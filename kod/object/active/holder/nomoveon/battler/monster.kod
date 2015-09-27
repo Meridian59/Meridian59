@@ -1429,7 +1429,8 @@ messages:
       }
 
       % Victim phased out or is now in spectator mode, break aggro.
-      if Send(poTarget,@IsInCannotInteractMode)
+      if IsClass(poTarget,&User)
+         AND Send(poTarget,@IsInCannotInteractMode)
       {
          Send(self,@EnterStateMove);
 
@@ -1505,7 +1506,8 @@ messages:
       }
 
       % Victim phased out or is now in spectator mode, break aggro.
-      if Send(oVictim,@IsInCannotInteractMode)
+      if IsClass(oVictim,&User)
+         AND Send(oVictim,@IsInCannotInteractMode)
       {
          Send(self,@EnterStateMove);
 
@@ -1798,36 +1800,35 @@ messages:
          }
       }
 
-	  % moved down at least a full row 
-	  if iNew_finerow >= FINENESS
-	  {
-		iNew_row = piRow + (iNew_finerow / FINENESS);
-		iNew_finerow = iNew_finerow MOD FINENESS;
-	  }
-	  
-	  % moved up at least a full row
-	  if iNew_finerow < 0
-	  {
-	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
-		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
-	  }
-	  
-	  % moved right at least a full col 
-	  if iNew_finecol >= FINENESS
-	  {
-		iNew_col = piCol + (iNew_finecol / FINENESS);
-		iNew_finecol = iNew_finecol MOD FINENESS;
-	  }
-	  
-	  % moved left at least a full row
-	  if iNew_finecol < 0
-	  {
-	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
-		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
-	  }
-	  
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
-	          #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+      % moved down at least a full row 
+      if iNew_finerow >= FINENESS
+      {
+         iNew_row = piRow + (iNew_finerow / FINENESS);
+         iNew_finerow = iNew_finerow MOD FINENESS;
+      }
+      else if iNew_finerow < 0
+      {
+         % moved up at least a full row
+         iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
+         iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+      }
+     
+      % moved right at least a full col 
+      if iNew_finecol >= FINENESS
+      {
+         iNew_col = piCol + (iNew_finecol / FINENESS);
+         iNew_finecol = iNew_finecol MOD FINENESS;
+      }
+      else if iNew_finecol < 0
+      {
+         % moved left at least a full row
+         iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
+         iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+      }
+
+      if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
+         OR Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol);
@@ -2602,8 +2603,9 @@ messages:
          piState = piState & ESTATE_LSTEP_MASK;
       }
 
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
-               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+      if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
+         OR Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
                #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
@@ -6256,10 +6258,10 @@ messages:
 
    CreateTreasure(who=$,corpse=$)
    {
-      local i,j,oReagent,iNumberItems,oTreasure,oTreasure_type,tokengen,
-            iSafetyCntr,lTreasureItems,iNumberOfItemsDropped,
-            iNumberOfItemsLooted,iRandomCashAmount,oMoney,iGetResult,
-            bCapacityFailure,bRangeFailure,iSurvivalLoot;
+      local i, j, oReagent, iNumberItems, oTreasure, oTreasure_type,
+            lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted,
+            iRandomCashAmount, oMoney, iGetResult, bCapacityFailure,
+            bRangeFailure, iSurvivalLoot;
 
       % Apparitions, etc, provide no treasure
       if pbIllusion
@@ -6268,7 +6270,7 @@ messages:
       }
 
       oTreasure_type = Send(SYS,@FindTreasureByNum,
-                            #num=Send(self,@GetTreasureType));
+                              #num=Send(self,@GetTreasureType));
       if oTreasure_type = $
       {
          Debug("Can't find monster treasure type",Send(self,@GetTreasureType),
@@ -6277,61 +6279,12 @@ messages:
          return;
       }
 
-      lTreasureItems = $;
-
-      if Send(self,@GetTreasureType) <> TID_NONE
-      {
-         if (viAttributes & MOB_ONE_TREASURE)
-         {
-            iNumberItems = 1;
-         }
-         else
-         {
-            % Random number of treasure items are dropped based on viLevel
-            %  and viDifficulty.  The higher these values are, the more items
-            %  that may be dropped.
-            iSurvivalLoot = piBoostedLevel
-              / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot);
-
-            iNumberItems = 1 + (viLevel/55) + Random(0,viDifficulty/3)
-                              + iSurvivalLoot;
-            iNumberItems = Bound(iNumberItems,$,6 + iSurvivalLoot);
-            iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor)*iNumberItems)/100;
-            iNumberItems = Bound(iNumberItems,1,$);
-         }
-
-         tokengen = TRUE;
-         i = 1;
-
-         while i++ <= iNumberItems
-         {
-            oTreasure = Send(oTreasure_type,@GenerateTreasure,#level=viLevel,
-                              #who=who,#mob=self,#tokengen=tokengen,
-                              #corpse=corpse);
-            if oTreasure <> $
-            {
-               if IsClass(oTreasure,&SpellItem)
-               {
-                  iSafetyCntr = 0;
-
-                  while (NOT Send(oTreasure,@SpellItemIsAccessible))
-                        AND iSafetyCntr++ < 5
-                  {
-                     oTreasure = Send(oTreasure_type,@GenerateTreasure,
-                                      #level=viLevel,#who=who,#mob=self,
-                                      #tokengen=tokengen,#corpse=corpse);
-                  }
-               }
-
-               if IsClass(oTreasure,&Token)
-               {
-                  tokengen = FALSE;
-               }
-
-               lTreasureItems = Cons(oTreasure,lTreasureItems);
-            }
-         }
-      }
+      % TreasureType now handles putting together the treasure list.
+      % Returns a list of items to drop, or $.
+      lTreasureItems = Send(oTreasure_Type,@CreateMobTreasure,#mob=self,
+                              #who=who,#level=viLevel,#difficulty=viDifficulty,
+                              #corpse=corpse,#attributes=viAttributes,
+                              #boostedlevel=piBoostedLevel);
 
       % Add in our inventory
       foreach i in plActive

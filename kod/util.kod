@@ -421,38 +421,11 @@ messages:
       return XLat;
    }
 
-   ListCopy(source = $)
-   {
-      local lCopy, i, iElem;
-
-      lCopy = $;
-      if source <> $
-      {
-         i = length(source);
-         while i > 0
-         {
-            iElem = nth(source, i);
-            if IsList(iElem)
-            {
-               lCopy = Cons(Send(self,@ListCopy,#source=iElem),lCopy);
-            }
-            else
-            {
-               lCopy = Cons(iElem,lCopy);
-            }
-
-            i = i - 1;
-         }
-      }
-
-      return lCopy;
-   }
-
    ListClass(lSource = $)
    {
       local i, lObjects;
 
-      lObjects = Send(self,@ListCopy,#source=lSource);
+      lObjects = ListCopy(lSource);
       foreach i in lSource
       {
          Debug("create object", GetClass(i));
@@ -500,9 +473,9 @@ messages:
 
    GetSpellCommands(plSpells = $)
    {
-      local i,lSpells;
+      local i, lSpells;
 
-      lSpells = Send(self,@ListCopy,#source=plSpells);
+      lSpells = ListCopy(plSpells);
       foreach i in lSpells
       {
          %AdminSetSpell(num = 0, ability = 0, add = 0)
@@ -518,7 +491,7 @@ messages:
    {
       local i, lUsers, lFinal, iHigh, iIndex;
 
-      lUsers = Send(self,@ListCopy,#source=Send(SYS,@GetUsers));
+      lUsers = ListCopy(Send(SYS,@GetUsers));
       lFinal = $;
 
       % First, let's delete any deadweight from the list.

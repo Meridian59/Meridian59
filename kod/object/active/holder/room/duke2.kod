@@ -98,7 +98,7 @@ messages:
       {
          % don't create the timer yet, the feast hall may not be created yet and
          % we need to check it's state, instead set a timer to check it and act then
-         CreateTimer(self,@CreateFeastTimer,FEAST_TIMER_CREATE_DELAY);
+         ptFeastTimer = CreateTimer(self,@CreateFeastTimer,FEAST_TIMER_CREATE_DELAY);
       }
       
       propagate;

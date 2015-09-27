@@ -336,10 +336,6 @@ messages:
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
 
-      % Have to delay this a bit so all objects are created by the time
-      % it gets called.
-      CreateTimer(self,@RecalcLightAndWeather,5000);
-
       propagate;
    }
 
@@ -1286,9 +1282,10 @@ messages:
       return n;
    }
 
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $,report = TRUE)
+   ReqSomethingAttack(what = $,victim = $, use_weapon = $, stroke_obj = $,
+                      report = TRUE)
    {
-      local oWatcher;
+      local oWatcher, i, each_obj;
 
       if what <> $
          AND IsClass(what,&Player)
@@ -1390,7 +1387,18 @@ messages:
          }
       }
 
-      propagate;
+      if use_weapon = $
+      {
+         use_weapon = stroke_obj;
+      }
+
+      if NOT SendListBreak(plActive,1,@ReqSomethingAttack,#what=what,
+                  #victim=victim,#use_weapon=use_weapon)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    AllowGuildAttack(what = $, victim = $,report = TRUE)
@@ -2002,7 +2010,7 @@ messages:
       }
 
       Send(self,@HolderAddNode,#node=Cons(what,new_pos));
-	  
+
       % possibly mark object's location blocked in BSP room
       if new_pos <> $ AND what <> $ AND (Send(what,@GetMoveOnType) = MOVEON_NO)
       {
@@ -2013,7 +2021,7 @@ messages:
             debug("Failed to add BSP blocker ", what, " to ", prmRoom);
          }
       }
-	
+
       if IsClass(what,&User)
       {
          % NPCs might need to do or say something.
@@ -2301,7 +2309,7 @@ messages:
          iFineCol = FINENESS_HALF;
       }
 
-      if Send(what,@GetOwner) = self AND Send(self,@IsHolding,#what=what)
+      if Send(what,@GetOwner) = self
       {
          % get position of object to move
          iRow = Send(what,@GetRow);
@@ -2373,7 +2381,15 @@ messages:
          %    OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))
       }
 
-      propagate;
+      % Do this here, instead of Holder.
+      if NOT SendListBreak(plActive,1,@ReqSomethingMoved,#what=what,
+                     #new_row=new_row,#new_col=new_col,
+                     #new_finerow=new_finerow,#new_finecol=new_finecol)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    LineOfSight(obj1 = $, obj2 = $)
@@ -2413,14 +2429,14 @@ messages:
          fine_col = 32;
       }
 
-	  if (Send(what,@GetMoveOnType) = MOVEON_NO)
-	  {
-	    if NOT BlockerMoveBSP(prmRoom, what, new_row, new_col, fine_row, fine_col)
-		{
-		% debug("Failed to move blocker ", what);
-		}
-	  }
-	  
+      if (Send(what,@GetMoveOnType) = MOVEON_NO)
+      {
+         if NOT BlockerMoveBSP(prmRoom, what, new_row, new_col, fine_row, fine_col)
+         {
+            % debug("Failed to move blocker ", what);
+         }
+      }
+
       flags = IsInThingsBoxBSP(prmRoom, new_row, new_col, fine_row, fine_col);
 
       if (flags & IBF_OUT_S)
@@ -2522,8 +2538,11 @@ messages:
                OR NOT non_monsters_only
                OR NOT IsClass(each_obj,&Monster)
             {
-               ClearPacket();
-               packet_built = FALSE;
+               if packet_built
+               {
+                  ClearPacket();
+                  packet_built = FALSE;
+               }
                Send(each_obj,@SomethingMoved,#what=what,
                     #new_row=new_row,#new_col=new_col,
                     #fine_row=fine_row,#fine_col=fine_col,
@@ -2586,7 +2605,7 @@ messages:
             if NOT packet_built
             {
                Send(each_obj,@BuildPacketSomethingTurned,#what=what,
-                     #new_angle=new_angle,#cause=cause);
+                    #new_angle=new_angle,#cause=cause);
                packet_built = TRUE;
             }
 
@@ -3224,12 +3243,8 @@ messages:
    SomethingWaveRoom(what = 0,wave_rsc = $)
    "Don't send <what> if not from any particular object"
    {
-      local i,each_obj;
-
-      foreach i in plActive
-      {
-         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what);
-      }
+      SendListByClass(plActive,1,&User,@WaveSendUser,
+            #wave_rsc=wave_rsc,#source_obj=what);
 
       return;
    }
@@ -3525,21 +3540,11 @@ messages:
 
    AmbientLightChanged()
    {
-      local i,each_obj;
-
-      foreach i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         Send(each_obj,@AmbientLightChanged);
-      }
+      SendList(plActive,1,@AmbientLightChanged);
 
       if piRoom_flags & ROOM_LAMPS
       {
-         foreach i in plPassive
-         {
-            each_obj = Send(self,@HolderExtractObject,#data=i);
-            Send(each_obj,@AmbientLightChanged);
-         }
+         SendList(plPassive,1,@AmbientLightChanged);
       }
 
       return;
@@ -3563,21 +3568,11 @@ messages:
 
    BackgroundChanged()
    {
-      local i,each_obj;
-
-      foreach i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         Send(each_obj,@BackgroundChanged);
-      }
+      SendList(plActive,1,@BackgroundChanged);
 
       if piRoom_flags & ROOM_LAMPS
       {
-         foreach i in plPassive
-         {
-            each_obj = Send(self,@HolderExtractObject,#data=i);
-            Send(each_obj,@BackgroundChanged);
-         }
+         SendList(plPassive,1,@BackgroundChanged);
       }
 
       return;

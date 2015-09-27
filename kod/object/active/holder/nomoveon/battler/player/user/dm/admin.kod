@@ -389,6 +389,30 @@ messages:
       propagate;
    }
 
+   SpawnTestMobs(class = &OrcWizard, num = 1)
+   {
+      local i, oMob;
+
+      if poOwner = $
+      {
+         return;
+      }
+
+      i = 0;
+
+      % Don't make too many at once.
+      num = Bound(num,1,200);
+
+      while i++ < num
+      {
+         oMob = Create(class);
+         Send(poOwner,@NewHold,#what=oMob,#new_row=piRow,#new_col=piCol,
+               #fine_row=piFine_row,#fine_col=piFine_col);
+      }
+
+      return;
+   }
+
    %%% Room tours
 
    StartTour(delay=2000)

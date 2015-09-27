@@ -45,12 +45,11 @@ resources:
    viSpeed = SPEED_FAST
    vrSound_aware = XeoFire_sound_aware
 
+   viTreasure_type = TID_XEO_FIRE
+
 properties:
 
    piAnimation = ANIM_NONE
-
-   % What do we drop on death?
-   pcTreasureItem = &RedHeartStone
 
 messages:
 

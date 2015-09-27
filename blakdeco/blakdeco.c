@@ -570,6 +570,10 @@ char * name_function(int fnum)
 
    case SENDMESSAGE : return "Send";
    case POSTMESSAGE : return "Post";
+   case SENDLISTMSG : return "SendList";
+   case SENDLISTMSGBREAK : return "SendListBreak";
+   case SENDLISTMSGBYCLASS : return "SendListByClass";
+   case SENDLISTMSGBYCLASSBREAK : return "SendListByClassBreak";
 
    case SAVEGAME : return "SaveGame";
    case LOADGAME : return "LoadGame";
@@ -641,6 +645,8 @@ char * name_function(int fnum)
    case LAST : return "Last";
    case GETLISTELEMBYCLASS : return "GetListElemByClass";
    case GETLISTNODE : return "GetListNode";
+   case GETALLLISTNODESBYCLASS : return "C_GetAllListNodesByClass";
+   case LISTCOPY : return "ListCopy";
 
    case GETTIMEZONEOFFSET : return "GetTimeZoneOffset";
    case GETTIME : return "GetTime";

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NoTreasure is TreasureType
+XeoFireT is TreasureType
 
 constants:
 
@@ -16,15 +16,21 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_NONE
+   viTreasure_num = TID_XEO_FIRE
 
 properties:
 
+   piItem_att_chance = 0
+   piDiff_seed = 0
+
 messages:
 
-   CreateMobTreasure()
+   Constructed()
    {
-      return $;
+      plTreasure = [ [ &RedHeartStone, 100]
+                   ];
+
+      propagate;
    }
 
 end

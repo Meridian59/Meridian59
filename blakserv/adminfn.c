@@ -1185,7 +1185,7 @@ void AdminWhoEachSession(session_node *s)
 	aprintf("%-18.18s ",str);
 	
 	if (s->account != NULL)
-		aprintf("%4i",s->account->account_id);
+		aprintf("%4i ",s->account->account_id);
 	else
 		aprintf("    ");
 	
@@ -1194,7 +1194,7 @@ void AdminWhoEachSession(session_node *s)
 	else
 		aprintf(" %-3s","No");
 	
-	aprintf(" %4i ",s->session_id);
+	aprintf("%4i ",s->session_id);
 	aprintf("%-22.22s ",s->conn.name);
 	
 	aprintf("%s",GetStateName(s));
@@ -1889,6 +1889,9 @@ void AdminPrintResource(resource_node *r)
 	{
 		aprintf("%-7i %s = %s\n",r->resource_id,
 			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val[0]);
+		aprintf("WARNING: do not change player names with created resources.\n");
+		aprintf("Use send o 0 AdminChangeUserName oUser o obj_num sName q name instead.\n");
+		aprintf("Failure to do so will result in player's new name not being added to user table.\n");
 	}
 }
 
@@ -2093,6 +2096,10 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETCLASS : strcpy(c_name, "GetClass"); break;
 		case SENDMESSAGE : strcpy(c_name, "Send"); break;
 		case POSTMESSAGE : strcpy(c_name, "Post"); break;
+		case SENDLISTMSG : strcpy(c_name, "SendList"); break;
+		case SENDLISTMSGBREAK : strcpy(c_name, "SendListBreak"); break;
+		case SENDLISTMSGBYCLASS : strcpy(c_name, "SendListByClass"); break;
+		case SENDLISTMSGBYCLASSBREAK : strcpy(c_name, "SendListByClassBreak"); break;
 		case GODLOG : strcpy(c_name, "GodLog"); break;
 		case DEBUG : strcpy(c_name, "Debug"); break;
 		case SAVEGAME : strcpy(c_name, "SaveGame"); break;
@@ -2153,6 +2160,8 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
 		case GETLISTELEMBYCLASS : strcpy(c_name, "GetListElemByClass"); break;
 		case GETLISTNODE : strcpy(c_name, "GetListNode"); break;
+		case GETALLLISTNODESBYCLASS : strcpy(c_name, "GetAllListNodesByClass"); break;
+		case LISTCOPY : strcpy(c_name, "ListCopy"); break;
 		case GETTIMEZONEOFFSET : strcpy(c_name, "GetTimeZoneOffset"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
 		case GETTICKCOUNT : strcpy(c_name, "GetTickCount"); break;

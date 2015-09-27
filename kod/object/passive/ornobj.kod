@@ -722,7 +722,14 @@ resources:
    oo_Qormas_wreath_name = "qormas wreath"
    oo_Qormas_wreath_icon = wreath.bgf
    oo_Qormas_wreath_desc = "A Qormas Wreath"
-   
+
+   oo_smcrate_name = "small crate"
+   oo_smcrate_icon = crate.bgf
+   oo_smcrate_desc = "A Small Crate"
+
+   oo_vjournal_name = "dusty journal"
+   oo_vjournal_icon = book1.bgf
+   oo_vjournal_desc = "A dusty journal containing the inventory of the vault."
    
 classvars:
 
@@ -739,7 +746,7 @@ properties:
    piGroup = 1
 
    piType = 0
-   
+
 messages:
 
    Constructor(type=0, rName=$, rIcon=$, rDesc=$)
@@ -1293,6 +1300,21 @@ messages:
       
       if type = OO_QORMAS_WREATH
       {  vrName = oo_Qormas_wreath_name;  vrIcon = oo_Qormas_wreath_icon;  vrDesc = oo_Qormas_wreath_desc;  }
+
+      if type = OO_SMCRATE
+      {
+         vrName = oo_smcrate_name;
+         vrIcon = oo_smcrate_icon;
+         vrDesc = oo_smcrate_desc;
+         pbNoMoveOn = TRUE;
+      }
+
+      if type = OO_VJOURNAL
+      {
+         vrName = oo_vjournal_name;
+         vrIcon = oo_vjournal_icon;
+         vrDesc = oo_vjournal_desc;
+      }
 
 
       %% tell the room we changed, unless this is in constructor

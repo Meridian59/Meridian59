@@ -288,35 +288,31 @@ messages:
       propagate;
    }
 
-   ResetPlayerFlagList()
+   ResetPlayerFlagList(nodraw=FALSE)
    {
       local i;
 
       Send(self,@ResetPlayerDrawfx,#Sendsomethingchanged=FALSE);
+
       piFlags = (piFlags & PFLAG_MASK);
       piFlags2 = (piFlags2 & PFLAG2_MASK);
+      piFlags3 = (piFlags3 & PFLAG3_MASK);
+
       if Send(self,@IsResting)
       {
-         Send(self,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
-         Send(self,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
-         Send(self,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+         piFlags = piFlags | PFLAG_NO_MOVE;
+         piFlags = piFlags | PFLAG_NO_FIGHT;
+         piFlags = piFlags | PFLAG_NO_MAGIC;
       }
 
-      foreach i in plEnchantments
-      {
-         Send(nth(i,2),@SetSpellPlayerFlag,#who=self);
-      }
-
-      foreach i in plUsing
-      {
-         Send(i,@SetItemPlayerFlag,#who=self);
-      }
+      SendList(plEnchantments,2,@SetSpellPlayerFlag,#who=self);
+      SendList(plUsing,0,@SetItemPlayerFlag,#who=self);
 
       if poOwner <> $
       {
          foreach i in Send(poOwner,@GetEnchantmentList)
          {
-            Send(nth(i,2),@SetSpellPlayerFlag,#who=self,#state=nth(i,3));
+            Send(Nth(i,2),@SetSpellPlayerFlag,#who=self,#state=Nth(i,3));
          }
       }
 
@@ -338,6 +334,12 @@ messages:
       if poOwner <> $
       {
          Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      if nodraw=FALSE
+      {
+         Post(self,@DrawOffense);
+         Post(self,@DrawDefense);
       }
 
       return;

@@ -140,6 +140,10 @@ void InitBkodInterpret(void)
 	
 	ccall_table[SENDMESSAGE] = C_SendMessage;
 	ccall_table[POSTMESSAGE] = C_PostMessage;
+	ccall_table[SENDLISTMSG] = C_SendListMessage;
+	ccall_table[SENDLISTMSGBREAK] = C_SendListMessageBreak;
+	ccall_table[SENDLISTMSGBYCLASS] = C_SendListMessageByClass;
+	ccall_table[SENDLISTMSGBYCLASSBREAK] = C_SendListMessageByClassBreak;
 
 	ccall_table[SAVEGAME] = C_SaveGame;
 	ccall_table[LOADGAME] = C_LoadGame;
@@ -204,6 +208,8 @@ void InitBkodInterpret(void)
 	ccall_table[ISLISTMATCH] = C_IsListMatch;
 	ccall_table[GETLISTELEMBYCLASS] = C_GetListElemByClass;
 	ccall_table[GETLISTNODE] = C_GetListNode;
+	ccall_table[GETALLLISTNODESBYCLASS] = C_GetAllListNodesByClass;
+	ccall_table[LISTCOPY] = C_ListCopy;
 
 	ccall_table[GETTIMEZONEOFFSET] = C_GetTimeZoneOffset;
 	ccall_table[GETTIME] = C_GetTime;

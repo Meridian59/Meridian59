@@ -117,7 +117,7 @@ messages:
          }
       }
 
-      lAllRooms = Send(SYS,@ListCopy,#source=Send(SYS,@GetRooms));
+      lAllRooms = ListCopy(Send(SYS,@GetRooms));
 
       % If we sent the string used to activate the arena (only for public)
       % check it for a room name to use. If we sent a room name, use that

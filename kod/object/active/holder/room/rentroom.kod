@@ -277,12 +277,11 @@ messages:
                   ];
 
       Send(self,@RecalcLightAndWeather);
-      Post(self,@InitializeDecor);
 
       propagate;
    }
 
-   InitializeDecor()
+   Constructed()
    {
       Send(self,@SetBedSector);
       Send(self,@SetBedSpread,#num=piBedSpread);
@@ -297,7 +296,7 @@ messages:
             #fine_col=Nth(Nth(Nth(plBedCoords,piBedSector),3),2),
             #new_angle= Nth(Nth(plBedCoords,piBedSector),5) );
 
-      return;
+      propagate;
    }
 
    GetRenter()

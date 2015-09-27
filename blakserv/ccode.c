@@ -672,6 +672,344 @@ int C_PostMessage(int object_id,local_var_type *local_vars,
    return NIL;
 }
 
+/*
+* C_SendListMessage: Takes a list, a list position (n), a message and message
+*   parameters. If n = 0, sends the message to all objects in the list given.
+*   If n > 1, sends the message to the Nth object in each element of the list
+*   given, which should be a list containing sublists. Handles TRUE and FALSE
+*   returns from the messages, returns TRUE by default and FALSE if any called
+*   object returns FALSE. Rationale is that a call to multiple objects would
+*   be looking for a FALSE condition, not a TRUE one.
+*/
+int C_SendListMessage(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, pos_val, message_val, ret_val;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = True;
+
+   // Get the list we're going to use.
+   list_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   // If $ list, just return.
+   if (list_val.v.tag == TAG_NIL)
+      return ret_val.int_val;
+
+   // List 'position', 0 for obj in top list, >0 for obj = Nth(list,pos).
+   pos_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 0)
+   {
+      bprintf("C_SendListMessage OBJECT %i can't use non-int list pos %i, %i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Get the message to send, either a message ID or a string containing a message name.
+   message_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_SendListMessage OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return ret_val.int_val;
+         }
+      }
+      else
+      {
+         bprintf("C_SendListMessage OBJECT %i can't send non-message %i,%i\n",
+               object_id, message_val.v.tag, message_val.v.data);
+         return ret_val.int_val;
+      }
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_SendListMessage OBJECT %i can't send to non-list %i, %i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Separate functions handle each of the cases: objects in top list, objects
+   // as first element of sublist, objects as nth element of sublist.
+   if (pos_val.v.data == 0)
+      ret_val.v.data = SendListMessage(list_val.v.data, False, message_val.v.data,
+         num_name_parms, name_parm_array);
+   else if (pos_val.v.data == 1)
+      ret_val.v.data = SendFirstListMessage(list_val.v.data, False, message_val.v.data,
+         num_name_parms, name_parm_array);
+   else
+      ret_val.v.data = SendNthListMessage(list_val.v.data, pos_val.v.data, False,
+         message_val.v.data, num_name_parms, name_parm_array);
+
+   return ret_val.int_val;
+}
+
+/*
+* C_SendListMessageBreak: Works the same as SendListMessage, except
+*   breaks on the first FALSE return from the sent messages. Used to
+*   speed up algorithms that rely on calling every object in a list
+*   until reaching a FALSE return.
+*/
+int C_SendListMessageBreak(int object_id, local_var_type *local_vars,
+            int num_normal_parms, parm_node normal_parm_array[],
+            int num_name_parms, parm_node name_parm_array[])
+{
+   val_type list_val, pos_val, message_val, ret_val;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = True;
+
+   // Get the list we're going to use.
+   list_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   // If $ list, just return.
+   if (list_val.v.tag == TAG_NIL)
+      return ret_val.int_val;
+
+   // List 'position', 0 for obj in top list, >0 for obj = Nth(list,pos).
+   pos_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 0)
+   {
+      bprintf("C_SendListMessageBreak OBJECT %i can't use non-int list pos %i, %i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Get the message to send, either a message ID or a string containing a message name.
+   message_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_SendListMessageBreak OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return ret_val.int_val;
+         }
+      }
+      else
+      {
+         bprintf("C_SendListMessageBreak OBJECT %i can't send non-message %i,%i\n",
+            object_id, message_val.v.tag, message_val.v.data);
+         return ret_val.int_val;
+      }
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_SendListMessageBreak OBJECT %i can't send to non-list %i, %i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Separate functions handle each of the cases: objects in top list, objects
+   // as first element of sublist, objects as nth element of sublist.
+   if (pos_val.v.data == 0)
+      ret_val.v.data = SendListMessage(list_val.v.data, True, message_val.v.data,
+      num_name_parms, name_parm_array);
+   else if (pos_val.v.data == 1)
+      ret_val.v.data = SendFirstListMessage(list_val.v.data, True, message_val.v.data,
+      num_name_parms, name_parm_array);
+   else
+      ret_val.v.data = SendNthListMessage(list_val.v.data, pos_val.v.data, True,
+      message_val.v.data, num_name_parms, name_parm_array);
+
+   return ret_val.int_val;
+}
+
+/*
+* C_SendListMessageByClass: Takes a list, a list position (n), a class, a
+*   message and message parameters. Works the same as C_SendListMessage,
+*   except the message is only sent to objects of the given class.
+*/
+int C_SendListMessageByClass(int object_id, local_var_type *local_vars,
+            int num_normal_parms, parm_node normal_parm_array[],
+            int num_name_parms, parm_node name_parm_array[])
+{
+   val_type list_val, pos_val, message_val, class_val, ret_val;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = True;
+
+   // Get the list we're going to use.
+   list_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   // If $ list, just return.
+   if (list_val.v.tag == TAG_NIL)
+      return ret_val.int_val;
+
+   // List 'position', 0 for obj in top list, >0 for obj = Nth(list,pos).
+   pos_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 0)
+   {
+      bprintf("C_SendListMessageByClass OBJECT %i can't use non-int list pos %i, %i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Get the class we want to send to.
+   class_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   if (class_val.v.tag != TAG_CLASS)
+   {
+      bprintf("C_SendListMessageByClass OBJECT %i can't use non-class %i, %i\n",
+         object_id, class_val.v.tag, class_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Get the message to send, either a message ID or a string containing a message name.
+   message_val = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+      normal_parm_array[3].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_SendListMessageByClass OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return ret_val.int_val;
+         }
+      }
+      else
+      {
+         bprintf("C_SendListMessageByClass OBJECT %i can't send non-message %i,%i\n",
+            object_id, message_val.v.tag, message_val.v.data);
+         return ret_val.int_val;
+      }
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_SendListMessageByClass OBJECT %i can't send to non-list %i, %i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Separate functions handle each of the cases: objects in top list, objects
+   // as first element of sublist, objects as nth element of sublist.
+   if (pos_val.v.data == 0)
+      ret_val.v.data = SendListMessageByClass(list_val.v.data, class_val.v.data, False,
+         message_val.v.data, num_name_parms, name_parm_array);
+   else if (pos_val.v.data == 1)
+      ret_val.v.data = SendFirstListMessageByClass(list_val.v.data, class_val.v.data, False,
+         message_val.v.data, num_name_parms, name_parm_array);
+   else
+      ret_val.v.data = SendNthListMessageByClass(list_val.v.data, pos_val.v.data, 
+         class_val.v.data, False, message_val.v.data, num_name_parms, name_parm_array);
+
+   return ret_val.int_val;
+}
+
+/*
+* C_SendListMessageByClassBreak: Works the same as SendListMessageByClass,
+*   except breaks on the first FALSE return from the sent messages. Used to
+*   speed up algorithms that rely on calling every object in a list until
+*   reaching a FALSE return.
+*/
+int C_SendListMessageByClassBreak(int object_id, local_var_type *local_vars,
+   int num_normal_parms, parm_node normal_parm_array[],
+   int num_name_parms, parm_node name_parm_array[])
+{
+   val_type list_val, pos_val, message_val, class_val, ret_val;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = True;
+
+   // Get the list we're going to use.
+   list_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   // If $ list, just return.
+   if (list_val.v.tag == TAG_NIL)
+      return ret_val.int_val;
+
+   // List 'position', 0 for obj in top list, >0 for obj = Nth(list,pos).
+   pos_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 0)
+   {
+      bprintf("C_SendListMessageByClassBreak OBJECT %i can't use non-int list pos %i, %i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Get the class we want to send to.
+   class_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   if (class_val.v.tag != TAG_CLASS)
+   {
+      bprintf("C_SendListMessageByClassBreak OBJECT %i can't use non-class %i, %i\n",
+         object_id, class_val.v.tag, class_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Get the message to send, either a message ID or a string containing a message name.
+   message_val = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+      normal_parm_array[3].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_SendListMessageByClassBreak OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return ret_val.int_val;
+         }
+      }
+      else
+      {
+         bprintf("C_SendListMessageByClassBreak OBJECT %i can't send non-message %i,%i\n",
+            object_id, message_val.v.tag, message_val.v.data);
+         return ret_val.int_val;
+      }
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_SendListMessageByClassBreak OBJECT %i can't send to non-list %i, %i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return ret_val.int_val;
+   }
+
+   // Separate functions handle each of the cases: objects in top list, objects
+   // as first element of sublist, objects as nth element of sublist.
+   if (pos_val.v.data == 0)
+      ret_val.v.data = SendListMessageByClass(list_val.v.data, class_val.v.data, True,
+      message_val.v.data, num_name_parms, name_parm_array);
+   else if (pos_val.v.data == 1)
+      ret_val.v.data = SendFirstListMessageByClass(list_val.v.data, class_val.v.data, True,
+      message_val.v.data, num_name_parms, name_parm_array);
+   else
+      ret_val.v.data = SendNthListMessageByClass(list_val.v.data, pos_val.v.data,
+      class_val.v.data, True, message_val.v.data, num_name_parms, name_parm_array);
+
+   return ret_val.int_val;
+}
+
 int C_CreateObject(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])
@@ -3372,10 +3710,56 @@ int C_FindListElem(int object_id,local_var_type *local_vars,
 }
 
 /*
- * C_GetListNode: takes a list, a position and a list element. Checks each
- *                sublist in the parent list and returns the list node
- *                containing the element at that position. Returns NIL
- *                if the element wasn't found.
+ * C_GetAllListNodesByClass: takes a list, a position and a class. Checks each
+ *                sub-list in the parent list and if the class is present at
+ *                the position, adds it to a new list. Returns the new list or
+ *                NIL.
+ */
+int C_GetAllListNodesByClass(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, class_val, pos_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      if (list_val.v.tag == TAG_NIL)
+         return NIL;
+      bprintf("C_GetAllListNodesByClass object %i can't find elem in non-list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   pos_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+               normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 1)
+   {
+      bprintf("C_GetAllListNodesByClass object %i can't use non-int position %i,%i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return NIL;
+   }
+
+   class_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+                  normal_parm_array[2].value);
+
+   if (class_val.v.tag != TAG_CLASS)
+   {
+      bprintf("C_GetAllListNodesByClass object %i can't use non-class %i,%i\n",
+         object_id, class_val.v.tag, class_val.v.data);
+      return NIL;
+   }
+
+   return GetAllListNodesByClass(list_val.v.data, pos_val.v.data, class_val.v.data);
+}
+
+/*
+ * C_GetListNode: takes a list, a position and an object. Checks each
+ *                sub-list in the parent list and returns the first list node
+ *                containing the object at that position. Returns NIL if the
+ *                object wasn't found in any sub-lists.
  */
 int C_GetListNode(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],
@@ -3386,13 +3770,10 @@ int C_GetListNode(int object_id,local_var_type *local_vars,
    list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
                   normal_parm_array[0].value);
 
-   if (list_val.v.tag == TAG_NIL)
-   {
-      return NIL;
-   }
-
    if (list_val.v.tag != TAG_LIST)
    {
+      if (list_val.v.tag == TAG_NIL)
+         return NIL;
       bprintf("C_GetListNode object %i can't find elem in non-list %i,%i\n",
          object_id, list_val.v.tag, list_val.v.data);
       return NIL;
@@ -3433,13 +3814,10 @@ int C_GetListElemByClass(int object_id,local_var_type *local_vars,
    list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
                   normal_parm_array[0].value);
 
-   if (list_val.v.tag == TAG_NIL)
-   {
-      return NIL;
-   }
-
    if (list_val.v.tag != TAG_LIST)
    {
+      if (list_val.v.tag == TAG_NIL)
+         return NIL;
       bprintf("C_GetListElemByClass object %i can't get elem in non-list %i,%i\n",
          object_id, list_val.v.tag, list_val.v.data);
       return NIL;
@@ -3455,6 +3833,33 @@ int C_GetListElemByClass(int object_id,local_var_type *local_vars,
    }
 
    return GetListElemByClass(list_val, class_val.v.data);
+}
+
+/*
+ * C_ListCopy: takes a list, makes a copy and returns the copy.
+ */
+int C_ListCopy(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, ret_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      if (list_val.v.tag == TAG_NIL)
+         return NIL;
+      bprintf("C_ListCopy object %i can't copy non-list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   ret_val.v.data = ListCopy(list_val.v.data);
+   ret_val.v.tag = TAG_LIST;
+
+   return ret_val.int_val;
 }
 
 /*

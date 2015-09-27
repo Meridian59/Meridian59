@@ -124,15 +124,27 @@ int Rest(int list_id)
 	return (l? l->rest.int_val : NIL);
 }
 
-int AppendListElem(val_type source,val_type list_val)
+int AppendListElem(val_type source, val_type list_val)
 {
-   int list_id, new_list_id, n = 0;
+   int list_id, new_list_id, n = 0, temp_list_id = -1;
    list_node *l, *new_node;
-
-   list_id = list_val.v.data;
 
    if (list_val.v.tag == TAG_NIL)
       return Cons(source,list_val);
+   list_id = list_val.v.data;
+
+   // If we're appending a list, get the ID now in case memory is reallocated.
+   if (source.v.tag == TAG_LIST)
+      temp_list_id = source.v.data;
+
+   // Allocate first, so a resize doesn't clobber list references.
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+   if (!new_node)
+   {
+      bprintf("AppendListElem couldn't create list node, returning list %i", list_id);
+      return list_id;
+   }
 
    l = GetListNodeByID(list_id);
    if (!l)
@@ -150,16 +162,16 @@ int AppendListElem(val_type source,val_type list_val)
    if (n > 500)
       bprintf("Warning, AppendListElem adding to large list, length %i",n);
 
-   new_list_id = AllocateListNode();
-   new_node = GetListNodeByID(new_list_id);
-   if (!new_node)
-   {
-      bprintf("AppendListElem couldn't create list node, returning list %i",list_id);
-      return list_id;
-   }
-
    new_node->rest.int_val = NIL;
-   new_node->first.int_val = source.int_val;
+
+   if (temp_list_id >= 0)
+   {
+      new_node->first.v.tag = TAG_LIST;
+      new_node->first.v.data = temp_list_id;
+   }
+   else
+      new_node->first.int_val = source.int_val;
+
    l->rest.v.data = new_list_id;
    l->rest.v.tag = TAG_LIST;
 
@@ -168,10 +180,13 @@ int AppendListElem(val_type source,val_type list_val)
 
 int Cons(val_type source,val_type dest)
 {
-   int list_id;
+   int list_id, source_id = -1, dest_id = -1;
    list_node *new_node;
 
-   /*   bprintf("Allocing list node #%i\n",num_nodes); */
+   if (source.v.tag == TAG_LIST)
+      source_id = source.v.data;
+   if (dest.v.tag == TAG_LIST)
+      dest_id = dest.v.data;
 
    list_id = AllocateListNode();
    new_node = GetListNodeByID(list_id);
@@ -181,8 +196,21 @@ int Cons(val_type source,val_type dest)
       return NIL;
    }
 
-   new_node->first.int_val = source.int_val;
-   new_node->rest.int_val = dest.int_val;
+   if (source_id >= 0)
+   {
+      new_node->first.v.tag = TAG_LIST;
+      new_node->first.v.data = source_id;
+   }
+   else
+      new_node->first.int_val = source.int_val;
+   if (dest_id >= 0)
+   {
+      new_node->rest.v.tag = TAG_LIST;
+      new_node->rest.v.data = dest_id;
+   }
+   else
+      new_node->rest.int_val = dest.int_val;
+
    return list_id;
 }
 
@@ -431,6 +459,134 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
+int GetAllListNodesByClass(int list_id, int position, int class_id)
+{
+   list_node *l;
+   object_node *o;
+   class_node *c;
+   int new_list_id = -1, l_list_id;
+   val_type nil_val, obj_val, first_val, rest_val;
+   nil_val.int_val = NIL;
+   first_val.v.tag = TAG_LIST;
+   rest_val.v.tag = TAG_LIST;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("GetAllListNodesByClass got invalid list %i.\n", list_id);
+      return NIL;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("GetAllListNodesByClass got invalid sub-list %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   }
+   else
+   {
+      if (position == 1)
+         obj_val.int_val = First(l->first.v.data);
+      else
+         obj_val.int_val = Nth(position, l->first.v.data);
+
+      if (obj_val.v.tag == TAG_OBJECT)
+      {
+         o = GetObjectByID(obj_val.v.data);
+         if (o == NULL)
+         {
+            bprintf("GetAllListNodesByClass can't find object %i\n",
+               obj_val.v.data);
+            return NIL;
+         }
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("GetAllListNodesByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return NIL;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+            {
+               first_val.v.data = ListCopy(l->first.v.data);
+               new_list_id = Cons(first_val, nil_val);
+               break;
+            }
+            c = c->super_ptr;
+         } while (c != NULL);
+
+         // Just made an allocation, get list_node again.
+         l = &list_nodes[list_id];
+      }
+   }
+
+   while (l && l->rest.v.data != NIL)
+   {
+      // This may allocate a node, so save list id.
+      l_list_id = l->rest.v.data;
+      l = GetListNodeByID(l->rest.v.data);
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("GetAllListNodesByClass got invalid sub-list %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+      }
+      else
+      {
+         if (position == 1)
+            obj_val.int_val = First(l->first.v.data);
+         else
+            obj_val.int_val = Nth(position, l->first.v.data);
+
+         if (obj_val.v.tag == TAG_OBJECT)
+         {
+            o = GetObjectByID(obj_val.v.data);
+            if (o == NULL)
+            {
+               bprintf("GetAllListNodesByClass can't find object %i\n",
+                  obj_val.v.data);
+               return NIL;
+            }
+            c = GetClassByID(o->class_id);
+            if (c == NULL)
+            {
+               bprintf("GetAllListNodesByClass can't find class %i, DIE totally\n",
+                  o->class_id);
+               FlushDefaultChannels();
+               return NIL;
+            }
+
+            do
+            {
+               if (c->class_id == class_id)
+               {
+                  if (new_list_id < 0)
+                  {
+                     first_val.v.data = ListCopy(l->first.v.data);
+                     new_list_id = Cons(first_val, nil_val);
+                  }
+                  else
+                  {
+                     first_val.v.data = ListCopy(l->first.v.data);
+                     rest_val.v.data = new_list_id;
+                     new_list_id = Cons(first_val, rest_val);
+                  }
+                  break;
+               }
+               c = c->super_ptr;
+            } while (c != NULL);
+            // Just made an allocation, get list_node again.
+            l = &list_nodes[l_list_id];
+         }
+      }
+   }
+
+   first_val.v.data = new_list_id;
+   return new_list_id >= 0 ? first_val.int_val : nil_val.int_val;
+}
+
 // Works like FindListElem, but compares the class of the object.
 int GetListElemByClass(val_type list_id, int class_id)
 {
@@ -441,7 +597,7 @@ int GetListElemByClass(val_type list_id, int class_id)
    l = GetListNodeByID(list_id.v.data);
    if (!l)
    {
-      bprintf("FindListElemByClass got invalid list.\n");
+      bprintf("GetListElemByClass got invalid list.\n");
       return NIL;
    }
 
@@ -450,13 +606,13 @@ int GetListElemByClass(val_type list_id, int class_id)
       o = GetObjectByID(l->first.v.data);
       if (o == NULL)
       {
-         bprintf("FindListElemByClass can't find object %i\n",l->first.v.data);
+         bprintf("GetListElemByClass can't find object %i\n",l->first.v.data);
          return NIL;
       }
       c = GetClassByID(o->class_id);
       if (c == NULL)
       {
-         bprintf("FindListElemByClass can't find class %i, DIE totally\n",
+         bprintf("GetListElemByClass can't find class %i, DIE totally\n",
             o->class_id);
          FlushDefaultChannels();
          return NIL;
@@ -477,14 +633,14 @@ int GetListElemByClass(val_type list_id, int class_id)
          o = GetObjectByID(l->first.v.data);
          if (o == NULL)
          {
-            bprintf("FindListElemByClass can't find object %i\n",l->first.v.data);
+            bprintf("GetListElemByClass can't find object %i\n",l->first.v.data);
 
             return NIL;
          }
          c = GetClassByID(o->class_id);
          if (c == NULL)
          {
-            bprintf("FindListElemByClass can't find class %i, DIE totally\n",
+            bprintf("GetListElemByClass can't find class %i, DIE totally\n",
                o->class_id);
             FlushDefaultChannels();
             return NIL;
@@ -549,15 +705,148 @@ int GetListNode(val_type list_id, int position, val_type list_elem)
    return NIL;
 }
 
+// ListCopy makes a lot of list allocations, and if a list allocation causes
+// the list_nodes memory to be resized, all existing list_node references
+// here are invalidated. As a result, this function is structured so that
+// no old list_nodes are accessed after an allocation or recursive ListCopy
+// call. This adds overhead, but is still the fastest safe way to copy a list.
+int ListCopy(int list_id)
+{
+   list_node *l, *new_node, *new_next;
+   int new_list_id, first_list_id, rest_list_id, l_list_id;
+   int temp;
+
+   // Allocate first so a resize doesn't clobber references.
+   new_list_id = first_list_id = AllocateListNode();
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("ListCopy got invalid list %i.\n",list_id);
+      return NIL;
+   }
+
+   if (l->first.v.tag == TAG_LIST)
+   {
+      // Copy to temp, in case ListCopy resizes memory.
+      temp = ListCopy(l->first.v.data);
+
+      // After a ListCopy call, any existing list reference may be invalid.
+      // Access list_nodes directly, list node already confirmed to exist.
+      l = &list_nodes[list_id];
+
+      new_node = GetListNodeByID(new_list_id);
+      if (!new_node)
+      {
+         bprintf("ListCopy couldn't allocate new node! %i\n",new_list_id);
+         return NIL;
+      }
+      new_node->first.v.data = temp;
+      new_node->first.v.tag = TAG_LIST;
+   }
+   else
+   {
+      new_node = GetListNodeByID(new_list_id);
+      if (!new_node)
+      {
+         bprintf("ListCopy couldn't allocate new node! %i\n",new_list_id);
+         return NIL;
+      }
+      new_node->first.int_val = l->first.int_val;
+   }
+
+   // Get next list id for accessing after allocation.
+   l_list_id = l->rest.v.data;
+
+   while (l && l->rest.v.data != NIL)
+   {
+      // Allocate first so a resize doesn't clobber references.
+      rest_list_id = AllocateListNode();
+
+      l = GetListNodeByID(l_list_id);
+      if (!l)
+      {
+         bprintf("ListCopy got invalid list node %i %i\n",
+            l->rest.v.tag, l->rest.v.data);
+         return NIL;
+      }
+
+      if (l->first.v.tag == TAG_LIST)
+      {
+         // Copy to temp, in case ListCopy resizes memory.
+         temp = ListCopy(l->first.v.data);
+         // After a ListCopy call, any existing list reference may be invalid.
+         // Access list_nodes directly, list node already confirmed to exist.
+         l = &list_nodes[l_list_id];
+
+         // Get new list node.
+         new_next = GetListNodeByID(rest_list_id);
+         if (!new_next)
+         {
+            bprintf("ListCopy couldn't allocate new node! %i\n",
+               new_list_id);
+            return NIL;
+         }
+         // Access list_nodes directly, list node already confirmed to exist.
+         new_node = &list_nodes[first_list_id];
+         new_node->rest.v.tag = TAG_LIST;
+         new_node->rest.v.data = rest_list_id;
+         new_node = new_next;
+
+         new_node->first.v.data = temp;
+         new_node->first.v.tag = TAG_LIST;
+      }
+      else
+      {
+         // Get new list node.
+         new_next = GetListNodeByID(rest_list_id);
+         if (!new_next)
+         {
+            bprintf("ListCopy couldn't allocate new node! %i\n",
+               new_list_id);
+            return NIL;
+         }
+         // Access list_nodes directly, list node already confirmed to exist.
+         new_node = &list_nodes[first_list_id];
+         new_node->rest.v.tag = TAG_LIST;
+         new_node->rest.v.data = rest_list_id;
+         new_node = new_next;
+
+         new_node->first.int_val = l->first.int_val;
+      }
+
+      // Save list node refs, so we can get them next iteration after the allocation.
+      first_list_id = rest_list_id;
+      l_list_id = l->rest.v.data;
+   }
+   new_node->rest.int_val = NIL;
+
+   return new_list_id;
+}
+
 int InsertListElem(int n,int list_id,val_type new_val)
 {
-   int new_list_id;
+   int new_list_id, temp_list_id = -1;
    list_node *l, *prev = NULL, *new_node;
 
-   if (n  == 0)
+   if (n == 0)
    {
       bprintf("InsertListElem given invalid list element %i, returning old list\n",
          n);
+      return list_id;
+   }
+
+   // If the element we're adding is a list, get the list node now before
+   // allocating another node, in case memory is resized.
+   if (new_val.v.tag == TAG_LIST)
+      temp_list_id = new_val.v.data;
+   // Allocate first, so a resize doesn't clobber list references.
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+   if (!new_node)
+   {
+      bprintf("InsertListElem couldn't allocate new node! %i\n",
+         new_list_id);
       return list_id;
    }
 
@@ -575,16 +864,18 @@ int InsertListElem(int n,int list_id,val_type new_val)
       if (l->rest.v.tag != TAG_LIST)
       {
          // Add the new value to the end of the list.
-         new_list_id = AllocateListNode();
-         new_node = GetListNodeByID(new_list_id);
-         if (!new_node)
-         {
-            bprintf("InsertListElem couldn't allocate new node! %i\n",
-               new_list_id);
-            return list_id;
-         }
          new_node->rest.int_val = NIL;
-         new_node->first.int_val = new_val.int_val;
+
+         // Use temp id if element we're adding is a list, in case allocate
+         // resized memory.
+         if (temp_list_id >= 0)
+         {
+            new_node->first.v.tag = TAG_LIST;
+            new_node->first.v.data = temp_list_id;
+         }
+         else
+            new_node->first.int_val = new_val.int_val;
+
          // Previous node points to this one.
          l->rest.v.tag = TAG_LIST;
          l->rest.v.data = new_list_id;
@@ -601,21 +892,21 @@ int InsertListElem(int n,int list_id,val_type new_val)
       return list_id;
    }
 
-   new_list_id = AllocateListNode();
-   new_node = GetListNodeByID(new_list_id);
-
-   if (!new_node)
-   {
-      bprintf("InsertListElem couldn't allocate new node! %i\n",
-         new_list_id);
-      return list_id;
-   }
-
    // This node is inserted in position of the existing one, so use its rest data.
    // Points to the old node.
    new_node->rest.v.data = prev->rest.v.data;
    new_node->rest.v.tag = TAG_LIST;
-   new_node->first.int_val = new_val.int_val;
+
+   // Use temp id if element we're adding is a list, in case allocate
+   // resized memory.
+   if (temp_list_id >= 0)
+   {
+      new_node->first.v.tag = TAG_LIST;
+      new_node->first.v.data = temp_list_id;
+   }
+   else
+      new_node->first.int_val = new_val.int_val;
+
    // Previous node points to this one.
    prev->rest.v.data = new_list_id;
 
@@ -651,6 +942,669 @@ int DelListElem(val_type list_id,val_type list_elem)
 		list_elem.v.tag,list_elem.v.data,list_id.v.data);
 	
 	return list_id.int_val;
+}
+
+// Next 6 functions deal with sending a message to objects in a list.
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendListMessage(int list_id, bool ret_false, int message_id,
+                    int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendListMessage can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag == TAG_OBJECT)
+   {
+      ret_val.int_val = SendBlakodMessage(l->first.v.data, message_id, num_parms, parms);
+      if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+      {
+         if (ret_false)
+            return False;
+         return_int = False;
+      }
+   }
+   /* Sending to built-in objects in a list disabled for now.
+   else if (l->first.v.tag == TAG_INT)
+   {
+      // Can send to built-in objects using constants.
+      obj_id = GetBuiltInObjectID(l->first.v.data);
+      if (obj_id > INVALID_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+   }*/
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendListMessage got invalid list node somewhere in list %i.\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(l->first.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (l->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(l->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendFirstListMessage(int list_id, bool ret_false, int message_id,
+                         int num_parms, parm_node parms[])
+{
+   list_node *l, *first;
+   int return_int = True, obj_id = INVALID_OBJECT;
+   val_type ret_val;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendFirstListMessage can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+      bprintf("SendFirstListMessage called on invalid sublist %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   else
+   {
+      first = GetListNodeByID(l->first.v.data);
+      if (!first)
+         bprintf("SendFirstListMessage can't find sub-list node %i %i\n",
+            l->first.v.tag, l->first.v.data);
+      else if (first->first.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(first->first.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (first->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(first->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendFirstListMessage got invalid node somewhere in list %i.\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag != TAG_LIST)
+         bprintf("SendFirstListMessage called on invalid sublist %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+      else
+      {
+         first = GetListNodeByID(l->first.v.data);
+         if (!first)
+         {
+            bprintf("SendFirstListMessage can't find sub-list node %i %i\n",
+               l->first.v.tag, l->first.v.data);
+            continue;
+         }
+
+         if (first->first.v.tag == TAG_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(first->first.v.data, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+         /* Sending to built-in objects in a list disabled for now.
+         else if (first->first.v.tag == TAG_INT)
+         {
+            // Can send to built-in objects using constants.
+            obj_id = GetBuiltInObjectID(first->first.v.data);
+            if (obj_id > INVALID_OBJECT)
+            {
+               ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+               if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+               {
+                  if (ret_false)
+                     return False;
+                  return_int = False;
+               }
+            }
+         }*/
+      }
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendNthListMessage(int list_id, int position, bool ret_false,
+                       int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type obj_val, ret_val;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendNthListMessage can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+      bprintf("SendNthListMessage called on invalid sublist %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   else
+   {
+      obj_val.int_val = Nth(position, l->first.v.data);
+      if (obj_val.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(obj_val.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendNthListMessage got invalid list node somewhere in list %i\n",
+            list_id);
+         return return_int;
+      }
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("SendNthListMessage called on invalid sub-list %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+         continue;
+      }
+
+      obj_val.int_val = Nth(position, l->first.v.data);
+      if (obj_val.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(obj_val.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendListMessageByClass(int list_id, int class_id, bool ret_false,
+                           int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val;
+   object_node *o = NULL;
+   class_node *c;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendListMessageByClass can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag == TAG_OBJECT)
+      o = GetObjectByID(l->first.v.data);
+   /* Sending to built-in objects in a list disabled for now.
+   else if (l->first.v.tag == TAG_INT)
+   {
+      // Can send to built-in objects using constants.
+      obj_id = GetBuiltInObjectID(l->first.v.data);
+      if (obj_id > INVALID_OBJECT)
+         o = GetObjectByID(obj_id);
+   }*/
+
+   if (o != NULL)
+   {
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendListMessageByClass got invalid list node in list %i\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag == TAG_OBJECT)
+         o = GetObjectByID(l->first.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (l->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(l->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o == NULL)
+         continue;
+
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendFirstListMessageByClass(int list_id, int class_id, bool ret_false,
+                                int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l, *first;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val;
+   object_node *o = NULL;
+   class_node *c;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendFirstListMessageByClass can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("SendFirstListMessageByClass called on invalid sub-list %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   }
+   else
+   {
+      first = GetListNodeByID(l->first.v.data);
+      if (!first)
+      {
+         bprintf("SendFirstListMessageByClass can't find list node %i\n",
+            l->first.v.tag, l->first.v.data);
+      }
+      else if (first->first.v.tag == TAG_OBJECT)
+         o = GetObjectByID(first->first.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (first->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(first->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o != NULL)
+      {
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("SendFirstListMessageByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return return_int;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+            {
+               ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+               o = NULL;
+               if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+               {
+                  if (ret_false)
+                     return False;
+                  return_int = False;
+               }
+               break;
+            }
+            c = c->super_ptr;
+         } while (c != NULL);
+      }
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendFirstListMessageByClass got invalid list node in list %i\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("SendFirstListMessageByClass called on invalid sub-list %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+         continue;
+      }
+
+      first = GetListNodeByID(l->first.v.data);
+      if (!first)
+      {
+         bprintf("SendFirstListMessageByClass can't find list node %i %i\n",
+            l->first.v.tag, l->first.v.data);
+         continue;
+      }
+
+      if (first->first.v.tag == TAG_OBJECT)
+         o = GetObjectByID(first->first.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (first->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(first->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o == NULL)
+         continue;
+
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendFirstListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendNthListMessageByClass(int list_id, int position, int class_id, bool ret_false,
+                              int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val, obj_val;
+   object_node *o = NULL;
+   class_node *c;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendNthListMessageByClass can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("SendNthListMessageByClass called on invalid list %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   }
+   else
+   {
+      obj_val.int_val = Nth(position, l->first.v.data);
+
+      if (obj_val.v.tag == TAG_OBJECT)
+         o = GetObjectByID(obj_val.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o != NULL)
+      {
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("SendNthListMessageByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return return_int;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+            {
+               ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+               o = NULL;
+               if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+               {
+                  if (ret_false)
+                     return False;
+                  return_int = False;
+               }
+               break;
+            }
+            c = c->super_ptr;
+         } while (c != NULL);
+      }
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendNthListMessageByClass got invalid list node in list %i\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("SendNthListMessageByClass called on invalid list.\n");
+         continue;
+      }
+
+      obj_val.int_val = Nth(position, l->first.v.data);
+
+      if (obj_val.v.tag == TAG_OBJECT)
+         o = GetObjectByID(obj_val.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o == NULL)
+         continue;
+
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendNthListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   return return_int;
 }
 
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id))

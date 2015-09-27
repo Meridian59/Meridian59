@@ -45,15 +45,14 @@ resources:
    viSpeed = SPEED_FAST
    vrSound_aware = XeoWater_sound_aware
 
+   viTreasure_type = TID_XEO_WATER
+
 properties:
 
    piAnimation = ANIM_NONE
 
    % percent of victim's max mana it will try to drain, double normal rate.
    piDrainAmount = 10
-
-   % What do we drop on death?
-   pcTreasureItem = &BlueHeartStone
 
 messages:
 

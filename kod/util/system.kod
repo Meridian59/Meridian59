@@ -260,7 +260,7 @@ resources:
 
    system_success_rsc = "Success."
    system_failure_rsc = "Failure."
-   system_please_wait_rsc = "Please wait about 30 seconds for processing."
+   system_please_wait_rsc = "Please wait about 5 seconds for processing."
 
    % A resource for use when a hidden admin tells something to a non-admin.
    %  Placed here so we can filter out user names to avoid confusion.
@@ -573,6 +573,8 @@ messages:
 
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
+      ptRecreateTimer = CreateTimer(self,@CreateLightAndWeather,3000);
+
       return;
    }
 
@@ -591,7 +593,7 @@ messages:
 
    RecreateAll()
    {
-      local i, plSavedFlagStates, plSavedSenate;
+      local i, lSavedFlagStates, lSavedSenate;
 
       % Reset our level points.
       vlLevelPoints = [1,2,4,6,8,10];
@@ -618,12 +620,14 @@ messages:
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
 
-      plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
-      plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
+      lSavedFlagStates = ListCopy(Send(poTerritoryGame,@SaveFlagStates));
+      lSavedSenate = ListCopy(Send(poTokenGame,@GetSenate));
 
       % Don't leave any active spellcasting objects
       Send(self,@DeleteAllSpellTotems);
- 
+
+      Send(self,@CreateUserTable);
+
       Send(self,@RecreateNecromancerBalance);
       Send(self,@ClearAllQuests);
       Send(self,@CreateAllBanksIfNew);
@@ -652,20 +656,20 @@ messages:
       %Send(self,@CreateAllSpellsIfNew);
       %Send(self,@CreateAllRoomsIfNew);
 
-      if plSavedFlagStates <> $
+      if lSavedFlagStates <> $
       {
-         Send(Send(self,@GetTerritoryGame),@SetFlagStates,#lFlagStates=plSavedFlagStates);
-         plSavedFlagStates = $;
+         Send(poTerritoryGame,@SetFlagStates,#lFlagStates=lSavedFlagStates);
+         lSavedFlagStates = $;
       }
-      
-      if plSavedSenate <> $
+
+      if lSavedSenate <> $
       {
-         Send(Send(self,@GetTokenGame),@SetSenate,#lSenate=plSavedSenate);
-         plSavedSenate = $;
+         Send(poTokenGame,@SetSenate,#lSenate=lSavedSenate);
+         lSavedSenate = $;
       }
-      
+
       piRecreate_state = RECREATE_WAITING;
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,3000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,500);
 
       Send(self,@RecreateVisibleCargoTypes);
 
@@ -691,7 +695,7 @@ messages:
       Send(self,@RecreateAllTreasureTypes);
       Send(self,@RecreateAllBackgroundObjects);
 
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseThree,2000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseThree,500);
       piRecreate_state = RECREATE_WAITING;
 
       return;
@@ -716,7 +720,7 @@ messages:
 
       Send(self,@RecreateAllSpells,#figure_totals=FALSE);
 
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFour,2000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFour,500);
       piRecreate_state = RECREATE_WAITING;
 
       return;
@@ -737,7 +741,7 @@ messages:
 
       Send(self,@RecreateAllSkills,#figure_totals=FALSE);
 
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFive,2000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFive,500);
       piRecreate_state = RECREATE_WAITING;
 
       return;
@@ -990,21 +994,9 @@ messages:
 
    GarbageCollecting(type = $)
    {
-      local i;
-
       Send(self,@CleanReflectionList);
 
-      foreach i in plUsers_logged_on
-      {
-         Send(i,@GarbageCollecting);
-      }
-
-      % Don't clear these on GC any more.
-      %phUsers = $;
-      %phRooms = $;
-      %phSpells = $;
-      %phSkills = $;
-      %phItemAtts = $;
+      SendList(plUsers_logged_on,0,@GarbageCollecting);
 
       Send(poStatistics,@GarbageCollecting);
 
@@ -1013,51 +1005,28 @@ messages:
 
    GarbageCollectingDone(type = $)
    {
-      local i;
-
       if type = SYSEVENT_RELOAD_SYSTEM
       {
-         foreach i in plRooms
-         {
-            Send(i,@LoadRoomData);
-         }
+         SendList(plRooms,0,@LoadRoomData);
       }
 
-      % Tables are GC'd now, don't need to recreate them.
-      %Send(self,@CreateUserTable);
-      %Send(self,@CreateRoomTable);
-      %Send(self,@CreateSpellTable);
-      %Send(self,@CreateSkillTable);
-      %Send(self,@CreateItemAttTable);
-
-      foreach i in plUsers_logged_on
-      {
-         Send(i,@GarbageCollectingDone);
-      }
+      SendList(plUsers_logged_on,0,@GarbageCollectingDone);
 
       return;
    }
 
    LoadedFromDisk()
    {
-      local i;
-
       % Room maintenance.
-
-      foreach i in plRooms
-      {
-         Send(i,@LoadRoomData);
-      }
+      SendList(plRooms,0,@LoadRoomData);
 
       Send(&BossRoom,@ResetBoss);
 
+      % Check tables.
+      Send(self,@VerifyAllTables);
+
       % Player maintenance.
-
-      foreach i in plUsers_logged_on
-      {
-         Send(i,@DisconnectSession);
-      }
-
+      SendList(plUsers_logged_on,0,@DisconnectSession);
       plUsers_logged_on = $;
 
       Send(&Player,@SetKillTarget,#target=$);
@@ -1072,6 +1041,36 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
+
+      return;
+   }
+
+   VerifyAllTables()
+   {
+      if phUsers = $ OR NOT IsTable(phUsers)
+      {
+         Send(self,@CreateUserTable);
+      }
+      if phRooms = $ OR NOT IsTable(phRooms)
+      {
+         Send(self,@CreateRoomTable);
+      }
+      if phSpells = $ OR NOT IsTable(phSpells)
+      {
+         Send(self,@CreateSpellTable);
+      }
+      if phSkills = $ OR NOT IsTable(phSkills)
+      {
+         Send(self,@CreateSkillTable);
+      }
+      if phItemAtts = $ OR NOT IsTable(phItemAtts)
+      {
+         Send(self,@CreateItemAttTable);
+      }
+      if phTresTypes = $ OR NOT IsTable(phTresTypes)
+      {
+         Send(self,@RecreateAllTreasureTypes);
+      }
 
       return;
    }
@@ -1378,7 +1377,6 @@ messages:
 
    NewDay()
    {
-      local i;
       piDay = (piDay + 1) mod 240;
 
       if piDay = 0
@@ -1386,24 +1384,18 @@ messages:
          Send(self,@NewYear);
       }
 
-      pbDecay_counter = pbDecay_counter + 1;
-      piLogoffPenaltyDecayCounter = piLogoffPenaltyDecayCounter + 1;
-      if pbDecay_counter >=3
+      ++pbDecay_counter;
+      ++piLogoffPenaltyDecayCounter;
+      if pbDecay_counter >= 3
       {
          pbDecay_counter = 0;
-         foreach i in plUsers
-         {
-            Send(i,@decayPKillCount);
-         }
+         SendList(plUsers,0,@DecayPKillCount);
       }
 
       if piLogoffPenaltyDecayCounter >= piLogoffPenaltyDecayTime
       {
          piLogoffPenaltyDecayCounter = 0;
-         foreach i in plUsers
-         {
-            Send(i,@DecayLogoffPenaltyCount);
-         }
+         SendList(plUsers,0,@DecayLogoffPenaltyCount);
       }
 
       Send(self,@RecalcWeatherConditions);
@@ -2362,6 +2354,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_JAS_SEWER1,#class=&JasSewer1);
       Send(self,@CreateOneRoomIfNew,#num=RID_JAS_SEWER2,#class=&JasSewer2);
       Send(self,@CreateOneRoomIfNew,#num=RID_JAS_SEWER3,#class=&JasSewer3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_JAS_VAULT,#class=&JasperVault);
 
       % Barloque
       Send(self,@CreateOneRoomIfNew,#num=RID_BAR_NORTH,#class=&BarloqueNorth);
@@ -3862,6 +3855,11 @@ messages:
       Create(&EasterBunnyTreasure);
       Create(&KillerBunnyTreasure);
 
+      Create(&XeoAirT);
+      Create(&XeoEarthT);
+      Create(&XeoFireT);
+      Create(&XeoWaterT);
+
       return;
    }
 
@@ -3895,6 +3893,15 @@ messages:
    GetWeather()
    {
       return piWeather;
+   }
+
+   CreateLightAndWeather()
+   "Called by timer when System is first created, to add a delay."
+   {
+      ptRecreateTimer = $;
+      Send(self,@RecalcLightAndWeather);
+
+      return;
    }
 
    RecalcLightAndWeather()
@@ -4162,6 +4169,19 @@ messages:
       }
 
       return;
+   }
+
+   AdminChangeUserName(oUser=$,sName=$)
+   "Can be called by admin to both validate and change a user name."
+   {
+      if (Send(self,@ValidateUserName,#oUser=oUser,#sName=sName))
+      {
+         Send(self,@ChangeUserName,#oUser=oUser,#sName=sName);
+
+         return system_success_rsc;
+      }
+
+      return system_failure_rsc;
    }
 
    ValidateUserName(oUser=$,sName=$)
@@ -7730,7 +7750,7 @@ messages:
          lTempClassOrder = lClassOrder;
       }
       
-      lBaseList = Send(self,@ListCopy,#source=lItems);
+      lBaseList = ListCopy(lItems);
       
       lSortedItems = $;
       foreach cClass in lTempClassOrder

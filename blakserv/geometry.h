@@ -35,8 +35,8 @@ typedef struct V2
    (a)->Z = (b)->X * (c)->Y - (b)->Y * (c)->X;
 
 #define V3DOT(a,b) ((a)->X * (b)->X + (a)->Y * (b)->Y + (a)->Z * (b)->Z)
-#define V3LEN2(a)  (a)->X*(a)->X + (a)->Y*(a)->Y + (a)->Z*(a)->Z
-#define V3LEN(a)   sqrtf(V3LEN2)
+#define V3LEN2(a)  ((a)->X * (a)->X + (a)->Y * (a)->Y + (a)->Z * (a)->Z)
+#define V3LEN(a)   sqrtf(V3LEN2((a)))
 
 #define V2ADD(a,b,c) \
    (a)->X = (b)->X + (c)->X; \
@@ -51,8 +51,8 @@ typedef struct V2
    (a)->Y *= b;
 
 #define V2DOT(a,b) ((a)->X * (b)->X + (a)->Y * (b)->Y)
-#define V2LEN2(a)  (a)->X*(a)->X + (a)->Y*(a)->Y
-#define V2LEN(a)   sqrtf(V2LEN2)
+#define V2LEN2(a)  ((a)->X * (a)->X + (a)->Y * (a)->Y)
+#define V2LEN(a)   sqrtf(V2LEN2((a)))
 
 // true if point (c) lies inside boundingbox defined by min/max of (a) and (b)
 #define ISINBOX(a, b, c) \

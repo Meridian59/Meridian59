@@ -1099,7 +1099,7 @@ messages:
 
    LoadRoomData()
    {
-      local lRoom_data;
+      local i, lList, each_obj, lRoom_data;
 
       if prRoom = $
       {
@@ -1113,6 +1113,24 @@ messages:
       piSecurity = Nth(lRoom_data,3);
       piRowsHighRes = Nth(lRoom_data,4);
       piColsHighRes = Nth(lRoom_data,5);
+
+      foreach lList in [plActive, plPassive]
+      {
+         foreach i in lList
+         {
+            each_obj = First(i);
+
+            if (Send(each_obj,@GetMoveOnType) = MOVEON_NO)
+            {
+               if NOT BlockerAddBSP(prmRoom,each_obj,
+                           Nth(i,3),Nth(i,4),
+                           Nth(i,5),Nth(i,6))
+               {
+                  Debug("Failed to add BSP blocker ",each_obj, " to ",prmRoom);
+               }
+            }
+         }
+      }
 
       return;
    }
@@ -1984,7 +2002,18 @@ messages:
       }
 
       Send(self,@HolderAddNode,#node=Cons(what,new_pos));
-
+	  
+      % possibly mark object's location blocked in BSP room
+      if new_pos <> $ AND what <> $ AND (Send(what,@GetMoveOnType) = MOVEON_NO)
+      {
+         if NOT BlockerAddBSP(prmRoom, what,
+            Nth(new_pos, 2), Nth(new_pos, 3),
+            Nth(new_pos, 4), Nth(new_pos, 5))
+         {
+            debug("Failed to add BSP blocker ", what, " to ", prmRoom);
+         }
+      }
+	
       if IsClass(what,&User)
       {
          % NPCs might need to do or say something.
@@ -2166,6 +2195,9 @@ messages:
    LeaveHold(what = $)
    {
       local i,each_obj;
+
+      % make sure to unregister it as a blocker
+      BlockerRemoveBSP(prmRoom, what);
 
       if NOT IsClass(what,&User)
       {
@@ -2370,7 +2402,7 @@ messages:
                   fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
                   non_monsters_only = FALSE)
    {
-      local i, temp, each_obj, packet_built, lNode;
+      local i, temp, each_obj, packet_built, lNode, flags;
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
@@ -2381,28 +2413,38 @@ messages:
          fine_col = 32;
       }
 
-      if new_row > piRows
+	  if (Send(what,@GetMoveOnType) = MOVEON_NO)
+	  {
+	    if NOT BlockerMoveBSP(prmRoom, what, new_row, new_col, fine_row, fine_col)
+		{
+		% debug("Failed to move blocker ", what);
+		}
+	  }
+	  
+      flags = IsInThingsBoxBSP(prmRoom, new_row, new_col, fine_row, fine_col);
+
+      if (flags & IBF_OUT_S)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_SOUTH,#pos=new_col);
 
          return;
       }
 
-      if new_row < 1
+      if (flags & IBF_OUT_N)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_NORTH,#pos=new_col);
 
          return;
       }
 
-      if new_col > piCols
+      if (flags & IBF_OUT_E)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_EAST,#pos=new_row);
 
          return;
       }
 
-      if new_col < 1
+      if (flags & IBF_OUT_W)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_WEST,#pos=new_row);
 

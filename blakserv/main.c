@@ -83,7 +83,6 @@ void MainServer()
 	InitTimer();
 	InitSession();
 	InitResource();
-	InitRoomData();
 	InitString();
 	InitUser();
 	InitAccount();
@@ -156,7 +155,7 @@ void MainExitServer()
 	ResetAccount();
 	ResetUser();
 	ResetString();
-	ResetRoomData();
+	ResetRooms();
 	ResetResource();
 	ResetTimer();
 	ResetList();
@@ -181,7 +180,7 @@ void MainReloadGameData()
    ResetAdminConstants();
    ResetUser();
    ResetString();
-   ResetRoomData();
+   ResetRooms();
    ResetLoadMotd();
    ResetLoadBof();
    ResetDLlist();

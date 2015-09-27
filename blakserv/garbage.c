@@ -58,6 +58,7 @@ void MarkTableObject(int list_id);
 void DeleteUnreferencedObject(object_node *o);
 
 void RenumberObject(object_node *o);
+void RenumberBlockerObjects(room_node *r);
 void RenumberObjectReferences(object_node *o);
 void RenumberUserObjectReferences(user_node *u);
 void RenumberSessionObjectReferences(session_node *s);
@@ -202,6 +203,8 @@ void GarbageCollect()
    next_renumber = SERVER_MERGE_BASE;
 
    ForEachObject(RenumberObject);
+   // Renumber object IDs in each room's blocker data.
+   ForEachRoom(RenumberBlockerObjects);
    ForEachObject(RenumberObjectReferences); // Also mark strings here
    ForEachListNode(RenumberListNodeObjectReferences); // Also mark strings here
    ForEachTable(RenumberTableObjectReferences); // Also mark strings here
@@ -630,6 +633,18 @@ void DeleteUnreferencedObject(object_node *o)
 void RenumberObject(object_node *o)
 {
    o->garbage_ref = next_renumber++;
+}
+
+void RenumberBlockerObjects(room_node *r)
+{
+   Blocker *b;
+
+   b = r->data.Blocker;
+   while (b)
+   {
+      b->ObjectID = GetObjectByID(b->ObjectID)->garbage_ref;
+      b = b->Next;
+   }
 }
 
 void RenumberObjectReferences(object_node *o)

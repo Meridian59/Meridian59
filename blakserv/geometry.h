@@ -35,8 +35,8 @@ typedef struct V2
    (a)->Z = (b)->X * (c)->Y - (b)->Y * (c)->X;
 
 #define V3DOT(a,b) ((a)->X * (b)->X + (a)->Y * (b)->Y + (a)->Z * (b)->Z)
-#define V3LEN2(a)  (a)->X*(a)->X + (a)->Y*(a)->Y + (a)->Z*(a)->Z
-#define V3LEN(a)   sqrtf(V3LEN2)
+#define V3LEN2(a)  ((a)->X * (a)->X + (a)->Y * (a)->Y + (a)->Z * (a)->Z)
+#define V3LEN(a)   sqrtf(V3LEN2((a)))
 
 #define V2ADD(a,b,c) \
    (a)->X = (b)->X + (c)->X; \
@@ -51,13 +51,24 @@ typedef struct V2
    (a)->Y *= b;
 
 #define V2DOT(a,b) ((a)->X * (b)->X + (a)->Y * (b)->Y)
-#define V2LEN2(a)  (a)->X*(a)->X + (a)->Y*(a)->Y
-#define V2LEN(a)   sqrtf(V2LEN2)
+#define V2LEN2(a)  ((a)->X * (a)->X + (a)->Y * (a)->Y)
+#define V2LEN(a)   sqrtf(V2LEN2((a)))
 
 // true if point (c) lies inside boundingbox defined by min/max of (a) and (b)
 #define ISINBOX(a, b, c) \
    (fmin((a)->X, (b)->X) - EPSILON <= (c)->X && (c)->X <= fmax((a)->X, (b)->X) + EPSILON && \
     fmin((a)->Y, (b)->Y) - EPSILON <= (c)->Y && (c)->Y <= fmax((a)->Y, (b)->Y) + EPSILON)
+
+// Rotates V2 instance by radian
+__inline void V2ROTATE(V2* V, float Radian)
+{
+   float cs = cosf(Radian);
+   float sn = sinf(Radian);
+   float px = V->X;
+   float py = V->Y;
+   V->X = px * cs - py * sn;
+   V->Y = px * sn + py * cs;
+}
 
 // Möller–Trumbore intersection algorithm
 // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
@@ -119,7 +130,7 @@ __inline bool IntersectLineTriangle(V3* P1, V3* P2, V3* P3, V3* S, V3* E)
 }
 
 // Returns the minimum squared distance between
-// point P and finite line segment given by P1 and P2
+// point P and finite line segment given by Q1 and Q2
 __inline float MinSquaredDistanceToLineSegment(V2* P, V2* Q1, V2* Q2)
 {
    // finite line vector from start (Q1) to end (Q2)
@@ -165,4 +176,62 @@ __inline float MinSquaredDistanceToLineSegment(V2* P, V2* Q1, V2* Q2)
 
       return V2LEN2(&d);
    }
+}
+
+// Generates random coordinates on point P which are guaranteed
+// to be inside the triangle defined by A, B, C
+__inline void RandomPointInTriangle(V2* P, V2* A, V2* B, V2* C)
+{
+   // create two randoms in [0.0f , 1.0f]
+   float rnd1 = (float)rand() * (1.0f / (float)RAND_MAX);
+   float rnd2 = (float)rand() * (1.0f / (float)RAND_MAX);
+
+   // get rootsqrt
+   float sqrt_rnd1 = sqrtf(rnd1);
+
+   // coefficients
+   float coeff1 = 1.0f - sqrt_rnd1;
+   float coeff2 = sqrt_rnd1 * (1.0f - rnd2);
+   float coeff3 = rnd2 * sqrt_rnd1;
+
+   // generate random coordinates on P
+   P->X = coeff1 * A->X + coeff2 * B->X + coeff3 * C->X;
+   P->Y = coeff1 * A->Y + coeff2 * B->Y + coeff3 * C->Y;
+}
+
+// Checks for intersection of a finite line segment (S, E) and a circle (M=center)
+// http://stackoverflow.com/questions/1073336/circle-line-collision-detection
+// Returns true if there is an intersection
+__inline bool IntersectLineCircle(V2* M, float Radius, V2* S, V2* E)
+{
+   V2 d, f;
+
+   V2SUB(&d, E, S);
+   V2SUB(&f, S, M);
+
+   float a = V2DOT(&d, &d);
+   float b = 2.0f * V2DOT(&f, &d);
+   float c = V2DOT(&f, &f) - (Radius * Radius);
+   float discriminant = b * b - 4.0f * a * c;
+
+   if (discriminant >= 0.0f)
+   {
+      discriminant = sqrtf(discriminant);
+
+      float div = (2.0f * a);
+
+      if (ISZERO(div))
+         return false;
+
+	  float t1 = (-b - discriminant) / div;
+	  float t2 = (-b + discriminant) / div;
+
+      if ((t1 >= 0.0f && t1 <= 1.0f) ||
+          (t2 >= 0.0f && t2 <= 1.0f))
+      {
+         return true;
+      }
+   }
+
+   return false;
 }

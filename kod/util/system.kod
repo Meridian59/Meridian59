@@ -1042,6 +1042,15 @@ messages:
    {
       local i;
 
+      % Room maintenance.
+
+      foreach i in plRooms
+      {
+         Send(i,@LoadRoomData);
+      }
+
+      Send(&BossRoom,@ResetBoss);
+
       % Player maintenance.
 
       foreach i in plUsers_logged_on
@@ -1054,15 +1063,6 @@ messages:
       Send(&Player,@SetKillTarget,#target=$);
       Send(&LogoffGhost,@Delete);
 
-      % Room maintenance.
-
-      foreach i in plRooms
-      {
-         Send(i,@LoadRoomData);
-      }
-
-      Send(&BossRoom,@ResetBoss);
-
       % System object maintenance.
 
       Send(poHolder1,@Delete);
@@ -1072,14 +1072,6 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
-
-      % Recreate the hash tables.
-
-      Send(self,@CreateUserTable);
-      Send(self,@CreateRoomTable);
-      Send(self,@CreateSpellTable);
-      Send(self,@CreateSkillTable);
-      Send(self,@CreateItemAttTable);
 
       return;
    }

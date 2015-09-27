@@ -2124,14 +2124,15 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CREATEROOMDATA : strcpy(c_name, "CreateRoomData"); break;
 		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
-		case CANMOVEINROOM : strcpy(c_name, "CanMoveInRoom"); break;
-		case CANMOVEINROOMFINE : strcpy(c_name, "CanMoveInRoomFine"); break;
-		case CANMOVEINROOMHIGHRES : strcpy(c_name, "CanMoveInRoomHighRes"); break;
-		case GETHEIGHT : strcpy(c_name, "GetHeight"); break;
 		case GETHEIGHTFLOORBSP: strcpy(c_name, "GetHeightFloorBSP"); break;
 		case GETHEIGHTCEILINGBSP: strcpy(c_name, "GetHeightCeilingBSP"); break;
 		case CANMOVEINROOMBSP: strcpy(c_name, "CanMoveInRoomBSP"); break;
 		case LINEOFSIGHTBSP: strcpy(c_name, "LineOfSightBSP"); break;
+		case ISINTHINGSBOXBSP: strcpy(c_name, "IsInThingsBoxBSP"); break;
+		case BLOCKERADDBSP: strcpy(c_name, "BlockerAddBSP"); break;
+		case BLOCKERMOVEBSP: strcpy(c_name, "BlockerMoveBSP"); break;
+		case BLOCKERREMOVEBSP: strcpy(c_name, "BlockerRemoveBSP"); break;
+		case BLOCKERCLEARBSP: strcpy(c_name, "BlockerClearBSP"); break;
 		case MINIGAMENUMBERTOSTRING : strcpy(c_name, "MinigameNumberToString"); break;
 		case MINIGAMESTRINGTONUMBER : strcpy(c_name, "MinigameStringToNumber"); break;
 		case APPENDLISTELEM : strcpy(c_name, "AppendListElem"); break;
@@ -4626,7 +4627,7 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	
 	aprintf("Unloading game... ");
 	AdminSendBufferList();
-	ResetRoomData();
+	ResetRooms();
 	ResetUser();
 	ResetString();
 	ResetTimer();

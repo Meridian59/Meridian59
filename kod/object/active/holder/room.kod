@@ -1123,8 +1123,8 @@ messages:
             if (Send(each_obj,@GetMoveOnType) = MOVEON_NO)
             {
                if NOT BlockerAddBSP(prmRoom,each_obj,
-                           Nth(i,2),Nth(i,3),
-                           Nth(i,4),Nth(i,5))
+                           Nth(i,3),Nth(i,4),
+                           Nth(i,5),Nth(i,6))
                {
                   Debug("Failed to add BSP blocker ",each_obj, " to ",prmRoom);
                }

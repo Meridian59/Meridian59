@@ -36,6 +36,9 @@
 
 #define BOF_VERSION 6
 
+// enable constants such as M_PI from math.h
+#define _USE_MATH_DEFINES
+
 enum
 {
    USER_CLASS = 1,

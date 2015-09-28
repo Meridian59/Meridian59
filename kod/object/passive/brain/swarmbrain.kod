@@ -1,0 +1,54 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SwarmBrain is Brain
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viBrain_num = BRAIN_SWARM
+
+properties:
+
+   piDefault_behavior = 0
+
+   % The higher this is, the more likely the monster
+   % will pick the highest level player in the room.
+   piPlayer_factor = 10
+
+   % Any monster flagged with this is much more likely to
+   % engage in very deadly behavior.  Used to make orcs deadly.
+   piHyperAggressive_factor = 60
+
+   % The higher this is, the less likely monsters will 'swarm'.
+   piChaser_factor = 0
+
+   % The higher this number is, the more likely a wizard hater
+   % will chase after wizards.
+   piWizard_factor = 25
+
+   % THe higher this number, the more likely a karma hater
+   % will choose someone of the opposite karma.
+   piKarma_factor = 25
+
+   % These two variables control how much hatred is removed
+   % by invisibility and shadow form.
+   piInvis_reduction = 100
+   piShadForm_reduction = 60
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

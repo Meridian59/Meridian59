@@ -3251,18 +3251,29 @@ int C_GetRandomPointBSP(int object_id, local_var_type *local_vars,
 	int num_normal_parms, parm_node normal_parm_array[],
 	int num_name_parms, parm_node name_parm_array[])
 {
-	val_type ret_val, room_val;
-	val_type maxattempts_val;
+	val_type ret_val, room_val, maxattempts_val;
+	val_type row, col, finerow, finecol;
 	room_node *r;
 
 	// in case it fails
-	ret_val.int_val = NIL;
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
 
 	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
 		normal_parm_array[0].value);
+
 	maxattempts_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
 		normal_parm_array[1].value);
-	
+
+	row = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	col = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[5].type,
+		normal_parm_array[5].value);
+
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
 		bprintf("C_GetRandomPointBSP can't use non room %i,%i\n",
@@ -3274,6 +3285,34 @@ int C_GetRandomPointBSP(int object_id, local_var_type *local_vars,
 	{
 		bprintf("C_GetRandomPointBSP maxattempts can't use non int %i,%i\n",
 			maxattempts_val.v.tag, maxattempts_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row.v.tag != TAG_INT)
+	{
+		bprintf("C_GetRandomPointBSP row source can't use non int %i,%i\n",
+			row.v.tag, row.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col.v.tag != TAG_INT)
+	{
+		bprintf("C_GetRandomPointBSP col source can't use non int %i,%i\n",
+			col.v.tag, col.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow.v.tag != TAG_INT)
+	{
+		bprintf("C_GetRandomPointBSP finerow source can't use non int %i,%i\n",
+			finerow.v.tag, finerow.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol.v.tag != TAG_INT)
+	{
+		bprintf("C_GetRandomPointBSP finecol source can't use non int %i,%i\n",
+			finecol.v.tag, finecol.v.data);
 		return ret_val.int_val;
 	}
 
@@ -3289,35 +3328,14 @@ int C_GetRandomPointBSP(int object_id, local_var_type *local_vars,
 
 	if (ok)
 	{
-		int coordinate_list;
-		val_type first_val, rest_val;
+		// set output vars
+		local_vars->locals[finecol.v.data].v.data = ROOCOORDTOGRIDFINE(p.X);
+		local_vars->locals[finerow.v.data].v.data = ROOCOORDTOGRIDFINE(p.Y);
+		local_vars->locals[col.v.data].v.data = ROOCOORDTOGRIDBIG(p.X);
+		local_vars->locals[row.v.data].v.data = ROOCOORDTOGRIDBIG(p.Y);
 
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDFINE(p.X);
-		rest_val.v.tag = TAG_NIL;
-		rest_val.v.data = NIL;
-		coordinate_list = Cons(first_val, rest_val); // [ finecol ]
-
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDFINE(p.Y);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ finerow, finecol ]
-
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDBIG(p.X);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ col, finerow, finecol ]
-
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDBIG(p.Y);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ row, col, finerow, finecol ]
-		
-		ret_val.v.tag = TAG_LIST;
-		ret_val.v.data = coordinate_list;	
+		// mark succeeded
+		ret_val.v.data = true;	
 	}
 
 	return ret_val.int_val;

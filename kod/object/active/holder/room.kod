@@ -4541,11 +4541,13 @@ messages:
    "put at a gen point.  This is now in Room, as all rooms can use it for "
    "placing either a monster or a random item."
    {
-      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount, lPatrolPath;
+      local oOldOwner, iMRow, iMCol, iMRowFine, iMColFine, lPos, iRoll, iCount, lPatrolPath;
 
       iMRow = iRow;
       iMCol = iCol;
-
+      iMRowFine = FINENESS_HALF;
+      iMColFine = FINENESS_HALF;
+	  
       lPatrolPath = $;
 
       if oMonster = $
@@ -4574,18 +4576,11 @@ messages:
          if plGenerators = $
             OR bRandom
          {
-            iCount = 0;
-            iMRow = Random(1,piRows);
-            iMCol = Random(1,piCols);
-            while ((NOT Send(self,@ReqSomethingMoved,#what=oMonster,
-                     #new_row=iMRow,#new_col=iMCol))
-                  AND iCount < 15)
-            {
-               iMRow = Random(1,piRows);
-               iMCol = Random(1,piCols);
-               iCount = iCount + 1;
-            }
-            if iCount = 15
+            % query random point from C (into local vars)
+            % this point is guaranteed to have the following properties:
+            % (a) inside ThingsBox  (b) inside a sector with a texture set
+            % (c) not blocked by another object
+            if NOT GetRandomPointBSP(prmRoom, 15, *iMRow, *iMCol, *iMRowFine, *iMColFine)
             {
                Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
                      " in room ",self,Send(self,@GetName));
@@ -4609,11 +4604,12 @@ messages:
 
       if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
          AND (Send(self,@ReqSomethingMoved,#what=oMonster,
-                     #new_row=iMRow,#new_col=iMCol)
+                     #new_row=iMRow,#new_col=iMCol,
+                     #new_finerow=iMRowFine, #new_finecol=iMColFine)
             OR bStack)
       {
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
-               #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+               #fine_row=iMRowFine,#fine_col=iMColFine);
 
          if (lPatrolPath <> $)
          {

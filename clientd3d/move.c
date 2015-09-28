@@ -110,6 +110,7 @@ static int worstDistance = 0;
 
 /* local function prototypes */
 static void CheckPlayerMove();
+static bool IsInRoom(int x, int y, room_type *room);
 static void BounceUser(int dt);
 static int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *new_y, int z);
 static WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_y, int z);
@@ -358,7 +359,7 @@ void UserMovePlayer(int action)
          col = x / FINENESS;
 
       // See if trying to move off room.
-      if (!IsInRoom(row, col, current_room))
+      if (!IsInRoom(x, y, &current_room))
       {
          // Delay between consecutive attempts to move off room
          if (now - move_off_room_time >= MOVE_OFF_ROOM_INTERVAL) // current time 
@@ -466,6 +467,18 @@ void UserMovePlayer(int action)
    SoundSetListenerPosition(player.x, player.y, player.angle);
 
    RedrawAll();
+}
+
+bool IsInRoom(int x, int y, room_type *room)
+{
+   if (!room)
+      return False;
+
+   if (x <= room->ThingsBox.Min.X || x >= room->ThingsBox.Max.X
+      || y <= room->ThingsBox.Min.Y || y >= room->ThingsBox.Max.Y)
+      return False;
+
+   return True;
 }
 
 void SlideAlongWall(WallData *wall, int xOld, int yOld, int *xNew, int *yNew)

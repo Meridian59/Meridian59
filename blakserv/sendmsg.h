@@ -130,12 +130,6 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
 	 ret_val.int_val = NIL;
 	 return ret_val;
       }
-      if (GetKodStats()->debugging)
-      {
-	 if (o->p[data].val.v.tag == TAG_INVALID)
-	    eprintf("[%s] RetrieveValue got value of property that was uninitialized (INVALID %i)\n",
-	       BlakodDebugInfo(),local_vars->locals[data].v.data);
-      }
       return *(val_type *)&o->p[data].val.int_val; 
    }
 

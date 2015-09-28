@@ -108,21 +108,6 @@ int AllocateObject(int class_id)
    objects[num_objects].p = (prop_type *)AllocateMemory(MALLOC_ID_OBJECT_PROPERTIES,
 							sizeof(prop_type)*(1+c->num_properties));
 
-   if (ConfigBool(DEBUG_INITPROPERTIES))
-   {
-      int i;
-      prop_type p;
-
-      p.id = 0;
-      p.val.v.tag = TAG_INVALID;
-      p.val.v.data = 0;
-
-      for (i = 0; i < (1+c->num_properties); i++)
-      {
-	 objects[num_objects].p[i] = p;
-      }
-   }
-
    return num_objects++;
 }
 
@@ -214,15 +199,6 @@ int CreateObject(int class_id,int num_parms,parm_node parms[])
       SendBlakodMessage(new_object_id,CONSTRUCTOR_MSG,num_parms,parms);
    else
       SendTopLevelBlakodMessage(new_object_id,CONSTRUCTOR_MSG,num_parms,parms);
-
-   if (ConfigBool(DEBUG_UNINITIALIZED))
-   {
-      int i;
-      for (i = 0; i < (1+c->num_properties); i++)
-	 if (objects[new_object_id].p[i].val.v.tag == TAG_INVALID)
-	    eprintf("Uninitialized properties after constructor, class %s\n",
-	       c->class_name);
-   }
 
    return new_object_id;
 }

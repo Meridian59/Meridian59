@@ -2632,48 +2632,45 @@ messages:
    MoveTowardsCoords(iRow=$, iCol=$, iFineRow=FINENESS_HALF, iFineCol=FINENESS_HALF, face_target=FALSE,
                      face_away=FALSE, to_master=FALSE)
    {
-      local lPos, iRowDest, iColDest, iFineRowDest, iFineColDest;
+      local iState;
 
       if (iRow = $ or iCol = $)
       {
          return;
       }
 
+      iState = $;
       % query where to step next
       % note: these need some persistent info across
       % calls which are stored in piState (flags from old KOD code)
-      lPos = GetStepTowardsBSP(
+      iState = GetStepTowardsBSP(
                 Send(poOwner, @GetRoomData),
                 piRow, piCol, piFine_row, piFine_col,
-                iRow, iCol, iFineRow, iFineCol,
+                *iRow, *iCol, *iFineRow, *iFineCol,
                 piState);
 
-      if lPos <> $
+      if iState <> $
       {
-         iRowDest = Nth(lPos,1);
-         iColDest = Nth(lPos,2);
-         iFineRowDest = Nth(lPos,3);
-         iFineColDest = Nth(lPos,4);
-         piState = Nth(lPos,5);
+         piState = iState;
 
-         % debug("step",iRowDest,iColDest,iFineRowDest,iFineColDest);
+         % debug("step",iRow,iCol,iFineRow,iFineCol);
 	  
          if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
-             OR Send(self,@ReqMonsterMove,#new_row=iRowDest,#new_col=iColDest,
-                     #new_finerow=iFineRowDest,#new_finecol=iFineColDest)
+             OR Send(self,@ReqMonsterMove,#new_row=iRow,#new_col=iCol,
+                     #new_finerow=iFineRow,#new_finecol=iFineCol)
          {
-            Send(self,@MonsterOrient,#new_row=iRowDest,#new_col=iColDest,
-                 #new_finerow=iFineRowDest,#new_finecol=iFineColDest,
+            Send(self,@MonsterOrient,#new_row=iRow,#new_col=iCol,
+                 #new_finerow=iFineRow,#new_finecol=iFineCol,
                  #face_target=face_target,#face_away=face_away);
 		
             Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
-                 #new_row=iRowDest,#new_col=iColDest,
-                 #fine_row=iFineRowDest,#fine_col=iFineColDest,
+                 #new_row=iRow,#new_col=iCol,
+                 #fine_row=iFineRow,#fine_col=iFineCol,
                  #non_monsters_only=TRUE);
 
             % Turn to face target
-            Send(self,@MonsterOrient,#new_row=iRowDest,#new_col=iColDest,
-                 #new_finerow=iFineRowDest,#new_finecol=iFineColDest,
+            Send(self,@MonsterOrient,#new_row=iRow,#new_col=iCol,
+                 #new_finerow=iFineRow,#new_finecol=iFineCol,
                  #face_target=face_target,#face_away=face_away);
 
          return TRUE;		

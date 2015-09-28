@@ -3441,8 +3441,8 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 	s.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
 
 	V2 e;
-	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
-	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
+   e.X = GRIDCOORDTOROO(local_vars->locals[col_dest.v.data].v.data, local_vars->locals[finecol_dest.v.data].v.data);
+   e.Y = GRIDCOORDTOROO(local_vars->locals[row_dest.v.data].v.data, local_vars->locals[finerow_dest.v.data].v.data);
 
 	V2 p;
 	unsigned int flags = (unsigned int)state_flags.v.data;
@@ -3450,41 +3450,13 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 
 	if (ok)
 	{
-		int coordinate_list;
-		val_type first_val, rest_val;
+		ret_val.v.tag = TAG_INT;
+		ret_val.v.data = flags;
 
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = flags;
-		rest_val.v.tag = TAG_NIL;
-		rest_val.v.data = NIL;
-		coordinate_list = Cons(first_val, rest_val); // [ stateflags ]
-		
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDFINE(p.X);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ finecol, stateflags ]
-
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDFINE(p.Y);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ finerow, finecol, stateflags ]
-
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDBIG(p.X);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ col, finerow, finecol, stateflags ]
-
-		first_val.v.tag = TAG_INT;
-		first_val.v.data = ROOCOORDTOGRIDBIG(p.Y);
-		rest_val.v.tag = TAG_LIST;
-		rest_val.v.data = coordinate_list;
-		coordinate_list = Cons(first_val, rest_val); // [ row, col, finerow, finecol, stateflags ]
-
-		ret_val.v.tag = TAG_LIST;
-		ret_val.v.data = coordinate_list;
+      local_vars->locals[finecol_dest.v.data].v.data = ROOCOORDTOGRIDFINE(p.X);
+      local_vars->locals[finerow_dest.v.data].v.data = ROOCOORDTOGRIDFINE(p.Y);
+      local_vars->locals[col_dest.v.data].v.data = ROOCOORDTOGRIDBIG(p.X);
+      local_vars->locals[row_dest.v.data].v.data = ROOCOORDTOGRIDBIG(p.Y);
 	}
 
 	return ret_val.int_val;

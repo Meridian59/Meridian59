@@ -395,6 +395,7 @@ fname:
 literal:
 		'&' id		{ $$ = make_literal_class($2); }
 	| 	'@' id		{ $$ = make_literal_message($2); }
+	| 	'*' id		{ $$ = make_literal_variable($2); }
 	;
 
 id:

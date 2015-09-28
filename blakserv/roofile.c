@@ -895,7 +895,7 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
    }
 
    // this first normalizes the se vector,
-   // then scales to a length of 16 kod-fineunits
+   // then scales to a length of 16 kod-fineunits (=256  roo-fineunits)
    float scale = (1.0f / len) * FINENESSKODTOROO(16.0f);
 
    // apply the scale on se
@@ -905,7 +905,12 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
    // 1) try direct step towards destination first
    /****************************************************/
 
+   // note: we must verify the location the object is actually going to end up in KOD,
+   // this means we must round to the next closer kod-fineness value,  
+   // so these values are also exactly expressable in kod coordinates.
    V2ADD(&stepend, S, &se);
+   stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+   stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
    if (BSPCanMoveInRoom(Room, S, &stepend))
    {
       *P = stepend;
@@ -937,6 +942,8 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
          // try 45° right
          V2ROTATE(&v, (float)-M_PI_4);
          V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
          if (BSPCanMoveInRoom(Room, S, &stepend))
          {
             *P = stepend;
@@ -948,6 +955,8 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
          // try 90° right
          V2ROTATE(&v, (float)-M_PI_4);
          V2ADD(&stepend, S, &v);
+		 stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+		 stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
          if (BSPCanMoveInRoom(Room, S, &stepend))
          {
             *P = stepend;
@@ -959,6 +968,8 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
          // try 135° right
          V2ROTATE(&v, (float)-M_PI_4);
          V2ADD(&stepend, S, &v);
+		 stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+		 stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
          if (BSPCanMoveInRoom(Room, S, &stepend))
          {
             *P = stepend;
@@ -979,6 +990,8 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
          // try 45° left
          V2ROTATE(&v, (float)M_PI_4);
          V2ADD(&stepend, S, &v);
+		 stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+		 stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
          if (BSPCanMoveInRoom(Room, S, &stepend))
          {
             *P = stepend;
@@ -990,6 +1003,8 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
          // try 90° left
          V2ROTATE(&v, (float)M_PI_4);
          V2ADD(&stepend, S, &v);
+		 stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+		 stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
          if (BSPCanMoveInRoom(Room, S, &stepend))
          {
             *P = stepend;
@@ -1001,6 +1016,8 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
          // try 135° left
          V2ROTATE(&v, (float)M_PI_4);
          V2ADD(&stepend, S, &v);
+		 stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+		 stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
          if (BSPCanMoveInRoom(Room, S, &stepend))
          {
             *P = stepend;

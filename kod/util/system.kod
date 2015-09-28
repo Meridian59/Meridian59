@@ -365,10 +365,9 @@ properties:
    % outdoor brightness level (0-100), updated hourly
    piBrightness
    % updated here and there
-   piWeather
-
-   % updated every day
-   pbStormy = TRUE
+   piDay_Phase
+   % weather around the world
+   plWeatherConditions = $
 
    poLibrary = $
    poParliament = $
@@ -3890,15 +3889,21 @@ messages:
       return GetListElemByClass(plBackground_objects,&Sun);
    }
 
-   GetWeather()
+   GetDayPhase()
    {
-      return piWeather;
+      return piDay_Phase;
+   }
+
+   GetSeason()
+   {
+      return piYear MOD 4;
    }
 
    CreateLightAndWeather()
    "Called by timer when System is first created, to add a delay."
    {
       ptRecreateTimer = $;
+      Send(self,@RecalcWeatherConditions);
       Send(self,@RecalcLightAndWeather);
 
       return;
@@ -3928,13 +3933,64 @@ messages:
    }
 
    RecalcWeatherConditions()
-   "Resets piStormy randomly"
    {
-      pbStormy = False;
-      if Random(1,100) <= 100
+      local i,j,iRand, iZone,lLastWeatherConditions;
+
+      % don't fiddle with weather during Qormas event
+      if (Send(EVENTENGINE_OBJECT,@IsQormasActive))
       {
-         pbStormy = True;
+         return;
       }
+
+      if (plWeatherConditions = $)
+      {
+         for(i=1;i<=WEATHER_ZONE_MAX;++i)
+         {
+            plWeatherConditions = Cons(WEATHER_PATTERN_CLEAR,
+                                    plWeatherConditions);
+         }
+      }
+
+      lLastWeatherConditions = ListCopy(plWeatherConditions);
+
+      for(i=1;i<=WEATHER_ZONE_MAX;++i)
+      {
+         iRand = Random(1,100);
+         if  (iRand <= Send(SETTINGS_OBJECT,@GetStormChance))
+         {
+            if(Nth(plWeatherConditions,i) <> WEATHER_PATTERN_STORM)
+            {
+               SetNth(plWeatherConditions,i,WEATHER_PATTERN_STORM);
+            }
+         }
+         else if (Nth(plWeatherConditions,i) <> WEATHER_PATTERN_CLEAR)
+         {
+            SetNth(plWeatherConditions,i,WEATHER_PATTERN_CLEAR);
+         }
+      }
+
+      foreach i in plRooms
+      {
+         iZone = Send(i,@GetWeatherZone);
+
+         % this is expensive, only continue if the weather has changed
+         if (iZone <> 0)
+         {
+            if (Nth(plWeatherConditions,iZone) 
+               <> Nth(lLastWeatherConditions,iZone))
+            {
+               if (Nth(plWeatherConditions,iZone) <> WEATHER_PATTERN_CLEAR)
+               {
+                  Send(i,@StartStorm);
+               }
+               else if (Nth(plWeatherConditions,iZone) <> WEATHER_PATTERN_STORM)
+               {
+                  Send(i,@EndStorm);
+               }
+            }
+         }
+      }
+
       return;
    }
 
@@ -3945,38 +4001,19 @@ messages:
 
       if piHour < 6 or piHour > 20
       {
-         piWeather = WEATHER_NIGHT;
+         piDay_Phase = WEATHER_NIGHT;
+      }
+      else if piHour > 17
+      {
+         piDay_Phase = WEATHER_DUSK;
+      }
+      else if piHour < 9
+      {
+         piDay_Phase = WEATHER_DAWN;
       }
       else
       {
-         if piHour > 17
-         {
-            piWeather = WEATHER_DUSK;
-            if pbStormy
-            {
-               piWeather = WEATHER_DUSK_STORMY;
-            }
-
-         }
-         else
-         {
-            if piHour < 9
-            {
-               piWeather = WEATHER_DAWN;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAWN_STORMY;
-               }
-            }
-            else
-            {
-               piWeather = WEATHER_DAY;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAY_STORMY;
-               }
-            }
-         }
+         piDay_Phase = WEATHER_DAY;
       }
 
       % shift hour so doesn't get light /dark until later

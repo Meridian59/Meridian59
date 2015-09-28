@@ -798,19 +798,19 @@ int BSPIsInThingsBox(room_type* Room, V2* P)
    int flags = IBF_INSIDE;
 
    // out west
-   if (P->X < Room->ThingsBox.Min.X)
+   if (P->X <= Room->ThingsBox.Min.X)
       flags |= IBF_OUT_W;
 
    // out east
-   else if (P->X > Room->ThingsBox.Max.X)
+   else if (P->X >= Room->ThingsBox.Max.X)
       flags |= IBF_OUT_E;
 
    // out north
-   if (P->Y < Room->ThingsBox.Min.Y)
+   if (P->Y <= Room->ThingsBox.Min.Y)
       flags |= IBF_OUT_N;
 
    // out south
-   else if (P->Y > Room->ThingsBox.Max.Y)
+   else if (P->Y >= Room->ThingsBox.Max.Y)
       flags |= IBF_OUT_S;
 
    return flags;

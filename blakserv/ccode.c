@@ -2461,14 +2461,16 @@ int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
 
 	// get floor height (1:1024) with depth modifier
 	// (=height of 'object's feet' in water - BELOW water texture)
-	float height = BSPGetHeight(&r->data, &p, true, true);
+	float height;
+	BspLeaf* leaf;
+	bool inside = BSPGetHeight(&r->data, &p, true, true, &height, &leaf);
 
 	// height of -MIN_KOD_INT indicates a location outside of the map
 	// leave this value untouched, otherwise scale from ROO FINENESS to KOD
 	// and box value into min/max kod integer
 
 	ret_val.v.data = 
-		(height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
+		(!inside ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 
 	return ret_val.int_val;
 }
@@ -2542,14 +2544,16 @@ int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
 	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
 
 	// get ceiling height (1:1024)
-	float height = BSPGetHeight(&r->data, &p, false, false);
+	float height;
+	BspLeaf* leaf;
+	bool inside = BSPGetHeight(&r->data, &p, false, false, &height, &leaf);
 
 	// height of -MIN_KOD_INT indicates a location outside of the map
 	// leave this value untouched, otherwise scale from ROO FINENESS to KOD
 	// and box value into min/max kod integer
 
 	ret_val.v.data =
-		(height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
+		(!inside ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 
 	return ret_val.int_val;
 }
@@ -2849,13 +2853,16 @@ int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
+	BspLeaf* leaf;
+
 	V3 s;
 	s.X = GRIDCOORDTOROO(col_source.v.data, finecol_source.v.data);
 	s.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
 
 	// get floor height with depth modifier
 	V2 s2d = { s.X, s.Y };
-	s.Z = BSPGetHeight(&r->data, &s2d, true, true) + OBJECTHEIGHTROO;
+	BSPGetHeight(&r->data, &s2d, true, true, &s.Z, &leaf);
+	s.Z += OBJECTHEIGHTROO;
 
 	V3 e;
 	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
@@ -2863,7 +2870,8 @@ int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
 
 	// get floor height with depth modifier
 	V2 e2d = { e.X, e.Y };
-	e.Z = BSPGetHeight(&r->data, &e2d, true, true) + OBJECTHEIGHTROO;
+	BSPGetHeight(&r->data, &e2d, true, true, &e.Z, &leaf);
+	e.Z += OBJECTHEIGHTROO;
 
 	ret_val.v.data = BSPLineOfSight(&r->data, &s, &e);
 

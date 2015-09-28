@@ -109,32 +109,38 @@ void BSPUpdateLeafHeights(room_type* Room, Sector* Sector, bool Floor)
    }
 }
 
-float BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth)
+bool BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth, float* Height, BspLeaf** Leaf)
 {
-   if (!Node)
-      return (float)-MIN_KOD_INT;
+   if (!Node || !P || !Height || !Leaf)
+      return false;
 
-   // reached a leaf, return its floor or ceiling height
+   // reached a leaf: return true, the leaf and its floor or ceiling height
    if (Node->Type == BspLeafType && Node->u.leaf.Sector)
    {
+      // set output: leaf this point belongs to
+      *Leaf = &Node->u.leaf;
+
+      // set output: height of that point
       if (Floor)
-      {
-         return (WithDepth) ? GetSectorHeightFloorWithDepth(Node->u.leaf.Sector, P) :
+      {	  
+         *Height = (WithDepth) ? GetSectorHeightFloorWithDepth(Node->u.leaf.Sector, P) :
             SECTORHEIGHTFLOOR(Node->u.leaf.Sector, P);
       }
       else
-         return SECTORHEIGHTCEILING(Node->u.leaf.Sector, P);
+         *Height = SECTORHEIGHTCEILING(Node->u.leaf.Sector, P);
+
+      return true;
    }
 
    // still internal node, climb down only one subtree
    else if (Node->Type == BspInternalType)
    {
       return (DISTANCETOSPLITTERSIGNED(&Node->u.internal, P) >= 0.0f) ?
-         BSPGetHeightTree(Node->u.internal.RightChild, P, Floor, WithDepth) :
-         BSPGetHeightTree(Node->u.internal.LeftChild, P, Floor, WithDepth);
+         BSPGetHeightTree(Node->u.internal.RightChild, P, Floor, WithDepth, Height, Leaf) :
+         BSPGetHeightTree(Node->u.internal.LeftChild, P, Floor, WithDepth, Height, Leaf);
    }
 
-   return (float)-MIN_KOD_INT;
+   return false;
 }
 
 bool BSPLineOfSightTree(BspNode* Node, V3* S, V3* E)
@@ -624,12 +630,12 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 /* BSPGetHeight:  Returns the floor or ceiling height in a room for a given location.        */
 /*                Returns -MIN_KOD_INT (-134217728) for a location outside of the map.       */
 /*********************************************************************************************/
-float BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth)
+bool BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth, float* Height, BspLeaf** Leaf)
 {
    if (!Room || Room->TreeNodesCount == 0 || !P)
       return 0.0f;
 
-   return BSPGetHeightTree(&Room->TreeNodes[0], P, Floor, WithDepth);
+   return BSPGetHeightTree(&Room->TreeNodes[0], P, Floor, WithDepth, Height, Leaf);
 }
 
 /*********************************************************************************************/
@@ -826,6 +832,9 @@ bool BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P)
 	if (!Room || !P)
 		return false;
 
+	float height = (float)-MIN_KOD_INT;
+	BspLeaf* leaf = NULL;
+
 	for (int i = 0; i < MaxAttempts; i++)
 	{
 		// generate random coordinates inside the things box
@@ -834,12 +843,20 @@ bool BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P)
 		P->X = ((float)rand() / (float)RAND_MAX) * Room->ThingsBox.Max.X;
 		P->Y = ((float)rand() / (float)RAND_MAX) * Room->ThingsBox.Max.Y;
 
+		// make sure point is exactly expressable in KOD fineness units also
+		P->X = (float)ROUNDROOTOKODFINENESS(P->X);
+		P->Y = (float)ROUNDROOTOKODFINENESS(P->Y);
+
 		// 1. check for inside valid sector, otherwise roll again
 		// note: locations quite close to a wall pass this check!
-		if ((float)-MIN_KOD_INT == BSPGetHeight(Room, P, true, false))
+		if (!BSPGetHeight(Room, P, true, false, &height, &leaf))
 			continue;
 		
-		// 2. check for being too close to a blocker
+		// 2. must also have floor texture set
+		if (leaf && leaf->Sector->FloorTexture == 0)
+			continue;
+
+		// 3. check for being too close to a blocker
 		Blocker* blocker = Room->Blocker;
 		bool collision = false;
 		while (blocker)

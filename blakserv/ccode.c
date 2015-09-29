@@ -3252,9 +3252,16 @@ int C_GetRandomPointBSP(int object_id, local_var_type *local_vars,
 	if (ok)
 	{
 		// set output vars
+		local_vars->locals[finecol.v.data].v.tag = TAG_INT;
 		local_vars->locals[finecol.v.data].v.data = ROOCOORDTOGRIDFINE(p.X);
+
+		local_vars->locals[finerow.v.data].v.tag = TAG_INT;
 		local_vars->locals[finerow.v.data].v.data = ROOCOORDTOGRIDFINE(p.Y);
+
+		local_vars->locals[col.v.data].v.tag = TAG_INT;
 		local_vars->locals[col.v.data].v.data = ROOCOORDTOGRIDBIG(p.X);
+
+		local_vars->locals[row.v.data].v.tag = TAG_INT;
 		local_vars->locals[row.v.data].v.data = ROOCOORDTOGRIDBIG(p.Y);
 
 		// mark succeeded
@@ -3394,10 +3401,17 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 		ret_val.v.tag = TAG_INT;
 		ret_val.v.data = flags;
 
-      local_vars->locals[finecol_dest.v.data].v.data = ROOCOORDTOGRIDFINE(p.X);
-      local_vars->locals[finerow_dest.v.data].v.data = ROOCOORDTOGRIDFINE(p.Y);
-      local_vars->locals[col_dest.v.data].v.data = ROOCOORDTOGRIDBIG(p.X);
-      local_vars->locals[row_dest.v.data].v.data = ROOCOORDTOGRIDBIG(p.Y);
+		local_vars->locals[finecol_dest.v.data].v.tag = TAG_INT;
+		local_vars->locals[finecol_dest.v.data].v.data = ROOCOORDTOGRIDFINE(p.X);
+
+		local_vars->locals[finerow_dest.v.data].v.tag = TAG_INT;
+		local_vars->locals[finerow_dest.v.data].v.data = ROOCOORDTOGRIDFINE(p.Y);
+
+		local_vars->locals[col_dest.v.data].v.tag = TAG_INT;
+		local_vars->locals[col_dest.v.data].v.data = ROOCOORDTOGRIDBIG(p.X);
+
+		local_vars->locals[row_dest.v.data].v.tag = TAG_INT;
+		local_vars->locals[row_dest.v.data].v.data = ROOCOORDTOGRIDBIG(p.Y);
 	}
 
 	return ret_val.int_val;

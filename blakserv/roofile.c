@@ -672,31 +672,52 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E)
    Blocker* blocker = Room->Blocker;
    while (blocker)
    {
-      V2 ms, me;
-      V2SUB(&ms, S, &blocker->Position);
-      V2SUB(&me, E, &blocker->Position);
-
+      V2 ms; // from m to s  
+      V2SUB(&ms, S, &blocker->Position);     
       float ds2 = V2LEN2(&ms);
-      float de2 = V2LEN2(&me);
 
-      // unfortunately we're inside the blocking radius already,
-      // but since we want to get farer way, don't block
-	  // this allows already blocked objects to get away from each other
-	  // and also makes sure we don't block ourself!
-	  if (ds2 <= OBJMINDISTANCE2 && (ds2 <= de2))
+      // CASE 1) Start is exactly on the blocker-position
+      // Note: This catches the case where the blocker itself called
+      //   CanMoveInRoomBSP and is verified against his own blocker.
+      if (ds2 == 0.0f)
       {
-         blocker = blocker->Next;
-         continue;
+         // just go on with next loop
       }
 
-	  if (IntersectLineCircle(&blocker->Position, OBJMINDISTANCE, S, E))
-	  {
+      // CASE 2) Start is too close
+      // Note: IntersectLineCircle below will reject moves starting or ending exactly
+      //   on the circle as well as moves going from inside to outside of the circle.
+      //   So this case here must handle moves until the object is out of radius again.
+      else if (ds2 <= OBJMINDISTANCE2)
+      {
+         V2 me;
+         V2SUB(&me, E, &blocker->Position); // from m to e
+         float de2 = V2LEN2(&me);
+
+         // end must be farer away than start
+         if (de2 <= ds2)
+            return false;
+
+         V2 se;
+         V2SUB(&se, E, S); // from s to e
+         float angle = acosf(V2DOT(&ms, &se));
+
+         // step (se) must also point towards +-90° of the straight step-away direction (ms)
+         if (angle < -M_PI_2 || angle > M_PI_2)
+            return false;
+      }
+
+      // CASE 3) Start is outside blockradius, verify by intersection algorithm.
+      else
+      {
+         if (IntersectLineCircle(&blocker->Position, OBJMINDISTANCE, S, E))
+         {
 #if DEBUGMOVE
-         dprintf("MOVEBLOCK BY OBJ %i",blocker->ObjectID);
+            dprintf("MOVEBLOCK BY OBJ %i",blocker->ObjectID);
 #endif
-         return false;
+            return false;
+         }
       }
-
       blocker = blocker->Next;
    }
 

@@ -232,6 +232,10 @@ properties:
    piBlueHeartstone = 4
    piBrownHeartstone = 4
    piSkyHeartstone = 4
+   piGreenHeartstone = 4
+   piBlackHeartstone = 4
+   piWhiteHeartstone = 4
+   piPurpleHeartstone = 4
 
 messages:
 
@@ -1265,7 +1269,9 @@ messages:
       local bGotAll;
 
       bGotAll = (piRedHeartStone AND piBlueHeartStone
-                 AND piSkyHeartStone AND piBrownHeartStone);
+                 AND piSkyHeartStone AND piBrownHeartStone
+                 AND piGreenHeartStone AND piWhiteHeartStone
+                 AND piBlackHeartStone AND piPurpleHeartStone);
 
       % Increment appropriate type of heartstone.
       if IsClass(oStone,&RedHeartStone)
@@ -1296,9 +1302,31 @@ messages:
                #string=RentableRoom_heartstone_sky);
       }
 
+      if IsClass(oStone,&GreenHeartStone)
+      {
+         piGreenHeartStone = piGreenHeartStone + ITEMS_FROM_HEARTSTONES;
+      }
+
+      if IsClass(oStone,&WhiteHeartStone)
+      {
+         piWhiteHeartStone = piWhiteHeartStone + ITEMS_FROM_HEARTSTONES;
+      }
+
+      if IsClass(oStone,&BlackHeartStone)
+      {
+         piBlackHeartStone = piBlackHeartStone + ITEMS_FROM_HEARTSTONES;
+      }
+
+      if IsClass(oStone,&PurpleHeartStone)
+      {
+         piPurpleHeartStone = piPurpleHeartStone + ITEMS_FROM_HEARTSTONES;
+      }
+
       if (NOT bGotAll)
          AND (piRedHeartStone AND piBlueHeartStone
-            AND piSkyHeartStone AND piBrownHeartStone)
+                 AND piSkyHeartStone AND piBrownHeartStone
+                 AND piGreenHeartStone AND piWhiteHeartStone
+                 AND piBlackHeartStone AND piPurpleHeartStone)
       {
          Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
                #string=RentableRoom_heartstone_all);

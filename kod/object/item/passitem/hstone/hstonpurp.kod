@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PurpleHeartStone is HeartStone
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include hstonpurp.lkod
+
+   PurpleHeartStone_name_rsc = "purple heartstone"
+   PurpleHeartStone_desc_rsc = \
+      "This is called a 'heartstone'.  It is a huge purple gem taken from "
+      "the body of a fallen re'Xeochicatl.  It wiggles slightly and is cool "
+      "to the touch.  The uses for this gem are not widely known."
+
+classvars:
+
+   vrName = PurpleHeartStone_name_rsc
+   vrDesc = PurpleHeartStone_desc_rsc
+
+   viValue_average = 100
+   viWeight = 20
+   viBulk = 10
+
+   viColor = XLAT_TO_PURPLE
+properties:
+
+messages:
+
+   CreateXeo()
+   {
+      return Create(&XeoIll,#InAttack=Send(self,@IsInAttack));
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

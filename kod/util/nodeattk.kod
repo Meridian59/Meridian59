@@ -410,9 +410,9 @@ messages:
    {
       local iRandom, oXeo;
 
-      if (iType < 1) or (iType > 4)
+      if (iType < 1) or (iType > 8)
       {
-         iRandom = random(1,4);
+         iRandom = random(1,8);
       }
       else
       {
@@ -437,6 +437,26 @@ messages:
       if iRandom = 4
       {
          oXeo = Create(&XeoAir,#InAttack=TRUE);
+      }
+
+      if iRandom = 5
+      {
+         oXeo = Create(&XeoAcid,#InAttack=TRUE);
+      }
+
+      if iRandom = 6
+      {
+         oXeo = Create(&XeoUnholy,#InAttack=TRUE);
+      }
+
+      if iRandom = 7
+      {
+         oXeo = Create(&XeoHoly,#InAttack=TRUE);
+      }
+
+      if iRandom = 8
+      {
+         oXeo = Create(&XeoIll,#InAttack=TRUE);
       }
 
       return oXeo;

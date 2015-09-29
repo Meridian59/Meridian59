@@ -1767,6 +1767,11 @@
    TID_XEO_EARTH     = 66
    TID_XEO_FIRE      = 67
    TID_XEO_WATER     = 68
+   TID_XEO_ACID      = 69
+   TID_XEO_UNHOLY    = 70
+   TID_XEO_HOLY      = 71
+   TID_XEO_NERU      = 72
+   TID_XEO_ILL       = 73
 
    %%% English articles
 

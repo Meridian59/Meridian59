@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Orange is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include orange.lkod
+
+   orange_name_rsc = "orange"
+   orange_icon_rsc = orange.bgf
+   orange_desc_rsc = \
+      "Beautiful, almost perfectly round, this orange "
+      "is ripe to perfection.  It is sure to be a juicy "
+      "snack."
+
+
+   orange_name_plural_rsc = "oranges"
+
+   orange_disp_name = "orange tree"
+   orange_disp_icon = orangetree.bgf
+   orange_disp_desc = \
+     "This orange tree is common around the city of Marion and is "
+     "known for its many beautiful oranges.  Several of them look low "
+     "enough for you to pick."
+   orange_got_one = "You reach up and pick an orange from the tree."
+
+classvars:
+
+   vrName = orange_name_rsc
+   vrIcon = orange_icon_rsc
+   vrDesc = orange_desc_rsc
+
+   vrName_plural = orange_name_plural_rsc
+
+   vrDisp_name = orange_disp_name
+   vrDisp_icon = orange_disp_icon
+   vrDisp_desc = orange_disp_desc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 7
+
+   viValue_average = 0
+
+properties:
+
+   viFilling = 25
+   viNutrition = 11
+   piNumber = 1
+
+messages:
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      Send(who,@MsgSendUser,#message_rsc=orange_got_one);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-XeoWater is Xeochicatl
+XeoNeru is Xeochicatl
 
 constants:
 
@@ -18,34 +18,39 @@ constants:
 
 resources:
 
-   include xeowater.lkod
+   include xeoneru.lkod
 
-   XeoWater_name_rsc = "ma'xeochicatl"
-   XeoWater_koc_name_rsc = "ma'xeo'chicatl"
-   XeoWater_icon_rsc = Xeo.bgf
-   XeoWater_desc_rsc = \
-      "Before you is a ma'xeochicatl, a fearsome monster given life by the "
-      "chaotic magic of the Meridian.  The ma'xeochicatl is the embodiment of "
+   XeoNeru_name_rsc = "nu'xeochicatl"
+   XeoNeru_koc_name_rsc = "nu'xeo'chicatl"
+   XeoNeru_icon_rsc = Xeoneru.bgf
+   XeoNeru_desc_rsc = \
+      "Before you is a nu'xeochicatl, a fearsome monster given life by the "
+      "chaotic magic of the Meridian.  The nu'xeochicatl is the embodiment of "
       "destruction, a violent monster that seems uncontrollable.  These "
       "monsters feed off of the magic of the lands which makes them very "
       "powerful.  Rumors abound about the origin of these monsters, but you "
       "have little time to contemplate these rumors in the presence of "
       "such destructive power!"
 
-   XeoWater_sound_aware = xeo1awr.wav
+   XeoNeru_dead_icon_rsc = XeoneruX.bgf
+
+   XeoNeru_sound_aware = xeo1awr.wav
 
  classvars:
 
-   vrName = XeoWater_name_rsc
-   vrKocName = XeoWater_koc_name_rsc
+   vrName = XeoNeru_name_rsc
+   vrKocName = XeoNeru_koc_name_rsc
 
    viAttack_type = ATCK_WEAP_MAGIC
-   viLevel = 190
-   viDifficulty = 8
-   viSpeed = SPEED_FAST
-   vrSound_aware = XeoWater_sound_aware
+   viLevel = 700
+   viDifficulty = 9
+   viSpeed = SPEED_VERY_FAST
+   vrSound_aware = XeoNeru_sound_aware
 
-   viTreasure_type = TID_XEO_WATER
+   vrIcon = XeoNeru_icon_rsc
+   vrDead_icon = XeoNeru_dead_icon_rsc
+
+   viTreasure_type = TID_XEO_NERU
 
 properties:
 
@@ -58,17 +63,14 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_COLD, 70 ],
-                        [-ATCK_SPELL_FIRE, -20 ],
-                        [ATCK_WEAP_MAGIC, -10 ],
-                        [-ATCK_SPELL_QUAKE, 100 ]
+      plResistances = [ [-ATCK_WEAP_SLASH, -20 ],
+                        [-ATCK_SPELL_ALL, 100 ]
                       ];
 
-      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE);
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=PT_REDTODGREEN3);
 
-      plSpellBook = [ [SID_ICE_NOVA,5,30], [SID_HOLD,5,60],
-                      [SID_BRITTLE,10,100] ];
-
+      plSpellBook = [ [SID_VERTIGO,6,40], [SID_EVIL_TWIN,2,60], 
+                      [SID_RING_OF_FLAMES,10,70], [SID_DEMENT,3,100] ];
       propagate;
    }
 

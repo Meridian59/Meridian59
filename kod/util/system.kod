@@ -3874,10 +3874,15 @@ messages:
       Create(&EasterBunnyTreasure);
       Create(&KillerBunnyTreasure);
 
-      Create(&XeoAirT);
-      Create(&XeoEarthT);
-      Create(&XeoFireT);
-      Create(&XeoWaterT);
+      Create(&XeoAirTreasure);
+      Create(&XeoEarthTreasure);
+      Create(&XeoFireTreasure);
+      Create(&XeoWaterTreasure);
+      Create(&XeoAcidTreasure);
+      Create(&XeoUnholyTreasure);
+      Create(&XeoHolyTreasure);
+      Create(&XeoNeruTreasure);
+      Create(&XeoIllTreasure);
 
       return;
    }
@@ -5327,6 +5332,11 @@ messages:
       plMonsterTemplates = cons(create(&XeoWater),plMonsterTemplates);
       plMonsterTemplates = cons(create(&XeoEarth),plMonsterTemplates);
       plMonsterTemplates = cons(create(&XeoAir),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&XeoAcid),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&XeoUnholy),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&XeoHoly),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&XeoNeru),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&XeoIll),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&DarkAngel),plMonsterTemplates);
       plMonsterTemplates = cons(create(&MolluskMonster),plMonsterTemplates);
@@ -5584,6 +5594,11 @@ messages:
       plItemTemplates = cons(create(&SkyHeartStone),plItemTemplates);
       plItemTemplates = cons(create(&BlueHeartStone),plItemTemplates);
       plItemTemplates = cons(create(&BrownHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&GreenHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&BlackHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&WhiteHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&DarkGreenHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&PurpleHeartStone),plItemTemplates);
 
       plItemTemplates = cons(create(&ShamanBlood),plItemTemplates);
       plItemTemplates = cons(create(&YrxlSap),plItemTemplates);
@@ -5638,6 +5653,9 @@ messages:
       plItemTemplates = cons(create(&Bread),plItemTemplates);
       plItemTemplates = cons(create(&Grapes),plItemTemplates);
       plItemTemplates = cons(create(&Apple),plItemTemplates);
+      plItemTemplates = cons(create(&Cookie),plItemTemplates);
+      plItemTemplates = cons(create(&Pear),plItemTemplates);
+      plItemTemplates = cons(create(&Orange),plItemTemplates);
 
       plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
 

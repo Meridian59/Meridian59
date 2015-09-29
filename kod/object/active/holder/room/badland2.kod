@@ -44,6 +44,8 @@ properties:
 
    pbSnowGroundTexture = TRUE
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 messages:
 
  

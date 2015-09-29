@@ -66,6 +66,9 @@ classvars:
    viQuality = 8
    viSeconds_til_close = 9
 
+   viWeatherZone = WEATHER_ZONE_KOC_TOWN
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 properties:
 
    prRoom = room_guildh13

@@ -64,6 +64,8 @@ classvars:
    
    viTerrain_Type = TERRAIN_CASTLE | TERRAIN_FOUNTAIN
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    % timer for animation

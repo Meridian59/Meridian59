@@ -35,6 +35,8 @@ classvars:
    viTeleport_col = 13
    viTerrain_type = TERRAIN_CASTLE | TERRAIN_RESIDENCE | TERRAIN_MYSTICAL | TERRAIN_FOUNTAIN
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
    prMusic = mockers_music

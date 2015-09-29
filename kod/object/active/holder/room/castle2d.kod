@@ -159,6 +159,8 @@ classvars:
    viTeleport_row = 7
    viTeleport_col = 6
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
 

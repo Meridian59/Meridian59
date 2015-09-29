@@ -14,6 +14,10 @@ constants:
 
    include blakston.khd
 
+classvars:
+   viWeatherZone = WEATHER_ZONE_KOC_TOWN
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 messages:
 
    GetRegion()

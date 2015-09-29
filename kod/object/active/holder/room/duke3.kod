@@ -40,6 +40,8 @@ classvars:
 
    viTerrain_Type = TERRAIN_CASTLE
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    vrName = room_name_Duke3

@@ -59,6 +59,9 @@ classvars:
    viClientFlags = ROOM_OVERRIDE_DEPTH1
    viOverrideDepth1 = BRIDGE_OF_FAITH_LEVEL
 
+   viWeatherZone = WEATHER_ZONE_KOC_OUTP
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 properties:
 
    prRoom = room_RiijaTemple

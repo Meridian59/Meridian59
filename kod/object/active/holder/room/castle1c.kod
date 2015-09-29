@@ -31,6 +31,9 @@ classvars:
    viTeleport_col = 24
    viTerrain_Type = TERRAIN_MOUNTAIN | TERRAIN_FOREST
 
+   viWeatherZone = WEATHER_ZONE_CV
+   viWeatherMask = WEATHER_MASK_MOUNTAINS
+
 properties:
 
    prMusic = castle1c_music

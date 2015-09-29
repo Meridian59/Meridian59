@@ -635,7 +635,6 @@ const_type make_literal_variable(id_type id)
 
    case I_MISSING:
       if (id->source != I_LOCAL)
-         break;
       action_error("Identifier %s was referenced earlier with different type",
          id->name);
       break;

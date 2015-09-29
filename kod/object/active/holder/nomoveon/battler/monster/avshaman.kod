@@ -150,22 +150,22 @@ messages:
       switch(clan)
       {
          case AVARCLAN_ANTIMAGIC:
-            vrName = avar_nomagic_name;
-            vrDesc = avar_nomagic_desc;
+            vrName = avarshaman_nomagic_name;
+            vrDesc = avarshaman_nomagic_desc;
             piReputationGroup = REP_KKAVAR;
             plReputationEnemies = [REP_PSAVAR, REP_CTAVAR];
             break;
 
          case AVARCLAN_BONE_FACTION:
-            vrName = avar_bone_name;
-            vrDesc = avar_bone_desc;
+            vrName = avarshaman_bone_name;
+            vrDesc = avarshaman_bone_desc;
             piReputationGroup = REP_CTAVAR;
             plReputationEnemies = [REP_PSAVAR, REP_KKAVAR];
             break;
 
          default:
-            vrName = avar_name_rsc;
-            vrDesc = avar_desc_rsc;
+            vrName = avarshaman_name_rsc;
+            vrDesc = avarshaman_desc_rsc;
             piReputationGroup = REP_PSAVAR;
             plReputationEnemies = [REP_KKAVAR, REP_CTAVAR];
             break;

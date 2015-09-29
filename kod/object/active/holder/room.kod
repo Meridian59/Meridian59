@@ -2418,7 +2418,8 @@ messages:
                   fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
                   non_monsters_only = FALSE)
    {
-      local i, temp, each_obj, packet_built, lNode, flags;
+      local i, temp, each_obj, packet_built, lNode, iQflags, 
+            iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
@@ -2437,30 +2438,39 @@ messages:
          }
       }
 
-      flags = IsInThingsBoxBSP(prmRoom, new_row, new_col, fine_row, fine_col);
+      % set query-flags, here we're only interested in the things bbox
+      iQflags = LIQ_CHECK_THINGSBOX;
 
-      if (flags & IBF_OUT_S)
+      % call c function
+      if NOT GetLocationInfoBSP(prmRoom, iQflags, new_row, new_col, fine_row, fine_col,
+                *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+      {
+         debug("Failed to get location info in ", prmRoom);
+         iRflags = 0;
+      }
+
+      if (iRflags & LIR_TBOX_OUT_S)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_SOUTH,#pos=new_col);
 
          return;
       }
 
-      if (flags & IBF_OUT_N)
+      if (iRflags & LIR_TBOX_OUT_N)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_NORTH,#pos=new_col);
 
          return;
       }
 
-      if (flags & IBF_OUT_E)
+      if (iRflags & LIR_TBOX_OUT_E)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_EAST,#pos=new_row);
 
          return;
       }
 
-      if (flags & IBF_OUT_W)
+      if (iRflags & LIR_TBOX_OUT_W)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_WEST,#pos=new_row);
 

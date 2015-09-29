@@ -2391,12 +2391,13 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
+int C_GetLocationInfoBSP(int object_id, local_var_type *local_vars,
 	int num_normal_parms, parm_node normal_parm_array[],
 	int num_name_parms, parm_node name_parm_array[])
 {
-	val_type ret_val, room_val;
+	val_type ret_val, room_val, queryflags;
 	val_type row, col, finerow, finecol;
+	val_type returnflags, floorheight, floorheightwd, ceilingheight, serverid;
 	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
@@ -2404,54 +2405,102 @@ int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
 
 	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	row = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+	queryflags = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
 		normal_parm_array[1].value);
-	col = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+	row = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
 		normal_parm_array[2].value);
-	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+	col = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
 		normal_parm_array[3].value);
-	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
 		normal_parm_array[4].value);
+	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[5].type,
+		normal_parm_array[5].value);
+
+	// local 'out' vars
+	returnflags = RetrieveValue(object_id, local_vars, normal_parm_array[6].type,
+		normal_parm_array[6].value);
+	floorheight = RetrieveValue(object_id, local_vars, normal_parm_array[7].type,
+		normal_parm_array[7].value);
+	floorheightwd = RetrieveValue(object_id, local_vars, normal_parm_array[8].type,
+		normal_parm_array[8].value);
+	ceilingheight = RetrieveValue(object_id, local_vars, normal_parm_array[9].type,
+		normal_parm_array[9].value);
+	serverid = RetrieveValue(object_id, local_vars, normal_parm_array[10].type,
+		normal_parm_array[10].value);
 
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
-		bprintf("C_GetHeightFloorBSP can't use non room %i,%i\n",
+		bprintf("C_GetLocationInfoBSP can't use non room %i,%i\n",
 			room_val.v.tag, room_val.v.data);
 		return ret_val.int_val;
 	}
-
+	if (queryflags.v.tag != TAG_INT)
+	{
+		bprintf("C_GetLocationInfoBSP queryflags can't use non int %i,%i\n",
+			queryflags.v.tag, queryflags.v.data);
+		return ret_val.int_val;
+	}
 	if (row.v.tag != TAG_INT)
 	{
-		bprintf("C_GetHeightFloorBSP row can't use non int %i,%i\n",
+		bprintf("C_GetLocationInfoBSP row source can't use non int %i,%i\n",
 			row.v.tag, row.v.data);
 		return ret_val.int_val;
 	}
-
 	if (col.v.tag != TAG_INT)
 	{
-		bprintf("C_GetHeightFloorBSP col can't use non int %i,%i\n",
+		bprintf("C_GetLocationInfoBSP col source can't use non int %i,%i\n",
 			col.v.tag, col.v.data);
 		return ret_val.int_val;
 	}
-
 	if (finerow.v.tag != TAG_INT)
 	{
-		bprintf("C_GetHeightFloorBSP finerow can't use non int %i,%i\n",
+		bprintf("C_GetLocationInfoBSP finerow source can't use non int %i,%i\n",
 			finerow.v.tag, finerow.v.data);
 		return ret_val.int_val;
 	}
-
 	if (finecol.v.tag != TAG_INT)
 	{
-		bprintf("C_GetHeightFloorBSP finecol can't use non int %i,%i\n",
+		bprintf("C_GetLocationInfoBSP finecol source can't use non int %i,%i\n",
 			finecol.v.tag, finecol.v.data);
 		return ret_val.int_val;
 	}
 
+	if (returnflags.v.tag != TAG_INT)
+	{
+		bprintf("C_GetLocationInfoBSP returnflags can't use non int %i,%i\n",
+			returnflags.v.tag, returnflags.v.data);
+		return ret_val.int_val;
+	}
+	if (floorheight.v.tag != TAG_INT)
+	{
+		bprintf("C_GetLocationInfoBSP floorheight can't use non int %i,%i\n",
+			floorheight.v.tag, floorheight.v.data);
+		return ret_val.int_val;
+	}
+	if (floorheightwd.v.tag != TAG_INT)
+	{
+		bprintf("C_GetLocationInfoBSP floorheightwd can't use non int %i,%i\n",
+			floorheightwd.v.tag, floorheightwd.v.data);
+		return ret_val.int_val;
+	}
+	if (ceilingheight.v.tag != TAG_INT)
+	{
+		bprintf("C_GetLocationInfoBSP ceilingheight can't use non int %i,%i\n",
+			ceilingheight.v.tag, ceilingheight.v.data);
+		return ret_val.int_val;
+	}
+	if (serverid.v.tag != TAG_INT)
+	{
+		bprintf("C_GetLocationInfoBSP serverid can't use non int %i,%i\n",
+			serverid.v.tag, serverid.v.data);
+		return ret_val.int_val;
+	}
+
+
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
-		bprintf("C_GetHeightFloorBSP can't find room %i\n", room_val.v.data);
+		bprintf("C_GetLocationInfoBSP can't find room %i\n", room_val.v.data);
 		return ret_val.int_val;
 	}
 
@@ -2459,175 +2508,39 @@ int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
 	p.X = GRIDCOORDTOROO(col.v.data, finecol.v.data);
 	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
 
-	// get floor height (1:1024) with depth modifier
-	// (=height of 'object's feet' in water - BELOW water texture)
-	float height;
-	BspLeaf* leaf;
-	bool inside = BSPGetHeight(&r->data, &p, true, true, &height, &leaf);
-
-	// height of -MIN_KOD_INT indicates a location outside of the map
-	// leave this value untouched, otherwise scale from ROO FINENESS to KOD
-	// and box value into min/max kod integer
-
-	ret_val.v.data = 
-		(!inside ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
-
-	return ret_val.int_val;
-}
-
-int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
-	int num_normal_parms, parm_node normal_parm_array[],
-	int num_name_parms, parm_node name_parm_array[])
-{
-	val_type ret_val, room_val;
-	val_type row, col, finerow, finecol;
-	room_node *r;
-
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = false;
-
-	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	row = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	col = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
-		normal_parm_array[2].value);
-	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
-		normal_parm_array[3].value);
-	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
-		normal_parm_array[4].value);
-
-	if (room_val.v.tag != TAG_ROOM_DATA)
-	{
-		bprintf("C_GetHeightCeilingBSP can't use non room %i,%i\n",
-			room_val.v.tag, room_val.v.data);
-		return ret_val.int_val;
-	}
-
-	if (row.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeightCeilingBSP row can't use non int %i,%i\n",
-			row.v.tag, row.v.data);
-		return ret_val.int_val;
-	}
-
-	if (col.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeightCeilingBSP col can't use non int %i,%i\n",
-			col.v.tag, col.v.data);
-		return ret_val.int_val;
-	}
-
-	if (finerow.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeightCeilingBSP finerow can't use non int %i,%i\n",
-			finerow.v.tag, finerow.v.data);
-		return ret_val.int_val;
-	}
-
-	if (finecol.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeightCeilingBSP finecol can't use non int %i,%i\n",
-			finecol.v.tag, finecol.v.data);
-		return ret_val.int_val;
-	}
-
-	r = GetRoomDataByID(room_val.v.data);
-	if (r == NULL)
-	{
-		bprintf("C_GetHeightCeilingBSP can't find room %i\n", room_val.v.data);
-		return ret_val.int_val;
-	}
-
-	V2 p;
-	p.X = GRIDCOORDTOROO(col.v.data, finecol.v.data);
-	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
-
-	// get ceiling height (1:1024)
-	float height;
-	BspLeaf* leaf;
-	bool inside = BSPGetHeight(&r->data, &p, false, false, &height, &leaf);
-
-	// height of -MIN_KOD_INT indicates a location outside of the map
-	// leave this value untouched, otherwise scale from ROO FINENESS to KOD
-	// and box value into min/max kod integer
-
-	ret_val.v.data =
-		(!inside ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
-
-	return ret_val.int_val;
-}
-
-int C_IsInThingsBoxBSP(int object_id, local_var_type *local_vars,
-	int num_normal_parms, parm_node normal_parm_array[],
-	int num_name_parms, parm_node name_parm_array[])
-{
-	val_type ret_val, room_val;
-	val_type row, col, finerow, finecol;
-	room_node *r;
-
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = false;
-
-	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	row = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	col = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
-		normal_parm_array[2].value);
-	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
-		normal_parm_array[3].value);
-	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
-		normal_parm_array[4].value);
-
-	if (room_val.v.tag != TAG_ROOM_DATA)
-	{
-		bprintf("C_IsInThingsBoxBSP can't use non room %i,%i\n",
-			room_val.v.tag, room_val.v.data);
-		return ret_val.int_val;
-	}
-
-	if (row.v.tag != TAG_INT)
-	{
-		bprintf("C_IsInThingsBoxBSP row can't use non int %i,%i\n",
-			row.v.tag, row.v.data);
-		return ret_val.int_val;
-	}
-
-	if (col.v.tag != TAG_INT)
-	{
-		bprintf("C_IsInThingsBoxBSP col can't use non int %i,%i\n",
-			col.v.tag, col.v.data);
-		return ret_val.int_val;
-	}
-
-	if (finerow.v.tag != TAG_INT)
-	{
-		bprintf("C_IsInThingsBoxBSP finerow can't use non int %i,%i\n",
-			finerow.v.tag, finerow.v.data);
-		return ret_val.int_val;
-	}
-
-	if (finecol.v.tag != TAG_INT)
-	{
-		bprintf("C_IsInThingsBoxBSP finecol can't use non int %i,%i\n",
-			finecol.v.tag, finecol.v.data);
-		return ret_val.int_val;
-	}
-
-	r = GetRoomDataByID(room_val.v.data);
-	if (r == NULL)
-	{
-		bprintf("C_IsInThingsBoxBSP can't find room %i\n", room_val.v.data);
-		return ret_val.int_val;
-	}
-
-	V2 p;
-	p.X = GRIDCOORDTOROO(col.v.data, finecol.v.data);
-	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
-
+	// params of query
+	unsigned int qflags = (unsigned int)queryflags.v.data;
+	unsigned int rflags;
+	float heightF, heightFWD, heightC;
+	BspLeaf* leaf = NULL;
+	
 	// query
-	ret_val.v.data = BSPIsInThingsBox(&r->data, &p);
+	bool ok = BSPGetLocationInfo(&r->data, &p, qflags, &rflags, &heightF, &heightFWD, &heightC, &leaf);
+
+	if (ok)
+	{
+		// set output vars
+		local_vars->locals[returnflags.v.data].v.tag = TAG_INT;
+		local_vars->locals[returnflags.v.data].v.data = (int)rflags;
+
+		local_vars->locals[floorheight.v.data].v.tag = TAG_INT;
+		local_vars->locals[floorheight.v.data].v.data = FLOATTOKODINT(FINENESSROOTOKOD(heightF));
+
+		local_vars->locals[floorheightwd.v.data].v.tag = TAG_INT;
+		local_vars->locals[floorheightwd.v.data].v.data = FLOATTOKODINT(FINENESSROOTOKOD(heightFWD));
+
+		local_vars->locals[ceilingheight.v.data].v.tag = TAG_INT;
+		local_vars->locals[ceilingheight.v.data].v.data = FLOATTOKODINT(FINENESSROOTOKOD(heightC));
+
+		if (leaf && leaf->Sector)
+		{
+			local_vars->locals[serverid.v.data].v.tag = TAG_INT;
+			local_vars->locals[serverid.v.data].v.data = leaf->Sector->ServerID;
+		}
+
+		// mark succeeded
+		ret_val.v.data = true;
+	}
 
 	return ret_val.int_val;
 }
@@ -2854,23 +2767,25 @@ int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
 	}
 
 	BspLeaf* leaf;
+	float tmp1;
+	float tmp2;
 
 	V3 s;
 	s.X = GRIDCOORDTOROO(col_source.v.data, finecol_source.v.data);
 	s.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
 
-	// get floor height with depth modifier
+	// use floor height with depth modifier
 	V2 s2d = { s.X, s.Y };
-	BSPGetHeight(&r->data, &s2d, true, true, &s.Z, &leaf);
+	BSPGetHeight(&r->data, &s2d, &tmp1, &s.Z, &tmp2, &leaf);
 	s.Z += OBJECTHEIGHTROO;
 
 	V3 e;
 	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
 	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
 
-	// get floor height with depth modifier
+	// use floor height with depth modifier
 	V2 e2d = { e.X, e.Y };
-	BSPGetHeight(&r->data, &e2d, true, true, &e.Z, &leaf);
+	BSPGetHeight(&r->data, &e2d, &tmp1, &e.Z, &tmp2, &leaf);
 	e.Z += OBJECTHEIGHTROO;
 
 	ret_val.v.data = BSPLineOfSight(&r->data, &s, &e);

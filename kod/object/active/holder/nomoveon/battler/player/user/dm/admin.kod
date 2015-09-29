@@ -345,7 +345,7 @@ messages:
                #parm2=piCol,
                #parm3=piFine_Row,
                #parm4=piFine_Col,
-               #parm5=GetHeightFloorBSP(Send(poOwner,@GetRoomData),piRow,piCol,piFine_row,piFine_col));
+               #parm5=Send(self, @GetHeightFloorAtObjectBSP));
 
          return;
       }

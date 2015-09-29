@@ -2131,11 +2131,9 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CREATEROOMDATA : strcpy(c_name, "CreateRoomData"); break;
 		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
-		case GETHEIGHTFLOORBSP: strcpy(c_name, "GetHeightFloorBSP"); break;
-		case GETHEIGHTCEILINGBSP: strcpy(c_name, "GetHeightCeilingBSP"); break;
 		case CANMOVEINROOMBSP: strcpy(c_name, "CanMoveInRoomBSP"); break;
 		case LINEOFSIGHTBSP: strcpy(c_name, "LineOfSightBSP"); break;
-		case ISINTHINGSBOXBSP: strcpy(c_name, "IsInThingsBoxBSP"); break;
+		case GETLOCATIONINFOBSP: strcpy(c_name, "GetLocationInfoBSP"); break;
 		case GETRANDOMPOINTBSP: strcpy(c_name, "GetRandomPointBSP"); break;
 		case GETSTEPTOWARDSBSP: strcpy(c_name, "GetStepTowardsBSP"); break;
 		case BLOCKERADDBSP: strcpy(c_name, "BlockerAddBSP"); break;

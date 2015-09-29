@@ -109,26 +109,20 @@ void BSPUpdateLeafHeights(room_type* Room, Sector* Sector, bool Floor)
    }
 }
 
-bool BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth, float* Height, BspLeaf** Leaf)
+bool BSPGetHeightTree(BspNode* Node, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf)
 {
-   if (!Node || !P || !Height || !Leaf)
+   // note: we don't check for other nullptrs here because caller is doing it and we're recursive..
+   if (!Node)
       return false;
 
-   // reached a leaf: return true, the leaf and its floor or ceiling height
+   // reached a leaf
    if (Node->Type == BspLeafType && Node->u.leaf.Sector)
    {
-      // set output: leaf this point belongs to
+      // set output params
       *Leaf = &Node->u.leaf;
-
-      // set output: height of that point
-      if (Floor)
-      {	  
-         *Height = (WithDepth) ? GetSectorHeightFloorWithDepth(Node->u.leaf.Sector, P) :
-            SECTORHEIGHTFLOOR(Node->u.leaf.Sector, P);
-      }
-      else
-         *Height = SECTORHEIGHTCEILING(Node->u.leaf.Sector, P);
-
+      *HeightF = SECTORHEIGHTFLOOR(Node->u.leaf.Sector, P);
+      *HeightFWD = GetSectorHeightFloorWithDepth(Node->u.leaf.Sector, P);
+      *HeightC = SECTORHEIGHTCEILING(Node->u.leaf.Sector, P);
       return true;
    }
 
@@ -136,8 +130,8 @@ bool BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth, float* H
    else if (Node->Type == BspInternalType)
    {
       return (DISTANCETOSPLITTERSIGNED(&Node->u.internal, P) >= 0.0f) ?
-         BSPGetHeightTree(Node->u.internal.RightChild, P, Floor, WithDepth, Height, Leaf) :
-         BSPGetHeightTree(Node->u.internal.LeftChild, P, Floor, WithDepth, Height, Leaf);
+         BSPGetHeightTree(Node->u.internal.RightChild, P, HeightF, HeightFWD, HeightC, Leaf) :
+         BSPGetHeightTree(Node->u.internal.LeftChild, P, HeightF, HeightFWD, HeightC, Leaf);
    }
 
    return false;
@@ -627,15 +621,16 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 /**************************************************************************************************************/
 
 /*********************************************************************************************/
-/* BSPGetHeight:  Returns the floor or ceiling height in a room for a given location.        */
-/*                Returns -MIN_KOD_INT (-134217728) for a location outside of the map.       */
+/* BSPGetHeight:  Returns true if location is inside any sector, false otherwise.
+/*                  If true, heights are in parameters HeightF (floor), 
+/*				    HeightFWD (floor with depth) and HeightC (ceiling) and Leaf is valid.
 /*********************************************************************************************/
-bool BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth, float* Height, BspLeaf** Leaf)
+bool BSPGetHeight(room_type* Room, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf)
 {
-   if (!Room || Room->TreeNodesCount == 0 || !P)
-      return 0.0f;
+   if (!Room || Room->TreeNodesCount == 0 || !P || !HeightF || !HeightFWD || !HeightC)
+      return false;
 
-   return BSPGetHeightTree(&Room->TreeNodes[0], P, Floor, WithDepth, Height, Leaf);
+   return BSPGetHeightTree(&Room->TreeNodes[0], P, HeightF, HeightFWD, HeightC, Leaf);
 }
 
 /*********************************************************************************************/
@@ -793,33 +788,78 @@ void BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Hei
 }
 
 /*********************************************************************************************/
-/* BSPIsInThingsBox:  Checks if given point lies inside the 'red' boundingbox
-/*                    described by the 'Thing' vertices in RoomEdit.
+/* BSPGetLocationInfo:  Returns several infos about a location depending on 'QueryFlags'
 /*********************************************************************************************/
-int BSPIsInThingsBox(room_type* Room, V2* P)
+bool BSPGetLocationInfo(room_type* Room, V2* P, unsigned int QueryFlags, unsigned int* ReturnFlags,
+                        float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf)
 {
-   if (!Room || !P)
-      return IBF_INVALID;
+   if (!Room || !P || !ReturnFlags)
+      return false;
 
-   int flags = IBF_INSIDE;
+   // see what to query
+   bool isCheckThingsBox = ((QueryFlags & LIQ_CHECK_THINGSBOX) == LIQ_CHECK_THINGSBOX);
+   bool isCheckOjectBlock = ((QueryFlags & LIQ_CHECK_OBJECTBLOCK) == LIQ_CHECK_OBJECTBLOCK);
+   bool isGetSectorInfo = ((QueryFlags & LIQ_GET_SECTORINFO) == LIQ_GET_SECTORINFO);
+   
+   // check if output parameters are provided if query-type needs them
+   if (isGetSectorInfo && (!HeightF || !HeightFWD || !HeightC || !Leaf))
+      return false;
 
-   // out west
-   if (P->X <= Room->ThingsBox.Min.X)
-      flags |= IBF_OUT_W;
+   // default returnflags
+   *ReturnFlags = 0;
 
-   // out east
-   else if (P->X >= Room->ThingsBox.Max.X)
-      flags |= IBF_OUT_E;
+   // check outside thingsbox
+   if (isCheckThingsBox)
+   {
+      // out west
+      if (P->X <= Room->ThingsBox.Min.X)
+         *ReturnFlags |= LIR_TBOX_OUT_W;
 
-   // out north
-   if (P->Y <= Room->ThingsBox.Min.Y)
-      flags |= IBF_OUT_N;
+      // out east
+      else if (P->X >= Room->ThingsBox.Max.X)
+         *ReturnFlags |= LIR_TBOX_OUT_E;
 
-   // out south
-   else if (P->Y >= Room->ThingsBox.Max.Y)
-      flags |= IBF_OUT_S;
+      // out north
+      if (P->Y <= Room->ThingsBox.Min.Y)
+         *ReturnFlags |= LIR_TBOX_OUT_N;
 
-   return flags;
+      // out south
+      else if (P->Y >= Room->ThingsBox.Max.Y)
+         *ReturnFlags |= LIR_TBOX_OUT_S;
+   }
+
+   // check too close to blocker
+   if (isCheckOjectBlock)
+   {
+      Blocker* blocker = Room->Blocker;
+      while (blocker)
+      {
+         V2 b;
+         V2SUB(&b, P, &blocker->Position);
+
+         // too close
+         if (V2LEN2(&b) < OBJMINDISTANCE2)
+         {
+            *ReturnFlags |= LIR_BLOCKED_OBJECT;
+            break;
+         }
+         blocker = blocker->Next;
+      }
+   }
+
+   // bsp lookup
+   if (isGetSectorInfo && BSPGetHeight(Room, P, HeightF, HeightFWD, HeightC, Leaf))
+   {
+      *ReturnFlags |= LIR_SECTOR_INSIDE;
+
+      if ((*Leaf)->Sector->FloorTexture > 0)
+         *ReturnFlags |= LIR_SECTOR_HASFTEX;
+
+      if ((*Leaf)->Sector->CeilingTexture > 0)
+         *ReturnFlags |= LIR_SECTOR_HASCTEX;
+   }
+
+   return true;
 }
 
 /*********************************************************************************************/
@@ -832,7 +872,7 @@ bool BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P)
 	if (!Room || !P)
 		return false;
 
-	float height = (float)-MIN_KOD_INT;
+	float heightF, heightFWD, heightC;
 	BspLeaf* leaf = NULL;
 
 	for (int i = 0; i < MaxAttempts; i++)
@@ -849,7 +889,7 @@ bool BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P)
 
 		// 1. check for inside valid sector, otherwise roll again
 		// note: locations quite close to a wall pass this check!
-		if (!BSPGetHeight(Room, P, true, false, &height, &leaf))
+		if (!BSPGetHeight(Room, P, &heightF, &heightFWD, &heightC, &leaf))
 			continue;
 		
 		// 2. must also have floor texture set

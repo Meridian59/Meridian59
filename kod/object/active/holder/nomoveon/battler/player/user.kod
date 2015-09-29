@@ -3490,10 +3490,11 @@ messages:
    {
       local iCurrentTime, iDelta, iDeltaVigor, iExertion, iHasteLevel,
          iAngle, iRow, iCol, iFineRow, iFineCol, iRoomNum,
-         iDx, iDy, iMoveLength, iMaxMoveRun;
+         iDx, iDy, iMoveLength, iMaxMoveRun, 
+         iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
       %
-      % 1. Get current position values
+      % 1.1 Get current position values
       %
 
       iRow = piRow;
@@ -3502,12 +3503,25 @@ messages:
       iFineCol = piFine_col;
       iAngle = Send(self,@GetAngle);
 
+      % 
+      % 1.2 Get sectorinfo of destination
       %
+      iQflags = LIQ_GET_SECTORINFO;
+			
+      if NOT GetLocationInfoBSP(
+                      Send(poOwner,@GetRoomData), iQflags, 
+                      new_row, new_col, fine_row, fine_col,
+                      *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+      {
+         debug("Failed to get location info in ", Send(poOwner,@GetRoomData));
+         iRflags = 0;
+      }
+
+	  %
       % 2. Do not allow any moves if player is marked as not allowed to move or 
-      %    if destination is outside of the map. (return of MIN_KOD_INT = outside)
+      %    if destination is outside of the map.
       %
-      if (piFlags & PFLAG_NO_MOVE) OR
-          MIN_KOD_INT = GetHeightFloorBSP(Send(poOwner,@GetRoomData),new_row,new_col,fine_row,fine_col)
+      if (piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE)
       {
          % Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,

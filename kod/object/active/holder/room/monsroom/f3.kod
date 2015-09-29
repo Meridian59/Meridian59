@@ -33,6 +33,8 @@ classvars:
 
    viFlag_Row = 19
    viFlag_Col = 69
+
+   viWeatherZone = WEATHER_ZONE_CORNOTH
    
 properties:
 

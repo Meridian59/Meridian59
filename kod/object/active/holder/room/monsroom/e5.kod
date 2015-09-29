@@ -54,6 +54,8 @@ classvars:
 
    viTerrain_type = TERRAIN_FOREST | TERRAIN_FIELDS
 
+   viWeatherZone = WEATHER_ZONE_JASPER
+
 properties:
 
    prRoom = room_OutdoorsE5

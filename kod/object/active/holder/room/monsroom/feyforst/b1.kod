@@ -31,6 +31,7 @@ classvars:
 
    viEquilibrium = 70               %%% This is where this section of the faerie forest
 				    %%% will 'aim' for on the karmic scale.
+
 properties:
 
    prRoom = room_OutdoorsB1

@@ -36,6 +36,8 @@ classvars:
 
    viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
    prRoom = room_barlsew

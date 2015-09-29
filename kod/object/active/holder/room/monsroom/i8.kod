@@ -33,6 +33,8 @@ classvars:
 
    viTerrain_type = TERRAIN_MOUNTAIN
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    prRoom = room_OutdoorsI8

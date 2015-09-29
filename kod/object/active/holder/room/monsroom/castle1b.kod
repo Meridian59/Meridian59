@@ -33,6 +33,8 @@ classvars:
 
    viPermanent_Flags = ROOM_GUILD_PK_ONLY
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    prMusic = castle1b_music

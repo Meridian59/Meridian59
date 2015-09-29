@@ -47,6 +47,8 @@ classvars:
 
    viTerrain_type = TERRAIN_MOUNTAIN | TERRAIN_MYSTICAL
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    prRoom = room_i9

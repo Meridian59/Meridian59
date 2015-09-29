@@ -38,6 +38,8 @@ classvars:
    viFlag_row = 110
    viFlag_col = 46
 
+   viWeatherZone = WEATHER_ZONE_CORNOTH
+
 properties:
 
    prRoom = room_OutdoorsG6

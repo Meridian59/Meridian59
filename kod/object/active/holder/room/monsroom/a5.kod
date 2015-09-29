@@ -37,6 +37,8 @@ classvars:
 
    viTerrain_type = TERRAIN_MOUNTAIN | TERRAIN_BEACH
 
+   viWeatherZone = WEATHER_ZONE_MARION
+
 properties:
 
    prRoom = room_OutdoorsA5

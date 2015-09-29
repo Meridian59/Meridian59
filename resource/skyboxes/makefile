@@ -3,10 +3,10 @@
 TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
-DIRS = skya skyb skyc skyd skye
+DIRS = skya skyb skyc skyd skye redsky
          
 
-CLEANDIRS = skya skyb skyc skyd skye
+CLEANDIRS = skya skyb skyc skyd skye redsky
 
 all:
 	@-for %i in ($(DIRS)) do \

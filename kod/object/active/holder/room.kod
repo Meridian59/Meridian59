@@ -4551,7 +4551,8 @@ messages:
    "put at a gen point.  This is now in Room, as all rooms can use it for "
    "placing either a monster or a random item."
    {
-      local oOldOwner, iMRow, iMCol, iMRowFine, iMColFine, lPos, iRoll, iCount, lPatrolPath;
+      local oOldOwner, iMRow, iMCol, iMRowFine, iMColFine, lPos, iRoll, iCount, lPatrolPath,
+            iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, iCheck;
 
       iMRow = iRow;
       iMCol = iCol;
@@ -4581,10 +4582,14 @@ messages:
          }
       }
 
+      % verify the spawnpoint by default
+      iCheck = TRUE;
+
+      % no spawn point provided
       if (iMRow=0 and iMCol=0)
       {
-         if plGenerators = $
-            OR bRandom
+         % no generators or forced to be random
+         if plGenerators = $ OR bRandom
          {
             % query random point from C (into local vars)
             % this point is guaranteed to have the following properties:
@@ -4594,6 +4599,13 @@ messages:
             {
                Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
                      " in room ",self,Send(self,@GetName));
+               Send(oMonster,@Delete);
+               return FALSE;
+            }
+            else
+            {
+               % no need to verify these randompoints again
+               iCheck = FALSE;
             }
          }
          else
@@ -4612,11 +4624,33 @@ messages:
          }
       }
 
-      if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
-         AND (Send(self,@ReqSomethingMoved,#what=oMonster,
-                     #new_row=iMRow,#new_col=iMCol,
-                     #new_finerow=iMRowFine, #new_finecol=iMColFine)
-            OR bStack)
+      % possibly check location (skipped for randompoints)
+	  % active for generators or provided coords in param
+      if iCheck = TRUE
+      {
+         % we want the full info
+         iQflags = LIQ_CHECK_OBJECTBLOCK | LIQ_CHECK_THINGSBOX | LIQ_GET_SECTORINFO;
+	  
+         % query to C function
+         if NOT GetLocationInfoBSP(prmRoom, iQflags,
+                  iMRow,iMCol,iMRowFine,iMColFine,
+                  *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+         {
+            debug("Failed to get location info in ", prmRoom);
+            return FALSE;
+         }
+      }
+      else
+	  {
+         % make sure we pass the test below
+         iRflags = LIR_SECTOR_INSIDE | LIR_SECTOR_HASFTEX;
+	  }
+      
+      % verify location
+      if (iRflags & LIR_SECTOR_INSIDE)
+         AND (iRflags & LIR_SECTOR_HASFTEX)
+         AND (bStack OR NOT (iRflags & LIR_BLOCKED_OBJECT))
+         AND Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
       {
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
                #fine_row=iMRowFine,#fine_col=iMColFine);

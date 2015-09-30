@@ -496,6 +496,9 @@ properties:
    piReputationGroup = REP_NEUTRAL
    plReputationEnemies = $
 
+   % 20 seconds default for players, 60 for monsters
+   piHurtMeTime = 60000
+
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0, iBrain = 0)
@@ -2258,6 +2261,8 @@ messages:
          Post(what,@MsgPlayerHitResisted,#what=what,#resistance=iResist,
               #target=self,#color_rsc=monster_color_blue_rsc);
       }
+      
+      Send(self,@AddHurtMeRecently,#who=what,#amount=iDamage);
 
       return iDamage;
    }

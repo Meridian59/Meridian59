@@ -48,9 +48,9 @@
 #define FLOATTOKODINT(x) \
    (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)-MIN_KOD_INT) ? -MIN_KOD_INT : (int)x))
 
-// rounds a floatingpoint-value in ROO fineness to next lower
+// rounds a floatingpoint-value in ROO fineness to next close
 // value exactly expressable in KOD fineness units
-#define ROUNDROOTOKODFINENESS(a) ((int)(a) - ((int)(a) % 16))
+#define ROUNDROOTOKODFINENESS(a) FINENESSKODTOROO(roundf(FINENESSROOTOKOD(a)))
 
 // from blakston.khd, used in BSPGetNextStepTowards across calls
 #define ESTATE_AVOIDING  0x00004000

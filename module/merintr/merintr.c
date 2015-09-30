@@ -120,6 +120,7 @@ client_message user_msg_table[] = {
 { UC_DEPOSIT,              { PARAM_INT, PARAM_END }, },
 { UC_BALANCE,              { PARAM_END }, },
 { UC_APPEAL,               { PARAM_STRING, PARAM_END }, },
+{ UC_REQ_TIME,              { PARAM_END }, },
 { 0,                       { PARAM_END, }, },    // Must end table this way
 };
 
@@ -422,6 +423,8 @@ static TypedCommand commands[] = {
 { "spellpower an",      CommandSpellPowerOn, },
 { "spellpower off",     CommandSpellPowerOff, },
 { "spellpower aus",     CommandSpellPowerOff, },
+{ "time",               CommandTime, },
+{ "Zeit",               CommandTime, },
 { NULL,          NULL},    // Must end table this way
 };
 

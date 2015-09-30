@@ -748,3 +748,13 @@ void CommandTellGuild(char *args)
       return;
    SendSay(SAY_GUILD, args);
 }
+
+/************************************************************************/
+/*
+ * CommandTime: "time" command
+ */
+void CommandTime(char *args)
+{
+   RequestTime();
+}
+/************************************************************************/

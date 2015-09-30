@@ -106,6 +106,7 @@ ToServer(BP_REQ_MOVE, NULL, FinenessClientToKod(y) + KOD_FINENESS, \
 #define RequestChangePassword(str1, str2) ToServer(BP_CHANGE_PASSWORD, NULL, str1, str2)
 #define RequestRescue()              ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_RESCUE)
 #define RequestRoundtrip(t)          ToServer(BP_ROUNDTRIP2, NULL, t)
+#define RequestTime()                ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_TIME)
 
 M59EXPORT void Logoff(void);
 M59EXPORT void _cdecl ToServer(BYTE type, ClientMsgTable table, ...);

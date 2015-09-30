@@ -80,6 +80,7 @@ static client_message game_msg_table[] = {
 client_message user_msg_table[] = {
 { UC_CHANGE_URL,           { PARAM_ID, PARAM_STRING, PARAM_END, }, },
 { UC_REQ_RESCUE,           { PARAM_END, }, },
+{ UC_REQ_TIME,           { PARAM_END, }, },
 { 0,                       { PARAM_END, }, },    // Must end table this way
 };
 

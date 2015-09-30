@@ -69,5 +69,6 @@ void CommandReagentBagOn(char *args);
 void CommandReagentBagOff(char *args);
 void CommandSpellPowerOn(char *args);
 void CommandSpellPowerOff(char *args);
+void CommandTime(char *args);
 
 #endif /* #ifndef _COMMAND_H */

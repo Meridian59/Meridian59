@@ -161,6 +161,8 @@ resources:
    room_necro_sound = necloop2.wav
    room_beach_sound = ocean.wav
 
+   room_rain_sound = rain.wav
+
    no_use_jig = \
       "You can't wield that - it would interfere with your funky moves!"
 
@@ -697,7 +699,7 @@ messages:
 
    AddLoopingSound(lSoundData = $)
    {
-      local iRadius, iMaxVol, oObject;
+      local iRadius, iMaxVol;
 
       if lSoundData <> $
       {
@@ -716,17 +718,33 @@ messages:
             iMaxVol = Nth(lSoundData,5);
          }
 
-         foreach oObject in plActive
-         {
-            if IsClass(first(oObject),&User)
-            {
-               Send(first(oObject),@WaveSendUser,#wave_rsc=First(lSoundData),
-                    #flags=SOUND_LOOP,
-                    #row=Nth(lSoundData,2),#col=Nth(lSoundData,3),
-                    #cutoff_radius=iRadius,#max_volume=iMaxVol);
-           }
-        }
+         SendListByClass(plActive,1,&User,@WaveSendUser,#wave_rsc=First(lSoundData),
+               #flags=SOUND_LOOP,#row=Nth(lSoundData,2),#col=Nth(lSoundData,3),
+               #cutoff_radius=iRadius,#max_volume=iMaxVol);
       }
+
+      return;
+   }
+
+   RemoveLoopingSound(sound_rsc = $)
+   "Removes a looping sound by resource."
+   {
+      local i;
+
+      if (sound_rsc = $)
+      {
+         return;
+      }
+
+      foreach i in plLooping_sounds
+      {
+         if (First(i) = sound_rsc)
+         {
+            plLooping_sounds = DelListElem(plLooping_sounds,i);
+         }
+      }
+
+      SendListByClass(plActive,1,&User,@WaveSendUserStop,#wave_rsc=sound_rsc);
 
       return;
    }
@@ -734,15 +752,24 @@ messages:
    RemoveObjectLoopingSound(what = $)
    "Removes a looping sound added by an object."
    {
-      local lSoundData;
+      local i, lSounds;
 
-      foreach lSoundData in plLooping_sounds
+      % List of sounds getting removed, may be more than one.
+      lSounds = $;
+
+      foreach i in plLooping_sounds
       {
-         if length(lSoundData) > 5
-            AND Nth(lSoundData,6) = what
+         if Length(i) > 5
+            AND Nth(i,6) = what
          {
-            plLooping_sounds = DelListElem(plLooping_sounds,lSoundData);
+            lSounds = Cons(First(i),lSounds);
+            plLooping_sounds = DelListElem(plLooping_sounds,i);
          }
+      }
+
+      foreach i in lSounds
+      {
+         SendListByClass(plActive,1,&User,@WaveSendUserStop,#wave_rsc=i);
       }
 
       return;
@@ -3712,6 +3739,7 @@ messages:
       {
          Send(self,@EndSandstorm);
       }
+      Send(self,@AddLoopingSound,#lSoundData=[room_rain_sound, 1, 1, 300, 100]);
 
       Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=TRUE);
       Send(self,@WeatherChanged);
@@ -3724,6 +3752,7 @@ messages:
       if Send(self,@CheckRoomFlag,#flag=ROOM_RAINING)
       {
          Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=FALSE);
+         Send(self,@RemoveLoopingSound,#sound_rsc=room_rain_sound);
          Send(self,@WeatherChanged);
       }
 

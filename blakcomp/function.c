@@ -53,7 +53,7 @@ function_type Functions[] = {
                                          ASETTINGS, ANONE},
 {"SendListByClass",     SENDLISTMSGBYCLASS, AEXPRESSION, AEXPRESSION, AEXPRESSION,
                                             AEXPRESSION, ASETTINGS, ANONE},
-{"SendListByClassBreak",SENDLISTMSGBYCLASS, AEXPRESSION, AEXPRESSION, AEXPRESSION,
+{"SendListByClassBreak",SENDLISTMSGBYCLASSBREAK, AEXPRESSION, AEXPRESSION, AEXPRESSION,
                                             AEXPRESSION, ASETTINGS, ANONE},
 {"Random",              RANDOM,          AEXPRESSION,   AEXPRESSION,  ANONE},
 {"SaveGame",            SAVEGAME,        ANONE},

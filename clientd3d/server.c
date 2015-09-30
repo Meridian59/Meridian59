@@ -85,6 +85,7 @@ static handler_struct game_handler_table[] = {
 { BP_PLAY_WAVE,         HandlePlayWave },
 { BP_PLAY_MIDI,         HandlePlayMidi },
 { BP_PLAY_MUSIC,        HandlePlayMusic },
+{ BP_STOP_WAVE,         HandleStopWave },
 { BP_EFFECT,            HandleEffect },
 { BP_SHOOT,             HandleShoot },
 { BP_RADIUS_SHOOT,      HandleRadiusShoot },
@@ -1346,6 +1347,19 @@ Bool HandlePlayWave(char *ptr,long len)
    maxvol = config.sound_volume;
    
    GamePlaySound(rsc, obj, flags, row, col, radius, maxvol);
+   return True;
+}
+/********************************************************************/
+Bool HandleStopWave(char *ptr,long len)
+{
+   ID rsc;
+
+   if (len != SIZE_ID)
+      return False;
+
+   Extract(&ptr, &rsc, SIZE_ID);
+
+   SoundStopResource(rsc);
    return True;
 }
 /********************************************************************/

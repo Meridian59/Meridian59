@@ -101,6 +101,7 @@ Bool HandleWithdrawalList(char *ptr,long len);
 Bool HandlePlayWave(char *ptr,long len);
 Bool HandlePlayMidi(char *ptr,long len);
 Bool HandlePlayMusic(char *ptr,long len);
+Bool HandleStopWave(char *ptr,long len);
 Bool HandleQuit(char *ptr, long len);
 Bool HandleGameResync(char *ptr, long len);
 Bool HandleClasses(char *ptr,long len);

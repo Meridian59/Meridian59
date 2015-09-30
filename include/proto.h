@@ -173,6 +173,7 @@ enum {
    BP_PLAY_WAVE             = 170,
    BP_PLAY_MUSIC            = 171,
    BP_PLAY_MIDI             = 172,
+   BP_STOP_WAVE             = 173,
 
    BP_LOOK_NEWSGROUP        = 180,
    BP_ARTICLES              = 181,

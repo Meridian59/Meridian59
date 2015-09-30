@@ -215,6 +215,27 @@ BOOL AudioPlay3D(char *file, int volume, bool loop, ISound** soundid, int x, int
    return TRUE;
 }
 
+BOOL AudioStopFile(char *file)
+{
+   if (!initialized || !file)
+      return FALSE;
+
+   // Get the sound source data.
+   ISoundSource* soundsrc = soundengine->getSoundSource(file, false);
+
+   if (!soundsrc)
+      return FALSE;
+
+   for (int i = 0; i < MAXSOUNDS; ++i)
+      if (sounds[i].id && sounds[i].id->getSoundSource() == soundsrc)
+         SoundStop(sounds[i].id);
+
+   // Remove the sound.
+   //soundengine->removeSoundSource(file);
+
+   return TRUE;
+}
+
 BOOL AudioStop(ISound* soundid)
 {
    if (!initialized || !soundid)
@@ -419,6 +440,28 @@ BOOL SoundPlayFile(char* file, BYTE flags, int x, int y)
    return TRUE;
 }
 
+BOOL SoundStopFile(char* file)
+{
+   // abort cases
+   if (!config.play_sound || !file)
+      return FALSE;
+
+   char current_dir[MAX_PATH];              // workdir
+   char filename[MAX_PATH + FILENAME_MAX];  // full filename
+
+   // get working directory
+   if (!GetWorkingDirectory(current_dir, MAX_PATH))
+      return FALSE;
+
+   // combine workdir, resource subfoldername and file into filename
+   sprintf(filename, "%s%s\\%s", current_dir, AUDIODIR, file);
+
+   if (!AudioStopFile(filename))
+     return FALSE;
+
+   return TRUE;
+}
+
 BOOL SoundPlayResource(ID rsc, BYTE flags, int x, int y)
 {
    // nothing to do if sound disabled
@@ -433,6 +476,22 @@ BOOL SoundPlayResource(ID rsc, BYTE flags, int x, int y)
 
    // call variant with filename parameter
    return SoundPlayFile(file, flags, x, y);
+}
+
+BOOL SoundStopResource(ID rsc)
+{
+   // nothing to do if sound disabled
+   if (!config.play_sound)
+      return TRUE;
+
+   // try get filename for resource id
+   char* file = LookupNameRsc(rsc);
+
+   if (!file)
+      return FALSE;
+
+   // call variant with filename parameter
+   return SoundStopFile(file);
 }
 
 BOOL SoundSetVolume()

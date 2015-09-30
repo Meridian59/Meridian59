@@ -5326,13 +5326,6 @@ messages:
       {
          % see formula above  
          iTime = 10000 / (viSpeed * 4);
-		 
-		 % diagonal move: scale-up the time according to the increased distance
-         if piState & ESTATE_LONG_STEP
-         {
-            % sqrt(2) = 1.41421356  
-            iTime = (14142 * iTime) / 10000;
-         }
 
          % finally we reduce the timer a bit (right now it's exact at ms)
          % why? the client should get a new position before the last destination

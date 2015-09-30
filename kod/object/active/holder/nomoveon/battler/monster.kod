@@ -1894,30 +1894,35 @@ messages:
 
    DoGoTowardsLocation()
    {
-      piPatrolAttempts = piPatrolAttempts + 1;
+      local iDist2;
 
-      Send(self,@MoveTowardsCoords,
-            #iRow=piTargetLocationRow,
-            #iCol=piTargetLocationCol,
-            #iFineRow=piTargetLocationFineRow,
-            #iFineCol=piTargetLocationFineCol);
+      % see how far away we are (2D only)
+      iDist2 = Send(self, @SquaredFineDistanceToLocation,
+                    #row=piTargetLocationRow,
+                    #col=piTargetLocationCol,
+                    #fine_row=piTargetLocationFineRow,
+                    #fine_col=piTargetLocationFineCol);
 
-      % for now just reaching the row and col is good enough
-      % fineness is ignored
-      if ((piRow = piTargetLocationRow)
-         AND (piCol = piTargetLocationCol))
+      % more than 64 fine-units far away (64*64=4096)
+      % and not yet reached maxappempts
+      if iDist2 > 4096 AND piPatrolAttempts < 500
       {
+         % try get closer
+         Send(self,@MoveTowardsCoords,
+              #iRow=piTargetLocationRow,
+              #iCol=piTargetLocationCol,
+              #iFineRow=piTargetLocationFineRow,
+              #iFineCol=piTargetLocationFineCol);
+
+         piPatrolAttempts = piPatrolAttempts + 1;
+      }
+      else
+      {
+         % close enough
          Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
          piPatrolAttempts = 0;
       }
-
-      % after a while just give up
-      if (piPatrolAttempts >= 500)
-      {
-         Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
-         piPatrolAttempts = 0;
-      }
-
+ 
       return;
    }
 
@@ -2680,7 +2685,7 @@ messages:
       return FALSE;
    }
 
-   GotoCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0)
+   GotoCoords(iRow=$,iCol=$,iFineRow=FINENESS_HALF,iFineCol=FINENESS_HALF)
    "Move to a specific row and column. warning! fineness really"
    "isn't accurate as the monster will stop when it reaches the destination"
    "row and column"

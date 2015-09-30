@@ -3999,12 +3999,12 @@ messages:
       return;
    }
 
-   WaveSendUserStop(wave_rsc = $)
+   WaveSendUserStop(wave_rsc = $, source_obj = 0)
    % Sends a message to the client to stop playing a wav using the resource ID.
    {
       if (wave_rsc <> $) and (pbLogged_on)
       {
-         AddPacket(1,BP_STOP_WAVE, 4,wave_rsc);
+         AddPacket(1,BP_STOP_WAVE, 4,wave_rsc, 4,source_obj);
          SendPacket(poSession);
       }
 

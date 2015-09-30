@@ -1352,14 +1352,15 @@ Bool HandlePlayWave(char *ptr,long len)
 /********************************************************************/
 Bool HandleStopWave(char *ptr,long len)
 {
-   ID rsc;
+   ID rsc, obj;
 
-   if (len != SIZE_ID)
+   if (len != 2 * SIZE_ID)
       return False;
 
    Extract(&ptr, &rsc, SIZE_ID);
+   Extract(&ptr, &obj, SIZE_ID);
 
-   SoundStopResource(rsc);
+   SoundStopResource(rsc, obj);
    return True;
 }
 /********************************************************************/

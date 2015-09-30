@@ -440,7 +440,7 @@ BOOL SoundPlayFile(char* file, BYTE flags, int x, int y)
    return TRUE;
 }
 
-BOOL SoundStopFile(char* file)
+BOOL SoundStopFile(char* file, ID obj)
 {
    // abort cases
    if (!config.play_sound || !file)
@@ -478,7 +478,7 @@ BOOL SoundPlayResource(ID rsc, BYTE flags, int x, int y)
    return SoundPlayFile(file, flags, x, y);
 }
 
-BOOL SoundStopResource(ID rsc)
+BOOL SoundStopResource(ID rsc, ID obj)
 {
    // nothing to do if sound disabled
    if (!config.play_sound)
@@ -491,7 +491,7 @@ BOOL SoundStopResource(ID rsc)
       return FALSE;
 
    // call variant with filename parameter
-   return SoundStopFile(file);
+   return SoundStopFile(file, obj);
 }
 
 BOOL SoundSetVolume()

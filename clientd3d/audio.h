@@ -37,7 +37,7 @@ M59EXPORT BOOL SoundStopAll(BYTE flags = 0);
 M59EXPORT BOOL SoundPlayFile(char* file, BYTE flags, int x = 0, int y = 0);
 M59EXPORT BOOL SoundStopFile(char* file);
 M59EXPORT BOOL SoundPlayResource(ID rsc, BYTE flags, int x = 0, int y = 0);
-M59EXPORT BOOL SoundStopResource(ID rsc);
+M59EXPORT BOOL SoundStopResource(ID rsc, ID obj);
 M59EXPORT BOOL SoundSetVolume();
 M59EXPORT BOOL SoundSetListenerPosition(int x, int y, int angle);
 

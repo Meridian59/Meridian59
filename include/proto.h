@@ -277,6 +277,8 @@ enum {
    UC_MINIGAME_MOVE         = 47,
    UC_MINIGAME_PLAYER       = 48,
    UC_MINIGAME_RESET_PLAYERS= 49,
+
+   UC_REQ_TIME = 60,
 };
 
 // Login error action constants

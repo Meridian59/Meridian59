@@ -455,7 +455,10 @@ resources:
    inventory_sort_report = \
       "%s"
    inventory_already_in_list = \
-      "That is already in your list."  
+      "That is already in your list."
+
+   user_time_string =  \
+   "The time in Meridian is %i:00.  It is the %q day of the year %i."
 
 classvars:
 
@@ -2089,6 +2092,17 @@ messages:
          case UC_MINIGAME_RESET_PLAYERS:
             Send(Nth(client_msg,2),@ResetPlayers,#who=self);
             return;
+         case UC_REQ_TIME:
+               ClearTempString();
+               Send(SYS,@AppendOrdinalToTempString,#number=Send(SYS,@GetDay));
+               Send(self,@MsgSendUser,
+                  #message_rsc=user_time_string,
+                  #parm1=Send(SYS,@GetHour),
+                  #parm2=GetTempString(),
+                  #parm3=Send(SYS,@GetYear)
+                  );
+         return;
+
          default:
             Debug("User.kod got unknown UserCommand command from client",
                iClient_cmd);

@@ -238,8 +238,8 @@ enum
    TAG_MESSAGE = 11,
    TAG_DEBUGSTR = 12,
    TAG_TABLE = 13,
-   TAG_OVERRIDE = 14,     // For overriding a class variable with a property
-   TAG_INVALID = 15,
+   TAG_OVERRIDE = 14,  // For overriding a class variable with a property
+   TAG_EMPTY = 15,     // Empty tag available for use
 };
 
 #define MAX_TAG 12

@@ -414,15 +414,17 @@ int codegen_switch(switch_stmt_type s, int numlocals)
                && case_stmt->value.case_stmt_val->condition->value.constval->value.numval
                == case_stmt2->value.case_stmt_val->condition->value.constval->value.numval)
             {
-               codegen_error("Duplicate constant %i in switch statement",
-                  case_stmt->value.case_stmt_val->condition->value.constval->value.numval);
+               codegen_error("Duplicate constant %i in switch statement, line %i",
+                  case_stmt->value.case_stmt_val->condition->value.constval->value.numval,
+                  s->condition->lineno);
             }
             if (case_stmt->value.case_stmt_val->condition->type == E_IDENTIFIER
                && case_stmt->value.case_stmt_val->condition->value.idval->idnum
                == case_stmt->value.case_stmt_val->condition->value.idval->idnum)
             {
-               codegen_error("Duplicate ID %i in switch statement",
-                  case_stmt->value.case_stmt_val->condition->value.idval->idnum);
+               codegen_error("Duplicate ID %i in switch statement, line %i",
+                  case_stmt->value.case_stmt_val->condition->value.idval->idnum,
+                  s->condition->lineno);
             }
          }
       }
@@ -472,7 +474,8 @@ int codegen_switch(switch_stmt_type s, int numlocals)
          // If we already have a default case, this means we have two in
          // the same switch statement. Give codegen error.
          if (default_stmt)
-            codegen_error("Two defaults defined in switch statement!");
+            codegen_error("Two defaults defined in switch statement, line %i",
+               s->condition->lineno);
 
          // Save default for last.
          default_stmt = case_stmt;

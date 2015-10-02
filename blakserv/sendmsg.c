@@ -84,7 +84,6 @@ void InitProfiling(void)
    kod_stat.interpreting_time_posts = 0;
    kod_stat.message_depth_highest = 0;
    kod_stat.interpreting_class = INVALID_CLASS;
-   kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
 
    for (i = 0; i < MAX_C_FUNCTION; i++)
       kod_stat.c_count_untimed[i] = 0;
@@ -316,8 +315,6 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 		eprintf("SendTopLevelBlakodMessage called with message_depth %i "
 			"and message id %i\n", message_depth,message_id);
 	}
-	
-	kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
 	
 	start_time = GetMicroCountDouble();
 	kod_stat.num_top_level_messages++;
@@ -607,8 +604,9 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 
 	num_locals = get_byte();
 	num_parms = get_byte();
-	
+
 	local_vars.num_locals = num_locals + num_parms;
+
 	if (local_vars.num_locals > MAX_LOCALS)
 	{
 		dprintf("InterpretAtMessage found too many locals and parms for OBJECT %i CLASS %s MESSAGE %s (%s) aborting and returning NIL\n",
@@ -619,22 +617,13 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		(*ret_val).int_val = NIL;
 		return RETURN_NO_PROPAGATE;
 	}
-	
-	/*if (ConfigBool(DEBUG_INITLOCALS))
-	{
-		parm_init_value.v.tag = TAG_INVALID;
-		parm_init_value.v.data = 1;
-		
-		for (i = 0; i < local_vars.num_locals; i++)
-		{
-			local_vars.locals[i] = parm_init_value;
-		}
-	}*/
-	
+
 	/* both table and call parms are sorted */
 	
 	j = 0;
-	for (i=0;i<num_parms;i++)
+	i = 0;
+
+	for (;i<num_parms;i++)
 	{
 		parm_id = get_int(); /* match this with parameters */
 		parm_init_value.int_val = get_int();
@@ -659,7 +648,11 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		if (!found_parm)
 			local_vars.locals[i].int_val = parm_init_value.int_val;
 	}
-	
+
+	// Init all non-parm locals to NIL
+	for (;i < local_vars.num_locals; ++i)
+		local_vars.locals[i].int_val = NIL;
+
 	for(;;)			/* returns when gets a blakod return */
 	{
 		num_interpreted++;
@@ -757,13 +750,6 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 {
 	class_node *class_data;
 	object_node *o;
-	
-	if (kod_stat.debugging)
-	{
-		if (new_data.v.tag == TAG_INVALID)
-			eprintf("[%s] StoreValue trying to assign with uninitialized data (INVALID %i)\n",
-			BlakodDebugInfo(),new_data.v.data);
-	}
 	
 	switch (data_type)
 	{

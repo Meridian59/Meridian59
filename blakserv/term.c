@@ -86,7 +86,7 @@ const char * GetTagName(val_type val)
    case TAG_DEBUGSTR : return "DEBUGSTR";
    case TAG_TABLE : return "HASHTABLE";
    case TAG_OVERRIDE : return "OVERRIDE";
-   case TAG_INVALID : return "INVALID";
+   case TAG_EMPTY : return "EMPTY";
    default :
       eprintf("GetTagName warning, can't identify tag %i\n",val.v.tag);
       sprintf(s,"%i",val.v.tag);
@@ -168,8 +168,8 @@ int GetTagNum(const char *tag_str)
       return TAG_TEMP_STRING;
    if (ch == 'H')
       return TAG_TABLE;
-   if (0 == stricmp(tag_str,"INVALID"))
-      return TAG_INVALID;
+   if (0 == stricmp(tag_str,"EMPTY"))
+      return TAG_EMPTY;
    if (ch == 'I')
       return TAG_INT;
 

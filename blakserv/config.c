@@ -202,9 +202,6 @@ config_table_type config_table[] =
 { DEBUG_HEAP,             T, "Heap",          CONFIG_BOOL,  "No" },
 { DEBUG_TRANSMITTED_BYTES,T, "TransmittedBytes",CONFIG_BOOL,"No" },
 { DEBUG_HASH,             T, "Hash",          CONFIG_BOOL,  "No" },
-{ DEBUG_INITPROPERTIES,   T, "InitProperties",CONFIG_BOOL,  "No" },
-{ DEBUG_INITLOCALS,       T, "InitLocals",    CONFIG_BOOL,  "No" },
-{ DEBUG_UNINITIALIZED,    T, "Uninitialized", CONFIG_BOOL,  "No" },
 { DEBUG_TIME_CALLS,       T, "TimeCalls",     CONFIG_BOOL,  "No" },
 
 { SECURITY_GROUP,         F, "[Security]",    CONFIG_GROUP, "" },

@@ -77,6 +77,8 @@ classvars:
    viFlag_row = 36
    viFlag_col = 60
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    piBaseLight = LIGHT_NICE

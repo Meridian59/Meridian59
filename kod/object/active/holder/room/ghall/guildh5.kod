@@ -62,6 +62,7 @@ classvars:
    viSeconds_til_close = 11
 
    viWeatherZone = WEATHER_ZONE_TOS
+   viWeatherMask = WEATHER_MASK_DEFAULT_NS
 
 properties:
 

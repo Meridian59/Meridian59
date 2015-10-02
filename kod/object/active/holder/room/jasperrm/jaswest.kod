@@ -43,6 +43,8 @@ classvars:
    viFlag_row = 35
    viFlag_col = 25
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_JasperWest

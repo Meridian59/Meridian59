@@ -21,6 +21,7 @@ resources:
 classvars:
 
    viWeatherZone = WEATHER_ZONE_JASPER
+   viWeatherMask = WEATHER_MASK_DEFAULT_NS
 
 properties:
 

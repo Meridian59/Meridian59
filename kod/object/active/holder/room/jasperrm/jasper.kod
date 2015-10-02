@@ -36,6 +36,8 @@ classvars:
 
    viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_MOUNTAIN
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_JasperEast

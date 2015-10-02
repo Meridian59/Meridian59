@@ -16,7 +16,7 @@ constants:
 
 classvars:
    viWeatherZone = WEATHER_ZONE_KOC_TOWN
-   viWeatherMask = WEATHER_MASK_JUNGLE
+   viWeatherMask = WEATHER_MASK_JUNGLE_NS
 
 messages:
 

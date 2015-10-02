@@ -34,6 +34,8 @@ classvars:
    % Not technically a beach, but we want the ocean-type sounds.
    viTerrain_Type = TERRAIN_CITY | TERRAIN_FOUNTAIN | TERRAIN_ROAD | TERRAIN_BEACH
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_barls

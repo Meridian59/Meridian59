@@ -17,6 +17,7 @@ constants:
 classvars:
 
    viWeatherZone = WEATHER_ZONE_CORNOTH
+   viWeatherMask = WEATHER_MASK_DEFAULT_NS
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

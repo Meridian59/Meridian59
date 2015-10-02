@@ -158,7 +158,7 @@ messages:
       propagate;
    }
 
-   RecalcBackgroundSkyGraphic(iWeather=0)
+   RecalcBackgroundSkyGraphic(iSkyBox=0)
    {
       return;
    }

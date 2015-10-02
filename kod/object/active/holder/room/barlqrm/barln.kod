@@ -46,6 +46,8 @@ classvars:
    viFlag_row = 40
    viFlag_col = 41
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_barloquenorth

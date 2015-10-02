@@ -34,6 +34,8 @@ classvars:
    viTeleport_row = 27
    viTeleport_col = 16
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_EastTos

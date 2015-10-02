@@ -160,6 +160,7 @@ classvars:
    viTeleport_col = 6
 
    viWeatherZone = WEATHER_ZONE_BARLOQUE
+   viWeatherMask = WEATHER_MASK_DEFAULT_NS
 
 properties:
 

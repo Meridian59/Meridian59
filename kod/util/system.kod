@@ -4755,6 +4755,26 @@ messages:
       return piYear;
    }
 
+   SetYear(year=0)
+   {
+      local i, oldYear, adjust;
+
+      oldYear = piYear;
+      piYear = year;
+      adjust = piYear - oldYear;
+
+      foreach i in plUsers
+      {
+         if (Send(i,@GetLastLoginTime) <> 0)
+         {
+            Send(i,@SetBirthYear,#year=Send(i,@GetBirthYear) + adjust);
+         }
+      }
+      
+      return;
+      
+   }
+
    ClearAllQuests()
    {
       if poQuestEngine <> $

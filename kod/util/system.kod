@@ -3659,6 +3659,7 @@ messages:
    RecreateAllBrains()
    {
       plBrains = $;
+      plBrains = Cons(Create(&SwarmBrain),plBrains);
       plBrains = Cons(Create(&Brain),plBrains);
 
       return;

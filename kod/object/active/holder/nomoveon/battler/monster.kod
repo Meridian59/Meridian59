@@ -498,7 +498,7 @@ properties:
 
 messages:
 
-   Constructor(template=FALSE, color=0, piSurvivalLevel=0)
+   Constructor(template=FALSE, color=0, piSurvivalLevel=0, iBrain = 0)
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
       local iStatPoints, iMin, iMax;
@@ -537,7 +537,14 @@ messages:
 
       Send(self,@TryAddToQuestEngine);
 
-      poBrain = Send(SYS,@FindBrainByNum,#num=viBrain_type);
+      if (iBrain > 0 AND iBrain <= BRAIN_MAX_NUM)
+      {
+         poBrain = Send(SYS,@FindBrainByNum,#num=iBrain);
+      }
+      else
+      {
+         poBrain = Send(SYS,@FindBrainByNum,#num=viBrain_type);
+      }
       
       piState = piState & ESTATE_ZERO_MASK;
       Send(poBrain,@MobConstructor,#mob=self);

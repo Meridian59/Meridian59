@@ -33,6 +33,7 @@ static int security;         // Room security value, calculated as room is loade
 static Bool LoadNodes(file_node *f, room_type *room, int num_nodes);
 static Bool LoadWalls(file_node *f, room_type *room, int num_walls);
 static Bool LoadSectors(file_node *f, room_type *room, int num_sectors);
+static Bool LoadThings(file_node *f, room_type *room, int num_things);
 static Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
 static Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
 /*****************************************************************************************/
@@ -49,8 +50,8 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
 {
    int i, temp;
    BYTE byte;
-   WORD num_nodes, num_walls, num_sectors, num_sidedefs;
-   int node_pos, wall_pos, sidedef_pos, sector_pos, offset_adjust;
+   WORD num_nodes, num_walls, num_sectors, num_sidedefs, num_things;
+   int node_pos, wall_pos, sidedef_pos, sector_pos, thing_pos, offset_adjust;
    file_node f;
 
    if (!MappedFileOpenCopy(fname, &f))
@@ -97,10 +98,12 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &temp, 4) != 4) { MappedFileClose(&f); return False; }
    if (CliMappedFileRead(&f, &sidedef_pos, 4) != 4) { MappedFileClose(&f); return False; }
    if (CliMappedFileRead(&f, &sector_pos, 4) != 4) { MappedFileClose(&f); return False; }
+   if (CliMappedFileRead(&f, &thing_pos, 4) != 4) { MappedFileClose(&f); return False; }
    node_pos += offset_adjust;
    wall_pos += offset_adjust;
    sidedef_pos += offset_adjust;
    sector_pos += offset_adjust;
+   thing_pos += offset_adjust;
 
    // Read nodes
    MappedFileGoto(&f, node_pos);
@@ -141,7 +144,24 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
       MappedFileClose(&f); 
       return False; 
    }
-   
+
+   // Read things (room bbox)
+   MappedFileGoto(&f, thing_pos);
+   if (CliMappedFileRead(&f, &num_things, 2) != 2) { MappedFileClose(&f); return False; }
+   if (num_things != 2)
+   {
+      debug(("Num things != 2! Got %d things\n", num_things));
+      MappedFileClose(&f);
+      return False;
+   }
+
+   if (LoadThings(&f, room, num_things) == False)
+   {
+      debug(("Failure loading %d things\n", num_things));
+      MappedFileClose(&f);
+      return False;
+   }
+
    MappedFileClose(&f);
 
    if (num_nodes == 0)
@@ -674,6 +694,45 @@ Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
 	      return False;
       }
    }
+   return True;
+}
+Bool LoadThings(file_node *f, room_type *room, int num_things)
+{
+   int temp;
+
+   // note: Things vertices are stored as INT in (1:64) fineness, based on the
+   // coordinate-system origin AS SHOWN IN ROOMEDIT (Y-UP).
+   // Also these can be ANY variant of the 2 possible sets describing
+   // a diagonal in a rectangle, so not guaranteed to be ordered like min/or max first.
+   float x0, x1, y0, y1;
+
+   if (CliMappedFileRead(f, &temp, 4) != 4) return False;
+   x0 = (float)temp;
+   if (CliMappedFileRead(f, &temp, 4) != 4) return False;
+   y0 = (float)temp;
+   if (CliMappedFileRead(f, &temp, 4) != 4) return False;
+   x1 = (float)temp;
+   if (CliMappedFileRead(f, &temp, 4) != 4) return False;
+   y1 = (float)temp;
+
+   // from the 4 bbox points shown in roomedit (defined by 2 vertices)
+   // 1) Pick the left-bottom one as minimum (and scale to ROO fineness)
+   // 2) Pick the right-up one as maximum (and scale to ROO fineness)
+   room->ThingsBox.Min.X = FINENESSKODTOROO(fmin(x0, x1));
+   room->ThingsBox.Min.Y = FINENESSKODTOROO(fmin(y0, y1));
+   room->ThingsBox.Max.X = FINENESSKODTOROO(fmax(x0, x1));
+   room->ThingsBox.Max.Y = FINENESSKODTOROO(fmax(y0, y1));
+
+   // translate box so minimum is at (0/0)
+   room->ThingsBox.Max.X = room->ThingsBox.Max.X - room->ThingsBox.Min.X;
+   room->ThingsBox.Max.Y = room->ThingsBox.Max.Y - room->ThingsBox.Min.Y;
+   room->ThingsBox.Min.X = 0.0f;
+   room->ThingsBox.Min.Y = 0.0f;
+
+   // calculate the old cols/rows values rather than loading them
+   room->cols = (WORD)(room->ThingsBox.Max.X / 1024.0f);
+   room->rows = (WORD)(room->ThingsBox.Max.Y / 1024.0f);
+
    return True;
 }
 /*****************************************************************************************/

@@ -16,9 +16,6 @@
 #define CLIMB_VELOCITY_0   (FINENESS * 9 / 2)	// climb velocity set to be 3x faster than fall, to keep people from seeing through the floor
 #define FALL_VELOCITY_0    (-FINENESS * 2 / 3)
 
-#define IsInRoom(row, col, room) \
-((row) >= 0 && (row) < (room).rows && (col) >= 0 && (col) < (room).cols)
-
 void ResetPlayerPosition(void);
 
 void UserMovePlayer(int action);

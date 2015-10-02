@@ -102,7 +102,7 @@ messages:
       return;
    }
 
-   AddRadiusEnchantment(what=$,iPower=0,source=$)
+   AddRadiusEnchantment(what=$,iPower=0,source=$,oRoom=$)
    {
       local i;
       
@@ -111,12 +111,14 @@ messages:
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
             AND Nth(i,3) = source
+            AND Nth(i,4) = oRoom
          {
             return;
          }
       }
 
-      plRadiusEnchantments = Cons([what,iPower,source],plRadiusEnchantments);
+      plRadiusEnchantments = Cons([what, iPower, source, oRoom],
+                                   plRadiusEnchantments);
       
       If IsClass(self,&User)
       {
@@ -132,7 +134,7 @@ messages:
       return;
    }
 
-   RemoveRadiusEnchantment(what=$,iPower=0,source=$)
+   RemoveRadiusEnchantment(what=$,iPower=0,source=$,oRoom=$)
    {
       local i;
 
@@ -141,6 +143,7 @@ messages:
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
             AND Nth(i,3) = source
+            AND Nth(i,4) = oRoom
          {
             If IsClass(self,&User)
             {

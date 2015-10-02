@@ -120,7 +120,8 @@ messages:
          if iSpellPower = $
             OR Random(1,100) < iSpellPower
          {
-            Send(Nth(i,1),@CancelRadiusEnchantment,#source=Nth(i,3),#event=EVENT_STEER);
+            Send(Nth(i,1),@CancelRadiusEnchantment,#source=Nth(i,3),
+                  #event=EVENT_STEER,#target_room=oRoom);
          }
       }
       

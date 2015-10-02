@@ -109,32 +109,32 @@ void BSPUpdateLeafHeights(room_type* Room, Sector* Sector, bool Floor)
    }
 }
 
-float BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth)
+bool BSPGetHeightTree(BspNode* Node, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf)
 {
+   // note: we don't check for other nullptrs here because caller is doing it and we're recursive..
    if (!Node)
-      return (float)-MIN_KOD_INT;
+      return false;
 
-   // reached a leaf, return its floor or ceiling height
+   // reached a leaf
    if (Node->Type == BspLeafType && Node->u.leaf.Sector)
    {
-      if (Floor)
-      {
-         return (WithDepth) ? GetSectorHeightFloorWithDepth(Node->u.leaf.Sector, P) :
-            SECTORHEIGHTFLOOR(Node->u.leaf.Sector, P);
-      }
-      else
-         return SECTORHEIGHTCEILING(Node->u.leaf.Sector, P);
+      // set output params
+      *Leaf = &Node->u.leaf;
+      *HeightF = SECTORHEIGHTFLOOR(Node->u.leaf.Sector, P);
+      *HeightFWD = GetSectorHeightFloorWithDepth(Node->u.leaf.Sector, P);
+      *HeightC = SECTORHEIGHTCEILING(Node->u.leaf.Sector, P);
+      return true;
    }
 
    // still internal node, climb down only one subtree
    else if (Node->Type == BspInternalType)
    {
       return (DISTANCETOSPLITTERSIGNED(&Node->u.internal, P) >= 0.0f) ?
-         BSPGetHeightTree(Node->u.internal.RightChild, P, Floor, WithDepth) :
-         BSPGetHeightTree(Node->u.internal.LeftChild, P, Floor, WithDepth);
+         BSPGetHeightTree(Node->u.internal.RightChild, P, HeightF, HeightFWD, HeightC, Leaf) :
+         BSPGetHeightTree(Node->u.internal.LeftChild, P, HeightF, HeightFWD, HeightC, Leaf);
    }
 
-   return (float)-MIN_KOD_INT;
+   return false;
 }
 
 bool BSPLineOfSightTree(BspNode* Node, V3* S, V3* E)
@@ -621,15 +621,16 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 /**************************************************************************************************************/
 
 /*********************************************************************************************/
-/* BSPGetHeight:  Returns the floor or ceiling height in a room for a given location.        */
-/*                Returns -MIN_KOD_INT (-134217728) for a location outside of the map.       */
+/* BSPGetHeight:  Returns true if location is inside any sector, false otherwise.
+/*                  If true, heights are in parameters HeightF (floor), 
+/*				    HeightFWD (floor with depth) and HeightC (ceiling) and Leaf is valid.
 /*********************************************************************************************/
-float BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth)
+bool BSPGetHeight(room_type* Room, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf)
 {
-   if (!Room || Room->TreeNodesCount == 0 || !P)
-      return 0.0f;
+   if (!Room || Room->TreeNodesCount == 0 || !P || !HeightF || !HeightFWD || !HeightC)
+      return false;
 
-   return BSPGetHeightTree(&Room->TreeNodes[0], P, Floor, WithDepth);
+   return BSPGetHeightTree(&Room->TreeNodes[0], P, HeightF, HeightFWD, HeightC, Leaf);
 }
 
 /*********************************************************************************************/
@@ -671,31 +672,52 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E)
    Blocker* blocker = Room->Blocker;
    while (blocker)
    {
-      V2 ms, me;
-      V2SUB(&ms, S, &blocker->Position);
-      V2SUB(&me, E, &blocker->Position);
-
+      V2 ms; // from m to s  
+      V2SUB(&ms, S, &blocker->Position);     
       float ds2 = V2LEN2(&ms);
-      float de2 = V2LEN2(&me);
 
-      // unfortunately we're inside the blocking radius already,
-      // but since we want to get farer way, don't block
-	  // this allows already blocked objects to get away from each other
-	  // and also makes sure we don't block ourself!
-	  if (ds2 <= OBJMINDISTANCE2 && (ds2 <= de2))
+      // CASE 1) Start is exactly on the blocker-position
+      // Note: This catches the case where the blocker itself called
+      //   CanMoveInRoomBSP and is verified against his own blocker.
+      if (ds2 == 0.0f)
       {
-         blocker = blocker->Next;
-         continue;
+         // just go on with next loop
       }
 
-	  if (IntersectLineCircle(&blocker->Position, OBJMINDISTANCE, S, E))
-	  {
+      // CASE 2) Start is too close
+      // Note: IntersectLineCircle below will reject moves starting or ending exactly
+      //   on the circle as well as moves going from inside to outside of the circle.
+      //   So this case here must handle moves until the object is out of radius again.
+      else if (ds2 <= OBJMINDISTANCE2)
+      {
+         V2 me;
+         V2SUB(&me, E, &blocker->Position); // from m to e
+         float de2 = V2LEN2(&me);
+
+         // end must be farer away than start
+         if (de2 <= ds2)
+            return false;
+
+         V2 se;
+         V2SUB(&se, E, S); // from s to e
+         float angle = acosf(V2DOT(&ms, &se));
+
+         // step (se) must also point towards +-90° of the straight step-away direction (ms)
+         if (angle < -M_PI_2 || angle > M_PI_2)
+            return false;
+      }
+
+      // CASE 3) Start is outside blockradius, verify by intersection algorithm.
+      else
+      {
+         if (IntersectLineCircle(&blocker->Position, OBJMINDISTANCE, S, E))
+         {
 #if DEBUGMOVE
-         dprintf("MOVEBLOCK BY OBJ %i",blocker->ObjectID);
+            dprintf("MOVEBLOCK BY OBJ %i",blocker->ObjectID);
 #endif
-         return false;
+            return false;
+         }
       }
-
       blocker = blocker->Next;
    }
 
@@ -787,33 +809,395 @@ void BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Hei
 }
 
 /*********************************************************************************************/
-/* BSPIsInThingsBox:  Checks if given point lies inside the 'red' boundingbox
-/*                    described by the 'Thing' vertices in RoomEdit.
+/* BSPGetLocationInfo:  Returns several infos about a location depending on 'QueryFlags'
 /*********************************************************************************************/
-int BSPIsInThingsBox(room_type* Room, V2* P)
+bool BSPGetLocationInfo(room_type* Room, V2* P, unsigned int QueryFlags, unsigned int* ReturnFlags,
+                        float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf)
 {
-   if (!Room || !P)
-      return IBF_INVALID;
+   if (!Room || !P || !ReturnFlags)
+      return false;
 
-   int flags = IBF_INSIDE;
+   // see what to query
+   bool isCheckThingsBox = ((QueryFlags & LIQ_CHECK_THINGSBOX) == LIQ_CHECK_THINGSBOX);
+   bool isCheckOjectBlock = ((QueryFlags & LIQ_CHECK_OBJECTBLOCK) == LIQ_CHECK_OBJECTBLOCK);
+   bool isGetSectorInfo = ((QueryFlags & LIQ_GET_SECTORINFO) == LIQ_GET_SECTORINFO);
+   
+   // check if output parameters are provided if query-type needs them
+   if (isGetSectorInfo && (!HeightF || !HeightFWD || !HeightC || !Leaf))
+      return false;
 
-   // out west
-   if (P->X < Room->ThingsBox.Min.X)
-      flags |= IBF_OUT_W;
+   // default returnflags
+   *ReturnFlags = 0;
 
-   // out east
-   else if (P->X > Room->ThingsBox.Max.X)
-      flags |= IBF_OUT_E;
+   // check outside thingsbox
+   if (isCheckThingsBox)
+   {
+      // out west
+      if (P->X <= Room->ThingsBox.Min.X)
+         *ReturnFlags |= LIR_TBOX_OUT_W;
 
-   // out north
-   if (P->Y < Room->ThingsBox.Min.Y)
-      flags |= IBF_OUT_N;
+      // out east
+      else if (P->X >= Room->ThingsBox.Max.X)
+         *ReturnFlags |= LIR_TBOX_OUT_E;
 
-   // out south
-   else if (P->Y > Room->ThingsBox.Max.Y)
-      flags |= IBF_OUT_S;
+      // out north
+      if (P->Y <= Room->ThingsBox.Min.Y)
+         *ReturnFlags |= LIR_TBOX_OUT_N;
 
-   return flags;
+      // out south
+      else if (P->Y >= Room->ThingsBox.Max.Y)
+         *ReturnFlags |= LIR_TBOX_OUT_S;
+   }
+
+   // check too close to blocker
+   if (isCheckOjectBlock)
+   {
+      Blocker* blocker = Room->Blocker;
+      while (blocker)
+      {
+         V2 b;
+         V2SUB(&b, P, &blocker->Position);
+
+         // too close
+         if (V2LEN2(&b) < OBJMINDISTANCE2)
+         {
+            *ReturnFlags |= LIR_BLOCKED_OBJECT;
+            break;
+         }
+         blocker = blocker->Next;
+      }
+   }
+
+   // bsp lookup
+   if (isGetSectorInfo && BSPGetHeight(Room, P, HeightF, HeightFWD, HeightC, Leaf))
+   {
+      *ReturnFlags |= LIR_SECTOR_INSIDE;
+
+      if ((*Leaf)->Sector->FloorTexture > 0)
+         *ReturnFlags |= LIR_SECTOR_HASFTEX;
+
+      if ((*Leaf)->Sector->CeilingTexture > 0)
+         *ReturnFlags |= LIR_SECTOR_HASCTEX;
+   }
+
+   return true;
+}
+
+/*********************************************************************************************/
+/* BSPGetRandomPoint: Tries up to 'MaxAttempts' times to create a randompoint in 'Room'.
+/*                    If return is true, P's coordinates are guaranteed to be:
+/*                    (a) inside a sector (b) inside thingsbox (c) outside any obj blockradius
+/*********************************************************************************************/
+bool BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P)
+{
+	if (!Room || !P)
+		return false;
+
+	float heightF, heightFWD, heightC;
+	BspLeaf* leaf = NULL;
+
+	for (int i = 0; i < MaxAttempts; i++)
+	{
+		// generate random coordinates inside the things box
+		// we first map the random value to [0.0f , 1.0f] and then to [0.0f , BBOXMAX]
+		// note: the minimum of thingsbox is always at 0/0
+		P->X = ((float)rand() / (float)RAND_MAX) * Room->ThingsBox.Max.X;
+		P->Y = ((float)rand() / (float)RAND_MAX) * Room->ThingsBox.Max.Y;
+
+		// make sure point is exactly expressable in KOD fineness units also
+		P->X = (float)ROUNDROOTOKODFINENESS(P->X);
+		P->Y = (float)ROUNDROOTOKODFINENESS(P->Y);
+
+		// 1. check for inside valid sector, otherwise roll again
+		// note: locations quite close to a wall pass this check!
+		if (!BSPGetHeight(Room, P, &heightF, &heightFWD, &heightC, &leaf))
+			continue;
+		
+		// 2. must also have floor texture set
+		if (leaf && leaf->Sector->FloorTexture == 0)
+			continue;
+
+		// 3. check for being too close to a blocker
+		Blocker* blocker = Room->Blocker;
+		bool collision = false;
+		while (blocker)
+		{
+			V2 b;
+			V2SUB(&b, P, &blocker->Position);
+
+			// too close
+			if (V2LEN2(&b) < OBJMINDISTANCE2)
+			{
+				collision = true;
+				break;
+			}
+
+			blocker = blocker->Next;
+		}
+
+		// too close to a blocker, roll again
+		if (collision)
+			continue;
+
+		// all good with P
+		return true;
+	}
+
+	// max attempts reached without success
+	return false;
+}
+
+/*********************************************************************************************/
+/* BSPGetStepTowards:  Returns a location in P param, in a distant of 16 kod fineness units
+/*                     away from S on the way towards E.
+/*********************************************************************************************/
+bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags)
+{
+   if (!Room || !S || !E || !P || !Flags)
+      return false;
+
+   V2 se, stepend;
+   V2SUB(&se, E, S);
+
+   // get length from start to end
+   float len = V2LEN(&se);
+
+   // trying to step to old location?
+   if (ISZERO(len))
+   {
+      // set step destination to end
+      *P = *E;
+      *Flags &= ~ESTATE_AVOIDING;
+      *Flags &= ~ESTATE_CLOCKWISE;
+      return true;
+   }
+
+   // this first normalizes the se vector,
+   // then scales to a length of 16 kod-fineunits (=256  roo-fineunits)
+   float scale = (1.0f / len) * FINENESSKODTOROO(16.0f);
+
+   // apply the scale on se
+   V2SCALE(&se, scale);
+
+   /****************************************************/
+   // 1) try direct step towards destination first
+   /****************************************************/
+
+   // note: we must verify the location the object is actually going to end up in KOD,
+   // this means we must round to the next closer kod-fineness value,  
+   // so these values are also exactly expressable in kod coordinates.
+   // in fact this makes the vector a variable length between ~15.5 and ~16.5 fine units
+   V2ADD(&stepend, S, &se);
+   stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+   stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+   if (BSPCanMoveInRoom(Room, S, &stepend))
+   {
+      *P = stepend;
+      *Flags &= ~ESTATE_AVOIDING;
+      *Flags &= ~ESTATE_CLOCKWISE;
+      return true;
+   }
+   
+   /****************************************************/
+   // 2) can't do direct step
+   /****************************************************/
+
+   bool isAvoiding = ((*Flags & ESTATE_AVOIDING) == ESTATE_AVOIDING);
+   bool isRight = ((*Flags & ESTATE_CLOCKWISE) == ESTATE_CLOCKWISE);
+
+   // not yet in clockwise or cclockwise mode
+   // randomly pick one of them
+   if (!isAvoiding)
+      isRight = (rand() % 2 == 1);
+
+   // must run this possibly twice
+   // e.g. left after right failed or right after left failed
+   for (int i = 0; i < 2; i++)
+   {
+      if (isRight)
+      {
+         V2 v = se;
+
+		 // try 22.5° right
+		 V2ROTATE(&v, 0.5f * (float)-M_PI_4);
+		 V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+		 if (BSPCanMoveInRoom(Room, S, &stepend))
+		 {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 45° right
+         V2ROTATE(&v, 0.5f * (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 67.5° right
+         V2ROTATE(&v, 0.5f * (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+		 }
+
+         // try 90° right
+         V2ROTATE(&v, 0.5f * (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 112.5° right
+         V2ROTATE(&v, 0.5f * (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 135° right
+         V2ROTATE(&v, (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // failed to circumvent by going right, switch to left
+         isRight = false;
+         *Flags |= ESTATE_AVOIDING;
+         *Flags &= ~ESTATE_CLOCKWISE;
+      }
+      else
+      {
+         V2 v = se;
+
+         // try 22.5° left
+         V2ROTATE(&v, 0.5f * (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 45° left
+         V2ROTATE(&v, 0.5f * (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 67.5° left
+         V2ROTATE(&v, 0.5f * (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+		 }
+
+         // try 90° left
+         V2ROTATE(&v, 0.5f * (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 112.5° left
+         V2ROTATE(&v, 0.5f * (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 135° left
+         V2ROTATE(&v, 0.5f * (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         stepend.X = ROUNDROOTOKODFINENESS(stepend.X);
+         stepend.Y = ROUNDROOTOKODFINENESS(stepend.Y);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // failed to circumvent by going left, switch to right
+         isRight = true;
+         *Flags |= ESTATE_AVOIDING;
+         *Flags |= ESTATE_CLOCKWISE;
+      }
+   }
+
+   /****************************************************/
+   // 3) fully stuck
+   /****************************************************/
+
+   *P = *S;
+   *Flags &= ~ESTATE_AVOIDING;
+   *Flags &= ~ESTATE_CLOCKWISE;
+   return false;
 }
 
 /*********************************************************************************************/

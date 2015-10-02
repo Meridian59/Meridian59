@@ -2445,7 +2445,8 @@ messages:
                   fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
                   non_monsters_only = FALSE)
    {
-      local i, temp, each_obj, packet_built, lNode, flags;
+      local i, temp, each_obj, packet_built, lNode, iQflags, 
+            iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
@@ -2464,30 +2465,39 @@ messages:
          }
       }
 
-      flags = IsInThingsBoxBSP(prmRoom, new_row, new_col, fine_row, fine_col);
+      % set query-flags, here we're only interested in the things bbox
+      iQflags = LIQ_CHECK_THINGSBOX;
 
-      if (flags & IBF_OUT_S)
+      % call c function
+      if NOT GetLocationInfoBSP(prmRoom, iQflags, new_row, new_col, fine_row, fine_col,
+                *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+      {
+         debug("Failed to get location info in ", prmRoom);
+         iRflags = 0;
+      }
+
+      if (iRflags & LIR_TBOX_OUT_S)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_SOUTH,#pos=new_col);
 
          return;
       }
 
-      if (flags & IBF_OUT_N)
+      if (iRflags & LIR_TBOX_OUT_N)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_NORTH,#pos=new_col);
 
          return;
       }
 
-      if (flags & IBF_OUT_E)
+      if (iRflags & LIR_TBOX_OUT_E)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_EAST,#pos=new_row);
 
          return;
       }
 
-      if (flags & IBF_OUT_W)
+      if (iRflags & LIR_TBOX_OUT_W)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_WEST,#pos=new_row);
 
@@ -4570,11 +4580,14 @@ messages:
    "put at a gen point.  This is now in Room, as all rooms can use it for "
    "placing either a monster or a random item."
    {
-      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount, lPatrolPath;
+      local oOldOwner, iMRow, iMCol, iMRowFine, iMColFine, lPos, iRoll, iCount, lPatrolPath,
+            iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, iCheck;
 
       iMRow = iRow;
       iMCol = iCol;
-
+      iMRowFine = FINENESS_HALF;
+      iMColFine = FINENESS_HALF;
+	  
       lPatrolPath = $;
 
       if oMonster = $
@@ -4598,26 +4611,30 @@ messages:
          }
       }
 
+      % verify the spawnpoint by default
+      iCheck = TRUE;
+
+      % no spawn point provided
       if (iMRow=0 and iMCol=0)
       {
-         if plGenerators = $
-            OR bRandom
+         % no generators or forced to be random
+         if plGenerators = $ OR bRandom
          {
-            iCount = 0;
-            iMRow = Random(1,piRows);
-            iMCol = Random(1,piCols);
-            while ((NOT Send(self,@ReqSomethingMoved,#what=oMonster,
-                     #new_row=iMRow,#new_col=iMCol))
-                  AND iCount < 15)
-            {
-               iMRow = Random(1,piRows);
-               iMCol = Random(1,piCols);
-               iCount = iCount + 1;
-            }
-            if iCount = 15
+            % query random point from C (into local vars)
+            % this point is guaranteed to have the following properties:
+            % (a) inside ThingsBox  (b) inside a sector with a texture set
+            % (c) not blocked by another object
+            if NOT GetRandomPointBSP(prmRoom, 15, *iMRow, *iMCol, *iMRowFine, *iMColFine)
             {
                Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
                      " in room ",self,Send(self,@GetName));
+               Send(oMonster,@Delete);
+               return FALSE;
+            }
+            else
+            {
+               % no need to verify these randompoints again
+               iCheck = FALSE;
             }
          }
          else
@@ -4636,13 +4653,36 @@ messages:
          }
       }
 
-      if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
-         AND (Send(self,@ReqSomethingMoved,#what=oMonster,
-                     #new_row=iMRow,#new_col=iMCol)
-            OR bStack)
+      % possibly check location (skipped for randompoints)
+	  % active for generators or provided coords in param
+      if iCheck = TRUE
+      {
+         % we want the full info
+         iQflags = LIQ_CHECK_OBJECTBLOCK | LIQ_CHECK_THINGSBOX | LIQ_GET_SECTORINFO;
+	  
+         % query to C function
+         if NOT GetLocationInfoBSP(prmRoom, iQflags,
+                  iMRow,iMCol,iMRowFine,iMColFine,
+                  *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+         {
+            debug("Failed to get location info in ", prmRoom);
+            return FALSE;
+         }
+      }
+      else
+	  {
+         % make sure we pass the test below
+         iRflags = LIR_SECTOR_INSIDE | LIR_SECTOR_HASFTEX;
+	  }
+      
+      % verify location
+      if (iRflags & LIR_SECTOR_INSIDE)
+         AND (iRflags & LIR_SECTOR_HASFTEX)
+         AND (bStack OR NOT (iRflags & LIR_BLOCKED_OBJECT))
+         AND Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
       {
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
-               #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+               #fine_row=iMRowFine,#fine_col=iMColFine);
 
          if (lPatrolPath <> $)
          {

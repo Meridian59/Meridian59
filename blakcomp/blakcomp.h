@@ -305,6 +305,7 @@ const_type make_number_from_constant_id(id_type id);
 
 const_type make_literal_class(id_type id);
 const_type make_literal_message(id_type id);
+const_type make_literal_variable(id_type id);
 
 id_type make_identifier(char *);
 id_type make_var(id_type);

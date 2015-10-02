@@ -41,22 +41,39 @@
 #define GRIDCOORDTOROO(big, fine) \
    (FINENESSKODTOROO((float)(big - 1) * (float)KODFINENESS + (float)fine))
 
+#define ROOCOORDTOGRIDBIG(x)  (((int)FINENESSROOTOKOD(x) / KODFINENESS)+1)
+#define ROOCOORDTOGRIDFINE(x) ((int)FINENESSROOTOKOD(x) % KODFINENESS)
+
 // converts a floatingpoint-value into KOD integer (boxes into MAX/MIN KOD INT)
 #define FLOATTOKODINT(x) \
    (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)-MIN_KOD_INT) ? -MIN_KOD_INT : (int)x))
 
-// flags used as return of isinbox queries
-#define IBF_INVALID 0x00FFFFFF
-#define IBF_INSIDE  0x00000000
-#define IBF_OUT_N   0x00000001
-#define IBF_OUT_E   0x00000002
-#define IBF_OUT_S   0x00000004
-#define IBF_OUT_W   0x00000008
-#define IBF_OUT_NE  0x00000003 //N+E
-#define IBF_OUT_SE  0x00000006 //S+E
-#define IBF_OUT_NW  0x00000009 //N+W
-#define IBF_OUT_SW  0x0000000C //S+W
+// rounds a floatingpoint-value in ROO fineness to next close
+// value exactly expressable in KOD fineness units
+#define ROUNDROOTOKODFINENESS(a) FINENESSKODTOROO(roundf(FINENESSROOTOKOD(a)))
 
+// from blakston.khd, used in BSPGetNextStepTowards across calls
+#define ESTATE_AVOIDING  0x00004000
+#define ESTATE_CLOCKWISE 0x00008000
+
+// query flags for BSPGetLocationInfo
+#define LIQ_GET_SECTORINFO           0x00000001
+#define LIQ_CHECK_THINGSBOX          0x00000002
+#define LIQ_CHECK_OBJECTBLOCK        0x00000004
+
+// return flags for BSPGetLocationInfo
+#define LIR_TBOX_OUT_N     0x00000001
+#define LIR_TBOX_OUT_E     0x00000002
+#define LIR_TBOX_OUT_S     0x00000004
+#define LIR_TBOX_OUT_W     0x00000008
+#define LIR_TBOX_OUT_NE    0x00000003 //N+E
+#define LIR_TBOX_OUT_SE    0x00000006 //S+E
+#define LIR_TBOX_OUT_NW    0x00000009 //N+W
+#define LIR_TBOX_OUT_SW    0x0000000C //S+W
+#define LIR_SECTOR_INSIDE  0x00000010
+#define LIR_SECTOR_HASFTEX 0x00000020
+#define LIR_SECTOR_HASCTEX 0x00000040
+#define LIR_BLOCKED_OBJECT 0x00000100
 #pragma endregion
 
 #pragma region Structs
@@ -198,12 +215,14 @@ typedef struct room_type
 /**************************************************************************************************************/
 /*                                          METHODS                                                           */
 /**************************************************************************************************************/
-float BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth);
+bool  BSPGetHeight(room_type* Room, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf);
 bool  BSPCanMoveInRoom(room_type* Room, V2* S, V2* E);
 bool  BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void  BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void  BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);
-int   BSPIsInThingsBox(room_type* Room, V2* P);
+bool  BSPGetLocationInfo(room_type* Room, V2* P, unsigned int QueryFlags, unsigned int* ReturnFlags, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf);
+bool  BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P);
+bool  BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags);
 bool  BSPBlockerAdd(room_type* Room, int ObjectID, V2* P);
 bool  BSPBlockerMove(room_type* Room, int ObjectID, V2* P);
 bool  BSPBlockerRemove(room_type* Room, int ObjectID);

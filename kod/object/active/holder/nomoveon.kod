@@ -67,17 +67,6 @@ messages:
       return piFine_col;
    }
 
-   GetHeightAtObject()
-   {
-      if poOwner <> $
-      {
-         return GetHeightFloorBSP(Send(poOwner,@GetRoomData),piRow,piCol,
-                     piFine_row,piFine_col);
-      }
-
-      return 0;
-   }
-
    ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,
                      new_finecol = $)
    {
@@ -417,7 +406,7 @@ messages:
                                  fine_col = FINENESS_HALF)
    {
       local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iHeight_diff,
-      iResult;
+            iResult, iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
       % Scale to fine
       iRow = piRow * FINENESS + piFine_row;
@@ -425,12 +414,27 @@ messages:
       iWhatRow = (row * FINENESS) + fine_row;
       iWhatCol = (col * FINENESS) + fine_col;
 
+      % set query-flags, here we're only interested in the sectorinfo
+      iQflags = LIQ_GET_SECTORINFO;
+
+      % query data from bsp in c-function
+      if NOT GetLocationInfoBSP(
+                      Send(poOwner,@GetRoomData), iQflags, 
+                      Send(self,@GetRow), Send(self,@GetCol),
+                      Send(self,@GetFineRow), Send(self,@GetFineCol),
+                      *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+      {
+         debug("Failed to get location info in ", Send(poOwner,@GetRoomData));
+         iHeight_diff = 0;
+      }
+      else
+	  {
+         iHeight_diff = Send(self,@GetHeightFloorAtObjectBSP) - iHeightFWD;
+	  }
+      	
       % Deltas.
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
-      iHeight_diff = Send(self,@GetHeightFloorAtObjectBSP)
-                           - GetHeightFloorBSP(Send(poOwner,@GetRoomData),row,col,
-                                    fine_row,fine_col);
 
       iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
                   + iHeight_diff * iHeight_diff;

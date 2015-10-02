@@ -434,21 +434,7 @@ messages:
    "in a room, this message recursively checks the owner's coordinates "
    "until one in a room is found."
    {
-      if poOwner <> $
-      {
-         if IsClass(poOwner,&Room)
-         {
-            return GetHeightFloorBSP(Send(poOwner,@GetRoomData),
-                        Send(self,@GetRow),Send(self,@GetCol),
-                        Send(self,@GetFineRow),Send(self,@GetFineCol));
-         }
-         else
-         {
-            Send(poOwner,@GetHeightAtObject);
-         }
-      }
-
-      return 0;
+      return Send(self, @GetHeightFloorAtObjectBSP);
    }
 
    GetHeightFloorAtObjectBSP()
@@ -456,13 +442,28 @@ messages:
    "If the object is not in a room, this message recursively checks the owner's coordinates "
    "until one in a room is found."
    {
+      local iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
+			
       if poOwner <> $
       {
          if IsClass(poOwner,&Room)
          {
-            return GetHeightFloorBSP(Send(poOwner,@GetRoomData),
-                        Send(self,@GetRow),Send(self,@GetCol),
-                        Send(self,@GetFineRow),Send(self,@GetFineCol));
+            % set query-flags, here we're only interested in the sectorinfo
+            iQflags = LIQ_GET_SECTORINFO;
+
+            % query data from bsp in c-function
+            if NOT GetLocationInfoBSP(
+                      Send(poOwner,@GetRoomData), iQflags, 
+                      Send(self,@GetRow), Send(self,@GetCol),
+                      Send(self,@GetFineRow), Send(self,@GetFineCol),
+                      *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+            {
+               debug("Failed to get location info in ", Send(poOwner,@GetRoomData));
+               return 0;
+            }
+
+            % we're only using the floor-height with depth modifier here
+            return iHeightFWD;
          }
          else
          {
@@ -478,13 +479,28 @@ messages:
    "If the object is not in a room, this message recursively checks the owner's coordinates "
    "until one in a room is found."
    {
+      local iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
+			
       if poOwner <> $
       {
          if IsClass(poOwner,&Room)
          {
-            return GetHeightCeilingBSP(Send(poOwner,@GetRoomData),
-                        Send(self,@GetRow),Send(self,@GetCol),
-                        Send(self,@GetFineRow),Send(self,@GetFineCol));
+            % set query-flags, here we're only interested in the sectorinfo
+            iQflags = LIQ_GET_SECTORINFO;
+	  
+            % query data from bsp in c-function
+            if NOT GetLocationInfoBSP(
+                      Send(poOwner,@GetRoomData), iQflags, 
+                      Send(self,@GetRow), Send(self,@GetCol),
+                      Send(self,@GetFineRow), Send(self,@GetFineCol),
+                      *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+            {
+               debug("Failed to get location info in ", Send(poOwner,@GetRoomData));
+               return 0;
+            }
+
+            % we're only using the ceiling-height here
+            return iHeightC;
          }
          else
          {

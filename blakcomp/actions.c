@@ -623,6 +623,36 @@ const_type make_literal_message(id_type id)
    return c;
 }
 /************************************************************************/
+const_type make_literal_variable(id_type id)
+{
+   const_type c = (const_type) SafeMalloc(sizeof(const_struct));
+
+   lookup_id(id);
+   switch (id->type)
+   {
+   case I_LOCAL:
+      break;
+
+   case I_MISSING:
+      if (id->source != I_LOCAL)
+      action_error("Identifier %s was referenced earlier with different type",
+         id->name);
+      break;
+
+   default:
+      // Can't use these without having them referenced previously.
+      action_error("Identifier %s literal was referenced before being defined",
+         id->name);
+      break;
+   }
+
+   /* Make a constant expression whose value is the id # */
+   c->type = C_NUMBER;
+   c->value.numval = id->idnum;
+
+   return c;
+}
+/************************************************************************/
 expr_type make_expr_from_id(id_type id)
 {
    expr_type e = (expr_type) SafeMalloc(sizeof(expr_struct));

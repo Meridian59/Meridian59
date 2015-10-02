@@ -30,6 +30,9 @@ classvars:
    viTeleport_col = 46
    viTerrain_type = TERRAIN_JUNGLE | TERRAIN_MOUNTAIN
 
+   viWeatherZone = WEATHER_ZONE_KOC_TOWN
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 properties:
 
    prRoom = room_OutdoorsKA5

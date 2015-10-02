@@ -36,6 +36,8 @@ classvars:
    viFlag_row = 13
    viFlag_col = 17
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
    prMusic = OutdoorsD5_music

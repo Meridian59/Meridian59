@@ -31,6 +31,8 @@ classvars:
 
    viTerrain_type = TERRAIN_BADLANDS | TERRAIN_TEMPLE
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
    prRoom = room_badland1

@@ -39,6 +39,8 @@ classvars:
    viTeleport_row = 8
    viTeleport_col = 13
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
    prMusic = castle2c_music

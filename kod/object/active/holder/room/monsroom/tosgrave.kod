@@ -32,6 +32,8 @@ classvars:
    viTeleport_row = 14
    viTeleport_col = 18
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    prRoom = room_TosGraveyard

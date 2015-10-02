@@ -32,6 +32,9 @@ classvars:
 
    viAvar_clan = AVARCLAN_BONE_FACTION 
 
+   viWeatherZone = WEATHER_ZONE_KOC_CLIFFS
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 properties:
 
    prRoom = room_OutdoorsKC1

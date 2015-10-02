@@ -61,6 +61,8 @@ classvars:
    viTerrain_type = TERRAIN_CITY | TERRAIN_GUILDHALL | TERRAIN_FOUNTAIN
    viSeconds_til_close = 11
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    prRoom = room_guildhall5

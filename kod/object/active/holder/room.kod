@@ -196,6 +196,9 @@ classvars:
    viFlag_row = $
    viFlag_col = $
 
+   viWeatherZone = WEATHER_ZONE_DEFAULT
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    piRoom_Flags = 0
@@ -317,6 +320,9 @@ properties:
    
    % Flag for reagent use. If set to true, no reagent use in room
    pbNoReagents = FALSE
+
+   % per room weather conditions
+   piWeather = WEATHER_DAY
    
 messages:
 
@@ -1815,12 +1821,10 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i, each_obj, iWeather, iRand, oSun;
+      local i, each_obj, iRand, oSun;
 
       % Change weather for background if outdoors and tell everyone the
       %  background changed
-
-      iWeather = Send(SYS,@GetWeather);
 
       if Send(SYS,@GetChaosNight)
       {
@@ -1829,7 +1833,7 @@ messages:
          return;
       }
 
-      Send(self,@RecalcBackgroundSkyGraphic,#iWeather=iWeather);
+      Send(self,@RecalcBackgroundSkyGraphic,#iWeather=piWeather);
 
       % Reproduce the following calls here, ~40% faster.
       % Send(self,@RecalculateDirectionalLight);
@@ -3631,6 +3635,11 @@ messages:
       return;
    }
 
+   GetWeatherZone()
+   {
+      return viWeatherZone;
+   }
+
    GetRoomWeather()
    {
       local effect;
@@ -3655,6 +3664,120 @@ messages:
       }
 
       return effect;
+   }
+
+   StartStorm()
+   {
+
+      if (NOT pbWeatherEffects)
+      {
+         return;
+      }
+
+      switch (Send(SYS,@GetSeason))
+      {
+         case WEATHER_SEASON_SPRING:
+            if (viWeatherMask & WEATHER_MASK_SPRING_SAND)
+            {
+               Send(self,@StartSandStorm);
+            }
+            else if (viWeatherMask & WEATHER_MASK_SPRING_SNOW)
+            {
+               Send(self,@StartSnow);
+            }
+            else if (viWeatherMask & WEATHER_MASK_SPRING_RAIN)
+            {
+               Send(self,@StartRain);
+            }
+            break;
+         case WEATHER_SEASON_SUMMER:
+            if (viWeatherMask & WEATHER_MASK_SUMMER_SAND)
+            {
+               Send(self,@StartSandStorm);
+            }
+            else if (viWeatherMask & WEATHER_MASK_SUMMER_SNOW)
+            {
+               Send(self,@StartSnow);
+            }
+            else if (viWeatherMask & WEATHER_MASK_SUMMER_RAIN)
+            {
+               Send(self,@StartRain);
+            }
+            break;
+         case WEATHER_SEASON_FALL:
+            if (viWeatherMask & WEATHER_MASK_FALL_SAND)
+            {
+               Send(self,@StartSandStorm);
+            }
+            else if (viWeatherMask & WEATHER_MASK_FALL_SNOW)
+            {
+               Send(self,@StartSnow);
+            }
+            else if (viWeatherMask & WEATHER_MASK_FALL_RAIN)
+            {
+               Send(self,@StartRain);
+            }
+            break;
+         case WEATHER_SEASON_WINTER:
+            if (viWeatherMask & WEATHER_MASK_WINTER_SAND)
+            {
+               Send(self,@StartSandStorm);
+            }
+            else if (viWeatherMask & WEATHER_MASK_WINTER_SNOW)
+            {
+               Send(self,@StartSnow);
+            }
+            else if (viWeatherMask & WEATHER_MASK_WINTER_RAIN)
+            {
+               Send(self,@StartRain);
+            }
+            break;
+      }
+      
+      switch(Send(SYS,@GetDayPhase))
+      {
+         case WEATHER_DAY:
+            piWeather = WEATHER_DAY_STORMY;
+            break;
+         case WEATHER_NIGHT:
+            piWeather = WEATHER_NIGHT;
+            break;
+         case WEATHER_DUSK:
+            piWeather = WEATHER_DUSK_STORMY;
+            break;
+         case WEATHER_DAWN:
+            piWeather = WEATHER_DAWN_STORMY;
+            break;
+      }
+
+      return;
+   }
+
+   EndStorm()
+   {
+      if (NOT pbWeatherEffects)
+      {
+         return;
+      }
+
+      if piRoom_flags & ROOM_SNOWING
+      {
+         Send(self,@EndSnow);
+      }
+      
+      if piRoom_flags & ROOM_RAINING
+      {
+         Send(self,@EndRain);
+      }
+
+      if piRoom_flags & ROOM_SANDSTORM
+      {
+         Send(self,@EndSandStorm);
+      }
+
+      piWeather = Send(SYS,@GetDayPhase);
+
+      return;
    }
 
    StartSnow(bOnGround=TRUE)

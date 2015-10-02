@@ -39,6 +39,9 @@ classvars:
    viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP 
    viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_SAFELOGOFF
 
+   viWeatherZone = WEATHER_ZONE_KOC_OUTP
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 properties:
 
    prRoom = room_TradingPost

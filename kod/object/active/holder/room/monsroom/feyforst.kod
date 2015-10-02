@@ -33,6 +33,8 @@ classvars:
 
    viTerrain_type = TERRAIN_FOREST | TERRAIN_MYSTICAL
 
+   viWeatherZone = WEATHER_ZONE_VALE
+
 properties:
    
    piBaseLight = BASE_LIGHT

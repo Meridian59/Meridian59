@@ -33,6 +33,9 @@ classvars:
 
    viPermanent_Flags = ROOM_GUILD_PK_ONLY
 
+   viWeatherZone = WEATHER_ZONE_CV
+   viWeatherMask = WEATHER_MASK_MOUNTAINS
+
 properties:
 
    prMusic = castle1b_music

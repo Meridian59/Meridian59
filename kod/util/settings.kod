@@ -247,6 +247,9 @@ properties:
    % Jasper vault access
    pbJasperVault = FALSE
 
+   % chance for stormy weather
+   piStormChance = 25
+
 messages:
 
    Constructor()
@@ -645,6 +648,11 @@ messages:
    JasperVaultOpen()
    {
       return pbJasperVault;
+   }
+
+   GetStormChance()
+   {
+      return piStormChance;
    }
 
 end

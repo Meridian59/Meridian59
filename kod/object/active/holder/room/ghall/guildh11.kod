@@ -58,6 +58,8 @@ classvars:
    viTerrain_type = TERRAIN_FOREST | TERRAIN_GUILDHALL | TERRAIN_RESIDENCE
    viSeconds_til_close = 8
 
+   viWeatherZone = WEATHER_ZONE_MARION
+
 properties:
 
    prRoom = room_guildh11

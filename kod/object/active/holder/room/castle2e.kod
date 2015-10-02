@@ -32,6 +32,8 @@ classvars:
 
    viTerrain_type = TERRAIN_CASTLE | TERRAIN_SHOP
 
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
 properties:
 
    viPermanent_flags = ROOM_NO_COMBAT

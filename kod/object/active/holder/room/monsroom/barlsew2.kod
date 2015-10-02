@@ -35,7 +35,7 @@ classvars:
    viTeleport_col = 33
 
    viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
-   
+
 properties:
 
    prRoom = room_barlsew2

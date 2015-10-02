@@ -10,9 +10,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JasperRoom is Room
 
+constants:
+
+   include blakston.khd
+
 resources:
 
    JasperRoom_music = city03.mp3
+
+classvars:
+
+   viWeatherZone = WEATHER_ZONE_JASPER
 
 properties:
 

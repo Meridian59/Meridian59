@@ -121,6 +121,9 @@ classvars:
 
    viTerrain_type = TERRAIN_MOUNTAIN | TERRAIN_MYSTICAL
 
+   viWeatherZone = WEATHER_ZONE_CV
+   viWeatherMask = WEATHER_MASK_MOUNTAINS
+
 properties:
 
    prRoom = room_OutdoorsG9

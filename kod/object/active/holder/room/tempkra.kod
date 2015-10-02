@@ -74,6 +74,9 @@ classvars:
 
    viTerrain_type = TERRAIN_TEMPLE | TERRAIN_MOUNTAIN
 
+   viWeatherZone = WEATHER_ZONE_CV
+   viWeatherMask = WEATHER_MASK_MOUNTAINS
+
 properties:
 
    prRoom = room_templekra

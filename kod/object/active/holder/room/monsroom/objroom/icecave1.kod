@@ -41,6 +41,9 @@ classvars:
 
    viTerrain_type = TERRAIN_TUNDRA | TERRAIN_LAIR | TERRAIN_CAVES
 
+   viWeatherZone = WEATHER_ZONE_MARION
+   viWeatherMask = WEATHER_MASK_TUNDRA
+
 properties:
 
    prRoom = room_Icecave1

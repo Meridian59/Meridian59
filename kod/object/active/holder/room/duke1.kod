@@ -35,6 +35,8 @@ classvars:
    viTeleport_col = 27
    viTerrain_Type = TERRAIN_CASTLE | TERRAIN_FIELDS | TERRAIN_FOUNTAIN
 
+   viWeatherZone = WEATHER_ZONE_TOS
+
 properties:
 
    prRoom = room_Duke1

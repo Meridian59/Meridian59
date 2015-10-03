@@ -15,7 +15,7 @@ $min -= 1000000;
 mysql_free_result($result);
 */
 
-$result = mysql_query("SELECT player_money_total_amount amount, player_money_total_time time from meridian103.player_money_total where date(player_money_total_time) = date(now()) order by player_money_total_time ASC;");
+$result = mysql_query("SELECT player_money_total_amount amount, player_money_total_time time from meridian.player_money_total where date(player_money_total_time) = date(now()) order by player_money_total_time ASC;");
 while ($row = mysql_fetch_assoc($result)) {
     $data[] = array( $row['time'],$row['amount'] );
 }

@@ -6,7 +6,7 @@ $link = mysql_connect('localhost', 'root', '');
 $max = 0;
 $min = 0;
 
-$result = mysql_query("SELECT avg(player_damaged_applied) pvpdamagetaken, player_damaged_weapon weapon FROM meridian103.player_damaged
+$result = mysql_query("SELECT avg(player_damaged_applied) pvpdamagetaken, player_damaged_weapon weapon FROM meridian.player_damaged
 WHERE player_damaged_weapon != 'monster attack' AND
 player_damaged_attacker != 'sandstorm' AND
 player_damaged_attacker != 'Amulet of Shadows'

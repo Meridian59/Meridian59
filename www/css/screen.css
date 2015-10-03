@@ -1,0 +1,56 @@
+/* Override Bootswatch styles */
+body { overflow-y: scroll; }
+
+h5 { font-weight: bold; }
+
+.table-striped > tbody > tr:nth-of-type(odd) { background-color: #f1f1f1; }
+
+.panel-primary { border-color: #2780e3; }
+.panel-primary>.panel-heading { border-color: #2780e3; }
+
+.panel-info { border-color: #9954bb; }
+.panel-info > .panel-heading { border-color: #9954bb; }
+
+.panel-success { border-color: #3fb618; }
+.panel-success>.panel-heading { border-color: #3fb618; }
+
+.panel-warning { border-color: #ff7518; }
+.panel-warning > .panel-heading { border-color: #ff7518; }
+
+.badge.danger { background-color: #ff0039; }
+
+/* Useless Fun */
+div { transition: width 0.2s; }
+
+
+/* Helper Classes */
+.pull-right  { float: right; }
+.pull-left { float: left; }
+
+
+/* Top Menu */
+
+
+/* Side Menus */
+#player-results a span          { float: right; }
+
+
+/* Server Page */
+
+
+/* Player Page */
+#player-information .panel { display: none; }
+#player-information .panel-heading { cursor: pointer; }
+
+#player-information .panel-body { display: none; }
+#player-information .panel-body .death-wrapper { border: 1px solid #dddddd; } /*border-bottom: 0px;*/
+/*#player-information .panel-body .death-wrapper:last-child { border-bottom: 1px solid #dddddd; }*/
+
+#player-deaths h4 { cursor: pointer; font-weight: bold; margin: 0px; padding: 10px; }
+#player-deaths h4.pvp-death { background-color: #ff0039; color: #FFFFFF; }
+#player-deaths table { display: none; }
+#player-deaths table td { width: 33%; }
+
+/* Guild Page */
+#guild-information .panel { display: none; }
+#guild-information .panel-heading { cursor: pointer; }

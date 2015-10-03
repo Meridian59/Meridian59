@@ -770,7 +770,7 @@ messages:
 
    UserLogon(session_id = $)
    {
-      local i;
+      local i, sGuild, oBRoom, oHRoom;
 
       poSession = session_id;
       pbLogged_on = TRUE;
@@ -841,6 +841,44 @@ messages:
 
       % Update vigor drain time as 'now' so we drain vigor correctly
       piLastVigorDrainTime = GetTickCount();
+
+      oHRoom = $;
+      if piHomeroom <> $
+      {
+         oHRoom = Send(SYS,@FindRoomByNum,#num=abs(piHomeroom));
+      }
+
+       if piBound_Room <> $
+      {
+         oBRoom = Send(SYS,@FindRoomByNum,#num=abs(piBound_Room));
+      }
+      else
+      {
+         oBRoom = oHRoom;
+      }
+
+      if poGuild <> $
+      {  
+         sGuild = Send(poGuild,@GetName);
+
+         if Send(poGuild,@GetGuildHall) <> $
+         {
+            RecordStat(STAT_GUILD, sGuild, Send(Send(poGuild,@GetGuildMaster),@GetName), Send(Send(poGuild,@GetGuildHall),@GetName) );
+         }
+         else
+         {
+            RecordStat(STAT_GUILD, sGuild, Send(Send(poGuild,@GetGuildMaster),@GetName), system_blank_resource );
+         }
+      }
+      else
+      {
+         sGuild = system_blank_resource;
+      }
+
+      RecordStat(STAT_PLAYER, poSession, Send(self,@GetTrueName), Send(oHRoom,@GetName), Send(oBRoom,@GetName), 
+                  sGuild, Send(self,@GetBaseMaxHealth), piMax_mana, Send(self,@GetRawMight), 
+                  Send(self,@GetRawIntellect), Send(self,@GetRawMysticism), Send(self,@GetRawStamina), Send(self,@GetRawAgility), 
+                  Send(self,@GetRawAim));
 
       return;
    }
@@ -1682,6 +1720,8 @@ messages:
          AddPacket(1,BP_USERCOMMAND,1,UC_SEND_QUIT);
          SendPacket(poSession);
       }
+
+      RecordStat(STAT_PLAYERSUICIDE, poSession, Send(self,@GetTrueName));
 
       % Change the name to a unique placeholder one.
       ClearTempString();

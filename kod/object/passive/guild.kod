@@ -2716,6 +2716,8 @@ messages:
          Send(First(i),@ToCliRoomContents);
       }
 
+      RecordStat(STAT_GUILDDISBAND, Send(self,@GetName) );
+
       Send(SYS,@SystemRemoveFromChampionLists,#oldChamp=self);
       Send(SYS,@DefunctGuild,#what=self);
 

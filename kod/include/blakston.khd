@@ -3608,6 +3608,11 @@
    STAT_MONEYCREATED = 2
    STAT_PLAYERLOGIN = 3
    STAT_ASSESS_DAM = 4
+   STAT_PLAYERDEATH = 5
+   STAT_PLAYER = 6
+   STAT_PLAYERSUICIDE = 7
+   STAT_GUILD = 8
+   STAT_GUILDDISBAND = 9
    
    % Survival options
    OPT_NATURAL = 1    % Rooms with natural monster spawn only

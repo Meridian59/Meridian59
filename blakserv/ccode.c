@@ -4554,8 +4554,13 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {	
-	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7;
-	resource_node *r_who_damaged, *r_who_attacker, *r_weapon;
+	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7, stat8, stat9, stat10, stat11, stat12, stat13;
+	resource_node *r_who_damaged, *r_who_attacker, *r_weapon, *r_victim, *r_cause, *r_killer, *r_room, *r_attack,
+      *r_name, *r_home, *r_bind, *r_guild, *r_leader, *r_ghall;
+
+   session_node *session;
+   string_node *snod;
+   char *c_guild_name, *c_guild_hall;
 
 	// The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
@@ -4659,6 +4664,267 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				}
 			}
 			break;
+
+      case STAT_PLAYERDEATH:
+         if (num_normal_parms != 6)
+         {
+            bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_PLAYERDEATH");
+            break;
+         }
+
+         stat1 = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+         stat2 = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+         stat3 = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+         stat4 = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
+         stat5 = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
+
+         if (stat1.v.tag != TAG_RESOURCE ||
+            stat2.v.tag != TAG_RESOURCE ||
+            stat3.v.tag != TAG_RESOURCE ||
+            stat4.v.tag != TAG_RESOURCE ||
+            stat5.v.tag != TAG_INT)
+         {
+            bprintf("Wrong Type of Parameter in C_RecordStat() STAT_PLAYERDEATH");
+            break;
+         }
+         else
+         {
+            r_victim = GetResourceByID(stat1.v.data);
+            r_killer = GetResourceByID(stat2.v.data);
+            r_room = GetResourceByID(stat3.v.data);
+            r_attack = GetResourceByID(stat4.v.data);
+
+            if (!r_victim || !r_killer || !r_room || !r_attack ||
+               !r_victim->resource_val[0] || !r_killer->resource_val[0] || !r_room->resource_val[0] || !r_attack->resource_val[0])
+            {
+               bprintf("NULL string in C_RecordStat() for STAT_PLAYERDEATH");
+            }
+            else
+            {
+
+               MySQLRecordPlayerDeath(
+                  r_victim->resource_val[0],
+                  r_killer->resource_val[0],
+                  r_room->resource_val[0],
+                  r_attack->resource_val[0],
+                  stat5.v.data);
+            }
+         }
+         break;
+
+      case STAT_PLAYER:
+         if (num_normal_parms != 14)
+         {
+            bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_PLAYER");
+            break;
+         }
+
+         stat1 = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+         stat2 = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+         stat3 = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+         stat4 = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
+         stat5 = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
+         stat6 = RetrieveValue(object_id, local_vars, normal_parm_array[6].type, normal_parm_array[6].value);
+         stat7 = RetrieveValue(object_id, local_vars, normal_parm_array[7].type, normal_parm_array[7].value);
+         stat8 = RetrieveValue(object_id, local_vars, normal_parm_array[8].type, normal_parm_array[8].value);
+         stat9 = RetrieveValue(object_id, local_vars, normal_parm_array[9].type, normal_parm_array[9].value);
+         stat10 = RetrieveValue(object_id, local_vars, normal_parm_array[10].type, normal_parm_array[10].value);
+         stat11 = RetrieveValue(object_id, local_vars, normal_parm_array[11].type, normal_parm_array[11].value);
+         stat12 = RetrieveValue(object_id, local_vars, normal_parm_array[12].type, normal_parm_array[12].value);
+         stat13 = RetrieveValue(object_id, local_vars, normal_parm_array[13].type, normal_parm_array[13].value);
+
+         if (stat1.v.tag != TAG_SESSION)
+         {
+            bprintf("C_RecordStat can't use non-session %i,%i\n", stat1.v.tag, stat1.v.data);
+            return NIL;
+         }
+
+         if (stat2.v.tag != TAG_RESOURCE ||
+            stat3.v.tag != TAG_RESOURCE ||
+            stat4.v.tag != TAG_RESOURCE ||
+            stat6.v.tag != TAG_INT ||
+            stat7.v.tag != TAG_INT ||
+            stat8.v.tag != TAG_INT ||
+            stat9.v.tag != TAG_INT ||
+            stat10.v.tag != TAG_INT ||
+            stat11.v.tag != TAG_INT ||
+            stat12.v.tag != TAG_INT ||
+            stat13.v.tag != TAG_INT)
+         {
+
+            bprintf("Wrong Type of Parameter in C_RecordStat() STAT_PLAYER");
+            break;
+         }
+         else
+         {
+            if (stat5.v.tag != TAG_STRING)
+            {
+               snod = GetTempString();
+            }
+            else
+            {
+               snod = GetStringByID(stat5.v.data);
+            }
+
+            if (snod == NULL)
+            {
+               bprintf("C_RecordStat guild string is null");
+               break;
+            }
+
+            session = GetSessionByID(stat1.v.data);
+            r_name = GetResourceByID(stat2.v.data);
+            r_home = GetResourceByID(stat3.v.data);
+            r_bind = GetResourceByID(stat4.v.data);
+            c_guild_name = snod->data;
+
+            if (!session->account->account_id || !r_name || !r_home || !r_bind || !c_guild_name ||
+               !r_name->resource_val[0] || !r_home->resource_val[0] || !r_bind->resource_val[0])
+            {
+               bprintf("NULL string in C_RecordStat() for STAT_PLAYER");
+            }
+            else
+            {
+
+               MySQLRecordPlayer(
+                  session->account->account_id,
+                  r_name->resource_val[0],
+                  r_home->resource_val[0],
+                  r_bind->resource_val[0],
+                  c_guild_name,
+                  stat6.v.data,
+                  stat7.v.data,
+                  stat8.v.data,
+                  stat9.v.data,
+                  stat10.v.data,
+                  stat11.v.data,
+                  stat12.v.data,
+                  stat13.v.data);
+            }
+         }
+         break;
+
+      case STAT_PLAYERSUICIDE:
+         if (num_normal_parms != 3)
+         {
+            bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_PLAYERSUICIDE");
+            break;
+         }
+
+         stat1 = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+         stat2 = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+
+         if (stat1.v.tag != TAG_SESSION)
+         {
+            bprintf("C_RecordStat STAT_PLAYERSUICIDE can't use non-session %i,%i\n", stat1.v.tag, stat1.v.data);
+            return NIL;
+         }
+
+         if (stat2.v.tag != TAG_RESOURCE)
+         {
+            bprintf("Wrong Type of Parameter in C_RecordStat() STAT_PLAYERSUICIDE");
+            break;
+         }
+
+         session = GetSessionByID(stat1.v.data);
+         r_name = GetResourceByID(stat2.v.data);
+
+         if (!session->account->account_id || !r_name || !r_name->resource_val[0])
+         {
+            bprintf("NULL string in C_RecordStat() for STAT_PLAYERSUICIDE");
+         }
+         else
+         {
+
+            MySQLRecordPlayerSuicide(session->account->account_id, r_name->resource_val[0]);
+         }
+
+         break;
+
+      case STAT_GUILD:
+         if (num_normal_parms != 4)
+         {
+            bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_GUILD");
+            break;
+         }
+
+         stat1 = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+         stat2 = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+         stat3 = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+
+         if (stat1.v.tag != TAG_STRING ||
+            stat2.v.tag != TAG_RESOURCE ||
+            stat3.v.tag != TAG_RESOURCE)
+         {
+            bprintf("Wrong Type of Parameter in C_RecordStat() STAT_GUILD");
+            return NIL;
+         }
+
+         snod = GetStringByID(stat1.v.data);
+         if (snod == NULL)
+         {
+            bprintf("C_RecordStat STAT_GUILD, guild string is null");
+            break;
+         }
+
+
+         c_guild_name = snod->data;
+         r_leader = GetResourceByID(stat2.v.data);
+         r_ghall = GetResourceByID(stat3.v.data);
+
+         if (!r_ghall || !r_ghall->resource_val[0])
+         {
+            snod = GetTempString();
+            c_guild_hall = snod->data;
+         }
+         else
+         {
+            c_guild_hall = r_ghall->resource_val[0];
+         }
+
+         if (!r_leader ||
+            !r_leader->resource_val[0])
+         {
+            bprintf("NULL string in C_RecordStat() for STAT_GUILD");
+         }
+         else
+         {
+
+            MySQLRecordGuild(
+               c_guild_name,
+               r_leader->resource_val[0],
+               c_guild_hall);
+         }
+
+         break;
+
+      case STAT_GUILDDISBAND:
+         if (num_normal_parms != 2)
+         {
+            bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_GUILDDISBAND");
+            break;
+         }
+
+         stat1 = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+
+         if (stat1.v.tag != TAG_STRING)
+         {
+            bprintf("Wrong Type of Parameter in C_RecordStat() STAT_GUILDDISBAND");
+            return NIL;
+         }
+
+         snod = GetStringByID(stat1.v.data);
+         if (snod == NULL)
+         {
+            bprintf("C_RecordStat STAT_GUILDDISBAND, guild name is null");
+            break;
+         }
+
+         c_guild_name = snod->data;
+
+         MySQLRecordGuildDisband(c_guild_name);
+
+         break;
 
 		default:
 			bprintf("ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);

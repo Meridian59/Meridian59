@@ -71,6 +71,7 @@ resources:
    system_admin_message = "%q"
    system_blank_resource = ""
    system_space_resource = " "
+   system_unknown_resource = "Unknown"
 
    % Templates for sending lots of description parts.
    system_rsc_template_1 = "%r"
@@ -1709,11 +1710,11 @@ messages:
       return $;
    }
 
-   UserKilled(what = $,killer = $)
+   UserKilled(what = $,killer = $, oRoom = $,stroke_obj = $)
    {
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
-            war_string1, war_string2, oBook, oMaster;
+            war_string1, war_string2, oBook, oMaster, oKillingBlow;
 
       % Notify the event engine
       Send(EVENTENGINE_OBJECT,@UserKilled,#who=what,#killer=killer);
@@ -1723,6 +1724,17 @@ messages:
          OR IsClass(killer,&Guest)
       {
          return;
+      }
+
+      oKillingBlow = $;
+
+      if stroke_obj <> $ AND Send(stroke_obj,@GetName) <> $
+      {
+         oKillingBlow = Send(stroke_obj,@GetName);
+      }
+      else
+      {
+          oKillingBlow = system_unknown_resource;
       }
 
       if isClass(what,&User) AND isClass(killer,&User)
@@ -1740,7 +1752,14 @@ messages:
          {
             Send(poNecromancerBalance,@IncrementHKCounter);
          }
+
+         %pvp flag set to TRUE
+         RecordStat(STAT_PLAYERDEATH, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), oKillingBlow, TRUE);	 
       }
+      else
+	   {
+		   RecordStat(STAT_PLAYERDEATH,Send(what,@GetTrueName), Send(killer,@GetName), Send(oRoom,@GetName), oKillingBlow, FALSE);
+	   }
 
       Send(Send(self,@FindRoomByNum,#num=RID_TOS_GRAVEYARD),@PlayerKilled,
            #who=what,#killer=killer);

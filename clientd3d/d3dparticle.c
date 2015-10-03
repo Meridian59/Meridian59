@@ -16,8 +16,17 @@ void D3DParticleDestroy(particle *pParticle);
 
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
-	list_destroy(pParticleSystem->emitterList);
-	pParticleSystem->emitterList = NULL;
+   list_type list;
+   emitter *pEmitter;
+
+   for (list = pParticleSystem->emitterList; list != NULL; list = list->next)
+   {
+      pEmitter = (emitter *)list->data;
+      if (pEmitter->particles)
+         SafeFree(pEmitter->particles);
+   }
+   list_destroy(pParticleSystem->emitterList);
+   pParticleSystem->emitterList = NULL;
 }
 
 void D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
@@ -858,7 +867,7 @@ void FireworksInit(void)
       // Normal height.
       D3DParticleEmitterInit(&gParticleSystemFireworks,
          4096.0f, 0.0f, FIREWORKS_EMITTER_HEIGHT,
-         0.0f, 0.0f, -2.0f,
+         1.0f, 1.0f, -1.0f,
          FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
          FIREWORKS_EMITTER_ENERGY, 3,
          0, 0, 0,
@@ -866,7 +875,7 @@ void FireworksInit(void)
          0, 0, MAX_FIREWORK_PARTICLES);
       D3DParticleEmitterInit(&gParticleSystemFireworks,
          4096.0f, 0.0f, FIREWORKS_EMITTER_HEIGHT,
-         0.0f, 0.0f, -2.0f,
+         1.0f, 1.0f, -1.0f,
          FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
          FIREWORKS_EMITTER_ENERGY, 6,
          0, 0, 0,
@@ -874,7 +883,7 @@ void FireworksInit(void)
          0, 0, MAX_FIREWORK_PARTICLES);
       D3DParticleEmitterInit(&gParticleSystemFireworks,
          0, 4096.0f, FIREWORKS_EMITTER_HEIGHT,
-         0.0f, 0.0f, -2.0f,
+         1.0f, 1.0f, -1.0f,
          FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
          FIREWORKS_EMITTER_ENERGY, 9,
          0, 0, 0,
@@ -882,7 +891,7 @@ void FireworksInit(void)
          0, 0, MAX_FIREWORK_PARTICLES);
       D3DParticleEmitterInit(&gParticleSystemFireworks,
          0, 4096.0f, FIREWORKS_EMITTER_HEIGHT,
-         0.0f, 0.0f, -3.0f,
+         1.0f, 1.0f, -1.0f,
          FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
          FIREWORKS_EMITTER_ENERGY, 12,
          0, 0, 0,
@@ -892,7 +901,7 @@ void FireworksInit(void)
    for (i = 0; i < 3; ++i)
       D3DParticleEmitterInit(&gParticleSystemFireworks,
          4096.0f, 4096.0f, FIREWORKS_EMITTER_HEIGHT * 2,
-         0.0f, 0.0f, -1.0f,
+         1.0f, 1.0f, -1.0f,
          FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
          FIREWORKS_EMITTER_ENERGY, 2,
          0, 0, 0,

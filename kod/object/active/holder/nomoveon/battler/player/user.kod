@@ -857,6 +857,8 @@ messages:
          oBRoom = oHRoom;
       }
 
+      sGuild = $;
+
       if poGuild <> $
       {  
          sGuild = Send(poGuild,@GetName);
@@ -869,10 +871,6 @@ messages:
          {
             RecordStat(STAT_GUILD, sGuild, Send(Send(poGuild,@GetGuildMaster),@GetName), system_blank_resource );
          }
-      }
-      else
-      {
-         sGuild = system_blank_resource;
       }
 
       RecordStat(STAT_PLAYER, poSession, Send(self,@GetTrueName), Send(oHRoom,@GetName), Send(oBRoom,@GetName), 

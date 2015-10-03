@@ -4759,24 +4759,23 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
          {
             if (stat5.v.tag != TAG_STRING)
             {
-               snod = GetTempString();
+               c_guild_name = "";
             }
             else
             {
                snod = GetStringByID(stat5.v.data);
-            }
-
-            if (snod == NULL)
-            {
-               bprintf("C_RecordStat guild string is null");
-               break;
+               if (snod == NULL)
+               {
+                  bprintf("C_RecordStat guild string is null");
+                  break;
+               }
+               c_guild_name = snod->data;
             }
 
             session = GetSessionByID(stat1.v.data);
             r_name = GetResourceByID(stat2.v.data);
             r_home = GetResourceByID(stat3.v.data);
             r_bind = GetResourceByID(stat4.v.data);
-            c_guild_name = snod->data;
 
             if (!session->account->account_id || !r_name || !r_home || !r_bind || !c_guild_name ||
                !r_name->resource_val[0] || !r_home->resource_val[0] || !r_bind->resource_val[0])

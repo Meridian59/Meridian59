@@ -4873,8 +4873,7 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 
          if (!r_ghall || !r_ghall->resource_val[0])
          {
-            snod = GetTempString();
-            c_guild_hall = snod->data;
+            c_guild_hall = "";
          }
          else
          {

@@ -1070,28 +1070,28 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateFluid(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.raining && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateFluid(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.snowing && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemSnow, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateFluid(&gParticleSystemSnow, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.fireworks)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DFireworksSystemUpdate(&gParticleSystemFireworks, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateBurst(&gParticleSystemFireworks, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		timeParticles = timeGetTime() - timeParticles;
 	}

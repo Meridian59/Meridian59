@@ -8,7 +8,6 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	512
 #define SANDSTORM_R		226
 #define SANDSTORM_G		153
 #define SANDSTORM_B		6
@@ -24,7 +23,6 @@
 #define SNOW_B			255
 #define SNOW_A			220
 
-#define MAX_FIREWORK_PARTICLES	256
 #define FIREWORKS_R			((int)rand() % 256)
 #define FIREWORKS_G			((int)rand() % 256)
 #define FIREWORKS_B			((int)rand() % 256)
@@ -38,8 +36,6 @@ typedef struct particle
 	custom_xyz	velocity;
 	custom_xyz	rotation;
 	custom_bgra	bgra;
-	float		size;
-	float		weight;
 } particle;
 
 typedef struct emitter
@@ -52,17 +48,21 @@ typedef struct emitter
 	int			timerBase;
 	int			randomPos;
 	int			randomRot;
+   int         emitterFlags;
 	custom_xyz	pos;
 	custom_xyz	delta;
 	custom_xyz	velocity;
 	custom_xyz	rotation;
 	custom_bgra	bgra;
 	particle	*particles;
-	Bool		bRandomizeXY;
-	Bool		bRandomizeZ;
-	Bool		bGroundDestroy;
-	Bool		bWeatherEffect;
 } emitter;
+
+#define PS_NO_FLAGS        0
+#define PS_RANDOM_XY       0x0001
+#define PS_RANDOM_Z        0x0002
+#define PS_GROUND_DESTROY  0x0004
+#define PS_WEATHER_EFFECT  0x0008
+#define PS_GRAVITY         0x0010
 
 typedef struct particle_system
 {
@@ -72,16 +72,15 @@ typedef struct particle_system
 
 void	D3DParticleSystemReset(particle_system *pParticleSystem);
 void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
-							float velX, float velY, float velZ, unsigned char b, unsigned char g,
-							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, Bool bRandomizeXY, Bool bRandomizeZ,
-							int randomPos, int randomRot, Bool bGroundDestroy, Bool bWeatherEffect,
-                     int maxParticles);
+                           float velX, float velY, float velZ, unsigned char b, unsigned char g,
+                           unsigned char r, unsigned char a, int energy, int timerBase,
+                           float rotX, float rotY, float rotZ, int randomPos, int randomRot,
+                           int maxParticles, int emitterFlags);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 //void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
-void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
+void	D3DParticleSystemUpdateFluid(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem, Draw3DParams *params);
-void	D3DFireworksSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
+void	D3DParticleSystemUpdateBurst(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem, Draw3DParams *params);
 
 #endif

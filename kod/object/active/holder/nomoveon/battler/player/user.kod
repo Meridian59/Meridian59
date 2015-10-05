@@ -539,6 +539,9 @@ properties:
    % What order do you want your inventory sorted in?
    plClassOrderPreferences = $
 
+   % keep track of how much this player triggers flood protection
+   piFloodCount = 0
+
 messages:
 
    Constructor(name = $,icon = $)
@@ -1139,6 +1142,8 @@ messages:
          if piPacketsPerSecond > INCOMING_PACKET_THROTTLE
             AND NOT Send(self,@PlayerIsImmortal)
          {
+            piFloodCount++;
+
             % Don't go on if marked as spammer
             return;
          }

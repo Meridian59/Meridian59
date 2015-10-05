@@ -2744,6 +2744,13 @@ messages:
       return piBorn_year;
    }
 
+   SetBirthYear(year=0)
+   {
+      piBorn_Year = year;
+
+      return;
+   }
+
    ResetCharacter()
    "Setup default stuff"
    {

@@ -5680,6 +5680,8 @@ messages:
       {
          Send(shrunken,@DamageTaken,#what=what,#amount=damage/100);
       }
+      
+      Send(self,@AddHurtMeRecently,#who=what,#amount=damage);
 
       return damage;
    }

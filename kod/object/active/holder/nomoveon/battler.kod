@@ -192,6 +192,13 @@ properties:
    
    % Reputation hashtable for monster territory/influence system
    phReputation = $
+
+   % Keeps track of who damaged this battler recently, and for how much.
+   % Used to determine who logged / killed this monster or player.
+   % Form [damager, amount, timer]
+   plHurtMeRecently = $
+   % 20 seconds default for players, 60 for monsters
+   piHurtMeTime = 20000
    
 messages:
 
@@ -243,6 +250,21 @@ messages:
             Send(i,@Delete);
          }
          plApparitionList = $;
+      }
+      
+      if plHurtMeRecently <> $
+      {
+         foreach i in plHurtMeRecently
+         {
+            if IsTimer(Nth(i,3))
+            {
+               DeleteTimer(Nth(i,3));
+            }
+            SetNth(i,1,$);
+            SetNth(i,2,$);
+            SetNth(i,3,$);
+            plHurtMeRecently = DelListElem(plHurtMeRecently,i);
+         }
       }
 
       propagate;
@@ -1770,6 +1792,68 @@ messages:
          AddTableEntry(phReputation,faction,value);
       }
       
+      return;
+   }
+   
+   GetHurtMeRecentlyAmount(who=$)
+   {
+      local i;
+      
+      foreach i in plHurtMeRecently
+      {
+         if Nth(i,1) = who
+         {
+            return Nth(i,2);
+         }
+      }
+
+      return 0;
+   }
+   
+   AddHurtMeRecently(who=$,amount=0)
+   {
+      local i;
+      
+      foreach i in plHurtMeRecently
+      {
+         if Nth(i,1) = who
+         {
+            if Nth(i,2) + amount > 100000
+            {
+               % Somebody is doing something stupid. Let's return this.
+               % Catch for players botting attacks on alts, shenanigans.
+               return;
+            }
+            SetNth(i,2,Nth(i,2)+amount);
+            DeleteTimer(Nth(i,3));
+            SetNth(i,3,CreateTimer(self,@RemoveHurtMeRecently,piHurtMeTime));
+            return;
+         }
+      }
+      
+      plHurtMeRecently = Cons([who,amount,CreateTimer(self,
+                               @RemoveHurtMeRecently,piHurtMeTime)],
+                               plHurtMeRecently);
+      
+      return;
+   }
+
+   RemoveHurtMeRecently(timer=$)
+   {
+      local i;
+      
+      foreach i in plHurtMeRecently
+      {
+         if Nth(i,3) = timer
+         {
+            SetNth(i,1,$);
+            SetNth(i,2,$);
+            SetNth(i,3,$);
+            plHurtMeRecently = DelListElem(plHurtMeRecently,i);
+            return;
+         }
+      }
+
       return;
    }
    

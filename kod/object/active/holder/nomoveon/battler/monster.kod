@@ -2641,17 +2641,25 @@ messages:
       return;
    }
 
-   MoveTowardsCoords(iRow=$, iCol=$, iFineRow=FINENESS_HALF, iFineCol=FINENESS_HALF, face_target=FALSE,
-                     face_away=FALSE, to_master=FALSE)
+   MoveTowardsCoords(iRow=$, iCol=$, iFineRow=FINENESS_HALF, iFineCol=FINENESS_HALF,
+                     face_target=FALSE, face_away=FALSE, to_master=FALSE)
    {
-      local iState;
+      local iState, iMoveFlags;
 
       if (iRow = $ or iCol = $)
       {
          return;
       }
 
-      iState = $;
+      % Mobs that can move outside the BSP tree set this field which is then
+      % combined with the state flags and sent to GetStepTowardsBSP. These
+      % moves aren't checked against room geometry.
+      iMoveFlags = 0;
+      if (piBehavior & AI_MOVE_WALKTHROUGH_WALLS)
+      {
+         iMoveFlags = iMoveFlags | MSTATE_MOVE_OUTSIDE_BSP;
+      }
+
       % query where to step next
       % note: these need some persistent info across
       % calls which are stored in piState (flags from old KOD code)
@@ -2659,7 +2667,7 @@ messages:
                 Send(poOwner, @GetRoomData),
                 piRow, piCol, piFine_row, piFine_col,
                 *iRow, *iCol, *iFineRow, *iFineCol,
-                piState);
+                piState | iMoveFlags);
 
       if iState <> $
       {

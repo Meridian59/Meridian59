@@ -56,6 +56,9 @@
 #define ESTATE_AVOIDING  0x00004000
 #define ESTATE_CLOCKWISE 0x00008000
 
+// from blakston.khd, used for monster that can move outside BSP tree
+#define MSTATE_MOVE_OUTSIDE_BSP 0x00100000
+
 // query flags for BSPGetLocationInfo
 #define LIQ_GET_SECTORINFO           0x00000001
 #define LIQ_CHECK_THINGSBOX          0x00000002
@@ -216,7 +219,7 @@ typedef struct room_type
 /*                                          METHODS                                                           */
 /**************************************************************************************************************/
 bool  BSPGetHeight(room_type* Room, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf);
-bool  BSPCanMoveInRoom(room_type* Room, V2* S, V2* E);
+bool  BSPCanMoveInRoom(room_type* Room, V2* S, V2* E, bool moveOutsideBSP);
 bool  BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void  BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void  BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);

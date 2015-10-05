@@ -2552,6 +2552,7 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	val_type ret_val, room_val;
 	val_type row_source, col_source, finerow_source, finecol_source;
 	val_type row_dest, col_dest, finerow_dest, finecol_dest;
+	val_type move_outside_bsp;
 	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
@@ -2576,6 +2577,8 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 		normal_parm_array[7].value);
 	finecol_dest = RetrieveValue(object_id, local_vars, normal_parm_array[8].type,
 		normal_parm_array[8].value);
+	move_outside_bsp = RetrieveValue(object_id, local_vars, normal_parm_array[9].type,
+		normal_parm_array[9].value);
 
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
@@ -2640,6 +2643,13 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
+	if (move_outside_bsp.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomBSP move outside BSP bool can't use non int %i,%i\n",
+			move_outside_bsp.v.tag, move_outside_bsp.v.data);
+		return ret_val.int_val;
+	}
+
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
@@ -2655,7 +2665,7 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
 	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
 
-	ret_val.v.data = BSPCanMoveInRoom(&r->data, &s, &e);
+	ret_val.v.data = BSPCanMoveInRoom(&r->data, &s, &e, (move_outside_bsp.v.data != 0));
 
 #if DEBUGMOVE
 	//dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", ret_val.v.data, r->data.roomdata_id, s.X, s.Y, e.X, e.Y);

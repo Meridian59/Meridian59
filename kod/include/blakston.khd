@@ -1602,6 +1602,11 @@
    VSTATE_INVALID_ATTACK   = 0x20000
    VSTATE_VALIDITY_MASK    = 0x0FFFF
 
+   % Flag passed to BSP C calls to signify the monster
+   % can move outside the BSP tree. Mobs that can do this
+   % have the AI_MOVE_WALKTHROUGH_WALLS AI flag.
+   MSTATE_MOVE_OUTSIDE_BSP = 0x100000
+
    % brain identification numbers
    BRAIN_ORIGINAL          = 1
    BRAIN_REVENANT          = 2

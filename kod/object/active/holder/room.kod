@@ -2408,7 +2408,7 @@ messages:
          }
 
          if NOT CanMoveInRoomBSP(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,
-                     new_col,new_finerow,new_finecol,bMoveOffBSP)
+                     new_col,new_finerow,new_finecol,what,bMoveOffBSP)
          {
             return FALSE;
          }

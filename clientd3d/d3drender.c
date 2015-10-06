@@ -1034,37 +1034,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_particles)
 	{
       timeParticles = timeGetTime();
-      list_type	list;
-		emitter		*pEmitter;
 
-		for (list = gParticleSystemSand.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
+      // Updates emitter positions for all particle systems.
+      D3DParticleSystemSetPlayerPos(playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
 
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
-		for (list = gParticleSystemRain.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
-
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
-		for (list = gParticleSystemSnow.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
-
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
-		for (list = gParticleSystemFireworks.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
-
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
 		if (effects.sand)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -1389,8 +1362,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		{		
 			D3DRenderShutDown();
 			gFrame = 0;
+         gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 			D3DRenderInit(hMain);
-			ResetUserData();
+			D3DParticlesInit(false);
 		}
 	}
 	

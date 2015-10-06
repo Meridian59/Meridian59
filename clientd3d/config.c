@@ -67,6 +67,7 @@ static char INIBounce[]      = "Bounce";
 static char INIToolbar[]     = "Toolbar";
 static char INIPainFX[]      = "Pain";
 static char INIWeatherFX[]   = "Weather";
+static char INIParticleNum[] = "Particles";
 static char INIOldProfane[]  = "AntiProfane";
 static char INIIgnoreProfane[]= "IgnoreProfane";
 static char INIAntiProfane[] = "ProfanityFilter";
@@ -232,6 +233,7 @@ void ConfigLoad(void)
    config.toolbar      = GetConfigInt(interface_section, INIToolbar, True, ini_file);
    config.pain         = GetConfigInt(interface_section, INIPainFX, True, ini_file);
    config.weather      = GetConfigInt(interface_section, INIWeatherFX, True, ini_file);
+   config.particles    = GetConfigInt(interface_section, INIParticleNum, 100, ini_file);
    config.antiprofane  = GetConfigInt(interface_section, INIAntiProfane, True, ini_file);
    config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, False, ini_file);
    config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, False, ini_file);
@@ -338,6 +340,7 @@ void ConfigSave(void)
 
    WriteConfigInt(interface_section, INIPainFX, config.pain, ini_file);
    WriteConfigInt(interface_section, INIWeatherFX, config.weather, ini_file);
+   WriteConfigInt(interface_section, INIParticleNum, config.particles, ini_file);
    WriteConfigInt(interface_section, INIAntiProfane, config.antiprofane, ini_file);
    WriteConfigInt(interface_section, INIIgnoreProfane, config.ignoreprofane, ini_file);
    WriteConfigInt(interface_section, INIExtraProfane, config.extraprofane, ini_file);

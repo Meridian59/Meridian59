@@ -14,6 +14,8 @@ particle_system gParticleSystemRain;
 particle_system gParticleSystemSnow;
 particle_system gParticleSystemFireworks;
 
+extern player_info player;
+
 void D3DParticleInitPosSpeed(emitter *pEmitter, particle *pParticle);
 void D3DParticleInitPosSpeedSphere(emitter *pEmitter, particle *pParticle);
 void D3DParticleInitRotation(emitter *pEmitter, particle *pParticle);
@@ -24,6 +26,26 @@ void D3DParticleRandomizeEmitterPosition(emitter *pEmitter);
 
 Bool D3DParticleIsAlive(emitter *pEmitter, particle *pParticle);
 void D3DParticleDestroy(particle *pParticle);
+
+void SandstormInit(void);
+void RainInit(void);
+void SnowInit(void);
+void FireworksInit(void);
+
+/*
+ * D3DParticlesReset: Initializes all particle systems.
+ */
+void D3DParticlesInit(bool reset)
+{
+   int height = PlayerGetHeight();
+
+   SandstormInit();
+   RainInit();
+   SnowInit();
+   FireworksInit();
+   if (reset)
+      D3DParticleSystemSetPlayerPos((float)player.x, (float)player.y, (float)height);
+}
 
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
@@ -36,6 +58,7 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
       if (pEmitter->particles)
          SafeFree(pEmitter->particles);
    }
+   // list_destroy frees the emitters.
    list_destroy(pParticleSystem->emitterList);
    pParticleSystem->emitterList = NULL;
 }
@@ -55,10 +78,15 @@ void D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float 
 
    if (pEmitter == NULL)
       return;
+   // User can choose how many particles to display.
+   pEmitter->maxParticles = (maxParticles * config.particles) / 100;
+   if (pEmitter->maxParticles <= 0)
+      return;
 
-   pEmitter->maxParticles = maxParticles;
-   pEmitter->particles = (particle *)SafeMalloc(maxParticles * sizeof(particle));
-   memset(pEmitter->particles, 0, maxParticles * sizeof(particle));
+   // Allocate particle mem and set to 0.
+   pEmitter->particles = (particle *)SafeMalloc(pEmitter->maxParticles * sizeof(particle));
+   memset(pEmitter->particles, 0, pEmitter->maxParticles * sizeof(particle));
+
    pEmitter->numParticles = 0;
    pEmitter->numAlive = 0;
    pEmitter->emitterFlags = emitterFlags;
@@ -87,6 +115,9 @@ void D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float 
       list_add_item(pParticleSystem->emitterList, pEmitter);
 }
 
+/*
+ * D3DParticleEmitterUpdate: Called when the player moves, to update emitter positions.
+ */
 void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
 {
    pEmitter->pos.x += posX;
@@ -95,8 +126,48 @@ void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float p
 }
 
 /*
+ * D3DParticleEmittersSetPlayerPos: Called to set emitter initial pos from player pos.
+ */
+void D3DParticleSystemSetPlayerPos(float posX, float posY, float posZ)
+{
+   list_type list;
+   emitter *pEmitter;
+
+   for (list = gParticleSystemSand.emitterList; list != NULL; list = list->next)
+   {
+      pEmitter = (emitter *)list->data;
+
+      if (pEmitter)
+         D3DParticleEmitterUpdate(pEmitter, posX, posY, posZ);
+   }
+   for (list = gParticleSystemRain.emitterList; list != NULL; list = list->next)
+   {
+      pEmitter = (emitter *)list->data;
+
+      if (pEmitter)
+         D3DParticleEmitterUpdate(pEmitter, posX, posY, posZ);
+   }
+   for (list = gParticleSystemSnow.emitterList; list != NULL; list = list->next)
+   {
+      pEmitter = (emitter *)list->data;
+
+      if (pEmitter)
+         D3DParticleEmitterUpdate(pEmitter, posX, posY, posZ);
+   }
+   for (list = gParticleSystemFireworks.emitterList; list != NULL; list = list->next)
+   {
+      pEmitter = (emitter *)list->data;
+
+      if (pEmitter)
+         D3DParticleEmitterUpdate(pEmitter, posX, posY, posZ);
+   }
+}
+
+/*
  * D3DParticleIsAlive: Decrements particle energy, checks if particle
- *                     is alive and can be displayed.
+ *                     is alive and can be displayed. Doesn't check if
+ *                     particle is behind the player, because position
+ *                     and velocity still need to be updated for these.
  */
 Bool D3DParticleIsAlive(emitter *pEmitter, particle *pParticle)
 {
@@ -311,7 +382,6 @@ void D3DParticleInitPosSpeed(emitter *pEmitter, particle *pParticle)
    pParticle->velocity.x = pEmitter->velocity.x;
    pParticle->velocity.y = pEmitter->velocity.y;
    pParticle->velocity.z = pEmitter->velocity.z;
-
 
    // Weather effect randomizing.
    if (pEmitter->emitterFlags & PS_WEATHER_EFFECT)

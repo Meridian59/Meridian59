@@ -18,6 +18,10 @@ extern player_info player;
 
 void D3DParticleInitPosSpeed(emitter *pEmitter, particle *pParticle);
 void D3DParticleInitPosSpeedSphere(emitter *pEmitter, particle *pParticle);
+void D3DParticleInitPosSpeedRandomCircle(emitter *pEmitter, particle *pParticle);
+void D3DParticleInitPosSpeedCircleX(emitter *pEmitter, particle *pParticle);
+void D3DParticleInitPosSpeedCircleY(emitter *pEmitter, particle *pParticle);
+void D3DParticleInitPosSpeedCircleZ(emitter *pEmitter, particle *pParticle);
 void D3DParticleInitRotation(emitter *pEmitter, particle *pParticle);
 void D3DParticleInitColorEnergy(emitter *pEmitter, particle *pParticle);
 void D3DParticleAddToRenderer(d3d_render_pool_new *pPool, particle *pParticle);
@@ -289,9 +293,10 @@ void D3DParticleSystemUpdateBurst(particle_system *pParticleSystem, d3d_render_p
             if (!D3DParticleIsAlive(pEmitter, pParticle))
                continue;
 
+            // TODO: standardize particle sound effects, for now hardcoded fireworks sound.
             if (!playedSound && curParticle == 0
                && pParticle->energy == pEmitter->energy - 1
-               && (int)rand() % 1)
+               && rand() % 2)
             {
                SoundPlayFile("firework.wav", 0, pParticle->pos.x, pParticle->pos.y);
                playedSound = true;
@@ -356,27 +361,27 @@ void D3DParticleSystemUpdateBurst(particle_system *pParticleSystem, d3d_render_p
 */
 void D3DParticleInitPosSpeed(emitter *pEmitter, particle *pParticle)
 {
+   int sign = 1;
+
    pParticle->pos.x = pEmitter->pos.x;
    pParticle->pos.y = pEmitter->pos.y;
    pParticle->pos.z = pEmitter->pos.z;
 
    if (pEmitter->emitterFlags & PS_RANDOM_XY)
    {
-      int sign = 1;
-
       if (rand() & 1)
          sign = -sign;
       pParticle->pos.x += sign * ((int)rand() % pEmitter->randomPos);
       if (rand() & 1)
          sign = -sign;
       pParticle->pos.y += sign * ((int)rand() % pEmitter->randomPos);
+   }
 
-      if (pEmitter->emitterFlags & PS_RANDOM_Z)
-      {
-         if (rand() & 1)
-            sign = -sign;
-         pParticle->pos.z += sign * ((int)rand() % pEmitter->randomPos);
-      }
+   if (pEmitter->emitterFlags & PS_RANDOM_Z)
+   {
+      if (rand() & 1)
+         sign = -sign;
+      pParticle->pos.z += sign * ((int)rand() % pEmitter->randomPos);
    }
 
    pParticle->velocity.x = pEmitter->velocity.x;
@@ -404,14 +409,13 @@ void D3DParticleInitPosSpeed(emitter *pEmitter, particle *pParticle)
  */
 void D3DParticleInitPosSpeedSphere(emitter *pEmitter, particle *pParticle)
 {
-   float initdist = (float)(rand() % 3);
    float angle = (float)(rand() % 360);
-   float speed = (rand() % 6);
+   float speed = (rand() % 9);
 
    pParticle->pos.x = pEmitter->pos.x;
    pParticle->pos.y = pEmitter->pos.y;
    pParticle->pos.z = pEmitter->pos.z;
-   pParticle->velocity.z = (float)(rand() % 7 - 3);
+   pParticle->velocity.z = (float)(rand() % 11 - 5);
 
    if (angle < 90)
    {
@@ -432,6 +436,126 @@ void D3DParticleInitPosSpeedSphere(emitter *pEmitter, particle *pParticle)
    {
       pParticle->velocity.x = (float)-cos(angle) * speed;
       pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+}
+
+/*
+* D3DParticleInitPosSpeedCircleZ: Sets initial particle position and speed for a circle emitter.
+*/
+void D3DParticleInitPosSpeedCircleZ(emitter *pEmitter, particle *pParticle)
+{
+   float angle = (float)(rand() % 360);
+   float speed = 5.0f;
+
+   pParticle->pos.x = pEmitter->pos.x;
+   pParticle->pos.y = pEmitter->pos.y;
+   pParticle->pos.z = pEmitter->pos.z;
+
+   pParticle->velocity.z = 0.0f;
+
+   if (angle < 90)
+   {
+      pParticle->velocity.x = (float)cos(angle) * speed;
+      pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+   else if (angle < 180)
+   {
+      pParticle->velocity.x = (float)-cos(angle) * speed;
+      pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+   else if (angle < 270)
+   {
+      pParticle->velocity.x = (float)cos(angle) * speed;
+      pParticle->velocity.y = (float)-sin(angle) * speed;
+   }
+   else if (angle < 360)
+   {
+      pParticle->velocity.x = (float)-cos(angle) * speed;
+      pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+}
+
+/*
+* D3DParticleInitPosSpeedCircleX: Sets initial particle position and speed for a circle emitter.
+*/
+void D3DParticleInitPosSpeedCircleX(emitter *pEmitter, particle *pParticle)
+{
+   float angle = (float)(rand() % 360);
+   float speed = 5.0f;
+
+   pParticle->pos.x = pEmitter->pos.x;
+   pParticle->pos.y = pEmitter->pos.y;
+   pParticle->pos.z = pEmitter->pos.z;
+
+   pParticle->velocity.x = 0.0f;
+   if (angle < 90)
+   {
+      pParticle->velocity.z = (float)cos(angle) * speed;
+      pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+   else if (angle < 180)
+   {
+      pParticle->velocity.z = (float)-cos(angle) * speed;
+      pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+   else if (angle < 270)
+   {
+      pParticle->velocity.z = (float)cos(angle) * speed;
+      pParticle->velocity.y = (float)-sin(angle) * speed;
+   }
+   else if (angle < 360)
+   {
+      pParticle->velocity.z = (float)-cos(angle) * speed;
+      pParticle->velocity.y = (float)sin(angle) * speed;
+   }
+}
+
+/*
+* D3DParticleInitPosSpeedCircleY: Sets initial particle position and speed for a circle emitter.
+*/
+void D3DParticleInitPosSpeedCircleY(emitter *pEmitter, particle *pParticle)
+{
+   float angle = (float)(rand() % 360);
+   float speed = 5.0f;
+
+   pParticle->pos.x = pEmitter->pos.x;
+   pParticle->pos.y = pEmitter->pos.y;
+   pParticle->pos.z = pEmitter->pos.z;
+
+   pParticle->velocity.y = 0.0f;
+   if (angle < 90)
+   {
+      pParticle->velocity.z = (float)cos(angle) * speed;
+      pParticle->velocity.x = (float)sin(angle) * speed;
+   }
+   else if (angle < 180)
+   {
+      pParticle->velocity.z = (float)-cos(angle) * speed;
+      pParticle->velocity.x = (float)sin(angle) * speed;
+   }
+   else if (angle < 270)
+   {
+      pParticle->velocity.z = (float)cos(angle) * speed;
+      pParticle->velocity.x = (float)-sin(angle) * speed;
+   }
+   else if (angle < 360)
+   {
+      pParticle->velocity.z = (float)-cos(angle) * speed;
+      pParticle->velocity.x = (float)sin(angle) * speed;
+   }
+}
+
+/*
+* D3DParticleInitPosSpeedCircleY: Sets initial particle position and speed for a random circle emitter.
+*/
+void D3DParticleInitPosSpeedRandomCircle(emitter *pEmitter, particle *pParticle)
+{
+   int random = rand() % 3;
+   switch (random)
+   {
+      case 0: return D3DParticleInitPosSpeedCircleX(pEmitter, pParticle);
+      case 1: return D3DParticleInitPosSpeedCircleY(pEmitter, pParticle);
+      case 2: return D3DParticleInitPosSpeedCircleZ(pEmitter, pParticle);
    }
 }
 
@@ -889,47 +1013,93 @@ void FireworksInit(void)
    // Amount of energy to give them.
 #define FIREWORKS_EMITTER_ENERGY	(120)
    // Default height to spawn them at.
-#define FIREWORKS_EMITTER_HEIGHT	(4096)
+#define FIREWORKS_EMITTER_HEIGHT	(3600)
 #define FIREWORKS_TIMER ((int)rand() % 120)
 
    D3DParticleSystemReset(&gParticleSystemFireworks);
 
-   for (int i = 0; i < 2; ++i)
-   {
-      D3DParticleEmitterInit(&gParticleSystemFireworks,
-         8192.0f, -2048.0f, FIREWORKS_EMITTER_HEIGHT,
-         5.0f, 5.0f, 0.0f,
-         FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
-         FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
-         0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
-         MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
-      D3DParticleEmitterInit(&gParticleSystemFireworks,
-         8192.0f, -1024.0f, FIREWORKS_EMITTER_HEIGHT,
-         5.0f, 5.0f, 0.0f,
-         FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
-         FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
-         0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
-          MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
-      D3DParticleEmitterInit(&gParticleSystemFireworks,
-         8192.0f, 0.0f, FIREWORKS_EMITTER_HEIGHT,
-         5.0f, 5.0f, 0.0f,
-         FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
-         FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
-         0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
-         MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
-      D3DParticleEmitterInit(&gParticleSystemFireworks,
-         8192.0f, 1024.0f, FIREWORKS_EMITTER_HEIGHT,
-         5.0f, 5.0f, 0.0f,
-         FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
-         FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
-         0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
-         MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
-      D3DParticleEmitterInit(&gParticleSystemFireworks,
-         8192.0f, 2048.0f, FIREWORKS_EMITTER_HEIGHT,
-         5.0f, 5.0f, 0.0f,
-         FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
-         FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
-         0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
-         MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
-   }
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, -3000.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, -2500.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, -2000.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, -1500.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, -1000.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, -500.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, 0.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, 500.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, 1000.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, 1500.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, 2000.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
+   D3DParticleEmitterInit(&gParticleSystemFireworks,
+      12000.0f, 2500.0f, FIREWORKS_EMITTER_HEIGHT,
+      5.0f, 5.0f, 0.0f,
+      FIREWORKS_B, FIREWORKS_G, FIREWORKS_R, FIREWORKS_A,
+      FIREWORKS_EMITTER_ENERGY, FIREWORKS_TIMER,
+      0, 0, 0, FIREWORKS_EMITTER_RADIUS, 0,
+      MAX_FIREWORK_PARTICLES, PS_NO_FLAGS);
 }

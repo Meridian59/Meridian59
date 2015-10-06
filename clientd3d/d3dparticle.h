@@ -60,9 +60,14 @@ typedef struct emitter
 #define PS_NO_FLAGS        0
 #define PS_RANDOM_XY       0x0001
 #define PS_RANDOM_Z        0x0002
-#define PS_GROUND_DESTROY  0x0004
-#define PS_WEATHER_EFFECT  0x0008
-#define PS_GRAVITY         0x0010
+#define PS_RANDOM_CIRCLE   0x0004
+#define PS_CIRCLE          0x0008
+#define PS_CIRCLE_X        0x0010
+#define PS_CIRCLE_Y        0x0020
+#define PS_CIRCLE_Z        0x0040
+#define PS_GROUND_DESTROY  0x0080
+#define PS_WEATHER_EFFECT  0x0100
+#define PS_GRAVITY         0x0200
 
 typedef struct particle_system
 {

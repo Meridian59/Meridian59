@@ -460,6 +460,8 @@ resources:
    user_time_string =  \
    "The time in Meridian is %i:00.  It is the %q day of the year %i."
 
+   user_tell_wav = imp.wav
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -7863,6 +7865,9 @@ messages:
             }
 
             rSay_format = user_send_str;
+
+            % Play a "tell sound" to the recipient
+            Send(self,@WaveSendUser,#what=what,#wave_rsc=user_tell_wav);
          }
          else if type = SAY_GROUP_ONE
          {
@@ -7874,6 +7879,9 @@ messages:
             }
 
             rSay_format = user_send_one_str;
+
+            % Play a "tell sound" to the recipient
+            Send(self,@WaveSendUser,#what=what,#wave_rsc=user_tell_wav);
 
             % this is what the client is expecting to hear
             type = SAY_GROUP;
@@ -7900,6 +7908,8 @@ messages:
             {
                rSay_format = user_emote_str_morphed;
             }
+
+            
 
             AddPacket(1,BP_SAID, 4,what, 4,rName, 1,type, 4,rSay_format,
                       4,Send(what,@GetCapIndef), 4,rName, 0,string);

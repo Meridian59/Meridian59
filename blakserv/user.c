@@ -323,3 +323,15 @@ user_node * GetUserByName(char *username)
    return GetUserByObjectID(ret_val.v.data);
 }
 
+void ChangeUserAccountID(int account_id, int new_account_id)
+{
+   user_node *u;
+
+   u = users;
+   while (u != NULL)
+   {
+      if (u->account_id == account_id)
+         u->account_id = new_account_id;
+      u = u->next;
+   }
+}

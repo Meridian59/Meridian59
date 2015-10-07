@@ -541,3 +541,32 @@ void DeleteAccountAndAssociatedUsersByID(int account_id)
 	      account_id);
    }
 }
+
+// Deletes an account and associated users if account has never been logged in.
+void DeleteAccountIfUnused(account_node *a)
+{
+   if (a->last_login_time == 0)
+      DeleteAccountAndAssociatedUsersByID(a->account_id);
+}
+
+// Compacts the accounts if any have been removed. Called by
+// AdminDeleteUnusedAccounts after deleting unused accounts.
+void CompactAccounts()
+{
+   account_node *a;
+   int new_number = 1;
+
+   a = accounts;
+
+   while (a != NULL)
+   {
+      if (a->account_id != new_number)
+      {
+         ChangeUserAccountID(a->account_id, new_number);
+         a->account_id = new_number;
+      }
+      ++new_number;
+      a = a->next;
+   }
+   SetNextAccountID(new_number);
+}

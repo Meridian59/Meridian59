@@ -2552,7 +2552,7 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	val_type ret_val, room_val;
 	val_type row_source, col_source, finerow_source, finecol_source;
 	val_type row_dest, col_dest, finerow_dest, finecol_dest;
-	val_type move_outside_bsp;
+	val_type objectid, move_outside_bsp;
 	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
@@ -2577,8 +2577,10 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 		normal_parm_array[7].value);
 	finecol_dest = RetrieveValue(object_id, local_vars, normal_parm_array[8].type,
 		normal_parm_array[8].value);
-	move_outside_bsp = RetrieveValue(object_id, local_vars, normal_parm_array[9].type,
+	objectid = RetrieveValue(object_id, local_vars, normal_parm_array[9].type,
 		normal_parm_array[9].value);
+	move_outside_bsp = RetrieveValue(object_id, local_vars, normal_parm_array[10].type,
+		normal_parm_array[10].value);
 
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
@@ -2643,6 +2645,13 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
+	if (objectid.v.tag != TAG_OBJECT)
+	{
+		bprintf("C_CanMoveInRoomBSP objectid can't use non obj %i,%i\n",
+			objectid.v.tag, objectid.v.data);
+		return ret_val.int_val;
+	}
+
 	if (move_outside_bsp.v.tag != TAG_INT)
 	{
 		bprintf("C_CanMoveInRoomBSP move outside BSP bool can't use non int %i,%i\n",
@@ -2665,7 +2674,7 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
 	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
 
-	ret_val.v.data = BSPCanMoveInRoom(&r->data, &s, &e, (move_outside_bsp.v.data != 0));
+	ret_val.v.data = BSPCanMoveInRoom(&r->data, &s, &e, objectid.v.data, (move_outside_bsp.v.data != 0));
 
 #if DEBUGMOVE
 	//dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", ret_val.v.data, r->data.roomdata_id, s.X, s.Y, e.X, e.Y);
@@ -3288,7 +3297,7 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 	val_type ret_val, room_val;
 	val_type row_source, col_source, finerow_source, finecol_source;
 	val_type row_dest, col_dest, finerow_dest, finecol_dest;
-	val_type state_flags;
+	val_type state_flags, objectid;
 	room_node *r;
 
 	// in case it fails
@@ -3316,6 +3325,8 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 
 	state_flags = RetrieveValue(object_id, local_vars, normal_parm_array[9].type,
 		normal_parm_array[9].value);
+	objectid = RetrieveValue(object_id, local_vars, normal_parm_array[10].type,
+		normal_parm_array[10].value);
 
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
@@ -3387,6 +3398,13 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
+	if (objectid.v.tag != TAG_OBJECT)
+	{
+		bprintf("C_GetStepTowardsBSP objectid can't use non obj %i,%i\n",
+			objectid.v.tag, objectid.v.data);
+		return ret_val.int_val;
+	}
+
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
@@ -3404,7 +3422,7 @@ int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
 
 	V2 p;
 	unsigned int flags = (unsigned int)state_flags.v.data;
-	bool ok = BSPGetStepTowards(&r->data, &s, &e, &p, &flags);
+	bool ok = BSPGetStepTowards(&r->data, &s, &e, &p, &flags, objectid.v.data);
 
 	if (ok)
 	{

@@ -2672,7 +2672,7 @@ messages:
                 Send(poOwner, @GetRoomData),
                 piRow, piCol, piFine_row, piFine_col,
                 *iRow, *iCol, *iFineRow, *iFineCol,
-                piState | iMoveFlags);
+                piState | iMoveFlags, self);
 
       if iState <> $
       {

@@ -1,0 +1,74 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pear is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include pear.lkod
+
+   pear_name_rsc = "pear"
+   pear_icon_rsc = pear.bgf
+   pear_desc_rsc = \
+      "This firm and strange shaped fruit fits well in"
+      " your hand.  You're not sure where to bite first!"
+
+
+   pear_name_plural_rsc = "pears"
+
+   pear_disp_name = "pear tree"
+   pear_disp_icon = peartree.bgf
+   pear_disp_desc = \
+     "This pear tree is common around the city of Marion and is "
+     "known for its strange shaped fruit.  Several of them look low "
+     "enough for you to pick."
+   pear_got_one = "You reach up and pick an pear from the tree."
+
+classvars:
+
+   vrName = pear_name_rsc
+   vrIcon = pear_icon_rsc
+   vrDesc = pear_desc_rsc
+
+   vrName_plural = pear_name_plural_rsc
+
+   vrDisp_name = pear_disp_name
+   vrDisp_icon = pear_disp_icon
+   vrDisp_desc = pear_disp_desc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 7
+
+   viValue_average = 0
+
+properties:
+
+   viFilling = 25
+   viNutrition = 11
+   piNumber = 1
+
+messages:
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      Send(who,@MsgSendUser,#message_rsc=pear_got_one);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

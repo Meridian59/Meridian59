@@ -1,0 +1,53 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cookie is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include Cookie.lkod
+
+   cookie_name_rsc = "cookie"
+   cookie_icon_rsc = cookie.bgf
+   cookie_desc_rsc = \
+      "Baked by Daenks, this cookie is both warm and soft"
+      " to the touch. Your mouth waters at just the very sight of it."
+
+   cookie_name_plural_rsc = "cookies"
+
+classvars:
+
+   vrName = cookie_name_rsc
+   vrIcon = cookie_icon_rsc
+   vrDesc = cookie_desc_rsc
+
+   vrName_plural = cookie_name_plural_rsc
+
+   viBulk = 5
+   viWeight = 4
+
+   viValue_average = 36
+
+   viGround_group = 2
+
+properties:
+
+   viFilling = 20
+   viNutrition = 10
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

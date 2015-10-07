@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-XeoFire is Xeochicatl
+XeoIll is Xeochicatl
 
 constants:
 
@@ -18,53 +18,54 @@ constants:
 
 resources:
 
-   include xeofire.lkod
+   include xeoill.lkod
 
-   XeoFire_name_rsc = "ro'xeochicatl"
-   XeoFire_koc_name_rsc = "ro'xeo'chicatl"
-   XeoFire_icon_rsc = Xeo.bgf
-   XeoFire_desc_rsc = \
-      "Before you is a ro'xeochicatl, a fearsome monster given life by the "
-      "chaotic magic of the Meridian.  The ro'xeochicatl is the embodiment of "
+   XeoIll_name_rsc = "re'xeochicatl"
+   XeoIll_koc_name_rsc = "re'xeo'chicatl"
+   XeoIll_icon_rsc = Xeo.bgf
+   XeoIll_desc_rsc = \
+      "Before you is a re'xeochicatl, a fearsome monster given life by the "
+      "chaotic magic of the Meridian.  The re'xeochicatl is the embodiment of "
       "destruction, a violent monster that seems uncontrollable.  These "
       "monsters feed off of the magic of the lands which makes them very "
       "powerful.  Rumors abound about the origin of these monsters, but you "
       "have little time to contemplate these rumors in the presence of "
       "such destructive power!"
 
-   XeoFire_sound_aware = xeo3awr.wav
+   XeoIll_sound_aware = xeo2awr.wav
 
  classvars:
 
-   vrName = XeoFire_name_rsc
-   vrKocName = XeoFire_koc_name_rsc
+   vrName = XeoIll_name_rsc
+   vrKocName = XeoIll_koc_name_rsc
 
    viAttack_type = ATCK_WEAP_MAGIC
-   viLevel = 170
-   viDifficulty = 7
-   viSpeed = SPEED_FAST
-   vrSound_aware = XeoFire_sound_aware
+   viLevel = 200
+   viDifficulty = 9
+   viSpeed = SPEED_AVERAGE
+   vrSound_aware = XeoIll_sound_aware
 
-   viTreasure_type = TID_XEO_FIRE
+   viTreasure_type = TID_XEO_ILL
 
 properties:
 
    piAnimation = ANIM_NONE
+   piMax_Mana = 30
 
 messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_FIRE, 110 ],
-                        [-ATCK_SPELL_COLD, -20 ],
+      plResistances = [ [ATCK_WEAP_NERUDITE, 40 ],
                         [ATCK_WEAP_MAGIC, -10 ],
-                        [-ATCK_SPELL_QUAKE, 100 ]
+                        [-ATCK_SPELL_SHOCK, -10 ],
+                        [-ATCK_SPELL_QUAKE, 110 ]
                       ];
 
-      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_RED);
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_PURPLE);
 
-      plSpellBook = [ [SID_FIREBALL,2,30], [SID_FIREWALL,10,50],
-                      [SID_HEAT,10,70], [SID_DEMENT,3,100] ];
+      plSpellBook = [ [SID_DEMENT,5,10], [SID_FORGET,10,40],
+                      [SID_EVIL_TWIN,2,80], [SID_APPARITION,10,100] ];
 
       propagate;
    }

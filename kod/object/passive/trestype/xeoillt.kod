@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-XeoEarthTreasure is TreasureType
+XeoIllTreasure is TreasureType
 
 constants:
 
@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_XEO_EARTH
+   viTreasure_num = TID_XEO_ILL
 
 properties:
 
@@ -27,7 +27,7 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &BrownHeartStone, 100]
+      plTreasure = [ [ &PurpleHeartStone, 100]
                    ];
 
       propagate;

@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DarkGreenHeartStone is HeartStone
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include hstondkgre.lkod
+
+   DarkGreenHeartStone_name_rsc = "dark green heartstone"
+   DarkGreenHeartStone_desc_rsc = \
+      "This is called a 'heartstone'.  It is a huge dark green gem taken from "
+      "the body of a fallen Cr'Xeochicatl.  It wiggles slightly and is cool "
+      "to the touch.  The uses for this gem are not widely known."
+
+classvars:
+
+   vrName = DarkGreenHeartStone_name_rsc
+   vrDesc = DarkGreenHeartStone_desc_rsc
+
+   viValue_average = 100
+   viWeight = 20
+   viBulk = 10
+
+   viColor = PT_REDTODGREEN3
+properties:
+
+messages:
+
+   CreateXeo()
+   {
+      return Create(&XeoNeru,#InAttack=Send(self,@IsInAttack));
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

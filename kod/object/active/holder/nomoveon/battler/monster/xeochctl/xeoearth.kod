@@ -65,7 +65,7 @@ messages:
       piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4);
 
       plSpellBook = [ [SID_EARTHQUAKE,5,10], [SID_SAND_STORM,10,40],
-                      [SID_BLIND,2,80], [SID_BRITTLE,10,100] ];
+                      [SID_KILLING_FIELDS,2,80], [SID_BRAMBLE_WALL,10,100] ];
 
       propagate;
    }

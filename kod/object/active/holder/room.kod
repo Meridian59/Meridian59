@@ -56,13 +56,11 @@ resources:
    room_door_was_opened = "You open the door and walk through."
    room_silenced_rsc = "Your words catch in your throat and you cannot speak."
 
-   %  note that these 'stormy' skies are the normal skies,
-   %     and the 'normal' skies are just flat colors (and we don't use them)...
    background_stars = night.bgf
-   background_light_sky = lt-blue.bgf
-   background_light_stormy_sky = lt-sky.bgf
-   background_dusk_sky = dk-blue.bgf
-   background_dusk_stormy_sky = dk-sky.bgf
+   %background_light_sky = lt-blue.bgf
+   %background_light_stormy_sky = lt-sky.bgf
+   %background_dusk_sky = dk-blue.bgf
+   %background_dusk_stormy_sky = dk-sky.bgf
    background_chaos_night = redsky.bgf
 
    background_kocatan_afternoon_sky = 1skya.bgf
@@ -322,7 +320,7 @@ properties:
    pbNoReagents = FALSE
 
    % per room weather conditions
-   piWeather = WEATHER_DAY
+   piWeather = WEATHER_PATTERN_CLEAR
    
 messages:
 
@@ -1751,33 +1749,33 @@ messages:
       return;
    }
 
-   RecalcBackgroundSkyGraphic(iWeather=0)
+   RecalcBackgroundSkyGraphic(iSkyBox=0)
    "Doing this this way allows us to have some zones, such as Ko'catan, have "
    "different skies."
    {
       if Send(self,@GetRegion) = RID_KOCATAN
       {
-         switch(iWeather)
+         switch(iSkyBox)
          {
-            case WEATHER_DAY:
+            case SKYBOX_DAY:
                prBackground = background_kocatan_afternoon_sky;
                break;
-            case WEATHER_DAY_STORMY:
+            case SKYBOX_DAY_STORMY:
                prBackground = background_kocatan_afternoon_sky;
                break;
-            case WEATHER_DUSK:
+            case SKYBOX_DUSK:
                prBackground = background_kocatan_evening_sky;
                break;
-            case WEATHER_DUSK_STORMY:
+            case SKYBOX_DUSK_STORMY:
                prBackground = background_kocatan_evening_sky;
                break;
-            case WEATHER_DAWN:
+            case SKYBOX_DAWN:
                prBackground = background_kocatan_morning_sky;
                break;
-            case WEATHER_DAWN_STORMY:
+            case SKYBOX_DAWN_STORMY:
                prBackground = background_kocatan_morning_sky;
                break;
-            case WEATHER_NIGHT:
+            case SKYBOX_NIGHT:
                prBackground = background_kocatan_night_sky;
                break;
             default:
@@ -1788,27 +1786,30 @@ messages:
          return;
       }
 
-      switch(iWeather)
+      switch(iSkyBox)
       {
-         case WEATHER_DAY:
-            prBackground = background_light_sky;
-            break;
-         case WEATHER_DAY_STORMY:
+         case SKYBOX_DAY:
+            %prBackground = background_light_sky;
             prBackground = background_afternoon_sky;
             break;
-         case WEATHER_DUSK:
-            prBackground = background_dusk_sky;
+         case SKYBOX_DAY_STORMY:
+            prBackground = background_afternoon_sky;
             break;
-         case WEATHER_DUSK_STORMY:
+         case SKYBOX_DUSK:
+            %prBackground = background_dusk_sky;
             prBackground = background_evening_sky;
             break;
-         case WEATHER_DAWN:
-            prBackground = background_dusk_sky;
+         case SKYBOX_DUSK_STORMY:
+            prBackground = background_evening_sky;
             break;
-         case WEATHER_DAWN_STORMY:
+         case SKYBOX_DAWN:
+            %prBackground = background_dusk_sky;
             prBackground = background_morning_sky;
             break;
-         case WEATHER_NIGHT:
+         case SKYBOX_DAWN_STORMY:
+            prBackground = background_morning_sky;
+            break;
+         case SKYBOX_NIGHT:
             prBackground = background_night_sky;
             break;
          default:
@@ -1821,7 +1822,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i, each_obj, iRand, oSun;
+      local i, each_obj, iRand, oSun, iBackGround;
 
       % Change weather for background if outdoors and tell everyone the
       %  background changed
@@ -1833,7 +1834,44 @@ messages:
          return;
       }
 
-      Send(self,@RecalcBackgroundSkyGraphic,#iWeather=piWeather);
+      if (piWeather & WEATHER_PATTERN_STORM)
+      {
+         switch(Send(SYS,@GetDayPhase))
+         {
+            case DAY_PHASE_DAWN:
+               iBackGround = SKYBOX_DAWN_STORMY;
+               break;
+            case DAY_PHASE_DAY:
+               iBackGround = SKYBOX_DAY_STORMY;
+               break;
+            case DAY_PHASE_DUSK:
+               iBackGround = SKYBOX_DUSK_STORMY;
+               break;
+            case DAY_PHASE_NIGHT:
+               iBackGround = SKYBOX_NIGHT;
+               break;
+         }
+      }
+      else
+      {
+         switch(Send(SYS,@GetDayPhase))
+         {
+            case DAY_PHASE_DAWN:
+               iBackGround = SKYBOX_DAWN;
+               break;
+            case DAY_PHASE_DAY:
+               iBackGround = SKYBOX_DAY;
+               break;
+            case DAY_PHASE_DUSK:
+               iBackGround = SKYBOX_DUSK;
+               break;
+            case DAY_PHASE_NIGHT:
+               iBackGround = SKYBOX_NIGHT;
+               break;
+         }
+      }
+
+      Send(self,@RecalcBackgroundSkyGraphic,#iSkyBox=iBackground);
 
       % Reproduce the following calls here, ~40% faster.
       % Send(self,@RecalculateDirectionalLight);
@@ -1847,7 +1885,7 @@ messages:
       }
 
       %Send(self,@AmbientLightChanged);
-      %Send(self,@BackgroundChanged);
+      Send(self,@BackgroundChanged);
       %Send(self,@DirectionalLightChanged);
       % This sends weather effects (i.e. rain, snow) to clients.
       %Send(self,@WeatherChanged);
@@ -3746,22 +3784,8 @@ messages:
             break;
       }
       
-      switch(Send(SYS,@GetDayPhase))
-      {
-         case WEATHER_DAY:
-            piWeather = WEATHER_DAY_STORMY;
-            break;
-         case WEATHER_NIGHT:
-            piWeather = WEATHER_NIGHT;
-            break;
-         case WEATHER_DUSK:
-            piWeather = WEATHER_DUSK_STORMY;
-            break;
-         case WEATHER_DAWN:
-            piWeather = WEATHER_DAWN_STORMY;
-            break;
-      }
-
+      piWeather = WEATHER_PATTERN_STORM;
+      
       return;
    }
 
@@ -3787,7 +3811,7 @@ messages:
          Send(self,@EndSandStorm);
       }
 
-      piWeather = Send(SYS,@GetDayPhase);
+      piWeather = WEATHER_PATTERN_CLEAR;
 
       return;
    }
@@ -3884,7 +3908,12 @@ messages:
       {
          Send(self,@EndSandstorm);
       }
-      Send(self,@AddLoopingSound,#lSoundData=[room_rain_sound, 1, 1, 300, 100]);
+
+      if (viWeatherMask & WEATHER_MASK_SOUND)
+      {
+         Send(self,@AddLoopingSound,
+            #lSoundData=[room_rain_sound, 0, 0, 300, 50]);
+      }
 
       Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=TRUE);
       Send(self,@WeatherChanged);
@@ -3897,7 +3926,10 @@ messages:
       if Send(self,@CheckRoomFlag,#flag=ROOM_RAINING)
       {
          Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=FALSE);
-         Send(self,@RemoveLoopingSound,#sound_rsc=room_rain_sound);
+         if (viWeatherMask & WEATHER_MASK_SOUND)
+         {
+            Send(self,@RemoveLoopingSound,#sound_rsc=room_rain_sound);
+         }
          Send(self,@WeatherChanged);
       }
 

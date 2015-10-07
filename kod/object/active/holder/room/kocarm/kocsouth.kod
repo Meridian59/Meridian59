@@ -50,6 +50,8 @@ classvars:
 
    viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_BEACH
 
+   viWeatherMask = WEATHER_MASK_JUNGLE
+
 properties:
 
    prRoom = room_kocatansouth

@@ -32,6 +32,8 @@ classvars:
 
    vrName = room_name_barloqueport
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_barloqueport

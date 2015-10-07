@@ -40,6 +40,8 @@ classvars:
    viFlag_row = 14
    viFlag_col = 31
 
+   viWeatherMask = WEATHER_MASK_DEFAULT
+
 properties:
 
    prRoom = room_CorNoth

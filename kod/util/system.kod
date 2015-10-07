@@ -4021,19 +4021,19 @@ messages:
 
       if piHour < 6 or piHour > 20
       {
-         piDay_Phase = WEATHER_NIGHT;
+         piDay_Phase = DAY_PHASE_NIGHT;
       }
       else if piHour > 17
       {
-         piDay_Phase = WEATHER_DUSK;
+         piDay_Phase = DAY_PHASE_DUSK;
       }
       else if piHour < 9
       {
-         piDay_Phase = WEATHER_DAWN;
+         piDay_Phase = DAY_PHASE_DAWN;
       }
       else
       {
-         piDay_Phase = WEATHER_DAY;
+         piDay_Phase = DAY_PHASE_DAY;
       }
 
       % shift hour so doesn't get light /dark until later
@@ -4100,7 +4100,7 @@ messages:
       piHour = (piHour + 1) mod 24;
       if piHour <> 0
       {
-         CreateTimer(self,@TestGameDayTimer,3000);
+         CreateTimer(self,@TestGameDayTimer,500);
       }
       else
       {

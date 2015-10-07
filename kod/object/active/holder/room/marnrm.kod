@@ -17,6 +17,7 @@ constants:
 classvars:
 
    viWeatherZone = WEATHER_ZONE_MARION
+   viWeatherMask = WEATHER_MASK_DEFAULT_NS
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

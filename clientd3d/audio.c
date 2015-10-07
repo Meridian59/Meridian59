@@ -25,7 +25,7 @@ typedef struct
 
 /*********************************************************************/
 
-#define MAXSOUNDS 12                  // maximum simutaneously played sounds
+#define MAXSOUNDS 24                  // maximum simutaneously played sounds
 #define AUDIODIR  "resource"          // folder with wav and mp3 files
 #define ROLLOFF   0.00016f            // sets how volume decreases with distance
 #define MAXDIST   (FINENESS * 32.0f)  // beyond this distance, volume is always 0
@@ -36,10 +36,7 @@ ISound*       music         = NULL;   // soundid of current background music
 char*         lastmusicname = NULL;   // saves the last played music for restart
 ISoundEngine* soundengine   = NULL;   // the irrklang engine object
 
-AudioInfo sounds[MAXSOUNDS] = { 
-   { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, 
-   { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-   { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, };
+AudioInfo *sounds;
 
 /*********************************************************************/
 
@@ -98,7 +95,11 @@ BOOL AudioInit()
    soundengine->setRolloffFactor(ROLLOFF);
 
    // mark initialized
-   initialized = true;			
+   initialized = true;
+
+   // Allocate memory for sound IDs
+   sounds = (AudioInfo *)SafeMalloc(MAXSOUNDS * sizeof(AudioInfo));
+   memset(sounds, 0, MAXSOUNDS * sizeof(AudioInfo));
 
    return TRUE;
 }
@@ -127,6 +128,9 @@ BOOL AudioShutdown()
       sounds[i].id = 0;
       sounds[i].flags = 0;
    }
+
+   // Free sound mem.
+   SafeFree(sounds);
 
    // mark not initialized
    initialized = false;

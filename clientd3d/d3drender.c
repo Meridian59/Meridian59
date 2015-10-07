@@ -64,9 +64,10 @@ d3d_render_pool_new		gWallMaskPool;
 d3d_render_pool_new		gEffectPool;
 d3d_render_pool_new		gParticlePool;
 
-particle_system			gParticleSystemSand;
-particle_system			gParticleSystemRain;
-particle_system			gParticleSystemSnow;
+extern particle_system			gParticleSystemSand;
+extern particle_system			gParticleSystemRain;
+extern particle_system			gParticleSystemSnow;
+extern particle_system			gParticleSystemFireworks;
 
 custom_xyz				playerOldPos;
 custom_xyz				playerDeltaPos;
@@ -1033,52 +1034,39 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_particles)
 	{
       timeParticles = timeGetTime();
-      list_type	list;
-		emitter		*pEmitter;
 
-		for (list = gParticleSystemSand.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
+      // Updates emitter positions for all particle systems.
+      D3DParticleSystemSetPlayerPos(playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
 
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
-		for (list = gParticleSystemRain.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
-
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
-		for (list = gParticleSystemSnow.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
-
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
 		if (effects.sand)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateFluid(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.raining && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateFluid(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.snowing && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemSnow, &gParticlePool, &gParticleCacheSystem, params);
+			D3DParticleSystemUpdateFluid(&gParticleSystemSnow, &gParticlePool, &gParticleCacheSystem, params);
 		}
-      timeParticles = timeGetTime() - timeParticles;
+		if (effects.fireworks)
+		{
+			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
+
+			D3DParticleSystemUpdateBurst(&gParticleSystemFireworks, &gParticlePool, &gParticleCacheSystem, params);
+		}
+		timeParticles = timeGetTime() - timeParticles;
 	}
 
 	/***************************************************************************/
@@ -1374,8 +1362,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		{		
 			D3DRenderShutDown();
 			gFrame = 0;
+         gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 			D3DRenderInit(hMain);
-			ResetUserData();
+			D3DParticlesInit(false);
 		}
 	}
 	
@@ -2202,6 +2191,61 @@ void D3DLMapsStaticGet(room_type *room)
 
 		gDLightCacheDynamic.numLights++;
 	}
+
+   // fireworks
+   emitter *pEmitter;
+   particle *pParticle;
+   for (list = gParticleSystemFireworks.emitterList; list != NULL; list = list->next)
+   {
+      pEmitter = (emitter *)list->data;
+      pParticle = &pEmitter->particles[0];
+      if (pParticle && pParticle->energy > 0)
+      {
+         if (gDLightCacheDynamic.numLights >= 150)
+            continue;
+
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pParticle->pos.x;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pParticle->pos.y;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pParticle->pos.z;
+
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
+            DLIGHT_SCALE(pParticle->energy);
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
+            DLIGHT_SCALE(pParticle->energy);
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
+            DLIGHT_SCALE(pParticle->energy);
+
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].maxX = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x +
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].minX = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x -
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].maxY = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y +
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].minY = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y -
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f;
+
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
+            1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
+            1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
+            1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
+
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
+            1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
+            1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
+            1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
+
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r = pParticle->bgra.r;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g = pParticle->bgra.g;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b = pParticle->bgra.b;
+
+         gDLightCacheDynamic.numLights++;
+      }
+   }
 
 	// static lights
 	for (list = room->contents; list != NULL; list = list->next)
@@ -10551,325 +10595,6 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 	hr = IDirect3DSurface9_Release(pDest[1]);
 
 	return pTex1;
-}
-
-void SandstormInit(void)
-{
-#define EMITTER_RADIUS	(12)
-#define EMITTER_ENERGY	(40)
-#define EMITTER_HEIGHT	(0)
-
-	D3DParticleSystemReset(&gParticleSystemSand);
-	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		500.0f, 0, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-
-	// four corners, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		353.55f, -353.55f, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		-353.55f, -353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-
-	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
-		500.0f, 0.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-
-	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		500.0f, 0, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-
-	// four corners, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		353.55f, -353.55f, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		-353.55f, -353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-
-	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
-		500.0f, 0.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-	D3DParticleEmitterInit(&gParticleSystemSand,
-		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1, 1024, 2,
-		0, 0);
-}
-
-void RainInit(void)
-{
-#define RAIN_EMITTER_RADIUS	(16384)
-#define RAIN_EMITTER_ENERGY	(400)
-#define RAIN_EMITTER_HEIGHT	(2500)
-
-   int i;
-
-   D3DParticleSystemReset(&gParticleSystemRain);
-
-   for (i=0; i < 16; i++)
-   {
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         0, 0, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, RAIN_EMITTER_RADIUS, 0,
-         1, 1);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         0, 0, RAIN_EMITTER_HEIGHT*2,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, RAIN_EMITTER_RADIUS, 0,
-         1, 1);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         0, 0, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, RAIN_EMITTER_RADIUS/4, 0,
-         1, 1);
-   }
-}
-
-void SnowInit(void)
-{
-// Distance from the player to spawn particles.
-#define SNOW_EMITTER_RADIUS	(16384)
-// Amount of energy to give them.
-#define SNOW_EMITTER_ENERGY	(400)
-// Default height to spawn them at.
-#define SNOW_EMITTER_HEIGHT	(2500)
-
-   int i;
-
-   D3DParticleSystemReset(&gParticleSystemSnow);
-
-   for (i=0; i < 9; i++)
-   {
-      // Normal height.
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
-         5.0f, 0.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, SNOW_EMITTER_RADIUS, 0,
-         1, 1);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
-         -5.0f, 0.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, SNOW_EMITTER_RADIUS, 0,
-         1, 1);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
-         0.0f, 0.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, SNOW_EMITTER_RADIUS, 0,
-         1, 1);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
-         0.0f, 0.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, SNOW_EMITTER_RADIUS, 0,
-         1, 1);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
-         0.0f, 0.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, 0, SNOW_EMITTER_RADIUS, 0,
-         1, 1);
-      // These ones are higher, but disappear faster (filler).
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT*2,
-         0.0f, 0.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY/3, 1,
-         0, 0, 0,
-         1, 0, SNOW_EMITTER_RADIUS, 0,
-         1, 1);
-   }
 }
 
 float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)

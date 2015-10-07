@@ -206,6 +206,9 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
 
       CheckDlgButton(hDlg, IDC_COLORCODES, config.colorcodes);
 
+      Trackbar_SetRange(GetDlgItem(hDlg, IDC_PARTICLENUM), 25, CONFIG_MAX_PARTICLES, FALSE);
+      Trackbar_SetPos(GetDlgItem(hDlg, IDC_PARTICLENUM), config.particles);
+
       Trackbar_SetRange(GetDlgItem(hDlg, IDC_SOUND_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
       Trackbar_SetRange(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
       Trackbar_SetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME), config.sound_volume);
@@ -340,6 +343,14 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          {
             config.sound_volume = new_val;
             SoundSetVolume();
+         }
+
+         new_val = Trackbar_GetPos(GetDlgItem(hDlg, IDC_PARTICLENUM));
+         if (new_val != config.particles)
+         {
+            config.particles = new_val;
+            // Reset particle system with new max num.
+            D3DParticlesInit(true);
          }
 
          if( IsDlgButtonChecked( hDlg, IDC_TARGETHALO1 ) == BST_CHECKED )

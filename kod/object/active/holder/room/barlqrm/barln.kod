@@ -72,8 +72,8 @@ messages:
       plExits = $;
 
   
-      plExits = Cons([ 2, 48, RID_BAR_PORT, 27, 27, ROTATE_NONE ],plExits);
-      plExits = Cons([ 2, 49, RID_BAR_PORT, 27, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 48, RID_BAR_PORT, 28, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 49, RID_BAR_PORT, 28, 27, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 47, 41, RID_BAR_SEWER, 56, 9, ROTATE_NONE ],plExits);
       plExits = Cons([ 48, 41, RID_BAR_SEWER, 56, 9, ROTATE_NONE ],plExits);

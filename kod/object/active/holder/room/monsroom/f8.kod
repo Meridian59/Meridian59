@@ -111,23 +111,23 @@ messages:
    {
       local oGuildHall;
 
-      oGuildHall = send(SYS,@FindRoomByNum,#num=RID_GUILDH3);
+      oGuildHall = Send(SYS,@FindRoomByNum,#num=RID_GUILDH3);
 
       if row = 6 AND col = 49 AND pbDoor_open = FALSE
       {
-         send(self,@OpenDoor);
+         Send(self,@OpenDoor);
 
          return TRUE;
       }
      
       % prevent newbies from getting trapped behind the door!
       if row = 6 AND col = 50 AND (NOT pbDoor_open)
-         AND NOT send(what,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE)
+         AND NOT Send(what,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE)
       {
-         send(self,@OpenDoor);
+         Send(self,@OpenDoor);
       }
 
-      if (pbPasswordDoorUnlocked OR (send(oGuildHall,@GetGuildOwner) = $))
+      if (pbPasswordDoorUnlocked OR (Send(oGuildHall,@GetGuildOwner) = $))
          AND (row=26) AND (col=50)
       {
          Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
@@ -143,7 +143,7 @@ messages:
    OpenDoor()
    {
        pbDoor_open = TRUE;
-       send(self,@SetSector,#sector=DOOR,#animation=ANIMATE_CEILING_LIFT,
+       Send(self,@SetSector,#sector=DOOR,#animation=ANIMATE_CEILING_LIFT,
             #height=DOOR_OPEN,#speed=16);
 
        ptDoor = CreateTimer(self,@CloseDoorTimer,LIFT_DELAY);
@@ -155,14 +155,14 @@ messages:
    {
       ptDoor = $;
 
-      send(self,@CloseDoor);
+      Send(self,@CloseDoor);
       return;
    }
 
    CloseDoor()
    {
        pbDoor_open = FALSE;
-       send(self,@SetSector,#sector=DOOR,#animation=ANIMATE_CEILING_LIFT,
+       Send(self,@SetSector,#sector=DOOR,#animation=ANIMATE_CEILING_LIFT,
             #height=DOOR_CLOSED,#speed=16);
 
        return;
@@ -192,7 +192,7 @@ messages:
          propagate;
       }
 
-      oGuildHall = send(SYS,@FindRoomByNum,#num=RID_GUILDH3);
+      oGuildHall = Send(SYS,@FindRoomByNum,#num=RID_GUILDH3);
       if type = SAY_YELL
          OR NOT IsClass(what,&Player)
       {
@@ -201,11 +201,11 @@ messages:
 
       foreach i in plActive
       {
-         each_obj = send(self,@HolderExtractObject,#data=i);
+         each_obj = Send(self,@HolderExtractObject,#data=i);
 
-         if send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
          {
-            if send(self,@inBalcony,#who=what)=send(self,@inBalcony,#who=each_obj)
+            if Send(self,@inBalcony,#who=what)=Send(self,@inBalcony,#who=each_obj)
             {
                Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
                      #parm1=parm1, #parm2=parm2,#parm3=parm3,#parm4=parm4,
@@ -213,42 +213,51 @@ messages:
             }
             else
             {
-               send(each_obj,@MsgSendUser,#message_rsc=OutdoorsF8_muffled);
+               Send(each_obj,@MsgSendUser,#message_rsc=OutdoorsF8_muffled);
             }
          }
       }
-      if (send(oGuildHall,@GetGuildOwner) <> $)
-            AND (send(oGuildHall,@GetGuildOwner) = send(what,@GetGuild))
-            AND StringEqual(string,send(oGuildHall,@GetPassword))
-            AND send(self,@inBalcony,#who=what) and (pbPasswordDoorUnlocked = FALSE)
+      if (Send(oGuildHall,@GetGuildOwner) <> $)
+            AND (Send(oGuildHall,@GetGuildOwner) = Send(what,@GetGuild))
+            AND StringEqual(string,Send(oGuildHall,@GetPassword))
+            AND Send(self,@inBalcony,#who=what) and (pbPasswordDoorUnlocked = FALSE)
             AND type <> SAY_EMOTE
       {
-         send(self,@OpenSecretDoor);
+         Send(self,@OpenSecretDoor);
       }
 
       return;
    }
 
-   inBalcony(who=$)
+   InBalcony(who=$)
    {
-      local iRow, iCol;
+      local iRow, iCol, iHeight;
 
-      if who <> $
+      if who = $
       {
-         iRow = send(who,@GetRow);
-         iCol = send(who,@GetCol);
+         return FALSE;
+      }
 
-         if iRow < 20 OR iRow > 27 OR iCol < 48 OR iCol > 50
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if iRow < 20 OR iRow > 27 OR iCol < 46 OR iCol > 50
+      {
+         return FALSE;
+      }
+
+      if iCol = 46
+         AND (iRow = 22 OR iRow = 21 OR iRow = 20)
+      {
+         iHeight = Send(who,@GetHeightFloorAtObjectBSP);
+
+         if iHeight < 560
          {
             return FALSE;
          }
-         else
-         {
-            return TRUE;
-         }
       }
 
-      return FALSE;
+      return TRUE;
    }
 
    OpenSecretDoor()
@@ -259,10 +268,10 @@ messages:
 
       foreach i in plActive
       {
-         each_obj = send(self,@HolderExtractObject,#data=i);
-         if send(self,@inBalcony,#who=each_obj)
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(self,@inBalcony,#who=each_obj)
          {
-            send(each_obj,@MsgSendUser,#message_rsc=OutdoorsF8_PasswordDoorUnlocked);
+            Send(each_obj,@MsgSendUser,#message_rsc=OutdoorsF8_PasswordDoorUnlocked);
          }
       }
 
@@ -280,10 +289,10 @@ messages:
 
       foreach i in plActive
       {
-         each_obj = send(self,@HolderExtractObject,#data=i);
-         if send(self,@InBalcony,#who=each_obj)
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(self,@InBalcony,#who=each_obj)
          {
-            send(each_obj,@MsgSendUser,#message_rsc=OutdoorsF8_PasswordDoorRelocked);
+            Send(each_obj,@MsgSendUser,#message_rsc=OutdoorsF8_PasswordDoorRelocked);
          }
       }
 

@@ -87,6 +87,43 @@ __inline float GetSectorHeightFloorWithDepth(Sector* Sector, V2* P)
    return height;
 }
 
+__inline bool BSPCanMoveInRoomTreeInternal(Sector* SectorS, Sector* SectorE, Side* SideS, Side* SideE, V2* Q)
+{
+   // block moves with end outside
+   if (!SectorE || !SideE)
+      return false;
+
+   // don't block moves with start outside and end inside
+   if (!SectorS || !SideS)
+      return true;
+
+   // sides which have no passable flag set always block
+   if (!((SideS->Flags & WF_PASSABLE) == WF_PASSABLE))
+      return false;
+
+   // get floor heights
+   float hFloorS = GetSectorHeightFloorWithDepth(SectorS, Q);
+   float hFloorE = GetSectorHeightFloorWithDepth(SectorE, Q);
+
+   // check stepheight (this also requires a lower texture set)
+   if (SideS->TextureLower > 0 && (hFloorE - hFloorS > MAXSTEPHEIGHT))
+      return false;
+
+   // get ceiling heights
+   //float hCeilingS = SECTORHEIGHTCEILING(SectorS, Q);
+   float hCeilingE = SECTORHEIGHTCEILING(SectorE, Q);
+
+   // check ceilingheight (this also requires an upper texture set)
+   if (SideS->TextureUpper > 0 && (hCeilingE - hFloorS < OBJECTHEIGHTROO))
+      return false;
+
+   // check endsector height
+   if (hCeilingE - hFloorE < OBJECTHEIGHTROO)
+      return false;
+
+   return true;
+}
+
 void BSPUpdateLeafHeights(room_type* Room, Sector* Sector, bool Floor)
 {
    for (int i = 0; i < Room->TreeNodesCount; i++)
@@ -385,232 +422,178 @@ bool BSPLineOfSightTree(BspNode* Node, V3* S, V3* E)
 
 bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 {
-	// reached a leaf or nullchild, movements not blocked by leafs
-	if (!Node || Node->Type != BspInternalType)
-		return true;
+   // reached a leaf or nullchild, movements not blocked by leafs
+   if (!Node || Node->Type != BspInternalType)
+      return true;
 
-	/****************************************************************/
+   /****************************************************************/
 
-	// get signed distances from splitter to both endpoints of move
-	float distS = DISTANCETOSPLITTERSIGNED(&Node->u.internal, S);
-	float distE = DISTANCETOSPLITTERSIGNED(&Node->u.internal, E);
+   // get signed distances from splitter to both endpoints of move
+   float distS = DISTANCETOSPLITTERSIGNED(&Node->u.internal, S);
+   float distE = DISTANCETOSPLITTERSIGNED(&Node->u.internal, E);
 
-	/****************************************************************/
+   /****************************************************************/
 
-	// both endpoints far away enough on positive (right) side
-	// --> climb down only right subtree
-	if (distS > WALLMINDISTANCE && distE > WALLMINDISTANCE)
-		return BSPCanMoveInRoomTree(Node->u.internal.RightChild, S, E);
+   // both endpoints far away enough on positive (right) side
+   // --> climb down only right subtree
+   if (distS > WALLMINDISTANCE && distE > WALLMINDISTANCE)
+      return BSPCanMoveInRoomTree(Node->u.internal.RightChild, S, E);
 
-	// both endpoints far away enough on negative (left) side
-	// --> climb down only left subtree
-	else if (distS < -WALLMINDISTANCE && distE < -WALLMINDISTANCE)
-		return BSPCanMoveInRoomTree(Node->u.internal.LeftChild, S, E);
+   // both endpoints far away enough on negative (left) side
+   // --> climb down only left subtree
+   else if (distS < -WALLMINDISTANCE && distE < -WALLMINDISTANCE)
+      return BSPCanMoveInRoomTree(Node->u.internal.LeftChild, S, E);
 
-	// endpoints are on different sides, one/both on infinite line or potentially too close
-	// --> check walls of splitter first and then possibly climb down both subtrees
-	else
-	{
-		// loop through walls in this splitter
-		Wall* wall = Node->u.internal.FirstWall;
-		while (wall)
-		{
-			// these will be filled by two cases below
-			V2 q;
-			Side* sideS;
-			Sector* sectorS;
-			Side* sideE;
-			Sector* sectorE;
+   // endpoints are on different sides, or one/both on infinite line or potentially too close
+   // --> check walls of splitter first and then possibly climb down both subtrees
+   else
+   {
+      V2 q;
+      Side* sideS;
+      Sector* sectorS;
+      Side* sideE;
+      Sector* sectorE;
 
-			// CASE 1) The move line actually crosses this infinite splitter.
-			// This case handles long movelines where S and E can be far away from each other and
-			// just checking the distance of E to the line would fail.
-			// q contains the intersection point
-			if ((distS > 0.0f && distE < 0.0f) ||
-				(distS < 0.0f && distE > 0.0f))
-			{
-				// get 2d line equation coefficients for infinite line through S and E
-				float a1, b1, c1;
-				a1 = E->Y - S->Y;
-				b1 = S->X - E->X;
-				c1 = a1 * S->X + b1 * S->Y;
+      // CASE 1) The move line actually crosses this infinite splitter.
+      // This case handles long movelines where S and E can be far away from each other and
+      // just checking the distance of E to the line would fail.
+      // q contains the intersection point
+      if ((distS > 0.0f && distE < 0.0f) ||
+          (distS < 0.0f && distE > 0.0f))
+      {
+         // get 2d line equation coefficients for infinite line through S and E
+         float a1, b1, c1;
+         a1 = E->Y - S->Y;
+         b1 = S->X - E->X;
+         c1 = a1 * S->X + b1 * S->Y;
 
-				// get 2d line equation coefficients for infinite line through P1 and P2
-				// NOTE: This should be using BspInternal A,B,C coefficients
-				float a2, b2, c2;
-				a2 = wall->P2.Y - wall->P1.Y;
-				b2 = wall->P1.X - wall->P2.X;
-				c2 = a2 * wall->P1.X + b2 * wall->P1.Y;
+         // get 2d line equation coefficients of splitter
+         float a2, b2, c2;
+         a2 = -Node->u.internal.A;
+         b2 = -Node->u.internal.B;
+         c2 = Node->u.internal.C;
 
-				float det = a1*b2 - a2*b1;
+         float det = a1*b2 - a2*b1;
 
-				// parallel (or identical) lines
-				// should not happen here but is important for div by 0
-				if (ISZERO(det))
-				{
-					wall = wall->NextWallInPlane;
-					continue;
-				}
+         // shouldn't be zero at all, because distS and distE have different sign
+         if (!ISZERO(det))
+         {
+            // intersection point of infinite lines				
+            q.X = (b2*c1 - b1*c2) / det;
+            q.Y = (a1*c2 - a2*c1) / det;
 
-				// intersection point of infinite lines				
-				q.X = (b2*c1 - b1*c2) / det;
-				q.Y = (a1*c2 - a2*c1) / det;
+            // must be in boundingbox of SE
+            if (ISINBOX(S, E, &q))
+            {
+               // iterate finite segments (walls) in this splitter
+               Wall* wall = Node->u.internal.FirstWall;
+               while (wall)
+               {
+                  // infinite intersection point must also be in bbox of wall
+                  // otherwise no intersect
+                  if (!ISINBOX(&wall->P1, &wall->P2, &q))
+                  {
+                     wall = wall->NextWallInPlane;
+                     continue;
+                  }
 
-				//dprintf("intersect: %f %f \t p1.x:%f p1.y:%f p2.x:%f p2.y:%f \n", q.X, q.Y, wall->P1.X, wall->P1.Y, wall->P2.X, wall->P2.Y);
+                  // set from and to sector / side
+                  if (distS > 0.0f)
+                  {
+                     sideS = wall->RightSide;
+                     sectorS = wall->RightSector;
+                  }
+                  else
+                  {
+                     sideS = wall->LeftSide;
+                     sectorS = wall->LeftSector;
+                  }
 
-				// infinite intersection point must be in BOTH
-				// finite segments boundingboxes, otherwise no intersect
-				if (!ISINBOX(S, E, &q) || !ISINBOX(&wall->P1, &wall->P2, &q))
-				{
-					wall = wall->NextWallInPlane;
-					continue;
-				}
+                  if (distE > 0.0f)
+                  {
+                     sideE = wall->RightSide;
+                     sectorE = wall->RightSector;
+                  }
+                  else
+                  {
+                     sideE = wall->LeftSide;
+                     sectorE = wall->LeftSector;
+                  }
 
-				// set from and to sector / side
-				if (distS > 0.0f)
-				{
-					sideS = wall->RightSide;
-					sectorS = wall->RightSector;
-				}
-				else
-				{
-					sideS = wall->LeftSide;
-					sectorS = wall->LeftSector;
-				}
+                  // check the transition data for this wall
+                  if (!BSPCanMoveInRoomTreeInternal(sectorS, sectorE, sideS, sideE, &q))
+                     return false;
 
-				if (distE > 0.0f)
-				{
-					sideE = wall->RightSide;
-					sectorE = wall->RightSector;
-				}
-				else
-				{
-					sideE = wall->LeftSide;
-					sectorE = wall->LeftSector;
-				}
-			}
+                  wall = wall->NextWallInPlane;
+               }
+            }		 
+         }
+      }
 
-			// CASE 2) The move line does not cross the infinite splitter, both move endpoints are on the same side.
-			// This handles short moves where walls are not intersected, but the endpoint may be too close
-			// q will store the too-close endpoint
-			else
-			{
-				// allow getting "away" from wall (distS, distE are signed)
-				// even in case both endpoints would be too close
-				if (fabs(distE) > fabs(distS))
-				{
-					wall = wall->NextWallInPlane;
-					continue;
-				}
+      // CASE 2) The move line does not cross the infinite splitter, both move endpoints are on the same side.
+      // This handles short moves where walls are not intersected, but the endpoint may be too close
+      // q will store the too-close endpoint
+      else
+      {
+         // check only getting closer
+         if (fabs(distE) <= fabs(distS))
+         {
+            // iterate finite segments (walls) in this splitter
+            Wall* wall = Node->u.internal.FirstWall;
+            while (wall)
+            {
+               // get min. squared distance from move endpoint to line segment
+               float dist2 = MinSquaredDistanceToLineSegment(E, &wall->P1, &wall->P2);
 
-				// get min. squared distance from move endpoint to line segment
-				float dist2 = MinSquaredDistanceToLineSegment(E, &wall->P1, &wall->P2);
+               // skip if far enough away
+               if (dist2 > WALLMINDISTANCE2)
+               {
+                  wall = wall->NextWallInPlane;
+                  continue;
+               }
 
-				// skip if far enough away
-				if (dist2 > WALLMINDISTANCE2)
-				{
-					wall = wall->NextWallInPlane;
-					continue;
-				}
+               q.X = E->X;
+               q.Y = E->Y;
 
-				q.X = E->X;
-				q.Y = E->Y;
+               // set from and to sector / side
+               // for case 2 (too close) these are based on (S),
+               // and (E) is assumed to be on the other side.
+               if (distS >= 0.0f)
+               {
+                  sideS = wall->RightSide;
+                  sectorS = wall->RightSector;
+                  sideE = wall->LeftSide;
+                  sectorE = wall->LeftSector;
+               }
+               else
+               {
+                  sideS = wall->LeftSide;
+                  sectorS = wall->LeftSector;
+                  sideE = wall->RightSide;
+                  sectorE = wall->RightSector;
+               }
 
-				// set from and to sector / side
-				// for case 2 (too close) these are based on (S),
-				// and (E) is assumed to be on the other side.
-				if (distS >= 0.0f)
-				{
-					sideS = wall->RightSide;
-					sectorS = wall->RightSector;
-					sideE = wall->LeftSide;
-					sectorE = wall->LeftSector;
-				}
-				else
-				{
-					sideS = wall->LeftSide;
-					sectorS = wall->LeftSector;
-					sideE = wall->RightSide;
-					sectorE = wall->RightSector;
-				}
-			}
+               // check the transition data for this wall
+               if (!BSPCanMoveInRoomTreeInternal(sectorS, sectorE, sideS, sideE, &q))
+                  return false;
 
-			/****************************************/
-			/*   From here on both cases together   */
-			/****************************************/
+               wall = wall->NextWallInPlane;
+            }
+         }
+      }
 
-			// block moves with end outside
-			if (!sectorE || !sideE)
-			{
-#if DEBUGMOVE
-				dprintf("MOVEBLOCK (END OUTSIDE): W:%i", wall->Num);
-#endif
-				return false;
-			}
+      /****************************************************************/
 
-			// don't block moves with start outside (and end inside, see above)
-			if (!sectorS || !sideS)
-			{
-#if DEBUGMOVE
-				dprintf("MOVEALLOW (START OUT, END IN): W:%i", wall->Num);
-#endif
-				wall = wall->NextWallInPlane;
-				continue;
-			}
+      // try right subtree first
+      bool retval = BSPCanMoveInRoomTree(Node->u.internal.RightChild, S, E);
 
-			// sides which have no passable flag set always block
-			if (!((sideS->Flags & WF_PASSABLE) == WF_PASSABLE))
-				return false;
+      // found a collision there? return it
+      if (!retval)
+         return retval;
 
-			// get heights
-			float hFloorS = GetSectorHeightFloorWithDepth(sectorS, &q);
-			float hFloorE = GetSectorHeightFloorWithDepth(sectorE, &q);
-			float hCeilingS = SECTORHEIGHTCEILING(sectorS, &q);
-			float hCeilingE = SECTORHEIGHTCEILING(sectorE, &q);
-
-			// check stepheight (this also requires a lower texture set)
-			if (sideS->TextureLower > 0 && (hFloorE - hFloorS > MAXSTEPHEIGHT))
-			{
-#if DEBUGMOVE
-				dprintf("MOVEBLOCK (STEPHEIGHT): W:%i HFS:%1.2f HFE:%1.2f", wall->Num, hFloorS, hFloorE);
-#endif
-				return false;
-			}
-
-			// check ceilingheight (this also requires an upper texture set)
-			if (sideS->TextureUpper > 0 && (hCeilingE - hFloorS < OBJECTHEIGHTROO))
-			{
-#if DEBUGMOVE
-				dprintf("MOVEBLOCK (UPWALL): W:%i HFS:%1.2f HCE:%1.2f", wall->Num, hFloorS, hCeilingE);
-#endif
-				return false;
-			}
-
-			// check endsector height
-			if (hCeilingE - hFloorE < OBJECTHEIGHTROO)
-			{
-#if DEBUGMOVE
-				dprintf("MOVEBLOCK (SECTHEIGHT): W:%i HFE:%1.2f HCE:%1.2f", wall->Num, hFloorE, hCeilingE);
-#endif
-				return false;
-			}
-
-			// next wall for next loop
-			wall = wall->NextWallInPlane;
-		}
-
-		/****************************************************************/
-
-		// try right subtree first
-		bool retval = BSPCanMoveInRoomTree(Node->u.internal.RightChild, S, E);
-
-		// found a collision there? return it
-		if (!retval)
-			return retval;
-
-		// otherwise try left subtree
-		return BSPCanMoveInRoomTree(Node->u.internal.LeftChild, S, E);
-	}
+      // otherwise try left subtree
+      return BSPCanMoveInRoomTree(Node->u.internal.LeftChild, S, E);
+   }
 }
 #pragma endregion
 

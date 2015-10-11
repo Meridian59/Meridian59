@@ -1,4 +1,4 @@
-IllusionaryFireWall_name_rsc = de "illusionary firewall"
+IllusionaryFireWall_name_rsc = de "Illusionsfeuerwand"
 IllusionaryFireWall_desc_rsc = de \
    "Creates an illusionary wall of fire.  This wall will cause illusionary "
    "wounds, which are never lethal, to victims walking through it.  Requires "

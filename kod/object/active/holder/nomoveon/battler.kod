@@ -199,7 +199,7 @@ properties:
    plHurtMeRecently = $
    % 20 seconds default for players, 60 for monsters
    piHurtMeTime = 20000
-   
+
 messages:
 
    % The first lump of code here deals with resistances and immunities/etc.
@@ -251,7 +251,7 @@ messages:
          }
          plApparitionList = $;
       }
-      
+
       if plHurtMeRecently <> $
       {
          foreach i in plHurtMeRecently
@@ -260,7 +260,7 @@ messages:
             {
                DeleteTimer(Nth(i,3));
             }
-            SetNth(i,1,$);
+            SetFirst(i,$);
             SetNth(i,2,$);
             SetNth(i,3,$);
             plHurtMeRecently = DelListElem(plHurtMeRecently,i);
@@ -1766,42 +1766,42 @@ messages:
    CreateReputationHash()
    {
       phReputation = CreateTable();
-      
+
       return phReputation;
    }
-   
+
    GetReputationHash()
    {
       return phReputation;
    }
-   
+
    GetReputation(faction=$)
    {
       if (faction <> $)
       {
          return GetTableEntry(phReputation,faction);
       }
-      
+
       return;
    }
-   
+
    SetReputation(faction=$,value=$)
    {
       if (faction <> $ AND value <> $)
       {
          AddTableEntry(phReputation,faction,value);
       }
-      
+
       return;
    }
-   
+
    GetHurtMeRecentlyAmount(who=$)
    {
       local i;
-      
+
       foreach i in plHurtMeRecently
       {
-         if Nth(i,1) = who
+         if First(i) = who
          {
             return Nth(i,2);
          }
@@ -1809,14 +1809,14 @@ messages:
 
       return 0;
    }
-   
+
    AddHurtMeRecently(who=$,amount=0)
    {
       local i;
-      
+
       foreach i in plHurtMeRecently
       {
-         if Nth(i,1) = who
+         if First(i) = who
          {
             if Nth(i,2) + amount > 100000
             {
@@ -1827,35 +1827,37 @@ messages:
             SetNth(i,2,Nth(i,2)+amount);
             DeleteTimer(Nth(i,3));
             SetNth(i,3,CreateTimer(self,@RemoveHurtMeRecently,piHurtMeTime));
+
             return;
          }
       }
-      
+
       plHurtMeRecently = Cons([who,amount,CreateTimer(self,
                                @RemoveHurtMeRecently,piHurtMeTime)],
                                plHurtMeRecently);
-      
+
       return;
    }
 
    RemoveHurtMeRecently(timer=$)
    {
       local i;
-      
+
       foreach i in plHurtMeRecently
       {
          if Nth(i,3) = timer
          {
-            SetNth(i,1,$);
+            SetFirst(i,$);
             SetNth(i,2,$);
             SetNth(i,3,$);
             plHurtMeRecently = DelListElem(plHurtMeRecently,i);
+
             return;
          }
       }
 
       return;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

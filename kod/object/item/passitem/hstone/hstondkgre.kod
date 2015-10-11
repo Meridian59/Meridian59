@@ -21,7 +21,7 @@ resources:
    DarkGreenHeartStone_name_rsc = "dark green heartstone"
    DarkGreenHeartStone_desc_rsc = \
       "This is called a 'heartstone'.  It is a huge dark green gem taken from "
-      "the body of a fallen Cr'Xeochicatl.  It wiggles slightly and is cool "
+      "the body of a fallen ne'Xeochicatl.  It wiggles slightly and is cool "
       "to the touch.  The uses for this gem are not widely known."
 
 classvars:

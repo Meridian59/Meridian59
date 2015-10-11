@@ -37,6 +37,7 @@ resources:
  classvars:
 
    vrName = XeoWater_name_rsc
+   vrDesc = XeoWater_desc_rsc
    vrKocName = XeoWater_koc_name_rsc
 
    viAttack_type = ATCK_WEAP_MAGIC

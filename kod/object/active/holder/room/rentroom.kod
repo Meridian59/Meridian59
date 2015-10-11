@@ -1256,7 +1256,11 @@ messages:
             AND (piRedHeartStone >= ITEMS_FROM_HEARTSTONES)
             AND (piBlueHeartStone >= ITEMS_FROM_HEARTSTONES)
             AND (piSkyHeartStone >= ITEMS_FROM_HEARTSTONES)
-            AND (piBrownHeartStone >= ITEMS_FROM_HEARTSTONES))
+            AND (piBrownHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piGreenHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piWhiteHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piBlackHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piPurpleHeartStone >= ITEMS_FROM_HEARTSTONES))
       {
          return TRUE;
       }
@@ -1374,6 +1378,10 @@ messages:
          piRedHeartStone = piRedHeartStone - ITEMS_FROM_HEARTSTONES;
          piSkyHeartStone = piSkyHeartStone - ITEMS_FROM_HEARTSTONES;
          piBlueHeartStone = piBlueHeartStone - ITEMS_FROM_HEARTSTONES;
+         piGreenHeartstone = piGreenHeartstone - ITEMS_FROM_HEARTSTONES;
+         piBlackHeartstone = piBlackHeartstone - ITEMS_FROM_HEARTSTONES;
+         piWhiteHeartstone = piWhiteHeartstone - ITEMS_FROM_HEARTSTONES;
+         piPurpleHeartstone = piPurpleHeartstone - ITEMS_FROM_HEARTSTONES;
       }
 
       return;

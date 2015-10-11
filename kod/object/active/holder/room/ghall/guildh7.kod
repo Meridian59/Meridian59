@@ -150,7 +150,7 @@ messages:
          return GH7_FOYER_SW;
       }
 
-      if (iRow < 7) AND (iCol < 15) AND (iCol > 5)
+      if (iRow < 7) AND (iCol < 14) AND (iCol > 5)
       {
          return GH7_FOYER_NW;
       }

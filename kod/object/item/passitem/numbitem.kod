@@ -209,6 +209,16 @@ messages:
       propagate;
    }
 
+   GetPluralName()
+   {
+      if vrName_plural <> $
+      {
+         return vrName_plural;
+      }
+
+      return Send(self,@GetName);
+   }
+
    AppendDesc()
    {
       % You are looking at 8 elderberries.

@@ -406,7 +406,7 @@ void AsyncSocketWrite(SOCKET sock)
 		return;
 	
 	/* dprintf("got async write session %i\n",s->session_id); */
-	if (WaitForSingleObject(s->muxSend,10000) != WAIT_OBJECT_0)
+	if (!MutexAcquireWithTimeout(s->muxSend,10000))
 	{
 		eprintf("AsyncSocketWrite couldn't get session %i muxSend\n",s->session_id);
 		return;
@@ -422,7 +422,7 @@ void AsyncSocketWrite(SOCKET sock)
 			if (GetLastError() != WSAEWOULDBLOCK)
 			{
 				/* eprintf("AsyncSocketWrite got send error %i\n",GetLastError()); */
-				if (!ReleaseMutex(s->muxSend))
+				if (!MutexRelease(s->muxSend))
 					eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 				HangupSession(s);
 				return;
@@ -442,7 +442,7 @@ void AsyncSocketWrite(SOCKET sock)
 			DeleteBuffer(bn);
 		}
 	}
-	if (!ReleaseMutex(s->muxSend))
+	if (!MutexRelease(s->muxSend))
 		eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 }
 
@@ -459,7 +459,7 @@ void AsyncSocketRead(SOCKET sock)
 	if (s->hangup)
 		return;
 	
-	if (WaitForSingleObject(s->muxReceive,10000) != WAIT_OBJECT_0)
+	if (!MutexAcquireWithTimeout(s->muxReceive,10000))
 	{
 		eprintf("AsyncSocketRead couldn't get session %i muxReceive",s->session_id);
 		return;
@@ -491,12 +491,12 @@ void AsyncSocketRead(SOCKET sock)
 		if (GetLastError() != WSAEWOULDBLOCK)
 		{
 			/* eprintf("AsyncSocketRead got read error %i\n",GetLastError()); */
-			if (!ReleaseMutex(s->muxReceive))
+			if (!MutexRelease(s->muxReceive))
 				eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 			HangupSession(s);
 			return;
 		}
-		if (!ReleaseMutex(s->muxReceive))
+		if (!MutexRelease(s->muxReceive))
 			eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 	}
 	
@@ -522,7 +522,7 @@ void AsyncSocketRead(SOCKET sock)
 		 dprintf("\n");
 		 }
 	*/ 
-	if (!ReleaseMutex(s->muxReceive))
+	if (!MutexRelease(s->muxReceive))
 		eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);  
 	
 	SignalSession(s->session_id);

@@ -80,6 +80,7 @@ OBJS =  \
 	$(OUTDIR)\intstringhash.obj \
 	$(OUTDIR)\files.obj \
 	$(OUTDIR)\sprocket.obj \
+	$(OUTDIR)\mutex_windows.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

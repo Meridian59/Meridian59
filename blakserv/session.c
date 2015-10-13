@@ -381,8 +381,8 @@ session_node * CreateSession(connection_node conn)
 	
 	if (conn.type == CONN_SOCKET)
 	{
-		session->muxReceive = CreateMutex(NULL,FALSE,NULL);
-		session->muxSend = CreateMutex(NULL,FALSE,NULL);
+		session->muxReceive = MutexCreate();
+		session->muxSend = MutexCreate();
 	}
 	
 	session->connected = True;
@@ -442,7 +442,7 @@ void CloseSession(int session_id)
 	
 	if (s->conn.type == CONN_SOCKET)
 	{
-		if (WaitForSingleObject(s->muxSend,10000) != WAIT_OBJECT_0)
+		if (!MutexAcquireWithTimeout(s->muxSend,10000))
 			eprintf("CloseSession couldn't get session %i muxSend\n",s->session_id);
 		else
 		{
@@ -451,13 +451,13 @@ void CloseSession(int session_id)
 			
 			/* no need to release mutex... we're closing it */
 			/*
-			if (!ReleaseMutex(s->muxSend))
+			if (!MutexRelease(s->muxSend))
 			eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 			*/
 			
 		}
 		
-		if (WaitForSingleObject(s->muxReceive,10000) != WAIT_OBJECT_0)
+		if (!MutexAcquireWithTimeout(s->muxReceive,10000))
 			eprintf("CloseSession couldn't get session %i muxReceive\n",s->session_id);
 		else
 		{
@@ -466,17 +466,17 @@ void CloseSession(int session_id)
 			
 			/* no need to release mutex... we're closing it */
 			/*
-			if (!ReleaseMutex(s->muxReceive))
+			if (!MutexRelease(s->muxReceive))
 			eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 			*/
 			
 		}
 		
-		if (!CloseHandle(s->muxSend))
+		if (!MutexClose(s->muxSend))
 			eprintf("CloseSession error (%s) closing send mutex %i in session %i\n",
 			GetLastErrorStr(),s->muxSend,s->session_id);
 		
-		if (!CloseHandle(s->muxReceive))
+		if (!MutexClose(s->muxReceive))
 			eprintf("CloseSession error (%s) closing receive mutex %i in session %i\n",
 			GetLastErrorStr(),s->muxReceive,s->session_id);
 		
@@ -554,7 +554,7 @@ void PollSession(int session_id)
 		return;
 	}
 	
-	if (WaitForSingleObject(s->muxReceive,10000) != WAIT_OBJECT_0)
+	if (!MutexAcquireWithTimeout(s->muxReceive,10000))
 	{
 		eprintf("PollSession bailed waiting for mutex on session %i\n",s->session_id);
 		HangupSession(s);
@@ -576,7 +576,7 @@ void PollSession(int session_id)
 		ProcessSessionBuffer(s);
 	
 	
-	if (!ReleaseMutex(s->muxReceive))
+	if (!MutexRelease(s->muxReceive))
 	{
 		eprintf("PollSession released mutex it didn't own in session %i\n",s->session_id);
 		HangupSession(s);
@@ -849,7 +849,7 @@ void SendBytes(session_node *s,char *buf,int len_buf)
 	if (s->hangup)
 		return;   
 	
-	if (WaitForSingleObject(s->muxSend,10000) != WAIT_OBJECT_0)
+	if (!MutexAcquireWithTimeout(s->muxSend,10000))
 	{
 		eprintf("SendBytes couldn't get session %i muxSend\n",s->session_id);
 		return;
@@ -864,7 +864,7 @@ void SendBytes(session_node *s,char *buf,int len_buf)
 			if (GetLastError() != WSAEWOULDBLOCK)
 			{
 				/* eprintf("SendBytes got send error %i\n",GetLastError()); */
-				if (!ReleaseMutex(s->muxSend))
+				if (!MutexRelease(s->muxSend))
 					eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 				HangupSession(s);
 				return;
@@ -882,7 +882,7 @@ void SendBytes(session_node *s,char *buf,int len_buf)
 		s->send_list = AddToBufferList(s->send_list,buf,len_buf);
 	}
 	
-	if (!ReleaseMutex(s->muxSend))
+	if (!MutexRelease(s->muxSend))
 		eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 }
 
@@ -992,7 +992,7 @@ void SendBufferList(session_node *s,buffer_node *blist)
 	}
 	
 	
-	if (WaitForSingleObject(s->muxSend,10000) != WAIT_OBJECT_0)
+	if (!MutexAcquireWithTimeout(s->muxSend,10000))
 	{
 		eprintf("SendBufferList couldn't get session %i muxSend\n",s->session_id);
 		return;
@@ -1008,7 +1008,7 @@ void SendBufferList(session_node *s,buffer_node *blist)
 			{
 				if (GetLastError() != WSAEWOULDBLOCK)
 				{
-					if (!ReleaseMutex(s->muxSend))
+					if (!MutexRelease(s->muxSend))
 						eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 					/* eprintf("SendBufferList got send error %i\n",GetLastError()); */
 					DeleteBufferList(blist);
@@ -1034,7 +1034,7 @@ void SendBufferList(session_node *s,buffer_node *blist)
 		SessionAddBufferList(s,blist);
 	}
 	
-	if (!ReleaseMutex(s->muxSend))
+	if (!MutexRelease(s->muxSend))
 		eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 }
 

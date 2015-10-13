@@ -40,7 +40,7 @@ classvars:
 
    vrDead_icon = elephant_dead_icon_rsc
    vrDead_name = elephant_dead_name_rsc
-
+   viIndefinite = ARTICLE_AN
    viSpeed = SPEED_SLOW
    viAttack_type = ATCK_WEAP_BITE
    viLevel = 75

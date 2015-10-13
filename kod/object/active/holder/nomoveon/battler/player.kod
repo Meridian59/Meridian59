@@ -2980,14 +2980,17 @@ messages:
       {
          oItem = droppedItem;
       }
-      else
+      else if index = $
       {
-         if index = $
-         {
-            return FALSE;
-         }
+         return FALSE;
+      }
 
-         oItem = Send(self,@FindItemByIndex,#index=index);
+      oItem = Send(self,@FindItemByIndex,#index=index);
+
+      % Can't drop nothing.
+      if (oItem = $)
+      {
+         return FALSE;
       }
 
       if targetGhost = $
@@ -3052,7 +3055,7 @@ messages:
 
       if index = $
       {
-         return;
+         return $;
       }
 
       if index <= length(plActive)
@@ -3063,6 +3066,11 @@ messages:
       {
          lInv = plPassive;
          index = index - length(plActive);
+      }
+
+      if (lInv = $)
+      {
+         return $;
       }
 
       return Nth(lInv,index);

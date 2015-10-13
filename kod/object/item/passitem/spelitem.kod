@@ -235,7 +235,8 @@ messages:
    CastSpell(what=$,apply_on=$)
    "Casts the spell set by the spell object"
    {
-      local oSpell,iSpellPower,iRand,iInt,lTargets;
+      local oSpell, iSpellPower, iRand, iInt, lTargets, lRadiusState,
+            oModifierSpell, iSPLoss;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
 
@@ -267,6 +268,37 @@ messages:
       {
          iSpellpower = piSpellpower;
       }
+
+      % AMA modifies item spellpower.
+      lRadiusState = Send(poOwner,@GetMostPowerfulRadiusEnchantmentState,
+                           #byClass=&AntiMagicAura);
+      if lRadiusState <> $
+      {
+         iSpellPower = Send(First(lRadiusState),@ModifySpellpower,#who=poOwner,
+                              #oSpell=oSpell,#state=lRadiusState,
+                              #iSpellPower=iSpellPower);
+      }
+
+      % Mana convergence adds spellpower.
+      lRadiusState = Send(poOwner,@GetMostPowerfulRadiusEnchantmentState,
+                           #byClass=&ManaConvergence);
+      if lRadiusState <> $
+      {
+         iSpellPower = Send(First(lRadiusState),@ModifySpellpower,#who=poOwner,
+                              #oSpell=oSpell,#state=lRadiusState,
+                              #iSpellPower=iSpellPower);
+      }
+
+      % Owner of spellitem being demented reduces item spellpower.
+      oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENT);
+      if Send(poOwner,@IsEnchanted,#what=oModifierSpell)
+      {
+         iSPLoss = First(Send(poOwner,@GetEnchantedState,#what=oModifierSpell));
+         iSPLoss = Random(iSPLoss, iSPLoss * 2);
+         iSpellPower = iSpellPower - iSPLoss;
+      }
+
+      iSpellPower = Bound(iSpellPower, SPELLPOWER_MINIMUM, SPELLPOWER_MAXIMUM);
 
       if (vbFailSafe)
          OR ( (Send(oSpell,@CanPayCosts,#who=poOwner,#lTargets=lTargets,

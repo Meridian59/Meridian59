@@ -22,16 +22,20 @@ resources:
    brittle_desc_rsc = \
       "Ages the target's weapon by many years, making it "
       "frail and prone to breaking.  "
-      "Requires magic mushrooms and purple mushrooms to cast."
+      "Requires three magic mushrooms and two purple mushrooms to cast."
 
-   brittle_nothing = "For all of your mystic concentration, nothing seems to happen."
+   brittle_nothing = \
+      "For all of your mystic concentration, nothing seems to happen."
 
    brittle_sound = fbrit.wav
 
    brittle_no_weapon = "%s%s isn't wielding anything that you can damage."
    brittle_hunter_sword = "%s%s's Sword of the Hunt repells your spell."
-   brittle_cast_rsc = "%s%s's eyes focus intensely on your weapon.  Your %s takes on a duller cast."
-   brittle_succeed = "You focus your eyes intensely on %s%s's %s, and it dulls."
+   brittle_cast_rsc = \
+      "%s%s's eyes focus intensely on your weapon.  Your %s takes "
+      "on a duller cast."
+   brittle_succeed = \
+      "You focus your eyes intensely on %s%s's %s, and it dulls."
 
 classvars:
 
@@ -77,7 +81,7 @@ messages:
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
       local target, i, oWeapon;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -85,78 +89,88 @@ messages:
       }
 
       target = First(lTargets);
-      if not IsClass(target, &User)
+      if NOT IsClass(target, &User)
       {
-         if not bItemCast
+         if NOT bItemCast
          {
-            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target,
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
          }
+
          return FALSE;
       }
 
       if target = who
       {
-         if not bItemCast
+         if NOT bItemCast
          {
-            Send(who, @MsgSendUser, #message_rsc=spell_no_self_target,
-	           #parm1=vrName);
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,
+                  #parm1=vrName);
          }
+
          return FALSE;
       }
+
       oWeapon = Send(Target,@LookupPlayerWeapon);
-      if oWeapon = $ or not send(oWeapon,@CanWeaken)
+      if oWeapon = $
+         OR NOT send(oWeapon,@CanWeaken)
       {
-         if not bItemCast
+         if NOT bItemCast
          {
-            send(who,@msgsenduser,#message_rsc=brittle_nothing);
+            send(who,@MsgSendUser,#message_rsc=brittle_nothing);
          }
+
          return FALSE;
       }
+
       propagate;   % Check other things higher up
    }
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oWeapon, oTarget, iHits;
+      local oWeapon, oTarget, iHits, iMax;
 
       oTarget = First(lTargets);
       oWeapon = Send(oTarget,@LookupPlayerWeapon);
 
-      %% if target has no wielded weapon, the spell is wasted.
+      % If target has no wielded weapon, the spell is wasted.
       if oWeapon = $
-      { 
-	      Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-	      Send(who,@MsgSendUser,#message_rsc=brittle_no_weapon,
-            #parm1=Send(oTarget,@GetCapDef),
-	         #parm2=Send(oTarget,@GetName));
-	      propagate; 
+      {
+         Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+         Send(who,@MsgSendUser,#message_rsc=brittle_no_weapon,
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         propagate;
       }
 
-      if isClass(oWeapon,&HunterSword) 
+      if IsClass(oWeapon,&HunterSword)
       {
          Send(who,@MsgSendUser,#message_rsc=brittle_hunter_sword,
-            #parm1=Send(oTarget,@GetCapDef),
-            #parm2=Send(oTarget,@GetName));
-	      propagate;
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         propagate;
       }
 
       iHits   = Send(oWeapon,@GetHits);
 
       %% Brittle currently does random(1,iSpellPower/2) - 10 points of damage.
+      iMax = Bound(iSpellPower/2, SPELLPOWER_MINIMUM, SPELLPOWER_MAXIMUM);
+      iHits   = iHits - (Random(1,iMax)) - 10;
+      if iHits < 1
+      {
+         iHits = 1;
+      }
 
-      iHits   = iHits - (random(1,iSpellPower/2)) - 10;
-      if iHits < 1   {  iHits = 1 ;  }
       Send(oWeapon,@SetHits,#number=iHits);
-      Send(oTarget, @MsgSendUser, #message_rsc=brittle_cast_rsc,
-	   #parm1=Send(who,@GetCapDef),
-	   #parm2=Send(who,@GetName),
-	   #parm3=Send(oWeapon,@GetName));
+      Send(oTarget,@MsgSendUser,#message_rsc=brittle_cast_rsc,
+            #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+            #parm3=Send(oWeapon,@GetName));
 
       Send(who,@MsgSendUser,#message_rsc=brittle_succeed,
-	   #parm1=Send(oTarget,@GetDef),
-	   #parm2=Send(oTarget,@GetName),
-	   #parm3=Send(oWeapon,@GetName));
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),
+            #parm3=Send(oWeapon,@GetName));
+
       propagate;
    }
 
@@ -166,5 +180,4 @@ messages:
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

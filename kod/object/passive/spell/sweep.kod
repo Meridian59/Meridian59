@@ -103,9 +103,17 @@ messages:
          oObj = Send(oRoom,@HolderExtractObject,#data=lPassive);
 
          % Cull everything that isn't "get-able" out of the list.
+         % Also exclude items that are in guild halls and not in the same
+         % section as the caster to prevent 'sweep transfers'
          if IsClass(oObj,&Item)
             AND send(who,@ReqNewHold,#what=oObj)
             AND Send(oObj,@CanSweep)
+            AND NOT (IsClass(oRoom,&GuildHall)
+               AND Send(oRoom,@InFoyer,#who=who) <>
+                  Send(oRoom,@InFoyer,#iRow=Send(oObj,@GetRow),
+                        #iCol=Send(oObj,@GetCol),
+                        #iFineRow=Send(oObj,@GetFineRow),
+                        #iFineCol=Send(oObj,@GetFineCol)))
          {
             lGoodItems = cons(oObj,lGoodItems);
          }                 

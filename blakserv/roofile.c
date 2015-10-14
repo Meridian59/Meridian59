@@ -679,18 +679,6 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E, int ObjectID, bool moveOuts
          // end must be farer away than start
          if (de2 <= ds2)
             return false;
-
-         // step (se) must also point towards +-90° of the straight step-away direction (ms)
-         // if it's not starting exactly on S (if so there's no straight step-away dir and all are allowed)
-         if (ds2 > EPSILON)
-         {
-            V2 se;
-            V2SUB(&se, E, S); // from s to e
-            float angle = acosf(V2DOT(&ms, &se));
-
-            if (angle < -M_PI_2 || angle > M_PI_2)
-               return false;
-         }
       }
 
       // CASE 2) Start is outside blockradius, verify by intersection algorithm.

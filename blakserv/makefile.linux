@@ -80,6 +80,7 @@ OBJS =  \
 	$(OUTDIR)/intstringhash.obj \
 	$(OUTDIR)/files.obj \
 	$(OUTDIR)/critical_section.obj \
+	$(OUTDIR)/mutex_linux.obj \
 
 
 all : makedirs $(OUTDIR)/blakserv

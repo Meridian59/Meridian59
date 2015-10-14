@@ -57,14 +57,6 @@ KODINCLUDEDIR = $(KODDIR)/include
 
 PALETTEFILE = $(TOPDIR)/blakston.pal
 
-# compiler specs -- uses multi-threaded DLL C runtime library
-# /TP builds C files in C++ mode
-# /WX treats warnings as errors
-# /GR- turns off RTTI
-# /EHsc- turns off exceptions
-# /wd4996  disables warning (GetVersionExA has been deprecated)
-# -arch:IA32 disables SSE instructions (not supported on ancient Athlon CPUs)
-
 CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX
 CNORMALFLAGS = $(CCOMMONFLAGS) -O3
 CDEBUGFLAGS = $(CCOMMONFLAGS) -DBLAKDEBUG
@@ -95,10 +87,9 @@ endif
 # programs
 
 CC     = g++
-MAKE   =nmake
+MAKE   = make
 LIBPRG =
 LINK   = g++
-RC     =
 
 LEX = /usr/bin/flex -I -i
 YACC = /usr/bin/bison -d -t
@@ -107,7 +98,6 @@ RM = rm -f
 RMDIR = rmdir
 MV = mv
 LATEX = latex
-MAKENSIS =
 
 BC = $(BLAKBINDIR)/bc
 MAKEBGF = $(BLAKBINDIR)/makebgf

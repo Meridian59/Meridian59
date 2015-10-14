@@ -88,6 +88,9 @@ resources:
 
    guildhall_newsball = "news"
    guildhall_newsdesc = "This is the latest guild news."
+   
+   cannot_conveyance_msg = \
+      "The guild hall's innate defenses prevent you from casting conveyance!"
 
    guildhall_sound_down = shielddn.wav
    guildhall_sound_up = shieldup.wav
@@ -1307,6 +1310,22 @@ messages:
    CanTokenEnterRoom()
    {
       return FALSE;
+   }
+   
+   ReqSpellCast(oSpell=$,who=$)
+   {
+      % Cannot conveyance inside a hall.
+      if IsClass(oSpell,&Conveyance)
+      {
+         if who <> $
+            AND IsClass(who,&Player)
+         {
+            Send(who,@MsgSendUser,#message_rsc=cannot_conveyance_msg);
+         }
+         return FALSE;
+      }
+
+      propagate;
    }
 
 end

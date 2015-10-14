@@ -144,8 +144,7 @@ messages:
       % Template #93 is dement learn quest, deliver item
       % QNT_ID_DEMENT_PUPIL_TWO
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
-               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Book, 1  ],
-                            [ QN_PRIZETYPE_ITEMCLASS, &Scroll, 1 ],
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Scroll, 1 ],
                             [ QN_PRIZETYPE_ITEMCLASS, &CureDiseasePotion, 1  ],
                             [ QN_PRIZETYPE_ITEMCLASS, &Sacchaqua, 1  ] ],
                #prizelist=[ [ QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -5, 2 ] ],

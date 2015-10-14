@@ -169,7 +169,7 @@ messages:
                #cargolist= [ [  QN_PRIZETYPE_ITEMCLASS, &StoutGoblet, 50 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Goblet, 50 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &WineGoblet, 40 ] ],
-               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 1300 ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Book, 1 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Money, 1400 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Money, 1500 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Money, 1600 ],

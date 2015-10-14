@@ -707,7 +707,7 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E, int ObjectID, bool moveOuts
 
             if (angle < -M_PI_2 || angle > M_PI_2)
                return false;
-		 }
+         }
       }
 
       // CASE 2) Start is outside blockradius, verify by intersection algorithm.

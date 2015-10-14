@@ -152,7 +152,7 @@ messages:
                               [ QN_PRIZETYPE_ITEMCLASS, &Mushroom, 20 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &KriipaClaw, 5 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &DragonflyEye, 5 ] ],
-               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 500 ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Book, 1 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Money, 600 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Money, 650 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &Money, 600 ],

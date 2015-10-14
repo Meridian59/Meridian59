@@ -206,11 +206,9 @@ messages:
       % Template #23 is lute quest, deliver the priority item.
       % QNT_ID_LUTEQUEST_THREE
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
-               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Book, 1  ],
-                            [ QN_PRIZETYPE_ITEMCLASS, &Scroll, 1  ],
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Scroll, 1  ],
                             [ QN_PRIZETYPE_ITEMCLASS, &CurePoisonPotion, 1  ],
-                            [ QN_PRIZETYPE_ITEMCLASS, &Sacchaqua, 1  ],
-                            [ QN_PRIZETYPE_ITEMCLASS, &Rose, 1  ] ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Sacchaqua, 1  ] ],
                #quest_node_index=QNT_ID_LUTEQUEST_THREE)
       {
          % lNPCs was set in the previous node

@@ -20,12 +20,12 @@ resources:
 
    include xeoholy.lkod
 
-   XeoHoly_name_rsc = "gi'xeochicatl"
-   XeoHoly_koc_name_rsc = "gi'xeo'chicatl"
+   XeoHoly_name_rsc = "si'xeochicatl"
+   XeoHoly_koc_name_rsc = "si'xeo'chicatl"
    XeoHoly_icon_rsc = Xeo.bgf
    XeoHoly_desc_rsc = \
-      "Before you is a gi'xeochicatl, a fearsome monster given life by the "
-      "chaotic magic of the Meridian.  The gi'xeochicatl is the embodiment of "
+      "Before you is a si'xeochicatl, a fearsome monster given life by the "
+      "chaotic magic of the Meridian.  The si'xeochicatl is the embodiment of "
       "destruction, a violent monster that seems uncontrollable.  These "
       "monsters feed off of the magic of the lands which makes them very "
       "powerful.  Rumors abound about the origin of these monsters, but you "
@@ -37,6 +37,7 @@ resources:
  classvars:
 
    vrName = XeoHoly_name_rsc
+   vrDesc = XeoHoly_desc_rsc
    vrKocName = XeoHoly_koc_name_rsc
 
    viAttack_type = ATCK_WEAP_MAGIC

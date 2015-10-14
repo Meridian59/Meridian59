@@ -11,25 +11,26 @@
 Set is UtilitySpell
 
 constants:
+
    include blakston.khd
 
 resources:
 
    include set.lkod
 
-   Set_cast = "You register your inventory preferences."
+   set_cast = "You register your inventory preferences."
 
-   Set_name_rsc = "set"
-   Set_icon_rsc = imend.bgf
-   Set_desc_rsc = \
-     "Registers your personal battle gear preferences with Frular's office.  "
-	 "Requires nothing but a will to fight."
+   set_name_rsc = "set"
+   set_icon_rsc = imend.bgf
+   set_desc_rsc = \
+      "Registers your personal battle gear preferences with Frular's office.  "
+      "Requires nothing but a will to fight."
 
 classvars:
 
-   vrName = Set_name_rsc
-   vrIcon = Set_icon_rsc
-   vrDesc = Set_desc_rsc
+   vrName = set_name_rsc
+   vrIcon = set_icon_rsc
+   vrDesc = set_desc_rsc
 
    viCast_time = 0
 
@@ -53,40 +54,47 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local each_obj, i, plPassive, plLocal_list;
+      local oItem, lPassive, lLocal_list;
 
-      plLocal_list = $;
-      plPassive = Send(who,@GetHolderPassive);
-      
-      foreach i in plPassive
+      lLocal_list = $;
+      lPassive = Send(who,@GetHolderPassive);
+
+      foreach oItem in lPassive
       {
-         each_obj = Send(who,@HolderExtractObject,#data=i);
-
-         % Ignore scrolls of set
-         if IsClass(each_obj,&SetScroll)
+         % Ignore scrolls of set.
+         if IsClass(oItem,&SetScroll)
          {
             continue;
          }
 
-         % It's important to get disciple robes of the correct school
-         if IsClass(each_obj,&DiscipleRobe)
+         % Ignore money.
+         if IsClass(oItem,&Money)
          {
-            plLocal_list = Cons([GetClass(each_obj),Send(each_obj,@GetSchool),Send(each_obj,@GetIndef),Send(each_obj,@GetTrueName)],plLocal_list);
             continue;
          }
 
-         if IsClass(each_obj,&NumberItem)
+         % It's important to get disciple robes of the correct school.
+         if IsClass(oItem,&DiscipleRobe)
          {
-            plLocal_list = Cons([GetClass(each_obj),Send(each_obj,@GetNumber),Send(each_obj,@GetIndef),Send(each_obj,@GetTrueName)],plLocal_list);
+            lLocal_list = Cons([GetClass(oItem),Send(oItem,@GetSchool)],
+                                 lLocal_list);
+            continue;
+         }
+
+         if IsClass(oItem,&NumberItem)
+         {
+            lLocal_list = Cons([GetClass(oItem),Send(oItem,@GetNumber)],
+                                 lLocal_list);
          }
          else
          {
-            plLocal_list = Cons([GetClass(each_obj),-1,Send(each_obj,@GetIndef),Send(each_obj,@GetTrueName)],plLocal_list);
+            lLocal_list = Cons([GetClass(oItem),-1],lLocal_list);
          }
       }
 
-      Send(who,@SetLoadoutList,#set_list=plLocal_list);
+      Send(who,@SetLoadoutList,#set_list=lLocal_list);
       Send(who,@MsgSendUser,#message_rsc=Set_cast);
+
       propagate;
    }
 

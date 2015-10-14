@@ -21,8 +21,8 @@ resources:
    cookie_name_rsc = "cookie"
    cookie_icon_rsc = cookie.bgf
    cookie_desc_rsc = \
-      "Baked by Daenks, this cookie is both warm and soft"
-      " to the touch. Your mouth waters at just the very sight of it."
+      "Baked by Daenks, this cookie is both warm and soft "
+      "to the touch. Your mouth waters at the very sight of it."
 
    cookie_name_plural_rsc = "cookies"
 

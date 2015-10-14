@@ -21,7 +21,7 @@ resources:
    WhiteHeartStone_name_rsc = "white heartstone"
    WhiteHeartStone_desc_rsc = \
       "This is called a 'heartstone'.  It is a huge white gem taken from "
-      "the body of a fallen Gi'Xeochicatl.  It wiggles slightly and is cool "
+      "the body of a fallen si'Xeochicatl.  It wiggles slightly and is cool "
       "to the touch.  The uses for this gem are not widely known."
 
 classvars:

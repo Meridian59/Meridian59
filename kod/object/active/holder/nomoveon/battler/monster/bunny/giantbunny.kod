@@ -40,7 +40,7 @@ classvars:
    vrDesc = easterbunny_desc_rsc
    vrDead_icon = easterbunny_dead_icon_rsc
    vrDead_name = easterbunny_dead_name_rsc
-
+   viIndefinite = ARTICLE_AN
    vrSpawnBunny = easterbunny_spawn_minion
 
    viSpeed = SPEED_FAST

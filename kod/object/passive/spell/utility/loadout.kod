@@ -17,32 +17,33 @@ resources:
 
    include loadout.lkod
 
-   Loadout_not_safe = "You must be in a safe area to cast loadout."
-   Loadout_not_guilded = "You must be guilded to cast loadout."
-   Loadout_rank_too_low = "You are not high enough rank to cast loadout."
-   Loadout_no_hall = "With no guild hall to link with, the loadout spell fails."
+   loadout_not_safe = "You must be in a safe area to cast loadout."
+   loadout_not_guilded = "You must be guilded to cast loadout."
+   loadout_rank_too_low = "You are not high enough rank to cast loadout."
+   loadout_no_hall = "With no guild hall to link with, the loadout spell fails."
 
-   Loadout_items_not_found = "The chests did not contain %s."
-   Loadout_items_not_enough = "The chests did not contain enough %s."
-   Loadout_item_not_found = "The chests did not contain %s%s."
-   Loadout_cant_carry_all = "You can't carry all the %s."
-   Loadout_cant_carry_one = "You can't carry %s%s."
-   Loadout_cant_carry_any = "You can't carry any %s."
-   
-   Loadout_cast = "You activate your link with your guild hall's storage."
-   Loadout_not_set = "You currently have no inventory preferences set."
-   
-   Loadout_name_rsc = "loadout"
-   Loadout_icon_rsc = imend.bgf
-   Loadout_desc_rsc = \
-     "Attempts to translocate gear and reagents from your guild hall's storage, "
-     "according to preferences previously registered with Frular's office.  "
+   loadout_items_not_found = "The chests did not contain any %s."
+   loadout_items_not_enough = "The chests did not contain enough %s."
+   loadout_item_not_found = "The chests did not contain %s%s."
+   loadout_cant_carry_all = "You can't carry all the %s."
+   loadout_cant_carry_one = "You can't carry %s%s."
+   loadout_cant_carry_any = "You can't carry any %s."
+
+   loadout_cast = "You activate your link with your guild hall's storage."
+   loadout_not_set = "You currently have no inventory preferences set."
+
+   loadout_name_rsc = "loadout"
+   loadout_icon_rsc = imend.bgf
+   loadout_desc_rsc = \
+      "Attempts to translocate gear and reagents from your guild hall's "
+      "storage, according to preferences previously registered with "
+      "Frular's office."
 
 classvars:
 
-   vrName = Loadout_name_rsc
-   vrIcon = Loadout_icon_rsc
-   vrDesc = Loadout_desc_rsc
+   vrName = loadout_name_rsc
+   vrIcon = loadout_icon_rsc
+   vrDesc = loadout_desc_rsc
 
    viCast_time = 20000
 
@@ -63,36 +64,41 @@ messages:
 
       return;
    }
-   
+
    CanPayCosts(who = $)
    {
       if Send(who,@GetGuild) = $
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_not_guilded);
+         Send(who,@MsgSendUser,#message_rsc=loadout_not_guilded);
+
          return FALSE;
       }
 
       if Send(Send(who,@GetGuild),@GetRank,#who=who) = RANK_APPRENTICE
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_rank_too_low);
+         Send(who,@MsgSendUser,#message_rsc=loadout_rank_too_low);
+
          return FALSE;
       }
 
       if Send(Send(who,@GetGuild),@GetGuildHall) = $
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_no_hall);
+         Send(who,@MsgSendUser,#message_rsc=loadout_no_hall);
+
          return FALSE;
       }
 
       if NOT Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_not_safe);
+         Send(who,@MsgSendUser,#message_rsc=loadout_not_safe);
+
          return FALSE;
       }
       
       if Send(who,@GetLoadoutList) = $
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_not_set);
+         Send(who,@MsgSendUser,#message_rsc=loadout_not_set);
+
          return FALSE;
       }
 
@@ -101,169 +107,180 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local i, n, z, each_obj, countHolding, countNeeded, findAmount, class, number, have_number, bFound, plLoadout_list, plPassive,
-            indef, name, plDoNotSearch, bDoNotSearch, school, plDoNotSearchSchool, bDoNotSearchSchool;
+      local i, n, countHolding, countNeeded, findAmount, class, number, bFound,
+            lLoadout_list, lInventory, lDoNotSearch, school, oItem, lDRobes,
+            lLRobes;
 
-      plLoadout_list = Send(who,@GetLoadoutList);
-      plPassive = Send(who,@GetHolderPassive);
-      plDoNotSearch = $;
-      plDoNotSearch = Cons(&Money,plDoNotSearch);
-      plDoNotSearchSchool = $;
-      
-      Send(who,@MsgSendUser,#message_rsc=Loadout_cast);
-      
-      foreach i in plLoadout_list
+      lLoadout_list = Send(who,@GetLoadoutList);
+      lLRobes = $;
+      lDRobes = $;
+      lInventory = Send(who,@GetHolderPassive);
+      lDoNotSearch = $;
+
+      Send(who,@MsgSendUser,#message_rsc=loadout_cast);
+
+      foreach i in lLoadout_list
       {
-         class = Nth(i,1);
-         number = Nth(i,2);
-         indef = Nth(i,3);
-         name = Nth(i,4);
-         bFound = FALSE;
-         bDoNotSearch = FALSE;
-         bDoNotSearchSchool = FALSE;
-         
-         foreach z in plDoNotSearch
-         {
-            if z = class
-            {
-               bDoNotSearch = TRUE;
-               break;
-            }
-         }
-         if bDoNotSearch
+         class = First(i);
+
+         % Skip this item if we shouldn't search for it.
+         if FindListElem(lDoNotSearch, class)
          {
             continue;
          }
 
-         % Special case for Disciple Robes, which are implemented without separate classes
+         % Number can be -1 for single-stack items, school number for
+         % disciple robes, or the number of a saved stackable item.
+         number = Nth(i,2);
+         bFound = FALSE;
+
+         % Special case for Disciple Robes, which are implemented
+         % without separate classes.
+         if class = &LightDiscipleRobe
+         {
+            lLRobes = Cons(number, lLRobes);
+
+            continue;
+         }
          if class = &DiscipleRobe
          {
-            school = number;
+            lDRobes = Cons(number, lDRobes);
 
-            foreach z in plDoNotSearchSchool
-            {
-               if z = school
-               {
-                  bDoNotSearchSchool = TRUE;
-                  break;
-               }
-            }
-            if bDoNotSearchSchool
-            {
-               continue;
-            }
-            
-            countHolding = 0;
-            foreach i in plPassive
-            {
-               each_obj = Send(who,@HolderExtractObject,#data=i);
-               If IsClass(each_obj,&DiscipleRobe)
-                  AND Send(each_obj,@GetSchool) = school
-               {
-                  countHolding = countHolding + 1;
-               }
-            }
-            countNeeded = 0;
-            foreach n in plLoadout_list
-            {
-               if Nth(n,1) = class
-                  AND Nth(n,2) = school
-               {
-                  countNeeded = countNeeded + 1;
-               }
-            }
-            findAmount = countNeeded - countHolding;
-            if countNeeded > countHolding
-            {
-               bFound = Send(self,@GetDiscipleRobeFromHallChest,#who=who,#indef=indef,#name=name,#school=school);
-               if NOT bFound
-               {
-                  plDoNotSearchSchool = Cons(school,plDoNotSearchSchool);
-               }
-            }
             continue;
          }
-         
+
          if number = -1
          {
-            % Look for singular item in inventory.
+            % Don't need to search for it again.
+            lDoNotSearch = Cons(class,lDoNotSearch);
+
+            % Check how many we have.
             countHolding = Send(who,@CountHoldingHowMany,#class=class);
+
             countNeeded = 0;
-            foreach n in plLoadout_list
+            foreach n in lLoadout_list
             {
-               if Nth(n,1) = class
+               if First(n) = class
                {
-                  countNeeded = countNeeded + 1;
+                  ++countNeeded;
                }
             }
             findAmount = countNeeded - countHolding;
-            if countNeeded > countHolding
+            while (findAmount-- > 0)
             {
-               bFound = Send(self,@GetSingleItemFromHallChest,#who=who,#class=class,#indef=indef,#name=name);
+               bFound = Send(self,@GetSingleItemFromHallChest,#who=who,
+                              #class=class);
                if NOT bFound
                {
-                  plDoNotSearch = Cons(class,plDoNotSearch);
+                  break;
                }
             }
          }
          else
          {
-            % Look for numbered item. If we find it, check how many of it we have.
-            % Get the remainder of (needed - have).
-            foreach n in plPassive
+            % Look for numbered item. If we find it, check how many of it
+            % we have. Get the remainder of (needed - have).
+            oItem = GetListElemByClass(lInventory,class);
+            if (oItem <> $)
             {
-               each_obj = Send(who,@HolderExtractObject,#data=n);
-               if isClass(each_obj, class)
-               {
-                  bFound = true;
-                  have_number = Send(each_obj,@GetNumber);
-
-                  if have_number < number
-                  {
-                     Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,#number=number-have_number,#name=name);
-                  }                  
-                  break;
-               }
+               countHolding = Send(oItem,@GetNumber);
             }
-            if NOT bFound
+            else
             {
-               Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,#number=number,#name=name);
+               countHolding = 0;
+            }
+
+            if (countHolding < number)
+            {
+               Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,
+                     #number=number-countHolding);
             }
          }
+      }
+
+      % Now deal with disciple robes. If lDRobes and lLRobes are both $,
+      % just propagate.
+      if lDRobes = $ AND lLRobes = $
+      {
+         propagate;
+      }
+
+      % For each robe the player currently has, remove it if present in
+      % the robe loadout lists.
+      foreach oItem in lInventory
+      {
+         if IsClass(oItem,&LightDiscipleRobe)
+         {
+            if lLRobes = $
+            {
+               continue;
+            }
+            school = Send(oItem,@GetSchool);
+            if FindListElem(lLRobes, school)
+            {
+               lLRobes = DelListElem(lLRobes, school);
+            }
+         }
+         else if IsClass(oItem,&DiscipleRobe)
+         {
+            if lDRobes = $
+            {
+               continue;
+            }
+            school = Send(oItem,@GetSchool);
+            if FindListElem(lDRobes, school)
+            {
+               lDRobes = DelListElem(lDRobes, school);
+            }
+         }
+      }
+
+      % lDRobes and lLRobes should now contain a list of robes we actually
+      % need, so try get them from the chest.
+      foreach school in lDRobes
+      {
+         Send(self,@GetDiscipleRobeFromHallChest,#who=who,#school=school);
+      }
+      foreach school in lLRobes
+      {
+         Send(self,@GetDiscipleRobeFromHallChest,#who=who,#school=school,
+               #class=&LightDiscipleRobe);
       }
 
       propagate;
    }
 
-   GetDiscipleRobeFromHallChest(who=$,class=&DiscipleRobe,indef="an",name="item",school=SS_RIIJA)
+   GetDiscipleRobeFromHallChest(who=$,school=SS_RIIJA,class=&DiscipleRobe)
    {
-      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound;
-      
+      local i, oBox, oItem, oGuild, oGuildHall, bFound;
+
       oGuild = Send(who,@GetGuild);
       oGuildHall = Send(oGuild,@GetGuildHall);
       bFound = FALSE;
-      
+
       foreach i in Send(oGuildHall,@GetHolderActive)
       {
-         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&StorageBox)
+         oBox = First(i);
+         if IsClass(oBox,&StorageBox)
          {
-            foreach n in Send(each_obj,@GetHolderPassive)
+            foreach oItem in Send(oBox,@GetHolderPassive)
             {
-               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
-               if IsClass(each_obj_in_chest,class)
-                  AND Send(each_obj_in_chest,@GetSchool) = school
+               if (GetClass(oItem) = class
+                  AND Send(oItem,@GetSchool) = school)
                {
                   bFound = TRUE;
-                  if Send(who,@ReqNewHold,#what=each_obj_in_chest)
+                  if Send(who,@ReqNewHold,#what=oItem)
                   {
-                     Send(who,@NewHold,#what=each_obj_in_chest);
+                     Send(who,@NewHold,#what=oItem);
+
                      return TRUE;
                   }
                   else
                   {
-                     Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_one,
-                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetTrueName));
+                     Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_one,
+                           #parm1=Send(oItem,@GetIndef),
+                           #parm2=Send(oItem,@GetTrueName));
+
                      return FALSE;
                   }
                }
@@ -273,39 +290,49 @@ messages:
 
       if NOT bFound
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_item_not_found,#parm1=indef,#parm2=name);
+         % Get item template for message.
+         oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+         if (oItem <> $)
+         {
+            Send(who,@MsgSendUser,#message_rsc=loadout_item_not_found,
+                  #parm1=Send(oItem,@GetIndef),
+                  #parm2=Send(oItem,@GetTrueName));
+         }
       }
+
       return FALSE;
    }
 
-   GetSingleItemFromHallChest(who=$,class=&Item,indef="an",name="item")
+   GetSingleItemFromHallChest(who=$,class=&Item)
    {
-      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound;
-      
+      local i, oItem, oBox, oGuild, oGuildHall, bFound;
+
       oGuild = Send(who,@GetGuild);
       oGuildHall = Send(oGuild,@GetGuildHall);
       bFound = FALSE;
-      
+
       foreach i in Send(oGuildHall,@GetHolderActive)
       {
-         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&StorageBox)
+         oBox = First(i);
+         if IsClass(oBox,&StorageBox)
          {
-            foreach n in Send(each_obj,@GetHolderPassive)
+            foreach oItem in Send(oBox,@GetHolderPassive)
             {
-               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
-               if IsClass(each_obj_in_chest,class)
+               if IsClass(oItem,class)
                {
                   bFound = TRUE;
-                  if Send(who,@ReqNewHold,#what=each_obj_in_chest)
+                  if Send(who,@ReqNewHold,#what=oItem)
                   {
-                     Send(who,@NewHold,#what=each_obj_in_chest);
+                     Send(who,@NewHold,#what=oItem);
+
                      return TRUE;
                   }
                   else
                   {
-                     Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_one,
-                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetTrueName));
+                     Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_one,
+                           #parm1=Send(oItem,@GetIndef),
+                           #parm2=Send(oItem,@GetTrueName));
+
                      return FALSE;
                   }
                }
@@ -315,103 +342,120 @@ messages:
 
       if NOT bFound
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_item_not_found,#parm1=indef,#parm2=name);
+         % Get item template for message.
+         oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+         if (oItem <> $)
+         {
+            Send(who,@MsgSendUser,#message_rsc=loadout_item_not_found,
+                  #parm1=Send(oItem,@GetIndef),
+                  #parm2=Send(oItem,@GetTrueName));
+         }
       }
+
       return FALSE;
    }
 
-   GetNumberItemFromHallChest(who=$,class=&Item,number=-1,name="item")
+   GetNumberItemFromHallChest(who=$,class=&Item,number=-1)
    {
-      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound,
-            oSplit, iCanHold, iNumInChest, iGetNumber, bSentErrorMsg;
+      local i, oBox, oItem, oGuild, oGuildHall, bFound, oSplit, iCanHold,
+            iNumInChest, iGetNumber, bSentErrorMsg;
 
       if number < 1
       {
          return;
       }
+
       oGuild = Send(who,@GetGuild);
       oGuildHall = Send(oGuild,@GetGuildHall);
+
       bFound = FALSE;
       bSentErrorMsg = FALSE;
 
       foreach i in Send(oGuildHall,@GetHolderActive)
       {
          iGetNumber = number;
-         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&StorageBox)
+         oBox = First(i);
+         if IsClass(oBox,&StorageBox)
          {
-            foreach n in Send(each_obj,@GetHolderPassive)
+            oItem = GetListElemByClass(Send(oBox,@GetHolderPassive), class);
+            if oItem <> $
             {
-               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
-               if IsClass(each_obj_in_chest,class)
+               iCanHold = Send(who,@GetNumberCanHold,#what=oItem);
+               iNumInChest = Send(oItem,@GetNumber);
+               bFound = TRUE;
+
+               if iGetNumber > iNumInChest
                {
-                  iCanHold = Send(who,@GetNumberCanHold,#what=each_obj_in_chest);
-                  iNumInChest = Send(each_obj_in_chest,@GetNumber);
-                  bFound = TRUE;
+                  iGetNumber = iNumInChest;
+               }
 
-                  if iGetNumber > iNumInChest
+               if iCanhold <> $
+                  AND iGetNumber > iCanHold
+               {
+                  if iCanHold > 0
                   {
-                     iGetNumber = iNumInChest;
-                  }
-
-                  if iCanhold <> $
-                     AND iGetNumber > iCanHold
-                  {
-                     if iCanHold > 0
+                     if NOT bSentErrorMsg
                      {
-                        if NOT bSentErrorMsg
-                        {
-                           Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_all,
-                                #parm1=Send(each_obj_in_chest,@GetTrueName));
-                           bSentErrorMsg = TRUE;       
-                        }
+                        Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_all,
+                              #parm1=Send(oItem,@GetPluralName));
+                        bSentErrorMsg = TRUE;
                      }
-                     else
+                  }
+                  else
+                  {
+                     if NOT bSentErrorMsg
                      {
-                        if NOT bSentErrorMsg
-                        {
-                           Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_any,
-                                #parm1=Send(each_obj_in_chest,@GetTrueName));    
-                           bSentErrorMsg = TRUE;       
-                        }                      
+                        Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_any,
+                             #parm1=Send(oItem,@GetPluralName));
+                        bSentErrorMsg = TRUE;
+                     }
+                     return;
+                  }
+                  iGetNumber = iCanHold;
+               }
+
+               if iGetNumber > 0
+               {
+                  oSplit = Send(oItem,@Split,#number=iGetNumber);
+                  if Send(oItem,@ReqNewOwner,#what=oSplit)
+                  {
+                     Send(who,@NewHold,#what=oSplit);
+                     number = number - iGetNumber;
+                     if number < 1
+                     {
                         return;
-                     }         
-                     iGetNumber = iCanHold;
+                     }
                   }
- 
-                  if iGetNumber > 0
+                  else
                   {
-                     oSplit = Send(each_obj_in_chest,@Split,#number=iGetNumber);
-                     if Send(each_obj_in_chest,@ReqNewOwner,#what=oSplit)
-                     {
-                        Send(who,@NewHold,#what=oSplit);
-                        number = number - iGetNumber;
-                        if number < 1
-                        {
-                           return;
-                        }
-                     }
-                     else
-                     {
-                        Send(each_obj_in_chest,@AddNumber,#number=iGetNumber);
-                     }
-                  }        
+                     Send(oItem,@AddNumber,#number=iGetNumber);
+                  }
                }
             }
          }
       }
-      
+
       if NOT bFound
       {
-         Send(who,@MsgSendUser,#message_rsc=Loadout_items_not_found,#parm1=name);
-      }
-      else
-      {
-         if number > 0
+         % Get item template for message.
+         oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+         if (oItem <> $)
          {
-            Send(who,@MsgSendUser,#message_rsc=Loadout_items_not_enough,#parm1=name);
+            Send(who,@MsgSendUser,#message_rsc=loadout_items_not_found,
+                  #parm1=Send(oItem,@GetPluralName));
          }
       }
+      else if number > 0
+      {
+         % Get item template for message.
+         oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+         if (oItem <> $)
+         {
+            Send(who,@MsgSendUser,#message_rsc=loadout_items_not_enough,
+                  #parm2=Send(oItem,@GetPluralName));
+         }
+      }
+
       return;
    }
 

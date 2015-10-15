@@ -35,6 +35,7 @@ char *maintenance_buffer = NULL;
 
 void InitAsyncConnections(void)
 {
+#ifdef BLAK_PLATFORM_WINDOWS
 	WSADATA WSAData; 
 	
 	if (WSAStartup(MAKEWORD(1,1),&WSAData) != 0)
@@ -42,7 +43,8 @@ void InitAsyncConnections(void)
 		eprintf("InitAsyncConnections can't open WinSock!\n");
 		return;
 	}
-	
+#endif
+   
 	maintenance_buffer = (char *)malloc(strlen(ConfigStr(SOCKET_MAINTENANCE_MASK)) + 1);
 	strcpy(maintenance_buffer,ConfigStr(SOCKET_MAINTENANCE_MASK));
 
@@ -69,8 +71,10 @@ void InitAsyncConnections(void)
 
 void ExitAsyncConnections(void)
 {
+#ifdef BLAK_PLATFORM_WINDOWS
 	if (WSACleanup() == SOCKET_ERROR)
 		eprintf("ExitAsyncConnections can't close WinSock!\n");
+#endif   
 }
 
 void AsyncSocketStart(void)

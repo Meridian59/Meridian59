@@ -163,6 +163,13 @@ void MainExitServer()
 	DeleteAllBlocks();
 }
 
+#ifdef BLAK_PLATFORM_LINUX
+int GetLastError()
+{
+   return errno;
+}
+#endif
+
 char * GetLastErrorStr()
 {
 #ifdef BLAK_PLATFORM_WINDOWS

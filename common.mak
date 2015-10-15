@@ -79,21 +79,25 @@ CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:fast \
 # /MT           Use static multithreaded VC++ runtime
 # /MTd          Use static debug multithreaded VC++ runtime
 # /Ox           Maximum optimization
+# /Ob2          Inline any suitable
+# /Oi           Enable system internal functions
+# /Ot           Prefer fast over small code
+# /Oy           Suppress frame pointer
 # /GL           Full optimization across modules (for /LTCG)
 # /GF           Eliminate duplicate strings
-# /Zi           Create debug .PDB file
+# /ZI           Debug info generation (edit and continue)
 # /DBLAKDEBUG   Tell blakserv to run in debug mode
 # /DNODPRINTFS  Used to surpress debug output and few others in release client
-CNORMALFLAGS  = $(CCOMMONFLAGS) /MT /Ox /GL /GF /DNODPRINTFS
-CDEBUGFLAGS   = $(CCOMMONFLAGS) /MT /Zi /DBLAKDEBUG
+CNORMALFLAGS  = $(CCOMMONFLAGS) /MT /Ox /Ob2 /Oi /Ot /Oy /GL /GF /DNODPRINTFS
+CDEBUGFLAGS   = $(CCOMMONFLAGS) /MT /ZI /DBLAKDEBUG
 
 # -----------------------------------------------------------------
 # Linker settings for MS linker
 # /nologo              Surpress banner
 # /machine:ix86        x86 architecture
 # /LARGEADDRESSAWARE   Allow using up to 3GB RAM
-# /release             For releasebuild
-# /debug               For debugbuild
+# /release             Sets header checksum
+# /debug               Creates debug info
 # /LTCG                Optimize across modules (see /GL)
 # /OPT:REF             Optimization
 # /OPT:ICF             Optimization

@@ -10,7 +10,7 @@ TOPDIR=..
 # /DBLAKCLIENT  Specific for m59 client
 # -I$(OUTDIR)   Need to put build dir in include path, because trig and palette
 #               generated files are there.
-CFLAGS = $(CFLAGS) /arch:SSE /TP /DBLAKCLIENT -I$(OUTDIR)  
+CFLAGS = $(CFLAGS) /arch:SSE /TP /DBLAKCLIENT /D_USING_V110_SDK71_ -I$(OUTDIR)  
 
 # ----------------------------------------------------------------------
 # Additional linker flags (see common.mak)

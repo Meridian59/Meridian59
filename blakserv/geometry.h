@@ -44,7 +44,7 @@ typedef struct V2
 
 #define V2SUB(a,b,c) \
    (a)->X = (b)->X - (c)->X; \
-   (a)->Y = (b)->Y - (c)->Y;;
+   (a)->Y = (b)->Y - (c)->Y;
 
 #define V2SCALE(a,b) \
    (a)->X *= b; \

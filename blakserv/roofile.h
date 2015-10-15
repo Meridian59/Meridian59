@@ -219,7 +219,7 @@ typedef struct room_type
 /*                                          METHODS                                                           */
 /**************************************************************************************************************/
 bool  BSPGetHeight(room_type* Room, V2* P, float* HeightF, float* HeightFWD, float* HeightC, BspLeaf** Leaf);
-bool  BSPCanMoveInRoom(room_type* Room, V2* S, V2* E, int ObjectID, bool moveOutsideBSP);
+bool  BSPCanMoveInRoom(room_type* Room, V2* S, V2* E, int ObjectID, bool moveOutsideBSP, Wall** BlockWall);
 bool  BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void  BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void  BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);

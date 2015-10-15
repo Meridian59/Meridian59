@@ -137,6 +137,7 @@ enum
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include "critical_section.h"
@@ -147,6 +148,15 @@ enum
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
 
+typedef int SOCKET;
+#define closesocket close
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+#define WSAEWOULDBLOCK EWOULDBLOCK
+typedef sockaddr SOCKADDR;
+typedef sockaddr_in SOCKADDR_IN;
+extern int GetLastError();
+
 #define VER_PLATFORM_WIN32_WINDOWS 1
 #define VER_PLATFORM_WIN32_NT 2
 #define PROCESSOR_INTEL_386 386
@@ -154,13 +164,13 @@ enum
 #define PROCESSOR_INTEL_PENTIUM 586
 
 // XXX stuff below here is junk
+
 typedef int DWORD;
-typedef int SOCKET;
 typedef int HANDLE;
 typedef int HINSTANCE;
-typedef int HMODULE;
 typedef int HWND;
 typedef unsigned long long UINT64;
+
 #define MAXGETHOSTSTRUCT 64
 #endif  // BLAK_PLATFORM_LINUX
 

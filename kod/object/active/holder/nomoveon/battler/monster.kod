@@ -4459,8 +4459,11 @@ messages:
             }
          }
       }
+      else
+      {
+         Send(oMoney,@AddNumber,#number=amount);
+      }
 
-      Send(oMoney,@AddNumber,#number=amount);
       Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt-amount);
 
       % Send this message even if we gave the almost full one - players are

@@ -10,74 +10,53 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RadiusEnchantment is Spell
 
-% Radius Enchantments are spells that apply an effect to players within a 
-% certain distance of the caster.
-% Caster must typically maintain a trance, but requirements to keep the trance 
-% are variable.
+% Radius Enchantments are spells that apply an effect to players within a certain distance of the caster.
+% Caster must typically maintain a trance, but requirements to keep the trance are variable.
 %
 % Internally, the spell maintains an instanced state of 7 entries, of the form:
-% [source, mana drain time, periodic effect time, enchanted object list, 
-%  power, range, duration, original room].
-% This should not be altered. It is used to track the radius, who should be 
-% affected, who the caster was,
+% [source, mana drain time, periodic effect time, enchanted object list, power, range, original room].
+% This should not be altered. It is used to track the radius, who should be affected, who the caster was,
 % when to drain mana, and when to employ periodic effects.
-% Power and Range have their own Calculate functions if they need to be 
-% modified.
-% For example, a spell may have a Power range 1-20, or a Power range not 
-% based on spellpower at all.
+% Power and Range have their own Calculate functions if they need to be modified.
+% For example, a spell may have a Power range 1-20, or a Power range not based on spellpower at all.
 %
-% EnterRadius and LeaveRadius add or remove from an object's 
-% plRadiusEnchantments list.
-% Each element is of the form [spell object, spellpower, caster, origin room].
+% EnterRadius and LeaveRadius add or remove from an object's plRadiusEnchantments list.
+% Each element is of the form [spell object, spellpower, caster].
 % These states should be used when effects are actually being performed,
-% and should be called by the objects themselves. For example, a player 
-% swinging a mace will
-% check his plRadiusEnchantments list for spells that affect mace swings, 
-% and call them appropriately.
+% and should be called by the objects themselves. For example, a player swinging a mace will
+% check his plRadiusEnchantments list for spells that affect mace swings, and call them appropriately.
 %
 % Useful Radius enchantment functions to call (these are in Object.kod):
-% IsAffectedByRadiusEnchantment(what=$,byClass=&RadiusEnchantment)
-%    -- returns TRUE or FALSE
-% GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
-%    -- returns [spell object, power, caster] with highest power
-% GetRadiusEnchantments()
-%    -- returns object's list of [spell object, power, caster]
+% IsAffectedByRadiusEnchantment(what=$,byClass=&RadiusEnchantment)  -- returns TRUE or FALSE
+% GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment) -- returns [spell object, power, caster] with highest power
+% GetRadiusEnchantments()                                           -- returns object's list of [spell object, power, caster]
 
 constants:
 
    include blakston.khd
    
-   RADIUS_CHECK_TIME = 250   % Time between checks for who is affected
+   RADIUS_CHECK_TIME = 250   % Time between checks for who is affected, no worse than an active object lag-wise
 
 resources:
 
    include radiusench.lkod
 
-   radius_ench_default_cast = \
-      "A circle of magic expands outward from you."
-   radius_ench_default_starts = \
-      "A circle of magic expands outward from %s."
-   radius_ench_default_ends = \
-      "The circle of magic maintained by %s collapses."
-   radius_ench_default_caster_ends = \
-      "Your circle of magic collapses."
-   radius_ench_default_caster_enter = \
-      "You feel your circle of magic having an effect."
-   radius_ench_default_enter = \
-      "You enter a circle of magical effect maintained by %s."
-   radius_ench_default_leave = \
-      "You leave a circle of magical effect maintained by %s."
+   radius_ench_default_cast = "A circle of magic expands outward from you."
+   radius_ench_default_starts = "A circle of magic expands outward from %s."
+   radius_ench_default_ends = "The circle of magic maintained by %s collapses."
+   radius_ench_default_caster_ends = "Your circle of magic collapses."
+   radius_ench_default_caster_enter = "You feel your circle of magic having an effect."
+   radius_ench_default_enter = "You enter a circle of magical effect maintained by %s."
+   radius_ench_default_leave = "You leave a circle of magical effect maintained by %s."
    radius_ench_no_newbie = \
       "Your guardian angel tells you, \"You are not ready to cast spells "
       "which may hinder other players.\""
       
-   radius_ench_default_already_cast = \
-      "You are already maintaining that radius enchantment."
+   radius_ench_default_already_cast = "You are already maintaining that radius enchantment."
 
    radius_ench_need_instrument = "You need an instrument!"
 
-   radius_ench_old_style_aleady_cast = \
-      "You are already under the effects of that magic."
+   radius_ench_old_style_aleady_cast = "You are already under the effects of that magic."
 
    radius_ench_cant_fight_here = "You can't fight here."
 
@@ -176,8 +155,7 @@ messages:
             {
                if IsClass(who,&User)
                {
-                  Send(who,@MsgSendUser,
-                        #message_rsc=radius_ench_old_style_aleady_cast);
+                  Send(who,@MsgSendUser,#message_rsc=radius_ench_old_style_aleady_cast);
                }
 
                return FALSE;
@@ -237,9 +215,7 @@ messages:
             }
             else
             {
-               Send(oUser,@MsgSendUser,
-                     #message_rsc=radius_ench_starts,
-                     #parm1=Send(who,@GetName));
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_starts,#parm1=Send(who,@GetName));
             }
          }
       }
@@ -278,9 +254,7 @@ messages:
          return 0;
       }
 
-      plCurrentEnchantments = Cons([source,0,0,$,
-                                    iPower,iRange,iDuration,oRoom],
-                                    plCurrentEnchantments);
+      plCurrentEnchantments = Cons([source,0,0,$,iPower,iRange,iDuration,oRoom],plCurrentEnchantments);
 
       Send(self,@RecalculateActiveEnchantments);
 
@@ -332,25 +306,6 @@ messages:
             Debug("Radius check went off without a proper room!",self);
          }
 
-         % Check for objects that have left the radius of effect
-         % We must leave first so that similar spells can reapply later
-         foreach oObject in lEnchanted
-         {
-            iDistance = Send(source,@SquaredDistanceTo,#what=oObject);
-            if ((iDistance = $
-               OR iDistance > (iRange * iRange))
-                  AND NOT piOldAreaEnchStyle)
-               OR NOT Send(self,@TargetIsValid,#target=oObject,#source=source)
-               OR (piOldAreaEnchStyle
-                   AND (Send(oObject,@GetOwner) = $
-                        OR Send(oObject,@GetOwner) <> oRoom))
-            {
-               Send(self,@LeaveRadius,#what=oObject,#iPower=iPower,
-                     #source=source,#oRoom=oRoom);
-               lEnchanted = DelListElem(lEnchanted,oObject);
-            }
-         }
-
          % Check for active objects that have entered the radius of effect
          foreach oActive in Send(oRoom,@GetPlActive)
          {
@@ -364,8 +319,7 @@ messages:
             {
                if Send(self,@TargetIsValid,#target=oObject,#source=source)
                {
-                  Send(self,@EnterRadius,#what=oObject,#iPower=iPower,
-                        #source=source,#oRoom=oRoom);
+                  Send(self,@EnterRadius,#what=oObject,#iPower=iPower,#source=source);
                   lEnchanted = Cons(oObject,lEnchanted);
                }
             }
@@ -386,11 +340,27 @@ messages:
                {
                   if Send(self,@TargetIsValid,#target=oObject,#source=source)
                   {
-                     Send(self,@EnterRadius,#what=oObject,#iPower=iPower,
-                           #source=source,#oRoom=oRoom);
+                     Send(self,@EnterRadius,#what=oObject,#iPower=iPower,#source=source);
                      lEnchanted = Cons(oObject,lEnchanted);
                   }
                }
+            }
+         }
+
+         % Check for objects that have left the radius of effect
+         foreach oObject in lEnchanted
+         {
+            iDistance = Send(source,@SquaredDistanceTo,#what=oObject);
+            if ((iDistance = $
+               OR iDistance > (iRange * iRange))
+                  AND NOT piOldAreaEnchStyle)
+               OR NOT Send(self,@TargetIsValid,#target=oObject,#source=source)
+               OR (piOldAreaEnchStyle
+                   AND (Send(oObject,@GetOwner) = $
+                        OR Send(oObject,@GetOwner) <> oRoom))
+            {
+               Send(self,@LeaveRadius,#what=oObject,#iPower=iPower,#source=source);
+               lEnchanted = DelListElem(lEnchanted,oObject);
             }
          }
 
@@ -601,10 +571,9 @@ messages:
       return FALSE;
    }
 
-   EnterRadius(what=$,iPower=0,source=$,oRoom=$)
+   EnterRadius(what=$,iPower=0,source=$)
    {
-      Send(what,@AddRadiusEnchantment,#what=self,#iPower=iPower,#source=source,
-            #oRoom=oRoom);
+      Send(what,@AddRadiusEnchantment,#what=self,#iPower=iPower,#source=source);
 
       if IsClass(what,&User)
       {
@@ -614,8 +583,7 @@ messages:
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=radius_ench_enter,
-                  #parm1=Send(source,@GetName));
+            Send(what,@MsgSendUser,#message_rsc=radius_ench_enter,#parm1=Send(source,@GetName));
          }
       }
 
@@ -624,10 +592,9 @@ messages:
       return;
    }
 
-   LeaveRadius(what=$,iPower=0,source=$,oRoom=$)
+   LeaveRadius(what=$,iPower=0,source=$)
    {
-      Send(what,@RemoveRadiusEnchantment,#what=self,#iPower=iPower,
-            #source=source,#oRoom=oRoom);
+      Send(what,@RemoveRadiusEnchantment,#what=self,#iPower=iPower,#source=source);
       
       if IsClass(what,&User)
       {
@@ -637,8 +604,7 @@ messages:
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=radius_ench_leave,
-                  #parm1=Send(source,@GetName));
+            Send(what,@MsgSendUser,#message_rsc=radius_ench_leave,#parm1=Send(source,@GetName));
          }
       }
 
@@ -710,7 +676,7 @@ messages:
       propagate;
    }
 
-   CancelRadiusEnchantment(source=$, event=$, target_room=$)
+   CancelRadiusEnchantment(source=$, event=$)
    {
       local i, n, oUser, oObj, iDrain, iPeriodic, lEnchanted, iPower, iRange, oRoom;
 
@@ -725,25 +691,18 @@ messages:
             iPower = Nth(i,5);
             iRange = Nth(i,6);
 
+            foreach oObj in lEnchanted
+            {
+               Send(self,@LeaveRadius,#what=oObj,#iPower=iPower,#source=source);
+            }
+
             if piOldAreaEnchStyle
             {
                oRoom = Nth(i,8);
-               
-               if target_room <> $
-                  AND oRoom <> target_room
-               {
-                  continue;
-               }
             }
             else
             {
                oRoom = Send(source,@GetOwner);
-            }
-
-            foreach oObj in lEnchanted
-            {
-               Send(self,@LeaveRadius,#what=oObj,#iPower=iPower,#source=source,
-                     #oRoom=oRoom);
             }
 
             if oRoom <> $
@@ -764,8 +723,7 @@ messages:
                      }
                      else
                      {
-                        Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,
-                              #parm1=Send(source,@GetName));
+                        Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,#parm1=Send(source,@GetName));
                      }
                   
                   }

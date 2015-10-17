@@ -575,8 +575,7 @@ messages:
          {
             foreach k in Send(j,@GetRadiusEnchantments)
             {
-               Send(Nth(k,1),@CancelRadiusEnchantment,#source=Nth(k,3),
-                     #target_room=self);
+               Send(Nth(k,1),@CancelRadiusEnchantment,#source=Nth(k,3));
             }
          }
       }

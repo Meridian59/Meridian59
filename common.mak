@@ -59,14 +59,15 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /GR-                    Turns off RTTI
 # /EHsc-                  Turns off exceptions
 # /MP                     Compile using multiple cpu cores
-# /fp:fast                Use fast floating-point
+# /fp:precise             Use precise floating-point calculations
+#                         /fp:fast causes issues with BSP tree calcs
 # /DBLAK_PLATFORM_WINDOWS Build blakserv for Windows
 # /DLIBARCHIVE_STATIC     For static libarchive build
 # /DHAVE_CONFIG_H         For libarchive build
 # /WX                     Treat warnings as errors
 # /W3                     Warnings level
 # /wdXXXX                 Disable specific warnings
-CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:fast \
+CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:precise \
     /DBLAK_PLATFORM_WINDOWS /DWIN32 \
     /D_CRT_SECURE_NO_WARNINGS \
     /D_CRT_NONSTDC_NO_DEPRECATE \

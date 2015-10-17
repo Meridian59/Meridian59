@@ -18,7 +18,7 @@ resources:
    include conveyance.lkod
 
    Conveyance_name_rsc = "conveyance"
-   Conveyance_icon_rsc = iboonint.bgf
+   Conveyance_icon_rsc = iconveyance.bgf
    Conveyance_desc_rsc = \
       "Sends a stack of items to your closest personal vault.  "
       "Requires only the fee for depositing items."

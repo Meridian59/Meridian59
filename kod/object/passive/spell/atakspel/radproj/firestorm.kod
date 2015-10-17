@@ -19,7 +19,7 @@ resources:
    include firestorm.lkod
 
    firestorm_name_rsc = "fire storm"
-   firestorm_icon_rsc = ifirebal.bgf
+   firestorm_icon_rsc = ifirestorm.bgf
    firestorm_projectile_rsc = fireball.bgf
    firestorm_desc_rsc = \
       "Call upon the magic of Faren and propel forth a devastating "

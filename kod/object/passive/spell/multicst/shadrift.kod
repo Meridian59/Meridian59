@@ -20,7 +20,7 @@ resources:
 
 
    DeathsDoor_name_rsc = "shadow rift"
-   DeathsDoor_icon_rsc = ideadoor.bgf
+   DeathsDoor_icon_rsc = irift.bgf
    DeathsDoor_desc_rsc = \
       "Summons the darkest of magics to warp the fabric of space.  "
       "Forms a magical bond between a prism and the area in which it "

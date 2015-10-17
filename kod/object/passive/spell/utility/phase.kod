@@ -21,7 +21,7 @@ resources:
    include phase.lkod
 
    Phase_name_rsc = "phase"
-   Phase_icon_rsc = iboonint.bgf
+   Phase_icon_rsc = iphase.bgf
    Phase_desc_rsc = \
       "By phasing partially out of existence, one may become temporarily "
       "immune to danger... but, adventurers be warned: staying out of phase "

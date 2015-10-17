@@ -21,7 +21,7 @@ resources:
    include meditate.lkod
 
    Meditate_name_rsc = "meditate"
-   Meditate_icon_rsc = imanafoc.bgf
+   Meditate_icon_rsc = imeditate.bgf
    Meditate_desc_rsc = \
       "Allows you to channel your experience in meditation in order to "
       "open your mind and improve your abilities.  To do so, speak the "

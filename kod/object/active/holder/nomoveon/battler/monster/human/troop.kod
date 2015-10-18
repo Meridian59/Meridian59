@@ -68,14 +68,6 @@ properties:
 
 messages:
 
-   Constructed()
-   {
-      Send(self,@SetShield);
-      Send(self,@SetEquipment);
-
-      propagate;
-   }
-
    SetClothes()
    {
       Send(self,@SetDefaultClothes,#shirt_color=viColorTranslate1);

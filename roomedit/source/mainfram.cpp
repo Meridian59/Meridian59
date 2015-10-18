@@ -349,7 +349,8 @@ void TMainFrame::SetupEditorControlBar()
 	controlBar->Insert(*new TSeparatorGadget(6));
 	controlBar->Insert(*new TButtonGadget(CM_OBJECTS_RECTANGLE, CM_OBJECTS_RECTANGLE));
 	controlBar->Insert(*new TButtonGadget(CM_OBJECTS_POLYGON, CM_OBJECTS_POLYGON));
-   controlBar->Insert(*new TButtonGadget(CM_OBJECTS_TORCH, CM_OBJECTS_TORCH));
+	controlBar->Insert(*new TButtonGadget(CM_OBJECTS_CIRCLE, CM_OBJECTS_CIRCLE));
+	controlBar->Insert(*new TButtonGadget(CM_OBJECTS_TORCH, CM_OBJECTS_TORCH));
 	controlBar->Insert(*new TSeparatorGadget(6));
 	controlBar->Insert(*new TButtonGadget(CM_EDIT_UNDO, CM_EDIT_UNDO));
 	controlBar->Insert(*new TButtonGadget(CM_EDIT_REDO, CM_EDIT_REDO));

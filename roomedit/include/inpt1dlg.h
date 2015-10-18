@@ -20,43 +20,67 @@
 	DEU team
 	Jul-Dec 1994, Jan-Mar 1995
 
-	FILE:         windeapp.rh
+	FILE:         inpt2dlg.h
+
+	OVERVIEW
+	========
+	Class definition for TInput1Dialog (TDialog).
 */
-#if !defined(__windeapp_rh)                // Sentry use file only if it's not already included.
-#define CM_FILESET_ROOM_ID	104
-#define IDC_ROOMID_LIST	101
-#define IDD_SETROOMID 981
-#define IDD_SELECT_ENTRANCE	49
-#define IDC_ROOM	101
-#define __windeapp_rh
+#if !defined(__inpt1dlg_h)              // Sentry, use file only if it's not already included.
+#define __inpt1dlg_h
 
+#ifndef __common_h
+	#include "common.h"
+#endif
 
-#include "owldef.rh"
-#include "aboutdlg.rh"
-#include "cnflddlg.rh"
-#include "cnfsedlg.rh"
-#include "cnfthdlg.rh"
-#include "cnfvedlg.rh"
-#include "cursor.rh"
-#include "editmenu.rh"
-#include "episdlg.rh"
-#include "entrydlg.rh"
-#include "funnydlg.rh"
-#include "inpt1dlg.rh"
+#ifndef OWL_DIALOG_H
+	#include <owl\dialog.h>
+#endif
+
+#ifndef OWL_EDIT_H
+	class _OWLCLASS TEdit;
+#endif
+
+#ifndef OWL_STATIC_H
+	class _OWLCLASS TStatic;
+#endif
+
+#ifndef OWL_VALIDATE_H
+	#include <owl\validate.h>
+#endif
+
+#include "inpt1dlg.rh"            // Definition of all resources.
 #include "inpt2dlg.rh"
-#include "lineedit.rh"
-#include "lprogdlg.rh"
-#include "mainmenu.rh"
-#include "mastdlg.rh"
-#include "prefdlg.rh"
-#include "seditdlg.rh"
-#include "statdlg.rh"
-#include "thingdlg.rh"
-#include "usagedlg.rh"
-#include "vertdlg.rh"
-#include "viewbmp.rh"
-#include "wadlidlg.rh"
-#include "workdlg.rh"
 
-#endif         // __windeapp_rh sentry.
+
+class TInput1Dialog : public TDialog
+{
+protected:
+	char *Title, *Prompt;
+	char *Buffer1;
+	int Buffer1Size;
+
+	TEdit *pInput1Edit;
+	TStatic *pPromptStatic;
+
+public:
+	TInput1Dialog (TWindow *parent, char *title, char *prompt,
+				   char *buffer1, int buffer1Size,
+				   TValidator *valid1 = NULL,
+				   TResId resId = IDD_INPUT_1, TModule *module = 0);
+	virtual ~TInput1Dialog ();
+
+//{{TInput1DialogVIRTUAL_BEGIN}}
+public:
+	virtual void SetupWindow ();
+//{{TInput1DialogVIRTUAL_END}}
+
+//{{TInput1DialogRSP_TBL_BEGIN}}
+protected:
+	void CmOk ();
+//{{TInput1DialogRSP_TBL_END}}
+DECLARE_RESPONSE_TABLE(TInput1Dialog);
+};    //{{TInput1Dialog}}
+
+#endif                                      // __inpt1dlg_h sentry.
 

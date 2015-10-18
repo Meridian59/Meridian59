@@ -174,6 +174,7 @@ protected:
 	void CmSearchJump ();
 	void CmObjectsRectangle ();
 	void CmObjectsPolygon ();
+   void CmObjectsCircle();
    void CmObjectsTorch();
 	void CmModeThings ();
 	void CmModeVertexes ();

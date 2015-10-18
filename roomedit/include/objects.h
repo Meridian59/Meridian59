@@ -105,6 +105,7 @@ void GoToObject (int objtype, SHORT objnum);
 // originaly form editobj.cpp
 void InsertRectangle (SHORT xpos, SHORT ypos, SHORT width, SHORT height);
 void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius);
+void InsertCircle(SHORT xpos, SHORT ypos, SHORT radius);
 void InsertTorch(SHORT xpos, SHORT ypos, SHORT torchAngle);
 void PutPointOnLineDef(LineDef *ld, SHORT *xpos, SHORT *ypos);
 void CheckAndMergeVertex(SHORT vertexNum, SHORT *xpos, SHORT *ypos);

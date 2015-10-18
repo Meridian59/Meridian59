@@ -55,6 +55,7 @@ OBJS = \
    $(OUTDIR)\entrydlg.obj\
    $(OUTDIR)\episdlg.obj\
    $(OUTDIR)\inpt2dlg.obj\
+   $(OUTDIR)\inpt1dlg.obj\
    $(OUTDIR)\lineedit.obj\
    $(OUTDIR)\lprogdlg.obj\
    $(OUTDIR)\mastdlg.obj\

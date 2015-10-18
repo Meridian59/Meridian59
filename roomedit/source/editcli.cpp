@@ -94,6 +94,10 @@
 	#include "vertdlg.h"
 #endif
 
+#ifndef __inpt1dlg_h
+	#include "inpt1dlg.h"
+#endif
+
 #ifndef __inpt2dlg_h
 	#include "inpt2dlg.h"
 #endif
@@ -177,7 +181,8 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_SEARCH_PREVOBJ, CmSearchPrev),
 	EV_COMMAND(CM_SEARCH_NEXTOBJ, CmSearchNext),
 	EV_COMMAND(CM_SEARCH_JUMPOBJ, CmSearchJump),
-   EV_COMMAND(CM_OBJECTS_TORCH, CmObjectsTorch),
+	EV_COMMAND(CM_OBJECTS_TORCH, CmObjectsTorch),
+	EV_COMMAND(CM_OBJECTS_CIRCLE, CmObjectsCircle),
 	EV_COMMAND(CM_OBJECTS_RECTANGLE, CmObjectsRectangle),
 	EV_COMMAND(CM_OBJECTS_POLYGON, CmObjectsPolygon),
 	EV_COMMAND(CM_EDIT_DELETEOBJ, CmEditDelete),
@@ -3036,6 +3041,98 @@ void TEditorClient::CmObjectsPolygon ()
 		Invalidate();
 	}
 	RESTORE_HELP_CONTEXT();
+}
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmObjectsCircle()
+{
+   // Ignore if "insert object" mode
+   if (InsertingObject)
+      return;
+
+   // Keep in memory between calls
+   static SHORT Radius = 256;
+   char Title[80];
+   char Prompt[80];
+   TRangeValidator *pValid1 = new TRangeValidator(8, 14000);
+   char wBuf[7];
+
+   SET_HELP_CONTEXT(Insert_Circle);
+   wsprintf(Title, "New circle size");
+   wsprintf(Prompt, "Enter radius of circle:");
+   wsprintf(wBuf, "%d", Radius);
+
+   if (TInput1Dialog(this, Title, Prompt, wBuf, 7, pValid1).Execute() == IDOK)
+   {
+      Radius = (SHORT)atoi(wBuf);
+
+      // Hide information windows
+      BOOL OldInfoWinShown = InfoWinShown;
+      InfoWinShown = FALSE;
+      if (OldInfoWinShown != InfoWinShown)
+      {
+         SetupInfoWindows();
+         UpdateWindow();
+      }
+
+      // Clip cursor movements to editor window and get mouse capture
+      TRect editRect;
+      GetWindowRect(editRect);
+      editRect.right++;
+      editRect.bottom++;
+      ClipCursor(&editRect);
+      SetCursor(GetApplication(), IDC_INSERT);
+      SetCapture();
+
+      // Begin insert mode
+      WorkMessage("Click left mouse button to insert circle...");
+      InsertingObject = TRUE;  // don't highlight when mouse move
+
+      // Stops when left button down
+      MSG  loopMsg;
+      loopMsg.message = 0;
+      while (loopMsg.message != WM_LBUTTONDOWN)
+      {
+         if (::PeekMessage(&loopMsg, 0, 0, 0, PM_REMOVE))
+         {
+            // Don't send the WM_LBUTTONDOWN, because we don't
+            // want to select an object!
+            if (loopMsg.message != WM_LBUTTONDOWN)
+            {
+               ::TranslateMessage(&loopMsg);
+               ::DispatchMessage(&loopMsg);
+            }
+         }
+
+         Scroller->AutoScroll();
+      }
+
+      // Restore window and cursor
+      InsertingObject = FALSE;
+      SetCursor(NULL, IDC_ARROW);
+      ReleaseCapture();
+      ClipCursor(NULL);
+      GetApplication()->ResumeThrow();
+
+      // UNDO
+      StartUndoRecording("Insert circle");
+
+      // Insert rectangle a cursor position
+      InsertCircle(MAPX(PointerX), MAPY(PointerY), Radius);
+
+      // UNDO
+      StopUndoRecording();
+
+      // Redraw map, status bar and info windows
+      InfoWinShown = OldInfoWinShown;
+      SetupInfoWindows();
+      DrawStatusBar();
+      Invalidate();
+   }
+   RESTORE_HELP_CONTEXT();
 }
 
 /////////////////////////////////////////////////////////////////////

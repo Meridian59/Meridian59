@@ -305,3 +305,4 @@
 #define Tips 305
 #define Editing_tips 306
 #define DOOM_LIMITS 307
+#define Insert_Circle 308

@@ -19,7 +19,7 @@ resources:
    include deathrift.lkod
 
    DeathRift_name_rsc = "death rift"
-   DeathRift_icon_rsc = ideadoor.bgf
+   DeathRift_icon_rsc = ideathrift.bgf
    DeathRift_desc_rsc = \
       "By calling upon a pact with the most ancient of dark forces, "
       "the truest disciples of Qor may traverse the fiery pits of the "

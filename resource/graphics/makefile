@@ -12,7 +12,8 @@ DIRS = keen\
 		 mark \
 		 diggie \
 		 delerium \
-         gar
+         gar \
+         lod
 
 BGFS = \
 	$(OUTDIR)\arrowfir.bgf \

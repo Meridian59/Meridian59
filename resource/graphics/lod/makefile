@@ -8,7 +8,7 @@ SOURCEDIR = .
 OUTDIR = $(CLIENTRUNDIR)\resource
 OUTDIRSUB = ..\$(OUTDIR)
 
-BGFS = igreyinvis.bgf isitting.bgf itransferitem.bgf iexplosion.bgf irift.bgf
+BGFS = iphase.bgf imeditate.bgf iconveyance.bgf ifirestorm.bgf ideathrift.bgf
 
 DIRS = 
 

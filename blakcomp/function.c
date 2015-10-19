@@ -177,6 +177,7 @@ id_struct BuiltinIds[] = {
 {"settings",      I_MISSING,   35,  0,   I_CLASS},
 {"realtime",      I_MISSING,   36,  0,   I_CLASS},
 {"gameeventengine",I_MISSING,  37,  0,   I_CLASS},
+{"escapedconvict",I_MISSING,  38,  0,   I_CLASS},
 };
 
 int numbuiltins = (sizeof(BuiltinIds)/sizeof(id_struct));

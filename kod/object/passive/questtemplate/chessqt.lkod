@@ -1,17 +1,17 @@
 % Quest description.
 chessqt_desc_rsc = de \
-   "You have been asked to courier a chess move."
+   "Du wurdest beauftragt einen Schachzug zu überbringen."
 
 chessqt_nodetwo_rsc = de \
-   "%s%s is playing a game of chess with a friend, and would be grateful "
-   "if you could courier %s next move to %s opponent.  Do you accept?"
+   "%s%s spielt eine Partie Schach und wäre überaus froh, wenn Du "
+   " %s nächstne Zug zu %s Gegner bringst.  Akzeptierst du?"
 
 chessqt_nodethree_rsc = de \
-   "Go to %s%s and tell %s that the next move in the chess game is \"%q\"."
+   "Gehe zu %s%s und sage %s nächster Schachzug ist \"%q\"."
 
 chessqt_nodefour_rsc = de \
-   "Go back to %s%s and tell %s that the next move in the "
-   "chess game is \"%q\"."
+   "Gehe zurück zu %s%s und sage %s nächster Schachzug in "
+   "dieser Partie ist \"%q\"."
 
 % Quest resources.
 chess_assign_2 = de \

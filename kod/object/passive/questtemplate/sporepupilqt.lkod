@@ -1,22 +1,22 @@
 % Quest description.
-sporepupilquest_name_rsc = de "sporeburst pupil quest"
+sporepupilquest_name_rsc = de "Sporenwolke Schüler Quest"
 sporepupilquest_desc_rsc = de \
-   "Maleval has offered to teach you a powerful new spell, but has "
-   "requested that you bring him rare magical items before he will do so."
+   "Maleval hat Dir angeboten, Dir einen mächtigen Zauber beizubringen. Aber zuerst "
+   "will er, dass Du ihm seltene magische Dinge bringst."
 
 sporepupilquest_nodetwo_rsc = de \
-   "Maleval has offered to teach you a powerful new spell, but has "
-   "requested that you obtain %s%s for him first."
+   "Maleval hat dir angeboten, einen mächtigen neuen Zauber zu lernen, aber zuerst "
+   "musst Du ihm %s%s für ihn besorgen."
 
 sporepupilquest_nodethree_rsc = de \
-   "Maleval has asked that you obtain another item for him, %s%s.  Bring "
-   "it to him so that he will teach you the spell."
+   "Maleval hat dich beauftragt einen weiteren Gegenstand für ihn zu besorgen, %s%s.  Bring "
+   "zu ihm, damit er Dir den Zauberspruch beibringt."
 
 sporepupilquest_completed = de \
-   "You have completed the sporeburst pupil quest.  Maleval will now "
-   "teach you the sporeburst spell, provided you know at least level "
-   "5 Qor and level 6 Faren.  He will also teach you the curse weapon "
-   "spell, if you know level 4 Qor and level 5 Kraanan."
+   "Du hast das Sporenwolken Quest abgeschlossen.  Maleval wird Dir nun "
+   "den Zauber Sporenwolke beibringen, wenn Du wenigstens Qor Level 5 und Faren Level 6 besitzt."
+   "Er wird dir ebenfalls den Zauber verfluchte Waffe beibringen, wenn Du wenigstens Qor Level 4, "
+   "und Kraanan Level 5 besitzt."
 
 % Quest resources.
 sporeburstlearn_assign_2 = de \

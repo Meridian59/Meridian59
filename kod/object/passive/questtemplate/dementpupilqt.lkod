@@ -1,18 +1,17 @@
 % Quest description.
-dementpupilquest_name_rsc = de "dement pupil quest"
+dementpupilquest_name_rsc = de "Vergessen Schüler Quest"
 dementpupilquest_desc_rsc = de \
-   "Afiera D'xor has asked you to deliver some cargo.  Do so, and return "
-   "to him when you are done."
+   "Afiera D'xor hat dich beauftragt ein paar Güter zu überbringen.  Erledige es,  "
+   "und kehre zurück zu ihm, wenn Du fertig bist."
 
 dementpupilquest_nodetwo_rsc = de \
-   "Afiera D'xor has asked you to deliver %s%s to %s."
+   "Afiera D'xor hat dich beauftragt %s%s zu %s zu überbringen."
 dementpupilquest_return_rsc = de \
-   "Return to Afiera D'xor and let him know the task has been "
-   "completed."
+   "Kehre zu Afiera D'xor zurück, und teile ihm mit, dass Du fertig bist."
 
 dementpupilquest_completed = de \
-   "You have completed the dement pupil quest.  Afiera D'xor will now "
-   "teach you how to cast the dement spell."
+   "Du hast das Vergessen Schüler Quest abgeschlossen.  Afiera D'xor wird dich nun "
+   "den Vergessen Zauber lehren."
 
 % Quest resources.
 dementlearn_trigger = de "Schüler"

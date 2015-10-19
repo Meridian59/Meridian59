@@ -1,7 +1,7 @@
 Animate_name_rsc = de "Untoten erwecken"
 Animate_desc_rsc = de \
    "elebt die Leiche eines anderen Menschen,auf dass er Deinem Befehl Folge "
-   "leiste. Der Zauber benötigt Schamanenblut."
+   "leiste. Der Zauber benötigt ein Schamanenblut."
 Animate_bad_target = de "Du kannst Untoten erwecken nicht auf %s%s zaubern!"
 Animate_human_cast_rsc = de "%ss Leiche steht von alleine vom Boden auf."
 Animate_human_failed_rsc = de "%ss Leiche bleibt unbelebt auf dem Boden liegen."

@@ -1,23 +1,19 @@
 % Quest description.
-tradingpostquest_name_rsc = de "trading post inventory quest"
+tradingpostquest_name_rsc = de "Handelsposten Inventar Quest"
 tradingpostquest_desc_rsc = de \
-   "Wulfgang zax'Ak has asked you to obtain some items for him so that "
-   "he may replenish his inventory.  He is willing to make it worth "
-   "your trip."
+   "Wulfgang zax'Ak hat dich dazu beauftragt ihm ein paar Sachen zu besorgen "
+   "um sein Inventar wieder aufzustocken. Er wird dich gut belohnen."
 
 tradingpostquest_deliver_rsc = de \
-   "Wulfgang zax'Ak has asked you to obtain %s%s for him so that "
-   "he may replenish his inventory.  He is willing to make it worth "
-   "your trip."
+   "Wulfgang zax'Ak hat dich dazu beauftragt %s%s für ihn zu besorgen, um "
+   "sein Inventar aufzustocken.  Er wird Dich dafür gut belohnen"
 
 tradingpostquest_deliver_number_rsc = de \
-   "Wulfgang zax'Ak has asked you to obtain %i %s for him so that "
-   "he may replenish his inventory.  He is willing to make it worth "
-   "your trip."
+   "Wulfgang zax'Ak hat dich dazu beauftragt %i %s für ihn zu besorgen, um "
+   "sein Inventar aufzustocken.  Er wird Dich dafür gut belohnen"
 
 tradingpostquest_completed_rsc = de \
-   "You have helped Wulfgang zax'Ak replenish his supplies, and in return "
-   "have obtained a Riija sword shard."
+   "Du hast Wulfgang zax'Ak geholfen, sein Lager aufzustocken, und hast als Belohnung einen Schwertsplitter erhalten."
 
 % Quest resources.
 tradingpost_trigger_1 = de "Inventar"

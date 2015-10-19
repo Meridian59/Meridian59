@@ -1,21 +1,20 @@
 % Quest description.
-lutequest_name_rsc = de "instrument quest"
+lutequest_name_rsc = de "Instrumenten Quest"
 lutequest_desc_rsc = de \
-   "Parrin knows someone who can get you an instrument, so he "
-   "can teach you how to play."
+   "Parrin kennt jemanden, der ein Instrument für Dich hat, um dich zu lehren es zu nutzen."
 
 lutequest_nodetwo_rsc = de \
-   "Parrin will help you get an instrument.  Go to %s and say \"%s\"."
+   "Parrin wird Dir helfen ein Instrument zu bekommen.  Gehe zu %s und sag \"%s\"."
 
 lutequest_nodethree_rsc = de \
-   "%s will give you a lute, but first you need to do something for "
-   "%s.  Deliver %s%s to %s, then return to %s."
+   "%s wird Dir eine Laute geben, aber zu allererst musst Du etwas für "
+   "%s tun.  Überbringe %s%s an %s, und kehre dann zu %s zurück."
    
 lutequest_nodefour_rsc = de \
-   "Return to %s to receive the lute."
+   "Kehre zu %s zurück, um eine Laute zu erhalten."
 
 lutequest_completed_rsc = de \
-   "You have completed the instrument quest, and have received a lute."
+   "Du hast das Instrumenten Quest abgeschlossen, und dafür eine Laute erhalten."
 
 % Quest resources.
 lutequest_trigger_1 = de "Instrument"

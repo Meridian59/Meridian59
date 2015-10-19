@@ -1,17 +1,16 @@
 % Quest description.
-barrestockqt_name_rsc = de "bar restock quest"
+barrestockqt_name_rsc = de "Lager Auffüllen Quest"
 barrestockqt_desc_rsc = de \
-   "A bartender is running low on supplies, and would like your assistance."
+   "Ein Baarkeeper hat nahezu keine Getränke mehr und fragt nach deiner Hilfe."
 
 barrestockqt_nodetwo_rsc = de \
-   "%s%s is running low on supplies for %s bar. %s would like your help "
-   "to restock - go to %s%s and ask %s about the \"shipment\"."
+   "%s%s hat nahezu keine Getränke mehr in der Bar von %s . %s braucht deine Hilfe um das Lager "
+   "wieder aufzufüllen - gehe zu %s%s und frage %s nach der \"Lieferung\"."
 barrestockqt_nodethree_rsc = de \
-   "Bring %i %s back to %s%s, and don't take any for yourself lest you "
-   "be punished for your thievery!"
+   "Bringe %i %s zurück zu %s%s, und behalte nichts für dich selber, andererseits wirst Du bestraft!"
 
 barrestockqt_completed_rsc = de \
-   "You have completed the bar restock quest."
+   "Du hast das Lager Auffüllen Quest abgeschlossen."
 
 % Quest resources.
 barrestock_assign_2 = de \

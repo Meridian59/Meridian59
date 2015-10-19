@@ -1,24 +1,24 @@
 % Quest description.
-fadepupilquest_name_rsc = de "fade pupil quest"
+fadepupilquest_name_rsc = de "Verblassen Schüler Quest"
 fadepupilquest_desc_rsc = de \
-   "Joguer would like you to retrieve a formula for him, and in return "
-   "he will teach you the fade spell."
+   "Joguer möchte gerne, dass Du ihm eine Formel besorgst, und im Gegenzug "
+   "wird er Dich den Verblassen Zauber lehren."
 
 fadepupilquest_nodetwo_rsc = de \
-   "Joguer has asked you to retrieve his formula from %s.  In return, "
-   "he will teach you the fade spell.  Ask %s about the formula, obtain "
-   "it and bring it back to Joguer."
+   "Joguer hat dich beauftragt die Formel von %s zu besorgen.  Im Gegenzug "
+   "wird er Dich den Verblassen Zauber lehren.  Frage %s nach der Formel, und  "
+   "bringe diese dann zurück zu Joguer."
 fadepupilquest_nodethree1_rsc = de \
-   "%s will give you the formula, but first you must slay %s%s. Do that "
-   "and return to %s."
+   "%s wird dir die Formel geben, aber zuerst töte %s%s. Tue das "
+   "und kehre zurück zu %s."
 fadepupilquest_nodethree2_rsc = de \
-   "You have killed the monster, now return to %s and ask about the formula."
+   "Du hast das Monster getötet, kehre nun zu %s zurück, und frage nach der Formel."
 fadepupilquest_nodefour_rsc = de \
-   "Return to Joguer with the formula."
+   "Kehre mit der Formel zu Joguer zurück."
 
-fadepupilquest_completed_rsc = de \
-   "You have completed the fade pupil quest.  Joguer will now "
-   "teach you the fade spell."
+ fadepupilquest_completed = de \
+   "Du hast das Verblassen Schüler Quest abgeschlossen.  Joguer wird "
+   "Dir nun den Verblassen Zauber beibringen."
 
 % Quest resources.
 fadelearn_trigger = de "Schüler"

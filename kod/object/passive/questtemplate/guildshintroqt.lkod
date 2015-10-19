@@ -1,12 +1,12 @@
 % Quest description. No description is actually displayed for this
 % quest, its purpose is to activate another quest which isn't given
 % to the player directly.
-guildshintroquest_name_rsc = de "blacksmith ore quest"
+guildshintroquest_name_rsc = de "Schmied Eisenerz Quest"
 guildshintroquest_desc_rsc = de \
-   "The bartender has told you of a blacksmith looking for ore."
+   "Der Baarkeeper hat Dir von einem Schmied erzählt, der nach Eisenerz sucht."
 
 guildshintroquest_completed_rsc = de \
-   "The bartender has told you of a blacksmith looking for ore."
+   "Der Baarkeeper hat Dir von einem Schmied erzählt, der nach Eisenerz sucht."
 
 % Quest resources.
 guildshield_intro = de \

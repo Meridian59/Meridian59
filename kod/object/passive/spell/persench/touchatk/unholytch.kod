@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include unholytch.lkod
+
    UnholyTouch_name_rsc = "unholy touch"
    UnholyTouch_icon_rsc = iunholyt.bgf
    UnholyTouch_desc_rsc = \

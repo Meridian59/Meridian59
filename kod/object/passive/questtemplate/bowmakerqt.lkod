@@ -1,9 +1,9 @@
 % Quest description.
-bowmakerquest_name_rsc = de "avar shaman tailfeather quest"
+bowmakerquest_name_rsc = de "Avar Schamanen Feder Quest"
 
 bowmakerquest_completed_rsc = de \
-   "You have obtained an avar shaman tailfeather for Hanla zax'Ta "
-   "and received a Riija sword shard in return."
+   "Du hast eine Avar Schamanen Feder für Hanla zax'Ta erhalten"
+   "und dafür einen Riija Schwert Splitter erhalten."
 
 % Quest resources.
 bowmaker_trigger_1 = de "Pfeile"

@@ -1,7 +1,7 @@
 TouchOfFlame_name_rsc = de "Flammengriff"
 TouchOfFlame_desc_rsc = de \
    "Kocht die Eingeweide der Zielperson mit einer heißen, weißen Flamme. "
-   "Der Zauber benötigt Rote Pilze."
+   "Der Zauber benötigt einen Roten Pilz."
 TouchOfFlame_already_enchanted_rsc = de \
    "Deine Hände sind bereits mit Flammen ummantelt."
 TouchOfFlame_On_rsc = de "Stichflammen brechen aus deinen Fingern."

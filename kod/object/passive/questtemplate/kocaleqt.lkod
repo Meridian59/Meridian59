@@ -1,18 +1,18 @@
 % Quest description.
-kocaleqt_name_rsc = de "Ko'catan ale trade quest"
+kocaleqt_name_rsc = de "Ko'catan Bierhandel Quest"
 kocaleqt_desc_rsc = de \
-   "Make an alcohol delivery to the Island."
+   "Mache eine Alkohollieferung zur Insel."
 
 kocaleqt_nodetwo_rsc = de \
-   "%s%s needs a guaranteed delivery made to the island.  Failure to "
-   "make the delivery would be punished. Will you accept these terms?"
+   "%s%s benötigt eine garantierte Lieferung.  Ein Fehlschlag "
+   "dieser Lieferung wird bestraft. Wirst du diesen Handel eingehen?"
 
 kocaleqt_nodethree_rsc = de \
-   "Deliver %i %s to %s%s.  Do not be tempted to keep the supplies "
-   "for yourself; thievery will be punished."
+   "Überbringe %i %s zu %s%s.  Wage es nicht, die Vorrät für dich "
+   "selber zu behalten; Diebstahl wird bestraft."
 
 kocaleqt_completed_rsc = de \
-   "You have completed the Ko'catan weapon trade quest."
+   "Du hast das Ko'catan Bierhandel Quest abgeschlossen."
 
 % Quest resources.
 kocale_assign_2 = de \

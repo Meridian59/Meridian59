@@ -1,19 +1,19 @@
 % Quest description.
-idpotionqt_name_rsc = de "potion identification quest"
+idpotionqt_name_rsc = de "Zaubertrank Identifikations Quest"
 idpotionqt_desc_rsc = de \
-   "Help an NPC identify a potion."
+   "Hilf einem NPC einen Zaubertrank zu identifizieren."
 
 idpotionqt_nodetwo_rsc = de \
-   "%s%s recently received a potion %s is unable to identify, and would "
-   "like your assistance in determining its nature.  Offer the potion to "
-   "%s%s and see if %s can help with this task."
+   "%s%s hat kürzlich einen Zaubetrank erhalten. %s ist nicht in der Lage ihn zu identifizieren, "
+   "und bittet Dich um Hilfe.  Biete den Zaubertrank  "
+   "%s%s an und schau ob %s bei der Sache helfen kann."
 
 idpotionqt_nodethree_rsc = de \
-   "%s%s has determined the nature of the potion. Go back to %s%s and "
-   "offer %s the now identified potion, and collect your reward."
+   "%s%s hat den Zaubertrank identifiziert. Kehre zurück zu %s%s und "
+   "biete %s nun den identifizierten Zaubertrank an um deine Belohnung zu erhalten."
 
 idpotionqt_completed_rsc = de \
-   "You have completed the potion identification quest."
+   "Du hast das Zaubertrank Identifikations Quest abgeschlossen."
 
 % Quest resources.
 potion_identify_assign_1 = de \

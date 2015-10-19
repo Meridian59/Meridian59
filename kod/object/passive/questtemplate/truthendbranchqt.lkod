@@ -1,11 +1,11 @@
 % Quest description.
-truthendbranch_name_rsc = de "lying to Parrin"
+truthendbranch_name_rsc = de "Parrin Anlügen"
 truthendbranch_desc_rsc = de \
-   "Tell Parrin how your performance really went."
+   "Erzähle Parrin wie dein Aufritt wirklich war."
 
 truthendbranch_completed = de \
-   "You have completed Parrin's pupil quest.  Parrin will now "
-   "teach you the songs of Jala."
+   "Du hast das Jala Schüler Quest abgeschlossen.  Parrin wird dir nun "
+   "die Lieder Jalas beibringen."
 
 % Quest resources.
 truthquest_trigger_5 = de "gut"

@@ -1,26 +1,25 @@
 % Quest description.
-apothecaryqt_name_rsc = de "apothecary quest"
+apothecaryqt_name_rsc = de "Apotheker Quest"
 apothecaryqt_desc_rsc = de \
-   "An apothecary has run out of stock; deliver some to them."
+   "Ein Apotheker hat nichts mehr im Lager. Bringe ihm etwas für sein Lager"
 
 apothecaryqt_deliver_rsc = de \
-   "%s%s has need of %i %s, so %s%s has asked you to deliver them to %s.  "
-   "Do not be tempted to keep them for yourself, lest you be punished "
-   "for your thievery!"
+   "%s%s benötigt %i %s, also hat %s%s danach gefragt sie zu %s zu liefern.  "
+   "Behalte nichts für dich, denn sonst wirst Du bestraft!"
 
 apothecaryqt_completed_rsc = de \
-   "You have completed the apothecary quest."
+   "Du hast das Apotheker Quest abgeschlossen."
 
 % Quest resources.
 apothecary_assign_2 = de \
-   "%NPC benötigt diese %INDEF_CARGO%CARGO, bitte bringe sie zu %HIMHER_NPC.  "
+   "%NPC benötigt diese %INDEF_CARGO%CARGO, bitte überbringe sie %HIMHER_NPC.  "
    "Diebstahl in jeglicher Form wird dazu führen, dass Du als Gesetzesloser "
    "deklariert wirst.  Ich habe mit %NPC eine Vereinbarung getroffen, dass "
    "er Dich für deine Zeit bezahlt.  Du hast einen Meridian Tag um die Waren "
    "anzuliefern."
 apothecary_assign_2_h = de \
-   "%NPC benötigt diese %INDEF_CARGO%CARGO, bitte bringe sie zu %HIMHER_NPC.  "
-   "Diesbstahl einer der Waren wird zu einem großen Unglück führen  Ich habe "
+   "%NPC benötigt diese %INDEF_CARGO%CARGO, bitte überbringe sie%HIMHER_NPC.  "
+   "Diebstahl einer der Waren wird zu einem großen Unglück führen  Ich habe "
    "mit %NPC eine Vereinbarung getroffen. dass er Dich für deine Zeit bezahlt.  "
    "Du hast einen Meridian Tag um die Waren anzuliefern."
 apothecary_success_2 = de \

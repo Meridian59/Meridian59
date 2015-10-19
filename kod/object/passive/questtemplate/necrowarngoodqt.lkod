@@ -1,19 +1,18 @@
 % Quest description.
-necrowarngoodqt_name_rsc = de "necromancer warning quest"
+necrowarngoodqt_name_rsc = de "Nekromanten Warnungs Quest"
 necrowarngoodqt_desc_rsc = de \
-   "Parrin Aragone says he has urgent information regarding necromancers "
-   "coming to the lands."
+   "Parrin Aragone sagt, er habe wichtige Informationen, dass die Nekromanten zurückkehren..."
 
 necrowarngoodqt_nodetwo_rsc = de \
-   "Parrin Aragone says he has urgent information regarding necromancers "
-   "coming to the lands.  Help him warn others by delivering a letter "
-   "to %s%s."
+   "Parrin Aragone sagt, er habe wichtige Informationen, dass die Nekromanten zurückkehren."
+   "Hilf ihm, Andere zu warnen, und bringe diesen Brief "
+   "zu %s%s."
 necrowarngoodqt_nodethree_rsc = de \
-   "%s%s thought nothing of the warning.  Return to Parrin Aragone and "
-   "let him know you have delivered the letter."
+   "%s%s hat nichts über die Warnung gedacht.  Kehre zurück zu Parrin und "
+   "lass ihn wissen, dass Du den Brief überbracht hast."
 
 necrowarngoodqt_completed_rsc = de \
-   "You have completed the necromancer warning quest."
+   "Du hast das Nekromanten Warnungs Quest abgeschlossen."
 
 % Quest resources.
 necrowarning2_assign_2 = de \

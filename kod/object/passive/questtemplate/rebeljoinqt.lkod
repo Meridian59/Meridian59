@@ -1,16 +1,15 @@
 % Quest description.
-rebeljoin_name_rsc = de "rebel join faction quest"
+rebeljoin_name_rsc = de "Rebellen Anhänger Quest"
 rebeljoin_desc_rsc = de \
-   "Before Jonas D'Accor will let you join his ranks, he must be convinced "
-   "you are not a spy. Bring him an item, and you will gain his trust."
+   "Bevor Jonas D'Accor dich in seine Ränge aufnimmt, musst du beweisen, dass Du "
+   "kein Spion bist, und ihm einen Gegenstand bringen."
 
 rebeljoin_deliver_rsc = de \
-   "Before Jonas D'Accor will let you join his ranks, he must be convinced "
-   "you are not a spy. Bring him %s%s, and you will gain his trust."
+   "Bevor Jonas D'Accor dich in seine Ränge aufnimmt, musst du beweisen, dass Du "
+   "kein Spion bist, und ihm %s%s bringen."   
 
 rebeljoin_completed = de \
-   "You have earnt the trust of Jonas D'Accor, and are now a member "
-   "of his faction."
+   "Du hast das Vertrauen von Jonas gewonnen, und bist nun ein Anhänger der Rebellen."
 
 % Quest resources.
 rebel_join2_assign = de \

@@ -1,8 +1,8 @@
 % Quest description.
 offeringquest_accept_rsc = de \
-   "%s%s has invited you to chant with %s, do you accept?"
+   "%s%s hat dich dazu eingeladen mit %s zu singen, akzeptierst du?"
 
 offeringquest_chant_rsc = de \
-   "Speak the following words aloud: \"%s\"."
+   "Sprich folgende Worte laut: \"%s\"."
 
 qoroffering_trigger_2 = de "Ja"

@@ -1,38 +1,37 @@
 % Quest description.
-stunteddwarfquest_name_rsc = de "stunted dwarf quest"
+stunteddwarfquest_name_rsc = de "Verkümmerter Zwerg Quest"
 stunteddwarfquest_desc_rsc = de \
-   "You overheard the bartender mention something about a stunted dwarf.  "
-   "See if you can find out more about this."
-
+   "Du hast den Barkeeper etwas über einen Verkümmerten Zwerg reden hören. "
+   "Versuche mehr darüber herauszufinden."
+  
 stunteddwarfquest_nodetwo_rsc = de \
-   "%s mentioned something about a stunted dwarf.  This sounds "
-   "interesting - you should find out more."
+   "%s hat etwas über einen Verkümmerten Zwerg gesagt.  Das klingt interessant - "
+   "Finde mehr darüber heraus."
 
 stunteddwarfquest_nodethree_rsc = de \
-   "%s said that %s knows about the stunted dwarf recipe.  Go to "
-   "%s and ask %s about it."
+   "%s sagte das %s etwas über einen verkümmerten Zwerg Rezept weiß.  Gehe zu "
+   "%s und frage %s danach."
 
 stunteddwarfquest_nodefour_rsc = de \
-   "%s told you that the stunted dwarf recipe is just a myth.  "
-   "Return to %s and see if %s has anything to say about it."
+   "%s sagte Dir, dass das Rezept für einen Verkümmerten Zwerg nur ein Mythos ist.  "
+   "Kehre zurück zu %s und schau ob %s irgendetwas darüber zu sagen hat."
 
 stunteddwarfquest_nodefive_rsc = de \
-   "Ask around and see if anyone knows more about this \"stunted dwarf\"."
+   "Frag herum und schau ob jemand etwas über einen \"Verkümmerter Zwerg\" weiß."
 
 stunteddwarfquest_nodesix_kill_rsc = de \
-   "%s will give you a recipe for the stunted dwarf drink, but first "
-   "you must kill a kriipa to prove you can handle it.  Kill a kriipa "
-   "and then return to %s."
+   "%s wird Dir ein Rezept Verkümmerter Zwerg Drink geben, aber zuerst "
+   "musst du eine Kriipa töten um zu zeigen das Du stark genug dazu bist.  "
+   "Töte eine Kriipa und kehre dann zurück zu %s."
 
 stunteddwarfquest_nodesix_return_rsc = de \
-   "Return to %s and let them know you have succeeded in "
-   "killing the kriipa."
+   "Kehre zurück zu %s und teile ihm mit, dass Du erfolgreich warst eine Kriipa zu töten."
 
 stunteddwarfquest_nodeseven_rsc = de \
-   "You have the recipe!  Return to %s and give it to %s."
+   "Hier hast du das Rezept!  Kehre zurück zu %s und gib es %s."
 
 stunteddwarfquest_completed_rsc = de \
-   "You have completed the stunted dwarf quest."
+   "Du hast das Verkümmerter Zwerg Quest abgeschlossen."
 
 % Quest resources.
 stunteddwarf_trigger = de "Verkümmerter Zwerg"

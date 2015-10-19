@@ -295,3 +295,5 @@ inventory_sort_report_header = de \
    "Dein Inventar wird der nach der folgenden Reihenfolge sortiert:"
 inventory_sort_report = de "%s"
 inventory_already_in_list = de "Dies ist bereits in deiner Liste."
+user_time_string = de \
+   "Die Zeit in Meridian beträgt %i:00. Es ist der %q Tag des Jahres %i."

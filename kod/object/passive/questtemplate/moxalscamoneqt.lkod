@@ -1,19 +1,19 @@
 % Quest description.
-moxalscamonequest_name_rsc = de "Moxal's get rich quick quest"
+moxalscamonequest_name_rsc = de "Moxals Schnell reich werden Quest"
 moxalscamonequest_desc_rsc = de \
-   "Moxal ix'Hanak says he found the perfect \"opportunity\" for you both to "
-   "make some shillings. Do you trust him?"
+   "Moxal ix'Hanak sagt, er hat die perfekte \"Möglichkeit\" für euch beide gefunden "
+   "ein paar Schillinge zu machen. Na, traust Du dich?"
 
 moxalscamonequest_nodethree_rsc = de \
-   "Moxal ix'Hanak has asked you to take a letter to %s%s.  He claims you "
-   "will both soon be rolling in cash!"
+   "Moxal ix'Hanak hat dich beauftragt, einen Brief an %s%s zu überbringen.  Er schätzt, dass "
+   "ihr beide bald in Geld schwimmt!"
 
 moxalscamonequest_nodefour_rsc = de \
-   "%s%s says that to get rich, you need to pass the letter on to %s%s."
+   "%s%s sagt, um reich zu werden musst du den Brief an %s%s überbringen."
 
 moxalscamonequest_completed_rsc = de \
-   "You have completed Moxal ix'Hanak's get rich quick scheme.  You don't "
-   "feel very rich, but you do feel slightly wiser."
+   "Du hast Moxal ix'Hanak's Schnell reich werden Quest abgeschlossen.  Du fühlst "
+   "dich nicht wirklich reicher, aber etwas waiser."
 
 % Quest resources.
 moxalscam1_assign_2 = de \

@@ -1,3 +1,6 @@
-%cookie_name_rsc = de ""
-%cookie_desc_rsc = de \
-%cookie_name_plural_rsc = de ""
+cookie_name_rsc = de "Der Cookie"
+cookie_desc_rsc = de \
+	   "Von Daenks gebacken, ist dieser Cookie sowohl warm, als auch weich."
+	   "Dir läuft bei dem Anblick schon das Wasser im Mund zusammen."
+cookie_name_plural_rsc = de "Cookies"
+

@@ -1,15 +1,14 @@
 % Quest description.
-mysterymobquest_name_rsc = de "mystery monster quest"
+mysterymobquest_name_rsc = de "Myteriöses Monster quest"
 mysterymobquest_desc_rsc = de \
-   "The tailor has been having insect trouble lately.  She found a large "
-   "insect of some sort nesting in her storage area and while she was able "
-   "to chase it away with fire and smoke, it made off with one of her "
-   "special dress patterns.  Find the insect, slay it and retrieve the "
-   "pattern."
+   "Die Schneiderin hatte ein paar Insektenprobleme vor kurzem.  Sie hat ein großes "
+   "Insekt in ihrem Lager gefunden, und während Sie versucht hat es mit Feuer und Rauch "
+   "zu verscheuchen, hat es sich davon gemacht mit eines ihrer Schnittmuster"
+   "Finde das Insekt und bring das Schnittmuster zurück."
 
 mysterymobquest_node_two_rsc = de \
-   "%s%s mentioned that %s has been having \"insect\" troubles,  "
-   "and that %s will reward you if you can help %s."
+   "%s%s hat mitgeteilt, dass %s ein paar \"Insekten\" Probleme hatte,  "
+   "und das %s dich belohnen wird, wenn Du hilfst %s."
 mysterymobquest_node_three_rsc = de \
    "%s%s found a large insect of some sort nesting in %s "
    "storage area.  %s was able to chase it away with fire and smoke, "

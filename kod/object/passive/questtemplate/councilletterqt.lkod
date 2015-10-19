@@ -1,15 +1,14 @@
 % Quest description.
-councilletterquest_name_rsc = de "council letter quest"
+councilletterquest_name_rsc = de "Ratsbrief Quest"
 councilletterquest_desc_rsc = de \
-   "Deliver an official letter to a councillor.  You will be paid "
-   "on delivery of the letter."
+   "Überbringe einen offiziellen Brief an ein Ratsmitglied.  Du wirst bei Erhalt des Briefes bezahlt."
 
 councilletterquest_deliver_rsc = de \
-   "%s%s has asked you to deliver an official letter to Councillor "
-   "%s.  You will be paid upon delivery of the letter."
+   "%s%s hat dich beauftragt einen offiziellen Brief an  "
+   "%s ein Ratsmitglied zu überbringen.  Bezahlung bei Erhalt."
 
 councilletterquest_completed_rsc = de \
-   "You have completed the council letter delivery quest."
+   "Du hast das Ratsbrief Quest abgeschlossen."
 
 % Quest resources.
 council_letter_assign = de \

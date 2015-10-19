@@ -239,6 +239,12 @@ MENU_MISC_LINEDEFS MENU
   MENUITEM "SD2 Normal", CM_MISCL_AX_SD2_NORMAL
   MENUITEM "SD2 Upper", CM_MISCL_AX_SD2_UPPER
   MENUITEM "SD2 Lower", CM_MISCL_AX_SD2_LOWER
+  MENUITEM "SD1 Circle Normal", CM_MISCL_AX_SD1_CIRCLE_NORMAL
+  MENUITEM "SD1 Circle Upper", CM_MISCL_AX_SD1_CIRCLE_UPPER
+  MENUITEM "SD1 Circle Lower", CM_MISCL_AX_SD1_CIRCLE_LOWER
+  MENUITEM "SD2 Circle Normal", CM_MISCL_AX_SD2_CIRCLE_NORMAL
+  MENUITEM "SD2 Circle Upper", CM_MISCL_AX_SD2_CIRCLE_UPPER
+  MENUITEM "SD2 Circle Lower", CM_MISCL_AX_SD2_CIRCLE_LOWER
  }
 
 }
@@ -332,6 +338,12 @@ MENU_LINEDEFS MENU
    MENUITEM "SD2 Normal", CM_MISCL_AX_SD2_NORMAL
    MENUITEM "SD2 Upper", CM_MISCL_AX_SD2_UPPER
    MENUITEM "SD2 Lower", CM_MISCL_AX_SD2_LOWER
+   MENUITEM "SD1 Circle Normal", CM_MISCL_AX_SD1_CIRCLE_NORMAL
+   MENUITEM "SD1 Circle Upper", CM_MISCL_AX_SD1_CIRCLE_UPPER
+   MENUITEM "SD1 Circle Lower", CM_MISCL_AX_SD1_CIRCLE_LOWER
+   MENUITEM "SD2 Circle Normal", CM_MISCL_AX_SD2_CIRCLE_NORMAL
+   MENUITEM "SD2 Circle Upper", CM_MISCL_AX_SD2_CIRCLE_UPPER
+   MENUITEM "SD2 Circle Lower", CM_MISCL_AX_SD2_CIRCLE_LOWER
   }
 
   MENUITEM SEPARATOR
@@ -1505,6 +1517,12 @@ STRINGTABLE
  CM_MISCL_AX_SD2_NORMAL, "X Align second SideDefs by normal texture"
  CM_MISCL_AX_SD2_UPPER, "X Align second SideDefs by upper texture"
  CM_MISCL_AX_SD2_LOWER, "X Align second SideDefs by lower texture"
+ CM_MISCL_AX_SD1_CIRCLE_NORMAL, "X Align first SideDefs for a circle by normal texture"
+ CM_MISCL_AX_SD1_CIRCLE_UPPER, "X Align first SideDefs for a circle by upper texture"
+ CM_MISCL_AX_SD1_CIRCLE_LOWER, "X Align first SideDefs for a circle by lower texture"
+ CM_MISCL_AX_SD2_CIRCLE_NORMAL, "X Align second SideDefs for a circle by normal texture"
+ CM_MISCL_AX_SD2_CIRCLE_UPPER, "X Align second SideDefs for a circle by upper texture"
+ CM_MISCL_AX_SD2_CIRCLE_LOWER, "X Align second SideDefs for a circle by lower texture"
  CM_MISCL_AX_SD2_NOCHECK_OFFSET, "X Align second SideDefs and ask initial offset"
 }
 

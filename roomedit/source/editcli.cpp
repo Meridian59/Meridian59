@@ -216,6 +216,12 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_MISCL_AX_SD2_NORMAL, CmAlignXSD2Normal),
 	EV_COMMAND(CM_MISCL_AX_SD2_UPPER, CmAlignXSD2Upper),
 	EV_COMMAND(CM_MISCL_AX_SD2_LOWER, CmAlignXSD2Lower),
+   EV_COMMAND(CM_MISCL_AX_SD1_CIRCLE_UPPER, CmAlignXCircleSD1Upper),
+   EV_COMMAND(CM_MISCL_AX_SD1_CIRCLE_LOWER, CmAlignXCircleSD1Lower),
+   EV_COMMAND(CM_MISCL_AX_SD1_CIRCLE_NORMAL, CmAlignXCircleSD1Normal),
+   EV_COMMAND(CM_MISCL_AX_SD2_CIRCLE_UPPER, CmAlignXCircleSD2Upper),
+   EV_COMMAND(CM_MISCL_AX_SD2_CIRCLE_LOWER, CmAlignXCircleSD2Lower),
+   EV_COMMAND(CM_MISCL_AX_SD2_CIRCLE_NORMAL, CmAlignXCircleSD2Normal),
 	EV_COMMAND(CM_MISCV_DELETE, CmMiscVDelete),
 	EV_COMMAND(CM_MISCV_MERGE, CmMiscVMerge),
 	EV_COMMAND(CM_MISCV_ADD, CmMiscVAddLineDef),
@@ -5006,6 +5012,160 @@ void TEditorClient::CmAlignXSD2Lower ()
 	AlignX (2, 2);
 }
 
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmAlignXCircleSD1Normal()
+{
+   AlignXCircle(1, 3);
+}
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmAlignXCircleSD1Upper()
+{
+   AlignXCircle(1, 1);
+}
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmAlignXCircleSD1Lower()
+{
+   AlignXCircle(1, 2);
+}
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmAlignXCircleSD2Normal()
+{
+   AlignXCircle(2, 3);
+}
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmAlignXCircleSD2Upper()
+{
+   AlignXCircle(2, 1);
+}
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmAlignXCircleSD2Lower()
+{
+   AlignXCircle(2, 2);
+}
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::AlignXCircle(SHORT sdType, SHORT texType)
+{
+   // Ignore if "insert object" mode
+   if (InsertingObject)
+      return;
+
+   // Check only one object selected
+   if (CheckSelection(1, 1) == FALSE)
+   {
+      Notify("Select only one linedef!");
+      return;
+   }
+
+   SET_HELP_CONTEXT(Align_textures_X_circle);
+
+   // UNDO
+   StartUndoRecording("Align circle X offsets");
+
+   // Step 1. Build up a selection of the circle linedefs, making sure
+   // we actually have a circle. At some point the end of a linedef should
+   // equal the start of the first linedef. If we can't find another linedef
+   // starting from the end point of the previous one, we don't have a
+   // valid circle and can exit.
+   SelPtr ldlist = NULL, sdlist = NULL, cur;
+   SHORT i;
+   LineDef *pCheck = &LineDefs[Selected->objnum];
+   SHORT start_vertex = pCheck->start;
+   SHORT end_vertex = pCheck->end;
+   BOOL bFound;
+   int num_iterations = 0;
+   // Add selected linedef to new list.
+   SelectObject(&ldlist, Selected->objnum);
+
+   while (end_vertex != start_vertex)
+   {
+      bFound = false;
+      // Iterate through the room's linedefs, finding the one that
+      // starts at the end of the previous one.
+      for (i = 0; i < NumLineDefs; ++i)
+      {
+         pCheck = &LineDefs[i];
+         if (pCheck->start == end_vertex)
+         {
+            SelectObject(&ldlist, i);
+            end_vertex = pCheck->end;
+            bFound = true;
+            break;
+         }
+      }
+
+      // If we couldn't find another linedef starting at the end of the
+      // previous one, we likely haven't selected a circle.
+      if (!bFound)
+      {
+         Notify("Selected linedef not part of a valid circle!");
+         goto End;
+      }
+      if (++num_iterations > 1024)
+      {
+         Notify("Too many linedefs in circle!");
+         goto End;
+      }
+   }
+
+   // Step 2: Now have all the linedefs in the circle selected.
+   // Select each sidedef based on which option we were given.
+   for (cur = ldlist; cur; cur = cur->next)
+   {
+      LineDef *pLineDef = &LineDefs[cur->objnum];
+
+      if (sdType == 1 && pLineDef->sidedef1 >= 0)
+         SelectObject(&sdlist, pLineDef->sidedef1);
+      else if (sdType == 2 && pLineDef->sidedef2 >= 0)
+         SelectObject(&sdlist, pLineDef->sidedef2);
+   }
+
+   // If no sidedefs in list, exit.
+   if (!sdlist)
+   {
+      Notify("No sidedefs found in circle!");
+      goto End;
+   }
+
+   // Step 3: Call AlignTexturesX with the given side,
+   // texture type and sidedef list.
+   AlignTexturesX(&sdlist, sdType, 0, 1, texType);
+
+   // Clean up sidedef list separately before end.
+   ForgetSelection(&sdlist);
+
+End:
+   ForgetSelection(&ldlist);
+   // UNDO
+   StopUndoRecording();
+   // SELECTION IS STILL VALID
+   // Restore selection
+   SetupSelection(FALSE);
+   // Redraw map, info windows and status bar
+   RefreshWindows();
+   RESTORE_HELP_CONTEXT();
+}
 
 /////////////////////////////////////////////////////////////////////
 // TEditorClient

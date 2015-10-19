@@ -306,3 +306,4 @@
 #define Editing_tips 306
 #define DOOM_LIMITS 307
 #define Insert_Circle 308
+#define Align_textures_X_circle 309

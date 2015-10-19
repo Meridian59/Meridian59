@@ -3434,7 +3434,7 @@ void InsertCircle(SHORT xpos, SHORT ypos, SHORT radius)
    if (radius < 8)
       radius = 8;
 
-   SHORT nsides = (SHORT)(10.0 * sqrt((double)radius));
+   SHORT nsides = (SHORT)(9.8 * sqrt((double)radius));
 
    // are we inside a Sector?
    sector = GetCurObject(OBJ_SECTORS, xpos, ypos, xpos, ypos);

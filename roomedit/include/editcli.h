@@ -125,7 +125,8 @@ private:
 	void DrawMouseCoord (TDC &dc);
 	void SetupSelection (BOOL SaveSel);
 	BOOL CheckSelection (SHORT min, SHORT max);
-        void AlignX (SHORT sdType, SHORT texType);
+   void AlignX (SHORT sdType, SHORT texType);
+   void AlignXCircle(SHORT sdType, SHORT texType);
 
 	void EditCurObject();
 	void CenterMapAroundCoords (SHORT xpos, SHORT ypos);
@@ -190,12 +191,21 @@ protected:
 	void CmMiscLDFlip ();
 	void CmMiscLDSwap ();
 	void CmMiscLDAlignY ();
+
 	void CmAlignXSD1Normal ();
 	void CmAlignXSD1Upper ();
 	void CmAlignXSD1Lower ();
 	void CmAlignXSD2Normal ();
 	void CmAlignXSD2Upper ();
 	void CmAlignXSD2Lower ();
+
+   void CmAlignXCircleSD1Normal();
+   void CmAlignXCircleSD1Upper();
+   void CmAlignXCircleSD1Lower();
+   void CmAlignXCircleSD2Normal();
+   void CmAlignXCircleSD2Upper();
+   void CmAlignXCircleSD2Lower();
+
 	void CmMiscVDelete ();
 	void CmMiscVMerge ();
 	void CmMiscVAddLineDef ();

@@ -1895,9 +1895,6 @@ void AdminPrintResource(resource_node *r)
 	{
 		aprintf("%-7i %s = %s\n",r->resource_id,
 			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val[0]);
-		aprintf("WARNING: do not change player names with created resources.\n");
-		aprintf("Use send o 0 AdminChangeUserName oUser o obj_num sName q name instead.\n");
-		aprintf("Failure to do so will result in player's new name not being added to user table.\n");
 	}
 }
 
@@ -3928,6 +3925,9 @@ void AdminCreateResource(int session_id,admin_parm_type parms[],
 		return;
 	}
 	AdminPrintResource(r);
+   aprintf("WARNING: do not change player names with created resources.\n");
+   aprintf("Use send o 0 AdminChangeUserName oUser o obj_num sName q name instead.\n");
+   aprintf("Failure to do so will result in player's new name not being added to user table.\n");
 }
 
 void AdminDeleteTimer(int session_id,admin_parm_type parms[],

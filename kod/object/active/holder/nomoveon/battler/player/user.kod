@@ -1084,6 +1084,13 @@ messages:
    {
       local rName;
 
+      % don't inform non-DM clients of Escaped Convict
+      if (NOT IsClass(self,&DM) AND IsClass(what,&EscapedConvict)
+         AND NOT IsClass(self,&EscapedConvict) AND IsClass(what,&EscapedConvict))
+      {
+         return;
+      }
+
       rName = Send(what,@GetTrueName);
 
       if pbLogged_on
@@ -2995,15 +3002,40 @@ messages:
    "Sends client a list of all users logged on, including object id, "
    "resource id, and actual string of the resource (since it's a dynarsc)."
    {
-      local i, lUsers, rName;
+      local i, lUsers, rName, bVisible;
 
       lUsers = $;
 
       foreach i in Send(SYS,@GetUsersLoggedOn)
       {
-         if IsClass(self,&Admin)
-            OR NOT (IsClass(i,&DM)
-                    AND Send(i,@IsHidden))
+         bVisible = FALSE;
+
+         % admins see everyone
+         if (IsClass(self,&Admin))
+         {
+            bVisible = TRUE;
+         }
+         % escaped convict can see self and fellow convicts
+         else if (IsClass(self,&EscapedConvict) AND IsClass(i,&EscapedConvict))
+         {
+            bVisible = TRUE;
+         }
+         else
+         {
+            % self is a regular user, here is where to start hiding special
+            % players like escaped convict and hidden DMs
+            if (IsClass(i,&EscapedConvict)
+               OR (IsClass(i,&DM) AND Send(i,@IsHidden)))
+            {
+               bVisible = FALSE;
+            }
+            else
+            {
+               bVisible = TRUE;
+            }
+         }
+            
+         if (bVisible)
          {
             lUsers = Cons(i,lUsers);
          }

@@ -4195,6 +4195,18 @@ messages:
          return FALSE;
       }
 
+      % Can always attack Escaped Convict regardless of room
+      if IsClass(victim,&EscapedConvict)
+      {
+         return TRUE;
+      }
+
+      % But Escaped Convict can also fight back!
+      if IsClass(self,&EscapedConvict)
+      {
+         return TRUE;
+      }
+
       % Make sure room allows the attack. Check if room has
       % special combat affects.
       if actual

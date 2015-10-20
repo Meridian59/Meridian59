@@ -125,6 +125,8 @@ void AdminShowAccount(int session_id,admin_parm_type parms[],
                       int num_blak_parm,parm_node blak_parm[]);
 void AdminShowAccountHeader(void);
 void AdminShowOneAccount(account_node *a);
+void AdminDeleteUnusedAccounts(int session_id, admin_parm_type parms[],
+                               int num_blak_parm, parm_node blak_parm[]);
 void AdminShowResource(int session_id,admin_parm_type parms[],
                        int num_blak_parm,parm_node blak_parm[]);
 void AdminPrintResource(resource_node *r);
@@ -416,6 +418,7 @@ admin_table_type admin_create_table[] =
 admin_table_type admin_delete_table[] =
 {
 	{ AdminDeleteAccount, {I,N}, F,A|M,NULL, 0, "account","Delete account & user by ID" },
+	{ AdminDeleteUnusedAccounts, {N}, F,A|M, NULL, 0, "unused", "Delete unused accounts" },
 	{ AdminDeleteTimer,   {I,N}, F, A, NULL, 0, "timer",  "Delete timer by ID" },
 	{ AdminDeleteUser,    {I,N}, F, A|M, NULL, 0, "user",   "Delete user by object ID" },
 };
@@ -4433,6 +4436,33 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	SendTopLevelBlakodMessage(GetSystemObjectID(),LOADED_GAME_MSG,0,NULL);
 	
 	aprintf("done.\n");
+}
+
+// Uses the accounts_in_game global.
+void AdminDeleteUnusedAccounts(int session_id, admin_parm_type parms[],
+                               int num_blak_parm, parm_node blak_parm[])
+{
+   // Make sure no one in game, because after deleting accounts
+   // we compact the numbers.
+   AdminHangupAll(session_id, parms, num_blak_parm, blak_parm);
+
+   accounts_in_game = 0;
+   ForEachSession(AdminReloadGameEachSession);
+   if (accounts_in_game > 0)
+   {
+      aprintf("Cannot delete unused accounts because %i %s in game.\n",
+         accounts_in_game, accounts_in_game == 1 ? "person is" : "people are");
+      return;
+   }
+
+   int beforeAcct = GetActiveAccountCount();
+
+   aprintf("Number of accounts before is: %i.\n", beforeAcct);
+   DeleteAccountsIfUnused();
+   CompactAccounts();
+   int afterAcct = GetActiveAccountCount();
+   aprintf("Number of accounts after is: %i, deleted %i accounts.\n",
+      afterAcct, beforeAcct - afterAcct);
 }
 
 void AdminReloadGameEachSession(session_node *s)

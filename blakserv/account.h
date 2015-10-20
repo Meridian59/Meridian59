@@ -50,6 +50,10 @@ void DoneLoadAccounts(void);
 void ForEachAccount(void (*callback_func)(account_node *a));
 void DeleteAccountAndAssociatedUsersByID(int account_id);
 
+void DeleteAccountsIfUnused();
+void DeleteAccountIfUnused(account_node *a);
+void CompactAccounts(void);
+
 Bool SuspendAccountAbsolute(account_node *a, int suspend_time);
 Bool SuspendAccountRelative(account_node *a, int hours);
 int GetActiveAccountCount();

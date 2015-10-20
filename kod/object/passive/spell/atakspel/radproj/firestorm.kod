@@ -33,7 +33,7 @@ resources:
 
    % These aren't in use at the moment.
    firestorm_killed_someone = \
-      "The ice shards fatally wound %s%s."
+      "The flames consume %s%s."
    firestorm_cast_rsc = \
       "You let out a cry of pain as flames sear your flesh, "
       "causing ~r~B%i~n damage."

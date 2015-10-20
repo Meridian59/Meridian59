@@ -7806,6 +7806,13 @@ messages:
 
          lIP = Send(i,@GetIP);
 
+         if (lIP = $)
+         {
+            Debug("User ",i,Send(i,@GetTrueName)," returned $ for GetSessionIP!");
+
+            continue;
+         }
+
          foreach j in lUserIPList
          {
             if IsListMatch(lIP,j)

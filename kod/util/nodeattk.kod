@@ -81,7 +81,7 @@ properties:
    % Base percent chance to actually be severed from the node.
    piSeveredChance = 2
    % Number of users that must be on before a node attack goes on.
-   piNumberOnForAttack = 40
+   piNumIPsOnForAttack = 20
 
    % NOTE: See specific notes in Recreate() for more information.
    % The current node being attacked.
@@ -268,14 +268,14 @@ messages:
 
    DoNodeAttack(iNode=$,bOverride=FALSE)
    {
-      local Active, lUsers, iIndex, oRoom, oMonsters, lPosition, lAllItems,
+      local Active, iNum, iIndex, oRoom, oMonsters, lPosition, lAllItems,
             oItem, iNumber, iNumberXeos;
 
       % General fail conditions, not enough users, bad node, attacking an
       %  already dead node.
-      lUsers = Send(SYS,@GetUsersLoggedOn);
+      iNum = Send(SYS,@GetUniqueIPs);
       if poAttackedNode <> $
-         OR (Length(lUsers) < piNumberOnForAttack AND NOT bOverride)
+         OR (iNum < piNumIPsOnForAttack AND NOT bOverride)
       {
          return FALSE;
       }

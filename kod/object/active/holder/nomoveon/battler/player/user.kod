@@ -10103,7 +10103,11 @@ messages:
       local sReturn, lIP;
       
       lIP = GetSessionIP(poSession);
-      
+      if (lIP = $)
+      {
+         return;
+      }
+
       sReturn = CreateString();
       
       ClearTempString();

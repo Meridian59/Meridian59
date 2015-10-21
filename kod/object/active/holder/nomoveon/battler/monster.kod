@@ -1095,7 +1095,8 @@ messages:
    "here, we have already handled the case that the user was plunked down"
    "near a non-fighting and agressive mob. So, lets just start our timers."
    {
-      if piState & STATE_LIMBO
+      if ((piState & STATE_LIMBO)
+         OR (piBehavior & AI_NPC))
       {
          Send(self,@StartBasicTimers);
       }
@@ -3441,6 +3442,14 @@ messages:
       % plSpamlist is [ [mob_class, key_num],...]
       plSpamList = Cons([mob_class,key_num], plSpamList);
 
+      % Spam list cleared with random timer, so if we add something we need
+      % to make sure that timer is set.
+      if (ptRandom = $)
+      {
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay
+                        + Random(0,viRandom_delay/2));
+      }
+
       return;
    }
 
@@ -3450,6 +3459,8 @@ messages:
    "Handle a random timer, and set up the next one."
    {
       local lAction, iNum, oTarget, i, lActives, oLibrary;
+
+      ptRandom = $;
 
       % Clear spam list
       plSpamList = $;
@@ -5302,7 +5313,10 @@ messages:
          ptCancelOffer = $;
       }
 
-      poCustomer = $;  
+      poCustomer = $;
+
+      % Clear spam list when last user leaves.
+      plSpamList = $;
 
       return;
    }

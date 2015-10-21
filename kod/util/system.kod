@@ -6769,8 +6769,7 @@ messages:
 
    AdminSetString(s = $, q = $)
    {
-      SetString(s, q);
-      return s;
+      return SetString(s, q);
    }
 
    AdminGetTime()

@@ -69,6 +69,7 @@ resources:
    guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
+   system_admin_message_bang = "~B~U~k[###]~n ~B%q"
    system_blank_resource = ""
    system_space_resource = " "
    system_unknown_resource = "Unknown"
@@ -1102,6 +1103,20 @@ messages:
       foreach i in plUsers_logged_on
       {
          Send(i,@SysMsgSendUser,#message_rsc=system_admin_message,
+              #parm1=string);
+         Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
+      }
+
+      return;
+   }
+
+   AdminSystemMessageBang(string = $)
+   {
+      local i;
+
+      foreach i in plUsers_logged_on
+      {
+         Send(i,@SysMsgSendUser,#message_rsc=system_admin_message_bang,
               #parm1=string);
          Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
       }

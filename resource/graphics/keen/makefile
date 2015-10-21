@@ -25,7 +25,8 @@ DIRS = \
    bunny \
    wolf \
    elephant \
-   chupacabra
+   chupacabra \
+   edited_old_art
 
 all:
 	@-for %i in ($(BGFS)) do \

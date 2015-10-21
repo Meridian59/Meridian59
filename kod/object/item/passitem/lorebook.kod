@@ -26,7 +26,6 @@ classvars:
 
    vrIcon = lore_book_icon_rsc
    viTotalBooks = 0
-   viMoveOn_type = MOVEON_NO
    viValue_average = 1500
    viWeight = 5
    viBulk = 5

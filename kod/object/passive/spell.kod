@@ -695,6 +695,7 @@ messages:
       oRoom = Send(who,@GetOwner);
       if Send(who,@PlayerIsImmortal)
          OR Send(oRoom,@NoReagents)
+         OR IsClass(who,&EscapedConvict)
       {
          return TRUE;
       }
@@ -1380,6 +1381,12 @@ messages:
 
          % Spell casting requires exertion (which is in 10^-4 units)
          Send(who,@AddExertion,#amount=10000*viSpellExertion);
+
+         % Escaped Convict loses mana and vigor, but reagents are not required
+         if (IsClass(who,&EscapedConvict))
+         {
+            return TRUE;
+         }
 
          % Use up reagents, provided reagent use is turned on
          if NOT Send(oRoom, @NoReagents)

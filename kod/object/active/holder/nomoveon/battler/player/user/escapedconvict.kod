@@ -16,15 +16,25 @@ constants:
 
 resources:
 
+   escaped_convict_name_rsc = "Escaped Convict"
+
 classvars:
 
    % Amount of shillings to distribute to EACH ATTACKER.
    viMoneyAmount = 20000
 
+   viMax_Vigor = 50000
+   viMax_Health = 50000
+   viMax_Mana = 50000
+
+   viBulk_hold_max = 1000000
+   viWeight_hold_max = 1000000
+
 properties:
 
+   % NOT IMPLEMENTED
    % Enable Convict Pick Pocket ability.
-   pbPickPocket = FALSE
+   % pbPickPocket = FALSE
 
    % Queue of most recent attackers.
    plAttackers = $
@@ -65,7 +75,6 @@ messages:
          }
          else
          {
-            % Debug("Player not in list");
             % Player not already in list, check size and delete if needed.
             if (Length(plAttackers) < piAttackers)
             {
@@ -108,7 +117,6 @@ messages:
                {
                   Debug("treasure list",lTreasure);
                }
-               %Send(oAttacker,@NewHold,#what=lTreasure);
                foreach oTreasure in lTreasure
                {
                   if pbDebug
@@ -169,6 +177,115 @@ messages:
       plAttackers = $;
 
       propagate;
+   }
+
+   GetName()
+   {
+      % Give a generic resource Clients will not have the proper name resource.
+      % as EscapedConvict is hidden from the who list
+      return escaped_convict_name_rsc;
+   }
+
+   PlayerNewCharInfo(desc = $,charinfo = $,gender = $)
+   {
+      vrName = escaped_convict_name_rsc;
+
+      propagate;
+   }
+
+   AdminReset()
+   {
+      
+      piMight = 50;
+      piIntellect = 50;
+      piStamina = 50;
+      piAgility = 50;
+      piMysticism = 50;
+      piAim = 50;
+
+      Send(self,@FillHealth);
+      Send(self,@FillMana);
+      Send(self,@FillVigor);
+
+      Send(self,@GivePlayerAllSpells,#override=TRUE);
+      Send(self,@GivePlayerAllSKills,#override=TRUE);
+      Send(self,@EvaluatePKStatus);
+      Send(self,@PlayerIsIntriguing);
+
+      Send(self,@EquipEscapedConvict);
+
+      return;
+   }
+
+   EquipEscapedConvict()
+   {
+      if (Send(self,@FindHolding,#class=&ReagentBag) = $)
+      {
+         Send(self,@Newhold,#what=Create(&ReagentBag));
+      }
+
+      return;
+   }
+
+   AdminHarm(percent=10)
+   {
+      piHealth = piHealth - (piHealth / (100 / percent));
+      Send(self,@DrawHealth);
+
+      return piHealth;
+   }
+
+   AdminHeal(percent=10)
+   {
+      piHealth = piHealth + ((viMax_Health / (100 / percent)) * 100);
+      return;
+   }
+
+   FillHealth(percent=100)
+   {
+      local iAmount;
+
+      iAmount = viMax_Health * percent / 100;
+
+      piHealth = iAmount * 100;
+      piMax_Health = iAmount;
+      piBase_Max_Health = iAmount;
+      Send(self,@DrawHealth);
+
+      return piHealth;
+   }
+
+   FillMana(percent=100)
+   {
+      local iAmount;
+
+      iAmount = viMax_Mana * percent / 100;
+
+      piMana = iAmount;
+      piMax_Mana = iAmount;
+      Send(self,@DrawMana);
+
+      return piMana;
+   }
+
+   FillVigor(percent=100)
+   {
+      local iAmount;
+
+      iAmount = viMax_Vigor * percent / 100;
+
+      piVigor = iAmount;
+      Send(self,@DrawVigor);
+
+      return piVigor;
+   }
+
+   SendStatVigor()
+   {
+      AddPacket(1,3, 4,user_stat_vigor, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,piVigor, 4,0, 4,viMax_Vigor, 4,piVigor_rest_threshold);
+
+      return;
    }
 
    GetClientObjectType()

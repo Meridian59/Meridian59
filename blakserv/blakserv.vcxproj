@@ -62,25 +62,34 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\mysql;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>SyncCThrow</ExceptionHandling>
-      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;user32.lib;wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;ws2_32.lib;jansson.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
+      <StackReserveSize>0x180000</StackReserveSize>
+      <MinimumRequiredVersion>6.00</MinimumRequiredVersion>
+      <RandomizedBaseAddress />
+      <DataExecutionPrevention />
+      <GenerateMapFile>true</GenerateMapFile>
+      <ProfileGuidedDatabase />
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server
@@ -109,12 +118,14 @@ copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\mysql;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -127,16 +138,28 @@ copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;user32.lib;wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;ws2_32.lib;jansson.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
+      <StackReserveSize>0x180000</StackReserveSize>
+      <MinimumRequiredVersion>6.00</MinimumRequiredVersion>
+      <SetChecksum>true</SetChecksum>
+      <ImageHasSafeExceptionHandlers />
+      <RandomizedBaseAddress />
+      <DataExecutionPrevention />
+      <GenerateMapFile>true</GenerateMapFile>
+      <ProfileGuidedDatabase />
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server

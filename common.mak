@@ -59,14 +59,15 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /GR-                    Turns off RTTI
 # /EHsc-                  Turns off exceptions
 # /MP                     Compile using multiple cpu cores
-# /fp:fast                Use fast floating-point
+# /fp:precise             Use precise floating-point calculations
+#                         /fp:fast causes issues with BSP tree calcs
 # /DBLAK_PLATFORM_WINDOWS Build blakserv for Windows
 # /DLIBARCHIVE_STATIC     For static libarchive build
 # /DHAVE_CONFIG_H         For libarchive build
 # /WX                     Treat warnings as errors
 # /W3                     Warnings level
 # /wdXXXX                 Disable specific warnings
-CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:fast \
+CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:precise \
     /DBLAK_PLATFORM_WINDOWS /DWIN32 \
     /D_CRT_SECURE_NO_WARNINGS \
     /D_CRT_NONSTDC_NO_DEPRECATE \
@@ -79,21 +80,25 @@ CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:fast \
 # /MT           Use static multithreaded VC++ runtime
 # /MTd          Use static debug multithreaded VC++ runtime
 # /Ox           Maximum optimization
+# /Ob2          Inline any suitable
+# /Oi           Enable system internal functions
+# /Ot           Prefer fast over small code
+# /Oy           Suppress frame pointer
 # /GL           Full optimization across modules (for /LTCG)
 # /GF           Eliminate duplicate strings
-# /Zi           Create debug .PDB file
+# /ZI           Debug info generation (edit and continue)
 # /DBLAKDEBUG   Tell blakserv to run in debug mode
 # /DNODPRINTFS  Used to surpress debug output and few others in release client
-CNORMALFLAGS  = $(CCOMMONFLAGS) /MT /Ox /GL /GF /DNODPRINTFS
-CDEBUGFLAGS   = $(CCOMMONFLAGS) /MT /Zi /DBLAKDEBUG
+CNORMALFLAGS  = $(CCOMMONFLAGS) /MT /Ox /Ob2 /Oi /Ot /Oy /GL /GF /DNODPRINTFS
+CDEBUGFLAGS   = $(CCOMMONFLAGS) /MT /ZI /DBLAKDEBUG
 
 # -----------------------------------------------------------------
 # Linker settings for MS linker
 # /nologo              Surpress banner
 # /machine:ix86        x86 architecture
 # /LARGEADDRESSAWARE   Allow using up to 3GB RAM
-# /release             For releasebuild
-# /debug               For debugbuild
+# /release             Sets header checksum
+# /debug               Creates debug info
 # /LTCG                Optimize across modules (see /GL)
 # /OPT:REF             Optimization
 # /OPT:ICF             Optimization

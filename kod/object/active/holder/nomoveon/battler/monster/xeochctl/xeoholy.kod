@@ -43,7 +43,7 @@ resources:
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 170
    viDifficulty = 7
-   viSpeed = SPEED_FAST
+   viSpeed = SPEED_FASTER
    vrSound_aware = XeoHoly_sound_aware
 
    viTreasure_type = TID_XEO_HOLY

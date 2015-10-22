@@ -75,7 +75,7 @@ classvars:
    viVisionDistance = 60
    % Attack range of 192, or 3 row/col.
    viAttackRange = 3 * FINENESS
-   viSpeed = SPEED_AVERAGE
+   viSpeed = SPEED_FASTER
    viKarma = 0
 
    vrSound_hit = Xeochicatl_sound_attack

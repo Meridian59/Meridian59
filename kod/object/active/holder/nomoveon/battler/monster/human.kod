@@ -218,6 +218,9 @@ messages:
       % Sets random clothes for humans.
       Send(self,@SetClothes);
 
+      Send(self,@SetShield);
+      Send(self,@SetEquipment);
+
       propagate;
    }
 
@@ -227,6 +230,17 @@ messages:
       piAttackRange = Send(self,@GetAttackRange);
 
       propagate;
+   }
+
+   % Child classes override these.
+   SetShield()
+   {
+      return;
+   }
+
+   SetEquipment()
+   {
+      return;
    }
 
    SetClothes()

@@ -216,6 +216,8 @@ resources:
 
    dm_server = "server"
 
+   dm_system_message = "%q"
+
 classvars:
 
    viDM = TRUE
@@ -728,6 +730,51 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=dm_help_scenery);
 
+         return;
+      }
+
+      %
+      % Broadcast emote and other messaging
+      %
+      if StringContain(string,"systemmessage")
+      {
+         StringSubstitute(string,"systemmessage ","");
+         Send(SYS,@AdminSystemMessageBang,#string=string);
+         return;
+      }
+
+      if StringContain(string,"gemote")
+      {
+         StringSubstitute(string,"gemote ","");
+         Send(SYS,@AdminSystemMessage,#string=string);
+         return;
+      }
+
+      if StringContain(string,"gqemote")
+      {
+         StringSubstitute(string,"gqemote ","");
+         Send(self,@SysMsgSendUser,#message_rsc=dm_system_message,#parm1=string);
+         return;
+      }
+
+      if StringContain(string,"lemote")
+      {
+         StringSubstitute(string,"lemote ","");
+         foreach i in send(poOwner,@GetHolderActive)
+         {
+            Send(Nth(i,1),@MsgSendUser,#message_rsc=dm_system_message,#parm1=string);
+            Send(Nth(i,1),@WaveSendUser,#wave_rsc=system_message_sound);
+         }
+         return;
+      }
+
+      if StringContain(string,"lqemote")
+      {
+         StringSubstitute(string,"lqemote ","");
+         foreach i in send(poOwner,@GetHolderActive)
+         {
+            Send(Nth(i,1),@MsgSendUser,#message_rsc=dm_system_message,#parm1=string);
+         }
          return;
       }
 

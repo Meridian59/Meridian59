@@ -1,23 +1,20 @@
 % Quest description.
 seraphymquest_icon_rsc = de serappol.bgf
-seraphymquest_name_rsc = de "polished seraphym quest"
+seraphymquest_name_rsc = de "Polierte Edelsteine Quest"
 seraphymquest_desc_rsc = de \
-   "You have been asked if you have any uncut seraphym to spare, "
-   "so that the NPC can hone his jewelling skills.  They will give "
-   "you one of the resulting polished gems."
+   "Du wurdest gefragt, ob Du ungeschliffene Seraphen besitzt, damit "
+   "ein NPC seine Künste verbessern kann. Er wird dir einen seiner Resultate geben."
 
 seraphymquest_deliver_rsc = de \
-   "%s is honing %s jewelling skills, and has asked if you have any "
-   "uncut seraphym to spare.  In return, %s has offered to give you "
-   "one of the resulting polished gems."
+   "%s verbessert %sseine Künste, und hat dich gefragt, ob Du noch ungeschliffene Seraphen hast. "
+   "Als Gegenleistung erhälst Du %seinen seiner Resultate."
 
 seraphymquest_completed_rsc = de \
-   "You have completed the polished seraphym quest, and received "
-   "a shiny new polished seraphym for your troubles."
+   "Du hast das Quest abgeschlossen"
 
 % Quest resources.
 polishquest_assign = de \
-   "Entschuldige, ich habe meine Fähigkeiten verbesserd und frage mich ob "
+   "Entschuldige, ich habe meine Fähigkeiten verbessert, und frage mich ob "
    "Du vielleicht ungeschliffene Edelsteine jeglicher Art dabei hast.  Wenn "
    "ja, wäre ich froh sie zu polieren und gebe Dir einen als Resultat."
 polishquest_success = de "Ah, vielen Dank. Erlaube mir Dich zu belohnen."

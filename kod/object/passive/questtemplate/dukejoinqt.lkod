@@ -1,15 +1,13 @@
 % Quest description.
-dukejoin_name_rsc = de "Duke join faction quest"
+dukejoin_name_rsc = de "Herzog Anhänger Quest"
 dukejoin_desc_rsc = de \
-   "Duke Akardius has asked you to bring him an item, to prove yourself "
-   "worthy of his trust."
+   "Herzog Akardius hat dich beauftragt ihm einen Gegenstand zu bringen um dich zu beweisen."
 
 dukejoin_deliver_rsc = de \
-   "Duke Akardius has asked you to bring him %s%s, to prove yourself "
-   "worthy of his trust."
+   "Herzog Arkadius hat dich beauftragt ihm %s%s zu bringen, um Dich zu beweisen."
 
 dukejoin_completed = de \
-   "You have earnt the trust of Duke Akardius, and are now a member "
+   "Du hast das Vertrauen von Herzog Arkadius erhalten, und bist nun Anhänger."
 
 % Quest resources.
 duke_join2_assign = de \

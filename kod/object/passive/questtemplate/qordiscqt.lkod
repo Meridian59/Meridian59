@@ -1,19 +1,17 @@
 % Quest description.
-qorquest_name_rsc = de "Qor disciple quest"
+qorquest_name_rsc = de "Qor Schüler Quest"
 qorquest_desc_rsc = de \
-   "Priestess Zuxana has asked you to go to %s and speak "
-   "the words: \"In darkness all shall be bound.  Our Mistress would walk "
-   "among men in the comfort of a lightless sky and a bloody moon.\".  "
-   "Return when you have completed this task."
+   "Priesterin Zuxana hat dich beauftragt zu %s zu gehen und folgende Worte "
+   "zu sagen: \"Alles sollte in Dunkelheit gehüllt sein. Dann würde unsere Meisterin "
+   "unter den Menschen im Schutz eines lichtlosen Himmels und eines blutigen "
+   "Mondes wandeln.\".  "
+   "Kehre zu ihr zurück, wenn Du den Auftrag erledigt hast."
 
 qorquest_node_three_rsc = de \
-   "Return to Priestess Zuxana and let her know the task has been "
-   "completed."
+   "Kehre zur Priesterin zurück, und lasse Sie wissen, dass Du den Auftrag erledigt hast."
 
 qorquest_completed = de \
-   "You have completed the Qor disciple quest.  You are a faithful "
-   "disciple of Qor, and Priestess Zuxana will now teach you more "
-   "powerful spells."
+   "Du hast das Qor Schüler Quest abgeschlossen.  Du bist nun ein Schüler Qors."
 
 % Quest resources.
 qordisciple_trigger = de \
@@ -39,15 +37,15 @@ qordisciple_failure = de \
 
 % NPC responses.
 qordisc_shalpr_resp = de \
-   "~kPriestess Xiana says, \"~bReconsider your actions, Shal'ille will "
-   "grant you forgiveness when you are ready to receive it.~k\""
+   "~kPriesterin Xiana sagt, \"~bÜberdenke deine Taten, Sha'lill wird dir "
+   "vergeben, wenn Du bereit dafür bist.~k\""
 qordisc_marheal_resp = de \
-   "~kLady Aftyn says, \"Shal'ille's compassion will brush aside "
-   "the darkness.\""
+   "~kLady Aftyn sagt, \"Shal'ills Mitgefühl wird die Dunkelheit bei Seite "
+   "spühlen.\""
 qordisc_barsmith_resp = de \
-   "~kFehr'loi Qan says, \"I'm gettin' mad now.  You better leave before "
-   "I give you a good punch.\""
+   "~kFehr'loi Qan sagt, \"Ich werde nun sauer.  Du solltest nun besser gehen "
+   "bevor ich Dir einen ordentlichen Schlag gebe.\""
 qordisc_tosapoth_resp = de \
-   "~kFrisconar says, \"Did you just put a curse on me?  Please, get out!\""
+   "~kFrisconar sagt, \"Hast Du mich gerade verflucht?  Bitte, geh jetzt!\""
 qordisc_jasinn_resp = de \
-   "~kThe Widow Qesino says, \"You are evil, you must leave at once.\""
+   "~kDie Witwe Qesino sagt, \"Du bist böse. Du musst nun gänzlich verschwinden.\""

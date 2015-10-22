@@ -1,21 +1,20 @@
 % Quest description.
-warletterqt_name_rsc = de "war letter quest"
+warletterqt_name_rsc = de "Kriegsbrief Quest"
 warletterqt_desc_rsc = de \
-   "Deliver a letter for an NPC."
+   "Überbringe einen Brief an einen NPC."
 
 warletterqt_nodetwo_rsc = de \
-   "%s%s has asked you to deliver a letter to %s%s.  You have been told "
-   "that it might be dangerous to transport this letter, but you will be "
-   "rewarded for its delivery."
+   "%s%s hat dich beauftragt einen Brief an %s%s zu überbringen.  Dir wurde "
+   "gesagt, es könnte gefährlich sein, aber Du wirst dafür belohnt."
 
 warletterqt_completed_rsc = de \
-   "You have completed the war letter quest."
+   "Du hast das Kriegsbrief Quest abgeschlossen"
 
 % Quest resources.
 warletter_trigger1 = de "Kurier"
 warletter_assign = de \
-   "Ah, ja!  Ich habe gerade einen Brief an %NPC geschrieben.  Bitte bringe "
-   "ihn zu %HIMHER_NPC.  Ich schlage vor, Du heuerst einen Beschützer an, "
+   "Ah, ja!  Ich habe gerade einen Brief an %NPC geschrieben.  Bitte überbringe "
+   "ihn%HIMHER_NPC.  Ich schlage vor, Du heuerst einen Beschützer an, "
    "denn es kann sehr gefährlich sein. Ich bin mir sicher die Belohnung wird "
    "genug sein für euch Beide."
 warletter_success = de \

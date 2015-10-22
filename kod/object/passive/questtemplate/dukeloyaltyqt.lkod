@@ -1,18 +1,18 @@
 % Quest description.
-dukeloyalty_name_rsc = de "Duke loyalty quest"
+dukeloyalty_name_rsc = de "Herzog Loyalitäts Quest"
 dukeloyalty_desc_rsc = de \
-   "Duke Akardius has commanded you to collect taxes for him.  Return "
-   "quickly with the full amount."
+   "Herzog Akardius hat Dich befehligt Steuern für ihn einzutreiben.  Kehre rasch "
+   "zurück mit der vollen Summe."
 
 dukeloyalty_collect_rsc = de \
-   "Duke Akardius has commanded you to collect taxes from %s.  Return "
-   "quickly with the full amount."
+   "Herzog Akardius hat Dich befehligt Steuern für ihn einzutreiben bei %s.  Kehre rasch "
+   "zurück mit der vollen Summe."
 
 dukeloyalty_return_rsc = de \
-   "Return to Duke Akardius and give him the %i shillings in taxes."
+   "Kehre zu Herzog Arkadius zurück mit den %i Schillingen an Steuer."
 
 dukeloyalty_completed = de \
-   "You have carried out the Duke's task, and remain in his favor."
+   "Du hast den Auftrag von Herzog Arkadius abgeschlossen und bleibst sein Anhänger."
 
 % Quest resources.
 duke_standard2_assign = de \

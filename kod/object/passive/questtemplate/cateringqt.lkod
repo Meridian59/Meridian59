@@ -1,20 +1,19 @@
 % Quest description.
-cateringqt_name_rsc = de "catering quest"
+cateringqt_name_rsc = de "Catering Quest"
 cateringqt_desc_rsc = de \
-   "An NPC is looking for help delivering food for a party."
+   "Ein NPC sucht nach Hilfe um eine Lieferung für eine Party zu überbringen."
 
 cateringqt_nodetwo_rsc = de \
-   "%s%s is having a private party and %s errand boy is ill.  %s would "
-   "like you to help %s out by delivering the food.  %s%s is catering the "
-   "party, go to %s and ask about the \"catering assignment\".  You will "
-   "be rewarded on delivery."
+   "%s%s hat eine Party und %s der Botenjunge ist krank.  %s würde gerne "
+   "das du %s aushilst bei der Auslieferung der Lieferung.  %s%s catert die Party "
+   ", gehe zu %s und frage nach dem \"Catering\".  Du wirst "
+   "bei Lieferung bezahlt."
 cateringqt_nodethree_rsc = de \
-   "Bring %i %s to %s%s, who is responsible for setting up the party.  "
-   "Don't be tempted to take any for yourself, lest you be punished "
-   "for your thievery!"
+   "Bringe %i %s zu %s%s, wer verantwortlich für die Party ist.  "
+   "Wage es nicht, irgendetwas für Dich zu behalten. Diebstahl wird bestraft!"
 
 cateringqt_completed_rsc = de \
-   "You have completed the catering quest."
+   "Du hast das Catering Quest abgeschlossen."
 
 % Quest resources.
 catering_assign_2 = de \

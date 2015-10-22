@@ -1,3 +1,12 @@
-%pear_name_rsc = de ""
-%pear_desc_rsc = de \
-%pear_name_plural_rsc = de ""
+pear_name_rsc = de "Die Birne"
+pear_desc_rsc = de \
+	  "Diese bekannte und stark geformte Frucht fühlt passt gut in "
+	  "deine Hände. Du bist Dir nicht sicher wo Du zuerst reinbeisßen sollst."
+
+pear_name_plural_rsc = de "Birnen"
+pear_disp_name = de "Der Birnenbaum"
+pear_disp_desc = de \
+	 "Dieser Birnenbaum ist häufig in der Stadt von Marion zu finden, und ist "
+	 "bekannt für seine wundervollen Birnen. Einige hängen tief genug "
+	 "um sie zu pflücken."
+pear_got_one = de "Du greifst nach oben und pflückst eine Orange vom Baum."

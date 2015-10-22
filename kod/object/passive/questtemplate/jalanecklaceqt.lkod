@@ -1,24 +1,24 @@
 % Quest description.
-jalanecklaceqt_name_rsc = de "Jala necklace quest"
+jalanecklaceqt_name_rsc = de "Jala Halsketten Quest"
 jalanecklaceqt_desc_rsc = de \
-   "Help an NPC identify a potion."
+   "Helfe einem NPC einen Trank zu idenzifizieren."
 
 jalanecklaceqt_nodetwo_rsc = de \
-   "Go and ask Moxal ix'Hanak about the \"necklace\"."
+   "Geh und sprich mit Moxal ix'Hanak über die \"Halskette\"."
 jalanecklaceqt_nodethree_rsc = de \
-   "Moxal ix'Hanak will give you the necklace, but first he wants to make "
-   "some profit from you.  Go to %s%s and ask %s if some \"entertainment\" "
-   "would please %s."
+   "Moxal ix'Hanak wird Dir die Halskette geben, aber zuerst will er ein wenig "
+   "Profit mit dir machen.  Gehe zu %s%s und frage %s ob ein wenig \"Unterhaltung\" "
+   " %s gefallen würde."
 jalanecklaceqt_nodefour_rsc = de \
-   "%s%s does not trust Moxal.  Go and ask %s%s about Moxal's \"proposal\"."
+   "%s%s vertraut Moxal nicht.  Geh und frag %s%s über Moxal's \"Vorschlag\"."
 jalanecklaceqt_nodefive_rsc = de \
-   "%s%s says to tell %s%s to just let you \"sing\" for %s."
+   "%s%s will, dass Du %s%s mitteilst, das du einfach nur \"singen\" sollst für %s."
 jalanecklaceqt_nodesix_rsc = de \
-   "%s%s wants you to play a song, and then give %s your lute."
+   "%s%s will das Du ein Lied singst und wird %s dann eine Laute für dich geben."
 jalanecklaceqt_nodeseven_rsc = de \
-   "Go back to Moxal ix'Hanak and let him know you were successful."
+   "Gehe zurück zu Moxal ix'Hanak und teile ihm mit, dass Du erfolgreich warst."
 jalanecklaceqt_completed_rsc = de \
-   "You have completed the Jala neckace quest."
+   "Du hast das Jala Halsketten Quest abgeschlossen."
 
 % Quest resources.
 jala_necklace_trigger = de "Kette"

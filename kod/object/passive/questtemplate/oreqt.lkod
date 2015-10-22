@@ -1,16 +1,15 @@
 % Quest description.
 oreqt_icon_rsc = de ore.bgf
-oreqt_name_rsc = de "blacksmith ore quest"
+oreqt_name_rsc = de "Schmied Eisenerz Quest"
 oreqt_desc_rsc = de \
-   "A blacksmith has run out of ore; deliver some to them."
+   "Ein Schmied hat kein Eisenerz mehr. Besorge ihm welches."
 
 oreqt_deliver_rsc = de \
-   "%s%s has run out of ore, so %s%s has asked you to deliver some to %s.  "
-   "Do not be tempted to keep it for yourself, lest you be punished "
-   "for your thievery!"
+   "%s%s hat kein Eisenerz mehr, also hat %s%s dich beauftrag welches zu %s zu bringen.  "
+   "Behalte nichts für dich! Diebstahl wird bestraft."
 
 oreqt_completed_rsc = de \
-   "You have completed the blacksmith ore quest."
+   "Du hast das Schmied Eisenerz Quest abgeschlossen."
 
 % Quest resources.
 ore_assign_2 = de \

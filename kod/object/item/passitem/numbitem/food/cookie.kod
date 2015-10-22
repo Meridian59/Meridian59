@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   include Cookie.lkod
+   include cookie.lkod
 
    cookie_name_rsc = "cookie"
    cookie_icon_rsc = cookie.bgf

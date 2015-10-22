@@ -1,18 +1,18 @@
 % Quest description.
-guildshieldquest_name_rsc = de "mining expedition quest"
+guildshieldquest_name_rsc = de "Bergwerksexpeditions Quest"
 guildshieldquest_desc_rsc = de \
-   "The blacksmith has asked you to obtain some ore from the orc caves "
-   "for him.  In return, he will make you a herald shield with your "
-   "guild's crest and colors."
+   "Der Schmied hat dich beauftragt, Eisenerz aus den Orkhöhlen zu besorgen. "
+   "Als Gegenleistung, wird er ein Gildenschild für Dich anfertigen, mit dem "
+   "Muster und den Farben Deiner Gilde."
 
 guildshieldquest_deliver_rsc = de \
-   "%s has asked you to obtain some ore from the orc caves for %s.  "
-   "In return, %s will make you a herald shield with your guild's "
-   "crest and colors.  Find %s%s and bring it back to %s."
+   "%s hat dich beauftragt, Eisenerz für %s aus den Orkhöhlen zu besorgen.  "
+   "Als Gegenleistung wird Dir %s ein Gildenschild mit den Formen und Farben "
+   "deiner Gilde anfertigen.  Finde %s%s und bringe es zu %s."
 
 guildshieldquest_completed_rsc = de \
-   "You have completed the mining expedition quest, and received "
-   "a herald shield with your guilds coat of arms."
+   "Du hast das Bergwerksexpeditions Quest abgeschlossen und hast als Belohnung "
+   "ein Gildenschild erhalten."
 
 % Quest resources.
 guildshield_initial_trigger = de "Bergwerksexpedition"

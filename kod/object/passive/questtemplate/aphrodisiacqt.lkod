@@ -1,19 +1,19 @@
 % Quest description.
-aphrodisiacqt_name_rsc = de "aphrodisiac potion quest"
+aphrodisiacqt_name_rsc = de "Aphrodisiakum Quest"
 aphrodisiacqt_desc_rsc = de \
-   "Obtain an aphrodisiac potion and help the NPC."
+   "Besorge ein Aphrodisiakum und helfe einem NPC."
 
 aphrodisiacqt_nodetwo_rsc = de \
-   "%s%s is having some... personal issues and has been told that %s%s "
-   "knows of a powerful aphrodisiac that could help.  Go to %s%s and ask "
-   "%s about the \"aphrodisiac\"."
+   "%s%s hat ein paar... persönliche Probleme und es wurde gesagt, dass %s%s "
+   "weiß etwas über ein kräftiges Aphrodisiakum das helfen könnte.  Gehe zu %s%s und frage "
+   "%s nach dem \"Aphrodisiakum\"."
 aphrodisiacqt_nodethree_rsc = de \
-   "Fetch the egg of a queen spider and bring it to %s%s."
+   "Greif Dir das Ei der Spinnenkönigin und bringe es zu %s%s."
 aphrodisiacqt_nodefour_rsc = de \
-   "Take the aphrodisiac potion back to %s%s."
+   "Nimm das Aphrodisiakum mit zurück zu %s%s."
 
 aphrodisiacqt_completed_rsc = de \
-   "You have completed the aphrodisiac potion quest."
+   "Du hast das Aphrodisiakum Quest abgeschlossen."
 
 % Quest resources.
 aphrodesiac_assign_2 = de \

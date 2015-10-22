@@ -1,21 +1,18 @@
 % Quest description.
-scimprofquest_name_rsc = de "scimitar wielding pupil quest"
+scimprofquest_name_rsc = de "Säbelkampf Quest"
 
 scimprofquest_desc_rsc = de \
-   "Quintor has sent you to slay a monster, so that he will teach you "
-   "scimitar wielding."
+   "Quintor hat dich losgeschickt, ein Monster zu töten um Dir die Künste des Säbelkampfes zu lehren."
 
 scimprofquest_kill_rsc = de \
-   "Quintor will teach you how to use a scimitar, but first you must "
-   "slay a %s. Complete this task and report back to him."
+   "Quintor wird dir beibringen, wie man einen Säbel benutzt, aber zuerst musst du"
+   " %s töten. Erledige den Auftrag und kehre dann zu ihm zurück."
 
 scimprofquest_return_rsc = de \
-   "Return to Quintor and let him know the task has been "
-   "completed."
+   "Kehre zurück zu Quintor und teile ihm mit, dass der Auftrag abgeschlossen wurde."
 
 scimprofquest_completed = de \
-   "You have completed Quintor's scimitar pupil quest.  Quintor will now "
-   "be willing to train you in the art of scimitar wielding."
+   "Du hast das Säbelkampf Quest abgeschlossen. Quintor wird Dir nun beibringen wie man mit dem Säbel kämpft."
 
 % Quest resources.
 scimitarlearn_trigger = de "Schüler"

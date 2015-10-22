@@ -1,24 +1,24 @@
 % Quest description.
-hypochondriacquest_name_rsc = de "hypochondriac quest"
+hypochondriacquest_name_rsc = de "Hypochonder Quest"
 hypochondriacquest_desc_rsc = de \
-   "Frisconar is \"sick\" once again, and requires your assistance "
-   "in obtaining a remedy for his illness."
+   "Frisconar ist wieder einmal \"krank\", und benötigt Hilfe um eine Heilung für "
+   "seine Krankheit zu finden."
 
 hypochondriacquest_nodetwo_rsc = de \
-   "Frisconar is sick once again, this time with %s.  Go to "
-   "%s and ask %s about a cure for \"%s\"."
+   "Frisconar ist wieder einmal krank. Diesmal hat er %s.  Gehe zu "
+   "%s und frag %s nach einem Heilmittel für \"%s\"."
 
 hypochondriacquest_nodethree_rsc = de \
-   "Go to %s and ask %s about the \"Sacchaqua\" potion."
+   "Gehe zu %s und frag %s nach dem \"Sacchaqua\" Trank."
 
 hypochondriacquest_nodefour_rsc = de \
-   "Return to Frisconar and give him the Sacchaqua potion, to save him "
-   "from certain demise."
+   "Kehre zurück zu Frisconar und gib ihm den Sacchaqua Trank, um  "
+   "ihn von seinem Leiden zu erlösen."
 
 hypochondriacquest_completed_rsc = de \
-   "You have helped poor Frisconar stave off death for another day, "
-   "and have been rewarded for it.  Perhaps he will need your help "
-   "in the future."
+   "Du hast den armen Frisconar geholfen, einen weiteren Tag zu überleben, "
+   "und wurdest dafür belohnt.  Vielleicht benötigt er deine Hilfe noch einmal "
+   "in der Zukunft."
 
 % Quest resources.
 hypochondriac_assign_2 = de \

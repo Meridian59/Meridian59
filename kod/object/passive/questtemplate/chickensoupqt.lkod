@@ -1,18 +1,17 @@
 % Quest description.
-chickensoupquest_name_rsc = de "chicken soup quest"
+chickensoupquest_name_rsc = de "Hühnersuppen Quest"
 chickensoupquest_desc_rsc = de \
-   "Go to Widow Qesino and ask for some warm chicken soup for NPC."
+   "Gehe zu Witwe Qesino und frage nach einer schönen warmen Hühnersuppe für einen NPC."
 
 chickensoupquest_nodetwo_rsc = de \
-   "%s is feeling sick, and has asked if you could go to Widow Qesino "
-   "and ask for a bowl of her special chicken soup."
+   "%s fühlt sich krank, und fragt ob du zu Witwe Qesino "
+   "gehen kannst und nach einer warmen Hühnersuppe fragen kannst."
 
 chickensoupquest_return_rsc = de \
-   "Return to %s and give %s the chicken soup."
+   "Kehre zurück zu %s und gib %s die Hühnersuppe."
 
 chickensoupquest_completed = de \
-   "You have completed the chicken soup quest, and received a reward "
-   "for your generosity."
+   "Du hast das Hühnersuppen Quest abgeschlossen und wurdest dafür belohnt."
 
 % Quest resources.
 chickensoupquest_trigger_2 = de "Hühnersuppe"

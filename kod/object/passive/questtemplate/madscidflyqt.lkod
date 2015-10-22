@@ -1,14 +1,13 @@
 % Quest description.
-madscientistdflyquest_name_rsc = de "mad scientist dragonfly quest"
+madscientistdflyquest_name_rsc = de "Verrückter Wissenschaftler Drachenfliegen Quest"
 madscientistdflyquest_desc_rsc = de \
-   "Bahal zax'Ot would like you to bring him a live dragonfly queen "
-   "to experiment on.  In return, he has something interesting for you.  "
-   "Locate a wild dragonfly queen and find some way to entice it to "
-   "follow you."
+   "Bahal zax'Ot möchte, dass Du ihm eine lebendige Drachenfliegenkönigin bringst, "
+   "um damit zu experimentieren.  Danach hat er etwas interessantes für Dich.  "
+   "Finde eine Drachenfliegenkönigin, und finde einen Weg, dass sie Dir folgt."
 
 madscientistdflyquest_completed_rsc = de \
-   "You have delivered a dragonfly queen to Bahal zax'Ot, and received "
-   "a Riija sword shard in return."
+   "Du hast eine Drachenfliegenkönigin zu Bahal zax'Ot gebracht, und dafür "
+   "ein Splitter eines Riija Schwertes erhalten."
 
 % Quest resources.
 madscientistquest_trigger_1 = de "Kohuzotz"

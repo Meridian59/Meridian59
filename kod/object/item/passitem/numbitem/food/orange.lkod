@@ -1,3 +1,12 @@
-%orange_name_rsc = de ""
-%orange_desc_rsc = de \
-%orange_name_plural_rsc = de ""
+orange_name_rsc = de "Die Orange"
+orange_desc_rsc = de \
+	  "Wundervoll, beinah perfekt geformt, ist diese Orange "
+	  "nahezu perfekt. Es wird sicherlich ein saftiger Snack sein."
+orange_name_plural_rsc = de "Orangen"
+
+orange_disp_name = de "Der Orangenbaum"
+orange_disp_desc = de \
+	 "Dieser Orangenbaum ist häufig in der Stadt von Marion zu finden, und ist "
+	 "bekannt für seine wundervollen Orangen. Einige hängen tief genug "
+	 "um sie zu pflücken."
+orange_got_one = de "Du greifst nach oben und pflückst eine Orange vom Baum."

@@ -1,12 +1,11 @@
 % Quest description.
-bonepriestessquest_name_rsc = de "bone priestess orc pit boss quest"
+bonepriestessquest_name_rsc = de "Knochenpriesterin: Orkboss Quest"
 bonepriestessquest_desc_rsc = de \
-   "You're a little rusty in the language of the Avars, but you "
-   "think the bone priestess would like an orc pit boss head."
+   "Du bist etwas eingerostet in der Sprache der Avar, aber "
+   "du glaubst, dass die Priesterin den Kopf eines Orkbosses haben möchte."
 
 bonepriestessquest_completed_rsc = de \
-   "You have delivered an orc pit boss head to the bone priestess, "
-   "and received a Riija sword shard in return."
+   "Du hast einen Orkbosskopf abgeliefert und dafür einen Schwertsplitter erhalten."
 
 % Quest resources.
 bonepriestessquest_trigger_1 = de "Riija"

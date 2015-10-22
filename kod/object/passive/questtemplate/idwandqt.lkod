@@ -1,16 +1,16 @@
 % Quest description.
-idwandqt_name_rsc = de "wand identification quest"
+idwandqt_name_rsc = de "Zauberstab Identifikations Quest"
 idwandqt_desc_rsc = de \
-   "Help an NPC identify a wand."
+   "Hilf einem NPC einen Zauberstab zu identifizieren."
 
 idwandqt_nodetwo_rsc = de \
-   "%s%s recently received a wand %s is unable to identify, and would "
-   "like your assistance in determining its nature.  Offer the wand to "
-   "%s%s and see if %s can help with this task."
+   "%s%s hat vor kurzem einen Zauberstan erhalten. %s ist nicht in der Lage ihn zu identifizieren, "
+   "und fragt nach deiner Hilfe.  Biete den Zauberstab  "
+   "%s%s an und schau ob %s bei der Aufgabe helfen kann."
 
 idwandqt_nodethree_rsc = de \
-   "%s%s has determined the nature of the wand. Go back to %s%s and "
-   "offer %s the now identified wand, and collect your reward."
+   "%s%s hat den Zauberstab identifiziert. Geh zurück zu %s%s und "
+   "biete %s den nun identifizierten Zauberstab an um deine Belohnung zu erhalten."
 
 idwandqt_completed_rsc = de \
    "You have completed the wand identification quest."

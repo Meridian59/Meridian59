@@ -1,24 +1,23 @@
 % Quest description.
-factioninsigniaquest_name_rsc = de "herald shield insignia quest"
+factioninsigniaquest_name_rsc = de "Gildenschild Insignien Quest"
 factioninsigniaquest_desc_rsc = de \
-   "Your liege will place its insignia on your shield, provided "
-   "you complete a \"mission\" for them."
+   "Dein Lehnsherr wird seine Insignien auf dein Gildenschild einlassen, wenn Du "
+   "einen \"Auftrag\" für ihn erledigst."
 
 factioninsigniaquest_nodetwo_rsc = de \
-   "%s%s will place %s insignia on your herald shield, provided you "
-   "complete a \"mission\" for %s."
+   "%s%s wird %s Insignien auf dein Gildenschild einlassen, wenn "
+   "Du einen \"Auftrag\" erledigst für %s."
 
 factioninsigniaquest_nodethree_rsc = de \
-   "%s%s has asked you to go to %s and ask them about %s.  Return to "
-   "%s when you are done, and let %s know what %s has said to you."
+   "%s%s hat dich beauftragt zu %s zu gehen und nach %s zu fragen.  Kehre zurück zu"
+   "%s wenn Du fertig bist, und lasse %s wissen, was %s zu Dir gesagt hat."
 
 factioninsigniaquest_nodefour_rsc = de \
-   "When questioned, %s said \"%s\".  Return to %s and inform %s of "
-   "what was told to you."
+   "Nach der Frage sagte %s \"%s\".  Kehre zurück zu %s und informiere %s über "
+   "das, was Dir mitgeteilt wurde."
 
 factioninsigniaquest_completed_rsc = de \
-   "You have received an insignia on your herald shield, which adds "
-   "more power to your spells when worn."
+   "Du hast Insignien auf dein Gildenschild erhalten, und erhälst nun somit mehr Kraft für deine Zauber."
 
 % Quest resources.
 factioninsignia_trigger = de "Abzeichen"

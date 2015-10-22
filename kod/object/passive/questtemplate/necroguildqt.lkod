@@ -1,18 +1,18 @@
 % Quest description.
-necroguildquest_name_rsc = de "raise Queen Venya'cyr quest"
+necroguildquest_name_rsc = de "Königin Venya'cyr Auferstehungs Quest"
 necroguildquest_desc_rsc = de \
-   "The ghostly remains of Queen Venya'cyr have whispered to you, and "
-   "told you of her desire to return to this plane of existence.  Will "
-   "you assist her?"
+   "Die Überreste von Königin Venya'cyr haben zu Dir geflüstert, und "
+   "dir mitgeteilt, wie sehr sich sich danach sehnt zurück zu finden "
+   "in diese Welt. Wirst Du ihr helfen?"
 
 necroguildquest_nodethree_rsc = de \
-   "To assist in Queen Venya'cyr's return to this plane of existence, "
-   "you must obtain the \"blood of the innocent\".  Find this item and "
-   "offer it to the ghostly remains."
+   "Um der Königin zu helfen, musst Du zu ihren Überresten zurückkehren, und"
+   "ihr das \"Blut der Unschuldigen\" anbieten.  Finde diesen Gegenstand, "
+   "und biete ihn den Überresten der Königin an."
 
 necroguildquest_completed_rsc = de \
-   "You have successfully raised Queen Venya'cyr from the dead, and are "
-   "now her loyal undead servant."
+   "Du hast erfolgreich die Königin Venya'cyr wiederbelebt, und bist nun ein "
+   "treuer untoter Anhänger von ihr."
 
 % Quest resources.
 necroguild_assign_2 = de \

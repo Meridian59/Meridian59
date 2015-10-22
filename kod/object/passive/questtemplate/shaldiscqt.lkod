@@ -1,27 +1,25 @@
 % Quest description.
-shalquest_name_rsc = de "Shal'ille disciple quest"
+shalquest_name_rsc = de "Shal'ill Schüler Quest"
 shalquest_desc_rsc = de \
-   "Priestess Xiana has asked you to go to %s and speak "
-   "the words: \"The ways of violence and destruction have hardened our "
-   "people.  It is time to move towards gentleness and peace.  I will "
-   "begin this process by granting forgiveness for your deeds.  Please "
-   "accept my blessing.\".  Return when you have completed this task."
+   "Priesterin Xiana hat dich beauftragt zu %s zu gehen und folgende Worte zu sprechen"
+   ":\"Ihr und Euresgleichen, empfanget die Reinheit welches uns leitet in unserer "
+   "Not und unserer Trauer. Ich verzeihe euch und euren Jüngern. Euer Leben "
+   "ist dem Krieg gewidmet doch niemand anderes als die Gütige selbst wird "
+   "euch nach eurem Tode richten.\".  Kehre zurück, wenn Du den Auftrag erledigt hast."
 
 shalquest_node_three_rsc = de \
-   "Return to Priestess Xiana and let her know the task has been "
-   "completed."
+   "Kehre zurück zu Priesterin Xiana und teile ihr mit, dass der Auftrag erledigt ist"
 
 shalquest_completed = de \
-   "You have completed the Shal'ille disciple quest.  You are a faithful "
-   "disciple of Shal'ille, and Priestess Xiana will now teach you more "
-   "powerful spells."
+   "Du hast das Shal'ill Schüler Quest abgeschlossen.  Du bist nun Schüler Shal'ills, und "
+   "die Priesterin wird Dir nun weitere Zauber beibringen. "
 
 % Quest resources.
 shalilledisciple_trigger = de \
    "Ihr und Euresgleichen, empfanget die Reinheit welches uns leitet in unserer "
    "Not und unserer Trauer. Ich verzeihe euch und euren Jüngern. Euer Leben "
    "ist dem Krieg gewidmet doch niemand anderes als die Gütige selbst wird "
-   "euchnach eurem Tode richten."
+   "euch nach eurem Tode richten."
 shalilledisciple_assign = de \
    "~bDu möchtest mehr lernen über das sanfte, heilende Wesen unserer guten "
    "Herrin. Du musst den Machenschaften von %NPC trotzen und Deine Absicht "
@@ -40,17 +38,16 @@ shalilledisciple_failure = de \
 
 % NPC responses.
 shaldisc_qorpr_resp = de \
-   "~kPriestess Zuxana says, \"~r~IYes, I suppose it is time for Qor to seek "
-   "redemption.  You are the key to her salvation.  Join our fold and "
-   "together we can begin the path towards malumnea.~I~k\""
+   "~kPriestess Zuxana sagt, \"~r~IJa, ich vermute, für Qor ist die Zeit gekommen, Erlösung zu "
+   "suchen. Du bist der Schlüssel für ihre Rettung. Schließe dich unserer Gemeinde an, und "
+   "wir werden uns gemeinsam auf den Weg zum Malumnea machen.~I~k\""
 shaldisc_farenpr_resp = de \
-   "~kPriestess Tenuv'vyal says, \"~B~gHow dare you presume to forgive of "
-   "Lord Faren.  Leave!~B~k\""
+   "~kPriestess Tenuv'vyal sagt, \"~B~gWie kannst Du es wagen, von Lord Faren Vergebung zu erwarten "
+   "Geh!!~B~k\""
 shaldisc_kranpr_resp = de \
-   "~kPriestess Qerti'nya says, \"~B~bLittle Xiana seeks to train another "
-   "student.  Very well, you have delivered your message.  You may now "
-   "return to her.~B~k\""
+   "~kPriestess Qerti'nya sagt, \"~B~bUnsere kleine Xiana möchte einen neuen Schüler ausbilden."
+   "  Sehr gut, Du hast die Nachricht abgeliefert. Du kannst jetzt zu ihr zurückkehren.~B~k\""
 shaldisc_duke_resp = de \
-   "~kDuke Akardius laughs and says, \"~B~bSurely you cannot be serious?  "
-   "I do not need forgiveness.  Crawl back to your temple, your deed is "
-   "done.~B~k\""
+   "~kDuke Akardius lacht und sagt, \"~B~bSicherlich meinst Du das nicht ernst?  "
+   "Ich brauche keine Vergebung.  Krieche zurück in Deinen Templel, Dein Tod ist Dir "
+   "sicher.~B~k\""

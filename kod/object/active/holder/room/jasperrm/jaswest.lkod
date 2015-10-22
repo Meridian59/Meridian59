@@ -9,3 +9,5 @@ jasper_bank_closed_rsc = de \
 jasper_hard_times_rsc = de "Das Wohnhaus wurde in schweren Zeiten verlassen."
 jasper_tenement = de "Das Mietshaus ist verlassen."
 jasper_schoolmarm_rsc = de "Das Schulgebäude ist verfallen."
+jasper_vault_closed = de "Das Lager von Jasper ist geschlossen."
+jasper_vault_enter = de "Du öffnest die Tür, und gehst durch."

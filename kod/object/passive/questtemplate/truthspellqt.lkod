@@ -1,22 +1,22 @@
 % Quest description.
-truthspellquest_name_rsc = de "Jala pupil quest"
+truthspellquest_name_rsc = de "Jala Schüler Quest"
 truthspellquest_desc_rsc = de \
-   "Parrin Aragone will teach you the songs of Jala, but first you "
-   "must prove your devotion to the arts. He has sent you to sing a "
-   "song, to try out your voice."
+   "Parrin Aragone wird dir die Lieder von Jala beibringen, aber zuerst "
+   "musst Du deine Hingabe für die Künste beweisen. Er hat dich beauftragt "
+   "zu jemandem zu gehen und ein Lied zu singen."
 
 truthspellquest_nodetwo_rsc = de \
-   "Parrin Aragone will teach you the songs of Jala, but first you "
-   "must prove your devotion to the arts. You must sing a song for "
-   "%s, which you can do using the \"emote\" command."
+   "Parrin Aragone wird dir die Lieder von Jala beibringen, aber zuerst "
+   "musst Du deine Hingabe für die Künste beweisen. Du musst ein Lied für "
+   "%s singen, was du mit dem \"emote\" Befehl tun kannst."
 truthspellquest_nodethree_rsc = de \
-   "Return to Parrin and let him know how your performance went."
+   "Kehre zu Parrin zurück und teile ihm mit wie dein Auftritt war."
 truthspellquest_nodefour_rsc = de \
-   "Tell Parrin how your performance went."
+   "Teile Parrin mit, wie Dein Auftritt war."
 
 truthspellquest_completed = de \
-   "You have completed Parrin's pupil quest.  Parrin will now "
-   "teach you the songs of Jala."
+   "Du hast das Jala Schüler Quest abgeschlossen.  Parrin wird dir nun "
+   "die Lieder Jalas beibringen."
 
 % Quest resources.
 truthquest_trigger_1 = de "Schüler"
@@ -39,7 +39,7 @@ truthquest_failure_3 = de \
    "Betreff: Dein Vorsingen\nWo warst Du?  Ich konnte nicht noch länger auf "
    "Dich warten.  Ich habe daher einen anderen Schüler genommen.  Vielleicht "
    "werde ich Dich zu einem späteren Zeitpunkt unterrichten.\n\n-Parrin Aragone"
-truthquest_trigger_4 = de "schlecht schrecklich"
+truthquest_trigger_4 = de "schrecklich"
 truthquest_assign_4 = de \
    "Ah, Du bist zurückgekehrt.  Was haben sie über Deine Lied gesagt?  Gut "
    "oder schlecht?"

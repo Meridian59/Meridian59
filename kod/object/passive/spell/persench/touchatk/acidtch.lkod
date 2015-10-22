@@ -1,7 +1,7 @@
 AcidTouch_name_rsc = de "Säuregriff"
 AcidTouch_desc_rsc = de \
    "Verätzt das Ziel mit der Kraft einer starken Säure, die Rüstung, Kleidung "
-   "und das Fleisch selbst auflöst. Der Zauber benötigt Wurzelknollen.."
+   "und das Fleisch selbst auflöst. Der Zauber benötigt eine Wurzelknolle."
 AcidTouch_On_rsc = de \
    "Der ätzende Speichel Qors trieft aus den Poren Deiner Handflächen."
 AcidTouch_Off_rsc = de "Von Deinen Handflächen tropft keine Säure mehr."

@@ -1,16 +1,13 @@
 % Quest description.
-rebelloyalty_name_rsc = de "rebel loyalty quest"
+rebelloyalty_name_rsc = de "Rebellen Loyalitäts Quest"
 rebelloyalty_desc_rsc = de \
-   "Jonas D'Accor's troops need equipment, and he has requested that "
-   "you help the cause by bringing him some."
+   "Jonas D'Accors Truppen benötigen Ausrüstung, und Du sollst sie besorgen."
 
 rebelloyalty_deliver_rsc = de \
-   "Jonas D'Accor's troops need equipment, and he has requested that "
-   "you help the cause by bringing him %s%s to remain in favor."
+   "Jonas D'Accors Truppen benötigen Ausrüstung und hat dich beauftragt ihm %s%s zu bringen, um ihm einen Gefallen zu tun.."
 
 rebelloyalty_completed = de \
-   "You have completed the rebel loyalty quest and shown your "
-   "dedication for the cause."
+   "Du hast das Rebellen Loyalitäts Quest abgeschlossen. Jonas ist dir dankbar... für eine Weile."
 
 % Quest resources.
 rebel_standard2_assign = de \

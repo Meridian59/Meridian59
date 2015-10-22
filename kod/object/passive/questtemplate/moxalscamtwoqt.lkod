@@ -1,30 +1,30 @@
 % Quest description.
-moxalscamtwoquest_name_rsc = de "Moxal's investment quest"
+moxalscamtwoquest_name_rsc = de "Moxal's Investment Quest"
 moxalscamtwoquest_desc_rsc = de \
-   "Moxal ix'Hanak says he has a great idea, and has been trying to "
-   "convince people to fund it.  If you help him find a financier, he "
-   "will split the returns with both of you 50/50/50."
+   "Moxal ix'Hanak sagt, er habe eine geniale Idee, und hat versucht"
+   "ein paar Leute dafür zu gewinnen um Ihn zu unterstützen.  Wenn Du ihm hilst"
+   "jemanden zu finden der die Idee finanziert, wird er den Gewinn teilen 50/50/50."
 
 moxalscamtwoquest_nodetwo_rsc = de \
-   "Moxal ix'Hanak says he has a great idea, and has been trying to "
-   "convince %s%s to fund it.  If you can convince %s, Moxal will split "
-   "the returns with both of you 50/50/50."
+   "Moxal ix'Hanak sagt, er hat eine geniale Idee, und hat versucht "
+   " %s%s zu gewinnen um die Idee zu finanzieren.  Wenn Du %s dafür gewinnen kannst,"
+   " wird Moxal den Gewinn wie folgt aufteilen 50/50/50."
 
 moxalscamtwoquest_nodethree_rsc = de \
-   "%s%s says to tell Moxal %s is \"not interested\" in his idea."
+   "%s%s möchte das Du Moxal mitteilst, dass %s \"nicht interessiert\" nicht an seiner Idee interessiert ist."
 
 moxalscamtwoquest_nodefour_rsc = de \
-   "Moxal wants you to try again - let %s%s know just how lucrative "
-   "this investment will be!"
+   "Moxal möchte, dass Du es noch einmal probierst - lass %s%s wissen, dass es lukrativ ist, "
+   "dieses Investment einzugehen!"
 
 moxalscamtwoquest_nodefive_rsc = de \
-   "%s%s seems pretty angry now, you should let Moxal know %s is "
-   "definitely \"not interested\"."
+   "%s%s scheint nun sehr sauer zu sein. Du solltest Moxal mitteilen, dass %s "
+   "definitiv \"nicht interessiert\" ist."
 
 moxalscamtwoquest_completed_rsc = de \
-   "You have completed Moxal ix'Hanak's investment scheme, however "
-   "his mark wasn't convinced.  You weren't rewarded, but you have "
-   "gained a little experience from this annoyingly tedious quest."
+   "Du hast Moxal ix'Hanak's Investmentplan Quest abgeschlossen, auch wenn "
+   "sein Ziel nicht erreicht wurde.  Du wurdest nicht belohnt, aber wenigstens "
+   "hast Du ein wenig Erfahrung erhalten dafür, dass Du dieses nervige Quest abgeschlossen hast."
 
 % Quest resources.
 moxalscam2_assign_2 = de \

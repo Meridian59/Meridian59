@@ -1,7 +1,7 @@
 Zap_name_rsc = de "Schockgriff"
 Zap_desc_rsc = de \
    "Bündelt natürliche elektrische Energie in einer kraftvollen Ladung, die "
-   "durch Berührung abgegeben wird. Der Zauber benötigt Blaue Pilze."
+   "durch Berührung abgegeben wird. Der Zauber benötigt einen Blauen Pilz."
 Zap_already_enchanted_rsc = de "~I<Autsch!> ~IGleich fliegt die Sicherung!"
 Zap_On_rsc = de "Elektrische Funken sprühen von Deinen Fingerspitzen."
 Zap_Off_rsc = de \

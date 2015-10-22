@@ -1,20 +1,20 @@
 % Quest description.
-necrowarnevilqt_name_rsc = de "necromancer warning quest"
+necrowarnevilqt_name_rsc = de "Nekromanten Warnungs Quest"
 necrowarnevilqt_desc_rsc = de \
-   "Maleval has information about a dark power coming to these lands.  "
-   "Help him spread the word of the coming darkness."
+   "Maleval sagt, er habe wichtige Informationen, dass die Nekromanten zurückkehren..."
+   "Hilf ihm diese zu verbreiten."
 
 necrowarnevilqt_nodetwo_rsc = de \
-   "Maleval has information about a dark power coming to these lands.  "
-   "Help him spread the word of the coming darkness by delivering a letter "
-   "to %s%s for him.  If you fail to deliver the letter, Maleval promises "
-   "to make you suffer."
+   "Maleval hat Informationen, dass die dunklen Mächte zurück sind.  "
+   "Hilf ihm, diese Meldung zu verbreiten in dem Du diesen Brief  "
+   "zu %s%s für ihn bringst.  Schlägt dieser Auftrag fehl, schwört Maleval, "
+   "wirst du leiden."
 necrowarnevilqt_nodethree_rsc = de \
-   "%s%s thought nothing of the warning.  Return to Maleval and let him "
-   "know you have delivered the letter."
+   "%s%s hat nichts von der Warnung gehalten.  Kehre zurück zu Maleval, und "
+   "teile ihm mit, dass Du den Auftrag erledigt hast."
 
 necrowarnevilqt_completed_rsc = de \
-   "You have completed the necromancer warning quest."
+   "Du hast das Nekromanten Warnungs Quest abgeschlossen"
 
 % Quest resources.
 necrowarning_assign_2 = de \

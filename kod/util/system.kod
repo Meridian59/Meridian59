@@ -6784,8 +6784,7 @@ messages:
 
    AdminSetString(s = $, q = $)
    {
-      SetString(s, q);
-      return s;
+      return SetString(s, q);
    }
 
    AdminGetTime()
@@ -7820,6 +7819,13 @@ messages:
          bFound = FALSE;
 
          lIP = Send(i,@GetIP);
+
+         if (lIP = $)
+         {
+            Debug("User ",i,Send(i,@GetTrueName)," returned $ for GetSessionIP!");
+
+            continue;
+         }
 
          foreach j in lUserIPList
          {

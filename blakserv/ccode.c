@@ -1872,6 +1872,7 @@ int C_SetString(int object_id,local_var_type *local_vars,
 {
    val_type s1_val,s2_val;
    string_node *snod,*snod2;
+   class_node *c;
    const char *str;
 
    s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -1943,6 +1944,23 @@ int C_SetString(int object_id,local_var_type *local_vars,
          return NIL;
       }
       SetString(snod,GetNameByID(s2_val.v.data),strlen(GetNameByID(s2_val.v.data)));
+      break;
+
+   case TAG_CLASS :
+      c = GetClassByID(s2_val.v.data);
+      if (c == NULL)
+      {
+         bprintf("C_SetString can't set from invalid class %i\n", s2_val.v.data);
+         return NIL;
+      }
+
+      if (c->class_name == NULL)
+      {
+         bprintf("C_SetString can't set from invalid class name %i\n",s2_val.v.data);
+         return NIL;
+      }
+
+      SetString(snod, c->class_name, strlen(c->class_name));
       break;
 
    case TAG_DEBUGSTR :

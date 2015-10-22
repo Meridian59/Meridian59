@@ -217,7 +217,9 @@ void AdminResetHighestTimed(int session_id, admin_parm_type parms[],
 void AdminAddUserToEachAccount(int session_id,admin_parm_type parms[],
 							   int num_blak_parm,parm_node blak_parm[]);
 void AdminCreateUser(int session_id,admin_parm_type parms[],
-                     int num_blak_parm,parm_node blak_parm[]);
+                        int num_blak_parm, parm_node blak_parm[]);
+void AdminCreateEscapedConvict(int session_id, admin_parm_type parms[],
+                        int num_blak_parm, parm_node blak_parm[]); 
 void AdminCreateAdmin(int session_id,admin_parm_type parms[],
                       int num_blak_parm,parm_node blak_parm[]);
 void AdminCreateDM(int session_id,admin_parm_type parms[],
@@ -415,6 +417,7 @@ admin_table_type admin_create_table[] =
 	{ AdminCreateAutomated,{S,S,N},F, A|M,NULL, 0, "automated",
 	"Create account and user by name, password" },
 	{ AdminCreateDM,      {I,N},   F, A|M, NULL, 0, "dm",      "Create DM object by account id" },
+   { AdminCreateEscapedConvict, { I, N }, F, A | M, NULL, 0, "ec", "Create escaped convict object by account id" },
 	{ AdminCreateListNode,{S,S,S,S,N},F, A|M, NULL, 0, "listnode","Create list node" },
 	{ AdminCreateObject,  {S,N},   T, A|M, NULL, 0, "object",  "Create object by class name and parms" },
 	{ AdminCreateResource,{R,N},   F, A|M, NULL, 0, "resource","Create resource string" },
@@ -1892,9 +1895,6 @@ void AdminPrintResource(resource_node *r)
 	{
 		aprintf("%-7i %s = %s\n",r->resource_id,
 			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val[0]);
-		aprintf("WARNING: do not change player names with created resources.\n");
-		aprintf("Use send o 0 AdminChangeUserName oUser o obj_num sName q name instead.\n");
-		aprintf("Failure to do so will result in player's new name not being added to user table.\n");
 	}
 }
 
@@ -3726,7 +3726,7 @@ void AdminAddUserToEachAccount(int session_id,admin_parm_type parms[],
 }
 
 void AdminCreateUser(int session_id,admin_parm_type parms[],
-                     int num_blak_parm,parm_node blak_parm[])                     
+                     int num_blak_parm,parm_node blak_parm[])
 {
 	user_node *u;
 	
@@ -3742,6 +3742,25 @@ void AdminCreateUser(int session_id,admin_parm_type parms[],
 	}
 	AdminShowUserHeader();
 	AdminShowOneUser(u);
+}
+
+void AdminCreateEscapedConvict(int session_id, admin_parm_type parms[],
+                              int num_blak_parm, parm_node blak_parm[])
+{
+   user_node *u;
+
+   int account_id;
+   account_id = (int)parms[0];
+
+   u = CreateNewUser(account_id, ESCAPED_CONVICT_CLASS);
+   if (u == NULL)
+   {
+      aprintf("Cannot find just created user for account %i!\n",
+         account_id);
+      return;
+   }
+   AdminShowUserHeader();
+   AdminShowOneUser(u);
 }
 
 void AdminCreateAdmin(int session_id,admin_parm_type parms[],
@@ -3906,6 +3925,9 @@ void AdminCreateResource(int session_id,admin_parm_type parms[],
 		return;
 	}
 	AdminPrintResource(r);
+   aprintf("WARNING: do not change player names with created resources.\n");
+   aprintf("Use send o 0 AdminChangeUserName oUser o obj_num sName q name instead.\n");
+   aprintf("Failure to do so will result in player's new name not being added to user table.\n");
 }
 
 void AdminDeleteTimer(int session_id,admin_parm_type parms[],

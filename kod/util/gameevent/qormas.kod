@@ -1046,6 +1046,14 @@ messages:
 
       % Check per IP limit
       lIP = Send(who,@GetIP);
+      if (lIP = $)
+      {
+         Debug("User ",who,Send(who,@GetTrueName),
+               " returned $ for GetSessionIP!");
+
+         return;
+      }
+
       foreach i in plGiftIPCount
       {
          j = First(i);
@@ -1253,8 +1261,16 @@ messages:
             plGifts = DelListElem(plGifts,what);
          }
          plGiftClaims = Cons(who,plGiftClaims);
+
          lIP = Send(who,@GetIP);
-         
+         if (lIP = $)
+         {
+            Debug("User ",who,Send(who,@GetTrueName),
+                  " returned $ for GetSessionIP!");
+
+            return;
+         }
+
          foreach i in plGiftIPCount
          {
             j = First(i);

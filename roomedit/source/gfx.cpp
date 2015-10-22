@@ -197,16 +197,23 @@ double ComputeDistDouble(double dx, double dy)
 
 void InsertPolygonVertices (SHORT centerx, SHORT centery, SHORT sides, SHORT radius)
 {
-   SHORT n;
+   double theta = PIX2 / (double)sides;
+   double tangetial_factor = tan(theta);
+   double radial_factor = cos(theta);
+   double x = radius;
+   double y = 0;
 
-   for (n = 0; n < sides; n++)
-	  InsertObject( OBJ_VERTEXES, -1,
-					centerx + (SHORT) round(((double) radius * cos( 6.283185 * (double) n / (double) sides))),
-					centery + (SHORT) round(((double) radius * sin( 6.283185 * (double) n / (double) sides))));
-   /* Yes, I know... etc. */
+   for (SHORT n = 0; n < sides; n++)
+   {
+      InsertObject(OBJ_VERTEXES, -1, centerx + (SHORT)round(x), centery + (SHORT)round(y));
+      double tx = -y;
+      double ty = x;
+      x += tx * tangetial_factor;
+      y += ty * tangetial_factor;
+      x *= radial_factor;
+      y *= radial_factor;
+   }
 }
-
-
 
 /*
    move (x, y) to a new position: rotate and scale around (0, 0)

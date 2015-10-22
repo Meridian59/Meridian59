@@ -3425,6 +3425,74 @@ void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius)
 	}
 }
 
+// Inserts a circle of a given radius at the mouse cursor.
+void InsertCircle(SHORT xpos, SHORT ypos, SHORT radius)
+{
+   SHORT sector;
+   SHORT n;
+
+   if (radius < 8)
+      radius = 8;
+
+   SHORT nsides = (SHORT)(9.8 * sqrt((double)radius));
+
+   // are we inside a Sector?
+   sector = GetCurObject(OBJ_SECTORS, xpos, ypos, xpos, ypos);
+
+   // Insert vertices (and new sector)
+   InsertPolygonVertices(xpos, ypos, nsides, radius);
+   if (sector < 0)
+      InsertObject(OBJ_SECTORS, -1, 0, 0);
+
+   // Insert the LineDefs
+   for (n = 0; n < nsides; n++)
+   {
+      // Insert LineDef
+      InsertObject(OBJ_LINEDEFS, -1, 0, 0);
+
+      // Insert SideDef1
+      InsertObject(OBJ_SIDEDEFS, -1, 0, 0);
+      LineDefs[NumLineDefs - 1].sidedef1 = NumSideDefs - 1;
+      if (sector >= 0)
+         SideDefs[NumSideDefs - 1].sector = sector;
+   }
+
+   // If inside a sector, join LineDef clockwise
+   if (sector >= 0)
+   {
+      LineDef *pLineDef = &LineDefs[NumLineDefs - 1];
+
+      // Close polygon with last LineDef
+      pLineDef->start = NumVertexes - 1;
+      pLineDef->end = NumVertexes - nsides;
+
+      // Build polygon with LineDefs
+      for (n = 2; n <= nsides; n++)
+      {
+         pLineDef = &LineDefs[NumLineDefs - n];
+
+         pLineDef->start = NumVertexes - n;
+         pLineDef->end = NumVertexes - n + 1;
+      }
+   }
+   // If outside a sector, join LineDef anti-clockwise
+   else
+   {
+      LineDef *pLineDef = &LineDefs[NumLineDefs - 1];
+
+      pLineDef->start = NumVertexes - nsides;
+      pLineDef->end = NumVertexes - 1;
+
+      for (n = 2; n <= nsides; n++)
+      {
+         pLineDef = &LineDefs[NumLineDefs - n];
+
+         pLineDef->start = NumVertexes - n + 1;
+         pLineDef->end = NumVertexes - n;
+      }
+   }
+}
+
 // Makes a torch at the given position.
 void InsertTorch(SHORT xpos, SHORT ypos, SHORT torchAngle)
 {

@@ -109,6 +109,7 @@
     <ClInclude Include="include\gfx.h" />
     <ClInclude Include="include\infocont.h" />
     <ClInclude Include="include\inpt2dlg.h" />
+    <ClInclude Include="include\inpt1dlg.h" />
     <ClInclude Include="include\levels.h" />
     <ClInclude Include="include\lineedit.h" />
     <ClInclude Include="include\lprogdlg.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="source\gfx.cpp" />
     <ClCompile Include="source\infocont.cpp" />
     <ClCompile Include="source\inpt2dlg.cpp" />
+    <ClCompile Include="source\inpt1dlg.cpp" />
     <ClCompile Include="source\lineedit.cpp" />
     <ClCompile Include="source\load.cpp" />
     <ClCompile Include="source\lprogdlg.cpp" />
@@ -254,6 +256,7 @@
     <None Include="res\entrydlg.rh" />
     <None Include="res\episdlg.rh" />
     <None Include="res\funnydlg.rh" />
+    <None Include="res\inpt1dlg.rh" />
     <None Include="res\inpt2dlg.rh" />
     <None Include="res\LINEEDIT.RH" />
     <None Include="res\lprogdlg.rh" />

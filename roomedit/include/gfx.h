@@ -51,6 +51,7 @@
 #define MAP_MIN_Y   -14000
 #define MAP_MAX_Y    14000
 #define MAP_Y_SIZE  (MAP_MAX_Y - MAP_MIN_Y)
+#define PIX2 6.283185307179586476925286766559
 #endif
 
 /*

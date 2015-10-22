@@ -11,7 +11,9 @@ OUTDIR = $(TOPDIR)\resource\graphics
 DIRS = keen\
 		 mark \
 		 diggie \
-		 delerium
+		 delerium \
+         gar \
+         lod
 
 BGFS = \
 	$(OUTDIR)\arrowfir.bgf \

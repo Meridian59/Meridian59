@@ -133,6 +133,15 @@ messages:
 
       oTakerOwner = Send(taker,@GetOwner);
 
+      if (NOT Send(oTakerOwner,@LineOfSight,#obj1=taker,#obj2=self))
+      {
+         Debug("ALERT!  ",Send(taker,@GetTrueName),taker," in RID ",
+               Send(oTakerOwner,@GetRoomNum),
+               " taking from a chest they cannot see! ");
+
+         return FALSE;
+      }
+
       if IsClass(taker,&User)
          AND NOT IsClass(taker,&Admin)
          AND IsClass(oTakerOwner,&Room) AND IsClass(poOwner,&Room)
@@ -160,6 +169,15 @@ messages:
 
       % The player's owner.
       oWhoOwner = Send(who,@GetOwner);
+
+      if (NOT Send(oWhoOwner,@LineOfSight,#obj1=who,#obj2=self))
+      {
+         Debug("ALERT!  ",Send(who,@GetTrueName),who," in RID ",
+               Send(oWhoOwner,@GetRoomNum),
+               " depositing to a chest they cannot see! ");
+
+         return FALSE ;
+      }
 
       if IsClass(who,&User)
          AND NOT IsClass(who,&Admin)

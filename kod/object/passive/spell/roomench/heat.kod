@@ -180,7 +180,7 @@ messages:
    StartEnchantment(who = $, iSpellpower = 0)
    "Does enchantment effect on one player"
    {
-      local oRoom, bDoDamage, iDamage, oArmor;
+      local i, oRoom, bDoDamage, iDamage, lUsing;
 
       if who = $
       {
@@ -196,10 +196,10 @@ messages:
 
       bDoDamage = FALSE;
 
-      oArmor = Send(who,@GetArmor);
+      lUsing = Send(who,@GetPlayerUsing);
       oRoom = Send(who,@GetOwner);
 
-      if oArmor <> $
+      if lUsing <> $
       {
          if Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          {
@@ -226,20 +226,24 @@ messages:
       
       if bDoDamage
       {
-         iDamage = Send(oArmor,@GetHeatDamage);
+         iDamage = 0;
 
-         % robes = no heat damage
+         foreach i in lUsing
+         {
+            iDamage = iDamage + Send(i,@GetHeatDamage);
+         }
+
          if iDamage = 0
          {
             return;
-         }    
+         }
 
          Send(who,@MsgSendUser,#message_rsc=heat_hurts_you);
          
          if Send(who,@AssessDamage,#report=FALSE,#what=self,#damage=iDamage,
-            #aspell=ATCK_SPELL_FIRE) = $
+                  #aspell=ATCK_SPELL_FIRE) = $
          {
-            if IsClass(who,&Player)
+            if IsClass(who,&User)
             {
                Send(who,@MsgSendUser,#message_rsc=heat_kills_you);
             }

@@ -462,25 +462,25 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E, Wall** BlockWall)
           (distS < 0.0f && distE > 0.0f))
       {
          // get 2d line equation coefficients for infinite line through S and E
-         float a1, b1, c1;
+         double a1, b1, c1;
          a1 = E->Y - S->Y;
          b1 = S->X - E->X;
          c1 = a1 * S->X + b1 * S->Y;
 
          // get 2d line equation coefficients of splitter
-         float a2, b2, c2;
+         double a2, b2, c2;
          a2 = -Node->u.internal.A;
          b2 = -Node->u.internal.B;
          c2 = Node->u.internal.C;
 
-         float det = a1*b2 - a2*b1;
+         double det = a1*b2 - a2*b1;
 
          // shouldn't be zero at all, because distS and distE have different sign
          if (!ISZERO(det))
          {
-            // intersection point of infinite lines				
-            q.X = (b2*c1 - b1*c2) / det;
-            q.Y = (a1*c2 - a2*c1) / det;
+            // intersection point of infinite lines
+            q.X = (float)((b2*c1 - b1*c2) / det);
+            q.Y = (float)((a1*c2 - a2*c1) / det);
 
             // must be in boundingbox of SE
             if (ISINBOX(S, E, &q))

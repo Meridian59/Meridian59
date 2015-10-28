@@ -739,21 +739,21 @@ messages:
       if StringContain(string,"systemmessage")
       {
          StringSubstitute(string,"systemmessage ","");
-         Send(SYS,@AdminSystemMessageBang,#string=string);
+         Send(SYS,@AdminSystemMessage,#string=string,#bSound=TRUE,#bPrefix=TRUE);
          return;
       }
 
       if StringContain(string,"gemote")
       {
          StringSubstitute(string,"gemote ","");
-         Send(SYS,@AdminSystemMessage,#string=string);
+         Send(SYS,@AdminSystemMessage,#string=string,#bSound=TRUE,#bPrefix=FALSE);
          return;
       }
 
       if StringContain(string,"gqemote")
       {
          StringSubstitute(string,"gqemote ","");
-         Send(self,@SysMsgSendUser,#message_rsc=dm_system_message,#parm1=string);
+         Send(SYS,@AdminSystemMessage,#string=string,#bSound=FALSE,#bPrefix=FALSE);
          return;
       }
 

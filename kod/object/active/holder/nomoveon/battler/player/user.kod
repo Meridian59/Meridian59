@@ -4837,6 +4837,13 @@ messages:
          return;
       }
 
+      if IsClass(what,&StorageBox)
+         AND NOT Send(poOwner,@LineOfSight,#obj1=what,#obj2=self)
+      {
+         Debug("User ", self, vrName, "tried to look at storebox item they could not see!");
+         return;
+      }
+
       if IsClass(what,&Player)
       {
          lHolding1 = Send(what,@GetPlayerUsing);

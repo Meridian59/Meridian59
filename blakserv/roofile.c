@@ -176,248 +176,247 @@ bool BSPGetHeightTree(BspNode* Node, V2* P, float* HeightF, float* HeightFWD, fl
 
 bool BSPLineOfSightTree(BspNode* Node, V3* S, V3* E)
 {
-	if (!Node)
-		return true;
+   if (!Node)
+      return true;
 
-	/****************************************************************/
+   /****************************************************************/
 
-	// reached a leaf
-	if (Node->Type == BspLeafType)
-	{
-		// no collisions with leafs without sectors
-		if (!Node->u.leaf.Sector)
-			return true;
+   // reached a leaf
+   if (Node->Type == BspLeafType)
+   {
+      // no collisions with leafs without sectors
+      if (!Node->u.leaf.Sector)
+         return true;
 
-		// floors and ceilings don't have backsides.
-		// therefore a floor can only collide if
-		// the start height is bigger than end height
-		// and for ceiling the other way round.
-		if (S->Z > E->Z && Node->u.leaf.Sector->FloorTexture > 0)
-		{
-			for (int i = 0; i < Node->u.leaf.PointsCount - 2; i++)
-			{
-				bool blocked = IntersectLineTriangle(
-					&Node->u.leaf.PointsFloor[i + 2],
-					&Node->u.leaf.PointsFloor[i + 1],
-					&Node->u.leaf.PointsFloor[0], S, E);
+      // floors and ceilings don't have backsides.
+      // therefore a floor can only collide if
+      // the start height is bigger than end height
+      // and for ceiling the other way round.
+      if (S->Z > E->Z && Node->u.leaf.Sector->FloorTexture > 0)
+      {
+         for (int i = 0; i < Node->u.leaf.PointsCount - 2; i++)
+         {
+            bool blocked = IntersectLineTriangle(
+               &Node->u.leaf.PointsFloor[i + 2],
+               &Node->u.leaf.PointsFloor[i + 1],
+               &Node->u.leaf.PointsFloor[0], S, E);
 
-				// blocked by floor
-				if (blocked)
-				{
+            // blocked by floor
+            if (blocked)
+            {
 #if DEBUGLOS
-					dprintf("BLOCK - FLOOR");
+               dprintf("BLOCK - FLOOR");
 #endif
-					return false;
-				}
-			}
-		}
+               return false;
+            }
+         }
+      }
 
-		else if (S->Z < E->Z && Node->u.leaf.Sector->CeilingTexture > 0)
-		{
-			for (int i = 0; i < Node->u.leaf.PointsCount - 2; i++)
-			{
-				bool blocked = IntersectLineTriangle(
-					&Node->u.leaf.PointsCeiling[i + 2],
-					&Node->u.leaf.PointsCeiling[i + 1],
-					&Node->u.leaf.PointsCeiling[0], S, E);
+      // check ceiling collision
+      else if (S->Z < E->Z && Node->u.leaf.Sector->CeilingTexture > 0)
+      {
+         for (int i = 0; i < Node->u.leaf.PointsCount - 2; i++)
+         {
+            bool blocked = IntersectLineTriangle(
+               &Node->u.leaf.PointsCeiling[i + 2],
+               &Node->u.leaf.PointsCeiling[i + 1],
+               &Node->u.leaf.PointsCeiling[0], S, E);
 
-				// blocked by ceiling
-				if (blocked)
-				{
+            // blocked by ceiling
+            if (blocked)
+            {
 #if DEBUGLOS
-					dprintf("BLOCK - CEILING");
+               dprintf("BLOCK - CEILING");
 #endif
-					return false;
-				}
-			}
-		}
+               return false;
+            }
+         }
+      }
 
-		// not blocked by this leaf
-		return true;
-	}
+      // not blocked by this leaf
+      return true;
+   }
 
-	/****************************************************************/
+   /****************************************************************/
 
-	// expecting anything else/below to be a splitter
-	if (Node->Type != BspInternalType)
-		return true;
+   // expecting anything else/below to be a splitter
+   if (Node->Type != BspInternalType)
+      return true;
 
-	// get signed distances to both endpoints of ray
-	float distS = DISTANCETOSPLITTERSIGNED(&Node->u.internal, S);
-	float distE = DISTANCETOSPLITTERSIGNED(&Node->u.internal, E);
+   // get signed distances to both endpoints of ray
+   float distS = DISTANCETOSPLITTERSIGNED(&Node->u.internal, S);
+   float distE = DISTANCETOSPLITTERSIGNED(&Node->u.internal, E);
 
-	/****************************************************************/
+   /****************************************************************/
 
-	// both endpoints on positive (right) side
-	// --> climb down only right subtree
-	if (distS > EPSILON && distE > EPSILON)
-		return BSPLineOfSightTree(Node->u.internal.RightChild, S, E);
+   // both endpoints on positive (right) side
+   // --> climb down only right subtree
+   if (distS > EPSILON && distE > EPSILON)
+      return BSPLineOfSightTree(Node->u.internal.RightChild, S, E);
 
-	// both endpoints on negative (left) side
-	// --> climb down only left subtree
-	else if (distS < -EPSILON && distE < -EPSILON)
-		return BSPLineOfSightTree(Node->u.internal.LeftChild, S, E);
+   // both endpoints on negative (left) side
+   // --> climb down only left subtree
+   else if (distS < -EPSILON && distE < -EPSILON)
+      return BSPLineOfSightTree(Node->u.internal.LeftChild, S, E);
 
-	// endpoints are on different sides or one/both on infinite line
-	// --> check walls of splitter first and then possibly climb down both
-	else
-	{
-		// loop through walls in this splitter and check for collision
-		Wall* wall = Node->u.internal.FirstWall;
-		while (wall)
-		{
-			// must have at least a sector on one side of the wall
-			// otherwise skip this wall
-			if (!wall->RightSector && !wall->LeftSector)
-			{
-				wall = wall->NextWallInPlane;
-				continue;
-			}
+   // endpoints are on different sides or one/both on infinite line
+   // --> check walls of splitter first and then possibly climb down both
+   else
+   {
+      // get 2d line equation coefficients for infinite line through S and E
+      double a1, b1, c1;
+      a1 = E->Y - S->Y;
+      b1 = S->X - E->X;
+      c1 = a1 * S->X + b1 * S->Y;
 
-			// pick side ray is coming from
-			Side* side = (distS > 0.0f) ? wall->RightSide : wall->LeftSide;
+      // get 2d line equation coefficients of splitter
+      double a2, b2, c2;
+      a2 = -Node->u.internal.A;
+      b2 = -Node->u.internal.B;
+      c2 = Node->u.internal.C;
 
-			// no collision with unset sides
-			if (!side)
-			{
-				wall = wall->NextWallInPlane;
-				continue;
-			}
+      double det = a1*b2 - a2*b1;
 
-			// get 2d line equation coefficients for infinite line through S and E
-			float a1, b1, c1;
-			a1 = E->Y - S->Y;
-			b1 = S->X - E->X;
-			c1 = a1 * S->X + b1 * S->Y;
+      // if zero they're parallel
+      if (!ISZERO(det))
+      {
+         // intersection point of infinite lines
+         V2 q;
+         q.X = (float)((b2*c1 - b1*c2) / det);
+         q.Y = (float)((a1*c2 - a2*c1) / det);
 
-			// get 2d line equation coefficients for infinite line through P1 and P2
-			// NOTE: This should be using BspInternal A,B,C coefficients
-			float a2, b2, c2;
-			a2 = wall->P2.Y - wall->P1.Y;
-			b2 = wall->P1.X - wall->P2.X;
-			c2 = a2 * wall->P1.X + b2 * wall->P1.Y;
+         // must be in boundingbox of SE
+         if (ISINBOX(S, E, &q))
+         {
+            // iterate finite segments (walls) in this splitter
+            Wall* wall = Node->u.internal.FirstWall;
+            while (wall)
+            {
+               // infinite intersection point must also be in bbox of wall
+               // otherwise no intersect
+               if (!ISINBOX(&wall->P1, &wall->P2, &q))
+               {
+                  wall = wall->NextWallInPlane;
+                  continue;
+               }
 
-			float det = a1*b2 - a2*b1;
+               // must have at least a sector on one side of the wall
+               // otherwise skip this wall
+               if (!wall->RightSector && !wall->LeftSector)
+               {
+                  wall = wall->NextWallInPlane;
+                  continue;
+               }
 
-			// parallel (or identical) lines
-			if (ISZERO(det))
-			{
-				wall = wall->NextWallInPlane;
-				continue;
-			}
+               // pick side ray is coming from
+               Side* side = (distS > 0.0f) ? wall->RightSide : wall->LeftSide;
 
-			// intersection point of infinite lines
-			V2 q;
-			q.X = (b2*c1 - b1*c2) / det;
-			q.Y = (a1*c2 - a2*c1) / det;
+               // no collision with unset sides
+               if (!side)
+               {
+                  wall = wall->NextWallInPlane;
+                  continue;
+               }
 
-			//dprintf("intersect: %f %f \t p1.x:%f p1.y:%f p2.x:%f p2.y:%f \n", q.X, q.Y, wall->P1.X, wall->P1.Y, wall->P2.X, wall->P2.Y);
+               // vector from (S)tart to (E)nd
+			   V3 se;
+               V3SUB(&se, E, S);
 
-			// infinite intersection point must be in BOTH
-			// finite segments boundingboxes, otherwise no intersect
-			if (!ISINBOX(S, E, &q) || !ISINBOX(&wall->P1, &wall->P2, &q))
-			{
-				wall = wall->NextWallInPlane;
-				continue;
-			}
+               // find rayheight of (S->E) at intersection point
+               float lambda = 1.0f;
+               if (!ISZERO(se.X))
+                  lambda = (q.X - S->X) / se.X;
 
-			// vector from (S)tart to (E)nd
-			V3 se;
-			V3SUB(&se, E, S);
+               else if (!ISZERO(se.Y))
+                  lambda = (q.Y - S->Y) / se.Y;
 
-			// find rayheight of (S->E) at intersection point
-			float lambda = 1.0f;
-			if (!ISZERO(se.X))
-				lambda = (q.X - S->X) / se.X;
+               float rayheight = S->Z + lambda * se.Z;
 
-			else if (!ISZERO(se.Y))
-				lambda = (q.Y - S->Y) / se.Y;
+               // get heights of right and left floor/ceiling
+               float hFloorRight = (wall->RightSector) ?
+                  SECTORHEIGHTFLOOR(wall->RightSector, &q) :
+                  SECTORHEIGHTFLOOR(wall->LeftSector, &q);
 
-			float rayheight = S->Z + lambda * se.Z;
+               float hFloorLeft = (wall->LeftSector) ?
+                  SECTORHEIGHTFLOOR(wall->LeftSector, &q) :
+                  SECTORHEIGHTFLOOR(wall->RightSector, &q);
 
-			// get heights of right and left floor/ceiling
-			float hFloorRight = (wall->RightSector) ?
-				SECTORHEIGHTFLOOR(wall->RightSector, &q) :
-				SECTORHEIGHTFLOOR(wall->LeftSector, &q);
+               float hCeilingRight = (wall->RightSector) ?
+                  SECTORHEIGHTCEILING(wall->RightSector, &q) :
+                  SECTORHEIGHTCEILING(wall->LeftSector, &q);
 
-			float hFloorLeft = (wall->LeftSector) ?
-				SECTORHEIGHTFLOOR(wall->LeftSector, &q) :
-				SECTORHEIGHTFLOOR(wall->RightSector, &q);
+               float hCeilingLeft = (wall->LeftSector) ?
+                  SECTORHEIGHTCEILING(wall->LeftSector, &q) :
+                  SECTORHEIGHTCEILING(wall->RightSector, &q);
 
-			float hCeilingRight = (wall->RightSector) ?
-				SECTORHEIGHTCEILING(wall->RightSector, &q) :
-				SECTORHEIGHTCEILING(wall->LeftSector, &q);
+               // build all 4 possible heights (h0 lowest)
+               float h3 = fmax(hCeilingRight, hCeilingLeft);
+               float h2 = fmax(fmin(hCeilingRight, hCeilingLeft), fmax(hFloorRight, hFloorLeft));
+               float h1 = fmin(fmin(hCeilingRight, hCeilingLeft), fmax(hFloorRight, hFloorLeft));
+               float h0 = fmin(hFloorRight, hFloorLeft);
 
-			float hCeilingLeft = (wall->LeftSector) ?
-				SECTORHEIGHTCEILING(wall->LeftSector, &q) :
-				SECTORHEIGHTCEILING(wall->RightSector, &q);
+               // above maximum or below minimum
+               if (rayheight > h3 || rayheight < h0)
+               {
+                  wall = wall->NextWallInPlane;
+                  continue;
+               }
 
-			// build all 4 possible heights (h0 lowest)
-			float h3 = fmax(hCeilingRight, hCeilingLeft);
-			float h2 = fmax(fmin(hCeilingRight, hCeilingLeft), fmax(hFloorRight, hFloorLeft));
-			float h1 = fmin(fmin(hCeilingRight, hCeilingLeft), fmax(hFloorRight, hFloorLeft));
-			float h0 = fmin(hFloorRight, hFloorLeft);
+               // ray intersects middle wall texture
+               if (rayheight <= h2 && rayheight >= h1 && side->TextureMiddle > 0)
+               {
+                  // get some flags from the side we're coming from
+                  // these are applied only to the 'main' = 'middle' texture
+                  bool isNoLookThrough = ((side->Flags & WF_NOLOOKTHROUGH) == WF_NOLOOKTHROUGH);
+                  bool isTransparent = ((side->Flags & WF_TRANSPARENT) == WF_TRANSPARENT);
 
-			// above maximum or below minimum
-			if (rayheight > h3 || rayheight < h0)
-			{
-				wall = wall->NextWallInPlane;
-				continue;
-			}
-
-			// ray intersects middle wall texture
-			if (rayheight <= h2 && rayheight >= h1 && side->TextureMiddle > 0)
-			{
-				// get some flags from the side we're coming from
-				// these are applied only to the 'main' = 'middle' texture
-				bool isNoLookThrough = ((side->Flags & WF_NOLOOKTHROUGH) == WF_NOLOOKTHROUGH);
-				bool isTransparent   = ((side->Flags & WF_TRANSPARENT) == WF_TRANSPARENT);
-
-				// 'transparent' middle textures block only
-				// if they are set so by 'no-look-through'
-				if (!isTransparent || (isTransparent && isNoLookThrough))
-				{
+                  // 'transparent' middle textures block only
+                  // if they are set so by 'no-look-through'
+                  if (!isTransparent || (isTransparent && isNoLookThrough))
+                  {
 #if DEBUGLOS
-					dprintf("WALL %i - MID - (%f/%f/%f)", wall->Num, q.X, q.Y, rayheight);
+                     dprintf("WALL %i - MID - (%f/%f/%f)", wall->Num, q.X, q.Y, rayheight);
 #endif
-					return false;
-				}
-			}
+                     return false;
+                  }
+               }
 
-			// ray intersects upper wall texture
-			if (rayheight <= h3 && rayheight >= h2 && side->TextureUpper > 0)
-			{
+               // ray intersects upper wall texture
+               if (rayheight <= h3 && rayheight >= h2 && side->TextureUpper > 0)
+               {
 #if DEBUGLOS
-				dprintf("WALL %i - UP - (%f/%f/%f)", wall->Num, q.X, q.Y, rayheight);
+                  dprintf("WALL %i - UP - (%f/%f/%f)", wall->Num, q.X, q.Y, rayheight);
 #endif
-				return false;
-			}
+                  return false;
+               }
 
-			// ray intersects lower wall texture
-			if (rayheight <= h1 && rayheight >= h0 && side->TextureLower > 0)
-			{
+               // ray intersects lower wall texture
+               if (rayheight <= h1 && rayheight >= h0 && side->TextureLower > 0)
+               {
 #if DEBUGLOS
-				dprintf("WALL %i - LOW - (%f/%f/%f)", wall->Num, q.X, q.Y, rayheight);
+                  dprintf("WALL %i - LOW - (%f/%f/%f)", wall->Num, q.X, q.Y, rayheight);
 #endif
-				return false;
-			}
+                  return false;
+               }
 
-			// next wall for next loop
-			wall = wall->NextWallInPlane;
-		}
+               // next wall for next loop
+               wall = wall->NextWallInPlane;
+            }
+         }
+      }
 
-		/****************************************************************/
+      /****************************************************************/
 
-		// try right subtree first
-		bool retval = BSPLineOfSightTree(Node->u.internal.RightChild, S, E);
+      // try right subtree first
+      bool retval = BSPLineOfSightTree(Node->u.internal.RightChild, S, E);
 
-		// found a collision there? return it
-		if (!retval)
-			return retval;
+      // found a collision there? return it
+      if (!retval)
+         return retval;
 
-		// otherwise try left subtree
-		return BSPLineOfSightTree(Node->u.internal.LeftChild, S, E);
-	}
+      // otherwise try left subtree
+      return BSPLineOfSightTree(Node->u.internal.LeftChild, S, E);
+   }
 }
 
 bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E, Wall** BlockWall)

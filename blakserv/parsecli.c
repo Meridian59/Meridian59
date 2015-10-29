@@ -19,6 +19,14 @@
 
 #include "blakserv.h"
 
+#define OBJECT_ERROR1 1
+#define OBJECT_ERROR2 2
+#define OBJECT_ERROR3 3
+#define LENGTH_ERROR1 4
+#define LENGTH_ERROR2 5
+#define LENGTH_ERROR3 6
+#define OBJECT_LIST_ERROR 7
+
 client_table_node *user_table,*system_table,*usercommand_table;
 
 /* stuff for client -> server */
@@ -27,6 +35,40 @@ val_type cli_list_nodes[MAX_CLIENT_PARMS];
 /* local function prototypes */
 void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,int object_id,
 						   client_table_type command_table);
+
+// Handles more common error messages for ParseClientSendBlakod,
+// adds extra info to track down the error.
+inline void ParseClientSendBlakodError(int err_type, int session_id, int data, int protocol, int parm)
+{
+   session_node *s = GetSessionByID(session_id);
+   int client_version = 0, account_id = 0;
+
+   if (s)
+   {
+      client_version = s->version_minor + 100 * s->version_major;
+      if (s->account)
+         account_id = s->account->account_id;
+   }
+   switch (err_type)
+   {
+   case OBJECT_ERROR1:
+   case OBJECT_ERROR2:
+   case OBJECT_ERROR3:
+      eprintf("ParseClientSendBlakod %i got invalid obj ref %i, protocol %i, cli parm %i, cli vers %i, acct id %i\n",
+         err_type, data, protocol, parm, client_version, account_id);
+      break;
+   case LENGTH_ERROR1:
+   case LENGTH_ERROR2:
+   case LENGTH_ERROR3:
+      eprintf("ParseClientSendBlakod %i got invalid short message len %i, protocol %i, cli parm %i, cli vers %i, acct id %i\n",
+         err_type - 3, data, protocol, parm, client_version, account_id);
+      break;
+   case OBJECT_LIST_ERROR:
+      eprintf("ParseClientSendBlakod got invalid obj ref %i in a list, protocol %i, cli parm %i, cli vers %i, acct id %i\n",
+         data, protocol, parm, client_version, account_id);
+      break;
+   }
+}
 
 void InitParseClient(void)
 {
@@ -175,8 +217,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 	{
 		if (msg_byte_offset > msg_len - command_table[i].client_parms[j].len_parm)
 		{
-			eprintf("ParseClientSendBlakod got invalid short message type %i, len %i\n",
-				i,msg_len);
+			ParseClientSendBlakodError(LENGTH_ERROR1, session_id, msg_len, i, j);
 			return;
 		}
 		
@@ -245,8 +286,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %i\n",
-						temp.v.data);
+					ParseClientSendBlakodError(OBJECT_ERROR1, session_id, temp.v.data, i, j);
 					return;
 				}
 				
@@ -280,8 +320,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 						{
 							if (msg_byte_offset > msg_len-4)
 							{
-								eprintf("ParseClientSendBlakod 2 got invalid short message type %i, len %i\n",
-										  i,msg_len);
+								ParseClientSendBlakodError(LENGTH_ERROR2, session_id, msg_len, i, j);
 								break;
 							}
 
@@ -293,8 +332,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 							if (/* temp.v.tag == TAG_OBJECT && */
 								NULL == GetObjectByID(temp.v.data))
 							{
-								eprintf("ParseClientSendBlakod got invalid object reference %i in a list\n",
-									temp.v.data);
+								ParseClientSendBlakodError(OBJECT_LIST_ERROR, session_id, temp.v.data, i, j);
 								return;
 							}
 							
@@ -350,8 +388,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %i\n",
-						temp.v.data);
+					ParseClientSendBlakodError(OBJECT_ERROR2, session_id, temp.v.data, i, j);
 					return;
 				}
 				
@@ -365,8 +402,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %i\n",
-						temp.v.data);
+					ParseClientSendBlakodError(OBJECT_ERROR3, session_id, temp.v.data, i, j);
 					return;
 				}
 				
@@ -393,9 +429,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
    */
    if (msg_byte_offset > msg_len)
    {
-	   eprintf("ParseClientSendBlakod 4 got invalid short message type %i, len %i\n",
-		   i,msg_len);
-	   return;
+      ParseClientSendBlakodError(LENGTH_ERROR3, session_id, msg_len, i, j);
+      return;
    }
    
    /* give the message to KOD:

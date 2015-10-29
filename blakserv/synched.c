@@ -295,8 +295,17 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       /* they're there, so hangup timer reset, and we are done */
       break;
       
-   default : 
-      eprintf("SynchedProtocolParse got invalid packet %u\n",msg->data[0]);
+   default :
+      int client_version = s->version_minor + 100 * s->version_major;
+      account_node *a = s->account;
+      int account_id;
+      if (a)
+         account_id = a->account_id;
+      else
+         account_id = INVALID_ID;
+
+      eprintf("SynchedProtocolParse got invalid packet %u from account %i, cli vers %i\n",
+         msg->data[0], account_id, client_version);
       break;
    }
 }

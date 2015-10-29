@@ -627,7 +627,41 @@ bool BSPLineOfSight(room_type* Room, V3* S, V3* E)
    if (!Room || Room->TreeNodesCount == 0 || !S || !E)
       return false;
 
-   return BSPLineOfSightTree(&Room->TreeNodes[0], S, E);
+   // test center
+   if (BSPLineOfSightTree(&Room->TreeNodes[0], S, E))
+      return true;
+
+   V3 e;
+
+   // test p
+   e.X = E->X + LOSEXTEND;
+   e.Y = E->Y + LOSEXTEND;
+   e.Z = E->Z;
+   if (BSPLineOfSightTree(&Room->TreeNodes[0], S, &e))
+      return true;
+
+   // test p
+   e.X = E->X - LOSEXTEND;
+   e.Y = E->Y - LOSEXTEND;
+   e.Z = E->Z;
+   if (BSPLineOfSightTree(&Room->TreeNodes[0], S, &e))
+      return true;
+
+   // test p
+   e.X = E->X + LOSEXTEND;
+   e.Y = E->Y - LOSEXTEND;
+   e.Z = E->Z;
+   if (BSPLineOfSightTree(&Room->TreeNodes[0], S, &e))
+      return true;
+
+   // test p
+   e.X = E->X - LOSEXTEND;
+   e.Y = E->Y + LOSEXTEND;
+   e.Z = E->Z;
+   if (BSPLineOfSightTree(&Room->TreeNodes[0], S, &e))
+      return true;
+
+   return false;
 }
 
 /*********************************************************************************************/

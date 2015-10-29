@@ -99,6 +99,7 @@ messages:
       local iAmountHpInc, iAmountManaInc;
 
       if caster = $ OR victim = $
+         OR Send(victim,@IsDrainImmune)
       {
          return;
       }

@@ -81,6 +81,7 @@ messages:
       local iToHeal;
       
       if who = $ OR victim = $
+         OR Send(victim,@IsDrainImmune)
       {
          propagate;
       }

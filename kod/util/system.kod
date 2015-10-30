@@ -1096,29 +1096,27 @@ messages:
       return;
    }
 
-   AdminSystemMessage(string = $)
+   AdminSystemMessage(string = $,bSound = TRUE,bPrefix = FALSE)
    {
       local i;
 
       foreach i in plUsers_logged_on
       {
-         Send(i,@SysMsgSendUser,#message_rsc=system_admin_message,
+         if (bPrefix)
+         {
+            Send(i,@SysMsgSendUser,#message_rsc=system_admin_message_bang,
               #parm1=string);
-         Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
-      }
-
-      return;
-   }
-
-   AdminSystemMessageBang(string = $)
-   {
-      local i;
-
-      foreach i in plUsers_logged_on
-      {
-         Send(i,@SysMsgSendUser,#message_rsc=system_admin_message_bang,
+         }
+         else
+         {
+            Send(i,@SysMsgSendUser,#message_rsc=system_admin_message,
               #parm1=string);
-         Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
+         }
+
+         if (bSound)
+         {
+            Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
+         }
       }
 
       return;

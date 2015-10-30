@@ -1,4 +1,5 @@
 #define EPSILON     0.0001f
+#define EPSILONBIG  0.1f
 #define ISZERO(a)   ((a) > -EPSILON && (a) < EPSILON)
 
 typedef struct V3
@@ -56,8 +57,8 @@ typedef struct V2
 
 // true if point (c) lies inside boundingbox defined by min/max of (a) and (b)
 #define ISINBOX(a, b, c) \
-   (fmin((a)->X, (b)->X) - EPSILON <= (c)->X && (c)->X <= fmax((a)->X, (b)->X) + EPSILON && \
-    fmin((a)->Y, (b)->Y) - EPSILON <= (c)->Y && (c)->Y <= fmax((a)->Y, (b)->Y) + EPSILON)
+   (fmin((a)->X, (b)->X) - EPSILONBIG <= (c)->X && (c)->X <= fmax((a)->X, (b)->X) + EPSILONBIG && \
+    fmin((a)->Y, (b)->Y) - EPSILONBIG <= (c)->Y && (c)->Y <= fmax((a)->Y, (b)->Y) + EPSILONBIG)
 
 // Rotates V2 instance by radian
 __inline void V2ROTATE(V2* V, float Radian)

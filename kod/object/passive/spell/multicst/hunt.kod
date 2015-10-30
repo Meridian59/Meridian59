@@ -169,6 +169,11 @@ messages:
 
       oPrey = Send(SYS,@FindUserByString,#string=string);
 
+      if (oPrey = $)
+      {
+         return;
+      }
+
       if IsClass(oPrey,&DM) AND NOT Send(oPrey,@IsHuntable)
       {
          Send(who,@MsgSendUser,#message_rsc=hunt_target_is_dm);

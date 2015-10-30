@@ -65,6 +65,9 @@ BOOL AudioInit()
    ISoundDeviceList* deviceList = 
       ::irrklang::createSoundDeviceList();
 
+   if (!deviceList)
+      return FALSE;
+
    // see how many we got
    ik_s32 devicecount = deviceList->getDeviceCount();
 
@@ -221,7 +224,7 @@ BOOL AudioPlay3D(char *file, int volume, bool loop, ISound** soundid, int x, int
 
 BOOL AudioStopFile(char *file)
 {
-   if (!initialized || !file)
+   if (!initialized || !sounds || !file)
       return FALSE;
 
    // Get the sound source data.
@@ -264,7 +267,7 @@ BOOL AudioStop(ISound* soundid)
 BOOL MusicStop()
 {
    // nothing to stop
-   if (!music)
+   if (!initialized || !music)
       return FALSE;
 
    // stop it
@@ -292,7 +295,7 @@ BOOL MusicPlayFile(char* file)
 {
    // nothing to do if music is disabled, null file given
    // or trying to play current file (must compare by string rather than id)
-   if (!config.play_music || !file || (musicname && stricmp(file, musicname) == 0))
+   if (!config.play_music || !initialized || !file || (musicname && stricmp(file, musicname) == 0))
       return TRUE;
 
    debug(("Trying to play music: %s  (volume:%i)\n", file, config.music_volume));
@@ -350,16 +353,17 @@ BOOL MusicSetVolume()
 
 __inline int SoundGetFreeIndex()
 {
-   for (int i = 0; i < MAXSOUNDS; i++)	
-      if (sounds[i].id == 0)		
-         return i;
+   if (initialized && sounds)
+      for (int i = 0; i < MAXSOUNDS; i++)	
+         if (sounds[i].id == 0)		
+            return i;
 
    return -1;
 }
 
 BOOL SoundStop(ISound* soundid)
 {
-   if (!soundid)
+   if (!initialized || !soundid || !sounds)
       return TRUE;
 
    // try remove it from our array
@@ -383,9 +387,10 @@ BOOL SoundStop(ISound* soundid)
 BOOL SoundStopAll(BYTE flags)
 {
    // stop any matching flags (by default all)
-   for (int i = 0; i < MAXSOUNDS; i++)
-      if ((sounds[i].flags & flags) == flags)
-         SoundStop(sounds[i].id);
+   if (initialized && sounds)
+      for (int i = 0; i < MAXSOUNDS; i++)
+         if ((sounds[i].flags & flags) == flags)
+            SoundStop(sounds[i].id);
 
    return TRUE;
 }
@@ -396,7 +401,7 @@ BOOL SoundPlayFile(char* file, BYTE flags, int x, int y)
    bool isRandom = ((flags & SF_RANDOM_PLACE) == SF_RANDOM_PLACE);
 
    // abort cases
-   if (!config.play_sound || !file ||
+   if (!config.play_sound || !file || !sounds ||
       (!config.play_loop_sounds && isLoop) ||
       (!config.play_random_sounds && isRandom))
          return FALSE;
@@ -447,7 +452,7 @@ BOOL SoundPlayFile(char* file, BYTE flags, int x, int y)
 BOOL SoundStopFile(char* file, ID obj)
 {
    // abort cases
-   if (!config.play_sound || !file)
+   if (!initialized || !config.play_sound || !file)
       return FALSE;
 
    char current_dir[MAX_PATH];              // workdir
@@ -500,9 +505,10 @@ BOOL SoundStopResource(ID rsc, ID obj)
 
 BOOL SoundSetVolume()
 {
-   for (int i = 0; i < MAXSOUNDS; i++)
-      if (sounds[i].id)
-         AudioSetVolume(sounds[i].id, config.sound_volume);
+   if (initialized && sounds)
+      for (int i = 0; i < MAXSOUNDS; i++)
+         if (sounds[i].id)
+            AudioSetVolume(sounds[i].id, config.sound_volume);
 
    return TRUE;
 }

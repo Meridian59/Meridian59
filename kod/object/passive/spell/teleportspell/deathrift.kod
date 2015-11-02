@@ -63,7 +63,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&DarkAngelFeather,6],plReagents);
+      plReagents = Cons([&DarkAngelFeather,4],plReagents);
 
       return;
    }

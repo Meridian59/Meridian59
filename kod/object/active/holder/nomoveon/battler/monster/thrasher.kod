@@ -60,7 +60,7 @@ classvars:
    vrDead_name = thrasher_dead_name_rsc
 
    viTreasure_type = TID_THRASHER
-   viCashmin = -12000
+   viCashmin = -9000
    viCashmax = 6000
    viNormalSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BLUDGEON
@@ -156,27 +156,6 @@ messages:
             oObject = Create(&Scimitar);
             Send(self,@NewHold,#what=oObject);
             prShieldOverlay = thrasher_scimitar_overlay;
-         }
-      }
-
-      return;
-   }
-
-   HitSideEffect(what = $, who = $)
-   {
-      local oSpell;
-
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_ENFEEBLE);
-      if NOT Send(what,@IsEnchanted,#what=oSpell)
-         AND Random(1,PALSY_CHANCE) = 1
-      {
-         if who <> $
-         {
-            Send(oSpell,@CastSpell,#who=who,#lTargets=[what],#iSpellPower=90);
-         }
-         else
-         {
-            Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=90);
          }
       }
 

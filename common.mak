@@ -61,16 +61,22 @@ KODINCLUDEDIR = $(KODDIR)\include
 PALETTEFILE = $(TOPDIR)\blakston.pal
 
 # compiler specs -- uses multi-threaded DLL C runtime library
+# See this link for information on each setting: https://msdn.microsoft.com/en-us/library/fwkeyyhe.aspx
 # /TP builds C files in C++ mode
 # /WX treats warnings as errors
-# /GR- turns off RTTI
+# /GR- turns off Run-Time Type Information
 # /EHsc- turns off exceptions
 # /wd4996  disables warning (GetVersionExA has been deprecated)
 # -arch:IA32 disables SSE instructions (not supported on ancient Athlon CPUs)
 
+# Configuration specific flags:
+# -Zi turns on debug information compatible with "Edit & Continue"
+# /Ox enables full optimization
+# -W# specifies which warning level
+
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
              -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
-             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
+             -D_WINSOCK_DEPRECATED_NO_WARNINGS -DNO_WARN_MBCS_MFC_DEPRECATION /wd4996 \
 				 -TP -WX -GR- -EHsc- -arch:IA32
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox

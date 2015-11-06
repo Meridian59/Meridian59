@@ -200,6 +200,9 @@ classvars:
 properties:
 
    piRoom_Flags = 0
+   
+   % DMs can say "turn off pk" in a room to prevent PK for 60 minutes
+   ptNoPKTimer = $
 
    prRoom                       % the room resource id
    prmRoom                      % the room data id
@@ -1092,6 +1095,12 @@ messages:
       {
          DeleteTimer(ptPeriodic_sounds);
          ptPeriodic_sounds = $;
+      }
+      
+      if ptNoPKTimer <> $
+      {
+         DeleteTimer(ptNoPKTimer);
+         ptNoPKTimer = $;
       }
 
       Send(SYS,@DeleteRoom,#what=self);
@@ -5126,6 +5135,28 @@ messages:
    GetGenerators()
    {
       return $;
+   }
+   
+   StartTemporaryNoPK()
+   {
+      if NOT (piRoom_flags & ROOM_NO_PK)
+      {
+         piRoom_flags = piRoom_flags | ROOM_NO_PK;
+         ptNoPKTimer = CreateTimer(self,@EndTemporaryNoPK,60000*60);
+      }
+      return;
+   }
+   
+   EndTemporaryNoPK(timer=$)
+   {
+      if timer = $
+      {
+         % Manual end by admin.
+         DeleteTimer(ptNoPKTimer);
+      }
+      ptNoPKTimer = $;
+      Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_PK);
+      return;
    }
 
 end

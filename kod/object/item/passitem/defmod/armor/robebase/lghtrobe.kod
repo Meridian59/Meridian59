@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-LightRobe is Robe
+LightRobe is RobeBase
 
 %% Robe is the first item that takes two different use positions.
 %% Note that a robe forcibly unuses anything already there.

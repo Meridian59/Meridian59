@@ -107,100 +107,114 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local i, n, countHolding, countNeeded, findAmount, class, number, bFound,
-            lLoadout_list, lInventory, lDoNotSearch, school, oItem, lDRobes,
-            lLRobes;
-
-      lLoadout_list = Send(who,@GetLoadoutList);
-      lLRobes = $;
-      lDRobes = $;
-      lInventory = Send(who,@GetHolderPassive);
-      lDoNotSearch = $;
+      local i, n, class, number, bFound, lLoadout_list, lInventory, school,
+            oItem, lDRobes, lLRobes, oGuild, oGuildHall, lSpellItems;
 
       Send(who,@MsgSendUser,#message_rsc=loadout_cast);
+
+      oGuild = Send(who,@GetGuild);
+      if (oGuild = $)
+      {
+         propagate;
+      }
+
+      oGuildHall = Send(oGuild,@GetGuildHall);
+      if (oGuildHall = $)
+      {
+         propagate;
+      }
+
+      lLoadout_list = Send(who,@GetLoadoutList);
+      % Copy inventory since we're going to modify the list.
+      lInventory = ListCopy(Send(who,@GetHolderPassive));
 
       foreach i in lLoadout_list
       {
          class = First(i);
 
-         % Skip this item if we shouldn't search for it.
-         if FindListElem(lDoNotSearch, class)
-         {
-            continue;
-         }
-
          % Number can be -1 for single-stack items, school number for
-         % disciple robes, or the number of a saved stackable item.
+         % disciple robes, the number of charges in a spellitem or the
+         % number of a saved stackable item.
          number = Nth(i,2);
          bFound = FALSE;
 
-         % Special case for Disciple Robes, which are implemented
-         % without separate classes.
-         if class = &LightDiscipleRobe
+         % Disciple robes have school as the number, so are handled separately.
+         if (class = &LightDiscipleRobe)
          {
             lLRobes = Cons(number, lLRobes);
 
             continue;
          }
-         if class = &DiscipleRobe
+         if (class = &DiscipleRobe)
          {
             lDRobes = Cons(number, lDRobes);
 
             continue;
          }
 
-         if number = -1
-         {
-            % Don't need to search for it again.
-            lDoNotSearch = Cons(class,lDoNotSearch);
+         % See if the player has the item in inventory.
+         oItem = GetListElemByClass(lInventory,class);
 
-            % Check how many we have.
-            countHolding = Send(who,@CountHoldingHowMany,#class=class);
-
-            countNeeded = 0;
-            foreach n in lLoadout_list
-            {
-               if First(n) = class
-               {
-                  ++countNeeded;
-               }
-            }
-            findAmount = countNeeded - countHolding;
-            while (findAmount-- > 0)
-            {
-               bFound = Send(self,@GetSingleItemFromHallChest,#who=who,
-                              #class=class);
-               if NOT bFound
-               {
-                  break;
-               }
-            }
-         }
-         else
+         % Non-stackables have number of -1.
+         if (number = -1)
          {
-            % Look for numbered item. If we find it, check how many of it
-            % we have. Get the remainder of (needed - have).
-            oItem = GetListElemByClass(lInventory,class);
-            if (oItem <> $)
+            if (oItem = $)
             {
-               countHolding = Send(oItem,@GetNumber);
+               Send(self,@GetSingleItemFromHallChest,#who=who,#class=class,
+                     #oGuildHall=oGuildHall);
             }
             else
             {
-               countHolding = 0;
-            }
-
-            if (countHolding < number)
-            {
-               Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,
-                     #number=number-countHolding);
+               lInventory = DelListElem(lInventory,oItem);
             }
          }
+         else if (oItem = $)
+         {
+            % Need to determine whether we have a numberitem or spellitem.
+            oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+            if (oItem = $)
+            {
+               Debug("Loadout got $ template item for class ",class);
+
+               continue;
+            }
+
+            if (IsClass(oItem,&SpellItem))
+            {
+               Send(self,@GetSpellItemFromHallChest,#who=who,#class=class,
+                     #oGuildHall=oGuildHall,#number=number);
+            }
+            else
+            {
+               Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,
+                     #oGuildHall=oGuildHall,#number=number);
+            }
+         }
+         else if (IsClass(oItem,&SpellItem))
+         {
+            % Handle these later.
+            lSpellItems = Send(SYS,@AddToSortedList,#what=class,
+                                 #lList=lSpellItems,#number=number,
+                                 #bIgnoreDuplicate=TRUE);
+         }
+         else
+         {
+            Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,
+                  #oGuildHall=oGuildHall,#number=number-Send(oItem,@GetNumber));
+            % Remove this item from inventory.
+            lInventory = DelListElem(lInventory,oItem);
+         }
+      }
+
+      if (lSpellItems <> $)
+      {
+         Send(self,@LoadoutSpellItems,#who=who,#lList=lSpellItems,
+               #lInventory=lInventory,#oGuildHall=oGuildHall);
       }
 
       % Now deal with disciple robes. If lDRobes and lLRobes are both $,
       % just propagate.
-      if lDRobes = $ AND lLRobes = $
+      if (lDRobes = $ AND lLRobes = $)
       {
          propagate;
       }
@@ -239,23 +253,74 @@ messages:
       % need, so try get them from the chest.
       foreach school in lDRobes
       {
-         Send(self,@GetDiscipleRobeFromHallChest,#who=who,#school=school);
+         Send(self,@GetDiscipleRobeFromHallChest,#who=who,#oGuildHall=oGuildHall,
+               #school=school);
       }
       foreach school in lLRobes
       {
-         Send(self,@GetDiscipleRobeFromHallChest,#who=who,#school=school,
-               #class=&LightDiscipleRobe);
+         Send(self,@GetDiscipleRobeFromHallChest,#who=who,#oGuildHall=oGuildHall,
+               #school=school,#class=&LightDiscipleRobe);
       }
 
       propagate;
    }
 
-   GetDiscipleRobeFromHallChest(who=$,school=SS_RIIJA,class=&DiscipleRobe)
+   LoadoutSpellItems(who=$,lList=$,lInventory=$,oGuildHall=$)
    {
-      local i, oBox, oItem, oGuild, oGuildHall, bFound;
+      local bFound, class, i, j, oItem, lInvSorted, number;
 
-      oGuild = Send(who,@GetGuild);
-      oGuildHall = Send(oGuild,@GetGuildHall);
+      % First need a sorted list of what the player has.
+      foreach oItem in lInventory
+      {
+         if (IsClass(oItem,&SpellItem))
+         {
+            lInvSorted = Send(SYS,@AddToSortedList,#what=oItem,#lList=lInvSorted,
+                              #number=Send(oItem,@GetHits));
+         }
+      }
+
+      % Strategy: go through loadout list (lList), and either:
+      %   1. match it with an element in lInvSorted and add the items from
+      %      chest, then remove from lInvSorted;
+      %   2. if not found in lInvSorted, give it to the player directly.
+      foreach i in lList
+      {
+         class = First(i);
+         number = Nth(i,2);
+
+         bFound = FALSE;
+         foreach j in lInvSorted
+         {
+            if (IsClass(First(j),class))
+            {
+               if (number > Nth(j,2))
+               {
+                  Send(self,@GetSpellItemFromHallChest,#who=who,#class=class,
+                        #oGuildHall=oGuildHall,#oPlayerItem=First(j),
+                        #number=number - Nth(j,2));
+               }
+               lInvSorted = DelListElem(lInvSorted,j);
+               bFound = TRUE;
+
+               break;
+            }
+         }
+
+         if (NOT bFound)
+         {
+            Send(self,@GetSpellItemFromHallChest,#who=who,#class=class,
+                  #oGuildHall=oGuildHall,#number=number);
+         }
+      }
+
+      return;
+   }
+
+   GetDiscipleRobeFromHallChest(who=$,oGuildHall=$,school=SS_RIIJA,
+                                class=&DiscipleRobe)
+   {
+      local i, oBox, oItem, bFound;
+
       bFound = FALSE;
 
       foreach i in Send(oGuildHall,@GetHolderActive)
@@ -303,12 +368,10 @@ messages:
       return FALSE;
    }
 
-   GetSingleItemFromHallChest(who=$,class=&Item)
+   GetSingleItemFromHallChest(who=$,oGuildHall=$,class=&Item)
    {
-      local i, oItem, oBox, oGuild, oGuildHall, bFound;
+      local i, oItem, oBox, bFound;
 
-      oGuild = Send(who,@GetGuild);
-      oGuildHall = Send(oGuild,@GetGuildHall);
       bFound = FALSE;
 
       foreach i in Send(oGuildHall,@GetHolderActive)
@@ -316,26 +379,26 @@ messages:
          oBox = First(i);
          if IsClass(oBox,&StorageBox)
          {
-            foreach oItem in Send(oBox,@GetHolderPassive)
+            oItem = GetListElemByClass(Send(oBox,@GetHolderPassive),class);
+            if (oItem = $)
             {
-               if IsClass(oItem,class)
-               {
-                  bFound = TRUE;
-                  if Send(who,@ReqNewHold,#what=oItem)
-                  {
-                     Send(who,@NewHold,#what=oItem);
+               continue;
+            }
 
-                     return TRUE;
-                  }
-                  else
-                  {
-                     Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_one,
-                           #parm1=Send(oItem,@GetIndef),
-                           #parm2=Send(oItem,@GetTrueName));
+            bFound = TRUE;
+            if Send(who,@ReqNewHold,#what=oItem)
+            {
+               Send(who,@NewHold,#what=oItem);
 
-                     return FALSE;
-                  }
-               }
+               return TRUE;
+            }
+            else
+            {
+               Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_one,
+                     #parm1=Send(oItem,@GetIndef),
+                     #parm2=Send(oItem,@GetTrueName));
+
+               return FALSE;
             }
          }
       }
@@ -355,18 +418,15 @@ messages:
       return FALSE;
    }
 
-   GetNumberItemFromHallChest(who=$,class=&Item,number=-1)
+   GetNumberItemFromHallChest(who=$,oGuildHall=$,class=&Item,number=-1)
    {
-      local i, oBox, oItem, oGuild, oGuildHall, bFound, oSplit, iCanHold,
-            iNumInChest, iGetNumber, bSentErrorMsg;
+      local i, oBox, oItem, bFound, iCanHold, iNumInChest, iGetNumber,
+            bSentErrorMsg;
 
       if number < 1
       {
          return;
       }
-
-      oGuild = Send(who,@GetGuild);
-      oGuildHall = Send(oGuild,@GetGuildHall);
 
       bFound = FALSE;
       bSentErrorMsg = FALSE;
@@ -378,58 +438,56 @@ messages:
          if IsClass(oBox,&StorageBox)
          {
             oItem = GetListElemByClass(Send(oBox,@GetHolderPassive), class);
-            if oItem <> $
+            if (oItem = $)
             {
-               iCanHold = Send(who,@GetNumberCanHold,#what=oItem);
-               iNumInChest = Send(oItem,@GetNumber);
-               bFound = TRUE;
+               continue;
+            }
 
-               if iGetNumber > iNumInChest
+            iCanHold = Send(who,@GetNumberCanHold,#what=oItem);
+            iNumInChest = Send(oItem,@GetNumber);
+            bFound = TRUE;
+
+            if iGetNumber > iNumInChest
+            {
+               iGetNumber = iNumInChest;
+            }
+
+            if iCanhold <> $
+               AND iGetNumber > iCanHold
+            {
+               if iCanHold > 0
                {
-                  iGetNumber = iNumInChest;
+                  if NOT bSentErrorMsg
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_all,
+                           #parm1=Send(oItem,@GetPluralName));
+                     bSentErrorMsg = TRUE;
+                  }
                }
-
-               if iCanhold <> $
-                  AND iGetNumber > iCanHold
+               else
                {
-                  if iCanHold > 0
+                  if NOT bSentErrorMsg
                   {
-                     if NOT bSentErrorMsg
-                     {
-                        Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_all,
-                              #parm1=Send(oItem,@GetPluralName));
-                        bSentErrorMsg = TRUE;
-                     }
+                     Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_any,
+                          #parm1=Send(oItem,@GetPluralName));
+                     bSentErrorMsg = TRUE;
                   }
-                  else
-                  {
-                     if NOT bSentErrorMsg
-                     {
-                        Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_any,
-                             #parm1=Send(oItem,@GetPluralName));
-                        bSentErrorMsg = TRUE;
-                     }
-                     return;
-                  }
-                  iGetNumber = iCanHold;
+                  return;
                }
+               iGetNumber = iCanHold;
+            }
 
-               if iGetNumber > 0
+            if iGetNumber > 0
+            {
+               if (iGetNumber <> iNumInChest)
                {
-                  oSplit = Send(oItem,@Split,#number=iGetNumber);
-                  if Send(oItem,@ReqNewOwner,#what=oSplit)
-                  {
-                     Send(who,@NewHold,#what=oSplit);
-                     number = number - iGetNumber;
-                     if number < 1
-                     {
-                        return;
-                     }
-                  }
-                  else
-                  {
-                     Send(oItem,@AddNumber,#number=iGetNumber);
-                  }
+                  oItem = Send(oItem,@Split,#number=iGetNumber);
+               }
+               Send(who,@NewHold,#what=oItem);
+               number = number - iGetNumber;
+               if number < 1
+               {
+                  return;
                }
             }
          }
@@ -453,6 +511,132 @@ messages:
          {
             Send(who,@MsgSendUser,#message_rsc=loadout_items_not_enough,
                   #parm2=Send(oItem,@GetPluralName));
+         }
+      }
+
+      return;
+   }
+
+   GetSpellItemFromHallChest(who=$,oGuildHall=$,class=&Item,number=-1,
+                             oPlayerItem=$)
+   {
+      local i, oBox, oItem, bFound, iCanHold, iNumHits, iGetNumber,
+            bSentErrorMsg;
+
+      if number < 1
+      {
+         return;
+      }
+
+      bFound = FALSE;
+      bSentErrorMsg = FALSE;
+
+      foreach i in Send(oGuildHall,@GetHolderActive)
+      {
+         oBox = First(i);
+         if (IsClass(oBox,&StorageBox))
+         {
+            oItem = GetListElemByClass(Send(oBox,@GetHolderPassive),class);
+
+            % We either use up all the items and move to next box, or we
+            % get what we need and return.
+            while (oItem <> $)
+            {
+               iGetNumber = number;
+               iCanHold = Send(who,@GetNumberCanHold,#what=oItem);
+               iNumHits = Send(oItem,@GetHits);
+               bFound = TRUE;
+
+               if iGetNumber > iNumHits
+               {
+                  iGetNumber = iNumHits;
+               }
+
+               if iCanhold <> $
+                  AND iGetNumber > iCanHold
+               {
+                  if iCanHold > 0
+                  {
+                     if NOT bSentErrorMsg
+                     {
+                        Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_all,
+                              #parm1=Send(oItem,@GetTrueName));
+                        bSentErrorMsg = TRUE;
+                     }
+                  }
+                  else
+                  {
+                     if NOT bSentErrorMsg
+                     {
+                        Send(who,@MsgSendUser,#message_rsc=loadout_cant_carry_any,
+                              #parm1=Send(oItem,@GetTrueName));
+                        bSentErrorMsg = TRUE;
+                     }
+
+                     return;
+                  }
+                  iGetNumber = iCanHold;
+               }
+
+               if iGetNumber > 0
+               {
+                  if (iGetNumber <> iNumHits)
+                  {
+                     oItem = Send(oItem,@Split,#number=iGetNumber);
+                  }
+
+                  if (oPlayerItem <> $)
+                  {
+                     Send(oPlayerItem,@CombineSpellItems,#what=oItem);
+                  }
+                  else
+                  {
+                     Send(who,@NewHold,#what=oItem,#check_combine=FALSE);
+                     oPlayerItem = oItem;
+                  }
+                  number = number - iGetNumber;
+                  if (number < 1)
+                  {
+                     return;
+                  }
+               }
+               oItem = GetListElemByClass(Send(oBox,@GetHolderPassive),class);
+            }
+         }
+      }
+
+      if NOT bFound
+      {
+         if (oPlayerItem <> $)
+         {
+            oItem = oPlayerItem;
+         }
+         else
+         {
+            % Get item template for message.
+            oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+         }
+         if (oItem <> $)
+         {
+            Send(who,@MsgSendUser,#message_rsc=loadout_items_not_found,
+                  #parm1=Send(oItem,@GetTrueName));
+         }
+      }
+      else if number > 0
+      {
+         if (oPlayerItem <> $)
+         {
+            oItem = oPlayerItem;
+         }
+         else
+         {
+            % Get item template for message.
+            oItem = Send(SYS,@FindTemplateItemByClass,#cClass=class);
+         }
+         if (oItem <> $)
+         {
+            Send(who,@MsgSendUser,#message_rsc=loadout_items_not_enough,
+                  #parm2=Send(oItem,@GetTrueName));
          }
       }
 

@@ -321,9 +321,10 @@ messages:
    {
       local iBulk_can_hold, iWeight_can_hold, iUnit_bulk, iUnit_weight;
 
-      if NOT IsClass(what,&NumberItem)
-         OR send(self,@GetBulkMax) = $
-         OR send(self,@GetWeightMax) = $
+      if NOT (IsClass(what,&NumberItem)
+            OR IsClass(what,&SpellItem))
+         OR Send(self,@GetBulkMax) = $
+         OR Send(self,@GetWeightMax) = $
       {
          return $;
       }

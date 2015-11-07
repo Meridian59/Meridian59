@@ -23,7 +23,6 @@ resources:
    WandSplitter_desc_rsc = \
       "This wand glimmers with capacity, waiting to acquire charge "
       "from other wands."
-
    wand_split_spell_item_rsc = \
       "You partially drain the %s, transferring charge. The uncharged "
       "wand gains %d charges of %d spellpower."
@@ -33,8 +32,8 @@ classvars:
    vrName = WandSplitter_name_rsc
    vrIcon = WandSplitter_icon_rsc
    vrDesc = WandSplitter_desc_rsc
-   
-   vsSplitMessage = wand_split_spell_item_rsc
+
+   vrSplitMessage = wand_split_spell_item_rsc
 
    viBulk = 5
    viWeight = 5

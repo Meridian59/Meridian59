@@ -7399,7 +7399,7 @@ messages:
 
          if oLastSpellItem <> $
          {
-            Post(oLastSpellItem,@CombineSpellItems,#sacrificed_item=what);
+            Post(oLastSpellItem,@CombineSpellItems,#what=what);
          }
       }
 

@@ -364,41 +364,56 @@ messages:
       return vrLabelName;
    }
 
-   NewApplied(what=$,apply_on=$)
-   "Casts the spell specified by the item (see subclass) on whatever it"
-   "is being applied to, then reduces 1 charge--break the item if last charge"
+   SetHits(number = $)
    {
-      piHits = piHits - 1;
+      if (number = $)
+      {
+         return;
+      }
 
-      % Cast the spell specific to the Spellitem
-      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
+      piHits = number;
 
-      % Check and see if that does in the Spellitem
-      if piHits <= 0
+      if (piHits <= 0)
       {
          % Post this so it prints AFTER the spell message.
-         Post(poOwner,@MsgSendUser,#message_rsc=vrBroken,
-               #parm1=Send(self,@GetCapDef),
-               #parm2=Send(self,@GetName));
+         if (poOwner <> $
+            AND IsClass(poOwner,&User))
+         {
+            Post(poOwner,@MsgSendUser,#message_rsc=vrBroken,
+                  #parm1=Send(self,@GetCapDef),
+                  #parm2=Send(self,@GetName));
+         }
 
-         % Due to a lack of art resources we are now deleting all used up spellitems.
-         % I'm leaving vbNoBrokenView in so that if/when we ever get broken wand art we just 
-         % pop in into wand.kod and uncomment the if statement below.
-
+         % Due to a lack of art resources we are now deleting all used up
+         % spellitems. I'm leaving vbNoBrokenView in so that if/when we ever
+         % get broken wand art we just pop in into wand.kod and uncomment
+         % the if statement below.
          if vbNoBrokenView
          {
-            Post(self,@Delete);
+            Send(self,@Delete);
          }
       }
       else
       {
          % Update the player's weight carried bar.
-         if poOwner <> $
-            AND IsClass(poOwner,&Player)
+         if (poOwner <> $
+            AND IsClass(poOwner,&User))
          {
             Send(poOwner,@DrawCapacity);
          }
       }
+
+      return;
+   }
+
+   NewApplied(what=$,apply_on=$)
+   "Casts the spell specified by the item (see subclass) on whatever it"
+   "is being applied to, then reduces 1 charge--break the item if last charge"
+   {
+      % Cast the spell specific to the Spellitem
+      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
+
+      Send(self,@SetHits,#number=piHits - 1);
 
       return;
    }
@@ -621,23 +636,23 @@ messages:
       return piSpellPower;
    }
 
-   CombineSpellItems(sacrificed_item=$)
+   CombineSpellItems(what=$)
    {
       local iSacrificeHits, iSacrificeSpellPower;
 
-      if sacrificed_item = $
+      if what = $
       {
          return;
       }
 
-      iSacrificeHits = Send(sacrificed_item,@GetHits);
+      iSacrificeHits = Send(what,@GetHits);
       if iSacrificeHits = $
          OR iSacrificeHits < 1
       {
          return;
       }
 
-      iSacrificeSpellPower = Send(sacrificed_item,@GetSpellPower);
+      iSacrificeSpellPower = Send(what,@GetSpellPower);
       if iSacrificeSpellPower = $
          OR iSacrificeSpellPower < 1
       {
@@ -652,18 +667,104 @@ messages:
       piSpellPower = ((piSpellPower * piHits)
                         + (iSacrificeSpellPower * iSacrificeHits))
                         / (piHits + iSacrificeHits);
-      piHits = piHits + iSacrificeHits;
+      Send(self,@SetHits,#number=piHits + iSacrificeHits);
 
       if IsClass(poOwner,&User)
       {
          Send(poOwner,@MsgSendUser,#message_rsc=combine_spell_item_rsc,
-               #parm1=Send(sacrificed_item,@GetName),
+               #parm1=Send(what,@GetName),
                #parm2=piHits,#parm3=piSpellPower);
       }
 
-      Send(sacrificed_item,@Delete);
+      Send(what,@Delete);
 
       return;
+   }
+
+   Split(number = $)
+   {
+      local oSplit, iSpellPower;
+
+      if (number >= 1 AND number <= piHits)
+      {
+         iSpellPower = Send(self,@GetSpellPower);
+         oSplit = Create(GetClass(self),#iSpellPower=iSpellPower);
+
+         if Send(self,@IsRevealed)
+         {
+            Send(oSplit,@RevealHiddenAttributes);
+         }
+
+         Send(oSplit,@SetKarmaCheck,#value=Send(self,@GetKarmaCheck));
+
+         Send(self,@SetHits,#number=(piHits - number));
+         Send(oSplit,@SetHits,#number=number);
+
+         return oSplit;
+      }
+
+      return $;
+   }
+
+   GetNumberCanHold(what = $, weight = 0, bulk = 0)
+   {
+      local iBulk_can_hold, iWeight_can_hold;
+
+      % Sanity checks, if these can be less than 0 there's a chance
+      % they can be -1 (INFINITE_COUNT). This could allow players to
+      % carry more than their max bulk/weight limit.
+      if bulk < 0
+      {
+         bulk = 0;
+      }
+
+      if weight < 0
+      {
+         weight = 0;
+      }
+
+      if viBulk = 0
+      {
+         iBulk_can_hold = INFINITE_COUNT;
+      }
+      else if viBulk > 0
+      {
+         iBulk_can_hold = bulk / viBulk;
+      }
+      else
+      {
+         iBulk_can_hold = bulk * 100 / (-viBulk);
+      }
+
+      if viWeight = 0
+      {
+         iWeight_can_hold = INFINITE_COUNT;
+      }
+      else if viWeight > 0
+      {
+         iWeight_can_hold = weight / viWeight;
+      }
+      else
+      {
+         iWeight_can_hold = weight * 100 / (-viWeight);
+      }
+
+      if iBulk_can_hold = INFINITE_COUNT
+      {
+         return iWeight_can_hold;
+      }
+
+      if iWeight_can_hold = INFINITE_COUNT
+      {
+         return iBulk_can_hold;
+      }
+
+      if iBulk_can_hold < iWeight_can_hold
+      {
+         return iBulk_can_hold;
+      }
+
+      return iWeight_can_hold;
    }
 
    CanSplit()

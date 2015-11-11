@@ -13,6 +13,6 @@ heat_new_entrant = de \
    "Farens ;Agoe erfüllt den Raum mit Hitze, die alle Rüstungen schmelzen "
    "lässt."
 heat_kills_you = de "Du erfährst Verbrennungen durch deine Rüstung."
-heat_kills_him = de "%s erfährt Verbrennungen durch die getragene Rüstung."
+heat_kills_him = de "%s%s erfährt Verbrennungen durch die getragene Rüstung."
 heat_hurts_you = de \
    "Du schreist vor Schmerzen, als deine glühende Rüstung deine Haut berührt."

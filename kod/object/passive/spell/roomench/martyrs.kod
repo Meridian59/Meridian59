@@ -46,6 +46,7 @@ classvars:
    vrName = martyrsbg_name_rsc
    vrIcon = martyrsbg_icon_rsc
    vrDesc = martyrsbg_desc_rsc
+   vrAlreadyEnchanted = martyrsbg_unnecessary
 
    viSpell_num = SID_MARTYRS_BATTLEGROUND
    viSchool = SS_KRAANAN
@@ -70,28 +71,6 @@ messages:
 
       return;
    }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-      % check if room already has martyrsbg
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=martyrsbg_unnecessary);
-
-         return FALSE;
-      }
-
-      propagate;
-   }
-
 
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."

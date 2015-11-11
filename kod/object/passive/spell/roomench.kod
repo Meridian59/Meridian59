@@ -22,7 +22,9 @@ resources:
    RoomEnchantment_icon_rsc = iheat.bgf
    RoomEnchantment_desc_rsc = \
       "An enchantment which is attached to a room."
-
+   RoomEnchantment_kill_rsc = "The room enchantment kills you."
+   RoomEnchantment_killer_rsc = "You killed %s%s with your room enchantment."
+   RoomEnchantment_hit_rsc = "The room enchantment damages you."
    room_blank_template = "%q"
 
 classvars:
@@ -31,33 +33,69 @@ classvars:
    vrIcon = RoomEnchantment_icon_rsc
    vrDesc = RoomEnchantment_desc_rsc
 
+   vrAlreadyEnchanted = spell_already_in_effect % From spell.kod
+   vrRoomEnchKilled = RoomEnchantment_kill_rsc
+   vrRoomEnchKiller = RoomEnchantment_killer_rsc
+   vrRoomEnchHit = RoomEnchantment_hit_rsc
+
+   vbRoomEnchHitCaster = TRUE
+
+   viAttack_type = 0
+   viAttack_spell = ATCK_SPELL_ALL
+
 properties:
 
 messages:
-	 
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+
+      if (oRoom = $)
+      {
+         return FALSE;
+      }
+
+      % Check for enchantment already applied.
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
    DoubleCheckAfterTrance(who = $, lTargets = $)
    {
       local oRoom;
 
       oRoom = Send(who,@GetOwner);
-    
-      if (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT) 
-           OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MAGIC)) 
+
+      if (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+           OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MAGIC))
          AND (viOutlaw OR viHarmful)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
 
          return FALSE;
       }
-      
-      if send(oRoom,@IsEnchanted,#what=self)
+
+      if Send(oRoom,@IsEnchanted,#what=self)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_already_in_effect,
-              #parm1=vrName);
+         Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,#parm1=vrName);
 
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -73,6 +111,95 @@ messages:
       }
 
       propagate;
+   }
+
+   RoomEnchantmentDamage(oTarget=$, state=$, iLevel=1)
+   "Takes a target (oTarget), an enchantment state (state) and optional "
+   "iLevel parameter (used for Qor/Shalbane) and deals the damage to oTarget."
+   {
+      local iDamage, iSpellPower, oCaster, oCasterRoom, oRoom;
+
+      if (state = $
+         OR oTarget = $)
+      {
+         return;
+      }
+
+      iSpellPower = First(state);
+
+      % oCaster is original caster of the spell.
+      oCaster = Nth(state,2);
+      if (oCaster = $)
+      {
+         return;
+      }
+
+      if (IsClass(oCaster,&User)
+         AND ((oTarget = self AND NOT vbRoomEnchHitCaster)
+            OR NOT Send(oCaster,@AllowPlayerAttack,#victim=oTarget,
+                        #stroke_obj=self)))
+      {
+         return;
+      }
+
+      iDamage = Send(self,@ComputeDamage,#who=oCaster,#oTarget=oTarget,
+                     #iDamage=iDamage,#iLevel=iLevel,#iSpellpower=iSpellPower);
+
+      if (iDamage = 0)
+      {
+         return;
+      }
+
+      iDamage = Send(oTarget,@AssessDamage,#report=TRUE,#what=self,
+                        #damage=iDamage,#aspell=viAttack_spell,
+                        #atype=viAttack_type);
+
+      if (IsClass(oCaster,&Battler))
+      {
+         Send(oCaster,@AssessHit,#what=oTarget,#damage=iDamage,
+               #use_weapon=self);
+      }
+
+      if (iDamage = $)
+      {
+         if IsClass(oTarget,&User)
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=vrRoomEnchKilled);
+         }
+
+         if IsClass(oCaster,&User)
+         {
+            Send(oCaster,@MsgSendUser,#message_rsc=vrRoomEnchKiller,
+                  #parm1=Send(oTarget,@GetCapDef),
+                  #parm2=Send(oTarget,@GetTrueName));
+         }
+
+         oRoom = Send(oTarget,@GetOwner);
+         oCasterRoom = Send(oCaster,@GetOwner);
+         
+         Send(oCaster,@KilledSomething,#what=oTarget,#use_weapon=self);
+
+         if (oRoom <> oCasterRoom)
+         {
+            Send(oRoom,@SomethingKilled,#what=oCaster,#victim=oTarget);
+         }
+      }
+      else if IsClass(oTarget,&User)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=vrRoomEnchHit);
+      }
+
+      return;
+   }
+
+   GetAttackSpell()
+   {
+      return viAttack_spell;
+   }
+
+   GetAttackType()
+   {
+      return viAttack_type;
    }
 
 end

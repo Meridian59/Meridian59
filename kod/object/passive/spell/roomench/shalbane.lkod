@@ -11,8 +11,8 @@ ShalilleBane_on = de \
 ShalilleBane_off = de "Die dunkle Kraft verschwindet."
 ShalilleBane_new_entrant = de \
    "Du weißt, dass Du hier lieber nicht Shal'ill zaubern solltest."
-ShalilleBane_HurtCaster = de \
+ShalilleBane_hit_rsc = de \
    "Du zauberst Shal'ill und wirst dadurch verletzt durch die Macht Qors."
-ShalilleBane_kills_you = de \
+ShalilleBane_kill_rsc = de \
    "Durch die dunkle Macht Qors wirst Du getötet, da du Shal'ill in einer "
    "dunklen Gegend gezaubert hast."

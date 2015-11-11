@@ -1556,7 +1556,7 @@ messages:
 
    SpellCast(who = $,oSpell = $,lItems = $,bItemCast = FALSE)
    {
-      local state, school, roomench;
+      local state, school, oRoomEnch;
 
       % Skip these if the spell is cast by an item.
       if bItemCast
@@ -1568,22 +1568,22 @@ messages:
 
       if school = SS_SHALILLE
       {
-         roomench = Send(SYS,@FindSpellByNum,#num=SID_SHALILLEBANE);
-         state = Send(self,@GetEnchantmentState,#what=roomench);
+         oRoomEnch = Send(SYS,@FindSpellByNum,#num=SID_SHALILLEBANE);
+         state = Send(self,@GetEnchantmentState,#what=oRoomEnch);
          if state <> $
          {
-            Post(roomench,@HurtCaster,#shalCaster=who,#iSpellPower=state,
-                 #shalSpellLevel=Send(oSpell,@GetLevel));
+            Post(oRoomEnch,@RoomEnchantmentDamage,#oTarget=who,#state=state,
+                 #iLevel=Send(oSpell,@GetLevel));
          }
       }
       else if school = SS_QOR
       {
-         roomench = Send(SYS,@FindSpellByNum,#num=SID_QORBANE);
-         state = Send(self,@GetEnchantmentState,#what=roomench);
+         oRoomEnch = Send(SYS,@FindSpellByNum,#num=SID_QORBANE);
+         state = Send(self,@GetEnchantmentState,#what=oRoomEnch);
          if state <> $
          {
-            Post(roomench,@HurtCaster,#qorCaster=who,#iSpellPower=state,
-                 #qorSpellLevel=Send(oSpell,@GetLevel));
+            Post(oRoomEnch,@RoomEnchantmentDamage,#oTarget=who,#state=state,
+                 #iLevel=Send(oSpell,@GetLevel));
          }
       }
 
@@ -3402,17 +3402,17 @@ messages:
       return;
    }
 
-   EnchantAllOccupants(what = $, iSpellPower=0)
+   EnchantAllOccupants(what = $, iSpellPower = 0, state = $)
    {
       local i, each_obj;
 
       foreach i in plActive
       {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
+         each_obj = First(i);
          if IsClass(each_obj,&Player)
          {
             Send(what,@StartEnchantment,#who=each_obj,
-                 #iSpellPower=iSpellPower);
+                 #iSpellPower=iSpellPower,#state=state);
          }
       }
 

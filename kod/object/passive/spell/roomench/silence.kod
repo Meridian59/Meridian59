@@ -43,6 +43,8 @@ classvars:
    vrDesc = Silence_desc_rsc
    vrSpell_intro = Silence_spell_intro
 
+   vrAlreadyEnchanted = Silence_unnecessary
+
    viSpell_num = SID_SILENCE
    viSchool = SS_QOR
    viMana = 10
@@ -69,27 +71,6 @@ messages:
       plReagents = Cons([&PurpleMushroom,1],plReagents);
 
       return;
-   }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-   	   Send(who,@MsgSendUser,#message_rsc=Silence_unnecessary);
-   	   
-	      return FALSE;
-      }
-
-      propagate;
    }
 
    CastSpell(who = $, iSpellPower = 0)

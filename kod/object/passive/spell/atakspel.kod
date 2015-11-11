@@ -34,7 +34,6 @@ classvars:
    vrCast = attack_spell_cast_rsc
    vrHit = attack_spell_hit_rsc
 
-
    viAttack_type = 0
    viAttack_spell = ATCK_SPELL_ALL
 
@@ -362,12 +361,6 @@ messages:
    ComputeDamage(who=$,target=$,iDamage=$)
    {
       return;
-   }
-
-   % This is for the attack message infrastructure.
-   GetAttackName()
-   {
-      return vrName;
    }
 
 end

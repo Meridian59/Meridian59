@@ -66,7 +66,7 @@ messages:
       piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_PURPLE);
 
       plSpellBook = [ [SID_DEMENT,5,10], [SID_FORGET,10,40],
-                      [SID_EVIL_TWIN,2,80], [SID_APPARITION,10,100] ];
+                      [SID_EVIL_TWIN,2,80], [SID_REFLECTION,10,100] ];
 
       propagate;
    }

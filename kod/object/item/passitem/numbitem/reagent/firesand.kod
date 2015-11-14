@@ -38,7 +38,7 @@ classvars:
    vrName_plural = FireSand_name_plural_rsc
 
    viValue_average = 30
-   viWeight = 7
+   viWeight = 5
    viBulk = 4
 
 properties:

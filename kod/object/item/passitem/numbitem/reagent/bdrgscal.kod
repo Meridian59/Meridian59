@@ -21,9 +21,9 @@ resources:
    bluedragonscale_name_rsc = "blue dragon scale"
    bluedragonscale_icon_rsc = bdrgscal.bgf
    bluedragonscale_desc_rsc = \
-	"This scale is hard as Jasper rock and as thick as a man's finger.  They "
-	"seem to be the only remnants of the ancient Dragons that were thought to "
-	"have gone extinct centuries ago."
+   "This scale is hard as Jasper rock and as thick as a man's finger.  They "
+   "seem to be the only remnants of the ancient Dragons that were thought to "
+   "have gone extinct centuries ago."
 
    bluedragonscale_name_plural_rsc = "blue dragon scales"
 
@@ -36,8 +36,8 @@ classvars:
    vrName_plural = bluedragonscale_name_plural_rsc
 
    viValue_average = 100
-   viWeight = 10
-   viBulk = 10
+   viWeight = 5
+   viBulk = 5
 
 
 properties:

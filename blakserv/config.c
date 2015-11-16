@@ -225,7 +225,7 @@ config_table_type config_table[] =
 { MYSQL_DB,               F, "Database",      CONFIG_STR,   "meridian" },
 
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
-
+{ BLAKOD_MATCHES_LIST_MAX,T, "MatchesList",   CONFIG_INT,   "10000" },
 };
 
 enum

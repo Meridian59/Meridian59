@@ -2481,8 +2481,18 @@ void AdminShowMatches(int session_id,admin_parm_type parms[],
 	aprintf(":< matching instances of CLASS %s (%i) %s %s %s %s\n",
 		c->class_name,c->class_id, property_str, relation_str,
 		GetTagName(match), GetDataName(match));
-   double startTime = GetMicroCountDouble();
-	m = 0;
+
+	// Limit size of the return list.
+	int max_list_size = ConfigInt(BLAKOD_MATCHES_LIST_MAX);
+
+	// Store everything in a buffer, flush to aprintf every 9000 chars.
+	// Necessary because this command can potentially list 100000s of objects.
+	char admin_buf[BUFFER_SIZE];
+	char *buf_ptr = admin_buf;
+	int len_admin_buf = 0, num_chars = 0;
+
+	m = 0; // Number of objects returned.
+	double startTime = GetMicroCountDouble();
 	for (i = 0; i < num_objects; i++)
 	{
 		class_node* wc = GetClassByID(objects[i].class_id);
@@ -2529,14 +2539,25 @@ void AdminShowMatches(int session_id,admin_parm_type parms[],
 				if ((thismatch &  (sametag|difftag)) == (matchtype &  (sametag|difftag)) &&
 					(thismatch & ~(sametag|difftag)) &  (matchtype & ~(sametag|difftag)))
 				{
-					first_val.v.tag = TAG_OBJECT;
-					first_val.v.data = i;
-					list_id = Cons(first_val, rest_val);
-					rest_val.v.tag = TAG_LIST;
-					rest_val.v.data = list_id;
-					aprintf(": OBJECT %i CLASS %s (%i) %s = %s %s\n",
-						i, thisc->class_name, thisc->class_id, property_str,
-						GetTagName(thisv), GetDataName(thisv));
+					if (m < max_list_size)
+					{
+						first_val.v.tag = TAG_OBJECT;
+						first_val.v.data = i;
+						list_id = Cons(first_val, rest_val);
+						rest_val.v.tag = TAG_LIST;
+						rest_val.v.data = list_id;
+					}
+					num_chars = sprintf(buf_ptr, ": OBJECT %i CLASS %s (%i) %s = %s %s\n",
+										i, thisc->class_name, thisc->class_id, property_str,
+										GetTagName(thisv), GetDataName(thisv));
+					len_admin_buf += num_chars;
+					buf_ptr += num_chars;
+					if (len_admin_buf > BUFFER_SIZE * 0.9)
+					{
+						buf_ptr -= len_admin_buf;
+						aprintf(buf_ptr);
+						len_admin_buf = 0;
+					}
 					m++;
 				}
 				
@@ -2545,11 +2566,16 @@ void AdminShowMatches(int session_id,admin_parm_type parms[],
 			wc = wc->super_ptr;
 		}
 	}
+	if (len_admin_buf)
+	{
+		buf_ptr -= len_admin_buf;
+		aprintf(buf_ptr);
+	}
 	aprintf(": %i total\n", m);
 	if (m)
 		aprintf(": Objects list: LIST %i\n",list_id);
 	aprintf(":>\n");
-   aprintf("Time to run: %.3f microseconds\n", GetMicroCountDouble() - startTime);
+	aprintf("Time to run: %.3f microseconds\n", GetMicroCountDouble() - startTime);
 }
 
 void AdminShowPackages(int session_id,admin_parm_type parms[],

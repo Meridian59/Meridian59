@@ -336,7 +336,13 @@ messages:
 
    NewHold(what = $)
    {
-      local i,each_obj;
+      local i, each_obj;
+
+      if what = $
+         OR what = self
+      {
+         return;
+      }
 
       if IsClass(what,&NumberItem)
       {
@@ -349,7 +355,7 @@ messages:
                if GetClass(what) = GetClass(each_obj)
                {
                   % should only be one of these, so can quit loop if found
-	          
+
                   Send(each_obj,@AddNumber,#number=Send(what,@GetNumber));
                   Send(what,@Delete);
                   return;
@@ -357,12 +363,12 @@ messages:
             }
          }
       }
-      
+
       Send(self,@NewHoldObject,#what=what);
-      
+
       return;
    }
-   
+
    NewHoldObject(what = $)
    {
       Send(self,@HolderAddNode,#node=what);

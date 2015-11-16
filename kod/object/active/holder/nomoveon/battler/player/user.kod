@@ -7361,9 +7361,10 @@ messages:
       local i, oLastSpellItem;
 
       if what = $
+         OR what = self
       {
-         Debug(Send(self,@GetTrueName),self," got newhold of $. Owner is ",
-               Send(poOwner,@GetName));
+         Debug(Send(self,@GetTrueName),self," got newhold of ",what,
+               ". Owner is ",Send(poOwner,@GetName));
 
          return;
       }
@@ -7386,8 +7387,6 @@ messages:
          AND (piPreferences & CF_AUTOCOMBINE)
          AND check_combine
       {
-         oLastSpellItem = $;
-
          foreach i in plPassive
          {
             if GetClass(i) = GetClass(what)

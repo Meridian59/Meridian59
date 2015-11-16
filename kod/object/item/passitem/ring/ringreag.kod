@@ -137,7 +137,10 @@ messages:
    Delete()
    {
       % Print message to user that ring has been consumed.
-      Send(poOwner,@MsgSendUser,#message_rsc=ReagentRing_disappear_rsc);
+      if poOwner <> $
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ReagentRing_disappear_rsc);
+      }
 
       propagate;
    }

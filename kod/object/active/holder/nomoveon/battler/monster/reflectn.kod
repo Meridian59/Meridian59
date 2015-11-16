@@ -628,6 +628,7 @@ messages:
          %  Currently special-cased for the dark angels.  Should standardize
          %   monsters to make this smoother.
          piAnimation = ANIM_ATTACK;
+         Send(poOriginal,@SetAnimation,#animation=piAnimation);
          if Send(poOriginal,@GetProjectileIcon) <> $
          {
             Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
@@ -644,6 +645,7 @@ messages:
       else
       {
          piAnimation = ANIM_NONE;
+         Send(poOriginal,@SetAnimation,#animation=piAnimation);
       }
 
       return;

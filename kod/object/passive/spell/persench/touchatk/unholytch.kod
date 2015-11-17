@@ -22,14 +22,14 @@ resources:
    UnholyTouch_name_rsc = "unholy touch"
    UnholyTouch_icon_rsc = iunholyt.bgf
    UnholyTouch_desc_rsc = \
-      "Dark energy from Qor sears your target.  More effective on good "
-      "targets.   "
+      "Dark energy from Qor sears your target and drains a small amount of "
+      "health. More effective on good targets. "
       "Requires a single fairy wing to cast."
 
    UnholyTouch_already_enchanted_rsc = \
-      "Your hands are already bathed in Qor's magic."
-   UnholyTouch_On_rsc = "Your hands are now beating with dark magic."
-   UnholyTouch_Off_rsc = "Your hands are no longer bathed in Qor's magic."
+      "Your hands are already bathed in Qor's love."
+   UnholyTouch_On_rsc = "Your hands pulse with dark energies."
+   UnholyTouch_Off_rsc = "Your hands are no longer bathed in Qor's love."
 
    UnholyTouch_player_was_hit = "%s%s rips you with the dark force of Qor!"
    UnholyTouch_player_hit_something = \
@@ -71,6 +71,9 @@ classvars:
    viSpell_level = 1
    viMana = 4
 
+   % While Unholy Touch seems to have similar base damages to other spells,
+   % it does not get any proficiency damage bonuses. Instead, it
+   % swings damage based on karma, and also heals its wielder per hit.
    viMin_Damage = 5
    viMax_Damage = 8
 
@@ -98,6 +101,37 @@ messages:
       plReagents = Cons([&FairyWing,1],plReagents);
 
       return;
+   }
+
+   FindDamage(weapon_used=$,who=$,victim=$)
+   {
+      % We reach this point when the player has successfully hit something.
+      % We don't have final damage amounts, so we'll keep the drain small.
+      % We're hitting somebody, so we're dealing at least 1 damage. With
+      % that in mind, let's have this level one spell heal 1 health per hit.
+      % Sometimes two health if the mage is lucky.
+      % Even 1 health per hit is pretty substantial for a newbie.
+      % This should give Qors a strong building tool right out of the gate.
+      % Acid Touch at level two will not heal its users, but its damage
+      % is significantly higher.
+      
+      if Send(victim,@IsUndead)
+         OR Send(victim,@IsDrainImmune)
+      {
+         % Can't drain from undead or drain immunes!
+         propagate;
+      }
+
+      if Random(1,6) = 1
+      {
+         Send(who,@GainHealthNormal,#amount=2);
+      }
+      else
+      {
+         Send(who,@GainHealthNormal,#amount=1);
+      }
+      
+      propagate;
    }
 
    DamageFactors(damage=0, who=$, victim=$)

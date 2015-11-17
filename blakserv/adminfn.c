@@ -674,7 +674,6 @@ void SendSessionAdminText(int session_id,const char *fmt,...)
 	
 	admin_session_id = session_id;
 	
-	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
 	SendAdminBuffer(s,strlen(s));
 	
 	admin_session_id = prev_admin_session_id;

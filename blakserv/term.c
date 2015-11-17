@@ -25,8 +25,6 @@ void cprintf(int session_id,const char *fmt,...)
    vsnprintf(s,sizeof(s),fmt,marker);
    va_end(marker);
 
-   TermConvertBuffer(s,sizeof(s));
-
    SendClientStr(session_id,s);
 }
 

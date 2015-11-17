@@ -115,6 +115,9 @@ properties:
    ptGenerateTroops = $
    piTroopCap = 4
 
+   piFlagHotspot = HS_FLAG
+   ptHalfStaffOff = $
+
 messages:
 
    Constructor()
@@ -629,7 +632,8 @@ messages:
          AddPacket(4,flag_rebel_icon_rsc);
       }
 
-      AddPacket(1,HS_FLAG);
+      %AddPacket(1,HS_FLAG);
+      AddPacket(1,piFlagHotSpot);
       AddPacket(1,ANIMATE_CYCLE,4,100,2,FRAME_START,2,FRAME_END);
 
       return;
@@ -902,6 +906,43 @@ messages:
       {
          iDelete = iDelete - 1;
          Send(Send(poOwner,@FindHoldingActive,#class=&FactionTroop),@Delete);
+      }
+
+      return;
+   }
+
+   HalfStaff(duration=86400000)
+   "for mourning purposes, in game or not default duratio is 1 day 86400000"
+   "Max duration is Kod Max int 134217728(A little more than 37 hours)"
+   {
+      if (ptHalfStaffOff <> $)
+      {
+         DeleteTimer(ptHalfStaffOff);
+      }
+
+      piFlagHotSpot = 4;
+      if (poOwner <> $) 
+      { 
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+      ptHalfStaffOff = CreateTimer(self,@HalfStaffTimer,duration);
+
+      return;
+   }
+
+   HalfStaffTimer(timer=$)
+   {
+      if (timer = $)
+         AND (ptHalfStaffOff <> $)
+      {
+         DeleteTimer(ptHalfStaffOff);
+      }
+
+      ptHalfStaffOff = $;
+      piFlagHotSpot = 1;
+      if (poOwner <> $) 
+      { 
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;

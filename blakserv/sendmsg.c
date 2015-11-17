@@ -748,7 +748,6 @@ in sendmsg.h now */
 __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,int data,
 						 val_type new_data)
 {
-	class_node *class_data;
 	object_node *o;
 	
 	switch (data_type)
@@ -771,18 +770,11 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 				BlakodDebugInfo(),object_id);
 			return;
 		}
-		class_data = GetClassByID(o->class_id);
-		if (class_data == NULL)
-		{
-			eprintf("[%s] StoreValue can't find class id %i\n",
-				BlakodDebugInfo(),o->class_id);
-			return;
-		}
-		/* equal to num_properties is ok, because self = prop 0 */
-		if (data < 0 || data > class_data->num_properties) 
+		// num_props includes self, so the max property is stored at [num_props - 1]
+		if (data < 0 || data >= o->num_props)
 		{
 			eprintf("[%s] StoreValue can't write to illegal property %i (max %i)\n",
-				BlakodDebugInfo(),data,class_data->num_properties);
+				BlakodDebugInfo(), data, o->num_props - 1);
 			return;
 		}
 		o->p[data].val.int_val = new_data.int_val; 

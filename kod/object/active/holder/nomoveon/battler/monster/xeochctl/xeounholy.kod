@@ -53,6 +53,8 @@ properties:
    piAnimation = ANIM_NONE
    piMax_Mana = 30
 
+   piDrawFx = DRAWFX_INVISIBLE
+
 messages:
 
    Constructed()

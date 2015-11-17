@@ -54,6 +54,7 @@ resources:
    dm_getall = "get"
    dm_gettotem = "totem"
    dm_help_command = "help"
+   dm_turn_off_pk = "turn off pk"
    dm_help_lights_command = "help lights"
    dm_help_scenery_command = "help scenery"
    dm_appeal_off_command = "appeal off"
@@ -716,6 +717,13 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=dm_help);
          Send(self,@MsgSendUser,#message_rsc=dm_help_items);
 
+         return;
+      }
+      
+      if StringEqual(string,dm_turn_off_pk)
+      {
+         Send(Send(self,@GetOwner),@StartTemporaryNoPK);
+         
          return;
       }
 

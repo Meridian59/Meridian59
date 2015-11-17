@@ -31,8 +31,10 @@ messages:
                      [ &DarkAngelFeather, 18],
                      [ &PurpleMushroom, 16],
                      [ &InkyCap, 14],
-                     [ &NightVisionPotion, 25],
+                     [ &NightVisionPotion, 5],
                      [ &BerserkerRing, 5],
+                     [ &Emerald, 10],
+                     [ &RedMushroom, 10],
                      [ &MysticSword, 4]
                    ];
 

@@ -34,6 +34,7 @@
 #define WALLMINDISTANCE2    (WALLMINDISTANCE * WALLMINDISTANCE)    // (from clientd3d/game.c)
 #define OBJMINDISTANCE      768.0f                                 // 3 highres rows/cols, old value from kod
 #define OBJMINDISTANCE2     (OBJMINDISTANCE * OBJMINDISTANCE)
+#define LOSEXTEND           64.0f
 
 // converts grid coordinates
 // input: 1-based value of big row (or col), 0-based value of fine-row (or col)

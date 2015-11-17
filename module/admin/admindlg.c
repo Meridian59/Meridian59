@@ -57,14 +57,17 @@ static int owner;       // Owner of currently displayed object
 /* local function prototypes */
 static ID AdminGetCurrentUser(HWND hList);
 static void AdminDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify);
+void AdminDlgConvertString(char *s, int len_s);
 static Bool AdminGetString(HWND hParent, char *buf);
 static BOOL CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static BOOL CALLBACK AdminStringDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 BOOL CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-   char *new_str, *name;
-   int txtlen, new_len, index, add;
+   char *name;
+   char new_str[MAX_HISTORY];
+   char *str_ptr = new_str;
+   int txtlen, new_len, str_len, index, add;
    char temp_command[MAX_ADMIN + 1];
    list_type l;
    MINMAXINFO *lpmmi;
@@ -107,51 +110,51 @@ BOOL CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
    case BK_GOTTEXT:   /* lParam is text to add to edit box */
       // Add new text to text window
-      new_str = (char *) lParam;
-      new_len = strlen(new_str);
-
+      str_ptr = (char *)lParam;
+      AdminDlgConvertString(str_ptr, sizeof(new_str));
       WindowBeginUpdate(hText);
 
       /* If box is full, remove some beginning text */
+      str_len = strlen(str_ptr);
       txtlen = Edit_GetTextLength(hText);
-      if (txtlen + new_len >= MAX_HISTORY)
+      if (txtlen + str_len >= MAX_HISTORY)
       {
-	 Edit_SetSel(hText, 0, txtlen + new_len - MAX_HISTORY);
-	 Edit_ReplaceSel(hText, "");
+         Edit_SetSel(hText, 0, txtlen + str_len + 1 - MAX_HISTORY);
+         Edit_ReplaceSel(hText, "");
       }
 
       new_len = GetWindowTextLength(hText);
       
       // Add new text to end of box
       Edit_SetSel(hText, new_len, new_len);
-      Edit_ReplaceSel(hText, new_str);
+      Edit_ReplaceSel(hText, str_ptr);
       
       /* Scroll new string into view */
       EditBoxScroll(hText, False);
       
       WindowEndUpdate(hText);
 
-      AdminNewLine(new_str);
+      AdminNewLine(str_ptr);
       return TRUE;
       
    case BK_SENDCMD:   /* lParam is command to send to server */
-      new_str = (char *) lParam;
-      RequestAdminCommand(new_str);
-      Edit_SetText(hInput, new_str);
+      str_ptr = (char *)lParam;
+      RequestAdminCommand(str_ptr);
+      Edit_SetText(hInput, str_ptr);
       ComboBox_SetEditSel(hInput, 0, -1);
 
       add = False;
       /* Add command to combo list box, if not the same as the prev. command */
       if (ComboBox_GetCount(hInput) == 0)
-	 add = True;
+         add = True;
       else
       {
-	 ComboBox_GetLBText(hInput, 0, temp_command);
-	 if (stricmp(new_str, temp_command))
-	    add = True;
+         ComboBox_GetLBText(hInput, 0, temp_command);
+         if (stricmp(str_ptr, temp_command))
+            add = True;
       }
       if (add)
-	 ComboBox_InsertString(hInput, 0, new_str);
+         ComboBox_InsertString(hInput, 0, str_ptr);
       return TRUE;
 
    case BK_SETDLGFONTS:
@@ -176,14 +179,14 @@ BOOL CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
       /* Add users to list box.  Itemdata is object id. */
       for (l = *(c->current_users); l != NULL; l = l->next)
       {
-	 object_node *obj = (object_node *) (l->data);
-	 
-	 name = LookupRsc(obj->name_res);
-	 if (name != NULL)
-	 {
-	    index = ListBox_AddString(hUserList, name);
-	    ListBox_SetItemData(hUserList, index, obj->id);
-	 }
+         object_node *obj = (object_node *) (l->data);
+
+         name = LookupRsc(obj->name_res);
+         if (name != NULL)
+         {
+            index = ListBox_AddString(hUserList, name);
+            ListBox_SetItemData(hUserList, index, obj->id);
+         }
       }
       WindowEndUpdate(hUserList);
       break;
@@ -200,23 +203,51 @@ BOOL CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
       ListBox_ResetContent(hUserList);
 
       if (hAdminMoveDlg != NULL)
-	 SendMessage(hAdminMoveDlg, WM_COMMAND, IDCANCEL, 0);
+         SendMessage(hAdminMoveDlg, WM_COMMAND, IDCANCEL, 0);
       break;
 
    case WM_ACTIVATE:
       if (wParam == 0)
-	 *c->hCurrentDlg = NULL;
+         *c->hCurrentDlg = NULL;
       else *c->hCurrentDlg = hDlg;
-      return TRUE;
+         return TRUE;
 
    case WM_DESTROY:
       hAdminDlg = NULL;
       if (exiting)
-	 PostMessage(c->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
+         PostMessage(c->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
       return TRUE;
    }
-   return FALSE;
 
+   return FALSE;
+}
+/****************************************************************************/
+/*
+ * AdminDlgConvertString:  Convert \n's to CR-LF pairs.
+ */
+void AdminDlgConvertString(char *s, int len_s)
+{
+   int i = 0;
+
+   while (s[i])
+   {
+      if (i >= len_s - 2
+         || s[i] == '\0')
+         break;
+
+      if (s[i] == '\n')
+      {
+         // newlines get a carriage return inserted
+         memmove(s + i + 2, s + i + 1, len_s - i - 2);
+         s[i++] = '\r';
+         s[i++] = '\n';
+      }
+      else if (s[i] == '\r')
+         // carriage returns in the original are stripped to avoid making \r\r\n's
+         memmove(s + i, s + i + 1, len_s - i - 1);
+      else
+         i++;
+   }
 }
 /****************************************************************************/
 /*

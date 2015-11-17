@@ -260,24 +260,45 @@ Bool IsInterpreting(void)
 }
 
 void TraceInfo(int session_id,char *class_name,int message_id,int num_parms,
-			   parm_node parms[])
+               parm_node parms[])
 {
-	int i;
-	val_type val;
-	
-	SendSessionAdminText(session_id,"%-15s%-20s ",class_name,GetNameByID(message_id));
-	
-	for (i=0;i<num_parms;i++)
-	{
-		SendSessionAdminText(session_id,"%s = ",GetNameByID(parms[i].name_id));
-		val.int_val = parms[i].value;
-		SendSessionAdminText(session_id,"%s ",GetTagName(val));
-		SendSessionAdminText(session_id,"%s",GetDataName(val));
-		
-		if (i != num_parms-1)
-			SendSessionAdminText(session_id,", ");
-	}
-	SendSessionAdminText(session_id,"\n");
+   int i;
+   val_type val;
+   char trace_buf[BUFFER_SIZE];
+   char *buf_ptr = trace_buf;
+   int num_chars;
+   int buf_len = 0;
+
+   if (num_parms == 0)
+      num_chars = sprintf(buf_ptr, "%-15s%-20s\n", class_name, GetNameByID(message_id));
+   else
+      num_chars = sprintf(buf_ptr, "%-15s%-20s ", class_name, GetNameByID(message_id));
+   buf_len += num_chars;
+   buf_ptr += num_chars;
+
+   for (i = 0; i < num_parms; ++i)
+   {
+      val.int_val = parms[i].value;
+
+      if (i == num_parms - 1)
+         num_chars = sprintf(buf_ptr, "%s = %s %s\n", GetNameByID(parms[i].name_id),
+                        GetTagName(val), GetDataName(val));
+      else
+         num_chars = sprintf(buf_ptr, "%s = %s %s, ", GetNameByID(parms[i].name_id),
+                        GetTagName(val), GetDataName(val));
+      buf_len += num_chars;
+      buf_ptr += num_chars;
+
+      // Flushing shouldn't be necessary here, but just in case.
+      if (buf_len > BUFFER_SIZE * 0.9)
+      {
+         buf_ptr -= buf_len;
+         SendSessionAdminText(session_id, buf_ptr);
+         buf_len = 0;
+      }
+   }
+   buf_ptr -= buf_len;
+   SendSessionAdminText(session_id, buf_ptr);
 }
 
 void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])

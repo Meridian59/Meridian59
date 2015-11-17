@@ -81,7 +81,7 @@ void FlushDefaultChannels()
 
 void dprintf(const char *fmt,...)
 {
-   char s[2000];
+   char s[BUFFER_SIZE];
    va_list marker;
 
    sprintf(s,"%s|",TimeStr(GetTime()));
@@ -90,7 +90,6 @@ void dprintf(const char *fmt,...)
    vsprintf(s+strlen(s),fmt,marker);
    va_end(marker);
 
-   TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
    if (s[strlen(s)-1] != '\n')
       strcat(s,"\r\n");
 
@@ -99,7 +98,7 @@ void dprintf(const char *fmt,...)
 
 void eprintf(const char *fmt,...)
 {
-   char s[2000];
+   char s[BUFFER_SIZE];
    va_list marker;
 
    sprintf(s,"%s | ",TimeStr(GetTime()));
@@ -108,14 +107,12 @@ void eprintf(const char *fmt,...)
    vsprintf(s+strlen(s),fmt,marker);
    va_end(marker);
 
-   TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
-
    WriteStrChannel(CHANNEL_E,s);
 }
 
 void bprintf(const char *fmt,...)
 {
-   char s[1000];
+   char s[BUFFER_SIZE];
    va_list marker;
 
    sprintf(s,"%s | [%s] ",TimeStr(GetTime()),BlakodDebugInfo());
@@ -124,7 +121,6 @@ void bprintf(const char *fmt,...)
    vsprintf(s+strlen(s),fmt,marker);
    va_end(marker);
 
-   TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
    if (s[strlen(s)-1] != '\n')
       strcat(s,"\r\n");
 
@@ -133,7 +129,7 @@ void bprintf(const char *fmt,...)
 
 void lprintf(const char *fmt,...)
 {
-   char s[1000];
+   char s[BUFFER_SIZE];
    va_list marker;
 
    sprintf(s,"%s | ",TimeStr(GetTime()));
@@ -142,7 +138,6 @@ void lprintf(const char *fmt,...)
    vsprintf(s+strlen(s),fmt,marker);
    va_end(marker);
 
-   TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
    if (s[strlen(s)-1] != '\n')
       strcat(s,"\r\n");
 
@@ -151,7 +146,7 @@ void lprintf(const char *fmt,...)
 
 void gprintf(const char *fmt,...)
 {
-   char s[1000];
+   char s[BUFFER_SIZE];
    va_list marker;
 
    sprintf(s,"%s | ",TimeStr(GetTime()));
@@ -168,7 +163,6 @@ void gprintf(const char *fmt,...)
 	   sprintf(s, "%s | Line excluded due to personal information.", TimeStr(GetTime()));
    }
 
-   TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
    if (s[strlen(s)-1] != '\n')
       strcat(s,"\r\n");
 
@@ -184,7 +178,6 @@ void aprintf(const char *fmt, ...)
    vsnprintf(s, sizeof(s), fmt, marker);
    va_end(marker);
 
-   TermConvertBuffer(s, sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
    WriteStrChannel(CHANNEL_A, s);
    AdminBufferSend(s, strlen(s));
 }

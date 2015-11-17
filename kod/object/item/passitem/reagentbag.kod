@@ -124,12 +124,12 @@ messages:
 
    ReqTaker(what=$,taker=$)
    {
-      if taker <> Send(self,@GetOwner)
+      if taker <> poOwner
       {
          return FALSE;
       }
 
-      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=get_from_bag,
+      Send(poOwner,@MsgSendUser,#message_rsc=get_from_bag,
             #parm1=Send(what,@GetNumber),
             #parm2=Send(what,@GetName));
 
@@ -138,7 +138,7 @@ messages:
 
    ReqNewHold(what=$,who=$)
    {
-      if who <> Send(self,@GetOwner)
+      if who <> poOwner
       {
          return FALSE;
       }
@@ -158,7 +158,13 @@ messages:
    {
       local i;
 
-      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=stash_in_bag,
+      if what = $
+         OR what = self
+      {
+         return;
+      }
+
+      Send(poOwner,@MsgSendUser,#message_rsc=stash_in_bag,
             #parm1=Send(what,@GetNumber),
             #parm2=Send(what,@GetName));
 

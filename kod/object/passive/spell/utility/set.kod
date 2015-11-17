@@ -81,6 +81,13 @@ messages:
             continue;
          }
 
+         if IsClass(oItem,&SpellItem)
+         {
+            lLocal_list = Cons([GetClass(oItem),Send(oItem,@GetHits)],
+                                 lLocal_list);
+            continue;
+         }
+
          if IsClass(oItem,&NumberItem)
          {
             lLocal_list = Cons([GetClass(oItem),Send(oItem,@GetNumber)],

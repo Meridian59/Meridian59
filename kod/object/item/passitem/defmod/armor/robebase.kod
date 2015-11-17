@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Robe is Armor
+RobeBase is Armor
 
 %% Robe is the first item that takes two different use positions.
 %% Note that a robe forcibly unuses anything already there.
@@ -19,13 +19,13 @@ constants:
 
 resources:
 
-   include robe.lkod
+   include robebase.lkod
 
    robe_name_rsc = "robes"
    robe_icon_rsc = robe.bgf
    robe_desc_rsc = \
-   	"Heavy and warm, these full length robes generally denotes one's dedication to " 
-      "the higher arts of knowledge, spell craft or religion."
+      "Heavy and warm, these full length robes generally denotes one's "
+      "dedication to the higher arts of knowledge, spell craft or religion."
 
    robe_male_icon_rsc = btc.bgf
    robe_female_icon_rsc = btd.bgf
@@ -39,7 +39,8 @@ resources:
    robe_rightarm_female =brd.bgf
 
    robe_condition_exc = " are in immaculate condition."
-   robe_condition_exc_mended = " are in excellent condition, but have been patched before.."
+   robe_condition_exc_mended = \
+      " are in excellent condition, but have been patched before.."
    robe_condition_good = " are scuffed and slightly worn."
    robe_condition_med = " have a few unsightly rips."
    robe_condition_poor = " are in tatters, and barely holding together."
@@ -80,7 +81,7 @@ classvars:
 
    vrLegs_male = robe_legs_male 
    vrLegs_female = robe_legs_female 
-   
+
    vrPoss_article = object_article_cap_these_rsc
 
    vrCondition_exc = robe_condition_exc 
@@ -89,44 +90,47 @@ classvars:
    vrCondition_med = robe_condition_med 
    vrCondition_poor = robe_condition_poor 
    vrCondition_broken = robe_condition_broken
-   
+
    % Robes go over layer 0 items, such as shirts and pants
    viLayer = 1
 
-properties:   
+properties:
 
 messages:
 
    Constructor(translation = $,model = $, color = $)
-   {      
+   {
       if color <> $
       {
-         translation = send(SYS,@EncodeTwoColorXLAT,#color1=color,#color2=XLAT_TO_SKIN1);
+         translation = Send(SYS,@EncodeTwoColorXLAT,#color1=color,
+                           #color2=XLAT_TO_SKIN1);
       }
 
       if translation <> $
       {
-         Send(self,@SetPaletteTranslation,#translation=translation);         
+         Send(self,@SetPaletteTranslation,#translation=translation);
 
          propagate;
       }
 
       if model <> $
       {
-         Send(self,@SetPaletteTranslation,#translation=Send(model,@GetPaletteTranslation));         
+         Send(self,@SetPaletteTranslation,
+               #translation=Send(model,@GetPaletteTranslation));
 
          propagate;
-      }     
+      }
 
-      Send(self,@SetPaletteTranslation,#translation=
-           send(SYS,@EncodeTwoColorXLAT, #color1 = XLAT_TO_BLUE, #color2 = XLAT_TO_SKIN1));
+      Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE,
+                              #color2=XLAT_TO_SKIN1));
 
       propagate;
    }
 
    ReqUse()
    {
-      return (NOT send(send(SYS,@GetWarEvent),@IsActive));
+      return (NOT Send(Send(SYS,@GetWarEvent),@IsActive));
    }
 
    HasSkinTones()

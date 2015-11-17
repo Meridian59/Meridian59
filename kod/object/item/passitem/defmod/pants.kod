@@ -124,7 +124,7 @@ messages:
    {
       local oRobes;
 
-      oRobes = Send(poOwner,@FindUsing,#class=&Robe);
+      oRobes = Send(poOwner,@FindUsing,#class=&RobeBase);
       if oRobes <> $
       {
          Post(oRobes,@SetLegs);

@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\shirt.bof
-BOFS = tanktop.bof royalsht.bof
+DEPEND = ..\robebase.bof
+BOFS = robe.bof robedisc.bof lghtrobe.bof
 
 !include $(KODDIR)\kod.mak

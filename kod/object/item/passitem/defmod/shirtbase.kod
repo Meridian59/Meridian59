@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Shirt is DefenseModifier
+ShirtBase is DefenseModifier
 
 constants:
 
@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   include shirt.lkod
+   include shirtbase.lkod
 
    shirt_condition_exc = " is in immaculate condition."
    shirt_condition_good = " is scuffed and slightly worn."

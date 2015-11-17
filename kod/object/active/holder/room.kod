@@ -2007,6 +2007,7 @@ messages:
       local i,each_obj,bUser, lLoopSound;
 
       if what = $
+         OR what = self
       {
          return;
       }

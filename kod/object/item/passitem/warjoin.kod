@@ -81,7 +81,7 @@ messages:
       vrDesc = WarJoinPendant_desc_after_rsc;
 
       % Fix possible disciple robe problems
-      oRobe = Send(poOwner,@FindUsing,#class=&Robe);
+      oRobe = Send(poOwner,@FindUsing,#class=&RobeBase);
 
       % Are they using a robe?
       if oRobe <> $

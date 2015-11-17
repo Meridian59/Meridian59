@@ -266,7 +266,7 @@ messages:
             % immediately but unlikely.
             if IsClass(oEggOwner,&Player)
             {
-               plScores = Send(self,@AddPointsToScoreboard,#who=oEggOwner,
+               plScores = Send(self,@AddToSortedList,#what=oEggOwner,
                                  #lList=plScores);
             }
             plEggs = DelListElem(plEggs,i);

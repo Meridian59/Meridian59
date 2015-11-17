@@ -20,9 +20,8 @@ resources:
 
    SpellItemSplitter_name_rsc = "spell item splitter"
    SpellItemSplitter_icon_rsc = potion01.bgf
-   SpellItemSplitter_desc_rsc = \
-      "This is a spell item splitter."
-   
+   SpellItemSplitter_desc_rsc = "This is a spell item splitter."
+
    splitter_cant_use_on = "You can't acquire any charges from %s%s."
    default_split_spell_item_rsc = \
       "You combine half of the %s into your splitter, creating an item "
@@ -36,7 +35,7 @@ classvars:
    vrIcon = SpellItemSplitter_icon_rsc
    vrDesc = SpellItemSplitter_desc_rsc
 
-   vsSplitMessage = default_split_spell_item_rsc
+   vrSplitMessage = default_split_spell_item_rsc
 
    viBulk = 25
    viWeight = 20
@@ -70,68 +69,53 @@ messages:
    {
       if IsClass(apply_on,vcSplitClass)
       {
-         Send(self,@SplitSpellItem,#what=what,#sacrificed_item=apply_on);
+         Send(self,@SplitSpellItem,#who=what,#what=apply_on);
       }
 
       return;
    }
 
-   SplitSpellItem(what=$,sacrificed_item=$)
+   SplitSpellItem(who=$,what=$)
    {
       local cSacrificeClass, iSacrificeHits, iSacrificeSpellPower,
             oNewItem, iNewHits;
 
-      if sacrificed_item = $
-         OR what = $
+      if what = $
+         OR who = $
       {
          return;
       }
 
-      if NOT Send(sacrificed_item,@CanSplit)
+      if NOT Send(what,@CanSplit)
       {
-         Send(what,@MsgSendUser,#message_rsc=item_no_split);
+         Send(who,@MsgSendUser,#message_rsc=item_no_split);
 
          return;
       }
 
-      iSacrificeHits = Send(sacrificed_item,@GetHits);
+      iSacrificeHits = Send(what,@GetHits);
       if iSacrificeHits = $
          OR iSacrificeHits < 2
       {
-         Send(what,@MsgSendUser,#message_rsc=cant_split);
+         Send(who,@MsgSendUser,#message_rsc=cant_split);
 
          return;
       }
 
       iNewHits = (iSacrificeHits / 2);
-      Send(sacrificed_item,@SetHits,#number=(iSacrificeHits-iNewHits));
+      oNewItem = Send(what,@Split,#number=iNewHits);
 
-      iSacrificeSpellPower = Send(sacrificed_item,@GetSpellPower);
-
-      cSacrificeClass = GetClass(sacrificed_item);
-
-      oNewItem = Create(cSacrificeClass,#iSpellpower=iSacrificeSpellPower);
-      Send(oNewItem,@SetHits,#number=iNewHits);
-
-      if Send(sacrificed_item,@IsRevealed)
+      if Send(what,@GetOwner) = who
       {
-         Send(oNewItem,@RevealHiddenAttributes);
-      }
-
-      Send(oNewItem,@SetKarmaCheck,#value=Send(sacrificed_item,@GetKarmaCheck));
-
-      if Send(sacrificed_item,@GetOwner) = what
-      {
-         Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE);
+         Send(who,@NewHold,#what=oNewItem,#check_combine=FALSE);
       }
       else
       {
-         if Send(sacrificed_item,@GetOwner) <> $
-            AND IsClass(Send(sacrificed_item,@GetOwner),&Room)
+         if Send(what,@GetOwner) <> $
+            AND IsClass(Send(what,@GetOwner),&Room)
          {
-            Send(Send(sacrificed_item,@GetOwner),@NewHold,#what=oNewItem,
-                  #new_row=Send(sacrificed_item,@GetRow),
-                  #new_col=Send(sacrificed_item,@GetCol));
+            Send(Send(what,@GetOwner),@NewHold,#what=oNewItem,
+                  #new_row=Send(what,@GetRow),#new_col=Send(what,@GetCol));
          }
          else
          {
@@ -139,12 +123,9 @@ messages:
          }
       }
 
-      If IsClass(what,&User)
-      {
-         Send(what,@MsgSendUser,#message_rsc=vsSplitMessage,
-               #parm1=Send(sacrificed_item,@GetName),
-               #parm2=iNewHits,#parm3=iSacrificeSpellPower);
-      }
+      Send(who,@MsgSendUser,#message_rsc=vrSplitMessage,
+            #parm1=Send(what,@GetName),
+            #parm2=iNewHits,#parm3=iSacrificeSpellPower);
 
       Send(self,@Delete);
 

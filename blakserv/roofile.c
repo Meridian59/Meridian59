@@ -226,7 +226,7 @@ bool BSPLineOfSightTree(BspNode* Node, V3* S, V3* E)
             if (blocked)
             {
 #if DEBUGLOS
-               dprintf("BLOCK - CEILING");
+               dprintf("BLOCK - CEILING sector %i", Node->u.leaf.SectorNum);
 #endif
                return false;
             }
@@ -632,6 +632,13 @@ bool BSPLineOfSight(room_type* Room, V3* S, V3* E)
       return true;
 
    V3 e;
+
+   // test lower
+   e.X = E->X;
+   e.Y = E->Y;
+   e.Z = E->Z - OBJECTHEIGHTROO + 1;
+   if (BSPLineOfSightTree(&Room->TreeNodes[0], S, &e))
+      return true;
 
    // test p
    e.X = E->X + LOSEXTEND;

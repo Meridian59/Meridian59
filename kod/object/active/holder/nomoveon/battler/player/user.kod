@@ -4838,7 +4838,7 @@ messages:
       }
 
       if IsClass(what,&StorageBox)
-         AND NOT Send(poOwner,@LineOfSight,#obj1=what,#obj2=self)
+         AND NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
       {
          Debug("User ", self, vrName, "tried to look at storebox item they could not see!");
          return;

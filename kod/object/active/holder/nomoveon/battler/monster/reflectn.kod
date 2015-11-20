@@ -115,14 +115,24 @@ messages:
       return Send(poOriginal,@GetName,#cap=cap);
    }
 
-   GetDef(cap=FALSE)
+   GetDef()
    {
-      return Send(poOriginal,@GetDef,#cap=cap);
+      return Send(poOriginal,@GetDef);
    }
 
-   GetIndef(cap=FALSE)
+   GetCapDef()
    {
-      return Send(poOriginal,@GetIndef,#cap=cap);
+      return Send(poOriginal,@GetCapDef);
+   }
+
+   GetIndef()
+   {
+      return Send(poOriginal,@GetIndef);
+   }
+
+   GetCapIndef()
+   {
+      return Send(poOriginal,@GetCapIndef);
    }
 
    GetHisHer(cap=FALSE)
@@ -297,7 +307,7 @@ messages:
             OR Send(poOriginal,@IsLoggedOn))
       {
          Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=reflection_delete,
-              #what=self,#parm1=Send(self,@GetDef,#cap=TRUE),
+              #what=self,#parm1=Send(self,@GetCapDef),
               #parm2=Send(self,@GetName,#cap=FALSE));
       }
 
@@ -494,21 +504,26 @@ messages:
 
       % Our source object changed; tell everyone that we've changed, too.
       if (what = poOriginal)
-         AND IsClass(poOriginal,&Player)
       {
          piDrawfx = Send(poOriginal,@GetDrawingEffects);
-
-         % Players report that if a character casts a lot of
-         % reflections and then changes state, e.g. by putting on lots
-         % of clothing, other clients in the room may crash.  Our
-         % suspicion is that a server buffer gets filled, and then
-         % clients go out of sync.  We increased server buffer sizes
-         % and this appeared to fix it, but players report there may
-         % still be a problem.  Thus we jitter reflection updates to
-         % try to avoid lots of messages being sent out at once.
-         if ptSomethingChanged <> $
+         if IsClass(poOriginal,&User)
          {
-            ptSomethingChanged = CreateTimer(self,@SomethingChangedTimer,750);
+            % Players report that if a character casts a lot of
+            % reflections and then changes state, e.g. by putting on lots
+            % of clothing, other clients in the room may crash.  Our
+            % suspicion is that a server buffer gets filled, and then
+            % clients go out of sync.  We increased server buffer sizes
+            % and this appeared to fix it, but players report there may
+            % still be a problem.  Thus we jitter reflection updates to
+            % try to avoid lots of messages being sent out at once.
+            if ptSomethingChanged <> $
+            {
+               ptSomethingChanged = CreateTimer(self,@SomethingChangedTimer,750);
+            }
+         }
+         else
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
          }
       }
 
@@ -525,6 +540,37 @@ messages:
       {
          Post(poOwner,@SomethingChanged,#what=self);
       }
+
+      return;
+   }
+
+   DoWave()
+   "Causes the reflection to wave."
+   {
+      Send(self,@GetOriginalInfo);
+      piAnimation = PANM_WAVE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+
+      return;
+   }
+
+   DoPoint()
+   {
+      Send(self,@GetOriginalInfo);
+      piAnimation = PANM_POINT;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+
+      return;
+   }
+
+   DoDance()
+   {
+      Send(self,@GetOriginalInfo);
+      piAnimation = PANM_DANCE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
 
       return;
    }
@@ -579,18 +625,18 @@ messages:
 
    DoAttack()
    {
-      local Weapon, ammotype, i;
+      local oWeapon, oAmmo, i;
 
       Send(self,@GetOriginalInfo);
 
-      if IsClass(poOriginal,&Player)
+      if IsClass(poOriginal,&User)
       {
-         Weapon = Send(poOriginal,@GetWeapon);
-         ammotype = poArrow;
+         oWeapon = Send(poOriginal,@GetWeapon);
+         oAmmo = poArrow;
 
-         if Weapon <> $
+         if oWeapon <> $
          {
-            if IsClass(Weapon,&Bow)
+            if IsClass(oWeapon,&Bow)
             {
                piAnimation = PANM_BOW_FIRE;
 
@@ -598,23 +644,20 @@ messages:
                {
                   if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
                   {
-                     AmmoType = i;
+                     oAmmo = i;
                   }
                }
 
                Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
-                    #projectile=AmmoType);
+                     #projectile=oAmmo);
+            }
+            else if IsClass(oWeapon,&TouchAttackSpell)
+            {
+               piAnimation = PANM_CAST;
             }
             else
             {
-               if IsClass(Weapon,&TouchAttackSpell)
-               {
-                  piAnimation = PANM_CAST;
-               }
-               else
-               {
-                  piAnimation = PANM_WEAPON_ATTACK;
-               }
+               piAnimation = PANM_WEAPON_ATTACK;
             }
          }
          else
@@ -624,21 +667,19 @@ messages:
       }
       else
       {
-         % Kludgish:
-         %  Currently special-cased for the dark angels.  Should standardize
-         %   monsters to make this smoother.
          piAnimation = ANIM_ATTACK;
          Send(poOriginal,@SetAnimation,#animation=piAnimation);
+         % If original fires a projectile, we send one too.
          if Send(poOriginal,@GetProjectileIcon) <> $
          {
             Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
-                 #projectile=poOriginal);
+                  #projectile=poOriginal);
          }
       }
 
       Send(poOwner,@SomethingChanged,#what=self);
 
-      if IsClass(poOriginal,&Player)
+      if IsClass(poOriginal,&User)
       {
          piAnimation = PANM_NONE;
       }

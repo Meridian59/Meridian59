@@ -844,6 +844,11 @@ messages:
       % Give user the logon delay
       Send(self,@LogonDelay);
 
+      if (poEvilTwin <> $)
+      {
+         Send(poEvilTwin,@PlaceEvilTwin,#who=self);
+      }
+
       % Update vigor drain time as 'now' so we drain vigor correctly
       piLastVigorDrainTime = GetTickCount();
 
@@ -1032,6 +1037,32 @@ messages:
       }
 
       poSession = $;
+
+      return;
+   }
+
+   PhaseMinions()
+   "Deletes reflections, phases any ETs attacking us."
+   {
+      Send(SYS,@DeletePlayerReflections,#who=self);
+      if (poEvilTwin <> $
+         AND poOwner <> $)
+      {
+         Send(poEvilTwin,@OriginalPhased);
+         Send(poOwner,@SomethingChanged,#what=poEvilTwin);
+      }
+
+      return;
+   }
+
+   UnphaseMinions()
+   "Unphases any ETs attacking us."
+   {
+      if (poEvilTwin <> $)
+      {
+         Send(poEvilTwin,@OriginalUnphased,#who=self);
+         Send(poOwner,@SomethingChanged,#what=poEvilTwin);
+      }
 
       return;
    }

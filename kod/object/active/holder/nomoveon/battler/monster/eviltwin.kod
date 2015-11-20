@@ -88,10 +88,6 @@ messages:
 
    Constructor(iSpellPower=1,oMaster=$,oTarget=$)
    {
-      local i, each_obj, oRoom;
-
-      oRoom = Send(oTarget,@GetOwner);
-
       if oMaster <> $
       {
          poCaster = oMaster;
@@ -101,35 +97,61 @@ messages:
       if oTarget <> $
       {
          poOriginal = oTarget;
-         poTarget = oTarget;
-         foreach i in Send(oRoom,@GetHolderActive)
-         {
-            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-
-            if (IsClass(each_obj,&Reflection) OR IsClass(each_obj,&EvilTwin))
-               AND Send(each_obj,@GetIllusionForm) = oTarget
-               AND random(1,2) = 1
-               AND each_obj <> self
-            {
-               poTarget = each_obj;
-            }
-         }
       }
+
       piDamagePercent = viDamagePercent;
       piSpellpower = iSpellpower;
       poArrow = Create(&Arrow);
-      Post(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
-      Post(self,@EnterStateChase);
-
-      if IsClass(poOriginal,&Player)
-      {
-         Send(poOriginal,@AddEvilTwin);
-      }
 
       propagate;
    }
 
-   Delete(bMonsterReport=TRUE)
+   PlaceEvilTwin(who=$)
+   "Places the ET at the location of 'who', and makes it take a random step."
+   {
+      local oTarget, iRow, iCol, iFine_Row, iFine_Col, oRoom, i, each_obj;
+
+      if (who = $)
+      {
+         return;
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+      iFine_Row = Send(who,@GetFineRow);
+      iFine_Col = Send(who,@GetFineCol);
+
+      Send(self,@SetOriginal,#who=who);
+
+      Send(oRoom,@NewHold,#what=self,#new_row=iRow,#new_col=iCol,
+            #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      Send(self,@DoRandomWalk,#override=TRUE);
+
+      oTarget = who;
+
+      foreach i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = First(i);
+
+         if (IsClass(each_obj,&Reflection) OR IsClass(each_obj,&EvilTwin))
+            AND Send(each_obj,@GetMaster) = who
+            AND Random(1,2) = 1
+            AND each_obj <> self
+         {
+            oTarget = each_obj;
+         }
+      }
+
+      Send(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
+      Send(self,@EnterStateChase);
+
+      return;
+   }
+
+   Delete()
    {
       if poOriginal <> $
       {
@@ -149,7 +171,7 @@ messages:
             OR Send(poOriginal,@IsLoggedOn))
       {
          Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=EvilTwin_delete,
-               #what=self,#parm1=Send(self,@GetDef,#cap=TRUE),
+               #what=self,#parm1=Send(self,@GetCapDef),
                #parm2=Send(self,@GetName,#cap=FALSE));
       }
 
@@ -193,15 +215,25 @@ messages:
    {
       return Send(poOriginal,@GetName,#cap=cap);
    }
-   
-   GetDef(cap=FALSE)
+
+   GetDef()
    {
-      return Send(poOriginal,@GetDef,#cap=cap);
+      return Send(poOriginal,@GetDef);
    }
 
-   GetIndef(cap=FALSE)
+   GetCapDef()
    {
-      return Send(poOriginal,@GetIndef,#cap=cap);
+      return Send(poOriginal,@GetCapDef);
+   }
+
+   GetIndef()
+   {
+      return Send(poOriginal,@GetIndef);
+   }
+
+   GetCapIndef()
+   {
+      return Send(poOriginal,@GetCapIndef);
    }
 
    GetHisHer(cap=FALSE)
@@ -240,6 +272,24 @@ messages:
       propagate;
    }
 
+   OriginalPhased()
+   "If the original phases out, set the ET to behave like a NPC."
+   {
+      piBehavior = piBehavior | AI_NPC;
+
+      return;
+   }
+
+   OriginalUnphased(who = $)
+   "If original phases back in, unset the NPC flag and alert us to their entry."
+   {
+      piBehavior = piBehavior & ~AI_NPC;
+
+      Send(self,@SomethingEntered,#who=who);
+
+      return;
+   }
+
    SomethingLeft(what=$)
    {
       if poOriginal = $
@@ -247,10 +297,13 @@ messages:
          return;
       }
 
-      if IsClass(poOriginal,&Player)
+      if IsClass(poOriginal,&User)
          AND NOT Send(poOriginal,@IsLoggedOn)
       {
-         Send(self,@Delete);
+         % If the original logs off, we go to 'limbo' and await their return.
+         % If the caster logs off or is deleted/killed/phases, we get deleted.
+         Send(self,@EnterStateLimbo);
+         Send(self,@NewOwner,#what=$);
 
          return;
       }
@@ -375,10 +428,20 @@ messages:
          return;
       }
 
-      vrIcon = Send(poOriginal,@GetPlayerIcon);
-      vrName = Send(poOriginal,@GetTrueName);
+      if IsClass(poOriginal,&Player)
+      {
+         vrIcon = Send(poOriginal,@GetPlayerIcon);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
+         vrName = Send(poOriginal,@GetTrueName);
+      }
+      else
+      {
+         vrIcon = Send(poOriginal,@GetIcon);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
+         vrName = Send(poOriginal,@GetName);
+      }
+
       piGender = Send(poOriginal,@GetGender);
-      piDrawfx = Send(poOriginal,@GetDrawingEffects);
 
       return;
    }
@@ -437,10 +500,18 @@ messages:
          return 0;
       }
 
-      iWeapon = Send(poOriginal,@GetWeapon);
-      if iWeapon <> $
+      if IsClass(poOriginal,&User)
       {
-         return Send(iWeapon,@GetRange);
+         iWeapon = Send(poOriginal,@GetWeapon);
+
+         if iWeapon <> $
+         {
+            return Send(iWeapon,@GetRange);
+         }
+      }
+      else
+      {
+         return Send(poOriginal,@GetAttackRange);
       }
 
       return 64;
@@ -511,22 +582,31 @@ messages:
    {
       if what = poOriginal
       {
-         if Send(what,@GetAnimation) = PANM_WAVE
-         {
-            Send(self,@DoWave);
-         }
-
-         if Send(what,@GetAnimation) = PANM_POINT
-         {
-            Send(self,@DoPoint);
-         }
-
-         if Send(what,@GetAnimation) = PANM_DANCE
-         {
-            Send(self,@DoDance);
-         }
-
          piDrawfx = Send(poOriginal,@GetDrawingEffects);
+
+         if IsClass(poOriginal,&User)
+         {
+            if Send(what,@GetAnimation) = PANM_WAVE
+            {
+               Send(self,@DoWave);
+            }
+            else if Send(what,@GetAnimation) = PANM_POINT
+            {
+               Send(self,@DoPoint);
+            }
+            else if Send(what,@GetAnimation) = PANM_DANCE
+            {
+               Send(self,@DoDance);
+            }
+            else
+            {
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+         }
+         else
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
       }
 
       propagate;
@@ -611,32 +691,33 @@ messages:
 
    DoAttack()
    {
-      local Weapon, ammotype, i;
-      
-      Weapon = Send(poOriginal,@GetWeapon);
-      ammotype = poArrow;
+      local oWeapon, oAmmo, i;
+
       Send(self,@GetOriginalInfo);
 
-      if Weapon <> $   %IsClass(Weapon,&Weapon)
+      if IsClass(poOriginal,&User)
       {
-         if IsClass(Weapon,&Bow)
-         {
-            piAnimation = PANM_BOW_FIRE;
+         oWeapon = Send(poOriginal,@GetWeapon);
+         oAmmo = poArrow;
 
-            foreach i in Send(poOriginal,@GetPlayerUsing)
+         if oWeapon <> $
+         {
+            if IsClass(oWeapon,&Bow)
             {
-               if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
-               {
-                  AmmoType = i;
-               }
-            }
+               piAnimation = PANM_BOW_FIRE;
 
-            Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
-                  #projectile=AmmoType);
-         }
-         else
-         {
-            if IsClass(Weapon,&TouchAttackSpell)
+               foreach i in Send(poOriginal,@GetPlayerUsing)
+               {
+                  if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
+                  {
+                     oAmmo = i;
+                  }
+               }
+
+               Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+                     #projectile=oAmmo);
+            }
+            else if IsClass(oWeapon,&TouchAttackSpell)
             {
                piAnimation = PANM_CAST;
             }
@@ -645,14 +726,35 @@ messages:
                piAnimation = PANM_WEAPON_ATTACK;
             }
          }
+         else
+         {
+            piAnimation = PANM_FIST_ATTACK;
+         }
       }
       else
       {
-         piAnimation = PANM_FIST_ATTACK;
+         piAnimation = ANIM_ATTACK;
+         Send(poOriginal,@SetAnimation,#animation=piAnimation);
+
+         % If original fires a projectile, we send one too.
+         if Send(poOriginal,@GetProjectileIcon) <> $
+         {
+            Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+                  #projectile=poOriginal);
+         }
       }
 
       Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = PANM_NONE;
+
+      if IsClass(poOriginal,&User)
+      {
+         piAnimation = PANM_NONE;
+      }
+      else
+      {
+         piAnimation = ANIM_NONE;
+         Send(poOriginal,@SetAnimation,#animation=piAnimation);
+      }
 
       return;
    }
@@ -701,19 +803,30 @@ messages:
 
    TryLook(what=$)
    {
+      if what = $
+      {
+         return;
+      }
+
       if poOriginal = $
       {
          return;
       }
 
-      if IsClass(poOriginal,&Player)
-         AND Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
-         AND what <> poOriginal
+      if IsClass(poOriginal,&User)
       {
-         return;
-      }
+         if Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+            AND (what <> poOriginal)
+         {
+            return;
+         }
 
-      Send(what,@SendLookPlayer,#what=poOriginal);
+         Send(what,@SendLookPlayer,#what=poOriginal);
+      }
+      else
+      {
+         Send(poOriginal,@TryLook,#what=what);
+      }
 
       return;
    }

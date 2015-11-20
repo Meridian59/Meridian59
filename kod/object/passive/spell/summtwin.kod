@@ -141,7 +141,7 @@ messages:
 
    CastSpell(who=$,lTargets=$,iSpellPower=1)
    {
-      local i, j, oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget;
+      local i, j, oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col;
 
       % Monster casters can rarely end up with $ target.
       if lTargets = $
@@ -149,22 +149,28 @@ messages:
          return;
       }
 
-      oTarget = First(lTargets);
+      Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_cast_rsc);
 
-      if IsClass(oTarget,&Player)
+      Send(self,@SpawnEvilTwin,#oTarget=First(lTargets),#who=who,
+            #iSpellPower=iSpellPower);
+
+      propagate;
+   }
+
+   SpawnEvilTwin(who = $, oTarget=$, iSpellPower=SPELLPOWER_MAXIMUM)
+   "Creates the ET and adds the info to caster/target. Tells the ET to "
+   "place itself."
+   {
+      local i, j, oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col;
+
+      if (oTarget = $
+         OR who = $)
       {
-         oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,
-                     #oTarget=oTarget);
+         return;
       }
-      else
-      {
-         % Should be a monster. Make a low HP copy of it.
-         oTwin = Create((GetClass(oTarget)));
-         % Set the illusion boolean on the ET, so it doesn't drop loot.
-         Send(oTwin,@SetIllusion,#value=TRUE);
-         % Set the ET's original to the target.
-         Send(oTwin,@EvilTwinOrignial,#what=oTarget,#who=who);
-      }
+
+      oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,
+                  #oTarget=oTarget);
 
       % Add this ET to the target's evil twin property, which keeps
       % track of the current ET pursuing them.
@@ -175,35 +181,9 @@ messages:
       % ETs they've created.
       Send(who,@EvilTwinsCreated,#what=oTwin);
 
-      oRoom = Send(who,@GetOwner);
+      Send(oTwin,@PlaceEvilTwin,#who=oTarget);
 
-      iRow = Send(oTarget,@GetRow);
-      iCol = Send(oTarget,@GetCol);
-      iFine_Row = Send(oTarget,@GetFineRow);
-      iFine_Col = Send(oTarget,@GetFineCol);
-
-      if IsClass(oTarget,&Player)
-      {
-         Send(oTwin,@SetOriginal,#who=oTarget);
-      }
-
-      Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol,
-           #fine_row=iFine_Row,#fine_col=iFine_Col);
-
-      Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_cast_rsc);
-
-      if oTarget <> $
-         AND IsClass(oTarget,&Monster)
-      {
-         Post(oTwin,@TargetSwitch,#what=oTarget,#iHatred=1000);
-         Post(oTwin,@EnterStateChase);
-         i = Send(oTwin,@ReturnMaxHitPoints);
-         j = i/(100/((21+iSpellPower)/20));
-         j = bound(j,1,25);
-         Send(oTwin,@SetMaxHitPoints,#amount=j);
-      }
-
-      propagate;
+      return;
    }
 
 end

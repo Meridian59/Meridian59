@@ -440,11 +440,6 @@ properties:
    pbIllusion = FALSE
    vbSummoned = FALSE
 
-   % Evil twin objects
-   poEvilTwin = $
-   poEvilTwinOriginal = $
-   poEvilTwinCaster = $
-   
    % Apparition object (caster)
    poApparitionCaster = $
 
@@ -716,23 +711,6 @@ messages:
 
       % Clear reagent return list.
       plSpellList = $;
-
-      % If this monster is an 'Evil Twin', tell the original it was deleted.
-      if poEvilTwinOriginal <> $
-      {
-         Send(poEvilTwinOriginal,@RemoveEvilTwin);
-         poEvilTwinOriginal = $;
-
-         % Tell the caster it was deleted too.
-         Send(poEvilTwinCaster,@RemoveCreatedEvilTwin,#what=self);
-         poEvilTwinCaster = $;
-      }
-
-      % If this monster has an Evil Twin, delete it too.
-      if poEvilTwin <> $
-      {
-         Post(poEvilTwin,@Delete);
-      }
 
       % If this monster is an Apparition, tell the original it was deleted.
       if poApparitionOriginal <> $
@@ -1770,13 +1748,14 @@ messages:
 
    %%%  Auxiliary Routines
 
-   DoRandomWalk()
+   DoRandomWalk(override=FALSE)
    {
       local iNew_row, iNew_col, iNew_finerow, iNew_finecol;
 
       % The bigger/tougher I am, the less likely I'm interested in milling
       %  around.
       if Random(1,140) < piHit_points/100
+         AND NOT override
       {
          return;
       }
@@ -3569,8 +3548,6 @@ messages:
 
    KilledSomething(what=$,use_weapon=$)
    {
-      local oIllusionCaster;
-
       if what = $
       {
          Debug("Bad info in killedsomething().");
@@ -3605,28 +3582,16 @@ messages:
                      #use_weapon=use_weapon);
       }
 
-      % If this is a monster evil twin, and it has no master,
-      % the caster of the evil twin acts as the master for
+      % If this is an apparition, and it has no master,
+      % the caster of the apparition acts as the master for
       % tracking the results of monster kills, but not any
       % accidental player kills (or player minion kills).
-      % Handle apparitions the same way.
-      oIllusionCaster = $;
-
       if poApparitionCaster <> $
-      {
-         oIllusionCaster = poApparitionCaster;
-      }
-      if poEvilTwinCaster <> $
-      {
-         oIllusionCaster = poEvilTwinCaster;
-      }
-
-      if oIllusionCaster <> $
          AND IsClass(what,&Monster)
          AND (Send(what,@GetMaster) = $
             OR IsClass(Send(what,@GetMaster),&Monster))
       {
-         return Send(oIllusionCaster,@KilledSomething,#what=what,
+         return Send(poApparitionCaster,@KilledSomething,#what=what,
                      #use_weapon=use_weapon);
       }
 
@@ -6398,15 +6363,6 @@ messages:
       return TRUE;
    }
 
-   % If this monster is an Evil Twin, this keeps track of the original target.
-   EvilTwinOrignial(what=$,who=$)
-   {
-      poEvilTwinOriginal = what;
-      poEvilTwinCaster = who;
-
-      return;
-   }
-
    ApparitionCaster(who=$)
    "If this monster is an apparition, keep track of the caster."
    {
@@ -6416,7 +6372,7 @@ messages:
    }
 
    IsOwnedByPlayer()
-   "Checks the three cases of minions, and returns TRUE if owned by "
+   "Checks the two cases of minions, and returns TRUE if owned by "
    "a player, FALSE if not. If minion has a monster for a master, "
    "IsOwnedByPlayer is called on the master."
    {
@@ -6441,7 +6397,7 @@ messages:
 
       if poApparitionCaster <> $
       {
-         if IsClass(poApparitionCaster,&Player)
+         if IsClass(poApparitionCaster,&User)
          {
             return TRUE;
          }
@@ -6449,21 +6405,6 @@ messages:
          if IsClass(poApparitionCaster,&Monster)
          {
             return Send(poApparitionCaster,@IsOwnedByPlayer);
-         }
-
-         return FALSE;
-      }
-      
-      if poEvilTwinCaster <> $
-      {
-         if IsClass(poEvilTwinCaster,&Player)
-         {
-            return TRUE;
-         }
-
-         if IsClass(poEvilTwinCaster,&Monster)
-         {
-            return Send(poEvilTwinCaster,@IsOwnedByPlayer);
          }
 
          return FALSE;
@@ -6478,7 +6419,6 @@ messages:
    {
       if poMaster <> $
          OR poApparitionCaster <> $
-         OR poEvilTwinCaster <> $
       {
          return TRUE;
       }
@@ -6508,7 +6448,6 @@ messages:
       {
          return;
       }
-
 
       foreach oActive in plControlledMinions
       {

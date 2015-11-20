@@ -195,7 +195,9 @@ messages:
 
    SendOverlayInformation(iAnimation = $)
    {
-      if piUsed = ATTACKING and iAnimation <> $
+      if iAnimation <> $
+         AND (piUsed = ATTACKING
+            OR iAnimation = PANM_BOW_FIRE)
       {
          AddPacket(4,prBowTop);
          AddPacket(1,HS_TOP_BOW);
@@ -220,7 +222,9 @@ messages:
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
 
-      if piUsed = ATTACKING and iAnimation <> $
+      if iAnimation <> $
+         AND (piUsed = ATTACKING
+            OR iAnimation = PANM_BOW_FIRE)
       {
          AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);
 
@@ -243,7 +247,9 @@ messages:
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
 
-      if  piUsed = ATTACKING and iAnimation <> $
+      if iAnimation <> $
+         AND (piUsed = ATTACKING
+            OR iAnimation = PANM_BOW_FIRE)
       {
          AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);
       }
@@ -258,8 +264,9 @@ messages:
    GetNumberOverlays(iAnimation = $)
    {
       %% most overlay items only offer one overlay.  weapons and bows may offer two.
-      if piUsed = ATTACKING
-         AND iAnimation <> $
+      if iAnimation <> $
+         AND (piUsed = ATTACKING
+            OR iAnimation = PANM_BOW_FIRE)
       {
          return 2;
       }

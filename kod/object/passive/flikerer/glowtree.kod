@@ -22,10 +22,10 @@ resources:
 
    GlowTree_name = "soulsap willow tree"
    GlowTree_desc = \
-      "A luminescent sap hangs from the branches of this bizarre tree.  Rather "
-      "than gather sunlight with plump foliage, the soulsap tree attracts insects "
-      "with the sweet glowing fluid, then absorbs the nutrients of the helpless "
-      "bugs directly."
+      "A luminescent sap hangs from the branches of this bizarre tree.  "
+      "Rather than gather sunlight with plump foliage, the soulsap tree "
+      "attracts insects with the sweet glowing fluid, then absorbs the "
+      "nutrients of the helpless bugs directly."
    GlowTree_icon = nectree3.bgf
 
 classvars:
@@ -41,7 +41,7 @@ classvars:
    viEnd_frame = 1
 
    % Lighting flags.  Default "on" flag
-   viLightFlags = LIGHT_FLAG_ON 
+   viLightFlags = LIGHT_FLAG_ON
 
    % Light color.
    viLightColor = LIGHT_DGREEN
@@ -49,7 +49,7 @@ classvars:
 properties:
 
    piAnim_speed = 0
-   
+
    % Intensity, from 0-255.
    piLightIntensity = 50
 
@@ -60,9 +60,8 @@ messages:
       % Does not animate
       piAnim_speed = 0;
 
-      return;   
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -20,8 +20,8 @@ resources:
 
    skullbrazier_name = "skull brazier"
    skullbrazier_desc = \
-      "This skull brazier offers an ominous, eerie glow.  Fire glints in the eye "
-      "sockets giving it a life like appearance."
+      "This skull brazier offers an ominous, eerie glow.  Fire glints in the "
+      "eye sockets giving it a life like appearance."
    skullbrazier_icon = head.bgf
 
 classvars:
@@ -43,6 +43,5 @@ properties:
 
 messages:
 
-   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

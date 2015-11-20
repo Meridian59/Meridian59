@@ -23,8 +23,8 @@ resources:
    kocatanbrazier_name_rsc = "settlement lamp"
    kocatanbrazier_icon_rsc = koclamp.bgf
    kocatanbrazier_desc_rsc = \
-      "By order of the A'ach Tezcha these lamps are to remain lit during hours of darkness."
-
+      "By order of the A'ach Tezcha these lamps are to remain lit "
+      "during hours of darkness."
    kocatanbrazier_flame_rsc = kocflame.bgf
 
 classvars:
@@ -71,12 +71,7 @@ messages:
       % The base doesn't animate, just the overlay.
       piAnim_speed = 0;
 
-      return;   
-   }
-
-   ReqNewOwner(what = $)
-   {
-      return FALSE;
+      return;
    }
 
    SetFlame(has_flame=TRUE)
@@ -97,7 +92,7 @@ messages:
 
    SendOverlays()
    {
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
 
       if NOT pbIsLit
       {
@@ -106,36 +101,37 @@ messages:
 
       % We have one overlay, the flame
       AddPacket(1,1);
-         
+
       % always animate the flame in a cycle
       AddPacket(4,kocatanbrazier_flame_rsc,1,HS_kocatanbrazier,1,ANIMATE_CYCLE);
-      
+
       % but have different cycle groups
-      
       if piFlame_animation = 1
       {
-         AddPacket(4,50,2,1,2,5); 
+         AddPacket(4,50,2,1,2,5);
+
          return;
       }
-         
+
       if piFlame_animation = 2
       {
          AddPacket(4,60,2,1,2,8);
+
          return;
       }
-         
+
       if piFlame_animation = 3
       {
          AddPacket(4,70,2,5,2,7);
+
          return;
       }
-         
+
       % if piFlame_animation = 4
       AddPacket(4,40,2,3,2,6);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

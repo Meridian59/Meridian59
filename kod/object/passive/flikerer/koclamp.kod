@@ -20,7 +20,8 @@ resources:
 
    lamp_name = "blue iron brazier"
    lamp_desc = \
-      "Scented oil burns in this brazier, providing light and giving the room a musky air."
+      "Scented oil burns in this brazier, providing light and giving the "
+      "room a musky air."
    lamp_icon = lamp1.bgf
 
 classvars:
@@ -41,7 +42,6 @@ properties:
    piLightIntensity = 30
 
 messages:
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

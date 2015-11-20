@@ -22,7 +22,8 @@ resources:
 
    firepit_name_rsc = "fire"
    firepit_icon_rsc = firepit.bgf
-   firepit_desc_rsc = "This small fire offers both light and warmth to the surrounding area."
+   firepit_desc_rsc = \
+      "This small fire offers both light and warmth to the surrounding area."
 
    firepit_flame_rsc = brazflam.bgf
    firepit_sound_rsc = fireplac.wav
@@ -72,7 +73,7 @@ messages:
       if poOwner <> $ AND IsClass(poOwner,&Room)
       {
          % Remove ourselves as part of the sound list.
-         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
       }
 
       propagate;
@@ -83,31 +84,28 @@ messages:
       % The base doesn't animate, just the overlay.
       piAnim_speed = 0;
 
-      return;   
-   }
-
-   ReqNewOwner(what = $)
-   {
-      return FALSE;
+      return;
    }
 
    NewOwner(what = $)
    {
       local lPosition, lSoundData;
 
-      % Check the old (current) owner.  It shouldn't happen, but let's be sane about it.
+      % Check the old (current) owner.  It shouldn't happen, but
+      % let's be sane about it.
       if poOwner <> $ AND IsClass(poOwner,&Room)
       {
          % Remove ourselves as part of the sound list.
-         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
       }
 
       if piSoundRadius AND what <> $ AND IsClass(what,&Room)
       {
          % Sound data is [wave_file, row, col, cutoff radius, maximum volume, object]
-         lPosition = send(what,@GetRoomPos,#what=self);
-         lSoundData = [firepit_sound_rsc, First(lPosition), Nth(lPosition,2), piSoundRadius, 100, self];
-         send(what,@AddLoopingSound,#lSoundData=lSoundData);
+         lPosition = Send(what,@GetRoomPos,#what=self);
+         lSoundData = [firepit_sound_rsc, First(lPosition), Nth(lPosition,2),
+                       piSoundRadius, 100, self];
+         Send(what,@AddLoopingSound,#lSoundData=lSoundData);
       }
 
       propagate;
@@ -124,43 +122,41 @@ messages:
 
    SendOverlays()
    {
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
 
       % We have one overlay, the flame
       AddPacket(1,1);
-         
+
       % Always animate the flame in a cycle...
       AddPacket(4,firepit_flame_rsc,1,HS_FIREPIT,1,ANIMATE_CYCLE);
-      
+
       % ...but have different cycle groups.
-      
       if piFlame_animation = 1
       {
-         AddPacket(4,100, 2,1, 2,5); 
+         AddPacket(4,100, 2,1, 2,5);
 
          return;
       }
-         
+
       if piFlame_animation = 2
       {
          AddPacket(4,120, 2,1, 2,8);
 
          return;
       }
-         
+
       if piFlame_animation = 3
       {
          AddPacket(4,140, 2,5, 2,7);
 
          return;
       }
-         
+
       % if piFlame_animation = 4
       AddPacket(4,90, 2,3, 2,6);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

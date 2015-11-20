@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AcidArrow is Ammo
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   acid_arrow_name_rsc = "acidic arrows"
+   acid_arrow_name_rsc_icon_rsc = arrowner.bgf
+   acid_arrow_name_rsc_desc_rsc = \
+      "A foul hiss emanates from this arrow as it is drawn from the quiver.  "
+      "Green liquid drips from the point as it is drawn along the bow, "
+      "promising searing pain for the target."
+
+classvars:
+
+   vrName = acid_arrow_name_rsc
+   vrIcon = acid_arrow_name_rsc_icon_rsc
+   vrDesc = acid_arrow_name_rsc_desc_rsc
+
+   viAmmo_type = AMMO_ARROW
+   viValue_average = 20
+
+   viGround_group = 4
+   viInventory_group = 3
+   viBroken_group = 2
+
+   viBulk = 4
+   viWeight = 5
+
+   viMinDamage = 4
+   viMaxDamage = 10
+
+properties:
+
+   piNumber = 5
+   piAttack_spell = ATCK_SPELL_ACID
+
+messages:
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   GetProjectileIcon()
+   {
+      return vrIcon;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

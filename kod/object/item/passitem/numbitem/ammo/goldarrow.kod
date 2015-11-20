@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%an Arrow is a NumberItem used by a bow--it needs properties and procedures
+%for ShowSomething() and GetDamage()
+%
+GoldenArrow is Ammo
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   golden_arrow_name_rsc = "golden arrows"
+   golden_arrow_icon_rsc = arrowgold.bgf
+   golden_arrow_desc_rsc = \
+      "These arrows are crafted from pure gold.  Undiscovered for"
+      "centuries, these arrows are believed to be crafted by the god "
+      "Kraanan, and bestowed upon only the mightiest of mortals."
+
+classvars:
+
+   vrName = golden_arrow_name_rsc
+   vrIcon = golden_arrow_icon_rsc
+   vrDesc = golden_arrow_desc_rsc
+
+   viAmmo_type = AMMO_ARROW
+   viValue_average = 5000
+
+   viGround_group = 4
+   viInventory_group = 3
+   viBroken_group = 2
+
+   viBulk = 4
+   viWeight = 5
+
+   viMinDamage = 10
+   viMaxDamage = 20
+
+properties:
+
+   piNumber = 10
+   piAttack_type = ATCK_WEAP_PIERCE
+
+messages:
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   GetProjectileIcon()
+   {
+      return vrIcon;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

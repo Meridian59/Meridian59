@@ -1,21 +1,20 @@
-   UnholyTouch_name_rsc = de "Unheiliger Griff"
-      UnholyTouch_desc_rsc = de \
-	  "Dunkle Energien Qors trocknen Dein Ziel aus. Effektiver bei guten Zielen. "
-      "Benötigt einen Feenflügel."
-
-   UnholyTouch_already_enchanted_rsc = de \
-	  "Deine Hände sind bereits in Qors Magie gebadet"
-   UnholyTouch_On_rsc = de "Deine Hände schlagen nun mit dunkler Magie."
-   UnholyTouch_Off_rsc = de "Deine Hände sind nicht länger in Qors Magie gebadet."
-
-   UnholyTouch_player_was_hit = de "%s%s zerreißt Dich mit der dunklen Magie Qors!"
-   UnholyTouch_player_hit_something = de \
-      "%s%s%s schreckt zurück durch die dunkle Energie Qors."
-
-   UnholyTouch_player_killed_something = de \
-	  "Das böse Dunkle verlässt %s%s, und hinterlässt eine zerissene Seele."
-   UnholyTouch_player_was_killed = de \
-	  "Der Griff von %s%s trennt die Seele vom Körper, und schickt %s%s in die Unterwelt."
-   UnholyTouch_spell_intro = de \
-      "Qor Level. 1: Befördert die dunkle Energie Qors in Deine Hände."
-
+UnholyTouch_name_rsc = de "Unheiliger Griff"
+UnholyTouch_desc_rsc = de \
+   "Dunkle Energien Qors trocknen Dein Ziel aus. Effektiver bei guten Zielen. "
+   "Benötigt einen Feenflügel."
+UnholyTouch_already_enchanted_rsc = de \
+   "Deine Hände sind bereits in Qors Magie gebadet"
+UnholyTouch_On_rsc = de "Deine Hände schlagen nun mit dunkler Magie."
+UnholyTouch_Off_rsc = de "Deine Hände sind nicht länger in Qors Magie gebadet."
+UnholyTouch_player_was_hit = de "%s%s zerreißt Dich mit der dunklen Magie Qors!"
+UnholyTouch_player_hit_something = de \
+   "%s%s%s schreckt zurück durch die dunkle Energie Qors."
+UnholyTouch_player_killed_something = de \
+   "Das böse Dunkle verlässt %s%s, und hinterlässt eine zerissene Seele."
+UnholyTouch_player_was_killed = de \
+   "Der Griff von %s%s trennt die Seele vom Körper, und schickt %s%s in die Unterwelt."
+UnholyTouch_spell_intro = de \
+   "Qor Level. 1: Befördert die dunkle Energie Qors in Deine Hände."
+UnholyTouch_health_gain = de \
+   "Du saugst die Lebenskraft Deines Opfers um ~g~B%i~B~n Lebenspunkte aus, "
+   "und fühlst Dich stärker."

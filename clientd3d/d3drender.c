@@ -2193,57 +2193,60 @@ void D3DLMapsStaticGet(room_type *room)
 	}
 
    // fireworks
-   emitter *pEmitter;
-   particle *pParticle;
-   for (list = gParticleSystemFireworks.emitterList; list != NULL; list = list->next)
+   if (effects.fireworks)
    {
-      pEmitter = (emitter *)list->data;
-      pParticle = &pEmitter->particles[0];
-      if (pParticle && pParticle->energy > 0)
+      emitter *pEmitter;
+      particle *pParticle;
+      for (list = gParticleSystemFireworks.emitterList; list != NULL; list = list->next)
       {
-         if (gDLightCacheDynamic.numLights >= 150)
-            continue;
+         pEmitter = (emitter *)list->data;
+         pParticle = &pEmitter->particles[0];
+         if (pParticle && pParticle->energy > 0)
+         {
+            if (gDLightCacheDynamic.numLights >= 150)
+               continue;
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pParticle->pos.x;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pParticle->pos.y;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pParticle->pos.z;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pParticle->pos.x;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pParticle->pos.y;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pParticle->pos.z;
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-            DLIGHT_SCALE(pParticle->energy);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-            DLIGHT_SCALE(pParticle->energy);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-            DLIGHT_SCALE(pParticle->energy);
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
+               DLIGHT_SCALE(pParticle->energy);
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
+               DLIGHT_SCALE(pParticle->energy);
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
+               DLIGHT_SCALE(pParticle->energy);
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].maxX = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x +
-            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].minX = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x -
-            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].maxY = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y +
-            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].minY = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y -
-            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].maxX = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x +
+               gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].minX = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x -
+               gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].maxY = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y +
+               gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].minY = gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y -
+               gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f;
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-            1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-            1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-            1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
+               1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
+               1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
+               1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-            1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-            1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-            1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
+               1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
+               1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
+               1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r = pParticle->bgra.r;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g = pParticle->bgra.g;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b = pParticle->bgra.b;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r = pParticle->bgra.r;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g = pParticle->bgra.g;
+            gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b = pParticle->bgra.b;
 
-         gDLightCacheDynamic.numLights++;
+            gDLightCacheDynamic.numLights++;
+         }
       }
    }
 

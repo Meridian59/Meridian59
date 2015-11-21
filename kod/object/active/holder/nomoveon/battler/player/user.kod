@@ -2836,10 +2836,19 @@ messages:
    {
       local iBehavior, iFlags, oIllusion, oOtherGuild;
 
-      if what = self
-         OR what = $
+      if what = $
          OR poOwner <> Send(what,@GetOwner)
       {
+         return MM_NONE;
+      }
+
+      if (what = self)
+      {
+         if (piFlags & PFLAG_TEMPSAFE)
+         {
+            return MM_TEMPSAFE;
+         }
+
          return MM_NONE;
       }
 

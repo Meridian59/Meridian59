@@ -4461,7 +4461,7 @@ messages:
    "Handle things having to do with mobs who have stuff to sell. "
    "This is used for both teachers and sellers"
    {
-      local i, j, bFound, oBuy, oMoney, iPrice, lNumbers,
+      local i, j, bFound, oBuy, oMoney, iPrice, iPriceOne, lNumbers,
             iAmount, oItemAtt, iCan_hold, oSplit; 
 
       % Ensure that buyer and seller are in the same room
@@ -4502,7 +4502,10 @@ messages:
          oMoney = Send(what,@GetMoneyObject);
 
          % Get the price for that amount
-         iPrice = Send(self,@GetPrice,#what=i,#who=what); 
+         iPriceOne = Send(self,@GetPrice,#what=i,#who=what);
+
+         % Init iPrice to the cost of one item.
+         iPrice = iPriceOne;
 
          if IsClass(i,&Item)
          {
@@ -4535,8 +4538,11 @@ messages:
                   iAmount = Bound(iAmount,1,MAX_BUY_AMOUNT);
                }
 
+               % Make sure cost for 1 item is at least one gold coin.
+               iPriceOne = Bound(iPriceOne, 1, $);
+
                % Now figure price
-               iPrice = iPrice * iAmount;
+               iPrice = iPriceOne * iAmount;
 
                % Make sure we have a price of at least one gold coin
                iPrice = Bound(iPrice, 1, $);
@@ -4651,8 +4657,7 @@ messages:
                      if Send(oBuy,@ReqNewOwner,#what=oSplit)
                      {
                         Send(oMoney,@SubtractNumber,
-                              #number=Send(self,@GetPrice,#what=oBuy,#who=what)*
-                                           Send(oSplit,@GetNumber));
+                              #number=iPriceOne * Send(oSplit,@GetNumber));
                         Send(i,@SubtractNumber,#Number=Send(oSplit,@GetNumber));
                         Send(what,@NewHold,#what=oSplit);
                         Post(poOwner,@SomeoneSaid,#what=self,

@@ -87,7 +87,7 @@ static int mapNumCacheWalls = 0;
 /* local function prototypes */
 static void MapDrawMiniMapWalls(HDC hdc, int x, int y, room_type *room);
 static void MapDrawWall(HDC hdc, int x, int y, float scale, WallData *wall);
-static void MapDrawPlayer(HDC hdc, int x, int y, float scale);
+static void MapDrawPlayer(HDC hdc, int x, int y, float scale, int minimapflags);
 static void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale);
 static void MapDrawWalls(HDC hdc, int x, int y, float scale, room_type *room);
 static void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap );
@@ -247,7 +247,6 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
        if (config.map_annotations)
           MapDrawAnnotations(hdc, room->annotations, xoffset, yoffset, scale, FALSE );
 	    MapDrawObjects(hdc, room->contents, xoffset, yoffset, scale);
-	    MapDrawPlayer(hdc, xoffset, yoffset, scale);
 	 }
 	 else
 	 {
@@ -283,7 +282,6 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
        if (config.map_annotations)
           MapDrawAnnotations( hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, TRUE );
 	    MapDrawObjects(hdc, room->contents, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
-	    MapDrawPlayer(hdc, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
 	 }
 	 SelectObject(hdc, hOldPen);
 	 SelectObject(hdc, hOldBrush);
@@ -395,10 +393,14 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
    {
       room_contents_node *r = (room_contents_node *) (l->data);
 
-      // Skip ourselves, invisible objects and anything with
-      // minimapflags of 0.
-      if ((r->obj.id == player.id)
-         || (r->obj.drawingtype == DRAWFX_INVISIBLE)
+      if (r->obj.id == player.id)
+      {
+         MapDrawPlayer(hdc, x, y, scale, r->obj.minimapflags);
+         continue;
+      }
+
+      // Skip invisible objects and anything with minimapflags of 0.
+      if ((r->obj.drawingtype == DRAWFX_INVISIBLE)
          || (r->obj.minimapflags == MM_NONE))
          continue;
 
@@ -542,9 +544,10 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
 /*****************************************************************************/
 /*
  * MapDrawPlayer:  Draw a line on the map indicating the player's position.
- *   (x, y) is the upper-left corner of the drawing area on hdc.
+ *   (x, y) is the upper-left corner of the drawing area on hdc. Draws a
+ *   light-blue line for MM_TEMPSAFE, otherwise dark-blue standard player line.
  */
-void MapDrawPlayer(HDC hdc, int x, int y, float scale)
+void MapDrawPlayer(HDC hdc, int x, int y, float scale, int minimapflags)
 {
    int dx, dy;
    int ldx, ldy;
@@ -553,7 +556,10 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
    RECT rc;
    int radius = player.width / 2;
 
-   hOldPen = (HPEN) SelectObject(hdc, hPlayerPen);
+   if (minimapflags & MM_TEMPSAFE)
+      hOldPen = (HPEN)SelectObject(hdc, hTempsafePen);
+   else
+      hOldPen = (HPEN)SelectObject(hdc, hPlayerPen);
 
    FindOffsets(player.width * 3 / 4, player.angle, &dx, &dy);
    FindOffsets(player.width / 4, player.angle+NUMDEGREES/4, &ldx, &ldy);

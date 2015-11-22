@@ -6128,7 +6128,8 @@ messages:
       }
 
       % Get the spell power
-      iSpellPower = Send(oSpell,@GetSpellPower,#who=self);
+      iSpellPower = Send(oSpell,@GetSpellPower,#who=self,
+                          #lTargets=lFinalTargets);
 
       % First make sure user has enough magic points, reagents, etc.
       if NOT Send(oSpell,@CanPayCosts,#who=self,#lTargets=lFinalTargets,

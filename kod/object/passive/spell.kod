@@ -660,7 +660,8 @@ messages:
 
       % Make sure caster has enough magic
       if Send(who,@GetMana)
-            < Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
+            < Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower,
+                    #lTargets=lTargets)
       {
          iCrystalizeManaAbility = Send(who,@GetSpellAbility,
                                        #spell_num=SID_CRYSTALIZE_MANA);
@@ -671,7 +672,8 @@ messages:
             oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
             Send(oCrystalizeMana,@DoManaSurge,#who=who,#triggered=TRUE);
             if Send(who,@GetMana)
-                  > Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
+                  > Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower,
+                          #lTargets=lTargets)
             {
                return TRUE;
             }
@@ -1713,7 +1715,7 @@ messages:
       return $;
    }
 
-   GetManaCost(who=$,iSpellPower=0)
+   GetManaCost(who=$,iSpellPower=0,lTargets=$)
    "Returns number of magic points needed to cast spell"
    {
       local iCost, oPrincessShield;
@@ -1747,7 +1749,8 @@ messages:
       oPrincessShield = Send(who,@FindUsing,#class=&PrincessShield);
       if oPrincessShield <> $
       {
-         iCost = iCost - Send(oPrincessShield,@GetSpellManaReduction);
+         iCost = iCost - Send(oPrincessShield,@GetSpellManaReduction,
+                               #lTargets=lTargets);
       }
       
       return bound(iCost,1,$);
@@ -2254,7 +2257,7 @@ messages:
       return;
    }
 
-   GetSpellPower(who=$)
+   GetSpellPower(who=$,lTargets=$)
    {
       local iSpellPower, i, iTerrain, oRoom, oModifierSpell, iAbilityLoss,
             iAbilityGain, iItemModifier, iBase, iPrimaryBonus, iSecondaryBonus,
@@ -2291,7 +2294,8 @@ messages:
       foreach i in Send(who,@GetPlayerUsing)
       {
          iItemModifier = iItemModifier + Send(i,@GetSpellModifier,
-                                              #oSpell=self);
+                                              #oSpell=self,
+                                              #lTargets=lTargets);
       }
    
       % Each school has a bonus for different things.

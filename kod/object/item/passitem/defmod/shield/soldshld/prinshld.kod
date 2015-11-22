@@ -151,13 +151,34 @@ messages:
       return;
    }
 
-   GetSpellManaReduction()
+   GetSpellManaReduction(lTargets=$)
    {
-      local iReduction;
+      local oTarget, oSoldierShield;
 
-      iReduction = ((piFactionRank/3) - 1);
+      % Cess shield gives mana cost reduction against monsters & enemy soldiers
 
-      return iReduction;
+      if Send(SETTINGS_OBJECT,@GetAlwaysApplySoldierBonus)
+      {
+         return ((piFactionRank/3) - 1);
+      }
+
+      if lTargets <> $
+         AND Length(lTargets) = 1
+      {
+         oTarget = First(lTargets);
+
+         oSoldierShield = Send(poOwner,@FindUsing,#class=&SoldierShield);
+         if (IsClass(oTarget,&Player)
+               AND oSoldierShield <> $
+               AND Send(oSoldierShield,@IsEnemyAttack,#who=oTarget,
+                         #what=poOwner,#damage=FALSE))
+            OR IsClass(oTarget,&Monster)
+         {
+            return ((piFactionRank/3) - 1);
+         }
+      }
+
+      return 0;
    }
 
 

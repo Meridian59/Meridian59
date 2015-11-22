@@ -250,6 +250,11 @@ properties:
    % chance for stormy weather
    piStormChance = 25
 
+   % If this is set to true, soldier shields will give their specialized bonuses
+   % under all conditions. If it is false, they will only apply when attacking or being
+   % attacked by another soldier to prevent scenario overlap.
+   pbAlwaysApplySoldierBonus = FALSE
+
 messages:
 
    Constructor()
@@ -653,6 +658,11 @@ messages:
    GetStormChance()
    {
       return piStormChance;
+   }
+   
+   GetAlwaysApplySoldierBonus()
+   {
+      return pbAlwaysApplySoldierBonus;
    }
 
 end

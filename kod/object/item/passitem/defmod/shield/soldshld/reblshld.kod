@@ -155,8 +155,25 @@ messages:
    ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Sets piDamage_reduce for damage reduction in the superclass."
    {
-      % This ranges from 2-4.  At low end, we absorb 0-2 damage.  At high end, 1-4.
-      piDamage_reduce = viDamage_base + ((piFactionRank/3) - 1);
+      local oSoldierShield;
+
+      oSoldierShield = $;
+      if IsClass(what,&Player)
+      {
+         oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield);
+      }
+
+      piDamage_reduce = 0;
+      if (oSoldierShield <> $
+            AND Send(oSoldierShield,@IsEnemyAttack,#who=who,#what=what,
+                      #damage=FALSE))
+         OR IsClass(what,&Monster)
+         OR Send(SETTINGS_OBJECT,@GetAlwaysApplySoldierBonus)
+      {
+         % This ranges from 2-4.  At low end, we absorb 0-2 damage.
+         % At high end, 1-4. This bonus only works against mobs and soldiers.
+         piDamage_reduce = viDamage_base + ((piFactionRank/3) - 1);
+      }
 
       propagate;
    }

@@ -418,7 +418,8 @@ messages:
       local i, bLooped, LossCounter, BaseLossAmount, iHealth,
             LossAmount, iNumItemsInventory, numItemsLost, iLoops,
             iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
-            lSkills, iSkillAbility, numSkillPointsLost, poGhostedPlayer;
+            lSkills, iSkillAbility, numSkillPointsLost, poGhostedPlayer,
+            oSoldierShield;
 
       if who = $
       {
@@ -627,6 +628,15 @@ messages:
          Send(poGhostedPlayer,@MsgSendUser,#message_rsc=penalties_inflicted_plural,
                #parm1=numItemsLost,#parm2=numSpellPointsLost,
                #parm3=numSkillPointsLost);
+      }
+
+      % Let the faction shield know of this person's naughtiness if we took a
+      %  penalty.
+      oSoldierShield = Send(poGhostedPlayer,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+      {
+         % Treat it like a death.
+         Send(oSoldierShield,@OwnerDied,#logoff=TRUE);
       }
 
       % Reset the time to avoid any funny business like potential double

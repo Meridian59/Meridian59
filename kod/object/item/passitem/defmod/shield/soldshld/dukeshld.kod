@@ -152,13 +152,34 @@ messages:
       return;
    }
 
-   GetBaseSpellModifier(oSpell=$)
+   GetBaseSpellModifier(oSpell=$,lTargets=$)
    {
-      local iModifier;
+      local oTarget, oSoldierShield;
 
-      iModifier = ((15 * piFactionRank) / 10);
+      % Duke shield gives a spellpower bonus against monsters & enemy soldiers
 
-      return iModifier;
+      if Send(SETTINGS_OBJECT,@GetAlwaysApplySoldierBonus)
+      {
+         return ((15 * piFactionRank) / 10);
+      }
+
+      if lTargets <> $
+         AND Length(lTargets) = 1
+      {
+         oTarget = First(lTargets);
+
+         oSoldierShield = Send(poOwner,@FindUsing,#class=&SoldierShield);
+         if (IsClass(oTarget,&Player)
+               AND oSoldierShield <> $
+               AND Send(oSoldierShield,@IsEnemyAttack,#who=oTarget,
+                         #what=poOwner,#damage=FALSE))
+            OR IsClass(oTarget,&Monster)
+         {
+            return ((15 * piFactionRank) / 10);
+         }
+      }
+
+      return 0;
    }
 
 

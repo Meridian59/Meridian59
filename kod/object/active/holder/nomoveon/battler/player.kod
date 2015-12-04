@@ -2409,8 +2409,14 @@ messages:
    AddDefaultSpells()
    "Add the spells a player is given when creating a character"
    {
-      Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
-      
+      local i;
+      for i in send(SYS,@GetSpells) 
+      {
+         if send(i,@IsGivenFreeToNewPlayers)
+         {
+            Send(self,@AddSpell,#num=Send(i,@GetSpellNum),#initial=TRUE);
+         }  
+      }
       return;
    }
 
@@ -6381,7 +6387,7 @@ messages:
    {
      piKarma = value;
      Send(self,@NewKarma);
-		
+
      return;
    }
 
@@ -10524,7 +10530,7 @@ messages:
             }
          }
 
-         if NOT IsClass(nobj,&Blink)  % DON'T COUNT BLINK!
+         if NOT send(nobj,@IsGivenFreeToNewPlayers)  % DON'T COUNT DEFAULT SPELLS!
          {
             if nSchool = SS_KRAANAN
                AND nLevel > iKraanan
@@ -10763,7 +10769,7 @@ messages:
          iSchool = Send(oSpellObj,@GetSchool);
          iLevel = Send(oSpellObj,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+         if NOT send(oSpellObj,@IsGivenFreeToNewPlayers)  % DON'T COUNT DEFAULT SPELLS!
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {

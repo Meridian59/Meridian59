@@ -3629,6 +3629,7 @@
    MAX_GUILD_NAME_LEN = 30
    MAX_GUILD_RANK_LEN = 20
    MAX_URL_LEN = 200
+   MAX_CHAT_LEN = 500
    
    %Statistics Constants, must match enum sql_recordtype in database.h
    STAT_TOTALMONEY = 1

@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DuskRatMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DuskRatMask_name_rsc = "dusk rat mask"
+   DuskRatMask_icon_male_rsc = mmdrat.bgf
+   DuskRatMask_icon_female_rsc = mfdrat.bgf
+   DuskRatMask_desc_rsc = \
+      "This mask is the silhouette of the poisonous dusk rat.  Great for playing Hide "
+      "'n Seek with your friends!"
+
+classvars:
+
+   vrName = DuskRatMask_name_rsc
+   vrDesc = DuskRatMask_desc_rsc
+   vrIcon = DuskRatMask_icon_male_rsc
+
+   vrMaleIcon = DuskRatMask_icon_male_rsc
+   vrFemaleIcon = DuskRatMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

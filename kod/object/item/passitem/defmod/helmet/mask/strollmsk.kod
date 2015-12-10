@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StoneTrollMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   StoneTrollMask_name_rsc = "stone troll mask"
+   StoneTrollMask_icon_male_rsc = mmtrl.bgf
+   StoneTrollMask_icon_female_rsc = mftrl.bgf
+   StoneTrollMask_desc_rsc = \
+      "This is the mask of a walking statue, the stone troll!  Lets see who can "
+      "stand still the longest!"
+
+classvars:
+
+   vrName = StoneTrollMask_name_rsc
+   vrDesc = StoneTrollMask_desc_rsc
+   vrIcon = StoneTrollMask_icon_male_rsc
+
+   vrMaleIcon = StoneTrollMask_icon_male_rsc
+   vrFemaleIcon = StoneTrollMask_icon_female_rsc
+
+properties:
+
+   piItem_flags = 49
+   piDrawFX = DRAWFX_SECONDTRANS
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

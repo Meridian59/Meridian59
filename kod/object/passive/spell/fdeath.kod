@@ -66,11 +66,13 @@ messages:
    "Initiation point for the spell."
    {
       local oMonster, oBody, oRoom, oScapegoat, iRand, i, each_obj,
-            row, col, iDropChance;
+            iRow, iCol, iFineRow, iFineCol, iDropChance;
       
       oRoom = Send(who,@GetOwner);
-      row = Send(who,@GetRow);
-      col = Send(who,@GetCol);
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+      iFineRow = Send(who,@GetFineRow);
+      iFineCol = Send(who,@GetFineCol);
 
       if IsClass(oRoom,&MonsterRoom)
          AND Send(oRoom,@GetMonsterList) <> $
@@ -121,42 +123,45 @@ messages:
          {
             if (Send(i,@GetItemUseType) & (ITEM_USE_HAND | ITEM_USE_HEAD))
                AND (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
-               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
+               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
                AND Send(i,@ReqUnUse)
                AND Send(i,@ReqNewOwner,#what=oRoom)
                AND Send(i,@ReqLeaveOwner)
                AND Send(i,@DropOnDeath)
                AND NOT IsClass(i,&RiijaSword)
             {
-               Send(oRoom,@NewHold,#what=i,#new_row=row,#new_col=col);
+               Send(oRoom,@NewHold,#what=i,#new_row=iRow,#new_col=iCol,
+                     #fine_row=iFineRow,#fine_col=iFineCol);
             }
          }
          
          foreach i in Send(who,@GetHolderActive)
          {
             if (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
-               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
+               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
                AND Send(i,@ReqNewOwner,#what=oRoom)
                AND Send(i,@ReqLeaveOwner)
                AND Send(i,@DropOnDeath)
                AND NOT IsClass(i,&RiijaSword)
                AND Random(1,100) < iDropChance
             {
-               Send(oRoom,@NewHold,#what=i,#new_row=row,#new_col=col);
+               Send(oRoom,@NewHold,#what=i,#new_row=iRow,#new_col=iCol,
+                     #fine_row=iFineRow,#fine_col=iFineCol);
             }
          }
          
          foreach i in Send(who,@GetHolderPassive)
          {
             if (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
-               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
+               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
                AND Send(i,@ReqNewOwner,#what=oRoom)
                AND Send(i,@ReqLeaveOwner)
                AND NOT IsClass(i,&RiijaSword)
                AND Send(i,@DropOnDeath)
                AND Random(1,100) < iDropChance
             {
-               Send(oRoom,@NewHold,#what=i,#new_row=row,#new_col=col);
+               Send(oRoom,@NewHold,#what=i,#new_row=iRow,#new_col=iCol,
+                     #fine_row=iFineRow,#fine_col=iFineCol);
             }
          }
       }

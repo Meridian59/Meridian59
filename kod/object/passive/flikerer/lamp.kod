@@ -23,7 +23,8 @@ resources:
    lamp_name_rsc = "lamp"
    lamp_icon_rsc = lamp.bgf
    lamp_desc_off_rsc = "These lamps stand like silent sentinels."
-   lamp_desc_on_rsc = "You have to shield your eyes from the gentle glare of the lamp."
+   lamp_desc_on_rsc = \
+      "You have to shield your eyes from the gentle glare of the lamp."
 
 classvars:
 
@@ -33,7 +34,7 @@ classvars:
    viObject_flags = OF_NOEXAMINE
 
    % Lighting flags.  Default "on" and wavering flags
-   viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING
+   viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING | LIGHT_FLAG_DYNAMIC
 
    % Light color.
    viLightColor = LIGHT_FIRE
@@ -60,9 +61,9 @@ messages:
    SetAnimationSpeed()
    {
       % Set our animations a bit randomly.
-      piAnim_speed = (random(4,7) * 10);
-      viStart_frame = random(2,3);
-      viEnd_frame = random(6,7);
+      piAnim_speed = (Random(4,7) * 10);
+      viStart_frame = Random(2,3);
+      viEnd_frame = Random(6,7);
 
       return;
    }
@@ -74,11 +75,6 @@ messages:
       iPrev_switch = pbIsLit;
       Send(self,@SetSwitchOnTime);
 
-      if iPrev_switch <> pbIsLit
-      {
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
-
       return;
    }
 
@@ -87,9 +83,9 @@ messages:
       local iHour;
 
       % lamps indoors don't shut off at night.
-      if send(self,@GetOwner) <> $
+      if Send(self,@GetOwner) <> $
       {
-         if send(send(self,@GetOwner),@GetOutsideFactor) = OUTDOORS_NONE
+         if Send(Send(self,@GetOwner),@GetOutsideFactor) = OUTDOORS_NONE
          {
             Send(self,@SetSwitch,#bSwitch=ON);
 
@@ -124,9 +120,13 @@ messages:
          vrDesc = lamp_desc_off_rsc;
       }
 
+      if (poOwner <> $)
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

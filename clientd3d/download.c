@@ -12,7 +12,12 @@
 #include "client.h"
 #include "archive.h"
 #include "archive_entry.h"
+
+// Have to disable 4091 when including shlobj.h due to a bug in VS2015.
+// https://connect.microsoft.com/VisualStudio/feedback/details/976983
+#pragma warning(disable:4091)
 #include "shlobj.h"
+#pragma warning(default:4091)
 
 static DownloadInfo *info;  // Info on download
 

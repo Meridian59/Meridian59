@@ -26,8 +26,8 @@ resources:
       "An ornate brass five-candle stand.  The candles are flickering softly."
    candelabra_desc_off = \
       "An ornate brass five-candle stand.  The candles are unlit."
-
-   candelabra_not_in_range = "You are not close enough to the candelabra to use it."
+   candelabra_not_in_range = \
+      "You are not close enough to the candelabra to use it."
 
 classvars:
 
@@ -78,16 +78,16 @@ messages:
    TryActivate(who=$)
    "Return False only if you want user.kod to send its own error message to user."
    {
-      if abs(send(who,@GetRow)-send(self,@GetRow)) > USE_RANGE
-         OR abs(send(who,@GetCol)-send(self,@GetCol)) > USE_RANGE
+      if Abs(Send(who,@GetRow) - Send(self,@GetRow)) > USE_RANGE
+         OR Abs(Send(who,@GetCol) - Send(self,@GetCol)) > USE_RANGE
       {
          Send(who,@MsgSendUser,#message_rsc=candelabra_not_in_range);
 
          return TRUE;
-      }                                                                     
+      }
 
       % Change the flame state.
-      send(self,@SetFlame,#has_flame=(NOT pbIsLit));
+      Send(self,@SetFlame,#has_flame=(NOT pbIsLit));
 
       return TRUE;
    }
@@ -99,7 +99,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -242,6 +242,12 @@ messages:
          plEvilTwins = $;
       }
 
+      % If this Battler has an Evil Twin, delete it too.
+      if poEvilTwin <> $
+      {
+         Send(poEvilTwin,@Delete);
+      }
+
       % If this Battler has Apparitions attacking it, delete them.
       if plApparitionList <> $
       {

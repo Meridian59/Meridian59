@@ -48,10 +48,10 @@ properties:
    piLightIntensity = 255
 
 messages:
-   
+
    Constructor(iIntensity=$)
    {
-      send(self,@SetAnimationSpeed);
+      Send(self,@SetAnimationSpeed);
 
       if iIntensity <> $
       {
@@ -65,7 +65,7 @@ messages:
    {
       piAnim_speed = random(50,100);
 
-      return;   
+      return;
    }
 
    SendAnimation()
@@ -76,7 +76,7 @@ messages:
 
          return;
       }
-   
+
       if piAnim_speed = 0
       {
          AddPacket(1,ANIMATE_NONE,2,viStart_frame);
@@ -107,22 +107,16 @@ messages:
    "this item makes faren spells in the room stronger."
    {
       return TRUE;
-   }   
+   }
 
    SendLightingInformation()
    {
-      if pbIsLit
-      {
-         AddPacket(2,viLightFlags);
-         AddPacket(1,piLightIntensity);
-         AddPacket(2,viLightColor);
+      AddPacket(2,viLightFlags);
+      AddPacket(1,piLightIntensity * pbIsLit);
+      AddPacket(2,viLightColor);
 
-         return;
-      }
-
-      propagate;
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

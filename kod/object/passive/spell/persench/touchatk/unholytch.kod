@@ -38,8 +38,10 @@ resources:
    UnholyTouch_player_killed_something = \
       "Dark evil energy escapes from %s%s, ripping apart their soul."
    UnholyTouch_player_was_killed = \
-      "The touch of %s%s separates body from soul, dragging %s%s to the Underworld."
-
+      "The touch of %s%s separates body from soul, dragging %s%s to "
+      "the Underworld."
+   UnholyTouch_health_gain = \
+      "You siphon your victim's life force, gaining ~g~B%i~B~n health."
    UnholyTouch_spell_intro = \
       "Qor Lv. 1: Delivers the evil of Qor in your touch."
 
@@ -105,6 +107,8 @@ messages:
 
    FindDamage(weapon_used=$,who=$,victim=$)
    {
+      local iHeal;
+
       % We reach this point when the player has successfully hit something.
       % We don't have final damage amounts, so we'll keep the drain small.
       % We're hitting somebody, so we're dealing at least 1 damage. With
@@ -124,13 +128,16 @@ messages:
 
       if Random(1,6) = 1
       {
-         Send(who,@GainHealthNormal,#amount=2);
+         iHeal = 1;
       }
       else
       {
-         Send(who,@GainHealthNormal,#amount=1);
+         iHeal = 2;
       }
-      
+
+      Send(who,@GainHealthNormal,#amount=iHeal);
+      Post(who,@MsgSendUser,#message_rsc=UnholyTouch_health_gain,#parm1=iHeal);
+
       propagate;
    }
 
@@ -162,7 +169,19 @@ messages:
       return iDamage;
    }
 
+   PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
+   "Override because unholy touch needs GetDef instead of GetCapDef."
+   {
+      if vrPlayer_killed_Something = $
+      {
+         return FALSE;
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=vrPlayer_killed_something,
+            #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

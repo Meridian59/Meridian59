@@ -735,11 +735,6 @@ messages:
       if poOwner <> $
       {
          Send(poOwner,@SomethingChanged,#what=self);
-         if piFaction <> FACTION_NEUTRAL AND ptGenerateTroops = $
-            AND IsClass(poOwner,&MonsterRoom)
-         {
-            ptGenerateTroops = CreateTimer(self,@GenerateTroops,piGen_time);
-         }
       }
 
       return;
@@ -791,18 +786,46 @@ messages:
 
    NewOwner(what=$)
    {
-      if IsClass(what,&MonsterRoom)
-      {
-         if piFaction <> FACTION_NEUTRAL
-         {
-            % Start generating troops.
-            ptGenerateTroops = CreateTimer(self,@GenerateTroops,piGen_time);
-         }
-      }
-      else
+      if NOT IsClass(what,&MonsterRoom)
       {
          % Make sure the claimable flag is off.
          pbClaimable = FALSE;
+      }
+
+      propagate;
+   }
+
+   FirstUserEntered()
+   "Always have a soldier present to defend the flagpole when a player "
+   "enters the room. If none are present, call GenerateTroops immediately "
+   "otherwise just set the timer."
+   {
+      local i, each_obj;
+
+      if (poOwner = $
+         OR NOT IsClass(poOwner,&MonsterRoom))
+      {
+         propagate;
+      }
+
+      if (ptGenerateTroops = $)
+      {
+         foreach i in Send(poOwner,@GetHolderActive)
+         {
+            each_obj = First(i);
+
+            if (IsClass(each_obj,&FactionTroop)
+               AND Send(each_obj,@GetFaction) = piFaction)
+            {
+               % We have at least one here already, so just set the timer.
+               ptGenerateTroops = CreateTimer(self,@GenerateTroops,piGen_time);
+
+               propagate;
+            }
+         }
+
+         % None found, spawn one.
+         Send(self,@GenerateTroops);
       }
 
       propagate;
@@ -817,6 +840,7 @@ messages:
       if poOwner = $
          OR NOT IsClass(poOwner,&MonsterRoom)
          OR piFaction = FACTION_NEUTRAL
+         OR NOT Send(poOwner,@IsUserInRoom)
       {
          return;
       }
@@ -954,20 +978,26 @@ messages:
 
       if ptClaimAttempt <> $
       {
-         deleteTimer(ptClaimAttempt);
+         DeleteTimer(ptClaimAttempt);
          ptClaimAttempt = $;
       }
 
       if ptNextAllowedAttempt <> $
       {
-         deleteTimer(ptNextAllowedAttempt);
+         DeleteTimer(ptNextAllowedAttempt);
          ptNextAllowedAttempt = $;
       }
 
       if ptGenerateTroops <> $
       {
-         deleteTimer(ptGenerateTroops);
+         DeleteTimer(ptGenerateTroops);
          ptGenerateTroops = $;
+      }
+
+      if ptHalfStaffOff <> $
+      {
+         DeleteTimer(ptHalfStaffOff);
+         ptHalfStaffOff = $;
       }
 
       propagate;

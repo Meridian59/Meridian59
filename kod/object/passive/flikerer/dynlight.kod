@@ -36,14 +36,15 @@ properties:
 
 messages:
 
-   Constructor(iFlags = LIGHT_FLAG_ON, iIntensity = 255, iColor = LIGHT_BWHITE, bVisible=FALSE)
+   Constructor(iFlags = LIGHT_FLAG_ON, iIntensity = 255, iColor = LIGHT_BWHITE,
+               bVisible=FALSE)
    {
       if bVisible
       {
          vrIcon = DynamicLight_visible_icon;
       }
 
-      post(self,@SetLight,#iFlags=iFlags,#iIntensity=iIntensity,#iColor=iColor);
+      Post(self,@SetLight,#iFlags=iFlags,#iIntensity=iIntensity,#iColor=iColor);
 
       propagate;
    }
@@ -53,10 +54,11 @@ messages:
       % Does not animate
       piAnim_speed = 0;
 
-      return;   
+      return;
    }
 
-   SetLight(iFlags = $, iIntensity = $, iColor = $, iRed = 0, iBlue = 0, iGreen = 0, bNegative = FALSE)
+   SetLight(iFlags = $, iIntensity = $, iColor = $, iRed = 0, iBlue = 0,
+            iGreen = 0, bNegative = FALSE)
    {
       if iFlags <> $
       {
@@ -81,14 +83,14 @@ messages:
             OR iGreen <> 0
             OR iBlue <> 0
          {
-            viLightColor = send(SYS,@GetRGB,#iRed=iRed,#iBlue=iBlue,#iGreen=iGreen,
-                                #bNegative=bNegative);
+            viLightColor = Send(SYS,@GetRGB,#iRed=iRed,#iBlue=iBlue,
+                                 #iGreen=iGreen,#bNegative=bNegative);
          }
       }
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -107,11 +109,11 @@ messages:
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
-   }   
+   }
 
    SetVisible(value = $)
    {
@@ -133,7 +135,7 @@ messages:
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -149,7 +151,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

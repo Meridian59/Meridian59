@@ -52,11 +52,10 @@ messages:
 
    SetAnimationSpeed()
    {
-      piAnim_speed = random(100,140);
+      piAnim_speed = Random(100,140);
 
-      return;   
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

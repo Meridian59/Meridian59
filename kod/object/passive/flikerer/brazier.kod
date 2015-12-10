@@ -22,7 +22,8 @@ resources:
 
    brazier_name_rsc = "brazier"
    brazier_icon_rsc = brazier.bgf
-   brazier_desc_rsc = "The flame burns bright, offering welcome light to the surroundings."
+   brazier_desc_rsc = \
+      "The flame burns bright, offering welcome light to the surroundings."
 
 classvars:
 
@@ -58,11 +59,11 @@ messages:
    SetAnimationSpeed()
    {
       % Set our animations a bit randomly.
-      piAnim_speed = (random(10,12) * 10);
-      viStart_frame = random(2,3);
-      viEnd_frame = random(6,7);
+      piAnim_speed = (Random(10,12) * 10);
+      viStart_frame = Random(2,3);
+      viEnd_frame = Random(6,7);
 
-      return;   
+      return;
    }
 
    ReqNewOwner(what = $)
@@ -75,15 +76,14 @@ messages:
       pbIsLit = has_flame;
       if pbIsLit
       {
-         % randomize each time it comes on.
-         send(self,@SetAnimationSpeed);
+         % Randomize each time it comes on.
+         Send(self,@SetAnimationSpeed);
       }
 
       Send(poOwner,@SomethingChanged,#what=self);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

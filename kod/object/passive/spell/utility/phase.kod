@@ -222,15 +222,15 @@ messages:
          Send(self,@NotifyRoomPhaseIn,#who=who);
          Send(who,@RemoveEnchantment,#what=self);
          Send(who,@LogonDelay);
+         Send(who,@UnphaseMinions);
       }
       else
       {
          Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
          Send(who,@BreakTrance,#event=EVENT_STEER);
-         Send(SYS,@DeletePlayerReflections,#who=who);
          Send(who,@FreezeAllEnchantments);
          Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
-
+         Send(who,@PhaseMinions);
          % Post this because FreezeAllEnchantments checks for phase applied
          Post(who,@StartEnchantment,#what=self);
          Post(who,@StartPhaseTimer);

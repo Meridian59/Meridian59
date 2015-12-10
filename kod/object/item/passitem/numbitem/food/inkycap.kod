@@ -38,7 +38,7 @@ classvars:
 
    viIndefinite = ARTICLE_AN
 
-   viBulk = 10
+   viBulk = 5
    viWeight = 4
    viValue_average = 250
 

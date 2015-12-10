@@ -37,8 +37,8 @@ classvars:
    viIndefinite = ARTICLE_AN
 
    viValue_average = 30
-   viWeight = 6
-   viBulk = 5
+   viWeight = 4
+   viBulk = 4
 
 properties:
 

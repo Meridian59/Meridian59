@@ -43,7 +43,7 @@ classvars:
 
    viValue_average = 100
    viWeight = 4
-   viBulk = 5
+   viBulk = 3
 
 properties:
 

@@ -82,7 +82,32 @@ messages:
       propagate;
    }
 
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   "Disallow attacks between the two parts of the room. "
+   {
+      local iWhatCol, iVicCol;
+      if (what = $
+         OR victim = $)
+      {
+         propagate;
+      }
+
+      iWhatCol = Send(what,@GetCol);
+      iVicCol = Send(victim,@GetCol);
+      if (iWhatCol = $
+         OR iVicCol = $)
+      {
+         propagate;
+      }
+      
+      if ((iWhatCol > 25 AND iVicCol < 25)
+         OR (iWhatCol < 25 AND iVicCol > 25))
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

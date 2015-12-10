@@ -47,6 +47,8 @@ properties:
    prRoom = room_castle1
    piRoom_num = RID_CASTLE1
 
+   pbMobUseDoors = TRUE
+
 messages:
 
    Constructed()
@@ -118,6 +120,152 @@ messages:
       plExits = Cons([ 4, 33, RID_DUNGEON, 24, 2, ROTATE_NONE ],plExits);
 
       propagate;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS/2,
+                  fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
+                  non_monsters_only = FALSE)
+   {
+      % Moves monsters through the doors. If this message is modified,
+      % take care not to choose new_row values that would cause an infinite
+      % loop. Random check also present to help prevent that from happening
+      % by mistake, and to stop the mobs potentially moving back and forward
+      % quickly. This can be turned on/off via pbMobUseDoors.
+      if (NOT pbMobUseDoors)
+      {
+         propagate;
+      }
+
+      if IsClass(what,&Monster)
+      {
+         if (new_row = 9
+               OR new_row = 8)
+            AND (new_col = 4
+               OR new_col = 10
+               OR new_col = 26
+               OR new_col = 32)
+         {
+            if Random(1,5) = 1
+            {
+               if (new_row = 9)
+               {
+                  Send(self,@SomethingMoved,#what=what,
+                        #new_row=7,#new_col=new_col,
+                        #fine_row=fine_row,#fine_col=fine_col,
+                        #speed=speed);
+               }
+               else
+               {
+                  Send(self,@SomethingMoved,#what=what,
+                        #new_row=10,#new_col=new_col,
+                        #fine_row=fine_row,#fine_col=fine_col,
+                        #speed=speed);
+               }
+
+               return;
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   "Disallow attacks between the two parts of the room. "
+   {
+      local iWhatRow, iWhatCol, iVicRow, iVicCol, iTmp;
+      if (what = $
+         OR victim = $)
+      {
+         propagate;
+      }
+
+      iWhatRow = Send(what,@GetRow);
+      iWhatCol = Send(what,@GetCol);
+      iVicRow = Send(victim,@GetRow);
+      iVicCol = Send(victim,@GetCol);
+      if (iWhatRow = $
+         OR iWhatCol = $
+         OR iVicRow = $
+         OR iVicCol = $)
+      {
+         propagate;
+      }
+      
+      if (iWhatRow >= 9 AND iVicRow >= 9)
+      {
+         propagate;
+      }
+
+      if (iWhatRow >= 9)
+      {
+         iTmp = iWhatRow;
+         iWhatRow = iVicRow;
+         iVicRow = iTmp;
+         iTmp = iWhatCol;
+         iWhatCol = iVicCol;
+         iVicCol = iTmp;
+      }
+
+      if (iWhatRow < 9)
+      {
+         if (iWhatCol < 8)
+         {
+            if (iVicRow > 8
+               OR iVicCol > 7)
+            {
+               return FALSE;
+            }
+
+            propagate;
+         }
+
+         if (iWhatCol < 13)
+         {
+            if (iVicRow > 8
+               OR iVicCol < 8
+               OR iVicCol > 12)
+            {
+               return FALSE;
+            }
+
+            propagate;
+         }
+
+         if (iWhatCol > 23
+            AND iWhatCol < 30)
+         {
+            if (iVicRow > 8
+               OR iVicCol < 24
+               OR iVicCol > 29)
+            {
+               return FALSE;
+            }
+
+            propagate;
+         }
+
+         if (iWhatCol > 29
+            AND iWhatCol < 35)
+         {
+            if (iVicRow > 8
+               OR iVicCol < 30
+               OR iVicCol > 34)
+            {
+               return FALSE;
+            }
+
+            propagate;
+         }
+
+         if (iVicCol > 12
+               OR iVicCol < 24)
+         {
+            propagate;
+         }
+      }
+
+      return FALSE;
    }
 
 end

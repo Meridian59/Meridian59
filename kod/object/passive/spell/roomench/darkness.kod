@@ -48,6 +48,8 @@ classvars:
    vrSucceed_wav = darkness_sound
    vrSpell_intro = darkness_spell_intro
 
+   vrAlreadyEnchanted = darkness_unnecessary
+
    viSpell_num = SID_DARKNESS
    viSchool = SS_QOR
    viMana = 8
@@ -67,27 +69,6 @@ messages:
       plReagents = Cons([&EntrootBerry,1],plReagents);
 
       return;
-   }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=darkness_unnecessary);
-
-         return FALSE;
-      }
-
-      propagate;
    }
 
    CastSpell(who = $, iSpellPower = 0)

@@ -44,6 +44,8 @@ classvars:
    vrDesc = light_desc_rsc
    vrSucceed_wav = light_sound
 
+   vrAlreadyEnchanted = light_unnecessary
+
    vrSpell_intro = light_spell_intro
 
    viSpell_num = SID_LIGHT
@@ -65,27 +67,6 @@ messages:
 
       return;
    }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-      % check if room already has light
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-	 Send(who,@MsgSendUser,#message_rsc=light_unnecessary);
-	 return False;
-      }
-
-      propagate;
-   }
-
 
    CastSpell( who = $, iSpellPower = 0 )
    "Initiation point for the spell."

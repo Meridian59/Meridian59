@@ -38,7 +38,7 @@ resources:
    heat_new_entrant = \
       "Faren earth magic fills the room heating all armor to a molten state."
    heat_kills_you = "You expire from burns caused by your armor."
-   heat_kills_him = "%s expires from armor-induced burns."
+   heat_kills_him = "%s%s expires from armor-induced burns."
 
    heat_hurts_you = \
       "You offer a yelp of pain as your red-hot armor presses against your skin."
@@ -47,17 +47,21 @@ resources:
 
 classvars:
 
-   viSpell_num = SID_HEAT
-
    vrName = heat_name_rsc
    vrIcon = heat_icon_rsc
    vrDesc = heat_desc_rsc
 
+   vrAlreadyEnchanted = heat_already_enchanted
+   vrRoomEnchKilled = heat_kills_you
+   vrRoomEnchKiller = heat_kills_him
+   vrRoomEnchHit = heat_hurts_you
+
+   viAttack_spell = ATCK_SPELL_FIRE
+   viSpell_num = SID_HEAT
    viSchool = SS_FAREN
    viSpell_level = 3
    viMana = 8
 
-   viOutlaw = TRUE
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
 
@@ -80,38 +84,6 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-      
-      oRoom = Send(who,@GetOwner);
-      
-      % Check for enchantment already applied.
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=heat_already_enchanted);
-         
-         return FALSE;
-      }
-      
-      % Disallow in non-combat areas.  Towns, for example
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_PK)
-         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
-      {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
-         
-         return FALSE;
-      }
-      
-      propagate;
-   }
-
    CastSpell( who = $, iSpellPower = 0 )
    "Initiation point for the spell."
    {
@@ -127,20 +99,21 @@ messages:
       iPeriod = iPeriod * 1000;
 
       Send(oRoom,@RoomStartEnchantment,#what=self,#time=iPeriod,
-           #state=iPeriod+iSpellPower,#addicon=TRUE,#lastcall=FALSE);
+            #state=[iPeriod + iSpellPower, who],#addicon=TRUE,#lastcall=FALSE);
 
       propagate;
    }
 
-   StartPeriodicEnchantment( who = $, where = $, state = 0 )
+   StartPeriodicEnchantment(who = $, where = $, state = $)
    "Sends enchantment message to room like CastSpell for most room enchantments, "
    "but silent, and done as often as necessary"
    {
-      local iNext_time, iPower, iPeriod;
-      
+      local iNext_time, iCombined, iPower, iPeriod;
+
       % First, extract the spellpower from the state
-      iPower = state mod 100;
-      state = state - iPower;
+      iCombined = First(state);
+      iPower = iCombined MOD 100;
+      iCombined = iCombined - iPower;
 
       % Ranges from 7 to 17 seconds
       iPeriod = (170-iPower)/10;
@@ -149,114 +122,69 @@ messages:
       
       % Global effects of the enchantment
       % State is elapsed time in ms
-      iNext_time = state + iPeriod;
+      iNext_time = iCombined + iPeriod;
       if iNext_time >= HEAT_TIME
       {
-         Send(where,@RoomStartEnchantment,#what=self,#time=HEAT_TIME-state,
-              #state=HEAT_TIME+iPower,#addicon=False,#lastcall=TRUE);
-         return ;
+         Send(where,@RoomStartEnchantment,#what=self,#time=HEAT_TIME-iCombined,
+               #state=[HEAT_TIME + iPower, Nth(state,2)],#addicon=False,
+               #lastcall=TRUE);
+
+         return;
       }
-      
+
       Send(where,@RoomStartEnchantment,#what=self,#time=iPeriod,
-           #state=iNext_time+iPower,#addicon=FALSE,#lastcall=FALSE);
-           
-      Send(where,@EnchantAllOccupants,#what=self,#iSpellPower=iPower);
-      
+            #state=[iNext_time+iPower, Nth(state,2)],#addicon=FALSE,
+            #lastcall=FALSE);
+
+      Send(where,@EnchantAllOccupants,#what=self,#iSpellPower=iPower,
+            #state=state);
+
       return;
    }
-   
 
-   StartEnchantmentNewOccupant( who = $ )
+   StartEnchantmentNewOccupant(who = $,state = $)
    "Called on new occupants of the enchanted room."
    {
       Send(who,@MsgSendUser,#message_rsc=heat_new_entrant);
-      Send(self,@StartEnchantment,#who=who);
-      
+      Send(self,@StartEnchantment,#who=who,#state=state);
+
       return;
    }
 
-   StartEnchantment(who = $, iSpellpower = 0)
+   StartEnchantment(who = $, state = $)
    "Does enchantment effect on one player"
    {
-      local oRoom, bDoDamage, iDamage, oArmor;
-
-      if who = $
+      if (who = $)
       {
          return;
       }
 
-      if ((IsClass(who,&DM)
-            AND Send(who,@PlayerIsImmortal))
-         OR Send(who,@IsInCannotInteractMode))
-      {
-         return;
-      }
-
-      bDoDamage = FALSE;
-
-      oArmor = Send(who,@GetArmor);
-      oRoom = Send(who,@GetOwner);
-
-      if oArmor <> $
-      {
-         if Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         {
-            bDoDamage = TRUE;
-         }
-         
-         if Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
-         {
-            bDoDamage = TRUE;
-         }
-         
-         if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
-         {
-            if Send(oRoom,@IsValidTarget,#who=who)
-            {
-               bDoDamage = TRUE;
-            }
-            else
-            {
-               bDoDamage = FALSE;
-            }
-         }
-      }
-      
-      if bDoDamage
-      {
-         iDamage = Send(oArmor,@GetHeatDamage);
-
-         % robes = no heat damage
-         if iDamage = 0
-         {
-            return;
-         }    
-
-         Send(who,@MsgSendUser,#message_rsc=heat_hurts_you);
-         
-         if Send(who,@AssessDamage,#report=FALSE,#what=self,#damage=iDamage,
-            #aspell=ATCK_SPELL_FIRE) = $
-         {
-            if IsClass(who,&Player)
-            {
-               Send(who,@MsgSendUser,#message_rsc=heat_kills_you);
-            }
-            
-            Send(who,@Killed,#what=self);
-            
-            % Currently no one is charged with the death
-            Send(oRoom,@SomethingKilled,#what=self,#victim=who);
-         }
-      }
+      Send(self,@RoomEnchantmentDamage,#oTarget=who,#state=state);
 
       return;
+   }
+
+   ComputeDamage(who=$,oTarget=$,iDamage=$)
+   {
+      local i, lUsing;
+
+      lUsing = Send(oTarget,@GetPlayerUsing);
+
+      iDamage = 0;
+
+      foreach i in lUsing
+      {
+         iDamage = iDamage + Send(i,@GetHeatDamage);
+      }
+
+      return iDamage;
    }
 
    EndSpell(where = $, state = $)
    "Called when spell expires."
    {
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=heat_off,#what=self);
-      
+
       return;
    }
 
@@ -264,7 +192,7 @@ messages:
    "Ends enchantment effect on one player"
    {
       Send(who,@RemoveEnchantment,#what=self);
-      
+
       return;
    }
 

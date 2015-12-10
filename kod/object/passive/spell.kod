@@ -775,9 +775,7 @@ messages:
 
    CanPayCosts(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)
    {
-      local i, oRoom, iRand, oSpell, oTarget;
-
-      oTarget = $;
+      local i, each_obj, oRoom, iRand, oSpell, oTarget;
 
       if lTargets <> $
          AND Length(lTargets) = 1
@@ -785,7 +783,7 @@ messages:
          % Extract first target for handling single target code.
          oTarget = First(lTargets);
 
-         if IsClass(oTarget,&Player)
+         if IsClass(oTarget,&User)
             AND Send(oTarget,@IsInCannotInteractMode)
          {
             Send(who,@MsgSendUser,#message_rsc=cannot_cast_on_phased_out,
@@ -796,7 +794,7 @@ messages:
          }
       }
 
-      if NOT IsClass(who,&Player)
+      if NOT IsClass(who,&User)
       {
          return TRUE;
       }
@@ -849,8 +847,7 @@ messages:
          }
 
          % Don't check the attack time for itemcast spells. The items
-         % themselves will allow or disallow this - for instance a
-         % potion can be used during the cooldown, but a wand cannot.
+         % themselves will allow or disallow this.
          if NOT Send(who,@IsOkayAttackTime,#seconds=viPostCast_Time)
          {
             return FALSE;
@@ -874,10 +871,10 @@ messages:
          piCast_attempts = piCast_attempts + 1;
          foreach i in lTargets
          {
-            if IsClass(i,&Player)
+            if IsClass(i,&User)
             {
                piCast_attempts_at_players = piCast_attempts_at_players + 1;
-               
+
                break;
             }
          }
@@ -926,15 +923,16 @@ messages:
       % Check for newbies/mules using attack or annoyance spells.
       if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
-         AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE) 
+         AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
       {
-         if oTarget = $ 
+         if oTarget = $
          {
             if viNoNewbieOffense
             {
                foreach i in Send(oRoom,@GetHolderActive)
                {
-                  if IsClass(First(i),&Player) AND First(i) <> who
+                  each_obj = First(i);
+                  if IsClass(each_obj,&User) AND each_obj <> who
                   {
                      Send(who,@MsgSendUser,#message_rsc=spell_guardian);
 
@@ -945,7 +943,7 @@ messages:
          }
          else
          {
-            if oTarget <> who AND IsClass(oTarget,&Player)
+            if oTarget <> who AND IsClass(oTarget,&User)
             {
                if viNoNewbieOffense
                {
@@ -958,8 +956,8 @@ messages:
                   AND oTarget <> who
                {
                   Send(who,@MsgSendUser,#message_rsc=spell_cant_help,
-                       #parm1=Send(oTarget,@GetDef),
-                       #parm2=Send(oTarget,@GetName));
+                        #parm1=Send(oTarget,@GetDef),
+                        #parm2=Send(oTarget,@GetName));
 
                   return FALSE;
                }
@@ -978,7 +976,7 @@ messages:
       if Send(self,@IsHarmful)
       {
          % Can the caster attack the target(s) with the harmful spell?
-         if NOT Send(self,@CheckPlayerAttack,#who=who,#lTargets=lTargets)
+         if NOT Send(self,@CheckPlayerAttackCast,#who=who,#lTargets=lTargets)
          {
             return FALSE;
          }
@@ -1001,7 +999,7 @@ messages:
          % A bit kludgish here.  We call PayCosts here to simulate casting the
          % spell with no effect.  There should be a special function for this,
          % but we're cutting corners to save money!
-         if not bItemCast
+         if NOT bItemCast
          {
             Send(self,@PayCosts,#who=who,#iSpellpower=iSpellpower,
                   #lTargets=lTargets);
@@ -1070,7 +1068,7 @@ messages:
       return lTargets;
    }
 
-   CheckPlayerAttack(who=$,lTargets=$)
+   CheckPlayerAttackCast(who=$,lTargets=$)
    "Checks to see if player can attack said targets."
    {
       local oRoom, i, lFinalTargets, oTarget;
@@ -1089,8 +1087,12 @@ messages:
                i = Send(oRoom,@HolderExtractObject,#data=i);
                if i = who
                   OR NOT IsClass(i,&Battler)
-                  OR (IsClass(i,&DM) AND Send(i,@PlayerIsImmortal))
-                  OR (IsClass(i,&Player) AND Send(i,@IsInCannotInteractMode))
+                  OR (IsClass(i,&DM)
+                     AND Send(i,@PlayerIsImmortal))
+                  OR (IsClass(i,&User)
+                     AND (Send(i,@IsInCannotInteractMode)
+                        OR (NOT Send(i,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+                        OR Send(i,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)))
                   OR (IsClass(i,&Monster)
                      AND (Send(i,@GetBehavior) & AI_NPC))
                   OR Send(oRoom,@IsArena)
@@ -1114,12 +1116,12 @@ messages:
 
             % Don't cast the spell if there's no valid targets.
             if lFinalTargets = $
-               OR length(lFinalTargets) = 0
+               OR Length(lFinalTargets) = 0
             {
                if Send(self,@GetNumSpellTargets) <> 1
                {
                   Send(who,@MsgSendUser,#message_rsc=spell_no_targets,
-                       #parm1=Send(self,@GetName));
+                        #parm1=Send(self,@GetName));
                }
 
                return FALSE;
@@ -1981,8 +1983,8 @@ messages:
       }
 
       if (Send(self,@IsHarmful)
-          AND IsClass(who,&Player)
-          AND NOT Send(self,@CheckPlayerAttack,#who=who,#lTargets=lTargets))
+            AND IsClass(who,&User)
+            AND NOT Send(self,@CheckPlayerAttackCast,#who=who,#lTargets=lTargets))
          OR NOT Send(Send(who,@GetOwner),@ReqSpellCast,#who=who,#oSpell=self,
                      #lItems=lTargets)
       {
@@ -2314,8 +2316,8 @@ messages:
          if Send(oRoom,@IsEnchanted,#what=SID_FORCES_OF_LIGHT)
          {
             % Add a function of the spellpower.
-            iAbilityGain = Send(oRoom,@GetEnchantMentState,
-                                #what=SID_FORCES_OF_LIGHT);  
+            iAbilityGain = Send(oRoom,@GetEnchantmentState,
+                                 #what=SID_FORCES_OF_LIGHT);
             iAbilityGain = iAbilityGain/10;
             iSecondaryBonus = iSecondaryBonus + iAbilityGain;
          }
@@ -2333,7 +2335,7 @@ messages:
          {
             % This reconstructs the darkness spellpower.
             iAbilityGain = Send(oRoom,@GetEnchantmentState,
-                                #what=SID_DARKNESS);
+                                 #what=SID_DARKNESS);
             iAbilityGain = -(iAbilityGain - 25);
             iAbilityGain = iAbilityGain/10;
             iSecondaryBonus = iSecondaryBonus + iAbilityGain;
@@ -2582,6 +2584,12 @@ messages:
    "Used for flavor text on player-enchanted items."
    {
       return vrEnchantment_type;
+   }
+
+   % This is for the attack message infrastructure.
+   GetAttackName()
+   {
+      return vrName;
    }
 
    GetRingCharges()

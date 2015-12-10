@@ -13,10 +13,10 @@ QorBane_new_entrant = de \
    "Dieser Ort ist von einer heiligen Gegenwart umgeben. Du kannst fühlen, "
    "das Shal'ill dich beobachtet und dich davor warnt die dunklen Zauber "
    "Qors auszuüben."
-QorBane_HurtCaster = de \
+QorBane_hit_rsc = de \
    "Als Du den dunklen Zauber ausführst, spürst Du einen Stich und erleidest "
    "Verbrühungen durch die heilie Kraft"
-QorBane_kills_you = de \
+QorBane_kill_rsc = de \
    "Als Du den dunklen Zauber ausführst, spürst Du einen Stich und erleidest "
    "Verbrühungen durch die heilie Kraft.Du schreist noch ein einiziges Mal "
    "auf bevor die Heiligkeit dich tötet."

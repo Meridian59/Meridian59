@@ -263,6 +263,12 @@ messages:
       return FALSE;
    }
 
+   PossessesA(class = $)
+   "Override from Holder, optimised for NoMoveOn."
+   {
+      return GetListElemByClass(plPassive,class) <> $;
+   }
+
    SquaredDistanceTo(what = $)
    "Computes squared distance to <what>. Returns $ for any object that is "
    "not within a room."

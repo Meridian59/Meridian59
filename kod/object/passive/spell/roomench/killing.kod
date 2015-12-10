@@ -45,6 +45,8 @@ classvars:
    vrIcon = killingfields_icon_rsc
    vrDesc = killingfields_desc_rsc
 
+   vrAlreadyEnchanted = killingfields_already_enchanted
+
    viSpell_num = SID_KILLING_FIELDS
    viMana = 9
    viSchool = SS_KRAANAN
@@ -64,28 +66,6 @@ messages:
       plReagents = Cons([&OrcTooth,1],plReagents);
 
       return;
-   }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-
-      % check for enchantment already applied
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=killingfields_already_enchanted);
-         
-         return FALSE;
-      }
-
-      propagate;
    }
 
    CastSpell(who = $,iSpellPower = 0)

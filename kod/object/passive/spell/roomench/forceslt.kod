@@ -43,6 +43,8 @@ classvars:
    vrIcon = forcesoflight_icon_rsc
    vrDesc = forcesoflight_desc_rsc
 
+   vrAlreadyEnchanted = forcesoflight_already_enchanted
+
    viSpell_num = SID_FORCES_OF_LIGHT
    viSchool = SS_SHALILLE
    viSpell_level = 4
@@ -64,28 +66,6 @@ messages:
       plReagents = Cons([&Emerald,1],plReagents);
 
       return;
-   }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-
-      % check for enchantment already applied
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-	      Send(who,@MsgSendUser,#message_rsc=forcesoflight_already_enchanted);
-	      
-	      return FALSE;
-      }
-
-      propagate;
    }
 
    CastSpell(who = $, iSpellpower = $)

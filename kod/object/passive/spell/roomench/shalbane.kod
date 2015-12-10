@@ -21,21 +21,32 @@ resources:
    ShalilleBane_name_rsc = "Shal'illebane"
    ShalilleBane_icon_rsc = ishabane.bgf
    ShalilleBane_desc_rsc = \
-      "Permeates an area with the unholy essence of Qor, harming any who attempt to call on the holy energy of Shal'ille.  "
-      "Requires yrxl sap and fairy wings to cast."
+      "Permeates an area with the unholy essence of Qor, harming any who "
+      "attempt to call on the holy energy of Shal'ille.  Requires one vial of "
+      "yrxl sap and one fairy wing to cast."
    
-   ShalilleBane_unnecessary = "This area is already polarized against Shal'ille."
+   ShalilleBane_unnecessary = \
+      "This area is already polarized against Shal'ille."
 
-   ShalilleBane_on = "A magical force enters the area, filling the air with an acrid odor.  The shadows seem "
-      "to deepen almost imperceptibly, and a chill creeps up your spine, making the hairs on your arms stand up."
+   ShalilleBane_on = \
+      "A magical force enters the area, filling the air with an acrid odor.  "
+      "The shadows seem to deepen almost imperceptibly, and a chill creeps "
+      "up your spine, making the hairs on your arms stand up."
    ShalilleBane_off = "The evil force dissipates."
-   ShalilleBane_new_entrant = "This place is permeated by an evil presence;  you can feel the eyes of Qor "
-      "watching you, warning you against calling upon the magical forces of Shal'ille."
+   ShalilleBane_new_entrant = \
+      "This place is permeated by an evil presence;  you can feel the eyes "
+      "of Qor watching you, warning you against calling upon the magical "
+      "forces of Shal'ille."
 
-   ShalilleBane_HurtCaster = "As you utter the final syllables of your spell, a bolt of unholy "
+   ShalilleBane_hit_rsc = \
+      "As you utter the final syllables of your spell, a bolt of unholy "
       "energy slams into your body."
-   ShalilleBane_kills_you = "As you utter the final syllables of your spell a bolt of unholy "
+   ShalilleBane_kill_rsc = \
+      "As you utter the final syllables of your spell a bolt of unholy "
       "energy slams into your body, killing you instantly."
+   ShalilleBane_killer_rsc = \
+      "%s%s is destroyed by a bolt of unholy energy from your Shal'illebane "
+      "enchantment."
 
    ShalilleBane_sound = qshalban.wav
 
@@ -45,6 +56,12 @@ classvars:
    vrIcon = ShalilleBane_icon_rsc
    vrDesc = ShalilleBane_desc_rsc
 
+   vrAlreadyEnchanted = ShalilleBane_unnecessary
+   vrRoomEnchKilled = ShalilleBane_kill_rsc
+   vrRoomEnchKiller = ShalilleBane_killer_rsc
+   vrRoomEnchHit = ShalilleBane_hit_rsc
+
+   viAttack_spell = ATCK_SPELL_UNHOLY
    viSpell_num = SID_SHALILLEBANE
    viSchool = SS_QOR
    viMana = 15
@@ -55,8 +72,7 @@ classvars:
    viMeditate_ratio = 30
 
    vrSucceed_wav =  ShalilleBane_sound
-   viOutlaw = True
-   viHarmful = True
+   viHarmful = TRUE
    vbCastable_in_HappyLand = FALSE
 
 properties:
@@ -72,27 +88,6 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-      % check if room already has this
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=ShalilleBane_unnecessary);
-         return FALSE;
-      }
-
-      propagate;
-   }
-
-
    CastSpell( who = $, iSpellPower = 0 )
    "Initiation point for the spell."
    {
@@ -107,7 +102,7 @@ messages:
 
       % global effects of the enchantment
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=ShalilleBane_on,#what=self);
-      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellPower,
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=[iSpellPower,who],
             #time=send(self,@GetDuration,#iSpellPower=iSpellPower));
       
       propagate;
@@ -118,79 +113,33 @@ messages:
       local iDuration;
 
       iDuration = 45 + (iSpellPower*3);  %% 30 - 228 seconds
-      iDuration = iDuration * 1000;      %% convert to seconds            
+      iDuration = iDuration * 1000;      %% convert to seconds
 
-      return random(iDuration/2,iDuration);
+      return Random(iDuration/2,iDuration);
    }
 
    StartEnchantmentNewOccupant( who = $ )
    "Called on new occupants of the enchanted room."
    {
       Send(who,@MsgSendUser,#message_rsc=ShalilleBane_new_entrant);
+
       return;
    }
 
    EndSpell( where = $, state = $ )
    "Called when spell expires."
    {
-      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=ShalilleBane_off,#what=self);
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=ShalilleBane_off,
+            #what=self);
+
       return;
    }
 
-   HurtCaster(shalCaster=$, iSpellPower=0, shalSpellLevel=1)
+   ComputeDamage(iSpellPower=$,iLevel=1)
    {
-      local bDoDamage,oRoom,iDamageAmt;
-      
-      bDoDamage = FALSE;
-
-      if IsClass(shalCaster,&Monster)
-         OR send(shalCaster,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         OR send(send(shalCaster,@GetOwner),@checkroomflag,#flag=ROOM_KILL_ZONE)
-      {
-         bDoDamage = TRUE;
-      }
-      
-      if send(send(shalCaster,@getowner),@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
-      {
-         if send(send(shalCaster,@GetOwner),@IsValidTarget,#who=shalCaster)
-         {
-            bDoDamage = TRUE;
-         }
-         else
-         {
-            bDoDamage = FALSE;
-         }
-      }
-      
-      if bDoDamage
-      {
-         if IsClass(shalCaster,&Player)
-         {
-            Send(shalCaster,@MsgSendUser,#message_rsc=ShalilleBane_HurtCaster);
-         }
-         
-         % Conceptually: ((iSpellPower/15) * (shalSpellLevel/2) * random(8,12))/10
-         iDamageAmt = (iSpellPower * shalSpellLevel * random(8,12))/300;
-         
-         if Send(shalCaster,@AssessDamage,#report=FALSE,#what=self,
-                 #damage=iDamageAmt,#aspell=ATCK_SPELL_UNHOLY) = $
-         {
-            if IsClass(shalCaster,&Player)
-            {
-               Send(shalCaster,@MsgSendUser,#message_rsc=ShalilleBane_kills_you);
-            }
-            
-            oRoom = Send(shalCaster,@GetOwner);
-            Send(shalCaster,@Killed,#what=self);
-            
-            % currently no one is charged with the murder
-            Send(oRoom,@SomethingKilled,#what=self,#victim=shalCaster);
-         }
-      }
-
-      return;
+      % Conceptually: ((iSpellPower/15) * (iLevel/2) * Random(8,12))/10
+      return (iSpellPower * iLevel * Random(8,12))/300;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

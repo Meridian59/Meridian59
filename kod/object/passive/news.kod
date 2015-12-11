@@ -22,6 +22,11 @@ resources:
    news_icon_rsc = news.bgf
    news_desc_rsc = "You are looking at a public posting device."
 
+   news_users_cant_delete = \
+      "Only DMs, Admins and Moderators may delete posts from this newsglobe."
+   news_not_own_post = \
+      "You can only delete your own posts."
+
 classvars:
 
    vrIcon = news_icon_rsc
@@ -135,6 +140,68 @@ messages:
       return;
    }
 
+   MovePostToGodGlobe(who=$, index=$)
+   {
+      local lArticle, oNews;
+
+      if (index = $)
+      {
+         Debug("MovePostToGodGlobe passed $ index! Not moving post.");
+
+         return FALSE;
+      }
+
+      oNews = Send(SYS,@FindNewsByNum,#num=NID_GODROOM);
+      if (oNews = $)
+      {
+         Debug("MovePostToGodGlobe couldn't find GodGlobe! Not moving post.");
+
+         return FALSE;
+      }
+
+      % Get the article we want to move.
+      lArticle = Send(self,@GetArticle,#index=index);
+
+      if (lArticle = $)
+      {
+         Debug("MovePostToGodGlobe unable to find article with index ",
+               index," not moving post.");
+
+         return FALSE;
+      }
+
+      if (who <> $
+         AND NOT IsClass(who,&DM))
+      {
+         if (NOT Send(SETTINGS_OBJECT,@CanUsersRemoveOwnPosts))
+         {
+            Send(who,@MsgSendUser,#message_rsc=news_users_cant_delete);
+
+            return FALSE;
+         }
+
+         if (Nth(lArticle,2) <> who)
+         {
+            Send(who,@MsgSendUser,#message_rsc=news_not_own_post);
+
+            return FALSE;
+         }
+      }
+
+      % Article is [index, player obj_id, time, title, body]
+      % index and time are not preserved when copying. If deleting
+      % from god globe, don't try to move the post.
+      if (oNews <> self)
+      {
+         Send(oNews,@PostNews,#what=Nth(lArticle,2),#title=Nth(lArticle,4),
+               #body=Nth(lArticle,5));
+      }
+
+      Send(self,@DeleteMail,#number=index);
+
+      return TRUE;
+   }
+
    GetNumArticles()
    {
       return Length(plMessages);
@@ -143,6 +210,12 @@ messages:
    GetArticleList()
    {
       return plMessages;
+   }
+
+   GetArticle(index=$)
+   "Returns an article by post index."
+   {
+      return GetListNode(plMessages, 1, index);
    }
 
    GetNewsBody(num = $)
@@ -293,7 +366,7 @@ messages:
    {
       plMessages = $;
       piNext_num = 1;
-      
+
       return;
    }
 
@@ -308,7 +381,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -27,6 +27,10 @@
   <ItemGroup>
     <ResourceCompile Include="mailnews.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap\letter.ico" />
+    <Image Include="bitmap\mailbox.bmp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BFFAB19A-0D34-4BF6-8BC6-A81D22274899}</ProjectGuid>
   </PropertyGroup>

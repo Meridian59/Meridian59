@@ -4986,50 +4986,20 @@ messages:
             OR (IsClass(stroke_obj,&Spell)
                AND Send(stroke_obj,@GetNumSpellTargets) = 1))
       {
-         iAngle = Send(self,@GetAngle);
-         iRow = piRow;
-         iCol = piCol;
-         iTargetRow = Send(oTarget,@GetRow);
-         iTargetCol = Send(oTarget,@GetCol);
-
-         % What this does:
-         % Basically, it finds your direction and makes sure you aren't trying to target
-         % something behind you. "Behind you" is defined as behind the line defined
-         % by the cardinal directions that are the closest to being perpendicular to the
-         % player's direction vector. For example, if you're facing mostly east, then
-         % the cardinal direction direction line runs north/south; in essense, anything
-         % that is further west than you is "behind" you. The more interesting cases
-         % are when the player is facing one of the corner directions. We calculate
-         % the equation of the line using the point-slope formula and determine which
-         % side of the line the target is.
-         % Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
-         % Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
          if iDist > 1
-            AND (((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
-                  AND iTargetCol < iCol)
-               OR (iAngle > ANGLE_ESE AND iAngle <= ANGLE_SSE
-                  AND (iTargetRow - iRow) < (iCol - iTargetCol))
-               OR (iAngle > ANGLE_SSE AND iAngle <= ANGLE_SSW
-                  AND iTargetRow < iRow)
-               OR (iAngle > ANGLE_SSW AND iAngle <= ANGLE_WSW
-                  AND (iTargetRow - iRow) < (iTargetCol - iCol))
-               OR (iAngle > ANGLE_WSW AND iAngle <= ANGLE_WNW
-                  AND iTargetCol > iCol)
-               OR (iAngle > ANGLE_WNW AND iAngle <= ANGLE_NNW
-                  AND (iTargetRow - iRow) > (iCol - iTargetCol))
-               OR (iAngle > ANGLE_NNW AND iAngle <= ANGLE_NNE
-                  AND iTargetRow > iRow)
-               OR (iAngle > ANGLE_NNE AND iAngle <= ANGLE_ENE
-                  AND (iTargetRow - iRow) > (iTargetCol - iCol)))
+            AND NOT LineOfSightView(Send(self,@GetAngle), piRow, piCol, piFine_row,
+                        piFine_col, Send(oTarget,@GetRow), Send(oTarget,@GetCol),
+                        Send(oTarget,@GetFineRow), Send(oTarget,@GetFineCol))
          {
             if iDist > 2
                AND IsClass(oFinalTarget,&Player)
                AND Send(self,@CheckLog)
             {
                Debug("ALERT! ",Send(self,@GetTrueName),self," at "
-                     "[",iRow,iCol,"] and angle ",iAngle," tried to hit ",
-                     Send(oFinalTarget,@GetTrueName),oFinalTarget," at "
-                     "[",iTargetRow,iTargetCol,"] that was behind them.");
+                     "[",piRow,piCol,"] and angle ",Send(self,@GetAngle),
+                     " tried to hit ", Send(oFinalTarget,@GetTrueName),
+                     oFinalTarget," at [",Send(oTarget,@GetRow),
+                     Send(oTarget,@GetCol),"] that was behind them.");
             }
 
             Send(self,@MsgSendUser,#message_rsc=player_attack_not_in_view);

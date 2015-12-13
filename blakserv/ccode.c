@@ -2724,6 +2724,113 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_LineOfSightView(int object_id, local_var_type *local_vars,
+   int num_normal_parms, parm_node normal_parm_array[],
+   int num_name_parms, parm_node name_parm_array[])
+{
+   val_type ret_val, angle_val;
+   val_type row_source, col_source, finerow_source, finecol_source;
+   val_type row_dest, col_dest, finerow_dest, finecol_dest;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = false;
+
+   angle_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   row_source = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   col_source = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   finerow_source = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+      normal_parm_array[3].value);
+   finecol_source = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+      normal_parm_array[4].value);
+
+   row_dest = RetrieveValue(object_id, local_vars, normal_parm_array[5].type,
+      normal_parm_array[5].value);
+   col_dest = RetrieveValue(object_id, local_vars, normal_parm_array[6].type,
+      normal_parm_array[6].value);
+   finerow_dest = RetrieveValue(object_id, local_vars, normal_parm_array[7].type,
+      normal_parm_array[7].value);
+   finecol_dest = RetrieveValue(object_id, local_vars, normal_parm_array[8].type,
+      normal_parm_array[8].value);
+
+   if (angle_val.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView can't use non room %i,%i\n",
+         angle_val.v.tag, angle_val.v.data);
+      return ret_val.int_val;
+   }
+
+   if (row_source.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView row source can't use non int %i,%i\n",
+         row_source.v.tag, row_source.v.data);
+      return ret_val.int_val;
+   }
+
+   if (col_source.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView col source can't use non int %i,%i\n",
+         col_source.v.tag, col_source.v.data);
+      return ret_val.int_val;
+   }
+
+   if (finerow_source.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView finerow source can't use non int %i,%i\n",
+         finerow_source.v.tag, finerow_source.v.data);
+      return ret_val.int_val;
+   }
+
+   if (finecol_source.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView finecol source can't use non int %i,%i\n",
+         finecol_source.v.tag, finecol_source.v.data);
+      return ret_val.int_val;
+   }
+
+   if (row_dest.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView row dest can't use non int %i,%i\n",
+         row_dest.v.tag, row_dest.v.data);
+      return ret_val.int_val;
+   }
+
+   if (col_dest.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView col dest can't use non int %i,%i\n",
+         col_dest.v.tag, col_dest.v.data);
+      return ret_val.int_val;
+   }
+
+   if (finerow_dest.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView finerow dest can't use non int %i,%i\n",
+         finerow_dest.v.tag, finerow_dest.v.data);
+      return ret_val.int_val;
+   }
+
+   if (finecol_dest.v.tag != TAG_INT)
+   {
+      bprintf("C_LineOfSightView finecol dest can't use non int %i,%i\n",
+         finecol_dest.v.tag, finecol_dest.v.data);
+      return ret_val.int_val;
+   }
+
+   V2 source;
+   source.X = GRIDCOORDTOROO(col_source.v.data, finecol_source.v.data);
+   source.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
+
+   V2 target;
+   target.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
+   target.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
+
+   ret_val.v.data = BSPLineOfSightView(&source, &target, angle_val.v.data);
+
+   return ret_val.int_val;
+}
+
 int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
 	int num_normal_parms, parm_node normal_parm_array[],
 	int num_name_parms, parm_node name_parm_array[])

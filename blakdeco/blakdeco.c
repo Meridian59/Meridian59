@@ -613,6 +613,7 @@ char * name_function(int fnum)
    case CREATEROOMDATA : return "LoadRoom";
    case FREEROOM : return "FreeRoom";
    case ROOMDATA : return "RoomData";
+   case LINEOFSIGHTVIEW : return "LineOfSightView";
    case LINEOFSIGHTBSP : return "LineOfSightBSP";
    case GETLOCATIONINFOBSP: return "GetLocationInfoBSP";
    case BLOCKERADDBSP: return "BlockerAddBSP";

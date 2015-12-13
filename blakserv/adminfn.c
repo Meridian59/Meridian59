@@ -2217,6 +2217,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
 		case CANMOVEINROOMBSP: strcpy(c_name, "CanMoveInRoomBSP"); break;
+		case LINEOFSIGHTVIEW: strcpy(c_name, "LineOfSightView"); break;
 		case LINEOFSIGHTBSP: strcpy(c_name, "LineOfSightBSP"); break;
 		case GETLOCATIONINFOBSP: strcpy(c_name, "GetLocationInfoBSP"); break;
 		case GETRANDOMPOINTBSP: strcpy(c_name, "GetRandomPointBSP"); break;

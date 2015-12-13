@@ -1,6 +1,7 @@
 #define EPSILON     0.0001f
 #define EPSILONBIG  0.1f
 #define ISZERO(a)   ((a) > -EPSILON && (a) < EPSILON)
+#define PI_MULT_2   6.283185307f
 
 typedef struct V3
 {

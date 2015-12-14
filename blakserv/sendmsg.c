@@ -32,6 +32,19 @@ int trace_session_id = INVALID_ID;
 
 post_queue_type post_q;
 
+// structs for unary/binary op to read data quicker.
+typedef struct
+{
+   bkod_type dest;
+   bkod_type source;
+} unopdata_node;
+
+typedef struct
+{
+   bkod_type dest;
+   bkod_type source1;
+   bkod_type source2;
+} binopdata_node;
 
 /* return values for InterpretAtMessage */
 enum
@@ -59,8 +72,7 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 						 val_type new_data);
 void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode);
 void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode);
-void InterpretGoto(int object_id,local_var_type *local_vars,
-				   opcode_type opcode,char *inst_start);
+void InterpretGoto(int object_id, local_var_type *local_vars, opcode_type opcode);
 void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode);
 
 void InitProfiling(void)
@@ -611,7 +623,6 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	int parm_id;
 	val_type parm_init_value;
 	int i,j;
-	char *inst_start;
 	Bool found_parm;
 
 #ifdef BLAK_PLATFORM_WINDOWS
@@ -723,8 +734,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 				InterpretBinaryAssign(object_id,&local_vars,opcode);
 				continue;
 			case GOTO : 
-				inst_start = bkod - 1; /* we've read one byte of instruction so far */
-				InterpretGoto(object_id,&local_vars,opcode,inst_start);
+				InterpretGoto(object_id, &local_vars, opcode);
 				continue;
 			case CALL : 
 				InterpretCall(object_id,&local_vars,opcode);
@@ -810,15 +820,11 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 
 void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode)
 {
-	char info;
-	int dest,source;
-	val_type source_data;
+	char info = get_byte();
+	unopdata_node *opnode = (unopdata_node*)((bkod += sizeof(unopdata_node))
+		- sizeof(unopdata_node));
 	
-	info = get_byte();
-	dest = get_int();
-	source = get_int();
-	
-	source_data = RetrieveValue(object_id,local_vars,opcode.source1,source);
+	val_type source_data = RetrieveValue(object_id, local_vars, opcode.source1, opnode->source);
 	
 	switch (info)
 	{
@@ -858,10 +864,10 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 				source_data.v.tag,source_data.v.data);
 			break;
 		}
-		if (source != dest)
-			StoreValue(object_id, local_vars, opcode.dest, dest, source_data);
+		if (opnode->source != opnode->dest)
+			StoreValue(object_id, local_vars, opcode.dest, opnode->dest, source_data);
 		++source_data.v.data;
-		StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		StoreValue(object_id, local_vars, opcode.dest, opnode->source, source_data);
 		return;
 	case PRE_INCREMENT:
 		if (source_data.v.tag != TAG_INT)
@@ -871,8 +877,8 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 			break;
 		}
 		++source_data.v.data;
-		if (source != dest)
-			StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		if (opnode->source != opnode->dest)
+			StoreValue(object_id, local_vars, opcode.dest, opnode->source, source_data);
 		break;
 	case POST_DECREMENT :
 		if (source_data.v.tag != TAG_INT)
@@ -881,10 +887,10 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 				source_data.v.tag,source_data.v.data);
 			break;
 		}
-		if (source != dest)
-			StoreValue(object_id, local_vars, opcode.dest, dest, source_data);
+		if (opnode->source != opnode->dest)
+			StoreValue(object_id, local_vars, opcode.dest, opnode->dest, source_data);
 		--source_data.v.data;
-		StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		StoreValue(object_id, local_vars, opcode.dest, opnode->source, source_data);
 		return;
 	case PRE_DECREMENT:
 		if (source_data.v.tag != TAG_INT)
@@ -894,30 +900,27 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 			break;
 		}
 		--source_data.v.data;
-		if (source != dest)
-			StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		if (opnode->source != opnode->dest)
+			StoreValue(object_id, local_vars, opcode.dest, opnode->source, source_data);
 		break;
 	default :
 		bprintf("InterpretUnaryAssign can't perform unary op %i\n",info);
 		break;
 	}
 	
-	StoreValue(object_id,local_vars,opcode.dest,dest,source_data);
+	StoreValue(object_id, local_vars, opcode.dest, opnode->dest, source_data);
 }
 
 void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode)
 {
-	char info;
-	int dest,source1,source2;
 	val_type source1_data,source2_data;
-	
-	info = get_byte();
-	dest = get_int();
-	source1 = get_int();
-	source2 = get_int();
-	
-	source1_data = RetrieveValue(object_id,local_vars,opcode.source1,source1);
-	source2_data = RetrieveValue(object_id,local_vars,opcode.source2,source2);
+	char info = get_byte();
+
+	binopdata_node *opnode = (binopdata_node*)((bkod += sizeof(binopdata_node))
+		- sizeof(binopdata_node));
+
+	source1_data = RetrieveValue(object_id,local_vars,opcode.source1, opnode->source1);
+	source2_data = RetrieveValue(object_id, local_vars, opcode.source2, opnode->source2);
 	
 	/*
 	if (source1_data.v.tag != source2_data.v.tag)
@@ -1115,20 +1118,22 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	default :
 		bprintf("InterpretBinaryAssign can't perform binary op %i\n",info);
 		break;
-   }
-   
-   StoreValue(object_id,local_vars,opcode.dest,dest,source1_data);
+	}
+	
+	StoreValue(object_id, local_vars, opcode.dest, opnode->dest, source1_data);
 }
 
-void InterpretGoto(int object_id,local_var_type *local_vars,
-				   opcode_type opcode,char *inst_start)
+void InterpretGoto(int object_id, local_var_type *local_vars, opcode_type opcode)
 {
 	int dest_addr;
 	int var_check;
 	val_type check_data;
-	
+
+	/* we've read one byte of instruction so far */
+	char *inst_start = bkod - 1;
+
 	/* This function is called often, so the switch has been
-    * optimized away to return the value immediately. */
+	* optimized away to return the value immediately. */
 	
 	dest_addr = get_int();
 	

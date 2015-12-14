@@ -136,7 +136,7 @@ messages:
             % Choose a random faction, because either the weapatt 
             %  failed the random check, or the player isn't allied with either.
 
-            iFact = Random(FACTION_NEUTRAL+1, FACTION_MAX);
+            iFact = Random(FACTION_NEUTRAL + 1, FACTION_NORMAL_MAX);
          }
       }
 
@@ -156,11 +156,12 @@ messages:
 
    ReqAddToItem(state1=$)
    {
-      if state1 <= FACTION_NEUTRAL or state1 > FACTION_MAX
+      if state1 <= FACTION_NEUTRAL
+         OR state1 > FACTION_NORMAL_MAX
       {
          Debug("Illegal faction chosen.  No attribute added.");
 
-         return FALSE; 
+         return FALSE;
       }
 
       propagate;
@@ -344,7 +345,7 @@ messages:
 
    FakeAttData()
    {
-      return Random(FACTION_DUKE,FACTION_MAX);
+      return Random(FACTION_DUKE,FACTION_NORMAL_MAX);
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

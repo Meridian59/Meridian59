@@ -559,7 +559,7 @@ messages:
 
       % last, tell the faction scenario if necessary.
       iFaction = 0;
-      while iFaction <= FACTION_MAX
+      while iFaction <= FACTION_NORMAL_MAX
       {
          iFaction = iFaction + 1;
          if Nth(lFlagCounts, iFaction) <> Nth(plFlagCounts, iFaction)
@@ -723,7 +723,7 @@ messages:
          Send(create(&PrincessFlag),@TeleportHome);
       }
 
-      if (FACTION_MAX > FACTION_PRINCESS) and
+      if (FACTION_NORMAL_MAX > FACTION_PRINCESS) and
             ((Nth(plFlagCounts, (FACTION_REBEL+1)) + piRebelFlagItemCount) < iMaxFlagItems)
       {
          Send(create(&RebelFlag),@TeleportHome);

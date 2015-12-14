@@ -12682,7 +12682,8 @@ messages:
    {
       local oSoldierShield;
 
-      if faction < FACTION_NEUTRAL OR faction > FACTION_MAX
+      if faction < FACTION_NEUTRAL
+         OR faction > FACTION_NORMAL_MAX
       {
          return FALSE;
       }
@@ -12950,7 +12951,8 @@ messages:
          return FALSE;
       }
 
-      if new_faction <= FACTION_NEUTRAL OR new_faction > FACTION_MAX
+      if new_faction <= FACTION_NEUTRAL
+         OR new_faction > FACTION_NORMAL_MAX
       {
          return FALSE;
       }

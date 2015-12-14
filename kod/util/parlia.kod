@@ -206,7 +206,7 @@ messages:
          Send(self,@DeleteLieges);
       }
       
-      i = FACTION_MAX;
+      i = FACTION_NORMAL_MAX;
       while i > FACTION_NEUTRAL
       {
          plLieges=Cons(Create(Send(self,@FactionLiegeClass,#num=i)),plLieges);
@@ -240,7 +240,7 @@ messages:
    {
       local i;
       
-      i = FACTION_MAX;
+      i = FACTION_NORMAL_MAX;
       while i >= FACTION_NEUTRAL
       {
          plFactions=Cons([i,$],plFactions);
@@ -439,7 +439,7 @@ messages:
       change = FALSE;
       fact = FACTION_NEUTRAL;
       
-      while fact<=FACTION_MAX
+      while fact <= FACTION_NORMAL_MAX
       {
          count = 0;
          power = 0;
@@ -723,7 +723,7 @@ messages:
       }
       else
       {
-         rnd = Random(FACTION_NEUTRAL,FACTION_MAX);
+         rnd = Random(FACTION_NEUTRAL, FACTION_NORMAL_MAX);
       }
 
       iRumor = random(1,100);
@@ -837,14 +837,14 @@ messages:
       
       iFact = faction;
 
-      if iFact <= 0 OR iFact > FACTION_MAX
+      if iFact <= 0 OR iFact > FACTION_NORMAL_MAX
       {
          iFact = Send(mob,@GetFaction);
       }
 
       if iFact = FACTION_NEUTRAL
       {
-         iFact = random((FACTION_NEUTRAL+1),FACTION_MAX);
+         iFact = Random((FACTION_NEUTRAL + 1),FACTION_NORMAL_MAX);
       }
       
       if IsClass(mob,&Factions)

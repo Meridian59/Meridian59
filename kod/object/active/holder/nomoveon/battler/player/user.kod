@@ -2751,7 +2751,7 @@ messages:
       }
 
       iDrawingFlags = Send(what,@GetDrawingEffects);
-      iFlags = Send(what,@GetObjectFlags);
+      iFlags = Send(what,@GetObjectFlags,#what=self);
       % If we can see the invisible object, remove its invis drawing flag
       % and set it to flash instead (in object flags).
       if (piFlags2 & PFLAG2_DETECT_INVIS)
@@ -6350,7 +6350,7 @@ messages:
          }
       }
 
-      if not Send(what,@ReqOffer,#what=self,#item_list=plOffer_items)
+      if NOT Send(what,@ReqOffer,#what=self,#item_list=plOffer_items)
       {
          Send(self,@CleanupCancelOffer);
 
@@ -6679,7 +6679,7 @@ messages:
 
       plOffer_items = $;
       lNumbers = number_list;
-      lObjects = $;
+
       foreach i in item_list
       {
          if lObjects <> $

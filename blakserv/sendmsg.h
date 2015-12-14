@@ -56,7 +56,9 @@ typedef struct
    /* while interpreting stuff, this is valid */
    int interpreting_class;
 
-   double frequency;
+   // True if we time calls.
+   bool debugtime;
+
    double ccall_total_time[MAX_C_FUNCTION];
    /* the number of calls to each C function */
    int c_count_untimed[MAX_C_FUNCTION];

@@ -612,8 +612,6 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	double startTime;
 	val_type parm_init_value;
 	local_var_type local_vars;
-	opcode_type opcode;
-	char opcode_char;
 	char num_locals, num_parms;
 	Bool found_parm;
 
@@ -699,30 +697,24 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 			return RETURN_NO_PROPAGATE;
 		}
 
-		opcode_char = get_byte();
-
-		//memcpy(&opcode,&opcode_char,1);
-		{
-			char *ch = (char*)&opcode;
-			*ch = opcode_char;
-		}
+		opcode_type *opcode = (opcode_type *)bkod++;
 
 		/* use continues instead of breaks here since there is nothing
 		after the switch, for efficiency */
 
-		switch (opcode.command)
+		switch (opcode->command)
 		{
 			case UNARY_ASSIGN : 
-				InterpretUnaryAssign(object_id,&local_vars,opcode);
+				InterpretUnaryAssign(object_id,&local_vars,*opcode);
 				continue;
 			case BINARY_ASSIGN : 
-				InterpretBinaryAssign(object_id,&local_vars,opcode);
+				InterpretBinaryAssign(object_id, &local_vars, *opcode);
 				continue;
 			case GOTO : 
-				InterpretGoto(object_id, &local_vars, opcode);
+				InterpretGoto(object_id, &local_vars, *opcode);
 				continue;
 			case CALL : 
-				InterpretCall(object_id,&local_vars,opcode);
+				InterpretCall(object_id, &local_vars, *opcode);
 				continue;
 			case RETURN :
 				if (kod_stat.debugtime)
@@ -734,19 +726,19 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 				{
 					m->untimed_call_count++;
 				}
-				if (opcode.dest == PROPAGATE)
+				if (opcode->dest == PROPAGATE)
 					return RETURN_PROPAGATE;
 				else
 				{
 					int data;
 					data = get_int();
-					*ret_val = RetrieveValue(object_id,&local_vars,opcode.source1,data);
+					*ret_val = RetrieveValue(object_id, &local_vars, opcode->source1, data);
 					return RETURN_NO_PROPAGATE;
 				}
 				/* can't get here */
 					continue;
 			default : 
-				bprintf("InterpretAtMessage found INVALID OPCODE command %i.  die.\n", opcode.command);
+				bprintf("InterpretAtMessage found INVALID OPCODE command %i.  die.\n", opcode->command);
 				FlushDefaultChannels();
 				continue;
 		}

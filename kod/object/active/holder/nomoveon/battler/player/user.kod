@@ -1213,6 +1213,13 @@ messages:
          {
             piFloodCount++;
 
+            % Have to let this message through in case they're logging off.
+            if (type = 0
+               AND First(client_msg) = BP_REQ_QUIT)
+            {
+               Send(self,@UserLogoff);
+            }
+
             % Don't go on if marked as spammer
             return;
          }

@@ -4857,13 +4857,17 @@ messages:
 
    UserObjectContents(what = $)
    {
-      local i,iObjs,oThing,rName,rIcon,lHolding1,lHolding2;
+      local i, iObjs, oThing, lHolding1, lHolding2;
 
-      if NOT IsClass(what,&Holder)
-         AND NOT IsClass(what,&ReagentBag)
-         OR (IsClass(what,&Player)
+      if (NOT IsClass(what,&Holder)
+         AND NOT IsClass(what,&ReagentBag))
+         OR (IsClass(what,&User)
              AND NOT (what = self OR IsClass(self,&Admin)))
+         OR IsClass(what,&Monster)
       {
+         Debug("ALERT!!  User ",self,Send(self,@GetTrueName),"trying to look ",
+               "inside ",what,Send(what,@GetTrueName));
+
          Send(self,@MsgSendUser,#message_rsc=user_err_get_contents,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
 
@@ -4871,20 +4875,22 @@ messages:
       }
 
       % Make sure object is in the same room as player
-      if NOT Send(self, @IsInSameRoom, #what = what)
+      if NOT Send(self,@IsInSameRoom,#what=what)
       {
-         Debug("User ", self, vrName, "tried to look at object in another room");
+         Debug("User ",self,vrName," tried to look at object in another room");
+
          return;
       }
 
       if IsClass(what,&StorageBox)
          AND NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
       {
-         Debug("User ", self, vrName, "tried to look at storebox item they could not see!");
+         Debug("User ",self,vrName," tried to look at storebox item they could not see!");
+
          return;
       }
 
-      if IsClass(what,&Player)
+      if IsClass(what,&User)
       {
          lHolding1 = Send(what,@GetPlayerUsing);
          lHolding2 = $;

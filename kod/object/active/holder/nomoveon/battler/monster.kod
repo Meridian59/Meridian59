@@ -4078,8 +4078,9 @@ messages:
       }
 
       iFee = 0;
-      iBulk=0;
+      iBulk = 0;
       iCount = 0;
+      bFound = FALSE;
 
       % Make sure the player really has this item in storage.
       foreach i in lItems

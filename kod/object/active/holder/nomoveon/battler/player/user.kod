@@ -5976,7 +5976,7 @@ messages:
          return;
       }
 
-      if (Send(oNews,@MovePostToGodGlobe,#who=self,#index=index))
+      if (Send(oNews,@RemovePost,#who=self,#index=index))
       {
          GodLog(Send(self,@GetTrueName)," deleted post ",index,
                " from newsglobe ",Send(oNews,@GetName));

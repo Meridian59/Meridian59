@@ -26,10 +26,15 @@ resources:
       "Only DMs, Admins and Moderators may delete posts from this newsglobe."
    news_not_own_post = \
       "You can only delete your own posts."
+   news_del_time_expired_header = \
+      "You may only delete your post within %r%r%r%r%r%r%r of posting."
 
 classvars:
 
    vrIcon = news_icon_rsc
+
+   % The number of minutes a user has to delete their post after posting it.
+   viPostDeleteMinutes = 60
 
 properties:
 
@@ -140,13 +145,15 @@ messages:
       return;
    }
 
-   MovePostToGodGlobe(who=$, index=$)
+   RemovePost(who=$, index=$)
+   "Removes a post from a newsglobe, triggered by 'who'. Addresses the post "
+   "by index."
    {
       local lArticle, oNews;
 
       if (index = $)
       {
-         Debug("MovePostToGodGlobe passed $ index! Not moving post.");
+         Debug("RemovePost passed $ index! Not moving post.");
 
          return FALSE;
       }
@@ -154,7 +161,7 @@ messages:
       oNews = Send(SYS,@FindNewsByNum,#num=NID_GODROOM);
       if (oNews = $)
       {
-         Debug("MovePostToGodGlobe couldn't find GodGlobe! Not moving post.");
+         Debug("RemovePost couldn't find GodGlobe! Not moving post.");
 
          return FALSE;
       }
@@ -164,8 +171,8 @@ messages:
 
       if (lArticle = $)
       {
-         Debug("MovePostToGodGlobe unable to find article with index ",
-               index," not moving post.");
+         Debug("RemovePost unable to find article with index ",index,
+               " not moving post.");
 
          return FALSE;
       }
@@ -186,6 +193,17 @@ messages:
 
             return FALSE;
          }
+
+         if (GetTime() - Nth(lArticle,3) > viPostDeleteMinutes * 60)
+         {
+            % Resource to be sent to user is a time string which may change,
+            % so we use a callback to add a BP_MESSAGE protocol and build
+            % the packet from PostDeleteTimeExpired().
+            Send(who,@MsgSendUserCallback,#what=self,
+                  #sCallBack=SetString($,@PostDeleteTimeExpired));
+
+            return FALSE;
+         }
       }
 
       % Article is [index, player obj_id, time, title, body]
@@ -200,6 +218,26 @@ messages:
       Send(self,@DeleteMail,#number=index);
 
       return TRUE;
+   }
+
+   PostDeleteTimeExpired()
+   "Called from user.kod's MsgSendUserCallback. Adds the required packets "
+   "for a time string depending on how long users have to delete their own "
+   "posts. Has to return TRUE so MsgSendUserCallback knows the packet was "
+   "built. Don't call this directly."
+   {
+      Send(self,@SendTimeRemaining,#iTime=viPostDeleteMinutes * 60);
+
+      return TRUE;
+   }
+
+   SendTimeRemainingHeader()
+   "Adds the header resource for sending a time-related collection of "
+   "resources to a client. Only SendTimeRemaining() should call this."
+   {
+      AddPacket(4, news_del_time_expired_header);
+
+      return;
    }
 
    GetNumArticles()

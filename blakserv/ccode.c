@@ -3165,7 +3165,8 @@ int C_BlockerRemoveBSP(int object_id, local_var_type *local_vars,
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
-		bprintf("C_BlockerRemoveBSP can't find room %i\n", room_val.v.data);
+		bprintf("C_BlockerRemoveBSP can't find room %i for object %i\n",
+			room_val.v.data, obj_val.v.data);
 		return ret_val.int_val;
 	}
 

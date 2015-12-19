@@ -345,6 +345,9 @@ messages:
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
 
+      Send(self,@RecalcSkyBox);
+      Send(self,@RecalculateDirectionalLight);
+
       propagate;
    }
 
@@ -363,69 +366,47 @@ messages:
 
       if (iTerrain & TERRAIN_BADLANDS) OR (iTerrain & TERRAIN_MOUNTAIN)
       {
-         plLooping_sounds = Cons([ room_badmount_sound, 1, 1, 300, 100 ], plLooping_sounds);
-
-         propagate;
+         plLooping_sounds = Cons([ room_badmount_sound, 1, 1, 300, 100 ],
+                                 plLooping_sounds);
       }
-
-      if (iTerrain & TERRAIN_BEACH)
+      else if (iTerrain & TERRAIN_BEACH)
       {
          plLooping_sounds = Cons([ room_beach_sound, 1, 1, 300, 100 ],
                                  plLooping_sounds);
-
-         propagate;
       }
-
-      if (iTerrain & TERRAIN_JUNGLE)
+      else if (iTerrain & TERRAIN_JUNGLE)
       {
          plLooping_sounds = Cons([ room_jungle_sound, 1, 1, 300, 100 ],
                                  plLooping_sounds);
-
-         propagate;
       }
-
-      if (iTerrain & TERRAIN_CAVES)
+      else if (iTerrain & TERRAIN_CAVES)
       {
          plLooping_sounds = Cons([ room_cave_sound, 1, 1, 300, 70 ],
                                  plLooping_sounds);
-
-         propagate;
       }
-
-      % Special case for guild hall 11, which is both forest and indoors
-      %  It sets it's own looping forest sound.
-      if (iTerrain & TERRAIN_FOREST) AND NOT (iTerrain & TERRAIN_GUILDHALL)
+      else if (iTerrain & TERRAIN_FOREST) AND NOT (iTerrain & TERRAIN_GUILDHALL)
       {
+         % Special case for guild hall 11, which is both forest and indoors
+         % It sets its own looping forest sound.
          plLooping_sounds = Cons([ room_forest_sound, 1, 1, 300, 100 ],
                                  plLooping_sounds);
-
-         propagate;
       }
-
-      if (iTerrain & TERRAIN_SEWERS)
+      else if (iTerrain & TERRAIN_SEWERS)
       {
          plLooping_sounds = Cons([ room_sewer_sound, 1, 1, 300, 100 ],
                                  plLooping_sounds);
-
-         propagate;
       }
-
-      if (iTerrain & TERRAIN_LAVA)
+      else if (iTerrain & TERRAIN_LAVA)
       {
          plLooping_sounds = Cons([ room_lava_sound, 18, 14, 300, 100 ],
                                  plLooping_sounds);
-
-         propagate;
       }
-
-      if (iTerrain & TERRAIN_NECROPOLIS) AND plLooping_sounds = $
+      else if (iTerrain & TERRAIN_NECROPOLIS) AND plLooping_sounds = $
       {
          % Some areas of Brax set their own special looping sounds.
-         %  Don't interfere.
+         % Don't interfere.
          plLooping_sounds = Cons([ room_necro_sound, 1, 1, 300, 100 ],
                                  plLooping_sounds);
-
-         propagate;
       }
 
       propagate;
@@ -1106,6 +1087,12 @@ messages:
       Send(SYS,@DeleteRoom,#what=self);
       Send(self,@RemoveAllEnchantments);
 
+      % Rooms have to delete inventory before freeing room.
+      Send(self,@DeleteHolding);
+
+      % Free the room memory.
+      FreeRoom(prmRoom);
+
       propagate;
    }
 
@@ -1758,6 +1745,52 @@ messages:
       return;
    }
 
+   RecalcSkyBox()
+   {
+      local iBackGround;
+
+      if (piWeather & WEATHER_PATTERN_STORM)
+      {
+         switch(Send(SYS,@GetDayPhase))
+         {
+            case DAY_PHASE_DAWN:
+               iBackGround = SKYBOX_DAWN_STORMY;
+               break;
+            case DAY_PHASE_DAY:
+               iBackGround = SKYBOX_DAY_STORMY;
+               break;
+            case DAY_PHASE_DUSK:
+               iBackGround = SKYBOX_DUSK_STORMY;
+               break;
+            case DAY_PHASE_NIGHT:
+               iBackGround = SKYBOX_NIGHT;
+               break;
+         }
+      }
+      else
+      {
+         switch(Send(SYS,@GetDayPhase))
+         {
+            case DAY_PHASE_DAWN:
+               iBackGround = SKYBOX_DAWN;
+               break;
+            case DAY_PHASE_DAY:
+               iBackGround = SKYBOX_DAY;
+               break;
+            case DAY_PHASE_DUSK:
+               iBackGround = SKYBOX_DUSK;
+               break;
+            case DAY_PHASE_NIGHT:
+               iBackGround = SKYBOX_NIGHT;
+               break;
+         }
+      }
+
+      Send(self,@RecalcBackgroundSkyGraphic,#iSkyBox=iBackground);
+
+      return;
+   }
+
    RecalcBackgroundSkyGraphic(iSkyBox=0)
    "Doing this this way allows us to have some zones, such as Ko'catan, have "
    "different skies."
@@ -1831,10 +1864,10 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i, each_obj, iRand, oSun, iBackGround;
+      local i, each_obj, oSun;
 
       % Change weather for background if outdoors and tell everyone the
-      %  background changed
+      % background changed
 
       if Send(SYS,@GetChaosNight)
       {
@@ -1843,44 +1876,7 @@ messages:
          return;
       }
 
-      if (piWeather & WEATHER_PATTERN_STORM)
-      {
-         switch(Send(SYS,@GetDayPhase))
-         {
-            case DAY_PHASE_DAWN:
-               iBackGround = SKYBOX_DAWN_STORMY;
-               break;
-            case DAY_PHASE_DAY:
-               iBackGround = SKYBOX_DAY_STORMY;
-               break;
-            case DAY_PHASE_DUSK:
-               iBackGround = SKYBOX_DUSK_STORMY;
-               break;
-            case DAY_PHASE_NIGHT:
-               iBackGround = SKYBOX_NIGHT;
-               break;
-         }
-      }
-      else
-      {
-         switch(Send(SYS,@GetDayPhase))
-         {
-            case DAY_PHASE_DAWN:
-               iBackGround = SKYBOX_DAWN;
-               break;
-            case DAY_PHASE_DAY:
-               iBackGround = SKYBOX_DAY;
-               break;
-            case DAY_PHASE_DUSK:
-               iBackGround = SKYBOX_DUSK;
-               break;
-            case DAY_PHASE_NIGHT:
-               iBackGround = SKYBOX_NIGHT;
-               break;
-         }
-      }
-
-      Send(self,@RecalcBackgroundSkyGraphic,#iSkyBox=iBackground);
+      Send(self,@RecalcSkyBox);
 
       % Reproduce the following calls here, ~40% faster.
       % Send(self,@RecalculateDirectionalLight);
@@ -1894,7 +1890,7 @@ messages:
       }
 
       %Send(self,@AmbientLightChanged);
-      Send(self,@BackgroundChanged);
+      %Send(self,@BackgroundChanged);
       %Send(self,@DirectionalLightChanged);
       % This sends weather effects (i.e. rain, snow) to clients.
       %Send(self,@WeatherChanged);

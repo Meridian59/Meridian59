@@ -124,6 +124,7 @@ void AdminShowAccount(int session_id,admin_parm_type parms[],
                       int num_blak_parm,parm_node blak_parm[]);
 void AdminShowAccountHeader(void);
 void AdminShowOneAccount(account_node *a);
+void AdminShowOneAccountIfSuspended(account_node *a);
 void AdminDeleteUnusedAccounts(int session_id, admin_parm_type parms[],
                                int num_blak_parm, parm_node blak_parm[]);
 void AdminShowResource(int session_id,admin_parm_type parms[],
@@ -140,9 +141,12 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 void AdminShowOneTimer(timer_node *t);
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],
                             int num_blak_parm,parm_node blak_parm[]);
-void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *default_str);
+void AdminShowOneConfigNode(config_node *c, const char *config_name,
+                            const char *default_str);
 void AdminShowString(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
+void AdminShowSuspended(int session_id, admin_parm_type parms[],
+                        int num_blak_parm, parm_node blak_parm[]);
 void AdminShowSysTimers(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[]);
 void AdminShowEachSysTimer(systimer_node *st);
@@ -333,7 +337,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowMemory,        {N},   F, A|M, NULL, 0, "memory",        "Show system memory use" },
 	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",       "Show info about class & message" },
 	{ AdminShowName,          {R,N}, F, A|M, NULL, 0, "name",          "Show object of user name" },
-   { AdminShowNameIDs,       {N},   F, A|M, NULL, 0, "nameids",       "Show all name ids (message/parms)" },
+	{ AdminShowNameIDs,       {N},   F, A|M, NULL, 0, "nameids",       "Show all name ids (message/parms)" },
 	{ AdminShowObject,        {I,N}, F, A|M, NULL, 0, "object",        "Show one object by id" },
 	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",         "Show all packages loaded" },
 	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
@@ -341,8 +345,9 @@ admin_table_type admin_show_table[] =
 	{ AdminShowResource,      {S,N}, F, A|M, NULL, 0, "resource",      "Show a resource by resource name" },
 	{ AdminShowStatus,        {N},   F, A|M, NULL, 0, "status",        "Show system status" },
 	{ AdminShowString,        {I,N}, F, A|M, NULL, 0, "string",        "Show one string by string id" },
+	{ AdminShowSuspended,     {N},   F, A|M, NULL, 0, "suspended",     "Show all suspended accounts" },
 	{ AdminShowSysTimers,     {N},   F, A|M, NULL, 0, "systimers",     "Show system timers" },
-   { AdminShowTable,         {I,N}, F, A|M, NULL, 0, "hashtable",     "Show a hash table" },
+	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "hashtable",     "Show a hash table" },
 	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "table",         "Show a hash table" },
 	{ AdminShowTimer,         {I},   F, A|M, NULL, 0, "timer",         "Show one timer by id" },
 	{ AdminShowTimers,        {N},   F, A|M, NULL, 0, "timers",        "Show all timers" },
@@ -1897,6 +1902,42 @@ void AdminShowOneAccount(account_node *a)
         buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time));
 }
 
+void AdminShowSuspended(int session_id, admin_parm_type parms[],
+   int num_blak_parm, parm_node blak_parm[])
+{
+   AdminShowAccountHeader();
+   ForEachAccount(AdminShowOneAccountIfSuspended);
+}
+
+void AdminShowOneAccountIfSuspended(account_node *a)
+{
+   char ch = ' ';
+   static const char* types = " ADG"; // see enum ACCOUNT_* in account.h
+   char buff[9];
+
+   if (a->type >= 0 && a->type <= (int)strlen(types))
+      ch = types[a->type];
+
+   // Check the suspend time.  Only printing suspended accounts.
+   if (a->suspend_time <= GetTime())
+   {
+      return;
+   }
+
+   if (a->suspend_time > 0)
+   {
+      // Print suspended time left in hours.
+      sprintf(buff, "%7.1fh", (a->suspend_time - GetTime()) / (60.0*60.0));
+   }
+   else
+   {
+      sprintf(buff, "");
+   }
+
+   aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n", a->account_id, ch, a->name,
+      buff, a->credits / 100, a->credits % 100, TimeStr(a->last_login_time));
+}
+
 void AdminShowResource(int session_id,admin_parm_type parms[],
                        int num_blak_parm,parm_node blak_parm[])
 {
@@ -2042,7 +2083,7 @@ void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *d
 }
 
 void AdminShowString(int session_id,admin_parm_type parms[],
-                     int num_blak_parm,parm_node blak_parm[])                     
+                     int num_blak_parm,parm_node blak_parm[])
 {
 	string_node *snod;
 	
@@ -2070,7 +2111,7 @@ void AdminShowString(int session_id,admin_parm_type parms[],
 }
 
 void AdminShowSysTimers(int session_id,admin_parm_type parms[],
-                        int num_blak_parm,parm_node blak_parm[])                        
+                        int num_blak_parm,parm_node blak_parm[])
 {
 	aprintf("%s %-18s %-15s %-15s %-22s\n","#","System Timer type","Period","On the",
 		"Next time");

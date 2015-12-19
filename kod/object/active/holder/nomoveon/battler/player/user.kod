@@ -988,7 +988,7 @@ messages:
       Send(poOwner,@LeaveHold,#what=self);
       if poOwner <> $
          AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
-         AND Send(self,@GetDeathRiftProtection)
+         AND (piflags & PFLAG_DEATH_RIFTING)
       {
          % Don't let players stay in the Underworld with Death Rift
          Post(self,@AdminGoToSafety);
@@ -1754,7 +1754,6 @@ messages:
       piLast_Restart_time = getTime();
       piLastLoginTime = 0;
       psUrl = $;
-      psHonor = $;
       plHonor = $;
       piLogoffPenaltyCount = -1;
 
@@ -2701,7 +2700,7 @@ messages:
       else if piSave_Room >= RID_NEWB_BASE AND piSave_Room <= RID_NEWB_MAX
       {
          Debug("Player died while offline, but in newbie area!  (how did "
-                "a necromancer get there?):",Send(self,@GetName));
+                "a necromancer get there?):",Send(self,@GetTrueName));
          piSave_Room = RID_NEWB1;
          oRoom = Send(SYS,@FindRoomByNum,#num=RID_NEWB1);
          piSave_Row = Send(oRoom,@GetTeleportRow);
@@ -2709,6 +2708,7 @@ messages:
       }
       else
       {
+         Debug("Player died while offline: ",Send(self,@GetTrueName));
          piSave_Room = RID_UNDERWORLD;
          piSave_Row = 24;
          piSave_Col = 10;
@@ -7483,9 +7483,8 @@ messages:
    NewOwner(what = $)
    "A user has a new owner when they enter a new room."
    {
-      local old;
+      local oOldRoom;
 
-      old = $;
       Send(self,@CancelIfOffer);
 
       % Count right now as the last time we moved.
@@ -7494,21 +7493,21 @@ messages:
       % This is here because it has to be done before poOwner is changed.
 
       % If newbie is entering a kill zone, warn him.  If he is leaving
-      %  one, then tell him he's safe again.  Ignore during chaos night.
+      % one, then tell him he's safe again.  Ignore during chaos night.
 
       if NOT Send(SYS,@GetChaosNight)
          AND NOT (piFlags & PFLAG_PKILL_ENABLE)
       {
          if Send(what,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
-            AND (poOwner = $
-                 OR NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_KILL_ZONE))
          {
-            Send(self,@MsgSendUser,#message_rsc=user_kill_zone);
+            if (poOwner = $
+               OR NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_KILL_ZONE))
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_kill_zone);
+            }
          }
-
-         if NOT Send(what,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
-            AND (poOwner <> $
-                 AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_KILL_ZONE))
+         else if (poOwner <> $
+            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_KILL_ZONE))
          {
             Send(self,@MsgSendUser,#message_rsc=user_angel_rejoins);
          }
@@ -7518,16 +7517,17 @@ messages:
       % execute this stuff before Sending new info to client
 
       if Send(what,@GetRoomNum) = RID_UNDERWORLD
-         AND Send(self,@GetDeathRiftProtection) = TRUE
+         AND (piflags & PFLAG_DEATH_RIFTING)
       {
-         % Deliverance people who somehow got to the Underworld already protected
-         % Usually it's because they logged off in the Underworld while Death Rifting
+         % Deliverance people who somehow got to the Underworld
+         % already protected. Usually it's because they logged off
+         % in the Underworld while Death Rifting.
          Post(self,@AdminGoToSafety);
       }
 
       if poOwner <> $
       {
-        old = poOwner;
+        oOldRoom = poOwner;
         Send(poOwner,@LeaveHold,#what=self);
       }
 
@@ -7535,10 +7535,10 @@ messages:
 
       if poOwner <> $
       {
-         if old <> $
+         if oOldRoom <> $
          {
-            Send(self,@CheckLeavingNewbieOrGuest,#leaving=old);
-            Send(self,@CheckTokenInNewRoom,#what=old);
+            Send(self,@CheckLeavingNewbieOrGuest,#leaving=oOldRoom);
+            Send(self,@CheckTokenInNewRoom,#what=oOldRoom);
          }
 
          % If room is no combat and safe logoff, record it as the
@@ -7563,7 +7563,7 @@ messages:
       % This is intended to protect players from wall spells stacked on
       % entrances. It will clear out a small space when they enter the zone,
       % so that they don't appear in the middle of a wall spell.
-      if old <> $
+      if oOldRoom <> $
          AND (piFlags & PFLAG_PKILL_ENABLE)
          AND Send(poOwner,@AllowGuildAttack,#what=self)
          AND NOT IsClass(self,&DM)
@@ -7574,9 +7574,10 @@ messages:
       % This removes Death Rift's protection when the user enters any
       % non-Underworld room
       if Send(poOwner,@GetRoomNum) <> RID_UNDERWORLD
-         AND Send(self,@GetDeathRiftProtection) = TRUE
+         AND (piflags & PFLAG_DEATH_RIFTING)
       {
          Send(self,@SetDeathRiftProtection,#value=FALSE);
+         piLastSafeRoom = Send(self,@GetHomeRoom);
       }
 
       propagate;
@@ -9070,10 +9071,13 @@ messages:
             }
             else
             {
-               % If the user is in a different region from their last safe room, use region default homeroom instead.
-               % This can happen if a player goes to a new region but never stops in at a safe room.
+               % If the user is in a different region from their last
+               % safe room, use region default homeroom instead.
+               % This can happen if a player goes to a new region but
+               % never stops in at a safe room.
 
-               oTargetRoom = Send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               oTargetRoom = Send(SYS,@FindRoomByNum,
+                                 #num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
                Send(oTargetRoom,@Teleport,#what=self);
                Send(self,@MsgSendUser,#message_rsc=user_goto_safety);
             }

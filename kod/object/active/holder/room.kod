@@ -1647,17 +1647,17 @@ messages:
       return Send(oSun,@GetBackgroundOverlayAngle);
    }
 
-   BrazierLit(brazier_obj=$,who=$,bIsLit=FALSE)
+   BrazierLit(what=$,who=$,bIsLit=FALSE)
    {
       if bIsLit
       {
          Send(who,@MsgSendUser,#message_rsc=room_brazier_turn_off);
-         Send(brazier_obj,@SetFlame,#has_flame=FALSE);
+         Send(what,@SetFlame,#has_flame=FALSE);
       }
       else
       {
          Send(who,@MsgSendUser,#message_rsc=room_try_light_unlit);
-         Send(brazier_obj,@SetFlame,#has_flame=TRUE);
+         Send(what,@SetFlame,#has_flame=TRUE);
       }
 
       return;

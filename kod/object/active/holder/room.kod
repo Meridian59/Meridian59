@@ -1494,7 +1494,7 @@ messages:
 
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
-      local target;
+      local oTarget;
 
       if (piRoom_flags & ROOM_NO_MAGIC)
       {
@@ -1518,18 +1518,21 @@ messages:
          return FALSE;
       }
 
-      % Must have Line of Sight if target is set
-      if Length(lItems) = 1
+      % Must have Line of Sight if spell is single target
+      if (Send(oSpell,@GetNumSpellTargets) = 1
+         AND lItems <> $)
       {
-         target = Nth(lItems,1);
+         oTarget = First(lItems);
 
-         if target <> $ AND who <> $ AND target <> who AND
-            Send(self,@IsHolding,#what=target) AND
-            Send(self,@IsHolding,#what=who) AND
-            NOT Send(self,@LineOfSight,#obj1=who,#obj2=target)
+         if oTarget <> $
+            AND who <> $
+            AND oTarget <> who
+            AND Send(self,@IsHolding,#what=oTarget)
+            AND Send(self,@IsHolding,#what=who)
+            AND NOT Send(self,@LineOfSight,#obj1=who,#obj2=oTarget)
          {
             % tell player about blocked LoS
-            if IsClass(who, &Player)
+            if IsClass(who,&User)
             {
                Send(who,@SendNoLineOfSightMessage);
             }

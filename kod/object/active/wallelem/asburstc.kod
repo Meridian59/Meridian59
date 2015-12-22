@@ -14,9 +14,6 @@ constants:
 
    include blakston.khd
 
-   % What's the base duration for the hold effect in milliseconds?
-   BASE_HOLD_DURATION = 5000
-
 resources:
 
    include asburstc.lkod
@@ -47,22 +44,25 @@ classvars:
 
    vbPeriodic = FALSE
 
+   % Hold min percent is the base chance to hold a target. This number
+   % then has spellpower/2 added to it.
+   viHoldMinPercent = 40
+
 properties:
 
    piDrawFx = DRAWFX_TRANSLUCENT_50
-
-   piRangeSquared = 1
-   piBonus = 1000 % Milliseconds.
+   piSpellPower = 1
 
 messages:
 
-   Constructor(caster=$,duration=$,range=$)
+   Constructor(caster=$,duration=$,range=$,iSpellPower=1)
    {
       if range <> $
       {
          piRange = range;
-         piBonus = range * 1000;
       }
+
+      piSpellPower = iSpellPower;
 
       propagate;
    }
@@ -71,10 +71,16 @@ messages:
    {
       local oSpell;
 
+      if (Random(1,100) > viHoldMinPercent + piSpellPower/2)
+      {
+         propagate;
+      }
+
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
 
-      Send(oSpell,@DoSpell,#what=self,#otarget=what,
-            #iDuration=BASE_HOLD_DURATION + piBonus);
+      Send(oSpell,@DoSpell,#what=self,#oTarget=what,
+            #iDuration=Send(oSpell,@GetDuration,#iSpellPower=piSpellPower));
+
       Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
             #use_weapon=self,#stroke_obj=self);
 
@@ -83,7 +89,7 @@ messages:
 
    SendAnimation()
    {
-      AddPacket(1,ANIMATE_CYCLE, 4,random(240,280), 2,1, 2,5);
+      AddPacket(1,ANIMATE_CYCLE, 4,Random(240,280), 2,1, 2,5);
 
       return;
    }

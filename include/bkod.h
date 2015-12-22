@@ -263,4 +263,8 @@ typedef struct
    unsigned int command:3;
 } opcode_type;
 
+// This is the type of any kod data structure, i.e. kod integers (data and tag).
+// Added as a separate typedef for possible future transition to 64-bit types.
+typedef int bkod_type;
+
 #endif

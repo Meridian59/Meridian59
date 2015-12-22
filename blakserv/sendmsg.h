@@ -16,7 +16,7 @@
 #define MAX_C_PARMS 40
 #define MAX_NAME_PARMS 45
 #define MAX_LOCALS 50
-#define MAX_BLAKOD_STATEMENTS 20000000
+#define MAX_BLAKOD_STATEMENTS 30000000
 /* the c function id is 1 byte */
 #define MAX_C_FUNCTION 256
 
@@ -28,12 +28,12 @@ typedef struct
 
 typedef struct
 {
-	int class_id;
-	int message_id;
-	int propagate_depth;
-	int num_parms;
+   int class_id;
+   int message_id;
+   int propagate_depth;
+   int num_parms;
    parm_node parms[MAX_NAME_PARMS];
-	char *bkod_ptr;
+   char *bkod_ptr;
 } kod_stack_type;
 
 typedef struct
@@ -56,7 +56,9 @@ typedef struct
    /* while interpreting stuff, this is valid */
    int interpreting_class;
 
-   double frequency;
+   // True if we time calls.
+   bool debugtime;
+
    double ccall_total_time[MAX_C_FUNCTION];
    /* the number of calls to each C function */
    int c_count_untimed[MAX_C_FUNCTION];

@@ -1801,17 +1801,18 @@ messages:
 
       if NOT Send(self,@ismember, #who=who)
       {
-         Debug("Somehow, someone's voting in a guild that is not their own!");
+         Debug(who,Send(who,@GetTrueName)," voting in a guild that is not their own!");
 
          return FALSE;
       }
 
       if NOT IsClass(candidate,&User)
       {
-         Debug("voted for an inanimate object of some sort!");
+         Debug(who,Send(who,@GetTrueName)," guild voted for inanimate object ",
+               Send(candidate,@GetTrueName));
          Send(who,@MsgSendUser,#message_rsc=guild_cant_vote_nonuser,
-              #parm1=Send(candidate,@getcapdef),
-              #parm2=Send(candidate,@GetTrueName));
+               #parm1=Send(candidate,@GetCapDef),
+               #parm2=Send(candidate,@GetTrueName));
 
       }
 
@@ -1880,7 +1881,8 @@ messages:
          }
       }
 
-      Debug("Somehow, someone's voting for someone outside their guild!");
+      Debug(who,Send(who,@GetTrueName)," is voting for someone outside guild ",
+            Send(self,@GetName),self);
       Send(who,@MsgSendUser,#message_rsc=guild_cant_vote_outsider,
             #parm1=Send(candidate,@GetDef),
             #type2=STRING_RESOURCE,#parm2=Send(candidate,@GetTrueName),

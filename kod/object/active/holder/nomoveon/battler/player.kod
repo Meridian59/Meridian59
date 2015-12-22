@@ -1,5 +1,4 @@
 % Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
-% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -10,7 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Player is Battler
-   
+
 % Don't instantiate this class--use things derived from it
 
 constants:
@@ -1033,7 +1032,6 @@ properties:
 
    ptAttackTimer = $
 
-   psHonor = $
    plHonor = $
 
    piMonsterChasers = 0
@@ -1079,7 +1077,6 @@ properties:
    piBound_angle = ANGLE_SOUTH
 
    % Is the player currently using a Death Rift spell?
-   pbDeath_rift = FALSE
    ptDeathRiftTimer = $
 
    % This list keeps track of selfcast buffs for passive improvement.
@@ -4260,7 +4257,7 @@ messages:
       }
 
       % Check for guildmates and allies
-      if IsClass(victim,&Player)
+      if IsClass(victim,&User)
          AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
@@ -4291,7 +4288,7 @@ messages:
       }
 
       % Check for temporary safety flag.
-      if IsClass(victim,&Player)
+      if IsClass(victim,&User)
          AND ((piFlags & PFLAG_TEMPSAFE)
             OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE))
       {
@@ -4322,7 +4319,7 @@ messages:
          return FALSE;
       }
 
-      if IsClass(victim,&Player)
+      if IsClass(victim,&User)
          AND Send(victim,@IsInCannotInteractMode)
       {
          return FALSE;
@@ -9631,7 +9628,7 @@ messages:
          piFlags = piFlags & ~PFLAG_KILLED_BY_PLAYER;
       }
 
-      if Send(self,@GetDeathRiftProtection)
+      if (piflags & PFLAG_DEATH_RIFTING)
       {
          % Leaving the Underworld while protected, no penalties. Protection
          % is removed in NewOwner to allow them to log off without penalties.
@@ -12682,7 +12679,8 @@ messages:
    {
       local oSoldierShield;
 
-      if faction < FACTION_NEUTRAL OR faction > FACTION_MAX
+      if faction < FACTION_NEUTRAL
+         OR faction > FACTION_NORMAL_MAX
       {
          return FALSE;
       }
@@ -12950,7 +12948,8 @@ messages:
          return FALSE;
       }
 
-      if new_faction <= FACTION_NEUTRAL OR new_faction > FACTION_MAX
+      if new_faction <= FACTION_NEUTRAL
+         OR new_faction > FACTION_NORMAL_MAX
       {
          return FALSE;
       }
@@ -14371,7 +14370,7 @@ messages:
             #new_row=piBound_row,#new_col=piBound_col,
             #fine_row=piBound_fine_row,#fine_col=piBound_fine_col,
             #new_angle=piBound_angle, #max_distance=3);
-      
+
       return;
    }
 
@@ -14402,33 +14401,29 @@ messages:
 
    SetDeathRiftProtection(value=FALSE)
    {
-      if value=TRUE
-         AND poOwner <> $
-         AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+      if value
       {
-         % Only allow Death Rift Protection for those already
-         % logged on and in the Underworld
-         pbDeath_rift = TRUE;
+         if poOwner <> $
+            AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+         {
+            % Only allow Death Rift Protection for those already
+            % logged on and in the Underworld
+            piFlags = piflags | PFLAG_DEATH_RIFTING;
 
-         return;
+            return;
+         }
       }
-
-      if value=FALSE
+      else
       {
          if ptDeathRiftTimer <> $
          {
             DeleteTimer(ptDeathRiftTimer);
             ptDeathRiftTimer = $;
          }
-         pbDeath_rift = FALSE;
+         piFlags = piflags & ~PFLAG_DEATH_RIFTING;
       }
 
       return;
-   }
-
-   GetDeathRiftProtection()
-   {
-      return pbDeath_rift;
    }
 
    StartDeathRiftTimer()
@@ -14446,7 +14441,7 @@ messages:
 
       if poOwner <> $
          AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
-         AND Send(self,@GetDeathRiftProtection) = TRUE
+         AND (piflags & PFLAG_DEATH_RIFTING)
       {
          Send(self,@AdminGoToSafety);
 

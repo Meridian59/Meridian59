@@ -161,9 +161,9 @@ messages:
       propagate;
    }
 
-   TogglePortal(What = $)
+   TogglePortal(what = $)
    {
-      if What = 1
+      if what = 1
       {
          if pbLitA
          {
@@ -178,8 +178,7 @@ messages:
             Send(poBrazier1,@SetFlame,#has_flame=TRUE);
          }
       }
-
-      if What = 2
+      else if what = 2
       {
          if pbLitB
          {
@@ -194,8 +193,7 @@ messages:
             Send(poBrazier2,@SetFlame,#has_flame=TRUE);
          }
       }
-
-      if What = 3
+      else if what = 3
       {
          if pbLitC
          {
@@ -210,8 +208,7 @@ messages:
             Send(poBrazier3,@SetFlame,#has_flame=TRUE);
          }
       }
-
-      if What = 4
+      else if what = 4
       {
          if pbLitD
          {
@@ -226,8 +223,7 @@ messages:
             Send(poBrazier4,@SetFlame,#has_flame=TRUE);
          }
       }
-
-      if What = 5
+      else if what = 5
       {
          if pblite
          {
@@ -246,12 +242,12 @@ messages:
       return;
    }
 
-   BrazierLit(Brazier_obj=$,Who=$)
+   BrazierLit(what=$,who=$)
    {
-      Local what, lit;
-      
+      local lit;
+
       lit = TRUE;
-      what = brazier_obj;
+
       if what = poBrazier1 AND NOT pbLitA
       {
          Send(self,@Toggleportal,#what=1);
@@ -309,7 +305,6 @@ messages:
       return;
    }
 
-
    CreateStandardExits()
    {
       plExits = $;
@@ -317,12 +312,11 @@ messages:
       propagate;
    }
 
-
    LeaveHold(what=$)
    {
       local i;
 
-      if isClass(what,&Player)
+      if isClass(what,&User)
       {
          foreach i in plCorpses
          {
@@ -332,7 +326,7 @@ messages:
             }
          }
 
-         %% Now we take losses from our death.
+         % Now we take losses from our death.
          if Send(what,@GetOwner) <> $
             AND Send(what,@IsLoggedOn)
          {
@@ -465,7 +459,6 @@ messages:
 
       return;
    }
-
 
    ResetPuzzle()
    {
@@ -613,7 +606,8 @@ messages:
       if inKocatan
       {
          oDeadPlayer = Send(SYS,@FindUserByString,#string=Send(what,@GetCorpseName));
-         Send(oDeadPlayer,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#value=TRUE,#flagset=2);
+         Send(oDeadPlayer,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,
+               #value=TRUE,#flagset=2);
       }
 
       return;
@@ -629,7 +623,8 @@ messages:
          {
             plCorpses = DelListElem(plCorpses,i);
             oDeadPlayer = Send(SYS,@FindUserByString,#string=Send(what,@GetCorpseName));
-            Send(oDeadPlayer,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#value=FALSE,#flagset=2);
+            Send(oDeadPlayer,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,
+                  #value=FALSE,#flagset=2);
          }
       }
 
@@ -641,36 +636,52 @@ messages:
       Send(self,@NewHold,#what=Create(&HellPortal),#new_row=10,#new_col=6);
 
       pobrazier1 = Create(&BrazierSwitch);
-      Send(self,@NewHold,#what=pobrazier1,#new_row=4,#new_col=7,#fine_row=32,#fine_col=8);
+      Send(self,@NewHold,#what=pobrazier1,#new_row=4,#new_col=7,
+            #fine_row=32,#fine_col=8);
 
       pobrazier2 = Create(&BrazierSwitch);
-      Send(self,@NewHold,#what=pobrazier2,#new_row=2,#new_col=23,#fine_row=8,#fine_col=24);
+      Send(self,@NewHold,#what=pobrazier2,#new_row=2,#new_col=23,
+            #fine_row=8,#fine_col=24);
 
       pobrazier3 = Create(&BrazierSwitch);
-      Send(self,@NewHold,#what=pobrazier3,#new_row=20,#new_col=29,#fine_row=16,#fine_col=40);
+      Send(self,@NewHold,#what=pobrazier3,#new_row=20,#new_col=29,
+            #fine_row=16,#fine_col=40);
 
       pobrazier4 = Create(&BrazierSwitch);
-      Send(self,@NewHold,#what=pobrazier4,#new_row=31,#new_col=15,#fine_row=43,#fine_col=28);
+      Send(self,@NewHold,#what=pobrazier4,#new_row=31,#new_col=15,
+            #fine_row=43,#fine_col=28);
 
       pobrazier5 = Create(&BrazierSwitch);
-      Send(self,@NewHold,#what=pobrazier5,#new_row=20,#new_col=2,#fine_row=32,#fine_col=8);
+      Send(self,@NewHold,#what=pobrazier5,#new_row=20,#new_col=2,
+            #fine_row=32,#fine_col=8);
 
-      poPortal1 = Create(&Portal,#desc=portal_tos,#dest_room_num=RID_TOS_INN,#dest_col=7  ,#dest_row=8);
-      Send(self,@NewHold,#what=poPortal1,#new_row=3,#new_col=7,#fine_row=0,#fine_col=32,#new_angle=ANGLE_SOUTH_EAST);
+      poPortal1 = Create(&Portal,#desc=portal_tos,#dest_room_num=RID_TOS_INN,
+                        #dest_col=7,#dest_row=8);
+      Send(self,@NewHold,#what=poPortal1,#new_row=3,#new_col=7,
+            #fine_row=0,#fine_col=32,#new_angle=ANGLE_SOUTH_EAST);
 
-      poPortal2 = Create(&Portal,#desc=portal_cornoth,#dest_room_num=RID_COR_INN,#dest_col=5  ,#dest_row=5);  
-      Send(self,@NewHold,#what=poPortal2,#new_row=2,#new_col=25,#fine_row=40,#fine_col=24,#new_angle=ANGLE_SOUTH_WEST);
+      poPortal2 = Create(&Portal,#desc=portal_cornoth,#dest_room_num=RID_COR_INN,
+                        #dest_col=5,#dest_row=5);
+      Send(self,@NewHold,#what=poPortal2,#new_row=2,#new_col=25,
+            #fine_row=40,#fine_col=24,#new_angle=ANGLE_SOUTH_WEST);
 
-      poPortal3 = Create(&Portal,#desc=portal_barloque,#dest_room_num=RID_BAR_INN,#dest_col=6  ,#dest_row=5);
-      Send(self,@NewHold,#what=poPortal3,#new_row=21,#new_col=30,#fine_row=44,#fine_col=20,#new_angle=ANGLE_NORTH_WEST);
+      poPortal3 = Create(&Portal,#desc=portal_barloque,#dest_room_num=RID_BAR_INN,
+                        #dest_col=6,#dest_row=5);
+      Send(self,@NewHold,#what=poPortal3,#new_row=21,#new_col=30,
+            #fine_row=44,#fine_col=20,#new_angle=ANGLE_NORTH_WEST);
 
-      poPortal4 = Create(&Portal,#desc=portal_marion,#dest_room_num=RID_MAR_INN,#dest_col=6,#dest_row=12);
-      Send(self,@NewHold,#what=poPortal4,#new_row=32,#new_col=16,#fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH);
+      poPortal4 = Create(&Portal,#desc=portal_marion,#dest_room_num=RID_MAR_INN,
+                        #dest_col=6,#dest_row=12);
+      Send(self,@NewHold,#what=poPortal4,#new_row=32,#new_col=16,
+            #fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH);
 
-      poPortal5 = Create(&Portal,#desc=portal_jasper,#dest_room_num=RID_JAS_INN,#dest_col=10 ,#dest_row=4);
-      Send(self,@NewHold,#what= poPortal5,#new_row=21,#new_col=2,#fine_row=48,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+      poPortal5 = Create(&Portal,#desc=portal_jasper,#dest_room_num=RID_JAS_INN,
+                        #dest_col=10 ,#dest_row=4);
+      Send(self,@NewHold,#what= poPortal5,#new_row=21,#new_col=2,
+            #fine_row=48,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
 
-      Send(self,@NewHold,#what=Create(&Skull),#new_row=16,#new_col=16,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=16,#new_col=16,
+            #fine_row=32,#fine_col=32);
 
       Send(self,@ResetPuzzle);
 

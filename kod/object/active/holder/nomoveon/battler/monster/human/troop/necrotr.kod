@@ -59,6 +59,8 @@ classvars:
    % viInsignia = INSIG_QOR
    vcShieldClass = &NecromancerShield
 
+   viFaction = FACTION_NECROMANCER
+
 properties:
 
    piBaseLevel = 60

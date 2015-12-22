@@ -35,7 +35,6 @@ properties:
 
 messages:
 
-   
    Constructor()
    {
       Send(self,@Recreate);
@@ -62,8 +61,14 @@ messages:
 
    Recreate()
    {
+      local i;
+
+      foreach i in plActiveEvents
+      {
+         Send(i,@Recreate);
+      }
+
       plRandomEvents = $;
-      plActiveEvents = $;
 
       Debug("Creating Events");
       plRandomEvents = Cons(&RatInvasion,plRandomEvents);

@@ -627,7 +627,7 @@ int C_PostMessage(int object_id,local_var_type *local_vars,
             int num_normal_parms,parm_node normal_parm_array[],
             int num_name_parms,parm_node name_parm_array[])
 {
-   val_type object_val,message_val;
+   val_type object_val, message_val;
 
    object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
       normal_parm_array[0].value);
@@ -656,7 +656,31 @@ int C_PostMessage(int object_id,local_var_type *local_vars,
       }
    }
 
-   if (object_val.v.tag != TAG_OBJECT)
+   if (object_val.v.tag == TAG_OBJECT)
+   {
+      PostBlakodMessage(object_val.v.data, message_val.v.data, num_name_parms,
+         name_parm_array);
+   }
+   else if (object_val.v.tag == TAG_INT)
+   {
+      /* Can post to built-in objects using constants. */
+      int post_obj_id = GetBuiltInObjectID(object_val.v.data);
+      if (post_obj_id > INVALID_OBJECT)
+      {
+         PostBlakodMessage(post_obj_id, message_val.v.data, num_name_parms,
+            name_parm_array);
+      }
+      else
+      {
+         /* Assumes object_id (the current 'self') is a valid object */
+         bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to bad built-in object %i,%i\n",
+            object_id,
+            GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
+            GetNameByID(message_val.v.data), message_val.v.data,
+            object_val.v.tag, object_val.v.data);
+      }
+   }
+   else
    {
       /* Assumes object_id (the current 'self') is a valid object */
       bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
@@ -667,8 +691,6 @@ int C_PostMessage(int object_id,local_var_type *local_vars,
       return NIL;
    }
 
-   PostBlakodMessage(object_val.v.data,message_val.v.data,
-      num_name_parms,name_parm_array);
    return NIL;
 }
 
@@ -3165,7 +3187,8 @@ int C_BlockerRemoveBSP(int object_id, local_var_type *local_vars,
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
-		bprintf("C_BlockerRemoveBSP can't find room %i\n", room_val.v.data);
+		bprintf("C_BlockerRemoveBSP can't find room %i for object %i\n",
+			room_val.v.data, obj_val.v.data);
 		return ret_val.int_val;
 	}
 

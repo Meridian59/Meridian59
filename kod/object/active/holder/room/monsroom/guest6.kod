@@ -163,7 +163,7 @@ properties:
 
    prMusic = guest6_music
 
-   piMonster_count_max = 20
+   piMonster_count_max = 25
 
    piPit_Monsters = 0        % Number of monsters currently in the pit area
 
@@ -455,11 +455,6 @@ messages:
    SlamTimer()
    {
       ptDoor = $;
-
-      if GetTime() > 59871006
-      {
-         piMonster_count_max = piMonster_count_max + 1;
-      }
 
       Send(self,@SomethingWaveRoom,#wave_rsc=guest6_door1_rsc,#what=poLever1);
       Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,

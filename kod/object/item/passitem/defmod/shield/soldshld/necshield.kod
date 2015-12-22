@@ -45,7 +45,7 @@ classvars:
    prShield_emblem_drop = necshield_emblem_drop
    prShield_emblem_back = necshield_emblem_back
 
-   viFaction = FACTION_DUKE
+   viFaction = FACTION_NECROMANCER
    viColor = XLAT_REDTOBLACK
 
    % Stuff for rank

@@ -59,6 +59,11 @@ messages:
       return;
    }
 
+   Recreate()
+   {
+      return;
+   }
+
    IsUnique()
    {
       return vbUnique;

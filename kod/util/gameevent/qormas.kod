@@ -95,6 +95,20 @@ messages:
       return;
    }
 
+   Recreate()
+   "Turns Qormas off so rooms can be recreated properly, then turns it "
+   "back on. StartQormas has to be posted, so that it occurs after room "
+   "creation."
+   {
+      if (pbActive)
+      {
+         Send(self,@EndQormas,#bDisplayMessage=FALSE);
+         Post(self,@StartQormas,#bDisplayMessage=FALSE);
+      }
+
+      return;
+   }
+
    % required GameEvent Overload
    StartEvent()
    {
@@ -114,11 +128,18 @@ messages:
    % not required to overload, but a good idea for cleanup
    EndEvent()
    {
+      % In case this is called manually, let RealTime know to delete
+      % the callback.
+      Post(REALTIME_OBJECT,@DeleteCallback,#what=self);
+
       Send(self,@EndQormas);
+
       propagate;
    }
 
    StartQormas(override=FALSE,bDisplayMessage=TRUE)
+   "Shouldn't call this manually to start Qormas - use 'send c GameEventEngine "
+   "EventStart parm1 c Qormas'."
    {
       local oDecoration, oRoom;
 
@@ -467,13 +488,16 @@ messages:
       % If snow is turned on, set all rooms to start snowing.
       if pbSnow
       {
-         Send(&Room,@StartSnow);
+         SendList(Send(SYS,@GetRooms),0,@StartSnow);
       }
 
       return TRUE;
    }
 
    EndQormas(reporter=$,bDisplayMessage=TRUE)
+   "Shouldn't call this message manually to end Qormas - use the "
+   "@NotifyEngineEndEvent on the Qormas object, or send EventEnd directly to "
+   "GameEventEngine with the Qormas object as parm1."
    {
       Send(self,@RemoveDecorations);
 
@@ -481,7 +505,7 @@ messages:
       Send(self,@RemoveGifts);
 
       % If snow is turned on, stop snowing in all rooms.
-      Send(&Room,@EndSnow);
+      SendList(Send(SYS,@GetRooms),0,@EndSnow);
 
       pbActive = FALSE;
 
@@ -490,7 +514,7 @@ messages:
 
    RemoveDecorations()
    {
-      local i;
+      local i, oRoom;
 
       foreach i in plDecorations
       {
@@ -499,10 +523,11 @@ messages:
 
       foreach i in plWreaths
       {
-         if Nth(i,1) <> $
-            AND IsClass(Nth(i,1),&Room)
+         oRoom = First(i);
+         if oRoom <> $
+            AND IsClass(oRoom,&Room)
          {
-            Send(Nth(i,1),@RemoveTextureChange,#id=Nth(i,2));
+            Send(oRoom,@RemoveTextureChange,#id=Nth(i,2));
          }
          plWreaths = DelListElem(plWreaths,i);
       }
@@ -523,54 +548,54 @@ messages:
 
       % Tos Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
             #bSE=FALSE,#bNE=FALSE);
 
       % Tos Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_HALL);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
             #bSE=FALSE,#bNE=FALSE);
 
       % Barloque Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_INN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
             #bSW=FALSE,#bNW=FALSE);
 
       % Barloque Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_HALL);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree);
 
       % Cor Noth Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_INN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
             #bSW=FALSE,#bS=FALSE);
 
       % Cor Noth Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_HALL);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
             #bN=FALSE,#bNW=FALSE);
 
       % Jasper Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_INN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
             #bS=FALSE,#bSE=FALSE);
 
       % Jasper Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_HALL);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
             #bSW=FALSE,#bS=FALSE);
 
       % Marion Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       if (Send(oTree,@GetRow) = 14 AND Send(oTree,@GetCol) = 15)
       {
          Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE);
@@ -594,19 +619,19 @@ messages:
 
       % Marion Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_HALL);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
             #bSW=FALSE,#bS=FALSE);
 
       % Kocatan Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
             #bN=FALSE,#bNW=FALSE);
 
       % Kocatan Tavern
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_TAVERN);
-      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      oTree = First(Send(self,@FindTrees,#oRoom=oRoom));
       Send(self,@PlaceGiftsAroundTree,#oTree=oTree);
 
       return;
@@ -675,8 +700,8 @@ messages:
       % North
       if bN
       {
-         iNewRow=iRow;
-         iNewCol=iCol;
+         iNewRow = iRow;
+         iNewCol = iCol;
          iNewFineRow = iFineRow - TREE_DISTANCE;
          iNewFineCol = iFineCol;
          
@@ -922,11 +947,9 @@ messages:
       {
          if (Send(i,@GetRecipient) <> $)
          {
-            lGiftsBackup = Cons([Send(i,@GetRow),
-                                 Send(i,@GetCol),
-                                 Send(i,@GetFineRow),
-                                 Send(i,@GetFineCol),
-                                 Send(i,@GetRecipient)],lGiftsBackup);
+            lGiftsBackup = Cons([ Send(i,@GetRow), Send(i,@GetCol),
+                                  Send(i,@GetFineRow), Send(i,@GetFineCol),
+                                  Send(i,@GetRecipient) ], lGiftsBackup);
          }
       }
 
@@ -939,13 +962,13 @@ messages:
          {
             foreach j in plGifts
             {
-               if (Nth(i,1) = Send(j,@GetRow))
+               if (First(i) = Send(j,@GetRow))
                   AND (Nth(i,2) = Send(j,@GetCol))
                   AND (Nth(i,3) = Send(j,@GetFineRow))
                   AND (Nth(i,4) = Send(j,@GetFineCol))
-                  {
-                     Send(j,@SetRecipient,#who=Nth(i,5));
-                  }
+               {
+                  Send(j,@SetRecipient,#who=Nth(i,5));
+               }
             }
          }
       }
@@ -955,7 +978,7 @@ messages:
 
    RemoveGifts()
    {
-      local i,oOwner;
+      local i, oOwner;
 
       if plGifts = $
       {
@@ -979,7 +1002,7 @@ messages:
 
    RemoveGiftsFromPlayers()
    {
-      local i,oOwner;
+      local i, oOwner;
 
       if plGifts = $
       {
@@ -1210,7 +1233,7 @@ messages:
       {
          if (Length(lIslandGifts) > 0)
          {
-            return (Nth(lIslandGifts,1));
+            return First(lIslandGifts);
          }
          else if (Length(lMainlandGifts) > 0)
          {

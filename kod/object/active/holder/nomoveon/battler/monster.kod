@@ -2755,9 +2755,10 @@ messages:
       return ((viAttributes & MOB_RECEIVE) AND TRUE);
    }
 
-   CanAcceptOffer()
+   CanAcceptOffer(who=$)
    {
-      return ((viAttributes & MOB_BUYER) OR (viAttributes & MOB_RECEIVE));
+      return ((viAttributes & MOB_BUYER OR viAttributes & MOB_RECEIVE)
+               OR (who <> $ AND IsClass(who,&DM)));
    }
 
    ReqOffer(what = $, item_list = $)
@@ -2880,6 +2881,12 @@ messages:
             return FALSE;
          }
 
+         return TRUE;
+      }
+
+      % Let DMs give monsters stuff - will drop on death.
+      if IsClass(what,&DM)
+      {
          return TRUE;
       }
 
@@ -3841,29 +3848,36 @@ messages:
    Offer(what = $,item_list = $)
    "Offer the player money in exchange for their goods - MOB_BUYER"
    {
-      local i,iValue_offered,iAdd,x,y;
+      local i, iValue_offered, iAdd, x, y;
 
       % The Faction Pricing bonus was selling items to NPCs at higher prices
-      %  than the new price.  This has been taken out.
+      % than the new price.  This has been taken out.
 
-      iValue_offered = 0;
-      foreach i in item_list
+      if (viAttributes & MOB_BUYER
+         OR viAttributes & MOB_RECEIVE)
       {
-         x = Send(i,@GetValue) * (100 - 10*viMerchant_markup) / 100;
-         iAdd = Bound(x,1,$);
+         iValue_offered = 0;
+         foreach i in item_list
+         {
+            x = Send(i,@GetValue) * (100 - 10*viMerchant_markup) / 100;
+            iAdd = Bound(x,1,$);
 
-         iValue_offered = iValue_offered + iAdd;
+            iValue_offered = iValue_offered + iAdd;
+         }
+
+         poCustomer = what;
+
+         plOffer_items = [ Create(&Money,#number=iValue_offered) ];
+         Send(what,@CounterOffer,#item_list=plOffer_items);
+         ptCancelOffer = CreateTimer(self,@CancelOfferTimer,viCancel_offer_time);
       }
-
-      poCustomer = what;
-
-      plOffer_items = [ Create(&Money,#number=iValue_offered) ];
-      Send(what,@CounterOffer,#item_list=plOffer_items);
-      ptCancelOffer = CreateTimer(self,@CancelOfferTimer,viCancel_offer_time);
+      else if IsClass(what,&DM)
+      {
+         Send(what,@CounterOffer,#item_list=$);
+      }
 
       return;
    }
-
 
    CancelOfferTimer()
    {
@@ -4064,8 +4078,9 @@ messages:
       }
 
       iFee = 0;
-      iBulk=0;
+      iBulk = 0;
       iCount = 0;
+      bFound = FALSE;
 
       % Make sure the player really has this item in storage.
       foreach i in lItems
@@ -6296,7 +6311,7 @@ messages:
       return pbDontDispose;
    }
 
-   GetObjectFlags()
+   GetObjectFlags(what=$)
    {
       local iFlags;
 
@@ -6312,8 +6327,9 @@ messages:
          iFlags = iFlags | OF_BUYABLE;
       }
 
-      if (viAttributes & MOB_BUYER)
-         OR (viAttributes & MOB_RECEIVE)
+      if ((viAttributes & MOB_BUYER
+         OR viAttributes & MOB_RECEIVE)
+         OR what <> $ AND IsClass(what,&DM))
       {
          iFlags = iFlags | OF_OFFERABLE;
       }

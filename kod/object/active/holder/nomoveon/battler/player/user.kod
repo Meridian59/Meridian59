@@ -1352,6 +1352,15 @@ messages:
       {
          iSay_type = Nth(client_msg,2);
          sStr_said = Nth(client_msg,3);
+
+         % don't send oversized chat strings
+         if (StringLength(sStr_said) > MAX_CHAT_LEN)
+         {
+            Debug("ALERT! ",Send(self,@GetTrueName),self," tried to "
+               "send an overly large chat message.");
+            return;
+         }
+
          Send(self,@UserSay,#type=iSay_type,#string=sStr_said);
 
          return;
@@ -1361,6 +1370,15 @@ messages:
       {
          lUsers  = Nth(client_msg,2);
          sStr_said = Nth(client_msg,3);
+
+         % don't send oversized chat strings
+         if (StringLength(sStr_said) > MAX_CHAT_LEN)
+         {
+            Debug("ALERT! ",Send(self,@GetTrueName),self," tried to "
+               "send an overly large chat message.");
+            return;
+         }
+
          Send(self,@UserSayGroup,#users=lUsers,#string=sStr_said);
 
          return;

@@ -89,9 +89,9 @@ properties:
    pbKriipaMask = TRUE
 
    % Set this in qormas kod, leave this one alone
-   pbMaskPossible = FALSE   
-   
-messages:   
+   pbMaskPossible = FALSE
+
+messages:
 
    Constructor(mask=FALSE,qormas_obj=$)
    {
@@ -109,23 +109,32 @@ messages:
       propagate;
    }
 
+   Delete()
+   {
+      % Clear object references.
+      poQormas = $;
+      poRecipient = $;
+
+      propagate;
+   }
+
    DestroyDisposable()
    {
       return;
    }
-   
+
    GetRecipient()
    {
       return poRecipient;
    }
-   
+
    SetRecipient(who=$)
    {
       poRecipient = who;
       
       return;
    }
-   
+
    SetRandomPaper()
    {
       local iRandom;
@@ -401,6 +410,9 @@ messages:
          if (IsClass(what,&User))
          {
             Send(poQormas,@GiftClaimed,#what=self,#who=what);
+
+            % Clear Qormas reference
+            poQormas = $;
          }
       }
 

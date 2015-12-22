@@ -5713,6 +5713,8 @@ messages:
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
       plItemTemplates = cons(create(&FireArrow),plItemTemplates);
       plItemTemplates = cons(create(&IceArrow),plItemTemplates);
+      plItemTemplates = cons(create(&AcidArrow),plItemTemplates);
+      plItemTemplates = cons(create(&GoldenArrow),plItemTemplates);
 
       % Weapons
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);

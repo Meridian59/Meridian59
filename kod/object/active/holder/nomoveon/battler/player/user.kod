@@ -7483,7 +7483,7 @@ messages:
    NewOwner(what = $)
    "A user has a new owner when they enter a new room."
    {
-      local oOldRoom;
+      local i, oOldRoom;
 
       Send(self,@CancelIfOffer);
 
@@ -7547,7 +7547,22 @@ messages:
             AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
          {
             piLastSafeRoom = Send(poOwner,@GetRoomNum);
+
+            % Recharge user's rods.
             Send(self,@RechargeAllRods);
+
+            % If this player has created any evil twins, delete them.
+            if plEvilTwins <> $
+            {
+               foreach i in plEvilTwins
+               {
+                  if IsClass(i,&EvilTwin)
+                  {
+                     Send(i,@Delete);
+                  }
+               }
+               plEvilTwins = $;
+            }
          }
 
          piRow = First(Send(poOwner,@GetRoomPos,#what=self));

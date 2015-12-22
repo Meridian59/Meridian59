@@ -4257,7 +4257,7 @@ messages:
       }
 
       % Check for guildmates and allies
-      if IsClass(victim,&Player)
+      if IsClass(victim,&User)
          AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
@@ -4288,7 +4288,7 @@ messages:
       }
 
       % Check for temporary safety flag.
-      if IsClass(victim,&Player)
+      if IsClass(victim,&User)
          AND ((piFlags & PFLAG_TEMPSAFE)
             OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE))
       {
@@ -4319,7 +4319,7 @@ messages:
          return FALSE;
       }
 
-      if IsClass(victim,&Player)
+      if IsClass(victim,&User)
          AND Send(victim,@IsInCannotInteractMode)
       {
          return FALSE;

@@ -3505,39 +3505,45 @@ messages:
 
    ToCliSpells()
    {
-      local i,oSpell;
+      local i, oSpell;
 
-      AddPacket(1,BP_SPELLS, 2,Length(plSpells));
-
-      foreach i in plSpells
+      if pbLogged_on
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
-                                                     #compound=i));
-         Send(self,@ToCliObject,#what=oSpell);
-         AddPacket(1,Send(oSpell,@GetNumSpellTargets));
-         AddPacket(1,Send(oSpell,@GetSchool));
-      }
+         AddPacket(1,BP_SPELLS, 2,Length(plSpells));
 
-      SendPacket(poSession);
-      Send(self,@ToCliStats,#group=3);
+         foreach i in plSpells
+         {
+            oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
+                                                        #compound=i));
+            Send(self,@ToCliObject,#what=oSpell);
+            AddPacket(1,Send(oSpell,@GetNumSpellTargets));
+            AddPacket(1,Send(oSpell,@GetSchool));
+         }
+
+         SendPacket(poSession);
+         Send(self,@ToCliStats,#group=3);
+      }
 
       return;
    }
 
    ToCliSkills()
    {
-      local i,oSkill;
+      local i, oSkill;
 
-      AddPacket(1, BP_SKILLS,2,Length(plSkills));
-      foreach i in plSkills
+      if pbLogged_on
       {
-         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
-                                                     #compound=i));
-         Send(self,@ToCliObject,#what=oSkill);
-      }
+         AddPacket(1, BP_SKILLS,2,Length(plSkills));
+         foreach i in plSkills
+         {
+            oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
+                                                        #compound=i));
+            Send(self,@ToCliObject,#what=oSkill);
+         }
 
-      SendPacket(poSession);
-      Send(self,@ToCliStats,#group=4);
+         SendPacket(poSession);
+         Send(self,@ToCliStats,#group=4);
+      }
 
       return;
    }

@@ -13417,7 +13417,7 @@ messages:
 
       foreach i in Send(SYS,@GetSpells)
       {
-         if not IsClass(i,&Spell)
+         if NOT IsClass(i,&Spell)
          {
             continue;
          }
@@ -13427,7 +13427,7 @@ messages:
             if iMaxLevel >= Send(i,@Getlevel)
             {
                Send(self,@AddSpell,#num=Send(i,@GetSpellNum),
-                     #iability=iAbility);
+                     #iability=iAbility,#dontSend=TRUE);
             }
          }
       }
@@ -13444,6 +13444,8 @@ messages:
          % Need -10 Karma per spell level (-10 for fudge).
          piKarma = level * -1000;
       }
+      Send(self,@ToCliSpells);
+      Send(self,@DrawKarma);
 
       return TRUE;
    }
@@ -13498,7 +13500,7 @@ messages:
 
       foreach i in Send(SYS,@GetSkills)
       {
-         if not IsClass(i,&Skill)
+         if NOT IsClass(i,&Skill)
          {
             continue;
          }
@@ -13507,10 +13509,13 @@ messages:
          {
             if iMaxLevel >= Send(i,@Getlevel)
             {
-               Send(self,@AddSkill,#num=Send(i,@GetSkillNum),#iability=iAbility);
+               Send(self,@AddSkill,#num=Send(i,@GetSkillNum),
+                     #iability=iAbility,#dontSend=TRUE);
             }
          }
       }
+
+      Send(self,@ToCliSkills);
 
       return TRUE;
    }

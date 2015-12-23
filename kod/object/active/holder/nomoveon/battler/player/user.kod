@@ -54,7 +54,7 @@ constants:
    USER_RUNNING_SPEED = 50
 
    % How many packets incoming per second do we allow?
-   INCOMING_PACKET_THROTTLE = 20
+   INCOMING_PACKET_THROTTLE = 25
 
    % What's the lower threshold for being able to run?  Below this, we can't
    %  run.
@@ -1183,6 +1183,13 @@ messages:
    DisconnectSession()
    {
       Send(self,@UserLogoff);
+
+      return;
+   }
+
+   SetFloodCount(iNum=0)
+   {
+      piFloodCount = iNum;
 
       return;
    }

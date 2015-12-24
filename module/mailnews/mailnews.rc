@@ -16,20 +16,18 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Neutral) resources
+// German resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
-#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-145 DIALOG  0, 0, 282, 255
+145 DIALOG 0, 0, 282, 255
 STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Artikel veröffentlichen"
 FONT 8, "MS Sans Serif"
@@ -50,12 +48,13 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "",1001,4,4,297,8
     CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
-    PUSHBUTTON      "Antworten",1116,5,143,42,12
-    PUSHBUTTON      "A&utor antworten",1125,51,143,58,12,WS_DISABLED
-    PUSHBUTTON      "&Nachricht verfassen",12,113,143,68,12
-    PUSHBUTTON      "A&ktualisieren",1017,185,143,46,12
-    PUSHBUTTON      "Schließen",1,236,143,41,12
+    PUSHBUTTON      "Antworten",1116,3,143,42,12
+    PUSHBUTTON      "A&utor antworten",1125,47,143,58,12,WS_DISABLED
+    PUSHBUTTON      "&Nachricht verfassen",12,107,143,68,12
+    PUSHBUTTON      "A&ktualisieren",1017,177,143,46,12
+    PUSHBUTTON      "Schließen",1,261,143,41,12
     EDITTEXT        1118,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+    PUSHBUTTON      "Löschen",1018,225,143,35,12,NOT WS_TABSTOP
 END
 
 1013 DIALOGEX 0, 0, 283, 338
@@ -74,7 +73,7 @@ BEGIN
     EDITTEXT        1013,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
 END
 
-111 DIALOG  0, 0, 282, 263
+111 DIALOG 0, 0, 282, 263
 STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Nachricht versenden"
 FONT 8, "MS Sans Serif"
@@ -92,10 +91,37 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    145, DIALOG
+    BEGIN
+    END
+
+    144, DIALOG
+    BEGIN
+    END
+
+    1013, DIALOG
+    BEGIN
+    END
+
+    111, DIALOG
+    BEGIN
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     1                       "Die Empfänger werden überprüft ..."
     2                       "Betreff: "
@@ -114,7 +140,7 @@ BEGIN
     15                      "Nachricht versendet."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     16                      "Du mußt zumindest einen Empfänger festlegen."
     17                      "Die Nachricht %s kann nicht gelöscht werden."
@@ -125,7 +151,7 @@ BEGIN
     22                      "Du kannst auf diese Nachricht nicht antworten."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     32                      "Jan"
     33                      "Feb"
@@ -145,7 +171,7 @@ BEGIN
     47                      "Don"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     48                      "Fre"
     49                      "Sam"
@@ -157,18 +183,16 @@ BEGIN
     IDS_SUBJECT_GERMAN      "Betreff: "
 END
 
-#endif    // German (Neutral) resources
+#endif    // German resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -192,7 +216,7 @@ BEGIN
     EDITTEXT        IDC_MAILEDIT,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
 END
 
-IDD_MAILSEND DIALOG  0, 0, 282, 263
+IDD_MAILSEND DIALOG 0, 0, 282, 263
 STYLE DS_SETFONT | DS_3DLOOK | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Send Mail"
 CLASS "Mail"
@@ -208,7 +232,7 @@ BEGIN
     LTEXT           "",IDC_SENDMAILMSG,9,63,249,10
 END
 
-IDD_NEWSPOST DIALOG  0, 0, 282, 255
+IDD_NEWSPOST DIALOG 0, 0, 282, 255
 STYLE DS_SETFONT | DS_3DLOOK | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Post Article"
 FONT 8, "MS Sans Serif"
@@ -232,9 +256,10 @@ BEGIN
     PUSHBUTTON      "&Reply",IDC_REPLY,5,143,42,12
     PUSHBUTTON      "&Mail author",IDC_REPLYMAIL,51,143,42,12,WS_DISABLED
     PUSHBUTTON      "&Post",IDC_NEWSPOST,97,143,41,12
-    PUSHBUTTON      "Re&scan",IDC_RESCAN,142,143,41,12
-    PUSHBUTTON      "&Close",IDOK,187,143,41,12
+    PUSHBUTTON      "Re&scan",IDC_RESCAN,141,143,41,12
+    PUSHBUTTON      "&Close",IDOK,228,143,41,12
     EDITTEXT        IDC_NEWSEDIT,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+    PUSHBUTTON      "&Delete",IDC_DELETEMSG,187,143,35,12
 END
 
 
@@ -289,7 +314,7 @@ IDB_MAILBOX             BITMAP                  "bitmap\\mailbox.bmp"
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_MAILREAD, DIALOG
     BEGIN
@@ -331,7 +356,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_NORECIPIENTS        "You must specify at least one recipient"
     IDS_CANTDELETEMAIL      "Can't delete mail message %s."
@@ -342,7 +367,7 @@ BEGIN
     IDS_CANTREPLY           "You cannot reply to this message."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CHECKNAMES          "Checking recipient names..."
     IDS_SUBJECT             "Subject: "
@@ -361,7 +386,7 @@ BEGIN
     IDS_MESSAGESENT         "Message sent."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_JANUARY             "Jan"
     IDS_FEBRUARY            "Feb"
@@ -381,7 +406,7 @@ BEGIN
     IDS_THURSDAY            "Thu"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_FRIDAY              "Fri"
     IDS_SATURDAY            "Sat"
@@ -393,7 +418,7 @@ BEGIN
     IDS_SUBJECT_GERMAN      "Betreff: "
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

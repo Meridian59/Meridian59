@@ -57,6 +57,8 @@ resources:
    dm_turn_off_pk = "turn off pk"
    dm_help_lights_command = "help lights"
    dm_help_scenery_command = "help scenery"
+   dm_pk_off = "PvP is now OFF for this screen."
+   dm_pk_already_off = "PvP is already OFF for this screen."
    dm_appeal_off_command = "appeal off"
    dm_appeal_on_command = "appeal on"
    dm_guest_appeal_off_command = "guest appeal off"
@@ -154,12 +156,22 @@ resources:
       "Use `rgo #`n to teleport to a room number or room RID.\n"
       "Cast Squelch for information on how to Squelch players."
 
-   dm_help = \
-      "DM APPEAL ON/OFF, DM STEALTH ON/OFF, "
-      "DM CLEAR ABILITIES, DM CLEAR INVENTORY, DM PK ENABLE, DM PK DISABLE, DM PK LOCK, DM PK UNLOCK, "
+   dm_admin_help = \
+      "DM APPEAL ON/OFF, DM STEALTH ON/OFF, DM CLEAR ABILITIES, "
+      "DM CLEAR INVENTORY, DM PK ENABLE, DM PK DISABLE, DM PK LOCK, DM PK UNLOCK, "
       "DM GET SPELLS, DM GET SKILLS, DM GET MONEY, DM BOOST STATS, DM GOOD, DM NEUTRAL, DM EVIL, "
       "DM TOTEM, DM RELIC <number/name>, DM MONSTER <monster name>, DM ITEM <item name>, "
       "DM GET <reagents/ food/ armor/ gems/ rings/ weapons/ necklaces/ potions/ sundries>"
+
+   dm_help_all = \
+      "Sending messages to users:\n"
+      "Use 'dm systemmessage' to send a message to all users with the [###] "
+      "prefix.\nUse 'dm gemote' to send a message to all users without the "
+      "prefix.\nUse 'dm gqemote' to send to all without a 'ding' sound.\n"
+      "Use 'dm lemote' to send a message to users in the same room.\n"
+      "Use 'dm lqemote' to send to users in the same room without the 'ding' "
+      "sound.\nUse the command 'dm turn off pk' to deactivate PvP on the "
+      "current screen for 1 hour.\n"
 
    dm_help_items = \
       "You can place scenery and lights using the \"dm place \" command.\n"
@@ -172,6 +184,7 @@ resources:
       "orc torch, skull brazier, table lamp, lantern, jasper lantern, "
       "jasper lantern1 and smoke (nice for firepits).  You can also place a dynamic light "
       "(with no visible object) using \" dm place dynamic light\"."
+
    dm_help_scenery = \
       "Available scenery items for placing are:  tree, raza tree, dead tree, "
       "pine tree, elm tree, spider tree, fey tree, bush (low res), shrub, "
@@ -356,7 +369,8 @@ messages:
 
          if NOT IsClass(self,&Admin)
          {
-            Send(self,@MsgSendUser,#message_rsc=dm_login,#parm1=Send(self,@GetName));
+            Send(self,@MsgSendUser,#message_rsc=dm_login,
+                  #parm1=Send(self,@GetName));
          }
       }
 
@@ -700,30 +714,35 @@ messages:
          if prRank = dm_moderator
          {
             Send(self,@MsgSendUser,#message_rsc=dm_moderator_help);
-            Send(self,@MsgSendUser,#message_rsc=dm_help_items);
-         
-            return;
          }
-         
-         if prRank = dm_guide
+         else if prRank = dm_guide
          {
             Send(self,@MsgSendUser,#message_rsc=dm_guide_help);
-            Send(self,@MsgSendUser,#message_rsc=dm_help_items);
-
-            return;
+         }
+         else
+         {
+            % If they're a higher rank, give them the admin help guide.
+            Send(self,@MsgSendUser,#message_rsc=dm_admin_help);
          }
 
-         % If they're a higher rank, give them the whole help guide.
-         Send(self,@MsgSendUser,#message_rsc=dm_help);
+         % Generic help guides.
          Send(self,@MsgSendUser,#message_rsc=dm_help_items);
+         Send(self,@MsgSendUser,#message_rsc=dm_help_all);
 
          return;
       }
-      
+
       if StringEqual(string,dm_turn_off_pk)
       {
-         Send(Send(self,@GetOwner),@StartTemporaryNoPK);
-         
+         if (Send(poOwner,@StartTemporaryNoPK))
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_pk_off);
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_pk_already_off);
+         }
+
          return;
       }
 
@@ -748,6 +767,7 @@ messages:
       {
          StringSubstitute(string,"systemmessage ","");
          Send(SYS,@AdminSystemMessage,#string=string,#bSound=TRUE,#bPrefix=TRUE);
+
          return;
       }
 
@@ -755,6 +775,7 @@ messages:
       {
          StringSubstitute(string,"gemote ","");
          Send(SYS,@AdminSystemMessage,#string=string,#bSound=TRUE,#bPrefix=FALSE);
+
          return;
       }
 
@@ -762,16 +783,17 @@ messages:
       {
          StringSubstitute(string,"gqemote ","");
          Send(SYS,@AdminSystemMessage,#string=string,#bSound=FALSE,#bPrefix=FALSE);
+
          return;
       }
 
       if StringContain(string,"lemote")
       {
          StringSubstitute(string,"lemote ","");
-         foreach i in send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
-            Send(Nth(i,1),@MsgSendUser,#message_rsc=dm_system_message,#parm1=string);
-            Send(Nth(i,1),@WaveSendUser,#wave_rsc=system_message_sound);
+            Send(First(i),@MsgSendUser,#message_rsc=dm_system_message,#parm1=string);
+            Send(First(i),@WaveSendUser,#wave_rsc=system_message_sound);
          }
          return;
       }
@@ -779,10 +801,11 @@ messages:
       if StringContain(string,"lqemote")
       {
          StringSubstitute(string,"lqemote ","");
-         foreach i in send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
-            Send(Nth(i,1),@MsgSendUser,#message_rsc=dm_system_message,#parm1=string);
+            Send(First(i),@MsgSendUser,#message_rsc=dm_system_message,#parm1=string);
          }
+
          return;
       }
 

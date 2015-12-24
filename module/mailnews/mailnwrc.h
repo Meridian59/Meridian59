@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by mailnews.rc
 //
 #define IDS_GETUSERS                    1

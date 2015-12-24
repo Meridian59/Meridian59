@@ -163,13 +163,16 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
 
       // Ask for articles if we have read permission
       if (info->permissions & NEWS_READ)
-	 RequestArticles(info->newsgroup);
+         RequestArticles(info->newsgroup);
       else
-	 EnableWindow(GetDlgItem(hDlg, IDC_RESCAN), FALSE);
+         EnableWindow(GetDlgItem(hDlg, IDC_RESCAN), FALSE);
 
-      // Disable post button if we don't have permission
+      // Disable post and delete buttons if we don't have permission
       if (!(info->permissions & NEWS_POST))
-	 EnableWindow(GetDlgItem(hDlg, IDC_NEWSPOST), FALSE);
+      {
+         EnableWindow(GetDlgItem(hDlg, IDC_NEWSPOST), FALSE);
+         EnableWindow(GetDlgItem(hDlg, IDC_DELETEMSG), FALSE);
+      }
 
       SetTimer(hDlg, 1, 100, NULL);
 
@@ -242,7 +245,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       /* Display article's text */
       SetWindowText(hEdit, (char *) lParam);
       if (info->permissions & NEWS_POST)
-	 EnableWindow(GetDlgItem(hDlg, IDC_REPLY), TRUE);
+         EnableWindow(GetDlgItem(hDlg, IDC_REPLY), TRUE);
       EnableWindow(GetDlgItem(hDlg, IDC_REPLYMAIL), TRUE);
       SetTimer(hDlg, 1, 1000, NULL);
       return TRUE;
@@ -351,10 +354,17 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
 
       case IDOK:
       case IDCANCEL:
-	 info->articles = list_destroy(info->articles);
+         info->articles = list_destroy(info->articles);
          new_articles   = NULL;
-	 EndDialog(hDlg, 0);
-	 return TRUE;
+         EndDialog(hDlg, 0);
+         return TRUE;
+
+      case IDC_DELETEMSG:
+         if (!ListViewGetCurrentData(hList, &index, (int *) &article))
+            return TRUE;
+         RequestDeleteNews(info->newsgroup, article_index);
+         RequestArticles(info->newsgroup);
+         return TRUE;
       }
    }
    return FALSE;

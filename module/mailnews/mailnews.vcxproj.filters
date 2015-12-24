@@ -53,4 +53,12 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap\letter.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap\mailbox.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

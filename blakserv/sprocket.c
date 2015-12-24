@@ -41,6 +41,7 @@ client_def_table_type client_def_table[] =
 	{ BP_SEND_MAIL,            { {2, LIST_OBJ_PARM}, {0, TAG_STRING}, {0, DONE_PARM} } },
 	{ BP_REQ_GET_MAIL,         { {0, DONE_PARM} } },
 	{ BP_DELETE_MAIL,          { {4, TAG_INT}, {0, DONE_PARM} } },
+	{ BP_DELETE_NEWS,          { {2, TAG_INT}, {4, TAG_INT}, {0, DONE_PARM} } },
 	{ BP_SEND_STATS,           { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ BP_SEND_STAT_GROUPS,     { {0, DONE_PARM} } },
 	{ BP_REQ_HIDE,             { {4, TAG_OBJECT}, {0, DONE_PARM} } },

@@ -48,6 +48,7 @@ client_message msg_table[] = {
 { BP_REQ_ARTICLES,         { PARAM_NEWSID, PARAM_END}, },
 { BP_REQ_ARTICLE,          { PARAM_NEWSID, PARAM_INDEX, PARAM_END}, },
 { BP_POST_ARTICLE,         { PARAM_NEWSID, PARAM_STRING, PARAM_STRING, PARAM_END}, },
+{ BP_DELETE_NEWS,          { PARAM_NEWSID, PARAM_INDEX, PARAM_END }, },
 { 0,                       { PARAM_END }, },
 };
 

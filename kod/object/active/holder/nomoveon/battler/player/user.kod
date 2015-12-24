@@ -54,7 +54,7 @@ constants:
    USER_RUNNING_SPEED = 50
 
    % How many packets incoming per second do we allow?
-   INCOMING_PACKET_THROTTLE = 20
+   INCOMING_PACKET_THROTTLE = 25
 
    % What's the lower threshold for being able to run?  Below this, we can't
    %  run.
@@ -1187,6 +1187,13 @@ messages:
       return;
    }
 
+   SetFloodCount(iNum=0)
+   {
+      piFloodCount = iNum;
+
+      return;
+   }
+
    ReceiveClient(client_msg = $,number_stuff = $,type = $)
    "Sent by the server when the client has a message.  The client_msg "
    "is the permanent list created by AllocateCommCli in the server, "
@@ -1194,10 +1201,8 @@ messages:
    "parameters for any of the client_msg things that are number objects.  "
    "It is dynamically allocated each time (wasting list nodes)."
    {
-      local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
-            sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
-            lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets, i;
+      local liClient_cmd, oWhat, oRoom, iRow, iCol, lUsers, iAngle, sBody,
+            iSpeed, i, sStr_said;
 
       % This checks to see if the user is trying to Send too many packets
       %  per second.  If they are, then we mark them as a spammer and
@@ -1214,6 +1219,13 @@ messages:
             AND NOT Send(self,@PlayerIsImmortal)
          {
             piFloodCount++;
+
+            % Have to let this message through in case they're logging off.
+            if (type = 0
+               AND First(client_msg) = BP_REQ_QUIT)
+            {
+               Send(self,@UserLogoff);
+            }
 
             % Don't go on if marked as spammer
             return;
@@ -1242,7 +1254,7 @@ messages:
 
          % Check if it's an outdated message, from a person going off side of
          %  room multiple times before they got their new room.
-         if oRoom <> poOwner 
+         if oRoom <> poOwner
          {
             return;
          }
@@ -1316,41 +1328,36 @@ messages:
 
       if liClient_cmd = BP_REQ_DROP
       {
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
+         Send(self,@UserDrop,#what=Nth(client_msg,2),#number=number_stuff);
 
          return;
       }
 
       if liClient_cmd = BP_REQ_INVENTORY_MOVE
       {
-         oWhat = Nth(client_msg,2);
-         oWhere = Nth(client_msg,3);
-         Send(self,@UserMoveInventoryItem,#what=oWhat,#where=oWhere);
+         Send(self,@UserMoveInventoryItem,#what=Nth(client_msg,2),
+               #where=Nth(client_msg,3));
 
          return;
       }
 
       if liClient_cmd = BP_REQ_PUT
       {
-         oWhat = Nth(client_msg,2);
-         oWhere = Nth(client_msg,3);
-         Send(self,@UserPut,#what=oWhat,#where=oWhere,#number=number_stuff);
+         Send(self,@UserPut,#what=Nth(client_msg,2),#where=Nth(client_msg,3),
+               #number=number_stuff);
 
          return;
       }
 
       if liClient_cmd = BP_SEND_OBJECT_CONTENTS
       {
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserObjectContents,#what=oWhat);
+         Send(self,@UserObjectContents,#what=Nth(client_msg,2));
 
          return;
       }
 
       if liClient_cmd = BP_SAY_TO
       {
-         iSay_type = Nth(client_msg,2);
          sStr_said = Nth(client_msg,3);
 
          % don't send oversized chat strings
@@ -1361,14 +1368,13 @@ messages:
             return;
          }
 
-         Send(self,@UserSay,#type=iSay_type,#string=sStr_said);
+         Send(self,@UserSay,#type=Nth(client_msg,2),#string=sStr_said);
 
          return;
       }
 
       if liClient_cmd = BP_SAY_GROUP
       {
-         lUsers  = Nth(client_msg,2);
          sStr_said = Nth(client_msg,3);
 
          % don't send oversized chat strings
@@ -1379,24 +1385,22 @@ messages:
             return;
          }
 
-         Send(self,@UserSayGroup,#users=lUsers,#string=sStr_said);
+         Send(self,@UserSayGroup,#users=Nth(client_msg,2),#string=sStr_said);
 
          return;
       }
 
       if liClient_cmd = BP_REQ_LOOK
       {
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserLook,#what=oWhat);
+         Send(self,@UserLook,#what=Nth(client_msg,2));
 
          return;
       }
 
       if liClient_cmd = BP_SEND_MAIL
       {
-         lDest_mail = Nth(client_msg,2);
-         sStr_mailed = Nth(client_msg,3);
-         Send(self,@UserMail,#dest_list=lDest_mail,#string=sStr_mailed);
+         Send(self,@UserMail,#dest_list=Nth(client_msg,2),
+               #string=Nth(client_msg,3));
 
          return;
       }
@@ -1415,45 +1419,46 @@ messages:
          return;
       }
 
+      if liClient_cmd = BP_DELETE_NEWS
+      {
+         Send(self,@UserDeleteNews,#nid=Nth(client_msg,2),
+               #index=Nth(client_msg,3));
+
+         return;
+      }
+
       if liClient_cmd = BP_REQ_USE
       {
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserUseItem,#what=oWhat);
+         Send(self,@UserUseItem,#what=Nth(client_msg,2));
 
          return;
       }
 
       if liClient_cmd = BP_REQ_UNUSE
       {
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserUnuseItem,#what=oWhat);
+         Send(self,@UserUnuseItem,#what=Nth(client_msg,2));
 
          return;
       }
 
       if liClient_cmd = BP_REQ_ATTACK
       {
-         iAttack_type = Nth(client_msg,2);
-         oWhat = Nth(client_msg,3);
-         Send(self,@UserAttack,#type=iAttack_type,#what=oWhat);
+         Send(self,@UserAttack,#type=Nth(client_msg,2),#what=Nth(client_msg,3));
 
          return;
       }
 
       if liClient_cmd = BP_SEND_STATS
       {
-         iGroup = Nth(client_msg,2);
-         Send(self,@ToCliStats,#group=iGroup);
+         Send(self,@ToCliStats,#group=Nth(client_msg,2));
 
          return;
       }
 
       if liClient_cmd = BP_REQ_OFFER
       {
-         oWhat = Nth(client_msg,2);
-         lItems = Nth(client_msg,3);
-         Send(self,@UserOffer,#what=oWhat,#item_list=lItems,
-              #number_list=number_stuff);
+         Send(self,@UserOffer,#what=Nth(client_msg,2),
+               #item_list=Nth(client_msg,3),#number_list=number_stuff);
 
          return;
       }
@@ -1467,8 +1472,7 @@ messages:
 
       if liClient_cmd = BP_REQ_COUNTEROFFER
       {
-         lItems = Nth(client_msg,2);
-         Send(self,@UserCounterOffer,#item_list=lItems,
+         Send(self,@UserCounterOffer,#item_list=Nth(client_msg,2),
               #number_list=number_stuff);
 
          return;
@@ -1504,9 +1508,8 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
-            lItems = Nth(client_msg,3);
-            Send(self,@UserBuyItems,#what=oWhat,#item_list=lItems,
-               #number_list=number_stuff);
+            Send(self,@UserBuyItems,#what=oWhat,#item_list=Nth(client_msg,3),
+                  #number_list=number_stuff);
          }
 
          return;
@@ -1528,9 +1531,8 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
-            lItems = Nth(client_msg,3);
-            Send(self,@UserWithdrawalItems,#what=oWhat,#item_list=lItems,
-               #number_list=number_stuff);
+            Send(self,@UserWithdrawalItems,#what=oWhat,
+                  #item_list=Nth(client_msg,3),#number_list=number_stuff);
          }
 
          return;
@@ -1541,8 +1543,7 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
-            lItems = Nth(client_msg,3);
-            Send(self,@UserDeposit,#what=oWhat,#item_list=lItems,
+            Send(self,@UserDeposit,#what=oWhat,#item_list=Nth(client_msg,3),
                #number_list=number_stuff);
          }
 
@@ -1551,9 +1552,8 @@ messages:
 
       if liClient_cmd = BP_REQ_APPLY
       {
-         oWhat = Nth(client_msg,2);
-         oApply_on = Nth(client_msg,3);
-         Send(self,@UserApply,#what=oWhat,#apply_on=oApply_on);
+         Send(self,@UserApply,#what=Nth(client_msg,2),
+               #apply_on=Nth(client_msg,3));
 
          return;
       }
@@ -1574,44 +1574,38 @@ messages:
 
       if liClient_cmd = BP_REQ_CAST
       {
-         oWhat = Nth(client_msg,2);  % Spell type
-         lTargets = Nth(client_msg,3); % Targets of spell (if any)
-         Send(self,@UserCast,#oSpell=oWhat,#lTargets=lTargets);
+         Send(self,@UserCast,#oSpell=Nth(client_msg,2),
+               #lTargets=Nth(client_msg,3));
 
          return;
       }
 
       if liClient_cmd = BP_POST_ARTICLE
       {
-         iNid = Nth(client_msg,2);
-         sTitle = Nth(client_msg,3);
-         sBody = Nth(client_msg,4);
-         Send(self,@UserPost,#nid=iNid,#title=sTitle,#body=sBody);
+         Send(self,@UserPost,#nid=Nth(client_msg,2),#title=Nth(client_msg,3),
+               #body=Nth(client_msg,4));
 
          return;
       }
 
       if liClient_cmd = BP_REQ_ARTICLES
       {
-         iNid = Nth(client_msg,2);
-         Send(self,@UserGetNewsTitles,#nid=iNid);
+         Send(self,@UserGetNewsTitles,#nid=Nth(client_msg,2));
 
          return;
       }
 
       if liClient_cmd = BP_REQ_ARTICLE
       {
-         iNid = Nth(client_msg,2);
-         iNum = Nth(client_msg,3);
-         Send(self,@UserGetNewsArticle,#nid=iNid,#num=iNum);
+         Send(self,@UserGetNewsArticle,#nid=Nth(client_msg,2),
+               #num=Nth(client_msg,3));
 
          return;
       }
 
       if liClient_cmd = BP_ACTION
       {
-         iNum = Nth(client_msg, 2);
-         Send(self,@UserAction,#action=iNum);
+         Send(self,@UserAction,#action=Nth(client_msg,2));
 
          return;
       }
@@ -1625,8 +1619,7 @@ messages:
 
       if liClient_cmd = BP_SAY_BLOCKED
       {
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserBlockedSend,#what=oWhat);
+         Send(self,@UserBlockedSend,#what=Nth(client_msg,2));
 
          return;
       }
@@ -1663,9 +1656,9 @@ messages:
             return;
          }
 
-         oWhere = Send(oWhat,@GetOwner);
+         oRoom = Send(oWhat,@GetOwner);
          if Send(oWhat,@CanEditInscription)
-            AND ((oWhere = self) or (oWhere = poOwner))
+            AND ((oRoom = self) or (oRoom = poOwner))
          {
             sBody = Send(SYS,@CleanseString,#string=sBody);
             Send(oWhat,@SetInscription,#string=sBody);
@@ -3512,39 +3505,45 @@ messages:
 
    ToCliSpells()
    {
-      local i,oSpell;
+      local i, oSpell;
 
-      AddPacket(1,BP_SPELLS, 2,Length(plSpells));
-
-      foreach i in plSpells
+      if pbLogged_on
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
-                                                     #compound=i));
-         Send(self,@ToCliObject,#what=oSpell);
-         AddPacket(1,Send(oSpell,@GetNumSpellTargets));
-         AddPacket(1,Send(oSpell,@GetSchool));
-      }
+         AddPacket(1,BP_SPELLS, 2,Length(plSpells));
 
-      SendPacket(poSession);
-      Send(self,@ToCliStats,#group=3);
+         foreach i in plSpells
+         {
+            oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
+                                                        #compound=i));
+            Send(self,@ToCliObject,#what=oSpell);
+            AddPacket(1,Send(oSpell,@GetNumSpellTargets));
+            AddPacket(1,Send(oSpell,@GetSchool));
+         }
+
+         SendPacket(poSession);
+         Send(self,@ToCliStats,#group=3);
+      }
 
       return;
    }
 
    ToCliSkills()
    {
-      local i,oSkill;
+      local i, oSkill;
 
-      AddPacket(1, BP_SKILLS,2,Length(plSkills));
-      foreach i in plSkills
+      if pbLogged_on
       {
-         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
-                                                     #compound=i));
-         Send(self,@ToCliObject,#what=oSkill);
-      }
+         AddPacket(1, BP_SKILLS,2,Length(plSkills));
+         foreach i in plSkills
+         {
+            oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
+                                                        #compound=i));
+            Send(self,@ToCliObject,#what=oSkill);
+         }
 
-      SendPacket(poSession);
-      Send(self,@ToCliStats,#group=4);
+         SendPacket(poSession);
+         Send(self,@ToCliStats,#group=4);
+      }
 
       return;
    }
@@ -5964,6 +5963,41 @@ messages:
 
          lNew_mail = Nth(plNew_mail, index);
          plNew_mail = DelListElem(plNew_mail, lNew_mail);
+      }
+
+      return;
+   }
+
+   UserDeleteNews(nid = $, index = $)
+   {
+      local oNews;
+
+      if (index = $
+         OR nid = $)
+      {
+         Debug("UserDeleteNews got $ parameter! Index is ",index,
+               " NID is ",nid);
+
+         return;
+      }
+
+      oNews = Send(SYS,@FindNewsByNum,#num=nid);
+      if (oNews = $)
+      {
+         Debug("UserDeleteNews couldn't find news globe ",nid);
+
+         return;
+      }
+
+      if (Send(oNews,@RemovePost,#who=self,#index=index))
+      {
+         GodLog(Send(self,@GetTrueName)," deleted post ",index,
+               " from newsglobe ",Send(oNews,@GetName));
+      }
+      else if (IsClass(self,&DM))
+      {
+         Debug("Failed to remove post index ",index," from newsglobe ",
+               Send(oNews,@GetName));
       }
 
       return;

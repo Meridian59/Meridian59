@@ -98,7 +98,7 @@ enum {
    BP_REQ_GET_MAIL          = 81,
    BP_SEND_MAIL             = 82,
    BP_DELETE_MAIL           = 83,
-
+   BP_DELETE_NEWS           = 84,
    BP_REQ_ARTICLES          = 85,
    BP_REQ_ARTICLE           = 86,
    BP_POST_ARTICLE          = 87,

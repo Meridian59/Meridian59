@@ -15,7 +15,7 @@ DeathRift_travel = de \
    "A vast passage of flames opens, and you find yourself pulled to the Underworld!"
 DeathRift_travel_notify = de \
    "A fiery portal flares open briefly, dragging %s to the Underworld!"
-DeathRift_travel_notify_with_dest = de \
+DeathRift_travel_notify_dest = de \
    "A fiery portal flares open briefly, dragging %s through the Underworld "
    "and toward %s!"
 DeathRift_generic_fail = de \

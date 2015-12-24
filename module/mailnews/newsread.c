@@ -167,11 +167,12 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       else
          EnableWindow(GetDlgItem(hDlg, IDC_RESCAN), FALSE);
 
-      EnableWindow(GetDlgItem(hDlg, IDC_DELETEMSG), TRUE);
-
-      // Disable post button if we don't have permission
+      // Disable post and delete buttons if we don't have permission
       if (!(info->permissions & NEWS_POST))
-	 EnableWindow(GetDlgItem(hDlg, IDC_NEWSPOST), FALSE);
+      {
+         EnableWindow(GetDlgItem(hDlg, IDC_NEWSPOST), FALSE);
+         EnableWindow(GetDlgItem(hDlg, IDC_DELETEMSG), FALSE);
+      }
 
       SetTimer(hDlg, 1, 100, NULL);
 
@@ -244,7 +245,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       /* Display article's text */
       SetWindowText(hEdit, (char *) lParam);
       if (info->permissions & NEWS_POST)
-	 EnableWindow(GetDlgItem(hDlg, IDC_REPLY), TRUE);
+         EnableWindow(GetDlgItem(hDlg, IDC_REPLY), TRUE);
       EnableWindow(GetDlgItem(hDlg, IDC_REPLYMAIL), TRUE);
       SetTimer(hDlg, 1, 1000, NULL);
       return TRUE;

@@ -1347,7 +1347,7 @@ messages:
          }
 
          % if the caster is not a combatant, attack fails.
-         if IsClass(what,&Player)
+         if IsClass(what,&User)
             AND NOT Send(oWatcher,@IsCombatant,#who=what)
          {
             return FALSE;
@@ -1361,7 +1361,7 @@ messages:
          AND (IsClass(what,&Monster)
          OR IsClass(victim,&Monster))
       {
-         if IsClass(what,&Player)
+         if IsClass(what,&User)
          {
             if report
             {
@@ -1388,8 +1388,8 @@ messages:
          return FALSE;
       }
 
-      if (piRoom_flags & ROOM_NO_PK) AND IsClass(what,&Player)
-         AND (victim = $ OR IsClass(victim,&Player))
+      if (piRoom_flags & ROOM_NO_PK) AND IsClass(what,&User)
+         AND (victim = $ OR IsClass(victim,&User))
       {
          if report
          {
@@ -1399,8 +1399,8 @@ messages:
          return FALSE;
       }
 
-      if (piRoom_flags & ROOM_GUILD_PK_ONLY) AND IsClass(what,&Player)
-         AND (victim = $ OR IsClass(victim,&Player))
+      if (piRoom_flags & ROOM_GUILD_PK_ONLY) AND IsClass(what,&User)
+         AND (victim = $ OR IsClass(victim,&User))
       {
          if (NOT Send(self,@AllowGuildAttack,#what=what,#victim=victim,#report=report))
             AND Send(SYS,@IsPKAllowed)
@@ -2175,7 +2175,7 @@ messages:
       {
          foreach i in Send(what,@GetRadiusEnchantments)
          {
-            each_obj = Nth(i,1);
+            each_obj = First(i);
             Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
          }
       }
@@ -5136,17 +5136,26 @@ messages:
    {
       return $;
    }
-   
+
    StartTemporaryNoPK()
+   "Returns TRUE if we turned PvP off, FALSE if it was already off."
    {
       if NOT (piRoom_flags & ROOM_NO_PK)
       {
          piRoom_flags = piRoom_flags | ROOM_NO_PK;
+         if (ptNoPkTimer <> $)
+         {
+            DeleteTimer(ptNoPkTimer);
+         }
+
          ptNoPKTimer = CreateTimer(self,@EndTemporaryNoPK,60000*60);
+
+         return TRUE;
       }
-      return;
+
+      return FALSE;
    }
-   
+
    EndTemporaryNoPK(timer=$)
    {
       if timer = $
@@ -5155,7 +5164,9 @@ messages:
          DeleteTimer(ptNoPKTimer);
       }
       ptNoPKTimer = $;
+
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_PK);
+
       return;
    }
 

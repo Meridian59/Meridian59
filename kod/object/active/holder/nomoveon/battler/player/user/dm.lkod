@@ -135,7 +135,7 @@ dm_guide_help = de \
    "~w[Decke die komplette Karte auf]~n\nHIDEMAP  ~w[Vergisst die Karte]~n\nRESET "
    "~w[Aktualisiert Deinen Client]~n\nGETPLAYER <name> ~w[Holt einen Spieler "
    "zu Dir]~n\nGOPLAYER <name> ~w[Bringt Dich zu einem Spieler]~n\n"
-dm_help = de \
+dm_admin_help = de \
    "\n~B~UDM Befehle~n\nDM APPEAL ON/OFF ~w[Schaltet den Götter-Kanal an/aus]~n\nDM "
    "STEALTH ON/OFF ~w[Schaltet Aktionsmeldungen aus/an]~n\nDM CLEAR ABILITIES "
    "~w[Löscht alle Deine Fertigkeiten]~n\nDM CLEAR INVENTORY ~w[Löscht Dein "

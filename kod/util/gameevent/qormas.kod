@@ -1312,6 +1312,32 @@ messages:
       return;
    }
 
+   ClearIPCountByPlayer(who = $)
+   {
+      local lIP, i, j;
+
+      lIP = Send(who,@GetIP);
+
+      if (lIP = $)
+      {
+         Debug("User ",who,Send(who,@GetTrueName),
+               " returned $ for GetSessionIP!");
+
+         return;
+      }
+
+      foreach i in plGiftIPCount
+      {
+         j = First(i);
+         if IsListMatch(lIP,j)
+         {
+            SetNth(i,2,0);
+         }
+      }
+
+      return;
+   }
+
    AdminOwnAllGifts(who=$)
    {
       local i;

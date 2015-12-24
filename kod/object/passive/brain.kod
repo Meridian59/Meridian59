@@ -125,7 +125,8 @@ messages:
       % Monsters should ONLY be waiting or moving at this point.
       if (state & STATE_CHASE) OR (state & STATE_ATTACK)
       {
-         Debug("Unreachable. Illegal state.");
+         Debug("Unreachable. Illegal state for ",mob," in room ",
+               Send(Send(mob,@GetOwner),@GetName));
       }
 
       return;

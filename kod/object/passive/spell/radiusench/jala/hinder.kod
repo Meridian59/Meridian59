@@ -22,7 +22,9 @@ resources:
    hinder_starts = "%s begins playing a discordant tune!"
    hinder_ends = "The discordant tune maintained by %s fades."
    hinder_caster_ends = "Your discordant tune fades."
-   hinder_caster_enter = "You feel the words of your song weaving together to interfere with specific other magics."
+   hinder_caster_enter = \
+      "You feel the words of your song weaving together to "
+      "interfere with specific other magics."
    hinder_enter = "A discordant tune sung by %s fills your mind."
    hinder_leave = "You can no longer hear the discordant tune sung by %s."
    
@@ -49,27 +51,25 @@ classvars:
 
 properties:
 
-      
 messages:
 
    GetAlteredChance(chance = 0, what = $, lRadiusState = 0)
    {
-      local altChance, iSongSpellpower;
-   
-      if what = $ OR send(what,@GetSchool) <> viHinderedSchool
+      local iAltChance, iSongSpellpower;
+
+      if what = $
+         OR Send(what,@GetSchool) <> viHinderedSchool
       {
          return chance;
       }
-      
+
       iSongSpellpower = Nth(lRadiusState,2);
 
-      altChance = chance - random(iSongSpellpower/2,(iSongSpellpower*2)/3);
-      
+      iAltChance = chance - Random(iSongSpellpower/2,(iSongSpellpower*2)/3);
+
       % Don't worry about bounding, that's done the level above us.
-      return altChance;
+      return iAltChance;
    }
 
-
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

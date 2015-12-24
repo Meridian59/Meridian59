@@ -620,6 +620,52 @@ bool BSPGetHeight(room_type* Room, V2* P, float* HeightF, float* HeightFWD, floa
 }
 
 /*********************************************************************************************/
+/* BSPLineOfSightView: Checks if (player) with coordinates S can see target E, if player is     */
+/*                  facing kod_angle direction (max angle 4096, 0 east, increase clockwise.  */
+/*********************************************************************************************/
+bool BSPLineOfSightView(V2 *S, V2 *E, int kod_angle)
+{
+   float radangle = KODANGLETORADIANS(kod_angle);
+   E->X -= S->X;
+   E->Y -= S->Y;
+
+   // Check behind player.
+   float center_a = cosf(radangle) * ROOFINENESS;
+   float center_b = sinf(radangle) * ROOFINENESS;
+   if (center_a * E->X + center_b * E->Y < 0)
+   {
+#if DEBUGLOSVIEW
+      dprintf("BSPLineOfSightView block - target behind player.\n");
+#endif
+      return false;
+   }
+
+   // Check to left of player's view frustum.
+   float left_a = -center_b + ((center_a * HALFFRUSTUMWIDTH) / HALFROOFINENESS);
+   float left_b = center_a + ((center_b * HALFFRUSTUMWIDTH) / HALFROOFINENESS);
+   if (left_a * E->X + left_b * E->Y < 0)
+   {
+#if DEBUGLOSVIEW
+      dprintf("BSPLineOfSightView block - target to left of player.\n");
+#endif
+      return false;
+   }
+
+   // Check to right of player's view frustum.
+   float right_a = center_b + ((center_a * HALFFRUSTUMWIDTH) / HALFROOFINENESS);
+   float right_b = -center_a + ((center_b * HALFFRUSTUMWIDTH) / HALFROOFINENESS);
+   if (right_a * E->X + right_b * E->Y < 0)
+   {
+#if DEBUGLOSVIEW
+      dprintf("BSPLineOfSightView block - target to right of player.\n");
+#endif
+      return false;
+   }
+
+   return true;
+}
+
+/*********************************************************************************************/
 /* BSPLineOfSight:  Checks if location E(nd) can be seen from location S(tart)               */
 /*********************************************************************************************/
 bool BSPLineOfSight(room_type* Room, V3* S, V3* E)

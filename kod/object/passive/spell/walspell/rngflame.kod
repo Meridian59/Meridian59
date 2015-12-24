@@ -48,13 +48,13 @@ classvars:
    vrSucceed_wav = RingOfFlames_sound
 
    viHarmful = TRUE
-   viOutlaw = TRUE
 
    % We technically have 12 elements, but that would never let us cast this while
    %  another wall spell is active.  A little cheat here, only count 9 elements.
    viNumElements = 9
-
    vrSummonLimitMsg = RingOfFlames_failed_rsc
+   % If TRUE, can target others with this spell.
+   vbCanCastOnOthers = TRUE
 
 properties:
 
@@ -71,10 +71,10 @@ messages:
 
    GetNumSpellTargets()
    {
-      return 1;
+      return vbCanCastOnOthers;
    }
 
-   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   CastSpell(who=$,lTargets=$,iSpellPower=1)
    {
       local oTarget;
 
@@ -102,13 +102,21 @@ messages:
       propagate;
    }
 
-   PlaceWallElements(who=$,lTargets=$,iSpellPower=0)
+   PlaceWallElements(who=$,lTargets=$,iSpellPower=1)
    {
       local oRoom, iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep,
             iAngle, iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
             iHalfFine_Col, oElement, oTarget;
 
-      oTarget = First(lTargets);
+      if (lTargets = $
+         OR NOT vbCanCastOnOthers)
+      {
+         oTarget = who;
+      }
+      else
+      {
+         oTarget = First(lTargets);
+      }
 
       iAngle = Send(oTarget,@GetAngle);
       iMaxDamage = iSpellPower / 5;

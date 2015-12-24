@@ -47,10 +47,6 @@ spell_unlawful_outlaw = de \
    "Sha-Lill ist Durch Deinen ungerechtfertigten Angriff erzürnt."
 spell_failed_by_chance = de \
    "Dein Versuch, den %s-Zauber anzuwenden, war erfolglos."
-spell_spellbane_stopped = de \
-   "Die Noten des Liedes, gesungen von %s vermischen sich mit den Worten "
-   "Deines Zauberspruches und lösen diese schneller auf, als Deine Zunge "
-   "sie weben kann."
 spell_advanced = de \
    "Du hast Deine Fähigkeiten in %s verbessert! Deine Fähigkeit liegt nun "
    "bei %s."

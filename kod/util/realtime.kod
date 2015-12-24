@@ -432,9 +432,28 @@ messages:
       return;
    }
 
+   DeleteCallback(what = $)
+   "Deletes all callbacks matching the given object. Returns number deleted."
+   {
+      local i, iDeleted;
+
+      iDeleted = 0;
+
+      foreach i in plCallbacks
+      {
+         if (Nth(i,2) = what)
+         {
+            plCallbacks = DelListElem(plCallbacks,i);
+            ++iDeleted;
+         }
+      }
+
+      return iDeleted;
+   }
+
    NewMinute()
    {
-      local i, iYear, iMonth, iDay, iHour, iMinute;
+      local lCallbackTime, i, iYear, iMonth, iDay, iHour, iMinute;
 
       Send(EVENTENGINE_OBJECT,@NewMinute);
 
@@ -448,12 +467,14 @@ messages:
 
          foreach i in plCallbacks
          {
-            if Nth(Nth(i,1),3) <= iYear
-               AND Nth(Nth(i,1),1) <= iMonth
-               AND Nth(Nth(i,1),2) <= iDay
-               AND Nth(Nth(i,1),4) <= iHour
+            lCallbackTime = First(i);
+
+            if Nth(lCallbackTime,3) <= iYear
+               AND First(lCallbackTime) <= iMonth
+               AND Nth(lCallbackTime,2) <= iDay
+               AND Nth(lCallbackTime,4) <= iHour
             {
-               if Nth(Nth(i,1),5) = iMinute
+               if Nth(lCallbackTime,5) = iMinute
                {
                      % foreach creates a copy of the list so i exists even if we
                      % delete it from the original list
@@ -464,22 +485,19 @@ messages:
                         #parm7=Nth(i,10),#parm8=Nth(i,11),#parm9=Nth(i,12),
                         #parm10=Nth(i,13),#parm11=Nth(i,14),#parm12=Nth(i,15),
                         #parm13=Nth(i,16),#parm14=Nth(i,17),#parm15=Nth(i,18));
-                }
-               else
+               }
+               else if Nth(lCallbackTime,5) < iMinute
                {
-                  if Nth(Nth(i,1),5) < iMinute
-                  {
-                     Debug("Deleting expired event that would never have started! (event time is less than current time)");
-                     plCallbacks = DelListElem(plCallbacks,i);
-                  }
+                  Debug("Deleting expired event that would never have started! (event time is less than current time)");
+                  plCallbacks = DelListElem(plCallbacks,i);
                }
             }
          }
       }
-   
+
       return;
    }
-   
+
    NewHour()
    {
       Send(EVENTENGINE_OBJECT,@NewHour);

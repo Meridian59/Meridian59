@@ -26,17 +26,28 @@ resources:
       "Underworld while still retaining life. The interdimensional "
       "pathways can lead Qor's favored to many locations, including "
       "one dedicated destination of their choosing."
-      "Requires a large number of dark angel feathers to cast."
+      "Requires four dark angel feathers to cast."
 
    DeathRift_sound = qdthdoor.wav
 
-   DeathRift_no_angeled = "You cannot call upon such an evil pact while your guardian angel watches over you."
-   DeathRift_bind = "You leave a smattering of blood at the ground beneath your feet, binding a small part of your soul to this location."
-   DeathRift_travel = "A vast passage of flames opens, and you find yourself pulled to the Underworld!"
-   DeathRift_travel_notify = "A fiery portal flares open briefly, dragging %s to the Underworld!"
-   DeathRift_travel_notify_with_dest = "A fiery portal flares open briefly, dragging %s through the Underworld and toward %s!"
-   DeathRift_generic_fail = "The evil pact's magic fails. Something seems amiss."
-   DeathRift_warning = "~BYou sense a nearby connection forming between dimensions!"
+   DeathRift_no_angeled = \
+      "You cannot call upon such an evil pact while your guardian "
+      "angel watches over you."
+   DeathRift_bind = \
+      "You leave a smattering of blood at the ground beneath your "
+      "feet, binding a small part of your soul to this location."
+   DeathRift_travel = \
+      "A vast passage of flames opens, and you find yourself "
+      "pulled to the Underworld!"
+   DeathRift_travel_notify = \
+      "A fiery portal flares open briefly, dragging %s to the Underworld!"
+   DeathRift_travel_notify_dest = \
+      "A fiery portal flares open briefly, dragging %s through "
+      "the Underworld and toward %s!"
+   DeathRift_generic_fail = \
+      "The evil pact's magic fails. Something seems amiss."
+   DeathRift_warning = \
+      "~BYou sense a nearby connection forming between dimensions!"
    
 classvars:
 
@@ -56,6 +67,8 @@ classvars:
 
    vrSucceed_wav = DeathRift_sound
 
+   vbAngeledCast = FALSE
+
 properties:
 
 messages:
@@ -70,36 +83,47 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local oRoom;
+      local oRoom, iRegion;
 
       if who = $
       {
-         return false;
+         return FALSE;
       }
-      
-      if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+
+      if (NOT vbAngeledCast
+         AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
-         Send(who,@MsgSendUser,#message_rsc = DeathRift_no_angeled);
-         return false;
+         Send(who,@MsgSendUser,#message_rsc=DeathRift_no_angeled);
+
+         return FALSE;
       }
-      
+
       oRoom = Send(who,@GetOwner);
-      
-      if oRoom = $
-         OR NOT Send(oRoom,@CanHavePlayerPortal)
-         OR Send(oRoom, @GetRegion) = RID_NEWB_BASE
-         OR Send(oRoom, @GetRegion) = RID_GUEST_BASE
+
+      if (oRoom = $)
       {
-         Send(who,@MsgSendUser,#message_rsc = DeathRift_generic_fail);
-         return false;
+         Send(who,@MsgSendUser,#message_rsc=DeathRift_generic_fail);
+
+         return FALSE;
       }
-      
+
+      iRegion = Send(oRoom,@GetRegion);
+
+      if (NOT Send(oRoom,@CanHavePlayerPortal)
+         OR iRegion = RID_NEWB_BASE
+         OR iRegion = RID_GUEST_BASE)
+      {
+         Send(who,@MsgSendUser,#message_rsc=DeathRift_generic_fail);
+
+         return FALSE;
+      }
+
       propagate;
    }
 
    GetTranceTime(iSpellpower=0,who=$)
    {
-      return bound(viCast_time-(iSpellpower*500),10000,60000);
+      return Bound(viCast_time - (iSpellpower * 500),10000,60000);
    }
 
    GetNumSpellTargets()
@@ -109,54 +133,56 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local poOwner, oTargetRoom, i, each_active;
+      local oOwner, oTargetRoom, i, each_obj;
 
-      poOwner = Send(who,@GetOwner);
-      
-      if poOwner = $
+      oOwner = Send(who,@GetOwner);
+
+      if oOwner = $
       {
          return;
       }
-      
-      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-         AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+
+      if Send(oOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+         AND Send(oOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
       {
          Send(who,@MsgSendUser,#message_rsc=DeathRift_travel);
-         
-         oTargetRoom = Send(SYS,@FindRoomByNum,#num=Send(who,@GetBoundLocationRoomNum));
+
+         oTargetRoom = Send(SYS,@FindRoomByNum,
+                           #num=Send(who,@GetBoundLocationRoomNum));
          if oTargetRoom <> $
          {
             foreach i in Send(oTargetRoom,@GetHolderActive)
             {
-               each_active = Send(oTargetRoom,@HolderExtractObject,#data=i);
-               if IsClass(each_active,&User)
+               each_obj = Send(oTargetRoom,@HolderExtractObject,#data=i);
+               if IsClass(each_obj,&User)
                {
-                  Send(each_active,@MsgSendUser,#message_rsc=DeathRift_warning);
-                  Send(each_active,@WaveSendUser,#row=Send(who,@GetBoundLocationRow),
-                       #col=Send(who,@GetBoundLocationCol),#wave_rsc=DeathRift_sound);
+                  Send(each_obj,@MsgSendUser,#message_rsc=DeathRift_warning);
+                  Send(each_obj,@WaveSendUser,#wave_rsc=DeathRift_sound,
+                        #row=Send(who,@GetBoundLocationRow),
+                        #col=Send(who,@GetBoundLocationCol));
                }
             }
          }
-         
-         foreach i in Send(poOwner,@GetHolderActive)
+
+         foreach i in Send(oOwner,@GetHolderActive)
          {
-            each_active = Send(poOwner,@HolderExtractObject,#data=i);
-            If IsClass(each_active,&User)
-               AND each_active <> who
+            each_obj = Send(oOwner,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+               AND each_obj <> who
             {
                if oTargetRoom <> $
                {
-                  Send(each_active,@MsgSendUser,#message_rsc=DeathRift_travel_notify_with_dest,
-                       #parm1=Send(who,@GetName),#parm2=Send(oTargetRoom,@GetName));
+                  Send(each_obj,@MsgSendUser,#message_rsc=DeathRift_travel_notify_dest,
+                        #parm1=Send(who,@GetName),#parm2=Send(oTargetRoom,@GetName));
                }
                else
                {
-                  Send(each_active,@MsgSendUser,#message_rsc=DeathRift_travel_notify,
-                       #parm1=Send(who,@GetName));
+                  Send(each_obj,@MsgSendUser,#message_rsc=DeathRift_travel_notify,
+                        #parm1=Send(who,@GetName));
                }
             }
          }
-         
+
          Post(who,@UserGotoDeadRoom);
          Post(who,@SetDeathRiftProtection,#value=TRUE);
          Post(who,@StartDeathRiftTimer);
@@ -172,7 +198,7 @@ messages:
 
    SuccessChance(who=$)
    {
-      return true;
+      return TRUE;
    }
 
 end

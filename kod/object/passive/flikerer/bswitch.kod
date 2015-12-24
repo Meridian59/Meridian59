@@ -89,7 +89,7 @@ messages:
          return TRUE;
       }
 
-      Send(poOwner,@BrazierLit,#brazier_obj=self,#who=who,#bIsLit=pbIsLit);
+      Send(poOwner,@BrazierLit,#what=self,#who=who,#bIsLit=pbIsLit);
 
       return TRUE;
    }

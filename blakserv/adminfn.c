@@ -99,6 +99,8 @@ void AdminShowCalled(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminShowCalledClass(class_node *c);
 
+void AdminShowBlockers(int session_id,admin_parm_type parms[],
+                       int num_blak_parm,parm_node blak_parm[]);
 void AdminShowObject(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminShowObjects(int session_id,admin_parm_type parms[],
@@ -122,6 +124,7 @@ void AdminShowAccount(int session_id,admin_parm_type parms[],
                       int num_blak_parm,parm_node blak_parm[]);
 void AdminShowAccountHeader(void);
 void AdminShowOneAccount(account_node *a);
+void AdminShowOneAccountIfSuspended(account_node *a);
 void AdminDeleteUnusedAccounts(int session_id, admin_parm_type parms[],
                                int num_blak_parm, parm_node blak_parm[]);
 void AdminShowResource(int session_id,admin_parm_type parms[],
@@ -138,9 +141,12 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 void AdminShowOneTimer(timer_node *t);
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],
                             int num_blak_parm,parm_node blak_parm[]);
-void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *default_str);
+void AdminShowOneConfigNode(config_node *c, const char *config_name,
+                            const char *default_str);
 void AdminShowString(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
+void AdminShowSuspended(int session_id, admin_parm_type parms[],
+                        int num_blak_parm, parm_node blak_parm[]);
 void AdminShowSysTimers(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[]);
 void AdminShowEachSysTimer(systimer_node *st);
@@ -313,44 +319,40 @@ void AdminMark(int session_id,admin_parm_type parms[],
 
 admin_table_type admin_show_table[] =
 {
-	{ AdminShowAccount,       {R,N}, F, A|M, NULL, 0, "account", 
-	"Show one account by account id or name" },
+	{ AdminShowAccount,       {R,N}, F, A|M, NULL, 0, "account",       "Show one account by account id or name" },
 	{ AdminShowAccounts,      {N},   F, A|M, NULL, 0, "accounts",      "Show all accounts" },
-	{ AdminShowObjects,       {I,N}, F, A|M, NULL, 0, "belong",       "Show objects belonging to id" },
-	{ AdminShowCalled,        {I,N}, F, A|M, NULL, 0, "called",
-     "Show top (int) called messages" },
+	{ AdminShowObjects,       {I,N}, F, A|M, NULL, 0, "belong",        "Show objects belonging to id" },
+	{ AdminShowBlockers,      {I,N}, F, A|M, NULL, 0, "blockers",      "Show all blockers in a room (TAG_ROOM_DATA parameter)" },
+	{ AdminShowCalled,        {I,N}, F, A|M, NULL, 0, "called",        "Show top (int) called messages" },
 	{ AdminShowCalls,         {I,N}, F, A|M, NULL, 0, "calls",         "Show top (int) C call counts" },
 	{ AdminShowClass,         {S,N}, F,A|M, NULL, 0, "class",          "Show info about class" },
-	{ AdminShowTime,          {N},   F, A|M, NULL, 0, "clock",        "Show current server time" },
-	{ AdminShowConfiguration, {N},   F, A|M, NULL, 0, "configuration", "Show configuration values" },
+	{ AdminShowTime,          {N},   F, A|M, NULL, 0, "clock",         "Show current server time" },
+	{ AdminShowConfiguration, {N},   F, A|M, NULL, 0, "config",        "Show configuration values" },
 	{ AdminShowConstant,      {S,N}, F,A|M, NULL, 0, "constant",       "Show value of admin constant" },
 	{ AdminShowDynamicResources,{N}, F, A|M, NULL, 0, "dynamic",       "Show all dynamic resources" },
 	{ AdminShowInstances,     {S,N}, F, A|M, NULL, 0, "instances",     "Show all instances of class" },
 	{ AdminShowList,          {I,N}, F, A|M, NULL, 0, "list",          "Traverse & show a list" },
 	{ AdminShowListNode,      {I,N}, F, A|M, NULL, 0, "listnode",      "Show one list node by id" },
-	{ AdminShowMatches,       {S,S,S,S,S,N}, F, A|M, NULL, 0, "matches",     "Show all instances of class which match criteria" },
+	{ AdminShowMatches,       {S,S,S,S,S,N}, F, A|M, NULL, 0, "matches", "Show all instances of class which match criteria" },
 	{ AdminShowMemory,        {N},   F, A|M, NULL, 0, "memory",        "Show system memory use" },
-	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",       
-	"Show info about class & message" },
+	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",       "Show info about class & message" },
 	{ AdminShowName,          {R,N}, F, A|M, NULL, 0, "name",          "Show object of user name" },
-   { AdminShowNameIDs,       {N},   F, A|M, NULL, 0, "nameids",       "Show all name ids (message/parms)" },
+	{ AdminShowNameIDs,       {N},   F, A|M, NULL, 0, "nameids",       "Show all name ids (message/parms)" },
 	{ AdminShowObject,        {I,N}, F, A|M, NULL, 0, "object",        "Show one object by id" },
-	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",       "Show all packages loaded" },
+	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",         "Show all packages loaded" },
 	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
-	{ AdminShowReferences,    {S,S,N}, F, A|M, NULL, 0, "references",  
-	"Show what objects or lists reference a particular data value" },
-	{ AdminShowResource,      {S,N}, F, A|M, NULL, 0, "resource",      
-	"Show a resource by resource name" },
+	{ AdminShowReferences,    {S,S,N}, F, A|M, NULL, 0, "references",  "Show what objects or lists reference a particular data value" },
+	{ AdminShowResource,      {S,N}, F, A|M, NULL, 0, "resource",      "Show a resource by resource name" },
 	{ AdminShowStatus,        {N},   F, A|M, NULL, 0, "status",        "Show system status" },
 	{ AdminShowString,        {I,N}, F, A|M, NULL, 0, "string",        "Show one string by string id" },
+	{ AdminShowSuspended,     {N},   F, A|M, NULL, 0, "suspended",     "Show all suspended accounts" },
 	{ AdminShowSysTimers,     {N},   F, A|M, NULL, 0, "systimers",     "Show system timers" },
-   { AdminShowTable,         {I,N}, F, A|M, NULL, 0, "hashtable",     "Show a hash table" },
+	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "hashtable",     "Show a hash table" },
 	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "table",         "Show a hash table" },
-	{ AdminShowTimer,         {I},   F, A|M, NULL, 0, "timer",        "Show one timer by id" },
+	{ AdminShowTimer,         {I},   F, A|M, NULL, 0, "timer",         "Show one timer by id" },
 	{ AdminShowTimers,        {N},   F, A|M, NULL, 0, "timers",        "Show all timers" },
-	{ AdminShowTransmitted,   {N},   F,A, NULL, 0, "transmitted",
-	"Show # of bytes transmitted in last minute" },
-	{ AdminShowUsage,         {N},   F,A|M,NULL, 0, "usage",         "Show current usage" },
+	{ AdminShowTransmitted,   {N},   F,A, NULL, 0, "transmitted",      "Show # of bytes transmitted in last minute" },
+	{ AdminShowUsage,         {N},   F,A|M,NULL, 0, "usage",           "Show current usage" },
 	{ AdminShowUser,          {R,N}, F, A|M, NULL, 0, "user",          "Show one user by name or object id" },
 	{ AdminShowUsers,         {N},   F, A|M, NULL, 0, "users",         "Show all users" },
 };
@@ -995,7 +997,7 @@ void AdminHelp(int session_id,int len_command_table,admin_table_type command_tab
 	
 	for (i=0;i<len_command_table;i++)
 	{
-		aprintf("%-10s ",command_table[i].admin_cmd);
+		aprintf("%-12s ",command_table[i].admin_cmd);
 		
 		done_parm = False;
 		for (j=0;j<MAX_ADMIN_PARM;j++)
@@ -1498,8 +1500,36 @@ void AdminShowCalledClass(class_node *c)
    }
 }
 
+void AdminShowBlockers(int session_id,admin_parm_type parms[],
+                      int num_blak_parm,parm_node blak_parm[])
+{
+   room_node *room;
+   Blocker *b;
+   int row, col, finerow, finecol;
+
+   room = GetRoomDataByID((int)parms[0]);
+   if (!room)
+   {
+      aprintf("Invalid roomdata.\n");
+
+      return;
+   }
+
+   b = room->data.Blocker;
+   while (b)
+   {
+      row = ROOCOORDTOGRIDBIG(b->Position.Y);
+      finerow = ROOCOORDTOGRIDFINE(b->Position.Y);
+      col = ROOCOORDTOGRIDBIG(b->Position.X);
+      finecol = ROOCOORDTOGRIDFINE(b->Position.X);
+      aprintf("Obj ID %i at row %i, %i, col %i, %i\n",
+         b->ObjectID, row, finerow, col, finecol);
+      b = b->Next;
+   }
+}
+
 void AdminShowObjects(int session_id,admin_parm_type parms[],
-                      int num_blak_parm,parm_node blak_parm[])                      
+                      int num_blak_parm,parm_node blak_parm[])
 {
 	object_node *o;
 	class_node *c;
@@ -1872,6 +1902,42 @@ void AdminShowOneAccount(account_node *a)
         buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time));
 }
 
+void AdminShowSuspended(int session_id, admin_parm_type parms[],
+   int num_blak_parm, parm_node blak_parm[])
+{
+   AdminShowAccountHeader();
+   ForEachAccount(AdminShowOneAccountIfSuspended);
+}
+
+void AdminShowOneAccountIfSuspended(account_node *a)
+{
+   char ch = ' ';
+   static const char* types = " ADG"; // see enum ACCOUNT_* in account.h
+   char buff[9];
+
+   if (a->type >= 0 && a->type <= (int)strlen(types))
+      ch = types[a->type];
+
+   // Check the suspend time.  Only printing suspended accounts.
+   if (a->suspend_time <= GetTime())
+   {
+      return;
+   }
+
+   if (a->suspend_time > 0)
+   {
+      // Print suspended time left in hours.
+      sprintf(buff, "%7.1fh", (a->suspend_time - GetTime()) / (60.0*60.0));
+   }
+   else
+   {
+      sprintf(buff, "");
+   }
+
+   aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n", a->account_id, ch, a->name,
+      buff, a->credits / 100, a->credits % 100, TimeStr(a->last_login_time));
+}
+
 void AdminShowResource(int session_id,admin_parm_type parms[],
                        int num_blak_parm,parm_node blak_parm[])
 {
@@ -2017,7 +2083,7 @@ void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *d
 }
 
 void AdminShowString(int session_id,admin_parm_type parms[],
-                     int num_blak_parm,parm_node blak_parm[])                     
+                     int num_blak_parm,parm_node blak_parm[])
 {
 	string_node *snod;
 	
@@ -2045,7 +2111,7 @@ void AdminShowString(int session_id,admin_parm_type parms[],
 }
 
 void AdminShowSysTimers(int session_id,admin_parm_type parms[],
-                        int num_blak_parm,parm_node blak_parm[])                        
+                        int num_blak_parm,parm_node blak_parm[])
 {
 	aprintf("%s %-18s %-15s %-15s %-22s\n","#","System Timer type","Period","On the",
 		"Next time");
@@ -2151,6 +2217,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
 		case CANMOVEINROOMBSP: strcpy(c_name, "CanMoveInRoomBSP"); break;
+		case LINEOFSIGHTVIEW: strcpy(c_name, "LineOfSightView"); break;
 		case LINEOFSIGHTBSP: strcpy(c_name, "LineOfSightBSP"); break;
 		case GETLOCATIONINFOBSP: strcpy(c_name, "GetLocationInfoBSP"); break;
 		case GETRANDOMPOINTBSP: strcpy(c_name, "GetRandomPointBSP"); break;

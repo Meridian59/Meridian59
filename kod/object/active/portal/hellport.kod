@@ -31,7 +31,7 @@ resources:
    hellportal_jasper = "the quiet Yonder Inn of Jasper"
    hellportal_cornoth = "the lazy happenings in the Cibilo Creek Inn"
    hellportal_barloque = "the fine Brownstone Inn in a bustling Barloque"
-
+   hellportal_raza = "the rustic charm of the Raza Inn"
    hellportal_kocatan = "the sturdy, island fortress of Ko'catan"
 
 classvars:
@@ -57,7 +57,8 @@ messages:
 
    Constructed()
    {
-      plPossibleLocations = [RID_TOS_INN, RID_COR_INN, RID_BAR_INN, RID_JAS_INN, RID_MAR_INN ];
+      plPossibleLocations = [ RID_TOS_INN, RID_COR_INN, RID_BAR_INN,
+                              RID_JAS_INN, RID_MAR_INN ];
 
       % Set up the locations timer.
       Send(self,@LocationsTimer);
@@ -69,33 +70,33 @@ messages:
    {
       ptLocations = $;
 
-      send(self,@SwapLocations);
-      ptLocations = Createtimer(self,@LocationsTimer,random(SWITCH_DELAY_MIN,SWITCH_DELAY_MAX));
+      Send(self,@SwapLocations);
+      ptLocations = Createtimer(self,@LocationsTimer,
+                        Random(SWITCH_DELAY_MIN,SWITCH_DELAY_MAX));
 
       return;
    }
 
    SwapLocations()
    {
-      local number,chosen, rand, oRoom;
+      local iNum, iChosen, oRoom;
 
-      number = length(plPossibleLocations);
+      iNum = Length(plPossibleLocations);
 
-      chosen = piDest_Room;
-      while chosen = piDest_room
+      iChosen = piDest_Room;
+      while iChosen = piDest_room
       {
-         rand = random(1,number);
-         chosen = Nth(plPossibleLocations,rand);
+         iChosen = Nth(plPossibleLocations,Random(1,iNum));
       }
 
-      oRoom = send(SYS,@FindRoomByNum,#num=chosen);
+      oRoom = Send(SYS,@FindRoomByNum,#num=iChosen);
 
       % If room doesn't exist, don't change anything.
       if oRoom <> $
       {
-         piDest_room = chosen;
-         piDest_row = send(oRoom,@GetTeleportRow);
-         piDest_col = send(oRoom,@GetTeleportCol);
+         piDest_room = iChosen;
+         piDest_row = Send(oRoom,@GetTeleportRow);
+         piDest_col = Send(oRoom,@GetTeleportCol);
       }
 
       return;
@@ -107,40 +108,39 @@ messages:
       local rLocation;
 
       if (poOwner <> $ AND IsClass(poOwner,&Underworld))
-         AND send(who,@CheckPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#flagset=2)
+         AND Send(who,@CheckPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#flagset=2)
       {
          rLocation = hellportal_kocatan;
+      }
+      else if (Send(who,@CheckPlayerFlag,#flag=PFLAG_DEATH_RIFTING)
+         AND Send(who,@GetBoundLocationName) <> $)
+      {
+         rLocation = Send(who,@GetBoundLocationName);
+      }
+      else if piDest_room = RID_MAR_INN
+      {
+         rLocation = hellportal_marion;
+      }
+      else if piDest_room = RID_COR_INN
+      {
+         rLocation = hellportal_cornoth;
+      }
+      else if piDest_room = RID_JAS_INN
+      {
+         rLocation = hellportal_jasper;
+      }
+      else if piDest_room = RID_BAR_INN
+      {
+         rLocation = hellportal_barloque;
+      }
+      else if piDest_room = RID_RAZA_INN
+      {
+         rLocation = hellportal_raza;
       }
       else
       {
          % Default
-         rLocation = hellportal_tos; 
-
-         if piDest_room = RID_MAR_INN
-         {
-            rLocation = hellportal_marion;
-         }
-
-         if piDest_room = RID_COR_INN
-         {
-            rLocation = hellportal_cornoth;
-         }
-
-         if piDest_room = RID_JAS_INN
-         {
-            rLocation = hellportal_jasper;
-         }
-
-         if piDest_room = RID_BAR_INN
-         {
-            rLocation = hellportal_barloque;
-         }
-      }
-      
-      if Send(who,@GetDeathRiftProtection) = TRUE
-         AND Send(who,@GetBoundLocationName) <> $
-      {
-         rLocation = Send(who,@GetBoundLocationName);
+         rLocation = hellportal_tos;
       }
 
       AddPacket(4,vrDesc,4,rLocation);
@@ -154,24 +154,27 @@ messages:
       local oRoom;
       
       % Check for Death Rifters.
-      if poOwner <> $ and isClass(poOwner,&Underworld)
-         AND IsClass(what,&Player)
-         AND Send(what,@GetDeathRiftProtection) = TRUE
+      if poOwner <> $
+         AND IsClass(poOwner,&Underworld)
+         AND IsClass(what,&User)
+         AND Send(what,@CheckPlayerFlag,#flag=PFLAG_DEATH_RIFTING)
          AND Send(what,@GetBoundLocationName) <> $
       {
          Send(what,@SendPlayerToBoundLocation);
+
          return;
       }
 
       % Check for Ko'catanites.
-      if poOwner <> $ and isClass(poOwner,&Underworld)
-         AND IsClass(what,&Player)
-         AND send(what,@CheckPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#flagset=2)
+      if poOwner <> $
+         AND IsClass(poOwner,&Underworld)
+         AND IsClass(what,&User)
+         AND Send(what,@CheckPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#flagset=2)
       {
          % Allow them to head to the island.
-         send(what,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#value=FALSE,#flagset=2);
-         oRoom = send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
-         send(oRoom,@Teleport,#what=what);
+         Send(what,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#value=FALSE,#flagset=2);
+         oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
+         Send(oRoom,@Teleport,#what=what);
 
          return;
       }
@@ -189,7 +192,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

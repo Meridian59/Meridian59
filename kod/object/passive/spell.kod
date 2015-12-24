@@ -71,9 +71,6 @@ resources:
       "Shal'ille frowns upon your assitance to unlawful citizens."
 
    spell_failed_by_chance = "You were unsuccessful in casting %s."
-   spell_spellbane_stopped = \
-      "The notes of %s's song tangle with the words of your spell, unraveling "
-      "it faster than your tongue can weave it."
 
    spell_advanced = "You advanced in %s!  Your ability is now at %s."
    spell_guardian = \
@@ -568,20 +565,6 @@ messages:
 
       if NOT bItemCast
       {
-         if IsClass(who,&Player)
-            AND Send(who,@IsAffectedByRadiusEnchantment,#byClass=&Spellbane)
-         {
-            lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,
-                                 #byClass=&Spellbane);
-            if report
-            {
-               Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,
-                     #parm1=Send(Nth(lRadiusState,3),@GetName));
-            }
-
-            return FALSE;
-         }
-
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_SILENCE);
          if Send(where,@IsEnchanted,#what=oSpell)
          {
@@ -1306,7 +1289,8 @@ messages:
       {
          foreach i in Send(who,@GetRadiusEnchantments)
          {
-            num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#lRadiusState=i);
+            num = Send(First(i),@GetAlteredChance,#chance=num,#what=self,
+                        #lRadiusState=i);
          }
       }
 

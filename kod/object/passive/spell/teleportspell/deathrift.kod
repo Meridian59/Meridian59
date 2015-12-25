@@ -67,7 +67,7 @@ classvars:
 
    vrSucceed_wav = DeathRift_sound
 
-   vbAngeledCast = FALSE
+   vbAngeledCast = TRUE
 
 properties:
 

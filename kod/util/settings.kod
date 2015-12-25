@@ -255,10 +255,10 @@ properties:
    % bonuses under all conditions. If it is false, they will only apply
    % when attacking or being attacked by another soldier to prevent
    % scenario overlap.
-   pbAlwaysApplySoldierBonus = FALSE
+   pbAlwaysApplySoldierBonus = TRUE
 
    % Setting to allow users to remove their own posts.
-   pbCanUserRemoveOwnPosts = FALSE
+   pbCanUserRemoveOwnPosts = TRUE
 
 messages:
 

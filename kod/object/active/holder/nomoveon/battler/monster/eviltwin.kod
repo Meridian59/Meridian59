@@ -263,8 +263,9 @@ messages:
 
    ReqSomethingEntered(what=$)
    {
-      if poOriginal = $
-         OR NOT Send(poOriginal,@IsLoggedOn)
+      if (poOriginal = $
+         OR (IsClass(poOriginal,&User)
+            AND NOT Send(poOriginal,@IsLoggedOn)))
       {
          return TRUE;
       }
@@ -292,13 +293,15 @@ messages:
 
    SomethingLeft(what=$)
    {
-      if poOriginal = $
+      local oRoom;
+
+      if (poOriginal = $)
       {
          return;
       }
 
-      if IsClass(poOriginal,&User)
-         AND NOT Send(poOriginal,@IsLoggedOn)
+      oRoom = Send(poOriginal,@GetOwner);
+      if (oRoom = $)
       {
          % If the original logs off, we go to 'limbo' and await their return.
          % If the caster logs off or is deleted/killed/phases, we get deleted.
@@ -308,10 +311,10 @@ messages:
          return;
       }
 
-      if what = poOriginal
+      if (what = poOriginal)
       {
          % If target leaves room, hunt them down.
-         if IsClass(Send(poOriginal,@GetOwner),&UnderWorld)
+         if IsClass(oRoom,&UnderWorld)
          {
             Send(self,@Delete);
 
@@ -328,24 +331,25 @@ messages:
 
    GotoOriginal()
    {
-      local oOriginalOwner;
+      local oRoom;
 
-      if poOriginal = $
+      if (poOriginal = $)
       {
          return;
       }
 
-      if Send(poOriginal,@IsLoggedOn)
+      oRoom = Send(poOriginal,@GetOwner);
+      if (oRoom = $)
       {
-         oOriginalOwner = Send(poOriginal,@GetOwner);
-         Send(oOriginalOwner,@NewHold,#what=self,
-               #new_row = Send(poOriginal,@GetRow),
-               #new_col = Send(poOriginal,@GetCol),
-               #new_angle = Send(poOriginal,@GetAngle));
-         if poOriginal <> poMaster
-         {
-            Post(self,@AttackOriginal);
-         }
+         return;
+      }
+
+      Send(oRoom,@NewHold,#what=self,#new_angle=Send(poOriginal,@GetAngle),
+            #new_row=Send(poOriginal,@GetRow),#new_col=Send(poOriginal,@GetCol));
+
+      if poOriginal <> poMaster
+      {
+         Post(self,@AttackOriginal);
       }
 
       return;

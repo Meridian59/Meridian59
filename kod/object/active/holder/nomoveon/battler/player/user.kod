@@ -7596,12 +7596,14 @@ messages:
          % If room is no combat and safe logoff, record it as the
          % player's last safe location
          if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
          {
-            piLastSafeRoom = Send(poOwner,@GetRoomNum);
+            if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+            {
+               piLastSafeRoom = Send(poOwner,@GetRoomNum);
 
-            % Recharge user's rods.
-            Send(self,@RechargeAllRods);
+               % Recharge user's rods.
+               Send(self,@RechargeAllRods);
+            }
 
             % If this player has created any evil twins, delete them.
             if plEvilTwins <> $

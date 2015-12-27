@@ -19,7 +19,7 @@
 
 #include "blakserv.h"
 
-#define BOF_SPEC "*.bof"
+#define BOF_EXTENSION ".bof"
 
 static unsigned char magic_num[] = { 'B', 'O', 'F', 0xFF };
 #define BOF_MAGIC_LEN sizeof(magic_num)
@@ -46,10 +46,9 @@ void LoadBof(void)
 	
 	int files_loaded = 0;
 	
-	sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF),BOF_SPEC);
-   StringVector files;
-   if (FindMatchingFiles(file_load_path, &files))
-   {
+	StringVector files;
+	if (FindMatchingFiles(ConfigStr(PATH_BOF), BOF_EXTENSION, &files))
+	{
       for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
       {
 			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF), it->c_str());
@@ -67,11 +66,10 @@ void LoadBof(void)
 	//dprintf("starting to load bof files\n");
 	files_loaded = 0;
 	
-	sprintf(file_load_path,"%s%s",ConfigStr(PATH_MEMMAP),BOF_SPEC);
-   if (FindMatchingFiles(file_load_path, &files))
-   {
-      for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
-      {
+	if (FindMatchingFiles(ConfigStr(PATH_MEMMAP), BOF_EXTENSION, &files))
+	{
+		for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
+		{
 			sprintf(file_load_path,"%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
 			
 			if (LoadBofName(file_load_path))

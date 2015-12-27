@@ -132,9 +132,6 @@ config_table_type config_table[] =
 { LOCK_DEFAULT,           F, "Default",       CONFIG_STR,   
      "The game is temporarily closed for maintenance." },
 
-{ RESOURCE_GROUP,         F, "[Resource]",    CONFIG_GROUP, "" },
-{ RESOURCE_RSC_SPEC,      F, "RscSpec",       CONFIG_STR,   "*.rsc" },
-
 { MEMORY_GROUP,           F, "[Memory]",      CONFIG_GROUP, "" },
 { MEMORY_SIZE_CLASS_HASH, F, "SizeClassHash", CONFIG_INT,   "99971" },
 { MEMORY_SIZE_CLASS_NAME_HASH,F,"SizeClassNameHash", CONFIG_INT,   "99971" },
@@ -281,14 +278,18 @@ const char * AddConfig(int config_id,const char *config_data,int config_type,int
    case CONFIG_PATH :
       len = strlen(s);
       
-      if (s[len-1] == '\\')
-	 s[len-1] = 0;
-      
+      if (s[len-1] == '\\' || s[len-1] == '/')
+		  s[len-1] = 0;
+
       if (stat(s,&file_stat) != 0 || !(file_stat.st_mode & S_IFDIR))
-	 return "invalid path--not found";
+		  return "invalid path--not found";
       
+#ifdef BLAK_PLATFORM_WINDOWS
       if (s[len-1] != ':')
-	 strcat(s,"\\");
+		  strcat(s,"\\");
+#elif BLAK_PLATFORM_LINUX
+	  strcat(s,"/");
+#endif
       c->config_str_value = (char *)AllocateMemory(MALLOC_ID_CONFIG,strlen(s)+1);
       strcpy(c->config_str_value,s);
       break;

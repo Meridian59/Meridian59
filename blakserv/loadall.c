@@ -136,9 +136,9 @@ Bool LoadControlFile(int *last_save_time)
 	while (fgets(line,MAX_SAVE_CONTROL_LINE,loadfile))
 	{
 		lineno++;
-		
-		t1 = strtok(line," \n");
-		t2 = strtok(NULL," \n");
+
+		t1 = strtok(line," \r\n");
+		t2 = strtok(NULL," \r\n");
 		
 		if (t1 == NULL)	/* ignore blank lines */
 			continue;
@@ -154,7 +154,7 @@ Bool LoadControlFile(int *last_save_time)
 			}
 			
 			eprintf("LoadControl file invalid data line %s (%i)\n",
-				load_name,lineno);
+					load_name,lineno);
 			fclose(loadfile);
 			return False;
 			

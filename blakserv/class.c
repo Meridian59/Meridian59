@@ -112,7 +112,7 @@ void AddClass(int id,bof_class_header *class_data,char *fname,char *bof_base,
 {
 	int i,hash_num;
 	class_node *new_node;
-   bof_list_elem *classvar_values, *prop_values;
+	bof_list_elem *classvar_values, *prop_values;
 
 	new_node = (class_node *)AllocateMemory(MALLOC_ID_CLASS,sizeof(class_node));
 	memset(new_node, 0, sizeof(class_node));

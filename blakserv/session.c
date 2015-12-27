@@ -345,8 +345,7 @@ void SetSessionState(session_node *s,int state)
 /* a recent write could have failed, if so don't do anything since
 	they were closed */
 	
-	
-    if (s->connected)
+	if (s->connected)
     {
 		/* dprintf("state %i to %i\n",s->state,state); */
 		ExitSessionState(s);

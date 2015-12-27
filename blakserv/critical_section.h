@@ -15,8 +15,6 @@
 
 // Linux version of a Windows CRITICAL_SECTION, using a pthread mutex.
 
-#include <pthread.h>
-
 typedef pthread_mutex_t CRITICAL_SECTION;
 
 void InitializeCriticalSection(CRITICAL_SECTION *m);

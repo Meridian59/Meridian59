@@ -78,9 +78,9 @@ OBJS =  \
 	$(OUTDIR)\block.obj \
 	$(OUTDIR)\stringinthash.obj \
 	$(OUTDIR)\intstringhash.obj \
-	$(OUTDIR)\files.obj \
 	$(OUTDIR)\sprocket.obj \
 	$(OUTDIR)\mutex_windows.obj \
+	$(OUTDIR)\osd_windows.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

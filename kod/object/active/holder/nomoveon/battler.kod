@@ -1676,7 +1676,8 @@ messages:
       return FALSE;
    }
 
-   RemoveEvilTwin()
+   ClearEvilTwin()
+   "Clears the poEvilTwin property, called when ET is deleted."
    {
       if poEvilTwin <> $
       {
@@ -1690,12 +1691,7 @@ messages:
 
    HasEvilTwin()
    {
-      if poEvilTwin <> $
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return poEvilTwin <> $;
    }
 
    EvilTwinsCreated(what=$)

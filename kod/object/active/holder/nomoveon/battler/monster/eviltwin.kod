@@ -156,7 +156,7 @@ messages:
       if poOriginal <> $
       {
          % Clear the original's chasing evil twin property.
-         Send(poOriginal,@RemoveEvilTwin);
+         Send(poOriginal,@ClearEvilTwin);
       }
 
       if poCaster <> $
@@ -333,7 +333,9 @@ messages:
    {
       local oRoom;
 
-      if (poOriginal = $)
+      if (poOriginal = $
+         OR poMaster = $
+         OR poCaster = $)
       {
          return;
       }

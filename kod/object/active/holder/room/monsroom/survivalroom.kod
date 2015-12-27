@@ -631,7 +631,7 @@ messages:
       {
          if Nth(lFixedReward,2) = piLevel
          {
-            oReward = Create(Nth(lFixedReward,1));
+            oReward = Create(First(lFixedReward));
             foreach i in plActive
             {
                if IsClass(First(i),&User)
@@ -653,7 +653,7 @@ messages:
             }
 
             Send(self,@NewHold,#what=oReward,
-                  #new_row=Nth(lRandomSpawnPoint,1),
+                  #new_row=First(lRandomSpawnPoint),
                   #new_col=Nth(lRandomSpawnPoint,2));
             iRewardTime = iRewardTime + 45000;
          }
@@ -664,21 +664,22 @@ messages:
       
       foreach i in plActive
       {
-         if IsClass(First(i),&User)
+         each_obj = First(i);
+
+         if IsClass(each_obj,&User)
          {
             if pbRestoreResources
             {
-               Send(First(i),@SetHealth,#amount=Send(First(i),@GetMaxHealth));
-               Send(First(i),@EatSomething,#nutrition=200);
-               if NOT Send(First(i),@IsCrystalizeManaSurging)
+               Send(each_obj,@SetHealth,#amount=Send(each_obj,@GetMaxHealth));
+               Send(each_obj,@EatSomething,#nutrition=200);
+               if NOT Send(each_obj,@IsCrystalizeManaSurging)
                {
-                  Send(First(i),@GainMana,#amount=Send(First(i),@GetMaxMana),
-                     #bCapped=TRUE);
+                  Send(each_obj,@GainMana,#amount=Send(each_obj,@GetMaxMana),
+                        #bCapped=TRUE);
                }
             }
-            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
-                                #parm1 = piLevel,
-                                #parm2 = (piRegroupTime + iRewardTime)/1000);
+            Send(each_obj,@MsgSendUser,#message_rsc=next_level_in_seconds,
+                  #parm1=piLevel,#parm2=(piRegroupTime + iRewardTime) / 1000);
          }
       }
 
@@ -686,10 +687,10 @@ messages:
 
       return;
    }
-   
+
    ChooseGoals()
    {
-      local iRand,plBosses,iNumAdmins,i,iTotalParticipants;
+      local iRand, plBosses, iNumAdmins, i, iTotalParticipants;
 
       iNumAdmins = 0;
       foreach i in plParticipants
@@ -711,9 +712,7 @@ messages:
          iTotalParticipants = iTotalParticipants + Length(plCrashProtection);
       }
 
-      iRand = Random((iTotalParticipants)*5,
-                     (iTotalParticipants)*15);
-                     
+      iRand = Random(iTotalParticipants * 5, iTotalParticipants * 15);
       iRand = Bound(iRand,1,75);
 
       plLevelGoals = Cons([GOAL_KILLS,iRand],plLevelGoals);
@@ -761,7 +760,7 @@ messages:
 
       return;
    }
-   
+
    RespawnMiniboss(timer=$)
    {
       ptRespawnMiniBossTimer = $;
@@ -769,7 +768,7 @@ messages:
 
       return;
    }
-   
+
    SpawnMiniboss()
    {
       local cMiniboss;
@@ -777,12 +776,13 @@ messages:
       cMiniboss = Nth(plMinibosses,Random(1,Length(plMinibosses)));
       Send(self,@GenerateMonster,#oMonster=Create(cMiniboss),#bStack=TRUE,
             #piSurvivalLevel=piLevel);
+
       return;
    }
 
    SomethingKilled(what=$,victim=$)
    {
-      local i, n, p, cDeadClass, respawnCheck, oTarget, mob, oMonster, iGoal;
+      local i, cDeadClass, oTarget, mob, oMonster, iGoal, iKills;
 
       if IsClass(victim,&User)
       {
@@ -800,9 +800,9 @@ messages:
 
          cDeadClass = GetClass(victim);
 
-         foreach respawnCheck in plMinibosses
+         foreach i in plMinibosses
          {
-            if respawnCheck = cDeadClass
+            if i = cDeadClass
                AND ptRespawnMiniBossTimer = $
             {
                ptRespawnMiniBossTimer = 
@@ -813,43 +813,42 @@ messages:
          foreach i in plLevelGoals
          {
             iGoal = First(i);
+            iKills = Nth(i,2) - 1;
+
             if iGoal = GOAL_KILLS
             {
-               SetNth(i,2,Nth(i,2)-1);
+               SetNth(i,2,iKills);
 
-               foreach p in plActive
-               {
-                  if IsClass(First(p),&User)
-                  {
-                     Send(First(p),@MsgSendUser,#message_rsc=kills_remaining,
-                           #parm1=Nth(i,2));
-                  }
-               }
+               % Player:mob ratio is usually 1:8 or worse, so use
+               % SendListByClass for speed.
+               SendListByClass(plActive,1,&User,@MsgSendUser,
+                     #message_rsc=kills_remaining,#parm1=iKills);
             }
             else if (iGoal = GOAL_BOSS
                   AND FindListElem(plBosses,cDeadClass))
             {
-               SetNth(i,2,Nth(i,2)-1);
+               SetNth(i,2,iKills);
             }
             else if (iGoal = GOAL_MINIBOSSES
                      AND FindListElem(plMinibosses,cDeadClass))
             {
-               SetNth(i,2,Nth(i,2)-1);
+               SetNth(i,2,iKills);
             }
          }
 
          foreach i in plExtraLifeGoals
          {
             iGoal = First(i);
+            iKills = Nth(i,2) - 1;
             if (iGoal = GOAL_BOSS
                   AND FindListElem(plBosses,cDeadClass))
             {
-               SetNth(i,2,Nth(i,2)-1);
+               SetNth(i,2,iKills);
             }
             else if (iGoal = GOAL_MINIBOSSES
                      AND FindListElem(plMinibosses,cDeadClass))
             {
-               SetNth(i,2,Nth(i,2)-1);
+               SetNth(i,2,iKills);
             }
          }
       }
@@ -865,25 +864,17 @@ messages:
             }
             else if iGoal = GOAL_BOSS
             {
-               foreach n in plActive
-               {
-                  if IsClass(First(n),&User)
-                  {
-                     Send(First(n),@MsgSendUser,
-                           #message_rsc=boss_slain_goal_msg);
-                  }
-               }
+               % Player:mob ratio is usually 1:8 or worse, so use
+               % SendListByClass for speed.
+               SendListByClass(plActive,1,&User,@MsgSendUser,
+                     #message_rsc=boss_slain_goal_msg);
             }
             else if iGoal = GOAL_MINIBOSSES
             {
-               foreach n in plActive
-               {
-                  if IsClass(First(n),&User)
-                  {
-                     Send(First(n),@MsgSendUser,
-                           #message_rsc=minibosses_slain_goal_msg);
-                  }
-               }
+               % Player:mob ratio is usually 1:8 or worse, so use
+               % SendListByClass for speed.
+               SendListByClass(plActive,1,&User,@MsgSendUser,
+                     #message_rsc=minibosses_slain_goal_msg);
             }
 
             plLevelGoals = DelListElem(plLevelGoals,i);
@@ -1282,7 +1273,7 @@ messages:
          foreach p in plLivesPerPlayer
          {
             SetNth(p,2,Nth(p,2)+1);
-            Send(Nth(p,1),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=Nth(p,2));
+            Send(First(p),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=Nth(p,2));
          }
          return;
       }
@@ -1304,136 +1295,127 @@ messages:
    
    OverrideDeathFunction(who=$,what=$)
    {
-      local i, iCheckForFriendlyKillGoal, bFoundGoal, p;
+      local i, bFoundGoal, p, iLives, each_obj;
 
       Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
 
       bFoundGoal = FALSE;
-      foreach iCheckForFriendlyKillGoal in plExtraLifeGoals
+      foreach i in plExtraLifeGoals
       {
-         if Nth(iCheckForFriendlyKillGoal,1) = GOAL_KILL_FRIENDLY
+         if First(i) = GOAL_KILL_FRIENDLY
             AND IsClass(what,&User)
             AND who <> what
             AND bFoundGoal = FALSE
          {
             Send(self,@GainALife);
-            
-            foreach i in plActive
-            {
-               if IsClass(First(i),&User)
-               {
-                  Send(First(i),@MsgSendUser,
-                                      #message_rsc=player_murdered_player_goal,
-                                      #parm1=Send(who,@GetTrueName),
-                                      #parm2=Send(what,@GetTrueName));
-               }
-            }
-            
+
+            % Player:mob ratio is usually 1:8 or worse, so use
+            % SendListByClass for speed.
+            SendListByClass(plActive,1,&User,@MsgSendUser,
+                  #message_rsc=player_murdered_player_goal,
+                  #parm1=Send(who,@GetTrueName),#parm2=Send(what,@GetTrueName));
+
             Send(self,@SpectateUser,#who=who);
-            
-            plExtraLifeGoals = DelListElem(plExtraLifeGoals,
-                                           iCheckForFriendlyKillGoal);
+
+            plExtraLifeGoals = DelListElem(plExtraLifeGoals,i);
+
             break;
          }
       }
-      
+
       if IsClass(what,&User)
          AND who <> what
          AND NOT bFoundGoal
       {
-         foreach i in plActive
-         {
-            if IsClass(First(i),&User)
-            {
-               Send(First(i),@MsgSendUser,#message_rsc=player_murdered_player_no_goal);
-            }
-         }
+         % Player:mob ratio is usually 1:8 or worse, so use
+         % SendListByClass for speed.
+         SendListByClass(plActive,1,&User,@MsgSendUser,
+               #message_rsc=player_murdered_player_no_goal);
+
          Send(self,@SpectateUser,#who=who);
+
          return;
       }
-      
+
       foreach i in plActive
       {
-         if First(i) = who
+         each_obj = First(i);
+         if (each_obj = who)
          {
-            if IsClass(First(i),&User)
-            {
-               Send(First(i),@MsgSendUser,#message_rsc=you_died_to_monster,
-                     #parm1=Send(what,@GetTrueName));
-            }
+            Send(who,@MsgSendUser,#message_rsc=you_died_to_monster,
+                  #parm1=Send(what,@GetTrueName));
          }
-         else
+         else if IsClass(each_obj,&User)
          {
-            if IsClass(First(i),&User)
-            {
-               Send(First(i),@MsgSendUser,#message_rsc=player_died_to_monster,
-                     #parm1=Send(who,@GetTrueName),#parm2=Send(what,@GetIndef),
-                     #parm3=Send(what,@GetTrueName));
-            }
+            Send(each_obj,@MsgSendUser,#message_rsc=player_died_to_monster,
+                  #parm1=Send(who,@GetTrueName),#parm2=Send(what,@GetIndef),
+                  #parm3=Send(what,@GetTrueName));
          }
       }
-      
+
       if piPublic
       {
          foreach p in plLivesPerPlayer
          {
-            if who = Nth(p,1)
+            if (who = First(p))
             {
-               if Nth(p,2) > 0
+               iLives = Nth(p,2);
+               if iLives > 0
                {
                   Send(who,@GainMana,#amount=Send(who,@GetMaxMana),#bCapped=TRUE);
                   Send(self,@Teleport,#what=who);
-                  SetNth(p,2,Nth(p,2)-1);
-                  
-                  if Nth(p,2) > 1
+                  SetNth(p,2,--iLives);
+
+                  if iLives > 1
                   {
-                     Send(Nth(p,1),@MsgSendUser,#message_rsc=your_lives_remain,
-                                             #parm1=Nth(p,2));
+                     Send(who,@MsgSendUser,#message_rsc=your_lives_remain,
+                           #parm1=iLives);
                   }
-                  else if Nth(p,2) = 1
+                  else if iLives = 1
                   {
-                     Send(Nth(p,1),@MsgSendUser,#message_rsc=one_life_remains,
-                                             #parm1=Nth(p,2));
+                     Send(who,@MsgSendUser,#message_rsc=one_life_remains,
+                           #parm1=iLives);
                   }
-                  else if Nth(p,2) = 0
+                  else if iLives = 0
                   {
-                     Send(Nth(p,1),@MsgSendUser,#message_rsc=no_lives_remain,
-                                             #parm1=Nth(p,2));
+                     Send(who,@MsgSendUser,#message_rsc=no_lives_remain,
+                           #parm1=iLives);
                   }
-                  
+
                   return;
                }
             }
-         
          }
       }
-      
+
       if NOT piPublic
          AND piLives > 0
       {
          piLives = piLives - 1;
          Send(who,@GainMana,#amount=Send(who,@GetMaxMana),#bCapped=TRUE);
          Send(self,@Teleport,#what=who);
-         
+
          foreach i in plActive
          {
-            if NOT IsClass(First(i),&User)
+            each_obj = First(i);
+
+            if NOT IsClass(each_obj,&User)
             {
                continue;
             }
 
             if piLives > 1
             {
-               Send(First(i),@MsgSendUser,#message_rsc=lives_remain_update,
+               Send(each_obj,@MsgSendUser,#message_rsc=lives_remain_update,
                                    #parm1=piLives);
             }
             else if piLives = 1
             {
-               Send(First(i),@MsgSendUser,#message_rsc=one_life_remains);
+               Send(each_obj,@MsgSendUser,#message_rsc=one_life_remains);
             }
             else if piLives = 0
             {
-               Send(First(i),@MsgSendUser,#message_rsc=no_lives_remain);
+               Send(each_obj,@MsgSendUser,#message_rsc=no_lives_remain);
             }
          }
 
@@ -1444,7 +1426,7 @@ messages:
 
       return;
    }
-   
+
    SpectateUser(who=$)
    {
       local p, oSpell;
@@ -1483,7 +1465,7 @@ messages:
    {
       plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
                                plCrashProtection);
-      
+
       if plParticipants <> $
          AND FindListElem(plParticipants,who) <> 0
       {
@@ -1492,7 +1474,7 @@ messages:
 
       return;
    }
-   
+
    CountdownBootUser(timer=$)
    {
       local crashprot, ingrate;
@@ -1501,44 +1483,44 @@ messages:
       {
          if timer = Nth(crashprot,2)
          {
-            ingrate = Nth(crashprot,1);
+            ingrate = First(crashprot);
             SetNth(crashprot,2,$);
-            SetNth(crashprot,1,$);
+            SetFirst(crashprot,$);
             plCrashProtection = DelListElem(plCrashProtection, crashprot);
          }
       }
-      
+
       Send(self,@BootUser,#who=ingrate);
-      
+
       return;
    }
-   
+
    BootUser(who=$,inform=TRUE,booting_all=FALSE)
    {
-      local i, p, crashprot;
+      local oRoom, i, p, crashprot;
 
       % Take this person out of the crash protection list if they're there.
       foreach crashprot in plCrashProtection
       {
-         if who = Nth(crashprot,1)
+         if who = First(crashprot)
          {
             DeleteTimer(Nth(crashprot,2));
             SetNth(crashprot,2,$);
             plCrashProtection = DelListElem(plCrashProtection, crashprot);
          }
       }
-      
+
       if plParticipants <> $
          AND FindListElem(plParticipants,who) <> 0
       {
          plParticipants = DelListElem(plParticipants,who);
       }
-      
+
       if piPublic
       {
          foreach p in plLivesPerPlayer
          {
-            if Nth(p,1) = who
+            if First(p) = who
             {
                plLivesPerPlayer = DelListElem(plLivesPerPlayer,p);
             }
@@ -1546,16 +1528,11 @@ messages:
       }
 
       Send(who,@MsgSendUser,#message_rsc=you_were_booted);
-      
+
+      oRoom = Send(who,@GetOwner);
       % They logged off.
-      if Send(who,@GetOwner) = $
-      {
-         Send(who,@RemoveEnchantmentClass,#class=&Spectate);
-         Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
-      }
-      
-      % They're still here.
-      if Send(who,@GetOwner) = self
+      if oRoom = $
+         OR oRoom = self
       {
          Send(who,@RemoveEnchantmentClass,#class=&Spectate);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
@@ -1572,7 +1549,7 @@ messages:
             }
          }
       }
-      
+
       if NOT booting_all
       {
          if plParticipants = $
@@ -1583,29 +1560,29 @@ messages:
 
       return;
    }
-   
+
    BootAllUsers()
    {
       local i, logged_player;
-      
+
       % Boot all participants
       foreach i in plParticipants
       {
          Send(self,@BootUser,#who=i,#inform=FALSE,#booting_all=TRUE);
       }
-      
+
       % Boot all crash protection players
       foreach i in plCrashProtection
       {
          DeleteTimer(Nth(i,2));
          SetNth(i,2,$);
-         logged_player = Nth(i,1);
-         SetNth(i,1,$);
+         logged_player = First(i);
+         SetFirst(i,$);
          plCrashProtection = DelListElem(plCrashProtection,i);
          Send(self,@BootUser,#who=logged_player,#inform=FALSE,
                              #booting_all=TRUE);
       }
-      
+
       % Boot everyone who remains (spectators)
       foreach i in plActive
       {
@@ -1615,22 +1592,23 @@ messages:
                                 #booting_all=TRUE);
          }
       }
-      
+
       return;
    }
-   
+
    FirstUserEntered()
    {
       local i;
-      
+
       if piPublic
       {
          ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,PB_START_TIME);
+
          propagate;
       }
 
       ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,DEFLT_START_TIME);
-      
+
       foreach i in plActive
       {
          if IsClass(First(i),&User)
@@ -1638,10 +1616,10 @@ messages:
             Send(First(i),@MsgSendUser,#message_rsc=beginning_in_sixty);
          }
       }
-   
+
       propagate;
    }
-   
+
    LastUserLeft()
    {
       Post(self,@Delete);
@@ -1708,12 +1686,12 @@ messages:
    {
       return piAllowJoins;
    }
-   
+
    GetGuildAssociation()
    {
       return poGuildAssociation;
    }
-   
+
    GetPublicStatus()
    {
       return piPublic;
@@ -1748,6 +1726,7 @@ messages:
              AND StringEqual(string,"leave guild survival"))
       {
          Post(self,@BootUser,#who=what);
+
          return;
       }
 

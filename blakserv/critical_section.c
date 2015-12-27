@@ -1,4 +1,3 @@
-
 // Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
@@ -6,8 +5,10 @@
 // the LICENSE file that accompanies it.
 //
 // Meridian is a registered trademark.
-
-#include "critical_section.h"
+/*
+ * critical_section.c
+ */
+#include "blakserv.h"
 
 void InitializeCriticalSection(CRITICAL_SECTION *m)
 {

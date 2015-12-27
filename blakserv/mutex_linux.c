@@ -5,6 +5,9 @@
 // the LICENSE file that accompanies it.
 //
 // Meridian is a registered trademark.
+/*
+ * mutex_linux.c
+ */
 
 #include "blakserv.h"
 
@@ -19,13 +22,20 @@ bool MutexAcquire(Mutex mutex) {
 }
 
 bool MutexAcquireWithTimeout(Mutex mutex, int timeoutMs) {
-   timespec ts;
+	// we'd like to do this to be clean, but it doesn't exist:
 
-   clock_gettime(CLOCK_REALTIME, &ts);
-   ts.tv_sec += (timeoutMs / 1000L);
-   ts.tv_nsec += (timeoutMs - ((timeoutMs / 1000L) * 1000L)) * 1000000L;
+	//timespec ts;
 
-   return pthread_mutex_timedlock(&mutex->mutex, &ts);
+	//clock_gettime(CLOCK_REALTIME, &ts);
+	//ts.tv_sec += (timeoutMs / 1000L);
+	//ts.tv_nsec += (timeoutMs - ((timeoutMs / 1000L) * 1000L)) * 1000000L;
+
+	//return pthread_mutex_timedlock(&mutex->mutex, &ts);
+
+	// since we only have one thread in the linux version of the server,
+	// this locking is pointless anyway, so just wait as long as necessary
+	// (which will always be no waiting at all)
+	return pthread_mutex_lock(&mutex->mutex) == 0;
 }
 
 bool MutexRelease(Mutex mutex) {

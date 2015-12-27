@@ -531,7 +531,7 @@ admin_table_type admin_main_table[] =
 	{ NULL, {N}, F, A, admin_trace_table,  LEN_ADMIN_TRACE_TABLE,  "trace",  "Trace subcommand" },
 	{ AdminUnlock,        {N},   F, A, NULL, 0, "unlock",    "Unlock the game" },
 	{ NULL, {N}, F, A, admin_unsuspend_table, LEN_ADMIN_UNSUSPEND_TABLE,"unsuspend", "Unsuspend subcommand" },
-	{ AdminWho,           {N},   F, A, NULL, 0, "who",       "Show every account logged on" },
+	{ AdminWho,           {N},   F, A|M, NULL, 0, "who",       "Show every account logged on" },
 };
 
 #define LEN_ADMIN_MAIN_TABLE (sizeof(admin_main_table)/sizeof(admin_table_type))
@@ -1144,7 +1144,7 @@ void AdminSaveOneConfigNode(config_node *c,const char *config_name,const char *d
 		break;
 	default :
 		fprintf(configfile,"%-20s ",config_name);
-		fprintf(configfile,"xxx # Unknown type\n");
+		fprintf(configfile,"# Unknown type\n");
 		break;
 	}   
 }
@@ -1801,7 +1801,7 @@ void AdminShowOneAccount(account_node *a)
    }
    else
    {
-      sprintf(buff,"");
+	   buff[0] = 0;
    }
 	
 	aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n",a->account_id,ch,a->name,
@@ -1947,7 +1947,7 @@ void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *d
 			aprintf("No\n");
 		break;
 	default :
-		aprintf("xxx # Unknown type\n");
+		aprintf("# Unknown type\n");
 		break;
 	}   
 }

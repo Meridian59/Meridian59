@@ -90,7 +90,7 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 	SOCKET sock;
 	SOCKADDR_IN sin;
 	struct linger xlinger;
-	int xxx;
+	int opt;
 	
 	sock = socket(AF_INET,SOCK_STREAM,0);
 	if (sock == INVALID_SOCKET) 
@@ -110,8 +110,8 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 		return;
 	}
 	
-	xxx=1;
-	if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,(char *)&xxx,sizeof xxx) < 0)
+	opt=1;
+	if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof opt) < 0)
 	{
 		eprintf("AcceptSocketConnections error setting sock opts 2\n");
 		return;
@@ -120,8 +120,8 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 	if (!ConfigBool(SOCKET_NAGLE))
 	{
 		/* turn off Nagle algorithm--improve latency? */
-		xxx = true;
-		if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(char *)&xxx,sizeof xxx))
+		opt = true;
+		if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(char *)&opt,sizeof opt))
 		{
 			eprintf("AcceptSocketConnections error setting sock opts 3\n");
 			return;
@@ -157,9 +157,9 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 {
 	SOCKET new_sock;
 	SOCKADDR_IN acc_sin;    /* Accept socket address - internet style */
-	int acc_sin_len;        /* Accept socket address length */
+	socklen_t acc_sin_len;        /* Accept socket address length */
 	SOCKADDR_IN peer_info;
-	int peer_len;
+	socklen_t peer_len;
 	struct in_addr peer_addr;
 	connection_node conn;
 	session_node *s;
@@ -197,10 +197,6 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 	memcpy(&peer_addr,(long *)&(peer_info.sin_addr),sizeof(struct in_addr));
 	memcpy(&conn.addr, &peer_addr, sizeof(struct in_addr));
 	sprintf(conn.name,"%s",inet_ntoa(peer_addr));
-	
-	// Too out following line to prevent log files from becoming spammed with extra lines.
-	// This line is extraneous because the outcome of the authentication is always posted to logs.
-	// lprintf("Got connection from %s to be authenticated.\n", conn.name);
 	
 	if (connection_type == SOCKET_MAINTENANCE_PORT)
 	{
@@ -259,6 +255,12 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 	LeaveServerLock();
 }
 
+#ifdef BLAK_PLATFORM_WINDOWS
+#define IN_ADDR_HELPER(x) x.S_un.S_addr
+#elif BLAK_PLATFORM_LINUX
+#define IN_ADDR_HELPER(x) x.s_addr
+#endif
+
 Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
 {
 	IN_ADDR mask;
@@ -266,40 +268,49 @@ Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
 
 	for (i=0;i<num_maintenance_masks;i++)
 	{
-		mask.S_un.S_addr = inet_addr(maintenance_masks[i]);
-		if (mask.S_un.S_addr == INADDR_NONE)
+		IN_ADDR_HELPER(mask) = inet_addr(maintenance_masks[i]);
+		if (IN_ADDR_HELPER(mask) == INADDR_NONE)
 		{
 			eprintf("CheckMaintenanceMask has invalid configured mask %s\n",
 					  maintenance_masks[i]);
 			continue;
 		}
 	
+		unsigned char b1 = (unsigned char)((IN_ADDR_HELPER(mask) & 0xff000000) >> 24);
+		unsigned char b2 = (unsigned char)((IN_ADDR_HELPER(mask) & 0x00ff0000) >> 16);
+		unsigned char b3 = (unsigned char)((IN_ADDR_HELPER(mask) & 0x0000ff00) >> 8);
+		unsigned char b4 = (unsigned char)(IN_ADDR_HELPER(mask) & 0xff);
 		/* for each byte of the mask, if it's non-zero, the client must match it */
 	
-		if ((mask.S_un.S_un_b.s_b1 != 0) && (addr->sin_addr.S_un.S_un_b.s_b1 != mask.S_un.S_un_b.s_b1))
+		unsigned char addr_b1 = (unsigned char)((IN_ADDR_HELPER(addr->sin_addr) & 0xff000000) >> 24);
+		unsigned char addr_b2 = (unsigned char)((IN_ADDR_HELPER(addr->sin_addr) & 0x00ff0000) >> 16);
+		unsigned char addr_b3 = (unsigned char)((IN_ADDR_HELPER(addr->sin_addr) & 0x0000ff00) >> 8);
+		unsigned char addr_b4 = (unsigned char)((IN_ADDR_HELPER(addr->sin_addr) & 0xff));
+
+		if ((b1 != 0) && (addr_b1 != b1))
 			continue;
 	
-		if ((mask.S_un.S_un_b.s_b2 != 0) && (addr->sin_addr.S_un.S_un_b.s_b2 != mask.S_un.S_un_b.s_b2))
+		if ((b2 != 0) && (addr_b2 != b2))
 			continue;
 	
-		if ((mask.S_un.S_un_b.s_b3 != 0) && (addr->sin_addr.S_un.S_un_b.s_b3 != mask.S_un.S_un_b.s_b3))
+		if ((b3 != 0) && (addr_b3 != b3))
 			continue;
 	
-		if ((mask.S_un.S_un_b.s_b4 != 0) && (addr->sin_addr.S_un.S_un_b.s_b4 != mask.S_un.S_un_b.s_b4))
+		if ((b4 != 0) && (addr_b4 != b4))
 			continue;
 	
 		/*
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b1);
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b2);
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b3);
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b4);
+		dprintf("%u\n",addr_b1);
+		dprintf("%u\n",addr_b2);
+		dprintf("%u\n",addr_b3);
+		dprintf("%u\n",addr_b4);
 		
 		  dprintf("----\n");
 		  
-			dprintf("%u\n",mask.S_un.S_un_b.s_b1);
-			dprintf("%u\n",mask.S_un.S_un_b.s_b2);
-			dprintf("%u\n",mask.S_un.S_un_b.s_b3);
-			dprintf("%u\n",mask.S_un.S_un_b.s_b4);
+			dprintf("%u\n",b1);
+			dprintf("%u\n",b2);
+			dprintf("%u\n",b3);
+			dprintf("%u\n",b4);
 	*/
 		return True;
 	}
@@ -503,7 +514,15 @@ void AsyncSocketRead(SOCKET sock)
 		if (!MutexRelease(s->muxReceive))
 			eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 	}
-	
+	if (bytes == 0)
+	{
+		// read of 0 bytes means it's been closed; on windows we're
+		// sent a specific close event instead
+		HangupSession(s);
+		return;
+	}
+
+
 	if (bytes < 0 || bytes > bn->size_buf - bn->len_buf)
 	{
 		eprintf("AsyncSocketRead got %i bytes from recv() when asked to stop at %i\n",bytes,bn->size_buf - bn->len_buf);

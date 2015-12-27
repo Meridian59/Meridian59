@@ -16,7 +16,6 @@
 
 #include "blakserv.h"
 
-static Bool in_main_loop = False;
 static int numActiveTimers = 0;
 
 timer_node *timers;
@@ -133,9 +132,11 @@ void AddTimerNode(timer_node *t)
       t->next = timers; /* order is important! do this FIRST */
       timers = t;
 
-      /* we're making a new first-timer, so the time main loop should wait might
-	 have changed, so have it break out of loop and recalibrate */
+	  /* we're making a new first-timer, so the time main loop should wait might
+		 have changed, so have it break out of loop and recalibrate */
+#ifdef BLAK_PLATFORM_WINDOWS
       PostThreadMessage(main_thread_id,WM_BLAK_MAIN_RECALIBRATE,0,0);
+#endif
       return;
    }
 
@@ -312,97 +313,23 @@ void TimerActivate()
    }
 }
 
-Bool InMainLoop(void)
+INT64 GetMainLoopWaitTime()
 {
-   return in_main_loop;
-}
-
-void ServiceTimers(void)
-{
-   MSG msg;
-   INT64 ms;
-
-   StartupComplete(); /* for the interface to report no errors on startup */
-   InterfaceUpdate();
-   lprintf("Status: %i accounts\n",GetNextAccountID());
-
-   lprintf("-------------------------------------------------------------------------------------\n");
-   dprintf("-------------------------------------------------------------------------------------\n");
-   eprintf("-------------------------------------------------------------------------------------\n");
-
-   in_main_loop = True;
-   SetWindowText(hwndMain, ConfigStr(CONSOLE_CAPTION));
-
-	AsyncSocketStart();
-
-   for(;;)
-   {
-      if (timers == NULL)
+	INT64 ms;
+	if (timers == NULL)
+		ms = 500;
+	else
+	{
+		ms = timers->time - GetMilliCount();
+		if (ms <= 0)
+			ms = 0;
+		
+		if (ms > 500)
 			ms = 500;
-      else
-      {
-			ms = timers->time - GetMilliCount();
-			if (ms <= 0)
-				ms = 0;
-	 
-			if (ms > 500)
-				ms = 500;
-      }	 
-      
-      if (MsgWaitForMultipleObjects(0,NULL,0,(DWORD)ms,QS_ALLINPUT) == WAIT_OBJECT_0)
-      {
-	 while (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-	 {
-	    if (msg.message == WM_QUIT)
-	    {
-	       lprintf("ServiceTimers shutting down the server\n");   
-	       return;
-	    }
-	    
-	    switch (msg.message)
-	    {
-	    case WM_BLAK_MAIN_READ :
-	       EnterServerLock();
-	       
-	       PollSession(msg.lParam);
-	       TimerActivate();
-	       
-	       LeaveServerLock();
-	       break;
-	    case WM_BLAK_MAIN_RECALIBRATE :
-	       /* new soonest timer, so we should recalculate our time left... 
-		  so we just need to restart the loop! */
-	       break;
-	    case WM_BLAK_MAIN_DELETE_ACCOUNT :
-	       EnterServerLock();
-	       DeleteAccountAndAssociatedUsersByID(msg.lParam);
-	       LeaveServerLock();
-	       break;
-
-	    case WM_BLAK_MAIN_VERIFIED_LOGIN :
-	       EnterServerLock();
-	       VerifiedLoginSession(msg.lParam);
-	       LeaveServerLock();
-	       break;
-
-	    default :
-	       dprintf("ServiceTimers got unknown message %i\n",msg.message);
-	       break;
-	    }
-	 }
-      }
-      else
-      {
-	 /* a Blakod timer is ready to go */
-	 
-	 EnterServerLock();
-	 PollSessions(); /* really just need to check session timers */
-	 TimerActivate();
-	 LeaveServerLock();
-      }
-   }
+	}	 
+	return ms;
 }
-
+	
 timer_node * GetTimerByID(int timer_id)
 {
    timer_node *t;

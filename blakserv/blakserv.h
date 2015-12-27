@@ -17,7 +17,7 @@
 	them seem to be required in them, and since some of the include
 	filenames clash with that of most compilers */
 
-#define BLAKSERV_VERSION "2.1"
+#define BLAKSERV_VERSION "2.2"
 
 #define MAX_LOGIN_NAME 50
 #define MAX_LOGIN_PASSWORD 32
@@ -117,61 +117,16 @@ enum
 #define PACKAGE_FILE "packages.txt"
 #define SPROCKET_FILE "sprocket.dll"
 
+#include <string>
+#include <vector>
+typedef std::vector<std::string> StringVector;
+
 #ifdef BLAK_PLATFORM_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <winsock2.h>
-#include "resource.h"
-#include <crtdbg.h>
-#include <io.h>
-#include <process.h>
-#include "mutex_windows.h"
+#include "osd_windows.h"
 #endif  // BLAK_PLATFORM_WINDOWS
 
 #ifdef BLAK_PLATFORM_LINUX
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <limits.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include "critical_section.h"
-#include "mutex_linux.h"
-#define MAX_PATH PATH_MAX
-#define O_BINARY 0
-#define O_TEXT 0
-#define stricmp strcasecmp
-#define strnicmp strncasecmp
-
-typedef int SOCKET;
-#define closesocket close
-#define SOCKET_ERROR -1
-#define INVALID_SOCKET -1
-#define WSAEWOULDBLOCK EWOULDBLOCK
-typedef sockaddr SOCKADDR;
-typedef sockaddr_in SOCKADDR_IN;
-extern int GetLastError();
-
-#define VER_PLATFORM_WIN32_WINDOWS 1
-#define VER_PLATFORM_WIN32_NT 2
-#define PROCESSOR_INTEL_386 386
-#define PROCESSOR_INTEL_486 486
-#define PROCESSOR_INTEL_PENTIUM 586
-
-// XXX stuff below here is junk
-
-typedef int DWORD;
-typedef int HANDLE;
-typedef int HINSTANCE;
-typedef int HWND;
-typedef unsigned long long UINT64;
-
-#define MAXGETHOSTSTRUCT 64
+#include "osd_linux.h"
 #endif  // BLAK_PLATFORM_LINUX
 
 #include <algorithm>
@@ -218,7 +173,6 @@ typedef struct
 
 /* in main.c */
 extern DWORD main_thread_id;
-char * GetLastErrorStr();
 #define WM_BLAK_MAIN_READ           (WM_APP + 4000)
 #define WM_BLAK_MAIN_RECALIBRATE    (WM_APP + 4001)
 #define WM_BLAK_MAIN_DELETE_ACCOUNT (WM_APP + 4002)
@@ -228,6 +182,7 @@ char * GetLastErrorStr();
 
 #include "config.h"
 
+// these hashes pre-date the use of C++
 #include "stringinthash.h"
 #include "intstringhash.h"
 
@@ -249,7 +204,6 @@ char * GetLastErrorStr();
 #include "loadgame.h"
 #include "roomdata.h"
 #include "roofile.h"
-#include "files.h"
 
 #include "bufpool.h"
 #include "admin.h"

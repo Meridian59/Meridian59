@@ -5,7 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\tostwn.bof
-BOFS  = tsurchin.bof tsapoth.bof tssmith.bof tsinnk.bof tsbanker.bof \
+BOFS  = TsUrchin.bof TsApoth.bof TsSmith.bof TsInnK.bof TsBanker.bof \
         tswatch.bof dkgrd.bof basicinn.bof
 
 !include $(KODDIR)\kod.mak

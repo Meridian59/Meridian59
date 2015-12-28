@@ -1,0 +1,58 @@
+#
+# Makefile piece included by each kod directory makefile. The top level
+# makefile reproduces this with some commands to run after recursing.
+#
+
+.SUFFIXES : .kod
+
+BCFLAGS = -d -I $(KODINCLUDEDIR) -K $(KODDIR)/kodbase.txt
+
+%.bof: %.kod
+	@$(BC) $(BCFLAGS) $<
+	$(CP) $@ $(BLAKSERVRUNDIR)/loadkod
+	if [ -f $(*F).rsc ]; \
+	then \
+		$(CP) $(*F).rsc $(BLAKSERVRUNDIR)/rsc; \
+	fi
+
+all : $(BOFS) $(BOFS2) $(BOFS3) $(BOFS4) $(BOFS5) $(BOFS6) $(BOFS7) $(BOFS8)
+	@for i in $(BOFS:.bof=) $(BOFS2:.bof=) $(BOFS3:.bof=.) $(BOFS4:.bof=.) $(BOFS5:.bof=.) $(BOFS6:.bof=.) $(BOFS7:.bof=.) $(BOFS8:.bof=.); do \
+		if [ -d $$i ]; \
+        then \
+				echo Building $$i; \
+			  	cd $$i; \
+				sed -e "s/\!include/include/" \
+				-e "s/common.mak/common.mak.linux/" \
+				-e "s/\\\\kod.mak/\/kod.mak.linux/" \
+				-e "/include/ s:\\\\:\/:" \
+				-e "/TOPDIR/ s:\\\\:\/:" \
+				-e "/kod.mak/ s:\\\\:\/:" \
+				-e "/DEPEND/ s:\\\\:\/:" \
+				makefile >makefile.linux; \
+				$(MAKE) -j 1 -f makefile.linux TOPDIR=../$(TOPDIR); \
+				$(RM) makefile.linux; \
+				cd ..; \
+		fi; \
+	done
+
+$(BOFS) $(BOFS2) $(BOFS3) $(BOFS4) $(BOFS5) $(BOFS6) $(BOFS7) $(BOFS8): $(DEPEND)
+
+clean :
+	@-$(RM) *.bof *.rsc kodbase.txt 2>&1
+	@-for i in $(BOFS:.bof=); do \
+		if [ -d $$i ]; \
+		then \
+			cd $$i; \
+			sed -e "s/\!include/include/" \
+            -e "s/common.mak/common.mak.linux/" \
+            -e "s/\\\\kod.mak/\/kod.mak.linux/" \
+            -e "/include/ s:\\\\:\/:" \
+            -e "/TOPDIR/ s:\\\\:\/:" \
+            -e "/kod.mak/ s:\\\\:\/:" \
+            -e "/DEPEND/ s:\\\\:\/:" \
+                makefile >makefile.linux; \
+			$(MAKE) -f makefile.linux TOPDIR=../$(TOPDIR) clean; \
+			$(RM) makefile.linux; \
+			cd ..; \
+		fi; \
+	done

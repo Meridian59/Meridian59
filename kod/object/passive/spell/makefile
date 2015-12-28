@@ -19,11 +19,11 @@ BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
        cursewp.bof anon.bof boon.bof jala.bof \
        dispillu.bof summrefl.bof apparitn.bof creasphm.bof forget.bof \
        seduce.bof morph.bof portlife.bof artifice.bof \
-       forsight.bof bait.bof persench.bof vertigo.bof \
+       forsight.bof bait.bof persench.bof Vertigo.bof \
        roomench.bof flash.bof animate.bof \
        holysymb.bof finlrite.bof fdeath.bof multicst.bof \
        summtwin.bof brthlife.bof glow.bof seance.bof \
        sweep.bof mysttch.bof relay.bof distill.bof \
-       dazzle.bof purge.bof elusion.bof walspell.bof
+       Dazzle.bof purge.bof elusion.bof walspell.bof
 
 !include $(KODDIR)\kod.mak

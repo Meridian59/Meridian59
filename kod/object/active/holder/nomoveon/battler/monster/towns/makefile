@@ -6,6 +6,6 @@
 
 DEPEND = ..\towns.bof
 BOFS  = barlqtwn.bof crnthtwn.bof jasprtwn.bof marntwn.bof tostwn.bof hazartwn.bof \
-                kocatwn.bof wanderer.bof goad.bof decoratr.bof ladyphen.bof
+                kocatwn.bof wanderer.bof Goad.bof decoratr.bof ladyphen.bof
 
 !include $(KODDIR)\kod.mak

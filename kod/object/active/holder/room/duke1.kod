@@ -20,7 +20,7 @@ constants:
 resources:
 
    room_name_Duke1 = "The Courtyard of Blackstone Keep"
-   room_Duke1 = Duke1.roo
+   room_Duke1 = duke1.roo
    Duke1_music = area01.mid
 
    fountain_soundDuke1 = fountain.wav

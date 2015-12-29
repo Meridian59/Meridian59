@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_OutdoorsG6 ="The King's Way"
-   room_OutdoorsG6 = G6.roo
+   room_OutdoorsG6 = g6.roo
    OutdoorsG6_music = forest.mid
 
    G6_lakewalk = \

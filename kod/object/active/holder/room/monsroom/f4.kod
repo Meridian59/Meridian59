@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsF4 = F4.roo
+   room_OutdoorsF4 = f4.roo
    room_name_OutdoorsF4 ="East Merchant Way"
    OutdoorsF4_music = forest.mid
 

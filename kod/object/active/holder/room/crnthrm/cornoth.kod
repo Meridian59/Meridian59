@@ -18,7 +18,7 @@ constants:
 
 resources:
 
-   room_CorNoth = CorNoth.roo
+   room_CorNoth = cornoth.roo
    room_name_CorNoth ="Cor Noth"
 
    cor_music = city04.mid

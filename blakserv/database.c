@@ -593,6 +593,8 @@ BOOL MySQLRecordPlayer(int account_id, char* name, char* home, char* bind, char*
    {
       free(record->name);
       free(record->guild);
+      free(record->home);
+      free(record->bind);
 
       free(record);
       free(node);
@@ -616,7 +618,7 @@ BOOL MySQLRecordPlayerSuicide(int account_id, char* name)
 
    // set values
    record->account_id = account_id;
-   record->name = name;
+   record->name = _strdup(name);
 
    // attach to node
    node->type = STAT_PLAYERSUICIDE;

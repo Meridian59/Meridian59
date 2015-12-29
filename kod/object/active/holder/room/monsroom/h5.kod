@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsH5 = H5.roo
+   room_OutdoorsH5 = h5.roo
    room_name_OutdoorsH5 ="The border of the Badlands"
    OutdoorsH5_music = forest.mid
 

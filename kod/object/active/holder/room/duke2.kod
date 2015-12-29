@@ -27,7 +27,7 @@ constants:
 resources:
 
    room_name_Duke2 = "Blackstone Keep"
-   room_Duke2 = Duke2.roo
+   room_Duke2 = duke2.roo
 
    Duke2_music = area01.mid
 

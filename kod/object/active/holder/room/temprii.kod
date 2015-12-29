@@ -21,7 +21,7 @@ constants:
 resources:
 
    room_name_RiijaTemple = "The Temple of Riija"
-   room_RiijaTemple = ke1.roo
+   room_RiijaTemple = KE1.roo
    riijatemple_music = bridge.mid
 
    riijatemple_door1 = "~kThe Monk of Riija says, \"~BNo ~rone ~B~bmay ~Ienter ~kmy ~g~Badytum~n~k.\""

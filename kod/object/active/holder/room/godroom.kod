@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_Godroom = Zndramas.roo
+   room_Godroom = zndramas.roo
    room_name_Godroom ="The meeting place of the Gods"
    godroom_music = main.mid
    waterfall_soundGodroom = wfall2.wav

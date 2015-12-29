@@ -63,7 +63,7 @@ constants:
 resources:
 
    room_name_OutdoorsG9 ="An ancient place, its origin forgotten"
-   room_OutdoorsG9 = G9.roo
+   room_OutdoorsG9 = g9.roo
    OutdoorsG9_music = walk4.mid
 
    G9_door_sound = down2.wav

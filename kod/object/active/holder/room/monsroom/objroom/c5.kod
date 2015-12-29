@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsC5 = C5.roo
+   room_OutdoorsC5 = c5.roo
    room_name_OutdoorsC5 ="West Merchant Way through Ilerian Woods"
    OutdoorsC5_music = walk1.mid
    waterfall_soundC5 = wfall2.wav

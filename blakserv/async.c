@@ -128,7 +128,7 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 		}
 	}
 	
-	memset(&sin,sizeof sin,0);
+	memset(&sin,0,sizeof sin);
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	sin.sin_port = htons((short)socket_port);

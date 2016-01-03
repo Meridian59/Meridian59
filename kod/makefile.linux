@@ -17,6 +17,11 @@ BCFLAGS = -d -I $(KODINCLUDEDIR) -K $(KODDIR)/kodbase.txt
 
 %.bof: %.kod
 	@$(BC) $(BCFLAGS) $< 
+	@$(CP) $@ $(BLAKSERVRUNDIR)/loadkod
+	@if [ -f $(*F).rsc ]; \
+	then \
+		$(CP) $(*F).rsc $(BLAKSERVRUNDIR)/rsc; \
+	fi
 
 all : $(BOFS) $(BOFS2) $(BOFS3) $(BOFS4) $(BOFS5) $(BOFS6) $(BOFS7) $(BOFS8)
 	@for i in $(BOFS:.bof=) $(BOFS2:.bof=) $(BOFS3:.bof=.) $(BOFS4:.bof=.) $(BOFS5:.bof=.) $(BOFS6:.bof=.) $(BOFS7:.bof=.) $(BOFS8:.bof=.); do \
@@ -35,8 +40,6 @@ all : $(BOFS) $(BOFS2) $(BOFS3) $(BOFS4) $(BOFS5) $(BOFS6) $(BOFS7) $(BOFS8)
 		cd ..; \
 	done
 	@echo Copying kodbase.txt and kod include files
-	-@$(CP) $(KODDIR)/*.bof $(BLAKSERVRUNDIR)/loadkod 2>&1
-	-@$(CP) $(KODDIR)/*.rsc $(BLAKSERVRUNDIR)/rsc 2>&1
 	-@$(CP) $(KODDIR)/kodbase.txt $(BLAKSERVRUNDIR) 2>&1
 	-@$(CP) $(KODDIR)/include/*.khd $(BLAKSERVRUNDIR) 2>&1
 
@@ -58,6 +61,3 @@ clean :
 		$(RM) makefile.linux; \
 		cd ..; \
 	done
-	$(RM) $(BLAKSERVRUNDIR)/rsc/*.rsc 2>&1
-	$(RM) $(BLAKSERVRUNDIR)/loadkod/*.bof 2>&1
-	$(RM) $(BLAKSERVRUNDIR)/memmap/*.bof 2>&1

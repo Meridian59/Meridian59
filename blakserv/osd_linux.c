@@ -128,7 +128,8 @@ bool FindMatchingFiles(const char *path, const char *extension, std::vector<std:
 	DIR *dir = opendir(path);
 	if (dir == NULL)
 		return false;
-	
+
+   files->clear();
 	std::string ext(extension);
 	while (entry = readdir(dir))
 	{

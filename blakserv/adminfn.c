@@ -512,7 +512,7 @@ admin_table_type admin_main_table[] =
 	{ NULL, {N}, F, A, admin_enable_table, LEN_ADMIN_ENABLE_TABLE, "enable", "Enable subcommand" },
 	{ AdminGarbage,       {N},   F, A, NULL, 0, "garbage",   "Garbage collect" },
 	{ NULL, {N}, F, A, admin_hangup_table, LEN_ADMIN_HANGUP_TABLE, "hangup", "Hangup subcommand" },
-	{ AdminLock,          {R,N}, F, A, NULL, 0, "lock",      "Lock the game" },
+	{ AdminLock,          {R,N}, F, A|M, NULL, 0, "lock",      "Lock the game" },
 	{ NULL, {N}, F, A, admin_kickoff_table,LEN_ADMIN_KICKOFF_TABLE,"kickoff","Kickoff subcommand" },
 	{ AdminMail,          {N},   F, A, NULL, 0, "mail",      "Read administrator mail" },
 	{ AdminMark,          {N},   F, A|M, NULL, 0, "mark",      "Mark all channel logs with a dashed line" },
@@ -529,7 +529,7 @@ admin_table_type admin_main_table[] =
 	{ NULL, {N}, F, A, admin_terminate_table,LEN_ADMIN_TERMINATE_TABLE,"terminate",
 	"Terminate subcommand" },
 	{ NULL, {N}, F, A, admin_trace_table,  LEN_ADMIN_TRACE_TABLE,  "trace",  "Trace subcommand" },
-	{ AdminUnlock,        {N},   F, A, NULL, 0, "unlock",    "Unlock the game" },
+	{ AdminUnlock,        {N},   F, A|M, NULL, 0, "unlock",    "Unlock the game" },
 	{ NULL, {N}, F, A, admin_unsuspend_table, LEN_ADMIN_UNSUSPEND_TABLE,"unsuspend", "Unsuspend subcommand" },
 	{ AdminWho,           {N},   F, A|M, NULL, 0, "who",       "Show every account logged on" },
 };

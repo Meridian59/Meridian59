@@ -518,6 +518,8 @@ void AsyncSocketRead(SOCKET sock)
 	{
 		// read of 0 bytes means it's been closed; on windows we're
 		// sent a specific close event instead
+      if (!MutexRelease(s->muxReceive))
+         eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 		HangupSession(s);
 		return;
 	}

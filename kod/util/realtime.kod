@@ -555,12 +555,16 @@ messages:
 
    GetYearDay()
    {
-      local iTime,iDay;
+      local iTime;
 
       iTime = GetTime() - piTimeZoneOffset;
-      iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
 
-      return iDay;
+      if (Send(self,@IsLeapYear,#year=Send(self,@GetYear)))
+      {
+         return (iTime / DAY MOD 366) + OFFSET_DAY;
+      }
+
+      return (iTime / DAY MOD 365) + OFFSET_DAY;
    }
 
    GetMonth()
@@ -606,7 +610,7 @@ messages:
 
    GetDay()
    {
-      local i,iTime,iDay,iMonthDays;
+      local i,iDay,iMonthDays;
 
       if Send(self,@IsLeapYear,#iYear=Send(self,@GetYear))
       {
@@ -617,8 +621,7 @@ messages:
          iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
       }
 
-      iTime = GetTime() - piTimeZoneOffset;
-      iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
+      iDay = Send(self,@GetYearDay);
 
       foreach i in iMonthDays
       {

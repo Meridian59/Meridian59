@@ -1,7 +1,7 @@
 Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2015 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2016 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -73,6 +73,16 @@ You can point your local client at your local server by running the
 client (meridian.exe) with command line flags, like this:
 
 meridian.exe /U:joe.smith /W:password /H:localhost /P:5959 
+
+
+RUNNING ON LINUX
+
+The server can be built on Linux with the following commands:
+
+cd blakserv
+make -f makefile.linux
+
+The blakserv.cfg file requires some manual changes to run on Linux.
 
 
 THIRD-PARTY CODE

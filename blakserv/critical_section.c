@@ -12,7 +12,13 @@
 
 void InitializeCriticalSection(CRITICAL_SECTION *m)
 {
-   pthread_mutex_init(m, NULL);
+  // Make the mutex reentrant, the same way a Windows critical
+  // section is.
+  pthread_mutexattr_t attr;
+  pthread_mutexattr_init(&attr);
+  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+  pthread_mutex_init(m, &attr);
 }
 
 void EnterCriticalSection(CRITICAL_SECTION *m)

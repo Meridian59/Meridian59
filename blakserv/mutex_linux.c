@@ -22,20 +22,13 @@ bool MutexAcquire(Mutex mutex) {
 }
 
 bool MutexAcquireWithTimeout(Mutex mutex, int timeoutMs) {
-	// we'd like to do this to be clean, but it doesn't exist:
+	timespec ts;
 
-	//timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	ts.tv_sec += (timeoutMs / 1000L);
+	ts.tv_nsec += (timeoutMs - ((timeoutMs / 1000L) * 1000L)) * 1000000L;
 
-	//clock_gettime(CLOCK_REALTIME, &ts);
-	//ts.tv_sec += (timeoutMs / 1000L);
-	//ts.tv_nsec += (timeoutMs - ((timeoutMs / 1000L) * 1000L)) * 1000000L;
-
-	//return pthread_mutex_timedlock(&mutex->mutex, &ts);
-
-	// since we only have one thread in the linux version of the server,
-	// this locking is pointless anyway, so just wait as long as necessary
-	// (which will always be no waiting at all)
-	return pthread_mutex_lock(&mutex->mutex) == 0;
+	return pthread_mutex_timedlock(&mutex->mutex, &ts) == 0;
 }
 
 bool MutexRelease(Mutex mutex) {

@@ -10,7 +10,7 @@ $(OUTDIR)/%.obj : $(OUTDIR)/%.c
 	$(CC) $(CFLAGS) -I $(SOURCEDIR) -o $@ -c $< 
 
 makedirs:
-	-@mkdir $(OUTDIR)
+	-@mkdir -p $(OUTDIR)
 
 clean:
 	@$(RM) $(OUTDIR)/*

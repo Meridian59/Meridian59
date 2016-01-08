@@ -448,12 +448,8 @@ void CloseSession(int session_id)
 			DeleteBufferList(s->send_list);
 			s->send_list = NULL;
 			
-			/* no need to release mutex... we're closing it */
-			/*
 			if (!MutexRelease(s->muxSend))
-			eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
-			*/
-			
+				eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 		}
 		
 		if (!MutexAcquireWithTimeout(s->muxReceive,10000))
@@ -463,14 +459,10 @@ void CloseSession(int session_id)
 			DeleteBufferList(s->receive_list);
 			s->receive_list = NULL;
 			
-			/* no need to release mutex... we're closing it */
-			/*
 			if (!MutexRelease(s->muxReceive))
-			eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
-			*/
-			
+				eprintf("File %s line %i release of non-owned mutex\n",__FILE__,__LINE__);
 		}
-		
+
 		if (!MutexClose(s->muxSend))
 			eprintf("CloseSession error (%s) closing send mutex %i in session %i\n",
 			GetLastErrorStr(),s->muxSend,s->session_id);

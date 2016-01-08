@@ -6,7 +6,7 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR)
+CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
 
 SOURCEDIR = .
 
@@ -96,9 +96,7 @@ $(OUTDIR)/md5.obj : $(TOPDIR)/util/md5.c
 
 $(OUTDIR)/blakserv: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ -c $(SOURCEDIR)/version.c
-	$(LINK) $(LIBS) $^ -o$@ $(LINKFLAGS)
+	$(LINK) $^ $(LIBS) -o$@ $(LINKFLAGS)
 	$(CP) $@ $(BLAKSERVRUNDIR)
-
-#	$(LINK)	$@ $(LIBS) $(LINKFLAGS)
 
 include $(TOPDIR)/rules.mak.linux

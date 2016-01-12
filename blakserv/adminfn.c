@@ -98,7 +98,8 @@ void AdminShowMemory(int session_id,admin_parm_type parms[],
 void AdminShowCalled(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminShowCalledClass(class_node *c);
-
+void AdminShowRoomTable(int session_id, admin_parm_type parms[],
+                        int num_blak_parm, parm_node blak_parm[]);
 void AdminShowBlockers(int session_id,admin_parm_type parms[],
                        int num_blak_parm,parm_node blak_parm[]);
 void AdminShowObject(int session_id,admin_parm_type parms[],
@@ -343,6 +344,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
 	{ AdminShowReferences,    {S,S,N}, F, A|M, NULL, 0, "references",  "Show what objects or lists reference a particular data value" },
 	{ AdminShowResource,      {S,N}, F, A|M, NULL, 0, "resource",      "Show a resource by resource name" },
+	{ AdminShowRoomTable,     {N},   F, A|M, NULL, 0, "roomtable",     "Show the rooms table" },
 	{ AdminShowStatus,        {N},   F, A|M, NULL, 0, "status",        "Show system status" },
 	{ AdminShowString,        {I,N}, F, A|M, NULL, 0, "string",        "Show one string by string id" },
 	{ AdminShowSuspended,     {N},   F, A|M, NULL, 0, "suspended",     "Show all suspended accounts" },
@@ -1498,6 +1500,12 @@ void AdminShowCalledClass(class_node *c)
          m = m->next;
       }
    }
+}
+
+void AdminShowRoomTable(int session_id, admin_parm_type parms[],
+                        int num_blak_parm, parm_node blak_parm[])
+{
+   PrintRoomTable();
 }
 
 void AdminShowBlockers(int session_id,admin_parm_type parms[],

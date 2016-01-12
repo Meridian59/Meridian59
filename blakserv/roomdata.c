@@ -119,24 +119,54 @@ void UnloadRoom(room_node *r)
       return;
    }
 
-   room_hash = r->data.roomdata_id % INIT_ROOMTABLE_SIZE;
-   if (rooms)
+   if (!rooms)
    {
-      // Free the room.
-      room = rooms[room_hash];
-      while (room)
+      bprintf("UnloadRoomData couldn't get room table!");
+
+      return;
+   }
+
+   room_hash = r->data.roomdata_id % INIT_ROOMTABLE_SIZE;
+
+   // Get rooms occupying this position in rooms table.
+   room = rooms[room_hash];
+
+   if (!room)
+   {
+      bprintf("UnloadRoomData got NULL data for room %i at room table entry %i!",
+         r->data.roomdata_id, room_hash);
+
+      return;
+   }
+
+   // If the room we want to free is first, set rooms at this position
+   // to the next room in this list.
+   if (room->data.roomdata_id == r->data.roomdata_id)
+   {
+      rooms[room_hash] = room->next;
+      BSPFreeRoom(&room->data);
+      FreeMemory(MALLOC_ID_ROOM, room, sizeof(room_node));
+      room = NULL;
+
+      return;
+   }
+
+   // Otherwise check the next room in list.
+   while (room->next)
+   {
+      if (room->next->data.roomdata_id == r->data.roomdata_id)
       {
+         // Matched, set temp to the room to be freed.
          temp = room->next;
-         if (room->data.roomdata_id == r->data.roomdata_id)
-         {
-            BSPFreeRoom(&room->data);
-            FreeMemory(MALLOC_ID_ROOM, room, sizeof(room_node));
-            room = NULL;
-            rooms[room_hash] = temp;
-            return;
-         }
-         room = room->next;
+         // Set current room's next pointer to the next pointer
+         // of the room we're freeing.
+         room->next = room->next->next;
+         BSPFreeRoom(&temp->data);
+         FreeMemory(MALLOC_ID_ROOM, temp, sizeof(room_node));
+
+         return;
       }
+      room = room->next;
    }
 
    // If we get to this point, we didn't find the room we wanted to unload.
@@ -161,6 +191,30 @@ room_node * GetRoomDataByID(int id)
    }
 
    return NULL;
+}
+
+// Prints the rooms in rooms table to admin log.
+void PrintRoomTable()
+{
+   room_node *room;
+
+   if (!rooms)
+   {
+      aprintf("No rooms table loaded.\n");
+
+      return;
+   }
+
+   for (int i = 0; i < INIT_ROOMTABLE_SIZE; i++)
+   {
+      room = rooms[i];
+      while (room)
+      {
+         aprintf("Room at position %i, roomdata %i, resource %s\n",
+            i, room->data.roomdata_id, GetResourceStrByLanguageID(room->data.resource_id,0));
+         room = room->next;
+      }
+   }
 }
 
 void ForEachRoom(void(*callback_func)(room_node *r))

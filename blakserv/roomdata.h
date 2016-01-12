@@ -27,6 +27,7 @@ void        ResetRooms(void);
 int         LoadRoom(int resource_id);
 void        UnloadRoom(room_node *r);
 room_node*  GetRoomDataByID(int id);
+void PrintRoomTable();
 void ForEachRoom(void(*callback_func)(room_node *r));
 
 #endif

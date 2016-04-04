@@ -194,21 +194,21 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       // The following line was commented out because I added support for the 3 4-byte integers
       // index += 12; /* 12 bytes future expansion space */
 
-      len = *(short *)(msg->data+index);
+      len = *(short *)(msg->data + index);
       if (index + 2 + len > msg->len) /* 2 = length word len */
-	 break;
-      if (len > sizeof(name))
-	 break;
-      memcpy(name,msg->data+index+2,len);
+         break;
+      if (len >= sizeof(name))
+         break;
+      memcpy(name, msg->data + index + 2, len);
       name[len] = 0; /* null terminate string */
       index += 2 + len;
       
-      len = *(short *)(msg->data+index);
+      len = *(short *)(msg->data + index);
       if (index + 2 + len > msg->len)
-	 break;
-      if (len > sizeof(name))
-	 break;
-      memcpy(password,msg->data+index+2,len);
+         break;
+      if (len >= sizeof(password))
+         break;
+      memcpy(password, msg->data + index + 2, len);
       password[len] = 0; /* null terminate string */
       index += 2 + len;
       
@@ -258,7 +258,7 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       len = *(short *)(msg->data+index);
       if (index + 2 + len > msg->len)
          break;
-      if (len > sizeof(name))
+      if (len >= sizeof(name))
          break;
       memcpy(name,msg->data+index+2,len);
       name[len] = 0; /* null terminate string */

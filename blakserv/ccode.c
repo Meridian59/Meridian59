@@ -730,7 +730,7 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		// make a zero-terminated scratch copy of string1
 		len1 = snod1->len_data;
 		memcpy( buf1, snod1->data, len1 );
-		buf1[len1+1] = 0x0;
+		buf1[len1] = 0x0;
 		break;
 		
 	case TAG_TEMP_STRING :
@@ -739,7 +739,7 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		// make a zero-terminated scratch copy of string1
 		len1 = snod1->len_data;
 		memcpy( buf1, snod1->data, len1 );
-		buf1[len1+1] = 0x0;
+		buf1[len1] = 0x0;
 		break;
 		
 	case TAG_RESOURCE :
@@ -806,7 +806,7 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	
 	// now make a zero-terminated scratch copy of string0
 	memcpy( s0, snod0->data, snod0->len_data );
-	s0[snod0->len_data+1] = 0x0;
+	s0[snod0->len_data] = 0x0;
 	
 	// so we can use stristr to do the work
 	subspot = stristr( s0, s1 );
@@ -816,14 +816,6 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	
 	if( subspot != NULL )	// only substitute if string1 is found in string0
 	{
-		char* source;
-		int source_len;
-		
-		source_len = snod0->len_data;
-		source = (char *)AllocateMemory(MALLOC_ID_STRING, source_len+1);
-		memcpy(source, snod0->data, source_len);
-		source[source_len] = '\0';
-		
 		if (snod0 != GetTempString())
 		{
 			// free the old string0 and allocate a new (possibly longer) string0
@@ -844,8 +836,6 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		memcpy( copyspot, subspot + len1, new_len - (subspot - s0) - len2 );
 		snod0->len_data = new_len;
 		snod0->data[snod0->len_data] = '\0';
-		
-		FreeMemory(MALLOC_ID_STRING,source,source_len+1);
 		
 		r_val.v.data = 1;
 	}

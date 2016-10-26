@@ -75,6 +75,7 @@ static char INILagbox[]      = "LatencyMeter";
 static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
+static char INILanguage[] = "Language";
 
 static char window_section[] = "Window";         /* Section in INI file for window info */
 static char INILeft[]        = "NormalLeft";
@@ -239,6 +240,7 @@ void ConfigLoad(void)
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, True, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
+   config.language = GetConfigInt(interface_section, INILanguage, -1, ini_file);
 
    config.guest        = GetConfigInt(misc_section, INIGuest, False, ini_file);
    config.server_low   = GetConfigInt(misc_section, INIServerLow, 0, ini_file);

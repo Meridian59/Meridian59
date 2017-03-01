@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ThornedCirclet is Helmet
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ThornedCirclet_name_rsc = "thorned circlet"
+   ThornedCirclet_icon_rsc = thocircl.bgf
+   ThornedCirclet_desc_rsc = \
+      "Thick brown thorns and spines from an unknown plant have been fused "
+      "and tied into a wreath. Difficult to handle, this prickly circlet "
+      "looks like it would be painful to put against your brow. "
+      "Devout servants of the Vile One, not known for their high spirits, "
+      "have been known to suffer through wearing this uncomfortable headpiece, "
+      "but not for looks - it's said the pain of wearing one can enhance "
+      "their aptitude as an Arch Mage of Qor. As your hands are already "
+      "covered in blood just from holding it, you can see why."
+
+   thronedcirclet_cant = "The thorned circlet stubbornly resists your attempts to place it on your brow."
+
+   ThornedCirclet_overlay_rsc = thocirclov.bgf
+
+classvars:
+
+   vrName = ThornedCirclet_name_rsc
+   vrIcon = ThornedCirclet_icon_rsc
+   vrDesc = ThornedCirclet_desc_rsc
+
+   viHits_init_min = 255
+   viHits_init_max = 300
+
+   viValue_average = 450
+   viWeight = 10
+   viBulk = 20
+
+   viUse_type = ITEM_USE_HEAD
+   viUse_amount = 1
+
+   viGround_group = 1
+   viInventory_group = 2
+
+   viDefense_base = 10               % This is the default value for piDefense_bonus
+
+properties:
+
+   piMana_change = 0
+   piHealth_change = 0
+
+messages:
+
+   GetOverlay(animation = $)
+   {
+      % Uses different file for the overlay.
+      return ThornedCirclet_overlay_rsc;
+   }
+   
+   GetResistanceModifiers()
+   {
+      return [ [-ATCK_SPELL_FIRE,-10],
+               [-ATCK_SPELL_SHOCK,20],
+               [-ATCK_SPELL_HOLY,20]
+             ];
+   }
+
+   ReqUse()
+   {
+      if send(poOwner,@GetKarma) > 50  
+      { 
+         send(poOwner,@MsgSendUser,#message_rsc=thronedcirclet_cant);
+
+         return FALSE; 
+      }
+
+      propagate;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if send(oSpell,@GetSchool) = SS_QOR
+      {
+         return 15;
+      }
+
+      if send(oSpell,@GetSchool) = SS_SHALILLE
+      {
+         return -15;
+      }
+
+      return 0;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

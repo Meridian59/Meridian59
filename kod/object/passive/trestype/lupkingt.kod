@@ -29,9 +29,10 @@ messages:
    constructed()
    {
       plTreasure = [ [ &LongSword, 20 ],
-                     [ &Scimitar, 20 ],
+                     [ &Scimitar, 10 ],
                      [ &PlateArmor, 10 ],	
                      [ &IvyCirclet, 10 ],
+                     [ &ThornedCirclet, 10],
                      [ &OrcShield, 10 ],
                      [ &KnightShield, 8 ],
                      [ &RingInvisibility, 5 ],

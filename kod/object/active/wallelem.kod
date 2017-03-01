@@ -197,6 +197,16 @@ messages:
       ptPeriodic = $;
       plAffected = $;
 
+      % Delete the active walls if the caster logs off
+      if IsClass(poCaster,&Player)
+      {
+          if NOT Send(poCaster,@IsLoggedOn)
+          {
+             Send(self,@Delete);
+             return;
+          }
+      }
+
       if vbPeriodic
       {
          for i in send(poOwner,@GetHolderActive)

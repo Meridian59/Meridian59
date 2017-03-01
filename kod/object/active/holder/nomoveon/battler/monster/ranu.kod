@@ -1,0 +1,147 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MutantRanunculus is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ranu_koc_name_rsc = "youyozotz"
+   ranu_name_rsc = "mutant ranunculus"
+   ranu_icon_rsc = ranu.bgf
+   ranu_desc_rsc = \
+      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
+      "ed diam nonumy eirmod tempor invidunt ut labore et dolore "
+      "magna aliquyam erat, sed diam voluptua."
+
+   ranu_dead_icon_rsc = ranuX.bgf
+   ranu_dead_name_rsc = "dead mutant ranunculus"
+
+   ranu_sound_hit = frg_atkh.wav
+   ranu_sound_miss = frg_atkm.wav
+   ranu_sound_death = frg_dth.wav
+   ranu_sound_aware = frg_awr.wav
+
+classvars:
+
+   vrName = ranu_name_rsc
+   vrIcon = ranu_icon_rsc
+   vrDesc = ranu_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+   vrKocName = ranu_koc_name_rsc
+
+   vrDead_icon = ranu_dead_icon_rsc
+   vrDead_name = ranu_dead_name_rsc
+
+   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_BITE
+   viLevel = 80
+   viDifficulty = 4
+   viKarma = 60
+
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
+   viAttributes = MOB_SPASM
+
+   viTreasure_type = TID_RANU
+
+   vrSound_hit = ranu_sound_hit
+   vrSound_miss = ranu_sound_miss
+   vrSound_aware = ranu_sound_aware
+   vrSound_death = ranu_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ -20, -ATCK_WEAP_ALL] ];
+
+      propagate;
+   }
+
+   DoSpasm()
+   {
+      local roll;
+
+      roll = Random(1,10);
+
+      if roll = 1
+      {
+         Send(self,@DoLegSpasm);
+         propagate;
+      }
+
+      if roll <= 5
+      {
+         Send(poOwner,@SomethingTurned,#what=self,#new_angle=Random(0,MAX_ANGLE-1));
+      }
+
+      propagate;
+   }
+         
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   DoLegSpasm()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,150, 2,1, 2,3);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,150, 2,1, 2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,150, 2,1, 2,6, 2,1);
+
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

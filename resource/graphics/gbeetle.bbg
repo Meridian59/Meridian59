@@ -1,0 +1,39 @@
+# GRAY BEETLE
+#  Framset: 1- 3 walking unique
+#  4-10 walking /attack duplicates of 1-3 
+# -s = Shinkfactor 6
+# 18 = 18 frames
+# all 18 bitmaps in a row
+# 10 = framsets
+# animation per frameset? the first 8 means maybe the sites of the model.
+-s 6
+18
+rbeetle_01.bmp
+rbeetle_02.bmp
+rbeetle_03.bmp
+rbeetle_04.bmp
+rbeetle_05.bmp
+rbeetle_06.bmp
+rbeetle_07.bmp
+rbeetle_08.bmp
+rbeetle_09.bmp
+rbeetle_10.bmp
+rbeetle_11.bmp
+rbeetle_12.bmp
+rbeetle_13.bmp
+rbeetle_14.bmp
+rbeetle_15.bmp
+rbeetle_16.bmp
+rbeetle_17.bmp
+rbeetle_18.bmp
+10
+ 8 1 6 5 4 4 4 3 2 
+ 8 7 12 11 10 10 10 9 8 
+ 8 13 18 17 16 16 16 15 14 
+ 8 1 6 5 4 4 4 3 2 
+ 8 7 12 11 10 10 10 9 8 
+ 8 13 18 17 16 16 16 15 14 
+ 8 13 18 17 16 16 16 15 14 
+ 8 7 12 11 10 10 10 9 8 
+ 8 13 18 17 16 16 16 15 14 
+ 8 7 12 11 10 10 10 9 8 

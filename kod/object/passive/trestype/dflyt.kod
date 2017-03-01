@@ -29,9 +29,8 @@ messages:
    {
       plTreasure = [ [ &DragonflyEye, 30 ],
                      [ &WebMoss, 20 ],
-                     [ &Meatpie, 20 ],
                      [ &RainbowFern, 15 ],
-                     [ &Money, 7 ],
+                     [ &Money, 27 ],
                      [ &KriipaClaw, 7 ],
                      [ &Yrxlsap, 1 ]
 		             ];

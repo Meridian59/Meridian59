@@ -32,13 +32,13 @@ messages:
                      [ &DarkAngelFeather, 18],
                      [ &PurpleMushroom, 16],
                      [ &InkyCap, 11],
-                     [ &ScaleArmor, 8],
-                     [ &LongSword, 6],
-		               [ &Torch, 5],
-                     [ &NightVisionPotion, 5],
-                     [ &Money, 4],
-                     [ &BerserkerRing, 5],
-                     [ &MysticSword, 4]
+                     [ &ScaleArmor, 1],
+                     [ &LongSword, 1],
+		               [ &Torch, 1],
+                     [ &NightVisionPotion, 1],
+                     [ &Money, 31],
+                     [ &BerserkerRing, 1],
+                     [ &MysticSword, 1]
                    ];
 
       propagate;

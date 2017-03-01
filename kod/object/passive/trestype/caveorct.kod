@@ -41,13 +41,8 @@ messages:
                      [ &ColdRing, 3 ],
                      [ &ShockRing, 3 ],
                      [ &AcidRing, 2 ],
-                     [ &Money, 2 ],
+                     [ &Money, 12 ],
                      [ &UncutSeraphym, 2 ],
-                     [ &CurePoisonPotion, 2 ],
-                     [ &CureDiseasePotion, 2 ],
-                     [ &RemoveCursePotion, 2 ],
-                     [ &PurifyPotion, 2 ],
-                     [ &RingofLethargy, 2 ],
                      [ &KnightShield, 1 ],
                      [ &FlashScroll, 1 ]
                    ];

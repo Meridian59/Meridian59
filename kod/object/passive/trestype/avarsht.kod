@@ -21,21 +21,17 @@ properties:
    
    piTreasure_num = TID_AVAR_SHAMAN
    piItem_att_chance = 8
-   piDiff_seed = 4
+   piDiff_seed = 8
 
 messages:
    
    constructed()
    {
       plTreasure = [ [ &ShamanBlood, 40 ],
-                     [ &Yrxlsap, 13],
+                     [ &Yrxlsap, 29],
                      [ &WebMoss, 10 ],
                      [ &RainbowFern, 9 ],
                      [ &KriipaClaw, 6],
-                     [ &CurePoisonPotion, 4],
-                     [ &CureDiseasePotion, 4],
-                     [ &RemoveCursePotion, 4],
-                     [ &PurifyPotion, 4],
                      [ &UncutSeraphym, 3],
                      [ &PolishedSeraphym, 3]
                    ];

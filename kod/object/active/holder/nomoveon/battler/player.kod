@@ -489,7 +489,7 @@ resources:
 
    player_tutorial_mail = "Subject: You're doing well for yourself.\n"
       "It's nice to see that you seem to be doing well.  "
-      "I thought I might take this time to explain some finer points of "
+      "I thought I take this time to explain some finer points of "
       "the world of Meridian to you."
       "\n\n"
       "There are a variety of spells and skill schools that you can "
@@ -4198,7 +4198,7 @@ messages:
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
+         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*8) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
          {
@@ -4230,7 +4230,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,1000);
+      return bound(iOffense,1,1500);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4260,7 +4260,7 @@ messages:
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
+         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*8) + (piBase_Max_Health*3/2);
       }
 
       for i in plDefense_modifiers
@@ -4273,7 +4273,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,1000);
+      return bound(iDefense,1,1500);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three

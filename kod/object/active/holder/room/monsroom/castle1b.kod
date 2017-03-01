@@ -29,7 +29,6 @@ classvars:
 
    viTerrain_type = TERRAIN_CASTLE
 
-   viPermanent_Flags = ROOM_GUILD_PK_ONLY
 
 properties:
 

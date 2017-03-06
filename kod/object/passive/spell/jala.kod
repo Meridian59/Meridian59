@@ -10,17 +10,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Jala is Spell
 
-% Jala Spells are effect spells that last so long as the player remains in a
-% trance.  There can only be one Jala spell per room.
+% Jala Spells are radius spells that last as long as the player remains in a trance.
+%
+% Mechanically, there is a state here of the form [time elapsed, players enchanted, volume, range].
+% This should not be altered. It is used to track the radius and who should be affected.
+% Volume and Range have their own Calculate functions if they need to be modified.
+%
+% EnterSong and LeaveSong add or remove from a player's plJala_modifiers list.
+% Jala modifiers are states of the form [song object, volume, singer].
+% These states should be used when effects are actually being performed.
+%
+% Useful Jala functions to call (these are in Player.kod):
+% IsAffectedByJalaModifier(what=$,byClass=&Jala) -- returns TRUE or FALSE
+% GetLoudestJalaModifierState(byClass=&Jala)     -- returns [song object, volume, singer] with highest volume
+% GetJalaModifiers()                             -- returns player's list of [song object, volume, singer]
 
 constants:
 
    include blakston.khd
+   
+   SONG_CHECK_TIME = 500   %Time between checks for who is affected, no worse than an active object lag-wise
 
 resources:
 
-   jala_song_ends = "The song sung by a nearby bard of Jala ends."
-   jala_song_starts = "A nearby bard of Jala starts to sing a song."
+   jala_default_ends = "The song sung by a nearby bard of Jala ends."
+   jala_default_starts = "A nearby bard of Jala starts to sing a song."
+   jala_default_enter = "The bard's song begins to affect you."
+   jala_default_leave = "The song's notes fade from your ears."
    jala_song_failed = \
       "A nearby bard of Jala begins to sing a song, but quits when they "
       "realize they can't be heard over the song sung by another."
@@ -29,10 +45,19 @@ resources:
    jala_no_newbie = \
       "Your guardian angel tells you, \"You are not ready to cast spells "
       "which may hinder other players.\""
+      
+   jala_already_being_sung = "You are already singing a song."
 
    jala_default = jala1.mid
 
 classvars:
+
+   jala_song_already_singing = jala_already_being_sung
+   
+   jala_song_ends = jala_default_ends
+   jala_song_starts = jala_default_starts
+   jala_song_enter = jala_default_enter
+   jala_song_leave = jala_default_leave
 
    viSchool = SS_JALA
    % viMana is amount used upon inititiation
@@ -46,14 +71,23 @@ classvars:
    % viPostCast_time is in seconds, since it works off GetTime()
    viPostCast_time = 1
 
-   % Can non-PK characers use this song?
-   vbCanNewbieSing = TRUE     
+   % If harmful, don't affect people we can't hit
+   viHarmful = FALSE
+
+   % Ranges goes up to double base, based on spellpower
+   viBaseRange = 5
+   
+   % If FALSE, affects caster only
+   viAffectsOthers = TRUE
+   
+   % If TRUE, a harmful spell will still affect guildmates
+   % Important for balance in guild war situations
+   viAffectsGuildmates = FALSE
 
 properties:
 
-   % Do we need to Send removeenchantment to every user in the room on
-   %  spell termination?
-   pbUserEffects = FALSE  
+   ptDrainTimer = $
+   ptDrainNow = FALSE
 
 messages:
 
@@ -69,90 +103,177 @@ messages:
 
    CanPayCosts(who=$, lTargets=$)  
    {
-      if NOT vbCanNewbieSing
-         AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         Send(who,@MsgSendUser,#message_rsc=jala_no_newbie);
-         
-         return FALSE;
-      }
-
-
       if Send(who,@GetInstrumentLevel) = 0
       { 
          Send(who,@MsgSendUser,#message_rsc=jala_need_instrument);
          return FALSE; 
       }
-      
+
       propagate;
-   }
-
-   CalculateVolume(who=$, iSpellPower=25)
-   {
-      local iVolume;
-
-      % This should be a funcion of the spellpower AND the amount of mana
-      %  used to upkeep the spell AND quality of the instrument.
-      % Multiply the numerator by 1000 to break viDrainTime down to seconds
-      %  without risking a divide by for small durations.
-      iVolume = iSpellPower * viManaDrain * 1000 / viDrainTime;
-
-      return iVolume;
    }
 
    CastSpell(who=$, iSpellPower=0)
    "Initiation point for the spell."
    {
-      local oRoom, oldVolume, thisVolume, i, iJalaInfo;
+      local i, iSinging, iSongState, oObj, oUser, oCasterGuild, oRoom, iElapsed, lEnchanted, iVolume, iRange;
+
+      iElapsed = 0;
+      lEnchanted = $;
+      iVolume = Send(self,@CalculateVolume,#iSpellPower=iSpellPower);
+      iRange = Send(self,@CalculateRange,#iSpellPower=iSpellPower);
+      
+      if Send(who,@IsEnchanted,#byClass=&Jala)
+      {
+         iSinging = Send(who,@GetEnchantmentsByClass,#enchClass=&Jala);
+         for i in iSinging
+         {
+            iSongState = Send(who,@GetEnchantedState,#what=Nth(i,2));
+            Send(Nth(i,2),@BreakTrance,#who=who,#state=iSongState,#event=EVENT_STEER);
+         }
+      }
 
       oRoom = Send(who,@GetOwner);
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_starts);
+      
+      oCasterGuild = Send(who,@GetGuild);
 
-      iJalaInfo = Send(oRoom,@GetJalaInfo);
-      oldVolume = 0;
-
-      if iJalaInfo <> $
+      for oObj in send(oRoom,@GetplActive)
       {
-         % Our state information is the third item return from JalaInfo
-         oldVolume = Nth(Nth(iJalaInfo,3),1);
+         oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
+
+         % Important note: FindListElem returns nil on a passed nil value, not zero.
+         if IsClass(oUser,&User)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+         {
+            if NOT viHarmful
+               OR oUser=who
+               OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
+                  AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
+                  AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+               OR (viAffectsGuildmates
+                  AND oCasterGuild <> $
+                  AND oCasterGuild = Send(oUser,@GetGuild))
+            {
+               if viAffectsOthers
+                  OR (NOT viAffectsOthers AND oUser=who)
+               {
+                  send(self,@EnterSong,#who=oUser,#iVolume=iVolume,#singer=who);
+                  lEnchanted = cons(oUser,lEnchanted);
+               }
+            }
+         }
       }
 
-      thisVolume = Send(self,@CalculateVolume,#who=who,
-                        #iSpellPower=iSpellPower);
-      thisVolume = bound(thisVolume,1,$);
-      if thisVolume < oldVolume
-         OR thisVolume = oldVolume
-      {
-         Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_failed,
-              #what=self);
-         
-         return;
-      }
-      else
-      {
-         Send(oRoom,@RoomStartEnchantment,#what=self,
-              #state=Send(self,@BuildState,#thisVolume=thisVolume,#who=who,
-                          #iSpellPower=iSpellPower),
-              #time=viDrainTime,#iSpellPower=iSpellPower,#lastcall=FALSE);
-         Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_starts,
-              #what=self);
-         Send(self,@StartMusic,#oCaster=who,#rMusic=prMusic);
-         Send(who,@SetTranceFlag);
-         Send(oRoom,@EnchantAllOccupants,#what=self);
-      }
+      % Put spell maintenance info in casters enchantment list.
+      Send(who,@StartEnchantment,#what=self,#time=SONG_CHECK_TIME,
+           #state=[iElapsed,lEnchanted,iVolume,iRange]);      
+
+      % Set up mana drain
+      ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
 
       propagate;
    }
 
-   BuildState(thisVolume=0,who=$,iSpellPower=0)
-   {
-      return [thisVolume,who,iSpellPower];
+   EnterSong(who=$,iVolume=0,singer=$)
+   {      
+      local i,each_obj;
+      
+      Send(who,@AddJalaModifier,#what=self,#iVolume=iVolume,#singer=who);
+      Send(who,@MsgSendUser,#message_rsc=jala_song_enter);
+
+      return;
+   }
+   
+   LeaveSong(who=$,iVolume=0,singer=$)
+   {      
+      Send(who,@RemoveJalaModifier,#what=self,#iVolume=iVolume,#singer=who);
+      Send(who,@MsgSendUser,#message_rsc=jala_song_leave);
+      
+      return;
    }
 
-   BreakTrance(who=$, event=$, state=$, location=$)
+   EndEnchantment( who = $, state = $ )
+   "Called only for caster. Refreshes itself to recalculate affected players."
+   {
+      local iElapsed, lEnchanted, iVolume, iRange, oUser, oCasterGuild, oRoom, lActive;
+
+      iElapsed = Nth(state,1);
+      lEnchanted = Nth(state,2);
+      iVolume = Nth(state,3);
+      iRange = Nth(state,4);
+
+      oRoom = Send(who,@GetOwner);
+      oCasterGuild = Send(who,@GetGuild);
+
+      % Do test.
+      for oUser in lEnchanted
+      {
+         if Send(who,@SquaredDistanceTo,#what=oUser) > (iRange * iRange)
+            OR Send(who,@GetOwner) <> Send(oUser,@GetOwner)
+         {
+            Send(self,@LeaveSong,#who=oUser,#iVolume=iVolume,#singer=who);
+            lEnchanted = DelListElem(lEnchanted,oUser);
+         }
+      }
+      
+      for lActive in send(oRoom,@GetplActive)
+      {
+         oUser = Send(oRoom,@HolderExtractObject,#data=lActive);
+
+         if IsClass(oUser,&User)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+         {
+            if NOT viHarmful
+               OR oUser=who
+               OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
+                  AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
+                  AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+               OR (viAffectsGuildmates
+                  AND oCasterGuild <> $
+                  AND oCasterGuild = Send(oUser,@GetGuild))
+            {
+               if viAffectsOthers
+                  OR (NOT viAffectsOthers AND oUser=who)
+               {
+                  send(self,@EnterSong,#who=oUser,#iVolume=iVolume,#singer=who);
+                  lEnchanted = cons(oUser,lEnchanted);
+               }
+            }
+         }
+      }
+
+      Send(who,@StartEnchantment,#what=self,#time=SONG_CHECK_TIME,
+          #state=[iElapsed,lEnchanted,iVolume,iRange],#Report=FALSE);
+              
+      if ptDrainNow = TRUE
+      {
+         if Send(who,@GetMana) >= viManaDrain
+         {
+            Send(who,@LoseMana,#amount=viManaDrain);
+            ptDrainNow = FALSE;
+         }
+         else
+         {
+            Send(self,@BreakTrance,#who=who,#state=state,#event=EVENT_STEER);
+         }
+      }
+
+      return;
+   }
+
+   RemoveEnchantment(who = $, state=$)
+   "Remove enchantment effects on this occupant"
+   {
+      return;
+   }
+   
+   BreakTrance(who=$, event=$, state=$, location=$, iVolume=$)
    "If caster runs out of mana or loses trance, spell ends."
    {
-      local oRoom;
-      
+      local oUser, lEnchanted;
+            
       % Check for Necklace of Jala first
       if Send(who,@IsUsingA,#class=&JalaNecklace)
       {
@@ -160,31 +281,35 @@ messages:
          if event = EVENT_DAMAGE
             OR event = EVENT_ATTACK
             OR event = EVENT_RUN
+            OR event = EVENT_DISRUPT
             OR (event = EVENT_CAST AND Send(Send(SYS, @GetSettings), @CanRecastJalaWithNecklace))
          {
             return FALSE;
          }
+      }
+   
+      iVolume = Nth(state,3);
 
-         % Chance to keep going through a disruption
-         if event = EVENT_DISRUPT
-            AND Send(self,@CheckDisruptWithNecklace)
-         {
-            return FALSE;
-         }
-      }
-
-      if location = $
+      % Clean up Trance.
+      Send(who,@ClearTranceFlag);
+      Send(who,@RemoveEnchantment,#what=self);
+      Send(Send(who,@GetOwner),@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_ends);
+      lEnchanted = Nth(state,2);
+      for oUser in lEnchanted
       {
-         oRoom = Send(who,@GetOwner);
+         Send(self,@LeaveSong,#who=oUser,#iVolume=iVolume);
       }
-      else
-      {
-         oRoom = location;
-      }
-      
-      Send(oRoom,@RemoveEnchantment,#what=self,#state=state);
+      DeleteTimer(ptDrainTimer);
+      ptDrainTimer=$;
 
       propagate;
+   }
+   
+   DrainTimer(who=$)
+   {
+      ptDrainNow = TRUE;
+      ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
+      return;
    }
 
    CheckDisruptWithNecklace()
@@ -199,126 +324,9 @@ messages:
       return FALSE;
    }
 
-   StartEnchantment(who = $, state=$)
-   "Does enchantment effect on one player"
+   SetSpellPlayerFlag(who=$)
    {
-      return;
-   }
-
-   RemoveEnchantment(who = $, state=$)
-   "Remove enchantment effects on this occupant"
-   {
-      return;
-   }
-
-   StartPeriodicEnchantment(where=$, state=$)
-   "Sends enchantment message to room like CastSpell for most room "
-   "enchantments, but silent, and done as often as necessary."
-   {
-      local oCaster;
-      
-      oCaster = Nth(state,2);
-   
-      % If caster runs out of mana or loses trance, spell ends.
-      if Send(oCaster,@GetMana) < viManaDrain * 2
-      {
-         Send(where,@RoomStartEnchantment,#what=self,#time=viDrainTime,
-              #state=state,#addicon=FALSE,#lastcall=TRUE);
-
-      }
-      else
-      {      
-         Send(where,@RoomStartEnchantment,#what=self,#time=viDrainTime,
-              #state=state,#addicon=FALSE,#lastcall=FALSE);
-      }
-      
-      Send(oCaster,@LoseMana,#amount=viManaDrain);
-      
-      return;
-   }
-
-   StartEnchantmentNewOccupant(who=$, state=$)
-   "Called on new occupants of the enchanted room."
-   {
-      Send(self,@StartEnchantment,#who=who);
-      Send(who,@MsgSendUser,#message_rsc=jala_song_playing);
-      Post(who,@MidiSendUser,#midi_rsc=prMusic);
-      
-      return;
-   }
-
-   EndRoomEnchantment(who=$, state=$)
-   "Ends enchantment effect on one player, generally for players leaving the "
-   "room."
-   {
-      Send(who,@RemoveEnchantment,#what=self,#state=state);
-      
-      return;
-   }
-
-   EndSpell(where=$, state=$)  
-   "Called by room when spell expires."
-   {
-      local oCaster, lActive, each_obj, oRoom, i;
-      oCaster = Nth(state,2);
-
-      if pbUserEffects
-      {
-         if where = $
-         {
-            oRoom = Send(oCaster,@GetOwner);
-         }
-         else
-         {
-            oRoom = where;
-         }
-         
-         lActive = Send(oRoom,@GetHolderActive);
-         for i in lActive
-         {
-            each_obj = Send(oRoom,@HolderExtractObject,#Data=i);
-            Send(self,@RemoveEnchantment,#who=each_obj,#state=state);
-         }
-      }
-
-      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_ends,
-           #what=self);
-      % Send $ as midi_rsc to end music and resume default.
-      Send(self,@StartMusic,#oCaster=oCaster,#rMusic=$);
-      Send(oCaster,@ClearTranceFlag);
-      
-      return;
-   }
-
-   StartMusic(oCaster=$, rMusic=$)
-   {
-      local oRoom, i;
-      
-      if oCaster = $
-      {
-         debug("BAD MUSIC SETUP, MAN!");
-
-         return FALSE;
-      }
-
-      oRoom = Send(oCaster,@GetOwner);
-      for i in Send(oRoom,@GetHolderActive)
-      {
-         if IsClass(first(i),&user)
-         {
-            Send(first(i),@MidiSendUser,#midi_rsc=rMusic);
-         }
-      }
-      
-      return;
-   }
-
-   SetSpellPlayerFlag(who=$, state=$)
-   {
-      if who = Nth(state,2)
-      {
-         Send(who,@SetTranceFlag);
-      }
+      Send(who,@SetTranceFlag);
       
       return;
    }
@@ -328,7 +336,151 @@ messages:
       % Jala plays midis for songs, not wavs.  Just return.
       return;
    }
+   
+   RemoveEnchantmentEffects()
+   "Need to override spell.kod's thing, since we do this ourselves specially."
+   {
+      return;
+   }
 
+   % Replace this to modify volume by spellpower calculations - currently on 0 to 99 scale
+   CalculateVolume(who=$, iSpellPower=25)
+   {
+      return iSpellPower;
+   }
+
+   % Replace this to modify range by spellpower calculations
+   CalculateRange(who=$, iSpellPower=25)
+   {
+      local iRange;
+
+      % Default is up to twice base range      
+      iRange = viBaseRange + ((viBaseRange*iSpellPower)/99);
+      
+      return iRange;
+   }
+      
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      return FALSE;
+   }
+
+   %%% Modifier functions.
+   %%% All songs do their effect. Use bounds to avoid song-stacking problems.
+
+   ModifyHitRoll(who = $,what = $,state = $,hit_roll = $,stroke_obj = $,originalValue = 0)
+   {
+      return hit_roll;
+   }
+
+   ModifyDamage(who = $,what = $,state = $,damage = $,stroke_obj = $,originalValue = 0)
+   {
+      return damage;
+   }
+
+   ModifyDefense(who = $,what = $,state = $,defense = $,stroke_obj = $,originalValue = 0)
+   {
+      return defense;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,state = $,damage = $,atype = $,aspell = $,stroke_obj = $,originalValue = 0)
+   {
+      return damage;
+   }
+   
+   % Add or replace elements in a weapon attack
+   ModifyAttackType(who = $,what = $,state = $,attack_type = $)
+   {
+      return attack_type;
+   }
+
+   % Power of outgoing spell attacks
+   ModifySpellPower(who=$,what=$,state=$,iSpellPower=0)
+   {
+      return iSpellPower;
+   }
+
+   % Damage of outgoing spell attacks
+   ModifySpellDamage(who = $,what = $,state=$,iSpellPower=0,damage=$,originalValue=$)
+   {
+      return damage;
+   }
+   
+   % Element type of outgoing spell attacks
+   ModifySpellType(who = $,what = $,state=$,iSpellPower=0,spell_type=$,originalValue=$)
+   {
+      return spell_type;
+   }
+      
+   % The absolute flag causes an attack spell to ignore resists and vulnerabilities
+   ModifySpellAbsolute(who = $,what = $,state=$,iSpellPower=0,absolute=$,originalValue=$)
+   {
+      return absolute;
+   }
+   
+   ModifyVigorTime(state = $,time = 1000)
+   {
+      return time;
+   }
+      
+   ModifyHealthTime(state = $,time = 1000)
+   {
+      return time;
+   }
+
+   ModifyManaTime(state = $,time = 1000)
+   {
+      return time;
+   }
+   
+   % Usual post-attack delay is 1
+   ModifyAttackTime(state=$,time=1,originalValue=1)
+   {
+      return time;
+   }
+   
+   % Replace this to modify postcast times
+   ModifyPostCastTime(state=$,time=1,originalValue=1)
+   {
+      return time;
+   }
+   
+   % Modifies focus times. Passed percent may be 51% - 149% already based on initial spellpower
+   ModifyTranceTime(who=$,state=$,percent=100,iSpellPower=0,originalValue=100)
+   {
+      return percent;
+   }
+   
+   % This is a Spellbane type effect
+   TryPreventSpell(who=$,state=$,iSpellPower=0)
+   {
+      % False = spell not blocked
+      return FALSE;
+   }
+   
+   % This is a Winds type effect
+   TryPreventAttack(who=$,state=$,iSpellPower=0)
+   {
+      % False = attack not blocked
+      return FALSE;
+   }
+
+   % Use in EnterSong to add resists to a player
+   % Must also remove same resists in LeaveSong
+   AddResistances(who=$,state=$,value=$)
+   {
+      Send(who,@AddResistance,#what=-ATCK_SPELL_ALL,#value=value);
+
+      return;
+   }
+
+   RemoveResistances(who=$,state=$,value=$)
+   {
+      Send(who,@RemoveResistance,#what=-ATCK_SPELL_ALL,#value=value);
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

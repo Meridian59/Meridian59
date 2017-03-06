@@ -24,14 +24,17 @@ resources:
 
    ManaConvergence_song = jala5.mid
 
-   ManaConvergence_on = "The flow of magic in this place suddenly becomes stronger."
-   ManaConvergence_new_occupant = "You can feel a strong flow of magic in this place."
- 
+   manacon_enter_rsc = "You begin murmuring arcane words of power, converging mana within your spirit."
+   manacon_leave_rsc = "As your murmuring stops, the convergence of mana within your spirit dissipates."
+
 classvars:
 
    vrName = ManaConvergence_name_rsc
    vrIcon = ManaConvergence_icon_rsc
    vrDesc = ManaConvergence_desc_rsc
+
+   jala_song_enter = manacon_enter_rsc
+   jala_song_leave = manacon_leave_rsc
 
    viMana = 10          % Mana is amount used upon inititiation
    viManaDrain = 9      % Drain is amount used every viDrainTime milliseconds
@@ -42,6 +45,7 @@ classvars:
    viSpell_level = 5
 
    viHarmful = FALSE
+   viAffectsOthers = FALSE
 
 properties:
 
@@ -57,63 +61,10 @@ messages:
       return;
    }
 
-   CastSpell( who = $, iSpellPower = 0 )
-   "Initiation point for the spell."
+   ModifySpellPower(who=$,what=$,state=$,iSpellPower=0)
    {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-      
-      % global effects of the enchantment
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=ManaConvergence_on,#what=self);
-      
-      propagate;
+      return (iSpellPower + ((Nth(state,2)/2)+25));
    }
-
-   BuildState(thisVolume=0,who=$,iSpellPower=0)
-   {
-      return [thisVolume,who,((iSpellPower/2)+25)];
-   }
-
-   StartEnchantmentNewOccupant( who = $ )
-   "Called on new occupants of the enchanted room."
-   {
-      Send(who,@MsgSendUser,#message_rsc=ManaConvergence_new_occupant);
-
-      return;
-   }
-
-   AffectsSpellPower()
-   {
-      return TRUE;
-   }
-
-   ModifySpellPower(oRoom = $, oSpell = $)
-   {
-      local iChange;
-
-      iChange = 0;
-
-      if oRoom <> $
-      {
-         iChange = send(oRoom,@GetEnchantedState,#what=self);
-         if iChange <> $
-         {
-            iChange = nth(iChange,3);
-         }
-      }
-
-      % Spell won't affect Anti-Magic Aura
-      if iChange = $
-         OR IsClass(oSpell,&AntiMagicAura)
-      {
-         iChange = 0;
-      }
-
-      % This is added to spell power in spell.kod
-      return iChange;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -20,15 +20,21 @@ resources:
    SacredResonance_icon_rsc = isacrres.bgf
    SacredResonance_desc_rsc = \
       "The music of this song hinders the casting of the dark spells of Qor.  "
-      "A ruby and an entroot berry are required to begin performing this song."
+      "An entroot berry is required to begin performing this song."
 
    SacredResonance_song = goodfor.mid
- 
+
+   sacredres_enter_rsc = "The nearby hymn forces a certain introspective guilt."
+   sacredres_leave_rsc = "As the hymn fades, your killer instinct returns."
+
 classvars:
 
    vrName = SacredResonance_name_rsc
    vrIcon = SacredResonance_icon_rsc
    vrDesc = SacredResonance_desc_rsc
+   
+   jala_song_enter = sacredres_enter_rsc
+   jala_song_leave = sacredres_leave_rsc
 
    viMana = 5          % Mana is amount used upon inititiation
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
@@ -37,9 +43,6 @@ classvars:
 
    viSchool = SS_JALA
    viSpell_level = 3
-
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
 
    viHinderedSchool = SS_QOR
 
@@ -52,7 +55,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Ruby,1],plReagents);
       plReagents = Cons([&EntrootBerry,1],plReagents);
 
       return;

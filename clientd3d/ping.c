@@ -64,6 +64,7 @@ void PingGotReply(void)
    //XXX
    //REVIEW: Should send out a ModuleEvent so any module can notice a new value.
    Lagbox_Update(latency);
+   UpdateLatency(latency);
 }
 /****************************************************************************/
 /*

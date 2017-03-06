@@ -15,7 +15,7 @@
 // Initial velocities when climbing and falling, in FINENESS units per second
 #define CLIMB_VELOCITY_0   (FINENESS * 9 / 2)	// climb velocity set to be 3x faster than fall, to keep people from seeing through the floor
 #define FALL_VELOCITY_0    (-FINENESS * 2 / 3)
-
+static DWORD real_move_interval = 200;
 #define IsInRoom(row, col, room) \
 ((row) >= 0 && (row) < (room).rows && (col) >= 0 && (col) < (room).cols)
 
@@ -30,7 +30,7 @@ void PlayerChangeHeightMouse(int dz);
 void PlayerResetHeight(void);
 int  PlayerGetHeight(void);
 int  PlayerGetHeightOffset(void);
-
+void UpdateLatency(DWORD dwLatency);
 void ServerMovedPlayer(void);
 void MoveUpdateServer(void);
 void MoveSetValidity(Bool valid);

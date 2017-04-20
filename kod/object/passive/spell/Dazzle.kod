@@ -39,10 +39,10 @@ classvars:
    viSpell_num = SID_DAZZLE
    viSchool = SS_SHALILLE
    viSpell_level = 4
-   viMana = 12
+   viMana = 10
    viChance_To_Increase = 15
 
-   viSpellExertion = 6
+   viSpellExertion = 4
 
    viOutlaw = TRUE
    viHarmful = TRUE
@@ -57,8 +57,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Emerald,1],plReagents);
-      plReagents = Cons([&PurpleMushroom,1],plReagents);
+      plReagents = Cons([&Diamond,2],plReagents);
 
       return;
    }
@@ -125,22 +124,23 @@ messages:
       iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower,
                        #caster=who,#target=otarget);
 
-      Send(self,@DoDazzle,#what=who,#oTarget=oTarget,#iDurationSecs=iDuration);
+      Send(self,@DoDazzle,#what=who,#oTarget=oTarget,#iDurationMSecs=iDuration);
       
       propagate;
    }
 
-   DoDazzle(what=$,oTarget=$,iDurationSecs=0)
+   DoDazzle(what=$,oTarget=$,iDurationMSecs=0)
    {
       local oSpell, iDuration;
 
-      iDuration = iDurationSecs;
+      iDuration = iDurationMSecs;
      
       oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
       if Send(oTarget,@IsEnchanted,#what=oSpell)
       {
          iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,
-                          #iDuration=iDuration,#iFactor=2);
+                          #iDuration=iDuration,#iFactor=1);
+         
          if iDuration = $
          {
             % Resisted completely.
@@ -148,9 +148,8 @@ messages:
          }
       }
 
-      % Convert duration to milliseconds
-      iDuration = bound(iDuration,3,15);
-      iDuration = iDuration * 1000;
+      % Already converted to miliseconds
+      iDuration = bound(iDuration,2500,10000);
 
       if IsClass(oTarget,&Player)
       {
@@ -173,10 +172,13 @@ messages:
 
    GetDuration(iSpellPower=0,caster=$,target=$)
    {
-      local iDuration,iKarmaDif,iKarma;
+      local iDuration,iKarmaDif,iKarma,iDeviation;
+      
+      % Maximum deviation from actual duration as percentage of actual duration
+      iDeviation = 10;
 
-      % 1-8 seconds based on spellpower.
-      iDuration = (iSpellPower/12);
+      % 0-5 seconds based on spellpower.
+      iDuration = ((iSpellPower + 1) * 50);
       if IsClass(caster,&Battler)
       {
          iKarma = Send(caster,@GetKarma);
@@ -187,9 +189,12 @@ messages:
          iKarma = random(30,90);
       }
 
-       % 1-10 seconds based on Karma difference.
-      iKarmaDif = (iKarma - Send(target,@GetKarma,#detect=TRUE))/20;
-      iDuration = bound(iDuration + iKarmaDif,3,15);  
+       % 0-10 seconds based on Karma difference. Sum bound to 2.5-15 seconds.
+      iKarmaDif = (iKarma - Send(target,@GetKarma,#detect=TRUE))*50;
+      iKarmaDif = bound(iKarmaDif,0,5000);
+      iDuration = iDuration + iKarmaDif;
+      iDuration = bound(iDuration,2500,10000);
+      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100); 
 
       return iDuration;
    }
@@ -203,7 +208,7 @@ messages:
             Send(who,@MsgSendUser,#message_rsc=Dazzle_off);
          }
 
-         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=8000);
+         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=4000);
          Send(who,@EffectSendUserXLat,#xlat=0);
       } 
       else  

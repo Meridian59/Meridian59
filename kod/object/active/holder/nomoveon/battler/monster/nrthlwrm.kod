@@ -53,7 +53,7 @@ classvars:
    viAttributes = 0
    viLevel = 120
    viDifficulty = 7
-   viKarma = 0
+   viKarma = -70
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
 
    vrSound_miss = NarthylWorm_sound_miss

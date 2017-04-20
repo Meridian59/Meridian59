@@ -19,10 +19,11 @@ resources:
    leatherarmor_name_rsc = "leather armor"
    leatherarmor_icon_rsc = leathamr.bgf
    leatherarmor_desc_rsc = \
-      "This armor is made from thick, cured troll hides "
-      "roughly stitched together.  Despite a smell reminiscent "
-      "of rotting troll meat, the armor provides some "
-      "protection."
+      "This armor is crafted from tough and resilient troll hides, cured and carefully stitched "
+      "together in order to provide some light protection in battle - especially in close quarters "
+      "combat.  Light and flexible, the leather armor does not hinder spell casting in the least "
+      "and allows for great mobility in battle, yet you can't help but notice that the material seems "
+      "to be a highly flammable."
 
    leatherarmor_male_icon_rsc = btg.bgf
    leatherarmor_female_icon_rsc = bth.bgf
@@ -33,11 +34,11 @@ classvars:
    vrIcon = leatherarmor_icon_rsc
    vrDesc = leatherarmor_desc_rsc
 
-   viHits_init_min = 300
-   viHits_init_max = 350
+   viHits_init_min = 550
+   viHits_init_max = 650
 
-   viValue_average = 400
-   viWeight = 100
+   viValue_average = 2000
+   viWeight = 150
    viBulk = 150
 
    viSpell_modifier = 0
@@ -46,8 +47,8 @@ classvars:
    vrIcon_male = Leatherarmor_male_icon_rsc
    vrIcon_female = Leatherarmor_female_icon_rsc
 
-   viDefense_base = 50
-   viDamage_base = 0
+   viDefense_base = 100
+   viDamage_base = 2
 
 properties:
    
@@ -60,13 +61,16 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_ALL,5]
+      return [ [ATCK_WEAP_THRUST,10],
+               [ATCK_WEAP_BLUDGEON,10],
+               [ATCK_WEAP_SLASH,10]
+               [ATCK_SPELL_FIRE,-20],
              ];
    }
 
    GetHeatDamage()
    {
-      return 1;
+      return 2;
    }
 
 

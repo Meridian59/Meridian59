@@ -105,26 +105,15 @@ messages:
       iDamageReduce = 0;
       if piDamage_reduce <> 0
       {
-         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
-         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+         iDamageReduce = bound(iDamageReduce,0,damage);
       }
 
       if aspell <> 0
       {
-         % Reduce damage if part of the damage is spell
-         if atype <> 0
-         {
-            % Only 2/3 of the damage reduction if we're doing both weapon
-            % and spell damage types.
-            iDamageReduce = iDamageReduce * 2 / 3;
-         }
-         else
-         {
-            % If we're doing pure spell damage, we get no reduction.
-            iDamageReduce = 0;
-         }
+         % If the weapon has a spell damage component, flat damage reduction
+         % is slashed entirely, but damage will still be reduced by resistance.
+         iDamageReduce = 0;
       }
-      
       return damage - iDamageReduce;
    }
 

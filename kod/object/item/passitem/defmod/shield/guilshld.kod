@@ -64,7 +64,11 @@ resources:
    guildshield_window_overlay_rsc = povshldE.bgf
 
    guildshield_desc_rsc = \
-      "Heavy metal shields of this style are decorated in the standards of its owner guild. "
+      "Tall but light, this delicately crafted shield is decorated in the standards of its guild "
+      "and offers its proud owner some light protection in battle.  While its notable size "
+      "makes it fairly effective at blocking projectiles, it is light enough to allow spellcasters "
+      "the unrestricted use of their magical powers.  You can't help but notice, that the material "
+      "seems to be a great conductor."
 
    guildshield_heraldry_prefix = "The pattern on this shield is "
 
@@ -106,15 +110,16 @@ classvars:
    vrName = guildshield_name_rsc
 
    viHits_init_min = 350
-   viHits_init_max = 400
+   viHits_init_max = 450
 
-   % Being custom and made from ore, it's heavier than your average shield.
-   viValue_average = 400
-   viWeight = 200  
-   viBulk = 150
+   viValue_average = 1500
+   viWeight = 125  
+   viBulk = 125
+   
+   viSpell_modifier = 0
 
-   viDefense_base = 20
-   viDamage_base = 2
+   viDefense_base = 50
+   viDamage_base = 1
 
 properties:
 
@@ -552,7 +557,9 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_PIERCE,10] ];
+      return [ [ATCK_WEAP_PIERCE,10],
+               [ATCK_SPELL_SHOCK,-20] 
+             ];
    }
 
    GetBaseSpellModifier(oSpell=$)

@@ -20,7 +20,12 @@ resources:
    IvyCirclet_icon_rsc = ivycircl.bgf
    IvyCirclet_desc_rsc = \
       "Healthy, green leaves of ivy are wrapped around a wooden wreath.  "
-      "This looks like it would be cool and refreshing against your brow."
+      "Curiously, the ivy circlet seems to have a life of its own as its leaves
+      "gently rustle in your hands.  As you put it on, a wave of compassion washes "
+      "over you and you feel as if your mind has become deeper.  With the ivy circlet "
+      "gracing your head, the day seems brighter and you feel as if nothing could "
+      "stop you from spreading good wherever you go!  Be careful though - your newfound "
+      "empathy might leave you more vulnerable to the wicked ways of the world."
 
    ivycirclet_cant = "The ivy circlet stubbornly resists your attempts to place it on your brow."
 
@@ -32,12 +37,12 @@ classvars:
    vrIcon = IvyCirclet_icon_rsc
    vrDesc = IvyCirclet_desc_rsc
 
-   viHits_init_min = 255
-   viHits_init_max = 300
+   viHits_init_min = 350
+   viHits_init_max = 450
 
-   viValue_average = 450
-   viWeight = 10
-   viBulk = 20
+   viValue_average = 500
+   viWeight = 50
+   viBulk = 50
 
    viUse_type = ITEM_USE_HEAD
    viUse_amount = 1
@@ -45,7 +50,8 @@ classvars:
    viGround_group = 1
    viInventory_group = 2
 
-   viDefense_base = 10               % This is the default value for piDefense_bonus
+   viDefense_base = 0               % This is the default value for piDefense_bonus
+   viDamage_base = 0
 
 properties:
 
@@ -53,18 +59,50 @@ properties:
    piHealth_change = 0
 
 messages:
+   
+   NewUsed()
+   {
+      local iKarma;
 
+      iKarma = bound(Send(poOwner,@GetKarma)/5,0,20);
+      piMana_change = Send(poOwner,@NewMaxMana,#amount=iKarma);
+
+      propagate;
+   }
+
+   GetManaChange()
+   {
+      return piMana_change;
+   }
+
+   NewUnused()
+   {
+      Send(poOwner,@NewMaxMana,#amount=-piMana_change);
+
+      piMana_change = 0;
+
+      propagate;
+   }   
+   
+   
    GetOverlay(animation = $)
    {
       % Uses different file for the overlay.
       return IvyCirclet_overlay_rsc;
    }
    
+   AdjustsMaxMana()
+   {
+      return TRUE;
+   }
+   
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_SHOCK,20],
-               [-ATCK_SPELL_UNHOLY,20]
+      return [ [ATCK_WEAP_THRUST,5],
+               [ATCK_WEAP_BLUDGEON,5],
+               [ATCK_WEAP_SLASH,5],
+               [ATCK_WEAP_PIERCE,5]
+               [ATCK_SPELL_UNHOLY,-20]
              ];
    }
 

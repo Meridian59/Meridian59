@@ -19,9 +19,11 @@ resources:
    metalshield_name_rsc = "small round shield"
    metalshield_icon_rsc = metlshld.bgf
    metalshield_desc_rsc = \
-      "This small shield is made from a sheet of tin bent and "
-      "fitted to a wooden frame.  Although the workmanship is "
-      "poor, it offers some protection during battle."
+      "This small shield consists of dual sheets of tin and bronze alloy, "
+      "fitted to a light wooden frame and offering some light protection in battle.  "
+      "Its compact size makes it especially useful when blocking attacks made "
+      "in melee.  It is light enough to not hinder spell casting, but you cannot "
+      "help but notice, that the material seems somewhat flammable."
 
    metalshield_window_overlay_rsc = povshldA.bgf
 
@@ -31,12 +33,14 @@ classvars:
    vrIcon = metalshield_icon_rsc
    vrDesc = metalshield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 350
+   viHits_init_max = 450
 
-   viValue_average = 160
+   viValue_average = 1000
    viWeight = 100
-   viBulk = 125
+   viBulk = 100
+   
+   viSpell_modifier = 0
 
    vrShield_window_overlay = metalshield_window_overlay_rsc
    vrShield_overlay = metalshield_icon_rsc
@@ -44,7 +48,7 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viDefense_base = 5
+   viDefense_base = 50
    viDamage_base = 1
 
 properties:
@@ -53,7 +57,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_SLASH,10]
+      return [ [ATCK_WEAP_THRUST,10],
+               [ATCK_WEAP_BLUDGEON,10],
+               [ATCK_WEAP_SLASH,10],
+               [ATCK_SPELL_FIRE,-20]
              ];
    }
 

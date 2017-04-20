@@ -19,10 +19,11 @@ resources:
    scalearmor_name_rsc = "scale armor"
    scalearmor_icon_rsc = scaleamr.bgf
    scalearmor_desc_rsc = \
-      "Thousands of overlapping steel scales give this armor "
-      "its strength.  This armor is stronger than chain mail "
-      "and lighter than plate.  Markings suggest it was made "
-      "by Quintor, master armor maker."
+      "Thousands of overlapping scales, skillfully crafted onto a sturdy set "
+      "of leather padding, give this armor its strength, offering heavy protection "
+      "in battle - especially against attacks made in melee.  The armor is quite "
+      "cumbersome though, making it harder for its wearer to cast spells or avoid "
+      "incoming attacks.  You can't help but notice that the material seems highly flammable."
 
    scalearmor_male_icon_rsc = bti.bgf
    scalearmor_female_icon_rsc = btj.bgf
@@ -32,12 +33,12 @@ classvars:
    vrIcon = scalearmor_icon_rsc
    vrDesc = scalearmor_desc_rsc
 
-   viHits_init_min = 550
-   viHits_init_max = 650
+   viHits_init_min = 750
+   viHits_init_max = 850
 
-   viValue_average = 1500
-   viWeight = 330
-   viBulk = 350
+   viValue_average = 4000
+   viWeight = 300
+   viBulk = 300
 
    viSpell_modifier = -20
 
@@ -58,7 +59,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_BLUDGEON,10]
+      return [ [ATCK_WEAP_THRUST,20],
+               [ATCK_WEAP_BLUDGEON,20],
+               [ATCK_WEAP_SLASH,20]
+               [ATCK_SPELL_FIRE,-20],
              ];
    }
 

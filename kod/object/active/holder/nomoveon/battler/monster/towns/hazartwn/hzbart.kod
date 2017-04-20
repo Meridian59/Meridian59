@@ -22,13 +22,13 @@ resources:
 
    Hazar_Bartender_name_rsc = "Eric d'Jorn"
    Hazar_Bartender_icon_rsc = tsinnk.bgf
-   Hazar_Bartender_desc_rsc = "A grinning and mischievous man stands quietly grinning behind the bar."
+   Hazar_Bartender_desc_rsc = "Despite his professional demeanor and fashionable barkeeping attire, Eric's spirits truly soar when it comes to his true passion: cooking.  He is especially renowned for his delicious soup and always on the lookout for fresh ingredients."
 
    HzBar_entry_welcome = "Care for a nice stiff drink?  The house special will knock you on your arse!"
   
 
-   HazarBart_enough = "Entroot berries?  FanTAStic!  Here, let me reward you..."
-   HazarBart_not_enough = "I need those berries, but they're useless to me unless you can get me at LEAST ten.  If you get more, come back and I'll reward you!"
+   HazarBart_enough = "Mmmh! Tasty hand-picked mushrooms - fanTAStic!  Here, let me reward you..."
+   HazarBart_not_enough = "I need some edible mushrooms, but they're useless to me unless you can get me enough to make a nice soup - say, at LEAST ten.  If you get more, come back and I'll reward you!"
 
 classvars:
 
@@ -49,7 +49,8 @@ messages:
       plFor_sale=[[Create(&Bread,#number=4),
                    Create(&Apple,#number=2),
                    Create(&MeatPie,#number=4),
-                   Create(&Mug,#number=1)
+                   Create(&Mug,#number=1),
+                   Create(&Soup,#number=1)
                    ],
                   $,$];
       return;
@@ -57,7 +58,7 @@ messages:
 
    Constructed()
    {
-      plWantedItems = [ &EntrootBerry ];
+      plWantedItems = [ &Snack ];
       propagate;
    }
 
@@ -73,12 +74,12 @@ messages:
    {
 		local oShield;
 
-		if not isClass(obj,&EntrootBerry)
+		if not isClass(obj,&Snack)
 		{
 		   propagate;
 		}
 
-		%% Item must have been an entroot berry.  See if there are
+		%% Item must have been an edible mushroom.  See if there are
 		%% enough, and take it away.
 		if send(obj,@GetNumber) > 9
 		{

@@ -20,7 +20,7 @@ resources:
    mummy_name_rsc = "mummy"
    mummy_icon_rsc = mummy.bgf
    mummy_desc_rsc = \
-      "This evil being has been brought to life by dark magics of unknown origin. "
+      "Unable to find peace, this poor, forsaken soul wanders dark and endless corridors, waiting to be judged at last. "
       "Its flesh is putrid and soft, and its eyes ask for rest from its cursed unlife."
 
    mummy_dead_icon_rsc = mummyX.bgf
@@ -44,9 +44,9 @@ classvars:
    viTreasure_type = TID_NEWBIE_AREA
    viSpeed = SPEED_VERY_SLOW
    viAttributes = 0
-   viLevel = 25
-   viDifficulty = 2
-   viKarma = -20
+   viLevel = 30
+   viDifficulty = 1
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
    vrSound_hit = mummy_sound_hit
@@ -69,6 +69,7 @@ messages:
    {
       plResistances = [ [ 20, -ATCK_SPELL_UNHOLY],
                         [ -20, -ATCK_SPELL_HOLY],
+                        [ -60, -ATCK_SPELL_FIRE],
                         [-20, ATCK_WEAP_ALL ] ];
       propagate;
    }

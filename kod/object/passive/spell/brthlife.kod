@@ -18,8 +18,8 @@ constants:
 
 resources:
 
-   breathoflife_cast_rsc = "You feel the life force of another filling your body."
-   breathoflife_caster_msg_rsc = "You give part of your life force to %s%s."
+   breathoflife_cast_rsc = "You feel %s%s's life force filling your body. You gain (~B%i~B) health."
+   breathoflife_caster_msg_rsc = "You give part of your life force to %s%s, sacrificing (~B%i~B) health."
 
    breathoflife_name_rsc = "breath of life"
    breathoflife_icon_rsc = ibreath.bgf
@@ -144,10 +144,11 @@ messages:
       iTransfer = bound(iTransfer,$,(MAX_TOTAL_AMOUNT-Send(oTarget,@GetHealth)));
 
       Send(who,@MsgSendUser,#message_rsc=breathoflife_caster_msg_rsc,
-           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));  
+           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHpAmount);  
       Send(who,@LoseHealth,#amount=iHpAmount);
 
-      Send(oTarget,@MsgSendUser,#message_rsc=breathoflife_cast_rsc);
+      Send(oTarget,@MsgSendUser,#message_rsc=breathoflife_cast_rsc,
+      	   #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),#parm3=iTransfer);
       Send(oTarget,@GainHealth,#amount=iTransfer);
 
       propagate;

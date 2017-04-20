@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
    % How much health does the caster get back?
-   DAMAGE_FACTOR_TO_HEAL = 2
+   DAMAGE_FACTOR_TO_HEAL = 3
 
 resources:
 
@@ -40,7 +40,7 @@ classvars:
 
    viSpell_level = 3
    viMana = 10
-   viSpellExertion = 4
+   viSpellExertion = 5
 
    viAttack_spell = ATCK_SPELL_ALL + ATCK_SPELL_UNHOLY
 
@@ -53,10 +53,10 @@ classvars:
 
 properties:
 
-   piDamageMin = 12
-   piDamageMax = 18
+   piDamageMin = 6
+   piDamageMax = 9
 
-   piRange = 4
+   piRange = 17
 
    % No bonus from Mana Focus
    piManaFocusBonus = 0
@@ -84,13 +84,13 @@ messages:
       % Take some of that damage and add it to our health!
       if damage <> $
       {
-         % Add half of the damage done.
-         iToHeal = bound(damage/DAMAGE_FACTOR_TO_HEAL,1,$);
+         % Gain three times the damage done in health.
+         iToHeal = bound(damage*DAMAGE_FACTOR_TO_HEAL,1,$);
       }
       else
       {
-         % Ah!  We killed someone.  Give them a large bonus based on max damage.
-         iToHeal = bound(piDamageMax/DAMAGE_FACTOR_TO_HEAL,1,$);
+         % Ah!  We killed someone.  Double the heal as a bonus.
+         iToHeal = bound(damage*2*DAMAGE_FACTOR_TO_HEAL,1,$);
          Post(who,@MsgSendUser,#message_rsc=VampiricDrain_death,
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }

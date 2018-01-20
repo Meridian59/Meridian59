@@ -1,0 +1,51 @@
+//----------------------------------------------------------------------------
+// ObjectComponents
+// Copyright (c) 1994, 1996 by Borland International, All Rights Reserved
+//
+// $Revision: 1.2 $
+//----------------------------------------------------------------------------
+
+#include <winver.h>
+
+#if !defined(BOCOLE_NAME)
+#if !defined(UNICODE)
+# define BOCOLE_NAME "BOCOF.DLL\000"
+#else
+# define BOCOLE_NAME "BOCOFW.DLL\000"
+#endif
+#endif
+
+#if !defined(IDS_SAVEOBJ)
+# define IDS_SAVEOBJ  32900
+#endif
+
+1 VERSIONINFO
+  FILEOS          VOS__WINDOWS32
+  FILETYPE        VFT_DLL
+  FILEVERSION     1,  1,  1, 86
+  PRODUCTVERSION  1,  1,  0,  0
+  BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+      BLOCK "040904E4"
+      BEGIN
+         VALUE "CompanyName", "Borland International, Inc.\000\000"
+         VALUE "FileDescription", "Borland OLE2 Encapsulation Helper DLL\000"
+         VALUE "FileVersion", "1.13\000\000"
+         VALUE "InternalName", "BOLERO \0"
+         VALUE "LegalCopyright", "Copyright (c) 1994, 2009 by Codegear International, Inc. All rights reserved.\000\000"
+         VALUE "OriginalFilename", BOCOLE_NAME
+         VALUE "ProductVersion", "5.01\000\000"
+         VALUE "SpecialBuild", "OWLNext 6.30 \0"
+      END
+    END
+  END
+
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_SAVEOBJ, "Save Object before closing?"
+}
+
+
+
+

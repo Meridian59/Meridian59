@@ -1,0 +1,25 @@
+//---------------------------------------------------------------------
+// ObjectComponents - (C) Copyright 1994, 1996 by Borland International
+//---------------------------------------------------------------------
+#if defined(RC_INVOKED)
+
+#if !defined(BI_COMP_BORLANDC)
+#include "windows.h"
+#endif
+
+#include <owl/lclstrng.rh>
+#include <ocf/ocapp.rh>
+#include <ocf/oleview.rh>
+#include <ocf/ocf.rc>
+#include <ocf/oleview.rc>
+
+#ifndef MAKELIB
+#  if defined(__BORLANDC__) && defined(RC_INVOKED)
+#    include "version.i" // preprocessed "version.rc"
+#  else
+#    include "version.rc"
+#  endif
+#endif
+
+#endif
+

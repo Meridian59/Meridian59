@@ -1,0 +1,6 @@
+#define IDS_AUTOMATIC           20580
+#define IDS_NOCOLOR             20585
+#define IDS_MORECOLORS          20590
+
+#define IDS_COLORPICKER         20600
+// reseved up to                20650

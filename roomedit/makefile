@@ -5,16 +5,17 @@ TOPDIR=..
 
 SOURCEDIR = $(ROOMEDITDIR)\source
 RESDIR = $(ROOMEDITDIR)\res
-OWLSOURCEDIR = $(ROOMEDITDIR)\owl-6.34\source
-OWLINCLUDEDIR = $(ROOMEDITDIR)\owl-6.34\include
-OWLOUTDIR = $(ROOMEDITDIR)\owl-6.34\$(OUTDIR)
+OWLSOURCEDIR = $(ROOMEDITDIR)\owl-6.43\source\owlcore
+OWLINCLUDEDIR = $(ROOMEDITDIR)\owl-6.43\include
+OWLOUTDIR = $(ROOMEDITDIR)\owl-6.43\$(OUTDIR)
+OWLLIBNAME = owl.lib
 
 # /GR: Needs RTTI
 # /wd4244: conversion, possible loss of data
 # /wd4018: signed/unsigned mismatch
 
 CFLAGS = $(CFLAGS) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)\include -I$(OWLINCLUDEDIR) -I$(RESDIR) \
-	/GR /wd4244 /wd4018
+	/GR /wd4244 /wd4018 /MP
 
 #
 # Dependency List
@@ -72,9 +73,9 @@ OBJS = \
    $(OUTDIR)\windeapp.res
 
 LIBS = \
-	$(OWLOUTDIR)\owl.lib \
+	$(OWLOUTDIR)\$(OWLLIBNAME) \
 	zdll.lib \
- 	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
+	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
 
 OWLOBJS = \
 	$(OWLOUTDIR)\animctrl.obj \
@@ -124,7 +125,6 @@ OWLOBJS = \
 	$(OWLOUTDIR)\dib.obj \
 	$(OWLOUTDIR)\dibdc.obj \
 	$(OWLOUTDIR)\dibitmap.obj \
-	$(OWLOUTDIR)\dispatch.obj \
 	$(OWLOUTDIR)\docking.obj \
 	$(OWLOUTDIR)\docmanag.obj \
 	$(OWLOUTDIR)\doctpl.obj \
@@ -291,7 +291,6 @@ OWLOBJS = \
 	$(OWLOUTDIR)\wsksockd.obj \
 	$(OWLOUTDIR)\wsksockm.obj \
 	$(OWLOUTDIR)\wsyscls.obj \
-	$(OWLOUTDIR)\owlpch.obj \
 	$(OWLOUTDIR)\owl.res
 
 {$(OWLSOURCEDIR)}.cpp{$(OWLOUTDIR)}.obj::
@@ -300,7 +299,7 @@ OWLOBJS = \
 {$(OWLSOURCEDIR)}.rc{$(OWLOUTDIR)}.res:
    $(RC) /i$(OWLINCLUDEDIR) /fo $@ $**
 
-$(OWLOUTDIR)\owl.lib: $(OWLOBJS)
+$(OWLOUTDIR)\$(OWLLIBNAME): $(OWLOBJS)
 	$(LIBPRG) $** -OUT:$@
 
 {$(RESDIR)}.rc{$(OUTDIR)}.res:
@@ -309,7 +308,7 @@ $(OWLOUTDIR)\owl.lib: $(OWLOBJS)
 makeowldir:
 		-@mkdir $(OWLOUTDIR)
 
-$(OUTDIR)\windeu32.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\owl.lib
+$(OUTDIR)\windeu32.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
 	$(LINK) $(LINKFLAGS) $(LINKWINDOWSFLAGS) @<<
 	$(OBJS) $(LIBS) -OUT:$@
 <<

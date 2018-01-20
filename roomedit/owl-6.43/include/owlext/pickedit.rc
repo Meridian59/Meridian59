@@ -1,0 +1,28 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//----------------------------------------------------------------------------
+#include <owlext/pickedit.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+#include "windows.h"
+#endif
+
+IDD_EXTPICKLIST DIALOG 14, 28, 207, 111
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_BORDER | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "", IDC_PICKLIST, "static", SS_WHITEFRAME | WS_BORDER | WS_TABSTOP, 3, 3, 201, 81
+ DEFPUSHBUTTON "OK", IDOK, 37, 91, 50, 14
+ PUSHBUTTON "Cancel", IDCANCEL, 113, 91, 50, 14
+}
+
+#endif
+

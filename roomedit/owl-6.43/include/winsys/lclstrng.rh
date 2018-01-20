@@ -1,0 +1,7 @@
+//----------------------------------------------------------------------------
+// Borland WinSys Library Compatibility header
+//
+//----------------------------------------------------------------------------
+
+#pragma message ("<classlib/lclstrng.rh> has been replaced by <owl/lclstrng.rh>")
+#include <owl/lclstrng.rh>

@@ -83,7 +83,7 @@ void OpenBBG(void)
    ungetc(ch, fp);
 
    fscanf(fp, " ");
-   fscanf(fp, "-s%d ", (int) &BBGs[NumBBGs].Shrink);
+   fscanf(fp, "-s%d ", (int *) &BBGs[NumBBGs].Shrink);
 
    fscanf(fp, "%d", &BBGs[NumBBGs].NumBitmaps);
    for (i = 0; i < BBGs[NumBBGs].NumBitmaps;i++)

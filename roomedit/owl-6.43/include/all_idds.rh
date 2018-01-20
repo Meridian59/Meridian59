@@ -1,0 +1,495 @@
+/////////////////////////////////////////////
+// tabbed.h
+#define IDC_TABCONTROL      1015   //????????????
+
+
+//#define OWL_INPUTDIA_RH ------------------------------------------------------
+
+
+#define ID_PROMPT           4091
+#define ID_INPUT            4090
+
+//#define OWL_LISTVIEW_RH ------------------------------------------------------
+
+//
+// Many list view specific CMs are just backward compatible names for common
+// CMs
+//
+#define CM_LISTUNDO         CM_EDITUNDO
+#define CM_LISTCUT          CM_EDITCUT
+#define CM_LISTCOPY         CM_EDITCOPY
+#define CM_LISTPASTE        CM_EDITPASTE
+#define CM_LISTDELETE       CM_EDITPASTE
+#define CM_LISTCLEAR        CM_EDITCLEAR
+#define CM_LISTADD          CM_EDITADD
+#define CM_LISTEDIT         CM_EDITEDIT
+
+//#define OWL_MDI_RH -----------------------------------------------------------
+
+//
+
+//#define OWL_PICKLIST_RH ------------------------------------------------------
+
+#define IDC_LIST                      101
+
+//#define OWL_PREVWIN_RH -------------------------------------------------------
+
+//#define OWL_PRINTER_RH -------------------------------------------------------
+
+//
+
+//
+// Printer abort dialog & control IDs
+//
+#define ID_TITLE  101              // Document title text control
+#define ID_DEVICE 102              // Device & optional port text control
+#define ID_PORT   103              // Old port text control, unused
+#define ID_PAGE   104              // Page # text control
+#define ID_TOPAGE 105              // Ending page number
+
+
+//#define OWL_PROPSHT_RH -------------------------------------------------------
+
+#if !defined(ID_APPLY)
+# define  ID_APPLY              0xAEA0
+#endif
+#if !defined(ID_BACK)
+# define  ID_BACK               0xAEA1
+#endif
+#if !defined(ID_NEXT)
+# define  ID_NEXT               0xAEA2
+#endif
+#if !defined(ID_FINISH)
+# define  ID_FINISH             0xAEA3
+#endif
+#if !defined(IDHELP)
+# define  IDHELP                9
+#endif
+
+//#define OWL_RCNTFILE_RH ------------------------------------------------------
+
+//
+// Commands
+//
+
+//#define OWL_SLIDER_RH --------------------------------------------------------
+
+//
+
+
+
+//#define OWL_VALIDATE_RH ------------------------------------------------------
+
+//
+//--------------------------- COMMANDS -----------------------------------------
+//
+#define CM_EXIT             24310
+#define CM_EDITUNDO         24321       // Common edit menu commands
+#define CM_EDITCUT          24322
+#define CM_EDITCOPY         24323
+#define CM_EDITPASTE        24324
+#define CM_EDITDELETE       24325
+#define CM_EDITCLEAR        24326
+#define CM_EDITADD          24327
+#define CM_EDITEDIT         24328
+//
+//
+//
+#define CM_FILENEW          24331
+#define CM_FILEOPEN         24332
+#define CM_FILESAVE         24333
+#define CM_FILESAVEAS       24334
+#define CM_FILEREVERT       24335
+#define CM_FILEPAGESETUP    24336
+#define CM_FILEPRINT        24337
+#define CM_FILEPRINTERSETUP 24338
+#define CM_FILECLOSE        24339
+#define CM_FILEPRINTPREVIEW 24340
+#define CM_VIEWCREATE       24341
+//
+//
+//
+#define CM_EDITFIND         24351
+#define CM_EDITREPLACE      24352
+#define CM_EDITFINDNEXT     24353
+//
+//
+//
+#define CM_CASCADECHILDREN  24361
+#define CM_TILECHILDREN     24362
+#define CM_TILECHILDRENHORIZ 24363
+#define CM_ARRANGEICONS     24364
+#define CM_CLOSECHILDREN    24365
+#define CM_CREATECHILD      24366
+//
+//
+//
+#define CM_FORMATFONT       24371
+#define CM_FORMATCOLOR      24372
+#define CM_FORMATBOLD       24373
+#define CM_FORMATITALIC     24374
+#define CM_FORMATUNDERLINE  24375
+#define CM_FORMATSTRIKEOUT  24376
+//for menu CM_PARAGRAPHLEFT-1
+#define CM_PARAGRAPHLEFT    24378
+#define CM_PARAGRAPHCENTER  24379
+#define CM_PARAGRAPHRIGHT   24380
+#define CM_PARAGRAPHBULLET  24381
+
+//
+//
+//
+#define CM_CONTEXTHELP      24390
+#define CM_WHAT_IS_THIS     24391
+
+// owlext/ctxhelpm.rh
+#define CM_HELPCONTENTS     24390
+#define CM_HELPCONTEXT      24392
+#define CM_HELPUSING        24393
+#define CM_HELPSEARCH       24394
+
+// owwwlext/hlinkctl.rh
+#define ID_POPUP_COPYSHORTCUT   24400
+#define ID_POPUP_PROPERTIES     24401
+#define ID_POPUP_ADDTOFAVORITES 24402
+#define ID_POPUP_ADDTODESKTOP   24403
+#define ID_POPUP_OPEN           24404
+
+
+//
+//
+//
+//
+#define CM_MRU_FIRST          31990
+
+//
+//-------------------------- MENU ----------------------------------------------
+//
+#define IDW_MDICLIENT       32000
+#define IDW_FIRSTMDICHILD   32001
+
+#define IDM_DOCMANAGERFILE  32401
+#define IDM_EDITSEARCH      32541
+
+#define IDM_EDITFILE        32550
+
+#define IDM_EDITVIEW         32581
+#define IDM_LISTVIEW        32582
+#define IDM_RICHEDITVIEW    32583
+
+#define IDM_WHAT_IS_THIS    32584
+
+// owwlext/hlinkctl.rh
+#define IDM_HLINK_POPUP     32600
+
+//
+//-------------------------- ACCELERATORS --------------------------------------
+//
+#define IDA_EDITSEARCH      32542
+#define IDA_EDITFILE        32550
+#define IDA_CALCULATOR      32551
+
+#define IDA_EDITVIEW         32582
+#define IDA_LISTVIEW        32583
+#define IDA_RICHEDITVIEW    32584
+
+
+
+//
+//-------------------------- ICONS ---------------------------------------------
+//
+#define IDI_OWLAPP          32000
+#define IDI_OWLAPPSM        32001
+#define IDI_HLINK_URL       32002  // hlinkctl.rh
+
+//              CURSORS
+
+//#define OWL_PANESPLI_RH ------------------------------------------------------
+#define IDC_RESIZE_H    1000
+#define IDC_RESIZE_V    1001
+#define IDC_RESIZE_HV   1002
+
+//#define OWL_COLUMNHDR_RH ------------------------------------------------------
+#define IDC_SIZEBARV    1010
+#define IDC_SIZEBARH    1011
+#define IDC_SPLITV      1012
+#define IDC_SPLITH      1013
+
+// hlpmanag.rh
+#define IDC_HELPCURSOR  1014
+
+// urllink.rh
+#define IDC_HANDCURSOR  1016
+// hlink.rh
+#define IDC_HLINK       1016 // the same shape
+
+
+//
+//-------------------------- BITMAPS -------------------------------------------
+//
+//#define OWL_GLYPHBTN_RH ------------------------------------------------------
+#define IDB_BORBTNII_OK         1000
+#define IDB_BORBTNII_CANCEL     1001
+#define IDB_BORBTNII_NO         1002
+#define IDB_BORBTNII_HELP       1003
+#define IDB_BORBTNII_ADD        1004
+#define IDB_BORBTNII_DEL        1005
+#define IDB_BORBTNII_EDIT       1006
+#define IDB_BORBTNII_KEY        1007
+#define IDB_BORBTNII_APPLY      1008
+#define IDB_BORBTNII_REVERT     1009
+#define IDB_BORBTNII_SETUP      1010
+#define IDB_BORBTNII_BROWSE     1011
+
+// Print Preview glyphs
+#define IDB_PREVIOUS        24500
+#define IDB_NEXT            24501
+#define IDB_ONEUP           24502
+#define IDB_TWOUP           24503
+#define IDB_CURRPAGE        24504
+#define IDB_DONE            24505
+
+// other bitmaps
+#define IDB_HSLIDERTHUMB     32000
+#define IDB_VSLIDERTHUMB     32001
+
+#define IDB_TIP_BULB          32002   // from owlext/tipdlg.rh
+#define IDB_DIRDLG_TREEIMAGE   32003   // from owlext/dirdlg.rh
+#define IDB_CALCBTN            32004   // from owlext/calcedit.rh
+#define IDB_CALBTN            32005   // from owlext/caledit.rh
+#define IDB_CALPREVNEXT         32006   // from owlext/caledit.rh
+
+//
+// ---------------------------- DIALOGS ----------------------------------------
+//
+#define IDD_PICKLISTDIALOG  32513
+#define IDD_INPUTDIALOG     32514
+#define IDD_PROGRESS         32515    // from owlext/progress.rh
+#define IDD_TIPDLG          32516    // from owlext/tipdlg.rh
+#define IDD_DIRDLG          32517    // from owlext/dirdlg.rh
+#define IDD_DIRDLG          32517    // from owlext/dirdlg.rh
+#define IDD_HLINKTEST_DIALOG  32518  // from owlext/hlinnkctl.rh
+#define IDD_CALCDIALOG      32519    // from owlext/calcedit.rh
+#define IDD_EXTPICKLIST      32520    // from owlext/picklist.rh
+
+#define IDD_ABORTDIALOG     32599 // keep different than any string IDs
+
+//
+// -------------------------- OTHER IDS ----------------------------------------
+//
+#define IDW_STATUSBAR       32040
+#define IDW_TOOLBAR         32041
+
+
+//
+// -------------------------- STRINGS ------------------------------------------
+//
+#define IDS_WINSOCK_BASE    32300
+
+//
+//
+//
+#define IDS_APPLY               32440
+#define IDS_BACK                32441
+#define IDS_CANCEL              32442
+#define IDS_CLOSE               32443
+#define IDS_FINISH              32444
+#define IDS_HELP                32445
+#define IDS_NEXT                32446
+#define IDS_OK                  32447
+
+//
+//
+//
+#define IDS_SHELLFAILURE        32450     //
+#define IDS_SHELLALLOCFAIL      32451     //
+#define IDS_INVALIDPATH         32452     //
+#define IDS_BINDTOOBJECTFAIL    32453     //
+#define IDS_SHGETDESKTOPFAIL    32454     //
+#define IDS_SHGETSPECIALFAIL    32455     //
+#define IDS_GETATTRIBUTESOFFAIL 32456     //
+#define IDS_GETFILEINFOFAIL     32457     //
+#define IDS_GETDISPLAYNAMEFAIL  32458     //
+#define IDS_GETPATHFROMPIDLFAIL 32459     //
+#define IDS_SETNAMEOFFAIL       32460     //
+#define IDS_GETUIOBJECTOFFAIL   32461     //
+#define IDS_COMPAREIDSFAIL      32462     //
+#define IDS_TSHELLITEMINVALID   32463     //
+#define IDS_ENUMOBJECTSFAIL     32464     //
+#define IDS_CLONEFAIL           32465     //
+#define IDS_SHELLITERATORATEND  32466     //
+#define IDS_IDLISTNEXTFAIL      32467     //
+#define IDS_IDLISTSKIPFAIL      32468     //
+#define IDS_IDLISTRESETFAIL     32469     //
+#define IDS_IDLISTZEROPOINTER   32470     //
+#define IDS_SHGETMALLOCFAIL     32471     //
+#define IDS_GETICONLOCFAIL      32472     //
+#define IDS_EXTRICONEXTRACTFAIL 32473     //
+#define IDS_SHELLRENAMEFAIL     32474     //
+#define IDS_SHELLCOPYFAIL       32475     //
+#define IDS_SHELLMOVEFAIL       32476     //
+#define IDS_SHELLDELETEFAIL     32477     //
+#define IDS_CREATESHELLLINKFAIL 32478     //
+#define IDS_LINKQUERYINTRFCFAIL 32479     //
+#define IDS_PERSISTFILELOADFAIL 32480     //
+#define IDS_LINKGETIDLISTFAIL   32481     //
+#define IDS_SHLLINKSETPATHFAIL  32482     //
+#define IDS_SHLLINKSETDESCFAIL  32483     //
+
+//
+//
+//
+#define IDS_DOCMANAGERFILE  32500
+#define IDS_DOCLIST         32501
+#define IDS_VIEWLIST        32502
+#define IDS_UNTITLED        32503
+#define IDS_UNABLEOPEN      32504
+#define IDS_UNABLECLOSE     32505
+#define IDS_READERROR       32506
+#define IDS_WRITEERROR      32507
+#define IDS_DOCCHANGED      32508
+#define IDS_NOTCHANGED      32509
+#define IDS_NODOCMANAGER    32510
+#define IDS_NOMEMORYFORVIEW 32511
+#define IDS_DUPLICATEDOC    32512
+
+//
+//
+//
+#define IDS_VALPXPCONFORM   32520
+#define IDS_VALINVALIDCHAR  32521
+#define IDS_VALNOTINRANGE   32522
+#define IDS_VALNOTINLIST    32523
+
+//
+//
+//
+#define IDS_MODES            32530    // String resource to define mode On indicators
+#define IDS_MODESOFF         32531    // String resource to define mode Off indicators
+
+//
+//
+//
+#define IDS_CANNOTFIND      32540
+
+//
+//
+//
+#define IDS_UNTITLEDFILE    32550
+#define IDS_UNABLEREAD      32551
+#define IDS_UNABLEWRITE     32552
+#define IDS_FILECHANGED     32553
+#define IDS_FILEFILTER      32554
+#define IDS_RICHEDITFILTER  32555
+
+//
+//
+//
+#define IDS_LISTNUM         32584
+
+// Printing error message string resource IDs
+#define IDS_PRNNODEFAULT     32589
+#define IDS_PRNON            32590
+#define IDS_PRNERRORTEMPLATE 32591
+#define IDS_PRNOUTOFMEMORY   32592
+#define IDS_PRNOUTOFDISK     32593
+#define IDS_PRNCANCEL        32594
+#define IDS_PRNMGRABORT      32595
+#define IDS_PRNGENERROR      32596
+#define IDS_PRNERRORCAPTION  32597
+//
+//
+//
+// Owl 1 compatibility messages
+#define IDS_INVALIDWINDOW       32709     //
+#define IDS_INVALIDCHILDWINDOW  32708     //
+#define IDS_INVALIDCLIENTWINDOW 32707     //
+
+//
+//
+//
+
+//
+// urllink.h
+//
+#define IDS_PATHNOTFOUND        32718
+#define IDS_FILENOTFOUIND       32719
+#define IDS_FILEINVALID         32720
+#define IDS_ACCESSDENIED        32721
+#define IDS_INVALIDASSOC        32722
+#define IDS_DDEBISY             32723
+#define IDS_DDEFAILED           32724
+#define IDS_DDETYMEOUT          32725
+#define IDS_NOINSTANCE          32726
+#define IDS_SHAREDERROR         32727
+#define IDS_UNCKNOWNERR         32728
+
+//
+//
+//
+#define IDS_CLIPBOARDBUSY       32729     //
+#define IDS_WINGFAILURE         32730     //
+#define IDS_WINGNOTAVAILABLE    32731     //
+#define IDS_INVALIDDIBHANDLE    32732     //
+#define IDS_GDIDESTROYFAIL      32733     //
+#define IDS_GDIDELETEFAIL       32734     //
+#define IDS_GDIFILEREADFAIL     32735     //
+#define IDS_GDIRESLOADFAIL      32736     //
+#define IDS_GDICREATEFAIL       32737     //
+#define IDS_GDIALLOCFAIL        32738     //
+#define IDS_GDIFAILURE          32739     //
+#define IDS_LAYOUTBADRELWIN     32740     //
+#define IDS_LAYOUTINCOMPLETE    32741     //
+#define IDS_PRINTERERROR        32742     //
+#define IDS_VALIDATORSYNTAX     32743     //
+#define IDS_MENUFAILURE         32744     //
+#define IDS_CHILDCREATEFAIL     32745     //
+#define IDS_WINDOWEXECUTEFAIL   32746     //
+#define IDS_WINDOWCREATEFAIL    32747     //
+#define IDS_CHILDREGISTERFAIL   32748     //
+#define IDS_CLASSREGISTERFAIL   32749     //
+#define IDS_BADFILEFORMAT       32750     //
+#define IDS_NOTSUPPORTEDCALL    32751     //
+
+//
+//
+//
+#define IDS_COMMCTRL            32755     //
+#define IDS_INVALIDMODULEORD    32756     //
+#define IDS_INVALIDMODULEFCN    32757     //
+#define IDS_VBXLIBRARYFAIL      32758     //
+#define IDS_INVALIDMAINWINDOW   32759     //
+#define IDS_INVALIDMODULE       32760     //
+#define IDS_OUTOFMEMORY         32761     //
+#define IDS_NOAPP               32762     //
+#define IDS_UNKNOWNERROR        32763     //
+#define IDS_UNHANDLEDXMSG       32764     //
+#define IDS_OKTORESUME          32765     //
+#define IDS_OWLEXCEPTION        32766     //
+#define IDS_UNKNOWNEXCEPTION    32767     //
+
+
+//
+// for others    40000
+//
+
+//
+//  tipdlg.h
+//
+#define IDS_TIPDLG_ERRFILE_CORRUPT  40001
+#define IDS_TIPDLG_ERRFILEABSENT    40002
+#define IDS_TIP_DIDYOUKNOW          40003
+
+// owlext/ctxhelpm.rh
+#define IDS_HINTTEXT                40004
+
+// owlext/hlinnnkctl.rh
+#define IDS_HLINK_PROPERTIES         40005
+
+// owlext/caledit.rh
+#define IDS_CAL_ERRMSG              40006
+
+
+// owlext/ctxhelpm.rh
+#define HID_TITLEBAR                24100       //????????
+

@@ -1,0 +1,21 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+// Copyright(c) 1998 by Yura Bidus
+// All rights reserved.
+//
+// .RH file for TDorDialog; original code by Kent Reisdorph:
+//
+// Resource IDs to use with dirdlg.rc and dirdlg.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_DIRDIALG_RH)
+#define OWL_DIRDIALG_RH
+
+#define IDC_DIRTREE       101
+#define IDC_CURRENTDIR    102
+
+
+#define IDD_DIRDLG            32517    // from owlext/dirdlg.rh
+#define IDB_DIRDLG_TREEIMAGE  32003
+
+
+#endif  // OWL_DIRDIALG_RH

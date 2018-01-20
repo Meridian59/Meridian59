@@ -1,0 +1,62 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1994, 1996 by Borland International, All Rights Reserved
+//
+// Menu and accelerator IDs for use with TOleView
+//----------------------------------------------------------------------------
+#if !defined(OCF_OLEVIEW_RH)
+#define OCF_OLEVIEW_RH
+
+#if !defined(OCF_OCAPP_RH)
+# include <ocf/ocapp.rh>
+#endif
+
+#define CM_EDITPASTESPECIAL       24311
+#define CM_EDITPASTELINK          24312
+#define CM_EDITINSERTOBJECT       24313
+#define CM_EDITLINKS              24314
+#define CM_EDITINSERTCONTROL      24315
+
+#define CM_EDITOBJECT             24370
+#define CM_EDITFIRSTVERB          24371 // 20 verbs at most
+#define CM_EDITLASTVERB           24390
+
+#define CM_EDITCONVERT            24391
+#define CM_EDITSHOWOBJECTS        24392
+
+//
+// Menu ID
+//
+#define IDM_OLEPOPUP              32405
+#define IDM_OLEVIEW               32406
+#define IDM_OLEVIEWEMBED          32407
+
+//
+// String ID
+//
+#define IDS_EDITOBJECT      32600
+#define IDS_EDITCONVERT     32601
+#define IDS_CLOSESERVER     32602
+#define IDS_EXITSERVER      32603
+
+//
+// Accelerator IDs
+//
+#define IDA_OLEVIEW       32551
+
+#if defined(RC_INVOKED)
+//
+// The following OWL constants are C++ constants. The macros defined
+// below allows the constants to be used when compiling resources.
+//
+
+//
+// Window IDs
+//
+//  Pad decorations IDs, 4 total: 32042, 32043, 32044, 32045
+//
+#define IDW_PADDECORATION 32042
+#define IDW_REMVIEWBUCKET 32046  // Window id for remote view holder
+
+#endif  //  RC_INVOKED
+#endif  //  OCF_OLEVIEW_RH

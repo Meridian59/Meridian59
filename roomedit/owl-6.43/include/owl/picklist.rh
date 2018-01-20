@@ -1,0 +1,13 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1995, 1996 by Borland International, All Rights Reserved
+//
+// Resource and command IDs to use with TPickListDialog
+//----------------------------------------------------------------------------
+#if !defined(OWL_PICKLIST_RH)
+#define OWL_PICKLIST_RH
+
+#define IDD_PICKLISTDIALOG            32513
+#define IDC_LIST                      101
+
+#endif  // OWL_PICKLIST_RH

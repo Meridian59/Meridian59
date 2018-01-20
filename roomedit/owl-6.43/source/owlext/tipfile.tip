@@ -1,0 +1,39 @@
+; Tip of the Day
+; Copyright© 1996 AutoMedia Ltd. All rights reserved.
+; -- Tips --
+
+For a step by step overview of AutoMasker V.1.1, we encourage you to refer to the multimedia tutorial which is in subdirectory "tutorial" on the CD-ROM. Going over the tutorial will enchance your work with AutoMasker, and improve your overall performance.
+Use the Preview Window to see the output result during the editing process.
+Working with Preview Window helps you to decide when your editing is complete.
+You can decide before you finish editing all the frames whether or not the result of your editing is acceptable, by looking at the picture in the Preview Window.
+If the Link Preview Mode is on, every change in the Edit Window is immediately reflected in the Preview Window.
+You only have to check some of the frames using the Link Preview Mode. You can drag a frame displayed in the Preview Window to the Edit Window to make some changes and to see immediately the reflection in the Preview Window.
+Once you are satisfied with the results, turn off the Link Preview Mode. Being in mode Link Preview Mode, slows down the editing speed significantly.
+When the object is not clear - it contains holes or its colors blend into each other, it is easier to mark the background border. In this case you must use the inverted mask option the Make Movie - 2nd Step Dialog Box.
+When the background that you want to isolate is not clear or its colors blend into each other, it is easier to mark the object border. In this case you must use the inverted mask option the Make Movie - 2nd Step Dialog Box.
+When defining the H/V Range, try to keep its value as small as possible - but not zero.
+Decreasing the range, reduces the time needed for computing the object border.  It may also increase the accuracy of the border.
+It is preferable, in many cases, to keep a small H/V Range, so as to obtain more accurate results. However, you will have to carry out further work on the border segments that are not included in the range.
+If you are working in Auto Mode you have to create the accurate object border only in the keyframe, and the system computes the border for each frame in the sequence automatically (without using the Find Next command).
+You are strongly recommended to activate the Auto Mode ONLY if the object is clearly distinguished from its background over the range of frames, otherwise there is no guarantee of acceptable results.
+You can if necessary, smooth the object border by using the Smoothness Level Control. The higher the smoothness level, the less the border will be 'snapped' to the object.
+To control the sharpness of the border, use the Width Control Option. Raise the antialiasing level if you don't want a sharp border.
+If you find it difficult to mark the border exactly around all the edges, you can use the Border Offset Option. The results of the offset operation can be seen only in the Preview Window by activating either the Alpha Mask or the Painted Mask View.
+Selecting a frame in which the object is very clear will make it easier for the AutoMasker to find the object border by moving backwards or forwards in the frame sequence.
+To define a segment of the border that runs along the edge of the picture, drag the cursor out of the picture on the side you wish to define and run it in the direction you wish to define.The border is automatically snapped to the edge of the picture.
+Whenever you need to define straight segments of a border, use the Line Tool.
+You can display a pop-up menu by clicking the right mouse button in a window. The pop-up menu contains commands specific to the window where you clicked.
+You can close a dialog box by pressing Esc.
+You can move a toolbar by clicking between the toolbar buttons and dragging.
+Dock your toolbar to either side of the application frame for easy access.
+
+;To close and save multiple files, you can choose the Windows command on the Window menu.
+;You can add buttons to any toolbar. From the Tools menu, choose Customize. Select the Toolbars tab. Drag any button or command onto a toolbar.
+;You can hide all screen elements to see more information.
+;Pressing F1 displays help for the keyword at the cursor in a source window or the Output window.
+;You can get help on any dialog box. Click the Help button in the dialog or message box or press F1.
+;You can display multiple toolbars. From the Option menu, choose Environment, Toolbars and then select the toolbars you want.
+;You can undock a dockable window by double-clicking its border.
+;You can choose the Keyboard command on the Help menu to see the current keyboard shortcuts.
+
+

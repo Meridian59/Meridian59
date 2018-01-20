@@ -1,0 +1,18 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// .RH file for TCalcEdit
+//
+// Resource IDs to use with calcedit.rc and calcedit.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_CALCEDIT_RH)
+#define OWL_CALCEDIT_RH
+
+#define IDB_CALCBTN     32004
+#define IDD_CALCDIALOG  32519
+#define IDA_CALCULATOR  32551
+
+#define ID_DISPLAY      101
+
+
+#endif //

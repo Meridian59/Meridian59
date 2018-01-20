@@ -1,0 +1,207 @@
+
+#define FIRSTBITMAP             21000
+
+// menu's
+#define IDM_CUSTOMIZEGADGET     20000
+#define IDM_SHOWHIDECONTROLBARS 20100
+
+// dialogs
+#define IDD_TOOLBARS            20300
+#define IDD_COMMANDS            20400
+#define IDD_BUTTON_PROPS        20500
+
+
+#define IDC_CUTPASTEGADGET      19097  //????????????? local ???
+#define IDC_COPYGADGET          19098  //????????????? local ???
+#define IDC_DELETEGADGET        19099  //????????????? local ???
+
+#define CM_GADGETRESET          20001
+#define CM_GADGETDELETE         20002
+#define CM_GADGETCOPYIMAGE      20003
+#define CM_GADGETPASTEIMAGE     20004
+#define CM_GADGETAPPEARANCE     20005
+#define CM_GADGETIMAGE          20010
+#define CM_GADGETTEXT           20011
+#define CM_GADGETIMAGETEXT      20012
+#define CM_GADGETBEGINGROUP     20015
+
+#define CM_INVISIBLEGADGET      20110
+#define CM_SHOWHIDECTLBAR       20150 // First Menu Message ID
+#define CM_CUSTOMIZE            20200
+
+
+#define IDS_CUSTOMIZE           20250 //?? the same as CM_
+#define IDS_RENAMETOOLBAR       20251 //?? the same as CM_
+#define IDS_NEWTOOLBAR          20252 //?? the same as CM_
+#define IDS_PROMPTTOOLBAR       20253 //?? the same as CM_
+#define IDS_TOOLBAREXIST        20254 //?? the same as CM_
+#define IDS_DELETETOOLBAR       20255 //?? the same as CM_
+#define IDS_CLOSEBTN            20249 // ??????
+
+
+// Dialogs
+#define IDC_RB_IMAGE            20501
+#define IDC_RB_TEXT             20502
+#define IDC_RB_IMAGETEXT        20503
+#define IDC_GB_IMAGES           20505
+#define IDC_LB_IMAGES           20506
+#define IDC_TEXT_BUTTONTEXT     20509
+#define IDC_EDIT_BUTTONTEXT     20510
+
+//////////////////////////////////////
+// Dialog : need to be 20501 ???
+#define IDC_RB_IMAGE            20501
+#define IDC_RB_TEXT             20502
+#define IDC_RB_IMAGETEXT        20503
+#define IDC_GB_IMAGES           20505
+#define IDC_LB_IMAGES           20506
+#define IDC_TEXT_BUTTONTEXT     20509
+#define IDC_EDIT_BUTTONTEXT     20510
+
+//////////////////////////////////////
+// Dialog if this needed to be 20301 ???
+#define IDC_LB_TOOLBARS         20301
+#define IDC_PB_ADDTOOLBAR       20302
+#define IDC_PB_RENAMETOOLBAR    20303
+#define IDC_PB_DELETETOOLBAR    20304
+#define IDC_PB_RESETTOOLBAR     20305
+#define IDC_CB_SHOWTOOLTIPS     20310
+#define IDC_CB_WITHSHORTCUTKEYS 20311
+#define IDC_CB_SHOWGRIPPER      20312
+#define IDC_CB_FLATSTYLE        20313
+#define IDC_RB_NOHINTS          20321
+#define IDC_RB_PRESSHINTS       20322
+#define IDC_RB_ENTERHINTS       20323
+
+//////////////////////////////////////
+// Dialog if this needed to be 20401 ???
+#define IDC_CATEGORY            20401
+#define IDC_LB_CATEGORY         20402
+#define IDC_DESCRIPTION         20405
+#define IDC_BOTTONS             20410
+#define IDC_LB_BUTTONS          20411
+#define IDC_PB_MODIFYSELECTION  20415
+
+
+/*
+#define CM_INFO                 FIRSTBITMAP+0
+#define APX_PPR_PREVIOUS        FIRSTBITMAP+1
+#define CM_LEVEL1               FIRSTBITMAP+2
+#define CM_KEY                  FIRSTBITMAP+3
+#define CM_SMILIE1              FIRSTBITMAP+4
+#define CM_STOP                 FIRSTBITMAP+5
+#define APX_PPR_NEXT            FIRSTBITMAP+6
+#define CM_LEVEL2               FIRSTBITMAP+7
+#define CM_FILEMANAGER          FIRSTBITMAP+8
+#define CM_SMILIE2              FIRSTBITMAP+9
+#define CM_EXCLAMATION          FIRSTBITMAP+10
+#define APX_PPP_TOP             FIRSTBITMAP+11
+#define CM_LEVEL3               FIRSTBITMAP+12
+#define CM_SUM                  FIRSTBITMAP+13
+#define CM_TOOLBOX              FIRSTBITMAP+14
+#define CM_HYPERLINK            FIRSTBITMAP+15
+#define APX_PPP_BOTTOM          FIRSTBITMAP+16
+#define CM_LEVEL4               FIRSTBITMAP+17
+#define CM_PERCENT              FIRSTBITMAP+18
+#define CM_EXECUTE              FIRSTBITMAP+19
+#define CM_WIZARD               FIRSTBITMAP+20
+#define CM_SWITCH               FIRSTBITMAP+21
+#define CM_HOME                 FIRSTBITMAP+22
+#define CM_LINK                 FIRSTBITMAP+23
+#define CM_SOUND                FIRSTBITMAP+24
+#define CM_SIMPLEADD            FIRSTBITMAP+25
+#define CM_CHECKBOX             FIRSTBITMAP+26
+#define CM_ENVELOPE             FIRSTBITMAP+27
+#define CM_PHONE                FIRSTBITMAP+28
+#define CM_FLASH                FIRSTBITMAP+29
+#define CM_SIMPLESUB            FIRSTBITMAP+30
+#define CM_LOCK                 FIRSTBITMAP+31
+#define CM_DRAWSELECTOBJECT     FIRSTBITMAP+32
+#define CM_INSERTFILE           FIRSTBITMAP+33
+#define CM_INSERTDIAGRAM        FIRSTBITMAP+34
+#define CM_INSERTDATE           FIRSTBITMAP+35
+#define CM_INSERTTIME           FIRSTBITMAP+36
+#define CM_INSERTJOB            FIRSTBITMAP+37
+#define CM_INSERTCOMMENT        FIRSTBITMAP+38
+#define CM_INSERTGRAPHIC        FIRSTBITMAP+39
+#define CM_INSERTSYMBOL         FIRSTBITMAP+40
+#define CM_INSERTTABLE          FIRSTBITMAP+41
+#define CM_MAILANSWERALL        FIRSTBITMAP+42
+#define CM_VIEWREFRESH          FIRSTBITMAP+43
+#define CM_VIEWMAGNIFIER        FIRSTBITMAP+44
+#define CM_PROPERTIES           FIRSTBITMAP+45
+#define CM_NEWFOLDER            FIRSTBITMAP+46
+#define CM_MAILANSWER           FIRSTBITMAP+47
+#define CM_EDITDELETESELECTION  FIRSTBITMAP+48
+
+#define IDC_CUTPASTEGADGET      19097
+#define IDC_COPYGADGET          19098
+#define IDC_DELETEGADGET        19099
+
+#define CM_GADGETRESET          20001
+#define CM_GADGETDELETE         20002
+#define CM_GADGETCOPYIMAGE      20003
+#define CM_GADGETPASTEIMAGE     20004
+#define CM_GADGETAPPEARANCE     20005
+#define CM_GADGETIMAGE          20010
+#define CM_GADGETTEXT           20011
+#define CM_GADGETIMAGETEXT      20012
+#define CM_GADGETBEGINGROUP     20015
+
+#define IDM_SHOWHIDECONTROLBARS 20100
+
+#define CM_INVISIBLEGADGET      20110
+
+//      CM_SHOWHIDECTLBAR-1     20149 // Reserved for popup menu item
+#define CM_SHOWHIDECTLBAR       20150 // First Menu Message ID
+//      CM_SHOWHIDECTLBAR+1     20151
+//      CM_SHOWHIDECTLBAR+2     20152
+//      CM_SHOWHIDECTLBAR+3     20153
+//      CM_SHOWHIDECTLBAR+4     20154
+//      CM_SHOWHIDECTLBAR+5     20155
+//      CM_SHOWHIDECTLBAR+6     20156
+//      CM_SHOWHIDECTLBAR+7     20157
+//      CM_SHOWHIDECTLBAR+8     20158
+//      CM_SHOWHIDECTLBAR+9     20159
+
+#define CM_CUSTOMIZE            20200
+
+#define IDS_CUSTOMIZE           20250
+#define IDS_RENAMETOOLBAR       20251
+#define IDS_NEWTOOLBAR          20252
+#define IDS_PROMPTTOOLBAR       20253
+#define IDS_TOOLBAREXIST        20254
+#define IDS_DELETETOOLBAR       20255
+
+#define IDD_TOOLBARS            20300
+#define IDC_LB_TOOLBARS         20301
+#define IDC_PB_ADDTOOLBAR       20302
+#define IDC_PB_RENAMETOOLBAR    20303
+#define IDC_PB_DELETETOOLBAR    20304
+#define IDC_PB_RESETTOOLBAR     20305
+#define IDC_CB_SHOWTOOLTIPS     20310
+#define IDC_CB_WITHSHORTCUTKEYS 20311
+#define IDC_CB_SHOWGRIPPER      20312
+#define IDC_CB_FLATSTYLE        20313
+#define IDC_RB_NOHINTS          20321
+#define IDC_RB_PRESSHINTS       20322
+#define IDC_RB_ENTERHINTS       20323
+
+#define IDD_COMMANDS            20400
+#define IDC_CATEGORY            20401
+#define IDC_LB_CATEGORY         20402
+#define IDC_DESCRIPTION         20405
+#define IDC_BOTTONS             20410
+#define IDC_LB_BUTTONS          20411
+#define IDC_PB_MODIFYSELECTION  20415
+
+#define IDD_BUTTON_PROPS        20500
+#define IDC_RB_IMAGE            20501
+#define IDC_RB_TEXT             20502
+#define IDC_RB_IMAGETEXT        20503
+#define IDC_GB_IMAGES           20505
+#define IDC_LB_IMAGES           20506
+#define IDC_TEXT_BUTTONTEXT     20509
+#define IDC_EDIT_BUTTONTEXT     20510
+*/
+

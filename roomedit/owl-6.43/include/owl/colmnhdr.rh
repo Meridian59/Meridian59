@@ -1,0 +1,15 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Resource IDs used by TColumnHeader for 16-bit control emulation
+//----------------------------------------------------------------------------
+#if !defined(OWL_COLMNHDR_RH)
+#define OWL_COLUMNHDR_RH
+
+#define IDC_SIZEBARV  1010
+#define IDC_SIZEBARH  1011
+#define IDC_SPLITV    1012
+#define IDC_SPLITH    1013
+
+#endif //  OWL_COLUMNHDR_RH

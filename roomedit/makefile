@@ -14,8 +14,8 @@ OWLLIBNAME = owl.lib
 # /wd4244: conversion, possible loss of data
 # /wd4018: signed/unsigned mismatch
 
-CFLAGS = $(CFLAGS) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)\include -I$(OWLINCLUDEDIR) -I$(RESDIR) \
-	/GR /wd4244 /wd4018 /MP
+CFLAGS = $(CFLAGS:-GR-=-GR) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)\include -I$(OWLINCLUDEDIR) -I$(RESDIR) \
+	/wd4244 /wd4018
 
 #
 # Dependency List
@@ -313,4 +313,21 @@ $(OUTDIR)\windeu32.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
 	$(OBJS) $(LIBS) -OUT:$@
 <<
 
-!include $(TOPDIR)\rules.mak
+
+makedirs:
+        -@mkdir $(OUTDIR)
+
+{$(SOURCEDIR)}.c{$(OUTDIR)}.obj::
+	$(CC) $(CFLAGS) /FpCpch /Fd$(OUTDIR)\vc90.pdb /Fo$(OUTDIR)/ -c $< 
+
+{$(SOURCEDIR)}.cpp{$(OUTDIR)}.obj::
+	$(CC) $(CFLAGS) /FpCpch /Fd$(OUTDIR)\vc90.pdb /Fo$(OUTDIR)/ -c $< 
+
+{$(SOURCEDIR)}.rc{$(OUTDIR)}.res:
+        $(RC) /fo $@ /i$(SOURCEDIR) $**
+
+clean :
+        @$(RM) $(OUTDIR)\*
+        @$(RMDIR) $(OUTDIR)
+        @$(RM) $(OWLOUTDIR)\*
+        @$(RMDIR) $(OWLOUTDIR)

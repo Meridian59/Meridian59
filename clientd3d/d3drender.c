@@ -4060,17 +4060,19 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromPNG(char *pFilename)
 	png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, NULL);
 	rows = png_get_rows(pPng, pInfo);
 
-	bytePP = pPng->pixel_depth / 8;
-	stride = pPng->width * bytePP - bytePP;
-
+  unsigned int image_width = png_get_image_width(pPng, pInfo);
+  unsigned int image_height = png_get_image_height(pPng, pInfo);
+	bytePP = png_get_bit_depth(pPng, pInfo) / 8;
+	stride = image_width * bytePP - bytePP;
+  
 	{
 		int	i;
 		png_bytep	curRow;
 
 		for (i = 0; i < 6; i++)
 		{
-			IDirect3DDevice9_CreateTexture(gpD3DDevice, pPng->width, pPng->height, 1, 0,
-                                        D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &pTexture, NULL);
+			IDirect3DDevice9_CreateTexture(gpD3DDevice, image_width, image_height, 1, 0,
+                                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &pTexture, NULL);
 
 			IDirect3DTexture9_LockRect(pTexture, 0, &lockedRect, NULL, 0);
 
@@ -4078,11 +4080,11 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromPNG(char *pFilename)
 
 			pBits = (unsigned char *)lockedRect.pBits;
 
-			for (h = 0; h < pPng->height; h++)
+			for (h = 0; h < image_height; h++)
 			{
 				curRow = rows[h];
 
-				for (w = 0; w < pPng->width; w++)
+				for (w = 0; w < image_width; w++)
 				{
 					for (b = 0; b < 4; b++)
 					{
@@ -6430,10 +6432,12 @@ void D3DRenderBackgroundsLoad(char *pFilename, int index)
 			png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, NULL);
 			rows = png_get_rows(pPng, pInfo);
 
-			bytePP = pPng->pixel_depth / 8;
+      unsigned int image_width = png_get_image_width(pPng, pInfo);
+      unsigned int image_height = png_get_image_height(pPng, pInfo);
+      bytePP = png_get_bit_depth(pPng, pInfo) / 8;
 
-			IDirect3DDevice9_CreateTexture(gpD3DDevice, pPng->width, pPng->height, 1, 0,
-                                        D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], NULL);
+			IDirect3DDevice9_CreateTexture(gpD3DDevice, image_width, image_height, 1, 0,
+                                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], NULL);
 
 			IDirect3DTexture9_LockRect(gpSkyboxTextures[index][i], 0, &lockedRect, NULL, 0);
 
@@ -6441,11 +6445,11 @@ void D3DRenderBackgroundsLoad(char *pFilename, int index)
 
 			pBits = (unsigned char *)lockedRect.pBits;
 
-			for (h = 0; h < pPng->height; h++)
+			for (h = 0; h < image_height; h++)
 			{
 				curRow = rows[h];
 
-				for (w = 0; w < pPng->width; w++)
+				for (w = 0; w < image_width; w++)
 				{
 					for (b = 0; b < 4; b++)
 					{

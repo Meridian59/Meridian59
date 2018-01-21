@@ -7,6 +7,9 @@ kodbase.txt
 run/*
 lib/meridian.lib
 lib/rscload.lib
+lib/libarchive.lib
+lib/libpng.lib
+lib/zlib.lib
 bin/bbgun.exe
 bin/bc.exe
 bin/blakdeco.exe

@@ -48,6 +48,9 @@ SPROCKETDIR = $(TOPDIR)\sprocket
 CLUBDIR     = $(TOPDIR)\club
 KEYBINDDIR  = $(TOPDIR)\keybind
 WAVEMIXDIR  = $(TOPDIR)\wavemix
+LIBARCHIVEDIR = $(TOPDIR)\libarchive
+LIBPNGDIR   = $(TOPDIR)\libpng
+ZLIBDIR     = $(TOPDIR)\zlib
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -136,4 +139,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(TOPDIR)\miles\include

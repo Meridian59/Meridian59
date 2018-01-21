@@ -220,6 +220,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "d3ddriver.h"
 #include "rscload.h"
 #include "crc.h"
+#include "zlib.h"
 
 // Only include externs if compiling main client
 #ifdef BLAKCLIENT

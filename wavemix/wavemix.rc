@@ -1,0 +1,44 @@
+/**************************************************************************
+ *
+ *  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+ *  KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+ *  PURPOSE.
+ *
+ *  Copyright (c) 1993, 1994  Microsoft Corporation.  All Rights Reserved.
+ *
+ ***************************************************************************/
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 1,0,7,2
+PRODUCTVERSION 3,1,0,0
+FILEFLAGSMASK 0L
+FILEFLAGS 0x0L
+//FILEOS VOS_DOS_WINDOWS16
+//FILETYPE VFT_DLL
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "Microsoft Corporation\0"
+            VALUE "FileDescription", "Realtime Wave Mixing DLL by Angel Diaz.\0"
+            VALUE "FileVersion", "1.72\0"
+            VALUE "InternalName", "WAVEMIX\0"
+            VALUE "LegalCopyright", "Copyright Microsoft Corp. 1993-1994\0"
+            VALUE "ProductName", "Microsoft Windows WaveMix DLL\0"
+            VALUE "ProductVersion", "3.10.0.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252 
+    END
+END
+

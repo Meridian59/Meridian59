@@ -16,7 +16,7 @@ Bserver:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bclient: Butil Blibpng Blibarchive
+Bclient: Butil Blibpng Blibarchive Bwavemix
 	echo Making in $(CLIENTDIR)
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)

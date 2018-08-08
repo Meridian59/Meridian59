@@ -66,7 +66,7 @@ messages:
          %% no duplicates
          if not Send(target,@IsEnchanted,#what=oSpell)
          {	          
-            send(oSpell,@CastSpell,#who=self,#ltargets=[target],#ispellpower=99);
+            send(oSpell,@CastSpell,#who=self,#wielder=wielder,#ltargets=[target],#ispellpower=99);
             send(wielder,@MsgSendUser,#message_rsc=holder_worked,
                  #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
          }

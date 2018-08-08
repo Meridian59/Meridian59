@@ -33,6 +33,8 @@ resources:
 
    blind_sound = qblind.wav
 
+   blind_ring_projectile_rsc = blindproj.bgf
+
 classvars:
 
    vrName = blind_name_rsc
@@ -52,6 +54,17 @@ classvars:
    viNoNewbieOffense = TRUE
 
    vrSucceed_wav = blind_sound
+   
+   vrProjectile_Icon = blind_ring_projectile_rsc
+   viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 100
+   viProjectileLightColor = LIGHT_BGREEN
+
+   viProjectileSpeed = 12
+   viLayer = 9
 
 properties:
 
@@ -130,11 +143,32 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who = $, wielder = $, lTargets = $, iSpellPower = 0)
    {
-      local oTarget;
+      local oTarget, oOrigin, oRoom;
 
       oTarget = First(lTargets);
+
+      % We shoot a projectile even if the target resists, so this must be before eagle eyes.
+      % The caster will know the target resisted because the target will not glow green.
+      if who <> $
+      {
+         % Weapons can proc this spell. In that case, we use their wielder.
+         if wielder <> $
+         {
+            oOrigin = wielder;
+         }
+         else
+         {
+            oOrigin = who;
+         }
+         oRoom = Send(oOrigin,@GetOwner);
+         if oRoom <> $
+            AND IsClass(oRoom,&Room)
+         {
+            Send(oRoom,@SomethingShot,#who=oOrigin,#target=oTarget,#projectile=self,#flags=viProjectileFlag);
+         }
+      }
 
       % Spell effects
       Send(self,@DoBlind,#what=who,#oTarget=oTarget,
@@ -177,6 +211,10 @@ messages:
       {
          % class is Monster
          Post(oTarget,@ResetBehaviorFlags);
+         if Send(oTarget,@GetOwner) <> $
+         {
+            Post(Send(oTarget,@GetOwner),@SomethingChanged,#what=oTarget);
+         }
       }
 
       Send(what,@MsgSendUser,#message_rsc=blind_caster,
@@ -211,6 +249,10 @@ messages:
          % This has to be done AFTER the enchantment is gone from the
          %  monster's ench list - post it.
          Post(who,@ResetBehaviorFlags);   
+         if Send(who,@GetOwner) <> $
+         {
+            Post(Send(who,@GetOwner),@SomethingChanged,#what=who);
+         }
       }
      
       return;
@@ -237,6 +279,38 @@ messages:
       return;      
    }
 
+   % Return the icon used to display a spell shooting through the air.
+   GetProjectileIcon()
+   {
+      return vrProjectile_Icon;
+   }
+
+   % Return the speed at which a particular spell should appear to shoot through the air.
+   GetProjectileSpeed(who=$, target=$)
+   {
+      return viProjectileSpeed;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 10);   % 40ms between animations
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      return viProjectileLightFlags;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      return viProjectileLightIntensity;
+   }
+
+   GetProjectileLightColor()
+   {
+      return viProjectileLightColor;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

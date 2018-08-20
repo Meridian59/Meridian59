@@ -541,7 +541,7 @@ keymap	gCustomKeys[] =
 	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
 	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
 	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{-1,				-1,				A_TEXTCOMMAND,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
 
 	// end
 	{0, 0, 0},

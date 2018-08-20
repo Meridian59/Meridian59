@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Images">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\documentation\images\bm0.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm1.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm10.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm103.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm11.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm12.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm13.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm14.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm15.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm156.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm157.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm158.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm159.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm16.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm160.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm161.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm162.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm163.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm164.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm165.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm166.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm167.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm168.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm169.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm17.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm170.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm171.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm172.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm173.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm174.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm175.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm176.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm177.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm178.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm179.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm18.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm180.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm181.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm182.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm187.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm19.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm192.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm198.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm2.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm20.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm203.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm21.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm210.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm211.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm212.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm213.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm214.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm22.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm23.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm243.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm25.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm251.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm252.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm257.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm263.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm266.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm267.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm268.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm269.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm275.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm278.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm280.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm282.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm3.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm32.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm4.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm5.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm58.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm59.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm6.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm60.bmp">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm61.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm62.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm63.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm64.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm65.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm66.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm67.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm68.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm69.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm7.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm70.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm71.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm72.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm73.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm74.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm78.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm79.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm8.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm80.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm81.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm82.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm83.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm84.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm85.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm9.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\bm92.BMP">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="..\..\..\documentation\images\OWLNext-icon.png">
+      <Filter>Images</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\documentation\customdoxygen.css" />
+    <None Include="..\..\..\documentation\additional\additional.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional1.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional2.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional3.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional4.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional5.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional6.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional7.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional8.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional9.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional10.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional11.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional12.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional13.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional14.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional15.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\additional16.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\additional\modules.dox">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\documentation\html.doxyfile" />
+    <None Include="..\..\..\documentation\makefile" />
+    <None Include="..\..\..\documentation\html-help.doxyfile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\..\documentation\layout.xml" />
+  </ItemGroup>
+</Project>

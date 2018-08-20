@@ -1,0 +1,140 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1994, 1996 by Borland International, All Rights Reserved
+//
+// Menu and accelerators for use with TOleWindow & TOleView
+//----------------------------------------------------------------------------
+#include <owl/window.rh>
+#include <owl/edit.rh>
+#include <owl/docview.rh>
+#include <ocf/oleview.rh>
+
+#if defined(RC_INVOKED)
+
+#if !defined(BI_COMP_BORLANDC)
+#include "windows.h"
+#endif
+
+#if !defined(NO_IDM_OLEVIEW) && !defined(__IDM_OLEVIEW)
+#define __IDM_OLEVIEW
+IDM_OLEVIEW MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  // File
+  MenuItem  Separator
+  Popup "&Edit"
+  {
+    MenuItem "&Undo\aCtrl+Z",     CM_EDITUNDO
+    MenuItem Separator
+    MenuItem "Cu&t\aCtrl+X",      CM_EDITCUT
+    MenuItem "&Copy\aCtrl+C",     CM_EDITCOPY
+    MenuItem "&Paste\aCtrl+V",    CM_EDITPASTE
+    MenuItem "Paste &Special...", CM_EDITPASTESPECIAL
+    MenuItem "Paste &Link",       CM_EDITPASTELINK
+    MenuItem "&Delete\aDel",      CM_EDITDELETE
+    MenuItem Separator
+    MenuItem "&Insert Object...", CM_EDITINSERTOBJECT
+    MenuItem "&Links...",         CM_EDITLINKS
+    MenuItem "&Object",           CM_EDITOBJECT
+    MenuItem Separator
+    MenuItem "&Show Objects",     CM_EDITSHOWOBJECTS
+  }
+}
+
+#define __IDM_OLEVIEWEMBED
+IDM_OLEVIEWEMBED MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  // File
+  Popup "&File"
+  {
+//    MenuItem  "Save Copy &As...",CM_FILESAVEAS
+//    MenuItem  "&Revert To Saved",CM_FILEREVERT
+    MenuItem  "&Close",          CM_FILECLOSE
+    MenuItem  Separator
+    MenuItem  "E&xit",           CM_EXIT
+  }
+  MenuItem  Separator
+  Popup "&Edit"
+  {
+    MenuItem "&Undo\aCtrl+Z",     CM_EDITUNDO
+    MenuItem Separator
+    MenuItem "Cu&t\aCtrl+X",      CM_EDITCUT
+    MenuItem "&Copy\aCtrl+C",     CM_EDITCOPY
+    MenuItem "&Paste\aCtrl+V",    CM_EDITPASTE
+    MenuItem "Paste &Special...", CM_EDITPASTESPECIAL
+    MenuItem "Paste &Link",       CM_EDITPASTELINK
+    MenuItem "&Delete\aDel",      CM_EDITDELETE
+    MenuItem Separator
+    MenuItem "&Insert Object...", CM_EDITINSERTOBJECT
+    MenuItem "&Links...",         CM_EDITLINKS
+    MenuItem "&Object",           CM_EDITOBJECT
+    MenuItem Separator
+    MenuItem "&Show Objects",     CM_EDITSHOWOBJECTS
+  }
+}
+
+IDM_OLEPOPUP MENU
+{
+ Popup "OLE"
+ {
+  MenuItem "Cu&t\aCtrl+X",  CM_EDITCUT
+  MenuItem "&Copy\aCtrl+C", CM_EDITCOPY
+  MenuItem "&Delete\aDel",  CM_EDITDELETE
+  MenuItem Separator
+  MenuItem "&Object",       CM_EDITOBJECT
+ }
+}
+
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+ CM_EDITPASTESPECIAL, "Select paste option and format"
+ CM_EDITPASTELINK,    "Link with object on the clipboard"
+ CM_EDITLINKS,        "Edit links to the document"
+ CM_EDITINSERTOBJECT, "Insert an object into the document"
+ CM_EDITOBJECT,       "Ask the selected object to perform an action"
+ CM_EDITSHOWOBJECTS,  "Show a frame around embedded objects"
+}
+
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_EDITOBJECT,  "&Object"
+  IDS_EDITCONVERT, "Con&vert..."
+  IDS_CLOSESERVER, "&Close and Return to "
+  IDS_EXITSERVER,  "E&xit and Return to "
+}
+
+#if !defined(__OLEVIEW_RC_OCF_RC_COMMON_STR)
+#define __OLEVIEW_RC_OCF_RC_COMMON_STR
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_CFTEXT,        "Text\nplain text"
+  IDS_CFBITMAP,      "Bitmap\na bitmap image"
+  IDS_CFMETAFILE,    "Metafile Picture\na static picture"
+  IDS_CFSYLK,        "Sylk\na spreadsheet"
+  IDS_CFDIF,         "DIF\na document"
+  IDS_CFTIFF,        "Tagged Image File Format\na TIFF image file"
+  IDS_CFOEMTEXT,     "OEM Text\nan OEM text"
+  IDS_CFDIB,         "DIB\na device independent bitmap image"
+  IDS_CFPALETTE,     "Palette\na color palette"
+  IDS_CFPENDATA,     "Pen Data\npen data"
+  IDS_CFRIFF,        "RIFF\na RIFF media file"
+  IDS_CFWAVE,        "Wave\na sound wave file"
+  IDS_CFUNICODETEXT, "UniCode Text\nUnicode text"
+  IDS_CFENHMETAFILE, "Enhanced Metafile\nan enhanced metafile picture"
+}
+
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_IN, " in "
+}
+#endif
+
+IDA_OLEVIEW ACCELERATORS
+BEGIN
+  VK_DELETE, CM_EDITDELETE,   VIRTKEY, SHIFT
+  VK_DELETE, CM_EDITDELETE,   VIRTKEY
+END
+
+#endif
+#undef NO_IDM_OLEVIEW
+
+#endif  // defined(RC_INVOKED)

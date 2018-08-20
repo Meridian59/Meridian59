@@ -1,0 +1,54 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TUrlLink
+//----------------------------------------------------------------------------
+
+#include <owl/urllink.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDS_URLLINK) && !defined(__IDS_URLLINK)
+#define __IDS_URLLINK
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_PATHNOTFOUND,     "The specified path was not found."
+  IDS_FILENOTFOUIND,    "The specified file was not found."
+  IDS_FILEINVALID,      "The .EXE file is invalid."
+  IDS_ACCESSDENIED,     "The operating system denied\naccess to the specified file."
+  IDS_INVALIDASSOC,     "The filename association is\nincomplete or invalid."
+  IDS_DDEBISY,          "The DDE transaction could not\nbe completed because other DDE transactions\nwere being processed."
+  IDS_DDEFAILED,        "The DDE transaction failed."
+  IDS_DDETYMEOUT,       "The DDE transaction could not\nbe completed because the request timed out."
+  IDS_NOINSTANCE,       "There is no application associated\nwith the given filename extension."
+  IDS_SHAREDERROR,      "A sharing violation occurred."
+  IDS_UNCKNOWNERR,      "Unknown Error (%d) occurred."
+}
+
+#endif
+
+IDC_HANDCURSOR CURSOR "owl/res/hand.cur"
+
+#endif  // defined(RC_INVOKED)

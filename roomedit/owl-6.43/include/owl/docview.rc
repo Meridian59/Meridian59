@@ -1,0 +1,153 @@
+//----------------------------------------------------------------------------  
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TDocManager
+//----------------------------------------------------------------------------
+
+#include <owl/window.rh>  //  CM_EXIT
+#include <owl/mdi.rh>
+#include <owl/docview.rh>
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#if defined(RC_INVOKED)
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#if !defined(NO_IDS_DOCVIEW) && !defined(__IDS_DOCVIEW)
+#define __IDS_DOCVIEW
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  CM_FILENEW-1,       "Create, open, save and print documents"
+  CM_FILENEW,         "Create a new document"
+  CM_FILEOPEN,        "Open an existing document"
+  CM_FILESAVE,        "Save this document"
+  CM_FILESAVEAS,      "Save this document with a new name"
+  CM_FILEREVERT,      "Revert changes to last document save"
+  CM_FILECLOSE,       "Close this document"
+  CM_FILEPRINT,       "Print this document"
+  CM_EXIT,            "Quit the application, prompting to save documents"
+
+  CM_VIEWCREATE,      "Create a new view for this document"
+
+  CM_CASCADECHILDREN-1, "Arrange open windows"
+  CM_CASCADECHILDREN, "Cascade open windows"
+  CM_TILECHILDREN,    "Tile open windows"
+  CM_ARRANGEICONS,    "Arrange iconic windows along bottom"
+  CM_CLOSECHILDREN,   "Close all open windows"
+
+  IDS_DOCMANAGERFILE, "&File"
+  IDS_DOCLIST,        "--Document Type--"
+  IDS_VIEWLIST,       "--View Type--"
+  IDS_UNTITLED,       "Document"
+  IDS_UNABLEOPEN,     "Unable to open document."
+  IDS_UNABLECLOSE,    "Unable to close document."
+  IDS_READERROR,      "Document read error."
+  IDS_WRITEERROR,     "Document write error."
+  IDS_DOCCHANGED,     "The document has been changed.\n\nDo you want to save the changes?"
+  IDS_NOTCHANGED,     "The document has not been changed."
+  IDS_NODOCMANAGER,   "Document Manager not present."
+  IDS_NOMEMORYFORVIEW,"Insufficient memory for view."
+  IDS_DUPLICATEDOC,   "Document already loaded."
+}
+#endif  // !BI_MSG_LANGUAGE_JAPAN
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  CM_FILENEW-1,       "文書の新規作成、開く、保存、印刷など"
+  CM_FILENEW,         "新規文書の作成"
+  CM_FILEOPEN,        "既存の文書を開く"
+  CM_FILESAVE,        "この文書を上書き保存"
+  CM_FILESAVEAS,      "この文書に名前を付けて保存"
+  CM_FILEREVERT,      "変更を取り消し、最後に保存した状態に戻す"
+  CM_FILECLOSE,       "この文書を閉じる"
+  CM_FILEPRINT,       "この文書を印刷"
+  CM_EXIT,            "文書を保存することを促し、ｱﾌﾟﾘｹｰｼｮﾝを終了"
+
+  CM_VIEWCREATE,      "この文書の新しいﾋﾞｭｰを作成"
+
+  CM_CASCADECHILDREN-1, "開いているｳｨﾝﾄﾞｳの再配置"
+  CM_CASCADECHILDREN, "開いているｳｨﾝﾄﾞｳを重ねて表示"
+  CM_TILECHILDREN,    "開いているｳｨﾝﾄﾞｳを並べて表示"
+  CM_ARRANGEICONS,    "下辺に沿ってｱｲｺﾝを整列"
+  CM_CLOSECHILDREN,   "開いているすべてのｳｨﾝﾄﾞｳを閉じる"
+
+  IDS_DOCMANAGERFILE, "ﾌｧｲﾙ(&F)"
+  IDS_DOCLIST,        "--文書ﾀｲﾌﾟ--"
+  IDS_VIEWLIST,       "--ﾋﾞｭｰﾀｲﾌﾟ--"
+  IDS_UNTITLED,       "文書"
+  IDS_UNABLEOPEN,     "文書を開くことができません。"
+  IDS_UNABLECLOSE,    "文書を閉じることができません。"
+  IDS_READERROR,      "文書読み込みｴﾗｰ。"
+  IDS_WRITEERROR,     "文書書き込みｴﾗｰ。"
+  IDS_DOCCHANGED,     "この文書は変更されています。\n\n現在の変更内容を保存しますか?"
+  IDS_NOTCHANGED,     "この文書は変更されていません。"
+  IDS_NODOCMANAGER,   "文書ﾏﾈｰｼﾞｬが用意されていません。"
+  IDS_NOMEMORYFORVIEW,"ﾋﾞｭｰを作成するﾒﾓﾘが足りません。"
+  IDS_DUPLICATEDOC,   "文書は既にﾛｰﾄﾞされています。"
+}
+#endif  // if BI_MSG_LANGUAGE_JAPAN
+
+#endif // __IDS_DOCVIEW
+
+
+#if !defined(NO_IDM_DOCMANAGERFILE) && !defined(__IDM_DOCMANAGERFILE)
+#define __IDM_DOCMANAGERFILE
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDM_DOCMANAGERFILE MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  MENUITEM  "&New",            CM_FILENEW
+  MENUITEM  "&Open...",        CM_FILEOPEN
+  MENUITEM  "&Save",           CM_FILESAVE
+  MENUITEM  "Save &As...",     CM_FILESAVEAS
+  MENUITEM  "&Revert To Saved",CM_FILEREVERT
+  MENUITEM  "&Close",          CM_FILECLOSE
+  MENUITEM  SEPARATOR
+  MENUITEM  "E&xit",           CM_EXIT
+}
+#endif  // !BI_MSG_LANGUAGE_JAPAN
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDM_DOCMANAGERFILE MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  MENUITEM  "新規作成(&N)",                CM_FILENEW
+  MENUITEM  "開く(&O)...",                 CM_FILEOPEN
+  MENUITEM  "上書き保存(&S)",              CM_FILESAVE
+  MENUITEM  "名前を付けて保存(&A)...",     CM_FILESAVEAS
+  MENUITEM  "最後に保存した状態に戻す(&R)",CM_FILEREVERT
+  MENUITEM  "閉じる(&C)",                  CM_FILECLOSE
+  MENUITEM  SEPARATOR
+  MENUITEM  "終了(&X)",                    CM_EXIT
+}
+#endif // if BI_MSG_LANGUAGE_JAPAN
+
+#endif  // __IDM_DOCMANAGERFILE
+
+#endif  // defined(RC_INVOKED)

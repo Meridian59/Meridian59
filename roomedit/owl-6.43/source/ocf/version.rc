@@ -1,0 +1,81 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1991, 1996 by Borland International, All Rights Reserved
+// Copyright (c) 1998-2009 by OWLNext Contributors, All Rights Reserved
+// Version resources for ObjectWindows DLLs
+//----------------------------------------------------------------------------
+
+#include <winver.h>
+#include <ocf/version.h>
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OCF resources! >\0"
+END
+#endif //APSTUDIO_INVOKED
+
+#if defined(OCF_PRERELEASE) && OCF_PRERELEASE == 1
+# define OCF_FF_PRERELEASE VS_FF_PRERELEASE
+#else
+# define OCF_FF_PRERELEASE 0
+#endif
+
+#if defined(__DEBUG) && __DEBUG > 0
+# define OCF_FF_DEBUG VS_FF_DEBUG
+#else
+# define OCF_FF_DEBUG 0
+#endif
+
+#if OCF_BUILD_MIXED != 0 || OCF_BUILD_DIRTY != 0
+# define OCF_FF_PRIVATEBUILD VS_FF_PRIVATEBUILD
+# if OCF_BUILD_MIXED && OCF_BUILD_DIRTY
+#   define OCF_PRIVATEBUILD VALUE "PrivateBuild", "Built from mixed revisions and dirty source code.\0"
+# elif OCF_BUILD_MIXED
+#   define OCF_PRIVATEBUILD VALUE "PrivateBuild", "Built from mixed revisions of the source code.\0"
+# else
+#   define OCF_PRIVATEBUILD VALUE "PrivateBuild", "Built from dirty source code.\0"
+# endif
+#else
+# define OCF_FF_PRIVATEBUILD 0
+# define OCF_PRIVATEBUILD
+#endif
+
+#if defined(_BUILDOCFDLL)
+# define OCF_VFT VFT_DLL
+#else
+# define OCF_VFT VFT_STATIC_LIB
+#endif
+
+#ifndef WINELIB
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     OCF_FILEVERSION
+  FILEFLAGS       OCF_FF_PRERELEASE | OCF_FF_DEBUG | OCF_FF_PRIVATEBUILD
+  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+  FILEOS          VOS__WINDOWS32
+  PRODUCTVERSION  OCF_PRODUCTVERSION
+  FILETYPE        OCF_VFT
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "OWLNext Project Community\0"
+      VALUE "URL", "http://owlnext.sourceforge.net\0"
+      VALUE "FileDescription", "OCFNext C++ Application Framework Library File\0"
+      VALUE "FileVersion", OCF_FILEVERSION_STRING "\0"
+      VALUE "InternalName", "OCF\0"
+      VALUE "LegalCopyright", "See OWLNext license.\0"
+      VALUE "ProductName", "OCFNext\0"
+      VALUE "ProductVersion", OCF_PRODUCTVERSION_STRING "\0"
+      OCF_PRIVATEBUILD
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language    |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English | Windows Multilingual
+  END
+END
+#endif //! WINELIB
+

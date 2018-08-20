@@ -1,0 +1,311 @@
+// ****************************************************************************
+// Copyright (C) 1998 by Dieter Windau
+// All rights reserved
+//
+// dockingex.rc: resource file
+// Version:      1.5
+// Date:         08.11.1998
+// Author:       Dieter Windau
+//
+// Freeware OWL classes that extents the dockable and gadget system
+//
+// You are free to use/modify this code but leave this header intact.
+// May not be sold for profit.
+//
+// Tested with Borland C++ 5.02, OWL 5.02, OWL6 patch #3 and with Windows
+// NT 4.0 SP3 but I think the class should work with Windows 95 too.
+// This file is provided "as is" with no expressed or implied warranty.
+// Use at your own risk.
+//
+// This package contains many classes and source that are based on other OWL
+// developers work. Very special thanks to Alan Chambers, Christopher Kohlhoff,
+// Jo Parrello, Mark Hatsell, Michael Mogensen and Yura Bidus
+//
+// Please send me bug reports, bug fixes, enhancements, requests, etc., and
+// I'll try to keep this in next versions:
+//   EMail: dieter.windau@usa.net
+//   Web:   http://members.aol.com/softengage/index.htm
+// ****************************************************************************
+
+#include <owl/inputdia.rc>
+
+#include <owlext/dockingex.rh>
+
+IDC_DELETEGADGET CURSOR "res/delete.cur"
+IDC_COPYGADGET CURSOR "res/copy.cur"
+IDC_CUTPASTEGADGET CURSOR "res/cutpast.cur"
+
+/*
+CM_INFO BITMAP "res/info.bmp"
+APX_PPR_PREVIOUS BITMAP "res/previous.bmp"
+CM_LEVEL1 BITMAP "res/level1.bmp"
+CM_KEY BITMAP "res/key.bmp"
+CM_SMILIE1 BITMAP "res/smilie1.bmp"
+
+CM_STOP BITMAP "res/stop.bmp"
+APX_PPR_NEXT BITMAP "res/next.bmp"
+CM_LEVEL2 BITMAP "res/level2.bmp"
+CM_FILEMANAGER BITMAP "res/fileman.bmp"
+CM_SMILIE2 BITMAP "res/smilie2.bmp"
+
+CM_EXECUTE BITMAP "res/execute.bmp"
+CM_EXCLAMATION BITMAP "res/exclam.bmp"
+APX_PPP_TOP BITMAP "res/top.bmp"
+CM_LEVEL3 BITMAP "res/level3.bmp"
+CM_SUM BITMAP "res/sum.bmp"
+
+CM_TOOLBOX BITMAP "res/toolbox.bmp"
+CM_HYPERLINK BITMAP "res/hlink.bmp"
+APX_PPP_BOTTOM BITMAP "res/bottom.bmp"
+CM_LEVEL4 BITMAP "res/level4.bmp"
+CM_PERCENT BITMAP "res/percent.bmp"
+
+CM_WIZARD BITMAP "res/wizard.bmp"
+CM_SWITCH BITMAP "res/switch.bmp"
+CM_HOME BITMAP "res/home.bmp"
+CM_SOUND BITMAP "res/sound.bmp"
+CM_LINK BITMAP "res/link.bmp"
+
+CM_SIMPLEADD BITMAP "res/add.bmp"
+CM_CHECKBOX BITMAP "res/checkbox.bmp"
+CM_ENVELOPE BITMAP "res/envelope.bmp"
+CM_PHONE BITMAP "res/phone.bmp"
+CM_FLASH BITMAP "res/flash.bmp"
+
+CM_SIMPLESUB BITMAP "res/sub.bmp"
+CM_LOCK BITMAP "res/lock.bmp"
+CM_DRAWSELECTOBJECT BITMAP "res/select.bmp"
+CM_INSERTFILE BITMAP "res/insfile.bmp"
+CM_INSERTDIAGRAM BITMAP "res/insdgm.bmp"
+
+CM_INSERTDATE BITMAP "res/insdate.bmp"
+CM_INSERTTIME BITMAP "res/instime.bmp"
+CM_INSERTGRAPHIC BITMAP "res/insgraph.bmp"
+CM_INSERTCOMMENT BITMAP "res/inscomm.bmp"
+CM_INSERTJOB BITMAP "res/insjob.bmp"
+
+CM_INSERTSYMBOL BITMAP "res/inssymb.bmp"
+CM_INSERTTABLE BITMAP "res/instable.bmp"
+CM_VIEWREFRESH BITMAP "res/refresh.bmp"
+CM_VIEWMAGNIFIER BITMAP "res/magnifi.bmp"
+CM_PROPERTIES BITMAP "res/propert.bmp"
+
+CM_NEWFOLDER BITMAP "res/newfold.bmp"
+CM_MAILANSWERALL BITMAP "res/mailansa.bmp"
+CM_MAILANSWER BITMAP "res/mailans.bmp"
+CM_EDITDELETESELECTION BITMAP "res/delsel.bmp"
+*/
+
+#ifndef BI_MSG_LANGUAGE_GERMANY
+
+IDM_SHOWHIDECONTROLBARS MENU
+{
+ POPUP "&Toolbars"
+ {
+  MENUITEM SEPARATOR
+  MENUITEM "&Customize...", CM_CUSTOMIZE
+ }
+}
+
+IDM_CUSTOMIZEGADGET MENU
+{
+ POPUP "CUSTOMIZEGADGET"
+ {
+  MENUITEM "&Reset", CM_GADGETRESET
+  MENUITEM "&Delete", CM_GADGETDELETE
+  MENUITEM SEPARATOR
+  MENUITEM "&Copy Button Image", CM_GADGETCOPYIMAGE
+  MENUITEM "&Paste Button Image", CM_GADGETPASTEIMAGE
+  MENUITEM "Button Appearance...", CM_GADGETAPPEARANCE
+  MENUITEM SEPARATOR
+  MENUITEM "&Image Only", CM_GADGETIMAGE
+  MENUITEM "&Text Only", CM_GADGETTEXT
+  MENUITEM "Image &and Text", CM_GADGETIMAGETEXT
+  MENUITEM SEPARATOR
+  MENUITEM "Begin &Group", CM_GADGETBEGINGROUP
+ }
+}
+
+STRINGTABLE
+{
+ IDS_CLOSEBTN,        "Close"
+ IDS_NEWTOOLBAR,      "New Toolbar"
+ IDS_RENAMETOOLBAR,   "Rename toolbar"
+ IDS_PROMPTTOOLBAR,   "Toolbar name:"
+ IDS_CUSTOMIZE,       "Customize"
+ IDS_TOOLBAREXIST,    "The toolbar name you have specified cannot be used because there is already a toolbar with that name."
+ IDS_DELETETOOLBAR,   "Are you sure that you want delete the selected toolbar?"
+ CM_SHOWHIDECTLBAR-1, "Here you can show, hide and customize the toolbars"
+ CM_SHOWHIDECTLBAR+0, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+1, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+2, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+3, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+4, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+5, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+6, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+7, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+8, "Show or hide the selected toolbar"
+ CM_SHOWHIDECTLBAR+9, "Show or hide the selected toolbar"
+ CM_CUSTOMIZE,        "Here you can show, hide and customize the toolbars"
+ CM_GADGETRESET,      "Resets the button and its contents to default settings"
+ CM_GADGETDELETE,     "Deletes the selected button"
+ CM_GADGETCOPYIMAGE,  "Copies the image of the selected button to the Clipboard"
+ CM_GADGETPASTEIMAGE, "Pastes the image on the Clipboard onto the selected button"
+ CM_GADGETAPPEARANCE, "Allows modification of image and label of the selected button"
+ CM_GADGETIMAGE,      "Shows the selected button as an image only"
+ CM_GADGETTEXT,       "Shows the selected button as text only"
+ CM_GADGETIMAGETEXT,  "Shows the selected button as image and text"
+ CM_GADGETBEGINGROUP, "Begins a command group before the selected button"
+}
+
+IDD_BUTTON_PROPS DIALOG 0, 0, 238, 168
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Button Appearance"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "&Image only", IDC_RB_IMAGE, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 6, 4, 50, 10
+ CONTROL "&Text only", IDC_RB_TEXT, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 6, 16, 45, 10
+ CONTROL "Image &and text", IDC_RB_IMAGETEXT, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 6, 28, 63, 10
+ CONTROL "Images", IDC_GB_IMAGES, "button", BS_GROUPBOX | WS_CHILD | WS_VISIBLE | WS_GROUP, 6, 40, 166, 94
+ CONTROL "", IDC_LB_IMAGES, "listbox", LBS_NOTIFY | LBS_OWNERDRAWFIXED | LBS_MULTICOLUMN | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP, 12, 50, 154, 80
+ CONTROL "&Button text:", IDC_TEXT_BUTTONTEXT, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 140, 37, 8
+ CONTROL "", IDC_EDIT_BUTTONTEXT, "edit", ES_LEFT | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 6, 150, 166, 12
+ CONTROL "OK", IDOK, "button", BS_DEFPUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 180, 8, 50, 14
+ CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 180, 26, 50, 14
+}
+
+IDD_TOOLBARS DIALOG 94, 72, 274, 150
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Toolbars"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "&Toolbars:", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 4, 60, 8
+ CONTROL "", IDC_LB_TOOLBARS, "listbox", LBS_NOTIFY | LBS_OWNERDRAWVARIABLE | LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 6, 14, 120, 130
+ CONTROL "&Show Tooltips", IDC_CB_SHOWTOOLTIPS, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 14, 76, 10
+ CONTROL "&With shortcut keys", IDC_CB_WITHSHORTCUTKEYS, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 26, 76, 10
+ CONTROL "Show &Gripper", IDC_CB_SHOWGRIPPER, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 38, 60, 10
+ CONTROL "With flat &buttons", IDC_CB_FLATSTYLE, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 50, 80, 10
+ CONTROL "&New...", IDC_PB_ADDTOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 218, 4, 50, 14, 0
+ CONTROL "Rena&me...", IDC_PB_RENAMETOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 218, 22, 50, 14, 0
+ CONTROL "&Delete", IDC_PB_DELETETOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 218, 40, 50, 14, 0
+ CONTROL "&Reset", IDC_PB_RESETTOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 218, 58, 50, 14, 0
+ CONTROL "Statusbar hints", -1, "button", BS_GROUPBOX | WS_CHILD | WS_VISIBLE | WS_GROUP, 132, 94, 86, 50
+ CONTROL "&None", IDC_RB_NOHINTS, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 138, 106, 54, 10
+ CONTROL "&Pressed", IDC_RB_PRESSHINTS, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 138, 118, 56, 10
+ CONTROL "&Always", IDC_RB_ENTERHINTS, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 138, 130, 54, 10
+}
+
+IDD_COMMANDS DIALOG 94, 72, 274, 150
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Commands"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "&Category:", IDC_CATEGORY, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 4, 60, 8
+ CONTROL "", IDC_LB_CATEGORY, "listbox", LBS_NOTIFY | LBS_HASSTRINGS | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 6, 14, 88, 82
+ CONTROL "Description:", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 92, 60, 8
+ CONTROL "", IDC_DESCRIPTION, "static", SS_LEFT | SS_SUNKEN | WS_CHILD | WS_VISIBLE, 6, 102, 88, 40
+ CONTROL "Buttons", IDC_BOTTONS, "button", BS_GROUPBOX | WS_CHILD | WS_VISIBLE | WS_GROUP, 102, 4, 166, 90
+ CONTROL "", IDC_LB_BUTTONS, "listbox", LBS_NOTIFY | LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 106, 14, 158, 76
+ CONTROL "Hint: Select a category. Click a button to see its decription, or drag it to a toolbar.", -1, "static", SS_LEFT | SS_SUNKEN | WS_CHILD | WS_VISIBLE, 102, 102, 166, 26
+ CONTROL "&Modify Selection", IDC_PB_MODIFYSELECTION, "OWL_GlyphBtn", 0 | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 102, 130, 166, 14
+}
+
+#else
+
+IDM_SHOWHIDECONTROLBARS MENU
+{
+ POPUP "&Symbolleisten"
+ {
+  MENUITEM SEPARATOR
+  MENUITEM "&Anpassen...", CM_CUSTOMIZE
+ }
+}
+
+IDM_CUSTOMIZEGADGET MENU
+{
+ POPUP "CUSTOMIZEGADGET"
+ {
+  MENUITEM "&Zurücksetzen", CM_GADGETRESET
+  MENUITEM "&Löschen", CM_GADGETDELETE
+  MENUITEM SEPARATOR
+  MENUITEM "Schaltflächensymbol &kopieren", CM_GADGETCOPYIMAGE
+  MENUITEM "Schaltflächensymbol &einfügen", CM_GADGETPASTEIMAGE
+  MENUITEM "Schaltflächensymbol &bearbeiten...", CM_GADGETAPPEARANCE
+  MENUITEM SEPARATOR
+  MENUITEM "Nur &Symbol", CM_GADGETIMAGE
+  MENUITEM "Nur &Text", CM_GADGETTEXT
+  MENUITEM "Symbol &und Text", CM_GADGETIMAGETEXT
+  MENUITEM SEPARATOR
+  MENUITEM "&Gruppierung beginnen", CM_GADGETBEGINGROUP
+ }
+}
+
+STRINGTABLE
+{
+ IDS_CLOSE,           "Schließen"
+ IDS_NEWTOOLBAR,      "Neue Symbolleiste"
+ IDS_RENAMETOOLBAR,   "Symbolleiste umbenennen"
+ IDS_PROMPTTOOLBAR,   "Name der Symbolleiste:"
+ IDS_CUSTOMIZE,       "Anpassen"
+ IDS_TOOLBAREXIST,    "Es existiert bereits eine Symbolleiste mit dem angegebenen Namen. Bitte geben Sie einen anderen Namen ein."
+ IDS_DELETETOOLBAR,   "Wollen Sie die markierte Symbolleiste wirklich löschen?"
+ CM_SHOWHIDECTLBAR-1, "Hier können Sie Symbolleisten einblenden, ausblenden und anpassen"
+ CM_SHOWHIDECTLBAR+0, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+1, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+2, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+3, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+4, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+5, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+6, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+7, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+8, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_SHOWHIDECTLBAR+9, "Blendet die markierte Symbolleiste ein oder aus"
+ CM_CUSTOMIZE,        "Hier können Sie Symbolleisten einblenden, ausblenden und anpassen"
+ CM_GADGETRESET,      "Stellt die ursprünglichen Einstellungen für die markierte Schaltfläche wieder her"
+ CM_GADGETDELETE,     "Löscht die markierte Schaltfläche"
+ CM_GADGETCOPYIMAGE,  "Kopiert das Symbol der markierten Schaltfläche in die Zwischenablage"
+ CM_GADGETPASTEIMAGE, "Fügt das kopierte Schaltflächensymbol auf der ausgewählten Schaltfläche ein"
+ CM_GADGETAPPEARANCE, "Ändert das Schaltflächensymbol und den Namen der markierten Schaltfläche"
+ CM_GADGETIMAGE,      "Zeigt für die markierte Schaltfläche nur das Symbol an"
+ CM_GADGETTEXT,       "Zeigt für die markierte Schaltfläche nur den Text an"
+ CM_GADGETIMAGETEXT,  "Zeigt für die markierte Schältfläche das Symbol und den Text an"
+ CM_GADGETBEGINGROUP, "Fügt eine Trennlinie vor der markierten Schaltfläche ein"
+}
+
+IDD_TOOLBARS DIALOG 94, 72, 294, 150
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Symbolleisten"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "&Symbolleisten:", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 4, 60, 8
+ CONTROL "", IDC_LB_TOOLBARS, "listbox", LBS_STANDARD | LBS_OWNERDRAWVARIABLE | LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 6, 14, 120, 130
+ CONTROL "&Tooltips anzeigen", IDC_CB_SHOWTOOLTIPS, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 14, 76, 10
+ CONTROL "&Mit Tastaturkombination", IDC_CB_WITHSHORTCUTKEYS, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 26, 90, 10
+ CONTROL "Zieh&punkt anzeigen", IDC_CB_SHOWGRIPPER, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 38, 90, 10
+ CONTROL "Mit &flachen Schaltflächen", IDC_CB_FLATSTYLE, "button", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 132, 50, 96, 10
+ CONTROL "&Neu...", IDC_PB_ADDTOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 228, 4, 60, 14, 0
+ CONTROL "&Umbenennen...", IDC_PB_RENAMETOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 228, 22, 60, 14, 0
+ CONTROL "&Löschen", IDC_PB_DELETETOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 228, 40, 60, 14, 0
+ CONTROL "&Zurücksetzen", IDC_PB_RESETTOOLBAR, "button", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 228, 58, 60, 14, 0
+ CONTROL "Hinweise in Statuszeile", -1, "button", BS_GROUPBOX | WS_CHILD | WS_VISIBLE | WS_GROUP, 132, 94, 96, 50
+ CONTROL "&Keine", IDC_RB_NOHINTS, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 138, 106, 54, 10
+ CONTROL "&Gedrückt", IDC_RB_PRESSHINTS, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 138, 118, 56, 10
+ CONTROL "&Immer", IDC_RB_ENTERHINTS, "button", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 138, 130, 54, 10
+}
+
+IDD_COMMANDS DIALOG 94, 72, 294, 150
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Befehle"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "&Kategorien:", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 4, 60, 8
+ CONTROL "", IDC_LB_CATEGORY, "listbox", LBS_NOTIFY | LBS_HASSTRINGS | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 6, 14, 88, 82
+ CONTROL "Beschreibung:", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 6, 92, 60, 8
+ CONTROL "", IDC_DESCRIPTION, "static", SS_LEFT | SS_SUNKEN | WS_CHILD | WS_VISIBLE, 6, 102, 88, 40
+ CONTROL "Schaltflächen", IDC_BOTTONS, "button", BS_GROUPBOX | WS_CHILD | WS_VISIBLE | WS_GROUP, 102, 4, 186, 90
+ CONTROL "", IDC_LB_BUTTONS, "listbox", LBS_NOTIFY | LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 106, 14, 178, 76
+ CONTROL "Hinweis: Wählen Sie eine Kategorie aus. Klicken Sie auf eine Schaltfläche um die Beschreibung zu sehen, oder um sie in eine Symbolleiste zu ziehen", -1, "static", SS_LEFT | SS_SUNKEN | WS_CHILD | WS_VISIBLE, 102, 102, 186, 26
+ CONTROL "&Auswahl ändern", IDC_PB_MODIFYSELECTION, "OWL_GlyphBtn", 0 | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 102, 130, 186, 14
+}
+
+#endif

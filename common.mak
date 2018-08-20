@@ -48,6 +48,9 @@ SPROCKETDIR = $(TOPDIR)\sprocket
 CLUBDIR     = $(TOPDIR)\club
 KEYBINDDIR  = $(TOPDIR)\keybind
 WAVEMIXDIR  = $(TOPDIR)\wavemix
+LIBARCHIVEDIR = $(TOPDIR)\libarchive
+LIBPNGDIR   = $(TOPDIR)\libpng
+ZLIBDIR     = $(TOPDIR)\zlib
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -67,11 +70,12 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /EHsc- turns off exceptions
 # /wd4996  disables warning (GetVersionExA has been deprecated)
 # -arch:IA32 disables SSE instructions (not supported on ancient Athlon CPUs)
+# /MP enables parallel compiling
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
-             -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
+	     -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
              -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
-				 -TP -WX -GR- -EHsc- -arch:IA32
+	     -TP -WX -GR- -EHsc- -MP -arch:IA32
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -W3 -DBLAKDEBUG
@@ -135,4 +139,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(TOPDIR)\miles\include

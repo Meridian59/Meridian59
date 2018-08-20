@@ -30,7 +30,7 @@ included.
 
 BUILD INSTRUCTIONS
 
-The code has been built successfully with Microsoft Visual Studio 2013
+The code has been built successfully with Microsoft Visual Studio 2017
 Express, which you can download for free at http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
 
 1. Make sure Visual Studio's binaries are in your path, e.g. by using
@@ -87,8 +87,8 @@ The blakserv.cfg file requires some manual changes to run on Linux.
 
 THIRD-PARTY CODE
 
-Meridian uses zlib and libarchive.  zlib was installed from binaries.
-libarchive was built from source, with the following cmake environment
+Meridian uses zlib, libpng libarchive.  All three are built from source.
+libarchive was configured via cmake with the following cmake environment
 variables set to use zlib:
 
 ZLIB_INCLUDE_DIR points to the include directory

@@ -1,0 +1,18 @@
+; 
+
+LIBRARY      WAVEPLAY
+
+EXPORTS
+        WaveMixInit
+        WaveMixActivate
+        WaveMixOpenWave
+        WaveMixOpenChannel
+        WaveMixPlay
+        WaveMixFlushChannel
+        WaveMixCloseChannel
+        WaveMixFreeWave
+        WaveMixCloseSession
+        WaveMixPump
+        WaveMixGetInfo
+	WaveMixConfigureInit
+

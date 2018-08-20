@@ -1,0 +1,16 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resource & command IDs to use with slider.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_SLIDER_RH)
+#define OWL_SLIDER_RH
+
+//
+// Slider thumb bitmap ids
+//
+#define IDB_HSLIDERTHUMB 32000
+#define IDB_VSLIDERTHUMB 32001
+
+#endif  // OWL_SLIDER_RH

@@ -1,0 +1,108 @@
+<HTML><HEAD><TITLE>OWLEXT Readme</TITLE></HEAD>
+
+<BODY bgcolor="#ffffff">
+<blockquote>
+<h2>OWLEXT</h2>
+<hr noshade size=1>
+<FONT FACE="Helvetica,Arial">
+
+<b><P>Overview</P></b>
+<P>OWLEXT (or OwlExt, if you prefer) is the OWL Extensions library that comes on the CD packaged inside the books <I>Core OWL 5.0</I> and <I>Advanced OWL 5.0</I>. It began life with two purposes: One, to demonstrate some of the OWL techniques the book presents, and two, to give those unfamiliar with the concept a chance to see how to build a DLL out of commonly-used classes and routines. However, events just prior to the books' publication forced a dramatic shift in the purpose of OwlExt, and its contents shifted accordingly.</P>
+<P>&nbsp;</P>
+<b><P>The Future of OWL</P></b>
+<P>With the release of Borland C++ 5.02, and C++Builder not long thereafter, Borland announced a shift in its marketing strategy. No longer would Borland sell its C++ compiler as part of the "Borland C++" package; instead, "The next release of Borland C++ will be... C++Builder", to use the direct quote. This had a profound effect not only on the future of Borland International, but on the future of all those applications and programs written in OWL. Borland's decision to make Borland C++ 5.02 the last "Borland C++" release also meant that OWL 5.02 would be the last OWL ever released by Borland, since C++Builder uses the Visual Component Library and not OWL. Naturally, this created no small amount of consternation amongst the world's OWL developers, as evidenced by the volume of traffic on the OWL mailing list on this particular topic.</P>
+
+<P>In response, a small grass-roots effort was begun amongst five developers on the OWL mailing list: Don Griffin, Rich Goldstein, Ron Reynolds, Brian Macy, and myself. We decided to try and help extend the lifetime of OWL as long as was reasonably possible by creating a standalone library (and, possibly, fixes to OWL sometime in the future) that could be publicly distributed.</P>
+
+<P>Towards that end, I volunteered the OwlExt library (as it stood then, all of a dozen classes or so) to become to nucleus of such an effort, and it was accepted. Both Don and Rich (as well as other members of the OWL mailing list) sent me portions of their individual class libraries to include as part of this OwlExt release. Although some of their classes have been incorporated into the OwlExt library as a whole, certainly more work remains to be done to bring all of their work into a unified whole. I also took what freeware classes I could find, and tried to incorporate them into the library, as well. This shift in intent for OwlExt also meant that I had to shift my focus from finalizing the one or two classes remaining to be written, to bringing in the dozens that Rich and Don had written. I believe that it was better for you, the reader, to see more classes on a variety of topics than to see just one or two that I had written. </P>
+
+<P>Unfortunately, this means that several classes that are discussed in the book didn't make it into this release of the OwlExt library. To be specific, <I>THotTextGadget</I> and <I>TTabbedGadgetWindow</I> failed to make it in. The first is a trivial exercise that I'll now claim was an exercise for the reader from the start, but the second I hope to bring into OwlExt fairly soon. On the positive side, you now have a wide variety of classes to examine and dig through, whose list includes but is not limited to:</P>
+
+<UL>
+<I><LI>TBusyCursor </LI>
+<LI>TEditList </LI>
+<LI>TGaugeGadget </LI>
+<LI>TKeyHook, TMouseHook, TMsgHook </LI>
+<LI>TScrollerEx </LI>
+<LI>TProgressDlg</LI></UL>
+</I>
+
+<P>There are many more classes that await integration into the library, and believe that I will be hard at work on bringing them into the fold as time permits. For more information on the OwlExt development effort, be sure to visit the OwlExt Development effort on <A HREF="http://www.starbase21.com/">www.starbase21.com</A>.</P>
+<P>&nbsp;</P>
+<b><P>Future directions of OwlExt</P></b>
+<P>In case you're curious, OwlExt has a variety of potential projects on its plate:</P>
+
+<UL>
+<B><LI>Make OWL and OwlExt portable to other compilers.</B> This would help move OWL to be independent of Borland's compilers, which would aid in the migration of OWL code to other arenas. </LI>
+<B><LI>Add new Common Controls and other new Win32 abilities.</B> This list would include Internet support, possibly even Java-C++ communication, and any other new features Microsoft introduces into the Win32 API set. </LI>
+<B><LI>Bug Fixes.</B> Since Borland will be officially dropping OWL, <I>somebody</I> has to keep up with the inevitable bug reports.</LI></UL>
+
+<P>There have been other, more concrete suggestions, but this is neither the time nor the place to go over them. For more information on OwlExt's efforts, be sure to contact us.</P>
+<P>&nbsp;</P>
+<b><P>Organization of the OwlExt directories</P></b>
+<P>Under the OwlExt directory on the CD, you will find the following directories:</P>
+
+<UL>
+<LI>DOC: This directory contains all documentation on the OwlExt library. Presently, that consists solely of this README file, but future versions of OwlExt may be documented through automatic documentation tools (a la <I>javadoc</I> or the like). </LI>
+<LI>LIB: This directory will contain all .LIB and .DLL files generated during the build process of OwlExt. </LI>
+<LI>OBJ-DD32: This is where all DLL-Debug-32bit .OBJs reside. </LI>
+<LI>OBJ-DR32: This is where all DLL-Retail-32bit .OBJs reside. </LI>
+<LI>OBJ-SD32: This is where all Static-Debug-32bit .OBJs reside. </LI>
+<LI>OBJ-SR32: This is where all Static-Retail-32bit .OBJs reside. </LI>
+<LI>SRC: This is the location of the .CPP, .RC and .IDE files that comprise OwlExt. All include files are located at the root of the OwlExt directory, one level up from SRC. </LI>
+<LI>TEST: This is where the test application resides. Theoretically, any class written for OwlExt should come with its own test application code, but I've tried to integrate many classes together into one application, in order to save time. </LI>
+<LI>TODO: This is just a sample of some of the code that has yet to migrate into the OwlExt library.</LI></UL>
+
+<P>&nbsp;</P>
+<b><P>Installation</P></b>
+<P>Installation of OwlExt is, for the moment, fairly simple. Simply copy the entire directory structure over to your local disk, and set an environment variable to point to the directory which contains OwlExt. In other words, if you copy OwlExt to
+
+<pre>
+<font face="Courier">
+        D:\CODE\OWLEXT
+</font>
+</pre>
+
+then set the environment variable OWLEXT to read
+<pre>
+<font face="Courier">
+        OWLEXT=D:\CODE
+</font>
+</pre>
+
+<P>This allows you to <I>#include</I> the various OwlExt headers in your code as
+
+<pre>
+<font face="Courier">
+        #include &lt;owlext/all.h&gt;
+</font>
+</pre>
+
+which mimics the way OWL headers are included. In order to do this, however, you must make use of a Borland C++ 5.0 "trick" in the Options|Project|Directories tab: the $env() macro. This macro allows you to substitute the value of an environment variable in place of itself, thus allowing you to write your Include path as follows:
+
+<pre>
+<font face="Courier">
+        D:\BC5\INCLUDE;$env(owlext)
+</font>
+</pre>
+
+You can also use this trick (as I have) to make your projects independent of the exact directory structure where Borland was installed:
+
+<pre>
+<font face="Courier">
+        Include = $env(bcroot)\include
+        Lib = $env(bcroot)\lib
+</font>
+</pre>
+
+BCROOT is an environment variable installed when Borland C++ is installed.</P>
+
+<P>Alternatively, if you don't like playing around with environment
+variables, you can copy the contents of the OWLEXT directory's .H
+files to a subdirectory under BC5\INCLUDE called "OWLEXT", and the
+.LIB files to Borland's LIB directory. Personally, I dislike this
+approach, as you're inserting files into somebody else's playground,
+and can potentially lead to file-name conflicts and overwrites
+later.</P>
+</BODY>
+</HTML>

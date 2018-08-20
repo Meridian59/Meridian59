@@ -69,7 +69,8 @@
 #define EDITOR_Save_as 69
 #define Quit_editor 70
 #define Edit 71
-#define Edit_Undo 72
+// Unused; conflicts with a new Windows macro.  akirmse 2018-01-19
+//#define Edit_Undo 72
 #define Edit_Redo 73
 #define Edit_objects 74
 #define Copy_objects 75

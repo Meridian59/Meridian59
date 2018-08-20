@@ -1,0 +1,163 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TEditSearch.
+//----------------------------------------------------------------------------
+
+#include <owl/editsear.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDM_EDITSEARCH) && !defined(__IDM_EDITSEARCH)
+#define __IDM_EDITSEARCH
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDM_EDITSEARCH MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  Popup "&Edit"
+  {
+    MENUITEM  "&Undo\aCtrl+Z",        CM_EDITUNDO
+    MENUITEM  SEPARATOR
+    MENUITEM  "Cu&t\aCtrl+X",         CM_EDITCUT
+    MENUITEM  "&Copy\aCtrl+C",        CM_EDITCOPY
+    MENUITEM  "&Paste\aCtrl+V",       CM_EDITPASTE
+    MENUITEM  "&Delete\aDel",         CM_EDITDELETE
+    MENUITEM  "C&lear All\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "&Search"
+  {
+    MENUITEM  "&Find...",    CM_EDITFIND
+    MENUITEM  "&Replace...", CM_EDITREPLACE
+    MENUITEM  "&Next\aF3",   CM_EDITFINDNEXT
+  }
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDM_EDITSEARCH MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  POPUP "編集(&E)"
+  {
+    MENUITEM  "元に戻す(&U)\aCtrl+Z",     CM_EDITUNDO
+    MENUITEM  SEPARATOR
+    MENUITEM  "切り取り(&T)\aCtrl+X",     CM_EDITCUT
+    MENUITEM  "ｺﾋﾟｰ(&C)\aCtrl+C",         CM_EDITCOPY
+    MENUITEM  "貼り付け(&P)\aCtrl+V",     CM_EDITPASTE
+    MENUITEM  "削除(&D)\aDel",            CM_EDITDELETE
+    MENUITEM  "すべて削除(&L)\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "検索(&S)"
+  {
+    MENUITEM  "文字列の検索(&F)...", CM_EDITFIND
+    MENUITEM  "文字列の置換(&R)...", CM_EDITREPLACE
+    MENUITEM  "次を検索(&N)\aF3",    CM_EDITFINDNEXT
+  }
+}
+#endif
+
+#endif
+
+#if !defined(NO_IDA_EDITSEARCH) && !defined(__IDA_EDITSEARCH)
+#define __IDA_EDITSEARCH
+IDA_EDITSEARCH ACCELERATORS
+{
+  "Z",      CM_EDITUNDO,    VIRTKEY, CONTROL
+  "X",      CM_EDITCUT,    VIRTKEY, CONTROL
+  "C",      CM_EDITCOPY,    VIRTKEY, CONTROL
+  "V",      CM_EDITPASTE,    VIRTKEY, CONTROL
+  VK_DELETE, CM_EDITDELETE,    VIRTKEY
+  VK_DELETE, CM_EDITCLEAR,    VIRTKEY, CONTROL
+  VK_F3,     CM_EDITFINDNEXT, VIRTKEY
+}
+#endif
+
+#if !defined(NO_IDS_EDITSEARCH) && !defined(__IDS_EDITSEARCH)
+#define __IDS_EDITSEARCH
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  CM_EDITUNDO-1,  "Editing commands, undo and Clipboard access"
+  CM_EDITUNDO,    "Undo the last action"
+  CM_EDITCUT,     "Cut the selection and put it on the Clipboard"
+  CM_EDITCOPY,    "Copy the selection to the Clipboard"
+  CM_EDITPASTE,   "Insert the Clipboard contents at the caret"
+  CM_EDITDELETE,  "Delete the selection"
+  CM_EDITCLEAR,   "Clear the document"
+  CM_EDITADD,     "Insert a new line"
+  CM_EDITEDIT,    "Edit the current line"
+  CM_EDITFIND,    "Find the specified text"
+  CM_EDITREPLACE, "Find the specified text and change it"
+  CM_EDITFINDNEXT,"Find the next match"
+
+  IDS_CANNOTFIND, "Cannot find ""%s""."
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  CM_EDITUNDO-1,  "編集ｺﾏﾝﾄﾞ、取り消し、ｸﾘｯﾌﾟﾎﾞｰﾄﾞの操作"
+  CM_EDITUNDO,    "直前の操作の取り消し"
+  CM_EDITCUT,     "選択範囲をｸﾘｯﾌﾟﾎﾞｰﾄﾞへ切り取る"
+  CM_EDITCOPY,    "選択範囲をｸﾘｯﾌﾟﾎﾞｰﾄﾞへｺﾋﾟｰする"
+  CM_EDITPASTE,   "ｸﾘｯﾌﾟﾎﾞｰﾄﾞの内容をｶｰｿﾙの位置に挿入"
+  CM_EDITDELETE,  "選択範囲を削除"
+  CM_EDITCLEAR,   "文書全体を削除"
+  CM_EDITADD,     "新しい行の追加"
+  CM_EDITEDIT,    "現在行の編集"
+  CM_EDITFIND,    "指定文字列の検索"
+  CM_EDITREPLACE, "指定文字列を検索して別の文字列に置換"
+  CM_EDITFINDNEXT,"次に一致する文字列の検索"
+
+  IDS_CANNOTFIND, """%s"" が見つかりません。"
+}
+#endif
+
+#endif
+
+
+#if !defined(NO_BMP_EDITSEARCH) && !defined(__BMP_EDITSEARCH)
+#define __BMP_EDITSEARCH
+CM_EDITFIND BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/find.bmp"
+//CM_EDITREPLACE BITMAP PRELOAD MOVEABLE DISCARDABLE "include/owl/res/findrepl.bmp"
+CM_EDITFINDNEXT BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/findnext.bmp"
+
+CM_EDITUNDO BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/undo.bmp"
+CM_EDITCUT BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/cut.bmp"
+CM_EDITCOPY BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/copy.bmp"
+CM_EDITPASTE BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/paste.bmp"
+
+#endif
+
+#endif  // defined(RC_INVOKED)

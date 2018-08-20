@@ -5,6 +5,26 @@
 *.rsc
 kodbase.txt
 run/*
+lib/meridian.lib
+lib/rscload.lib
+lib/libarchive.lib
+lib/libpng.lib
+lib/waveplay.lib
+lib/zlib.lib
+bin/bbgun.exe
+bin/bc.exe
+bin/blakdeco.exe
+bin/blakdiff.exe
+bin/bmpdump.exe
+bin/makebgf.exe
+bin/makepal.exe
+bin/maketrig.exe
+bin/palcomp.exe
+bin/paldump.exe
+bin/porttest.exe
+bin/rscmerge.exe
+bin/rscprint.exe
+bin/waveplay.dll
 
 #################
 ## Eclipse

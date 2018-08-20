@@ -1,0 +1,43 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with THSlider & TVSlider
+//----------------------------------------------------------------------------
+
+#include <owl/slider.rh>
+
+#if defined(RC_INVOKED)
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+
+
+#if !defined(NO_IDB_HSLIDERTHUMB) && !defined(__IDB_HSLIDERTHUMB)
+#define __IDB_HSLIDERTHUMB
+IDB_HSLIDERTHUMB BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/hslider.bmp"
+#endif
+#undef NO_IDB_HSLIDERTHUMB
+
+#if !defined(NO_IDB_VSLIDERTHUMB) && !defined(__IDB_VSLIDERTHUMB)
+#define __IDB_VSLIDERTHUMB
+IDB_VSLIDERTHUMB BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/vslider.bmp"
+#endif
+#undef NO_IDB_VSLIDERTHUMB
+
+#endif  // defined(RC_INVOKED)

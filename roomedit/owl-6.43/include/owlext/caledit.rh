@@ -1,0 +1,15 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// .RH file for TCalendarEdit
+//
+// Resource IDs to use with ctxhelpm.rc and ctxhelpm.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_CALEDIT_RH)
+#define OWL_CALEDIT_RH
+
+#define IDB_CALBTN          32005
+#define IDB_CALPREVNEXT     32006
+#define IDS_CAL_ERRMSG      40006
+
+#endif //OWL_CALEDIT_RH

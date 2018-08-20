@@ -1,0 +1,33 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//----------------------------------------------------------------------------
+#include <owlext/caledit.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+#include "windows.h"
+#endif
+
+
+IDB_CALBTN BITMAP LOADONCALL MOVEABLE DISCARDABLE "res/calbtn.BMP"
+
+
+IDB_CALPREVNEXT BITMAP "res/calpnbtn.BMP"
+
+
+STRINGTABLE
+{
+ IDS_CAL_ERRMSG, "Incorrect date !"
+// IDS_FRENCH_ERRMSG,  "Date incorrecte !"
+// IDS_GERMAN_ERRMSG,  "Invalide Datum !"
+// IDS_SPANISH_ERRMSG, "Invalido data !"
+}
+
+#endif

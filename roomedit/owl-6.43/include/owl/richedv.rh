@@ -1,0 +1,29 @@
+// ObjectWindows
+// Copyright (c) 1998 by Bidus Yura, All Rights Reserved
+//
+// Definition of class TRichEditView
+//  Constant definitions for all resources for TRichEditView.
+// Based on Russell Morris class.
+//----------------------------------------------------------------------------
+#if !defined(OWL_RICHEDV_RH)   // Sentry use file only if it's not already included.
+#define OWL_RICHEDV_RH
+
+//
+// Application specific definitions:
+//
+#define CM_FORMATFONT       24371
+#define CM_FORMATCOLOR      24372
+#define CM_FORMATBOLD       24373
+#define CM_FORMATITALIC     24374
+#define CM_FORMATUNDERLINE  24375
+#define CM_FORMATSTRIKEOUT  24376
+//for menu CM_PARAGRAPHLEFT-1
+#define CM_PARAGRAPHLEFT    24378
+#define CM_PARAGRAPHCENTER  24379
+#define CM_PARAGRAPHRIGHT   24380
+#define CM_PARAGRAPHBULLET  24381
+
+#define IDM_RICHEDITVIEW    32583
+#define IDA_RICHEDITVIEW    32584
+
+#endif  // OWL_RICHEDV_RH

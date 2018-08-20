@@ -1,0 +1,37 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//  Copyright © 1998 by Yura Bidus. All Rights Reserved.
+//
+// .RC file for TDirDialog; original code by Kent Reisdorph:
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//----------------------------------------------------------------------------
+#include <owlext/dirdialg.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+#include "windows.h"
+#endif
+
+
+IDD_DIRDLG DIALOG 6, 15, 237, 151
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose Directory"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "OK", IDOK, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 182, 61, 50, 14
+ CONTROL "Cancel", IDCANCEL, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 182, 80, 50, 14
+ CONTROL "Help", IDHELP, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 182, 108, 50, 14
+ CONTROL "Current Directory:", -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 5, 10, 121, 8
+ CONTROL "", IDC_CURRENTDIR, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 5, 21, 221, 8
+ CONTROL "", IDC_DIRTREE, "SysTreeView32", 7 | WS_CHILD | WS_VISIBLE | WS_BORDER, 5, 30, 168, 116, 0x200L
+}
+
+IDB_DIRDLG_TREEIMAGE BITMAP "res/dirimage.BMP"
+#endif  // defined(RC_INVOKED)
+

@@ -1,0 +1,36 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// .RH file for THLinkCtrl; original code by Dieter Windau:
+//
+// Resource IDs to use with hlinkctl.rc and hlinkctl.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_HLINKCTL_RH)
+#define OWL_HLINKCTL_RH
+
+// dialog
+#define IDD_HLINK_PROPERTIES            32518
+
+//  icon
+#define IDI_HLINK_URL                   32002
+// cursor
+#define IDC_HLINK                       1015
+
+//  menu
+#define IDM_HLINK_POPUP                 32600
+
+// string
+#define IDS_HLINK_PROPERTIES             40005
+
+#define IDC_NAME                        101
+#define IDC_URL_PROMPT                  102
+#define IDC_URL                         103
+
+#define ID_POPUP_COPYSHORTCUT           32771
+#define ID_POPUP_PROPERTIES             32773
+#define ID_POPUP_ADDTOFAVORITES         32774
+#define ID_POPUP_ADDTODESKTOP           32775
+#define ID_POPUP_OPEN                   32776
+
+
+#endif // OWL_HLINKCTL_RH

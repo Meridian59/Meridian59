@@ -1892,7 +1892,7 @@ int C_GetTime(int object_id,local_var_type *local_vars,
         than that.  So, we subtract off time to compensate.
     */
 
-   ret_val.v.data = GetTime() - 1400000000L;    // Offset to sometime in May 2014
+   ret_val.v.data = GetTime() - 1534000000L;    // Offset to sometime in mid-2018
 	
 	return ret_val.int_val;
 }

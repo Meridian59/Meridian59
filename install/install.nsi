@@ -3,9 +3,11 @@
 ; Installer for Meridian 59 client
 ;--------------------------------
 
+!addplugindir ".\plugins"
 !include FontReg.nsh
 !include FontName.nsh
 !include WinMessages.nsh
+!include UAC.nsh
 
 !define SOURCEDIR "..\run\installclient"
 
@@ -36,7 +38,7 @@ RequestExecutionLevel user
 Function .OnInit
  
 UAC_Elevate:
-    UAC::RunElevated 
+    !insertmacro UAC_RunElevated
     StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
     StrCmp 0 $0 0 UAC_Err ; Error?
     StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
@@ -61,11 +63,11 @@ FunctionEnd
 
 
 Function .OnInstFailed
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
  
 Function .OnInstSuccess
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
 ;--------------------------------
 
@@ -123,7 +125,7 @@ Function InstallWithUserPrivilege
   update_ini_timestamp:
 
     ; Set download time to reflect new installer
-    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 193
+    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 195
 
   no_previous_install:
 
@@ -166,8 +168,7 @@ Section "Meridian 59 (required)"
   WriteUninstaller "uninstall.exe"
 
   ; Install resources and copy old settings at user level
-  GetFunctionAddress $0 InstallWithUserPrivilege
-  UAC::ExecCodeSegment $0
+!insertmacro UAC_AsUser_Call function InstallWithUserPrivilege ${UAC_SYNCREGISTERS}|${UAC_SYNCINSTDIR}
 SectionEnd
 
 ; Optional section (can be disabled by the user)
@@ -200,7 +201,7 @@ SectionEnd
 
 Function un.OnInit
 UAC_Elevate:
-    UAC::RunElevated 
+    !insertmacro UAC_RunElevated
     StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
     StrCmp 0 $0 0 UAC_Err ; Error?
     StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
@@ -224,11 +225,11 @@ UAC_Success:
 FunctionEnd
 
 Function un.OnUnInstFailed
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
  
 Function un.OnUnInstSuccess
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
 
 Section "Uninstall"

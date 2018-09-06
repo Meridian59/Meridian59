@@ -396,7 +396,9 @@
 #define IDC_MAP_ANNOTATIONS             1202
 #define IDC_SOUND_VOLUME                1205
 #define IDC_MUSIC_VOLUME                1206
+#define IDC_SERVER_101                  1206
 #define IDC_SOUND_VOLUME2               1207
+#define IDC_SERVER_102                  1207
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -454,9 +456,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        187
+#define _APS_NEXT_RESOURCE_VALUE        188
 #define _APS_NEXT_COMMAND_VALUE         3513
-#define _APS_NEXT_CONTROL_VALUE         1206
+#define _APS_NEXT_CONTROL_VALUE         1208
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif

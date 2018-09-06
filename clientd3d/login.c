@@ -199,7 +199,7 @@ Bool GetLogin(void)
  */
 BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 {
-   static HWND hUser, hPasswd, hServer;        /* Edit boxes in dialog */
+   static HWND hUser, hPasswd;        /* Edit boxes in dialog */
    static HWND hGroupBox, hTryPreviewButton;
    int value;
    BOOL success;
@@ -210,25 +210,27 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       CenterWindow(hDlg, GetParent(hDlg));
       hUser = GetDlgItem(hDlg, IDC_USERNAME);
       hPasswd = GetDlgItem(hDlg, IDC_PASSWORD);
-      hServer = GetDlgItem(hDlg, IDC_SERVERNUM);
       hGroupBox = GetDlgItem(hDlg, IDC_NEW_TO_MERIDIAN_59);
 
       Edit_LimitText(hUser, MAXUSERNAME);
       Edit_LimitText(hPasswd, MAXPASSWORD);
-      Edit_LimitText(hServer, MAXSERVERNUM);
 
       SetWindowFont(hUser, GetFont(FONT_INPUT), FALSE);
       SetWindowFont(hPasswd, GetFont(FONT_INPUT), FALSE);
-      SetWindowFont(hServer, GetFont(FONT_INPUT), FALSE);
 
       // Set server number, if it's valid
+      if (config.comm.server_num == 101) {
+        CheckDlgButton(hDlg, IDC_SERVER_101, TRUE);
+      } else if (config.comm.server_num == 102) {
+        CheckDlgButton(hDlg, IDC_SERVER_102, TRUE);
+      }
       if (config.comm.server_num != -1)
       {
-         SetDlgItemInt(hDlg, IDC_SERVERNUM, config.comm.server_num, FALSE);
-	 
-	 // If already logged in, can't change server number
-	 if (connection != CON_NONE)
-	    EnableWindow(hServer, FALSE);
+        // If already logged in, can't change server number
+        if (connection != CON_NONE) {
+          EnableWindow(GetDlgItem(hDlg, IDC_SERVER_101), FALSE);
+          EnableWindow(GetDlgItem(hDlg, IDC_SERVER_102), FALSE);
+        }
       }
 
       /* If we have a default name, go to password edit box */
@@ -242,7 +244,6 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	 Edit_SetText(hPasswd, "GUEST");
 	 EnableWindow(hUser, FALSE);
 	 EnableWindow(hPasswd, FALSE);
-	 EnableWindow(hServer, FALSE);	 
 	 EnableWindow(GetDlgItem(hDlg,IDC_OK), FALSE);
 	 GetWindowRect(hGroupBox, &rc);
 	 bottom = rc.bottom + 5;
@@ -302,12 +303,13 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	    
 	    if (success)
 	       PostMessage(hDlg, WM_COMMAND, IDC_OK, 0);
-	    else SetFocus(hServer);
+	    else SetFocus(GetDlgItem(hDlg, IDC_SERVER_101));
 	    return True;	    
 	 }
 
-	 if (GetFocus() == hServer)
-	    PostMessage(hDlg, WM_COMMAND, IDC_OK, 0);
+	 if (GetFocus() == GetDlgItem(hDlg, IDC_SERVER_101) ||
+       GetFocus() == GetDlgItem(hDlg, IDC_SERVER_102))
+     PostMessage(hDlg, WM_COMMAND, IDC_OK, 0);
 	 return TRUE;
 
       case IDC_OK:
@@ -315,18 +317,7 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	 Edit_GetText(hUser, config.username, MAXUSERNAME + 1);
 	 Edit_GetText(hPasswd, config.password, MAXPASSWORD + 1);
 
-	 value = GetDlgItemInt(hDlg, IDC_SERVERNUM, &success, FALSE);
-	 if (!success)
-	 {
-	    // If logging in as "guest", no server number required
-	    if (!stricmp(config.username, GetString(hInst, IDS_GUEST)))
-	       value = config.server_guest;
-	    else
-	    {
-	       ClientError(hInst, hDlg, IDS_NOSERVERNUM);
-	       return TRUE;
-	    }
-	 }
+   value = (IsDlgButtonChecked(hDlg, IDC_SERVER_102)) ? 102 : 101;
 	 
 	 // If value changed, set server name and socketport
 	 if (value != config.comm.server_num)

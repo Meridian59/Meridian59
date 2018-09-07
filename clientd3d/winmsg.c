@@ -135,10 +135,6 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	
 	SetMainCursor(LoadCursor(NULL, IDC_ARROW));
 	
-	// Find default Web browser, if not set manually
-	if (config.default_browser)
-		WebFindDefaultBrowser();
-	
 	return TRUE;
 }
 /****************************************************************************/

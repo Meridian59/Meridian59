@@ -146,12 +146,8 @@ void AbortPreferencesDialog(void)
 /*****************************************************************************/
 BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 {
-   static HWND hBrowser;
-   static Bool browser_changed;
    Bool toolbar_changed, lagbox_changed, temp;
    CommSettings *comm = &config.comm;
-   OPENFILENAME ofn;
-   static char *dir;   // Working directory before dialog (OpenFile may change it)
    int new_val;
 
    switch (message)
@@ -165,14 +161,6 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       }
       hPreferencesDialog = hDlg;
       
-      hBrowser = GetDlgItem(hDlg, IDC_BROWSER);
-      
-      Edit_LimitText(hBrowser, MAX_PATH);
-
-      SetWindowFont(hBrowser, GetFont(FONT_INPUT), FALSE);
-
-      SetWindowText(hBrowser, config.browser);
-
       CheckDlgButton(hDlg, IDC_SCROLLLOCK, config.scroll_lock);
       CheckDlgButton(hDlg, IDC_DRAWNAMES, config.draw_names);
       CheckDlgButton(hDlg, IDC_TOOLTIPS, config.tooltips);
@@ -203,38 +191,11 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       Trackbar_SetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME), config.sound_volume);
       Trackbar_SetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), config.music_volume);
       
-      dir = (char *) SafeMalloc(MAX_PATH + 1);
-      GetWorkingDirectory(dir, MAX_PATH);
-
-      browser_changed = False;
       return TRUE;
 
    case WM_COMMAND:
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
-      case IDC_BROWSER:
-         if (GET_WM_COMMAND_CMD(wParam, lParam) != EN_CHANGE)
-            break;
-         
-         browser_changed = True;
-         return TRUE;
-         
-      case IDC_FIND:
-         memset(&ofn, 0, sizeof(OPENFILENAME));
-         ofn.lStructSize = sizeof(OPENFILENAME);
-         ofn.hwndOwner = hDlg;
-         ofn.lpstrFilter = EXE_filter;
-         ofn.lpstrFile = config.browser;
-         ofn.nMaxFile = MAX_PATH;
-         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-         if (GetOpenFileName(&ofn))
-         {
-            SetWindowText(hBrowser, config.browser);
-            browser_changed = True;
-         }
-         else debug(("GetOpenFileName failed, error = %d\n", CommDlgExtendedError()));
-         return TRUE;
-         
       case IDCANCEL:
          EndDialog(hDlg, IDCANCEL);
          return TRUE;
@@ -250,11 +211,6 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          return TRUE;
          
       case IDOK:
-         Edit_GetText(hBrowser, config.browser, MAX_PATH);
-         
-         if (browser_changed)
-            config.default_browser = False;
-         
          config.scroll_lock   = IsDlgButtonChecked(hDlg, IDC_SCROLLLOCK);
          config.draw_names    = IsDlgButtonChecked(hDlg, IDC_DRAWNAMES);
          config.tooltips      = IsDlgButtonChecked(hDlg, IDC_TOOLTIPS);
@@ -321,11 +277,6 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       break;
       
    case WM_DESTROY:
-      // Restore working drive and directory
-      if (chdir(dir) != 0)
-         debug(("chdir failed to %s\n", dir));
-      SafeFree(dir);
-      
       hPreferencesDialog = NULL;
       return TRUE;
    }

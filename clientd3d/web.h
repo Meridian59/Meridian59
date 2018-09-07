@@ -12,7 +12,6 @@
 #ifndef _WEB_H
 #define _WEB_H
 
-Bool WebFindDefaultBrowser(void);
 void WebLaunchBrowser(char *url);
 
 #endif /* #ifndef _WEB_H */

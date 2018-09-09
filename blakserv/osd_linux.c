@@ -55,10 +55,12 @@ void RunMainLoop(void)
    struct epoll_event notify_events[num_notify_events];
    int i;
 
+   signal(SIGPIPE, SIG_IGN);
+
    while (!GetQuit())
    {
 	   ms = GetMainLoopWaitTime();
-	   
+
 	   // wait up to ms, dispatch any socket events
 	   int val = epoll_wait(fd_epoll, notify_events, num_notify_events, ms);
 	   if (val == -1)
@@ -101,7 +103,7 @@ void RunMainLoop(void)
 				   }
 			   }
 		   }
-		   
+
 	   }
 	   EnterServerLock();
 	   PollSessions(); /* really just need to check session timers */
@@ -142,9 +144,9 @@ bool FindMatchingFiles(const char *path, const char *extension, std::vector<std:
 				}
 		}
 	}
-   
+
 	closedir(dir);
-   
+
 	return true;
 }
 
@@ -168,18 +170,18 @@ void StartupPrintf(const char *fmt,...)
 {
 	char s[200];
 	va_list marker;
-	
+
 	va_start(marker,fmt);
 	vsprintf(s,fmt,marker);
-	
-	
+
+
 	if (strlen(s) > 0)
 	{
 		if (s[strlen(s)-1] == '\n') /* ignore \n char at the end of line */
 			s[strlen(s)-1] = 0;
 	}
 	va_end(marker);
-	
+
 	printf("Startup: %s\n", s);
 }
 
@@ -265,8 +267,8 @@ void StartAsyncSession(session_node *s)
 void FatalErrorShow(const char *filename,int line,const char *str)
 {
 	char s[5000];
-	
+
 	printf(s,"Fatal Error File %s line %i\r\n\r\n%s",filename,line,str);
-	
+
 	exit(1);
 }

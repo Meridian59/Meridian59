@@ -186,9 +186,9 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 	}
 
 #ifdef BLAK_PLATFORM_LINUX
-    int flags = fcntl(sock,F_GETFL,0);
+    int flags = fcntl(new_sock,F_GETFL,0);
     flags |= O_NONBLOCK;
-    if (fcntl(sock,F_SETFL,flags) < 0) {
+    if (fcntl(new_sock,F_SETFL,flags) < 0) {
         eprintf("AcceptSocketConnections error setting non-blocking\n");
         return;
     }

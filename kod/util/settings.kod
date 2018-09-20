@@ -145,7 +145,7 @@ properties:
    % useful to prevent flame wars and spamming, it also reduces player's
    % ability to ask questions and socialize.  (Puts a damper on trivia
    % contests too!)  This value can be changed to tweak the penalty in realtime
-   piBroadcastManaCostPercent = 8
+   piBroadcastManaCostPercent = 50
 
 messages:
 

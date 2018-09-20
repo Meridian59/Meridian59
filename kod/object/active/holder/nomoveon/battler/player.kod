@@ -3216,7 +3216,7 @@ messages:
    "Called when the user wants to broadcast a string.  Return True/False, "
    "and use some mana too."
    {
-      local iCost;
+      local iCost, iBroadcastPenaltyPercent;
       
       if piFlags & PFLAG_SQUELCHED
       {
@@ -3227,7 +3227,15 @@ messages:
 
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
-         iCost = Bound(piMax_mana/2+1,11,$);
+         iBroadcastPenaltyPercent = Send(Send(SYS,@GetSettings),@GetBroadcastManaCostPercent);
+
+         if iBroadcastPenaltyPercent = 0
+         {
+            return TRUE;
+         }
+            
+         iCost = Bound((piMax_Mana * iBroadcastPenaltyPercent / 100 + 1),1,$);
+
          if piMana < iCost
          {
             Send(self,@MsgSendUser,#message_rsc=player_cant_broadcast);

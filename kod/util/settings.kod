@@ -140,6 +140,12 @@ properties:
    % a player in hatred calculations. This is off by default, enabling it
    % will allow players to attack monsters without them fighting back.
    pbAlwaysCheckMonsterChasers = FALSE
+   
+   % Broadcast mana penalty in percent.  While the cost to broadcast can be
+   % useful to prevent flame wars and spamming, it also reduces player's
+   % ability to ask questions and socialize.  (Puts a damper on trivia
+   % contests too!)  This value can be changed to tweak the penalty in realtime
+   piBroadcastManaCostPercent = 8
 
 messages:
 
@@ -343,5 +349,9 @@ messages:
       return pbAlwaysCheckMonsterChasers;
    }
 
+   GetBroadcastManaCostPercent()
+   {
+      return piBroadcastManaCostPercent;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

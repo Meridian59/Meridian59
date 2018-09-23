@@ -617,19 +617,32 @@ messages:
       return;
    }
 
-   IsEnchanted(what = $)
+   IsEnchanted(what = $, byClass = &Spell)
    "Returns whether or not currently enchanted by <what>."
    {
       local i;
 
-      for i in plEnchantments
+      if what = $
       {
-         if Nth(i,2) = what
+         for i in plEnchantments
          {
-            return TRUE;
+            if IsClass(Nth(i,2),byClass)
+            {
+               return TRUE;
+            }
          }
       }
-
+      else
+      {
+         for i in plEnchantments
+         {
+            if Nth(i,2) = what
+            {
+               return TRUE;
+            }
+         }      
+      }
+  
       return FALSE;
    }
 
@@ -5829,6 +5842,29 @@ messages:
       return;
    }
 
+   SendLightingInformation()
+   {
+      % Hold gives off a purple glow
+      if Send(self,@IsEnchanted,#byClass=&Hold)
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),1,100, 2,LIGHT_BPURPLE);
+         return;
+      }
+      % Blind gives off a dim green glow
+      if Send(self,@IsEnchanted,#byClass=&Blind)
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),1,50, 2,LIGHT_BGREEN);
+         return;
+      }
+      % Dazzle is blazing white
+      if Send(self,@IsEnchanted,#byClass=&Dazzle)
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),1,255, 2,LIGHT_WHITE);
+         return;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

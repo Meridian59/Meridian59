@@ -2821,6 +2821,11 @@ messages:
       {
          Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_PLAYER);
       }
+      
+      if IsClass(what,&Hold)
+      {
+         Send(self,@SetOverlay,#what=what);
+      }
 
       return;
    }
@@ -12311,6 +12316,25 @@ messages:
 
    SendLightingInformation()
    {
+      % Hold gives off a purple glow
+      if Send(self,@IsEnchanted,#byClass=&Hold)
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),1,100, 2,LIGHT_BPURPLE);
+         return;
+      }
+      % Blind gives off a dim green glow
+      if Send(self,@IsEnchanted,#byClass=&Blind)
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),1,50, 2,LIGHT_BGREEN);
+         return;
+      }
+      % Dazzle is blazing white
+      if Send(self,@IsEnchanted,#byClass=&Dazzle)
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),1,255, 2,LIGHT_WHITE);
+         return;
+      }
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)

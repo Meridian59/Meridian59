@@ -18,7 +18,7 @@ constants:
    SECTOR_NODE1 = 4
    SECTOR_NODE2 = 5
 
-   SLAM_TIME = 2000
+   SLAM_TIME = 5500
    FIGHT_TIME = 10000
 
    MIN_GEN_ROW = 29

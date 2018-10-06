@@ -252,77 +252,93 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
-int InsertListElem(int n,int list_id,val_type new_val)
+int InsertListElem(int n, int list_id, val_type new_val)
 {
-   int new_list_id;
-   list_node *l, *prev, *new_node;
+	int new_list_id, temp_list_id = -1;
+	list_node *l, *prev = NULL, *new_node;
 
-   if (n  == 0)
-   {
-      bprintf("InsertListElem given invalid list element %i, returning old list\n",
-         n);
-      return list_id;
-   }
+	if (n == 0)
+	{
+		bprintf("InsertListElem given invalid list element %i, returning old list\n",
+			n);
+		return list_id;
+	}
 
-   l = GetListNodeByID(list_id);
+	// If the element we're adding is a list, get the list node now before
+	// allocating another node, in case memory is resized.
+	if (new_val.v.tag == TAG_LIST)
+		temp_list_id = new_val.v.data;
+	// Allocate first, so a resize doesn't clobber list references.
+	new_list_id = AllocateListNode();
+	new_node = GetListNodeByID(new_list_id);
+	if (!new_node)
+	{
+		bprintf("InsertListElem couldn't allocate new node! %i\n",
+			new_list_id);
+		return list_id;
+	}
 
-   // Start at i = 2, n = 1 handled already.
-   for (int i = 2; i <= n; i++)
-   {
-      if (!l)
-      {
-         bprintf("InsertListElem found invalid list node somewhere in list %i\n",
-            list_id);
-         return list_id;
-      }
-      if (l->rest.v.tag != TAG_LIST)
-      {
-         // Add the new value to the end of the list.
-         new_list_id = AllocateListNode();
-         new_node = GetListNodeByID(new_list_id);
-         if (!new_node)
-         {
-            bprintf("InsertListElem couldn't allocate new node! %i\n",
-               new_list_id);
-            return list_id;
-         }
-         new_node->rest.int_val = NIL;
-         new_node->first.int_val = new_val.int_val;
-         // Previous node points to this one.
-         l->rest.v.tag = TAG_LIST;
-         l->rest.v.data = new_list_id;
-         return list_id;
-      }
-      prev = l;
-      l = GetListNodeByID(l->rest.v.data);
-   }
+	l = GetListNodeByID(list_id);
 
-   if (!l || !prev)
-   {
-      bprintf("InsertListElem found invalid list node somewhere in list %i\n",
-         list_id);
-      return list_id;
-   }
+	// Start at i = 2, n = 1 handled already.
+	for (int i = 2; i <= n; i++)
+	{
+		if (!l)
+		{
+			bprintf("InsertListElem found invalid list node somewhere in list %i\n",
+				list_id);
+			return list_id;
+		}
+		if (l->rest.v.tag != TAG_LIST)
+		{
+			// Add the new value to the end of the list.
+			new_node->rest.int_val = NIL;
 
-   new_list_id = AllocateListNode();
-   new_node = GetListNodeByID(new_list_id);
+			// Use temp id if element we're adding is a list, in case allocate
+			// resized memory.
+			if (temp_list_id >= 0)
+			{
+				new_node->first.v.tag = TAG_LIST;
+				new_node->first.v.data = temp_list_id;
+			}
+			else
+				new_node->first.int_val = new_val.int_val;
 
-   if (!new_node)
-   {
-      bprintf("InsertListElem couldn't allocate new node! %i\n",
-         new_list_id);
-      return list_id;
-   }
+			// Previous node points to this one.
+			l->rest.v.tag = TAG_LIST;
+			l->rest.v.data = new_list_id;
+			return list_id;
+		}
+		prev = l;
+		l = GetListNodeByID(l->rest.v.data);
+	}
 
-   // This node is inserted in position of the existing one, so use its rest data.
-   // Points to the old node.
-   new_node->rest.v.data = prev->rest.v.data;
-   new_node->rest.v.tag = TAG_LIST;
-   new_node->first.int_val = new_val.int_val;
-   // Previous node points to this one.
-   prev->rest.v.data = new_list_id;
+	if (!l || !prev)
+	{
+		bprintf("InsertListElem found invalid list node somewhere in list %i\n",
+			list_id);
+		return list_id;
+	}
 
-   return list_id;
+	// This node is inserted in position of the existing one, so use its rest data.
+	// Points to the old node.
+	new_node->rest.v.data = prev->rest.v.data;
+	new_node->rest.v.tag = TAG_LIST;
+
+	// Use temp id if element we're adding is a list, in case allocate
+	// resized memory.
+	if (temp_list_id >= 0)
+	{
+		new_node->first.v.tag = TAG_LIST;
+		new_node->first.v.data = temp_list_id;
+	}
+	else
+		new_node->first.int_val = new_val.int_val;
+
+	// Previous node points to this one.
+	prev->rest.v.data = new_list_id;
+
+	return list_id;
 }
 
 int DelListElem(val_type list_id,val_type list_elem)

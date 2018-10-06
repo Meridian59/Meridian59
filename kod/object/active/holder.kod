@@ -867,7 +867,7 @@ messages:
 
       if Send(oThing,@GetObjectType) = ACTIVE
       {
-         plActive = Cons(node,plActive);
+         plActive = send(self, @HolderDoAddNode,#node=node,#lNodes=plActive);
          Send(oThing,@NewOwner,#what=self);
          for i in Rest(plActive)
          {
@@ -880,7 +880,7 @@ messages:
 
       if Send(oThing,@GetObjectType) = PASSIVE
       {
-         plPassive = Cons(node,plPassive);
+         plPassive = send(self,@HolderDoAddNode,#node=node,#lNodes=plPassive);
          Send(oThing,@NewOwner,#what=self);
          for i in plActive
          {
@@ -893,6 +893,12 @@ messages:
       
       Debug("Object is neither active nor passive:",oThing);
       return;
+   }
+
+   HolderDoAddNode(node = $,lNodes = $)
+   {
+      lNodes = Cons(node,lNodes);
+      return lNodes;
    }
 
    CountItems()

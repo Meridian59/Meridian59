@@ -70,6 +70,31 @@ messages:
       propagate;
    }
 
+   HolderDoAddNode(node = $, lNodes = $)
+   {
+      local oCurrentNode, index, inserted;
+      index = 1;
+      inserted = FALSE;
+
+      for oCurrentNode in lNodes
+      {
+         if GetClass(oCurrentNode) = GetClass(node)
+         {
+            InsertListElem(lNodes,index,node);
+            inserted = TRUE;
+            break;
+         }
+         index = index + 1;
+      }
+
+      if inserted = FALSE
+      {
+         lNodes = Cons(node, lNodes);
+      }
+
+      return lNodes;
+   }
+
    Delete()
    {      
       poPlayer = $;

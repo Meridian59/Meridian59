@@ -28,6 +28,12 @@ resources:
    hold_on = "A magical tingling pulses through your body.  You are unable to move."
    hold_off = "The magical hold lifts and you are able to move once more."
 
+   hold_player_rsc = \
+      holdrings.bgf
+
+   hold_ring_projectile_rsc = \
+      holdproj.bgf
+
 classvars:
 
    vrName = hold_name_rsc
@@ -51,6 +57,20 @@ classvars:
 
    % In seconds, since it works off GetTime()
    viPostCast_time = 2
+
+   % Graphical layer as represented on the player
+   viLayer = 9
+
+   vrHoldRings = hold_player_rsc
+
+   vrProjectile_Icon = hold_ring_projectile_rsc
+   viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 100
+   viProjectileLightColor = LIGHT_BPURPLE
+   viProjectileSpeed = 12
 
 properties:
 
@@ -117,12 +137,37 @@ messages:
       propagate;   % Check other things higher up
    }
 
-   CastSpell(who=$, lTargets=$, iSpellpower=0)
+   CastSpell(who=$, oWielder=$, lTargets=$, iSpellpower=0)
    {
-      local oTarget,oSpell,iDuration;
+      local oTarget,oSpell,iDuration,oOrigin,oRoom;
 
       oTarget = First(lTargets);
       iDuration = Send(self,@GetDuration,#ispellPower=iSpellPower);
+
+      % Check if we're using graphical projectiles
+      if Send(Send(SYS,@GetSettings),@GetUseCCProjectiles)
+      {
+         % We shoot a projectile even if the target resists, so this must be before free action.
+         % The caster will know the target resisted because the target will not be surrounded by rings or glow purple.
+         if who <> $
+         {
+            % Weapons can proc this spell. In that case, we use their wielder.
+            if oWielder <> $
+            {
+               oOrigin = oWielder;
+            }
+            else
+            {
+               oOrigin = who;
+            }
+            oRoom = Send(oOrigin,@GetOwner);
+            if oRoom <> $
+               AND IsClass(oRoom,&Room)
+            {
+               Send(oRoom,@SomethingShot,#who=oOrigin,#target=oTarget,#projectile=self,#flags=viProjectileFlag);
+            }
+         }
+      }
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_FREE_ACTION);
 
@@ -156,6 +201,10 @@ messages:
       {
          % class is &Monster
          Send(oTarget,@ResetBehaviorFlags);
+         if Send(oTarget,@GetOwner) <> $
+         {
+            Post(Send(oTarget,@GetOwner),@SomethingChanged,#what=oTarget);
+         }
       }
       
       propagate;
@@ -163,6 +212,12 @@ messages:
 
    EndEnchantment(who = $,report = TRUE,state=$)
    {
+      if who <> $
+         AND IsClass(who,&Player)
+      {
+         Send(who,@RemoveOverlay,#what=self);
+      }
+
       if IsClass(who,&Player)
       {
          Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
@@ -175,7 +230,11 @@ messages:
       {
          % This has to be done AFTER the enchantment is gone from the
          %  monster's ench list - Post it
-         Post(who,@ResetBehaviorFlags);   
+         Post(who,@ResetBehaviorFlags);  
+         if Send(who,@GetOwner) <> $
+         {
+            Post(Send(who,@GetOwner),@SomethingChanged,#what=who);
+         } 
       }
      
       return;
@@ -300,6 +359,84 @@ messages:
       return;
    }
 
+   GetLayer()
+   {
+      return viLayer;
+   }
+   
+   GetOverlayHotspot()
+   {
+      return HS_LEGS;
+   }
+
+   SendOverlayAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,80, 2,1, 2,5);
+    %  AddPacket(1,ANIMATE_NONE,2,1); % group 2 is the player-overlay group
+      
+      return;
+   }
+
+   SendInventoryOverlays()
+   {
+      AddPacket(1, 0);
+      
+      return;
+   }
+
+   SendOverlayInformation()
+   {
+      AddPacket(4,Send(self,@GetOverlay));
+      AddPacket(1,Send(self,@GetOverlayHotspot));
+      Send(self,@SendOverlayAnimation);
+      
+      return;
+   }
+
+   GetNumberOverlays()
+   {
+      % Most overlay items only offer one overlay.
+      %  Some items like weapons and bows may offer two.
+      return 1;
+   }
+
+   GetOverlay(animation = $)
+   {
+      return hold_player_rsc;
+   }
+
+   % Return the icon used to display a spell shooting through the air.
+   GetProjectileIcon()
+   {
+      return vrProjectile_Icon;
+   }
+
+   % Return the speed at which a particular spell should appear to shoot through the air.
+   GetProjectileSpeed(who=$, target=$)
+   {
+      return viProjectileSpeed;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 6);   % 40ms between animations
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      return viProjectileLightFlags;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      return viProjectileLightIntensity;
+   }
+
+   GetProjectileLightColor()
+   {
+      return viProjectileLightColor;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

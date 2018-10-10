@@ -15,6 +15,10 @@ BGFS = \
 	$(OUTDIR)\mystwdov.bgf \
 	$(OUTDIR)\ring3.bgf \
 	$(OUTDIR)\povmystsw.bgf \
+	$(OUTDIR)\holdrings.bgf \
+	$(OUTDIR)\holdproj.bgf \
+	$(OUTDIR)\blindproj.bgf \
+	$(OUTDIR)\dazzleproj.bgf \
 
 all: makedirs $(BGFS)
 

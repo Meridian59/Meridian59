@@ -1,0 +1,25 @@
+# glowing white star thrown by the dazzle spell
+#^Applied to Hotspot: 0
+#*Groups: 9
+#* all simple frames of the white star
+-s 16
+9
+dazzleproj-0.bmp     [0, -100] 
+dazzleproj-1.bmp     [0, -100] 
+dazzleproj-2.bmp     [0, -100] 
+dazzleproj-3.bmp     [0, -100] 
+dazzleproj-4.bmp     [0, -100] 
+dazzleproj-5.bmp     [0, -100] 
+dazzleproj-6.bmp     [0, -100] 
+dazzleproj-7.bmp     [0, -100] 
+dazzleproj-8.bmp     [0, -100] 
+9
+ 1   1 
+ 1   2 
+ 1   3 
+ 1   4 
+ 1   5 
+ 1   6 
+ 1   7 
+ 1   8 
+ 1   9

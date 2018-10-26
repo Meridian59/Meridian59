@@ -46,6 +46,7 @@ void CInteraction::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EXAMINE_MOD, m_examine_mod);
 	DDX_Control(pDX, IDC_DEPOSIT_MOD, m_deposit_mod);
 	DDX_Control(pDX, IDC_BUY_MOD, m_buy_mod);
+   DDX_Control(pDX, IDC_VAULT_MOD, m_vault_mod);
 	DDX_Control(pDX, IDC_ATTACK_MOD, m_attack_mod);
 	//}}AFX_DATA_MAP
 }
@@ -62,6 +63,7 @@ BEGIN_MESSAGE_MAP(CInteraction, CPropertyPage)
 	ON_BN_CLICKED(IDC_OPEN, OnOpen)
 	ON_BN_CLICKED(IDC_PICKUP, OnPickup)
 	ON_BN_CLICKED(IDC_WITHDRAW, OnWithdraw)
+   ON_BN_CLICKED(IDC_VAULT, OnVault)
 	ON_BN_CLICKED(IDC_ATTACK_MOD, OnAttackMod)
 	ON_BN_CLICKED(IDC_BUY_MOD, OnBuyMod)
 	ON_BN_CLICKED(IDC_DEPOSIT_MOD, OnDepositMod)
@@ -71,6 +73,7 @@ BEGIN_MESSAGE_MAP(CInteraction, CPropertyPage)
 	ON_BN_CLICKED(IDC_OPEN_MOD, OnOpenMod)
 	ON_BN_CLICKED(IDC_PICKUP_MOD, OnPickupMod)
 	ON_BN_CLICKED(IDC_WITHDRAW_MOD, OnWithdrawMod)
+   ON_BN_CLICKED(IDC_VAULT_MOD, OnVaultMod)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -87,6 +90,7 @@ void CInteraction::UpdateDialogData()
   SetDlgItemText(IDC_OPEN,TCOpen);
   SetDlgItemText(IDC_PICKUP,TCPickup);
   SetDlgItemText(IDC_WITHDRAW,TCWithdraw);
+  SetDlgItemText(IDC_VAULT,TCVault);
 
   InitModifierButton(TCAttack,&m_attack_mod);
   InitModifierButton(TCDeposit,&m_deposit_mod);
@@ -96,6 +100,7 @@ void CInteraction::UpdateDialogData()
   InitModifierButton(TCOpen,&m_open_mod);
   InitModifierButton(TCPickup,&m_pickup_mod);
   InitModifierButton(TCWithdraw,&m_withdraw_mod);
+  InitModifierButton(TCVault,&m_vault_mod);
 }
 
 BOOL CInteraction::OnInitDialog() 
@@ -153,6 +158,11 @@ void CInteraction::OnWithdraw()
   ProcessButtonPressed(TCWithdraw,&m_withdraw_mod,IDC_WITHDRAW,m_hWnd);
 }
 
+void CInteraction::OnVault()
+{
+  ProcessButtonPressed(TCVault,&m_vault_mod,IDC_VAULT,m_hWnd);
+}
+
 
 void CInteraction::OnAttackMod() 
 {
@@ -197,4 +207,9 @@ void CInteraction::OnPickupMod()
 void CInteraction::OnWithdrawMod() 
 {
   ProcessModifierPressed(TCWithdraw,IDC_WITHDRAW,m_hWnd);
+}
+
+void CInteraction::OnVaultMod()
+{
+   ProcessModifierPressed(TCVault,IDC_VAULT,m_hWnd);
 }

@@ -584,6 +584,10 @@ void PerformAction(int action, void *action_data)
    case A_WITHDRAW:
       UserWithdraw();
       break;
+
+   case A_VAULT:
+	   UserVault();
+	   break;
 #endif
    }
 }

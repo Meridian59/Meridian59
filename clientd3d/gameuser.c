@@ -592,6 +592,30 @@ void UserWithdraw(void)
    list_delete(bankers);
 }
 /************************************************************************/
+/*
+ * UserVault: Called when user wants to sort the vault.
+ */
+void UserVault(void)
+{
+   list_type storekeepers = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, CLOSE_DISTANCE, OF_VAULT, 0);
+	if (storekeepers == NULL)
+	{
+		GameMessage(GetString(hInst, IDS_NOVAULT));
+		return;
+	}
+
+   list_type storekeeper_list = DisplayLookList(hMain, GetString(hInst, IDS_VAULT), storekeepers, LD_SINGLEAUTO);
+	if (storekeeper_list == NULL)
+	{
+      list_delete(storekeepers);
+      return;
+	}
+
+   ID storekeeper = ((object_node*)(storekeeper_list->data))->id;
+   list_delete(storekeeper_list);
+   RequestVault(storekeeper);
+}
+/************************************************************************/
 void Offered(list_type items)
 {
    info.items = items;

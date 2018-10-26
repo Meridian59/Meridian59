@@ -100,6 +100,7 @@ OBJS = \
         $(OUTDIR)\music.obj \
         $(OUTDIR)\key.obj \
         $(OUTDIR)\buy.obj \
+        $(OUTDIR)\vault.obj \
         $(OUTDIR)\statstrt.obj \
         $(OUTDIR)\dibutil.obj \
         $(OUTDIR)\pal.obj \

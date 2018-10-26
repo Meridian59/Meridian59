@@ -95,6 +95,61 @@ messages:
       return lNodes;
    }
 
+   ReplaceContent(owner = $, vaultman = $, item_list = $, number_list = $)
+   {
+      local i, j, lItemListCopy, lVaultListCopy, iCount;
+
+      lVaultListCopy = Send(SYS,@ListCopy,#source=plPassive);
+      lItemListCopy = Send(SYS,@ListCopy,#source=item_list);
+      iCount = 0;
+
+      % Make sure all items are in storage.
+      % First remove all items that are on both lists.
+      for i in lItemListCopy
+      {
+         % Debug("checking item ", Send(i,@GetName));
+         for j in lVaultListCopy
+         {  
+            % Debug("against item ", Send(j,@GetName));
+            if isClass(i,&NumberItem) AND GetClass(i) = GetClass(j)
+            {
+               iCount = iCount + 1; 
+               if nth(number_list,iCount) <> Send(j,@GetNumber)
+               {
+                  Send(vaultman,@SayToOne,#target=owner,#message_rsc=vaultman_not_enough,#parm1=Send(i,@GetName));
+                  return;
+               }
+               % Debug("Deleting number element ", Send(j,@GetName));
+               lItemListCopy = DelListElem(lItemListCopy,i);
+               lVaultListCopy = DelListElem(lVaultListCopy,j);
+               break;
+            }
+            if i = j 
+            {
+               % Debug("Deleting element ", Send(j,@GetName));
+               lItemListCopy = DelListElem(lItemListCopy,i);
+               lVaultListCopy = DelListElem(lVaultListCopy,j);
+               break;
+            }
+         }
+      }
+      % If there are items left on any list, the user sent us wrong data.
+      if lItemListCopy <> $
+      {
+         Send(vaultman,@SayToOne,#target=owner,#message_rsc=vaultman_dont_have,#parm1=Send(First(lItemListCopy),@GetIndef),#parm2=Send(First(lItemListCopy),@GetName));
+         return;
+      }
+      if lVaultListCopy <> $
+      {
+         Send(vaultman,@SayToOne,#target=owner,#message_rsc=vaultman_dont_have,#parm1=Send(First(lVaultListCopy),@GetIndef),#parm2=Send(First(lVaultListCopy),@GetName));
+         return;
+      }
+
+      plPassive = item_list;
+
+      return;
+   }
+
    Delete()
    {      
       poPlayer = $;

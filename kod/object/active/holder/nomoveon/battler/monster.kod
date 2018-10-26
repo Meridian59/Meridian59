@@ -3672,6 +3672,44 @@ messages:
       return;
    }
 
+   ReplaceVaultItems(what = $, item_list = $, number_list = $)
+   "User requested sorting the vault and sent the sorted item list."
+   {
+      local oVault, oSafeBox;
+
+      if Send(what,@GetOwner) <> poOwner
+      {
+         Debug("ALERT! ",Send(what,@GetTrueName),what," tried to sort vault items "
+               "from ",Send(self,@GetTrueName)," while in distant RID ",
+               Send(Send(what,@GetOwner),@GetRoomNum));
+         return FALSE;
+      }
+
+      if NOT Send(self,@MobIsVaultman)
+      {
+        return;
+      }
+
+      if NOT Send(self,@IsCustomerOkay,#who=what)
+      {
+         return;
+      }
+
+      oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
+      oSafeBox = Send(oVault,@GetPlayerSafeBox,#who=what);
+
+      if oSafeBox = $
+      {
+         Send(self,@SayToOne,#target=what,#message_rsc=vaultman_noAccount);
+         return;
+      }
+
+      Send(oSafeBox,@ReplaceContent,#owner=what,#vaultman=self,#item_list=item_list,#number_list=number_list);
+      
+      return;
+   }
+
+
    Buy(what = $,item_list = $,number_list = $)
    "Handle things having to do with mobs who have stuff to sell. "
    "This is used for both teachers and sellers"
@@ -5186,6 +5224,11 @@ messages:
       if Send(Self,@MobIsSeller)
       {
          iFlags = iFlags | BUY_YES;
+      }
+
+      if Send(Self,@MobIsVaultman)
+      {
+         iFlags = iFlags | VAULT_YES;
       }
 
       if (viAttributes & MOB_BUYER)

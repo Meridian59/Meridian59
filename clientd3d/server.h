@@ -98,6 +98,7 @@ Bool HandleRemovePlayer(char *ptr,long len);
 Bool HandleSysMessage(char *ptr,long len);
 Bool HandleBuyList(char *ptr,long len);
 Bool HandleWithdrawalList(char *ptr,long len);
+Bool HandleVaultList(char *ptr, long len);
 Bool HandlePlayWave(char *ptr,long len);
 Bool HandlePlayMidi(char *ptr,long len);
 Bool HandlePlayMusic(char *ptr,long len);

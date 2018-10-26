@@ -70,6 +70,14 @@ typedef struct {
    HWND hwndItemList, hwndCostList, hwndQuanList, hwndCost;
 } BuyDialogStruct;
 
+/* Structure passed to VaultDialogProc as lParam of WM_INITDIALOG message */
+typedef struct {
+   ID vaultman_id;
+   ID vaultman_name;
+   list_type vault_items;
+   HWND hwndItemList;
+} VaultDialogStruct;
+
 /* Structure passed to AmountDialogProc as lParam of WM_INITDIALOG message */
 typedef struct {
    int x, y;                 /* Initial position of dialog */

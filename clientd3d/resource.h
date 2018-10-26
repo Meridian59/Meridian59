@@ -99,6 +99,7 @@
 #define IDS_YES                         93
 #define IDS_NO                          94
 #define IDS_BUYFROM                     95
+#define IDS_VAULT                       96
 #define IDS_CANTUPDATE                  97
 #define IDS_NEEDNEWVERSION              98
 #define IDS_CANTMOVE                    99
@@ -149,6 +150,7 @@
 #define IDS_NOSELLERS                   128
 #define IDS_NOOFFERERS                  129
 #define IDS_NOBROWSER                   130
+#define IDS_NOVAULT                     131
 #define IDI_CLOCK                       134
 #define IDS_CANTFINDFILE                134
 #define IDI_FORM                        135
@@ -278,6 +280,7 @@
 #define IDC_USERNAME                    1076
 #define IDC_QUANLIST                    1076
 #define IDC_PASSWORD                    1077
+#define IDC_VAULT                       1078
 #define IDC_HANGUP                      1079
 #define IDC_OK                          1080
 #define IDC_MAINLIST                    1081
@@ -378,6 +381,9 @@
 #define IDC_NEXT                        1182
 #define IDC_PREV                        1183
 #define IDC_SPARKS                      1184
+#define IDD_VAULT                       1185
+#define IDC_LAST                        1186
+#define IDC_FIRST                       1187
 #define IDC_BTN_DEMO                    1189
 #define IDC_ASK_DOWNLOAD_REASON         1191
 #define IDC_UPDATE                      1192

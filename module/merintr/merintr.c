@@ -340,6 +340,7 @@ static TypedCommand commands[] = {
 { "password",    CommandPassword, },
 { "withdraw",    CommandWithdraw, },
 { "deposit",     CommandDeposit, },
+{ "vault",       CommandVault, },
 { "balance",     CommandBalance, },
 { "group",       CommandGroup, },
 { "appeal",      CommandAppeal, },

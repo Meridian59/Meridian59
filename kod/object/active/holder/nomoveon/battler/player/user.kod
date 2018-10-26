@@ -1204,6 +1204,23 @@ messages:
          
          return;
       }
+
+      if liClient_cmd = BP_REQ_VAULT
+      {
+         Send(self,@UserVault,#what=Nth(client_msg,2));
+         
+         return;
+      }
+
+      if liClient_cmd = BP_REQ_VAULT_ITEMS
+      {
+         oWhat = Nth(client_msg,2);
+         lItems = Nth(client_msg,3);
+         Send(self,@UserReplaceVaultItems,#what=oWhat,#item_list=lItems,
+              #number_list=number_stuff);
+         
+         return;
+      }
       
       if liClient_cmd = BP_REQ_APPLY
       {
@@ -5655,6 +5672,34 @@ messages:
 
       return;
    }
+
+   UserVault(what = $)
+   {
+      local i, lSaleItems;
+
+      lSaleItems = $;
+      lSaleItems = Send(what,@GetForSale,#who=self);
+      if lSaleItems = $
+      {
+         return;
+      }
+
+      if Send(what,@MobIsVaultman)
+      {
+         AddPacket(1,BP_VAULT_LIST);
+
+         Send(self,@ToCliObject,#what=what);
+         AddPacket(2,Length(lSaleItems));
+         for i in lSaleItems
+         {
+            Send(self,@ToCliObject,#what=i);
+         }
+      }
+
+      SendPacket(poSession);
+
+      return;
+   }
    
    SendBuyGuildHall()
    {
@@ -5735,6 +5780,24 @@ messages:
       }
 
       Send(what,@Buy,#what=self,#item_list=item_list,#number_list=number_list);
+      
+      return;
+   }
+
+   UserReplaceVaultItems(what = $, item_list = $, number_list = $)
+   {
+      local i;
+      % Check quantities; must be positive
+      for i in number_list
+      {
+        if i < 1
+        {
+           Debug("Bad vault items quantity", i, "from user", self);
+           return;
+        }
+      }
+
+      Send(what,@ReplaceVaultItems,#what=self,#item_list=item_list,#number_list=number_list);
       
       return;
    }

@@ -161,6 +161,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "color.h"
 #include "offer.h"
 #include "buy.h"
+#include "vault.h"
 #include "key.h"
 #include "say.h"
 #include "statstrt.h"

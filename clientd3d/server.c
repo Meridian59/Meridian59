@@ -61,6 +61,7 @@ static handler_struct game_handler_table[] = {
 { BP_OBJECT_CONTENTS,   HandleObjectContents },
 { BP_BUY_LIST,          HandleBuyList },
 { BP_WITHDRAWAL_LIST,   HandleWithdrawalList },
+{ BP_VAULT_LIST,        HandleVaultList },
 { BP_INVENTORY_ADD,     HandleInventoryAdd },
 { BP_INVENTORY_REMOVE,  HandleInventoryRemove },
 { BP_PLAYER_ADD,        HandleAddPlayer },
@@ -1252,6 +1253,35 @@ Bool HandleWithdrawalList(char *ptr, long len)
    }
    WithdrawalList(seller, list);
 
+   return True;
+}
+/********************************************************************/
+Bool HandleVaultList(char *ptr, long len)
+{
+   char *start = ptr;
+
+   object_node vaultman {0};
+   ExtractObject(&ptr, &vaultman);
+
+   WORD list_len = 0;
+   Extract(&ptr, &list_len, SIZE_LIST_LEN);
+
+   list_type list = NULL;
+   for (int i = 0; i < list_len; ++i)
+   {
+      item_object *item_obj = (item_object *)ZeroSafeMalloc(sizeof(item_object));
+      ExtractObject(&ptr, &item_obj->obj);
+      list = list_add_item(list, item_obj);
+   }
+
+   len -= (ptr - start);
+   if (len != 0)
+   {
+      ObjectListDestroy(list);
+      return False;
+   }
+
+   VaultList(vaultman, list);
    return True;
 }
 /********************************************************************/

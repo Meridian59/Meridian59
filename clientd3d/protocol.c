@@ -56,6 +56,8 @@ static client_message game_msg_table[] = {
 { BP_REQ_BUY_ITEMS,        { PARAM_ID, PARAM_OBJECT_LIST, PARAM_END }, },
 { BP_REQ_WITHDRAWAL,       { PARAM_ID, PARAM_END }, },
 { BP_REQ_WITHDRAWAL_ITEMS, { PARAM_ID, PARAM_OBJECT_LIST, PARAM_END }, },
+{ BP_REQ_VAULT,            { PARAM_ID, PARAM_END }, },
+{ BP_REQ_VAULT_ITEMS,      { PARAM_ID, PARAM_OBJECT_LIST, PARAM_END }, },
 { BP_SEND_PLAYERS,         { PARAM_END }, },
 { BP_REQ_QUIT,             { PARAM_END }, },
 { BP_REQ_SHOOT,            { PARAM_COORD, PARAM_COORD, PARAM_END }, },

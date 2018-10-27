@@ -198,6 +198,37 @@ messages:
       return;
    }
 
+   HolderDoAddNode(node = $, lNodes = $)
+   "Adds a node to a list of nodes. If a node with the same class already exists, the node is added before that node, otherwise at the first position."
+   {
+      local oCurrentNode, index, inserted;
+      index = 1;
+      inserted = FALSE;
+
+      for oCurrentNode in lNodes
+      {
+         if GetClass(oCurrentNode) = GetClass(node)
+         {
+            lNodes = InsertListElem(lNodes,index,node);
+            inserted = TRUE;
+            break;
+         }
+         index = index + 1;
+      }
+
+      if inserted = FALSE
+      {
+         lNodes = Cons(node, lNodes);
+      }
+
+      for oCurrentNode in lNodes
+      {
+      debug(oCurrentNode);
+      }
+
+      return lNodes;
+   }
+
    GetItemsStored(who=$)
    {
       if Send(who,@GetOwner) <> poOwner

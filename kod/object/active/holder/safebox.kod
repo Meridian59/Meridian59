@@ -81,7 +81,7 @@ messages:
       {
          if GetClass(oCurrentNode) = GetClass(node)
          {
-            InsertListElem(lNodes,index,node);
+            lNodes = InsertListElem(lNodes,index,node);
             inserted = TRUE;
             break;
          }

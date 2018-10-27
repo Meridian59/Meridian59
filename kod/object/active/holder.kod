@@ -978,6 +978,73 @@ messages:
       return TRUE;
    }
 
+   CompareHoldToItemList(item_list = $, number_list = $, use_passive = TRUE)
+   "Compares the current hold against a list of items. The number list has an entry for every NumberItem in the item list. Use plPassive by default, else plActive."
+   "Items don't need to be in the same order for equality. Returns a list of items that are different or $ if all items are equal."
+   {
+      local i, j, lItemListCopy, lVaultListCopy, iCount, lDifferences;
+
+      if use_passive = TRUE
+      {
+         lVaultListCopy = Send(SYS,@ListCopy,#source=plPassive);
+      }
+      else
+      {
+         lVaultListCopy = Send(SYS,@ListCopy,#source=plActive);
+      }
+
+      lItemListCopy = Send(SYS,@ListCopy,#source=item_list);
+      iCount = 0;
+      lDifferences = $;
+
+      % First remove all items that are on both lists.
+      for i in lItemListCopy
+      {
+         % Debug("checking item ", Send(i,@GetName));
+         for j in lVaultListCopy
+         {  
+            % Debug("against item ", Send(j,@GetName));
+            if IsClass(i,&NumberItem) AND GetClass(i) = GetClass(j)
+            {
+               iCount = iCount + 1; 
+               if Nth(number_list,iCount) <> Send(j,@GetNumber)
+               {
+                  % Debug("Items have different quantities");
+                  lDifferences = Cons(j,lDifferences);
+               }
+               % Debug("Deleting number element ", Send(j,@GetName));
+               lItemListCopy = DelListElem(lItemListCopy,i);
+               lVaultListCopy = DelListElem(lVaultListCopy,j);
+               break;
+            }
+            if i = j 
+            {
+               % Debug("Deleting element ", Send(j,@GetName));
+               lItemListCopy = DelListElem(lItemListCopy,i);
+               lVaultListCopy = DelListElem(lVaultListCopy,j);
+               break;
+            }
+         }
+      }
+
+      % Copy all items left on any list.
+      if lItemListCopy <> $
+      {
+         for i in lItemListCopy
+         {
+           lDifferences = Cons(i,lDifferences);
+         }
+      }
+      if lVaultListCopy <> $
+      {
+         for i in lVaultListCopy
+         {
+           lDifferences = Cons(i,lDifferences);
+         }
+      }
+
+      return lDifferences;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

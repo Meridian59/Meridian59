@@ -3672,16 +3672,16 @@ messages:
       return;
    }
 
-   ReplaceVaultItems(what = $, item_list = $, number_list = $)
-   "User requested sorting the vault and sent the sorted item list."
+   SortVaultItems(owner = $, item_list = $, number_list = $)
+   "Sort the owner's vault corresponding to the given item list. The number list has an entry for every NumberItem in the item list."
+   "All items in the list must be present in the vault with the correct quantity, otherwise the vault will stay unchanged."
    {
-      local oVault, oSafeBox;
+      local oVault, oSafeBox, lDifferences, oFirstDifference;
 
-      if Send(what,@GetOwner) <> poOwner
+      if Send(owner,@GetOwner) <> poOwner
       {
-         Debug("ALERT! ",Send(what,@GetTrueName),what," tried to sort vault items "
-               "from ",Send(self,@GetTrueName)," while in distant RID ",
-               Send(Send(what,@GetOwner),@GetRoomNum));
+         Debug("ALERT! ",Send(owner,@GetTrueName),owner," tried to sort vault items from ",Send(self,@GetTrueName),
+               " while in distant RID ",Send(Send(owner,@GetOwner),@GetRoomNum));
          return FALSE;
       }
 
@@ -3690,21 +3690,35 @@ messages:
         return;
       }
 
-      if NOT Send(self,@IsCustomerOkay,#who=what)
+      if NOT Send(self,@IsCustomerOkay,#who=owner)
       {
          return;
       }
 
       oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
-      oSafeBox = Send(oVault,@GetPlayerSafeBox,#who=what);
+      oSafeBox = Send(oVault,@GetPlayerSafeBox,#who=owner);
 
       if oSafeBox = $
       {
-         Send(self,@SayToOne,#target=what,#message_rsc=vaultman_noAccount);
+         Send(self,@SayToOne,#target=owner,#message_rsc=vaultman_noAccount);
          return;
       }
 
-      Send(oSafeBox,@ReplaceContent,#owner=what,#vaultman=self,#item_list=item_list,#number_list=number_list);
+      lDifferences = $;
+      lDifferences = Send(oSafeBox,@SortItems,#owner=owner,#vaultman=self,#item_list=item_list,#number_list=number_list);
+
+      if lDifferences <> $
+      {
+         oFirstDifference = First(lDifferences);
+         if IsClass(oFirstDifference,&NumberItem)
+         {
+            Send(self,@SayToOne,#target=owner,#message_rsc=vaultman_not_enough,#parm1=Send(oFirstDifference,@GetName));
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=owner,#message_rsc=vaultman_dont_have,#parm1=Send(oFirstDifference,@GetIndef),#parm2=Send(oFirstDifference,@GetName));
+         }
+      }
       
       return;
    }

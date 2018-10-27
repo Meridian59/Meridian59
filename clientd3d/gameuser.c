@@ -597,23 +597,23 @@ void UserWithdraw(void)
  */
 void UserVault(void)
 {
-   list_type storekeepers = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, CLOSE_DISTANCE, OF_VAULT, 0);
-	if (storekeepers == NULL)
+   list_type vaults = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, CLOSE_DISTANCE, OF_VAULT | OF_CONTAINER, 0);
+	if (vaults == NULL)
 	{
 		GameMessage(GetString(hInst, IDS_NOVAULT));
 		return;
 	}
 
-   list_type storekeeper_list = DisplayLookList(hMain, GetString(hInst, IDS_VAULT), storekeepers, LD_SINGLEAUTO);
-	if (storekeeper_list == NULL)
+   list_type vault_list = DisplayLookList(hMain, GetString(hInst, IDS_VAULT), vaults, LD_SINGLEAUTO);
+	if (vault_list == NULL)
 	{
-      list_delete(storekeepers);
+      list_delete(vaults);
       return;
 	}
 
-   ID storekeeper = ((object_node*)(storekeeper_list->data))->id;
-   list_delete(storekeeper_list);
-   RequestVault(storekeeper);
+   ID vault = ((object_node*)(vault_list->data))->id;
+   list_delete(vault_list);
+   RequestVault(vault);
 }
 /************************************************************************/
 void Offered(list_type items)

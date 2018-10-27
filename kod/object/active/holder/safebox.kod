@@ -71,6 +71,7 @@ messages:
    }
 
    HolderDoAddNode(node = $, lNodes = $)
+   "Adds a node to a list of nodes. If a node with the same class already exists, the node is added before that node, otherwise at the first position."
    {
       local oCurrentNode, index, inserted;
       index = 1;
@@ -95,59 +96,22 @@ messages:
       return lNodes;
    }
 
-   ReplaceContent(owner = $, vaultman = $, item_list = $, number_list = $)
+   SortItems(owner = $, vaultman = $, item_list = $, number_list = $)
+   "Sort the items corresponding to the given item list. The number list has an entry for every NumberItem in the item list."
+   "All items in the list must be present in the vault with the correct quantity, otherwise the vault will stay unchanged."
+   "Returns $ if all items were equal and the operation succeeded. Otherwise returns a list of items that were different."
    {
-      local i, j, lItemListCopy, lVaultListCopy, iCount;
+      local lDifferences;
 
-      lVaultListCopy = Send(SYS,@ListCopy,#source=plPassive);
-      lItemListCopy = Send(SYS,@ListCopy,#source=item_list);
-      iCount = 0;
+      lDifferences = $;
+      lDifferences = Send(self,@CompareHoldToItemList,#item_list=item_list,#number_list=number_list);
 
-      % Make sure all items are in storage.
-      % First remove all items that are on both lists.
-      for i in lItemListCopy
+      if lDifferences = $
       {
-         % Debug("checking item ", Send(i,@GetName));
-         for j in lVaultListCopy
-         {  
-            % Debug("against item ", Send(j,@GetName));
-            if isClass(i,&NumberItem) AND GetClass(i) = GetClass(j)
-            {
-               iCount = iCount + 1; 
-               if nth(number_list,iCount) <> Send(j,@GetNumber)
-               {
-                  Send(vaultman,@SayToOne,#target=owner,#message_rsc=vaultman_not_enough,#parm1=Send(i,@GetName));
-                  return;
-               }
-               % Debug("Deleting number element ", Send(j,@GetName));
-               lItemListCopy = DelListElem(lItemListCopy,i);
-               lVaultListCopy = DelListElem(lVaultListCopy,j);
-               break;
-            }
-            if i = j 
-            {
-               % Debug("Deleting element ", Send(j,@GetName));
-               lItemListCopy = DelListElem(lItemListCopy,i);
-               lVaultListCopy = DelListElem(lVaultListCopy,j);
-               break;
-            }
-         }
-      }
-      % If there are items left on any list, the user sent us wrong data.
-      if lItemListCopy <> $
-      {
-         Send(vaultman,@SayToOne,#target=owner,#message_rsc=vaultman_dont_have,#parm1=Send(First(lItemListCopy),@GetIndef),#parm2=Send(First(lItemListCopy),@GetName));
-         return;
-      }
-      if lVaultListCopy <> $
-      {
-         Send(vaultman,@SayToOne,#target=owner,#message_rsc=vaultman_dont_have,#parm1=Send(First(lVaultListCopy),@GetIndef),#parm2=Send(First(lVaultListCopy),@GetName));
-         return;
+         plPassive = item_list;
       }
 
-      plPassive = item_list;
-
-      return;
+      return lDifferences;
    }
 
    Delete()

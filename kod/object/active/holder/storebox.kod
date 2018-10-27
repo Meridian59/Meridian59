@@ -24,6 +24,10 @@ resources:
 
    storagebox_desc_rsc = "This is a place to store stuff."
 
+   storagebox_dont_have = "There is no %s%s in the storage."
+   storagebox_not_enough = "There aren't that many %s stored."
+   storagebox_empty = "%s%s is empty."
+
 classvars:
 
    vrName = storagebox_name_rsc
@@ -194,6 +198,51 @@ messages:
       return;
    }
 
+   GetItemsStored(who=$)
+   {
+      if Send(who,@GetOwner) <> poOwner
+      {
+         Debug("ALERT! ",Send(who,@GetTrueName),who," tried to get items stored from ",Send(self,@GetTrueName),
+               " while in distant RID ",Send(Send(who,@GetOwner),@GetRoomNum));
+         return FALSE;
+      }
+      return Send(self,@GetHolderPassive);
+   }
+
+   SortVaultItems(owner = $, item_list = $, number_list = $)
+   "Sort the storage box corresponding to the given item list. The number list has an entry for every NumberItem in the item list."
+   "All items in the list must be present in the storage with the correct quantity, otherwise the storage will stay unchanged."
+   {
+      local lDifferences, oFirstDifference;
+
+      if Send(owner,@GetOwner) <> poOwner
+      {
+         Debug("ALERT! ",Send(owner,@GetTrueName),owner," tried to sort storage box from ",Send(self,@GetTrueName),
+               " while in distant RID ",Send(Send(owner,@GetOwner),@GetRoomNum));
+         return FALSE;
+      }
+
+      lDifferences = $;
+      lDifferences = Send(self,@CompareHoldToItemList,#item_list=item_list,#number_list=number_list);
+
+      if lDifferences <> $
+      {
+         oFirstDifference = First(lDifferences);
+         if IsClass(oFirstDifference,&NumberItem)
+         {
+            Send(owner,@SysMsgSendUser,#message_rsc=storagebox_not_enough,#parm1=Send(oFirstDifference,@GetName));
+         }
+         else
+         {
+            Send(owner,@SysMsgSendUser,#message_rsc=storagebox_dont_have,#parm1=Send(oFirstDifference,@GetIndef),#parm2=Send(oFirstDifference,@GetName));
+         }
+         return;
+      }
+
+      plPassive = item_list;
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

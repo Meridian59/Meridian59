@@ -73,26 +73,20 @@ messages:
    HolderDoAddNode(node = $, lNodes = $)
    "Adds a node to a list of nodes. If a node with the same class already exists, the node is added before that node, otherwise at the first position."
    {
-      local oCurrentNode, index, inserted;
+      local oCurrentNode, index;
       index = 1;
-      inserted = FALSE;
 
       for oCurrentNode in lNodes
       {
          if GetClass(oCurrentNode) = GetClass(node)
          {
             lNodes = InsertListElem(lNodes,index,node);
-            inserted = TRUE;
-            break;
+            return lNodes;
          }
          index = index + 1;
       }
 
-      if inserted = FALSE
-      {
-         lNodes = Cons(node, lNodes);
-      }
-
+      lNodes = Cons(node, lNodes);
       return lNodes;
    }
 
@@ -106,12 +100,16 @@ messages:
       lDifferences = $;
       lDifferences = Send(self,@CompareHoldToItemList,#item_list=item_list,#number_list=number_list);
 
-      if lDifferences = $
+      if lDifferences <> $
       {
-         plPassive = item_list;
+         Debug("ALERT! ",Send(owner,@GetTrueName),owner," tried to sort vault items from ",Send(self,@GetTrueName),self,
+         " and sent item list that differed from actual list");
+         return lDifferences;
       }
 
-      return lDifferences;
+      plPassive = item_list;
+
+      return $;
    }
 
    Delete()

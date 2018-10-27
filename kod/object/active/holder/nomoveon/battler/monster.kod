@@ -3709,6 +3709,7 @@ messages:
 
       if lDifferences <> $
       {
+         % just send a message for the first difference
          oFirstDifference = First(lDifferences);
          if IsClass(oFirstDifference,&NumberItem)
          {

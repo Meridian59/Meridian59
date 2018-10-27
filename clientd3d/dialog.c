@@ -696,7 +696,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 void AbortGameDialogs(void)
 {
 	AbortBuyDialog();
-   AbortVaultDialog();
+	AbortVaultDialog();
 	if (hDescDialog != NULL)
 		SendMessage(hDescDialog, WM_COMMAND, IDCANCEL, 0);
 	if (hAmountDialog != NULL)

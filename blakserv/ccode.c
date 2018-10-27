@@ -1829,7 +1829,7 @@ int C_InsertListElem(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],
          int num_name_parms,parm_node name_parm_array[])
 {
-	val_type n_val, list_val, set_val, ret_val;
+   val_type n_val, list_val, set_val, ret_val;
 
    list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
       normal_parm_array[0].value);
@@ -1851,19 +1851,23 @@ int C_InsertListElem(int object_id,local_var_type *local_vars,
       return list_val.int_val;
    }
 
-	set_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+   set_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
 		normal_parm_array[2].value);
 
-	ret_val.v.tag = TAG_LIST;
+   ret_val.v.tag = TAG_LIST;
 
    // Handle the case where the new element should be in the first position.
    // Should have called Cons to do this. Cons also adds to $ lists.
    if (n_val.v.data == 1 || list_val.v.tag == TAG_NIL)
-      ret_val.v.data = Cons(set_val,list_val);
+   {
+      ret_val.v.data = Cons(set_val, list_val);
+   }
    else
-      ret_val.v.data = InsertListElem(n_val.v.data,list_val.v.data,set_val);
+   {
+      ret_val.v.data = InsertListElem(n_val.v.data, list_val.v.data, set_val);
+   }
 
-	return ret_val.int_val;
+   return ret_val.int_val;
 }
 
 int C_DelListElem(int object_id,local_var_type *local_vars,

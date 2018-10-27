@@ -72,8 +72,8 @@ typedef struct {
 
 /* Structure passed to VaultDialogProc as lParam of WM_INITDIALOG message */
 typedef struct {
-   ID vaultman_id;
-   ID vaultman_name;
+   ID vault_id;
+   ID vault_name;
    list_type vault_items;
    HWND hwndItemList;
 } VaultDialogStruct;

@@ -60,7 +60,7 @@ typedef struct {
 } buy_object;    /* Object to display in list of things to buy */
 
 typedef struct {
-	object_node obj;
+   object_node obj;
 } item_object;    /* Object to display in item lists when no price is needed */
 
 void InitializeGame(void);

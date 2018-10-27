@@ -39,7 +39,7 @@ public:
 	CButton	m_examine_mod;
 	CButton	m_deposit_mod;
 	CButton	m_buy_mod;
-   CButton	m_vault_mod;
+	CButton	m_vault_mod;
 	CButton	m_attack_mod;
 	//}}AFX_DATA
 
@@ -65,7 +65,7 @@ protected:
 	afx_msg void OnOpen();
 	afx_msg void OnPickup();
 	afx_msg void OnWithdraw();
-   afx_msg void OnVault();
+	afx_msg void OnVault();
 	afx_msg void OnAttackMod();
 	afx_msg void OnBuyMod();
 	afx_msg void OnDepositMod();
@@ -75,7 +75,7 @@ protected:
 	afx_msg void OnOpenMod();
 	afx_msg void OnPickupMod();
 	afx_msg void OnWithdrawMod();
-   afx_msg void OnVaultMod();
+	afx_msg void OnVaultMod();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

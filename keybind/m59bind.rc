@@ -164,7 +164,7 @@ BEGIN
     LTEXT           "Kaufen",-1,7,104,24,8
     LTEXT           "Hinterlegen",-1,151,9,50,8
     LTEXT           "Zurücknehmen",-1,151,28,50,8
-    LTEXT           "Lager",-1,151,47,38,8
+    LTEXT           "Lager sortieren",-1,151,47,50,8
     LTEXT           "Angreifen",-1,151,66,31,8
     PUSHBUTTON      "space",1004,53,7,55,14
     PUSHBUTTON      "g",1005,53,26,55,14
@@ -391,27 +391,30 @@ BEGIN
     LTEXT           "Examine",IDC_STATIC,7,66,28,8
     LTEXT           "Offer",IDC_STATIC,7,85,16,8
     LTEXT           "Buy",IDC_STATIC,7,104,13,8
-    LTEXT           "Deposit",IDC_STATIC,138,9,25,8
-    LTEXT           "Withdraw",IDC_STATIC,138,28,31,8
-    LTEXT           "Attack",IDC_STATIC,138,49,22,8
+    LTEXT           "Deposit",-1,151,9,50,8
+    LTEXT           "Withdraw",-1,151,28,50,8
+    LTEXT           "Sort vault",-1,151,47,38,8
+    LTEXT           "Attack",-1,151,66,31,8
     PUSHBUTTON      "space",IDC_OPEN,44,7,55,14
     PUSHBUTTON      "g",IDC_PICKUP,44,26,55,14
     PUSHBUTTON      "l",IDC_LOOK,44,45,55,14
     PUSHBUTTON      "mouse1",IDC_EXAMINE,44,64,55,14
     PUSHBUTTON      "o",IDC_OFFER,44,83,55,14
     PUSHBUTTON      "b",IDC_BUY,44,102,55,14
-    PUSHBUTTON      "d",IDC_DEPOSIT,171,7,55,14
-    PUSHBUTTON      "w",IDC_WITHDRAW,171,26,55,14
-    PUSHBUTTON      "a",IDC_ATTACK,171,45,55,14
+    PUSHBUTTON      "d",IDC_DEPOSIT,211,7,55,14
+    PUSHBUTTON      "w",IDC_WITHDRAW,211,26,55,14
+    PUSHBUTTON      "v",IDC_VAULT,211,45,55,14
+    PUSHBUTTON      "a",IDC_ATTACK,211,64,55,14
     PUSHBUTTON      "+",IDC_OPEN_MOD,102,7,14,14
     PUSHBUTTON      "+",IDC_PICKUP_MOD,102,26,14,14
     PUSHBUTTON      "+",IDC_LOOK_MOD,102,45,14,14
     PUSHBUTTON      "+",IDC_EXAMINE_MOD,102,64,14,14
     PUSHBUTTON      "+",IDC_OFFER_MOD,102,83,14,14
     PUSHBUTTON      "+",IDC_BUY_MOD,102,102,14,14
-    PUSHBUTTON      "+",IDC_DEPOSIT_MOD,229,7,14,14
-    PUSHBUTTON      "+",IDC_WITHDRAW_MOD,229,26,14,14
-    PUSHBUTTON      "+",IDC_ATTACK_MOD,229,45,14,14
+    PUSHBUTTON      "+",IDC_DEPOSIT_MOD,269,7,14,14
+    PUSHBUTTON      "+",IDC_WITHDRAW_MOD,269,26,14,14
+    PUSHBUTTON      "+",IDC_VAULT_MOD,269,45,14,14
+    PUSHBUTTON      "+",IDC_ATTACK_MOD,269,64,14,14
 END
 
 IDD_MAP DIALOG  0, 0, 258, 138

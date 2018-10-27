@@ -1260,8 +1260,8 @@ Bool HandleVaultList(char *ptr, long len)
 {
    char *start = ptr;
 
-   object_node vaultman {0};
-   ExtractObject(&ptr, &vaultman);
+   object_node vault {0};
+   ExtractObject(&ptr, &vault);
 
    WORD list_len = 0;
    Extract(&ptr, &list_len, SIZE_LIST_LEN);
@@ -1281,7 +1281,7 @@ Bool HandleVaultList(char *ptr, long len)
       return False;
    }
 
-   VaultList(vaultman, list);
+   VaultList(vault, list);
    return True;
 }
 /********************************************************************/

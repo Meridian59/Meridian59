@@ -586,8 +586,8 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_VAULT:
-	   UserVault();
-	   break;
+      UserVault();
+      break;
 #endif
    }
 }

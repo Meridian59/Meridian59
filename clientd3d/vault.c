@@ -40,9 +40,9 @@ static HWND hwndDialog = NULL;   /* Non-NULL when vault dialog is displayed */
  * Server just sent us list of objects that can be sorted. Bring up vault dialog.
  *   items is list of objects to sort (each of type item_object)
  */
-void VaultList(object_node vaultman, list_type items)
+void VaultList(object_node vault, list_type items)
 {
-   VaultDialogStruct dlg_info { vaultman.id, vaultman.name_res, items };
+   VaultDialogStruct dlg_info { vault.id, vault.name_res, items };
    if (hwndDialog == NULL)
    {
       DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_VAULT), hMain, VaultDialogProc, (LPARAM)&dlg_info);
@@ -109,8 +109,8 @@ BOOL VaultInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    }
    WindowEndUpdate(info->hwndItemList);
 
-   /* Set vaultman's name. */
-   Edit_SetText(GetDlgItem(hDlg, IDC_VAULT), LookupNameRsc(info->vaultman_name));
+   /* Set vault's name. */
+   Edit_SetText(GetDlgItem(hDlg, IDC_VAULT), LookupNameRsc(info->vault_name));
    SetWindowFont(GetDlgItem(hDlg, IDC_VAULT), GetFont(FONT_LIST), FALSE);
 
    HandleNoItemSelected(hDlg);
@@ -156,7 +156,7 @@ void VaultCommand(HWND hDlg, int id, HWND hwndCtl, UINT codeNotify)
          list_type items = GetItems();
          if (items != NULL)
          {
-            RequestVaultItems(info->vaultman_id, items);
+            RequestVaultItems(info->vault_id, items);
             list_delete(items);
          }
          EndDialog(hDlg, IDOK);
@@ -280,7 +280,6 @@ list_type GetItems(void)
    for (int index = num_entries - 1; index >= 0; --index)
    {
       object_node *obj = (object_node *)ListBox_GetItemData(info->hwndItemList, index);
-      char* name = LookupNameRsc(obj->name_res);
       obj->temp_amount = obj->amount;  // Items without temp_amount are not sent to the server.
       selection = list_add_item(selection, obj);
    }

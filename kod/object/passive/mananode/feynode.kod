@@ -135,7 +135,7 @@ messages:
    GetManaAdjust(who=$)
    {
       % Twice the standard.
-      return (2*(((5 + Send(who,@GetMysticism)) / 10) + 3));
+      return (2*((5 + Send(who,@GetMysticism)) / 10));
    }
 
    SendAnimation()

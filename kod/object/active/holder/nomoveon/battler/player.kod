@@ -5869,7 +5869,7 @@ messages:
 
    GetInitialMaxMana()
    {
-      return 15 + Send(self,@GetMysticism)/5;
+      return 54 + Send(self,@GetMysticism)/5;
    }
  
    StripNodeList(number=$)

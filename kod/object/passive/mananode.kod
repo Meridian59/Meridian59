@@ -232,7 +232,7 @@ messages:
          return 0;
       }
 
-      return (((5 + Send(who,@GetMysticism)) / 10) + 3);
+      return ((5 + Send(who,@GetMysticism)) / 10);
    }
 
    ReqNewOwner(what = $)

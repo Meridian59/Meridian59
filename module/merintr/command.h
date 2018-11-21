@@ -51,6 +51,7 @@ void CommandGuild(char *args);
 void CommandPassword(char *args);
 void CommandDeposit(char *args);
 void CommandWithdraw(char *args);
+void CommandVault(char *args);
 void CommandBalance(char *args);
 void CommandGroup(char *args);
 void CommandAppeal(char *args);

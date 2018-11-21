@@ -214,6 +214,9 @@ enum {
    BP_SECTOR_SCROLL         = 236,
    BP_SET_VIEW              = 237,
    BP_RESET_VIEW            = 238,
+   BP_REQ_VAULT             = 239,
+   BP_VAULT_LIST            = 240,
+   BP_REQ_VAULT_ITEMS       = 241
 };
 
 // User commands (in BP_USERCOMMAND message)
@@ -357,6 +360,7 @@ enum {
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
 #define OF_CONTAINER     0x00000020    // Set if player can put objects inside this one
 #define OF_NOEXAMINE     0x00000040    // Set if player CAN'T examine object
+#define OF_VAULT         0x00000080    // Set if object is a vault
 #define OF_OFFERABLE     0x00000200    // Set if object can be offered to
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated

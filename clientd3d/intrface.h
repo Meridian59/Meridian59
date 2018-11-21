@@ -85,7 +85,7 @@ enum { A_NOACTION = 0,
 	  A_TEXTINSERT, A_USERACTION, A_LOOKINSIDE, A_ACTIVATE,
 	  A_ACTIVATEMOUSE, A_CHANGEPASSWORD, 
 	  A_TARGETPREVIOUS, A_TARGETNEXT, A_TARGETCLEAR, A_TARGETSELF,
-	  A_CURSOR_ESC,
+	  A_CURSOR_ESC, A_VAULT
     };
 
 /* Modules should use action codes starting at A_MODULE to avoid conflicts with client */

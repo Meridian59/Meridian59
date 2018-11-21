@@ -345,6 +345,7 @@ void CM59bindDlg::ReadINIFile(void)
   GetPrivateProfileString(strSection,"open",DEF_OPEN,TCOpen,nSize,strINIFile);
   GetPrivateProfileString(strSection,"pickup",DEF_PICKUP,TCPickup,nSize,strINIFile);
   GetPrivateProfileString(strSection,"withdraw",DEF_WITHDRAW,TCWithdraw,nSize,strINIFile);
+  GetPrivateProfileString(strSection,"vault",DEF_VAULT,TCVault,nSize,strINIFile);
 
   // Movement
   GetPrivateProfileString(strSection,"backward",DEF_BACKWARD,TCBackward,nSize,strINIFile);
@@ -434,6 +435,7 @@ void CM59bindDlg::UpdateINIFile(void)
   WritePrivateProfileString(strSection,"open",TCOpen,strINIFile);
   WritePrivateProfileString(strSection,"pickup",TCPickup,strINIFile);
   WritePrivateProfileString(strSection,"withdraw",TCWithdraw,strINIFile);
+  WritePrivateProfileString(strSection,"vault",TCVault,strINIFile);
 
   // Movement
   WritePrivateProfileString(strSection,"backward",TCBackward,strINIFile);
@@ -551,6 +553,7 @@ void RestoreDefaults(void)
   strcpy(TCOpen,DEF_OPEN);
   strcpy(TCPickup,DEF_PICKUP);
   strcpy(TCWithdraw,DEF_WITHDRAW);
+  strcpy(TCVault,DEF_VAULT);
 
   strcpy(TCBackward,DEF_BACKWARD);
   strcpy(TCFlip,DEF_FLIP);

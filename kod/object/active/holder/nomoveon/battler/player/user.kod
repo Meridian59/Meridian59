@@ -1204,6 +1204,23 @@ messages:
          
          return;
       }
+
+      if liClient_cmd = BP_REQ_VAULT
+      {
+         Send(self,@UserVault,#what=Nth(client_msg,2));
+         
+         return;
+      }
+
+      if liClient_cmd = BP_REQ_VAULT_ITEMS
+      {
+         oWhat = Nth(client_msg,2);
+         lItems = Nth(client_msg,3);
+         Send(self,@UserSortVaultItems,#what=oWhat,#item_list=lItems,
+              #number_list=number_stuff);
+         
+         return;
+      }
       
       if liClient_cmd = BP_REQ_APPLY
       {
@@ -5655,6 +5672,48 @@ messages:
 
       return;
    }
+
+   UserVault(what = $)
+   {
+      local i, lItems;
+      lItems = $;
+
+      if IsClass(what,&Monster)
+      {
+         lItems = Send(what,@GetForSale,#who=self);
+         if lItems = $
+         {
+           Send(what,@SayToOne,#target=self,#message_rsc=vaultman_noaccount);
+           return;
+         }
+      }
+      if IsClass(what,&StorageBox)
+      {
+         lItems = Send(what,@GetItemsStored,#who=self);
+         if lItems = $
+         {
+           Send(self,@SysMsgSendUser,#message_rsc=storagebox_empty,#parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+           return;
+         }
+      }
+      if lItems = $
+      {
+         return;
+      }
+
+      AddPacket(1,BP_VAULT_LIST);
+
+      Send(self,@ToCliObject,#what=what);
+      AddPacket(2,Length(lItems));
+      for i in lItems
+      {
+         Send(self,@ToCliObject,#what=i);
+      }
+
+      SendPacket(poSession);
+
+      return;
+   }
    
    SendBuyGuildHall()
    {
@@ -5735,6 +5794,24 @@ messages:
       }
 
       Send(what,@Buy,#what=self,#item_list=item_list,#number_list=number_list);
+      
+      return;
+   }
+
+   UserSortVaultItems(what = $, item_list = $, number_list = $)
+   {
+      local i;
+      % Check quantities; must be positive
+      for i in number_list
+      {
+        if i < 1
+        {
+           Debug("Bad vault items quantity", i, "from user", self);
+           return;
+        }
+      }
+
+      Send(what,@SortVaultItems,#owner=self,#item_list=item_list,#number_list=number_list);
       
       return;
    }

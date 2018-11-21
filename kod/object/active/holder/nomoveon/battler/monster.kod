@@ -3672,6 +3672,59 @@ messages:
       return;
    }
 
+   SortVaultItems(owner = $, item_list = $, number_list = $)
+   "Sort the owner's vault corresponding to the given item list. The number list has an entry for every NumberItem in the item list."
+   "All items in the list must be present in the vault with the correct quantity, otherwise the vault will stay unchanged."
+   {
+      local oVault, oSafeBox, lDifferences, oFirstDifference;
+
+      if Send(owner,@GetOwner) <> poOwner
+      {
+         Debug("ALERT! ",Send(owner,@GetTrueName),owner," tried to sort vault items from ",Send(self,@GetTrueName),
+               " while in distant RID ",Send(Send(owner,@GetOwner),@GetRoomNum));
+         return FALSE;
+      }
+
+      if NOT Send(self,@MobIsVaultman)
+      {
+        return;
+      }
+
+      if NOT Send(self,@IsCustomerOkay,#who=owner)
+      {
+         return;
+      }
+
+      oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
+      oSafeBox = Send(oVault,@GetPlayerSafeBox,#who=owner);
+
+      if oSafeBox = $
+      {
+         Send(self,@SayToOne,#target=owner,#message_rsc=vaultman_noAccount);
+         return;
+      }
+
+      lDifferences = $;
+      lDifferences = Send(oSafeBox,@SortItems,#owner=owner,#vaultman=self,#item_list=item_list,#number_list=number_list);
+
+      if lDifferences <> $
+      {
+         % just send a message for the first difference
+         oFirstDifference = First(lDifferences);
+         if IsClass(oFirstDifference,&NumberItem)
+         {
+            Send(self,@SayToOne,#target=owner,#message_rsc=vaultman_not_enough,#parm1=Send(oFirstDifference,@GetName));
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=owner,#message_rsc=vaultman_dont_have,#parm1=Send(oFirstDifference,@GetIndef),#parm2=Send(oFirstDifference,@GetName));
+         }
+      }
+      
+      return;
+   }
+
+
    Buy(what = $,item_list = $,number_list = $)
    "Handle things having to do with mobs who have stuff to sell. "
    "This is used for both teachers and sellers"
@@ -5186,6 +5239,11 @@ messages:
       if Send(Self,@MobIsSeller)
       {
          iFlags = iFlags | BUY_YES;
+      }
+
+      if Send(Self,@MobIsVaultman)
+      {
+         iFlags = iFlags | VAULT_YES;
       }
 
       if (viAttributes & MOB_BUYER)

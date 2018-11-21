@@ -70,6 +70,48 @@ messages:
       propagate;
    }
 
+   HolderDoAddNode(node = $, lNodes = $)
+   "Adds a node to a list of nodes. If a node with the same class already exists, the node is added before that node, otherwise at the first position."
+   {
+      local oCurrentNode, index;
+      index = 1;
+
+      for oCurrentNode in lNodes
+      {
+         if GetClass(oCurrentNode) = GetClass(node)
+         {
+            lNodes = InsertListElem(lNodes,index,node);
+            return lNodes;
+         }
+         index = index + 1;
+      }
+
+      lNodes = Cons(node, lNodes);
+      return lNodes;
+   }
+
+   SortItems(owner = $, vaultman = $, item_list = $, number_list = $)
+   "Sort the items corresponding to the given item list. The number list has an entry for every NumberItem in the item list."
+   "All items in the list must be present in the vault with the correct quantity, otherwise the vault will stay unchanged."
+   "Returns $ if all items were equal and the operation succeeded. Otherwise returns a list of items that were different."
+   {
+      local lDifferences;
+
+      lDifferences = $;
+      lDifferences = Send(self,@CompareHoldToItemList,#item_list=item_list,#number_list=number_list);
+
+      if lDifferences <> $
+      {
+         Debug("ALERT! ",Send(owner,@GetTrueName),owner," tried to sort vault items from ",Send(self,@GetTrueName),self,
+         " and sent item list that differed from actual list");
+         return lDifferences;
+      }
+
+      plPassive = item_list;
+
+      return $;
+   }
+
    Delete()
    {      
       poPlayer = $;

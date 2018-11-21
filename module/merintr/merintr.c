@@ -340,6 +340,7 @@ static TypedCommand commands[] = {
 { "password",    CommandPassword, },
 { "withdraw",    CommandWithdraw, },
 { "deposit",     CommandDeposit, },
+{ "vault",       CommandVault, },
 { "balance",     CommandBalance, },
 { "group",       CommandGroup, },
 { "appeal",      CommandAppeal, },
@@ -448,6 +449,7 @@ static action_label	gActionLabels[] =
 	{"buy",				A_BUY,				NULL},
 	{"deposit",			A_DEPOSIT,			NULL},
 	{"withdraw",		A_WITHDRAW,			NULL},
+	{"vault",			A_VAULT,				NULL},
 	{"mousetarget",		A_ATTACK,			NULL},
 	{"targetnext",		A_TARGETNEXT,		NULL},
 	{"targetprevious",	A_TARGETPREVIOUS,	NULL},
@@ -505,6 +507,7 @@ keymap	gCustomKeys[] =
 	{(WORD)-1,				(WORD)-1,				A_BUY,				NULL},
 	{(WORD)-1,				(WORD)-1,				A_DEPOSIT,			NULL},
 	{(WORD)-1,				(WORD)-1,				A_WITHDRAW,			NULL},
+	{(WORD)-1,           (WORD)-1,				A_VAULT,				NULL},
 	{(WORD)-1,				(WORD)-1,				A_ATTACK,			NULL},
 	{(WORD)-1,				(WORD)-1,				A_TARGETNEXT,		NULL},
 	{(WORD)-1,				(WORD)-1,				A_TARGETPREVIOUS,	NULL},
@@ -739,6 +742,7 @@ void CustomConfigInit(void)
 		WritePrivateProfileString("keys", "deposit", "d+shift", "./config.ini");
 
 		WritePrivateProfileString("keys", "withdraw", "w+shift", "./config.ini");
+		WritePrivateProfileString("keys", "vault", "v+shift", "./config.ini");
 		WritePrivateProfileString("keys", "targetnext", "]", "./config.ini");
 		WritePrivateProfileString("keys", "targetprevious", "[", "./config.ini");
 		WritePrivateProfileString("keys", "emote", ";", "./config.ini");

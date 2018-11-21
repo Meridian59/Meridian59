@@ -34,6 +34,7 @@
 #define DEF_OPEN "space"
 #define DEF_PICKUP "g"
 #define DEF_WITHDRAW "o+shift"
+#define DEF_VAULT "v+shift"
 
 // Movement
 #define DEF_BACKWARD "s"

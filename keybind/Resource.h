@@ -74,6 +74,8 @@
 #define IDC_FLIP                        1016
 #define IDC_MOUSEYSCALEVALUE            1016
 #define IDC_MOUSELOOKTOGGLE             1017
+#define IDC_VAULT                       1018
+#define IDC_VAULT_MOD                   1019
 #define IDC_COMBO_SAY                   1020
 #define IDC_COMBO_MAP                   1021
 #define IDC_COMBO_CHAT                  1021

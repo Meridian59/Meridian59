@@ -49,6 +49,7 @@ TCHAR TCOffer[MAX_KEYVALUELEN];
 TCHAR TCOpen[MAX_KEYVALUELEN];
 TCHAR TCPickup[MAX_KEYVALUELEN];
 TCHAR TCWithdraw[MAX_KEYVALUELEN];
+TCHAR TCVault[MAX_KEYVALUELEN];
 
 TCHAR TCBackward[MAX_KEYVALUELEN];
 TCHAR TCFlip[MAX_KEYVALUELEN];
@@ -300,6 +301,7 @@ BOOL CheckforDuplicateBind(TCHAR *TCCompare)
   if(lstrcmp(TCCompare,TCOpen)==0 && TCCompare!=TCOpen) return TRUE;
   if(lstrcmp(TCCompare,TCPickup)==0 && TCCompare!=TCPickup) return TRUE;
   if(lstrcmp(TCCompare,TCWithdraw)==0 && TCCompare!=TCWithdraw) return TRUE;
+  if(lstrcmp(TCCompare,TCVault)==0 && TCCompare!=TCVault) return TRUE;
 
   if(lstrcmp(TCCompare,TCBackward)==0 && TCCompare!=TCBackward) return TRUE;
   if(lstrcmp(TCCompare,TCFlip)==0 && TCCompare!=TCFlip) return TRUE;

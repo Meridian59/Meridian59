@@ -624,6 +624,14 @@ void CommandDeposit(char *args)
 }
 /************************************************************************/
 /*
+ * CommandVault: "vault" command
+ */
+void CommandVault(char *args)
+{
+   PerformAction(A_VAULT, NULL);
+}
+/************************************************************************/
+/*
  * CommandGroup: "group" command
  */
 void CommandGroup(char *args)

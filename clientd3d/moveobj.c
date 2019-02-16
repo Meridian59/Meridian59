@@ -21,6 +21,7 @@
 
 extern player_info player;
 extern room_type current_room;
+extern int sector_depths[];
 
 static void MoveSingleVertically(Motion *m, int dt);
 /************************************************************************/
@@ -232,21 +233,60 @@ Bool ObjectsMove(int dt)
 		}
 		if (OF_BOUNCING == (OF_BOUNCING & r->obj.flags))
 		{
-			if (!(OF_PLAYER & r->obj.flags))
+		   int floor,ceiling,angleBounce,bounceHeight, sector_flags;
+	      long top, bottom;
+         float depth;
+         bool bUsingAlternateDepth = false; // Is kod overriding our depth?
+            
+	      GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, 0, 0);
+            
+		   depth = sector_depths[SectorDepth(sector_flags)];
+         if (ROOM_OVERRIDE_MASK & GetRoomFlags())
+         {
+            switch (SectorDepth(sector_flags))
+            {
+               case SF_DEPTH1:
+                  if (ROOM_OVERRIDE_DEPTH1 & GetRoomFlags())
+                  {
+                     depth = GetOverrideRoomDepth(SF_DEPTH1);
+                     bUsingAlternateDepth = true;
+                  }
+                  break;
+               case SF_DEPTH2:
+                  if (ROOM_OVERRIDE_DEPTH2 & GetRoomFlags())
+                  {
+                     depth = GetOverrideRoomDepth(SF_DEPTH2);
+                     bUsingAlternateDepth = true;
+                  }
+                  break;
+               case SF_DEPTH3:
+                  if (ROOM_OVERRIDE_DEPTH3 & GetRoomFlags())
+                  {
+                     depth = GetOverrideRoomDepth(SF_DEPTH3);
+                     bUsingAlternateDepth = true;
+                  }
+                  break;
+            }
+         }
+
+			r->obj.bounceTime += min(dt,40);
+			if (r->obj.bounceTime > TIME_FULL_OBJECT_BOUNCE)
+				r->obj.bounceTime -= TIME_FULL_OBJECT_BOUNCE;
+			angleBounce = NUMDEGREES * r->obj.bounceTime / TIME_FULL_OBJECT_BOUNCE;
+			bounceHeight = FIXED_TO_INT(fpMul(OBJECT_BOUNCE_HEIGHT, SIN(angleBounce)));
+			if (GetPointHeights(r->motion.x,r->motion.y,&floor,&ceiling))
 			{
-				int floor,ceiling,angleBounce,bounceHeight;
-				r->obj.bounceTime += min(dt,40);
-				if (r->obj.bounceTime > TIME_FULL_OBJECT_BOUNCE)
-					r->obj.bounceTime -= TIME_FULL_OBJECT_BOUNCE;
-				angleBounce = NUMDEGREES * r->obj.bounceTime / TIME_FULL_OBJECT_BOUNCE;
-				bounceHeight = FIXED_TO_INT(fpMul(OBJECT_BOUNCE_HEIGHT, SIN(angleBounce)));
-				if (GetPointHeights(r->motion.x,r->motion.y,&floor,&ceiling))
-				{
+            if (bUsingAlternateDepth)
+            {
+			   	r->motion.z = depth + OBJECT_BOUNCE_HEIGHT + bounceHeight;
+            }
+            else
+            {
 					//int midPoint = floor + ((ceiling-floor)>>1);
-					r->motion.z = floor + OBJECT_BOUNCE_HEIGHT + bounceHeight;
-				}
-				retval = True;
+			   	r->motion.z = floor + OBJECT_BOUNCE_HEIGHT + bounceHeight;
+            }
 			}
+			retval = True;
 		}
 		if (r->motion.v_z != 0)
 		{

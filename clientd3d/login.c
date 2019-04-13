@@ -88,7 +88,7 @@ HWND GetMessageBoxParent(void)
 /*
  * LoginErrorMessage:  Bring up an error message box with given login error message.
  */
-void LoginErrorMessage(char *message, BYTE action)
+void LoginErrorMessage(const char *message, BYTE action)
 {
    HWND hParent = GetMessageBoxParent();
    config.quickstart = FALSE;

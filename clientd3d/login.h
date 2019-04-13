@@ -26,7 +26,7 @@ void LoginSendInfo(void);
 Bool GetLogin(void);
 void LoginOk(BYTE type);
 void LoginError(int err_string);
-void LoginErrorMessage(char *message, BYTE action);
+void LoginErrorMessage(const char *message, BYTE action);
 void LoginTimeout(void);
 void EnterGame(void);
 

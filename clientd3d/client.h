@@ -68,7 +68,7 @@ enum {False = 0, True = 1};
 #define P_CATCH 3
 
 /* Enable for "retail", official builds, not for the open source version */
-#define M59_RETAIL
+//#define M59_RETAIL
 
 extern void GetGamePath( char *szGamePath );
 
@@ -88,7 +88,7 @@ extern "C" {
     // #define to enable Miles Sound System version.  If not defined,
     // music is played through the default MIDI player, and sound goes through the
     // ancient wavemix DLL.
-    //#define M59_MSS
+    #define M59_MSS
 #endif
 
 #ifdef M59_MSS

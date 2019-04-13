@@ -49,6 +49,8 @@ enum {False = 0, True = 1};
 #define MAJOR_REV 7   /* Major version of client program */
 #define MINOR_REV 19  /* Minor version of client program; must be in [0, 99] */
 
+#define VERSION_NUMBER(major_rev, minor_rev) ((minor_rev + 100) * major_rev)
+
 #define MAXAMOUNT 9     /* Max # of digits in a server integer */
 #define MAXSTRINGLEN 255 /* Max length of a string loaded from string table */
 
@@ -65,11 +67,13 @@ enum {False = 0, True = 1};
 /* To make sure we are using the right version of the client */
 #define P_CATCH 3
 
+/* Enable for "retail", official builds, not for the open source version */
+#define M59_RETAIL
+
 extern void GetGamePath( char *szGamePath );
 
 extern long CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
-
 
 extern Bool is_foreground;   // True when program is in the foreground
 
@@ -80,11 +84,12 @@ extern Bool is_foreground;   // True when program is in the foreground
 extern "C" {
 #endif
 
-// Use this #define to enable Miles Sound System version.  If not defined,
-// music is played through the default MIDI player, and sound goes through the
-// ancient wavemix DLL.
-//#define M59_MSS
-
+#ifdef M59_RETAIL
+    // #define to enable Miles Sound System version.  If not defined,
+    // music is played through the default MIDI player, and sound goes through the
+    // ancient wavemix DLL.
+    //#define M59_MSS
+#endif
 
 #ifdef M59_MSS
 #define HANDLE_MM_WOM_DONE(hwnd, wParam, lParam, fn) \
@@ -116,6 +121,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#include <string>
 
 #include "resource.h"
 #include "proto.h"

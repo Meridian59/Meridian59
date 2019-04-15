@@ -33,7 +33,7 @@ enum SignUpWebResponse
 
 enum AccountStatusWebResponse
 {
-    // Out of a web api to check if an bad login account is due to be unverified
+    // Outcome of a web api to check if an bad login account is due to be unverified
     OK = 0,
     VERIFY = 1 << 0,
     FAILURE = 1 << 2

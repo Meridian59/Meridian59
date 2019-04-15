@@ -5,10 +5,13 @@
 *.rsc
 kodbase.txt
 run/*
+include/mss.h
+include/rrcore.h
 lib/meridian.lib
 lib/rscload.lib
 lib/libarchive.lib
 lib/libpng.lib
+lib/mss*.lib
 lib/waveplay.lib
 lib/zlib.lib
 bin/bbgun.exe
@@ -25,6 +28,8 @@ bin/porttest.exe
 bin/rscmerge.exe
 bin/rscprint.exe
 bin/waveplay.dll
+install/meridian59-installer.exe
+roomedit/windeu32.log
 
 #################
 ## Eclipse

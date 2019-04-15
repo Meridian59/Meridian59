@@ -26,27 +26,25 @@ static FILE *debug_file = NULL;
 char *szAppName;
 
 /************************************************************************/
-void _cdecl dprintf(char *fmt,...)
+void _cdecl dprintf(char *fmt, ...)
 {
-	char s[200];
+	const int bufferSize = 256;
+	const char s[bufferSize]{ 0 };
 	va_list marker;
 	DWORD written;
 
 	va_start(marker,fmt);
-	vsprintf(s,fmt,marker);
+	vsnprintf((char*)s, bufferSize, fmt, marker);
 	va_end(marker);
 
-	assert(strlen(s)<200);	/* overflowed local stack buffer, increase sizeof s buffer */
-
 	_RPT1(_CRT_WARN,"dprintf() says : %s",s);
-
 
 	if (!config.debug)
 		return;
 
 	WriteFile(hStdout, s, strlen(s), &written, NULL);
-  if (debug_file != NULL)
-    fputs(s, debug_file);
+	if (debug_file != NULL)
+		fputs(s, debug_file);
 }
 
 unsigned short gCRC16=0;

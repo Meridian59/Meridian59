@@ -10,6 +10,9 @@
  */
 
 #include "client.h"
+#include <sstream>
+
+using namespace std;
 
 #define MAXSERVERNUM 3      /* Max # of digits in server number */
 
@@ -112,10 +115,67 @@ void LoginErrorMessage(const char *message, BYTE action)
 void LoginError(int err_string)
 {
    HWND hParent = GetMessageBoxParent();
-   ClientError(hInst, hParent, err_string);
+   if (err_string == IDS_BADLOGIN)
+   {
+       CheckAccountActivation();
+   }
+   else
+   {
+       ClientError(hInst, hParent, err_string);
+   }
    config.quickstart = FALSE;
    LoginReset();
 }
+
+void CheckAccountActivation(void)
+{
+    HWND hParent = GetMessageBoxParent();
+
+    // make web api request.
+    char domain[256];
+    LoadString(hInst, IDS_WEBAPIDOMAIN, domain, sizeof(domain));
+    char resource[256];
+    LoadString(hInst, IDS_VERIFIEDAPI, resource, sizeof(resource));
+    wstring response;
+
+    // Build http post body with user input values.
+    stringstream ss;
+    ss << "submit=1";
+    ss << "&username=" << config.username;
+    ss << "&server=" << config.comm.server_num;
+
+    if (SendHttpsRequest(hParent, domain, resource, ss.str(), response))
+    {
+        string dStr(response.begin(), response.end());
+        char* text = const_cast<char *>(dStr.c_str());
+        debug((text));
+
+        char* pEnd = nullptr;
+        long webResponse = strtol(text, &pEnd, 10);
+
+        if (pEnd)
+        {
+            // successfully parsed web api response, check for unverified account.
+            switch (webResponse)
+            {
+            default:
+                ClientError(hInst, hParent, IDS_BADLOGIN);
+                break;
+            case AccountStatusWebResponse::VERIFY:
+            {
+                if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_UNVERIFIED))
+                {
+                    // request re-send of verification email.
+                    LoadString(hInst, IDS_RESENDAPI, resource, sizeof(resource));
+                    SendHttpsRequest(hParent, domain, resource, ss.str(), response);
+                }
+            }
+            break;
+            }
+        }
+    }
+}
+
 /****************************************************************************/
 /*
  * LoginReset:  We've gotten an error from the server in LOGIN state;
@@ -158,7 +218,19 @@ void EnterGame(void)
 }
 /****************************************************************************/
 
-
+/****************************************************************************/
+/*
+* UseRetailLoginSystem:  Determine if the retail web api's should be utilized.
+*   Return True iff "retail", official build, is in use (not for the open source version).
+*/
+bool UseRetailLoginSystem()
+{
+#ifdef M59_RETAIL
+    return true;
+#else
+    return false;
+#endif
+}
 
 /****************************************************************************/
 /*
@@ -276,19 +348,25 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	 return TRUE;
 
       case IDC_SIGNUP:
-	 {
-	    char url[256];
-	    LoadString(hInst,IDS_HOMEPAGEURL,url,sizeof(url));
-	    if (*url)
-	    {
-	       WebLaunchBrowser(url);
-	       EndDialog(hDlg, IDCANCEL);
-	       PostMessage(hMain,WM_SYSCOMMAND,SC_CLOSE,0);
-	    }
-	 }
-	 return TRUE;
-
-      case IDOK:
+      {
+          /* Sign up for an account */
+          if (UseRetailLoginSystem())
+          {
+              /* via HTTPs web api for "retail" (official builds) */
+              Signup::GetInstance()->GetSignUp();
+          }
+          else
+          {
+              /* via (classic) HTTP browser web page sign up (open source) */
+              char homepageUrl[256];
+              LoadString(hInst, IDS_HOMEPAGEURL, homepageUrl, sizeof(homepageUrl));
+              WebLaunchBrowser(homepageUrl);
+              EndDialog(hDlg, IDCANCEL);
+              PostMessage(hMain, WM_SYSCOMMAND, SC_CLOSE, 0);
+          }
+      }
+     return TRUE;
+     case IDOK:
 	 /* User has pressed return on one of the edit boxes */
 	 if (GetFocus() == hUser)
 	 {

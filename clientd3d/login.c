@@ -275,7 +275,7 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	 EndDialog(hDlg, IDOK);
 	 return TRUE;
 
-      case IDC_HOMEPAGE:
+      case IDC_SIGNUP:
 	 {
 	    char url[256];
 	    LoadString(hInst,IDS_HOMEPAGEURL,url,sizeof(url));

@@ -543,7 +543,6 @@ BEGIN
 
     116, DIALOG
     BEGIN
-        BOTTOMMARGIN, 266
     END
 
     1017, DIALOG
@@ -726,7 +725,7 @@ BEGIN
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
-    164                     "http://meridian59.com/"
+    164                     "http://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -735,6 +734,26 @@ BEGIN
     180                     "Wähle die Gegenstände zum Hinterlegen aus."
     187                     "Unable to send an HTTP request for the file %s to the server %s."
     188                     "Unable to get size of file %s from the server %s."
+    189                     "Failed to contact the signup server, please check your network settings and try again (%s)."
+    190                     "https://meridian59.com/troubleshoot"
+    191                     "Your signup failed because:\n\n%s"
+END
+
+STRINGTABLE
+BEGIN
+    192                     "Username is invalid or already in use."
+    193                     "E-mail address is invalid."
+    194                     "E-mail address is already in use."
+    195                     "Passwords are invalid or not not match."
+    196                     "Unknown server selected."
+    197                     "Registration Server is Offline."
+    198                     "Signup generated an unknown error, please try again."
+    199                     "/api/signup/"
+    200                     "meridian59.com"
+    201                     "/api/verified/"
+    202                     "Your account is unverified! This is why you cannot login. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't receivedthe activation e-mail to be resent, please press Yes below."
+    203                     "/api/resend/"
+    204                     "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 
 #endif    // German resources
@@ -1013,7 +1032,7 @@ CAPTION "Meridian 59 Login"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Enter Your Account Information",IDC_STATIC,37,94,207,69
-    PUSHBUTTON      "Sign up for an account...",IDC_HOMEPAGE,137,63,100,14
+    PUSHBUTTON      "Sign up for an account...",IDC_SIGNUP,137,63,100,14
     EDITTEXT        IDC_USERNAME,93,107,143,13,ES_AUTOHSCROLL
     EDITTEXT        IDC_PASSWORD,93,121,143,13,ES_PASSWORD | ES_AUTOHSCROLL
     CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,93,139,28,10
@@ -1253,6 +1272,32 @@ BEGIN
     PUSHBUTTON      "Preview Offer...",IDC_BTN_DEMO,138,167,93,14
 END
 
+IDD_SIGNUP DIALOGEX 0, 0, 288, 253
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION " Meridian 59 Sign up for a free account!"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    ICON            IDI_ICON,IDC_STATIC,7,6,20,20
+    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, confirm password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot.",IDC_STATIC,34,11,233,46
+    GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,57,244,171
+    LTEXT           "E-mail Address",ID_SU_EMAIL,39,76,62,8
+    EDITTEXT        IDC_NEW_EMAIL,104,75,150,14,ES_AUTOHSCROLL
+    RTEXT           "Used for account verification and to reset your password.",IDC_STATIC,35,91,219,11
+    LTEXT           "Desired Username",ID_SU_USERNAME,39,106,67,10
+    EDITTEXT        IDC_NEW_USERNAME,104,104,149,14,ES_AUTOHSCROLL
+    LTEXT           "Password",ID_SU_PW1,39,123,51,10
+    EDITTEXT        IDC_NEW_PW1,104,121,149,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirm Password",ID_SU_PW2,39,140,69,10
+    EDITTEXT        IDC_NEW_PW2,104,138,149,14,ES_PASSWORD | ES_AUTOHSCROLL
+    RTEXT           "Passwords must be  6-32 characters without whitespace.",IDC_STATIC,39,155,214,11
+    LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,109,168,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,142,168,32,10
+    LTEXT           "There are two servers available: 101 is very active and filled with expert players who love to fight. 102 is less populated, but the players are friendlier and more likely to help out new players.",IDC_STATIC,39,186,220,30
+    PUSHBUTTON      "Troubleshoot",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
+    DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,150,221,107,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1291,7 +1336,6 @@ BEGIN
         LEFTMARGIN, 6
         RIGHTMARGIN, 251
         TOPMARGIN, 6
-        BOTTOMMARGIN, 259
     END
 
     IDD_OFFERRECEIVE, DIALOG
@@ -1406,6 +1450,11 @@ BEGIN
         RIGHTMARGIN, 241
         TOPMARGIN, 7
         BOTTOMMARGIN, 181
+    END
+
+    IDD_SIGNUP, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 252
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1523,6 +1572,11 @@ IDA_DOWNLOAD            AVI                     "bitmap\\download.avi"
 //
 
 IDD_LOGIN AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_SIGNUP AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -1678,6 +1732,9 @@ BEGIN
     IDS_DEPOSIT_ITEMS       "Select Items to Deposit"
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
+    IDS_CANTSIGNUP          "Failed to contact the signup server, please check your network settings and try again (%s)."
+    IDS_TROUBLESHOOT        "https://meridian59.com/troubleshoot/"
+    IDS_SIGNUPFAILED        "Your sign up failed because:\n\n%s"
 END
 
 STRINGTABLE
@@ -1686,7 +1743,7 @@ BEGIN
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."
-    IDS_HOMEPAGEURL         "http://meridian59.com/"
+    IDS_HOMEPAGEURL         "http://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -1704,6 +1761,23 @@ BEGIN
     IDS_LATENCY8            "very poor connection"
     IDS_LATENCYMETRIC       "approximately %dms latency"
     IDS_LAGBOXSUBNAME       "A measurement of your network delay."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_USERNAMEINVALID     "Username is invalid or already in use.\n"
+    IDS_EMAILINVALID        "E-mail address is invalid.\n"
+    IDS_EMAILINUSE          "E-mail address is already in use.\n"
+    IDS_PASSWORDINVALID     "Passwords are invalid or not not match.\n"
+    IDS_SERVERUNKNOWN       "Unknown server selected.\n"
+    IDS_SIGNUPOFFLINE       "Registration Server is Offline.\n"
+    IDS_SIGNUPUNKNOWNERROR  "Signup generated an unknown error, please try again.\n"
+    IDS_SIGNUPAPI           "/api/signup/"
+    IDS_WEBAPIDOMAIN        "meridian59.com"
+    IDS_VERIFIEDAPI         "/api/verified/"
+    IDS_UNVERIFIED          "Your account is unverified! This is why you cannot login. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then pess Yes below to resend it now."
+    IDS_RESENDAPI           "/api/resend/"
+    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 
 #endif    // English (United States) resources

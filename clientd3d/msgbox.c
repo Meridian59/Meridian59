@@ -14,7 +14,7 @@
 #define ERROR_LENGTH 1024 /* Max length of an error string */
 
 typedef struct {
-    const char *text;
+   const char *text;
    char *title;
    UINT style;
 } MsgBoxStruct;

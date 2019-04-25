@@ -1042,7 +1042,7 @@ BEGIN
     LTEXT           "Meridian 59 is a game played over the Internet.  To play, you must have an account with the central server.",IDC_STATIC,36,6,206,18
     GROUPBOX        "New to Meridian 59",IDC_NEW_TO_MERIDIAN_59,37,33,207,49
     LTEXT           "If you don't have an account, here's how you can get started today!",IDC_STATIC,45,47,87,29
-    LTEXT           "Login name:",IDC_STATIC,43,110,45,10
+    LTEXT           "Username:",IDC_STATIC,43,110,45,10
     LTEXT           "Password:",IDC_STATIC,43,123,45,8
     LTEXT           "Server:",IDC_STATIC,43,139,44,8
 END
@@ -1289,7 +1289,7 @@ BEGIN
     EDITTEXT        IDC_NEW_PW1,104,121,149,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "Confirm Password",ID_SU_PW2,39,140,69,10
     EDITTEXT        IDC_NEW_PW2,104,138,149,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "Passwords must be  6-32 characters without whitespace.",IDC_STATIC,39,155,214,11
+    RTEXT           "Username and Password must be 6-32 characters without whitespace.",IDC_STATIC,26,155,227,11
     LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
     CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,109,168,32,10
     CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,142,168,32,10

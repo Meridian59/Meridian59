@@ -159,7 +159,6 @@ BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam
             {
                 string dStr(response.begin(), response.end());
                 char* text = const_cast<char *>(dStr.c_str());
-                debug((text));
 
                 char* pEnd = nullptr;
                 long webResponse = strtol(text, &pEnd, 10);

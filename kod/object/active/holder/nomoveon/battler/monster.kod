@@ -288,6 +288,8 @@ properties:
    piHit_points = 1
    piMax_hit_points = 1
 
+   piBossBonus = 0
+
    % Who we are dealing with.
    poCustomer = $
 
@@ -5829,6 +5831,10 @@ messages:
       return;
    }
 
+   GetBonusXP()
+   {
+      return piBossBonus;
+   }  
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

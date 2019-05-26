@@ -30,8 +30,6 @@ classvars:
    viTeleport_col = 31
    viTerrain_type = TERRAIN_JUNGLE
 
-   viPermanent_flags = ROOM_NO_COMBAT
-
 properties:
 
    prRoom = room_OutdoorsKC5

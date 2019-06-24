@@ -4883,6 +4883,7 @@ messages:
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
+         Send(self,@DrawHPChance);
 
       return;
    }
@@ -9711,6 +9712,7 @@ messages:
       }
 
       Send(self,@DrawMight);
+      Post(self,@DrawCapacity);
       
       return piMightMod - iOrigMight;
    }

@@ -296,6 +296,8 @@ resources:
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
+   user_tell_wav = slitherboltwand.wav
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -6361,6 +6363,9 @@ messages:
             }
 
             rSay_format = user_send_str;
+
+            % Play a "tell sound" to the recipient
+            Send(self,@WaveSendUser,#what=what,#wave_rsc=user_tell_wav);
          }
 
          if type = SAY_GROUP_ONE
@@ -6373,6 +6378,9 @@ messages:
             }
 
             rSay_format = user_send_one_str;
+
+            % Play a "tell sound" to the recipient
+            Send(self,@WaveSendUser,#what=what,#wave_rsc=user_tell_wav);
 
             % this is what the client is expecting to hear
             type = SAY_GROUP; 

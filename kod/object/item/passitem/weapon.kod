@@ -308,7 +308,7 @@ messages:
       local iDamage, i, oWeapAtt;
 
       % First, get base damage.
-      iDamage = send(self,@GetBaseDamage);
+      iDamage = send(self,@GetBaseDamage,#who=poOwner,#target=target);
 
       % Then check weapon attributes
       %  Weapon Attributes in general should only + or - damage - no multipliers!

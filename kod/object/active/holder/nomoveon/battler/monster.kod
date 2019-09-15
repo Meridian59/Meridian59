@@ -195,6 +195,10 @@ resources:
 
    monster_default_attack = "attack"
 
+   autolooted_all = "You loot the corpse clean."
+   autolooted_some = "You loot some of the items from your fallen kill."
+   autolooted_none = "You find nothing easily lootable on your slain enemy."
+
 classvars:
 
    vrKocName = monster_koc_name
@@ -4945,7 +4949,7 @@ messages:
    CreateTreasure(who=$,corpse=$)
    {
       local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
-            lTreasureItems;
+            lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted;
 
       % Apparitions, etc, provide no treasure
       if pbIllusion
@@ -5031,6 +5035,9 @@ messages:
          lTreasureItems = cons(i,lTreasureItems);
       }
       
+      iNumberOfItemsDropped = 0;
+      iNumberOfItemsLooted = 0;
+      
       % Now drop all the treasure.
       for oTreasure in lTreasureItems
       {
@@ -5041,10 +5048,43 @@ messages:
          {
             Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol);
+            
+            iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+            
+            if IsClass(oTreasure,&NumberItem)
+               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
+               AND Send(oTreasure,@GetPos) <> $
+               AND IsClass(who,&User)
+               AND Send(who,@IsAutolooting)
+            {
+               iNumberOfItemsLooted = iNumberOfItemsLooted + 1;
+               Send(who,@UserGet,#what=oTreasure);
+            }
          }
          else
          {
             Send(oTreasure,@Delete);
+         }
+      }
+      
+      if iNumberOfItemsDropped <> 0
+         AND IsClass(who,&User)
+         AND Send(who,@IsAutolooting)
+      {
+            if iNumberOfItemsLooted = iNumberOfItemsDropped
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_all);
+         }
+
+         if iNumberOfItemsLooted > 0
+            AND iNumberOfItemsLooted < iNumberOfItemsDropped
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_some);
+         }
+
+         if iNumberOfItemsLooted = 0
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_none);
          }
       }
 

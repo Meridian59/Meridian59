@@ -293,6 +293,9 @@ resources:
 
    user_default_url = "http://www.Meridian59.com/"
    
+   autoloot_on_msg = "You decide to pick up treasure as it drops."
+   autoloot_off_msg = "You stop picking up treasure as it drops."
+   
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
@@ -347,6 +350,8 @@ properties:
    piMoveOldRow = 0
    piMoveOldCol = 0
    piMoveOldRoom = RID_TOS
+   
+   pbAutoloot = TRUE
 
    piCheaterLogs = 0
 
@@ -3915,6 +3920,25 @@ messages:
       {
          Send(self,@NotifyMonstersOfPresence);
       }
+      
+      if type = SAY_NORMAL
+      {
+         If StringContain(String,"autoloot on")
+            AND NOT Send(self,@IsAutolooting)
+         {
+            Send(self,@SetAutoloot,#value=TRUE);
+            Send(self,@MsgSendUser,#message_rsc=autoloot_on_msg);
+            return;
+         }
+
+If StringContain(String,"autoloot off")
+AND Send(self,@IsAutolooting)
+{
+Send(self,@SetAutoloot,#value=FALSE);
+Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
+return;
+}
+}
 
       if NOT Send(poOwner,@RoomReqCommunication,#type=type,#string=string,
                   #who=self)
@@ -4331,12 +4355,12 @@ messages:
          string = psPlayerDescription;
       }
       
-      if StringContain(psPlayerDescription,"¶")
+      if StringContain(psPlayerDescription,"Â¶")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"¶")
+         while StringContain(psPlayerDescription,"Â¶")
          {
-            StringSubstitute(psPlayerDescription,"¶","");
+            StringSubstitute(psPlayerDescription,"Â¶","");
             iCount = iCount + 1;
             if iCount > 10
             {
@@ -7820,6 +7844,17 @@ messages:
 	 i = i + 1;
       }
       return 0;
+   }
+
+   SetAutoloot(value=TRUE)
+   {
+      pbAutoloot = value;
+      return;
+   }
+   
+   IsAutolooting()
+   {
+      return pbAutoloot;
    }
 
 end

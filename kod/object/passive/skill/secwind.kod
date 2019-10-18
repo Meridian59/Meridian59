@@ -13,6 +13,7 @@ SecondWind is Skill
 constants:
 
    include blakston.khd
+   include protocol.khd
 
 resources:
 
@@ -48,6 +49,8 @@ classvars:
    vbCheck_exertion = FALSE
 
    vbAutomatic = TRUE
+   
+   viShow_enchantment_icon = 0x02
 
 properties:
 
@@ -87,6 +90,7 @@ messages:
       % Reverse sign so we're taking away exertion.
       iVigor = -iVigor;
       Send(who,@AddExertion,#amount=10000*iVigor);
+      Send(who,@ShowAddEnchantment,#what=self,#type=ENCHANTMENT_PLAYER);
 
       propagate;
    }
@@ -125,6 +129,10 @@ messages:
       propagate;
    }
 
+   ShowEnchantmentIcon(type = $)
+   {
+      return viShow_enchantment_icon & 0x02;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

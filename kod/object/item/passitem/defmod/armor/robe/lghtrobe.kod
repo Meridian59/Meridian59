@@ -47,7 +47,7 @@ classvars:
    viWeight = 75
    viBulk = 125
 
-   viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
+   viUse_type = ITEM_USE_BODY
 
    vrIcon_male = lightrobe_male_icon_rsc
    vrIcon_female = lightrobe_female_icon_rsc

@@ -43,6 +43,7 @@ classvars:
    viMax_Disp_hits = 5
 
    viGround_group = 2
+   viSpell_modifier = 10
 
 properties:
    
@@ -71,11 +72,10 @@ messages:
    "When the charm is put on, the wearer gets a moderate bonus to both might and aim."
    {
       piAim_change = send(what,@addaim,#points=AIM_CHANGE);
-      piStamina_change = send(what,@addStamina,#points = STAMINA_CHANGE);      
-      if random(1,5) = 3   %% 20% chance
-        {
-          send(what,@msgsenduser,#message_rsc=FarenCharm_whisper);
-        }
+      piStamina_change = send(what,@addStamina,#points = STAMINA_CHANGE);
+
+      send(what,@msgsenduser,#message_rsc=FarenCharm_whisper);
+
       propagate;
    }
 
@@ -85,6 +85,15 @@ messages:
       send(what,@addaim,#points=-piAim_change);
       send(what,@addStamina,#points = -piStamina_change);
       propagate;
+   }
+   
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = SS_FAREN
+      {
+         return viSpell_modifier;
+      }
+      return 0;
    }
 
    DestroyDisposable()

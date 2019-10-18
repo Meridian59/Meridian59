@@ -48,6 +48,7 @@ classvars:
    viMax_Disp_hits = 5
 
    viGround_group = 2
+   viSpell_modifier = 10
 
 properties:
    
@@ -77,11 +78,8 @@ messages:
    {
       piAim_change = send(what,@addaim,#points=AIM_CHANGE);
       piMight_change = send(what,@addmight,#points = MIGHT_CHANGE);
+      send(what,@msgsenduser,#message_rsc=QorCharm_whisper);
 
-      if random(1,5) = 3   %% 20% chance
-        {
-          send(what,@msgsenduser,#message_rsc=QorCharm_whisper);
-        }
       propagate;
    }
 
@@ -91,6 +89,15 @@ messages:
       send(what,@addaim,#points=-piAim_change);
       send(what,@addmight,#points = -piMight_change);
       propagate;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = SS_QOR
+      {
+         return viSpell_modifier;
+      }
+      return 0;
    }
 
    DestroyDisposable()

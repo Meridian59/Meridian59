@@ -43,6 +43,7 @@ classvars:
    viMax_Disp_hits = 5
 
    viGround_group = 2
+   viSpell_modifier = 10
 
 properties:
    
@@ -72,11 +73,8 @@ messages:
    {
       piStamina_change = send(what,@addStamina,#points=Stamina_CHANGE);
       piIntellect_change = send(what,@addIntellect,#points = Intellect_CHANGE);
-
-      if random(1,5) = 3   %% 20% chance
-        {
-          send(what,@msgsenduser,#message_rsc=ShalilleCharm_whisper);
-        }
+      send(what,@msgsenduser,#message_rsc=ShalilleCharm_whisper);
+      
       propagate;
    }
 
@@ -86,6 +84,15 @@ messages:
       send(what,@addStamina,#points=-piStamina_change);
       send(what,@addIntellect,#points = -piIntellect_change);
       propagate;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = SS_SHALILLE
+      {
+         return viSpell_modifier;
+      }
+      return 0;
    }
 
    DestroyDisposable()

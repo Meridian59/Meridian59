@@ -3372,21 +3372,21 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				if (ROOM_OVERRIDE_DEPTH1 & GetRoomFlags())
 				{
 					depth = GetOverrideRoomDepth(SF_DEPTH1);
-               bUsingAlternateDepth = false;
+               bUsingAlternateDepth = true;
 				}
 			break;
 			case SF_DEPTH2:
 				if (ROOM_OVERRIDE_DEPTH2 & GetRoomFlags())
 				{
 					depth = GetOverrideRoomDepth(SF_DEPTH2);
-               bUsingAlternateDepth = false;
+               bUsingAlternateDepth = true;
 				}
 			break;
 			case SF_DEPTH3:
 				if (ROOM_OVERRIDE_DEPTH3 & GetRoomFlags())
 				{
 					depth = GetOverrideRoomDepth(SF_DEPTH3);
-               bUsingAlternateDepth = false;
+               bUsingAlternateDepth = true;
 				}
 			break;
 			}

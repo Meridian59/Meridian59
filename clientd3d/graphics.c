@@ -197,8 +197,7 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    //int max_width, max_height;
    //int stretchfactor = config.large_area ? 2 : 1;
-   // 452 // 2000
-	//#define MAXY 2000 //276 // 2000
+
    float proportion = min(ysize / MAXY, xsize / MAXX);
    config.stretchfactor = proportion/2;
 
@@ -207,7 +206,7 @@ void GraphicsAreaResize(int xsize, int ysize)
    int inventory_min_width = xsize * 0.4;
    int text_area_min_height = ysize * 0.4;
 
-   new_xsize = xsize - INVENTORY_MIN_WIDTH;
+   new_xsize = xsize - inventory_min_width;
    new_ysize = ysize - text_area_min_height - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
    //new_ysize = ysize - TEXT_AREA_MIN_HEIGHT - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
 
@@ -244,16 +243,18 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 
+   int minimap_width_height = (inventory_min_width + 3) & ~3;
+
    //	areaMiniMap added by ajw.
    areaMiniMap.x	= view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
-   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, MINIMAP_MAX_WIDTH );
+   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height/* MINIMAP_MAX_HEIGHT*/);
 
    areaMiniMap.y	= 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
 
    iHeightAvailableForMapAndStats = ysize - areaMiniMap.y - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 
    areaMiniMap.cy	= (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
-   areaMiniMap.cy	= min( areaMiniMap.cy, MINIMAP_MAX_HEIGHT );
+   areaMiniMap.cy	= min( areaMiniMap.cy, minimap_width_height/* MINIMAP_MAX_HEIGHT*/);
 
    areaMiniMap.cy -= (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
    areaMiniMap.y += (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;

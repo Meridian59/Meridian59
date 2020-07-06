@@ -362,8 +362,8 @@ void MainMinMaxInfo(HWND hwnd, MINMAXINFO *lpmmi)
 	lpmmi->ptMinTrackSize.y = MIN_WINDOW_HEIGHT;
 	
 	InterfaceGetMaxSize(&s);
-	//lpmmi->ptMaxTrackSize.x = s.cx;
-	//lpmmi->ptMaxTrackSize.y = s.cy;
+	lpmmi->ptMaxTrackSize.x = s.cx;
+	lpmmi->ptMaxTrackSize.y = s.cy;
 }
 /****************************************************************************/
 void MainSetFocus(HWND hwnd, HWND hwndOldFocus)

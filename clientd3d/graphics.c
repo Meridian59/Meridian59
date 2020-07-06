@@ -195,21 +195,26 @@ void GraphicsAreaResize(int xsize, int ysize)
    int new_xsize, new_ysize;  /* Need signed #s */
    Bool must_redraw = False;
 
-   int max_width, max_height;
-   int stretchfactor = config.large_area ? 2 : 1;
+   //int max_width, max_height;
+   //int stretchfactor = config.large_area ? 2 : 1;
+   // 452 // 2000
+	//#define MAXY 2000 //276 // 2000
+   float proportion = min(ysize / MAXY, xsize / MAXX);
+   config.stretchfactor = proportion/2;
 
    int iHeightAvailableForMapAndStats;
 
-   max_width  = stretchfactor * MAXX;
-   max_height = stretchfactor * MAXY;
+   int inventory_min_width = xsize * 0.4;
+   int text_area_min_height = ysize * 0.4;
 
-   new_xsize = min(xsize - INVENTORY_MIN_WIDTH, max_width);
+   new_xsize = xsize - INVENTORY_MIN_WIDTH;
+   new_ysize = ysize - text_area_min_height - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
+   //new_ysize = ysize - TEXT_AREA_MIN_HEIGHT - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
 
-   new_ysize = ysize - TEXT_AREA_MIN_HEIGHT - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
    if (config.toolbar)
      new_ysize -= TOOLBAR_BUTTON_HEIGHT - MIN_TOP_TOOLBAR;
    else new_ysize -= MIN_TOP_NOTOOLBAR;
-   new_ysize = min(new_ysize, max_height);   
+   new_ysize = new_ysize;
 
    /* Make sizes divisible by 4.  Must be even for draw3d, and when 
     * stretchfactor = 2, need divisible by 4 so that room fits exactly in view */
@@ -233,6 +238,9 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    view.cx = new_xsize;
    view.cy = new_ysize;
+
+   config.viewport_width = new_xsize;
+   config.viewport_height = new_ysize;
 
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 

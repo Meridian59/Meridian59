@@ -13,8 +13,8 @@
 #define	TEX_CACHE_MAX_WALLMASK	2000000
 #define	TEX_CACHE_MAX_EFFECT	2000000
 #define	TEX_CACHE_MAX_PARTICLE	1000000
-#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(MAXX * stretchfactor) * (-PI / 3.6f))
-#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * stretchfactor) * (PI / 6.0f))
+#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(config.viewport_width/2 * stretchfactor) * (-PI / 3.6f))
+#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(config.viewport_height/2 * stretchfactor) * (PI / 6.0f))
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -717,6 +717,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheSystemReset(&gWorldCacheSystem);
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+
+	params->stretchfactor = config.stretchfactor; // ?1; //  22
 
 	UpdateRoom3D(room, params);
 

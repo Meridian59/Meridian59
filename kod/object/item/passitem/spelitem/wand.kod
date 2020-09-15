@@ -27,6 +27,13 @@ resources:
    Wand_target_gone = "You carefully aim your wand at %s%s, but you suddenly realize your target is gone."
    Wand_fails = "You point your wand but nothing happens."
 
+   wand_condition_exc = " is brimming with magical power."
+   wand_condition_exc_mended = " is brimming with magical power, but seems weaker than it should be."
+   wand_condition_good = " radiates strong magical energy."
+   wand_condition_med = " emits a faint magical glow."
+   wand_condition_poor = " flickers with what little magic remains."
+   wand_condition_broken = " has exhausted the last of its magical energies."
+
 classvars:
 
    vrLabelName = Wand_label_name_rsc
@@ -42,8 +49,16 @@ classvars:
 
    vbNoBrokenView = TRUE
 
-   viHits_init_min = 4
-   viHits_init_max = 9
+   viHits_init_min = 5
+   viHits_init_max = 20
+
+   vbShow_condition = TRUE
+   vrCondition_exc =   wand_condition_exc
+   vrCondition_exc_mended = wand_condition_exc_mended
+   vrCondition_good =  wand_condition_good
+   vrCondition_med =   wand_condition_med
+   vrCondition_poor =  wand_condition_poor
+   vrCondition_broken = wand_condition_broken
 
 properties:
 
@@ -68,7 +83,7 @@ messages:
 
          return;
       }
-
+      
       propagate;
    }
 

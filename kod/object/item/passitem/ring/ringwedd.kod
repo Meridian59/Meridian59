@@ -30,6 +30,7 @@ classvars:
    vrRealName = ringwedding_name_rsc
    vrIcon = ringwedding_icon_rsc
    vrRealDesc = ringwedding_desc_rsc
+   vbShow_condition = FALSE
 
    viHits_init_min = 3
    viHits_init_max = 7

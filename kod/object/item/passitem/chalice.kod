@@ -29,6 +29,14 @@ resources:
    chalice_empty = "You sip the last bit of water from the Chalice of Rain."
    chalice_combine = "You pour the water from one Chalice into the other."
    chalice_cant_use_pkill = "Only innocents may partake of the chalice."
+   chalice_refilled = "You fill your Chalice of the Rain with fresh, sparkling water."
+
+   chalice_condition_exc = " filled to the brim with pure, sparkling water."
+   chalice_condition_exc_mended = " filled to the brim with pure, sparkling water."
+   chalice_condition_good = " is still plenty full."
+   chalice_condition_med = " has a few sips left."
+   chalice_condition_poor = " is almost empty."
+   chalice_condition_broken = " is completely empty."
 
 classvars:
 
@@ -48,7 +56,17 @@ classvars:
 
    viValue_average = 500
 
+   vbShow_condition = TRUE
+   vrCondition_exc =   chalice_condition_exc
+   vrCondition_exc_mended = chalice_condition_exc_mended
+   vrCondition_good =  chalice_condition_good
+   vrCondition_med =   chalice_condition_med
+   vrCondition_poor =  chalice_condition_poor
+   vrCondition_broken = chalice_condition_broken
+
 properties:
+
+   poLastOwner = $
    
 messages:
 
@@ -76,15 +94,21 @@ messages:
       }
 
       % If we drop it in a room with a high Shal'ille bonus, refill the chalice
+      % And inform the last owner (if any) that the chalice has been refilled
       if IsClass(what,&Room)
          AND send(what,@GetShalilleBonus) > 20
+         AND piHits < piHits_init
       {
+         if poLastOwner <> $
+         {
+            send(poLastOwner, @MsgSendUser, #message_rsc = chalice_refilled);
+         }
          piHits = piHits_init;
       }
 
-      % If a user already has a chalice, then "combine" them.
       if IsClass(what,&User)
       {
+         % If a user already has a chalice, then "combine" them.
          % Get the second chalice in sequence.  This is the one the
          % user was originally holding, if any.
 
@@ -96,6 +120,11 @@ messages:
             send(what,@MsgSendUser,#message_rsc=chalice_combine);
             send(oOtherChalice,@SetHits,#number=send(oOtherChalice,@GetHits)+piHits);
             post(self,@Delete);
+         }
+         else
+         {
+            % Otherwise, mark the user as the most recent owner
+            poLastOwner = what;
          }
       }
 
@@ -151,7 +180,7 @@ messages:
 
          Post(self,@Delete);
       }
-
+      
       % Cast Rescue at really low power.
       oRescue = send(SYS,@FindSpellByNum,#num=SID_RESCUE);
       Send(oRescue,@CastSpell,#who=apply_on,#iSpellPower=1,#bItemCast=TRUE);

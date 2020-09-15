@@ -22,6 +22,13 @@ resources:
    ring_identified_name_rsc = "generic magical ring"
    ring_identified_description_rsc = "The has some magical effect."
 
+   ring_condition_exc = " is brimming with magical power."
+   ring_condition_exc_mended = " is brimming with magical power, but seems weaker than it should be."
+   ring_condition_good = " radiates strong magical energy."
+   ring_condition_med = " emits a faint magical glow."
+   ring_condition_poor = " flickers with what little magic remains."
+   ring_condition_broken = " has exhausted the last of its magical energies."
+
 classvars:
 
    viUse_type = ITEM_USE_FINGER
@@ -31,6 +38,15 @@ classvars:
 
    vrRealName = ring_identified_name_rsc
    vrRealDesc = ring_identified_name_rsc
+
+   vbShow_condition = TRUE
+   vrCondition_exc =   ring_condition_exc
+   vrCondition_exc_mended = ring_condition_exc_mended
+   vrCondition_good =  ring_condition_good
+   vrCondition_med =   ring_condition_med
+   vrCondition_poor =  ring_condition_poor
+   vrCondition_broken = ring_condition_broken
+
 
 properties:
 

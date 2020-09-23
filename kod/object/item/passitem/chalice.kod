@@ -29,7 +29,7 @@ resources:
    chalice_empty = "You sip the last bit of water from the Chalice of Rain."
    chalice_combine = "You pour the water from one Chalice into the other."
    chalice_cant_use_pkill = "Only innocents may partake of the chalice."
-   chalice_refilled = "You fill your Chalice of the Rain with fresh, sparkling water."
+   chalice_refilled = "The Chalice of Rain glows faintly for a moment, renewed by the spirit of Shal'ille that seems to permeate the area."
 
    chalice_condition_exc = " filled to the brim with pure, sparkling water."
    chalice_condition_exc_mended = " filled to the brim with pure, sparkling water."

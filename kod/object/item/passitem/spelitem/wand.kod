@@ -49,8 +49,8 @@ classvars:
 
    vbNoBrokenView = TRUE
 
-   viHits_init_min = 5
-   viHits_init_max = 20
+   viHits_init_min = 4
+   viHits_init_max = 9
 
    vbShow_condition = TRUE
    vrCondition_exc =   wand_condition_exc

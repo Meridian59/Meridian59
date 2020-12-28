@@ -108,9 +108,9 @@ enum
 #define NOTE_FILE "admnote.txt"
 #define PROFANE_FILE "profane.txt"
 
-#define DEBUG_FILE "debug.txt"
-#define ERROR_FILE "error.txt"
-#define LOG_FILE "log.txt"
+#define DEBUG_FILE_BASE "debug"
+#define ERROR_FILE_BASE "error"
+#define LOG_FILE_BASE "log"
 
 #define KODBASE_FILE "kodbase.txt"
 

@@ -14,7 +14,7 @@
 #define _SESSION_H
 
 /* for async.c to add bytes it writes */
-extern int transmitted_bytes; 
+extern int transmitted_bytes;
 
 #define SEED_COUNT 5
 
@@ -32,7 +32,7 @@ enum
 
 enum { CONN_SOCKET, CONN_CONSOLE };
 
-enum { STATE_ADMIN, STATE_GAME, STATE_TRYSYNC, 
+enum { STATE_ADMIN, STATE_GAME, STATE_TRYSYNC,
        STATE_SYNCHED, STATE_RESYNC, STATE_MAINTENANCE };
 
 #define SESSION_STATE_BYTES 120
@@ -48,11 +48,11 @@ enum
 typedef struct
 {
    int type;
-   
+
    SOCKET socket;
    char peer_data[MAXGETHOSTSTRUCT]; /* filled in by async database call to get DNS name */
    HANDLE hLookup;                   /* handle to async lookup call */
-   
+
    char name[100];
 
    struct in_addr addr;
@@ -102,7 +102,7 @@ typedef struct
    int displays_possible;
    int bandwidth;
    int reserved;
-   
+
    Bool exiting_state;		/* true iff in ExitXXX, so errors on writing don't inf loop */
 				/* only needs to be set if you write, so it's only in exitgame */
 

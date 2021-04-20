@@ -21,7 +21,7 @@ resources:
    truce_desc_rsc = \
       "The spirit of Shal'ille calls upon her ally Faren, forming a truce with creatures of nature for "
       "several minutes.  "
-      "Requires emerald and yrxl sap to cast."
+      "Requires emerald and elderberry to cast."
 
    truce_unnecessary = "Combat with monsters is already impossible here."
 
@@ -71,7 +71,7 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&Emerald,1],plReagents);
-      plReagents = Cons([&Yrxlsap,1],plReagents);
+      plReagents = Cons([&ElderBerry,1],plReagents);
 
       return;
    }

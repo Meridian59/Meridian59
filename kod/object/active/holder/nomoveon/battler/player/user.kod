@@ -3484,6 +3484,15 @@ messages:
    TextureSendUser(id = $,new_texture = $,flags = 0)
    "Sent by room when one of its textures changes."
    {
+      if (id = $
+         OR new_texture = $
+         OR flags = $)
+         AND Send(self,@GetOwner) <> $
+      {
+         % We must find out in which room this error is occurring
+         Debug("Had a texture error in ",Send(Send(self,@GetOwner),@GetName));
+      }
+
       if pbLogged_on
       {
          AddPacket(1,BP_CHANGE_TEXTURE,2,id,2,new_texture,1,flags);

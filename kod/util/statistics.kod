@@ -98,6 +98,12 @@ messages:
       if (oRoom <> $)
       {
          iNum = Send(oRoom, @GetRoomNum);
+         
+         if iNum >= RID_RENTABLE_START
+         {
+            % Rented rooms are not tracked.
+            return;
+         }
          for lItem in plRoom_entered_counts
          {
             if First(lItem) = iNum

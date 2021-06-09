@@ -1,0 +1,17 @@
+# purple rings of paralysis showing the hold debuff on a player
+#^Applied to Hotspot: player
+#*Groups: 5
+#* each group is a different frame in the animation
+-s 12
+5
+holdrings-0.bmp     [120, 95] 
+holdrings-1.bmp     [120, 110] 
+holdrings-2.bmp     [120, 125] 
+holdrings-3.bmp     [120, 148] 
+holdrings-4.bmp     [120, 193] 
+5
+ 1   1 
+ 1   2 
+ 1   3 
+ 1   4 
+ 1   5

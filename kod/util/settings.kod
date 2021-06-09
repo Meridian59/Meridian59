@@ -147,6 +147,15 @@ properties:
    % contests too!)  This value can be changed to tweak the penalty in realtime
    piBroadcastManaCostPercent = 50
 
+   % If pbUseCCProjectiles is TRUE,
+   % Hold, Blind, and Dazzle, so called 'CC' (crowd control) spells,
+   % will fire animated glowing projectiles that players can see moving to their target.
+   % If pbUseCCGlow is TRUE,
+   % players and monsters will also glow with the CC they are affected by,
+   % in increasing priority: Dazzle, Blind, Hold.
+   pbUseCCProjectiles = TRUE
+   pbUseCCGlow = TRUE
+
 messages:
 
    Constructor(server_num = $)
@@ -353,5 +362,16 @@ messages:
    {
       return piBroadcastManaCostPercent;
    }
+
+   GetUseCCProjectiles()
+   {
+      return pbUseCCProjectiles;
+   }
+
+   GetUseCCGlow()
+   {
+      return pbUseCCGlow;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

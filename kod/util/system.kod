@@ -4815,6 +4815,7 @@ messages:
       plItemTemplates = cons(create(&WineGoblet),plItemTemplates);
       plItemTemplates = cons(create(&Stew),plItemTemplates);
       plItemTemplates = cons(create(&Cheese),plItemTemplates);
+      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
 
       plItemTemplates = cons(create(&BerserkerRing),plItemTemplates);
       plItemTemplates = cons(create(&RingOfLethargy),plItemTemplates);

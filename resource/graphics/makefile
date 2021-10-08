@@ -15,6 +15,7 @@ BGFS = \
 	$(OUTDIR)\mystwdov.bgf \
 	$(OUTDIR)\ring3.bgf \
 	$(OUTDIR)\povmystsw.bgf \
+	$(OUTDIR)\tikitrib.bgf \
 
 all: makedirs $(BGFS)
 

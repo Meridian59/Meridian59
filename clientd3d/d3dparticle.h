@@ -8,16 +8,21 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	128
+#define MAX_PARTICLES	512
 #define SANDSTORM_R		226
 #define SANDSTORM_G		153
 #define SANDSTORM_B		6
 #define SANDSTORM_A		255
 
-#define RAIN_R			128
-#define RAIN_G			128
-#define RAIN_B			128
-#define RAIN_A			128
+#define RAIN_R			175
+#define RAIN_G			228
+#define RAIN_B			249
+#define RAIN_A			100
+
+#define SNOW_R			255
+#define SNOW_G			255
+#define SNOW_B			255
+#define SNOW_A			220
 
 typedef struct particle
 {
@@ -45,7 +50,10 @@ typedef struct emitter
 	custom_xyz	rotation;
 	custom_bgra	bgra;
 	particle	particles[MAX_PARTICLES];
-	Bool		bRandomize;
+	Bool		bRandomizeXY;
+	Bool		bRandomizeZ;
+	Bool		bGroundDestroy;
+	Bool		bWeatherEffect;
 } emitter;
 
 typedef struct particle_system
@@ -58,7 +66,8 @@ void	D3DParticleSystemReset(particle_system *pParticleSystem);
 void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
 							float velX, float velY, float velZ, unsigned char b, unsigned char g,
 							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, Bool bRandomize, int randomPos, int randomRot);
+							float rotX, float rotY, float rotZ, Bool bRandomizeXY, Bool bRandomizeZ,
+							int randomPos, int randomRot, Bool bGroundDestroy, Bool bWeatherEffect);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 //void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,

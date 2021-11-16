@@ -75,7 +75,7 @@ static ObjectData objectdata[MAXOBJECTS];
 static long nobjects;
 
 /* Hold info on items (walls, ceilings, floors, objects) to be drawn */
-#define MAX_ITEMS 1200L
+#define MAX_ITEMS 2400L
 DrawItem drawdata[MAX_ITEMS];
 long nitems;
 

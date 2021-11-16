@@ -15,6 +15,7 @@
 #define NO_COORD_CHECK -1
 
 int  GetPointFloor(int x, int y);
+int  GetPointCeiling(int x, int y);
 int GetFloorBase(int x, int y);
 Bool GetPointHeights(int x, int y, int *floor, int *ceiling);
 PDIB GetPointCeilingTexture(int x, int y);

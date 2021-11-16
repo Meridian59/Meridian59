@@ -367,7 +367,8 @@ messages:
       dropped = FALSE;
       for i in send(what,@GetPlayerUsing)
       {
-         if send(i,@ReqLeaveOwner)
+         if Send(i,@ReqLeaveOwner)
+            AND Send(i,@DropOnDeath)
             AND random(1,3) = 1
          {
             send(self,@NewHold,#what=i,#new_row=send(what,@GetRow),#new_col=send(what,@GetCol));
@@ -381,8 +382,9 @@ messages:
       {
          for i in send(what,@GetHolderPassive)
          {
-            if send(i,@ReqLeaveOwner)
-            AND random(1,3) = 1
+            if Send(i,@ReqLeaveOwner)
+               AND Send(i,@DropOnDeath)
+               AND random(1,3) = 1
             {
                send(self,@NewHold,#what=i,#new_row=send(what,@GetRow),#new_col=send(what,@GetCol));
                

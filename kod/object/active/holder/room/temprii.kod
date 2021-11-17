@@ -367,8 +367,7 @@ messages:
       dropped = FALSE;
       for i in send(what,@GetPlayerUsing)
       {
-         if send(i,@ReqLeaveOwner)
-            AND random(1,3) = 1
+         if Send(self,@ShouldDropItem,#oItem=i)
          {
             send(self,@NewHold,#what=i,#new_row=send(what,@GetRow),#new_col=send(what,@GetCol));
             dropped = TRUE;
@@ -381,8 +380,7 @@ messages:
       {
          for i in send(what,@GetHolderPassive)
          {
-            if send(i,@ReqLeaveOwner)
-            AND random(1,3) = 1
+            if Send(self,@ShouldDropItem,#oItem=i)
             {
                send(self,@NewHold,#what=i,#new_row=send(what,@GetRow),#new_col=send(what,@GetCol));
                
@@ -432,6 +430,19 @@ messages:
       }
       
       return;
+   }
+
+   ShouldDropItem(oItem=$)
+   {
+      if oItem <> $
+         AND Send(oItem,@ReqLeaveOwner)
+         AND Send(oItem,@DropOnDeath)
+         AND random(1,3) = 1
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    TimerMessage1()

@@ -43,9 +43,9 @@ enum
 
 /* table of pointers to functions to call for ccode functions */
 
-typedef int (*ccall_proc)(int object_id,local_var_type *local_vars,
-						  int num_normal_parms,parm_node normal_parm_array[],
-						  int num_name_parms,parm_node name_parm_array[]);
+typedef blak_int (*ccall_proc)(int object_id,local_var_type *local_vars,
+                               int num_normal_parms,parm_node normal_parm_array[],
+                               int num_name_parms,parm_node name_parm_array[]);
 
 ccall_proc ccall_table[MAX_C_FUNCTION];
 
@@ -239,9 +239,9 @@ void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parm
 }
 
 /* returns the return value of the blakod */
-int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
+blak_int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
 {
-	int ret_val = 0;
+	blak_int ret_val = 0;
 	UINT64 start_time = 0;
 	int interp_time = 0;
 	int posts = 0;
@@ -360,7 +360,7 @@ int SendBlakodClassMessage(int class_id,int message_id,int num_params,parm_node 
 }
 
 /* returns the return value of the blakod */
-int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
+blak_int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
 {
 	object_node *o;
 	class_node *c,*propagate_class;

@@ -149,15 +149,18 @@ typedef std::vector<std::string> StringVector;
 #include "bkod.h"
 #include "crc.h"
 #include "md5.h"
+
+typedef INT64 blak_int;
+
 typedef union 
 {
-   int int_val;
+   blak_int int_val;
    constant_type v;
 } val_type;
 
 typedef struct
 {
-   int value;
+   blak_int value;
    int name_id; /* for call-by-name parm list only */
    char type; /* for normal c parms (not call by name) only */
 } parm_node;

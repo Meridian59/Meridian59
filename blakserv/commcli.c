@@ -85,7 +85,7 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
       case NUMBER_OBJECT :
 			temp_val.int_val = obj_data.int_val;
 			temp_val.v.tag = CLIENT_TAG_NUMBER;
-			byte4 = temp_val.int_val;
+			byte4 = (int) temp_val.int_val;
 			AddIntToPacket(byte4);
 			break;
       case STRING_RESOURCE :

@@ -218,7 +218,7 @@ void InsertTable(int table_id,val_type key_val,val_type data_val)
    tn->table[index] = hn;
 }
 
-int GetTableEntry(int table_id,val_type key_val)
+blak_int GetTableEntry(int table_id,val_type key_val)
 {
    table_node *tn;
    hash_node *hn;
@@ -432,7 +432,7 @@ unsigned int GetTableHash(val_type val)
       break;
 
    default:
-      return GetBufferHash((char *)&val.int_val,4);
+     return GetBufferHash((char *)&val.int_val,sizeof(val.int_val));
    }
 
    if (!s || len <= 0)

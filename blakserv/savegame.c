@@ -210,8 +210,8 @@ void SaveListNodes(void)
 
 void SaveEachListNode(list_node *l,int list_id)
 {
-	SaveGameWriteInt((int) l->first.int_val);
-	SaveGameWriteInt((int) l->rest.int_val);
+	SaveGameWriteInt64(l->first.int_val);
+	SaveGameWriteInt64(l->rest.int_val);
 }
 
 void SaveTimers(void)

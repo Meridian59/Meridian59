@@ -47,12 +47,6 @@ typedef struct loaded_file_struct
 } loaded_file_node;
 loaded_file_node loadfile;
 
-// 32-bit value from old saved games
-typedef union {
-   int int_val;
-   constant_type v;  // 32 bits, from bkod
-} v0_val_type;
-
 int current_object_id;
 int current_object_class_id;
 
@@ -342,9 +336,14 @@ Bool LoadGameListNodes(int file_version)
 	
 	for (i=0;i<num_list_nodes;i++)
 	{
-		if (!LoadGameReadInt32To64(&first_val) ||
-        !LoadGameReadInt32To64(&rest_val)) {
-      return False;
+    if (file_version == 0) {
+      if (!LoadGameReadInt32To64(&first_val) ||
+          !LoadGameReadInt32To64(&rest_val)) {
+        return False;
+      }
+    } else {
+      LoadGameReadInt64(&first_val);
+      LoadGameReadInt64(&rest_val);
     }
 		
 		LoadGameTranslateVal(&first_val);

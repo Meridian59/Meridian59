@@ -17,7 +17,7 @@
 	them seem to be required in them, and since some of the include
 	filenames clash with that of most compilers */
 
-#define BLAKSERV_VERSION "2.2"
+#define BLAKSERV_VERSION "2.3"
 
 #define MAX_LOGIN_NAME 50
 #define MAX_LOGIN_PASSWORD 32
@@ -150,12 +150,25 @@ typedef std::vector<std::string> StringVector;
 #include "crc.h"
 #include "md5.h"
 
+// Originally, we stored Bkod values in a 32-bit int, but due to the function
+// GetTime(), which stored millisecond-resolution times in 28-bit Bkod values,
+// the time values would roll over every 8 years or so.  The workaround is
+// to store Bkod values in 64-bit ints at runtime, although they are still
+// 32 bits in the bof files and in client communication.  This effectively
+// expands the range of Bkod values to 32 bits, delaying time rollover visible to
+// to clients to 8*16 > 100 years.
 typedef INT64 blak_int;
+
+typedef struct
+{
+   INT64 data:60;
+   UINT64 tag:4;
+} server_constant_type;
 
 typedef union 
 {
    blak_int int_val;
-   constant_type v;
+   server_constant_type v;
 } val_type;
 
 typedef struct

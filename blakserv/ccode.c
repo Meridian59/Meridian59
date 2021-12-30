@@ -173,7 +173,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				r = GetResourceByID(each_val.v.data);
 				if (r == NULL)
 				{
-					sprintf(buf+strlen(buf),"<unknown RESOURCE %i>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<unknown RESOURCE %lli>",each_val.v.data);
 				}
 				else
 				{
@@ -192,7 +192,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				c = GetClassByID(each_val.v.data);
 				if (c == NULL)
 				{
-					sprintf(buf+strlen(buf),"<unknown CLASS %i>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<unknown CLASS %lli>",each_val.v.data);
 				}
 				else
 				{
@@ -242,13 +242,13 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				o = GetObjectByID(each_val.v.data);
 				if (o == NULL)
 				{
-					sprintf(buf+strlen(buf),"<OBJECT %i invalid>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<OBJECT %lli invalid>",each_val.v.data);
 					break;
 				}
 				c = GetClassByID(o->class_id);
 				if (c == NULL)
 				{
-					sprintf(buf+strlen(buf),"<OBJECT %i unknown class>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<OBJECT %lli unknown class>",each_val.v.data);
 					break;
 				}
 				
@@ -258,10 +258,10 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 					u = GetUserByObjectID(o->object_id);
 					if (u == NULL)
 					{
-						sprintf(buf+strlen(buf),"<OBJECT %i broken user>",each_val.v.data);
+						sprintf(buf+strlen(buf),"<OBJECT %lli broken user>",each_val.v.data);
 						break;
 					}
-					sprintf(buf+strlen(buf),"ACCOUNT %i OBJECT %i",u->account_id,each_val.v.data);
+					sprintf(buf+strlen(buf),"ACCOUNT %i OBJECT %lli",u->account_id,each_val.v.data);
 					break;
 				}
 			}
@@ -1528,8 +1528,10 @@ blak_int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
 	}
 	
 	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoom(r,row_source.v.data-1,col_source.v.data-1,
-		row_dest.v.data-1,col_dest.v.data-1);
+	ret_val.v.data = CanMoveInRoom(r,(int) (row_source.v.data-1),
+                                 (int) (col_source.v.data-1),
+                                 (int) (row_dest.v.data-1),
+                                 (int) (col_dest.v.data-1));
 	
 	return ret_val.int_val;
 }
@@ -1602,8 +1604,10 @@ blak_int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	}
 	
 	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoomFine(r,row_source.v.data-1,col_source.v.data-1,
-		row_dest.v.data-1,col_dest.v.data-1);
+	ret_val.v.data = CanMoveInRoomFine(r,(int) (row_source.v.data-1),
+                                     (int) (col_source.v.data-1),
+                                     (int) (row_dest.v.data-1),
+                                     (int) (col_dest.v.data-1));
 	
 	return ret_val.int_val;
 }

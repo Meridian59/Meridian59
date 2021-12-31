@@ -221,7 +221,7 @@ void SaveTimers(void)
 
 void SaveEachTimer(timer_node *t)
 {
-	int save_time;
+	INT64 save_time;
 	object_node *o;
 	const char *s;
 	
@@ -244,10 +244,10 @@ void SaveEachTimer(timer_node *t)
 	SaveGameWriteInt(t->object_id);
 	SaveGameWriteString(GetNameByID(t->message_id));
 	
-	save_time = (int)(t->time - GetMilliCount());
+	save_time = (INT64)(t->time - GetMilliCount());
 	if (save_time < 0)
 		save_time = 0;
-	SaveGameWriteInt(save_time);
+	SaveGameWriteInt64(save_time);
 }
 
 void SaveUsers(void)

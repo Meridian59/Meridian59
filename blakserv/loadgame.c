@@ -102,7 +102,7 @@ void LoadGameClose(void);
 Bool LoadGameSystem(void);
 Bool LoadGameObject(int file_version);
 Bool LoadGameListNodes(int file_version);
-Bool LoadGameTimer(void);
+Bool LoadGameTimer(int file_version);
 Bool LoadGameUser(void);
 Bool LoadGameClass(void);
 void LoadAddPropertyName(load_game_class_node *lgc,int prop_old_id,char *prop_name);
@@ -242,7 +242,7 @@ Bool LoadGameParse(char *filename)
 				return False;
 			break;
 		case SAVE_GAME_TIMER :
-			if (!LoadGameTimer())
+			if (!LoadGameTimer(file_version))
 				return False;
 			break;
 		case SAVE_GAME_USER :
@@ -359,17 +359,22 @@ Bool LoadGameListNodes(int file_version)
 	return True;
 }
 
-Bool LoadGameTimer(void)
+Bool LoadGameTimer(int file_version)
 {
-	int timer_id,object_id,milliseconds;
+	int timer_id,object_id,milliseconds32,milliseconds64;
 	char buf[100];
 	
 	LoadGameReadInt(&timer_id);
 	LoadGameReadInt(&object_id);
 	LoadGameReadString(buf,sizeof(buf));
-	LoadGameReadInt(&milliseconds);
+  if (file_version == 0) {
+    LoadGameReadInt(&milliseconds32);
+    milliseconds64 = milliseconds32;
+  } else {
+    LoadGameReadInt64(&milliseconds64);
+  }
 	
-	if (!LoadTimer(timer_id,object_id,buf,milliseconds))
+	if (!LoadTimer(timer_id,object_id,buf,milliseconds64))
 	{
 		eprintf("LoadGameTimer can't set timer %i\n",timer_id);
 		/* still ok */

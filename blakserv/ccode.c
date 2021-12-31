@@ -1888,13 +1888,11 @@ blak_int C_GetTime(int object_id,local_var_type *local_vars,
 	
 	ret_val.v.tag = TAG_INT;
 
-    /*  We must subtract a number from the system time due to size
-        limitations within the blakod.  Blakod uses 32 bit values,
-        -4 bits for type and -1 bit for sign.  This leaves us with
-        27 bits for value,  This only allows us to have 134M or so
-        as a positive value.  Current system time is a bit larger
-        than that.  So, we subtract off time to compensate.
-    */
+	/* This offset is left over from when in-memory values were 32 bits,
+	   and would overflow when the time wrapped around (every 8 years or so).     
+	   This matches an offset in the client but is otherwise no longer strictly needed.
+	   Removing it would be difficult, as some time values are stored in objects.
+	*/
 
    ret_val.v.data = GetTime() - 1534000000L;    // Offset to sometime in mid-2018
 	

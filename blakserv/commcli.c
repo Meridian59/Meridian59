@@ -83,8 +83,8 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
 			AddIntToPacket(byte4);
 			break;
       case NUMBER_OBJECT :
-      // Send as a 32 bit value with the "number object" tag in the high bits
-      temp_val.v.data = (int) obj_data.v.data;
+			// Send as a 32 bit value with the "number object" tag in the high bits
+			temp_val.v.data = (int) obj_data.v.data;
 			temp_val.v.tag = CLIENT_TAG_NUMBER;
 			byte4 = temp_val.int_val;
 			AddIntToPacket(byte4);

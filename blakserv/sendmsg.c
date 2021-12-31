@@ -732,7 +732,7 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode)
 {
 	char info;
-  int dest;
+	int dest;
 	blak_int source;
 	val_type source_data;
 	

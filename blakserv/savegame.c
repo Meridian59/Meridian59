@@ -100,8 +100,8 @@ Bool SaveGame(char *filename)
 		return False;
 	}
 
-  // Version number
-  SaveGameWriteByte('V');
+	// Version number
+	SaveGameWriteByte('V');
 	SaveGameWriteInt(1);
 
 	SaveClasses();

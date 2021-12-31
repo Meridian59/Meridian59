@@ -348,15 +348,15 @@ Bool LoadGameListNodes(int file_version)
 	
 	for (i=0;i<num_list_nodes;i++)
 	{
-    if (file_version == 0) {
-      if (!LoadGameReadInt32To64(&first_val) ||
-          !LoadGameReadInt32To64(&rest_val)) {
-        return False;
-      }
-    } else {
-      LoadGameReadInt64(&first_val);
-      LoadGameReadInt64(&rest_val);
-    }
+		if (file_version == 0) {
+		  if (!LoadGameReadInt32To64(&first_val) ||
+		      !LoadGameReadInt32To64(&rest_val)) {
+		    return False;
+		  }
+		} else {
+		  LoadGameReadInt64(&first_val);
+		  LoadGameReadInt64(&rest_val);
+		}
 		
 		LoadGameTranslateVal(&first_val);
 		LoadGameTranslateVal(&rest_val);
@@ -379,12 +379,12 @@ Bool LoadGameTimer(int file_version)
 	LoadGameReadInt(&timer_id);
 	LoadGameReadInt(&object_id);
 	LoadGameReadString(buf,sizeof(buf));
-  if (file_version == 0) {
-    LoadGameReadInt(&milliseconds32);
-    milliseconds64 = milliseconds32;
-  } else {
-    LoadGameReadInt64(&milliseconds64);
-  }
+	if (file_version == 0) {
+	  LoadGameReadInt(&milliseconds32);
+	  milliseconds64 = milliseconds32;
+	} else {
+	  LoadGameReadInt64(&milliseconds64);
+	}
 	
 	if (!LoadTimer(timer_id,object_id,buf,milliseconds64))
 	{

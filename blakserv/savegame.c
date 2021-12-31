@@ -99,7 +99,11 @@ Bool SaveGame(char *filename)
 		eprintf("SaveGame can't open %s to save everything!!!\n",filename);
 		return False;
 	}
-	
+
+  // Version number
+  SaveGameWriteByte('V');
+	SaveGameWriteInt(1);
+
 	SaveClasses();
 	SaveResources();
 	SaveSystem();

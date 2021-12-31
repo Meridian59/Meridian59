@@ -205,7 +205,19 @@ Bool LoadGameParse(char *filename)
   // 0 - original save game, everything is 32 bits
   // 1 - object properties are 64 bits
   int file_version = 0;
-	
+
+  char sentinel;
+  LoadGameReadChar(&sentinel);
+  if (sentinel == 'V') {
+    LoadGameReadInt(&file_version);
+    if (file_version < 0 || file_version > 1) {
+      eprintf("LoadGameParse got unknown save game version %i\n", file_version);
+      return False;
+    }
+  } else {
+    rewind(loadfile.file);
+  }
+
 	while (true)
 	{
       if (fread(&cmd, 1, 1, loadfile.file) != 1)

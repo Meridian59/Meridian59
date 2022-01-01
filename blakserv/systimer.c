@@ -54,7 +54,7 @@ void ResetSysTimer()
 void CreateSysTimer(int type,int time,int period)
 {
    systimer_node *st;
-   int now,next_time;
+   INT64 now,next_time;
 
    if (period == 0)
    {
@@ -102,7 +102,7 @@ void CreateInitialSysTimers()
 	*/
 }
 
-void ProcessSysTimer(int time)
+void ProcessSysTimer(INT64 time)
 {
    systimer_node *st;
 

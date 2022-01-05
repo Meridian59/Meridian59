@@ -89,15 +89,15 @@ Bool IsInterpreting(void);
 
 void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 
-int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
-int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
+blak_int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
+blak_int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 int SendBlakodClassMessage(int class_id,int message_id,int num_params,parm_node parm[]);
 char *BlakodDebugInfo(void);
 char *BlakodStackInfo(void);
 
 /* this function used in sendmsg.c and ccode.c, but called all the time! */
 
-val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int data_type,int data)
+val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int data_type,blak_int data)
 {
    object_node *o;
    class_node *c;

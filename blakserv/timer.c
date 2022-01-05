@@ -176,7 +176,7 @@ int CreateTimer(int object_id,int message_id,int milliseconds)
    return t->timer_id;
 }
 
-Bool LoadTimer(int timer_id,int object_id,char *message_name,int milliseconds)
+Bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds)
 {
    object_node *o;
    timer_node *t;

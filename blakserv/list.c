@@ -108,7 +108,7 @@ Bool IsListNodeByID(int list_id)
 	return True;
 }
 
-int First(int list_id)
+blak_int First(int list_id)
 {
 	list_node *l;
 	
@@ -116,7 +116,7 @@ int First(int list_id)
 	return (l? l->first.int_val : NIL);
 }
 
-int Rest(int list_id)
+blak_int Rest(int list_id)
 {
 	list_node *l;
 	
@@ -159,7 +159,7 @@ int Length(int list_id)
 	return len_so_far;
 }
 
-int Nth(int n,int list_id)
+blak_int Nth(int n,int list_id)
 {
 	int i;
 	list_node *l;
@@ -252,7 +252,7 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
-int DelListElem(val_type list_id,val_type list_elem)
+blak_int DelListElem(val_type list_id,val_type list_elem)
 {
 	list_node *l,*prev;
 	

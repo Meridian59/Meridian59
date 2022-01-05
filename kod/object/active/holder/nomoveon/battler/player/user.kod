@@ -900,10 +900,6 @@ messages:
          iSpeed = Nth(client_msg,4);
          oRoom = Nth(client_msg,5);
 
-         % XORed with some magic numbers to throw off teleport hacks.
-         %iRow = Send(SYS,@BitWiseXOR,#value=iRow,#value2=12692257);
-         %iCol = Send(SYS,@BitWiseXOR,#value=iCol,#value2=11627532);
-
          % Check if it's an outdated message, from a person going off side of
          %  room multiple times before they got their new room.
          if oRoom <> poOwner 

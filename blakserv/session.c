@@ -500,7 +500,8 @@ void CloseAllSessions()
 void PollSessions()
 {
 	session_node *s;
-	int i,poll_time;
+	int i;
+  INT64 poll_time;
 
 	poll_time = GetTime();
 

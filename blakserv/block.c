@@ -36,7 +36,7 @@ block_node* FindBlock(struct in_addr* piaPeer)
 void AddBlock(int iSeconds, struct in_addr* piaPeer)
 {
 	block_node* pBlock = FindBlock(piaPeer);
-	int iExpires = (iSeconds < 0)? -1 : GetTime() + iSeconds;
+	INT64 iExpires = (iSeconds < 0)? -1 : GetTime() + iSeconds;
 
     // A block set to expire at -1 will stay in effect until all blocks are deleted.
 	// (Usually when server is shut down and later restarted.)

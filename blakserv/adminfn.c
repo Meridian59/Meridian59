@@ -1051,7 +1051,7 @@ void AdminGarbage(int session_id,admin_parm_type parms[],
 void AdminSaveGame(int session_id,admin_parm_type parms[],
                    int num_blak_parm,parm_node blak_parm[])
 {
-	int save_time;
+	INT64 save_time;
 
 	lprintf("AdminSave saving\n");
 
@@ -1067,7 +1067,7 @@ void AdminSaveGame(int session_id,admin_parm_type parms[],
 
 	SendBlakodEndSystemEvent(SYSEVENT_SAVE);
 
-	aprintf("done.  Save time is (%i).\n", save_time);
+	aprintf("done.  Save time is (%lli).\n", save_time);
 	UnpauseTimers();
 }
 
@@ -1311,7 +1311,7 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	object_node *o;
 	class_node *c;
 	const char *m;
-	int now = GetTime();
+	INT64 now = GetTime();
 
 	aprintf("System Status -----------------------------\n");
 
@@ -1321,13 +1321,13 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	kstat = GetKodStats();
 
 	aprintf("Current time is %s\n",TimeStr(now));
-	aprintf("System started at %s (up for %s = %i seconds)\n",
+	aprintf("System started at %s (up for %s = %lli seconds)\n",
 		TimeStr(kstat->system_start_time),
-		RelativeTimeStr(now - kstat->system_start_time),
+          RelativeTimeStr((int) (now - kstat->system_start_time)),
 		now - kstat->system_start_time);
 
 	aprintf("----\n");
-	aprintf("Interpreted %i.%09i billion total instructions in %i seconds\n",
+	aprintf("Interpreted %i.%09i billion total instructions in %lli seconds\n",
 		kstat->billions_interpreted,kstat->num_interpreted,
 		kstat->interpreting_time/1000);
 	aprintf("Handled %i top level messages, total %i messages\n",
@@ -1903,9 +1903,9 @@ void AdminShowOneTimer(timer_node *t)
 void AdminShowTime(int session_id,admin_parm_type parms[],
                    int num_blak_parm,parm_node blak_parm[])
 {
-	int now = GetTime();
+	INT64 now = GetTime();
 
-	aprintf("Current server clock reads %i (%s).\n", now, TimeStr(now));
+	aprintf("Current server clock reads %lli (%s).\n", now, TimeStr(now));
 }
 
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],

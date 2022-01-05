@@ -13,7 +13,8 @@
 #ifndef _SAVEALL_H
 #define _SAVEALL_H
 
-int SaveAll(void);
-void SaveControlFile(int save_time);
+// Returns timestamp of save
+INT64 SaveAll(void);
+void SaveControlFile(INT64 save_time);
 
 #endif

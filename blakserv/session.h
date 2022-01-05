@@ -65,10 +65,10 @@ typedef struct
    Bool active;			/* False if we're gonna hang 'em up
 				   because too many people online */
    Bool connected;
-   int connected_time;
+   INT64 connected_time;
    int state;
    Bool hangup;                 /* if set, PollSessions will hang us up next time 'round */
-   int timer;			/* time to call its state timer */
+   INT64 timer;			/* time to call its state timer */
 
    char session_state_data[SESSION_STATE_BYTES];
 

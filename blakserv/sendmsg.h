@@ -43,9 +43,9 @@ typedef struct
    int billions_interpreted;
    int num_messages;
    int num_top_level_messages;
-   int system_start_time;
+   INT64 system_start_time;
 
-   int interpreting_time;
+   INT64 interpreting_time;
    int interpreting_time_highest;
    int interpreting_time_over_second;
    int interpreting_time_message_id;

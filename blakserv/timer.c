@@ -23,7 +23,7 @@ int next_timer_num;
 
 timer_node *deleted_timers;
 
-int pause_time;
+INT64 pause_time;
 
 /* local function prototypes */
 void AddTimerNode(timer_node *t);
@@ -87,7 +87,7 @@ void PauseTimers(void)
 
 void UnpauseTimers(void)
 {
-   int add_time;
+   INT64 add_time;
    timer_node *t;
    
    if (pause_time == 0)

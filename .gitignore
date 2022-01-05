@@ -31,6 +31,10 @@ bin/waveplay.dll
 install/meridian59-installer.exe
 roomedit/windeu32.log
 
+# Include runtime scripts
+!run/scripts
+!run/scripts/*
+
 #################
 ## Eclipse
 #################

@@ -17,7 +17,7 @@
 	them seem to be required in them, and since some of the include
 	filenames clash with that of most compilers */
 
-#define BLAKSERV_VERSION "2.3"
+#define BLAKSERV_VERSION "2.4"
 
 #define MAX_LOGIN_NAME 50
 #define MAX_LOGIN_PASSWORD 32

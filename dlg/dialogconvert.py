@@ -21,23 +21,30 @@ def main():
     input_filename = sys.argv[1]
     output_filename = sys.argv[2]
 
-    output_file = open(output_filename, "a")
+    output_file = open(output_filename, "w")
     
     with open(input_filename, "r") as input_file:
         for line in input_file:
             fields = line.split('\t')
-            
-            command1 = f"send o 0 speechlibtrigger who class {fields[0]}"
-            command2 = f"send o 0 speechlibquote who class {fields[0]} quote q {fields[3]}"
 
-            if fields[1]:
-                command1 += f" mood int LIBRES_{fields[1]}"
             if fields[2]:
-                command1 += f" trigger q {fields[2]}"
-            output_file.write(command1)
-            output_file.write("\n")
-            output_file.write(command2)
-            output_file.write("\n")
+                command1 = f"send o 0 speechlibtrigger who class {fields[0]}"
+                command2 = f"send o 0 speechlibquote who class {fields[0]} quote q {fields[3]}"
+                if fields[1]:
+                    command1 += f" mood int LIBRES_{fields[1]}"
+                if fields[2]:
+                    command1 += f" trigger q {fields[2]}"
+                output_file.write(command1)
+                output_file.write("\n")
+                output_file.write(command2)
+                output_file.write("\n")
+            else:
+                command1 = f"send o 0 randomlibquote who class {fields[0]}"
+                if fields[1]:
+                    command1 += f" mood int LIBRES_{fields[1]}"
+                command1 += f" quote q {fields[3]}"
+                output_file.write(command1)
+                output_file.write("\n")
             
     output_file.close()
 

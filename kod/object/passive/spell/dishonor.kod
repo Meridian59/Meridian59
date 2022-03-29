@@ -135,6 +135,7 @@ messages:
       iKarma = Send(oTarget,@GetKarma);
 
       % Shal'ille only takes vigor from evil people.
+      iVigorRestThresholdChange = 0;
       if iKarma < 0
       {
          iVigorRestThreshold = Send(oTarget,@GetVigorRestThreshold);

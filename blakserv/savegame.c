@@ -158,7 +158,7 @@ void SaveResources(void)
 
 void SaveEachResource(resource_node *r)
 {
-	if ((r->resource_name == NULL))
+	if (r->resource_name == NULL)
 	{
 		eprintf("SaveEachResource is not saving invalid resource %i\n",r->resource_id);
 		return;

@@ -15,6 +15,7 @@ lib/mss*.lib
 lib/waveplay.lib
 lib/zlib.lib
 bin/bbgun.exe
+bin/bc
 bin/bc.exe
 bin/blakdeco.exe
 bin/blakdiff.exe

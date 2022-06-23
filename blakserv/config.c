@@ -310,7 +310,7 @@ const char * AddConfig(int config_id,const char *config_data,int config_type,int
       break;
 
    case CONFIG_STR :
-      if (s && *s == '@')
+      if (*s == '@')
       {
 	 // If blakserv.cfg has line "Setting   <@setting.txt>",
 	 // then Setting is set to the *contents* of the first line

@@ -374,7 +374,7 @@ Bool SuspendAccountRelative(account_node *a, int hours)
     * if suspended, hours is relative to their current suspension.
     */
 
-   suspend_time = std::max(GetTime(), a->suspend_time) + hours*60*60;
+   suspend_time = std::max((INT64) GetTime(), a->suspend_time) + hours*60*60;
 
    return SuspendAccountAbsolute(a, suspend_time);
 }

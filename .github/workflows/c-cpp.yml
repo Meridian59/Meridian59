@@ -16,7 +16,10 @@ jobs:
     - name: make blakserv
       working-directory: blakserv
       run: make -f makefile.linux -k
-    - name: make blakcomp
+    - name: make kod
       working-directory: blakcomp
-      run: make -f makefile.linux -k
-
+      run: |
+        make -f makefile.linux -k
+        cd ../kod
+        make -f makefile.linux
+      

@@ -7,19 +7,34 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-linux:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: make blakserv
       working-directory: blakserv
       run: make -f makefile.linux -k
+      
     - name: make kod
       working-directory: blakcomp
       run: |
         make -f makefile.linux -k
         cd ../kod
         make -f makefile.linux
-      
+  
+  
+  build-windows:
+  
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ilammy/msvc-dev-cmd@v1
+    
+    - name: make client
+      run: |
+        vcvars32.bat
+        nmake /nologo Bclient Bmodules

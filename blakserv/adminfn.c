@@ -556,7 +556,7 @@ void aprintf(const char *fmt,...)
 char *to_lowercase(char *s)
 {
    char* p = s;
-   while (*p = tolower(*p)) p++;
+   while ((*p = tolower(*p))) p++;
    return s;
 }
 

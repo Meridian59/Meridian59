@@ -453,7 +453,7 @@ unsigned int GetBufferHash(const char *buf,unsigned int len_buf)
    for (i=0;i<len_buf;i++)
    {
       h = (h << 4) + (unsigned char)(toupper(buf[i]));
-      if (g = h & 0xF0000000)
+      if ((g = h & 0xF0000000))
 	 h ^= g >> 24;
       h &= ~g;
    }

@@ -134,7 +134,6 @@ typedef std::vector<std::string> StringVector;
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <malloc.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>

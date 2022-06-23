@@ -87,7 +87,7 @@ const char * GetTagName(val_type val)
    case TAG_INVALID : return "INVALID";
    default :
       eprintf("GetTagName warning, can't identify tag %i\n",val.v.tag);
-      sprintf(s,"%i",val.v.tag);
+      sprintf(s,"%i",(int) val.v.tag);
       return s;
    }
 }

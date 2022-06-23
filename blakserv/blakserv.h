@@ -139,6 +139,7 @@ typedef std::vector<std::string> StringVector;
 #include <sys/stat.h>
 #include <time.h>
 #include <math.h>
+#include <inttypes.h>
 
 #include "btime.h"
 

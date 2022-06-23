@@ -33,8 +33,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: ilammy/msvc-dev-cmd@v1
-    
+      with: 
+        arch: x86
+        
     - name: make client
       run: |
-        vcvars32.bat
         nmake /nologo Bclient Bmodules

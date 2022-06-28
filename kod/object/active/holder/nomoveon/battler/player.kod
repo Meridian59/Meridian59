@@ -87,9 +87,6 @@ constants:
    PANTS_MUL  = 0x0100
    
    BASE_NEED = 105
-
-   % If vigor gets this low, see if second wind skill kicks in.
-   SECONDWIND_THRESHOLD = 25
    
    % How steep is the curve for learning new levels of spells?
    %  A higher number means a greater slope (less points at low levels)
@@ -708,8 +705,6 @@ resources:
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
    
-   second_wind_finished = "You feel more relaxed as your second wind dissipates."
-
 classvars:
 
    viHand_space = 2
@@ -877,6 +872,7 @@ properties:
    
    piGender = GENDER_MALE
 
+   % Player vigor thresholds
    piVigor_rest_threshold = 80
 
    % The user's string description, typed when created (and editable in game).
@@ -937,9 +933,6 @@ properties:
 
    piLastDeathTime = 0
 
-   % This keeps the duration of our Second Wind skill's "downtime"
-   ptSecondWind = $
-
    % Measures how long we have to wait before we're rescued.
    ptRescue = $
 
@@ -998,14 +991,6 @@ messages:
       {
          DeleteTimer(ptAdvancement);
          ptAdvancement = $;
-      }
-      
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
-         	#type=ENCHANTMENT_PLAYER);
       }
 
       Send(self,@CancelRescue);
@@ -1197,72 +1182,20 @@ messages:
    %%% Vigor
 
    NewVigor()
-   "Ensures vigor stays in bounds.  Also checks for second wind skill"
-   "NOTE: Do not modify vigor below SECONDWIND_THRESHOLD if you do not want the skill to kick in."
+   "Ensures vigor stays in bounds, including attempts at second wind skill"
    "Vigor display will be driven from here."
    {
-      if piVigor < SECONDWIND_THRESHOLD
-         AND ptSecondWind = $
-         AND Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
-         AND Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self)
+      % If vigor is changing and player has second wind, but isn't enchanted by it,
+      % then attempt second wind.
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
+         AND NOT Send(self,@IsEnchanted,#byClass=&SecondWind)
       {
-         Send(self,@StartSecondWind);
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@TrySkill,#who=self);
       }
-      
+
       piVigor = bound(piVigor,1,viMax_vigor);
       Send(self,@DrawVigor);
 
-      return;
-   }
-
-   StartSecondWind()
-   {
-      local oWind, iTime;
-
-      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) = 0
-      {
-         return FALSE;
-      }
-
-      oWind = Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND);
-      iTime = Send(oWind,@GetWaitTime,#who=self);
-      ptSecondWind = CreateTimer(self,@EndSecondWindTimer,iTime);
-      Send(self,@SetVigorRestThreshold,#amount=10);
-      
-      return TRUE;
-   }
-
-   EndSecondWindTimer()
-   {
-      ptSecondWind = $;
-      Send(self,@EndSecondWind);
-      
-      return;
-   }
-
-   EndSecondWind()
-   {
-      local iAmount;
-
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-      }
-      
-      % This prevents repeated triggering of the second wind skill.
-      if piVigor < SECONDWIND_THRESHOLD
-      {
-         piVigor = SECONDWIND_THRESHOLD;
-      }
-
-      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
-      Send(self,@SetVigorRestThreshold,#amount=iAmount);
-      Send(self,@NewVigor);
-      Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
-      Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
-      		 #type=ENCHANTMENT_PLAYER);
-      
       return;
    }
 
@@ -1276,11 +1209,11 @@ messages:
       piVigor_rest_threshold = amount;
 
       % Don't go above rest threshold if we're still waiting for Second Wind.
-      if ptSecondWind <> $
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
       {
          piVigor_rest_threshold = 10;
       }
-      
+  
       piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,100);
 
       Send(self,@DrawVigor);
@@ -1292,14 +1225,15 @@ messages:
    {
       local iExertionAdded, iPercentReduced, iVigorLost;
       
+      iExertionAdded = amount;
+
       % If we cannot gain vigor due to Second Wind, return out if trying
       %  to take away exertion
-      if ptSecondWind <> $ AND amount < 0
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
+         AND amount < 0
       {
          return;
       }
-
-      iExertionAdded = amount;
 
       if iExertionAdded > 0
       {
@@ -1326,7 +1260,7 @@ messages:
 
          Send(self,@NewVigor);
       }
-      
+
       return;
    }
 
@@ -1335,8 +1269,11 @@ messages:
    {        
       local iAmount;
 
-      % If we cannot gain vigor (probably due to Second Wind), return out if trying to take away exertion
-      if (ptSecondWind <> $) AND (amount < 0)
+      iAmount = amount;
+
+      % Return if extertion is being added but second wind skill is active
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
+         AND amount < 0
       {
          return;
       }
@@ -1346,7 +1283,6 @@ messages:
          return;
       }
       
-      iAmount = Amount;
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SANCTUARY) AND amount < 0
       {
          iAmount = 2 * Amount;
@@ -1372,7 +1308,7 @@ messages:
       
       return;
    }
-      
+
    UpdateStomach()
    "Removes consumed food from stomach"
    {
@@ -3117,12 +3053,6 @@ messages:
          {
             Send(self,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_PLAYER);
          }
-      }
-      
-      if ptSecondWind <> $
-      {
-	 Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
-	    #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
       }
 
       return;
@@ -10137,18 +10067,6 @@ messages:
       Send(self,@RemoveAllEnchantments);
       Send(self,@RecalcBulkAndWeight);
       Send(self,@ResetPlayerFlagList);
-
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-         Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
-         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
-         	#type=ENCHANTMENT_PLAYER);
-      }
-
-      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
-      Send(self,@SetVigorRestThreshold,#amount=iAmount);
 
       % All attack modifiers should be a room enchantment, a personal enchantment
       %  or something they are wearing.  If one still exists, bug.  This is also

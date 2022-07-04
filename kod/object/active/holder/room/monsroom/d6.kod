@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsD6 = D6.roo
+   room_OutdoorsD6 = d6.roo
    room_name_OutdoorsD6 ="Deep in the Forest of Farol"
    OutdoorsD6_music = walk7.mid
 

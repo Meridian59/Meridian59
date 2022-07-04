@@ -214,6 +214,23 @@
 #define ID_CONFIGMENU                   186
 #define IDS_CANTSENDREQUEST             187
 #define IDS_CANTGETFILESIZE             188
+#define IDS_CANTSIGNUP                  189
+#define IDD_SIGNUP                      189
+#define IDS_TROUBLESHOOT                190
+#define IDS_SIGNUPFAILED                191
+#define IDS_USERNAMEINVALID             192
+#define IDS_EMAILINVALID                193
+#define IDS_EMAILINUSE                  194
+#define IDS_PASSWORDINVALID             195
+#define IDS_SERVERUNKNOWN               196
+#define IDS_SIGNUPOFFLINE               197
+#define IDS_SIGNUPUNKNOWNERROR          198
+#define IDS_SIGNUPAPI                   199
+#define IDS_WEBAPIDOMAIN                200
+#define IDS_VERIFIEDAPI                 201
+#define IDS_UNVERIFIED                  202
+#define IDS_RESENDAPI                   203
+#define IDS_SIGNUPMSG                   204
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001
 #define IDC_ITEMLIST                    1002
@@ -282,7 +299,7 @@
 #define IDC_OK                          1080
 #define IDC_MAINLIST                    1081
 #define IDC_GUEST                       1081
-#define IDC_HOMEPAGE                    1082
+#define IDC_SIGNUP                      1082
 #define IDC_CREDITS                     1083
 #define IDC_SCREENSIZE                  1085
 #define IDC_FILESIZE                    1087
@@ -396,7 +413,21 @@
 #define IDC_MAP_ANNOTATIONS             1202
 #define IDC_SOUND_VOLUME                1205
 #define IDC_MUSIC_VOLUME                1206
+#define IDC_SERVER_101                  1206
 #define IDC_SOUND_VOLUME2               1207
+#define IDC_SERVER_102                  1207
+#define ID_SU_EMAIL                     1208
+#define ID_SU_USERNAME                  1209
+#define ID_SU_PW1                       1210
+#define ID_SU_PW2                       1211
+#define ID_SU_SERVER                    1212
+#define IDC_SIGNUP_OK                   1213
+#define IDC_NEW_EMAIL                   1214
+#define IDC_NEW_USERNAME                1215
+#define IDC_NEW_PW1                     1216
+#define IDC_NEW_PW2                     1217
+#define IDC_EMAIL_ADDRESS               1218
+#define IDC_SIGNUP_TROUBLESHOOT         1219
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -454,9 +485,11 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        187
+#define _APS_NEXT_RESOURCE_VALUE        190
 #define _APS_NEXT_COMMAND_VALUE         3513
-#define _APS_NEXT_CONTROL_VALUE         1206
+#define _APS_NEXT_CONTROL_VALUE         1208
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif
+
+

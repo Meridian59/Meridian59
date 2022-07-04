@@ -26,6 +26,7 @@ void MainServer();
 void MainExitServer();
 
 DWORD main_thread_id;
+static Bool in_main_loop = False;
 
 #ifdef BLAK_PLATFORM_WINDOWS
 
@@ -49,6 +50,11 @@ int main(int argc, char **argv)
 }
 
 #endif
+
+Bool InMainLoop(void)
+{
+   return in_main_loop;
+}
 
 void MainServer()
 {
@@ -122,9 +128,22 @@ void MainServer()
 	UnpauseTimers();
 
 	
+	//SetWindowText(hwndMain, ConfigStr(CONSOLE_CAPTION));
 
-	ServiceTimers();
-	/* returns if server termiated */
+    StartupComplete(); /* for the interface to report no errors on startup */
+    InterfaceUpdate();
+    lprintf("Status: %i accounts\n",GetNextAccountID());
+
+    lprintf("-------------------------------------------------------------------------------------\n");
+    dprintf("-------------------------------------------------------------------------------------\n");
+    eprintf("-------------------------------------------------------------------------------------\n");
+
+    AsyncSocketStart();
+
+    in_main_loop = True;
+
+    RunMainLoop();
+	/* returns if server terminated */
 	
 	MainExitServer();
 }
@@ -163,22 +182,3 @@ void MainExitServer()
 	DeleteAllBlocks();
 }
 
-char * GetLastErrorStr()
-{
-#ifdef BLAK_PLATFORM_WINDOWS
-
-	char *error_str;
-	
-	error_str = "No error string"; /* in case the call  fails */
-	
-	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL,GetLastError(),MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US),
-		(LPTSTR) &error_str,0,NULL);
-	return error_str;
-   
-#else
-
-   return strerror(errno);
-   
-#endif
-}

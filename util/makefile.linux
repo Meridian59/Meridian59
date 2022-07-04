@@ -1,0 +1,20 @@
+# Makefile for Blakod compiler
+
+TOPDIR=..
+include $(TOPDIR)/common.mak.linux
+
+CFLAGS += -I $(BLAKINCLUDEDIR)
+
+SOURCEDIR = .
+
+all: makedirs $(OUTDIR)/rscmerge $(OUTDIR)/rscprint
+
+$(OUTDIR)/rscmerge: $(OUTDIR)/rscmerge.obj $(OUTDIR)/rscload.obj
+	$(LINK) $(LINKFLAGS) $^ -o$@
+	$(CP) $@ $(BLAKBINDIR)
+
+$(OUTDIR)/rscprint: $(OUTDIR)/rscprint.obj $(OUTDIR)/rscload.obj
+	$(LINK) $(LINKFLAGS) $^ -o$@
+	$(CP) $@ $(BLAKBINDIR)
+
+include $(TOPDIR)/rules.mak.linux

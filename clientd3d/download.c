@@ -10,6 +10,7 @@
  */
 
 #include "client.h"
+#define LIBARCHIVE_STATIC
 #include "archive.h"
 #include "archive_entry.h"
 

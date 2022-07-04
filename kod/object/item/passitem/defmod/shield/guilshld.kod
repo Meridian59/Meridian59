@@ -572,6 +572,7 @@ messages:
          OR (piInsigniaType = INSIG_QOR AND iSchool = SS_QOR)
          OR (piInsigniaType = INSIG_SHALILLE AND iSchool = SS_SHALILLE)
          OR (piInsigniaType = INSIG_RIIJA AND iSchool = SS_RIIJA)
+         OR (piInsigniaType = INSIG_JALA AND iSchool = SS_JALA)
       {
          return 10;
       }

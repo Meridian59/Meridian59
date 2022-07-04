@@ -11,34 +11,48 @@ int	gNumCalls;
 extern int						gNumDPCalls;
 extern d3d_render_cache			gTempCache;
 
-extern LPDIRECT3DTEXTURE8		gpDLightAmbient;
-extern LPDIRECT3DTEXTURE8		gpDLightWhite;
-extern LPDIRECT3DTEXTURE8		gpDLightOrange;
+extern LPDIRECT3DTEXTURE9		gpDLightAmbient;
+extern LPDIRECT3DTEXTURE9		gpDLightWhite;
+extern LPDIRECT3DTEXTURE9		gpDLightOrange;
 extern d3d_driver_profile		gD3DDriverProfile;
 
 void	D3DCacheLock(d3d_render_cache *pCache);
 
+static int getTextureSizeBytes(const D3DSURFACE_DESC &surface)
+{
+   int size = surface.Width * surface.Height;
+
+   switch(surface.Format)
+   {
+   case D3DFMT_A8R8G8B8:
+		size *= 4;
+	case D3DFMT_A4R4G4B4:
+		size *= 2;
+	}
+   return size;
+}
+
 void D3DCacheInit(d3d_render_cache *pCache, int size, int numStages, DWORD flags)
 {
-	IDirect3DDevice8_CreateIndexBuffer(gpD3DDevice, size * sizeof(custom_index),
+	IDirect3DDevice9_CreateIndexBuffer(gpD3DDevice, size * sizeof(custom_index),
                                       flags, D3DFMT_INDEX16, D3DPOOL_DEFAULT,
-                                      &pCache->indexBuffer.pIBuffer);
+                                      &pCache->indexBuffer.pIBuffer, NULL);
 
-	IDirect3DDevice8_CreateVertexBuffer(gpD3DDevice, size *
+	IDirect3DDevice9_CreateVertexBuffer(gpD3DDevice, size *
                                        sizeof(custom_xyz), flags, D3DFVF_XYZ,
-                                       D3DPOOL_DEFAULT, &pCache->xyzBuffer.pVBuffer);
+                                       D3DPOOL_DEFAULT, &pCache->xyzBuffer.pVBuffer, NULL);
    
-	IDirect3DDevice8_CreateVertexBuffer(gpD3DDevice, size *
+	IDirect3DDevice9_CreateVertexBuffer(gpD3DDevice, size *
                                        sizeof(custom_st), flags, D3DFVF_TEX0,
-                                       D3DPOOL_DEFAULT, &pCache->stBuffer[0].pVBuffer);
+                                       D3DPOOL_DEFAULT, &pCache->stBuffer[0].pVBuffer, NULL);
    
-	IDirect3DDevice8_CreateVertexBuffer(gpD3DDevice, size *
+	IDirect3DDevice9_CreateVertexBuffer(gpD3DDevice, size *
                                        sizeof(custom_st), flags, D3DFVF_TEX1,
-                                       D3DPOOL_DEFAULT, &pCache->stBuffer[1].pVBuffer);
+                                       D3DPOOL_DEFAULT, &pCache->stBuffer[1].pVBuffer, NULL);
    
-	IDirect3DDevice8_CreateVertexBuffer(gpD3DDevice, size *
+	IDirect3DDevice9_CreateVertexBuffer(gpD3DDevice, size *
                                        sizeof(custom_bgra), flags, D3DFVF_DIFFUSE,
-                                       D3DPOOL_DEFAULT, &pCache->bgraBuffer.pVBuffer);
+                                       D3DPOOL_DEFAULT, &pCache->bgraBuffer.pVBuffer, NULL);
    
 	pCache->numPackets = 0;
 	pCache->bgraBuffer.curIndex = 0;
@@ -50,19 +64,19 @@ void D3DCacheInit(d3d_render_cache *pCache, int size, int numStages, DWORD flags
 void D3DCacheShutdown(d3d_render_cache *pCache)
 {
 	if (pCache->indexBuffer.pIBuffer)
-		IDirect3DIndexBuffer8_Release(pCache->indexBuffer.pIBuffer);
+		IDirect3DIndexBuffer9_Release(pCache->indexBuffer.pIBuffer);
 
 	if (pCache->xyzBuffer.pVBuffer)
-		IDirect3DVertexBuffer8_Release(pCache->xyzBuffer.pVBuffer);
+		IDirect3DVertexBuffer9_Release(pCache->xyzBuffer.pVBuffer);
 
 	if (pCache->stBuffer[0].pVBuffer)
-		IDirect3DVertexBuffer8_Release(pCache->stBuffer[0].pVBuffer);
+		IDirect3DVertexBuffer9_Release(pCache->stBuffer[0].pVBuffer);
 
 	if (pCache->stBuffer[1].pVBuffer)
-		IDirect3DVertexBuffer8_Release(pCache->stBuffer[1].pVBuffer);
+		IDirect3DVertexBuffer9_Release(pCache->stBuffer[1].pVBuffer);
 
 	if (pCache->bgraBuffer.pVBuffer)
-		IDirect3DVertexBuffer8_Release(pCache->bgraBuffer.pVBuffer);
+		IDirect3DVertexBuffer9_Release(pCache->bgraBuffer.pVBuffer);
 
 	pCache->numPackets = 0;
 	pCache->bgraBuffer.curIndex = 0;
@@ -70,10 +84,10 @@ void D3DCacheShutdown(d3d_render_cache *pCache)
 	pCache->indexBuffer.curIndex = 0;
 }
 
-LPDIRECT3DTEXTURE8 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
+LPDIRECT3DTEXTURE9 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
 												 int effect)
 {
-	LPDIRECT3DTEXTURE8		pTexture = NULL;
+	LPDIRECT3DTEXTURE9		pTexture = NULL;
 	D3DSURFACE_DESC			surfDesc;
 	d3d_texture_cache_entry	*pTexEntry;
 	list_type				list;
@@ -103,7 +117,7 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCach
 		if (pTexEntry)
 		{
 			if (pTexEntry->pTexture)
-				IDirect3DTexture8_Release(pTexEntry->pTexture);
+				IDirect3DTexture9_Release(pTexEntry->pTexture);
 
 			pTexEntry->pTexture = NULL;
 			pTextureCache->size -= pTexEntry->size;
@@ -121,7 +135,7 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCach
 	pTexEntry = (d3d_texture_cache_entry *)D3DRenderMalloc(sizeof(d3d_texture_cache_entry));
 	assert(pTexEntry);
 
-	IDirect3DTexture8_GetLevelDesc(pTexture, 0, &surfDesc);
+	IDirect3DTexture9_GetLevelDesc(pTexture, 0, &surfDesc);
 
 	pTexEntry->effects = effect;
 	pTexEntry->pDibID = pPacket->pDib->uniqueID;
@@ -130,7 +144,7 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCach
 	pTexEntry->pTexture = pTexture;
 	pTexEntry->xLat0 = pPacket->xLat0;
 	pTexEntry->xLat1 = pPacket->xLat1;
-	pTexEntry->size = surfDesc.Size;
+	pTexEntry->size = getTextureSizeBytes(surfDesc);
 
 	pTextureCache->textureList = list_add_item(pTextureCache->textureList, pTexEntry);
 	pTextureCache->size += pTexEntry->size;
@@ -138,10 +152,10 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCach
 	return pTexEntry->pTexture;
 }
 
-LPDIRECT3DTEXTURE8 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
+LPDIRECT3DTEXTURE9 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
 										 int effect)
 {
-	LPDIRECT3DTEXTURE8		pTexture = NULL;
+	LPDIRECT3DTEXTURE9		pTexture = NULL;
 	D3DSURFACE_DESC			surfDesc;
 	d3d_texture_cache_entry	*pTexEntry;
 	list_type				list;
@@ -171,7 +185,7 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_r
 		if (pTexEntry)
 		{
 			if (pTexEntry->pTexture)
-				IDirect3DTexture8_Release(pTexEntry->pTexture);
+				IDirect3DTexture9_Release(pTexEntry->pTexture);
 
 			pTexEntry->pTexture = NULL;
 			pTextureCache->size -= pTexEntry->size;
@@ -189,7 +203,7 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_r
 	pTexEntry = (d3d_texture_cache_entry *)D3DRenderMalloc(sizeof(d3d_texture_cache_entry));
 	assert(pTexEntry);
 
-	IDirect3DTexture8_GetLevelDesc(pTexture, 0, &surfDesc);
+	IDirect3DTexture9_GetLevelDesc(pTexture, 0, &surfDesc);
 
 	pTexEntry->effects = effect;
 	pTexEntry->pDibID = pPacket->pDib->uniqueID;
@@ -198,7 +212,7 @@ LPDIRECT3DTEXTURE8 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_r
 	pTexEntry->pTexture = pTexture;
 	pTexEntry->xLat0 = pPacket->xLat0;
 	pTexEntry->xLat1 = pPacket->xLat1;
-	pTexEntry->size = surfDesc.Size;
+	pTexEntry->size = getTextureSizeBytes(surfDesc);
 
 	pTextureCache->textureList = list_add_item(pTextureCache->textureList, pTexEntry);
 	pTextureCache->size += pTexEntry->size;
@@ -256,7 +270,7 @@ void D3DCacheSystemShutdown(d3d_render_cache_system *pCacheSystem)
 		pTexEntry = (d3d_texture_cache_entry *)list->data;
 
 		if (pTexEntry->pTexture)
-			IDirect3DTexture8_Release(pTexEntry->pTexture);
+			IDirect3DTexture9_Release(pTexEntry->pTexture);
 	}
 
 	list_destroy(pCacheSystem->textureCache.textureList);
@@ -381,22 +395,22 @@ void D3DCacheLock(d3d_render_cache *pCache)
 {
 	int	i;
 
-	IDirect3DVertexBuffer8_Lock((pCache)->xyzBuffer.pVBuffer,
+	IDirect3DVertexBuffer9_Lock((pCache)->xyzBuffer.pVBuffer,
                                0, TEMP_CACHE_MAX * sizeof(custom_xyz),
-                               (BYTE **)&(pCache)->xyzBuffer.u.pXYZ,
+                               (void **)&(pCache)->xyzBuffer.u.pXYZ,
                                D3DLOCK_DISCARD);
 	for (i = 0; i < TEMP_NUM_STAGES; i++)
-		IDirect3DVertexBuffer8_Lock((pCache)->stBuffer[i].pVBuffer,
+		IDirect3DVertexBuffer9_Lock((pCache)->stBuffer[i].pVBuffer,
                                   0, TEMP_CACHE_MAX * sizeof(custom_st),
-                                  (BYTE **)&(pCache)->stBuffer[i].u.pST,
+                                  (void **)&(pCache)->stBuffer[i].u.pST,
                                   D3DLOCK_DISCARD);
-	IDirect3DVertexBuffer8_Lock((pCache)->bgraBuffer.pVBuffer,
+	IDirect3DVertexBuffer9_Lock((pCache)->bgraBuffer.pVBuffer,
                                0, TEMP_CACHE_MAX * sizeof(custom_bgra),
-                               (BYTE **)&(pCache)->bgraBuffer.u.pBGRA,
+                               (void **)&(pCache)->bgraBuffer.u.pBGRA,
                                D3DLOCK_DISCARD);
-	IDirect3DVertexBuffer8_Lock((pCache)->indexBuffer.pIBuffer,
+	IDirect3DVertexBuffer9_Lock((pCache)->indexBuffer.pIBuffer,
                                0, TEMP_CACHE_MAX * sizeof(custom_index),
-                               (BYTE **)&(pCache)->indexBuffer.pIndex,
+                               (void **)&(pCache)->indexBuffer.pIndex,
                                D3DLOCK_DISCARD);
 }
 
@@ -477,7 +491,7 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 				   int type)
 {
 	u_int				curPacket, curChunk, numPackets;
-	LPDIRECT3DTEXTURE8	pTexture = NULL;
+	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	d3d_render_cache		*pRenderCache = NULL;
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
@@ -517,8 +531,9 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 					D3DRENDER_SET_STREAMS(gpD3DDevice, pRenderCache, numStages);
 				}
 
-				IDirect3DDevice8_DrawIndexedPrimitive(gpD3DDevice,
+				IDirect3DDevice9_DrawIndexedPrimitive(gpD3DDevice,
                                                   (D3DPRIMITIVETYPE) type,
+                                                  0,
                                                   pChunk->startIndex,
                                                   pChunk->numIndices,
                                                   pChunk->startIndex,
@@ -533,7 +548,7 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 	// now decrement reference count for these textures
 	for (i = 0; i < numStages; i++)
 	{
-		IDirect3DDevice8_SetTexture(gpD3DDevice, i, NULL);
+		IDirect3DDevice9_SetTexture(gpD3DDevice, i, NULL);
 	}
 
 	D3DRENDER_CLEAR_STREAMS(gpD3DDevice, numStages);

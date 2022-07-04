@@ -45,7 +45,7 @@ const char* stristr(const char* pSource, const char* pSearch)
 }
 
 
-int C_Invalid(int object_id,local_var_type *local_vars,
+blak_int C_Invalid(int object_id,local_var_type *local_vars,
 			  int num_normal_parms,parm_node normal_parm_array[],
 			  int num_name_parms,parm_node name_parm_array[])
 {
@@ -54,7 +54,7 @@ int C_Invalid(int object_id,local_var_type *local_vars,
 }
 
 
-int C_AddPacket(int object_id,local_var_type *local_vars,
+blak_int C_AddPacket(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
@@ -82,7 +82,7 @@ int C_AddPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_SendPacket(int object_id,local_var_type *local_vars,
+blak_int C_SendPacket(int object_id,local_var_type *local_vars,
 				 int num_normal_parms,parm_node normal_parm_array[],
 				 int num_name_parms,parm_node name_parm_array[])
 {
@@ -102,7 +102,7 @@ int C_SendPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_SendCopyPacket(int object_id,local_var_type *local_vars,
+blak_int C_SendCopyPacket(int object_id,local_var_type *local_vars,
 					 int num_normal_parms,parm_node normal_parm_array[],
 					 int num_name_parms,parm_node name_parm_array[])
 {
@@ -122,7 +122,7 @@ int C_SendCopyPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_ClearPacket(int object_id,local_var_type *local_vars,
+blak_int C_ClearPacket(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -131,7 +131,7 @@ int C_ClearPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_Debug(int object_id,local_var_type *local_vars,
+blak_int C_Debug(int object_id,local_var_type *local_vars,
 			int num_normal_parms,parm_node normal_parm_array[],
 			int num_name_parms,parm_node name_parm_array[])
 {
@@ -173,7 +173,7 @@ int C_Debug(int object_id,local_var_type *local_vars,
 				r = GetResourceByID(each_val.v.data);
 				if (r == NULL)
 				{
-					sprintf(buf+strlen(buf),"<unknown RESOURCE %i>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<unknown RESOURCE %lli>", (long long) each_val.v.data);
 				}
 				else
 				{
@@ -192,7 +192,7 @@ int C_Debug(int object_id,local_var_type *local_vars,
 				c = GetClassByID(each_val.v.data);
 				if (c == NULL)
 				{
-					sprintf(buf+strlen(buf),"<unknown CLASS %i>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<unknown CLASS %lli>", (long long) each_val.v.data);
 				}
 				else
 				{
@@ -242,13 +242,13 @@ int C_Debug(int object_id,local_var_type *local_vars,
 				o = GetObjectByID(each_val.v.data);
 				if (o == NULL)
 				{
-					sprintf(buf+strlen(buf),"<OBJECT %i invalid>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<OBJECT %lli invalid>",(long long) each_val.v.data);
 					break;
 				}
 				c = GetClassByID(o->class_id);
 				if (c == NULL)
 				{
-					sprintf(buf+strlen(buf),"<OBJECT %i unknown class>",each_val.v.data);
+					sprintf(buf+strlen(buf),"<OBJECT %lli unknown class>",(long long) each_val.v.data);
 					break;
 				}
 				
@@ -258,10 +258,10 @@ int C_Debug(int object_id,local_var_type *local_vars,
 					u = GetUserByObjectID(o->object_id);
 					if (u == NULL)
 					{
-						sprintf(buf+strlen(buf),"<OBJECT %i broken user>",each_val.v.data);
+						sprintf(buf+strlen(buf),"<OBJECT %lli broken user>",(long long) each_val.v.data);
 						break;
 					}
-					sprintf(buf+strlen(buf),"ACCOUNT %i OBJECT %i",u->account_id,each_val.v.data);
+					sprintf(buf+strlen(buf),"ACCOUNT %i OBJECT %lli",u->account_id,(long long) each_val.v.data);
 					break;
 				}
 			}
@@ -278,7 +278,7 @@ int C_Debug(int object_id,local_var_type *local_vars,
    return NIL;
 }
 
-int C_GetInactiveTime(int object_id,local_var_type *local_vars,
+blak_int C_GetInactiveTime(int object_id,local_var_type *local_vars,
 					  int num_normal_parms,parm_node normal_parm_array[],
 					  int num_name_parms,parm_node name_parm_array[])
 {
@@ -314,7 +314,7 @@ int C_GetInactiveTime(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;   
 }
 
-int C_DumpStack(int object_id,local_var_type *local_vars,
+blak_int C_DumpStack(int object_id,local_var_type *local_vars,
 					  int num_normal_parms,parm_node normal_parm_array[],
 					  int num_name_parms,parm_node name_parm_array[])
 {
@@ -326,7 +326,7 @@ int C_DumpStack(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_SendMessage(int object_id,local_var_type *local_vars,
+blak_int C_SendMessage(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -374,7 +374,7 @@ int C_SendMessage(int object_id,local_var_type *local_vars,
 		return SendBlakodMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
 }
 
-int C_PostMessage(int object_id,local_var_type *local_vars,
+blak_int C_PostMessage(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -408,7 +408,7 @@ int C_PostMessage(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_CreateObject(int object_id,local_var_type *local_vars,
+blak_int C_CreateObject(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])
 {
@@ -428,7 +428,7 @@ int C_CreateObject(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_IsClass(int object_id,local_var_type *local_vars,
+blak_int C_IsClass(int object_id,local_var_type *local_vars,
 			  int num_normal_parms,parm_node normal_parm_array[],
 			  int num_name_parms,parm_node name_parm_array[])
 {
@@ -485,7 +485,7 @@ int C_IsClass(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_GetClass(int object_id,local_var_type *local_vars,
+blak_int C_GetClass(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
@@ -587,7 +587,7 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
 }
 
 
-int C_StringEqual(int object_id,local_var_type *local_vars,
+blak_int C_StringEqual(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -682,7 +682,7 @@ bool FuzzyBufferEqual(const char *s1,int len1,const char *s2,int len2)
 //	Blakod parameters; string0, string1, string2
 //	Substitute first occurrence of string1 in string0 with string2
 //	Returns 1 if substituted, 0 if not found, NIL if error
-int C_StringSubstitute(int object_id,local_var_type *local_vars,
+blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 					   int num_normal_parms,parm_node normal_parm_array[],
 					   int num_name_parms,parm_node name_parm_array[])
 {
@@ -730,7 +730,7 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		// make a zero-terminated scratch copy of string1
 		len1 = snod1->len_data;
 		memcpy( buf1, snod1->data, len1 );
-		buf1[len1+1] = 0x0;
+		buf1[len1] = 0x0;
 		break;
 		
 	case TAG_TEMP_STRING :
@@ -739,7 +739,7 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		// make a zero-terminated scratch copy of string1
 		len1 = snod1->len_data;
 		memcpy( buf1, snod1->data, len1 );
-		buf1[len1+1] = 0x0;
+		buf1[len1] = 0x0;
 		break;
 		
 	case TAG_RESOURCE :
@@ -806,7 +806,7 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	
 	// now make a zero-terminated scratch copy of string0
 	memcpy( s0, snod0->data, snod0->len_data );
-	s0[snod0->len_data+1] = 0x0;
+	s0[snod0->len_data] = 0x0;
 	
 	// so we can use stristr to do the work
 	subspot = stristr( s0, s1 );
@@ -816,14 +816,6 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	
 	if( subspot != NULL )	// only substitute if string1 is found in string0
 	{
-		char* source;
-		int source_len;
-		
-		source_len = snod0->len_data;
-		source = (char *)AllocateMemory(MALLOC_ID_STRING, source_len+1);
-		memcpy(source, snod0->data, source_len);
-		source[source_len] = '\0';
-		
 		if (snod0 != GetTempString())
 		{
 			// free the old string0 and allocate a new (possibly longer) string0
@@ -845,15 +837,13 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		snod0->len_data = new_len;
 		snod0->data[snod0->len_data] = '\0';
 		
-		FreeMemory(MALLOC_ID_STRING,source,source_len+1);
-		
 		r_val.v.data = 1;
 	}
 	
 	return r_val.int_val;
 }
 
-int C_StringContain(int object_id,local_var_type *local_vars,
+blak_int C_StringContain(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
@@ -903,7 +893,7 @@ int C_StringContain(int object_id,local_var_type *local_vars,
 //	first converting to uppercase and squashing tabs and spaces to a single space
 bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
 {
-	if (!s1 || !s2 || len_s1 <= 0 || len_s1 <= 0)
+	if (!s1 || !s2 || len_s1 <= 0 || len_s2 <= 0)
 		return false;
 	
 	FuzzyCollapseString(buf0, s1, len_s1);
@@ -912,7 +902,7 @@ bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
 	return (NULL != strstr(buf0, buf1));
 }
 
-int C_SetResource(int object_id,local_var_type *local_vars,
+blak_int C_SetResource(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -979,7 +969,7 @@ int C_SetResource(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_ParseString(int object_id,local_var_type *local_vars,
+blak_int C_ParseString(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1063,7 +1053,7 @@ int C_ParseString(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_SetString(int object_id,local_var_type *local_vars,
+blak_int C_SetString(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
@@ -1131,7 +1121,7 @@ int C_SetString(int object_id,local_var_type *local_vars,
 	return s1_val.int_val;
 }
 
-int C_ClearTempString(int object_id,local_var_type *local_vars,
+blak_int C_ClearTempString(int object_id,local_var_type *local_vars,
 					  int num_normal_parms,parm_node normal_parm_array[],
 					  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1144,7 +1134,7 @@ int C_ClearTempString(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_GetTempString(int object_id,local_var_type *local_vars,
+blak_int C_GetTempString(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
@@ -1155,7 +1145,7 @@ int C_GetTempString(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_AppendTempString(int object_id,local_var_type *local_vars,
+blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 					   int num_normal_parms,parm_node normal_parm_array[],
 					   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1234,7 +1224,7 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_CreateString(int object_id,local_var_type *local_vars,
+blak_int C_CreateString(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1246,7 +1236,7 @@ int C_CreateString(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_StringLength(int object_id,local_var_type *local_vars,
+blak_int C_StringLength(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1265,7 +1255,7 @@ int C_StringLength(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_StringConsistsOf(int object_id,local_var_type *local_vars,
+blak_int C_StringConsistsOf(int object_id,local_var_type *local_vars,
                        int num_normal_parms,parm_node normal_parm_array[],
                        int num_name_parms,parm_node name_parm_array[])
 {
@@ -1300,7 +1290,7 @@ int C_StringConsistsOf(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_CreateTimer(int object_id,local_var_type *local_vars,
+blak_int C_CreateTimer(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1356,7 +1346,7 @@ int C_CreateTimer(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_DeleteTimer(int object_id,local_var_type *local_vars,
+blak_int C_DeleteTimer(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1376,7 +1366,7 @@ int C_DeleteTimer(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_GetTimeRemaining(int object_id,local_var_type *local_vars,
+blak_int C_GetTimeRemaining(int object_id,local_var_type *local_vars,
 					   int num_normal_parms,parm_node normal_parm_array[],
 					   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1408,7 +1398,7 @@ int C_GetTimeRemaining(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_LoadRoom(int object_id,local_var_type *local_vars,
+blak_int C_LoadRoom(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1426,7 +1416,7 @@ int C_LoadRoom(int object_id,local_var_type *local_vars,
 	return LoadRoomData(room_val.v.data);
 }
 
-int C_RoomData(int object_id,local_var_type *local_vars,
+blak_int C_RoomData(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1470,7 +1460,7 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
+blak_int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
@@ -1538,13 +1528,15 @@ int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
 	}
 	
 	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoom(r,row_source.v.data-1,col_source.v.data-1,
-		row_dest.v.data-1,col_dest.v.data-1);
+	ret_val.v.data = CanMoveInRoom(r,(int) (row_source.v.data-1),
+                                 (int) (col_source.v.data-1),
+                                 (int) (row_dest.v.data-1),
+                                 (int) (col_dest.v.data-1));
 	
 	return ret_val.int_val;
 }
 
-int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
+blak_int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 						   int num_normal_parms,parm_node normal_parm_array[],
 						   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1612,13 +1604,15 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	}
 	
 	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoomFine(r,row_source.v.data-1,col_source.v.data-1,
-		row_dest.v.data-1,col_dest.v.data-1);
+	ret_val.v.data = CanMoveInRoomFine(r,(int) (row_source.v.data-1),
+                                     (int) (col_source.v.data-1),
+                                     (int) (row_dest.v.data-1),
+                                     (int) (col_dest.v.data-1));
 	
 	return ret_val.int_val;
 }
 
-int C_Cons(int object_id,local_var_type *local_vars,
+blak_int C_Cons(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1633,7 +1627,7 @@ int C_Cons(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_First(int object_id,local_var_type *local_vars,
+blak_int C_First(int object_id,local_var_type *local_vars,
 			int num_normal_parms,parm_node normal_parm_array[],
 			int num_name_parms,parm_node name_parm_array[])
 {
@@ -1656,7 +1650,7 @@ int C_First(int object_id,local_var_type *local_vars,
 	return First(list_val.v.data);
 }
 
-int C_Rest(int object_id,local_var_type *local_vars,
+blak_int C_Rest(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1679,7 +1673,7 @@ int C_Rest(int object_id,local_var_type *local_vars,
 	return Rest(list_val.v.data);
 }
 
-int C_Length(int object_id,local_var_type *local_vars,
+blak_int C_Length(int object_id,local_var_type *local_vars,
 			 int num_normal_parms,parm_node normal_parm_array[],
 			 int num_name_parms,parm_node name_parm_array[])
 {
@@ -1706,7 +1700,7 @@ int C_Length(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_Nth(int object_id,local_var_type *local_vars,
+blak_int C_Nth(int object_id,local_var_type *local_vars,
 		  int num_normal_parms,parm_node normal_parm_array[],
 		  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1739,7 +1733,7 @@ int C_Nth(int object_id,local_var_type *local_vars,
 	return Nth(n_val.v.data,list_val.v.data);
 }
 
-int C_List(int object_id,local_var_type *local_vars,
+blak_int C_List(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1761,7 +1755,7 @@ int C_List(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_IsList(int object_id,local_var_type *local_vars,
+blak_int C_IsList(int object_id,local_var_type *local_vars,
 			 int num_normal_parms,parm_node normal_parm_array[],
 			 int num_name_parms,parm_node name_parm_array[])
 {
@@ -1779,7 +1773,7 @@ int C_IsList(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_SetFirst(int object_id,local_var_type *local_vars,
+blak_int C_SetFirst(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1800,7 +1794,7 @@ int C_SetFirst(int object_id,local_var_type *local_vars,
 	return SetFirst(list_val.v.data,set_val);
 }
 
-int C_SetNth(int object_id,local_var_type *local_vars,
+blak_int C_SetNth(int object_id,local_var_type *local_vars,
 			 int num_normal_parms,parm_node normal_parm_array[],
 			 int num_name_parms,parm_node name_parm_array[])
 {
@@ -1829,7 +1823,7 @@ int C_SetNth(int object_id,local_var_type *local_vars,
 	return SetNth(n_val.v.data,list_val.v.data,set_val);
 }
 
-int C_DelListElem(int object_id,local_var_type *local_vars,
+blak_int C_DelListElem(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1852,7 +1846,7 @@ int C_DelListElem(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_FindListElem(int object_id,local_var_type *local_vars,
+blak_int C_FindListElem(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1886,7 +1880,7 @@ int C_FindListElem(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_GetTime(int object_id,local_var_type *local_vars,
+blak_int C_GetTime(int object_id,local_var_type *local_vars,
 			  int num_normal_parms,parm_node normal_parm_array[],
 			  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1894,20 +1888,18 @@ int C_GetTime(int object_id,local_var_type *local_vars,
 	
 	ret_val.v.tag = TAG_INT;
 
-    /*  We must subtract a number from the system time due to size
-        limitations within the blakod.  Blakod uses 32 bit values,
-        -4 bits for type and -1 bit for sign.  This leaves us with
-        27 bits for value,  This only allows us to have 134M or so
-        as a positive value.  Current system time is a bit larger
-        than that.  So, we subtract off time to compensate.
-    */
+	/* This offset is left over from when in-memory values were 32 bits,
+	   and would overflow when the time wrapped around (every 8 years or so).     
+	   This matches an offset in the client but is otherwise no longer strictly needed.
+	   Removing it would be difficult, as some time values are stored in objects.
+	*/
 
-   ret_val.v.data = GetTime() - 1400000000L;    // Offset to sometime in May 2014
+   ret_val.v.data = GetTime() - 1534000000L;    // Offset to sometime in mid-2018
 	
 	return ret_val.int_val;
 }
 
-int C_Random(int object_id,local_var_type *local_vars,
+blak_int C_Random(int object_id,local_var_type *local_vars,
 			 int num_normal_parms,parm_node normal_parm_array[],
 			 int num_name_parms,parm_node name_parm_array[])
 {
@@ -1948,7 +1940,7 @@ int C_Random(int object_id,local_var_type *local_vars,
 	
 }
 
-int C_Abs(int object_id,local_var_type *local_vars,
+blak_int C_Abs(int object_id,local_var_type *local_vars,
 		  int num_normal_parms,parm_node normal_parm_array[],
 		  int num_name_parms,parm_node name_parm_array[])
 {
@@ -1971,7 +1963,7 @@ int C_Abs(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;  
 }
 
-int C_Sqrt(int object_id,local_var_type *local_vars,
+blak_int C_Sqrt(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[])
 {
@@ -1996,7 +1988,7 @@ int C_Sqrt(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;  
 }
 
-int C_Bound(int object_id,local_var_type *local_vars,
+blak_int C_Bound(int object_id,local_var_type *local_vars,
 			int num_normal_parms,parm_node normal_parm_array[],
 			int num_name_parms,parm_node name_parm_array[])
 {
@@ -2039,7 +2031,7 @@ int C_Bound(int object_id,local_var_type *local_vars,
 	return int_val.int_val;
 }
 
-int C_CreateTable(int object_id,local_var_type *local_vars,
+blak_int C_CreateTable(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -2052,7 +2044,7 @@ int C_CreateTable(int object_id,local_var_type *local_vars,
 	
 }
 
-int C_AddTableEntry(int object_id,local_var_type *local_vars,
+blak_int C_AddTableEntry(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
@@ -2077,7 +2069,7 @@ int C_AddTableEntry(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_GetTableEntry(int object_id,local_var_type *local_vars,
+blak_int C_GetTableEntry(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
@@ -2099,7 +2091,7 @@ int C_GetTableEntry(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_DeleteTableEntry(int object_id,local_var_type *local_vars,
+blak_int C_DeleteTableEntry(int object_id,local_var_type *local_vars,
 					   int num_normal_parms,parm_node normal_parm_array[],
 					   int num_name_parms,parm_node name_parm_array[])
 {
@@ -2121,7 +2113,7 @@ int C_DeleteTableEntry(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_DeleteTable(int object_id,local_var_type *local_vars,
+blak_int C_DeleteTable(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -2141,7 +2133,7 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 }
 
 
-int C_RecycleUser(int object_id,local_var_type *local_vars,
+blak_int C_RecycleUser(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
@@ -2190,7 +2182,7 @@ int C_RecycleUser(int object_id,local_var_type *local_vars,
 	return object_val.int_val;
 }
 
-int C_IsObject(int object_id,local_var_type *local_vars,
+blak_int C_IsObject(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
@@ -2208,7 +2200,7 @@ int C_IsObject(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_MinigameNumberToString(int object_id,local_var_type *local_vars,
+blak_int C_MinigameNumberToString(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
@@ -2267,7 +2259,7 @@ int C_MinigameNumberToString(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
+blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {

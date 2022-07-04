@@ -25,7 +25,7 @@ static int bytes_read;                // Total # of bytes we've read
 Bool TransferStart(void)
 {
    Bool done;
-   const char *mime_types[2] = { "application/octet-stream" };
+   const char *mime_types[2] = { "application/x-zip-compressed", NULL };
    char file_size_buf[20];
    DWORD file_size_buf_len = sizeof(file_size_buf);
    DWORD index = 0;
@@ -40,8 +40,8 @@ Bool TransferStart(void)
      PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
      return False;
    }
-   
-   hSession = InternetConnect(hConnection, transfer_machine, 
+
+   hSession = InternetConnect(hConnection, transfer_machine.c_str(), 
                               INTERNET_INVALID_PORT_NUMBER, 
                               NULL, NULL, INTERNET_SERVICE_HTTP, 
                               0, 0);
@@ -50,57 +50,59 @@ Bool TransferStart(void)
    {
      if (GetLastError() != ERROR_IO_PENDING)
      {
-       Error(GetString(hInst, IDS_NOCONNECTION), transfer_machine,
-             GetLastError(), GetLastErrorStr());
-       InternetCloseHandle(hConnection);
-       PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-       return False;
+        Error(GetString(hInst, IDS_NOCONNECTION), transfer_machine.c_str(),
+              GetLastError(), GetLastErrorStr());
+        InternetCloseHandle(hConnection);
+        PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
+        return False;
       }
    }
 
-   hFile = HttpOpenRequest(hSession, NULL, transfer_filename, NULL, NULL,
+   hFile = HttpOpenRequest(hSession, NULL, transfer_filename.c_str(), NULL, NULL,
                            mime_types, INTERNET_FLAG_NO_UI, 0);
    if (hFile == NULL)
    {
-     if (GetLastError() != ERROR_IO_PENDING)
-     {
-       Error(GetString(hInst, IDS_CANTFINDFILE), transfer_filename, transfer_machine, 
-             GetLastError(), GetLastErrorStr());
-       InternetCloseHandle(hSession);
-       InternetCloseHandle(hConnection);
-       PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-       return False;
-     }
+      if (GetLastError() != ERROR_IO_PENDING)
+      {
+         Error(GetString(hInst, IDS_CANTFINDFILE), transfer_filename.c_str(), transfer_machine.c_str(), 
+               GetLastError(), GetLastErrorStr());
+         InternetCloseHandle(hSession);
+         InternetCloseHandle(hConnection);
+         PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
+         return False;
+      }
    }
-
+   
    if (!HttpSendRequest(hFile, NULL, 0, NULL, 0)) {
-     Error(GetString(hInst, IDS_CANTSENDREQUEST), transfer_filename, transfer_machine, 
-           GetLastError(), GetLastErrorStr());
-     InternetCloseHandle(hFile);
-     InternetCloseHandle(hSession);
-     InternetCloseHandle(hConnection);
-     return False;
+      Error(GetString(hInst, IDS_CANTSENDREQUEST), transfer_filename.c_str(), transfer_machine.c_str(), 
+            GetLastError(), GetLastErrorStr());
+      InternetCloseHandle(hFile);
+      InternetCloseHandle(hSession);
+      InternetCloseHandle(hConnection);
+      PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
+      return False;
    }
    
    // Get file size
    if (!HttpQueryInfo(hFile, HTTP_QUERY_CONTENT_LENGTH,
                       file_size_buf, &file_size_buf_len, &index)) {
-     Error(GetString(hInst, IDS_CANTGETFILESIZE), transfer_filename, transfer_machine, 
-           GetLastError(), GetLastErrorStr());
-     InternetCloseHandle(hFile);
-     InternetCloseHandle(hSession);
-     InternetCloseHandle(hConnection);
-     return False;
+      Error(GetString(hInst, IDS_CANTGETFILESIZE), transfer_filename.c_str(), transfer_machine.c_str(), 
+            GetLastError(), GetLastErrorStr());
+      InternetCloseHandle(hFile);
+      InternetCloseHandle(hSession);
+      InternetCloseHandle(hConnection);
+      PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
+      return False;
    }
    
    sscanf(file_size_buf, "%d", &file_size);
    PostMessage(hwndMain, CM_FILESIZE, 0, file_size);
    
-   outfile = open(transfer_local_filename, O_BINARY | O_RDWR | O_CREAT | O_TRUNC,
+   outfile = open(transfer_local_filename.c_str(), O_BINARY | O_RDWR | O_CREAT | O_TRUNC,
                   S_IWRITE | S_IREAD);
    if (outfile < 0)
    {
-     Error(GetString(hInst, IDS_CANTWRITELOCALFILE), transfer_local_filename, 
+      Error(GetString(hInst, IDS_CANTWRITELOCALFILE), transfer_local_filename.c_str(), 
            GetLastError(), GetLastErrorStr());
      InternetCloseHandle(hFile);
      InternetCloseHandle(hSession);
@@ -118,9 +120,9 @@ Bool TransferStart(void)
      {
        if (GetLastError() != ERROR_IO_PENDING)
        {
-         Error(GetString(hInst, IDS_CANTREADFTPFILE), transfer_filename, 
-               GetLastError(), GetLastErrorStr());
-         PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
+          Error(GetString(hInst, IDS_CANTREADFTPFILE), transfer_filename.c_str(), 
+                GetLastError(), GetLastErrorStr());
+          PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
        }
      }
      
@@ -130,14 +132,14 @@ Bool TransferStart(void)
      {
        if (write(outfile, buf, size) != size)
        {
-         Error(GetString(hInst, IDS_CANTWRITELOCALFILE), transfer_local_filename, 
-               GetLastError(), GetLastErrorStr());
-         close(outfile);
-         InternetCloseHandle(hFile);
-         InternetCloseHandle(hSession);
-         InternetCloseHandle(hConnection);
-         PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-         return False;
+          Error(GetString(hInst, IDS_CANTWRITELOCALFILE), transfer_local_filename.c_str(), 
+                GetLastError(), GetLastErrorStr());
+          close(outfile);
+          InternetCloseHandle(hFile);
+          InternetCloseHandle(hSession);
+          InternetCloseHandle(hConnection);
+          PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
+          return False;
        }
      }
      

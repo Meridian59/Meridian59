@@ -8,7 +8,7 @@ TOPDIR=.
 .SILENT:
 
 # make ignores targets if they match directory names
-all: Bserver Bclient Bmodules Bkod Bdeco Bupdater Bbbgun Bkeybind Bresource
+all: Bserver Bclient Bmodules Bkod Bdeco Bupdater Bbbgun Bresource Broomedit
 
 Bserver:
 	echo Making in $(BLAKSERVDIR)
@@ -16,7 +16,7 @@ Bserver:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bclient: Butil
+Bclient: Butil Blibpng Blibarchive Bwavemix
 	echo Making in $(CLIENTDIR)
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
@@ -25,6 +25,30 @@ Bclient: Butil
 Bmodules: Bclient
 	echo Making in $(MODULEDIR)
 	cd $(MODULEDIR)
+	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
+	cd ..
+
+Blibpng: Bzlib
+	echo Making in $(LIBPNGDIR)
+	cd $(LIBPNGDIR)
+	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
+	cd ..
+
+Bzlib:
+	echo Making in $(ZLIBDIR)
+	cd $(ZLIBDIR)
+	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
+	cd ..
+
+Blibarchive: Bzlib
+	echo Making in $(LIBARCHIVEDIR)
+	cd $(LIBARCHIVEDIR)
+	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
+	cd ..
+
+Bwavemix:
+	echo Making in $(WAVEMIXDIR)
+	cd $(WAVEMIXDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
@@ -85,6 +109,12 @@ Bbbgun:
 Bkeybind:
 	echo Making $(COMMAND) in $(KEYBINDDIR)
 	cd $(KEYBINDDIR)
+	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
+	cd ..
+
+Broomedit:
+	echo Making $(COMMAND) in $(ROOMEDITDIR)
+	cd $(ROOMEDITDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 

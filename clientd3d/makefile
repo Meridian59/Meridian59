@@ -12,9 +12,20 @@ CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
 LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
 	 ws2_32.lib comctl32.lib advapi32.lib \
-	 winmm.lib archive.lib rscload.lib wininet.lib \
-	 ole32.lib mss32.lib mss32midi.lib waveplay.lib \
-	 dxerr8.lib d3d8.lib d3dx8.lib libpng.lib zdll.lib
+	 winmm.lib libarchive.lib rscload.lib wininet.lib \
+	 ole32.lib waveplay.lib \
+	 d3d9.lib libpng.lib zlib.lib
+
+# Setting RETAIL=1 turns on the Miles Sound System, which we can't
+# put in the open source version
+!ifdef RETAIL
+
+CFLAGS = $(CFLAGS) -DM59_RETAIL
+LIBS = $(LIBS) \
+       mss32.lib mss32midi.lib
+
+!endif
+
 
 DEFFILE  = $(SOURCEDIR)\client.def
 
@@ -118,7 +129,8 @@ OBJS = \
         $(OUTDIR)\d3dparticle.obj \
         $(OUTDIR)\d3drender.obj \
         $(OUTDIR)\matrix.obj \
-        $(OUTDIR)\xform.obj
+        $(OUTDIR)\xform.obj \
+        $(OUTDIR)\signup.obj\
 
 
 $(OUTDIR)\trig.c $(OUTDIR)\trig.h: $(OUTDIR)\maketrig.exe
@@ -135,7 +147,7 @@ $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ /subsystem:windows
+$(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS) /NODEFAULTLIB:libc
 <<
 	$(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
 	$(CP) $@ $(CLIENTRUNDIR)
@@ -150,7 +162,7 @@ $(OUTDIR)\makepal.exe: $(OUTDIR)\makepal.obj
 
 profile: $(OBJS) client.res $(BLAKNTLIBS) 
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe /subsystem:windows
+$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe $(LINKWINDOWSFLAGS)
 <<
 #       prep /lc /excall /inc draw3d.obj meridian.exe   
 	prep /ft /excall /inc drawbsp.obj meridian.exe

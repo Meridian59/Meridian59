@@ -17,6 +17,8 @@
 
 #include "blakserv.h"
 
+#define RSC_EXTENSION ".rsc"
+
 /* local function prototypes */
 bool EachLoadRsc(char *filename,int resource_num, char *string);
 Bool LoadDynamicRscName(char *filename);
@@ -26,14 +28,13 @@ void LoadRsc(void)
 	char file_load_path[MAX_PATH+FILENAME_MAX];
 	
 	int files_loaded = 0;
-	sprintf(file_load_path,"%s%s",ConfigStr(PATH_RSC),ConfigStr(RESOURCE_RSC_SPEC));
-   StringVector files;
-   if (FindMatchingFiles(file_load_path, &files))
-   {
-      for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
-      {
+	StringVector files;
+	if (FindMatchingFiles(ConfigStr(PATH_RSC), RSC_EXTENSION, &files))
+	{
+		for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
+		{
 			sprintf(file_load_path,"%s%s",ConfigStr(PATH_RSC), it->c_str());
-
+			
 			if (RscFileLoad(file_load_path,EachLoadRsc))
 				files_loaded++;
 			else

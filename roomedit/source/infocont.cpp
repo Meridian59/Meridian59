@@ -101,7 +101,7 @@ TInfoControl::TInfoControl (TWindow* parent, int id, unsigned _NumLines,
 	curColor = DEF_COLOR;
 	curAlign = DEF_ALIGN;
 
-	SetCursor (GetApplication(), IDC_HAND);
+	SetCursor (GetApplication(), IDC_HANDC);
 }
 
 
@@ -172,7 +172,7 @@ void TInfoControl::SetupWindow ()
 	// Calculate font height on first time
 	if ( FontHeight == 0 )
 	{
-		TClientDC dc(HWindow);
+		TClientDC dc(Handle);
 		dc.SelectObject (*StaticFont);
 
 		TEXTMETRIC textMetric;
@@ -195,7 +195,7 @@ void TInfoControl::SetupWindow ()
 // TInfoControl
 // ------------
 //
-void TInfoControl::Paint (TDC& dc, BOOL erase, TRect& rect)
+void TInfoControl::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	TControl::Paint(dc, erase, rect);
 
@@ -242,7 +242,7 @@ void TInfoControl::Paint (TDC& dc, BOOL erase, TRect& rect)
 // TInfoControl
 // ------------
 //
-UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
+UINT TInfoControl::EvNCHitTest (const TPoint& /*point*/)
 {
 	return HTCAPTION;
 }
@@ -252,10 +252,10 @@ UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
 // TInfoControl
 // ------------
 //
-BOOL TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
+bool TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
 								UINT /* mouseMsg */)
 {
-	if (hWndCursor == HWindow && hitTest == HTCAPTION && HCursor)
+	if (hWndCursor == Handle && hitTest == HTCAPTION && HCursor)
 	{
 		::SetCursor(HCursor);
 		return TRUE;

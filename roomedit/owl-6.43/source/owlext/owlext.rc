@@ -1,0 +1,28 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+// Copyright(c) 1996 by Manic Software.
+// Copyright(c) 1998 by Bidus Yura.
+//
+// Resources for ObjectWindows Extensions DLLs
+//----------------------------------------------------------------------------
+
+#include "owlext/calcedit.rc"
+#include "owlext/caledit.rc"
+#include "owlext/colpick.rc"
+#include "owlext/ctxhelpm.rc"
+#include "owlext/dirdialg.rc"
+#include "owlext/dockingex.rc"
+#include "owlext/hlinkctl.rc"
+#include "owlext/pickedit.rc"
+#include "owlext/progress.rc"
+#include "owlext/tipdialg.rc"
+#include "owlext/menubtn.rc"
+
+#ifndef MAKELIB
+#  if defined(__BORLANDC__) && defined(RC_INVOKED)
+#    include "version.i" // preprocessed "version.rc"
+#  else
+#    include "version.rc"
+#  endif
+#endif
+

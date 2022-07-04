@@ -17,7 +17,7 @@
 	them seem to be required in them, and since some of the include
 	filenames clash with that of most compilers */
 
-#define BLAKSERV_VERSION "2.1"
+#define BLAKSERV_VERSION "2.4"
 
 #define MAX_LOGIN_NAME 50
 #define MAX_LOGIN_PASSWORD 32
@@ -108,58 +108,25 @@ enum
 #define NOTE_FILE "admnote.txt"
 #define PROFANE_FILE "profane.txt"
 
-#define DEBUG_FILE "debug.txt"
-#define ERROR_FILE "error.txt"
-#define LOG_FILE "log.txt"
+#define DEBUG_FILE_BASE "debug"
+#define ERROR_FILE_BASE "error"
+#define LOG_FILE_BASE "log"
 
 #define KODBASE_FILE "kodbase.txt"
 
 #define PACKAGE_FILE "packages.txt"
 #define SPROCKET_FILE "sprocket.dll"
 
+#include <string>
+#include <vector>
+typedef std::vector<std::string> StringVector;
+
 #ifdef BLAK_PLATFORM_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <winsock2.h>
-#include "resource.h"
-#include <crtdbg.h>
-#include <io.h>
-#include <process.h>
+#include "osd_windows.h"
 #endif  // BLAK_PLATFORM_WINDOWS
 
 #ifdef BLAK_PLATFORM_LINUX
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <limits.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include "critical_section.h"
-#define MAX_PATH PATH_MAX
-#define O_BINARY 0
-#define O_TEXT 0
-#define stricmp strcasecmp
-#define strnicmp strncasecmp
-
-#define VER_PLATFORM_WIN32_WINDOWS 1
-#define VER_PLATFORM_WIN32_NT 2
-#define PROCESSOR_INTEL_386 386
-#define PROCESSOR_INTEL_486 486
-#define PROCESSOR_INTEL_PENTIUM 586
-
-// XXX stuff below here is junk
-typedef int DWORD;
-typedef int SOCKET;
-typedef int HANDLE;
-typedef int HINSTANCE;
-typedef int HMODULE;
-typedef int HWND;
-typedef unsigned long long UINT64;
-#define MAXGETHOSTSTRUCT 64
+#include "osd_linux.h"
 #endif  // BLAK_PLATFORM_LINUX
 
 #include <algorithm>
@@ -167,12 +134,12 @@ typedef unsigned long long UINT64;
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <malloc.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <math.h>
+#include <inttypes.h>
 
 #include "btime.h"
 
@@ -182,15 +149,31 @@ typedef unsigned long long UINT64;
 #include "bkod.h"
 #include "crc.h"
 #include "md5.h"
+
+// Originally, we stored Bkod values in a 32-bit int, but due to the function
+// GetTime(), which stored millisecond-resolution times in 28-bit Bkod values,
+// the time values would roll over every 8 years or so.  The workaround is
+// to store Bkod values in 64-bit ints at runtime, although they are still
+// 32 bits in the bof files and in client communication.  This effectively
+// expands the range of Bkod values to 32 bits, delaying time rollover visible to
+// to clients to 8*16 > 100 years.
+typedef INT64 blak_int;
+
+typedef struct
+{
+   INT64 data:60;
+   UINT64 tag:4;
+} server_constant_type;
+
 typedef union 
 {
-   int int_val;
-   constant_type v;
+   blak_int int_val;
+   server_constant_type v;
 } val_type;
 
 typedef struct
 {
-   int value;
+   blak_int value;
    int name_id; /* for call-by-name parm list only */
    char type; /* for normal c parms (not call by name) only */
 } parm_node;
@@ -206,7 +189,6 @@ typedef struct
 
 /* in main.c */
 extern DWORD main_thread_id;
-char * GetLastErrorStr();
 #define WM_BLAK_MAIN_READ           (WM_APP + 4000)
 #define WM_BLAK_MAIN_RECALIBRATE    (WM_APP + 4001)
 #define WM_BLAK_MAIN_DELETE_ACCOUNT (WM_APP + 4002)
@@ -216,6 +198,7 @@ char * GetLastErrorStr();
 
 #include "config.h"
 
+// these hashes pre-date the use of C++
 #include "stringinthash.h"
 #include "intstringhash.h"
 
@@ -237,7 +220,6 @@ char * GetLastErrorStr();
 #include "loadgame.h"
 #include "roomdata.h"
 #include "roofile.h"
-#include "files.h"
 
 #include "bufpool.h"
 #include "admin.h"

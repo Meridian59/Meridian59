@@ -1,0 +1,42 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+// Copyright(c) 1996 by Manic Software
+// All rights reserved.
+//
+// .RC file for TProgressDialog; original code by Rich Goldstein:
+// --------------------------------------------------------------
+// TDialog-derived class which provides a dialog box containing a gauge
+// and a text box, and responds to defined messages to update the gauge.
+// This is a sample Dialog, which can be used with TProgressDialog.
+//
+// Works in both 16- and 32- bit environments
+//
+// Copyright (c) 1997 Rich Goldstein, MD
+// goldstei@interport.net
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//
+//-------------------------------------------------------------------
+#include <owlext/progress.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+#include "windows.h"
+#endif
+
+IDD_PROGRESS DIALOG 0, 0, 240, 67
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Progress"
+FONT 8, "MS Sans Serif"
+{
+ CONTROL "Some Text", IDC_TEXT, "static", SS_CENTER | SS_NOPREFIX | WS_CHILD | WS_VISIBLE, 28, 6, 184, 14
+ CONTROL "", IDC_GAUGE, "OWL_Gauge", WS_CHILD | WS_VISIBLE | WS_BORDER, 28, 25, 184, 18
+ CONTROL "Cancel", IDCANCEL, "BUTTON", BS_PUSHBUTTON | BS_CENTER | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 95, 49, 50, 14
+}
+
+#endif  // defined(RC_INVOKED)

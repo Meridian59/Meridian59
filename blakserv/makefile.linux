@@ -4,24 +4,13 @@
 
 TOPDIR=..
 
-#!include $(TOPDIR)/common.mak
-CP = cp
-RM = rm
-MKDIR = mkdir
-RMDIR = rmdir
-CC     = gcc
-OUTDIR=debug
-BLAKINCLUDEDIR = $(TOPDIR)/include
+include $(TOPDIR)/common.mak.linux
 
-CFLAGS = -I $(BLAKINCLUDEDIR) -x c++ -DBLAK_PLATFORM_LINUX
-
-
-
-BLAKSERVLINKFLAGS =
+CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
 
 SOURCEDIR = .
 
-LIBS =
+LIBS = -lpthread
 
 OBJS =  \
 	$(OUTDIR)/main.obj \
@@ -74,7 +63,6 @@ OBJS =  \
 	$(OUTDIR)/version.obj \
 	$(OUTDIR)/systimer.obj \
 	$(OUTDIR)/memory.obj \
-	$(OUTDIR)/interface.obj \
 	$(OUTDIR)/intrlock.obj \
 	$(OUTDIR)/chanbuf.obj \
 	$(OUTDIR)/debug.obj \
@@ -89,8 +77,10 @@ OBJS =  \
 	$(OUTDIR)/block.obj \
 	$(OUTDIR)/stringinthash.obj \
 	$(OUTDIR)/intstringhash.obj \
-	$(OUTDIR)/files.obj \
+	$(OUTDIR)/sprocket.obj \
 	$(OUTDIR)/critical_section.obj \
+	$(OUTDIR)/mutex_linux.obj \
+	$(OUTDIR)/osd_linux.obj \
 
 
 all : makedirs $(OUTDIR)/blakserv
@@ -106,17 +96,7 @@ $(OUTDIR)/md5.obj : $(TOPDIR)/util/md5.c
 
 $(OUTDIR)/blakserv: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ -c $(SOURCEDIR)/version.c
-	$(LINK)	$@ $(LIBS) $(BLAKSERVLINKFLAGS) $(LINKFLAGS)
+	$(LINK) $^ $(LIBS) -o$@ $(LINKFLAGS)
 	$(CP) $@ $(BLAKSERVRUNDIR)
 
-
-#!include $(TOPDIR)/rules.mak
-makedirs:
-	-$(MKDIR) $(OUTDIR)
-
-$(OUTDIR)/%.obj : %.c
-	$(CC) $(CFLAGS) -o $@ -c $< 
-
-clean:
-	-$(RM) $(OUTDIR)/*
-	-$(RMDIR) $(OUTDIR)
+include $(TOPDIR)/rules.mak.linux

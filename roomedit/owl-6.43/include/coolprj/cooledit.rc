@@ -1,0 +1,127 @@
+#include "coolprj/cooledit.rh"
+#include <owl/winres.rh>
+#include <owl/editsear.rh>
+
+
+#if !defined(NO_IDR_MARGIN_ICONS)
+IDR_MARGIN_ICONS        BITMAP  MOVEABLE PURE   "coolprj/mg_icons.bmp"
+#endif
+#if !defined(NO_ID_DIRTYINDICATOR)
+ID_DIRTYINDICATOR       BITMAP  MOVEABLE PURE   "coolprj/dirty.bmp"
+#endif
+#if !defined(NO_IDB_FONTTYP)
+IDB_FONTTYPE            BITMAP  MOVEABLE PURE   "coolprj/fonticon.bmp"
+#endif
+#if !defined(NO_IDR_MARGIN_CURSOR)
+IDR_MARGIN_CURSOR       CURSOR  DISCARDABLE     "coolprj/mg_cur.cur"
+#endif
+
+
+#if !defined(NO_IDD_FINDTEXTDLG)
+IDD_FINDTEXTDLG DIALOG DISCARDABLE  0, 0, 275, 76
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Find"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_FINDTEXT,48,7,165,106,CBS_DROPDOWN | CBS_SORT |
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FINDENGINE,60,23,153,77,CBS_DROPDOWNLIST |
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Whole words only",IDC_FINDWORD,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,39,90,10
+    CONTROL         "&Case senstive",IDC_FINDCASE,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,7,49,87,10
+    CONTROL         "&Global search",IDC_FINDGLOBAL,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,7,59,66,10
+    CONTROL         "Forwar&d",IDC_FINDFRW,"Button",BS_AUTORADIOBUTTON |
+                    WS_TABSTOP,139,48,57,10
+    CONTROL         "&Backward",IDC_FINDBACK,"Button",BS_AUTORADIOBUTTON,139,
+                    58,48,10
+    DEFPUSHBUTTON   "&Find Next",IDOK,218,7,50,14
+    PUSHBUTTON      "Close",IDCANCEL,218,24,50,14
+    LTEXT           "&Text to find:",IDC_STATIC,7,9,38,8
+    LTEXT           "Search &Engine:",IDC_STATIC,7,25,50,8
+    GROUPBOX        "Direction",IDC_STATIC,134,39,69,31
+END
+#endif
+
+#if !defined(NO_IDD_REPLACEDLG)
+IDD_REPLACEDLG DIALOG DISCARDABLE  0, 0, 276, 102
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Replace"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_FINDTEXT,50,7,164,88,CBS_DROPDOWN | CBS_SORT |
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_REPLACETEXT,50,23,164,72,CBS_DROPDOWN | CBS_SORT |
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FINDENGINE,60,39,153,86,CBS_DROPDOWNLIST |
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Whole words only",IDC_FINDWORD,"Button",
+                    BS_AUTOCHECKBOX,7,55,90,10
+    CONTROL         "&Case senstive",IDC_FINDCASE,"Button",BS_AUTOCHECKBOX,7,
+                    65,87,10
+    CONTROL         "Global search",IDC_FINDGLOBAL,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,7,75,66,10
+    CONTROL         "&Prompt on replace",IDC_FINDPROMPT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,85,73,10
+    CONTROL         "Forwar&d",IDC_FINDFRW,"Button",BS_AUTORADIOBUTTON,139,
+                    69,57,10
+    CONTROL         "&Backward",IDC_FINDBACK,"Button",BS_AUTORADIOBUTTON,139,
+                    81,48,10
+    DEFPUSHBUTTON   "Find &Next",IDOK,219,7,50,14
+    PUSHBUTTON      "&Replace",IDC_REPLACE,219,23,50,14
+    PUSHBUTTON      "&All",IDC_REPLACEALL,219,40,50,14
+    PUSHBUTTON      "Close",IDCANCEL,219,57,50,14
+    LTEXT           "&Text to find:",IDC_STATIC,7,9,38,8
+    LTEXT           "Search &Engine:",IDC_STATIC,7,41,50,8
+    GROUPBOX        "Direction",IDC_STATIC,134,59,69,35
+    LTEXT           "&New text:",IDC_STATIC,7,25,31,8
+END
+#endif
+
+#if !defined(NO_IDD_COOLEDITPROP)
+IDD_COOLEDITPROP DIALOG DISCARDABLE  50, 18, 253, 146
+STYLE DS_3DLOOK | WS_CHILD | WS_CAPTION
+CAPTION "Colors"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_EDITCATEGORY,7,17,83,121,LBS_NOINTEGRALHEIGHT |
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_EDITFONTNAME,95,15,115,100,CBS_DROPDOWNLIST |
+                    CBS_OWNERDRAWFIXED | CBS_AUTOHSCROLL | CBS_SORT |
+                    CBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_EDITFONTSIZE,214,15,35,100,CBS_DROPDOWN | WS_VSCROLL |
+                    WS_TABSTOP
+    COMBOBOX        IDC_EDITCLRTEXT,96,40,74,100,CBS_DROPDOWNLIST |
+                    CBS_OWNERDRAWFIXED | CBS_AUTOHSCROLL | WS_BORDER |
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_EDITCLRBK,174,40,73,100,CBS_DROPDOWNLIST |
+                    CBS_OWNERDRAWFIXED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Italic",IDC_EDITITALIC,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,148,57,40,10
+    CONTROL         "&Bold",IDC_EDITBOLD,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,96,57,35,10
+    CONTROL         "&Underline",IDC_EDITUNDERLINE,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,201,57,43,10
+    GROUPBOX        "Preview:",IDC_STATIC,95,70,153,68,WS_GROUP
+    LTEXT           "AbBbYyZz°Ð±Ñ²Ò",IDC_EDITSAMPLE,103,81,138,51,SS_SUNKEN
+    LTEXT           "&Category:",IDC_STATIC,11,7,31,8
+    LTEXT           "&Font:",IDC_STATIC,95,5,40,9
+    LTEXT           "&Size:",IDC_STATIC,220,5,24,9
+    LTEXT           "&Text:",IDC_STATIC,96,31,17,8
+    LTEXT           "Back&ground:",IDC_STATIC,174,31,42,8
+END
+#endif
+
+
+#if !defined(NO_COOLSTRINGTABLE)
+STRINGTABLE DISCARDABLE
+BEGIN
+  IDS_COOLUNDOSTRINGS     "Can't Undo|Undo Insert Char|Undo Replace Text|Undo Key Enter|Undo Key Tab|Undo Tabify Selection|Undo Delete Char|Undo Delete Word|Undo Delete Char Back|Undo Delete Word Back|Undo Delete Selection|Undo Paste|Undo Clear All|Undo DragDrop Move|Undo Drag-Drop Copy|Undo Drag-Drop Move|"
+  IDS_COOLREDOSTRINGS     "Can't Redo|"
+  IDS_SYNTAXDESCR         "White Space|Normal Text|Margin|Selection|Syntax Higlight|Keyword|Comments|Number|Operator|String|Character|Preprocessor|Function|Error|Execution Point|Breakpoint|Invalid Berakpoint|Custom0|Custom1|Custom2|Custom3|Custom4|Custom5|Custom6|Custom7|Custom8|Custom9|"
+  IDS_FONTSIZES           "8|9|10|11|12|14|16|18|20|22|24|28|36|48|72|"
+  IDS_COLORNAMES          "Automatic|Black|Dark Red|Dark Green|Dark Yellow|Dark Blue|Violet|Dark Cyan|Gray|Light Gray|Red|Bright Green|Yellow|Blue|Magenta|Cyan|White|"
+END
+#endif

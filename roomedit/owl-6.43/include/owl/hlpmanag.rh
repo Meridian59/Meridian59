@@ -1,0 +1,17 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1998 by Yura Bidus, All Rights Reserved
+//
+// Resource IDs used by THelpManager
+//----------------------------------------------------------------------------
+#if !defined(OWL_HLPMANAG_RH)
+#define OWL_HLPMANAG_RH
+
+#define CM_CONTEXTHELP      24390
+#define CM_WHAT_IS_THIS     24391
+
+#define IDM_WHAT_IS_THIS    32584
+
+#define IDC_HELPCURSOR      1014
+
+#endif //  OWL_HLPMANAG_RH

@@ -17,14 +17,14 @@
 
 #include "blakserv.h"
 
-HANDLE muxServer;
+Mutex muxServer;
 
 CRITICAL_SECTION csQuit;
 Bool quit;
 
 void InitInterfaceLocks()
 {
-   muxServer = CreateMutex(NULL,FALSE,NULL);
+   muxServer = MutexCreate();
 
    quit = False;
    InitializeCriticalSection(&csQuit);
@@ -33,24 +33,27 @@ void InitInterfaceLocks()
 
 void EnterServerLock()
 {
-   WaitForSingleObject(muxServer,INFINITE);
+   MutexAcquire(muxServer);
 }
 
 Bool TryEnterServerLock()
 {
-   return WaitForSingleObject(muxServer,50) == WAIT_OBJECT_0;
+   return MutexAcquireWithTimeout(muxServer, 50);
 }
 
 void LeaveServerLock()
 {
-   ReleaseMutex(muxServer);
+   MutexRelease(muxServer);
 }
 
 void SetQuit()
 {
    EnterCriticalSection(&csQuit);   
    quit = True;
+
+#ifdef BLAK_PLATFORM_WINDOWS
    PostThreadMessage(main_thread_id,WM_QUIT,0,0);
+#endif
    LeaveCriticalSection(&csQuit);
 }
 
@@ -67,5 +70,9 @@ Bool GetQuit()
 
 void SignalSession(int session_id)
 {
-   PostThreadMessage(main_thread_id,WM_BLAK_MAIN_READ,0,session_id);
+	// doesn't seem to really be needed because each time through
+	// the main loop every session is checked anyway
+#ifdef BLAK_PLATFORM_WINDOWS
+	PostThreadMessage(main_thread_id,WM_BLAK_MAIN_READ,0,session_id);
+#endif
 }

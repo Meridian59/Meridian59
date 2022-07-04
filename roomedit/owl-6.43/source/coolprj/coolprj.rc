@@ -1,0 +1,10 @@
+
+#include "coolprj/cooledit.rc"
+
+#ifndef MAKELIB
+#  if defined(__BORLANDC__) && defined(RC_INVOKED)
+#    include "version.i" // preprocessed "version.rc"
+#  else
+#    include "version.rc"
+#  endif
+#endif

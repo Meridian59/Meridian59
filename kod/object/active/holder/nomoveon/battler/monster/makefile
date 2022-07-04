@@ -13,9 +13,9 @@ BOFS  = ant.bof centip.bof cow.bof ent.bof fairy.bof \
         revenant.bof frogman.bof iceper.bof council.bof factions.bof \
         priestes.bof evfairy.bof lupogg.bof tester.bof avar.bof avchief.bof \
         avshaman.bof reflectn.bof guard.bof orccave.bof orcboss.bof shadowb.bof \
-        orcwiza.bof dfly.bof dflyq.bof lupking.bof kriipa.bof bossbody.bof \
+        orcwiza.bof dfly.bof dflyq.bof lupking.bof kriipa.bof BossBody.bof \
         stntroll.bof snowrat.bof lich.bof deadlich.bof duskrat.bof thrasher.bof \
-        nrthlwrm.bof bramble.bof eviltwin.bof dethspid.bof grdworm.bof troop.bof \
+        nrthlwrm.bof BRAMBLE.bof eviltwin.bof dethspid.bof grdworm.bof troop.bof \
         xeochctl.bof dflypet.bof dangel.bof mollusk.bof specmum.bof lvstatue.bof \
         evilent.bof \
 

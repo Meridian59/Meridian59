@@ -6,9 +6,7 @@ TOPDIR=..
 
 !include $(TOPDIR)\common.mak
 
-CFLAGS = $(CFLAGS) /Gr
-
-BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug /subsystem:windows
+BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug $(LINKWINDOWSFLAGS)
 
 SOURCEDIR = .
 
@@ -80,8 +78,9 @@ OBJS =  \
 	$(OUTDIR)\block.obj \
 	$(OUTDIR)\stringinthash.obj \
 	$(OUTDIR)\intstringhash.obj \
-	$(OUTDIR)\files.obj \
 	$(OUTDIR)\sprocket.obj \
+	$(OUTDIR)\mutex_windows.obj \
+	$(OUTDIR)\osd_windows.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

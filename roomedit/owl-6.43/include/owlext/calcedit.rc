@@ -1,0 +1,78 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//----------------------------------------------------------------------------
+#include <owlext/calcedit.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+#include "windows.h"
+#endif
+
+IDB_CALCBTN BITMAP LOADONCALL MOVEABLE DISCARDABLE "res/calcbtn.bmp"
+
+
+IDD_CALCDIALOG DIALOG 48, 48, 82, 106
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_DLGFRAME | WS_SYSMENU
+{
+ PUSHBUTTON "0", 48, 25, 77, 14, 12
+ PUSHBUTTON "1", 49, 7, 63, 14, 12
+ PUSHBUTTON "2", 50, 25, 63, 14, 12
+ PUSHBUTTON "3", 51, 43, 63, 14, 12
+ PUSHBUTTON "4", 52, 7, 49, 14, 12
+ PUSHBUTTON "5", 53, 25, 49, 14, 12
+ PUSHBUTTON "6", 54, 43, 49, 14, 12
+ PUSHBUTTON "7", 55, 7, 35, 14, 12
+ PUSHBUTTON "8", 56, 25, 35, 14, 12
+ PUSHBUTTON "9", 57, 43, 35, 14, 12
+ PUSHBUTTON ".", 46, 7, 77, 14, 12
+ PUSHBUTTON "%", 37, 43, 77, 14, 12
+ PUSHBUTTON "=", 61, 61, 77, 14, 12
+ PUSHBUTTON "+", 43, 61, 63, 14, 12
+ PUSHBUTTON "-", 45, 61, 49, 14, 12
+ PUSHBUTTON "*", 42, 61, 35, 14, 12
+ PUSHBUTTON "/", 47, 61, 21, 14, 12
+ PUSHBUTTON "C", 67, 7, 21, 14, 12
+ PUSHBUTTON "<-", 8, 25, 21, 14, 12
+ PUSHBUTTON "+/-", 95, 43, 21, 14, 12
+ RTEXT "0", ID_DISPLAY, 8, 6, 66, 8, SS_RIGHT | WS_CHILD | WS_VISIBLE
+ CONTROL "", -1, "static", SS_BLACKFRAME | WS_CHILD | WS_VISIBLE, 5, 4, 72, 12
+ CONTROL "", -1, "static", SS_WHITEFRAME | WS_CHILD | WS_VISIBLE, 4, 3, 74, 14
+ PUSHBUTTON "done", IDOK, 7, 92, 32, 12
+ PUSHBUTTON "cancel", IDCANCEL, 43, 92, 32, 12
+}
+
+IDA_CALCULATOR ACCELERATORS
+{
+  VK_BACK, 8, VIRTKEY
+  VK_RETURN, 13, VIRTKEY
+  "C", 67, ASCII
+  "c", 67, ASCII
+  "_", 95, ASCII
+  "0", 48, ASCII
+  "1", 49, ASCII
+  "2", 50, ASCII
+  "3", 51, ASCII
+  "4", 52, ASCII
+  "5", 53, ASCII
+  "6", 54, ASCII
+  "7", 55, ASCII
+  "8", 56, ASCII
+  "9", 57, ASCII
+  "%", 37, ASCII
+  "/", 47, ASCII
+  "*", 42, ASCII
+  "-", 45, ASCII
+  "+", 43, ASCII
+  "=", 61, ASCII
+  ".", 46, ASCII
+}
+
+
+#endif

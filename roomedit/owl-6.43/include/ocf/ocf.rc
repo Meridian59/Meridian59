@@ -1,0 +1,70 @@
+//---------------------------------------------------------------------
+// ObjectComponents - (C) Copyright 1994, 1996 by Borland International
+//---------------------------------------------------------------------
+#include <windows.h>
+#include <owl/lclstrng.rh>
+#include <ocf/ocapp.rh>
+
+// Ambient properties
+BackColor_  XLAT "Background color" XEND
+ForeColor_  XLAT "Foreground color" XEND
+LocaleID_   XLAT "Locale ID" XEND
+TextAlign_  XLAT "Text Alignment" XEND
+MsgReflect_ XLAT "Windows Messages reflected to control" XEND
+UserMode_   XLAT "User or Design Mode" XEND
+UIDead_     XLAT "Responds to user input" XEND
+GrabHdl_    XLAT "Show grab handles" XEND
+Mnemonics_  XLAT "Supports keyboard mnemonics" XEND
+Hatching_   XLAT "Show hatching" XEND
+DispName_   XLAT "Displayed name" XEND
+ScaleUnits_ XLAT "Coordinate unit name" XEND
+Font_       XLAT "Font" XEND
+
+// Extended properties
+Cancel_     XLAT "Cancel button" XEND
+Default_    XLAT "Default button" XEND
+ObjName_    XLAT "Object name" XEND
+
+
+// Control Events
+Click_     XLAT "Click event" XEND
+DblClick_  XLAT "Double click event" XEND
+MouseDown_ XLAT "Mouse down event" XEND
+MouseUp_   XLAT "Mouse up event" XEND
+MouseMove_ XLAT "Mouse move event" XEND
+KeyDown_   XLAT "Keyboard down event" XEND
+KeyUp_     XLAT "Keyboard up event"  XEND
+CustomEvent_ XLAT "Custom event" XEND
+ErrorEvent_  XLAT "Error event" XEND
+
+// Object descriptions
+TOcxView_     XLAT "OLE Control container class" XEND
+TOcControl_   XLAT "OLE Control class" XEND
+TOcCtrlEvent_ XLAT "OLE Control event class" XEND
+
+#if !defined(__OLEVIEW_RC_OCF_RC_COMMON_STR)
+#define __OLEVIEW_RC_OCF_RC_COMMON_STR
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_CFTEXT,        "Text\nplain text"
+  IDS_CFBITMAP,      "Bitmap\na bitmap image"
+  IDS_CFMETAFILE,    "Metafile Picture\na static picture"
+  IDS_CFSYLK,        "Sylk\na spreadsheet"
+  IDS_CFDIF,         "DIF\na document"
+  IDS_CFTIFF,        "Tagged Image File Format\na TIFF image file"
+  IDS_CFOEMTEXT,     "OEM Text\nan OEM text"
+  IDS_CFDIB,         "DIB\na device independent bitmap image"
+  IDS_CFPALETTE,     "Palette\na color palette"
+  IDS_CFPENDATA,     "Pen Data\npen data"
+  IDS_CFRIFF,        "RIFF\na RIFF media file"
+  IDS_CFWAVE,        "Wave\na sound wave file"
+  IDS_CFUNICODETEXT, "UniCode Text\nUnicode text"
+  IDS_CFENHMETAFILE, "Enhanced Metafile\nan enhanced metafile picture"
+}
+
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_IN, " in "
+}
+#endif
+

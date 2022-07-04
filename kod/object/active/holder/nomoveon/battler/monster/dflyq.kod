@@ -70,7 +70,7 @@ classvars:
    viTreasure_type = TID_DRAGONFLY
 
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_WEAP_PIERCE
+   viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 145
    viDifficulty = 6
    viKarma = 40

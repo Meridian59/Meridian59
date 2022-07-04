@@ -3,9 +3,11 @@
 ; Installer for Meridian 59 client
 ;--------------------------------
 
+!addplugindir ".\plugins"
 !include FontReg.nsh
 !include FontName.nsh
 !include WinMessages.nsh
+!include UAC.nsh
 
 !define SOURCEDIR "..\run\installclient"
 
@@ -36,7 +38,7 @@ RequestExecutionLevel user
 Function .OnInit
  
 UAC_Elevate:
-    UAC::RunElevated 
+    !insertmacro UAC_RunElevated
     StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
     StrCmp 0 $0 0 UAC_Err ; Error?
     StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
@@ -61,11 +63,11 @@ FunctionEnd
 
 
 Function .OnInstFailed
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
  
 Function .OnInstSuccess
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
 ;--------------------------------
 
@@ -95,38 +97,25 @@ Function InstallWithUserPrivilege
   ; Create download directory now; creating it on demand seems to fail
   ; under some UAC conditions.
   CreateDirectory "$LOCALAPPDATA\Meridian 59\download"
+FunctionEnd
 
-   ; Copy settings from previous installation  
-  ClearErrors
-  Var /GLOBAL NDSDIR 
-  ReadRegStr $NDSDIR HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\meridian.exe" "Path"
-  IfErrors no_previous_install
-    ; Copy mail and map from prior installation, if any
-    CopyFiles /SILENT $NDSDIR\mail\*.* $OUTDIR\mail
-  
-    ; Copy ini files
-    CopyFiles /SILENT $NDSDIR\*.ini $OUTDIR
+Function InstallDesktopShortcut
+  ; This inherits the run directory from $OUTDIR, which is set to the local data dir
+  ; by InstallWithUserPrivilege
 
-    ; Look for files in VirtualStore on Vista or later (earlier Meridian installs
-    ; on these OSes will cause meridian.ini, mail, etc. to be virtualized)
-    StrCpy $2 $NDSDIR "" 3  ; Chop off "c:\", will fail on UNC names
-    Var /GLOBAL VIRTUALDIR
-    StrCpy $VIRTUALDIR "$LOCALAPPDATA\VirtualStore\$2"
-    IfFileExists $VIRTUALDIR\mail 0 update_ini_files
-      CopyFiles /SILENT $VIRTUALDIR\mail\*.* $OUTDIR\mail
+  ; Set to run in data directory
+  SetOutPath "$LOCALAPPDATA\Meridian 59"
+  CreateShortCut "$DESKTOP\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
+FunctionEnd
 
-  update_ini_files:
+Function InstallMenuShortcuts
+  CreateDirectory "$SMPROGRAMS\Meridian 59"
+  CreateShortCut "$SMPROGRAMS\Meridian 59\Uninstall Meridian 59.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
 
-    IfFileExists $VIRTUALDIR\meridian.ini 0 update_ini_timestamp
-      CopyFiles /SILENT $VIRTUALDIR\*.ini $OUTDIR
+  ; Set to run in data directory
+  SetOutPath "$LOCALAPPDATA\Meridian 59"
 
-  update_ini_timestamp:
-
-    ; Set download time to reflect new installer
-    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 186
-
-  no_previous_install:
-
+  CreateShortCut "$SMPROGRAMS\Meridian 59\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
 FunctionEnd
 
 ; The stuff to install
@@ -139,7 +128,6 @@ Section "Meridian 59 (required)"
 
   ; Put executable files there
   File "${SOURCEDIR}\archive.dll"
-  File "${SOURCEDIR}\arq.exe"
   File "${SOURCEDIR}\club.exe"
   File "${SOURCEDIR}\heidelb1.ttf"
   File "${SOURCEDIR}\license.rtf"
@@ -149,7 +137,6 @@ Section "Meridian 59 (required)"
   File "${SOURCEDIR}\mss32midi.dll"
   File "${SOURCEDIR}\mssmp3.asi"
   File "${SOURCEDIR}\waveplay.dll"
-  File "${SOURCEDIR}\wrap.dll"
   File "${SOURCEDIR}\zlib1.dll"
 
   ; Install font
@@ -167,33 +154,20 @@ Section "Meridian 59 (required)"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
 
-  ; Install resources and copy old settings at user level
-  GetFunctionAddress $0 InstallWithUserPrivilege
-  UAC::ExecCodeSegment $0
+  ; Install resources at user level
+  !insertmacro UAC_AsUser_Call function InstallWithUserPrivilege ${UAC_SYNCREGISTERS}|${UAC_SYNCINSTDIR}
 SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Desktop Shortcut"
-  ; This inherits the run directory from $OUTDIR, which is set to the local data dir
-  ; by InstallWithUserPrivilege
-
-  ; Set to run in data directory
-  SetOutPath "$LOCALAPPDATA\Meridian 59"
-  CreateShortCut "$DESKTOP\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
-  
+  ; Shortcut must be installed as current user
+  !insertmacro UAC_AsUser_Call function InstallDesktopShortcut ${UAC_SYNCREGISTERS}|${UAC_SYNCINSTDIR}
 SectionEnd
 
 ; Optional section
 Section "Start Menu Shortcuts"
-
-  CreateDirectory "$SMPROGRAMS\Meridian 59"
-  CreateShortCut "$SMPROGRAMS\Meridian 59\Uninstall Meridian 59.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-
-  ; Set to run in data directory
-  SetOutPath "$LOCALAPPDATA\Meridian 59"
-
-  CreateShortCut "$SMPROGRAMS\Meridian 59\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
-  
+  ; Shortcut must be installed as current user
+  !insertmacro UAC_AsUser_Call function InstallMenuShortcuts ${UAC_SYNCREGISTERS}|${UAC_SYNCINSTDIR}
 SectionEnd
 
 ;--------------------------------
@@ -202,7 +176,7 @@ SectionEnd
 
 Function un.OnInit
 UAC_Elevate:
-    UAC::RunElevated 
+    !insertmacro UAC_RunElevated
     StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
     StrCmp 0 $0 0 UAC_Err ; Error?
     StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
@@ -226,11 +200,11 @@ UAC_Success:
 FunctionEnd
 
 Function un.OnUnInstFailed
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
  
 Function un.OnUnInstSuccess
-    UAC::Unload ;Must call unload!
+;    UAC::Unload ;Must call unload!
 FunctionEnd
 
 Section "Uninstall"

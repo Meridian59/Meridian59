@@ -24,6 +24,6 @@ void InitNameID(void);
 void ResetNameID(void);
 void CreateNameID(char *parm_name,int parm_id);
 int GetIDByName(const char *name);
-char * GetNameByID(int id);
+const char * GetNameByID(int id);
 
 #endif

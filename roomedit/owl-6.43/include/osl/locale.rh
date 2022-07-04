@@ -1,0 +1,5 @@
+//
+// Obsolete header directory. Use winsys
+//
+#pragma message ("osl/lclstrng.rh has been replaced by owl/lclstrng.rh")
+#include <owl/lclstrng.rh>

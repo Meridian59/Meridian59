@@ -33,43 +33,43 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	class _OWLCLASS TEdit;
 #endif
 
 TEdit        *newTEdit(TWindow* parent, int resourceID, UINT textLen = 0, TModule* module =0);
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	class _OWLCLASS TStatic;
 #endif
 
 TStatic      *newTStatic(TWindow* parent, int resourceId, UINT textLen = 0, TModule* module= 0);
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	class _OWLCLASS TListBox;
 #endif
 
 TListBox     *newTListBox(TWindow* Parent, int resourceId, TModule* module = 0);
 
-#ifndef __OWL_COMBOBOX_H
+#ifndef OWL_COMBOBOX_H
 	class _OWLCLASS TComboBox;
 #endif
 
 TComboBox    *newTComboBox(TWindow* parent, int ResourceId, UINT textLen = 0, TModule*module = 0);
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	class _OWLCLASS TCheckBox;
 #endif
 
 TCheckBox    *newTCheckBox(TWindow* parent, int resourceId, TGroupBox* group = 0, TModule*module = 0);
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	class _OWLCLASS TRadioButton;
 #endif
 
 TRadioButton *newTRadioButton(TWindow* parent,int resourceId,TGroupBox *group = 0, TModule*module = 0);
 
-#ifndef __OWL_BUTTON_H
+#ifndef OWL_BUTTON_H
 	class _OWLCLASS TButton;
 #endif
 

@@ -23,12 +23,12 @@ void codegen_error(const char *fmt, ...)
 {
    va_list marker;
 
-   printf("error: ");
+   fprintf(stderr, "error: ");
 
    va_start(marker, fmt);
-   vprintf(fmt, marker);
+   vfprintf(stderr, fmt, marker);
    va_end(marker);
-   printf("\nAborting.\n");
+   fprintf(stderr, "\nAborting.\n");
 
    codegen_ok = False;
 }

@@ -1,0 +1,22 @@
+//------------------------------------------------------------------------------
+//  ObjectWindows Library
+//  Copyright © 1998 by Yura Bidus. All Rights Reserved.
+//
+//------------------------------------------------------------------------------
+#if !defined(OWL_TIPDIALG_RH)
+#define OWL_TIPDIALG_RH
+
+#define IDC_TIP_BULB                101
+#define IDC_TIP_FRAME               102
+#define IDC_TIP_STARTUP             103
+#define IDC_TIP_NEXT                104
+#define IDC_TIP_STRING              105
+
+#define IDS_TIPDLG_ERRFILE_CORRUPT  40001
+#define IDS_TIPDLG_ERRFILEABSENT    40002
+#define IDS_TIP_DIDYOUKNOW          40003
+
+#define IDB_TIP_BULB                32002
+#define IDD_TIPDLG                  32516
+
+#endif // OWL_TIPDIALG_RH

@@ -51,7 +51,7 @@ classvars:
    viTreasure_type = TID_NONE
 
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 45
    viDifficulty = 4
@@ -517,7 +517,7 @@ messages:
 
          if Weapon <> $
          {
-            if IsClass(Weapon,&Longbow)
+            if IsClass(Weapon,&Bow)
             {
                piAnimation = PANM_BOW_FIRE;
 

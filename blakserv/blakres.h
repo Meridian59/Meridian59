@@ -23,9 +23,9 @@ typedef struct resource_struct
 
 void InitResource(void);
 void ResetResource(void);
-void AddResource(int id,char *str_value);
+void AddResource(int id,const char *str_value);
 void SetResourceName(int id,char *name);
-int AddDynamicResource(char *str_value);
+int AddDynamicResource(const char *str_value);
 void ChangeDynamicResourceStr(resource_node *r,char *str_value);
 void ChangeDynamicResource(resource_node *r,char *data,int len_data);
 int GetNumDynamicRscFiles(void);

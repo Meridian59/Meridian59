@@ -1,0 +1,30 @@
+OWLNext License
+
+
+1. Prerequisites
+
+OWLNext is based on the Object Windows Library (OWL) which is copyrighted software owned by Embarcadero Technologies (acquired from Borland Software Corporation as part of its CodeGear division in 2008). Therefore, you need a license to one of Embarcadero's C++Builder products, or an earlier legacy product, such as Borland C++, that gives you rights to use OWL 5.0.
+
+See our project web site for more information on how to obtain an OWL license.
+
+http://owlnext.sourceforge.net
+
+
+2. OWLNext Specific License 
+
+OWLNext consists of modifications and additions (collectively called PATCHES) to the original OWL source code. These PATCHES are the property of the respective contributors to OWLNext and are licensed for general use in accordance with the OSI Approved zlib/libpng License. Note that this license only applies to the PATCHES. The full OWLNext source code (the patched software) is further restricted by the OWL license; refer to your OWL license for details.
+
+
+2.1. The zlib/libpng License
+
+This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.
+
+http://opensource.org/licenses/zlib

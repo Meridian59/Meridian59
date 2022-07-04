@@ -1,4 +1,3 @@
-
 // Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
@@ -6,12 +5,20 @@
 // the LICENSE file that accompanies it.
 //
 // Meridian is a registered trademark.
-
-#include "critical_section.h"
+/*
+ * critical_section.c
+ */
+#include "blakserv.h"
 
 void InitializeCriticalSection(CRITICAL_SECTION *m)
 {
-   pthread_mutex_init(m, NULL);
+  // Make the mutex reentrant, the same way a Windows critical
+  // section is.
+  pthread_mutexattr_t attr;
+  pthread_mutexattr_init(&attr);
+  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+  pthread_mutex_init(m, &attr);
 }
 
 void EnterCriticalSection(CRITICAL_SECTION *m)

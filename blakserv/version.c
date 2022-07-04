@@ -16,12 +16,12 @@
 
 #include "blakserv.h"
 
-char * BlakServLongVersionString(void)
+const char * BlakServLongVersionString(void)
 {
    return "BlakSton Server v" BLAKSERV_VERSION " (" __DATE__ " " __TIME__ ")";
 }
 
-char * BlakServNameString(void)
+const char * BlakServNameString(void)
 {
    return "BlakSton Server";
 }

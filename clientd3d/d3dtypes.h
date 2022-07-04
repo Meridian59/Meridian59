@@ -91,7 +91,7 @@ typedef short custom_index;
 typedef struct custom_vbuffer
 {
 	u_int					curIndex;
-	LPDIRECT3DVERTEXBUFFER8	pVBuffer;
+	LPDIRECT3DVERTEXBUFFER9	pVBuffer;
 	union
 	{
 		custom_xyz		*pXYZ;
@@ -103,7 +103,7 @@ typedef struct custom_vbuffer
 typedef struct custom_ibuffer
 {
 	u_int					curIndex;
-	LPDIRECT3DINDEXBUFFER8	pIBuffer;
+	LPDIRECT3DINDEXBUFFER9	pIBuffer;
 	custom_index			*pIndex;
 } custom_ibuffer;
 
@@ -111,7 +111,7 @@ typedef struct render_packet
 {
 	D3DMATRIX			xForm;
 	u_int				flags;
-	LPDIRECT3DTEXTURE8	pTexture;
+	LPDIRECT3DTEXTURE9	pTexture;
 	PDIB				pDib;
 	int					numStages;
 	u_int				startIndex;

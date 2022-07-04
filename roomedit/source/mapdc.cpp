@@ -354,7 +354,7 @@ TMapDC::TMapDC (TEditorClient *pEditor, TDC &dc):
 // ------
 //
 TMapDC::TMapDC (TEditorClient *pEditor):
-	TDC (::GetDC(pEditor->HWindow))
+	TDC (::GetDC(pEditor->Handle))
 {
 	FromWindow = TRUE;
 	Init (pEditor);
@@ -374,7 +374,7 @@ TMapDC::~TMapDC()
 	// If DC created with GetDC, call ReleseDC
 	if ( FromWindow )
 	{
-		::ReleaseDC (pEditor->HWindow, GetHDC());
+		::ReleaseDC (pEditor->Handle, GetHDC());
 		Handle = 0;		// DC destroyed
 	}
 }
@@ -744,7 +744,7 @@ TMapDC::DrawMapArrow(SHORT mapXstart, SHORT mapYstart, USHORT angle, USHORT len)
 void TMapDC::DrawMapThing (int editmode, SHORT tnum)
 {
 	assert_tnum (tnum);
-	Thing HUGE *pThing = &Things[tnum];
+	Thing *pThing = &Things[tnum];
 
 	SHORT xpos = pThing->xpos;
 	SHORT ypos = pThing->ypos;
@@ -821,14 +821,14 @@ void TMapDC::DrawMapLineDef (int editmode, SHORT ldnum, BOOL DrawLen)
 	assert_ldnum (ldnum);
 
 	// Use interm. vars. to accelarate
-	LineDef HUGE *pLD = &LineDefs[ldnum];
+	LineDef *pLD = &LineDefs[ldnum];
 	SHORT start = pLD->start;
 	SHORT end   = pLD->end;
 
 	assert_vnum (start);
 	assert_vnum (end);
-	Vertex HUGE *pVStart = &Vertexes[start];
-	Vertex HUGE *pVEnd   = &Vertexes[end];
+	Vertex *pVStart = &Vertexes[start];
+	Vertex *pVEnd   = &Vertexes[end];
 	SHORT x0    = pVStart->x;
 	SHORT y0    = pVStart->y;
 	SHORT x1    = pVEnd->x;
@@ -864,14 +864,14 @@ void TMapDC::DrawMapLineDefLen (int editmode, SHORT ldnum)
 	assert_ldnum (ldnum);
 
 	// Use interm. vars. to accelarate
-	LineDef HUGE *pLD = &LineDefs[ldnum];
+	LineDef *pLD = &LineDefs[ldnum];
 	SHORT start = pLD->start;
 	SHORT end   = pLD->end;
 
 	assert_vnum (start);
 	assert_vnum (end);
-	Vertex HUGE *pVStart = &Vertexes[start];
-	Vertex HUGE *pVEnd   = &Vertexes[end];
+	Vertex *pVStart = &Vertexes[start];
+	Vertex *pVEnd   = &Vertexes[end];
 	SHORT x0    = pVStart->x;
 	SHORT y0    = pVStart->y;
 	SHORT x1    = pVEnd->x;
@@ -947,10 +947,10 @@ int TMapDC::GetLineDefColor (int editmode, SHORT ldnum)
 	assert_ldnum (ldnum);
 	int color = 0;
 	SHORT m;
-	Sector HUGE *pSector;
+	Sector *pSector;
 
 	// Use interm. vars. to accelarate
-	LineDef HUGE *pLD = &LineDefs[ldnum];
+	LineDef *pLD = &LineDefs[ldnum];
 
 	// Select pen color
 	switch (editmode)
@@ -1064,7 +1064,7 @@ void TMapDC::DrawMapSector (int editmode, SHORT snum)
 	assert_snum (snum);
 
 	SHORT n;
-	LineDef HUGE *pLD;
+	LineDef *pLD;
 	for (n = 0, pLD = LineDefs;
 		 n < NumLineDefs ;
 		 n++, pLD++)

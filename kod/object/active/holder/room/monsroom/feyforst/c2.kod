@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_OutdoorsC2 = "The Vale of Sorrows"
-   room_OutdoorsC2 = C2.roo
+   room_OutdoorsC2 = c2.roo
    OutdoorsC2_music = walk7.mid
 
    c2_elhai_win = \

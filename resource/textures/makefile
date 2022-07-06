@@ -54,6 +54,6 @@ $(OUTDIR)\grd20130.bgf:
 	$(MAKEBGF) -o $@ -n "mudroot" -s 4 1 $** 1 1 1	
 
 $(OUTDIR)\grd50078.bgf:
-	$(MAKEBGF) -o $@ -n "kocatan wall with blue stripe" -s 1 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "kocatan wall with blue stripe" -s 4 1 $** 1 1 1
 
 !include $(TOPDIR)\rules.mak

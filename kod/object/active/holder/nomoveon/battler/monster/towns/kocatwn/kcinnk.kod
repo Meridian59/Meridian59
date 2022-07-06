@@ -28,28 +28,28 @@ resources:
    kocinn_winknudge = "Thanks!  I'll be sure to let you know how it all turns out!"
    kocataninnkeeper_unwanted_keep = "~k%s%s tells you, \"Thank you.  You won't regret letting me borrow that.~n~k\""
 
-   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+   KocatanInnkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
 
    % Rentable room stuff.
-   KocatanInkeeper_room_rented = \
+   KocatanInnkeeper_room_rented = \
       "Here you go.  I hope you enjoy your stay, and if you have any problems "
       "I will be glad to help you."
 
-   KocatanInkeeper_cost = \
+   KocatanInnkeeper_cost = \
       "Oh, good, you should rest.  Let me see....  I charge %i shillings to "
       "~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay "
       "longer, I charge %i per day if you pre-pay.  Key copies, uh, key "
       "copies....  Oh, they cost %i shillings to make.  I know you'll "
       "like your room."
 
-   KocatanInkeeper_days_left = \
+   KocatanInnkeeper_days_left = \
       "You like it here, I see.  There are %q days until you should "
       "pay me again."
-   KocatanInkeeper_too_long = \
+   KocatanInnkeeper_too_long = \
       "Oh, I can't be responsible for holding so much money!  Pay me again "
       "later when you don't have so many days left on your tab."
 
-   KocatanInkeeper_destroy_key_copy = \
+   KocatanInnkeeper_destroy_key_copy = \
       "Moxal ix'Hanak tells you, \"Oh, yes. I can get rid of this key for "
       "you.  No problem.\""
 
@@ -187,7 +187,7 @@ messages:
       oObj = Create(&PurpleMushroom,#number=2);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,1250,KocatanInkeeper_purplemushroom_sale]);
+           #action=[LIBACT_CONDITIONAL,oObj,1250,KocatanInnkeeper_purplemushroom_sale]);
            
       return;
    }
@@ -211,7 +211,7 @@ messages:
             % rSayRsc is $ on success.  Use the innkeeper's saying.
             if rSayRsc = $
             {
-               rSayRsc = KocatanInkeeper_room_rented;
+               rSayRsc = KocatanInnkeeper_room_rented;
             }
 
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
@@ -239,7 +239,7 @@ messages:
                AND StringContain(string,"cost"))
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                  #string=KocatanInkeeper_cost,#type1=0,
+                  #string=KocatanInnkeeper_cost,#type1=0,
                   #parm1=piInitialRoomCost,#parm2=piPerDayCost,
                   #parm3=piKeyCopyCosts);
 
@@ -272,7 +272,7 @@ messages:
             {
                % Say something and delete the key.
                Send(what,@MsgSendUser,
-                     #message_rsc=KocatanInkeeper_destroy_key_copy);
+                     #message_rsc=KocatanInnkeeper_destroy_key_copy);
                Send(i,@Delete);
 
                return FALSE;
@@ -299,12 +299,12 @@ messages:
          if iNewDays = 0
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                  #string=KocatanInkeeper_too_long);
+                  #string=KocatanInnkeeper_too_long);
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                  #string=KocatanInkeeper_days_left,
+                  #string=KocatanInnkeeper_days_left,
                   #parm1=Send(SYS,@IntToString,#num=iNewDays),
                   #type1=STRING_RESOURCE);
          }

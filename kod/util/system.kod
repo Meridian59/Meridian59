@@ -6503,33 +6503,6 @@ messages:
       return (piServerFlags & flag);
    }      
 
-   BitwiseXOR(value1 = 0, value2 = 0)
-   "Returns the bitwise XOR of the two values."
-   {
-      local iDiv, bit1, bit2, retVal;
-
-      retVal = 0;
-      % iDiv = 2 to the 26th power = the 5th most significant bit.
-      %  Blakod integers use bits 0-3 as type info, then 1 bit for sign.
-      iDiv = 67108864;
-
-      while iDiv > 0
-      {
-         bit1 = value1 & iDiv;
-         bit2 = value2 & iDiv;
-
-         if (bit1 <> 0 OR bit2 <> 0)
-            AND (bit1 = 0 OR bit2 = 0)
-         {
-            retVal = retVal + iDiv;
-         }
-
-         iDiv = iDiv / 2;
-      }
-
-      return retVal;
-   }
-
    RemoveOldMails(max=10000)
    {
       local i,iCount;

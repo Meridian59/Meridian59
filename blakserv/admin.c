@@ -8,10 +8,10 @@
 /*
  * admin.c
  *
- 
+
  This module supports one mode of a session, STATE_ADMIN.  Only
  administrators are allowed in this mode.  The admin commands are
- sent to adminfn.c for processing, since this can be done through a 
+ sent to adminfn.c for processing, since this can be done through a
  game command as well.
 
  */
@@ -24,7 +24,7 @@ void AdminInputChar(session_node *s,char ch);
 void AdminInit(session_node *s)
 {
    s->adm = (admin_data *)s->session_state_data;
-   
+
    s->adm->command[0] = 0;
 
    cprintf(s->session_id,"Administrator mode\n");
@@ -41,26 +41,27 @@ void AdminProcessSessionBuffer(session_node *s)
    while (s->receive_list != NULL)
    {
       if (ReadSessionBytes(s,1,&ch) == False)
-	 return;
-      
+         return;
+
       /* give up receive mutex, so the interface/socket thread can
 	 read data for us, even if doing something long (GC/save/reload sys) */
 
       if (!MutexRelease(s->muxReceive))
-	 eprintf("APSBPollSession released mutex it didn't own in session %i\n",
-		 s->session_id);
-      
+      {
+         eprintf("APSBPollSession released mutex it didn't own in session %i\n",
+                 s->session_id);
+      }
       AdminInputChar(s,ch);
 
       if (!MutexAcquireWithTimeout(s->muxReceive,10000))
       {
-	 eprintf("APSB bailed waiting for mutex on session %i\n",s->session_id);
-	 return;
+         eprintf("APSB bailed waiting for mutex on session %i\n",s->session_id);
+         return;
       }
 
       /* any character could change our state.  if so, leave */
       if (s->hangup == True || s->state != STATE_ADMIN)
-	 return;
+         return;
    }
 }
 
@@ -84,20 +85,20 @@ void AdminInputChar(session_node *s,char ch)
 
    cprintf(s->session_id,"> %s\n",s->adm->command);
    session_id = s->session_id;
-   
+
    if (!strnicmp(s->adm->command,"QUIT",4))
    {
       cprintf(s->session_id,"%c%c",27,'G'); /* this tells client to resynchronize */
       SetSessionState(s,STATE_RESYNC);
 
       return;
-      
+
    }
-   
+
    TryAdminCommand(s->session_id,s->adm->command);
-   
+
    /* this next stuff is fuzzy--not sure how much is needed 7/27/95 */
-   
+
    /* right here, s could be invalid if we got hung up.
       check with the saved id */
    s = GetSessionByID(session_id);
@@ -109,7 +110,7 @@ void AdminInputChar(session_node *s,char ch)
        * a zero from a strtok, and could have residue from previous commands.
        * Of course, only do this if we didn't change state.
        */
-      
+
       s->adm->command[0] = 0;
       memset(s->adm->command,0,MAX_ADMIN_COMMAND);
    }

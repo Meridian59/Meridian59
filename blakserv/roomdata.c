@@ -19,7 +19,7 @@
 #include "blakserv.h"
 
 roomdata_node *roomdata;
-int num_roomdata;
+blak_int num_roomdata;
 
 /* local function prototypes */
 Bool LoadRoomFile(char *fname,room_type *file_info);
@@ -60,7 +60,7 @@ void ResetRoomData()
    num_roomdata = 0;
 }
 
-int LoadRoomData(int resource_id)
+blak_int LoadRoomData(int resource_id)
 {
    val_type ret_val;
    resource_node *r;

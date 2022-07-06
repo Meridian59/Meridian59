@@ -34,7 +34,7 @@ int CreateTable(int size);
 table_node * GetTableByID(int table_id);
 void DeleteTable(int table_id);
 void InsertTable(int table_id,val_type key_val,val_type data_val);
-int GetTableEntry(int table_id,val_type key_val);
+blak_int GetTableEntry(int table_id,val_type key_val);
 void DeleteTableEntry(int table_id,val_type key_val);
 
 unsigned int GetBufferHash(const char *buf,unsigned int len_buf);

@@ -321,7 +321,7 @@ void SynchedAcceptLogin(session_node *s,char *name,char *password)
 {
    session_node *other;
    account_node *a;
-   int now = GetTime();
+   INT64 now = GetTime();
 
    a = AccountLoginByName(name); /* maps the GUEST_ACCOUNT_NAME into a real account */
 
@@ -593,7 +593,7 @@ void SynchedSendMenuChoice(session_node *s)
       the pseudo-random # sequence thing for game messages */
 
    AddByteToPacket(AP_GETCHOICE);
-   s->seeds[0] = GetTime()*2;
+   s->seeds[0] = (int)GetTime()*2;
    s->seeds[1] = (int)GetMilliCount();
    s->seeds[2] = rand();
    s->seeds[3] = rand()*rand();

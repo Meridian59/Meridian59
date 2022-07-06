@@ -202,8 +202,6 @@ messages:
 
          if (StringContain(string,KoIk_rent_command)
                AND StringContain(string,KoIk_room_command))
-            OR (StringContain(string,"rent")
-               AND StringContain(string,"room"))
          {
             rSayRsc = Send(oRoomMaint,@RentRoom,#who=what,
                            #iLocation=RID_KOC_INN,#iCost=piInitialRoomCost);
@@ -221,7 +219,6 @@ messages:
          }
 
          if StringContain(string,KoIk_copy_key_command)
-            OR StringContain(string,"copy key")
          {
             rSayRsc = Send(oRoomMaint,@CopyKey,#who=what,
                            #iLocation=RID_KOC_INN,#iCost=piKeyCopyCosts);
@@ -235,8 +232,6 @@ messages:
 
          if (StringContain(string,KoIk_room_command)
                AND StringContain(string,KoIk_cost_command))
-            OR (StringContain(string,"room")
-               AND StringContain(string,"cost"))
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=KocatanInnkeeper_cost,#type1=0,

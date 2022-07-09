@@ -124,8 +124,6 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hPal = InitializePalette();
 	InitStandardXlats(hPal);
 	
-   WrapInit();
-	
 	LoadSettings();
 	MenuDisplaySettings(hwnd);
 	
@@ -136,10 +134,6 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	MusicInitialize();
 	
 	SetMainCursor(LoadCursor(NULL, IDC_ARROW));
-	
-	// Find default Web browser, if not set manually
-	if (config.default_browser)
-		WebFindDefaultBrowser();
 	
 	return TRUE;
 }
@@ -161,8 +155,6 @@ void MainQuit(HWND hwnd)
 	
 	DeleteObject(hPal);
 
-   WrapShutdown();
-	
 	HookClose();
 	
 	FreeLibrary(hRichEditLib);

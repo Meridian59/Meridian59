@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_OutdoorsD5 ="West Merchant Way"
-   room_OutdoorsD5 = D5.roo
+   room_OutdoorsD5 = d5.roo
    OutdoorsD5_music = forest.mid
 
    waterfall_soundd5 = wfall2.wav

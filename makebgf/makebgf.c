@@ -381,12 +381,8 @@ int main(int argc, char **argv)
    if (!VerifyArguments(&b, &options))
       exit(1);
 
-   WrapInit();
-
    if (!WriteBGFFile(&b, &options, output_filename))
       Error("Error writing output file");
-
-   WrapShutdown();
 
    return 0;
 }

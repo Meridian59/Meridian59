@@ -1,0 +1,682 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;
+      charset=ISO-8859-1">
+    <title>Meridian 59 Administrative Commands</title>
+  </head>
+  <body>
+    <h1>The Meridian 59 Server Administration </h1>
+    <span style="font-weight: bold;">Author:</span> Brian
+    Green&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;<span style="font-weight: bold;">Last
+      updated: </span>Sept. 23, 2004<br>
+    <br>
+    This document is intended to describe the important administrative
+    commands and features of the Blakserv (Meridian 59) server.<br>
+    <h2>Shutting down Meridian 59</h2>
+    The fastest way to shut down Meridian 59 is to:<br>
+    <ul>
+      <li>Send the users a notification.&nbsp; (At the server console:
+        send users ~BServer shutting down in 5 minutes.)</li>
+      <li>Save then shut down the game.&nbsp; (At the server console:
+        terminate save)<br>
+      </li>
+    </ul>
+    This will save the game then immediately shut down the server.&nbsp;
+    It is advisable to give the players some time (usually 30 minutes)
+    to put things in order before shutting down the server.&nbsp; All
+    game state is saved, including quests that could expire while the
+    player is offline.&nbsp; In most cases, players should NOT be
+    affected by logoff ghost penalties if you shut down the game like
+    this.<br>
+    <h2>The Maintenance Port</h2>
+    <h3>What is it?</h3>
+    The maintenance port is a special port you can connect to and send
+    administrative commands to. This is very useful for integrating a
+    billing system with the server.<br>
+    <h3>How do you use it?</h3>
+    Using the maintenance port requires 2 steps to establish the
+    security of the connection. Both steps involve editing the
+    blakserv.cfg on the server.<br>
+    <br>
+    If you edit the blakserv.cfg file, you will notice that under the
+    [Socket] header, you have 2 important keys:<br>
+    <br>
+    <span style="font-family: monospace;">[Socket]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">MaintenancePort&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      5959</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">MaintenanceMask&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      65.194.80.144;</span><span style="font-family: monospace;">65.194.80.145</span><br>
+    <br>
+    The "MaintenancePort" is the port the maintenance system listens to.
+    By default, this is 9998. In our example, we're using 5959.<br>
+    <br>
+    The "MaintenanceMask" are the IP numbers from which we can take
+    messages. This is to provide a layer of security since the
+    maintenance port does not require a login. Note that different IP
+    numbers can be listed if separated with a semicolon (;). Up to 15 IP
+    numbers can be specified this way.<br>
+    <br>
+    Note that changing either of these values requires a restart of the
+    server.<br>
+    <br>
+    Once this has been done, you can simply open a connection to the
+    server on this port from one of the trusted IP numbers specified.
+    You send administrative commands in plain text; note that you could
+    open a telnet connection to the server and send commands that way if
+    desired (for testing, for example). A full list of administrative
+    commands appears later in this document. Note that not all
+    administrative commands are available via the administrative port,
+    again for security reasons.<br>
+    <h3>Special notes<br>
+    </h3>
+    There are two special error messages return via the mainteance port.
+    The first is "Help is unavailable through maintenance mode."
+    &nbsp;This message can appear if you try to use the <span
+      style="font-style: italic;">help</span> command, or if you send
+    only part of a proper command. The second message is "You do not
+    have access to this command." &nbsp;This is sent if you try to use a
+    command that cannot be used via the maintenance port.<br>
+    <h2>Administrator Commands</h2>
+    These are the basic commands that can be used to administrate the
+    servers. These commands can be entered in the "Administration" pane
+    of the server, via admin window control in the game, or by
+    mainteance port (if allowed). &nbsp;Sample output is shown so you
+    can see normal messages and parse them for expected information.<br>
+    <br>
+    <span style="font-weight: bold;"> If you are entering the commands
+      via the server console or an admin window</span><span
+      style="font-weight: bold;">:</span> you can type "help" for
+    information about the commands. Typing part of a command will result
+    in getting additional help about that command, including parameter
+    information.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> create automated
+    &lt;account name&gt; &lt;password&gt;<span style="font-weight:
+      bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: </span><br>
+    &lt;account name&gt; is a string that should be used for the account
+    name. <span style="font-weight: bold;">NOTE:</span> This should not
+    contain just numbers.<span style="font-weight: bold;"></span><br>
+    &lt;password&gt; is the initial password to be assigned to the
+    account.<br>
+    <span style="font-weight: bold;">Purpose:</span> Creates a user
+    account with 1 user object associated with it.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">create automated test.account
+      1234</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;"> Created account 23.<br>
+      &nbsp;</span><span style="font-family: monospace;">
+      23&nbsp;&nbsp;&nbsp; 7354 User&nbsp;&nbsp;&nbsp; User2355399544</span><br>
+    <span style="font-weight: bold;">Comments:</span> This should be the
+    the default function used to create accounts to save on
+    communication. It is recommended that you allow each account to have
+    2 character objects, so use the "create character" command found
+    below. The second line of output shows the account number, the user
+    object number (which can change), the type of character created
+    (User), and the default name assigned to the character by the
+    system.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> create account
+    &lt;type&gt; &lt;account name&gt; &lt;password&gt;<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;type&gt; indicates the type of account: user, DM, or
+    Admin.<br>
+    &lt;account name&gt; is a string that should be used for the account
+    name. <span style="font-weight: bold;">NOTE:</span> This should not
+    contain just numbers.<span style="font-weight: bold;"></span><br>
+    &lt;password&gt; is the initial password to be assigned to the
+    account.<br>
+    <span style="font-weight: bold;">Purpose:</span> Creates an account
+    with no character objects associated with it.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    NO.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">create account admin
+      test.admin 4321</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">Created ACCOUNT 24.</span><br>
+    <span style="font-weight: bold;">Comments:</span> This is the way to
+    create accounts above the user level. Note that the account
+    determines the greatest amount of control allowed to a character.
+    Therefore, a User account with a DM character will restrict the DM
+    to user-level access; the DM will be unable to use any special
+    client commands (those that start with "dm"), for example. Likewise,
+    a User object on a DM-level account will look and behave just like a
+    normal User character.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> create
+    &lt;character type&gt; &lt;account number&gt;<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;character type&gt; indicates the type of character: user,
+    DM, or Admin.<br>
+    &lt;account number&gt; is the number of the account you wish to add
+    the character to.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Purpose:</span> Creates a character
+    object and associates it with the specified account.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes, but only for Users. You cannot create DMs or Admins via the
+    maintenance port.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">create user 24</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Acct Object&nbsp;
+      Class&nbsp;&nbsp; Name</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp; 24&nbsp;&nbsp;&nbsp;
+      7368 User&nbsp;&nbsp;&nbsp; User2456202510</span><br>
+    <span style="font-weight: bold;">Comments:</span> This is the way to
+    create additional user character objects. Note that the account
+    determines the greatest amount of control allowed to a character.
+    Therefore, a User account with a DM character will restrict the DM
+    to User-level access; the DM will be unable to use any special
+    client commands (those that start with "dm"), for example. Likewise,
+    a User object on a DM-level account will look and behave just like a
+    normal User character. The second line of output shows the account
+    number, the user object number (which can change), the type of
+    character created (User), and the default name assigned to the
+    character by the system.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> delete account
+    &lt;account number&gt;<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;account number&gt; is the number of the account you wish
+    to delete.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Purpose:</span> Deletes an account
+    from the server.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">delete account 24</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Account 24 will be deleted.</span><br>
+    <span style="font-weight: bold;">Comments:</span> This is how you
+    permanently delete an account from the server. <span
+      style="font-weight: bold;">NOTE: Once deleted, an account cannot
+      be restored automatically. </span>Make sure you really want to
+    delete an account before you do so. It is recommended that you
+    suspend accounts that are no longer used for a long time (99999
+    hours is a good value). A suspension allows a user to come back to
+    the game easier in the future. Meridian 59 currently does not
+    recycle account numbers, so that numbers associated with deleted
+    accounts will not be reused.<span style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> suspend account
+    &lt;duration&gt; &lt;account number&gt;<span style="font-weight:
+      bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;duration&gt; is the number of hours to suspend an
+    account.<span style="font-weight: bold;"><span style="font-weight:
+        bold;"></span><br>
+    </span>&lt;account number&gt; is the number of the account you wish
+    to suspend.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Purpose:</span> Temporarily
+    suspends an account for a number of hours.<span style="font-weight:
+      bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">suspend account 99999 23</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Account 23 (test.account) is
+      suspended until Jul&nbsp; 9 2014 17:46:42.</span><br>
+    <span style="font-weight: bold;">Comments:</span> This is the
+    recommended way to disable an account of a customer cancelling the
+    account. A duration of 99,999 hours is over 10 years, which should
+    suffice. Shorter durations can be used as punishment for repeat
+    offenders or at the request of a user that needs to focus on offline
+    activities for a few days. A user that is suspended will be
+    immediately logged off, so you do not need to send additional
+    commands to disconnect them. Note that the duration of the
+    suspension duration comes first, be careful not to suspend the wrong
+    account! &nbsp;Also note that time added is <span
+      style="text-decoration: underline;">cumulative</span>, so that a
+    suspension of 24 hours plus 48 hours is a total suspension of 72
+    hours. &nbsp;Accounts cannot be suspended beyond January 18, 2038
+    (the timestamp could cause an integer overflow error). &nbsp;The
+    server catches small additions beyond this date, but very large
+    numbers (such as 999,999, for example) can cause previously
+    suspended accounts to become unsuspended.<span style="font-weight:
+      bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> unsuspend account
+    &lt;account number&gt;<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;account number&gt; is the number of the account you wish
+    to unsuspend.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Purpose:</span> Unsuspends an
+    account.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;"> unsuspend account 23</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"> Account 23 (test.account) is
+      unsuspended.<br>
+    </span><span style="font-weight: bold;">Comments:</span> This will
+    eliminate all the suspension time that was remaining.<span
+      style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> set account object
+    &lt;account number&gt; &lt;character object number&gt;<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;account number&gt; is the number of the account you wish
+    to own the new character object.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span>&lt;character object
+    number&gt; object number of the character you wish to move to the
+    new account..<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Moves a character object from one account
+    to another.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">set account object 23 7299</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Removing user object 7299 from
+      the old account 23.</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">Associated account 23 with
+      object 7299 as a user.</span><br>
+    <span style="font-family: monospace;"></span><span
+      style="font-weight: bold;">Comments:</span> This command is not
+    recommended to be used with the maintenance port, since character
+    object numbers can and often do change during system saves.<span
+      style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> show account
+    &lt;account number&gt;<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;account number&gt; is the number of the account you wish
+    to examine.<br>
+    (It is also possible to use the account name instead of the number,
+    resulting in the same output.)<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Purpose:</span> Prints information
+    about an account.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">show account 23</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Acct&nbsp;
+      Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Suspended
+
+      Credits Last login</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp; 23&nbsp;
+      test.account&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0.00
+
+      Never</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">Acct Object&nbsp;
+      Class&nbsp;&nbsp; Name</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp; 23&nbsp;&nbsp;&nbsp;
+      7354 User&nbsp;&nbsp;&nbsp; User2355399544<br>
+    </span><span style="font-family: monospace;">&nbsp;</span><span
+      style="font-family: monospace;"> 23 &nbsp; &nbsp;7355 User &nbsp;
+      &nbsp;</span><span style="font-family: monospace;">User2357418822</span><br
+      style="font-family: monospace;">
+    <br style="font-family: monospace;">
+    <span style="font-family: monospace;">show account 3</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Acct&nbsp;
+      Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Suspended
+
+      Credits Last login</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp; 3A green.b &nbsp;
+      &nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      99999.0h&nbsp; 250.81 Feb&nbsp; 9 2003 20:55:42</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Acct Object&nbsp;
+      Class&nbsp;&nbsp; Name</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;
+      3&nbsp;&nbsp;&nbsp; 4106 admin&nbsp;<span style="font-family:
+        monospace;">&nbsp; Psychochild<br>
+      </span><br style="font-family: monospace;">
+    </span><span style="font-family: monospace;">show account 777</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Cannot find account 777<br>
+    </span><span style="font-weight: bold;">Comments:</span> There are 3
+    outputs shown above. The first one shows an account with two
+    characters, but has never been logged on. The second one shows an
+    admin account with only 1 character that is also suspended for 99999
+    hours. Note that the "Suspended" location is blank on the normal
+    account. Also note that an admin account as an "A" after the account
+    number in the first line. DM accounts will likewise have a "D" in
+    that location. The "Credits" column is a historical relic from the
+    original concept behind the game. This does show the cumulative time
+    the account has been logged on. Each hundredth of a credit is one
+    second, so the admin above has been logged on 25081 seconds total,
+    which is just shy of 7 hours.<span style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> show user &lt;user
+    name&gt;<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;user name&gt; is the name of the character object you
+    wish to examine.<br>
+    (It is also possible to use the character's object number instead of
+    the name, resulting in the same output.)<span style="font-weight:
+      bold;"></span><br>
+    <span style="font-weight: bold;">Purpose:</span> Prints information
+    about a character object. <span style="font-weight: bold;"><br>
+      Available by Maintenance Port?</span> Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;">show user psychochild</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Acct Object&nbsp;
+      Class&nbsp;&nbsp; Name</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;
+      3&nbsp;&nbsp;&nbsp; 4106 admin&nbsp;&nbsp; Psychochild<br>
+    </span><span style="font-family: monospace;"><br>
+      show user Bob</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">Cannot find user Bob.</span><br
+      style="font-family: monospace;">
+    <span style="font-weight: bold;">Comments:</span> Useful for finding
+    the account number to suspend to punish a transgressor. &nbsp;<span
+      style="font-weight: bold;">Note that character object numbers can
+      and do change during system saves. &nbsp;Object numbers are
+      dynamic, but character names are generally not.</span><span
+      style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> set account
+    password &lt;account number&gt; &lt;password&gt;<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;account number&gt; is the number of the account you wish
+    to set the password on.<br>
+    (It is also possible to use the account name instead of the number,
+    resulting in the same output.)<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span>&lt;password&gt; is the new
+    password to be assigned to the account.<br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Resets the password for a specific account.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">set account password 23
+      dontforget</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">Set password for account 23
+      (test.account).</span><br>
+    <span style="font-weight: bold;">Comments:</span> Used to reset a
+    password, useful for people that forget their password.<span
+      style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> send users
+    &lt;message&gt;<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Parameters: <br>
+    </span>&lt;message&gt; is the message to be sent. It is recommended
+    that you use "~B" in front of your messages to make them bold and
+    stand out.&nbsp; <span style="font-weight: bold;"></span><span
+      style="font-weight: bold;"><br>
+      Purpose:</span> Sends a messages to all users logged on.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">send users ~BServer down in 10
+      minutes.</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">Sent to gamers: '~BServer down
+      in 10 minutes.'.</span><br>
+    <span style="font-weight: bold;">Comments:</span> You can send
+    messages to the users, indicating things like planned downtime, etc.
+    Note that the formatting characters used for in-game communication
+    (such as ~B for bold) can be used in this string. The default color
+    is yellow (or purple for the old client), since this is a system
+    message.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> save game<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:</span>None<br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Saves the game to the hard drive.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br>
+    <span style="font-family: monospace;">save game</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Garbage collecting and saving
+      game... <span style="text-decoration: underline;">done.&nbsp;
+        Save time is (1044958603).</span></span><br>
+    <span style="font-weight: bold;">Comments:</span> Note that in the
+    message above, the underlined part is not sent until the server is
+    done saving. This could take several minutes on older and
+    established servers.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> lock &lt;reason&gt;<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:<br>
+    </span>&lt;reason&gt; is the text message given to players that try
+    to log on.<br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Locks the game so that no User can log on.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    NO.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">lock Temporary maintenance.</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Locking game &lt;Temporary
+      maintenance.&gt;.</span><br>
+    <span style="font-weight: bold;">Comments:</span> Useful to keep
+    users offline while you update the game. Admins are still allowed to
+    log on a locked game. This does not kick users off that are
+    currently logged on. The server console shows a message near the top
+    if the game is locked.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> unlock<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:</span>None<br>
+    <span style="font-weight: bold;">Purpose:</span> Unlocks the game so
+    that users can log on.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    NO.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">unlock</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">Unlocking game.</span><br
+      style="font-family: monospace;">
+    <span style="font-weight: bold;">Comments:</span> Allows users back
+    on.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> kickoff
+    [all|account &lt;account number&gt;]<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:<br>
+    </span><span style="font-weight: bold;"></span>The "all" option
+    requires no parameters, and affects all users.<br>
+    The "account" option requires an account number, and only affects
+    that account.<br>
+    (It is also possible to use the account name instead of the number,
+    resulting in the same effect.)<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Kicks selected user(s) out of the game.
+    They can log back on immediately.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    NO.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;">kickoff all</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-weight: bold;">Comments:</span> This is a temporary
+    kick off. Useful to kick all users off after locking the game for
+    maintenance. It is also useful for kicking off people that are using
+    macro or botting programs.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> hangup [all|account
+    &lt;account number&gt;|IP &lt;ip number&gt;]<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:<br>
+    </span><span style="font-weight: bold;"></span>The "all" option
+    requires no parameters, and affects all users.<br>
+    The "account" option requires an account number, and only affects
+    that account.<br>
+    (It is also possible to use the account name instead of the number,
+    resulting in the same effect.)<br>
+    The "IP" option requires an IP number, which can use * as a
+    wildcard.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Kicks selected user(s) out of the game for
+    about 10 minutes.<span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">hangup all</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;"><br>
+      <span style="font-family: monospace;"> hangup account 3</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">ACCOUNT 3 (green.b) SESSION
+        1 has been disconnected.<br>
+        <br>
+      </span><span style="font-family: monospace;">hangup account 23</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">ACCOUNT 23 (test.account) is
+        not logged in.</span><br>
+      <span style="font-family: monospace;"></span><span
+        style="font-weight: bold;"></span></span><span
+      style="font-weight: bold;">Comments:</span> This is a longer way
+    to kick users off. Useful to give a troublemaker 10 minutes to cool
+    down before being forced to use more drastic punishment.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> who<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:</span>None<br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Shows a list of all users online.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    NO.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;"></span><span style="font-family:
+      monospace;">who</span><br style="font-family: monospace;">
+    <br style="font-family: monospace;">
+    <span style="font-family: monospace;">Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Act
+
+      Ver Sess
+      Port&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      Where</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">----------------------------------------------------------------------------</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">green.b
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp;&nbsp; 3 557&nbsp;&nbsp;&nbsp; 1
+      neardeath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Game - Psychochild (4106)</span><br style="font-family:
+      monospace;">
+    <span style="font-weight: bold;">Comments:</span> A way to see all
+    the users online at the current time. Organized by account. Ver is
+    the client version reported, Sess is the connection session used.
+    Port is confusingly labeled, and actually indicates the location the
+    user is connected from. Where shows what state they are in, usually
+    "Game" (IE, in the game), and which character is in the game.<br>
+    <br>
+    <span style="font-weight: bold;">Command:</span> terminate
+    [save|NoSave] <span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Parameters:</span> "save" means do a save before ending,
+    "NoSave" means terminate the server immediately.<br>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;">Purpose:</span> Shuts down the game server.<span
+      style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Available by Maintenance Port?</span>
+    Yes.<br>
+    <span style="font-weight: bold;">Sample output:</span> <br
+      style="font-family: monospace;">
+    terminate save<br>
+    Garbage collecting and saving game... done.<br>
+    Terminating server. All connections, including yours, about to be
+    lost<br>
+    <span style="font-weight: bold;">Comments:</span> Shuts down the
+    server completely. &nbsp;Note that there is no way to restart the
+    server via admin commands, since the server must be online to accept
+    commands! &nbsp;Also, the message show above does not appear until
+    the game is done saving, which can take several minutes.
+    <h2>The Accounts File</h2>
+    <h3>What is it?<br>
+    </h3>
+    The accounts file is a file that lists all the accounts on the
+    server, and can be parsed to compare against external records. This
+    is one of the files saved to the hard drive when the server saves
+    the game.<br>
+    <br>
+    The file is found in "game\accounts.*" in the server installation.
+    The extension of the file is the timestamp of when it was saved. The
+    server writes a new file every save cycle, so you should look for
+    the most recent file. Note that any change in the accounts since
+    last server save will NOT be reflected in the file.<br>
+    <h3>What is the format?<br>
+    </h3>
+    A file could look like this:<br>
+    <span style="font-family: monospace;">ACCOUNT
+      1:Chris.Kirmse:0:1:0:0:0</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">ACCOUNT
+      2:Andrew.Kirmse:0:1:0:0:0</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">ACCOUNT
+      3:green.b:0:1:1044852942:25081:0</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">ACCOUNT
+      4:ellis.r:0:1:1044645282:57235:0</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">ACCOUNT
+      5:ellis.c:0:1:1043870283:10124:</span><span
+      style="font-family: monospace;">1404953660</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">NEXT_ACCOUNT_ID 6</span><br
+      style="font-family: monospace;">
+    <br>
+    You'll notice each line is a separate account, with information
+    separated by colons (:).<br>
+    <br>
+    First column is the word "ACCOUNT", then the account number.<br>
+    Second column is the account name.<br>
+    Third column is the encrypted password. (Ignore the similarities
+    shown above, this was taken from an internal server that uses
+    default passwords.)<br>
+    Fourth column is the account permission level. 0 for user, 1 for
+    admin, 2 for DM.<br>
+    Fifth column is last login timestamp.<br>
+    Sixth column is the number of seconds spent online by this account.
+    &nbsp;This is the same as the "credits" amount indicated above.<br>
+    Last column indicates the timestamp of when the account will be
+    unsuspended. In most cases, this is 0 for users that not currently
+    suspended. However, if an account has passed it's unsuspension time
+    and the user has not logged on since then, this will still show a
+    non-zero value. Since this is a timestamp, you could compare it to
+    current time, assuming the times are synchronized (or fairly close).<br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+<HEAD>
+   <TITLE>TO DO List</TITLE>
+</HEAD>
+<BODY>
+<H1>Meridian 59 TO DO list</H1>
+This document is to keep track of bugs and proposed changes to the game.
+
+<P>
+<H2>Possible Bugs</H2>
+<UL>
+    <LI>Casting helpful spells on outlaw/murderer in Arena?
+    <LI>Can you buy multiple spells simultaneously to learn over your maximum?
+    <LI>Players incorrectly tripping off the "cheating" detection for breaking into guildhalls.
+    <LI>Eliminate distant posting and reading of newsglobes.  Put in "expected" room values in specific news content?
+    <LI>Fix Goad's Grinder!  See if it gives you a status or faction loss change.
+    <LI>If you leave a faction while needing to do the loyalty quest and join another, you lose new faction when timer expires.
+    <LI>Loyalty quest for the last leg of the Duke's quest has gmail coming from the wrong NPC (comes from the NPC you collected taxes from)?
+    <LI>Apparitions that are abandoned don't properly remove themselves from the monster count in a room?
+    <LI>Creating then killing (with acid touch) a reflection causes error spam.
+</UL>
+
+<P>
+<H2>To Do</H2>
+<UL>
+    <LI>Change DM spells to no have sounds if admin is stealthed.
+    <LI>Change NPCs to not react to immortal admin says.
+    <LI>Add in variable to stop random chat of an NPC.
+    <LI>Fix Justicar book, find out why it stops working.
+    <LI>Teleport people who shouldn't be inside a guild hall (cheaters) to the foyer if they try to open the door.  Alter SomethingTryGo in ghall.kod.
+    <LI>Add in way to set it so that people join a random side in a War Event.
+    <LI>Fix free arena heals, allowing people to get fully healed after a battle.
+    <LI>Add in logged global message (like death messages)?
+    <LI>Change spells to work on monsters.  List of suggestions below.
+    <LI>Make monster selection for apparition not suck so bad.
+    <LI>Change monster AI to get bored if they can't attack a target after a while.  They'll stop chasing the target after a certain amount of time.  Makes getting a monster "stuck" less effective of a tactic.
+    <LI>Change Holy/Unholy weapon enchantments to do bonus damage vs. low/high karma targets.
+    <LI>Using blast/touch spells while morphed gives wrong damage message (EG, damage instead of char).
+    <LI>Vote tally command in Caramo.
+    <LI>Add new rooms for tokens to head to.
+    <LI>Fix faction flags to not reset during a RecreateAll.
+    <LI>Make boss rooms spawn items when boss dies so they don't get cleared or swept beforehand.
+    <LI>Make monsters move out of wall spells on their own.  (Make wall elements "frighteners" to monsters?)
+    <LI>Only 1 fog element remains after casting sporeburst in the arena.
+    <LI>Killing Orc Pit Boss in room without actually being in room screws up the boss timer somehow.
+    <LI>Message to guildmates when player leaves guild due to suicide?
+    <LI>Remove Denial enchantments from arena losers so they don't die.
+    <LI>Fix Shrines: They should be active objects which catch SomethingEntered.  ShrineCheckItem should also be an internal message of the Shrine class.
+    <LI>Mollusk monsters need sounds.
+    <LI>Have a bonus to imp for a while shortly after death.  Penalty/100% of base duration, gives a chance to improve.
+    <LI>Clean up RoomEnchantment to provide infrastructure for room enchantments like personal enchantments do.
+    <LI>Add in Moxal quest for Nerudite Bow.
+    <LI>Decouple the "dm night" etc commands from the hours system to not screw up things that count days.
+    <LI>Add in logged global message (like death messages)?
+    <LI>Add event-magic weapons.
+    <LI>Clean up arena code.  Move out of room.kod into specific arena room files.
+    <LI>Move the posting restrictions from constants in user.kod to variables in system.kod.
+    <LI>Change room enchantments to only affect "legal" targets?
+    <LI>Make Avars slowly move through the orc caves as people get the negative Avar node.
+    <LI>Change it so that you can set a room's regeneration level to a specific level in the code (instead of relying on the flags).
+    <LI>Stop mummies from spawning in the pit in Raza.
+    <LI>Clean up Hold to use DoHold for spell casting.
+    <LI>Notify players of inability to buy spells due to angel status.
+    <LI>Some way to prevent cheesing of the Vale node.
+    <LI>Clean up Purify potion code.
+    <LI>Have proper animations for different defenses. (EG, shield movement when player "blocks", etc.)
+    <LI>Look into fixing the fact that spell fizzles still penalize you if you cast upon another player.
+    <LI>Fix issue of trading at full weight.
+    <LI>Change the arena to not use ammo or reagents or wear down equipment.  IDEA: Have arena duplicate your inventory before going in, and restore it upon exit.
+    <LI>Change short sword fighting's damage bonus to be more like a "critical strike" than normal bonus damage.  Gotta rip out the damage bonus code kludge in stroke and move it to proficiency.
+    <LI>Make the lich able to appear outside the necro room.
+    <LI>Sound when fireball (or other ranged spell) for player target when spell is cast at him?
+    <LI>Clean up how deflect works when casting a spell.
+    <LI>Trading an item that gives a might bonus will cause dropped items if carrying capacity is exceeded.
+    <LI>Check for an inactive guild during guild wars?
+    <LI>Create separate "spellcasting" timer that's separate from the attack timer?  Put a pause after a successful harmful non-damaging spellcasting which doesn't interfere with attacks?
+    <LI>Add in a system like AttackModifiers for spellpower modifiers.
+    <LI>Fix IA_MADE attribute to work with number items.
+    <LI>The white knights need to be finished up.
+    <LI>Add in real death arena duals (or find out why they're broken).
+    <LI>Some way around 'blocking' that's been going on in the crypt.
+    <LI>Fix apparition to not attack mules, or call a safety check like reflections.
+    <LI>Possibly tone down the thrasher treasure, or diversify it.
+    <LI>Fix the thrasher zone to stop being abused by mules, holding doors open and the such.
+    <LI>Add a timer on ally/un-ally guild messages to prevent spam.
+    <LI>Add in offensive checks for white unguilded Jala's in towns.
+    <LI>Raise the HP limit on the justicar(just my opinion -MRE)?
+    <LI>Notfication for second wind wearing off.
+    <LI>Disallow food during second wind.
+    <LI>Balance truce vs. discord when Jala has anti- spells playing.
+</UL>
+
+<P>
+<H2>Spell Changes for PvM</H2>
+Add in monster effects to these spells.  Allows them to be used on Sacred Haven, too.
+List taken from suggestions at <a href="http://forums.neardeathstudios.com/showthread.php?s=&threadid=957">http://forums.neardeathstudios.com/showthread.php?s=&threadid=957</a>.
+To swap descriptions, change vrDesc to a property and set it if the server type changes.
+<UL>
+    <LI>Seance: Give location where last person died.
+    <LI>Heat: fire damage over time to all organic and undead creatures, undead espec. vuln
+    <LI>Winds: stop ranged attacks (avar chieftain, mollusk, fungus beast) and lower monster accuracy
+    <LI>Brittle: direct damage to Stone creatures, and/or increase the damage the monster takes
+    <LI>Sandstorm: physical damage to all creatures in room
+    <LI>Shatter: shatter individual items (in inventory only for 200?)
+    <LI>Civility: only allow one monster will aggro one target at a time while the song is up
+    <LI>Conciliation: all monsters forget aggro and return to combat once the song ends
+    <LI>Warp Time: all monster movement slows while the song is up
+    <LI>Profane Resonance: unholy damage over time to all good creatures
+    <LI>Sacred Resonance: holy damage over time to all evil and undead
+    <LI>Disharmony: ?
+    <LI>Shal'illebane: lower offense of evil creatures
+    <LI>Qorbane: lower offense of good creatures
+    <LI>Martyr's Battleground: reduce penalties if killed (by monster?)
+    <LI>Shatterlock: ?
+    <LI>Cloak: creatures have reduced chance to aggro player
+    <LI>Defile: castable on monster corpses, but smaller amount of mana than from a player
+    <LI>Silence: no casting by monsters
+    <LI>Animate: castable on monster corpses
+    <LI>Anonymity: monsters don't aggro you
+    <LI>Dement: monster can't cast spells
+    <LI>Evil Twin: like Apparition?
+    <LI>Mark of Dishonor: NO_MOVE effect on evil creatures
+    <LI>Purge: lowers defense abilities of creature
+    <LI>Forget: Lower spellcasting chance on monster.
+</UL>
+
+<P>
+<H2>Errors</H2>
+<UL>
+    <LI>Territory object has problems saving and reloading.  Line 402 in territory.bof (infinite loop).
+    <LI>Some player-caused weapon enchantment isn't removing itself properly when the weapon goes away.
+    <LI>Error spam for faction flags at launch.  A quick hack was done to prevent the worst of it.
+</UL>
+<P>
+</BODY>
+</HTML>

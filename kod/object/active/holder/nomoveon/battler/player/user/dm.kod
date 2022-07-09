@@ -103,6 +103,9 @@ resources:
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
+   dm_roomgive_command = "roomgive"
+   dm_gave_to_number = "%s players received reward!"
+
    dm_stealth_on = "You are now in stealth mode."
    dm_stealth_off = "You are no longer in stealth mode."
 
@@ -610,7 +613,7 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject;
+      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject, iGiven;
 
       if type <> SAY_DM
       {
@@ -692,6 +695,157 @@ messages:
 
       if pbActor
       {
+         if StringEqual(string,dm_hidden_command)
+            OR StringEqual(string,"hidden")
+         {
+            if NOT (piDMFlags & DMFLAG_HIDDEN)
+            {
+               piDMFlags = piDMFlags | DMFLAG_HIDDEN;
+               Send(self,@MsgSendUser,#message_rsc=dm_hidden);
+
+               % Make it look like we just logged off without really logging off.
+               Send(SYS,@SystemUserLogoffAdvertise,#what=self,#bTrue=FALSE);
+            }
+            else
+            {
+               piDMFlags = piDMFlags & ~DMFLAG_HIDDEN;
+               Send(self,@MsgSendUser,#message_rsc=dm_not_hidden);
+
+               % Make it look like we just logged back on.
+               Send(SYS,@SystemUserLogonAdvertise,#what=self,#bTrue=FALSE);
+            }
+
+            % Do this so that our name changes properly.
+            Send(poOwner,@SomethingChanged,#what=self);
+
+            return;
+         }
+
+         if StringEqual(string,dm_blank_command)
+            OR StringEqual(string,"blank")
+         {
+            % Make everyone think we left the room.
+            lObjects = Send(poOwner,@GetHolderActive);
+
+            for i in lObjects
+            {
+               oObject = Send(poOwner,@HolderExtractObject,#data=i);
+
+               if IsClass(oObject,&User)
+                  AND oObject <> self
+               {
+                  Send(oObject,@SomethingLeft,#what=self);
+               }
+            }
+
+            vrIcon = admin_icon_blank;
+            pbMorph = TRUE;
+            piMove_start = 1;
+            piMove_end = 1;
+            piMove_delay = 500;
+            piAttack_start = 1;
+            piAttack_end = 1;
+            piAttack_delay = 500;
+
+            Send(self,@MsgSendUser,#message_rsc=dm_blank);
+            Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=TRUE);
+            Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
+            piDMFlags = piDMFlags | DMFLAG_INVISIBLE;
+            Send(self,@ResetPlayerFlagList); 
+ 
+            return;
+         }
+         
+         if StringContain(string,dm_disguise_command)
+            OR StringContain(string,"disguise")
+         {
+           StringSubstitute(string,dm_disguise_command," ");
+           StringSubstitute(string,"disguise"," ");
+         
+           % Checks art archive, if no matches goes to NPCs.
+           temp = Send(Send(SYS,@GetArtArchive),@FindArchiveByString,#string=string);
+
+           % Nothing in art archive?  Check for NPCs.
+           if temp = $
+           {
+
+              % Checks NPC list, if no matches, goes to monsters.
+              oObject = Send(SYS,@FindNPCByString,#string=string);
+              if oObject <> $
+              {
+                 temp = Send(oObject,@GetIcon);
+              }
+                                           
+              if oObject = $
+              {
+                 % Checks Monster list, if no matches, return.
+                 oObject = Send(SYS,@FindMonsterByString,#string=string);
+                 if oObject <> $               
+                 {
+                    temp = Send(oObject,@GetIcon);
+                 }    
+        
+                 if oObject = $
+                 {
+                    return;
+                 }            
+              } 
+           }
+
+           vrIcon = temp;
+           pbMorph = TRUE;
+           piMove_start = 1;
+           piMove_end = 1;
+           piMove_delay = 500;
+           piAttack_start = 1;
+           piAttack_end = 1;
+           piAttack_delay = 500;
+           Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+           piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
+           piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
+           Send(self,@ResetPlayerFlagList);
+
+           return;
+        }
+
+        if StringEqual(string,dm_plain_command) OR StringEqual(string,dm_human_command)
+           OR StringEqual(string,"plain") OR StringEqual(string,"human")
+        {
+           Send(self,@ResetPlayerIcon,#alldone=FALSE);
+           pbMorph = FALSE;
+
+           % For characters we want to have a non-standard icon
+           if prStandardIcon <> $
+           {
+              vrIcon = prStandardIcon;
+              pbMorph = TRUE;
+           }
+
+           Send(self,@MsgSendUser,#message_rsc=dm_plain);
+           Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
+           Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
+           Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+
+           piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
+           piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
+
+           Send(self,@ResetPlayerFlagList); 
+
+           lObjects = Send(poOwner,@GetHolderActive);
+
+           for i in lObjects
+           {
+              oObject = Send(poOwner,@HolderExtractObject,#data=i);
+
+              if IsClass(oObject,&User)
+              {
+                 Send(oObject,@ToCliRoomContents);
+              }
+           }
+
+           return;
+        }
+         
          if (StringEqual(string,dm_rumble_command) OR StringEqual(string,"rumble"))
          {
             Send(poOwner,@Rumble);
@@ -752,67 +906,6 @@ messages:
             Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
                  #string=dm_baddie,#parm1=vrName);
          }
-
-         return;
-      }
-
-      if StringEqual(string,dm_hidden_command)
-         OR StringEqual(string,"hidden")
-      {
-         if NOT (piDMFlags & DMFLAG_HIDDEN)
-         {
-            piDMFlags = piDMFlags | DMFLAG_HIDDEN;
-            Send(self,@MsgSendUser,#message_rsc=dm_hidden);
-
-            % Make it look like we just logged off without really logging off.
-            Send(SYS,@SystemUserLogoffAdvertise,#what=self,#bTrue=FALSE);
-         }
-         else
-         {
-            piDMFlags = piDMFlags & ~DMFLAG_HIDDEN;
-            Send(self,@MsgSendUser,#message_rsc=dm_not_hidden);
-
-            % Make it look like we just logged back on.
-            Send(SYS,@SystemUserLogonAdvertise,#what=self,#bTrue=FALSE);
-         }
-
-         % Do this so that our name changes properly.
-         Send(poOwner,@SomethingChanged,#what=self);
-
-         return;
-      }
-
-      if StringEqual(string,dm_blank_command)
-         OR StringEqual(string,"blank")
-      {
-         % Make everyone think we left the room.
-         lObjects = Send(poOwner,@GetHolderActive);
-
-         for i in lObjects
-         {
-            oObject = Send(poOwner,@HolderExtractObject,#data=i);
-
-            if IsClass(oObject,&User)
-               AND oObject <> self
-            {
-               Send(oObject,@SomethingLeft,#what=self);
-            }
-         }
-
-         vrIcon = admin_icon_blank;
-         pbMorph = TRUE;
-         piMove_start = 1;
-         piMove_end = 1;
-         piMove_delay = 500;
-         piAttack_start = 1;
-         piAttack_end = 1;
-         piAttack_delay = 500;
-
-         Send(self,@MsgSendUser,#message_rsc=dm_blank);
-         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=TRUE);
-         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
-         piDMFlags = piDMFlags | DMFLAG_INVISIBLE;
-         Send(self,@ResetPlayerFlagList); 
 
          return;
       }
@@ -1276,97 +1369,6 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_disguise_command)
-         OR StringContain(string,"disguise")
-      {
-         StringSubstitute(string,dm_disguise_command," ");
-         StringSubstitute(string,"disguise"," ");
-         
-         % Checks art archive, if no matches goes to NPCs.
-         temp = Send(Send(SYS,@GetArtArchive),@FindArchiveByString,#string=string);
-
-         % Nothing in art archive?  Check for NPCs.
-         if temp = $
-         {
-
-            % Checks NPC list, if no matches, goes to monsters.
-            oObject = Send(SYS,@FindNPCByString,#string=string);
-            if oObject <> $
-            {
-               temp = Send(oObject,@GetIcon);
-            }
-                
-                            
-            if oObject = $
-            {
-               % Checks Monster list, if no matches, return.
-               oObject = Send(SYS,@FindMonsterByString,#string=string);
-               if oObject <> $               
-               {
-                  temp = Send(oObject,@GetIcon);
-               }    
-        
-               if oObject = $
-               {
-                  return;
-               }            
-            } 
-         }
-
-         vrIcon = temp;
-         pbMorph = TRUE;
-         piMove_start = 1;
-         piMove_end = 1;
-         piMove_delay = 500;
-         piAttack_start = 1;
-         piAttack_end = 1;
-         piAttack_delay = 500;
-         Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
-         piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
-         piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
-         Send(self,@ResetPlayerFlagList);
-
-         return;
-      }
-
-      if StringEqual(string,dm_plain_command) OR StringEqual(string,dm_human_command)
-         OR StringEqual(string,"plain") OR StringEqual(string,"human")
-      {
-         Send(self,@ResetPlayerIcon,#alldone=FALSE);
-         pbMorph = FALSE;
-
-         % For characters we want to have a non-standard icon
-         if prStandardIcon <> $
-         {
-            vrIcon = prStandardIcon;
-            pbMorph = TRUE;
-         }
-
-         Send(self,@MsgSendUser,#message_rsc=dm_plain);
-         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
-         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
-         Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
-
-         piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
-         piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
-
-         Send(self,@ResetPlayerFlagList); 
-
-         lObjects = Send(poOwner,@GetHolderActive);
-
-         for i in lObjects
-         {
-            oObject = Send(poOwner,@HolderExtractObject,#data=i);
-
-            if IsClass(oObject,&User)
-            {
-               Send(oObject,@ToCliRoomContents);
-            }
-         }
-
-         return;
-      }
-
       if StringContain(string,dm_createjunk)
          OR StringContain(string,"item junk")
       {
@@ -1397,6 +1399,32 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
          }
 
+         return;
+      }
+
+      if StringContain(string,dm_roomgive_command)
+         OR StringContain(string,"roomgive")
+      {
+         iGiven = 0;
+         lTemplate = Send(SYS,@GetItemTemplates);
+
+         for i in lTemplate
+         {
+            if StringContain(string,Send(i,@GetName))
+               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+            {
+               iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
+                           #number=Send(SYS,@GetNumberFromString,#string=string));
+               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=iGiven);
+               return;
+            }
+         }
+
+         if NOT iGiven
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+         }
+         
          return;
       }
 

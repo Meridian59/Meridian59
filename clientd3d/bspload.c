@@ -22,8 +22,7 @@
 #include "client.h"
 #include "d3dcache.h"
 
-#define ROO_VERSION 10
-#define OLD_VERSION 9
+static const int ROO_VERSION = 10;
 
 static BYTE room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
 
@@ -31,20 +30,11 @@ static int room_version;     // Version of room file we're reading
 
 static int security;         // Room security value, calculated as room is loaded
 
-static char *password = "\x06F\x0CA\x054\x0B7\x0EC\x064\x0B7";  // Password for decrypting roo file
-
-// number of extra bytes in an encrypted roo file
-#define EXTRA_BYTES 12
-
-// this should be in a header
-//#define assert(x) { if (!(x)) debug(("assert failed %s, %d\n", __FILE__, __LINE__)); }
-
 static Bool LoadNodes(file_node *f, room_type *room, int num_nodes);
 static Bool LoadWalls(file_node *f, room_type *room, int num_walls);
 static Bool LoadSectors(file_node *f, room_type *room, int num_sectors);
 static Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
 static Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
-static Bool RoomFileDecrypt(file_node *f, int security);
 /*****************************************************************************************/
 /*
  * BSPRooFileLoad:  Load room description from given file, and put result in room.
@@ -73,7 +63,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
 
    security = 0;
 
-   if (CliMappedFileRead(&f, &room_version, 4) != 4 || room_version < OLD_VERSION)
+   if (CliMappedFileRead(&f, &room_version, 4) != 4 || room_version < ROO_VERSION)
    { 
       MappedFileClose(&f); 
       debug(("Bad roo version %d; expecting %d\n", room_version, ROO_VERSION)); 
@@ -95,19 +85,6 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    { MappedFileClose(&f); return False; }
 
    offset_adjust = 0;
-   // See if room file is encrypted
-   if (room->width == -1)
-   {
-      if (!RoomFileDecrypt(&f, room->security))
-      { MappedFileClose(&f); return False; }
-      
-      // Read read value of room width
-      if (CliMappedFileRead(&f, &room->width, 4) != 4)
-      { MappedFileClose(&f); return False; }
-
-      // Adjust file offsets by this much to account for encryption
-      offset_adjust = EXTRA_BYTES;
-   }
    room->cols = room->width >> LOG_FINENESS;
 
    if (CliMappedFileRead(&f, &room->height, 4) != 4)
@@ -874,35 +851,6 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
       break;
    }
    
-   return True;
-}
-/*****************************************************************************************/
-/*
- * RoomFileDecrypt:  Decrypt given room file, which must currently be pointing to
- *   the length of the encrypted section.  security gives security value read from file.
- *   Returns True on success.
- */
-Bool RoomFileDecrypt(file_node *f, int security)
-{
-   int len, response;
-
-   if (CliMappedFileRead(f, &len, 4) != 4)
-      return False;
-
-   // Read response to challenge
-   if (CliMappedFileRead(f, &response, 4) != 4)
-      return False;
-
-   // Make sure that file is actually this long
-   if ((f->ptr - f->mem) + len > f->length)
-      return False;
-
-   if (!WrapDecrypt(f->ptr, len, password, security, response))
-   {
-      debug(("RoomFileDecrypt decryption failed\n"));
-      return False;
-   }
-
    return True;
 }
 

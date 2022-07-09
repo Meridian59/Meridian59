@@ -1,0 +1,737 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Renaissance Spells Status</TITLE>
+
+</HEAD>
+<BODY>
+
+<P><B><FONT SIZE=+4>Renaissance Spells Status:</FONT></B></P>
+
+<P><B><FONT SIZE=-1>[Draft 6: Dec 1, 97]</FONT></B></P>
+
+<P><B><FONT SIZE=-1><A HREF="renspel5.htm">[link to Draft 5: Oct 28, 97]</A></FONT></B></P>
+
+<P><FONT SIZE=+1>General Notes:</FONT></P>
+
+<UL>
+<LI>Chant (multicaster) spells are currently a little tricky to cast. Note
+the following:</LI>
+
+<UL>
+<LI>A prism must be on the ground nearby to initiate or join a chant.</LI>
+
+<LI>As the chant progresses, <I>lots </I>of mana will be continually drained.
+The amount drained will be lowered a bit.</LI>
+
+<LI>As each caster continues to chant, spellpower will periodically be
+stored up in the prism.</LI>
+
+<LI>When the total spellpower exceeds the amount needed for the spell,
+and the number of casters equals the number of sides that the prism has,
+the spell will fire.</LI>
+
+<LI>Known bug: If you run out of mana and therefore stop chanting, things
+get left in a wierd state:</LI>
+
+<UL>
+<LI>your trance flag will be stuck on, so you won't be able to cast anything
+else until you log off and log back on.</LI>
+
+<LI>Also, the prism still thinks you're a caster, so the spell may never
+fire (since you have to have exactly the right number of casters for it
+to work). Once this has happened, the prism is permanently messed up and
+you have to try again with a different prism.</LI>
+</UL>
+</UL>
+
+<LI>Summoning spells (wall of whatever, reflection, evil twin, etc) don't
+have a common object limit. Some of the spells have an individual limit
+(two walls of lightning, two walls of fire) but they are independent from
+one another.</LI>
+</UL>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"><B><FONT SIZE=+2>Individual Spell Status:
+<HR WIDTH="100%"></FONT></B><I><FONT SIZE=+1>Faren</FONT>: </I></P>
+
+<P><B>Wall of Bramble:</B> Player/monster takes damage while walking through
+it, but not if standing stationary. </P>
+
+<UL>
+<P>kod details:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>level: 2</LI>
+
+<LI>mana: 10</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 4 seconds</LI>
+
+<LI>reagents: 1 kriipa claw</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: miriana</LI>
+
+<LI>damage: 1-5 points</LI>
+
+<LI>duration: lasts 150% as long as a firewall object, though is attackable,
+with 10-20 hp depending on spellpower.</LI>
+</UL>
+</UL>
+
+<UL>
+<P>art needs:</P>
+
+<UL>
+<LI>dead one-view</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>A dead wall of bramble has no art, so it looks like a dead ant (ugh).
+Need new art, or need to make it simply disappear, no corpse.</LI>
+
+<LI>There is currently no limit to the number of bramble objects in a room
+(bad!)</LI>
+</UL>
+</UL>
+
+<P><B>Web</B>: The floor is covered with a sticky substance, and any player
+or monster (except spiders) who walks through it may get stuck (3x3 square
+of hotplates). While stuck, player can turn, attack, cast spells, but cannot
+move. Web objects are visible on ground, and a stuck player has a graphical
+overlay of webbing on legs and feet. Chances of getting stuck and duration
+are proportional to spellpower.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 3</LI>
+
+<LI>mana: 15</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 3 seconds</LI>
+
+<LI>reagents: 1 web moss (of course)</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: tendrath (new ghost npc)</LI>
+
+<LI>duration: stuck players held for about 2/3 the duration of the hold
+spell. web objects stick around (ha!) for about 2/3 as long as firewall
+objects.</LI>
+</UL>
+</UL>
+
+<UL>
+<P>status:</P>
+
+<UL>
+<LI>no player web overlay when stuck</LI>
+
+<LI>when a player is stuck, there's a wierd jerking effect when they turn
+(the wierd jerking effect when they try to move is unavoidable).</LI>
+</UL>
+</UL>
+
+<P><B>Wall of lightning:</B> Similar to Wall of fire, but extremely damaging.
+Hurts players who walk through or stand in. Very damaging to players wearing/using
+metal objects.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 6</LI>
+
+<LI>mana: 25</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 5 seconds</LI>
+
+<LI>reagents: 1yrxl sap, 4 herbs</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: tendrath (new ghost npc)</LI>
+
+<LI>duration: lightning objects stick around 2/3 as long as firewall objects.</LI>
+
+<LI>damage: 150% that of a firewall, 200% if the player is holding anything
+metal.</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><I><FONT SIZE=+1>Kraanan</FONT>:</I></P>
+
+<P><B>Deflect</B>: Personal enchantment (can target other players). Damage
+from any faren spell has a chance of reflecting onto that spell's caster
+(chance based on spellpower, and is never more than 75%, to prevent someone
+from casting it then standing in a firewall without fear of harm).</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 20</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 10 seconds</LI>
+
+<LI>reagents: 2 solagh, 1 kriipa claw</LI>
+
+<LI>type: Personal enchantment</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: tendrath (new ghost npc)</LI>
+
+<LI>duration: 20 - 40 seconds</LI>
+
+<LI>damage: reflects 50%-75% of faren spell damage done to enchantee onto
+original faren caster. (and no damage is done to enchantee)</LI>
+</UL>
+</UL>
+
+<UL>
+<P>status:</P>
+
+<UL>
+<LI>name changed from 'reflect', to avoid confusion with 'reflection'</LI>
+
+<LI>deflected projectiles look funny.</LI>
+</UL>
+</UL>
+
+<P><B>Hunt</B>: Chant spell. Principal chanter says the name of a murderer
+while chanting. After the spell fires, the hunted player acquires an enchantment
+which periodically tells the principle chanter his location, and as long
+as the enchantment lasts (proportional to spellpower and number of the
+murderer's pks) the principal chanter is notified every time the hunted
+player changes rooms. The hunted player is notified that s/he's being hunted.
+If the hunted player logs, the enchantment is paused (as normal) and its
+remaining time is multiplied by 1+piLogoffPenaltyCounter. If the hunted
+player tries to hide out in a non-pk safe zone, for every second spent
+there that second <I>adds </I>to the enchantment's duration, rather than
+subtracting from it. If the hunted player is online but the principal chanter
+is not, the enchantment is paused.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 50</LI>
+
+<LI>vigor: 50</LI>
+
+<LI>trance: 2 hours</LI>
+
+<LI>reagents: 4 kriipa claws</LI>
+
+<LI>type: chant, personal enchantment</LI>
+
+<LI>increase chance: 50</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: Tendrath</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>need to see if penalties for logging or hiding in a safe zone (as described
+above) have been implemented and work correctly.</LI>
+</UL>
+</UL>
+
+<P><B>Shatterlock</B>: Chant spell. If the principal chanter holds trance
+in close proximity to guild-protected door, the spell will eventually open
+it. The chant time varies inversely with the number of guild members logged
+on at the time the chant is initiated.</P>
+
+<UL>
+<P>kod details:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>level: 6</LI>
+
+<LI>mana: 50</LI>
+
+<LI>vigor: 50</LI>
+
+<LI>trance: 5 hours - 20 minutes (inversely proportional to number of guild
+members logged on)</LI>
+
+<LI>reagents: 4 kriipa claws</LI>
+
+<LI>type: chant, sorcery</LI>
+
+<LI>increase chance: 50</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: Jonas</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Jala:</FONT></I></P>
+
+<P><B>Jig</B>: Forces all players in room to dance, preventing them from
+using items, running, casting spells, or attacking. Paralyzes all monsters
+while this silliness is going on.. Lasts as long as bard holds trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 10 with upkeep of 10</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 1 diamond (a miniature disco ball - what else?)</LI>
+
+<LI>type: Room enchantment</LI>
+
+<LI>increase chance: 40</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: parrin arrogone (minstrel)</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+</UL>
+</UL>
+
+<UL>
+<P>status:</P>
+
+<UL>
+<LI>forces all players to unuse all items, which has unfortunate consequences
+for necromancers and hunters, as well as immediately dispelling the spell,
+since the bard has unused his/her instrument!</LI>
+
+<LI>need to verify that monsters are paralyzed during all this silliness.</LI>
+
+<LI>polish: would be nice if monsters did their walk animation while jigged.</LI>
+</UL>
+</UL>
+
+<P><B>Mana Convergence:</B> All spellcasters in room receive a bonus to
+spellpower. High mana drain to upkeep the song.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 15 with upkeep of 15</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 1 cut seraphym</LI>
+
+<LI>type: Room enchantment</LI>
+
+<LI>increase chance: 40</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: parrin arrogone (minstrel)</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+
+<LI>spellpower bonus: 25% of mana convergence's spellpower is added to
+all casters' spellpowers.</LI>
+</UL>
+</UL>
+
+<UL>
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Riija</FONT>:</I></P>
+
+<P><B>Feign Death</B>: Caster looks like a corpse (name disappears) as
+long as s/he holds trance. Also sends a fake death notice, but only to
+the yell-list. Player can walk, and is attackable (neither of these break
+the trance). Lowers viewpoint to just above the ground.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 1</LI>
+
+<LI>mana: 5 with upkeep of 5</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 2 solagh</LI>
+
+<LI>type: personal enchantment</LI>
+
+<LI>increase chance: 40</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: riija monk?</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+</UL>
+</UL>
+
+<UL>
+<P>status:</P>
+
+<UL>
+<LI>under some circumstances, the spell only seems to last for a fraction
+of a second. Need to narrow down when this happens.</LI>
+
+<LI>viewpoint doesn't drop to the ground</LI>
+</UL>
+</UL>
+
+<P><B>Evil Twin</B>: Creates a reflection of target player who will immediately
+attack his/her original. An evil twin is stronger than a reflection, but
+there can only be one twin of any given player in a room at a time. The
+evil twin cannot tell the difference between its original and any other
+reflections which may be present. Similarly, reflections cannot tell the
+evil twin apart from the original or other reflections (unless the twin
+attacks it). The caster must hold trance to keep the spell active.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 20 with upkeep of 20</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 3 firesand, 3 rainbow fern, 3 uncut seraphym</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: same as reflection</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: lich queen venya'cyr</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+</UL>
+</UL>
+
+<UL>
+<P>status:</P>
+
+<UL>
+<LI>evil twin seems to immediately attack the caster, rather than the target!</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Shal'ille</FONT></I></P>
+
+<P><B>Holy Symbol:</B> Has a chance of frightening undead creatures, making
+them run away from the caster (each monster checks individually). The percentage
+chance of frightening is based on the caster's spellpower, the sum of the
+caster's karma and the monster's karma (e.g. moster: -60, caster:60, percentage
+bonus=0), and the strength of the monster. If an undead monster fails to
+be frightened by 25%, it will aggressively pursue the caster (hatred=caster's
+karma).</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 2</LI>
+
+<LI>mana: 8</LI>
+
+<LI>vigor: 2</LI>
+
+<LI>trance: 2 seconds</LI>
+
+<LI>reagents: 2 herbs, 2 elderberry</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 15</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: shal'ille priestess</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P><B>Final Rites:</B> Damages all undead creatures in a room (including
+necromancer players). Requires a fairly lengthy trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 20</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: 10 seconds</LI>
+
+<LI>reagents: 2 emeralds</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 20</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: shal'ille priestess or Miriana</LI>
+
+<LI>damage: 10-20 (scales by target's karma and spellpower)</LI>
+</UL>
+
+<P>status:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P><B>Bond:</B> Chant. Targets a non-number item. When the spell fires,
+the item is now semi-permanently 'bonded' to whoever is holding it at the
+time (if it's on the ground, it defaults to the caster, and if the item
+is destroyed in the interim the spell fizzles). If the player loses the
+item, s/he will recieve periodic notification of where it is (in a location,
+in a player's inventory, etc.). The item may not be placed in a vault or
+chest. If someone other than the item's true owner logs off with it in
+possession, it drops to the ground. It is never auto-disposed. Each player
+may have exactly one bonded item at a time.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 6</LI>
+
+<LI>mana: 50</LI>
+
+<LI>vigor: 50</LI>
+
+<LI>trance: 3 minutes</LI>
+
+<LI>reagents: 2 polished seraphym</LI>
+
+<LI>type: chant, sorcery</LI>
+
+<LI>increase chance: 50</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: Miriana</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional, but needs rigorous testing.</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Qor:</FONT></I></P>
+
+<P><B>Poison Cloud</B>: Similar to fog, except moving through or standing
+in the cloudy area may poison player (no effect on monsters).</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 20</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: 5 seconds</LI>
+
+<LI>reagents: 2 shaman blood</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 20</LI>
+
+<LI>outlaw: <I>oh</I>, yeah.</LI>
+
+<LI>teacher: lich queen</LI>
+
+<LI>damage: poison.</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P><B>Blood Inheritance</B>: chant. Cast on an item. Erases a bond (see
+Bond, above). Requires a lengthy trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 200</LI>
+
+<LI>vigor: 50</LI>
+
+<LI>trance: 5 seconds</LI>
+
+<LI>reagents: 1 solagh, 2 shaman blood</LI>
+
+<LI>type: chant, sorcery</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: lich queen</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P><B>Death's Door</B>:&nbsp;Chant spell. When the spell fires, it creates
+a one-way portal at the prism's location which leads to the main plaza
+of Brax.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 30</LI>
+
+<LI>vigor: 40</LI>
+
+<LI>trance: 2 hours</LI>
+
+<LI>reagents: 2 shaman blood</LI>
+
+<LI>type: chant, sorcery</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: lich queen</LI>
+</UL>
+
+<P>status:</P>
+
+<UL>
+<LI>functional</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"></P>
+
+</BODY>
+</HTML>

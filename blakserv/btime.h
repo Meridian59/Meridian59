@@ -10,15 +10,15 @@
  *
  */
 
-#ifndef _TIME_H
-#define _TIME_H
+#ifndef _BTIME_H
+#define _BTIME_H
 
 void InitTime();
-int GetTime();
-char * TimeStr(time_t time);
-char * ShortTimeStr(time_t time);
-char * FileTimeStr(time_t time);
-char * RelativeTimeStr(int time);
+time_t GetTime();
+const char * TimeStr(time_t time);
+const char * ShortTimeStr(time_t time);
+const char * FileTimeStr(time_t time);
+const char * RelativeTimeStr(time_t time);
 UINT64 GetMilliCount();
 
 #endif

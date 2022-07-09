@@ -139,25 +139,28 @@ BOOL CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       header = (MailHeader *) lParam;
 
       // Add message to list view
-      sprintf(str, "%d", msg_num);
-      lvitem.mask = LVIF_TEXT | LVIF_PARAM;
-      lvitem.iItem = 0;
-      lvitem.iSubItem = 0;
-      lvitem.pszText = str;
-      lvitem.lParam = msg_num;
-      ListView_InsertItem(hList, &lvitem);
+      if (!IsNameInIgnoreList(header->sender))
+      {
+         sprintf(str, "%d", msg_num);
+         lvitem.mask = LVIF_TEXT | LVIF_PARAM;
+         lvitem.iItem = 0;
+         lvitem.iSubItem = 0;
+         lvitem.pszText = str;
+         lvitem.lParam = msg_num;
+         ListView_InsertItem(hList, &lvitem);
 
-      // Add subitems
-      lvitem.mask = LVIF_TEXT;
-      lvitem.iSubItem = 1;
-      lvitem.pszText = header->sender;
-      ListView_SetItem(hList, &lvitem);
-      lvitem.iSubItem = 2;
-      lvitem.pszText = header->subject;
-      ListView_SetItem(hList, &lvitem);
-      lvitem.iSubItem = 3;
-      lvitem.pszText = header->date;
-      ListView_SetItem(hList, &lvitem);
+         // Add subitems
+         lvitem.mask = LVIF_TEXT;
+         lvitem.iSubItem = 1;
+         lvitem.pszText = header->sender;
+         ListView_SetItem(hList, &lvitem);
+         lvitem.iSubItem = 2;
+         lvitem.pszText = header->subject;
+         ListView_SetItem(hList, &lvitem);
+         lvitem.iSubItem = 3;
+         lvitem.pszText = header->date;
+         ListView_SetItem(hList, &lvitem);
+      }
 
       // Erase message in status area
       SetDlgItemText(hDlg, IDC_MAILINFO, "");

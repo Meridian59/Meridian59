@@ -112,7 +112,7 @@ void AddClass(int id,bof_class_header *class_data,char *fname,char *bof_base,
 {
 	int i,hash_num;
 	class_node *new_node;
-   bof_list_elem *classvar_values, *prop_values;
+	bof_list_elem *classvar_values, *prop_values;
 
 	new_node = (class_node *)AllocateMemory(MALLOC_ID_CLASS,sizeof(class_node));
 	memset(new_node, 0, sizeof(class_node));
@@ -135,7 +135,7 @@ void AddClass(int id,bof_class_header *class_data,char *fname,char *bof_base,
 	for (i=0;i<new_node->num_prop_defaults;i++)
 	{
 		new_node->prop_default[i].id = prop_values[i].id;
-		new_node->prop_default[i].val.int_val = prop_values[i].offset; 
+		new_node->prop_default[i].val.int_val = val32to64(prop_values[i].offset);
 	}
 	new_node->fname = fname;
 	new_node->class_name = NULL;
@@ -165,7 +165,7 @@ void AddClass(int id,bof_class_header *class_data,char *fname,char *bof_base,
 	for (i=0;i<new_node->num_var_defaults;i++)
 	{
 		new_node->var_default[i].id = classvar_values[i].id;
-		new_node->var_default[i].val.int_val = classvar_values[i].offset; 
+		new_node->var_default[i].val.int_val = val32to64(classvar_values[i].offset); 
 	}
 	
 	new_node->vars = NULL;
@@ -349,7 +349,7 @@ class_node * GetClassByID(int class_id)
 	return NULL;
 }
 
-class_node * GetClassByName(char *class_name)
+class_node * GetClassByName(const char *class_name)
 {
 	int class_id;
 	Bool found;
@@ -366,7 +366,7 @@ const char * GetPropertyNameByID(class_node *c,int property_id)
 	return SIHashFindByValue(c->property_names,property_id);
 }
 
-int GetPropertyIDByName(class_node *c,char *property_name)
+int GetPropertyIDByName(class_node *c,const char *property_name)
 {
 	int id;
 
@@ -383,7 +383,7 @@ int GetPropertyIDByName(class_node *c,char *property_name)
 	return INVALID_PROPERTY;
 }
 
-int GetClassVarIDByName(class_node *c, char *name)
+int GetClassVarIDByName(class_node *c, const char *name)
 {
 	classvar_name_node *cv;
 
@@ -442,7 +442,7 @@ void ForEachClass(void (*callback_func)(class_node *c))
 	}
 }
 
-char * GetClassDebugStr(class_node *c,int dstr_id)
+const char * GetClassDebugStr(class_node *c,int dstr_id)
 {
 	if (dstr_id > c->dstrs->num_strings)
 	{

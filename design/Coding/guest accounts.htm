@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Guest Accounts</title>
+  </head>
+  <body>
+    <h2>
+      <hr width="100%"></h2>
+    <h2>Guest accounts</h2>
+    <h6>Andrew Kirmse/ 25 January 1996</h6>
+    <p>
+    </p>
+    <hr width="100%">
+    <p></p>
+    <p><b>Client side</b></p>
+    <p>Players can log in to a guest account in two ways. First, the
+      setting
+      "Guest=1" can appear in the [Miscellaneous] section of the
+      meridian.ini
+      file. In this case, the client attempts to log in immediately
+      after the
+      title screen; the login dialog does not appear. Second, the user
+      can type
+      "guest" as his account name, with any password.</p>
+    <p>When a player tries to log in as a guest, the client picks a
+      server
+      number uniformly at random from the closed interval given by the
+      "ServerLow"
+      and "ServerHigh" entries in the [Miscellaneous] section of the
+      meridian.ini file. If the server responds that the login is
+      allowed, the
+      player continues to log in and create his character as usual. If,
+      however,
+      the server responds that the login is not allowed (for example, if
+      there
+      are too many guests on the server), the client picks another
+      server number
+      and tries again. In either case, the server can include as part of
+      its
+      response a new closed interval of server numbers, which replace
+      the "ServerLow"
+      and "ServerHigh" values in the client's ini file. This is how
+      we can dynamically change the servers we use for guest accounts.</p>
+    <p>In addition to the above scheme, the client keeps track of the
+      last
+      server number it connected to, and attempts to log in to that
+      server first.
+      The purpose of this is to have guests reconnect to the same server
+      if they
+      lose connection for some reason.</p>
+    <p>While the client is attempting to log in as a guest, a small
+      dialog
+      displays a message and a progress bar. The progress bar counts the
+      number
+      of attempted logins; the client stops trying after 20 logins and
+      displays
+      a message that all servers are full.</p>
+    <p>
+    </p>
+    <hr width="100%">
+    <p></p>
+    <p><b>Server side</b></p>
+    <p>Three keys in the [Guest] section of the blakserv.cfg file
+      control guest
+      logins. The "Max" key specifies the number of simultaneous guest
+      logins that the server accepts. The "ServerMin" and "ServerMax"
+      keys give the range of server numbers the client should try to
+      contact
+      for guest logins (these correspond to the client's "ServerLow and
+      ServerHigh" numbers above). The server's default values for this
+      section
+      look as follows:</p>
+    <dd><tt>[Guest]</tt></dd>
+    <dd><tt>Max 30</tt></dd>
+    <dd><tt>ServerMin 55</tt></dd>
+    <dd><tt>ServerHigh 58</tt></dd>
+    <p>These settings can be changed dynamically with the "set config"
+      administrator command. Any changes should be saved by also issuing
+      the
+      "save config" command.</p>
+    <p>When a server encounters a login with the account name "guest",
+      it attempts to assign the login to the first available guest
+      account. At
+      present (1/25/97), there are no guest accounts on the commercial
+      servers,
+      so these need to be created---at least as many accounts as the
+      "Max"
+      setting in the blakserv.cfg file. These accounts are created with
+      the "create
+      account guest" administrator mode command.</p>
+    <p>
+    </p>
+    <hr width="100%">
+    <p></p>
+    <p><b>Game play</b></p>
+    <p>Guests log in to a special section of the game world that is not
+      connected
+      with the area containing paying customers. In character creation,
+      they
+      do not have a choice of spells or skills; they always start with
+      the fireball
+      spell and the slash skill.</p>
+    <p>Guests cannot broadcast, or "tell" to anyone outside the guest
+      area. They cannot send or receive mail. When a guest dies, he is
+      restored
+      to the place he first appeared upon login. There is no way out
+      from the
+      guest area to the outside world.</p>
+    <p>
+    </p>
+    <hr width="100%">
+    <p></p>
+    <p><b>Updating guest clients</b></p>
+    <p>Guest clients should be updated as rarely as possible, since
+      guest installations
+      may circulate long after we distribute them. However, whenever we
+      update
+      the commercial customers, guest customers will probably always
+      need at
+      least a small update. The files that guests need should be
+      collected in
+      a separate package, and this package must be marked in the
+      server's packages.txt
+      file by adding 32 to the package type number. This signals the
+      client that
+      it needs to download the package even if it is logging in as a
+      guest.</p>
+    <p>
+    </p>
+    <hr width="100%">
+    <p></p>
+  </body>
+</html>

@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_OutdoorsE2 = "The Great Ocean"
-   room_OutdoorsE2 = E2.roo
+   room_OutdoorsE2 = e2.roo
    OutdoorsE2_music = walk7.mid
 
    E2_oceanwalk = "You decide you don't like saltwater enough to go swimming in the Great Ocean."

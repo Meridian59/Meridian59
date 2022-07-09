@@ -145,15 +145,9 @@ messages:
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
            #new_row=50,#new_col=27,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
-           #new_row=48,#new_col=15,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
-      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
-           #new_row=43,#new_col=15,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
-      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
            #new_row=43,#new_col=13,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
            #new_row=41,#new_col=13,#fine_row=17,#fine_col=30,#new_angle=ANGLE_EAST);
-      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
-           #new_row=41,#new_col=15,#fine_row=17,#fine_col=30,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
            #new_row=61,#new_col=23,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
@@ -169,6 +163,12 @@ messages:
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
            #new_row=17,#new_col=16,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
 
+      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=48,#new_col=15,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=43,#new_col=15,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=41,#new_col=15,#fine_row=17,#fine_col=30,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
            #new_row=21,#new_col=16,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),

@@ -16,7 +16,7 @@
 enum
 {
    SYST_GARBAGE, SYST_SAVE, SYST_BLAKOD_HOUR, SYST_INTERFACE_UPDATE,
-   SYST_RESET_TRANSMITTED, SYST_RESET_POOL,
+   SYST_RESET_TRANSMITTED, SYST_RESET_POOL, SYST_REOPEN_CHANNELS,
 };
 
 typedef struct systimer_struct
@@ -24,7 +24,7 @@ typedef struct systimer_struct
    int systimer_type;
    int time;
    int period;
-   int next_time_activate;
+   INT64 next_time_activate;
    Bool enabled;
    struct systimer_struct *next;
 } systimer_node;
@@ -32,7 +32,7 @@ typedef struct systimer_struct
 void InitSysTimer();
 void ResetSysTimer();
 void CreateSysTimer(int type,int time,int period);
-void ProcessSysTimer(int time);
+void ProcessSysTimer(INT64 time);
 void ForEachSysTimer(void (*callback_func)(systimer_node *st));
 Bool DisableSysTimer(int systimer_type);
 Bool EnableSysTimer(int systimer_type);

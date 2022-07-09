@@ -1,0 +1,14 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1995, 1996 by Borland International, All Rights Reserved
+//
+// Pane splitter resource ids
+//----------------------------------------------------------------------------
+#if !defined(OWL_PANESPLI_RH)
+#define OWL_PANESPLI_RH
+
+#define IDC_RESIZE_H    1000
+#define IDC_RESIZE_V    1001
+#define IDC_RESIZE_HV   1002
+
+#endif  // OWL_PANESPLI_RH

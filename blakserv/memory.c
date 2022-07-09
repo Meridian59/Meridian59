@@ -60,7 +60,7 @@
 
 
 #ifndef NDEBUG
-static void *MallocCHK(size_t size,char*filename,int linenumber)
+static void *MallocCHK(size_t size,const char*filename,int linenumber)
 #else
 static void *MallocCHK(size_t size)
 #endif
@@ -68,10 +68,10 @@ static void *MallocCHK(size_t size)
 	unsigned long *p;
 	unsigned char *tmp;
 	
-#ifndef NDEBUG
+#if defined BLAK_PLATFORM_WINDOWS && !defined NDEBUG
 	tmp = (unsigned char*)_malloc_dbg( size + (sizeof(unsigned long)*3), _NORMAL_BLOCK,filename,linenumber );
 #else
-	tmp = malloc(size);
+	tmp = (unsigned char *) malloc(size);
 #endif
 	
 	
@@ -186,7 +186,7 @@ void *ReallocCHK(int malloc_id, void *p,size_t size, size_t old_size )
 
 memory_statistics memory_stat;
 
-char *memory_stat_names[] = 
+const char *memory_stat_names[] = 
 {
 	"Timer", "String", "Kodbase", "Resource", 
 		"Session", "Account", "User", "Motd",
@@ -242,13 +242,13 @@ int GetNumMemoryStats(void)
 	return MALLOC_ID_NUM;
 }
 
-char * GetMemoryStatName(int malloc_id)
+const char * GetMemoryStatName(int malloc_id)
 {
 	return memory_stat_names[malloc_id];
 }
 
 
-void * AllocateMemoryDebug(int malloc_id,int size,char *filename,int linenumber)
+void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linenumber)
 {
 	void *ptr;
 	

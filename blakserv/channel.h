@@ -30,9 +30,9 @@ void OpenDefaultChannels(void);
 void CloseDefaultChannels(void);
 void FlushDefaultChannels(void);
 
-void __cdecl dprintf(char *fmt,...);
-void __cdecl eprintf(char *fmt,...);
-void __cdecl bprintf(char *fmt,...);	/* blakod errors, goes to channel e */
-void __cdecl lprintf(char *fmt,...);
+void dprintf(const char *fmt,...);
+void eprintf(const char *fmt,...);
+void bprintf(const char *fmt,...);  /* blakod errors, goes to channel e */
+void lprintf(const char *fmt,...);
 
 #endif

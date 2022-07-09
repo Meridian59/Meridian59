@@ -17,7 +17,7 @@ constants:
 
 resources:
 
-   room_KocatanHallA = Kochoha.roo
+   room_KocatanHallA = kochoha.roo
    room_name_KocatanHallA = "The Hall of Heroes West"
 
    KocatanHallA_music = extra01.mid

@@ -40,9 +40,9 @@ classvars:
    viSpell_num = SID_VERTIGO
    viSchool = SS_RIIJA
    viSpell_level = 3
-   viMana = 10
+   viMana = 12
    viSpellExertion = 10
-   viCast_time = 2000
+   viCast_time = 0
 
    viOutlaw = TRUE
    viHarmful = TRUE
@@ -154,7 +154,7 @@ messages:
    {
       local iDuration;
 
-      iDuration = (10 + iSpellPower/2)*1000;
+      iDuration = (10 + iSpellPower/2)*250;
 
       return random(iDuration/2,iDuration);
    }
@@ -181,7 +181,7 @@ messages:
    RestartEnchantmentEffect(who=$,state=$)
    {
       Send(who,@MsgSendUser,#message_rsc=Vertigo_on);
-      Send(who,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=20000);
+      Send(who,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=15000);
 
       return;
    }

@@ -24,7 +24,7 @@ constants:
 resources:
 
    room_name_barloquenorth = "North Barloque"
-   room_barloquenorth = barlN.roo
+   room_barloquenorth = barln.roo
    barloquenorth_music = corloth.mid
 
    barloquenorth_sound_rsc = down2.wav

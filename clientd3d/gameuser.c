@@ -413,7 +413,6 @@ void UserToggleMusic(Bool music_on)
  */
 void UserQuit(void)
 {
-   if (AreYouSure(hInst, hMain, NO_BUTTON, IDS_QUIT))
       RequestQuit();   
 }
 /************************************************************************/

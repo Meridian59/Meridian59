@@ -238,7 +238,7 @@ messages:
       lFinalTargets = Send(self,@GetFinalTargets);
       If Length(lFinalTargets) > 1
          AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-
+         And NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
       {
          Send(self,@StartSpin);
 

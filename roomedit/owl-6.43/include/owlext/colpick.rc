@@ -1,0 +1,155 @@
+// ****************************************************************************
+// Copyright (C) 1998 by Dieter Windau
+// All rights reserved
+//
+// colpick.rc:   resource file
+// Version:      1.6
+// Date:         25.10.1998
+// Author:       Dieter Windau
+//
+// Freeware OWL classes that extents the dockable and gadget system
+//
+// TColorPicker is based on the JPColorPicker class written by Jo Parrello
+//
+// You are free to use/modify this code but leave this header intact.
+// May not be sold for profit.
+//
+// Tested with Borland C++ 5.02, OWL 5.02, OWL6 patch #3 and with Windows
+// NT 4.0 SP3 but I think the class should work with Windows 95 too.
+// This file is provided "as is" with no expressed or implied warranty.
+// Use at your own risk.
+//
+// This package contains many classes and source that are based on other OWL
+// developers work. Very special thanks to Alan Chambers, Christopher Kohlhoff,
+// Jo Parrello, Mark Hatsell, Michael Mogensen and Yura Bidus
+//
+// Please send me bug reports, bug fixes, enhancements, requests, etc., and
+// I'll try to keep this in next versions:
+//   EMail: dieter.windau@usa.net
+//   Web:   http://members.aol.com/softengage/index.htm
+// ****************************************************************************
+
+#include "colpick.rh"
+
+#ifndef BI_MSG_LANGUAGE_GERMANY
+
+STRINGTABLE
+{
+  IDS_AUTOMATIC,    "Automatic"
+  IDS_AUTOMATIC+1,  "Display the default color"
+  IDS_NOCOLOR,      "None"
+ IDS_NOCOLOR+1,    "Display no color"
+  IDS_MORECOLORS,   "More Colors..."
+  IDS_MORECOLORS+1, "Choose a Custom Color"
+  IDS_MORECOLORS+2, "More Colors"
+}
+
+STRINGTABLE
+{
+  IDS_COLORPICKER + 0,  "Black"
+  IDS_COLORPICKER + 1,  "Brown"
+  IDS_COLORPICKER + 2,  "Dark Olive Green"
+  IDS_COLORPICKER + 3,  "Dark Green"
+  IDS_COLORPICKER + 4,  "Dark Teal"
+  IDS_COLORPICKER + 5,  "Dark Blue"
+  IDS_COLORPICKER + 6,  "Indigo"
+  IDS_COLORPICKER + 7,  "Dark Grey"
+  IDS_COLORPICKER + 8,  "Dark Red"
+  IDS_COLORPICKER + 9,  "Orange"
+  IDS_COLORPICKER + 10, "Dark Yellow"
+  IDS_COLORPICKER + 11, "Green"
+  IDS_COLORPICKER + 12, "Teal"
+  IDS_COLORPICKER + 13, "Blue"
+  IDS_COLORPICKER + 14, "Blue-grey"
+  IDS_COLORPICKER + 15, "Grey-40"
+  IDS_COLORPICKER + 16, "Red"
+  IDS_COLORPICKER + 17, "Light Orange"
+  IDS_COLORPICKER + 18, "Lime"
+  IDS_COLORPICKER + 19, "Sea Green"
+  IDS_COLORPICKER + 20, "Aqua"
+  IDS_COLORPICKER + 21, "Light Blue"
+  IDS_COLORPICKER + 22, "Violet"
+  IDS_COLORPICKER + 23, "Grey-50"
+  IDS_COLORPICKER + 24, "Pink"
+  IDS_COLORPICKER + 25, "Gold"
+  IDS_COLORPICKER + 26, "Yellow"
+  IDS_COLORPICKER + 27, "Bright Green"
+  IDS_COLORPICKER + 28, "Turquoise"
+  IDS_COLORPICKER + 29, "Sky Blue"
+  IDS_COLORPICKER + 30, "Plum"
+  IDS_COLORPICKER + 31, "Light Grey"
+  IDS_COLORPICKER + 32, "Rose"
+  IDS_COLORPICKER + 33, "Tan"
+  IDS_COLORPICKER + 34, "Light Yellow"
+  IDS_COLORPICKER + 35, "Pale Green"
+  IDS_COLORPICKER + 36, "Pale Turquoise"
+  IDS_COLORPICKER + 37, "Pale Blue"
+  IDS_COLORPICKER + 38, "Lavender"
+  IDS_COLORPICKER + 39, "White"
+  IDS_COLORPICKER + 40, "Dark Green"
+  IDS_COLORPICKER + 41, "Blue Green"
+  IDS_COLORPICKER + 42, "Pink"
+}
+
+#else
+
+STRINGTABLE
+{
+  IDS_AUTOMATIC,    "Automatisch"
+  IDS_AUTOMATIC+1,  "Zeigt die voreingestellten Farbe an"
+  IDS_NOCOLOR,      "Kein(e)"
+ IDS_NOCOLOR+1,    "Zeigt keine Farbe an"
+ IDS_NOCOLOR+2,    "Ohne"
+  IDS_MORECOLORS,   "Weitere Farben..."
+  IDS_MORECOLORS+1, "Hier können Sie weitere Farben auswählen"
+  IDS_MORECOLORS+2, "Weitere Farben"
+}
+
+STRINGTABLE
+{
+  IDS_COLORPICKER + 0,  "Schwarz"
+  IDS_COLORPICKER + 1,  "Braun"
+  IDS_COLORPICKER + 2,  "Olivgrün"
+  IDS_COLORPICKER + 3,  "Dunkelgrün"
+  IDS_COLORPICKER + 4,  "Grünblau"
+  IDS_COLORPICKER + 5,  "Dunkelblau"
+  IDS_COLORPICKER + 6,  "Indigoblau"
+  IDS_COLORPICKER + 7,  "Grau-80%"
+  IDS_COLORPICKER + 8,  "Dunkelrot"
+  IDS_COLORPICKER + 9,  "Orange"
+  IDS_COLORPICKER + 10, "Ocker"
+  IDS_COLORPICKER + 11, "Grün"
+  IDS_COLORPICKER + 12, "Blaugrün"
+  IDS_COLORPICKER + 13, "Blau"
+  IDS_COLORPICKER + 14, "Blaugrau"
+  IDS_COLORPICKER + 15, "Grau-50%"
+  IDS_COLORPICKER + 16, "Rot"
+  IDS_COLORPICKER + 17, "Helles Orange"
+  IDS_COLORPICKER + 18, "Gelbrün"
+  IDS_COLORPICKER + 19, "Meeresgrün"
+  IDS_COLORPICKER + 20, "Aquablau"
+  IDS_COLORPICKER + 21, "Hellblau"
+  IDS_COLORPICKER + 22, "Violett"
+  IDS_COLORPICKER + 23, "Grau-40%"
+  IDS_COLORPICKER + 24, "Rosa"
+  IDS_COLORPICKER + 25, "Gold"
+  IDS_COLORPICKER + 26, "Gelb"
+  IDS_COLORPICKER + 27, "Hellgrün"
+  IDS_COLORPICKER + 28, "Türkis"
+  IDS_COLORPICKER + 29, "Himmelblau"
+  IDS_COLORPICKER + 30, "Pflaume"
+  IDS_COLORPICKER + 31, "Grau-25%"
+  IDS_COLORPICKER + 32, "Hellrosa"
+  IDS_COLORPICKER + 33, "Gelbbraun"
+  IDS_COLORPICKER + 34, "Hellgelb"
+  IDS_COLORPICKER + 35, "Pastellgrün"
+  IDS_COLORPICKER + 36, "Helles Türkis"
+  IDS_COLORPICKER + 37, "Blaßblau"
+  IDS_COLORPICKER + 38, "Lavendel"
+  IDS_COLORPICKER + 39, "Weiß"
+  IDS_COLORPICKER + 40, "Dunkelgrün"
+  IDS_COLORPICKER + 41, "Blaugrün"
+  IDS_COLORPICKER + 42, "Rosa"
+}
+
+#endif

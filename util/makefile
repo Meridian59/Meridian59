@@ -11,7 +11,6 @@ NTLIBS = user32.lib gdi32.lib
 
 all: \
        makedirs \
-       $(OUTDIR)\roocrypt.exe \
        $(OUTDIR)\rscload.lib \
        $(OUTDIR)\rscprint.exe \
        $(OUTDIR)\bmpdump.exe \
@@ -40,10 +39,6 @@ $(OUTDIR)\inst.exe: $(OUTDIR)\inst.obj
 
 $(OUTDIR)\ftptest.exe: ftptest.obj
 	$(LINK) $(LINKFLAGS) $** $(NTLIBS) wininet.lib -out:$@
-
-$(OUTDIR)\roocrypt.exe: $(OUTDIR)\roocrypt.obj $(OUTDIR)\memmap.obj
-	$(LINK) $(LINKFLAGS) $** $(NTLIBS) wrap.lib -out:$@
-	$(CP) $@ $(BLAKBINDIR)
 
 $(OUTDIR)\rscload.lib: $(OUTDIR)\rscload.obj $(OUTDIR)\memmap.obj
 	$(LIBPRG) $** -out:$@

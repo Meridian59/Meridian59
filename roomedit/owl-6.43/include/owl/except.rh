@@ -1,0 +1,117 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// String resource IDs to use with except.h and except.rc
+//----------------------------------------------------------------------------
+#if !defined(OWL_EXCEPT_RH)
+#define OWL_EXCEPT_RH
+
+//
+// General & application exception messages
+//
+#define IDS_UNKNOWNEXCEPTION    32767     //
+#define IDS_OWLEXCEPTION        32766     //
+#define IDS_OKTORESUME          32765     //
+#define IDS_UNHANDLEDXMSG       32764     //
+#define IDS_UNKNOWNERROR        32763     //
+#define IDS_NOAPP               32762     //
+#define IDS_OUTOFMEMORY         32761     //
+#define IDS_INVALIDMODULE       32760     //
+#define IDS_INVALIDMAINWINDOW   32759     //
+#define IDS_VBXLIBRARYFAIL      32758     //
+#define IDS_INVALIDMODULEFCN    32757     //
+#define IDS_INVALIDMODULEORD    32756     //
+#define IDS_COMMCTRL            32755     //
+#define IDS_VERSIONINFOFAIL     32754
+#define IDS_NOTSUPPORTEDCALL    32751     
+#define IDS_BADFILEFORMAT       32750
+
+//                                        
+// TXWindow messages (also see below for OWLNext extensions)                    
+//                                
+#define IDS_CLASSREGISTERFAIL   32749     //
+#define IDS_CHILDREGISTERFAIL   32748     //
+#define IDS_WINDOWCREATEFAIL    32747     //
+#define IDS_WINDOWEXECUTEFAIL   32746     //
+#define IDS_CHILDCREATEFAIL     32745     //
+#define IDS_MENUFAILURE         32744     //
+#define IDS_VALIDATORSYNTAX     32743     //
+#define IDS_PRINTERERROR        32742     //
+#define IDS_LAYOUTINCOMPLETE    32741     //
+#define IDS_LAYOUTBADRELWIN     32740     //
+                                          
+//                                        
+// TXGdi messages                         
+//                                        
+#define IDS_GDIFAILURE          32739     //
+#define IDS_GDIALLOCFAIL        32738     //
+#define IDS_GDICREATEFAIL       32737     //
+#define IDS_GDIRESLOADFAIL      32736     //
+#define IDS_GDIFILEREADFAIL     32735     //
+#define IDS_GDIDELETEFAIL       32734     //
+#define IDS_GDIDESTROYFAIL      32733     //
+#define IDS_INVALIDDIBHANDLE    32732     //
+#define IDS_WINGNOTAVAILABLE    32731     //
+#define IDS_WINGFAILURE         32730     //
+
+//
+// Clipboard
+//
+#define IDS_CLIPBOARDBUSY       32729     //
+
+//                                        
+// Owl 1 compatibility messages           
+//                                        
+#define IDS_INVALIDWINDOW       32709     //
+#define IDS_INVALIDCHILDWINDOW  32708     //
+#define IDS_INVALIDCLIENTWINDOW 32707     //
+
+//
+// More TXOwl and TXWindow messages (OWLNext extensions)
+//                                          
+#define IDS_TRANSFERBUFFERSIZEMISMATCH 32699
+#define IDS_TRANSFERCONTROLMISSING 32698
+#define IDS_DLGINITFAIL 32697
+#define IDS_SYSTEMTIMEPARSEFAIL 32696
+
+//                                        
+// TXShell messages (32450 - 32499 allocated to TXShell)
+//
+#define IDS_SHELLFAILURE        32450     //
+#define IDS_SHELLALLOCFAIL      32451     //
+#define IDS_INVALIDPATH         32452     //
+#define IDS_BINDTOOBJECTFAIL    32453     //
+#define IDS_SHGETDESKTOPFAIL    32454     //
+#define IDS_SHGETSPECIALFAIL    32455     //
+#define IDS_GETATTRIBUTESOFFAIL 32456     //
+#define IDS_GETFILEINFOFAIL     32457     //
+#define IDS_GETDISPLAYNAMEFAIL  32458     //
+#define IDS_GETPATHFROMPIDLFAIL 32459     //
+#define IDS_SETNAMEOFFAIL       32460     //
+#define IDS_GETUIOBJECTOFFAIL   32461     //
+#define IDS_COMPAREIDSFAIL      32462     //
+#define IDS_TSHELLITEMINVALID   32463     //
+#define IDS_ENUMOBJECTSFAIL     32464     //
+#define IDS_CLONEFAIL           32465     //
+#define IDS_SHELLITERATORATEND  32466     //
+#define IDS_IDLISTNEXTFAIL      32467     //
+#define IDS_IDLISTSKIPFAIL      32468     //
+#define IDS_IDLISTRESETFAIL     32469     //
+#define IDS_IDLISTZEROPOINTER   32470     //
+#define IDS_SHGETMALLOCFAIL     32471     //
+#define IDS_GETICONLOCFAIL      32472     //
+#define IDS_EXTRICONEXTRACTFAIL 32473     //
+#define IDS_SHELLRENAMEFAIL     32474     //
+#define IDS_SHELLCOPYFAIL       32475     //
+#define IDS_SHELLMOVEFAIL       32476     //
+#define IDS_SHELLDELETEFAIL     32477     //
+#define IDS_CREATESHELLLINKFAIL 32478     //
+#define IDS_LINKQUERYINTRFCFAIL 32479     //
+#define IDS_PERSISTFILELOADFAIL 32480     //
+#define IDS_LINKGETIDLISTFAIL   32481     //
+#define IDS_SHLLINKSETPATHFAIL  32482     //
+#define IDS_SHLLINKSETDESCFAIL  32483     //
+                                          
+                                          
+#endif  //  OWL_EXCEPT_RH

@@ -43,7 +43,7 @@ classvars:
 
    viTreasure_type = TID_WORM_QUEEN
    viSpeed = SPEED_SLOW
-   viAttack_types = ATCK_WEAP_ACID
+   viAttack_spell = ATCK_SPELL_ACID
    viLevel = 130
    viDifficulty = 7
    viKarma = -30

@@ -21,7 +21,7 @@ resources:
    good_fairy_icon_rsc = faerie-g.bgf
    good_fairy_desc_rsc = \
       "One of the noble woodland fairies, the fey elhai are most "
-      "reknown for their utter hatred of their dark brothers, the fey "
+      "renowned for their utter hatred of their dark brothers, the fey "
       "dirhai."
 
    fairy_dead_icon_rsc = faerieXG.bgf
@@ -47,8 +47,8 @@ classvars:
    viTreasure_type = TID_FAIRY
 
    viSpeed = SPEED_VERY_FAST
-   viAttack_types = 0
-   viAttack_spells = ATCK_SPELL_SHOCK
+   viAttack_type = 0
+   viAttack_spell = ATCK_SPELL_SHOCK
    viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
    viWimpy = 10
 

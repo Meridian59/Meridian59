@@ -89,5 +89,24 @@ typedef struct
    bof_line_entry entries;
 } bof_line_table;
 
+//
+// Compatibility with 32-bit values
+//
+
+// 32-bit value from old saved games or bkod
+typedef union {
+   int int_val;
+   constant_type v;  // 32 bits, from bkod.h
+} v0_val_type;
+
+// Convert from 32 bit bkod value to in-memory size
+__inline blak_int val32to64(int val32) {
+  v0_val_type v0_val;
+  v0_val.int_val = val32;
+  val_type val;
+  val.v.tag = v0_val.v.tag;
+  val.v.data = v0_val.v.data;
+  return val.int_val;
+}
 
 #endif

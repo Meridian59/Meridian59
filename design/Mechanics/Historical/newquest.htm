@@ -1,0 +1,291 @@
+<HTML VERSION="3">
+<HEAD></HEAD><TITLE>Example New Quest Dialog</TITLE>
+<FORM>
+ <FONT FACE="ARIAL,HELVETICA" SIZE="5">New Quest</FONT><P>
+
+<FONT SIZE=3 FACE="Arial,Helvetica">Quest Name:</FONT>
+<INPUT TYPE="text" NAME="Quest_Name" SIZE=20 MAXLENGTH=30><BR>
+<FONT SIZE=2><I>must be unique</I>
+<HR>
+
+<FONT SIZE=3 FACE="Arial,Helvetica"><B>Players:</B></FONT>
+<TABLE CELLSPACING=0>
+<TR><TD WIDTH=150>
+	<FONT FACE="Arial,Helvetica" SIZE=2>Number of players: </FONT></TD>
+	<TD><FONT FACE="Arial,Helvetica" SIZE=2><TAB>Group of eligible players: </FONT>
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Players_All_Or_Number" VALUE="Number"><INPUT TYPE="range" NAME="Number_Of_Players" SIZE=5 MIN=1 MAX=10000 VALUE = 1>
+	<TD><INPUT TYPE="radio" NAME="Players_Group_Eligible" VALUE="All" CHECKED><FONT FACE="Arial,Helvetica" SIZE=2>All</FONT>
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Players_All_Or_Number" VALUE="All eligible" CHECKED><FONT FACE="Arial,Helvetica" SIZE=2>All eligible</FONT>
+	<TD><INPUT TYPE="radio" NAME="Players_Group_Eligible" VALUE="Room"><FONT FACE="Arial,Helvetica" SIZE=2>Players in room when assigned</FONT>
+</TD></TR>
+<TR><TD></TD>
+<TD>
+	<INPUT TYPE="radio" NAME="Players_Group_Eligible" VALUE="This"><FONT FACE="Arial,Helvetica" SIZE=2>This</FONT>
+</TD></TR>
+</TABLE>
+<P>
+<TABLE>
+<TR><TD>
+	<FONT FACE="Arial,Helvetica" SIZE=2>Player eligibility restrictions: </FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Players_Eligible_Guild">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Must be in guild 
+	<SELECT NAME="Players_Eligible_Guild_Name">
+	<OPTION VALUE="1">Crips
+	<OPTION VALUE="2">Bloods
+	<OPTION VALUE="3">Mouseketeers
+	<OPTION VALUE="4" SELECTED>none
+	</SELECT></FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Players_Eligible_Quest_Completed">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Must have completed quest type
+	<SELECT NAME="Players_Eligible_Quest_Completed_Type">
+	<OPTION VALUE="1">any
+	<OPTION VALUE="2" SELECTED>Holy Grail
+	</SELECT></FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Players_Eligible_Quest_Not_Completed">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Must not have completed quest type
+	<SELECT NAME="Players_Eligible_Quest_Not_Completed_Type">
+	<OPTION VALUE="1">any
+	<OPTION VALUE="2" SELECTED>Holy Grail
+	</SELECT></FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Players_Eligible_Statistic1">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Must have statistic 
+	<SELECT NAME="Players_Eligible_Statistic_Type1">
+	<OPTION VALUE="1" SELECTED>Vigor
+	<OPTION VALUE="2">Strength
+	<OPTION VALUE="3">Dexterity
+	<OPTION VALUE="4">none
+	</SELECT> 
+	<FONT SIZE=2 FACE="Arial,Helvetica">of at least <INPUT TYPE="range" NAME="Players_Eligible_Statistic_Type1_Min" SIZE=3 MIN=0 MAX=100 VALUE = 0> and no greater than <INPUT TYPE="range" NAME="Players_Eligible_Statistic_Type1_Max" SIZE=3 MIN=0 MAX=100 VALUE = 100></FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Players_Eligible_Spell">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Must have spell
+	<SELECT NAME="Players_Eligible_Spell_Name">
+	<OPTION VALUE="1" SELECTED>Morph
+	<OPTION VALUE="2">Fireball
+	</SELECT></FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Players_Eligible_Not_Spell">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Must not have spell
+	<SELECT NAME="Players_Eligible_Not_Spell_Name">
+	<OPTION VALUE="1" SELECTED>Morph
+	<OPTION VALUE="2">Fireball
+	</SELECT></FONT>
+</TD></TR>
+</TABLE>
+
+<P>
+<FONT SIZE=3 FACE="Arial,Helvetica"><B>Scheduling:</B></FONT>
+<TABLE CELLSPACING=0>
+<TR><TD WIDTH=150>
+	<FONT FACE="Arial,Helvetica" SIZE=2>First time: </FONT></TD>
+	<TD><FONT FACE="Arial,Helvetica" SIZE=2>Reschedule:
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Schedule_Now_Or_In" VALUE="Now" CHECKED><FONT FACE="Arial,Helvetica" SIZE=2>Now
+	<TD><INPUT TYPE="checkbox" NAME="Reschedule" CHECKED>
+<FONT FACE="Arial,Helvetica" SIZE=2>Every <INPUT TYPE="range" NAME="Reschedule_Every_Min" SIZE=3 MIN=1 MAX=10000 VALUE = 4>
+ to <INPUT TYPE="range" NAME="Reschedule_Every_Max" SIZE=3 MIN=1 MAX=10000 VALUE = 8>hours
+</TD></TR>
+
+<TR><TD>
+<INPUT TYPE="radio" NAME="Schedule_Now_Or_In" VALUE="In">
+<FONT FACE="Arial,Helvetica" SIZE=2>In <INPUT TYPE="range" NAME="Schedule_In" SIZE=3 MIN=1 MAX=10000 VALUE=24>hours
+
+</TD></TR>
+</TABLE>
+<P>
+<TABLE>
+<TR><TD>
+	<FONT FACE="Arial,Helvetica" SIZE=2>Scheduling restrictions: </FONT>
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Scheduling_Restrictions_Not_Event">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Never during event 
+	<SELECT NAME="Scheduling_Restrictions_Not_Event_Name">
+	<OPTION VALUE="1">Red Sky
+	<OPTION VALUE="2">any
+	</SELECT></FONT>
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Scheduling_Restrictions_Event">
+	<FONT SIZE=2 FACE="Arial,Helvetica">Only during event 
+	<SELECT NAME="Scheduling_Restrictions_Event_Name">
+	<OPTION VALUE="1">Red Sky
+	<OPTION VALUE="2">any
+	</SELECT></FONT>
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Scheduling_Max_Active">
+	<FONT SIZE=2 FACE="Arial,Helvetica">No more than
+<INPUT TYPE="range" NAME="Scheduling_Max_Active_Value" SIZE=3 MIN=1 MAX=10000 VALUE = 10>
+quests of this type active at any time
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Scheduling_Max_Total">
+	<FONT SIZE=2 FACE="Arial,Helvetica">No more than
+<INPUT TYPE="range" NAME="Scheduling_Max_Total_Value" SIZE=3 MIN=1 MAX=10000 VALUE = 100>
+quests of this type assigned total
+</TD></TR>
+</TABLE>
+
+<P>
+<FONT SIZE=3 FACE="Arial,Helvetica"><B>Completion:</B></FONT>
+<TABLE CELLSPACING=0>
+<TR><TD>
+	<FONT SIZE=2 FACE="Arial,Helvetica">Deadline: (before quest is cancelled and penalty assessed)</FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Deadline_None_In_Or_Before" VALUE="None" CHECKED><FONT FACE="Arial,Helvetica" SIZE=2>None
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Deadline_None_In_Or_Before" VALUE="In"><FONT FACE="Arial,Helvetica" SIZE=2><INPUT TYPE="range" NAME="Deadline_In_Value" SIZE=3 MIN=1 MAX=10000 VALUE = 48>hours from assignment
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Deadline_None_In_Or_Before" VALUE="Before"><FONT FACE="Arial,Helvetica" SIZE=2>Before next event 
+	<SELECT NAME="Scheduling_Restrictions_Event_Name">
+	<OPTION VALUE="1">Red Sky
+	<OPTION VALUE="2">any
+	</SELECT></FONT>
+</TD></TR>
+</TABLE>
+<P>
+<FONT SIZE=3 FACE="Arial,Helvetica"><B>Prizes & Penalties:</B></FONT>
+<TABLE CELLSPACING=0>
+<TR><TD>
+	<FONT SIZE=2 FACE="Arial,Helvetica">Division of spoils:</FONT>
+</TD></TR>
+
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Comp_Coop_Or_Coll" VALUE="Comp"><FONT FACE="Arial,Helvetica" SIZE=2>
+Competitive: First player to complete all questnodes gets prize, rest get penalty (race)
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Comp_Coop_Or_Coll" VALUE="Coop"><FONT FACE="Arial,Helvetica" SIZE=2>
+Cooperative: Each player must complete all questnodes, all get prize
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="radio" NAME="Comp_Coop_Or_Coll" VALUE="Coll" CHECKED><FONT FACE="Arial,Helvetica" SIZE=2>
+Collective: Any questnode can be completed by any player, all get prize
+</TD></TR>
+</TABLE>
+<P>
+
+<TABLE>
+<TR><TD WIDTH=100>
+	<FONT SIZE=2 FACE="Arial,Helvetica">Prizes:</FONT>
+</TD></TR>
+<TR><TD WIDTH=100>
+	<INPUT TYPE="checkbox" NAME="Prize_Item"><FONT SIZE=2 FACE="Arial,Helvetica">Item
+</TD></TR>
+<TR>
+<TD WIDTH=100></TD>
+<TD>
+	<INPUT TYPE="radio" NAME="Prize_Item_Specific_Or_Class" VALUE="Specific"><FONT FACE="Arial,Helvetica" SIZE=2>Specific item (This)
+</TD></TR>
+<TD WIDTH=100></TD>
+<TD>
+	<INPUT TYPE="radio" NAME="Prize_Item_Specific_Or_Class" VALUE="Class" CHECKED><FONT FACE="Arial,Helvetica" SIZE=2>New item of type
+	<SELECT NAME="Prize_Item_Class">
+	<OPTION VALUE="1">Mystic Sword
+	<OPTION VALUE="2" SELECTED>Shield
+	</SELECT></FONT>
+
+</TD></TR>
+</TABLE>
+<P>
+
+<TABLE>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Prize_Statistic"><FONT SIZE=2 FACE="Arial,Helvetica">Statistic +
+	<INPUT TYPE="range" NAME="Prize_Statistic_Amount" SIZE=3 MIN=1 MAX=10000 VALUE = 10>to
+	<SELECT NAME="Prize_Statistic_Name">
+	<OPTION VALUE="1">Vigor
+	<OPTION VALUE="2">Strength
+	</SELECT></FONT>
+
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Prize_Spell"><FONT SIZE=2 FACE="Arial,Helvetica">Learn spell
+	<SELECT NAME="Prize_Spell_Name">
+	<OPTION VALUE="1" SELECTED>Morph
+	<OPTION VALUE="2">Fireball
+	</SELECT></FONT>
+</TD></TR>
+</TABLE>
+<P>
+
+<TABLE>
+<TR><TD>
+	<FONT SIZE=2 FACE="Arial,Helvetica">Prize is described at start of quest as:
+	<INPUT TYPE="text" NAME="Prize_Name" SIZE=120 MAXLENGTH=150></FONT><BR>
+</TD></TR>
+
+</TABLE>
+<P>
+<TABLE>
+<TR><TD WIDTH=100>
+	<FONT SIZE=2 FACE="Arial,Helvetica">Penalties:</FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Penalty_Blacklist"><FONT SIZE=2 FACE="Arial,Helvetica">Blacklist from any new quests for
+	<INPUT TYPE="range" NAME="Penalty_Blacklist_Hours" SIZE=3 MIN=1 MAX=10000 VALUE = 10>hours
+
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Penalty_Statistic"><FONT SIZE=2 FACE="Arial,Helvetica">Statistic -
+	<INPUT TYPE="range" NAME="Penalty_Statistic_Amount" SIZE=3 MIN=1 MAX=10000 VALUE = 10>to
+	<SELECT NAME="Penalty_Statistic_Name">
+	<OPTION VALUE="1">Vigor
+	<OPTION VALUE="2">Strength
+	</SELECT></FONT>
+
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Penalty_Spell"><FONT SIZE=2 FACE="Arial,Helvetica">Unlearn spell
+	<SELECT NAME="Penalty_Spell_Name">
+	<OPTION VALUE="1" SELECTED>Morph
+	<OPTION VALUE="2">Fireball
+	</SELECT></FONT>
+</TD></TR>
+<TR><TD>
+	<INPUT TYPE="checkbox" NAME="Penalty_Event"><FONT SIZE=2 FACE="Arial,Helvetica">Trigger event
+	<SELECT NAME="Penalty_Event_Name">
+	<OPTION VALUE="1">Red Sky
+	<OPTION VALUE="2">any
+	</SELECT></FONT>
+</TD></TR>
+
+</TABLE>
+<P>
+
+<TABLE>
+<TR><TD>
+	<FONT SIZE=2 FACE="Arial,Helvetica">Penalty is described at start of quest as:
+	<INPUT TYPE="text" NAME="Penalty_Name" SIZE=120 MAXLENGTH=150></FONT><BR>
+</TD></TR>
+
+</TABLE>
+</FORM>
+</BODY> 
+</HTML> 

@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsJ3 = J3.roo
+   room_OutdoorsJ3 = j3.roo
    room_name_OutdoorsJ3 ="The Queen's Way"
 
    OutdoorsJ3_music = forest.mid

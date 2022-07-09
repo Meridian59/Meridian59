@@ -396,7 +396,7 @@ void codegen_exit_loop(void)
 
    /* Backpatch break statements to jump to end of loop */
    for (p = current_loop->break_list; p != NULL; p = p->next)
-      BackpatchGoto(outfile,  (int) p->data, FileCurPos(outfile));
+      BackpatchGoto(outfile, *((int *)(&p->data)), FileCurPos(outfile));
 
    /* Remove current list from loop "stack" */
    loop_stack = list_delete_first(loop_stack);
@@ -557,7 +557,7 @@ int codegen_for(for_stmt_type s, int numlocals)
 
    /* Backpatch continue statements in loop body */
    for (p = current_loop->for_continue_list; p != NULL; p = p->next)
-      BackpatchGoto(outfile,  (int) p->data, FileCurPos(outfile));
+      BackpatchGoto(outfile, *((int *)(&p->data)), FileCurPos(outfile));
 
    /**** Statement #4:    temp = Rest(temp) ****/
    /* Can reuse most of statement #3 above */
@@ -862,7 +862,7 @@ void codegen(char *kod_fname, char *bof_fname)
    codegen_ok = True;
    debug_lines = NULL;
 
-   outfile = open(bof_fname, _O_TRUNC | _O_CREAT | _O_RDWR | _O_BINARY, _S_IWRITE | _S_IREAD);
+   outfile = open(bof_fname, O_TRUNC | O_CREAT | O_RDWR | O_BINARY, S_IWRITE | S_IREAD);
 
    if (outfile == -1)
    {
@@ -901,13 +901,13 @@ void codegen(char *kod_fname, char *bof_fname)
       endpos = FileCurPos(outfile);
       FileGoto(outfile, debugpos); 
       if (debug_bof)
-	 OutputInt(outfile, endpos);
+         OutputInt(outfile, endpos);
       else OutputInt(outfile, 0);
-
+      
       FileGotoEnd(outfile);
       if (debug_bof)
-	 codegen_debug_info();
-
+         codegen_debug_info();
+      
       /* Backpatch location of kod filename */
       endpos = FileCurPos(outfile);
       FileGoto(outfile, namepos); 

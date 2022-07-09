@@ -16,13 +16,13 @@
 
 #include "blakserv.h"
 
-void __cdecl cprintf(int session_id,char *fmt,...)
+void cprintf(int session_id,const char *fmt,...)
 {
    char s[8000];
    va_list marker;
 
    va_start(marker,fmt);
-   _vsnprintf(s,sizeof(s),fmt,marker);
+   vsnprintf(s,sizeof(s),fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s));
@@ -65,7 +65,7 @@ void TermConvertBuffer(char *s,int len_s)
 }
 
 
-char * GetTagName(val_type val)
+const char * GetTagName(val_type val)
 {
    static char s[10];
 
@@ -87,16 +87,16 @@ char * GetTagName(val_type val)
    case TAG_INVALID : return "INVALID";
    default :
       eprintf("GetTagName warning, can't identify tag %i\n",val.v.tag);
-      sprintf(s,"%i",val.v.tag);
+      sprintf(s,"%i",(int) val.v.tag);
       return s;
    }
 }
 
-char * GetDataName(val_type val)
+const char * GetDataName(val_type val)
 {
    resource_node *r;
    class_node *c;
-   static char s[10];
+   static char s[30];
    val_type int_val;
 
    switch (val.v.tag)
@@ -105,7 +105,7 @@ char * GetDataName(val_type val)
       r = GetResourceByID(val.v.data);
       if (r == NULL)
       {
-	 sprintf(s,"%i",val.v.data);
+        sprintf(s,"%lli",(long long) val.v.data);
 	 return s;
       }
       if (r->resource_name == NULL)
@@ -119,7 +119,7 @@ char * GetDataName(val_type val)
       if (c == NULL)
       {
 	 eprintf("GetTagData error, can't find class id %i\n",val.v.data);
-	 sprintf(s,"%i",val.v.data);
+	 sprintf(s,"%lli",(long long) val.v.data);
 	 return s;
       }
       return c->class_name;
@@ -131,13 +131,13 @@ char * GetDataName(val_type val)
       /* write as positive int so no problem reading in */
       int_val.v.tag = val.v.tag;
       int_val.v.data = val.v.data;
-      sprintf(s,"%i",int_val.v.data);
+      sprintf(s,"%lli",(long long) int_val.v.data);
       return s;
    }
 }
 
 
-int GetTagNum(char *tag_str)
+int GetTagNum(const char *tag_str)
 {
    int retval;
    char ch;
@@ -182,7 +182,7 @@ int GetTagNum(char *tag_str)
    return retval;
 }
 
-int GetDataNum(int tag_val,char *data_str)
+int GetDataNum(int tag_val,const char *data_str)
 {
    resource_node *r;
    class_node *c;
@@ -232,20 +232,5 @@ int GetDataNum(int tag_val,char *data_str)
    }
 
    return retval;
-}
-
-Bool BlakMoveFile(char *source,char *dest)
-{
-   if (!CopyFile(source,dest,FALSE))
-   {
-      eprintf("BlakMoveFile error moving %s to %s (%s)\n",source,dest,GetLastErrorStr());
-      return False;
-   }
-   if (!DeleteFile(source))
-   {
-      eprintf("BlakMoveFile error deleting %s (%s)\n",source,GetLastErrorStr());
-      return False;
-   }
-   return True;
 }
 

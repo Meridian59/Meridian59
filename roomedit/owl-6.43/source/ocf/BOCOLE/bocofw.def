@@ -1,0 +1,47 @@
+LIBRARY  BOCOFW
+DESCRIPTION  'Aggregable Generic OLE2 Container and Object Implementation'
+EXETYPE      WINDOWS
+
+;CODE         LOADONCALL MOVEABLE DISCARDABLE
+DATA         MULTIPLE NONSHARED
+
+SEGMENTS
+  _TEXT   PRELOAD MOVEABLE DISCARDABLE
+  WEP_TEXT PRELOAD MOVEABLE DISCARDABLE
+
+HEAPSIZE     1024
+
+EXPORTS
+  ;WEP @1 RESIDENTNAME PRIVATE ;; required WEP entry point (uses library WEP)
+  DllGetClassObject  @2
+  CreateClassMgr     @3
+  DllCanUnloadNow    @4
+  DllEntryPoint      @5
+
+   _IID_IBPart                    @260 
+   _IID_IBSite                    @261
+   _IID_IBContainer               @262 
+   _IID_IBDocument                @263 
+   _IID_IBService                 @264 
+   _IID_IBApplication             @265 
+   _IID_IBClassMgr                @266 
+   _IID_IBLinkInfo                @267 
+   _IID_IBLinkable                @268 
+   _IID_IBRootLinkable            @269 
+   _IID_IBContains                @270 
+   _IID_BOleDocument              @271
+   _IID_BOlePart                  @272 
+   _IID_IBDataConsumer            @273 
+   _IID_IBDataProvider            @274 
+   _IID_IBWindow                  @275 
+   _IID_IBDataNegotiator          @276 
+   _IID_IBDropDest                @277 
+   _IID_BOleShadowData            @278 
+   _IID_IBClass                   @279 
+   _IID_IBOverrideBrowseLinks     @280
+   _IID_IBOverrideHelpButton      @281
+   _IID_IBSite2                   @282
+   _IID_BOleFont                  @283 
+   _IID_BOlePicture               @284 
+   _IID_IBPicture                 @285 
+

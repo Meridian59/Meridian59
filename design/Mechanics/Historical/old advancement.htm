@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Advancement</TITLE>
+</HEAD>
+<BODY>
+
+<P>Implementor's notes: Advancement</P>
+
+<P>These were my goals in coding advancement.</P>
+
+<UL>
+<LI>Less complicated math, so that fewer special cases would happen, and
+both players and customer service would have a better idea how to advance
+and (more to the point) why they were not.</LI>
+
+<LI>Allow the game to better deal with exceptional cases, such as new spell
+schools or abbreviated spell schools.</LI>
+</UL>
+
+<P><B>Spell Acquisition</B></P>
+
+<P>I started by making the following example graph: How hard should it
+be to acquire a spell at level X? It currently depends largely on how many
+spell or skill points you have at the previous level, but the precise number
+is extremely cryptic. I based my math on the following stats:</P>
+
+<TABLE BORDER=1 >
+<CAPTION>
+<H5><B>I want to acquire spell of level X. What % must I earn in all of
+my level X-1 spells to get it?<BR>
+Given information: other spell schools, and my intellect.</B></H5>
+</CAPTION>
+
+<TR>
+<TD></TD>
+
+<TD>1 intellect</TD>
+
+<TD>25 intellect</TD>
+
+<TD>50 intellect</TD>
+</TR>
+
+<TR>
+<TD>No other spells</TD>
+
+<TD>50</TD>
+
+<TD>45</TD>
+
+<TD>40</TD>
+</TR>
+
+<TR>
+<TD>One complete spell school in the same division</TD>
+
+<TD>70</TD>
+
+<TD>60</TD>
+
+<TD>50</TD>
+</TR>
+
+<TR>
+<TD>One complete spell school in a different division</TD>
+
+<TD>90</TD>
+
+<TD>75</TD>
+
+<TD>60</TD>
+</TR>
+
+<TR>
+<TD>Two other spell schools, complete, same div<BR>
+and other div</TD>
+
+<TD>XX</TD>
+
+<TD>90</TD>
+
+<TD>70</TD>
+</TR>
+
+<TR>
+<TD>Two other spell schools, complete, both other div</TD>
+
+<TD>XX</TD>
+
+<TD>XX</TD>
+
+<TD>80</TD>
+</TR>
+
+<TR>
+<TD>Three other spell schools, complete, two other div<BR>
+and one same div</TD>
+
+<TD>XX</TD>
+
+<TD>XX</TD>
+
+<TD>90</TD>
+</TR>
+</TABLE>
+
+<P><B>Notes:</B></P>
+
+<UL>
+<LI>The numbers above assume there are 15 spells in each school. This is
+in fact low for the more established schools.</LI>
+
+<LI>Players cannot learn Qor/Shal'ille spells without passing the Karma
+check (10 or -10 for every level of the spell). This behavior is unchanged.</LI>
+
+<LI>Customer service can use the following way to help determine advancement
+problems: <BR>
+<B>send object &lt;player&nbsp;#&gt; playercanlearn skill_num int (SKID#)
+spell_num int (SID#) scryer obj &lt;guardian's object #&gt;. </B>This will
+tell that guardian what stats, exactly, the player must have to advance.
+Customer service can also use the <B>scry</B> spell.</LI>
+
+<LI>Players can always acquire first level spells from any school, without
+passing any check other than the karma check. However, this has the effect
+of slowing down their advancement. This behavior is largely unchanged.</LI>
+
+<LI><B>Divisions</B> are how spells are divided up - it is easier to learn
+spells and skills that are similiar to ones you possess. In meridian, there
+are three divisions: </LI>
+
+<UL>
+<LI><B>mystic: </B>shal'ille, qor, and faren</LI>
+
+<LI><B>combat: </B>kraanan and weaponcraft</LI>
+
+<LI><B>lore: </B>jala and riija, possibly language</LI>
+</UL>
+
+<LI>To get any spell above 2nd level from a priestess, you must do a quest
+for her. This is unchanged behavior.</LI>
+</UL>
+
+</BODY>
+</HTML>

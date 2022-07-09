@@ -5,6 +5,9 @@ TOPDIR=..
 
 SOURCEDIR = $(BLAKCOMPDIR)
 
+# Disable warnings in Bison-generated code
+CFLAGS = $(CFLAGS) /wd4065
+
 LIBS =
 
 OBJS = \
@@ -30,10 +33,9 @@ $(OUTDIR)\bc.exe: $(OBJS)
 $(OUTDIR)\lexyy.obj: $(OUTDIR)\lexyy.c $(OUTDIR)\blakcomp.tab.h
 
 $(OUTDIR)\lexyy.c: {$(SOURCEDIR)}blakcomp.l {$(SOURCEDIR)}blakcomp.h
-	$(LEX) -o$(OUTDIR)\lexyy.c $(SOURCEDIR)\blakcomp.l
+	$(LEX) --wincompat -o$(OUTDIR)\lexyy.c $(SOURCEDIR)\blakcomp.l
 
 $(OUTDIR)\blakcomp.tab.c $(OUTDIR)\blakcomp.tab.h: {$(SOURCEDIR)}blakcomp.y {$(SOURCEDIR)}blakcomp.h
-        set BISON_SIMPLE=$(SOURCEDIR)\bison.simple
 	$(YACC) $(SOURCEDIR)\blakcomp.y -o $(OUTDIR)\blakcomp.tab.c
 
 !include $(TOPDIR)\rules.mak

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <title>Blakod Notes</title>
+</head>
+<body>
+<h1>
+Additional Blakod Notes</h1>
+By: Brian
+Green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Date: June 11, 2002
+<h2>Purpose:</h2>
+The purpose of this document is to record some of the little details of
+the Blakod language not captured in other documents.<br>
+<h3><a name="maxint">Maximum integer size</a></h3>
+Blakod has a maximum integer value that is considerably smaller than
+the value for most modern systems.&nbsp; Blakod stores variables using
+32 bit integers: 4 bits are for type, and the remaining 28 bits are for
+the value.&nbsp; For integers, the value portion is the value of the
+integer.&nbsp; Since all integers are signed, this leaves 27 bits for
+the maximum integer value.&nbsp; This maximum value is:<br>
+<br>
+2 <sup>27</sup> - 1= 134,217,727&nbsp; (minimum negative value is
+-134,217,728.&nbsp; Blakod uses two's complement notation for negative
+numbers.)<br>
+<br>
+If a Blakod integer variable exceeds this value, it will result in an
+overflow and the value will become a large negative number.<br>
+<h3>
+FindListElem</h3>
+This is a standard Blakod call.
+<p><b>Form:</b>
+<br>
+iIndex = FindListElem(lList, element);
+</p>
+<p><b>Parameters:</b>
+<br>
+lList = any list
+<br>
+element = any Blakod object
+</p>
+<p><b>Return values:</b>
+<br>
+Returns the index of the element if found in the list (1 for the first
+element, etc).
+<br>
+Returns 0 if element was not found.
+<br>
+Returns Nil ($) if the list is Nil.
+<br>
+&nbsp;
+</p>
+</body>
+</html>

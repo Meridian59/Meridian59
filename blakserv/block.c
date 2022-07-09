@@ -36,7 +36,7 @@ block_node* FindBlock(struct in_addr* piaPeer)
 void AddBlock(int iSeconds, struct in_addr* piaPeer)
 {
 	block_node* pBlock = FindBlock(piaPeer);
-	int iExpires = (iSeconds < 0)? -1 : GetTime() + iSeconds;
+	INT64 iExpires = (iSeconds < 0)? -1 : GetTime() + iSeconds;
 
     // A block set to expire at -1 will stay in effect until all blocks are deleted.
 	// (Usually when server is shut down and later restarted.)
@@ -120,33 +120,33 @@ bool CheckBlockList(struct in_addr* piaPeer)
  *
  */
 
-void BuildBannedIPBlocks( char *filename )
+void BuildBannedIPBlocks( const char *filename )
 {
-
-	FILE*fp;
-	char buffer[1024];
-	struct in_addr blocktoAdd ;
-
-	fp = fopen(filename,"rt");
-	if( fp == NULL ) {
-		eprintf("Cannot open banned log file %s\n",filename );
-		return ;
+  
+  FILE*fp;
+  char buffer[1024];
+  struct in_addr blocktoAdd ;
+  
+  fp = fopen(filename,"rt");
+  if( fp == NULL ) {
+    eprintf("Cannot open banned log file %s\n",filename );
+    return ;
+  }
+  dprintf("loading banned IP addresses\n");
+  
+  do {
+    if(fgets(buffer,1023,fp) != NULL ) {
+      /* lets be cautious */
+      if(strlen(buffer)>0) {
+	if( ( blocktoAdd.s_addr = inet_addr( buffer ) ) != -1 ) {
+	  AddBlock( -1, &blocktoAdd );
+	  dprintf("Banned IP address %s\n", inet_ntoa( blocktoAdd ) );
+	} else {
+	  eprintf("Warning invalid entry in %s is [%s]\n",filename,buffer);
 	}
-	dprintf("loading banned IP addresses\n");
-
-	do {
-		if(fgets(buffer,1023,fp) != NULL ) {
-			/* lets be cautious */
-			if(strlen(buffer)>0) {
-				if( ( blocktoAdd.s_addr = inet_addr( buffer ) ) != -1 ) {
-					AddBlock( -1, &blocktoAdd );
-					dprintf("Banned IP address %s\n", inet_ntoa( blocktoAdd ) );
-				} else {
-					eprintf("Warning invalid entry in %s is [%s]\n",filename,buffer);
-				}
-			}
-		}
-	}while( !feof( fp ) );
-
-	fclose( fp );
+      }
+    }
+  } while( !feof( fp ) );
+  
+  fclose( fp );
 }

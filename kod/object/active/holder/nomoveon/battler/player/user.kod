@@ -273,11 +273,9 @@ resources:
    user_cant_deposit_items = "You can't deposit items here!"
    user_cant_balance = "You can't check any balance here!"
 
-   user_appeal = "%s appeals: %q"
+   user_appeal = "%s appeals, \"%q~n\""
    user_first_time_appeal = "### %s has just logged on for the first time."
-   user_did_appeal = \
-      "If you do not get a timely response, please send game mail to Help for "
-      "further assistance."
+   user_did_appeal = "You appeal, \"%q~n\""
 
    user_kill_zone = \
       "Your guardian angel whispers to you, \"I cannot defend you here.\""
@@ -294,6 +292,9 @@ resources:
    user_guildofficer_rsc = "guildofficer"
 
    user_default_url = "http://www.Meridian59.com/"
+   
+   user_safety_on_wav_rsc = safety_on.wav
+   user_safety_off_wav_rsc = safety_off.wav
 
 classvars:
 
@@ -686,6 +687,14 @@ messages:
       {
          % Reset our logoff penalty time since we're logging safely.
          piLogoffPenaltyTime = 0;
+         
+         % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
+         if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
+            AND Send(SYS, @GetLogoffPenaltyEnable)
+         {
+            Send(self,@LoseMana,#amount=(piMana/2));
+            Send(Send(SYS,@FindSpellByNum,#num=SID_PURGE),@DoPurge,#who=self,#iChance=100);
+         }
       }
       
       if piLogoffPenaltyCount < 0
@@ -890,10 +899,6 @@ messages:
          iCol = Nth(client_msg,3);
          iSpeed = Nth(client_msg,4);
          oRoom = Nth(client_msg,5);
-
-         % XORed with some magic numbers to throw off teleport hacks.
-         %iRow = Send(SYS,@BitWiseXOR,#value=iRow,#value2=12692257);
-         %iCol = Send(SYS,@BitWiseXOR,#value=iCol,#value2=11627532);
 
          % Check if it's an outdated message, from a person going off side of
          %  room multiple times before they got their new room.
@@ -1522,6 +1527,7 @@ messages:
             if Send(SYS,@IsPKAllowed)
             {
                Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+               Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_on_wav_rsc);
             }
             
             return;
@@ -1532,6 +1538,7 @@ messages:
             if Send(SYS,@IsPKAllowed)
             {
                Send(self,@MsgSendUser,#message_rsc=user_safety_off);
+               Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_off_wav_rsc);
             }
             
             return;
@@ -1953,7 +1960,8 @@ messages:
       AddPacket(1,BP_USERCOMMAND,1,UC_GUILDINFO);
       AddPacket(6,Send(poGuild,@GetName));
       lHall = Send(poGuild,@GetGuildHall);
-      if lHall <> $
+      % Only send password to guildmaster, for security
+      if lHall <> $ AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
       {
          AddPacket(1,1);
          AddPacket(6,Send(poGuild,@GetPassword));
@@ -3151,7 +3159,7 @@ messages:
          return;
       }
 
-      Send(self,@MsgSendUser,#message_rsc=user_did_appeal);
+      Send(self,@MsgSendUser,#message_rsc=user_did_appeal,#parm1=string);
       
       return;
    }
@@ -3672,8 +3680,6 @@ messages:
    "Sent by client when they're blocking messages from a user, and that "
    "user Sends a message."
    {
-      Send(what,@MsgSendUser,#message_rsc=user_blocked_send,
-           #parm1=Send(self,@GetTrueName));
 
       return;
    }
@@ -3849,6 +3855,13 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=user_err_get_contents,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
               
+         return;
+      }
+
+      % Make sure object is in the same room as player
+      if NOT Send(self, @IsInSameRoom, #what = what)
+      {
+         Debug("User ", self, "tried to look at object in another room");
          return;
       }
 
@@ -4237,8 +4250,6 @@ messages:
 
    TryLook(what = $)
    {
-      local what_owner, found;
-
       if (piFlags & PFLAG_INVISIBLE)
          AND what <> self
          AND NOT Send(self,@PlayerIsImmortal)
@@ -4246,20 +4257,7 @@ messages:
          return;
       }
 
-      % Should be in the same room
-      found = FALSE;
-      what_owner = Send(what, @GetOwner);
-      while what_owner <> $
-      {
-         if what_owner = poOwner
-         {
-            found = TRUE;
-            break;
-         }
-         what_owner = Send(what_owner, @GetOwner);
-      }
-
-      if NOT found
+      if NOT Send(self, @IsInSameRoom, #what = what)
       {
          Debug("User ", self, "tried to look at object in another room");
          return;
@@ -5995,6 +5993,16 @@ messages:
             Send(self,@ToCliPlayer);
             Send(self,@ToCliRoomContents);
          }
+      }
+      
+      % This is intended to protect players from wall spells stacked on entrances. It will clear
+      % out a small space when they enter the zone, so that they don't appear in the middle of a wall spell.
+      if old <> $
+         AND Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND Send(Send(self,@GetOwner), @AllowGuildAttack,#what=self)
+         AND NOT IsClass(self,&DM)
+      {
+         Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
       }
       
       propagate;

@@ -145,7 +145,10 @@ messages:
       }
 
       % Is room truced, or otherwise a NO_COMBAT area?
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      if (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+         AND IsClass(what,&Player))
+         OR (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
+         AND IsClass(what,&Monster))
       {
          return FALSE;
       }

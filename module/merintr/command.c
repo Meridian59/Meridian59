@@ -547,6 +547,22 @@ void CommandActivate(char *args)
 }
 /************************************************************************/
 /*
+ * SendSafetyOn: "safetyOn" command
+ */
+void CommandSafetyOn(char *args)
+{
+   SendSafety(1);
+}
+/************************************************************************/
+/*
+ * SendSafetyOff: "safetyoff" command
+ */
+void CommandSafetyOff(char *args)
+{
+   SendSafety(0);
+}
+/************************************************************************/
+/*
  * CommandGuild: "guild" command
  */
 void CommandGuild(char *args)

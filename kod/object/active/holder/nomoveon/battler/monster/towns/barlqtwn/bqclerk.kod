@@ -79,7 +79,9 @@ resources:
    barloque_clerk_tally_no_leader = \
       "Thus far, there are no votes tallied for the next Justicar election."
    barloque_clerk_tally_leader = \
-      "Thus far, the leader in the next Justicar election is %s, with %d votes."
+      "Thus far, the leader in the next Justicar election is %q, with %i votes."
+   barloque_clerk_tally_tied = \
+      "Thus far, it appears there is a tie."
    barloque_clerk_announce_winner_subject = "Newly Elected Justicar"
    barloque_clerk_announce_winner1 = \
       "Please congratulate "
@@ -802,7 +804,78 @@ messages:
 
    CitizenAsksTally(who=$)
    {
-      % TODO
+      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound;
+
+      if piJusticar_State <> STATE_ACCEPTING_VOTES
+      {
+         Send(self,@SayToOne,#message_rsc=barloqueClerk_not_yet,#target=who);
+         
+         return;
+      }
+
+      lTallied = $;
+      
+      for i in plVotes
+      {
+         if NOT Send(self,@IsLegalJusticar,#candidate=Nth(i,2))
+         {
+            continue; 
+         }
+         
+         bFound = FALSE;
+         
+         for j in lTallied
+         {
+            if nth(i,2) = first(j)          
+            {
+               setnth(j,2,(nth(j,2)+1));
+               bFound = TRUE;
+            }            
+         }
+         
+         if not bFound
+         {
+            lTallied = cons([nth(i,2),1],lTallied);
+         }
+      }
+      
+      if lTallied = $
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_tally_tied,#type1=STRING_RESOURCE);
+         
+         return;
+      }
+      
+      oHighest = $;
+      iHighestCount = 0;      
+      bTie = FALSE;
+      
+      for i in lTallied
+      {
+         if Nth(i,2) = iHighestCount
+         {
+            bTie = TRUE;
+         }
+         
+         if Nth(i,2) > iHighestCount
+         {
+            oHighest = first(i);
+            iHighestCount = nth(i,2);
+            bTie = FALSE;
+         }         
+      }
+      
+      if bTie
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_tally_tied,#type1=STRING_RESOURCE);
+         return;
+      }
+
+      Send(self,@SayToOne,#target=who,
+           #message_rsc=barloque_clerk_tally_leader,
+           #parm1=Send(oHighest,@GetTrueName),#type1=STRING_RESOURCE,
+           #parm2=iHighestCount);
+
       return;
    }
 

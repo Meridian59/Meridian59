@@ -33,15 +33,15 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	class _OWLCLASS TListBox;
 #endif
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	class _OWLCLASS TCheckBox;
 #endif
 

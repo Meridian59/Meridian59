@@ -1,0 +1,1245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Changes</TITLE>
+</HEAD>
+<BODY>
+
+<H3>Changes made to Meridian 59 (27 Nov 1996 - 17 Jan 1997)</H3>
+
+<P>To make changes to this document, check the file out in sourcesafe,
+and make your changes in whatever webpage-editing program you prefer (Netscape
+Gold has a reasonable one built in). Place all changes in chronological
+order, so that testers don't have to hunt to find new stuff. Only the development
+team should make changes to this document. Click here to know <A HREF="#addon">the
+easiest way to use this system.</A> </P>
+
+<P>See <A HREF="changes.htm">changes made after 17 Jan
+1997</A></P>
+
+<H4>Server and server-related kod changes</H4>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD width=5%>20 Dec</TD>
+
+<TD width=12%>CKirmse</TD>
+
+<TD Width=60%>Changed the server socket writes to only call the winsock
+send() API once for most packets.</TD>
+
+<TD width=10%>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>20 Dec</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Changed rooms to store users' sessions, and use SendCopyPacket() to
+send movement and turn packets to clients, rather than sending each user
+object a Blakod message.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Dec</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Added an additional listening port (default is 9998) for maintenance
+and statistics gathering. A subset of admin mode is supported, in this
+mode called <I>maintenance mode</I>. The only command so far that is allowed
+is <TT>show usage</TT>.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>2 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Changed admin command <TT>delete account</TT> to work on accounts that
+are logged in, and made it accessible in maintenance mode.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>2 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Made admin commands <TT>create automated</TT> and <TT>set account password</TT>
+accessible from maintenance mode.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>All player suicides are logged with their account number, previous
+name, and new name in the debug.txt log.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>All player logins and logouts are logged by account number, not account
+name</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>In game mode, players are now hung up after no messages are received
+for 20 seconds. Players should still be ok after a long game save or reload
+sys.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Passwords are only changed if the old password is typed correctly.</TD>
+
+<TD>High confidence</TD>
+</TR>
+</TABLE>
+
+<H4>Client Changes</H4>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD width=5%>4 Dec</TD>
+
+<TD width=12%>CKirmse</TD>
+
+<TD width=60%>Changed all DM commands to use the DM prefix instead of the
+'Say' prefix. I.e. 'DM get all reagents' instead of 'say get all reagents'.</TD>
+
+<TD width=10%>High confidence</TD>
+</TR>
+
+<TR>
+<TD>4 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added client support for guest accounts. This is a bit too complicated
+to explain here.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD width=5%>9 Dec</TD>
+
+<TD width=12%>AKirmse</TD>
+
+<TD width=25%>Added scrolling textures on walls and floors. </TD>
+
+<TD width=10%>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Fixed stray pixels on a few walls, such as the arch over the river
+just outside Cor Noth.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Changed some DM commands. For example: 'DM good', 'DM evil' and 'DM
+neutral', 'DM item &lt;item name&gt;', 'DM monster &lt;monster name&gt;',
+and 'DM get &lt;itemtype' (example: DM get reagents).</TD>
+
+<TD>mid confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed the bar graphs to show the actual number, even when it's below
+the minimum or above the maximum bar value (example: &gt; 100 mana points).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added animated spell enchantment icons; for example, truce has a waving
+flag.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>11 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added the ability to change textures dynamically (such as the faerie
+forest walls).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>11 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added flickering lights.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>11 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added directional lighting (light that appears to come from the sun).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>11 Dec</TD>
+
+<TD>EHalley</TD>
+
+<TD>Changed package download dialog to resemble Win95 Explorer file copy
+with animation. Artwork not final. Artwork does not yet match non-gray
+dialog colors. </TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>11 Dec</TD>
+
+<TD>EHalley</TD>
+
+<TD>Changed text input box into a dropdown combo box, which records twenty
+recent commands. Commands that are invalid are not remembered, and two
+identical commands in a row are only remembered once. Commands generated
+by alias keys are not remembered. Should still be able to use edit box
+as usual.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>12 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added &quot;tellguild&quot; or &quot;tguild&quot; command--sends text
+to all members of your guild. Gives appropriate messages if you're not
+in a guild, or if you're the only one from your guild logged on.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added palette translations, which make objects appear in different
+colors. Probably the pants and the character faces will be the only things
+that use this feature in this release. The color of palette translated
+objects needs to be tested on the ground, in the inventory, while worn
+by players, as players move, etc.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Fixed the mail and news dialogs so that you can click anywhere on a
+row to select a message.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>19 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed object drawing routines and added darkness effect for the shadowform
+Riija spell. Need to verify that darkness, invisibility, and palette translation
+effects all work for objects on the ground, objects in the inventory, objects
+in dialogs, players standing, players walking, and players attacking. 
+<P>Further, check that your self-view head and 1st person overlays (sword,
+shield) turn invisible and dark when you cast those spells, and that palette
+translations work on those graphics too.</P>
+</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>19 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Players' names should now become darker as you move away from them,
+just as the player graphics themselves do.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>20 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Altered lag death check: a lag of 4-9 seconds at the time of death
+should register as a &quot;lag death&quot;, in which case you don't lose
+your inventory or your spell or skill %s. This needs to be thoroughly tested
+to see if we have picked good numbers for lag detection.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Don't show invisible players in the guild invitation list.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Display advertisement AVI files in the character selection dialog.
+Clicking on one of the animating bitmaps brings up the Web browser on an
+associated URL. If the client does a download consisting only of advertisements,
+a different download dialog is displayed, showing the message &quot;Performing
+routine maintenance&quot;.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed wading a little--you should be able to enter or leave an area
+with wading even if the wall around the wading area would normally be too
+high, as long as the step up you're making isn't too large.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Dec</TD>
+
+<TD>AKirmse</TD>
+
+<TD>When you cast illusionary form and change into a non-human, the self-view
+face area shows your new form.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>6 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>The map shows dots only for objects that would be visible in the normal
+view, as well as objects within a certain distance of the player.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>8 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Added a spinning cube latency indicator. It spins fast and is red when
+your latency is low, and slower and orange/yellow/green/blue when your
+latency is high. Right clicking on it brings up a description box. It should
+size itself correctly when the toolbar is added or removed.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>8 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed palette. Be on the lookout for missing or unpalettized artwork
+anywhere in the game.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed the map to always draw dots for players, regardless of distance.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Added a DM ECHO command for Actors. 'ECHO You sense an evil omen.'
+will show the message to everyone in the room. This is different from emote
+since it doesn't show who sends it. Useful mostly during roleplay events.
+Only those DMs with the Actor flag will be able to use the command. </TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Don't show invisible objects in look dialog boxes.</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Package download dialogs should have correct transparent look, even
+if user specifies puke green for their Win95 button colors. Should not
+appear as a big gray rectangle on non-standard colored dialogs. </TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Changed latency meter colors from &quot;spectral order&quot; to &quot;stoplight
+order&quot;. So a very good connection is green, medium ones go through
+yellow and gold, then bad ones are red and purple. Color changes should
+be very smooth, using a new dithering feature to draw in-between colors.
+</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Added DM PLAIN (normal), DM BLANK (completely invisible), DM ANONYMOUS
+(no name), and DM SHADOW (silhouette effect) for Actors. Note that some
+messages will be missing the person's name when they are anonymous: those
+will not be fixed. Other messages say 'Someone' if you're anonymous, such
+as when you talk or broadcast. </TD>
+
+<TD>High confidence</TD>
+</TR>
+</TABLE>
+
+<H4>Gameplay Changes (new gameplay elements or bug fixes)</H4>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD width=5%>4 Dec</TD>
+
+<TD width=12%>DSchubert</TD>
+
+<TD width=60%>Automatic unuse should now work, even for items that take
+more than one wear position, such as robes. Automatic unuse also works
+for weapons when a shield is used.</TD>
+
+<TD width=10%>High confidence</TD>
+</TR>
+
+<TR>
+<TD width=5%>6 Dec</TD>
+
+<TD width=12%>DSchubert</TD>
+
+<TD width=25%>Pressing space bar at coordinates 21,13 in the Wryn's Keep
+will no longer teleport you to Cor&nbsp;Noth.</TD>
+
+<TD width=10%>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>6 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You can now say the names of the new spells to the priestesses, and
+they will tell you how far you have to go to get them. Also, saying 'level
+five' to the priestesses will now mention those new spells.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>6 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>'Abandon guild hall' button now goes away after a guildmaster abandons
+a guild hall.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>6 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>'Fire' was reclassed as a Level 50 skill so that it would not mess
+up the learning curve of the skills that are actually in use. &nbsp;This
+makes it now possible to gain level 4 Weaponcraft.</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>6 Dec</TD>
+
+<TD>DSchubert </TD>
+
+<TD>DMs and Admins can no longer enter the underground lake without a key.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>6 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added &quot;orc teeth&quot; to lightning bolt's reagent description.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You can no longer 'stack' anti-magic auras. However, if a second spell-caster
+comes along and casts anti-magic aura, it will replace the old one if the
+new one is more powerful.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>If you kill an outlaw (not a murderer) or an innocent person with a
+fireball or lightning bolt spell, it used to brand you and outlaw (not
+a murderer). It should now brand you a murderer if you killed an innocent,
+and not brand you anything if you fireball an outlaw or murderer. </TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Forgetpotions have a new graphic.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>9 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Improved failure for shatter and swap - most notably, you get a message
+now if you cast shatter or swap and they are carrying nothing (or an item
+that is non-swappable or non-shatterable is chosen).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Dec</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Clicking on an invisible player (other than yourself) is now ignored;
+you no longer get the standard look dialog.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>6 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD><A HREF="http://meridian58/assgame.htm">Assassin's Game.</A> See link
+for further details. While I'm a brilliant coder, this is a substantial
+set of changes, and should probably be tested heavier than anything else.</TD>
+
+<TD>Test this to death</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>Dschubert</TD>
+
+<TD>Rumors were added to Cor Noth, Marion and Jasper innkeeper, telling
+of the Faronath's knack for ignoring Truce spells.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You may no longer use heal staffs in the arena if you are a non-combatant.
+You also may not use them unless the target is a combatant, and you may
+only use them when a match is in session.</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Arena Tournament mode now requires DM commands instead of 'say' commands.
+Some commands were shortened to be easier run. Actor running the tournament
+can now type 'DM&nbsp;arena help' to see his options.</TD>
+
+<TD>Mid to High.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Traditional arena matches extended to 5 minutes in length, other three
+types (last man standing, guild v guild &amp; battle royale) extended to
+9.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added a hellportal to the Meridian University. This portal may be toggled
+in and out of existence by a DM with the 'DM portal' command in the University.</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You may no longer Suicide while Out Of Grace With the Higher Powers.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>If you die while Out Of Grace With the Higher Powers, you no longer
+are teleported to the underworld (only known way to die in this fashion
+right now is with the amulet of shadows).</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You no longer can communicate with the outside world while in Out Of
+Grace, unless to a DM, and only then through tells. DMs are not affected.
+</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>There was a bug where anyone could say ACCEPT when the challenger challenged
+the champion (including the challenger!), forcing the champion to fight
+someone he didn't want to. Now, only a champion can accept the challenger's
+challenge.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>There was a bug where anyone could say ACCEPT during the 30 second
+'join' period of last man standing, guild vs guild, and battle royale combat.
+This bug has been removed.</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Monsters will now fight back in the arena. They will not attack non-combatants
+(although they may follow them around).</TD>
+
+<TD>High confidence.</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>At the end of an arena fight, if the watcher is in a room that is supposed
+to be an arena (such as the Tos Arena), all monsters in the room are deleted
+(excluding the watcher).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added a DM&nbsp;HELP command.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Put in a stub for old DM&nbsp;commands, telling them to type DM&nbsp;HELP&nbsp;to
+learn new DM commands.</TD>
+
+<TD>high confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Umbrella no longer works on immortals, although it does work on mortal
+admins.</TD>
+
+<TD>high confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Added a message to system to make a no-pk server. Enable by doing <TT>send
+obj 0 SetNoPKServer</TT>. </TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Shopkeepers in Tos and Barloque are now under political pressure to
+not serve the murderers. When a murderer tries to buy or offer to a &quot;lawful&quot;
+NPC, if there are others in the room, the NPC says loudly that they won't
+do business with thugs. The NPC also whispers to the murderer that they
+can come back alone later, when they can do business without soiling the
+NPC's reputation. </TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Added opening and closing messages and graphics for the &quot;book&quot;
+object type. Books still do nothing, but people nearby will notice you
+opening and closing a book. Books are still not for sale anywhere. </TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>Dschubert</TD>
+
+<TD>Added fairy forest: RIDS c1, c2, c3, a1, b1, b2, d1, d2. Connects to
+c4. Fairy forest tree textures range from very good to very bad, depending
+on # of good fairies/# of total fairies (80% = very good, 60% = good, etc).
+If all of the fairy forest rooms are either very good or very evil, then
+a mana node will appear in C2. See me for more details.</TD>
+
+<TD>Medium confidence.</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added armageddon spell, which kills all monsters in the room (deletes
+them actually, and leves no corpse or treasure). DM&nbsp;only spell.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added RID_K5, connected to badlands.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>15 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Forget potions can no longer be swapped.</TD>
+
+<TD>High confidnce.</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You no longer drop a black dagger when you die a conventional death.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16&nbsp;Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You no longer can give black daggers to NPCs as birthday gifts (for
+example, to Paddock).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Made all the timer values for the Assassin's Game dynamically setable
+so that testing can be sped up. Times set are in milliseconds.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Assassin Game Deaths now generate a corpse.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Weapons are now mendable.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Created new monsters faeries. Added to monster templates.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Unlocked the locked door to the old schoolhouse in Jasper.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Corrected the angle at which you are placed when you leave Solomon's
+Edibles in Cor Noth.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Removed Riija spells from Char creation.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Underworld portals no longer start all on right after a game recreate</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>16 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Locked the door tot he second Lover's Tryst in Tos.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>No Assassin's Games during tournaments.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan </TD>
+
+<TD>DSchubert</TD>
+
+<TD>Changed the way that damage is computed. Previously, resistance/susceptibilities
+were multiplied in AFTER attack modifiers such as Jewels of Froz or Bless
+spells were figured in. Now this multiplier happens BEFORE. Should result
+in most things generally doing less damage.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Newbies can no longer enter guild halls. Guild halls are no longer
+killing zones.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You now get a message if you attempt to pick something up after a kill
+but fail. Please test all sorts of get item possibilities to besure I didn't
+miss anything.</TD>
+
+<TD>Test this to death.</TD>
+</TR>
+
+<TR>
+<TD>17 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Tokens and daggers are not affected by 'clear inventory'</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Rook no longer sends you to Rook.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Bug in Revenants fixed. Revenants should now be extremely hard on people
+who kill multiple people at once. (BUg pretty much prevented them from
+appearing at all).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Removing a shadow amulet will no longer set your personal light to
+full on for all time.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>17 Jan </TD>
+
+<TD>DSchubert</TD>
+
+<TD>Gave rook a function that will allow him to automatically remove guardian
+angels. This will only work on the beta server if we want it to.</TD>
+
+<TD>Mid confidence.</TD>
+</TR>
+
+<TR>
+<TD>17 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You can no longer advance by casting weapon enchantments on weapons
+that already have enchantments.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+</TABLE>
+
+<P><B>Kod architecture and infrastructure.</B></P>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD>15 Dec</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Added a room hash table to system.kod. All room lookups are performed
+using the hash table instead of a list. As of 1/7/97, the list lookup is
+still used to verify that the hash table is working correctly, and discrepancies
+are printed to debug.txt</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD width=5%>18 Dec</TD>
+
+<TD width=12%>DSchubert</TD>
+
+<TD width=60%>Added CanEnchant routine. All three enchantment spells now
+check this to see if a target weapon can be enchanted. All weapons should
+be enchantable, unless they already have an enchantment of some form. Black
+Daggers may not be enchanted.</TD>
+
+<TD width=10%>Mid confidence.</TD>
+</TR>
+
+<TR>
+<TD width=5%>18 Dec</TD>
+
+<TD width=12%>DSchubert</TD>
+
+<TD width=25%>Added CanMend routine. Returns&nbsp;TRUE if the item can
+be affected by reparations (such as the mend spell). Should return true
+for weapons, armor, helmets (and circlets), and shields, but not the black
+dagger, or any other item. </TD>
+
+<TD width=10%>Mid confidence.</TD>
+</TR>
+
+<TR>
+<TD>18 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added CanShatter routine. Returns TRUE&nbsp;if an item can be shattered.
+&nbsp;Currently, returns true for all items except for tokens and black
+daggers.</TD>
+
+<TD>Mid confidence.</TD>
+</TR>
+
+<TR>
+<TD>18 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added CanSwap routine. Returns TRUE if an item can be swapped or stolen.
+Returns true for all items except for black daggers.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>18 Dec</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added CanWeaken routine. Returns TRUE if an item can be weakened by
+some artificial means (for example, a Brittle spell). Currently, only returns
+FALSE for black daggers, but weapons are the only thing that can be affected
+by brittle currently.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added minor change to communication for new Out of Grace properties
+to work. &nbsp;General communication (tell, say, broadcast) should be quickly
+doublechecked.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>7 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Changed general log off procedures internally, regarding items a player
+is carrying. Check guild invitations, ring of fire resistance, ring of
+invis, torches and tokens to see if they still behave properly when their
+owners log off.</TD>
+
+<TD>Mid confidence.</TD>
+</TR>
+</TABLE>
+
+<H3>
+<HR WIDTH="100%"></H3>
+
+<H3><A NAME="addon"></A>To use this system with the Netscape Editor*</H3>
+
+<P>--Outdated, unnecessary.--</P>
+
+<P>* I use the Netscape editor instead of Frontpage because (a) it's easier
+to get around in than Frontpage, (b) we all can get copies easily, and
+(c) it's far easier to work with tables in Netscape than in frontpage.
+</P>
+
+</BODY>
+</HTML>

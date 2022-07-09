@@ -92,7 +92,7 @@ public:
 
 //{{TLevelProgressDialogRSP_TBL_BEGIN}}
 protected:
-	void EvSize (UINT sizeType, TSize& size);
+	void EvSize (UINT sizeType, const TSize& size);
 	void EvPaint ();
 //{{TLevelProgressDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TLevelProgressDialog);

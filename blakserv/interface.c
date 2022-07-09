@@ -396,8 +396,8 @@ void InterfaceAddList(int session_id)
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
-	ListView_SetItemText(hwndLV,index,2,ShortTimeStr(s->connected_time));
-	ListView_SetItemText(hwndLV,index,3,GetStateName(s));
+	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
 	LeaveServerLock();
@@ -450,8 +450,8 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
-		ListView_SetItemText(hwndLV,index,2,ShortTimeStr(s->connected_time));
-		ListView_SetItemText(hwndLV,index,3,GetStateName(s));
+		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}
 	LeaveServerLock();
@@ -543,7 +543,7 @@ void StartAsyncSession(session_node *s)
 }
 
 /* this cannot be called from main thread, causes problems!!!!!! */
-void __cdecl StartupPrintf(char *fmt,...)
+void StartupPrintf(const char *fmt,...)
 {
 	char s[200];
 	va_list marker;
@@ -955,7 +955,7 @@ void InterfaceCheckChannels()
 		if (num_items >= CHANNEL_INTERFACE_LINES)
 			ListBox_DeleteString(hwndList,0);
 		ListBox_AddString(hwndList,cb->buf);
-		ListBox_SetTopIndex(hwndList,max(0,num_items-1));
+		ListBox_SetTopIndex(hwndList,std::max(0,num_items-1));
 		SendMessage(hwndList,WM_SETREDRAW,TRUE,0);
 		
 		DoneChannelBuffer();
@@ -1065,8 +1065,8 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
 	screen_width  = GetSystemMetrics(SM_CXSCREEN);
 	screen_height = GetSystemMetrics(SM_CYSCREEN);
 	
-	x = max(0, min(x, screen_width  - rcDlg.right));
-	y = max(0, min(y, screen_height - rcDlg.bottom));
+	x = std::max(0, std::min(x, (int) (screen_width  - rcDlg.right)));
+   y = std::max(0, std::min(y, (int) (screen_height - rcDlg.bottom)));
 	
 	SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }
@@ -1264,7 +1264,7 @@ void InterfaceUpdateAdmin()
 	InvalidateRect(hwnd,NULL,TRUE);
 }
 
-void FatalErrorShow(char *filename,int line,char *str)
+void FatalErrorShow(const char *filename,int line,const char *str)
 {
 	char s[5000];
 	

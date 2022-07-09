@@ -61,12 +61,6 @@ messages:
 
    % General combat messages:
 
-   % Overriden from superclass.  Can't parry arrows.
-   CanParry()
-   {
-      return FALSE;
-   }
-
    % Finds ammo and uses it if not used.
    FindLikelyAmmo(who=$,report=FALSE)
    {

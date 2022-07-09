@@ -1,0 +1,67 @@
+-----------------------------------------------
+Welcome to Meridian(tm)59: Vale of Sorrow
+
+WARNING!  DO NOT INSTALL THIS SOFTWARE 
+until the date specified at
+http://meridian.3do.com/update/.
+
+If you install this software before that 
+date, you will not be able to play 
+Meridian 59.
+
+WARNING!  The install process will erase 
+your old game map files.  You will need to 
+revisit rooms in order to rebuild your map 
+files.  This was an unfortunate side-
+effect of the substantial improvements 
+made to the game.
+
+-----------------------------------------------
+
+Meridian 59, the world's number one next 
+generation Internet-based RPG, just got 
+bigger, more exciting, and more mysterious 
+than ever with new areas, new monsters and 
+new quests to solve.
+
+Explore a mysterious forest ruled by 
+enchanting but deadly faeries and discover 
+a secret source of magical power.
+
+Enter the deadly Meridian Assassin game 
+with your fellow players where stealth and 
+skill, not brute force, are the key to 
+winning.
+
+Challenge a horrible new foe, the Lupogg, 
+in the eerie depths beneath Barloque.
+
+Customize your character with colorful new 
+clothing options.
+
+Instantly verify the quality of your 
+Internet connection with a graphical 
+latency meter.
+
+Use expanded aliases and improved guild 
+communications to keep in touch with your 
+friends.
+
+Screen out annoying language with a new 
+text filter.
+
+You can obtain additional information 
+about Meridian 59 at the 3DO Meridian web 
+site, http://meridian.3do.com/.  Please 
+look there for news about upgrades and 
+troubleshooting.  For gameplay questions, 
+please check the help file by pressing F1 
+from Meridian.  Gameplay hints and tips 
+are also available at 1-900-225-5336.  For 
+technical support issues send e-mail to 
+meridian59-support@3do.com or call 1-415-
+261-3454.
+
+See you in the game!
+-----------------------------------------------
+

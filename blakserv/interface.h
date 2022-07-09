@@ -22,7 +22,7 @@ void StoreInstanceData(HINSTANCE hInstance,int how_show);
 
 int GetUsedSessions(void);
  
-void __cdecl StartupPrintf(char *fmt,...);
+void StartupPrintf(const char *fmt,...);
 void StartupComplete(void);
 
 void InterfaceUpdate(void);
@@ -41,6 +41,6 @@ HANDLE StartAsyncNameLookup(char *peer_addr,char *buf);
 void StartAsyncSession(session_node *s);
 void StartAsyncPortalSocket(SOCKET sock);
 
-void FatalErrorShow(char *filename,int line,char *str);
+void FatalErrorShow(const char *filename,int line,const char *str);
 
 #endif

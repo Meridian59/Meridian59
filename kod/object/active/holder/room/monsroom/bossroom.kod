@@ -361,7 +361,7 @@ messages:
 % cleanup %
 %%%%%%%%%%%
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    {
       % Don't allow portals here, or boss might get out
       return false;

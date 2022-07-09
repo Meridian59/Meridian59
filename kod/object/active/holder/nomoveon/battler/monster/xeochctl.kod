@@ -70,7 +70,7 @@ classvars:
    viTreasure_type = TID_NONE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT \
                         | AI_MOVE_REGROUP | AI_MOVE_WALKTHROUGH_WALLS
-   viAttack_types = ATCK_WEAP_MAGIC
+   viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 150
    viDifficulty = 8
    viSpeed = SPEED_AVERAGE

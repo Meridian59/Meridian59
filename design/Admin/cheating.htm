@@ -1,0 +1,623 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Cheating Detection in Meridian</title>
+  </head>
+  <body>
+    <h1>Cheating detection in Meridian 59</h1>
+    <span style="font-weight: bold;">Author:</span> Brian
+    Green&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; &nbsp;<span style="font-weight: bold;">Last
+      updated:
+    </span>Sept. 23, 2004<br>
+    <br>
+    This document explains the various ways the game checks for
+    cheating..
+    <h2>General Information</h2>
+    Almost all cheating detection shows up in the debug log and begins
+    with
+    the word "ALERT!" in all capitals.
+    <p>In general, we prefer to detect people instead of simply stopping
+      them.&nbsp; Players that try to abuse the system one way are most
+      likely
+      the same people willing to abuse the system in other ways.&nbsp;
+      In
+      addition, some fixes are imperfect.&nbsp; If we simply stopped
+      people
+      from using the cheat, they would keep working until they found out
+      how
+      they can use the cheat without being stopped.&nbsp; For example,
+      even
+      though Half-Life has a way to detect the speedhack, some people
+      have
+      figured out that if you don't use the speed boost all the time you
+      can
+      avoid detection.</p>
+    <h4>Log Limitaions and how to reset them.</h4>
+    <b>Note:</b> The system will only generally track 25 suspected
+    problems.&nbsp; This is to prevent the debug log from overflowing
+    with
+    alerts from a blatant cheater.
+    <p>An admin can reset the logging restrictions on a player so that a
+      player that has hit the maximum logging can continue to be
+      logged.&nbsp;
+      One way is to manually reset the <i>piCheaterLogs</i> value in a
+      player.&nbsp; The other way is to send the message <i>ResetCheaterLogs</i>
+      to the player object.&nbsp; To do this globally for all players
+      you can
+      issue the command:<i>send class user ResetCheaterLogs</i> in the
+      admin
+      window or server console.<br>
+      <br>
+    </p>
+    <h2>Speedhack Detection</h2>
+    <h3>What is it?</h3>
+    Speedhack is a program that allows people to move faster than they
+    should.&nbsp; As far as I understand it, the program tricks the
+    computer
+    and client into thinking it is running slower than it really
+    is.&nbsp;
+    The client uses the computer's timing to limit movement, so it tries
+    to
+    speed up movement since it thinks it is running slower.&nbsp; Since
+    the
+    computer is really running at normal speed, this results in super
+    speed
+    for the character.
+    <h3>What do we detect and how does the game react?</h3>
+    The Meridian 59 client sends a movement update once per
+    second.&nbsp; A
+    client affected by speedhack sends many more updates per
+    second.&nbsp;
+    In addition, the speedhacker travels faster than normal, obviously.
+    <p>Our first layer of defense is to check for movement
+      packets.&nbsp;
+      As stated, we should get one movement packet per second, even in
+      lag.&nbsp; This means that if the user sends more than one packet
+      per
+      second, they are probably cheating.&nbsp; The game allows the
+      player to
+      send 2 more packets than the duration of movement should expect;
+      this
+      is
+      to allow for some leeway for strange cases of a player lagging a
+      lot.<br>
+    </p>
+    <p>The second layer of defnese is to detect large movements without
+      the
+      corresponding lag in reporting movements.&nbsp; If a player moves
+      a
+      large distance and it wasn't enough time since the previous
+      movement
+      message, then the player may have teleported in the room.&nbsp;
+      The
+      game
+      considers that a <a href="#squareddistance">squared distance</a>
+      of&nbsp; 200 or more with the previous message happening less than
+      3
+      seconds ago as worthy of flagging.<br>
+    </p>
+    <p>Note that we ignore any movement that happens between
+      rooms.&nbsp;
+      So, if a player ends up in a different room than the original,
+      there
+      will be no message.</p>
+    <p>Also, DMs and above will never be checked.&nbsp; Due to their
+      teleportation powers, they would regularly trip the detection
+      mechanism.</p>
+    <p>The game does not do anything about speedhackers due to the
+      complexity of trying to stop them, not wanting to give them a
+      "test"
+      harness to test alterations to the code, and the likelyhood of
+      punishing
+      false positives. </p>
+    <h3>What do the detection messages look like?</h3>
+    There are two messages for detecting speedhack use.&nbsp; Note that
+    the
+    examples below may not be exactly as what would show up in the
+    game.&nbsp; For example, line numbers may change with edits.&nbsp;
+    Also,
+    the coordinates and RIDs used may reflect not actual game
+    information.
+    <p>The first message detects too many movement packets sent on
+      average.<br>
+    </p>
+    <p><tt>Mar&nbsp; 2 2003 02:14:50|[user.bof (2461)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6845, is moving too fast.&nbsp; Has
+        moves
+        count
+        of 3, Possible speedhacker.<br>
+      </tt></p>
+    The line indicates how many more packets on average they have
+    sent.&nbsp; In this case, they have sent 3 more packets than the
+    number
+    of seconds they have been moving.&nbsp; A probable speedhacker. <br>
+    <br>
+    The second message detects speedhack movement that is above and
+    beyond
+    what is expected for the short delay since last update..<br>
+    <p><tt>Mar&nbsp; 2 2003 04:14:55|[user.bof (2481)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6845, moved ,221, with only ,1, seconds
+        since
+        last movement update.</tt><br>
+      <tt>Mar&nbsp; 2 2003 04:14:55|[user.bof (2482)] Additional: ,GriEf
+        PkeR!, went from (,2,15,) to (,12,15,) in RID ,951, Possible
+        speedhacker.<br>
+      </tt></p>
+    <p>The first line provides the information needed in a
+      nutshell.&nbsp;
+      It provides the name and account/object info of the suspected
+      cheater.&nbsp; It shows the <a href="#squareddistance">squared
+        distance</a>
+      the character moved as well as the time since the last movement
+      update.&nbsp; In this case, someone moved about three times as
+      fast as
+      they should have moved in one second.&nbsp; Note that this message
+      should not print if the user ends up in the blink position in the
+      room
+      (i.e., has probably just finished casting the "blink" spell.)<br>
+    </p>
+    <p>The second line provides more information that can be used to see
+      if
+      the person really is a cheater.&nbsp; This includes the starting
+      and
+      ending (row, column) pairs and which RID (by number) the move
+      happened
+      in.&nbsp; This allows administrators to check to see if this would
+      be
+      normally possible due to special conditions in the room, the
+      player
+      ending up in the safe teleport coordinates (an indication they
+      blinked
+      or were teleported there for some reason).<br>
+    </p>
+    <h3>What about false positives?</h3>
+    <span style="font-weight: bold;">NOTE:</span>&nbsp; Currently, the
+    move
+    packet tracking is giving many false positives.&nbsp; For now, this
+    tracking is not trustworthy.<br>
+    <br>
+    Unfortunately, this is not an exact science.&nbsp; The code can only
+    detect what it is told and sometimes flukes happen.&nbsp; False
+    positives, times when a player is detected as cheating when they
+    most
+    likely are not, exist and must be watched for.<br>
+    <p>As mentioned above, any movement that happens between rooms is
+      ignored, which cuts down on some false positives.&nbsp; All
+      notifications are for movement made in a single room.</p>
+    <p>There are certain instances when the cleint sends more than one
+      update per second as part of the game. These include times when
+      the
+      player walks over active items, like firewalls and lightning walls
+      and
+      the hotplates in guild halls.&nbsp; Also, hitting the space bar
+      frequently will send more frequent move updates.&nbsp; A player in
+      these
+      situations may trigger the detection mechanism even though they
+      might
+      not be cheating.&nbsp; The movement counter should compensate for
+      these
+      situations and not give a false high value in most cases.&nbsp;
+      Wall
+      spells have caused problems in the past, so be aware of this
+      situation.<br>
+    </p>
+    <p>A good administrator should check for special conditions in the
+      teleport checks.&nbsp; Blinking will almost always set it off.<br>
+    </p>
+    <p>In general, a player that has a lot of log entries in a very
+      short
+      period of time has a higher probability of being a cheater than
+      the
+      player that sets off the detection a few times over a long period
+      of
+      time.&nbsp; It is recommended that you take user complaints into
+      account
+      if there is any doubt if a player is cheating.</p>
+    <h3>Other Information</h3>
+    <h4><a name="squareddistance"></a><b>Squared Distance:</b></h4>
+    We use squared distances because they are easy to calculate.&nbsp;
+    We
+    use the Pythagorean theorm to detect this.&nbsp; So, if a player
+    moves
+    from (old row, old col) to (new row, new col), we can find the
+    squared
+    distance between the points as:
+    <p>((old row - new row) * (old row - new row)) + ((old col - new
+      col) *
+      (old col - new col))</p>
+    <p>Taking a square root is a very expensive operation, so we just
+      use
+      the squared distance.<br>
+      <br>
+    </p>
+    <h2>Running without Vigor</h2>
+    <h3>What is it?</h3>
+    There is a program that tricks the client into running, even though
+    their vigor is too low.&nbsp; Previously, this was only checked on
+    the
+    client side.<br>
+    <h3>What do we detect and how does the game react?</h3>
+    We check to see if the client sent a higher speed value than is
+    allowed
+    by vigor.&nbsp; If the player is trying to "run" without the proper
+    vigor, then we flag it.&nbsp; The player is also moved back to the
+    previous location they were at when they tried to run without vigor.<br>
+    <h3>What do the detection messages look like?</h3>
+    There is only one message associated with this detection:
+    <p><tt>Mar&nbsp; 2 2002 10:56:27|[user.bof (4684)] ALERT! Player
+        ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, was running with no vigor.</tt> </p>
+    <p>It gives player name and account/object information.&nbsp; Pretty
+      simple. </p>
+    <h3>What about false positives?</h3>
+    I fear that there may be cases where lag will prevent a client from
+    being properly updated with the amount of vigor a player has but
+    would
+    still allow a player to run.&nbsp; This has not been properly
+    tested,
+    but it should be kept in mind.&nbsp; If this message is repeated
+    many
+    times in rapid order, it is probably a strong indication of a
+    cheater
+    (since the server is getting updates, the client is probably getting
+    the
+    proper updates as well).<br>
+    <br>
+    <h2>Attacking or casting spells on targets "behind" the player<br>
+    </h2>
+    <h3>What is it?</h3>
+    There is a program that allows the player to attack or cast a spell
+    at
+    any object within the room, even if it is not in the view of the
+    client.<br>
+    <h3>What do we detect and how does the game react?</h3>
+    The game already checked for range for the weapon or spell, so that
+    is
+    not a concern.&nbsp; However, the server relied on the client for
+    the
+    "field of view" of the player, and what they could hit.&nbsp; The
+    program allows people to hit targets that were not in the client
+    graphic
+    window's view.<br>
+    <br>
+    "Behind" the player is defined as behind the line defined by the
+    cardinal and in-between directions that are the closest to being
+    perpendicular to the player's direction vector.&nbsp; For example,
+    if
+    the player is facing mostly east, then the cardinal direction
+    direction
+    line runs north/south; in essense, anything that is further west
+    than
+    the layer is "behind" him or her.&nbsp; The more interesting cases
+    are
+    when the player is facing one of the corner directions.&nbsp; The
+    code
+    calculates the equation of the line using the point-slope formula
+    and
+    determines which side of the line the target is.&nbsp; The target
+    must
+    also be at least 1 unit away from the player in order to be
+    considered
+    behind the user.<br>
+    <br>
+    The server sends a message that appears to be the default "not in
+    view"
+    message that the client gives if you try to attack something that's
+    not
+    in view.<br>
+    <h3>What do the detection messages look like?</h3>
+    There is only one message associated with this detection:
+    <p><tt>Mar&nbsp; 2 2002 10:56:27|[player.bof (3810)] ALERT! Player
+        ,GriEf PkeR!,ACCOUNT 313 OBJECT 6856, at [,34,25,] and angle ,0,
+        tried
+        to hit ,Victim,ACCOUNT 665 OBJECT 31029, at [,34,20,] that was
+        behind
+        them.</tt> </p>
+    <p>It gives player name and account/object information and the
+      object
+      targetted.&nbsp; We also give the coordinates and the angle of the
+      attacker.&nbsp; Angle in Meridian are as follows:&nbsp; Due East
+      is
+      angle 0, and every 90 degrees is another 1024 angle units going
+      clockwise.&nbsp; Therefore, due south is 1024, and southwest is
+      1536.<br>
+    </p>
+    <h3>What about false positives?</h3>
+    There seems to be a good number of false positives generated by the
+    movement lag
+    between the client and the server's positions.&nbsp; This does not
+    look
+    to be a reliable way to find cheaters without further verification.<br>
+    <h3>Other information</h3>
+    The game penalizes any attack or spell on a target that is not
+    considered in visible range.&nbsp; Currently, the game makes spells
+    fizzle or attacks miss 2/3rds of the time if the target is behind a
+    wall.&nbsp; This is in response to people casting spells on targets
+    from
+    across town.&nbsp; Note that this also hinders "safe spots" that
+    players
+    stand at in order to avoid being hit by enemies.&nbsp; This behavior
+    cannot be completely shut down because of the way players move on
+    fine
+    coordinates and monsters move on the large coordinates, plus the
+    fact
+    that room information does not take movable sectors into
+    consideration
+    for calculating line of sight.<br>
+    <br>
+    <h2>Forced Offer Detection</h2>
+    <h3>What is it?</h3>
+    There is a program that exploits the Windows foundation of the
+    client
+    and allows people to use normally disabled buttons and
+    messages.&nbsp;
+    Using this program, people were able to force an offer to be
+    finished
+    without the other person accepting the initial offer.&nbsp; This
+    meant
+    that they could force people to take harmful items, such as the
+    amulet
+    of shadows, without consent.
+    <h3>What do we detect and how does the game react?</h3>
+    We check to see if a player tries to finish an offer without the
+    other
+    player accepting the offer.&nbsp; We accomplish this by flags in the
+    user object.
+    <p>Once the other person accepts the offer by making a counter
+      offer, a
+      flag is set in the original offerer's user.&nbsp; If this flag is
+      NOT
+      set when the original player tries to finish the offer, the offer
+      is
+      cancelled and not completed.&nbsp; We then write a notice to the
+      debug
+      log.</p>
+    <h3>What do the detection messages look like?</h3>
+    There is only one message associated with this detection:
+    <p><tt>Mar&nbsp; 2 2002 10:56:27|[user.bof (4684)] ALERT! Player
+        ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, tried complete an offer without
+        the
+        other
+        person accepting.</tt> </p>
+    <p>It gives player name and account/object information.&nbsp; Pretty
+      simple. </p>
+    <h3>What about false positives?</h3>
+    There is no chance for a false positive, barring the possibility of
+    bugs in the detection code.&nbsp; Anyone that is caught by this code
+    is
+    most likely a cheater.<br>
+    <br>
+    <h2>Forced Globe Posting Detection</h2>
+    <h3>What is it?</h3>
+    Using a program similar to the forced offer detection, players can
+    post
+    on globes they would not normally be allowed to.&nbsp; Even though
+    this
+    leaves a telltale message as to who did it, we still log the
+    infraction
+    for later use.
+    <h3>What do we detect and how does the game react?</h3>
+    We do a double-check for permissions before we allow the article to
+    be
+    written.&nbsp; The game stops any unauthorized posting from going
+    on.
+    <h3>What do the detection messages look like?</h3>
+    <b>Note</b>: The detection code is currently NOT working, even
+    though
+    posts are stopped.
+    <p>There is only one message associated with this detection:</p>
+    <p><tt>Mar&nbsp; 1 2002 11:36:21|[news.bof (107)] ALERT! Player
+        ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, tried to write to a newsglobe
+        without
+        permission.</tt></p>
+    <p>It gives player name and account/object information.</p>
+    <h3>What about false positives?</h3>
+    There is no chance for a false positive, barring the possibility of
+    bugs in the detection code.&nbsp; Anyone that is caught by this code
+    is
+    almost certainly a cheater.<br>
+    <br>
+    <h2>Bad Characters in Character Bios</h2>
+    <h3>What is it?</h3>
+    An old trick.&nbsp; A player tries to trick the server's profanity
+    filter into overloading by using repeated non-standard
+    characters.&nbsp;
+    Enough of these characters would lag the server, and too many of
+    them
+    would crash it entirely.
+    <p><b>Note</b>:&nbsp; The server side profanity filter is currently
+      disabled. </p>
+    <h3>What do we detect and how does the game react?</h3>
+    The client detects if the person tries to set their bio with all the
+    characters.&nbsp; It then sends a "broadcast" message to the server
+    that
+    contains a sequence of color codes that is impossible for the client
+    to
+    send under normal circumstances.
+    <p>In order to prevent people from flooding the logs, we limit the
+      number of logs to 10.&nbsp; Note that this uses the same log count
+      as
+      the speedhack system above.</p>
+    <p>The client blocks these changes from happening.</p>
+    <h3>What do the detection messages look like?</h3>
+    There are a few messages that deal with this cheat, depending on the
+    serverity
+    <p>The first one is for people that use a small number of
+      characters,
+      generally in order to just lag the server instead of crash it.</p>
+    <p><tt>Mar&nbsp; 3 2002 01:06:06|[user.bof (3346)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, used more than 20 bad chars in
+        their
+        bio.&nbsp; Watch for multiple occurrences.</tt></p>
+    <p>It gives player name and account/object information and a
+      notification of the number of bad characters.</p>
+    <p>The second message if for more flagrant abusers.</p>
+    <p><tt>Mar&nbsp; 3 2002 01:09:26|[user.bof (3351)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, used more than 50 bad chars in
+        their bio.</tt></p>
+    <p>Again, it gives player name and account/object information and a
+      notification of the number of bad characters.</p>
+    <h3>What about false positives?</h3>
+    There is no chance for a false positive, barring the possibility of
+    bugs in the detection code.&nbsp; I did not write this code myself,
+    so
+    I
+    do not know the accuracy of it.&nbsp; Anyone that is caught by this
+    code
+    is almost certainly a cheater, however.<br>
+    <br>
+    <h2>Distance Trading With Players and NPCs</h2>
+    <h3>What is it?</h3>
+    Using a cheat program players were able to trick the client into
+    thinking that some random item was a particular NPC.&nbsp; Players
+    could
+    interact with the NPC as normal, offering them items for sale.&nbsp;
+    This was rather convenient for some players, as they could go to
+    hard-to-reach areas and not have to return for quite some time.
+    <h3>What do we detect and how does the game react?</h3>
+    We simply detect if the NPC's owner and the player's owner are the
+    same.&nbsp; If not, we flag the interaction.&nbsp; The interaction
+    is
+    also stopped without success.
+    <h3>What do the detection messages look like?</h3>
+    There are three messages for this, one for offering to NPCs, one for
+    buying from NPCs, and one for offering to players..
+    <p><tt>Mar&nbsp; 3 2002 01:06:06|[monster.bof (1891)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, offered items to NPC ,Paddock,
+        from
+        distant RID, 828</tt> </p>
+    <p><tt>Mar&nbsp; 3 2002 01:06:06|[monster.bof (3092)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, tried to buy items from ,Paddock,
+        while
+        in distant RID, 828</tt></p>
+    <p><tt>Mar&nbsp; 3 2002 01:26:06|[user.bof (4424)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, in RID ,2, offered items to
+        ,GriEf
+        MUlE!,ACCOUNT 314, object 7841, in distant RID, 828</tt></p>
+    <p>It gives player name and account/object information, which NPC or
+      player they tried to interact with, and the RID of the room they
+      were
+      in.</p>
+    <h3>What about false positives?</h3>
+    There have been a few detections of players offering to other
+    players
+    in adjacent rooms. &nbsp;This could be from players having an offer
+    window open while going to another zone.&nbsp; Players flagged with
+    this
+    message are most likely cheaters if they are not in adjacent zones..<br>
+    <br>
+    <h2>Distance Trading With Chests<br>
+    </h2>
+    <h3>What is it?</h3>
+    Similar to distance trading with players, &nbsp;some cheaters can
+    make
+    the client think an object is a distant chest to store items in.
+    <h3>What do we detect and how does the game react?</h3>
+    We detect if the player's owner is the same as the chests's true
+    owner
+    since the server knows the true location of both. &nbsp;If the
+    owners
+    are not the same, then the system flags the user and disallows the
+    transaction.
+    <h3>What do the detection messages look like?</h3>
+    There are two messages for this, one for taking from, and one for
+    putting stuff into chests..
+    <p><tt>Oct&nbsp; 3 2002 09:16:03|[storebox.bof (112)]
+        ALERT!&nbsp;&nbsp;</tt><tt>GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856,</tt><tt> in RID ,100, taking from
+        distant
+        chest in RID ,10013</tt></p>
+    <p><tt>Oct&nbsp; 3 2002 11:16:30|[storebox.bof </tt><tt>(1372)]&nbsp;</tt><tt>ALERT!&nbsp;&nbsp;</tt><tt>GriEf
+PkeR!,ACCOUNT
+        313 OBJECT 6856,</tt><tt> in RID ,101, putting into
+        distant chest in RID</tt><tt> ,10013<br>
+      </tt></p>
+    <tt>The messages show the user and the room IDs of the cheater and
+      the
+      chest.<br>
+    </tt>
+    <p><tt></tt></p>
+    <h3>What about false positives?</h3>
+    As with distant trades with players, there may be a few false
+    positives. &nbsp;Check for adjacent room IDs. &nbsp;Otherwise, any
+    player flagged with this message is most likely cheating.<br>
+    <br>
+    <h2>Putting Objects Directly into Player Inventories</h2>
+    <h3>What is it?</h3>
+    By tricking the client, the cheater makes the game think that an
+    object
+    is a player with the same attributes as a chest. &nbsp;In other
+    words,
+    the cheater can put objects directly into the player's inventory
+    without
+    the regular offer checks.
+    <h3>What do we detect and how does the game react?</h3>
+    We check to see if the object that the player is putting stuff into
+    is
+    actually a Player. &nbsp;If so, we flag them and disallow the
+    transaction.
+    <h3>What do the detection messages look like?</h3>
+    There is only one message associated with this detection:
+    <p><tt>Mar&nbsp; 2 2002 10:56:27|[user.bof (3215)]
+        ALERT!&nbsp;&nbsp;</tt><tt>GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856,</tt><tt> tried to 'put' items
+        into
+        player
+        ,Innocent Victim,Account 101 OBJECT 1343<br>
+      </tt></p>
+    <p>The message gives information about the cheater and the target or
+      victim.</p>
+    <h3>What about false positives?</h3>
+    There is no chance for a false positive, barring the possibility of
+    bugs in the detection code.<br>
+    <br>
+    <h2>Duping<br>
+    </h2>
+    <h3>What is it?</h3>
+    Using a cheat, players were able to duplicate any Number Item (also
+    called "stacked items").&nbsp; They were able to trick the client
+    into
+    offering the same object twice by altering memory addresses.&nbsp;
+    Due
+    to the way the server handled number items the game would add the
+    number of the stack to another stack twice, effectively doubling the
+    stack.&nbsp; This is most commonly used on money since it has no
+    weight.<br>
+    <h3>What do we detect and how does the game react?</h3>
+    We detect if a player tries to offer&nbsp; the same item or put the
+    same item into a chest multiple times.&nbsp; This is done every
+    offer
+    or "put" command.<br>
+    <h3>What do the detection messages look like?</h3>
+    There are three messages for this:<br>
+    <p><tt>Sep 11 2004 21:26:44|[user.bof (4687)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, tried to offer a duplicate item
+        to,Psychochild,ACCOUNT 3 OBJECT 66,.</tt> </p>
+    <p><tt>Sep 11 2004 22:29:13|[user.bof (5069)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, tried to counter-offer a
+        duplicate item
+        to Paddock,OBJECT 1234,.</tt>
+    </p>
+    <p><tt>Sep 11 2004 23:11:04|[user.bof (3665)] ALERT! ,GriEf
+        PkeR!,ACCOUNT 313 OBJECT 6856, tried to put a duplicate item in
+        a chest.</tt></p>
+    <p>It gives player name and account/object information, which NPC or
+      player they tried to interact with, and the RID of the room they
+      were
+      in.<br>
+    </p>
+    <h3>What about false positives?</h3>
+    There should not be false positives for this detection, barring bugs
+    in
+    the detection code.<br>
+    <br>
+  </body>
+</html>

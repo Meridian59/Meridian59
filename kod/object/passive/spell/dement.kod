@@ -138,8 +138,8 @@ messages:
    {
       local iDuration;
 
-      % 5-30 minutes
-      iDuration = (300 + 16*iSpellPower) * 1000;
+      % 1-3 minutes
+      iDuration = (300 + 16*iSpellPower) * 100;
 
       return random(iDuration/2,iDuration);
    }

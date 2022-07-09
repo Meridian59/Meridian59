@@ -20,7 +20,7 @@ static Resource *resources;
 static const int RSC_VERSION = 4;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
-static void Error(char *fmt, ...);
+static void Error(const char *fmt, ...);
 
 /************************************************************************/
 /*
@@ -55,7 +55,7 @@ void Usage(void)
    exit(1);
 }
 /**************************************************************************/
-void Error(char *fmt, ...)
+void Error(const char *fmt, ...)
 {
    char s[200];
    va_list marker;

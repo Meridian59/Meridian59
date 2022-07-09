@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <title>Blakod Notes</title>
+</head>
+<body>
+<h1>Blakod Coding Standard<br>
+</h1>
+By: Brian
+Green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Date: August 10, 2004
+<h2>Purpose:</h2>
+The purpose of this document is provide a coding standard for the
+Blakod scripting language.<br>
+<h3>Line Length</h3>
+All text should be formatted to be readable at 80 column width.&nbsp;
+Any text that goes beyond this length should be reformatted to be fit
+on a new line.<br>
+<h3>Indentation</h3>
+Indentation should use spaces instead of tabs.&nbsp; Indentation should
+be three spaces.<br>
+<br>
+Indentation should be used to indicate scope and association.<br>
+<h3>Statements</h3>
+There should only be one statement per line.&nbsp; Putting multiple
+statements on a single line should be avoided.<br>
+<br>
+Statements that are broken up due to line length should be logical and
+properly indented.&nbsp; Operators should be place at the beginning of
+a new line.<br>
+<br>
+<span style="font-weight: bold;">Examples:</span><br>
+<pre>% One statement per line<br>a = a + 1;<br>b = b + 2;<br><br>% If statement on multiple lines<br>if oObject &lt;&gt; $<br>   AND Send(oObject,@IsActive)<br>{<br>   % something<br>}<br><br>% Multi-line math assignment<br>iVeryLongVariableName = Send(oObject,@VeryLongClassName,#parameter=ALongParameterName)<br>                        + Send(oObject,@OtherVeryLongClassName,#parm=AnotherLongName);<br></pre>
+<h3>Capitalization and Naming</h3>
+All script keywords, such as 'if', should be entirely in lower case.<br>
+<br>
+All names in the script should be descriptive.&nbsp; Names should
+contain no spaces and each word should begin with a capital letter.<br>
+<br>
+<span style="font-weight: bold;"><span style="font-style: italic;">Example:</span><br>
+</span>
+<pre><span style="font-weight: bold;"><span style="font-weight: bold;"><span
+ style="font-weight: bold;"></span></span></span>MyScriptName<br></pre>
+The exception to this rule is for constants, as explained below.<br>
+<br>
+In addition, operators that are words should be in all capitals.&nbsp;
+This includes boolean operators like AND, OR, NOT, and the mathematical
+operator MOD.<br>
+<h4>Constants</h4>
+Constants are labelled in all capital letters, with underscores instead
+of spaces.&nbsp; Constants include all the values in blakston.khd,
+including the values for TRUE and FALSE.<br>
+<br>
+<span style="font-weight: bold; font-style: italic;">Example:</span><br>
+<pre>A_CONSTANT_VALUE_NAME = 100<br></pre>
+<h4>Variables<br>
+</h4>
+Although variables are not restricted by type, it is a good idea to
+indicate the expected type of the variable.&nbsp; This helps with
+debugging on the servers.<br>
+<br>
+All variables of a class are of the format:&nbsp; &lt;class
+function&gt;&lt;type&gt;VariableName<br>
+&lt;class function&gt; = nothing for local variables, 'v' for
+classvars, 'p' for properties.<br>
+&lt;type&gt; = 'b' for boolean, 'i' for integer, 'o' for object, 'l'
+for list, 't' for timer, 'r' for resource, 's' for string, 'h' for hash
+table, 'c' for class.<br>
+<br>
+<span style="font-weight: bold;"><span style="font-style: italic;">Examples:</span><br>
+</span><span style="font-weight: bold;"></span>
+<pre>% An integer classvar<br>viInitialValue<br><br>% A object property<br>poSomethingElse<br><br>% A local timer<br>tDeadlineTimer<br></pre>
+<h4>Parameters<br>
+</h4>
+The following table show some default parameter names and their usual
+meaning.<br>
+<br>
+<table style="text-align: left; width: 1247px; height: 76px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;">who<br>
+      </td>
+      <td style="vertical-align: top;">Object of the message.&nbsp; Who
+is taking the action?<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;">what<br>
+      </td>
+      <td style="vertical-align: top;">Direct object of the
+message.&nbsp; What is being acted upon?<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;">lTargets<br>
+      </td>
+      <td style="vertical-align: top;">List of direct objects.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h3>Spacing and Braces</h3>
+Blank lines should be placed between logical blocks in the code.&nbsp;
+Putting a blank line before a comment makes it easier to pick out.<br>
+<br>
+There should be a blank line after any closing brace, except in the
+case of an else statement for readability.&nbsp; There should also be a
+blank line before any statement which changes the flow, such as return,
+propagate, break, and continue statements.<br>
+<br>
+Open and close braces for code blocks ( { and } ) should be placed on a
+new line separate from other code in the same column as the line before
+the block.&nbsp; All code between the braces should be indented to show
+scope of the code.<br>
+<br>
+<span style="font-weight: bold;"><span style="font-style: italic;">Example:</span><br>
+</span>
+<pre><span style="font-weight: bold;"></span>if x &gt; 1<br>{<br>   x = x + 1;<br>   y = x - 1;<br>}<br></pre>
+<h3>Return Values</h3>
+Return values should be of a consistent type.&nbsp; Return boolean
+types (TRUE or FALSE) for tests.&nbsp; Return $ (nil) if you do not
+have anything to return.&nbsp; Mixing types (returning an object or
+FALSE if there is no object) should be avoided.<br>
+<br>
+</body>
+</html>

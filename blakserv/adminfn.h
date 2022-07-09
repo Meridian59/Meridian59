@@ -13,7 +13,7 @@
 #ifndef _ADMINFN_H
 #define _ADMINFN_H
 
-void __cdecl SendSessionAdminText(int session_id,char *fmt,...);
+void SendSessionAdminText(int session_id,const char *fmt,...);
 void TryAdminCommand(int session_id,char *admin_command);
 
 

@@ -26,7 +26,7 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data);
 void AddByteToPacket(unsigned char byte1);
 void AddShortToPacket(short byte2);
 void AddIntToPacket(int byte4);
-void AddStringToPacket(int int_len,char *ptr);
+void AddStringToPacket(int int_len,const char *ptr);
 void SecurePacketBufferList(int session_id,buffer_node *blist);
 void SendPacket(int session_id);
 void SendCopyPacket(int session_id);

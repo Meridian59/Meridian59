@@ -66,8 +66,8 @@ classvars:
    viTreasure_type = TID_DARK_ANGEL
 
    viSpeed = SPEED_VERY_FAST
-   viAttack_types = ATCK_WEAP_MAGIC
-   viAttack_spells = ATCK_SPELL_FIRE
+   viAttack_type = ATCK_WEAP_MAGIC
+   viAttack_spell = ATCK_SPELL_FIRE
    viLevel = 200
    viDifficulty = 9
    viKarma = -100

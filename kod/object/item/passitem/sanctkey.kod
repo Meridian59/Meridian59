@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   SanctuaryKey_name_rsc = "Iron Key"
+   SanctuaryKey_name_rsc = "iron key"
    SanctuaryKey_icon_rsc = fishkey.bgf
    SanctuaryKey_desc_rsc = "This is an intricately wrought iron key."
 
@@ -25,6 +25,8 @@ classvars:
    vrName = SanctuaryKey_name_rsc
    vrIcon = SanctuaryKey_icon_rsc
    vrDesc = SanctuaryKey_desc_rsc
+
+   viIndefinite = ARTICLE_AN
 
    viBulk = 10
    viWeight = 12

@@ -148,24 +148,26 @@ void handle_error(void)
    generate_code = False; /* Errors; don't generate code */
    if (++numerrors > MAXERRORS)
    {
-      printf("Too many errors. Aborting.\n");
+      fprintf(stderr, "Too many errors. Aborting.\n");
       exit(1);
    }
 }
 /************************************************************************/
 /* yyerror should be used for lexing & parsing errors. */
-void yyerror(char *s)
+void yyerror(const char *s)
 {
    /* If token is EOL, give useful error message */
    if (!strcmp(yytext, "\n"))
-      printf("%s(%d): error: Premature end of line\n", current_fname, lineno-1);
+      fprintf(stderr, "%s(%d): error: Premature end of line\n", 
+							 current_fname, lineno-1);
    else
-      printf("%s(%d): error: %s on token %s\n", current_fname, lineno, s, yytext);
+      fprintf(stderr, "%s(%d): error: %s on token %s\n", 
+							 current_fname, lineno, s, yytext);
    handle_error();
 }
 /************************************************************************/
 /* action_error should be used for semantic errors. */
-void action_error(char *fmt, ...)
+void action_error(const char *fmt, ...)
 {
    int errline = lineno;
    va_list marker;
@@ -174,32 +176,32 @@ void action_error(char *fmt, ...)
    if (!strcmp(yytext, "\n"))
       errline--;
 
-   printf("%s(%d): error: ", current_fname, errline);  
+   fprintf(stderr, "%s(%d): error: ", current_fname, errline);  
 
    va_start(marker, fmt);
-   vprintf(fmt, marker);
+   vfprintf(stderr, fmt, marker);
    va_end(marker);
-   printf("\n");
+   fprintf(stderr, "\n");
 
    handle_error();
 }
 /************************************************************************/
 /* simple_error should be used for other errors. */
-void simple_error(char *fmt, ...)
+void simple_error(const char *fmt, ...)
 {
    va_list marker;
 
-   printf("  error: ");
+   fprintf(stderr, "  error: ");
    va_start(marker, fmt);
-   vprintf(fmt, marker);
+   vfprintf(stderr, fmt, marker);
    va_end(marker);
-   printf("\n");
+   fprintf(stderr, "\n");
 
    handle_error();   
 }
 /************************************************************************/
 /* simple_warning should be used for all warnings. */
-void simple_warning(char *fmt, ...)
+void simple_warning(const char *fmt, ...)
 {
 
    va_list marker;
@@ -286,7 +288,6 @@ char *assemble_string(char *str)
 void recompile_warnings(list_type l)
 {
    int column = 0;
-   char *name;
 
    if (l == NULL)
       return;
@@ -295,17 +296,17 @@ void recompile_warnings(list_type l)
 
    for (; l != NULL; l = l->next)
    {
-      name = ((recompile_type) (l->data))->class_id->name;
+      const char *name = ((recompile_type) (l->data))->class_id->name;
       
       if (column + strlen(name) >= 75)
       {
-	 printf("\n");
-	 column = 0;
+         printf("\n");
+         column = 0;
       }
       printf("%s  ", name);
       column += strlen(name) + 2;
-   
-       /* ((recompile_type) (l->data))->superclass->name); */
+      
+      /* ((recompile_type) (l->data))->superclass->name); */
    }
    printf("\n");
 }
@@ -373,7 +374,7 @@ FILE *open_include_file(char *filename)
    /* Loop through include directories and try to open file */
    for (i=0; i < num_include_dirs; i++)
    {
-      sprintf(tempbuf, "%s\\%s", include_dirs[i], filename);
+      sprintf(tempbuf, "%s/%s", include_dirs[i], filename);
       if ((fin = fopen(tempbuf, "r")) != NULL)
 	 return fin;
    }
@@ -473,7 +474,7 @@ int main(int argc, char **argv)
 	    
 	 case 'K' :              /* Specify kodbase filename */
 	    if (i == argc - 1)
-	       printf("Switch -%c needs a filename (ignoring)\n",*(arg+1));
+	       fprintf(stderr, "Switch -%c needs a filename (ignoring)\n",*(arg+1));
 	    else
 	    {
 	       i++;
@@ -484,7 +485,7 @@ int main(int argc, char **argv)
 	    
 	 case 'I':               /* Specify include file directory */
 	    if (i == argc - 1)
-	       printf("Switch -%c needs a directory (ignoring)\n",*(arg+1));
+		    fprintf(stderr, "Switch -%c needs a directory (ignoring)\n",*(arg+1));
 	    else
 	    {
 	       i++;
@@ -493,15 +494,15 @@ int main(int argc, char **argv)
 		  add_include_directory(arg);
 	       else
 	       {
-		  printf("Unable to read include file directory %s\n",arg);
-		  exit(1);
+			 fprintf(stderr, "Unable to read include file directory %s\n",arg);
+			 exit(1);
 	       }
 	    }
 	    break;
 
 
 	 default:
-	    printf("Ignoring unknown switch -%c.\n", *(arg + 1));
+	    fprintf(stderr, "Ignoring unknown switch -%c.\n", *(arg + 1));
 	    
 	 }
       else file_list = list_add_item(file_list, argv[i]);
@@ -509,7 +510,7 @@ int main(int argc, char **argv)
 
    if (file_list == NULL)
    {
-      printf("No files specified!\n");
+      fprintf(stderr, "No files specified!\n");
       exit(1);
    }
 
@@ -526,13 +527,16 @@ int main(int argc, char **argv)
       
 
    for (current_file_ptr = file_list; current_file_ptr != NULL; 
-	current_file_ptr = current_file_ptr->next)
+        current_file_ptr = current_file_ptr->next)
    {
+      // Reset per-file counts
       include_depth = 0;
-
+      st.num_strings = 0;
+      st.strings = NULL;
+      
       include_stack[0].file_ptr = open_file( (char *) current_file_ptr->data);
       include_stack[0].buffer = yy_create_buffer(include_stack[0].file_ptr, 
-						 YY_BUF_SIZE);
+                                                 YY_BUF_SIZE);
       include_stack[0].filename = current_fname;
       yy_switch_to_buffer(include_stack[0].buffer);
 /*
@@ -546,7 +550,7 @@ int main(int argc, char **argv)
 /*      yy_delete_buffer(include_stack[0].buffer); */
 
       if (generate_code) 
-	 codegen(current_fname, bof_fname); 
+         codegen(current_fname, bof_fname); 
       generate_code = True;
    }
 

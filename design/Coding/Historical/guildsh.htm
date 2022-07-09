@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Guild Shield Kod Support</TITLE>
+</HEAD>
+<BODY>
+
+<P>The following kod support has been added for guild shields: (note, still
+in it's young stage. Make note of wierd behavior). (Note2: 3rd person overlay
+art does not yet exist).</P>
+
+<UL>
+<LI>SYSTEM.KOD </LI>
+
+<UL>
+<LI><B>IsGuildShieldAvailable</B>(color1,color2,shape) Returns FALSE if:
+both color1 and color2 are grey color1 and color2 match another guild's
+color, and color1 = color2 color1, color2 and shape match another guild's
+stuff. otherwise return TRUE</LI>
+
+<LI>Guild shields were also added to the item templates. Therefore, 'dm
+item coat of arms' will create a guild shield for you.</LI>
+</UL>
+
+<LI>GUILD.KOD </LI>
+
+<UL>
+<LI>Added three properties: piColor1, piColor2, piShield_shape </LI>
+
+<LI>Added three functions to access these:</LI>
+
+<UL>
+<LI><B>GetPrimaryGuildColor</B>() </LI>
+
+<LI><B>GetSecondaryGuildColor</B>()</LI>
+
+<LI><B>GetShieldShape</B>() </LI>
+</UL>
+
+<LI>Added a function to see if a guild has these set. (Unset colors are
+set to GRAY). </LI>
+
+<UL>
+<LI><B>HasGuildColors</B>() </LI>
+</UL>
+
+<LI>Added a function to set these values </LI>
+
+<UL>
+<LI><B>SetGuildColors</B>(color1,color2,shape) This will fail if you send
+out of bounds colors.</LI>
+</UL>
+</UL>
+
+<LI>GUILSHLD.KOD</LI>
+
+<UL>
+<LI>Added function to see if guild has colors </LI>
+
+<UL>
+<LI><B>IsShieldColored</B>() Returns FALSE if guild is Gray &amp; Gray.
+Otherwise TRUE</LI>
+
+<LI><B>ChangeGuildShieldColors</B>(color1,color2,shape,override) </LI>
+
+<UL>
+<LI>Use this to change a guild shield to it's new values for color1, color2,
+and shape. </LI>
+
+<LI>This will fail if the guild shield already has colors, or if you send
+out-of-bounds colors. </LI>
+
+<LI>'override' overrides the color check, good for testing. </LI>
+</UL>
+
+<LI><B>Constructor</B>() Calls ChangeGuildShieldColors with default values,
+grey &amp; grey. These values CAN be overridden in the constructor.</LI>
+</UL>
+</UL>
+
+<LI>UTIL.KOD </LI>
+
+<UL>
+<LI>These functions are used for player clothes as well as guild shields.
+</LI>
+
+<LI>System (SYS) is built off of util, so call system to access these functions:
+</LI>
+
+<UL>
+<LI><B>EncodeTwoColorXLAT</B>(color1,color2) Given two colors, what is
+the 'xlat' (palette translation) the client needs? </LI>
+
+<LI><B>DecodePrimaryColor</B>(XLAT) Given the XLAT, what's 'color1'? </LI>
+
+<LI><B>DecodeSecondaryColor</B>(XLAT) Given the XLAT, what's 'color2'?
+</LI>
+</UL>
+</UL>
+
+<LI>BLAKSTON.KHD </LI>
+
+<UL>
+<LI>Constants for colors (referred to above as color1 and color2). </LI>
+
+<LI>Odd things will happen if you use values out of range. </LI>
+
+<UL>
+<LI>XLAT_TO_RED = 0x00 </LI>
+
+<LI>XLAT_TO_SKIN1 = 0x01</LI>
+
+<LI>XLAT_TO_SKIN2 = 0x02</LI>
+
+<LI>XLAT_TO_SKIN4 = 0x03 %% note: skin3 uses skin4 </LI>
+
+<LI>XLAT_TO_ORANGE = 0x04 </LI>
+
+<LI>XLAT_TO_GREEN = 0x05 </LI>
+
+<LI>XLAT_TO_BLUE = 0x06 </LI>
+
+<LI>XLAT_TO_PURPLE = 0x07 </LI>
+
+<LI>XLAT_TO_YELLOW = 0x08 </LI>
+
+<LI>XLAT_TO_GRAY = 0x09 </LI>
+
+<LI>XLAT_TO_SKY = 0x0A </LI>
+</UL>
+
+<LI>These are used to determine if a color is out of bounds.</LI>
+
+<UL>
+<LI>XLAT_LOW_VALUE = 0x00 </LI>
+
+<LI>XLAT_HIGH_VALUE = 0x0A </LI>
+</UL>
+
+<LI>Constants for shield shapes (referred to above as 'shape'.) </LI>
+
+<UL>
+<LI>SHIELDSHAPE_SLASH = 1 </LI>
+
+<LI>SHIELDSHAPE_HALF = 2 </LI>
+
+<LI>SHIELDSHAPE_HORIZ = 3 </LI>
+
+<LI>SHIELDSHAPE_CHECKER = 4 </LI>
+
+<LI>SHIELDSHAPE_DEFAULT = 1 (same as slash)</LI>
+</UL>
+
+<LI>These are used to determine if a shape is out of bounds.</LI>
+
+<UL>
+<LI>SHIELDSHAPE_LOW = 1 </LI>
+
+<LI>SHIELDSHAPE_HIGH = 4 </LI>
+</UL>
+</UL>
+</UL>
+
+</BODY>
+</HTML>

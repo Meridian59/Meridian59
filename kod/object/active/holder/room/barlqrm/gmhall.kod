@@ -24,6 +24,9 @@ resources:
 
    guild_charter_ball = "Guild Charters"
    guild_charter_desc = "Here, guildmasters may post information for potential members."
+   
+   gwarkills_name = "Guild War News"
+   gwarkills_desc = "News of Guild Wars and Alliances."
 
 classvars:
 
@@ -44,6 +47,9 @@ properties:
    piOutside_factor = 3
 
    prMusic = GM_Hall_music
+   
+   poMaster = $
+   poBook = $
 
 messages:
 
@@ -65,19 +71,29 @@ CreateStandardObjects()
 
 %%%%%%%%%% guild creator
 
-      Send(self,@NewHold,#what=Create(&GuildCreator),
+      poMaster = Create(&GuildCreator);
+      Send(self,@NewHold,#what=poMaster,
            #new_row=5,#new_col=7,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
 
-%%%%%%%%%% charter newsball
+%%%%%%%%%% charter newsball & guild war book
 
       oNews = send(SYS,@FindNewsByNum,#num=NID_GUILD_CHARTER);
       if oNews = $
-        {
-           oNews=Create(&NewsGuildCharter,#nid=NID_GUILD_CHARTER,
-              #name=guild_charter_ball,#desc=guild_charter_desc);
-        }
+      {
+         oNews=Create(&NewsGuildCharter,#nid=NID_GUILD_CHARTER,
+            #name=guild_charter_ball,#desc=guild_charter_desc);
+      }
       Send(self,@NewHold,#what=oNews,
            #new_row=5,#new_col=12,#fine_row=32,#fine_col=56,#new_angle=ANGLE_SOUTH);
+           
+      poBook = send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
+      if poBook = $
+      {
+          poBook=Create(&GuildWarNews,#nid=NID_GUILD_NEWS,
+             #name=gwarkills_name,#desc=gwarkills_desc);
+      }
+      Send(self,@NewHold,#what=poBook,
+           #new_row=4,#new_col=1,#fine_row=0,#fine_col=31,#new_angle=ANGLE_SOUTH_EAST);
 
 %%%%%%%%%%  some braziers
 
@@ -110,6 +126,16 @@ CreateStandardObjects()
 
       propagate;
    }
+   
+   GetMaster()
+   {
+     return poMaster;
+   }
 
+   GetBook()
+   {
+     return poBook;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

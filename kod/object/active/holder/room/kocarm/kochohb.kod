@@ -17,7 +17,7 @@ constants:
 
 resources:
 
-   room_KocatanHallB = Kochohb.roo
+   room_KocatanHallB = kochohb.roo
    room_name_KocatanHallB = "The Hall of Heroes East"
 
    kochistory_book_name = "History of the Settlement"

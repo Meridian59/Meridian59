@@ -163,20 +163,20 @@ BEGIN
     PUSHBUTTON      "Bestätigen",1254,227,354,50,14
 END
 
-107 DIALOGEX 0, 0, 225, 220
+107 DIALOGEX 0, 0, 249, 259
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eine Gildenhalle mieten"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "Bestätigen",1,102,194,50,14
-    PUSHBUTTON      "Abbrechen",2,168,194,50,14
-    CONTROL         "",1201,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,16,211,118,WS_EX_CLIENTEDGE
+    DEFPUSHBUTTON   "Bestätigen",1,66,238,50,14
+    PUSHBUTTON      "Abbrechen",2,132,238,50,14
+    CONTROL         "",1201,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,16,238,162,WS_EX_CLIENTEDGE
     LTEXT           "Wähle eine Gildenhalle aus:",-1,6,4,89,8
-    LTEXT           "Gildenpasswort:",-1,6,173,51,8
-    EDITTEXT        1239,60,171,94,12,ES_AUTOHSCROLL
-    LTEXT           "Das Passwort schützt Teile der Gildenhalle vor unbefugtem Zugriff.",-1,6,158,210,8
-    LTEXT           "Ausgewählte Gildenhalle:",-1,6,140,80,8
-    LTEXT           "",1215,89,139,129,11,SS_SUNKEN
+    LTEXT           "Gildenpasswort:",-1,6,219,51,8
+    EDITTEXT        1239,60,217,94,12,ES_AUTOHSCROLL
+    LTEXT           "Das Passwort schützt Teile der Gildenhalle vor unbefugtem Zugriff.",-1,6,204,210,8
+    LTEXT           "Ausgewählte Gildenhalle:",-1,6,186,80,8
+    LTEXT           "",1215,89,185,129,11,SS_SUNKEN
 END
 
 106 DIALOG  0, 0, 165, 122
@@ -287,6 +287,12 @@ BEGIN
     140, DIALOG
     BEGIN
         BOTTOMMARGIN, 214
+    END
+
+    107, DIALOG
+    BEGIN
+        RIGHTMARGIN, 245
+        BOTTOMMARGIN, 220
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -556,20 +562,20 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,215,189,50,14
 END
 
-IDD_GUILDHALLS DIALOGEX 0, 0, 225, 220
+IDD_GUILDHALLS DIALOGEX 0, 0, 249, 258
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Rent Guild Hall"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,102,194,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,168,194,50,14
-    CONTROL         "List1",IDC_GUILDLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,16,211,118,WS_EX_CLIENTEDGE
+    DEFPUSHBUTTON   "OK",IDOK,66,237,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,132,237,50,14
+    CONTROL         "List1",IDC_GUILDLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,16,235,153,WS_EX_CLIENTEDGE
     LTEXT           "Select a hall to house your guild:",IDC_STATIC,6,4,103,8
-    LTEXT           "Guild Password:",IDC_STATIC,6,173,51,8
-    EDITTEXT        IDC_GUILD_PASSWORD,60,171,94,12,ES_AUTOHSCROLL
-    LTEXT           "The guild password protects certain areas of your guild hall.",IDC_STATIC,6,158,187,8
-    LTEXT           "Selected guild hall:",IDC_STATIC,6,140,60,8
-    LTEXT           "",IDC_GUILDNAME,74,139,144,11,SS_SUNKEN
+    LTEXT           "Guild Password:",IDC_STATIC,6,213,51,8
+    EDITTEXT        IDC_GUILD_PASSWORD,60,211,94,12,ES_AUTOHSCROLL
+    LTEXT           "The guild password protects certain areas of your guild hall.",IDC_STATIC,6,198,187,8
+    LTEXT           "Selected guild hall:",IDC_STATIC,6,180,60,8
+    LTEXT           "",IDC_GUILDNAME,98,179,144,11,SS_SUNKEN
 END
 
 IDD_GUILDINVITE DIALOG  0, 0, 280, 122
@@ -712,6 +718,113 @@ BEGIN
 END
 
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ALIAS, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 212
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_STATS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_INVENTORY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 176
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 85
+    END
+
+    IDD_GUILDCREATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 265
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_GUILDHALLS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 251
+    END
+
+    IDD_GUILDINVITE, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GUILDMEMBERS, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GUILDALLIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GUILDMASTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GROUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 279
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 366
+    END
+
+    IDD_CMDALIAS, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 215
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 219
+    END
+
+    IDD_SUICIDE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 235
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -852,113 +965,6 @@ IDB_ERREPEAT            BITMAP                  "bitmap\\edgetreat_rrepeat.BMP"
 IDB_EUREPEAT            BITMAP                  "bitmap\\edgetreat_urepeat.BMP"
 IDB_EBREPEAT            BITMAP                  "bitmap\\edgetreat_brepeat.BMP"
 IDB_SELFTRGT            BITMAP                  "bitmap\\selftrgt.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ALIAS, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 212
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 222
-    END
-
-    IDD_STATS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 177
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 86
-    END
-
-    IDD_INVENTORY, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 176
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 85
-    END
-
-    IDD_GUILDCREATE, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 265
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 203
-    END
-
-    IDD_GUILDHALLS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 218
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 213
-    END
-
-    IDD_GUILDINVITE, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 276
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 118
-    END
-
-    IDD_GUILDMEMBERS, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 276
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 118
-    END
-
-    IDD_GUILDALLIES, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 276
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 118
-    END
-
-    IDD_GUILDMASTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 276
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 118
-    END
-
-    IDD_GROUP, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 279
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 366
-    END
-
-    IDD_CMDALIAS, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 215
-        TOPMARGIN, 4
-        BOTTOMMARGIN, 219
-    END
-
-    IDD_SUICIDE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 235
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 88
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
 
 /////////////////////////////////////////////////////////////////////////////
 //

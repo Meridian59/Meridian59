@@ -34,7 +34,8 @@ void InitAccount(void)
    console_account = &console_account_node;
    console_account->account_id = 0;
    console_account->name = ConfigStr(CONSOLE_ADMINISTRATOR);
-   console_account->password = "";
+   console_account->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,1);
+   console_account->password[0] = 0;
 
    console_account->type = ACCOUNT_ADMIN;
    console_account->last_login_time = 0;
@@ -140,15 +141,15 @@ Bool CreateAccount(char *name,char *password,int type,int *account_id)
 	return True;
 }
 
-int CreateAccountSecurePassword(char *name,char *password,int type)
+int CreateAccountSecurePassword(const char *name,const char *password,int type)
 {
-   char buf[100],*ptr;
+   char buf[100];
    int index;
    account_node *a;
    unsigned int ch;
 
    index = 0;
-   ptr = password;
+   const char *ptr = password;
    while (sscanf(ptr,"%02x",&ch) == 1)
    {
       buf[index++] = ch;
@@ -220,8 +221,8 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
    return a->account_id;
 }
 
-void LoadAccount(int account_id,char *name,char *password,int type,int last_login_time,
-		 int suspend_time, int credits)
+void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_login_time,
+		 INT64 suspend_time, int credits)
 {
    account_node *a;
 
@@ -307,16 +308,16 @@ void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password)
    strcpy(a->password,password);
 }
 
-Bool SuspendAccountAbsolute(account_node *a, int suspend_time)
+Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
 {
    session_node *s;
-   int now = GetTime();
+   INT64 now = GetTime();
 
    /* validate arguments */
 
    if (suspend_time < 0)
    {
-      eprintf("SuspendAccountAbsolute: invalid suspend time %d; ignored\n",suspend_time);
+      eprintf("SuspendAccountAbsolute: invalid suspend time %lld; ignored\n",suspend_time);
       return False;
    }
 
@@ -367,13 +368,13 @@ Bool SuspendAccountAbsolute(account_node *a, int suspend_time)
 
 Bool SuspendAccountRelative(account_node *a, int hours)
 {
-   int suspend_time;
+   INT64 suspend_time;
 
    /* if not suspended, hours is relative to now.
     * if suspended, hours is relative to their current suspension.
     */
 
-   suspend_time = max(GetTime(), a->suspend_time) + hours*60*60;
+   suspend_time = std::max((INT64) GetTime(), a->suspend_time) + hours*60*60;
 
    return SuspendAccountAbsolute(a, suspend_time);
 }
@@ -408,7 +409,7 @@ account_node * GetAccountByID(int account_id)
    return NULL;
 }
 
-account_node * GetAccountByName(char *name)
+account_node * GetAccountByName(const char *name)
 {
    account_node *a;
 

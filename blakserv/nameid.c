@@ -64,7 +64,7 @@ void CreateNameID(char *name,int id)
    nameids = nid;
 }
 
-int GetIDByName(char *name)
+int GetIDByName(const char *name)
 {
    nameid_node *nid;
 
@@ -79,7 +79,7 @@ int GetIDByName(char *name)
    return INVALID_ID;
 }
 
-char * GetNameByID(int id)
+const char * GetNameByID(int id)
 {
    nameid_node *nid;
 

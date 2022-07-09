@@ -1,0 +1,68 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1999 by Yura Bidus, All Rights Reserved
+//
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the
+// Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+// Boston, MA 02111-1307, USA.
+//
+// Menu and accelerator IDs for use with TEditView
+//----------------------------------------------------------------------------
+#if !defined(COOLVIEW_RH)
+#define COOLVIEW_RH
+
+#define IDR_MARGIN_ICONS  300
+#define IDR_MARGIN_CURSOR  300
+#define IDB_FONTTYPE    301
+
+#define IDD_FINDTEXTDLG         130
+#define IDD_REPLACEDLG          131
+#define IDD_COOLEDITPROP        132
+
+#define IDC_FINDTEXT            1001
+#define IDC_FINDWORD            1002
+#define IDC_FINDCASE            1003
+#define IDC_FINDENGINE          1004
+#define IDC_FINDFRW             1006
+#define IDC_FINDBACK            1007
+#define IDC_FINDEXPR            1008
+#define IDC_REPLACETEXT         1009
+#define IDC_FINDPROMPT          1010
+#define IDC_REPLACEALL          1011
+#define IDC_FINDGLOBAL          1012
+#define IDC_FINDINBLOCK         1013
+#define IDC_REPLACE             1014
+#define IDC_EDITCATEGORY        1015
+#define IDC_EDITCLRBK           1016
+#define IDC_EDITCLRTEXT         1017
+#define IDC_EDITITALIC          1018
+#define IDC_EDITBOLD            1019
+#define IDC_EDITFONTNAME        1020
+#define IDC_EDITFONTSIZE        1021
+#define IDC_EDITUNDERLINE       1022
+#define IDC_EDITCOLOR           1023
+#define IDC_EDITSAMPLE          1024
+
+#define ID_LINEINDICATOR        4092
+#define ID_DIRTYINDICATOR       4093
+#define ID_INSERTINDICATOR      4094
+
+#define IDS_COOLUNDOSTRINGS     32424
+#define IDS_COOLREDOSTRINGS     32425
+#define IDS_SYNTAXDESCR         32426
+#define IDS_FONTSIZES           32427
+#define IDS_COLORNAMES          32428
+
+#endif  // COOLVIEW_RH

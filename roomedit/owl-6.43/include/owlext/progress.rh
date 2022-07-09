@@ -1,0 +1,18 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+// Copyright(c) 1998 by Yura Bidus
+// All rights reserved.
+//
+// .RH file for TProgressDialog; original code by Rich Goldstein:
+//
+// Resource IDs to use with progress.rc and progress.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_PROGRESS_RH)
+#define OWL_PROGRESS_RH
+
+#define  IDD_PROGRESS   32515
+#define  IDC_TEXT       101
+#define  IDC_GAUGE      102
+
+
+#endif  // OWL_PROGRESS_RH

@@ -1,0 +1,404 @@
+<HTML>
+<HEAD>
+   <TITLE>Brian's Changes List</TITLE>
+</HEAD>
+<BODY>
+<H1>Brian's Changes List</H1>
+This document is to chronicle subtle changes in the game that might not be obvious and/or recorded in other places.
+<P>
+<h2>Changes to the Game</h2>
+<UL>
+    <LI>February 11, 1999
+    <UL>
+       <LI>Players no longer outlaws from casting wall spells if safety is on.  (still bugged in non-sacred haven arenas)
+       <LI>Player's vigor rest threshold reset to 80 when character is reset.
+       <LI>Player's modifiers are reset when character is reset.
+       <LI>Innkeepers no longer give key copies when player has no money.
+       <LI>Can no longer offer items that are marked "cannot offer to NPCs" to buyer NPCs.
+       <LI>Free action now works correctly when the hold spell is cast.  Used to work in reverse.
+    </UL>
+    <LI>February 16, 1999
+    <UL>
+       <LI><strong>Patched commercial servers.  Included my changes, as indicated above.</strong>
+    </UL>
+    <LI>April 19, 1999
+    <UL>
+       <LI>Updated combat to use new offense and defense values and new equation.
+       <LI>Updated Evaluate spell to give combat abilities of both players (and hp info) and monsters.
+       <LI>Combat code focused in battler instead of part of both player and monster.
+       <LI>Combat messages updated to reflect combat.  (Current attack messages are basic, current defense messages aren't reflective of abilities.)
+       <LI>Combat sounds work like before.
+       <LI>Monsters convert viDifficulty into offense and defense values, but values are very generic, no variation between different monsters of the same type.
+       <LI>Divorced touch attacks from the combat code in their old capacity.
+       <LI>Touch attacks are ready to be treated as weapons.  Must be personal enchantments, though.
+       <LI>Damage not fixed yet, still under old system (don't know if it'll work well or not with the binding).
+       <LI>Need to make sure things are balanced, so that people can hit bigger things if necessary.
+       <LI>Armor not changed yet, doesn't take away damage, actually makes wearer damn near invulnerable.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>April 23, 1999
+    <UL>
+       <LI>Fixed infrastucture for using both physical and spell damage types.
+       <LI>Put in basic infrastucture for combat text by damage type.
+    </UL>
+    <LI>April 25, 1999
+    <UL>
+       <LI>Monsters are by default neuter instead of male.
+       <LI>Fixed the combat messaging system to work correctly now.
+       <LI>Capped damage from outside factors such as attack modifiers and faction benefits.
+       <LI>Added faction factors into combat.
+       <LI>Added infrastructure to give monsters unique offense, defense, and damage values.  Monsters still have a generic default.
+    </UL>
+    <LI>April 26, 1999
+    <UL>
+       <LI>Changed armor to give bonuses to defense and to absorb damage if defined.
+       <LI>Changed shields to give bonuses to block and absorb damage on successful block skill checks.
+       <LI>Changed armor to give negative bonuses to defense, but absorb more damage.
+       <LI>Change orc shield to give slight bonuses to Qor spells, like the opposite of the ivy circlets.
+       <LI>Changed circlets to give mana depending on users max hps.  Takes hps/7 (bound between 5 and 20) hps, gives twice than in mana.
+       <LI>Changed combat to allow for additional damage due to proficiency with weapon.
+    </UL>
+    <LI>April 27, 1999
+    <UL>
+       <LI>Altered values of defense modifiers to match new combat system.
+       <LI>Fixed bug that was giving WAY too much attack and defense bonuses from the attack modifiers and defense modifiers.
+       <LI>Fixed Bless to remove itself as an attack modifier when the spell ends.
+       <LI>Added message "DefaultValues()" to object.  Allows us to reset the default values on any subclass it is defined on.  Currently works
+           for DefenseModifier, re-sets the defense bonus and damage reduction values.  Will be useful for when updating, can set old armor to
+           new armor values.
+       <LI><strong>Patched the Beta server with the above changes.</strong>
+    </UL>
+    <LI>April 29, 1999
+    <UL>
+       <LI>Fixed skeletons' death sound resources so that skeletons will make a death sound.  Will mess up people who have re-named their
+           wave files, but that's an unauthorized change to the client.  ;)
+       <LI>Made the casting of touch spells to enchant self a non-outlaw act.  (Fixes bugs 163 and 164)
+       <LI>Set correct genders on monsters and NPCs.  (Fixes bug 146)
+       <LI>Cleaned up text kludges in: Room decorator, council members, forest shrine, helms, spellbane, hold, spell.
+    </UL>
+    <LI>May 3, 1999
+    <UL>
+       <LI>Updated the lore object to follow object-orientated methodology.  Now draws data from accessor functions in player instead of
+           being passed the internal plSchools data structure.
+       <LI>Added a list of weighted castings of spells in a school.  Weighted because higher level castings contribute more castings than
+           lower level spells.  Used to give bonuses to spell advancement for people with a slim chance to advance.
+       <LI>Added code for combat skills (weapon, unarmed skills) to improve after every few swings instead of at every death.
+       <LI>Added infrastructure in skill objects to give a bonus to the secondary chance to advance.  Currently used for the swings bonus
+           for weapon proficiency/stroke improvement checks and bonuses.
+       <LI>Fixed bug that was not allowing defense skills to advance.  Was not setting the "dodged" flag in a player when opponent missed.
+           (Fixes bugs 168 and 169)
+    </UL>
+    <LI>May 4, 1999
+    <UL>
+       <LI>Removed the possibility for Faction soldiers to have Plate and Nerudite armor, and Nerudite swords.
+       <LI>Tweaked the Disarm and Second Wind skills.  Disarm now disarms much less, and Second wind will be a bit kinder than before.
+       <LI>Fixed error spam in shield and skill, caused by not passing correct parameters to shields in combat section.
+       <LI>Fixed bug of gauntlets not taking damage.  Also switched gauntlets from taking damage when wearer hits opponent to taking damage
+           when wearer is hit by opponent.
+       <LI>Fixed combat messages by bows.  Now says that the arrow does damage, not the bow.  (Fixes bug 175)
+       <LI>Boosted to-hit bonus of gauntlets.  Also made the bonuses customizable, like armor is.  ("Fixes" bug 161)
+       <LI>Increased values of Bless and Eagle Eyes to fall more in line with the new combat system instead of the old one.
+       <LI>Fixed a bug in Eagle Eyes that made the enchantment return nil if player had no ranged weapon, and remove itself as an attack
+           modifier when it expires.  Also made it look up weapons correctly.
+       <LI>Modified berzerker rings to fall more in line with new combat system.  Also reduced the bonus damage a bit.
+       <LI>Modified parliament bonuses to reflect new combat system.  Bonus to hit is pretty good.  Also lowered damage bonuses.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>May 5, 1999
+    <UL>
+       <LI>Removed a phantom door near clock tower in Cor Noth.   (Fixes bug 176)
+       <LI>Changed holy touch to only do damage, like other touch attack spells.  No longer heals.  Does +50% damage to undead and
+           increases/decreases the amount of damage depending on victim's Karma.  Someone with +100 karma will take no damage, someone
+           with 0 karma will take average damage, someone with -100 Karma will take double damage.  (Fixes bug 137)
+       <LI>Increased Vampiric Touch's damage.  It does roughly the same damage as Acid Touch.  Also heals 1/4 the damage to caster.
+       <LI>Added elderberries, herbs, and mushrooms to the big pillar in Raza.  (Fixes bug 120)
+       <LI>Can no longer store un-vaultable things in chests.  This includes tokens.  (Fixes bug 119)
+       <LI>Fixed touch spells to give combat messages again.  Forgot to make the change when I fixed combat changes for bows (see above).  (Fixes bug 189)
+       <LI>Updated Jewels of Froz for the new combat system.  They give a reasonable bonus to hit, and a reasonable increase to touch 
+           attack damage.  They give a small to-hit bonus for non-spell attacks.
+       <LI>Fixed bug that was making attack modifiers give too large of a bonus to damage.  Basically, each attack modifier doubled damage.
+       <LI>Fixed touch attacks to increase in damage as skill gets better.  Also balanced touch spells do do more appropriate damage.
+           Touch attacks do 1/2 the base damage, plus the spellpower % of half the base damage.  So, at full spell power, touch attacks will
+           do full damage.
+          <UL>
+             <LI> Zap does 4-10 points of damage.
+             <LI> Touch of Flame does 6-10 points of damage.
+             <LI> Icy Fingers does 7-10 points of damage.
+             <LI> Holy Touch does 3-6 points of damage at base, can do up to double damage to evil monsters and 50% extra to undead.
+             <LI> Acid Touch does 5-10 points of damage.
+             <LI> Vampiric Touch does 6-10 points of damage, but heals player 1/4 that damage.
+          </UL>
+       <LI>Set advancement to 5 improves every 9-12 minutes.
+       <LI>Halved Disarm's initial chance to improve.
+    </UL>
+    <LI>May 10, 1999
+    <UL>
+       <LI>Fixed various text bugs in quest engine, pillars, truce. (Fixes bugs 66, 90, 126)
+       <LI>Made wall elements (fire, lightning, web) affect players on Sacred Haven if a monster cast the element.  (Fixes bug 111)
+       <LI>Fixed Medei's yells to be black instead of default purple in the Barloque Bar.  (Fixes bug 107)
+       <LI>Fixed help messages in DM.  (Fixes bug 114)
+       <LI>Made the Duke's throneroom and the Princess's chamber no-fight zones.  (Fixes bugs 143 and 144)
+       <LI>Made it so that you can't initiate attacks in no-fight zones.  (Fixes bug 194)
+       <LI>Made it so that armor only checks to be damaged 50% of the time. (Fixes bug 170)
+       <LI>Fixed it so that killing something with a touch attack does not give two messages, one for touch attack, one for punching.  (Fixes bug 167)
+       <LI>Fixed spellitems so that the notify the room they're casting.  This now disallows the use of shatter wands in the arena.  (Fixes bug 138)
+       <LI>Made attacking yourself a non-outlaw activity.  (Fixes bug 132)
+       <LI>Fixed it so that when you find a monster in the crate in the basement of Castle Victoria, it gets created.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>May 11, 1999
+    <UL>
+       <LI>Fixed weaponcraft improves to be more generous in improvement checks.
+    </UL>
+    <LI>May 17, 1999
+    <UL>
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>May 19, 1999
+    <UL>
+       <LI>Fixed Drechx's description to include all the lieges.  (Fixes bug 207)
+       <LI>Vastly improved Kara'hol's curse so that it uses new combat system, is useful, and doesn't allow people to go through
+           doors while stunned.  (fixes bug 72) Could perhaps improve the message timing?
+    </UL>
+    <LI>May 20, 1999
+    <UL>
+       <LI>Removed the instructions to use $ to bring up an admin window from the Admin greeting message.
+       <LI>Removed the extra line of spam when monsters miss DMs when they are immortal.  Current combat messages handle the
+           immortality of DMs just fine.
+       <LI>Developed the defense messages better.  Gives a weighted chance to dodge, parry, block, or avoid attacks depending on
+           your ability in each skill.  "Avoid"ing an attack is to give a bit of variety and to handle instances where a mage
+           with no defense ability (but defensive spells) avoids an attack.
+       <LI>Updated monsters so that monsters with visible weapons can parry.  Faction soldiers can also block.
+       <LI>Updated reflections to use the dodge, parry, and block skills of their original.
+       <LI>Updated Avar Chieftains to not allow defender to parry their attacks.
+       <LI>Updated Avar Chieftains ranged attack to use the attack infrastructure instead of the special case it had.
+    </UL>
+    <LI>May 21, 1999
+    <UL>
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>May 24, 1999
+    <UL>
+       <LI>Fixed problem of touch attacks doing too little damage.  Was using punch stroke instead of touch attack stroke.
+       <LI>Fixed problem of touch attacks' "out of range" message using the punch default.  (Fixes bug 202)
+    </UL>
+    <LI>May 25, 1999
+    <UL>
+       <LI>Made it so that the Watcher in the Tos Arena lets the Bard know when someone cast a spell during a tournament.
+       <LI>Made key copies undroppable (swapable) unless willfully given or dropped (moved code to key copy superclass)
+       <LI>Made key copies undroppable in rentable rooms.
+       <LI>Made keys remove the owner of the key from the room when the key is deleted (IE when the room expires).  (Fixes bug 128)
+    </UL>
+    <LI>May 26, 1999
+    <UL>
+       <LI>Put a message in keys notifying player owners that they cannot drop their key when attempting to drop them in unallowed rooms.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>June 2, 1999
+    <UL>
+       <LI>Fixed a bug that made punch almost unusable.  (Fixes bugs 230 and 231)
+    </UL>
+    <LI>June 8, 1999
+    <UL>
+       <LI>Investigated bug of touch attacks happening too fast.  Seems to be a false bug.
+       <LI>Lowered damage of touch attacks.  Maximum damage lowered from 10 to 8.
+       <LI>Put a "magic resistance" infrastructure in.  Battlers are checked when a spell is cast on them to see if they resist the
+           spell.  Most cases they don't.  If the battler resists, then the spell fails.  Check is made at end of CanPayCosts, if
+           the battler succeeds, then the spell uses the costs (reagents and mana) and gives a resist message.
+       <LI>Xeochicatl use the new magic resistance infrastructure to resist spells.  They resist harmful spells with spellpower less
+           than 40 and resist 50% of the spells over that spellpower.  Blind, hold, and dazzle are resisted at 80% instead of 50%.
+    </UL>
+    <LI>June 14, 1999
+    <UL>
+       <LI>Finished Mollusk monster.  Has full description and will throw rocks at players.  Still doesn't "pop up" right, but
+           that's less of a priority for now.
+       <LI>Made it so that Xeochicatl (and Dark Angels) never resist DM spells.
+    </UL>
+    <LI>June 17, 1999
+    <UL>
+       <LI>Fixed gauntlets so that they don't cause wearer to take extra damage when they are worn.  Attack and Defense modifiers use
+           the same message name "ModifyDamage" to give damage bonuses and damage reductions, respectively.  Since gauntlets are both
+           types of modifiers, it was adding damage to defending hits (when it should only be adding damage to attacks).
+       <LI>Actually, on further inspection, I found that Gauntlets were doing absolutely NOTHING for the wearer.  Then NewUsed and
+           NewUnused messages were returning instead of propagating, meaning that the superclass's code to add the gauntlets as an
+           attack modifier (let alone defense modifier) was never reached.
+       <LI>Also made gauntlets add and remove themselves as an attack modifier at the right times.
+       <LI>Finished Dark Angel's attack powers.  Very nasty monsters.
+       <LI>Changed Evil Twin to accept a monster as caster.  Dark Angels summon Evil Twins against players.
+    </UL>
+    <LI>June 18, 1999
+    <UL>
+       <LI>Finished Dark Angel.  Has a variety of spells it can cast (many nasty ones) and is difficult.  Also have magic resistance
+           the same as Xeochicatl.  Can cast: Evil Twin, Reflection (specially cast in the Dark Angel monster, doesn't use normal
+           spell infrastructure), Blind, Hold, Enfeeble, Forget, Discordance.  Every attack 30% chance to cast on current target.
+           Also casts Darkness in room on every attack if not already cast.
+       <LI>Changed Reflection to work with monster casters.  Dark Angels create reflections (that don't require mana drain!)  Put in
+           so that monsters that use ranged weapons have reflections that use ranged weapons.  All behavior isn't duplicated in the
+           reflection (such as maintaining range, or speed), but it's good enough for now.
+       <LI>Created Dark Angel treasure type.  Drops: Dark angel feathers most of the time (duh), blue dragon scales, entroot berries,
+           fairy wings, shaman blood, and inkycap mushrooms.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>June 21, 1999
+    <UL>
+       <LI>Fixed problem of touch attacks giving double "miss" messages.
+    </UL>
+    <LI>June 22, 1999
+    <UL>
+       <LI>Fixed error spam of reflections wanting to see if Dark Angels are "logged on".
+       <LI>Fixed various room key and room key copy error spam relating to what being NIL on a ReqNewHold call.
+       <LI>Fixed error spam in Evil Twin where the caster didn't have an owner (like a deleted/killed Dark Angel).
+       <LI>Fixed some error spam probably caused by the funky mailing problems the NodeAttack had before.
+       <LI>Fixed error spam in brain that was trying to send battler messages to class DeadBody.  Monsters target dead bodies?
+           (My guess is that it's from feign death)
+       <LI>Made monsters a bit more likely to swarm a person, more likely to attack someone of opposite Karma if so flagged, and
+           less aggressive against wizards if so flagged.
+       <LI>Fixed error spam of room keys not finding their owner's room.
+       <LI>Changed gauntlets to not give attack bonuses to ranged weapons.
+    </UL>
+    <LI>June 23, 1999
+    <UL>
+       <LI>Changed cheese to give a bit less vigor and to be more filling.
+       <LI>Reduced the amount edible mushrooms fill you up.
+       <LI>Fixed wall spells turning you outlaw in arena of Kraanan. (Fixes bug 125)
+       <LI>Replaced Spiders in front of Barloque (RID_I3) with centipedes to make it a bit more newbie friendly.
+       <LI>Added mollusk creatures to: RID_E2, RID_F3, RID_D6.  Replaced one of the previous monsters.  (see the room
+           information page in the Meridian58 documentation) for full list.
+       <LI>Documented new monsters and monster locations on Meridian58.
+    </UL>
+    <LI>June 23, 1999
+    <UL>
+       <LI>Added damage descriptors for different types of attacks in battler.  Now attacks will have cool verbs to describe
+           The damage they do.  (Thanks to Joe for helping with this.)
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>
+    <LI>June 25, 1999
+    <UL>
+       <LI>Added magic resistance to Lich.  Resists ALL Qor spells, resists Dazzle 90% of the time, resists all spells below 30
+           spellpower, resists all other spells at 60%.
+       <LI>Evil twin now uses targets combat stats to fight, instead of using the standard monsters stats.  Problem: Causes
+           the normal combat side-effects to the target, IE, target's weapons will be worn down.  Should not be too noticable.
+       <LI>Made the Morph spell actually work!  Combat was ignoring a morphed character.  Added a check to most of the combat 
+           functions to see if an illusion is affecting the player.  Made sure that it was only Morph that affected the player.
+    </UL>
+    <LI>June 28, 1999
+    <UL>
+       <LI>Cleared up error spam of spell Foresight when cast on a non-player.  Was calling a player-only message even if target
+           was a non-player.  Spell now fails at casting if the target is a non-player or a DM.
+       <LI>Fixed up error spam in Yrxl sap in NewHold.
+       <LI>Fixed error spam of Dazzle trying to get the sun's Karma.  Made call check if caster is a battler.
+       <LI>Fixed error spam of spell checking for room flags in a caster that doesn't have a room, like the Sun.
+       <LI>"Fixed" Shadowform's description to follow the standard of using plural general pronouns.  (It's incorrect grammar,
+           you know)
+       <LI><strong>Patched the Beta server with above changes.</strong>
+       <LI>Increased the spider queen's attack range to compensate for her not moving.
+       <LI>Changed some text in quest engine text to be gender-neutral. (Fixes bugs 52 and 53)
+    </UL>
+    <LI>June 29, 1999
+    <UL>
+       <LI>Fixed problem of using punch for stroke if enchanted with a personal enchantment instead of weapon. (Fixes bug 260)
+       <LI>Fixed problem of water finding arrows not showing a graphic in inventory.  (Fixes bug 134)
+       <LI><strong>Patched the Beta server with above changes.</strong>
+       <LI>Fixed Illusionary Wounds error spam trying to find "GetHealth" from a monster.  Put the message in monster.
+       <LI>Fixed error spam in Guild Hall 14 of SomethingSaid called without a what.  Checked if what was nil beforehand.
+       <LI>Fixed error spam of trying to delete a bad timer in OrcCave6.  It didn't follow standard timer convention.
+    </UL>
+    <LI>July 6, 1999
+    <UL>
+       <LI><strong>Updated commercial servers with patch.</strong>
+    </UL>
+    <LI>July 7, 1999
+    <UL>
+       <LI>Fixed orc shield's inaccurate resistances.  The spell resistances weren't negative, so the wrong resistances were
+           being added when a player used the shield.
+       <LI>Increased shirt hits to reasonable levels.  For some reason, they were lowered to 10 hits.  Increased them in line
+           with other clothing.
+       <LI>Fixed bug of deaths causing double penalties.  Teleporting to the Underworld no longer assumes that you deserve to be
+           punished for death.  Only dying will set you up to be punished for death.
+       <LI>Fixed Sandstorm's permanent aim reduction problem.  Sandstorm now reduces aim temporarily.  Also reduced amount of
+           penalty the spell gives; now spellpower/3 instead of spellpower/2.
+       <LI>Reduced Winds' aim penalty from spellpower/2 to spellpower/4.
+       <LI>Amulet of Shadows now works as a defense modifier.  It previously had no functions for reducing damage, so when the 
+           combat code called the function (which should be in every defense modifier), it got nil, and screwed up the damage.
+       <LI>Made it so that deflect only protects against harmful Faren spells, not beneficial spells (like enchantments).
+       <LI>Made it so that Truce requires the Yrxl sap it claims to in the description.
+    </UL>
+    <LI>July 8, 1999
+    <UL>
+       <LI>Changed Super Strength's reagent cost from 5 elderberries to 3, as per Director recommendation.
+       <LI>Made it so that created weapons can be dropped and given, but not sold.
+       <LI>Reduced duration of weapons created by Create Weapon from spellpower/7 hours to spellpower*2 minutes.
+       <LI>Increased mana cost for Create Weapon to 15.  This should slow down the overcrowding of made weapons (I hope).
+       <LI>Made Rescue never "fail".  It does not have a random chance to not work.
+       <LI>Fixed it so that Outlaw and Murderers never create revenants when they die.
+       <LI>Prevent casting of portal of life on non-player corpses and repeated casting of Portal of Life.
+       <LI>Fixed the statues in the Hall of Heroes.  They weren't using the update information correctly when told to update.
+    </UL>   
+    <LI>July 9, 1999
+    <UL>
+       <LI>Fixed error spam in Umbrella.  Also fixes problem of new users wandering into the area of effect of Umbrella after
+           the spell is cast.  Wasn't extracting users from the active list properly.
+       <LI>Fixed error spam in Sweep.  Had the same error as Umbrella, as well as others.  I fixed it to work as advertised.
+       <LI>Fixed error spam of casting Invisibility on a non-player target.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+       <LI>Fixed Eavesdrop.  The "figure the duration" message used a non-standard name.  Now works as advertised.
+       <LI>Changed generic weapon attributes to give a reasonable to-hit bonus for the new combat system.
+       <LI>Fixed problem of identified "special" weapons not giving a description.  As a bonus, I made it so that player-enchanted
+           weapons (like holy and unholy weapon) now show the maker string that is stored in the item attribute.
+    </UL>   
+    <LI>July 10, 1999
+    <UL>
+       <LI>Fixed weapon enchantments to not overflow the max integer value when figuring the duration for a timer.  Weapon
+           enchantments will only last a maximum of 37 hours (random 1 to 4, plus spellpower/3 hours), because 37 converted to
+           milliseconds is less than the maximum integer value of 2^27 (32 bit variable, 4 bits for type, 1 bit for sign), which
+           is roughly equal to 137 million.
+       <LI>Fixed engrave to show description when an item is engraved.  Also removed some debug spam associated with it.
+    </UL>   
+    <LI>July 11, 1999
+    <UL>
+       <LI>Lowered casting cost of enchant weapon down to 3 elderberries and 1 orc tooth.
+       <LI>Lowered casting cost of holy weapon down to 3 emeralds.
+       <LI>Raised casting cost of unholy weapon to 3 fairy wings.
+       <LI>Lowered casting cost of shroud to 3 mushrooms, 3 elderberries, and 2 herbs.
+       <LI>Lowered casting cost of glow to 2 elderberries and 2 mushrooms.
+       <LI>Fixed combat messages for attack spells.  Attack spells (like fireball, etc) now use standard damage messages.
+       <LI>Fixed problem of wands improving attack spells when used.
+       <LI>Fixed some error spam in Player when trying to figure combat damage messages with no stroke object (like when attack
+           spells (now) use the combat damage message infrastructure).
+       <LI>Increased ranged attack spell damage.  Damage is now more like touch attack spells, where base damage is determined
+           from a range of numbers, and spell finally does (50 + spellpower/2) percent damage.  Mana focus now gives a 25% bonus
+           to spell damage.
+       <LI>Eliminated some debug spam from SpellItem.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>   
+    <LI>July 12, 1999
+    <UL>
+       <LI>Fixed problem of Super Strength causing error spam when trying to end.  Changed the structure of the state to only
+           include the strength change, NOT the target (assumed when the spell wears off).
+       <LI>Fixed attack spells to not give insta-kills or no damage.  Problem with uninitialized values.  Seems SourceSafe saved
+           the file in a mixed state.  Argh.
+       <LI>Fixed bug of rescue continuing to cast on a bad target, such as a logoff ghost or an NPC.
+       <LI>Fixed bug of no item information when a DM creates a glowing item attribute.  Now sets default values for adding the
+           glow attribute to a weapon.
+       <LI>Removed some debug spam from the spell Glow.
+       <LI>Fixed umbrella to not give double messages and to put users in the umbrella properly.
+       <LI>Fixed umbrella to no longer give outlaw status.
+       <LI>Found problem of giving a weapon a glow attribute making the admin unable to benefit from personal light effects.  If
+           a DM creates a glow attribute on a weapon, it will decrease the user's light value without the initial increase, leading
+           to problems.  A recalibrate should fix the problem.
+       <LI><strong>Patched the Beta server with above changes.</strong>
+    </UL>   
+</UL>
+<h2>To Do</h2>
+<UL>
+    <LI>Clean up error spam from commercial and beta servers.
+</UL>
+<h2>For the future</h2>
+<UL>
+    <LI>Allow lich queen to live through a "recreateall". (bug 122)
+    <LI>Clean up SotH and Ao3 errors with stat changes.
+    <LI>Come up with penalty for people who just sit around and cast spells in no-fight zones.
+    <LI>Shut down "safe corners".
+</UL>
+</BODY>
+</HTML>

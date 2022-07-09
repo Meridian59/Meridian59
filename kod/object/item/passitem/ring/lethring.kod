@@ -53,6 +53,12 @@ classvars:
    viValue_average = 70
 
    viVigorDrop = 400000
+   
+   % Peach inset when identified
+   viRevealedColor = PT_ITEM_XLAT_BLUE_TO_SKIN2
+   
+   % Same as resistance rings
+   viUnrevealedColor = PT_ITEM_XLAT_BLUE_TO_WHITE
 
 properties:
 

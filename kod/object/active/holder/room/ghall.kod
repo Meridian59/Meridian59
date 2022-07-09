@@ -567,13 +567,6 @@ messages:
       }
 
       AppendTempString("~B~g]");
-      i = Send(SYS,@GetInvestigator);
-
-      if i <> $ and Send(i,@IsLoggedOn)
-      {
-         Send(i,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-              #parm1=getTempString(),#type1=0);
-      }
 
       Send(SYS,@MailSrGuardian,#from=self,#subject=Send(who,@GetTrueName),
            #body=getTempString());
@@ -1057,8 +1050,7 @@ messages:
 
       oGuild = Send(who,@GetGuild);
 
-      if (oGuild = poGuild_owner
-          OR Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
+      if oGuild = poGuild_owner
          AND Send(oGuild,@GetRank,#who=who) >= RANK_SIR
       {
          return TRUE;
@@ -1409,11 +1401,11 @@ messages:
       return FALSE;
    }
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    {
       % Don't allow portals into guild halls
       return false;
    }
 
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

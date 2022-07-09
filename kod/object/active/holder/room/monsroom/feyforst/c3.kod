@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsC3 = C3.roo
+   room_OutdoorsC3 = c3.roo
    room_name_OutdoorsC3 ="Quilicia Wood"
    OutdoorsC3_music = walk7.mid
 

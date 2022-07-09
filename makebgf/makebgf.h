@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include "wrap.h"
+#include "zlib.h"
 
 #include "dibutil.h"
 

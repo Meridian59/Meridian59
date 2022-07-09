@@ -11,6 +11,7 @@
 
 #include "client.h"
 #include "char.h"
+#include <algorithm>
 
 // Parameters to pick char dialog box
 typedef struct {
@@ -122,33 +123,45 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       hList = GetDlgItem(hDlg, IDC_CHARLIST);
       info = (PickCharStruct *) lParam;
 
+      // Insertion sort alphabetically, with new characters at the end
+      for (i = 1; i < info->num_characters; ++i) {
+         int j = i;
+         
+         while (j > 0 &&
+                ((info->characters[j-1].flags == 1 && info->characters[j].flags != 1) ||
+                 strcmpi(info->characters[j-1].name, info->characters[j].name) > 0)) {
+            std::swap(info->characters[j], info->characters[j - 1]);
+            --j;
+         }
+      }
+      
       /* Display characters in list */
       for (i=0; i < info->num_characters; i++)
       {
- 	 // For new characters, show a special string
-  	 if (info->characters[i].flags == 1)
-	   index = ListBox_AddString(hList, GetString(hInst, IDS_NEWCHARACTER));
-	   else index = ListBox_AddString(hList, info->characters[i].name);
-	 ListBox_SetItemData(hList, index, i);
+         // For new characters, show a special string
+         if (info->characters[i].flags == 1)
+            index = ListBox_AddString(hList, GetString(hInst, IDS_NEWCHARACTER));
+         else index = ListBox_AddString(hList, info->characters[i].name);
+         ListBox_SetItemData(hList, index, i);
       }
-
+      
       /* Select first char */
       ListBox_SetCurSel(hList, 0);
-
+      
       // Show message of the day
       Edit_SetText(GetDlgItem(hDlg, IDC_MOTD), info->motd);  
-
+      
       // Display advertisements
       for (i=0; i < info->num_ads; i++)
       {
-	 char filename[MAX_PATH + FILENAME_MAX];
-	 sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
-	 Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
+         char filename[MAX_PATH + FILENAME_MAX];
+         sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
+         Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
       }
-
+      
       hPickCharDialog = hDlg;
       return TRUE;
-
+      
    case WM_COMPAREITEM:
       return ItemListCompareItem(hDlg, (const COMPAREITEMSTRUCT *) lParam);
    case WM_MEASUREITEM:

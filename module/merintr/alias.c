@@ -48,7 +48,7 @@ static HotkeyAlias aliases[] =
    { VK_F9,   "point",    True, },
    { VK_F10,  "addgroup", True, },
    { VK_F11,  "mail",     True, },
-   { VK_F12,  "help",     True, },
+   { VK_F12,  "quit",     True, },
 };
 
 static VerbAlias* _apVerbAliases = NULL;

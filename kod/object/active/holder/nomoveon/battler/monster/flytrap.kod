@@ -38,8 +38,8 @@ classvars:
    viTreasure_type = TID_LOW_HUMAN
 
    viSpeed = SPEED_VERY_SLOW
-   viAttack_types = 0
-   viAttack_spells = 0
+   viAttack_type = 0
+   viAttack_spell = 0
    viAttributes = 0
    viLevel = 60
    viDifficulty = 5

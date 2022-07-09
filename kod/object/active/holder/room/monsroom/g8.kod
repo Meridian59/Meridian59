@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_OutdoorsG8 = G8.roo
+   room_OutdoorsG8 = g8.roo
    room_name_OutdoorsG8 ="The Cragged Mountains"
    OutdoorsG8_music = walk4.mid
 

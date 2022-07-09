@@ -1399,6 +1399,21 @@ messages:
 
       if oRoom <> $
       {
+         if isClass(who,&Admin)
+            AND Send(who, @IsHidden)
+         {
+             if oTarget = $
+             {
+                 Debug("ADMIN:",Send(who,@GetTrueName),"cast",Send(Self,@GetName),"while hidden.");
+             }               
+             else
+             {
+                 Debug("ADMIN:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetTrueName),"while hidden.");
+             }
+              
+            return;
+         }     
+      
          Send(self,@PlaySpellSound,#room_obj=oRoom,#what=who);
          Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets);
       }
@@ -1884,6 +1899,12 @@ messages:
 
    SpellMurmurMessage(caster=$,target=$,hearer=$)
    {
+      if isClass(caster,&Admin)
+         AND Send(caster, @IsHidden)
+      {
+         return;     
+      }      
+      
       if caster = hearer
       {
          return;

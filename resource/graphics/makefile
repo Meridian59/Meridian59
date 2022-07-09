@@ -13,6 +13,7 @@ BGFS = \
 	$(OUTDIR)\arrowner.bgf \
 	$(OUTDIR)\mystswd.bgf \
 	$(OUTDIR)\mystwdov.bgf \
+	$(OUTDIR)\ring3.bgf \
 	$(OUTDIR)\povmystsw.bgf \
 
 all: makedirs $(BGFS)

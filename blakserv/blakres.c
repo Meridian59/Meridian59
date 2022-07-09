@@ -72,7 +72,7 @@ void ResetResource(void)
 	resource_name_map = CreateSIHash(ConfigInt(MEMORY_SIZE_RESOURCE_NAME_HASH));
 }
 
-void AddResource(int id,char *str_value)
+void AddResource(int id,const char *str_value)
 {
 	int hash_num;
 	resource_node *new_node;
@@ -126,7 +126,7 @@ void SetResourceName(int id,char *name)
 
 static resource_node *notify_r;
 
-int AddDynamicResource(char *str_value)
+int AddDynamicResource(const char *str_value)
 {
 	int new_rsc_id;
 	resource_node *r;

@@ -56,8 +56,5 @@ void ClientToBlakodUser(session_node *session,int msg_len,char *msg_data);
 
 void LoadParseClientTables(void);
 void ResetParseClientTables(void);
-void TryUpdateParseClientTables(void);
-
-
 
 #endif

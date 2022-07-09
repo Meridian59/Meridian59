@@ -1,0 +1,18 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// .RH file for TCtxHelpFileManager
+//
+// Resource IDs to use with ctxhelpm.rc and ctxhelpm.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_CTXHELPM_RH)
+#define OWL_CTXHELPM_RH
+
+#define HID_TITLEBAR        24100
+#define CM_HELPCONTENTS     24390
+#define CM_HELPCONTEXT      24392
+#define CM_HELPUSING        24393
+#define CM_HELPSEARCH       24394
+#define IDS_HINTTEXT        40004
+
+#endif

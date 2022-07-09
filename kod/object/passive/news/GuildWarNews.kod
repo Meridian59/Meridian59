@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildWarNews is News
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   guildwarnews_icon_rsc = jbook.bgf
+
+classvars:
+
+   vrIcon = guildwarnews_icon_rsc
+
+properties:
+   
+   piMax_messages = 200
+
+messages:
+
+   GetNewsPermission(what = $)
+   {
+     % We only want the GuildCreator to post to this book.
+     if IsClass(what,&GuildCreator)
+     {	 
+  	   return NEWS_PERMISSION_READ_WRITE;
+     }
+   
+     return NEWS_PERMISSION_READ;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

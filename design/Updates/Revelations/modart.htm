@@ -1,0 +1,658 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE></TITLE>
+   <META NAME="Author" CONTENT="">
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY>
+
+<H2><B>Odds and Ends</B></H2>
+
+<P><I>Note about art: </I></P>
+
+<UL>
+<LI><I>the <B>ground</B> view is what the player sees when a player or
+monster drops the item on the ground. </I></LI>
+
+<LI><I>The <B>inventory</B> view is what the player sees on the right side
+of his client when he holds an item - note that this view should tend to
+be square in shape (for example, swords should be drawn at an angle). </I></LI>
+
+<LI><I>The <B>look</B> view is what you see when you right-click on the
+item. Note that this view is very large, and low-res art will appear to
+be very pixelated.</I></LI>
+</UL>
+
+<P><I>For many items, these three viewpoints are the same. Also note that
+any or all of these viewpoints can be animated to add a little flavor to
+the art.</I></P>
+
+<UL>
+<LI><B>Guild Shields</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Variable, dependant upon insignia</LI>
+
+<LI>Overall, slightly less powerful than a knightshield</LI>
+
+<LI>Generally less potent resistances, but at least one achilles heel.</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Looks much like our current knight shield, but with several definible
+color fields, broken into several possible patterns</LI>
+
+<UL>
+<LI>4 field checkerboard</LI>
+
+<LI>3 field slash</LI>
+
+<LI>4 field klondike</LI>
+</UL>
+
+<LI>Players may choose to get an insignia of either one of the gods (eye,
+skull, ankh, fist or bolt) or of the princess or duke (pegasus or griffin).</LI>
+</UL>
+
+<LI>Art needs</LI>
+
+<UL>
+<LI>third person overlay, in pieces</LI>
+
+<LI>ground, inventory, and look views</LI>
+
+<LI>consult tech team before final implementation for final specs.</LI>
+</UL>
+</UL>
+
+<LI><B>Orc Shield</B></LI>
+
+<UL>
+<LI>stats</LI>
+
+<UL>
+<LI>very strong defensive bonuses</LI>
+
+<LI>very susceptible to thrusting weapons, good attacks</LI>
+
+<LI>only players with karmas &lt;&nbsp;-50 can wear</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>ornate, fierce, made of bone/skulls, ominous. &nbsp;Artists, go nuts.</LI>
+</UL>
+
+<LI>Art needs</LI>
+
+<UL>
+<LI>3rd person view</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Longbow</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Can use any item of type ARROW for ammo</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>First person overlay: bow</LI>
+
+<LI>Third person overlay: walking with bow</LI>
+
+<LI>Third person overlay: shooting with bow</LI>
+
+<LI>ground, inventory, and look views</LI>
+
+<LI>broken view</LI>
+</UL>
+</UL>
+
+<LI><B>Arrows</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Low in damage</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>Projectile flying: 0 degrees and 90 degrees</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Nerudite Arrows</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Low in damage</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>Projectile flying: 0 degrees and 90 degrees</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Nerudite sword</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Has attack type NERUDITE, which some monsters may be susceptible to.</LI>
+
+<LI>lighter in weight and more durable than a standard long sword.</LI>
+
+<LI>Does 1 less damage than a long sword, but is more likely to hit.</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Nerudite is an olive green, flexible, durable metal which the settlers
+on Konima's Island were quick to use for their own means.</LI>
+
+<LI>The weapon itself should look distinctive without looking unique.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>first person overlay</LI>
+
+<LI>third person: carrying</LI>
+
+<LI>third person: attacking</LI>
+
+<LI>ground, inventory and look views</LI>
+
+<LI>broken view</LI>
+</UL>
+</UL>
+
+<LI><B>Nerudite Armor</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Nerudite armor is somewhere between chain and scale in defensive power.</LI>
+
+<LI>Has a resistance to electricity (where most other armors are susceptible
+to it). Also resistant to heat attacks.</LI>
+
+<LI>Susceptible to cold attacks.</LI>
+
+<LI>Lightweight and durable (high numbers of item hit points).</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Nerudite is an olive or transparent green, flexible, durable metal
+which the settlers on Konima's Island were quick to use for their own means.</LI>
+
+<LI>Possibly the armor itself is a series of plates of nerudite connected
+with pieces of bamboo, but artists should go crazy</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>third person standing and attacking</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Robe and Full Skirt</B></LI>
+
+<UL>
+<LI>stats</LI>
+
+<UL>
+<LI>negligable defensive bonus</LI>
+
+<LI>'robe of the master' stats, TBD</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Long, flowing sorcerer's robes.</LI>
+
+<LI>Drawn in color translatable greyscale.</LI>
+
+<LI>Each priestess may offer a 'robe of the master', which is the same
+as a standard robe, but with the insignia of it's school (eye, ankh, skull,
+bolt or fist) on it.</LI>
+
+<LI>Full skirt is merely the bottom half of the robe without the top half.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>third person standing and attacking views.</LI>
+
+<LI>third person waving and pointing if robes cover arms.</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Sari</B></LI>
+
+<UL>
+<LI>stats</LI>
+
+<UL>
+<LI>negligable defensive bonus</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Short, knee-length tropical wrap skirt</LI>
+
+<LI>drawn in color translatable greyscale.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>third person standing and attacking</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Simple metal helm</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Offers a small but valuable defensive bonus. </LI>
+
+<LI>Has few hit points (breaks easily).</LI>
+
+<LI>advanced helms have different bonuses.</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Should be simple and cheap looking, but still be big enough to cover
+all of a player's hair.</LI>
+
+<LI>Should have color translatable trim, which NPCs may offer for different
+reasons (example, Rook gives one with gold trim to a weapons master).</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>Third person worn view</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Ivy Circlet</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Wearing this item gives you a +20% in casting Shal'ille spells, but
+a -10% in casting all other spells.</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>Ornate, peaceful, 'good' feeling art, a tribute to Shal'ille.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>Third person worn view</LI>
+
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Riija's Sword</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>Very unique looking sword, that quite possibly has the eye of riija
+embossed on the hilt.</LI>
+
+<LI>Players acquire it piecemail by doing four quests.</LI>
+
+<LI>See Rob E. for more details.</LI>
+</UL>
+
+<LI>Art Needed</LI>
+
+<UL>
+<LI>4 pieces: ground, inventory and look views.</LI>
+
+<LI>whole sword</LI>
+
+<UL>
+<LI>ground, inventory and look views</LI>
+
+<LI>1st person overlay</LI>
+
+<LI>3rd person attack and standing</LI>
+
+<LI>broken view</LI>
+</UL>
+
+<LI>glowing sword</LI>
+
+<UL>
+<LI>ground, inventory and look views</LI>
+
+<LI>1st person overlay</LI>
+
+<LI>3rd person attack and standing</LI>
+</UL>
+
+<LI>4 glows, that go around each part (for when the player does the quest
+for the second time in a row).</LI>
+</UL>
+</UL>
+
+<LI><B>Riija's Staff</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>Very unique looking staff, that possibly has the eye of Riija embossed
+on it.</LI>
+
+<LI>Players acquire it piecemail by doing four quests.</LI>
+
+<LI>See Rob E. for details.</LI>
+</UL>
+
+<LI>Art Needed</LI>
+
+<UL>
+<LI>4 pieces: ground, inventory and look views.</LI>
+
+<LI>whole staff: ground, inventory and look views.</LI>
+
+<LI>whole staff: broken view</LI>
+
+<LI>whole staff glowing: ground inventory and look views.</LI>
+</UL>
+</UL>
+
+<LI><B>Feathered Totem</B></LI>
+
+<UL>
+<LI>Stats</LI>
+
+<UL>
+<LI>Does not decay the way other rooms do. Decays on it's own in 2 days
+time.</LI>
+</UL>
+
+<LI>Description</LI>
+
+<UL>
+<LI>This item is merely an item that guides can place in the world, and
+then challenge players to go find. I envisioned a small totem pole-like
+object with feathers as long as the pole, small wooden wings, but the item
+could really be almost anything that is visually striking but functionally
+useless.</LI>
+</UL>
+
+<LI>Art Needed</LI>
+
+<UL>
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Reagents</B></LI>
+
+<UL>
+<LI>9 Different Reagents, primarily used for the Riija school</LI>
+
+<UL>
+<LI>3 common</LI>
+
+<LI>3 uncommon</LI>
+
+<LI>2 rare</LI>
+
+<LI>1 very rare</LI>
+</UL>
+
+<LI>Art Needed</LI>
+
+<UL>
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Scrolls</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>Closed scroll with stamp of Justicar ('J'?) is needed for ballot</LI>
+
+<LI>Closed scroll with god emblems and/or princess emblems</LI>
+
+<LI>Closed scroll without a stamp.</LI>
+</UL>
+
+<LI>Art Needed</LI>
+
+<UL>
+<LI>ground, inventory and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Potions</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>3 types of potion bottles</LI>
+
+<LI>liquid is color translatable grey.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Rings</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>2 different kinds of rings</LI>
+
+<LI>color translatable gems</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>ground, inventory, and look views</LI>
+</UL>
+</UL>
+
+<LI><B>Book on pedestal</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>Big, ornate book on a pedestal</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>ground and look view, perhaps only one view, no more than 4.</LI>
+</UL>
+</UL>
+
+<LI><B>Column of smoke</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>Large column of smoke that may go on top of a chimney.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>ground view, one angle, animated.</LI>
+</UL>
+</UL>
+
+<LI><B>Compass</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>an object in your inventory that tells you which way you're facing.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>inventory view, with hotspotted needle in each of the 8 main directions.</LI>
+
+<LI>ground and look view, seperate from inventory view</LI>
+</UL>
+</UL>
+
+<LI><B>Altar</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>An altar that can be devoted in some manner to any one of the five
+gods, by doing a minor quest.</LI>
+</UL>
+
+<LI>Art needed</LI>
+
+<UL>
+<LI>ground and look view. </LI>
+
+<LI>one angle, if altar is round.</LI>
+</UL>
+</UL>
+
+<LI><B>Further 1 view items</B></LI>
+
+<UL>
+<LI>More details will be known as we get closer to completion with the
+quest engine, but these are used mostly for quest engine courier items.</LI>
+
+<LI>Descriptions</LI>
+
+<UL>
+<LI>8-10 items</LI>
+
+<LI>all specifics TBD</LI>
+
+<LI>ground, inventory, and look views all the same</LI>
+</UL>
+</UL>
+</UL>
+
+<P><B>Other Art</B></P>
+
+<UL>
+<LI><B>Spell Icons</B></LI>
+
+<UL>
+<LI>Description</LI>
+
+<UL>
+<LI>See <A HREF="http://meridian58/spells.htm">spells</A> document for
+individual spells attributes.</LI>
+</UL>
+
+<LI>Art Needed</LI>
+
+<UL>
+<LI>look view icon. Preferably animated for enchantment icons.</LI>
+</UL>
+</UL>
+
+<LI><B>Monsters</B></LI>
+
+<UL>
+<LI>See <A HREF="http://meridian58/monsters.htm">monsters</A> document.</LI>
+</UL>
+
+<LI><B>NPCs</B></LI>
+
+<UL>
+<LI>See <A HREF="http://meridian58/NPC.htm">NPCs</A> document.</LI>
+</UL>
+
+<LI><B>UI art</B></LI>
+
+<UL>
+<LI>TBD by R. Vogel and Y. Sheng-Croddy.</LI>
+</UL>
+</UL>
+
+</BODY>
+</HTML>

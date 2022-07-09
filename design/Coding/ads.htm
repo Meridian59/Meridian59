@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Advertisements</TITLE>
+</HEAD>
+<BODY>
+
+<H2>
+<HR width="100%"></H2>
+
+<H2>Advertisements</H2>
+
+<H6>Andrew Kirmse/ 25 January 1996</H6>
+
+<P>The Meridian client can display up to 2 advertisements in its character
+selection dialog. Clicking on an advertisement opens the user's Web browser
+on a URL associated with the advertisement, and logs the advertisement
+and user names in the server log. An ad is an AVI&nbsp;file with no sound.
+</P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B>Client side</B></P>
+
+<P>On the client side, advertisements are stored in the &quot;ads&quot;
+subdirectory of the client installation. A message from the server identifies
+which two advertisements to display in the character selection dialog.
+<A HREF="../../makingadverts.doc">Here</A> is a description of how to
+make advertisement AVI files (Word file).</P>
+
+<P>If a client update consists solely of advertisement files, the normal
+download dialog is not displayed. Instead, the client shows a small dialog
+with the words &quot;Performing routine maintenance&quot; while the advertisements
+are downloaded.</P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B>Server side</B></P>
+
+<P>The advertisement filenames and associated URLs are set in the server's
+configuration file (blakserv.cfg). In the [Advertise] section, the keys
+File1 and File2 point to the two AVI filenames. The keys Url1 and Url2
+point to the associated URLs. The default setup is</P>
+
+<DD><TT>[Advertise]</TT></DD>
+
+<DD><TT>File1=ad1.avi</TT></DD>
+
+<DD><TT>Url1=http://www.3do.com</TT></DD>
+
+<DD><TT>File2=ad2.avi</TT></DD>
+
+<DD><TT>Url2=http://www.microsoft.com</TT></DD>
+
+<P>These can be changed dynamically with the &quot;set config&quot; administrator
+command. Any changes should be saved by also issuing the &quot;save config&quot;
+command.</P>
+
+<P>
+<HR width="100%"></P>
+
+<P><B>Updating advertisements</B></P>
+
+<P>Advertisements are updated via the normal client update mechanism. First,
+build a package containing the new AVI files, using the arq program. By convention, packages are named pkg####$.avi, where #### gives the month and day, and $ is a sequence letter
+for each day, starting at &quot;a&quot;.</P>
+
+<P>Example (typed at the command line): </P>
+
+<P><TT>arq -a pkg0125a newad1.avi</TT></P>
+
+<P>Next, add a line to the end of the server's packages.txt file, containing
+the package name, a new sequence number, and the package type number 24.
+(If you want guests to also download the new advertisement, use the package
+type number 56. However, this is not recommended, since it forces guests
+to do a download when they log in.)</P>
+
+<P>Example (new line in packages.txt file):</P>
+
+<P><TT>pkg0125a.arq 50 24</TT></P>
+
+<P>where the sequence number 50 is one more than the number appearing in
+the previous line of packages.txt.</P>
+
+<P>Finally, type the command &quot;reload packages&quot; in administrator
+mode. If the server is not running when the packages.txt file is modified,
+this step is not necessary; the file will be reread when the server starts.</P>
+
+<P>
+
+</BODY>
+</HTML>

@@ -19,16 +19,14 @@ resources:
    truce_name_rsc = "truce"
    truce_icon_rsc = itruce.bgf
    truce_desc_rsc = \
-      "The spirit of Shal'ille descends upon the area and "
-      "calms the minds of all present, preventing combat for "
+      "The spirit of Shal'ille calls upon her ally Faren, forming a truce with creatures of nature for "
       "several minutes.  "
       "Requires emerald and yrxl sap to cast."
 
-   truce_unnecessary = "Combat is already impossible here."
+   truce_unnecessary = "Combat with monsters is already impossible here."
 
    truce_on = \
-      "A numbing calm settles upon your mind, driving out all thought of "
-      "conflict and war.  You find yourself unable to lift a weapon."
+      "A numbing calm settles upon your mind. You find yourself unable to lift a weapon against nature."
    truce_off = \
       "The calm that had gripped your mind departs.  You feel ready for "
       "battle once more."
@@ -90,7 +88,8 @@ messages:
       oRoom = Send(who,@GetOwner);
 
       % check if combat already banned in room
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
+         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
       {
          Send(who,@MsgSendUser,#message_rsc=truce_unnecessary);
 
@@ -165,7 +164,7 @@ messages:
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=truce_on,#what=self);
       Send(oRoom,@RoomStartEnchantment,#what=self,#state=$,
            #time=Send(self,@GetDuration,#iSpellPower=iSpellPower));
-      Send(oRoom,@SetRoomFlag,#flag=ROOM_NO_COMBAT,#value=TRUE);
+      Send(oRoom,@SetRoomFlag,#flag=ROOM_NO_MOB_COMBAT,#value=TRUE);
 
       propagate;
    }
@@ -205,16 +204,16 @@ messages:
       local i;
 
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=truce_off,#what=self);
-      if Send(where,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      if Send(where,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
       {
-         Send(where,@SetRoomFlagtoDefault,#flag=ROOM_NO_COMBAT);
+         Send(where,@SetRoomFlagtoDefault,#flag=ROOM_NO_MOB_COMBAT);
       }
 
       for i in Send(where,@GetEnchantmentList)
       {
          if Send(Nth(i,2),@GetSpellNum) = SID_JIG
          {
-            Send(where,@SetRoomFlag,#flag=ROOM_NO_COMBAT,#value=TRUE);
+            Send(where,@SetRoomFlag,#flag=ROOM_NO_MOB_COMBAT,#value=TRUE);
          }
       }
 

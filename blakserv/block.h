@@ -15,7 +15,7 @@
 
 typedef struct block_node_struct
 {
-   int iExpires;
+   INT64 iExpires;  // Expiration time
    struct in_addr iaPeer;
    struct block_node_struct *next;
 } block_node;
@@ -26,7 +26,7 @@ void DeleteAllBlocks(void);
 
 bool CheckBlockList(struct in_addr* piaPeer);
 
-void BuildBannedIPBlocks( char *filename );
+void BuildBannedIPBlocks( const char *filename );
 
 
 #endif // BLOCK_H

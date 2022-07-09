@@ -35,7 +35,7 @@ constants:
 
 resources:
 
-   room_OutdoorsE5 = E5.roo
+   room_OutdoorsE5 = e5.roo
    room_name_OutdoorsE5 ="The Forest Shrine"
    OutdoorsE5_music = walk5.mid
 

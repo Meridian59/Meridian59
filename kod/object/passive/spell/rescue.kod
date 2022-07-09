@@ -26,6 +26,7 @@ resources:
    Rescue_Start = "You start your rescue preparations."
    Rescue_Success = "You feel a holy force rescue you from your current situation."
    Rescue_Already_Cast = "You are already being rescued."
+   Rescue_Token_Cancel = "You cannot rescue while holding a token."
    
    rescue_sound = srescue.wav
 
@@ -71,7 +72,14 @@ messages:
       {
          Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
          return FALSE;
-      }         
+      }
+      
+      if Send(who,@FindHolding,#class=&Token)
+      {
+        send(who,@MsgSendUser,#message_rsc=Rescue_Token_Cancel);
+        
+        return FALSE;
+      }
 
       if NOT send(who,@CanRescue)
       {

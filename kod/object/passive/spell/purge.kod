@@ -6,6 +6,7 @@
 %
 % Meridian is a registered trademark.
 
+% IMPORTANT NOTE: If you change the spell purge you might destroy the LogSafePenaltyEnable-function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Purge is Spell

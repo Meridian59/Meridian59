@@ -43,7 +43,7 @@ classvars:
 
    viTreasure_type = TID_TOUGH
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_THRUST
+   viAttack_type = ATCK_WEAP_THRUST
    viAttributes = 0
    viLevel = 75
    viDifficulty = 5

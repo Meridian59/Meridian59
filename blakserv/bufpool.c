@@ -135,7 +135,7 @@ buffer_node * AddToBufferList(buffer_node *blist,void *buf,int len_buf)
    index = 0;
    for(;;)
    {
-      copy_bytes = min(bn->size_buf - bn->len_buf, len_buf - index);
+     copy_bytes = std::min(bn->size_buf - bn->len_buf, len_buf - index);
       memcpy(bn->buf + bn->len_buf, (char *)buf + index, copy_bytes);
       index += copy_bytes;
       bn->len_buf += copy_bytes;

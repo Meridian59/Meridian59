@@ -1,0 +1,8 @@
+EXPORTS
+ DllGetClassObject PRIVATE
+ DllCanUnloadNow PRIVATE
+ DllRegisterServer PRIVATE
+ DllUnregisterServer PRIVATE
+ DllRegisterCommand  PRIVATE
+ GetDocTemplateHead   @ 6
+ GetModulePtr         @ 7

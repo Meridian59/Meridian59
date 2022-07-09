@@ -19,7 +19,7 @@
 
 #include "blakserv.h"
 
-#define BOF_SPEC "*.bof"
+#define BOF_EXTENSION ".bof"
 
 static unsigned char magic_num[] = { 'B', 'O', 'F', 0xFF };
 #define BOF_MAGIC_LEN sizeof(magic_num)
@@ -41,62 +41,49 @@ void InitLoadBof(void)
 
 void LoadBof(void)
 {
-	HANDLE hFindFile;
-	WIN32_FIND_DATA search_data;
-	int files_found;
-	int files_loaded;
 	char file_load_path[MAX_PATH+FILENAME_MAX];
 	char file_copy_path[MAX_PATH+FILENAME_MAX];
 	
-	files_found = 0;
-	files_loaded = 0;
+	int files_loaded = 0;
 	
-	sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF),BOF_SPEC);
-	hFindFile = FindFirstFile(file_load_path,&search_data);
-	if (hFindFile != INVALID_HANDLE_VALUE)
+	StringVector files;
+	if (FindMatchingFiles(ConfigStr(PATH_BOF), BOF_EXTENSION, &files))
 	{
-		do
-		{
-			files_found++; 
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF),search_data.cFileName);
-			sprintf(file_copy_path,"%s%s",ConfigStr(PATH_MEMMAP),search_data.cFileName);
+      for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
+      {
+			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF), it->c_str());
+			sprintf(file_copy_path,"%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
 			if (BlakMoveFile(file_load_path,file_copy_path))
 				files_loaded++;
-		} while (FindNextFile(hFindFile,&search_data));
-		FindClose(hFindFile);
-	}
+      }
+   }
 	
 	/*
-	if (files_found > 0)
-	dprintf("LoadBof moved in %i of %i found new .bof files\n",files_loaded,files_found);
+	if (!files.empty())
+	dprintf("LoadBof moved in %i of %i found new .bof files\n",files_loaded,files.size());
 	*/
 
 	//dprintf("starting to load bof files\n");
-	files_found = 0;
 	files_loaded = 0;
 	
-	sprintf(file_load_path,"%s%s",ConfigStr(PATH_MEMMAP),BOF_SPEC);
-	hFindFile = FindFirstFile(file_load_path,&search_data);
-	if (hFindFile != INVALID_HANDLE_VALUE)
+	if (FindMatchingFiles(ConfigStr(PATH_MEMMAP), BOF_EXTENSION, &files))
 	{
-		do
+		for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
 		{
-			files_found++; 
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_MEMMAP),search_data.cFileName);
+			sprintf(file_load_path,"%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
 			
 			if (LoadBofName(file_load_path))
 				files_loaded++;
 			else
-				eprintf("LoadAllBofs can't load %s\n",search_data.cFileName);
-		} while (FindNextFile(hFindFile,&search_data));
-		FindClose(hFindFile);
+				eprintf("LoadAllBofs can't load %s\n", it->c_str());
+		}
 	}
 	
 	SetClassesSuperPtr();
 	SetClassVariables();
 	SetMessagesPropagate();
 
-	//dprintf("LoadBof loaded %i of %i found .bof files\n",files_loaded,files_found);
+	//dprintf("LoadBof loaded %i of %i found .bof files\n",files_loaded,files.size());
 }
 
 void ResetLoadBof(void)

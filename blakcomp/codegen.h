@@ -44,7 +44,7 @@ void OutputGotoOffset(int outfile, int source, int destination);
 void OutputBaseExpression(int outfile, expr_type expr);
 void BackpatchGoto(int outfile, int source, int destination);
 
-void codegen_error(char *fmt, ...);
+void codegen_error(const char *fmt, ...);
 int const_to_int(const_type c);
 int set_source_id(opcode_type *opcode, int sourcenum, expr_type e);
 int set_dest_id(opcode_type *opcode, id_type id);

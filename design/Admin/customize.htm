@@ -1,0 +1,368 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+  <title>Customizable parts of Meridian</title>
+</head>
+<body>
+<h1> Customizable parts of Meridian</h1>
+This document explains the various parts of Meridian that have
+customizable parameters. These parameters can be changed while the game
+is running and will alter the game experience.
+<h2> How Node Attacks Work</h2>
+<h3> Technical Aspects</h3>
+The node attacks are controlled by an object, similar to the object
+that controls the assassin&#8217;s game. In order to access this object from
+the admin window, you need to enter the command: <i>send object 0
+GetNodeAttack</i>. This command will return an object number which you
+must then <i>show object</i> to view.
+<p>The node attack object has several settable parameters. This allows
+us
+to customize the attacks on the fly to determine how node attacks
+behave. </p>
+<h3> The variables:</h3>
+<table border="1">
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>pbAttackEnabled</td>
+      <td>0 (FALSE)</td>
+      <td>Are attacks scheduled?</td>
+    </tr>
+    <tr>
+      <td>piAttackFrequency</td>
+      <td>36</td>
+      <td>The number of Meridian days minimum between scheduled
+attacks. The actual
+attack happens up to 2 Meridian days after it is "scheduled".</td>
+    </tr>
+    <tr>
+      <td>piAttackIntensity</td>
+      <td>8</td>
+      <td>The maximum number of Xeochicatl that spawn with an attack.
+This number can be less, but never more.</td>
+    </tr>
+    <tr>
+      <td>piAttackDuration</td>
+      <td>60</td>
+      <td>Number of minutes the attack lasts.</td>
+    </tr>
+    <tr>
+      <td>piLossDuration</td>
+      <td>12</td>
+      <td>Number of Meridian days a node loss lasts</td>
+    </tr>
+    <tr>
+      <td>piSeveredChance</td>
+      <td>5</td>
+      <td>Base percent chance a person is severed from a node instead
+of merely losing it&#8217;s mana during that time.</td>
+    </tr>
+    <tr>
+      <td>piNumberOnForAttack</td>
+      <td>20</td>
+      <td>Minimum number of people needed to be on for an attack.</td>
+    </tr>
+    <tr>
+      <td>pbXeoRespawn</td>
+      <td>0 (FALSE)</td>
+      <td>When heartstones are dropped, do Xeochicatl respawn from them
+after a short period of time.</td>
+    </tr>
+  </tbody>
+</table>
+<i>Note that a Meridian day is equal to two "real" hours.</i>
+<p>Xeochicatl are also not affected by DestroyDisposable if in the same
+room
+as a node attack. That means they won&#8217;t be cleared out of a room if
+left
+alone for a long time like other monsters. After a node attack, all
+Xeochicatl
+may be removed normally. </p>
+<h3> So, what happens?</h3>
+After the correct number of Meridian days pass (piAttackFrequency), a
+timer is created to start the attack. The conditions are then checked
+for the attack.
+In order to proceed, there must not be another node attack in progress,
+the
+node selected must not currently be deactivated (from a previous node
+attack),
+and there must be a minimum number of people online
+(piNumberOnForAttack). If any of these conditions are not met, then the
+attack is scheduled for &frac12;
+to one full Meridian day later.
+<p>When an attack starts, Xeochicatl are created around the node, and
+Miriana is brought from her previous location to a location near the
+node. Players then have a certain number of minutes (piAttackDuration)
+to kill all the Xeochicatl.
+At the start of the attack, all monsters in the attacked room will die,
+and
+a message will be given to all players in the room. Monsters will stop
+generating
+in the room. All players online that have bonded with the node will get
+a
+message that they feel one of their nodes threatened. After 1/3 of the
+total
+time has passed, all online players are given a notification of which
+node
+is being attacked. </p>
+<p>During a node attack, the Xeochicatl will be in the room and will
+not leave,
+even if no users show up. This means that users cannot avoid an attack
+by
+not going there. Note that after the attack, the Xeochicatl will
+disappear
+like any other monster if left alone for a period of time. </p>
+<p>If all are destroyed, the node attack is averted. Note, that the
+heartstones that the Xeochicatl drop can respawn into Xeochicatl if
+left on the ground long enough (A variable in the Node Attack object
+(pbXeoRespawn) controls if heartstones respawn into Xeochicatl). If
+this feature is enabled, then the last Xeochicatl killed in a node
+attack should cause heartstones to respawn
+automatically. </p>
+<p>If the attack is not averted, then the node is "taken". This means
+the art is changed, and it will remain "dead" for a certain period of
+Meridian days (piLossDuration). During this period, players who have
+bonded with the
+node will not get the extra mana that bonding normally gives. In
+addition, no player will be able to bond with the node during this
+time. There is a
+chance that a player will actually be severed from the node instead
+(piSeveredChance). This chance is checked individually for each
+character, and is modified by
+the number of nodes they already have. If severed, the player will have
+to
+re-bond with the node in at a future time. </p>
+<p>Players online will get a message if the node is lost or severed.
+Offline players will get a gmail notification of the results. </p>
+<h3> Which nodes?</h3>
+Currently, the node attacks are scheduled to happen at the following
+nodes: <br>
+NODE_H9, NODE_VICTORIA, NODE_BADLANDS, NODE_ORCCAVES, NODE_A5,
+NODE_ICECAVE1
+<p>Additionally, there are mechanics for another node that can have
+attacks scheduled manually for NODE_Q. This node is the "Martyr's
+Battleground" node.
+Due to the difficulty of getting to this node, it must be scheduled
+manually. </p>
+<h3> Other Information</h3>
+For events, an admin may open an admin window and send a node the
+message <i>DoNodeAttack</i>. This will start an attack, following most
+of the normal conditions. The only condition it will ignore is the
+minimum number of players
+online.<br>
+<br>
+When node attacks are activated the designer fairies in the rentable
+rooms
+will require heartstones from the Xeochicatl in order to place most of
+the
+objects within the room. &nbsp;Before activation, the designer faries
+will
+place any object besides a wooden box. &nbsp;Afterwards, one heartstone
+will
+allow you to place a number of objects based upon which heart stone is
+offered.
+&nbsp;It takes all four types of heartstones (sky, red, blue, brown) in
+order
+to place one wooden box within the room.<br>
+<h2> How the Territory Game Works</h2>
+The territory game now has a few customizable parameters.
+<p>You can get the territory game object by sending the command: <i>send
+object
+0 GetTerritoryGame</i> By showing the object, you can see following
+parameters: <br>
+&nbsp;
+<table border="1">
+  <tbody>
+    <tr>
+      <th>Variable</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>piClaimWait</td>
+      <td>10</td>
+      <td>Number of minutes to wait before a flag claim is completed.</td>
+    </tr>
+    <tr>
+      <td>piClaimRetry</td>
+      <td>480</td>
+      <td>Number of minutes to wait before you can claim a flag again.</td>
+    </tr>
+    <tr>
+      <td>piMinUsers</td>
+      <td>20</td>
+      <td>Minimum number of users needed online before you can take a
+flag.</td>
+    </tr>
+    <tr>
+      <td>piMinAllies</td>
+      <td>4</td>
+      <td>Minimum number of allies you must have in same room to make
+claim.</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h2> How the Economy Controls Work</h2>
+There are new variables in the system object (object 0) that control
+how much stuff drops from monsters.&nbsp; These variables work as
+percentages, so that a value of 50 cuts things down by half and a value
+of 200 doubles whatever the variable controls. <br>
+&nbsp;
+<table border="1">
+  <tbody>
+    <tr>
+      <td>
+      <center><b>Variable</b></center>
+      </td>
+      <td>
+      <center><b>Default</b></center>
+      </td>
+      <td>
+      <center><b>Description</b></center>
+      </td>
+    </tr>
+    <tr>
+      <td>piMoneyFactor</td>
+      <td>100</td>
+      <td>Controls the amount of money dropped by monsters when money
+does drop.</td>
+    </tr>
+    <tr>
+      <td>piItemFactor</td>
+      <td>100</td>
+      <td>Controls the total number of items dropped by a monster at
+death.</td>
+    </tr>
+    <tr>
+      <td>piMagicItemModifier</td>
+      <td>100</td>
+      <td>Modifies the chance that a magical item is created in a
+monster's treasure.</td>
+    </tr>
+  </tbody>
+</table>
+<p>These controls can be used to modify the amount of loot dropped from
+monsters
+to put an economy back in balance. </p>
+<p>One should exercise caution with the variables, however.&nbsp; A
+value of piItemFactor below 25 will most likely cause monsters to stop
+dropping items as monsters have a hard-coded limit of 4 items dropped
+per death no
+matter what.&nbsp; Also, the chance for a magical item to drop is
+incredibly tiny (0.5% - 2.5% per kill in most cases).&nbsp; Increasing
+piMagicItemModifier may not have much obvious effect immediately, and
+decreasing it too much may
+completely eliminate the chance for some monsters to drop items.&nbsp;
+In
+general, it should never drop below 10.<br>
+</p>
+<h2>How Global Player Bonuses Work<br>
+</h2>
+You can set bonuses for players.&nbsp; These can be useful for testing
+or for special events.<br>
+<h3>Advancement Bonuses</h3>
+You can set a global bonus for advancment in the System object.<br>
+<br>
+<table border="1">
+  <tbody>
+    <tr>
+      <td>
+      <center><b>Variable</b></center>
+      </td>
+      <td>
+      <center><b>Default</b></center>
+      </td>
+      <td>
+      <center><b>Description</b></center>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">piAdvancementRate</td>
+      <td style="vertical-align: top;">100<br>
+      </td>
+      <td style="vertical-align: top;">Sets the rate of advancement as
+a percent adjustement to the secondary chance to advance.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+This variable only affects the secondary chance to advance, and affects
+it as a percent.&nbsp; So, setting it to 50 makes it twice as hard to
+advance (50% of base), and setting it to 200 makes it twice as easy to
+advance (200% of base).&nbsp; This variable affects all spells and
+skills.<br>
+<h3>Spellpower Bonuses<br>
+</h3>
+An admin can give spellpower bonuses to the entire server through the
+System object.<br>
+<br>
+There are two variables in System which can affect spellpower to
+extreme ends.<br>
+<br>
+<table border="1">
+  <tbody>
+    <tr>
+      <td>
+      <center><b>Variable</b></center>
+      </td>
+      <td>
+      <center><b>Default</b></center>
+      </td>
+      <td>
+      <center><b>Description</b></center>
+      </td>
+    </tr>
+    <tr>
+      <td>piFullSpellpower</td>
+      <td>FALSE</td>
+      <td>If set to true, makes all spells cast with maximum (99)
+spellpower.</td>
+    </tr>
+    <tr>
+      <td>piNoSpellPower</td>
+      <td>FALSE</td>
+      <td>If set to true, makes all spells cast with no (0) spellpower.</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+piFullSpellpower takes precidence.<br>
+<br>
+There are also two messages in System used to give specific bonuses to
+specific schools:<br>
+<span style="font-style: italic;">send object 0 SetBonusSpellpower
+school int &lt;school&gt; </span>[<span style="font-style: italic;">bonus
+int &lt;amount&gt;</span>] [<span style="font-style: italic;">add int
+&lt;amount&gt;</span>]<br>
+This sets the bonus for the selected school.&nbsp; The parameter <span
+ style="font-style: italic;">bonus</span> sets the bonus to that
+amount, and <span style="font-style: italic;">add</span> adds that
+amount to the existing bonus.&nbsp; Either <span
+ style="font-style: italic;">bonus</span> or <span
+ style="font-style: italic;">add</span> must be defined. If neither are
+defined, no change is made.&nbsp; If both are defined, then <span
+ style="font-style: italic;">bonus</span> is used and <span
+ style="font-style: italic;">add</span> is discarded.&nbsp; The return
+value is the new value of the bonus for that school.&nbsp; Either
+number can be negative.<br>
+<br>
+<span style="font-style: italic;">send object 0 GetBonusSpellpower
+school int &lt;school&gt;</span><br>
+This gets the current bonus for the school as a return value.<br>
+<br>
+Note: the school constants, usable for the <span
+ style="font-style: italic;">school</span> variables above are:
+SS_SHALILLE, SS_QOR, SS_FAREN, SS_KRAANAN, SS_RIIJA, SS_JALA<br>
+<br>
+</body>
+</html>

@@ -14,8 +14,8 @@ constants:
 
    include blakston.khd
 
-   FORGET_BASE_TIME = 180000
-   FORGET_PER_SPELLPOWER = 7870
+   FORGET_BASE_TIME = 60000
+   FORGET_PER_SPELLPOWER = 787
 
 resources:
 
@@ -50,8 +50,8 @@ classvars:
    viSpell_level = 2
    viSchool = SS_RIIJA
    viMana = 20
-   viSpellExertion = 5
-   viCast_time = 5000
+   viSpellExertion = 10
+   viCast_time = 0
    viChance_to_increase = 25
 
    viFlash = FLASH_BAD
@@ -225,7 +225,7 @@ messages:
 
    IsIllusion()
    {
-      return FALSE;
+      return TRUE;
    }
 
 end

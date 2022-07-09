@@ -23,7 +23,7 @@ constants:
    SOLDIER_PERCENT = 20
 
    % What percent of the time do we wake up when someone is near?
-   WAKEUP_CHANCE = 70
+   WAKEUP_CHANCE = 100
 
    % How long are we dormant when someone tries to wake us up?
    DORMANT_DURATION = 2 * 60 * 1000  % 2 minutes (in ms)
@@ -45,7 +45,7 @@ resources:
    LivingStatue_elder = "elder"
    LivingStatue_soldier = "soldier"
 
-   LivingStatue_damage = "~B~r%s%s is noticably more damaged."
+   LivingStatue_damage = "~B~r%s%s is noticeably more damaged."
    LivingStatue_severe_damage = "~B~r%s%s is severely damaged."
 
    LivingStatue_rose_drop = "My... beloved...!"
@@ -130,9 +130,9 @@ resources:
    LivingStatue_leftarm_gauntlet_male = ble.bgf
    LivingStatue_leftarm_gauntlet_female = blf.bgf
 
-   LivingStatue_sound_attack = stat_atk.wav
-   LivingStatue_sound_aware = stat_awr.wav
-   LivingStatue_sound_death = stat_die.wav
+   LivingStatue_sound_attack = trpsatk.wav
+   LivingStatue_sound_aware = xeodie.wav
+   LivingStatue_sound_death = xeo1awr.wav
 
 classvars:
 
@@ -141,7 +141,7 @@ classvars:
 
    viTreasure_type = TID_MEDIUM_TOUGH
 
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
 
    vrSound_hit = LivingStatue_sound_attack
    vrSound_miss = LivingStatue_sound_attack

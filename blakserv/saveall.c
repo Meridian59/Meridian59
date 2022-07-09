@@ -21,46 +21,15 @@
 
 #include "blakserv.h"
 
-int CheckDiskSpace(char *rootname )
-{
-	ULARGE_INTEGER lpFreeBytesAvailableToCaller;
-    ULARGE_INTEGER lpTotalNumberOfBytes ; 
-    ULARGE_INTEGER lpTotalNumberOfFreeBytes ; 
-
-	if ( GetDiskFreeSpaceEx("C:\\", &lpFreeBytesAvailableToCaller,&lpTotalNumberOfBytes , &lpTotalNumberOfFreeBytes ) == ERROR_CALL_NOT_IMPLEMENTED ) {
-		eprintf("Why you running BlakServ on the wrong OS ?\n");
-		return 0;
-	}
-	/*  see if diskspace is less tham 20mb */
-	if( (__int64)lpFreeBytesAvailableToCaller.QuadPart < (__int64)20*1024*1024) {
-		char buf[200];
-		sprintf(buf,"machine only has %luK bytes free",(unsigned long)(lpFreeBytesAvailableToCaller.QuadPart/1024) );
-		eprintf("Low on disk space, not saving game!\n");
-		return 1;
-	}
-	/* all ok */
-	return 0 ;
-}
-int SaveAll(void)
+INT64 SaveAll(void)
 {
    Bool save_ok;
-   int save_time;
+   INT64 save_time;
    char save_name[MAX_PATH+FILENAME_MAX];
    char time_str[100];
    
    /* Note:  You must call GarbageCollect() right before SaveAll() */
    
-/* 
-	charlie: we check for low disk space *before* saving game !duh!
-	and it pages someone, currently me, on a low disk space warning
-	and refuses to save until the problems is cleared ! !
-*/
-
-   if( CheckDiskSpace( ConfigStr(PATH_LOADSAVE) ) == 1 ) {
-	   eprintf("Cant save not enough diskspace, admin paged!!\\n");
-	   save_ok = False ;
-	   return 0;
-   }
 /*
 	 charlie: machine sets the local time from a time synch server
      its potentially dangerous, but only if the time has been changed
@@ -76,7 +45,7 @@ int SaveAll(void)
       We make our own copy since the time functions use a static
       buffer. */
    save_time = GetTime();
-   sprintf(time_str,"%i",save_time);
+   sprintf(time_str,"%lli",(long long) save_time);
    
    save_ok = True;
 
@@ -110,7 +79,7 @@ int SaveAll(void)
 }
 
 
-void SaveControlFile(int save_time)
+void SaveControlFile(INT64 save_time)
 {
    char save_name[MAX_PATH+FILENAME_MAX];
    FILE *savefile;
@@ -127,15 +96,15 @@ void SaveControlFile(int save_time)
    fprintf(savefile,"# Control file for last successful save\n");
    fprintf(savefile,"#\n");
    fprintf(savefile,"# Files written:\n");
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,save_time);
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,save_time);
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,save_time);
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,(long long) save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,(long long) save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,(long long) save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"#\n");
    fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time));
    fprintf(savefile,"#\n");
    fprintf(savefile,"\n");
-   fprintf(savefile,"LASTSAVE %i\n",save_time);
+   fprintf(savefile,"LASTSAVE %lli\n",(long long) save_time);
    
    fclose(savefile);
 }

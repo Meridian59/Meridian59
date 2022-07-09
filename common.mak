@@ -48,6 +48,9 @@ SPROCKETDIR = $(TOPDIR)\sprocket
 CLUBDIR     = $(TOPDIR)\club
 KEYBINDDIR  = $(TOPDIR)\keybind
 WAVEMIXDIR  = $(TOPDIR)\wavemix
+LIBARCHIVEDIR = $(TOPDIR)\libarchive
+LIBPNGDIR   = $(TOPDIR)\libpng
+ZLIBDIR     = $(TOPDIR)\zlib
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -65,15 +68,23 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /WX treats warnings as errors
 # /GR- turns off RTTI
 # /EHsc- turns off exceptions
+# /wd4996  disables warning (GetVersionExA has been deprecated)
+# -arch:IA32 disables SSE instructions (not supported on ancient Athlon CPUs)
+# /MP enables parallel compiling
 
-CCOMMONFLAGS = -nologo -DWIN32 -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE -TP -WX -GR- -EHsc-
+CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
+	     -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
+             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
+	     -TP -WX -GR- -EHsc- -MP -arch:IA32
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -W3 -DBLAKDEBUG
 CNODEBUGFLAGS = $(CCOMMONFLAGS) -W2 -DBLAKDEBUG
-LINKNORMALFLAGS = -nologo /release /machine:ix86
-LINKDEBUGFLAGS = -nologo /debug /machine:ix86
-LINKNODEBUGFLAGS = -nologo /machine:ix86
+LINKNORMALFLAGS =/release
+LINKDEBUGFLAGS = /debug
+LINKNODEBUGFLAGS =
+LINKCONSOLEFLAGS = -subsystem:console,5.01
+LINKWINDOWSFLAGS = -subsystem:windows,5.01
 
 !ifdef DEBUG
 
@@ -111,7 +122,7 @@ CC     = cl
 MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
-RC     = rc
+RC     = rc -nologo
 
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t
@@ -128,4 +139,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(TOPDIR)\miles\include

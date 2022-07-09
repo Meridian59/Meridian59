@@ -38,19 +38,19 @@ void InitChannelBuffer()
 
 void WriteChannelBuffer(int channel_id,char *s)
 {
-   char *ptr;
+   const char *str = s;
 
    EnterCriticalSection(&csChannel_buffers);
 
    if (((head_buffer+1) % MAX_BUFFERS) != tail_buffer)
    {
       channel_buffers[head_buffer].channel_id = channel_id;
-      if (strlen(s) > CHANBUF_SIZE)
-			s = "<<WriteChannelBuffer got string too long to display>>";
+      if (strlen(str) > CHANBUF_SIZE)
+			str = "<<WriteChannelBuffer got string too long to display>>";
 
       // Copy all but trailing \n's and \r's.
-      strcpy(channel_buffers[head_buffer].buf,s);
-      ptr = channel_buffers[head_buffer].buf;
+      strcpy(channel_buffers[head_buffer].buf,str);
+      char *ptr = channel_buffers[head_buffer].buf;
       ptr += strlen(ptr);
       while (ptr > channel_buffers[head_buffer].buf &&
 				 (*(ptr-1) == '\n' || *(ptr-1) == '\r'))

@@ -65,7 +65,7 @@ classvars:
    viTreasure_type = TID_ORC_WIZARD
 
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_BLUDGEON
+   viAttack_type = ATCK_WEAP_BLUDGEON
    viAttributes = 0
    viLevel = 80
    viDifficulty = 7

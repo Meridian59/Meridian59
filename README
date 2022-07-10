@@ -1,7 +1,7 @@
 Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2016 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2022 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -30,8 +30,9 @@ included.
 
 BUILD INSTRUCTIONS
 
-The code has been built successfully with Microsoft Visual Studio 2017
-Express, which you can download for free at http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
+The code has been built successfully with Microsoft Visual Studio 2022
+Community Edition, which you can download for free at 
+http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
 
 1. Make sure Visual Studio's binaries are in your path, e.g. by using
 the vcvars32.bat script that comes with Visual Studio.

@@ -22,8 +22,8 @@ typedef struct account_node_struct
    char *password;
    int type;
    int credits;			/* remember, stored as 1/100 of a credit */
-   int last_login_time;
-   int suspend_time;
+   INT64 last_login_time;
+   INT64 suspend_time;
    struct account_node_struct *next;
 } account_node;
 
@@ -35,8 +35,8 @@ int GetUsedGuestAccounts(void);
 Bool CreateAccount(char *name,char *password,int type,int *account_id);
 int CreateAccountSecurePassword(const char *name,const char *password,int type);
 int RecreateAccountSecurePassword(int account_id,char *name,char *password,int type);
-void LoadAccount(int account_id,char *name,char *password,int type,int last_login_time,
-		 int suspend_time, int credits);
+void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_login_time,
+		 INT64 suspend_time, int credits);
 Bool DeleteAccount(int account_id);
 void SetAccountName(account_node *a,char *name);
 void SetAccountPassword(account_node *a,char *password);
@@ -50,7 +50,7 @@ void DoneLoadAccounts(void);
 void ForEachAccount(void (*callback_func)(account_node *a));
 void DeleteAccountAndAssociatedUsersByID(int account_id);
 
-Bool SuspendAccountAbsolute(account_node *a, int suspend_time);
+Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time);
 Bool SuspendAccountRelative(account_node *a, int hours);
 int GetActiveAccountCount();
 

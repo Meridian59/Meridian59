@@ -15,6 +15,7 @@ lib/mss*.lib
 lib/waveplay.lib
 lib/zlib.lib
 bin/bbgun.exe
+bin/bc
 bin/bc.exe
 bin/blakdeco.exe
 bin/blakdiff.exe
@@ -30,6 +31,10 @@ bin/rscprint.exe
 bin/waveplay.dll
 install/meridian59-installer.exe
 roomedit/windeu32.log
+
+# Include runtime scripts
+!run/scripts
+!run/scripts/*
 
 #################
 ## Eclipse

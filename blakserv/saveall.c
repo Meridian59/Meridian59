@@ -21,10 +21,10 @@
 
 #include "blakserv.h"
 
-int SaveAll(void)
+INT64 SaveAll(void)
 {
    Bool save_ok;
-   int save_time;
+   INT64 save_time;
    char save_name[MAX_PATH+FILENAME_MAX];
    char time_str[100];
    
@@ -45,7 +45,7 @@ int SaveAll(void)
       We make our own copy since the time functions use a static
       buffer. */
    save_time = GetTime();
-   sprintf(time_str,"%i",save_time);
+   sprintf(time_str,"%lli",(long long) save_time);
    
    save_ok = True;
 
@@ -79,7 +79,7 @@ int SaveAll(void)
 }
 
 
-void SaveControlFile(int save_time)
+void SaveControlFile(INT64 save_time)
 {
    char save_name[MAX_PATH+FILENAME_MAX];
    FILE *savefile;
@@ -96,15 +96,15 @@ void SaveControlFile(int save_time)
    fprintf(savefile,"# Control file for last successful save\n");
    fprintf(savefile,"#\n");
    fprintf(savefile,"# Files written:\n");
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,save_time);
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,save_time);
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,save_time);
-   fprintf(savefile,"# %s%s%i\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,(long long) save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,(long long) save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,(long long) save_time);
+   fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"#\n");
    fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time));
    fprintf(savefile,"#\n");
    fprintf(savefile,"\n");
-   fprintf(savefile,"LASTSAVE %i\n",save_time);
+   fprintf(savefile,"LASTSAVE %lli\n",(long long) save_time);
    
    fclose(savefile);
 }

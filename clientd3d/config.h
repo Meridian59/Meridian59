@@ -43,9 +43,6 @@ typedef struct {
    Bool play_music;              /* Does user want to hear music? */
    Bool play_sound;              /* Does user want to hear sound? */
    Bool large_area;              /* Drawing area size--> 0 = small, nonzero = large */
-   float stretchfactor; // proprotion of how much bigger than the original maximum width/height
-   int viewport_width; // rename these, viewport width, height
-   int viewport_height;
    int  timeout;                 /* Period of logoff timer */
    char username[MAXUSERNAME+1]; /* User's last login name */
    char password[MAXPASSWORD+1]; /* User's last password (not saved to INI file) */

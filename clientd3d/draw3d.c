@@ -333,11 +333,8 @@ void DrawViewTreatment()
 	int iOffset = 0;
 
 //	HDC hdcTarget = ( stretchfactor == 1 ) ? gBitsDC : gBufferDC;
-
-	// Scaling factor for ui elements?
 	BYTE* pBitsTarget = ( stretchfactor == 1 ) ? gBits : gBufferBits;
-	int iWidthTarget = (stretchfactor == 1) ? config.viewport_width : config.viewport_width * 2; // MAXX : MAXX * 2;
-
+	int iWidthTarget = ( stretchfactor == 1 ) ? MAXX : MAXX*2;
 
 //	if (state == STATE_GAME && (GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
 	if (GetFocus() == hMain)
@@ -345,8 +342,6 @@ void DrawViewTreatment()
 
 	for( i = iOffset; i < iOffset + ( NUM_VIEW_ELEMENTS / 2 ); i++ )
 	{
-		//iWidthTarget = ViewElements[i].width * 1;
-
 		BitCopy( pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
 					ViewElements[i].bits, 0, 0, DIBWIDTH( ViewElements[i].width ), OBB_FLIP | OBB_TRANSPARENT );
 //		OffscreenBitBlt( hdcTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
@@ -419,7 +414,7 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    static int count = 0;
    
    /* write stuff in static variables */
-   stretchfactor = 2; // params->stretchfactor;
+   stretchfactor = params->stretchfactor;
    p = params;
    
    /* Size of offscreen bitmap */

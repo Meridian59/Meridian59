@@ -27,8 +27,8 @@
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
 /* Max viewport size -- must be DWORD aligned for WinG */
-#define MAXX 452 // 2000
-#define MAXY 276 // 2000
+#define MAXX 452
+#define MAXY 276
 
 /* Fineness of offset within a grid square. */
 #define FINENESS     1024L       /* Keep track of rays to within 1/FINENESS */

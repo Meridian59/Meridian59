@@ -857,8 +857,8 @@ void BitCopy( BYTE* dest_bits, int dest_bits_width, int dest_x, int dest_y, int 
 			else dest = dest_bits + (i + dest_yoffset) * dest_bits_width + dest_xoffset;
 			for (j=0; j < width; j++)
 			{
-				if (*src != TRANSPARENT_INDEX) // had to comment out as crashing!
-					//*dest = *src;
+				if (*src != TRANSPARENT_INDEX)
+					*dest = *src;
 				src++;
 				dest++;
 			}

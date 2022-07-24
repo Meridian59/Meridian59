@@ -195,25 +195,21 @@ void GraphicsAreaResize(int xsize, int ysize)
    int new_xsize, new_ysize;  /* Need signed #s */
    Bool must_redraw = False;
 
-   //int max_width, max_height;
-   //int stretchfactor = config.large_area ? 2 : 1;
-
-   float proportion = min(ysize / MAXY, xsize / MAXX);
-   config.stretchfactor = proportion/2;
+   int max_width, max_height;
+   int stretchfactor = config.large_area ? 2 : 1;
 
    int iHeightAvailableForMapAndStats;
 
-   int inventory_min_width = xsize * 0.4;
-   int text_area_min_height = ysize * 0.4;
+   max_width  = stretchfactor * MAXX;
+   max_height = stretchfactor * MAXY;
 
-   new_xsize = xsize - inventory_min_width;
-   new_ysize = ysize - text_area_min_height - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
-   //new_ysize = ysize - TEXT_AREA_MIN_HEIGHT - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
+   new_xsize = min(xsize - INVENTORY_MIN_WIDTH, max_width);
 
+   new_ysize = ysize - TEXT_AREA_MIN_HEIGHT - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
    if (config.toolbar)
      new_ysize -= TOOLBAR_BUTTON_HEIGHT - MIN_TOP_TOOLBAR;
    else new_ysize -= MIN_TOP_NOTOOLBAR;
-   new_ysize = new_ysize;
+   new_ysize = min(new_ysize, max_height);   
 
    /* Make sizes divisible by 4.  Must be even for draw3d, and when 
     * stretchfactor = 2, need divisible by 4 so that room fits exactly in view */
@@ -238,23 +234,18 @@ void GraphicsAreaResize(int xsize, int ysize)
    view.cx = new_xsize;
    view.cy = new_ysize;
 
-   config.viewport_width = new_xsize;
-   config.viewport_height = new_ysize;
-
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
-
-   int minimap_width_height = (inventory_min_width + 3) & ~3;
 
    //	areaMiniMap added by ajw.
    areaMiniMap.x	= view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
-   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height/* MINIMAP_MAX_HEIGHT*/);
+   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, MINIMAP_MAX_WIDTH );
 
    areaMiniMap.y	= 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
 
    iHeightAvailableForMapAndStats = ysize - areaMiniMap.y - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 
    areaMiniMap.cy	= (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
-   areaMiniMap.cy	= min( areaMiniMap.cy, minimap_width_height/* MINIMAP_MAX_HEIGHT*/);
+   areaMiniMap.cy	= min( areaMiniMap.cy, MINIMAP_MAX_HEIGHT );
 
    areaMiniMap.cy -= (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
    areaMiniMap.y += (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;

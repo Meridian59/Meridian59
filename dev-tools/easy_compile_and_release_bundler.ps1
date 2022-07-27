@@ -1,36 +1,36 @@
 <#
     .SYNOPSIS
-    Converted the Post Build Batch for Meridian 59 to Powershell and exteneded it with some neat tweeks
+    Converted the Post Build Batch for Meridian 59 to PowerShell and extended it with some goodies to ease the Deployment
 
     .DESCRIPTION
-    Converted the Post Build Batch for Meridian 59 to Powershell and exteneded it with some neat tweeks
+    Converted the Post Build Batch for Meridian 59 to PowerShell and extended it with some goodies to ease the Deployment
     Link to Post Build Batch File: https://github.com/Meridian59/Meridian59/wiki/Build-Instructions
     All credits to the Post Build Batch file and steps go to Andrew Kirmse
 
     .PARAMETER ClientResourceFolder
-    Specifies the Folder where we copy the official images, music etc. from for the Classic Client
+    Specifies the Folder where we copy the official Images, Music etc. from for the Classic Client
 
     .PARAMETER BuildType
     Specifies what kind of Build you want to trigger
     DEBUG:    Triggers a Debug Build over the Make File
-    RELEASE:  Triggers a Release Build over the Make File and creates Zip Files of the Server and Client at the End which can be deployed
+    RELEASE:  Triggers a Release Build over the Make File and creates Zip Files of the Server and Client which can be deployed
 
     .PARAMETER ServerConfigTemplatePath
-    OPTIONAL Parameter! If passed it specifies the location of a Server Config File Template you have created with your custom settings,
+    OPTIONAL Parameter! If passed, it specifies the location of a Server Configuration File Template you have created with your custom settings,
     so that its copied after the Build and you don't always have to transfer it manually to your server folder
 
     .EXAMPLE
     Debug Build
-    ./compile.ps1 -ClientResourceFolder C:\temp\oldClient\Resources -BuildType DEBUG
+    ./easy_compile_and_release_bundler.ps1 -ClientResourceFolder C:\temp\oldClient\Resources -BuildType DEBUG
     
     Release Build
-    ./compile.ps1 -ClientResourceFolder C:\temp\oldClient\Resources -BuildType RELEASE
+    ./easy_compile_and_release_bundler.ps1 -ClientResourceFolder C:\temp\oldClient\Resources -BuildType RELEASE
 
     Release Build with Server Config Template passed
-    ./compile.ps1 -ClientResourceFolder C:\temp\oldClient\Resources -BuildType Release -ServerConfigTemplatePath "C:\Temp\blakserv_template.cfg"
+    ./easy_compile_and_release_bundler.ps1 -ClientResourceFolder C:\temp\oldClient\Resources -BuildType Release -ServerConfigTemplatePath "C:\Temp\blakserv_example_template.cfg"
 
     .NOTES
-    Run this from the Developer PowerShell for VS 2017 or 2019
+    Run this Script from the Developer PowerShell for VS 2017, 2019 or 2022
 
 #>
 
@@ -41,10 +41,33 @@ Param
   [String] $ServerConfigTemplatePath 
 )
 
-
 Write-Host "#####################################" -ForegroundColor Cyan
 Write-Host "Thorbenn's Meridian 59 Compile Script" -ForegroundColor Cyan
 Write-Host "#####################################" -ForegroundColor Cyan
+
+
+#Check if we are in the Root Directory of the Repository
+Write-Host "Checking Working Directory..." -ForegroundColor Yellow
+$workingDirectory = (Get-Item $PSScriptRoot).Parent.FullName
+
+#If we are not in the Working Directory, switch to Working Directory
+if( (Get-Location).Path -eq $workingDirectory )
+{
+  Write-Host "Already in correct Working Directory: $workingDirectory" -ForegroundColor Green
+}
+else
+{  
+  #Change Working Directory to the Root Folder of the Repository
+  Write-Host "Changing Working Directory to: $workingDirectory" -ForegroundColor Yellow
+  Set-Location $workingDirectory
+}
+
+#Check that the makefile exists in the Working Directory, otherwise abort script!
+if( (Test-Path -Path "$workingDirectory\makefile") -eq $false)
+{
+  Write-Host "makefile not found! Aborting Script..." -ForegroundColor Red
+  exit 1
+}
 
 #Compile the Code according to the Mode passed as parameter
 switch($BuildType)
@@ -129,20 +152,20 @@ switch($BuildType)
 }
 
 
-Write-Host "Create Kod Folder in Server Directory if it does not exist..." -ForegroundColor Yellow
+Write-Host "Create Kod Folder in Server Directory, if it does not exist..." -ForegroundColor Yellow
 if((Test-Path -Path .\run\server\kod) -eq $false)
 {
     New-Item -ItemType Directory -Path .\run\server\kod
 }
 
-Write-Host "Create savegame Folder in Server Directory if it does not exist..." -ForegroundColor Yellow
+Write-Host "Create savegame Folder in Server Directory, if it does not exist..." -ForegroundColor Yellow
 if((Test-Path -Path .\run\server\savegame) -eq $false)
 {
     New-Item -ItemType Directory -Path .\run\server\savegame
 }
 
-#Copying Client Images and Stuff from specified Resource Folder passed as Parameter
-Write-Host "Copying Graphics, Sound etc..." -ForegroundColor Yellow
+#Copying Client Images and Stuff from the specified Resource Folder
+Write-Host "Copying Graphics, Sounds etc..." -ForegroundColor Yellow
 $items = Get-ChildItem -Path $ClientResourceFolder -Filter *.bgf
 foreach($item in $items)
 {
@@ -199,23 +222,29 @@ foreach($item in $items)
   Copy-Item -Path $name -Destination .\run\localclient\resource\
 }
 
-#check if the cfg template parameter was passed, if so copy the server config template to the server folder
+#check if the cfg Template Parameter was passed, if so copy the Server Configuration Template to the Server Folder
 if( ($null -ne $ServerConfigTemplatePath) -and ($ServerConfigTemplatePath -ne ""))
 {
   Write-Host "Copying blacksev.cfg Template to Server Folder..."
   Copy-Item -Path $ServerConfigTemplatePath -Destination .\run\server\blakserv.cfg
 }
 
+#if this is a Debug Build, copy the runLocalClient.ps1 script to .\run\localclient
+if($BuildType -eq "DEBUG")
+{
+  Write-Host "Copying runLocalClient.ps1 to .\run\localclient Folder..."
+  Copy-Item -Path .\dev-tools\runLocalClient.ps1 -Destination .\run\localclient\runLocalClient.ps1
+}
 
-#if this is a release build compress the Server and client to a Zip File so that it can be deployed
+#if this is a Release Build, compress the Server and Client to a Zip File, so that it can be deployed more easily
 if($BuildType -eq "RELEASE")
 {
     #Get the Date for the Folder Structure and Zips
-    $date = (Get-Date).ToString("dd-MM-yyyy")
+    $date = (Get-Date).ToString("dd-MM-yyyy-hhmm")
     #Where we will place our Release Artifacts
     $releaseFolder = ".\run\releaseBuilds\$date"
 
-    #Create a Release Folder if it does not exist
+    #Create a Release Folder, if it does not exist
     if((Test-Path -Path $releaseFolder ) -eq $false)
     {
         New-Item -ItemType Directory -Path $releaseFolder
@@ -226,11 +255,11 @@ if($BuildType -eq "RELEASE")
     #Copy the Client to the Release Folder
     Copy-Item -Recurse -Path .\run\localclient -Destination ".\$releaseFolder\classic_client"
 
-    #Remove the .gitignore Files from the client and server folder
+    #Remove the .gitignore Files from the Client and Server Folder
     $items = Get-ChildItem -Recurse -Path $releaseFolder -Filter .gitignore
     foreach($item in $items)
     {
-        Remove-Item -Path $item.FullName
+      Remove-Item -Path $item.FullName
     }
     
     #Compress the Client
@@ -238,8 +267,28 @@ if($BuildType -eq "RELEASE")
     $clientPath = $releaseFolder + "\" + $date + "_ClassicClient.zip"
     Compress-Archive -Path "$releaseFolder\classic_client" -DestinationPath $clientPath -CompressionLevel Optimal
 
+    #Remove classic_client Folder after Zipping
+    if($? -eq $true)
+    {
+      if(Test-Path -Path "$releaseFolder\classic_client")
+      {
+        Write-Host "Removing Folder $releaseFolder\classic_client" -ForegroundColor Yellow
+        Remove-Item -Recurse -Force -Path "$releaseFolder\classic_client"
+      }
+    }
+
     #Compress the Server
     Write-Host "Compressing Server to Zip..." -ForegroundColor Yellow
     $serverPath = $releaseFolder + "\" + $date + "_Server.zip"
     Compress-Archive -Path "$releaseFolder\server" -DestinationPath $serverPath -CompressionLevel Optimal
+
+    #Remove server Folder after Zipping
+    if($? -eq $true)
+    {
+      if(Test-Path -Path "$releaseFolder\server")
+      {
+        Write-Host "Removing Folder $releaseFolder\server" -ForegroundColor Yellow
+        Remove-Item -Recurse -Force -Path "$releaseFolder\server"
+      }
+    }
 }

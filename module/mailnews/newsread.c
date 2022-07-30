@@ -27,8 +27,6 @@ static list_type new_articles = NULL; /* Build up new articles arriving from ser
 static RECT dlg_rect; // Screen position of dialog
 
 // Constants for news dialog columns
-// enum { COL_TITLE = 0, COL_POSTER = 1, COL_TIME = 2};
-
 #define COL_TITLE 0x0000
 #define COL_POSTER 0x0001
 #define COL_TIME 0x0002
@@ -44,7 +42,6 @@ static BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LO
 static void UserReplyNewsMail(NewsArticle *article);
 void OnColumnClick(LPNMLISTVIEW pLVInfo);
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
-int strcicmp(char const *a, char const *b);
 
 /****************************************************************************/
 /*

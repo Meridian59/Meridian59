@@ -11,26 +11,27 @@
 
 #include "client.h"
 #include "mailnews.h"
-
-#ifdef _WIN32
-#include <string.h>
-#define strcasecmp _stricmp
-#else // assuming POSIX or BSD compliant system
-#include <strings.h>
-#endif
+#include "string.h"
 
 HWND hReadNewsDialog = NULL;
 
 /* Stuff for making raw times into human-readable times */
-static int months[] =
-    {IDS_JANUARY, IDS_FEBRUARY, IDS_MARCH, IDS_APRIL, IDS_MAY, IDS_JUNE, IDS_JULY,
-     IDS_AUGUST, IDS_SEPTEMBER, IDS_OCTOBER, IDS_NOVEMBER, IDS_DECEMBER};
-static int weekdays[] =
-    {IDS_SUNDAY, IDS_MONDAY, IDS_TUESDAY, IDS_WEDNESDAY, IDS_THURSDAY, IDS_FRIDAY, IDS_SATURDAY};
+static int months[] = {IDS_JANUARY,   IDS_FEBRUARY, IDS_MARCH,    IDS_APRIL,
+                       IDS_MAY,       IDS_JUNE,     IDS_JULY,     IDS_AUGUST,
+                       IDS_SEPTEMBER, IDS_OCTOBER,  IDS_NOVEMBER, IDS_DECEMBER};
+static int weekdays[] = {IDS_SUNDAY,   IDS_MONDAY, IDS_TUESDAY, IDS_WEDNESDAY,
+                         IDS_THURSDAY, IDS_FRIDAY, IDS_SATURDAY};
 
 static list_type new_articles = NULL; /* Build up new articles arriving from server */
 
 static RECT dlg_rect; // Screen position of dialog
+
+// Constants for news dialog columns
+// enum { COL_TITLE = 0, COL_POSTER = 1, COL_TIME = 2};
+
+#define COL_TITLE 0x0000
+#define COL_POSTER 0x0001
+#define COL_TIME 0x0002
 
 static ChildPlacement newsread_controls[] = {
     {IDC_NEWSEDIT, RDI_ALL},
@@ -65,8 +66,8 @@ void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions
    s.permissions = permissions;
    s.desc = desc;
 
-   DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
-                  ReadNewsDialogProc, (LPARAM)&s);
+   DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain, ReadNewsDialogProc,
+                  (LPARAM) &s);
 }
 /****************************************************************************/
 /*
@@ -95,7 +96,7 @@ void ReceiveArticles(WORD newsgroup, BYTE part, BYTE max_part, list_type article
 
    if (part == max_part)
    {
-      SendMessage(hReadNewsDialog, BK_ARTICLES, 0, (LPARAM)new_articles);
+      SendMessage(hReadNewsDialog, BK_ARTICLES, 0, (LPARAM) new_articles);
       last_part = 0;
    }
 }
@@ -108,7 +109,7 @@ void UserReadArticle(char *article)
    if (hReadNewsDialog == NULL)
       return;
 
-   SendMessage(hReadNewsDialog, BK_ARTICLE, 0, (LPARAM)article);
+   SendMessage(hReadNewsDialog, BK_ARTICLE, 0, (LPARAM) article);
 }
 /****************************************************************************/
 BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
@@ -134,13 +135,12 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, cinfo->hMain);
-      info = (ReadNewsDialogStruct *)lParam;
+      info = (ReadNewsDialogStruct *) lParam;
 
       hList = GetDlgItem(hDlg, IDC_NEWSLIST);
       hEdit = GetDlgItem(hDlg, IDC_NEWSEDIT);
 
-      ListView_SetExtendedListViewStyleEx(hList, LVS_EX_FULLROWSELECT,
-                                          LVS_EX_FULLROWSELECT);
+      ListView_SetExtendedListViewStyleEx(hList, LVS_EX_FULLROWSELECT, LVS_EX_FULLROWSELECT);
 
       SetWindowFont(hEdit, GetFont(FONT_MAIL), FALSE);
       SetWindowFont(hList, GetFont(FONT_MAIL), FALSE);
@@ -192,7 +192,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       return TRUE;
 
    case WM_GETMINMAXINFO:
-      lpmmi = (MINMAXINFO *)lParam;
+      lpmmi = (MINMAXINFO *) lParam;
       lpmmi->ptMinTrackSize.x = 200;
       lpmmi->ptMinTrackSize.y = 300;
       return 0;
@@ -202,17 +202,17 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       if (info->articles != NULL)
          list_destroy(info->articles);
 
-      info->articles = (list_type)lParam;
+      info->articles = (list_type) lParam;
 
       /* Put article title lines in list box; save old position if appropriate */
       index = -1;
       if (ListView_GetItemCount(hList) > 0)
-         if (!ListViewGetCurrentData(hList, &index, (int *)&article))
+         if (!ListViewGetCurrentData(hList, &index, (int *) &article))
             index = -1;
       ListView_DeleteAllItems(hList);
       for (l = info->articles; l != NULL; l = l->next)
       {
-         article = (NewsArticle *)(l->data);
+         article = (NewsArticle *) (l->data);
 
          // Add article to list view
          if (!IsNameInIgnoreList(article->poster))
@@ -221,7 +221,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
             lvitem.iItem = ListView_GetItemCount(hList);
             lvitem.iSubItem = 0;
             lvitem.pszText = article->title;
-            lvitem.lParam = (LPARAM)article;
+            lvitem.lParam = (LPARAM) article;
             ListView_InsertItem(hList, &lvitem);
 
             // Add subitems
@@ -251,7 +251,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
 
    case BK_ARTICLE:
       /* Display article's text */
-      SetWindowText(hEdit, (char *)lParam);
+      SetWindowText(hEdit, (char *) lParam);
       if (info->permissions & NEWS_POST)
          EnableWindow(GetDlgItem(hDlg, IDC_REPLY), TRUE);
       EnableWindow(GetDlgItem(hDlg, IDC_REPLYMAIL), TRUE);
@@ -264,20 +264,21 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       HANDLE_MSG(hDlg, WM_CTLCOLORDLG, MailCtlColor);
 
    case WM_NOTIFY:
-      if ((((LPNMHDR)lParam)->idFrom == IDC_NEWSLIST) &&
-          (((LPNMHDR)lParam)->code == LVN_COLUMNCLICK))
-         OnColumnClick((LPNMLISTVIEW)lParam);
+      if ((((LPNMHDR) lParam)->idFrom == IDC_NEWSLIST) &&
+          (((LPNMHDR) lParam)->code == LVN_COLUMNCLICK))
+         OnColumnClick((LPNMLISTVIEW) lParam);
       return TRUE;
 
       if (wParam != IDC_NEWSLIST)
          return TRUE;
 
-      nm = (NM_LISTVIEW *)lParam;
+      nm = (NM_LISTVIEW *) lParam;
 
       switch (nm->hdr.code)
       {
       case NM_CLICK:
-         // If you click on an item, select it--why doesn't control work this way by default?
+         // If you click on an item, select it--why doesn't control work this way
+         // by default?
          GetCursorPos(&lvhit.pt);
          ScreenToClient(hList, &lvhit.pt);
          lvhit.pt.x = 10;
@@ -285,8 +286,8 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          if (index == -1)
             break;
 
-         ListView_SetItemState(hList, index,
-                               LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+         ListView_SetItemState(hList, index, LVIS_SELECTED | LVIS_FOCUSED,
+                               LVIS_SELECTED | LVIS_FOCUSED);
          break;
 
       case LVN_ITEMCHANGED:
@@ -300,7 +301,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          if (!(lvitem.state & LVIS_SELECTED))
             break;
 
-         article = (NewsArticle *)lvitem.lParam;
+         article = (NewsArticle *) lvitem.lParam;
          if (article->num == article_index)
             break;
 
@@ -332,7 +333,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       switch (GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDC_REPLY:
-         if (!ListViewGetCurrentData(hList, &index, (int *)&article))
+         if (!ListViewGetCurrentData(hList, &index, (int *) &article))
             break;
 
          /* If user posts article, rescan so that it will show up */
@@ -342,7 +343,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          return TRUE;
 
       case IDC_REPLYMAIL:
-         if (!ListViewGetCurrentData(hList, &index, (int *)&article))
+         if (!ListViewGetCurrentData(hList, &index, (int *) &article))
             break;
 
          UserReplyNewsMail(article);
@@ -378,7 +379,7 @@ void UserReplyNewsMail(NewsArticle *article)
 {
    MailInfo *reply;
 
-   reply = (MailInfo *)SafeMalloc(sizeof(MailInfo)); // Freed when reply dialog ends
+   reply = (MailInfo *) SafeMalloc(sizeof(MailInfo)); // Freed when reply dialog ends
 
    reply->num_recipients = 1;
    strcpy(reply->recipients[0], article->poster);
@@ -405,9 +406,9 @@ Bool DateFromSeconds(long seconds, char *str)
    if (t == NULL)
       return False;
 
-   sprintf(str, "%s %s %.2ld, %.4ld %.2ld:%.2ld",
-           GetString(hInst, weekdays[t->tm_wday]), GetString(hInst, months[t->tm_mon]),
-           t->tm_mday, t->tm_year + 1900, t->tm_hour, t->tm_min);
+   sprintf(str, "%s %s %.2ld, %.4ld %.2ld:%.2ld", GetString(hInst, weekdays[t->tm_wday]),
+           GetString(hInst, months[t->tm_mon]), t->tm_mday, t->tm_year + 1900, t->tm_hour,
+           t->tm_min);
    return True;
 }
 
@@ -415,7 +416,7 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 {
    static int nSortColumn = 0;
    static BOOL bSortAscending = TRUE;
-   LPARAM lParamSort;
+   LPARAM lParamSort = 1 + nSortColumn;
 
    // get new sort parameters
    if (pLVInfo->iSubItem == nSortColumn)
@@ -427,7 +428,6 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
    }
 
    // combine sort info into a single value we can send to our sort function
-   lParamSort = 1 + nSortColumn;
    if (!bSortAscending)
       lParamSort = -lParamSort;
 
@@ -437,35 +437,37 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
-   NewsArticle *article1, *article2;
    BOOL bSortAscending = (lParamSort > 0);
    int nColumn = abs(lParamSort) - 1;
 
-   article1 = (NewsArticle *) lParam1;
-   article2 = (NewsArticle *) lParam2;
+   NewsArticle *article1 = (NewsArticle *) lParam1;
+   NewsArticle *article2 = (NewsArticle *) lParam2;
+
+   // `ListView_SortItems` is unstable, so we append the article index for stability
+   char title1[MAX_SUBJECT + 10];
+   sprintf(title1, "%s %d", article1->title, article1->num);
+   char title2[MAX_SUBJECT + 10];
+   sprintf(title2, "%s %d", article2->title, article2->num);
+
+   char poster1[MAXUSERNAME + 10];
+   sprintf(poster1, "%s %d", article1->poster, article1->num);
+   char poster2[MAXUSERNAME + 10];
+   sprintf(poster2, "%s %d", article2->poster, article2->num);
 
    switch (nColumn)
    {
-   case 0:
+   case COL_TITLE:
       if (bSortAscending)
-         return strcasecmp(article1->title, article2->title);
-      else
-         return strcasecmp(article2->title, article1->title);
-      break;
-
-   case 1:
+         return stricmp(title1, title2);
+      return stricmp(title2, title1);
+   case COL_POSTER:
       if (bSortAscending)
-         return strcasecmp(article1->poster, article2->poster);
-      else
-         return strcasecmp(article2->poster, article1->poster);
-      break;
-
-   case 2:
+         return stricmp(poster1, poster2);
+      return stricmp(poster2, poster1);
+   case COL_TIME:
       if (bSortAscending)
          return article1->time - article2->time;
-      else
-         return article2->time - article1->time;
-      break;
+      return article2->time - article1->time;
    }
 
    return 0;

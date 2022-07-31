@@ -35,6 +35,10 @@
    HOUR = 3600
    MINUTE = 60
 
+   % 1 offline day is equal to 12 Meridian days
+   % Use when calculating Meridian days using  
+   MERIDIAN_DAY_MULTIPLER = 12
+
    %%% Object type constants
 
    ACTIVE = 1

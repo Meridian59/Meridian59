@@ -28,8 +28,9 @@ properties:
 
    plHoldingDuringRecreate = $
    plRoomsRented = $
-   % Max number of days a room can be rented for at one time. ~20 offline days.
-   piRentableDaysMax = 240
+
+   % Max number of (offline) days a room can be rented for at one time
+   piRentableDaysMax = 20 * MERIDIAN_DAY_MULTIPLER
 
 messages: 
 

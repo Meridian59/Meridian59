@@ -447,11 +447,6 @@ messages:
    {
       ptDoor = $;
 
-      if GetTime() > 59871006
-      {
-         piMonster_count_max = piMonster_count_max + 1;
-      }
-
       Send(self,@SomethingWaveRoom,#wave_rsc=guest6_door1_rsc,#what=poLever1);
       Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
            #height=84,#speed=128);

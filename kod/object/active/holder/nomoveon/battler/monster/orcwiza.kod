@@ -49,8 +49,8 @@ resources:
 
    OrcWizard_sound_hit = orc_atkh.wav
    OrcWizard_sound_miss = orc_atkm.wav
-   OrcWizard_sound_death = wor_dth.wav
    OrcWizard_sound_aware = wor_awr.wav
+   OrcWizard_sound_death = wor_dth.wav
 
 classvars:
 
@@ -74,10 +74,10 @@ classvars:
 
    viWimpy = 3
 
-   vrSound_hit = orc_sound_hit
-   vrSound_miss = orc_sound_miss
-   vrSound_aware = orc_sound_aware
-   vrSound_death = orc_sound_death
+   vrSound_hit = OrcWizard_sound_hit
+   vrSound_miss = OrcWizard_sound_miss
+   vrSound_aware = OrcWizard_sound_aware
+   vrSound_death = OrcWizard_sound_death
 
 properties:
 

@@ -26,7 +26,7 @@ constants:
    MAX_GEN_ROW = 37
    MAX_GEN_COL = 8
 
-   MIN_FINAL_ROW = 27
+   MIN_FINAL_ROW = 28
    MIN_FINAL_COL = 1
    MAX_FINAL_ROW = 40
    MAX_FINAL_COL = 9

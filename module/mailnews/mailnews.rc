@@ -31,7 +31,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 145 DIALOG  0, 0, 282, 255
 STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Artikel verï¿½ffentlichen"
+CAPTION "Artikel veröffentlichen"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Artikel in einer Newsgroup",-1,10,11,86,8
@@ -54,7 +54,7 @@ BEGIN
     PUSHBUTTON      "A&utor antworten",1125,51,143,58,12,WS_DISABLED
     PUSHBUTTON      "&Nachricht verfassen",12,113,143,68,12
     PUSHBUTTON      "A&ktualisieren",1017,185,143,46,12
-    PUSHBUTTON      "Schlieï¿½en",1,236,143,41,12
+    PUSHBUTTON      "Schließen",1,236,143,41,12
     EDITTEXT        1118,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
 END
 
@@ -68,8 +68,8 @@ BEGIN
     PUSHBUTTON      "&Antworten",1116,59,141,35,12,NOT WS_TABSTOP
     PUSHBUTTON      "Antwort an &Alle",1124,97,141,55,12,NOT WS_TABSTOP
     PUSHBUTTON      "A&ktualisieren",1017,156,141,45,12,NOT WS_TABSTOP
-    PUSHBUTTON      "Lï¿½schen",1018,204,141,35,12,NOT WS_TABSTOP
-    PUSHBUTTON      "Schlieï¿½en",2,243,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Löschen",1018,204,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Schließen",2,243,141,35,12,NOT WS_TABSTOP
     LTEXT           "",1019,4,157,274,9
     EDITTEXT        1013,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
 END
@@ -97,7 +97,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    1                       "Die Empfï¿½nger werden ï¿½berprï¿½ft ..."
+    1                       "Die Empfänger werden überprüft ..."
     2                       "Betreff: "
     3                       "Datum: "
     4                       "Von: "
@@ -116,12 +116,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    16                      "Du muï¿½t zumindest einen Empfï¿½nger festlegen."
-    17                      "Die Nachricht %s kann nicht gelï¿½scht werden."
-    18                      "Die Nachrichten kï¿½nnen nicht empfangen werden."
-    19                      "Die Nachricht kann nicht gespeichert werden. Vielleicht ist nicht mehr genï¿½gend Festplattenspeicher frei?"
-    20                      "Der Empfï¿½ngername %s ist ungï¿½ltig.\nï¿½berprï¿½fe die Schreibweise und versuche es noch einmal."
-    21                      "Diese Nachricht kann nicht an soviele Empfï¿½nger versandt werden.\nWillst Du Sie and die ersten %d Empfï¿½nger versenden?"
+    16                      "Du mußt zumindest einen Empfänger festlegen."
+    17                      "Die Nachricht %s kann nicht gelöscht werden."
+    18                      "Die Nachrichten können nicht empfangen werden."
+    19                      "Die Nachricht kann nicht gespeichert werden. Vielleicht ist nicht mehr genügend Festplattenspeicher frei?"
+    20                      "Der Empfängername %s ist ungültig.\nÜberprüfe die Schreibweise und versuche es noch einmal."
+    21                      "Diese Nachricht kann nicht an soviele Empfänger versandt werden.\nWillst Du Sie and die ersten %d Empfänger versenden?"
     22                      "Du kannst auf diese Nachricht nicht antworten."
 END
 
@@ -129,7 +129,7 @@ STRINGTABLE
 BEGIN
     32                      "Jan"
     33                      "Feb"
-    34                      "Mï¿½r"
+    34                      "Mär"
     35                      "Apr"
     36                      "Mai"
     37                      "Jun"
@@ -228,7 +228,7 @@ CAPTION "Newsgroup: "
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "",IDC_NEWSDESC,4,4,297,8
-    CONTROL         "List1",IDC_NEWSLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
+    CONTROL         "List1",IDC_NEWSLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
     PUSHBUTTON      "&Reply",IDC_REPLY,5,143,42,12
     PUSHBUTTON      "&Mail author",IDC_REPLYMAIL,51,143,42,12,WS_DISABLED
     PUSHBUTTON      "&Post",IDC_NEWSPOST,97,143,41,12

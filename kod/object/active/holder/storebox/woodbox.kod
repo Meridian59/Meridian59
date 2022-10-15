@@ -28,7 +28,7 @@ classvars:
    vrIcon = WoodenBox_icon_rsc
    vrDesc = WoodenBox_desc_rsc
 
-   viBulk_hold_max = 12000
+   viBulk_hold_max = 18000
    viWeight_hold_max = $
 
 properties:

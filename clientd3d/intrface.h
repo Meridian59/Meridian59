@@ -12,7 +12,7 @@
 #ifndef _INTRFACE_H
 #define _INTRFACE_H
 
-#define TEXT_AREA_MIN_HEIGHT 96
+#define TEXT_AREA_HEIGHT 100
 
 /* Grid view area */
 #define GRID_TOP_BORDER  5
@@ -40,9 +40,8 @@
 #define GRAPHICS_TOP_HEIGHT 24
 
 /* Inventory area */
-//#define INVENTORY_MIN_WIDTH (170 + LEFT_BORDER)
 #define INVENTORY_MIN_WIDTH (185 + LEFT_BORDER + 67)
-#define INVENTORY_MAX_WIDTH (250 + LEFT_BORDER)
+#define INVENTORY_MAX_WIDTH 1000 /*(250 + LEFT_BORDER)*/
 
 //	MiniMap area.
 #define MINIMAP_MAX_WIDTH	( INVENTORY_MAX_WIDTH + 3 ) & ~3

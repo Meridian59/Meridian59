@@ -77,7 +77,7 @@ int sector_depths[] = {0, FINENESS / 5, 2 * FINENESS / 5, 3 * FINENESS / 5};
 /* Palettes for different light levels */
 extern BYTE light_palettes[NUM_PALETTES][NUM_COLORS];
 
-BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
+BYTE light_rows[CLASSIC_VIEWPORT_Y/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
@@ -98,8 +98,8 @@ Bool InitializeGraphics3D(void)
 	int i;
 	BITMAPINFOHEADER* ptr;
 
-   gBitsDC = CreateMemBitmap(MAXX, MAXY, &gOldBitmap, &gBits);
-   gBufferDC = CreateMemBitmap(2*MAXX, 2*MAXY, &gOldBitmap, &gBufferBits);
+   gBitsDC = CreateMemBitmap(CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, &gOldBitmap, &gBits);
+   gBufferDC = CreateMemBitmap(2*CLASSIC_VIEWPORT_X, 2*CLASSIC_VIEWPORT_Y, &gOldBitmap, &gBufferBits);
    gMiniMapDC = CreateMemBitmap( MINIMAP_MAX_WIDTH, MINIMAP_MAX_HEIGHT, &gOldBitmap, &gMiniMapBits);
 
    SetBkMode(gBitsDC, TRANSPARENT);
@@ -199,7 +199,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	// sand
 	if (effects.sand)
 	{
-		SandDib(gBits, MAXX, MAXY, 200/*drops*/);
+		SandDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, 200/*drops*/);
 		RedrawAll();
 		if (!config.animate)
 			effects.sand = 0;
@@ -209,7 +209,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	// rain
 	if (effects.raining && !pdibCeiling)
 	{
-		RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
+		RainDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
 		if (config.animate)
 			RedrawAll();
 	}
@@ -217,7 +217,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	// snow
 	if (effects.snowing && !pdibCeiling)
 	{
-		SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
+		SnowDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
 		if (config.animate)
 			RedrawAll();
 	}
@@ -246,7 +246,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 	 amount = 2 * EFFECT_BLUR_AMPLITUDE - amount;
       amount++;
 
-      BlurDib(gBits, MAXX, MAXY, amount);
+      BlurDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, amount);
       RedrawAll();
       if (!config.animate)
 	 effects.blur = 0;
@@ -257,7 +257,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    {
       static int offset = 0;
       offset++;
-      WaverDib(gBits, MAXX, MAXY, offset);
+      WaverDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, offset);
       RedrawAll();
       if (!config.animate)
 	 effects.waver = 0;
@@ -266,7 +266,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    // Flash of XLAT.  Could be color, blindness, whatever.
    if (effects.flashxlat != XLAT_IDENTITY)
    {
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(effects.flashxlat));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(effects.flashxlat));
       effects.duration -= (int)timeDelta;
       if (effects.duration <= 0)
       {
@@ -277,18 +277,18 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 
    if (effects.xlatOverride > 0)
    {
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(effects.xlatOverride));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(effects.xlatOverride));
       RedrawAll();
       return;
    }
 
    // Whiteout
    if (effects.whiteout > 500)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND100WHITE));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND100WHITE));
    else if (effects.whiteout > 250)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND90WHITE));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND90WHITE));
    else if (effects.whiteout > 0)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND80WHITE));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND80WHITE));
    if (!config.animate && effects.whiteout)
    {
       // Whiteout always shows up, but if not animating, it doesn't fade out, it blinks.
@@ -300,21 +300,21 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    if (!config.pain)
       return;
    if (effects.pain > 2000)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND80RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND80RED));
    else if (effects.pain > 1000)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND70RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND70RED));
    else if (effects.pain > 500)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND60RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND60RED));
    else if (effects.pain > 400)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND50RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND50RED));
    else if (effects.pain > 300)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND40RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND40RED));
    else if (effects.pain > 200)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND30RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND30RED));
    else if (effects.pain > 100)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND20RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND20RED));
    else if (effects.pain)
-      XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND10RED));
+      XlatDib(gBits, CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y, FindStandardXlat(XLAT_BLEND10RED));
    
    if (!config.animate && effects.pain)
    {
@@ -334,7 +334,7 @@ void DrawViewTreatment()
 
 //	HDC hdcTarget = ( stretchfactor == 1 ) ? gBitsDC : gBufferDC;
 	BYTE* pBitsTarget = ( stretchfactor == 1 ) ? gBits : gBufferBits;
-	int iWidthTarget = ( stretchfactor == 1 ) ? MAXX : MAXX*2;
+	int iWidthTarget = ( stretchfactor == 1 ) ? CLASSIC_VIEWPORT_X : CLASSIC_VIEWPORT_X*2;
 
 //	if (state == STATE_GAME && (GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
 	if (GetFocus() == hMain)
@@ -369,8 +369,8 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width  / stretchfactor, MAXX);
-   area.cy = min(params->height / stretchfactor, MAXY);
+   area.cx = min(params->width  / stretchfactor, main_viewport_width/*CLASSIC_VIEWPORT_X*/);
+   area.cy = min(params->height / stretchfactor, main_viewport_height/*CLASSIC_VIEWPORT_Y*/);
 
    // Force size to be even
    area.cy = area.cy & ~1;  
@@ -419,8 +419,8 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width  / stretchfactor, MAXX);
-   area.cy = min(params->height / stretchfactor, MAXY);
+   area.cx = min(params->width  / stretchfactor, CLASSIC_VIEWPORT_X);
+   area.cy = min(params->height / stretchfactor, CLASSIC_VIEWPORT_Y);
 
    // Force size to be even
    area.cy = area.cy & ~1;  
@@ -484,13 +484,13 @@ void DrawMap( room_type *room, Draw3DParams *params, Bool bMiniMap )
 	   {
 		  gDC = gBitsDC;
 		  bits = gBits;
-		  width = MAXX;
+		  width = CLASSIC_VIEWPORT_X;
 	   }
 	   else 
 	   {
 		  gDC = gBufferDC;
 		  bits = gBufferBits;
-		  width = 2 * MAXX;
+		  width = 2 * CLASSIC_VIEWPORT_X;
 	   }
    }
    else
@@ -509,7 +509,7 @@ void DrawMap( room_type *room, Draw3DParams *params, Bool bMiniMap )
 
    t1 = timeGetTime();
    // Trace BSP tree to see if more walls are visible
-   DrawBSP(room, params, MAXX, False);
+   DrawBSP(room, params, CLASSIC_VIEWPORT_X, False);
 
    t2 = timeGetTime();
 
@@ -605,9 +605,9 @@ void StretchC1To2(BYTE *src,BYTE *dest,int width,int height)
   /* 1->2 stretch */
   for(i = 0;i < height;i++)
   {
-    s = src + i * MAXX;
-    d  = dest + 2 * i * MAXX * 2;
-    d2 = d + MAXX * 2;                // One row offset from dest
+    s = src + i * CLASSIC_VIEWPORT_X;
+    d  = dest + 2 * i * CLASSIC_VIEWPORT_X * 2;
+    d2 = d + CLASSIC_VIEWPORT_X * 2;                // One row offset from dest
     for(j = 0; j < width; j++)
     {
       register BYTE b = *s;
@@ -638,8 +638,8 @@ void RecopyRoom3D( HDC hdc, int x, int y, int width, int height, Bool bMiniMap )
 
    if( !bMiniMap )
    {
-	   width =  min(width, stretchfactor * MAXX);
-	   height = min(height, stretchfactor * MAXY);
+	   width =  min(width, stretchfactor * CLASSIC_VIEWPORT_X);
+	   height = min(height, stretchfactor * CLASSIC_VIEWPORT_Y);
 
 	   if (factor == 1)
 		  gCopyDC = gBitsDC;
@@ -709,7 +709,7 @@ void LightChanged3D(BYTE viewer_light, BYTE ambient_light)
 
    //   debug(("Viewer light = %d\n", (int) viewer_light));
 
-   for (row = 1; row <= MAXY/2; row++)
+   for (row = 1; row <= CLASSIC_VIEWPORT_Y/2; row++)
    {
       int distance, x;
       /* Pick palette to use for rows based on distance & light level */
@@ -740,8 +740,8 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
       row = ((FINENESS/2) << LOG_VIEWER_DISTANCE) / distance;
       if (row < 1)
 	 row = 1;
-      if (row > MAXY / 2)
-	 row = MAXY / 2;
+      if (row > CLASSIC_VIEWPORT_Y / 2)
+	 row = CLASSIC_VIEWPORT_Y / 2;
 
       index = ((int) light_rows[row] + (int) sector_light - LIGHT_NEUTRAL) * 
 	 LIGHT_LEVELS / MAX_LIGHT;  // Scale from 0-255 to # of palettes
@@ -780,8 +780,8 @@ int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightO
       row = ((FINENESS/2) << LOG_VIEWER_DISTANCE) / distance;
       if (row < 1)
 	 row = 1;
-      if (row > MAXY / 2)
-	 row = MAXY / 2;
+      if (row > CLASSIC_VIEWPORT_Y / 2)
+	 row = CLASSIC_VIEWPORT_Y / 2;
 
       index = ((int) light_rows[row] + (int) sector_light - LIGHT_NEUTRAL) * 
 	 LIGHT_LEVELS / MAX_LIGHT;  // Scale from 0-255 to # of palettes
@@ -822,16 +822,16 @@ void DrawMapAsView(room_type *room, Draw3DParams *params)
    {
       gDC = gBitsDC;
       bits = gBits;
-      width = MAXX;
+      width = CLASSIC_VIEWPORT_X;
    }
    else 
    {
       gDC = gBufferDC;
       bits = gBufferBits;
-      width = 2 * MAXX;
+      width = 2 * CLASSIC_VIEWPORT_X;
    }
    // Trace BSP tree to see if more walls are visible
-   DrawBSP(room, params, MAXX, False);
+   DrawBSP(room, params, CLASSIC_VIEWPORT_X, False);
    MapDraw(gDC, bits, &area, room, width, FALSE);
    DrawPostOverlayEffects(room, params); // In case player blind or drunk
    DrawViewTreatment();

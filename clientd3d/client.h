@@ -77,6 +77,10 @@ extern void ClearMessageQueue(void);
 
 extern Bool is_foreground;   // True when program is in the foreground
 
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+
 /* This list of include files is good for precompiled headers */
 /* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
 

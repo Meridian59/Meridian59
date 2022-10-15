@@ -82,8 +82,8 @@ static char INIRight[]       = "NormalRight";
 static char INITop[]         = "NormalTop";
 static char INIBottom[]      = "NormalBottom";
 static char INIShow[]        = "Show";
-static char INIMaxX[]        = "MaxX";
-static char INIMaxY[]        = "MaxY";
+static char INICLASSIC_VIEWPORT_X[]        = "CLASSIC_VIEWPORT_X";
+static char INICLASSIC_VIEWPORT_Y[]        = "CLASSIC_VIEWPORT_Y";
 
 static char comm_section[]   = "Comm";  /* Section for comm stuff in INI file */
 static char INIPort[]        = "Port";
@@ -438,8 +438,8 @@ void WindowSettingsSave(void)
    WriteConfigInt(window_section, INIRight, r->right, ini_file);
    WriteConfigInt(window_section, INITop, r->top, ini_file);
    WriteConfigInt(window_section, INIBottom, r->bottom, ini_file);
-   WriteConfigInt(window_section, INIMaxX, w.ptMaxPosition.x, ini_file);
-   WriteConfigInt(window_section, INIMaxY, w.ptMaxPosition.y, ini_file);
+   WriteConfigInt(window_section, INICLASSIC_VIEWPORT_X, w.ptMaxPosition.x, ini_file);
+   WriteConfigInt(window_section, INICLASSIC_VIEWPORT_Y, w.ptMaxPosition.y, ini_file);
    WriteConfigInt(window_section, INIShow, w.showCmd, ini_file);
 }
 /************************************************************************/
@@ -458,12 +458,14 @@ void WindowSettingsLoad(WINDOWPLACEMENT *w)
    def_width  = min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
    def_height = min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
 
+   // Need to update here also perhaps for default optimal window size.
+
    r->left   = GetConfigInt(window_section, INILeft, MAIN_DEF_LEFT, ini_file);
    r->right  = GetConfigInt(window_section, INIRight, MAIN_DEF_LEFT + def_width, ini_file);
    r->top    = GetConfigInt(window_section, INITop, MAIN_DEF_TOP, ini_file);
    r->bottom = GetConfigInt(window_section, INIBottom, MAIN_DEF_TOP + def_height, ini_file);
-   w->ptMaxPosition.x = GetConfigInt(window_section, INIMaxX, def_x, ini_file);
-   w->ptMaxPosition.y = GetConfigInt(window_section, INIMaxY, def_y, ini_file);
+   w->ptMaxPosition.x = GetConfigInt(window_section, INICLASSIC_VIEWPORT_X, def_x, ini_file);
+   w->ptMaxPosition.y = GetConfigInt(window_section, INICLASSIC_VIEWPORT_Y, def_y, ini_file);
    w->showCmd = GetConfigInt(window_section, INIShow, SW_SHOWNORMAL, ini_file);
 }
 

@@ -59,7 +59,7 @@ Stretch20:
 
 	mov		[edi],eax				// this probably isn`t so hot..
 
-	mov		[edi+(MAXX*2)],eax
+	mov		[edi+(CLASSIC_VIEWPORT_X*2)],eax
 	add		edi,4
 	mov		eax,0
 
@@ -74,13 +74,13 @@ Stretch20:
 
 	mov		eax,ebx					// get rid  of this (gone) relook at the algo for rewrite
 
-	add		esi,MAXX
+	add		esi,CLASSIC_VIEWPORT_X
 
 	shl		eax,1
 	mov		ecx,[l_ecx]				// get rid of me
 	sub		esi,ebx
 	sub		edi,eax
-	add		edi,MAXX*4
+	add		edi,CLASSIC_VIEWPORT_X*4
 
 
 

@@ -13,8 +13,8 @@
 #define	TEX_CACHE_MAX_WALLMASK	2000000
 #define	TEX_CACHE_MAX_EFFECT	2000000
 #define	TEX_CACHE_MAX_PARTICLE	1000000
-#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(MAXX * stretchfactor) * (-PI / 3.6f))
-#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * stretchfactor) * (PI / 6.0f))
+#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width) *(-PI/4.0f))// * (-PI / 3.6f)) // CLASSIC_VIEWPORT_X
+#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height) *(PI/6.0f)) // * (PI / 6.0f)) // CLASSIC_VIEWPORT_Y
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -133,7 +133,7 @@ extern D3DPRESENT_PARAMETERS	gPresentParam;
 extern Vector3D			sun_vect;
 extern long				shade_amount;
 extern long				stretchfactor;
-extern BYTE				light_rows[MAXY/2+1];      // Strength of light as function of screen row
+extern BYTE				light_rows[CLASSIC_VIEWPORT_Y/2+1];      // Strength of light as function of screen row
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
@@ -702,6 +702,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 
+   stretchfactor = 20;
+
 	XformMatrixPerspective(&proj, FOV_H, FOV_V, 100.0f, Z_RANGE);
 //	aspectRatio = (float)(gD3DRect.right - gD3DRect.left) / (float)(gD3DRect.bottom - gD3DRect.top);
 //	XformMatrixPerspective(&proj, -PI / 4.0f * 0.64f * aspectRatio, PI / 6.0f * 1.55f * (1.0f / aspectRatio), 100.0f, 150000.0f);
@@ -1006,6 +1008,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		pRNode = GetRoomObjectById(player.id);
 
+      // Rendering of Personal Equipment (Shields, weapons etc)
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
 		{
          IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -3214,17 +3217,22 @@ Bool D3DObjectLightingCalc(room_type *room, room_contents_node *pRNode, custom_b
 Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 {
 	float	screenW, screenH;
-
+   /*
 	if (stretchfactor == 2)
 	{
-		screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(MAXX * (stretchfactor * 1.75f));
-		screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * (stretchfactor * 2.25f));
+		screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(CLASSIC_VIEWPORT_X * (stretchfactor * 1.75f));
+		screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(CLASSIC_VIEWPORT_Y * (stretchfactor * 2.25f));
 	}
 	else
 	{
-		screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(MAXX * (stretchfactor * 1.25f));
-		screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * (stretchfactor * 1.5f));
+		screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(CLASSIC_VIEWPORT_X * (stretchfactor * 1.25f));
+		screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(CLASSIC_VIEWPORT_Y * (stretchfactor * 1.5f));
 	}
+   */
+
+   // Scaling factor for UI elements (Scimtar/shield etc)
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 1.75f);
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 2.25f);
 
    if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
    {
@@ -4123,8 +4131,8 @@ void D3DRenderEnableToggle(void)
 
 	if (gD3DEnabled)
 	{
-		memset(gBits, 0, MAXX * MAXY);
-		memset(gBufferBits, 0, MAXX * 2 * MAXY * 2);
+		memset(gBits, 0, CLASSIC_VIEWPORT_X * CLASSIC_VIEWPORT_Y);
+		memset(gBufferBits, 0, CLASSIC_VIEWPORT_X * 2 * CLASSIC_VIEWPORT_Y * 2);
 	}
 }
 
@@ -6928,6 +6936,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			bottomRight.z = 0;
 			bottomRight.w = 1.0f;
 
+
+         //stretchfactor = config.viewport_stretchfactor;
+
 			MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 			MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 			MatrixMultiply(&rot, &rot, &mat);
@@ -7967,6 +7978,7 @@ void D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Dr
 
 void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)
 {
+   // Renders UI elements (like Scimitars, shields etc)
 	D3DMATRIX			mat;
 	room_contents_node	*pRNode;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
@@ -7983,8 +7995,8 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(MAXX * stretchfactor);
-	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * stretchfactor);
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(CLASSIC_VIEWPORT_X * stretchfactor);
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(CLASSIC_VIEWPORT_Y * stretchfactor);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
@@ -8184,6 +8196,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type overlays,
 		PDIB pDib, room_type *room, Draw3DParams *params, AREA *objArea, BOOL underlays)
 {
+   return;
 	int					pass, depth;
 	room_contents_node	*pRNode;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
@@ -8198,8 +8211,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(MAXX * (stretchfactor * 1.5f));
-	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * (stretchfactor * 1.5f));
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;// (CLASSIC_VIEWPORT_X * (stretchfactor * 1.5f));
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;// (CLASSIC_VIEWPORT_Y * (stretchfactor * 1.5f));
 
    // Get player's object flags for special drawing effects
 	pRNode = GetRoomObjectById(player.id);
@@ -8419,8 +8432,8 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(MAXX * stretchfactor);
-	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * stretchfactor);
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;// (CLASSIC_VIEWPORT_X * stretchfactor);
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;// (CLASSIC_VIEWPORT_Y * stretchfactor);
 
 	if (GetFocus() == hMain)
 		offset = 4;

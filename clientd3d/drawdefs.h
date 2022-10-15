@@ -26,9 +26,11 @@
 #define TURN_RIGHT(angle) ((angle + NUMDEGREES / 4) % NUMDEGREES)
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
-/* Max viewport size -- must be DWORD aligned for WinG */
-#define MAXX 452
-#define MAXY 276
+/* Original classic view port size -- must be DWORD aligned for WinG */
+#define CLASSIC_VIEWPORT_X 1452
+#define CLASSIC_VIEWPORT_Y 1276
+#define CLASSIC_VIEWPORT_YX_PROPTION 1.68//(1+(CLASSIC_VIEWPORT_X-CLASSIC_VIEWPORT_Y)/CLASSIC_VIEWPORT_Y)
+#define CLASSIC_VIEWPORT_XY_PROPTION 0.59//(1/CLASSIC_VIEWPORT_YX_PROPTION)
 
 /* Fineness of offset within a grid square. */
 #define FINENESS     1024L       /* Keep track of rays to within 1/FINENESS */

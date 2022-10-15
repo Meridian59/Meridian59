@@ -25,6 +25,9 @@ static FILE *debug_file = NULL;
 
 char *szAppName;
 
+int main_viewport_width;
+int main_viewport_height;
+
 /************************************************************************/
 void _cdecl dprintf(char *fmt, ...)
 {

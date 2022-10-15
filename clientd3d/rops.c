@@ -168,7 +168,7 @@ void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 
 /***************************************************************************/
 
-static int _blur_offset[4] = { 1, -1, MAXX, -MAXX };
+static int _blur_offset[4] = { 1, -1, CLASSIC_VIEWPORT_X, -CLASSIC_VIEWPORT_X };
 
 void BlurDib(BYTE* pabyBits, int width, int height, int amount)
 	//PERFORMANCE

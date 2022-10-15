@@ -13,8 +13,9 @@
 #define	TEX_CACHE_MAX_WALLMASK	2000000
 #define	TEX_CACHE_MAX_EFFECT	2000000
 #define	TEX_CACHE_MAX_PARTICLE	1000000
-#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width) *(-PI/4.0f))// * (-PI / 3.6f)) // CLASSIC_VIEWPORT_X
-#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height) *(PI/6.0f)) // * (PI / 6.0f)) // CLASSIC_VIEWPORT_Y
+// Define field of views with magic numbers for tuning
+#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width) * (-PI/4.0f))
+#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height) * (PI/6.0f))
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -701,8 +702,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	MatrixMultiply(&view, &trans, &rot);
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
-
-   stretchfactor = 20;
 
 	XformMatrixPerspective(&proj, FOV_H, FOV_V, 100.0f, Z_RANGE);
 //	aspectRatio = (float)(gD3DRect.right - gD3DRect.left) / (float)(gD3DRect.bottom - gD3DRect.top);
@@ -3217,20 +3216,8 @@ Bool D3DObjectLightingCalc(room_type *room, room_contents_node *pRNode, custom_b
 Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 {
 	float	screenW, screenH;
-   /*
-	if (stretchfactor == 2)
-	{
-		screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(CLASSIC_VIEWPORT_X * (stretchfactor * 1.75f));
-		screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(CLASSIC_VIEWPORT_Y * (stretchfactor * 2.25f));
-	}
-	else
-	{
-		screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(CLASSIC_VIEWPORT_X * (stretchfactor * 1.25f));
-		screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(CLASSIC_VIEWPORT_Y * (stretchfactor * 1.5f));
-	}
-   */
 
-   // Scaling factor for UI elements (Scimtar/shield etc)
+   // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling
    screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 1.75f);
    screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 2.25f);
 

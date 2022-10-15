@@ -210,11 +210,6 @@ void GraphicsAreaResize(int xsize, int ysize)
    {
       new_ysize = ysize - text_area_height;
       new_xsize = new_ysize * CLASSIC_VIEWPORT_YX_PROPTION;
-      debug(("Using y as the maximum value\n"));
-   }
-   else
-   {
-      debug(("Using x as the maximum value\n"));
    }
 
    /* Make sizes divisible by 4.  Must be even for draw3d, and when 
@@ -233,7 +228,6 @@ void GraphicsAreaResize(int xsize, int ysize)
    debug(("new_xsize = %d\n", new_xsize));
    debug(("new_ysize = %d\n", new_ysize));
    debug(("New stretchfactor = %d\n", stretchfactor));
-   //debug(("config.stretchfactor = %f\n", config.viewport_stretchfactor));
    debug(("config.large_area = %d\n", config.large_area));
 
    if (new_xsize < 0)

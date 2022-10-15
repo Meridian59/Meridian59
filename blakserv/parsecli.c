@@ -103,7 +103,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 						   client_table_type command_table)
 {
 	int i,j,msg_byte_offset,num_parms;
-	val_type command,in_val,temp,session_id_const,type_const;
+	v0_val_type in_val;  // Client sends 32-bit values
+	val_type command,temp,session_id_const,type_const;
 	parm_node parms[5];
 	int list_index, table_type;
 	unsigned short len_str;

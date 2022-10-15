@@ -46,6 +46,14 @@ FILE *savefile;
 	eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
 } 
 
+#define SaveGameWriteInt64(num) \
+{ \
+	INT64 temp; \
+	temp = num; \
+	if (fwrite(&temp,8,1,savefile) != 1) \
+	eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
+} 
+
 #define SaveGameWriteString(s) \
 { \
 	size_t len_s; \
@@ -91,7 +99,11 @@ Bool SaveGame(char *filename)
 		eprintf("SaveGame can't open %s to save everything!!!\n",filename);
 		return False;
 	}
-	
+
+	// Version number
+	SaveGameWriteByte('V');
+	SaveGameWriteInt(1);
+
 	SaveClasses();
 	SaveResources();
 	SaveSystem();
@@ -146,7 +158,7 @@ void SaveResources(void)
 
 void SaveEachResource(resource_node *r)
 {
-	if ((r->resource_name == NULL))
+	if (r->resource_name == NULL)
 	{
 		eprintf("SaveEachResource is not saving invalid resource %i\n",r->resource_id);
 		return;
@@ -190,7 +202,7 @@ void SaveEachObject(object_node *o)
     */
 	/* equal to num_properties is ok, because self = prop 0 */
 	for (i=1;i<=c->num_properties;i++)
-		SaveGameWriteInt(o->p[i].val.int_val);
+		SaveGameWriteInt64(o->p[i].val.int_val);
 }
 
 void SaveListNodes(void)
@@ -202,8 +214,8 @@ void SaveListNodes(void)
 
 void SaveEachListNode(list_node *l,int list_id)
 {
-	SaveGameWriteInt(l->first.int_val);
-	SaveGameWriteInt(l->rest.int_val);
+	SaveGameWriteInt64(l->first.int_val);
+	SaveGameWriteInt64(l->rest.int_val);
 }
 
 void SaveTimers(void)
@@ -213,7 +225,7 @@ void SaveTimers(void)
 
 void SaveEachTimer(timer_node *t)
 {
-	int save_time;
+	INT64 save_time;
 	object_node *o;
 	const char *s;
 	
@@ -236,10 +248,10 @@ void SaveEachTimer(timer_node *t)
 	SaveGameWriteInt(t->object_id);
 	SaveGameWriteString(GetNameByID(t->message_id));
 	
-	save_time = (int)(t->time - GetMilliCount());
+	save_time = (INT64)(t->time - GetMilliCount());
 	if (save_time < 0)
 		save_time = 0;
-	SaveGameWriteInt(save_time);
+	SaveGameWriteInt64(save_time);
 }
 
 void SaveUsers(void)

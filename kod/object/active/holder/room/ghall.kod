@@ -567,13 +567,6 @@ messages:
       }
 
       AppendTempString("~B~g]");
-      i = Send(SYS,@GetInvestigator);
-
-      if i <> $ and Send(i,@IsLoggedOn)
-      {
-         Send(i,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-              #parm1=getTempString(),#type1=0);
-      }
 
       Send(SYS,@MailSrGuardian,#from=self,#subject=Send(who,@GetTrueName),
            #body=getTempString());

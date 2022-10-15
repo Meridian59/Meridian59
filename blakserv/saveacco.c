@@ -53,6 +53,6 @@ void SaveEachAccount(account_node *a)
    if (a->password[0] == 0)
       fprintf(accofile,"None");
 
-   fprintf(accofile,":%i:%i:%i:%i\n",a->type,a->last_login_time,
-           a->credits,a->suspend_time);
+   fprintf(accofile,":%i:%lli:%i:%lli\n",a->type,(long long) a->last_login_time,
+           a->credits,(long long) a->suspend_time);
 }

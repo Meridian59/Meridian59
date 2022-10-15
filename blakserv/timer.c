@@ -23,7 +23,7 @@ int next_timer_num;
 
 timer_node *deleted_timers;
 
-int pause_time;
+INT64 pause_time;
 
 /* local function prototypes */
 void AddTimerNode(timer_node *t);
@@ -87,7 +87,7 @@ void PauseTimers(void)
 
 void UnpauseTimers(void)
 {
-   int add_time;
+   INT64 add_time;
    timer_node *t;
    
    if (pause_time == 0)
@@ -176,7 +176,7 @@ int CreateTimer(int object_id,int message_id,int milliseconds)
    return t->timer_id;
 }
 
-Bool LoadTimer(int timer_id,int object_id,char *message_name,int milliseconds)
+Bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds)
 {
    object_node *o;
    timer_node *t;

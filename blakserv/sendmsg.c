@@ -43,9 +43,9 @@ enum
 
 /* table of pointers to functions to call for ccode functions */
 
-typedef int (*ccall_proc)(int object_id,local_var_type *local_vars,
-						  int num_normal_parms,parm_node normal_parm_array[],
-						  int num_name_parms,parm_node name_parm_array[]);
+typedef blak_int (*ccall_proc)(int object_id,local_var_type *local_vars,
+                               int num_normal_parms,parm_node normal_parm_array[],
+                               int num_name_parms,parm_node name_parm_array[]);
 
 ccall_proc ccall_table[MAX_C_FUNCTION];
 
@@ -239,9 +239,9 @@ void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parm
 }
 
 /* returns the return value of the blakod */
-int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
+blak_int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
 {
-	int ret_val = 0;
+	blak_int ret_val = 0;
 	UINT64 start_time = 0;
 	int interp_time = 0;
 	int posts = 0;
@@ -360,7 +360,7 @@ int SendBlakodClassMessage(int class_id,int message_id,int num_params,parm_node 
 }
 
 /* returns the return value of the blakod */
-int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
+blak_int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
 {
 	object_node *o;
 	class_node *c,*propagate_class;
@@ -514,6 +514,11 @@ __inline unsigned int get_int()
 	return *((unsigned int *)(bkod-4));
 }
 
+__inline blak_int get_blakint() {
+  return val32to64(get_int());
+}
+
+
 /* before calling this, you MUST set bkod to point to valid bkod. */
 
 /* returns either RETURN_PROPAGATE or RETURN_NO_PROPAGATE.  If no propagate,
@@ -566,7 +571,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	for (i=0;i<num_parms;i++)
 	{
 		parm_id = get_int(); /* match this with parameters */
-		parm_init_value.int_val = get_int();
+		parm_init_value.int_val = get_blakint();
 		
 		/* look if we have a value for this parm */
 		found_parm = False;
@@ -649,8 +654,8 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 					return RETURN_PROPAGATE;
 				else
 				{
-					int data;
-					data = get_int();	    
+					blak_int data;
+					data = get_blakint();	    
 					*ret_val = RetrieveValue(object_id,&local_vars,opcode.source1,data);
 					return RETURN_NO_PROPAGATE;
 				}
@@ -727,12 +732,13 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode)
 {
 	char info;
-	int dest,source;
+	int dest;
+	blak_int source;
 	val_type source_data;
 	
 	info = get_byte();
 	dest = get_int();
-	source = get_int();
+	source = get_blakint();
 	
 	source_data = RetrieveValue(object_id,local_vars,opcode.source1,source);
 	
@@ -741,7 +747,7 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 	case NOT : 
 		if (source_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretUnaryAssign can't not non-int %i,%i\n",
+			bprintf("InterpretUnaryAssign can't not non-int %i,%lli\n",
 				source_data.v.tag,source_data.v.data);
 			break;
 		}
@@ -750,7 +756,7 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 	case NEGATE :
 		if (source_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretUnaryAssign can't negate non-int %i,%i\n",
+			bprintf("InterpretUnaryAssign can't negate non-int %i,%lli\n",
 				source_data.v.tag,source_data.v.data);
 			break;
 		}
@@ -761,7 +767,7 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 	case BITWISE_NOT :
 		if (source_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretUnaryAssign can't bitwise not non-int %i,%i\n",
+			bprintf("InterpretUnaryAssign can't bitwise not non-int %i,%lli\n",
 				source_data.v.tag,source_data.v.data);
 			break;
 		}
@@ -779,13 +785,14 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type opcode)
 {
 	char info;
-	int dest,source1,source2;
+  int dest;
+	blak_int source1,source2;
 	val_type source1_data,source2_data;
 	
 	info = get_byte();
 	dest = get_int();
-	source1 = get_int();
-	source2 = get_int();
+	source1 = get_blakint();
+	source2 = get_blakint();
 	
 	source1_data = RetrieveValue(object_id,local_vars,opcode.source1,source1);
 	source2_data = RetrieveValue(object_id,local_vars,opcode.source2,source2);
@@ -799,7 +806,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case ADD : 
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't add 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't add 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -809,7 +816,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case SUBTRACT :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't sub 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't sub 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -819,7 +826,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case MULTIPLY :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't mult 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't mult 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -829,7 +836,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case DIV :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't div 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't div 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -844,7 +851,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case MOD :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't mod 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't mod 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -860,7 +867,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case AND :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't and 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't and 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -870,7 +877,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case OR :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't or 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't or 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -887,7 +894,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 		if (source1_data.v.tag != source2_data.v.tag &&
 			source1_data.v.tag != TAG_NIL && source2_data.v.tag != TAG_NIL)
 		{
-			bprintf("InterpretBinaryAssign can't = 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't = 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -910,7 +917,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 		if (source1_data.v.tag != source2_data.v.tag &&
 			source1_data.v.tag != TAG_NIL && source2_data.v.tag != TAG_NIL)
 		{
-			bprintf("InterpretBinaryAssign can't <> 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't <> 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -926,7 +933,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case LESS_THAN :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't < 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't < 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -936,7 +943,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case GREATER_THAN :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't > 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't > 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -946,7 +953,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case LESS_EQUAL :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't <= 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't <= 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -956,7 +963,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case GREATER_EQUAL :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't >= 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't >= 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -966,7 +973,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case BITWISE_AND :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't and 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't and 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -976,7 +983,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case BITWISE_OR :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't or 2 vars %i,%i and %i,%i\n",
+			bprintf("InterpretBinaryAssign can't or 2 vars %i,%lli and %i,%lli\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;
@@ -995,7 +1002,7 @@ void InterpretGoto(int object_id,local_var_type *local_vars,
 				   opcode_type opcode,char *inst_start)
 {
 	int dest_addr;
-	int var_check;
+	blak_int var_check;
 	val_type check_data;
 	
 	/* This function is called often, so the switch has been
@@ -1011,7 +1018,7 @@ void InterpretGoto(int object_id,local_var_type *local_vars,
 		return;
 	}
 	
-	var_check = get_int();
+	var_check = get_blakint();
 	check_data = RetrieveValue(object_id,local_vars,opcode.source1,var_check);
 	if ((opcode.dest == GOTO_IF_TRUE && check_data.v.data != 0) ||
 		(opcode.dest == GOTO_IF_FALSE && check_data.v.data == 0))
@@ -1022,7 +1029,7 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode)
 {
 	parm_node normal_parm_array[MAX_C_PARMS],name_parm_array[MAX_NAME_PARMS]; 
 	unsigned char info,num_normal_parms,num_name_parms,initial_type;
-	int initial_value;
+	blak_int initial_value;
 	val_type call_return;
 	
 	val_type name_val;
@@ -1054,7 +1061,7 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode)
 	for (i=0;i<num_normal_parms;i++)
 	{
 		normal_parm_array[i].type = get_byte();
-		normal_parm_array[i].value = get_int();
+		normal_parm_array[i].value = get_blakint();
 	}
 	
 	num_name_parms = get_byte();
@@ -1072,7 +1079,7 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode)
 		name_parm_array[i].name_id = get_int();
 		
 		initial_type = get_byte();
-		initial_value = get_int();
+		initial_value = get_blakint();
 		
 		/* translate to literal now, because won't have local vars
 		if nested call to sendmessage again */

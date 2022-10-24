@@ -3419,7 +3419,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			z = 0;
 			ptr = pName;
 
-      // XXX
 			while (c = *ptr++)
 			{
         int index = c - 32;
@@ -5145,9 +5144,6 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
 			pChunk->indices[1] = 2;
 			pChunk->indices[2] = 0;
 			pChunk->indices[3] = 3;
-
-//			for (i = 0; i < 4; i++)
-//				CACHE_ST_ADD(pRenderCache, 1, stBase[i].s, stBase[i].t);
 		}
 	}
 }
@@ -5170,7 +5166,6 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    BYTE			bAlpha;
   
 	pFont->fontHeight = GetFontHeight(hFont);
-//	pFont->flags = flags;
 	pFont->flags = 0;
 	pFont->texScale = 1.0f;
    
@@ -7995,10 +7990,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			continue;
 
 		D3DComputePlayerOverlayArea(pDib, pOverlay->hotspot, &objArea);
-//		objArea.x *= screenW;
-//		objArea.y *= screenH;
-//		objArea.cx /= screenW;
-//		objArea.cy /= screenH;
 
 		overlays = *(obj->overlays);
 
@@ -8059,21 +8050,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		else
 		{
 			D3DObjectLightingCalc(room, pRNode, &bgra, 0);
-/*				lastDistance = D3DRenderObjectLightGetNearest(pRNode);
-
-			light = D3DRenderObjectGetLight(room->tree, pRNode);
-
-			if ((pRNode->obj.flags & OF_FLICKERING) || (pRNode->obj.flags & OF_FLASHING))
-				light = GetLightPaletteIndex(D3DRENDER_LIGHT_DISTANCE, light, FINENESS,
-							-pRNode->obj.lightAdjust);
-			else
-				light = GetLightPaletteIndex(D3DRENDER_LIGHT_DISTANCE, light, FINENESS,
-							0);
-
-			light = light * COLOR_AMBIENT / 64;
-
-			bgra.r = bgra.g = bgra.b = min(255, light + lastDistance);
-			bgra.a = 255;*/
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -8091,8 +8067,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		pChunk->xyz[0].z = pChunk->xyz[3].z = objArea.y;
 		pChunk->xyz[2].x = pChunk->xyz[3].x = pChunk->xyz[0].x + objArea.cx;
 		pChunk->xyz[2].z = pChunk->xyz[1].z = pChunk->xyz[0].z + objArea.cy;
-
-//		D3DObjectLightingCalc(room, pRNode, &bgra);
 
 		for (count = 0; count < 4; count++)
 		{
@@ -8137,15 +8111,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		pChunk->st1[2].t += (gFrame & 3) / 256.0f;
 		pChunk->st1[3].s += (gFrame & 3) / 256.0f;
 		pChunk->st1[3].t -= (gFrame & 3) / 256.0f;
-
-/*		pChunk->st1[0].s = 0.0f;
-		pChunk->st1[0].t = 0.0f;
-		pChunk->st1[1].s = 0.0f;
-		pChunk->st1[1].t = 1.0f;
-		pChunk->st1[2].s = 1.0f;
-		pChunk->st1[2].t = 1.0f;
-		pChunk->st1[3].s = 1.0f;
-		pChunk->st1[3].t = 0.0f;*/
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;

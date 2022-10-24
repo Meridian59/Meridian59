@@ -1379,7 +1379,6 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 			/* then do walls on the separator */
 			if (side != 0)
 			{
-				//WallList list;
 				WallData	*pWall;
 				int			flags, wallFlags;
 
@@ -1519,7 +1518,6 @@ void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params)
 			/* then do walls on the separator */
 			if (side != 0)
 			{
-				//WallList list;
 				WallData	*pWall;
 				int			flags, wallFlags;
 
@@ -1896,25 +1894,12 @@ void D3DGeometryBuildNew(room_type *room, d3d_render_pool_new *pPool)
 			break;
 
 			case BSPleaftype:
-				if (pNode->u.leaf.sector == &room->sectors[0])
-				{
-/*					if ((pNode->bbox.x0 < 0) ||
-						(pNode->bbox.x1 > room->width))
-						break;*/
-//					if (pNode->u.leaf.sector->server_id == 0)
-//						break;
-/*						if (bDone)
-							break;
-						else
-							bDone = TRUE;*/
-				}
-
 				D3DRenderPacketFloorAdd(pNode, &gWorldPoolStatic, FALSE);
 				D3DRenderPacketCeilingAdd(pNode, &gWorldPoolStatic, FALSE);
-			break;
+        break;
 
 			default:
-			break;
+        break;
 		}
 	}
 
@@ -2237,7 +2222,6 @@ void D3DRenderPacketFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool bD
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -2331,7 +2315,6 @@ void D3DRenderPacketCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool 
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -2481,7 +2464,6 @@ void D3DRenderPacketWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsigne
 
 	if (NULL == pDib)
 		return;
-//		pDib = current_room.sectors[0].floor;
 
 	D3DRenderWallExtract(pWall, pDib, &flags, xyz, st, bgra, type, side);
 
@@ -2845,7 +2827,6 @@ void D3DRenderFloorMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool bDyn
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -2908,7 +2889,6 @@ void D3DRenderCeilingMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool bD
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -3328,8 +3308,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		vector.x = pRNode->motion.x - player.x;
 		vector.y = pRNode->motion.y - player.y;
 
-		distance = (vector.x * vector.x) + (vector.y * vector.y);
-		distance = (float)sqrt((double)distance);
+		distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
 			distance = 1;
 
@@ -3388,10 +3367,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			}
 		}
 
-		//			z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-//			z += ((float)pRNode->boundingHeightAdjust * 4.0f);// / 1.66f;
-
 		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pRNode->motion.x, (float)max(bottom,
@@ -3442,33 +3417,34 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		{
 			x = 0.0f;
 			z = 0;
-//			z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-//			z += ((float)pRNode->boundingHeightAdjust * 4.0f);// / 1.66f;
-
 			ptr = pName;
 
+      // XXX
 			while (c = *ptr++)
 			{
-				x += (pFont->texST[c - 32][1].s - pFont->texST[c - 32][0].s) *
-					pFont->texWidth / pFont->texScale * (distance / FINENESS);
+        int index = c - 32;
+        float charWidth = (pFont->texST[index][1].s - pFont->texST[index][0].s) *
+          pFont->texWidth / pFont->texScale;
+				x += charWidth;
 			}
-
+      x *= (distance / FINENESS);
+      
 			ptr = pName;
 
 			while (c = *ptr++)
 			{
 				int	i;
+        int index = c - 32;
 
 				// flip t values since bmps are upside down
-				st[0].s = pFont->texST[c - 32][0].s;
-				st[0].t = pFont->texST[c - 32][1].t;
-				st[1].s = pFont->texST[c - 32][0].s;
-				st[1].t = pFont->texST[c - 32][0].t;
-				st[2].s = pFont->texST[c - 32][1].s;
-				st[2].t = pFont->texST[c - 32][0].t;
-				st[3].s = pFont->texST[c - 32][1].s;
-				st[3].t = pFont->texST[c - 32][1].t;
+				st[0].s = pFont->texST[index][0].s;
+				st[0].t = pFont->texST[index][1].t;
+				st[1].s = pFont->texST[index][0].s;
+				st[1].t = pFont->texST[index][0].t;
+				st[2].s = pFont->texST[index][1].s;
+				st[2].t = pFont->texST[index][0].t;
+				st[3].s = pFont->texST[index][1].s;
+				st[3].t = pFont->texST[index][1].t;
 
 				width = (st[2].s - st[0].s) * pFont->texWidth * 2.0f / pFont->texScale *
 					(distance / FINENESS);
@@ -3492,7 +3468,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
 				if (offset)
 				{
-					//MatrixScale(&scale, 1.01f);
 					MatrixTranslate(&trans, -30.0f * distance / MAX_NAME_DISTANCE,
 						-30.0f * distance / MAX_NAME_DISTANCE, 0);
 					MatrixMultiply(&pChunk->xForm, &trans, &xForm);
@@ -4417,8 +4392,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 32; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 16) * (height - 16) +
-											(width - 16) * (width - 16)));
+			float	scale = sqrtf((height - 16) * (height - 16) +
+											(width - 16) * (width - 16));
 			scale = 16.0f - scale;
 			scale = max(scale, 0);
 			scale /= 16.0f;
@@ -4448,8 +4423,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 32; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 16) * (height - 16) +
-											(width - 16) * (width - 16)));
+			float	scale = sqrtf((height - 16) * (height - 16) +
+											(width - 16) * (width - 16));
 
 			scale = 16.0f - scale;
 			scale = max(scale, 0);
@@ -4480,8 +4455,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 128; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 64) * (height - 64) +
-											(width - 64) * (width - 64)));
+			float	scale = sqrtf((height - 64) * (height - 64) +
+											(width - 64) * (width - 64));
 
 			scale = 64.0f - scale;
 			scale = max(scale, 0);
@@ -4515,8 +4490,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 32; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 16) * (height - 16) +
-											(width - 16) * (width - 16)));
+			float	scale = sqrtf((height - 16) * (height - 16) +
+											(width - 16) * (width - 16));
 			float	scaleAlpha;
 
 			scale = 16.0f - scale;
@@ -5194,7 +5169,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		pFont->texWidth = pFont->texHeight = 512;
 	else
 		pFont->texWidth = pFont->texHeight = 256;
-   
+
 	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &d3dCaps);
   
 	if (pFont->texWidth > (long) d3dCaps.MaxTextureWidth)
@@ -5223,19 +5198,10 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, NULL, 0 );
    SetMapMode(hDC, MM_TEXT);
   
-/*	nHeight = -MulDiv(pFont->fontHeight, (int)(GetDeviceCaps(hDC, LOGPIXELSY)
- * pFont->texScale), 72);
- dwBold = (pFont->flags & D3DFONT_BOLD) ? FW_BOLD : FW_NORMAL;
- dwItalic = (pFont->flags & D3DFONT_ITALIC) ? TRUE : FALSE;
- hFont = CreateFont(nHeight, 0, 0, 0, dwBold, dwItalic,
- FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
- CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
- VARIABLE_PITCH, pFont->strFontName);*/
-  
-	assert(hFont);
+   assert(hFont);
    
-	SelectObject(hDC, hbmBitmap);
-	SelectObject(hDC, hFont);
+   SelectObject(hDC, hbmBitmap);
+   SelectObject(hDC, hFont);
    
    // Set text properties
    SetTextColor(hDC, RGB(255,255,255));
@@ -5245,20 +5211,20 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    for(c = 32; c < 127; c++ )
    {
       BOOL	temp;
-      int left_offset, right_offset;
+      int left_offset;
+      int index = c-32;
       
       str[0] = c;
       GetTextExtentPoint32(hDC, str, 1, &size);
       
-      if (!GetCharABCWidths(hDC, c, c, &pFont->abc[c-32])) {
-         pFont->abc[c-32].abcA = 0;
-         pFont->abc[c-32].abcB = size.cx;
-         pFont->abc[c-32].abcC = 0;
+      if (!GetCharABCWidths(hDC, c, c, &pFont->abc[index])) {
+         pFont->abc[index].abcA = 0;
+         pFont->abc[index].abcB = size.cx;
+         pFont->abc[index].abcC = 0;
       }
-      
-      left_offset = abs(pFont->abc[c-32].abcA);
-      right_offset = abs(pFont->abc[c-32].abcC);
-      size.cx = abs(pFont->abc[c-32].abcA) + pFont->abc[c-32].abcB + abs(pFont->abc[c-32].abcC);
+
+      left_offset = abs(pFont->abc[index].abcA);
+      size.cx = abs(pFont->abc[index].abcA) + pFont->abc[index].abcB + abs(pFont->abc[index].abcC);
       
       if (x + size.cx + 1 > pFont->texWidth)
       {
@@ -5268,10 +5234,10 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
       
       temp = ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
       
-      pFont->texST[c-32][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
-      pFont->texST[c-32][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
-      pFont->texST[c-32][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
-      pFont->texST[c-32][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
+      pFont->texST[index][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
+      pFont->texST[index][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
+      pFont->texST[index][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
+      pFont->texST[index][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
       
       x += size.cx+1;
    }

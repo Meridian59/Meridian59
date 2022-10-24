@@ -3425,6 +3425,9 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
         int index = c - 32;
         float charWidth = (pFont->texST[index][1].s - pFont->texST[index][0].s) *
           pFont->texWidth / pFont->texScale;
+
+        // Take out space for kerning
+        charWidth -= (pFont->abc[index].abcA + pFont->abc[index].abcC);
 				x += charWidth;
 			}
       x *= (distance / FINENESS);
@@ -3478,28 +3481,33 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 
-				pChunk->xyz[0].x = x;
+        float leftx = x;
+        // Kerning: add in leading for character
+        leftx -= 2.0 * pFont->abc[index].abcA * (distance / FINENESS);
+        float rightx = leftx - width;
+        
+				pChunk->xyz[0].x = leftx;
 				pChunk->xyz[0].y = 0;
 				pChunk->xyz[0].z = z;
 
 				pChunk->st0[0].s = st[0].s;
 				pChunk->st0[0].t = st[0].t;
 
-				pChunk->xyz[1].x = x;
+				pChunk->xyz[1].x = leftx;
 				pChunk->xyz[1].y = 0;
 				pChunk->xyz[1].z = z + height;
 
 				pChunk->st0[1].s = st[1].s;
 				pChunk->st0[1].t = st[1].t;
 
-				pChunk->xyz[2].x = x - width;
+				pChunk->xyz[2].x = rightx;
 				pChunk->xyz[2].y = 0;
 				pChunk->xyz[2].z = z + height;
 
 				pChunk->st0[2].s = st[2].s;
 				pChunk->st0[2].t = st[2].t;
 
-				pChunk->xyz[3].x = x - width;
+				pChunk->xyz[3].x = rightx;
 				pChunk->xyz[3].y = 0;
 				pChunk->xyz[3].z = z;
 
@@ -3542,7 +3550,10 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 					pChunk->xLat1 = 0;
 				}
 
+        // Deal with kerning when moving to next character: character width
+        // doesn't include overhangs
 				x -= width;
+        x -= 2.0 * (pFont->abc[index].abcA + pFont->abc[index].abcC) * (distance / FINENESS);
 			}
 		}
 	}

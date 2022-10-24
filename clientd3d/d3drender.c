@@ -362,20 +362,8 @@ HRESULT D3DRenderInit(HWND hWnd)
 		return E_FAIL;
 
 	gD3DEnabled = D3DDriverProfileInit();
-
-/*	modeCount = gpD3D->lpVtbl->GetAdapterModeCount(gpD3D, D3DADAPTER_DEFAULT);
-
-	for (i = 0; i < modeCount; i++)
-	{
-		if (FAILED(gpD3D->lpVtbl->EnumAdapterModes(gpD3D, D3DADAPTER_DEFAULT, i,
-			&displayMode2[i])))
-		{
-		error = E_FAIL;
-		assert(0);
-		}
-	}*/
 	if (!gD3DEnabled)
-		return FALSE;
+		return E_FAIL;
 
 	IDirect3D9_GetAdapterDisplayMode(gpD3D, D3DADAPTER_DEFAULT, &displayMode);
 
@@ -3423,13 +3411,13 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			{
         int index = c - 32;
         float charWidth = (pFont->texST[index][1].s - pFont->texST[index][0].s) *
-          pFont->texWidth / pFont->texScale;
+          pFont->texWidth;
 
         // Take out space for kerning
-        charWidth -= (pFont->abc[index].abcA + pFont->abc[index].abcC);
+        charWidth += (pFont->abc[index].abcA + pFont->abc[index].abcC);
 				x += charWidth;
 			}
-      x *= (distance / FINENESS);
+      x *= (distance / FINENESS) / pFont->texScale;
       
 			ptr = pName;
 
@@ -3482,7 +3470,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
         float leftx = x;
         // Kerning: add in leading for character
-        leftx -= 2.0 * pFont->abc[index].abcA * (distance / FINENESS);
+        leftx -= 2.0 * pFont->abc[index].abcA * (distance / FINENESS) / pFont->texScale;
         float rightx = leftx - width;
         
 				pChunk->xyz[0].x = leftx;
@@ -3552,7 +3540,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
         // Deal with kerning when moving to next character: character width
         // doesn't include overhangs
 				x -= width;
-        x -= 2.0 * (pFont->abc[index].abcA + pFont->abc[index].abcC) * (distance / FINENESS);
+        x -= 2.0 * (pFont->abc[index].abcA + pFont->abc[index].abcC)
+          * (distance / FINENESS) / pFont->texScale; 
 			}
 		}
 	}
@@ -5164,10 +5153,15 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    BYTE			*pDstRow;
    WORD			*pDst16;
    BYTE			bAlpha;
-  
-	pFont->fontHeight = GetFontHeight(hFont);
-	pFont->flags = 0;
-	pFont->texScale = 1.0f;
+
+   // Ask for a bigger font to reduce aliasing, then scale the texture
+   // down by the same amount.
+   float fontScale = 3.0;
+   HFONT hScaledFont = FontsGetScaledFont(hFont, fontScale);
+   assert(hScaledFont);
+      
+   pFont->fontHeight = GetFontHeight(hScaledFont);
+   pFont->texScale = fontScale;
    
 	if (pFont->fontHeight > 40)
 		pFont->texWidth = pFont->texHeight = 1024;
@@ -5180,7 +5174,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
   
 	if (pFont->texWidth > (long) d3dCaps.MaxTextureWidth)
 	{
-		pFont->texScale = (float)pFont->texWidth / (float)d3dCaps.MaxTextureWidth;
+		pFont->texScale *= (float)pFont->texWidth / (float)d3dCaps.MaxTextureWidth;
 		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
 	}
   
@@ -5204,10 +5198,8 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, NULL, 0 );
    SetMapMode(hDC, MM_TEXT);
   
-   assert(hFont);
-   
    SelectObject(hDC, hbmBitmap);
-   SelectObject(hDC, hFont);
+   SelectObject(hDC, hScaledFont);
    
    // Set text properties
    SetTextColor(hDC, RGB(255,255,255));
@@ -5273,6 +5265,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
    
    DeleteObject(hbmBitmap);
+   DeleteObject(hScaledFont);
    DeleteDC(hDC);
 }
 

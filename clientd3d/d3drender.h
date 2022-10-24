@@ -125,7 +125,6 @@ typedef struct font_3d
 {
 	TCHAR				strFontName[80];
 	long				fontHeight;
-	long				flags;
 
 	LPDIRECT3DTEXTURE9	pTexture;
 	long				texWidth;

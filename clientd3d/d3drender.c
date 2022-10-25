@@ -3414,7 +3414,9 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
           pFont->texWidth;
 
         // Take out space for kerning
-        charWidth += (pFont->abc[index].abcA + pFont->abc[index].abcC);
+        float leading = min(0, pFont->abc[index].abcA);
+        float trailing = min(0, pFont->abc[index].abcC);
+        charWidth += (leading + trailing);
 				x += charWidth;
 			}
       x *= (distance / FINENESS) / pFont->texScale;
@@ -3469,8 +3471,10 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 
         float leftx = x;
-        // Kerning: add in leading for character
-        leftx -= 2.0 * pFont->abc[index].abcA * (distance / FINENESS) / pFont->texScale;
+        // Kerning: add in leading for character if necessary
+        float leading = min(0, pFont->abc[index].abcA);
+        float trailing = min(0, pFont->abc[index].abcC);
+        leftx -= 2.0 * leading * (distance / FINENESS) / pFont->texScale;
         float rightx = leftx - width;
         
 				pChunk->xyz[0].x = leftx;
@@ -3540,7 +3544,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
         // Deal with kerning when moving to next character: character width
         // doesn't include overhangs
 				x -= width;
-        x -= 2.0 * (pFont->abc[index].abcA + pFont->abc[index].abcC)
+        x -= 2.0 * (leading + trailing)
           * (distance / FINENESS) / pFont->texScale; 
 			}
 		}
@@ -5221,10 +5225,11 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
          pFont->abc[index].abcC = 0;
       }
 
-      left_offset = abs(pFont->abc[index].abcA);
+      left_offset = abs(min(0, pFont->abc[index].abcA));
       size.cx = abs(pFont->abc[index].abcA) + pFont->abc[index].abcB + abs(pFont->abc[index].abcC);
-      
-      if (x + size.cx + 1 > pFont->texWidth)
+
+      // Is this row of the texture filled up?
+      if (x + size.cx >= pFont->texWidth)
       {
          x  = 0;
          y += size.cy + 1;

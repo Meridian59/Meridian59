@@ -184,7 +184,7 @@ void GraphicsResetFont(void)
    SelectObject(gBitsDC, hFont);
 
    if (gD3DEnabled)
-	D3DRenderFontInit(&gFont, hFont);
+     D3DRenderFontInit(&gFont, hFont);
 }
 
 /************************************************************************/

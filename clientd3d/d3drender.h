@@ -124,16 +124,16 @@ typedef struct d_light_cache
 static const int numChars = 128 - 32;
 typedef struct font_3d
 {
-	TCHAR				strFontName[80];
-	long				fontHeight;
+	TCHAR        strFontName[80];
+	long         fontHeight;
 
 	LPDIRECT3DTEXTURE9	pTexture;
-	long				texWidth;
-	long				texHeight;
-	float				texScale;
-	custom_st			texST[numChars][2];
+	long				 texWidth;
+	long				 texHeight;
+	float				 texScale;
+	custom_st	   texST[numChars][2];
   // Deal with underhanging and overhanging characters
-  ABC         abc[numChars];
+  ABC          abc[numChars];
   int          numKerningPairs;
   KERNINGPAIR *kerningPairs;
 } font_3d;

@@ -3468,8 +3468,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
         float leftx = x;
         // Kerning: add in leading for character if necessary
         int kerningAmount = getKerningAmount(pFont, pName, ptr - 1);
-        float leading = min(0, pFont->abc[index].abcA + kerningAmount);
-        float trailing = min(0, pFont->abc[index].abcC);
+        float leading = pFont->abc[index].abcA + kerningAmount;
+        float trailing = pFont->abc[index].abcC;
         leftx -= 2.0 * leading * (distance / FINENESS) / pFont->texScale;
         float rightx = leftx - width;
         
@@ -5206,8 +5206,6 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    
    for(c = 32; c < 127; c++ )
    {
-      BOOL	temp;
-      int left_offset;
       int index = c-32;
       
       str[0] = c;
@@ -5219,24 +5217,25 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
          pFont->abc[index].abcC = 0;
       }
 
-      left_offset = abs(min(0, pFont->abc[index].abcA));
-      size.cx = abs(pFont->abc[index].abcA) + pFont->abc[index].abcB + abs(pFont->abc[index].abcC);
+      int left_offset = abs(min(0, pFont->abc[index].abcA));
+      size.cx = pFont->abc[index].abcB;
 
       // Is this row of the texture filled up?
       if (x + size.cx >= pFont->texWidth)
       {
-         x  = 0;
+         x = 0;
          y += size.cy + 1;
       }
       
-      temp = ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
+      ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
       
       pFont->texST[index][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
       pFont->texST[index][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
       pFont->texST[index][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
       pFont->texST[index][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
-      
-      x += size.cx+1;
+
+      // Leave +1 space so bilinear filtering doesn't pick up neighboring character
+      x += size.cx+1;  
    }
    
    IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);

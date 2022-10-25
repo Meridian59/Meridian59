@@ -317,6 +317,7 @@ LPDIRECT3DTEXTURE9		D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 void					*D3DRenderMalloc(unsigned int bytes);
 
 float					D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk);
+static int getKerningAmount(font_3d *pFont, char *str, char *ptr);
 
 static void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
    float bias = z_bias * -0.00001f;
@@ -539,7 +540,8 @@ void D3DRenderShutDown(void)
 		if (gFont.pTexture)
 		{
          IDirect3DTexture9_Release(gFont.pTexture);
-			gFont.pTexture = NULL;
+         delete [] gFont.kerningPairs;
+         gFont.pTexture = NULL;
 		}
 
 		for (i = 0; i < 16; i++)
@@ -3255,37 +3257,29 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 						room_type *room, Draw3DParams *params, font_3d *pFont)
 {
 	D3DMATRIX			mat, rot, xForm, trans;
-	int					angleHeading, anglePitch, strLen, sector_flags, offset;
-	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
-	list_type			list;
+	int					sector_flags, offset;
 	long				dx, dy, angle, top, bottom;
-	PDIB				pDib;
 	custom_xyz			vector;
 	custom_st			st[4];
 	custom_bgra			bgra;
-	float				lastDistance, width, height, x, z, depth, distance;
-	char				*pName, *ptr;
 	TCHAR				c;
-	COLORREF			fg_color;
 	Color				color;
 	BYTE				*palette;
-
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-	angleHeading = params->viewer_angle + 3072;
+	int angleHeading = params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
 
-	anglePitch = PlayerGetHeightOffset();
+	int anglePitch = PlayerGetHeightOffset();
 
 	// base objects
-	for (list = room->contents; list != NULL; list = list->next)
+	for (list_type list = room->contents; list != NULL; list = list->next)
 	{
       float glyph_scale = 255;
       
-		pRNode = (room_contents_node *)list->data;
+      room_contents_node *pRNode = (room_contents_node *)list->data;
 
 		if (pRNode->obj.id == player.id)
 			continue;
@@ -3296,14 +3290,14 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		vector.x = pRNode->motion.x - player.x;
 		vector.y = pRNode->motion.y - player.y;
 
-		distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
+		float distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
 			distance = 1;
 
 		if (distance >= MAX_NAME_DISTANCE)
 			continue;
 
-		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, pRNode->obj.animate->group);
+		PDIB pDib = GetObjectPdib(pRNode->obj.icon_res, 0, pRNode->obj.animate->group);
 
 		if (NULL == pDib)
 			continue;
@@ -3313,8 +3307,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
 		angle = (pRNode->angle - intATan2(-dy,-dx)) & NUMDEGREES_MASK;
 
-		pName = LookupNameRsc(pRNode->obj.name_res);
-		strLen = strlen(pName);
+		char *pName = LookupNameRsc(pRNode->obj.name_res);
+		int strLen = strlen(pName);
 
 		angle = pRNode->angle - (params->viewer_angle + 3072);
 
@@ -3328,7 +3322,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		}
 
 		// Set object depth based on "depth" sector flags
-		depth = sector_depths[SectorDepth(sector_flags)];
+		float depth = sector_depths[SectorDepth(sector_flags)];
 
 		if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 		{
@@ -3363,12 +3357,12 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			((float)pRNode->boundingHeightAdjust * 4.0f), (float)pRNode->motion.y);
 		MatrixMultiply(&xForm, &rot, &mat);
 
-		fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
+		COLORREF fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
 
 		// Some names never grow darker, they use PALETTEINDEX().
 		if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))
 		{
-			//XXX: normally, SetTextColor() works with PALETTEINDEX() types fine,
+			//     normally, SetTextColor() works with PALETTEINDEX() types fine,
 			//     but not here for unknown reason
 			//     so we convert to our base_palette[] PALETTERGB() type.
 			//
@@ -3399,13 +3393,13 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
       bgra.b = color.blue * glyph_scale / 255;
       bgra.a = COLOR_MAX;
       
-		lastDistance = 0;
+      float lastDistance = 0;
 
 		for (offset = 0; offset <= 1; offset++)
 		{
-			x = 0.0f;
-			z = 0;
-			ptr = pName;
+			float x = 0.0f;
+			float z = 0;
+			char *ptr = pName;
 
 			while (c = *ptr++)
 			{
@@ -3414,7 +3408,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
           pFont->texWidth;
 
         // Take out space for kerning
-        float leading = min(0, pFont->abc[index].abcA);
+        int kerningAmount = getKerningAmount(pFont, pName, ptr - 1);
+        float leading = min(0, pFont->abc[index].abcA + kerningAmount);
         float trailing = min(0, pFont->abc[index].abcC);
         charWidth += (leading + trailing);
 				x += charWidth;
@@ -3438,9 +3433,9 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				st[3].s = pFont->texST[index][1].s;
 				st[3].t = pFont->texST[index][1].t;
 
-				width = (st[2].s - st[0].s) * pFont->texWidth * 2.0f / pFont->texScale *
+				float width = (st[2].s - st[0].s) * pFont->texWidth * 2.0f / pFont->texScale *
 					(distance / FINENESS);
-				height = (st[0].t - st[2].t) * pFont->texHeight * 2.0f / pFont->texScale *
+				float height = (st[0].t - st[2].t) * pFont->texHeight * 2.0f / pFont->texScale *
 					(distance / FINENESS);
 
 				pPacket = D3DRenderPacketFindMatch(pPool, pFont->pTexture, NULL, 0, 0, 0);
@@ -3472,7 +3467,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
         float leftx = x;
         // Kerning: add in leading for character if necessary
-        float leading = min(0, pFont->abc[index].abcA);
+        int kerningAmount = getKerningAmount(pFont, pName, ptr - 1);
+        float leading = min(0, pFont->abc[index].abcA + kerningAmount);
         float trailing = min(0, pFont->abc[index].abcC);
         leftx -= 2.0 * leading * (distance / FINENESS) / pFont->texScale;
         float rightx = leftx - width;
@@ -3544,8 +3540,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
         // Deal with kerning when moving to next character: character width
         // doesn't include overhangs
 				x -= width;
-        x -= 2.0 * (leading + trailing)
-          * (distance / FINENESS) / pFont->texScale; 
+        x -= 2.0 * (leading + trailing) * (distance / FINENESS) / pFont->texScale; 
 			}
 		}
 	}
@@ -5154,7 +5149,6 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	TCHAR			c;
    SIZE			size;
 	D3DLOCKED_RECT	d3dlr;
-   BYTE			*pDstRow;
    WORD			*pDst16;
    BYTE			bAlpha;
 
@@ -5247,7 +5241,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    
    IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
    
-   pDstRow = (BYTE*)d3dlr.pBits;
+   BYTE *pDstRow = (BYTE*)d3dlr.pBits;
    
    for(y = 0; y < pFont->texHeight; y++)
    {
@@ -5268,6 +5262,11 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    }
    
    IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
+
+   // Get kerning pairs for font
+   pFont->numKerningPairs = GetKerningPairs(hDC, 0, NULL);
+   pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
+   GetKerningPairs(hDC, pFont->numKerningPairs, pFont->kerningPairs);
    
    DeleteObject(hbmBitmap);
    DeleteObject(hScaledFont);
@@ -10068,4 +10067,17 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 		(current_room.ambient_light * FINENESS));
 
 	return end;
+}
+
+// Given a string and a pointer into the string, return the amount of kerning
+// between the pointer and the previous character (if any).
+int getKerningAmount(font_3d *pFont, char *str, char *ptr) {
+  int kerningAmount = 0;
+  for (int i = 0; i < pFont->numKerningPairs; ++i) {
+    KERNINGPAIR *pair = &pFont->kerningPairs[i];
+    if (ptr > str && pair->wFirst == *(ptr - 1) && pair->wSecond == *ptr) {
+      return pair->iKernAmount;
+    }
+  }
+  return 0;
 }

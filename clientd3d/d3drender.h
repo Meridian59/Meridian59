@@ -121,6 +121,7 @@ typedef struct d_light_cache
 	d_light	dLights[MAX_DLIGHTS];
 } d_light_cache;
 
+static const int numChars = 128 - 32;
 typedef struct font_3d
 {
 	TCHAR				strFontName[80];
@@ -130,9 +131,11 @@ typedef struct font_3d
 	long				texWidth;
 	long				texHeight;
 	float				texScale;
-	custom_st			texST[128 - 32][2];
+	custom_st			texST[numChars][2];
   // Deal with underhanging and overhanging characters
-  ABC         abc[128 - 32];
+  ABC         abc[numChars];
+  int          numKerningPairs;
+  KERNINGPAIR *kerningPairs;
 } font_3d;
 
 extern LPDIRECT3D9				gpD3D;

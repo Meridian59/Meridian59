@@ -203,13 +203,12 @@ void GraphicsAreaResize(int xsize, int ysize)
       text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
 
    // Calculate the largest possible viewport size keeping the classic client x,y proportions
-   new_xsize = xsize - INVENTORY_MIN_WIDTH;
-   new_ysize = xsize * CLASSIC_VIEWPORT_XY_PROPTION;
+   new_ysize = ysize - text_area_height;
+   new_xsize = new_ysize * MAXYX_PROPTION;
 
-   if ((new_ysize + text_area_height) > ysize)
-   {
-      new_ysize = ysize - text_area_height;
-      new_xsize = new_ysize * CLASSIC_VIEWPORT_YX_PROPTION;
+   if ((new_xsize + INVENTORY_MIN_WIDTH) > xsize) {
+      new_xsize = xsize - INVENTORY_MIN_WIDTH;
+      new_ysize = new_xsize * MAXXY_PROPTION;
    }
 
    /* Make sizes divisible by 4.  Must be even for draw3d, and when 
@@ -219,11 +218,11 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    int inventory_width = xsize - new_xsize;
 
-   int stretchfactor = ceil((new_xsize - CLASSIC_VIEWPORT_X) / CLASSIC_VIEWPORT_X);
+   int stretchfactor = ceil((new_xsize - MAXX) / MAXX);
 
-   debug(("original x,y = %d,%d\n", CLASSIC_VIEWPORT_X, CLASSIC_VIEWPORT_Y));
-   debug(("CLASSIC_VIEWPORT_YX_PROPTION = %f\n", CLASSIC_VIEWPORT_YX_PROPTION));
-   debug(("CLASSIC_VIEWPORT_XY_PROPTION = %f\n", CLASSIC_VIEWPORT_XY_PROPTION));
+   debug(("original x,y = %d,%d\n", MAXX, MAXY));
+   debug(("MAXYX_PROPTION = %f\n", MAXYX_PROPTION));
+   debug(("MAXXY_PROPTION = %f\n", MAXXY_PROPTION));
    debug(("text_area_min_height = %d\n", text_area_height));
    debug(("new_xsize = %d\n", new_xsize));
    debug(("new_ysize = %d\n", new_ysize));

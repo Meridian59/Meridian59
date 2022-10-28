@@ -59,7 +59,7 @@ int main(int argc, char **argv)
    dir = argv[1];
 
    num_degrees = NUMDEGREES;
-   maxx = CLASSIC_VIEWPORT_X;
+   maxx = MAXX;
    viewer_distance = VIEWER_DISTANCE;
 
    /* First spew the header file */
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
    fprintf(headerfile, "extern long sin_table[NUMDEGREES];\n");
 //   fprintf(headerfile, "extern long tan_table[NUMDEGREES];\n");
 //   fprintf(headerfile, "extern long cot_table[NUMDEGREES];\n");
-//   fprintf(headerfile, "extern long atan_table[%d];\n", CLASSIC_VIEWPORT_X);
+//   fprintf(headerfile, "extern long atan_table[%d];\n", MAXX);
    fprintf(headerfile, "\n#endif /* ifndef _TRIG_H */\n");
 
    fclose(headerfile);
@@ -197,11 +197,11 @@ int main(int argc, char **argv)
    fprintf(tablefile, "\n};\n\n");
 
    /* Arctangent table */
-   fprintf(tablefile, "long atan_table[%d] = {\n", CLASSIC_VIEWPORT_X);
+   fprintf(tablefile, "long atan_table[%d] = {\n", MAXX);
 
-   for (i = 0; i < CLASSIC_VIEWPORT_X; i++)
+   for (i = 0; i < MAXX; i++)
    {
-      radians = atan(((double)(i - CLASSIC_VIEWPORT_X / 2)) / viewer_distance);
+      radians = atan(((double)(i - MAXX / 2)) / viewer_distance);
       /* Convert radians to pseudodegrees */
       result = (long) ((radians * num_degrees) / PITWICE);
       if (result < 0)

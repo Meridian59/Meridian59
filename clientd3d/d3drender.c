@@ -14,8 +14,8 @@
 #define	TEX_CACHE_MAX_EFFECT	2000000
 #define	TEX_CACHE_MAX_PARTICLE	1000000
 // Define field of views with magic numbers for tuning
-#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width) * (-PI/4.0f))
-#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height) * (PI/6.0f))
+#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width) * (-PI/3.6f))
+#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height) * (PI/5.6f))
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -134,7 +134,7 @@ extern D3DPRESENT_PARAMETERS	gPresentParam;
 extern Vector3D			sun_vect;
 extern long				shade_amount;
 extern long				stretchfactor;
-extern BYTE				light_rows[CLASSIC_VIEWPORT_Y/2+1];      // Strength of light as function of screen row
+extern BYTE				light_rows[MAXY/2+1];      // Strength of light as function of screen row
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
@@ -1154,7 +1154,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	}
 
-	// view elements
+	// view elements (e.g. viewport corners)
 	if (1)
 	{
 		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
@@ -4118,8 +4118,8 @@ void D3DRenderEnableToggle(void)
 
 	if (gD3DEnabled)
 	{
-		memset(gBits, 0, CLASSIC_VIEWPORT_X * CLASSIC_VIEWPORT_Y);
-		memset(gBufferBits, 0, CLASSIC_VIEWPORT_X * 2 * CLASSIC_VIEWPORT_Y * 2);
+		memset(gBits, 0, MAXX * MAXY);
+		memset(gBufferBits, 0, MAXX * 2 * MAXY * 2);
 	}
 }
 
@@ -7982,8 +7982,8 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(CLASSIC_VIEWPORT_X * stretchfactor);
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(CLASSIC_VIEWPORT_Y * stretchfactor);
+   screenW = /*(float)(gD3DRect.right - gD3DRect.left) /*/ (float)(main_viewport_width);
+   screenH = /*(float)(gD3DRect.bottom - gD3DRect.top) /*/ (float)(main_viewport_height);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
@@ -8198,8 +8198,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;// (CLASSIC_VIEWPORT_X * (stretchfactor * 1.5f));
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;// (CLASSIC_VIEWPORT_Y * (stretchfactor * 1.5f));
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;// (MAXX * (stretchfactor * 1.5f));
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;// (MAXY * (stretchfactor * 1.5f));
 
    // Get player's object flags for special drawing effects
 	pRNode = GetRoomObjectById(player.id);
@@ -8413,500 +8413,258 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 
 void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
+   // Render view elements (such as the main viewport yellow ui corners)
 	int						i;
 	float					screenW, screenH, foffset;
 	int						offset = 0;
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;// (CLASSIC_VIEWPORT_X * stretchfactor);
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;// (CLASSIC_VIEWPORT_Y * stretchfactor);
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;
 
 	if (GetFocus() == hMain)
 		offset = 4;
 
 	foffset = 1.0f / 64.0f;
 
-	if (stretchfactor == 1)
+	// top left
+	pPacket = D3DRenderPacketNew(pPool);
+	pPacket->pDib = NULL;
+	pPacket->pTexture = gpViewElements[0 + offset];
+	pPacket->xLat0 = 0;
+	pPacket->xLat1 = 0;
+	pPacket->effect = 0;
+	pPacket->size = pPool->packetSize;
+
+	pChunk = D3DRenderChunkNew(pPacket);
+	pChunk->flags = 0;
+	pChunk->numIndices = 4;
+	pChunk->numVertices = 4;
+	pChunk->numPrimitives = pChunk->numVertices - 2;
+	pChunk->xLat0 = 0;
+	pChunk->xLat1 = 0;
+
+	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
+	pChunk->pMaterialFctn = D3DMaterialNone;
+
+	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
+	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
+	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH, gScreenHeight);
+	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW, gScreenWidth);
+	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH, gScreenHeight);
+	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW, gScreenWidth);
+	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+
+	for (i = 0; i < 4; i++)
 	{
-		// top left
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[0 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(72 / (float)screenH, gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(58 / (float)screenW, gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(72 / (float)screenH, gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(58 / (float)screenW, gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-
-		// top right
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[1 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 58 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 58 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(72 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(72 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-
-		// bottom left
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[2 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 73 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(58 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight,
-			gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(58 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 73 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-
-		// bottom right
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[3 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 58 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 73 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 58 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight,
-			gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight,
-			gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 73 / (float)screenH, gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
+		pChunk->bgra[i].b = 255;
+		pChunk->bgra[i].g = 255;
+		pChunk->bgra[i].r = 255;
+		pChunk->bgra[i].a = 255;
 	}
-	else
+
+	pChunk->st0[0].s = foffset;
+	pChunk->st0[0].t = foffset;
+	pChunk->st0[1].s = foffset;
+	pChunk->st0[1].t = 1.0f - foffset;
+	pChunk->st0[2].s = 1.0f - foffset;
+	pChunk->st0[2].t = 1.0f - foffset;
+	pChunk->st0[3].s = 1.0f - foffset;
+	pChunk->st0[3].t = foffset;
+
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
+
+	// top right
+	pPacket = D3DRenderPacketNew(pPool);
+	pPacket->pDib = NULL;
+	pPacket->pTexture = gpViewElements[1 + offset];
+	pPacket->xLat0 = 0;
+	pPacket->xLat1 = 0;
+	pPacket->effect = 0;
+	pPacket->size = pPool->packetSize;
+
+	pChunk = D3DRenderChunkNew(pPacket);
+	pChunk->flags = 0;
+	pChunk->numIndices = 4;
+	pChunk->numVertices = 4;
+	pChunk->numPrimitives = pChunk->numVertices - 2;
+	pChunk->xLat0 = 0;
+	pChunk->xLat1 = 0;
+
+	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
+	pChunk->pMaterialFctn = D3DMaterialNone;
+
+	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
+		gScreenWidth);
+	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
+		gScreenWidth);
+	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH,
+		gScreenHeight);
+	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
+		gScreenWidth);
+	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH,
+		gScreenHeight);
+	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
+		gScreenWidth);
+	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+
+	for (i = 0; i < 4; i++)
 	{
-		// top left
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[0 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH, gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW, gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH, gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW, gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-
-		// top right
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[1 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-
-		// bottom left
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[2 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f, gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
-			gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-
-		// bottom right
-		pPacket = D3DRenderPacketNew(pPool);
-		pPacket->pDib = NULL;
-		pPacket->pTexture = gpViewElements[3 + offset];
-		pPacket->xLat0 = 0;
-		pPacket->xLat1 = 0;
-		pPacket->effect = 0;
-		pPacket->size = pPool->packetSize;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pChunk->xLat0 = 0;
-		pChunk->xLat1 = 0;
-
-		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-		pChunk->pMaterialFctn = D3DMaterialNone;
-
-		pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
-			gScreenHeight);
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-			gScreenWidth);
-		pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
-			gScreenHeight);
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
-			gScreenHeight);
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-			gScreenWidth);
-		pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH, gScreenHeight);
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-		for (i = 0; i < 4; i++)
-		{
-			pChunk->bgra[i].b = 255;
-			pChunk->bgra[i].g = 255;
-			pChunk->bgra[i].r = 255;
-			pChunk->bgra[i].a = 255;
-		}
-
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
+		pChunk->bgra[i].b = 255;
+		pChunk->bgra[i].g = 255;
+		pChunk->bgra[i].r = 255;
+		pChunk->bgra[i].a = 255;
 	}
+
+	pChunk->st0[0].s = foffset;
+	pChunk->st0[0].t = foffset;
+	pChunk->st0[1].s = foffset;
+	pChunk->st0[1].t = 1.0f - foffset;
+	pChunk->st0[2].s = 1.0f - foffset;
+	pChunk->st0[2].t = 1.0f - foffset;
+	pChunk->st0[3].s = 1.0f - foffset;
+	pChunk->st0[3].t = foffset;
+
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
+
+	// bottom left
+	pPacket = D3DRenderPacketNew(pPool);
+	pPacket->pDib = NULL;
+	pPacket->pTexture = gpViewElements[2 + offset];
+	pPacket->xLat0 = 0;
+	pPacket->xLat1 = 0;
+	pPacket->effect = 0;
+	pPacket->size = pPool->packetSize;
+
+	pChunk = D3DRenderChunkNew(pPacket);
+	pChunk->flags = 0;
+	pChunk->numIndices = 4;
+	pChunk->numVertices = 4;
+	pChunk->numPrimitives = pChunk->numVertices - 2;
+	pChunk->xLat0 = 0;
+	pChunk->xLat1 = 0;
+
+	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
+	pChunk->pMaterialFctn = D3DMaterialNone;
+
+	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
+	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
+		gScreenHeight);
+	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
+	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f, gScreenHeight);
+	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW,
+		gScreenWidth);
+	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
+		gScreenHeight);
+	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW,
+		gScreenWidth);
+	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
+		gScreenHeight);
+	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+
+	for (i = 0; i < 4; i++)
+	{
+		pChunk->bgra[i].b = 255;
+		pChunk->bgra[i].g = 255;
+		pChunk->bgra[i].r = 255;
+		pChunk->bgra[i].a = 255;
+	}
+
+	pChunk->st0[0].s = foffset;
+	pChunk->st0[0].t = foffset;
+	pChunk->st0[1].s = foffset;
+	pChunk->st0[1].t = 1.0f - foffset;
+	pChunk->st0[2].s = 1.0f - foffset;
+	pChunk->st0[2].t = 1.0f - foffset;
+	pChunk->st0[3].s = 1.0f - foffset;
+	pChunk->st0[3].t = foffset;
+
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
+
+	// bottom right
+	pPacket = D3DRenderPacketNew(pPool);
+	pPacket->pDib = NULL;
+	pPacket->pTexture = gpViewElements[3 + offset];
+	pPacket->xLat0 = 0;
+	pPacket->xLat1 = 0;
+	pPacket->effect = 0;
+	pPacket->size = pPool->packetSize;
+
+	pChunk = D3DRenderChunkNew(pPacket);
+	pChunk->flags = 0;
+	pChunk->numIndices = 4;
+	pChunk->numVertices = 4;
+	pChunk->numPrimitives = pChunk->numVertices - 2;
+	pChunk->xLat0 = 0;
+	pChunk->xLat1 = 0;
+
+	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
+	pChunk->pMaterialFctn = D3DMaterialNone;
+
+	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
+		gScreenWidth);
+	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
+		gScreenHeight);
+	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
+		gScreenWidth);
+	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
+		gScreenHeight);
+	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
+		gScreenWidth);
+	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
+		gScreenHeight);
+	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
+	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
+		gScreenWidth);
+	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH, gScreenHeight);
+	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+
+	for (i = 0; i < 4; i++)
+	{
+		pChunk->bgra[i].b = 255;
+		pChunk->bgra[i].g = 255;
+		pChunk->bgra[i].r = 255;
+		pChunk->bgra[i].a = 255;
+	}
+
+	pChunk->st0[0].s = foffset;
+	pChunk->st0[0].t = foffset;
+	pChunk->st0[1].s = foffset;
+	pChunk->st0[1].t = 1.0f - foffset;
+	pChunk->st0[2].s = 1.0f - foffset;
+	pChunk->st0[2].t = 1.0f - foffset;
+	pChunk->st0[3].s = 1.0f - foffset;
+	pChunk->st0[3].t = foffset;
+
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
 }
 
 void D3DPostOverlayEffects(d3d_render_pool_new *pPool)

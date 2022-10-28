@@ -198,7 +198,7 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE s
    dos.flags    = flags;
    dos.cone     = &c;
    dos.distance = 1;
-   dos.cutoff = main_viewport_height;//CLASSIC_VIEWPORT_Y;
+   dos.cutoff = main_viewport_height;//MAXY;
    dos.translation = translation;
    dos.secondtranslation = secondtranslation;
    dos.obj      = pPlayer;

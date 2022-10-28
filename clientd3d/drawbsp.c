@@ -29,8 +29,8 @@
 #define LOG_FRACTION 12
 #define FRACTION  (1 << LOG_FRACTION)
 
-#define MINCLIPROW (-16*CLASSIC_VIEWPORT_Y)
-#define MAXCLIPROW (17*CLASSIC_VIEWPORT_Y)
+#define MINCLIPROW (-16*MAXY)
+#define MAXCLIPROW (17*MAXY)
 
 // inline utility macros
 #define SWAP(a,b,tmp) (tmp)=(a);(a)=(b);(b)=(tmp)
@@ -688,7 +688,7 @@ typedef struct ConeTreeNode
 static ConeTreeNode *cone_tree_root;
 
 /* cone tree storage and free list */
-static ConeTreeNode cone_node_array[CLASSIC_VIEWPORT_X];
+static ConeTreeNode cone_node_array[MAXX];
 static int allocd_cone_nodes;
 static ConeTreeNode *free_cone_node_list;
 
@@ -717,7 +717,7 @@ static void init_cone_tree()
   c->height = 1;
   
   start_anchor.cone.rightedge = -10;
-  end_anchor.cone.leftedge = CLASSIC_VIEWPORT_X+10;
+  end_anchor.cone.leftedge = MAXX+10;
   
   c->cone.leftedge = 0;
   c->cone.rightedge = screen_width-1;
@@ -835,7 +835,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
   else
     new_node = &cone_node_array[allocd_cone_nodes++];
   
-  blakassert(allocd_cone_nodes < CLASSIC_VIEWPORT_X);
+  blakassert(allocd_cone_nodes < MAXX);
   
   /* copy cone */
   new_node->cone = node->cone;
@@ -1065,7 +1065,7 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
   long slack;
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
-  blakassert(col1 < CLASSIC_VIEWPORT_X);
+  blakassert(col1 < MAXX);
   for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
     {
       next = c->next;  /* get next pointer now, before we munge c */
@@ -1276,7 +1276,7 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
   long slack;
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
-  blakassert(col1 < CLASSIC_VIEWPORT_X);
+  blakassert(col1 < MAXX);
   for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
     {
       next = c->next;  /* get next pointer now, before we munge c */
@@ -2196,7 +2196,7 @@ static void WalkWall(WallData *wall, long side)
      /* wall completes a column, so we don't need to calculate
       * its vertical extent.
       */
-     blakassert(col1 < CLASSIC_VIEWPORT_X);
+     blakassert(col1 < MAXX);
      for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
      {
 	    next = c->next;
@@ -2308,8 +2308,8 @@ static void WalkObjects(ObjectData *objects)
       
       right--;  /* fix overlap */
       
-      if (right >= CLASSIC_VIEWPORT_X)
-	right = CLASSIC_VIEWPORT_X-1;
+      if (right >= MAXX)
+	right = MAXX-1;
       for(c = search_for_first(left); c->cone.leftedge <= right; c = c->next)
       {
 	if (nitems >= MAX_ITEMS)
@@ -2714,8 +2714,8 @@ void MinimapUpdate(Draw3DParams *params, BSPnode *tree)
 	viewer_y = params->viewer_y;
 	viewer_angle = params->viewer_angle;
 	viewer_height = params->viewer_height;
-	area.cx = min(params->width  / params->stretchfactor, CLASSIC_VIEWPORT_X);
-	area.cy = min(params->height / params->stretchfactor, CLASSIC_VIEWPORT_Y);
+	area.cx = min(params->width  / params->stretchfactor, MAXX);
+	area.cy = min(params->height / params->stretchfactor, MAXY);
 
 	// Force size to be even
 	area.cy = area.cy & ~1;  
@@ -2771,7 +2771,7 @@ static void fillcone(ViewCone *c)
 	maxrow = area.cy-1;
       
       for(row = minrow; row <= maxrow; row++)
-	*(gBits + row*CLASSIC_VIEWPORT_X + col) = fillcolor;
+	*(gBits + row*MAXX + col) = fillcolor;
     }
   fillcolor+=15;
 }
@@ -2800,9 +2800,9 @@ static void outlinecone(ViewCone *c)
 	continue;
       
       if (minrow >= 0 && minrow < area.cy)
-	*(gBits + minrow*CLASSIC_VIEWPORT_X + col) = fillcolor;
+	*(gBits + minrow*MAXX + col) = fillcolor;
       if (maxrow >= 0 && maxrow < area.cy)
-	*(gBits + maxrow*CLASSIC_VIEWPORT_X + col) = fillcolor;
+	*(gBits + maxrow*MAXX + col) = fillcolor;
     }
   
   minrow = DIVUP(c->top_b * c->leftedge + c->top_d, c->top_a);
@@ -2810,7 +2810,7 @@ static void outlinecone(ViewCone *c)
   if (minrow < 0) debug(("minrow left (%d %d): %d\n", c->leftedge, c->rightedge, minrow));
   if (maxrow >= area.cy) debug(("maxrow left (%d %d): %d (%d)\n", c->leftedge, c->rightedge, maxrow, area.cy));
   for(row = max(0,minrow); row <= min(area.cy-1,maxrow); row++)
-    *(gBits + row*CLASSIC_VIEWPORT_X + c->leftedge) = fillcolor;
+    *(gBits + row*MAXX + c->leftedge) = fillcolor;
   
   minrow = DIVUP(c->top_b * c->rightedge + c->top_d, c->top_a);
   maxrow = DIVDOWN(c->bot_b * c->rightedge + c->bot_d, c->bot_a);
@@ -2819,7 +2819,7 @@ static void outlinecone(ViewCone *c)
   if (minrow < 0) debug(("minrow right %d (%d %d), %d (%d %d)\n", c->leftedge, DIVUP(c->top_b * c->leftedge + c->top_d, c->top_a), DIVDOWN(c->bot_b * c->leftedge + c->bot_d, c->bot_a), c->rightedge, minrow, maxrow));
   if (maxrow >= area.cy) debug(("maxrow right (%d %d): %d (%d)\n", c->leftedge, c->rightedge, maxrow, area.cy));
   for(row = max(0,minrow); row <= min(area.cy-1,maxrow); row++)
-    *(gBits + row*CLASSIC_VIEWPORT_X + c->rightedge) = fillcolor;
+    *(gBits + row*MAXX + c->rightedge) = fillcolor;
 
   fillcolor+=15;
 }
@@ -3112,7 +3112,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       // should shift by LOG_FINENESS
       yinc = yinc * (top - bottom) / FINENESS * DibShrinkFactor(bmap);
 
-      screen_ptr = gBits + col + clipend*CLASSIC_VIEWPORT_X;
+      screen_ptr = gBits + col + clipend*MAXX;
 
       /*  PICK OUT GRAPHIC TO DISPLAY */
       if (hasMipMaps)
@@ -3194,7 +3194,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 	 
 	 // debug(("num_steps = %d, ytex = %d\n", num_steps, ytex));
 	 
-	 end_screen_ptr = screen_ptr - CLASSIC_VIEWPORT_X * num_steps;
+	 end_screen_ptr = screen_ptr - MAXX * num_steps;
 	 if (transparent)
 	 {
 		if (NULL != pBiXlat)
@@ -3205,7 +3205,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 		       if (val != TRANSPARENT_INDEX)
 			  *screen_ptr = fastBIXLAT(palette[val], *screen_ptr, pBiXlat);
 		       
-		       screen_ptr -= CLASSIC_VIEWPORT_X;
+		       screen_ptr -= MAXX;
 		       ytex += yinc;
 		    }
 		}
@@ -3217,7 +3217,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 		       if (val != TRANSPARENT_INDEX)
 			  *screen_ptr = palette[val];
 		       
-		       screen_ptr -= CLASSIC_VIEWPORT_X;
+		       screen_ptr -= MAXX;
 		       ytex += yinc;
 		    }
 		}
@@ -3239,10 +3239,10 @@ WHILE_SCREEN_PTR_GT_END_SCREEN_PTR:
 	       shr   eax, 16;
 	       sub   ebx, eax;
 	       mov   cl, BYTE PTR [ebx];
-	       sub   edi, CLASSIC_VIEWPORT_X;
+	       sub   edi, MAXX;
 	       add   edx, yinc;
 	       mov   al, BYTE PTR [esi + ecx];
-	       mov   BYTE PTR [edi + CLASSIC_VIEWPORT_X],al
+	       mov   BYTE PTR [edi + MAXX],al
 	       cmp   edi, end_screen_ptr;
 	       jg    WHILE_SCREEN_PTR_GT_END_SCREEN_PTR;
 	       mov   ytex, edx;
@@ -3255,7 +3255,7 @@ END_WHILE_SCREEN_PTR_GT_END_SCREEN_PTR:
 	       *screen_ptr = 
 		  palette[*(square_base_ptr - (ytex >> FIX_DECIMAL))];
 	       
-	       screen_ptr -= CLASSIC_VIEWPORT_X;
+	       screen_ptr -= MAXX;
 	       ytex += yinc;
 	    }
 #endif
@@ -3619,7 +3619,7 @@ static void doDrawSloped(ViewCone *c, BSPleaf *leaf, BYTE floor) {
 	light2 = z0 + fpMul(u_2, z_du) - fpMul(v_2, z_dv);
 
 	// pointer to first pixel in row
-	screen_ptr = gBits + row * CLASSIC_VIEWPORT_X + mincol;
+	screen_ptr = gBits + row * MAXX + mincol;
 
 	// length of current row
 	len = 1 + maxcol - mincol;
@@ -3846,7 +3846,7 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
       tx &= ((1L << TEXTURE_ACC)-1);
       ty &= ((1L << TEXTURE_ACC)-1);
       
-      screen_ptr = gBits + row * CLASSIC_VIEWPORT_X + mincol;
+      screen_ptr = gBits + row * MAXX + mincol;
       
       end_screen_ptr = screen_ptr + (maxcol - mincol);
       
@@ -4027,7 +4027,7 @@ static void doDrawBackground(ViewCone *c)
       if (background == NULL || IsBlind())
 	{
 	  if (mincol <= maxcol)
-	    memset(gBits + row*CLASSIC_VIEWPORT_X + mincol, 0, maxcol-mincol+1);
+	    memset(gBits + row*MAXX + mincol, 0, maxcol-mincol+1);
 	  continue;
 	}
       else
@@ -4044,7 +4044,7 @@ static void doDrawBackground(ViewCone *c)
 	 {
 	    length = min(maxcol-mincol+1, width-xoffset);
 	    
-	    memcpy(gBits + row*CLASSIC_VIEWPORT_X + mincol,
+	    memcpy(gBits + row*MAXX + mincol,
    		bkgnd_ptr + xoffset,
    		length);
 	    mincol += length;
@@ -4151,7 +4151,7 @@ static void doDrawBackground(ViewCone *c)
 	 overlay->drawn = TRUE;
 
 	 row_bits = bkgnd_bmap + (row - py) * over_width + (mincol - px);
-	 screen_ptr = gBits + row * CLASSIC_VIEWPORT_X + mincol;
+	 screen_ptr = gBits + row * MAXX + mincol;
 	 end_screen_ptr = screen_ptr + (maxcol - mincol);
 	 while(screen_ptr <= end_screen_ptr)
 	 {

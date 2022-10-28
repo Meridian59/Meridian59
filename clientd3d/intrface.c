@@ -126,8 +126,7 @@ void InterfaceResize(int xsize, int ysize)
 }
 /************************************************************************/
 /* 
- * InterfaceGetMaxSize:  Fill s with the maximum size for the primary 
- *   display monitor.
+ * InterfaceGetMaxSize:  Fill s with primary display monitor max size.
  */
 void InterfaceGetMaxSize(SIZE *s)
 {

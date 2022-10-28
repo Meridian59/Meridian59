@@ -331,8 +331,8 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    d.flags = dos->flags | (dos->effect << 20);
    d.translation = dos->translation;
    d.secondtranslation = dos->secondtranslation;
-   rowTimesX = starty * main_viewport_width;//MAXX;
-   for (row = starty; row <= endy; row++, y += yinc, rowTimesX += main_viewport_width/*MAXX*/)
+   rowTimesX = starty * main_viewport_width;
+   for (row = starty; row <= endy; row++, y += yinc, rowTimesX += main_viewport_width)
    {
       long mincol = startx;
       long maxcol = endx;

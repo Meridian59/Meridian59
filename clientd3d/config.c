@@ -458,8 +458,6 @@ void WindowSettingsLoad(WINDOWPLACEMENT *w)
    def_width  = min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
    def_height = min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
 
-   // Need to update here also perhaps for default optimal window size.
-
    r->left   = GetConfigInt(window_section, INILeft, MAIN_DEF_LEFT, ini_file);
    r->right  = GetConfigInt(window_section, INIRight, MAIN_DEF_LEFT + def_width, ini_file);
    r->top    = GetConfigInt(window_section, INITop, MAIN_DEF_TOP, ini_file);

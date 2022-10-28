@@ -332,11 +332,9 @@ void DrawViewTreatment()
 	int i;
 	int iOffset = 0;
 
-   // todo: remove stretch factor from here
-
 //	HDC hdcTarget = ( stretchfactor == 1 ) ? gBitsDC : gBufferDC;
-	BYTE* pBitsTarget = ( stretchfactor == 1 ) ? gBits : gBufferBits;
-   int iWidthTarget = (stretchfactor == 1) ? MAXX : MAXX * 2;
+	BYTE* pBitsTarget = gBufferBits;
+	int iWidthTarget = MAXX * 2;
 
 //	if (state == STATE_GAME && (GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
 	if (GetFocus() == hMain)
@@ -344,14 +342,10 @@ void DrawViewTreatment()
 
 	for( i = iOffset; i < iOffset + ( NUM_VIEW_ELEMENTS / 2 ); i++ )
 	{
-      // the classic client has some visible artifacts when opening doors and changing zones around the corner pieces
-      // this is more noticable on a larger viewport
-
-      // strange copies of corners all over the place during this code flow. This should be removed. We might be able to purge most of this function
-      /*
-		BitCopy( pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
-					ViewElements[i].bits, 0, 0, DIBWIDTH( ViewElements[i].width ), OBB_FLIP | OBB_TRANSPARENT );
-      */
+		// The classic client has some visible artifacts when opening doors and changing zones relating to the corner graphics. This is more noticable on a larger viewport
+		// The following BitCopy causes strange copies of corners all over the place during this code flow.
+		//BitCopy( pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height, 
+		// ViewElements[i].bits, 0, 0, DIBWIDTH( ViewElements[i].width ), OBB_FLIP | OBB_TRANSPARENT );
 
 //		OffscreenBitBlt( hdcTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
 //							ViewElements[i].bits, 0, 0, DIBWIDTH( ViewElements[i].width ), OBB_COPY | OBB_FLIP | OBB_TRANSPARENT );

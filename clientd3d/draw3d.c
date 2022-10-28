@@ -372,8 +372,8 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width  / stretchfactor, main_viewport_width/*MAXX*/);
-   area.cy = min(params->height / stretchfactor, main_viewport_height/*MAXY*/);
+   area.cx = min(params->width  / stretchfactor, main_viewport_width);
+   area.cy = min(params->height / stretchfactor, main_viewport_height);
 
    // Force size to be even
    area.cy = area.cy & ~1;  

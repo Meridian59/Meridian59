@@ -257,14 +257,14 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    //	areaMiniMap added by ajw.
    areaMiniMap.x	= view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
-   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height /*MINIMAP_MAX_WIDTH*/);
+   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height);
 
    areaMiniMap.y	= 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
 
    iHeightAvailableForMapAndStats = ysize - areaMiniMap.y - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 
    areaMiniMap.cy	= (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
-   areaMiniMap.cy	= min( areaMiniMap.cy, minimap_width_height/*MINIMAP_MAX_HEIGHT*/);
+   areaMiniMap.cy	= min( areaMiniMap.cy, minimap_width_height);
 
    areaMiniMap.cy -= (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
    areaMiniMap.y += (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;

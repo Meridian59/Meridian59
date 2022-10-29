@@ -86,7 +86,7 @@ int main(int argc, char **argv)
    fprintf(headerfile, "extern long sin_table[NUMDEGREES];\n");
 //   fprintf(headerfile, "extern long tan_table[NUMDEGREES];\n");
 //   fprintf(headerfile, "extern long cot_table[NUMDEGREES];\n");
-//   fprintf(headerfile, "extern long atan_table[%d];\n", MAXX);
+//   fprintf(headerfile, "extern long atan_table[%d];\n", maxx);
    fprintf(headerfile, "\n#endif /* ifndef _TRIG_H */\n");
 
    fclose(headerfile);
@@ -197,11 +197,11 @@ int main(int argc, char **argv)
    fprintf(tablefile, "\n};\n\n");
 
    /* Arctangent table */
-   fprintf(tablefile, "long atan_table[%d] = {\n", MAXX);
+   fprintf(tablefile, "long atan_table[%d] = {\n", maxx);
 
-   for (i = 0; i < MAXX; i++)
+   for (i = 0; i < maxx; i++)
    {
-      radians = atan(((double)(i - MAXX / 2)) / viewer_distance);
+      radians = atan(((double)(i - maxx / 2)) / viewer_distance);
       /* Convert radians to pseudodegrees */
       result = (long) ((radians * num_degrees) / PITWICE);
       if (result < 0)

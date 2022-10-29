@@ -256,7 +256,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    long x, xinc, y, yinc;
    long startx, endx, starty, endy, bitmap_width;
    BYTE *screen_ptr, *row_bits, *obj_bits, *palette, *end_screen_ptr;
-   long col, row, rowTimesX;
+   long col, row, rowTimesMAXX;
    long lefttop,righttop,leftbot,rightbot;
    ViewCone *c;
    int effect;
@@ -335,8 +335,8 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    d.flags = dos->flags | (dos->effect << 20);
    d.translation = dos->translation;
    d.secondtranslation = dos->secondtranslation;
-   rowTimesX = starty * main_viewport_width;
-   for (row = starty; row <= endy; row++, y += yinc, rowTimesX += main_viewport_width)
+   rowTimesMAXX = starty * main_viewport_width;
+   for (row = starty; row <= endy; row++, y += yinc, rowTimesMAXX += main_viewport_width)
    {
       long mincol = startx;
       long maxcol = endx;
@@ -377,8 +377,8 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 //			else	Never seems to happen.
       }
 
-      screen_ptr = gBits + mincol + rowTimesX;
-      end_screen_ptr = gBits + maxcol + rowTimesX;
+      screen_ptr = gBits + mincol + rowTimesMAXX;
+      end_screen_ptr = gBits + maxcol + rowTimesMAXX;
 
       row_bits = obj_bits + (y >> FIX_DECIMAL) * bitmap_width;
       x = (mincol - obj_area->x) * xinc;

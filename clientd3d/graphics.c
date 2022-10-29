@@ -205,7 +205,7 @@ void GraphicsAreaResize(int xsize, int ysize)
    if (config.toolbar)
       text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
 
-   // Calculate the largest possible viewport size keeping the classic client x,y proportions
+   // Calculate the largest possible viewport size keeping the classic client aspect ratio
    new_ysize = ysize - text_area_height;
    new_xsize = new_ysize * MAXYX_ASPECT_RATIO;
 
@@ -220,8 +220,6 @@ void GraphicsAreaResize(int xsize, int ysize)
    new_ysize &= ~3;
 
    int inventory_width = xsize - new_xsize;
-
-   int stretchfactor = ceil((new_xsize - MAXX) / MAXX);
 
    if (new_xsize < 0)
       new_xsize = 0;

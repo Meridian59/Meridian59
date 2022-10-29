@@ -21,17 +21,11 @@
 
 void InitTime()
 {
-/* I use the multimedia timers (set to accuracy of 1ms here) because
-for millisecond timing because they are more accurate than 
-	GetTickCount().
-	
-	timeBeginPeriod(1);
-    */
 }
 
-int GetTime()
+time_t GetTime()
 {
-	return (int)time(NULL);
+	return time(NULL);
 }
 
 const char * TimeStr(time_t time)
@@ -97,13 +91,13 @@ const char * FileTimeStr(time_t time)
 	return s;
 }
 
-const char * RelativeTimeStr(int time)
+const char * RelativeTimeStr(time_t time)
 {
 	static char s[80];
 	int amount;
 	s[0] = 0;
 	
-	amount = time / (24*60*60);
+	amount = (int) (time / (24*60*60));
 	if (amount != 0)
 		sprintf(s,"%i day%s ",amount,amount != 1 ? "s" : "");
 	

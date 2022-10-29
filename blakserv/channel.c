@@ -11,7 +11,7 @@
 
  This module has all the functions dealing with writing to channels.
  Based on the configuration, the channels may or not be written to
- files, but they are always shown on the interface (chanbuf.c).  
+ files, but they are always shown on the interface (chanbuf.c).
 
  */
 
@@ -26,9 +26,9 @@ typedef struct
 
 channel_table_type channel_table[] =
 {
-{ CHANNEL_D, CHANNEL_DEBUG_DISK, DEBUG_FILE, },
-{ CHANNEL_E, CHANNEL_ERROR_DISK, ERROR_FILE, },
-{ CHANNEL_L, CHANNEL_LOG_DISK,   LOG_FILE,   },
+{ CHANNEL_D, CHANNEL_DEBUG_DISK, DEBUG_FILE_BASE, },
+{ CHANNEL_E, CHANNEL_ERROR_DISK, ERROR_FILE_BASE, },
+{ CHANNEL_L, CHANNEL_LOG_DISK,   LOG_FILE_BASE,   },
 };
 
 channel_node channel[NUM_CHANNELS];
@@ -164,7 +164,19 @@ FILE *CreateFileChannel(int channel_id)
    char channel_file[MAX_PATH+FILENAME_MAX];
    FILE *pFile;
 
-   sprintf(channel_file,"%s%s",ConfigStr(PATH_CHANNEL),channel_table[channel_id].file_name);
+   char date_str[500];
+
+   time_t t;
+   struct tm *time_struct;
+
+   t = time(NULL);
+   time_struct = localtime(&t);
+   if (time_struct == NULL) {
+       strcpy(date_str, "unknown");
+   } else {
+       strftime(date_str, sizeof(date_str), "%Y-%m-%d", time_struct);
+   }
+   sprintf(channel_file,"%s%s-%s.txt",ConfigStr(PATH_CHANNEL),channel_table[channel_id].file_name, date_str);
    pFile = fopen(channel_file, "ab");
 
    return pFile;

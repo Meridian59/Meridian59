@@ -8,7 +8,7 @@
 /*
  * config.c
  *
- 
+
  This module takes care of all the configurable parts of Blakserv,
  except for the Blakod.  It reads data from a file, or uses default
  values in the table defining all the configurable data.
@@ -21,7 +21,7 @@
  be reallocated.
 
  Because configuration is done early, before channels, we can't use
- normal error reporting functions.  Therefore, use StartupPrintf() 
+ normal error reporting functions.  Therefore, use StartupPrintf()
  in here for error messages.
 
  It is necessary to allow some of these configurable things to change
@@ -32,7 +32,7 @@
  dynamic config, and then released by another function.  Dynamic
  ints and bools are fine, since we lock and unlock here, only
  returning an int or bool.
- 
+
 */
 
 #include "blakserv.h"
@@ -85,19 +85,19 @@ config_table_type config_table[] =
 { GUEST_MAX,              T, "Max",           CONFIG_INT,   "30" },
 { GUEST_SERVER_MIN,       T, "ServerMin",     CONFIG_INT,   "100" },
 { GUEST_SERVER_MAX,       T, "ServerMax",     CONFIG_INT,   "109" },
-{ GUEST_TOO_MANY,         F, "TooMany",       CONFIG_STR,   
+{ GUEST_TOO_MANY,         F, "TooMany",       CONFIG_STR,
      "Too many guests are logged on right now; please try again later." },
 
 { LOGIN_GROUP,            F, "[Login]",       CONFIG_GROUP, "" },
 { LOGIN_MAX_ATTEMPTS,     F, "MaxAttempts",   CONFIG_INT,   "3" },
 { LOGIN_MIN_VERSION,      T, "MinVersion",    CONFIG_INT,   "0" },
-{ LOGIN_OLD_VERSION_STR,  F, "OldVersionStr", CONFIG_STR,   
+{ LOGIN_OLD_VERSION_STR,  F, "OldVersionStr", CONFIG_STR,
      "The game software has been upgraded while you have been online. Logoff and "
      "then login again to automatically upgrade your software." },
-{ LOGIN_INVALID_VERSION,  T, "InvalidVersion",CONFIG_INT,   "100" }, 
-{ LOGIN_INVALID_VERSION_STR,F,"InvalidVersionStr",CONFIG_STR,  
-    "Your version of the game software is beta; you need to purchase the latest version." }, 
-{ LOGIN_SUSPEND_STR,      F, "SuspendStr", CONFIG_STR,   
+{ LOGIN_INVALID_VERSION,  T, "InvalidVersion",CONFIG_INT,   "100" },
+{ LOGIN_INVALID_VERSION_STR,F,"InvalidVersionStr",CONFIG_STR,
+    "Your version of the game software is beta; you need to purchase the latest version." },
+{ LOGIN_SUSPEND_STR,      F, "SuspendStr", CONFIG_STR,
      "Your account has been disabled temporarily. "
 	 "Check your email to see if the administrator has sent you a message." },
 { LOGIN_MAX_PER_IP,       T, "MaxPerIPAddress", CONFIG_INT, "0" },
@@ -109,6 +109,7 @@ config_table_type config_table[] =
 { INACTIVE_TRANSFER,      T, "Transfer",      CONFIG_INT,   "2" }, /* minutes */
 { INACTIVE_SELECTCHAR,    T, "SelectChar",    CONFIG_INT,   "10" }, /* minutes */
 { INACTIVE_GAME,          T, "Game",          CONFIG_INT,   "30" }, /* seconds */
+{ INACTIVE_MAINTENANCE,   T, "Maintenance",   CONFIG_INT,   "30" }, /* seconds */
 { INACTIVE_OVERRIDE,      T, "Override",      CONFIG_BOOL,  "Yes" },
 
 { MOTD_GROUP,             F, "[MessageOfTheDay]", CONFIG_GROUP, "" },
@@ -129,7 +130,7 @@ config_table_type config_table[] =
      "Too many people are logged on right now; please try again later." },
 
 { LOCK_GROUP,             F, "[Lock]",        CONFIG_GROUP, "" },
-{ LOCK_DEFAULT,           F, "Default",       CONFIG_STR,   
+{ LOCK_DEFAULT,           F, "Default",       CONFIG_STR,
      "The game is temporarily closed for maintenance." },
 
 { MEMORY_GROUP,           F, "[Memory]",      CONFIG_GROUP, "" },
@@ -151,6 +152,8 @@ config_table_type config_table[] =
 { AUTO_TRANSMITTED_PERIOD,F, "TransmittedPeriod",CONFIG_INT,"60", }, /* seconds */
 { AUTO_RESET_POOL_TIME,   F, "ResetPoolTime", CONFIG_INT,   "0", },
 { AUTO_RESET_POOL_PERIOD, F, "ResetPoolPeriod",CONFIG_INT,  "60", },
+{ AUTO_REOPEN_CHANNELS_TIME, F, "ReopenChannelsTime", CONFIG_INT,   "0", },
+{ AUTO_REOPEN_CHANNELS_PERIOD, F, "ReopenChannelsPeriod",CONFIG_INT,  "86400", },
 
 { EMAIL_GROUP,            F, "[Email]",       CONFIG_GROUP, "" },
 { EMAIL_LISTEN,           F, "Listen",        CONFIG_BOOL,  "No" },
@@ -160,7 +163,7 @@ config_table_type config_table[] =
 { EMAIL_LOCAL_MACHINE_NAME, T, "LocalMachineName", CONFIG_STR, "unknown" },
 { EMAIL_HOST,			  F, "MailServer",    CONFIG_STR,	   "ms-camaro" },
 { EMAIL_NAME,			  F, "PageAddress",    CONFIG_STR,	   "nobody@dev.null" },
-   
+
 { UPDATE_GROUP,           F, "[Update]",      CONFIG_GROUP, "" },
 { UPDATE_CLIENT_MACHINE,  T, "ClientMachine", CONFIG_STR,   "unknown" },
 { UPDATE_CLIENT_FILE,     T, "ClientFilename",CONFIG_STR,   "unknown" },
@@ -183,7 +186,7 @@ config_table_type config_table[] =
 { CONSTANTS_GROUP,        F, "[Constants]",   CONFIG_GROUP, "" },
 { CONSTANTS_ENABLED,      F, "Enabled",       CONFIG_BOOL,  "No" },
 { CONSTANTS_FILENAME,     F, "Filename",      CONFIG_STR,   ".\blakston.khd" },
-   
+
 { ADVERTISE_GROUP,        F, "[Advertise]",   CONFIG_GROUP, "" },
 { ADVERTISE_FILE1,        T, "File1",         CONFIG_STR,   "ad1.avi" },
 { ADVERTISE_URL1,         T, "Url1",          CONFIG_STR,   "http://www.neardeathstudios.com" },
@@ -200,8 +203,8 @@ config_table_type config_table[] =
 { DEBUG_UNINITIALIZED,    T, "Uninitialized", CONFIG_BOOL,  "No" },
 
 { SECURITY_GROUP,         F, "[Security]",    CONFIG_GROUP, "" },
-{ SECURITY_LOG_SPOOFS,    T, "LogSpoofs",     CONFIG_BOOL,  "Yes" }, 
-{ SECURITY_HANGUP_SPOOFS, T, "HangupSpoofs",  CONFIG_BOOL,  "Yes" }, 
+{ SECURITY_LOG_SPOOFS,    T, "LogSpoofs",     CONFIG_BOOL,  "Yes" },
+{ SECURITY_HANGUP_SPOOFS, T, "HangupSpoofs",  CONFIG_BOOL,  "Yes" },
 { SECURITY_REDBOOK_RSC,   T, "RedbookRsc",    CONFIG_STR,   "system_success_rsc" },
 	/* RedbookRsc is dynamic, but changes only take effect on garbage collection */
 
@@ -277,13 +280,13 @@ const char * AddConfig(int config_id,const char *config_data,int config_type,int
 
    case CONFIG_PATH :
       len = strlen(s);
-      
+
       if (s[len-1] == '\\' || s[len-1] == '/')
 		  s[len-1] = 0;
 
       if (stat(s,&file_stat) != 0 || !(file_stat.st_mode & S_IFDIR))
 		  return "invalid path--not found";
-      
+
 #ifdef BLAK_PLATFORM_WINDOWS
       if (s[len-1] != ':')
 		  strcat(s,"\\");
@@ -307,7 +310,7 @@ const char * AddConfig(int config_id,const char *config_data,int config_type,int
       break;
 
    case CONFIG_STR :
-      if (s && *s == '@')
+      if (*s == '@')
       {
 	 // If blakserv.cfg has line "Setting   <@setting.txt>",
 	 // then Setting is set to the *contents* of the first line
@@ -380,7 +383,7 @@ char * ConfigStr(int config_id)
    config_node *c;
 
    /* this should be changed to NOT call startupprintf */
-   
+
    c = GetConfigByID(config_id);
    if (c == NULL)
    {
@@ -434,7 +437,7 @@ Bool ConfigBool(int config_id)
 {
    config_node *c;
    Bool ret_val;
-   
+
    c = GetConfigByID(config_id);
    if (c == NULL)
    {
@@ -527,7 +530,7 @@ int GetConfigIDByGroupAndName(char *group,char *name)
 void SetConfigInt(int config_id,int new_value)
 {
    config_node *c;
-   
+
    c = GetConfigByID(config_id);
    if (c == NULL)
    {
@@ -556,7 +559,7 @@ void SetConfigInt(int config_id,int new_value)
 void SetConfigBool(int config_id,Bool new_value)
 {
    config_node *c;
-   
+
    c = GetConfigByID(config_id);
    if (c == NULL)
    {
@@ -574,7 +577,7 @@ void SetConfigBool(int config_id,Bool new_value)
       eprintf("SetConfigBool found id %i is not dynamic\n",config_id);
       return;
    }
-   
+
    LockDynamicConfig();
 
    c->config_int_value = new_value;
@@ -585,7 +588,7 @@ void SetConfigBool(int config_id,Bool new_value)
 void SetConfigStr(int config_id,char *new_value)
 {
    config_node *c;
-   
+
    c = GetConfigByID(config_id);
    if (c == NULL)
    {
@@ -603,7 +606,7 @@ void SetConfigStr(int config_id,char *new_value)
       eprintf("SetConfigStr found id %i is not dynamic\n",config_id);
       return;
    }
-   
+
    LockDynamicConfig();
 
    FreeMemory(MALLOC_ID_CONFIG,c->config_str_value,strlen(c->config_str_value)+1);
@@ -617,7 +620,7 @@ void LoadConfig(void)
 {
    FILE *configfile;
    char line[MAX_CONFIG_LINE+1];
-   int lineno,current_group,i,config_id;   
+   int lineno,current_group,i,config_id;
 
    if ((configfile = fopen(CONFIG_FILE,"rt")) == NULL)
       StartupPrintf("LoadConfig can't open %s, using default configuration\n",CONFIG_FILE);
@@ -653,7 +656,7 @@ int LoadConfigLine(char *line,int lineno,const char *filename,int current_group)
 
    if (*first_str == '#')
       return current_group;
-   
+
    if (*first_str == '[')
    {
       if (strchr(first_str,']') == NULL)
@@ -674,14 +677,14 @@ int LoadConfigLine(char *line,int lineno,const char *filename,int current_group)
 	 if (config_table[i].config_type == CONFIG_GROUP &&
 	     !stricmp(first_str,config_table[i].config_name))
 	    return i;
-      
+
       StartupPrintf("LoadConfig found nonexistent group %s %s (%i)\n",
 	     first_str,filename,lineno);
-      
+
       return current_group;
    }
-   
-   
+
+
    if (current_group < 0 || current_group >= LEN_CONFIG_TABLE)
    {
       StartupPrintf("LoadConfig found data before a group declared %s (%i)\n",
@@ -722,10 +725,9 @@ int LoadConfigLine(char *line,int lineno,const char *filename,int current_group)
 	 break;
       }
    }
-   
+
    if (i == LEN_CONFIG_TABLE || config_table[i].config_type == CONFIG_GROUP)
       StartupPrintf("LoadConfig can't match value %s (%i)\n",filename,lineno);
 
    return current_group;
 }
-

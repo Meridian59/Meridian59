@@ -14,11 +14,11 @@
 #define _BTIME_H
 
 void InitTime();
-int GetTime();
+time_t GetTime();
 const char * TimeStr(time_t time);
 const char * ShortTimeStr(time_t time);
 const char * FileTimeStr(time_t time);
-const char * RelativeTimeStr(int time);
+const char * RelativeTimeStr(time_t time);
 UINT64 GetMilliCount();
 
 #endif

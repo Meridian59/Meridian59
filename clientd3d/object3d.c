@@ -58,6 +58,10 @@ ObjectRange visible_objects[MAXOBJECTS];    /* Where objects are on screen */
 // Inner loops for drawing objects with special effects
 extern DrawingLoop drawing_loops[];
 
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+
 /* local function prototypes */
 static void SortObjects(DrawnObject *objects, int *indices, int max_object);
 static void ComputeObjectArea(PDIB pdib, int center, int distance, int height, AREA *a, int *cutoff);

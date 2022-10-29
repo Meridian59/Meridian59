@@ -41,11 +41,9 @@
 
 /* Inventory area */
 #define INVENTORY_MIN_WIDTH (215 + LEFT_BORDER + 67)
-#define INVENTORY_MAX_WIDTH 9000
 
-//	MiniMap area.
-#define MINIMAP_MAX_WIDTH	( INVENTORY_MAX_WIDTH + 3 ) & ~3
-#define MINIMAP_MAX_HEIGHT	MINIMAP_MAX_WIDTH
+/* MiniMap area */
+#define MINIMAP_MAX	9000
 
 //	How much of the minimap/stats box area goes to the minimap.
 #define PROPORTION_MINIMAP		.4

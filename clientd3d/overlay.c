@@ -16,6 +16,10 @@
 extern AREA area;                  /* size and position of view window */
 extern player_info player;
 
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+
 /* local function prototypes */
 Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 static void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags);

@@ -13,9 +13,20 @@
 #define	TEX_CACHE_MAX_WALLMASK	2000000
 #define	TEX_CACHE_MAX_EFFECT	2000000
 #define	TEX_CACHE_MAX_PARTICLE	1000000
+
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+
 // Define field of views with magic numbers for tuning
-#define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width) * (-PI/3.6f))
-#define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height) * (PI/5.6f))
+inline float FovHorizontal(long diff)
+{
+   return (diff / (float)(main_viewport_width) * (-PI / 3.6f));
+}
+inline float FovVertical(long diff)
+{
+   return (diff / (float)(main_viewport_height) * (PI / 5.6f));
+}
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -703,7 +714,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 
-	XformMatrixPerspective(&proj, FOV_H, FOV_V, 100.0f, Z_RANGE);
+	XformMatrixPerspective(&proj, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 100.0f, Z_RANGE);
 //	aspectRatio = (float)(gD3DRect.right - gD3DRect.left) / (float)(gD3DRect.bottom - gD3DRect.top);
 //	XformMatrixPerspective(&proj, -PI / 4.0f * 0.64f * aspectRatio, PI / 6.0f * 1.55f * (1.0f / aspectRatio), 100.0f, 150000.0f);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
@@ -6923,15 +6934,12 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			bottomRight.z = 0;
 			bottomRight.w = 1.0f;
 
-
-         //stretchfactor = config.viewport_stretchfactor;
-
 			MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 			MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 			MatrixMultiply(&rot, &rot, &mat);
 			MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 			MatrixMultiply(&mat, &trans, &rot);
-			XformMatrixPerspective(&localToScreen, FOV_H, FOV_V, 1.0f, 2000000.0f);
+			XformMatrixPerspective(&localToScreen, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 1.0f, 2000000.0f);
 			MatrixMultiply(&mat, &pChunk->xForm,
 				&mat);
 			MatrixMultiply(&localToScreen, &mat, &localToScreen);
@@ -7611,7 +7619,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						MatrixMultiply(&rot, &rot, &mat);
 						MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 						MatrixMultiply(&mat, &trans, &rot);
-						XformMatrixPerspective(&localToScreen, FOV_H, FOV_V, 1.0f, Z_RANGE);
+						XformMatrixPerspective(&localToScreen, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 1.0f, Z_RANGE);
 						MatrixMultiply(&mat, &pChunk->xForm,
 							&mat);
 						MatrixMultiply(&localToScreen, &mat, &localToScreen);
@@ -7982,8 +7990,8 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = /*(float)(gD3DRect.right - gD3DRect.left) /*/ (float)(main_viewport_width);
-   screenH = /*(float)(gD3DRect.bottom - gD3DRect.top) /*/ (float)(main_viewport_height);
+   screenW = (float)(main_viewport_width);
+   screenH = (float)(main_viewport_height);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
@@ -8198,8 +8206,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;// (MAXX * (stretchfactor * 1.5f));
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;// (MAXY * (stretchfactor * 1.5f));
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;
 
    // Get player's object flags for special drawing effects
 	pRNode = GetRoomObjectById(player.id);

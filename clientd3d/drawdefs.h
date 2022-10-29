@@ -29,8 +29,8 @@
 /* Original classic view port size -- must be DWORD aligned for WinG */
 #define MAXX 1452
 #define MAXY 1276
-#define MAXYX_PROPTION 1.68
-#define MAXXY_PROPTION 0.59
+#define MAXYX_ASPECT_RATIO 1.68
+#define MAXXY_ASPECT_RATIO (1/MAXYX_ASPECT_RATIO)
 
 /* Fineness of offset within a grid square. */
 #define FINENESS     1024L       /* Keep track of rays to within 1/FINENESS */

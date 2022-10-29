@@ -78,6 +78,9 @@ static int num_move_areas = (sizeof(move_areas) / sizeof(ScreenArea));
 extern room_type current_room;
 extern int border_index;
 
+int main_viewport_width;
+int main_viewport_height;
+
 /************************************************************************/
 /*
  * GraphicsAreaCreate:  Create main graphics view window.
@@ -204,11 +207,11 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    // Calculate the largest possible viewport size keeping the classic client x,y proportions
    new_ysize = ysize - text_area_height;
-   new_xsize = new_ysize * MAXYX_PROPTION;
+   new_xsize = new_ysize * MAXYX_ASPECT_RATIO;
 
    if ((new_xsize + INVENTORY_MIN_WIDTH) > xsize) {
       new_xsize = xsize - INVENTORY_MIN_WIDTH;
-      new_ysize = new_xsize * MAXXY_PROPTION;
+      new_ysize = new_xsize * MAXXY_ASPECT_RATIO;
    }
 
    /* Make sizes divisible by 4.  Must be even for draw3d, and when 
@@ -219,15 +222,6 @@ void GraphicsAreaResize(int xsize, int ysize)
    int inventory_width = xsize - new_xsize;
 
    int stretchfactor = ceil((new_xsize - MAXX) / MAXX);
-
-   debug(("original x,y = %d,%d\n", MAXX, MAXY));
-   debug(("MAXYX_PROPTION = %f\n", MAXYX_PROPTION));
-   debug(("MAXXY_PROPTION = %f\n", MAXXY_PROPTION));
-   debug(("text_area_min_height = %d\n", text_area_height));
-   debug(("new_xsize = %d\n", new_xsize));
-   debug(("new_ysize = %d\n", new_ysize));
-   debug(("New stretchfactor = %d\n", stretchfactor));
-   debug(("config.large_area = %d\n", config.large_area));
 
    if (new_xsize < 0)
       new_xsize = 0;

@@ -329,6 +329,7 @@ LPDIRECT3DTEXTURE9		D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 void					*D3DRenderMalloc(unsigned int bytes);
 
 float					D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk);
+static int getKerningAmount(font_3d *pFont, char *str, char *ptr);
 
 static void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
    float bias = z_bias * -0.00001f;
@@ -374,20 +375,8 @@ HRESULT D3DRenderInit(HWND hWnd)
 		return E_FAIL;
 
 	gD3DEnabled = D3DDriverProfileInit();
-
-/*	modeCount = gpD3D->lpVtbl->GetAdapterModeCount(gpD3D, D3DADAPTER_DEFAULT);
-
-	for (i = 0; i < modeCount; i++)
-	{
-		if (FAILED(gpD3D->lpVtbl->EnumAdapterModes(gpD3D, D3DADAPTER_DEFAULT, i,
-			&displayMode2[i])))
-		{
-		error = E_FAIL;
-		assert(0);
-		}
-	}*/
 	if (!gD3DEnabled)
-		return FALSE;
+		return E_FAIL;
 
 	IDirect3D9_GetAdapterDisplayMode(gpD3D, D3DADAPTER_DEFAULT, &displayMode);
 
@@ -563,7 +552,8 @@ void D3DRenderShutDown(void)
 		if (gFont.pTexture)
 		{
          IDirect3DTexture9_Release(gFont.pTexture);
-			gFont.pTexture = NULL;
+         delete [] gFont.kerningPairs;
+         gFont.pTexture = NULL;
 		}
 
 		for (i = 0; i < 16; i++)
@@ -1392,7 +1382,6 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 			/* then do walls on the separator */
 			if (side != 0)
 			{
-				//WallList list;
 				WallData	*pWall;
 				int			flags, wallFlags;
 
@@ -1532,7 +1521,6 @@ void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params)
 			/* then do walls on the separator */
 			if (side != 0)
 			{
-				//WallList list;
 				WallData	*pWall;
 				int			flags, wallFlags;
 
@@ -1909,25 +1897,12 @@ void D3DGeometryBuildNew(room_type *room, d3d_render_pool_new *pPool)
 			break;
 
 			case BSPleaftype:
-				if (pNode->u.leaf.sector == &room->sectors[0])
-				{
-/*					if ((pNode->bbox.x0 < 0) ||
-						(pNode->bbox.x1 > room->width))
-						break;*/
-//					if (pNode->u.leaf.sector->server_id == 0)
-//						break;
-/*						if (bDone)
-							break;
-						else
-							bDone = TRUE;*/
-				}
-
 				D3DRenderPacketFloorAdd(pNode, &gWorldPoolStatic, FALSE);
 				D3DRenderPacketCeilingAdd(pNode, &gWorldPoolStatic, FALSE);
-			break;
+        break;
 
 			default:
-			break;
+        break;
 		}
 	}
 
@@ -2250,7 +2225,6 @@ void D3DRenderPacketFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool bD
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -2344,7 +2318,6 @@ void D3DRenderPacketCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool 
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -2494,7 +2467,6 @@ void D3DRenderPacketWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsigne
 
 	if (NULL == pDib)
 		return;
-//		pDib = current_room.sectors[0].floor;
 
 	D3DRenderWallExtract(pWall, pDib, &flags, xyz, st, bgra, type, side);
 
@@ -2858,7 +2830,6 @@ void D3DRenderFloorMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool bDyn
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -2921,7 +2892,6 @@ void D3DRenderCeilingMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool bD
 	pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
-//	pChunk->numIndices = (pNode->u.leaf.poly.npts - 2) * 3;
 	pChunk->numVertices = pNode->u.leaf.poly.npts;
 	pChunk->numIndices = pChunk->numVertices;
 	pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -3293,37 +3263,29 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 						room_type *room, Draw3DParams *params, font_3d *pFont)
 {
 	D3DMATRIX			mat, rot, xForm, trans;
-	int					angleHeading, anglePitch, strLen, sector_flags, offset;
-	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
-	list_type			list;
+	int					sector_flags, offset;
 	long				dx, dy, angle, top, bottom;
-	PDIB				pDib;
 	custom_xyz			vector;
 	custom_st			st[4];
 	custom_bgra			bgra;
-	float				lastDistance, width, height, x, z, depth, distance;
-	char				*pName, *ptr;
 	TCHAR				c;
-	COLORREF			fg_color;
 	Color				color;
 	BYTE				*palette;
-
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-	angleHeading = params->viewer_angle + 3072;
+	int angleHeading = params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
 
-	anglePitch = PlayerGetHeightOffset();
+	int anglePitch = PlayerGetHeightOffset();
 
 	// base objects
-	for (list = room->contents; list != NULL; list = list->next)
+	for (list_type list = room->contents; list != NULL; list = list->next)
 	{
       float glyph_scale = 255;
       
-		pRNode = (room_contents_node *)list->data;
+      room_contents_node *pRNode = (room_contents_node *)list->data;
 
 		if (pRNode->obj.id == player.id)
 			continue;
@@ -3334,15 +3296,14 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		vector.x = pRNode->motion.x - player.x;
 		vector.y = pRNode->motion.y - player.y;
 
-		distance = (vector.x * vector.x) + (vector.y * vector.y);
-		distance = (float)sqrt((double)distance);
+		float distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
 			distance = 1;
 
 		if (distance >= MAX_NAME_DISTANCE)
 			continue;
 
-		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, pRNode->obj.animate->group);
+		PDIB pDib = GetObjectPdib(pRNode->obj.icon_res, 0, pRNode->obj.animate->group);
 
 		if (NULL == pDib)
 			continue;
@@ -3352,8 +3313,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
 		angle = (pRNode->angle - intATan2(-dy,-dx)) & NUMDEGREES_MASK;
 
-		pName = LookupNameRsc(pRNode->obj.name_res);
-		strLen = strlen(pName);
+		char *pName = LookupNameRsc(pRNode->obj.name_res);
+		int strLen = strlen(pName);
 
 		angle = pRNode->angle - (params->viewer_angle + 3072);
 
@@ -3367,7 +3328,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		}
 
 		// Set object depth based on "depth" sector flags
-		depth = sector_depths[SectorDepth(sector_flags)];
+		float depth = sector_depths[SectorDepth(sector_flags)];
 
 		if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 		{
@@ -3394,10 +3355,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			}
 		}
 
-		//			z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-//			z += ((float)pRNode->boundingHeightAdjust * 4.0f);// / 1.66f;
-
 		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pRNode->motion.x, (float)max(bottom,
@@ -3406,12 +3363,12 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			((float)pRNode->boundingHeightAdjust * 4.0f), (float)pRNode->motion.y);
 		MatrixMultiply(&xForm, &rot, &mat);
 
-		fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
+		COLORREF fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
 
 		// Some names never grow darker, they use PALETTEINDEX().
 		if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))
 		{
-			//XXX: normally, SetTextColor() works with PALETTEINDEX() types fine,
+			//     normally, SetTextColor() works with PALETTEINDEX() types fine,
 			//     but not here for unknown reason
 			//     so we convert to our base_palette[] PALETTERGB() type.
 			//
@@ -3442,43 +3399,49 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
       bgra.b = color.blue * glyph_scale / 255;
       bgra.a = COLOR_MAX;
       
-		lastDistance = 0;
+      float lastDistance = 0;
 
 		for (offset = 0; offset <= 1; offset++)
 		{
-			x = 0.0f;
-			z = 0;
-//			z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-//			z += ((float)pRNode->boundingHeightAdjust * 4.0f);// / 1.66f;
-
-			ptr = pName;
+			float x = 0.0f;
+			float z = 0;
+			char *ptr = pName;
 
 			while (c = *ptr++)
 			{
-				x += (pFont->texST[c - 32][1].s - pFont->texST[c - 32][0].s) *
-					pFont->texWidth / pFont->texScale * (distance / FINENESS);
-			}
+        int index = c - 32;
+        float charWidth = (pFont->texST[index][1].s - pFont->texST[index][0].s) *
+          pFont->texWidth;
 
+        // Take out space for kerning
+        int kerningAmount = getKerningAmount(pFont, pName, ptr - 1);
+        float leading = min(0, pFont->abc[index].abcA + kerningAmount);
+        float trailing = min(0, pFont->abc[index].abcC);
+        charWidth += (leading + trailing);
+				x += charWidth;
+			}
+      x *= (distance / FINENESS) / pFont->texScale;
+      
 			ptr = pName;
 
 			while (c = *ptr++)
 			{
 				int	i;
+        int index = c - 32;
 
 				// flip t values since bmps are upside down
-				st[0].s = pFont->texST[c - 32][0].s;
-				st[0].t = pFont->texST[c - 32][1].t;
-				st[1].s = pFont->texST[c - 32][0].s;
-				st[1].t = pFont->texST[c - 32][0].t;
-				st[2].s = pFont->texST[c - 32][1].s;
-				st[2].t = pFont->texST[c - 32][0].t;
-				st[3].s = pFont->texST[c - 32][1].s;
-				st[3].t = pFont->texST[c - 32][1].t;
+				st[0].s = pFont->texST[index][0].s;
+				st[0].t = pFont->texST[index][1].t;
+				st[1].s = pFont->texST[index][0].s;
+				st[1].t = pFont->texST[index][0].t;
+				st[2].s = pFont->texST[index][1].s;
+				st[2].t = pFont->texST[index][0].t;
+				st[3].s = pFont->texST[index][1].s;
+				st[3].t = pFont->texST[index][1].t;
 
-				width = (st[2].s - st[0].s) * pFont->texWidth * 2.0f / pFont->texScale *
+				float width = (st[2].s - st[0].s) * pFont->texWidth * 2.0f / pFont->texScale *
 					(distance / FINENESS);
-				height = (st[0].t - st[2].t) * pFont->texHeight * 2.0f / pFont->texScale *
+				float height = (st[0].t - st[2].t) * pFont->texHeight * 2.0f / pFont->texScale *
 					(distance / FINENESS);
 
 				pPacket = D3DRenderPacketFindMatch(pPool, pFont->pTexture, NULL, 0, 0, 0);
@@ -3498,7 +3461,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
 				if (offset)
 				{
-					//MatrixScale(&scale, 1.01f);
 					MatrixTranslate(&trans, -30.0f * distance / MAX_NAME_DISTANCE,
 						-30.0f * distance / MAX_NAME_DISTANCE, 0);
 					MatrixMultiply(&pChunk->xForm, &trans, &xForm);
@@ -3509,28 +3471,36 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 
-				pChunk->xyz[0].x = x;
+        float leftx = x;
+        // Kerning: add in leading for character if necessary
+        int kerningAmount = getKerningAmount(pFont, pName, ptr - 1);
+        float leading = pFont->abc[index].abcA + kerningAmount;
+        float trailing = pFont->abc[index].abcC;
+        leftx -= 2.0 * leading * (distance / FINENESS) / pFont->texScale;
+        float rightx = leftx - width;
+        
+				pChunk->xyz[0].x = leftx;
 				pChunk->xyz[0].y = 0;
 				pChunk->xyz[0].z = z;
 
 				pChunk->st0[0].s = st[0].s;
 				pChunk->st0[0].t = st[0].t;
 
-				pChunk->xyz[1].x = x;
+				pChunk->xyz[1].x = leftx;
 				pChunk->xyz[1].y = 0;
 				pChunk->xyz[1].z = z + height;
 
 				pChunk->st0[1].s = st[1].s;
 				pChunk->st0[1].t = st[1].t;
 
-				pChunk->xyz[2].x = x - width;
+				pChunk->xyz[2].x = rightx;
 				pChunk->xyz[2].y = 0;
 				pChunk->xyz[2].z = z + height;
 
 				pChunk->st0[2].s = st[2].s;
 				pChunk->st0[2].t = st[2].t;
 
-				pChunk->xyz[3].x = x - width;
+				pChunk->xyz[3].x = rightx;
 				pChunk->xyz[3].y = 0;
 				pChunk->xyz[3].z = z;
 
@@ -3573,7 +3543,10 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 					pChunk->xLat1 = 0;
 				}
 
+        // Deal with kerning when moving to next character: character width
+        // doesn't include overhangs
 				x -= width;
+        x -= 2.0 * (leading + trailing) * (distance / FINENESS) / pFont->texScale; 
 			}
 		}
 	}
@@ -4423,8 +4396,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 32; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 16) * (height - 16) +
-											(width - 16) * (width - 16)));
+			float	scale = sqrtf((height - 16) * (height - 16) +
+											(width - 16) * (width - 16));
 			scale = 16.0f - scale;
 			scale = max(scale, 0);
 			scale /= 16.0f;
@@ -4454,8 +4427,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 32; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 16) * (height - 16) +
-											(width - 16) * (width - 16)));
+			float	scale = sqrtf((height - 16) * (height - 16) +
+											(width - 16) * (width - 16));
 
 			scale = 16.0f - scale;
 			scale = max(scale, 0);
@@ -4486,8 +4459,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 128; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 64) * (height - 64) +
-											(width - 64) * (width - 64)));
+			float	scale = sqrtf((height - 64) * (height - 64) +
+											(width - 64) * (width - 64));
 
 			scale = 64.0f - scale;
 			scale = max(scale, 0);
@@ -4521,8 +4494,8 @@ void D3DRenderLMapsBuild(void)
 	{
 		for (width = 0; width < 32; width++)
 		{
-			float	scale = (float)sqrt((double)((height - 16) * (height - 16) +
-											(width - 16) * (width - 16)));
+			float	scale = sqrtf((height - 16) * (height - 16) +
+											(width - 16) * (width - 16));
 			float	scaleAlpha;
 
 			scale = 16.0f - scale;
@@ -5165,9 +5138,6 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
 			pChunk->indices[1] = 2;
 			pChunk->indices[2] = 0;
 			pChunk->indices[3] = 3;
-
-//			for (i = 0; i < 4; i++)
-//				CACHE_ST_ADD(pRenderCache, 1, stBase[i].s, stBase[i].t);
 		}
 	}
 }
@@ -5185,14 +5155,17 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	TCHAR			c;
    SIZE			size;
 	D3DLOCKED_RECT	d3dlr;
-   BYTE			*pDstRow;
    WORD			*pDst16;
    BYTE			bAlpha;
-  
-	pFont->fontHeight = GetFontHeight(hFont);
-//	pFont->flags = flags;
-	pFont->flags = 0;
-	pFont->texScale = 1.0f;
+
+   // Ask for a bigger font to reduce aliasing, then scale the texture
+   // down by the same amount.
+   float fontScale = 3.0;
+   HFONT hScaledFont = FontsGetScaledFont(hFont, fontScale);
+   assert(hScaledFont);
+      
+   pFont->fontHeight = GetFontHeight(hScaledFont);
+   pFont->texScale = fontScale;
    
 	if (pFont->fontHeight > 40)
 		pFont->texWidth = pFont->texHeight = 1024;
@@ -5200,12 +5173,12 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		pFont->texWidth = pFont->texHeight = 512;
 	else
 		pFont->texWidth = pFont->texHeight = 256;
-   
+
 	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &d3dCaps);
   
 	if (pFont->texWidth > (long) d3dCaps.MaxTextureWidth)
 	{
-		pFont->texScale = (float)pFont->texWidth / (float)d3dCaps.MaxTextureWidth;
+		pFont->texScale *= (float)pFont->texWidth / (float)d3dCaps.MaxTextureWidth;
 		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
 	}
   
@@ -5229,19 +5202,8 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, NULL, 0 );
    SetMapMode(hDC, MM_TEXT);
   
-/*	nHeight = -MulDiv(pFont->fontHeight, (int)(GetDeviceCaps(hDC, LOGPIXELSY)
- * pFont->texScale), 72);
- dwBold = (pFont->flags & D3DFONT_BOLD) ? FW_BOLD : FW_NORMAL;
- dwItalic = (pFont->flags & D3DFONT_ITALIC) ? TRUE : FALSE;
- hFont = CreateFont(nHeight, 0, 0, 0, dwBold, dwItalic,
- FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
- CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
- VARIABLE_PITCH, pFont->strFontName);*/
-  
-	assert(hFont);
-   
-	SelectObject(hDC, hbmBitmap);
-	SelectObject(hDC, hFont);
+   SelectObject(hDC, hbmBitmap);
+   SelectObject(hDC, hScaledFont);
    
    // Set text properties
    SetTextColor(hDC, RGB(255,255,255));
@@ -5250,41 +5212,41 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    
    for(c = 32; c < 127; c++ )
    {
-      BOOL	temp;
-      int left_offset, right_offset;
+      int index = c-32;
       
       str[0] = c;
       GetTextExtentPoint32(hDC, str, 1, &size);
       
-      if (!GetCharABCWidths(hDC, c, c, &pFont->abc[c-32])) {
-         pFont->abc[c-32].abcA = 0;
-         pFont->abc[c-32].abcB = size.cx;
-         pFont->abc[c-32].abcC = 0;
+      if (!GetCharABCWidths(hDC, c, c, &pFont->abc[index])) {
+         pFont->abc[index].abcA = 0;
+         pFont->abc[index].abcB = size.cx;
+         pFont->abc[index].abcC = 0;
       }
-      
-      left_offset = abs(pFont->abc[c-32].abcA);
-      right_offset = abs(pFont->abc[c-32].abcC);
-      size.cx = abs(pFont->abc[c-32].abcA) + pFont->abc[c-32].abcB + abs(pFont->abc[c-32].abcC);
-      
-      if (x + size.cx + 1 > pFont->texWidth)
+
+      int left_offset = abs(min(0, pFont->abc[index].abcA));
+      size.cx = pFont->abc[index].abcB;
+
+      // Is this row of the texture filled up?
+      if (x + size.cx >= pFont->texWidth)
       {
-         x  = 0;
+         x = 0;
          y += size.cy + 1;
       }
       
-      temp = ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
+      ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
       
-      pFont->texST[c-32][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
-      pFont->texST[c-32][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
-      pFont->texST[c-32][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
-      pFont->texST[c-32][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
-      
-      x += size.cx+1;
+      pFont->texST[index][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
+      pFont->texST[index][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
+      pFont->texST[index][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
+      pFont->texST[index][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
+
+      // Leave +1 space so bilinear filtering doesn't pick up neighboring character
+      x += size.cx+1;  
    }
    
    IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
    
-   pDstRow = (BYTE*)d3dlr.pBits;
+   BYTE *pDstRow = (BYTE*)d3dlr.pBits;
    
    for(y = 0; y < pFont->texHeight; y++)
    {
@@ -5305,8 +5267,14 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    }
    
    IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
+
+   // Get kerning pairs for font
+   pFont->numKerningPairs = GetKerningPairs(hDC, 0, NULL);
+   pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
+   GetKerningPairs(hDC, pFont->numKerningPairs, pFont->kerningPairs);
    
    DeleteObject(hbmBitmap);
+   DeleteObject(hScaledFont);
    DeleteDC(hDC);
 }
 
@@ -8025,10 +7993,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			continue;
 
 		D3DComputePlayerOverlayArea(pDib, pOverlay->hotspot, &objArea);
-//		objArea.x *= screenW;
-//		objArea.y *= screenH;
-//		objArea.cx /= screenW;
-//		objArea.cy /= screenH;
 
 		overlays = *(obj->overlays);
 
@@ -8089,21 +8053,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		else
 		{
 			D3DObjectLightingCalc(room, pRNode, &bgra, 0);
-/*				lastDistance = D3DRenderObjectLightGetNearest(pRNode);
-
-			light = D3DRenderObjectGetLight(room->tree, pRNode);
-
-			if ((pRNode->obj.flags & OF_FLICKERING) || (pRNode->obj.flags & OF_FLASHING))
-				light = GetLightPaletteIndex(D3DRENDER_LIGHT_DISTANCE, light, FINENESS,
-							-pRNode->obj.lightAdjust);
-			else
-				light = GetLightPaletteIndex(D3DRENDER_LIGHT_DISTANCE, light, FINENESS,
-							0);
-
-			light = light * COLOR_AMBIENT / 64;
-
-			bgra.r = bgra.g = bgra.b = min(255, light + lastDistance);
-			bgra.a = 255;*/
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -8121,8 +8070,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		pChunk->xyz[0].z = pChunk->xyz[3].z = objArea.y;
 		pChunk->xyz[2].x = pChunk->xyz[3].x = pChunk->xyz[0].x + objArea.cx;
 		pChunk->xyz[2].z = pChunk->xyz[1].z = pChunk->xyz[0].z + objArea.cy;
-
-//		D3DObjectLightingCalc(room, pRNode, &bgra);
 
 		for (count = 0; count < 4; count++)
 		{
@@ -8167,15 +8114,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		pChunk->st1[2].t += (gFrame & 3) / 256.0f;
 		pChunk->st1[3].s += (gFrame & 3) / 256.0f;
 		pChunk->st1[3].t -= (gFrame & 3) / 256.0f;
-
-/*		pChunk->st1[0].s = 0.0f;
-		pChunk->st1[0].t = 0.0f;
-		pChunk->st1[1].s = 0.0f;
-		pChunk->st1[1].t = 1.0f;
-		pChunk->st1[2].s = 1.0f;
-		pChunk->st1[2].t = 1.0f;
-		pChunk->st1[3].s = 1.0f;
-		pChunk->st1[3].t = 0.0f;*/
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -9894,4 +9832,17 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 		(current_room.ambient_light * FINENESS));
 
 	return end;
+}
+
+// Given a string and a pointer into the string, return the amount of kerning
+// between the pointer and the previous character (if any).
+int getKerningAmount(font_3d *pFont, char *str, char *ptr) {
+  int kerningAmount = 0;
+  for (int i = 0; i < pFont->numKerningPairs; ++i) {
+    KERNINGPAIR *pair = &pFont->kerningPairs[i];
+    if (ptr > str && pair->wFirst == *(ptr - 1) && pair->wSecond == *ptr) {
+      return pair->iKernAmount;
+    }
+  }
+  return 0;
 }

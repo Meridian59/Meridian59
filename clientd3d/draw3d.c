@@ -1,7 +1,7 @@
 // Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
-// This software is distributed under a license that is described in
+// This software is distributed trademark a license that is described in
 // the LICENSE file that accompanies it.
 //
 // Meridian is a registered trademarkd3d_driver_profile	

@@ -67,6 +67,8 @@ extern int num_visible_objects;
 extern int main_viewport_width;
 extern int main_viewport_height;
 
+extern d3d_driver_profile	gD3DDriverProfile;
+
 long horizon;                   /* row of horizon */
 long stretchfactor;      /* =1 for normal, =2 for stretch to twice normal size */
 
@@ -331,13 +333,33 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 /************************************************************************/
 void DrawViewTreatment()
 {
-	//	Ensure that border, which covers up parts of view treatment, is drawn.
-	DrawGridBorder();
-	GdiFlush();
-	GdiFlush();
-	GdiFlush();
-	GdiFlush();
-	GdiFlush();
+   if (gD3DDriverProfile.bSoftwareRenderer == TRUE)
+   {
+      //	Draw view elements (edge treatment): added by ajw.
+      int i;
+      int iOffset = 0;
+
+      BYTE* pBitsTarget = (stretchfactor == 1) ? gBits : gBufferBits;
+      int iWidthTarget = (stretchfactor == 1) ? MAXX : MAXX * 2;
+
+      if (GetFocus() == hMain)
+         iOffset = 4;
+
+      for (i = iOffset; i < iOffset + (NUM_VIEW_ELEMENTS / 2); i++)
+      {
+         BitCopy(pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
+            ViewElements[i].bits, 0, 0, DIBWIDTH(ViewElements[i].width), OBB_FLIP | OBB_TRANSPARENT);
+         GdiFlush();
+      }
+   }
+
+   //	Ensure that border, which covers up parts of view treatment, is drawn.
+   DrawGridBorder();
+   GdiFlush();
+   GdiFlush();
+   GdiFlush();
+   GdiFlush();
+   GdiFlush();
 }
 
 /************************************************************************/

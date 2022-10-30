@@ -4,7 +4,7 @@
 // This software is distributed under a license that is described in
 // the LICENSE file that accompanies it.
 //
-// Meridian is a registered trademarkd.
+// Meridian is a registered trademark.
 /* 
  * draw3d.c
  * Draw first-person perspective view of room 

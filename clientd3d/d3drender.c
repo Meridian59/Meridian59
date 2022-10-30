@@ -8129,7 +8129,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type overlays,
 		PDIB pDib, room_type *room, Draw3DParams *params, AREA *objArea, BOOL underlays)
 {
-   return;
 	int					pass, depth;
 	room_contents_node	*pRNode;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;

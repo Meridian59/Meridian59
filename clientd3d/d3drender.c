@@ -7941,7 +7941,7 @@ void D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Dr
 
 void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)
 {
-   // Renders UI elements (like Scimitars, shields etc)
+	// Renders UI elements (like Scimitars, shields etc)
 	D3DMATRIX			mat;
 	room_contents_node	*pRNode;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
@@ -7958,8 +7958,8 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = (float)(main_viewport_width);
-   screenH = (float)(main_viewport_height);
+	screenW = (float)(main_viewport_width);
+	screenH = (float)(main_viewport_height);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
@@ -8366,8 +8366,8 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
 
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;
+	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;
+	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;
 
 	if (GetFocus() == hMain)
 		offset = 4;

@@ -4,7 +4,7 @@
 // This software is distributed under a license that is described in
 // the LICENSE file that accompanies it.
 //
-// Meridian is a registered trademark.
+// Meridian is a registered trademarkd3d_driver_profile	
 /* 
  * draw3d.c
  * Draw first-person perspective view of room 
@@ -67,7 +67,7 @@ extern int num_visible_objects;
 extern int main_viewport_width;
 extern int main_viewport_height;
 
-extern d3d_driver_profile	gD3DDriverProfile;
+extern d3d_driver_profile gD3DDriverProfile;
 
 long horizon;                   /* row of horizon */
 long stretchfactor;      /* =1 for normal, =2 for stretch to twice normal size */

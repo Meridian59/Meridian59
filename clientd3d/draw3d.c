@@ -106,7 +106,7 @@ Bool InitializeGraphics3D(void)
 
    gBitsDC = CreateMemBitmap(MAXX, MAXY, &gOldBitmap, &gBits);
    gBufferDC = CreateMemBitmap(2*MAXX, 2*MAXY, &gOldBitmap, &gBufferBits);
-   gMiniMapDC = CreateMemBitmap(MINIMAP_MAX, MINIMAP_MAX, &gOldBitmap, &gMiniMapBits);
+   gMiniMapDC = CreateMemBitmap(MINIMAP_MAX_AREA, MINIMAP_MAX_AREA, &gOldBitmap, &gMiniMapBits);
 
    SetBkMode(gBitsDC, TRANSPARENT);
    GraphicsResetFont();
@@ -356,10 +356,6 @@ void DrawViewTreatment()
    //	Ensure that border, which covers up parts of view treatment, is drawn.
    DrawGridBorder();
    GdiFlush();
-   GdiFlush();
-   GdiFlush();
-   GdiFlush();
-   GdiFlush();
 }
 
 /************************************************************************/
@@ -507,7 +503,7 @@ void DrawMap( room_type *room, Draw3DParams *params, Bool bMiniMap )
 		num_visible_object_SavedForMiniMapHack = num_visible_objects;
 		gDC		= gMiniMapDC;
 		bits	= gMiniMapBits;
-		width	= MINIMAP_MAX;
+		width	= MINIMAP_MAX_AREA;
    }
 
    num_visible_objects = 0;
@@ -851,9 +847,7 @@ void DrawMiniMap(room_type *room, Draw3DParams *params)
    CopyCurrentAreaMiniMap(&areaMiniMap);
    area = areaMiniMap;
    area.x = area.y = 0;
-   MapDraw(gMiniMapDC, gMiniMapBits, &area, room, MINIMAP_MAX, TRUE); // cx = MINIMAP_MAX_WIDTH
+   MapDraw(gMiniMapDC, gMiniMapBits, &area, room, MINIMAP_MAX_AREA, TRUE);
    num_visible_objects = num_visible_object_SavedForMiniMapHack; // restore
    RecopyRoom3D(params->hdc, areaMiniMap.x, areaMiniMap.y, area.cx, area.cy,TRUE);
 }
-
-

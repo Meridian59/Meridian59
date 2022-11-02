@@ -27,8 +27,8 @@
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
 /* Original classic view port size -- must be DWORD aligned for WinG */
-#define MAXX 452
-#define MAXY 276
+#define MAXX 1452
+#define MAXY 1276
 #define MAXYX_ASPECT_RATIO 1.68
 #define MAXXY_ASPECT_RATIO (1/MAXYX_ASPECT_RATIO)
 

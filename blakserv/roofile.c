@@ -55,11 +55,13 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    lseek(infile, temp, SEEK_SET);
 
    // Read size of room
-   if (read(infile, &room->rows, 4) != 4)
+   if (read(infile, &temp, 4) != 4)
    { close(infile); return False; }
+   room->rows = static_cast<short>(temp);
 
-   if (read(infile, &room->cols, 4) != 4)
+   if (read(infile, &temp, 4) != 4)
    { close(infile); return False; }
+   room->cols = static_cast<short>(temp);
 
    // Allocate and read movement grid
    room->grid = (unsigned char **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(char *));

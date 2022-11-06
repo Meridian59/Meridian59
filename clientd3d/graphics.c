@@ -80,7 +80,7 @@ extern int border_index;
 
 int main_viewport_width;
 int main_viewport_height;
-float main_viewport_scaler = 1;
+extern float main_viewport_scaler;
 
 /************************************************************************/
 /*

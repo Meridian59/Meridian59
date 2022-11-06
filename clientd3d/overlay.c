@@ -19,7 +19,7 @@ extern player_info player;
 // Main client windows current viewport area
 extern int main_viewport_width;
 extern int main_viewport_height;
-extern float main_viewport_scaler;
+float main_viewport_scaler = 1;
 
 /* local function prototypes */
 Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);

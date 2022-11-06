@@ -26,9 +26,14 @@
 #define TURN_RIGHT(angle) ((angle + NUMDEGREES / 4) % NUMDEGREES)
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
+/* Scaler used to increase the classic view port x,y values */
+#define XY_SCALER 5
+
 /* Original classic view port size -- must be DWORD aligned for WinG */
-#define MAXX 1452
-#define MAXY 1276
+#define CLASSIC_X 452
+#define CLASSIC_Y 276
+#define MAXX (CLASSIC_X*XY_SCALER)
+#define MAXY (CLASSIC_Y*XY_SCALER)
 #define MAXYX_ASPECT_RATIO 1.68
 #define MAXXY_ASPECT_RATIO (1/MAXYX_ASPECT_RATIO)
 

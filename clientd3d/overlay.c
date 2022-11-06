@@ -19,6 +19,7 @@ extern player_info player;
 // Main client windows current viewport area
 extern int main_viewport_width;
 extern int main_viewport_height;
+extern float main_viewport_scaler;
 
 /* local function prototypes */
 Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
@@ -222,6 +223,12 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
       return False;
    }
 
+   float player_overlay_scaler = main_viewport_scaler * 0.5f;
+   int dib_width = DibWidth(pdib) * player_overlay_scaler;
+   int dib_height = DibHeight(pdib) * player_overlay_scaler;
+   int dib_x_offset = DibXOffset(pdib) * player_overlay_scaler;
+   int dib_y_offset = DibYOffset(pdib) * player_overlay_scaler;
+
    // Find x position
    switch (hotspot)
    {
@@ -234,13 +241,13 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
    case HOTSPOT_SE:
    case HOTSPOT_E:
    case HOTSPOT_NE:
-      obj_area->x = area.cx - DibWidth(pdib);
+      obj_area->x = area.cx - dib_width;
       break;
 
    case HOTSPOT_N:
    case HOTSPOT_S:
    case HOTSPOT_CENTER:
-      obj_area->x = (area.cx - DibWidth(pdib)) / 2;
+      obj_area->x = (area.cx - dib_width) / 2;
       break;
    }
 
@@ -256,20 +263,20 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
    case HOTSPOT_SW:
    case HOTSPOT_S:
    case HOTSPOT_SE:
-      obj_area->y = area.cy - DibHeight(pdib);
+      obj_area->y = area.cy - dib_height;
       break;
 
    case HOTSPOT_W:
    case HOTSPOT_E:
    case HOTSPOT_CENTER:
-      obj_area->y = (area.cy - DibHeight(pdib)) / 2;
+      obj_area->y = (area.cy - (dib_height) / 2);
       break;
    }
 
-   obj_area->x += DibXOffset(pdib);
-   obj_area->y += DibYOffset(pdib);
-   obj_area->cx = DibWidth(pdib);
-   obj_area->cy = DibHeight(pdib);
+   obj_area->x += dib_x_offset;
+   obj_area->y += dib_y_offset;
+   obj_area->cx = dib_width;
+   obj_area->cy = dib_height;
    return True;
 }
 

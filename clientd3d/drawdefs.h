@@ -26,14 +26,16 @@
 #define TURN_RIGHT(angle) ((angle + NUMDEGREES / 4) % NUMDEGREES)
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
-/* Scaler used to increase the classic view port x,y values */
-#define XY_SCALER 5
+/* Original game clients view port size -- must be DWORD aligned for WinG */
+#define CLASSIC_WIDTH 452
+#define CLASSIC_HEIGHT 276
 
-/* Original classic view port size -- must be DWORD aligned for WinG */
-#define CLASSIC_X 452
-#define CLASSIC_Y 276
-#define MAXX (CLASSIC_X*XY_SCALER)
-#define MAXY (CLASSIC_Y*XY_SCALER)
+/* Scaler used to increase the classic view port x,y values */
+#define VIEW_SCALER 5
+
+/* Maximum values used to create view textures and buffers */
+#define MAXX (CLASSIC_WIDTH * VIEW_SCALER)
+#define MAXY (CLASSIC_HEIGHT * VIEW_SCALER)
 #define MAXYX_ASPECT_RATIO 1.68
 #define MAXXY_ASPECT_RATIO (1/MAXYX_ASPECT_RATIO)
 

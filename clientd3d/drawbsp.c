@@ -827,7 +827,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
   blakassert(node);
   blakassert(col >= node->cone.leftedge);
   blakassert(col < node->cone.rightedge);
-  
+
   /* allocate new node */
   new_node = free_cone_node_list;
   if (new_node != NULL)
@@ -1058,11 +1058,11 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
   ConeTreeNode *c,*next;
   DrawItem *item = NULL;
   long c0,c1,cmid;
-  long num,denom;
+  int64 num,denom;
   Bool viewable = False;
-  long a_topb, a_topd, topa_b, topa_d;
-  long a_botb, a_botd, bota_b, bota_d;
-  long slack;
+  int64 a_topb, a_topd, topa_b, topa_d;
+  int64 a_botb, a_botd, bota_b, bota_d;
+  int64 slack;
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
   blakassert(col1 < MAXX);
@@ -1269,11 +1269,11 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
   ConeTreeNode *c, *next;
   DrawItem *item = NULL;
   long c0,c1,cmid;
-  long num,denom;
+  int64 num,denom;
   Bool viewable = False;
-  long a_botb, a_botd, bota_b, bota_d;
-  long a_topb, a_topd, topa_b, topa_d;
-  long slack;
+  int64 a_botb, a_botd, bota_b, bota_d;
+  int64 a_topb, a_topd, topa_b, topa_d;
+  int64 slack;
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
   blakassert(col1 < MAXX);

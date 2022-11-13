@@ -125,8 +125,7 @@ BOOL GameWindowSetCursor(void)
 		hCursorInside = LoadCursor(hInst, MAKEINTRESOURCE(IDC_INSIDECURSOR));
 		hCursorCross = LoadCursor(hInst, MAKEINTRESOURCE(IDC_CROSSCURSOR));
 		hCursorGet = LoadCursor(hInst, MAKEINTRESOURCE(IDC_GETCURSOR));
-		hCursorWait = LoadCursor(NULL, IDC_WAIT);		
-
+		hCursorWait = LoadCursor(NULL, IDC_WAIT);
 		hCursorResizeWE = LoadCursor(NULL, IDC_SIZEWE);
 		hCursorResizeNS = LoadCursor(NULL, IDC_SIZENS);
 		hCursorResizeNESW = LoadCursor(NULL, IDC_SIZENESW);

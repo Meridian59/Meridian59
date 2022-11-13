@@ -68,13 +68,6 @@ void UserMoveCursor(int command, int dy, int dx)
 /* Returns TRUE iff cursor was set                                          */
 BOOL MainSetCursor(HWND hwnd, HWND hwndCursor, UINT codeHitTest, UINT msg)
 {
-#if 0
-	if (hCurrentCursor == NULL)
-		return FALSE;
-	
-	SetCursor(hCurrentCursor);
-	return TRUE;
-#endif
 	switch (codeHitTest) {
 		case HTLEFT:
 		case HTRIGHT:
@@ -194,13 +187,6 @@ BOOL GameWindowSetCursor(void)
 		
 		if (!ModuleEvent(EVENT_SETCURSOR, cursor))
 			return FALSE;
-		
-		//	ajw Experimentation xxx
-		/*
-		// Don't show cursor on dialogs, menus, etc.
-		if (GetFocus() != hMain)
-		return;
-		*/
 		
 		switch (GameGetState())
 		{

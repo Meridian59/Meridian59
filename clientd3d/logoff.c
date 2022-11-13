@@ -62,11 +62,6 @@ BOOL CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPara
    case WM_COMMAND:
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
-#if 0
-      case IDC_TIMEOUTENABLE:
-	 EnableWindow(hMinutes, IsDlgButtonChecked(hDlg, IDC_TIMEOUTENABLE));
-	 break;
-#endif
 
       case IDOK:
 	 /* Get typed # of minutes, if enabled */

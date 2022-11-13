@@ -121,15 +121,6 @@ Bool OpenSocketConnection(char *host, int sock_port)
 		return False;
 	}
 	
-#if 0
-	// Experiment with turning off Nagle algorithm
-	{
-		BOOL junk = TRUE;
-		if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &junk, sizeof(int)) != 0)
-			debug(("setsockopt failed\n"));
-	}
-#endif
-	
 	if (connect(sock,(PSOCKADDR) &dest_sin, sizeof(dest_sin)) < 0) 
 		if (WSAGetLastError() != WSAEWOULDBLOCK)
 		{

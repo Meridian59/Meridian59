@@ -126,17 +126,13 @@ void InterfaceResize(int xsize, int ysize)
 }
 /************************************************************************/
 /* 
- * InterfaceGetMaxSize:  Fill s with maximum allowed main window size.
+ * InterfaceGetMaxSize:  Fill s with primary display monitor max size.
  */
 void InterfaceGetMaxSize(SIZE *s)
 {
-   int factor = config.large_area ? 2 : 1;
-
-   s->cx = MAXX * factor + INVENTORY_MAX_WIDTH + LEFT_BORDER * 3 
-      + 2 * GetSystemMetrics(SM_CXFRAME);
-   s->cy = GetSystemMetrics(SM_CYSCREEN) + 2 * GetSystemMetrics(SM_CYFRAME);
+   s->cx = GetSystemMetrics(SM_CXMAXIMIZED);
+   s->cy = GetSystemMetrics(SM_CYMAXIMIZED);
 }
-
 
 /************************************************************************/
 /* 

@@ -63,8 +63,13 @@ extern font_3d					gFont;
 
 extern int num_visible_objects;
 
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+
+extern d3d_driver_profile gD3DDriverProfile;
+
 long horizon;                   /* row of horizon */
-long stretchfactor;      /* =1 for normal, =2 for stretch to twice normal size */
 
 AREA area;                      /* size and position of view window */
 
@@ -100,7 +105,7 @@ Bool InitializeGraphics3D(void)
 
    gBitsDC = CreateMemBitmap(MAXX, MAXY, &gOldBitmap, &gBits);
    gBufferDC = CreateMemBitmap(2*MAXX, 2*MAXY, &gOldBitmap, &gBufferBits);
-   gMiniMapDC = CreateMemBitmap( MINIMAP_MAX_WIDTH, MINIMAP_MAX_HEIGHT, &gOldBitmap, &gMiniMapBits);
+   gMiniMapDC = CreateMemBitmap(MINIMAP_MAX_AREA, MINIMAP_MAX_AREA, &gOldBitmap, &gMiniMapBits);
 
    SetBkMode(gBitsDC, TRANSPARENT);
    GraphicsResetFont();
@@ -184,7 +189,7 @@ void GraphicsResetFont(void)
    SelectObject(gBitsDC, hFont);
 
    if (gD3DEnabled)
-	D3DRenderFontInit(&gFont, hFont);
+     D3DRenderFontInit(&gFont, hFont);
 }
 
 /************************************************************************/
@@ -327,34 +332,29 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 /************************************************************************/
 void DrawViewTreatment()
 {
-	//	Draw view elements (edge treatment).
-	//	added by ajw.
-	int i;
-	int iOffset = 0;
+   if (gD3DDriverProfile.bSoftwareRenderer == TRUE)
+   {
+      //	Draw view elements (edge treatment): added by ajw.
+      int i;
+      int iOffset = 0;
 
-//	HDC hdcTarget = ( stretchfactor == 1 ) ? gBitsDC : gBufferDC;
-	BYTE* pBitsTarget = ( stretchfactor == 1 ) ? gBits : gBufferBits;
-	int iWidthTarget = ( stretchfactor == 1 ) ? MAXX : MAXX*2;
+      BYTE* pBitsTarget = gBufferBits;
+      int iWidthTarget = MAXX*2;
 
-//	if (state == STATE_GAME && (GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
-	if (GetFocus() == hMain)
-		iOffset = 4;
+      if (GetFocus() == hMain)
+         iOffset = 4;
 
-	for( i = iOffset; i < iOffset + ( NUM_VIEW_ELEMENTS / 2 ); i++ )
-	{
-		BitCopy( pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
-					ViewElements[i].bits, 0, 0, DIBWIDTH( ViewElements[i].width ), OBB_FLIP | OBB_TRANSPARENT );
-//		OffscreenBitBlt( hdcTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
-//							ViewElements[i].bits, 0, 0, DIBWIDTH( ViewElements[i].width ), OBB_COPY | OBB_FLIP | OBB_TRANSPARENT );
-		GdiFlush();
-	}
-	//	Ensure that border, which covers up parts of view treatment, is drawn.
-	DrawGridBorder();
-	GdiFlush();
-	GdiFlush();
-	GdiFlush();
-	GdiFlush();
-	GdiFlush();
+      for (i = iOffset; i < iOffset + (NUM_VIEW_ELEMENTS / 2); i++)
+      {
+         BitCopy(pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
+            ViewElements[i].bits, 0, 0, DIBWIDTH(ViewElements[i].width), OBB_FLIP | OBB_TRANSPARENT);
+         GdiFlush();
+      }
+   }
+
+   //	Ensure that border, which covers up parts of view treatment, is drawn.
+   DrawGridBorder();
+   GdiFlush();
 }
 
 /************************************************************************/
@@ -364,13 +364,12 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
    static int count = 0;
    
    /* write stuff in static variables */
-   stretchfactor = params->stretchfactor;
    p = params;
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width  / stretchfactor, MAXX);
-   area.cy = min(params->height / stretchfactor, MAXY);
+   area.cx = min(params->width / 2, main_viewport_width);
+   area.cy = min(params->height / 2, main_viewport_height);
 
    // Force size to be even
    area.cy = area.cy & ~1;  
@@ -414,13 +413,12 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    static int count = 0;
    
    /* write stuff in static variables */
-   stretchfactor = params->stretchfactor;
    p = params;
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width  / stretchfactor, MAXX);
-   area.cy = min(params->height / stretchfactor, MAXY);
+   area.cx = min(params->width / 2, main_viewport_width);
+   area.cy = min(params->height / 2, main_viewport_height);
 
    // Force size to be even
    area.cy = area.cy & ~1;  
@@ -472,26 +470,15 @@ void DrawMap( room_type *room, Draw3DParams *params, Bool bMiniMap )
    
    int num_visible_object_SavedForMiniMapHack;
 
-   stretchfactor = params->stretchfactor;
-
    area.x = area.y = 0;
    area.cx = params->width & ~1;
    area.cy = params->height & ~1;
 
    if( !bMiniMap )
    {
-	   if (stretchfactor == 1)
-	   {
-		  gDC = gBitsDC;
-		  bits = gBits;
-		  width = MAXX;
-	   }
-	   else 
-	   {
 		  gDC = gBufferDC;
 		  bits = gBufferBits;
 		  width = 2 * MAXX;
-	   }
    }
    else
    {
@@ -502,7 +489,7 @@ void DrawMap( room_type *room, Draw3DParams *params, Bool bMiniMap )
 		num_visible_object_SavedForMiniMapHack = num_visible_objects;
 		gDC		= gMiniMapDC;
 		bits	= gMiniMapBits;
-		width	= MINIMAP_MAX_WIDTH;
+		width	= MINIMAP_MAX_AREA;
    }
 
    num_visible_objects = 0;
@@ -578,23 +565,11 @@ void SetLightingInfo(int sun_x, int sun_y, BYTE intensity)
  */
 void StretchImage(void)
 {
-   switch (stretchfactor)
-   {
-   case 1:
-      break;
-      
-   case 2:
 #ifdef FASTASM
       StretchAsm1To2(gBits,gBufferBits,area.cx,area.cy);
 #else   
       StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
 #endif
-      break;
-      
-   default:
-      debug(("StretchImage factor not supported %d\n", stretchfactor));
-      break;
-   }
 }
 /************************************************************************/
 void StretchC1To2(BYTE *src,BYTE *dest,int width,int height)
@@ -632,18 +607,13 @@ void RecopyRoom3D( HDC hdc, int x, int y, int width, int height, Bool bMiniMap )
 {
    HDC gCopyDC;  // DC to copy from
 
-   int factor = stretchfactor;  
-
    SelectPalette(hdc, hPal, FALSE);
 
    if( !bMiniMap )
    {
-	   width =  min(width, stretchfactor * MAXX);
-	   height = min(height, stretchfactor * MAXY);
-
-	   if (factor == 1)
-		  gCopyDC = gBitsDC;
-	   else gCopyDC = gBufferDC;
+   width =  min(width, 2 * MAXX);
+   height = min(height, 2 * MAXY);
+   gCopyDC = gBufferDC;
    }
    else
    {
@@ -818,18 +788,10 @@ void DrawMapAsView(room_type *room, Draw3DParams *params)
    area.cx = params->width & ~1;
    area.cy = params->height & ~1;
 
-   if (params->stretchfactor == 1)
-   {
-      gDC = gBitsDC;
-      bits = gBits;
-      width = MAXX;
-   }
-   else 
-   {
-      gDC = gBufferDC;
-      bits = gBufferBits;
-      width = 2 * MAXX;
-   }
+   gDC = gBufferDC;
+   bits = gBufferBits;
+   width = 2 * MAXX;
+
    // Trace BSP tree to see if more walls are visible
    DrawBSP(room, params, MAXX, False);
    MapDraw(gDC, bits, &area, room, width, FALSE);
@@ -846,9 +808,7 @@ void DrawMiniMap(room_type *room, Draw3DParams *params)
    CopyCurrentAreaMiniMap(&areaMiniMap);
    area = areaMiniMap;
    area.x = area.y = 0;
-   MapDraw(gMiniMapDC, gMiniMapBits, &area, room, MINIMAP_MAX_WIDTH, TRUE); // cx = MINIMAP_MAX_WIDTH
+   MapDraw(gMiniMapDC, gMiniMapBits, &area, room, MINIMAP_MAX_AREA, TRUE);
    num_visible_objects = num_visible_object_SavedForMiniMapHack; // restore
    RecopyRoom3D(params->hdc, areaMiniMap.x, areaMiniMap.y, area.cx, area.cy,TRUE);
 }
-
-

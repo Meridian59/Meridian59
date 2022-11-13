@@ -59,8 +59,9 @@ typedef struct {
 typedef struct
 {
    short leftedge, rightedge;   /* viewable columns of screen (inclusive) */
-   long top_a,top_b,top_d;
-   long bot_a,bot_b,bot_d;     /* see comments in drawbsp.c */
+   // These need to be 64 bit to avoid overflow in some multiplications
+   int64 top_a, top_b, top_d;
+   int64 bot_a, bot_b, bot_d;     /* see comments in drawbsp.c */
 } ViewCone;
 
 /* Parameters to be passed to DrawRoom3D */

@@ -340,23 +340,6 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			DestroyWindow(GetDlgItem(hDlg, IDC_APPLY));
 		
 		SetLookPageButtons(hDlg, info);
-#if 0
-		if (info->numPages < 2)
-		{
-			HWND hwnd = GetDlgItem(hDlg,IDC_NEXT);
-			if (hwnd)
-				DestroyWindow(GetDlgItem(hDlg, IDC_NEXT));
-			hwnd = GetDlgItem(hDlg,IDC_PREV);
-			if (hwnd)
-				DestroyWindow(GetDlgItem(hDlg, IDC_PREV));
-		}
-		else 
-		{
-			HWND hwnd = GetDlgItem(hDlg,IDC_PREV);
-			if (hwnd)
-				EnableWindow(hwnd,FALSE);
-		}
-#endif
 		SetFocus(hwndOK);
 		hDescDialog = hDlg;
 		changed = False;
@@ -419,10 +402,6 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			   GetPageText(descriptionBuffer,info);
 			   SetLookPageButtons(hDlg, info);
 			   Edit_SetText(GetDlgItem(hDlg, IDC_DESCBOX), descriptionBuffer);
-#if 0
-			   EnableWindow(GetDlgItem(hDlg,IDC_PREV),info->currentPage > 0);
-			   EnableWindow(GetDlgItem(hDlg,IDC_NEXT),info->currentPage < info->numPages-1);
-#endif
 			   return TRUE;
 			   
 		   case IDC_NEXT:
@@ -431,10 +410,6 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			   GetPageText(descriptionBuffer,info);
 			   Edit_SetText(GetDlgItem(hDlg, IDC_DESCBOX), descriptionBuffer);
 			   SetLookPageButtons(hDlg, info);
-#if 0
-			   EnableWindow(GetDlgItem(hDlg,IDC_PREV),info->currentPage > 0);
-			   EnableWindow(GetDlgItem(hDlg,IDC_NEXT),info->currentPage < info->numPages-1);
-#endif
 			   return TRUE;
 			   
 		   case IDC_GET:

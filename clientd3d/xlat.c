@@ -229,17 +229,7 @@ bixlat* FindStandardBiXlat(UINT uBiXlatID)
 
 BYTE GetRGBLightness(PALETTEENTRY* pe)
 {
-#if 0
-	int minv = min(min(pe->peRed, pe->peGreen), pe->peBlue);
-	int maxv = max(max(pe->peRed, pe->peGreen), pe->peBlue);
-	return LOBYTE((maxv + minv) / 2);
-#endif
-#if 0
-	return LOBYTE((pe->peRed + pe->peGreen + pe->peBlue)/3);
-#endif
-#if 1
 	return LOBYTE(max(max(pe->peRed, pe->peGreen), pe->peBlue));
-#endif
 }
 
 /* CalcFilterXlat:

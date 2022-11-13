@@ -16,6 +16,11 @@
 extern AREA area;                  /* size and position of view window */
 extern player_info player;
 
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+float player_overlay_scaler = 1;
+
 /* local function prototypes */
 Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 static void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags);
@@ -198,7 +203,7 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE s
    dos.flags    = flags;
    dos.cone     = &c;
    dos.distance = 1;
-   dos.cutoff   = MAXY;
+   dos.cutoff   = main_viewport_height;
    dos.translation = translation;
    dos.secondtranslation = secondtranslation;
    dos.obj      = pPlayer;
@@ -218,6 +223,12 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
       return False;
    }
 
+   float scaler = player_overlay_scaler * 0.5f;
+   int dib_width = DibWidth(pdib) * scaler;
+   int dib_height = DibHeight(pdib) * scaler;
+   int dib_x_offset = DibXOffset(pdib) * scaler;
+   int dib_y_offset = DibYOffset(pdib) * scaler;
+
    // Find x position
    switch (hotspot)
    {
@@ -230,13 +241,13 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
    case HOTSPOT_SE:
    case HOTSPOT_E:
    case HOTSPOT_NE:
-      obj_area->x = area.cx - DibWidth(pdib);
+      obj_area->x = area.cx - dib_width;
       break;
 
    case HOTSPOT_N:
    case HOTSPOT_S:
    case HOTSPOT_CENTER:
-      obj_area->x = (area.cx - DibWidth(pdib)) / 2;
+      obj_area->x = (area.cx - dib_width) / 2;
       break;
    }
 
@@ -252,20 +263,20 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
    case HOTSPOT_SW:
    case HOTSPOT_S:
    case HOTSPOT_SE:
-      obj_area->y = area.cy - DibHeight(pdib);
+      obj_area->y = area.cy - dib_height;
       break;
 
    case HOTSPOT_W:
    case HOTSPOT_E:
    case HOTSPOT_CENTER:
-      obj_area->y = (area.cy - DibHeight(pdib)) / 2;
+      obj_area->y = (area.cy - (dib_height) / 2);
       break;
    }
 
-   obj_area->x += DibXOffset(pdib);
-   obj_area->y += DibYOffset(pdib);
-   obj_area->cx = DibWidth(pdib);
-   obj_area->cy = DibHeight(pdib);
+   obj_area->x += dib_x_offset;
+   obj_area->y += dib_y_offset;
+   obj_area->cx = dib_width;
+   obj_area->cy = dib_height;
    return True;
 }
 

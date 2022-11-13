@@ -336,9 +336,6 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 break;
 
       case LBN_SELCHANGE:
-#if 0
-	 LookSelChange(hwndCtl);
-#else
 	 index = ListBox_GetCurSel(info->hwndListBox);
 	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, index);
 	 WindowBeginUpdate(info->hwndQuanList);
@@ -364,7 +361,6 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 ListBox_SetSel(info->hwndQuanList,FALSE,index);
 	 WindowEndUpdate(info->hwndQuanList);
 
-#endif
 	 break;
       }
       break;

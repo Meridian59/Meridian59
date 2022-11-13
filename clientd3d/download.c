@@ -115,25 +115,6 @@ void DownloadFiles(DownloadInfo *params)
    Logoff();
    ShowWindow(hMain, SW_SHOW);
    UpdateWindow(hMain);
-
-#if 0
-   // If we were hung up, just leave
-   if (state != STATE_DOWNLOAD)
-      return;
-   
-   MainSetState(STATE_LOGIN);
-
-   switch (retval)
-   {
-   case IDOK:
-      RequestGame(config.download_time);
-      break;
-
-   case IDCANCEL:
-      Logoff();
-      break;
-   }
-#endif
 }
 /*****************************************************************************/
 /*

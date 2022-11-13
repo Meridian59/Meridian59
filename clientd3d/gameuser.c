@@ -507,9 +507,6 @@ void UserBuy(void)
  */
 void UserDeposit(void)
 {
-#if 0
-   GameMessage("DEPOSIT (not money) not developed yet");
-#else
    list_type sel_list, items, recipients;
    ID recipient;
 
@@ -560,7 +557,6 @@ void UserDeposit(void)
    /* Send offer to server */
    RequestDeposit(recipient, items);
    ObjectListDestroy(items);
-#endif
 }
 /************************************************************************/
 /*

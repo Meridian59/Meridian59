@@ -173,16 +173,9 @@ void InventoryBoxCreate(HWND hParent)
    if (!GetBitmapResourceInfo(hInst, IDB_INVBKGND, &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
-	//	ajw begin...
-//	hbmpScrollBack = GetHBitmapFromResource( hInst, IDB_INVBKGND );
-//	if( !hbmpScrollBack )
-//		debug(("InventoryBoxCreate couldn't create hbmpScrollBack\n"));
 	if( !( ptr = GetBitmapResource( hInst, IDB_INVBKGND ) ) )
 		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
 
-//	logbrush.lbStyle = BS_DIBPATTERN;
-//	logbrush.lbColor = DIB_RGB_COLORS;
-//	logbrush.lbHatch = hbmpScrollBack;
 	logbrush.lbStyle = BS_DIBPATTERNPT;
 	logbrush.lbColor = DIB_RGB_COLORS;
 	logbrush.lbHatch = (long)ptr;

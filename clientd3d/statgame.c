@@ -15,6 +15,15 @@
 /* Current state of game--selecting object, picking character, etc. */
 static int game_state = GAME_NONE;
 
+extern int main_viewport_height;
+extern int main_viewport_width;
+
+bool text_area_resize_zone = false;
+bool text_area_resize_inprogress = false;
+
+int text_area_resize_start_x = 0;
+int text_area_resize_start_y = 0;
+
 /****************************************************************************/
 void GameInit(void)
 {
@@ -197,16 +206,78 @@ void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
    UserDidSomething();   /* User is alive! */
 
    SetFocus(hMain);
+
+   if (text_area_resize_zone) {
+       // Start text area resize.
+       text_area_resize_start_x = x;
+       text_area_resize_start_y = y;
+       text_area_resize_inprogress = true;
+   }
+
 }
 /****************************************************************************/
 void GameLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-   UserEndDrag();
+    if (text_area_resize_inprogress) {
+        // End text area resize.
+        text_area_resize_zone = false;
+        text_area_resize_inprogress = false;
+    }
+
+    UserEndDrag();
 }
 /****************************************************************************/
 void GameMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
-   //GameWindowSetCursor();
+    RECT rcToolbar;
+    ToolbarGetUnionRect(&rcToolbar);
+
+    /* Resize the text area is possible from the left hand edge of the client window,
+    in-between the viewport and textarea. The vertical resize cursor will be displayed
+    at this time. */
+    int offset = 5;
+    if (text_area_resize_inprogress ||
+        (y >= main_viewport_height + rcToolbar.bottom + EDGETREAT_HEIGHT- offset
+        && y <= main_viewport_height + EDGETREAT_HEIGHT + rcToolbar.bottom + offset
+        && x <= EDGETREAT_HEIGHT + offset))
+    {
+        MainSetCursor(hwnd, hwnd, HTTOP, 0);
+        text_area_resize_zone = true;
+    }
+    else
+    {
+        text_area_resize_zone = false;
+        text_area_resize_inprogress = false;
+    }
+
+    if (text_area_resize_inprogress)
+    {
+        RECT rect;
+        GetClientRect(hwnd, &rect);
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
+
+        // Calculate new text area size.
+        int delta_x = text_area_resize_start_x - x;
+        int delta_y = text_area_resize_start_y - y;
+        int new_text_area_height = (((float)config.text_area_size / 100.0) * height) + delta_y;
+
+        // Define limits of the text area size as a perecentage of the client size.
+        int textarea_min_height = height * TEXT_AREA_HEIGHT_MIN;
+        int textarea_max_height = height * TEXT_AREA_HEIGHT_MAX;
+
+        new_text_area_height = max(textarea_min_height, new_text_area_height);
+        new_text_area_height = min(textarea_max_height, new_text_area_height);
+
+        // Save updated text area size and apply changes.
+        int text_area_height_percentage = ((float)new_text_area_height / (float)height) * 100.0;
+        if (config.text_area_size != text_area_height_percentage) {
+            config.text_area_size = text_area_height_percentage;
+            debug(("Resizing text area to %d\n", config.text_area_size));
+            InterfaceResize(width, height);
+            RedrawAll();
+        }
+    }
 }
 /****************************************************************************/
 void GameMenuSelect(HWND hwnd, HMENU hmenu, int item, HMENU hmenuPopup, UINT flags)

@@ -19,7 +19,6 @@
 
 /* Miscellaneous game settings */
 Config config;
-Bool	gLargeArea;
 char inihost[MAXHOST];
 
 // Full pathname of INI file
@@ -103,6 +102,8 @@ static char special_section[] = "Special";  /* Section for hidden stuff in INI f
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
+
+static char INITextAreaSize[] = "TextAreaSize";
 
 #ifndef NODPRINTFS
 static char INIShowMapBlocking[]= "ShowMapBlocking";
@@ -188,8 +189,7 @@ void ConfigLoad(void)
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
-   config.large_area    = GetConfigInt(misc_section, INIArea, False, ini_file);
-   gLargeArea = config.large_area;
+
    // Animation option removed 3/4/97 to fix movement bug
 #ifndef NODPRINTFS
    config.animate       = GetConfigInt(misc_section, INIAnimate, True, ini_file);
@@ -295,6 +295,8 @@ void ConfigLoad(void)
    config.clearCache = FALSE;
 #endif // NODPRINTFS
 
+   config.text_area_size = GetConfigInt(misc_section, INITextAreaSize, TEXT_AREA_HEIGHT, ini_file);
+
    TimeSettingsLoad();
 }
 /****************************************************************************/
@@ -311,7 +313,6 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIPlayLoopSounds, config.play_loop_sounds, ini_file);
    WriteConfigInt(misc_section, INIPlayRandomSounds, config.play_random_sounds, ini_file);
    WriteConfigInt(misc_section, INITimeout, config.timeout, ini_file);
-   WriteConfigInt(misc_section, INIArea, gLargeArea, ini_file);
    WriteConfigInt(misc_section, INIAnimate, config.animate, ini_file);
    WriteConfigInt(misc_section, INIVersion, config.ini_version, ini_file);
    WriteConfigInt(misc_section, INIDefaultBrowser, config.default_browser, ini_file);
@@ -361,6 +362,8 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIServerHigh, config.server_high, ini_file);
    WriteConfigInt(misc_section, INIServerGuest, config.server_guest, ini_file);
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
+
+   WriteConfigInt(misc_section, INITextAreaSize, config.text_area_size, ini_file);
 
    // "Special" section options NOT saved, so that they're not normally visible
 

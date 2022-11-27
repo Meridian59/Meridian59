@@ -138,14 +138,13 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
-   int stretchfactor = config.large_area ? 2 : 1;
 
    if (client_x < view.x || client_x > view.x + view.cx ||
        client_y < view.y || client_y > view.y + view.cy)
       return False;
 
-   *x = (client_x - view.x) / stretchfactor;
-   *y = (client_y - view.y) / stretchfactor;
+   *x = (client_x - view.x) / 2;
+   *y = (client_y - view.y) / 2;
 
    return True;
 }
@@ -202,9 +201,9 @@ void GraphicsAreaResize(int xsize, int ysize)
    int iHeightAvailableForMapAndStats;
 
    // Determine the height of the text area section of the client
-   int text_area_height = TEXT_AREA_HEIGHT + BOTTOM_BORDER + GetTextInputHeight() + TOP_BORDER + EDGETREAT_HEIGHT * 2;
-   if (config.toolbar)
-      text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
+   int text_area_size = ((float)config.text_area_size / 100.0) * ysize;
+   int text_area_height = text_area_size + BOTTOM_BORDER + GetTextInputHeight() + TOP_BORDER + EDGETREAT_HEIGHT * 2;
+   text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
 
    // Calculate the largest possible viewport size keeping the classic client aspect ratio
    new_ysize = ysize - text_area_height;
@@ -251,15 +250,15 @@ void GraphicsAreaResize(int xsize, int ysize)
    int minimap_width_height = (inventory_width + 3) & ~3;
 
    //	areaMiniMap added by ajw.
-   areaMiniMap.x	= view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
-   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height);
+   areaMiniMap.x = view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
+   areaMiniMap.cx = min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height);
 
-   areaMiniMap.y	= 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
+   areaMiniMap.y = 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
 
    iHeightAvailableForMapAndStats = ysize - areaMiniMap.y - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 
-   areaMiniMap.cy	= (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
-   areaMiniMap.cy	= min( areaMiniMap.cy, minimap_width_height);
+   areaMiniMap.cy = (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
+   areaMiniMap.cy = min( areaMiniMap.cy, minimap_width_height);
 
    areaMiniMap.cy -= (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
    areaMiniMap.y += (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
@@ -428,22 +427,21 @@ void GraphicsAreaRedraw(HDC hdc)
 void UserMouseMove(void)
 {
    int x, y, xunit, yunit, i;
-   int stretchfactor = config.large_area ? 2 : 1;
 
    if (!MouseToRoom(&x, &y) || view.cx == 0 || view.cy == 0)
       return;
 
    // Find action that corresponds to this part of the graphics area
-   xunit = x * SCREEN_UNIT * stretchfactor / view.cx;
-   yunit = y * SCREEN_UNIT * stretchfactor / view.cy;
+   xunit = x * SCREEN_UNIT * 2 / view.cx;
+   yunit = y * SCREEN_UNIT * 2 / view.cy;
 
    for (i=0; i < num_move_areas; i++)
    {
       if (xunit >= move_areas[i].left && xunit < move_areas[i].right &&
 	  yunit >= move_areas[i].top  && yunit < move_areas[i].bottom)
       {
-	 PerformAction(move_areas[i].action, NULL);
-	 break;
+	     PerformAction(move_areas[i].action, NULL);
+	     break;
       }
    }
 }
@@ -461,7 +459,7 @@ void UserStartDrag(void)
 
    /* Find out where in the the room the user clicked on, if anywhere */
    if (!MouseToRoom(&x, &y))
-      return;
+       return;
 
    objects = GetObjects3D(x, y, CLOSE_DISTANCE, OF_GETTABLE | OF_CONTAINER, 0);
    if (objects == NULL)

@@ -12,7 +12,10 @@
 #ifndef _INTRFACE_H
 #define _INTRFACE_H
 
-#define TEXT_AREA_HEIGHT 100
+// Default text area height as a percentage of the height of the client.
+#define TEXT_AREA_HEIGHT 20
+#define TEXT_AREA_HEIGHT_MIN 0.10
+#define TEXT_AREA_HEIGHT_MAX 0.75
 
 /* Grid view area */
 #define GRID_TOP_BORDER  5

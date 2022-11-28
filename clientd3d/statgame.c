@@ -245,14 +245,14 @@ void GameMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
     RECT rcToolbar;
     ToolbarGetUnionRect(&rcToolbar);
 
-    /* Resizing the text area is possible from the left hand edge of the client window,
-    in-between the viewport and textarea. The vertical resize cursor will be displayed
-    at this time. */
+    /* Resize the text area by clicking and dragging in-between the viewport and 
+    * the textarea. The vertical resize cursor will be displayed at this time. */
     int offset = 5;
     if (text_area_resize_inprogress ||
         (y >= main_viewport_height + rcToolbar.bottom + EDGETREAT_HEIGHT- offset
         && y <= main_viewport_height + EDGETREAT_HEIGHT + rcToolbar.bottom + offset
-        && x <= EDGETREAT_WIDTH + offset))
+        && x >= EDGETREAT_WIDTH
+        && x <= EDGETREAT_WIDTH * 2 + main_viewport_width))
     {
         MainSetCursor(hwnd, hwnd, HTTOP, 0);
         text_area_resize_zone = true;

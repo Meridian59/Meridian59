@@ -440,8 +440,8 @@ void UserMouseMove(void)
       if (xunit >= move_areas[i].left && xunit < move_areas[i].right &&
 	  yunit >= move_areas[i].top  && yunit < move_areas[i].bottom)
       {
-	     PerformAction(move_areas[i].action, NULL);
-	     break;
+	 PerformAction(move_areas[i].action, NULL);
+	 break;
       }
    }
 }
@@ -459,7 +459,7 @@ void UserStartDrag(void)
 
    /* Find out where in the the room the user clicked on, if anywhere */
    if (!MouseToRoom(&x, &y))
-       return;
+      return;
 
    objects = GetObjects3D(x, y, CLOSE_DISTANCE, OF_GETTABLE | OF_CONTAINER, 0);
    if (objects == NULL)

@@ -224,6 +224,7 @@ void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
        window_width = width;
 
        new_text_area_height_cumulative = ((float)config.text_area_size / 100.0) * height;
+       SetCapture(hwnd);
    }
 
 }
@@ -235,6 +236,7 @@ void GameLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
         text_area_resize_zone = false;
         text_area_resize_inprogress = false;
         new_text_area_height_cumulative = 0;
+        ReleaseCapture();
     }
 
     UserEndDrag();

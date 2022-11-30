@@ -71,7 +71,6 @@ void DrawRoom(HDC hdc, int x, int y, room_type *room, Bool map)
    params.y = y;
    params.width = view.cx;
    params.height = view.cy;
-   params.stretchfactor = config.large_area ? 2 : 1;
 
    // Draw the current view.
    //

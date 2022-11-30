@@ -14,7 +14,6 @@
 static HMENU menu;          // Main menu
 
 extern int connection;
-extern Bool gLargeArea;
 
 /* local function prototypes */
 /****************************************************************************/
@@ -45,7 +44,6 @@ void MenuDisplaySettings(HWND hwnd)
    CheckMenuItem(menu, ID_OPTIONS_SAVEEXIT, config.save_settings ? MF_CHECKED : MF_UNCHECKED);
    CheckMenuItem(menu, ID_OPTIONS_MUSIC, config.play_music ? MF_CHECKED : MF_UNCHECKED);
    CheckMenuItem(menu, ID_OPTIONS_SOUND, config.play_sound ? MF_CHECKED : MF_UNCHECKED);
-   CheckMenuItem(menu, ID_OPTIONS_AREA, config.large_area ? MF_CHECKED : MF_UNCHECKED);
 }
 /****************************************************************************/
 /*
@@ -157,16 +155,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	   // this means a shutdown and restart are necessary for window size changes
 	   MessageBox(hMain, "You must shutdown and restart Meridian 59 for these changes to take effect",
 		   "Direct3D", MB_OK);
-		   
-//      config.large_area = !config.large_area;
-	   gLargeArea = !gLargeArea;
-      CheckMenuItem(menu, ID_OPTIONS_AREA, gLargeArea ? MF_CHECKED : MF_UNCHECKED);
-/*      if (state == STATE_GAME)
-	 // Send ourselves a resize message 
-	 ResizeAll();
-      RedrawAll();*/
       break;
-
    case ID_OPTIONS_FONT_MAP_TITLE: UserSelectFont(FONT_MAP_TITLE); break;
    case ID_OPTIONS_FONT_MAP_LABEL: UserSelectFont(FONT_MAP_LABEL); break;
    case ID_OPTIONS_FONT_MAP_TEXT: UserSelectFont(FONT_MAP_TEXT); break;

@@ -304,6 +304,11 @@ messages:
       {
          return &MarionRentableRoom;
       }
+
+      if iLocation = RID_KOC_INN
+      {
+         return &KocatanRentableRoom;
+      }
       
       return &Room;
    }

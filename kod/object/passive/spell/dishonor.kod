@@ -38,7 +38,7 @@ resources:
    MarkOfDishonor_no_self = \
       "You cannot cast mark of dishonor upon yourself; if you were truly "
       "dishonorable you would not be able to cast Shal'ille's spells."
-
+   MarkOfDishonor_no_target = "You may only cast %s upon the dishonorable."
 
 classvars:
    vrName = MarkOfDishonor_name_rsc
@@ -101,6 +101,7 @@ messages:
       }
 
       if NOT IsClass(target,&Player)
+         AND NOT IsClass(target,&Monster)
       {
          if NOT bItemCast
          {
@@ -132,39 +133,59 @@ messages:
       local oTarget, iKarma, iVigorRestThreshold, iVigorRestThresholdChange;
 
       oTarget = First(lTargets);
-      iKarma = Send(oTarget,@GetKarma);
-
-      % Shal'ille only takes vigor from evil people.
-      iVigorRestThresholdChange = 0;
-      if iKarma < 0
+      
+      % If being cast on a player
+      if IsClass(oTarget,&Player)
       {
+         iKarma = Send(oTarget,@GetKarma);
+         iVigorRestThresholdChange = 0;
+
+         % Shal'ille only takes vigor from evil people.
+         if iKarma >= 0
+         {
+            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_no_target,#parm1=vrName);
+            return false;
+         }
+
          iVigorRestThreshold = Send(oTarget,@GetVigorRestThreshold);
+
          iVigorRestThresholdChange = iKarma * ( iVigorRestThreshold -
-                                     DISHONOR_LOWEST_VIGOR_REST_THRESHOLD )
-                                     / MAX_EVIL;
+                                    DISHONOR_LOWEST_VIGOR_REST_THRESHOLD )
+                                    / MAX_EVIL;
 
          % Make sure we aren't going to lower target's VigorRestThreshold
-         %  below 10, otherwise we could end up increasing the player's
-         %  VigorRestThreshold (see player.kod for reason why)
+         % below 10, otherwise we could end up increasing the player's
+         % VigorRestThreshold (see player.kod for reason why)
          if (iVigorRestThreshold - iVigorRestThresholdChange) < 10
          {
-            iVigorRestThresholdChange = iVigorRestThreshold - 10;
+               iVigorRestThresholdChange = iVigorRestThreshold - 10;
          }
 
          Send(oTarget,@AddExertion,#amount=200000);
          Send(oTarget,@SetVigorRestThreshold,
-              #amount=iVigorRestThreshold-iVigorRestThresholdChange);
+               #amount=iVigorRestThreshold-iVigorRestThresholdChange);
       }
 
       Send(oTarget,@StartEnchantment,#what=self,
-           #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
-           #state=iVigorRestThresholdChange);
+            #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+            #state=iVigorRestThresholdChange);
       Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
       Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
-           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-      % Make sure hps aren't over maximum.  Post this so enchantment is finished.
-      post(oTarget,@NewHealth);
+      % Make sure hps aren't over maximum. Post this so enchantment is finished.
+      Post(oTarget,@NewHealth);
+      
+      % If being cast on a monster
+      if isClass(who,&Monster)
+      {
+         % EnterStateWait will make the monster stop aggro players and put
+         % them on wait-state waiting to aggro again
+         Send(oTarget,@EnterStateWait);
+         Send(oTarget,@StartEnchantment,#what=self,#time=Send(self,@GetDuration),#addicon=FALSE);
+         Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+      }
 
       propagate;
    }
@@ -182,15 +203,18 @@ messages:
    EndEnchantment(who = $, state = 0, report = TRUE)
    {
       local iVigorRestThreshold;
-
-      iVigorRestThreshold = Send(who,@GetVigorRestThreshold);
-      Send(who,@SetVigorRestThreshold,#amount=iVigorRestThreshold+state);
-
-      if report
+      
+      % If we end enchantment on a player reset VigorRestThreshold
+      if isClass(who,&Player)
       {
-         Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_stop);
-      }
+        iVigorRestThreshold = Send(who,@GetVigorRestThreshold);
+        Send(who,@SetVigorRestThreshold,#amount=iVigorRestThreshold+state);
 
+        if report
+        {
+            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_stop);
+        }
+      }
       return;
    }
 

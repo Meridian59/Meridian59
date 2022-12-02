@@ -42,7 +42,6 @@ typedef struct {
    Bool save_settings;           /* Save settings on exit? */
    Bool play_music;              /* Does user want to hear music? */
    Bool play_sound;              /* Does user want to hear sound? */
-   Bool large_area;              /* Drawing area size--> 0 = small, nonzero = large */
    int  timeout;                 /* Period of logoff timer */
    char username[MAXUSERNAME+1]; /* User's last login name */
    char password[MAXPASSWORD+1]; /* User's last password (not saved to INI file) */
@@ -117,6 +116,8 @@ typedef struct {
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
+
+   int text_area_size;        /* As a percentage of the client height */
 } Config;
 
 void ConfigInit(void);

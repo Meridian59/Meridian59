@@ -13,6 +13,7 @@ KocatanInnkeeper is KocatanTown
 constants:
 
    include blakston.khd
+   include protocol.khd
 
 resources:
 
@@ -27,7 +28,35 @@ resources:
    kocinn_winknudge = "Thanks!  I'll be sure to let you know how it all turns out!"
    kocataninnkeeper_unwanted_keep = "~k%s%s tells you, \"Thank you.  You won't regret letting me borrow that.~n~k\""
 
-   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+   KocatanInnkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+
+   % Rentable room stuff.
+   KocatanInnkeeper_room_rented = \
+      "Here you go.  I hope you enjoy your stay, and if you have any problems "
+      "I will be glad to help you."
+
+   KocatanInnkeeper_cost = \
+      "Oh, good, you should rest.  Let me see....  I charge %i shillings to "
+      "~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay "
+      "longer, I charge %i per day if you pre-pay.  Key copies, uh, key "
+      "copies....  Oh, they cost %i shillings to make.  I know you'll "
+      "like your room."
+
+   KocatanInnkeeper_days_left = \
+      "You like it here, I see.  There are %q days until you should "
+      "pay me again."
+   KocatanInnkeeper_too_long = \
+      "Oh, I can't be responsible for holding so much money!  Pay me again "
+      "later when you don't have so many days left on your tab."
+
+   KocatanInnkeeper_destroy_key_copy = \
+      "Moxal ix'Hanak tells you, \"Oh, yes. I can get rid of this key for "
+      "you.  No problem.\""
+
+   KoIk_room_command = "room"
+   KoIk_rent_command = "rent"
+   KoIk_cost_command = "cost"
+   KoIk_copy_key_command = "copy key"
 
 classvars:
 
@@ -43,6 +72,10 @@ classvars:
    vrUnwanted_keep = kocataninnkeeper_unwanted_keep
 
 properties:   
+
+   piInitialRoomCost = 5000
+   piPerDayCost = 75
+   piKeyCopyCosts = 500
 
 messages:
 
@@ -154,11 +187,128 @@ messages:
       oObj = Create(&PurpleMushroom,#number=2);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,1250,KocatanInkeeper_purplemushroom_sale]);
+           #action=[LIBACT_CONDITIONAL,oObj,1250,KocatanInnkeeper_purplemushroom_sale]);
            
       return;
    }
-   
+
+   SomeoneSaid(what=$,string=$)
+   {
+      local oRoomMaint, rSayRsc;
+      
+      if IsClass(what,&User)
+      {
+         oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);
+
+         if (StringContain(string,KoIk_rent_command)
+               AND StringContain(string,KoIk_room_command))
+         {
+            rSayRsc = Send(oRoomMaint,@RentRoom,#who=what,
+                           #iLocation=RID_KOC_INN,#iCost=piInitialRoomCost);
+
+            % rSayRsc is $ on success.  Use the innkeeper's saying.
+            if rSayRsc = $
+            {
+               rSayRsc = KocatanInnkeeper_room_rented;
+            }
+
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
+                  #what=self,#string=rSayRsc);
+
+            return;
+         }
+
+         if StringContain(string,KoIk_copy_key_command)
+         {
+            rSayRsc = Send(oRoomMaint,@CopyKey,#who=what,
+                           #iLocation=RID_KOC_INN,#iCost=piKeyCopyCosts);
+
+            % Tell the player.
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
+                  #what=self,#string=rSayRsc);
+
+            return;
+         }
+
+         if (StringContain(string,KoIk_room_command)
+               AND StringContain(string,KoIk_cost_command))
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=KocatanInnkeeper_cost,#type1=0,
+                  #parm1=piInitialRoomCost,#parm2=piPerDayCost,
+                  #parm3=piKeyCopyCosts);
+
+            return;
+         }
+      }
+
+      propagate;
+   }
+
+   ReqOffer(what = $,item_list = $)
+   {
+      local i, iMoney, oRoomMaint, iNewDays;
+
+      % Check for if in the same room.
+      if Send(what,@GetOwner) <> poOwner
+      {
+         Debug("ALERT! ",Send(what,@GetTrueName),what," offered items to NPC ",
+               Send(self,@GetTrueName)," from distant RID ",
+               Send(Send(what,@GetOwner),@GetRoomNum));
+
+         return FALSE;
+      }
+
+      for i in item_list
+      {
+         if NOT IsClass(i,&Money)
+         {
+            if GetClass(i) = &RoomKeyCopy
+            {
+               % Say something and delete the key.
+               Send(what,@MsgSendUser,
+                     #message_rsc=KocatanInnkeeper_destroy_key_copy);
+               Send(i,@Delete);
+
+               return FALSE;
+            }
+
+            propagate;
+         }
+      }
+
+      iMoney = 0;
+      for i in item_list
+      {
+         iMoney = iMoney + Send(i,@GetValue);
+      }
+
+      oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);
+
+      iNewDays = Send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,
+                     #iCost=piPerDayCost,#iLocation=RID_KOC_INN);
+
+      if iNewDays <> $
+      {
+         % iNewDays = 0 means that we've trying to pay for more than max days.
+         if iNewDays = 0
+         {
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+                  #string=KocatanInnkeeper_too_long);
+         }
+         else
+         {
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+                  #string=KocatanInnkeeper_days_left,
+                  #parm1=Send(SYS,@IntToString,#num=iNewDays),
+                  #type1=STRING_RESOURCE);
+         }
+
+         return FALSE;
+      }
+
+      propagate;
+   }
    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

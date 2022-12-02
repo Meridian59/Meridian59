@@ -2780,11 +2780,7 @@ static void outlinecone(ViewCone *c)
 {
   int row,col;
   int minrow,maxrow;
-#if 0
-  /* hunting down a bug... */
-  minrow = DIVUP(c->top_b * c->rightedge + c->top_d, c->top_a);
-  if (minrow >= 0) return;
-#endif  
+
   if (c->leftedge < 0 || c->rightedge >= screen_width || c->leftedge > c->rightedge)
     {
       debug(("bad left/right in outlinecone! %d %d\n", c->leftedge, c->rightedge));

@@ -27,6 +27,7 @@ constants:
    CARPET_D = 09588        % light wood (tos inn floor)
    CARPET_E = 09637        % dark wood
                            % add?: bar inn red carpet
+   CARPET_G = 08961        % kocatan wooden panels
 
    WALLPAPER_A = 50053     % cream vines (off-white)
    WALLPAPER_B = 50057     % brown victorian medallions
@@ -34,6 +35,7 @@ constants:
    WALLPAPER_D = 50069     % white paisley brocade
    WALLPAPER_E = 09583     % brick (tos apoth wall - no picture allowed)
    WALLPAPER_F = 09586     % wood panelling
+   WALLPAPER_G = 50078     % kocatan wall with blue stripe
 
    BEDSPREAD_A = 50061     % blue
    BEDSPREAD_B = 50063     % red
@@ -65,17 +67,20 @@ resources:
 
    RentableRoom_carpet_options = \
       "We have two shades of carpet, a light grey and a darker grey, or "
-      "if you prefer wood floors I can put in one with a light or a dark finish."
+      "if you prefer wood floors I can put in one with a light or a "
+      "dark finish.  We also have wood floors made from Ko'catan timber."
    RentableRoom_bedspread_options = \
       "We have basic red and blue bedspreads, as well as a nice "
       "black floral pattern and my personal favorite, white linen."
    RentableRoom_wallpaper_options = \
       "I can offer you a number of different kinds of wallpaper.  I have "
       "a nice vine pattern in a cream color, a traditional Barloquan medallion "
-      "pattern in brown, a floral pattern on black, or a white paper with a "
-      "delicately embossed pattern.  Also, if you want a more spare look we "
-      "can go with brick or wood panelling, but if you choose one of those, "
-      "I can't hang a painting for you; they're too hard to put a hole in."
+      "pattern in brown, a floral pattern on black or a white paper with a "
+      "delicately embossed pattern.  "
+      "Also, if you want a more spare look we can go with brick or wood "
+      "panelling, or a Ko'catan white stone with blue stripe, but if you "
+      "choose one of those, I can't hang a painting for you; they're too "
+      "hard to put a hole in.  "
    RentableRoom_picture_options = \
       "Right now, the only framed art I have ready to hang is a still life "
       "of a flower vase, a reproduction of an ancient tapestry depicting a "
@@ -84,9 +89,9 @@ resources:
 
    RentableRoom_expiry_warning = \
       "Subject: Room check-out reminder notice\n"
-      "This is a courtesy notice to remind you that your room rental will expire "
-      "in %q days.  Please be sure to clear your room of any personal effects "
-      "before then.  I hope you are enjoying your stay."
+      "This is a courtesy notice to remind you that your room rental will "
+      "expire in %q days.  Please be sure to clear your room of any personal "
+      "effects before then.  I hope you are enjoying your stay."
    RentableRoom_expiry = \
       "Subject: Room check-out\n"
       "Your room rental has expired, and the room has been cleared of any "
@@ -132,6 +137,9 @@ resources:
    RentableRoom_command_dark_wood = "dark wood"
    RentableRoom_command_dark_hardwood = "dark hardwood"
    
+   RentableRoom_command_island_floor = "Ko'catan timber"
+   RentableRoom_command_island_floor_two = "kocatan timber"
+
    RentableRoom_command_cream = "cream"
    RentableRoom_command_vine = "vine"
    RentableRoom_command_brown = "brown"
@@ -140,6 +148,10 @@ resources:
    RentableRoom_command_barloq = "Barloq"
    RentableRoom_command_medallion = "medallion"
    
+   RentableRoom_command_bluestripe = "kocatan"
+   RentableRoom_command_bluestripe_two = "Ko'catan"
+   RentableRoom_command_bluestripe_three = "stripe"
+
    RentableRoom_command_flower = "flower"
    RentableRoom_command_paisley = "paisley"
    RentableRoom_command_brick = "brick"
@@ -320,12 +332,14 @@ messages:
       {
          sector = random(viBedSectorMin,viBedSectorMax);
       }
-
-      if piBedSector = sector
-         OR sector < viBedSectorMin
-         OR sector > viBedSectorMax
+      else
       {
-         return;
+         if piBedSector = sector
+            OR sector < viBedSectorMin
+            OR sector > viBedSectorMax
+         {
+            return;
+         }
       }
 
       piBedSector = sector;
@@ -574,7 +588,7 @@ messages:
 
    TrySetCarpet(string=$)
    {
-      local iLtGray, iDkGray, iLtWood, iDkWood;
+      local iLtGray, iDkGray, iLtWood, iDkWood, iKcWood;
 
       if string = $
       {
@@ -589,8 +603,10 @@ messages:
                  OR StringContain(string,RentableRoom_command_light_hardwood));
       iDkWood = (StringContain(string,RentableRoom_command_dark_wood)
                  OR StringContain(string,RentableRoom_command_dark_hardwood));
+      iKcWood = (StringContain(string,RentableRoom_command_island_floor)
+                 OR StringContain(string,RentableRoom_command_island_floor_two));
 
-      if (iLtGray + iDkGray + iLtWood + iDkWood) > 1
+      if (iLtGray + iDkGray + iLtWood + iDkWood + iKcWood) > 1
       {
          % Confusing command.  Ask for more info.
          return $;
@@ -616,12 +632,17 @@ messages:
          return Send(self,@SetCarpet,#num=CARPET_E);
       }
 
+      if iKcWood
+      {
+         return Send(self,@SetCarpet,#num=CARPET_G);
+      }
+
       return $;
    }
 
    TrySetWallpaper(string=$)
    {
-      local iCream,iBrown,iBlack,iWhite,iBrick,iWood,iRetValue;
+      local iCream,iBrown,iBlack,iWhite,iBrick,iWood,iStripe,iRetValue;
 
       if string = $
       {
@@ -642,8 +663,11 @@ messages:
                 OR StringContain(string,RentableRoom_command_paisley));
       iBrick = StringContain(string,RentableRoom_command_brick);
       iWood = StringContain(string,RentableRoom_command_wood);
+      iStripe = (StringContain(string,RentableRoom_command_bluestripe)
+                OR StringContain(string,RentableRoom_command_bluestripe_two)
+                OR StringContain(string,RentableRoom_command_bluestripe_three));
 
-      if (iCream+iBrown+iBlack+iWhite+iBrick+iWood) > 1
+      if (iCream+iBrown+iBlack+iWhite+iBrick+iWood+iStripe) > 1
       {
          % Confusing command.  Ask for more info.
          return $;
@@ -683,6 +707,13 @@ messages:
          return Send(self,@SetWallpaper,#num=WALLPAPER_F);
       }
 
+      if iStripe
+      {
+         Send(self,@SetPicture,#num=PICTURE_NONE);
+
+         return Send(self,@SetWallpaper,#num=WALLPAPER_G);
+      }
+
       return $;
    }
 
@@ -693,6 +724,7 @@ messages:
       if (string = $ AND NOT bRemove)
          OR (piWallPaper = WALLPAPER_E)
          OR (piWallPaper = WALLPAPER_F)
+         OR (piWallPaper = WALLPAPER_G)
       {
          return FALSE;
       }

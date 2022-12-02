@@ -21,10 +21,18 @@ resources:
 
    kocinn_waz_locked = "Room waz is locked."
    kocinn_wazwaz_locked = "Room wazwaz is locked."
-   kocinn_zik_locked = "Room zik is locked."
-   kocinn_zikzik_locked = "Room zikzik is locked."
-   kocinn_katalin_locked = "Room katalin is locked."
-   kocinn_katalinwaz_locked = "Room katalinwaz is locked."
+   kocinn_zik_locked = "Room zik is locked.  There is a small keyhole in the "
+      "door, however.  Perhaps if you used a key in it, something interesting might happen."
+   kocinn_zikzik_locked = "Room zikzik is locked.  There is a small keyhole in the "
+      "door, however.  Perhaps if you used a key in it, something interesting might happen."
+   kocinn_katalin_locked = "Room katalin is locked.  There is a small keyhole in the "
+      "door, however.  Perhaps if you used a key in it, something interesting might happen."
+   kocinn_katalinwaz_locked = "Room katalinwaz is locked.  There is a small keyhole "
+      "in the door, however.  Perhaps if you used a key in it, something interesting might happen."
+
+   kocinn_rentableroom_door = \
+      "  There is a small keyhole in the door, however.  Perhaps if "
+      "you used a key in it, something interesting might happen."
 
    kocnews_god_name = "Designers' News"
    kocnews_god_desc = "Check here for information from the game administrators."
@@ -70,18 +78,6 @@ messages:
 
       plExits = Cons([ 10, 3, ROOM_LOCKED_DOOR, kocinn_wazwaz_locked],plExits);
       plExits = Cons([ 10, 4, ROOM_LOCKED_DOOR, kocinn_wazwaz_locked],plExits);
-      
-      plExits = Cons([ 10, 6, ROOM_LOCKED_DOOR, kocinn_zik_locked],plExits);
-      %% 10,7 finecol is less than 32 has to be hardcoded
-
-      plExits = Cons([ 10, 8, ROOM_LOCKED_DOOR, kocinn_katalinwaz_locked],plExits);
-      %% 11,8 finerow is less than 32 has to be hardcoded
-
-      plExits = Cons([ 7, 6, ROOM_LOCKED_DOOR, kocinn_zikzik_locked],plExits);
-      %% 7, 5 finecol is greater than 32 has to be hardcoded
-
-      plExits = Cons([ 8, 6, ROOM_LOCKED_DOOR, kocinn_katalin_locked],plExits);
-      %% 9, 6 finerow less than 32 has to be hardcoded
 
       propagate;
    }
@@ -89,7 +85,7 @@ messages:
    SomethingTryGo(what=$, row=0, col=0, fine_row=0, fine_col=0)
    {
       if (row=10) and (col=7) and (fine_col < 32)
-      {
+      {     
          send(what,@msgsenduser,#message_rsc=kocinn_zik_locked);	 
          return TRUE;
       }
@@ -132,6 +128,40 @@ messages:
            #new_angle=ANGLE_EAST);
 
       propagate;
+   }
+
+   EnterRentableRoom(who=$)
+   "Sees if we are in the proper location to enter a rentable room in this inn."
+   {
+      local iRow, iCol;
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+      
+      % coords: [5,3],[7,5],[9,6],[10,4],[10,7],[11,8]
+      if (iRow = 10
+            AND (iCol = 3
+               OR iCol = 4
+               OR iCol = 6
+               OR iCol = 7
+               OR iCol = 8))
+         OR ((iRow = 5
+               OR iRow = 6)
+            AND (iCol = 2
+               OR iCol = 3))
+         OR (iRow = 7
+              AND (iCol = 5
+                  OR iCol = 6))
+         OR ((iRow = 8
+               OR iRow = 9)
+            AND (iCol = 6))
+         OR (iRow = 11
+              AND (iCol = 8))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

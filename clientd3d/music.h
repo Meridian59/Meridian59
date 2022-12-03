@@ -20,7 +20,7 @@ void MusicInitialize(void);
 void MusicClose(void);
 
 DWORD PlayMidiFile(HWND hWndNotify, char *fname);
-M59EXPORT DWORD PlayMusicFile(HWND hWndNotify, char *fname);
+M59EXPORT DWORD PlayMusicFile(HWND hWndNotify, const char *fname);
 M59EXPORT void PlayMidiRsc(ID rsc);
 M59EXPORT void PlayMusicRsc(ID rsc);
 

@@ -1019,9 +1019,9 @@ void UserFlipPlayer(void)
 
 
 // Move at most HEIGHT_INCREMENT per HEIGHT_DELAY milliseconds
-#define HEIGHT_INCREMENT (MAXY / 4)    
+#define HEIGHT_INCREMENT (CLASSIC_HEIGHT / 4)    
 #define HEIGHT_DELAY     100
-#define HEIGHT_MAX_OFFSET (3 * MAXY / 2)    // Farthest you can look up or down
+#define HEIGHT_MAX_OFFSET (3 * CLASSIC_HEIGHT / 2)    // Farthest you can look up or down
 /************************************************************************/
 /* 
  * BounceUser:  Modify user's height a little to give appearance that 

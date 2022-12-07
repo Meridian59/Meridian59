@@ -69,7 +69,7 @@ OBJS = \
         $(OUTDIR)\cursor.obj \
         $(OUTDIR)\client3d.obj \
         $(OUTDIR)\md5.obj \
-	     $(OUTDIR)\crc.obj \
+	$(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
         $(OUTDIR)\guest.obj \

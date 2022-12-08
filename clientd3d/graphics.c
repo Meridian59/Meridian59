@@ -33,47 +33,6 @@ static ID   drag_object;      // When capture = True, holds id of object being d
 static int fps;
 static int msDrawFrame;
 
-// XXX This isn't currently used at all
-// # of pieces to divide graphics area horizontally & vertically for determining what
-// user actions correspond to what parts of the graphics area.  For example, when
-// SCREEN_UNIT = 12, boundaries of pieces are measured in multiples of 1/12 of the height
-// and width of the graphics area.
-#define SCREEN_UNIT 12
-
-// Region of the graphics area that corresponds to a motion action
-typedef struct {
-   int left, right, top, bottom;      // In multiples of SCREEN_UNIT
-   int  action;
-} ScreenArea;
-
-ScreenArea move_areas[] = {
-{  0,  4,  0,  2, A_FORWARDTURNFASTLEFT },
-{  4,  8,  0,  3, A_FORWARDFAST },
-{  8, 12,  0,  2, A_FORWARDTURNFASTRIGHT },
-
-{  0,  2,  2,  4, A_FORWARDTURNFASTLEFT },
-{  2,  4,  2,  4, A_FORWARDTURNLEFT },
-{  4,  8,  3,  6, A_FORWARD },
-{  8, 10,  2,  4, A_FORWARDTURNRIGHT },
-{ 10, 12,  2,  4, A_FORWARDTURNFASTRIGHT },
-
-{  0,  2,  4,  8, A_TURNFASTLEFT },
-{  2,  4,  4,  8, A_TURNLEFT },
-{  8, 10,  4,  8, A_TURNRIGHT },
-{ 10, 12,  4,  8, A_TURNFASTRIGHT },
-
-{  0,  2,  8, 10, A_BACKWARDTURNFASTLEFT },
-{  2,  4,  8, 10, A_BACKWARDTURNLEFT },
-{  4,  8,  6,  9, A_BACKWARD },
-{  8, 10,  8, 10, A_BACKWARDTURNRIGHT },
-{ 10, 12,  8, 10, A_BACKWARDTURNFASTRIGHT },
-
-{  0,  4, 10, 12, A_BACKWARDTURNFASTLEFT },
-{  4,  8,  9, 12, A_BACKWARDFAST },
-{  8, 12, 10, 12, A_BACKWARDTURNFASTRIGHT },
-};
-
-static int num_move_areas = (sizeof(move_areas) / sizeof(ScreenArea));
 
 extern room_type current_room;
 extern int border_index;
@@ -417,33 +376,6 @@ void GraphicsAreaRedraw(HDC hdc)
 		RecopyRoom3D( hdc, view.x, view.y, view.cx, view.cy, FALSE );
 		RecopyRoom3D( hdc, areaMiniMap.x, areaMiniMap.y, areaMiniMap.cx, areaMiniMap.cy, TRUE );
 	}
-}
-
-/************************************************************************/
-/* 
- * UserMouseMove:  User wants to use mouse to move; check position of mouse
- *   and move user accordingly.
- */
-void UserMouseMove(void)
-{
-   int x, y, xunit, yunit, i;
-
-   if (!MouseToRoom(&x, &y) || view.cx == 0 || view.cy == 0)
-      return;
-
-   // Find action that corresponds to this part of the graphics area
-   xunit = x * SCREEN_UNIT * 2 / view.cx;
-   yunit = y * SCREEN_UNIT * 2 / view.cy;
-
-   for (i=0; i < num_move_areas; i++)
-   {
-      if (xunit >= move_areas[i].left && xunit < move_areas[i].right &&
-	  yunit >= move_areas[i].top  && yunit < move_areas[i].bottom)
-      {
-	 PerformAction(move_areas[i].action, NULL);
-	 break;
-      }
-   }
 }
 /************************************************************************/
 /*

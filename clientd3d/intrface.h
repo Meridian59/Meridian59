@@ -93,15 +93,11 @@ enum { A_NOACTION = 0,
 
 
 #define IsMoveAction(action)   ((( (action) >= A_FORWARD &&          \
-				  (action) <= A_SLIDERIGHTBACKWARDFAST))  \
-				|| ((action) == A_MOUSEMOVE))
-#define IsTurnAction(action)   ((( (action) >= A_TURNLEFT && (action) <= A_TURNFASTRIGHT)) \
-				|| ((action) == A_MOUSEMOVE))
+                                   (action) <= A_SLIDERIGHTBACKWARDFAST)))
+#define IsTurnAction(action)   ((( (action) >= A_TURNLEFT && (action) <= A_TURNFASTRIGHT)))
 #define IsMoveFastAction(action)   ((( (action) >= A_FORWARDFAST &&          \
-				  (action) <= A_SLIDERIGHTBACKWARDFAST))  \
-				|| ((action) == A_MOUSEMOVE))
-#define IsTurnFastAction(action)   ((( (action) >= A_FORWARDTURNFASTLEFT && (action) <= A_TURNFASTRIGHT)) \
-				|| ((action) == A_MOUSEMOVE))
+                                       (action) <= A_SLIDERIGHTBACKWARDFAST)))
+#define IsTurnFastAction(action)   ((( (action) >= A_FORWARDTURNFASTLEFT && (action) <= A_TURNFASTRIGHT)))
 #define IsCursorAction(action) ( (action) >= A_CURSORLEFT && (action) <= A_CURSORDOWNLEFT)
 #define IsAttackAction(action) ( (action) == A_ATTACK || (action) == A_ATTACKCLOSEST)
 #define IsViewAction(action)   ( (action) == A_LOOKUP || (action) == A_LOOKDOWN)

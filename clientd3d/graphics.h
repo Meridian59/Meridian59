@@ -43,7 +43,6 @@ void DrawGridBorder(void);
 Bool MapVisible(void);
 Bool GraphicsReleaseCapture(void);
 
-void UserMouseMove(void);
 void UserStartDrag(void);
 void UserEndDrag(void);
 Bool GraphicsMouseCaptured(void);

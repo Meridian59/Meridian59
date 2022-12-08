@@ -482,10 +482,6 @@ void PerformAction(int action, void *action_data)
       RequestAction((int) action_data);
       break;
 
-   case A_MOUSEMOVE:
-      UserMouseMove();
-      break;
-
    case A_MAP:
      GraphicsToggleMap();
 

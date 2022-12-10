@@ -5208,6 +5208,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    // Set text properties
    SetTextColor(hDC, RGB(255,255,255));
    SetBkColor(hDC, 0);
+   SetBkMode(hDC, TRANSPARENT);
    SetTextAlign(hDC, TA_TOP);
    
    for(c = 32; c < 127; c++ )
@@ -5223,7 +5224,6 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
          pFont->abc[index].abcC = 0;
       }
 
-      int left_offset = abs(min(0, pFont->abc[index].abcA));
       size.cx = pFont->abc[index].abcB;
 
       // Is this row of the texture filled up?
@@ -5233,7 +5233,8 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
          y += size.cy + 1;
       }
       
-      ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
+      int left_offset = pFont->abc[index].abcA;
+      ExtTextOut(hDC, x - left_offset, y+0, 0, NULL, str, 1, NULL);
       
       pFont->texST[index][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
       pFont->texST[index][0].t = ((FLOAT)(y+0)) / pFont->texHeight;

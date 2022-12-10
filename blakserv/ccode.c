@@ -939,7 +939,6 @@ blak_int C_SetResource(int object_id,local_var_type *local_vars,
 		break;
 		
 	case TAG_RESOURCE :
-		{
 			r = GetResourceByID(str_val.v.data);
 			if (r == NULL)
 			{
@@ -950,7 +949,17 @@ blak_int C_SetResource(int object_id,local_var_type *local_vars,
 			new_len = strlen(r->resource_val);
 			new_str = r->resource_val;
 			break;
+	case TAG_STRING :
+		snod = GetStringByID(str_val.v.data);
+		if (snod == NULL)
+		{
+			bprintf( "C_SetResource can't set from bad string %i\n",
+				str_val.v.data);
+			return NIL;
 		}
+		new_len = snod->len_data;
+		new_str = snod->data;
+		break;
 	default :
 		bprintf("C_SetResource can't set from non temp string %i,%i\n",
 			str_val.v.tag,str_val.v.data);

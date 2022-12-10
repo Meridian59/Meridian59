@@ -265,6 +265,31 @@ resources:
    % This string must be < 20 chars long to fit in the subject line with a player name
    barloque_clerk_pardon_7 = " granted reprieve"
 
+   % Name changing.
+   barloque_clerk_trigger_change = "change"
+   barloque_clerk_trigger_name = "name"
+   barloque_clerk_change_name = \
+      "Yes, I can change your legal name by deed poll.  Simply fill out your "
+      "new name on this scroll and return it to me. If it is available and not "
+      "obscene, it shall be yours.  I must warn you, there is a fee of %i "
+      "shillings for providing this service."
+   barloque_clerk_cant_hold = \
+      "I can change your legal name by deed poll, but you have no room in "
+      "your inventory to hold the scroll you would need to fill out."
+   barloque_clerk_not_enough = \
+      "Come back when you have enough money for this service."
+   barloque_clerk_bad_name = \
+      "Sorry, that name is not valid."
+   barloque_clerk_name_changed = \
+      "Your name has been changed."
+
+   barloque_clerk_name_post_1 = "'s name has been changed"
+   barloque_clerk_name_post_2 = "Let it be known that "
+   barloque_clerk_name_post_3 = \
+      "'s name has been changed by deed poll to "
+   barloque_clerk_name_post_4 = \
+      ". So it has been spoken, so shall it be done. \n\n-- Caramo"
+
 classvars:
 
    vrName = barloque_clerk_name_rsc
@@ -314,7 +339,7 @@ messages:
 
    Constructor()
    {
-      plWantedItems = [ &BallotItem ];
+      Send(self,@SetWantedItems);
       psJunkString = CreateString();
       Send(SYS,@SetCaramo,#oCaramo=self);
 
@@ -325,7 +350,25 @@ messages:
       propagate;
    }
 
-   %%% Selling and accepting Ballots
+   Recreate()
+   "Delete outstanding scrolls"
+   {
+      Send(self,@SetWantedItems);
+
+      % Delete any outstanding scrolls
+      Send(&NameChangeScroll,@Delete);
+
+      return;
+   }
+
+   SetWantedItems()
+   {
+      plWantedItems = [ &NameChangeScroll, &BallotItem ];
+
+      return;
+   }
+
+   %%% Selling and accepting Ballots and Name Changes
 
    IsCustomerOkay(who=$)
    {
@@ -358,7 +401,91 @@ messages:
          return;
       }
       
+      if IsClass(obj,&NameChangeScroll)
+      {
+         Send(self,@TryChangePlayerName,#who=who,#oItem=obj);
+
+         return;
+      }
+
       propagate;
+   }
+
+   %%% Name change and recordkeeping
+
+   TryChangePlayerName(who=$,oItem=$)
+   "Attempts to change a player's name. If they can pay the fee, will check with "
+   "System to see if the name is valid. If it is, name will be changed."
+   {
+      local i, iAmount, oMoney;
+
+      if who = $ or oItem = $
+      {
+         return;
+      }
+
+      iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
+
+      % Check if name is valid.
+      if NOT Send(SYS,@ValidateUserName,#oUser=who,#sName=Send(oItem,@GetInscription))
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_bad_name);
+
+         return;
+      }
+
+      % Get player purse
+      oMoney = Send(who,@GetMoneyObject);
+      
+      % Check to see if they have enough money
+      if Send(oMoney,@GetValue) >= iAmount
+      {
+         % Player has enough money, change their name and take the money.
+         Send(oMoney,@SubtractNumber,#number=iAmount);
+         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_name_changed);
+
+         % Record the name change in the Book of Jala.
+         Send(self,@RecordNameChangeBook,#parm1=Send(who,@GetTrueName),#parm2=Send(oItem,@GetInscription));
+
+         % System will handle changing the name.
+         Send(SYS,@ChangeUserName,#oUser=who,#sName=Send(oItem,@GetInscription));
+
+         % Delete scroll
+         Send(oItem,@Delete);
+      }
+      else
+      {
+         % Not enough money.
+         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_not_enough);
+      }
+
+      return;
+   }
+
+   RecordNameChangeBook(parm1=$, parm2=$)
+   "parm1=oldname,parm2=newname"
+   {
+      local sString, sString2, oBook;
+
+      ClearTempString();
+      AppendTempString(parm1);
+      AppendTempString(barloque_clerk_name_post_1);
+      sString = CreateString();
+      setString(sString,GetTempString());
+
+      ClearTempString();
+      AppendTempString(barloque_clerk_name_post_2);
+      AppendTempString(parm1);
+      AppendTempString(barloque_clerk_name_post_3);
+      AppendTempString(parm2);
+      AppendTempString(barloque_clerk_name_post_4);
+      sString2 = CreateString();
+      setString(sString2,GetTempString());
+
+      oBook = Send(poOwner,@GetBook);
+      Send(oBook,@PostNews,#what=self,#title=sString,#body=sString2);
+
+      return;
    }
 
    SetForSale()
@@ -922,6 +1049,39 @@ messages:
 
    CitizenSaid(who = $, string = $)
    {
+      local iAmount, oScroll;
+
+      % name change
+      if StringContain(string,barloque_clerk_trigger_change)
+            AND StringContain(string,barloque_clerk_trigger_name)
+      {
+         iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
+         oScroll = Create(&NameChangeScroll);
+
+         if Send(who,@ReqNewHold,#what=oScroll)
+         {
+            Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_change_name,#parm1=iAmount);
+
+            % Don't give out multiple scrolls.
+            if Send(who,@FindHolding,#class=&NameChangeScroll) = $
+            {
+               Send(who,@NewHold,#what=oScroll);
+            }
+            else
+            {
+               % Send a player tell to the effect of, "You already have one"
+               Send(oScroll,@Delete);
+            }
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_cant_hold);
+            Send(oScroll,@Delete);
+         }
+
+         return TRUE;
+      }
+
       % justicar report
       if (stringContain(string, barloque_clerk_report_phrase))
       {

@@ -3660,8 +3660,7 @@ messages:
 
    ReceiveClient(client_msg = $,number_stuff = $,session_id = $)
    {
-      local i,liClient_cmd,oUser,lCharinfo,sName,sDesc,oLookup,iGender,rOldName,bLegal,
-            lBadNameContain,lBadNameIs,sTemp;
+      local i, liClient_cmd, oUser, lCharinfo, sName, sDesc, iGender, bLegal;
 
       liClient_cmd = First(client_msg);
 
@@ -3681,108 +3680,13 @@ messages:
 
          % Validate name and description
          sName = Nth(client_msg,3);
-         if StringLength(sName) < MIN_CHAR_NAME_LEN OR 
-            StringLength(sName) > MAX_CHAR_NAME_LEN
-         {
-            Debug("Got char name length out of range for user ", oUser);
-            bLegal = FALSE;
-         }
 
-         if NOT StringConsistsOf(sName, 
-             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>")
-         {
-            Debug("Got char name with illegal characters for user ", oUser);
-            bLegal = FALSE;
-         }
+         bLegal = Send(self,@ValidateUserName,#oUser=oUser,#sName=sName);
 
          sDesc = Nth(client_msg,4);
          if StringLength(sDesc) > MAX_CHAR_DESCRIPTION_LEN
          {
             Debug("Got description length out of range for user ", oUser);
-            bLegal = FALSE;
-         }
-
-
-         oLookup = Send(SYS,@FindUserByString,#string=sName);
-         if oLookup <> $ AND oLookup <> oUser
-         {
-            bLegal = FALSE;
-         }
-
-         % No using monster or NPC names.
-         if Send(SYS,@FindMonsterByString,#string=sName) <> $
-            OR Send(SYS,@FindNPCByString,#string=sName) <> $
-            OR Send(SYS,@FindGuildByString,#string=sName) <> $
-         {
-            bLegal = FALSE;
-         }
-
-         % Check for people who put "a" or "an" in front of a monster name.
-         for i in plMonsterTemplates
-         {
-            if StringContain(sName,Send(i,@GetTrueName))
-            {
-               if psTemp = $
-               {
-                  psTemp = CreateString();
-               }
-
-               % Use the local temp string, substitute out the name, see if
-               %  we're left with "a" or "an"
-               SetString(psTemp,sName);
-               StringSubstitute(psTemp,Send(i,@GetTrueName),"");
-               if StringEqual(psTemp,"a")
-                  OR StringEqual(psTemp,"an")
-               {
-                  bLegal = FALSE;
-               }
-            }
-         }
-
-         % Don't do these lengthy checks if we're already looking bad.
-         if bLegal
-         {
-            % This is a list of bad things for the name to contain.
-            % Start with the dirty words.
-            lBadNameContain = plNaughtyWords;
-
-            % Confusing names
-            lBadNameContain = Cons("guardian angel", lBadNameContain);
-            lBadNameContain = Cons("guardianangel", lBadNameContain);
-
-            % This is a list of bad names in general.
-            lBadNameIs = [ % God's names.
-                           "Faren", "Shal'ille", "Qor", "Faren",
-                           "Kraanan", "Riija", "Jala",
-                           % Causes confusion.
-                           "You", system_hidden_admin
-                         ];
-
-            for i in lBadNameContain
-            {
-               if StringContain(sName,i)
-               {
-                  bLegal = FALSE;
-
-                  break;
-               }
-            }
-
-            for i in lBadNameIs
-            {
-               if StringEqual(sName, i)
-               {
-                  bLegal = FALSE;
-
-                  break;
-               }
-            }
-         }
-
-         % Pull the string from user.  This is the name we gmail to contact
-         %  our own guild.
-         if StringEqual(sName, "guild")
-         {
             bLegal = FALSE;
          }
 
@@ -3813,9 +3717,7 @@ messages:
          % such references expire through gameplay.
 
          Send(self,@RecreatedUser,#what=oUser);
-         rOldName = Send(oUser,@GetUserName);
          i = Send(oUser,@GetLastRestartTime);
-         DeleteTableEntry(phUsers,rOldName);
 
          if pbRecycleUsersEnabled
          {
@@ -3828,13 +3730,12 @@ messages:
          AddPacket(4,oUser);
          SendPacket(session_id);
 
-         if not isClass(oUser,&Guest)
+         if NOT isClass(oUser,&Guest)
          {
-            Debug("User suicide",oUser,"from",rOldName,"to",sName);
+            Debug("User suicide",oUser,"from",Send(oUser,@GetTrueName),"to",sName);
          }
 
-         SetResource(Send(oUser,@GetUserName),sName);
-         AddTableEntry(phUsers,Send(oUser,@GetUserName),oUser);
+         Send(self,@ChangeUserName,#oUser=oUser,#sName=sName);
 
          Send(oUser,@SetLastRestartTime,#time=i);
 
@@ -3852,6 +3753,131 @@ messages:
       }
 
       return;
+   }
+
+   ValidateUserName(oUser=$,sName=$)
+   {
+      local i, lBadNameContain, lBadNameIs, oLookup;
+
+      if oUser = $
+         OR sName = $
+      {
+         return FALSE;
+      }
+
+      if StringLength(sName) < MIN_CHAR_NAME_LEN
+         OR StringLength(sName) > MAX_CHAR_NAME_LEN
+      {
+         Debug("Got char name length out of range for user ", oUser);
+
+         return FALSE;
+      }
+
+      if NOT StringConsistsOf(sName, 
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>")
+      {
+         Debug("Got char name with illegal characters for user ", oUser);
+
+         return FALSE;
+      }
+
+      oLookup = Send(SYS,@FindUserByString,#string=sName);
+      if oLookup <> $
+         AND oLookup <> oUser
+      {
+         return FALSE;
+      }
+
+      % No using monster or NPC names.
+      if Send(SYS,@FindMonsterByString,#string=sName) <> $
+         OR Send(SYS,@FindNPCByString,#string=sName) <> $
+         OR Send(SYS,@FindGuildByString,#string=sName) <> $
+      {
+         return FALSE;
+      }
+
+      % Check for people who put "a" or "an" in front of a monster name.
+      for i in plMonsterTemplates
+      {
+         if StringContain(sName,Send(i,@GetTrueName))
+         {
+            if psTemp = $
+            {
+               psTemp = CreateString();
+            }
+
+            % Use the local temp string, substitute out the name, see if
+            %  we're left with "a" or "an"
+            SetString(psTemp,sName);
+            StringSubstitute(psTemp,Send(i,@GetTrueName),"");
+            if StringEqual(psTemp,"a")
+               OR StringEqual(psTemp,"an")
+            {
+               return FALSE;
+            }
+         }
+      }
+
+      % This is a list of bad things for the name to contain.
+      % Start with the dirty words.
+      lBadNameContain = plNaughtyWords;
+
+      % Confusing names
+      lBadNameContain = Cons("guardian angel", lBadNameContain);
+      lBadNameContain = Cons("guardianangel", lBadNameContain);
+
+      % This is a list of bad names in general.
+      lBadNameIs = [ % God's names.
+                     "Faren", "Shal'ille", "Qor", "Faren",
+                     "Kraanan", "Riija", "Jala",
+                     % Causes confusion.
+                     "You", system_hidden_admin
+                   ];
+
+      for i in lBadNameContain
+      {
+         if StringContain(sName,i)
+         {
+            return FALSE;
+         }
+      }
+
+      for i in lBadNameIs
+      {
+         if StringEqual(sName, i)
+         {
+            return FALSE;
+         }
+      }
+
+      % Pull the string from user.  This is the name we gmail to contact
+      %  our own guild.
+      if StringEqual(sName, "guild")
+      {
+            return FALSE;
+      }
+
+      % Name should be valid.
+
+      return TRUE;
+   }
+
+   ChangeUserName(oUser=$,sName=$)
+   {
+      local rOldName;
+
+      if oUser = $
+         OR sName = $
+      {
+         return FALSE;
+      }
+
+      rOldName = Send(oUser,@GetUserName);
+      DeleteTableEntry(phUsers,rOldName);
+      SetResource(Send(oUser,@GetUserName),sName);
+      AddTableEntry(phUsers,Send(oUser,@GetUserName),oUser);
+
+      return TRUE;
    }
 
    GetHiddenAdminName()
@@ -4765,6 +4791,7 @@ messages:
       plItemTemplates = cons(create(&Letter),plItemTemplates);
       plItemTemplates = cons(create(&InscriptionItem),plItemTemplates);
       plItemTemplates = cons(create(&BallotItem),plItemTemplates);
+      plItemTemplates = cons(create(&NameChangeScroll),plItemTemplates);
       plItemTemplates = cons(create(&Rose),plItemTemplates);
       plItemTemplates = cons(create(&OreChunk),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeOreChunk),plItemTemplates);

@@ -47,6 +47,9 @@ resources:
       "you no longer wish to be notified, say 'no advertise' to her instead.  "
       "Outlaws and murderers will not be notified of the vote, since they "
       "cannot properly participate."
+      "\n\n"
+      "Citizens can also ask for a legal name change by deed poll, for "
+      "a high cost.  Caramo will provide more information if asked."
 
 classvars:
 
@@ -107,6 +110,10 @@ messages:
       if poCaramo = $
       {
          poCaramo = Create(&BarloqueClerk);
+      }
+      else
+      {
+         Send(poCaramo,@Recreate);
       }
       
       Send(self,@NewHold,#what=poCaramo,

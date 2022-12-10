@@ -24,7 +24,7 @@ resources:
 
    inscript_emote_write_third_rsc = "%s scribbles something on %s%s."
 
-   inscript_blank_rsc = " "
+   inscript_blank_rsc = ""
    inscript_q = "%q"
 
 classvars:
@@ -77,7 +77,7 @@ messages:
 
       oOwner=send(self,@GetOwner);
 
-      if IsClass(self,&BallotItem) or IsClass(self,&Book)
+      if IsClass(self,&BallotItem) or IsClass(self,&Book) or IsClass(self,&NameChangeScroll)
       {
          return FALSE;
       }

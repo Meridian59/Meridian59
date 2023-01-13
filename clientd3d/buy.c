@@ -402,14 +402,9 @@ void UpdateCost(void)
    num = ListBox_GetCount(info->hwndItemList);
    for (i=0; i < num; i++)
    {
-#if 0
-      if (ListBox_GetSel(info->hwndItemList, i) > 0)
-	 info->cost += ListBox_GetItemData(info->hwndCostList, i);
-#else
       int quantity = (int)ListBox_GetItemData(info->hwndQuanList,i);
       int cost = (int)ListBox_GetItemData(info->hwndCostList,i);
       info->cost += quantity * cost;
-#endif
    }
 
    /* Draw new total cost */

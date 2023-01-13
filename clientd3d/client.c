@@ -308,8 +308,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	if (config.debug)
 		CreateDebugWindow();
 
-	if (lpszCmdParam && strlen(lpszCmdParam) > 0)
-		ConfigOverride(lpszCmdParam);
+  ConfigOverride(lpszCmdParam);
 
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);

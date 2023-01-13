@@ -13,6 +13,7 @@ SecondWind is Skill
 constants:
 
    include blakston.khd
+   include protocol.khd
 
 resources:
 
@@ -26,6 +27,7 @@ resources:
    SecondWind_skill_intro = "Weaponcraft Lv. 4: The ability to press on even when exhausted."
 
    SecondWind_success = "You catch your second wind!"
+   SecondWind_finished = "You feel more relaxed as your second wind dissipates."
    SecondWind_sound = wscndwnd.wav
 
 classvars:
@@ -43,11 +45,14 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_Level = 4
    viChance_to_Increase = 50
+   viThreshold = 25
 
    viSkillExertion = 0
    vbCheck_exertion = FALSE
 
    vbAutomatic = TRUE
+   
+   viShow_enchantment_icon = 0x02
 
 properties:
 
@@ -59,64 +64,101 @@ messages:
       return Send(who,@GetStamina);
    }
 
-   SkillFailed(who=$)
-   {
-      % Override base class behavior to do nothing.  Base class sends a
-      %  spammy message if we fail.
-      return;
-   }
-
-   DoSkill(who=$)
-   {
-      local iVigor;
-   
-      if who = $ 
-      {
-         debug("DoSkill called with bad who.");
-         return FALSE;
-      }
-      
-      if NOT (Send(self,@CanPayCosts,#who=who) AND Send(self,@PayCosts,#who=who))
-      {
-         return FALSE;
-      }
-      
-      send(who,@MsgSendUser,#message_rsc=SecondWind_success);
-      send(who,@WaveSendUser,#wave_rsc=SecondWind_sound);
-      iVigor = 40 + (Send(self,@GetRequisiteStat,#who=who)/2) + Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
-      % Reverse sign so we're taking away exertion.
-      iVigor = -iVigor;
-      Send(who,@AddExertion,#amount=10000*iVigor);
-
-      propagate;
-   }
-
-   GetWaitTime(who=$)
+   GetDuration(who=$)
+   "Duration is anywhere from 5 to 10 minutes before Second Wind can be triggered again"
    {
       local iStamina, iWaitTime;
-   
-      if (who=$)
-      {
-         debug("GetWaitTime called with bad who.");
-         return FALSE;
-      }
-      
+
       iStamina = Send(self,@GetRequisiteStat,#who=who);
-      iWaitTime = ((100-iStamina) * Send(who,@GetSkillAbility,#Skill_num=viSkill_num)/100) + iStamina;
-      % 5 to 10 minutes wait time before you can leap into the action again.
+      iWaitTime = ((100-iStamina) * Send(self,@GetAbility,#who=who)/100) + iStamina;
       iWaitTime = (600 - (iWaitTime*3)) * 1000;
 
       return iWaitTime;
    }
 
-   % This is the initial chance to advance.
-   GetInitialChance(who = $)
+   TrySkill(who=$)
+   "Do the skill only if player meets the requirements."
+   {
+      % If player has second wind, has fallen below the vigor 
+      % threshold, and is not already enchanted
+      if Send(self,@GetAbility,#who=who) > 0
+         AND Send(who,@GetVigor) < viThreshold
+         AND NOT Send(who,@IsEnchanted,#byClass=&SecondWind)
+      {
+         % Apply the effects of second wind
+         Send(self,@AddEnchantmentEffects,#who=who);
+
+         % Start the enchantment timer and adds enchantment icon
+         Send(who,@StartEnchantment,#what=self,
+           #time=send(self,@GetDuration,#who=who));
+
+         % Send message
+         Send(who,@MsgSendUser,#message_rsc=SecondWind_success);
+   
+         % Send sound
+         Send(who,@WaveSendUser,#wave_rsc=SecondWind_sound);
+      }
+
+      return;
+   }
+
+   AddEnchantmentEffects(who=$)
+   "Adjusts vigor threshold and amount. Mimics a personal enchantment."
+   { 
+      local iVigor;
+      
+      % Lock the player's vigor rest threshold while enchanted
+      Send(who,@SetVigorRestThreshold,#amount=10);
+
+      % Calculate new vigor = 40 + Stamina/2 + skill %
+      iVigor = 40 + Send(self,@GetRequisiteStat,#who=who)/2 + Send(self,@GetAbility,#who=who);
+      iVigor = -iVigor; % Reverse sign so we're taking away exertion
+      
+      % Update player vigor
+      Send(who,@AddExertion,#amount=10000*iVigor);
+
+      return;
+   }
+
+   EndEnchantment(who=$, report=TRUE)
+   {
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=SecondWind_finished);
+      }
+
+      Post(self,@EndEnchantmentEffects,#who=who);
+
+      return;
+   }
+   
+   EndEnchantmentEffects(who=$)
+   "Resets vigor rest threshold once the enchantment ends."
+   {
+      local iAmount;
+
+      % Resets the player's vigor rest threshold based on second wind %
+      iAmount = 80 + ((Send(self,@GetAbility,#who=who) + 1) / 5);
+   
+      Send(who,@SetVigorRestThreshold,#amount=iAmount);
+
+      return;
+   }
+
+   SkillFailed(who=$)
+   "Overrides base class behavior to avoid spammy message if we fail."
+   {
+      return;
+   }
+
+   GetInitialChance(who=$)
+   "This is the initial chance to advance."
    {
       % No easy-cheezing it.  No advancement if you have an "easy" way to trigger
       %  the skill.  This includes tokens, cursed rings, or (token) deaths.
-      if send(who,@PossessesA,#class=&Token)
-         OR send(who,@PossessesA,#class=&RingOfLethargy)
-         OR send(send(who,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      if Send(who,@PossessesA,#class=&Token)
+         OR Send(who,@PossessesA,#class=&RingOfLethargy)
+         OR Send(send(who,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
       {
          % No initial chance to succeed; that is, you will always fail to advance.
          return 0;
@@ -125,6 +167,53 @@ messages:
       propagate;
    }
 
+   ShowEnchantmentIcon(type=$)
+   {
+      return viShow_enchantment_icon & 0x02;
+   }
+
+   IsPersonalEnchantment()
+   "Included to support mimicing of personal enchantment spells."
+   {
+      return TRUE;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   "Included to support mimicing of personal enchantment spells."
+   {
+      return;
+   }
+
+   AffectsMaxMana()
+   "Included to support mimicing of personal enchantment spells."
+   {
+      return FALSE;
+   }
+
+   IsPeriodic()
+   "Included to support mimicing of personal enchantment spells."
+   {
+      return FALSE;
+   }
+
+   RestartEnchantmentEffect(who=$, state=$)
+   "Included to support mimicing of personal enchantment spells."
+   {
+      return;
+   }
+
+   IsHarmful()
+   "Included to support mimicing of personal enchantment spells."
+   {
+      return FALSE;
+   }
+
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      % Being a personal enchantment, stop SW from being removed by player(s)
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

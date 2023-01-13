@@ -73,16 +73,8 @@ Bool D3DDriverProfileInit(void)
       gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
       D3DFMT_X8R8G8B8, D3DFMT_D24S8, (D3DFORMAT) TRUE);
 
-	if (config.large_area)
-	{
-		gScreenWidth = 800;
-		gScreenHeight = 600;
-	}
-	else
-	{
-		gScreenWidth = 512;
-		gScreenHeight = 384;
-	}
+	gScreenWidth = 800;
+	gScreenHeight = 600;
 
 	memset(&gPresentParam, 0, sizeof(gPresentParam));
 	gPresentParam.Windowed = TRUE;

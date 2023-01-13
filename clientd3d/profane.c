@@ -195,30 +195,14 @@ void CompileProfaneExpression(REGEXP* pExp)
 		if (((p-buffer) + 2*_nGrout) > sizeof(buffer)/sizeof(char))
 			break;
 
-#if 0
-		if (!config.extraprofane)
-		{
-			// Add "[Aa]+" to the pattern.
-			*p++ = '[';
-			*p++ = toupper(*q);
-			*p++ = tolower(*q);
-			*p++ = ']';
-			*p++ = '+';
-		}
-		else
-		{
-#endif
-			// Add letter-specific pattern to the main pattern.
-			i = tolower(*q)-'a';
-			if (i >= 0 && i < 26)
-			{
-				strcpy(p, _szAlpha[i]);
-				while (*p)
-					p++;
-			}
-#if 0
-		}
-#endif
+    // Add letter-specific pattern to the main pattern.
+    i = tolower(*q)-'a';
+    if (i >= 0 && i < 26)
+    {
+      strcpy(p, _szAlpha[i]);
+      while (*p)
+        p++;
+    }
 
 		q++;
 

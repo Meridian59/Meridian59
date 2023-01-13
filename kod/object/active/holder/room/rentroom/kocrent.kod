@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanRentableRoom is RentableRoom
+
+constants:
+
+   include blakston.khd
+   
+   BEDSPREAD_D = 50075     % white (linen brocade)
+   
+   WALLPAPER_G = 50078     % Ko'catan stripe
+
+   CARPET_G = 08961        % Ko'catan lumber
+
+resources:
+
+   KocatanRentableRoom_name = "A comfortable room"
+   KocatanRentableRoom_roo = kocrent.roo
+
+   KocatanRentableRoom_landlord = "Moxal ix'Hanak"
+
+classvars:
+
+   vrName = KocatanRentableRoom_name
+
+   viTeleport_row = 2
+   viTeleport_col = 3
+
+   viBedSectorMin = 1
+   viBedSectorMax = 5
+   viPictureLocationMax = 6
+
+   vrLandlord = KocatanRentableRoom_landlord
+   viLocation = RID_KOC_INN
+
+   viDecorator_row = 2
+   viDecorator_col = 3
+
+properties:
+
+   prRoom = KocatanRentableRoom_roo
+
+messages:
+
+   Constructor(iRID=RID_RENTABLE_START)
+   {
+      % Format for plBedCoords: pillow coord, non-pillow coord, pillow1 finecoord,
+      %                         pillow2 finecoord, pillow angle
+      % Each top-level list (one per line) is one bed position.
+      plBedCoords = [ [ [2,2], [3,2], [16,0], [16,16], ANGLE_SOUTH ],
+                      [ [4,1], [4,3], [48,48], [16,48], ANGLE_EAST ],
+                      [ [5,1], [5,3], [16,48], [48,48], ANGLE_EAST ],
+                      [ [6,1], [6,3], [16,48], [48,48], ANGLE_EAST ],
+                      [ [6,4], [5,4], [16,16], [48,16], ANGLE_NORTH ]
+                    ];
+
+      % Format for plPictureCoords: coordinates nearest picture, followed by
+      % the next nearest coordinates.
+      % Each top-level list (one per line) is one picture position
+      plPictureCoords = [ [ [2,2], [2,3] ],
+                          [ [3,1] ],
+                          [ [4,1] ],
+                          [ [5,1] ],
+                          [ [6,1] ],
+                          [ [6,3], [6,4] ]
+                        ];
+
+      propagate;
+   }
+
+   InitializeDecor()
+   {
+      Send(self,@SetBedSector);
+      Send(self,@SetBedSpread,#num=BEDSPREAD_D);
+      Send(self,@SetCarpet,#num=CARPET_G);
+      Send(self,@SetWallpaper,#num=WALLPAPER_G);
+      Send(self,@NewHold,#what=create(&Mint),
+           #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
+           #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
+           #fine_row=nth(nth(nth(plBedCoords,piBedSector),3),1),
+           #fine_col=nth(nth(nth(plBedCoords,piBedSector),3),2),
+           #new_angle= nth(nth(plBedCoords,piBedSector),5) );
+      
+      return;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      if col = 6
+      {
+         Send(what,@MsgSendUser,#message_rsc=RentableRoom_teleport);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
+               #duration=750);
+         Send(Send(SYS,@FindRoomByNum,#num=RID_KOC_INN),@NewHold,#what=what,
+               #new_row=8,#new_col=8,#new_angle=ANGLE_NORTH);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Bell),
+            #new_row=2,#new_col=3,#fine_row=32,#fine_col=0);
+
+      propagate;
+   }
+
+   Enter(who=$)
+   {
+      Send(self,@NewHold,#what=who,#new_row=4,#new_col=5,#fine_row=32,#fine_col=16,
+            #new_angle=ANGLE_WEST);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

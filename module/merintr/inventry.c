@@ -173,16 +173,9 @@ void InventoryBoxCreate(HWND hParent)
    if (!GetBitmapResourceInfo(hInst, IDB_INVBKGND, &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
-	//	ajw begin...
-//	hbmpScrollBack = GetHBitmapFromResource( hInst, IDB_INVBKGND );
-//	if( !hbmpScrollBack )
-//		debug(("InventoryBoxCreate couldn't create hbmpScrollBack\n"));
 	if( !( ptr = GetBitmapResource( hInst, IDB_INVBKGND ) ) )
 		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
 
-//	logbrush.lbStyle = BS_DIBPATTERN;
-//	logbrush.lbColor = DIB_RGB_COLORS;
-//	logbrush.lbHatch = hbmpScrollBack;
 	logbrush.lbStyle = BS_DIBPATTERNPT;
 	logbrush.lbColor = DIB_RGB_COLORS;
 	logbrush.lbHatch = (long)ptr;
@@ -235,7 +228,7 @@ void InventoryBoxResize(int xsize, int ysize, AREA *view)
    DrawBorder(&inventory_area, inventory_bg_index, NULL);
    
    inventory_area.x = view->x + view->cx + LEFT_BORDER + 3 * HIGHLIGHT_THICKNESS;
-   inventory_area.cx = min(xsize - inventory_area.x - 3 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH, INVENTORY_MAX_WIDTH);
+   inventory_area.cx = xsize - inventory_area.x - 3 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH;
 
 //   inventory_area.y = 2 * TOP_BORDER + USERAREA_HEIGHT + GROUPBUTTONS_HEIGHT + EDGETREAT_HEIGHT;
 //   inventory_area.cy = view->y + view->cy - inventory_area.y;
@@ -243,7 +236,6 @@ void InventoryBoxResize(int xsize, int ysize, AREA *view)
    	yMiniMap = 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + MAPTREAT_HEIGHT;
 	iHeightAvailableForMapAndStats = ysize - yMiniMap - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 	iHeightMiniMap = (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
-	iHeightMiniMap = min( iHeightMiniMap, MINIMAP_MAX_HEIGHT );
 
 	inventory_area.y = yMiniMap + iHeightMiniMap + 3 * HIGHLIGHT_THICKNESS + MAPTREAT_HEIGHT + GROUPBUTTONS_HEIGHT + MAP_STATS_GAP_HEIGHT + 1;
 	inventory_area.cy = ysize - EDGETREAT_HEIGHT - HIGHLIGHT_THICKNESS - inventory_area.y - STATS_BOTTOM_GAP_HEIGHT;

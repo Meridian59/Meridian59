@@ -75,7 +75,7 @@ static ObjectData objectdata[MAXOBJECTS];
 static long nobjects;
 
 /* Hold info on items (walls, ceilings, floors, objects) to be drawn */
-#define MAX_ITEMS 1200L
+#define MAX_ITEMS 1600L
 DrawItem drawdata[MAX_ITEMS];
 long nitems;
 
@@ -827,7 +827,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
   blakassert(node);
   blakassert(col >= node->cone.leftedge);
   blakassert(col < node->cone.rightedge);
-  
+
   /* allocate new node */
   new_node = free_cone_node_list;
   if (new_node != NULL)
@@ -1058,11 +1058,11 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
   ConeTreeNode *c,*next;
   DrawItem *item = NULL;
   long c0,c1,cmid;
-  long num,denom;
+  int64 num,denom;
   Bool viewable = False;
-  long a_topb, a_topd, topa_b, topa_d;
-  long a_botb, a_botd, bota_b, bota_d;
-  long slack;
+  int64 a_topb, a_topd, topa_b, topa_d;
+  int64 a_botb, a_botd, bota_b, bota_d;
+  int64 slack;
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
   blakassert(col1 < MAXX);
@@ -1269,11 +1269,11 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
   ConeTreeNode *c, *next;
   DrawItem *item = NULL;
   long c0,c1,cmid;
-  long num,denom;
+  int64 num,denom;
   Bool viewable = False;
-  long a_botb, a_botd, bota_b, bota_d;
-  long a_topb, a_topd, topa_b, topa_d;
-  long slack;
+  int64 a_botb, a_botd, bota_b, bota_d;
+  int64 a_topb, a_topd, topa_b, topa_d;
+  int64 slack;
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
   blakassert(col1 < MAXX);
@@ -2780,11 +2780,7 @@ static void outlinecone(ViewCone *c)
 {
   int row,col;
   int minrow,maxrow;
-#if 0
-  /* hunting down a bug... */
-  minrow = DIVUP(c->top_b * c->rightedge + c->top_d, c->top_a);
-  if (minrow >= 0) return;
-#endif  
+
   if (c->leftedge < 0 || c->rightedge >= screen_width || c->leftedge > c->rightedge)
     {
       debug(("bad left/right in outlinecone! %d %d\n", c->leftedge, c->rightedge));

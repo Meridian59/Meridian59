@@ -46,7 +46,6 @@ BEGIN
     END
     POPUP "&Optionen"
     BEGIN
-        MENUITEM "&Groﬂes Sichtfenster",        3057
         MENUITEM "&Musik",                      3034
         MENUITEM "&Sounds",                     3033
         MENUITEM SEPARATOR
@@ -788,7 +787,6 @@ BEGIN
     END
     POPUP "&Options"
     BEGIN
-        MENUITEM "Large &graphics area",        ID_OPTIONS_AREA
         MENUITEM "&Music",                      ID_OPTIONS_MUSIC
         MENUITEM "&Sounds",                     ID_OPTIONS_SOUND
         MENUITEM SEPARATOR

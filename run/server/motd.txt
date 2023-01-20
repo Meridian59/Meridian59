@@ -1,1 +1,0 @@
-This message is shown to people when they log in.

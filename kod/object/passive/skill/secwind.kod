@@ -97,9 +97,11 @@ messages:
    
          % Send sound
          Send(who,@WaveSendUser,#wave_rsc=SecondWind_sound);
+
+	 propagate;
       }
 
-      propagate;
+      return;
    }
 
    AddEnchantmentEffects(who=$)

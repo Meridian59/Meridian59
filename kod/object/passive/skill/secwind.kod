@@ -76,7 +76,7 @@ messages:
       return iWaitTime;
    }
 
-   DoSkill(who=$)
+   TrySkill(who=$)
    "Do the skill only if player meets the requirements."
    {
       % If player has second wind, has fallen below the vigor 
@@ -97,8 +97,6 @@ messages:
    
          % Send sound
          Send(who,@WaveSendUser,#wave_rsc=SecondWind_sound);
-
-	 propagate;
       }
 
       return;

@@ -1190,7 +1190,7 @@ messages:
       if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
          AND NOT Send(self,@IsEnchanted,#byClass=&SecondWind)
       {
-         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@TrySkill,#who=self);
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self);
       }
 
       piVigor = bound(piVigor,1,viMax_vigor);

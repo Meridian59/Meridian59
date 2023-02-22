@@ -1182,17 +1182,8 @@ messages:
    %%% Vigor
 
    NewVigor()
-   "Ensures vigor stays in bounds, including attempts at second wind skill"
-   "Vigor display will be driven from here."
+   "Ensures vigor stays in bounds. Vigor display will be driven from here."
    {
-      % If vigor is changing and player has second wind, but isn't enchanted by it,
-      % then attempt second wind.
-      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
-         AND NOT Send(self,@IsEnchanted,#byClass=&SecondWind)
-      {
-         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@TrySkill,#who=self);
-      }
-
       piVigor = bound(piVigor,1,viMax_vigor);
       Send(self,@DrawVigor);
 
@@ -1259,6 +1250,14 @@ messages:
          }
 
          Send(self,@NewVigor);
+      }
+
+      % If Second Wind is available and inactive, and (adjusted) exertion is present, attempt SW
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
+         AND iExertionAdded > 0
+         AND NOT Send(self,@IsEnchanted,#byClass=&SecondWind)
+      {
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self);
       }
 
       return;

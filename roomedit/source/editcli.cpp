@@ -2679,10 +2679,6 @@ BOOL TEditorClient::SaveLevel ()
 	SaveLevelData(filename);
 	strcpy(LevelName, filename);
 
-	// Forget all UNDO datas
-	CleanupUndo();
-	InitUndo();
-
 	return TRUE;
 }
 
@@ -3865,9 +3861,6 @@ void TEditorClient::CmFileSave ()
 	}
 	SET_HELP_CONTEXT(EDITOR_Save);
 	SaveLevelData(LevelName);
-	// Forget all UNDO datas
-	CleanupUndo();
-	InitUndo();
 
 	DrawStatusBar();
 	RESTORE_HELP_CONTEXT();

@@ -69,7 +69,7 @@ typedef struct
 /*
    Maximum UNDO/REDO structs
 */
-int MaxUndo = 5;	// Default value
+int MaxUndo = 50;	// Default value
 
 /*
    Undo array

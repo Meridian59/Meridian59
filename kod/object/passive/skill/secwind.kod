@@ -76,14 +76,13 @@ messages:
       return iWaitTime;
    }
 
-   TrySkill(who=$)
+   DoSkill(who=$)
    "Do the skill only if player meets the requirements."
    {
       % If player has second wind, has fallen below the vigor 
       % threshold, and is not already enchanted
       if Send(self,@GetAbility,#who=who) > 0
          AND Send(who,@GetVigor) < viThreshold
-         AND NOT Send(who,@IsEnchanted,#byClass=&SecondWind)
       {
          % Apply the effects of second wind
          Send(self,@AddEnchantmentEffects,#who=who);
@@ -97,6 +96,8 @@ messages:
    
          % Send sound
          Send(who,@WaveSendUser,#wave_rsc=SecondWind_sound);
+
+         propagate;
       }
 
       return;
@@ -116,31 +117,6 @@ messages:
       
       % Update player vigor
       Send(who,@AddExertion,#amount=10000*iVigor);
-
-      return;
-   }
-
-   EndEnchantment(who=$, report=TRUE)
-   {
-      if report
-      {
-         Send(who,@MsgSendUser,#message_rsc=SecondWind_finished);
-      }
-
-      Post(self,@EndEnchantmentEffects,#who=who);
-
-      return;
-   }
-   
-   EndEnchantmentEffects(who=$)
-   "Resets vigor rest threshold once the enchantment ends."
-   {
-      local iAmount;
-
-      % Resets the player's vigor rest threshold based on second wind %
-      iAmount = 80 + ((Send(self,@GetAbility,#who=who) + 1) / 5);
-   
-      Send(who,@SetVigorRestThreshold,#amount=iAmount);
 
       return;
    }
@@ -167,7 +143,38 @@ messages:
       propagate;
    }
 
+   %
+   % While technically a skill, Second Wind acts like a personal 
+   % enchantment and the following handlers provide support for this.
+   %
+
+   EndEnchantment(who=$,state=$,report=TRUE)
+   "Included to support mimicing of personal enchantment spells."
+   {
+      local iAmount;
+
+      % Resets the player's vigor rest threshold based on second wind %
+      iAmount = 80 + ((Send(self,@GetAbility,#who=who) + 1) / 5);
+      Post(who,@SetVigorRestThreshold,#amount=iAmount);
+
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=SecondWind_finished);
+      }
+
+      return;
+   }
+
+   RemoveEnchantmentEffects(who=$,state=$,report=$)
+   "Included to support mimicing of personal enchantment spells."
+   {
+      Send(self,@EndEnchantment,#who=who,#report=report,#state=state);
+
+      return;
+   }
+
    ShowEnchantmentIcon(type=$)
+   "Included to support mimicing of personal enchantment spells."
    {
       return viShow_enchantment_icon & 0x02;
    }

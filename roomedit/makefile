@@ -21,7 +21,7 @@ CFLAGS = $(CFLAGS:-GR-=-GR) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)
 # Dependency List
 #
 
-all: makedirs $(OUTDIR)\windeu32.exe
+all: makedirs $(OUTDIR)\roomedit.exe
 
 OBJS = \
    $(OUTDIR)\save.obj\
@@ -308,7 +308,7 @@ $(OWLOUTDIR)\$(OWLLIBNAME): $(OWLOBJS)
 makeowldir:
 		-@mkdir $(OWLOUTDIR)
 
-$(OUTDIR)\windeu32.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
+$(OUTDIR)\roomedit.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
 	$(LINK) $(LINKFLAGS) $(LINKWINDOWSFLAGS) @<<
 	$(OBJS) $(LIBS) -OUT:$@
 <<

@@ -407,7 +407,7 @@ void UserMovePlayer(int action)
    player_obj->motion.y = y;
    //player_obj->motion.z = z;
 
-   // XXX Don't really need to store position in player, since he is also a room object.
+   // TODO: Don't really need to store position in player, since he is also a room object.
    //     The way things are currently done, we now need to update player.
    player.x = x;
    player.y = y;
@@ -505,8 +505,8 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 {
    BSPinternal *inode;
    WallData *wall;
-   int a, b, c, plane_distance, old_distance;
-   int newDistance;
+   float a, b, c, plane_distance, old_distance;
+   float newDistance;
 
    if (node == NULL || node->type == BSPleaftype)
       return NULL;
@@ -526,7 +526,7 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
    c = inode->separator.c;
    plane_distance = (a * new_x + b * new_y + c);
    old_distance = (a * old_x + b * old_y + c);
-   newDistance = ABS(plane_distance) >> LOG_FINENESS;
+   newDistance = ABS(plane_distance) / FINENESS;
    if ((newDistance > min_distance) || (ABS(plane_distance) > ABS(old_distance)))
       return NULL;
 
@@ -535,28 +535,29 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
    {
       Sidedef *sidedef;
       Sector *other_sector;
-      int below_height, d0, d1, dx, dy, lenWall2;
-      int minx = min(wall->x0, wall->x1) - min_distance;
-      int maxx = max(wall->x0, wall->x1) + min_distance;
-      int miny = min(wall->y0, wall->y1) - min_distance;
-      int maxy = max(wall->y0, wall->y1) + min_distance;
+      int below_height;
+      float d0, d1, dx, dy, lenWall2;
+      float minx = min(wall->x0, wall->x1) - min_distance;
+      float maxx = max(wall->x0, wall->x1) + min_distance;
+      float miny = min(wall->y0, wall->y1) - min_distance;
+      float maxy = max(wall->y0, wall->y1) + min_distance;
 	 
       // See if we are near the wall itself, and not just the wall's plane
       if ((new_x >= minx) && (new_x <= maxx) && (new_y >= miny) && (new_y <= maxy))
       {
-	 // Skip floor->ceiling wall if player can walk through it
-	 if (SGN(old_distance) > 0)
-	 {
-	    sidedef = wall->pos_sidedef;
-	    other_sector = wall->neg_sector;
-	 }
-	 else
-	 {
-	    sidedef = wall->neg_sidedef;
-	    other_sector = wall->pos_sector;
-	 }
-	 if (sidedef == NULL)
-	    continue;
+        // Skip floor->ceiling wall if player can walk through it
+        if (old_distance > 0.001)
+        {
+          sidedef = wall->pos_sidedef;
+          other_sector = wall->neg_sector;
+        }
+        else
+        {
+          sidedef = wall->neg_sidedef;
+          other_sector = wall->pos_sector;
+        }
+        if (sidedef == NULL)
+          continue;
 
 	 // Check for wading on far side of wall; reduce effective height of wall if found
 	 below_height = 0;
@@ -592,9 +593,9 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 	 lenWall2 = dx * dx + dy * dy;
 	 if (d0 > lenWall2) // d1 is closest vertex
 	 {
-	    int dx = old_x - wall->x1;
-	    int dy = old_y - wall->y1;
-	    int oldEndDist = dx * dx + dy * dy;
+	    float dx = old_x - wall->x1;
+	    float dy = old_y - wall->y1;
+	    float oldEndDist = dx * dx + dy * dy;
 	    if ((d1 < min_distance2) && (d1 <= oldEndDist))
 	    {
 	       return wall;
@@ -602,9 +603,9 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 	 }
 	 else if (d1 > lenWall2) // d0 is closest vertex
 	 {
-	    int dx = old_x - wall->x0;
-	    int dy = old_y - wall->y0;
-	    int oldEndDist = dx * dx + dy * dy;
+      float dx = old_x - wall->x0;
+	    float dy = old_y - wall->y0;
+	    float oldEndDist = dx * dx + dy * dy;
 	    if ((d0 < min_distance2) && (d0 <= oldEndDist))
 	    {
 	       return wall;

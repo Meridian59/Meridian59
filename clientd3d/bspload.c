@@ -30,7 +30,7 @@ static int room_version;     // Version of room file we're reading
 
 static int security;         // Room security value, calculated as room is loaded
 
-static Bool LoadNodes(file_node *f, room_type *room, int num_nodes);
+static Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version);
 static Bool LoadWalls(file_node *f, room_type *room, int num_walls);
 static Bool LoadSectors(file_node *f, room_type *room, int num_sectors);
 static Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
@@ -44,6 +44,13 @@ extern Bool						gD3DRedrawAll;
 extern d3d_render_cache_system	gWorldCacheSystemStatic;
 extern d3d_render_cache_system	gLMapCacheSystemStatic;
 extern custom_xyz				playerOldPos;
+
+// Interpret the given 4-byte buffer as a float or int, depending on room_version
+static float readValue(char *buf, int room_version) {
+  if (room_version < 13)
+    return (float) *((int *) buf);
+  return *((float *) buf);
+}
 
 Bool BSPRooFileLoad(char *fname, room_type *room)
 {
@@ -105,7 +112,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    // Read nodes
    MappedFileGoto(&f, node_pos);
    if (CliMappedFileRead(&f, &num_nodes, 2) != 2) { MappedFileClose(&f); return False; }
-   if (LoadNodes(&f, room, num_nodes) == False) 
+   if (LoadNodes(&f, room, num_nodes, room_version) == False) 
    { 
       debug(("Failure loading %d nodes\n", num_nodes));
       MappedFileClose(&f); 
@@ -239,7 +246,7 @@ void BSPRoomFree(room_type *room)
  * LoadNodes:  Load nodes of BSP tree, and set tree field of room structure to the root.
  *   Return True on success.
  */
-Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
+Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
 {
    int i, j, size;
    BYTE type;
@@ -260,10 +267,16 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
       if (CliMappedFileRead(f, &type, 1) != 1) return False;
       node->type = (BSPnodetype) type;
 
-      if (CliMappedFileRead(f, &node->bbox.x0, 4) != 4) return False;
-      if (CliMappedFileRead(f, &node->bbox.y0, 4) != 4) return False;
-      if (CliMappedFileRead(f, &node->bbox.x1, 4) != 4) return False;
-      if (CliMappedFileRead(f, &node->bbox.y1, 4) != 4) return False;
+      char buf[4];
+      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      node->bbox.x0 = readValue(buf, room_version);
+      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      node->bbox.y0 = readValue(buf, room_version);
+      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      node->bbox.x1 = readValue(buf, room_version);
+      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      node->bbox.y1 = readValue(buf, room_version);
+      
 
 //      debug(("Loading node %d ", i));
 
@@ -272,16 +285,21 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
       case BSPinternaltype:
 	 inode = &node->u.internal;
 	 
-	 if (CliMappedFileRead(f, &inode->separator.a, 4) != 4) return False;
-	 if (CliMappedFileRead(f, &inode->separator.b, 4) != 4) return False;
-	 if (CliMappedFileRead(f, &inode->separator.c, 4) != 4) return False;
+   if (CliMappedFileRead(f, buf, 4) != 4) return False;
+   inode->separator.a = readValue(buf, room_version);
+   security += *((int *) buf);
+   if (CliMappedFileRead(f, buf, 4) != 4) return False;
+   inode->separator.b = readValue(buf, room_version);
+   security += *((int *) buf);
+   if (CliMappedFileRead(f, buf, 4) != 4) return False;
+   inode->separator.c = readValue(buf, room_version);
+   security += *((int *) buf);
 
 	 if (CliMappedFileRead(f, &inode->pos_num, 2) != 2) return False;
 	 if (CliMappedFileRead(f, &inode->neg_num, 2) != 2) return False;
 	 if (CliMappedFileRead(f, &inode->wall_num, 2) != 2) return False;
 
-	 security += inode->separator.a + inode->separator.b + inode->separator.c + 
-	    inode->wall_num;
+	 security += inode->wall_num;
 
 	 break;
 
@@ -295,9 +313,12 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
 	 leaf->poly.npts = num_points;
 	 for (j=0; j < num_points; j++)
 	 {
-	    if (CliMappedFileRead(f, &leaf->poly.p[j].x, 4) != 4) return False;
-	    if (CliMappedFileRead(f, &leaf->poly.p[j].y, 4) != 4) return False;
-	    security += leaf->poly.p[j].x + leaf->poly.p[j].y;
+	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      leaf->poly.p[j].x = readValue(buf, room_version);
+      security += *((int *) buf);
+	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      leaf->poly.p[j].y = readValue(buf, room_version);
+      security += *((int *) buf);
 	 }
 	 leaf->poly.p[num_points] = leaf->poly.p[0];	 
 	 break;
@@ -318,6 +339,7 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls)
 {
    int i, size;
    WORD word;
+   char buf[4];
 
    size = num_walls * sizeof(WallData);
    room->walls = (WallData *) SafeMalloc(size);
@@ -337,15 +359,22 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls)
       if (CliMappedFileRead(f, &wall->neg_sidedef_num, 2) != 2) return False;
       security += wall->pos_sidedef_num + wall->neg_sidedef_num;
 
-      if (CliMappedFileRead(f, &wall->x0, 4) != 4) return False;
-      if (CliMappedFileRead(f, &wall->y0, 4) != 4) return False;
-      if (CliMappedFileRead(f, &wall->x1, 4) != 4) return False;
-      if (CliMappedFileRead(f, &wall->y1, 4) != 4) return False;
-      security += wall->x0 + wall->y0 + wall->x1 + wall->y1;
+	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      wall->x0 = readValue(buf, room_version);
+      security += *((int *) buf);
+	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      wall->y0 = readValue(buf, room_version);
+      security += *((int *) buf);
+	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      wall->x1 = readValue(buf, room_version);
+      security += *((int *) buf);
+	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      wall->y1 = readValue(buf, room_version);
+      security += *((int *) buf);
       
       // Get wall length
       if (CliMappedFileRead(f, &word, 2) != 2) return False;
-      wall->length = word;
+      wall->length = word;  // XXX Should probably be saved as 4 byte float
       
       // Get texture offsets
       if (CliMappedFileRead(f, &wall->pos_xoffset, 2) != 2) return False;
@@ -494,12 +523,17 @@ SlopeData *LoadSlopeInfo(file_node *f) {
     memset(new_slope, 0, size);
 
     // load coefficients of plane equation
-    if (CliMappedFileRead(f, &new_slope->plane.a, 4) != 4) return (SlopeData *)NULL;
-    if (CliMappedFileRead(f, &new_slope->plane.b, 4) != 4) return (SlopeData *)NULL;
-    if (CliMappedFileRead(f, &new_slope->plane.c, 4) != 4) return (SlopeData *)NULL;
-    if (CliMappedFileRead(f, &new_slope->plane.d, 4) != 4) return (SlopeData *)NULL;
+    char buf[4];
+    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
+    new_slope->plane.a = readValue(buf, room_version);
+    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
+    new_slope->plane.b = readValue(buf, room_version);
+    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
+    new_slope->plane.c = readValue(buf, room_version);
+    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
+    new_slope->plane.d = readValue(buf, room_version);
 
-//    dprintf("loaded equation a = %d, b = %d, c = %d, d = %d\n", new_slope->plane.a, new_slope->plane.b, new_slope->plane.c, new_slope->plane.d);
+    //    dprintf("loaded equation a = %d, b = %d, c = %d, d = %d\n", new_slope->plane.a, new_slope->plane.b, new_slope->plane.c, new_slope->plane.d);
     
     if (new_slope->plane.c == 0) {
 	debug(("Error: loaded plane equation equal to a vertical slope\n"));
@@ -678,8 +712,8 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
    BSPinternal *inode;
    BSPleaf *leaf;
    WallData *wall;
-   long   a,b,c,x0,y0,x1,y1,norm_size;
-   long   a2,b2;
+   float   a,b,c,x0,y0,x1,y1,norm_size;
+   float   a2,b2;
 
    if (tree == NULL)
       return True;
@@ -708,7 +742,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
 	  a = inode->separator.a;
 	  b = inode->separator.b;
 
-	  norm_size = (long)sqrt((float) a2 + b2);
+	  norm_size = sqrt(a2 + b2);
 	  if ((a2 < 0) || (b2 < 0) || (norm_size <= 0)) {
 	      norm_size = 1;
 	      debug(("RoomSwizzle: still getting overflow in normalization math!\n"));
@@ -716,22 +750,22 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
 
       }
       else {
-	  a <<= LOG_FINENESS;
-	  b <<= LOG_FINENESS;
+	  a *= FINENESS;
+	  b *= FINENESS;
 
-	  norm_size = (long)sqrt((float) a*a + b*b);
+	  norm_size = sqrt(a*a + b*b);
       }
 
       // normalize a & b (w.round to closest int)
-      a = ((a << LOG_FINENESS)+(norm_size>>1))/norm_size;
-      b = ((b << LOG_FINENESS)+(norm_size>>1))/norm_size;
+      a = ((a * FINENESS)+(norm_size / 2))/norm_size;
+      b = ((b * FINENESS)+(norm_size / 2))/norm_size;
       
       inode->separator.a = a;
       inode->separator.b = b;
 
       // re-calc c
       // take average over endpoints of wall (reduce error ?)
-      inode->separator.c = -((a*x1+b*y1)+(a*x0+b*y0))/2;
+      inode->separator.c = -((a*x1+b*y1)+(a*x0+b*y0))/2.0;
 
       if (inode->pos_num == 0)
 	 inode->pos_side = NULL;

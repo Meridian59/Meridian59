@@ -2670,15 +2670,15 @@ void D3DRenderPacketWallMaskAdd(WallData *pWall, d3d_render_pool_new *pPool, uns
 		{
 			pSideDef = pWall->pos_sidedef;
 
-			xyz[0].x = (float)pWall->x0;
-			xyz[3].x = (float)pWall->x1;
-			xyz[1].x = (float)pWall->x0;
-			xyz[2].x = (float)pWall->x1;
+			xyz[0].x = pWall->x0;
+			xyz[3].x = pWall->x1;
+			xyz[1].x = pWall->x0;
+			xyz[2].x = pWall->x1;
 
-			xyz[0].y = (float)pWall->y0;
-			xyz[3].y = (float)pWall->y1;
-			xyz[1].y = (float)pWall->y0;
-			xyz[2].y = (float)pWall->y1;
+			xyz[0].y = pWall->y0;
+			xyz[3].y = pWall->y1;
+			xyz[1].y = pWall->y0;
+			xyz[2].y = pWall->y1;
 
 			xyz[1].z = xyz[0].z;
 			xyz[2].z = xyz[3].z;
@@ -2687,22 +2687,22 @@ void D3DRenderPacketWallMaskAdd(WallData *pWall, d3d_render_pool_new *pPool, uns
 			{
 				case D3DRENDER_WALL_NORMAL:
 				{
-					xyz[0].z = (long)pWall->z2;
-					xyz[3].z = (long)pWall->zz2;
+					xyz[0].z = pWall->z2;
+					xyz[3].z = pWall->zz2;
 				}
 				break;
 
 				case D3DRENDER_WALL_BELOW:
 				{
-					xyz[0].z = (long)pWall->z1;
-					xyz[3].z = (long)pWall->zz1;
+					xyz[0].z = pWall->z1;
+					xyz[3].z = pWall->zz1;
 				}
 				break;
 
 				case D3DRENDER_WALL_ABOVE:
 				{
-					xyz[0].z = (long)pWall->z3;
-					xyz[3].z = (long)pWall->zz3;
+					xyz[0].z = pWall->z3;
+					xyz[3].z = pWall->zz3;
 				}
 				break;
 
@@ -2714,15 +2714,15 @@ void D3DRenderPacketWallMaskAdd(WallData *pWall, d3d_render_pool_new *pPool, uns
 		{
 			pSideDef = pWall->neg_sidedef;
 
-			xyz[0].x = (float)pWall->x1;
-			xyz[3].x = (float)pWall->x0;
-			xyz[1].x = (float)pWall->x1;
-			xyz[2].x = (float)pWall->x0;
+			xyz[0].x = pWall->x1;
+			xyz[3].x = pWall->x0;
+			xyz[1].x = pWall->x1;
+			xyz[2].x = pWall->x0;
 
-			xyz[0].y = (float)pWall->y1;
-			xyz[3].y = (float)pWall->y0;
-			xyz[1].y = (float)pWall->y1;
-			xyz[2].y = (float)pWall->y0;
+			xyz[0].y = pWall->y1;
+			xyz[3].y = pWall->y0;
+			xyz[1].y = pWall->y1;
+			xyz[2].y = pWall->y0;
 
 			xyz[1].z = xyz[0].z;
 			xyz[2].z = xyz[3].z;
@@ -2731,22 +2731,22 @@ void D3DRenderPacketWallMaskAdd(WallData *pWall, d3d_render_pool_new *pPool, uns
 			{
 				case D3DRENDER_WALL_NORMAL:
 				{
-					xyz[0].z = (long)pWall->zz2;
-					xyz[3].z = (long)pWall->z2;
+					xyz[0].z = pWall->zz2;
+					xyz[3].z = pWall->z2;
 				}
 				break;
 
 				case D3DRENDER_WALL_BELOW:
 				{
-					xyz[0].z = (long)pWall->zz1;
-					xyz[3].z = (long)pWall->z1;
+					xyz[0].z = pWall->zz1;
+					xyz[3].z = pWall->z1;
 				}
 				break;
 
 				case D3DRENDER_WALL_ABOVE:
 				{
-					xyz[0].z = (long)pWall->zz3;
-					xyz[3].z = (long)pWall->z3;
+					xyz[0].z = pWall->zz3;
+					xyz[3].z = pWall->z3;
 				}
 				break;
 
@@ -5366,24 +5366,24 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 			xOffset = pWall->pos_xoffset;
 			yOffset = pWall->pos_yoffset;
 
-			pXYZ[0].x = (float)pWall->x0;
-			pXYZ[3].x = (float)pWall->x1;
-			pXYZ[1].x = (float)pWall->x0;
-			pXYZ[2].x = (float)pWall->x1;
+			pXYZ[0].x = pWall->x0;
+			pXYZ[3].x = pWall->x1;
+			pXYZ[1].x = pWall->x0;
+			pXYZ[2].x = pWall->x1;
 
-			pXYZ[0].y = (float)pWall->y0;
-			pXYZ[3].y = (float)pWall->y1;
-			pXYZ[1].y = (float)pWall->y0;
-			pXYZ[2].y = (float)pWall->y1;
+			pXYZ[0].y = pWall->y0;
+			pXYZ[3].y = pWall->y1;
+			pXYZ[1].y = pWall->y0;
+			pXYZ[2].y = pWall->y1;
 
 			switch (type)
 			{
 				case D3DRENDER_WALL_NORMAL:
 				{
-					pXYZ[0].z = (long)pWall->z2;
-					pXYZ[3].z = (long)pWall->zz2;
-					pXYZ[1].z = (long)pWall->z1;
-					pXYZ[2].z = (long)pWall->zz1;
+					pXYZ[0].z = pWall->z2;
+					pXYZ[3].z = pWall->zz2;
+					pXYZ[1].z = pWall->z1;
+					pXYZ[2].z = pWall->zz1;
 
 					if (pSideDef->flags & WF_NORMAL_TOPDOWN)
 						drawTopDown = 1;
@@ -5397,17 +5397,17 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 					if ((pWall->bowtie_bits & BT_BELOW_POS) ||
 						(pWall->bowtie_bits & BT_BELOW_NEG))
 					{
-						pXYZ[0].z = (long)pWall->z1Neg;
-						pXYZ[3].z = (long)pWall->zz1Neg;
+						pXYZ[0].z = pWall->z1Neg;
+						pXYZ[3].z = pWall->zz1Neg;
 					}
 					else
 					{
-						pXYZ[0].z = (long)pWall->z1;
-						pXYZ[3].z = (long)pWall->zz1;
+						pXYZ[0].z = pWall->z1;
+						pXYZ[3].z = pWall->zz1;
 					}
 
-					pXYZ[1].z = (long)pWall->z0;
-					pXYZ[2].z = (long)pWall->zz0;
+					pXYZ[1].z = pWall->z0;
+					pXYZ[2].z = pWall->zz0;
 
 					if (pSideDef->flags & WF_BELOW_TOPDOWN)
 						drawTopDown = 1;
@@ -5418,10 +5418,10 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 
 				case D3DRENDER_WALL_ABOVE:
 				{
-					pXYZ[0].z = (long)pWall->z3;
-					pXYZ[3].z = (long)pWall->zz3;
-					pXYZ[1].z = (long)pWall->z2;
-					pXYZ[2].z = (long)pWall->zz2;
+					pXYZ[0].z = pWall->z3;
+					pXYZ[3].z = pWall->zz3;
+					pXYZ[1].z = pWall->z2;
+					pXYZ[2].z = pWall->zz2;
 
 					if (pSideDef->flags & WF_ABOVE_BOTTOMUP)
 						drawTopDown = 0;

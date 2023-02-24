@@ -97,6 +97,11 @@ static void SetMappingValues(SlopeData *slope );
 
 void MinimapUpdate(Draw3DParams *params, BSPnode *tree);
 
+static float epsilon = 0.0001f;
+inline bool isTiny(float f) {
+  return f < epsilon && f > -epsilon;
+}
+
 /*****************************************************************************/
 /*  Additions to BSP tree made on a per-frame basis.  For now,
  *  this includes only objects and projectiles.
@@ -151,7 +156,7 @@ BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
  */
 static Bool AddObject(BSPnode *tree, ObjectData *object)
 {
-   long side0, side1;
+   float side0, side1;
    BSPnode *pos, *neg;
    Bool res;
    
@@ -184,15 +189,15 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
 	 pos = tree->u.internal.pos_side;
 	 neg = tree->u.internal.neg_side;
 	 
-	 if (side0 == 0 && side1 == 0)
+	 if (isTiny(side0) && isTiny(side1))
 	    tree = (pos != NULL) ? pos : neg;
-	 else if (side0 >= 0 && side1 >= 0)
+	 else if (side0 >= epsilon && side1 >= epsilon)
 	   tree = pos;
-	 else if (side0 <= 0 && side1 <= 0)
+	 else if (side0 <= -epsilon && side1 <= -epsilon)
 	   tree = neg;
 	 else
 	 {   /* object segment crosses separator! */
-	    double f = ((double)side0) / (side0 - side1);
+      float f = side0 / (side0 - side1);
 	    long xmid = FloatToInt(object->x0 + f * (object->x1 - object->x0));
 	    long ymid = FloatToInt(object->y0 + f * (object->y1 - object->y0));
 	    ObjectData *copy;

@@ -1506,11 +1506,10 @@ int world_to_screen(float x0, float y0, float x1, float y1,
   
   /* make sure left and right are not both zero.  If they are,   */
   /* move them to a point that maps to the center of the screen. */
-  if (right0 <= 0.001 && right0 >= -0.001)
+  if (right0 < 1.0f && right0 >= -1.0f)
      right0 = 1.0f;
-  if (right1 <= 0.001 && right1 >= -0.001)
-     right1 = 1.0f;
-  
+  if (right1 < 1.0f && right1 >= -1.0f)
+     right1 = 1.0f;  
   if (left0 < 0)
   {
      if (left1 < 0)
@@ -4260,22 +4259,21 @@ static void SetMappingValues(SlopeData *slope ) {
     // the origin to the viewer position and rotating by viewer angle. 
     // center_a & b happen to be the Cos & Sin of the viewing angle multiplied
     // by FINENESS. BASE_DIF helps translate the results into FIXED_PRECISION
-    // units. (1<<(LOG_FINENESS+BASE_DIF-1)) is added to round instead of trunc
-    // in final divide. x & y values are multiplied by VIEWER_DISTANCE to
+    // units.  x & y values are multiplied by VIEWER_DISTANCE to
     // convert them to pixel units.
     
-    v0.z = (long)((slope->p0.x - viewer_x) * center_a + (slope->p0.y - viewer_y) * center_b + (1<<(LOG_FINENESS+BASE_DIF-1)))>>(LOG_FINENESS+BASE_DIF);
-    v0.x = (VIEWER_DISTANCE * ((long)((slope->p0.x - viewer_x) * -center_b + (slope->p0.y - viewer_y) * center_a + (1<<(LOG_FINENESS-1)))>>LOG_FINENESS) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-    v0.y = (long)(VIEWER_DISTANCE * (slope->p0.z - viewer_height) + (1<<(BASE_DIF-1)))>>BASE_DIF;
+    v0.z = ((slope->p0.x - viewer_x) * center_a + (slope->p0.y - viewer_y) * center_b) / FINENESS / BASE_DIF_FACTOR;
+    v0.x = (VIEWER_DISTANCE * (((slope->p0.x - viewer_x) * -center_b + (slope->p0.y - viewer_y) * center_a))) / FINENESS / BASE_DIF_FACTOR;
+    v0.y = (VIEWER_DISTANCE * (slope->p0.z - viewer_height)) / BASE_DIF_FACTOR;
 
-    v1.z = (long)((slope->p1.x - viewer_x) * center_a + (slope->p1.y - viewer_y) * center_b + (1<<(LOG_FINENESS+BASE_DIF-1)))>>(LOG_FINENESS+BASE_DIF);
-    v1.x = (VIEWER_DISTANCE * ((long)((slope->p1.x - viewer_x) * -center_b + (slope->p1.y - viewer_y) * center_a + (1<<(LOG_FINENESS-1)))>>LOG_FINENESS) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-    v1.y = (long)(VIEWER_DISTANCE * (slope->p1.z - viewer_height) + (1<<(BASE_DIF-1)))>>BASE_DIF;
+    v1.z = ((slope->p1.x - viewer_x) * center_a + (slope->p1.y - viewer_y) * center_b) / FINENESS / BASE_DIF_FACTOR;
+    v1.x = (VIEWER_DISTANCE * (((slope->p1.x - viewer_x) * -center_b + (slope->p1.y - viewer_y) * center_a))) / FINENESS / BASE_DIF_FACTOR;
+    v1.y = (VIEWER_DISTANCE * (slope->p1.z - viewer_height)) / BASE_DIF_FACTOR;
 
-    v2.z = (long)((slope->p2.x - viewer_x) * center_a + (slope->p2.y - viewer_y) * center_b + (1<<(LOG_FINENESS+BASE_DIF-1)))>>(LOG_FINENESS+BASE_DIF);
-    v2.x = (VIEWER_DISTANCE * ((long)((slope->p2.x - viewer_x) * -center_b + (slope->p2.y - viewer_y) * center_a + (1<<(LOG_FINENESS-1)))>>LOG_FINENESS) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-    v2.y = (long)(VIEWER_DISTANCE * (slope->p2.z - viewer_height) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-
+    v2.z = ((slope->p2.x - viewer_x) * center_a + (slope->p2.y - viewer_y) * center_b) / FINENESS / BASE_DIF_FACTOR;
+    v2.x = (VIEWER_DISTANCE * (((slope->p2.x - viewer_x) * -center_b + (slope->p2.y - viewer_y) * center_a))) / FINENESS / BASE_DIF_FACTOR;
+    v2.y = (VIEWER_DISTANCE * (slope->p2.z - viewer_height)) / BASE_DIF_FACTOR;
+    
     // now generate basis vectors for texture transform
     
     m.x = v1.x - v0.x;
@@ -4289,24 +4287,23 @@ static void SetMappingValues(SlopeData *slope ) {
     // h, v, & o vectors express relation between texture coordinates 
     // and pixel coordinates
     
-    slope->h.x = fpMul(v0.y, m.z) - fpMul(v0.z, m.y);
-    slope->h.y = fpMul(v0.y, n.z) - fpMul(v0.z, n.y);
-    slope->h.z = fpMul(n.y, m.z) - fpMul(n.z, m.y);
+    slope->h.x = (v0.y * m.z - v0.z * m.y) / FINENESS;
+    slope->h.y = (v0.y * n.z - v0.z * n.y) / FINENESS;
+    slope->h.z = (n.y * m.z - n.z * m.y) / FINENESS;
 
-    slope->v.x = fpMul(v0.z, m.x) - fpMul(v0.x, m.z);
-    slope->v.y = fpMul(v0.z, n.x) - fpMul(v0.x, n.z);
-    slope->v.z = fpMul(n.z, m.x) - fpMul(n.x, m.z);
+    slope->v.x = (v0.z * m.x - v0.x * m.z) / FINENESS;
+    slope->v.y = (v0.z * n.x - v0.x * n.z) / FINENESS;
+    slope->v.z = (n.z * m.x - n.x * m.z) / FINENESS;
 
-    slope->o.x = fpMul(v0.x, m.y) - fpMul(v0.y, m.x);
-    slope->o.y = fpMul(v0.x, n.y) - fpMul(v0.y, n.x);
-    slope->o.z = fpMul(n.x, m.y) - fpMul(n.y, m.x);
+    slope->o.x = (v0.x * m.y - v0.y * m.x) / FINENESS;
+    slope->o.y = (v0.x * n.y - v0.y * n.x) / FINENESS;
+    slope->o.z = (n.x * m.y - n.y * m.x) / FINENESS;
     
     // save these for calculating distance from viewer
     // in terms of u & v
     slope->z_du = m.z;
     slope->z_dv = n.z;
     slope->z0 = v0.z;
-
 }
 
 /**********************************************************************

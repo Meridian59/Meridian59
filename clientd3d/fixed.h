@@ -58,7 +58,7 @@ __inline int FloatToInt(float val)
 // difference between fixed point precision & FINENESS
 // (fails utterly if fixed precision is larger)
 #define BASE_DIF (LOG_FINENESS-FIXED_POINT_PRECISION)
-
+#define BASE_DIF_FACTOR (1 << BASE_DIF)
 
 long mulDiv(long value, long mulBy, long divBy);
 FixedPoint fpDiv(FixedPoint d1, FixedPoint d2);

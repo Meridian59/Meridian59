@@ -756,9 +756,9 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
 	  norm_size = sqrt(a*a + b*b);
       }
 
-      // normalize a & b (w.round to closest int)
-      a = ((a * FINENESS)+(norm_size / 2))/norm_size;
-      b = ((b * FINENESS)+(norm_size / 2))/norm_size;
+      // normalize a & b
+      a = (a * FINENESS)/norm_size;
+      b = (b * FINENESS)/norm_size;
       
       inode->separator.a = a;
       inode->separator.b = b;

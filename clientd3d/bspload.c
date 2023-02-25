@@ -455,7 +455,7 @@ Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
 FixedPoint V3SquaredLength(Vector3D *a) {
     FixedPoint s2;
 
-    s2 = fpSquare(a->x) + fpSquare(a->y) + fpSquare(a->z);
+    s2 = (a->x * a->x + a->y * a->y + a->z * a->z) / FIXED_ONE;
     
     return(s2);
 }
@@ -492,9 +492,9 @@ Vector3D *V3Scale(Vector3D *v, FixedPoint newlen) {
     len = V3Length(v);
     
     if (len != 0.0) {
-	v->x = mulDiv(v->x,newlen,len);
-	v->y = mulDiv(v->y,newlen,len);
-	v->z = mulDiv(v->z,newlen,len);
+      v->x = v->x * newlen / len;
+      v->y = v->y * newlen / len;
+      v->z = v->z * newlen / len;
     }
     return(v);
 }

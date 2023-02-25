@@ -30,15 +30,6 @@ __inline FixedPoint Dbl2FP(double val)
    return tempFP;
 }
 
-__inline long Dbl2Long(double val)
-{
-   __asm {
-      fld   val;
-      fistp dword ptr tempLong;
-   }
-   return tempLong;
-}
-
 __inline int FloatToInt(float val)
 {
    __asm {
@@ -60,18 +51,10 @@ __inline int FloatToInt(float val)
 #define BASE_DIF (LOG_FINENESS-FIXED_POINT_PRECISION)
 #define BASE_DIF_FACTOR (1 << BASE_DIF)
 
-long mulDiv(long value, long mulBy, long divBy);
 FixedPoint fpDiv(FixedPoint d1, FixedPoint d2);
 FixedPoint fpMul(FixedPoint m1, FixedPoint m2);
-FixedPoint fpInverse(FixedPoint x);
-FixedPoint fpSquare(FixedPoint x);
-FixedPoint fpSqrtFast(FixedPoint x);
-FixedPoint fpSqrtSlow(FixedPoint x);
 FixedPoint fpSqrtSlowest(FixedPoint x);
 FixedPoint fpSqrt(FixedPoint x);
 
 int intATan2(int dy, int dx);
-long GetLongSqrt(long value);
-float GetFloatSqrt(float value);
 int Distance(int dx, int dy);
-BOOL IsPower2(int val);

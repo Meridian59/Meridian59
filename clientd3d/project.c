@@ -94,7 +94,7 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
       p->motion.increment = 1.0;
    else 
    {
-      distance = GetLongSqrt(dx * dx + dy * dy + dz * dz) / FINENESS;
+      distance = sqrtf(dx * dx + dy * dy + dz * dz) / FINENESS;
       p->motion.increment = ((float) speed) / 1000.0 / distance;
    }
 

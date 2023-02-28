@@ -53,8 +53,6 @@ __inline int FloatToInt(float val)
 
 FixedPoint fpDiv(FixedPoint d1, FixedPoint d2);
 FixedPoint fpMul(FixedPoint m1, FixedPoint m2);
-FixedPoint fpSqrtSlowest(FixedPoint x);
-FixedPoint fpSqrt(FixedPoint x);
 
 int intATan2(int dy, int dx);
 int Distance(int dx, int dy);

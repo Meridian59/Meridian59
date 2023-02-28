@@ -57,48 +57,9 @@ FixedPoint fpMul(FixedPoint m1, FixedPoint m2)
    }
 }
 
-//----------------------------------------------
-//
-// Calculate x*x in FixedPoint
-//   This is faster than using FixedMul.
-// This is faster than using FixedMul for squares.
-
-FixedPoint fpSquare(FixedPoint x) 
-{
-   __asm 
-   {
-      mov   eax,x;
-      imul  eax;
-      add   eax, FIXED_ONE_HALF;
-      adc   edx, 0;
-      shrd  eax, edx, FIXED_POINT_PRECISION;
-   }
-}
-
-//----------------------------------------------
-//
-// Calculate square root of x in FixedPoint
-//   slowest highest precision version
-//    use this for now...
-//
-FixedPoint fpSqrtSlowest(FixedPoint x) 
-{
-   double r = FIXED_TO_DOUBLE(x);
-
-   r = sqrt(r);
-   x = DOUBLE_TO_FIXED(r);
-
-   return(x);
-}
-
 int intATan2(int dy, int dx)
 {
    return RadToDeg(atan2((float) dy,dx));
-}
-
-FixedPoint fpSqrt(FixedPoint x)
-{
-   return fpSqrtSlowest(x);
 }
 
 int Distance(int dx, int dy)

@@ -66,7 +66,7 @@ static long center_a,center_b;
 static long left_a,left_b,right_a,right_b;
 
 /* return distance along viewer sight line */
-#define GetDistance(x,y) ((center_a * (x) + center_b * (y)) / FINENESS)
+#define GetDistance(x,y) ((center_a * (x) + center_b * (y)) / (1 << (FIX_DECIMAL-6)))
 
 static int world_width = 3328;
 
@@ -75,7 +75,7 @@ static ObjectData objectdata[MAXOBJECTS];
 static long nobjects;
 
 /* Hold info on items (walls, ceilings, floors, objects) to be drawn */
-#define MAX_ITEMS 1600L
+#define MAX_ITEMS 2400L
 DrawItem drawdata[MAX_ITEMS];
 long nitems;
 
@@ -94,8 +94,6 @@ static int background_cones = MAX_ITEMS;
 static void doDrawWall(DrawWallStruct *wall, ViewCone *c);
 static void doDrawBackground(ViewCone *c);
 static void SetMappingValues(SlopeData *slope );
-
-void MinimapUpdate(Draw3DParams *params, BSPnode *tree);
 
 static float epsilon = 0.0001f;
 inline bool isTiny(float f) {
@@ -244,7 +242,7 @@ long GetFloorHeight(long x, long y, Sector *sector) {
     if (sector->sloped_floor == (SlopeData *)NULL)
 	return sector->floor_height;
     else
-	return (-sector->sloped_floor->plane.a*x - sector->sloped_floor->plane.b*y - sector->sloped_floor->plane.d)/sector->sloped_floor->plane.c;
+      return roundf((-sector->sloped_floor->plane.a*x - sector->sloped_floor->plane.b*y - sector->sloped_floor->plane.d)/sector->sloped_floor->plane.c);
 }
 
 /***************************************************************************
@@ -260,7 +258,7 @@ long GetCeilingHeight(long x, long y, Sector *sector) {
     if (sector->sloped_ceiling == (SlopeData *)NULL)
 	return sector->ceiling_height;
     else
-	return (-sector->sloped_ceiling->plane.a*x - sector->sloped_ceiling->plane.b*y - sector->sloped_ceiling->plane.d)/sector->sloped_ceiling->plane.c;
+      return roundf((-sector->sloped_ceiling->plane.a*x - sector->sloped_ceiling->plane.b*y - sector->sloped_ceiling->plane.d)/sector->sloped_ceiling->plane.c);
 }
 
 /*****************************************************************************/
@@ -507,8 +505,8 @@ static void AddObjects(room_type *room)
       d->ncones_ptr    = &d->ncones;
 
       /* set center field */
-      a = (left_a * dx + left_b * dy) / FINENESS;
-      b = (right_a * dx + right_b * dy) / FINENESS;
+      a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
+      b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (AddObjects) %ld\n",a+b));
@@ -2290,8 +2288,8 @@ static void WalkObjects(ObjectData *objects)
       
       x = object->x0 - viewer_x;
       y = object->y0 - viewer_y;
-      a = (left_a * x + left_b * y) / FINENESS;
-      b = (right_a * x + right_b * y) / FINENESS;
+      a = (left_a * x + left_b * y) >> (FIX_DECIMAL - 6);
+      b = (right_a * x + right_b * y) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (WalkObjects(1)) %ld\n",a+b));
@@ -2301,8 +2299,8 @@ static void WalkObjects(ObjectData *objects)
       
       x = object->x1 - viewer_x;
       y = object->y1 - viewer_y;
-      a = (left_a * x + left_b * y) / FINENESS;
-      b = (right_a * x + right_b * y) / FINENESS;
+      a = (left_a * x + left_b * y) >> (FIX_DECIMAL - 6);
+      b = (right_a * x + right_b * y) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (WalkObjects(2)) %ld\n",a+b));
@@ -2713,37 +2711,6 @@ static void WalkBSPtree(BSPnode *tree)
    }
 }
 
-void MinimapUpdate(Draw3DParams *params, BSPnode *tree)
-{
-/*	viewer_x = params->viewer_x;
-	viewer_y = params->viewer_y;
-	viewer_angle = params->viewer_angle;
-	viewer_height = params->viewer_height;
-	area.cx = min(params->width  / params->stretchfactor, MAXX);
-	area.cy = min(params->height / params->stretchfactor, MAXY);
-
-	// Force size to be even
-	area.cy = area.cy & ~1;  
-	area.cx = area.cx & ~1;
-	screen_width = area.cx;
-	screen_width2 = area.cx / 2;
-
-	// find equations that bound viewing frustum
-	// keep 10 = FIX_DECIMAL-6 bits of accuracy
-	center_a = COS(viewer_angle) >> 6;
-	center_b = SIN(viewer_angle) >> 6;
-
-	left_a = -center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
-	left_b =  center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
-
-	right_a =  center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
-	right_b = -center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
-
-	horizon = area.cy / 2 + PlayerGetHeightOffset();
-
-	init_cone_tree();
-	WalkBSPtree(tree);*/
-}
 
 /*****************************************************************
  * Routines to draw object list, back to front.  One routine for
@@ -3079,9 +3046,9 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       z1 = (a * x1 + b * y1) / FINENESS;
       
       if (z0 > 0)
-	 z0 = 0;
+	 z0 = 0.0f;
       if (z1 <= 0)
-	 z1 = 1;
+	 z1 = 1.0f;
 
       f = ((-z0) * (FINENESS * 4)) / (z1 - z0);
       if (f < oldf)
@@ -3091,7 +3058,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       // Compute extent of wall on screen
       d = d0 + (((d1-d0)*f) / (FINENESS * 4));
       if (d <= 1.0)
-	d = 1.0;
+	d = 1.0f;
 
       rowstart = horizon + ((viewer_height - top) << LOG_VIEWER_DISTANCE) / d;
       rowend = horizon + ((viewer_height - bottom) << LOG_VIEWER_DISTANCE) / d;
@@ -4248,8 +4215,7 @@ static Bool check_viewer_height(BSPnode *tree)
  * an explanation of the math involved.
  */
 static void SetMappingValues(SlopeData *slope ) {
-
-    Pnt3D v0; // Texture enpoints in un-projected screen space (view space?)
+    Pnt3D v0; // Texture endpoints in un-projected screen space (view space?)
     Pnt3D v1;
     Pnt3D v2;
     Pnt3D m;  // Basis vectors in un-projected screen space (view space?)

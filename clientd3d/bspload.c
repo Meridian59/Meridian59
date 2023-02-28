@@ -451,21 +451,12 @@ Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
 // These vector math functions are just a little bit of pork to make
 //  setting up the slope info records easier.
 	
-/* returns squared length of input vector */	
-FixedPoint V3SquaredLength(Vector3D *a) {
-    FixedPoint s2;
-
-    s2 = (a->x * a->x + a->y * a->y + a->z * a->z) / FIXED_ONE;
-    
-    return(s2);
-}
-
 /* returns length of input vector */
-FixedPoint V3Length(Vector3D *a) 
+float V3Length(Vector3D *a) 
 {
-   FixedPoint s2 = V3SquaredLength(a);
-   FixedPoint s = fpSqrt(s2);
-   return(s);
+  float lenSquared = (a->x * a->x + a->y * a->y + a->z * a->z);
+  float s = sqrt(lenSquared);
+  return(s);
 }
 
 /* return vector sum c = a+b */
@@ -479,15 +470,15 @@ Vector3D *V3Add(Vector3D *a, Vector3D *b, Vector3D *c) {
 
 /* return the cross product c = a cross b */
 Vector3D *V3Cross(Vector3D *a, Vector3D *b, Vector3D *c) {
-    c->x = fpMul(a->y, b->z) - fpMul(a->z, b->y);
-    c->y = fpMul(a->z, b->x) - fpMul(a->x, b->z);
-    c->z = fpMul(a->x, b->y) - fpMul(a->y, b->x);
-    return(c);
+  c->x = ((a->y * b->z) - (a->z * b->y)) / FIXED_ONE;
+  c->y = ((a->z * b->x) - (a->x * b->z)) / FIXED_ONE;
+  c->z = ((a->x * b->y) - (a->y * b->x)) / FIXED_ONE;
+  return(c);
 }
 
 /* scales the input vector to the new length and returns it */
-Vector3D *V3Scale(Vector3D *v, FixedPoint newlen) {
-    FixedPoint len;
+Vector3D *V3Scale(Vector3D *v, float newlen) {
+    float len;
     
     len = V3Length(v);
     
@@ -545,8 +536,10 @@ SlopeData *LoadSlopeInfo(file_node *f) {
     }
     
     // load x & y of texture origin
-    if (CliMappedFileRead(f, &new_slope->p0.x, 4) != 4) return (SlopeData *)NULL;
-    if (CliMappedFileRead(f, &new_slope->p0.y, 4) != 4) return (SlopeData *)NULL;
+    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
+    new_slope->p0.x = readValue(buf, room_version);
+    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
+    new_slope->p0.y = readValue(buf, room_version);
     
     // calculate z of texture origin from x, y, and plane equation
     new_slope->p0.z = (-new_slope->plane.a*new_slope->p0.x - new_slope->plane.b*new_slope->p0.y - new_slope->plane.d)/new_slope->plane.c;

@@ -832,7 +832,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		// this pass is a gigantic hack used to cover up the cracks
 		// caused by all the t-junctions in the old geometry.  the entire world is drawn
 		// in wireframe, with zwrite disabled.  welcome to my hell
-    // XXX Should be disabled if room version > 12
+    // XXX Should be disabled if room version > 12?
 		if (1)
 		{
 			gWireframe = TRUE;

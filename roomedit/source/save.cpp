@@ -53,6 +53,13 @@ void ShowProgress (int objtype)
 }
 
 
+// Reinterpret bit pattern of f as an int.  Needed because the security field
+// is based on interpreting the field as an int in old room versions, and having
+// two different security mechanisms would have been a pain.
+static int ftoi(float f) {
+  return *((int *) &f);
+}
+
 /***************************************************************************/
 /*
  * NumberNodes:  Fill in num fields of nodes in tree, so that the
@@ -87,7 +94,7 @@ void NumberNodes(BSPTree tree)
  */
 void SaveNodes(FILE *file, BSPTree tree)
 {
-   int temp, i;
+   int i;
    WallData *wall;
    BYTE byte;
    BSPinternal *inode;
@@ -115,7 +122,7 @@ void SaveNodes(FILE *file, BSPTree tree)
       WriteBytes(file, &inode->separator.b, 4);
       WriteBytes(file, &inode->separator.c, 4);
 
-      security += inode->separator.a + inode->separator.b + inode->separator.c;
+      security += ftoi(inode->separator.a) + ftoi(inode->separator.b) + ftoi(inode->separator.c);
       
       // Node numbers of children
       word = 0;
@@ -157,12 +164,12 @@ void SaveNodes(FILE *file, BSPTree tree)
 
       for (i=0; i < num_points; i++)
       {
-	 temp = leaf->poly.p[i].x;
-	 WriteBytes(file, &temp, 4);
-	 security += temp;
-	 temp = leaf->poly.p[i].y;
-	 WriteBytes(file, &temp, 4);
-	 security += temp;
+        float temp = leaf->poly.p[i].x;
+        WriteBytes(file, &temp, 4);
+        security += ftoi(temp);
+        temp = leaf->poly.p[i].y;
+        WriteBytes(file, &temp, 4);
+        security += ftoi(temp);
       }
       break;
    }
@@ -214,11 +221,11 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       WriteBytes(file, &wall->y0, 4);
       WriteBytes(file, &wall->x1, 4);
       WriteBytes(file, &wall->y1, 4);
-      security += wall->x0 + wall->y0 + wall->x1 + wall->y1;
+      security += ftoi(wall->x0) + ftoi(wall->y0) + ftoi(wall->x1) + ftoi(wall->y1);
 
       // Length of wall
-      word = wall->length;
-      WriteBytes(file, &word, 2);
+      word = wall->length; 
+      WriteBytes(file, &wall->length, 4);
 
       // Texture offsets
       word = wall->pos_xoffset;
@@ -930,10 +937,10 @@ void ComputeSlopeInfo(SlopeInfo *info, int floor)
 
    assert(ucrossv != 0.0);
 
-   info->plane.a = (int) (uv[0] * FINENESS / ucrossv);
-   info->plane.b = (int) (uv[1] * FINENESS / ucrossv);
-   info->plane.c = (int) (uv[2] * FINENESS / ucrossv);
-   info->plane.d = (int) - (info->plane.a * p[0].x + info->plane.b * p[0].y +
+   info->plane.a = (uv[0] * FINENESS / ucrossv);
+   info->plane.b = (uv[1] * FINENESS / ucrossv);
+   info->plane.c = (uv[2] * FINENESS / ucrossv);
+   info->plane.d = -(info->plane.a * p[0].x + info->plane.b * p[0].y +
 			  info->plane.c * p[0].z);
 
    if (floor != 0) { //floor

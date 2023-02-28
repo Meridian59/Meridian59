@@ -31,7 +31,7 @@ static int room_version;     // Version of room file we're reading
 static int security;         // Room security value, calculated as room is loaded
 
 static Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version);
-static Bool LoadWalls(file_node *f, room_type *room, int num_walls);
+static Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version);
 static Bool LoadSectors(file_node *f, room_type *room, int num_sectors);
 static Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
 static Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
@@ -122,7 +122,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    // Read walls
    MappedFileGoto(&f, wall_pos);
    if (CliMappedFileRead(&f, &num_walls, 2) != 2) { MappedFileClose(&f); return False; }
-   if (LoadWalls(&f, room, num_walls) == False) 
+   if (LoadWalls(&f, room, num_walls, room_version) == False) 
    { 
       debug(("Failure loading %d walls\n", num_walls));
       MappedFileClose(&f); 
@@ -166,7 +166,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    }
 
    security ^= 0x89ab786c;
-   if (security != room->security)
+   if (config.security && security != room->security)
    {
       debug(("Room security mismatch (got %d, expecting %d)!\n", security, room->security));
       BSPRoomFree(room);
@@ -335,7 +335,7 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
  * LoadWalls:  Load walls, and set global walls variable to array of walls.
  *   Return True on success.
  */
-Bool LoadWalls(file_node *f, room_type *room, int num_walls)
+Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
 {
    int i, size;
    WORD word;
@@ -372,9 +372,13 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls)
       wall->y1 = readValue(buf, room_version);
       security += *((int *) buf);
       
-      // Get wall length
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
-      wall->length = word;  // XXX Should probably be saved as 4 byte float
+      // Get wall length -- used to be 2 byte int, now 4 byte float
+      if (room_version < 13) {
+        if (CliMappedFileRead(f, &word, 2) != 2) return False;
+        wall->length = word;
+      } else {
+        if (CliMappedFileRead(f, &wall->length, 4) != 4) return False;
+      }
       
       // Get texture offsets
       if (CliMappedFileRead(f, &wall->pos_xoffset, 2) != 2) return False;
@@ -911,7 +915,7 @@ void BSPDumpTree(BSPnode *tree, int level)
       debug(("%sPolygon has %d points: ", indent, leaf->poly.npts));
       for (i=0; i < leaf->poly.npts; i++)
       {
-	 debug(("(%d %d) ", leaf->poly.p[i].x, leaf->poly.p[i].y));
+	 debug(("(%f %f) ", leaf->poly.p[i].x, leaf->poly.p[i].y));
       }
       debug(("\n"));
       return;
@@ -919,15 +923,15 @@ void BSPDumpTree(BSPnode *tree, int level)
    case BSPinternaltype:
       node = &tree->u.internal;
       
-      debug(("%sBounding box = (%d %d) (%d %d)\n", indent, 
+      debug(("%sBounding box = (%f %f) (%f %f)\n", indent, 
 	      tree->bbox.x0, tree->bbox.y0, 
 	      tree->bbox.x1, tree->bbox.y1));
-      debug(("%sPlane (a, b, c) = (%d %d %d):\n", indent, node->separator.a,
+      debug(("%sPlane (a, b, c) = (%f %f %f):\n", indent, node->separator.a,
 	      node->separator.b, node->separator.c));
       debug(("%sWalls:\n", indent));
       for (wall = node->walls_in_plane; wall != NULL; wall = wall->next)
       {
-	 debug(("%s   (%d %d)-(%d %d) ", indent, 
+	 debug(("%s   (%f %f)-(%f %f) ", indent, 
 		 wall->x0, wall->y0, 
 		 wall->x1, wall->y1));
 	 debug((" z = (%d %d %d %d), +x=%d, -x=%d\n", 

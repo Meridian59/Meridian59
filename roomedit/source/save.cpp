@@ -801,7 +801,8 @@ void WriteSlopeInfo(FILE *file, SlopeInfo *info, int floor)
 {
    int i, angle;
    SHORT x, y, z, v;
-
+   float ftemp;
+   
    ComputeSlopeInfo(info, floor); // compute slope needs to know whether its
                                   // a floor or a ceiling
    
@@ -809,8 +810,10 @@ void WriteSlopeInfo(FILE *file, SlopeInfo *info, int floor)
    WriteBytes(file, &info->plane.b, 4);
    WriteBytes(file, &info->plane.c, 4);
    WriteBytes(file, &info->plane.d, 4);
-   WriteBytes(file, &info->x, 4);
-   WriteBytes(file, &info->y, 4);
+   ftemp = info->x;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->y;
+   WriteBytes(file, &ftemp, 4);
    angle = info->angle * NUMDEGREES / 360;
    WriteBytes(file, &angle, 4);
    for (i=0; i < 3; i++)

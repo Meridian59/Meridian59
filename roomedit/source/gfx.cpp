@@ -177,7 +177,7 @@ USHORT ComputeAngle (SHORT dx, SHORT dy)
 
 USHORT ComputeDist (SHORT dx, SHORT dy)
 {
-   return (USHORT) round(hypot( (double) dx, (double) dy) + 0.5);
+   return (USHORT) round(hypot( (double) dx, (double) dy));
    /* Yes, I know this function could be in another file, but */
    /* this is the only source file that includes <math.h>...  */
 }

@@ -182,7 +182,7 @@ USHORT ComputeDist (SHORT dx, SHORT dy)
    /* this is the only source file that includes <math.h>...  */
 }
 
-float ComputeDistFloat(float dx, float dy)
+double ComputeDistDouble(double dx, double dy)
 {
    return hypot(dx, dy);
 }

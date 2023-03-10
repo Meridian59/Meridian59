@@ -26,11 +26,11 @@ static int  BSPSwapScroll(int direction);
         or b is nonzero. Now that we use doubles, this just reduces b to a
         small number, and scales a accordingly.
 */
-float GCD(float a, float b)
+double GCD(double a, double b)
 {
-   float temp;
+  double temp;
 
-   if (fabsf(a) < 1)
+   if (fabs(a) < 1)
       return ABS(b);
 
    a = ABS(a);
@@ -47,10 +47,10 @@ float GCD(float a, float b)
 /*
  * make a and b relatively prime.  Assumes that a is nonzero or b is nonzero.
  */
-void reduce(float *a, float *b)
+void reduce(double *a, double *b)
 {
-  float d = GCD(*a, *b);
-  if (d == 0)
+  double d = GCD(*a, *b);
+  if (d <= 0.001 && d >= -0.001)
      dprintf("reduce got 0, 0!\n");
   else
   {
@@ -58,7 +58,15 @@ void reduce(float *a, float *b)
      *b /= d;
   }
 }
-
+/*
+ * almost_equal: returns TRUE if the two doubles are essentially equal.
+ */
+Bool almost_equal(double a, double b)
+{
+   if (a - b <= 0.0001 && a - b >= -0.0001)
+      return TRUE;
+   return FALSE;
+}
 /*****************************************************************************/
 /*
  * BSPDumpWall
@@ -234,24 +242,24 @@ void BSPFreeNode(BSPnode *node)
  * BSPWallComputeLength:  Compute and return the length of the given wall.
  *   The units are 1 grid square = length 64.
  */
-float BSPWallComputeLength(WallData *wall)
+double BSPWallComputeLength(WallData *wall)
 {
-   float dx, dy;
+  double dx, dy;
    
    dx = (wall->x1 - wall->x0) / BLAK_FACTOR;
    dy = (wall->y1 - wall->y0) / BLAK_FACTOR;
-   return ComputeDistFloat(dx, dy);
+   return ComputeDistDouble(dx, dy);
 }
 /*****************************************************************************/
 /*
  * BSPGetLineEquationFromPoints:  Given two points wall, set the coefficients
  *   of the equation for the line containing the points.
  */
-void BSPGetLineEquationFromPoints(Pnt p1, Pnt p2, float *a, float *b, float *c)
+void BSPGetLineEquationFromPoints(Pnt p1, Pnt p2, double *a, double *b, double *c)
 {
    /* <dx,dy> is a vector from p1 to p2 */
-   float dx = p2.x - p1.x;
-   float dy = p2.y - p1.y;
+   double dx = p2.x - p1.x;
+   double dy = p2.y - p1.y;
    
    /* reduce to smallest vector possible in same direction */
    reduce(&dx, &dy);
@@ -269,7 +277,7 @@ void BSPGetLineEquationFromPoints(Pnt p1, Pnt p2, float *a, float *b, float *c)
  * BSPGetLineEquationFromWall:  Given a wall, set the coefficients
  *   of the equation for the line containing the wall.
  */
-void BSPGetLineEquationFromWall(WallData *wall, float *a, float *b, float *c)
+void BSPGetLineEquationFromWall(WallData *wall, double *a, double *b, double *c)
 {
    Pnt p1, p2;
 
@@ -284,9 +292,9 @@ void BSPGetLineEquationFromWall(WallData *wall, float *a, float *b, float *c)
  * BSPFindLineSide:   Find out which side of given wall the point is.
  *   Return 1 if on + side, -1 if on - side, 0 if on line containing wall.
  */
-int BSPFindLineSide(WallData *wall, float x, float y)
+int BSPFindLineSide(WallData *wall, double x, double y)
 {
-   float a, b, c;
+   double a, b, c;
    BSPGetLineEquationFromWall(wall, &a, &b, &c);
    return SGNDOUBLE(a * x + b * y + c);
 }
@@ -317,13 +325,13 @@ typedef enum {
  * intersection point if Inexpressible.  Returned point is guaranteed to be
  * on wall1.
  */
-IntersectionType BSPWallIntersection(WallData *wall1, WallData *wall2, float *x, float *y)
+IntersectionType BSPWallIntersection(WallData *wall1, WallData *wall2, double *x, double *y)
 {
-   float a,b,c;
-   float x0,y0,x1,y1;
-   float side0,side1;
-   float num,denom;
-   float dx,dy;
+   double a,b,c;
+   double x0,y0,x1,y1;
+   double side0,side1;
+   double num,denom;
+   double dx,dy;
    
    /* first, get line equation from first wall */
    BSPGetLineEquationFromWall(wall1, &a, &b, &c);
@@ -337,14 +345,14 @@ IntersectionType BSPWallIntersection(WallData *wall1, WallData *wall2, float *x,
    side0 = a*x0 + b*y0 + c;
    side1 = a*x1 + b*y1 + c;
 
-   if (side0 == 0 && side1 == 0)
+   if (almost_equal(side0,0.0) && almost_equal(side1,0.0))
       return Coincide;
-   if (side0 == 0)
+   if (almost_equal(side0, 0.0))
    {
       *x = x0; *y = y0;
       return FirstEndpoint;
    }
-   if (side1 == 0)
+   if (almost_equal(side1, 0.0))
    {
       *x = x1; *y = y1;
       return SecondEndpoint;
@@ -363,8 +371,6 @@ IntersectionType BSPWallIntersection(WallData *wall1, WallData *wall2, float *x,
       num = -side0;
       denom = side1 - side0;
    }
-   reduce(&num, &denom);
-   /* num/denom is between 0 and 1, exclusive */
    
    dx = x1 - x0;
    dy = y1 - y0;
@@ -389,7 +395,7 @@ WallData *BSPChooseRoot(WallDataList walls)
    for (root = walls; root != NULL; root = root->next)
    {
       int pos, neg, splits;
-      float a, b, c;
+      double a, b, c;
       int max_count;
 
       pos = 0;
@@ -409,8 +415,8 @@ WallData *BSPChooseRoot(WallDataList walls)
 	 // If both on same side, or one is on line, no split needed
 	 if (side0 * side1 >= 0)
 	 {
-	    // In plane of root?
-	    if (side0 == 0 && side1 == 0)
+     // In plane of root?
+     if (almost_equal(side0, 0.0) && almost_equal(side1, 0.0))
 	       continue;
 	
 	    // On + side of root?
@@ -474,7 +480,7 @@ void BSPUpdateSplit(WallData *wall1, WallData *wall2)
 void BSPFlipWall(WallData *wall)
 {
    int temp, posxoffset, negxoffset, posyoffset, negyoffset,temp1, temp2;
-   float ftemp;
+   double ftemp;
 
    SWAP(wall->pos_type, wall->neg_type, temp);
    SWAP(wall->pos_sector, wall->neg_sector, temp);
@@ -565,9 +571,9 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
 			   WallDataList *pos_walls, WallDataList *neg_walls)
 {
    int side0, side1;
-   float x, y;
-   float a, b, c;     // Coeffs in Ax + By + C = 0 for root
-   float a2,b2,c2;
+   double x, y;
+   double a, b, c;     // Coeffs in Ax + By + C = 0 for root
+   double a2,b2,c2;
    WallData *wall, *cur_wall, *neg_wall;
    
    *root_walls = *pos_walls = *neg_walls = NULL;
@@ -595,19 +601,14 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
       // If both on same side, or one is on line, no split needed
       if (side0 * side1 >= 0)
       {
-	 // In plane of root?
-	 if (side0 == 0 && side1 == 0)
-	 {
+        // In plane of root?
+        if (almost_equal(side0, 0.0) && almost_equal(side1, 0.0))
+        {
 	    /* we may need to reverse the wall */
 	    BSPGetLineEquationFromWall(wall, &a2, &b2, &c2);
-      long ra1, ra2, rb1, rb2;
-       ra1 = round(a);
-       ra2 = round(a2);
-       rb1 = round(b);
-       rb2 = round(b2);
-	    if (ra1 == ra2 && rb1 == rb2)
-	       ;          /* we're OK */
-	    else if (ra1 == -ra2 || rb1 == -rb2)
+      if (almost_equal(a, a2) && almost_equal(b,b2))
+        ;          /* we're OK */
+      else if (almost_equal(a,-a2) || almost_equal(b,-b2))
 	       BSPFlipWall(wall);
 	    else
 	       LogError("something is wacky in BSPSplitWalls! "
@@ -700,7 +701,7 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
 void BSPFindPolyBox(Poly *p, Box *b)
 {
    int i;
-   float minx, miny, maxx, maxy;
+   double minx, miny, maxx, maxy;
 
    if (p->npts == 0)
       LogError("BSPFindPolyBox got a polygon with 0 points!\n");
@@ -782,11 +783,11 @@ void BSPFindBoundingBoxes(BSPnode *tree)
  */
 Bool BSPSplitPoly(Poly *poly, WallData *wall, Poly *pos_poly, Poly *neg_poly)
 {
-  float a,b,c;
+  double a,b,c;
   int i,j;
   Poly tmp;
   WallData temp_wall;
-  float x,y, side;
+  double x,y, side;
   
   int intr[2];
   int intrcount;
@@ -806,7 +807,7 @@ Bool BSPSplitPoly(Poly *poly, WallData *wall, Poly *pos_poly, Poly *neg_poly)
       temp_wall.y0 = poly->p[i].y;
       temp_wall.x1 = poly->p[i+1].x;
       temp_wall.y1 = poly->p[i+1].y;
-      
+
       switch(BSPWallIntersection(wall, &temp_wall, &x, &y))
 	{
 	case NoIntersection:
@@ -978,7 +979,7 @@ BSPnode *BSPBuildNode(WallDataList walls, Poly *poly, int sector)
    WallDataList pos_walls, neg_walls, plane_walls;
    BSPnode *node;
    Poly pos_poly, neg_poly;
-   float a, b, c;
+   double a, b, c;
 #if 0
 	int i;
 #endif

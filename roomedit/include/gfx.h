@@ -115,7 +115,7 @@ void SetScaleMin ();
 
 USHORT ComputeAngle (SHORT, SHORT);
 USHORT ComputeDist (SHORT, SHORT);
-float ComputeDistFloat (float, float);
+double ComputeDistDouble (double, double);
 void InsertPolygonVertices (SHORT, SHORT, SHORT, SHORT);
 void RotateAndScaleCoords (SHORT *, SHORT *, double, double);
 

@@ -100,6 +100,7 @@ void SaveNodes(FILE *file, BSPTree tree)
    BSPinternal *inode;
    BSPleaf *leaf;
    WORD word;
+   float payload;
 
    if (tree == NULL)
       return;
@@ -118,11 +119,15 @@ void SaveNodes(FILE *file, BSPTree tree)
       // Write parent, then left child, then right child
       
       // Plane of node
-      WriteBytes(file, &inode->separator.a, 4);
-      WriteBytes(file, &inode->separator.b, 4);
-      WriteBytes(file, &inode->separator.c, 4);
-
-      security += ftoi(inode->separator.a) + ftoi(inode->separator.b) + ftoi(inode->separator.c);
+      payload = inode->separator.a;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = inode->separator.b;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = inode->separator.c;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
       
       // Node numbers of children
       word = 0;
@@ -180,10 +185,15 @@ void SaveNodes(FILE *file, BSPTree tree)
  */
 void SaveBoundingBox(FILE *file, Box *box)
 {
-   WriteBytes(file, &box->x0, 4);
-   WriteBytes(file, &box->y0, 4);
-   WriteBytes(file, &box->x1, 4);
-   WriteBytes(file, &box->y1, 4);
+   float payload;
+   payload = box->x0;
+   WriteBytes(file, &payload, 4);
+   payload = box->y0;
+   WriteBytes(file, &payload, 4);
+   payload = box->x1;
+   WriteBytes(file, &payload, 4);
+   payload = box->y1;
+   WriteBytes(file, &payload, 4);
 }
 /***************************************************************************/
 /*
@@ -199,6 +209,7 @@ void SaveClientWalls(FILE *file, BSPTree tree)
    BSPinternal *inode = &tree->u.internal;
    WallData *wall, *next_wall;
    WORD word;
+   float payload;
    
    for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
    {
@@ -217,15 +228,22 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       security += wall->pos_sidedef + wall->neg_sidedef;
 
       // Start and end of wall
-      WriteBytes(file, &wall->x0, 4);
-      WriteBytes(file, &wall->y0, 4);
-      WriteBytes(file, &wall->x1, 4);
-      WriteBytes(file, &wall->y1, 4);
-      security += ftoi(wall->x0) + ftoi(wall->y0) + ftoi(wall->x1) + ftoi(wall->y1);
+      payload = wall->x0;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = wall->y0;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = wall->x1;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = wall->y1;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
 
       // Length of wall
-      word = wall->length; 
-      WriteBytes(file, &wall->length, 4);
+      payload = wall->length; 
+      WriteBytes(file, &payload, 4);
 
       // Texture offsets
       word = wall->pos_xoffset;
@@ -805,11 +823,15 @@ void WriteSlopeInfo(FILE *file, SlopeInfo *info, int floor)
    
    ComputeSlopeInfo(info, floor); // compute slope needs to know whether its
                                   // a floor or a ceiling
-   
-   WriteBytes(file, &info->plane.a, 4);
-   WriteBytes(file, &info->plane.b, 4);
-   WriteBytes(file, &info->plane.c, 4);
-   WriteBytes(file, &info->plane.d, 4);
+
+   ftemp = info->plane.a;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->plane.b;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->plane.c;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->plane.d;
+   WriteBytes(file, &ftemp, 4);
    ftemp = info->x;
    WriteBytes(file, &ftemp, 4);
    ftemp = info->y;

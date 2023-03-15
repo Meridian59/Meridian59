@@ -488,7 +488,6 @@ void BSPFlipWall(WallData *wall)
    SWAP(wall->y0, wall->y1, ftemp);
 
    // Swap x offsets; need to recompute
-   // XXX Still not sure this is right
    posxoffset = wall->pos_xoffset;
    negxoffset = wall->neg_xoffset;
    posyoffset = wall->pos_yoffset;
@@ -980,9 +979,6 @@ BSPnode *BSPBuildNode(WallDataList walls, Poly *poly, int sector)
    BSPnode *node;
    Poly pos_poly, neg_poly;
    double a, b, c;
-#if 0
-	int i;
-#endif
 
 	// If empty polygon, there is nothing on this side of wall
 	// Also skip if no sector (= part of start boundingbox, but not of any sector)
@@ -1024,10 +1020,10 @@ BSPnode *BSPBuildNode(WallDataList walls, Poly *poly, int sector)
 
    node->u.internal.walls_in_plane = plane_walls;
    
-#if 0   
+#if 0
    dprintf("splitting: %d ", poly->npts);
-   for (i=0; i<=poly->npts; i++)
-     dprintf("(%d %d) ", poly->p[i].x, poly->p[i].y);
+   for (int i=0; i<=poly->npts; i++)
+     dprintf("(%f %f) ", poly->p[i].x, poly->p[i].y);
    dprintf("\n with ");
    BSPDumpWall(root);
 #endif
@@ -1038,11 +1034,11 @@ BSPnode *BSPBuildNode(WallDataList walls, Poly *poly, int sector)
 
 #if 0
    dprintf("positive: %d ", pos_poly.npts);
-   for (i=0; i<=pos_poly.npts; i++)
-     dprintf("(%d %d) ", pos_poly.p[i].x, pos_poly.p[i].y);
+   for (int i=0; i<=pos_poly.npts; i++)
+     dprintf("(%f %f) ", pos_poly.p[i].x, pos_poly.p[i].y);
    dprintf("negative: %d ", neg_poly.npts);
-   for (i=0; i<=neg_poly.npts; i++)
-     dprintf("(%d %d) ", neg_poly.p[i].x, neg_poly.p[i].y);
+   for (int i=0; i<=neg_poly.npts; i++)
+     dprintf("(%f %f) ", neg_poly.p[i].x, neg_poly.p[i].y);
    dprintf("\n\n");
 #endif
    

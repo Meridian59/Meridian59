@@ -166,9 +166,10 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    }
 
    security ^= 0x89ab786c;
-   if (config.security && security != room->security)
+   if (security != room->security)
    {
-      debug(("Room security mismatch (got %d, expecting %d)!\n", security, room->security));
+      debug(("Room security mismatch while loading (got %d, expecting %d)!\n",
+             security, room->security));
       BSPRoomFree(room);
       return False;
    }

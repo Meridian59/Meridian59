@@ -32,10 +32,6 @@
 #pragma hdrstop
 #include <time.h>
 
-#if 0
-	#include <ctl3d.h>
-#endif
-
 #ifndef __windeapp_h
 	#include "windeapp.h"		    // Definition of Application
 #endif
@@ -66,7 +62,7 @@
 //
 // Main window title
 //
-#define TITLE "BlakSton Room Editor version 2.0 (May 18, 2015)"
+#define TITLE "BlakSton Room Editor version 2.1 (March 1, 2023)"
 
 //
 // Generated help file.

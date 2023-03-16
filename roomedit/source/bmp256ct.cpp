@@ -562,7 +562,7 @@ void TBitmap256Control::BuildBitmapPalette (BOOL CreateNewPal)
 	{
 		pBitmapPalette->SetPaletteEntries ((WORD)0, (WORD)NbEntries, Entries);
 	}
-	delete Entries;
+	delete [] Entries;
 }
 
 

@@ -1050,7 +1050,8 @@ messages:
 
       oGuild = Send(who,@GetGuild);
 
-      if oGuild = poGuild_owner
+      if (oGuild = poGuild_owner
+         OR Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
          AND Send(oGuild,@GetRank,#who=who) >= RANK_SIR
       {
          return TRUE;

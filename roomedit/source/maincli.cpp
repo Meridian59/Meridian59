@@ -166,10 +166,6 @@ void TMainClient::CmFileOpenWad ()
 		// restore workingdirectory to folder of windeu32.exe
 		SetCurrentDirectory(workdir);
       
-#if 0
-		OpenPatchWad(FileData.FileName);
-		CloseUnusedWadFiles();
-#endif
 		// Sets a new client window (the editor) and destroy
 		// the old one (the main client)
 		TMainFrame *MainFrame =
@@ -511,23 +507,6 @@ void TMainClient::CmFileExit ()
 void TMainClient::CmEditorEdit ()
 {
    return; // We don't like this option ARK
-#if 0
-	char LevelName[9];
-
-	SET_HELP_CONTEXT(Edit_level);
-
-	// Executes the dialog box to get level number
-	if (TEpisodeMissionDialog (this, LevelName).Execute() == IDOK)
-	{
-		// Sets a new client window (the editor) and destroy
-		// the old one (the main client)
-		TMainFrame *MainFrame =
-			TYPESAFE_DOWNCAST (GetApplication()->GetMainWindow(), TMainFrame);
-		MainFrame->EditLevel (LevelName, FALSE) ;
-	}
-	RESTORE_HELP_CONTEXT();
-	return;		// 'this' is not valid anymore
-#endif
 }
 
 
@@ -542,10 +521,6 @@ void TMainClient::CmEditorCreate ()
 	SET_HELP_CONTEXT(Create_level);
 	// Executes the dialog box to get level number
 	
-#if 0
-	sprintf(LevelName, "temp.roo");
-	if (1)
-#endif
 	{
 		// Sets a new client window (the editor) and destroy
 		// the old one (the main client)

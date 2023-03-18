@@ -275,10 +275,6 @@ TPenColor16 *TMapDC::GetPenColor16(int color, int width, UINT style)
 		{
 			pen = LastPens[i];
 			LastPens[i]->HitCount = CallCount;
-#if 0
-			TRACE ("GetPenColor16() Cache hit: " << i << " (" <<
-				   Color16NameTab[LastPens[i]->color] << ")");
-#endif
 			break ;
 		}
 	}
@@ -297,14 +293,6 @@ TPenColor16 *TMapDC::GetPenColor16(int color, int width, UINT style)
 				break ;
 			}
 
-#if 0
-			TRACE ("GetPenColor16()      Replace Candidate" <<
-				   "i = " << i <<
-				   ", Color = " << Color16NameTab[LastPens[i]->color] <<
-				   ", HitCount = " << LastPens[i]->HitCount <<
-				   ", MinHitCount = " << MinHitCount);
-#endif
-
 			if ( LastPens[i]->HitCount < MinHitCount )
 			{
 				MinHitCount = LastPens[i]->HitCount;
@@ -312,14 +300,6 @@ TPenColor16 *TMapDC::GetPenColor16(int color, int width, UINT style)
 			}
 		}
 		assert (PenPos != -1);
-
-#if 0
-		TRACE ("GetPenColor16() Cache replace: " <<
-			   "PenPos = " << PenPos <<
-			   ", Color = " << (LastPens[PenPos] != NULL ? Color16NameTab[LastPens[PenPos]->color] : "NULL") <<
-			   ", MinHitCount = " << MinHitCount <<
-			   ", CallCount = " << CallCount);
-#endif
 
 		// Destroy old pen in cache
 		// NOTE:'delete' accepts 0 (and does nothing in that case)

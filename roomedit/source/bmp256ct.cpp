@@ -371,7 +371,6 @@ void TBitmap256Control::DisplayBitmap (TDC& dc, TRect &rect)
 	dc.RealizePalette();
 	dc.SetStretchBltMode (COLORONCOLOR);
 
-#if 1
 	TRect ZoomRect;
 	ZoomRect.left   = rect.left;
 	ZoomRect.top    = rect.top;
@@ -394,20 +393,7 @@ void TBitmap256Control::DisplayBitmap (TDC& dc, TRect &rect)
 					  DIBRect,
 					  pDIBits, *pDIBInfo,
 					  DIB_PAL_COLORS, SRCCOPY);
-#else
-	// Create memory DC and display bitmap
-	TMemoryDC mdc (dc);
-	mdc.SelectObject (*pBitmapPalette);
-	mdc.SelectObject (*pBitmap);
-	dc.StretchBlt(0, 0, ZoomXSize,   ZoomYSize,
-				  mdc,
-				  0, 0, BitmapXSize, BitmapYSize,
-				  SRCCOPY);
 
-	// Restore GDI objects
-	mdc.RestoreBitmap();
-	mdc.RestorePalette();
-#endif
 	dc.RestorePalette();
 }
 
@@ -579,22 +565,6 @@ void TBitmap256Control::BuildBitmap ()
 
 	// Create client DC
 	ConvertBitmapToDib();
-
-#if 0
-	LogMessage ("\nBitmap bits from pDIBits() (inversed line order !)\n");
-	for (y = BitmapYSize - 1 ; y >= 0 ; y--)
-	{
-		char msg[1024];
-
-		msg[0] = '\0';
-		for (x = 0 ; x < BitmapXSize ; x++)
-		{
-			wsprintf (&msg[strlen(msg)], "%02x ",
-					  ((char *)pDIBits)[y * ((BitmapXSize+3)& ~3) + x]);
-		}
-		LogMessage ("Y = %03d : %s\n", y, msg);
-	}
-#endif
 }
 
 
@@ -637,9 +607,6 @@ void TBitmap256Control::ConvertBitmapToDib()
 	pDIBits = ((BYTE *)pDIBInfo) + ((int)infoHeader.biSize + colorAlloc);
 
 	// Inverse the bits from the Bitmap to the DIB bits.
-#if 0
-	dc.GetDIBits (*pBitmap, 0, BitmapYSize, pDIBits, *pDIBInfo, DIB_PAL_COLORS);
-#else
 	// Set the DIB byte from pBitmapData with palette color mapping
 	BYTE *ptrData = pBitmapData;
 	SHORT xBytes       = (BitmapXSize + 3) & ~3;
@@ -655,7 +622,6 @@ void TBitmap256Control::ConvertBitmapToDib()
 			pDIBLineOffset++;
 		}
 	}
-#endif
 
 	// Set the INDEX of the DIB palette
 	WORD FAR *lpTable;

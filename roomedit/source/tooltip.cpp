@@ -114,27 +114,6 @@ void TTipControlBar::EvLButtonUp (UINT modKeys, const TPoint& point)
 	TControlBar::EvLButtonUp (modKeys, point);
 }
 
-#if 0
-UINT TTipControlBar::EvNCHitTest (TPoint& screenPt)
-{
-	// WM_NCHITTEST
-	TPoint point = screenPt;
-
-	ScreenToClient(point);
-	if (!Capture && !GadgetFromPoint (point))
-	{
-		// hide the tip window if mouse-button pressed
-		tooltip.HideTip ();
-
-		// hide the tip window if not over a gadget
-		return HTCAPTION;
-	}
-
-	return TControlBar::EvNCHitTest (screenPt);
-}
-#endif
-
-
 /////////////////////////////////////////////////////////////////////
 //                                                                 //
 //                                                                 //

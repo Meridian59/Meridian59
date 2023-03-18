@@ -313,15 +313,6 @@ void CleanupWindeu ()
 	ForgetWTextureInfo();
 	ForgetFTextureInfo();
 
-	// that's all, folks!
-	CloseWadFiles();
-
-  // Disabled 7/04 ARK
-//	UnloadKodObjects();
-//	UnloadKodRooms();
-//	SaveEntrances(EntranceData);
-//	CloseEntrances();
-
 	LogMessage( ": The end!\n\n\n");
 	CloseLog();
 }

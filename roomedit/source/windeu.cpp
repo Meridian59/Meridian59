@@ -113,6 +113,7 @@ char *BitmapDir = NULL;         /* Directory where bitmaps reside */
 char *BitmapSpec  = NULL;       /* Filespec of bitmap files */
 char *KodDir = NULL;
 char *ServerDir = NULL;
+char *RoomDir = NULL;
 char *EntranceData = NULL;
 
 // Grid info.
@@ -131,6 +132,7 @@ BOOL   GridShown  = FALSE;
 #define DEFAULT_BITMAP_SPEC     "grd*.bgf"
 #define DEFAULT_KOD_DIR				"..\\kod\\"
 #define DEFAULT_SERVER_DIR      	"..\\run\\server\\"
+#define DEFAULT_ROOM_DIR      	"..\\resource\\rooms\\"
 #define DEFAULT_ENTRANCE_FILE		"entrance.dat"
 
 char *DefaultWallTexture;		/* default normal wall texture */
@@ -201,6 +203,7 @@ OptDesc options[] =
 	{ "sc", "autoscroll",  	OPT_BOOLEAN,   NULL,   							NULL,  						&AutoScroll			},
 	{ "kod", "koddir",   	OPT_STRING,    NULL,								NULL,                   &KodDir			 	},
 	{ "svr", "serverdir",   OPT_STRING,    NULL,								NULL,                   &ServerDir			},
+	{ "roo", "roomdir",   OPT_STRING,    NULL,								NULL,                   &RoomDir			},
 	{ "ent", "entrances", 	OPT_STRING,		NULL,								NULL,							&EntranceData		},
 	{ NULL, NULL,          	OPT_END,       NULL,								NULL,                   NULL           	}
 };
@@ -249,6 +252,8 @@ void InitWindeu (int argc, char **argv, char *init_level)
 	strcpy (KodDir, DEFAULT_KOD_DIR);
 	ServerDir = (char *)GetMemory (strlen(DEFAULT_SERVER_DIR)+1);
 	strcpy (ServerDir, DEFAULT_SERVER_DIR);
+	RoomDir = (char *)GetMemory (strlen(DEFAULT_ROOM_DIR)+1);
+	strcpy (RoomDir, DEFAULT_ROOM_DIR);
 	EntranceData = (char*)GetMemory(strlen(DEFAULT_ENTRANCE_FILE)+1);
 	strcpy (EntranceData, DEFAULT_ENTRANCE_FILE);
 

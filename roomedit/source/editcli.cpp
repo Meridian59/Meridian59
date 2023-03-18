@@ -1678,29 +1678,10 @@ void TEditorClient::EvKeyDown (UINT key, UINT repeatCount, UINT flags)
 			Scroller->ScrollBy(0, -(long)repeatCount);
 			break;
 		case VK_ESCAPE:
-			// Ignore if "insert object" mode
-			if ( InsertingObject )
-				break;
-
-			// If there's map changes and user don't want to quit, return
-			if ( (MadeChanges || MadeMapChanges) &&
-				 MessageBox ("You have made changes.\n\n"
-							 "Are you sure you want to quit the editor?",
-							 "Quit editor",
-							 MB_YESNO | MB_DEFBUTTON2) == IDNO )
-			{
-				break;
-			}
-			// We cancel all changes made to the map.
-			// The SaveChanges function which will be called after
-			// the WM_CLOSE msg is received by the MainWindow
-			// won't ask the user to save the changes, since we mark
-			// here there were no.
-			MadeChanges = FALSE;
-			MadeMapChanges = FALSE;
-			// Send WM_CLOSE message to main frame
-			GetApplication()->GetMainWindow()->PostMessage(WM_CLOSE);
-			break;
+      // Unselect everything
+      HighlightSelection (TMapDC(this), EditMode, Selected);
+      ForgetSelection (&Selected);
+      break;
 	}
 
 	TLayoutWindow::EvKeyDown(key, repeatCount, flags);

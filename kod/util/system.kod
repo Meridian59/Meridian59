@@ -365,6 +365,7 @@ properties:
 
    plShrines = $
    plShrine_Powers = $
+   plShrine_Allegiances = $
 
    % Bonus spellpower set by admins for events.
    plBonusSpellpower = $
@@ -426,9 +427,8 @@ messages:
       Send(self,@RecreateAllBrains);
       Send(self,@RecreateLibrary);
       Send(self,@RecreateAllRooms);
-      % Creates the Faction games
       Send(self,@RecreateParliament);
-
+      Send(self,@RecreateShrineAllegiances);
       Send(self,@RecreateAssassinGame);
       Send(self,@RecreateQuestEngine);
       Send(self,@RecreateNodeAttack);
@@ -468,7 +468,6 @@ messages:
 
       Send(self,@RefigureAllAbilityTotals);
       Send(self,@RefigureAllAbilityTotals);
-      Send(self,@RecomputeShrineTotals);
       Send(self,@RecreateLearnAdvice);
 
       psTemp = CreateString();
@@ -524,6 +523,7 @@ messages:
       Send(self,@RecreateLibrary);
       Send(self,@RecreateAllRooms);
       Send(self,@RecreateAssassinGame);
+      Send(self,@RecreateShrineAllegiances);
       % The following two lines are handled in Parliament
       % Send(self,@RecreateTerritoryGame);
       % Send(self,@RecreateTokenGame);
@@ -624,7 +624,6 @@ messages:
       piRecreate_State = RECREATE_PHASE_FIVE;
 
       Send(self,@RecreateLearnAdvice);
-      Send(self,@RecomputeShrineTotals);
       Send(self,@RecreateMonsterTemplates);
       Send(self,@RecreateItemTemplates);
       Send(self,@RecreateMoneyTemplates);
@@ -2339,7 +2338,7 @@ messages:
    "CreateAllRoomsIfNew.\nUNSAFE to call from admin mode, as items"
    "in rooms lose state.  Use RecreateAll instead."
    {
-      local i, bFeast_Hall_Locked, oFeast_Hall;
+      local i, n, bFeast_Hall_Locked, oFeast_Hall;
 
       if plUsers_logged_on <> $
       {
@@ -2352,6 +2351,13 @@ messages:
       if oFeast_Hall <> $
       {
          bFeast_Hall_Locked = Send(oFeast_Hall, @IsLocked);
+      }
+
+      % Save shrine powers.
+      plShrine_Allegiances = $;
+      for n in plShrines
+      {
+         plShrine_Allegiances = Cons(Send(n,@GetAllegiance),plShrine_Allegiances);
       }
 
       if poParliament <> $
@@ -2716,6 +2722,30 @@ messages:
             Send(ShrineObj,@GotOffering,#what=what);
          }
       }
+
+      return;
+   }
+
+   RecreateShrineAllegiances()
+   {
+      % Shrines were recreated when rooms were recreated
+      % We now need to recreate their alliegences and power levels
+
+      local i, n;
+      if plShrine_Allegiances <> $
+      {
+         n = 5;
+
+         for i in plShrines
+         {
+            Send(i,@SetAllegiance,#allegiance=(Nth(plShrine_Allegiances,n)));
+            n = n - 1;
+         }
+      }
+      plShrine_Allegiances = $;
+
+      % Recalculate shrines
+      Send(self,@RecomputeShrineTotals);
 
       return;
    }

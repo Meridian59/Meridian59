@@ -56,18 +56,6 @@
 
 void *AllocMemory (long size)
 {
-#if 0
-	void *ptr;
-
-	if (size < 1)
-		size = 1;
-	ptr = malloc(size);
-	if (NULL == ptr)
-		ProgError ("Out of memory (cannot allocate %lu bytes)", size);
-	else
-		memset(ptr,0,size);
-	return ptr;
-#else
 	void *ret;
 	// DEBUG
 	// ULONG asksize = size;
@@ -78,30 +66,14 @@ void *AllocMemory (long size)
 
 	// TRACE ("Alloc: ask size = " << dec << asksize ", real size = " << size << " bytes");
 
-#ifdef __WIN32__
 	ret = malloc (size);
-#else
-	ret = farmalloc (size);
-#endif
 
 	if (ret == NULL)
 		ProgError ("Out of memory (cannot allocate %lu bytes)", size);
 
-#ifdef __WIN32__
 	memset (ret, 0, size);
-#else
-	BYTE HUGE *ptr = (BYTE *)ret;
-	while ( size > UINT_MAX )
-	{
-		memset (ptr, 0, UINT_MAX);
-		ptr += UINT_MAX;
-		size -= UINT_MAX;
-	}
-	memset (ptr, 0, (size_t)size);
-#endif
 
 	return ret;
-#endif
 }
 
 
@@ -112,16 +84,6 @@ void *AllocMemory (long size)
 
 void *ReallocMemory (void *old, long size)
 {
-#if 0
-	void *ptr;
-
-	if (size < 1)
-		size = 1;
-	ptr = realloc(old,size);
-	if (NULL == ptr)
-		ProgError ("Out of memory! (cannot reallocate %lu bytes)", size);
-	return ptr;
-#else
 	void *ret;
 	// DEBUG
 	// ULONG asksize = size;
@@ -132,17 +94,12 @@ void *ReallocMemory (void *old, long size)
 
 	// TRACE ("Realloc: ask size = " << dec << asksize << ", real size = " << size << " bytes");
 
-#ifdef __WIN32__
 	ret = realloc (old, size);
-#else
-	ret = farrealloc (old, size);
-#endif
 
 	if (ret == NULL)
 		ProgError ("Out of memory! (cannot reallocate %lu bytes)", size);
 
 	return ret;
-#endif
 }
 
 
@@ -154,11 +111,7 @@ void UnallocMemory (void *ptr)
 {
 	/* just a wrapper around farfree(), but provide an entry point */
 	/* for memory debugging routines... */
-#ifdef __WIN32__
 	free( ptr);
-#else
-	farfree( ptr);
-#endif
 }
 
 /*
@@ -167,15 +120,11 @@ void UnallocMemory (void *ptr)
 
 long GetAvailMemory ()
 {
-#ifdef __WIN32__
 	MEMORYSTATUS memstat;
 
 	memstat.dwLength = sizeof (memstat);
 	::GlobalMemoryStatus (&memstat);
 	return (long)memstat.dwAvailPhys + memstat.dwAvailPageFile;
-#else
-	return (long)::GetFreeSpace (0);
-#endif
 }
 
 /* end of file */

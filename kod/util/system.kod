@@ -4382,9 +4382,21 @@ messages:
 
    RecreateParliament()
    {
+      local plSavedFlagStates;
+
       if poParliament <> $
       {
+         plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@GetFlagStates));
+        
          Send(poParliament,@Recreate);
+         
+         if plSavedFlagStates <> $
+         {
+            Send(Send(self,@GetTerritoryGame),@ReloadFlagStates,#lFlagStates=plSavedFlagStates);
+            Send(Send(self,@GetTerritoryGame),@SaveFlagStates);
+            Send(Send(self,@GetTerritoryGame),@CountFlags);
+            plSavedFlagStates = $;
+         }
       }
       else
       {

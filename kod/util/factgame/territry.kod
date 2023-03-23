@@ -397,7 +397,6 @@ messages:
    }
 
    ReloadFlagStates(lFlagStates=$)
-   "Used during recreates to save flag states."
    {
       local i, iRID, oRoom, oFlag;
 

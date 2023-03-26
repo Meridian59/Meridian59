@@ -396,25 +396,18 @@ messages:
       return;
    }
 
-   ReloadFlagStates(lFlagStates=$)
-   "Used during recreates to save flag states."
+   ReloadSavedFlagStates()
    {
       local i, iRID, oRoom, oFlag;
 
-      if lFlagStates = $
+      if plFlagStates = $
       {
-         lFlagStates = plFlagStates;
+         DEBUG("ReloadSavedFlagStates:: nothing saved, nothing reloaded");
       }
 
-      if lFlagStates = $
-         OR NOT IsList(lFlagStates)
+      if length(plFlagStates) <> length(plFlagRIDs)
       {
-         DEBUG("ReloadFlagStates:: nothing saved, nothing reloaded");
-      }
-
-      if length(lFlagStates) <> length(plFlagRIDs)
-      {
-         DEBUG("ReloadFlagStates:: error in saved flag states - length mismatch");
+         DEBUG("ReloadSavedFlagStates:: error in saved flag states - length mismatch");
       }
 
       i = length(plFlagRIDs);
@@ -425,16 +418,16 @@ messages:
          oRoom = send(SYS,@FindRoomByNum,#num=iRID);
          if oRoom = $
          {
-            DEBUG("ReloadFlagStates:: got nil room for RID=",iRID);
+            DEBUG("ReloadSavedFlagStates:: got nil room for RID=",iRID);
             continue;
          }
          oFlag = send(oRoom,@FindHoldingActive,#class=&Flagpole);
          if oFlag = $
          {
-            DEBUG("ReloadFlagStates:: got nil flag in",send(oRoom,@GetName));
+            DEBUG("ReloadSavedFlagStates:: got nil flag in",send(oRoom,@GetName));
             continue;
          }
-         send(oFlag,@SetFaction,#faction=nth(lFlagStates,(i+1)));
+         send(oFlag,@SetFaction,#faction=nth(plFlagStates,(i+1)));
       }
 
       return;
@@ -481,7 +474,7 @@ messages:
          DEBUG("ReloadSavedFlagStates:: encountered errors during save; not replacing older save.");
       }
 
-      return plFlagStates;
+      return;
    }
 
    FlagClaimed(flag=$)
@@ -886,11 +879,6 @@ messages:
    GetMinUsers()
    {
       return piMinUsers;
-   }
-
-   GetFlagStates()
-   {
-      return plFlagStates;
    }
 
    GetMinAllies()

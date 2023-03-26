@@ -695,8 +695,7 @@ messages:
       return poClaimer;
    }
 
-   SetFaction(faction=FACTION_NEUTRAL)
-   "for admin use"
+   SetFaction(faction=FACTION_NEUTRAL,claim=TRUE)
    {
       piFaction = faction;
       if poOwner <> $
@@ -709,7 +708,11 @@ messages:
          }
       }
 
+      % If setting the faction as part of a bulk process (i.e. recreate),
+      % pass `claim=FALSE` and be sure to manually recalculate the flags 
+      % and save the flag states, as `FlagClaimed` does.
       if (send(SYS,@GetTerritoryGame) <> $)
+         AND claim
       {
          send(send(SYS,@GetTerritoryGame),@FlagClaimed,#flag=self);
       }

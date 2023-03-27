@@ -90,11 +90,7 @@ messages:
    {
       if IsClass(what,&Gauntlet)
       {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
+         if NOT Send(poOwner,@TryUnuseItem,#what=self)
          {
             return FALSE;
          }

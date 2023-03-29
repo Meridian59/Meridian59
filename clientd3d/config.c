@@ -40,7 +40,6 @@ static char INIPlayLoopSounds[]   = "PlayLoopSounds";
 static char INIPlayRandomSounds[]   = "PlayRandomSounds";
 static char INITimeout[]     = "Timeout";
 static char INIUserName[]    = "UserName";
-static char INIAnimate[]     = "Animate";
 static char INIArea[]        = "Area";
 static char INIDownload[]    = "Download";
 static char INIBrowser[]     = "Browser";

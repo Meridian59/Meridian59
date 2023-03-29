@@ -286,12 +286,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND90WHITE));
    else if (effects.whiteout > 0)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND80WHITE));
-   if (!config.animate && effects.whiteout)
-   {
-      // Whiteout always shows up, but if not animating, it doesn't fade out, it blinks.
-      effects.whiteout = 0;
-      RedrawAll();
-   }
    
    // Pain (always drawn last).
    if (!config.pain)
@@ -312,13 +306,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND20RED));
    else if (effects.pain)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND10RED));
-   
-   if (!config.animate && effects.pain)
-   {
-      // Pain always shows up, but if not animating, it doesn't fade out, it blinks.
-      effects.pain = 0;
-      RedrawAll();
-   }
 }
 
 /************************************************************************/

@@ -206,8 +206,6 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	{
 		SandDib(gBits, MAXX, MAXY, 200/*drops*/);
 		RedrawAll();
-		if (!config.animate)
-			effects.sand = 0;
 	}
 
 #if 0
@@ -215,16 +213,14 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	if (effects.raining && !pdibCeiling)
 	{
 		RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
-		if (config.animate)
-			RedrawAll();
+		RedrawAll();
 	}
 
 	// snow
 	if (effects.snowing && !pdibCeiling)
 	{
 		SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
-		if (config.animate)
-			RedrawAll();
+		RedrawAll();
 	}
 #endif
 }
@@ -253,8 +249,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 
       BlurDib(gBits, MAXX, MAXY, amount);
       RedrawAll();
-      if (!config.animate)
-	 effects.blur = 0;
    }
 
    // Wavering Vision.
@@ -264,8 +258,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
       offset++;
       WaverDib(gBits, MAXX, MAXY, offset);
       RedrawAll();
-      if (!config.animate)
-	 effects.waver = 0;
    }
 
    // Flash of XLAT.  Could be color, blindness, whatever.

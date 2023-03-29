@@ -22,6 +22,4 @@ Bool AnimateSingle(Animate *a, int num_groups, int dt);
 
 DWORD GetFrameTime(void);
 
-Bool VerifyAnimation(Animate *a);
-
 #endif /* #ifndef _ANIMATE_H */

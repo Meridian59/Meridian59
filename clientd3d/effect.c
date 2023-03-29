@@ -69,8 +69,7 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
 
    case EFFECT_SHAKE:
       Extract(&ptr, &duration, 4);
-      if (config.animate)
-	 effects.shake = duration;
+	   effects.shake = duration;
       break;
 
    case EFFECT_PARALYZE:
@@ -184,9 +183,6 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
  */
 void EffectFlash(int duration)
 {
-   if (!config.animate)
-      return;
-
    effects.invert = duration;
 }
 /****************************************************************************/

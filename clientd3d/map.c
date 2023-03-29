@@ -595,7 +595,7 @@ void MapZoom(int direction)
 
    now = timeGetTime();
    dt = now - last_time;
-   if (dt < MAP_ZOOM_DELAY && config.animate)
+   if (dt < MAP_ZOOM_DELAY)
       increment = increment * dt / MAP_ZOOM_DELAY;
    last_time = now;
 

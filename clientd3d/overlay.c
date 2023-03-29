@@ -40,13 +40,6 @@ void SetPlayerOverlay(char hotspot, object_node *poverlay)
       return;
    }
 
-   // See if we should actually do animation
-   if (!VerifyAnimation(poverlay->animate))
-   {
-      ObjectDestroyAndFree(poverlay);
-      return;
-   }
-
    // Replace previous player overlay, if any
    if (player.poverlays[num].obj != NULL)
       ObjectDestroyAndFree(player.poverlays[num].obj);

@@ -469,14 +469,6 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
    object_node *obj;
    Bool in_room = False;
 
-   /* If animation off, discard animations */
-   if (!VerifyAnimation(new_obj->animate))
-   {
-      ObjectDestroyAndFree(new_obj);
-      list_destroy(overlays);
-      return;
-   }
-
    /* First look for object in room */
    r = GetRoomObjectById(new_obj->id);
    if (r != NULL)

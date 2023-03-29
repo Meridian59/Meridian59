@@ -254,10 +254,6 @@ void WallChange(WORD wall_num, Animate *a, BYTE action)
 
    debug(("WallChange got wall %d\n", (int) wall_num));
 
-   // Adjust animation if user has it turned off
-   if (!config.animate)
-      VerifyAnimation(a);
-
    for (i=0; i < current_room.num_sidedefs; i++)
    {
       s = &current_room.sidedefs[i];
@@ -273,12 +269,12 @@ void WallChange(WORD wall_num, Animate *a, BYTE action)
       s->animate->u.bitmap.action = action;
 
       // If animation is a simple change of bitmap, do it now and throw it away
-      if (!config.animate || a->animation == ANIMATE_NONE)
+      if (a->animation == ANIMATE_NONE)
       {
-	 SidedefDoAnimation(&current_room, s, RAS_DONE);
-	 SafeFree(s->animate);
-	 s->animate = NULL;
-	 RedrawAll();
+         SidedefDoAnimation(&current_room, s, RAS_DONE);
+         SafeFree(s->animate);
+         s->animate = NULL;
+         RedrawAll();
       }
    }
 }
@@ -292,10 +288,6 @@ void SectorChange(WORD sector_num, Animate *a, BYTE action)
    Sector *s;
 
    debug(("SectorChange got sector %d\n", (int) sector_num));
-
-   // Adjust animation if user has it turned off
-   if (!config.animate)
-      VerifyAnimation(a);
 
    for (i=0; i < current_room.num_sectors; i++)
    {
@@ -313,12 +305,12 @@ void SectorChange(WORD sector_num, Animate *a, BYTE action)
       s->animate->u.bitmap.action = action;
 
       // If animation off, do it now and throw it away
-      if (!config.animate || a->animation == ANIMATE_NONE)
+      if (a->animation == ANIMATE_NONE)
       {
-	 SectorDoAnimation(&current_room, s, RAS_DONE);
-	 SafeFree(s->animate);
-	 s->animate = NULL;
-	 RedrawAll();
+         SectorDoAnimation(&current_room, s, RAS_DONE);
+         SafeFree(s->animate);
+         s->animate = NULL;
+         RedrawAll();
       }
    }
 }
@@ -434,11 +426,11 @@ void MoveSector(BYTE type, WORD sector_num, WORD height, BYTE speed)
 	  s->flags |= SF_HAS_ANIMATED;
 
       // Special case:  if speed = 0, perform lift immediately
-      if (speed == 0 || !config.animate)
+      if (speed == 0)
       {
-	 SectorAdjustHeight(&current_room, s, type, HeightKodToClient(height));
-	 RedrawAll();
-	 continue;
+         SectorAdjustHeight(&current_room, s, type, HeightKodToClient(height));
+         RedrawAll();
+         continue;
       }
 
       // Set up animation structure

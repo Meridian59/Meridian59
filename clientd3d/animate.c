@@ -72,11 +72,6 @@ void AnimationTimerAbort(void)
       animation_timer = 0;
    }
 }
-/************************************************************************/
-void AnimationSleep(void)
-{
-   Sleep(ANIMATE_INTERVAL);
-}
 
 DWORD GetFrameTime(void)
 {

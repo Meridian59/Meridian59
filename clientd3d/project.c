@@ -39,10 +39,6 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
    int dx, dy, dz;
    room_contents_node *s, *d;
 
-   // If animation off, don't bother with projectiles
-   if (!config.animate)
-     return;
-
    debug(("Adding new projectile\n"));
 
    // Set source and destination coordinates based on object locations

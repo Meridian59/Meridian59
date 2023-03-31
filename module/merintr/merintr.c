@@ -1732,16 +1732,14 @@ Bool WINAPI EventAnimate(int dt)
 {
    room_contents_node *r;
 
-   if (cinfo->config->animate)
-   {
-      AnimateInventory(dt);
-      AnimateEnchantments(dt);
+   AnimateInventory(dt);
+   AnimateEnchantments(dt);
 
-      // If self is invisible, redraw self view to make it shimmer
-      r = GetRoomObjectById(cinfo->player->id);
-      if (r != NULL && GetDrawingEffect(r->obj.flags) == OF_INVISIBLE)
-	 UserAreaRedraw();
-   }
+   // If self is invisible, redraw self view to make it shimmer
+   r = GetRoomObjectById(cinfo->player->id);
+   if (r != NULL && GetDrawingEffect(r->obj.flags) == OF_INVISIBLE)
+      UserAreaRedraw();
+   
    return True;
 }
 /****************************************************************************/

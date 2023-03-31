@@ -40,7 +40,6 @@ static char INIPlayLoopSounds[]   = "PlayLoopSounds";
 static char INIPlayRandomSounds[]   = "PlayRandomSounds";
 static char INITimeout[]     = "Timeout";
 static char INIUserName[]    = "UserName";
-static char INIAnimate[]     = "Animate";
 static char INIArea[]        = "Area";
 static char INIDownload[]    = "Download";
 static char INIBrowser[]     = "Browser";
@@ -192,12 +191,6 @@ void ConfigLoad(void)
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
 
-   // Animation option removed 3/4/97 to fix movement bug
-#ifndef NODPRINTFS
-   config.animate       = GetConfigInt(misc_section, INIAnimate, True, ini_file);
-#else
-   config.animate       = True;
-#endif
    config.ini_version   = GetConfigInt(misc_section, INIVersion, 0, ini_file);
    config.default_browser = GetConfigInt(misc_section, INIDefaultBrowser, True, ini_file);
    GetPrivateProfileString(misc_section, INIUserName, "", 
@@ -315,7 +308,6 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIPlayLoopSounds, config.play_loop_sounds, ini_file);
    WriteConfigInt(misc_section, INIPlayRandomSounds, config.play_random_sounds, ini_file);
    WriteConfigInt(misc_section, INITimeout, config.timeout, ini_file);
-   WriteConfigInt(misc_section, INIAnimate, config.animate, ini_file);
    WriteConfigInt(misc_section, INIVersion, config.ini_version, ini_file);
    WriteConfigInt(misc_section, INIDefaultBrowser, config.default_browser, ini_file);
    WritePrivateProfileString(misc_section, INIBrowser, config.browser, ini_file);

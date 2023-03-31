@@ -99,7 +99,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 	}
 
 	// If animation off, don't interpolate motion
-	if (speed == 0 || !config.animate)
+	if (speed == 0)
 	{
 		r->motion.x = x;
 		r->motion.y = y;

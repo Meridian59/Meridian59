@@ -211,7 +211,7 @@ void UserMovePlayer(int action)
    if (dt <= 0)
       dt = 1;
    
-   if (dt < MOVE_DELAY && config.animate)
+   if (dt < MOVE_DELAY)
    {
       gravityAdjust = 1.0;
       move_distance = move_distance * dt / MOVE_DELAY;
@@ -420,21 +420,17 @@ void UserMovePlayer(int action)
    if (z == -1)
       z = player_obj->motion.z;
 
-   if (config.animate)
-   {
-      player_obj->motion.dest_z = z;
+   player_obj->motion.dest_z = z;
 
-      // Only set motion if not already moving that direction
-      if (z > player_obj->motion.z && player_obj->motion.v_z <= 0)
-      {
-	 player_obj->motion.v_z = CLIMB_VELOCITY_0;
-      }
-      else if (z < player_obj->motion.z && player_obj->motion.v_z >= 0)
-      {
-	 player_obj->motion.v_z = FALL_VELOCITY_0;
-      }
+   // Only set motion if not already moving that direction
+   if (z > player_obj->motion.z && player_obj->motion.v_z <= 0)
+   {
+      player_obj->motion.v_z = CLIMB_VELOCITY_0;
    }
-   else player_obj->motion.z = z;
+   else if (z < player_obj->motion.z && player_obj->motion.v_z >= 0)
+   {
+      player_obj->motion.v_z = FALL_VELOCITY_0;
+   }
 
    if (bounce)
       BounceUser(dt);
@@ -913,11 +909,11 @@ void UserTurnPlayer(int action)
    dt = now - last_turn_time;
    if (last_turn_time == 0 || dt <= 0)
       dt = 1;
-   if (dt < TURN_DELAY && config.animate)
+   if (dt < TURN_DELAY)
    {
       delta = delta * dt / TURN_DELAY;
    }
-   else if (dt > (4*TURN_DELAY) && config.animate)
+   else if (dt > (4*TURN_DELAY))
    {
       delta = (delta * (int)(GetFrameTime()) / TURN_DELAY) / 2;
    }
@@ -1060,11 +1056,11 @@ void PlayerChangeHeight(int dz)
    dt = now - last_time;
    if (last_time == 0 || dt <= 0)
       dt = 1;
-   if (dt < HEIGHT_DELAY && config.animate)
+   if (dt < HEIGHT_DELAY)
    {
       dz = dz * dt / HEIGHT_DELAY;
    }
-   else if (dt > (4*HEIGHT_DELAY) && config.animate)
+   else if (dt > (4*HEIGHT_DELAY))
    {
       dz = (dz * (int)(GetFrameTime()) / HEIGHT_DELAY) / 2;
    }

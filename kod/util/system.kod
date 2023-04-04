@@ -2353,11 +2353,11 @@ messages:
          bFeast_Hall_Locked = Send(oFeast_Hall, @IsLocked);
       }
 
-      % Save shrine powers.
+      % Preserve shrine powers
       plShrine_Allegiances = $;
       for n in plShrines
       {
-         plShrine_Allegiances = Cons(Send(n,@GetAllegiance),plShrine_Allegiances);
+         plShrine_Allegiances = Cons(Send(n,@GetAllegiance), plShrine_Allegiances);
       }
 
       if poParliament <> $
@@ -2727,11 +2727,10 @@ messages:
    }
 
    RecreateShrineAllegiances()
+   "Resets shrine allegiances and power levels"
    {
-      % Shrines were recreated when rooms were recreated
-      % We now need to recreate their alliegences and power levels
-
       local i, n;
+
       if plShrine_Allegiances <> $
       {
          n = 5;
@@ -2744,7 +2743,6 @@ messages:
       }
       plShrine_Allegiances = $;
 
-      % Recalculate shrines
       Send(self,@RecomputeShrineTotals);
 
       return;

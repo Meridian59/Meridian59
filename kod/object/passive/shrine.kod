@@ -223,7 +223,7 @@ messages:
       return piAllegiance;
    }
 
-   SetAllegiance(allegiance = $)
+   SetAllegiance(allegiance=0)
    {
       piAllegiance = allegiance;
       return;

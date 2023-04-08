@@ -39,10 +39,6 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
    int dx, dy, dz;
    room_contents_node *s, *d;
 
-   // If animation off, don't bother with projectiles
-   if (!config.animate)
-     return;
-
    debug(("Adding new projectile\n"));
 
    // Set source and destination coordinates based on object locations
@@ -94,7 +90,7 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
       p->motion.increment = 1.0;
    else 
    {
-      distance = GetLongSqrt(dx * dx + dy * dy + dz * dz) / FINENESS;
+      distance = sqrtf(dx * dx + dy * dy + dz * dz) / FINENESS;
       p->motion.increment = ((float) speed) / 1000.0 / distance;
    }
 

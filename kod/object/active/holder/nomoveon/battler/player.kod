@@ -87,9 +87,6 @@ constants:
    PANTS_MUL  = 0x0100
    
    BASE_NEED = 105
-
-   % If vigor gets this low, see if second wind skill kicks in.
-   SECONDWIND_THRESHOLD = 25
    
    % How steep is the curve for learning new levels of spells?
    %  A higher number means a greater slope (less points at low levels)
@@ -707,7 +704,7 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
-
+   
 classvars:
 
    viHand_space = 2
@@ -875,6 +872,7 @@ properties:
    
    piGender = GENDER_MALE
 
+   % Player vigor thresholds
    piVigor_rest_threshold = 80
 
    % The user's string description, typed when created (and editable in game).
@@ -935,9 +933,6 @@ properties:
 
    piLastDeathTime = 0
 
-   % This keeps the duration of our Second Wind skill's "downtime"
-   ptSecondWind = $
-
    % Measures how long we have to wait before we're rescued.
    ptRescue = $
 
@@ -996,12 +991,6 @@ messages:
       {
          DeleteTimer(ptAdvancement);
          ptAdvancement = $;
-      }
-      
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
       }
 
       Send(self,@CancelRescue);
@@ -1193,69 +1182,11 @@ messages:
    %%% Vigor
 
    NewVigor()
-   "Ensures vigor stays in bounds.  Also checks for second wind skill"
-   "NOTE: Do not modify vigor below SECONDWIND_THRESHOLD if you do not want the skill to kick in."
-   "Vigor display will be driven from here."
+   "Ensures vigor stays in bounds. Vigor display will be driven from here."
    {
-      if piVigor < SECONDWIND_THRESHOLD
-         AND ptSecondWind = $
-         AND Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
-         AND Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self)
-      {
-         Send(self,@StartSecondWind);
-      }
-      
       piVigor = bound(piVigor,1,viMax_vigor);
       Send(self,@DrawVigor);
 
-      return;
-   }
-
-   StartSecondWind()
-   {
-      local oWind, iTime;
-
-      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) = 0
-      {
-         return FALSE;
-      }
-
-      oWind = Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND);
-      iTime = Send(oWind,@GetWaitTime,#who=self);
-      ptSecondWind = CreateTimer(self,@EndSecondWindTimer,iTime);
-      Send(self,@SetVigorRestThreshold,#amount=10);
-      
-      return TRUE;
-   }
-
-   EndSecondWindTimer()
-   {
-      ptSecondWind = $;
-      Send(self,@EndSecondWind);
-      
-      return;
-   }
-
-   EndSecondWind()
-   {
-      local iAmount;
-
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-      }
-      
-      % This prevents repeated triggering of the second wind skill.
-      if piVigor < SECONDWIND_THRESHOLD
-      {
-         piVigor = SECONDWIND_THRESHOLD;
-      }
-
-      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
-      Send(self,@SetVigorRestThreshold,#amount=iAmount);
-      Send(self,@NewVigor);
-      
       return;
    }
 
@@ -1269,11 +1200,11 @@ messages:
       piVigor_rest_threshold = amount;
 
       % Don't go above rest threshold if we're still waiting for Second Wind.
-      if ptSecondWind <> $
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
       {
          piVigor_rest_threshold = 10;
       }
-      
+  
       piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,100);
 
       Send(self,@DrawVigor);
@@ -1285,14 +1216,15 @@ messages:
    {
       local iExertionAdded, iPercentReduced, iVigorLost;
       
+      iExertionAdded = amount;
+
       % If we cannot gain vigor due to Second Wind, return out if trying
       %  to take away exertion
-      if ptSecondWind <> $ AND amount < 0
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
+         AND amount < 0
       {
          return;
       }
-
-      iExertionAdded = amount;
 
       if iExertionAdded > 0
       {
@@ -1319,7 +1251,15 @@ messages:
 
          Send(self,@NewVigor);
       }
-      
+
+      % If Second Wind is available and inactive, and (adjusted) exertion is present, attempt SW
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
+         AND iExertionAdded > 0
+         AND NOT Send(self,@IsEnchanted,#byClass=&SecondWind)
+      {
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self);
+      }
+
       return;
    }
 
@@ -1328,8 +1268,11 @@ messages:
    {        
       local iAmount;
 
-      % If we cannot gain vigor (probably due to Second Wind), return out if trying to take away exertion
-      if (ptSecondWind <> $) AND (amount < 0)
+      iAmount = amount;
+
+      % Return if extertion is being added but second wind skill is active
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
+         AND amount < 0
       {
          return;
       }
@@ -1339,7 +1282,6 @@ messages:
          return;
       }
       
-      iAmount = Amount;
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SANCTUARY) AND amount < 0
       {
          iAmount = 2 * Amount;
@@ -1365,7 +1307,7 @@ messages:
       
       return;
    }
-      
+
    UpdateStomach()
    "Removes consumed food from stomach"
    {
@@ -1856,7 +1798,7 @@ messages:
       % Restart Health and Mana timers
       Send(self,@NewHealth);
       Send(self,@NewMana);
-      
+
       Send(self,@SendUserAllWindowOverlays);
 
       if Send(SYS,@GetParliament)<>$
@@ -1896,14 +1838,6 @@ messages:
 
       % Send(self,@RefigureSchoolsLists,#informlore=TRUE);
 
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop <> $
-         AND Send(oSnoop,@IsLoggedOn)
-         AND Send(SYS,@IsSuspect,#who=self)
-      {
-         Send(oSnoop,@MsgSendUser,#message_rsc=player_eavesdrop_login_str,#parm1=vrName);
-      }
-      
       Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=FALSE);
 
       % If we log into the Raza/Hazar inn and aren't past the tutorial,
@@ -1933,16 +1867,8 @@ messages:
 
    UserLogoffHook()
    {
-      local i, oSnoop, oRoom;
+      local i, oRoom;
    
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop <> $
-         AND Send(oSnoop,@IsLoggedOn)
-         AND Send(SYS,@IsSuspect,#who=self)
-      {
-         Send(oSnoop,@MsgSendUser,#message_rsc=player_eavesdrop_logout_str,#parm1=vrName);
-      }
-
       for i in plPassive
       {
          Send(i,@UserLogoff);
@@ -3127,7 +3053,7 @@ messages:
             Send(self,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_PLAYER);
          }
       }
-      
+
       return;
    }
 
@@ -7640,14 +7566,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 2;
+               gain = 3;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 1;
+               gain = 2;
                roll = TRUE;
             }
          }
@@ -7672,7 +7598,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
+         if piBase_Max_health < PKILL_ENABLE_HP
          {
             gain = gain + 1;
          }
@@ -7903,11 +7829,6 @@ messages:
             
             break;
          }       
-      }
-
-      if Send(SYS,@GetInvestigator)
-      {
-         Post(Send(SYS,@GetInvestigator),@InvestigateDeath,#killer=what,#victim=self,#cheap=bNo_drop_death);
       }
 
       % Create the corpse.
@@ -10146,15 +10067,6 @@ messages:
       Send(self,@RecalcBulkAndWeight);
       Send(self,@ResetPlayerFlagList);
 
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-      }
-
-      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
-      Send(self,@SetVigorRestThreshold,#amount=iAmount);
-
       % All attack modifiers should be a room enchantment, a personal enchantment
       %  or something they are wearing.  If one still exists, bug.  This is also
       %  true for defense modifiers and resistances.
@@ -12051,88 +11963,18 @@ messages:
          }
       }
 
-      if NOT Send(SYS,@IsSuspect,#who=self)
-      {
-         propagate;
-      }
-
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop = $
-      {
-         propagate;
-      }
-      
-      if not Send(oSnoop,@IsLoggedOn)
-      {
-         propagate;
-      }
-
-      if (type = SAY_GROUP) or (type = SAY_GROUP_ONE)
-      {
-         Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,
-              #format=player_eavesdrop_str,#string=string);
-      }
-
       propagate;
    }
 
    UserSayGroup(users = $,string = $,no_tell=False)
    "<no_tell> = True means always Send the 'Sends' message, not 'tells'"
    {
-      local oSnoop, user;
-
-      if not Send(SYS,@IsSuspect,#who=self)
-      {
-         return;
-      }
-
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop = $
-      {
-         return;
-      }
-      
-      if not Send(oSnoop,@IsLoggedOn)
-      {
-         return;
-      }
-
-      for user in users
-      {
-         Send(oSnoop,@SomeoneOverheard,#from=self,#to=user,
-              #format=player_eavesdrop_str,#string=string);
-      }
-
       return;
    }
 
    UserSayGuild(users = $,string = $,no_tell=False)
    "<no_tell> = True means always Send the 'Sends' message, not 'tells'"
    {
-      local oSnoop, user;
-
-      if not Send(SYS,@IsSuspect,#who=self)
-      {
-         return;
-      }
-
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop = $
-      {
-         return;
-      }
-      
-      if not Send(oSnoop,@IsLoggedOn)
-      {
-         return;
-      }
-
-      for user in users
-      {
-         Send(oSnoop,@SomeoneOverheard,#from=self,#to=user,
-              #format=player_eavesdrop_str,#string=string);
-      }
-
       return;
    }
 

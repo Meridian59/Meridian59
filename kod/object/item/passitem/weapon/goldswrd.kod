@@ -57,14 +57,14 @@ properties:
 
 messages:
 
-   GetBaseDamage()
+   GetBaseDamage(who=$,target=$)
    {
-      local oOwner, iDamage;
+      local poOwner, iDamage;
 
       iDamage = random(viMin_damage,viMax_damage);
 
-      oOwner = send(send(self,@GetOwner),@getowner);
-      if send(oOwner,@IsArena)
+      poOwner = send(send(self,@GetOwner),@getowner);
+      if send(poOwner,@IsArena)
       {
          iDamage = iDamage + 7;
       }

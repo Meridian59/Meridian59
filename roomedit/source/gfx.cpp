@@ -177,11 +177,15 @@ USHORT ComputeAngle (SHORT dx, SHORT dy)
 
 USHORT ComputeDist (SHORT dx, SHORT dy)
 {
-   return (USHORT) (hypot( (double) dx, (double) dy) + 0.5);
+   return (USHORT) round(hypot( (double) dx, (double) dy));
    /* Yes, I know this function could be in another file, but */
    /* this is the only source file that includes <math.h>...  */
 }
 
+double ComputeDistDouble(double dx, double dy)
+{
+   return hypot(dx, dy);
+}
 
 
 /*
@@ -194,8 +198,8 @@ void InsertPolygonVertices (SHORT centerx, SHORT centery, SHORT sides, SHORT rad
 
    for (n = 0; n < sides; n++)
 	  InsertObject( OBJ_VERTEXES, -1,
-					centerx + (SHORT) ((double) radius * cos( 6.28 * (double) n / (double) sides)),
-					centery + (SHORT) ((double) radius * sin( 6.2832 * (double) n / (double) sides)));
+					centerx + (SHORT) round((double) radius * cos( 6.283185 * (double) n / (double) sides)),
+					centery + (SHORT) round((double) radius * sin( 6.283185 * (double) n / (double) sides)));
    /* Yes, I know... etc. */
 }
 

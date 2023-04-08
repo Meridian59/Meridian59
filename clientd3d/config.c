@@ -19,7 +19,6 @@
 
 /* Miscellaneous game settings */
 Config config;
-Bool	gLargeArea;
 char inihost[MAXHOST];
 
 // Full pathname of INI file
@@ -30,6 +29,8 @@ char *ini_file;  // Pointer to ini_filename
 // color and font settings in old clients).
 #define INI_VERSION 3
 
+static bool is_steam_install = false;
+
 /* INI file entries */
 static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
@@ -39,7 +40,6 @@ static char INIPlayLoopSounds[]   = "PlayLoopSounds";
 static char INIPlayRandomSounds[]   = "PlayRandomSounds";
 static char INITimeout[]     = "Timeout";
 static char INIUserName[]    = "UserName";
-static char INIAnimate[]     = "Animate";
 static char INIArea[]        = "Area";
 static char INIDownload[]    = "Download";
 static char INIBrowser[]     = "Browser";
@@ -103,6 +103,8 @@ static char special_section[] = "Special";  /* Section for hidden stuff in INI f
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
+
+static char INITextAreaSize[] = "TextAreaSize";
 
 #ifndef NODPRINTFS
 static char INIShowMapBlocking[]= "ShowMapBlocking";
@@ -188,14 +190,7 @@ void ConfigLoad(void)
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
-   config.large_area    = GetConfigInt(misc_section, INIArea, False, ini_file);
-   gLargeArea = config.large_area;
-   // Animation option removed 3/4/97 to fix movement bug
-#ifndef NODPRINTFS
-   config.animate       = GetConfigInt(misc_section, INIAnimate, True, ini_file);
-#else
-   config.animate       = True;
-#endif
+
    config.ini_version   = GetConfigInt(misc_section, INIVersion, 0, ini_file);
    config.default_browser = GetConfigInt(misc_section, INIDefaultBrowser, True, ini_file);
    GetPrivateProfileString(misc_section, INIUserName, "", 
@@ -295,6 +290,8 @@ void ConfigLoad(void)
    config.clearCache = FALSE;
 #endif // NODPRINTFS
 
+   config.text_area_size = GetConfigInt(misc_section, INITextAreaSize, TEXT_AREA_HEIGHT, ini_file);
+
    TimeSettingsLoad();
 }
 /****************************************************************************/
@@ -311,8 +308,6 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIPlayLoopSounds, config.play_loop_sounds, ini_file);
    WriteConfigInt(misc_section, INIPlayRandomSounds, config.play_random_sounds, ini_file);
    WriteConfigInt(misc_section, INITimeout, config.timeout, ini_file);
-   WriteConfigInt(misc_section, INIArea, gLargeArea, ini_file);
-   WriteConfigInt(misc_section, INIAnimate, config.animate, ini_file);
    WriteConfigInt(misc_section, INIVersion, config.ini_version, ini_file);
    WriteConfigInt(misc_section, INIDefaultBrowser, config.default_browser, ini_file);
    WritePrivateProfileString(misc_section, INIBrowser, config.browser, ini_file);
@@ -361,6 +356,8 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIServerHigh, config.server_high, ini_file);
    WriteConfigInt(misc_section, INIServerGuest, config.server_guest, ini_file);
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
+
+   WriteConfigInt(misc_section, INITextAreaSize, config.text_area_size, ini_file);
 
    // "Special" section options NOT saved, so that they're not normally visible
 
@@ -411,6 +408,15 @@ void ConfigOverride(LPCTSTR pszCmdLine)
 	    strcpy(config.password, p);
 	    break;
 
+   case 's':
+   case 'S':
+     // We had a snafu during an update, and now we need to be able to
+     // distinguish between Steam and non-Steam installs.  Specifying -s
+     // means this is a Steam install.
+     debug(("/S: Steam install\n"));
+     is_steam_install = true;
+     break;
+
 	 case 'q':
 	 case 'Q':
 	    debug(("/Q: will try to start quick\n"));
@@ -418,6 +424,17 @@ void ConfigOverride(LPCTSTR pszCmdLine)
 	    break;
 	 }
       }
+   }
+
+   // We had a problem where the Web (non-Steam) client was accidentally
+   // published with a download time of 9999.  To undo this, we
+   // interpret 9999 as the then-current download time of 195.  However,
+   // the Steam version also was set to 9999, and we don't want to
+   // have the Steam version accidentally trying to do a download.  So
+   // we specify a command line flag from Steam to avoid it.
+   // TODO: Remove if/when Steam-only
+   if (!is_steam_install && config.download_time == 9999) {
+     config.download_time = 195;
    }
 }
 /************************************************************************/

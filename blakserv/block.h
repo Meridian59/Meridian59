@@ -15,7 +15,7 @@
 
 typedef struct block_node_struct
 {
-   int iExpires;
+   INT64 iExpires;  // Expiration time
    struct in_addr iaPeer;
    struct block_node_struct *next;
 } block_node;

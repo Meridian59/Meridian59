@@ -1,0 +1,41 @@
+name: Build code
+on: 
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+  
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: make blakserv
+      working-directory: blakserv
+      run: make -f makefile.linux -k
+      
+    - name: make kod
+      working-directory: blakcomp
+      run: |
+        make -f makefile.linux -k
+        cd ../kod
+        make -f makefile.linux
+  
+  
+  build-windows:
+  
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ilammy/msvc-dev-cmd@v1
+      with: 
+        arch: x86
+        
+    - name: make client
+      run: |
+        nmake /nologo Bclient Bmodules

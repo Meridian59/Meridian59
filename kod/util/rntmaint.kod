@@ -14,10 +14,6 @@ constants:
    
    include blakston.khd
 
-   % This is the max number of days that a player can rent a room at a time.
-   % Equal to about 20 offline days.
-   DAYS_MAX = 240
-
 resources:
 
    RoomMaintenance_room_already = "You already have a room here."
@@ -31,8 +27,9 @@ resources:
 properties:
 
    plHoldingDuringRecreate = $
-
    plRoomsRented = $
+   % Max number of days a room can be rented for at one time. ~20 offline days.
+   piRentableDaysMax = 240
 
 messages: 
 
@@ -188,9 +185,9 @@ messages:
       iDays = iAmount / iCost;
 
       % Make sure we don't go over max.
-      if send(oRoom,@GetDaysLeft) + iDays > DAYS_MAX
+      if send(oRoom,@GetDaysLeft) + iDays > piRentableDaysMax
       {
-         iDays = DAYS_MAX - send(oRoom,@GetDaysLeft);
+         iDays = piRentableDaysMax - send(oRoom,@GetDaysLeft);
          % Returning 0 gives up the special error message.
          if iDays <= 0
          {
@@ -306,6 +303,11 @@ messages:
       if iLocation = RID_MAR_INN
       {
          return &MarionRentableRoom;
+      }
+
+      if iLocation = RID_KOC_INN
+      {
+         return &KocatanRentableRoom;
       }
       
       return &Room;

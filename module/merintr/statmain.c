@@ -86,6 +86,7 @@ void StatsMainReceive(list_type stats)
    }
 
    StatsMainMove();
+   StatsMainRedraw();
 }
 /************************************************************************/
 /*

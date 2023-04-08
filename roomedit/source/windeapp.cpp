@@ -32,10 +32,6 @@
 #pragma hdrstop
 #include <time.h>
 
-#if 0
-	#include <ctl3d.h>
-#endif
-
 #ifndef __windeapp_h
 	#include "windeapp.h"		    // Definition of Application
 #endif
@@ -66,7 +62,7 @@
 //
 // Main window title
 //
-#define TITLE "BlakSton Room Editor version 2.0 (May 18, 2015)"
+#define TITLE "BlakSton Room Editor version 2.1 (March 1, 2023)"
 
 //
 // Generated help file.
@@ -228,33 +224,6 @@ void WinDEUApp::InitInstance ()
 	// Parse command line and INI file.
 	InitWindeu(argc, argv, init_level);
 
-// removed annoyances ARK
-#if 0
-	// Create and display credits for WinDEU
-	CmHelpAbout();
-
-	//RP moved from InitWinDEU
-	if (Quieter == TRUE)
-		Quiet = TRUE;
-	if (Reminder == TRUE)
-		FunnyMessage();
-#endif
-
-	/* load the wad files */
-	// Don't load Doom WAD   ARK
-#if 0
-	OpenMainWad(MainWad);
-	if (PatchWads)
-		while (PatchWads[ 0])
-		{
-			OpenPatchWad( strupr( PatchWads[ 0]));
-			PatchWads++;
-		}
-#endif
-
-	/* sanity check */
-	CloseUnusedWadFiles();
-
 	// Load initial level if specified on command line
 	if (init_level[0] != 0)
 	{
@@ -313,91 +282,6 @@ bool WinDEUApp::CanClose ()
 //
 bool WinDEUApp::ProcessAppMsg (MSG& msg)
 {
-#if 0
-
-	BOOL result;
-
-	if (msg.message == WM_COMMAND)
-	{
-		if (ContextHelp || (GetKeyState(VK_F1) < 0))
-		{
-			ContextHelp = FALSE;
-			GetMainWindow()->WinHelp(HelpFileName, HELP_CONTEXT, msg.wParam);
-			return TRUE;
-		}
-	}
-	else
-	{
-		switch (msg.message)
-		{
-		case WM_KEYDOWN:
-			if (msg.wParam == VK_F1)
-			{
-				// If the Shift/F1 then set the help cursor and turn on the modal help state.
-				if (::GetKeyState(VK_SHIFT) < 0)
-				{
-					ContextHelp = TRUE;
-					HelpCursor = ::LoadCursor(GetMainWindow()->GetModule()->GetInstance(), MAKEINTRESOURCE(IDC_HELPCURSOR));
-					::SetCursor(HelpCursor);
-					return TRUE;        // Gobble up the message.
-				}
-				else
-				{
-					// If F1 w/o the Shift key then bring up help's main index.
-					// GetMainWindow()->WinHelp(HelpFileName, HELP_INDEX, 0L);
-					GetMainWindow()->WinHelp(HelpFileName, HelpContext, 0L);
-					return TRUE;        // Gobble up the message.
-				}
-			}
-			else
-			{
-				if (ContextHelp && (msg.wParam == VK_ESCAPE))
-				{
-					if (HelpCursor)
-						::DestroyCursor(HelpCursor);
-					ContextHelp = FALSE;
-					HelpCursor = 0;
-					GetMainWindow()->SetCursor(0, IDC_ARROW);
-					return TRUE;    // Gobble up the message.
-				}
-			}
-			break;
-
-		case WM_MOUSEMOVE:
-		case WM_NCMOUSEMOVE:
-			if (ContextHelp)
-			{
-				::SetCursor(HelpCursor);
-				return TRUE;        // Gobble up the message.
-			}
-			break;
-
-		case WM_INITMENU:
-			if (ContextHelp)
-			{
-				::SetCursor(HelpCursor);
-				return TRUE;        // Gobble up the message.
-			}
-			break;
-
-		case WM_ENTERIDLE:
-			if (msg.wParam == MSGF_MENU)
-			{
-				if (GetKeyState(VK_F1) < 0)
-				{
-					ContextHelp = TRUE;
-					GetMainWindow()->PostMessage(WM_KEYDOWN, VK_RETURN, 0L);
-					return TRUE;       // Gobble up the message.
-				}
-			}
-			break;
-
-		default:
-			;
-		}  // End of switch
-	}
-
-#endif
 	return TApplication::ProcessAppMsg(msg);
 }
 

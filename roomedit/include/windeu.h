@@ -178,6 +178,7 @@ extern FILE *logfile;       /* filepointer to the error log */
 
 extern char *BitmapDir;       /* Directory where bitmaps reside */
 extern char *BitmapSpec;      /* Bitmap filename spec */
+extern char *RoomDir;         // Default directory for loading rooms
 extern char *KodDir;
 extern char *ServerDir;
 

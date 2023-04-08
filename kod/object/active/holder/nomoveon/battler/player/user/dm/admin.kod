@@ -437,37 +437,6 @@ messages:
          return;
       }
 
-      if StringContain(string,"snoop")
-      {
-         if Send(SYS,@GetInvestigator) <> self
-         {
-            propagate;
-         }
-
-         StringSubstitute(string,"snoop "," ");
-         i = Send(SYS,@FindUserByString,#string=string);
-         if i <> $
-         {
-            Send(SYS,@AddSuspect,#who=i);
-         }
-
-         Send(self,@SuspectRollcall);
-
-         return;
-      }
-
-      if StringEqual(string,"list suspects")
-      {
-         if Send(SYS,@GetInvestigator) <> self
-         {
-            propagate;
-         }
-
-         Send(self,@SuspectRollcall);
-
-         return;
-      }
-
       propagate;
    }
 

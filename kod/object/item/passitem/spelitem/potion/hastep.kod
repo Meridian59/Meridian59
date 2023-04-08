@@ -18,9 +18,9 @@ resources:
 
    HastePotion_name_rsc = "potion of haste"
    %HastePotion_icon_rsc = potion01.bgf
-   HastePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   HastePotion_desc_rsc = "This is a glass vial of sand-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   HastePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   HastePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy sand-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
 

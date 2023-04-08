@@ -18,9 +18,9 @@ resources:
 
    ResistFirePotion_name_rsc = "succulent salve"
    %ResistFirePotion_icon_rsc = potion01.bgf
-   ResistFirePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   ResistFirePotion_desc_rsc = "This is a glass vial of pale blue-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   ResistFirePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   ResistFirePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy pale blue-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
 

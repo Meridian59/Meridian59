@@ -2750,7 +2750,8 @@ messages:
                n = n + 1;
             }
          }
-         else {
+         else 
+         {
             Debug("RecreateShrineAllegiances:: Length mismatch between shrines and shrine allegiances");
          }
       }

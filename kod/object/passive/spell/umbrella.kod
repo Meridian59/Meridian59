@@ -156,7 +156,7 @@ messages:
    "Called only for caster. Do spell test and/or end spell."
    {
       local lEnchanted, iElapsed, oUser, iSpellpower, iDuration, oRoom, lActive;
-
+            
       iElapsed = Nth(state,1);
       lEnchanted = Nth(state,2);
       iSpellpower = Nth(state,3);
@@ -216,9 +216,18 @@ messages:
       return;
    }
 
-   RemoveEnchantmentEffects()
+   RemoveEnchantmentEffects( who = $, state = $, report = TRUE )
    "Need to override spell.kod's thing, since we do this ourselves specially."
    {
+      local lEnchanted, iElapsed, iSpellpower, iDuration;
+
+      % Update state so that elapsed time matches duration of the effect,
+      % effectively calling an end to the enchantment
+      iElapsed = Nth(state,1);
+      SetNth(state,4,iElapsed);
+
+      Send(self,@EndEnchantment,#who=who,#state=state,#report=report);
+      
       return;
    }
 

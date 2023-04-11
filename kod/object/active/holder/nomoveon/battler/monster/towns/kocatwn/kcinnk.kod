@@ -28,7 +28,7 @@ resources:
    kocinn_winknudge = "Thanks!  I'll be sure to let you know how it all turns out!"
    kocataninnkeeper_unwanted_keep = "~k%s%s tells you, \"Thank you.  You won't regret letting me borrow that.~n~k\""
 
-   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wondrous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
 
    % Rentable room stuff.
    KocatanInnkeeper_room_rented = \

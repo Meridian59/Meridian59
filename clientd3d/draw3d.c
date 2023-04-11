@@ -206,8 +206,6 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	{
 		SandDib(gBits, MAXX, MAXY, 200/*drops*/);
 		RedrawAll();
-		if (!config.animate)
-			effects.sand = 0;
 	}
 
 #if 0
@@ -215,16 +213,14 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	if (effects.raining && !pdibCeiling)
 	{
 		RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
-		if (config.animate)
-			RedrawAll();
+		RedrawAll();
 	}
 
 	// snow
 	if (effects.snowing && !pdibCeiling)
 	{
 		SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
-		if (config.animate)
-			RedrawAll();
+		RedrawAll();
 	}
 #endif
 }
@@ -253,8 +249,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 
       BlurDib(gBits, MAXX, MAXY, amount);
       RedrawAll();
-      if (!config.animate)
-	 effects.blur = 0;
    }
 
    // Wavering Vision.
@@ -264,8 +258,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
       offset++;
       WaverDib(gBits, MAXX, MAXY, offset);
       RedrawAll();
-      if (!config.animate)
-	 effects.waver = 0;
    }
 
    // Flash of XLAT.  Could be color, blindness, whatever.
@@ -294,12 +286,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND90WHITE));
    else if (effects.whiteout > 0)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND80WHITE));
-   if (!config.animate && effects.whiteout)
-   {
-      // Whiteout always shows up, but if not animating, it doesn't fade out, it blinks.
-      effects.whiteout = 0;
-      RedrawAll();
-   }
    
    // Pain (always drawn last).
    if (!config.pain)
@@ -320,13 +306,6 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND20RED));
    else if (effects.pain)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND10RED));
-   
-   if (!config.animate && effects.pain)
-   {
-      // Pain always shows up, but if not animating, it doesn't fade out, it blinks.
-      effects.pain = 0;
-      RedrawAll();
-   }
 }
 
 /************************************************************************/

@@ -51,7 +51,6 @@ typedef struct {
    char browser[MAX_PATH + 1];   /* Full path to user's browser program */
    Bool default_browser;         /* True when browser location was retrieved from registry */
 
-   Bool animate;                 /* Should we draw animations? */
    int  download_time;           /* Time of last successful download */
    Bool auto_connect;            /* Connect immediately upon starting program? */
    Bool debug;                   /* Display debugging window? */

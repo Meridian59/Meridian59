@@ -86,6 +86,19 @@ properties:
 
 messages:
 
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what,&Gauntlet)
+      {
+         if NOT Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
    NewUsed(what = $)
    {
       local i, oFound, iPriority;

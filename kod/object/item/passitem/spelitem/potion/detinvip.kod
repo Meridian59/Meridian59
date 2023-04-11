@@ -18,9 +18,9 @@ resources:
 
    DetectInvisibilityPotion_name_rsc = "potion of invisibility detection"
    %DetectInvisibilityPotion_icon_rsc = potion01.bgf
-   DetectInvisibilityPotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   DetectInvisibilityPotion_desc_rsc = "This is a glass vial of orange-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   DetectInvisibilityPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   DetectInvisibilityPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy orange-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
 

@@ -219,7 +219,7 @@ messages:
    RemoveEnchantmentEffects( who = $, state = $, report = TRUE )
    "Need to override spell.kod's thing, since we do this ourselves specially."
    {
-      local lEnchanted, iElapsed, iSpellpower, iDuration;
+      local iElapsed;
 
       % Update state so that elapsed time matches duration of the effect,
       % effectively calling an end to the enchantment

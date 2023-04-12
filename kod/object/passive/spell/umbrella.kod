@@ -226,9 +226,7 @@ messages:
       iElapsed = Nth(state,1);
       SetNth(state,4,iElapsed);
 
-      Send(self,@EndEnchantment,#who=who,#state=state,#report=report);
-      
-      return;
+      propagate;
    }
 
    %%% Defense modifier stuff.

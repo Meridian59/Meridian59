@@ -156,7 +156,7 @@ messages:
    "Called only for caster. Do spell test and/or end spell."
    {
       local lEnchanted, iElapsed, oUser, iSpellpower, iDuration, oRoom, lActive;
-            
+
       iElapsed = Nth(state,1);
       lEnchanted = Nth(state,2);
       iSpellpower = Nth(state,3);

@@ -21,6 +21,7 @@ resources:
 
    bow_condition_good = " is slightly worn but in generally good condition."
    bow_condition_med = " is starting to crack and fray but is still effective."
+   bow_condition_broken = " is broken and in pieces."
 
    bow_name_rsc = "bow"
    bow_icon_rsc = bow.bgf          
@@ -67,6 +68,7 @@ classvars:
 
    vrCondition_good = bow_condition_good 
    vrCondition_med = bow_condition_med 
+   vrCondition_broken = bow_condition_broken
 
 properties:
 

@@ -19,6 +19,9 @@ constants:
 
 resources:
 
+   bow_condition_good = " is slightly worn but in generally good condition."
+   bow_condition_med = " is starting to crack and fray but is still effective."
+
    bow_name_rsc = "bow"
    bow_icon_rsc = bow.bgf          
 
@@ -61,6 +64,9 @@ classvars:
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4
+
+   vrCondition_good = bow_condition_good 
+   vrCondition_med = bow_condition_med 
 
 properties:
 

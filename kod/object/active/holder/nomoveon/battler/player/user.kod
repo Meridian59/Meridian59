@@ -4359,7 +4359,7 @@ messages:
       {
          string = psPlayerDescription;
       }
-            
+      
       psPlayerDescription = string;
       
       return;

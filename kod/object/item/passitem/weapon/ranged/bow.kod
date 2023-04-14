@@ -33,6 +33,10 @@ resources:
    bow_bottom_faction = bwfbov.bgf
    bow_window_overlay_faction_rsc = povbowf.bgf
 
+   bow_condition_good = " is slightly worn but in generally good condition."
+   bow_condition_med = " is starting to crack and fray but is still effective."
+   bow_condition_broken = " is broken and in pieces."
+
 classvars:
 
    vrName = bow_name_rsc
@@ -61,6 +65,10 @@ classvars:
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4
+
+   vrCondition_good = bow_condition_good 
+   vrCondition_med = bow_condition_med 
+   vrCondition_broken = bow_condition_broken
 
 properties:
 

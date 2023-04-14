@@ -979,7 +979,16 @@ messages:
          
          return;
       }
-      
+
+      if liClient_cmd = BP_REQ_INVENTORY_MOVE
+      {
+         oWhat = Nth(client_msg,2);
+         oWhere = Nth(client_msg,3);
+         Send(self,@UserMoveInventoryItem,#what=oWhat,#where=oWhere);
+
+         return;
+      }
+
       if liClient_cmd = BP_REQ_PUT
       {
          oWhat = Nth(client_msg,2);
@@ -3749,6 +3758,51 @@ messages:
       return;
    }
 
+    UserMoveInventoryItem(what=$,where=$)
+   "User moved an item in their inventory. Assuming everything checks out, "
+   "we move it in the plPassive list also."
+   {
+      local iWhere, lSafeList;
+
+      if what = $
+         OR where = $
+         OR what = where
+         OR plPassive = $
+      {
+         return;
+      }
+
+      % Get list position for the drop location.
+      iWhere = FindListElem(plPassive,where);
+
+      % MUST reassign this to plPassive, in case we're deleting the first
+      % list node. Use a temp list to verify there were no issues.
+      lSafeList = DelListElem(plPassive,what);
+      if lSafeList <> $
+      {
+         plPassive = lSafeList;
+      }
+      else
+      {
+         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
+               "plPassive to $ when deleting a list element! ",plPassive,what);
+      }
+
+      % MUST reassign this to plPassive, in case we're creating the first list node.
+      lSafeList = AddListElem(plPassive,iWhere,what);
+      if lSafeList <> $
+      {
+         plPassive = lSafeList;
+      }
+      else
+      {
+         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
+               "plPassive to $ when adding a list element! ",plPassive,what,iWhere);
+      }
+
+      return;
+   }
+
    UserPut(what = $,where = $,number = $)
    {
       local i, lObjects, lItem_pos, oNumber;
@@ -4327,12 +4381,12 @@ messages:
          string = psPlayerDescription;
       }
       
-      if StringContain(psPlayerDescription,"¶")
+      if StringContain(psPlayerDescription,"ï¿½")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"¶")
+         while StringContain(psPlayerDescription,"ï¿½")
          {
-            StringSubstitute(psPlayerDescription,"¶","");
+            StringSubstitute(psPlayerDescription,"ï¿½","");
             iCount = iCount + 1;
             if iCount > 10
             {

@@ -28,9 +28,7 @@ resources:
    Umbrella_icon_rsc = iumbrela.bgf
    Umbrella_desc_rsc = \
       "Creates a dome of magical energy that protects all "
-      "players near the caster for several minutes.  The spell "
-      "dissipates if caster breaks concentration by running or "
-      "combat.  Requires emeralds to cast."
+      "players near the caster for several minutes.  Requires emeralds to cast."
 
    Umbrella_already_enchanted = "You already have %s%s."
 

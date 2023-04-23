@@ -28,7 +28,9 @@ resources:
    Umbrella_icon_rsc = iumbrela.bgf
    Umbrella_desc_rsc = \
       "Creates a dome of magical energy that protects all "
-      "players near the caster for several minutes.  Requires emeralds to cast."
+      "players near the caster for several minutes.  The spell "
+      "dissipates if caster breaks concentration by running or "
+      "combat.  Requires emeralds to cast."
 
    Umbrella_already_enchanted = "You already have %s%s."
 
@@ -123,6 +125,25 @@ messages:
            #state=[iElapsed,lEnchanted,iSpellpower,iDuration]);      
 
       propagate;
+   }
+
+   BreakTrance(who = $, state = $)
+   "Clears trance, removes enchantment(s), and sends notifications to any previously enchanted players"
+   {
+      local oUser,lEnchanted,iSpellpower;
+
+      Send(who,@ClearTranceFlag);
+      
+      iSpellpower = Nth(state,3);
+      lEnchanted = Nth(state,2);
+      
+      for oUser in lEnchanted
+      {
+         Send(oUser,@MsgSendUser,#message_rsc=Umbrella_break_trance);
+         Send(oUser,@RemoveEnchantment,#what=self);
+      }
+
+      return;
    }
 
    EnterUmbrella( who = $,iSpellpower = $ )
@@ -230,6 +251,7 @@ messages:
    %%% Defense modifier stuff.
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)
+   "Adds 500 to the battler's ability to avoid being hit"
    {
       return defense_power + 500;
    }
@@ -254,8 +276,9 @@ messages:
    %%% Resistance stuff:
 
    GetResistanceStrength(iSpellpower=$)
+   "Increase resistance strength by 50 + half of spellpower"
    {
-      return iSpellpower/5;
+      return 50 + iSpellpower/2;
    }
 
    AddResistances(who=$,value=$)

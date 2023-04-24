@@ -38,6 +38,7 @@ resources:
    Umbrella_on = "You are encompassed by a dome of magical energy."
    Umbrella_off = "The dome of magical energy dissipates."
    Umbrella_outside = "You have passed outside the dome of magical energy."
+   Umbrella_wince_trance = "You wince as the dome of magical energy absorbs the blow!"
    Umbrella_break_trance = "Loss of concentration causes the dome of magical energy to implode!"
 
    Umbrella_deflected = "%s%s's guardian angel deflects the brunt of the blast back at you!"
@@ -127,16 +128,24 @@ messages:
       propagate;
    }
 
-   BreakTrance(who = $, state = $)
+   BreakTrance(who = $, state = $, event = 1)
    "Clears trance, removes enchantment(s), and sends notifications to any previously enchanted players"
    {
       local oUser,lEnchanted,iSpellpower;
 
+      iSpellpower = Nth(state,3);
+      
+      % The caster has up to a 50% chance to maintain trance even when damage is taken
+      if event = EVENT_DAMAGE
+         AND (Random(1,99) <= iSpellpower/2)
+      {
+         Send(oUser,@MsgSendUser,#message_rsc=Umbrella_wince_trance);
+         return;
+      }
+
       Send(who,@ClearTranceFlag);
       
-      iSpellpower = Nth(state,3);
       lEnchanted = Nth(state,2);
-      
       for oUser in lEnchanted
       {
          Send(oUser,@MsgSendUser,#message_rsc=Umbrella_break_trance);

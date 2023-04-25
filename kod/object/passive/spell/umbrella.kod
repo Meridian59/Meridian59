@@ -60,6 +60,8 @@ classvars:
    viChance_To_Increase = 35
    viCast_Time = 10000
 
+   viManaDrain = 1 % Drain is amount used every UMBRELLA_CHECK_TIME milliseconds
+
 properties:
    
 messages:
@@ -121,15 +123,16 @@ messages:
       iDuration = bound(iDuration,50,240);
       iDuration = iDuration * 1000;
 
-      % Put spell maintenance info in casters enchantment list.
+      % Kick off a periodic timer for handling players that enter and leave the umbrella
       Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
-           #state=[iElapsed,lEnchanted,iSpellpower,iDuration]);      
+         #state=[iElapsed,lEnchanted,iSpellpower,iDuration],#lastcall=FALSE);      
+      Send(who,@SetTranceFlag);
 
       propagate;
    }
 
    BreakTrance(who = $, state = $, event = 1)
-   "Clears trance, removes enchantment(s), and sends notifications to any previously enchanted players"
+   "Clears trance, removes enchantment and notifies any players affected"
    {
       local oUser,lEnchanted,iSpellpower;
 
@@ -180,8 +183,7 @@ messages:
       return;
    }
 
-   EndEnchantment( who = $, state = $ )
-   "Called only for caster. Do spell test and/or end spell."
+   StartPeriodicEnchantment(who = $,where = $,state = 0)
    {
       local lEnchanted, iElapsed, oUser, iSpellpower, iDuration, oRoom, lActive;
 
@@ -194,13 +196,7 @@ messages:
 
       if iElapsed >= iDuration  %% end spell
       {
-         Send(who,@ClearTranceFlag);
-         for oUser in lEnchanted
-         {
-            Send(oUser,@MsgSendUser,#message_rsc=umbrella_off);
-            Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
-         }
-         return;
+         Send(self,@EndEnchantment,#who=who,#state=state);
       }
       else
       {
@@ -232,9 +228,39 @@ messages:
          }
       }
 
-      Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
-           #state=[iElapsed,lEnchanted,iSpellpower,iDuration],#Report=FALSE);
+      % If we've reached the final check time, then we need to do a last call to end
+      % the periodic timer and put an end to the enchantment.
+      if (iDuration - iElapsed) <= UMBRELLA_CHECK_TIME
+         OR Send(who,@GetMana) < viManaDrain * 2
+      {
+         Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
+            #state=[iElapsed,lEnchanted,iSpellpower,iDuration],#addicon=FALSE,#lastcall=TRUE,#Report=FALSE);
+      }
+      else 
+      {
+         Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
+            #state=[iElapsed,lEnchanted,iSpellpower,iDuration],#addicon=FALSE,#lastcall=FALSE,#Report=FALSE);
+      }
 
+      Send(who,@LoseMana,#amount=viManaDrain);
+
+      return;
+   }
+
+   EndEnchantment(who = $,state = $)
+   "Called only for caster. Do spell test and/or end spell."
+   {
+      local lEnchanted, iElapsed, oUser, iSpellpower, iDuration, oRoom, lActive;
+
+      lEnchanted = Nth(state,2);
+      iSpellpower = Nth(state,3);
+
+      Send(who,@ClearTranceFlag);
+      for oUser in lEnchanted
+      {
+         Send(oUser,@MsgSendUser,#message_rsc=umbrella_off);
+         Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
+      }
       return;
    }
 

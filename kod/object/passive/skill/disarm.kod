@@ -140,7 +140,14 @@ messages:
          {
             % Currently, have 1/5th your percent plus your modifier chance to make opponent drop weapon.
             iAbil = (iAbil + 1 + iModifier) / DISARM_FACTOR;
-            if (random(1,100) < iAbil) and (not Send(Send(oTarget,@GetOwner),@IsArena))
+
+            % Cannot force a weapon to drop in the arena
+            % Also don't force it to drop if it doesn't drop on death
+            % or otherwise isn't supposed to leave its owner for whatever reason.
+            if (random(1,100) < iAbil)
+            and (not Send(Send(oTarget,@GetOwner),@IsArena))
+            and Send(oTarget, @DropOnDeath)
+            and Send(oTarget, @ReqLeaveOwner)
             {
                % Success!  They dropped it!
                Send(oTarget,@DropItem,#droppedItem=oOppWeapon);

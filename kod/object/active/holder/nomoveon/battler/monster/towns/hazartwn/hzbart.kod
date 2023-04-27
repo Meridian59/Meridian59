@@ -49,7 +49,10 @@ messages:
       plFor_sale=[[Create(&Bread,#number=4),
                    Create(&Apple,#number=2),
                    Create(&MeatPie,#number=4),
-                   Create(&Mug,#number=1)
+                   Create(&Mug,#number=1),
+				   Create(&Shirt,#color=XLAT_TO_GREEN),
+				   Create(&PantsA,#color=XLAT_TO_BLACK),
+				   Create(&PantsC,#translation=PT_HAIR_OLDHAIR3)
                    ],
                   $,$];
       return;

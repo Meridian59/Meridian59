@@ -193,7 +193,7 @@ int SetFirst(int list_id,val_type new_val)
 		l->first = new_val;
 	
 	return NIL;
-}
+}	
 
 int SetNth(int n,int list_id,val_type new_val)
 {
@@ -222,6 +222,53 @@ int SetNth(int n,int list_id,val_type new_val)
 		l->first = new_val;
 	
 	return NIL;
+}
+
+int SwapListElem(int list_id,int n,int m)
+{
+   int i;
+   list_node *l, *ln, *lm;
+   val_type temp;
+
+   l = GetListNodeByID(list_id);
+
+   // Set each of the list nodes to be swapped to the first list node initially.
+   lm = l;
+   ln = l;
+
+   // Start i at 2, since n or m = 1 will be handled by the initialisation.
+   for (i=2; i<=n || i<=m; i++)
+   {
+      if (!l)
+      {
+         bprintf("SwapListElem found invalid list node somewhere in list %i\n",
+            list_id);
+         return NIL;
+      }
+      if (l->rest.v.tag != TAG_LIST)
+      {
+         bprintf("SwapListElem can't go past end of list %i,%i\n",
+            l->rest.v.tag,l->rest.v.data);
+         return NIL;
+      }
+
+      l = GetListNodeByID(l->rest.v.data);
+
+      if (i == n)
+      {
+         ln = l;
+      }
+      if (i == m)
+      {
+         lm = l;
+      }
+   }
+
+   temp = lm->first;
+   lm->first = ln->first;
+   ln->first = temp;
+
+   return NIL;
 }
 
 int FindListElem(val_type list_id,val_type list_elem)

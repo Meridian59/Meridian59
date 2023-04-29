@@ -3758,12 +3758,11 @@ messages:
       return;
    }
 
-    UserMoveInventoryItem(what=$,where=$)
-   "User moved an item in their inventory. Assuming everything checks out, "
-   "we move it in the plPassive list also."
+   UserMoveInventoryItem(what=$,where=$)
+   % User moved an item in their inventory, now update plPassive list
    {
-      local iWhere, lSafeList;
-
+      local iWhat, iWhere;
+      
       if what = $
          OR where = $
          OR what = where
@@ -3771,36 +3770,14 @@ messages:
       {
          return;
       }
-
-      % Get list position for the drop location.
+      
+      % Find the list positions for the two objects that the player wants to move
+      iWhat = FindListElem(plPassive,what); 
       iWhere = FindListElem(plPassive,where);
 
-      % MUST reassign this to plPassive, in case we're deleting the first
-      % list node. Use a temp list to verify there were no issues.
-      lSafeList = DelListElem(plPassive,what);
-      if lSafeList <> $
-      {
-         plPassive = lSafeList;
-      }
-      else
-      {
-         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
-               "plPassive to $ when deleting a list element! ",plPassive,what);
-      }
-
-      % MUST reassign this to plPassive, in case we're creating the first list node.
-      lSafeList = AddListElem(plPassive,iWhere,what);
-      if lSafeList <> $
-      {
-         plPassive = lSafeList;
-      }
-      else
-      {
-         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
-               "plPassive to $ when adding a list element! ",plPassive,what,iWhere);
-      }
-
-      return;
+      SwapListElem(plPassive,iWhat,iWhere);
+      
+      return; 
    }
 
    UserPut(what = $,where = $,number = $)

@@ -224,20 +224,19 @@ int SetNth(int n,int list_id,val_type new_val)
 	return NIL;
 }
 
-int SwapListElem(int list_id,int n,int m)
+int SwapListElem(int list_id,int elem_one,int elem_two)
 {
-   int i;
-   list_node *l, *ln, *lm;
+   list_node *l, *list_node_one, *list_node_two;
    val_type temp;
 
    l = GetListNodeByID(list_id);
 
    // Set each of the list nodes to be swapped to the first list node initially.
-   lm = l;
-   ln = l;
+   list_node_one = l;
+   list_node_two = l;
 
    // Start i at 2, since n or m = 1 will be handled by the initialisation.
-   for (i=2; i<=n || i<=m; i++)
+   for (int i = 2; i <= elem_one || i <= elem_two; i++)
    {
       if (!l)
       {
@@ -254,19 +253,19 @@ int SwapListElem(int list_id,int n,int m)
 
       l = GetListNodeByID(l->rest.v.data);
 
-      if (i == n)
+      if (i == elem_one)
       {
-         ln = l;
+         list_node_one = l;
       }
-      if (i == m)
+      if (i == elem_two)
       {
-         lm = l;
+         list_node_two = l;
       }
    }
 
-   temp = lm->first;
-   lm->first = ln->first;
-   ln->first = temp;
+   temp = list_node_two->first;
+   list_node_two->first = list_node_one->first;
+   list_node_one->first = temp;
 
    return NIL;
 }

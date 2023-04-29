@@ -36,7 +36,7 @@ int Length(int list_id);
 blak_int Nth(int n,int list_id);
 int SetFirst(int list_id,val_type new_val);
 int SetNth(int n,int list_id,val_type new_val);
-int SwapListElem(int list_id,int n, int m);
+int SwapListElem(int list_id,int elem_one,int elem_two);
 int FindListElem(val_type list_id,val_type list_elem);
 blak_int DelListElem(val_type list_id,val_type list_elem);
 // Move element at index n to index m, both 1-based.

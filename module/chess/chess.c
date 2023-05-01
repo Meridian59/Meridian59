@@ -7,8 +7,6 @@
 // Meridian is a registered trademark.
 /*
  * chess.c:  DLL for player vs. player chess.
- *
- * XXX Sounds for pieces moving
  */
 
 #include "client.h"
@@ -377,27 +375,23 @@ void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
  */
 long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
-   HDC hdc;
-   
    UserDidSomething();
    switch (message)
    {
    case WM_KEYDOWN:
-      return 0;
-      
+     return 0;
+     
    case WM_ERASEBKGND:
-      return 1;
-
+     return 1;
+     
    case WM_PAINT:
-      if (exiting)
-	 break;
+     if (exiting)
+       break;
 
-      hdc = GetDC(hwnd);
-      BoardDraw(hdc, &b);
-      ReleaseDC(hwnd, hdc);
-      break;
-
-      HANDLE_MSG(hwnd, WM_LBUTTONDOWN, BoardLButtonDown);
+     ChessRedrawBoard();
+     break;
+     
+     HANDLE_MSG(hwnd, WM_LBUTTONDOWN, BoardLButtonDown);
    }
    return CallWindowProc(lpfnDefBoardProc, hwnd, message, wParam, lParam);
 }
@@ -439,6 +433,11 @@ void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 
    if (row >= BOARD_HEIGHT || col >= BOARD_WIDTH)
       return;
+
+   // Flip board for white
+   if (b.color == WHITE) {
+     row = BOARD_HEIGHT - row - 1;
+   }
 
    // If user does a move, send to server
    if (BoardSquareSelect(&b, row, col))

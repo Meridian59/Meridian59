@@ -193,7 +193,7 @@ int SetFirst(int list_id,val_type new_val)
 		l->first = new_val;
 	
 	return NIL;
-}	
+}
 
 int SetNth(int n,int list_id,val_type new_val)
 {

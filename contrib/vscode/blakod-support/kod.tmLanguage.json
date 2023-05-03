@@ -1,0 +1,106 @@
+{
+	"name": "kod",
+	"scopeName": "source.kod",
+
+	"patterns": [
+		{
+			"comment": "headers",
+			"name": "storage.modifer.kod",
+			"match": "\\b(constants|resources|classvars|properties|messages)\\b"
+		},
+
+		{
+			"comment": "Comment line",
+			"name": "comment.line.double-slash.kod",
+			"match": "%.*$"
+		},
+		{
+			"comment": "Comment block",
+			"name": "comment.block.kod",
+			"begin": "\\/\\*",
+			"end": "\\*\\/"
+		},
+		{
+			"comment": "regions",
+			"name": "comment.block.documentation.kod",
+			"match": "#(endregion|region).*$"
+		},
+
+		{
+			"comment": "true, false and nil",
+			"name": "constant.language.kod",
+			"match": "[$]|\\b(TRUE|FALSE)\\b"
+		},
+
+		{
+			"comment": "keywords such as if, else, ect.",
+			"name": "keyword.control.kod",
+			"match": "\\b(if|else|switch|case|default|for|foreach|do|while|return|propagate|break|continue|include|end|is|in)\\b"
+		},
+		{
+			"comment": "operators",
+			"name": "keyword.operator.kod",
+			"match": "\\b(AND|&&|OR|<>|NOT)\\b"
+		},
+
+		{
+			"comment": "C Calls",
+			"name": "support.function.kod",
+			"match": "\\b(Post|Send|SendList|SendListBreak|SendListByClass|SendListByClassBreak|Abs|AddPacket|AddTableEntry|AppendListElem|AppendTempString|BlockerAddBSP|BlockerClearBSP|BlockerMoveBSP|BlockerRemoveBSP|Bound|CanMoveInRoomBSP|ChangeTextureBSP|ClearPacket|ClearTempString|Cons|Create|CreateString|CreateTable|CreateTimer|DeleteTableEntry|DeleteTimer|DelLastListElem|DelListElem|DumpStack|FindListElem|First|FreeRoom|GetAllListNodesByClass|GetClass|GetDateAndTime|GetInactiveTime|GetListElemByClass|GetListNode|GetLocationInfoBSP|GetRandomPointBSP|GetSessionIP|GetStepTowardsBSP|GetTableEntry|GetTempString|GetTickCount|GetTime|GetTimeRemaining|GodLog|InsertListElem|IsClass|IsList|IsListMatch|IsObject|IsString|IsTable|IsTimer|Last|Length|LineOfSightBSP|LineOfSightView|ListCopy|LoadGame|LoadRoom|MoveSectorBSP|Nth|ParseString|Random|RecordStat|RecycleUser|Rest|RoomData|SaveGame|SendCopyPacket|SendPacket|SetClassVar|SetFirst|SetNth|SetResource|SetString|Sqrt|StringConsistsOf|StringContain|StringEqual|StringLength|StringSubstitute|StringToNumber|SwapListElem)\\b"
+		},
+		{
+			"comment": "class",
+			"name": "support.class.kod",
+			"match": "&[a-zA-Z0-9_]+"
+		},
+
+		{
+			"comment": "messages",
+			"name": "entity.name.function.kod",
+			"match": "@[a-zA-Z0-9_]+"
+		},
+
+		{
+			"comment": "self variable",
+			"name": "variable.language.kod",
+			"match": "self"
+		},
+		{
+			"comment": "local variables",
+			"name": "variable.other.kod",
+			"begin": "\\b(local )\\b",
+			"end": ";"
+		},
+		{
+			"comment": "parameters",
+			"name": "variable.parameter.kod",
+			"match": "#[a-zA-Z0-9_]+"
+		},
+
+		{
+			"comment": "Debug",
+			"name": "invalid.kod",
+			"begin": "\\b(Debug)\\b",
+			"end": ";"
+		},
+
+		{
+			"include": "#strings"
+		}
+	],
+
+	"repository": {
+		"strings": {
+			"name": "string.quoted.double.kod",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.kod",
+					"match": "\\\\."
+				}
+			]
+		}
+	}
+
+}

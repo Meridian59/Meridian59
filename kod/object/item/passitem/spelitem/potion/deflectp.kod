@@ -18,9 +18,9 @@ resources:
 
    DeflectPotion_name_rsc = "potion of deflection"
    %DeflectPotion_icon_rsc = potion01.bgf
-   DeflectPotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   DeflectPotion_desc_rsc = "This is a glass vial of blue-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   DeflectPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   DeflectPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy blue-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
 

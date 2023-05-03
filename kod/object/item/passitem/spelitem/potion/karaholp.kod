@@ -18,7 +18,7 @@ resources:
 
    KaraholsCursePotion_name_rsc = "Karahol's accursed elixir"
    %KaraholsCursePotion_icon_rsc = potion01.bgf
-   KaraholsCursePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   KaraholsCursePotion_desc_rsc = "This is a glass vial of dark-colored liquid.  "
                         "It smells like a cross between licorice and musk."
    KaraholsCursePotion_bad_desc_rsc = "This is a glass vial of dark, cloudy liquid.  "
                         "A slight whiff of it is enough to turn your stomach."

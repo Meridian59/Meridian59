@@ -46,12 +46,17 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[Create(&Bread,#number=4),
+      plFor_sale=[[Create(&Skirt,#color=XLAT_TO_ORANGE),
+                   Create(&PantsC,#translation=PT_GRAY_TO_KGRAY),
+                   Create(&PantsA,#color=XLAT_TO_BLACK),
+                   Create(&Shirt,#color=XLAT_TO_ORANGE),
+                   Create(&Shirt,#color=XLAT_TO_GREEN),
+                   Create(&Bread,#number=4),
                    Create(&Apple,#number=2),
                    Create(&MeatPie,#number=4),
                    Create(&Mug,#number=1)
                    ],
-                  $,$];
+                   $,$];
       return;
    }
 

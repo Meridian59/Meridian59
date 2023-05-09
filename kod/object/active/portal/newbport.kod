@@ -92,7 +92,7 @@ messages:
 
          % Nearly everyone will be leaving Raza at around 200 vigor after
          % hitting 25, so top them off before sending them on their way.
-         Send(what, @EatSomething, #nutrition=200);
+         Send(what, @AddExertion, #amount=-2000000);
 
          % teleporting them out of region will clean inventory, etc.
          Post(what,@AddRealWorldObjects);

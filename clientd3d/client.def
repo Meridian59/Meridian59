@@ -145,7 +145,7 @@ EXPORTS
 	list_destroy
 	list_length
 	list_move_to_front
-	list_move_to_nth
+	list_move_item
 	list_add_sorted_item
 
 ; ID lists

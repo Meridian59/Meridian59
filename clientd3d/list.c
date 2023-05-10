@@ -29,7 +29,7 @@ list_type list_create(void *newdata)
    return l;
 }
 /************************************************************************/
-/* list_add_item: add a node with data field newndata to end of l.  If l is NULL, 
+/* list_add_item: add a node with data field newdata to end of l.  If l is NULL, 
  *              creates a new list and returns it.
  */
 list_type list_add_item(list_type l, void *newdata)
@@ -240,7 +240,7 @@ void *list_find_item(list_type l, void *data, CompareProc compare)
 /*
  * list_get_position: Find and return the position of an item in the given list.
  *   The compare function is used to determine if two items are equal.
- *   Returns NULL if item not found.
+ *   Returns -1 if item not found.
  */
 int list_get_position(list_type l, void *data, CompareProc compare)
 {
@@ -253,7 +253,7 @@ int list_get_position(list_type l, void *data, CompareProc compare)
       l = l->next;
       n++;
    }
-   return NULL;
+   return -1;
 }
 /************************************************************************/
 /* list_length: return length of given list.
@@ -348,76 +348,88 @@ list_type list_move_to_front(list_type l, void *data, CompareProc compare)
 }
 /************************************************************************/
 /*
- * list_move_to_nth:  Find the given item in the given list, and
- *   move it to the nth place.
- *   Returns the list.
+ * list_move_item:  Given a list and two items, removes payload node (item1) and inserts
+ *   it at target index (item2's original index position). Returns a new list if the items  
+ *   are not in the same position. Otherwise returns the original list.
  */
-list_type list_move_to_nth(list_type l, void *data1, void *data2, CompareProc compare)
+list_type list_move_item(list_type l, void *data1, void *data2, CompareProc compare)
 {
-   list_type list_data1, temp, prev;
-   Bool data1_found = False, data2_found = False;
+   list_type payload_data, prev, temp;
+
    int i;
 
+   /* Sanity checks */
    if (l == NULL)
       return NULL;
 
-   int pos_data1 = list_get_position(l, data1, compare);
-   int pos_data2 = list_get_position(l, data2, compare);
+   int pos_payload = list_get_position(l, data1, compare);
+   int pos_target  = list_get_position(l, data2, compare);
 
-   // Check first node.
-   if (pos_data2 == 0)
-      return list_move_to_front(l,data1,compare);
-   if (pos_data1 == 0)
-   {
-      l->next->last = l->last;
-      list_data1 = l;
-      l = l->next;
-   }
-
-   // If data1 == data2, return the same list.
-   if (pos_data1 == pos_data2)
+   /* Check that payload (item1) and target (item2) are actually in the list */
+   if (pos_payload == -1)
       return l;
 
+   if (pos_target == -1)
+      return l;
+
+   /* If payload and target position are the same, return the original list */
+   if (pos_payload == pos_target)
+      return l;
+
+   /* Check if target (item2) is at the beginning of the list.  If so, use existing function list_move_to_front() */
+   if (pos_target == 0) 
+      return list_move_to_front(l, data1, compare);
+
+   /* If the payload node is removed from the list, we must adjust the *last pointer of the new HEAD node. */
+   if (pos_payload == 0)
+   {
+      l->next->last = l->last;   // Set *last on the second list node to point to the end of the list
+      payload_data = l;          // Save payload data to insert later at the target index pos_target
+      l = l->next;               // Remove payload node from the start of the list
+   }
+
+   /* We must now check for all other pos_payload indexes (so far we have only checked index=0).  Use prev and temp list pointers to walk the list */
    prev = l;
    temp = l->next;
 
-   // Remove data1 from the list.
-   for (i = 1; i <= pos_data1 && temp != NULL; i++)
+   for (i = 1; i <= pos_payload && temp != NULL; i++)  // Walk the list starting at the second node, index=1
    { 
-      if (i == pos_data1)
+      if (i == pos_payload)             // Payload node found, remove it from the list
       {
-         list_data1 = temp;
-         prev->next = temp->next;
-         if (temp->next == NULL)
-            l->last = prev;
+         payload_data = temp;           // save the value of the node we are removing
+         prev->next = temp->next;       // Remove the node from the list by linking the previous node to the next node
+         if (temp->next == NULL)        // Check if we are removing the last node
+            l->last = prev;             // If so, set *last pointer to point to the previous node
       }
       prev = temp;
       temp = temp->next;
    }
 
-   if (list_data1 == NULL)
+   // If the payload (item1) was never found in the list, return the original list
+   if (payload_data == NULL)   
+      return l; 
+
+   /* We now have the value of the payload (item1) in payload_data, we have removed the payload node from the list l, and we know the target (item2) original index position pos_target.  We now need to re-insert the payload (item1) at the target index (item2's original index position).  We do this by walking the list and re-inserting it at the target index of item2.*/
+
+   // First check if we need to add the payload as the last node in the list
+   if (list_length(l)-1 < pos_target)
+   {
+      l->last->next = payload_data;    // Append payload (item1) to the end of the list
+      l->last = payload_data;          // Add *last to point to payload (item1)
+      payload_data->next = NULL;       // Make sure last node points to NULL
       return l;
+   }
 
    prev = l;
    temp = l->next;
 
-   // Check if we need to add to last position. Inventory is 0 based,
-   // list length is not.
-   if (list_length(l)-1 < pos_data2)
+   // Walk the list and insert the payload data at target index position
+   for (i = 1; i <= pos_target; i++)
    {
-      l->last->next = list_data1;
-      l->last = list_data1;
-      list_data1->next = NULL;
-      return l;
-   }
-
-   // Now add data1 back in at data2.
-   for (i = 1; i <= pos_data2; i++)
-   {
-      if (i == pos_data2)
+      if (i == pos_target)             // Target index found, insert payload (item1)
       {
-         prev->next = list_data1;
-         list_data1->next = temp;
+         prev->next = payload_data;    // Insert payload (item1) by having previous node point to the payload_data node
+         payload_data->next = temp;    // have payload_data node point to the next node
       }
       prev = temp;
       temp = temp->next;

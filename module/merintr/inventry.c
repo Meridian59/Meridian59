@@ -1094,7 +1094,7 @@ Bool InventoryMoveCurrentItem(int x, int y)
    if (item->obj->id == drop_position->obj->id)
       return False;
 
-   items = list_move_to_nth(items,(void *)item->obj->id,(void *)drop_position->obj->id,InventoryCompareIdItem);
+   items = list_move_item(items,(void *)item->obj->id,(void *)drop_position->obj->id,InventoryCompareIdItem);
    InventoryRedraw();
 
    RequestInventoryMove(item->obj->id, drop_position->obj->id);

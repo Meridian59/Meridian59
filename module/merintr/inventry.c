@@ -689,15 +689,13 @@ void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
    GetCursorPos(&mouse);                  // Get mouse position
    ScreenToClient(cinfo->hMain, &mouse);  // Get mouse position in client coordinates
       
-   if (!IsInArea(&a, mouse.x, mouse.y))   // Cancel item move if client dropped item outside of inventory window
-      return;
-
-   if (!MouseToRoom(&temp_x, &temp_y))    // See if mouse pointer is in main graphics area
+   if (!MouseToRoom(&temp_x, &temp_y))       // If the mouse pointer is NOT in the main graphics area
     {
-      if (x < 0 || y < 0)                 // Another check that we are in inventory
+      if (x < 0 || y < 0)                    // Another check that we are in inventory
          return;
-
-      InventoryMoveCurrentItem(x,y);      // Move item to new position in inventory.
+      if (!IsInArea(&a, mouse.x, mouse.y))   // Cancel item move if client dropped item outside of inventory window
+         return;
+      InventoryMoveCurrentItem(x,y);         // Move item to new position in inventory.
       return;
     }
 

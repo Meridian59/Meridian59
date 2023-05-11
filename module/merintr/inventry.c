@@ -672,23 +672,32 @@ void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 /************************************************************************/
 /*
  * InventoryLButtonUp:  User released left mouse button on inventory box.
- */
+ *    Call InventoryMoveCurrentItem if the mouse is within the inventory.
+ */    
 void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
    int temp_x, temp_y;
    room_contents_node *r;
+   POINT mouse;
+   AREA a;
 
-   if (!InventoryReleaseCapture())
+   // Multiple Sanity Checks
+   if (!InventoryReleaseCapture()) // Check that we're still in inventory
       return;
 
-   // See if mouse pointer is in main graphics area
-   if (!MouseToRoom(&temp_x, &temp_y))
+   InventoryGetArea(&a);                  // Get inventory area
+   GetCursorPos(&mouse);                  // Get mouse position
+   ScreenToClient(cinfo->hMain, &mouse);  // Get mouse position in client coordinates
+      
+   if (!IsInArea(&a, mouse.x, mouse.y))   // Cancel item move if client dropped item outside of inventory window
+      return;
+
+   if (!MouseToRoom(&temp_x, &temp_y))    // See if mouse pointer is in main graphics area
     {
-      // Drop in inventory. Check if we're still in inventory first.
-      if (x < 0 || y < 0)
+      if (x < 0 || y < 0)                 // Another check that we are in inventory
          return;
 
-      InventoryMoveCurrentItem(x,y);
+      InventoryMoveCurrentItem(x,y);      // Move item to new position in inventory.
       return;
     }
 

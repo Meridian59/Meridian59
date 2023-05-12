@@ -224,52 +224,6 @@ int SetNth(int n,int list_id,val_type new_val)
 	return NIL;
 }
 
-int SwapListElem(int list_id,int elem_one,int elem_two)
-{
-   list_node *l, *list_node_one, *list_node_two;
-   val_type temp;
-
-   l = GetListNodeByID(list_id);
-
-   // Set each of the list nodes to be swapped to the first list node initially.
-   list_node_one = l;
-   list_node_two = l;
-
-   // Start i at 2, since n or m = 1 will be handled by the initialisation.
-   for (int i = 2; i <= elem_one || i <= elem_two; i++)
-   {
-      if (!l)
-      {
-         bprintf("SwapListElem found invalid list node somewhere in list %i\n",
-            list_id);
-         return NIL;
-      }
-      if (l->rest.v.tag != TAG_LIST)
-      {
-         bprintf("SwapListElem can't go past end of list %i,%i\n",
-            l->rest.v.tag,l->rest.v.data);
-         return NIL;
-      }
-
-      l = GetListNodeByID(l->rest.v.data);
-
-      if (i == elem_one)
-      {
-         list_node_one = l;
-      }
-      if (i == elem_two)
-      {
-         list_node_two = l;
-      }
-   }
-
-   temp = list_node_two->first;
-   list_node_two->first = list_node_one->first;
-   list_node_one->first = temp;
-
-   return NIL;
-}
-
 int FindListElem(val_type list_id,val_type list_elem)
 {
 	int i;
@@ -296,79 +250,6 @@ int FindListElem(val_type list_id,val_type list_elem)
 	}
 	
 	return NIL;
-}
-
-int InsertListElem(int n,int list_id,val_type new_val)
-{
-   int new_list_id;
-   list_node *l, *prev, *new_node;
-
-   if (n  == 0)
-   {
-      bprintf("InsertListElem given invalid list element %i, returning old list\n",
-         n);
-      return list_id;
-   }
-
-   l = GetListNodeByID(list_id);
-
-   // Start at i = 2, n = 1 handled already.
-   for (int i = 2; i <= n; i++)
-   {
-      if (!l)
-      {
-         bprintf("InsertListElem found invalid list node somewhere in list %i\n",
-            list_id);
-         return list_id;
-      }
-      if (l->rest.v.tag != TAG_LIST)
-      {
-         // Add the new value to the end of the list.
-         new_list_id = AllocateListNode();
-         new_node = GetListNodeByID(new_list_id);
-         if (!new_node)
-         {
-            bprintf("InsertListElem couldn't allocate new node! %i\n",
-               new_list_id);
-            return list_id;
-         }
-         new_node->rest.int_val = NIL;
-         new_node->first.int_val = new_val.int_val;
-         // Previous node points to this one.
-         l->rest.v.tag = TAG_LIST;
-         l->rest.v.data = new_list_id;
-         return list_id;
-      }
-      prev = l;
-      l = GetListNodeByID(l->rest.v.data);
-   }
-
-   if (!l || !prev)
-   {
-      bprintf("InsertListElem found invalid list node somewhere in list %i\n",
-         list_id);
-      return list_id;
-   }
-
-   new_list_id = AllocateListNode();
-   new_node = GetListNodeByID(new_list_id);
-
-   if (!new_node)
-   {
-      bprintf("InsertListElem couldn't allocate new node! %i\n",
-         new_list_id);
-      return list_id;
-   }
-
-   // This node is inserted in position of the existing one, so use its rest data.
-   // Points to the old node.
-   new_node->rest.v.data = prev->rest.v.data;
-   new_node->rest.v.tag = TAG_LIST;
-   new_node->first.int_val = new_val.int_val;
-   // Previous node points to this one.
-   prev->rest.v.data = new_list_id;
-
-   return list_id;
 }
 
 blak_int DelListElem(val_type list_id,val_type list_elem)
@@ -400,6 +281,62 @@ blak_int DelListElem(val_type list_id,val_type list_elem)
 		list_elem.v.tag,list_elem.v.data,list_id.v.data);
 	
 	return list_id.int_val;
+}
+
+void MoveListElem(val_type list_id, val_type n, val_type m)
+{
+  list_node *list = GetListNodeByID(list_id.v.data);
+  if (list == NULL)
+  {
+    return;
+  }
+
+  // Copy all list data into a vector
+  std::vector<val_type> node_contents;
+  node_contents.push_back(list->first);
+  list_node *node = list;
+  while (node != NULL && node->rest.v.data != NIL)
+  {
+		node = GetListNodeByID(node->rest.v.data);
+    node_contents.push_back(node->first);
+  }
+
+  int source_index = n.v.data;
+  int dest_index = m.v.data;
+  if (source_index <= 0 || source_index > (int) node_contents.size())
+  {
+    bprintf("MoveListElem got source index out of range %i in list %i\n",
+            source_index, list_id.v.data);
+    return;
+  }
+  if (dest_index <= 0 || dest_index > (int) node_contents.size() + 1)
+  {
+    bprintf("MoveListElem got destination index out of range %i in list %i\n",
+            dest_index, list_id.v.data);
+    return;
+  }
+
+  if (source_index == dest_index)
+  {
+    return;
+  }
+
+  // Go from 1-based (Blakod) to 0-based
+  source_index -= 1;
+  dest_index -= 1;
+
+  // Do the move on the vector
+  node_contents.insert(node_contents.begin() + dest_index, node_contents[source_index]);
+  int pos_to_erase = source_index + (source_index > dest_index ? 1 : 0);
+  node_contents.erase(node_contents.begin() + pos_to_erase);
+
+  // Copy the vector back to the list
+  node = list;
+  for (auto data : node_contents)
+  {
+    node->first = data;
+		node = GetListNodeByID(node->rest.v.data);
+  }
 }
 
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id))

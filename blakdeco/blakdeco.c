@@ -520,11 +520,12 @@ const char * name_function(int fnum)
    switch (fnum)
    {
    case CREATEOBJECT : return "Create";
-//   case DELETEOBJECT : return "Delete";
+
    case ISCLASS: return "IsClass";
    case GETCLASS: return "GetClass";
 
    case SENDMESSAGE : return "Send";
+   case POSTMESSAGE : return "Post";
 
    case DEBUG : return "Debug";  
    case ADDPACKET : return "AddPacket";
@@ -552,11 +553,15 @@ const char * name_function(int fnum)
    case ISLIST : return "IsList";
    case SETFIRST : return "SetFirst";
    case SETNTH : return "SetNth";
-   case SWAPLISTELEM : return "SwapListElem";
    case DELLISTELEM : return "DelListElem";
-   case INSERTLISTELEM : return "InsertListElem";
+   case FINDLISTELEM : return "FindListElem";
+   case MOVELISTELEM : return "MoveListElem";
 
    case GETTIME : return "GetTime";
+
+   case ABS: return "Abs";
+   case BOUND: return "Bound";
+   case SQRT: return "Sqrt";
 
    case RANDOM  : return "Random";
    default : sprintf(s,"Unknown function %i",fnum); return s;

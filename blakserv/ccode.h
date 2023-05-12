@@ -173,10 +173,6 @@ blak_int C_SetFirst(int object_id,local_var_type *local_vars,
 	       int num_normal_parms,parm_node normal_parm_array[],
 	       int num_name_parms,parm_node name_parm_array[]);
 
-blak_int C_SwapListElem(int object_id,local_var_type *local_vars,
-         int num_normal_parms,parm_node normal_parm_array[],
-         int num_name_parms,parm_node name_parm_array[]);
-
 blak_int C_SetNth(int object_id,local_var_type *local_vars,
 	     int num_normal_parms,parm_node normal_parm_array[],
 	     int num_name_parms,parm_node name_parm_array[]);
@@ -185,13 +181,13 @@ blak_int C_FindListElem(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[]);
 
-blak_int C_InsertListElem(int object_id,local_var_type *local_vars,
-         int num_normal_parms,parm_node normal_parm_array[],
-         int num_name_parms,parm_node name_parm_array[]);
-
 blak_int C_DelListElem(int object_id,local_var_type *local_vars,
 		  int num_normal_parms,parm_node normal_parm_array[],
 		  int num_name_parms,parm_node name_parm_array[]);
+
+blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
+		   int num_normal_parms,parm_node normal_parm_array[],
+		   int num_name_parms,parm_node name_parm_array[]);
 
 blak_int C_GetTime(int object_id,local_var_type *local_vars,
 	      int num_normal_parms,parm_node normal_parm_array[],

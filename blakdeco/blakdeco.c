@@ -554,6 +554,7 @@ const char * name_function(int fnum)
    case SETNTH : return "SetNth";
    case SWAPLISTELEM : return "SwapListElem";
    case DELLISTELEM : return "DelListElem";
+   case INSERTLISTELEM : return "InsertListElem";
 
    case GETTIME : return "GetTime";
 

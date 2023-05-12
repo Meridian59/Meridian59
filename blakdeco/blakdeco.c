@@ -552,7 +552,6 @@ const char * name_function(int fnum)
    case ISLIST : return "IsList";
    case SETFIRST : return "SetFirst";
    case SETNTH : return "SetNth";
-   case SWAPLISTELEM : return "SwapListElem";
    case DELLISTELEM : return "DelListElem";
    case FINDLISTELEM : return "FindListElem";
    case MOVELISTELEM : return "MoveListElem";

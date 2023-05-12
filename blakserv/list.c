@@ -283,6 +283,62 @@ blak_int DelListElem(val_type list_id,val_type list_elem)
 	return list_id.int_val;
 }
 
+void MoveListElem(val_type list_id, val_type n, val_type m)
+{
+  list_node *list = GetListNodeByID(list_id.v.data);
+  if (list == NULL)
+  {
+    return;
+  }
+
+  // Copy all list data into a vector
+  std::vector<val_type> node_contents;
+  node_contents.push_back(list->first);
+  list_node *node = list;
+  while (node != NULL && node->rest.v.data != NIL)
+  {
+		node = GetListNodeByID(node->rest.v.data);
+    node_contents.push_back(node->first);
+  }
+
+  int source_index = n.v.data;
+  int dest_index = m.v.data;
+  if (source_index <= 0 || source_index > (int) node_contents.size())
+  {
+    bprintf("MoveListElem got source index out of range %i in list %i\n",
+            source_index, list_id.v.data);
+    return;
+  }
+  if (dest_index <= 0 || dest_index > (int) node_contents.size() + 1)
+  {
+    bprintf("MoveListElem got destination index out of range %i in list %i\n",
+            dest_index, list_id.v.data);
+    return;
+  }
+
+  if (source_index == dest_index)
+  {
+    return;
+  }
+  
+  // Go from 1-based (Blakod) to 0-based
+  source_index -= 1;
+  dest_index -= 1;
+
+  // Do the move on the vector
+  node_contents.insert(node_contents.begin() + dest_index, node_contents[source_index]);
+  int pos_to_erase = source_index + (source_index > dest_index ? 1 : 0);
+  node_contents.erase(node_contents.begin() + pos_to_erase);
+  
+  // Copy the vector back to the list
+  node = list;
+  for (auto data : node_contents)
+  {
+    node->first = data;
+		node = GetListNodeByID(node->rest.v.data);
+  }
+}
+
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id))
 {
 	int i;

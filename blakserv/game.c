@@ -356,7 +356,7 @@ void GameWarnLowCredits(session_node *s)
    sprintf(text,"You have only %i credit%s remaining",s->account->credits/100,
 	   (s->account->credits/100 == 1) ? "" : "s");
 
-   SetTempString(text,strlen(text));
+   SetTempString(text, (int) strlen(text));
    str_val.v.tag = TAG_TEMP_STRING;
    str_val.v.data = 0;		/* the data field doesn't matter for TAG_TEMP_STRING */
 

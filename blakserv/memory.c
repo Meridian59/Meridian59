@@ -87,7 +87,7 @@ static void *MallocCHK(size_t size)
 #endif
 	
 	/* store actual size of allocated block */
-	p[0] = size ;
+	p[0] = (unsigned long) size ;
 	
 	/* store our check token */
 	p[1] = MCHK_START ;
@@ -225,13 +225,11 @@ memory_statistics * GetMemoryStats(void)
 	return &memory_stat;
 }
 
-int GetMemoryTotal(void)
+size_t GetMemoryTotal(void)
 {
-	int i,total;
+	size_t total = 0;
 	
-	total = 0;
-	
-	for (i=0;i<MALLOC_ID_NUM;i++)
+	for (int i=0;i<MALLOC_ID_NUM;i++)
 		total += memory_stat.allocated[i];
 	
 	return total;
@@ -248,7 +246,7 @@ const char * GetMemoryStatName(int malloc_id)
 }
 
 
-void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linenumber)
+void * AllocateMemoryDebug(int malloc_id,size_t size,const char *filename,int linenumber)
 {
 	void *ptr;
 	
@@ -290,7 +288,7 @@ void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linen
 	return ptr;
 }
 
-void FreeMemoryX(int malloc_id,void **ptr,int size)
+void FreeMemoryX(int malloc_id,void **ptr,size_t size)
 {
 	if (InMainLoop())
 	{
@@ -309,8 +307,7 @@ void FreeMemoryX(int malloc_id,void **ptr,int size)
 #endif
 	
 	/* we want to catch any references to this, after the free()  */
-	*ptr = (void*)0xDEADC0DE ;
-	
+	*ptr = (void*) (int) 0xDEADC0DE;	
 }
 
 void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)

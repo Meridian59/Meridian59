@@ -550,7 +550,7 @@ void aprintf(const char *fmt,...)
 
 	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
 
-	AdminBufferSend(s,strlen(s));
+	AdminBufferSend(s, (int) strlen(s));
 }
 
 char *to_lowercase(char *s)
@@ -660,7 +660,7 @@ void SendSessionAdminText(int session_id,const char *fmt,...)
 	admin_session_id = session_id;
 
 	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
-	SendAdminBuffer(s,strlen(s));
+	SendAdminBuffer(s, (int) strlen(s));
 
 	admin_session_id = prev_admin_session_id;
 }
@@ -871,7 +871,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				}
 
 				text = (char *) parm_str;
-				SetTempString( text, strlen( text ) );	// Copies to global temp_str
+				SetTempString( text, (int) strlen( text ) );  // Copies to global temp_str
 
 				// we need to set type, name_id, and value
 				//	type is CONSTANT (set above)
@@ -1374,17 +1374,16 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 void AdminShowMemory(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[])
 {
-	int i,total;
 	memory_statistics *mstat;
 
 	aprintf("System Memory -----------------------------\n");
 
 	mstat = GetMemoryStats();
 
-	total = 0;
+	size_t total = 0;
 
 	aprintf("%s\n",TimeStr(GetTime()));
-	for (i=0;i<GetNumMemoryStats();i++)
+	for (int i=0;i<GetNumMemoryStats();i++)
 	{
 		aprintf("%-20s %8lu\n",GetMemoryStatName(i),mstat->allocated[i]);
 		total += mstat->allocated[i];
@@ -3863,10 +3862,9 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 		else if (blak_val.v.tag == TAG_RESOURCE)
 		{
 			resource_node* rnod = GetResourceByID(blak_val.v.data);
-			int len;
 			if (rnod && rnod->resource_val && *rnod->resource_val)
 			{
-            len = std::min(strlen(rnod->resource_val), (size_t) 60);
+        int len = std::min((int) strlen(rnod->resource_val), 60);
 			  aprintf(":   == \"");
 			  AdminBufferSend(rnod->resource_val, len);
 			  if (len < (int)strlen(rnod->resource_val))
@@ -3898,7 +3896,7 @@ void AdminSendUsers(int session_id,admin_parm_type parms[],
 	char *text;
 	text = (char *)parms[0];
 
-	SetTempString(text,strlen(text));
+	SetTempString(text, (int) strlen(text));
 	str_val.v.tag = TAG_TEMP_STRING;
 	str_val.v.data = 0;		/* doesn't matter for TAG_TEMP_STRING */
 

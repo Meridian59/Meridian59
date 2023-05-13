@@ -68,11 +68,11 @@ void AdminProcessSessionBuffer(session_node *s)
 
 void AdminInputChar(session_node *s,char ch)
 {
-   int len,session_id;
+   int session_id;
 
    if (ch != CR)
    {
-      len = strlen(s->adm->command);
+      size_t len = strlen(s->adm->command);
       if (len < MAX_ADMIN_COMMAND - 1)
       {
 	 s->adm->command[len] = ch;

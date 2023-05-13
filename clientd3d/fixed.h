@@ -17,18 +17,7 @@ typedef long FixedPoint;
 #define FIXED_ONE		(1 << FIXED_POINT_PRECISION)
 #define FIXED_ONE_HALF		(1 << (FIXED_POINT_PRECISION-1))
 
-extern FixedPoint tempFP;
 extern long tempLong;
-
-__inline FixedPoint Dbl2FP(double val)
-{
-   val = val * (double)FIXED_ONE + 0.5;
-   __asm {
-      fld   val;
-      fistp dword ptr tempFP;
-   }
-   return tempFP;
-}
 
 __inline int FloatToInt(float val)
 {
@@ -40,8 +29,6 @@ __inline int FloatToInt(float val)
 }
 
 #define INT_TO_FIXED(x)         ((x) << FIXED_POINT_PRECISION)
-//#define DOUBLE_TO_FIXED(x)      ((long)((x) * (double)FIXED_ONE + 0.5))
-#define DOUBLE_TO_FIXED(x)	(Dbl2FP(x))
 #define FIXED_TO_INT(x)         ((x) >> FIXED_POINT_PRECISION)
 #define FIXED_TO_DOUBLE(x)      (((double)(x)) / (double)FIXED_ONE)
 #define ROUND_FIXED_TO_INT(x)   (((x) + FIXED_ONE_HALF) >> FIXED_POINT_PRECISION)

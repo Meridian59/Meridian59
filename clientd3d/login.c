@@ -21,7 +21,7 @@ Bool logged_in;             /* True iff we're past login dialog */
 extern int connection;
 Bool admin_mode;            // True when user wants to go into admin mode
 
-static BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static HWND GetMessageBoxParent(void);
 static void LoginReset(void);
 
@@ -269,7 +269,7 @@ Bool GetLogin(void)
 /*
  * LoginDialogProc:  Get login information.
  */
-BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hUser, hPasswd;        /* Edit boxes in dialog */
    static HWND hGroupBox, hTryPreviewButton;

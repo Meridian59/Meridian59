@@ -297,7 +297,7 @@ void MoveListElem(val_type list_id, val_type n, val_type m)
   list_node *node = list;
   while (node != NULL && node->rest.v.data != NIL)
   {
-		node = GetListNodeByID(node->rest.v.data);
+    node = GetListNodeByID(node->rest.v.data);
     node_contents.push_back(node->first);
   }
 
@@ -335,7 +335,7 @@ void MoveListElem(val_type list_id, val_type n, val_type m)
   for (auto data : node_contents)
   {
     node->first = data;
-		node = GetListNodeByID(node->rest.v.data);
+    node = GetListNodeByID(node->rest.v.data);
   }
 }
 

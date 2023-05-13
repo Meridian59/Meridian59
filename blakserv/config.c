@@ -259,7 +259,8 @@ void ResetConfig(void)
 const char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic)
 {
    config_node *c;
-   int len,num;
+   size_t len;
+   int num;
    struct stat file_stat;
    char s[MAX_CONFIG_LINE];
 

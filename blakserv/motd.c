@@ -69,7 +69,6 @@ Bool LoadMotdName(char *fname)
 {
    FILE *file;
    int file_size;
-   int num_read;
    
    file = fopen(fname, "rb");
    if (file == NULL)
@@ -81,7 +80,7 @@ Bool LoadMotdName(char *fname)
    file_size = st.st_size;
    
    motd = (char *)AllocateMemory(MALLOC_ID_MOTD,file_size + 1);
-   num_read = fread(motd, 1, file_size, file);
+   size_t num_read = fread(motd, 1, file_size, file);
    if (num_read != file_size)
    {
       FreeMemory(MALLOC_ID_MOTD,motd,file_size + 1);
@@ -114,7 +113,7 @@ void SetMotd(char *new_motd)
       return;
    }
 
-   if (write(fh,new_motd,strlen(new_motd)) != (int)strlen(new_motd))
+   if (write(fh,new_motd,(int) strlen(new_motd)) != (int)strlen(new_motd))
    {
       eprintf("SetMotd error writing motd file to %s\n",filename);
       close(fh);
@@ -130,9 +129,9 @@ void SetMotd(char *new_motd)
 int GetMotdLength(void)
 {
    if (motd != NULL)
-      return strlen(motd);
+     return (int) strlen(motd);
    else
-      return strlen(ConfigStr(MOTD_DEFAULT));
+     return (int) strlen(ConfigStr(MOTD_DEFAULT));
 }
 
 char * GetMotd(void)

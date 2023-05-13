@@ -30,18 +30,18 @@ enum
 
 typedef struct
 {
-   int allocated[MALLOC_ID_NUM];
+  size_t allocated[MALLOC_ID_NUM];
 } memory_statistics;
 
 #define AllocateMemory(id,size) AllocateMemoryDebug(id,size,__FILE__,__LINE__)
 
 void InitMemory(void);
 memory_statistics * GetMemoryStats(void);
-int GetMemoryTotal(void);
+size_t GetMemoryTotal(void);
 int GetNumMemoryStats(void);
 const char * GetMemoryStatName(int malloc_id);
-void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linenumber);
-void FreeMemoryX(int malloc_id,void **ptr,int size);
+void * AllocateMemoryDebug(int malloc_id,size_t size,const char *filename,int linenumber);
+void FreeMemoryX(int malloc_id,void **ptr,size_t size);
 void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size);
 
 

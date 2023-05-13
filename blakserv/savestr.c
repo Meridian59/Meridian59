@@ -23,7 +23,7 @@ void SaveEachString(string_node *snod,int string_id);
 Bool SaveStrings(char *filename)
 {
    int write_int;
-   int written;
+   size_t written;
 
    strfile = fopen(filename, "wb");
    if (strfile == NULL)
@@ -50,7 +50,7 @@ Bool SaveStrings(char *filename)
 
 void SaveEachString(string_node *snod,int string_id)
 {
-   int written;
+   size_t written;
 
    written = fwrite(&string_id, 1, LEN_STR_ID, strfile);
    if (written != LEN_STR_ID)

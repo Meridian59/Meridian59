@@ -2085,6 +2085,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case SETNTH : strcpy(c_name, "SetNth"); break;
 		case DELLISTELEM : strcpy(c_name, "DelListElem"); break;
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
+		case MOVELISTELEM : strcpy(c_name, "MoveListElem"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
 		case ABS : strcpy(c_name, "Abs"); break;
 		case BOUND : strcpy(c_name, "Bound"); break;

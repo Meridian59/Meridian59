@@ -1850,56 +1850,19 @@ blak_int C_FindListElem(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])
 {
-   val_type list_val, n_val, m_val;
-
-   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-      normal_parm_array[0].value);
-   if (list_val.v.tag != TAG_LIST)
-   {
-      bprintf("C_SwapListElem object %i can't set elem of non-list %i,%i\n",
-         object_id,list_val.v.tag,list_val.v.data);
-      return NIL;
-   }
-
-   n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-      normal_parm_array[1].value);
-   if (n_val.v.tag != TAG_INT)
-   {
-      bprintf("C_SwapListElem object %i can't take Nth with n = non-int %i,%i\n",
-         object_id,n_val.v.tag,n_val.v.data);
-      return NIL;
-   }
-
-   m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-      normal_parm_array[2].value);
-   if (m_val.v.tag != TAG_INT)
-   {
-      bprintf("C_SwapListElem object %i can't take Nth with n = non-int %i,%i\n",
-         object_id,m_val.v.tag,m_val.v.data);
-      return NIL;
-   }
-
-   if (n_val.v.data == 0 || m_val.v.data == 0)
-   {
-      bprintf("C_SwapListElem object %i given invalid list element, elements are %i,%i\n",
-         object_id,n_val.v.data,m_val.v.data);
-      return NIL;
-   }
-
-   return SwapListElem(list_val.v.data,n_val.v.data,m_val.v.data);
-}
-
-blak_int C_DelListElem(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
-{
 	val_type list_val,list_elem,ret_val;
 	
 	list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
+	
+	if (list_val.v.tag == TAG_NIL)
+	{
+		return NIL;
+	}
+	
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_DelListElem object %i can't delete elem from non-list %i,%i\n",
+		bprintf("C_FindListElem object %i can't find elem in non-list %i,%i\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1907,7 +1870,12 @@ blak_int C_DelListElem(int object_id,local_var_type *local_vars,
 	list_elem = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 			     normal_parm_array[1].value);
 	
-	ret_val.int_val = DelListElem(list_val,list_elem);
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = FindListElem(list_val,list_elem);
+	if (NIL == ret_val.int_val)
+	{
+		return NIL;
+	}
 	
 	return ret_val.int_val;
 }
@@ -1916,50 +1884,6 @@ blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
                         int num_normal_parms,parm_node normal_parm_array[],
                         int num_name_parms,parm_node name_parm_array[])
 {
-	val_type list_val,list_elem,ret_val;
-	
-	list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	
-	if (list_val.v.tag == TAG_NIL)
-	{
-		return NIL;
-	}
-	
-	if (list_val.v.tag != TAG_LIST)
-	{
-		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%i\n",
-            object_id,list_val.v.tag,list_val.v.data);
-		return NIL;
-	}
-
-	val_type n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-                                 normal_parm_array[1].value);
-	if (n_val.v.tag != TAG_INT)
-	{
-		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
-            object_id, n_val.v.tag, n_val.v.data);
-    return NIL;
-  }
-
-  val_type m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-                                 normal_parm_array[2].value);
-	if (m_val.v.tag != TAG_INT)
-	{
-		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
-            object_id, m_val.v.tag, m_val.v.data);
-    return NIL;
-  }
-
-  MoveListElem(list_val, n_val, m_val);
-
-  return NIL;
-}
-
-blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
-                        int num_normal_parms,parm_node normal_parm_array[],
-                        int num_name_parms,parm_node name_parm_array[])
-{
 	val_type list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
                                     normal_parm_array[0].value);
 	
@@ -1968,48 +1892,6 @@ blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
 		return NIL;
 	}
 	
-	if (list_val.v.tag != TAG_LIST)
-	{
-		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%i\n",
-            object_id,list_val.v.tag,list_val.v.data);
-		return NIL;
-	}
-
-	val_type n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-                                 normal_parm_array[1].value);
-	if (n_val.v.tag != TAG_INT)
-	{
-		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
-            object_id, n_val.v.tag, n_val.v.data);
-    return NIL;
-  }
-
-  val_type m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-                                 normal_parm_array[2].value);
-	if (m_val.v.tag != TAG_INT)
-	{
-		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
-            object_id, m_val.v.tag, m_val.v.data);
-    return NIL;
-  }
-
-  MoveListElem(list_val, n_val, m_val);
-
-  return NIL;
-}
-
-blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
-                        int num_normal_parms,parm_node normal_parm_array[],
-                        int num_name_parms,parm_node name_parm_array[])
-{
-	val_type list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-                                    normal_parm_array[0].value);
-
-	if (list_val.v.tag == TAG_NIL)
-	{
-		return NIL;
-	}
-
 	if (list_val.v.tag != TAG_LIST)
 	{
 		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%i\n",

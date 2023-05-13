@@ -1998,6 +1998,48 @@ blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
   return NIL;
 }
 
+blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
+                        int num_normal_parms,parm_node normal_parm_array[],
+                        int num_name_parms,parm_node name_parm_array[])
+{
+	val_type list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                                    normal_parm_array[0].value);
+
+	if (list_val.v.tag == TAG_NIL)
+	{
+		return NIL;
+	}
+
+	if (list_val.v.tag != TAG_LIST)
+	{
+		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%i\n",
+            object_id,list_val.v.tag,list_val.v.data);
+		return NIL;
+	}
+
+	val_type n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+                                 normal_parm_array[1].value);
+	if (n_val.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
+            object_id, n_val.v.tag, n_val.v.data);
+    return NIL;
+  }
+
+  val_type m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+                                 normal_parm_array[2].value);
+	if (m_val.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
+            object_id, m_val.v.tag, m_val.v.data);
+    return NIL;
+  }
+
+  MoveListElem(list_val, n_val, m_val);
+
+  return NIL;
+}
+
 blak_int C_GetTime(int object_id,local_var_type *local_vars,
 			  int num_normal_parms,parm_node normal_parm_array[],
 			  int num_name_parms,parm_node name_parm_array[])

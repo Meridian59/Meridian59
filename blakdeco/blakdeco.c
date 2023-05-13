@@ -525,6 +525,7 @@ const char * name_function(int fnum)
 
    case SENDMESSAGE : return "Send";
    case POSTMESSAGE : return "Post";
+   case POSTMESSAGE : return "Post";
 
    case DEBUG : return "Debug";  
    case ADDPACKET : return "AddPacket";
@@ -555,8 +556,14 @@ const char * name_function(int fnum)
    case DELLISTELEM : return "DelListElem";
    case FINDLISTELEM : return "FindListElem";
    case MOVELISTELEM : return "MoveListElem";
+   case FINDLISTELEM : return "FindListElem";
+   case MOVELISTELEM : return "MoveListElem";
 
    case GETTIME : return "GetTime";
+
+   case ABS: return "Abs";
+   case BOUND: return "Bound";
+   case SQRT: return "Sqrt";
 
    case ABS: return "Abs";
    case BOUND: return "Bound";

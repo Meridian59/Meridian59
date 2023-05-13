@@ -97,7 +97,7 @@ static void GenerateCRC16( void )
 }
 
 /************************************************************************/
-long CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	/* See if module wants to handle message */
 	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == False)

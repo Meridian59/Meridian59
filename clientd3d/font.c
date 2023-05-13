@@ -38,7 +38,7 @@ static char fontinfo[][MAX_FONTNAME] = {
 static char font_section[] = "Fonts";  /* Section for fonts in INI file */
 
 /* local function prototypes */
-UINT CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+UINT_PTR CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 Bool SetFont(WORD font, LOGFONT *lf);
 void DestroyFont(WORD font);
 HFONT GetFont(WORD font);
@@ -264,7 +264,7 @@ void UserSelectFont(WORD font)
  * ChooseFontHookProc:  Intercept window messages of Choose Font common
  *   dialog.
  */
-UINT CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+UINT_PTR CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

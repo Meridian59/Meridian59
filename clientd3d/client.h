@@ -73,7 +73,7 @@ enum {False = 0, True = 1};
 
 extern void GetGamePath( char *szGamePath );
 
-extern long CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
 
 extern Bool is_foreground;   // True when program is in the foreground

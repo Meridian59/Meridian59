@@ -15,6 +15,6 @@
 void PingTimerStart(void);
 void PingTimerAbort(void);
 void PingGotReply(void);
-void CALLBACK PingTimerProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime);
+void CALLBACK PingTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime);
 
 #endif /* #ifndef _PING_H */

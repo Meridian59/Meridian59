@@ -52,7 +52,7 @@ extern HPALETTE hPal;
 static char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
 
 /* local function prototypes */
-long CALLBACK GraphCtlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK GraphCtlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 static void GraphCtlLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void GraphCtlLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
 static Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
@@ -111,7 +111,7 @@ char *GraphCtlGetClassName(void)
 /*
  * GraphCtlWndProc:  Main window procedure for graph controls.
  */
-long CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    /* Send off control-specific messages */
    if (msg > WM_USER)
@@ -121,12 +121,12 @@ long CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    {
    case WM_NCCREATE:
       /* Allocate memory for our per-control structure */
-      SetWindowLong(hwnd, GWL_GRAPHCTLMEM, (long) SafeMalloc(sizeof(GraphCtlStruct)));
+     SetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM, (LONG_PTR) SafeMalloc(sizeof(GraphCtlStruct)));
       return 1L;
 
    case WM_NCDESTROY:
       /* Free control's memory */
-      SafeFree((void *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM));
+      SafeFree((void *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM));
       break;
 
       HANDLE_MSG(hwnd, WM_CREATE, GraphCtlCreate);
@@ -171,7 +171,7 @@ Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
    GraphCtlStruct *info;
    int i;
 
-   info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
 
    /* Start with default values for range */
    info->min_value     = GRAPHDEFMIN;
@@ -193,7 +193,7 @@ Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 /*****************************************************************************/
 void GraphCtlLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
-   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
 
    if (!(info->style & GCS_INPUT))
       return;
@@ -210,7 +210,7 @@ void GraphCtlLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
 /*****************************************************************************/
 void GraphCtlLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
 
    if (!(info->style & GCS_INPUT))
       return;
@@ -221,7 +221,7 @@ void GraphCtlLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 /*****************************************************************************/
 void GraphCtlMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
-   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
 
    if (!(info->style & GCS_INPUT) || !info->button_down)
       return;
@@ -231,7 +231,7 @@ void GraphCtlMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 /*****************************************************************************/
 void GraphCtlKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
-   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
 
    if (!(info->style & GCS_INPUT) || !fDown)
       return;
@@ -270,7 +270,7 @@ void GraphCtlPaint(HWND hwnd)
    char temp[MAXAMOUNT + 1];
 
 
-   info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
    hdc = BeginPaint(hwnd, &ps);
 
    SelectPalette(hdc, hPal, FALSE);
@@ -407,7 +407,7 @@ void GraphCtlPaint(HWND hwnd)
  */
 long GraphCtlMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLong(hwnd, GWL_GRAPHCTLMEM);
+   GraphCtlStruct *info = (GraphCtlStruct *) GetWindowLongPtr(hwnd, GWL_GRAPHCTLMEM);
    COLORREF color;
    long retval;
 

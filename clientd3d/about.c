@@ -78,7 +78,7 @@ static void AboutLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT ke
 /*
  * AboutDialogProc:  Display info about client.
  */
-BOOL CALLBACK AboutDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AboutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int i;
 

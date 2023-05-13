@@ -43,8 +43,8 @@ static int  timer_id;          // Timer for sending pings to server during downl
 HANDLE hThread = NULL;         // Handle of transfer thread
 
 /* local function prototypes */
-static BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void _cdecl TransferMessage(char *fmt, ...);
 static void AbortDownloadDialog(void);
 static Bool DownloadDone(DownloadFileInfo *file_info);
@@ -153,7 +153,7 @@ Bool DownloadCheckDirs(HWND hParent)
    return True;
 }
 
-BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    char buffer[256];
    int i,size;
@@ -232,7 +232,7 @@ BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
 /*
  * DownloadDialogProc:  Dialog procedure for displaying downloading progress.
  */
-BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int fraction, i;
    HWND hGraph;
@@ -671,7 +671,7 @@ Bool DownloadUnarchiveFile(char *zip_name, char *dir)
 /*
  * DownloadPingProc:  In response to a timer going off, send a ping message to the server.
  */
-void CALLBACK DownloadPingProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
+void CALLBACK DownloadPingProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 {
    RequestLoginPing();
 }

@@ -24,7 +24,7 @@ static HWND hGuestDialog = NULL;
 
 extern HWND hCurrentDlg;
 
-static BOOL CALLBACK GuestDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK GuestDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void AbortGuestDialog(void);
 /********************************************************************/
 /*
@@ -109,7 +109,7 @@ void GuestLoggingIn(BYTE status, int low, int high)
 /*
  * GuestDialogProc:  Display guest login dialog.
  */
-BOOL CALLBACK GuestDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuestDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

@@ -20,7 +20,7 @@ using namespace std;
 
 Signup* Signup::s_inst = NULL;
 
-static BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 void Signup::UpdateInputs(HWND hDlg, int enabled)
 {
@@ -50,7 +50,7 @@ INT_PTR ApplyErrorStyleToStaticText(UINT wParam, LONG lParam)
 /*
 * SignUpDialogProc: Manage the signup dialog window callbacks.
 */
-BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HWND hUsername, hPasswd1, hPasswd2, hEmail, hServer101, hServer102;
 

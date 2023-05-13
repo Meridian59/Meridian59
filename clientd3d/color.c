@@ -72,7 +72,7 @@ static char color_section[] = "Colors";  /* Section for colors in INI file */
 
 extern HPALETTE hPal;
 
-BOOL CALLBACK ColorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK ColorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 Bool SetColor(WORD color, COLORREF cr);
 /************************************************************************/
 /*
@@ -260,7 +260,7 @@ void UserSelectColors(WORD fg, WORD bg)
 /*
 * ColorDialogProc:  Allow user to select foreground & background colors.
 */
-BOOL CALLBACK ColorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ColorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static ColorDialogStruct *info;
 	static HWND hSample;

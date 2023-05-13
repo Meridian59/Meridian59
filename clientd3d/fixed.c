@@ -12,7 +12,6 @@
 #include "client.h"
 
 
-FixedPoint tempFP;
 long tempLong;
 
 // disable warning for missing return statements

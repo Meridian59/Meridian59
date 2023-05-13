@@ -3782,19 +3782,10 @@ messages:
          }
 
       % Check that the payload object isn't found in plPassive.
-      if iPayload = $
+      if iPayload = $ OR iTarget = $
          {
             Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to move "
-                  "an object in their inventory that does not exist!");
-
-            return;
-         }
-
-      % Check that the target object isn't found in plPassive.
-      if iTarget = $
-         {
-            Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to move "
-                  "an item to a target that does not exist!");
+                  "an object or an object to a target in their inventory that does not exist!");
 
             return;
          }

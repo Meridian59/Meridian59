@@ -292,7 +292,7 @@ int main(int argc, char **argv)
    /* Parse options */
    for (arg = 1; arg < argc; arg++)
    {
-      len = strlen(argv[arg]);
+     len = (int) strlen(argv[arg]);
       if (len == 0)
 	 break;
 

@@ -444,7 +444,7 @@ void AdminReturnLine(char *str)
  * AdminValueDialogProc:  Dialog procedure for editing a property's value.
  *   lParam of INITDIALOG message is index of property in object list box.
  */
-BOOL CALLBACK AdminValueDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK AdminValueDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static int index;
    int type, i;

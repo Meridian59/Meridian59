@@ -33,7 +33,7 @@ static void CharDrawFace(void);
 static void CharRecomputeFace(void);
 static long CALLBACK CharFaceButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
 /********************************************************************/
-BOOL CALLBACK CharFaceDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CharFaceDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

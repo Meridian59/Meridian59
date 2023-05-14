@@ -71,16 +71,16 @@ static RECT dlg_rect;    // Dialog rectangle; used for resizing
 // Minimum chess dialog size
 static SIZE min_window_size;
 
-static BOOL CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void ChessMinMaxInfo(HWND hwnd, MINMAXINFO *lpmmi);
 static void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify);
-static long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void ChessGotState(unsigned char *state);
 static void ChessDlgShowMessage(char *message);
 static void ChessDlgShowGameStatus(void);
 static void ChessDlgShowMover(void);
-static BOOL CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool AbortChessDialogs(void);
 static void ChessGotPlayerName(BYTE player_num, char *name);
 static void ChessSendMove(void);
@@ -273,7 +273,7 @@ Bool WINAPI EventResetData(void)
    return True;
 }
 /********************************************************************/
-BOOL CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hwnd;
    RECT rect;
@@ -566,7 +566,7 @@ BYTE ChessGetPromotionPiece(void)
    return DialogBox(hInst, MAKEINTRESOURCE(IDD_PROMOTION), hChessDlg, ChessPromotionDialogProc);
 }
 /********************************************************************/
-BOOL CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    UserDidSomething();
    switch (message)

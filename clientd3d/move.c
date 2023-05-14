@@ -468,8 +468,8 @@ void SlideAlongWall(WallData *wall, int xOld, int yOld, int *xNew, int *yNew)
    double num = dx * wall_dx + dy * wall_dy;
    double denom = wall_dx * wall_dx + wall_dy * wall_dy;
     
-   *xNew = xOld + FloatToInt(wall_dx * num / denom);
-   *yNew = yOld + FloatToInt(wall_dy * num / denom);
+   *xNew = xOld + (int) (wall_dx * num / denom);
+   *yNew = yOld + (int) (wall_dy * num / denom);
 }
 
 BSPnode *FindIntersection(BSPnode *node, int xOld, int yOld, int xNew, int yNew, int z,WallData **wallIntersect)

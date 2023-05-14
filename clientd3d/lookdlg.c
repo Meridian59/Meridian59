@@ -510,31 +510,6 @@ Bool GetAmount(HWND hParent, HWND hwnd, object_node *obj, int x, int y)
 
    obj->temp_amount = value;
    return True;
-#if 0
-   RECT r;
-   AmountDialogStruct dlg_info;
-
-   if (!IsNumberObj(obj->id))
-      return True;
-
-   GetWindowRect(hwnd, &r);
-
-   dlg_info.x = r.left + x;
-   dlg_info.y = r.top + y;
-   dlg_info.amount = obj->amount;
-   
-   if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AMOUNT), hParent,
-		      AmountDialogProc, (LPARAM) &dlg_info)
-       == IDCANCEL)
-      return False;  /* Don't select item */
-
-   obj->temp_amount = dlg_info.amount;
-
-   if (dlg_info.amount == 0)
-      return False;
-
-   return True;
-#endif
 }
 /************************************************************************/
 /*

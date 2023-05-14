@@ -283,13 +283,8 @@ void MakeLightPalettes(void)
    for (i=0; i < LIGHT_LEVELS; i++)
    {
       /* Quadratic dependence so that there are more palettes close to full brightness */
-#if 1
       factor = 1 - ((float) LIGHT_LEVELS - i) / LIGHT_LEVELS * 
 	           ((float) LIGHT_LEVELS - i) / LIGHT_LEVELS;
-#else
-      factor = ((float) LIGHT_LEVELS - i) / LIGHT_LEVELS * 
-	           ((float) LIGHT_LEVELS - i) / LIGHT_LEVELS;
-#endif
 
       for (j=0; j < NUM_COLORS; j++)
       {

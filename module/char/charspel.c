@@ -21,7 +21,7 @@ static void MaybeEnableAddButton(HWND hDlg);
 static void CharSpellsInit(HWND hDlg);
 void CharSpellsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoify);
 /********************************************************************/
-BOOL CALLBACK CharSpellsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CharSpellsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

@@ -568,7 +568,6 @@ void PerformAction(int action, void *action_data)
 		UserMouselookToggle();
 		break;
 
-#if 1
    case A_DEPOSIT:
       UserDeposit();
       break;
@@ -576,7 +575,6 @@ void PerformAction(int action, void *action_data)
    case A_WITHDRAW:
       UserWithdraw();
       break;
-#endif
    }
 }
 

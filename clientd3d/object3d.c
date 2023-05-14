@@ -399,143 +399,18 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
       // Handle common case of no effects specially here
       if (d.translation == 0 && GetDrawingEffect(d.flags) == 0)
       {	 // Draw normally
-#if 1
-	 while (screen_ptr <= end_screen_ptr)
-	 {
-	    /* Don't draw transparent pixels */
-	    register BYTE color = *(row_bits + (x >> FIX_DECIMAL));
-	    if (color != TRANSPARENT_INDEX)
-	       *screen_ptr = palette[color];
 
-	    /* Move to next column of screen */
-	    screen_ptr++;
-	    x += xinc;
-	 }
-#else
-	 __asm 
-	 {
-	    push  ebp;
-	    mov   ebp, palette;
-	    xor   eax, eax;
-	    mov	  ecx, end_screen_ptr;
-	    mov   edi, screen_ptr;
-	    sub	  ecx, edi;
-	    jl	  END_TRANS_BLIT;
-	    inc	  ecx;
-	    mov	  ebx, x;
-	    mov	  edx, row_bits;
-	    cmp	  ecx, 4;
-	    jl	  DO_REMAINDER;
-DRAW_TRANSPARENT0:
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    jne	  SOLID0;
-;DRAW_TRANSPARENT1:
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    jne	  SOLID1;
-DRAW_TRANSPARENT2:
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    jne	  SOLID2;
-DRAW_TRANSPARENT3:
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    jne	  SOLID3;
-
-	    // Done our 4 pixels, so move to next group
-END_TRANSPARENT:
-	    add	  edi,4;
-	    sub	  ecx,4;
-	    jle	  END_TRANS_BLIT;
-	    cmp	  ecx,4;
-	    jge	  DRAW_TRANSPARENT0;
-	    jmp	  DO_REMAINDER;
-
-	    // This is for drawing solid bytes
-SOLID0:
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi],al;	        // Save the byte on the screen
-	    mov	  esi, ebx;		        // Get the next byte
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    je	  DRAW_TRANSPARENT2;
-SOLID1:
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi+1],al;
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    je	  DRAW_TRANSPARENT3;
-SOLID2:
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi+2],al;
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    je	  END_TRANSPARENT;
-SOLID3:
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi+3],al;
-	    add	  edi,4;
-	    sub	  ecx,4;
-	    jle	  END_TRANS_BLIT;
-	    cmp	  ecx,4;
-	    jge	  DRAW_TRANSPARENT0;
-DO_REMAINDER:
-	    dec	  ecx;
-	    jl	  END_TRANS_BLIT;
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    je	  DO_REMAINDER1;
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi],al;
-DO_REMAINDER1:
-	    dec	  ecx;
-	    jl	  END_TRANS_BLIT;
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    add	  ebx, xinc;
-	    cmp	  al, TRANSPARENT_INDEX;
-	    je	  DO_REMAINDER2;
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi+1],al;
-DO_REMAINDER2:
-	    dec	  ecx;
-	    jl	  END_TRANS_BLIT;
-	    mov	  esi, ebx;
-	    shr	  esi, FIX_DECIMAL;
-	    mov	  al, BYTE PTR [esi + edx];
-	    cmp	  al, TRANSPARENT_INDEX;
-	    je	  END_TRANS_BLIT;
-	    mov   al, BYTE PTR [ebp + eax];
-	    mov	  BYTE PTR [edi+2],al;
-END_TRANS_BLIT:
-	    pop   ebp;
-	 }
-#endif
+        while (screen_ptr <= end_screen_ptr)
+        {
+          /* Don't draw transparent pixels */
+          register BYTE color = *(row_bits + (x >> FIX_DECIMAL));
+          if (color != TRANSPARENT_INDEX)
+            *screen_ptr = palette[color];
+          
+          /* Move to next column of screen */
+          screen_ptr++;
+          x += xinc;
+        }
       }
       else
       {

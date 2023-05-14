@@ -196,8 +196,8 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
 	 else
 	 {   /* object segment crosses separator! */
       float f = side0 / (side0 - side1);
-	    long xmid = FloatToInt(object->x0 + f * (object->x1 - object->x0));
-	    long ymid = FloatToInt(object->y0 + f * (object->y1 - object->y0));
+	    long xmid = (int) (object->x0 + f * (object->x1 - object->x0));
+	    long ymid = (int) (object->y0 + f * (object->y1 - object->y0));
 	    ObjectData *copy;
 	    
 	    if (nobjects >= MAXOBJECTS)
@@ -459,7 +459,7 @@ static void AddObjects(room_type *room)
       d->draw.secondtranslation = r->obj.secondtranslation;
       d->draw.obj      = r;
       d->draw.depth    = 0;
-#if 1
+
       /* Make sure that object is above the floor. */
       if (!GetRoomHeight(room->tree, &top, &bottom, &sector_flags, r->motion.x, r->motion.y))
       {
@@ -467,11 +467,7 @@ static void AddObjects(room_type *room)
 	 continue;
       }
       d->draw.height = max(bottom, r->motion.z);
-#else
-      d->draw.height = r->motion.z;
-#endif
 
-#if 1
       // Set object depth based on "depth" sector flags
       d->draw.depth = sector_depths[SectorDepth(sector_flags)];
       if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
@@ -500,7 +496,7 @@ static void AddObjects(room_type *room)
 	    break;
 	 }
       }
-#endif      
+
       d->ncones        = 0;
       d->ncones_ptr    = &d->ncones;
 
@@ -3193,41 +3189,14 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 	 }
 	 else
 	 {
-#if 0
-	    __asm
-	    {
-	       mov   edi, screen_ptr;
-	       cmp   edi, end_screen_ptr;
-	       jle   END_WHILE_SCREEN_PTR_GT_END_SCREEN_PTR;
-	       mov   edx, ytex;
-	       mov   esi, DWORD PTR palette;
-	       xor   ecx, ecx
-WHILE_SCREEN_PTR_GT_END_SCREEN_PTR:
-	       mov   eax, edx;
-	       mov   ebx, square_base_ptr;
-	       shr   eax, 16;
-	       sub   ebx, eax;
-	       mov   cl, BYTE PTR [ebx];
-	       sub   edi, MAXX;
-	       add   edx, yinc;
-	       mov   al, BYTE PTR [esi + ecx];
-	       mov   BYTE PTR [edi + MAXX],al
-	       cmp   edi, end_screen_ptr;
-	       jg    WHILE_SCREEN_PTR_GT_END_SCREEN_PTR;
-	       mov   ytex, edx;
-	       mov   screen_ptr, edi;
-END_WHILE_SCREEN_PTR_GT_END_SCREEN_PTR:
-	    }
-#else
-	    while(screen_ptr > end_screen_ptr)
-	    {
-	       *screen_ptr = 
-		  palette[*(square_base_ptr - (ytex >> FIX_DECIMAL))];
-	       
-	       screen_ptr -= MAXX;
-	       ytex += yinc;
-	    }
-#endif
+     while(screen_ptr > end_screen_ptr)
+     {
+       *screen_ptr = 
+         palette[*(square_base_ptr - (ytex >> FIX_DECIMAL))];
+       
+       screen_ptr -= MAXX;
+       ytex += yinc;
+     }
 	 }
 	 total_steps -= num_steps;
       }
@@ -3698,13 +3667,6 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
    
    tex_width  = DibWidth(texture);
    tex_height = DibHeight(texture);
-#if 0
-   if ((tex_width != BITMAP_WIDTH || tex_height != BITMAP_WIDTH) &&
-       (tex_width != BITMAP_WIDTH * 2 || tex_height != BITMAP_WIDTH * 2))
-   {
-      debug(("warning: bad leaf bitmap size %d x %d\n", tex_width, tex_height));
-   }
-#endif
    
    new_hv = (viewer_height - height) * VIEWER_DISTANCE;
    
@@ -4047,22 +4009,6 @@ static void doDrawBackground(ViewCone *c)
       over_width = DibWidth(pdib_ov);
       over_height = DibHeight(pdib_ov);
      
-#if 0
-      /* arbitrary definition: offsets of a background overlay are:
-       * x: angle from due east
-       * y: pixels up from horizon
-       * negative y gives an object location below the horizon.
-       * The given bitmap is centered at the offset location.
-       */
-      px = overlay->x;
-      py = overlay->y;
-      /* convert from arbitrary definition to real screen coordinates */
-      //px = px/2 + screen_width/2 - viewer_angle/2;
-      while (px >= 0)
-         px -= NUMDEGREES/2;
-      while (px < 0)
-	 px += NUMDEGREES/2;
-#else
       deltaAngle = overlay->x - viewer_angle;
       if (deltaAngle > (NUMDEGREES/2))
 	 deltaAngle -= NUMDEGREES;
@@ -4071,7 +4017,6 @@ static void doDrawBackground(ViewCone *c)
       px = (world_width * deltaAngle / NUMDEGREES);
       px += screen_width2;
       py = horizon - overlay->y;
-#endif
       
       /* adjust for center of bitmap */
       px -= over_width/2;

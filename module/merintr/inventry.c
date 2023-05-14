@@ -695,7 +695,7 @@ void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
       }
    
    // See if mouse pointer is in main graphics area
-   if (!MouseToRoom(&temp_x, &temp_y)) 
+   if (!MouseToRoom(&temp_x, &temp_y))
       return;
 
    // See if a container is under mouse pointer

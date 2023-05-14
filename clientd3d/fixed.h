@@ -30,7 +30,6 @@ __inline int FloatToInt(float val)
 
 #define INT_TO_FIXED(x)         ((x) << FIXED_POINT_PRECISION)
 #define FIXED_TO_INT(x)         ((x) >> FIXED_POINT_PRECISION)
-#define FIXED_TO_DOUBLE(x)      (((double)(x)) / (double)FIXED_ONE)
 #define ROUND_FIXED_TO_INT(x)   (((x) + FIXED_ONE_HALF) >> FIXED_POINT_PRECISION)
 
 // difference between fixed point precision & FINENESS

@@ -10,6 +10,8 @@
 // Declarations for Fixed point math routines
 //
 
+#include <intrin.h>
+
 typedef long FixedPoint;
 
 #define FIXED_POINT_PRECISION  8L
@@ -17,15 +19,11 @@ typedef long FixedPoint;
 #define FIXED_ONE		(1 << FIXED_POINT_PRECISION)
 #define FIXED_ONE_HALF		(1 << (FIXED_POINT_PRECISION-1))
 
-extern long tempLong;
-
 __inline int FloatToInt(float val)
 {
-   __asm {
-      fld   val;
-      fistp dword ptr tempLong;
-   }
-   return tempLong;
+  // Microsoft-specific function replaces previous inline assembly
+  // implementation.
+  return _cvt_ftoi_fast(val);
 }
 
 #define INT_TO_FIXED(x)         ((x) << FIXED_POINT_PRECISION)

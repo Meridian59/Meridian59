@@ -126,7 +126,7 @@ BOOL WriteBGFFile(Bitmaps *b, Options *opts, char *filename)
    UnmapViewOfFile(f.mem);
    CloseHandle(f.mapfh);
 
-   SetFilePointer(f.fh, (f.ptr - f.mem), NULL, FILE_BEGIN);
+   SetFilePointer(f.fh, (long) (f.ptr - f.mem), NULL, FILE_BEGIN);
    SetEndOfFile(f.fh);
 
    CloseHandle(f.fh);

@@ -69,11 +69,12 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /GR- turns off RTTI
 # /EHsc- turns off exceptions
 # /wd4996  disables warning (GetVersionExA has been deprecated)
+# /wd4312  disables warning (cast 32-bit value to 64-bit pointer)
 # /MP enables parallel compiling
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
 	     -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
-             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
+             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 /wd4312 \
 	     -TP -WX -GR- -EHsc- -MP
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox

@@ -45,9 +45,9 @@ void RestartFilename();
 void StartupError();
 void RestartClient();
 void Interface(int how_show);
-long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam);
+LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 void OnTimer(HWND hwnd,int id);
-BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 /************************************************************************/
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_line,int how_show)
@@ -199,7 +199,7 @@ void Interface(int how_show)
    }
 }
 /************************************************************************/
-long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
+LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)
 {
    HWND hCtrl;
 
@@ -242,7 +242,7 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
 
    case CM_FILESIZE:
       // Set max value
-     transfer_file_size = lParam;
+      transfer_file_size = (int) lParam;
       sprintf(string, format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwndMain, IDC_BYTES1, string);
       SendDlgItemMessage(hwnd, IDC_PROGRESS, PBM_SETRANGE, 0,
@@ -251,7 +251,7 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
 
    case CM_PROGRESS:
       // Set current value
-      transfer_progress = lParam;
+      transfer_progress = (int) lParam;
       sprintf(string, format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwndMain, IDC_BYTES1, string);
       SendDlgItemMessage(hwnd, IDC_PROGRESS, PBM_SETPOS, transfer_progress / 100, 0);
@@ -301,7 +301,7 @@ void Status(char *fmt, ...)
  */
 void Error(char *fmt, ...)
 {
-   int retval;
+   INT_PTR retval;
    char s[500];
    va_list marker;
     
@@ -320,7 +320,7 @@ void Error(char *fmt, ...)
 /*
  * ErrorDialogProc:  Dialog procedure for displaying error and asking for retry.
  */
-BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

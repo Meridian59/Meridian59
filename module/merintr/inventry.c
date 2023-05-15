@@ -690,7 +690,7 @@ void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 
    if (IsInArea(&a, mouse.x, mouse.y))
       {
-         InventoryMoveCurrentItem(x,y);
+         InventoryMoveCurrentItem(x, y);
          return;
       }
    
@@ -1078,11 +1078,11 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
 /************************************************************************/
 /*
  * InventoryMoveCurrentItem:  Move the item with the inventory cursor, if any.
- *   Return True iff item moved.
+ *   Return True iff item moved.  Coordinates (0,0) are at the top left corner
+ *   of the inventory window, increasing as you go to the right and down.
  */
 Bool InventoryMoveCurrentItem(int x, int y)
 {
-   int row, col;
    InvItem *item, *drop_position;
 
    item = InventoryGetCurrentItem();
@@ -1090,8 +1090,9 @@ Bool InventoryMoveCurrentItem(int x, int y)
       return False;
 
    // Find row and col in absolute coordinates
-   col = x / INVENTORY_BOX_WIDTH;
+   int row, col;
    row = top_row + y / INVENTORY_BOX_HEIGHT;
+   col = x / INVENTORY_BOX_WIDTH;
 
    drop_position = (InvItem *) list_nth_item(items, row * cols + col);
    if (drop_position == NULL)
@@ -1100,7 +1101,7 @@ Bool InventoryMoveCurrentItem(int x, int y)
    if (item->obj->id == drop_position->obj->id)
       return False;
 
-   items = list_move_item(items,(void *)item->obj->id,(void *)drop_position->obj->id,InventoryCompareIdItem);
+   items = list_move_item(items, (void *)item->obj->id, (void *)drop_position->obj->id, InventoryCompareIdItem);
    InventoryRedraw();
 
    RequestInventoryMove(item->obj->id, drop_position->obj->id);

@@ -984,7 +984,7 @@ messages:
       {
          iPayload = Nth(client_msg,2);
          iTarget = Nth(client_msg,3);
-         Send(self,@UserMoveInventoryItem,#payload=iPayload,#target=iTarget);
+         Send(self,@UserMoveInventoryItem,#payload_index=iPayload,#target_index=iTarget);
 
          return;
       }
@@ -3758,29 +3758,38 @@ messages:
       return;
    }
 
-   UserMoveInventoryItem(payload=$,target=$)
-   % User moved an item in their inventory, now update plPassive list
+   % Server has received a client request to move an item from the first item's position
+   %   in the inventory list to a second item's position.  This function executes the move
+   %   in the plPassive inventory list assuming all checks clear.
+   UserMoveInventoryItem(payload_index=1,target_index=1)
    {
-      if payload = $
-         OR target = $
-         OR payload = target
+      local plPassive_max_index;
+
+      if payload_index = $
+         OR target_index = $
+         OR payload_index = target_index
          OR plPassive = $
       {
+         Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to move "
+                  "an object or an object to a target in their inventory that does not exist!");
          return;
       }
 
-      % Check that the payload or target objects aren't found in plPassive.
-      if payload = $ OR target = $
-         {
-            Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to move "
-                  "an object or an object to a target in their inventory that does not exist!");
+      % Check to make sure payload_index and target_index are within plPassive
+      plPassive_max_index = Length(plPassive) + 1;
 
-            return;
-         }
+      if payload_index > plPassive_max_index
+         OR payload_index < 1
+         OR target_index > plPassive_max_index
+         OR target_index < 1
+      {
+         Debug("ALERT! ",Send(self,@GetTrueName),self," attempted an invalid inventory move! "
+                  "plPassive_max_index",plPassive_max_index,"payload_index",payload_index,"target_index",target_index);
+         return;
+      }
 
       % If all checks pass, move the item
-      MoveListElem(plPassive, payload, target);
-
+      MoveListElem(plPassive, payload_index, target_index);
       return; 
    }
 

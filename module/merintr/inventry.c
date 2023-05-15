@@ -1078,13 +1078,13 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
 /************************************************************************/
 /*
  * InventoryMoveCurrentItem:  Move the selected item with the inventory cursor 
- *   to the given (x, y) coordinates, if any.  Return True iff item moved.
+ *   to the item at the given (x, y) coordinates, if any. Returns True iff item moved.
  *   Coordinates (0,0) are at the top left corner of the inventory window,
  *   increasing as you go to the right and down.
  */
 Bool InventoryMoveCurrentItem(int x, int y)
 {
-   InvItem *item, *drop_position;
+   InvItem *item;
 
    item = InventoryGetCurrentItem();
    if (item == NULL)
@@ -1095,6 +1095,8 @@ Bool InventoryMoveCurrentItem(int x, int y)
    row = top_row + y / INVENTORY_BOX_HEIGHT;
    col = x / INVENTORY_BOX_WIDTH;
 
+   InvItem *drop_position;
+
    drop_position = (InvItem *) list_nth_item(items, row * cols + col);
    if (drop_position == NULL)
       return False;
@@ -1104,8 +1106,8 @@ Bool InventoryMoveCurrentItem(int x, int y)
 
    /* Before we send the move request to the server, we need to convert
    *   the move index arguments from 0-based to 1-based (Blakod).
-   *   We also need to reverse the list indeces because the client
-   *   and Blakod inventory lists are reversed.
+   *   We also need to reverse the list indices because the client
+   *   inventory list is reversed compared to the server Blakod list.
    */
 
    int pos_payload, pos_target;
@@ -1115,7 +1117,7 @@ Bool InventoryMoveCurrentItem(int x, int y)
    int length;
    length = list_length(items);
 
-   // subtract client pos from list length to reverse the list indeces
+   // subtract client pos from list length to reverse the list indices
    pos_payload = length - pos_payload;
    pos_target = length - pos_target;
 
@@ -1125,7 +1127,7 @@ Bool InventoryMoveCurrentItem(int x, int y)
    */
 
    if (pos_target > pos_payload)
-      pos_target +=1;
+      pos_target += 1;
 
    items = list_move_item(items, (void *)item->obj->id, (void *)drop_position->obj->id, InventoryCompareIdItem);
    InventoryRedraw();

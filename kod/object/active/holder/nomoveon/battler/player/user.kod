@@ -858,7 +858,7 @@ messages:
       local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets, bSpam, oPayload, oTarget;
+            lTargets, bSpam, iPayload, iTarget;
 
       bSpam = FALSE;
 
@@ -982,9 +982,9 @@ messages:
       
       if liClient_cmd = BP_REQ_INVENTORY_MOVE
       {
-         oPayload = Nth(client_msg,2);
-         oTarget = Nth(client_msg,3);
-         Send(self,@UserMoveInventoryItem,#payload=oPayload,#target=oTarget);
+         iPayload = Nth(client_msg,2);
+         iTarget = Nth(client_msg,3);
+         Send(self,@UserMoveInventoryItem,#payload=iPayload,#target=iTarget);
 
          return;
       }
@@ -3761,9 +3761,6 @@ messages:
    UserMoveInventoryItem(payload=$,target=$)
    % User moved an item in their inventory, now update plPassive list
    {
-      local iPayload, iTarget;
-
-      % Sanity checks
       if payload = $
          OR target = $
          OR payload = target
@@ -3772,17 +3769,8 @@ messages:
          return;
       }
 
-      % Find the list positions for the two objects that the player wants to move
-      iPayload = FindListElem(plPassive,payload); 
-      iTarget = FindListElem(plPassive,target);
-
-      if iTarget > iPayload
-         {
-            iTarget = iTarget + 1;
-         }
-
-      % Check that the payload object isn't found in plPassive.
-      if iPayload = $ OR iTarget = $
+      % Check that the payload or target objects aren't found in plPassive.
+      if payload = $ OR target = $
          {
             Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to move "
                   "an object or an object to a target in their inventory that does not exist!");
@@ -3791,7 +3779,7 @@ messages:
          }
 
       % If all checks pass, move the item
-      MoveListElem(plPassive, iPayload, iTarget);
+      MoveListElem(plPassive, payload, target);
 
       return; 
    }

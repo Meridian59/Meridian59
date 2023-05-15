@@ -1102,10 +1102,35 @@ Bool InventoryMoveCurrentItem(int x, int y)
    if (item->obj->id == drop_position->obj->id)
       return False;
 
+   /* Before we send the move request to the server, we need to convert
+   *   the move index arguments from 0-based to 1-based (Blakod).
+   *   We also need to reverse the list indeces because the client
+   *   and Blakod inventory lists are reversed.
+   */
+
+   int pos_payload, pos_target;
+   pos_payload = list_get_position(items, (void *)item->obj->id, InventoryCompareIdItem);
+   pos_target = list_get_position(items, (void *)drop_position->obj->id, InventoryCompareIdItem);
+
+   int length;
+   length = list_length(items);
+
+   // subtract client pos from list length to reverse the list indeces
+   pos_payload = length - pos_payload;
+   pos_target = length - pos_target;
+
+   /* add 1 to targetpos if target pos > payload pos because 
+   *   the destination argument is the index of the item you
+   *   want the moved item to go before.
+   */
+
+   if (pos_target > pos_payload)
+      pos_target +=1;
+
    items = list_move_item(items, (void *)item->obj->id, (void *)drop_position->obj->id, InventoryCompareIdItem);
    InventoryRedraw();
 
-   RequestInventoryMove(item->obj->id, drop_position->obj->id);
+   RequestInventoryMove(pos_payload, pos_target);
 
    return True;
 }

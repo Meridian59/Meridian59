@@ -672,23 +672,23 @@ void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 /************************************************************************/
 /*
  * InventoryLButtonUp:  User released left mouse button on inventory box.
- * Call InventoryMoveCurrentItem if the mouse is within the inventory.
  */
 void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
    int temp_x, temp_y;
    room_contents_node *r;
    POINT mouse;
-   AREA a;
+   AREA inventory_area;
 
-   InventoryGetArea(&a);
+   InventoryGetArea(&inventory_area);
    GetCursorPos(&mouse);
    ScreenToClient(cinfo->hMain, &mouse);
 
    if (!InventoryReleaseCapture())
       return;
 
-   if (IsInArea(&a, mouse.x, mouse.y))
+   // If button was released in inventory area, move selected item to new location in inventory list
+   if (IsInArea(&inventory_area, mouse.x, mouse.y))
       {
          InventoryMoveCurrentItem(x, y);
          return;
@@ -1077,9 +1077,10 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
 }
 /************************************************************************/
 /*
- * InventoryMoveCurrentItem:  Move the item with the inventory cursor, if any.
- *   Return True iff item moved.  Coordinates (0,0) are at the top left corner
- *   of the inventory window, increasing as you go to the right and down.
+ * InventoryMoveCurrentItem:  Move the selected item with the inventory cursor 
+ *   to the given (x, y) coordinates, if any.  Return True iff item moved.
+ *   Coordinates (0,0) are at the top left corner of the inventory window,
+ *   increasing as you go to the right and down.
  */
 Bool InventoryMoveCurrentItem(int x, int y)
 {

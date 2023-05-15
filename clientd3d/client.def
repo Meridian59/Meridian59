@@ -145,6 +145,8 @@ EXPORTS
 	list_length
 	list_move_to_front
 	list_add_sorted_item
+	list_get_position
+	list_move_item
 
 ; ID lists
 	IDListAdd

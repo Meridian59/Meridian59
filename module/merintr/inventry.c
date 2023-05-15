@@ -121,6 +121,7 @@ static Bool InventoryItemVisible(int row, int col);
 static void InventoryCursorMove(int action);
 static Bool InventoryReleaseCapture(void);
 static Bool InventoryDropCurrentItem(room_contents_node *container);
+static Bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
@@ -671,14 +672,27 @@ void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 /************************************************************************/
 /*
  * InventoryLButtonUp:  User released left mouse button on inventory box.
+ * Call InventoryMoveCurrentItem if the mouse is within the inventory.
  */
 void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
    int temp_x, temp_y;
    room_contents_node *r;
+   POINT mouse;
+   AREA a;
+
+   InventoryGetArea(&a);
+   GetCursorPos(&mouse);
+   ScreenToClient(cinfo->hMain, &mouse);
 
    if (!InventoryReleaseCapture())
       return;
+
+   if (IsInArea(&a, mouse.x, mouse.y))
+      {
+         InventoryMoveCurrentItem(x, y);
+         return;
+      }
 
    // See if mouse pointer is in main graphics area
    if (!MouseToRoom(&temp_x, &temp_y))
@@ -1059,6 +1073,39 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
    if (container == NULL)
       RequestDrop(item->obj);
    else RequestPut(item->obj, container->obj.id);
+   return True;
+}
+/************************************************************************/
+/*
+ * InventoryMoveCurrentItem:  Move the item with the inventory cursor, if any.
+ *   Return True iff item moved.  Coordinates (0,0) are at the top left corner
+ *   of the inventory window, increasing as you go to the right and down.
+ */
+Bool InventoryMoveCurrentItem(int x, int y)
+{
+   InvItem *item, *drop_position;
+
+   item = InventoryGetCurrentItem();
+   if (item == NULL)
+      return False;
+
+   // Find row and col in absolute coordinates
+   int row, col;
+   row = top_row + y / INVENTORY_BOX_HEIGHT;
+   col = x / INVENTORY_BOX_WIDTH;
+
+   drop_position = (InvItem *) list_nth_item(items, row * cols + col);
+   if (drop_position == NULL)
+      return False;
+
+   if (item->obj->id == drop_position->obj->id)
+      return False;
+
+   items = list_move_item(items, (void *)item->obj->id, (void *)drop_position->obj->id, InventoryCompareIdItem);
+   InventoryRedraw();
+
+   RequestInventoryMove(item->obj->id, drop_position->obj->id);
+
    return True;
 }
 /************************************************************************/

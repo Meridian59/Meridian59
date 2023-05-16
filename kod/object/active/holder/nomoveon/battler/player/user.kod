@@ -3758,10 +3758,8 @@ messages:
       return;
    }
 
-   % Server has received a client request to move an item from the first item's position
-   %   in the inventory list to a second item's position.  This function executes the move
-   %   in the plPassive inventory list assuming all checks clear.
    UserMoveInventoryItem(payload_index=1,target_index=1)
+   "Move the item from payload_index to just before target_index in the user's inventory\n"
    {
       local plPassive_max_index;
 
@@ -3775,7 +3773,7 @@ messages:
          return;
       }
 
-      % Check to make sure payload_index and target_index are within plPassive
+      % Check to make sure payload_index and target_index are valid requests
       plPassive_max_index = Length(plPassive) + 1;
 
       if payload_index > plPassive_max_index

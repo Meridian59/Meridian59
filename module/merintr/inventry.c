@@ -1084,20 +1084,15 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
  */
 Bool InventoryMoveCurrentItem(int x, int y)
 {
-   InvItem *item;
-
-   item = InventoryGetCurrentItem();
+   InvItem *item = InventoryGetCurrentItem();
    if (item == NULL)
       return False;
 
    // Find row and col in absolute coordinates
-   int row, col;
-   row = top_row + y / INVENTORY_BOX_HEIGHT;
-   col = x / INVENTORY_BOX_WIDTH;
+   int row = top_row + y / INVENTORY_BOX_HEIGHT;
+   int col = x / INVENTORY_BOX_WIDTH;
 
-   InvItem *drop_position;
-
-   drop_position = (InvItem *) list_nth_item(items, row * cols + col);
+   InvItem *drop_position = (InvItem *) list_nth_item(items, row * cols + col);
    if (drop_position == NULL)
       return False;
 
@@ -1110,12 +1105,9 @@ Bool InventoryMoveCurrentItem(int x, int y)
    *   inventory list is reversed compared to the server Blakod list.
    */
 
-   int pos_payload, pos_target;
-   pos_payload = list_get_position(items, (void *)item->obj->id, InventoryCompareIdItem);
-   pos_target = list_get_position(items, (void *)drop_position->obj->id, InventoryCompareIdItem);
-
-   int length;
-   length = list_length(items);
+   int pos_payload = list_get_position(items, (void *)item->obj->id, InventoryCompareIdItem);
+   int pos_target = list_get_position(items, (void *)drop_position->obj->id, InventoryCompareIdItem);
+   int length = list_length(items);
 
    // subtract client pos from list length to reverse the list indices
    pos_payload = length - pos_payload;
@@ -1125,7 +1117,6 @@ Bool InventoryMoveCurrentItem(int x, int y)
    *   the destination argument is the index of the item you
    *   want the moved item to go before.
    */
-
    if (pos_target > pos_payload)
       pos_target += 1;
 

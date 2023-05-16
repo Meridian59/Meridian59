@@ -121,6 +121,7 @@ static Bool InventoryItemVisible(int row, int col);
 static void InventoryCursorMove(int action);
 static Bool InventoryReleaseCapture(void);
 static Bool InventoryDropCurrentItem(room_contents_node *container);
+static Bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
@@ -676,9 +677,22 @@ void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
    int temp_x, temp_y;
    room_contents_node *r;
+   POINT mouse;
+   AREA inventory_area;
+
+   InventoryGetArea(&inventory_area);
+   GetCursorPos(&mouse);
+   ScreenToClient(cinfo->hMain, &mouse);
 
    if (!InventoryReleaseCapture())
       return;
+
+   // If button was released in inventory area, move selected item to new location in inventory list
+   if (IsInArea(&inventory_area, mouse.x, mouse.y))
+      {
+         InventoryMoveCurrentItem(x, y);
+         return;
+      }
 
    // See if mouse pointer is in main graphics area
    if (!MouseToRoom(&temp_x, &temp_y))
@@ -1059,6 +1073,58 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
    if (container == NULL)
       RequestDrop(item->obj);
    else RequestPut(item->obj, container->obj.id);
+   return True;
+}
+/************************************************************************/
+/*
+ * InventoryMoveCurrentItem:  Move the selected item with the inventory cursor 
+ *   to the item at the given (x, y) coordinates, if any. Returns True iff item moved.
+ *   Coordinates (0,0) are at the top left corner of the inventory window,
+ *   increasing as you go to the right and down.
+ */
+Bool InventoryMoveCurrentItem(int x, int y)
+{
+   InvItem *item = InventoryGetCurrentItem();
+   if (item == NULL)
+      return False;
+
+   // Find row and col in absolute coordinates
+   int row = top_row + y / INVENTORY_BOX_HEIGHT;
+   int col = x / INVENTORY_BOX_WIDTH;
+
+   InvItem *drop_position = (InvItem *) list_nth_item(items, row * cols + col);
+   if (drop_position == NULL)
+      return False;
+
+   if (item->obj->id == drop_position->obj->id)
+      return False;
+
+   /* Before we send the move request to the server, we need to convert
+   *   the move index arguments from 0-based to 1-based (Blakod).
+   *   We also need to reverse the list indices because the client
+   *   inventory list is reversed compared to the server Blakod list.
+   */
+
+   int pos_payload = list_get_position(items, (void *)item->obj->id, InventoryCompareIdItem);
+   int pos_target = list_get_position(items, (void *)drop_position->obj->id, InventoryCompareIdItem);
+   int length = list_length(items);
+
+   // subtract client pos from list length to reverse the list indices
+   pos_payload = length - pos_payload;
+   pos_target = length - pos_target;
+
+   /* add 1 to targetpos if target pos > payload pos because 
+   *   the destination argument is the index of the item you
+   *   want the moved item to go before.
+   */
+   if (pos_target > pos_payload)
+      pos_target += 1;
+
+   items = list_move_item(items, (void *)item->obj->id, (void *)drop_position->obj->id, InventoryCompareIdItem);
+   InventoryRedraw();
+
+   RequestInventoryMove(pos_payload, pos_target);
+
    return True;
 }
 /************************************************************************/

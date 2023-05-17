@@ -45,7 +45,7 @@ M59EXPORT int       list_length(list_type l);
 M59EXPORT list_type list_move_to_front(list_type l, void *data, CompareProc compare);
 M59EXPORT list_type list_add_sorted_item(list_type l, void *newdata, SortProc compare);
 M59EXPORT int       list_get_position(list_type l, void *data, CompareProc compare);
-M59EXPORT list_type list_move_item(list_type l, void *data1, void *data2, CompareProc compare);
+M59EXPORT list_type list_move_item(list_type l, int source_index, int dest_index);
 
 
 #endif /* #ifndef _LIST_H */

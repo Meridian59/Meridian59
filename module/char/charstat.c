@@ -51,7 +51,7 @@ static void CharStatsGraphChanging(HWND hDlg, WPARAM wParam, LPARAM lParam);
 static void CharStatsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 static void SetStatSliders(HWND hDlg, int *values);
 /********************************************************************/
-BOOL CALLBACK CharStatsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CharStatsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
@@ -89,7 +89,7 @@ void CharStatsInit(HWND hDlg)
    {
       hGraph = GetDlgItem(hDlg, IDC_CHAR_GRAPH1 + i);
       
-      lpfnDefGraphProc = (WNDPROC) GetWindowLong(hGraph, GWL_WNDPROC);
+      lpfnDefGraphProc = (WNDPROC) GetWindowLongPtr(hGraph, GWLP_WNDPROC);
       
       SendMessage(hGraph, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
       SendMessage(hGraph, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));

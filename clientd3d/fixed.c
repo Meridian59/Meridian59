@@ -11,10 +11,6 @@
 //
 #include "client.h"
 
-
-FixedPoint tempFP;
-long tempLong;
-
 // disable warning for missing return statements
 //  inline asm functions don't need them.
 #pragma warning( disable : 4035 )

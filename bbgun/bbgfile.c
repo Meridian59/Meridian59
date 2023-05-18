@@ -25,7 +25,7 @@ extern int CurrentGroupMember;
 extern int NumBBGs;
 
 static BOOL SaveBBGFile(int bbg, char *filename);
-static BOOL CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static char *BBG_Filter = "Command files\0*.bbg\0All Files\0*.*\0\0";
 /************************************************************************/
@@ -285,7 +285,7 @@ void CloseBBG(void)
    DrawIt();
 }
 /************************************************************************/
-BOOL CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    int flags;
 

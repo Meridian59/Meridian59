@@ -506,7 +506,7 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
       if (lift->progress >= 1.0)
 	 lift->z = lift->dest_z;
       else
-	 lift->z = FloatToInt (lift->source_z + lift->progress * (lift->dest_z - lift->source_z));
+        lift->z = (int) (lift->source_z + lift->progress * (lift->dest_z - lift->source_z));
       
       if (lift->progress >= 1.0)
 	 return RAS_DONE;

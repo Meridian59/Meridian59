@@ -16,12 +16,12 @@
 static HWND hPasswdDialog = NULL;
 static HWND hPreferencesDialog = NULL;
 
-BOOL CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 // XXX Would be nice to load this from resource file, but that doesn't seem to be possible
 static char EXE_filter[] = "Programs (*.exe)\0*.exe\0All files (*.*)\0*.*\0\0";
 /*****************************************************************************/
-BOOL CALLBACK PasswordDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK PasswordDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hOldPasswd, hNewPasswd1, hNewPasswd2;
    char oldpasswd[MAXPASSWORD + 1], newpasswd1[MAXPASSWORD + 1], newpasswd2[MAXPASSWORD + 1];
@@ -144,7 +144,7 @@ void AbortPreferencesDialog(void)
      EndDialog(hPreferencesDialog, IDCANCEL);
 }
 /*****************************************************************************/
-BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    Bool toolbar_changed, lagbox_changed, temp;
    CommSettings *comm = &config.comm;
@@ -283,7 +283,7 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
    return FALSE;
 }
 /*****************************************************************************/
-BOOL CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    char term[MAXPROFANETERM+1];
 

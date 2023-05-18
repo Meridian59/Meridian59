@@ -154,6 +154,7 @@ void InitBkodInterpret(void)
 	ccall_table[SETNTH] = C_SetNth;
 	ccall_table[DELLISTELEM] = C_DelListElem;
 	ccall_table[FINDLISTELEM] = C_FindListElem;
+	ccall_table[MOVELISTELEM] = C_MoveListElem;
 	
 	ccall_table[GETTIME] = C_GetTime;
 	

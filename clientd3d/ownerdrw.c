@@ -10,7 +10,7 @@
  *
  * This file implements an owner-drawn list box or combo box control.  The control can 
  * display bitmaps of objects; its behavior is controlled by the OD_* constants that
- * the creator of the window should put in the GWL_USERDATA field of the control when
+ * the creator of the window should put in the GWLP_USERDATA field of the control when
  * it's created.
  */
 
@@ -245,7 +245,7 @@ void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, Bool combo)
     * 2) Text height, plus borders
     */
 
-   style = GetWindowLong(hwnd, GWL_USERDATA);
+   style = GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
    height = GetFontHeight(GetFont(FONT_LIST));
    if (style & OD_DRAWOBJ)
@@ -338,7 +338,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    if (!lpdis || !IsWindow(lpdis->hwndItem) || !IsWindowVisible(lpdis->hwndItem))
       return;
 
-   style = GetWindowLong(lpdis->hwndItem, GWL_USERDATA);
+   style = GetWindowLongPtr(lpdis->hwndItem, GWLP_USERDATA);
 
    /* Set text mode of DC to transparent */
    dc_state = SaveDC(lpdis->hDC);

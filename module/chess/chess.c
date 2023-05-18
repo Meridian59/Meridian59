@@ -7,8 +7,6 @@
 // Meridian is a registered trademark.
 /*
  * chess.c:  DLL for player vs. player chess.
- *
- * XXX Sounds for pieces moving
  */
 
 #include "client.h"
@@ -73,16 +71,16 @@ static RECT dlg_rect;    // Dialog rectangle; used for resizing
 // Minimum chess dialog size
 static SIZE min_window_size;
 
-static BOOL CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void ChessMinMaxInfo(HWND hwnd, MINMAXINFO *lpmmi);
 static void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify);
-static long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void ChessGotState(unsigned char *state);
 static void ChessDlgShowMessage(char *message);
 static void ChessDlgShowGameStatus(void);
 static void ChessDlgShowMover(void);
-static BOOL CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool AbortChessDialogs(void);
 static void ChessGotPlayerName(BYTE player_num, char *name);
 static void ChessSendMove(void);
@@ -275,7 +273,7 @@ Bool WINAPI EventResetData(void)
    return True;
 }
 /********************************************************************/
-BOOL CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hwnd;
    RECT rect;
@@ -377,27 +375,23 @@ void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
  */
 long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
-   HDC hdc;
-   
    UserDidSomething();
    switch (message)
    {
    case WM_KEYDOWN:
-      return 0;
-      
+     return 0;
+     
    case WM_ERASEBKGND:
-      return 1;
-
+     return 1;
+     
    case WM_PAINT:
-      if (exiting)
-	 break;
+     if (exiting)
+       break;
 
-      hdc = GetDC(hwnd);
-      BoardDraw(hdc, &b);
-      ReleaseDC(hwnd, hdc);
-      break;
-
-      HANDLE_MSG(hwnd, WM_LBUTTONDOWN, BoardLButtonDown);
+     ChessRedrawBoard();
+     break;
+     
+     HANDLE_MSG(hwnd, WM_LBUTTONDOWN, BoardLButtonDown);
    }
    return CallWindowProc(lpfnDefBoardProc, hwnd, message, wParam, lParam);
 }
@@ -439,6 +433,11 @@ void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 
    if (row >= BOARD_HEIGHT || col >= BOARD_WIDTH)
       return;
+
+   // Flip board for white
+   if (b.color == WHITE) {
+     row = BOARD_HEIGHT - row - 1;
+   }
 
    // If user does a move, send to server
    if (BoardSquareSelect(&b, row, col))
@@ -567,7 +566,7 @@ BYTE ChessGetPromotionPiece(void)
    return DialogBox(hInst, MAKEINTRESOURCE(IDD_PROMOTION), hChessDlg, ChessPromotionDialogProc);
 }
 /********************************************************************/
-BOOL CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    UserDidSomething();
    switch (message)

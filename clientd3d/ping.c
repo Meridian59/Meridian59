@@ -61,8 +61,6 @@ void PingGotReply(void)
    now = timeGetTime();
    latency = now - last_sent_time;
 
-   //XXX
-   //REVIEW: Should send out a ModuleEvent so any module can notice a new value.
    Lagbox_Update(latency);
 }
 /****************************************************************************/
@@ -70,7 +68,7 @@ void PingGotReply(void)
  * PingTimerProc:  Send a ping if necessary.  This function should be called occasionally
  *   to see if we need to send a ping.
  */
-void CALLBACK PingTimerProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
+void CALLBACK PingTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 {
    DWORD now;
 

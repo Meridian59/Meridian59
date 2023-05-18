@@ -193,9 +193,9 @@ resources:
    user_guildmate_logoff = "~IYour guildmate %s has just departed."
 
    user_safety_on = \
-      "### Your safety is now ~I~gON~n:  You can no longer strike innocents."
+      "### Your safety is now  ~B~gON~n   You can no longer strike innocents."
    user_safety_off = \
-      "### Your safety is now ~B~rOFF~n:  Be careful, you are now able to "
+      "### Your safety is now  ~B~rOFF~n  Be careful, you are now able to "
       "hurt those around you."   
 
    user_cant_go = "You are unable to go anywhere."
@@ -858,7 +858,7 @@ messages:
       local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets, bSpam;
+            lTargets, bSpam, iPayload, iTarget;
 
       bSpam = FALSE;
 
@@ -980,6 +980,15 @@ messages:
          return;
       }
       
+      if liClient_cmd = BP_REQ_INVENTORY_MOVE
+      {
+         iPayload = Nth(client_msg,2);
+         iTarget = Nth(client_msg,3);
+         Send(self,@UserMoveInventoryItem,#payload_index=iPayload,#target_index=iTarget);
+
+         return;
+      }
+
       if liClient_cmd = BP_REQ_PUT
       {
          oWhat = Nth(client_msg,2);
@@ -3747,6 +3756,39 @@ messages:
       }
       
       return;
+   }
+
+   UserMoveInventoryItem(payload_index=1,target_index=1)
+   "Move the item from payload_index to just before target_index in the user's inventory\n"
+   {
+      local plPassive_max_index;
+
+      if payload_index = $
+         OR target_index = $
+         OR payload_index = target_index
+         OR plPassive = $
+      {
+         Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to move "
+                  "an object or an object to a target in their inventory that does not exist!");
+         return;
+      }
+
+      % Check to make sure payload_index and target_index are valid requests
+      plPassive_max_index = Length(plPassive) + 1;
+
+      if payload_index > plPassive_max_index
+         OR payload_index < 1
+         OR target_index > plPassive_max_index
+         OR target_index < 1
+      {
+         Debug("ALERT! ",Send(self,@GetTrueName),self," attempted an invalid inventory move! "
+                  "plPassive_max_index",plPassive_max_index,"payload_index",payload_index,"target_index",target_index);
+         return;
+      }
+
+      % If all checks pass, move the item
+      MoveListElem(plPassive, payload_index, target_index);
+      return; 
    }
 
    UserPut(what = $,where = $,number = $)

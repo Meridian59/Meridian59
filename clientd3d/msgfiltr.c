@@ -71,7 +71,7 @@ void UpdateWho(object_node* pUser, BOOL bAdded)
 }
 
 /*****************************************************************************/
-BOOL CALLBACK WhoDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hList;
    IDList users;
@@ -86,7 +86,7 @@ BOOL CALLBACK WhoDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       hList = GetDlgItem(hDlg, IDC_USERLIST);
 
       // Don't draw objects; too slow to load user bitmaps
-      SetWindowLong(hList, GWL_USERDATA, OD_DRAWICON | OD_ONLYSEL | OD_COLORTEXT | OD_MAKEICONINDEX(0));
+      SetWindowLongPtr(hList, GWLP_USERDATA, OD_DRAWICON | OD_ONLYSEL | OD_COLORTEXT | OD_MAKEICONINDEX(0));
       
       /* Set contents of user list */
       ItemListSetContents(hList, users, False);
@@ -111,7 +111,7 @@ BOOL CALLBACK WhoDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       CheckDlgButton(hDlg, IDC_IGNOREALL, config.ignore_all);
 
       if (config.ignore_all)
-         SetWindowLong(hList, GWL_USERDATA, GetWindowLong(hList, GWL_USERDATA) | OD_NEXTICON);
+         SetWindowLongPtr(hList, GWLP_USERDATA, GetWindowLongPtr(hList, GWLP_USERDATA) | OD_NEXTICON);
 
       hWhoDialog = hDlg;
       return TRUE;
@@ -160,9 +160,9 @@ BOOL CALLBACK WhoDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       case IDC_IGNOREALL:
         hList = GetDlgItem(hDlg, IDC_USERLIST);
         if (IsDlgButtonChecked(hDlg, IDC_IGNOREALL))
-          SetWindowLong(hList, GWL_USERDATA, GetWindowLong(hList, GWL_USERDATA) | OD_NEXTICON);
+          SetWindowLongPtr(hList, GWLP_USERDATA, GetWindowLongPtr(hList, GWLP_USERDATA) | OD_NEXTICON);
         else
-          SetWindowLong(hList, GWL_USERDATA, GetWindowLong(hList, GWL_USERDATA) & ~OD_NEXTICON);
+          SetWindowLongPtr(hList, GWLP_USERDATA, GetWindowLongPtr(hList, GWLP_USERDATA) & ~OD_NEXTICON);
         InvalidateRect(hList, NULL, TRUE);
         return TRUE;
         

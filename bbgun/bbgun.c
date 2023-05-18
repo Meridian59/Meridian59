@@ -20,7 +20,7 @@ static void ResetBBGList(void);
 static void AddHotspot(int num);
 static int  FindHotspot(int prev_value);
 
-BOOL CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 static long CALLBACK HotspotNumProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
 
 static WNDPROC lpfnDefEditProc;
@@ -91,7 +91,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
    DrawClose();
 
-   return msg.wParam;
+   return (int) msg.wParam;
 }
 /************************************************************************/
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -509,7 +509,7 @@ void DrawIt(void)
    ReleaseDC(hwnd, hdc);
 }
 /************************************************************************/
-BOOL CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    switch(msg)
    {

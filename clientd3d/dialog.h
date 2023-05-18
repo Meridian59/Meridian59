@@ -87,10 +87,10 @@ M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *descriptio
 
 M59EXPORT list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags);
 
-BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK SayDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK AmountDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK LookDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SayDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortGameDialogs(void);
 void FilterChangedDescription(char *desc);
 

@@ -24,8 +24,8 @@ extern Bool admin_mode;            // True when user wants to go into admin mode
 
 /* local function prototypes */
 
-long CALLBACK InputProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
-long CALLBACK HistoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+LRESULT CALLBACK InputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK HistoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /************************************************************************/
 void TermInit(void)
 {
@@ -100,7 +100,7 @@ void TermChangeFont(void)
 /*
  * HistoryProc:  Subclassed window procedure for history edit box.
  */
-long CALLBACK HistoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK HistoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
@@ -116,7 +116,7 @@ long CALLBACK HistoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 /*
  * InputProc:  Subclassed window procedure for input edit box.
  */
-long CALLBACK InputProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK InputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int len;
    char buf[MAX_ADMIN + 1];

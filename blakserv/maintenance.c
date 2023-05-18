@@ -77,11 +77,11 @@ void MaintenanceProcessSessionBuffer(session_node *s)
 
 void MaintenanceInputChar(session_node *s,char ch)
 {
-   int len,session_id;
+   int session_id;
 
    if (ch != CR)
    {
-      len = strlen(s->mtn->command);
+      size_t len = strlen(s->mtn->command);
       if (len < MAX_ADMIN_COMMAND - 1)
       {
          s->mtn->command[len] = ch;

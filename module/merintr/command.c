@@ -552,6 +552,7 @@ void CommandActivate(char *args)
 void CommandSafetyOn(char *args)
 {
    SendSafety(1);
+   pinfo.aggressive = cinfo->config->aggressive = FALSE;
 }
 /************************************************************************/
 /*
@@ -560,6 +561,7 @@ void CommandSafetyOn(char *args)
 void CommandSafetyOff(char *args)
 {
    SendSafety(0);
+   pinfo.aggressive = cinfo->config->aggressive = TRUE;
 }
 /************************************************************************/
 /*

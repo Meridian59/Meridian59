@@ -28,9 +28,7 @@ resources:
    Umbrella_icon_rsc = iumbrela.bgf
    Umbrella_desc_rsc = \
       "Creates a dome of magical energy that protects all "
-      "players near the caster for several minutes.  The spell "
-      "dissipates if caster breaks concentration by running or "
-      "combat.  Requires emeralds to cast."
+      "players near the caster for several minutes.  Requires emeralds to cast."
 
    Umbrella_already_enchanted = "You already have %s%s."
 
@@ -216,10 +214,17 @@ messages:
       return;
    }
 
-   RemoveEnchantmentEffects()
+   RemoveEnchantmentEffects( who = $, state = $, report = TRUE )
    "Need to override spell.kod's thing, since we do this ourselves specially."
    {
-      return;
+      local iElapsed;
+
+      % Update state so that elapsed time matches duration of the effect,
+      % effectively calling an end to the enchantment
+      iElapsed = Nth(state,1);
+      SetNth(state,4,iElapsed);
+
+      propagate;
    }
 
    %%% Defense modifier stuff.

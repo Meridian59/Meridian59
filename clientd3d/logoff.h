@@ -14,7 +14,7 @@
 
 int GetLogoffTimeout(void);
 void SetLogoffTimeout(int timeout);
-BOOL CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void UserSetTimeout(void);
 
 M59EXPORT void UserDidSomething(void);

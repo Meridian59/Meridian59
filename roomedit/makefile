@@ -306,7 +306,7 @@ $(OWLOUTDIR)\$(OWLLIBNAME): $(OWLOBJS)
    $(RC) /fo $@ $**
 
 makeowldir:
-		-@mkdir $(OWLOUTDIR)
+		-@if not exist $(OWLOUTDIR) mkdir $(OWLOUTDIR)
 
 $(OUTDIR)\roomedit.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
 	$(LINK) $(LINKFLAGS) $(LINKWINDOWSFLAGS) @<<
@@ -315,7 +315,7 @@ $(OUTDIR)\roomedit.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
 
 
 makedirs:
-        -@mkdir $(OUTDIR)
+        -@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
 {$(SOURCEDIR)}.c{$(OUTDIR)}.obj::
 	$(CC) $(CFLAGS) /FpCpch /Fd$(OUTDIR)\vc90.pdb /Fo$(OUTDIR)/ -c $< 

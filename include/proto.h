@@ -133,6 +133,7 @@ enum {
    BP_REQ_BUY               = 124,
    BP_REQ_BUY_ITEMS         = 125,
    BP_CHANGE_DESCRIPTION    = 126,
+   BP_REQ_INVENTORY_MOVE    = 127,
 
    BP_PLAYER                = 130,
    BP_STAT                  = 131,

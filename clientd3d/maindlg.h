@@ -20,11 +20,11 @@
 
 void PasswordOk(void);
 void PasswordNotOk(void);
-BOOL CALLBACK CommSettingsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK PasswordDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK RegisterDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK AdminNoteDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK CommSettingsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK PasswordDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK RegisterDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK AdminNoteDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 void AbortPasswordDialog(void);
 void AbortPreferencesDialog(void);

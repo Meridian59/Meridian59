@@ -424,7 +424,7 @@ WORD GetItemListColor(HWND hwnd, int type, int flags)
 						return COLOR_LISTSELBGD;
 				}
 	}
-		return 0;
+	return 0;
 }
 
 /****************************************************************************/

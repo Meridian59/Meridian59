@@ -187,7 +187,7 @@ resources:
 
    player_tougher_wav_rsc = tougher.wav
    player_missed_something_wave_rsc = swordmis.wav
-   player_killed_something = "You killed %s%s."
+   player_killed_something = "~B~IYou killed %s%s."
    player_killed_player = \
       "You have killed another player and have been branded a murderer."
    player_wanted_now = "You are now wanted for the murder of %s%s."

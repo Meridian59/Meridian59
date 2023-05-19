@@ -30,6 +30,7 @@ resources:
    chalice_combine = "You pour the water from one Chalice into the other."
    chalice_cant_use_pkill = "Only innocents may partake of the chalice."
    chalice_refilled = "The Chalice of Rain glows faintly for a moment, renewed by the spirit of Shal'ille that permeates the area."
+   chalice_refilled_sound = water_scoop01.wav
 
    chalice_condition_exc = " filled to the brim with pure water."
    chalice_condition_exc_mended = " filled to the brim with pure water."
@@ -99,9 +100,10 @@ messages:
          AND send(what,@GetShalilleBonus) > 20
          AND piHits < piHits_init
       {
-         if poLastOwner <> $
+         if IsClass(poLastOwner, &User)
          {
             send(poLastOwner, @MsgSendUser, #message_rsc = chalice_refilled);
+            send(poLastOwner, @WaveSendUser, #wave_rsc = chalice_refilled_sound);
          }
          piHits = piHits_init;
       }

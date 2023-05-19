@@ -32,8 +32,8 @@ resources:
    chalice_refilled = "The Chalice of Rain glows faintly for a moment, renewed by the spirit of Shal'ille that permeates the area."
    chalice_refilled_sound = water_scoop01.wav
 
-   chalice_condition_exc = " filled to the brim with pure water."
-   chalice_condition_exc_mended = " filled to the brim with pure water."
+   chalice_condition_exc = " is filled to the brim with pure water."
+   chalice_condition_exc_mended = " is filled to the brim with pure water."
    chalice_condition_good = " is mostly full of fresh water."
    chalice_condition_med = " has a few sips of water remaining."
    chalice_condition_poor = " is almost empty."

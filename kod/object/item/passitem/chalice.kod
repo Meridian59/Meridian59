@@ -120,6 +120,14 @@ messages:
             AND NOT (IsClass(what,&DM) AND send(what,@PlayerIsImmortal))
          {
             send(what,@MsgSendUser,#message_rsc=chalice_combine);
+
+            % If this chalice has more max hits than the primary/other one,
+            % the other chalice should inherit the better max hits value
+            if piHits_init > send(oOtherChalice, @GetMaxHits)
+            {
+               send(oOtherChalice, @SetMaxHits, #number = piHits_init);
+            }
+
             send(oOtherChalice,@SetHits,#number=send(oOtherChalice,@GetHits)+piHits);
             post(self,@Delete);
          }

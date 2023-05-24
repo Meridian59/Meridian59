@@ -53,7 +53,6 @@ OBJS = \
         $(OUTDIR)\statconn.obj \
         $(OUTDIR)\memmap.obj \
         $(OUTDIR)\mapfile.obj \
-        $(OUTDIR)\fastasm.obj \
         $(OUTDIR)\boverlay.obj \
         $(OUTDIR)\web.obj \
         $(OUTDIR)\about.obj \
@@ -69,7 +68,7 @@ OBJS = \
         $(OUTDIR)\cursor.obj \
         $(OUTDIR)\client3d.obj \
         $(OUTDIR)\md5.obj \
-	$(OUTDIR)\crc.obj \
+        $(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
         $(OUTDIR)\guest.obj \

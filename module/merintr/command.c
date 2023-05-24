@@ -435,7 +435,7 @@ void CommandSuicid(char *args)
 /*
  * CommandSuicide: "suicide" command
  */
-BOOL CALLBACK SuicideVerifyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK SuicideVerifyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hEdit;
    char achPassword[MAXPASSWORD+1];

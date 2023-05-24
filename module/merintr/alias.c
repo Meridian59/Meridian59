@@ -79,8 +79,8 @@ static HWND hAliasDialog = NULL;
 static HWND hAliasDialog1 = NULL;
 static HWND hAliasDialog2 = NULL;
 
-static BOOL CALLBACK AliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 extern Bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
@@ -547,7 +547,7 @@ void CommandAlias(char *args)
 /*
  * AliasDialogProc:  Dialog procedure for alias dialog.
  */
-BOOL CALLBACK AliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int i;
    HWND hEdit;
@@ -648,7 +648,7 @@ int ListView_GetSelection(HWND hList)
 /*
  * VerbAliasDialogProc:  Dialog procedure for command verb alias dialog.
  */
-BOOL CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

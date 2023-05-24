@@ -103,7 +103,7 @@ keymap inventory_key_table[] = {
 
 /* local function prototypes */
 static long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK InventoryDialogProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
 static void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
@@ -179,7 +179,7 @@ void InventoryBoxCreate(HWND hParent)
 
 	logbrush.lbStyle = BS_DIBPATTERNPT;
 	logbrush.lbColor = DIB_RGB_COLORS;
-	logbrush.lbHatch = (long)ptr;
+	logbrush.lbHatch = (ULONG_PTR) ptr;
 	
 	hbrushScrollBack = CreateBrushIndirect( &logbrush );
 	//	ajw end...
@@ -393,7 +393,7 @@ void InventorySetFocus(Bool forward)
 /*
  * InventoryDialogProc:  Dialog procedure for inventory modeless dialog.
  */
-BOOL CALLBACK InventoryDialogProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

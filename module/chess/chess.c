@@ -373,7 +373,7 @@ void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
 /*
  * ChessBoardProc:  Subclassed window procedure for board area.
  */
-long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    UserDidSomething();
    switch (message)

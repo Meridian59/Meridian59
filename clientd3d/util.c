@@ -314,8 +314,6 @@ Bool HasExtension(char *filename, char *extension)
  */
 Bool GetWorkingDirectory(char *buf, int buflen)
 {
-   int len;
-
    if (getcwd(buf, buflen) == NULL)
    {
       buf[0] = 0;
@@ -323,7 +321,7 @@ Bool GetWorkingDirectory(char *buf, int buflen)
    }
 
    // Add backslash to end of dir if not already there
-   len = strlen(buf);
+   size_t len = strlen(buf);
    if (buf[len - 1] != '\\')
    {
       buf[len] = '\\';

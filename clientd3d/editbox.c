@@ -194,7 +194,7 @@ void EditBoxAddText(char *message, int color, int style)
    int txtlen, msglen;
 
    txtlen = Edit_GetTextLength(hwndText);
-   msglen = strlen(message);
+   msglen = (int) strlen(message);
 
    /* If box is full, get as much as we can fit.  +2 for CR/LF */
    if (txtlen + msglen + 2 > MAX_TEXT)

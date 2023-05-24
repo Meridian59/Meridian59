@@ -725,7 +725,6 @@ void DrawObjectDecorations(DrawnObject *object)
 {
    ObjectRange *range;
    char *name;
-   int namelen;
    int x, y;
    SIZE s;
    COLORREF fg_color, bg_color;
@@ -750,10 +749,10 @@ void DrawObjectDecorations(DrawnObject *object)
       return;
    
    name = LookupNameRsc(r->obj.name_res);
-   namelen = strlen(name);
+   int namelen = (int) strlen(name);
 
    // Center over object
-   GetTextExtentPoint32(gBitsDC, name, strlen(name), &s);
+   GetTextExtentPoint32(gBitsDC, name, namelen, &s);
    x = (range->left_col + range->right_col - s.cx) / 2;
    y = range->top_row - s.cy - 2;
 

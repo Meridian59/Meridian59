@@ -1599,9 +1599,9 @@ char *re_replace_all(
 	struct re_registers regstruct;
 	regexp_registers_t regs = &regstruct;
 
-	int size = strlen(string);
+	int size = (int) strlen(string);
 	int range = size;
-	int withlen = strlen(with);
+	int withlen = (int) strlen(with);
 	
 	resultalloc = size + withlen;
 	result = (char *) SafeMalloc(resultalloc);

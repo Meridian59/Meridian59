@@ -96,7 +96,6 @@ static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, cons
 static void GetPageText(char *buffer, DescDialogStruct *info)
 {
 	int page, len;
-	int lenDescription;
 	char *pFullText;
 	char *pStart;
 	char *pEnd;
@@ -109,7 +108,7 @@ static void GetPageText(char *buffer, DescDialogStruct *info)
 	if (!info || !info->description)
 		return;
 	
-	lenDescription = strlen(info->description);
+	size_t lenDescription = strlen(info->description);
 	pFullText = info->description;
 	pStart = info->description;
 	pEnd = strchr(pStart,PAGE_BREAK_CHAR);
@@ -384,10 +383,10 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   SetBkMode(lpdis->hDC, TRANSPARENT);
 		   str = LookupNameRsc(info->obj->name_res);
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
-		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
 		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
-		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;
        }

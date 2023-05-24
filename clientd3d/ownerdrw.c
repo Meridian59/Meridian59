@@ -259,15 +259,13 @@ void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, Bool combo)
  */
 BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
 {
-   {
-      int iOldCaretItem = (int)GetProp(lpdis->hwndItem, "Caret");
-      int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
-      if (GetFocus() != lpdis->hwndItem)
-	 iNewCaretItem = -2;
-      if (iOldCaretItem != iNewCaretItem)
-	 InvalidateRect(lpdis->hwndItem, NULL, FALSE);
-      SetProp(lpdis->hwndItem, "Caret", (HANDLE)iNewCaretItem);
-   }
+  int iOldCaretItem = (int)GetProp(lpdis->hwndItem, "Caret");
+  int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
+  if (GetFocus() != lpdis->hwndItem)
+    iNewCaretItem = -2;
+  if (iOldCaretItem != iNewCaretItem)
+    InvalidateRect(lpdis->hwndItem, NULL, FALSE);
+  SetProp(lpdis->hwndItem, "Caret", (HANDLE)iNewCaretItem);
 
    switch (lpdis->itemAction)
    {
@@ -292,15 +290,13 @@ BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
  */
 BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
 {
-   {
-      int iOldCaretItem = (int)GetProp(lpdis->hwndItem, "Caret");
-      int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
-      if (GetFocus() != lpdis->hwndItem)
-	 iNewCaretItem = -2;
-      if (iOldCaretItem != iNewCaretItem)
-	 InvalidateRect(lpdis->hwndItem, NULL, FALSE);
-      SetProp(lpdis->hwndItem, "Caret", (HANDLE)iNewCaretItem);
-   }
+  int iOldCaretItem = (int)GetProp(lpdis->hwndItem, "Caret");
+  int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
+  if (GetFocus() != lpdis->hwndItem)
+    iNewCaretItem = -2;
+  if (iOldCaretItem != iNewCaretItem)
+    InvalidateRect(lpdis->hwndItem, NULL, FALSE);
+  SetProp(lpdis->hwndItem, "Caret", (HANDLE)iNewCaretItem);
 
    switch (lpdis->itemAction)
    {
@@ -423,20 +419,20 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
 
    if (style & OD_COLORTEXT)
    {
-   	// get the color we'd prefer for this particular obj
-   	crColorText = GetPlayerNameColor(obj->flags,NULL);
-   	
-	// draw a black halo around the text just to ensure it is visible
-	SetTextColor(lpdis->hDC, RGB(0, 0, 0));
-        OffsetRect(&r, 1, 0);
-	DrawText(lpdis->hDC, buf, strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
-        OffsetRect(&r, -2, 0);
-	DrawText(lpdis->hDC, buf, strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
-        OffsetRect(&r, 1, 1);
-	DrawText(lpdis->hDC, buf, strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
-        OffsetRect(&r, 0, -2);
-	DrawText(lpdis->hDC, buf, strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
-        OffsetRect(&r, 0, 1);
+     // get the color we'd prefer for this particular obj
+     crColorText = GetPlayerNameColor(obj->flags,NULL);
+     
+     // draw a black halo around the text just to ensure it is visible
+     SetTextColor(lpdis->hDC, RGB(0, 0, 0));
+     OffsetRect(&r, 1, 0);
+     DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
+     OffsetRect(&r, -2, 0);
+     DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
+     OffsetRect(&r, 1, 1);
+     DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
+     OffsetRect(&r, 0, -2);
+     DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
+     OffsetRect(&r, 0, 1);
    }
 
    SetTextColor(lpdis->hDC, crColorText);

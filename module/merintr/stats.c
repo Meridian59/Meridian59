@@ -28,7 +28,7 @@ static int group_type;              // Type of group currently being displayed
 static void StatsCreateGroup(void);
 static void StatsDestroyGroup(void);
 static void StatsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
-static BOOL CALLBACK StatsWindowProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK StatsWindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void StatRedraw(Statistic *s);
 /************************************************************************/
 /*
@@ -48,7 +48,7 @@ void StatsCreate(HWND hParent)
 /* 
  * StatsWindowProc:  Subclass stats window to have transparent background.
  */
-BOOL CALLBACK StatsWindowProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK StatsWindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    const DRAWITEMSTRUCT *lpdis;
   

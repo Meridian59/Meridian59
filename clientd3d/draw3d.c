@@ -86,12 +86,6 @@ BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
-#define FASTASM
-
-#ifdef FASTASM
-extern void StretchAsm1To2(BYTE *src,BYTE *dest,int width,int height);
-#endif
-
 static void StretchC1To2(BYTE *src,BYTE *dest,int width,int height);
 
 /* local function prototypes */
@@ -544,11 +538,7 @@ void SetLightingInfo(int sun_x, int sun_y, BYTE intensity)
  */
 void StretchImage(void)
 {
-#ifdef FASTASM
-      StretchAsm1To2(gBits,gBufferBits,area.cx,area.cy);
-#else   
-      StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
-#endif
+  StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
 }
 /************************************************************************/
 void StretchC1To2(BYTE *src,BYTE *dest,int width,int height)

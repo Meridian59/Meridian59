@@ -97,7 +97,7 @@ void LoadProfaneTerms()
 	FILE* pFile = NULL;
 
 	_nWith = 0;
-	_nGrout = strlen(_szGrout);
+	_nGrout = (int) strlen(_szGrout);
 
 	pFile = fopen(_szProfaneFile, "rt");
 	if (!pFile)
@@ -222,8 +222,8 @@ void CompileProfaneExpression(REGEXP* pExp)
 	// Finish preparing the pattern into a precompiled regular expression.
 	//
 	pExp->m_rexp.fastmap = pExp->m_achFastMap;
-	pExp->m_nLength = strlen(pExp->m_pszTerm);
-	re_compile_pattern(pExp->m_pszPattern, strlen(pExp->m_pszPattern), &pExp->m_rexp);
+	pExp->m_nLength = (int) strlen(pExp->m_pszTerm);
+	re_compile_pattern(pExp->m_pszPattern, (int) strlen(pExp->m_pszPattern), &pExp->m_rexp);
 	re_compile_fastmap(&pExp->m_rexp);
 }
 
@@ -546,14 +546,14 @@ int VerifyProfaneUsage(char* string, int from, int to)
 BOOL ContainsProfaneTerms(char* pszText)
 {
 	struct re_registers regs;
-	int i, a, l;
+	int i, a;
 
 	// We scan the string with each profane term in turn, until
 	// the first profane term is found, or we exhaust the list of terms.
 	// This doesn't count the terms found, it stops at the first term.
 	// String is not modified.
 
-	l = strlen(pszText);
+	int l = (int) strlen(pszText);
 	for (i = 0; i < _nExpressions; i++)
 	{
 		if (_apExpressions[i].m_pszTerm)

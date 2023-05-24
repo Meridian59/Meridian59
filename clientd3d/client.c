@@ -42,7 +42,7 @@ void _cdecl dprintf(char *fmt, ...)
 	if (!config.debug)
 		return;
 
-	WriteFile(hStdout, s, strlen(s), &written, NULL);
+	WriteFile(hStdout, s, (int) strlen(s), &written, NULL);
 	if (debug_file != NULL)
 		fputs(s, debug_file);
 }

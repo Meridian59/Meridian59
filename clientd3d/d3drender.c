@@ -3305,7 +3305,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		angle = (pRNode->angle - intATan2(-dy,-dx)) & NUMDEGREES_MASK;
 
 		char *pName = LookupNameRsc(pRNode->obj.name_res);
-		int strLen = strlen(pName);
 
 		angle = pRNode->angle - (params->viewer_angle + 3072);
 

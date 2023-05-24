@@ -442,7 +442,7 @@ BOOL CostListDrawItem(const DRAWITEMSTRUCT *lpdis)
 	 SetTextColor(lpdis->hDC, GetSysColor(COLOR_GRAYTEXT));
       else SetTextColor(lpdis->hDC, GetColor(COLOR_LISTFGD));
       ListBox_GetText(lpdis->hwndItem, lpdis->itemID, temp);
-      DrawText(lpdis->hDC, temp, strlen(temp), 
+      DrawText(lpdis->hDC, temp, (int) strlen(temp), 
 	       &((DRAWITEMSTRUCT *) lpdis)->rcItem, DT_VCENTER | DT_CENTER | DT_NOPREFIX);
       break;
 

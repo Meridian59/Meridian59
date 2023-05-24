@@ -356,7 +356,7 @@ void GraphCtlPaint(HWND hwnd)
       SetBkMode(hdc, TRANSPARENT);
       SelectObject(hdc, GetFont(FONT_STATNUM));
       SetTextColor(hdc, GetColor(COLOR_BAR4));
-      GetTextExtentPoint32(hdc, temp, strlen(temp), &size);
+      GetTextExtentPoint32(hdc, temp, (int) strlen(temp), &size);
 
       // If there's room past the bar, put it there, otherwise put it in bar
       if (rect.right - value_pos > size.cx)
@@ -364,7 +364,7 @@ void GraphCtlPaint(HWND hwnd)
       else
 	 x = value_pos - size.cx - 1;
 
-      TextOut(hdc, x, max(0, (rect.bottom - size.cy) / 2), temp, strlen(temp));
+      TextOut(hdc, x, max(0, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
    }
    
    /* Draw slider if appropriate */

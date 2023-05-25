@@ -134,7 +134,7 @@ void AliasInit(void)
       aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
 
       // Check for CR
-      len = strlen(aliases[i].text);
+    len = (int) strlen(aliases[i].text);
       if (len > 0 && aliases[i].text[len - 1] == '~')
       {
 	 command = A_TEXTINSERT;

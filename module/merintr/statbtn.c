@@ -60,7 +60,7 @@ static int button_border = 0;         // Height of area reserved for buttons
 
 /* local function prototypes */
 static void StatsCreateButtons(void);
-static long CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void StatsMoveButtonFocus(HWND button, Bool forward);
 /************************************************************************/
 /*
@@ -277,7 +277,7 @@ int StatsGetButtonBorder(void)
 /*
  * StatButtonProc:  Subclassed window procedure for stat group buttons
  */
-long CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	MSG msg;
 	msg.hwnd = hwnd;

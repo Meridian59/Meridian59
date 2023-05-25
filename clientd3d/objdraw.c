@@ -176,7 +176,7 @@ void DrawObjectDither50Invisible(ObjectRowData *d)
 		/* Don't draw transparent pixels or half of remaining pixels */
 		index = *(row_bits + (x >> FIX_DECIMAL));
 		if (index != TRANSPARENT_INDEX)
-			if ((d->row ^ (int)start) & 1)
+			if ((d->row ^ (intptr_t)start) & 1)
 				*start = palette[fastXLAT(index, pXlat)];
 			
 			/* Move to next column of screen */
@@ -390,7 +390,7 @@ void DrawObjectDitherTranslate(ObjectRowData *d)
 		index = *(row_bits + (x >> FIX_DECIMAL));
 		if (index != TRANSPARENT_INDEX)
 		{
-			if ((d->row ^ (int)start) & 1)
+			if ((d->row ^ (intptr_t)start) & 1)
 				*start = palette[fastXLAT(index, pXlat)];
 			else
 				*start = palette[fastXLAT(index, pXlat2)];

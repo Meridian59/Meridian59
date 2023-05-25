@@ -38,7 +38,7 @@ static void ToolbarSetButtonVisibility(HWND hButton);
 static void ToolbarButtonPressed(Button *b);
 static Button *ToolbarFindButtonByHandle(HWND hwnd);
 static Button *ToolbarFindButtonByAction(int action, void *action_data);
-static long CALLBACK ToolbarButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK ToolbarButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
  * ToolbarCreate:  Create toolbar.
@@ -340,7 +340,7 @@ Bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 /*
  * ToolbarButtonProc:  Subclassed window procedure for toolbar buttons
  */
-long CALLBACK ToolbarButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ToolbarButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    MSG msg;
    

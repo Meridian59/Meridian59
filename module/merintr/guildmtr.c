@@ -20,7 +20,7 @@ static void GuildMasterCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNo
 /*
  * GuildMasterDialogProc:  Dialog procedure for guildmaster commands.
  */
-BOOL CALLBACK GuildMasterDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildMasterDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   char password[MAX_GUILD_NAME + 1];
   HWND hEdit;

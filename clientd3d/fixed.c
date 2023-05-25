@@ -11,10 +11,6 @@
 //
 #include "client.h"
 
-// disable warning for missing return statements
-//  inline asm functions don't need them.
-#pragma warning( disable : 4035 )
-
 //----------------------------------------------
 //
 // Divide two fixed point numbers giving
@@ -23,15 +19,7 @@
 
 FixedPoint fpDiv(FixedPoint d1, FixedPoint d2) 
 {
-   __asm 
-   {
-      mov   eax, d1;
-      mov   ebx, d2;
-      cdq;
-      shld  edx, eax, FIXED_POINT_PRECISION;
-      sal   eax, FIXED_POINT_PRECISION;
-      idiv  ebx;
-   }
+  return (((__int64) d1 << FIXED_POINT_PRECISION) / d2);
 }
 
 //----------------------------------------------
@@ -42,15 +30,9 @@ FixedPoint fpDiv(FixedPoint d1, FixedPoint d2)
 
 FixedPoint fpMul(FixedPoint m1, FixedPoint m2) 
 {
-   __asm 
-   {
-      mov   eax, m1;
-      mov   edx, m2;
-      imul  edx;
-      add   eax, FIXED_ONE_HALF;
-      adc   edx, 0;
-      shrd  eax, edx, FIXED_POINT_PRECISION;
-   }
+  // + FIXED_ONE_HALF presumably for rounding.  This used
+  // to be an assembly language function.
+  return (m1 * m2 + FIXED_ONE_HALF) >> FIXED_POINT_PRECISION;
 }
 
 int intATan2(int dy, int dx)

@@ -206,7 +206,7 @@ void WinDEUApp::InitInstance ()
 	// Retrieve module directory to construct help file full path
 	if ( GetModuleFileName (HelpFileName, MAX_PATH) )
 	{
-		for (i = strlen(HelpFileName) - 1;
+		for (i = (int) strlen(HelpFileName) - 1;
 			 (i >= 0) && (HelpFileName[i] != '\\');
 			 i--)
 			;
@@ -331,7 +331,7 @@ void WinDEUApp::CmHelpContents ()
 //
 void WinDEUApp::CmHelpSearch ()
 {
-	AppHelp(HELP_PARTIALKEY, (DWORD)"");
+	AppHelp(HELP_PARTIALKEY, 0);
 }
 
 

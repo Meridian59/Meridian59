@@ -273,7 +273,7 @@ void TViewEntryDialog::EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT & drawInfo)
 
 			TabbedTextOut(drawInfo.hDC,
 						  drawInfo.rcItem.left, drawInfo.rcItem.top,
-						  Buf, strlen(Buf),
+                    Buf, (int) strlen(Buf),
 						  NB_HEX_LINE+2, TabStops, 0);
 #if 0
 			/* Is the item selected? */

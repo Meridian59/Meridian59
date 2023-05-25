@@ -889,7 +889,7 @@ void TMapDC::DrawLineDefLen (SHORT x0, SHORT y0, SHORT x1, SHORT y1, int color)
 	sprintf (Text, "%d", ComputeDist (abs(x1 - x0), abs(y1 - y0)));
 
 	// Get the text size
-	TSize TextSize = GetTextExtent(Text, strlen(Text));
+	TSize TextSize = GetTextExtent(Text, (int) strlen(Text));
 
 	// Calc. the text drawing rect
 #ifdef WINDOWS_SCALING

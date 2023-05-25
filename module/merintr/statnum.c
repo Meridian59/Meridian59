@@ -308,10 +308,10 @@ void DisplayNumericStat(Statistic *s)
 
    // Draw with drop shadow
    SetTextColor(hdc, GetColor(COLOR_STATSBGD));
-   DrawText(hdc, name, strlen(name), &r, DT_LEFT);
+   DrawText(hdc, name, (int) strlen(name), &r, DT_LEFT);
    OffsetRect(&r, 1, 1);
    SetTextColor(hdc, GetColor(COLOR_STATSFGD));
-   DrawText(hdc, name, strlen(name), &r, DT_LEFT);
+   DrawText(hdc, name, (int) strlen(name), &r, DT_LEFT);
 
    switch (s->numeric.tag)
    {
@@ -321,7 +321,7 @@ void DisplayNumericStat(Statistic *s)
       DrawWindowBackgroundColor( pinventory_bkgnd(), hdc, &r, stats_area.x + r.left, stats_area.y + r.top, -1 );
 
       str = LookupNameRsc(s->numeric.value);
-      DrawText(hdc, str, strlen(str), &r, DT_RIGHT);
+      DrawText(hdc, str, (int) strlen(str), &r, DT_RIGHT);
       break;
 
    case STAT_INT:

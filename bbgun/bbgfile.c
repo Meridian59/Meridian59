@@ -144,7 +144,7 @@ void SaveBBG(void)
    // If in dual bitmap mode, ask to save both anchor and wanderer
    if (config.dual_mode)
    {
-      flags = DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE), hMain, SaveBBGDialogProc);
+     flags = (int) DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE), hMain, SaveBBGDialogProc);
 
       if (flags == 0)
 	 return;

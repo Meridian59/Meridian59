@@ -607,9 +607,9 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
       SelectObject(hdc, GetFont(FONT_STATNUM));
 
       SetTextColor(hdc, GetColor(COLOR_INVNUMBGD));
-      TextOut(hdc, obj_area.x + 1, obj_area.y + 1, temp, strlen(temp));
+      TextOut(hdc, obj_area.x + 1, obj_area.y + 1, temp, (int) strlen(temp));
       SetTextColor(hdc, GetColor(COLOR_INVNUMFGD));
-      TextOut(hdc, obj_area.x, obj_area.y, temp, strlen(temp));      
+      TextOut(hdc, obj_area.x, obj_area.y, temp, (int) strlen(temp));      
    }
 
    // Draw border around area to clear previous cursor (if any)
@@ -1187,7 +1187,7 @@ void DisplayUsing(list_type using_list)
 
    /* Select used items */
    for (l = using_list; l != NULL; l = l->next)
-      DisplaySetUsing((ID) l->data, True);
+     DisplaySetUsing(reinterpret_cast<std::intptr_t>(l->data), True);
 }
 /************************************************************************/
 /*
@@ -1245,7 +1245,7 @@ Bool InventoryItemVisible(int row, int col)
 Bool InventoryCompareIdItem(void *idnum, void *item)
 {
    InvItem *temp = (InvItem *) item;
-   return GetObjId((ID) idnum) == GetObjId(temp->obj->id);
+   return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(temp->obj->id);
 }
 /************************************************************************/
 /*

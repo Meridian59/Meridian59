@@ -271,12 +271,10 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    r.left += ENCHANT_SIZE + 2;
    // Draw text with drop shadow
    SetTextColor(lpdis->hDC, GetColor(COLOR_STATSBGD));
-   //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
-   DrawText( lpdis->hDC, str, strlen(str), &r, DT_LEFT );
+   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
    OffsetRect(&r, 1, 1);
    SetTextColor(lpdis->hDC, selected ? GetColor(COLOR_HIGHLITE) : GetColor(COLOR_STATSFGD));
-   //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
-   DrawText( lpdis->hDC, str, strlen(str), &r, DT_LEFT );
+   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
 
    SelectObject(lpdis->hDC, hOldFont);
 

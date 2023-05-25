@@ -363,7 +363,7 @@ BOOL GroupListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       SetBkMode(lpdis->hDC, TRANSPARENT);
 
       rcItem.left += 2*GetSystemMetrics(SM_CXBORDER);
-      DrawText(lpdis->hDC, name, strlen(name), &rcItem, DT_VCENTER | DT_LEFT);
+      DrawText(lpdis->hDC, name, (int) strlen(name), &rcItem, DT_VCENTER | DT_LEFT);
 
       break;
 

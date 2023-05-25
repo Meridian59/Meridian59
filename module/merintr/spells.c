@@ -55,7 +55,7 @@ void SpellsInit(void)
    if (spell_menu != NULL)
    {
       InsertMenu(cinfo->main_menu, MENU_POSITION_SPELLS, MF_STRING | MF_POPUP | MF_BYPOSITION, 
-		 (UINT) spell_menu, GetString(hInst, IDS_SPELLS));
+                 (UINT_PTR) spell_menu, GetString(hInst, IDS_SPELLS));
       DrawMenuBar(cinfo->hMain);
 
    }

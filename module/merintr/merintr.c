@@ -1702,15 +1702,15 @@ Bool WINAPI EventInventory(int command, void *data)
       break;
 
    case INVENTORY_REMOVE:
-      InventoryRemoveItem((ID) data);
+      InventoryRemoveItem(reinterpret_cast<std::intptr_t>(data));
       break;
 
    case INVENTORY_USE:
-      DisplaySetUsing((ID) data, True);
+      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), True);
       break;
 
    case INVENTORY_UNUSE:
-      DisplaySetUsing((ID) data, False);
+      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), False);
       break;
 
    case INVENTORY_CHANGE:

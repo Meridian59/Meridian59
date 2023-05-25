@@ -91,7 +91,7 @@ extern player_info *GetPlayer(void);
  */
 void AliasInit(void)
 {
-   int i, len;
+   int i;
    char temp[10];
    char	fullSection[255];
    char	destName[128];
@@ -113,7 +113,7 @@ void AliasInit(void)
       srcName = "<Unknown>";
    else
       srcName = LookupNameRsc(cinfo->player->name_res);
-   len = strlen(srcName);
+   int len = (int) strlen(srcName);
 
    for (i = 0; i < len; i++)
    {
@@ -234,7 +234,7 @@ void AliasSave(void)
 
    playerInfo = GetPlayerInfo();
    srcName = LookupNameRsc(cinfo->player->name_res);
-   len = strlen(srcName);
+   len = (int) strlen(srcName);
 
    for (i = 0; i < len; i++)
    {

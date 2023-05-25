@@ -108,7 +108,7 @@ INT_PTR CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
    case BK_GOTTEXT:   /* lParam is text to add to edit box */
       // Add new text to text window
       new_str = (char *) lParam;
-      new_len = strlen(new_str);
+      new_len = (int) strlen(new_str);
 
       WindowBeginUpdate(hText);
 

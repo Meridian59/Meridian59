@@ -76,7 +76,7 @@ void EnchantmentAdd(BYTE type, object_node *obj)
 			  0, 0, 0, 0, cinfo->hMain, (HMENU) IDC_ENCHANTMENT, hInst, NULL);
    lpfnDefEnchantmentProc = SubclassWindow(e->hwnd, EnchantmentProc);
 
-   TooltipAddWindow(e->hwnd, hInst, (int) LPSTR_TEXTCALLBACK);
+   TooltipAddWindow(e->hwnd, hInst, reinterpret_cast<std::intptr_t>(LPSTR_TEXTCALLBACK));
 
    e->obj  = obj;
    switch (type)
@@ -329,7 +329,7 @@ Enchantment *EnchantmentDestroy(Enchantment *e)
  */
 Bool CompareIdEnchantment(void *idnum, void *e)
 {
-   return GetObjId((ID) idnum) == GetObjId(((Enchantment *) e)->obj->id);
+   return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(((Enchantment *) e)->obj->id);
 }
 /************************************************************************/
 /*

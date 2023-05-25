@@ -201,7 +201,7 @@ Bool WINAPI EventUserAction(int action, void *action_data)
       if (!GetQEditorDlg() /* && !GetGChannelDlg() */)
 	 return True;
 
-      id = (ID)action_data;
+      id = reinterpret_cast<std::intptr_t>(action_data);
       if (id == INVALID_ID)
 	 return True;
 

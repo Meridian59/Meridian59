@@ -436,7 +436,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    }
 
    SetTextColor(lpdis->hDC, crColorText);
-   DrawText(lpdis->hDC, buf, strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
+   DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
 
    RestoreDC(lpdis->hDC, dc_state);
 

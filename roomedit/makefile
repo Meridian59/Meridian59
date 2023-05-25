@@ -74,7 +74,7 @@ OBJS = \
 
 LIBS = \
 	$(OWLOUTDIR)\$(OWLLIBNAME) \
-	zdll.lib \
+	zlib.lib \
 	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
 
 OWLOBJS = \

@@ -102,7 +102,7 @@ keymap inventory_key_table[] = {
 };
 
 /* local function prototypes */
-static long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
 static void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
@@ -426,7 +426,7 @@ INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 /*
  * InventoryProc:  Subclassed window procedure for inventory area.
  */
-long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    RECT r;
    HDC hdc;

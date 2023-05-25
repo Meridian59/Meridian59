@@ -28,7 +28,7 @@ static BOOL GuildListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 /*
  * GuildMemberDialogProc:  Dialog procedure for guild membership dialog.
  */
-BOOL CALLBACK GuildMemberDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildMemberDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   HWND hList;
   int i, index, flags;

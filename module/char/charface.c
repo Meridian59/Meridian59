@@ -31,7 +31,7 @@ static void CharFaceCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 static void CharFaceHScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void CharDrawFace(void);
 static void CharRecomputeFace(void);
-static long CALLBACK CharFaceButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK CharFaceButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /********************************************************************/
 INT_PTR CALLBACK CharFaceDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -297,7 +297,7 @@ void CharDrawFace(void)
 /* 
  * CharFaceButtonProc:  Subclass face window to have transparent background.
  */
-long CALLBACK CharFaceButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK CharFaceButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

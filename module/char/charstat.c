@@ -46,7 +46,7 @@ static WNDPROC lpfnDefGraphProc;  /* Default graph control window procedure */
 
 static Stat *CharFindControl(HWND hwnd);
 static void CharStatsInit(HWND hDlg);
-static long CALLBACK StatGraphProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK StatGraphProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 static void CharStatsGraphChanging(HWND hDlg, WPARAM wParam, LPARAM lParam);
 static void CharStatsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 static void SetStatSliders(HWND hDlg, int *values);
@@ -172,7 +172,7 @@ Stat *CharFindControl(HWND hwnd)
 /*
  * StatGraphProc:  Subclassed window procedure for stat graph controls.
  */
-long CALLBACK StatGraphProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK StatGraphProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    Stat *s;
    int new_pos, cur_pos;

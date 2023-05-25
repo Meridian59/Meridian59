@@ -75,7 +75,7 @@ Bool GraphCtlRegister(HINSTANCE hInst)
    {
       wc.lpfnWndProc   = GraphCtlWndProc;
       wc.cbClsExtra    = 0;
-      wc.cbWndExtra    = sizeof(long);
+      wc.cbWndExtra    = sizeof(void *);
       wc.hInstance     = hInst;
       wc.hIcon         = NULL;
       wc.hCursor       = LoadCursor(NULL, IDC_ARROW);

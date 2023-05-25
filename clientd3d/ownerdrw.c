@@ -259,7 +259,7 @@ void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, Bool combo)
  */
 BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
 {
-  int iOldCaretItem = (int)GetProp(lpdis->hwndItem, "Caret");
+  int iOldCaretItem = (intptr_t)GetProp(lpdis->hwndItem, "Caret");
   int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
   if (GetFocus() != lpdis->hwndItem)
     iNewCaretItem = -2;
@@ -290,7 +290,7 @@ BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
  */
 BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
 {
-  int iOldCaretItem = (int)GetProp(lpdis->hwndItem, "Caret");
+  int iOldCaretItem = (intptr_t)GetProp(lpdis->hwndItem, "Caret");
   int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
   if (GetFocus() != lpdis->hwndItem)
     iNewCaretItem = -2;

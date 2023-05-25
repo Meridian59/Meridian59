@@ -43,7 +43,7 @@ static list_type EnchantmentListDestroy(list_type list);
 static Enchantment *EnchantmentDestroy(Enchantment *e);
 static Bool CompareIdEnchantment(void *idnum, void *e);
 static Enchantment *EnchantmentFindByWindow(HWND hwnd);
-static long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
  * EnchantmentsInit:  Called at startup.
@@ -359,7 +359,7 @@ Enchantment *EnchantmentFindByWindow(HWND hwnd)
 /* 
  * EnchantmentProc:  Subclass enchantment windows.
  */
-long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    MSG msg;
    Enchantment *e;

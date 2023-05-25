@@ -131,7 +131,7 @@ OWLOBJS = \
 	$(OWLOUTDIR)\document.obj \
 	$(OWLOUTDIR)\draglist.obj \
 	$(OWLOUTDIR)\drawitem.obj \
-	$(OWLOUTDIR)\dumpstack.obj \
+#	$(OWLOUTDIR)\dumpstack.obj \
 	$(OWLOUTDIR)\edit.obj \
 	$(OWLOUTDIR)\editfile.obj \
 	$(OWLOUTDIR)\editsear.obj \

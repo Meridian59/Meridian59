@@ -17,7 +17,7 @@ static GuildHall *halls;
 
 extern HWND hGuildHallsDialog;
 
-static BOOL CALLBACK GuildHallsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK GuildHallsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool ListViewGetCurrentData(HWND hList, int *index, int *data);
 static int CALLBACK GuildHallCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 /****************************************************************************/
@@ -35,7 +35,7 @@ void GuildHallsReceived(WORD init_num_halls, GuildHall *init_halls)
 /*
  * GuildHallsDialogProc:  Dialog procedure for guild halls dialog.
  */
-BOOL CALLBACK GuildHallsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildHallsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hList; 
    int i, index, len;

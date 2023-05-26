@@ -120,7 +120,7 @@ void SoundInitialize(void)
    mciSysinfoParms.dwRetSize = sizeof(num_devices);
    mciSysinfoParms.wDeviceType = MCI_DEVTYPE_WAVEFORM_AUDIO;
    retval = mciSendCommand(0, MCI_SYSINFO, MCI_SYSINFO_QUANTITY,
-		  (DWORD) &mciSysinfoParms);
+                           (DWORD_PTR) &mciSysinfoParms);
    if (retval == 0 && num_devices > 0)
       has_wave = True;
 

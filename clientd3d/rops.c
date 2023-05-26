@@ -196,7 +196,7 @@ void BlurDib(BYTE* pabyBits, int width, int height, int amount)
 		pbyPixel += j;
 		while (pbyPixel < pbyEnd-j)
 		{
-			byNew = *(pbyPixel+((((DWORD)(BYTE*)pbyPixel+i) & 1)? -j : j));
+			byNew = *(pbyPixel+((((intptr_t)(BYTE*)pbyPixel+i) & 1)? -j : j));
 			//REVIEW: could do: pBiXlat = FindStandardBiXlat(BIXLAT_BLEND50);
 			//REVIEW: could do: *pbyPixel = fastBIXLAT(*pbyPixel, byNew, pBiXlat); // blend the trashed pixels softly
 			*pbyPixel = byNew;

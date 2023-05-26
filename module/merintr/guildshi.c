@@ -36,7 +36,7 @@ void GuildShieldControl(HWND hwndGraphic)
 /*
  * GuildShieldDialogProc:  Dialog procedure for guild shield dialog.
  */
-BOOL CALLBACK GuildShieldDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildShieldDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{

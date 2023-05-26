@@ -710,7 +710,7 @@ void TEditorClient::SetupMenu()
 	}
 	newMiscMenu = GetApplication()->LoadMenu (newMiscMenuID);
 	menu.ModifyMenu (3, MF_BYPOSITION | MF_POPUP,
-							 (UINT)newMiscMenu, newMiscMenuName);
+							 (UINT_PTR)newMiscMenu, newMiscMenuName);
 
 	// Draw the check for the Automatic Layout menu item
 	menu.CheckMenuItem (CM_WINDOW_AUTOLAYOUT, MF_BYCOMMAND |

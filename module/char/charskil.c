@@ -20,7 +20,7 @@ extern list_type skills;
 void CharSkillsInit(HWND hDlg);
 void CharSkillsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoify);
 /********************************************************************/
-BOOL CALLBACK CharSkillsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CharSkillsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

@@ -21,8 +21,8 @@ static char temp[MAXAMOUNT + 1];
 
 static void BuyCommand(HWND hDlg, int id, HWND hwndCtl, UINT codeNotify);
 static void WithdrawCommand(HWND hDlg, int id, HWND hwndCtl, UINT codeNotify);
-static BOOL CALLBACK BuyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK WithdrawalDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK BuyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK WithdrawalDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
 static void UpdateCost(void);
 static BOOL CostListDrawItem(const DRAWITEMSTRUCT *lpdis);
@@ -69,7 +69,7 @@ static void DoAlignLists(void)
  *   from a list of objects.
  *   lParam of the WM_INITDIALOG message should be a pointer to a BuyDialogStruct.
  */
-BOOL CALLBACK BuyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK BuyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
@@ -105,7 +105,7 @@ BOOL CALLBACK BuyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
  *   withdraw from a list of objects.
  *   lParam of the WM_INITDIALOG message should be a pointer to a BuyDialogStruct.
  */
-BOOL CALLBACK WithdrawalDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK WithdrawalDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
@@ -152,9 +152,9 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    info->hwndCost = GetDlgItem(hDlg, IDC_COST);
 
    // Draw objects in owner-drawn list box
-   SetWindowLong(info->hwndItemList, GWL_USERDATA, OD_DRAWOBJ);
-   SetWindowLong(info->hwndCostList, GWL_USERDATA, OD_DRAWOBJ);
-   SetWindowLong(info->hwndQuanList, GWL_USERDATA, OD_DRAWOBJ);
+   SetWindowLongPtr(info->hwndItemList, GWLP_USERDATA, OD_DRAWOBJ);
+   SetWindowLongPtr(info->hwndCostList, GWLP_USERDATA, OD_DRAWOBJ);
+   SetWindowLongPtr(info->hwndQuanList, GWLP_USERDATA, OD_DRAWOBJ);
 
    /* Add items & costs to list boxes */
    WindowBeginUpdate(info->hwndItemList);
@@ -442,7 +442,7 @@ BOOL CostListDrawItem(const DRAWITEMSTRUCT *lpdis)
 	 SetTextColor(lpdis->hDC, GetSysColor(COLOR_GRAYTEXT));
       else SetTextColor(lpdis->hDC, GetColor(COLOR_LISTFGD));
       ListBox_GetText(lpdis->hwndItem, lpdis->itemID, temp);
-      DrawText(lpdis->hDC, temp, strlen(temp), 
+      DrawText(lpdis->hDC, temp, (int) strlen(temp), 
 	       &((DRAWITEMSTRUCT *) lpdis)->rcItem, DT_VCENTER | DT_CENTER | DT_NOPREFIX);
       break;
 

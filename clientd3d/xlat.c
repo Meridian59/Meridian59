@@ -304,44 +304,6 @@ void CalcBlendXlat(HPALETTE hPalette, xlat* pXlat, COLORREF crMix, int partsFirs
 	}
 }
 
-#if 0
-// Done by MAKEPAL which generates the pal.c sourcefile.
-void CalcBlendBiXlat(HPALETTE hPalette, bixlat* pBiXlat, int partsFirst, int partsSecond)
-{
-	int i, j;
-	PALETTEENTRY pe;
-
-	if (!hPalette || !pBiXlat || partsFirst <= 0 || partsSecond <= 0)
-		return;
-
-	for (i = 0; i < NUM_COLORS; i++)
-	{
-		PALETTEENTRY pe1;
-		GetPaletteEntries(hPalette, i, 1, &pe1);
-
-		for (j = 0; j < NUM_COLORS; j++)
-		{
-			PALETTEENTRY pe2, pe;
-			LONG l;
-			GetPaletteEntries(hPalette, j, 1, &pe2);
-
-			l = (((LONG)pe1.peRed)*partsFirst + ((LONG)pe2.peRed)*partsSecond) /
-					(partsFirst+partsSecond);
-			pe.peRed = (BYTE)(l & 0xFF);
-
-			l = (((LONG)pe1.peGreen)*partsFirst + ((LONG)pe2.peGreen)*partsSecond) /
-					(partsFirst+partsSecond);
-			pe.peGreen = (BYTE)(l & 0xFF);
-
-			l = (((LONG)pe1.peBlue)*partsFirst + ((LONG)pe2.peBlue)*partsSecond) /
-					(partsFirst+partsSecond);
-			pe.peBlue = (BYTE)(l & 0xFF);
-
-			pBiXlat->entry[(i<<8)|(j)] = GetNearestPaletteIndex(hPalette, RGB(pe.peRed, pe.peGreen, pe.peBlue));
-		}
-	}
-}
-#endif
 /***************************************************************************/
 /*
  * CalcRampXlat:  Make pXlat a palette translation where the the byMask

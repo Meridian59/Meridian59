@@ -58,10 +58,10 @@ static int owner;       // Owner of currently displayed object
 static ID AdminGetCurrentUser(HWND hList);
 static void AdminDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify);
 static Bool AdminGetString(HWND hParent, char *buf);
-static BOOL CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK AdminStringDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK AdminStringDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
-BOOL CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    char *new_str, *name;
    int txtlen, new_len, index, add;
@@ -108,7 +108,7 @@ BOOL CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
    case BK_GOTTEXT:   /* lParam is text to add to edit box */
       // Add new text to text window
       new_str = (char *) lParam;
-      new_len = strlen(new_str);
+      new_len = (int) strlen(new_str);
 
       WindowBeginUpdate(hText);
 
@@ -421,7 +421,7 @@ void AdminDisplayObject(int num, char *class_name)
 /*
  * AdminMoveDialogProc:  Dialog procedure for moving an object.
  */
-BOOL CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    char temp[MAXAMOUNT];
    char row[MAXAMOUNT + 1], col[MAXAMOUNT + 1], fine_row[MAXAMOUNT + 1], fine_col[MAXAMOUNT + 1];
@@ -573,7 +573,7 @@ Bool AdminGetString(HWND hParent, char *buf)
  * AdminStringDialogProc:  Dialog procedure for entering a string.
  *   Initial lParam is buffer to fill in.
  */
-BOOL CALLBACK AdminStringDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK AdminStringDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static char *buf;
    HWND hEdit;

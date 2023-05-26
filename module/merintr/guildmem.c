@@ -28,7 +28,7 @@ static BOOL GuildListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 /*
  * GuildMemberDialogProc:  Dialog procedure for guild membership dialog.
  */
-BOOL CALLBACK GuildMemberDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildMemberDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   HWND hList;
   int i, index, flags;
@@ -308,7 +308,7 @@ BOOL GuildListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       SetBkMode(lpdis->hDC, TRANSPARENT);
 
       rcItem.left += 2*GetSystemMetrics(SM_CXBORDER);
-      DrawText(lpdis->hDC, name, strlen(name), &rcItem, DT_VCENTER | DT_LEFT);
+      DrawText(lpdis->hDC, name, (int) strlen(name), &rcItem, DT_VCENTER | DT_LEFT);
 
       break;
 

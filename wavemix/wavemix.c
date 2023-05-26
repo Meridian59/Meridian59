@@ -580,7 +580,7 @@ UINT GetWaveDevice(void)
       /* Open a waveform output device.
 	 */
       if (uErr = waveOutOpen( (LPHWAVEOUT)&g->hWaveOut, g->wDeviceID, (LPCWAVEFORMATEX)&g->pcm,
-			     (DWORD)g->hWndApp, (DWORD)NULL, CALLBACK_WINDOW))
+			     (DWORD_PTR)g->hWndApp, (DWORD_PTR)NULL, CALLBACK_WINDOW))
       {
 	 //          BUGBUG: for some reason a MessageBox here screws up 
 	 //          MessageBox(GetFocus(), "Failed to open waveform output device.",  NULL, MB_OK | MB_ICONEXCLAMATION);
@@ -1007,7 +1007,7 @@ void WINAPI WaveMixPump(void)
    ODS(2,"{end pump}");
 }
 
-LONG WINAPI WndProc(HWND hWnd, unsigned msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI WndProc(HWND hWnd, unsigned msg, WPARAM wParam, LPARAM lParam)
 {
    ODS(2,"{WndProc}");
    
@@ -1877,7 +1877,7 @@ LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPSTR szWaveFilename, HINST
    else
       wDeviceID = (WORD)WAVE_MAPPER;
    
-   if (waveOutOpen(&hWaveOutTmp, wDeviceID, (LPCWAVEFORMATEX)&g->pcm, (DWORD)NULL, 0L, WAVE_FORMAT_QUERY))
+   if (waveOutOpen(&hWaveOutTmp, wDeviceID, (LPCWAVEFORMATEX)&g->pcm, (DWORD_PTR)NULL, 0L, WAVE_FORMAT_QUERY))
    {
       if (gfShow)
 	 MessageBox(NULL, "The waveform device can't play this format.", gszAppName, MB_OK | MB_ICONEXCLAMATION);
@@ -1920,7 +1920,7 @@ LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPSTR szWaveFilename, HINST
       }
       mmioInfo.cchBuffer=SizeofResource(hInst,hRsrc);
       mmioInfo.fccIOProc=FOURCC_MEM;
-      mmioInfo.adwInfo[0]=(DWORD)NULL;
+      mmioInfo.adwInfo[0]=0;
       
       if (!(hmmio = mmioOpen(NULL, &mmioInfo, MMIO_READ)))
       {

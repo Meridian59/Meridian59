@@ -36,7 +36,7 @@ static int num_default_ranks = (sizeof(default_ranks) / sizeof(DefaultRankName))
 
 static int secret_cost, non_secret_cost;   // Cost of guilds with and without secret flag
 
-static BOOL CALLBACK GuildCreateDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK GuildCreateDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /*****************************************************************************/
 /*
  * GuildCreate:  Ask user for parameters of a newly created guild.
@@ -51,7 +51,7 @@ void GuildCreate(int cost1, int cost2)
 /*
  * GuildCreateDialogProc:  Dialog procedure for guild creation dialog.
  */
-BOOL CALLBACK GuildCreateDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildCreateDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int i, len;
    HWND hEdit;

@@ -13,7 +13,7 @@
 #define _MSGFILTR_H
 
 void UpdateWho(object_node* pUser, BOOL bAdded);
-BOOL CALLBACK WhoDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortWhoDialog(void);
 
 void MessageSaid(ID sender_id, ID sender_name, BYTE say_type, char *message);

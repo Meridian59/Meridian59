@@ -109,7 +109,7 @@ void codegen_string_table(void)
    {
       OutputInt(outfile, curpos + total_len + st.num_strings * 4);
       str = (char *) (l->data);
-      total_len += strlen(str) + 1;
+      total_len += (int) strlen(str) + 1;
       l = l->next;
    }
 
@@ -118,7 +118,7 @@ void codegen_string_table(void)
    for (i=0; i < st.num_strings; i++)
    {
       str = (char *) (l->data);
-      write(outfile, str, strlen(str));
+      write(outfile, str, (int) strlen(str));
       OutputByte(outfile, 0);    // null terminate
       l = l->next;
    }
@@ -147,7 +147,7 @@ void codegen_debug_info(void)
  */
 void codegen_filename(char *filename)
 {
-   write(outfile, filename, strlen(filename));
+   write(outfile, filename, (int) strlen(filename));
    OutputByte(outfile, 0);    // null terminate
 }
 /************************************************************************/

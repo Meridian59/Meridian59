@@ -34,7 +34,7 @@ extern HWND hMakeCharDialog;
 static int animation_controls[] = { IDC_ANIMATE3, IDC_ANIMATE4, };
 static PickCharStruct *info;
 
-static BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void CharPickLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 /********************************************************************/
 /* character is id of character to use */
@@ -110,7 +110,7 @@ void ChooseCharacter(Character *characters, WORD num_characters, char *motd,
    }
 }
 /********************************************************************/
-BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hList;
    int index, i;

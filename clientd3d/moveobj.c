@@ -273,9 +273,9 @@ Bool MoveSingle(Motion *m, int dt)
 		return True;
 	}
 	
-	m->x = FloatToInt(m->source_x + m->progress * (m->dest_x - m->source_x));
-	m->y = FloatToInt(m->source_y + m->progress * (m->dest_y - m->source_y));
-	m->z = FloatToInt(m->source_z + m->progress * (m->dest_z - m->source_z));
+	m->x = (int) (m->source_x + m->progress * (m->dest_x - m->source_x));
+	m->y = (int) (m->source_y + m->progress * (m->dest_y - m->source_y));
+	m->z = (int) (m->source_z + m->progress * (m->dest_z - m->source_z));
 
 	return False;
 }
@@ -292,7 +292,7 @@ void MoveSingleVertically(Motion *m, int dt)
 {
 	int dz = dt * m->v_z / 1000;
 	
-	m->z += FloatToInt((double)dz * gravityAdjust);
+	m->z += (int) ((double)dz * gravityAdjust);
 	if (dz > 0)   // Rising
 	{
 		if (m->z >= m->dest_z)
@@ -313,7 +313,7 @@ void MoveSingleVertically(Motion *m, int dt)
 		else
 		{
 			// Constant acceleration of gravity
-			m->v_z += FloatToInt(gravityAdjust * (double)(GRAVITY_ACCELERATION * dt / 1000));
+			m->v_z += (int) (gravityAdjust * (double)(GRAVITY_ACCELERATION * dt / 1000));
 		}
 	}
 }

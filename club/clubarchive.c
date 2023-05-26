@@ -30,7 +30,7 @@ static int CopyArchiveData(struct archive *ar, struct archive *aw)
         return ARCHIVE_OK;
      if (r != ARCHIVE_OK)
         return r;
-     r = archive_write_data_block(aw, buff, size, offset);
+     r = (int) archive_write_data_block(aw, buff, size, offset);
      if (r != ARCHIVE_OK)
         return r;
   }

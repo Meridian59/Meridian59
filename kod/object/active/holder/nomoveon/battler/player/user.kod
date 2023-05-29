@@ -296,6 +296,9 @@ resources:
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
+   user_time_string =  \
+   "The current Meridian time is %i:00.  Today is the %q day of year %i."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -1947,6 +1950,19 @@ messages:
       {
          Send(Nth(client_msg,2),@ResetPlayers,#who=self);
          
+         return;
+      }
+
+      if iClient_cmd = UC_REQ_TIME
+      {        
+         ClearTempString();
+         Send(SYS,@AppendOrdinalToTempString,#number=Send(SYS,@GetDay));
+         Send(self,@MsgSendUser,
+            #message_rsc=user_time_string,
+            #parm1=Send(SYS,@GetHour),
+            #parm2=GetTempString(),
+            #parm3=Send(SYS,@GetYear)
+            );
          return;
       }
 

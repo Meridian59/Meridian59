@@ -654,3 +654,12 @@ void CommandTellGuild(char *args)
       return;
    SendSay(SAY_GUILD, args);
 }
+/************************************************************************/
+/*
+ * CommandTime: "show time" command
+ */
+void CommandTime(char *args)
+{
+   RequestTime();
+}
+/************************************************************************/

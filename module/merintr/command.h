@@ -57,5 +57,6 @@ void CommandAppeal(char *args);
 void CommandTellGuild(char *args);
 void CommandSafetyOn(char *args);
 void CommandSafetyOff(char *args);
+void CommandTime(char *args);
 
 #endif /* #ifndef _COMMAND_H */

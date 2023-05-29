@@ -117,6 +117,7 @@ client_message user_msg_table[] = {
 { UC_DEPOSIT,              { PARAM_INT, PARAM_END }, },
 { UC_BALANCE,              { PARAM_END }, },
 { UC_APPEAL,               { PARAM_STRING, PARAM_END }, },
+{ UC_REQ_TIME,             { PARAM_END }, },
 { 0,                       { PARAM_END, }, },    // Must end table this way
 };
 
@@ -347,6 +348,8 @@ static TypedCommand commands[] = {
 { "tguild",      CommandTellGuild, },
 { "safetyon",    CommandSafetyOn, },
 { "safetyoff",   CommandSafetyOff, },
+{ "show time",   CommandTime, },
+{ "zeigen zeit", CommandTime, }, // "show time" in German
 { NULL,          NULL},    // Must end table this way
 };
 

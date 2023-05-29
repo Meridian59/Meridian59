@@ -349,7 +349,7 @@ static TypedCommand commands[] = {
 { "safetyon",    CommandSafetyOn, },
 { "safetyoff",   CommandSafetyOff, },
 { "show time",   CommandTime, },
-{ "zeigen zeit", CommandTime, }, // "show time" in German
+{ "zeit anzeigen", CommandTime, }, // "show time" in German
 { NULL,          NULL},    // Must end table this way
 };
 

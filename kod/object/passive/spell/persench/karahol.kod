@@ -98,16 +98,10 @@ messages:
 
    CanPayCosts(who = $, lTargets = $)
    {
-      if lTargets = $
-      {
-         lTargets = [who];
-      }
-      
       % check for enchantment already applied
-      if Send(first(lTargets),@IsEnchanted,#what=self)
+      if Send(who,@IsEnchanted,#what=self)
       {
-         Send(first(lTargets),@MsgSendUser,#message_rsc=KaraholsCurse_already_enchanted_rsc,
-              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
+         Send(who,@MsgSendUser,#message_rsc=KaraholsCurse_already_enchanted_rsc);
 
          return FALSE;
       }

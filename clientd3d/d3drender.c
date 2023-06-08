@@ -19,14 +19,15 @@ extern int main_viewport_width;
 extern int main_viewport_height;
 
 // Define field of views with magic numbers for tuning
-inline float FovHorizontal(long diff)
+inline float FovHorizontal(long width)
 {
-   return (diff / (float)(main_viewport_width) * (-PI / 3.6f));
+	return width / (float)(MAXX) * (-PI / 3.6f);
 }
-inline float FovVertical(long diff)
+inline float FovVertical(long height)
 {
-   return (diff / (float)(main_viewport_height) * (PI / 5.6f));
+	return height / (float)(MAXY) * (PI / 6.0f);
 }
+
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;

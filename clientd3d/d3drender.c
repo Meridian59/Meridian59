@@ -21,11 +21,11 @@ extern int main_viewport_height;
 // Define field of views with magic numbers for tuning
 inline float FovHorizontal(long width)
 {
-	return width / (float)(MAXX) * (-PI / 3.6f);
+	return width / (float)(main_viewport_width) * (-PI / 3.6f);
 }
 inline float FovVertical(long height)
 {
-	return height / (float)(MAXY) * (PI / 6.0f);
+	return height / (float)(main_viewport_height) * (PI / 6.0f);
 }
 
 #define Z_RANGE					(200000.0f)

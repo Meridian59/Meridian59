@@ -401,7 +401,7 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    horizon = area.cy/2 + PlayerGetHeightOffset();
    num_visible_objects = 0;
    t1=timeGetTime();
-   DrawBSP(room, params, area.cx, FALSE);
+   DrawBSP(room, params, main_viewport_width, FALSE);
    t2=timeGetTime();
 /*   DrawPreOverlayEffects(room, params);
    if (!player.viewID)

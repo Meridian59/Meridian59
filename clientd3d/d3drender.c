@@ -19,14 +19,15 @@ extern int main_viewport_width;
 extern int main_viewport_height;
 
 // Define field of views with magic numbers for tuning
-inline float FovHorizontal(long diff)
+inline float FovHorizontal(long width)
 {
-   return (diff / (float)(main_viewport_width) * (-PI / 3.6f));
+	return width / (float)(main_viewport_width) * (-PI / 3.6f);
 }
-inline float FovVertical(long diff)
+inline float FovVertical(long height)
 {
-   return (diff / (float)(main_viewport_height) * (PI / 5.6f));
+	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
+
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -2137,11 +2138,7 @@ void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheS
 						lightScale = (long) (a * sun_vect.x +
 										b * sun_vect.y) >> LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-						lightScale = ABS(lightScale);
-#else
 						lightScale = (lightScale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 						lightScale = lo_end + ((lightScale * shade_amount)>>LOG_FINENESS);
 						
@@ -2636,9 +2633,6 @@ void D3DRenderPacketWallMaskAdd(WallData *pWall, d3d_render_pool_new *pPool, uns
 	pChunk->pSectorNeg = pWall->neg_sector;
 	pChunk->side = side;
 	pChunk->zBias = ZBIAS_MASK;
-
-//	if (bNoVTile)
-//		pChunk->flags |= D3DRENDER_NOCULL;
 
 	pPacket->pMaterialFctn = &D3DMaterialWorldPacket;
 
@@ -5519,19 +5513,8 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 					*flags |= D3DRENDER_NO_VTILE;
 		break;
 
-/*		case D3DRENDER_WALL_BELOW:
-			if (pSideDef->flags & WF_NO_VTILE)
-				if (NULL == pSideDef->normal_bmap)
-					*flags |= D3DRENDER_NO_VTILE;
-		break;
-
-		case D3DRENDER_WALL_ABOVE:
-			if (pSideDef->flags & WF_NO_VTILE)
-				*flags |= D3DRENDER_NO_VTILE;
-		break;*/
-
 		default:
-		break;
+      break;
 	}
 
 	if ((pXYZ) && (pST))
@@ -5672,15 +5655,6 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 			pST[1].s = temp;
 		}
 
-/*		if (pSideDef->flags & WF_NO_VTILE)
-		{
-			if (pST[1].t > 0.99f)
-				pST[1].t = 0.99f;
-
-			if (pST[2].t > 0.99f)
-				pST[2].t = 0.99f;
-		}*/
-
 		if (*flags & D3DRENDER_NO_VTILE)
 		{
 			if (pST[0].t < 0.0f)
@@ -5753,11 +5727,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 				lightScale = (long)(a * sun_vect.x +
 								b * sun_vect.y) >> LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-				lightScale = ABS(lightScale);
-#else
 				lightScale = (lightScale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 				lightScale = lo_end + ((lightScale * shade_amount)>>LOG_FINENESS);
 				
@@ -6028,11 +5998,7 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 						pNode->u.leaf.sector->sloped_floor->plane.b * sun_vect.y +
 						pNode->u.leaf.sector->sloped_floor->plane.c * sun_vect.z)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-					lightscale = ABS(lightscale);
-#else
 					lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 					lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
 
@@ -6292,11 +6258,7 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 						pNode->u.leaf.sector->sloped_ceiling->plane.b * sun_vect.y +
 						pNode->u.leaf.sector->sloped_ceiling->plane.a * sun_vect.z)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-					lightscale = ABS(lightscale);
-#else
 					lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 					lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
 
@@ -6799,13 +6761,6 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			if (D3DObjectLightingCalc(room, pRNode, &bgra, 0))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
 		}
-
-/*		if(pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID())
-		{
-			bgra.b = 0.0f;
-			bgra.g = 0.0f;
-			bgra.r = 255.0f;
-		}*/
 
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_TRANSLUCENT25)
 			bgra.a = D3DRENDER_TRANS25;
@@ -7483,13 +7438,6 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
 					}
 
-/*					if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID())
-					{
-						bgra.b = 0.0f;
-						bgra.g = 0.0f;
-						bgra.r = 255.0f;
-					}*/
-
 					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
 						bgra.a = D3DRENDER_TRANS25;
 					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT50 >> 20))
@@ -7610,40 +7558,16 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-							//if ((gFrame & 15) < 15)
-							{
-				/*				pChunk->st1[0].s -= ((int)rand() % 3) / 256.0f;
-								pChunk->st1[0].t -= ((int)rand() % 3) / 256.0f;
-								pChunk->st1[1].s -= ((int)rand() % 3) / 256.0f;
-								pChunk->st1[1].t += ((int)rand() % 3) / 256.0f;
-								pChunk->st1[2].s += ((int)rand() % 3) / 256.0f;
-								pChunk->st1[2].t += ((int)rand() % 3) / 256.0f;
-								pChunk->st1[3].s += ((int)rand() % 3) / 256.0f;
-								pChunk->st1[3].t -= ((int)rand() % 3) / 256.0f;*/
-								pChunk->st1[0].s -= (gFrame & 3) / 256.0f;
-								pChunk->st1[0].t -= (gFrame & 3) / 256.0f;
-								pChunk->st1[1].s -= (gFrame & 3) / 256.0f;
-								pChunk->st1[1].t += (gFrame & 3) / 256.0f;
-								pChunk->st1[2].s += (gFrame & 3) / 256.0f;
-								pChunk->st1[2].t += (gFrame & 3) / 256.0f;
-								pChunk->st1[3].s += (gFrame & 3) / 256.0f;
-								pChunk->st1[3].t -= (gFrame & 3) / 256.0f;
-								/*pChunk->st1[0].s += (5) / 256.0f;
-								pChunk->st1[0].t -= (5) / 256.0f;
-								pChunk->st1[1].s += (5) / 256.0f;
-								pChunk->st1[1].t += (5) / 256.0f;
-								pChunk->st1[2].s -= (5) / 256.0f;
-								pChunk->st1[2].t += (5) / 256.0f;
-								pChunk->st1[3].s -= (5) / 256.0f;
-								pChunk->st1[3].t -= (5) / 256.0f;*/
-							}
+              pChunk->st1[0].s -= (gFrame & 3) / 256.0f;
+              pChunk->st1[0].t -= (gFrame & 3) / 256.0f;
+              pChunk->st1[1].s -= (gFrame & 3) / 256.0f;
+              pChunk->st1[1].t += (gFrame & 3) / 256.0f;
+              pChunk->st1[2].s += (gFrame & 3) / 256.0f;
+              pChunk->st1[2].t += (gFrame & 3) / 256.0f;
+              pChunk->st1[3].s += (gFrame & 3) / 256.0f;
+              pChunk->st1[3].t -= (gFrame & 3) / 256.0f;
 						}
 
-/*						if (((D3DRENDER_CLIP(topLeft.x, 1.0f) ||
-							D3DRENDER_CLIP(topLeft.y, 1.0f)) &&
-							(D3DRENDER_CLIP(bottomRight.x, 1.0f) ||
-							D3DRENDER_CLIP(bottomRight.y, 1.0f))) &&
-							D3DRENDER_CLIP(topLeft.z, 1.0f))*/
 						if (
 							(
 							(D3DRENDER_CLIP(topLeft.x, 1.0f) &&

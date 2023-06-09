@@ -201,8 +201,7 @@ void GraphicsAreaResize(int xsize, int ysize)
    // update main viewport and classic scaler (required for FOV calculations and equipment scaling)
    main_viewport_width = view.cx;
    main_viewport_height = view.cy;
-   player_overlay_scaler = (float)(main_viewport_width - CLASSIC_WIDTH) / CLASSIC_WIDTH;
-   player_overlay_scaler = (player_overlay_scaler > 0) ? 1.0f + player_overlay_scaler : 1.0f - player_overlay_scaler;
+   player_overlay_scaler = ((float)main_viewport_width) / CLASSIC_WIDTH;
 
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 

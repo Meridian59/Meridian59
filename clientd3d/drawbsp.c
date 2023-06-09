@@ -2417,11 +2417,7 @@ static void WalkLeaf(BSPleaf *leaf)
 	   // light scale is based on dot product of surface normal and sun vector
 	   lightscale = (long)(surface_norm.x*sun_vect.x + surface_norm.y*sun_vect.y + surface_norm.z*sun_vect.z)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-	   lightscale = ABS(lightscale);
-#else
 	   lightscale = (long)(lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 	   lightscale = lo_end + (long)((lightscale * shade_amount)>>LOG_FINENESS);
 
@@ -2445,11 +2441,7 @@ static void WalkLeaf(BSPleaf *leaf)
 	   // light scale is based on dot product of surface normal and sun vector
 	   lightscale = (long)(surface_norm.x*sun_vect.x + surface_norm.y*sun_vect.y + surface_norm.z*sun_vect.z)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-	   lightscale = ABS(lightscale);
-#else
 	   lightscale = (long)(lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 	   lightscale = lo_end + (long)((lightscale * shade_amount)>>LOG_FINENESS);
 
@@ -2601,13 +2593,6 @@ static void WalkLeaf(BSPleaf *leaf)
 	 }
      }
 }
-/*****************************************************************************/
-// this controls where darkest point is relative to sun_vect
-// when non-zero walls are darkest when perpendicular to sun vect
-// and light when facing directly towards or directly away from sun_vect (obsolete)
-// when zero, wall are lightest when facing towards sun_vect and
-// darkest when facing directly away
-#define PERPENDICULAR_DARK  0
 
 static void WalkBSPtree(BSPnode *tree)
 {
@@ -2650,11 +2635,7 @@ static void WalkBSPtree(BSPnode *tree)
 
 	  lightscale = (long)(a*sun_vect.x + b*sun_vect.y)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-	  lightscale = ABS(lightscale);
-#else
 	  lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 	  lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
 	

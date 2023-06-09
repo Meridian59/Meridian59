@@ -1907,7 +1907,7 @@ messages:
       }
 
       % Break trance if the user is in one
-      if IsClass(what,&User) AND Send(what,@CheckPlayerFlag,#flag=PFLAG_TRANCE)
+      if Send(what,@CheckPlayerFlag,#flag=PFLAG_TRANCE)
       {
          Send(what,@BreakTrance,#event=EVENT_NEWOWNER);
       }

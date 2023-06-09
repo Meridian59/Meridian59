@@ -13,8 +13,6 @@
 #define COLOR_AMBIENT		239
 #define COLOR_MAX			255
 #define TEMP_LIGHT_SCALE	(32 * 150)
-// XXX
-//#define TEMP_ALPHA_REF		(127)
 #define TEMP_ALPHA_REF		(1)
 
 #define LIGHTMAP_B			(165)

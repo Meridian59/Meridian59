@@ -25,7 +25,7 @@ inline float FovHorizontal(long width)
 }
 inline float FovVertical(long height)
 {
-	return height / (float)(main_viewport_height) * (PI / 6.0f);
+	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
 
 #define Z_RANGE					(200000.0f)

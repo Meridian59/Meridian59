@@ -1907,7 +1907,7 @@ messages:
       }
 
       % Break trance if the user is in one
-      % Send(what,@BreakTrance,#event=EVENT_NEWOWNER);
+      Send(what,@BreakTrance,#event=EVENT_NEWOWNER);
 
       % unenchant this one occupant
       for i in plEnchantments

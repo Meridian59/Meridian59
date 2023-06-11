@@ -1907,10 +1907,7 @@ messages:
       }
 
       % Break trance if the user is in one
-      if IsClass(what,&User) AND Send(what,@CheckPlayerFlag,#flag=PFLAG_TRANCE)
-      {
-         Send(what,@BreakTrance,#event=EVENT_NEWOWNER);
-      }
+      % Send(what,@BreakTrance,#event=EVENT_NEWOWNER);
 
       % unenchant this one occupant
       for i in plEnchantments

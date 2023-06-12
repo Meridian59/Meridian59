@@ -362,7 +362,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    }
    else
    {
-      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), NULL));
+      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), 0));
    }
 
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))

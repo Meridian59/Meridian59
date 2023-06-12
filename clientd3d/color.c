@@ -56,7 +56,7 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "0,255,255"}       /* COLOR_ITEM_MAGIC_FG */
+	{ "0,255,255"}      /* COLOR_ITEM_SPECIAL_FG */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -404,12 +404,14 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 * GetItemListColor:  Get given color id # for given owner-drawn list box.
 *    (Inventory has different colors than popup dialog lists)
 *    Doesn't return color itself so that caller can use id to call GetBrush.
-*    Now colors magic items; any future item colors should be added here.
+*    Also colors special items.  When the client receives a OF_ITEM_SPECIAL flag
+*    for an object, the client will color the object's text in lists based on the
+*    value of COLOR_ITEM_MAGIC_FG.
 */
 WORD GetItemListColor(HWND hwnd, int type, int flags)
 {
-		if ((flags & OF_ITEM_MAGIC) != 0)
-				return COLOR_ITEM_MAGIC_FG;
+		if ((flags & OF_ITEM_SPECIAL) != 0)
+				return COLOR_ITEM_SPECIAL_FG;
 		else
    {
 				switch(type)

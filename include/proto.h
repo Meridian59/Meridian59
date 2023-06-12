@@ -358,7 +358,7 @@ enum {
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
 #define OF_CONTAINER     0x00000020    // Set if player can put objects inside this one
 #define OF_NOEXAMINE     0x00000040    // Set if player CAN'T examine object
-#define OF_ITEM_MAGIC    0x00000080    // Set for magic item to color in lists
+#define OF_ITEM_SPECIAL  0x00000080    // Set for special items to color in lists
 #define OF_OFFERABLE     0x00000200    // Set if object can be offered to
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
@@ -408,7 +408,6 @@ enum {
 #define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)
 #define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)
 #define GetDrawingEffectIndex(flags) (((flags) & OF_EFFECT_MASK) >> 20)
-#define GetItemFlags(flags) ((flags))
 
 /* How objects allow or disallow motion onto their square */
 enum {

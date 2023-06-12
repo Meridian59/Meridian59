@@ -480,7 +480,7 @@
 #define ID_OPTIONS_FONT_MAP_TEXT        3510
 #define ID_HELP_REQUEST_CS              3511
 #define IDM_DRAW_MAP                    3512
-#define ID_COLOR_MAGIC                  3513
+#define ID_COLOR_SPECIAL                3513
 
 // Next default values for new objects
 // 

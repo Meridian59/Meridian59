@@ -59,8 +59,8 @@
    LOOK_YES          = 0
    LOOK_NO           = 0x00000040
 
-   ITEM_MAGIC_YES    = 0x00000080
-   ITEM_MAGIC_NO     = 0
+   ITEM_SPECIAL_YES  = 0x00000080
+   ITEM_SPECIAL_NO   = 0
 
    INVISIBLE_YES     = 0x00000100
    INVISIBLE_NO      = 0

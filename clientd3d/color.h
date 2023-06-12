@@ -38,7 +38,7 @@ enum {
    COLOR_BAR4,            /* Bar graph color #4 (numbers in graphs) */
    COLOR_INVNUMFGD,       /* Inventory number foreground */
    COLOR_INVNUMBGD,       /* Inventory number background */
-   COLOR_ITEM_MAGIC_FG,   /* Color for magic weapons in lists*/
+   COLOR_ITEM_SPECIAL_FG, /* Color for special weapons in lists*/
    MAXCOLORS,
 };
 

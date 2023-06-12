@@ -161,9 +161,7 @@ $(OUTDIR)\makepal.exe: $(OUTDIR)\makepal.obj
 
 profile: $(OBJS) client.res $(BLAKNTLIBS) 
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe $(LINKWINDOWSFLAGS)
+$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:$(OUTDIR)\meridian.exe $(LINKWINDOWSFLAGS)
 <<
-#       prep /lc /excall /inc draw3d.obj meridian.exe   
-	prep /ft /excall /inc drawbsp.obj meridian.exe
 
 !include $(TOPDIR)\rules.mak

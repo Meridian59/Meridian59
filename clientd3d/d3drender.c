@@ -273,6 +273,7 @@ void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
 void				D3DRenderSkyboxDraw(d3d_render_pool_new *pPool, int angleHeading, int anglePitch);
+void				D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, room_type* room, Draw3DParams* params);
 void				D3DRenderSunDraw(int angleHeading, int anglePitch);
 Bool				D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 
@@ -609,19 +610,22 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox;
 	static ID	tempBkgnd = 0;
 	room_contents_node	*pRNode;
-   Bool draw_sky = TRUE;
-   Bool draw_world = TRUE;
-   Bool draw_objects = TRUE;
-   Bool draw_particles = TRUE;
 
-   // If blind, don't draw anything
-   if (effects.blind)
-   {
-      draw_sky = FALSE;
-      draw_world = FALSE;
-      draw_objects = FALSE;
-      draw_particles = FALSE;
-   }
+	Bool draw_sky = TRUE;
+	Bool draw_world = TRUE;
+	Bool draw_objects = TRUE;
+	Bool draw_particles = TRUE;
+	Bool draw_background_overlays = TRUE;
+
+	// If blind, don't draw anything
+	if (effects.blind)
+	{
+		draw_sky = FALSE;
+		draw_world = FALSE;
+		draw_objects = FALSE;
+		draw_particles = FALSE;
+		draw_background_overlays = FALSE;
+	}
    
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
@@ -764,6 +768,34 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// restore the correct view matrix
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 
+	// background overlays (e.g. the Sun & Moon)
+	if (draw_background_overlays)
+	{
+		MatrixIdentity(&mat);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+
+		D3DRenderPoolReset(&gWorldPool, &D3DMaterialWorldPool);
+		D3DCacheSystemReset(&gWorldCacheSystem);
+		D3DRenderBackgroundOverlays(&gWorldPool, angleHeading, anglePitch, room, params);
+		D3DCacheFill(&gWorldCacheSystem, &gWorldPool, 1);
+		D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
+
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+
+		MatrixIdentity(&mat);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+	}
+
+	// restore the correct view matrix
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
+
 	// draw world
 	if (draw_world)
 	{
@@ -853,8 +885,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE, D3DCMP_LESS, 0, D3DSTENCILOP_KEEP,
 			D3DSTENCILOP_KEEP, D3DSTENCILOP_KEEP);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
-    if (gD3DDriverProfile.bFogEnable)
-       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
+
+		if (gD3DDriverProfile.bFogEnable)
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
     
 		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
@@ -872,8 +905,52 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
-    if (gD3DDriverProfile.bFogEnable)
-       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+		if (gD3DDriverProfile.bFogEnable)
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+
+		// restore the view and world matrices
+		MatrixIdentity(&mat);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+	}
+
+	// Draw the background overlays again using the same stencil approach as for the skybox.
+	if (draw_background_overlays)
+	{
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
+
+		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
+		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE, D3DCMP_LESS, 0, D3DSTENCILOP_KEEP,
+			D3DSTENCILOP_KEEP, D3DSTENCILOP_KEEP);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+
+		if (gD3DDriverProfile.bFogEnable)
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
+
+		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+
+		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+
+		D3DRenderPoolReset(&gWorldPool, &D3DMaterialWorldPool);
+		D3DCacheSystemReset(&gWorldCacheSystem);
+		D3DRenderBackgroundOverlays(&gWorldPool, angleHeading, anglePitch, room, params);
+		D3DCacheFill(&gWorldCacheSystem, &gWorldPool, 1);
+		D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
+
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+
+		if (gD3DDriverProfile.bFogEnable)
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+
+		MatrixIdentity(&mat);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
 	}
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
@@ -5197,6 +5274,255 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    DeleteDC(hDC);
 }
 
+
+void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, room_type* room, Draw3DParams* params)
+{
+	room_contents_node* player_obj;
+	player_obj = GetRoomObjectById(player.id);
+
+	for (list_type list = room->bg_overlays; list != NULL; list = list->next)
+	{
+		BackgroundOverlay* overlay = (BackgroundOverlay*)(list->data);
+
+		PDIB pDib = GetObjectPdib(overlay->obj.icon_res, 0, overlay->obj.animate->group);
+		if (NULL == pDib)
+			continue;
+
+		BYTE* bkgnd_bmap = DibPtr(pDib);
+		if (bkgnd_bmap == NULL)
+			continue;
+
+		// The background overlay is not yet considered visible to the player.
+		overlay->drawn = FALSE;
+
+		// Increase the size of the background overlay if necessary.
+		int size_scaler = 1;
+
+		// Specify the maximum and minimum altitude of the background overlay.
+		// This will map from the -200 to 200 values return from the server to these values.
+		int heightMax = 200;
+		int heightMin = -200;
+
+		long object_width = DibWidth(pDib) * size_scaler;
+		long object_height = DibHeight(pDib) * size_scaler;
+
+		d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
+		if (NULL == pPacket)
+			return;
+
+		d3d_render_chunk_new* pChunk = D3DRenderChunkNew(pPacket);
+		assert(pChunk);
+
+		pPacket->pMaterialFctn = &D3DMaterialWorldPacket;
+
+		pChunk->numIndices = 4;
+		pChunk->numVertices = 4;
+		pChunk->numPrimitives = pChunk->numVertices - 2;
+		pChunk->pMaterialFctn = &D3DMaterialWorldDynamicChunk;
+		pChunk->flags |= D3DRENDER_NOAMBIENT | D3DRENDER_WORLD_OBJ;
+		pChunk->zBias = ZBIAS_BASE;
+
+		int piAngle = overlay->x;
+		int piHeight = overlay->y;
+
+		auto mapRange = [](double value, double in_min, double in_max, double out_min, double out_max) -> double {
+			return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+		};
+
+		long mappedHeightValue = mapRange(piHeight, -200, 200, heightMin, heightMax);
+		float angleInRadians = piAngle / 4096.0f;
+		double azimuthalAngle = angleInRadians * 2 * PI;
+		long radius = heightMax * 5;
+		double horizontalRadius = sqrt(pow(radius, 2) - pow(mappedHeightValue, 2));
+
+		long x = params->viewer_x - (object_width / 2) + horizontalRadius * cos(azimuthalAngle);
+		long y = params->viewer_y - (object_height / 2) + horizontalRadius * sin(azimuthalAngle);
+		long z = params->viewer_height + mappedHeightValue;
+
+		Vector3D bg_overlay_pos;
+		bg_overlay_pos.x = x;
+		bg_overlay_pos.y = y;
+		bg_overlay_pos.z = z;
+
+		D3DMATRIX rot, mat;
+		MatrixIdentity(&mat);
+		MatrixIdentity(&rot);
+
+		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+		MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
+		MatrixTranspose(&rot, &rot);
+		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
+		MatrixMultiply(&pChunk->xForm, &rot, &mat);
+
+		pChunk->xyz[0].x = 0;
+		pChunk->xyz[0].z = 0;
+		pChunk->xyz[0].y = 0;
+
+		pChunk->xyz[1].x = -object_width;
+		pChunk->xyz[1].z = 0;
+		pChunk->xyz[1].y = 0;
+
+		pChunk->xyz[2].x = -object_width;
+		pChunk->xyz[2].z = object_height;
+		pChunk->xyz[2].y = 0;
+
+		pChunk->xyz[3].x = 0;
+		pChunk->xyz[3].z = object_height;
+		pChunk->xyz[3].y = 0;
+
+		for (int j = 0; j < 4; j++) {
+			pChunk->bgra[j].b = 255;
+			pChunk->bgra[j].g = 255;
+			pChunk->bgra[j].r = 255;
+			pChunk->bgra[j].a = 255;
+		}
+
+		pChunk->st0[0].s = 0.001f;
+		pChunk->st0[0].t = 0.001f;
+		pChunk->st0[1].s = 0.001f;
+		pChunk->st0[1].t = 0.999f;
+		pChunk->st0[2].s = 0.999f;
+		pChunk->st0[2].t = 0.999f;
+		pChunk->st0[3].s = 0.999f;
+		pChunk->st0[3].t = 0.001f;
+
+		pChunk->indices[0] = 1;
+		pChunk->indices[1] = 2;
+		pChunk->indices[2] = 0;
+		pChunk->indices[3] = 3;
+
+		// Determine if the background overlay is visible for click detection in client
+		// (e.g. Blinded by the light of the ++Sun).
+		D3DMATRIX	localToScreen, trans;
+		custom_xyzw	topLeft, topRight, bottomLeft, bottomRight, center;
+		ObjectRange* range = FindVisibleObjectById(overlay->obj.id);
+		int			w, h;
+		int			tempLeft, tempRight, tempTop, tempBottom;
+		int			distX, distY, distance;
+
+		if (overlay->obj.id == player.id)
+			break;
+
+		w = gD3DRect.right - gD3DRect.left;
+		h = gD3DRect.bottom - gD3DRect.top;
+
+		topLeft.x = pChunk->xyz[3].x;
+		topLeft.y = pChunk->xyz[3].z;
+		topLeft.z = 0;
+		topLeft.w = 1.0f;
+
+		topRight.x = pChunk->xyz[3].x;
+		topRight.y = pChunk->xyz[3].z;
+		topRight.z = 0;
+		topRight.w = 1.0f;
+
+		bottomLeft.x = pChunk->xyz[1].x;
+		bottomLeft.y = pChunk->xyz[1].z;
+		bottomLeft.z = 0;
+		bottomLeft.w = 1.0f;
+
+		bottomRight.x = pChunk->xyz[1].x;
+		bottomRight.y = pChunk->xyz[1].z;
+		bottomRight.z = 0;
+		bottomRight.w = 1.0f;
+
+		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+		MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
+		MatrixMultiply(&rot, &rot, &mat);
+		MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
+		MatrixMultiply(&mat, &trans, &rot);
+		XformMatrixPerspective(&localToScreen, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 1.0f, 2000000.0f);
+		MatrixMultiply(&mat, &pChunk->xForm, &mat);
+		MatrixMultiply(&localToScreen, &mat, &localToScreen);
+
+		MatrixMultiplyVector(&topLeft, &localToScreen, &topLeft);
+		MatrixMultiplyVector(&topRight, &localToScreen, &topRight);
+		MatrixMultiplyVector(&bottomLeft, &localToScreen, &bottomLeft);
+		MatrixMultiplyVector(&bottomRight, &localToScreen, &bottomRight);
+
+		topLeft.x /= topLeft.w;
+		topLeft.y /= topLeft.w;
+		topLeft.z /= topLeft.w;
+		bottomRight.x /= bottomRight.w;
+		bottomRight.y /= bottomRight.w;
+		bottomRight.z /= bottomRight.w;
+
+		topLeft.z = topLeft.z * 2.0f - 1.0f;
+		bottomRight.z = bottomRight.z * 2.0f - 1.0f;
+
+		topRight.x = bottomRight.x;
+		topRight.y = topLeft.y;
+		topRight.z = topLeft.z;
+		bottomLeft.x = topLeft.x;
+		bottomLeft.y = bottomRight.y;
+		bottomLeft.z = topLeft.z;
+
+		center.x = (topLeft.x + topRight.x) / 2.0f;
+		center.y = (topLeft.y + bottomLeft.y) / 2.0f;
+		center.z = topLeft.z;
+
+		if (
+			(
+				(D3DRENDER_CLIP(topLeft.x, 1.0f) &&
+					D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
+				(D3DRENDER_CLIP(bottomLeft.x, 1.0f) &&
+					D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
+				(D3DRENDER_CLIP(topRight.x, 1.0f) &&
+					D3DRENDER_CLIP(topRight.y, 1.0f)) ||
+				(D3DRENDER_CLIP(bottomRight.x, 1.0f) &&
+					D3DRENDER_CLIP(bottomRight.y, 1.0f)) ||
+				(D3DRENDER_CLIP(center.x, 1.0f))
+				) &&
+			D3DRENDER_CLIP(topLeft.z, 1.0f))
+		{
+
+			tempLeft = (topLeft.x * w / 2) + (w / 2);
+			tempRight = (bottomRight.x * w / 2) + (w / 2);
+			tempTop = (topLeft.y * -h / 2) + (h / 2);
+			tempBottom = (bottomRight.y * -h / 2) + (h / 2);
+
+			tempLeft /= 2;
+			tempRight /= 2;
+			tempTop /= 2;
+			tempBottom /= 2;
+
+			distX = bg_overlay_pos.x - player.x;
+			distY = bg_overlay_pos.y - player.y;
+
+			distance = DistanceGet(distX, distY);
+
+			if (range == NULL)
+			{
+				// Set up new visible object.
+				range = &visible_objects[num_visible_objects];
+				range->id = overlay->obj.id;
+				range->distance = distance;
+				range->left_col = tempLeft;
+				range->right_col = tempRight;
+				range->top_row = tempTop;
+				range->bottom_row = tempBottom;
+
+				num_visible_objects = ++num_visible_objects > MAXOBJECTS ? MAXOBJECTS : num_visible_objects;
+			}
+
+			overlay->rcScreen.left = tempLeft;
+			overlay->rcScreen.right = tempRight;
+			overlay->rcScreen.top = tempTop;
+			overlay->rcScreen.bottom = tempBottom;
+
+			// The background overlay is visible and eligable for click detection.
+			overlay->drawn = TRUE;
+
+			// Record boundaries of drawing area.
+			range->left_col = min(range->left_col, tempLeft);
+			range->right_col = max(range->right_col, tempRight);
+			range->top_row = min(range->top_row, tempTop);
+			range->bottom_row = max(range->bottom_row, tempBottom);
+		}
+
+	}
+}
+
 void D3DRenderSkyboxDraw(d3d_render_pool_new *pPool, int angleHeading, int anglePitch)
 {
 	int			i, j;
@@ -8849,6 +9175,9 @@ Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
 
 Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 {
+	if ((pChunk->flags & D3DRENDER_WORLD_OBJ))
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
+
 	if (gWireframe)
 	{
 		if (pChunk->pSector == &current_room.sectors[0])

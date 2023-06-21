@@ -5287,13 +5287,16 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		// The background overlay is not yet considered visible to the player.
 		overlay->drawn = FALSE;
 
+		// Increase the size of the background overlay if necessary.
+		float size_scaler = 1.2f;
+
 		// Specify the maximum and minimum altitude of the background overlay.
 		// This will map from the -200 to 200 values return from the server to these values.
-		int heightMax = 200;
-		int heightMin = -200;
+		int height_max = 200;
+		int height_min = -200;
 
-		long object_width = DibWidth(pDib);
-		long object_height = DibHeight(pDib);
+		long object_width = DibWidth(pDib) * size_scaler;
+		long object_height = DibHeight(pDib) * size_scaler;
 
 		d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
 		if (NULL == pPacket)
@@ -5318,10 +5321,10 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 		};
 
-		long mappedHeightValue = mapRange(piHeight, -200, 200, heightMin, heightMax);
+		long mappedHeightValue = mapRange(piHeight, -200, 200, height_min, height_max);
 		float angleInRadians = piAngle / 4096.0f;
 		double azimuthalAngle = angleInRadians * 2 * PI;
-		long radius = heightMax * 5;
+		long radius = height_max * 5;
 		double horizontalRadius = sqrt(pow(radius, 2) - pow(mappedHeightValue, 2));
 
 		long x = params->viewer_x - (object_width / 2) + horizontalRadius * cos(azimuthalAngle);

@@ -611,21 +611,13 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	static ID	tempBkgnd = 0;
 	room_contents_node	*pRNode;
 
-	Bool draw_sky = TRUE;
-	Bool draw_world = TRUE;
-	Bool draw_objects = TRUE;
-	Bool draw_particles = TRUE;
-	Bool draw_background_overlays = TRUE;
-
 	// If blind, don't draw anything
-	if (effects.blind)
-	{
-		draw_sky = FALSE;
-		draw_world = FALSE;
-		draw_objects = FALSE;
-		draw_particles = FALSE;
-		draw_background_overlays = FALSE;
-	}
+	Bool can_see = !effects.blind;
+	Bool draw_sky = can_see;
+	Bool draw_world = can_see;
+	Bool draw_objects = can_see;
+	Bool draw_particles = can_see;
+	Bool draw_background_overlays = can_see;
    
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
@@ -5295,16 +5287,13 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		// The background overlay is not yet considered visible to the player.
 		overlay->drawn = FALSE;
 
-		// Increase the size of the background overlay if necessary.
-		int size_scaler = 1;
-
 		// Specify the maximum and minimum altitude of the background overlay.
 		// This will map from the -200 to 200 values return from the server to these values.
 		int heightMax = 200;
 		int heightMin = -200;
 
-		long object_width = DibWidth(pDib) * size_scaler;
-		long object_height = DibHeight(pDib) * size_scaler;
+		long object_width = DibWidth(pDib);
+		long object_height = DibHeight(pDib);
 
 		d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
 		if (NULL == pPacket)
@@ -5348,8 +5337,12 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		MatrixIdentity(&mat);
 		MatrixIdentity(&rot);
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
-		MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
+		const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
+		const float DEGREES_TO_RADIANS = PI / 180.0f;
+		const float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
+
+		MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
+		MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);
@@ -5377,14 +5370,14 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			pChunk->bgra[j].a = 255;
 		}
 
-		pChunk->st0[0].s = 0.001f;
-		pChunk->st0[0].t = 0.001f;
-		pChunk->st0[1].s = 0.001f;
-		pChunk->st0[1].t = 0.999f;
-		pChunk->st0[2].s = 0.999f;
-		pChunk->st0[2].t = 0.999f;
-		pChunk->st0[3].s = 0.999f;
-		pChunk->st0[3].t = 0.001f;
+		pChunk->st0[0].s = 0.0f;
+		pChunk->st0[0].t = 0.0f;
+		pChunk->st0[1].s = 0.0f;
+		pChunk->st0[1].t = 1.0f;
+		pChunk->st0[2].s = 1.0f;
+		pChunk->st0[2].t = 1.0f;
+		pChunk->st0[3].s = 1.0f;
+		pChunk->st0[3].t = 0.0f;
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -5392,40 +5385,37 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		pChunk->indices[3] = 3;
 
 		// Determine if the background overlay is visible for click detection in client
-		// (e.g. Blinded by the light of the ++Sun).
-		D3DMATRIX	localToScreen, trans;
-		custom_xyzw	topLeft, topRight, bottomLeft, bottomRight, center;
+		// (e.g. Blinded by the light of the Sun).
 		ObjectRange* range = FindVisibleObjectById(overlay->obj.id);
-		int			w, h;
-		int			tempLeft, tempRight, tempTop, tempBottom;
-		int			distX, distY, distance;
 
-		if (overlay->obj.id == player.id)
-			break;
+		int w = gD3DRect.right - gD3DRect.left;
+		int h = gD3DRect.bottom - gD3DRect.top;
 
-		w = gD3DRect.right - gD3DRect.left;
-		h = gD3DRect.bottom - gD3DRect.top;
-
+		custom_xyzw topLeft;
 		topLeft.x = pChunk->xyz[3].x;
 		topLeft.y = pChunk->xyz[3].z;
 		topLeft.z = 0;
 		topLeft.w = 1.0f;
 
+		custom_xyzw topRight;
 		topRight.x = pChunk->xyz[3].x;
 		topRight.y = pChunk->xyz[3].z;
 		topRight.z = 0;
 		topRight.w = 1.0f;
 
+		custom_xyzw bottomLeft;
 		bottomLeft.x = pChunk->xyz[1].x;
 		bottomLeft.y = pChunk->xyz[1].z;
 		bottomLeft.z = 0;
 		bottomLeft.w = 1.0f;
 
+		custom_xyzw bottomRight;
 		bottomRight.x = pChunk->xyz[1].x;
 		bottomRight.y = pChunk->xyz[1].z;
 		bottomRight.z = 0;
 		bottomRight.w = 1.0f;
 
+		D3DMATRIX localToScreen, trans;
 		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 		MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 		MatrixMultiply(&rot, &rot, &mat);
@@ -5457,6 +5447,7 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		bottomLeft.y = bottomRight.y;
 		bottomLeft.z = topLeft.z;
 
+		custom_xyzw center;
 		center.x = (topLeft.x + topRight.x) / 2.0f;
 		center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 		center.z = topLeft.z;
@@ -5476,20 +5467,20 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			D3DRENDER_CLIP(topLeft.z, 1.0f))
 		{
 
-			tempLeft = (topLeft.x * w / 2) + (w / 2);
-			tempRight = (bottomRight.x * w / 2) + (w / 2);
-			tempTop = (topLeft.y * -h / 2) + (h / 2);
-			tempBottom = (bottomRight.y * -h / 2) + (h / 2);
+			int tempLeft = (topLeft.x * w / 2) + (w / 2);
+			int tempRight = (bottomRight.x * w / 2) + (w / 2);
+			int tempTop = (topLeft.y * -h / 2) + (h / 2);
+			int tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
 			tempLeft /= 2;
 			tempRight /= 2;
 			tempTop /= 2;
 			tempBottom /= 2;
 
-			distX = bg_overlay_pos.x - player.x;
-			distY = bg_overlay_pos.y - player.y;
+			int distX = bg_overlay_pos.x - player.x;
+			int distY = bg_overlay_pos.y - player.y;
 
-			distance = DistanceGet(distX, distY);
+			int distance = DistanceGet(distX, distY);
 
 			if (range == NULL)
 			{
@@ -5502,7 +5493,7 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 				range->top_row = tempTop;
 				range->bottom_row = tempBottom;
 
-				num_visible_objects = ++num_visible_objects > MAXOBJECTS ? MAXOBJECTS : num_visible_objects;
+				num_visible_objects = min(num_visible_objects + 1, MAXOBJECTS);
 			}
 
 			overlay->rcScreen.left = tempLeft;

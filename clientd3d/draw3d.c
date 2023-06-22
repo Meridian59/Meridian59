@@ -385,6 +385,18 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    long t1,t2,t3;
    static int count = 0;
 
+   // Size of offscreen bitmap.
+   area.x = area.y = 0;
+   area.cx = min(params->width / 2, main_viewport_width);
+   area.cy = min(params->height / 2, main_viewport_height);
+
+   // Force size to be even.
+   area.cy = area.cy & ~1;
+   area.cx = area.cx & ~1;
+
+   // Horizon is used by drawbsp.c to determine which objects are visible.
+   horizon = area.cy / 2 + PlayerGetHeightOffset();
+
    p = params;
    num_visible_objects = 0;
 

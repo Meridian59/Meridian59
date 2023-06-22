@@ -124,7 +124,7 @@ Bool LoadLineAccount(char *account_str,char *name_str,char *password_str,
        type_str == NULL || last_login_str == NULL || credits_str == NULL ||
        sscanf(account_str,"%i",&account_id) != 1 ||
        sscanf(type_str,"%i",&type) != 1 ||
-       sscanf(last_login_str,"%" SCNi64,&last_login_time) != 1 ||
+       sscanf(last_login_str,"%lli",&last_login_time) != 1 ||
        sscanf(credits_str,"%i",&credits) != 1)
    {
       eprintf("LoadLineAccount (%i) found invalid account\n",lineno);
@@ -136,7 +136,7 @@ Bool LoadLineAccount(char *account_str,char *name_str,char *password_str,
    suspend_time = 0;
    if (suspend_str)
    {
-      sscanf(suspend_str, "%" SCNi64, &suspend_time);
+      sscanf(suspend_str, "%lli", &suspend_time);
    }
 
    /* now decode the password */

@@ -387,8 +387,8 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
 
    // Size of offscreen bitmap.
    area.x = area.y = 0;
-   area.cx = min(params->width / 2, main_viewport_width);
-   area.cy = min(params->height / 2, main_viewport_height);
+   area.cx = main_viewport_width;
+   area.cy = main_viewport_height;
 
    // Force size to be even.
    area.cy = area.cy & ~1;
@@ -401,7 +401,7 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    num_visible_objects = 0;
 
    t1=timeGetTime();
-   DrawBSP(room, params, main_viewport_width, False);
+   DrawBSP(room, params, area.cx, False);
    t2=timeGetTime();
 
    // Draw corner treatment.

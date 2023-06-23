@@ -6,7 +6,7 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR) -pthread --std=c++11
+CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
 
 SOURCEDIR = .
 

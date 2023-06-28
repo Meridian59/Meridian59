@@ -130,10 +130,6 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
  */
 void RestoreActiveStatGroup()
 {
-  int active_stat_group = GetStatGroup();
-  if (active_stat_group == StatsGetCurrentGroup())
-    return;
-
   bool inventory_group = (active_stat_group == STATS_INVENTORY);
   StatsShowGroup(!inventory_group);
   ShowInventory(inventory_group);
@@ -141,6 +137,7 @@ void RestoreActiveStatGroup()
   // Show the inventory, stats, spells or skills group.
   if (inventory_group)
   {
+    InvalidateRect(GetHwndInv(), NULL, FALSE);
     DisplayInventoryAsStatGroup(STATS_INVENTORY);
   }
   else
@@ -167,14 +164,6 @@ void InterfaceRedrawModule(HDC hdc)
   StatsDrawBorder();
   StatsMainRedraw();
   StatsDraw();
-
-  if( StatsGetCurrentGroup() == STATS_INVENTORY )
-  {
-    InvalidateRect( GetHwndInv(), NULL, FALSE );
-    ShowInventory(TRUE);
-    InventoryRedraw();
-  }
-  
   RestoreActiveStatGroup();
 }
 

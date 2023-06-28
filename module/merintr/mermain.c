@@ -125,14 +125,16 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
 }
 /****************************************************************************/
 /*
- * RestoreActiveGroup:  Restore the players activated group.
+ * RestoreActiveGroup:  Restore the player's active stat group.
+ * The possible stat groups are: inventory, skills, spells or stats.
  */
-void RestoreActiveGroup()
+void RestoreActiveStatGroup()
 {
-  if (GetGroup() == StatsGetCurrentGroup())
+  int active_stat_group = GetStatGroup();
+  if (active_stat_group == StatsGetCurrentGroup())
     return;
 
-  bool inventory_group = (GetGroup() == STATS_INVENTORY);
+  bool inventory_group = (active_stat_group == STATS_INVENTORY);
   StatsShowGroup(!inventory_group);
   ShowInventory(inventory_group);
 
@@ -144,14 +146,14 @@ void RestoreActiveGroup()
   else
   {
     list_type stat_list;
-    if (StatCacheGetEntry(GetGroup(), &stat_list) == True)
+    if (StatCacheGetEntry(active_stat_group, &stat_list) == True)
     {
-      DisplayStatGroup(GetGroup(), stat_list);
+      DisplayStatGroup(active_stat_group, stat_list);
     }
     else
     {
-      debug(("Setting active group to %d\n", GetGroup()));
-      RequestStats(GetGroup());
+      debug(("Setting active stat group to %d\n", active_stat_group));
+      RequestStats(active_stat_group);
     }
   }
 }
@@ -174,7 +176,7 @@ void InterfaceRedrawModule(HDC hdc)
     InventoryRedraw();
   }
   
-  RestoreActiveGroup();
+  RestoreActiveStatGroup();
 }
 
 /****************************************************************************/

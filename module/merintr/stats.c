@@ -16,13 +16,13 @@
 #include "client.h"
 #include "merintr.h"
 
-HWND hStats;                        // Window containing stats area
-static list_type stats = NULL;      // List of stats currently displayed
+HWND hStats;                        // Window containing stats area.
+static list_type stats = NULL;      // List of stats currently processed.
 
 static AREA stats_area;
 
-static int current_group;           // Group number currently being displayed
-static int group_type;              // Type of group currently being displayed
+static int current_group;           // Group number currently being processed.
+static int group_type;              // Type of group currently being processed.
 
 /* local function prototypes */
 static void StatsCreateGroup(void);

@@ -139,6 +139,7 @@ void RestoreActiveStatGroup()
   {
     InvalidateRect(GetHwndInv(), NULL, FALSE);
     DisplayInventoryAsStatGroup(STATS_INVENTORY);
+    InventoryRedraw();
   }
   else
   {

@@ -152,7 +152,6 @@ void RestoreActiveStatGroup()
     }
     else
     {
-      debug(("Setting active stat group to %d\n", active_stat_group));
       RequestStats(active_stat_group);
     }
   }

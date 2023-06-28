@@ -108,7 +108,6 @@ static BSPnode *lastBlockingNode = NULL;
 static int worstDistance = 0;
 
 /* local function prototypes */
-static void CheckPlayerMove();
 static void BounceUser(int dt);
 static int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *new_y, int z);
 static WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_y, int z);
@@ -266,8 +265,6 @@ void UserMovePlayer(int action)
 
    num_steps = max(1, min(STEPS_PER_MOVE, NUM_STEPS_PER_SECOND * dt / 1000));
 
-//   xinc = dx;// / num_steps;
-//   yinc = dy;// / num_steps;
    xinc = dx / num_steps;
    yinc = dy / num_steps;
 
@@ -283,7 +280,6 @@ void UserMovePlayer(int action)
    min_distance2 = min_distance * min_distance;
 
    for (i=0; i < num_steps; i++)
-   //for (i=0; i < 1; i++)
    {
       x = last_x + xinc;
       y = last_y + yinc;
@@ -340,11 +336,6 @@ void UserMovePlayer(int action)
 	    }
 	 }
       }
-      
-      // Don't try to slide to current location
-      if (x == last_x && y == last_y)
-		  x = x;
-//	 break;
       
       // Get around integer divide yuckiness
       if (y < 0)
@@ -405,14 +396,12 @@ void UserMovePlayer(int action)
    // Set new player position
    player_obj->motion.x = x;
    player_obj->motion.y = y;
-   //player_obj->motion.z = z;
 
    // TODO: Don't really need to store position in player, since he is also a room object.
    //     The way things are currently done, we now need to update player.
    player.x = x;
    player.y = y;
 
-   CheckPlayerMove();
    MoveUpdateServer();
 
    // Set up vertical motion, if necessary
@@ -670,10 +659,9 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
             if (!moveReported)
             {
                speed = 10;
-               //if (last_move_action == A_FORWARDFAST || last_move_action == A_BACKWARDFAST)
                if (IsMoveFastAction(last_move_action))
                   speed *= 2;
-               RequestMove(*new_y, *new_x, speed, player.room_id);
+               MoveUpdateServer();
                moveReported = TRUE;
                idLastObjNotify = idObjNotify;
             }
@@ -727,44 +715,6 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
    
    return MOVE_OK;
 }
-
-/************************************************************************/
-/*
- * CheckPlayerMove:  Called whenever the player is relocated, either
- *                   by the server or by the player's own efforts.
- *                   If the player's moving somewhere they shouldn't,
- *                   then we tattle to the server.  We don't stop the
- *                   player from being there; that's up to the server.
- */
-void CheckPlayerMove()
-{
-   room_contents_node *player_obj;
-   BSPleaf* leaf;
-
-   player_obj = GetRoomObjectById(player.id);
-   if (!player_obj)
-      return;
-
-   // Server's trying to move to a place the client finds suspicious.
-   // We undo the move, and tell the server that we're doing it.
-   //
-   leaf = BSPFindLeafByPoint(current_room.tree, player_obj->motion.x, player_obj->motion.y);
-   if (leaf == NULL || leaf->sector == NULL ||
-       (/* current_room->secure_zero */ TRUE && leaf->sector == &current_room.sectors[0]))
-   {
-//    debug(("Player is out of bounds.\n"));
-/*
-      // Set new player position.
-      player_obj->motion.x = server_x;
-      player_obj->motion.y = server_y;
-      player.x = server_x;
-      player.y = server_y;
-
-      MoveUpdateServer();
-*/
-   }
-}
-
 /************************************************************************/
 /*
  * ServerMovedPlayer:  Called whenever the player is relocated by the server.
@@ -782,11 +732,9 @@ void ServerMovedPlayer(void)
    if (!player_obj)
       return;
 
-   CheckPlayerMove();
    RoomObjectSetHeight(player_obj);
    server_x = player_obj->motion.x;
    server_y = player_obj->motion.y;
-   //player_obj->motion.z = GetFloorBase(server_x,server_y);
 
    // Update looping sounds to reflect the player's new position
 //   debug(("Player now at: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS));
@@ -832,12 +780,10 @@ void MoveUpdatePosition(void)
    if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
    {
       debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
-//      speed = 10;
-	  speed = 18;
-//      if (last_move_action == A_FORWARDFAST || last_move_action == A_BACKWARDFAST)
-	  if (IsMoveFastAction(last_move_action))
-	 speed *= 2;
-
+      speed = 18;
+      if (IsMoveFastAction(last_move_action))
+        speed *= 2;
+      
       RequestMove(y, x, speed, player.room_id);
       server_x = x;
       server_y = y;

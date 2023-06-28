@@ -125,6 +125,38 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
 }
 /****************************************************************************/
 /*
+ * RestoreActiveGroup:  Restore the players activated group.
+ */
+void RestoreActiveGroup()
+{
+    if (GetGroup() == StatsGetCurrentGroup())
+        return;
+
+    bool inventory_group = (GetGroup() == STATS_INVENTORY);
+    StatsShowGroup(!inventory_group);
+    ShowInventory(inventory_group);
+
+    // Show the inventory, stats, spells or skills group.
+    if (inventory_group)
+	{
+		DisplayInventoryAsStatGroup(STATS_INVENTORY);
+	}
+	else
+	{
+        list_type stat_list;
+        if (StatCacheGetEntry(GetGroup(), &stat_list) == True)
+        {
+            DisplayStatGroup(GetGroup(), stat_list);
+        }
+        else
+        {
+            debug(("Setting active group to %d\n", GetGroup()));
+            RequestStats(GetGroup());
+        }
+	}
+}
+
+/*
  * InterfaceRedrawModule:  Called when main window needs to be redrawn.
  */
 void InterfaceRedrawModule(HDC hdc)
@@ -134,13 +166,17 @@ void InterfaceRedrawModule(HDC hdc)
   StatsDrawBorder();
   StatsMainRedraw();
   StatsDraw();
+
   if( StatsGetCurrentGroup() == STATS_INVENTORY )
   {
     InvalidateRect( GetHwndInv(), NULL, FALSE );
     ShowInventory(TRUE);
     InventoryRedraw();
   }
+  
+  RestoreActiveGroup();
 }
+
 /****************************************************************************/
 Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {

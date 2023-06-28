@@ -15,6 +15,9 @@ player_info player;
 room_type current_room;
 BOOL dataValid = FALSE;
 
+// Default to group 5 (STATS_INVENTORY).
+BYTE active_group = 5; 
+
 /* This flag is True before we get the first player info message from the server,
  * and when we're not in the game.  We use it to keep track of entering the game,
  * so that we can load stuff from the INI file only the first time we get a player
@@ -682,4 +685,14 @@ int ComputeObjectDistance(room_contents_node *r1, room_contents_node *r2)
 player_info *GetPlayerInfo(void)
 {
    return &player;
+}
+
+void SetActiveGroup(BYTE group)
+{
+    active_group = group;
+}
+
+BYTE GetActiveGroup(void)
+{
+    return active_group;
 }

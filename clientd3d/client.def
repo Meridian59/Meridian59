@@ -189,6 +189,8 @@ EXPORTS
 	GetRoomObjectById
 	FindVisibleObjectById
 	GetPlayerInfo
+	SetActiveGroup
+	GetActiveGroup
 
 ; Bitmaps
 	DibOpenFile

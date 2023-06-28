@@ -1783,3 +1783,17 @@ player_info *GetPlayer(void)
 {
    return GetPlayerInfo();
 }
+
+extern void SetActiveGroup(BYTE group);
+
+void SetGroup(BYTE group)
+{
+	SetActiveGroup(group);
+}
+
+extern BYTE GetActiveGroup(void);
+
+BYTE GetGroup(void)
+{
+	return GetActiveGroup();
+}

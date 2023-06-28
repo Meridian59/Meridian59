@@ -153,7 +153,6 @@ void RestoreActiveStatGroup()
     }
   }
 }
-
 /*
  * InterfaceRedrawModule:  Called when main window needs to be redrawn.
  */

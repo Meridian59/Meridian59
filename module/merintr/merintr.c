@@ -1788,7 +1788,7 @@ player_info *GetPlayer(void)
 
 void SetStatGroup(int stat_group)
 {
-	SetActiveStatGroup(stat_group);
+   SetActiveStatGroup(stat_group);
 }
 
 int GetStatGroup(void)

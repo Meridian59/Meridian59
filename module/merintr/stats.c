@@ -375,7 +375,7 @@ void RestoreActiveStatGroup()
 	StatsShowGroup(!inventory_group);
 	ShowInventory(inventory_group);
 
-	// Show the inventory, stats, spell	s or skills group.
+	// Show the inventory, stats, spells or skills group.
 	if (inventory_group)
 	{
 		InvalidateRect(GetHwndInv(), NULL, FALSE);

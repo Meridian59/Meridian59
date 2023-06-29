@@ -134,12 +134,11 @@ void InterfaceRedrawModule(HDC hdc)
   StatsDrawBorder();
   StatsMainRedraw();
   StatsDraw();
-  if (GetStatGroup() == STATS_INVENTORY)
+  if( StatsGetCurrentGroup() == STATS_INVENTORY )
   {
-      InvalidateRect(GetHwndInv(), NULL, FALSE);
-      ShowInventory(TRUE);
-      InventoryRedraw();
-      InventorySetFocus(True);
+    InvalidateRect( GetHwndInv(), NULL, FALSE );
+    ShowInventory(TRUE);
+    InventoryRedraw();
   }
 }
 

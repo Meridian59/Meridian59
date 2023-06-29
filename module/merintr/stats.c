@@ -17,7 +17,7 @@
 #include "merintr.h"
 
 HWND hStats;                        // Window containing stats area.
-static list_type stats = NULL;      // List of stats currently processed.
+static list_type stats = NULL;      // List of stats currently being processed.
 
 static AREA stats_area;
 

@@ -130,6 +130,7 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
  */
 void RestoreActiveStatGroup()
 {
+  int active_stat_group = GetStatGroup();
   bool inventory_group = (active_stat_group == STATS_INVENTORY);
   StatsShowGroup(!inventory_group);
   ShowInventory(inventory_group);

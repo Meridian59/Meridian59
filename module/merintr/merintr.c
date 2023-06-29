@@ -577,6 +577,10 @@ keymap gQuickChatTable[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
+extern player_info* GetPlayerInfo(void);
+extern void SetActiveStatGroup(int stat_group);
+extern int GetActiveStatGroup(void);
+
 /* local function prototypes */
 static spell       *ExtractNewSpell(char **ptr);
 static Bool         ExtractStatistic(char **ptr, Statistic *s);
@@ -1777,9 +1781,17 @@ Bool WINAPI EventConfigChanged(void)
    return True;
 }
 
-extern player_info *GetPlayerInfo(void);
-
 player_info *GetPlayer(void)
 {
    return GetPlayerInfo();
+}
+
+void SetStatGroup(int stat_group)
+{
+   SetActiveStatGroup(stat_group);
+}
+
+int GetStatGroup(void)
+{
+   return GetActiveStatGroup();
 }

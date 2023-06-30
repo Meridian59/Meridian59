@@ -6841,6 +6841,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 	anglePitch = PlayerGetHeightOffset();
 
+	// For each object rendered we increase the z-depth to prevent z-fighting.
+	int z_depth_inc = 0;
+
 	// base objects
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
@@ -6979,7 +6982,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		pChunk->numPrimitives = pChunk->numVertices - 2;
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
-		pChunk->zBias = ZBIAS_BASE;
+		pChunk->zBias = ZBIAS_OVEROVER+(z_depth_inc++);
 
 		lastDistance = 0;
 

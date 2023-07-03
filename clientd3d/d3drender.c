@@ -6982,7 +6982,18 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		pChunk->numPrimitives = pChunk->numVertices - 2;
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
-		pChunk->zBias = ZBIAS_DEFAULT+(z_depth_inc++);
+
+		if (pRNode->boundingHeightAdjust != 0)
+		{
+			// Nodes with a bound height adjust are part of other players upper body.
+			pChunk->zBias = ZBIAS_BASE;
+		}
+		else
+		{
+			// Typical items such as reagents, keys, etc.
+			pChunk->zBias = ZBIAS_BASE +(z_depth_inc++);
+			z_depth_inc += 1;
+		}
 
 		lastDistance = 0;
 

@@ -28,6 +28,10 @@ DWORD	gFogCaps = (D3DPRASTERCAPS_FOGTABLE |
 
 D3DPRESENT_PARAMETERS	gPresentParam;
 
+extern int gFullTextureSize;
+extern int gSmallTextureSize;
+extern int d3dRenderTextureThreshold;
+
 Bool D3DDriverProfileInit(void)
 {
 	FILE					*pFile;
@@ -68,18 +72,26 @@ Bool D3DDriverProfileInit(void)
 		return FALSE;
 	}
 
-   // This looks wrong.. "TRUE" stencil format??
+	// This always returns an error for me and looks completely unchecked (suggest we remove it)
 	error = IDirect3D9_CheckDepthStencilMatch(
       gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-      D3DFMT_X8R8G8B8, D3DFMT_D24S8, (D3DFORMAT) TRUE);
+      D3DFMT_X8R8G8B8, D3DFMT_D24S8, D3DFMT_X8R8G8B8);
 
-	gScreenWidth = 800;
-	gScreenHeight = 600;
+	gScreenWidth = 1920;
+	gScreenHeight = 1080;
+
+	// Full texture size is the same as the game resolution width.
+	gFullTextureSize = gScreenWidth; // 1024; // 2048;// gScreenWidth;
+
+	// Small texture size is a quarter of the full texture size.
+	gSmallTextureSize = gFullTextureSize / 4;
+
+	d3dRenderTextureThreshold = gSmallTextureSize;
 
 	memset(&gPresentParam, 0, sizeof(gPresentParam));
 	gPresentParam.Windowed = TRUE;
 	gPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	gPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	gPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 	gPresentParam.BackBufferWidth = gScreenWidth;
 	gPresentParam.BackBufferHeight = gScreenHeight;
 	gPresentParam.BackBufferFormat = D3DFMT_A8R8G8B8;

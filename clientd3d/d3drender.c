@@ -6991,8 +6991,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		else
 		{
 			// Typical items such as reagents, keys, etc.
-			pChunk->zBias = ZBIAS_BASE +(z_depth_inc++);
-			z_depth_inc += 1;
+			pChunk->zBias = ZBIAS_DEFAULT+(z_depth_inc++);
 		}
 
 		lastDistance = 0;

@@ -16,13 +16,13 @@
 #include "client.h"
 #include "merintr.h"
 
-HWND hStats;                        // Window containing stats area
-static list_type stats = NULL;      // List of stats currently displayed
+HWND hStats;                        // Window containing stats area.
+static list_type stats = NULL;      // List of stats currently being processed.
 
 static AREA stats_area;
 
-static int current_group;           // Group number currently being displayed
-static int group_type;              // Type of group currently being displayed
+static int current_group;           // Group number currently being processed.
+static int group_type;              // Type of group currently being processed.
 
 /* local function prototypes */
 static void StatsCreateGroup(void);
@@ -363,6 +363,39 @@ void StatRedraw(Statistic *s)
       break;
    }
 }
+/****************************************************************************/
+/*
+ * RestoreActiveGroup:  Restore the player's active stat group.
+ * The possible stat groups are: inventory, skills, spells or stats.
+ */
+void RestoreActiveStatGroup()
+{
+	int active_stat_group = GetStatGroup();
+	bool inventory_group = (active_stat_group == STATS_INVENTORY);
+	StatsShowGroup(!inventory_group);
+	ShowInventory(inventory_group);
+
+	// Show the inventory, stats, spells or skills group.
+	if (inventory_group)
+	{
+		InvalidateRect(GetHwndInv(), NULL, FALSE);
+		DisplayInventoryAsStatGroup(STATS_INVENTORY);
+		InventoryRedraw();
+		InventorySetFocus(True);
+	}
+	else
+	{
+		list_type stat_list;
+		if (StatCacheGetEntry(active_stat_group, &stat_list) == True)
+		{
+			DisplayStatGroup(active_stat_group, stat_list);
+		}
+		else
+		{
+			RequestStats(active_stat_group);
+		}
+	}
+}
 /************************************************************************/
 /*
  * StatsReceiveGroup:  Called when we receive a group of stats from the server.
@@ -389,6 +422,7 @@ void StatsReceiveGroup(BYTE group, list_type l)
 	}
 
    StatCacheSetEntry(group, l);
+   RestoreActiveStatGroup();
 }
 
 /************************************************************************/

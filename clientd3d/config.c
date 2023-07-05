@@ -106,6 +106,8 @@ static char INITechnical[]    = "Technical";
 
 static char INITextAreaSize[] = "TextAreaSize";
 
+static char INIActiveStatGroup[] = "ActiveStatGroup";
+
 #ifndef NODPRINTFS
 static char INIShowMapBlocking[]= "ShowMapBlocking";
 static char INIShowFPS[]     = "ShowFPS";
@@ -292,6 +294,9 @@ void ConfigLoad(void)
 
    config.text_area_size = GetConfigInt(misc_section, INITextAreaSize, TEXT_AREA_HEIGHT, ini_file);
 
+   // Default to stat group 5 (INVENTORY)
+   config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
+
    TimeSettingsLoad();
 }
 /****************************************************************************/
@@ -358,6 +363,8 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
 
    WriteConfigInt(misc_section, INITextAreaSize, config.text_area_size, ini_file);
+
+   WriteConfigInt(misc_section, INIActiveStatGroup, config.active_stat_group, ini_file);
 
    // "Special" section options NOT saved, so that they're not normally visible
 

@@ -1077,7 +1077,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		pRNode = GetRoomObjectById(player.id);
 
-      // Rendering of Personal Equipment (Shields, weapons etc)
+		// Rendering of Personal Equipment (Shields, weapons etc)
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
 		{
          IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -3245,8 +3245,8 @@ Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 	float	screenW, screenH;
 
    // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 1.75f * 2.0f);
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 2.25f * 2.0f);
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 1.75f * 2.6f);
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 2.25f * 2.1f);
 
    if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
    {
@@ -7006,7 +7006,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		pChunk->numPrimitives = pChunk->numVertices - 2;
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
-		pChunk->zBias = ZBIAS_DEFAULT+(z_depth_inc++);
+
+		pChunk->zBias = ZBIAS_BASE;
+		// Nodes with a bound height adjust are part of other players' upper bodies.
+		if (pRNode->boundingHeightAdjust == 0)
+		{
+			// Typical items such as reagents, keys, etc.
+			pChunk->zBias = ZBIAS_DEFAULT + (z_depth_inc++);
+		}
 
 		lastDistance = 0;
 

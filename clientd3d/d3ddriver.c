@@ -72,16 +72,14 @@ Bool D3DDriverProfileInit(void)
 		return FALSE;
 	}
 
-	// This always returns an error for me and looks completely unchecked (suggest we remove it)
-	error = IDirect3D9_CheckDepthStencilMatch(
-      gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-      D3DFMT_X8R8G8B8, D3DFMT_D24S8, D3DFMT_X8R8G8B8);
-
+	// Main game view buffer resolution.
+	// original: 800 x 600 (4:3) 
+	// 1080p: 1920 x 1080 (16:9)
 	gScreenWidth = 1920;
 	gScreenHeight = 1080;
 
 	// Full texture size is the same as the game resolution width.
-	gFullTextureSize = gScreenWidth; // 1024; // 2048;// gScreenWidth;
+	gFullTextureSize = gScreenWidth;
 
 	// Small texture size is a quarter of the full texture size.
 	gSmallTextureSize = gFullTextureSize / 4;

@@ -277,7 +277,7 @@ void ConfigLoad(void)
    config.showUnseenWalls = GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
    config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
    config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
-   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 1000, ini_file);
+   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 140, ini_file);
    config.clearCache = GetConfigInt(special_section, INIClearCache, False, ini_file);
    //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
 #else

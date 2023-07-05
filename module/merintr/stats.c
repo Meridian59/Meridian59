@@ -231,6 +231,61 @@ void StatsClearArea(void)
 }
 /************************************************************************/
 /*
+ * ActivateInventory: Activate the inventory stat group.
+ */
+void ActivateInventory()
+{
+	DisplayInventory(cinfo->player->inventory);
+	DisplayInventoryAsStatGroup((BYTE)STATS_INVENTORY);
+
+	//InvalidateRect(GetHwndInv(), NULL, FALSE);
+	InventoryRedraw();
+	InventorySetFocus(true);
+
+
+	// The inventory is special and takes focus unlike the other stat groups.
+	// We now return focus to the main window.
+	SetFocus(cinfo->hMain);
+}
+/************************************************************************/
+/*
+ * ActiveStatGroup: Activate a specific stat group.
+ */
+void ActivateStatGroup(int stat_group)
+{
+	list_type stat_list;
+	if (StatCacheGetEntry(stat_group, &stat_list) == True)
+	{
+		DisplayStatGroup(stat_group, stat_list);
+	}
+	else
+	{
+		RequestStats(stat_group);
+	}
+}
+/****************************************************************************/
+/*
+ * RestoreActiveGroup:  Restore the player's active stat group.
+ * The possible stat groups are: inventory, skills, spells or stats.
+ */
+void RestoreActiveStatGroup()
+{
+	int active_stat_group = GetStatGroup();
+	bool inventory_group = (active_stat_group == STATS_INVENTORY);
+	StatsShowGroup(!inventory_group);
+	ShowInventory(inventory_group);
+
+	if (inventory_group)
+	{
+		ActivateInventory();
+	}
+	else
+	{
+		ActivateStatGroup(active_stat_group);
+	}
+}
+/************************************************************************/
+/*
  * StatsGroupsInfo:  We've just received info on stat groups from the server.
  *   num_groups gives the number of groups; names is an array of their name resources.
  */
@@ -249,8 +304,7 @@ void StatsGroupsInfo(BYTE num_groups, ID *names)
    StatsSetButtons( 5 );
    StatCacheSetSize(num_groups);
    RequestStats(STATS_MAIN);              // Always get main stats
-   if( current_group != STATS_INVENTORY )
-		RequestStats(current_group);
+   RestoreActiveStatGroup();
 }
 
 /************************************************************************/
@@ -363,39 +417,6 @@ void StatRedraw(Statistic *s)
       break;
    }
 }
-/****************************************************************************/
-/*
- * RestoreActiveGroup:  Restore the player's active stat group.
- * The possible stat groups are: inventory, skills, spells or stats.
- */
-void RestoreActiveStatGroup()
-{
-	int active_stat_group = GetStatGroup();
-	bool inventory_group = (active_stat_group == STATS_INVENTORY);
-	StatsShowGroup(!inventory_group);
-	ShowInventory(inventory_group);
-
-	// Show the inventory, stats, spells or skills group.
-	if (inventory_group)
-	{
-		InvalidateRect(GetHwndInv(), NULL, FALSE);
-		DisplayInventoryAsStatGroup(STATS_INVENTORY);
-		InventoryRedraw();
-		InventorySetFocus(True);
-	}
-	else
-	{
-		list_type stat_list;
-		if (StatCacheGetEntry(active_stat_group, &stat_list) == True)
-		{
-			DisplayStatGroup(active_stat_group, stat_list);
-		}
-		else
-		{
-			RequestStats(active_stat_group);
-		}
-	}
-}
 /************************************************************************/
 /*
  * StatsReceiveGroup:  Called when we receive a group of stats from the server.
@@ -422,7 +443,6 @@ void StatsReceiveGroup(BYTE group, list_type l)
 	}
 
    StatCacheSetEntry(group, l);
-   RestoreActiveStatGroup();
 }
 
 /************************************************************************/

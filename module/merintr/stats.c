@@ -231,17 +231,15 @@ void StatsClearArea(void)
 }
 /************************************************************************/
 /*
- * ActivateInventory: Activate the inventory stat group.
+ * ActivateInventory: Activate the inventory.
  */
 void ActivateInventory()
 {
 	DisplayInventory(cinfo->player->inventory);
 	DisplayInventoryAsStatGroup((BYTE)STATS_INVENTORY);
 
-	//InvalidateRect(GetHwndInv(), NULL, FALSE);
 	InventoryRedraw();
 	InventorySetFocus(true);
-
 
 	// The inventory is special and takes focus unlike the other stat groups.
 	// We now return focus to the main window.

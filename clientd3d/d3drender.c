@@ -616,6 +616,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	static ID	tempBkgnd = 0;
 	room_contents_node	*pRNode;
 
+	timeOverall = timeGetTime();
 	timeSetup = timeGetTime();
 
 	// If blind, don't draw anything
@@ -654,9 +655,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	gFrame++;
 
-	timeOverall = timeWorld = timeObjects = timeLMaps = timeSkybox = timeComplete = 0;
-
-	timeOverall = timeGetTime();
+	timeWorld = timeObjects = timeLMaps = timeSkybox = timeComplete = 0;
 
 	gNumObjects = 0;
 	gNumVertices = 0;
@@ -1058,7 +1057,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
       
-		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0], gSmallTextureSize, gSmallTextureSize);
+		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
+			gSmallTextureSize, gSmallTextureSize);
 
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
@@ -1164,7 +1164,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
       IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
       IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
-		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[t], gSmallTextureSize, gSmallTextureSize);
+		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[t],
+			gSmallTextureSize, gSmallTextureSize);
 
 		D3DCacheSystemReset(&gEffectCacheSystem);
 		D3DRenderPoolReset(&gEffectPool, &D3DMaterialBlurPool);
@@ -1224,9 +1225,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	timeComplete = timeGetTime();
 
-	long completeA = timeGetTime();
-
-
 	// view elements (e.g. viewport corners)
   D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
   D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
@@ -1251,10 +1249,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_EndScene(gpD3DDevice);
 
-	completeA = timeGetTime() - completeA;
-
-	long completeB = timeGetTime();
-
    RECT	rect;
    
    rect.top = 0;
@@ -1263,9 +1257,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
    rect.right = gScreenWidth;
    
    HRESULT hr = IDirect3DDevice9_Present(gpD3DDevice, &rect, &gD3DRect, NULL, NULL);
-
-   completeB = timeGetTime() - completeB;
-   long completeC = timeGetTime();
 
    if (hr == D3DERR_DEVICELOST)
    {
@@ -1279,18 +1270,15 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
          D3DGeometryBuildNew(room, &gWorldPoolStatic);
       }
    }
-
-   completeC = timeGetTime() - completeC;
-
 	if ((gFrame & 255) == 255)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices,
 		gNumDPCalls));
 
 	timeComplete = timeGetTime() - timeComplete;
-
 	timeOverall = timeGetTime() - timeOverall;
 
-	debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n", timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeSetup, timeComplete, completeA, completeB, completeC	));
+	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
+	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
 }
 
 void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)
@@ -8494,7 +8482,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[2].s = 1.0f - oneOverW;
 				pChunk->st0[2].t = 1.0f - oneOverH;
 				pChunk->st0[3].s = 1.0f - oneOverW;
-				pChunk->st0[3].t = oneOverH;			
+				pChunk->st0[3].t = oneOverH;
 			}
 
 			float divider = gSmallTextureSize;

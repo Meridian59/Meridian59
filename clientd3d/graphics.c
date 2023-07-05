@@ -333,7 +333,7 @@ void RedrawForce(void)
    lastEndFrame = endFrame;
    timeEndPeriod(1);
 
-   if (1) //config.showFPS)
+   if (config.showFPS)
    {
       RECT rc,lagBox;
       wsprintf(buffer, "FPS=%d (%dms)        ", fps, msDrawFrame);
@@ -346,9 +346,6 @@ void RedrawForce(void)
       DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
       SetBkMode(hdc,oldMode);
       GdiFlush();
-      if (fps < 60) {
-          debug(("bad FPS: %d!\n", fps));
-      }
    }
    ReleaseDC(hMain, hdc);
 }

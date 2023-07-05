@@ -181,10 +181,10 @@ void BoardInitialize(Board *b)
    b->squares[0][5].piece = BISHOP;
    b->squares[7][2].piece = BISHOP;
    b->squares[7][5].piece = BISHOP;
-   b->squares[0][3].piece = KING;
-   b->squares[7][3].piece = KING;
-   b->squares[0][4].piece = QUEEN;
-   b->squares[7][4].piece = QUEEN;
+   b->squares[0][4].piece = KING;
+   b->squares[7][4].piece = KING;
+   b->squares[0][3].piece = QUEEN;
+   b->squares[7][3].piece = QUEEN;
 
    b->move_color = WHITE;
 
@@ -249,7 +249,7 @@ void BoardDraw(HDC hdc, Board *b)
 
      for (j=0; j < BOARD_WIDTH; j++)
      {
-       if ((i + j) % 2 == 0)
+       if ((row + j) % 2 == 0)
          index = WHITE_INDEX;
        else index = BLACK_INDEX;
        

@@ -8485,14 +8485,14 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[3].t = oneOverH;
 			}
 
-			float divider = gSmallTextureSize;
-			pChunk->st1[0].t -= (gFrame & 3) / divider;
-			pChunk->st1[1].s -= (gFrame & 3) / divider;
-			pChunk->st1[1].t += (gFrame & 3) / divider;
-			pChunk->st1[2].s += (gFrame & 3) / divider;
-			pChunk->st1[2].t += (gFrame & 3) / divider;
-			pChunk->st1[3].s += (gFrame & 3) / divider;
-			pChunk->st1[3].t -= (gFrame & 3) / divider;
+			float animationFactor = gSmallTextureSize;
+			pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
+			pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
+			pChunk->st1[1].t += (gFrame & 3) / animationFactor;
+			pChunk->st1[2].s += (gFrame & 3) / animationFactor;
+			pChunk->st1[2].t += (gFrame & 3) / animationFactor;
+			pChunk->st1[3].s += (gFrame & 3) / animationFactor;
+			pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
 
 			pChunk->indices[0] = 1;
 			pChunk->indices[1] = 2;

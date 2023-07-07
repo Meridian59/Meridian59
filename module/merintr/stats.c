@@ -235,7 +235,7 @@ void StatsClearArea(void)
  */
 void ActivateInventory()
 {
-	DisplayInventory(cinfo->player->inventory);
+	InvalidateRect(GetHwndInv(), NULL, FALSE);
 	DisplayInventoryAsStatGroup((BYTE)STATS_INVENTORY);
 
 	InventoryRedraw();

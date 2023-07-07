@@ -7144,7 +7144,6 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
 				float animationFactor = 256;
-
 				pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
 				pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
 				pChunk->st1[1].s -= (gFrame & 3) / animationFactor;

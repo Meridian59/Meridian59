@@ -3233,8 +3233,8 @@ Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 	float	screenW, screenH;
 
    // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 1.75f * 2.6f);
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 2.25f * 2.1f);
+   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 4.15f);
+   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 4.05f);
 
    if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
    {
@@ -7143,16 +7143,16 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-				float divider = gSmallTextureSize; //  256.0f
+				float animationFactor = gSmallTextureSize;
 
-				pChunk->st1[0].s -= (gFrame & 3) / divider;
-				pChunk->st1[0].t -= (gFrame & 3) / divider;
-				pChunk->st1[1].s -= (gFrame & 3) / divider;
-				pChunk->st1[1].t += (gFrame & 3) / divider;
-				pChunk->st1[2].s += (gFrame & 3) / divider;
-				pChunk->st1[2].t += (gFrame & 3) / divider;
-				pChunk->st1[3].s += (gFrame & 3) / divider;
-				pChunk->st1[3].t -= (gFrame & 3) / divider;
+				pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
+				pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
+				pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
+				pChunk->st1[1].t += (gFrame & 3) / animationFactor;
+				pChunk->st1[2].s += (gFrame & 3) / animationFactor;
+				pChunk->st1[2].t += (gFrame & 3) / animationFactor;
+				pChunk->st1[3].s += (gFrame & 3) / animationFactor;
+				pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
 			}
 
 			if (
@@ -7801,15 +7801,15 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-							float divider = gSmallTextureSize;
-							pChunk->st1[0].s -= (gFrame & 3) / divider;
-							pChunk->st1[0].t -= (gFrame & 3) / divider;
-							pChunk->st1[1].s -= (gFrame & 3) / divider;
-							pChunk->st1[1].t += (gFrame & 3) / divider;
-							pChunk->st1[2].s += (gFrame & 3) / divider;
-							pChunk->st1[2].t += (gFrame & 3) / divider;
-							pChunk->st1[3].s += (gFrame & 3) / divider;
-							pChunk->st1[3].t -= (gFrame & 3) / divider;
+							float animationFactor = gSmallTextureSize;
+							pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
+							pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
+							pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
+							pChunk->st1[1].t += (gFrame & 3) / animationFactor;
+							pChunk->st1[2].s += (gFrame & 3) / animationFactor;
+							pChunk->st1[2].t += (gFrame & 3) / animationFactor;
+							pChunk->st1[3].s += (gFrame & 3) / animationFactor;
+							pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
 						}
 
 						if (
@@ -8252,14 +8252,14 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->st0[3].t = oneOverH;
 		}
 
-		float divider = gSmallTextureSize;
-		pChunk->st1[0].t -= (gFrame & 3) / divider;
-		pChunk->st1[1].s -= (gFrame & 3) / divider;
-		pChunk->st1[1].t += (gFrame & 3) / divider;
-		pChunk->st1[2].s += (gFrame & 3) / divider;
-		pChunk->st1[2].t += (gFrame & 3) / divider;
-		pChunk->st1[3].s += (gFrame & 3) / divider;
-		pChunk->st1[3].t -= (gFrame & 3) / divider;
+		float animationFactor = gSmallTextureSize;
+		pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
+		pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
+		pChunk->st1[1].t += (gFrame & 3) / animationFactor;
+		pChunk->st1[2].s += (gFrame & 3) / animationFactor;
+		pChunk->st1[2].t += (gFrame & 3) / animationFactor;
+		pChunk->st1[3].s += (gFrame & 3) / animationFactor;
+		pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -9761,8 +9761,6 @@ void SandstormInit(void)
 #define EMITTER_ENERGY	(40)
 #define EMITTER_HEIGHT	(0)
 
-	int max_position = gFullTextureSize;
-
 	D3DParticleSystemReset(&gParticleSystem);
 	// four corners, blowing around the perimeter
 	D3DParticleEmitterInit(&gParticleSystem,
@@ -9771,28 +9769,28 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		500.0f, 0, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 
 	// four corners, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystem,
@@ -9801,58 +9799,58 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		353.55f, -353.55f, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		-353.55f, -353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 
 	// forward, left, right, and back, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystem,
-		EMITTER_RADIUS * -max_position, 0, EMITTER_HEIGHT,
+		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
 		500.0f, 0.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
-		EMITTER_RADIUS * max_position, 0, EMITTER_HEIGHT,
+		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
-		0, EMITTER_RADIUS * max_position, EMITTER_HEIGHT,
+		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
-		0, EMITTER_RADIUS * -max_position, EMITTER_HEIGHT,
+		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 
 	// four corners, blowing around the perimeter
 	D3DParticleEmitterInit(&gParticleSystem,
@@ -9861,28 +9859,28 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		500.0f, 0, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 
 	// four corners, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystem,
@@ -9891,58 +9889,58 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		353.55f, -353.55f, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		-353.55f, -353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 
 	// forward, left, right, and back, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystem,
-		EMITTER_RADIUS * -max_position, 0, EMITTER_HEIGHT,
+		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
 		500.0f, 0.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
-		EMITTER_RADIUS * max_position, 0, EMITTER_HEIGHT,
+		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
-		0, EMITTER_RADIUS * max_position, EMITTER_HEIGHT,
+		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 	D3DParticleEmitterInit(&gParticleSystem,
-		0, EMITTER_RADIUS * -max_position, EMITTER_HEIGHT,
+		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, max_position, 2);
+		1, 1024, 2);
 }
 
 float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)

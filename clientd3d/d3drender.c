@@ -28,6 +28,13 @@ inline float FovVertical(long height)
 	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
 
+// Calculates the intensity of an animation based on the frame number.
+// This can be used to cycle in a pattern e.g. for invisibility.
+float animationIntensity(int frameNumber)
+{
+	return (frameNumber & 3) / 256.0f;
+}
+
 #define Z_RANGE					(200000.0f)
 
 d3d_render_packet_new	*gpPacket;
@@ -7149,16 +7156,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-				// animationFactor defines the intensity of the animation where lower values are more intense.
-				float animationFactor = 256.0f;
-				pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
-				pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
-				pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
-				pChunk->st1[1].t += (gFrame & 3) / animationFactor;
-				pChunk->st1[2].s += (gFrame & 3) / animationFactor;
-				pChunk->st1[2].t += (gFrame & 3) / animationFactor;
-				pChunk->st1[3].s += (gFrame & 3) / animationFactor;
-				pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
+				pChunk->st1[0].s -= animationIntensity(gFrame);
+				pChunk->st1[0].t -= animationIntensity(gFrame);
+				pChunk->st1[1].s -= animationIntensity(gFrame);
+				pChunk->st1[1].t += animationIntensity(gFrame);
+				pChunk->st1[2].s += animationIntensity(gFrame);
+				pChunk->st1[2].t += animationIntensity(gFrame);
+				pChunk->st1[3].s += animationIntensity(gFrame);
+				pChunk->st1[3].t -= animationIntensity(gFrame);
 			}
 
 			if (
@@ -7807,16 +7812,14 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-							// animationFactor defines the intensity of the animation where lower values are more intense.
-							float animationFactor = 256.0f;
-							pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
-							pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
-							pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
-							pChunk->st1[1].t += (gFrame & 3) / animationFactor;
-							pChunk->st1[2].s += (gFrame & 3) / animationFactor;
-							pChunk->st1[2].t += (gFrame & 3) / animationFactor;
-							pChunk->st1[3].s += (gFrame & 3) / animationFactor;
-							pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
+							pChunk->st1[0].s -= animationIntensity(gFrame);
+							pChunk->st1[0].t -= animationIntensity(gFrame);
+							pChunk->st1[1].s -= animationIntensity(gFrame);
+							pChunk->st1[1].t += animationIntensity(gFrame);
+							pChunk->st1[2].s += animationIntensity(gFrame);
+							pChunk->st1[2].t += animationIntensity(gFrame);
+							pChunk->st1[3].s += animationIntensity(gFrame);
+							pChunk->st1[3].t -= animationIntensity(gFrame);
 						}
 
 						if (
@@ -8259,15 +8262,13 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->st0[3].t = oneOverH;
 		}
 
-		// animationFactor defines the intensity of the animation where lower values are more intense.
-		float animationFactor = 256.0f;
-		pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
-		pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
-		pChunk->st1[1].t += (gFrame & 3) / animationFactor;
-		pChunk->st1[2].s += (gFrame & 3) / animationFactor;
-		pChunk->st1[2].t += (gFrame & 3) / animationFactor;
-		pChunk->st1[3].s += (gFrame & 3) / animationFactor;
-		pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
+		pChunk->st1[0].t -= animationIntensity(gFrame);
+		pChunk->st1[1].s -= animationIntensity(gFrame);
+		pChunk->st1[1].t += animationIntensity(gFrame);
+		pChunk->st1[2].s += animationIntensity(gFrame);
+		pChunk->st1[2].t += animationIntensity(gFrame);
+		pChunk->st1[3].s += animationIntensity(gFrame);
+		pChunk->st1[3].t -= animationIntensity(gFrame);
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -8493,15 +8494,13 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[3].t = oneOverH;
 			}
 
-			// animationFactor defines the intensity of the animation where lower values are more intense.
-			float animationFactor = 256.0f;
-			pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
-			pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
-			pChunk->st1[1].t += (gFrame & 3) / animationFactor;
-			pChunk->st1[2].s += (gFrame & 3) / animationFactor;
-			pChunk->st1[2].t += (gFrame & 3) / animationFactor;
-			pChunk->st1[3].s += (gFrame & 3) / animationFactor;
-			pChunk->st1[3].t -= (gFrame & 3) / animationFactor;
+			pChunk->st1[0].t -= animationIntensity(gFrame);
+			pChunk->st1[1].s -= animationIntensity(gFrame);
+			pChunk->st1[1].t += animationIntensity(gFrame);
+			pChunk->st1[2].s += animationIntensity(gFrame);
+			pChunk->st1[2].t += animationIntensity(gFrame);
+			pChunk->st1[3].s += animationIntensity(gFrame);
+			pChunk->st1[3].t -= animationIntensity(gFrame);
 
 			pChunk->indices[0] = 1;
 			pChunk->indices[1] = 2;

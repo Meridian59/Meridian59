@@ -96,6 +96,9 @@ int						gScreenWidth;
 int						gScreenHeight;
 int						gCurBackground;
 
+// The size of the main full size render buffer and also a smaller buffer for effects.
+// The smaller buffer is used for effects that don't need full resolution.
+// As per the original specification, the smaller buffer is 1/4 the size of the full buffer.
 int						gFullTextureSize;
 int						gSmallTextureSize;
 
@@ -3232,7 +3235,9 @@ Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 {
 	float	screenW, screenH;
 
-   // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling
+   // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling.
+   // The original magic numbers used here were 1.75f (width) and 2.25f (height) for 800 by 600.
+   // We have now scaled both of these for 1080p fromm 800 by 600 (2.4 and 1.8 respectively).
    screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 4.15f);
    screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 4.05f);
 
@@ -7143,7 +7148,8 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-				float animationFactor = 2560.0f;
+				// animationFactor defines the intensity of the animation where lower values are more intense.
+				float animationFactor = 256.0f;
 				pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
 				pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
 				pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
@@ -7800,6 +7806,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
+							// animationFactor defines the intensity of the animation where lower values are more intense.
 							float animationFactor = 256.0f;
 							pChunk->st1[0].s -= (gFrame & 3) / animationFactor;
 							pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
@@ -8251,6 +8258,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->st0[3].t = oneOverH;
 		}
 
+		// animationFactor defines the intensity of the animation where lower values are more intense.
 		float animationFactor = 256.0f;
 		pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
 		pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
@@ -8484,7 +8492,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[3].t = oneOverH;
 			}
 
-			float animationFactor = gSmallTextureSize;
+			// animationFactor defines the intensity of the animation where lower values are more intense.
+			float animationFactor = 256.0f;
 			pChunk->st1[0].t -= (gFrame & 3) / animationFactor;
 			pChunk->st1[1].s -= (gFrame & 3) / animationFactor;
 			pChunk->st1[1].t += (gFrame & 3) / animationFactor;

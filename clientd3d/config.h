@@ -117,6 +117,8 @@ typedef struct {
    int music_volume;           // 0 - 100
 
    int text_area_size;        /* As a percentage of the client height */
+
+   int active_stat_group; // Which stat group (inventory, skills, spells or stats) is visible.
 } Config;
 
 void ConfigInit(void);

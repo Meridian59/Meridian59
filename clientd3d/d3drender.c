@@ -1036,7 +1036,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
-		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
@@ -6841,6 +6841,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 	anglePitch = PlayerGetHeightOffset();
 
+	// For each object rendered we increase the z-depth to prevent z-fighting.
+	int z_depth_inc = 0;
+
 	// base objects
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
@@ -6979,7 +6982,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		pChunk->numPrimitives = pChunk->numVertices - 2;
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
+
 		pChunk->zBias = ZBIAS_BASE;
+		// Nodes with a bound height adjust are part of other players' upper bodies.
+		if (pRNode->boundingHeightAdjust == 0)
+		{
+			// Typical items such as reagents, keys, etc.
+			pChunk->zBias = ZBIAS_DEFAULT + (z_depth_inc++);
+		}
 
 		lastDistance = 0;
 

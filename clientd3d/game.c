@@ -683,3 +683,13 @@ player_info *GetPlayerInfo(void)
 {
    return &player;
 }
+
+void SetActiveStatGroup(int stat_group)
+{    
+    config.active_stat_group = stat_group;
+}
+
+int GetActiveStatGroup(void)
+{
+    return config.active_stat_group;
+}

@@ -24,8 +24,8 @@ WHAT'S INCLUDED AND NOT INCLUDED
 
 The source to the client, server, game code, Blakod compiler, room
 editor, and all associated tools are included.  The source code to the
-Miles Sound System audio library and the fallback waveplay.dll are not
-included.
+Miles Sound System audio library is not included.  Client builds that you 
+make will use the fallback waveplay audio library instead.
 
 
 BUILD INSTRUCTIONS

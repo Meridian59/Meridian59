@@ -112,4 +112,7 @@ DWORD GetOverrideRoomDepth(int level);
 
 M59EXPORT player_info *GetPlayerInfo(void);
 
+M59EXPORT void SetActiveStatGroup(int stat_group);
+M59EXPORT int GetActiveStatGroup(void);
+
 #endif _GAME_H

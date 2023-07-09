@@ -418,6 +418,10 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	if (group == GROUP_NONE)
 		return;
 
+	// Record which group is now active (inventory, spells, skills or stats)
+	// Used to restore correct ui state following a system save.
+	SetStatGroup(group);
+
 	if (group != StatsGetCurrentGroup())
 	{
 		//	ajw Changes to make Inventory act somewhat like one of the stats groups.

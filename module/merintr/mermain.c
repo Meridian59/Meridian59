@@ -141,6 +141,7 @@ void InterfaceRedrawModule(HDC hdc)
     InventoryRedraw();
   }
 }
+
 /****************************************************************************/
 Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {

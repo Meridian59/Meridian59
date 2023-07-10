@@ -43,10 +43,9 @@ int main_viewport_height;
 extern float player_overlay_scaler;
 
 // Variables to store frame times and FPS
-std::vector<double> frameTimes;
-const int windowSize = 60;  // Number of frames to consider in the rolling window
-int average_fps = 0;
-
+static std::vector<double> fps_store;
+static const int windowSize = 60;  // Number of fps values to consider in the rolling window.
+static int average_fps = 0;
 
 /************************************************************************/
 /*
@@ -333,46 +332,49 @@ void RedrawForce(void)
    {
       if (fps > config.maxFPS)
       {
-	 int msSleep = (1000 / config.maxFPS) - totalFrameTime;
-	 Sleep(msSleep);
+          int msSleep = (1000 / config.maxFPS) - totalFrameTime;
+          Sleep(msSleep);
       }
    }
 
    // Calcaute the FPS again after any adjustments from clamping.
-   fps = 1000 / (timeGetTime() - lastEndFrame);
+   totalFrameTime = (int)(timeGetTime() - lastEndFrame);
+   if (1 > totalFrameTime)
+       totalFrameTime = 1;
+   fps = 1000 / totalFrameTime;
 
    // Update the last end frame and end the time period.
    lastEndFrame = endFrame;
    timeEndPeriod(1);
 
-   // Add the fps to the rolling window
-   frameTimes.push_back(fps);
-
-   // Remove the oldest fps if the window is full
-   if (frameTimes.size() > windowSize) {
-       frameTimes.erase(frameTimes.begin());
-   }
-
-   // Calculate the average FPS over the rolling window
-   double sumFPS = 0.0;
-   for (const double frameTime : frameTimes) {
-       sumFPS += frameTime;
-   }
-   average_fps = sumFPS / frameTimes.size();
-
    if (config.showFPS)
    {
-      RECT rc,lagBox;
-      wsprintf(buffer, "FPS=%d (%dms)        ", average_fps, msDrawFrame);
-      ZeroMemory(&rc,sizeof(rc));
-      rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
-      Lagbox_GetRect(&lagBox);
-      OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
-      DrawWindowBackground(hdc, &rc, rc.left, rc.top);
-      oldMode = SetBkMode(hdc,TRANSPARENT);
-      DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
-      SetBkMode(hdc,oldMode);
-      GdiFlush();
+        // Add the fps to the rolling window
+        fps_store.push_back(fps);
+
+        // Remove the oldest fps if the window is full
+        if (fps_store.size() > windowSize) {
+            fps_store.erase(fps_store.begin());
+        }
+
+        // Calculate the average FPS over the rolling window
+        double sumFPS = 0.0;
+        for (const auto frameTime : fps_store) {
+            sumFPS += frameTime;
+        }
+        average_fps = sumFPS / fps_store.size();
+
+        RECT rc,lagBox;
+        wsprintf(buffer, "FPS=%d (%dms)        ", average_fps, msDrawFrame);
+        ZeroMemory(&rc,sizeof(rc));
+        rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
+        Lagbox_GetRect(&lagBox);
+        OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
+        DrawWindowBackground(hdc, &rc, rc.left, rc.top);
+        oldMode = SetBkMode(hdc,TRANSPARENT);
+        DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
+        SetBkMode(hdc,oldMode);
+        GdiFlush();
    }
    ReleaseDC(hMain, hdc);
 }

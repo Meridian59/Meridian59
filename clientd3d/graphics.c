@@ -338,7 +338,7 @@ void RedrawForce(void)
       }
    }
 
-   // Calcaute the FPS again aftter any adjustments from clamping.
+   // Calcaute the FPS again after any adjustments from clamping.
    fps = 1000 / (timeGetTime() - lastEndFrame);
 
    // Update the last end frame and end the time period.

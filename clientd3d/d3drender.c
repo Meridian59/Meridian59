@@ -8262,6 +8262,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->st0[3].t = oneOverH;
 		}
 
+		pChunk->st1[0].s -= animationIntensity(gFrame);
 		pChunk->st1[0].t -= animationIntensity(gFrame);
 		pChunk->st1[1].s -= animationIntensity(gFrame);
 		pChunk->st1[1].t += animationIntensity(gFrame);
@@ -8494,6 +8495,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[3].t = oneOverH;
 			}
 
+			pChunk->st1[0].s -= animationIntensity(gFrame);
 			pChunk->st1[0].t -= animationIntensity(gFrame);
 			pChunk->st1[1].s -= animationIntensity(gFrame);
 			pChunk->st1[1].t += animationIntensity(gFrame);

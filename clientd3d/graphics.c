@@ -14,6 +14,7 @@
 #include "client.h"
 #include <vector>
 #include <numeric>
+#include <chrono>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -35,7 +36,6 @@ static ID   drag_object;      // When capture = True, holds id of object being d
 static int fps;
 static int msDrawFrame;
 
-
 extern room_type current_room;
 extern int border_index;
 
@@ -47,6 +47,8 @@ extern float player_overlay_scaler;
 static std::vector<double> fps_store;
 static const int windowSize = 60;  // Number of fps values to consider in the rolling window.
 static int average_fps = 0;
+typedef std::chrono::time_point<std::chrono::high_resolution_clock> high_resolution_time_point;
+high_resolution_time_point lastEndFrame;
 
 /************************************************************************/
 /*
@@ -297,10 +299,11 @@ int GetMSDrawFrame(void)
 void RedrawForce(void)
 {
    HDC hdc;
-   static DWORD lastEndFrame = 0;
-   DWORD endFrame, startFrame;
-   int totalFrameTime, oldMode;
+   int oldMode;
    char buffer[32];
+   
+   high_resolution_time_point endFrame, startFrame;
+   std::chrono::duration<double> elapsedTime;
 
    if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
@@ -309,8 +312,7 @@ void RedrawForce(void)
       return;
    }
 
-   timeBeginPeriod(1);
-   startFrame = timeGetTime();
+   startFrame = std::chrono::high_resolution_clock::now();
 
    /* REVIEW: Clearing flag before draw phase allows draw phase to set flag.
     *         This is useful in rare circumstances when an effect should
@@ -320,48 +322,45 @@ void RedrawForce(void)
    hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
-   endFrame = timeGetTime();
-   msDrawFrame = (int)(endFrame - startFrame);
-   totalFrameTime = (int)(endFrame - lastEndFrame);
+   endFrame = std::chrono::high_resolution_clock::now();
+   elapsedTime = endFrame - startFrame;
+   auto elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+   msDrawFrame = elapsedMilliseconds;
 
-   // if totalFrameTime is less than one, clamp to 1 so we don't divide by 0 or get negative fps
-   if (1 > totalFrameTime)
-	   totalFrameTime = 1;
-
-   fps = 1000 / (int)totalFrameTime;
+   fps = 1000 / max(1, elapsedMilliseconds);
    if (config.maxFPS)
    {
       if (fps > config.maxFPS)
       {
-          int msSleep = (1000 / config.maxFPS) - totalFrameTime;
+          int msSleep = (1000 / config.maxFPS) - elapsedMilliseconds;
           Sleep(msSleep);
       }
    }
 
    // Calcaute the FPS again after any adjustments from clamping.
-   totalFrameTime = (int)(timeGetTime() - lastEndFrame);
-   if (1 > totalFrameTime)
-       totalFrameTime = 1;
-   fps = 1000 / totalFrameTime;
+   endFrame = std::chrono::high_resolution_clock::now();
+   elapsedTime = (endFrame - lastEndFrame);
+   elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+   fps = 1000 / max(1, elapsedMilliseconds);
 
    // Update the last end frame and end the time period.
    lastEndFrame = endFrame;
-   timeEndPeriod(1);
 
    if (config.showFPS)
    {
-        // Add the fps to the rolling window
+        // Add the fps to the rolling window.
         fps_store.push_back(fps);
 
-        // Remove the oldest fps if the window is full
+        // Remove the oldest fps if the window is full.
         if (fps_store.size() > windowSize) {
             fps_store.erase(fps_store.begin());
         }
 
-        // Calculate the average FPS over the rolling window
+        // Calculate the average FPS over the rolling window.
         double sumFPS = std::accumulate(fps_store.begin(), fps_store.end(), 0.0);
         average_fps = sumFPS / fps_store.size();
 
+        // Format and display the latest average fps value.
         RECT rc,lagBox;
         wsprintf(buffer, "FPS=%d (%dms)        ", average_fps, msDrawFrame);
         ZeroMemory(&rc,sizeof(rc));

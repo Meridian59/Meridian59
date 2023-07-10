@@ -12,6 +12,7 @@
  */
 
 #include "client.h"
+#include <vector>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -40,6 +41,12 @@ extern int border_index;
 int main_viewport_width;
 int main_viewport_height;
 extern float player_overlay_scaler;
+
+// Variables to store frame times and FPS
+std::vector<double> frameTimes;
+const int windowSize = 60;  // Number of frames to consider in the rolling window
+int average_fps = 0;
+
 
 /************************************************************************/
 /*
@@ -330,13 +337,33 @@ void RedrawForce(void)
 	 Sleep(msSleep);
       }
    }
+
+   // Calcaute the FPS again aftter any adjustments from clamping.
+   fps = 1000 / (timeGetTime() - lastEndFrame);
+
+   // Update the last end frame and end the time period.
    lastEndFrame = endFrame;
    timeEndPeriod(1);
+
+   // Add the fps to the rolling window
+   frameTimes.push_back(fps);
+
+   // Remove the oldest fps if the window is full
+   if (frameTimes.size() > windowSize) {
+       frameTimes.erase(frameTimes.begin());
+   }
+
+   // Calculate the average FPS over the rolling window
+   double sumFPS = 0.0;
+   for (const double frameTime : frameTimes) {
+       sumFPS += frameTime;
+   }
+   average_fps = sumFPS / frameTimes.size();
 
    if (config.showFPS)
    {
       RECT rc,lagBox;
-      wsprintf(buffer, "FPS=%d (%dms)        ", fps, msDrawFrame);
+      wsprintf(buffer, "FPS=%d (%dms)        ", average_fps, msDrawFrame);
       ZeroMemory(&rc,sizeof(rc));
       rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
       Lagbox_GetRect(&lagBox);

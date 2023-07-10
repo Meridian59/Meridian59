@@ -332,16 +332,17 @@ void RedrawForce(void)
    {
       if (fps > config.maxFPS)
       {
+          // Clamp the FPS to the maximum.
           int msSleep = (1000 / config.maxFPS) - elapsedMilliseconds;
           Sleep(msSleep);
+
+          // Calcaute the FPS again to reflect clamping.
+          endFrame = std::chrono::high_resolution_clock::now();
+          elapsedTime = (endFrame - lastEndFrame);
+          elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+          fps = 1000 / max(1, elapsedMilliseconds);
       }
    }
-
-   // Calcaute the FPS again after any adjustments from clamping.
-   endFrame = std::chrono::high_resolution_clock::now();
-   elapsedTime = (endFrame - lastEndFrame);
-   elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
-   fps = 1000 / max(1, elapsedMilliseconds);
 
    // Update the last end frame and end the time period.
    lastEndFrame = endFrame;

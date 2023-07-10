@@ -358,7 +358,7 @@ void RedrawForce(void)
         }
 
         // Calculate the average fps over the rolling window.
-        double sumFPS = std::accumulate(fps_store.begin(), fps_store.end(), 0.0);
+        auto sumFPS = std::accumulate(fps_store.begin(), fps_store.end(), 0.0);
         average_fps = sumFPS / fps_store.size();
 
         // Format and display the latest average fps value.

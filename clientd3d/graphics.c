@@ -344,7 +344,6 @@ void RedrawForce(void)
       }
    }
 
-   // Update the last end frame and end the time period.
    lastEndFrame = endFrame;
 
    if (config.showFPS)

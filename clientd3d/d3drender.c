@@ -6,6 +6,7 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <unordered_map>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
 #define	TEX_CACHE_MAX_WORLD		8000000
@@ -6866,8 +6867,11 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 	anglePitch = PlayerGetHeightOffset();
 
-	// For each object rendered we increase the z-depth to prevent z-fighting.
-	int z_depth_inc = 0;
+	// We track all objects that are in similar positions in the 3D world.
+	// This is to mitigate z-fighting by incrementing z-depths for each unique object in the same position.
+	// The key is composed of the x and y coordinates of the object and the value is the current
+	// count of objects found at that location.
+	std::unordered_map<int64, int> depth_adjustment_map;
 
 	// base objects
 	for (curObject = 0; curObject < nitems; curObject++)
@@ -7012,8 +7016,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		// Nodes with a bound height adjust are part of other players' upper bodies.
 		if (pRNode->boundingHeightAdjust == 0)
 		{
-			// Typical items such as reagents, keys, etc.
-			pChunk->zBias = ZBIAS_DEFAULT + (z_depth_inc++);
+			// Typical items such as reagents, keys, etc. are drawn at the default depth
+			// offset by the number of items already drawn at this location.
+
+			// Combine objects x and y position into a single int64 for the map key.
+			int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
+
+			// Increment the counter at the appropriate bin and assign the appropriate zBias.
+			pChunk->zBias = ZBIAS_DEFAULT + (BYTE)depth_adjustment_map[key]++;
 		}
 
 		lastDistance = 0;

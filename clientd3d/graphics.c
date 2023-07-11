@@ -15,6 +15,7 @@
 #include <vector>
 #include <numeric>
 #include <chrono>
+#include <cwchar>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -45,10 +46,12 @@ extern float player_overlay_scaler;
 
 // Variables to store frame times and FPS
 static std::vector<double> fps_store;
-static const int windowSize = 60;  // Number of fps values to consider in the rolling window.
+static const int fps_window_size = 60;  // Number of fps values to consider in the rolling window.
 static int average_fps = 0;
-typedef std::chrono::time_point<std::chrono::high_resolution_clock> high_resolution_time_point;
-high_resolution_time_point lastEndFrame;
+typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
+static steady_clock_time_point lastEndFrame;
+// The clock to use for fps calculations - updating here will update throughout.
+static auto& chrono_time_now = std::chrono::steady_clock::now;
 
 /************************************************************************/
 /*
@@ -300,9 +303,9 @@ void RedrawForce(void)
 {
    HDC hdc;
    int oldMode;
-   char buffer[32];
+   wchar_t buffer[32];
    
-   high_resolution_time_point endFrame, startFrame;
+   steady_clock_time_point endFrame, startFrame;
    std::chrono::duration<double> elapsedTime;
 
    if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
@@ -312,7 +315,7 @@ void RedrawForce(void)
       return;
    }
 
-   startFrame = std::chrono::high_resolution_clock::now();
+   startFrame = chrono_time_now();
 
    /* REVIEW: Clearing flag before draw phase allows draw phase to set flag.
     *         This is useful in rare circumstances when an effect should
@@ -322,9 +325,10 @@ void RedrawForce(void)
    hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
-   endFrame = std::chrono::high_resolution_clock::now();
+   endFrame = chrono_time_now();
    elapsedTime = endFrame - startFrame;
-   auto elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+   auto elapsedMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count();
+   auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
    fps = 1000 / max(1, elapsedMilliseconds);
@@ -337,7 +341,7 @@ void RedrawForce(void)
           Sleep(msSleep);
 
           // Reclaulate the fps following the sleep.
-          endFrame = std::chrono::high_resolution_clock::now();
+          endFrame = chrono_time_now();
           elapsedTime = (endFrame - lastEndFrame);
           elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
           fps = 1000 / max(1, elapsedMilliseconds);
@@ -352,7 +356,7 @@ void RedrawForce(void)
         fps_store.push_back(fps);
 
         // Remove the oldest fps if the window is full.
-        if (fps_store.size() > windowSize) {
+        if (fps_store.size() > fps_window_size) {
             fps_store.erase(fps_store.begin());
         }
 
@@ -362,14 +366,20 @@ void RedrawForce(void)
 
         // Format and display the latest average fps value.
         RECT rc,lagBox;
-        wsprintf(buffer, "FPS=%d (%dms)        ", average_fps, msDrawFrame);
+        double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
+        swprintf(buffer, L"FPS=%d (%.1fms)        ", average_fps, milliseconds);
         ZeroMemory(&rc,sizeof(rc));
-        rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
+
+        // Convert from wide to regular string for DrawText.
+        char narrowBuffer[32];
+        WideCharToMultiByte(CP_ACP, 0, buffer, -1, narrowBuffer, sizeof(narrowBuffer), NULL, NULL);
+
+        rc.bottom = DrawText(hdc, narrowBuffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
         Lagbox_GetRect(&lagBox);
         OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
         DrawWindowBackground(hdc, &rc, rc.left, rc.top);
         oldMode = SetBkMode(hdc,TRANSPARENT);
-        DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
+        DrawText(hdc, narrowBuffer,-1,&rc,DT_SINGLELINE);
         SetBkMode(hdc,oldMode);
         GdiFlush();
    }

@@ -6871,7 +6871,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 	// This is to mitigate z-fighting by incrementing z-depths for each unique object in the same position.
 	// The key is composed of the x and y coordinates of the object and the value is the current
 	// count of objects found at that location.
-	std::unordered_map<int64, BYTE> depth_adjustment_map;
+	std::unordered_map<int64, int> depth_adjustment_map;
 
 	// base objects
 	for (curObject = 0; curObject < nitems; curObject++)
@@ -7020,10 +7020,10 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			// offset by the number of items already drawn at this location.
 
 			// Combine objects x and y position into a single int64 for the map key.
-			int64_t key = ((int64_t)pRNode->motion.x << 32) | (int32_t)(pRNode->motion.y & 0xFFFFFFFF);
+			int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
 
 			// Increment the counter at the appropriate bin and assign the appropriate zBias.
-			pChunk->zBias = ZBIAS_DEFAULT + depth_adjustment_map[key]++;
+			pChunk->zBias = ZBIAS_DEFAULT + (BYTE)depth_adjustment_map[key]++;
 		}
 
 		lastDistance = 0;

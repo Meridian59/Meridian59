@@ -7,7 +7,7 @@
 // Meridian is a registered trademark.
 #include "client.h"
 #include <tuple>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
@@ -6845,20 +6845,6 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 	return pPacket;
 }
 
-struct ZPoint {
-	int x, y, z;
-};
-
-// Function to calculate the bin for a given point and bin size
-ZPoint calculateBin(const ZPoint& point, int binSize) {
-	return { point.x / binSize, point.y / binSize, point.z / binSize };
-}
-
-// Function to compare points (needed to use ZPoint as a key in std::map)
-bool operator<(const ZPoint& p1, const ZPoint& p2) {
-	return std::tie(p1.x, p1.y, p1.z) < std::tie(p2.x, p2.y, p2.z);
-}
-
 void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 							 Draw3DParams *params, int flags)
 {
@@ -6883,8 +6869,11 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 	anglePitch = PlayerGetHeightOffset();
 
-	// Track objects in similar positions in the 3d world.
-	std::map<ZPoint, std::vector<ZPoint>> objection_position_bins;
+	// We track all objects that are in similar positions in the 3D world.
+	// This is to mitigate z-fighting by incrementing z-depths for each unique object in the same position.
+	// The key is composed of the x and y coordinates of the object and the value is the current
+	// count of objects found at that location.
+	std::unordered_map<int64, BYTE> depth_adjustment_map;
 
 	// base objects
 	for (curObject = 0; curObject < nitems; curObject++)
@@ -7029,15 +7018,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		// Nodes with a bound height adjust are part of other players' upper bodies.
 		if (pRNode->boundingHeightAdjust == 0)
 		{
-			// For objects in a similar position we increase the z depth
-			// to prevent z fighting at that location.
-			float binSize = 5.0f;
-			const ZPoint position {pRNode->motion.x, pRNode->motion.y, pRNode->motion.z};
-			const ZPoint bin = calculateBin(position, binSize);
-			objection_position_bins[bin].push_back(position);
+			// Typical items such as reagents, keys, etc. are drawn at the default depth
+			// offset by the number of items already drawn at this location.
 
-			// Typical items such as reagents, keys, etc.
-			pChunk->zBias = ZBIAS_DEFAULT + (BYTE)(objection_position_bins[bin].size() & 0xFF);
+			// Combine objects x and y position into a single int64 for the map key.
+			int64_t key = ((int64_t)pRNode->motion.x << 32) | (int32_t)(pRNode->motion.y & 0xFFFFFFFF);
+
+			// Increment the counter at the appropriate bin and assign the appropriate zBias.
+			pChunk->zBias = ZBIAS_DEFAULT + depth_adjustment_map[key]++;
 		}
 
 		lastDistance = 0;

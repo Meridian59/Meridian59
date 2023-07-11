@@ -6854,7 +6854,7 @@ ZPoint calculateBin(const ZPoint& point, int binSize) {
 	return { point.x / binSize, point.y / binSize, point.z / binSize };
 }
 
-// Function to compare points (needed to use Point as a key in std::map)
+// Function to compare points (needed to use ZPoint as a key in std::map)
 bool operator<(const ZPoint& p1, const ZPoint& p2) {
 	return std::tie(p1.x, p1.y, p1.z) < std::tie(p2.x, p2.y, p2.z);
 }

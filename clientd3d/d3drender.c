@@ -6,9 +6,7 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-#include <tuple>
 #include <unordered_map>
-#include <vector>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
 #define	TEX_CACHE_MAX_WORLD		8000000

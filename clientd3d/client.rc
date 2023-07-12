@@ -1737,7 +1737,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LAGBOXURL           "http://meridian59.com/serverstatus/"
+    IDS_LAGBOXURL           "http://www.meridian59.com/"
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."

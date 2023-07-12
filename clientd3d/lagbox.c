@@ -243,10 +243,9 @@ void Lagbox_Update(DWORD dwLatency)
 
 void Lagbox_Animate(int dt)
 {
-  // Turned off animation because it's distracting
-	// BOOL bNeedRedraw = AnimateObject(pobjLagbox, dt);
-	// if (bNeedRedraw)
-  //	 InvalidateRect(hwndLagbox, NULL, FALSE);
+	boolean bNeedRedraw = AnimateObject(pobjLagbox, dt);
+	if (bNeedRedraw)
+		InvalidateRect(hwndLagbox, NULL, FALSE);
 }
 
 /****************************************************************************/
@@ -338,6 +337,19 @@ BOOL Lagbox_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT *lpdis)
 		DrawObject(lpdis->hDC, pobjLagbox, pobjLagbox->animate->group,
 			TRUE, &areaWindow, NULL, 0, 0, 0, TRUE);
 
+		auto hdc = GetDC(hMain);
+		char buffer[32];
+		RECT rc, lagBox;
+		ZeroMemory(&rc, sizeof(rc));
+		Lagbox_GetRect(&lagBox);
+		rc.bottom = DrawText(hdc, buffer, -1, &rc, DT_SINGLELINE | DT_CALCRECT);
+		OffsetRect(&rc, lagBox.right + TOOLBAR_SEPARATOR_WIDTH, lagBox.top);
+		DrawWindowBackground(hdc, &rc, rc.left, rc.top);
+		int oldMode = SetBkMode(hdc, TRANSPARENT);
+		wsprintf(buffer, "%dms", dwLagboxLatency);
+		DrawText(hdc, buffer, -1, &rc, DT_SINGLELINE);
+		SetBkMode(hdc, oldMode);
+		GdiFlush();
 		return TRUE;
 	}
 

@@ -84,6 +84,7 @@ typedef struct {
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 
                                   char *extra_string, char *url);
+M59EXPORT void SetDialogExtraString(char* extra_string);
 
 M59EXPORT list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags);
 

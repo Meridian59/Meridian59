@@ -364,6 +364,7 @@ enum {
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
 #define OF_PLAYER_MASK   0x0001C000    // Mask to get player flag bits
+#define OF_LATENCY       0x0002C000    // Set if object contains latency information
 
 #define OF_HANGING       0x00010000    // Overlaps with PF_CREATOR.
                                        //     FALSE for most objects.

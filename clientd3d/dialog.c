@@ -14,6 +14,8 @@
 #define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
+static DescDialogStruct info;	  /* Info for current Description dialog */
+
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */
 static HWND hAmountDialog = NULL; /* Non-null if Amount dialog is up */
 
@@ -635,7 +637,6 @@ void SetDescParams(HWND hParent, int flags)
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
                         char *extra_string, char *url)
 {
-	DescDialogStruct info;
 	int template_id;
 	
 	if (hDescDialog != NULL)
@@ -661,8 +662,18 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
 }
-
-/*****************************************************************************/
+/************************************************************************/
+/*
+* SetDialogExtraString:  Update the extra string for the dialog.
+*/
+void SetDialogExtraString(char* extra_string)
+{
+	if (hDescDialog != NULL)
+	{
+		SetDlgItemText(hDescDialog, IDC_DESCFIXED, _T(extra_string));
+		InvalidateRect(GetDlgItem(hDescDialog, IDC_DESCFIXED), NULL, TRUE);
+	}
+}/************************************************************************/
 /*
 * AbortGameDialogs:  Close modal dialogs, for example when we lose the server
 *   connection.

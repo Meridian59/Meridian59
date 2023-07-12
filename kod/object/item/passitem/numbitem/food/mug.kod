@@ -19,7 +19,8 @@ resources:
    mug_name_rsc = "mug of stout"
    mug_icon_rsc = mug.bgf
    mug_desc_rsc = \
-      "A dark hazelnut stout with a thick head of foam."
+      "A dark hazelnut stout with a thick head of foam fills this large, "
+      "well-crafted mug."
 
    mug_name_plural_rsc = "mugs of stout"
 
@@ -55,6 +56,8 @@ properties:
    viFilling = 8
    viNutrition = 6
    piNumber = 1
+
+   piItem_flags = PT_BLEND25YELLOW   % Slight golden hue to set it apart from mug of brew
 
 messages:
 

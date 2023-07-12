@@ -376,7 +376,7 @@ void RedrawForce(void)
 
         rc.bottom = DrawText(hdc, narrowBuffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
         Lagbox_GetRect(&lagBox);
-        OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
+        OffsetRect(&rc, main_viewport_width - 110, lagBox.top);
         DrawWindowBackground(hdc, &rc, rc.left, rc.top);
         oldMode = SetBkMode(hdc,TRANSPARENT);
         DrawText(hdc, narrowBuffer,-1,&rc,DT_SINGLELINE);

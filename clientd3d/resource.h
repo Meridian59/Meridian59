@@ -428,6 +428,7 @@
 #define IDC_NEW_PW2                     1217
 #define IDC_EMAIL_ADDRESS               1218
 #define IDC_SIGNUP_TROUBLESHOOT         1219
+#define ID_SPINNING_CUBE                1220
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -487,9 +488,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        190
 #define _APS_NEXT_COMMAND_VALUE         3513
-#define _APS_NEXT_CONTROL_VALUE         1208
+#define _APS_NEXT_CONTROL_VALUE         1221
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif
-
-

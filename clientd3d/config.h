@@ -79,6 +79,7 @@ typedef struct {
    int	halocolor;					//	0 = red, 1 = blue, 2 = green
 
    Bool lagbox;                  /* Display lag meter? */
+   Bool lagbox_live;             /* Display live lag meter with latency info? */
    Bool ignoreprofane;           /* Kill messages including any profanity. */
    Bool extraprofane;            /* Really search hard for possible hidden profanity. */
    int  server_guest;            /* Server to try first for guest logins */

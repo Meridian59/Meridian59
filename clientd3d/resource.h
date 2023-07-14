@@ -417,6 +417,7 @@
 #define IDC_SOUND_VOLUME2               1207
 #define IDC_SERVER_102                  1207
 #define ID_SU_EMAIL                     1208
+#define IDS_LATENCY_LIVE                1208
 #define ID_SU_USERNAME                  1209
 #define ID_SU_PW1                       1210
 #define ID_SU_PW2                       1211
@@ -485,11 +486,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        190
+#define _APS_NEXT_RESOURCE_VALUE        191
 #define _APS_NEXT_COMMAND_VALUE         3513
-#define _APS_NEXT_CONTROL_VALUE         1208
+#define _APS_NEXT_CONTROL_VALUE         1209
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif
-
-

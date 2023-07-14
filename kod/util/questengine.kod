@@ -540,7 +540,7 @@ resources:
    polishquest_assign = "Excuse me.  I’ve been honing my jewelling skills, and I was wondering if you have any "
          "uncut gems of any sort.  If you do, I’d be happy to polish them and give you one of the result."
    polishquest_success = "Ah, thank you.  Allow me to reward you."
-   polishquest_failure = "Subject:  Gem polishing\n"
+   polishquest_failure = "Subject: Gem polishing\n"
          "Never mind about the uncut gems, I found some from someone else.  Thanks, though."
 
    priestessinsignia_trigger = "insignia"

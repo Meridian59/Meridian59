@@ -15,7 +15,6 @@
 #include <vector>
 #include <numeric>
 #include <chrono>
-#include <cwchar>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -301,13 +300,6 @@ int GetMSDrawFrame(void)
  */
 void RedrawForce(void)
 {
-   HDC hdc;
-   int oldMode;
-   char buffer[32];
-   
-   steady_clock_time_point endFrame, startFrame;
-   std::chrono::duration<double> elapsedTime;
-
    if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
    {
@@ -315,18 +307,18 @@ void RedrawForce(void)
       return;
    }
 
-   startFrame = chrono_time_now();
+   steady_clock_time_point startFrame = chrono_time_now();
 
    /* REVIEW: Clearing flag before draw phase allows draw phase to set flag.
     *         This is useful in rare circumstances when an effect should
     *         last only one frame, even if animation is off.
     */
    need_redraw = False;
-   hdc = GetDC(hMain);
+   HDC hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
-   endFrame = chrono_time_now();
-   elapsedTime = endFrame - startFrame;
+   steady_clock_time_point endFrame = chrono_time_now();
+   std::chrono::duration<double> elapsedTime = endFrame - startFrame;
    auto elapsedMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count();
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
@@ -367,6 +359,7 @@ void RedrawForce(void)
         // Format and display the latest average fps value.
         RECT rc,lagBox;
         double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
+        char buffer[32];
         sprintf(buffer, "FPS=%d (%.1fms)        ", average_fps, milliseconds);
         ZeroMemory(&rc,sizeof(rc));
 
@@ -374,7 +367,7 @@ void RedrawForce(void)
         Lagbox_GetRect(&lagBox);
         OffsetRect(&rc, main_viewport_width - 110, lagBox.top);
         DrawWindowBackground(hdc, &rc, rc.left, rc.top);
-        oldMode = SetBkMode(hdc,TRANSPARENT);
+        int oldMode = SetBkMode(hdc,TRANSPARENT);
         DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE);
         SetBkMode(hdc,oldMode);
         GdiFlush();

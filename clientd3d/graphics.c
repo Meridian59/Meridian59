@@ -303,7 +303,7 @@ void RedrawForce(void)
 {
    HDC hdc;
    int oldMode;
-   wchar_t buffer[32];
+   char buffer[32];
    
    steady_clock_time_point endFrame, startFrame;
    std::chrono::duration<double> elapsedTime;
@@ -367,19 +367,15 @@ void RedrawForce(void)
         // Format and display the latest average fps value.
         RECT rc,lagBox;
         double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
-        swprintf(buffer, L"FPS=%d (%.1fms)        ", average_fps, milliseconds);
+        sprintf(buffer, "FPS=%d (%.1fms)        ", average_fps, milliseconds);
         ZeroMemory(&rc,sizeof(rc));
 
-        // Convert from wide to regular string for DrawText.
-        char narrowBuffer[32];
-        WideCharToMultiByte(CP_ACP, 0, buffer, -1, narrowBuffer, sizeof(narrowBuffer), NULL, NULL);
-
-        rc.bottom = DrawText(hdc, narrowBuffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
+        rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
         Lagbox_GetRect(&lagBox);
         OffsetRect(&rc, main_viewport_width - 110, lagBox.top);
         DrawWindowBackground(hdc, &rc, rc.left, rc.top);
         oldMode = SetBkMode(hdc,TRANSPARENT);
-        DrawText(hdc, narrowBuffer,-1,&rc,DT_SINGLELINE);
+        DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE);
         SetBkMode(hdc,oldMode);
         GdiFlush();
    }

@@ -428,15 +428,16 @@ void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
    if (b.white_resigned || b.black_resigned)
       return;
    
-   row = y / b.square_size;
+   row = BOARD_HEIGHT - y / b.square_size - 1;  // Row 0 at the bottom
    col = x / b.square_size;
 
    if (row >= BOARD_HEIGHT || col >= BOARD_WIDTH)
       return;
 
-   // Flip board for white
-   if (b.color == WHITE) {
+   // Rotate board for black
+   if (b.color == BLACK) {
      row = BOARD_HEIGHT - row - 1;
+     col = BOARD_WIDTH - col - 1;
    }
 
    // If user does a move, send to server

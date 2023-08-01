@@ -22,7 +22,7 @@ resources:
 	 "Requires nothing but a will to move."
 
    blink_spell_intro = "Riija Level 1: The Trickster's most basic spell teleports you to the local place of power."
-
+   blink_cast_rsc = "Upon opening your eyes, you find yourself realigned with your surroundings"
 classvars:
 
    vrName = blink_name_rsc
@@ -85,7 +85,7 @@ messages:
       }
 
       send(owner,@Teleport,#what=who);  
-
+      send(who, @MsgSendUser, #message_rsc=blink_cast_rsc);
       propagate;
    }
 

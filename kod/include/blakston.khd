@@ -303,6 +303,12 @@
    PT_ITEM_XLAT_BLUE_TO_SKIN2     = 0x9F
    PT_ITEM_XLAT_BLUE_TO_SKIN4     = 0xA0
 
+   % These will strip all color from the item, but note that
+   % the difference between each one is fairly subtle.
+   PT_GRAYSCALE_LIGHT             = 0x0036
+   PT_GRAYSCALE_MEDIUM            = 0x0032
+   PT_GRAYSCALE_DARK              = 0x0033
+
    % Metallic and other colors added for more flexibility
    % with coloring items using constants
    PT_MET_RED        = 0x004D       % metallic red #77

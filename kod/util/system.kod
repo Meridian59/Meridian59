@@ -4838,6 +4838,7 @@ messages:
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
+      plItemTemplates = cons(create(&FireArrow),plItemTemplates);
 
       plItemTemplates = cons(create(&Apple),plItemTemplates);
       plItemTemplates = cons(create(&Bread),plItemTemplates);
@@ -4979,6 +4980,7 @@ messages:
       plItemTemplates = cons(create(&DispellIllusionScroll),plItemTemplates);
       plItemTemplates = cons(create(&FinalRitesScroll),plItemTemplates);
       plItemTemplates = cons(create(&FlashScroll),plItemTemplates);
+      plItemTemplates = cons(create(&ForcesOfLightScroll),plItemTemplates);
       plItemTemplates = cons(create(&HeatScroll),plItemTemplates);
       plItemTemplates = cons(create(&KillingFieldScroll),plItemTemplates);
       plItemTemplates = cons(create(&MartyrScroll),plItemTemplates);

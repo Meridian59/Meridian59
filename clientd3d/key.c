@@ -47,9 +47,6 @@
 
 #define MAX_ACTIONS   10   /* Max # of actions to do on a single poll of keyboard */
 
-// Minimum # of milliseconds between non-repeat actions
-#define KEY_NOREPEAT_INTERVAL 400
-
 // Last time we performed a non-repeat action
 static DWORD last_norepeat_time;
 

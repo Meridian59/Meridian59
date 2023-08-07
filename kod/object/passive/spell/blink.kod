@@ -23,6 +23,7 @@ resources:
 
    blink_spell_intro = "Riija Level 1: The Trickster's most basic spell teleports you to the local place of power."
    blink_cast_rsc = "Upon opening your eyes, you find yourself realigned with your surroundings"
+   blink_cast_special = "You find yourself...elsewhere"
 classvars:
 
    vrName = blink_name_rsc
@@ -68,7 +69,7 @@ messages:
          if oRoom <> $
          {
             post(oRoom,@Teleport,#what=who);
-
+            send(who, @MsgSendUser, #message_rsc=blink_cast_special);
             propagate;
          }
       }
@@ -79,7 +80,7 @@ messages:
          if oRoom <> $
          {
             post(oRoom,@teleport,#what=who);
-
+            send(who, @MsgSendUser, #message_rsc=blink_cast_special);
             propagate;
          }
       }

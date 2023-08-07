@@ -3489,6 +3489,12 @@ messages:
 
       Create(&ThrasherTreasure);
 
+      Create(&IceTreasure);
+      Create(&FrogTreasure);
+      Create(&CowTreasure);
+      Create(&BabySpiderTreasure);
+      Create(&SpiderTreasure);
+
       return;
    }
 
@@ -5002,6 +5008,17 @@ messages:
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
 
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
+
+      plItemTemplates = cons(create(&StinkyCap),plItemTemplates);
+      plItemTemplates = cons(create(&CorpseMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&GoldenMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&AvarFeather),plItemTemplates);
+      plItemTemplates = cons(create(&BoneDust),plItemTemplates);
+      plItemTemplates = cons(create(&BlackenedBoneDust),plItemTemplates);
+      plItemTemplates = cons(create(&MysteryMeat),plItemTemplates);
+      plItemTemplates = cons(create(&TrollBlood),plItemTemplates);
+      plItemTemplates = cons(create(&Milk),plItemTemplates);
+      plItemTemplates = cons(create(&CustomWeapon),plItemTemplates);
 
       return;
    }

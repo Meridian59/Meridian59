@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SpiderQueenTreasure is TreasureType
+SpiderTreasure is TreasureType
 
 constants:
    
@@ -19,26 +19,28 @@ classvars:
 
 properties:
    
-   piTreasure_num = TID_SPIDER_QUEEN
-
-   %% good stuff, appears relatively rarely compared to other
-   %% supermonsters.
-   piDiff_seed = 5
-   piItem_att_chance = 5
+   piTreasure_num = TID_SPIDER
+   
+   %% monsters (like spiders) generate reasonably good stuff, but rarely
+   piDiff_seed = 4
+   piItem_att_chance = 1
 
 messages:
    
    constructed()
    {
-      plTreasure = [ [ &SpiderEgg, 20 ],
-                     [ &SpiderEggShell, 20 ],
+      plTreasure = [ [ &RedMushroom, 21 ],
+                     [ &Snack, 16],
                      [ &Spideye, 15],
-                     [ &BlueDragonScale, 10],
-                     [ &DarkAngelFeather, 10],
-                     [ &BerserkerRing, 10 ],
-                     [ &Ruby, 10 ],
-                     [ &GoldenMushroom, 5 ]
+                     [ &PurpleMushroom, 15],
+                     [ &Emerald, 10 ],
+                     [ &Sapphire, 10 ],
+                     [ &BlueMushroom, 8 ],
+                     [ &Diamond, 2 ],
+                     [ &Ruby, 2 ],
+                     [ &LightScroll, 1 ]
                    ];
+
       propagate;
    }
 

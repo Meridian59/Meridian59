@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-RatTreasure is TreasureType
+FrogTreasure is TreasureType
 
 constants:
    
@@ -19,22 +19,26 @@ classvars:
 
 properties:
    
-   piTreasure_num = TID_RAT
+   piTreasure_num = TID_FROGMAN
+   piDiff_seed = 2
+   piItem_att_chance = 2
 
-messages:
+messages:  
    
    constructed()
    {
-      plTreasure = [ [ &Herbs, 25 ],
-                     [ &Mushroom, 20],
-                     [ &Elderberry, 15 ],
-                     [ &Snack, 15],
+      plTreasure = [ [ &Elderberry, 15],
+                     [ &MysteryMeat, 15],
+                     [ &Herbs, 10],
+                     [ &Mushroom, 10],
+                     [ &PurpleMushroom, 10],
                      [ &Money, 10],
-                     [ &BlueMushroom, 5],
-                     [ &RedMushroom, 5],
-                     [ &Cheese, 5 ] ];
+                     [ &Solagh, 10],
+                     [ &DragonflyEye, 10],
+                     [ &UncutSeraphym, 10]
+                   ];
 
-      propagate;
+		propagate;
    }
 
 end

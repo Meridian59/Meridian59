@@ -28,18 +28,17 @@ messages:
    constructed()
    {
       plTreasure = [ [ &RainbowFern, 20],
-                     [ &Bread, 15],
+                     [ &AvarFeather, 15],
                      [ &KriipaClaw, 15],
-                     [ &Money, 14],
+                     [ &Money, 15],
+                     [ &Bread, 13],
                      [ &WebMoss, 8],
-                     [ &NeruditeSword, 7],
-                     [ &NeruditeArmor, 7],
-                     [ &IvyCirclet, 5],
-                     [ &CurePoisonPotion, 2],
-                     [ &CureDiseasePotion, 2],
-                     [ &RemoveCursePotion, 2],
-                     [ &PurifyPotion, 2],
-                     [ &Yrxlsap, 1]
+                     [ &TurkeyLeg, 5],
+                     [ &FireSand, 5],
+                     [ &Yrxlsap, 1],
+                     [ &IvyCirclet, 1],
+                     [ &NeruditeSword, 1],
+                     [ &NeruditeArmor, 1]
 		             ];
 
       propagate;

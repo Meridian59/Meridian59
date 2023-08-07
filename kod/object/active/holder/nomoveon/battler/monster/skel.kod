@@ -13,6 +13,7 @@ Skeleton is Monster
 constants:
 
    include blakston.khd
+   SWORD_DROP_CHANCE = 35
 
 resources:
 
@@ -172,23 +173,27 @@ messages:
 
    CreateTreasure(who=$,corpse=$)
    {
-      local oTreasure, iHits;
+      local oTreasure, iDropChance;
       
-      oTreasure = Create(&LongSword,#corpse=corpse);
-      iHits = Bound(Send(oTreasure,@GetHits)/Random(2,4),1,$);
-      Send(oTreasure,@SetHits,#number=iHits);
-              
-      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
-                  #new_row=piRow,#new_col=piCol)
+      % Not every skeleton needs to drop a weapon every single time,
+      % but we're still doing the drop here instead of via the normal 
+      % treasure table so they never drop more than one.
+      if Random(0, 100) < SWORD_DROP_CHANCE
       {
-         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+         oTreasure = Create(&CustomWeapon, #corpse=corpse);
+         Send(oTreasure, @MakeRandomAncientSword);              
+         if Send(poOwner, @ReqNewHold, #what=oTreasure, #new_row=piRow, #new_col=piCol)
+            AND Send(poOwner, @ReqSomethingMoved, #what=oTreasure,
+            #new_row=piRow, #new_col=piCol)
+         {
+           Send(poOwner, @NewHold, #what=oTreasure, #new_row=piRow, #new_col=piCol);
+         }
+         else
+         {
+            Send(oTreasure, @Delete);
+         }
       }
-      else
-      {
-         Send(oTreasure,@Delete);
-      }
-      
+
       propagate;
    }
 

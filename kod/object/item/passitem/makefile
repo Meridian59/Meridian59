@@ -7,7 +7,7 @@
 DEPEND = ..\passitem.bof
 BOFS = attmod.bof defmod.bof healer.bof key.bof \
 	numbitem.bof scepter.bof weapon.bof chalice.bof \
-	spdregg.bof spdreggX.bof \
+	spdregg.bof \
 	arsenic.bof necklace.bof ring.bof pforget.bof token.bof \
 	minigame.bof gift.bof pillufrm.bof instrum.bof sanctkey.bof \
 	totem.bof rose.bof orechunk.bof offering.bof letter.bof \

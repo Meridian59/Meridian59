@@ -8,33 +8,33 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SpiderEggShell is PassiveItem
+IceTreasure is TreasureType
 
 constants:
-
+   
    include blakston.khd
-
-resources:
-
-   spidereggshell_name_rsc = "egg shell"
-   spidereggshell_icon_rsc = spdreggX.bgf
-   spidereggshell_desc_rsc = \
-   "This large broken shell has a tough, leathery texture."
-
+   
 classvars:
 
-   vrName = spidereggshell_name_rsc
-   vrIcon = spidereggshell_icon_rsc
-   vrDesc = spidereggshell_desc_rsc
-
-   viBulk = 20
-   viWeight = 10
-
-   viValue_average = 25
 
 properties:
    
+   piTreasure_num = TID_ICE_PERSON
+   piDiff_seed = 5
+   piItem_att_chance = 2
 
+messages:  
+   
+   constructed()
+   {
+      plTreasure = [ [ &Waterskin, 59 ],
+                     [ &Sapphire, 20],
+                     [ &Diamond, 10 ],
+                     [ &UncutSeraphym, 10],
+                     [ &PolishedSeraphym, 1 ]
+                   ];
+		propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

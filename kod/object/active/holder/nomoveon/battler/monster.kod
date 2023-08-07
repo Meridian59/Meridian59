@@ -4175,7 +4175,6 @@ messages:
          OR IsClass(what,&Book)
          OR IsClass(what,&Arsenic)
          OR IsClass(what,&SpiderEgg)
-         OR IsClass(what,&SpiderEggShell)
          OR IsClass(what,&Key) 
       {
          return TRUE;

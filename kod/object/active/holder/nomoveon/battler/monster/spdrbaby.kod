@@ -39,7 +39,7 @@ classvars:
    vrDesc = spiderbaby_desc_rsc
    vrDead_icon = spiderbaby_dead_icon_rsc
    vrDead_name = spiderbaby_dead_name_rsc
-   viTreasure_type = TID_WIMPY
+   viTreasure_type = TID_BABY_SPIDER
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
 
    viSpeed = SPEED_SLOW

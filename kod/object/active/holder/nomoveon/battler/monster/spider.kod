@@ -41,7 +41,7 @@ classvars:
    vrDead_icon = spider_dead_icon_rsc
    vrDead_name = spider_dead_name_rsc
 
-   viTreasure_type = TID_MEDIUM_TOUGH
+   viTreasure_type = TID_SPIDER
    viSpeed = SPEED_AVERAGE
    viAttack_type =  ATCK_WEAP_BITE
    viAttributes = MOB_SPASM

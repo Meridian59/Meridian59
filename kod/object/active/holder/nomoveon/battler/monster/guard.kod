@@ -32,13 +32,17 @@ classvars:
    vrName = guard_name_rsc
    vrIcon = guard_icon_rsc
    vrDesc = guard_desc_rsc
+   vrDead_icon = guard_dead_icon_rsc
+   vrDead_name = guard_dead_name_rsc
 
    viMove_delay_min = 2000
    viMove_delay_max = 10000
       
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BITE
-   
+
+   viTreasure_type = TID_COW
+
    viLevel = 100
    viDifficulty = 5
    viKarma = 100

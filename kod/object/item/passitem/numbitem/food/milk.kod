@@ -1,0 +1,59 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Milk is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   milk_name_rsc = "bottle of milk"
+   milk_icon_rsc = blubott4.bgf
+   milk_desc_rsc = \
+   "This bottle of cold, nutrient-rich milk was taken from the "
+   "famed pygmy cow.  Due to the scarcity of the modern-day pygmy "
+   "cow, this milk is considered by many to be a rare delicacy."
+
+   milk_name_plural_rsc = "bottles of milk"
+
+   milk_eat_wav = drink.wav
+
+classvars:
+
+   vrName = milk_name_rsc
+   vrIcon = milk_icon_rsc
+   vrDesc = milk_desc_rsc
+
+   vrName_plural = milk_name_plural_rsc
+
+   viBulk = 10
+   viWeight = 7
+   viValue_average = 40
+
+   vrEat_wav = milk_eat_wav
+
+properties:
+
+   viFilling = 16
+   viNutrition = 12
+   piNumber = 1
+   piItem_flags = 54
+
+messages:
+
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

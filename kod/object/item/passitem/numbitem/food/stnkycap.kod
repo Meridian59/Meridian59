@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StinkyCap is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   stinkycap_name_rsc = "Stinky-cap mushroom"
+   stinkycap_name_plural_rsc = "Stinky-cap mushrooms"
+   stinkycap_icon_rsc = mushroom.bgf
+   stinkycap_desc_rsc = \
+      "At first glance, these mushrooms appear common, but look at the green stem!  "
+      "These are actually...hey wait a minute.  The unusually foul smell emanating "
+      "from these mushrooms makes your stomach twist itself in knots."
+   stinkycap_use_rsc = "You immediately realize your mistake as you choke down the "
+      "vile, bitter-tasting mushroom."
+
+classvars:
+
+   vrName = stinkycap_name_rsc
+   vrName_plural = stinkycap_name_plural_rsc
+   vrIcon = stinkycap_icon_rsc
+   vrDesc = stinkycap_desc_rsc
+
+   viWeight = 2
+   viBulk = 3
+   viValue_average = 150
+   viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY | ITEMTYPE_REAGENT
+
+   viLossRate = 10000       % 1 hp/sec
+   viDuration = 30000       % 30 seconds of agony
+   viDementiaPower = 20     % strength of dementia effect
+   viPalsyPower = 20        % strength of palsy effect
+
+properties:
+
+   viFilling = 5
+   viNutrition = 0     % these are not good for you at all
+   piNumber = 1
+   piItem_flags = 124
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      local oPoison, oDementia, oPalsy;
+
+      % Yeah, eating one of these is going to make you sick, sick, sick!
+      oPoison = Send(SYS, @FindSpellByNum, #num=SID_POISON);
+      oDementia = Send(SYS,@FindSpellByNum, #num=SID_DEMENTIA);
+      oPalsy = Send(SYS,@FindSpellByNum, #num=SID_PALSY);
+      
+      if NOT Send(apply_on, @IsEnchanted, #what=oDementia) 
+      {
+         Send(oDementia, @MakeSick, #who=apply_on, #iAmount=viDementiaPower, #iDuration=viDuration,
+            #report=FALSE);
+      }
+      if NOT Send(apply_on, @IsEnchanted, #what=oPalsy) 
+      {
+         Send(oPalsy, @MakeSick, #who=apply_on, #iAmount=viPalsyPower, #iDuration=viDuration,
+            #report=FALSE);
+      }
+      Send(oPoison, @MakePoisoned, #who=apply_on, #lossrate=viLossRate, #duration=viDuration,
+            #report=FALSE);
+
+      if isClass(apply_on, &User) 
+      {
+         Send(apply_on, @MsgSendUser, #message_rsc=stinkycap_use_rsc);
+      }
+      
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

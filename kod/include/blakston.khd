@@ -1577,6 +1577,11 @@
    TID_DARK_ANGEL    = 51
    TID_MUMMY         = 52
    TID_THRASHER      = 53
+   TID_ICE_PERSON    = 54
+   TID_FROGMAN       = 55
+   TID_COW           = 56
+   TID_BABY_SPIDER   = 57
+   TID_SPIDER        = 58
 
    %%% English articles
 

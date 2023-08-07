@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorpseMushroom is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   corpsemushroom_name_rsc = "corpse mushroom"
+   corpsemushroom_icon_rsc = mushroom.bgf
+   corpsemushroom_desc_rsc = \
+      "This rare mushroom is devoid of any color and only seems to grow on "
+      "corpses or in grave soil.  Surely there's a good reason for this, but "
+      "little is actually known about this unusual variety of highly-poisonous "
+      "mushroom."
+
+   corpsemushroom_name_plural_rsc = "corpse mushrooms"
+
+   corpsemushroom_use_rsc = "Your stomach burns like it's on fire as you "
+      "double over in mind-numbing agony!"
+
+classvars:
+
+   vrName = corpsemushroom_name_rsc
+   vrIcon = corpsemushroom_icon_rsc
+   vrDesc = corpsemushroom_desc_rsc
+
+   vrName_plural = corpsemushroom_name_plural_rsc
+
+   viWeight = 2
+   viBulk = 3
+
+   viValue_average = 100
+   viNutrition = 0       % Not good for you at all!
+   viFilling = 5
+   viDamage_min = 40     % Damage is capped at 50% max hp, thankfully
+   viDamage_max = 60
+   viLossRate = 30000    % 3 hp/sec - really nasty poison!
+   viDuration = 120000   % 120 seconds of agony
+
+   viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY | ITEMTYPE_REAGENT
+
+properties:
+
+   piNumber = 1
+   piItem_flags = 51
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      local oPoison, iDamage;
+
+      % Eating one of these causes acute pain as well as a really nasty poison
+      oPoison = Send(SYS, @FindSpellByNum, #num=SID_POISON);
+
+      % Damage shouldn't exceed 50% of max health.  No insta-killing newbies
+      % who may not know any better!
+      iDamage = Bound(Random(viDamage_min, viDamage_max), 1, Send(apply_on, @GetMaxHealth) / 2);
+
+      if Send(apply_on, @AssessDamage, #what=self, #damage=iDamage, #report=FALSE) = $
+      {
+         % If it kills the user...
+         Send(Send(apply_on, @GetOwner), @SomethingKilled, #what=self, #victim=apply_on);
+         Send(apply_on, @Killed, #what=self);
+      }
+      else
+      {
+         Send(oPoison, @MakePoisoned, #who=apply_on, #lossrate=viLossRate, #duration=viDuration,
+            #report=FALSE);
+      }
+      if isClass(apply_on, &User) 
+      {
+         Send(apply_on, @EffectSendUserDuration, #effect=EFFECT_WAVER, #duration=viDuration);
+         Send(apply_on, @MsgSendUser, #message_rsc=corpsemushroom_use_rsc);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MysteryMeat is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   mysterymeat_name_rsc = "hunk of mystery meat"
+   mysterymeat_icon_rsc = pork.bgf
+   mysterymeat_desc_rsc = \
+      "No one knows exactly what sort of creature this slab of "
+      "meat came from.  It's simply a question of how hungry "
+      "you are."
+
+   mysterymeat_name_plural_rsc = "hunks of mystery meat"
+
+   mysterymeat_use_rsc = "Yuck, it tastes terrible!"
+
+   mysterymeat_disp_name = "unidentified animal"
+   mysterymeat_disp_icon = pig.bgf
+   mysterymeat_disp_desc = \
+     "You don't exactly know what sort of animal this tough, "
+     "rubbery meat came from, but if you're hungry enough, "
+     "anything can be food."
+   mysterymeat_got_one = "You tear off a tough chunk of mystery meat."
+
+classvars:
+
+   vrName = mysterymeat_name_rsc
+   vrIcon = mysterymeat_icon_rsc
+   vrDesc = mysterymeat_desc_rsc
+
+   vrDisp_name = mysterymeat_disp_name
+   vrDisp_icon = mysterymeat_disp_icon
+   vrDisp_desc = mysterymeat_disp_desc
+
+   vrName_plural = mysterymeat_name_plural_rsc
+
+   viBulk = 6
+   viWeight = 6
+
+   viValue_average = 10
+
+properties:
+
+   viFilling = 15
+   viNutrition = 10
+   piNumber = 3
+   piItem_flags = 83
+
+messages:
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      send(who,@msgsenduser,#message_rsc=mysterymeat_got_one);
+      return;
+   }
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on, @MsgSendUser, #message_rsc=mysterymeat_use_rsc);
+	  return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

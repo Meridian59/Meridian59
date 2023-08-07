@@ -1,0 +1,63 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GoldenMushroom is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   goldmushroom_name_rsc = "golden mushroom"
+   goldmushroom_icon_rsc = mushroom.bgf
+   goldmushroom_desc_rsc = \
+      "This mushroom's magical properties are unknown, however it is "
+      "exceedingly rare and might be worth a lot to the right person."
+
+   goldmushroom_name_plural_rsc = "golden mushrooms"
+
+   goldmushroom_use_rsc = "You can't help but wonder if eating such a "
+      "rare specimen was worth it, even if it was absolutely delicious."
+
+classvars:
+
+   vrName = goldmushroom_name_rsc
+   vrIcon = goldmushroom_icon_rsc
+   vrDesc = goldmushroom_desc_rsc
+
+   vrName_plural = goldmushroom_name_plural_rsc
+
+   viValue_average = 750
+   viWeight = 4
+   viBulk = 5
+   viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY | ITEMTYPE_REAGENT
+
+properties:
+
+   viNutrition = 45    % Almost inky-tier vigor-to-fill ratio, but these
+   viFilling = 25      % are better off sold for money
+   piNumber = 1
+   piItem_flags = 227
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      if (IsClass(apply_on, &User))
+      {
+         Send(apply_on, @MsgSendUser, #message_rsc=goldmushroom_use_rsc);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

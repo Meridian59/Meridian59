@@ -40,6 +40,10 @@ classvars:
    vrName = cow_name_rsc
    vrIcon = cow_icon_rsc
    vrDesc = cow_desc_rsc
+   vrDead_icon = cow_dead_icon_rsc
+   vrDead_name = cow_dead_name_rsc
+
+   viTreasure_type = TID_COW
 
    viMove_delay_min = 2000
    viMove_delay_max = 10000

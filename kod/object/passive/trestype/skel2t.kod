@@ -28,13 +28,17 @@ messages:
    
    Constructed()
    {
-      plTreasure = [ [ &MetalShield, 50 ],
-                     [ &Knightshield, 15 ],
+      plTreasure = [ [ &Snack, 20 ],
+	                 [ &StinkyCap, 15 ],
+	                 [ &Mushroom, 15 ],
                      [ &Money, 15 ],
-                     [ &Scimitar, 10 ],
+                     [ &BoneDust, 10 ],
+	                 [ &Emerald, 7 ],
+	                 [ &Sapphire, 7 ],
                      [ &NeruditeArrow, 5 ],
                      [ &InkyCap, 4 ],
-                     [ &DiscordScroll, 1 ]
+                     [ &DiscordScroll, 1 ],
+                     [ &SimpleHelm, 1 ]
                    ];
 
       propagate;

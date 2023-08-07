@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-RatTreasure is TreasureType
+CowTreasure is TreasureType
 
 constants:
    
@@ -19,22 +19,18 @@ classvars:
 
 properties:
    
-   piTreasure_num = TID_RAT
+   piTreasure_num = TID_COW
 
-messages:
+messages:  
    
    constructed()
    {
-      plTreasure = [ [ &Herbs, 25 ],
-                     [ &Mushroom, 20],
-                     [ &Elderberry, 15 ],
-                     [ &Snack, 15],
-                     [ &Money, 10],
-                     [ &BlueMushroom, 5],
-                     [ &RedMushroom, 5],
-                     [ &Cheese, 5 ] ];
+      plTreasure = [ [ &MeatPie, 50 ],
+                     [ &Milk, 35],
+                     [ &Cheese, 15 ]
+                   ];
 
-      propagate;
+		propagate;
    }
 
 end

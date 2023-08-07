@@ -1,0 +1,394 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CustomWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ancientsword_name_rsc = "ancient sword"
+   ancientsword_desc_low_rsc = \
+      "This sword was forged long ago by an unknown maker.  "
+      "Its blade is pitted, coated in rust, and dulled from many ages of "
+      "unrelenting combat.  It's unclear how much longer this weapon could possibly "
+      "last."
+   ancientsword_desc_med_rsc = \
+      "This sword was forged long ago by an unknown maker.  "
+      "Its blade is dented and scratched in several places, making it clear this "
+      "sword has seen many battles.  In its prime, this was likely a decent weapon."
+   ancientsword_desc_high_rsc = \
+      "This sword was forged long ago by an unknown maker.  "
+      "For its age, it's in remarkable shape with no noticeable flaws and it "
+      "balances perfectly in your hand.  Still polished to a shine after so long, "
+      "the blade is very sturdy and quite sharp."
+
+   icesword_name_rsc = "sword of pure ice"
+   icesword_desc_rsc = \
+      "Crafted entirely from solid ice, this brittle, crudely-fashioned sword is "
+      "lightweight, incredibly sharp, and of course cold to the touch.  Glistening "
+      "beads of water trickle down the length of the blade as it slowly starts "
+      "to melt."
+   icesword_melt_rsc = \
+      "The %s melts away, leaving nothing but a puddle of water behind."
+
+   customweapon_long_icon_rsc = sword.bgf
+   customweapon_long_window_overlay_rsc = povsword.bgf
+   customweapon_long_player_overlay = swordov.bgf
+
+   customweapon_short_icon_rsc  = shswd.bgf
+   customweapon_short_window_overlay_rsc = povshswd.bgf
+   customweapon_short_player_overlay = shswdov.bgf
+
+classvars:
+
+   % These are variable-quality thrusting weapons
+   viWeaponType = WEAPON_TYPE_THRUST
+
+   viGround_group = 1
+   viInventory_group = 3
+   viBroken_group = 2
+
+   viQualityHitsLowMin = 100
+   viQualityHitsLowMax = 150
+   viQualityHitsMedMin = 300
+   viQualityHitsMedMax = 350
+   viQualityHitsHighMin = 600
+   viQualityHitsHighMax = 650
+
+   viQualityValueLow = 75
+   viQualityValueMed = 600
+   viQualityValueHigh = 2500
+
+   viXlatHigh = 48    % Shiny platinum blade
+   viXlatMed = 43     % Dull gray blade
+   viXlatLow = 28     % Rusty/coppery blade
+   viXlatIce = 82     % Slight bluish hue
+
+properties:
+
+   % Many class-level properties need to be object-level for 
+   % this weapon so they can be modified upon randomization or
+   % edited by a DM
+
+   % A medium-quality fencing sword is the default item created
+   vrName = ancientsword_name_rsc
+   vrDesc = ancientsword_desc_med_rsc
+   vrIcon = customweapon_long_icon_rsc
+
+   vrWeapon_window_overlay = customweapon_long_window_overlay_rsc
+   vrWeapon_overlay = customweapon_long_player_overlay
+
+   viProficiency_Needed = SKID_PROFICIENCY_SWORD
+
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   viValue_average = 600
+
+   viWeight = 80
+   viBulk = 60
+
+   % We need to be able to adjust these on randomization so that 
+   % the "has been mended before" text is displayed accurately
+   viHits_init_min = 300
+   viHits_init_max = 350
+
+   % Generally these will be just like any other weapon, although
+   % some exceptions may exist, such as ice swords not being mendable
+   % or enchantable
+   pbCanMend = TRUE
+   pbCanEnchant = TRUE
+   pbCanWeaken = TRUE
+   pbCanShatter = TRUE
+   pbCanSwap = TRUE
+
+   piAttack_type = ATCK_WEAP_NONMAGIC + ATCK_WEAP_SLASH
+   piItem_flags = 43
+
+   % For the ice person weapon variant, it melts over time
+   piDecayRate = 1     % This only matters if ptDecayTimer is active
+   ptDecayTimer = $
+
+messages:
+
+   SetAsLongsword()
+   {
+      % Sets this to be a long sword/fencing type weapon
+      viProficiency_Needed = SKID_PROFICIENCY_SWORD;
+      vrIcon = customweapon_long_icon_rsc;
+      vrWeapon_window_overlay = customweapon_long_window_overlay_rsc;
+      vrWeapon_overlay = customweapon_long_player_overlay;
+      viBulk = 60;
+
+      return;
+   }
+
+   SetAsShortsword()
+   {
+      % Sets this to be a short sword type weapon
+      viProficiency_Needed = SKID_PROFICIENCY_SHORT_SWORD;
+      vrIcon = customweapon_short_icon_rsc;
+      vrWeapon_window_overlay = customweapon_short_window_overlay_rsc;
+      vrWeapon_overlay = customweapon_short_player_overlay;
+      viBulk = 50;
+
+      return;
+   }
+
+   MakeRandomAncientSword()
+   {
+      local iRandomQuality;
+
+      iRandomQuality = Random(0, 1000);
+
+      % Extremely rare (1:1000)
+      if iRandomQuality = 59
+      {
+         Send(self, @MakePristineSword);
+      }
+      else
+      {
+         % Uncommon (35%)
+         if (iRandomQuality < 350)
+         {
+            Send(self, @MakeDentedSword);
+         }
+         % Common (65%)
+         else
+         {
+            Send(self, @MakeRustySword);
+         }
+      }
+
+      % Is it a short sword or a long sword?
+      if (Random(0, 100) < 50)
+      {
+         Send(self, @SetAsShortsword);
+      }
+      else
+      {
+         Send(self, @SetAsLongsword);
+      }
+
+      return iRandomQuality;
+   }
+
+   MakeRustySword()
+   {
+      % These are on par with short swords in terms of damage stats,
+      % but are lousy weapons overall
+
+      vrName = ancientsword_name_rsc;
+      vrDesc = ancientsword_desc_low_rsc;
+      viWeaponQuality = WEAPON_QUALITY_LOW;
+      viValue_average = viQualityValueLow;
+      viHits_init_min = viQualityHitsLowMin;
+      viHits_init_max = viQualityHitsLowMax;
+      viWeight = 90;               % Heavier, terrible weapon overall.
+      piItem_flags = viXlatLow;
+      piAttack_type = ATCK_WEAP_NONMAGIC + ATCK_WEAP_SLASH;
+      piAttack_spell = 0;
+
+      % These are in god-awful condition.
+      piHits_init = Random(viHits_init_min, viHits_init_max);
+      piHits = Bound(piHits_init * Random(20, 45) / 100, 1, $);
+
+      pbCanMend = TRUE;
+      pbCanEnchant = TRUE;
+      pbCanWeaken = TRUE;
+      pbCanShatter = TRUE;
+      pbCanSwap = TRUE;
+      Send(self, @ClearDecayTimer);
+
+      return;
+   }
+
+   MakeDentedSword()
+   {
+      % These are on par with long swords in terms of damage stats,
+      % and are average in every way.
+
+      vrName = ancientsword_name_rsc;
+      vrDesc = ancientsword_desc_med_rsc;
+      viWeaponQuality = WEAPON_QUALITY_NORMAL;
+      viValue_average = viQualityValueMed;
+      viHits_init_min = viQualityHitsMedMin;
+      viHits_init_max = viQualityHitsMedMax;
+      viWeight = 80;
+      piItem_flags = viXlatMed;
+      piAttack_type = ATCK_WEAP_NONMAGIC + ATCK_WEAP_SLASH;
+      piAttack_spell = 0;
+
+      % These can be in various states of wear.
+      piHits_init = Random(viHits_init_min, viHits_init_max);
+      piHits = Bound(piHits_init * Random(25, 85) / 100, 1, $);
+
+      pbCanMend = TRUE;
+      pbCanEnchant = TRUE;
+      pbCanWeaken = TRUE;
+      pbCanShatter = TRUE;
+      pbCanSwap = TRUE;
+      Send(self, @ClearDecayTimer);
+
+      return;
+   }
+
+   MakePristineSword()
+   {
+      % These are meant to be extremely rare, and are statwise on par
+      % with mystic swords, although they are nonmagical and enchantable.
+
+      vrName = ancientsword_name_rsc;
+      vrDesc = ancientsword_desc_high_rsc;
+      viWeaponQuality = WEAPON_QUALITY_HIGH;
+      viValue_average = viQualityValueHigh;
+      viHits_init_min = viQualityHitsHighMin;
+      viHits_init_max = viQualityHitsHighMax;
+      viWeight = 60;               % A bit lighter due to higher-quality materials.
+      piItem_flags = viXlatHigh;
+      piAttack_type = ATCK_WEAP_NONMAGIC + ATCK_WEAP_SLASH;
+      piAttack_spell = 0;
+
+      % The very rare variant is in near-perfect condition
+      piHits_init = Random(viHits_init_min, viHits_init_max);
+      piHits = Bound(piHits_init * Random(90, 95) / 100, 1, $);
+
+      pbCanMend = TRUE;
+      pbCanEnchant = TRUE;
+      pbCanWeaken = TRUE;
+      pbCanShatter = TRUE;
+      pbCanSwap = TRUE;
+      Send(self, @ClearDecayTimer);
+
+      return;
+   }
+
+   MakeIceSword()
+   {
+      vrName = icesword_name_rsc;
+      vrDesc = icesword_desc_rsc;
+      viWeaponQuality = WEAPON_QUALITY_NORMAL;
+      viValue_average = viQualityValueLow;   % Melting, so not worth much
+      viHits_init_min = viQualityHitsMedMin;
+      viHits_init_max = viQualityHitsMedMax;
+      viWeight = 10;                        % Ice is a lot lighter than steel
+      piItem_flags = viXlatIce;
+      piAttack_type = ATCK_WEAP_MAGIC + ATCK_WEAP_SLASH;
+      piAttack_spell = ATCK_SPELL_COLD;      % I mean, it's made out of ice...
+      piDecayRate = Random(1, 10);          % Some will melt faster than others
+      Send(self, @StartDecayTimer);
+
+      % Is it a short sword or a long sword?
+      if (Random(0, 100) < 50)
+      {
+         Send(self, @SetAsShortsword);
+      }
+      else
+      {
+         Send(self, @SetAsLongsword);
+      }
+
+      pbCanMend = FALSE;      % It decays over time like a torch, so no mend cheese!
+      pbCanEnchant = FALSE;   % Already quasi-enchanted with ice-type damage
+      pbCanWeaken = TRUE;
+      pbCanShatter = TRUE;
+      pbCanSwap = TRUE;
+
+      return;
+   }
+
+   CanMend()
+   {
+      return pbCanMend;
+   }
+
+   CanEnchant()
+   {
+      return pbCanEnchant;
+   }
+
+   CanWeaken()
+   {
+      return pbCanWeaken;
+   }
+
+   CanShatter()
+   {
+      return pbCanShatter;
+   }
+
+   CanSwap()
+   {
+      return pbCanSwap;
+   }
+
+   StartDecayTimer()
+   {
+      if ptDecayTimer <> $
+      {
+         DeleteTimer(ptDecayTimer);
+      }
+      ptDecayTimer = CreateTimer(self, @MeltWeapon, 60000);
+
+      return;
+   }
+
+   ClearDecayTimer()
+   {
+      if ptDecayTimer <> $
+      {
+         DeleteTimer(ptDecayTimer);
+         ptDecayTimer = $;
+      }
+
+      return;
+   }
+
+   MeltWeapon()
+   {
+      % Weapon loses durability every minute once the decay
+      % timer is started, lasting until it breaks or the timer
+      % is turned off
+      piHits = piHits - piDecayRate;
+
+      if (piHits <= 0)
+      {
+         if IsClass(poOwner, &User)
+         {
+            Send(poOwner, @MsgSendUser, #message_rsc=icesword_melt_rsc, #parm1=vrName);
+         }
+         ptDecayTimer = $;
+         Send(self, @Delete);
+      }
+      else
+      {
+         % This is here just in case a DM sets piDecayRate to a negative value.
+         % Doing so will cause the weapon to repair over time instead of decaying,
+         % so don't allow it to exceed its max hits value
+         if (piHits > piHits_init)
+         {
+            piHits = piHits_init;
+         }
+         ptDecayTimer = CreateTimer(self, @MeltWeapon, 60000);
+      }
+
+      return;
+   }
+
+   Delete()
+   {
+      Send(self, @ClearDecayTimer);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

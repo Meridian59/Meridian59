@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AvarFeather is NumberItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AvarFeather_name_rsc = "avar feather"
+   AvarFeather_icon_rsc = avfeathr.bgf
+   AvarFeather_desc_rsc = \
+      "Pristine avar tailfeathers are considered to be a valuable trade "
+      "commodity, for both decorative and magical purposes."
+
+   AvarFeather_name_plural_rsc = "avar feathers"
+
+classvars:
+
+   vrName = AvarFeather_name_rsc
+   vrIcon = AvarFeather_icon_rsc
+   vrDesc = AvarFeather_desc_rsc
+
+   vrName_plural = AvarFeather_name_plural_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viValue_average = 80
+   viWeight = 1
+   viBulk = 3
+
+properties:
+
+   piNumber = 1
+   piItem_flags = 57
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

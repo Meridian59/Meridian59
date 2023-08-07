@@ -13,6 +13,7 @@ Iceperson is Monster
 constants:
 
    include blakston.khd
+   SWORD_DROP_CHANCE = 15
 
 resources:
 
@@ -46,7 +47,7 @@ classvars:
    vrDead_icon = iceperson_dead_icon_rsc
    vrDead_name = iceperson_dead_name_rsc
 
-   viTreasure_type = TID_NONE
+   viTreasure_type = TID_ICE_PERSON
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_THRUST
    viAttack_spell = ATCK_SPELL_COLD
@@ -162,7 +163,33 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
+
+   CreateTreasure(who=$, corpse=$)
+   {
+      local oTreasure, iHits, iDropChance;
+      
+      % Not every ice person needs to drop a weapon every single time,
+      % but we're still doing the drop here instead of via the normal 
+      % treasure table so they never drop more than one.
+      if Random(0, 100) < SWORD_DROP_CHANCE
+      {
+         oTreasure = Create(&CustomWeapon, #corpse=corpse);
+         Send(oTreasure, @MakeIceSword);              
+         if Send(poOwner, @ReqNewHold, #what=oTreasure, #new_row=piRow, #new_col=piCol)
+            AND Send(poOwner, @ReqSomethingMoved, #what=oTreasure,
+            #new_row=piRow, #new_col=piCol)
+         {
+           Send(poOwner, @NewHold, #what=oTreasure, #new_row=piRow, #new_col=piCol);
+         }
+         else
+         {
+            Send(oTreasure, @Delete);
+         }
+      }
+
+      propagate;
+   }
 
 end
 

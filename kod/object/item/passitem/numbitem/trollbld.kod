@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TrollBlood is NumberItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TrollBlood_name_rsc = "bottle of troll blood"
+   TrollBlood_icon_rsc = goldbot4.bgf
+   TrollBlood_desc_rsc = \
+   "Thick, reddish-brown troll blood is believed to have powerful "
+   "regenerative properties, making it highly prized by alchemists "
+   "and mystics alike.  Whether or not this has any merit is open to "
+   "debate."
+
+   TrollBlood_name_plural_rsc = "bottles of troll blood"
+
+classvars:
+
+   vrName = TrollBlood_name_rsc
+   vrIcon = TrollBlood_icon_rsc
+   vrDesc = TrollBlood_desc_rsc
+
+   vrName_plural = TrollBlood_name_plural_rsc
+
+   viValue_average = 70
+   viWeight = 3
+   viBulk = 5
+
+properties:
+
+   piNumber = 3
+   piItem_flags = 77
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

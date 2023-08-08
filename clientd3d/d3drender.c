@@ -3361,8 +3361,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		}
 
 		// Set object depth based on "depth" sector flags
-		depth = sector_depths[SectorDepth(sector_flags)];
-      bool bUsingAlternateDepth = false; // Is kod overriding our depth?
+		bool bUsingAlternateDepth = false; // Is kod overriding our depth?
+		float depth = sector_depths[SectorDepth(sector_flags)];
 
 		if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 		{

@@ -35,7 +35,7 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
    int byte4;
    string_node *snod;
    resource_node *r;
-   val_type temp_val;
+   v0_val_type temp_val;
 
    if (obj_size.v.tag != TAG_INT)
    {
@@ -83,7 +83,8 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
 			AddIntToPacket(byte4);
 			break;
       case NUMBER_OBJECT :
-			temp_val.int_val = obj_data.int_val;
+			// Send as a 32 bit value with the "number object" tag in the high bits
+			temp_val.v.data = (int) obj_data.v.data;
 			temp_val.v.tag = CLIENT_TAG_NUMBER;
 			byte4 = temp_val.int_val;
 			AddIntToPacket(byte4);
@@ -127,14 +128,12 @@ void AddIntToPacket(int byte4)
    blist = AddToBufferList(blist,&byte4,4);
 }
 
-void AddStringToPacket(int int_len,const char *ptr)
+void AddStringToPacket(size_t int_len,const char *ptr)
 {
-   unsigned short len;
-
-   len = int_len;
+  auto len = (unsigned short) int_len;
 
    blist = AddToBufferList(blist,&len,2);
-   blist = AddToBufferList(blist,(void *) ptr,int_len);
+   blist = AddToBufferList(blist,(void *) ptr, (int) int_len);
 }
 
 void SecurePacketBufferList(int session_id, buffer_node *bl)

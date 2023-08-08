@@ -25,7 +25,7 @@ static ChildPlacement newssend_controls[] = {
 { 0,              0 },   // Must end this way
 };
 
-BOOL CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 /*****************************************************************************/
 /*
@@ -53,7 +53,7 @@ Bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title)
    return False;
 }
 /****************************************************************************/
-BOOL CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hEdit, hSubject;
    static PostNewsDialogStruct *info;
@@ -165,7 +165,7 @@ void MakeReplySubject(char *subject, int max_chars)
    int re_len;
 
    re_string = GetString(hInst, IDS_RE);
-   re_len = strlen(re_string);
+   re_len = (int) strlen(re_string);
 
    /* Skip stupid case */
    if (re_len >= max_chars)

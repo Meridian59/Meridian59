@@ -29,7 +29,7 @@ void ClearTimer(void);
 void PauseTimers(void);
 void UnpauseTimers(void);
 int CreateTimer(int object_id,int message_id,int milliseconds);
-Bool LoadTimer(int timer_id,int object_id,char *message_name,int milliseconds);
+Bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds);
 Bool DeleteTimer(int timer_id);
 void TimerActivate();
 INT64 GetMainLoopWaitTime();

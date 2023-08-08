@@ -9,7 +9,7 @@
 !include WinMessages.nsh
 !include UAC.nsh
 
-!define SOURCEDIR "..\run\installclient"
+!define SOURCEDIR "..\run\webclient"
 
 ; First is default
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"

@@ -512,7 +512,13 @@ messages:
 
       return;
    }
-   
+
+   %%% Disposability
+
+   DestroyDisposable()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

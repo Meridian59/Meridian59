@@ -96,7 +96,6 @@ static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, cons
 static void GetPageText(char *buffer, DescDialogStruct *info)
 {
 	int page, len;
-	int lenDescription;
 	char *pFullText;
 	char *pStart;
 	char *pEnd;
@@ -109,7 +108,7 @@ static void GetPageText(char *buffer, DescDialogStruct *info)
 	if (!info || !info->description)
 		return;
 	
-	lenDescription = strlen(info->description);
+	size_t lenDescription = strlen(info->description);
 	pFullText = info->description;
 	pStart = info->description;
 	pEnd = strchr(pStart,PAGE_BREAK_CHAR);
@@ -194,7 +193,7 @@ static void SetLookPageButtons(HWND hDlg, DescDialogStruct *info)
 * DescDialogProc:  Dialog procedure for dialog containing an
 *   item's long description.
 */
-BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	DescDialogStruct *info;
 	static HWND hwndBitmap;
@@ -209,14 +208,14 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	char descriptionBuffer[MAX_PAGE_DESCRIPTION_TEXT+1];
 	int height;
 	
-	info = (DescDialogStruct *) GetWindowLong(hDlg, DWL_USER);
+	info = (DescDialogStruct *) GetWindowLongPtr(hDlg, DWLP_USER);
 	
 	switch (message)
 	{
 	case WM_INITDIALOG:
 		info = (DescDialogStruct *) lParam;
 		/* Store structure in dialog box's extra bytes */
-		SetWindowLong(hDlg, DWL_USER, (long) info);
+		SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) info);
 		
 		hwndBitmap = GetDlgItem(hDlg, IDC_DESCBITMAP);
 		hFixed = GetDlgItem(hDlg, IDC_DESCFIXED);
@@ -340,23 +339,6 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			DestroyWindow(GetDlgItem(hDlg, IDC_APPLY));
 		
 		SetLookPageButtons(hDlg, info);
-#if 0
-		if (info->numPages < 2)
-		{
-			HWND hwnd = GetDlgItem(hDlg,IDC_NEXT);
-			if (hwnd)
-				DestroyWindow(GetDlgItem(hDlg, IDC_NEXT));
-			hwnd = GetDlgItem(hDlg,IDC_PREV);
-			if (hwnd)
-				DestroyWindow(GetDlgItem(hDlg, IDC_PREV));
-		}
-		else 
-		{
-			HWND hwnd = GetDlgItem(hDlg,IDC_PREV);
-			if (hwnd)
-				EnableWindow(hwnd,FALSE);
-		}
-#endif
 		SetFocus(hwndOK);
 		hDescDialog = hDlg;
 		changed = False;
@@ -401,10 +383,10 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 		   SetBkMode(lpdis->hDC, TRANSPARENT);
 		   str = LookupNameRsc(info->obj->name_res);
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
-		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
 		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
-		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;
        }
@@ -419,10 +401,6 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			   GetPageText(descriptionBuffer,info);
 			   SetLookPageButtons(hDlg, info);
 			   Edit_SetText(GetDlgItem(hDlg, IDC_DESCBOX), descriptionBuffer);
-#if 0
-			   EnableWindow(GetDlgItem(hDlg,IDC_PREV),info->currentPage > 0);
-			   EnableWindow(GetDlgItem(hDlg,IDC_NEXT),info->currentPage < info->numPages-1);
-#endif
 			   return TRUE;
 			   
 		   case IDC_NEXT:
@@ -431,10 +409,6 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			   GetPageText(descriptionBuffer,info);
 			   Edit_SetText(GetDlgItem(hDlg, IDC_DESCBOX), descriptionBuffer);
 			   SetLookPageButtons(hDlg, info);
-#if 0
-			   EnableWindow(GetDlgItem(hDlg,IDC_PREV),info->currentPage > 0);
-			   EnableWindow(GetDlgItem(hDlg,IDC_NEXT),info->currentPage < info->numPages-1);
-#endif
 			   return TRUE;
 			   
 		   case IDC_GET:
@@ -538,7 +512,7 @@ void AnimateDescription(int dt)
 	if (hDescDialog == NULL)
 		return;
 	
-	info = (DescDialogStruct *) GetWindowLong(hDescDialog, DWL_USER);
+	info = (DescDialogStruct *) GetWindowLongPtr(hDescDialog, DWLP_USER);
 	obj = info->obj;
 	
 	old_group = obj->animate->group;
@@ -550,7 +524,7 @@ void AnimateDescription(int dt)
 /*
 * AmountDialogProc:  Dialog procedure for dialog asking user for a number.
 */
-BOOL CALLBACK AmountDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static AmountDialogStruct *info;
 	static HWND hEdit;

@@ -14,14 +14,14 @@
 #define ERROR_LENGTH 1024 /* Max length of an error string */
 
 typedef struct {
-   char *text;
+   const char *text;
    char *title;
    UINT style;
 } MsgBoxStruct;
 
 static Bool error_dialog_up = False;
 
-static BOOL CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /************************************************************************/
 /*
  * ClientError: Print an error in a message box.  fmt_id should be the string
@@ -128,7 +128,7 @@ Bool _cdecl AreYouSure(HINSTANCE hModule, HWND hParent, int defbutton, int fmt_i
  *   - All default button styles (DEFBUTTON1, etc.)
  *   The box is application modal.
  */
-int ClientMessageBox(HWND hwndParent, char *text, char *title, UINT style)
+int ClientMessageBox(HWND hwndParent, const char *text, char *title, UINT style)
 {
    MsgBoxStruct s;
    static Bool box_up = False;
@@ -157,10 +157,10 @@ int ClientMessageBox(HWND hwndParent, char *text, char *title, UINT style)
  *   We have 2 OK buttons and 2 Cancel buttons, to account for the case where one
  *   or the other is the default button.  We hide the buttons we don't need.
  */
-BOOL CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static MsgBoxStruct *s;
-   char *icon = NULL, *temp;
+   const char *icon = NULL, *temp;
    int style, button_style, num_lines, yincrease;
    HICON hIcon;
    HWND hEdit, hText;

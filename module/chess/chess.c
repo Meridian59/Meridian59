@@ -7,8 +7,6 @@
 // Meridian is a registered trademark.
 /*
  * chess.c:  DLL for player vs. player chess.
- *
- * XXX Sounds for pieces moving
  */
 
 #include "client.h"
@@ -73,16 +71,16 @@ static RECT dlg_rect;    // Dialog rectangle; used for resizing
 // Minimum chess dialog size
 static SIZE min_window_size;
 
-static BOOL CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void ChessMinMaxInfo(HWND hwnd, MINMAXINFO *lpmmi);
 static void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify);
-static long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void ChessGotState(unsigned char *state);
 static void ChessDlgShowMessage(char *message);
 static void ChessDlgShowGameStatus(void);
 static void ChessDlgShowMover(void);
-static BOOL CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool AbortChessDialogs(void);
 static void ChessGotPlayerName(BYTE player_num, char *name);
 static void ChessSendMove(void);
@@ -275,7 +273,7 @@ Bool WINAPI EventResetData(void)
    return True;
 }
 /********************************************************************/
-BOOL CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hwnd;
    RECT rect;
@@ -375,29 +373,25 @@ void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
 /*
  * ChessBoardProc:  Subclassed window procedure for board area.
  */
-long CALLBACK ChessBoardProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-   HDC hdc;
-   
    UserDidSomething();
    switch (message)
    {
    case WM_KEYDOWN:
-      return 0;
-      
+     return 0;
+     
    case WM_ERASEBKGND:
-      return 1;
-
+     return 1;
+     
    case WM_PAINT:
-      if (exiting)
-	 break;
+     if (exiting)
+       break;
 
-      hdc = GetDC(hwnd);
-      BoardDraw(hdc, &b);
-      ReleaseDC(hwnd, hdc);
-      break;
-
-      HANDLE_MSG(hwnd, WM_LBUTTONDOWN, BoardLButtonDown);
+     ChessRedrawBoard();
+     break;
+     
+     HANDLE_MSG(hwnd, WM_LBUTTONDOWN, BoardLButtonDown);
    }
    return CallWindowProc(lpfnDefBoardProc, hwnd, message, wParam, lParam);
 }
@@ -434,11 +428,17 @@ void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
    if (b.white_resigned || b.black_resigned)
       return;
    
-   row = y / b.square_size;
+   row = BOARD_HEIGHT - y / b.square_size - 1;  // Row 0 at the bottom
    col = x / b.square_size;
 
    if (row >= BOARD_HEIGHT || col >= BOARD_WIDTH)
       return;
+
+   // Rotate board for black
+   if (b.color == BLACK) {
+     row = BOARD_HEIGHT - row - 1;
+     col = BOARD_WIDTH - col - 1;
+   }
 
    // If user does a move, send to server
    if (BoardSquareSelect(&b, row, col))
@@ -528,21 +528,33 @@ void ChessDlgShowMover(void)
 {
    int id1, id2;
 
+   // Flip name display if for white pieces or observers, to match piece locations.
+   bool flip = (b.color != BLACK);
+   
    // Show whose turn it is
+   int turn1 = IDC_WHITELABEL;
+   int turn2 = IDC_BLACKLABEL;
+   if (flip)
+     std::swap(turn1, turn2);
+   
    if (b.move_color == WHITE)
    {
-      SetDlgItemText(hChessDlg, IDC_WHITELABEL, GetString(hInst, IDS_WHITEMOVE));
-      SetDlgItemText(hChessDlg, IDC_BLACKLABEL, GetString(hInst, IDS_BLACK));
+      SetDlgItemText(hChessDlg, turn1, GetString(hInst, IDS_WHITEMOVE));
+      SetDlgItemText(hChessDlg, turn2, GetString(hInst, IDS_BLACK));
       id1 = IDC_WHITENAME;
       id2 = IDC_BLACKNAME;
    }
    else
    {
-      SetDlgItemText(hChessDlg, IDC_WHITELABEL, GetString(hInst, IDS_WHITE));
-      SetDlgItemText(hChessDlg, IDC_BLACKLABEL, GetString(hInst, IDS_BLACKMOVE));
+      SetDlgItemText(hChessDlg, turn1, GetString(hInst, IDS_WHITE));
+      SetDlgItemText(hChessDlg, turn2, GetString(hInst, IDS_BLACKMOVE));
       id1 = IDC_BLACKNAME;
       id2 = IDC_WHITENAME;
    }
+
+   if (flip)
+     std::swap(id1, id2);
+   
    SetWindowFont(GetDlgItem(hChessDlg, id1), GetFont(FONT_TITLES), TRUE);
    SetWindowFont(GetDlgItem(hChessDlg, id2), GetFont(FONT_STATS), TRUE);
 }
@@ -567,7 +579,7 @@ BYTE ChessGetPromotionPiece(void)
    return DialogBox(hInst, MAKEINTRESOURCE(IDD_PROMOTION), hChessDlg, ChessPromotionDialogProc);
 }
 /********************************************************************/
-BOOL CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    UserDidSomething();
    switch (message)
@@ -611,14 +623,17 @@ void ChessGotPlayerName(BYTE player_num, char *name)
    
    if (hChessDlg == NULL)
       return;
-   
+
+   // Flip name display if for white pieces or observers, to match piece locations.
+   bool flip = (b.color != BLACK);
+
    switch(player_num)
    {
    case 1:
-      id = IDC_WHITENAME;
+      id = flip ? IDC_BLACKNAME : IDC_WHITENAME;
       break;
    case 2:
-      id = IDC_BLACKNAME;
+      id = flip ? IDC_WHITENAME : IDC_BLACKNAME;
       break;
    default:
       // debug(("ChessGotPlayerName got unexpected player number %d\n", player_num));

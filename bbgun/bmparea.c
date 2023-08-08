@@ -188,7 +188,7 @@ void DoDraw(HDC hDC1, HWND hWnd)
 /************************************************************************/
 
 /* subclassed window procedure for main bitmap area */
-long CALLBACK MainButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

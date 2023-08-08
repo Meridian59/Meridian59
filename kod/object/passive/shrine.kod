@@ -223,6 +223,12 @@ messages:
       return piAllegiance;
    }
 
+   SetAllegiance(allegiance=0)
+   {
+      piAllegiance = allegiance;
+      return;
+   }
+
    GetPower()
    {
       return piShrine_power;

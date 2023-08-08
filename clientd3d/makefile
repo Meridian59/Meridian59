@@ -15,7 +15,17 @@ LIBS =  \
 	 winmm.lib libarchive.lib rscload.lib wininet.lib \
 	 ole32.lib waveplay.lib \
 	 d3d9.lib libpng.lib zlib.lib
-# mss32.lib mss32midi.lib
+
+# Setting RETAIL=1 turns on the Miles Sound System, which we can't
+# put in the open source version
+!ifdef RETAIL
+
+CFLAGS = $(CFLAGS) -DM59_RETAIL
+LIBS = $(LIBS) \
+       mss32.lib mss32midi.lib
+
+!endif
+
 
 DEFFILE  = $(SOURCEDIR)\client.def
 
@@ -43,7 +53,6 @@ OBJS = \
         $(OUTDIR)\statconn.obj \
         $(OUTDIR)\memmap.obj \
         $(OUTDIR)\mapfile.obj \
-        $(OUTDIR)\fastasm.obj \
         $(OUTDIR)\boverlay.obj \
         $(OUTDIR)\web.obj \
         $(OUTDIR)\about.obj \
@@ -59,7 +68,7 @@ OBJS = \
         $(OUTDIR)\cursor.obj \
         $(OUTDIR)\client3d.obj \
         $(OUTDIR)\md5.obj \
-	     $(OUTDIR)\crc.obj \
+        $(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
         $(OUTDIR)\guest.obj \
@@ -119,7 +128,8 @@ OBJS = \
         $(OUTDIR)\d3dparticle.obj \
         $(OUTDIR)\d3drender.obj \
         $(OUTDIR)\matrix.obj \
-        $(OUTDIR)\xform.obj
+        $(OUTDIR)\xform.obj \
+        $(OUTDIR)\signup.obj\
 
 
 $(OUTDIR)\trig.c $(OUTDIR)\trig.h: $(OUTDIR)\maketrig.exe
@@ -151,9 +161,7 @@ $(OUTDIR)\makepal.exe: $(OUTDIR)\makepal.obj
 
 profile: $(OBJS) client.res $(BLAKNTLIBS) 
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe $(LINKWINDOWSFLAGS)
+$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:$(OUTDIR)\meridian.exe $(LINKWINDOWSFLAGS)
 <<
-#       prep /lc /excall /inc draw3d.obj meridian.exe   
-	prep /ft /excall /inc drawbsp.obj meridian.exe
 
 !include $(TOPDIR)\rules.mak

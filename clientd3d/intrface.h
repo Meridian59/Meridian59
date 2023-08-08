@@ -12,7 +12,10 @@
 #ifndef _INTRFACE_H
 #define _INTRFACE_H
 
-#define TEXT_AREA_MIN_HEIGHT 96
+// Default text area height as a percentage of the height of the client.
+#define TEXT_AREA_HEIGHT 20
+#define TEXT_AREA_HEIGHT_MIN 0.15
+#define TEXT_AREA_HEIGHT_MAX 0.75
 
 /* Grid view area */
 #define GRID_TOP_BORDER  5
@@ -40,13 +43,10 @@
 #define GRAPHICS_TOP_HEIGHT 24
 
 /* Inventory area */
-//#define INVENTORY_MIN_WIDTH (170 + LEFT_BORDER)
-#define INVENTORY_MIN_WIDTH (185 + LEFT_BORDER + 67)
-#define INVENTORY_MAX_WIDTH (250 + LEFT_BORDER)
+#define INVENTORY_MIN_WIDTH (215 + LEFT_BORDER + 67)
 
-//	MiniMap area.
-#define MINIMAP_MAX_WIDTH	( INVENTORY_MAX_WIDTH + 3 ) & ~3
-#define MINIMAP_MAX_HEIGHT	MINIMAP_MAX_WIDTH
+/* MiniMap area */
+#define MINIMAP_MAX_AREA 9000
 
 //	How much of the minimap/stats box area goes to the minimap.
 #define PROPORTION_MINIMAP		.4
@@ -93,15 +93,11 @@ enum { A_NOACTION = 0,
 
 
 #define IsMoveAction(action)   ((( (action) >= A_FORWARD &&          \
-				  (action) <= A_SLIDERIGHTBACKWARDFAST))  \
-				|| ((action) == A_MOUSEMOVE))
-#define IsTurnAction(action)   ((( (action) >= A_TURNLEFT && (action) <= A_TURNFASTRIGHT)) \
-				|| ((action) == A_MOUSEMOVE))
+                                   (action) <= A_SLIDERIGHTBACKWARDFAST)))
+#define IsTurnAction(action)   ((( (action) >= A_TURNLEFT && (action) <= A_TURNFASTRIGHT)))
 #define IsMoveFastAction(action)   ((( (action) >= A_FORWARDFAST &&          \
-				  (action) <= A_SLIDERIGHTBACKWARDFAST))  \
-				|| ((action) == A_MOUSEMOVE))
-#define IsTurnFastAction(action)   ((( (action) >= A_FORWARDTURNFASTLEFT && (action) <= A_TURNFASTRIGHT)) \
-				|| ((action) == A_MOUSEMOVE))
+                                       (action) <= A_SLIDERIGHTBACKWARDFAST)))
+#define IsTurnFastAction(action)   ((( (action) >= A_FORWARDTURNFASTLEFT && (action) <= A_TURNFASTRIGHT)))
 #define IsCursorAction(action) ( (action) >= A_CURSORLEFT && (action) <= A_CURSORDOWNLEFT)
 #define IsAttackAction(action) ( (action) == A_ATTACK || (action) == A_ATTACKCLOSEST)
 #define IsViewAction(action)   ( (action) == A_LOOKUP || (action) == A_LOOKDOWN)

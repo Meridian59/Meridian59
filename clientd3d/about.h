@@ -17,7 +17,7 @@
 #define ABOUT_RSC2 19997    // Hard-coded rsc for About box graphic #2
 #define ABOUT_RSC3 19996    // Hard-coded rsc for About box graphic #3
 
-BOOL CALLBACK AboutDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK AboutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortAboutDialog(void);
 
 #endif /* #ifndef _ABOUT_H */

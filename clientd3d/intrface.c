@@ -126,17 +126,13 @@ void InterfaceResize(int xsize, int ysize)
 }
 /************************************************************************/
 /* 
- * InterfaceGetMaxSize:  Fill s with maximum allowed main window size.
+ * InterfaceGetMaxSize:  Fill s with primary display monitor max size.
  */
 void InterfaceGetMaxSize(SIZE *s)
 {
-   int factor = config.large_area ? 2 : 1;
-
-   s->cx = MAXX * factor + INVENTORY_MAX_WIDTH + LEFT_BORDER * 3 
-      + 2 * GetSystemMetrics(SM_CXFRAME);
-   s->cy = GetSystemMetrics(SM_CYSCREEN) + 2 * GetSystemMetrics(SM_CYFRAME);
+   s->cx = GetSystemMetrics(SM_CXMAXIMIZED);
+   s->cy = GetSystemMetrics(SM_CYMAXIMIZED);
 }
-
 
 /************************************************************************/
 /* 
@@ -300,10 +296,10 @@ void PerformAction(int action, void *action_data)
    switch (action)
    {
    case A_TABFWD:
-      MainTab((int) action_data, True);
+      MainTab(reinterpret_cast<std::intptr_t>(action_data), True);
       break;
    case A_TABBACK:
-      MainTab((int) action_data, False);
+      MainTab(reinterpret_cast<std::intptr_t>(action_data), False);
       break;
 
 /*   case A_FORWARD:
@@ -467,7 +463,7 @@ void PerformAction(int action, void *action_data)
 			while (ShowCursor(FALSE) >= 0)
 				ShowCursor(FALSE);
 	   }
-      UserSelect((ID) action_data);
+      UserSelect(reinterpret_cast<std::intptr_t>(action_data));
       break;
 
    case A_BUY:
@@ -483,11 +479,7 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_USERACTION:
-      RequestAction((int) action_data);
-      break;
-
-   case A_MOUSEMOVE:
-      UserMouseMove();
+      RequestAction(reinterpret_cast<std::intptr_t>(action_data));
       break;
 
    case A_MAP:
@@ -576,7 +568,6 @@ void PerformAction(int action, void *action_data)
 		UserMouselookToggle();
 		break;
 
-#if 1
    case A_DEPOSIT:
       UserDeposit();
       break;
@@ -584,7 +575,6 @@ void PerformAction(int action, void *action_data)
    case A_WITHDRAW:
       UserWithdraw();
       break;
-#endif
    }
 }
 

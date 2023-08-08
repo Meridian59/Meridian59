@@ -14,14 +14,11 @@
 
 void AnimationTimerAbort(void);
 void AnimationTimerStart(void);
-void AnimationSleep(void);
 M59EXPORT Bool AnimateObject(object_node *obj, int dt);
 void AnimationTimerProc(HWND hwnd, UINT timer);
 void AnimateStop(Animate *a);
 Bool AnimateSingle(Animate *a, int num_groups, int dt);
 
 DWORD GetFrameTime(void);
-
-Bool VerifyAnimation(Animate *a);
 
 #endif /* #ifndef _ANIMATE_H */

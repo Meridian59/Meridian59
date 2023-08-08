@@ -100,7 +100,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 	}
 
 	// If animation off, don't interpolate motion
-	if (speed == 0 || !config.animate)
+	if (speed == 0)
 	{
 		r->motion.x = x;
 		r->motion.y = y;
@@ -128,13 +128,13 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
       // (new distance remaining to move) / (old distance remaining to move)
 		dx = r->motion.x - x;
 		dy = r->motion.y - y;
-		new_remaining = GetFloatSqrt((float)(dx * dx + dy * dy)) / (float)FINENESS;
+		new_remaining = sqrtf((float)(dx * dx + dy * dy)) / (float)FINENESS;
 
 		if (new_remaining > 1.0f)
 		{
 			dx = r->motion.dest_x - r->motion.source_x;
 			dy = r->motion.dest_y - r->motion.source_y;
-			old_remaining = GetFloatSqrt((float)(dx * dx + dy * dy)) / (float)FINENESS;
+			old_remaining = sqrtf((float)(dx * dx + dy * dy)) / (float)FINENESS;
 
 			if (old_remaining == 0)
 				old_remaining = 0.00001f;
@@ -166,7 +166,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 		r->motion.increment = 1.0;
 	else 
 	{
-		float distance = GetFloatSqrt((float)(dx * dx + dy * dy)) / (float)FINENESS;
+		float distance = sqrtf((float)(dx * dx + dy * dy)) / (float)FINENESS;
 		// Object motion is given in # of grid squares per 10 seconds
 		r->motion.increment = (((float) r->motion.speed) / 10000.0f) / distance;
 	}
@@ -313,9 +313,9 @@ Bool MoveSingle(Motion *m, int dt)
 		return True;
 	}
 	
-	m->x = FloatToInt(m->source_x + m->progress * (m->dest_x - m->source_x));
-	m->y = FloatToInt(m->source_y + m->progress * (m->dest_y - m->source_y));
-	m->z = FloatToInt(m->source_z + m->progress * (m->dest_z - m->source_z));
+	m->x = (int) (m->source_x + m->progress * (m->dest_x - m->source_x));
+	m->y = (int) (m->source_y + m->progress * (m->dest_y - m->source_y));
+	m->z = (int) (m->source_z + m->progress * (m->dest_z - m->source_z));
 
 	return False;
 }
@@ -332,7 +332,7 @@ void MoveSingleVertically(Motion *m, int dt)
 {
 	int dz = dt * m->v_z / 1000;
 	
-	m->z += FloatToInt((double)dz * gravityAdjust);
+	m->z += (int) ((double)dz * gravityAdjust);
 	if (dz > 0)   // Rising
 	{
 		if (m->z >= m->dest_z)
@@ -353,7 +353,7 @@ void MoveSingleVertically(Motion *m, int dt)
 		else
 		{
 			// Constant acceleration of gravity
-			m->v_z += FloatToInt(gravityAdjust * (double)(GRAVITY_ACCELERATION * dt / 1000));
+			m->v_z += (int) (gravityAdjust * (double)(GRAVITY_ACCELERATION * dt / 1000));
 		}
 	}
 }

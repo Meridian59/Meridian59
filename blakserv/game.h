@@ -20,7 +20,7 @@ typedef struct
    int object_id;
    int game_state;
    int game_sync_index;
-   int game_last_message_time;
+   INT64 game_last_message_time;
 } game_data;
 
 enum

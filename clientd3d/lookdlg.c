@@ -25,7 +25,7 @@ static void LookListFreeContents(HWND hwndListBox);
 static BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam);
 static int  LookVkeyToItem(HWND hwnd, UINT key, HWND hwndListbox, int iCaret);
 static void LookCommand(HWND hDlg, int id, HWND hwndCtl, UINT codeNotify);
-static long CALLBACK LookProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK LookProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /*****************************************************************************/
 /* 
  * LookListSetContents: Set contents & highlight of list box in Look dialog.
@@ -99,7 +99,7 @@ void LookListFreeContents(HWND hwndListBox)
  *    of the dialog is IDOK (i.e. the user hit OK)
  *   lParam of the WM_INITDIALOG message should be a pointer to a LookDialogStruct.
  */
-BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK LookDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int index1,index2;
 
@@ -162,7 +162,7 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    if (info->flags & LD_SORT)
    {
       style = GetWindowLong(info->hwndListBox, GWL_STYLE);
-      SetWindowLong(info->hwndListBox, GWL_STYLE, style | LBS_SORT);
+      SetWindowLongPtr(info->hwndListBox, GWL_STYLE, style | LBS_SORT);
    }
 
    if (!(info->flags & LD_AMOUNTS))
@@ -172,7 +172,7 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    }
    
    // Draw objects in owner-drawn list box
-   SetWindowLong(info->hwndListBox, GWL_USERDATA, OD_DRAWOBJ);
+   SetWindowLongPtr(info->hwndListBox, GWLP_USERDATA, OD_DRAWOBJ);
    
    SetWindowText(hDlg, info->title);  /* Set window's title */
 
@@ -336,9 +336,6 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 break;
 
       case LBN_SELCHANGE:
-#if 0
-	 LookSelChange(hwndCtl);
-#else
 	 index = ListBox_GetCurSel(info->hwndListBox);
 	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, index);
 	 WindowBeginUpdate(info->hwndQuanList);
@@ -364,7 +361,6 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 ListBox_SetSel(info->hwndQuanList,FALSE,index);
 	 WindowEndUpdate(info->hwndQuanList);
 
-#endif
 	 break;
       }
       break;
@@ -514,31 +510,6 @@ Bool GetAmount(HWND hParent, HWND hwnd, object_node *obj, int x, int y)
 
    obj->temp_amount = value;
    return True;
-#if 0
-   RECT r;
-   AmountDialogStruct dlg_info;
-
-   if (!IsNumberObj(obj->id))
-      return True;
-
-   GetWindowRect(hwnd, &r);
-
-   dlg_info.x = r.left + x;
-   dlg_info.y = r.top + y;
-   dlg_info.amount = obj->amount;
-   
-   if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AMOUNT), hParent,
-		      AmountDialogProc, (LPARAM) &dlg_info)
-       == IDCANCEL)
-      return False;  /* Don't select item */
-
-   obj->temp_amount = dlg_info.amount;
-
-   if (dlg_info.amount == 0)
-      return False;
-
-   return True;
-#endif
 }
 /************************************************************************/
 /*
@@ -566,7 +537,7 @@ Bool GetAmountListBox(HWND hList, int index)
 /*
  * LookProc:  Subclassed window procedure for list box.
  */
-long CALLBACK LookProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LPARAM CALLBACK LookProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

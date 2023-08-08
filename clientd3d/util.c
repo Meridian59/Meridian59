@@ -314,8 +314,6 @@ Bool HasExtension(char *filename, char *extension)
  */
 Bool GetWorkingDirectory(char *buf, int buflen)
 {
-   int len;
-
    if (getcwd(buf, buflen) == NULL)
    {
       buf[0] = 0;
@@ -323,7 +321,7 @@ Bool GetWorkingDirectory(char *buf, int buflen)
    }
 
    // Add backslash to end of dir if not already there
-   len = strlen(buf);
+   size_t len = strlen(buf);
    if (buf[len - 1] != '\\')
    {
       buf[len] = '\\';
@@ -721,25 +719,4 @@ void InitMenuPopupHandler(HWND hwnd, HMENU hMenu, UINT item, BOOL fSystemMenu)
       EnableMenuItem(hMenu, SC_MOVE, MF_GRAYED);
       EnableMenuItem(hMenu, SC_SIZE, MF_GRAYED);
    }
-}
-
-/********************************************************************/
-/*
- * GetHBitmapFromResource:  Creates a DIB from resources. Returns handle to new DIB.
- *   Added by ajw.
- *   xxx Not sure if this works or is useful for anything. Ended up not using it.
- */
-HBITMAP GetHBitmapFromResource( HMODULE hModule, int bitmap_id )
-{
-	HBITMAP hbmpReturn;
-	BITMAPINFOHEADER* pbmiHeader = GetBitmapResource( hModule, bitmap_id );
-	HDC hDC = GetDC( hMain );
-	BITMAPINFO* pbmInfo = (BITMAPINFO*)SafeMalloc( sizeof(BITMAPINFO) + NUM_COLORS * sizeof(RGBQUAD) );
-	memcpy( &pbmInfo->bmiHeader, pbmiHeader, sizeof(BITMAPINFOHEADER) );
-	SetBMIColors( pbmInfo );
-	hbmpReturn = CreateDIBitmap( hDC, pbmiHeader, CBM_INIT,
-									((BYTE*)pbmiHeader) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD),
-									pbmInfo, DIB_PAL_COLORS );
-	ReleaseDC( hMain, hDC );
-	return hbmpReturn;
 }

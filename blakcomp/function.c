@@ -38,6 +38,7 @@ function_type Functions[] = {
 {"SetNth",              SETNTH,          AEXPRESSION,   AEXPRESSION,    AEXPRESSION, ANONE},
 {"DelListElem",         DELLISTELEM,     AEXPRESSION,   AEXPRESSION,    ANONE},
 {"FindListElem",         FINDLISTELEM,     AEXPRESSION,   AEXPRESSION,    ANONE},
+{"MoveListElem",       MOVELISTELEM,     AEXPRESSION,   AEXPRESSION, AEXPRESSION, ANONE},
 {"Random",		RANDOM,		 AEXPRESSION,	AEXPRESSION,	ANONE},
 {"AddPacket",           ADDPACKET,       AEXPRESSIONS,  ANONE},
 {"SendPacket",          SENDPACKET,      AEXPRESSION,   ANONE},

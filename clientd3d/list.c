@@ -12,6 +12,7 @@
  */
 
 #include "client.h"
+#include <vector>
 
 /************************************************************************/
 /* List abstraction: use void pointers to point to data field. 
@@ -29,7 +30,7 @@ list_type list_create(void *newdata)
    return l;
 }
 /************************************************************************/
-/* list_add_item: add a node with data field newndata to end of l.  If l is NULL, 
+/* list_add_item: add a node with data field newdata to end of l.  If l is NULL, 
  *              creates a new list and returns it.
  */
 list_type list_add_item(list_type l, void *newdata)
@@ -237,6 +238,25 @@ void *list_find_item(list_type l, void *data, CompareProc compare)
    return NULL;
 }
 /************************************************************************/
+/*
+ * list_get_position: Find and return the position of an item in the given list.
+ *   The compare function is used to determine if two items are equal.
+ *   Returns -1 if item not found.
+ */
+int list_get_position(list_type l, void *data, CompareProc compare)
+{
+   int n = 0;
+
+   while (l != NULL)
+   {
+      if ( (*compare)(data, l->data))
+         return n;
+      l = l->next;
+      n++;
+   }
+   return -1;
+}
+/************************************************************************/
 /* list_length: return length of given list.
  */
 int list_length(list_type l)
@@ -325,6 +345,41 @@ list_type list_move_to_front(list_type l, void *data, CompareProc compare)
       prev = temp;
       temp = temp->next;
    }
+   return l;
+}
+/************************************************************************/
+/*
+ * list_move_item:  Given a list and source and dest indices, which must
+ *   be in range, move the item at the source index to just before the dest index.
+ */
+list_type list_move_item(list_type l, int source_index, int dest_index)
+{
+   // Anything to do?
+   if (source_index == dest_index)
+      return l;
+
+   // Copy all list data into a vector
+   std::vector<void *> list_contents;
+   list_type node = l;
+   while (node != NULL)
+   {
+     list_contents.push_back(node->data);
+     node = node->next;
+   }
+   
+   // Do the move on the vector
+   list_contents.insert(list_contents.begin() + dest_index, list_contents[source_index]);
+   int pos_to_erase = source_index + (source_index > dest_index ? 1 : 0);
+   list_contents.erase(list_contents.begin() + pos_to_erase);
+   
+   // Copy the vector back to the list
+   node = l;
+   for (auto data : list_contents)
+   {
+     node->data = data;
+     node = node->next;
+   }
+
    return l;
 }
 /************************************************************************/

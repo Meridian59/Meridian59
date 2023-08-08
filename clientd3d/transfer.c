@@ -27,7 +27,7 @@ static HANDLE hSemaphore;
 
 static Bool aborted;    // True when user has aborted transfer
 
-static BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void __cdecl DownloadError(HWND hParent, char *fmt, ...);
 static void TransferCloseHandles(void);
 /************************************************************************/
@@ -279,7 +279,7 @@ void __cdecl DownloadError(HWND hParent, char *fmt, ...)
 /*
  * ErrorDialogProc:  Dialog procedure for displaying error and asking for retry.
  */
-BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

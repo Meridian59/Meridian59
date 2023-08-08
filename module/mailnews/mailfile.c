@@ -241,7 +241,7 @@ Bool MailSaveMessage(char *msg, int msgnum)
       
       if ((outfile = open(filename, _O_BINARY | _O_RDWR | _O_CREAT, _S_IWRITE | _S_IREAD)) == -1)
 	 saved = False;
-      if (write(outfile, msg, strlen(msg)) <= 0)
+      if (write(outfile, msg, (unsigned int) strlen(msg)) <= 0)
 	 saved = False;
 
       close(outfile);

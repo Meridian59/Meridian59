@@ -17,9 +17,9 @@ constants:
 resources:
 
    RescuePotion_name_rsc = "potion of deliverance"
-   RescuePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   RescuePotion_desc_rsc = "This is a glass vial of gray-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   RescuePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   RescuePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy gray-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
 

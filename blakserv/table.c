@@ -218,7 +218,7 @@ void InsertTable(int table_id,val_type key_val,val_type data_val)
    tn->table[index] = hn;
 }
 
-int GetTableEntry(int table_id,val_type key_val)
+blak_int GetTableEntry(int table_id,val_type key_val)
 {
    table_node *tn;
    hash_node *hn;
@@ -293,7 +293,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
 Bool EqualTableEntry(val_type s1_val,val_type s2_val)
 {
    char *s1,*s2;
-   int len1,len2;
+   size_t len1,len2;
 
    
    resource_node *r;
@@ -384,7 +384,7 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
       return False;
    }
 
-   return FuzzyBufferEqual(s1,len1,s2,len2);
+   return FuzzyBufferEqual(s1, (int) len1, s2, (int) len2);
 }
 
 unsigned int GetTableHash(val_type val)
@@ -405,7 +405,7 @@ unsigned int GetTableHash(val_type val)
 	 return 0;
       }
       s = r->resource_val;
-      len = strlen(r->resource_val);
+      len = (int) strlen(r->resource_val);
       break;
 
    case TAG_STRING :
@@ -432,7 +432,7 @@ unsigned int GetTableHash(val_type val)
       break;
 
    default:
-      return GetBufferHash((char *)&val.int_val,4);
+     return GetBufferHash((char *)&val.int_val,sizeof(val.int_val));
    }
 
    if (!s || len <= 0)
@@ -440,10 +440,10 @@ unsigned int GetTableHash(val_type val)
 
    FuzzyCollapseString(buf0,s,len);
 
-   return GetBufferHash(buf0,strlen(buf0));
+   return GetBufferHash(buf0, strlen(buf0));
 }
 
-unsigned int GetBufferHash(const char *buf,unsigned int len_buf)
+unsigned int GetBufferHash(const char *buf, size_t len_buf)
 {
    unsigned int g,h,i;
 
@@ -453,7 +453,7 @@ unsigned int GetBufferHash(const char *buf,unsigned int len_buf)
    for (i=0;i<len_buf;i++)
    {
       h = (h << 4) + (unsigned char)(toupper(buf[i]));
-      if (g = h & 0xF0000000)
+      if ((g = h & 0xF0000000))
 	 h ^= g >> 24;
       h &= ~g;
    }

@@ -221,8 +221,8 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
    return a->account_id;
 }
 
-void LoadAccount(int account_id,char *name,char *password,int type,int last_login_time,
-		 int suspend_time, int credits)
+void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_login_time,
+		 INT64 suspend_time, int credits)
 {
    account_node *a;
 
@@ -308,16 +308,16 @@ void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password)
    strcpy(a->password,password);
 }
 
-Bool SuspendAccountAbsolute(account_node *a, int suspend_time)
+Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
 {
    session_node *s;
-   int now = GetTime();
+   INT64 now = GetTime();
 
    /* validate arguments */
 
    if (suspend_time < 0)
    {
-      eprintf("SuspendAccountAbsolute: invalid suspend time %d; ignored\n",suspend_time);
+      eprintf("SuspendAccountAbsolute: invalid suspend time %lld; ignored\n",suspend_time);
       return False;
    }
 
@@ -368,13 +368,13 @@ Bool SuspendAccountAbsolute(account_node *a, int suspend_time)
 
 Bool SuspendAccountRelative(account_node *a, int hours)
 {
-   int suspend_time;
+   INT64 suspend_time;
 
    /* if not suspended, hours is relative to now.
     * if suspended, hours is relative to their current suspension.
     */
 
-   suspend_time = std::max(GetTime(), a->suspend_time) + hours*60*60;
+   suspend_time = std::max((INT64) GetTime(), a->suspend_time) + hours*60*60;
 
    return SuspendAccountAbsolute(a, suspend_time);
 }

@@ -115,9 +115,13 @@ messages:
 
       if Send(who,@ReqNewHold,#what=oWeapon)
       {
-	      Send(who,@NewHold,#what=oWeapon);
-	      Send(who,@MsgSendUser,#message_rsc=createweapon_cast_rsc,
-	           #parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
+         Send(who,@NewHold,#what=oWeapon);
+         Send(who,@MsgSendUser,#message_rsc=createweapon_cast_rsc,
+            #parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
+
+         % Apply attribute only if the weapon has been added to the player's inventory
+         oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);
+         send(oItemAtt,@AddtoItem,#oitem=oWeapon,#timer_duration=send(self,@getduration,#iSpellpower=iSpellpower));
       }
       else
       {
@@ -125,10 +129,6 @@ messages:
 	      Send(who, @MsgSendUser, #message_rsc=createweapon_inv_full_rsc,#parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
       }
       
-      oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);
-
-      send(oItemAtt,@AddtoItem,#oitem=oWeapon,#timer_duration=send(self,@getduration,#iSpellpower=iSpellpower));
-
       propagate;
    }
 
@@ -136,7 +136,7 @@ messages:
    {
       local iDuration;
 
-      iDuration = iSpellpower * 2;  %%In minutes
+      iDuration = iSpellpower * 2; %% In minutes
       iDuration = iDuration * 60 * 1000;
 
       return iDuration;

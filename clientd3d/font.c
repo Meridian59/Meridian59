@@ -38,7 +38,7 @@ static char fontinfo[][MAX_FONTNAME] = {
 static char font_section[] = "Fonts";  /* Section for fonts in INI file */
 
 /* local function prototypes */
-UINT CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+UINT_PTR CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 Bool SetFont(WORD font, LOGFONT *lf);
 void DestroyFont(WORD font);
 HFONT GetFont(WORD font);
@@ -46,61 +46,6 @@ HFONT GetFont(WORD font);
 LOGFONT *GetLogfont(int fontNum)
 {
    return &logfonts[fontNum];
-}
-
-Bool GetLogFont(WORD fontnum, LOGFONT *pLogFont)
-{
-   char str[MAX_FONTNAME], name[10], *ptr;
-   char *separators = ",";
-   int temp;
-   LOGFONT lf;
-   Bool success;
-
-   sprintf(name, "Font%d", fontnum);
-   GetPrivateProfileString(font_section, name, fontinfo[fontnum], str, MAX_FONTNAME, ini_file);
-
-   success = True;
-   if ((ptr = strtok(str, separators)) == NULL || sscanf(ptr, "%d", &lf.lfHeight) != 1)
-      success = False;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfWidth) != 1)
-      success = False;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfEscapement) != 1)
-      success = False;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfOrientation) != 1)
-      success = False;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfWeight) != 1)
-      success = False;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfItalic = temp; /* 1 byte value */
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfUnderline = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfStrikeOut = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfCharSet = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfOutPrecision = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfClipPrecision = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfQuality = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-      success = False;
-   else lf.lfPitchAndFamily = temp;
-   if ((ptr = strtok(NULL, separators)) == NULL)	 
-      success = False; 
-   else strcpy(lf.lfFaceName, ptr);
-   
-   if (success)
-      memcpy(pLogFont,&lf,sizeof(LOGFONT));
-   return success;
 }
 
 /************************************************************************/
@@ -262,6 +207,14 @@ void FontsRestoreDefaults(void)
 
    ModuleEvent(EVENT_FONTCHANGED, -1, NULL);
 }
+/************************************************************************/
+HFONT FontsGetScaledFont(HFONT hFont, float scale)
+{
+  LOGFONT lf;
+  GetObject(hFont, sizeof(LOGFONT), &lf);
+  lf.lfHeight *= scale;
+  return CreateFontIndirect(&lf);
+}
 
 
 /************************************************************************/
@@ -311,7 +264,7 @@ void UserSelectFont(WORD font)
  * ChooseFontHookProc:  Intercept window messages of Choose Font common
  *   dialog.
  */
-UINT CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+UINT_PTR CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

@@ -577,6 +577,10 @@ keymap gQuickChatTable[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
+extern player_info* GetPlayerInfo(void);
+extern void SetActiveStatGroup(int stat_group);
+extern int GetActiveStatGroup(void);
+
 /* local function prototypes */
 static spell       *ExtractNewSpell(char **ptr);
 static Bool         ExtractStatistic(char **ptr, Statistic *s);
@@ -1702,15 +1706,15 @@ Bool WINAPI EventInventory(int command, void *data)
       break;
 
    case INVENTORY_REMOVE:
-      InventoryRemoveItem((ID) data);
+      InventoryRemoveItem(reinterpret_cast<std::intptr_t>(data));
       break;
 
    case INVENTORY_USE:
-      DisplaySetUsing((ID) data, True);
+      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), True);
       break;
 
    case INVENTORY_UNUSE:
-      DisplaySetUsing((ID) data, False);
+      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), False);
       break;
 
    case INVENTORY_CHANGE:
@@ -1732,16 +1736,14 @@ Bool WINAPI EventAnimate(int dt)
 {
    room_contents_node *r;
 
-   if (cinfo->config->animate)
-   {
-      AnimateInventory(dt);
-      AnimateEnchantments(dt);
+   AnimateInventory(dt);
+   AnimateEnchantments(dt);
 
-      // If self is invisible, redraw self view to make it shimmer
-      r = GetRoomObjectById(cinfo->player->id);
-      if (r != NULL && GetDrawingEffect(r->obj.flags) == OF_INVISIBLE)
-	 UserAreaRedraw();
-   }
+   // If self is invisible, redraw self view to make it shimmer
+   r = GetRoomObjectById(cinfo->player->id);
+   if (r != NULL && GetDrawingEffect(r->obj.flags) == OF_INVISIBLE)
+      UserAreaRedraw();
+   
    return True;
 }
 /****************************************************************************/
@@ -1779,9 +1781,17 @@ Bool WINAPI EventConfigChanged(void)
    return True;
 }
 
-extern player_info *GetPlayerInfo(void);
-
 player_info *GetPlayer(void)
 {
    return GetPlayerInfo();
+}
+
+void SetStatGroup(int stat_group)
+{
+   SetActiveStatGroup(stat_group);
+}
+
+int GetStatGroup(void)
+{
+   return GetActiveStatGroup();
 }

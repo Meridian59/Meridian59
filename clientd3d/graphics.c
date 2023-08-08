@@ -12,6 +12,9 @@
  */
 
 #include "client.h"
+#include <vector>
+#include <numeric>
+#include <chrono>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -33,50 +36,21 @@ static ID   drag_object;      // When capture = True, holds id of object being d
 static int fps;
 static int msDrawFrame;
 
-// XXX This isn't currently used at all
-// # of pieces to divide graphics area horizontally & vertically for determining what
-// user actions correspond to what parts of the graphics area.  For example, when
-// SCREEN_UNIT = 12, boundaries of pieces are measured in multiples of 1/12 of the height
-// and width of the graphics area.
-#define SCREEN_UNIT 12
-
-// Region of the graphics area that corresponds to a motion action
-typedef struct {
-   int left, right, top, bottom;      // In multiples of SCREEN_UNIT
-   int  action;
-} ScreenArea;
-
-ScreenArea move_areas[] = {
-{  0,  4,  0,  2, A_FORWARDTURNFASTLEFT },
-{  4,  8,  0,  3, A_FORWARDFAST },
-{  8, 12,  0,  2, A_FORWARDTURNFASTRIGHT },
-
-{  0,  2,  2,  4, A_FORWARDTURNFASTLEFT },
-{  2,  4,  2,  4, A_FORWARDTURNLEFT },
-{  4,  8,  3,  6, A_FORWARD },
-{  8, 10,  2,  4, A_FORWARDTURNRIGHT },
-{ 10, 12,  2,  4, A_FORWARDTURNFASTRIGHT },
-
-{  0,  2,  4,  8, A_TURNFASTLEFT },
-{  2,  4,  4,  8, A_TURNLEFT },
-{  8, 10,  4,  8, A_TURNRIGHT },
-{ 10, 12,  4,  8, A_TURNFASTRIGHT },
-
-{  0,  2,  8, 10, A_BACKWARDTURNFASTLEFT },
-{  2,  4,  8, 10, A_BACKWARDTURNLEFT },
-{  4,  8,  6,  9, A_BACKWARD },
-{  8, 10,  8, 10, A_BACKWARDTURNRIGHT },
-{ 10, 12,  8, 10, A_BACKWARDTURNFASTRIGHT },
-
-{  0,  4, 10, 12, A_BACKWARDTURNFASTLEFT },
-{  4,  8,  9, 12, A_BACKWARDFAST },
-{  8, 12, 10, 12, A_BACKWARDTURNFASTRIGHT },
-};
-
-static int num_move_areas = (sizeof(move_areas) / sizeof(ScreenArea));
-
 extern room_type current_room;
 extern int border_index;
+
+int main_viewport_width;
+int main_viewport_height;
+extern float player_overlay_scaler;
+
+// Variables to store frame times and FPS
+static std::vector<double> fps_store;
+static const int fps_window_size = 60;  // Number of fps values to consider in the rolling window.
+static int average_fps = 0;
+typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
+static steady_clock_time_point lastEndFrame;
+// The clock to use for fps calculations - updating here will update throughout.
+static auto& chrono_time_now = std::chrono::steady_clock::now;
 
 /************************************************************************/
 /*
@@ -134,14 +108,13 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
-   int stretchfactor = config.large_area ? 2 : 1;
 
    if (client_x < view.x || client_x > view.x + view.cx ||
        client_y < view.y || client_y > view.y + view.cy)
       return False;
 
-   *x = (client_x - view.x) / stretchfactor;
-   *y = (client_y - view.y) / stretchfactor;
+   *x = (client_x - view.x) / 2;
+   *y = (client_y - view.y) / 2;
 
    return True;
 }
@@ -195,26 +168,28 @@ void GraphicsAreaResize(int xsize, int ysize)
    int new_xsize, new_ysize;  /* Need signed #s */
    Bool must_redraw = False;
 
-   int max_width, max_height;
-   int stretchfactor = config.large_area ? 2 : 1;
-
    int iHeightAvailableForMapAndStats;
 
-   max_width  = stretchfactor * MAXX;
-   max_height = stretchfactor * MAXY;
+   // Determine the height of the text area section of the client
+   int text_area_size = ((float)config.text_area_size / 100.0) * ysize;
+   int text_area_height = text_area_size + BOTTOM_BORDER + GetTextInputHeight() + TOP_BORDER + EDGETREAT_HEIGHT * 2;
+   text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
 
-   new_xsize = min(xsize - INVENTORY_MIN_WIDTH, max_width);
+   // Calculate the largest possible viewport size keeping the classic client aspect ratio
+   new_ysize = ysize - text_area_height;
+   new_xsize = new_ysize * MAXYX_ASPECT_RATIO;
 
-   new_ysize = ysize - TEXT_AREA_MIN_HEIGHT - BOTTOM_BORDER - GetTextInputHeight() - TOP_BORDER - EDGETREAT_HEIGHT * 2;
-   if (config.toolbar)
-     new_ysize -= TOOLBAR_BUTTON_HEIGHT - MIN_TOP_TOOLBAR;
-   else new_ysize -= MIN_TOP_NOTOOLBAR;
-   new_ysize = min(new_ysize, max_height);   
+   if ((new_xsize + INVENTORY_MIN_WIDTH) > xsize) {
+      new_xsize = xsize - INVENTORY_MIN_WIDTH;
+      new_ysize = new_xsize * MAXXY_ASPECT_RATIO;
+   }
 
    /* Make sizes divisible by 4.  Must be even for draw3d, and when 
     * stretchfactor = 2, need divisible by 4 so that room fits exactly in view */
    new_xsize &= ~3;
    new_ysize &= ~3;
+
+   int inventory_width = xsize - new_xsize;
 
    if (new_xsize < 0)
       new_xsize = 0;
@@ -234,18 +209,25 @@ void GraphicsAreaResize(int xsize, int ysize)
    view.cx = new_xsize;
    view.cy = new_ysize;
 
+   // update main viewport and classic scaler (required for FOV calculations and equipment scaling)
+   main_viewport_width = view.cx;
+   main_viewport_height = view.cy;
+   player_overlay_scaler = ((float)main_viewport_width) / CLASSIC_WIDTH;
+
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 
-   //	areaMiniMap added by ajw.
-   areaMiniMap.x	= view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
-   areaMiniMap.cx	= min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, MINIMAP_MAX_WIDTH );
+   int minimap_width_height = (inventory_width + 3) & ~3;
 
-   areaMiniMap.y	= 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
+   //	areaMiniMap added by ajw.
+   areaMiniMap.x = view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
+   areaMiniMap.cx = min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height);
+
+   areaMiniMap.y = 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
 
    iHeightAvailableForMapAndStats = ysize - areaMiniMap.y - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 
-   areaMiniMap.cy	= (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
-   areaMiniMap.cy	= min( areaMiniMap.cy, MINIMAP_MAX_HEIGHT );
+   areaMiniMap.cy = (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
+   areaMiniMap.cy = min( areaMiniMap.cy, minimap_width_height);
 
    areaMiniMap.cy -= (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
    areaMiniMap.y += (TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH) * 2;
@@ -318,12 +300,6 @@ int GetMSDrawFrame(void)
  */
 void RedrawForce(void)
 {
-   HDC hdc;
-   static DWORD lastEndFrame = 0;
-   DWORD endFrame, startFrame;
-   int totalFrameTime, oldMode;
-   char buffer[32];
-
    if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
    {
@@ -331,54 +307,72 @@ void RedrawForce(void)
       return;
    }
 
-   timeBeginPeriod(1);
-   startFrame = timeGetTime();
+   steady_clock_time_point startFrame = chrono_time_now();
 
    /* REVIEW: Clearing flag before draw phase allows draw phase to set flag.
     *         This is useful in rare circumstances when an effect should
     *         last only one frame, even if animation is off.
     */
    need_redraw = False;
-   hdc = GetDC(hMain);
+   HDC hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
-   endFrame = timeGetTime();
-   msDrawFrame = (int)(endFrame - startFrame);
-   totalFrameTime = (int)(endFrame - lastEndFrame);
+   steady_clock_time_point endFrame = chrono_time_now();
+   std::chrono::duration<double> elapsedTime = endFrame - startFrame;
+   auto elapsedMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count();
+   auto elapsedMilliseconds = elapsedMicroseconds / 1000;
+   msDrawFrame = elapsedMilliseconds;
 
-   // if totalFrameTime is less than one, clamp to 1 so we don't divide by 0 or get negative fps
-   if (1 > totalFrameTime)
-	   totalFrameTime = 1;
-
-   fps = 1000 / (int)totalFrameTime;
+   fps = 1000 / max(1, elapsedMilliseconds);
    if (config.maxFPS)
    {
       if (fps > config.maxFPS)
       {
-	 int msSleep = (1000 / config.maxFPS) - totalFrameTime;
-	 Sleep(msSleep);
+          // Clamp the fps to the maximum.
+          int msSleep = (1000 / config.maxFPS) - elapsedMilliseconds;
+          Sleep(msSleep);
+
+          // Reclaulate the fps following the sleep.
+          endFrame = chrono_time_now();
+          elapsedTime = (endFrame - lastEndFrame);
+          elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+          fps = 1000 / max(1, elapsedMilliseconds);
       }
    }
+
    lastEndFrame = endFrame;
-   timeEndPeriod(1);
 
    if (config.showFPS)
    {
-      RECT rc,lagBox;
-      wsprintf(buffer, "FPS=%d (%dms)        ", fps, msDrawFrame);
-      ZeroMemory(&rc,sizeof(rc));
-      rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
-      Lagbox_GetRect(&lagBox);
-      OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
-      DrawWindowBackground(hdc, &rc, rc.left, rc.top);
-      oldMode = SetBkMode(hdc,TRANSPARENT);
-      DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
-      SetBkMode(hdc,oldMode);
-      GdiFlush();
+        // Add the fps to the rolling window.
+        fps_store.push_back(fps);
+
+        // Remove the oldest fps if the window is full.
+        if (fps_store.size() > fps_window_size) {
+            fps_store.erase(fps_store.begin());
+        }
+
+        // Calculate the average fps over the rolling window.
+        auto sumFPS = std::accumulate(fps_store.begin(), fps_store.end(), 0.0);
+        average_fps = sumFPS / fps_store.size();
+
+        // Format and display the latest average fps value.
+        RECT rc,lagBox;
+        double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
+        char buffer[32];
+        sprintf(buffer, "FPS=%d (%.1fms)        ", average_fps, milliseconds);
+        ZeroMemory(&rc,sizeof(rc));
+
+        rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
+        Lagbox_GetRect(&lagBox);
+        OffsetRect(&rc, main_viewport_width - 110, lagBox.top);
+        DrawWindowBackground(hdc, &rc, rc.left, rc.top);
+        int oldMode = SetBkMode(hdc,TRANSPARENT);
+        DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE);
+        SetBkMode(hdc,oldMode);
+        GdiFlush();
    }
    ReleaseDC(hMain, hdc);
-
-   GameWindowSetCursor();   // We may have moved; reset cursor
 }
 /************************************************************************/
 void RedrawAll(void)
@@ -406,34 +400,6 @@ void GraphicsAreaRedraw(HDC hdc)
 		RecopyRoom3D( hdc, view.x, view.y, view.cx, view.cy, FALSE );
 		RecopyRoom3D( hdc, areaMiniMap.x, areaMiniMap.y, areaMiniMap.cx, areaMiniMap.cy, TRUE );
 	}
-}
-
-/************************************************************************/
-/* 
- * UserMouseMove:  User wants to use mouse to move; check position of mouse
- *   and move user accordingly.
- */
-void UserMouseMove(void)
-{
-   int x, y, xunit, yunit, i;
-   int stretchfactor = config.large_area ? 2 : 1;
-
-   if (!MouseToRoom(&x, &y) || view.cx == 0 || view.cy == 0)
-      return;
-
-   // Find action that corresponds to this part of the graphics area
-   xunit = x * SCREEN_UNIT * stretchfactor / view.cx;
-   yunit = y * SCREEN_UNIT * stretchfactor / view.cy;
-
-   for (i=0; i < num_move_areas; i++)
-   {
-      if (xunit >= move_areas[i].left && xunit < move_areas[i].right &&
-	  yunit >= move_areas[i].top  && yunit < move_areas[i].bottom)
-      {
-	 PerformAction(move_areas[i].action, NULL);
-	 break;
-      }
-   }
 }
 /************************************************************************/
 /*

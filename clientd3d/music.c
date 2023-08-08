@@ -17,6 +17,10 @@
 
 #include "client.h"
 
+#include <cctype>
+#include <regex>
+#include <string>
+
 static char music_dir[] = "resource";   /* Directory for sound files */
 
 static Bool has_midi = False;    /* Can system play MIDI files? */
@@ -41,7 +45,7 @@ static BYTE *pMIDIImmediate;
 enum {SOUND_MIDI, SOUND_MUSIC};
 
 /* local functions */
-static DWORD OpenMidiFile(LPSTR lpszMIDIFileName);
+static DWORD OpenMidiFile(const char *lpszMIDIFileName);
 static DWORD RestartMidiFile(DWORD device);
 static void PauseMusic(void);
 static void UnpauseMusic(void);
@@ -96,7 +100,7 @@ void MusicInitialize(void)
    mciSysinfoParms.dwRetSize = sizeof(num_devices);
    mciSysinfoParms.wDeviceType = MCI_DEVTYPE_SEQUENCER;
    retval = mciSendCommand(0, MCI_SYSINFO, MCI_SYSINFO_QUANTITY,
-                           (DWORD) &mciSysinfoParms);
+                           (DWORD_PTR) &mciSysinfoParms);
    if (retval == 0 && num_devices > 0)
    {
       has_midi = True;
@@ -130,7 +134,7 @@ void MusicClose(void)
  * OpenMidiFile:  Open midi file for playing.
  *   Returns 0 if successful; MCI error code otherwise.
  */
-DWORD OpenMidiFile(LPSTR lpszMIDIFileName)
+DWORD OpenMidiFile(const char *lpszMIDIFileName)
 {
    DWORD dwReturn;
    MCI_OPEN_PARMS mciOpenParms;
@@ -147,7 +151,7 @@ DWORD OpenMidiFile(LPSTR lpszMIDIFileName)
    mciOpenParms.lpstrDeviceType = "sequencer";
    mciOpenParms.lpstrElementName = filename;
    if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
-                                 (DWORD)(LPVOID) &mciOpenParms)) 
+                                 (DWORD_PTR)(LPVOID) &mciOpenParms)) 
       return dwReturn;
 
    midi_element = mciOpenParms.wDeviceID;
@@ -233,9 +237,9 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
        * MM_MCINOTIFY message when playback is complete.
        * The window procedure then closes the device.
        */
-      mciPlayParms.dwCallback = (DWORD) hWndNotify;
+      mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
       if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
-                                    MCI_NOTIFY, (DWORD)(LPVOID) &mciPlayParms)) 
+                                    MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
       {
          mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
          return dwReturn;
@@ -253,14 +257,12 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
  *   If background music had been playing, it picks up where it left off.
  *   Returns 0 if successful, MCI error code otherwise.
  */
-DWORD PlayMusicFile(HWND hWndNotify, char *fname)
+DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 {
 	if (!has_midi)
 		return 0;
 
 #ifdef M59_MSS
-	char *ext;
-
 	// If a sequence was paused, resume it
 	if (music_pos != 0)
 	{
@@ -273,32 +275,31 @@ DWORD PlayMusicFile(HWND hWndNotify, char *fname)
 		AIL_mem_free_lock(pMIDIBackground);
 
 	// First try MP3 file
-	ext = strstr( _strlwr( fname ), ".mid" );
-	if( ext != NULL )
-		strcpy( ext, ".mp3" );
+	std::string filename(fname);
+	std::transform(filename.begin(), filename.end(), filename.begin(),
+                 [](unsigned char c){ return std::tolower(c); });
+	filename = std::regex_replace(filename, std::regex("\\.mid$"), ".mp3");
 
 	// load the file
-	pMIDIBackground = (BYTE *) AIL_file_read( fname, NULL );
+	pMIDIBackground = (BYTE *) AIL_file_read( filename.c_str(), NULL);
 	if( !pMIDIBackground )
 	{
       // Next try xmi file
-      ext = strstr(fname, ".mp3" );
-      if( ext != NULL )
-         strcpy( ext, ".xmi" );
+	  filename = std::regex_replace(filename, std::regex("\\.mp3$"), ".xmi");
       
-      pMIDIBackground = (BYTE *) AIL_file_read( fname, NULL );
+      pMIDIBackground = (BYTE *) AIL_file_read( filename.c_str(), NULL);
       if( !pMIDIBackground )
       {
-         debug(( "Failed to load music file %s.\n", fname ));
+         debug(( "Failed to load music file %s.\n", filename.c_str() ));
          return 0;
       }
 	}
 
 	// initialize the sequence
-	if (!AIL_set_named_sample_file(hseqBackground, fname, pMIDIBackground,
-                                  AIL_file_size(fname), 0 ) )
+	if (!AIL_set_named_sample_file(hseqBackground, filename.c_str(), pMIDIBackground,
+                                  AIL_file_size(filename.c_str()), 0 ) )
 	{
-		debug(( "Failed to init music sequence %s.\n", fname ));
+		debug(( "Failed to init music sequence %s.\n", filename.c_str() ));
 		return 0;
 	}
 
@@ -311,7 +312,7 @@ DWORD PlayMusicFile(HWND hWndNotify, char *fname)
 
 	// start playing
 	AIL_start_sample( hseqBackground );
-	debug(( "Playing music file %s.\n", fname ));
+	debug(( "Playing music file %s.\n", filename.c_str() ));
 	playing_music = True;
 	return 0;
 
@@ -339,9 +340,9 @@ DWORD PlayMusicFile(HWND hWndNotify, char *fname)
     * MM_MCINOTIFY message when playback is complete.
     * The window procedure then closes the device.
     */
-   mciPlayParms.dwCallback = (DWORD) hWndNotify;
+   mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
    if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
-                                 MCI_NOTIFY, (DWORD)(LPVOID) &mciPlayParms)) 
+                                 MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
    {
       mciGetErrorString(dwReturn, temp, 80);
       debug((temp));
@@ -367,12 +368,12 @@ DWORD RestartMidiFile(DWORD device)
    MCI_PLAY_PARMS mciPlayParms;
 
    dwReturn = mciSendCommand(midi_element, MCI_SEEK,
-                             MCI_SEEK_TO_START, (DWORD)(LPVOID) NULL);
+                             MCI_SEEK_TO_START, (DWORD_PTR)(LPVOID) NULL);
    
-   mciPlayParms.dwCallback = (DWORD) hMain;
+   mciPlayParms.dwCallback = (DWORD_PTR) hMain;
    mciPlayParms.dwFrom = 0;
    if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
-                                 MCI_NOTIFY, (DWORD)(LPVOID) &mciPlayParms)) {
+                                 MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) {
       mciSendCommand(device, MCI_CLOSE, 0, 0);
       
    }
@@ -402,13 +403,13 @@ void PauseMusic(void)
 
    mciStatusParms.dwItem = MCI_STATUS_POSITION;
    mciSendCommand(midi_element, MCI_STATUS, 
-		  MCI_STATUS_ITEM, (DWORD)(LPVOID) &mciStatusParms);
+                  MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    music_pos = mciStatusParms.dwReturn;
 
    /* Get time format */
    mciStatusParms.dwItem = MCI_STATUS_TIME_FORMAT;
    mciSendCommand(midi_element, MCI_STATUS, 
-		  MCI_STATUS_ITEM, (DWORD)(LPVOID) &mciStatusParms);
+                  MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    time_format = mciStatusParms.dwReturn;
 
    debug(("Pausing, position = %ld\n", music_pos));
@@ -440,11 +441,11 @@ void UnpauseMusic(void)
    /* Set time format */
    mciSetParms.dwTimeFormat = time_format;
    mciSendCommand(midi_element, MCI_SET,
-		  MCI_SET_TIME_FORMAT, (DWORD)(LPVOID) &mciSetParms);
+                  MCI_SET_TIME_FORMAT, (DWORD_PTR)(LPVOID) &mciSetParms);
 
    mciSeekParms.dwTo = music_pos;
    mciSendCommand(midi_element, MCI_SEEK,
-		  MCI_TO, (DWORD)(LPVOID) &mciSeekParms);
+                  MCI_TO, (DWORD_PTR)(LPVOID) &mciSeekParms);
    debug(("Unpausing to  position = %ld\n", music_pos));
 #endif
 }

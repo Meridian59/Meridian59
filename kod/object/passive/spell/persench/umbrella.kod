@@ -1,0 +1,141 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Umbrella is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Umbrella_name_rsc = "umbrella"
+   Umbrella_icon_rsc = iumbrela.bgf
+   Umbrella_desc_rsc = \
+      "Creates a dome of magical energy especially helpful against the undead.  "
+      "Requires emeralds and polished seraphym to cast."
+
+   Umbrella_already_enchanted = "You are already protected."
+   Umbrella_on = "You are encompassed by a dome of magical energy."
+   Umbrella_off = "The dome of magical energy dissipates."
+   Umbrella_cast = "A mystic, shimmering dome of light emerges from %s%s's fingertips."
+
+classvars:
+
+   viPersonal_ench = TRUE
+
+   vrName = Umbrella_name_rsc
+   vrIcon = Umbrella_icon_rsc
+   vrDesc = Umbrella_desc_rsc
+
+   vrAlreadyEnchanted = Umbrella_already_enchanted
+   vrEnchantment_On = Umbrella_on
+   vrEnchantment_Off = Umbrella_off
+   vrSuccess = Umbrella_cast
+
+   viSpell_num = SID_UMBRELLA
+   viMana = 15
+   viSchool = SS_SHALILLE
+   viSpell_level = 5
+
+   % Determines how much damage is reduced by the dome
+   % Damage reduction < 5 is too powerful and > 15 is too weak
+   viDamageReduction_Factor = 10
+
+   viDefensePowerIncrease = 250
+
+   viChance_To_Increase = 35
+
+   vbCanCastOnOthers = FALSE
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = [ [&Emerald,2], [&PolishedSeraphym,1] ];
+
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      if Send(who,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Umbrella_already_enchanted);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellpower = $)
+   {
+      Send(who,@AddDefenseModifier,#what=self);
+      
+      propagate;
+   }
+
+   EndEnchantment(who = $,state = $)
+   {
+      Send(who,@RemoveDefenseModifier,#what=self);
+
+      propagate;
+   }
+
+   GetStateValue(iSpellpower=$)
+   {
+      return iSpellpower;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % Base duration is 40-640 seconds.
+      iDuration = (40 + (iSpellPower*6)) * 1000;
+
+      return Random(iDuration/2,iDuration);
+   }
+
+   %%% Defense modifier stuff.
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   "Adds to the battler's ability to avoid being hit"
+   {
+      return defense_power + viDefensePowerIncrease;
+   }
+
+   ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   {
+      local iSpellPower, iDamageReduction;
+
+      if IsClass(what,&Battler) AND Send(what,@IsUndead)
+      {
+         iSpellpower = Send(who,@GetEnchantedState,#what=self);
+
+         iDamageReduction = (damage * (iSpellPower / 20)) / viDamageReduction_Factor;
+ 
+         % Reduce by at least 1
+         return bound(damage - iDamageReduction, 1, damage);
+      }
+
+      return damage;
+   }
+
+   DefendingHit(who = $,what = $)
+   {
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

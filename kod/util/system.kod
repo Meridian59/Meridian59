@@ -260,6 +260,7 @@ properties:
    plBanks = $
    plVaults = $
    plGuilds = $
+   plFellowships = $
    plGuild_halls = $
    plBrains = $
    plAbility_totals = $
@@ -4114,6 +4115,26 @@ messages:
       return TRUE;
    }
 
+   NewFellowship(what=$)
+   "Adds the fellowship to the system's master list of fellowships."
+   {
+      local i;
+
+      for i in plFellowships
+      {
+         if i = what
+         {
+            Debug("tried to add a fellowship to system that already existed!",what);
+
+            return FALSE;
+         }
+      }
+   
+      plFellowships = cons(what,plFellowships);
+
+      return TRUE;
+   }
+
    ResetGuilds()
    "This will delete all the guilds, and also recreate all of the guild halls."
    "Admin/testing command only."
@@ -4172,9 +4193,40 @@ messages:
       return;
    }
 
+   DefunctFellowship(what = $)
+   "Removes the fellowship in question from the fellowship list."
+   {
+      local i, found_elem;
+
+      found_elem = $;
+
+      for i in plFellowships
+      {
+         if i = what
+         {
+            found_elem = i;
+         }
+      }
+
+      if found_elem <> $
+      {
+         plFellowships = DelListElem(plFellowships,found_elem);
+      }
+      else
+      {
+         Debug("Defuncted a fellowship that didn't exist!");
+      }
+      return;
+   }
+
    GetGuilds()
    {
       return plGuilds;
+   }
+
+   GetFellowships()
+   {
+      return plFellowships;
    }
 
    SetSafety()

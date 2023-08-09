@@ -652,6 +652,11 @@ messages:
       Send(self,@BreakTrance);
       pbLogged_on = FALSE;
 
+      if Send(self,@GetFellowship) <> $
+      {
+         Send(Send(self,@GetFellowship),@RemoveFromFellowship,#who=self,#logoff=TRUE);
+      }
+
       Send(self,@CancelIfOffer);
       Send(self,@UserLogoffHook);
 

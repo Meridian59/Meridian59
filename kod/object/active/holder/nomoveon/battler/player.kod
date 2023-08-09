@@ -176,6 +176,8 @@ resources:
    player_aggressor = "Shal'ille frowns upon your unprovoked attack."
    player_safety_caught = \
       "Hey!  You almost hit %s%s!  Good thing your safety was on!"
+   fellowship_no_attack = \
+      "You can't attack %s, %s's a member of your fellowship!"
 
    player_safe_server = \
       "You are not allowed to attack other players in this world."
@@ -747,6 +749,8 @@ properties:
    % player starts unguilded--doesn't do much yet
    poGuild = $
    piGuildRejoinTimestamp = 0
+
+   poFellowship = $
 
    % list of spells we know, in the form of a 3-part compound
    plSpells = $
@@ -3647,6 +3651,15 @@ messages:
    {
       local oEnemyGuild, oSoldierShield;
 
+	  % Fellowships prevent combat between members.
+	  if Send(self,@GetFellowship) <> $
+	     AND IsClass(victim,&Player)
+		 AND Send(victim,@GetFellowship) = Send(self,@GetFellowship)
+      {
+         Send(self,@MsgSendUser,#message_rsc=fellowship_no_attack,#parm1=Send(victim,@GetName),#parm2=Send(victim,@GetHeShe));
+         return FALSE;
+      }
+
       % Don't care about monsters.
       % And, free attacks on token holders.
       if IsClass(victim,&Monster)
@@ -6489,6 +6502,18 @@ messages:
       }
       
       return;
+   }
+   
+   SetFellowship(fellowship_obj=$)
+   "Sets the player's poFellowship to be equal to the fellowship object."
+   {
+      poFellowship = fellowship_obj;
+      return;
+   }
+   
+   GetFellowship()
+   {
+      return poFellowship;
    }
 
    %%%  Spells Stuff

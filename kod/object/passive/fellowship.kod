@@ -1,0 +1,340 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Fellowship is PassiveObject 
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+   % maximum number of people allowed in a fellowship.
+   MAX_MEMBERS = 10
+
+resources:
+
+   fellowship_name_rsc = "fellowship"
+   fellowship_icon_rsc = light.bgf
+   fellowship_desc_rsc = "A loose grouping of individuals on an adventure."
+
+   fellowship_title = "Member"
+
+   fellowship_newly_formed = "~BYour new fellowship has been formed."
+
+   fellowship_welcome = "~BPlease welcome the newest member of %s%q, %s."
+   fellowship_induct_already_fellowed = "You are already the member of a fellowship."
+   fellowship_induct_already_member = "You are already a member of this fellowship."
+
+   fellowship_allies_defunct = "~BYour allied fellowship, %s%q, has disbanded."
+   fellowship_enemies_defunct = "~BYour enemy fellowship, %s%q, has disbanded."
+
+   fellowship_ranks_full = \
+      "~BYou could not be accepted into %s%q because the fellowship is already full."
+   fellowship_ranks_full_inductor = \
+      "~B%s%s could not be accepted into %s%q because the fellowship is already full."
+
+   fellowship_invitation_one = \
+      "You may only have one outstanding fellowship invitation at a time."
+   fellowship_invitation_one_inductee = \
+      "Someone in your fellowship has already issued %s%s an invitation."
+   
+classvars:
+
+   vrIcon = fellowship_icon_rsc
+   vrDesc = fellowship_desc_rsc
+
+properties:
+
+   % Settable by players
+   vrName = fellowship_name_rsc
+
+   % This is a list of members
+   plMembers = $
+
+   % Secret fellowships do not advertise their existence.
+   pbSecret = FALSE
+
+   % These are stored only so that, if the fellowship goes while an invitation is
+   %  extended, the invitation disappears.
+   plInvitations = $
+
+   % Leader can set and unset certain options
+   pbCanFellowshipLoot = TRUE
+   pbCanAnyMemberInvite = TRUE
+   
+messages:
+
+   Constructor(fellowshipname = fellowship_name_rsc, secret = FALSE, master = $)
+   {
+      vrName = fellowshipname;
+
+      % Is the fellowship secret?
+      pbSecret = secret;
+
+      plMembers = cons(master, plMembers);
+
+      Send(master,@SetFellowship,#fellowship_obj=self);
+      Send(master,@MsgSendUser,#message_rsc=fellowship_newly_formed);
+
+      Send(SYS,@NewFellowship,#what=self);
+
+      propagate;
+   }
+
+   IsSecret()
+   {
+      return pbSecret;
+   }
+
+   CheckInvitationList(inductor = $, inductee = $)
+   {
+      local i;
+
+      for i in plInvitations
+      {
+         if Send(i,@GetInductor) = inductor
+         {
+            Send(inductor,@MsgSendUser,#message_rsc=fellowship_invitation_one);
+            
+            return FALSE;
+         }
+      }
+      
+      for i in plInvitations
+      {
+         if Send(i,@GetInductee) = inductee
+         {
+            Send(inductor,@MsgSendUser,
+                 #message_rsc=fellowship_invitation_one_inductee,
+                 #parm1=Send(inductee,@GetDef),
+                 #parm2=Send(inductee,@GetName));
+                 
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+%   AddInvitation(invite_obj = $)
+%  "Adds the invitation to the list.  This list is stored only so it can"
+%   "be deleted if the fellowship is deleted."
+%   {
+%      plInvitations = cons(invite_obj, plInvitations);
+%      
+%      return;
+%   }
+
+%   RemoveInvitation(invite_obj = $)
+%   {
+%      local i;
+%
+%      for i in plInvitations
+%      {
+%         if i = invite_obj
+%         {
+%            plInvitations = DelListElem(plInvitations, i);
+%            
+%            return TRUE;
+%         }
+%      }
+%      
+%      DEBUG("invitation wasn't here!");
+%      
+%      return FALSE;
+%   }
+
+   GetMemberList()
+   {
+      return plMembers;
+   }
+
+   IsMember(who=$)
+   {
+      local i;
+
+      for i in plMembers
+      {
+         if i = who
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   InductNewMember(who=$,inductor=$)
+   {
+      local i;
+
+      if length(plMembers) >= MAX_MEMBERS
+      {
+         Send(who,@MsgSendUser,#message_rsc=fellowship_ranks_full,
+              #parm1=Send(self,@GetDef),#parm2=vrName);
+              
+         if inductor <> $
+         {
+            Send(inductor,@MsgSendUser,#message_rsc=fellowship_ranks_full_inductor,
+                 #parm1=Send(who,@getcapdef),#parm2=Send(who,@GetName),
+                 #parm3=Send(self,@GetDef),#parm4=vrName);
+         }
+         
+         return FALSE;
+      }
+      
+      for i in plMembers
+      {
+         if i = who
+         {
+            Send(who,@MsgSendUser,#message_rsc = fellowship_induct_already_member);
+            
+            return FALSE;
+         }
+      }
+      
+      if Send(who,@GetFellowship) <> $
+      {
+         Send(who,@MsgSendUser,#message_rsc = fellowship_induct_already_fellowed);
+         
+         return FALSE;
+      }
+     
+      % Cleared checks.  Go ahead and set the fellowship.
+
+      Send(who,@SetFellowship,#fellowship_obj=self);
+      plMembers = cons(who,plMembers);
+
+      for i in plMembers
+      {
+         Send(i,@MsgSendUser,#message_rsc=fellowship_welcome,
+              #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
+              #parm3=Send(who,@GetTrueName));
+
+         % Reset friend/foe colors
+         Send(i,@ToCliRoomContents);
+      }
+
+      return TRUE;
+   }
+
+   RemoveFromFellowship(who=$,logoff=FALSE)
+   {
+      local i, bFound, oOwner;
+
+      bFound = FALSE;
+
+      for i in plMembers
+      {
+         if i = who
+         {
+            plMembers = DelListElem(plMembers,i);
+            bFound = TRUE;
+         }
+
+         % Reset friend/foe colors for everyone
+         if NOT logoff
+         {
+            Send(i,@ToCliRoomContents);
+         }
+      }
+      
+      if bFound = TRUE
+         AND NOT logoff
+      {
+         % If this player has an owner (is logged on), then let the room know
+         %  something changed so that other players can reset friend/foe
+         %  colors.
+         oOwner = Send(who,@GetOwner);
+         if oOwner <> $
+         {
+            Send(oOwner,@SomethingChanged,#what=who);
+         }
+
+         return TRUE;
+      }
+      
+      DEBUG("Was not a member of this fellowship!");
+      
+      return FALSE;
+   }
+
+   DefunctFellowship(what=$)
+   {
+      local i;
+
+      % Reset friend/foe colors
+      for i in plMembers
+      {
+         Send(i,@ToCliRoomContents);
+      }
+
+      return;
+   }
+
+   Delete()
+   "Kick all members out First!"
+   {
+      local i;
+
+      for i in plMembers
+      {
+         Send(self,@RemoveFromFellowship,#who=i);
+      }
+      
+      if plMembers <> $
+      {
+         debug("plMembers not fully empty!",Send(self,@GetName));
+         
+         plMembers = $;
+      }
+
+      % Delete any outstanding invites
+      for i in plInvitations
+      {
+         Send(i,@InvitationVanish);
+      }
+      
+      plInvitations = $;
+
+      Send(SYS,@DefunctFellowship,#what=self);
+
+      propagate;
+   }
+
+   GetMaxMembers()
+   {
+      return MAX_MEMBERS;
+   }
+
+   SetCanFellowshipLoot(value=TRUE)
+   {
+      pbCanFellowshipLoot = value;
+      return;
+   }
+
+   SetCanAnyMemberInvite(value=TRUE)
+   {
+      pbCanAnyMemberInvite = value;
+      return;
+   }
+
+   GetCanFellowshipLoot()
+   {
+      return pbCanFellowshipLoot;
+   }
+
+   GetCanAnyMemberInvite()
+   {
+      return pbCanAnyMemberInvite;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

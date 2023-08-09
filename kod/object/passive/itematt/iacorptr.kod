@@ -56,9 +56,23 @@ messages:
 
    CanGetAffectedItem(lData = $, who = $, oItem = $)
    {
-      local oCorpse;
+      local oCorpse, sCorpseName, oPlayer;
      
       oCorpse = nth(lData,3);
+      
+      if Send(who,@GetFellowship) <> $
+         AND Send(Send(who,@GetFellowship),@CanFellowshipLoot)
+      {
+         sCorpseName = Send(oCorpse,@GetCorpseName);
+         
+         for oPlayer in Send(Send(who,@GetFellowship),@GetMemberList)
+         {
+            if Send(oPlayer,@GetTrueName) = sCorpseName
+            {
+               return TRUE;
+            }
+         }
+      }
      
       % If the corpse object is pointing at who, then 'who' can pick up this item.
       if NOT send(oCorpse,@CanGetMe,#what=who)

@@ -4802,6 +4802,12 @@ messages:
       }
 
       if IsClass(what,&Monster)
+         AND NOT (IsClass(what,&Reflection)
+            AND NOT (Send(self,@GetOwner) <> $
+               AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_TEMPLE_RIIJA))
+         AND NOT (IsClass(what,&EvilTwin)
+            AND NOT (Send(self,@GetOwner) <> $
+               AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_TEMPLE_RIIJA))
       {         
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),

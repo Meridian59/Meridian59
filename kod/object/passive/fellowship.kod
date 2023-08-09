@@ -32,9 +32,6 @@ resources:
    fellowship_induct_already_fellowed = "You are already the member of a fellowship."
    fellowship_induct_already_member = "You are already a member of this fellowship."
 
-   fellowship_allies_defunct = "~BYour allied fellowship, %s%q, has disbanded."
-   fellowship_enemies_defunct = "~BYour enemy fellowship, %s%q, has disbanded."
-
    fellowship_ranks_full = \
       "~BYou could not be accepted into %s%q because the fellowship is already full."
    fellowship_ranks_full_inductor = \
@@ -257,6 +254,11 @@ messages:
          {
             Send(oOwner,@SomethingChanged,#what=who);
          }
+      
+         if plMembers = $
+         {
+            Post(self,@Delete);
+         }
 
          return TRUE;
       }
@@ -264,19 +266,6 @@ messages:
       DEBUG("Was not a member of this fellowship!");
       
       return FALSE;
-   }
-
-   DefunctFellowship(what=$)
-   {
-      local i;
-
-      % Reset friend/foe colors
-      for i in plMembers
-      {
-         Send(i,@ToCliRoomContents);
-      }
-
-      return;
    }
 
    Delete()

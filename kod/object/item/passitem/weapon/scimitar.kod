@@ -40,6 +40,9 @@ classvars:
    viWeight = 85
    viBulk = 70
 
+   viHits_init_min = 350
+   viHits_init_max = 400
+
    vrWeapon_window_overlay = scimitar_window_overlay_rsc
    vrWeapon_overlay = scimitar_player_overlay
 

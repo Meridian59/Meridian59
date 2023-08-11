@@ -36,6 +36,7 @@ resources:
    BarloqueInnkeeper_cost4 = " shillings if thou wishest to share thine room with a special someone."
 
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %q days left at my luxurious inn."
+   BarloqueInnkeeper_days_left_check = "Thy room hast %q Meridian days left.  ~I(%q days in real time.)"
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
    BarloqueInnkeeper_destroy_key_copy = "~kPritchett tells you, \"I will discardeth the key for thou.\""
@@ -44,6 +45,8 @@ resources:
    BqInn_rent_command = "rent"
    BqInn_cost_command = "cost"
    BqInn_copy_key_command = "copy key"
+   BqInn_change_lock_command = "change lock"
+   BqInn_help_command = "help"
 
 classvars:
 
@@ -155,7 +158,7 @@ messages:
 
    SomeoneSaid(what = $,type = $,string = $)
    {
-      local oRoomMaint, rSayRsc;
+      local oRoomMaint, rSayRsc, iDaysLeft;
       
       if isClass(what,&User)
       {
@@ -184,6 +187,39 @@ messages:
 
             % tell the player.
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
+
+            return;
+         }
+
+         if (StringContain(string, BqInn_room_command) AND StringContain(string, BqInn_help_command))
+            OR (StringContain(string, "room") AND StringContain(string, "help"))
+         {
+            Send(oRoomMaint, @GetHelpMessage, #who=what, #iRentCost=piInitialRoomCost,
+               #iCopyCost=piKeyCopyCosts, #iDayCost=piPerDayCost);
+
+            return;
+         }
+
+         if StringContain(string, BqInn_change_lock_command)
+            OR (StringContain(string, "change") AND StringContain(string, "lock"))
+         {
+            rSayRsc = Send(oRoomMaint, @ChangeLock, #who=what, #iLocation=RID_BAR_INN);
+
+            Post(poOwner, @SomeoneSaid, #type=SAY_RESOURCE, #what=self, #string=rSayRsc);
+
+            return;
+         }
+
+         if StringContain(string, BqInn_rent_command) OR StringContain(string, "rent")
+         {
+            iDaysLeft = Send(oRoomMaint, @CheckRent, #who=what, #iLocation=RID_BAR_INN);
+
+            if iDaysLeft <> $
+            {
+               Post(poOwner, @SomeoneSaid, #type=SAY_RESOURCE, #what=self, #string=BarloqueInnkeeper_days_left_check,
+                  #parm1=Send(SYS, @IntToString, #num=iDaysLeft), #type1=STRING_RESOURCE,
+                  #parm2=Send(SYS, @IntToString, #num=iDaysLeft / 12), #type2=STRING_RESOURCE);
+            }
 
             return;
          }

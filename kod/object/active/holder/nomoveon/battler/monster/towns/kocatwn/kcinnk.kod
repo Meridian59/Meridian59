@@ -45,6 +45,7 @@ resources:
    KocatanInnkeeper_days_left = \
       "You like it here, I see.  There are %q days until you should "
       "pay me again."
+   KocatanInkeeper_days_left_check = "The room is yours for %q Meridian days.  ~I(%q days in real time.)"
    KocatanInnkeeper_too_long = \
       "Oh, I can't be responsible for holding so much money!  Pay me again "
       "later when you don't have so many days left on your tab."
@@ -57,6 +58,8 @@ resources:
    KoIk_rent_command = "rent"
    KoIk_cost_command = "cost"
    KoIk_copy_key_command = "copy key"
+   KoIk_change_lock_command = "change lock"
+   KoIk_help_command = "help"
 
 classvars:
 
@@ -194,7 +197,7 @@ messages:
 
    SomeoneSaid(what=$,string=$)
    {
-      local oRoomMaint, rSayRsc;
+      local oRoomMaint, rSayRsc, iDaysLeft;
       
       if IsClass(what,&User)
       {
@@ -226,6 +229,39 @@ messages:
             % Tell the player.
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
                   #what=self,#string=rSayRsc);
+
+            return;
+         }
+
+         if (StringContain(string, KoIk_room_command) AND StringContain(string, KoIk_help_command))
+            OR (StringContain(string, "room") AND StringContain(string, "help"))
+         {
+            Send(oRoomMaint, @GetHelpMessage, #who=what, #iRentCost=piInitialRoomCost,
+               #iCopyCost=piKeyCopyCosts, #iDayCost=piPerDayCost);
+
+            return;
+         }
+
+         if StringContain(string, KoIk_change_lock_command)
+            OR (StringContain(string, "change") AND StringContain(string, "lock"))
+         {
+            rSayRsc = Send(oRoomMaint, @ChangeLock, #who=what, #iLocation=RID_KOC_INN);
+
+            Post(poOwner, @SomeoneSaid, #type=SAY_RESOURCE, #what=self, #string=rSayRsc);
+
+            return;
+         }
+
+         if StringContain(string, KoIk_rent_command) OR StringContain(string, "rent")
+         {
+            iDaysLeft = Send(oRoomMaint, @CheckRent, #who=what, #iLocation=RID_KOC_INN);
+
+            if iDaysLeft <> $
+            {
+               Post(poOwner, @SomeoneSaid, #type=SAY_RESOURCE, #what=self, #string=KocatanInkeeper_days_left_check,
+                  #parm1=Send(SYS, @IntToString, #num=iDaysLeft), #type1=STRING_RESOURCE,
+                  #parm2=Send(SYS, @IntToString, #num=iDaysLeft / 12), #type2=STRING_RESOURCE);
+            }
 
             return;
          }

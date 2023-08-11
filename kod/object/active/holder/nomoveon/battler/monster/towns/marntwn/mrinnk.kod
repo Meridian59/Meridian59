@@ -33,6 +33,7 @@ resources:
    MarionInnkeeper_cost4 = " shillings to make.  I know you'll like your room."
 
    MarionInnkeeper_days_left = "You like it here, I see.  There are %q days until you should pay me again."
+   MarionInnkeeper_days_left_check = "The room is yours for %q Meridian days.  ~I(%q days in real time.)"
    MarionInnkeeper_too_long = "Oh, I can't be responsible for holding so much money!  Pay me again later when you don't have so many days left on your tab."
 
    MarionInnkeeper_destroy_key_copy = "~kMorrigan tells you, \"Oh, yes. I can get rid of this key for you.  No problem.\""
@@ -41,6 +42,8 @@ resources:
    MrIk_rent_command = "rent"
    MrIk_cost_command = "cost"
    MrIk_copy_key_command = "copy key"
+   MrIk_change_lock_command = "change lock"
+   MrIk_help_command = "help"
 
 classvars:
 
@@ -62,7 +65,7 @@ messages:
    % special handling to make him laugh at Tova's chatter
    SomeoneSaid(what=$,string=$)
    {
-      local oRoomMaint, rSayRsc;
+      local oRoomMaint, rSayRsc, iDaysLeft;
 
       % if it's Tova talking
       if IsClass(what, &MarionBartender)
@@ -107,6 +110,39 @@ messages:
             return;
          }
 
+         if (StringContain(string, MrIk_room_command) AND StringContain(string, MrIk_help_command))
+            OR (StringContain(string, "room") AND StringContain(string, "help"))
+         {
+            Send(oRoomMaint, @GetHelpMessage, #who=what, #iRentCost=piInitialRoomCost,
+               #iCopyCost=piKeyCopyCosts, #iDayCost=piPerDayCost);
+
+            return;
+         }
+
+         if StringContain(string, MrIk_change_lock_command)
+            OR (StringContain(string, "change") AND StringContain(string, "lock"))
+         {
+            rSayRsc = Send(oRoomMaint, @ChangeLock, #who=what, #iLocation=RID_MAR_INN);
+
+            Post(poOwner, @SomeoneSaid, #type=SAY_RESOURCE, #what=self, #string=rSayRsc);
+
+            return;
+         }
+
+         if StringContain(string, MrIk_rent_command) OR StringContain(string, "rent")
+         {
+            iDaysLeft = Send(oRoomMaint, @CheckRent, #who=what, #iLocation=RID_MAR_INN);
+
+            if iDaysLeft <> $
+            {
+               Post(poOwner, @SomeoneSaid, #type=SAY_RESOURCE, #what=self, #string=MarionInnkeeper_days_left_check,
+                  #parm1=Send(SYS, @IntToString, #num=iDaysLeft), #type1=STRING_RESOURCE,
+                  #parm2=Send(SYS, @IntToString, #num=iDaysLeft / 12), #type2=STRING_RESOURCE);
+            }
+
+            return;
+         }
+
          if (StringContain(string,MrIk_room_command) AND StringContain(string,MrIk_cost_command))
             OR (StringContain(string,"room") AND StringContain(string,"cost"))
          {
@@ -123,7 +159,7 @@ messages:
                  #parm1=GetTempString(),#type1=0);
 
             return;
-         }          
+         }
       }
 
       propagate;

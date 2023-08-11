@@ -33,6 +33,10 @@ resources:
 
    RoomKeyCopy_no_drop_room = "You cannot drop your key here."
 
+   RoomKeyCopy_no_drop_not_yours = \
+      "You can't just carelessly discard %s's room key like that!  You must return "
+      "it to either them or the innkeeper."
+
    RoomKeyCopy_no_token = "You can't let go of your token to fit your key into the lock."
 
 classvars:
@@ -191,6 +195,22 @@ messages:
 
    ReqNewOwner(what=$)
    {
+      local oRoom, oRenter;
+
+      oRoom = Send(SYS, @FindRoomByNum, #num=piRID);
+      oRenter = Send(oRoom, @GetRenter);
+
+      % If you're not the room owner, don't allow the key to be given to
+      % anyone besides the owner or dropped somewhere.  This gives the
+      % room owner more control over who has their various copies.
+      if IsClass(poOwner, &User) AND poOwner <> oRenter AND what <> oRenter
+      {
+         Send(poOwner, @MsgSendUser, #message_rsc=RoomKeyCopy_no_drop_not_yours,
+            #parm1=Send(oRenter, @GetName));
+
+         return FALSE;
+      }
+
       % No dropping in rentable rooms to circumvent the room expiration code
       if what <> $ AND isClass(what,&RentableRoom)
       {

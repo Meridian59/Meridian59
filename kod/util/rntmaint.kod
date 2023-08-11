@@ -23,6 +23,21 @@ resources:
    RoomMaintenance_no_key = "Where is the key from this inn to copy?"
    RoomMaintenance_no_copy_copy = "You may not copy a copy of a room key."
    RoomMaintenance_copy_no_money = "You cannot afford a copy of your room key."
+   RoomMaintenance_change_lock = \
+      "Very well, I'll change the lock to your room.  This will destroy all "
+      "existing copies of your room key."
+   RoomMaintenance_no_copies_change_lock = \
+      "There aren't currently any copies of your room key out in circulation."
+   RoomMaintenance_no_key_change_lock = \
+      "You don't even have a room here, so how could I change the lock?"
+   RoomMaintenance_help_message = \
+      "~BHelp Room:~B  Displays this message.\n"
+      "~BRent Room:~B  Rents a room at this particular location.  ~ICost: %i~I\n"
+      "~BCopy Key:~B  Creates a tradeable copy of your room key.  ~ICost: %i~I\n"
+      "~BChange Lock:~B  Destroys all copies of your room key in circulation.\n"
+      "~BRent:~B  Displays the amount of time remaining for your room.\n"
+      "To buy additional time, offer shillings to the innkeeper.  ~ICost: %i "
+      "per Meridian day (2 hours real time), %i Meridian days maximum.~I"
 
 properties:
 
@@ -107,7 +122,48 @@ messages:
 
       % Return $ so that the innkeeper gives a friendly message in the local flavor.
       return $;
-   }   
+   }
+
+   ChangeLock(who=$, iLocation=$)
+   {
+      local lPassive, oObject, oKey, bHasRoomKey;
+
+      % Check for gold room key.
+      bHasRoomKey = FALSE;
+      lPassive = Send(who, @GetHolderPassive);
+
+      for oObject in lPassive
+      {
+         oKey = oObject;
+         if IsClass(oKey, &RoomKey)
+         {
+            if IsClass(Send(SYS, @FindRoomByNum, #num=Send(oKey, @GetRID)),
+               Send(self, @GetRoomClassByLocation, #iLocation=iLocation))
+            {
+               bHasRoomKey = TRUE;
+               break;
+            }
+         }
+      }
+
+      if bHasRoomKey
+      {
+         % See if there are any copies of this key present
+         if Send(oKey, @HasCopies)
+         {
+            % Great, now delete them
+            Send(oKey, @DeleteCopies);
+            return RoomMaintenance_change_lock;
+         }
+         else
+         {
+            % No copies out?  Okay tell them.
+            return RoomMaintenance_no_copies_change_lock;
+         }      }
+
+      % No key?  Tell them they can't change the lock on a room they don't have.
+      return RoomMaintenance_no_key_change_lock;
+   }
 
    CopyKey(who=$,iLocation=$,iCost=500)
    {
@@ -168,6 +224,31 @@ messages:
       send(who,@NewHold,#what=send(oKey,@Copy));
 
       return RoomMaintenance_key_copied;
+   }
+
+   GetHelpMessage(who=$, iRentCost=$, iCopyCost=$, iDayCost=$)
+   {
+      if who <> $ AND iRentCost <> $ AND iCopyCost <>$ AND iDayCost <> $
+      {
+         Send(who, @MsgSendUser, #message_rsc=RoomMaintenance_help_message,
+            #parm1=iRentCost, #parm2=iCopyCost, #parm3=iDayCost, #parm4=piRentableDaysMax);
+      }
+      return;
+   }
+
+   CheckRent(who=$, iLocation=$)
+   {
+      local oRoom;
+
+      oRoom = Send(self, @FindRoomByPlayer, #who=who, #iLocation=iLocation);
+
+      % If there's no room, do nothing
+      if oRoom = $
+      {
+        return;
+      }
+
+      return Send(oRoom, @GetDaysLeft);
    }
 
    GotRent(who=$,iAmount=0,iCost=150,iLocation=$)

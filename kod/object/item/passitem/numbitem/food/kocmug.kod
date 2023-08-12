@@ -16,10 +16,10 @@ constants:
 
 resources:
 
-   kocatanmug_name_rsc = "copper pekonch mugs"
+   kocatanmug_name_rsc = "mug of Pekonch"
    kocatanmug_icon_rsc = mug2.bgf
    kocatanmug_desc_rsc = \
-      "Wine that is thick enough, you could stand a dagger up in it."
+      "This Ko'catani wine is so thick you could stand a dagger up in it."
    kocatanmug_name_plural_rsc = "mugs of Pekonch"
 
    kocatanmug_disp_name = "pitcher of pekonch"

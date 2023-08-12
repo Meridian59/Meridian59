@@ -49,6 +49,7 @@ properties:
    viFilling = 20
    viNutrition = 9
    piNumber = 1
+   piItem_flags = PT_BLEND25BLUE   % Slight blue hue to set it apart from bowl of stew
 
 messages:
 

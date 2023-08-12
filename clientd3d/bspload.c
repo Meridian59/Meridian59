@@ -60,7 +60,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    int node_pos, wall_pos, sidedef_pos, sector_pos, offset_adjust;
    file_node f;
 
-   if (!MappedFileOpenCopy(fname, &f))
+   if (!CliMappedFileOpenRead(fname, &f))
       return False;
 
    // Check magic number and version

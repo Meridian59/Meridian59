@@ -292,6 +292,11 @@ messages:
       return TORCH_LIGHT;
    }
 
+   CanMend()
+   {
+      return FALSE;
+   }
+
    ReqRepair()
    {
       % To prevent cheesy working of Mend by using/unusing torch repeatedly.

@@ -98,8 +98,8 @@ messages:
 
    Constructed()
    {
-      piItem_flags = Send(SYS, @EncodeTwoColorXLAT,
-         #color1=Send(self, @GetMasterXLATBySchool), #color2=XLAT_TO_SKIN2);
+      Send(self, @SetPaletteTranslation, #translation=Send(SYS, @EncodeTwoColorXLAT,
+         #color1=Send(self, @GetMasterXLATBySchool), #color2=XLAT_TO_SKIN2));
 
       propagate;
    }
@@ -288,12 +288,9 @@ messages:
          Send(poOwner,@RemoveOverlay,#what=self);
       }
 
-      piItem_flags = Send(SYS, @EncodeTwoColorXLAT,
-         #color1=Send(self, @GetMasterXLATBySchool), #color2=XLAT_TO_SKIN2);
-      if IsClass(poOwner, &User) OR IsClass(poOwner, &Room)
-      {
-         Send(poOwner, @SomethingChanged, #what=self);
-      }
+      Send(self, @SetPaletteTranslation, #translation=Send(SYS, @EncodeTwoColorXLAT,
+         #color1=Send(self, @GetMasterXLATBySchool), #color2=XLAT_TO_SKIN2));
+      Send(poOwner, @SomethingChanged, #what=self);
 
       propagate;
    }

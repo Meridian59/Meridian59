@@ -305,7 +305,7 @@ void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify)
 
 	latencyDialogActive = true;
 
-	SetDescParams(hWnd, !DESC_DROP);
+	SetDescParams(hWnd, DESC_NONE);
 	DisplayDescription(pobjLagbox,
 		0/*flags*/,
 		pszLagboxDescription, 

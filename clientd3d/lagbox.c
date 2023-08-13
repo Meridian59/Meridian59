@@ -287,7 +287,7 @@ LRESULT Lagbox_UpdateLatencyText()
 
 	if(latencyDialogActive)
 	{
-		SetDialogExtraString(szTooltip);
+		SetDialogFixedString(szTooltip);
 	}	
 	
 	return 1;

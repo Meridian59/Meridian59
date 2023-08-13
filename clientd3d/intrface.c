@@ -27,6 +27,9 @@ static Bool interface_created = False;  /* True iff interface has been created *
 extern font_3d				gFont;
 extern d3d_driver_profile	gD3DDriverProfile;
 
+// The last time a text command (such as an alias) was sent
+static DWORD last_text_command_time;
+
 /************************************************************************/
 void InterfaceInitialize(HWND hParent)
 {
@@ -301,56 +304,6 @@ void PerformAction(int action, void *action_data)
    case A_TABBACK:
       MainTab(reinterpret_cast<std::intptr_t>(action_data), False);
       break;
-
-/*   case A_FORWARD:
-   case A_BACKWARD:
-   case A_SLIDELEFT:
-   case A_SLIDERIGHT:
-   case A_FORWARDFAST:
-   case A_BACKWARDFAST:
-      UserMovePlayer(action);
-      break;
-
-   case A_TURNLEFT:
-   case A_TURNRIGHT:
-   case A_TURNFASTLEFT:
-   case A_TURNFASTRIGHT:
-      UserTurnPlayer(action);
-      break;
-
-   case A_FORWARDTURNLEFT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNLEFT);
-      break;
-   case A_FORWARDTURNRIGHT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNRIGHT);
-      break;
-   case A_BACKWARDTURNLEFT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNLEFT);
-      break;
-   case A_BACKWARDTURNRIGHT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNRIGHT);
-      break;
-   case A_FORWARDTURNFASTLEFT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNFASTLEFT);
-      break;
-   case A_FORWARDTURNFASTRIGHT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNFASTRIGHT);
-      break;
-   case A_BACKWARDTURNFASTLEFT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNFASTLEFT);
-      break;
-   case A_BACKWARDTURNFASTRIGHT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNFASTRIGHT);
-      break;*/
-
    case A_ATTACK:
       if ((GetPlayerInfo()->viewID == 0) || (GetPlayerInfo()->viewID == GetPlayerInfo()->id))
 	 UserAttack(action);
@@ -522,10 +475,17 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_TEXTCOMMAND:
-      TextInputSetText((char *) action_data, False);
-      ParseGotText((char *) action_data);
-      break;
-
+   {
+       DWORD now = timeGetTime();
+       if (now - last_text_command_time > KEY_NOREPEAT_INTERVAL)
+       {
+           TextInputSetText((char*)action_data, False);
+           ParseGotText((char*)action_data);    
+           last_text_command_time = now;
+       }       
+       
+       break;
+   }
    case A_WHO:
       UserWho();
       break;

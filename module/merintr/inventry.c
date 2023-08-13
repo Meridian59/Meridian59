@@ -48,7 +48,6 @@ BYTE	*selftrgt_bits;
 
 static RawBitmap inventory_bkgnd;              // Background bitmap for inventory area
 
-//static HBITMAP	hbmpScrollBack;		//	ajw xxx Scrollbar texturing bmp.
 static HBRUSH	hbrushScrollBack;
 
 /* Keys to override default actions */
@@ -77,8 +76,6 @@ keymap inventory_key_table[] = {
 { VK_TAB,         KEY_NONE,             A_TABFWD,     (void *) IDC_INVENTORY },
 { VK_TAB,         KEY_SHIFT,            A_TABBACK,    (void *) IDC_INVENTORY },
 { VK_ESCAPE,      KEY_ANY,              A_GOTOMAIN },
-
-//{ 'D',            KEY_NONE,             A_DROP },
 { VK_DELETE,      KEY_NONE,             A_DROP },
 { 'L',            KEY_NONE,             A_LOOKINVENTORY },
 { 'P',            KEY_NONE,             A_PUT },
@@ -231,9 +228,6 @@ void InventoryBoxResize(int xsize, int ysize, AREA *view)
    inventory_area.x = view->x + view->cx + LEFT_BORDER + 3 * HIGHLIGHT_THICKNESS;
    inventory_area.cx = xsize - inventory_area.x - 3 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH;
 
-//   inventory_area.y = 2 * TOP_BORDER + USERAREA_HEIGHT + GROUPBUTTONS_HEIGHT + EDGETREAT_HEIGHT;
-//   inventory_area.cy = view->y + view->cy - inventory_area.y;
-
    	yMiniMap = 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + MAPTREAT_HEIGHT;
 	iHeightAvailableForMapAndStats = ysize - yMiniMap - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
 	iHeightMiniMap = (int)( iHeightAvailableForMapAndStats * PROPORTION_MINIMAP ) - HIGHLIGHT_THICKNESS - MAPTREAT_HEIGHT;
@@ -382,7 +376,6 @@ void InventoryResetFont(void)
  */
 void InventoryChangeColor(void)
 {
-  //  InventoryRedraw();
 }
 /************************************************************************/
 void InventorySetFocus(Bool forward)
@@ -415,9 +408,6 @@ INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
        *cinfo->hCurrentDlg = NULL;
      else *cinfo->hCurrentDlg = hwnd;
      return TRUE;
-
-//	case WM_CTLCOLORSCROLLBAR:						// ajw
-//		return (BOOL)hbrushScrollBack;
    }
 
    return FALSE;
@@ -434,10 +424,8 @@ LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
    switch (message)
    {
    case WM_KEYDOWN:
-      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey) == True)
+      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey))
       	 return 0;
-      break;
-
    case WM_ERASEBKGND:
      // Draw outside of inventory items
      // XXX
@@ -472,6 +460,15 @@ LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
    case WM_KILLFOCUS:
 	  StatsDrawBorder();
       InventoryReleaseCapture();
+      break;
+   case WM_SYSKEYDOWN:
+      // Prevent activation of the window's menu bar and propagate to parent
+      if (wParam == VK_F10)
+      {
+          if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey) == True)
+              return 0;
+          break;
+      }
       break;
    }
 
@@ -809,10 +806,6 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
    if (action == A_NOACTION)
       return False;
 
-   // Skip held-down keys, except for moving cursor around
-   if (held_down && !IsCursorAction(action))
-      return True;
-
    item = InventoryGetCurrentItem();
    if (item == NULL)
       id = INVALID_ID;
@@ -853,7 +846,6 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
    {
    case A_TABFWD:
 		TextInputSetFocus(True);	//	ajw
-		//StatsSetFocus(True);
 		break;
 
    case A_TABBACK:

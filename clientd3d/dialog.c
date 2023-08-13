@@ -635,7 +635,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *extra_string, char *url)
+                        char *fixed_string, char *url)
 {
 	int template_id;
 	
@@ -650,7 +650,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.flags        = flags;
 	info.name         = LookupNameRsc(obj->name_res);
 	info.description  = description;
-	info.fixed_string = extra_string;
+	info.fixed_string = fixed_string;
 	info.url          = url;
 	
 	// Different dialog for players
@@ -664,13 +664,14 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 }
 /************************************************************************/
 /*
-* SetDialogExtraString:  Update the extra string for the dialog.
+* SetDialogFixedString:  Update the fixed string for the dialog that appears
+* between the main name and description.
 */
-void SetDialogExtraString(char* extra_string)
+void SetDialogFixedString(char* fixed_string)
 {
 	if (hDescDialog != NULL)
 	{
-		SetDlgItemText(hDescDialog, IDC_DESCFIXED, _T(extra_string));
+		SetDlgItemText(hDescDialog, IDC_DESCFIXED, fixed_string);
 		InvalidateRect(GetDlgItem(hDescDialog, IDC_DESCFIXED), NULL, TRUE);
 	}
 }/************************************************************************/

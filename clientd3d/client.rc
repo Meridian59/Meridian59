@@ -934,7 +934,7 @@ BEGIN
     GROUPBOX        "Interface Features",IDC_STATIC,5,148,245,59,WS_GROUP
     CONTROL         "Show toolbar",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,159,62,9
     CONTROL         "Show tooltips",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,170,62,9
-    CONTROL         "Lock text window when scrolling back",IDC_SCROLLLOCK,
+    CONTROL         "Lock text window in place when scrolling back",IDC_SCROLLLOCK,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,182,163,9
     CONTROL         "Filter text profanity",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,193,77,9
     CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,159,77,9
@@ -1739,7 +1739,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LAGBOXURL           "http://www.meridian59.com/"
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."

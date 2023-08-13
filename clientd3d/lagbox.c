@@ -16,9 +16,6 @@
 //ASSUME: Only one lagbox can be created.
 //
 
-#define IDT_UPDATE_TOOLTIP 101
-#define LATENCY_TEXT_UPDATE_INTERVAL 1000
-
 static WNDPROC pfnDefLagboxProc = NULL;
 static HWND hwndLagbox = NULL;
 static object_node* pobjLagbox = NULL;
@@ -32,9 +29,12 @@ static char pszLagboxURL[MAX_URL] = "";
 extern HPALETTE hPal;
 
 static char szTooltip[80];
-static boolean bTracking = false;
+static bool bTracking = false;
 static object_node lagbox;
-static boolean latencyDialogActive = false;
+static bool latencyDialogActive = false;
+
+static const int updateToolTipEventId = 101;
+static const int updateToolTipInterval = 1000;
 
 /* local function prototypes */
 static LRESULT CALLBACK Lagbox_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -244,7 +244,7 @@ void Lagbox_Animate(int dt)
 {
 	if (config.spinning_cube)
 	{
-		boolean bNeedRedraw = true;
+		bool bNeedRedraw = true;
 		if (!latencyDialogActive)
 		{
 			// Animate by spinning the latency box.
@@ -282,7 +282,7 @@ LRESULT Lagbox_UpdateLatencyText()
 	ti.cbSize = sizeof(TOOLINFO);
 	ti.hwnd = hwndLagbox;
 	ti.uId = (UINT_PTR)hwndLagbox;
-	ti.lpszText = (LPTSTR)szTooltip;
+	ti.lpszText = (LPSTR)szTooltip;
 
 	SendMessage(TooltipGetControl(), TTM_UPDATETIPTEXT, 0, (LPARAM)&ti);
 
@@ -390,7 +390,7 @@ LRESULT CALLBACK Lagbox_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			tme.dwFlags = TME_LEAVE;
 			TrackMouseEvent(&tme);
 
-			SetTimer(hwndLagbox, IDT_UPDATE_TOOLTIP, LATENCY_TEXT_UPDATE_INTERVAL,
+			SetTimer(hwndLagbox, updateToolTipEventId, updateToolTipInterval,
 				(TIMERPROC)TimerProc);
 
 			bTracking = true;
@@ -405,14 +405,14 @@ LRESULT CALLBACK Lagbox_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		return TRUE;
 
 	case WM_DESTROY:
-		KillTimer(hWnd, IDT_UPDATE_TOOLTIP);
+		KillTimer(hWnd, updateToolTipEventId);
 		bTracking = false;
 		latencyDialogActive = false;
 	   break;
 	case WM_MOUSELEAVE:
 		if (!latencyDialogActive)
 		{
-			KillTimer(hWnd, IDT_UPDATE_TOOLTIP);
+			KillTimer(hWnd, updateToolTipEventId);
 			bTracking = false;
 		}
 	   break;

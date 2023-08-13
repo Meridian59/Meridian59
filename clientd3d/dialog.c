@@ -14,8 +14,6 @@
 #define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
-static DescDialogStruct info;	  /* Info for current Description dialog */
-
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */
 static HWND hAmountDialog = NULL; /* Non-null if Amount dialog is up */
 
@@ -637,6 +635,7 @@ void SetDescParams(HWND hParent, int flags)
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
                         char *fixed_string, char *url)
 {
+	DescDialogStruct info;
 	int template_id;
 	
 	if (hDescDialog != NULL)

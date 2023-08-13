@@ -15,7 +15,6 @@
 
 //ASSUME: Only one lagbox can be created.
 //
-
 static WNDPROC pfnDefLagboxProc = NULL;
 static HWND hwndLagbox = NULL;
 static object_node* pobjLagbox = NULL;

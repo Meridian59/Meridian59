@@ -42,6 +42,9 @@ classvars:
    viWeight = 60
    viBulk = 60
 
+   viHits_init_min = 200
+   viHits_init_max = 250
+
    vrWeapon_window_overlay = mace_window_overlay_rsc
 
    vrWeapon_overlay = mace_player_overlay

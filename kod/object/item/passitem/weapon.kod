@@ -53,10 +53,6 @@ constants:
    WEAPON_RANGE_MID  = 2
    WEAPON_RANGE_HIGH = 3
 
-   % Quality mods to number of hits
-   WEAPON_LOW_QUALITY_HITS  = -50
-   WEAPON_HIGH_QUALITY_HITS = 100
-   WEAPON_NERUDITE_HITS = 200
 
    % Quality mods to hit modifier
    WEAPON_LOW_QUALITY_HITMOD  = 0
@@ -154,28 +150,6 @@ properties:
    piUsed = UNUSED
 
 messages:
-
-   Constructed()
-   {
-      % Modify the hits depending on the weapon's quality.
-      if viWeaponQuality = WEAPON_QUALITY_LOW
-      {
-         piHits_init = piHits_init + WEAPON_LOW_QUALITY_HITS;
-         piHits = piHits + WEAPON_LOW_QUALITY_HITS;
-      }
-      if viWeaponQuality = WEAPON_QUALITY_HIGH
-      {
-         piHits_init = piHits_init + WEAPON_HIGH_QUALITY_HITS;
-         piHits = piHits + WEAPON_HIGH_QUALITY_HITS;
-      }
-      if viWeaponQuality = WEAPON_NERUDITE
-      {
-         piHits_init = piHits_init + WEAPON_NERUDITE_HITS;
-         piHits = piHits + WEAPON_NERUDITE_HITS;
-      }
-
-      propagate;
-   }
 
    %%% Hard Stats Functions
    %%% (Range, hit chance, damage, etc)

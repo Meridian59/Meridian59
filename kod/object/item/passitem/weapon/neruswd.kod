@@ -44,6 +44,9 @@ classvars:
    viWeight = 80
    viBulk = 70
 
+   viHits_init_min = 450
+   viHits_init_max = 500
+
    vrWeapon_window_overlay = NeruditeSword_window_overlay_rsc
    vrWeapon_overlay = NeruditeSword_player_overlay
 

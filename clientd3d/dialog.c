@@ -633,7 +633,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *extra_string, char *url)
+                        char *fixed_string, char *url)
 {
 	DescDialogStruct info;
 	int template_id;
@@ -649,7 +649,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.flags        = flags;
 	info.name         = LookupNameRsc(obj->name_res);
 	info.description  = description;
-	info.fixed_string = extra_string;
+	info.fixed_string = fixed_string;
 	info.url          = url;
 	
 	// Different dialog for players
@@ -661,8 +661,19 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
 }
-
-/*****************************************************************************/
+/************************************************************************/
+/*
+* SetDialogFixedString:  Update the fixed string for the dialog that appears
+* between the main name and description.
+*/
+void SetDialogFixedString(char* fixed_string)
+{
+	if (hDescDialog != NULL)
+	{
+		SetDlgItemText(hDescDialog, IDC_DESCFIXED, fixed_string);
+		InvalidateRect(GetDlgItem(hDescDialog, IDC_DESCFIXED), NULL, TRUE);
+	}
+}/************************************************************************/
 /*
 * AbortGameDialogs:  Close modal dialogs, for example when we lose the server
 *   connection.

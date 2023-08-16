@@ -43,6 +43,9 @@ classvars:
    viWeight = 15
    viBulk = 60
 
+   viHits_init_min = 350
+   viHits_init_max = 400
+
    vrWeapon_window_overlay = spirithammer_window_overlay_rsc
    vrWeapon_overlay = spirithammer_player_overlay
 

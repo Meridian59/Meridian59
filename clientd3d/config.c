@@ -72,6 +72,7 @@ static char INIIgnoreProfane[]= "IgnoreProfane";
 static char INIAntiProfane[] = "ProfanityFilter";
 static char INIExtraProfane[]= "ExtraProfaneSearch";
 static char INILagbox[]      = "LatencyMeter";
+static char INISpinningCube[]= "SpinningCube";
 static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
@@ -233,6 +234,7 @@ void ConfigLoad(void)
    config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, False, ini_file);
    config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, False, ini_file);
    config.lagbox       = GetConfigInt(interface_section, INILagbox, True, ini_file);
+   config.spinning_cube= GetConfigInt(interface_section, INISpinningCube, False, ini_file);
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, True, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
@@ -351,6 +353,7 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INIIgnoreProfane, config.ignoreprofane, ini_file);
    WriteConfigInt(interface_section, INIExtraProfane, config.extraprofane, ini_file);
    WriteConfigInt(interface_section, INILagbox, config.lagbox, ini_file);
+   WriteConfigInt(interface_section, INISpinningCube, config.spinning_cube, ini_file);
    WriteConfigInt(interface_section, INIHaloColor, config.halocolor, ini_file);
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);

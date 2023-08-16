@@ -34,12 +34,6 @@ classvars:
    vrLegs_female = Skirt_female_player_rsc
 
    vrPoss_article = item_this
-   vrCondition_exc = item_condition_exc 
-   vrCondition_exc_mended = item_condition_exc_mended
-   vrCondition_good = item_condition_good 
-   vrCondition_med = item_condition_med 
-   vrCondition_poor = item_condition_poor 
-   vrCondition_broken = item_condition_broken 
    viBroken_group = 3
 
    vrItem_Broken = item_broken_battle_clothing

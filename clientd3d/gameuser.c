@@ -96,7 +96,10 @@ void UserAttackClosest(int action)
 		if (FindVisibleObjectById(idTarget))
 			RequestAttack(ATTACK_NORMAL, idTarget);
 		else
-			GameMessage(GetString(hInst, IDS_TARGETNOTVISIBLEFORATTACK));
+         if (idTarget == player.id)
+            GameMessage(GetString(hInst, IDS_CANTATTACKSELF));
+         else
+			   GameMessage(GetString(hInst, IDS_TARGETNOTVISIBLEFORATTACK));
 		return;
 	}
 	

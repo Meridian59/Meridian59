@@ -20,16 +20,9 @@ resources:
    pants_desc_rsc = \
    "These pants will cover your legs but won't help much in the way of protection."
 
-   pants_condition_exc = " are in immaculate condition."
-   pants_condition_exc_mended = " are in excellent condition, but have been patched before.."
-   pants_condition_good = " are scuffed and slightly worn."
-   pants_condition_med = " have a few unsightly rips."
-   pants_condition_poor = " are in tatters, and barely holding together."
-   pants_condition_broken = " are covered in filth and ripped beyond use."
-
 classvars:
 
-   vbShow_condition = TRUE
+   vbShow_condition = FALSE
 
    viUse_type = ITEM_USE_LEGS
    viUse_amount = 1
@@ -47,14 +40,6 @@ classvars:
 
    viGround_group = 1
    viInventory_group = 2
-
-   vrShow_condition = TRUE
-   vrCondition_exc = pants_condition_exc 
-   vrCondition_exc_mended = pants_condition_exc_mended 
-   vrCondition_good = pants_condition_good 
-   vrCondition_med = pants_condition_med 
-   vrCondition_poor = pants_condition_poor 
-   vrCondition_broken = pants_condition_broken 
 
    vrItem_broken = defmod_broken_plural_clothes
 
@@ -132,7 +117,17 @@ messages:
       
    ReqRepair()
    {
-      return TRUE;
+      return FALSE;
+   }
+
+   CanMend()
+   {
+      return FALSE;
+   }
+
+   DefendingHit()
+   {
+      return;
    }
 
    IsPlural()

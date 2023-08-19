@@ -42,6 +42,9 @@ classvars:
    viWeight = 60 
    viBulk = 60
 
+   viHits_init_min = 350
+   viHits_init_max = 400
+
    vrWeapon_window_overlay = mysticsword_window_overlay_rsc
    vrWeapon_overlay = mysticsword_player_overlay
 

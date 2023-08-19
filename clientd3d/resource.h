@@ -231,6 +231,7 @@
 #define IDS_UNVERIFIED                  202
 #define IDS_RESENDAPI                   203
 #define IDS_SIGNUPMSG                   204
+#define IDS_CANTATTACKSELF              205
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001
 #define IDC_ITEMLIST                    1002

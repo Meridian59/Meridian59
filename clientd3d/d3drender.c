@@ -8060,7 +8060,7 @@ void D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Dr
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
 		// Projectile pDib `y offset` values are perfectly tuned for the software renderer.
-		// To spawn in the correct center location for the D3D renderer we required approximately 3 times that offset.
+		// To spawn in the correct center location we require 3 times the offset.
 		float yOffsetScaler = 3.0f;
 
 		pChunk->xyz[0].x = (float)pDib->width / (float)pDib->shrink * -8.0f + (float)pDib->xoffset;

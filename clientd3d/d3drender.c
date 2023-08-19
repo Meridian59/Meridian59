@@ -8059,17 +8059,21 @@ void D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Dr
 			(float)pProjectile->motion.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
+		// Projectile pDib `y offset` values are perfectly tuned for the software renderer.
+		// To spawn in the correct center location we require 3 times the offset.
+		float yOffsetScaler = 3.0f;
+
 		pChunk->xyz[0].x = (float)pDib->width / (float)pDib->shrink * -8.0f + (float)pDib->xoffset;
-		pChunk->xyz[0].z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
+		pChunk->xyz[0].z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * yOffsetScaler;
 
 		pChunk->xyz[1].x = (float)pDib->width / (float)pDib->shrink * -8.0f + (float)pDib->xoffset;
-		pChunk->xyz[1].z = -(float)pDib->yoffset * 4.0f;
+		pChunk->xyz[1].z = -(float)pDib->yoffset * yOffsetScaler;
 
 		pChunk->xyz[2].x = (float)pDib->width / (float)pDib->shrink * 8.0f + (float)pDib->xoffset;
-		pChunk->xyz[2].z = -(float)pDib->yoffset * 4.0f;
+		pChunk->xyz[2].z = -(float)pDib->yoffset * yOffsetScaler;
 
 		pChunk->xyz[3].x = (float)pDib->width / (float)pDib->shrink * 8.0f + (float)pDib->xoffset;
-		pChunk->xyz[3].z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
+		pChunk->xyz[3].z = ((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * yOffsetScaler;
 
 		{
 			float	oneOverW, oneOverH;

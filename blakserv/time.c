@@ -42,10 +42,7 @@ const char * TimeStr(time_t time)
 	if (tm_time == NULL)
 		return "Invalid Time";
 	
-	if (tm_time->tm_mday < 10)
-		time_format = "%b  %#d %Y %H:%M:%S";
-	else
-		time_format = "%b %#d %Y %H:%M:%S";
+  time_format = "%b %d %Y %H:%M:%S";
 	
 	if (strftime(s,sizeof(s),time_format,tm_time) == 0)
 		return "Time string too long";

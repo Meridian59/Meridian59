@@ -38,7 +38,7 @@ resources:
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
-   BarloqueInnkeeper_destroy_key_copy = "~kPritchett tells you, \"I will discardeth the key for thou.\""
+   BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thou."
    
 classvars:
 
@@ -151,7 +151,7 @@ messages:
    SomeoneSaid(what = $,type = $,string = $)
    {
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
-         #who=self, #what=what, #innRid=RID_BAR_INN, #string=string,
+         #who=self, #what=what, #innRid=RID_BAR_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
          #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost);
       

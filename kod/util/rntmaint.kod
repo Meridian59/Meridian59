@@ -13,6 +13,7 @@ RentableRoomMaintenance is UtilityFunctions
 constants:
    
    include blakston.khd
+   include protocol.khd
    ROOM_INIT_RENT_COST_DEFAULT = 5000
    ROOM_PER_DAY_COST_DEFAULT = 75
    ROOM_KEY_COPY_COST_DEFAULT = 500
@@ -45,10 +46,10 @@ resources:
    RoomMaintenance_innkeeper_say_too_long = \
       "Oh, I can't be responsible for holding so much money!  Pay me again "
       "later when you don't have so many days left on your tab."
+   RoomMaintenance_innkeeper_say_destroy_key_copy_template = \
+      "~k%q tells you, \"%s\""
    RoomMaintenance_innkeeper_say_destroy_key_copy = \
-      "%q tells you, \"Oh, yes. I can get rid of this key for "
-      "you.  No problem.\""
-
+      "I'll dispose of this key copy for you."
 
 properties:
 
@@ -100,9 +101,11 @@ messages:
       return;
    }
 
-   ParseInnkeeperCommands(who=$, what=$, innRid=$, string=$,
+   ParseInnkeeperCommands(who=$, what=$, innRid=$, speech=$,
       initCost=ROOM_INIT_RENT_COST_DEFAULT, perDayCost=ROOM_PER_DAY_COST_DEFAULT, keyCopyCost=ROOM_KEY_COPY_COST_DEFAULT,
       rscRoomRented=$, rscRoomCost=$)
+   "This processes spoken player commands, so it must go into SomeoneSaid on any\n"
+   "innkeeper who is supposed to rent rooms to players."
    {
       local rSayRsc;
 
@@ -115,12 +118,12 @@ messages:
       % These values are the bare minimum that should be passed in from
       % a listening innkeeper.  If they're not all present, abort and
       % leave a console message.
-      if who = $ OR innRid = $ OR string = $
+      if who = $ OR innRid = $ OR speech = $
       {
-         Debug("Warning: ParseInnkeeperCommands is missing required parameters: [#who, #innRid, #string]");
+         Debug("Warning: ParseInnkeeperCommands is missing required parameters: [#who, #innRid, #speech]");
          Debug("#who:", who, " - innkeeper object");
          Debug("#innRid:", innRid, " - inn's room id");
-         Debug("#string:", string, " - string spoken by player");
+         Debug("#speech:", speech, " - string spoken by player");
          return;
       }
 
@@ -129,8 +132,8 @@ messages:
       if rscRoomCost = $ { rscRoomCost = RoomMaintenance_innkeeper_say_cost; }
 
       % Command:  Rent Room
-      if (StringContain(string, RoomMaintenance_command_rent) AND StringContain(string, RoomMaintenance_command_room))
-         OR (StringContain(string, "rent") AND StringContain(string, "room"))
+      if (StringContain(speech, RoomMaintenance_command_rent) AND StringContain(speech, RoomMaintenance_command_room))
+         OR (StringContain(speech, "rent") AND StringContain(speech, "room"))
       {
          rSayRsc = Send(self, @RentRoom, #who=what, #iLocation=innRid, #iCost=initCost);
 
@@ -146,8 +149,8 @@ messages:
       }          
 
       % Command: Copy Key
-      if StringContain(string, RoomMaintenance_command_copy_key)
-         OR StringContain(string,"copy key")
+      if StringContain(speech, RoomMaintenance_command_copy_key)
+         OR StringContain(speech,"copy key")
       {
          rSayRsc = send(self, @CopyKey, #who=what, #iLocation=innRid, #iCost=keyCopyCost);
 
@@ -158,8 +161,8 @@ messages:
       }
 
       % Command: Room Cost
-      if (StringContain(string, RoomMaintenance_command_room) AND StringContain(string, RoomMaintenance_command_cost))
-         OR (StringContain(string, "room") AND StringContain(string, "cost"))
+      if (StringContain(speech, RoomMaintenance_command_room) AND StringContain(speech, RoomMaintenance_command_cost))
+         OR (StringContain(speech, "room") AND StringContain(speech, "cost"))
       {
          Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who,
             #string=rscRoomCost, 
@@ -171,11 +174,11 @@ messages:
       return;
    }
 
-   % Checks items offered (ReqOffer) to an innkeeper to see if they're related to rooms
-   % Returns TRUE if so, otherwise returns FALSE.  Innkeeper should terminate
-   % processing (return FALSE) in ReqOffer if this returns TRUE.
    ReqOfferedRoomItems(who=$, what=$, itemList=$, innRid=$, perDayCost=ROOM_PER_DAY_COST_DEFAULT,
       rscDaysLeft=$, rscTooLong=$, rscDestroyKeyCopy=$)
+   "Checks items offered (ReqOffer) to an innkeeper to see if they're related to rooms,\n"
+   "returns TRUE if so.  Otherwise returns FALSE.  Innkeeper should terminate\n"
+   "processing (return FALSE) in ReqOffer if this returns TRUE."
    {
       local oItem, iMoney, iNewDays;
 
@@ -234,7 +237,9 @@ messages:
          if GetClass(oItem) = &RoomKeyCopy
          {
             % Say something and delete the key.
-            Send(what, @MsgSendUser, #message_rsc=rscDestroyKeyCopy);
+            Send(what, @MsgSendUser, #message_rsc=RoomMaintenance_innkeeper_say_destroy_key_copy_template,
+               #parm1=Send(who, @GetName), #type1=STRING_RESOURCE,
+               #parm2=rscDestroyKeyCopy, #type2=STANDARD_RESOURCE);
             Send(oItem, @Delete);
 
             return TRUE;

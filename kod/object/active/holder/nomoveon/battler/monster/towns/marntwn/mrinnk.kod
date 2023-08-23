@@ -39,7 +39,7 @@ resources:
       "Oh, I can't be responsible for holding so much money!  Pay me again later "
       "when you don't have so many days left on your tab."
    MarionInnkeeper_destroy_key_copy = \
-      "~kMorrigan tells you, \"Oh, yes. I can get rid of this key for you.  No problem.\""
+      "Oh, yes. I can get rid of this key for you.  No problem."
 
 classvars:
 
@@ -74,7 +74,7 @@ messages:
       }
       
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
-         #who=self, #what=what, #innRid=RID_MAR_INN, #string=string,
+         #who=self, #what=what, #innRid=RID_MAR_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
          #rscRoomRented=MarionInnkeeper_room_rented, #rscRoomCost=MarionInnkeeper_cost);
 

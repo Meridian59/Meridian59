@@ -13,6 +13,9 @@ RentableRoomMaintenance is UtilityFunctions
 constants:
    
    include blakston.khd
+   ROOM_INIT_RENT_COST_DEFAULT = 5000
+   ROOM_PER_DAY_COST_DEFAULT = 75
+   ROOM_KEY_COPY_COST_DEFAULT = 500
 
 resources:
 
@@ -23,6 +26,29 @@ resources:
    RoomMaintenance_no_key = "Where is the key from this inn to copy?"
    RoomMaintenance_no_copy_copy = "You may not copy a copy of a room key."
    RoomMaintenance_copy_no_money = "You cannot afford a copy of your room key."
+
+   RoomMaintenance_command_room = "room"
+   RoomMaintenance_command_rent = "rent"
+   RoomMaintenance_command_cost = "cost"
+   RoomMaintenance_command_copy_key = "copy key"
+
+   RoomMaintenance_innkeeper_say_room_rented = \
+      "Here you go.  I hope you enjoy your stay, and if you have any problems "
+      "I will be glad to help you."
+   RoomMaintenance_innkeeper_say_cost = \
+      "I charge %i shillings to ~Irent~n a ~Iroom~n here for 85 days.  "
+      "If you want to stay longer, I charge %i per day if you pre-pay.  "
+      "Key copies cost %i shillings to make."
+   RoomMaintenance_innkeeper_say_days_left = \
+      "You like it here, I see.  There are %i days until you should "
+      "pay me again."
+   RoomMaintenance_innkeeper_say_too_long = \
+      "Oh, I can't be responsible for holding so much money!  Pay me again "
+      "later when you don't have so many days left on your tab."
+   RoomMaintenance_innkeeper_say_destroy_key_copy = \
+      "%q tells you, \"Oh, yes. I can get rid of this key for "
+      "you.  No problem.\""
+
 
 properties:
 
@@ -72,6 +98,150 @@ messages:
       plHoldingDuringRecreate = $;
       
       return;
+   }
+
+   ParseInnkeeperCommands(who=$, what=$, innRid=$, string=$,
+      initCost=ROOM_INIT_RENT_COST_DEFAULT, perDayCost=ROOM_PER_DAY_COST_DEFAULT, keyCopyCost=ROOM_KEY_COPY_COST_DEFAULT,
+      rscRoomRented=$, rscRoomCost=$)
+   {
+      local rSayRsc;
+
+      % If it's not a player talking, we don't want to do anything else here.  Abort.
+      if NOT IsClass(what, &User)
+      {
+         return;
+      }
+
+      % These values are the bare minimum that should be passed in from
+      % a listening innkeeper.  If they're not all present, abort and
+      % leave a console message.
+      if who = $ OR innRid = $ OR string = $
+      {
+         Debug("Warning: ParseInnkeeperCommands is missing required parameters: [#who, #innRid, #string]");
+         Debug("#who:", who, " - innkeeper object");
+         Debug("#innRid:", innRid, " - inn's room id");
+         Debug("#string:", string, " - string spoken by player");
+         return;
+      }
+
+      % Any of these not specified can just use generic defaults
+      if rscRoomRented = $ { rscRoomRented = RoomMaintenance_innkeeper_say_room_rented; }
+      if rscRoomCost = $ { rscRoomCost = RoomMaintenance_innkeeper_say_cost; }
+
+      % Command:  Rent Room
+      if (StringContain(string, RoomMaintenance_command_rent) AND StringContain(string, RoomMaintenance_command_room))
+         OR (StringContain(string, "rent") AND StringContain(string, "room"))
+      {
+         rSayRsc = Send(self, @RentRoom, #who=what, #iLocation=innRid, #iCost=initCost);
+
+         % rSayRsc is $ on success.  Use the innkeeper's saying.
+         if rSayRsc = $
+         {
+            rSayRsc = rscRoomRented;
+         }
+
+         Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who, #string=rSayRsc);
+
+         return;
+      }          
+
+      % Command: Copy Key
+      if StringContain(string, RoomMaintenance_command_copy_key)
+         OR StringContain(string,"copy key")
+      {
+         rSayRsc = send(self, @CopyKey, #who=what, #iLocation=innRid, #iCost=keyCopyCost);
+
+         % tell the player.
+         Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who, #string=rSayRsc);
+
+         return;
+      }
+
+      % Command: Room Cost
+      if (StringContain(string, RoomMaintenance_command_room) AND StringContain(string, RoomMaintenance_command_cost))
+         OR (StringContain(string, "room") AND StringContain(string, "cost"))
+      {
+         Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who,
+            #string=rscRoomCost, 
+            #parm1=initCost, #parm2=perDayCost, #parm3=keyCopyCost);
+
+         return;
+      }    
+
+      return;
+   }
+
+   % Checks items offered (ReqOffer) to an innkeeper to see if they're related to rooms
+   % Returns TRUE if so, otherwise returns FALSE.  Innkeeper should terminate
+   % processing (return FALSE) in ReqOffer if this returns TRUE.
+   ReqOfferedRoomItems(who=$, what=$, itemList=$, innRid=$, perDayCost=ROOM_PER_DAY_COST_DEFAULT,
+      rscDaysLeft=$, rscTooLong=$, rscDestroyKeyCopy=$)
+   {
+      local oItem, iMoney, iNewDays;
+
+      % These values are the bare minimum that should be passed in from
+      % an innkeeper's ReqOffer function.  If they're not all present, abort and
+      % leave a console message.
+      if who = $ OR what = $ OR itemList = $ OR innRid = $
+      {
+         Debug("Warning: ReqOfferedRoomItems is missing required parameters: [#who, #what, #itemList, #innRid]");
+         Debug("#who:", who, " - innkeeper object");
+         Debug("#what:", what, " - offering player object");
+         Debug("#itemList:", itemList, " - list of items offered");
+         Debug("#innRid:", innRid, " - inn's room id");
+         return FALSE;
+      }
+
+      % Any of these not specified can just use generic defaults
+      if rscDaysLeft = $ { rscDaysLeft = RoomMaintenance_innkeeper_say_days_left; }
+      if rscTooLong = $ { rscTooLong = RoomMaintenance_innkeeper_say_too_long; }
+      if rscDestroyKeyCopy = $ { rscDestroyKeyCopy = RoomMaintenance_innkeeper_say_destroy_key_copy; }
+
+      % Is the item money?  If so, try to pay rent with it.
+      iMoney = 0;
+      for oItem in itemList
+      {
+         if IsClass(oItem, &Money)
+         {
+            iMoney = iMoney + Send(oItem, @GetValue);
+         }
+      }
+      if iMoney > 0
+      {
+         iNewDays = Send(self, @GotRent, #who=what, #iAmount=iMoney, #iCost=perDayCost, #iLocation=innRid);
+         if iNewDays <> $
+         {
+            % iNewDays = 0 means that we've trying to pay for more days than allowed.
+            if iNewDays = 0
+            {
+               Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who, #string=rscTooLong);
+            }
+            else
+            {
+               Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who, #string=rscDaysLeft,
+                  #parm1=iNewDays);
+            }
+
+            return TRUE;
+         }
+
+         return FALSE;
+      }
+
+      % Is the item a key copy?  If so, destroy it.
+      for oItem in itemList
+      {
+         if GetClass(oItem) = &RoomKeyCopy
+         {
+            % Say something and delete the key.
+            Send(what, @MsgSendUser, #message_rsc=rscDestroyKeyCopy);
+            Send(oItem, @Delete);
+
+            return TRUE;
+         }
+      }
+
+      return FALSE;
    }
 
    RentRoom(who=$,iLocation=$,iCost=5000)

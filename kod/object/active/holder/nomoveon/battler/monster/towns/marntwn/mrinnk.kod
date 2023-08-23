@@ -25,22 +25,21 @@ resources:
 
    MrIk_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s."
 
-   MarionInnkeeper_room_rented = "Here ya go then.  Hope you enjoy your stay, if you have any problems Tova will be glad to help you."
-
-   MarionInnkeeper_cost1 = "Oh, good, you should rest.  Let me see....  I charge "
-   MarionInnkeeper_cost2 = " shillings to ~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay longer, I charge "
-   MarionInnkeeper_cost3 = " per day if you pre-pay.  Key copies, uh, key copies....  Oh, they cost "
-   MarionInnkeeper_cost4 = " shillings to make.  I know you'll like your room."
-
-   MarionInnkeeper_days_left = "You like it here, I see.  There are %q days until you should pay me again."
-   MarionInnkeeper_too_long = "Oh, I can't be responsible for holding so much money!  Pay me again later when you don't have so many days left on your tab."
-
-   MarionInnkeeper_destroy_key_copy = "~kMorrigan tells you, \"Oh, yes. I can get rid of this key for you.  No problem.\""
-
-   MrIk_room_command = "room"
-   MrIk_rent_command = "rent"
-   MrIk_cost_command = "cost"
-   MrIk_copy_key_command = "copy key"
+   MarionInnkeeper_room_rented = \
+      "Here ya go then.  Hope you enjoy your stay, if you have any problems Tova "
+      "will be glad to help you."
+   MarionInnkeeper_cost = \
+      "Oh, good, you should rest.  Let me see....  I charge %i shillings to ~Irent~n "
+      "a nice ~Iroom~n here for 85 days.  If you wish to stay longer, I charge %i "
+      "per day if you pre-pay.  Key copies, uh, key copies....  Oh, they cost %i "
+      "shillings to make.  I know you'll like your room."
+   MarionInnkeeper_days_left = \
+      "You like it here, I see.  There are %i days until you should pay me again."
+   MarionInnkeeper_too_long = \
+      "Oh, I can't be responsible for holding so much money!  Pay me again later "
+      "when you don't have so many days left on your tab."
+   MarionInnkeeper_destroy_key_copy = \
+      "~kMorrigan tells you, \"Oh, yes. I can get rid of this key for you.  No problem.\""
 
 classvars:
 
@@ -62,8 +61,6 @@ messages:
    % special handling to make him laugh at Tova's chatter
    SomeoneSaid(what=$,string=$)
    {
-      local oRoomMaint, rSayRsc;
-
       % if it's Tova talking
       if IsClass(what, &MarionBartender)
       {
@@ -76,63 +73,16 @@ messages:
          }
       }
       
-      if isClass(what,&User)
-      {
-         oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
-      
-         if (StringContain(string,MrIk_rent_command) AND StringContain(string,MrIk_room_command))
-            OR (StringContain(string,"rent") AND StringContain(string,"room"))
-         {
-            rSayRsc = send(oRoomMaint,@RentRoom,#who=what,#iLocation=RID_MAR_INN,#iCost=piInitialRoomCost);
-
-            % rSayRsc is $ on success.  Use the innkeeper's saying.
-            if rSayRsc = $
-            {
-               rSayRsc = MarionInnkeeper_room_rented;
-            }
-
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
-
-            return;
-         }          
-
-         if StringContain(string,MrIk_copy_key_command)
-            OR StringContain(string,"copy key")
-         {
-            rSayRsc = send(oRoomMaint,@CopyKey,#who=what,#iLocation=RID_MAR_INN,#iCost=piKeyCopyCosts);
-
-            % tell the player.
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
-
-            return;
-         }
-
-         if (StringContain(string,MrIk_room_command) AND StringContain(string,MrIk_cost_command))
-            OR (StringContain(string,"room") AND StringContain(string,"cost"))
-         {
-            ClearTempString();
-            AppendTempString(MarionInnkeeper_cost1);
-            AppendTempString(piInitialRoomCost);
-            AppendTempString(MarionInnkeeper_cost2);
-            AppendTempString(piPerDayCost);
-            AppendTempString(MarionInnkeeper_cost3);
-            AppendTempString(piKeyCopyCosts);
-            AppendTempString(MarionInnkeeper_cost4);
-            
-            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=send(SYS,@GetPercentQRsc),
-                 #parm1=GetTempString(),#type1=0);
-
-            return;
-         }          
-      }
+      Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
+         #who=self, #what=what, #innRid=RID_MAR_INN, #string=string,
+         #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
+         #rscRoomRented=MarionInnkeeper_room_rented, #rscRoomCost=MarionInnkeeper_cost);
 
       propagate;
    }
 
    ReqOffer(what = $,item_list = $)
    {
-      local i, iMoney, oRoomMaint, iNewDays;
-   
       % Check for if in the same room.
       if send(what,@GetOwner) <> poOwner
       {
@@ -141,46 +91,11 @@ messages:
          return FALSE;
       }     
 
-      for i in item_list
+      if Send(Send(SYS, @GetRentableRoomMaintenance), @ReqOfferedRoomItems, #who=self, #what=what,
+         #itemList=item_list, #innRid=RID_MAR_INN, #perDayCost=piPerDayCost,
+         #rscDaysLeft=MarionInnkeeper_days_left, #rscTooLong=MarionInnkeeper_too_long,
+         #rscDestroyKeyCopy=MarionInnkeeper_destroy_key_copy)
       {
-         if NOT IsClass(i,&Money)
-         {
-            if GetClass(i) = &RoomKeyCopy
-            {
-               % Say something and delete the key.
-               send(what,@MsgSendUser,#message_rsc=MarionInnkeeper_destroy_key_copy);
-               send(i,@Delete);
-
-               return FALSE;
-            }
-
-            propagate;
-         }
-      }
-
-      iMoney = 0;
-      for i in item_list
-      {
-         iMoney = iMoney + Send(i,@GetValue);
-      }
-
-      oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
-
-      iNewDays = send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,#iCost=piPerDayCost,#iLocation=RID_MAR_INN);
-
-      if iNewDays <> $
-      {
-         % iNewDays = 0 means that we've trying to pay for more days than allowed.
-         if iNewDays = 0
-         {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=MarionInnkeeper_too_long);
-         }
-         else
-         {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=MarionInnkeeper_days_left,
-                 #parm1=send(SYS,@IntToString,#num=iNewDays),#type1=STRING_RESOURCE);
-         }
-
          return FALSE;
       }
 

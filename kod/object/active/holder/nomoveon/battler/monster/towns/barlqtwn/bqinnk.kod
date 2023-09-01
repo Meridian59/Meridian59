@@ -38,7 +38,7 @@ resources:
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
-   BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thou."
+   BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thee."
    
 classvars:
 

@@ -92,9 +92,46 @@ messages:
       }
       
       send(self,@SetSchool,#school=school);
-      send(self,@SetXLATTranslation,#translation=viXLAT_no_knowledge);
       
       propagate;
+   }
+
+   Constructed()
+   {
+      Send(self, @SetPaletteTranslation, #translation=Send(SYS, @EncodeTwoColorXLAT,
+         #color1=Send(self, @GetMasterXLATBySchool), #color2=XLAT_TO_SKIN2));
+
+      propagate;
+   }
+
+   GetMasterXLATBySchool()
+   {
+      if piSchool = SS_JALA
+      {
+         return viXLAT_jala_master;
+      }
+      if piSchool = SS_RIIJA
+      {
+         return viXLAT_riija_master;
+      }
+      if piSchool = SS_SHALILLE
+      {
+         return viXLAT_shalille_master;
+      }
+      if piSchool = SS_QOR
+      {
+         return viXLAT_qor_master;
+      }
+      if piSchool = SS_KRAANAN
+      {
+         return viXLAT_kraanan_master;
+      }
+      if piSchool = SS_FAREN
+      {
+         return viXLAT_faren_master;
+      }
+
+      return viXLAT_no_knowledge;
    }
 
    GetBaseSpellModifier(oSpell=$)
@@ -208,35 +245,7 @@ messages:
       % Okay, it's above level four.  Let's be school specific, shall we?
       if iHigh_level > 4
       {
-         if piSchool = SS_JALA
-         {
-            send(self,@SetXLATTranslation,#translation=viXLAT_jala_master);         
-         }
-         
-         if piSchool = SS_FAREN
-         {
-            send(self,@SetXLATTranslation,#translation=viXLAT_faren_master);            
-         }
-         
-         if piSchool = SS_KRAANAN
-         {
-            send(self,@SetXLATTranslation,#translation=viXLAT_kraanan_master);
-         }
-         
-         if piSchool = SS_SHALILLE
-         {
-            send(self,@SetXLATTranslation,#translation=viXLAT_shalille_master);
-         }
-         
-         if piSchool = SS_QOR
-         {
-            send(self,@SetXLATTranslation,#translation=viXLAT_qor_master);            
-         }
-         
-         if piSchool = SS_RIIJA
-         {
-            send(self,@SetXLATTranslation,#translation=viXLAT_riija_master);         
-         }
+         Send(self, @SetXLATTranslation, #translation=Send(self, @GetMasterXLATBySchool));
       }
       
       return;
@@ -278,6 +287,10 @@ messages:
       {
          Send(poOwner,@RemoveOverlay,#what=self);
       }
+
+      Send(self, @SetPaletteTranslation, #translation=Send(SYS, @EncodeTwoColorXLAT,
+         #color1=Send(self, @GetMasterXLATBySchool), #color2=XLAT_TO_SKIN2));
+      Send(poOwner, @SomethingChanged, #what=self);
 
       propagate;
    }

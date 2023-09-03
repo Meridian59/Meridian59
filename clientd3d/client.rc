@@ -944,6 +944,7 @@ BEGIN
     PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,101,191,142,12
     DEFPUSHBUTTON   "OK",IDOK,145,212,50,12,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,201,212,50,12,WS_GROUP
+    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,182,71,9
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -1727,6 +1728,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_TARGETNOTVISIBLEFORATTACK "You can't see your selected target."
+    IDS_CANTATTACKSELF      "You can't attack yourself."
     IDS_DEPOSIT_ITEMS       "Deposit Items"
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
@@ -1737,7 +1739,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LAGBOXURL           "http://meridian59.com/serverstatus/"
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."

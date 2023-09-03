@@ -78,6 +78,9 @@ extern void ClearMessageQueue(void);
 
 extern Bool is_foreground;   // True when program is in the foreground
 
+// Minimum # of milliseconds between non-repeat actions
+#define KEY_NOREPEAT_INTERVAL 400
+
 /* This list of include files is good for precompiled headers */
 /* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
 

@@ -296,6 +296,8 @@ resources:
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
+   got_all_stuff = "You hastily grab what you need."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -964,6 +966,14 @@ messages:
          oWhat = Nth(client_msg,2);
          Send(self,@UserGet,#what=oWhat);
          
+         return;
+      }
+
+      if liClient_cmd = BP_REQ_GET_FROM_CONT
+      {
+         lItems = Nth(client_msg,2);
+         Send(self,@UserGetFromContainer,#items_list=lItems,#numbers_list=number_stuff);
+
          return;
       }
       
@@ -3682,6 +3692,103 @@ messages:
 
       Send(self,@NewHold,#what=what);
       
+      return;
+   }
+
+   UserGetFromContainer(items_list=$, numbers_list=$)
+   {
+      local oOldOwner, oSplit, iCan_hold, oitem, iCantGet, iNumber;
+      iCantGet = 0;
+      for oitem in items_list
+      {
+
+         iNumber = First(numbers_list);
+         oOldOwner = Send(oitem,@GetOwner);
+
+         if oOldOwner <> $
+            AND NOT Send(oOldOwner,@ReqTaker,#what=oitem,#taker=self)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
+            Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+            iCantGet = 1;
+         }
+
+         if NOT Send(oitem,@ReqNewOwner,#what=self)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
+            Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+            iCantGet = 1;
+         }
+
+         if IsClass(oitem,&NumberItem)
+         {
+            iCan_hold = Send(self,@GetNumberCanHold,#what=oitem);
+            if iCan_hold < iNumber
+            {
+               if iCan_hold = 0
+               {
+                  Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+                        #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
+                  Send(self, @WaveSendUser, #what=self, 
+                        #wave_rsc = user_cant_pickup_item_wav_rsc);
+                  iCantGet = 1;
+                }
+               else
+               {
+                  oSplit = Send(oitem,@Split,#number=iCan_hold);
+                  if Send(oitem,@ReqNewOwner,#what=oSplit)
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=user_got_some,
+                        #parm1=Send(oitem,@GetName));
+                     Send(self,@NewHold,#what=oSplit);
+                     iCantGet = 1;
+                  }
+               }
+            }
+            % iCan_hold > iNumber
+            else
+            {
+               oSplit = Send(oitem,@Split,#number=iNumber);
+               if Send(oitem,@ReqNewOwner,#what=oSplit)
+               {
+                  Send(self,@NewHold,#what=oSplit);
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+                        #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
+                  Send(self, @WaveSendUser, #what=self, 
+                        #wave_rsc = user_cant_pickup_item_wav_rsc);
+                  iCantGet = 1;
+               }
+            }
+         }
+         % Not a number item
+         else
+         {
+            if NOT Send(self,@ReqNewHold,#what=oitem)
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+                     #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
+               Send(self, @WaveSendUser, #what=self, 
+                     #wave_rsc = user_cant_pickup_item_wav_rsc);
+               iCantGet = 1;
+            }
+            else
+            {
+               Send(self,@NewHold,#what=oitem);
+            }
+         }
+         % Move down the list of numbers
+         numbers_list = Rest(numbers_list);
+      }
+      if iCantGet = 0
+      {
+         Send(self,@MsgSendUser,#message_rsc=got_all_stuff);
+      }
+
       return;
    }
 

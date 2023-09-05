@@ -136,8 +136,10 @@ void UserPickup(void)
  */
 void GotObjectContents(ID object_id, list_type contents)
 {
-   list_type sel_list, l;
+   list_type sel_list, l, stacklist, nostacklist;
    room_contents_node *r;
+   stacklist = NULL;
+   nostacklist = NULL;
 
    r = GetRoomObjectById(object_id);
 
@@ -147,13 +149,29 @@ void GotObjectContents(ID object_id, list_type contents)
 	 GameMessagePrintf(GetString(hInst, IDS_EMPTY), LookupNameRsc(r->obj.name_res));
       return;
    }
+   //Separate contents into number items and other items
+   for (l = contents; l != NULL; l = l->next)
+   {
+      if (IsNumberObj(((object_node *)(l->data))->id))
+      {
+         stacklist = list_add_sorted_item(stacklist, (object_node *)(l->data), CompareObjectNameRsc);
+      }
+      else
+      {
+         nostacklist = list_add_sorted_item(nostacklist, (object_node *)(l->data), CompareObjectNameRsc);
+      }
+   }
+   //Concat the two lists into one
+   stacklist = list_append(stacklist, nostacklist);
 
-   sel_list = DisplayLookList(hMain, GetString(hInst, IDS_GET), contents, LD_MULTIPLESEL);   
-
-   for (l = sel_list; l != NULL; l = l->next)
-      RequestPickup(((room_contents_node *) (l->data))->obj.id);
+   sel_list = DisplayLookList(hMain, GetString(hInst, IDS_GET), stacklist, LD_MULTIPLESEL | LD_AMOUNTS);   
+   //Request Pickup from container if any items are selected
+   if (list_length(sel_list) > 0)
+      RequestPickupFromContainer(sel_list);
 
    ObjectListDestroy(sel_list);
+   ObjectListDestroy(stacklist);
+   ObjectListDestroy(nostacklist);
 }
 /************************************************************************/
 /*

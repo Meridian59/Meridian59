@@ -50,6 +50,25 @@ int CompareRoomObjectDistance(void *r1, void *r2)
 {
    return ((room_contents_node *) r1)->distance - ((room_contents_node *) r2)->distance;
 }
+/*************************************************************************/
+// Alphabetical compare of objects based on display name
+//
+int CompareObjectNameRsc(void *obj1, void *obj2)
+{
+    // Cast obj1 and obj2 to the correct type (assuming object_node*)
+    object_node *node1 = (object_node *)obj1;
+    object_node *node2 = (object_node *)obj2;
+
+    const char *string1;
+    const char *string2;
+
+    //Get string1 and string2
+    string1 = LookupNameRsc(node1->name_res);
+    string2 = LookupNameRsc(node2->name_res);
+
+    // Use stricmp to compare the name_res strings
+    return stricmp(string1, string2);
+}
 /*****************************************************************************/
 /*
  * OverlayListDestroy:  Free memory associated with a list of overlays, and return NULL.

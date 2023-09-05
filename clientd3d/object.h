@@ -109,6 +109,7 @@ M59EXPORT Bool CompareIdObject(void *idnum, void *obj);
 Bool CompareId(void *id1, void *id2);
 Bool CompareIdRoomObject(void *idnum, void *obj);
 int  CompareRoomObjectDistance(void* p1, void* p2);
+int CompareObjectNameRsc(void *obj1, void *obj2);
 list_type    OverlayListDestroy(list_type overlays);
 M59EXPORT object_node *ObjectGetBlank(void);
 M59EXPORT object_node *ObjectCopy(object_node *obj);

@@ -3769,6 +3769,8 @@ messages:
                   iCantGet = 1;
                }
             }
+         % Move down the list of numbers
+         numbers_list = Rest(numbers_list);
          }
          % Not a number item
          else
@@ -3786,8 +3788,6 @@ messages:
                Send(self,@NewHold,#what=oitem);
             }
          }
-         % Move down the list of numbers
-         numbers_list = Rest(numbers_list);
       }
       if iCantGet = 0
       {

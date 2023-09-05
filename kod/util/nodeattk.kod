@@ -256,6 +256,7 @@ messages:
 
       ptAttack = $;
       if NOT Send(self,@DoNodeAttack)
+         AND pbAttackEnabled
       {
          % Between 1 and 2 hours
          ptAttack = CreateTimer(self,@StartAttackTimer,Random(3600,7200)*1000);

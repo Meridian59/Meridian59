@@ -443,7 +443,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	      obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
 	      if (ListBox_GetSel(info->hwndQuanList, i) > 0)
          {
-            amount = ListBox_GetItemData(info->hwndQuanList,i);	
+            DWORD amount = (DWORD)ListBox_GetItemData(info->hwndQuanList,i);	
 	         obj->temp_amount = amount;	
 	         selection = list_add_item(selection, obj);	
          }

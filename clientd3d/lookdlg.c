@@ -439,16 +439,16 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       
       for (i = 0; i < num_entries; i++)
       {
-	 /* If item is selected, add to selection list, else free */
-	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
-	 if (ListBox_GetSel(info->hwndListBox, i) > 0)
-    {
-      DWORD amount = (DWORD)ListBox_GetItemData(info->hwndQuanList,i);	
-	   obj->temp_amount = amount;	
-	   selection = list_add_item(selection, obj);	
-    }
-	 else 
-	    ObjectDestroyAndFree(obj);
+	      /* If item is selected, add to selection list, else free */
+	      obj = (object_node *) ListBox_GetItemData(info->hwndItemList, i);
+	      if (ListBox_GetSel(info->hwndItemList, i) > 0)
+         {
+            DWORD amount = (DWORD)ListBox_GetItemData(info->hwndQuanList,i);	
+	         obj->temp_amount = amount;	
+	         selection = list_add_item(selection, obj);	
+         }
+	      else 
+	         ObjectDestroyAndFree(obj);
       }
 
       LookDialogRetval = selection;

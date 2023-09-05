@@ -446,12 +446,12 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
             if (IsNumberObj(obj->id))
             {
                DWORD amount = (DWORD)ListBox_GetItemData(info->hwndQuanList,i);	
-	            obj->temp_amount = amount;
+	            obj->amount = amount;
 	            selection = list_add_item(selection, obj);
             }
             else
             {
-               obj->temp_amount = 1;
+               obj->amount = 1;
                selection = list_add_item(selection, obj);
             }
          }

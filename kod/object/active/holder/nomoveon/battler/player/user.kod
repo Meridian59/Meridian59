@@ -297,6 +297,7 @@ resources:
    user_safety_off_wav_rsc = safety_off.wav
 
    got_all_stuff = "You hastily grab what you need."
+   list_length_mismatch = "The List Lengths Dont Match!"
 
 classvars:
 
@@ -3699,6 +3700,10 @@ messages:
    {
       local oOldOwner, oSplit, iCan_hold, oitem, iCantGet, iNumber;
       iCantGet = 0;
+      if length(items_list) <> length(numbers_list)
+      {
+         Send(self,@MsgSendUser,#message_rsc=list_length_mismatch);
+      }
       for oitem in items_list
       {
 

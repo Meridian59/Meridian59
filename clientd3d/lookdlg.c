@@ -440,8 +440,8 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       for (i = 0; i < num_entries; i++)
       {
 	      /* If item is selected, add to selection list, else free */
-	      obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
-	      if (ListBox_GetSel(info->hwndQuanList, i) > 0)
+	      obj = (object_node *) ListBox_GetItemData(info->hwndItemList, i);
+	      if (ListBox_GetSel(info->hwndItemList, i) > 0)
          {
             DWORD amount = (DWORD)ListBox_GetItemData(info->hwndQuanList,i);	
 	         obj->temp_amount = amount;	

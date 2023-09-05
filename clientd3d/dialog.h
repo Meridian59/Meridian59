@@ -28,7 +28,7 @@ typedef struct {
    int       flags;          // Flags for dialog; behavior; see LD_ above
 
    /* These fields are used internally in the dialog: */
-   HWND hwndListBox, hwndQuanList, hwndFind;  /* Handles of child items */
+   HWND hwndListBox, hwdnItemList, hwndQuanList, hwndFind;  /* Handles of child items */
    WNDPROC lpfnDefLookProc;     /* Default list box window procedure */   
    Bool   *selected;            /* Array of booleans; true if item at index is selected */
 } LookDialogStruct;

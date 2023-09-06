@@ -441,8 +441,6 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       {
 	      /* If item is selected, add to selection list, else free */
 	      obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
-         //Temporarily keeping these two comments - will remove before PR
-         //if (ListBox_GetItemData(info->hwndQuanList,i) > 0)
          if (ListBox_GetSel(info->hwndListBox, i) > 0)
          {
             selection = list_add_item(selection, obj);

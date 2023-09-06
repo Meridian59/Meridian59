@@ -3781,7 +3781,8 @@ messages:
                   iCantGet = 1;
                }
             }
-         % Move down the list of numbers
+         % Move down the list of numbers only if we got a number item
+         % None number items dont care what iNumber is
          numbers_list = Rest(numbers_list);
          }
          % Not a number item
@@ -3801,6 +3802,8 @@ messages:
             }
          }
       }
+      % If iCantGet still equals zero then we grabbed everything in the list
+      % If so let's send a success message to the user
       if iCantGet = 0
       {
          Send(self,@MsgSendUser,#message_rsc=got_all_stuff);

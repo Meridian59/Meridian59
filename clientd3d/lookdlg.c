@@ -441,20 +441,11 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       {
 	      /* If item is selected, add to selection list, else free */
 	      obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
-	      //if (ListBox_GetSel(info->hwndListBox, i) > 0)
-         if (ListBox_GetItemData(info->hwndQuanList,i) > 0)
+         //Temporarily keeping these two comments - will remove before PR
+         //if (ListBox_GetItemData(info->hwndQuanList,i) > 0)
+         if (ListBox_GetSel(info->hwndListBox, i) > 0)
          {
-            if (IsNumberObj(obj->id))
-            {
-               DWORD amount = (DWORD)ListBox_GetItemData(info->hwndQuanList,i);	
-	            obj->temp_amount = amount;
-	            selection = list_add_item(selection, obj);
-            }
-            else
-            {
-               obj->temp_amount = 1;
-               selection = list_add_item(selection, obj);
-            }
+            selection = list_add_item(selection, obj);
          }
 	      else 
          {

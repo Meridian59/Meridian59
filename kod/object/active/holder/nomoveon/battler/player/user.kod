@@ -3710,6 +3710,23 @@ messages:
          iNumber = First(numbers_list);
          oOldOwner = Send(oitem,@GetOwner);
 
+         % Make sure we're not trying to get something we've already got!
+         if oOldOwner = self
+         {
+            return;
+         }
+
+         % Make sure object still exists, etc, so we don't cause errors
+         if Send(SYS,@UtilGetRoom,#what=what) <> poOwner
+            OR IsClass(Send(what,@GetOwner),&User)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+            Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+              
+            return;
+         }
+
          if oOldOwner <> $
             AND NOT Send(oOldOwner,@ReqTaker,#what=oitem,#taker=self)
          {

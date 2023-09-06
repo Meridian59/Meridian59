@@ -48,7 +48,7 @@ typedef INT64 int64;
 enum {False = 0, True = 1};
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 22  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 24  /* Minor version of client program; must be in [0, 99] */
 
 #define VERSION_NUMBER(major_rev, minor_rev) ((minor_rev + 100) * major_rev)
 
@@ -73,10 +73,13 @@ enum {False = 0, True = 1};
 
 extern void GetGamePath( char *szGamePath );
 
-extern long CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
 
 extern Bool is_foreground;   // True when program is in the foreground
+
+// Minimum # of milliseconds between non-repeat actions
+#define KEY_NOREPEAT_INTERVAL 400
 
 /* This list of include files is good for precompiled headers */
 /* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */

@@ -18,7 +18,7 @@
 static int timer_id = 0;          /* current timer id, or 0 if none */
 static DWORD last_time;           /* Time when user last did something */
 
-void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime);
+void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime);
 void LogoffTimerReset(void);
 
 /****************************************************************************/
@@ -27,7 +27,7 @@ void UserSetTimeout(void)
    DialogBox(hInst, MAKEINTRESOURCE(IDD_TIMEOUT), hMain, TimeoutDialogProc);
 }
 /****************************************************************************/
-BOOL CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hEnable, hMinutes;
    char temp[5];
@@ -143,7 +143,7 @@ void LogoffTimerReset(void)
    LogoffTimerStart();
 }
 /************************************************************************/
-void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
+void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 {
    UINT delay;
    long elapsed;

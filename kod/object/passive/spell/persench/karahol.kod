@@ -96,6 +96,19 @@ messages:
       return iDuration;
    }
 
+   CanPayCosts(who = $, lTargets = $)
+   {
+      % check for enchantment already applied
+      if Send(who,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=KaraholsCurse_already_enchanted_rsc);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
    EndEnchantment(who=$, report=TRUE, state=0)
    {
       local oHoldSpell, iDuration;

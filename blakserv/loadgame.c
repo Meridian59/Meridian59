@@ -432,7 +432,7 @@ void LoadAddPropertyName(load_game_class_node *lgc,int prop_old_id,char *prop_na
 	load_game_prop_node *lgp;
 	
 	lgp = &lgc->props[prop_old_id-1];
-	lgp->namelen = strlen( prop_name ) ;
+	lgp->namelen = (int) strlen( prop_name );
 	
 	assert( lgp->namelen );
 

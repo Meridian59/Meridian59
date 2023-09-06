@@ -88,7 +88,7 @@ enum {
 Bool GraphCtlRegister(HINSTANCE hInst);
 Bool GraphCtlUnregister(HINSTANCE hInst);
 M59EXPORT char *GraphCtlGetClassName(void);
-M59EXPORT long CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+M59EXPORT LRESULT CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #ifdef __cplusplus
 };

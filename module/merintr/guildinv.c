@@ -16,7 +16,7 @@
 /*
  * GuildInviteDialogProc:  Dialog procedure for guild invitation dialog.
  */
-BOOL CALLBACK GuildInviteDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildInviteDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   HWND hList;
   list_type l;

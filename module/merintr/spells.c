@@ -55,7 +55,7 @@ void SpellsInit(void)
    if (spell_menu != NULL)
    {
       InsertMenu(cinfo->main_menu, MENU_POSITION_SPELLS, MF_STRING | MF_POPUP | MF_BYPOSITION, 
-		 (UINT) spell_menu, GetString(hInst, IDS_SPELLS));
+                 (UINT_PTR) spell_menu, GetString(hInst, IDS_SPELLS));
       DrawMenuBar(cinfo->hMain);
 
    }
@@ -455,7 +455,7 @@ void MenuAddSpell(spell *sp)
    {
       submenus[school] = CreatePopupMenu();
       AppendMenu(spell_menu, MF_STRING | MF_POPUP | MF_BYPOSITION, 
-	 (UINT) submenus[school], LookupNameRsc(schoolID[school]));
+                 (UINT_PTR) submenus[school], LookupNameRsc(schoolID[school]));
       submenu = submenus[school];
    }
    num = GetMenuItemCount(submenu);

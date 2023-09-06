@@ -32,31 +32,34 @@ resources:
 
    % Rentable room stuff.
    KocatanInnkeeper_room_rented = \
-      "Here you go.  I hope you enjoy your stay, and if you have any problems "
-      "I will be glad to help you."
+      "My friend, you definitely know a good deal when you see one!  Please "
+      "enjoy your stay here, and come see me right away if you have any questions, "
+      "concerns, or if you want in on a rather lucrative prospect that's come to "
+      "my attention recently!"
 
    KocatanInnkeeper_cost = \
-      "Oh, good, you should rest.  Let me see....  I charge %i shillings to "
-      "~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay "
-      "longer, I charge %i per day if you pre-pay.  Key copies, uh, key "
-      "copies....  Oh, they cost %i shillings to make.  I know you'll "
-      "like your room."
+      "You'll not find a better deal on the island!  It costs %i shillings to "
+      "~Irent~n a ~Iroom~n at my fine establishment for 85 days.  If you "
+      "want to stay longer, that'll be %i shillings per day, paid in advance.  "
+      "For a very modest fee of %i shillings, I can even provide you "
+      "with a copy of your room key.  Act now, because this offer won't last "
+      "long!  Space is very limited and my rooms are first-come, first-serve!"
 
    KocatanInnkeeper_days_left = \
-      "You like it here, I see.  There are %q days until you should "
-      "pay me again."
+      "Thank you, my friend!  I'll have triple this amount for you after "
+      "an associate of mine can...  Oh right, you're just paying rent.  Your "
+      "room is paid for up to %i days now, so make yourself right at home!"
    KocatanInnkeeper_too_long = \
-      "Oh, I can't be responsible for holding so much money!  Pay me again "
-      "later when you don't have so many days left on your tab."
+      "Oh boy, I know of some amazing investment opportunities that could "
+      "make us both rich beyond our wildest dreams with this!  Alas, I'd hate "
+      "to lose my favorite patron and business partner should things not "
+      "quite pan out, so maybe you should hang onto that money for a while "
+      "longer.  Your rent isn't due right now either, but come see me again "
+      "when it is."
 
    KocatanInnkeeper_destroy_key_copy = \
-      "Moxal ix'Hanak tells you, \"Oh, yes. I can get rid of this key for "
-      "you.  No problem.\""
-
-   KoIk_room_command = "room"
-   KoIk_rent_command = "rent"
-   KoIk_cost_command = "cost"
-   KoIk_copy_key_command = "copy key"
+      "Oh, you don't want this key copy anymore?  "
+      "Just this once, I'll take it off your hands for free as a courtesy."
 
 classvars:
 
@@ -194,53 +197,10 @@ messages:
 
    SomeoneSaid(what=$,string=$)
    {
-      local oRoomMaint, rSayRsc;
-      
-      if IsClass(what,&User)
-      {
-         oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);
-
-         if (StringContain(string,KoIk_rent_command)
-               AND StringContain(string,KoIk_room_command))
-         {
-            rSayRsc = Send(oRoomMaint,@RentRoom,#who=what,
-                           #iLocation=RID_KOC_INN,#iCost=piInitialRoomCost);
-
-            % rSayRsc is $ on success.  Use the innkeeper's saying.
-            if rSayRsc = $
-            {
-               rSayRsc = KocatanInnkeeper_room_rented;
-            }
-
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
-                  #what=self,#string=rSayRsc);
-
-            return;
-         }
-
-         if StringContain(string,KoIk_copy_key_command)
-         {
-            rSayRsc = Send(oRoomMaint,@CopyKey,#who=what,
-                           #iLocation=RID_KOC_INN,#iCost=piKeyCopyCosts);
-
-            % Tell the player.
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
-                  #what=self,#string=rSayRsc);
-
-            return;
-         }
-
-         if (StringContain(string,KoIk_room_command)
-               AND StringContain(string,KoIk_cost_command))
-         {
-            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                  #string=KocatanInnkeeper_cost,#type1=0,
-                  #parm1=piInitialRoomCost,#parm2=piPerDayCost,
-                  #parm3=piKeyCopyCosts);
-
-            return;
-         }
-      }
+      Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
+         #who=self, #what=what, #innRid=RID_KOC_INN, #speech=string,
+         #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
+         #rscRoomRented=KocatanInnkeeper_room_rented, #rscRoomCost=KocatanInnkeeper_cost);
 
       propagate;
    }
@@ -259,51 +219,11 @@ messages:
          return FALSE;
       }
 
-      for i in item_list
+      if Send(Send(SYS, @GetRentableRoomMaintenance), @ReqOfferedRoomItems, #who=self, #what=what,
+         #itemList=item_list, #innRid=RID_KOC_INN, #perDayCost=piPerDayCost,
+         #rscDaysLeft=KocatanInnkeeper_days_left, #rscTooLong=KocatanInnkeeper_too_long,
+         #rscDestroyKeyCopy=KocatanInnkeeper_destroy_key_copy)
       {
-         if NOT IsClass(i,&Money)
-         {
-            if GetClass(i) = &RoomKeyCopy
-            {
-               % Say something and delete the key.
-               Send(what,@MsgSendUser,
-                     #message_rsc=KocatanInnkeeper_destroy_key_copy);
-               Send(i,@Delete);
-
-               return FALSE;
-            }
-
-            propagate;
-         }
-      }
-
-      iMoney = 0;
-      for i in item_list
-      {
-         iMoney = iMoney + Send(i,@GetValue);
-      }
-
-      oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);
-
-      iNewDays = Send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,
-                     #iCost=piPerDayCost,#iLocation=RID_KOC_INN);
-
-      if iNewDays <> $
-      {
-         % iNewDays = 0 means that we've trying to pay for more than max days.
-         if iNewDays = 0
-         {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                  #string=KocatanInnkeeper_too_long);
-         }
-         else
-         {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                  #string=KocatanInnkeeper_days_left,
-                  #parm1=Send(SYS,@IntToString,#num=iNewDays),
-                  #type1=STRING_RESOURCE);
-         }
-
          return FALSE;
       }
 

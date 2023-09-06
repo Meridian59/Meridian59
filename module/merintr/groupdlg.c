@@ -22,9 +22,9 @@ static HWND hGroupDialog;
 
 static void GroupCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify);
 static Bool GetCurrentGroupName(HWND hDlg, char *group_name);
-static BOOL CALLBACK GroupDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-static long CALLBACK GroupEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static long CALLBACK PlayerEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK GroupDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK GroupEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK PlayerEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static BOOL GroupListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 static void QuotePlayerName(char *name, char *buf);
 /****************************************************************************/
@@ -39,7 +39,7 @@ void GroupConfigure(void)
 /*
  * GroupDialogProc:  Dialog procedure for group dialog.
  */
-BOOL CALLBACK GroupDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GroupDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int i, index;
    HWND hList, hCombo;
@@ -363,7 +363,7 @@ BOOL GroupListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       SetBkMode(lpdis->hDC, TRANSPARENT);
 
       rcItem.left += 2*GetSystemMetrics(SM_CXBORDER);
-      DrawText(lpdis->hDC, name, strlen(name), &rcItem, DT_VCENTER | DT_LEFT);
+      DrawText(lpdis->hDC, name, (int) strlen(name), &rcItem, DT_VCENTER | DT_LEFT);
 
       break;
 

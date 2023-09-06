@@ -121,21 +121,21 @@ Bool VerifySettings(void);
 void CharInfoValid(void);
 void CharInfoInvalid(void);
 
-BOOL CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void CharNameGetChoices(char *name, char *desc);
 
 void CharFaceInit(void);
-BOOL CALLBACK CharFaceDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CharFaceDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void CharFaceGetChoices(CharAppearance *ap, int *stats, BYTE *gender);
 void CharFaceExit(void);
 
-BOOL CALLBACK CharStatsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CharStatsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void CharStatsGetChoices(int *buf);
 int  CharStatsGetPoints(void);
 
-BOOL CALLBACK CharSpellsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CharSpellsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-BOOL CALLBACK CharSkillsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CharSkillsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 extern int spell_points;                // Number of spells/skills points left
 

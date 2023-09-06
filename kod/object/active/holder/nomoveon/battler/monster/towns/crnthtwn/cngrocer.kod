@@ -37,7 +37,7 @@ classvars:
    vrDesc = Cornoth_grocer_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_BUYER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
    viOccupation = MOB_ROLE_GROCER
 
 properties:
@@ -98,6 +98,17 @@ messages:
 			Create(&Apple,#number=4) ],
                       $, $ ];
       return;
+   }
+
+   ObjectDesired(what = $)
+   {
+      if Send(what, @CanBeGiventoNPC) AND
+         (Send(self, @IsObjectReagent, #what=what) OR Send(self, @IsObjectSundry, #what=what))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    UserEntered(who = $)

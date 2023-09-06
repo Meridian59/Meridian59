@@ -24,7 +24,7 @@ static ChildPlacement mailread_controls[] = {
 };
 
 /* local function prototypes */
-static BOOL CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserMailReply(int msg_num, Bool reply_all);
 /****************************************************************************/
 /*
@@ -50,7 +50,7 @@ void UserReadMail(void)
 
 }
 /****************************************************************************/
-BOOL CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hEdit, hList;
    static int mail_index;  /* Number of currently displayed message, -1 if none */

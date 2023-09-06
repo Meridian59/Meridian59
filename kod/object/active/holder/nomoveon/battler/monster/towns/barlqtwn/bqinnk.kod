@@ -30,21 +30,16 @@ resources:
    BarloqueInnkeeper_room_rented = "Here is the key to thine room.  I trust you will findest "
       "our rooms to be most well-appointed.  Enjoyest thy stay!"
 
-   BarloqueInnkeeper_cost1 = "The rooms here are the finest.  I needeth "
-   BarloqueInnkeeper_cost2 = " shillings when thou ~Irent~neth a ~Iroom~n for for 85 days.  After that, I requireth "
-   BarloqueInnkeeper_cost3 = " per day up front.  Key copies costeth "
-   BarloqueInnkeeper_cost4 = " shillings if thou wishest to share thine room with a special someone."
+   BarloqueInnkeeper_cost = \
+      "The rooms here are the finest.  I needeth %i shillings when thou ~Irent~neth a "
+      "~Iroom~n for for 85 days.  After that, I requireth %i per day up front.  Key copies "
+      "costeth %i shillings if thou wishest to share thine room with a special someone."
 
-   BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %q days left at my luxurious inn."
+   BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
-   BarloqueInnkeeper_destroy_key_copy = "~kPritchett tells you, \"I will discardeth the key for thou.\""
+   BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thee."
    
-   BqInn_room_command = "room"
-   BqInn_rent_command = "rent"
-   BqInn_cost_command = "cost"
-   BqInn_copy_key_command = "copy key"
-
 classvars:
 
    vrName = Barloque_Innkeep_name_rsc
@@ -155,57 +150,10 @@ messages:
 
    SomeoneSaid(what = $,type = $,string = $)
    {
-      local oRoomMaint, rSayRsc;
-      
-      if isClass(what,&User)
-      {
-         oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
-      
-         if (StringContain(string,BqInn_rent_command) AND StringContain(string,BqInn_room_command))
-            OR (StringContain(string,"rent") AND StringContain(string,"room"))
-         {
-            rSayRsc = send(oRoomMaint,@RentRoom,#who=what,#iLocation=RID_BAR_INN,#iCost=piInitialRoomCost);
-
-            % rSayRsc is $ on success.  Use the innkeeper's saying.
-            if rSayRsc = $
-            {
-               rSayRsc = BarloqueInnkeeper_room_rented;
-            }
-
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
-
-            return;
-         }          
-
-         if StringContain(string,BqInn_copy_key_command)
-            OR StringContain(string,"copy key")
-         {
-            rSayRsc = send(oRoomMaint,@CopyKey,#who=what,#iLocation=RID_BAR_INN,#iCost=piKeyCopyCosts);
-
-            % tell the player.
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
-
-            return;
-         }
-
-         if (StringContain(string,BqInn_room_command) AND StringContain(string,BqInn_cost_command))
-            OR (StringContain(string,"room") AND StringContain(string,"cost"))
-         {
-            ClearTempString();
-            AppendTempString(BarloqueInnkeeper_cost1);
-            AppendTempString(piInitialRoomCost);
-            AppendTempString(BarloqueInnkeeper_cost2);
-            AppendTempString(piPerDayCost);
-            AppendTempString(BarloqueInnkeeper_cost3);
-            AppendTempString(piKeyCopyCosts);
-            AppendTempString(BarloqueInnkeeper_cost4);
-            
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=send(SYS,@GetPercentQRsc),
-                 #parm1=GetTempString(),#type1=0);
-
-            return;
-         }          
-      }
+      Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
+         #who=self, #what=what, #innRid=RID_BAR_INN, #speech=string,
+         #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
+         #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost);
       
       propagate;
    }
@@ -222,46 +170,11 @@ messages:
          return FALSE;
       }     
 
-      for i in item_list
+      if Send(Send(SYS, @GetRentableRoomMaintenance), @ReqOfferedRoomItems, #who=self, #what=what,
+         #itemList=item_list, #innRid=RID_BAR_INN, #perDayCost=piPerDayCost,
+         #rscDaysLeft=BarloqueInnkeeper_days_left, #rscTooLong=BarloqueInnkeeper_too_long,
+         #rscDestroyKeyCopy=BarloqueInnkeeper_destroy_key_copy)
       {
-         if NOT IsClass(i,&Money)
-         {
-            if GetClass(i) = &RoomKeyCopy
-            {
-               % Say something and delete the key.
-               send(what,@MsgSendUser,#message_rsc=BarloqueInnkeeper_destroy_key_copy);
-               send(i,@Delete);
-
-               return FALSE;
-            }
-
-            propagate;
-         }
-      }
-
-      iMoney = 0;
-      for i in item_list
-      {
-         iMoney = iMoney + Send(i,@GetValue);
-      }
-
-      oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
-
-      iNewDays = send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,#iCost=piPerDayCost,#iLocation=RID_BAR_INN);
-
-      if iNewDays <> $
-      {
-         % iNewDays = 0 means that we've trying to pay for more days than allowed.
-         if iNewDays = 0
-         {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=BarloqueInnkeeper_too_long);
-         }
-         else
-         {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=BarloqueInnkeeper_days_left,
-                 #parm1=send(SYS,@IntToString,#num=iNewDays),#type1=STRING_RESOURCE);
-         }
-
          return FALSE;
       }
 

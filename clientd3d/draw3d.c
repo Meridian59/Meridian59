@@ -86,12 +86,6 @@ BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
-#define FASTASM
-
-#ifdef FASTASM
-extern void StretchAsm1To2(BYTE *src,BYTE *dest,int width,int height);
-#endif
-
 static void StretchC1To2(BYTE *src,BYTE *dest,int width,int height);
 
 /* local function prototypes */
@@ -388,48 +382,43 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
 
 void UpdateRoom3D(room_type *room, Draw3DParams *params)
 {
-   long t1,t2,t3,t4,t5;
+   long t1,t2,t3;
    static int count = 0;
-   
-   /* write stuff in static variables */
-   p = params;
-   
-   /* Size of offscreen bitmap */
-   area.x = area.y = 0;
-   area.cx = min(params->width / 2, main_viewport_width);
-   area.cy = min(params->height / 2, main_viewport_height);
 
-   // Force size to be even
-   area.cy = area.cy & ~1;  
+   // Size of offscreen bitmap.
+   area.x = area.y = 0;
+   area.cx = main_viewport_width;
+   area.cy = main_viewport_height;
+
+   // Force size to be even.
+   area.cy = area.cy & ~1;
    area.cx = area.cx & ~1;
 
-   /* some precalculations */
-   horizon = area.cy/2 + PlayerGetHeightOffset();
+   // Horizon is used by drawbsp.c to determine which objects are visible.
+   horizon = area.cy / 2 + PlayerGetHeightOffset();
+
+   p = params;
    num_visible_objects = 0;
+
    t1=timeGetTime();
-   DrawBSP(room, params, area.cx, FALSE);
+   DrawBSP(room, params, area.cx, False);
    t2=timeGetTime();
-/*   DrawPreOverlayEffects(room, params);
-   if (!player.viewID)
-      DrawPlayerOverlays();
-   DrawPostOverlayEffects(room, params);*/
-   t3=timeGetTime();
-//   StretchImage();   
-   t4=timeGetTime();
-   //	Draw corner treatment.
+
+   // Draw corner treatment.
    DrawViewTreatment();
-   //	Copy offscreen buffer to screen.
+
+   // Copy offscreen buffer to screen.
    if (!D3DRenderIsEnabled())
    {
-		RecopyRoom3D( params->hdc, params->x, params->y, params->width, params->height, FALSE );
+		RecopyRoom3D( params->hdc, params->x, params->y, params->width, params->height, False );
 		GdiFlush();
    }
-   t5=timeGetTime();
+   t3=timeGetTime();
    
    count++;
    if (count > 500)
    {
-      debug(("BSP draw %ldms, overlays %dms, stretch %ldms, treatment and copy %ldms\n", t2-t1, t3-t2, t4-t3, t5-t4));
+      debug(("BSP draw %ldms, treatment and copy %ldms\n", t2-t1, t3-t2));
       count = 0;
    }
 }
@@ -544,11 +533,7 @@ void SetLightingInfo(int sun_x, int sun_y, BYTE intensity)
  */
 void StretchImage(void)
 {
-#ifdef FASTASM
-      StretchAsm1To2(gBits,gBufferBits,area.cx,area.cy);
-#else   
-      StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
-#endif
+  StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
 }
 /************************************************************************/
 void StretchC1To2(BYTE *src,BYTE *dest,int width,int height)

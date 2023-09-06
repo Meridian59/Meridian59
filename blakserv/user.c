@@ -301,7 +301,7 @@ user_node * GetUserByName(char *username)
    val_type temp_str_val,ret_val;
    parm_node p[1];
 
-   SetTempString(username,strlen(username));
+   SetTempString(username, (int) strlen(username));
 
    temp_str_val.v.tag = TAG_TEMP_STRING;
    temp_str_val.v.data = 0;

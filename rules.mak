@@ -3,7 +3,7 @@
 # to be included at the end of each makefile
 
 makedirs:
-        -@mkdir $(OUTDIR)
+        -@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
 {$(SOURCEDIR)}.c{$(OUTDIR)}.obj::
 	$(CC) $(CFLAGS) /FpCpch /Fd$(OUTDIR)\vc90.pdb /Fo$(OUTDIR)/ -c $< 

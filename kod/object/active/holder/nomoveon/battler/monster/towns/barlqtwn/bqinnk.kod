@@ -39,6 +39,9 @@ resources:
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
    BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thee."
+   BarloqueInnkeeper_change_lock = \
+      "Oh, hast thou misplaced one of thine key copies?  I shalt changeth thine room lock at once, "
+      "denying any unwashed miscreants access therein!"
    
 classvars:
 
@@ -153,7 +156,8 @@ messages:
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
          #who=self, #what=what, #innRid=RID_BAR_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
-         #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost);
+         #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost,
+         #rscChangeLock=BarloqueInnkeeper_change_lock);
       
       propagate;
    }

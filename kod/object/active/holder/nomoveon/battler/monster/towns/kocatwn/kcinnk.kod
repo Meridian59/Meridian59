@@ -60,6 +60,10 @@ resources:
    KocatanInnkeeper_destroy_key_copy = \
       "Oh, you don't want this key copy anymore?  "
       "Just this once, I'll take it off your hands for free as a courtesy."
+   KocatanInnkeeper_change_lock = \
+      "Alright, your existing key copies will be invalidated right away.  "
+      "If you want new copies, I'll of course be more than happy to sell you "
+      "some at a bargain price."
 
 classvars:
 
@@ -200,7 +204,8 @@ messages:
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
          #who=self, #what=what, #innRid=RID_KOC_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
-         #rscRoomRented=KocatanInnkeeper_room_rented, #rscRoomCost=KocatanInnkeeper_cost);
+         #rscRoomRented=KocatanInnkeeper_room_rented, #rscRoomCost=KocatanInnkeeper_cost,
+         #rscChangeLock=KocatanInnkeeper_change_lock);
 
       propagate;
    }

@@ -27,7 +27,7 @@ classvars:
    vrIcon = SmallBox_icon_rsc
    vrDesc = SmallBox_desc_rsc
 
-   viBulk_hold_max = 6000
+   viBulk_hold_max = 5000
    viWeight_hold_max = $
 
 properties:

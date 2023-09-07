@@ -296,7 +296,7 @@ resources:
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
-   got_all_stuff = "You hastily grab what you need."
+   user_got_all_stuff_from_container = "You hastily grab what you need."
 
 classvars:
 
@@ -3806,7 +3806,7 @@ messages:
       % If so let's send a success message to the user
       if iCantGet = 0
       {
-         Send(self,@MsgSendUser,#message_rsc=got_all_stuff);
+         Send(self,@MsgSendUser,#message_rsc=user_got_all_stuff_from_container);
       }
 
       return;

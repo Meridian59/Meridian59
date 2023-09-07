@@ -51,7 +51,7 @@ int CompareRoomObjectDistance(void *r1, void *r2)
    return ((room_contents_node *) r1)->distance - ((room_contents_node *) r2)->distance;
 }
 /*************************************************************************/
-// Alphabetical compare of objects based on display name
+// Hierarchical compare objects - first on IsNumberObj then alphabetical
 //
 int CompareObjectNameAndNumber(void *obj1, void *obj2)
 {
@@ -61,6 +61,7 @@ int CompareObjectNameAndNumber(void *obj1, void *obj2)
 
    if (IsNumberObj(node1->id) != IsNumberObj(node2->id))
    {
+      //Node2 before Node1 so that number object are on top
       return (IsNumberObj(node2->id) - IsNumberObj(node1->id));
    }
    else

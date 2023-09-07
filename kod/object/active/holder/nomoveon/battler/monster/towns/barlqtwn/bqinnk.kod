@@ -27,20 +27,20 @@ resources:
    BqInn_mace_sale = "Aye, ye might needeth one of them if ye plan on leavingeth our cultured city. I got some ye can buyeth."
    BqInn_unwanted_give = "~k%s%s tells you, \"Whyfore dost you offer me that?~n~k\""
 
-   BarloqueInnkeeper_room_rented = "Here is the key to thine room.  I trust you will findest "
+   BarloqueInnkeeper_room_rented = "Here is the key to thy room.  I trust you will findest "
       "our rooms to be most well-appointed.  Enjoyest thy stay!"
 
    BarloqueInnkeeper_cost = \
       "The rooms here are the finest.  I needeth %i shillings when thou ~Irent~neth a "
       "~Iroom~n for for 85 days.  After that, I requireth %i per day up front.  Key copies "
-      "costeth %i shillings if thou wishest to share thine room with a special someone."
+      "costeth %i shillings if thou wishest to share thy room with a special someone."
 
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
-   BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
+   BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thy room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
    BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thee."
    BarloqueInnkeeper_change_lock = \
-      "Oh, hast thou misplaced one of thine key copies?  I shalt changeth thine room lock at once, "
+      "Oh, hast thou misplaced one of thy key copies?  I shalt changeth thy room lock at once, "
       "denying any unwashed miscreants access therein!"
    
 classvars:

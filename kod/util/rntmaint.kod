@@ -371,6 +371,11 @@ messages:
    }
 
    ChangeLock(who=$, iLocation=$)
+   "If the player has a gold room key, this command will delete any "
+   "existing copies of it and notify any player holding such a copy.\n"
+   "Returns a string resource for the NPC to respond with based on "
+   "an unsuccessful result, or $ on succcess as an indicator for the "
+   "NPC to respond with a confirmation line specific to them."
    {
       local oKey;
 
@@ -443,6 +448,8 @@ messages:
    }
 
    FindKeyByPlayer(who=$, iLocation=$)
+   "Returns the gold room key matching the specified inn RID held by the "
+   "specified player, or $ if no match is found."
    {
       local oKey, oObj, lPassive;
 

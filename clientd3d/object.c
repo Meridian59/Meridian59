@@ -53,17 +53,25 @@ int CompareRoomObjectDistance(void *r1, void *r2)
 /*************************************************************************/
 // Alphabetical compare of objects based on display name
 //
-int CompareObjectNameRsc(void *obj1, void *obj2)
+int CompareObjectNameAndNumber(void *obj1, void *obj2)
 {
     // Cast obj1 and obj2 to the correct type
    object_node *node1 = (object_node *)obj1;
    object_node *node2 = (object_node *)obj2;
-   // Extract strings to compare
-   const char *string1 = LookupNameRsc(node1->name_res);
-   const char *string2 = LookupNameRsc(node2->name_res);
 
-    // Use stricmp to compare the name_res strings
-    return stricmp(string1, string2);
+   if IsNumberObj(node1->id) <> IsNumberObj(node2->id)
+   {
+      return (IsNumberObj(node2->id) - IsNumberObj(node1->id))
+   }
+   else
+   {
+      // Extract strings to compare
+      const char *string1 = LookupNameRsc(node1->name_res);
+      const char *string2 = LookupNameRsc(node2->name_res);
+
+      // Use stricmp to compare the name_res strings
+      return stricmp(string1, string2);
+   }
 }
 /*****************************************************************************/
 /*

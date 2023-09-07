@@ -59,7 +59,7 @@ int CompareObjectNameAndNumber(void *obj1, void *obj2)
    object_node *node1 = (object_node *)obj1;
    object_node *node2 = (object_node *)obj2;
 
-   if IsNumberObj(node1->id) != IsNumberObj(node2->id)
+   if (IsNumberObj(node1->id) != IsNumberObj(node2->id))
    {
       return (IsNumberObj(node2->id) - IsNumberObj(node1->id));
    }

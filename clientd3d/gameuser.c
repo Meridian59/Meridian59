@@ -154,11 +154,11 @@ void GotObjectContents(ID object_id, list_type contents)
    {
       if (IsNumberObj(((object_node *)(l->data))->id))
       {
-         stacklist = list_add_sorted_item(stacklist, (object_node *)(l->data), CompareObjectNameRsc);
+         stacklist = list_add_sorted_item(stacklist, (l->data), CompareObjectNameRsc);
       }
       else
       {
-         nostacklist = list_add_sorted_item(nostacklist, (object_node *)(l->data), CompareObjectNameRsc);
+         nostacklist = list_add_sorted_item(nostacklist, (l->data), CompareObjectNameRsc);
       }
    }
    //Concat the two lists into one

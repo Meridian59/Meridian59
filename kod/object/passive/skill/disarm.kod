@@ -140,7 +140,17 @@ messages:
          {
             % Currently, have 1/5th your percent plus your modifier chance to make opponent drop weapon.
             iAbil = (iAbil + 1 + iModifier) / DISARM_FACTOR;
-            if (random(1,100) < iAbil) and (not Send(Send(oTarget,@GetOwner),@IsArena))
+
+            % Cannot force a weapon to drop if...
+            % ...the target is a DM (generally, an event target)
+            % ...the target is in an arena
+            % ...the target's weapon doesn't drop on death (soft white light/transcendent)
+            % ...the target's weapon shouldn't leave them for other reasons
+            if (Random(1, 100) < iAbil)
+               AND NOT IsClass(oTarget, &DM)
+               AND NOT Send(Send(oTarget, @GetOwner), @IsArena)
+               AND Send(oOppWeapon, @DropOnDeath)
+               AND Send(oOppWeapon, @ReqLeaveOwner)
             {
                % Success!  They dropped it!
                Send(oTarget,@DropItem,#droppedItem=oOppWeapon);

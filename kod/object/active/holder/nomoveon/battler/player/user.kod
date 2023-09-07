@@ -969,7 +969,7 @@ messages:
          return;
       }
 
-      if liClient_cmd = BP_REQ_GET_FROM_CONT
+      if liClient_cmd = BP_REQ_GET_FROM_CONTAINER
       {
          lItems = Nth(client_msg,2);
          Send(self,@UserGetFromContainer,#items_list=lItems,#numbers_list=number_stuff);

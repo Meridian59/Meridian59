@@ -40,6 +40,9 @@ resources:
       "when you don't have so many days left on your tab."
    MarionInnkeeper_destroy_key_copy = \
       "Oh, yes. I can get rid of this key for you.  No problem."
+   MarionInnkeeper_change_lock = \
+      "Ah yes, of course.  I'll ask Tova to change the lock to your room right away.  "
+      "Any existing copies of your room key won't work anymore."
 
 classvars:
 
@@ -76,7 +79,8 @@ messages:
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
          #who=self, #what=what, #innRid=RID_MAR_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
-         #rscRoomRented=MarionInnkeeper_room_rented, #rscRoomCost=MarionInnkeeper_cost);
+         #rscRoomRented=MarionInnkeeper_room_rented, #rscRoomCost=MarionInnkeeper_cost,
+         #rscChangeLock=MarionInnkeeper_change_lock);
 
       propagate;
    }

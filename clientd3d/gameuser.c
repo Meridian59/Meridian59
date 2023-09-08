@@ -148,14 +148,14 @@ void GotObjectContents(ID object_id, list_type contents)
 	 GameMessagePrintf(GetString(hInst, IDS_EMPTY), LookupNameRsc(r->obj.name_res));
       return;
    }
-   //Separate contents into number items and other items and alpha sort
+   // Separate contents into number items and other items and alpha sort
    for (l = contents; l != NULL; l = l->next)
    {
       sorted_list = list_add_sorted_item(sorted_list, (l->data), CompareObjectNameAndNumber);
    }
 
    sel_list = DisplayLookList(hMain, GetString(hInst, IDS_GET), sorted_list, LD_MULTIPLESEL | LD_AMOUNTS);   
-   //Request Pickup from container if any items are selected
+   // Request pickup from container if any items are selected
    if (list_length(sel_list) > 0)
       RequestPickupFromContainer(sel_list);
 

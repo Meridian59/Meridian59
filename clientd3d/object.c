@@ -61,7 +61,7 @@ int CompareObjectNameAndNumber(void *obj1, void *obj2)
 
    if (IsNumberObj(node1->id) != IsNumberObj(node2->id))
    {
-      //Node2 before Node1 so that number object are on top
+      // Node2 before Node1 so that number objects are on top
       return (IsNumberObj(node2->id) - IsNumberObj(node1->id));
    }
    else
@@ -70,7 +70,6 @@ int CompareObjectNameAndNumber(void *obj1, void *obj2)
       const char *string1 = LookupNameRsc(node1->name_res);
       const char *string2 = LookupNameRsc(node2->name_res);
 
-      // Use stricmp to compare the name_res strings
       return stricmp(string1, string2);
    }
 }

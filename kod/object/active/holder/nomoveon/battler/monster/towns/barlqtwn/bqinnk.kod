@@ -22,13 +22,17 @@ resources:
    Barloque_Innkeep_desc_rsc = "Of everyone in Barloque, the former sailor turned innkeeper Pritchett is "
       "the least haughty.  Perhaps it is because he was not originally from the Royal City and moved to "
       "North Barloque to buy a title."
+
+   % Note: Pritchett's manner of speaking is intentionally bad/incorrect due to him being 
+   % a non-native citizen of Barloque
+
    BqInn_entry_welcome = "I am gladeth to see you, mate."
 
    BqInn_mace_sale = "Aye, ye might needeth one of them if ye plan on leavingeth our cultured city. I got some ye can buyeth."
    BqInn_unwanted_give = "~k%s%s tells you, \"Whyfore dost you offer me that?~n~k\""
 
    BarloqueInnkeeper_room_rented = "Here is the key to thine room.  I trust you will findest "
-      "our rooms to be most well-appointed.  Enjoyest thy stay!"
+      "our rooms to be most well-appointed.  Enjoyest thine stay!"
 
    BarloqueInnkeeper_cost = \
       "The rooms here are the finest.  I needeth %i shillings when thou ~Irent~neth a "
@@ -38,7 +42,10 @@ resources:
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
-   BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thee."
+   BarloqueInnkeeper_destroy_key_copy = "I will discardeth the key for thou."
+   BarloqueInnkeeper_change_lock = \
+      "Oh, hast ye misplaced one of thine key copies?  I shalt changeth the room lock at once "
+      "for thou, denying any unwashed miscreants access therein!"
    
 classvars:
 
@@ -153,7 +160,8 @@ messages:
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
          #who=self, #what=what, #innRid=RID_BAR_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
-         #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost);
+         #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost,
+         #rscChangeLock=BarloqueInnkeeper_change_lock);
       
       propagate;
    }

@@ -63,6 +63,26 @@ messages:
       return oCopy;
    }
 
+   NumberOfCopies()
+   {
+      return Length(plCopies);
+   }
+
+   DeleteCopies()
+   {
+      local oKeyCopy;
+      for oKeyCopy in plCopies
+      {
+         % Despite the name, OriginalDeleted just deletes the copy and
+         % informs the user if they're online.
+         Send(oKeyCopy, @OriginalDeleted);
+      }
+
+      plCopies = $;
+
+      return;
+   }
+
    RoomExpired(iRID=$)
    {
       if (iRID = $) or (iRID <> piRID)

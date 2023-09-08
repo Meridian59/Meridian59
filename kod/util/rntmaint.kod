@@ -138,8 +138,7 @@ messages:
       if rscChangeLock = $ { rscChangeLock = RoomMaintenance_innkeeper_say_lock_changed; }
 
       % Command:  Rent Room
-      if (StringContain(speech, RoomMaintenance_command_rent) AND StringContain(speech, RoomMaintenance_command_room))
-         OR (StringContain(speech, "rent") AND StringContain(speech, "room"))
+      if StringContain(speech, RoomMaintenance_command_rent) AND StringContain(speech, RoomMaintenance_command_room)
       {
          rSayRsc = Send(self, @RentRoom, #who=what, #iLocation=innRid, #iCost=initCost);
 
@@ -156,7 +155,6 @@ messages:
 
       % Command: Copy Key
       if StringContain(speech, RoomMaintenance_command_copy_key)
-         OR StringContain(speech,"copy key")
       {
          rSayRsc = send(self, @CopyKey, #who=what, #iLocation=innRid, #iCost=keyCopyCost);
 
@@ -167,8 +165,7 @@ messages:
       }
 
       % Command: Room Cost
-      if (StringContain(speech, RoomMaintenance_command_room) AND StringContain(speech, RoomMaintenance_command_cost))
-         OR (StringContain(speech, "room") AND StringContain(speech, "cost"))
+      if StringContain(speech, RoomMaintenance_command_room) AND StringContain(speech, RoomMaintenance_command_cost)
       {
          Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who,
             #string=rscRoomCost, 
@@ -179,7 +176,6 @@ messages:
       
       % Command: Change Lock
       if StringContain(speech, RoomMaintenance_command_change_lock)
-         OR StringContain(speech, "change lock")
       {
          rSayRsc = Send(self, @ChangeLock, #who=what, #iLocation=innRid);
 
@@ -448,8 +444,8 @@ messages:
    }
 
    FindKeyByPlayer(who=$, iLocation=$)
-   "Returns the gold room key matching the specified inn RID held by the "
-   "specified player, or $ if no match is found."
+   "Returns the RoomKey (original/master room key) matching the specified inn RID "
+   "held by the specified player, or $ if no match is found."
    {
       local oKey, oObj, lPassive;
 
@@ -458,7 +454,7 @@ messages:
 
       for oObj in lPassive
       {
-         % Check for gold (master) room key.
+         % Check to see if the player is holding an original/master room key
          if IsClass(oObj, &RoomKey)
          {
             % Make sure it's for the correct inn.

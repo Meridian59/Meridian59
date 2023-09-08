@@ -22,6 +22,13 @@ resources:
    ring_identified_name_rsc = "generic magical ring"
    ring_identified_description_rsc = "The has some magical effect."
 
+   ring_condition_exc = " is in pristine condition."
+   ring_condition_exc_mended = " is in pristine condition, although it appears to have been weakened somehow."
+   ring_condition_good = " has a minor scratch or two."
+   ring_condition_med = " is fairly tarnished from use."
+   ring_condition_poor = " is dull, cracked, and ready to break."
+   ring_condition_broken = " is broken and beyond repair."
+
 classvars:
 
    viUse_type = ITEM_USE_FINGER
@@ -31,6 +38,14 @@ classvars:
 
    vrRealName = ring_identified_name_rsc
    vrRealDesc = ring_identified_name_rsc
+
+   vbShow_condition = TRUE
+   vrCondition_exc = ring_condition_exc
+   vrCondition_exc_mended = ring_condition_exc_mended
+   vrCondition_good = ring_condition_good
+   vrCondition_med = ring_condition_med
+   vrCondition_poor = ring_condition_poor
+   vrCondition_broken = ring_condition_broken
 
 properties:
 
@@ -63,14 +78,25 @@ messages:
 
    RevealHiddenAttributes()
    {
+      local i, bDone;
+
+      bDone = FALSE;
+      for i in plItem_Attributes
+      {
+         if NOT Send(self, @GetIDStatusFromCompound, #compound=First(i))
+         {
+            SetNth(i, 1, (First(i) + 1));
+            bDone = TRUE;
+         }
+      }
       if vrName <> vrRealName
       {
          vrName = vrRealName;
          vrDesc = vrRealDesc;
-         return TRUE;
+         bDone = TRUE;
       }
       
-      return FALSE;
+      return bDone;
    }
 
    GetTrueName()

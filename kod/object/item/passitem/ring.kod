@@ -81,6 +81,8 @@ messages:
       local i, bDone;
 
       bDone = FALSE;
+      % Iterate through the item's properties and reveal any that are
+      % currently unrevealed.
       for i in plItem_Attributes
       {
          if NOT Send(self, @GetIDStatusFromCompound, #compound=First(i))
@@ -89,6 +91,7 @@ messages:
             bDone = TRUE;
          }
       }
+      % Reveal the true name and description of the item.
       if vrName <> vrRealName
       {
          vrName = vrRealName;

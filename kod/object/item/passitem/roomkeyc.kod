@@ -18,8 +18,15 @@ resources:
 
    RoomKeyCopy_name_rsc = "silver room key"
    RoomKeyCopy_icon_rsc = roomkeyc.bgf
-   RoomKeyCopy_desc_rsc = "This solid silver key bears an inscription which reads:\n"
-   RoomKeyCopy_desc2_rsc = "'s room at "
+   RoomKeyCopy_desc_rsc = "This crudely-fashioned silver key copy is used to gain "
+      "access to a private room at an inn."
+   RoomKeyCopy_append_renter_rsc = "  It bears an inscription which reads: \""
+   RoomKeyCopy_append_renter2_rsc = "'s room at "
+   RoomKeyCopy_append_renter3_rsc = ".\"  "
+   RoomKeyCopy_appendspecial_rsc = "On the back is an additional inscription: \""
+      "If found, please return this key to them or the innkeeper.\""
+   RoomKeyCopy_append_days_remaining_rsc = "Rent for this room has been paid for the next "
+   RoomKeyCopy_append_days_remaining2_rsc = " days."
 
    RoomKeyCopy_vanishes = \
       "Your silver room key dissolves into a strange silver liquid, then "
@@ -101,9 +108,9 @@ messages:
       return;
    }
 
-   DoBaseDesc()
+   AppendDesc()
    {
-      local oRoom,rName,rLocation;
+      local oRoom, oRenter, rLocation, iDaysLeft;
 
       oRoom = Send(SYS,@FindRoomByNum,#num=piRID);
       if (oRoom = $)
@@ -112,15 +119,32 @@ messages:
          return;
       }
 
-      rName = Send(Send(oRoom,@GetRenter),@GetName);
-      rLocation = Send(oRoom,@GetLocationName);
+      oRenter = Send(oRoom, @GetRenter);
+      rLocation = Send(oRoom, @GetLocationName);
+      iDaysLeft = Send(oRoom, @GetDaysLeft);
 
-      ClearTempString();
-      AppendTempString(vrDesc);
-      AppendTempString(rName);
-      AppendTempString(RoomKeyCopy_desc2_rsc);
-      AppendTempString(rLocation);
+      if (oRenter <> $)
+      {
+         AppendTempString(RoomKeyCopy_append_renter_rsc);
+         AppendTempString(Send(oRenter, @GetName));
+         AppendTempString(RoomKeyCopy_append_renter2_rsc);
+         AppendTempString(rLocation);
+         AppendTempString(RoomKeyCopy_append_renter3_rsc);
+         Send(self, @AppendSpecial);
+      }
 
+      AppendTempString("\n\n");
+      AppendTempString(RoomKeyCopy_append_days_remaining_rsc);
+      AppendTempString(iDaysLeft);
+      AppendTempString(RoomKeyCopy_append_days_remaining2_rsc);
+
+      return;
+   }
+
+   AppendSpecial()
+   "Appends text to the description relevant to specific key classes."
+   {
+      AppendTempString(RoomKeyCopy_appendspecial_rsc);
       return;
    }
    

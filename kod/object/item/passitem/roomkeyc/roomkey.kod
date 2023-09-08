@@ -19,7 +19,12 @@ resources:
    RoomKey_name_rsc = "gold room key"
    RoomKey_icon_rsc = roomkey.bgf
    RoomKey_desc_rsc = \
-      "This solid gold key bears an inscription which reads:\n"
+      "This finely-crafted golden key is used to gain "
+      "access to a private room at an inn."
+   RoomKey_appendspecial_rsc = "There's currently "
+   RoomKey_appendspecial_singular_rsc = " copy "
+   RoomKey_appendspecial_plural_rsc = " copies " 
+   RoomKey_appendspecial2_rsc = "of this key in circulation."
 
    RoomKey_vanishes = \
       "Your gold room key dissolves into a strange gold liquid, then "
@@ -47,6 +52,49 @@ properties:
    plCopies = $
 
 messages:
+
+   AppendSpecial()
+   "Appends the number of key copies in ciculation to the key's description."
+   {
+      local iCopyCount;
+
+      iCopyCount = Send(self, @NumberOfCopies);
+      % If there are no copies of this key in circulation, there's no reason to
+      % add text related to this statistic to the description.
+      if iCopyCount < 1
+      {
+         return;
+      }
+
+      AppendTempString(RoomKey_appendspecial_rsc);
+      AppendTempString(iCopyCount);
+      if iCopyCount = 1
+      {
+         AppendTempString(RoomKey_appendspecial_singular_rsc);
+      }
+      else
+      {
+         AppendTempString(RoomKey_appendspecial_plural_rsc);
+      }
+      AppendTempString(RoomKey_appendspecial2_rsc);
+
+      return;
+   }
+
+   UserLogOn()
+   {
+      local oRoom;
+
+      oRoom = Send(SYS, @FindRoomByNum, #num=piRID);
+      if oRoom <> $
+      {
+         Send(oRoom, @RenterLoggedOn);
+      }
+
+      propagate;
+   }
+
+
 
    OriginalDeleted()
    {

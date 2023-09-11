@@ -3670,14 +3670,13 @@ messages:
       iCantGet = 0;
       for oitem in items_list
       {
-
          iNumber = First(numbers_list);
 
          if NOT Send(self,@UserGetSafetyChecks,#what=oitem)
          {
             return;
          }
-
+         
          if IsClass(oitem,&NumberItem)
          {
             iCan_hold = Send(self,@GetNumberCanHold,#what=oitem);

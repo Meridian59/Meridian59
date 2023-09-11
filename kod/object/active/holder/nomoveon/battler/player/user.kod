@@ -3547,48 +3547,6 @@ messages:
       return;
    }
 
-   UserGetSafetyChecks(what = $)
-   {
-      local oOldOwner;
-
-      oOldOwner = Send(what,@GetOwner);
-
-      % Make sure we're not trying to get something we've already got!
-      if oOldOwner = self
-      {
-         % No message - user already got the item somehow
-         return FALSE;
-      }
-
-      % Make sure the object is not now owned by another player
-      if IsClass(oOldOwner,&User)
-      {
-         % The most likely cause of this is the item has been picked up
-         % by another player and therefore user_err_get_unk is the best message
-         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
-               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-              
-         return FALSE;
-      }
-
-      % Make sure the object is in the same room as the user
-      % Check ReqNewOwner for any item attributes that prevent new hold
-      % Check ReqTaker for legal entry for guild halls and other checks
-      if Send(SYS,@UtilGetRoom,#what=what) <> poOwner
-         OR NOT Send(what,@ReqNewOwner,#what=self)
-         OR (oOldOwner <> $ AND NOT Send(oOldOwner,@ReqTaker,#what=what,#taker=self))
-      {
-         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
-              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-
-         return FALSE;
-      }
-
-      return TRUE;
-   }
-
    UserGet(what = $)
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
@@ -3776,6 +3734,48 @@ messages:
       }
 
       return;
+   }
+
+   UserGetSafetyChecks(what = $)
+   {
+      local oOldOwner;
+
+      oOldOwner = Send(what,@GetOwner);
+
+      % Make sure we're not trying to get something we've already got!
+      if oOldOwner = self
+      {
+         % No message - user already got the item somehow
+         return FALSE;
+      }
+
+      % Make sure the object is not now owned by another player
+      if IsClass(oOldOwner,&User)
+      {
+         % The most likely cause of this is the item has been picked up
+         % by another player and therefore user_err_get_unk is the best message
+         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
+               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+              
+         return FALSE;
+      }
+
+      % Make sure the object is in the same room as the user
+      % Check ReqNewOwner for any item attributes that prevent new hold
+      % Check ReqTaker for legal entry for guild halls and other checks
+      if Send(SYS,@UtilGetRoom,#what=what) <> poOwner
+         OR NOT Send(what,@ReqNewOwner,#what=self)
+         OR (oOldOwner <> $ AND NOT Send(oOldOwner,@ReqTaker,#what=what,#taker=self))
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    UserBlockedSend(what = $)

@@ -3547,10 +3547,54 @@ messages:
       return;
    }
 
+   UserGetSafetyChecks(what = $)
+   {
+      local oOldOwner;
+
+      oOldOwner = Send(what,@GetOwner);
+
+      % Make sure we're not trying to get something we've already got!
+      if oOldOwner = self
+      {
+         % No message - user already got the item somehow
+         return FALSE;
+      }
+
+      % Make sure the object is not now owned by another player
+      if IsClass(oOldOwner,&User)
+      {
+         % The most likely cause of this is the item has been picked up
+         % by another player and therefore user_err_get_unk is the best message
+         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
+               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+              
+         return FALSE;
+      }
+
+      % Make sure the object is in the same room as the user
+      % Check ReqNewOwner for any item attributes that prevent new hold
+      % Check ReqTaker for legal entry for guild halls and other checks
+      if Send(SYS,@UtilGetRoom,#what=what) <> poOwner
+         OR NOT Send(what,@ReqNewOwner,#what=self)
+         OR (oOldOwner <> $ AND NOT Send(oOldOwner,@ReqTaker,#what=what,#taker=self))
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
    UserGet(what = $)
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, oSplit, oCorpse;
+
+      oOldOwner = Send(what,@GetOwner);
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3559,22 +3603,8 @@ messages:
          Send(self,@NotifyMonstersOfPresence);
       }
 
-      oOldOwner = Send(what,@GetOwner);
-
-      % Make sure we're not trying to get something we've already got!
-      if oOldOwner = self
+      if NOT Send(self,@UserGetSafetyChecks,#what=what)
       {
-         return;
-      }
-
-      % Make sure object still exists, etc, so we don't cause errors
-      if Send(SYS,@UtilGetRoom,#what=what) <> poOwner
-         OR IsClass(Send(what,@GetOwner),&User)
-      {
-         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
-              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-              
          return;
       }
 
@@ -3619,25 +3649,6 @@ messages:
          return FALSE;
       }
 
-      if oOldOwner <> $
-         AND NOT Send(oOldOwner,@ReqTaker,#what=what,#taker=self)
-      {
-         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
-              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-              
-         return;
-      }
-
-      if NOT Send(what,@ReqNewOwner,#what=self)
-      {
-         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
-              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-              
-         return;
-      }
-        
       if NOT Send(self,@ReqNewHold,#what=what) 
       {
          if IsClass(what,&NumberItem)
@@ -3697,46 +3708,16 @@ messages:
 
    UserGetFromContainer(items_list=$, numbers_list=$)
    {
-      local oOldOwner, oSplit, iCan_hold, oitem, iCantGet, iNumber;
+      local oSplit, iCan_hold, oitem, iCantGet, iNumber;
       iCantGet = 0;
       for oitem in items_list
       {
 
          iNumber = First(numbers_list);
-         oOldOwner = Send(oitem,@GetOwner);
 
-         % Make sure we're not trying to get something we've already got!
-         if oOldOwner = self
+         if NOT Send(self,@UserGetSafetyChecks,#what=oitem)
          {
             return;
-         }
-
-         % Make sure object still exists, etc, so we don't cause errors
-         if Send(SYS,@UtilGetRoom,#what=oitem) <> poOwner
-            OR IsClass(Send(oitem,@GetOwner),&User)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
-                  #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
-            Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-              
-            return;
-         }
-
-         if oOldOwner <> $
-            AND NOT Send(oOldOwner,@ReqTaker,#what=oitem,#taker=self)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
-               #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
-            Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-            iCantGet = 1;
-         }
-
-         if NOT Send(oitem,@ReqNewOwner,#what=self)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
-               #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
-            Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
-            iCantGet = 1;
          }
 
          if IsClass(oitem,&NumberItem)
@@ -3755,34 +3736,20 @@ messages:
                else
                {
                   oSplit = Send(oitem,@Split,#number=iCan_hold);
-                  if Send(oitem,@ReqNewOwner,#what=oSplit)
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=user_got_some,
-                        #parm1=Send(oitem,@GetName));
-                     Send(self,@NewHold,#what=oSplit);
-                     iCantGet = 1;
-                  }
+                  Send(self,@MsgSendUser,#message_rsc=user_got_some,
+                     #parm1=Send(oitem,@GetName));
+                  Send(self,@NewHold,#what=oSplit);
+                  iCantGet = 1;
                }
             }
             % iCan_hold > iNumber
             else
             {
                oSplit = Send(oitem,@Split,#number=iNumber);
-               if Send(oitem,@ReqNewOwner,#what=oSplit)
-               {
-                  Send(self,@NewHold,#what=oSplit);
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
-                        #parm1=Send(oitem,@GetDef),#parm2=Send(oitem,@GetName));
-                  Send(self, @WaveSendUser, #what=self, 
-                        #wave_rsc = user_cant_pickup_item_wav_rsc);
-                  iCantGet = 1;
-               }
+               Send(self,@NewHold,#what=oSplit);
             }
          % Move down the list of numbers only if we got a number item
-         % None number items dont care what iNumber is
+         % Non number items dont care what iNumber is
          numbers_list = Rest(numbers_list);
          }
          % Not a number item
@@ -3803,7 +3770,6 @@ messages:
          }
       }
       % If iCantGet still equals zero then we grabbed everything in the list
-      % If so let's send a success message to the user
       if iCantGet = 0
       {
          Send(self,@MsgSendUser,#message_rsc=user_got_all_stuff_from_container);

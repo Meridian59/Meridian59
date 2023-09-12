@@ -63,7 +63,7 @@ messages:
    {
       local iTime;
 
-      iTime = (time * (275-iSpellPower)) / 275;
+      iTime = (time * (225-iSpellPower)) / 225;
 
       return iTime;
    }

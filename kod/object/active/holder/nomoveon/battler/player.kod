@@ -5501,12 +5501,12 @@ messages:
             if IsClass(oJalaSpell,&Restorate)
             {
                iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               
+
                iTime = bound(iTime,1000,40000);
                iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
 
-               return = bound(iTime,650,40000);
+               return bound(iTime,650,40000);
             }
          }
       }

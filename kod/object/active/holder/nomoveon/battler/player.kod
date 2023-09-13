@@ -5506,7 +5506,7 @@ messages:
                iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
 
-               return bound(iTime,750,25000);
+               return bound(iTime,670,25000);
             }
          }
       }

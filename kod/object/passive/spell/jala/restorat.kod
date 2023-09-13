@@ -14,6 +14,9 @@ constants:
 
    include blakston.khd
 
+   SPELL_POWER_INTERCEPT = 40    % Hypothetical zero spell power restorate effect coefficient
+   SPELL_POWER_SLOPE = 400       % 1.12 to 1.51 times faster HP regen, linear effect on time per tick
+
 resources:
 
    Restorate_name_rsc = "restorate"
@@ -37,9 +40,7 @@ classvars:
    viMana = 5           % Mana is amount used upon inititiation
    viManaDrain = 3      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
-   viSpellPowerIntercept = 40    % Hypothetical zero spell power restorate effect coefficient
-   viSpellPowerSlope = 400       % 1.12 to 1.51 times faster HP regen, linear effect on time per tick
-   
+      
    viSpellExertion = 10      
    viChance_To_Increase = 20
 
@@ -65,7 +66,7 @@ messages:
    {
       local iTime;
 
-      iTime = (time * (viSpellPowerSlope - (viSpellPowerIntercept + iSpellPower))) / viSpellPowerSlope;
+      iTime = (time * (SPELL_POWER_SLOPE - (SPELL_POWER_INTERCEPT + iSpellPower))) / SPELL_POWER_SLOPE;
 
       return iTime;
    }

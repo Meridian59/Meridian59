@@ -53,6 +53,12 @@ properties:
 
    pbAtrophyOn = FALSE
 
+   % Skill/spell advancement cap settings
+   pbAdvancementCapOn = FALSE
+   piAdvanceTimerMin = 900000
+   piAdvanceTimerMax = 1320000
+   piAdvancementLimit = 10
+
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
    %  percents.
@@ -247,6 +253,21 @@ messages:
    IsAtrophyOn()
    {
       return pbAtrophyOn;
+   }
+
+   IsAdvancementCapOn()
+   {
+      return pbAdvancementCapOn;
+   }
+
+   GetAdvancementWait()
+   {
+      return Random(piAdvanceTimerMin, piAdvanceTimerMax);
+   }
+
+   GetAdvancementLimit()
+   {
+      return piAdvancementLimit;
    }
 
    GetMaxLearnPoints()

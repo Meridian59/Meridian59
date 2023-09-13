@@ -62,11 +62,6 @@ constants:
    % Number of ms to lose one boosted health or mana point.
    BOOST_DECAY_TIME = 30000 
 
-   % Currently: 10 improves every 15-22 minutes.
-   ADVANCE_TIMER_MIN =   900000
-   ADVANCE_TIMER_MAX =   1320000
-   ADVANCEMENT_LIMIT =   10
-
    PKPOINTER_TIME = 10*60*1000
 
    PLAYER_TRANSLATION_LEGS_MASK = 0xff
@@ -7450,15 +7445,18 @@ messages:
    "A player can only gain so many advancement points per hour, in spells"
    "And skills combined."
    {
-      local iTime;
+      local iTime, oSettings;
       
-      if ptAdvancement = $
+      oSettings = Send(SYS, @GetSettings);
+      if Send(oSettings, @IsAdvancementCapOn)
       {
-         iTime = random(ADVANCE_TIMER_MIN,ADVANCE_TIMER_MAX);
-         ptAdvancement = CreateTimer(self,@AdvancementTimer,iTime);
+         if ptAdvancement = $
+         {
+            iTime = Send(Send(SYS, @GetSettings), @GetAdvancementWait);
+            ptAdvancement = CreateTimer(self,@AdvancementTimer,iTime);
+         }
+         piAdvancement_points = piAdvancement_points + number;
       }
-      
-      piAdvancement_points = piAdvancement_points + number;
       
       return;
    }
@@ -7466,7 +7464,11 @@ messages:
    CheckAdvancementPoints()
    "Checks to be sure a player isn't at the limit yet."
    {
-      if piAdvancement_points < ADVANCEMENT_LIMIT
+      local oSettings;
+
+      oSettings = Send(SYS, @GetSettings);
+      if NOT Send(oSettings, @IsAdvancementCapOn) OR
+         piAdvancement_points < Send(oSettings, @GetAdvancementLimit)
       {
          return TRUE;
       }

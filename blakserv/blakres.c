@@ -149,7 +149,7 @@ int AddDynamicResource(const char *str_value)
 
 void ChangeDynamicResourceStr(resource_node *r,char *str_value)
 {
-	ChangeDynamicResource(r,str_value,strlen(str_value));
+	ChangeDynamicResource(r,str_value,(int) strlen(str_value));
 }
 
 void ChangeDynamicResource(resource_node *r,char *data,int len_data)

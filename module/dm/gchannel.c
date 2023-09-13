@@ -16,7 +16,7 @@ static HWND hGChannelDlg = NULL;
 static BOOL bGChannelHidden = FALSE;
 
 static void OnGChannelCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify);
-BOOL CALLBACK GChannelDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK GChannelDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 /****************************************************************************/
 
@@ -45,7 +45,7 @@ void ShowGChannelDlg()
 
 /****************************************************************************/
 
-BOOL CALLBACK GChannelDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK GChannelDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

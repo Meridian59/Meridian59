@@ -18,9 +18,9 @@ resources:
 
    RemoveCursePotion_name_rsc = "remove curse potion"
    %RemoveCursePotion_icon_rsc = potion01.bgf
-   RemoveCursePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   RemoveCursePotion_desc_rsc = "This is a glass vial of pale blue-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   RemoveCursePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   RemoveCursePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy pale blue-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
    RemoveCursePotion_drink = "You quaff the contents of the vial in a single gulp."

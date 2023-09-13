@@ -304,7 +304,7 @@ void recompile_warnings(list_type l)
          column = 0;
       }
       printf("%s  ", name);
-      column += strlen(name) + 2;
+      column += (int) strlen(name) + 2;
       
       /* ((recompile_type) (l->data))->superclass->name); */
    }

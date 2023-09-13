@@ -355,31 +355,6 @@ void TThingEditDialog::EntranceClicked()
 void TThingEditDialog::SelectFromEntrancesClicked ()
 {
   // Disabled 7/3/04 ARK.  See comment in windeu.cpp about entrances
-#if 0  
-	int startExitRoomID = CurThing.when;
-	int exitRoomID,exitRow,exitCol,exitAngle;
-	int id = SelectEntrance(this,startExitRoomID,CurThing.id,&exitRoomID,&exitRow,&exitCol,&exitAngle);
-	if (id >= 0)
-	{
-		int roomIndex = GetKodIndexFromID(exitRoomID);
-		if (roomIndex >= 0)
-		{
-			char tmp[256];
-			sprintf (tmp, "%d", exitCol);
-			pXExit->SetText(tmp);
-			sprintf (tmp, "%d", exitRow);
-			pYExit->SetText(tmp);
-			pExitRoomID->SetSelIndex(pExitRoomID->FindString(GetKodRoomDecorativeName(roomIndex),-1));
-			CurThing.xExitPos = exitCol;
-			CurThing.yExitPos = exitRow;
-			CurThing.id = id;
-			CurThing.angle = exitAngle;
-			CurThing.when = exitRoomID;
-			SetAngle();
-			SetupListBox();
-		}
-	}
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////

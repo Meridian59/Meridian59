@@ -23,7 +23,7 @@ static AREA user_area;      // Screen area of user bitmap
 
 extern BYTE *selftrgt_bits;        // Bitmap for in-use highlight
 
-static long CALLBACK UserAreaProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK UserAreaProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /************************************************************************/
 /*
  * UserAreaCreate:  Create the user display area.
@@ -98,7 +98,7 @@ void UserAreaResize(int xsize, int ysize, AREA *view)
 /* 
  * UserAreaProc:  Window procedure for user area window.
  */
-long CALLBACK UserAreaProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK UserAreaProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

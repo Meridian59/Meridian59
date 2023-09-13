@@ -181,10 +181,10 @@ void BoardInitialize(Board *b)
    b->squares[0][5].piece = BISHOP;
    b->squares[7][2].piece = BISHOP;
    b->squares[7][5].piece = BISHOP;
-   b->squares[0][3].piece = KING;
-   b->squares[7][3].piece = KING;
-   b->squares[0][4].piece = QUEEN;
-   b->squares[7][4].piece = QUEEN;
+   b->squares[0][4].piece = KING;
+   b->squares[7][4].piece = KING;
+   b->squares[0][3].piece = QUEEN;
+   b->squares[7][3].piece = QUEEN;
 
    b->move_color = WHITE;
 
@@ -223,7 +223,7 @@ void BoardBitmapsLoad(void)
  */
 void BoardDraw(HDC hdc, Board *b)
 {
-   int i, j, piece, color, index, mode;
+   int piece, color, index, mode;
    RECT rect;
 
    if (!b->valid)
@@ -241,39 +241,44 @@ void BoardDraw(HDC hdc, Board *b)
    // Turn off color interpolation
    mode = GetStretchBltMode(hdc);
    SetStretchBltMode(hdc, STRETCH_DELETESCANS);
+   
+   for (int i=0; i < BOARD_HEIGHT; i++) {
+     // Rotate board if for black pieces.
+     int row = (b->color == BLACK) ? (BOARD_HEIGHT - i - 1) : i;
 
-   for (i=0; i < BOARD_HEIGHT; i++)
-      for (j=0; j < BOARD_WIDTH; j++)
-      {
-	 if ((i + j) % 2 == 0)
-	    index = WHITE_INDEX;
-	 else index = BLACK_INDEX;
+     for (int j=0; j < BOARD_WIDTH; j++)
+     {
+       int col = (b->color == BLACK) ? (BOARD_WIDTH - j - 1) : j;
+       if ((i + j) % 2 == 0)
+         index = BLACK_INDEX;
+       else index = WHITE_INDEX;
+       
+       // Draw highlight if square selected
+       if (move_started && move_pos1.x == col && move_pos1.y == row)
+         index = select_index;
+       
+       rect.left   = j * b->square_size;
+       rect.top    = (BOARD_HEIGHT - i - 1) * b->square_size;  // Row 0 on bottom
+       rect.right  = rect.left + b->square_size;
+       rect.bottom = rect.top + b->square_size;
 
-	 // Draw highlight if square selected
-	 if (move_started && move_pos1.x == j && move_pos1.y == i)
-	    index = select_index;
-	    
-	 rect.left   = j * b->square_size;
-	 rect.top    = i * b->square_size;
-	 rect.right  = rect.left + b->square_size;
-	 rect.bottom = rect.top + b->square_size;
-
-	 piece = b->squares[i][j].piece;
-	 color = b->squares[i][j].color;
-	 if (piece == NONE)
-	 {
-	    OffscreenWindowColor(b->square_size, b->square_size, index);
-	    OffscreenCopy(hdc, rect.left, rect.top, b->square_size, b->square_size, 0, 0);
-	 }
-	 else
-	 {
-	    OffscreenWindowColor(PIECE_WIDTH, PIECE_HEIGHT, index);
-	    OffscreenStretchBlt(hdc, rect.left, rect.top, b->square_size, b->square_size,
-				piece_bitmaps[color][piece - 1].bmap.bits,
-				0, 0, PIECE_WIDTH, PIECE_HEIGHT,
-				OBB_TRANSPARENT | OBB_FLIP | OBB_COPY);
-	 }
-      }
+       piece = b->squares[row][col].piece;
+       color = b->squares[row][col].color;
+       if (piece == NONE)
+       {
+         OffscreenWindowColor(b->square_size, b->square_size, index);
+         OffscreenCopy(hdc, rect.left, rect.top, b->square_size, b->square_size, 0, 0);
+       }
+       else
+       {
+         OffscreenWindowColor(PIECE_WIDTH, PIECE_HEIGHT, index);
+         OffscreenStretchBlt(hdc, rect.left, rect.top, b->square_size, b->square_size,
+                             piece_bitmaps[color][piece - 1].bmap.bits,
+                             0, 0, PIECE_WIDTH, PIECE_HEIGHT,
+                             OBB_TRANSPARENT | OBB_FLIP | OBB_COPY);
+       }
+     }
+   }
    SetStretchBltMode(hdc, mode);
 }   
 /****************************************************************************/

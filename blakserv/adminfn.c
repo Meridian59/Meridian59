@@ -166,6 +166,8 @@ void AdminShowReferences(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[]);
 void AdminShowReferencesEachObject(object_node *o);
 void AdminShowReferencesEachList(int list_id);
+void AdminShowExactInstances(int session_id, admin_parm_type parms[],
+						int num_blak_parm, parm_node blak_parm[]);
 void AdminShowInstances(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[]);
 void AdminShowMatches(int session_id,admin_parm_type parms[],
@@ -311,6 +313,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowConfiguration, {N},   F, A|M, NULL, 0, "configuration", "Show configuration values" },
 	{ AdminShowConstant,      {S,N}, F,A|M, NULL, 0, "constant",       "Show value of admin constant" },
 	{ AdminShowDynamicResources,{N}, F, A, NULL, 0, "dynamic",       "Show all dynamic resources" },
+	{ AdminShowExactInstances,{S,N}, F, A, NULL, 0, "exactinstances", "Show all instances of class, excluding subclasses" },
 	{ AdminShowInstances,     {S,N}, F, A, NULL, 0, "instances",     "Show all instances of class" },
 	{ AdminShowList,          {I,N}, F, A|M, NULL, 0, "list",          "Traverse & show a list" },
 	{ AdminShowListNode,      {I,N}, F, A|M, NULL, 0, "listnode",      "Show one list node by id" },
@@ -550,7 +553,7 @@ void aprintf(const char *fmt,...)
 
 	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
 
-	AdminBufferSend(s,strlen(s));
+	AdminBufferSend(s, (int) strlen(s));
 }
 
 char *to_lowercase(char *s)
@@ -660,7 +663,7 @@ void SendSessionAdminText(int session_id,const char *fmt,...)
 	admin_session_id = session_id;
 
 	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
-	SendAdminBuffer(s,strlen(s));
+	SendAdminBuffer(s, (int) strlen(s));
 
 	admin_session_id = prev_admin_session_id;
 }
@@ -871,7 +874,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				}
 
 				text = (char *) parm_str;
-				SetTempString( text, strlen( text ) );	// Copies to global temp_str
+				SetTempString( text, (int) strlen( text ) );  // Copies to global temp_str
 
 				// we need to set type, name_id, and value
 				//	type is CONSTANT (set above)
@@ -1374,17 +1377,16 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 void AdminShowMemory(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[])
 {
-	int i,total;
 	memory_statistics *mstat;
 
 	aprintf("System Memory -----------------------------\n");
 
 	mstat = GetMemoryStats();
 
-	total = 0;
+	size_t total = 0;
 
 	aprintf("%s\n",TimeStr(GetTime()));
-	for (i=0;i<GetNumMemoryStats();i++)
+	for (int i=0;i<GetNumMemoryStats();i++)
 	{
 		aprintf("%-20s %8lu\n",GetMemoryStatName(i),mstat->allocated[i]);
 		total += mstat->allocated[i];
@@ -2085,6 +2087,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case SETNTH : strcpy(c_name, "SetNth"); break;
 		case DELLISTELEM : strcpy(c_name, "DelListElem"); break;
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
+		case MOVELISTELEM : strcpy(c_name, "MoveListElem"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
 		case ABS : strcpy(c_name, "Abs"); break;
 		case BOUND : strcpy(c_name, "Bound"); break;
@@ -2223,6 +2226,39 @@ void AdminShowClass(int session_id,admin_parm_type parms[],
 
 	aprintf(":>\n");
 
+}
+
+void AdminShowExactInstances(int session_id, admin_parm_type parms[],
+	int num_blak_parm, parm_node blak_parm[])
+{
+	int i, m;
+	class_node* c;
+	extern object_node* objects;
+	extern int num_objects;
+
+	char* class_str;
+	class_str = (char*)parms[0];
+
+	c = GetClassByName(class_str);
+	if (c == NULL)
+	{
+		aprintf("Cannot find CLASS %s.\n", class_str);
+		return;
+	}
+
+	aprintf(":< instances (excluding subclasses) of CLASS %s (%i)\n:", c->class_name, c->class_id);
+	m = 0;
+	for (i = 0; i < num_objects; i++)
+	{
+		class_node* wc = GetClassByID(objects[i].class_id);
+		if (wc == c)
+		{
+			aprintf(" OBJECT %i", i);
+			m++;
+		}
+	}
+	aprintf("\n: %i total", m);
+	aprintf("\n:>\n");
 }
 
 void AdminShowInstances(int session_id,admin_parm_type parms[],
@@ -3862,10 +3898,9 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 		else if (blak_val.v.tag == TAG_RESOURCE)
 		{
 			resource_node* rnod = GetResourceByID(blak_val.v.data);
-			int len;
 			if (rnod && rnod->resource_val && *rnod->resource_val)
 			{
-            len = std::min(strlen(rnod->resource_val), (size_t) 60);
+        int len = std::min((int) strlen(rnod->resource_val), 60);
 			  aprintf(":   == \"");
 			  AdminBufferSend(rnod->resource_val, len);
 			  if (len < (int)strlen(rnod->resource_val))
@@ -3897,7 +3932,7 @@ void AdminSendUsers(int session_id,admin_parm_type parms[],
 	char *text;
 	text = (char *)parms[0];
 
-	SetTempString(text,strlen(text));
+	SetTempString(text, (int) strlen(text));
 	str_val.v.tag = TAG_TEMP_STRING;
 	str_val.v.data = 0;		/* doesn't matter for TAG_TEMP_STRING */
 

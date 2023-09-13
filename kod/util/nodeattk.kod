@@ -223,7 +223,9 @@ messages:
 
       % Check the wait time, see if we're up for attacking the node again!
       piWaitTime = piWaitTime - 1;
-      if piWaitTime <= 0 AND poAttackedNode = $
+      if piWaitTime <= 0 
+         AND poAttackedNode = $
+         AND ptAttack = $
       {
          % Generate a wait between a minute and 4 hours
          ptAttack = CreateTimer(self,@StartAttackTimer,Random(60,14400)*1000);
@@ -254,6 +256,7 @@ messages:
 
       ptAttack = $;
       if NOT Send(self,@DoNodeAttack)
+         AND pbAttackEnabled
       {
          % Between 1 and 2 hours
          ptAttack = CreateTimer(self,@StartAttackTimer,Random(3600,7200)*1000);
@@ -364,7 +367,13 @@ messages:
 
       % Set timer for when everyone will be alerted, and send message to node
       %  holders. Convert minutes to milliseconds.
+      if (ptAttack <> $)
+      {
+         DeleteTimer(ptAttack);
+         ptAttack = $;
+      }
       ptAttack = CreateTimer(self,@WarnAllTimer,(piAttackDuration*60000)/3);
+      
       lAllItems = Send(SYS,@GetUsersLoggedOn);
       for oItem in lAllItems
       {

@@ -206,6 +206,11 @@ messages:
       return viRange;
    }   
 
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return viSpell_modifier;
+   }
+
    % This returns the weapon's attack name.  For ranged weapons, return the ammo name.
    GetAttackName()
    {

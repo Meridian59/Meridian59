@@ -37,7 +37,7 @@ void InsertTable(int table_id,val_type key_val,val_type data_val);
 blak_int GetTableEntry(int table_id,val_type key_val);
 void DeleteTableEntry(int table_id,val_type key_val);
 
-unsigned int GetBufferHash(const char *buf,unsigned int len_buf);
+unsigned int GetBufferHash(const char *buf, size_t len_buf);
 
 #endif
 

@@ -86,10 +86,6 @@ extern MDirPtr MasterDir;   /* the master directory */
 
 
 /* from wads.c */
-void OpenMainWad (char *);
-void OpenPatchWad (char *);
-void CloseWadFiles (void);
-void CloseUnusedWadFiles (void);
 WadPtr BasicWadOpen (char *);
 void BasicWadRead (WadPtr, void *, long);
 void BasicWadSeek (WadPtr, long);

@@ -21,7 +21,7 @@ CFLAGS = $(CFLAGS:-GR-=-GR) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)
 # Dependency List
 #
 
-all: makedirs $(OUTDIR)\windeu32.exe
+all: makedirs $(OUTDIR)\roomedit.exe
 
 OBJS = \
    $(OUTDIR)\save.obj\
@@ -74,7 +74,7 @@ OBJS = \
 
 LIBS = \
 	$(OWLOUTDIR)\$(OWLLIBNAME) \
-	zdll.lib \
+	zlib.lib \
 	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
 
 OWLOBJS = \
@@ -131,7 +131,7 @@ OWLOBJS = \
 	$(OWLOUTDIR)\document.obj \
 	$(OWLOUTDIR)\draglist.obj \
 	$(OWLOUTDIR)\drawitem.obj \
-	$(OWLOUTDIR)\dumpstack.obj \
+#	$(OWLOUTDIR)\dumpstack.obj \
 	$(OWLOUTDIR)\edit.obj \
 	$(OWLOUTDIR)\editfile.obj \
 	$(OWLOUTDIR)\editsear.obj \
@@ -306,16 +306,16 @@ $(OWLOUTDIR)\$(OWLLIBNAME): $(OWLOBJS)
    $(RC) /fo $@ $**
 
 makeowldir:
-		-@mkdir $(OWLOUTDIR)
+		-@if not exist $(OWLOUTDIR) mkdir $(OWLOUTDIR)
 
-$(OUTDIR)\windeu32.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
+$(OUTDIR)\roomedit.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\$(OWLLIBNAME)
 	$(LINK) $(LINKFLAGS) $(LINKWINDOWSFLAGS) @<<
 	$(OBJS) $(LIBS) -OUT:$@
 <<
 
 
 makedirs:
-        -@mkdir $(OUTDIR)
+        -@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
 {$(SOURCEDIR)}.c{$(OUTDIR)}.obj::
 	$(CC) $(CFLAGS) /FpCpch /Fd$(OUTDIR)\vc90.pdb /Fo$(OUTDIR)/ -c $< 

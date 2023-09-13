@@ -22,8 +22,8 @@ typedef struct {
    ID        sender_name;    /* Sender's name resource */
 } RcvOfferDialogStruct;
 
-BOOL CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void OfferChangeFonts(void);
 void OfferClose(void);
 void OfferChangeColor(void);

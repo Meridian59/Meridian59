@@ -160,7 +160,7 @@ PDIB DibReadBitmapInfo(int fh)
             bi.biClrUsed            = 0;
             bi.biClrImportant       = 0;
 
-            lseek(fh,(LONG)sizeof(BITMAPCOREHEADER)-sizeof(BITMAPINFOHEADER),SEEK_CUR);
+            lseek(fh,(LONG) (sizeof(BITMAPCOREHEADER)-sizeof(BITMAPINFOHEADER)),SEEK_CUR);
 
             break;
     }

@@ -21,7 +21,7 @@ static HWND hAnnotateDialog;
 
 extern room_type current_room;
 
-static BOOL CALLBACK MapAnnotationDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK MapAnnotationDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /*****************************************************************************/
 /*
  * MapAnnotationsInitialize:  Set up tooltips for map annotations.
@@ -191,7 +191,7 @@ void MapAnnotationClick(int x, int y)
  * MapAnnotationDialogProc:  Dialog procedure for editing annotation text.
  *   lParam of WM_INITDIALOG is index of annotation.
  */
-BOOL CALLBACK MapAnnotationDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK MapAnnotationDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static int index;
    HWND hEdit;

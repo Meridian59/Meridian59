@@ -133,43 +133,28 @@ Bool DibOpenFileReal(char *szFile, Bitmaps *b)
 		  start = szFile;
 
 	  end = strstr(szFile, ".bgf");
-	  len = (int)end - (int)start;
+	  len = (int) (end - start);
 
-	  if (0)
-	  {
-		  char	string[255];
-
-		assert((len > 0) && (len < MAX_BITMAPNAME));
-//		strncpy(b->pdibs[i]->uniqueID, start, len);
-//		itoa(i, &b->pdibs[i]->uniqueID[len], 10);
-//		b->pdibs[i]->uniqueID[len + 1] = '\0';
-		strncpy(string, start, len);
-		itoa(i, &string[len], 10);
-		string[len + 1] = '\0';
-	  }
-	  else
-	  {
-		  int	j;
-		  char	string[32];
-
-		  strcpy(string, start);
-		  strupr(string);
-
-		  b->pdibs[i]->uniqueID = 0;
-		  b->pdibs[i]->uniqueID2 = 0;
-
-		  for (j = 0; j < min(len, 4); j++)
-		  {
-			  b->pdibs[i]->uniqueID |= string[j] << (j * 8);
-		  }
-
-		  for (; j < len; j++)
-		  {
-			  b->pdibs[i]->uniqueID2 |= start[j] << ((j - 4) * 8);
-		  }
-
-		  b->pdibs[i]->frame = i;
-	  }
+    int	j;
+    char	string[32];
+    
+    strcpy(string, start);
+    strupr(string);
+    
+    b->pdibs[i]->uniqueID = 0;
+    b->pdibs[i]->uniqueID2 = 0;
+    
+    for (j = 0; j < min(len, 4); j++)
+    {
+      b->pdibs[i]->uniqueID |= string[j] << (j * 8);
+    }
+    
+    for (; j < len; j++)
+    {
+      b->pdibs[i]->uniqueID2 |= start[j] << ((j - 4) * 8);
+    }
+    
+    b->pdibs[i]->frame = i;
       
       // read in the hotspots
       for (j=0; j < num_hotspots; j++)

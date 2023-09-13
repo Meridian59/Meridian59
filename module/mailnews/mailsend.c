@@ -31,7 +31,7 @@ static ChildPlacement mailsend_controls[] = {
 
 static void SendMailInitialize(HWND hDlg, MailInfo *reply);
 static Bool SendMailMessage(HWND hDlg);
-static BOOL CALLBACK SendMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
  * UserSendMail:  Pop up the send mail dialog box, which does all the work.
@@ -77,7 +77,7 @@ void MailSendReply(HWND hParent, MailInfo *reply)
 		     SendMailDialogProc, (LPARAM) reply);
 }
 /****************************************************************************/
-BOOL CALLBACK SendMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hEdit, hSubject, hRecipients;
    static MailInfo *reply;

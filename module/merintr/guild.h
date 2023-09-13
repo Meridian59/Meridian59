@@ -85,11 +85,11 @@ void AbortGuildDialogs(void);
 
 void GuildHallsReceived(WORD num_halls, GuildHall *halls);
 
-BOOL CALLBACK GuildInviteDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK GuildMemberDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK GuildAllyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK GuildMasterDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK GuildShieldDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK GuildInviteDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK GuildMemberDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK GuildAllyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK GuildMasterDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK GuildShieldDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void GuildShieldDraw(void);
 void GuildShieldControl(HWND hwndGraphic);
 void GuildShieldInit();

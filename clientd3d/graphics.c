@@ -12,6 +12,9 @@
  */
 
 #include "client.h"
+#include <vector>
+#include <numeric>
+#include <chrono>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -33,13 +36,21 @@ static ID   drag_object;      // When capture = True, holds id of object being d
 static int fps;
 static int msDrawFrame;
 
-
 extern room_type current_room;
 extern int border_index;
 
 int main_viewport_width;
 int main_viewport_height;
 extern float player_overlay_scaler;
+
+// Variables to store frame times and FPS
+static std::vector<double> fps_store;
+static const int fps_window_size = 60;  // Number of fps values to consider in the rolling window.
+static int average_fps = 0;
+typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
+static steady_clock_time_point lastEndFrame;
+// The clock to use for fps calculations - updating here will update throughout.
+static auto& chrono_time_now = std::chrono::steady_clock::now;
 
 /************************************************************************/
 /*
@@ -201,8 +212,7 @@ void GraphicsAreaResize(int xsize, int ysize)
    // update main viewport and classic scaler (required for FOV calculations and equipment scaling)
    main_viewport_width = view.cx;
    main_viewport_height = view.cy;
-   player_overlay_scaler = (float)(main_viewport_width - CLASSIC_WIDTH) / CLASSIC_WIDTH;
-   player_overlay_scaler = (player_overlay_scaler > 0) ? 1.0f + player_overlay_scaler : 1.0f - player_overlay_scaler;
+   player_overlay_scaler = ((float)main_viewport_width) / CLASSIC_WIDTH;
 
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 
@@ -290,12 +300,6 @@ int GetMSDrawFrame(void)
  */
 void RedrawForce(void)
 {
-   HDC hdc;
-   static DWORD lastEndFrame = 0;
-   DWORD endFrame, startFrame;
-   int totalFrameTime, oldMode;
-   char buffer[32];
-
    if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
    {
@@ -303,50 +307,70 @@ void RedrawForce(void)
       return;
    }
 
-   timeBeginPeriod(1);
-   startFrame = timeGetTime();
+   steady_clock_time_point startFrame = chrono_time_now();
 
    /* REVIEW: Clearing flag before draw phase allows draw phase to set flag.
     *         This is useful in rare circumstances when an effect should
     *         last only one frame, even if animation is off.
     */
    need_redraw = False;
-   hdc = GetDC(hMain);
+   HDC hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
-   endFrame = timeGetTime();
-   msDrawFrame = (int)(endFrame - startFrame);
-   totalFrameTime = (int)(endFrame - lastEndFrame);
+   steady_clock_time_point endFrame = chrono_time_now();
+   std::chrono::duration<double> elapsedTime = endFrame - startFrame;
+   auto elapsedMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count();
+   auto elapsedMilliseconds = elapsedMicroseconds / 1000;
+   msDrawFrame = elapsedMilliseconds;
 
-   // if totalFrameTime is less than one, clamp to 1 so we don't divide by 0 or get negative fps
-   if (1 > totalFrameTime)
-	   totalFrameTime = 1;
-
-   fps = 1000 / (int)totalFrameTime;
+   fps = 1000 / max(1, elapsedMilliseconds);
    if (config.maxFPS)
    {
       if (fps > config.maxFPS)
       {
-	 int msSleep = (1000 / config.maxFPS) - totalFrameTime;
-	 Sleep(msSleep);
+          // Clamp the fps to the maximum.
+          int msSleep = (1000 / config.maxFPS) - elapsedMilliseconds;
+          Sleep(msSleep);
+
+          // Reclaulate the fps following the sleep.
+          endFrame = chrono_time_now();
+          elapsedTime = (endFrame - lastEndFrame);
+          elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+          fps = 1000 / max(1, elapsedMilliseconds);
       }
    }
+
    lastEndFrame = endFrame;
-   timeEndPeriod(1);
 
    if (config.showFPS)
    {
-      RECT rc,lagBox;
-      wsprintf(buffer, "FPS=%d (%dms)        ", fps, msDrawFrame);
-      ZeroMemory(&rc,sizeof(rc));
-      rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
-      Lagbox_GetRect(&lagBox);
-      OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
-      DrawWindowBackground(hdc, &rc, rc.left, rc.top);
-      oldMode = SetBkMode(hdc,TRANSPARENT);
-      DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
-      SetBkMode(hdc,oldMode);
-      GdiFlush();
+        // Add the fps to the rolling window.
+        fps_store.push_back(fps);
+
+        // Remove the oldest fps if the window is full.
+        if (fps_store.size() > fps_window_size) {
+            fps_store.erase(fps_store.begin());
+        }
+
+        // Calculate the average fps over the rolling window.
+        auto sumFPS = std::accumulate(fps_store.begin(), fps_store.end(), 0.0);
+        average_fps = sumFPS / fps_store.size();
+
+        // Format and display the latest average fps value.
+        RECT rc,lagBox;
+        double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
+        char buffer[32];
+        sprintf(buffer, "FPS=%d (%.1fms)        ", average_fps, milliseconds);
+        ZeroMemory(&rc,sizeof(rc));
+
+        rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
+        Lagbox_GetRect(&lagBox);
+        OffsetRect(&rc, main_viewport_width - 110, lagBox.top);
+        DrawWindowBackground(hdc, &rc, rc.left, rc.top);
+        int oldMode = SetBkMode(hdc,TRANSPARENT);
+        DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE);
+        SetBkMode(hdc,oldMode);
+        GdiFlush();
    }
    ReleaseDC(hMain, hdc);
 }

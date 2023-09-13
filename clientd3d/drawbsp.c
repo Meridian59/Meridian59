@@ -66,7 +66,7 @@ static long center_a,center_b;
 static long left_a,left_b,right_a,right_b;
 
 /* return distance along viewer sight line */
-#define GetDistance(x,y) ((center_a * (x) + center_b * (y)) >> (FIX_DECIMAL-6))
+#define GetDistance(x,y) ((center_a * (x) + center_b * (y)) / (1 << (FIX_DECIMAL-6)))
 
 static int world_width = 3328;
 
@@ -75,7 +75,7 @@ static ObjectData objectdata[MAXOBJECTS];
 static long nobjects;
 
 /* Hold info on items (walls, ceilings, floors, objects) to be drawn */
-#define MAX_ITEMS 1600L
+#define MAX_ITEMS 2400L
 DrawItem drawdata[MAX_ITEMS];
 long nitems;
 
@@ -95,7 +95,10 @@ static void doDrawWall(DrawWallStruct *wall, ViewCone *c);
 static void doDrawBackground(ViewCone *c);
 static void SetMappingValues(SlopeData *slope );
 
-void MinimapUpdate(Draw3DParams *params, BSPnode *tree);
+static float epsilon = 0.0001f;
+inline bool isTiny(float f) {
+  return f < epsilon && f > -epsilon;
+}
 
 /*****************************************************************************/
 /*  Additions to BSP tree made on a per-frame basis.  For now,
@@ -151,7 +154,7 @@ BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
  */
 static Bool AddObject(BSPnode *tree, ObjectData *object)
 {
-   long side0, side1;
+   float side0, side1;
    BSPnode *pos, *neg;
    Bool res;
    
@@ -184,17 +187,17 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
 	 pos = tree->u.internal.pos_side;
 	 neg = tree->u.internal.neg_side;
 	 
-	 if (side0 == 0 && side1 == 0)
+	 if (isTiny(side0) && isTiny(side1))
 	    tree = (pos != NULL) ? pos : neg;
-	 else if (side0 >= 0 && side1 >= 0)
+	 else if (side0 >= epsilon && side1 >= epsilon)
 	   tree = pos;
-	 else if (side0 <= 0 && side1 <= 0)
+	 else if (side0 <= -epsilon && side1 <= -epsilon)
 	   tree = neg;
 	 else
 	 {   /* object segment crosses separator! */
-	    double f = ((double)side0) / (side0 - side1);
-	    long xmid = FloatToInt(object->x0 + f * (object->x1 - object->x0));
-	    long ymid = FloatToInt(object->y0 + f * (object->y1 - object->y0));
+      float f = side0 / (side0 - side1);
+	    long xmid = (int) (object->x0 + f * (object->x1 - object->x0));
+	    long ymid = (int) (object->y0 + f * (object->y1 - object->y0));
 	    ObjectData *copy;
 	    
 	    if (nobjects >= MAXOBJECTS)
@@ -239,7 +242,7 @@ long GetFloorHeight(long x, long y, Sector *sector) {
     if (sector->sloped_floor == (SlopeData *)NULL)
 	return sector->floor_height;
     else
-	return (-sector->sloped_floor->plane.a*x - sector->sloped_floor->plane.b*y - sector->sloped_floor->plane.d)/sector->sloped_floor->plane.c;
+      return roundf((-sector->sloped_floor->plane.a*x - sector->sloped_floor->plane.b*y - sector->sloped_floor->plane.d)/sector->sloped_floor->plane.c);
 }
 
 /***************************************************************************
@@ -255,7 +258,7 @@ long GetCeilingHeight(long x, long y, Sector *sector) {
     if (sector->sloped_ceiling == (SlopeData *)NULL)
 	return sector->ceiling_height;
     else
-	return (-sector->sloped_ceiling->plane.a*x - sector->sloped_ceiling->plane.b*y - sector->sloped_ceiling->plane.d)/sector->sloped_ceiling->plane.c;
+      return roundf((-sector->sloped_ceiling->plane.a*x - sector->sloped_ceiling->plane.b*y - sector->sloped_ceiling->plane.d)/sector->sloped_ceiling->plane.c);
 }
 
 /*****************************************************************************/
@@ -456,7 +459,7 @@ static void AddObjects(room_type *room)
       d->draw.secondtranslation = r->obj.secondtranslation;
       d->draw.obj      = r;
       d->draw.depth    = 0;
-#if 1
+
       /* Make sure that object is above the floor. */
       if (!GetRoomHeight(room->tree, &top, &bottom, &sector_flags, r->motion.x, r->motion.y))
       {
@@ -464,11 +467,7 @@ static void AddObjects(room_type *room)
 	 continue;
       }
       d->draw.height = max(bottom, r->motion.z);
-#else
-      d->draw.height = r->motion.z;
-#endif
 
-#if 1
       // Set object depth based on "depth" sector flags
       d->draw.depth = sector_depths[SectorDepth(sector_flags)];
       if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
@@ -497,13 +496,13 @@ static void AddObjects(room_type *room)
 	    break;
 	 }
       }
-#endif      
+
       d->ncones        = 0;
       d->ncones_ptr    = &d->ncones;
 
       /* set center field */
-      a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL-6);
-      b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL-6);
+      a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
+      b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (AddObjects) %ld\n",a+b));
@@ -585,8 +584,8 @@ static void AddObjects(room_type *room)
       d->draw.obj      = NULL;
 
       /* set center field */
-      a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL-6);
-      b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL-6);
+      a = (left_a * dx + left_b * dy) / FINENESS;
+      b = (right_a * dx + right_b * dy) / FINENESS;
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (AddObjects) %ld\n",a+b));
@@ -1478,12 +1477,12 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
  * lie. These values are use to interpolate the height(s) at each endpoint
  * of a wall that bounds a sloped sector.
  */
-int world_to_screen(long x0, long y0, long x1, long y1,
-		    long *t0, long *t1, /* special parameters for sloped walls */
-		    long *col0, long *d0, long *col1, long *d1)
+int world_to_screen(float x0, float y0, float x1, float y1,
+                    long *t0, long *t1, /* special parameters for sloped walls */
+                    long *col0, float *d0, long *col1, float *d1)
 {
-  long left0,right0,left1,right1;
-  long x,y;
+  float left0,right0,left1,right1;
+  float x,y;
   long t,tleft,tright;
   
   /* go to viewer-relative coords */
@@ -1494,18 +1493,17 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 
   /* calculate perpindicular distance of endpoints from left and right view frustum bounds */
   /* positive distance is in viewable half-space (both positive => in view frustum) */
-  left0 = (left_a * x0 + left_b * y0) >> (FIX_DECIMAL-6);
-  right0 = (right_a * x0 + right_b * y0) >> (FIX_DECIMAL-6);
-  left1 = (left_a * x1 + left_b * y1) >> (FIX_DECIMAL-6);
-  right1 = (right_a * x1 + right_b * y1) >> (FIX_DECIMAL-6);
+  left0 = (left_a * x0 + left_b * y0) / FINENESS;
+  right0 = (right_a * x0 + right_b * y0) / FINENESS;
+  left1 = (left_a * x1 + left_b * y1) / FINENESS;
+  right1 = (right_a * x1 + right_b * y1) / FINENESS;
   
   /* make sure left and right are not both zero.  If they are,   */
   /* move them to a point that maps to the center of the screen. */
-  if (right0 == 0)
-     right0 = 1;
-  if (right1 == 0)
-     right1 = 1;
-  
+  if (right0 < 1.0f && right0 >= -1.0f)
+     right0 = 1.0f;
+  if (right1 < 1.0f && right1 >= -1.0f)
+     right1 = 1.0f;  
   if (left0 < 0)
   {
      if (left1 < 0)
@@ -1515,12 +1513,12 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	if (right1 < 0)
 	   return 0;          /* wall completely behind right ray */
 	/* quad 3 to quad 0 wall */
-	tleft = ((-left0) << LOG_FINENESS) / (left1 - left0);
-	tright = ((-right0) << LOG_FINENESS) / (right1 - right0);
+	tleft = ((-left0) * FINENESS) / (left1 - left0);
+	tright = ((-right0) * FINENESS) / (right1 - right0);
 	if (tleft > tright)
 	{	/* left of viewer */
-	   x = x0 + (((x1 - x0) * tleft) >> LOG_FINENESS);
-	   y = y0 + (((y1 - y0) * tleft) >> LOG_FINENESS);
+	   x = x0 + (((x1 - x0) * tleft) / FINENESS);
+	   y = y0 + (((y1 - y0) * tleft) / FINENESS);
 	   *col0 = 0;
 	   *d0 = GetDistance(x,y);
 	   *t0 = tleft;
@@ -1531,8 +1529,8 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	}
 	else
 	{	/* right of viewer */
-	   x = x0 + (((x1-x0) * tright) >> LOG_FINENESS);
-	   y = y0 + (((y1-y0) * tright) >> LOG_FINENESS);
+	   x = x0 + (((x1-x0) * tright) / FINENESS);
+	   y = y0 + (((y1-y0) * tright) / FINENESS);
 	   *col0 = screen_width;
 	   *d0 = GetDistance(x,y);
 	   *t0 = tright;
@@ -1544,9 +1542,9 @@ int world_to_screen(long x0, long y0, long x1, long y1,
      }
      else if (right1 < 0)
      {	/* quad 1 to quad 2 wall */
-	t = ((-left0) << LOG_FINENESS) / (left1 - left0);
-	x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-	y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+	t = ((-left0) * FINENESS) / (left1 - left0);
+	x = x0 + (((x1-x0) * t) / FINENESS);
+	y = y0 + (((y1-y0) * t) / FINENESS);
 	*col0 = 0;
 	*d0 = GetDistance(x,y);
 	*t0 = t;
@@ -1554,18 +1552,18 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	if (*d0 <= 0)
 	   return 0;
 	
-	t = (right0 << LOG_FINENESS) / (right0 - right1);
-	x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-	y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+	t = (right0 * FINENESS) / (right0 - right1);
+	x = x0 + (((x1-x0) * t) / FINENESS);
+	y = y0 + (((y1-y0) * t) / FINENESS);
 	*col1 = screen_width;
 	*d1 = GetDistance(x,y);
 	*t1 = t;
      }
      else
      {	/* quad 1 to quad 0 wall */
-	t = ((-left0) << LOG_FINENESS) / (left1 - left0);
-	x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-	y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+	t = ((-left0) * FINENESS) / (left1 - left0);
+	x = x0 + (((x1-x0) * t) / FINENESS);
+	y = y0 + (((y1-y0) * t) / FINENESS);
 	*col0 = 0;
 	*d0 = GetDistance(x,y);
 	*t0 = t;
@@ -1582,16 +1580,16 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	if (right0 < 0)
 	   return 0;          /* wall completely behind right ray */
 	/* quad 0 to quad 3 wall */
-	tleft = (left0 << LOG_FINENESS) / (left0 - left1);
-	tright = (right0 << LOG_FINENESS) / (right0 - right1);
+	tleft = (left0 * FINENESS) / (left0 - left1);
+	tright = (right0 * FINENESS) / (right0 - right1);
 	if (tleft < tright)
 	{	/* left of viewer */
 	   *col0 = (left0 * screen_width + screen_width2) / (left0 + right0);
 	   *d0 = GetDistance(x0,y0);
 	   *t0 = 0;
 	   
-	   x = x0 + (((x1-x0) * tleft) >> LOG_FINENESS);
-	   y = y0 + (((y1-y0) * tleft) >> LOG_FINENESS);
+	   x = x0 + (((x1-x0) * tleft) / FINENESS);
+	   y = y0 + (((y1-y0) * tleft) / FINENESS);
 	   *col1 = 0;
 	   *d1 = GetDistance(x,y);
 	   *t1 = tleft;
@@ -1602,8 +1600,8 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	   *d0 = GetDistance(x0,y0);
 	   *t0 = 0;
 	   
-	   x = x0 + (((x1-x0) * tright) >> LOG_FINENESS);
-	   y = y0 + (((y1-y0) * tright) >> LOG_FINENESS);
+	   x = x0 + (((x1-x0) * tright) / FINENESS);
+	   y = y0 + (((y1-y0) * tright) / FINENESS);
 	   *col1 = screen_width;
 	   *d1 = GetDistance(x,y);
 	   *t1 = tright;
@@ -1611,9 +1609,9 @@ int world_to_screen(long x0, long y0, long x1, long y1,
      }
      else if (right0 < 0)
      {	/* quad 2 to quad 1 wall */
-	t = ((-right0) << LOG_FINENESS) / (right1 - right0);
-	x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-	y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+	t = ((-right0) * FINENESS) / (right1 - right0);
+	x = x0 + (((x1-x0) * t) / FINENESS);
+	y = y0 + (((y1-y0) * t) / FINENESS);
 	*col0 = screen_width;
 	*d0 = GetDistance(x,y);
 	*t0 = t;
@@ -1621,9 +1619,9 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	if (*d0 <= 0)
 	   return 0;
 	
-	t = (left0 << LOG_FINENESS) / (left0 - left1);
-	x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-	y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+	t = (left0 * FINENESS) / (left0 - left1);
+	x = x0 + (((x1-x0) * t) / FINENESS);
+	y = y0 + (((y1-y0) * t) / FINENESS);
 	*col1 = 0;
 	*d1 = GetDistance(x,y);
 	*t1 = t;
@@ -1634,9 +1632,9 @@ int world_to_screen(long x0, long y0, long x1, long y1,
 	*d0 = GetDistance(x0,y0);
 	*t0 = 0;
 	
-	t = (left0 << LOG_FINENESS) / (left0 - left1);
-	x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-	y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+	t = (left0 * FINENESS) / (left0 - left1);
+	x = x0 + (((x1-x0) * t) / FINENESS);
+	y = y0 + (((y1-y0) * t) / FINENESS);
 	*col1 = 0;
 	*d1 = GetDistance(x,y);
 	*t1 = t;
@@ -1647,9 +1645,9 @@ int world_to_screen(long x0, long y0, long x1, long y1,
      if (right1 < 0)
 	return 0;              /* wall completely behind right ray */
      /* quad 2 to quad 0 wall */
-     t = ((-right0) << LOG_FINENESS) / (right1 - right0);
-     x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-     y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+     t = ((-right0) * FINENESS) / (right1 - right0);
+     x = x0 + (((x1-x0) * t) / FINENESS);
+     y = y0 + (((y1-y0) * t) / FINENESS);
      *col0 = screen_width;
      *d0 = GetDistance(x,y);
      *t0 = t;
@@ -1664,9 +1662,9 @@ int world_to_screen(long x0, long y0, long x1, long y1,
      *d0 = GetDistance(x0,y0);
      *t0 = 0;
      
-     t = (right0 << LOG_FINENESS) / (right0 - right1);
-     x = x0 + (((x1-x0) * t) >> LOG_FINENESS);
-     y = y0 + (((y1-y0) * t) >> LOG_FINENESS);
+     t = (right0 * FINENESS) / (right0 - right1);
+     x = x0 + (((x1-x0) * t) / FINENESS);
+     y = y0 + (((y1-y0) * t) / FINENESS);
      *col1 = screen_width;
      *d1 = GetDistance(x,y);
      *t1 = t;
@@ -2007,7 +2005,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 static void WalkWall(WallData *wall, long side)
 {
    long col0,col1;
-   long d0,d1;
+   float d0,d1;
    ConeTreeNode *c, *next;
    long toprow0,toprow1,botrow0,botrow1;
    long a,b,d;
@@ -2286,8 +2284,8 @@ static void WalkObjects(ObjectData *objects)
       
       x = object->x0 - viewer_x;
       y = object->y0 - viewer_y;
-      a = (left_a * x + left_b * y) >> (FIX_DECIMAL-6);
-      b = (right_a * x + right_b * y) >> (FIX_DECIMAL-6);
+      a = (left_a * x + left_b * y) >> (FIX_DECIMAL - 6);
+      b = (right_a * x + right_b * y) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (WalkObjects(1)) %ld\n",a+b));
@@ -2297,8 +2295,8 @@ static void WalkObjects(ObjectData *objects)
       
       x = object->x1 - viewer_x;
       y = object->y1 - viewer_y;
-      a = (left_a * x + left_b * y) >> (FIX_DECIMAL-6);
-      b = (right_a * x + right_b * y) >> (FIX_DECIMAL-6);
+      a = (left_a * x + left_b * y) >> (FIX_DECIMAL - 6);
+      b = (right_a * x + right_b * y) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (WalkObjects(2)) %ld\n",a+b));
@@ -2376,11 +2374,12 @@ Bool EyeBelowCeiling(Sector *sector) {
 static void WalkLeaf(BSPleaf *leaf)
 {
    long i;
-   long col0,d0,col1,d1;
+   long col0,col1;
+   float d0, d1;
    long row0,row1;
    DrawItem item_template;
    long a,b,d;
-   long x0,y0,x1,y1;
+   float x0,y0,x1,y1;
    long t0,t1,height,height0,height1;
    SlopeData *sloped_floor = leaf->sector->sloped_floor;  // only a tiny bit faster but much easier to read
    SlopeData *sloped_ceiling = leaf->sector->sloped_ceiling;
@@ -2416,15 +2415,11 @@ static void WalkLeaf(BSPleaf *leaf)
 	   surface_norm.z = sloped_floor->plane.c;
 
 	   // light scale is based on dot product of surface normal and sun vector
-	   lightscale = (surface_norm.x*sun_vect.x + surface_norm.y*sun_vect.y + surface_norm.z*sun_vect.z)>>LOG_FINENESS;
+	   lightscale = (long)(surface_norm.x*sun_vect.x + surface_norm.y*sun_vect.y + surface_norm.z*sun_vect.z)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-	   lightscale = ABS(lightscale);
-#else
-	   lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
+	   lightscale = (long)(lightscale + FINENESS)>>1; // map to 0 to 1 range
 
-	   lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
+	   lightscale = lo_end + (long)((lightscale * shade_amount)>>LOG_FINENESS);
 
 	   if (lightscale > FINENESS)
 	       lightscale = FINENESS;
@@ -2444,15 +2439,11 @@ static void WalkLeaf(BSPleaf *leaf)
 	   surface_norm.z = sloped_ceiling->plane.c;
 
 	   // light scale is based on dot product of surface normal and sun vector
-	   lightscale = (surface_norm.x*sun_vect.x + surface_norm.y*sun_vect.y + surface_norm.z*sun_vect.z)>>LOG_FINENESS;
+	   lightscale = (long)(surface_norm.x*sun_vect.x + surface_norm.y*sun_vect.y + surface_norm.z*sun_vect.z)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-	   lightscale = ABS(lightscale);
-#else
-	   lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
+	   lightscale = (long)(lightscale + FINENESS)>>1; // map to 0 to 1 range
 
-	   lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
+	   lightscale = lo_end + (long)((lightscale * shade_amount)>>LOG_FINENESS);
 
 	   if (lightscale > FINENESS)
 	       lightscale = FINENESS;
@@ -2602,13 +2593,6 @@ static void WalkLeaf(BSPleaf *leaf)
 	 }
      }
 }
-/*****************************************************************************/
-// this controls where darkest point is relative to sun_vect
-// when non-zero walls are darkest when perpendicular to sun vect
-// and light when facing directly towards or directly away from sun_vect (obsolete)
-// when zero, wall are lightest when facing towards sun_vect and
-// darkest when facing directly away
-#define PERPENDICULAR_DARK  0
 
 static void WalkBSPtree(BSPnode *tree)
 {
@@ -2649,13 +2633,9 @@ static void WalkBSPtree(BSPnode *tree)
 	      b = -b;
 	  }
 
-	  lightscale = (a*sun_vect.x + b*sun_vect.y)>>LOG_FINENESS;
+	  lightscale = (long)(a*sun_vect.x + b*sun_vect.y)>>LOG_FINENESS;
 
-#if PERPENDICULAR_DARK
-	  lightscale = ABS(lightscale);
-#else
 	  lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
-#endif
 
 	  lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
 	
@@ -2708,37 +2688,6 @@ static void WalkBSPtree(BSPnode *tree)
    }
 }
 
-void MinimapUpdate(Draw3DParams *params, BSPnode *tree)
-{
-/*	viewer_x = params->viewer_x;
-	viewer_y = params->viewer_y;
-	viewer_angle = params->viewer_angle;
-	viewer_height = params->viewer_height;
-	area.cx = min(params->width  / params->stretchfactor, MAXX);
-	area.cy = min(params->height / params->stretchfactor, MAXY);
-
-	// Force size to be even
-	area.cy = area.cy & ~1;  
-	area.cx = area.cx & ~1;
-	screen_width = area.cx;
-	screen_width2 = area.cx / 2;
-
-	// find equations that bound viewing frustum
-	// keep 10 = FIX_DECIMAL-6 bits of accuracy
-	center_a = COS(viewer_angle) >> 6;
-	center_b = SIN(viewer_angle) >> 6;
-
-	left_a = -center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
-	left_b =  center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
-
-	right_a =  center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
-	right_b = -center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
-
-	horizon = area.cy / 2 + PlayerGetHeightOffset();
-
-	init_cone_tree();
-	WalkBSPtree(tree);*/
-}
 
 /*****************************************************************
  * Routines to draw object list, back to front.  One routine for
@@ -2827,15 +2776,16 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    long clipstart,clipend;
    long textpos;
    long a,b;
-   long d0,d1;
+   float d0,d1;
    long xoffset, yoffset;
    WallData *BSPwall = wall->wall;
    PDIB bmap;
    BYTE *bits, light;
    int backwards, transparent, bitmap_height, bitmap_width;
-   long x0,y0,x1,y1, num_steps, total_steps;
-   long z0,z1,d,f;
-   long oldf = 0;
+   long num_steps, total_steps;
+   float x0,y0,x1,y1;
+   float z0,z1,d,f;
+   float oldf = 0;
    BOOL hasMipMaps = FALSE;
    grid_bitmap_type grid = NULL;
    Animate *pAnim = NULL;
@@ -3069,23 +3019,23 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       b =  center_a - ((center_b * (col - screen_width2)) >> LOG_VIEWER_DISTANCE);
       
       /* compute fraction along wall, in fixed point */
-      z0 = (a * x0 + b * y0) >> (FIX_DECIMAL-6);
-      z1 = (a * x1 + b * y1) >> (FIX_DECIMAL-6);
+      z0 = (a * x0 + b * y0) / FINENESS;
+      z1 = (a * x1 + b * y1) / FINENESS;
       
       if (z0 > 0)
-	 z0 = 0;
+	 z0 = 0.0f;
       if (z1 <= 0)
-	 z1 = 1;
+	 z1 = 1.0f;
 
-      f = ((-z0) << LOG_FRACTION) / (z1 - z0);
+      f = ((-z0) * (FINENESS * 4)) / (z1 - z0);
       if (f < oldf)
 	f = oldf;
       oldf = f;
       
       // Compute extent of wall on screen
-      d = d0 + (((d1-d0)*f) >> LOG_FRACTION);
-      if (d <= 0)
-	d = 1;
+      d = d0 + (((d1-d0)*f) / (FINENESS * 4));
+      if (d <= 1.0)
+	d = 1.0f;
 
       rowstart = horizon + ((viewer_height - top) << LOG_VIEWER_DISTANCE) / d;
       rowend = horizon + ((viewer_height - bottom) << LOG_VIEWER_DISTANCE) / d;
@@ -3146,10 +3096,10 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 	 xGraphicOffset >>= horzDownScale;
       }
       if (backwards)
-	 textpos = (((( FRACTION-1 - f) * length) >> LOG_FRACTION) + xGraphicOffset)
+        textpos = (long)(((( FRACTION-1 - f) * length) / (FINENESS * 4)) + xGraphicOffset)
 	    % (bitmap_height);
       else
-	 textpos = (((f * length) >> LOG_FRACTION) + xGraphicOffset)
+        textpos = (long)(((f * length) / (FINENESS * 4)) + xGraphicOffset)
 	    % (bitmap_height);
       
       // Make textpos positive
@@ -3220,41 +3170,14 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 	 }
 	 else
 	 {
-#if 0
-	    __asm
-	    {
-	       mov   edi, screen_ptr;
-	       cmp   edi, end_screen_ptr;
-	       jle   END_WHILE_SCREEN_PTR_GT_END_SCREEN_PTR;
-	       mov   edx, ytex;
-	       mov   esi, DWORD PTR palette;
-	       xor   ecx, ecx
-WHILE_SCREEN_PTR_GT_END_SCREEN_PTR:
-	       mov   eax, edx;
-	       mov   ebx, square_base_ptr;
-	       shr   eax, 16;
-	       sub   ebx, eax;
-	       mov   cl, BYTE PTR [ebx];
-	       sub   edi, MAXX;
-	       add   edx, yinc;
-	       mov   al, BYTE PTR [esi + ecx];
-	       mov   BYTE PTR [edi + MAXX],al
-	       cmp   edi, end_screen_ptr;
-	       jg    WHILE_SCREEN_PTR_GT_END_SCREEN_PTR;
-	       mov   ytex, edx;
-	       mov   screen_ptr, edi;
-END_WHILE_SCREEN_PTR_GT_END_SCREEN_PTR:
-	    }
-#else
-	    while(screen_ptr > end_screen_ptr)
-	    {
-	       *screen_ptr = 
-		  palette[*(square_base_ptr - (ytex >> FIX_DECIMAL))];
-	       
-	       screen_ptr -= MAXX;
-	       ytex += yinc;
-	    }
-#endif
+     while(screen_ptr > end_screen_ptr)
+     {
+       *screen_ptr = 
+         palette[*(square_base_ptr - (ytex >> FIX_DECIMAL))];
+       
+       screen_ptr -= MAXX;
+       ytex += yinc;
+     }
 	 }
 	 total_steps -= num_steps;
       }
@@ -3725,13 +3648,6 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
    
    tex_width  = DibWidth(texture);
    tex_height = DibHeight(texture);
-#if 0
-   if ((tex_width != BITMAP_WIDTH || tex_height != BITMAP_WIDTH) &&
-       (tex_width != BITMAP_WIDTH * 2 || tex_height != BITMAP_WIDTH * 2))
-   {
-      debug(("warning: bad leaf bitmap size %d x %d\n", tex_width, tex_height));
-   }
-#endif
    
    new_hv = (viewer_height - height) * VIEWER_DISTANCE;
    
@@ -4074,22 +3990,6 @@ static void doDrawBackground(ViewCone *c)
       over_width = DibWidth(pdib_ov);
       over_height = DibHeight(pdib_ov);
      
-#if 0
-      /* arbitrary definition: offsets of a background overlay are:
-       * x: angle from due east
-       * y: pixels up from horizon
-       * negative y gives an object location below the horizon.
-       * The given bitmap is centered at the offset location.
-       */
-      px = overlay->x;
-      py = overlay->y;
-      /* convert from arbitrary definition to real screen coordinates */
-      //px = px/2 + screen_width/2 - viewer_angle/2;
-      while (px >= 0)
-         px -= NUMDEGREES/2;
-      while (px < 0)
-	 px += NUMDEGREES/2;
-#else
       deltaAngle = overlay->x - viewer_angle;
       if (deltaAngle > (NUMDEGREES/2))
 	 deltaAngle -= NUMDEGREES;
@@ -4098,7 +3998,6 @@ static void doDrawBackground(ViewCone *c)
       px = (world_width * deltaAngle / NUMDEGREES);
       px += screen_width2;
       py = horizon - overlay->y;
-#endif
       
       /* adjust for center of bitmap */
       px -= over_width/2;
@@ -4214,7 +4113,7 @@ static Bool check_viewer_height(BSPnode *tree)
 	 if (side == 0)
 	   {
 	     /* make sure we satisfy height restriction on both sides! */
-	     /* this isn't quite right, but it's close XXX */
+	     /* this isn't quite right, but it's close */
 	     Bool ok = True;
 	     if (pos)
 	       ok = ok && check_viewer_height(pos);
@@ -4242,8 +4141,7 @@ static Bool check_viewer_height(BSPnode *tree)
  * an explanation of the math involved.
  */
 static void SetMappingValues(SlopeData *slope ) {
-
-    Pnt3D v0; // Texture enpoints in un-projected screen space (view space?)
+    Pnt3D v0; // Texture endpoints in un-projected screen space (view space?)
     Pnt3D v1;
     Pnt3D v2;
     Pnt3D m;  // Basis vectors in un-projected screen space (view space?)
@@ -4253,22 +4151,21 @@ static void SetMappingValues(SlopeData *slope ) {
     // the origin to the viewer position and rotating by viewer angle. 
     // center_a & b happen to be the Cos & Sin of the viewing angle multiplied
     // by FINENESS. BASE_DIF helps translate the results into FIXED_PRECISION
-    // units. (1<<(LOG_FINENESS+BASE_DIF-1)) is added to round instead of trunc
-    // in final divide. x & y values are multiplied by VIEWER_DISTANCE to
+    // units.  x & y values are multiplied by VIEWER_DISTANCE to
     // convert them to pixel units.
     
-    v0.z = ((slope->p0.x - viewer_x) * center_a + (slope->p0.y - viewer_y) * center_b + (1<<(LOG_FINENESS+BASE_DIF-1)))>>(LOG_FINENESS+BASE_DIF);
-    v0.x = (VIEWER_DISTANCE * (((slope->p0.x - viewer_x) * -center_b + (slope->p0.y - viewer_y) * center_a + (1<<(LOG_FINENESS-1)))>>LOG_FINENESS) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-    v0.y = (VIEWER_DISTANCE * (slope->p0.z - viewer_height) + (1<<(BASE_DIF-1)))>>BASE_DIF;
+    v0.z = ((slope->p0.x - viewer_x) * center_a + (slope->p0.y - viewer_y) * center_b) / FINENESS / BASE_DIF_FACTOR;
+    v0.x = (VIEWER_DISTANCE * (((slope->p0.x - viewer_x) * -center_b + (slope->p0.y - viewer_y) * center_a))) / FINENESS / BASE_DIF_FACTOR;
+    v0.y = (VIEWER_DISTANCE * (slope->p0.z - viewer_height)) / BASE_DIF_FACTOR;
 
-    v1.z = ((slope->p1.x - viewer_x) * center_a + (slope->p1.y - viewer_y) * center_b + (1<<(LOG_FINENESS+BASE_DIF-1)))>>(LOG_FINENESS+BASE_DIF);
-    v1.x = (VIEWER_DISTANCE * (((slope->p1.x - viewer_x) * -center_b + (slope->p1.y - viewer_y) * center_a + (1<<(LOG_FINENESS-1)))>>LOG_FINENESS) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-    v1.y = (VIEWER_DISTANCE * (slope->p1.z - viewer_height) + (1<<(BASE_DIF-1)))>>BASE_DIF;
+    v1.z = ((slope->p1.x - viewer_x) * center_a + (slope->p1.y - viewer_y) * center_b) / FINENESS / BASE_DIF_FACTOR;
+    v1.x = (VIEWER_DISTANCE * (((slope->p1.x - viewer_x) * -center_b + (slope->p1.y - viewer_y) * center_a))) / FINENESS / BASE_DIF_FACTOR;
+    v1.y = (VIEWER_DISTANCE * (slope->p1.z - viewer_height)) / BASE_DIF_FACTOR;
 
-    v2.z = ((slope->p2.x - viewer_x) * center_a + (slope->p2.y - viewer_y) * center_b + (1<<(LOG_FINENESS+BASE_DIF-1)))>>(LOG_FINENESS+BASE_DIF);
-    v2.x = (VIEWER_DISTANCE * (((slope->p2.x - viewer_x) * -center_b + (slope->p2.y - viewer_y) * center_a + (1<<(LOG_FINENESS-1)))>>LOG_FINENESS) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-    v2.y = (VIEWER_DISTANCE * (slope->p2.z - viewer_height) + (1<<(BASE_DIF-1)))>>BASE_DIF;
-
+    v2.z = ((slope->p2.x - viewer_x) * center_a + (slope->p2.y - viewer_y) * center_b) / FINENESS / BASE_DIF_FACTOR;
+    v2.x = (VIEWER_DISTANCE * (((slope->p2.x - viewer_x) * -center_b + (slope->p2.y - viewer_y) * center_a))) / FINENESS / BASE_DIF_FACTOR;
+    v2.y = (VIEWER_DISTANCE * (slope->p2.z - viewer_height)) / BASE_DIF_FACTOR;
+    
     // now generate basis vectors for texture transform
     
     m.x = v1.x - v0.x;
@@ -4282,24 +4179,23 @@ static void SetMappingValues(SlopeData *slope ) {
     // h, v, & o vectors express relation between texture coordinates 
     // and pixel coordinates
     
-    slope->h.x = fpMul(v0.y, m.z) - fpMul(v0.z, m.y);
-    slope->h.y = fpMul(v0.y, n.z) - fpMul(v0.z, n.y);
-    slope->h.z = fpMul(n.y, m.z) - fpMul(n.z, m.y);
+    slope->h.x = (v0.y * m.z - v0.z * m.y) / FINENESS;
+    slope->h.y = (v0.y * n.z - v0.z * n.y) / FINENESS;
+    slope->h.z = (n.y * m.z - n.z * m.y) / FINENESS;
 
-    slope->v.x = fpMul(v0.z, m.x) - fpMul(v0.x, m.z);
-    slope->v.y = fpMul(v0.z, n.x) - fpMul(v0.x, n.z);
-    slope->v.z = fpMul(n.z, m.x) - fpMul(n.x, m.z);
+    slope->v.x = (v0.z * m.x - v0.x * m.z) / FINENESS;
+    slope->v.y = (v0.z * n.x - v0.x * n.z) / FINENESS;
+    slope->v.z = (n.z * m.x - n.x * m.z) / FINENESS;
 
-    slope->o.x = fpMul(v0.x, m.y) - fpMul(v0.y, m.x);
-    slope->o.y = fpMul(v0.x, n.y) - fpMul(v0.y, n.x);
-    slope->o.z = fpMul(n.x, m.y) - fpMul(n.y, m.x);
+    slope->o.x = (v0.x * m.y - v0.y * m.x) / FINENESS;
+    slope->o.y = (v0.x * n.y - v0.y * n.x) / FINENESS;
+    slope->o.z = (n.x * m.y - n.y * m.x) / FINENESS;
     
     // save these for calculating distance from viewer
     // in terms of u & v
     slope->z_du = m.z;
     slope->z_dv = n.z;
     slope->z0 = v0.z;
-
 }
 
 /**********************************************************************

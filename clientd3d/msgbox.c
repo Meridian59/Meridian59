@@ -21,7 +21,7 @@ typedef struct {
 
 static Bool error_dialog_up = False;
 
-static BOOL CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /************************************************************************/
 /*
  * ClientError: Print an error in a message box.  fmt_id should be the string
@@ -157,7 +157,7 @@ int ClientMessageBox(HWND hwndParent, const char *text, char *title, UINT style)
  *   We have 2 OK buttons and 2 Cancel buttons, to account for the case where one
  *   or the other is the default button.  We hide the buttons we don't need.
  */
-BOOL CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static MsgBoxStruct *s;
    const char *icon = NULL, *temp;

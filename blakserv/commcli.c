@@ -128,14 +128,12 @@ void AddIntToPacket(int byte4)
    blist = AddToBufferList(blist,&byte4,4);
 }
 
-void AddStringToPacket(int int_len,const char *ptr)
+void AddStringToPacket(size_t int_len,const char *ptr)
 {
-   unsigned short len;
-
-   len = int_len;
+  auto len = (unsigned short) int_len;
 
    blist = AddToBufferList(blist,&len,2);
-   blist = AddToBufferList(blist,(void *) ptr,int_len);
+   blist = AddToBufferList(blist,(void *) ptr, (int) int_len);
 }
 
 void SecurePacketBufferList(int session_id, buffer_node *bl)

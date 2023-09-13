@@ -12,7 +12,7 @@ enum {False = 0, True = 1};
 
 #define NUM_BYTES 5   // # of bytes to read from server (< amount in 1 message)
 
-static int sock;      // Socket
+static SOCKET sock;      // Socket
 
 static Bool debug = False;   // Print debugging messages when True
 

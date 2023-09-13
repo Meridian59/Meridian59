@@ -20,8 +20,8 @@ static void ResetBBGList(void);
 static void AddHotspot(int num);
 static int  FindHotspot(int prev_value);
 
-BOOL CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-static long CALLBACK HotspotNumProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK HotspotNumProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 static WNDPROC lpfnDefEditProc;
 static char szBuffer[MAX_PATH];
@@ -91,7 +91,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
    DrawClose();
 
-   return msg.wParam;
+   return (int) msg.wParam;
 }
 /************************************************************************/
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -234,18 +234,18 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDVIEWHOTS:
-         config.all_hotspots = SendDlgItemMessage(hWnd, IDVIEWHOTS, BM_GETCHECK, 0, 0);
+         config.all_hotspots = (BOOL) SendDlgItemMessage(hWnd, IDVIEWHOTS, BM_GETCHECK, 0, 0);
          DrawIt();
          break;
 
       case IDC_DUALMODE:
 	 if (Anchor.BBG == -1 || WanderOne.BBG == -1)
 	 {
-	    config.dual_mode = SendDlgItemMessage(hWnd, IDC_DUALMODE, BM_SETCHECK, 0, 0);
+      config.dual_mode = (BOOL) SendDlgItemMessage(hWnd, IDC_DUALMODE, BM_SETCHECK, 0, 0);
 	    break;
 	 }
 
-	 config.dual_mode = SendDlgItemMessage(hWnd, IDC_DUALMODE, BM_GETCHECK, 0, 0);
+	 config.dual_mode = (BOOL) SendDlgItemMessage(hWnd, IDC_DUALMODE, BM_GETCHECK, 0, 0);
 	 if (!config.dual_mode)
 	 {
 	    WanderOne.BBG = -1;
@@ -425,7 +425,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	 
 	 /* The selected bitmap has changed */
 	 BBGs[WanderOne.BBG].CurrentBitmap = 
-	    SendDlgItemMessage(hWnd, IDC_FILELIST2, LB_GETCURSEL, 0, 0L);
+     (int) SendDlgItemMessage(hWnd, IDC_FILELIST2, LB_GETCURSEL, 0, 0L);
 	 DrawIt();
 	 FillHotlist();
 	 return 0;
@@ -509,7 +509,7 @@ void DrawIt(void)
    ReleaseDC(hwnd, hdc);
 }
 /************************************************************************/
-BOOL CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    switch(msg)
    {
@@ -1042,7 +1042,7 @@ void ResetBBGList(void)
 /*
  * HotspotNumProc:  Subclassed window procedure for hotspot edit box.
  */
-long CALLBACK HotspotNumProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK HotspotNumProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int num;
 

@@ -100,7 +100,7 @@ void MusicInitialize(void)
    mciSysinfoParms.dwRetSize = sizeof(num_devices);
    mciSysinfoParms.wDeviceType = MCI_DEVTYPE_SEQUENCER;
    retval = mciSendCommand(0, MCI_SYSINFO, MCI_SYSINFO_QUANTITY,
-                           (DWORD) &mciSysinfoParms);
+                           (DWORD_PTR) &mciSysinfoParms);
    if (retval == 0 && num_devices > 0)
    {
       has_midi = True;
@@ -151,7 +151,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName)
    mciOpenParms.lpstrDeviceType = "sequencer";
    mciOpenParms.lpstrElementName = filename;
    if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
-                                 (DWORD)(LPVOID) &mciOpenParms)) 
+                                 (DWORD_PTR)(LPVOID) &mciOpenParms)) 
       return dwReturn;
 
    midi_element = mciOpenParms.wDeviceID;
@@ -237,9 +237,9 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
        * MM_MCINOTIFY message when playback is complete.
        * The window procedure then closes the device.
        */
-      mciPlayParms.dwCallback = (DWORD) hWndNotify;
+      mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
       if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
-                                    MCI_NOTIFY, (DWORD)(LPVOID) &mciPlayParms)) 
+                                    MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
       {
          mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
          return dwReturn;
@@ -340,9 +340,9 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
     * MM_MCINOTIFY message when playback is complete.
     * The window procedure then closes the device.
     */
-   mciPlayParms.dwCallback = (DWORD) hWndNotify;
+   mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
    if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
-                                 MCI_NOTIFY, (DWORD)(LPVOID) &mciPlayParms)) 
+                                 MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
    {
       mciGetErrorString(dwReturn, temp, 80);
       debug((temp));
@@ -368,12 +368,12 @@ DWORD RestartMidiFile(DWORD device)
    MCI_PLAY_PARMS mciPlayParms;
 
    dwReturn = mciSendCommand(midi_element, MCI_SEEK,
-                             MCI_SEEK_TO_START, (DWORD)(LPVOID) NULL);
+                             MCI_SEEK_TO_START, (DWORD_PTR)(LPVOID) NULL);
    
-   mciPlayParms.dwCallback = (DWORD) hMain;
+   mciPlayParms.dwCallback = (DWORD_PTR) hMain;
    mciPlayParms.dwFrom = 0;
    if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
-                                 MCI_NOTIFY, (DWORD)(LPVOID) &mciPlayParms)) {
+                                 MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) {
       mciSendCommand(device, MCI_CLOSE, 0, 0);
       
    }
@@ -403,13 +403,13 @@ void PauseMusic(void)
 
    mciStatusParms.dwItem = MCI_STATUS_POSITION;
    mciSendCommand(midi_element, MCI_STATUS, 
-		  MCI_STATUS_ITEM, (DWORD)(LPVOID) &mciStatusParms);
+                  MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    music_pos = mciStatusParms.dwReturn;
 
    /* Get time format */
    mciStatusParms.dwItem = MCI_STATUS_TIME_FORMAT;
    mciSendCommand(midi_element, MCI_STATUS, 
-		  MCI_STATUS_ITEM, (DWORD)(LPVOID) &mciStatusParms);
+                  MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    time_format = mciStatusParms.dwReturn;
 
    debug(("Pausing, position = %ld\n", music_pos));
@@ -441,11 +441,11 @@ void UnpauseMusic(void)
    /* Set time format */
    mciSetParms.dwTimeFormat = time_format;
    mciSendCommand(midi_element, MCI_SET,
-		  MCI_SET_TIME_FORMAT, (DWORD)(LPVOID) &mciSetParms);
+                  MCI_SET_TIME_FORMAT, (DWORD_PTR)(LPVOID) &mciSetParms);
 
    mciSeekParms.dwTo = music_pos;
    mciSendCommand(midi_element, MCI_SEEK,
-		  MCI_TO, (DWORD)(LPVOID) &mciSeekParms);
+                  MCI_TO, (DWORD_PTR)(LPVOID) &mciSeekParms);
    debug(("Unpausing to  position = %ld\n", music_pos));
 #endif
 }

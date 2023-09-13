@@ -7452,7 +7452,7 @@ messages:
       {
          if ptAdvancement = $
          {
-            iTime = Send(Send(SYS, @GetSettings), @GetAdvancementWait);
+            iTime = Send(oSettings, @GetAdvancementWait);
             ptAdvancement = CreateTimer(self,@AdvancementTimer,iTime);
          }
          piAdvancement_points = piAdvancement_points + number;

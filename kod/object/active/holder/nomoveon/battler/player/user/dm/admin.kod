@@ -40,6 +40,7 @@ resources:
    admin_mortal_command = "mortal"
    admin_immortal_command = "immortal"
    admin_create_dynamic_light_command = "place dynamic light"
+   admin_create_ornamental_object = "place ornament"
    admin_logoffghost_on_command = "logoffghost on"
    admin_logoffghost_off_command = "logoffghost off"
    admin_logoffghost_temp_off_command = "logoffghost temp off"
@@ -320,6 +321,15 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=admin_currently_in,#parm1=send(poOwner,@GetName),
             #parm2=send(poOwner,@GetRoomResource));
 
+         return;
+      }
+
+      %%% Code for placing an ornamental object
+      if StringEqual(string, admin_create_ornamental_object)
+      {
+         oObject = Create(&OrnamentalObject, #type=OO_DUNG);
+         Send(oObject, @PlaceAt, #what=self);
+         
          return;
       }
 

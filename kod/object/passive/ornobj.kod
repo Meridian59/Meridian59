@@ -717,7 +717,11 @@ properties:
    piXlat = $
    piGroup = 1
 
+   % Custom description string to be displayed for the object.
+   % This value overrides the standard resource description when set.
    psCustomDesc = $
+
+   % Optional timer used to delete the object upon expiring.
    ptDecayTimer = $
 
 messages:
@@ -770,22 +774,31 @@ messages:
       propagate;
    }
 
-   StartDecayTimer(d=0, h=0, m=0, s=0)
+   StartDecayTimer(days=0, hours=0, minutes=0, seconds=0)
    "Admin supported\n"
    "Starts a timer for this object which will automatically delete it upon expiring.\n"
-   "Can specify the time using h for hours, m for minutes, and/or s for seconds."
+   "Can specify the time using values for any or all of the parameters.\n"
+   "These parameters are: days, hours, minutes, and/or seconds."
    {
       local iTime;
 
-      iTime = d * 86400000 + h * 3600000 + m * 60000 + s * 1000;
-
-      if (iTime > 0)
+      iTime = (((days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000;
+      if iTime > 0
       {
-         ptDecayTimer = CreateTimer(self, @DecayTimerExpired, iTime);
+         if days < 21
+         {
+            Send(self, @ClearDecayTimer);
+            ptDecayTimer = CreateTimer(self, @DecayTimerExpired, iTime);
+            Debug("iTime:", iTime, " | ptDecayTime:", GetTimeRemaining(ptDecayTimer));
+         }
+         else
+         {
+            Debug("Time must be 20 or fewer days to avoid undesirable timer results.");
+         }
       }
       else
       {
-         Send(self, @ClearDecayTimer);
+         Debug("Timer duration must be greater than zero.");
       }
 
       return;
@@ -946,7 +959,7 @@ messages:
       pbLook = FALSE;
 
       % Clear the custom description, if any
-      psCustomDesc = $;
+      Send(self, @ClearCustomDesc);
 
       % Clear the current decay timer, if any
       Send(self, @ClearDecayTimer);
@@ -1427,7 +1440,7 @@ messages:
    Delete()
    {
       Send(self, @ClearDecayTimer);
-      psCustomDesc = $;
+      Send(self, @ClearCustomDesc);
 
       propagate;
    }
@@ -1437,7 +1450,7 @@ messages:
    %%%%%%%%%%%%%%%%%%%%%%%%
    Duplicate()
    {
-      local oDuplicate;
+      local oDuplicate, sDuplicateDesc;
 
       oDuplicate = create(&OrnamentalObject,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
       if send(self,@GetObjectFlags) & OF_HANGING
@@ -1455,6 +1468,12 @@ messages:
       if NOT Send(self, @GetObjectFlags) & LOOK_NO
       {
          Send(oDuplicate, @SetLookable, #value=TRUE);
+      }
+      if psCustomDesc <> $
+      {
+         sDuplicateDesc = CreateString();
+         SetString(sDuplicateDesc, psCustomDesc);
+         Send(oDuplicate, @SetCustomDesc, #text=sDuplicateDesc);
       }
 
       return oDuplicate;

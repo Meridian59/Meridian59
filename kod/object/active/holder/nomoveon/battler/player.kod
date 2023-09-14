@@ -4418,9 +4418,9 @@ messages:
               #use_weapon=Send(self,@GetWeapon));
       }      
 
-      % Morphed?  As a bonus, people in illusionary form get the hit side effect.  :)
+      % Morphed?  Also apply the morphed monster's hit side effects, if any.
       oMonster = Send(self,@GetIllusionForm);
-      if (oMonster <> $)
+      if (oMonster <> $ AND Send(self, @CheckPlayerFlag, #flag=PFLAG_MORPHED))
       {
          Send(oMonster,@HitSideEffect,#what=what);
       }

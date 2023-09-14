@@ -16,12 +16,6 @@ constants:
 
 resources:
 
-   shirt_condition_exc = " is in immaculate condition."
-   shirt_condition_good = " is scuffed and slightly worn."
-   shirt_condition_med = " has a few unsightly rips."
-   shirt_condition_poor = " is in tatters, and barely holding together."
-   shirt_condition_broken = " is covered in filth and ripped beyond use."
-   
    shirt_name_rsc = "shirt"
  
    shirt_desc_rsc = \
@@ -74,7 +68,7 @@ classvars:
    vrLeftarm_female = shirt_leftarm_female 
    vrRightarm_female = shirt_rightarm_female 
 
-   vbShow_Condition = TRUE
+   vbShow_Condition = FALSE
 
    viDefense_base = 5               % This is the default value for piDefense_bonus
 
@@ -172,7 +166,17 @@ messages:
 
    ReqRepair()
    {
-      return TRUE;
+      return FALSE;
+   }
+
+   CanMend()
+   {
+      return FALSE;
+   }
+
+   DefendingHit()
+   {
+      return;
    }
 
    NewUsed()

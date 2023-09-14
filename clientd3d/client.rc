@@ -1728,6 +1728,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_TARGETNOTVISIBLEFORATTACK "You can't see your selected target."
+    IDS_CANTATTACKSELF      "You can't attack yourself."
     IDS_DEPOSIT_ITEMS       "Deposit Items"
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."

@@ -789,7 +789,6 @@ messages:
          {
             Send(self, @ClearDecayTimer);
             ptDecayTimer = CreateTimer(self, @DecayTimerExpired, iTime);
-            Debug("iTime:", iTime, " | ptDecayTime:", GetTimeRemaining(ptDecayTimer));
          }
          else
          {

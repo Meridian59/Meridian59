@@ -1407,7 +1407,7 @@ messages:
       {
          Send(oDuplicate, @SetFlickering, #value=TRUE);
       }
-      if NOT Send(self, @GetObjectFlags) & LOOK_NO
+      if NOT (Send(self, @GetObjectFlags) & LOOK_NO)
       {
          Send(oDuplicate, @SetLookable, #value=TRUE);
       }

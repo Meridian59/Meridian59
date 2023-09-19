@@ -33,6 +33,12 @@ properties:
 
    piAngle = 0
    piHeight = 0
+   piGroup = 0
+
+   viEighth_group = 3
+   viQuarter_group = 2
+   viHalf_group = 1
+   viFull_group = 0
 
 messages:
 
@@ -53,16 +59,33 @@ messages:
       piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
       if iHour > 12
       {
-	 iHour = iHour - 24;
+         iHour = iHour - 24;
       }
       piHeight = 400 - Abs(300-iDay) - 6*(iHour - 1)*(iHour - 1);
       if piHeight < -200
       {
-	 piHeight = -200;
+	      piHeight = -200;
       }
+
+      if (iDay >= 0 && iDay < 60)
+      {
+         piGroup = viEighth_group;
+      } 
+      else if (iDay >= 60 && iDay < 120)
+      {
+         piGroup = viQuarter_group;
+      } 
+      else if (iDay >= 120 && iDay < 180)
+      {
+         piGroup = viHalf_group;
+      } else if (iDay >= 180)
+      {
+         piGroup = viFull_group;
+      }
+
       for i in Send(SYS,@GetUsersLoggedOn)
       {
-	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
+	      Send(i,@ToCliChangeBackgroundOverlay,#what=self);
       }
 
       return;
@@ -84,6 +107,11 @@ messages:
    GetBackgroundOverlayHeight()
    {
       return piHeight;
+   }
+
+   GetBackgroundOverlayGroup()
+   {
+      return piGroup;
    }
 
 end

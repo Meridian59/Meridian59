@@ -482,6 +482,8 @@ BackgroundOverlay *ExtractNewBackgroundOverlay(char **ptr)
    item->x = (int) word;
    Extract(ptr, &word, 2);
    item->y = (int) word;
+   Extract(ptr, &word, 2);
+   item->obj.animate->group = word;
    
    return item;
 }

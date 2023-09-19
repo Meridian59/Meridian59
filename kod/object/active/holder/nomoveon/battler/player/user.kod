@@ -2860,6 +2860,7 @@ messages:
       Send(what,@SendAnimation);
       AddPacket(2,Send(what,@GetBackgroundOverlayAngle));
       AddPacket(2,Send(what,@GetBackgroundOverlayHeight));
+      AddPacket(2,Send(what,@GetBackgroundOverlayGroup));
       SendPacket(poSession);
 
       return;

@@ -692,6 +692,16 @@ resources:
       "kept eternally full of cool, fresh water, is ideal for rejuvenating the "
       "spirits of a traveller."
 
+   oo_signpost_name = "sign"
+   oo_signpost_icon = sign.bgf
+   oo_signpost_desc = "Whatever was once written on this signpost has long since faded."
+
+   oo_newbsign_name = "sign"
+   oo_newbsign_icon = newbsign.bgf
+   oo_newbsign_desc = "There's something written on this sign, but you can't quite seem to make it out."
+
+   oo_custom_template_rsc = "%q"
+
 classvars:
 
 properties:
@@ -700,11 +710,16 @@ properties:
    vrIcon = $
    vrDesc = $
 
+   pbLook = FALSE
    pbHanging = FALSE
    pbNoMoveOn = FALSE
    pbFlicker = FALSE
    piXlat = $
    piGroup = 1
+
+   % Custom description string to be displayed for the object.
+   % This value overrides the standard resource description when set.
+   psCustomDesc = $
 
 messages:
 
@@ -735,12 +750,99 @@ messages:
    {
       local f;
 
-      f = LOOK_NO;
+      f = 0;
+      if NOT pbLook { f = f | LOOK_NO; }
       if pbHanging { f = f | OF_HANGING; }
       if pbFlicker { f = f | FLICKERING_YES; }
       if pbNoMoveOn { f = f | MOVEON_NO; }
       
       return f;
+   }
+
+   ShowDesc()
+   {
+      if psCustomDesc <> $
+      {
+         AddPacket(4, oo_custom_template_rsc, 4, psCustomDesc);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   PlaceAt(what=$)
+   "Admin supported\n"
+   "Moves this ornamental object as close to <what>'s current room and location as possible."
+   {
+      local lPos, oRoom;
+
+      if what <> $
+      {
+         lPos = Send(what, @GetPos);
+         oRoom = Send(SYS, @UtilGetRoom, #what=what);
+         if lPos <> $ AND oRoom <> $
+         {
+            if oRoom <> poOwner
+            {
+               Send(oRoom, @NewHold, #what=self,
+                  #new_row=First(lPos), #new_col=Nth(lPos, 2),
+                  #fine_row=Nth(lPos, 3), #fine_col=Nth(lPos, 4),
+                  #new_angle=Send(what, @GetAngle));
+            }
+            else
+            {
+               Send(SYS, @UtilGoNearSquare, #what=self, #where=oRoom,
+                  #new_row=First(lPos), #new_col=Nth(lPos, 2),
+                  #fine_row=Nth(lPos, 3), #fine_col=Nth(lPos, 4),
+                  #new_angle=Send(what, @GetAngle));
+            }
+         }
+      }
+
+      return;
+   }
+
+   SetCustomDesc(text=$)
+   "Admin supported\n"
+   "Sets a custom string as the OrnamentalObject's description."
+   {
+      if (text = GetTempString())
+      {
+         psCustomDesc = CreateString();
+         SetString(psCustomDesc, text);
+      }
+      else
+      {
+         psCustomDesc = text;
+      }
+
+      return;
+   }
+
+   ClearCustomDesc()
+   "Admin supported\n"
+   "Removes the custom description from the OrnamentalObject."
+   {
+      psCustomDesc = $;
+
+      return;
+   }
+
+   SetLookable(value=FALSE)
+   {
+      pbLook = value;
+      if poOwner { Send(poOwner, @SomethingChanged, #what=self); }
+
+      return;
+   }
+
+   SetFlickering(value=FALSE)
+   {
+      pbFlicker = value;
+      if poOwner { Send(poOwner, @SomethingChanged, #what=self); }
+
+      return;
    }
 
    SetHanging(value = TRUE)
@@ -800,6 +902,10 @@ messages:
       pbHanging = FALSE;
       pbNoMoveOn = FALSE;
       pbFlicker = FALSE;
+      pbLook = FALSE;
+
+      % Clear the custom description, if any
+      Send(self, @ClearCustomDesc);
 
       if type = OO_3_CLOTH_BOLTS
       {  vrName = oo_3bolts_name;  vrIcon = oo_3bolts_icon;  vrDesc = oo_3bolts_desc;  }
@@ -1223,6 +1329,10 @@ messages:
       if type = OO_RR_BASIN
       {  vrName = oo_RRwashbasin_name;  vrIcon = oo_RRwashbasin_icon;  vrDesc = oo_RRwashbasin_desc;  }
 
+      if type = OO_SIGNPOST
+      {  vrName = oo_signpost_name;  vrIcon = oo_signpost_icon;  vrDesc = oo_signpost_desc;  pbLook = TRUE; }
+      if type = OO_NEWBSIGN
+      {  vrName = oo_newbsign_name;  vrIcon = oo_newbsign_icon;  vrDesc = oo_newbsign_desc;  pbLook = TRUE; }
 
       %% tell the room we changed, unless this is in constructor
       if (NOT const) AND poOwner <> $
@@ -1270,12 +1380,19 @@ messages:
       propagate;
    }
 
+   Delete()
+   {
+      Send(self, @ClearCustomDesc);
+
+      propagate;
+   }
+
    %%%%%%%%%%%%%%%%%%%%%%%%
    % Object copying stuff %
    %%%%%%%%%%%%%%%%%%%%%%%%
    Duplicate()
    {
-      local oDuplicate;
+      local oDuplicate, sDuplicateDesc;
 
       oDuplicate = create(&OrnamentalObject,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
       if send(self,@GetObjectFlags) & OF_HANGING
@@ -1285,6 +1402,20 @@ messages:
       if send(self,@GetObjectFlags) & MOVEON_NO
       {
          send(oDuplicate,@SetNoMoveOn,#value=TRUE);
+      }
+      if Send(self, @GetObjectFlags) & FLICKERING_YES
+      {
+         Send(oDuplicate, @SetFlickering, #value=TRUE);
+      }
+      if NOT (Send(self, @GetObjectFlags) & LOOK_NO)
+      {
+         Send(oDuplicate, @SetLookable, #value=TRUE);
+      }
+      if psCustomDesc <> $
+      {
+         sDuplicateDesc = CreateString();
+         SetString(sDuplicateDesc, psCustomDesc);
+         Send(oDuplicate, @SetCustomDesc, #text=sDuplicateDesc);
       }
 
       return oDuplicate;

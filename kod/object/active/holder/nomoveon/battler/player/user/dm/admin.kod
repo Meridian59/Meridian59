@@ -325,7 +325,7 @@ messages:
       }
 
       %%% Code for placing an ornamental object
-      if StringEqual(string, admin_create_ornamental_object)
+      if type = SAY_DM AND StringContain(string, admin_create_ornamental_object)
       {
          oObject = Create(&OrnamentalObject, #type=OO_DUNG);
          Send(oObject, @PlaceAt, #what=self);

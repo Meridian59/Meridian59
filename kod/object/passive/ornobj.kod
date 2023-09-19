@@ -721,9 +721,6 @@ properties:
    % This value overrides the standard resource description when set.
    psCustomDesc = $
 
-   % Optional timer used to delete the object upon expiring.
-   ptDecayTimer = $
-
 messages:
 
    Constructor(type=0, rName=$, rIcon=$, rDesc=$)
@@ -772,56 +769,6 @@ messages:
       }
 
       propagate;
-   }
-
-   StartDecayTimer(days=0, hours=0, minutes=0, seconds=0)
-   "Admin supported\n"
-   "Starts a timer for this object which will automatically delete it upon expiring.\n"
-   "Can specify the time using values for any or all of the parameters.\n"
-   "These parameters are: days, hours, minutes, and/or seconds."
-   {
-      local iTime;
-
-      iTime = (((days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000;
-      if iTime > 0
-      {
-         if days < 21
-         {
-            Send(self, @ClearDecayTimer);
-            ptDecayTimer = CreateTimer(self, @DecayTimerExpired, iTime);
-         }
-         else
-         {
-            Debug("Time must be 20 or fewer days to avoid undesirable timer results.");
-         }
-      }
-      else
-      {
-         Debug("Timer duration must be greater than zero.");
-      }
-
-      return;
-   }
-
-   ClearDecayTimer()
-   "Admin supported\n"
-   "Clears this object's active decay timer if it exists."
-   {
-      if ptDecayTimer <> $
-      {
-         DeleteTimer(ptDecayTimer);
-      }
-      ptDecayTimer = $;
-
-      return;
-   }
-
-   DecayTimerExpired()
-   {
-      ptDecayTimer = $;
-      Send(self, @Delete);
-
-      return;
    }
 
    PlaceAt(what=$)
@@ -959,9 +906,6 @@ messages:
 
       % Clear the custom description, if any
       Send(self, @ClearCustomDesc);
-
-      % Clear the current decay timer, if any
-      Send(self, @ClearDecayTimer);
 
       if type = OO_3_CLOTH_BOLTS
       {  vrName = oo_3bolts_name;  vrIcon = oo_3bolts_icon;  vrDesc = oo_3bolts_desc;  }
@@ -1438,7 +1382,6 @@ messages:
 
    Delete()
    {
-      Send(self, @ClearDecayTimer);
       Send(self, @ClearCustomDesc);
 
       propagate;

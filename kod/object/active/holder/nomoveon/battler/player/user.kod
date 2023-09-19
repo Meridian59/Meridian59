@@ -296,6 +296,8 @@ resources:
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
+   chestdebug = "Number was null."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -3549,7 +3551,10 @@ messages:
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, iNumber, oSplit, oCorpse;
-
+      if number = $
+      {
+         Send(self,@MsgSendUser,#message_rsc=chestdebug);
+      }
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  

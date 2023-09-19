@@ -3644,7 +3644,7 @@ messages:
             iCan_hold = Send(self,@GetNumberCanHold,#what=what);
 
             % Get minimum of number or iCan_hold for split
-            iNumber = bound(number,$,iCan_hold);
+            iNumber = bound(iCan_hold,$,number);
             if iNumber > 0
             {
                oSplit = Send(what,@Split,#number=iNumber);

@@ -149,7 +149,7 @@ void GotObjectContents(ID object_id, list_type contents)
       return;
    }
    // Separate contents into number items and other items and alpha sort
-   for (l = contents; l != Null; l = l->next)
+   for (l = contents; l != NULL; l = l->next)
    {
       sorted_list = list_add_sorted_item(sorted_list, (l->data), CompareObjectNameAndNumber);
    }

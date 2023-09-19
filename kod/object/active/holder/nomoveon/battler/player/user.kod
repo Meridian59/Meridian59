@@ -962,8 +962,16 @@ messages:
       if liClient_cmd = BP_REQ_GET
       {
          oWhat = Nth(client_msg,2);
-         Send(self,@UserGet,#what=oWhat);
+         Send(self,@UserGet,#what=oWhat,#number=$);
          
+         return;
+      }
+
+      if liClient_cmd = BP_REQ_GET_FROM_CONTAINER
+      {
+         oWhat = Nth(client_msg,2);
+         Send(self,@UserGet,#what=oWhat,#number=number_stuff);
+
          return;
       }
       
@@ -3537,10 +3545,10 @@ messages:
       return;
    }
 
-   UserGet(what = $)
+   UserGet(what = $, number = $)
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, oSplit, oCorpse;
+            iCan_hold, iNumber, oSplit, oCorpse;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3627,26 +3635,33 @@ messages:
               
          return;
       }
-        
-      if NOT Send(self,@ReqNewHold,#what=what) 
+      % Either we pass in a number or we didnt but cant hold it all
+      if number <> $
+         OR NOT Send(self,@ReqNewHold,#what=what)
       {
          if IsClass(what,&NumberItem)
          {
             iCan_hold = Send(self,@GetNumberCanHold,#what=what);
-            if iCan_hold > 0
+
+            % Get minimum of number or iCan_hold for split
+            iNumber = bound(number,$,iCan_hold);
+            if iNumber > 0
             {
-               oSplit = Send(what,@Split,#number=iCan_hold);
+               oSplit = Send(what,@Split,#number=iNumber);
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  Send(self,@MsgSendUser,#message_rsc=user_got_some,
-                       #parm1=Send(what,@GetName));
+                  if iCan_hold < number
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=user_got_some,
+                        #parm1=Send(what,@GetName));
+                  }
                   Send(self,@NewHold,#what=oSplit);
                   
                   return;
                }
                else
                {
-                  Send(what,@AddNumber,#number=iCan_hold);
+                  Send(what,@AddNumber,#number=iNumber);
                   Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
                        #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                   Send(self, @WaveSendUser, #what=self, 
@@ -3665,6 +3680,7 @@ messages:
                return;
             }
          }
+         % Not a number item
          else
          {
             %  KLUDGE!!  -Asif

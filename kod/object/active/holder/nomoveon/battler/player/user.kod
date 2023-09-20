@@ -2863,6 +2863,7 @@ messages:
       AddPacket(2,Send(what,@GetBackgroundOverlayAngle));
       AddPacket(2,Send(what,@GetBackgroundOverlayHeight));
       SendPacket(poSession);
+
       return;
    }
 

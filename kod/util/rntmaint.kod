@@ -62,6 +62,9 @@ properties:
    plRoomsRented = $
    % Max number of days a room can be rented for at one time. ~20 offline days.
    piRentableDaysMax = 240
+   % When fewer meridian days than this are left on a room's rent, user should be
+   % issued some kind of warning or notification.
+   piWarningDaysThreshold = 60
 
 messages: 
 
@@ -74,6 +77,11 @@ messages:
    Recreate()
    {
       return;
+   }
+
+   WarningDaysThreshold()
+   {
+      return piWarningDaysThreshold;
    }
 
    HoldRoomsDuringRecreate()

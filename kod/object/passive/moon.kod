@@ -54,6 +54,7 @@ messages:
 
       iHour = Send(SYS,@GetHour);
       iDay = Send(SYS,@GetDay);
+      piGroup = viFull_group;
 
       % east = 0, west = 2048
       piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
@@ -67,21 +68,18 @@ messages:
 	      piHeight = -200;
       }
 
-      if (iDay >= 0 && iDay < 60)
+      if (iDay < 180)
+      {
+         piGroup = viHalf_group;
+      }
+      if (iDay < 120)
+      {
+         piGroup = viQuarter_group;
+      }
+      if (iDay < 60)
       {
          piGroup = viEighth_group;
       } 
-      else if (iDay >= 60 && iDay < 120)
-      {
-         piGroup = viQuarter_group;
-      } 
-      else if (iDay >= 120 && iDay < 180)
-      {
-         piGroup = viHalf_group;
-      } else if (iDay >= 180)
-      {
-         piGroup = viFull_group;
-      }
 
       for i in Send(SYS,@GetUsersLoggedOn)
       {

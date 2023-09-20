@@ -2858,12 +2858,10 @@ messages:
       AddPacket(4,what);
       AddPacket(4,Send(what,@GetIcon));
       AddPacket(4,Send(what,@GetName));
+      group = Send(what,@GetBackgroundOverlayGroup);
+      AddPacket(1, ANIMATE_NONE, 2, group);
       AddPacket(2,Send(what,@GetBackgroundOverlayAngle));
       AddPacket(2,Send(what,@GetBackgroundOverlayHeight));
-
-      group = Send(what,@GetBackgroundOverlayGroup);
-      AddPacket(1, ANIMATE_ONCE, 4,10, group,group, group,group, group,group);
-      
       SendPacket(poSession);
       return;
    }

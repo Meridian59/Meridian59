@@ -31,7 +31,7 @@ properties:
 
    piAngle = 0
    piHeight = 0
-   piGroup = 0
+   piGroup = 1
 
 messages:
 
@@ -47,7 +47,7 @@ messages:
 
       iHour = Send(SYS,@GetHour);
       iDay = Send(SYS,@GetDay);
-      piGroup = 0;
+      piGroup = 1;
       
       % east = 0, west = 2048
       piAngle = ((iHour+19) mod 24)*130;
@@ -60,7 +60,7 @@ messages:
       if(iDay = 113 OR iDay = 233)
       {
          % Summer or Winter Solstice so show the special sun image.
-         piGroup = 1;
+         piGroup = 2;
       }
 
       for i in Send(SYS,@GetUsersLoggedOn)

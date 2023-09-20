@@ -47,6 +47,26 @@ messages:
       Send(self,@NewGameHour);
       propagate;
    }
+      
+   GetMoonPhase(dayOfYear = $)
+   {
+      local scaledLunarMonth, phaseLength, currentLunarDay;
+      scaledLunarMonth = 19;
+      currentLunarDay = dayOfYear mod scaledLunarMonth;
+      if currentLunarDay >= 1 AND currentLunarDay <= 5
+      {
+         return viFull_group;
+      }
+      if currentLunarDay > 5 AND currentLunarDay <= 10
+      {
+         return viHalf_group;
+      }
+      if currentLunarDay > 10 AND currentLunarDay <= 15
+      {
+         return viQuarter_group;
+      }
+      return viEighth_group;
+   }
 
    NewGameHour()
    {
@@ -54,7 +74,7 @@ messages:
 
       iHour = Send(SYS,@GetHour);
       iDay = Send(SYS,@GetDay);
-      piGroup = viFull_group;
+      piGroup = Send(self,@GetMoonPhase,#dayOfYear=iDay);
 
       % east = 0, west = 2048
       piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
@@ -67,19 +87,6 @@ messages:
       {
 	 piHeight = -200;
       }
-
-      if (iDay < 180)
-      {
-         piGroup = viHalf_group;
-      }
-      if (iDay < 120)
-      {
-         piGroup = viQuarter_group;
-      }
-      if (iDay < 60)
-      {
-         piGroup = viEighth_group;
-      } 
 
       for i in Send(SYS,@GetUsersLoggedOn)
       {

@@ -60,12 +60,12 @@ messages:
       piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
       if iHour > 12
       {
-         iHour = iHour - 24;
+	 iHour = iHour - 24;
       }
       piHeight = 400 - Abs(300-iDay) - 6*(iHour - 1)*(iHour - 1);
       if piHeight < -200
       {
-	      piHeight = -200;
+	 piHeight = -200;
       }
 
       if (iDay < 180)
@@ -83,7 +83,7 @@ messages:
 
       for i in Send(SYS,@GetUsersLoggedOn)
       {
-	      Send(i,@ToCliChangeBackgroundOverlay,#what=self);
+	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
       }
 
       return;

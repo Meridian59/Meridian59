@@ -54,7 +54,7 @@ messages:
       piHeight = 420 - 7*(iHour - 13)*(iHour - 13);
       if piHeight < -200
       {
-         piHeight = -200;
+	 piHeight = -200;
       }
       
       if(iDay = 113 OR iDay = 233)
@@ -65,7 +65,7 @@ messages:
 
       for i in Send(SYS,@GetUsersLoggedOn)
       {
-         Send(i,@ToCliChangeBackgroundOverlay,#what=self);
+	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
       }
 
       return;

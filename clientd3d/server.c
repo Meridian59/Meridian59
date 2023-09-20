@@ -475,16 +475,14 @@ BackgroundOverlay *ExtractNewBackgroundOverlay(char **ptr)
    Extract(ptr, &item->obj.name_res, SIZE_ID);
 
    ExtractPaletteTranslation(ptr,&item->obj.translation,&item->obj.effect);
-   ExtractAnimation(ptr, &item->obj.normal_animate);
-   item->obj.animate = &item->obj.normal_animate;
 
    Extract(ptr, &word, 2);
    item->x = (int) word;
-   Extract(ptr, &word, 2);
+   Extract(ptr, &word, 2); 
    item->y = (int) word;
-   Extract(ptr, &word, 2);
-   item->obj.animate->group = word;
-   
+
+   item->obj.animate = &item->obj.normal_animate;
+   ExtractAnimation(ptr, item->obj.animate);
    return item;
 }
 /********************************************************************/

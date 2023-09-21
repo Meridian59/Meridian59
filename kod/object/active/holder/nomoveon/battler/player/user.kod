@@ -3546,6 +3546,8 @@ messages:
    }
 
    UserGet(what = $, number = $)
+   "Try to pick up one item (what) and for number items optionally specify"
+   "an amount of that item (number)."
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, iNumber, oSplit, oCorpse;
@@ -3635,7 +3637,7 @@ messages:
               
          return;
       }
-      % Either we pass in a number or we didnt but cant hold it all
+      % Either we pass in a number or we didn't but can't hold it all
       if number <> $
          OR NOT Send(self,@ReqNewHold,#what=what)
       {

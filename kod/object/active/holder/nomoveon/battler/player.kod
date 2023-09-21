@@ -5502,16 +5502,16 @@ messages:
             {
                iJalaPower = Nth(Nth(lJalaInfo,3),3);
 
-               iTime = bound(iTime,1000,25000);
+               iTime = bound(iTime,1000,60000);
                iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
 
-               return bound(iTime,670,25000);
+               return bound(iTime,670,60000);
             }
          }
       }
 
-      return bound(iTime,1000,25000);
+      return bound(iTime,1000,60000);
    }
 
    CalculateManaTime()

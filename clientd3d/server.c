@@ -481,7 +481,7 @@ BackgroundOverlay *ExtractNewBackgroundOverlay(char **ptr)
    Extract(ptr, &word, 2);
    item->x = (int) word;
    Extract(ptr, &word, 2);
-   item->y = (int) word;
+   item->y = (int)word;
 
    return item;
 }

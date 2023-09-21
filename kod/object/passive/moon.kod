@@ -33,12 +33,12 @@ properties:
 
    piAngle = 0
    piHeight = 0
-   piGroup = 0
+   piAnimationGroup = 1
 
-   viEighth_group = 3
-   viQuarter_group = 2
-   viHalf_group = 1
-   viFull_group = 0
+   viFull_group = 1
+   viHalf_group = 2
+   viQuarter_group = 3
+   viEighth_group = 4
 
 messages:
 
@@ -50,22 +50,36 @@ messages:
       
    GetMoonPhase(dayOfYear = $)
    {
-      local scaledLunarMonth, phaseLength, currentLunarDay;
-      scaledLunarMonth = 19;
+      local scaledLunarMonth, currentLunarDay;
+      scaledLunarMonth = 20;
       currentLunarDay = dayOfYear mod scaledLunarMonth;
-      if currentLunarDay >= 1 AND currentLunarDay <= 5
+
+      if currentLunarDay >= 0 AND currentLunarDay <= 2
       {
-         return viFull_group;
+         return viEighth_group;
       }
-      if currentLunarDay > 5 AND currentLunarDay <= 10
-      {
-         return viHalf_group;
-      }
-      if currentLunarDay > 10 AND currentLunarDay <= 15
+      if currentLunarDay > 2 AND currentLunarDay <= 4
       {
          return viQuarter_group;
       }
-      return viEighth_group;
+      if currentLunarDay > 4 AND currentLunarDay <= 6
+      {
+         return viHalf_group;
+      }
+      if currentLunarDay > 14 AND currentLunarDay <= 16
+      {
+         return viHalf_group;
+      } 
+      if currentLunarDay > 16 AND currentLunarDay <= 18
+      {
+         return viQuarter_group;
+      }
+      if currentLunarDay >= 18 AND currentLunarDay <= 20
+      {
+         return viEighth_group;
+      } 
+
+      return viFull_group;
    }
 
    NewGameHour()
@@ -74,7 +88,7 @@ messages:
 
       iHour = Send(SYS,@GetHour);
       iDay = Send(SYS,@GetDay);
-      piGroup = Send(self,@GetMoonPhase,#dayOfYear=iDay);
+      piAnimationGroup = Send(self,@GetMoonPhase,#dayOfYear=iDay);
 
       % east = 0, west = 2048
       piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
@@ -114,9 +128,9 @@ messages:
       return piHeight;
    }
 
-   GetBackgroundOverlayGroup()
+   GetBackgroundOverlayAnimationGroup()
    {
-      return piGroup;
+      return piAnimationGroup;
    }
 
 end

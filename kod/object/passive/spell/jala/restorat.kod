@@ -65,10 +65,10 @@ messages:
    "Reduces time passed in so that health regens faster.  Returns reduced time."
    {
       local iTime;
-
+      % Bound time to normal HP regen range before applying spell effect
+      time = bound(time,1000,60000);
       iTime = (time * (SPELL_POWER_SLOPE - (SPELL_POWER_INTERCEPT + iSpellPower))) / SPELL_POWER_SLOPE;
-
-      return iTime;
+      return bound(iTime,670,60000);
    }
 
 

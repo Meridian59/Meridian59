@@ -5501,7 +5501,7 @@ messages:
             if IsClass(oJalaSpell,&Restorate)
             {
                iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
+               return Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
             }
          }

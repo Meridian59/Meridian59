@@ -406,7 +406,7 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 *    Doesn't return color itself so that caller can use id to call GetBrush.
 *    Also colors special items.  When the client receives a OF_ITEM_SPECIAL flag
 *    for an object, the client will color the object's text in lists based on the
-*    value of COLOR_ITEM_MAGIC_FG.
+*    value of COLOR_ITEM_SPECIAL_FG specified in color.h
 */
 WORD GetItemListColor(HWND hwnd, int type, int flags)
 {

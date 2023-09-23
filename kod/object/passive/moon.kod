@@ -35,10 +35,12 @@ properties:
    piHeight = 0
    piAnimationGroup = 1
 
-   viFull_group = 1
-   viHalf_group = 2
-   viQuarter_group = 3
-   viEighth_group = 4
+   viFull = 1
+   viHalf = 2
+   viQuarter = 3
+   viEighth = 4
+
+   temp = 0
 
 messages:
 
@@ -56,30 +58,34 @@ messages:
 
       if currentLunarDay >= 0 AND currentLunarDay <= 2
       {
-         return viEighth_group;
+         return viEighth;
       }
       if currentLunarDay > 2 AND currentLunarDay <= 4
       {
-         return viQuarter_group;
+         return viQuarter;
       }
       if currentLunarDay > 4 AND currentLunarDay <= 6
       {
-         return viHalf_group;
+         return viHalf;
+      }
+      if currentLunarDay > 6 AND currentLunarDay <= 14
+      {
+         return viFull;
       }
       if currentLunarDay > 14 AND currentLunarDay <= 16
       {
-         return viHalf_group;
+         return viHalf;
       } 
       if currentLunarDay > 16 AND currentLunarDay <= 18
       {
-         return viQuarter_group;
+         return viQuarter;
       }
       if currentLunarDay >= 18 AND currentLunarDay <= 20
       {
-         return viEighth_group;
-      } 
+         return viEighth;
+      }
 
-      return viFull_group;
+      return;
    }
 
    NewGameHour()
@@ -117,7 +123,7 @@ messages:
       return;
    }
 
-      
+ 
    GetBackgroundOverlayAngle()
    {
       return piAngle;

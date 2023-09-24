@@ -88,10 +88,9 @@ resources:
       "could opt to have nothing on the wall."
 
    RentableRoom_expiry_warning = \
-      "Subject: Room check-out reminder notice\n"
-      "This is a courtesy notice to remind you that your room rental will "
-      "expire in %q days.  Please be sure to clear your room of any personal "
-      "effects before then.  I hope you are enjoying your stay."
+      "~k%s tells you, ~I\"Your room is about to expire.  You only have %i "
+      "Meridian days left to pay your rent.\""
+
    RentableRoom_expiry = \
       "Subject: Room check-out\n"
       "Your room rental has expired, and the room has been cleared of any "
@@ -1387,13 +1386,6 @@ messages:
          return;
       }
 
-      % Send warning every 12 Meridian days (2 real days), and when we have 4 hours left
-      if (piDaysLeft <= 2)
-         OR ((piDaysLeft mod 12) = 0)
-      {
-         Send(self,@SendExpiryWarningMail);
-      }
-
       return;
    }
 
@@ -1406,14 +1398,35 @@ messages:
       return piDaysLeft;
    }
 
-   SendExpiryWarningMail()
+   RenterLoggedOn()
    {
-      Send(poRenter,@ReceiveNestedMail,#from=vrLandlord,
-            #dest_list=[poRenter],
-            #nest_list=[4,RentableRoom_expiry_warning,
-                        6,Send(SYS,@IntToString,#num=piDaysLeft)]);
+      if Send(self, @IsRoomExpiringSoon)
+      {
+         Send(self, @SendExpiryWarningMessage);
+      }
 
       return;
+   }
+
+   SendExpiryWarningMessage()
+   {
+      if poRenter <> $
+      {
+         Send(poRenter, @MsgSendUser, #message_rsc=RentableRoom_expiry_warning,
+            #parm1=vrLandlord, #parm2=piDaysLeft);
+      }
+
+      return;
+   }
+
+   IsRoomExpiringSoon()
+   {
+      if piDaysLeft < Send(Send(SYS, @GetRentableRoomMaintenance), @WarningDaysThreshold)
+      {
+         return TRUE;
+     }
+
+      return FALSE;
    }
 
    RoomExpired()

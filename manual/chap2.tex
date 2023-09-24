@@ -367,9 +367,9 @@ occurrence of the specified value removed from the list.
 
 \item[bound] Takes an integer (call it $n$) and two values which can be integers or nil.  
 Call the first of these $a$ and the second $b$.  If $a$ and $b$ are both nil, then this
-function returns $n$.  If $a$ is nil and $b$ is an integer, then it returns max($n$,$b$).
-If $a$ is an integer and $b$ is nil, then it returns min($n$,$a$).  If both $a$ and $b$
-are integers, returns max(min($n$,$a$),$b$).
+function returns $n$.  If $a$ is nil and $b$ is an integer, then it returns min($n$,$b$).
+If $a$ is an integer and $b$ is nil, then it returns max($n$,$a$).  If both $a$ and $b$
+are integers, returns min(max($n$,$a$),$b$).
 
 \item[createtable] Creates a new hash table with 2999 available entries.  Returns a table
 id which uniquely identifies the newly created hash table.

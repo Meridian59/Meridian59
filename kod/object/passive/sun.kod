@@ -31,6 +31,7 @@ properties:
 
    piAngle = 0
    piHeight = 0
+   piAnimationGroup = 1
 
 messages:
 
@@ -46,7 +47,8 @@ messages:
 
       iHour = Send(SYS,@GetHour);
       iDay = Send(SYS,@GetDay);
-
+      piAnimationGroup = 1;
+      
       % east = 0, west = 2048
       piAngle = ((iHour+19) mod 24)*130;
       piHeight = 420 - 7*(iHour - 13)*(iHour - 13);
@@ -54,6 +56,13 @@ messages:
       {
 	 piHeight = -200;
       }
+      
+      if (iDay = 113 OR iDay = 233)
+      {
+         % Summer or Winter Solstice so show the special sun image.
+         piAnimationGroup = 2;
+      }
+
       for i in Send(SYS,@GetUsersLoggedOn)
       {
 	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
@@ -93,6 +102,11 @@ messages:
    {
       return piHeight;
    }
+
+   GetBackgroundOverlayAnimationGroup()
+   {
+      return piAnimationGroup;
+   }   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

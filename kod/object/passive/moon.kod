@@ -121,7 +121,7 @@ messages:
       return;
    }
 
-
+      
    GetBackgroundOverlayAngle()
    {
       return piAngle;

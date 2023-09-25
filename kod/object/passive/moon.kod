@@ -105,7 +105,6 @@ messages:
       {
 	 piHeight = -200;
       }
-
       for i in Send(SYS,@GetUsersLoggedOn)
       {
 	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);

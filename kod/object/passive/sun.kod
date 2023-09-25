@@ -57,7 +57,7 @@ messages:
 	 piHeight = -200;
       }
       
-      if(iDay = 113 OR iDay = 233)
+      if (iDay = 113 OR iDay = 233)
       {
          % Summer or Winter Solstice so show the special sun image.
          piAnimationGroup = 2;

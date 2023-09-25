@@ -40,8 +40,6 @@ properties:
    viQuarter = 3
    viEighth = 4
 
-   temp = 0
-
 messages:
 
    Constructor()

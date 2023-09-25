@@ -3644,7 +3644,8 @@ messages:
          if IsClass(what,&NumberItem)
          {
             iCan_hold = Send(self,@GetNumberCanHold,#what=what);
-            % Admin's iCan_hold is $ and breaks the bound logic
+            % iCan_hold of $ intended to signal infinite capacity
+            % Therefor set iCan_hold to number of items requested
             if iCan_hold = $
             {
                iCan_hold = number;

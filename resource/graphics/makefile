@@ -16,6 +16,7 @@ BGFS = \
 	$(OUTDIR)\ring3.bgf \
 	$(OUTDIR)\povmystsw.bgf \
 	$(OUTDIR)\splash.bgf \
+	$(OUTDIR)\moon.bgf \
 
 all: makedirs $(BGFS)
 

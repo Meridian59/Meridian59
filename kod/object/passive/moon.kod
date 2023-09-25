@@ -33,6 +33,12 @@ properties:
 
    piAngle = 0
    piHeight = 0
+   piAnimationGroup = 1
+
+   viFull = 1
+   viHalf = 2
+   viQuarter = 3
+   viEighth = 4
 
 messages:
 
@@ -41,6 +47,44 @@ messages:
       Send(self,@NewGameHour);
       propagate;
    }
+      
+   GetMoonPhase(dayOfYear = $)
+   {
+      local scaledLunarMonth, currentLunarDay;
+      scaledLunarMonth = 20;
+      currentLunarDay = dayOfYear mod scaledLunarMonth;
+
+      if currentLunarDay >= 0 AND currentLunarDay <= 2
+      {
+         return viEighth;
+      }
+      if currentLunarDay > 2 AND currentLunarDay <= 4
+      {
+         return viQuarter;
+      }
+      if currentLunarDay > 4 AND currentLunarDay <= 6
+      {
+         return viHalf;
+      }
+      if currentLunarDay > 6 AND currentLunarDay <= 14
+      {
+         return viFull;
+      }
+      if currentLunarDay > 14 AND currentLunarDay <= 16
+      {
+         return viHalf;
+      } 
+      if currentLunarDay > 16 AND currentLunarDay <= 18
+      {
+         return viQuarter;
+      }
+      if currentLunarDay >= 18 AND currentLunarDay <= 20
+      {
+         return viEighth;
+      }
+
+      return;
+   }
 
    NewGameHour()
    {
@@ -48,6 +92,7 @@ messages:
 
       iHour = Send(SYS,@GetHour);
       iDay = Send(SYS,@GetDay);
+      piAnimationGroup = Send(self,@GetMoonPhase,#dayOfYear=iDay);
 
       % east = 0, west = 2048
       piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
@@ -84,6 +129,11 @@ messages:
    GetBackgroundOverlayHeight()
    {
       return piHeight;
+   }
+
+   GetBackgroundOverlayAnimationGroup()
+   {
+      return piAnimationGroup;
    }
 
 end

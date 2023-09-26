@@ -262,11 +262,15 @@ typedef struct {
 
 static FormatCode code_table[] = {
 { 'r', CODE_COLOR, PALETTERGB(128,   0,   0) }, // Maroon Red
-{ 'g', CODE_COLOR, PALETTERGB(  0, 255,   0) }, // Lime Green 
-{ 'b', CODE_COLOR, PALETTERGB(  0, 255, 255) }, // Cyan Blue
+{ 'g', CODE_COLOR, PALETTERGB(  0, 100,   0) }, // Dark Green
+{ 'l', CODE_COLOR, PALETTERGB(  0, 255,   0) }, // Lime Green
+{ 'b', CODE_COLOR, PALETTERGB(  0,   0, 255) }, // Blue
+{ 'c', CODE_COLOR, PALETTERGB(  0, 255, 255) }, // Cyan Blue
 { 'k', CODE_COLOR, PALETTERGB(  0,   0,   0) }, // Black
 { 'w', CODE_COLOR, PALETTERGB(255, 255, 255) }, // White
 { 'y', CODE_COLOR, PALETTERGB(255, 255,   0) }, // Yellow
+{ 'o', CODE_COLOR, PALETTERGB(255, 172,  28) }, // Bright Orange
+{ 'p', CODE_COLOR, PALETTERGB(255, 192, 203) }, // Pink
 { 'B', CODE_STYLE, STYLE_BOLD },
 { 'I', CODE_STYLE, STYLE_ITALIC },
 { 'U', CODE_STYLE, STYLE_UNDERLINE },

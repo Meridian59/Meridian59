@@ -34,8 +34,8 @@ classvars:
    vrIcon = RiijaSword_icon_rsc
    vrDesc = RiijaSword_desc_rsc
 
-   viHits_init_min = 600
-   viHits_init_max = 650
+   viHits_init_min = 700
+   viHits_init_max = 750
 
    % Riija Swords are high quality thrusting weapons
    viWeaponType = WEAPON_TYPE_THRUST

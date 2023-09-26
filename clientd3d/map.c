@@ -777,7 +777,7 @@ static void PrintMapAnnotations(HDC hdc)
       buffer[0] += i; // [A] .. [B] .. [C] .. ...
       SelectObject(hdc,hPrintLabel);
       GetTextArea(hdc,buffer,&size);
-      TextOut(hdc,pt.x - size.cx/2, pt.y - size.cy/2,buffer,strlen(buffer));
+      TextOut(hdc,pt.x - size.cx/2, pt.y - size.cy/2,buffer, (int)strlen(buffer));
       SetRect(&rcText,0,0,size.cx + iMapLabelSpace*2, size.cy + iMapLabelSpace);
       OffsetRect(&rcText,pt.x - size.cx/2 - iMapLabelSpace, pt.y - size.cy/2 - iMapLabelSpace);
       DrawRect(hdc,&rcText,TRUE);
@@ -807,7 +807,7 @@ static void PrintAnnotations(HDC hdc)
 	 RequestGamePing();
       }
       OffsetRect(&rcText,cp.x,cp.y);
-      TextOut(hdc,cp.x+iMapLabelSpace, cp.y+iMapLabelSpace,buffer,strlen(buffer));
+      TextOut(hdc,cp.x+iMapLabelSpace, cp.y+iMapLabelSpace,buffer, (int)strlen(buffer));
       DrawRect(hdc,&rcText,TRUE);
       cp.x += size.cx + iMapLabelSpace*2 + GetDeviceCaps(hdc, LOGPIXELSX) / 16;
       cp.y += iMapLabelSpace;

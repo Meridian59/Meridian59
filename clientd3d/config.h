@@ -79,6 +79,7 @@ typedef struct {
    int	halocolor;					//	0 = red, 1 = blue, 2 = green
 
    Bool lagbox;                  /* Display lag meter? */
+   Bool spinning_cube;           /* Display the classic spinning latency meter */
    Bool ignoreprofane;           /* Kill messages including any profanity. */
    Bool extraprofane;            /* Really search hard for possible hidden profanity. */
    int  server_guest;            /* Server to try first for guest logins */
@@ -117,6 +118,8 @@ typedef struct {
    int music_volume;           // 0 - 100
 
    int text_area_size;        /* As a percentage of the client height */
+
+   int active_stat_group; // Which stat group (inventory, skills, spells or stats) is visible.
 } Config;
 
 void ConfigInit(void);

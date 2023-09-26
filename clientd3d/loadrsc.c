@@ -222,7 +222,7 @@ void ChangeResource(ID res, char *value)
 	
 	entry = (resource_type) SafeMalloc(sizeof(resource_struct));
 	
-	entry->data = (char *) SafeMalloc(strlen(value) + 1);
+	entry->data = (char *) SafeMalloc((int) strlen(value) + 1);
 	strcpy(entry->data, value);
 	entry->idnum = res;
 	table_insert(t, entry, ResourceHash, ResourceCompare);
@@ -247,7 +247,7 @@ bool RscAddCallback(char *fname, int res, char *string)
 	entry = (resource_type) SafeMalloc(sizeof(resource_struct));
 	
 	entry->idnum = res;
-	entry->data = (char *) SafeMalloc(strlen(string) + 1);
+	entry->data = (char *) SafeMalloc((int) strlen(string) + 1);
 	strcpy(entry->data, string);
 	
 	if (table_insert(t, entry, ResourceHash, ResourceCompare) != 0)

@@ -166,6 +166,8 @@ void AdminShowReferences(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[]);
 void AdminShowReferencesEachObject(object_node *o);
 void AdminShowReferencesEachList(int list_id);
+void AdminShowExactInstances(int session_id, admin_parm_type parms[],
+						int num_blak_parm, parm_node blak_parm[]);
 void AdminShowInstances(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[]);
 void AdminShowMatches(int session_id,admin_parm_type parms[],
@@ -311,6 +313,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowConfiguration, {N},   F, A|M, NULL, 0, "configuration", "Show configuration values" },
 	{ AdminShowConstant,      {S,N}, F,A|M, NULL, 0, "constant",       "Show value of admin constant" },
 	{ AdminShowDynamicResources,{N}, F, A, NULL, 0, "dynamic",       "Show all dynamic resources" },
+	{ AdminShowExactInstances,{S,N}, F, A, NULL, 0, "exactinstances", "Show all instances of class, excluding subclasses" },
 	{ AdminShowInstances,     {S,N}, F, A, NULL, 0, "instances",     "Show all instances of class" },
 	{ AdminShowList,          {I,N}, F, A|M, NULL, 0, "list",          "Traverse & show a list" },
 	{ AdminShowListNode,      {I,N}, F, A|M, NULL, 0, "listnode",      "Show one list node by id" },
@@ -2223,6 +2226,39 @@ void AdminShowClass(int session_id,admin_parm_type parms[],
 
 	aprintf(":>\n");
 
+}
+
+void AdminShowExactInstances(int session_id, admin_parm_type parms[],
+	int num_blak_parm, parm_node blak_parm[])
+{
+	int i, m;
+	class_node* c;
+	extern object_node* objects;
+	extern int num_objects;
+
+	char* class_str;
+	class_str = (char*)parms[0];
+
+	c = GetClassByName(class_str);
+	if (c == NULL)
+	{
+		aprintf("Cannot find CLASS %s.\n", class_str);
+		return;
+	}
+
+	aprintf(":< instances (excluding subclasses) of CLASS %s (%i)\n:", c->class_name, c->class_id);
+	m = 0;
+	for (i = 0; i < num_objects; i++)
+	{
+		class_node* wc = GetClassByID(objects[i].class_id);
+		if (wc == c)
+		{
+			aprintf(" OBJECT %i", i);
+			m++;
+		}
+	}
+	aprintf("\n: %i total", m);
+	aprintf("\n:>\n");
 }
 
 void AdminShowInstances(int session_id,admin_parm_type parms[],

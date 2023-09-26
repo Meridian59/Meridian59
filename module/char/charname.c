@@ -83,7 +83,6 @@ void CharNameGetChoices(char *name, char *desc)
 char *VerifyCharName(char *name)
 {
    char *ptr;
-   int len;
    
    // Skip leading whitespace
    while (*name == ' ')
@@ -95,12 +94,12 @@ char *VerifyCharName(char *name)
       ptr--;
    *(ptr + 1) = 0;
 
-   len = strlen(name);
+   size_t len = strlen(name);
    if (len < MIN_CHARNAME || len > MAX_CHARNAME)
       return NULL;
 
    // Check that name is made up of legal characters
-   if ((int) strspn(name, legal_chars) != len)
+   if (strspn(name, legal_chars) != len)
       return NULL;
 
    return name;

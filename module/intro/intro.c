@@ -54,7 +54,7 @@ static void IntroInit(void);
 static void IntroShowSplash(void);
 static void IntroDrawLogo(void);
 static void IntroFreeLogo(void);
-static long CALLBACK MainButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime);
 static void CALLBACK LightTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime);
 /****************************************************************************/
@@ -384,7 +384,7 @@ void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 /*
  * MainButtonProc:  Subclassed window procedure for main button.
  */
-long CALLBACK MainButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

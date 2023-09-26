@@ -181,10 +181,10 @@ void BoardInitialize(Board *b)
    b->squares[0][5].piece = BISHOP;
    b->squares[7][2].piece = BISHOP;
    b->squares[7][5].piece = BISHOP;
-   b->squares[0][3].piece = KING;
-   b->squares[7][3].piece = KING;
-   b->squares[0][4].piece = QUEEN;
-   b->squares[7][4].piece = QUEEN;
+   b->squares[0][4].piece = KING;
+   b->squares[7][4].piece = KING;
+   b->squares[0][3].piece = QUEEN;
+   b->squares[7][3].piece = QUEEN;
 
    b->move_color = WHITE;
 
@@ -223,7 +223,7 @@ void BoardBitmapsLoad(void)
  */
 void BoardDraw(HDC hdc, Board *b)
 {
-   int i, j, piece, color, index, mode;
+   int piece, color, index, mode;
    RECT rect;
 
    if (!b->valid)
@@ -242,28 +242,28 @@ void BoardDraw(HDC hdc, Board *b)
    mode = GetStretchBltMode(hdc);
    SetStretchBltMode(hdc, STRETCH_DELETESCANS);
    
-   for (i=0; i < BOARD_HEIGHT; i++) {
-     // Flip board if for white pieces and observers.
-     // (Default was apparently black pieces on bottom in initial design).
-     int row = (b->color != BLACK) ? (BOARD_HEIGHT - i - 1) : i;
+   for (int i=0; i < BOARD_HEIGHT; i++) {
+     // Rotate board if for black pieces.
+     int row = (b->color == BLACK) ? (BOARD_HEIGHT - i - 1) : i;
 
-     for (j=0; j < BOARD_WIDTH; j++)
+     for (int j=0; j < BOARD_WIDTH; j++)
      {
+       int col = (b->color == BLACK) ? (BOARD_WIDTH - j - 1) : j;
        if ((i + j) % 2 == 0)
-         index = WHITE_INDEX;
-       else index = BLACK_INDEX;
+         index = BLACK_INDEX;
+       else index = WHITE_INDEX;
        
        // Draw highlight if square selected
-       if (move_started && move_pos1.x == j && move_pos1.y == i)
+       if (move_started && move_pos1.x == col && move_pos1.y == row)
          index = select_index;
        
        rect.left   = j * b->square_size;
-       rect.top    = row * b->square_size;
+       rect.top    = (BOARD_HEIGHT - i - 1) * b->square_size;  // Row 0 on bottom
        rect.right  = rect.left + b->square_size;
        rect.bottom = rect.top + b->square_size;
-       
-       piece = b->squares[i][j].piece;
-       color = b->squares[i][j].color;
+
+       piece = b->squares[row][col].piece;
+       color = b->squares[row][col].color;
        if (piece == NONE)
        {
          OffscreenWindowColor(b->square_size, b->square_size, index);

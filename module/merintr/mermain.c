@@ -141,6 +141,7 @@ void InterfaceRedrawModule(HDC hdc)
     InventoryRedraw();
   }
 }
+
 /****************************************************************************/
 Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
@@ -235,6 +236,7 @@ Bool InterfaceAction(int action, void *action_data)
    AREA a;
    room_contents_node *r;
    static int lastRestWarning = 0;
+   ID object_id;
 
    if ((pinfo.resting || cinfo->effects->paralyzed) && 
        (IsMoveAction(action) || IsAttackAction(action)))
@@ -354,6 +356,7 @@ Bool InterfaceAction(int action, void *action_data)
       break;
 
    case A_ENDDRAG:   // action_data is ID of object being dragged
+      object_id = reinterpret_cast<std::intptr_t>(action_data);
       // See if user dragged object to inventory
       InventoryGetArea(&a);
       
@@ -361,23 +364,23 @@ Bool InterfaceAction(int action, void *action_data)
       ScreenToClient(cinfo->hMain, &mouse);
       
       if (!IsInArea(&a, mouse.x, mouse.y))
-	 break;
+        break;
 
-      r = GetRoomObjectById((ID) action_data);
+      r = GetRoomObjectById(object_id);
       if (r == NULL)
-	 break;
+        break;
 
       // If a non-gettable container, try to get contents
       if ((r->obj.flags & OF_CONTAINER) && !(r->obj.flags & OF_GETTABLE))
-	 RequestObjectContents((ID) action_data);
-      else RequestPickup((ID) action_data);
+        RequestObjectContents(object_id);
+      else RequestPickup(object_id);
       
       break;
 
    case A_TABFWD:
-      return InterfaceTab((int) action_data, True);
+      return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), True);
    case A_TABBACK:
-      return InterfaceTab((int) action_data, False);
+      return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), False);
    }
 
    return True;

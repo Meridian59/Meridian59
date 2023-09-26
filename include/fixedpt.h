@@ -25,20 +25,8 @@ typedef long fix;
 
 #define FloatToFix(x) ((fix) ((x) * (1L << FIX_DECIMAL)))
 
-// Ignore lack of return value
-#pragma warning(disable:4035)
-
-/************************************************************************/
-__inline fix FixMul(int x, int y)
-{
-   _asm                         
-   {                           
-      mov eax,x              
-      imul y                 
-      shrd eax,edx,16        
-   }                           
+__inline fix FixMul(int x, int y) {
+  return (fix) (((__int64) x * (__int64) y) >> FIX_DECIMAL);
 }
-
-#pragma warning(default:4035)
 
 #endif /* #ifndef _FIXEDPT_H */

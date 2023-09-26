@@ -295,7 +295,7 @@ INT_PTR CALLBACK ColorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 		UpdateWindow(hSample);
 
 		SelectObject(hdc, GetFont(FONT_TITLES));
-		TextOut(hdc, 0, 0, szAppName, strlen(szAppName));
+		TextOut(hdc, 0, 0, szAppName, (int) strlen(szAppName));
 
 		ReleaseDC(hSample, hdc);
 		break;

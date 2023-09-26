@@ -11,7 +11,7 @@
 #define _BMPAREA_H
 
 void DrawAreaInit(void);
-long CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 void OffsetDrag(HWND hwnd);
 void HotspotDrag(HWND hwnd);
 void DoDraw(HDC hDC1, HWND hWnd);

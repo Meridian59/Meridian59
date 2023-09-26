@@ -74,7 +74,7 @@ OBJS = \
 
 LIBS = \
 	$(OWLOUTDIR)\$(OWLLIBNAME) \
-	zdll.lib \
+	zlib.lib \
 	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
 
 OWLOBJS = \
@@ -131,7 +131,7 @@ OWLOBJS = \
 	$(OWLOUTDIR)\document.obj \
 	$(OWLOUTDIR)\draglist.obj \
 	$(OWLOUTDIR)\drawitem.obj \
-	$(OWLOUTDIR)\dumpstack.obj \
+#	$(OWLOUTDIR)\dumpstack.obj \
 	$(OWLOUTDIR)\edit.obj \
 	$(OWLOUTDIR)\editfile.obj \
 	$(OWLOUTDIR)\editsear.obj \

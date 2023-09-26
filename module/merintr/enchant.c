@@ -43,7 +43,7 @@ static list_type EnchantmentListDestroy(list_type list);
 static Enchantment *EnchantmentDestroy(Enchantment *e);
 static Bool CompareIdEnchantment(void *idnum, void *e);
 static Enchantment *EnchantmentFindByWindow(HWND hwnd);
-static long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
  * EnchantmentsInit:  Called at startup.
@@ -76,7 +76,7 @@ void EnchantmentAdd(BYTE type, object_node *obj)
 			  0, 0, 0, 0, cinfo->hMain, (HMENU) IDC_ENCHANTMENT, hInst, NULL);
    lpfnDefEnchantmentProc = SubclassWindow(e->hwnd, EnchantmentProc);
 
-   TooltipAddWindow(e->hwnd, hInst, (int) LPSTR_TEXTCALLBACK);
+   TooltipAddWindow(e->hwnd, hInst, reinterpret_cast<std::intptr_t>(LPSTR_TEXTCALLBACK));
 
    e->obj  = obj;
    switch (type)
@@ -329,7 +329,7 @@ Enchantment *EnchantmentDestroy(Enchantment *e)
  */
 Bool CompareIdEnchantment(void *idnum, void *e)
 {
-   return GetObjId((ID) idnum) == GetObjId(((Enchantment *) e)->obj->id);
+   return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(((Enchantment *) e)->obj->id);
 }
 /************************************************************************/
 /*
@@ -359,7 +359,7 @@ Enchantment *EnchantmentFindByWindow(HWND hwnd)
 /* 
  * EnchantmentProc:  Subclass enchantment windows.
  */
-long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    MSG msg;
    Enchantment *e;

@@ -170,6 +170,7 @@ INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
       CheckDlgButton(hDlg, IDC_BOUNCE, config.bounce);
       CheckDlgButton(hDlg, IDC_TOOLBAR, config.toolbar);
       CheckDlgButton(hDlg, IDS_LATENCY0, config.lagbox);
+      CheckDlgButton(hDlg, ID_SPINNING_CUBE, config.spinning_cube);
       CheckDlgButton(hDlg, IDC_PROFANE, config.antiprofane);
       CheckDlgButton(hDlg, IDC_DRAWMAP, config.drawmap);
       CheckDlgButton(hDlg, IDC_MAP_ANNOTATIONS, config.map_annotations);
@@ -227,6 +228,8 @@ INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
          temp                 = IsDlgButtonChecked(hDlg, IDS_LATENCY0);
          lagbox_changed = (temp != config.lagbox);
          config.lagbox = temp;
+
+         config.spinning_cube = IsDlgButtonChecked(hDlg, ID_SPINNING_CUBE);
          
          if (IsDlgButtonChecked(hDlg, IDC_MUSIC) != config.play_music)
             UserToggleMusic(config.play_music);

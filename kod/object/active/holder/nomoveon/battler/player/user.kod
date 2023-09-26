@@ -193,7 +193,7 @@ resources:
    user_guildmate_logoff = "~IYour guildmate %s has just departed."
 
    user_safety_on = \
-      "### Your safety is now  ~B~gON~n   You can no longer strike innocents."
+      "### Your safety is now  ~B~lON~n   You can no longer strike innocents."
    user_safety_off = \
       "### Your safety is now  ~B~rOFF~n  Be careful, you are now able to "
       "hurt those around you."   
@@ -2854,10 +2854,12 @@ messages:
 
    ToCliBackgroundOverlay(what = $)
    {
+      local group;
       AddPacket(4,what);
       AddPacket(4,Send(what,@GetIcon));
       AddPacket(4,Send(what,@GetName));
-      Send(what,@SendAnimation);
+      group = Send(what,@GetBackgroundOverlayAnimationGroup);
+      AddPacket(1, ANIMATE_NONE, 2, group);
       AddPacket(2,Send(what,@GetBackgroundOverlayAngle));
       AddPacket(2,Send(what,@GetBackgroundOverlayHeight));
       SendPacket(poSession);

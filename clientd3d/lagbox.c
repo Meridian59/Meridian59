@@ -27,8 +27,17 @@ static char pszLagboxURL[MAX_URL] = "";
 
 extern HPALETTE hPal;
 
+static char szTooltip[80];
+static bool bTracking = false;
+static object_node lagbox;
+static bool latencyDialogActive = false;
+
+static const int updateToolTipEventId = 101;
+static const int updateToolTipInterval = 1000;
+
 /* local function prototypes */
 static LRESULT CALLBACK Lagbox_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 
 /****************************************************************************/
 
@@ -69,17 +78,6 @@ static BYTE s_abyLatencyTranslate[MAXLATENCYMETRICS][2] =
 	(BYTE)XLAT_GRAYTORED,		(BYTE)XLAT_GRAYTORED,
 	(BYTE)XLAT_GRAYTORED,		(BYTE)XLAT_GRAYTOPURPLE,
 	(BYTE)XLAT_GRAYTOPURPLE,	(BYTE)XLAT_GRAYTOPURPLE,
-
-	// Spectral Order (hot-red to cold-violet)
-//	(BYTE)XLAT_GRAYTORED,		(BYTE)XLAT_GRAYTORED,
-//	(BYTE)XLAT_GRAYTORED,		(BYTE)XLAT_GRAYTOORANGE,
-//	(BYTE)XLAT_GRAYTOORANGE,	(BYTE)XLAT_GRAYTOORANGE,
-//	(BYTE)XLAT_GRAYTOGOLD,		(BYTE)XLAT_GRAYTOGOLD,
-//	(BYTE)XLAT_GRAYTOGOLD,		(BYTE)XLAT_GRAYTOBGREEN,
-//	(BYTE)XLAT_GRAYTOBGREEN,	(BYTE)XLAT_GRAYTOBGREEN,
-//	(BYTE)XLAT_GRAYTODBLUE,		(BYTE)XLAT_GRAYTODBLUE,
-//	(BYTE)XLAT_GRAYTODBLUE,		(BYTE)XLAT_GRAYTOPURPLE,
-//	(BYTE)XLAT_GRAYTOPURPLE,	(BYTE)XLAT_GRAYTOPURPLE,
 
 };
 
@@ -243,27 +241,31 @@ void Lagbox_Update(DWORD dwLatency)
 
 void Lagbox_Animate(int dt)
 {
-  // Turned off animation because it's distracting
-	// BOOL bNeedRedraw = AnimateObject(pobjLagbox, dt);
-	// if (bNeedRedraw)
-  //	 InvalidateRect(hwndLagbox, NULL, FALSE);
+	if (config.spinning_cube)
+	{
+		bool bNeedRedraw = true;
+		if (!latencyDialogActive)
+		{
+			// Animate by spinning the latency box.
+			bNeedRedraw = AnimateObject(pobjLagbox, dt);
+		}
+
+		if (bNeedRedraw)
+			InvalidateRect(hwndLagbox, NULL, FALSE);
+	}
 }
 
 /****************************************************************************/
-
-// Lagbox_OnTooltipCallback:  Set the current tooltip text
+// Lagbox_UpdateLatencyText: Set the current tooltip and dialog latency text
 //
-LRESULT Lagbox_OnTooltipCallback(HWND hWnd, TOOLTIPTEXT* pTTT)
+LRESULT Lagbox_UpdateLatencyText()
 {
-	int iMetric;
-	static char szTooltip[80];
+	if (TooltipGetControl() == NULL)
+		return 1;
+
+	int iMetric = Lagbox_FindLatencyMetric(dwLagboxLatency);
 	char szMetric[80];
 	char szFormat[80];
-
-	if (!pTTT)
-		return 0;
-
-	iMetric = Lagbox_FindLatencyMetric(dwLagboxLatency);
 
 	// Format the metric of the latency into a tooltip string.
 	// Example:  "very good connection: approx. 0.073sec latency"
@@ -275,7 +277,18 @@ LRESULT Lagbox_OnTooltipCallback(HWND hWnd, TOOLTIPTEXT* pTTT)
 	sprintf(szMetric, szFormat, dwLagboxLatency);
 	strcat(szTooltip, szMetric);
 
-	strcpy(pTTT->szText, szTooltip);
+	TOOLINFO ti = { 0 };
+	ti.cbSize = sizeof(TOOLINFO);
+	ti.hwnd = hwndLagbox;
+	ti.uId = (UINT_PTR)hwndLagbox;
+	ti.lpszText = (LPSTR)szTooltip;
+
+	SendMessage(TooltipGetControl(), TTM_UPDATETIPTEXT, 0, (LPARAM)&ti);
+
+	if(latencyDialogActive)
+	{
+		SetDialogFixedString(szTooltip);
+	}	
 	
 	return 1;
 }
@@ -284,30 +297,23 @@ LRESULT Lagbox_OnTooltipCallback(HWND hWnd, TOOLTIPTEXT* pTTT)
 //
 void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify)
 {
-	object_node lagbox;
-	TOOLTIPTEXT ttt;
-
 	// Make a temporary copy of the lagbox to view close up.
 	// This allows it to spin freely and not affect the real lagbox.
-	// Unfortunately, this means it won't change colors and speed in
-	// the close-up window.
-	//
+
 	if (!pobjLagbox)
 		return;
-	lagbox = *pobjLagbox;
-	lagbox.animate = &lagbox.normal_animate;
-	lagbox.overlays = &lagbox.normal_overlays;
-	lagbox.flags |= OF_PLAYER | PF_OUTLAW;
 
-	Lagbox_OnTooltipCallback(hWnd, &ttt);
+	latencyDialogActive = true;
 
-	SetDescParams(hWnd, DESC_NOAGE);
-	DisplayDescription(&lagbox,
+	SetDescParams(hWnd, DESC_NONE);
+	DisplayDescription(pobjLagbox,
 		0/*flags*/,
 		pszLagboxDescription, 
-		ttt.szText/*guild*/,
+		szTooltip,
 		pszLagboxURL);
 	SetDescParams(hWnd, 0);
+
+	latencyDialogActive = false;
 }
 
 BOOL Lagbox_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT *lpdis)
@@ -346,6 +352,11 @@ BOOL Lagbox_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT *lpdis)
 
 /****************************************************************************/
 
+VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+	Lagbox_UpdateLatencyText();
+}
+
 LRESULT CALLBACK Lagbox_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	MSG msg;
@@ -360,24 +371,50 @@ LRESULT CALLBACK Lagbox_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_ERASEBKGND:
 		// don't erase the background
 		return TRUE; // yes, we erased the background, honest
-
 	case WM_NOTIFY:
+	{
+		NMHDR* pHdr = (NMHDR*)lParam;
+		if (pHdr && pHdr->code == TTN_NEEDTEXT)
+			Lagbox_UpdateLatencyText();
+		else
+			return CallWindowProc(pfnDefLagboxProc, hWnd, uMsg, wParam, lParam);
+	}
+	break;
+	case WM_MOUSEMOVE:
+		if (!bTracking)
 		{
-			NMHDR* pHdr = (NMHDR*)lParam;
-			if (pHdr && pHdr->code == TTN_NEEDTEXT)
-				return Lagbox_OnTooltipCallback(hWnd, (TOOLTIPTEXT*)(NMHDR*)pHdr);
-			else
-				return CallWindowProc(pfnDefLagboxProc, hWnd, uMsg, wParam, lParam);
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(tme);
+			tme.hwndTrack = hwndLagbox;
+			tme.dwFlags = TME_LEAVE;
+			TrackMouseEvent(&tme);
+
+			SetTimer(hwndLagbox, updateToolTipEventId, updateToolTipInterval,
+				(TIMERPROC)TimerProc);
+
+			bTracking = true;
 		}
 		break;
-
-   case WM_RBUTTONDOWN:
+	case WM_RBUTTONDOWN:
 		Lagbox_Command(hWnd, IDS_LATENCY0, hWnd, 0);
 		return TRUE;
 
-   case WM_LBUTTONDOWN:
-   case WM_LBUTTONUP:
-      return TRUE;
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+		return TRUE;
+
+	case WM_DESTROY:
+		KillTimer(hWnd, updateToolTipEventId);
+		bTracking = false;
+		latencyDialogActive = false;
+	   break;
+	case WM_MOUSELEAVE:
+		if (!latencyDialogActive)
+		{
+			KillTimer(hWnd, updateToolTipEventId);
+			bTracking = false;
+		}
+	   break;
 
 	default:
 		return CallWindowProc(pfnDefLagboxProc, hWnd, uMsg, wParam, lParam);

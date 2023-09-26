@@ -27,7 +27,7 @@ static void UpdateAllyLists(HWND hDlg);
 /*
  * GuildAllyDialogProc:  Dialog procedure for guild alliances dialog.
  */
-BOOL CALLBACK GuildAllyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK GuildAllyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   int flags;
 

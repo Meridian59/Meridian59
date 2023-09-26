@@ -273,7 +273,6 @@ void AdminAddProperty(char *str)
  */
 char *AdminNthToken(char *str, int n)
 {
-   int index;
    char *ptr = str;
 
    do {
@@ -281,7 +280,7 @@ char *AdminNthToken(char *str, int n)
 	 return NULL;
 
       // Skip spaces
-      index = strspn(ptr, whitespace);
+      size_t index = strspn(ptr, whitespace);
       str = ptr + index;
 
       // Move to next token

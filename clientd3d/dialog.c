@@ -96,7 +96,6 @@ static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, cons
 static void GetPageText(char *buffer, DescDialogStruct *info)
 {
 	int page, len;
-	int lenDescription;
 	char *pFullText;
 	char *pStart;
 	char *pEnd;
@@ -109,7 +108,7 @@ static void GetPageText(char *buffer, DescDialogStruct *info)
 	if (!info || !info->description)
 		return;
 	
-	lenDescription = strlen(info->description);
+	size_t lenDescription = strlen(info->description);
 	pFullText = info->description;
 	pStart = info->description;
 	pEnd = strchr(pStart,PAGE_BREAK_CHAR);
@@ -384,10 +383,10 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   SetBkMode(lpdis->hDC, TRANSPARENT);
 		   str = LookupNameRsc(info->obj->name_res);
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
-		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
 		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
-		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;
        }
@@ -634,7 +633,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *extra_string, char *url)
+                        char *fixed_string, char *url)
 {
 	DescDialogStruct info;
 	int template_id;
@@ -650,7 +649,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.flags        = flags;
 	info.name         = LookupNameRsc(obj->name_res);
 	info.description  = description;
-	info.fixed_string = extra_string;
+	info.fixed_string = fixed_string;
 	info.url          = url;
 	
 	// Different dialog for players
@@ -662,8 +661,19 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
 }
-
-/*****************************************************************************/
+/************************************************************************/
+/*
+* SetDialogFixedString:  Update the fixed string for the dialog that appears
+* between the main name and description.
+*/
+void SetDialogFixedString(char* fixed_string)
+{
+	if (hDescDialog != NULL)
+	{
+		SetDlgItemText(hDescDialog, IDC_DESCFIXED, fixed_string);
+		InvalidateRect(GetDlgItem(hDescDialog, IDC_DESCFIXED), NULL, TRUE);
+	}
+}/************************************************************************/
 /*
 * AbortGameDialogs:  Close modal dialogs, for example when we lose the server
 *   connection.

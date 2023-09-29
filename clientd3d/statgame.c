@@ -73,8 +73,7 @@ void GameExit(void)
    // Modules are freed elsewhere.
 
    MusicAbort();
-   SoundClose();
-   MusicClose();
+   SoundAbort();
    
    KeyClose();
    InterfaceClose();

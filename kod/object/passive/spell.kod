@@ -687,7 +687,7 @@ messages:
    }
 
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE,
-               bMade = FALSE)
+               bCheckKarma = TRUE)
    {
       local iLists, oUserObject, iNum, i, oOwner, oVictim, oRoom, iRand,
             oSpell;
@@ -717,7 +717,7 @@ messages:
          Send(who, @MsgSendUser, #message_rsc = vrToo_few_hp);
          return FALSE;
       }
-      
+
       if not bItemCast
       {
          % In a time and position to use the spell?
@@ -795,29 +795,26 @@ messages:
       }
 
       % Moved from CanPayManaVigor, because it doesn't relate to paying vigor 
-      %  or mana!  Spells cast from items should follow Karma restrictions
-
-      % If the spell is being cast by a made item then there are no Karma
-      %  restrictions.
-      if NOT (bMade OR Send(self,@KarmaCheck,#who=who))
+      % or mana!
+      
+      % Spells cast from items should follow Karma restrictions
+      % unless set to bypass them by setting bCheckKarma to FALSE.
+      if bCheckKarma AND NOT Send(self, @KarmaCheck, #who=who)
       {
-         if NOT bItemCast
+         if viSchool = SS_SHALILLE
+         {  
+            Send(who,@MsgSendUser,#message_rsc=spell_not_good_enough,
+                 #parm1=vrName);
+         }
+         else
          {
-            if viSchool = SS_SHALILLE
-            {  
-               Send(who,@MsgSendUser,#message_rsc=spell_not_good_enough,
-                    #parm1=vrName);
-            }
-            else
-            {
-               Send(who,@MsgSendUser,#message_rsc=spell_not_evil_enough,
-                    #parm1=vrName);
-            }
+            Send(who,@MsgSendUser,#message_rsc=spell_not_evil_enough,
+                 #parm1=vrName);
          }
 
          return FALSE;
       }
-      
+
       % Out of range?
       for i in lTargets
       {

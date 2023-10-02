@@ -3656,7 +3656,7 @@ messages:
             if iNumber > 0
             {
                oSplit = Send(what,@Split,#number=iNumber);
-               % Split returns NULL if iNumber is greater than available total
+               % Split returns NULL if iNumber is greater than the available total
                if oSplit = $
                {
                   Send(self,@MsgSendUser,#message_rsc=user_pickup_too_many, 

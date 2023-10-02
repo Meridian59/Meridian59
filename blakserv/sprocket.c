@@ -34,6 +34,7 @@ client_def_table_type client_def_table[] =
 	{ BP_REQ_INVENTORY,        { {0, DONE_PARM} } },
 	{ BP_REQ_TURN,             { {4, TAG_OBJECT}, {2, TAG_INT}, {0, DONE_PARM} } },
 	{ BP_REQ_GET,              { {4, TAG_OBJECT}, {0, DONE_PARM} } },
+	{ BP_REQ_GET_FROM_CONTAINER,	{ {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ BP_REQ_DROP,             { {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ BP_REQ_INVENTORY_MOVE,   { {2, TAG_INT}, {2, TAG_INT}, {0, DONE_PARM} } },
 	{ BP_REQ_PUT,              { {4, TAG_OBJECT}, {4, TAG_OBJECT}, {0, DONE_PARM} } },

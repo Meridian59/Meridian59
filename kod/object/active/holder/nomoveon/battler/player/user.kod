@@ -181,6 +181,7 @@ resources:
       "You can't carry all the items that %s%s has offered you."
 
    user_not_have_number = "You don't have that amount of %s to drop."
+   user_pickup_too_many = "You can't find that amount of %s to pick up."
    user_cant_deal_number = "You can't do anything with %i items."
    user_cant_attack_non_battler = "You can't attack %s%s."
    user_no_say_guild = \
@@ -962,7 +963,7 @@ messages:
       if liClient_cmd = BP_REQ_GET
       {
          oWhat = Nth(client_msg,2);
-         Send(self,@UserGet,#what=oWhat,#number=$);
+         Send(self,@UserGet,#what=oWhat);
          
          return;
       }
@@ -3645,7 +3646,7 @@ messages:
          {
             iCan_hold = Send(self,@GetNumberCanHold,#what=what);
             % iCan_hold of $ intended to signal infinite capacity
-            % Therefor set iCan_hold to number of items requested
+            % Therefore set iCan_hold to number of items requested
             if iCan_hold = $
             {
                iCan_hold = number;
@@ -3655,6 +3656,14 @@ messages:
             if iNumber > 0
             {
                oSplit = Send(what,@Split,#number=iNumber);
+               % Split returns NULL if iNumber is greater than available total
+               if oSplit = $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=user_pickup_too_many, 
+                     #parm1=Send(what,@GetName));
+                 
+                  return;
+               }
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
                   if iCan_hold < number

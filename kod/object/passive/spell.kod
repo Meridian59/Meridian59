@@ -795,8 +795,10 @@ messages:
       }
 
       % Moved from CanPayManaVigor, because it doesn't relate to paying vigor 
-      % or mana!  Spells cast from items should follow Karma restrictions
-      % unless set to bypass them.
+      % or mana!
+      
+      % Spells cast from items should follow Karma restrictions
+      % unless set to bypass them by setting bCheckKarma to FALSE.
       if bCheckKarma AND NOT Send(self, @KarmaCheck, #who=who)
       {
          if viSchool = SS_SHALILLE

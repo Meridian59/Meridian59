@@ -194,7 +194,7 @@ messages:
    
    CastSpell(what = $, apply_on = $)
    "Casts the spell set by the spell object, returning TRUE\n"
-   "If successful, or FALSE if the spell failed for whatever reason."
+   "if successful, or FALSE if the spell failed for whatever reason."
    {
       local oSpell,iSpellPower,iRand,iInt,lTargets;
 

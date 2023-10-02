@@ -95,6 +95,7 @@ messages:
       % If there's no target by now, something weird is going on.
       if target = $
       {
+         Debug("No valid target found for purify.");
          return FALSE;
       }  
 

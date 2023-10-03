@@ -56,6 +56,7 @@ static char INIObjectCacheMin[] = "ObjectCacheMin";
 static char INIGridCacheMin[] = "GridCacheMin";
 static char INIMusicVolume[]  = "MusicVolume";
 static char INISoundVolume[]  = "SoundVolume";
+static char INIAmbientVolume[] = "AmbientVolume";
 
 static char interface_section[]= "Interface";
 static char INIDrawMap[]     = "DrawMap";
@@ -191,6 +192,7 @@ void ConfigLoad(void)
    config.play_sound    = GetConfigInt(misc_section, INIPlaySound, True, ini_file);
    config.music_volume    = GetConfigInt(misc_section, INIMusicVolume, 100, ini_file);
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
+   config.ambient_volume    = GetConfigInt(misc_section, INIAmbientVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
 
@@ -312,6 +314,7 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIPlaySound, config.play_sound, ini_file);
    WriteConfigInt(misc_section, INIMusicVolume, config.music_volume, ini_file);
    WriteConfigInt(misc_section, INISoundVolume, config.sound_volume, ini_file);
+   WriteConfigInt(misc_section, INIAmbientVolume, config.ambient_volume, ini_file);
    WriteConfigInt(misc_section, INIPlayLoopSounds, config.play_loop_sounds, ini_file);
    WriteConfigInt(misc_section, INIPlayRandomSounds, config.play_random_sounds, ini_file);
    WriteConfigInt(misc_section, INITimeout, config.timeout, ini_file);

@@ -14,9 +14,7 @@ constants:
 
    include blakston.khd
 
-   SPELL_CHANCE = 12
    SPELL_RANGE_SQUARED = 666
-   MANA_REGEN_TIME = 1000
 
    ANIM_CAST = 2     %% cast spell animation.     
 
@@ -79,9 +77,8 @@ classvars:
    viTreasure_type = TID_AVAR_SHAMAN
    viAttack_type = ATCK_WEAP_PIERCE
    viAttack_spell = ATCK_SPELL_QUAKE
-   viSpeed = SPEED_SLOW
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
-   viLevel = 100
+   viLevel = 130
    viDifficulty = 8
    viKarma = 80
 
@@ -96,9 +93,18 @@ properties:
    vrDesc = avarshaman_desc_rsc
 
    piAnimation = ANIM_NONE
-   piMana = 10
    ptMana = $
+
+   % These default values should be changed based on the shaman's clan
+   piMana = 10
+   piMaxMana = 10
+   viSpeed = SPEED_SLOW
+   piManaRegenTime = 1000
+   piSpellChance = 12
    piColor_Translation = PT_PURPLETORED
+
+   % Format for shaman spell lists is: [[Spell ID, Weight, Mana Cost], ...]
+   plSpells = $
 
 messages:
 
@@ -133,11 +139,15 @@ messages:
    SetClan(clan = AVARCLAN_PROMAGIC)
    {
       piColor_translation = clan;
-
       if clan = AVARCLAN_ANTIMAGIC
       {
          vrName = avarshaman_nomagic_name;
          vrDesc = avarshaman_nomagic_desc;
+         plSpells = [[SID_DEMENT, 40, 3], [SID_FORGET, 30, 4], [SID_DAZZLE, 15, 6], [SID_ANTIMAGIC_AURA, 10, 10]];
+         viSpeed = SPEED_AVERAGE;
+         piManaRegenTime = 1500;
+         piSpelLChance = 12;
+         piMaxMana = 10;
       }
       else
       {
@@ -145,13 +155,24 @@ messages:
          {
             vrName = avarshaman_bone_name;
             vrDesc = avarshaman_bone_desc;
+            plSpells = [[SID_HOLD, 4, 4], [SID_APPARITION, 3, 3], [SID_DARKNESS, 2, 2], [SID_SANDSTORM, 2, 4]];
+            viSpeed = SPEED_SLOW;
+            piManaRegenTime = 1000;
+            piSpelLChance = 9;
+            piMaxMana = 12;
          }
          else
          {
             vrName = avarshaman_name_rsc;
             vrDesc = avarshaman_desc_rsc;
+            plSpells = [[SID_FIREBALL, 5, 2], [SID_LIGHTNING_BOLT, 4, 6], [SID_HEAT, 2, 4], [SID_EARTHQUAKE, 1, 10]];
+            viSpeed = SPEED_SLOW;
+            piManaRegenTime = 500;
+            piSpelLChance = 6;
+            piMaxMana = 20;
          }
       }
+      piMana = piMaxMana;
 
       if poOwner <> $
       {
@@ -173,6 +194,10 @@ messages:
          if random (1,5) > 1
          {
             send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
+         }
+         else
+         {
+            Send(self, @SetClan, #clan=0);
          }
 
          return;
@@ -198,14 +223,14 @@ messages:
    {
       piMana = piMana + 1;
 
-      if piMana >=10
+      if piMana >= piMaxMana
       {
          ptMana = $;
 
          return;
       }
 
-      ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+      ptMana = CreateTimer(self, @ManaTimer, piManaRegenTime);
 
       return;
    }
@@ -279,49 +304,46 @@ messages:
 
    MonsterCastSpell()
    {
-      local iSpell, iBase, oSpell, iManaCost, iRandom, lTargets;
+      local iSpell, iBase, oSpell, iManaCost, iRandom, lTargets, iTotalWeight, iWeight, lSpell;
 
-      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+      iBase = Send(self, @AdjustedChanceBase, #base=piSpelLChance);
       if random(1,iBase) <> 1
       {
          return FALSE;
       }
 
-      iRandom = random(1,100);
-      
-      if  iRandom < 40
+      if Length(plSpells) < 1
       {
-         iSpell = SID_HOLD;
-         iManaCost = 5;
+         return FALSE;
       }
-      else
+
+      iTotalWeight = 0;
+      for lSpell in plSpells
       {
-         if iRandom < 70
+         iTotalWeight = iTotalWeight + Nth(lSpell, 2);
+      }
+      iSpell = $;
+      for lSpell in plSpells
+      {
+         iRandom = Random(1, iTotalWeight);
+         iWeight = Nth(lSpell, 2);
+         iTotalWeight = iTotalWeight - iWeight;
+         if (iRandom <= iWeight)
          {
-            iSpell = SID_MANA_BOMB;
-            iManaCost = 6;
+            iSpell = First(lSpell);
+            break;
          }
-         else
-         {
-            if iRandom < 85
-            {
-               iSpell = SID_SAND_STORM;
-               iManaCost = 4;
-            }
-            else
-            {
-               if iRandom < 90      
-               {
-                  iSpell = SID_SHATTER;
-                  iManaCost = 10;
-               }
-               else
-               {   
-                  iSpell = SID_EARTHQUAKE;
-                  iManaCost = 10;
-               }
-            }
-         }
+      }
+      if iSpell = $
+      {
+         Debug("Malformed spell list: ", plSpells);
+         return FALSE;
+      }
+      iManaCost = Nth(lSpell, 3);
+      if iManaCost = $
+      {
+         Debug("Innvalid spell cost for spell ID: ", iSpell);
+         return FALSE;
       }
 
       if piMana < iManaCost
@@ -331,9 +353,9 @@ messages:
 
       piMana = piMana - iManaCost;
 
-      if piMana < 10
+      if piMana < piMaxMana
       {
-         ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+         ptMana = CreateTimer(self, @ManaTimer, piManaRegenTime);
       }
 
       piAnimation = ANIM_CAST;

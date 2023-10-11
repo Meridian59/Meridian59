@@ -373,7 +373,8 @@ Bool LoadGameListNodes(int file_version)
 
 Bool LoadGameTimer(int file_version)
 {
-	int timer_id,object_id,milliseconds32,milliseconds64;
+	int timer_id,object_id,milliseconds32;
+  INT64 milliseconds64;
 	char buf[100];
 	
 	LoadGameReadInt(&timer_id);

@@ -181,6 +181,7 @@ resources:
       "You can't carry all the items that %s%s has offered you."
 
    user_not_have_number = "You don't have that amount of %s to drop."
+   user_pickup_too_many = "You can't find that amount of %s to pick up."
    user_cant_deal_number = "You can't do anything with %i items."
    user_cant_attack_non_battler = "You can't attack %s%s."
    user_no_say_guild = \
@@ -964,6 +965,14 @@ messages:
          oWhat = Nth(client_msg,2);
          Send(self,@UserGet,#what=oWhat);
          
+         return;
+      }
+
+      if liClient_cmd = BP_REQ_GET_FROM_CONTAINER
+      {
+         oWhat = Nth(client_msg,2);
+         Send(self,@UserGet,#what=oWhat,#number=number_stuff);
+
          return;
       }
       
@@ -2854,10 +2863,12 @@ messages:
 
    ToCliBackgroundOverlay(what = $)
    {
+      local group;
       AddPacket(4,what);
       AddPacket(4,Send(what,@GetIcon));
       AddPacket(4,Send(what,@GetName));
-      Send(what,@SendAnimation);
+      group = Send(what,@GetBackgroundOverlayAnimationGroup);
+      AddPacket(1, ANIMATE_NONE, 2, group);
       AddPacket(2,Send(what,@GetBackgroundOverlayAngle));
       AddPacket(2,Send(what,@GetBackgroundOverlayHeight));
       SendPacket(poSession);
@@ -3537,10 +3548,12 @@ messages:
       return;
    }
 
-   UserGet(what = $)
+   UserGet(what = $, number = $)
+   "Try to pick up one item (what) and for number items optionally specify"
+   "an amount of that item (number)."
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, oSplit, oCorpse;
+            iCan_hold, iNumber, oSplit, oCorpse;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3627,26 +3640,46 @@ messages:
               
          return;
       }
-        
-      if NOT Send(self,@ReqNewHold,#what=what) 
+      % Either we pass in a number or we didn't but can't hold it all
+      if number <> $
+         OR NOT Send(self,@ReqNewHold,#what=what)
       {
          if IsClass(what,&NumberItem)
          {
             iCan_hold = Send(self,@GetNumberCanHold,#what=what);
-            if iCan_hold > 0
+            % iCan_hold of $ intended to signal infinite capacity
+            % Therefore set iCan_hold to number of items requested
+            if iCan_hold = $
             {
-               oSplit = Send(what,@Split,#number=iCan_hold);
+               iCan_hold = number;
+            }
+            % Get minimum of number or iCan_hold for split
+            iNumber = bound(iCan_hold,$,number);
+            if iNumber > 0
+            {
+               oSplit = Send(what,@Split,#number=iNumber);
+               % Split returns NULL if iNumber is greater than the available total
+               if oSplit = $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=user_pickup_too_many, 
+                     #parm1=Send(what,@GetName));
+                 
+                  return;
+               }
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  Send(self,@MsgSendUser,#message_rsc=user_got_some,
-                       #parm1=Send(what,@GetName));
+                  if iCan_hold < number
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=user_got_some,
+                        #parm1=Send(what,@GetName));
+                  }
                   Send(self,@NewHold,#what=oSplit);
                   
                   return;
                }
                else
                {
-                  Send(what,@AddNumber,#number=iCan_hold);
+                  Send(what,@AddNumber,#number=iNumber);
                   Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
                        #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                   Send(self, @WaveSendUser, #what=self, 
@@ -3665,6 +3698,7 @@ messages:
                return;
             }
          }
+         % Not a number item
          else
          {
             %  KLUDGE!!  -Asif

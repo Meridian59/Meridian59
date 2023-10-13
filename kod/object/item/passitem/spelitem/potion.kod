@@ -105,15 +105,22 @@ messages:
 
       propagate;
    }
+
+   OnSuccessfulApply(what=$, apply_on=$)
+   {
+
+      if IsClass(apply_on, &User) 
+      {
+         Send(apply_on, @WaveSendUser, #wave_rsc=Potion_gulp_sound);
+      }
+      Send(apply_on, @EatSomething, #nutrition=0, #filling=viFilling);
+
+      propagate;
+   }
    
    NewApplied(what = $,apply_on = $)
    {
       local oSpell;
-
-      if isClass(apply_on,&User) 
-      {
-         send(apply_on,@WaveSendUser,#wave_rsc=Potion_gulp_sound);
-      }
 
       if pbBad
       {
@@ -135,12 +142,12 @@ messages:
                  #duration=(POISON_DURATION*Random(8,12)/10));
          }
 
-         send(self,@Delete);
+         % Even though the desired effect didn't happen, we still technically
+         % applied the potion to the user, so do the follow-up.
+         Send(self, @OnSuccessfulApply, #what=what, #apply_on=apply_on);
 
          return;
       }
-
-      Send(apply_on,@EatSomething,#nutrition=0,#filling=viFilling);
 
       propagate;
    }

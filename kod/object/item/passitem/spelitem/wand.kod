@@ -27,6 +27,13 @@ resources:
    Wand_target_gone = "You carefully aim your wand at %s%s, but you suddenly realize your target is gone."
    Wand_fails = "You point your wand but nothing happens."
 
+   Wand_condition_exc = " is brimming with intense power."
+   Wand_condition_exc_mended = " is brimming with somewhat diminished power."
+   Wand_condition_good = " shows minimal wear and is still quite potent."
+   Wand_condition_med = " is starting to lose its luster."
+   Wand_condition_poor = " is charred at the end and nearly expended."
+   Wand_condition_broken = " is now an unusable, blackened mess."
+
 classvars:
 
    vrLabelName = Wand_label_name_rsc
@@ -44,6 +51,14 @@ classvars:
 
    viHits_init_min = 4
    viHits_init_max = 9
+
+   vbShow_condition = TRUE
+   vrCondition_exc = Wand_condition_exc
+   vrCondition_exc_mended = Wand_condition_exc_mended
+   vrCondition_good = Wand_condition_good
+   vrCondition_med = Wand_condition_med
+   vrCondition_poor = Wand_condition_poor
+   vrCondition_broken = Wand_condition_broken
 
 properties:
 

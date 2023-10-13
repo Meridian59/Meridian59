@@ -2661,6 +2661,8 @@
    OO_RR_PLANT2 = 153
    OO_RR_TABLE = 154
    OO_RR_BASIN = 155
+   OO_SIGNPOST = 156
+   OO_NEWBSIGN = 157
 
    %%% Shrines
 

@@ -116,6 +116,7 @@ typedef struct {
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
+   int ambient_volume;         // 0 - 100 (ambient sounds are looping sounds)
 
    int text_area_size;        /* As a percentage of the client height */
 

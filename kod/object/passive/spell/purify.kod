@@ -79,19 +79,25 @@ messages:
    {
       local target, i, lEnchantment, bHasEnchantment, oSpell;
 
-      % If it's only self cast, spoof self as target for following code
+      % If castable on others, there can be only one target.
+      if pbCan_Cast_on_others AND Length(lTargets) = 1
+      {
+         target = First(lTargets);
+      }
+
+      % If it's only self cast, spoof self as target for the
+      % rest of the checks.
       if NOT pbCan_Cast_on_others
       {
-         lTargets = Cons(who, lTargets);
+         target = who;
       }
       
-      % Can cast spell if the 1 target item is a user
-      if Length(lTargets) <> 1
+      % If there's no target by now, something weird is going on.
+      if target = $
       {
+         Debug("No valid target found for purify.");
          return FALSE;
       }  
-
-      target = First(lTargets);
 
       if not IsClass(target, &User)
       {

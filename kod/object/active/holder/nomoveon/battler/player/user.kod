@@ -7839,7 +7839,7 @@ messages:
             j = 1;
             while j <= Length(stuff)
             {
-               if (Nth(stuff,j+1) = $)
+               if (Nth(stuff,j+1) = $) OR Nth(stuff, j + 1) = RentableRoom_expiry_warning
 	       {
 	          Debug("found bad mail",self);
 		  plNew_mail = DelListElem(plNew_mail, lNew_mail);

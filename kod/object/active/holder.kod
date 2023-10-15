@@ -284,11 +284,12 @@ messages:
    GetNumberCanHold(what = $)
    {
       local iBulk_can_hold, iWeight_can_hold, iUnit_bulk, iUnit_weight;
-
+      debug("Shilling Message Go Here?")
       if NOT IsClass(what,&NumberItem)
          OR send(self,@GetBulkMax) = $
          OR send(self,@GetWeightMax) = $
       {
+         debug("Returning NULL")
          return $;
       }
       return Send(what,@GetNumberCanHold,

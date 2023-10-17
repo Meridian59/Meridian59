@@ -3650,6 +3650,7 @@ messages:
             % iCan_hold of $ intended to signal infinite capacity
             % Therefore set iCan_hold to number of items requested
             if iCan_hold = $
+               OR iCan_hold = INFINITE_COUNT
             {
                iCan_hold = number;
             }

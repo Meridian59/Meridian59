@@ -6574,22 +6574,6 @@ messages:
       }
       return total;
    }
-
-   CleanAllBadMail()
-   "Repeatedly calls CleanBadMail on all users until no bad mails remain."
-   {
-      local i, total, grandTotal;
-
-      total = Send(self, @CleanBadMail);
-      grandTotal = total;
-      while total > 0
-      {
-         total = Send(self, @CleanBadMail);
-         grandTotal = grandTotal + total;
-      }
-
-      return grandTotal;
-   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

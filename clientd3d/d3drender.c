@@ -7,6 +7,7 @@
 // Meridian is a registered trademark.
 #include "client.h"
 #include <unordered_map>
+#include <chrono>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
 #define	TEX_CACHE_MAX_WORLD		8000000
@@ -19,6 +20,9 @@
 extern int main_viewport_width;
 extern int main_viewport_height;
 
+typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
+static auto& chrono_time_now = std::chrono::steady_clock::now;
+
 // Define field of views with magic numbers for tuning
 inline float FovHorizontal(long width)
 {
@@ -29,11 +33,33 @@ inline float FovVertical(long height)
 	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
 
-// Calculates the intensity of an animation based on the frame number.
-// This can be used to cycle in a pattern e.g. for invisibility.
-float animationIntensity(int frameNumber)
+// Get the number of milliseconds lapsed since the epoch.
+int getMillisecondsLapsed()
 {
-	return (frameNumber & 3) / 256.0f;
+	auto time_point = chrono_time_now();
+	auto duration_since_epoch = time_point.time_since_epoch();
+	return std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch).count();
+}
+
+// Calculates the intensity of an animation based on the time.
+// This can be used to cycle in a pattern e.g. for invisibility.
+float animationIntensity(int milliseconds)
+{	
+	return (milliseconds & 3) / 256.0f;
+}
+
+// Calculates the intensity of an animation based on the time.
+void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
+{
+	int milliseconds = getMillisecondsLapsed();
+	pChunk->st1[0].s -= animationIntensity(milliseconds);
+	pChunk->st1[0].t -= animationIntensity(milliseconds);
+	pChunk->st1[1].s -= animationIntensity(milliseconds);
+	pChunk->st1[1].t += animationIntensity(milliseconds);
+	pChunk->st1[2].s += animationIntensity(milliseconds);
+	pChunk->st1[2].t += animationIntensity(milliseconds);
+	pChunk->st1[3].s += animationIntensity(milliseconds);
+	pChunk->st1[3].t -= animationIntensity(milliseconds);
 }
 
 #define Z_RANGE					(200000.0f)
@@ -7166,14 +7192,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-				pChunk->st1[0].s -= animationIntensity(gFrame);
-				pChunk->st1[0].t -= animationIntensity(gFrame);
-				pChunk->st1[1].s -= animationIntensity(gFrame);
-				pChunk->st1[1].t += animationIntensity(gFrame);
-				pChunk->st1[2].s += animationIntensity(gFrame);
-				pChunk->st1[2].t += animationIntensity(gFrame);
-				pChunk->st1[3].s += animationIntensity(gFrame);
-				pChunk->st1[3].t -= animationIntensity(gFrame);
+				updateRenderChunkAnimationIntensity(pChunk);
 			}
 
 			if (
@@ -7822,14 +7841,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-							pChunk->st1[0].s -= animationIntensity(gFrame);
-							pChunk->st1[0].t -= animationIntensity(gFrame);
-							pChunk->st1[1].s -= animationIntensity(gFrame);
-							pChunk->st1[1].t += animationIntensity(gFrame);
-							pChunk->st1[2].s += animationIntensity(gFrame);
-							pChunk->st1[2].t += animationIntensity(gFrame);
-							pChunk->st1[3].s += animationIntensity(gFrame);
-							pChunk->st1[3].t -= animationIntensity(gFrame);
+							updateRenderChunkAnimationIntensity(pChunk);
 						}
 
 						if (
@@ -8276,14 +8288,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->st0[3].t = oneOverH;
 		}
 
-		pChunk->st1[0].s -= animationIntensity(gFrame);
-		pChunk->st1[0].t -= animationIntensity(gFrame);
-		pChunk->st1[1].s -= animationIntensity(gFrame);
-		pChunk->st1[1].t += animationIntensity(gFrame);
-		pChunk->st1[2].s += animationIntensity(gFrame);
-		pChunk->st1[2].t += animationIntensity(gFrame);
-		pChunk->st1[3].s += animationIntensity(gFrame);
-		pChunk->st1[3].t -= animationIntensity(gFrame);
+		updateRenderChunkAnimationIntensity(pChunk);
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -8509,14 +8514,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[3].t = oneOverH;
 			}
 
-			pChunk->st1[0].s -= animationIntensity(gFrame);
-			pChunk->st1[0].t -= animationIntensity(gFrame);
-			pChunk->st1[1].s -= animationIntensity(gFrame);
-			pChunk->st1[1].t += animationIntensity(gFrame);
-			pChunk->st1[2].s += animationIntensity(gFrame);
-			pChunk->st1[2].t += animationIntensity(gFrame);
-			pChunk->st1[3].s += animationIntensity(gFrame);
-			pChunk->st1[3].t -= animationIntensity(gFrame);
+			updateRenderChunkAnimationIntensity(pChunk);
 
 			pChunk->indices[0] = 1;
 			pChunk->indices[1] = 2;

@@ -20,9 +20,6 @@
 extern int main_viewport_width;
 extern int main_viewport_height;
 
-typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
-static auto& chrono_time_now = std::chrono::steady_clock::now;
-
 // Define field of views with magic numbers for tuning
 inline float FovHorizontal(long width)
 {
@@ -33,33 +30,21 @@ inline float FovVertical(long height)
 	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
 
-// Get the number of milliseconds lapsed since the epoch.
-int getMillisecondsLapsed()
+// Update the pChunks animation values as a function of time.
+static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 {
-	auto time_point = chrono_time_now();
-	auto duration_since_epoch = time_point.time_since_epoch();
-	return std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch).count();
-}
+	auto duration_since_epoch = std::chrono::steady_clock::now().time_since_epoch();
+	int milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch).count();
+	float animationIntensity = (milliseconds & 3) / 256.0f;
 
-// Calculates the intensity of an animation based on the time.
-// This can be used to cycle in a pattern e.g. for invisibility.
-float animationIntensity(int milliseconds)
-{	
-	return (milliseconds & 3) / 256.0f;
-}
-
-// Calculates the intensity of an animation based on the time.
-void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
-{
-	int milliseconds = getMillisecondsLapsed();
-	pChunk->st1[0].s -= animationIntensity(milliseconds);
-	pChunk->st1[0].t -= animationIntensity(milliseconds);
-	pChunk->st1[1].s -= animationIntensity(milliseconds);
-	pChunk->st1[1].t += animationIntensity(milliseconds);
-	pChunk->st1[2].s += animationIntensity(milliseconds);
-	pChunk->st1[2].t += animationIntensity(milliseconds);
-	pChunk->st1[3].s += animationIntensity(milliseconds);
-	pChunk->st1[3].t -= animationIntensity(milliseconds);
+	pChunk->st1[0].s -= animationIntensity;
+	pChunk->st1[0].t -= animationIntensity;
+	pChunk->st1[1].s -= animationIntensity;
+	pChunk->st1[1].t += animationIntensity;
+	pChunk->st1[2].s += animationIntensity;
+	pChunk->st1[2].t += animationIntensity;
+	pChunk->st1[3].s += animationIntensity;
+	pChunk->st1[3].t -= animationIntensity;
 }
 
 #define Z_RANGE					(200000.0f)

@@ -23,7 +23,7 @@ typedef struct {
 } DebugLine;
 
 static list_type debug_lines;   // list of DebugLine structures
-int outfile; /* File handle of output file */
+FILE *outfile; /* File handle of output file */
 static list_type loop_stack;    /* Info for all current (possibly nested) loops */
 static loop_type current_loop;  /* Info for current loop */
 
@@ -118,7 +118,7 @@ void codegen_string_table(void)
    for (i=0; i < st.num_strings; i++)
    {
       str = (char *) (l->data);
-      write(outfile, str, (int) strlen(str));
+      fwrite(str, (int) strlen(str), 1, outfile);
       OutputByte(outfile, 0);    // null terminate
       l = l->next;
    }
@@ -147,7 +147,7 @@ void codegen_debug_info(void)
  */
 void codegen_filename(char *filename)
 {
-   write(outfile, filename, (int) strlen(filename));
+   fwrite(filename, (int) strlen(filename), 1, outfile);
    OutputByte(outfile, 0);    // null terminate
 }
 /************************************************************************/
@@ -862,9 +862,9 @@ void codegen(char *kod_fname, char *bof_fname)
    codegen_ok = True;
    debug_lines = NULL;
 
-   outfile = open(bof_fname, O_TRUNC | O_CREAT | O_RDWR | O_BINARY, S_IWRITE | S_IREAD);
+   outfile = fopen(bof_fname, "w+b");
 
-   if (outfile == -1)
+   if (outfile == nullptr)
    {
       simple_error("Unable to open bof file %s!", bof_fname);
       return;
@@ -917,7 +917,7 @@ void codegen(char *kod_fname, char *bof_fname)
       codegen_filename(kod_fname);
    }
 
-   close(outfile);
+   fclose(outfile);
 
    /* If code generation failed, delete partial bof file */
    if (!codegen_ok)

@@ -13,7 +13,7 @@
 
 // file opened in codegen.c -- ugly that it has the same name as a parameter
 // to many functions in this file.
-extern int outfile;
+extern FILE *outfile;
 
 /************************************************************************/
 /* 
@@ -33,25 +33,25 @@ void codegen_error(const char *fmt, ...)
    codegen_ok = False;
 }
 /************************************************************************/
-void OutputOpcode(int outfile, opcode_type opcode)
+void OutputOpcode(FILE *outfile, opcode_type opcode)
 {
    BYTE datum;
 
    /* Write out a 1 byte opcode--need to memcpy since opcode is bitfield structure */
    memcpy(&datum, &opcode, 1);
-   write(outfile, &datum, 1);
+   fwrite(&datum, 1, 1, outfile);
 }
 /************************************************************************/
-void OutputByte(int outfile, BYTE datum)
+void OutputByte(FILE *outfile, BYTE datum)
 {
    /* Write out a 1 byte # */
-   write(outfile, &datum, sizeof(datum));
+   fwrite(&datum, sizeof(datum), 1, outfile);
 }
 /************************************************************************/
-void OutputInt(int outfile, int datum)
+void OutputInt(FILE *outfile, int datum)
 {
    /* Write out a 4 byte # */
-   write(outfile, &datum, sizeof(datum)); 
+   fwrite(&datum, sizeof(datum), 1, outfile); 
 }
 /************************************************************************/
 /*
@@ -61,7 +61,7 @@ void OutputInt(int outfile, int datum)
  *    source byte is actually one byte into the instruction (right after
  *    the opcode).
  */  
-void OutputGotoOffset(int outfile, int source, int destination)
+void OutputGotoOffset(FILE *outfile, int source, int destination)
 {
    OutputInt(outfile, destination - source + 1);
 }
@@ -127,17 +127,17 @@ int const_to_int(const_type c)
  *   tag bits to the beginning of the number.  The tag bits indicate the
  *   type of the constant, and are given in bkod.h.
  */
-void OutputConstant(int outfile, const_type c)
+void OutputConstant(FILE *outfile, const_type c)
 {
    int outnum = const_to_int(c);
-   write(outfile, &outnum, sizeof(outnum));
+   fwrite(&outnum, sizeof(outnum), 1, outfile);
 }
 /************************************************************************/
 /*
  * OutputBaseExpression:  Given a base expression, first write out 1 byte
  *    for its type, and then 4 bytes for its value
  */
-void OutputBaseExpression(int outfile, expr_type expr)
+void OutputBaseExpression(FILE *outfile, expr_type expr)
 {
    id_type id;
 
@@ -180,7 +180,7 @@ void OutputBaseExpression(int outfile, expr_type expr)
  *   the offset required to jump to "destination".  Then return to 
  *   "destination" in the file.
  */
-void BackpatchGoto(int outfile, int source, int destination)
+void BackpatchGoto(FILE *outfile, int source, int destination)
 {
    FileGoto(outfile, source);
    OutputGotoOffset(outfile, source, destination);

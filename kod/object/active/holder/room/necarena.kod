@@ -313,22 +313,6 @@ messages:
       return FALSE;
    }
 
-   GetWatcher()
-   {
-      local i, oEachObj;
-
-      for i in plActive
-      {
-         oEachObj = Send(self,@HolderExtractObject,#data=i);
-         if isClass(oEachObj,&Goad)
-         {
-            return oEachObj;
-         }                  
-      }
-      
-      return $;
-   }
-
    Teleport(what=$,goinplay=FALSE,outofplay=FALSE)  
    {
       local row, col, angle, rand, i;
@@ -678,7 +662,18 @@ messages:
 
    GetWatcher()
    {
-      return poWatcher;
+      local i, oEachObj;
+
+      for i in plActive
+      {
+         oEachObj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(oEachObj,&Goad)
+         {
+            return oEachObj;
+         }                  
+      }
+      
+      return $;
    }
 
    CheckLava(flag = TRUE)

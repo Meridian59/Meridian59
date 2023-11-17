@@ -1202,26 +1202,12 @@ messages:
       {
          oWatcher = Send(self,@GetWatcher);
 
-         % if a fight isnt in session, attack fails.
-         if NOT Send(oWatcher,@FightInSession)
+         % The watcher decides if the attack moves forward
+         if oWatcher <> $ AND NOT Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim)
          {
             return FALSE;
          }
 
-         % if the afflicted person is not a combatant, attack fails.
-         if IsClass(victim,&Player)
-            AND NOT Send(oWatcher,@IsCombatant,#who=victim)
-         {
-            return FALSE;
-         }
-
-         % if the caster is not a combatant, attack fails.
-         if NOT Send(oWatcher,@IsCombatant,#who=what)
-         {
-            return FALSE;
-         }
-
-         % Anything else is legal in the Arena.
          return TRUE;
       }
       

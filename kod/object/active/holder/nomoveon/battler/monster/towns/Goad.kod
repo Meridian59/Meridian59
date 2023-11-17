@@ -309,8 +309,10 @@ messages:
 
     FightInSession()
     {
+      debug("CheckForFightInSession.");
        if ptFight <> $
        { return TRUE; }
+       debug("returned false for some reason.")
        return FALSE;
     }
 
@@ -1142,7 +1144,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       %% targetless spells: heat, earthquake, umbrella and mana bomb
       %% return true as long as a fight is on, and 
       if victim = $

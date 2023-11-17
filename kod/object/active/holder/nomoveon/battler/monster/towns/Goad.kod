@@ -1137,6 +1137,12 @@ messages:
          propagate;
       }
 
+      % if the attacker is not a combatant, attack fails.
+      if NOT Send(self,@IsCombatant,#who=what)
+      {
+         return FALSE;
+      }
+      
       %% targetless spells: heat, earthquake, umbrella and mana bomb
       %% return true as long as a fight is on, and 
       if victim = $

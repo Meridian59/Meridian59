@@ -510,6 +510,7 @@ messages:
 
    EndFight(lCombatants = $)
    {
+      debug("the fight is ending.");
       if plGoToShrine <> $
       {
          ptGoToShrineTimer = CreateTimer(self,@GoToShrineTimer,SHRINE_DELAY);
@@ -678,7 +679,7 @@ messages:
 
    CheckLava(flag = TRUE)
    {
-      local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands;
+      local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
 
       For i in plActive
       {
@@ -732,7 +733,8 @@ messages:
 
       if flag
       {
-         ptCheckLavaTimer = CreateTimer(self,@Checklava,(6*LAVA_TIMER));
+         debug("CheckLava_CreatingNewTimer.");
+         ptCheckLavaTimer = CreateTimer(self,@Checklava,(10*LAVA_TIMER));
       }
 
       return;
@@ -741,6 +743,7 @@ messages:
    CookVictim(what = $)
    {
       % Message: You die!!!!
+      debug("You are getting cooked.");
       Send(what,@killed,#what=self);
       Send(self,@somethingkilled,#what=self,#victim=what);
 

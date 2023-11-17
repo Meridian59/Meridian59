@@ -309,10 +309,8 @@ messages:
 
     FightInSession()
     {
-      debug("CheckForFightInSession.");
        if ptFight <> $
        { return TRUE; }
-       debug("returned false for some reason.");
        return FALSE;
     }
 

@@ -30,8 +30,9 @@ resources:
       "Your bronze room key dissolves into a strange metallic liquid, then "
       "evaporates into an orange mist and is gone."
    RoomKeySecureCopy_no_drop_not_yours = \
-      "You can't just carelessly discard %s's room key like that!  You must return "
+      "You can't just carelessly discard %q's room key like that!  You must return "
       "it to either them or the innkeeper."
+
 classvars:
 
    vrName = RoomKeySecureCopy_name_rsc
@@ -66,21 +67,22 @@ messages:
          AppendTempString(RoomKeySecureCopy_appendspecial_not_renter_rsc);
       }
 
-
       return;
    }
-   
+
    ReqNewOwner(what=$)
    {
-      local oRenter;
+      local oRenter, sName;
 
       % If the key holder isn't the renter, don't allow it to be given
       % to a new owner other than the renter.
       oRenter = Send(self, @GetRenter);
-      if IsClass(poOwner, &User) AND poOwner <> oRenter AND what <> oRenter
+      if IsClass(poOwner, &User) AND oRenter <> $ AND poOwner <> oRenter AND what <> oRenter
       {
+         sName = CreateString();
+         SetString(sName, Send(oRenter, @GetName));
          Send(poOwner, @MsgSendUser, #message_rsc=RoomKeySecureCopy_no_drop_not_yours,
-            #parm1=Send(oRenter, @GetName));
+            #parm1=sName);
 
          return FALSE;
       }

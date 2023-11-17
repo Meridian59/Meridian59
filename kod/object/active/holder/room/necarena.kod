@@ -277,6 +277,58 @@ messages:
       return TRUE;
    }
 
+   IsValidTarget(who=$)
+   {
+      local i, oWatcher;
+
+      if NOT Send(self,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         return FALSE;
+      }
+
+      oWatcher = $;
+      for i in plActive
+      {
+      
+         if IsClass(First(i),&Goad)
+         {
+            oWatcher = First(i);
+
+            break;
+         }
+      }
+      
+      if oWatcher = $
+      {
+         Debug("IsValidTarget called with no watcher in existence!");
+
+         return;
+      }
+      
+      if Send(oWatcher,@IsCombatant,#who=who) AND Send(oWatcher,@FightInSession)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   GetWatcher()
+   {
+      local i, oEachObj;
+
+      for i in plActive
+      {
+         oEachObj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(oEachObj,&Goad)
+         {
+            return oEachObj;
+         }                  
+      }
+      
+      return $;
+   }
+
    Teleport(what=$,goinplay=FALSE,outofplay=FALSE)  
    {
       local row, col, angle, rand, i;
@@ -685,7 +737,7 @@ messages:
 
       if flag
       {
-         ptCheckLavaTimer = CreateTimer(self,@Checklava,(1*1000));
+         ptCheckLavaTimer = CreateTimer(self,@Checklava,(6*LAVA_TIMER));
       }
 
       return;

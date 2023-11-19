@@ -104,6 +104,8 @@ properties:
    ptCheckLavaTimer = $
    ptShrineUsedTimer = $
    ptDelayedTeleportTimer = $
+
+   piStopTimer = 0
    
 messages:
 
@@ -386,6 +388,8 @@ messages:
 
          if ptCheckLavaTimer = $
          {
+            debug("Teleport also creates a lava timer.");
+            piStopTimer = 0;
             ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);
          }         
 
@@ -516,13 +520,13 @@ messages:
          ptGoToShrineTimer = CreateTimer(self,@GoToShrineTimer,SHRINE_DELAY);
       }
 
-      if ptCheckLavaTimer <> $
-      {
-         DeleteTimer(ptCheckLavaTimer);
-         ptCheckLavaTimer = $;
-      }
+      %if ptCheckLavaTimer <> $
+      %{
+      %   DeleteTimer(ptCheckLavaTimer);
+      %   ptCheckLavaTimer = $;
+      %}
 
-      Send(self,@CheckLava,#flag=FALSE);
+      %Send(self,@CheckLava,#flag=FALSE);
 
       return;
    }
@@ -731,7 +735,7 @@ messages:
          }
       }
 
-      if flag
+      if NOT piStopTimer
       {
          debug("CheckLava_CreatingNewTimer.");
          ptCheckLavaTimer = CreateTimer(self,@Checklava,(10*LAVA_TIMER));
@@ -753,6 +757,13 @@ messages:
    ShrineInUse()
    {
       return pbShrineInUse;
+   }
+
+   LastUserLeft()
+   {
+      piStopTimer = 1;
+
+      propagate;
    }
 
    Delete()

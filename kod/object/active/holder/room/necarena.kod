@@ -386,7 +386,7 @@ messages:
          % Mark position as occupied.
          SetNth(plOccupied,rand,1);  
 
-         if ptCheckLavaTimer = $
+         if piStopTimer
          {
             debug("Teleport also creates a lava timer.");
             piStopTimer = 0;

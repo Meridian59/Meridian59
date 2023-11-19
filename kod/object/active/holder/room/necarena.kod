@@ -685,6 +685,8 @@ messages:
    {
       local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
 
+      ptCheckLavaTimer = $;
+      
       For i in plActive
       {
          if isClass(First(i),&User) AND Send(self,@InPlay,#what = First(i))
@@ -738,7 +740,7 @@ messages:
       if NOT piStopTimer
       {
          debug("CheckLava_CreatingNewTimer.");
-         ptCheckLavaTimer = CreateTimer(self,@Checklava,(10*LAVA_TIMER));
+         ptCheckLavaTimer = CreateTimer(self,@Checklava,(LAVA_TIMER));
       }
 
       return;

@@ -685,7 +685,7 @@ messages:
    {
       local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
 
-      %ptCheckLavaTimer = $;
+      ptCheckLavaTimer = $;
 
       For i in plActive
       {

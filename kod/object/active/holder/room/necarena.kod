@@ -685,8 +685,8 @@ messages:
    {
       local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
 
-      ptCheckLavaTimer = $;
-      
+      %ptCheckLavaTimer = $;
+
       For i in plActive
       {
          if isClass(First(i),&User) AND Send(self,@InPlay,#what = First(i))
@@ -763,6 +763,7 @@ messages:
 
    LastUserLeft()
    {
+      debug("Make sure LUL isn't looping!");
       piStopTimer = 1;
 
       propagate;

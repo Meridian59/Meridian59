@@ -345,6 +345,8 @@ messages:
             }
             else
             {
+               % This is a bugged condition that was partially fixed.
+               % It would require an unlikely set-up as of November 2023.
                return FALSE;
             }
          }
@@ -388,6 +390,7 @@ messages:
 
          if piStopTimer
          {
+            % If the timer stop is active, deactivate it and restart lava timer loop.
             piStopTimer = 0;
             ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);
          }         
@@ -507,14 +510,13 @@ messages:
    BeginFight(lCombatants=$)  
    {
       % A valid fight started: clear plOccupied for next fight
-      Send(self,@clearOccupiedlist);
+      Send(self,@ClearOccupiedList);
 
       return;
    }
 
    EndFight(lCombatants = $)
    {
-      debug("the fight is ending.");
       if plGoToShrine <> $
       {
          ptGoToShrineTimer = CreateTimer(self,@GoToShrineTimer,SHRINE_DELAY);
@@ -524,8 +526,8 @@ messages:
    }
 
    ClearOccupiedList()
+   "We come here from begin fight or if the champion reneges."
    {
-      % Sent here from begin fight or from Goad on a renege
       plOccupied = [0,0,0,0,0,0];
 
       return;
@@ -684,7 +686,7 @@ messages:
    CheckLava(flag = TRUE)
    {
       local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
-
+      % We only get here when timer expires so reset timer's handle.
       ptCheckLavaTimer = $;
 
       For i in plActive
@@ -748,7 +750,6 @@ messages:
    CookVictim(what = $)
    {
       % Message: You die!!!!
-      debug("You are getting cooked.");
       Send(what,@killed,#what=self);
       Send(self,@somethingkilled,#what=self,#victim=what);
 
@@ -762,7 +763,6 @@ messages:
 
    LastUserLeft()
    {
-      debug("Make sure LUL isn't looping!");
       piStopTimer = 1;
 
       propagate;

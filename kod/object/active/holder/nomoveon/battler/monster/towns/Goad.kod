@@ -1243,8 +1243,7 @@ messages:
               return FALSE;
            }
 
-      %%% Some spells don't work in Goad's Grinder - November 2023
-      %%% Note that reflection does work - it just falls into lava
+      %%% Due to map geometry summon spells don't work in Goad's Grinder - November 2023
       if oSpell <> $
          AND (IsClass(oSpell,&SummonApparition)
             OR IsClass(oSpell,&SummonReflection)

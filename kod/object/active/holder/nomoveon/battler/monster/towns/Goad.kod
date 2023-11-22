@@ -455,6 +455,7 @@ messages:
     CombatantReneges(who=$,died=FALSE)
     {
       local i;
+      debug("do we end up here from falling into lava?");
       
       if (died = FALSE) and (send(self,@FightInSession) OR ptCommence <> $)
       {

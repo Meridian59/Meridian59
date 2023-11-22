@@ -388,7 +388,6 @@ messages:
 
          if piStopTimer
          {
-            debug("Teleport also creates a lava timer.");
             piStopTimer = 0;
             ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);
          }         
@@ -739,7 +738,6 @@ messages:
 
       if NOT piStopTimer
       {
-         debug("CheckLava_CreatingNewTimer.");
          ptCheckLavaTimer = CreateTimer(self,@Checklava,(LAVA_TIMER));
       }
 

@@ -506,7 +506,8 @@ messages:
 
    BeginFight(lCombatants=$)  
    {
-      plOccupied = [0,0,0,0,0,0];
+      % A valid fight started: clear plOccupied for next fight
+      Send(self,@clearOccupiedlist);
 
       return;
    }
@@ -518,16 +519,14 @@ messages:
       {
          ptGoToShrineTimer = CreateTimer(self,@GoToShrineTimer,SHRINE_DELAY);
       }
-
-      %if ptCheckLavaTimer <> $
-      %{
-      %   DeleteTimer(ptCheckLavaTimer);
-      %   ptCheckLavaTimer = $;
-      %}
-
-      %Send(self,@CheckLava,#flag=FALSE);
-
+      
       return;
+   }
+
+   ClearOccupiedList()
+   {
+      % Sent here from begin fight or from Goad on a renege
+      plOccupied = [0,0,0,0,0,0];
    }
 
    IsLocked()

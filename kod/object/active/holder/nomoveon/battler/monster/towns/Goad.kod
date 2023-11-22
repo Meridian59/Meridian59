@@ -456,7 +456,7 @@ messages:
     {
       local i;
       debug("do we end up here from falling into lava?");
-      
+
       if (died = FALSE) and (send(self,@FightInSession) OR ptCommence <> $)
       {
          debug("Someone tried to renege while fight was in session without dying.");
@@ -505,7 +505,14 @@ messages:
             poChampion = first(plCombatants);
          }
       }
-     
+      %% problematic scenario: Champion gets teleported in and reneges multiple times.
+      %% This fills up plOccupied in NecArena.kod and prevents teleporting into play.
+      %% If length plCombatants = 0 send message to clear list.
+      if length(plCombatants) = 0
+      {
+         send(poOwner,@ClearOccupiedList);
+      }
+
        return;
     }
 

@@ -105,7 +105,7 @@ properties:
    ptShrineUsedTimer = $
    ptDelayedTeleportTimer = $
 
-   piStopTimer = 0
+   piLavaTimerStopper = 0
    
 messages:
 
@@ -388,10 +388,10 @@ messages:
          % Mark position as occupied.
          SetNth(plOccupied,rand,1);  
 
-         if piStopTimer
+         if piLavaTimerStopper
          {
             % If the timer stop is active, deactivate it and restart lava timer loop.
-            piStopTimer = 0;
+            piLavaTimerStopper = 0;
             ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);
          }         
 
@@ -739,7 +739,7 @@ messages:
          }
       }
 
-      if NOT piStopTimer
+      if NOT piLavaTimerStopper
       {
          ptCheckLavaTimer = CreateTimer(self,@Checklava,(LAVA_TIMER));
       }
@@ -763,7 +763,7 @@ messages:
 
    LastUserLeft()
    {
-      piStopTimer = 1;
+      piLavaTimerStopper = 1;
 
       propagate;
    }

@@ -389,12 +389,15 @@ messages:
          SetNth(plOccupied,rand,1);  
 
          if piLavaTimerStopper
+            OR ptCheckLavaTimer = $
          {
-            % If the timer stop is active, deactivate it and restart lava timer loop.
+            % If the timer is stopped we re-start and turn of the stopper.
+            % After recreate all or on a brand new server we may need to start the loop
+            % even if the stopper is still zero so we look if the timer variable is null.
+            % The ptCheckLavaTimer alone should suffice but this is belt and suspenders.
             piLavaTimerStopper = 0;
-            ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);
-         }         
-
+            ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);      
+         }
          return;
       }
 
@@ -687,6 +690,7 @@ messages:
    {
       local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
       % We only get here when timer expires so reset timer's handle.
+      % Teleport will check if the timer handle exists before creating a new loop.
       ptCheckLavaTimer = $;
 
       For i in plActive
@@ -741,6 +745,9 @@ messages:
 
       if NOT piLavaTimerStopper
       {
+         % LavaTimerStopper breaks the Check Lava loop and gets set to 1
+         % when the last user leaves the room.
+         debug("looping lava.");
          ptCheckLavaTimer = CreateTimer(self,@Checklava,(LAVA_TIMER));
       }
 

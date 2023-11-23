@@ -747,7 +747,6 @@ messages:
       {
          % LavaTimerStopper breaks the Check Lava loop and gets set to 1
          % when the last user leaves the room.
-         debug("looping lava.");
          ptCheckLavaTimer = CreateTimer(self,@Checklava,(LAVA_TIMER));
       }
 

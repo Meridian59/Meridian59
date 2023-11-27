@@ -105,7 +105,7 @@ properties:
    ptShrineUsedTimer = $
    ptDelayedTeleportTimer = $
 
-   piLavaTimerStopper = 0
+   piLavaTimerStopper = 1
    
 messages:
 
@@ -288,23 +288,13 @@ messages:
          return FALSE;
       }
 
-      oWatcher = $;
-      for i in plActive
-      {
-      
-         if IsClass(First(i),&Goad)
-         {
-            oWatcher = First(i);
-
-            break;
-         }
-      }
+      oWatcher = send(self,@GetWatcher);
       
       if oWatcher = $
       {
          Debug("IsValidTarget called with no watcher in existence!");
 
-         return;
+         return FALSE;
       }
       
       if Send(oWatcher,@IsCombatant,#who=who) AND Send(oWatcher,@FightInSession)
@@ -389,12 +379,9 @@ messages:
          SetNth(plOccupied,rand,1);  
 
          if piLavaTimerStopper
-            OR ptCheckLavaTimer = $
          {
-            % If the timer is stopped we re-start and turn of the stopper.
-            % After recreate all or on a brand new server we may need to start the loop
-            % even if the stopper is still zero so we look if the timer variable is null.
-            % The ptCheckLavaTimer alone should suffice but this is belt and suspenders.
+            % If the lava checking loop is stopped we want to restart it
+            % Turn off the piLavaTimerStopper and create a check lava timer
             piLavaTimerStopper = 0;
             ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);      
          }
@@ -529,7 +516,7 @@ messages:
    }
 
    ClearOccupiedList()
-   "We come here from begin fight or if the champion reneges."
+   "This clears the six in-play teleport locations."
    {
       plOccupied = [0,0,0,0,0,0];
 

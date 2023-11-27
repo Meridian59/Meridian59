@@ -189,6 +189,7 @@ messages:
    }
 
    IsKeyCopy()
+   "As this is the original/master key to a room, this should be FALSE."
    {
       return FALSE;
    }

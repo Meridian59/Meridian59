@@ -265,6 +265,8 @@ messages:
       % Is the item a key copy?  If so, destroy it.
       for oItem in itemList
       {
+         % RoomKeyCopy is the superclass of all room keys, so we need to know if the item
+         % is a room key.  If so, we can then ask it if it's a copy or the original.
          if IsClass(oItem, &RoomKeyCopy) AND Send(oItem, @IsKeyCopy)
          {
             % Say something and delete the key.

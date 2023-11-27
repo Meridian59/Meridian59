@@ -88,6 +88,7 @@ messages:
    }
 
    GetRenter()
+   "Attempts to look up the room's renter, if one exists."
    {
       local oRoom, oRenter;
 
@@ -254,6 +255,7 @@ messages:
    }
 
    IsKeyCopy()
+   "Asks a key whether it's a copy or the original."
    {
       return TRUE;
    }

@@ -175,9 +175,16 @@ void GraphicsAreaResize(int xsize, int ysize)
    int text_area_height = text_area_size + BOTTOM_BORDER + GetTextInputHeight() + TOP_BORDER + EDGETREAT_HEIGHT * 2;
    text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
 
-   // Calculate the largest possible viewport size keeping the classic client aspect ratio
+   // Calculate the largest possible viewport size keeping the classic client aspect ratio.
    new_ysize = ysize - text_area_height;
    new_xsize = new_ysize * MAXYX_ASPECT_RATIO;
+
+   if (new_xsize > MAXX)
+   {
+       // Prevent larger resolutions from exceeding the maximum supported width.
+       new_xsize = MAXX;
+       new_ysize = new_xsize / MAXYX_ASPECT_RATIO;
+   }
 
    if ((new_xsize + INVENTORY_MIN_WIDTH) > xsize) {
       new_xsize = xsize - INVENTORY_MIN_WIDTH;

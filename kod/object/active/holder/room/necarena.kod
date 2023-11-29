@@ -105,7 +105,10 @@ properties:
    ptShrineUsedTimer = $
    ptDelayedTeleportTimer = $
 
-   piLavaTimerStopper = 1
+   % CheckLavaLoopStopper breaks the Check Lava loop by getting set to 1
+   % when the last user leaves the room. It gets set to 0 when a player 
+   % teleports into play.
+   piCheckLavaLoopStopper = 1
    
 messages:
 
@@ -335,8 +338,8 @@ messages:
             }
             else
             {
-               % This is a bugged condition that was partially fixed.
-               % It would require an unlikely set-up as of November 2023.
+               % After 20 tries we decide all teleport locations are used
+               % and we do not teleport the player into play.
                return FALSE;
             }
          }
@@ -378,11 +381,11 @@ messages:
          % Mark position as occupied.
          SetNth(plOccupied,rand,1);  
 
-         if piLavaTimerStopper
+         if piCheckLavaLoopStopper
          {
             % If the lava checking loop is stopped we want to restart it
-            % Turn off the piLavaTimerStopper and create a check lava timer
-            piLavaTimerStopper = 0;
+            % Turn off the piCheckLavaLoopStopper and create a check lava timer
+            piCheckLavaLoopStopper = 0;
             ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);      
          }
          return;
@@ -502,6 +505,9 @@ messages:
       % A valid fight started: clear plOccupied for next fight
       Send(self,@ClearOccupiedList);
 
+      % Make sure the Check Lava loop is running.
+      piCheckLavaLoopStopper = 0;
+
       return;
    }
 
@@ -544,10 +550,11 @@ messages:
    SomethingKilled(what=$,victim=$)
    {
       % You get to goto the shrine if you kill someone with 10 more hps
-      %  than you have.
+      %  than you have or if the victim is sufficiently high level.
       if IsClass(what,&User) AND IsClass(victim, &User)
       {
-         if (Send(what,@GetBaseMaxHealth) + 10) < Send(victim,@GetBaseMaxHealth)
+         if (Send(what,@GetBaseMaxHealth) + 10) <= Send(victim,@GetBaseMaxHealth)
+            OR Send(victim,@GetBaseMaxHealth) >= 140
          {
             plGoToShrine = cons(what,plGotoShrine);
          }
@@ -730,10 +737,9 @@ messages:
          }
       }
 
-      if NOT piLavaTimerStopper
+      if NOT piCheckLavaLoopStopper
       {
-         % LavaTimerStopper breaks the Check Lava loop and gets set to 1
-         % when the last user leaves the room.
+         % Perpetuate the lava checking loop unless it has been stopped.
          ptCheckLavaTimer = CreateTimer(self,@Checklava,(LAVA_TIMER));
       }
 
@@ -756,7 +762,8 @@ messages:
 
    LastUserLeft()
    {
-      piLavaTimerStopper = 1;
+      % The last user left the room so we can stop the lava checking loop.
+      piCheckLavaLoopStopper = 1;
 
       propagate;
    }

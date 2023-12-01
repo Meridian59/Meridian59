@@ -30,7 +30,6 @@ extern int connection;  /* What type of connection do we have? */
 static Bool notification = False;  /* Is notification on? */
 
 static SOCKET sock = INVALID_SOCKET; /* Socket communications handle */
-static DWORD dwIP4 = 0;
 
 static BYTE epoch;     // Epoch byte from last server message
 
@@ -46,16 +45,6 @@ static Bool WriteSocket(char *buf,int numbytes);
 static int ReadServerSocket(void);
 static void Resynchronize(void);
 static unsigned int RandomStreamsStep(void);
-
-SOCKET GetClientSocket()
-{
-	return sock;
-}
-
-DWORD GetHostIP4()
-{
-	return dwIP4;
-}
 
 /********************************************************************/
 /*
@@ -108,8 +97,6 @@ Bool OpenSocketConnection(char *host, int sock_port)
 			WSAGetLastError(), host));
 		return False;
 	}   
-	
-	dwIP4 = dest_sin.sin_addr.s_addr;
 	
 	dest_sin.sin_family = AF_INET;
 	dest_sin.sin_port   = htons((WORD) sock_port);        /* Convert to network ordering */

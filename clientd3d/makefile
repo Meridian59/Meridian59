@@ -71,7 +71,6 @@ OBJS = \
         $(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
-        $(OUTDIR)\guest.obj \
         $(OUTDIR)\profane.obj \
         $(OUTDIR)\object.obj \
         $(OUTDIR)\graphics.obj \

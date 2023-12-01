@@ -216,7 +216,6 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "md5.h"
 #include "xlat.h"
 #include "rops.h"
-#include "guest.h"
 #include "ping.h"
 #include "objdraw.h"
 #include "profane.h"

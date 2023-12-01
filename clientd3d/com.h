@@ -16,9 +16,6 @@ enum { CON_NONE, CON_SOCKET };  /* Connection types */
 
 #define COMBUFSIZE 40000  /* Size of send and receive buffers */
 
-SOCKET GetClientSocket();
-DWORD GetHostIP4();
-
 int ReadServer(void);
 Bool SendServer(char *buf, unsigned int numbytes);
 Bool WriteServer(char *buf,unsigned int numbytes);

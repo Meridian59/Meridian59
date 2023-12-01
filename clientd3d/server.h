@@ -152,6 +152,5 @@ Bool HandleDeleteAllRsc(char *ptr,long len);
 Bool HandleNoCharacters(char *ptr, long len);
 Bool HandleTime(char *ptr, long len);
 Bool HandleGetClient(char *ptr, long len);
-Bool HandleGuest(char *ptr, long len);
 
 #endif /* #ifndef _SERVER_H */

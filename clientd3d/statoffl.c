@@ -53,12 +53,6 @@ void OfflineConnect(void)
    
    if (!OpenSocketConnection(config.comm.hostname, config.comm.sockport))
    {
-      if (config.guest)
-      {
-	 GuestConnectError();
-	 return;
-      }
-
       connection = CON_NONE;
       ClientError(hInst, hMain, IDS_SOCKETOPEN, config.comm.sockport, config.comm.hostname);
       return;

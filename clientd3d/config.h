@@ -74,15 +74,12 @@ typedef struct {
    Bool technical;               /* Show technical info such as the connected server number? */
    Bool quickstart;              /* Try to answer all questions with defaults until playing. */
    Bool antiprofane;             /* Kill annoying incoming profanity. */
-   Bool guest;                   /* Automatically log in as "guest"? */
-   int  server_low, server_high; /* Closed interval of legal server numbers for guest logins */
    int	halocolor;					//	0 = red, 1 = blue, 2 = green
 
    Bool lagbox;                  /* Display lag meter? */
    Bool spinning_cube;           /* Display the classic spinning latency meter */
    Bool ignoreprofane;           /* Kill messages including any profanity. */
    Bool extraprofane;            /* Really search hard for possible hidden profanity. */
-   int  server_guest;            /* Server to try first for guest logins */
    Bool play_loop_sounds;
    Bool play_random_sounds;
    Bool showMapBlocking;

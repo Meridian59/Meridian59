@@ -328,9 +328,6 @@ void MainMove(HWND hwnd, int x, int y)
 	case STATE_GAME:
 		GameMove(hwnd,x,y);
 		break;
-	case STATE_CONNECTING:
-		GuestMove(hwnd, x, y);
-		break;
 	}
 }
 /****************************************************************************/
@@ -346,9 +343,6 @@ void MainResize(HWND hwnd, UINT resize_flag, int xsize, int ysize)
 		break;
 	case STATE_GAME:
 		GameResize(hwnd, resize_flag, xsize, ysize);
-		break;
-	case STATE_CONNECTING:
-		GuestResize(hwnd, resize_flag, xsize, ysize);
 		break;
 	}
 }
@@ -544,11 +538,6 @@ void MainReadSocket(HWND hwnd, int SelectType, SOCKET s, int error)
 		break;
 		
 	case FD_CLOSE:
-		// When guest server denies us during login, don't abort
-		if (config.guest && 
-			(state == STATE_CONNECTING || state == STATE_LOGIN))
-			return;
-		
 		MainSetState(STATE_OFFLINE);  /* Kill off dialogs, etc. */
 		connection = CON_NONE;
 		ClientError(hInst, hMain, IDS_LOSTSERVER);

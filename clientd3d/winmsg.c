@@ -555,6 +555,12 @@ void MainReadSocket(HWND hwnd, int SelectType, SOCKET s, int error)
 		return;
 		
 	case FD_READ:        /* Read stuff from server */
+    // XXX
+    // With Winsock 2, sometimes we get a FD_READ with no FD_CONNECT first.
+    if (state == STATE_CONNECTING) {
+      ConnectingDone(error);
+    }
+    
 		ReadServer();
 		MainProcessBuffer();
 		break;

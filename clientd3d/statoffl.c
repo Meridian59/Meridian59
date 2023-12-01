@@ -51,6 +51,7 @@ void OfflineConnect(void)
 
    connection = CON_SOCKET;
    
+   MainSetState(STATE_CONNECTING);
    if (!OpenSocketConnection(config.comm.hostname, config.comm.sockport))
    {
       if (config.guest)
@@ -61,7 +62,7 @@ void OfflineConnect(void)
 
       connection = CON_NONE;
       ClientError(hInst, hMain, IDS_SOCKETOPEN, config.comm.sockport, config.comm.hostname);
+      MainSetState(STATE_OFFLINE);
       return;
    }
-   MainSetState(STATE_CONNECTING);
 }

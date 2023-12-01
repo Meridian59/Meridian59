@@ -14,11 +14,11 @@
 
 #pragma warning(disable: 4244) // cast double to float loses information
 
-#ifndef _INC_WINDOWS
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <windowsx.h>
 #include "winxblak.h"
-#endif
 
 #include <assert.h>
 #include <stdio.h>
@@ -33,13 +33,12 @@
 #include <sys\stat.h>
 #include <dlgs.h>
 #include <mmsystem.h>
-#include <winsock.h>
 #include <math.h>
 #include <commctrl.h>
 #include <richedit.h>
 #include <process.h>
 #include <tchar.h>
-#include "wininet.h"
+#include <wininet.h>
 
 #include <d3d9.h>
 

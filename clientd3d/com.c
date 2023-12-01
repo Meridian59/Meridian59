@@ -30,7 +30,6 @@ extern int connection;  /* What type of connection do we have? */
 static Bool notification = False;  /* Is notification on? */
 
 static SOCKET sock = INVALID_SOCKET; /* Socket communications handle */
-static DWORD dwIP4 = 0;
 
 static BYTE epoch;     // Epoch byte from last server message
 
@@ -47,16 +46,6 @@ static int ReadServerSocket(void);
 static void Resynchronize(void);
 static unsigned int RandomStreamsStep(void);
 
-SOCKET GetClientSocket()
-{
-	return sock;
-}
-
-DWORD GetHostIP4()
-{
-	return dwIP4;
-}
-
 /********************************************************************/
 /*
 * OpenSocketConnection: Open a connection, given the host and socket #.
@@ -65,72 +54,60 @@ DWORD GetHostIP4()
 Bool OpenSocketConnection(char *host, int sock_port)
 {
 	WSADATA WSAData;
-	SOCKADDR_IN dest_sin;
-	PHOSTENT phe;
-	Bool success = False;
-	long addr;
-	
-	if (WSAStartup(MAKEWORD(1,1), &WSAData) != 0) 
+  DWORD ipv6only = 0;
+  int iResult;
+  BOOL bSuccess;
+  SOCKADDR_STORAGE LocalAddr = {0};
+  SOCKADDR_STORAGE RemoteAddr = {0};
+  DWORD dwLocalAddr = sizeof(LocalAddr);
+  DWORD dwRemoteAddr = sizeof(RemoteAddr);
+  char portbuf[20];
+  
+	if (WSAStartup(MAKEWORD(2,2), &WSAData) != 0) 
 	{
+    debug(("Couldn't initialize Winsock\n"));
 		ClientError(hInst, hMain, IDS_CANTINITSOCKET);
 		return False;
 	}
-	
-	sock = socket(AF_INET,SOCK_STREAM,0);
-	if (sock == INVALID_SOCKET) 
-	{
-		debug(("Error on call to socket; error # was %d\n", WSAGetLastError()));
-		closesocket(sock);
-		return False;
-	}
-	
-	// Try to interpret host as an address with "." notation
-	addr = inet_addr(host);
-	if (addr != -1)
-	{
-		dest_sin.sin_addr.s_addr = addr;
-		success = True;
-	}
-	else
-	{
-		// Interpret host as a name
-		phe = gethostbyname(host);
-		if (phe != NULL)
-		{
-			memcpy((char *)&(dest_sin.sin_addr), phe->h_addr, phe->h_length);
-			success = True;
-		}
-	}
-	
-	if (!success) 
-	{
-		debug(("Error on gethostbyname; error # was %d.\n Make sure '%s' is listed in the hosts file.\n",
-			WSAGetLastError(), host));
-		return False;
-	}   
-	
-	dwIP4 = dest_sin.sin_addr.s_addr;
-	
-	dest_sin.sin_family = AF_INET;
-	dest_sin.sin_port   = htons((WORD) sock_port);        /* Convert to network ordering */
-	
+
+  sock = socket(AF_INET6, SOCK_STREAM, 0);
+  if (sock == INVALID_SOCKET){
+    debug(("Couldn't create socket\n"));
+    return False;
+  }
+  
+  iResult = setsockopt(sock, IPPROTO_IPV6,
+                       IPV6_V6ONLY, (char*)&ipv6only, sizeof(ipv6only) );
+  if (iResult == SOCKET_ERROR){
+    debug(("Couldn't set socket to IPV4/6 mode\n"));
+    closesocket(sock);
+    return False;
+  }
+  
 	/* Set up notification when the socket is opened or closed, or when data arrives */
 	if (!StartReadNotification())
 	{
 		closesocket(sock);
 		return False;
 	}
+  
+	sprintf(portbuf, "%d", sock_port);
+  bSuccess = WSAConnectByName(sock, host, 
+                              portbuf, &dwLocalAddr,
+                              (SOCKADDR*)&LocalAddr,
+                              &dwRemoteAddr,
+                              (SOCKADDR*)&RemoteAddr,
+                              NULL,
+                              NULL);
+  if (!bSuccess && WSAGetLastError() != WSAEWOULDBLOCK)
+  {
+    debug(("Error on connect; error # was %d\n", WSAGetLastError()));
+    return False;
+  }
 	
-	if (connect(sock,(PSOCKADDR) &dest_sin, sizeof(dest_sin)) < 0) 
-		if (WSAGetLastError() != WSAEWOULDBLOCK)
-		{
-			debug(("Error on connect; error # was %d\n", WSAGetLastError()));
-			return False;
-		}
-		
-		bufpos = 0;
-		
-		return True;
+  bufpos = 0;
+	
+  return True;
 }
 /********************************************************************/
 /*

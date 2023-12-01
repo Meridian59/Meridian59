@@ -403,7 +403,7 @@ admin_table_type admin_set_table[] =
 admin_table_type admin_create_table[] =
 {
 	{ AdminCreateAccount, {S,S,S,N}, F,A,NULL, 0, "account",
-		"Create account by type (user/admin/dm/guest), name, password" },
+		"Create account by type (user/admin/dm), name, password" },
 	{ AdminCreateAdmin,   {I,N},   F, A, NULL, 0, "admin",   "Create admin object by account id" },
 	{ AdminCreateAutomated,{S,S,N},F,A|M,NULL, 0, "automated",
 	"Create account and user by name, password" },
@@ -1359,8 +1359,7 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	aprintf("Clients on port %i, maintenance on port %i\n",
 		ConfigInt(SOCKET_PORT),
 		ConfigInt(SOCKET_MAINTENANCE_PORT));
-	aprintf("There are %i sessions (%i guests) logged on\n",
-		GetUsedSessions(),GetUsedGuestAccounts());
+	aprintf("There are %i sessions logged on\n", GetUsedSessions());
 
 	aprintf("----\n");
 	aprintf("Used %i list nodes\n",GetListNodesUsed());
@@ -1712,12 +1711,9 @@ void AdminShowUser(int session_id,admin_parm_type parms[],
 void AdminShowUsage(int session_id,admin_parm_type parms[],
                     int num_blak_parm,parm_node blak_parm[])
 {
-	int s, g;
+	int s = GetUsedSessions();
 
-	s = GetUsedSessions();
-	g = GetUsedGuestAccounts();
-
-	aprintf(":< sessions %i = guests %i + nonguests %i\n",s,g,s-g);
+	aprintf(":< sessions %i\n",s);
 	aprintf(":>\n");
 }
 
@@ -3398,7 +3394,6 @@ void AdminCreateAccount(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[])
 {
 	int account_id;
-	user_node *u;
 
 	char *name,*password,*type;
 	type = (char *)parms[0];
@@ -3439,24 +3434,6 @@ void AdminCreateAccount(int session_id,admin_parm_type parms[],
 			aprintf("Account name %s already exists\n",name);
 			return;
 		}
-		break;
-
-	case 'G':
-		/* create account and 1 guest user, because there's no point in anything else */
-		if (CreateAccount(name,password,ACCOUNT_GUEST,&account_id) == False)
-		{
-			aprintf("Account name %s already exists\n",name);
-			return;
-		}
-
-		u = CreateNewUser(account_id,GUEST_CLASS);
-		if (u == NULL)
-		{
-			aprintf("Cannot find just created user for account %i!\n",account_id);
-			return;
-		}
-		AdminShowUserHeader();
-		AdminShowOneUser(u);
 		break;
 
 	default :
@@ -4215,13 +4192,7 @@ void AdminHangupUser(int session_id,admin_parm_type parms[],
 
 	// Manually hanging up an account will block that IP address
 	// from reconnecting for a short time (usually 5min).
-	//
-	// Manually hanging up a guest account gets quadruple the blockout
-	// time, since this is almost always due to a troublemaker.
-	//
 	id = ConfigInt(SOCKET_BLOCK_TIME);
-	if (a->type == ACCOUNT_GUEST)
-		id *= 4;
 	AddBlock(id, &hangup_session->conn.addr);
 
 	HangupSession(hangup_session);
@@ -4309,13 +4280,7 @@ void AdminHangupAccount(int session_id,admin_parm_type parms[],
 
 	// Manually hanging up an account will block that IP address
 	// from reconnecting for a short time (usually 5min).
-	//
-	// Manually hanging up a guest account gets quadruple the blockout
-	// time, since this is almost always due to a troublemaker.
-	//
 	id = ConfigInt(SOCKET_BLOCK_TIME);
-	if (a->type == ACCOUNT_GUEST)
-		id *= 4;
 	AddBlock(id, &hangup_session->conn.addr);
 
 	HangupSession(hangup_session);

@@ -3650,6 +3650,7 @@ messages:
             % iCan_hold of $ intended to signal infinite capacity
             % Therefore set iCan_hold to number of items requested
             if iCan_hold = $
+               OR iCan_hold = INFINITE_COUNT
             {
                iCan_hold = number;
             }
@@ -7837,9 +7838,13 @@ messages:
 	 if (Length(stuff) > 1)
 	 {
             j = 1;
+            % Note:  The line containing a check for RentableRoom_expiry_warning
+            % can safely be removed once it's done it's job.  By approximately
+            % November 1, 2023.
             while j <= Length(stuff)
             {
                if (Nth(stuff,j+1) = $)
+                 OR Nth(stuff, j + 1) = RentableRoom_expiry_warning
 	       {
 	          Debug("found bad mail",self);
 		  plNew_mail = DelListElem(plNew_mail, lNew_mail);

@@ -79,15 +79,6 @@ config_table_type config_table[] =
 { CHANNEL_LOG_DISK,       F, "LogDisk",       CONFIG_BOOL,  "No" },
 { CHANNEL_FLUSH,          T, "Flush",         CONFIG_BOOL,  "No" },
 
-{ GUEST_GROUP,            F, "[Guest]",       CONFIG_GROUP, "" },
-{ GUEST_ACCOUNT,          F, "Account",       CONFIG_STR,   "GUEST" },
-{ GUEST_CREDITS,          F, "Credits",       CONFIG_INT,   "10" },
-{ GUEST_MAX,              T, "Max",           CONFIG_INT,   "30" },
-{ GUEST_SERVER_MIN,       T, "ServerMin",     CONFIG_INT,   "100" },
-{ GUEST_SERVER_MAX,       T, "ServerMax",     CONFIG_INT,   "109" },
-{ GUEST_TOO_MANY,         F, "TooMany",       CONFIG_STR,
-     "Too many guests are logged on right now; please try again later." },
-
 { LOGIN_GROUP,            F, "[Login]",       CONFIG_GROUP, "" },
 { LOGIN_MAX_ATTEMPTS,     F, "MaxAttempts",   CONFIG_INT,   "3" },
 { LOGIN_MIN_VERSION,      T, "MinVersion",    CONFIG_INT,   "0" },

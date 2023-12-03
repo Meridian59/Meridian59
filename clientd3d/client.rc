@@ -1297,7 +1297,7 @@ BEGIN
     LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
     CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,109,168,32,10
     CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,142,168,32,10
-    LTEXT           "There are two servers available: 101 is very active and filled with expert players who love to fight. 102 is less populated, but the players are friendlier and more likely to help out new players.",IDC_STATIC,39,186,220,30
+    LTEXT           "There are two servers available, with 101 being the more active of the two. Players of all types call 101 home: veterans, newbies, players who love to fight, and players who just like to take it easy as they work on their characters.",IDC_STATIC,39,184,220,34
     PUSHBUTTON      "Troubleshoot",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
     DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,150,221,107,14
 END

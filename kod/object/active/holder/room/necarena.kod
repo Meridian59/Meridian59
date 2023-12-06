@@ -105,9 +105,9 @@ properties:
    ptShrineUsedTimer = $
    ptDelayedTeleportTimer = $
 
-   % CheckLavaLoopStopper breaks the Check Lava loop by getting set to 1
-   % when the last user leaves the room. It gets set to 0 when a player 
-   % teleports into play.
+   % CheckLavaLoopStopper, when set to 1, breaks the Check Lava loop
+   % It is set to 1 when the last user leaves the room. 
+   % It gets set to 0 when a player teleports into play.
    piCheckLavaLoopStopper = 1
    
 messages:
@@ -284,7 +284,7 @@ messages:
 
    IsValidTarget(who=$)
    {
-      local i, oWatcher;
+      local oWatcher;
 
       if NOT Send(self,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
       {
@@ -684,7 +684,6 @@ messages:
    {
       local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands, oWatcher;
       % We only get here when timer expires so reset timer's handle.
-      % Teleport will check if the timer handle exists before creating a new loop.
       ptCheckLavaTimer = $;
 
       For i in plActive

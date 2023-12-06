@@ -4874,6 +4874,7 @@ messages:
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
       plItemTemplates = cons(create(&VampireWand),plItemTemplates);
       plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
+      plItemTemplates = cons(create(&BonkStick),plItemTemplates);
 
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&LongSword),plItemTemplates);

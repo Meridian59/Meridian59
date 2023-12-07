@@ -141,19 +141,6 @@ messages:
       return FALSE;
    }
 
-   CheckWatcher(what=$)
-   {
-      if poWatcher = $
-      {
-         debug("Goad is nil!  Goad should never be nil!  Goad was moved!");
-         poWatcher = what;
-         Send(self,@NewHold,#what=what,#new_row=13,#new_col=20,
-              #fine_row=0,#new_angle=ANGLE_WEST);
-      }
-
-      return;
-   }
-
    % There are no consequences for killing in the arena.
    SafePlayerAttack()
    {

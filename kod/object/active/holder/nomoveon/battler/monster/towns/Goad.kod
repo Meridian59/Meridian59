@@ -181,14 +181,18 @@ messages:
    
       if poOwner = $ or NOT isClass(poOwner,&necarena)
       {
+         % Does NecArena already have a watcher?
          if send(oRoom,@GetWatcher) <> $
          {
             send(self,@delete);
             debug("Somebody made a second Goad, seek and destroy.");
          }
+         % NecArena doesn't have a Goad and a Goad exists in another room
+         % Warp that Goad back to NecArena!
          else
          {
-            send(oRoom,@checkwatcher);
+            Send(oRoom,@NewHold,#what=Self,#new_row=13,#new_col=20,
+              #fine_row=0,#new_angle=ANGLE_WEST);
          }
       }
 

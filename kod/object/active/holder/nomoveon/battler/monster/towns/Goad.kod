@@ -91,7 +91,6 @@ resources:
    Goad_worship_admin = "Oh how exciting . . . it's %s, %s is sooo important."
    Goad_worship_dm = "Don't except me to grovel to %s, I could care less about a %s of Meridian!"
    Goad_welcome_champion = "All hail %s%s, spiller of blood."
-   Goad_welcome_champion_guild = "Bug.  This message should never occur!"
 
    Goad_invalid_fight = "This fight was invalid for certain reasons, and therefore it has been cancelled."
 

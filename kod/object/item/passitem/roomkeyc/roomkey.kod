@@ -101,11 +101,19 @@ messages:
       return;
    }
 
-   Copy()
+   Copy(bSecure=FALSE)
    {
       local oCopy;
       
-      oCopy = Create(&RoomKeyCopy,#iRID=piRID);
+      if bSecure
+      {
+         oCopy = Create(&RoomKeySecureCopy, #iRID=piRID);
+      }
+      else
+      {
+         oCopy = Create(&RoomKeyCopy, #iRID=piRID);
+      }
+
       plCopies = cons(oCopy,plCopies);
       
       return oCopy;
@@ -178,6 +186,12 @@ messages:
       }
       
       propagate;
+   }
+
+   IsKeyCopy()
+   "As this is the original/master key to a room, this should be FALSE."
+   {
+      return FALSE;
    }
 
    CanShatter()

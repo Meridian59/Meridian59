@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\roomkeyc.bof
-BOFS = roomkey.bof
+BOFS = roomkey.bof rmkeysec.bof
 
 !include $(KODDIR)\kod.mak

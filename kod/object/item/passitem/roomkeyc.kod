@@ -47,6 +47,7 @@ classvars:
    vrName = RoomKeyCopy_name_rsc
    vrIcon = RoomKeyCopy_icon_rsc
    vrDesc = RoomKeyCopy_desc_rsc
+   vrVanish = RoomKeyCopy_vanishes
 
    viItem_type = ITEMTYPE_SPECIAL
 
@@ -86,13 +87,28 @@ messages:
       return piRID;
    }
 
+   GetRenter()
+   "Attempts to look up the room's renter, if one exists."
+   {
+      local oRoom, oRenter;
+
+      oRenter = $;
+      oRoom = Send(SYS, @FindRoomByNum, #num=piRID);
+      if oRoom <> $
+      {
+         oRenter = Send(oRoom, @GetRenter);      
+      }
+
+      return oRenter;
+   }
+
    OriginalDeleted()
    {
       if (poOwner <> $) and isClass(poOwner,&User)
       {
          if send(poOwner,@IsLoggedOn)
          {
-            send(poOwner,@MsgSendUser,#message_rsc=RoomKeyCopy_vanishes);
+            send(poOwner,@MsgSendUser,#message_rsc=vrVanish);
          }
          else
          {
@@ -150,6 +166,10 @@ messages:
    
    SendAnimation()
    {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1, ANIMATE_TRANSLATION, 1, piItem_flags & ITEM_PALETTE_MASK);
+      }
       AddPacket(1,ANIMATE_NONE,2,2);
 
       return;
@@ -157,6 +177,10 @@ messages:
 
    SendLookAnimation()
    {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1, ANIMATE_TRANSLATION, 1, piItem_flags & ITEM_PALETTE_MASK);
+      }
       AddPacket(1,ANIMATE_NONE,2,2);
 
       return;
@@ -164,6 +188,10 @@ messages:
 
    SendInventoryAnimation()
    {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1, ANIMATE_TRANSLATION, 1, piItem_flags & ITEM_PALETTE_MASK);
+      }
       AddPacket(1,ANIMATE_NONE,2,1);
 
       return;
@@ -224,6 +252,12 @@ messages:
       }
 
       propagate;
+   }
+
+   IsKeyCopy()
+   "Asks a key whether it's a copy or the original."
+   {
+      return TRUE;
    }
 
    CanSwap()

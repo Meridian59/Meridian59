@@ -4968,6 +4968,7 @@ messages:
 
       plItemTemplates = cons(create(&RoomKey),plItemTemplates);
       plItemTemplates = cons(create(&RoomKeyCopy),plItemTemplates);
+      plItemTemplates = cons(create(&RoomKeySecureCopy),plItemTemplates);
       plItemTemplates = cons(create(&Mint),plItemTemplates);
 
       plItemTemplates = cons(create(&RedHeartStone),plItemTemplates);

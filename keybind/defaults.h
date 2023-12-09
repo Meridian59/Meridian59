@@ -14,6 +14,7 @@
 #define DEF_DYNAMIC "true"
 #define DEF_SOFTWARE "false"
 #define DEF_ATTACKONTARGET "false"
+#define DEF_PERFORMANCE_MODE "false"
 
 // Communication
 #define DEF_BROADCAST "b"

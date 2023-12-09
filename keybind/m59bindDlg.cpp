@@ -79,6 +79,7 @@ CM59bindDlg::CM59bindDlg(CWnd* pParent /*=NULL*/)
 	m_quickchat = FALSE;
 	m_software = FALSE;
 	m_attackontarget = FALSE;
+	m_performance = FALSE;
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -119,6 +120,7 @@ void CM59bindDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_QUICKCHAT, m_quickchat);
 	DDX_Check(pDX, IDC_SOFTWARE, m_software);
 	DDX_Check(pDX, IDC_ATTACKONTARGET, m_attackontarget);
+	DDX_Check(pDX, IDC_PERFORMANCE_MODE, m_performance);
 	//}}AFX_DATA_MAP
 }
 
@@ -261,6 +263,13 @@ BOOL CM59bindDlg::OnInitDialog()
 	  pCheck->SetCheck(1);
   }
 
+  GetPrivateProfileString(strSection, "performance", DEF_PERFORMANCE_MODE, ReturnedString, nSize, strINIFile);
+  pCheck = (CButton*)GetDlgItem(IDC_PERFORMANCE_MODE);
+
+  if (StringtoBool(ReturnedString))
+  {
+	  pCheck->SetCheck(1);
+  }
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -406,7 +415,8 @@ void CM59bindDlg::UpdateINIFile(void)
   BooltoString(m_attackontarget,Value);
   WritePrivateProfileString(strSection,"attackontarget",Value,strINIFile);
 
-
+  BooltoString(m_performance, Value);
+  WritePrivateProfileString(strSection, "performance", Value, strINIFile);
 
   sprintf(Value,"%d",iMouselookXscale);
   WritePrivateProfileString(strSection,"mouselookxscale",Value,strINIFile);

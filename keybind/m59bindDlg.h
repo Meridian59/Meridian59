@@ -40,6 +40,7 @@ public:
 	BOOL	m_quickchat;
 	BOOL	m_software;
 	BOOL	m_attackontarget;
+	BOOL	m_performance;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides

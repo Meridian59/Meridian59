@@ -1,0 +1,125 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RoomKeySecureCopy is RoomKeyCopy
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RoomKeySecureCopy_name_rsc = "bronze room key"
+   RoomKeySecureCopy_icon_rsc = roomkeyc.bgf
+   RoomKeySecureCopy_desc_rsc = "This crudely-fashioned bronze key copy is used to gain "
+      "access to a private room at an inn."
+   RoomKeySecureCopy_appendspecial_rsc = "On the back is an additional inscription: \""
+   RoomKeySecureCopy_appendspecial_renter_rsc = "You may give this key to anyone.  Once given, "
+      "the recipient may only return it to either you or the innkeeper.\""
+   RoomKeySecureCopy_appendspecial_not_renter_rsc = "This key can only be returned to "
+      "the room owner or the innkeeper.\""
+
+   RoomKeySecureCopy_vanishes = \
+      "Your bronze room key dissolves into a strange metallic liquid, then "
+      "evaporates into an orange mist and is gone."
+   RoomKeySecureCopy_no_drop_not_yours = \
+      "You can't just carelessly discard %q's room key like that!  You must return "
+      "it to either them or the innkeeper."
+
+classvars:
+
+   vrName = RoomKeySecureCopy_name_rsc
+   vrIcon = RoomKeySecureCopy_icon_rsc
+   vrDesc = RoomKeySecureCopy_desc_rsc
+   vrVanish = RoomKeySecureCopy_vanishes
+
+   viItem_type = ITEMTYPE_SPECIAL
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 80
+
+   viUse_type = ITEM_SINGLE_USE
+
+properties:
+
+   piItem_flags = PT_GRAY_TO_ORANGE
+
+messages:
+
+   AppendSpecial()
+   "Appends text to the description relevant to specific key classes."
+   {
+      AppendTempString(RoomKeySecureCopy_appendspecial_rsc);
+      if poOwner = Send(self, @GetRenter)
+      {
+         AppendTempString(RoomKeySecureCopy_appendspecial_renter_rsc);
+      }
+      else
+      {
+         AppendTempString(RoomKeySecureCopy_appendspecial_not_renter_rsc);
+      }
+
+      return;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      local oRenter, sName;
+
+      % If the key holder isn't the renter, don't allow it to be given
+      % to a new owner other than the renter.
+      oRenter = Send(self, @GetRenter);
+      if IsClass(poOwner, &User) AND oRenter <> $ AND poOwner <> oRenter AND what <> oRenter
+      {
+         sName = CreateString();
+         SetString(sName, Send(oRenter, @GetName));
+         Send(poOwner, @MsgSendUser, #message_rsc=RoomKeySecureCopy_no_drop_not_yours,
+            #parm1=sName);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   ReqDMDelete()
+   "Keys are not deleted with the DM clear inventory command."
+   {
+      return FALSE;
+   }
+   
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+   CanBeGivenToNPC()
+   {
+      return FALSE;
+   }
+
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

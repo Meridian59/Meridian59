@@ -58,7 +58,8 @@
 #define WF_BELOW_TOPDOWN  0x00000080      // Draw lower texture top-down
 #define WF_NORMAL_TOPDOWN 0x00000100      // Draw normal texture top-down
 #define WF_NO_VTILE       0x00000200      // Don't tile texture vertically (must be transparent)
-#define WF_CLAMP          0x00000400      // Clamp texture
+#define WF_HAS_ANIMATED	  0x00000400      // Has animated once and hence is dynamic geometry, required for new client
+#define WF_CLAMP          0x00000800      // Clamp texture
 
 // Texture scrolling constants
 #define SCROLL_NONE    0x00000000      // No texture scrolling   

@@ -125,7 +125,7 @@ classvars:
 
 properties:
 
-   piCombat_style = STYLE_NO_FIGHT
+   piCombat_style = STYLE_ONE_ON_ONE
 
    ptAdvert = $               %% every now and then, the Watcher sends off
                               %% a blurb, asking people to fight for him
@@ -271,8 +271,6 @@ messages:
 
    ValidateFight()
    {
-      local oGuild, i;
-
       if (piCombat_Style = STYLE_ONE_ON_ONE or piCombat_Style = STYLE_LAST_MAN_STANDING)
       AND (send(poOwner,@ShrineInUse) = FALSE)
       {
@@ -560,13 +558,6 @@ messages:
 
        if plCombatants = $  { return; }
 
-       if piCombat_style = STYLE_GUILD_VS_GUILD
-       or piCombat_style = STYLE_LAST_GUILD_STANDING
-         {
-            send(self,@CheckForWinnerGuild);
-            return;
-         }
-
        if length(plCombatants) <> 1
           { return; }
        else
@@ -763,8 +754,6 @@ messages:
    SomeoneSaid(what=$, type = $, string = $)
    "Checks for keywords which activate commands."
    {
-      local i, oActor;
-
       if (not send(self,@FightInSession)) and (ptCommence = $) and isClass(what,&player)
       {
 
@@ -1167,14 +1156,6 @@ messages:
           return TRUE;
         }
 
-      %% monsters attacking players
-      if isClass(what,&monster)
-      AND send(self,@isCombatant,#who=victim)
-      AND send(self,@FightInSession)
-      {
-          propagate;
-      }
-
       %% spells with targets = all the rest of them     
 
       if (not send(self,@isCombatant,#who=what) OR
@@ -1236,11 +1217,10 @@ messages:
               return FALSE;
            }
 
-      %%% Due to map geometry summon spells don't work in Goad's Grinder - November 2023
+      %%% Summoned Monsters just seem to fall into the lava.
+      %%% For now Goad disallows their use - November 2023
       if oSpell <> $
-         AND (IsClass(oSpell,&SummonApparition)
-            OR IsClass(oSpell,&SummonReflection)
-            OR IsClass(oSpell,&SummonEvilTwin))
+         AND send(oSpell,@IsSummonSpell)
          {
             send(self,@SayToOne,#target=who,#message_rsc=Goad_no_summons);
 

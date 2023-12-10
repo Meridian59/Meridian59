@@ -344,7 +344,7 @@ messages:
       {
          Debug("IsValidTarget called with no watcher in existence!");
 
-         return;
+         return FALSE;
       }
       
       if Send(oWatcher,@IsCombatant,#who=who) AND Send(oWatcher,@FightInSession)

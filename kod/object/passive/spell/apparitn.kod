@@ -244,6 +244,11 @@ messages:
       return Create(&GiantRat);
    }
 
+   IsSummonSpell()
+   {
+      return TRUE;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

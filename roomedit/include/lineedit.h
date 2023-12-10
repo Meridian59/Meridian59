@@ -179,6 +179,8 @@ protected:
 	void BelowNegClicked();
 	void NoVTilePosClicked();
 	void NoVTileNegClicked();
+	void ClampPosClicked();
+	void ClampNegClicked();
 	void ScrollPosClicked();
 	void ScrollNegClicked();
 
@@ -204,6 +206,8 @@ protected:
 	TCheckBox *pNegBelowCheck;
 	TCheckBox *pPosNoVTile;
 	TCheckBox *pNegNoVTile;
+	TCheckBox *pPosClamp;
+	TCheckBox *pNegClamp;
 
 	TEdit *pSectorTagEdit;
 	TEdit *pVertex1Edit;

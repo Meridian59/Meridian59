@@ -447,14 +447,6 @@ messages:
        return;
     }
 
-    FightIsDraw()
-    "Called by FightTimer."
-    {
-       send(self,@say,#message_rsc=Goad_draw);
-       send(self,@ClearCombatants);
-       return;
-    }
-
     CombatantReneges(who=$,died=FALSE)
     {
       local i;
@@ -649,7 +641,6 @@ messages:
             index = (send(i,@getmaxmana)+25) - send(i,@getmana);
             send(i,@gainmana,#amount=bound(index,0,25));
 
-            %% Teleport any and all combatants out of the ring.
             if ptFight <> $
               {
                 deletetimer(ptFight);
@@ -857,7 +848,7 @@ messages:
       else   %% accept the champion here
       {
          send(self,@NewCombatant,#who=what);
-         send(self,@Say,#message_rsc=Goad_new_champion,
+         post(self,@Say,#message_rsc=Goad_new_champion,
                     #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname));
       }
       return;  

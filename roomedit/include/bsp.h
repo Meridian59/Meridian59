@@ -37,6 +37,8 @@
 #define BF_NEG_NORMAL_TDOWN  0x00020000      // - side normal texture top down
 #define BF_POS_NO_VTILE      0x00040000      // + side no vertical tile
 #define BF_NEG_NO_VTILE      0x00080000      // - side no vertical tile
+#define BF_POS_CLAMP         0x00100000      // + side texture clamp
+#define BF_NEG_CLAMP         0x00200000      // - side texture clamp
 
 // scrolling texture flags come next
 
@@ -56,6 +58,7 @@
 #define WF_BELOW_TOPDOWN  0x00000080      // Draw lower texture top-down
 #define WF_NORMAL_TOPDOWN 0x00000100      // Draw normal texture top-down
 #define WF_NO_VTILE       0x00000200      // Don't tile texture vertically (must be transparent)
+#define WF_CLAMP          0x00000400      // Clamp texture
 
 // Texture scrolling constants
 #define SCROLL_NONE    0x00000000      // No texture scrolling   

@@ -118,6 +118,12 @@ typedef struct {
    int text_area_size;        /* As a percentage of the client height */
 
    int active_stat_group; // Which stat group (inventory, skills, spells or stats) is visible.
+
+   // Lowers graphics performance settings for optimized resource usage. 
+   // Reduces max FPS to 60, lowers background texture resolution, 
+   // and switches D3D present mode to D3DPRESENT_INTERVAL_DEFAULT 
+   // for more stable, power-efficient rendering.
+   bool gpuEfficiency;
 } Config;
 
 void ConfigInit(void);

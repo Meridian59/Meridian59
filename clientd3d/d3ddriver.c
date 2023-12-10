@@ -72,19 +72,15 @@ Bool D3DDriverProfileInit(void)
 		return FALSE;
 	}
 
-	// check for performance mode
-	GetPrivateProfileString("config", "performance_mode", "error", config_setting, 255, "./config.ini");
-	strlwr(config_setting);
-	bool performance_mode = (0 == strcmp(config_setting, "true"));
 
 	// Main game view buffer resolution.
-	if (performance_mode)
+	if (config.gpuEfficiency)
 	{
 		// original: 800 x 600 (4:3) 
 		gScreenWidth = 800;
 		gScreenHeight = 600;
 	}
-	else
+	else   
 	{
 		// 1080p: 1920 x 1080 (16:9)
 		gScreenWidth = 1920;
@@ -102,7 +98,7 @@ Bool D3DDriverProfileInit(void)
 	memset(&gPresentParam, 0, sizeof(gPresentParam));
 	gPresentParam.Windowed = TRUE;
 	gPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	gPresentParam.PresentationInterval = (performance_mode) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
+	gPresentParam.PresentationInterval = (config.gpuEfficiency) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	gPresentParam.BackBufferWidth = gScreenWidth;
 	gPresentParam.BackBufferHeight = gScreenHeight;
 	gPresentParam.BackBufferFormat = D3DFMT_A8R8G8B8;

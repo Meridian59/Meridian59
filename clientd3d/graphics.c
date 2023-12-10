@@ -52,7 +52,7 @@ static steady_clock_time_point lastEndFrame;
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
-static bool performance_mode = false;
+static const int defaultMaxFps = 60;
 
 /************************************************************************/
 /*
@@ -60,10 +60,6 @@ static bool performance_mode = false;
  */
 void GraphicsAreaCreate(HWND hParent)
 {
-    // check for performance mode and apply a max fps
-    char string[255];
-    GetPrivateProfileString("config", "performance", "error", string, 255, "./config.ini");
-    performance_mode = (0 == strcmp(string, "true"));
 }
 /************************************************************************/
 /*
@@ -336,7 +332,7 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
-   auto maxFPS = performance_mode ? 60 : config.maxFPS;
+   auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
    fps = 1000 / max(1, elapsedMilliseconds);
 
    if (maxFPS)

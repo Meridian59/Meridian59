@@ -39,7 +39,7 @@
 #define IDC_LOOK                        1006
 #define IDC_MAPZOOMIN                   1006
 #define IDC_FORWARD                     1006
-#define IDC_PERFORMANCE_MODE            1006
+#define IDC_GPU_EFFICIENCY				1006
 #define IDC_WHO                         1007
 #define IDC_EXAMINE                     1007
 #define IDC_MAPZOOMOUT                  1007

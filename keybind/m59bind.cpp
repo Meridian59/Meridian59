@@ -120,7 +120,7 @@ BOOL CM59bindApp::InitInstance()
   CM59bindDlg dlg;
 
 	m_pMainWnd = &dlg;
-	int nResponse = dlg.DoModal();
+	auto nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
 		// TODO: Place code here to handle when the dialog is
@@ -380,7 +380,7 @@ void ProcessModifierPressed(TCHAR *TCString, int nID, HWND m_hWnd)
   CModifier dlg;
 
   iModifier=MODIFIER_NONE;
-	int nResponse = dlg.DoModal();
+	auto nResponse = dlg.DoModal();
 	if (nResponse == IDCANCEL)
 	{
     return;

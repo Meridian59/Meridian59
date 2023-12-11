@@ -7,7 +7,13 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#include "commctrl.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#ifndef IDC_STATIC
+#define IDC_STATIC -1
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -40,7 +46,7 @@ BEGIN
     CTEXT           "Wähle eine Modifikations- taste",-1,7,7,50,26
 END
 
-136 DIALOG  0, 0, 258, 138
+136 DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Mouse"
 FONT 8, "MS Sans Serif"
@@ -55,7 +61,7 @@ BEGIN
     GROUPBOX        "Mouselook",-1,95,13,112,97
 END
 
-135 DIALOG  96, 48, 110, 54
+135 DIALOG 96, 48, 110, 54
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -63,7 +69,7 @@ BEGIN
     CTEXT           "drücken",1009,40,26,27,8
 END
 
-133 DIALOG  0, 0, 268, 138
+133 DIALOG 0, 0, 268, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Zielanwahl"
 FONT 8, "MS Sans Serif"
@@ -91,7 +97,7 @@ BEGIN
     PUSHBUTTON      "+",1056,244,7,14,14
 END
 
-132 DIALOG  0, 0, 296, 138
+132 DIALOG 0, 0, 296, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Bewegung"
 FONT 8, "MS Sans Serif"
@@ -135,7 +141,7 @@ BEGIN
     PUSHBUTTON      "+",1050,269,102,14,14
 END
 
-131 DIALOG  0, 0, 258, 138
+131 DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Karte"
 FONT 8, "MS Sans Serif"
@@ -151,7 +157,7 @@ BEGIN
     PUSHBUTTON      "+",1039,125,45,14,14
 END
 
-130 DIALOG  0, 0, 258, 138
+130 DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interaktion"
 FONT 8, "MS Sans Serif"
@@ -185,7 +191,7 @@ BEGIN
     PUSHBUTTON      "+",1037,237,45,14,14
 END
 
-129 DIALOG  0, 0, 258, 138
+129 DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Kommunikation"
 FONT 8, "MS Sans Serif"
@@ -232,14 +238,14 @@ BEGIN
     PUSHBUTTON      "Standardeinstellungen",1062,313,121,79,14
 END
 
-100 DIALOG  0, 0, 235, 55
+100 DIALOG 0, 0, 235, 55
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Über m59bind"
 FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDR_MAINFRAME,-1,11,17,20,20
     LTEXT           "Meridian 59 Bind Editor Version 1.0",1,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright 2004  Near Death Studios, Inc.",2,40,25,144,8
+    LTEXT           "Copyright (C) 2024 Andrew and Christopher Kirmse.",2,40,25,144,8
     DEFPUSHBUTTON   "OK",3,178,7,50,14,WS_GROUP
 END
 
@@ -249,84 +255,35 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     101                     "&Über Meridian 59 Bind Editor"
 END
 
-#endif    // German (Germany) resources
+#endif    // German (Neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
-    "#ifdef _WIN32\r\n"
-    "LANGUAGE 9, 1\r\n"
-    "#pragma code_page(1252)\r\n"
-    "#endif //_WIN32\r\n"
-    "#include ""res\\m59bind.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
-    "#include ""afxres.rc""         // Standard components\r\n"
-    "#endif\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\m59bind.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOG  0, 0, 235, 55
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About m59bind"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
     LTEXT           "Meridian 59 Bind Editor Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2004  Near Death Studios,Inc.",IDC_STATIC,40,25,138,8
+    LTEXT           "Copyright (C) 2024 Andrew and Christopher Kirmse.",IDC_STATIC,40,25,138,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
 END
 
@@ -338,7 +295,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,272,140,30,15
     PUSHBUTTON      "Cancel",IDCANCEL,312,140,30,15
-    GROUPBOX        "Options",IDC_STATIC,272,7,110,108
+    GROUPBOX        "Options",IDC_STATIC,272,7,110,114
     CONTROL         "Classic Key Bindings",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,284,24,81,10
     CONTROL         "Quick Chat",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,284,38,51,10
     CONTROL         "Always Run",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,284,52,53,10
@@ -346,10 +303,11 @@ BEGIN
     CONTROL         "Software Renderer",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,284,94,75,10
     CONTROL         "Attack On Target",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,284,66,73,10
     PUSHBUTTON      "Help",IDC_MAINHELP,352,140,30,15
-    PUSHBUTTON      "Restore Defaults",IDC_RESTOREDEFAULTS,312,120,70,15
+    PUSHBUTTON      "Restore Defaults",IDC_RESTOREDEFAULTS,312,122,70,15
+    CONTROL         "GPU Efficiency", IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,284,107,75,10
 END
 
-IDD_COMMUNICATION DIALOG  0, 0, 258, 138
+IDD_COMMUNICATION DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Communication"
 FONT 8, "MS Sans Serif"
@@ -377,7 +335,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_EMOTE_MOD,229,7,14,14
 END
 
-IDD_INTERACTION DIALOG  0, 0, 258, 138
+IDD_INTERACTION DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interaction"
 FONT 8, "MS Sans Serif"
@@ -411,7 +369,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_ATTACK_MOD,229,45,14,14
 END
 
-IDD_MAP DIALOG  0, 0, 258, 138
+IDD_MAP DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Map"
 FONT 8, "MS Sans Serif"
@@ -427,7 +385,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,118,45,14,14
 END
 
-IDD_MOVEMENT DIALOG  0, 0, 258, 138
+IDD_MOVEMENT DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Movement"
 FONT 8, "MS Sans Serif"
@@ -471,7 +429,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,229,102,14,14
 END
 
-IDD_TARGETING DIALOG  0, 0, 258, 138
+IDD_TARGETING DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Targeting"
 FONT 8, "MS Sans Serif"
@@ -499,7 +457,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,229,7,14,14
 END
 
-IDD_ASSIGNKEY DIALOG  96, 48, 110, 54
+IDD_ASSIGNKEY DIALOG 96, 48, 110, 54
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -507,7 +465,7 @@ BEGIN
     LTEXT           "a mouse button",IDC_ASSIGNFOR,30,27,50,8
 END
 
-IDD_MOUSE DIALOG  0, 0, 258, 138
+IDD_MOUSE DIALOG 0, 0, 258, 138
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Mouse"
 FONT 8, "MS Sans Serif"
@@ -535,6 +493,16 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,7,132,50,14
     CTEXT           "Choose a modifier key:",IDC_STATIC,7,7,50,20
 END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\m59bind.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -581,7 +549,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -668,15 +636,31 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_M59BIND_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "&About Meridian 59 Bind Editor"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -690,15 +674,6 @@ END
 #define _AFX_NO_OLE_RESOURCES
 #define _AFX_NO_TRACKER_RESOURCES
 #define _AFX_NO_PROPERTY_RESOURCES
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE 9, 1
-#pragma code_page(1252)
-#endif //_WIN32
-#include "res\m59bind.rc2"  // non-Microsoft Visual C++ edited resources
-#include "afxres.rc"         // Standard components
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

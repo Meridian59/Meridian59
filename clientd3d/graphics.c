@@ -52,6 +52,8 @@ static steady_clock_time_point lastEndFrame;
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
+static const int defaultMaxFps = 60;
+
 /************************************************************************/
 /*
  * GraphicsAreaCreate:  Create main graphics view window.
@@ -330,13 +332,15 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
+   auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
    fps = 1000 / max(1, elapsedMilliseconds);
-   if (config.maxFPS)
+
+   if (maxFPS)
    {
-      if (fps > config.maxFPS)
+      if (fps > maxFPS)
       {
           // Clamp the fps to the maximum.
-          int msSleep = (1000 / config.maxFPS) - elapsedMilliseconds;
+          int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
           Sleep(msSleep);
 
           // Reclaulate the fps following the sleep.

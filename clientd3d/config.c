@@ -293,6 +293,11 @@ void ConfigLoad(void)
    // Default to stat group 5 (INVENTORY)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
+   // Determine if we should be using gpu efficiency mode or not.
+   char config_value[255];
+   GetPrivateProfileString("config", "gpuefficiency", "error", config_value, 255, "./config.ini");
+   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
+
    TimeSettingsLoad();
 }
 /****************************************************************************/

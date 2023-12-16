@@ -5794,6 +5794,9 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 	if (pSideDef->flags & WF_TRANSPARENT)
 		*flags |= D3DRENDER_TRANSPARENT;
 
+	if (pSideDef->flags & WF_CLAMP)
+		*flags |= D3DRENDER_CLAMP;
+
 	switch (type)
 	{
 		case D3DRENDER_WALL_NORMAL:
@@ -9227,6 +9230,11 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
+	if (pChunk->flags & D3DRENDER_CLAMP)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	else
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+
 	if (gD3DDriverProfile.bFogEnable)
 	{
 		float	end = D3DRenderFogEndCalc(pChunk);
@@ -9279,6 +9287,11 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
+
+	if (pChunk->flags & D3DRENDER_CLAMP)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	else
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 
 	if (gD3DDriverProfile.bFogEnable)
 	{

@@ -617,6 +617,7 @@ messages:
       {
          ptDelayedTeleportTimer = CreateTimer(self,@DelayedTeleportTimer,
                                               TELEPORT_DELAY);
+         return;
       }
       else
       {

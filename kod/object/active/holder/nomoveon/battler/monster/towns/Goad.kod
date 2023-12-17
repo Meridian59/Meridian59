@@ -337,10 +337,10 @@ messages:
       if piCombat_style = STYLE_ONE_ON_ONE
       {
          %%KLUDGE - REMOVE THIS
-         %send(self,@say,#message_rsc=Goad_challenge_offered,
-            %#parm1=send(who,@getcapdef),#parm2=send(who,@getname),
-            %#parm3=send(who,@gethimher),#parm4=send(who,@gethimher));
-         send(self,@KludgeMessage,#who=who);
+         send(self,@say,#message_rsc=Goad_challenge_offered,
+            #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
+            #parm3=send(who,@gethimher),#parm4=send(who,@gethimher));
+         %%send(self,@KludgeMessage,#who=who);
          %%END KLUDGE         
 
          pbAccept = FALSE;

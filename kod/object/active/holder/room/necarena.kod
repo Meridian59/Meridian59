@@ -622,7 +622,7 @@ messages:
       {
          for iCntr in plGoToShrine
          {
-            Send(iCntr,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
+            Send(Self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
          }
       }
 

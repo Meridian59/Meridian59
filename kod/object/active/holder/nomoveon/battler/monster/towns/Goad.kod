@@ -336,12 +336,9 @@ messages:
 
       if piCombat_style = STYLE_ONE_ON_ONE
       {
-         %%KLUDGE - REMOVE THIS
-         send(self,@say,#message_rsc=Goad_challenge_offered,
+         send(self,@sayToOne,#target=poChampion,#message_rsc=Goad_challenge_offered,
             #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
-            #parm3=send(who,@gethimher),#parm4=send(who,@gethimher));
-         %%send(self,@KludgeMessage,#who=who);
-         %%END KLUDGE         
+            #parm3=send(who,@gethimher),#parm4=send(who,@gethimher));      
 
          pbAccept = FALSE;
          ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY); 
@@ -1282,23 +1279,6 @@ messages:
       }
       propagate;
    }
-
-   KludgeMessage(who=$)
-   {
-
-      
-      ClearTempString();
-      AppendTempString(send(who,@GetName));
-      AppendTempString(" has challenged you.  Will you crush ");
-      AppendTempString(send(who,@GetHimHer));
-      AppendTempString(" like the bug ");
-      AppendTempString(send(who,@GetHeShe));
-      AppendTempString(" is?");
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-            #string=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
-      return;
-   }
-
 
    
 

@@ -615,19 +615,21 @@ messages:
      
       if bCalledByShrine
       {
+         % Shrine was dedicated - teleport after a pause
          ptDelayedTeleportTimer = CreateTimer(self,@DelayedTeleportTimer,
                                               TELEPORT_DELAY);
-         return;
       }
       else
       {
+         % Shrine was not dedicated and time ran out
+         % Teleport all players away and clear plGoToShrine
          for iCntr in plGoToShrine
          {
             Send(Self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
          }
-      }
 
-      plGoToShrine = $;
+         plGoToShrine = $;
+      }
 
       return;
    }  
@@ -648,24 +650,22 @@ messages:
       {
          Send(self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
       }
+      % The shrine was dedicated - get everone out of there
+      % and clear the list for next time
+      plGoToShrine = $;
 
       return;
    }
 
    GetWatcher()
    {
-      local i, oEachObj;
-
-      for i in plActive
-      {
-         oEachObj = Send(self,@HolderExtractObject,#data=i);
-         if isClass(oEachObj,&Goad)
-         {
-            return oEachObj;
-         }                  
-      }
+      local oWatcher;
       
-      return $;
+      % FindHoldingActive returns the first instance of Goad
+      % if Goad is in the room - otherwise returns $
+
+      oWatcher = send(self,@FindHoldingActive,#class=&Goad);
+      return oWatcher;
    }
 
    CheckLava(flag = TRUE)

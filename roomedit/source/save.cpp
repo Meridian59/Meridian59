@@ -900,9 +900,9 @@ int FindSidedef(LineDef *l, SideDef *s, Bool positive)
    if ((positive && (l->blak_flags & BF_POS_NO_VTILE)) ||
        (!positive && (l->blak_flags & BF_NEG_NO_VTILE)))
       flags |= WF_NO_VTILE;
-   if ((positive && (l->blak_flags & BF_POS_CLAMP)) ||
-       (!positive && (l->blak_flags & BF_NEG_CLAMP)))
-      flags |= WF_CLAMP;
+   if ((positive && (l->blak_flags & BF_POS_TEX_CLAMP)) ||
+       (!positive && (l->blak_flags & BF_NEG_TEX_CLAMP)))
+      flags |= WF_TEX_CLAMP;
 
    if (l->blak_flags & BF_MAP_NEVER)
       flags |= WF_MAP_NEVER;

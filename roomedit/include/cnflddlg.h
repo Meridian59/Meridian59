@@ -71,8 +71,8 @@ struct TConfirmLineDefDialogXfer {
 	uint16    pBelowNegCheck;
 	uint16    pNoVTilePosCheck;
 	uint16    pNoVTileNegCheck;
-	uint16    pClampPosCheck;
-	uint16    pClampNegCheck;
+	uint16    pTexClampPosCheck;
+	uint16    pTexClampNegCheck;
 
 	uint16    pSDAboveCheck[2];
 	uint16    pSDBelowCheck[2];
@@ -123,8 +123,8 @@ protected:
 	TCheckBox *pBelowNegCheck;
 	TCheckBox *pNoVTilePosCheck;
 	TCheckBox *pNoVTileNegCheck;
-	TCheckBox *pClampPosCheck;
-	TCheckBox *pClampNegCheck;
+	TCheckBox *pTexClampPosCheck;
+	TCheckBox *pTexClampNegCheck;
 
 	TCheckBox *pSDAboveCheck[2];
 	TCheckBox *pSDBelowCheck[2];

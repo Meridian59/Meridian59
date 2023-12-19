@@ -5794,7 +5794,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 	if (pSideDef->flags & WF_TRANSPARENT)
 		*flags |= D3DRENDER_TRANSPARENT;
 
-	if (pSideDef->flags & WF_CLAMP)
+	if (pSideDef->flags & WF_TEX_CLAMP)
 		*flags |= D3DRENDER_CLAMP;
 
 	switch (type)

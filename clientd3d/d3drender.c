@@ -9231,15 +9231,9 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 	}
 
 	if (pChunk->flags & D3DRENDER_CLAMP)
-	{
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	}
 	else
-	{
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	}
 
 	if (gD3DDriverProfile.bFogEnable)
 	{
@@ -9295,15 +9289,9 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	}
 
 	if (pChunk->flags & D3DRENDER_CLAMP)
-	{
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	}
 	else
-	{
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	}
 
 	if (gD3DDriverProfile.bFogEnable)
 	{

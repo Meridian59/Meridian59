@@ -5794,14 +5794,13 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 	if (pSideDef->flags & WF_TRANSPARENT)
 		*flags |= D3DRENDER_TRANSPARENT;
 
-	if (pSideDef->flags & WF_TEX_CLAMP)
-		*flags |= D3DRENDER_CLAMP;
-
 	switch (type)
 	{
 		case D3DRENDER_WALL_NORMAL:
 			if (pSideDef->flags & WF_NO_VTILE)
-					*flags |= D3DRENDER_NO_VTILE;
+				*flags |= D3DRENDER_NO_VTILE;
+			if (pSideDef->flags & WF_NO_HTILE)
+				*flags |= D3DRENDER_NO_HTILE;
 		break;
 
 		default:
@@ -9230,10 +9229,15 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
-	if (pChunk->flags & D3DRENDER_CLAMP)
+	if (pChunk->flags & D3DRENDER_NO_VTILE)
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	else
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+
+	if (pChunk->flags & D3DRENDER_NO_HTILE)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	else
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 
 	if (gD3DDriverProfile.bFogEnable)
 	{
@@ -9288,7 +9292,12 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
-	if (pChunk->flags & D3DRENDER_CLAMP)
+	if (pChunk->flags & D3DRENDER_NO_VTILE)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	else
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+
+	if (pChunk->flags & D3DRENDER_NO_HTILE)
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	else
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);

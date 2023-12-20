@@ -5798,7 +5798,9 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 	{
 		case D3DRENDER_WALL_NORMAL:
 			if (pSideDef->flags & WF_NO_VTILE)
-					*flags |= D3DRENDER_NO_VTILE;
+				*flags |= D3DRENDER_NO_VTILE;
+			if (pSideDef->flags & WF_NO_HTILE)
+				*flags |= D3DRENDER_NO_HTILE;
 		break;
 
 		default:
@@ -9227,6 +9229,14 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
+	// Clamp texture V axis if vertical tiling is disabled 
+	auto state = (pChunk->flags & D3DRENDER_NO_VTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, state);
+	
+	// Clamp texture U axis if horizontal tiling is disabled
+	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
+
 	if (gD3DDriverProfile.bFogEnable)
 	{
 		float	end = D3DRenderFogEndCalc(pChunk);
@@ -9279,6 +9289,14 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
+
+	// Clamp texture V axis if vertical tiling is disabled 
+	auto state = (pChunk->flags & D3DRENDER_NO_VTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, state);
+	
+	// Clamp texture U axis if horizontal tiling is disabled
+	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
 
 	if (gD3DDriverProfile.bFogEnable)
 	{

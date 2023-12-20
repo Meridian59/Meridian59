@@ -9205,6 +9205,8 @@ Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
 
 Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 {
+	auto state = NULL;
+
 	if ((pChunk->flags & D3DRENDER_WORLD_OBJ))
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
@@ -9229,15 +9231,17 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
-	if (pChunk->flags & D3DRENDER_NO_VTILE)
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	else
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	// Clamp texture V axis if vertical tiling is disabled 
+	state = (pChunk->flags & D3DRENDER_NO_VTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
 
-	if (pChunk->flags & D3DRENDER_NO_HTILE)
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	else
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	if (state)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, state);
+	
+	// Clamp texture U axis if horizontal tiling is disabled
+	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	
+	if (state)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
 
 	if (gD3DDriverProfile.bFogEnable)
 	{
@@ -9251,6 +9255,8 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 
 Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 {
+	auto state = NULL;
+
 	if (gWireframe)
 	{
 		if (pChunk->pSector == &current_room.sectors[0])
@@ -9292,15 +9298,17 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
-	if (pChunk->flags & D3DRENDER_NO_VTILE)
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	else
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	// Clamp texture V axis if vertical tiling is disabled 
+	state = (pChunk->flags & D3DRENDER_NO_VTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
 
-	if (pChunk->flags & D3DRENDER_NO_HTILE)
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	else
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	if (state)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, state);
+	
+	// Clamp texture U axis if horizontal tiling is disabled
+	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	
+	if (state)
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
 
 	if (gD3DDriverProfile.bFogEnable)
 	{

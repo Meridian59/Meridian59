@@ -512,6 +512,7 @@ void BSPFlipWall(WallData *wall)
    wall->flags = BSPSwapFlags(wall->flags, BF_POS_BELOW_TDOWN, BF_NEG_BELOW_TDOWN);
    wall->flags = BSPSwapFlags(wall->flags, BF_POS_NORMAL_TDOWN, BF_NEG_NORMAL_TDOWN);
    wall->flags = BSPSwapFlags(wall->flags, BF_POS_NO_VTILE, BF_NEG_NO_VTILE);
+   wall->flags = BSPSwapFlags(wall->flags, BF_POS_NO_HTILE, BF_NEG_NO_HTILE);
 
    // Switch around scrolling animations
    temp1 = WallScrollPosSpeed(wall->flags);

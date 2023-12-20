@@ -284,6 +284,8 @@ EV_BN_CLICKED(IDC_POS_BELOW, BelowPosClicked),
 EV_BN_CLICKED(IDC_NEG_BELOW, BelowNegClicked),
 EV_BN_CLICKED(IDC_POS_NOVTILE, NoVTilePosClicked),
 EV_BN_CLICKED(IDC_NEG_NOVTILE, NoVTileNegClicked),
+EV_BN_CLICKED(IDC_POS_NOHTILE, NoHTilePosClicked),
+EV_BN_CLICKED(IDC_NEG_NOHTILE, NoHTileNegClicked),
 EV_BN_CLICKED(IDC_SCROLLN1, ScrollPosClicked),
 EV_BN_CLICKED(IDC_SCROLLNE1, ScrollPosClicked),
 EV_BN_CLICKED(IDC_SCROLLE1, ScrollPosClicked),
@@ -352,6 +354,8 @@ TDialog(parent, resId, module)
    pNegBelowCheck = newTCheckBox(this, IDC_NEG_BELOW, 0);
    pPosNoVTile = newTCheckBox(this, IDC_POS_NOVTILE, 0);
    pNegNoVTile = newTCheckBox(this, IDC_NEG_NOVTILE, 0);
+   pPosNoHTile = newTCheckBox(this, IDC_POS_NOHTILE, 0);
+   pNegNoHTile = newTCheckBox(this, IDC_NEG_NOHTILE, 0);
    
    pVertex1Edit   = newTEdit(this, IDC_VERTEX2, 9);
    pVertex2Edit   = newTEdit(this, IDC_VERTEX1, 9);
@@ -685,6 +689,14 @@ void TLineDefEditDialog::CmOk ()
 		  if ( cflags & BF_NEG_NO_VTILE )	lflags |= BF_NEG_NO_VTILE;
 		  else				        lflags &= ~BF_NEG_NO_VTILE;
 
+         if ( ConfirmData.pNoHTilePosCheck )
+		  if ( cflags & BF_POS_NO_HTILE )	lflags |= BF_POS_NO_HTILE;
+		  else				        lflags &= ~BF_POS_NO_HTILE;
+
+	       if ( ConfirmData.pNoHTileNegCheck )
+		  if ( cflags & BF_NEG_NO_HTILE )	lflags |= BF_NEG_NO_HTILE;
+		  else				        lflags &= ~BF_NEG_NO_HTILE;
+
 	       if (ConfirmData.pScrollCheck[0])
 	       {
 		  lflags = (lflags & ~0x00300000) | (WallScrollPosSpeed(cflags) << 20);
@@ -768,6 +780,8 @@ void TLineDefEditDialog::GetLineDef ()
    if ( pNegBelowCheck->GetCheck() == BF_CHECKED )      flags |= BF_NEG_BELOW_TDOWN;
    if ( pPosNoVTile->GetCheck() == BF_CHECKED )         flags |= BF_POS_NO_VTILE;
    if ( pNegNoVTile->GetCheck() == BF_CHECKED )         flags |= BF_NEG_NO_VTILE;
+   if ( pPosNoHTile->GetCheck() == BF_CHECKED )        flags |= BF_POS_NO_HTILE;
+   if ( pNegNoHTile->GetCheck() == BF_CHECKED )        flags |= BF_NEG_NO_HTILE;
 
    if (pScrollNRadio[0]->GetCheck() == BF_CHECKED)
       flags |= SCROLL_N << 22;
@@ -1128,6 +1142,8 @@ void TLineDefEditDialog::SetLineDef ()
    pNegBelowCheck->SetCheck (flags & BF_NEG_BELOW_TDOWN ? BF_CHECKED : BF_UNCHECKED);
    pPosNoVTile->SetCheck    (flags & BF_POS_NO_VTILE ? BF_CHECKED : BF_UNCHECKED);
    pNegNoVTile->SetCheck    (flags & BF_NEG_NO_VTILE ? BF_CHECKED : BF_UNCHECKED);
+   pPosNoHTile->SetCheck    (flags & BF_POS_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
+   pNegNoHTile->SetCheck    (flags & BF_NEG_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
 
    switch (WallScrollPosDirection(flags))
    {
@@ -2011,6 +2027,18 @@ void TLineDefEditDialog::NoVTileNegClicked ()
 {
    ConfirmData.pFlagsCheck = TRUE;
    ConfirmData.pNoVTileNegCheck = TRUE;
+}
+
+void TLineDefEditDialog::NoHTilePosClicked ()
+{
+   ConfirmData.pFlagsCheck = TRUE;
+   ConfirmData.pNoHTilePosCheck = TRUE;
+}
+
+void TLineDefEditDialog::NoHTileNegClicked ()
+{
+   ConfirmData.pFlagsCheck = TRUE;
+   ConfirmData.pNoHTileNegCheck = TRUE;
 }
 
 void TLineDefEditDialog::ScrollPosClicked ()

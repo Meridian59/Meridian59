@@ -155,6 +155,32 @@ messages:
       return True;
    }
 
+   IsValidTarget(who=$)
+   {
+      local oWatcher;
+
+      if NOT Send(self,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         return FALSE;
+      }
+
+      oWatcher = send(self,@GetWatcher);
+
+      if oWatcher = $
+      {
+         Debug("IsValidTarget called with no watcher in existence!");
+
+         return FALSE;
+      }
+
+      if Send(oWatcher,@IsCombatant,#who=who) AND Send(oWatcher,@FightInSession)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    NewHold(what = $,new_row = 22, new_col = 11)
    "will move anyone who enters in the playing field into the stands."
    "This should only be necessary for people who drop link."
@@ -626,7 +652,13 @@ messages:
 
    GetWatcher()
    {
-      return poWatcher;
+      local oWatcher;
+
+      % FindHoldingActive returns the first instance of Goad
+      % if Goad is in the room - otherwise returns $
+
+      oWatcher = send(self,@FindHoldingActive,#class=&Goad);
+      return oWatcher;
    }
 
    CheckLava(flag = TRUE)

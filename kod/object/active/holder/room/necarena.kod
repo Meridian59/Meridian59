@@ -652,13 +652,7 @@ messages:
 
    GetWatcher()
    {
-      local oWatcher;
-
-      % FindHoldingActive returns the first instance of Goad
-      % if Goad is in the room - otherwise returns $
-
-      oWatcher = send(self,@FindHoldingActive,#class=&Goad);
-      return oWatcher;
+      return send(self,@FindHoldingActive,#class=&Goad);
    }
 
    CheckLava(flag = TRUE)

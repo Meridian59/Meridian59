@@ -45,7 +45,8 @@ properties:
 
    prMusic = nest1_music
 
-   piBaseLight = LIGHT_DARK
+   piBaseLight = LIGHT_VERY_DARK
+   piOutside_factor = OUTDOORS_NONE
    
    piMonster_Count_Max = 10
    piGen_time = 20000

@@ -2288,6 +2288,11 @@ messages:
       return FALSE;
    }
 
+   IsSummonSpell()
+   {
+      return FALSE;
+   }
+
    TranceBroken(oCaster=$)
    {
       Send(oCaster,@MsgSendUser,#message_rsc=spell_trance_break,

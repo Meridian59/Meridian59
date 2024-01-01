@@ -871,6 +871,13 @@ messages:
    {
       local i;
 
+      % Recreate the hash tables.
+
+      Send(self,@CreateUserTable);
+      Send(self,@CreateRoomTable);
+      Send(self,@CreateSpellTable);
+      Send(self,@CreateItemAttTable);
+      
       % Player maintenance.
 
       for i in plUsers_logged_on
@@ -901,13 +908,6 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
-
-      % Recreate the hash tables.
-
-      Send(self,@CreateUserTable);
-      Send(self,@CreateRoomTable);
-      Send(self,@CreateSpellTable);
-      Send(self,@CreateItemAttTable);
 
       return;
    }

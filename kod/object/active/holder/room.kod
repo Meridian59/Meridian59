@@ -1201,15 +1201,7 @@ messages:
       if Send(self,@IsArena)
       {
          oWatcher = Send(self,@GetWatcher);
-
-         % The watcher decides if the attack moves forward
-         if oWatcher <> $ AND NOT
-            Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim)
-         {
-            return FALSE;
-         }
-
-         return TRUE;
+         return oWatcher = $ OR Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim);
       }
       
       if (piRoom_flags & ROOM_NO_MOB_COMBAT)

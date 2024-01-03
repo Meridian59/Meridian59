@@ -1201,7 +1201,7 @@ messages:
       if Send(self,@IsArena)
       {
          oWatcher = Send(self,@GetWatcher);
-         return oWatcher = $ OR Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim);
+         return ((oWatcher = $) OR Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim));
       }
       
       if (piRoom_flags & ROOM_NO_MOB_COMBAT)

@@ -152,6 +152,11 @@ messages:
 	  
       return count;
    }
+   
+   IsSummonSpell()
+   {
+      return TRUE;
+   }
 
 end
 

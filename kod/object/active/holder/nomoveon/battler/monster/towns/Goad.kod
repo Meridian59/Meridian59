@@ -1225,8 +1225,9 @@ messages:
               return FALSE;
            }
 
-      %%% Summoned Monsters just seem to fall into the lava.
-      %%% For now Goad disallows their use - November 2023
+      %%% Summoned Monsters just seem to fall into the lava where they do nothing.
+      %%% These spells are turned off until the room geometry is updated
+      %%% and/or an update allows the lava to kill monsters.
       if oSpell <> $
          AND send(oSpell,@IsSummonSpell)
          {

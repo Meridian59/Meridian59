@@ -1201,28 +1201,7 @@ messages:
       if Send(self,@IsArena)
       {
          oWatcher = Send(self,@GetWatcher);
-
-         % if a fight isnt in session, attack fails.
-         if NOT Send(oWatcher,@FightInSession)
-         {
-            return FALSE;
-         }
-
-         % if the afflicted person is not a combatant, attack fails.
-         if IsClass(victim,&Player)
-            AND NOT Send(oWatcher,@IsCombatant,#who=victim)
-         {
-            return FALSE;
-         }
-
-         % if the caster is not a combatant, attack fails.
-         if NOT Send(oWatcher,@IsCombatant,#who=what)
-         {
-            return FALSE;
-         }
-
-         % Anything else is legal in the Arena.
-         return TRUE;
+         return ((oWatcher = $) OR Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim));
       }
       
       if (piRoom_flags & ROOM_NO_MOB_COMBAT)

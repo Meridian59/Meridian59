@@ -143,7 +143,7 @@ messages:
          debug("Goad is nil!  Goad should never be nil!  Goad was moved!");
          
          % Warp the Goad back to his home
-         Send(self,@NewHold,#what=what,#new_row=13,#new_col=20,
+         Send(self,@NewHold,#what=what,#new_row=7,#new_col=13,
               #fine_row=0,#new_angle=ANGLE_WEST);
          poWatcher = what;
       }

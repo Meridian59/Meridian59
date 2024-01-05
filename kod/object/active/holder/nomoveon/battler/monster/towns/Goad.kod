@@ -311,8 +311,6 @@ messages:
 
     Challenge(who=$)
     {
-      local i, bFound;
-
       if who = poChampion
       {
          send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_champion);

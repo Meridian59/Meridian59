@@ -539,10 +539,11 @@ messages:
    SomethingKilled(what=$,victim=$)
    {
       % You get to goto the shrine if you kill someone with 10 more hps
-      %  than you have.
+      %  than you have or if the victim is sufficiently high level.
       if IsClass(what,&User) AND IsClass(victim, &User)
       {
          if (Send(what,@GetBaseMaxHealth) + 10) < Send(victim,@GetBaseMaxHealth)
+            OR Send(victim,@GetBaseMaxHealth) >= 140
          {
             plGoToShrine = cons(what,plGotoShrine);
          }
@@ -600,7 +601,7 @@ messages:
    ShrineUsed()
    % Can be called by the shrine or a timer so check to kill the timer here as well.
    {
-      local bCalledByShrine,iCntr;    
+      local bCalledByShrine,each_obj;    
 
       bCalledByShrine = FALSE;
 
@@ -621,13 +622,12 @@ messages:
       }
       else
       {
-         for iCntr in plGoToShrine
+         for each_obj in plGoToShrine
          {
-            Send(iCntr,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
+            Send(self,@Teleport,#what=each_obj,#OutOfPlay=TRUE);
          }
+         plGoToShrine = $;
       }
-
-      plGoToShrine = $;
 
       return;
    }  
@@ -642,12 +642,14 @@ messages:
 
    DelayedTeleport()
    {
-      local iCntr;
+      local each_obj;
       
-      for iCntr in plGoToShrine
+      for each_obj in plGoToShrine
       {
-         Send(self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
+         Send(self,@Teleport,#what=each_obj,#OutOfPlay=TRUE);
       }
+      % The shrine was dedicated clear the list for next time
+      plGoToShrine = $;
 
       return;
    }

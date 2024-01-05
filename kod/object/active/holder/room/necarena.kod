@@ -542,7 +542,7 @@ messages:
       %  than you have or if the victim is sufficiently high level.
       if IsClass(what,&User) AND IsClass(victim, &User)
       {
-         if (Send(what,@GetBaseMaxHealth) + 10) < Send(victim,@GetBaseMaxHealth)
+         if (Send(what,@GetBaseMaxHealth) + 10) <= Send(victim,@GetBaseMaxHealth)
             OR Send(victim,@GetBaseMaxHealth) >= 140
          {
             plGoToShrine = cons(what,plGotoShrine);

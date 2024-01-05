@@ -105,7 +105,8 @@ resources:
 
    Goad_Draw = "`rFight is a draw.  This is a bug.  Please report it and specify combat type and all actions which led to this message."
    Goad_wont_fight = "`kApparently %s%s is too cowardly to fight.  Cowards should die . . . slowly."
-
+   Goad_no_summons = "I thirst for bloody battle, not magical parlor tricks!"
+   
    Goad_battle_midi_rsc = pk_sb16.mid
 
 classvars:
@@ -1101,8 +1102,33 @@ messages:
 
    ReqSomethingAttack(what=$,victim=$)
    {
+      % if a fight isnt in session, attack fails.
+      if NOT Send(self,@FightInSession)
+      {
+         return FALSE;
+      }
+
+      % if the victim is not a combatant, attack fails.
+      if IsClass(victim,&Player)
+         AND NOT Send(self,@IsCombatant,#who=victim)
+      {
+         return FALSE;
+      }
+
+      % Monsters attacking players
+      if IsClass(what,&Monster)
+         AND Send(self,@IsCombatant,#who=victim)
+      {
+         propagate;
+      }
+
+      % if the attacker is not a combatant, attack fails.
+      if NOT Send(self,@IsCombatant,#who=what)
+      {
+         return FALSE;
+      }
+
       %% targetless spells: heat, earthquake, umbrella and mana bomb
-      %% return true as long as a fight is on, and 
       if victim = $
         {
          if not send(self,@isCombatant,#who=what)         
@@ -1123,14 +1149,6 @@ messages:
            }
           return TRUE;
         }
-
-      %% monsters attacking players
-      if isClass(what,&monster)
-      AND send(self,@isCombatant,#who=victim)
-      AND send(self,@FightInSession)
-      {
-          propagate;
-      }
 
       %% spells with targets = all the rest of them     
 
@@ -1183,7 +1201,6 @@ messages:
        }
       }
 
-
       %%% Can't cast spells unless a fight is in session
       if ptFight = $
            {
@@ -1194,6 +1211,17 @@ messages:
               return FALSE;
            }
 
+      %%% Summoned Monsters just seem to fall into the lava where they do nothing.
+      %%% These spells are turned off until the room geometry is updated
+      %%% and/or an update allows the lava to kill monsters.
+      if oSpell <> $
+         AND send(oSpell,@IsSummonSpell)
+         {
+            send(self,@SayToOne,#target=who,#message_rsc=Goad_no_summons);
+
+            return FALSE;
+         }
+         
       %%% Certain spells are banned outright      
       if send(oSpell,@SpellBannedInArena)
          {

@@ -871,6 +871,13 @@ messages:
    {
       local i;
 
+      % Recreate the hash tables.
+
+      Send(self,@CreateUserTable);
+      Send(self,@CreateRoomTable);
+      Send(self,@CreateSpellTable);
+      Send(self,@CreateItemAttTable);
+      
       % Player maintenance.
 
       for i in plUsers_logged_on
@@ -901,13 +908,6 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
-
-      % Recreate the hash tables.
-
-      Send(self,@CreateUserTable);
-      Send(self,@CreateRoomTable);
-      Send(self,@CreateSpellTable);
-      Send(self,@CreateItemAttTable);
 
       return;
    }
@@ -4874,6 +4874,7 @@ messages:
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
       plItemTemplates = cons(create(&VampireWand),plItemTemplates);
       plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
+      plItemTemplates = cons(create(&BonkStick),plItemTemplates);
 
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&LongSword),plItemTemplates);

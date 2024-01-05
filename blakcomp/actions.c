@@ -68,10 +68,7 @@ void initialize_parser(void)
    st.maxresources = RESOURCEBASE;
    st.maxlocals = -1; /* So that first local is numbered 0 */
    st.maxclassvars = -1; /* So that first class variable is numbered 0 */
-   // XXX not needed because of self
-#if 0
-   st.maxproperties = -1; /* So that first property is numbered 0 */
-#endif
+   st.maxproperties = 0; /* So that first property is numbered 1; 0 = self */
    
    st.recompile_list = NULL;
    st.constants = NULL;
@@ -432,7 +429,7 @@ expr_type make_expr_from_id(id_type id)
    expr_type e = (expr_type) SafeMalloc(sizeof(expr_struct));
    
    /* Id must be a parameter, local, property, constant, or resource */
-   lookup_id(id);		
+   lookup_id(id);
    switch(id->type)
    {
    case I_LOCAL:
@@ -876,7 +873,7 @@ stmt_type make_assign_stmt(id_type id, expr_type expr)
    assign_stmt_type s = (assign_stmt_type) SafeMalloc(sizeof(assign_stmt_struct));
 
    /* Left-hand side must be a local or property */
-   lookup_id(id);
+   auto old_id = lookup_id(id);
    if (id->type == I_UNDEFINED || id->type == I_MISSING)
       action_error("Unknown identifier %s", id->name);
    else
@@ -889,6 +886,7 @@ stmt_type make_assign_stmt(id_type id, expr_type expr)
 
    s->lhs = id;
    s->rhs = expr;
+   old_id->assigned = true;  // Modify version in symbol table
 
    stmt->type = S_ASSIGN;
    stmt->value.assign_stmt_val = s;
@@ -901,7 +899,7 @@ stmt_type make_for_stmt(id_type id, expr_type expr, list_type stmts)
    for_stmt_type s = (for_stmt_type) SafeMalloc(sizeof(for_stmt_struct));
 
    /* Loop variable must be a local, property or parameter */
-   lookup_id(id);
+   auto old_id = lookup_id(id);
    if (id->type == I_UNDEFINED || id->type == I_MISSING)
       action_error("Unknown identifier %s", id->name);
    else
@@ -911,6 +909,7 @@ stmt_type make_for_stmt(id_type id, expr_type expr, list_type stmts)
    s->id = id;
    s->condition = expr;
    s->body = stmts;
+   old_id->assigned = true;
 
    stmt->type = S_FOR;
    stmt->value.for_stmt_val = s;
@@ -1185,6 +1184,15 @@ message_handler_type make_message_handler(message_header_type header, char *comm
    table_delete(st.localvars);
    st.maxlocals = -1; /* So that first local is numbered 0 */
 
+   // Unused local variable is an error
+   for (auto local = h->locals; local != NULL; local = local->next) {
+     auto id = (id_type) local->data;
+     if (!id->assigned) {
+       action_warning("Unused local %s in handler %s", id->name,
+                      header->message_id->name);
+     }
+   }
+   
    return h;
 }
 /************************************************************************/

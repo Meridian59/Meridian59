@@ -92,7 +92,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower=0)
    {
-      local oKiller,iValue,lRoomlist,oSpell,oRoom,oLocation,rLocationName;
+      local oKiller,iValue,oSpell,oRoom,oLocation,rLocationName;
 
       oKiller = send(SYS,@GetLastMurderer);
       iValue = send(self,@GetSeanceStrength,#iSpellpower=iSpellPower,#who=who);

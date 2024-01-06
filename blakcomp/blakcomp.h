@@ -292,6 +292,7 @@ void check_continue(void);
 stmt_type make_prop_stmt(void);
 stmt_type make_if_stmt(expr_type, list_type, list_type);
 stmt_type make_assign_stmt(id_type, expr_type);
+id_type make_loop_variable(id_type id);
 stmt_type make_for_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);
 stmt_type make_call(id_type, list_type);

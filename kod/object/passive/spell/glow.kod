@@ -79,7 +79,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oWeapon, oTarget, oGlow, iCurrentGlow;
+      local oWeapon, oTarget, iCurrentGlow;
 
       oTarget = first(lTargets);
       if oTarget = $

@@ -139,8 +139,6 @@ messages:
 
    SomethingMoved(what=$)
    {
-      local oTrance, oActive, lActive, i;
-
       if what <> self OR poOwner = $
       {
          propagate;
@@ -444,7 +442,7 @@ messages:
 
    Killed(what=$)
    {
-      local oSpell, oRoom, NumAttackers, i;
+      local oSpell, NumAttackers, i;
 
       NumAttackers = length(plAttackers);
  

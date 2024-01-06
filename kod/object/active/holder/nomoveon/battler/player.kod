@@ -1476,7 +1476,7 @@ messages:
 
    ShowDesc()
    {
-      local i, HitPoint_Percent;
+      local HitPoint_Percent;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND poIllusion_set <> $

@@ -59,9 +59,7 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    AddSelfToRandomItem(oItem = $, who=$)
-   {
-      local iSpellType, iRand;
-      
+   {   
       if oItem = $ or who = $  { DEBUG("BAD BAD BAD"); return FALSE; }
 	
       if send(self,@ReqAddToItem,#oItem=oItem)
@@ -102,7 +100,6 @@ messages:
 
    AddEffects(oItem = $, lData = $)
    {
-      local iSpellType;
       if oItem = $ or lData = $ { DEBUG("AddEffects failed!"); return FALSE; }
 	
       if Send(oItem,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
@@ -115,7 +112,7 @@ messages:
 
    RemoveEffects(oItem = $,lData = $)
    {
-      local iSpellType, oPlayer;
+      local oPlayer;
 	
       if oItem = $ or lData = $
       {

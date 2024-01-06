@@ -118,7 +118,7 @@ messages:
    
    TryCreateMonster(initroom = FALSE,goodguy=FALSE,darkguy=FALSE,nofigure=FALSE)
    {
-      local oMonster,iRoll,iTotal,lMonster_info,iRow,iCol,lPos;
+      local oMonster,iRoll,iRow,iCol,lPos;
       
       if piMonster_count >= piMonster_count_max
       {
@@ -181,7 +181,7 @@ messages:
    
    FigureRoomKarma(bForceChange=FALSE)
    {
-      local i, gCount, eCount, oldKarma, iIndex;
+      local i, gCount, eCount, oldKarma;
       
       gCount = 0;
       eCount = 0;

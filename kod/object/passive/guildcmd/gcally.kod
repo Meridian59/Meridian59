@@ -60,8 +60,7 @@ messages:
    "Create invitation and give it to the target."
 
    {
-      local oGuild, ownguild, rank, i;
-
+      local oGuild, ownguild, i;
 
       %debug("reaching gcally.kod");
       oGuild= oTarget;

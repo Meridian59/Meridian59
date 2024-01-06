@@ -51,7 +51,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local target, i, iTotalRange;
+      local target, iTotalRange;
 
       % Can cast spell if the 1 target item is a battler
       if Length(lTargets) <> 1

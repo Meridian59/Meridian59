@@ -252,8 +252,6 @@ messages:
 
    StartAttackTimer()
    {
-      local lUsers;
-
       ptAttack = $;
       if NOT Send(self,@DoNodeAttack)
          AND pbAttackEnabled

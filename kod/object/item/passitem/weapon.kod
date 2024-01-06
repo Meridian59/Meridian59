@@ -184,7 +184,7 @@ messages:
    "When someone attacks with this weapon, they send us their attack value "
    "and we change it based on quality of weapon"
    {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
+      local iBaseHit, oWeapAtt, i;
 
       iBaseHit = hit_roll;
 
@@ -803,8 +803,6 @@ messages:
 
    SendLookAnimation()
    {
-      local iFlags;
-
       if piHits > 0 OR viBroken_group = $
       {
          propagate;

@@ -203,7 +203,7 @@ messages:
    % focus on casting on the prism.  The prism calls PrismCast()
    % below when it has enough energy from the casters.
    {
-      local oRoom, oPrism;
+      local oPrism;
 
       oPrism = Send(Self,@FindPrism,#who=who);
 

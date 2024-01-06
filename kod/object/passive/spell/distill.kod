@@ -117,7 +117,7 @@ messages:
    "Do we have the ingredients?"
    {
       local lIngredients, lIngredient, cReagentClass, iNumNeeded, bFound,
-            lItems, lLists, oUserObject, iNum, oOwner, oSpell; 
+            lItems, lLists, oUserObject, iNum; 
 
       % Most of this is a modified cut and paste from CanPayReagents() in
       %  Spell superclass.
@@ -190,7 +190,7 @@ messages:
    PayIngredients(caster = $, oTarget = $)
    "Now we're making a potion so remove the ingredients."
    {
-      local num, reqstat, iability, lIngredient, lIngredients,
+      local lIngredient, lIngredients,
             cIngredientClass, iLists, lItems, iNumNeeded,oUserObject;
 
       % Again: Cut and paste from spell.kod
@@ -330,7 +330,7 @@ messages:
    SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
    "Check if string is a potion spell.  If it is make it the target."
    {
-      local lSpells, name, oTarget, iAbility, iRand, i;
+      local lSpells, oTarget, iAbility, iRand, i;
 
       lSpells = Send(SYS,@GetSpells);
       iRand = Random(1,100);

@@ -96,8 +96,6 @@ messages:
 
    Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,maker=$,Ability=$)
    {
-      local oItemAtt;
-
       if model <> $
       {
          if GetClass(model) <> GetClass(self)
@@ -196,7 +194,7 @@ messages:
    "Casts the spell set by the spell object, returning TRUE\n"
    "if successful, or FALSE if the spell failed for whatever reason."
    {
-      local oSpell,iSpellPower,iRand,iInt,lTargets;
+      local oSpell,iSpellPower,lTargets;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
 

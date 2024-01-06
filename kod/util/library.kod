@@ -2040,7 +2040,7 @@ messages:
    "value are deleted, or all are deleted if the id is -1 (Default)."
    "If all are deleted, then the reference to the mob is deleted as well."
    {
-      local i,j,k,lTmp,iCount;
+      local i,j,lTmp,iCount;
  
       iCount=0;
       for i in plMobLib
@@ -2115,7 +2115,7 @@ messages:
    % Now returns a list [lAction, cMobClass, iKey] for spamlist to use
    % MobLib items without keys (currently all of them) will not be filtered by spamlist
    {
-      local i,j,k,lActionList,iCount,bFound,iKey, ktriggered, bKtContainK, bKContainKt;
+      local i,j,k,lActionList,iCount,iKey, ktriggered, bKtContainK, bKContainKt;
       lActionList = action_list;
       ktriggered = $;
       iCount = count;
@@ -2237,7 +2237,7 @@ messages:
    %% They are always processed immediately and added to spam list,
    %% then search continues for a "real" action
    {
-      local i,j,k,iCount,lActionList, iKey, bFound, ktriggered, bKtContainK, bKContainKt;
+      local i,j,k,iCount,lActionList, iKey, ktriggered, bKtContainK, bKContainKt;
       lActionList = $;
       ktriggered = $;      % saves the current speech trigger corresponding to lActionList
       iCount = 0;
@@ -2359,7 +2359,7 @@ messages:
       % new class added if npc_class not found -- be careful! no way to error check this? xxxAJM;
       % mood only set on initial create
 
-      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch, sScratch;
+      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch;
 
       if( keynum = -1 )
       {
@@ -2639,7 +2639,7 @@ messages:
    % uses piLastSpeechKey if keynum = -1 (use to set quote for last trigger added)
    % adding new class not allowed, returns 0 if class not found;
 
-      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch;
+      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey;
       if( keynum = -1 )
       {
     keynum = piLastSpeechKey;
@@ -3513,7 +3513,7 @@ messages:
    CreateQuest(type=0, quester=$, reward=$)
    "if there are no arguments, its a temp quest. "
    {
-      local i,itemp,iType, oGoal, oQuester, oHinter, lReward, iId;
+      local i,iType, oGoal, oQuester, oHinter, lReward, iId;
 
       iType = type;
       if iType = QST_PERM_OBJECT OR iType = QST_PERM_PHRASE
@@ -3584,7 +3584,7 @@ messages:
 
    IsQuestStringMatch(string=$,id=0,goal=$,who=$,mob=$)
    {
-      local i,j,lGoal,bTest,bOld,oQuester,lReward,hinter;
+      local i,j,lGoal,bTest,bOld,lReward,hinter;
 
       if goal=$ { lGoal = Send(self,@GetQuestGoal,#id=id); bOld=False; }
       else {lGoal = goal; bOld=True;}
@@ -3614,8 +3614,8 @@ messages:
          if First(lReward) = QST_REWARD_ID AND
             Send(self,@HasDoneQuestID,#who=who,#questID=Nth(lReward,2))
          {
-            Post(Send(oQuester,@GetOwner),@SomeoneSaid,
-              #what=oQuester,#type=SAY_RESOURCE,#string = QM_already_done);
+            Post(Send(who,@GetOwner),@SomeoneSaid,
+              #what=mob,#type=SAY_RESOURCE,#string = QM_already_done);
             return False;
          }
       }
@@ -3913,7 +3913,7 @@ messages:
 
    RemoveQuestTriggers(id=$)
    {
-      local i,j,iType;
+      local i,iType;
 
       for i in [Send(self,@GetQuester,#id=id),Send(self,@GetHinter,#id=id)]
       {
@@ -3967,7 +3967,7 @@ messages:
 
    SelectQuestGoal(type=$)
    {
-      local bAlready,iCount,i,j,cGoal,Goal,tmp,tmp2,tmp3;
+      local bAlready,iCount,i,cGoal,Goal,tmp,tmp2,tmp3;
       Goal=$;
       iCount=0;
       bAlready=False;
@@ -4040,7 +4040,7 @@ messages:
 
    SelectQuestReward()
    {
-      local iInt,lReward,lTemp,iCount;
+      local lReward,lTemp,iCount;
 
       if Random(1,2) = 1
       {

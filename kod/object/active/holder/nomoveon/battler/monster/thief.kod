@@ -43,9 +43,7 @@ properties:
 messages:
 
    SendOverlays()
-   {
-      local i;
-      
+   {     
       % thief  has 2 legs, 2 arms
       
       AddPacket(1,4);

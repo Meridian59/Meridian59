@@ -134,8 +134,6 @@ messages:
 
    Constructor(GhostedPlayer = $, iPenaltyTime = $)
    {
-      local i;
-
       if GhostedPlayer <> $
       {
          Send(self,@SetLogoffGhost,#GhostedPlayer=GhostedPlayer);
@@ -663,8 +661,7 @@ messages:
 
    SendOverlays()
    {
-      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat,
-            iArms_xlat;
+      local iSkin_xlat;
 
       % Send overlay bitmap info to user.
 

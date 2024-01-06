@@ -409,7 +409,7 @@ messages:
 
    GotRent(who=$,iAmount=0,iCost=150,iLocation=$)
    {
-      local oMoney, iDays, oRoom, iDaysLeft;
+      local oMoney, iDays, oRoom;
 
       oRoom = send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
 
@@ -529,7 +529,7 @@ messages:
 
    RoomDeleted(what=$)
    {
-      local lRoomsRented, iRID;
+      local iRID;
 
       iRID = send(what,@GetRoomNum);
 

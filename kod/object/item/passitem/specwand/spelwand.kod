@@ -49,8 +49,6 @@ messages:
 
    Constructor(labelled=false,model=$)
    {
-      local oItemAtt;
-
       if model <> $ and GetClass(model) <> GetClass(self) { model = $; }
 
       if labelled or (model <> $ and send(model,@IsLabelled))

@@ -70,7 +70,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local target, i,oDementia;
+      local target, oDementia;
       
       if Length(lTargets) <> 1
       {
@@ -118,7 +118,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower=0)
    {
-      local iMight_change, oTarget, oDementia;
+      local oTarget, oDementia;
 
       oTarget = First(lTargets);
       oDementia = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);

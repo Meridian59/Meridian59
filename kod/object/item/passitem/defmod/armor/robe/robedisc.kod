@@ -180,7 +180,7 @@ messages:
     
    ResetColors()
    {
-      local i, oWarEvent, iSide, oSpell, iHigh_level, skin_color, bFound;
+      local i, oWarEvent, iSide, oSpell, iHigh_level, bFound;
       
       iHigh_level = 0;
 

@@ -82,7 +82,7 @@ messages:
 
    PlaceWallElements(who = $, iSpellPower = 0)
    {
-      local i, oRoom, iCounter, iDiff, oActiveFog, oPassiveFog, iRadius,
+      local oRoom, oActiveFog, oPassiveFog, iRadius,
             iDuration, iCasterRow, iCasterCol, iCasterFineRow, iCasterFineCol;
 
       oRoom = Send(who,@GetOwner);

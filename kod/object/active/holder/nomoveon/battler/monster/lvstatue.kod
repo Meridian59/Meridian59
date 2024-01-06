@@ -511,7 +511,7 @@ messages:
 
    SetHair()
    {
-      local RandomNumber,Translation,HelmetHair;
+      local RandomNumber;
 
       % Sets the hairdo, color.  Has a chance of putting a helmet on instead.
 
@@ -1083,7 +1083,7 @@ messages:
 
    CreateTreasure(who=$,corpse=$)
    {
-      local i,iGen_items,oTreasure,oTreasure_type;
+      local oTreasure;
 
       % Soldiers have a small chance to drop a rose as treasure.
       if pbIsSoldier AND random(0,100) = 59
@@ -1110,8 +1110,6 @@ messages:
 
    IsAlly(target = $, regroup = FALSE)
    {
-      local iFaction;
-
       if IsClass(target,GetClass(self))
       {
          return TRUE;

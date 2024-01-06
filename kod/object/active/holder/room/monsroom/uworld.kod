@@ -610,7 +610,7 @@ messages:
 
    CorpseDecomposed(what = $)
    {
-      local i, each_obj, oDeadPlayer;
+      local i, oDeadPlayer;
 
       for i in plCorpses
       {  

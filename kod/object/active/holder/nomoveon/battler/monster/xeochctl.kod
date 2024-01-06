@@ -214,7 +214,7 @@ messages:
 
    MonsterCastSpell()
    {
-      local iRandom, iSpell, iBase, oSpell, iManaCost, lInfo, lTargets;
+      local iRandom, iSpell, oSpell, iManaCost, lInfo, lTargets;
 
       % See if we actually cast a spell, 100% base lowered if we're demented,
       %  mana bombed, etc.

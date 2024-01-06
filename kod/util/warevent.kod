@@ -386,7 +386,7 @@ messages:
    RecordWarKill(who=$,victim=$)
    "Checks to see if who and victim are in the war, then increments the kill count if appropriate."
    {
-      local lSoldiers, iSidePosition, iVictimSide;
+      local iSidePosition, iVictimSide;
       
       % Bail for missing info, if victim isn't a player, or if not active
       if who = $ OR victim = $

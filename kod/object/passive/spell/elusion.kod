@@ -187,7 +187,7 @@ messages:
 
    GetLocations(iSpellpower=$,target=$)
    {
-      local lLocations, lAvailable, iNumLocations, oRoom, sLocations;
+      local lLocations, lAvailable, iNumLocations, oRoom;
 
       lLocations = [send(SYS,@FindRoomByNum,#num=RID_TOS),
                     send(SYS,@FindRoomByNum,#num=RID_MARION),

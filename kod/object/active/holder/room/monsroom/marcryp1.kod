@@ -249,8 +249,6 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
    {
-      local i, each_obj;
-
       % Let players call upon the "gods" to receive protection
       % VERY IMPORTANT: Make sure we don't catch our own string!
       if what <> self
@@ -539,7 +537,7 @@ messages:
 
    ResetMonstersInFinal()
    {
-      local i,each_obj,iCount,iRow,iCol, oStatue;
+      local i,each_obj,iRow,iCol, oStatue;
 
       for i in plActive
       {
@@ -602,8 +600,6 @@ messages:
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
    "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
    {
-      local iBonus;
-
       % Hinder learning Discordance due to the automatic room enchantment
       if IsClass(oSpellSkill,&Discordance)
       {

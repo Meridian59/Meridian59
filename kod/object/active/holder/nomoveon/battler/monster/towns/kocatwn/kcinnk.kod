@@ -123,7 +123,7 @@ messages:
 
    CheckForScheme(who=$, obj = 0)
    {
-      local oMoney, oBank, amount;
+      local oMoney, amount;
 
       if not isClass(obj,&Money)
       {
@@ -212,8 +212,6 @@ messages:
 
    ReqOffer(what = $,item_list = $)
    {
-      local i, iMoney, oRoomMaint, iNewDays;
-
       % Check for if in the same room.
       if Send(what,@GetOwner) <> poOwner
       {

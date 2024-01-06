@@ -65,10 +65,9 @@ messages:
 
    CheckWhyWanted(obj=$,who=$)
    {
-      local oMoney,spec_rsc,fact_rsc;
+      local spec_rsc,fact_rsc;
       if isClass(obj,&Token)
       {
-
          spec_rsc=Send(self,@CheckSpecialDeliverer,#who=who);
 
          if Send(who,@GetFaction)=FACTION_DUKE

@@ -337,7 +337,7 @@ messages:
 
    SendLightingInformation()
    {
-      local iFlags, iIntensity, iColor;
+      local iIntensity, iColor;
 
       if piState <> NODE_DEAD
       {

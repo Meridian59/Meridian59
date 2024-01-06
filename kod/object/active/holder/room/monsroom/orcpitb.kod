@@ -314,7 +314,7 @@ messages:
 
    AllBUsed()
    {
-      local i, each_obj, count, iRow, iCol, bBOne, bBTwo, bBThree, bBFour;
+      local i, each_obj, iRow, iCol, bBOne, bBTwo, bBThree, bBFour;
       bBOne = FALSE;
       bBTwo = FALSE;
       bBThree = FALSE;

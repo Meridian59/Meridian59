@@ -79,8 +79,6 @@ messages:
    
    CreateStandardObjects()
    {
-      local oPortal;
-
       include oc01.ktm;
 
 %      if not (send(SYS,@AreRoomIllusionsEnabled))

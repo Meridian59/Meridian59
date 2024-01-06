@@ -74,7 +74,7 @@ messages:
    ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
    "Wielder gets a damage bonus, equal to (proficiency/4) - 2."
    {
-      local iNum, iPower;
+      local iPower;
           
       %% here, iNum = power itself
       iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
@@ -104,7 +104,7 @@ messages:
    ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
    "Wielder gets a hit bonus based on whether or not the target is a murderer or outlaw."
    {
-      local iNum, iPower;
+      local iPower;
           
       %% here, iNum = power itself
       iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));

@@ -433,9 +433,7 @@ messages:
    }
 
    AuthenticateJusticar()
-   {
-      local sString, sString2, oBook;
-      
+   {     
       if poJusticar <> $
          AND (Send(poJusticar,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
               OR Send(poJusticar,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
@@ -1212,8 +1210,7 @@ messages:
 
    CountVotes()
    {
-      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound, oBook,
-            sString, sString2;
+      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound;
 
       lTallied = $;
       

@@ -28,12 +28,16 @@ DWORD	gFogCaps = (D3DPRASTERCAPS_FOGTABLE |
 
 D3DPRESENT_PARAMETERS	gPresentParam;
 
+extern int gFullTextureSize;
+extern int gSmallTextureSize;
+extern int d3dRenderTextureThreshold;
+
 Bool D3DDriverProfileInit(void)
 {
 	FILE					*pFile;
 	Bool					bProblem = FALSE;
 	Bool					bDisable = FALSE;
-	char					string[255];
+	char					config_setting[255];
 
 	pFile = fopen("d3dlog.txt", "w+t");
 	assert(pFile);
@@ -41,10 +45,10 @@ Bool D3DDriverProfileInit(void)
 	gD3DEnabled = FALSE;
 
 	// first check to make sure user isn't forcing software rendering
-	GetPrivateProfileString("config", "softwarerenderer", "error", string, 255, "./config.ini");
-	strlwr(string);
+	GetPrivateProfileString("config", "softwarerenderer", "error", config_setting, 255, "./config.ini");
+	strlwr(config_setting);
 
-	if (0 == strcmp(string, "true"))
+	if (0 == strcmp(config_setting, "true"))
 	{
 		gD3DDriverProfile.bSoftwareRenderer = TRUE;
 
@@ -68,18 +72,33 @@ Bool D3DDriverProfileInit(void)
 		return FALSE;
 	}
 
-   // This looks wrong.. "TRUE" stencil format??
-	error = IDirect3D9_CheckDepthStencilMatch(
-      gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-      D3DFMT_X8R8G8B8, D3DFMT_D24S8, (D3DFORMAT) TRUE);
 
-	gScreenWidth = 800;
-	gScreenHeight = 600;
+	// Main game view buffer resolution.
+	if (config.gpuEfficiency)
+	{
+		// original: 800 x 600 (4:3) 
+		gScreenWidth = 800;
+		gScreenHeight = 600;
+	}
+	else   
+	{
+		// 1080p: 1920 x 1080 (16:9)
+		gScreenWidth = 1920;
+		gScreenHeight = 1080;
+	}
+
+	// Full texture size is the same as the game resolution width.
+	gFullTextureSize = gScreenWidth;
+
+	// Small texture size is a quarter of the full texture size.
+	gSmallTextureSize = gFullTextureSize / 4;
+
+	d3dRenderTextureThreshold = gSmallTextureSize;
 
 	memset(&gPresentParam, 0, sizeof(gPresentParam));
 	gPresentParam.Windowed = TRUE;
 	gPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	gPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	gPresentParam.PresentationInterval = (config.gpuEfficiency) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	gPresentParam.BackBufferWidth = gScreenWidth;
 	gPresentParam.BackBufferHeight = gScreenHeight;
 	gPresentParam.BackBufferFormat = D3DFMT_A8R8G8B8;

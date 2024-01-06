@@ -64,8 +64,6 @@ messages:
 
    ReqSomethingMoved(what = $,new_row = $,new_col = $)
    {
-      local iRow,iCol;
-
       if new_row = piRow AND new_col = piCol AND IsClass(what,&Battler)
       {
          return FALSE;

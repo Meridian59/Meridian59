@@ -164,9 +164,7 @@ messages:
    }
 
    Constructor(original = $, default = FALSE,desc = $,special=FALSE, specialname = $, specialgender = GENDER_MALE)
-   {
-      local i;
-      
+   {     
       if special
       {
          send(self,@ConstructorSpecial,#desc=desc,#name=specialname,#gender=specialgender,#color = special);
@@ -494,7 +492,7 @@ messages:
 
    SendOverlays()
    {
-      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat, iArms_xlat;
+      local iSkin_xlat;
 
       % Send overlay bitmap info to user.  
 

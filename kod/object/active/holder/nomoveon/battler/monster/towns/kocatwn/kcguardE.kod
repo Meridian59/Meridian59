@@ -95,7 +95,7 @@ messages:
 
    CheckForBribe(who=$, obj = 0)
    {
-      local oMoney, oBank, amount;
+      local oMoney, amount;
 
       if not isClass(obj,&Money)  { return false; }
       amount = send(obj,@GetNumber);

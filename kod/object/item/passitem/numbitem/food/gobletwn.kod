@@ -44,6 +44,7 @@ properties:
    viFilling = 8
    viNutrition = 6
    piNumber = 1
+   piItem_flags = PT_GRAYSCALE_MEDIUM    % Pewter color to set it apart from goblet of ale
 
 messages:
 

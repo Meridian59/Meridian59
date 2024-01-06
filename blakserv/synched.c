@@ -327,7 +327,7 @@ void SynchedAcceptLogin(session_node *s,char *name,char *password)
 
    /* bad username, bad password, or suspended? */
    if (a == NULL ||
-       (a->type != ACCOUNT_GUEST && strcmp(a->password,password) != 0))
+       (strcmp(a->password,password) != 0))
    {
       s->syn->failed_tries++;
       if (s->syn->failed_tries == ConfigInt(LOGIN_MAX_ATTEMPTS))
@@ -337,30 +337,9 @@ void SynchedAcceptLogin(session_node *s,char *name,char *password)
          HangupSession(s);
          return;
       }
-      if (!stricmp(name,ConfigStr(GUEST_ACCOUNT)))
-      {
-         AddByteToPacket(AP_GUEST);
-         AddByteToPacket(1); /* we're hanging 'em up */
-         AddIntToPacket(ConfigInt(GUEST_SERVER_MIN));
-         AddIntToPacket(ConfigInt(GUEST_SERVER_MAX));
-         
-         /*
-           char *too_many_str;
-           
-           too_many_str = ConfigStr(GUEST_TOO_MANY);
-           AddByteToPacket(AP_MESSAGE);
-           AddStringToPacket(strlen(too_many_str),too_many_str);
-           AddByteToPacket(LA_LOGOFF);
-         */
-         
-         SendPacket(s->session_id);
-         HangupSession(s);
-      }
-      else
-      {
-         AddByteToPacket(AP_LOGINFAILED);
-         SendPacket(s->session_id);
-      }
+      
+      AddByteToPacket(AP_LOGINFAILED);
+      SendPacket(s->session_id);
       return;
    }
 
@@ -398,16 +377,6 @@ void SynchedAcceptLogin(session_node *s,char *name,char *password)
    /* suspension lifted naturally? */
    if (a->suspend_time)
       SuspendAccountAbsolute(a, 0);
-   
-   /* tell guest client what other servers may be available */
-   if (!stricmp(name,ConfigStr(GUEST_ACCOUNT)))
-   {
-      AddByteToPacket(AP_GUEST);
-      AddByteToPacket(0); /* we're letting 'em stay, give 'em the new range */
-      AddIntToPacket(ConfigInt(GUEST_SERVER_MIN));
-      AddIntToPacket(ConfigInt(GUEST_SERVER_MAX));
-      SendPacket(s->session_id);
-   }
    
    /* check if anyone already logged in on same account */
    other = GetSessionByAccount(a);

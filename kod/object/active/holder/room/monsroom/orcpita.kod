@@ -152,7 +152,7 @@ messages:
 
    AllBUsed()
    {
-      local i, each_obj, count, iRow, iCol, bBOne, bBTwo;
+      local i, each_obj, iRow, iCol, bBOne, bBTwo;
       bBOne = FALSE;
       bBTwo = FALSE;
       for i in plActive

@@ -23,6 +23,8 @@ resources:
    BonkStick_desc_rsc = \
       "This wand just drips of ludicrocity."
 
+   BonkStick_wav_rsc = Patk.wav
+
    bonkstick_bad_target = "You cannot use the bonkstick on %s%s."
    bonkstick_not_self = "You wouldn't feel right hitting yourself on the head with the bonkstick!"
 
@@ -41,8 +43,10 @@ classvars:
    viWeight = 25
    viValue_average = 150
 
-   viHits_init_min = 20000
-   viHits_init_max = 20000
+   % Greatly reduced hit value to allow these to be available to
+   % give to players in a reasonable way.
+   viHits_init_min = 20
+   viHits_init_max = 20
 
    viGround_group = 2
 
@@ -104,6 +108,8 @@ messages:
       Send(apply_on,@MsgSendUser,#message_rsc=bonked_bonkstick_msg,
            #parm1=Send(poOwner,@GetDef),#parm2=Send(poOwner,@GetName),
            #parm3=Send(poOwner,@GetHisHer));
+
+      Send(Send(apply_on, @GetOwner), @SomethingWaveRoom, #what=apply_on,#wave_rsc=BonkStick_wav_rsc);
 
       for i in lActive
       {

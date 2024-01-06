@@ -96,8 +96,6 @@ messages:
 
    Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,maker=$,Ability=$)
    {
-      local oItemAtt;
-
       if model <> $
       {
          if GetClass(model) <> GetClass(self)
@@ -193,9 +191,10 @@ messages:
    }
    
    CastSpell(what = $, apply_on = $)
-   "Casts the spell set by the spell object"
+   "Casts the spell set by the spell object, returning TRUE\n"
+   "if successful, or FALSE if the spell failed for whatever reason."
    {
-      local oSpell,iSpellPower,iRand,iInt,lTargets;
+      local oSpell,iSpellPower,lTargets;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
 
@@ -206,18 +205,16 @@ messages:
          AND IsClass(apply_on,&Monster)
          AND NOT Send(apply_on,@CanMonsterFight,#who=poOwner,#oStroke=self)
       {
-         return;
+         return FALSE;
       }
 
       % Karma check?
       if pbCheckKarma AND NOT Send(oSpell, @KarmaCheck, #who = poOwner)
       {
-         Debug("user karma = ", Send(poOwner, @GetKarma), " spell needs = ",
-             Send(oSpell, @GetLevel));
          Post(what, @MsgSendUser, #message_rsc = SpellItem_bad_karma,
               #parm1 = Send(self, @GetDef),
               #parm2 = Send(self, @GetName));
-         return;
+         return FALSE;
       }
 
       if piSpellPower = $
@@ -228,10 +225,11 @@ messages:
       {
          iSpellpower = piSpellpower;
       }
-      
+
       if (vbFailSafe)
          OR ( (Send(oSpell,@CanPayCosts,#who=poOwner,#lTargets=lTargets,
-                    #iSpellPower=iSpellPower,#bItemCast=TRUE,#bMade=pbMade))
+                    #iSpellPower=iSpellPower,#bItemCast=TRUE,
+                    #bCheckKarma=pbCheckKarma))
               AND (Send(Send(what,@GetOwner),@ReqSpellCast,#who=what,#oSpell=oSpell))
               AND ((NOT Send(oSpell,@IsHarmful))
                    OR Send(Send(what,@GetOwner),@ReqSomethingAttack,#what=what,
@@ -243,9 +241,11 @@ messages:
       else 
       {
          Send(self,@DoFailure,#what=what,#lTargets=lTargets);
+
+         return FALSE;
       }
 
-      return;
+      return TRUE;
    }
 
    DoFailure(what = $,lTargets=$)
@@ -288,12 +288,23 @@ messages:
    "Casts the spell specified by the item (see subclass) on whatever it"
    "is being applied to, then reduces 1 charge--break the item if last charge"
    {
+      % Attempt to cast the spell specific to the Spellitem, and only
+      % do the follow-up if the spell actually succeeds.
+      if Send(self, @CastSpell, #what=what, #apply_on=apply_on)
+      {
+         Send(self, @OnSuccessfulApply, #what=what, #apply_on=apply_on);
+      }
+      
+      return;
+   }
+
+   OnSuccessfulApply(what=$, apply_on=$)
+   "If the item is successfully applied to the user, this is everything"
+   "we want to happen besides the spell effect itself."
+   {
       piHits = piHits - 1;
 
-      % Cast the spell specific to the Spellitem
-      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
-      
-      % Check and see if that does in the Spellitem 
+      % Check and see if that uses up the Spellitem 
       if piHits <= 0
       {
          % Post this so it prints AFTER the spell message.
@@ -309,7 +320,7 @@ messages:
             Post(self,@Delete);
          }
       }
-      
+
       return;
    }
 

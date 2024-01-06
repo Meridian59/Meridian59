@@ -123,7 +123,7 @@ void TMasterDialog::SetupWindow ()
 
 		wsprintf(Buf, "%d", i);
 		pMasterList->AddString(Buf);
-		pMasterList->SetItemData(i, (DWORD)Dir);
+		pMasterList->SetItemData(i, (LPARAM)Dir);
 		Dir = Dir->next;
 	}
 }
@@ -189,9 +189,9 @@ void TMasterDialog::EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT far& drawInfo)
 			int TabStops[] = { Tab1, Tab2, Tab3 };
 
 			TabbedTextOut(drawInfo.hDC,
-						  drawInfo.rcItem.left, drawInfo.rcItem.top,
-						  Buf, strlen(Buf),
-						  3, TabStops, 0);
+                    drawInfo.rcItem.left, drawInfo.rcItem.top,
+                    Buf, (int) strlen(Buf),
+                    3, TabStops, 0);
 #if 0
 			/* Is the item selected? */
 			if (drawInfo.itemState & ODS_SELECTED)

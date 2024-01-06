@@ -43,8 +43,8 @@ static int  timer_id;          // Timer for sending pings to server during downl
 HANDLE hThread = NULL;         // Handle of transfer thread
 
 /* local function prototypes */
-static BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void _cdecl TransferMessage(char *fmt, ...);
 static void AbortDownloadDialog(void);
 static Bool DownloadDone(DownloadFileInfo *file_info);
@@ -153,7 +153,7 @@ Bool DownloadCheckDirs(HWND hParent)
    return True;
 }
 
-BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    char buffer[256];
    int i,size;
@@ -232,9 +232,9 @@ BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
 /*
  * DownloadDialogProc:  Dialog procedure for displaying downloading progress.
  */
-BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-   int fraction, i;
+   int fraction;
    HWND hGraph;
    BOOL bResult = FALSE;
    char temp[256];
@@ -339,17 +339,6 @@ BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          // Set download time
          DownloadSetTime(info->files[lParam].time);
          
-         // If we're a guest, there may be additional files that we are supposed to skip.
-         // If so, we should set our download time to the last file, so that we will skip
-         // the download on the next entry into the game.
-         if (config.guest)
-            for (i = lParam + 1; i < info->num_files; i++)
-            {
-               if (info->files[i].flags & DF_GUEST)
-                  break;
-               DownloadSetTime(info->files[i].time);
-            }
-         
          info->current_file++;
          
          // Tell transfer thread to continue
@@ -424,10 +413,6 @@ Bool DownloadDone(DownloadFileInfo *file_info)
    char zip_name[MAX_PATH + FILENAME_MAX];    // Name of uncompressed file
    char *destination_dir;
 
-   // If we're a guest, skip non-guest files
-   if (config.guest && !(file_info->flags & DF_GUEST))
-      return True;
- 
    sprintf(zip_name, "%s\\%s", download_dir, file_info->filename);
 
    switch (DownloadLocation(file_info->flags))
@@ -671,7 +656,7 @@ Bool DownloadUnarchiveFile(char *zip_name, char *dir)
 /*
  * DownloadPingProc:  In response to a timer going off, send a ping message to the server.
  */
-void CALLBACK DownloadPingProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
+void CALLBACK DownloadPingProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 {
    RequestLoginPing();
 }

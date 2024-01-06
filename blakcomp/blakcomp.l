@@ -186,6 +186,24 @@ void action_error(const char *fmt, ...)
    handle_error();
 }
 /************************************************************************/
+/* action_warning should be used for semantic warnings. */
+void action_warning(const char *fmt, ...)
+{
+   int errline = lineno;
+   va_list marker;
+
+   /* If last token was EOL, report error on previous line */
+   if (!strcmp(yytext, "\n"))
+      errline--;
+
+   fprintf(stderr, "%s(%d): warning: ", current_fname, errline);  
+
+   va_start(marker, fmt);
+   vfprintf(stderr, fmt, marker);
+   va_end(marker);
+   fprintf(stderr, "\n");
+}
+/************************************************************************/
 /* simple_error should be used for other errors. */
 void simple_error(const char *fmt, ...)
 {
@@ -203,7 +221,6 @@ void simple_error(const char *fmt, ...)
 /* simple_warning should be used for all warnings. */
 void simple_warning(const char *fmt, ...)
 {
-
    va_list marker;
 
    printf("  warning: ");
@@ -304,7 +321,7 @@ void recompile_warnings(list_type l)
          column = 0;
       }
       printf("%s  ", name);
-      column += strlen(name) + 2;
+      column += (int) strlen(name) + 2;
       
       /* ((recompile_type) (l->data))->superclass->name); */
    }

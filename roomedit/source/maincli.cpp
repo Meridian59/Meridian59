@@ -117,7 +117,8 @@ TMainClient::TMainClient (TWindow* parent, const char far* title,
 	// Common file file flags and filters for Open/Save As dialogs.
 	// Filename and directory are computed in the member functions CmFileOpen,
 	// and CmFileSaveAs.
-	FileData.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+	FileData.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT |
+    OFN_NOCHANGEDIR;
 	FileData.SetFilter("Room Files (*.ROO)|*.ROO|"
 					   "All Files (*.*)|*.*|");
 
@@ -153,23 +154,10 @@ void TMainClient::CmFileOpenWad ()
 	//
 	// Display standard Open dialog box to select a file name.
 	//
-   
-   // save current working directory (of windeu32.exe)
-	// the TFileOpenDialog below is going to set
-	// it to the folder of the file being opened...
-	char workdir[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, workdir);
-   
 	*FileData.FileName = 0;
+  FileData.InitialDir = RoomDir;
 	if (TFileOpenDialog(this, FileData).Execute() == IDOK)
 	{
-		// restore workingdirectory to folder of windeu32.exe
-		SetCurrentDirectory(workdir);
-      
-#if 0
-		OpenPatchWad(FileData.FileName);
-		CloseUnusedWadFiles();
-#endif
 		// Sets a new client window (the editor) and destroy
 		// the old one (the main client)
 		TMainFrame *MainFrame =
@@ -511,23 +499,6 @@ void TMainClient::CmFileExit ()
 void TMainClient::CmEditorEdit ()
 {
    return; // We don't like this option ARK
-#if 0
-	char LevelName[9];
-
-	SET_HELP_CONTEXT(Edit_level);
-
-	// Executes the dialog box to get level number
-	if (TEpisodeMissionDialog (this, LevelName).Execute() == IDOK)
-	{
-		// Sets a new client window (the editor) and destroy
-		// the old one (the main client)
-		TMainFrame *MainFrame =
-			TYPESAFE_DOWNCAST (GetApplication()->GetMainWindow(), TMainFrame);
-		MainFrame->EditLevel (LevelName, FALSE) ;
-	}
-	RESTORE_HELP_CONTEXT();
-	return;		// 'this' is not valid anymore
-#endif
 }
 
 
@@ -542,10 +513,6 @@ void TMainClient::CmEditorCreate ()
 	SET_HELP_CONTEXT(Create_level);
 	// Executes the dialog box to get level number
 	
-#if 0
-	sprintf(LevelName, "temp.roo");
-	if (1)
-#endif
 	{
 		// Sets a new client window (the editor) and destroy
 		// the old one (the main client)

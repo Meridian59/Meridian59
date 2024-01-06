@@ -435,7 +435,7 @@ void CommandSuicid(char *args)
 /*
  * CommandSuicide: "suicide" command
  */
-BOOL CALLBACK SuicideVerifyDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK SuicideVerifyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hEdit;
    char achPassword[MAXPASSWORD+1];
@@ -552,6 +552,7 @@ void CommandActivate(char *args)
 void CommandSafetyOn(char *args)
 {
    SendSafety(1);
+   pinfo.aggressive = cinfo->config->aggressive = FALSE;
 }
 /************************************************************************/
 /*
@@ -560,6 +561,7 @@ void CommandSafetyOn(char *args)
 void CommandSafetyOff(char *args)
 {
    SendSafety(0);
+   pinfo.aggressive = cinfo->config->aggressive = TRUE;
 }
 /************************************************************************/
 /*

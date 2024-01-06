@@ -59,7 +59,7 @@ messages:
    DoCommand(who=$)
    "Give up guild hall."
    {
-      local oGuild, oHall, lMembers, i;
+      local oGuild, oHall;
      
       oGuild = Send(who, @getguild);
 

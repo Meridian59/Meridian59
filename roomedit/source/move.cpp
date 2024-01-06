@@ -176,7 +176,7 @@ Bool MoveCheckBSPNode(BSPnode *node, int old_x, int old_y, int x, int y, int z,
 {
    BSPinternal *inode;
    WallData *wall;
-	int a, b, c, distance, temp, old_distance;
+   float a, b, c, distance, temp, old_distance;
    int below_height, sector_num;
    FileSideDef *sidedef;
 
@@ -297,7 +297,7 @@ BYTE ComputeSquareFlags(BSPTree tree, int row, int col, int /*rows*/, int /*cols
  */
 BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
 {
-   long side;
+   float side;
    BSPnode *pos, *neg;
    
    while (1)
@@ -317,17 +317,17 @@ BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
 	 
 	 pos = tree->u.internal.pos_side;
 	 neg = tree->u.internal.neg_side;
-	 if (side == 0)
+	 if (side <= 0.001 && side >= -0.001)
 	    tree = (pos != NULL) ? pos : neg;
-	 else if (side > 0)
+	 else if (side > 0.001)
 	    tree = pos;
 	 else
 	    tree = neg;
 	 break;
 
       default:
-	 dprintf("BSPFindLeafByPoint got illegal node type %d\n", tree->type);
-	 return NULL;
+        LogError("BSPFindLeafByPoint got illegal node type %d\n", tree->type);
+        return NULL;
       }
    }
 }

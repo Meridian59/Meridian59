@@ -106,14 +106,11 @@ messages:
 
    UserLogon()
    {
-      local i;
-
       %debug("userlogon");
 
       piHealth = piBase_max_health;
       Send(self,@NewHealth);
       Send(self,@setplayerflag,#flag=PFLAG_PKILL_ENABLE,#value=True);
-
 
       propagate;
    }

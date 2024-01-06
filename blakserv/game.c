@@ -356,7 +356,7 @@ void GameWarnLowCredits(session_node *s)
    sprintf(text,"You have only %i credit%s remaining",s->account->credits/100,
 	   (s->account->credits/100 == 1) ? "" : "s");
 
-   SetTempString(text,strlen(text));
+   SetTempString(text, (int) strlen(text));
    str_val.v.tag = TAG_TEMP_STRING;
    str_val.v.data = 0;		/* the data field doesn't matter for TAG_TEMP_STRING */
 
@@ -573,35 +573,28 @@ void GameTryGetUser(session_node *s)
 {
    char *ptr;
 
-   if (0 && s->account->type == ACCOUNT_GUEST) /* let guests choose too */
-   {
-      GameStartUser(s,GetFirstUserByAccountID(s->account->account_id));
-   }
-   else
-   {
-      AddByteToPacket(BP_CHARACTERS);
-      AddShortToPacket((short)CountUserByAccountID(s->account->account_id));
-      ForEachUserByAccountID(GameSendEachUserChoice,s->account->account_id);
-      AddStringToPacket(GetMotdLength(),GetMotd());
-
-      /* advertising stuff */
-      AddByteToPacket(2);
-
-      ptr = LockConfigStr(ADVERTISE_FILE1);
-      AddStringToPacket(strlen(ptr),ptr);
-      UnlockConfigStr();
-      ptr = LockConfigStr(ADVERTISE_URL1);
-      AddStringToPacket(strlen(ptr),ptr);
-      UnlockConfigStr();
-      ptr = LockConfigStr(ADVERTISE_FILE2);
-      AddStringToPacket(strlen(ptr),ptr);
-      UnlockConfigStr();
-      ptr = LockConfigStr(ADVERTISE_URL2);
-      AddStringToPacket(strlen(ptr),ptr);
-      UnlockConfigStr();
-      
-      SendPacket(s->session_id);   
-   }
+   AddByteToPacket(BP_CHARACTERS);
+   AddShortToPacket((short)CountUserByAccountID(s->account->account_id));
+   ForEachUserByAccountID(GameSendEachUserChoice,s->account->account_id);
+   AddStringToPacket(GetMotdLength(),GetMotd());
+   
+   /* advertising stuff */
+   AddByteToPacket(2);
+   
+   ptr = LockConfigStr(ADVERTISE_FILE1);
+   AddStringToPacket(strlen(ptr),ptr);
+   UnlockConfigStr();
+   ptr = LockConfigStr(ADVERTISE_URL1);
+   AddStringToPacket(strlen(ptr),ptr);
+   UnlockConfigStr();
+   ptr = LockConfigStr(ADVERTISE_FILE2);
+   AddStringToPacket(strlen(ptr),ptr);
+   UnlockConfigStr();
+   ptr = LockConfigStr(ADVERTISE_URL2);
+   AddStringToPacket(strlen(ptr),ptr);
+   UnlockConfigStr();
+   
+   SendPacket(s->session_id);   
 }
 
 void GameSendEachUserChoice(user_node *u)

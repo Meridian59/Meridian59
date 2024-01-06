@@ -53,6 +53,13 @@ void ShowProgress (int objtype)
 }
 
 
+// Reinterpret bit pattern of f as an int.  Needed because the security field
+// is based on interpreting the field as an int in old room versions, and having
+// two different security mechanisms would have been a pain.
+static int ftoi(float f) {
+  return *((int *) &f);
+}
+
 /***************************************************************************/
 /*
  * NumberNodes:  Fill in num fields of nodes in tree, so that the
@@ -87,12 +94,13 @@ void NumberNodes(BSPTree tree)
  */
 void SaveNodes(FILE *file, BSPTree tree)
 {
-   int temp, i;
+   int i;
    WallData *wall;
    BYTE byte;
    BSPinternal *inode;
    BSPleaf *leaf;
    WORD word;
+   float payload;
 
    if (tree == NULL)
       return;
@@ -111,11 +119,15 @@ void SaveNodes(FILE *file, BSPTree tree)
       // Write parent, then left child, then right child
       
       // Plane of node
-      WriteBytes(file, &inode->separator.a, 4);
-      WriteBytes(file, &inode->separator.b, 4);
-      WriteBytes(file, &inode->separator.c, 4);
-
-      security += inode->separator.a + inode->separator.b + inode->separator.c;
+      payload = inode->separator.a;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = inode->separator.b;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = inode->separator.c;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
       
       // Node numbers of children
       word = 0;
@@ -157,12 +169,12 @@ void SaveNodes(FILE *file, BSPTree tree)
 
       for (i=0; i < num_points; i++)
       {
-	 temp = leaf->poly.p[i].x;
-	 WriteBytes(file, &temp, 4);
-	 security += temp;
-	 temp = leaf->poly.p[i].y;
-	 WriteBytes(file, &temp, 4);
-	 security += temp;
+        float temp = leaf->poly.p[i].x;
+        WriteBytes(file, &temp, 4);
+        security += ftoi(temp);
+        temp = leaf->poly.p[i].y;
+        WriteBytes(file, &temp, 4);
+        security += ftoi(temp);
       }
       break;
    }
@@ -173,10 +185,15 @@ void SaveNodes(FILE *file, BSPTree tree)
  */
 void SaveBoundingBox(FILE *file, Box *box)
 {
-   WriteBytes(file, &box->x0, 4);
-   WriteBytes(file, &box->y0, 4);
-   WriteBytes(file, &box->x1, 4);
-   WriteBytes(file, &box->y1, 4);
+   float payload;
+   payload = box->x0;
+   WriteBytes(file, &payload, 4);
+   payload = box->y0;
+   WriteBytes(file, &payload, 4);
+   payload = box->x1;
+   WriteBytes(file, &payload, 4);
+   payload = box->y1;
+   WriteBytes(file, &payload, 4);
 }
 /***************************************************************************/
 /*
@@ -192,6 +209,7 @@ void SaveClientWalls(FILE *file, BSPTree tree)
    BSPinternal *inode = &tree->u.internal;
    WallData *wall, *next_wall;
    WORD word;
+   float payload;
    
    for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
    {
@@ -210,15 +228,22 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       security += wall->pos_sidedef + wall->neg_sidedef;
 
       // Start and end of wall
-      WriteBytes(file, &wall->x0, 4);
-      WriteBytes(file, &wall->y0, 4);
-      WriteBytes(file, &wall->x1, 4);
-      WriteBytes(file, &wall->y1, 4);
-      security += wall->x0 + wall->y0 + wall->x1 + wall->y1;
+      payload = wall->x0;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = wall->y0;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = wall->x1;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
+      payload = wall->y1;
+      WriteBytes(file, &payload, 4);
+      security += ftoi(payload);
 
       // Length of wall
-      word = wall->length;
-      WriteBytes(file, &word, 2);
+      payload = wall->length; 
+      WriteBytes(file, &payload, 4);
 
       // Texture offsets
       word = wall->pos_xoffset;
@@ -495,171 +520,6 @@ void SaveThings(FILE *file)
 	temp = RoomID;
 	WriteBytes(file, &temp, 4);
 }
-
-static void AppendFile(LPCSTR filename, LPCSTR line)
-{
-	FILE *file = fopen(filename,"at"); // append text file
-	if (file)
-	{
-		fputs(line,file);
-		fputs("\n",file);
-		fclose(file);
-	}
-}
-
-#define KOD_ANGLE 4096
-
-static void SaveKodFiles(LPCSTR rooFilename)
-{
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char file[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	char itemName[_MAX_PATH];
-	char exitName[_MAX_PATH];
-	char monsterName[_MAX_PATH];
-	char batchName[_MAX_PATH];
-	char buffer[512];
-	int i;
-
-	_splitpath(rooFilename,drive,dir,file,ext);
-	strcpy(itemName,drive);
-	strcat(itemName,dir);
-	strcat(itemName,file);
-	strcpy(exitName,itemName);
-	strcpy(monsterName,itemName);
-	//strcpy(batchName,"\\Meridian58\\croot\\blakrun\\server\\");
-	strcpy(batchName,ServerDir);
-	strcat(batchName,file);
-	strcat(batchName,".txt");
-	strcat(itemName,".ktm");
-	strcat(exitName,".kxt");
-	strcat(monsterName,".kmn");
-	unlink(itemName);
-	unlink(exitName);
-	unlink(monsterName);
-	unlink(batchName);
-
-	AppendFile(itemName,"% Item KOD Generation file");
-	AppendFile(monsterName,"% Monster Generator KOD Generation file");
-	AppendFile(monsterName,"\n\tplGenerators = $;\n");
-	AppendFile(exitName,"% Exit KOD generation file");
-	AppendFile(exitName,"\n\tplExits = $;\n");
-
-	wsprintf(buffer,"send object 0 CleanOutRoom rid int %s",
-		GetKodRoomNameByRoomID(RoomID));
-	AppendFile(batchName,buffer);
-	for (i=0; i < NumThings; i++)
-	{
-		char direction[64];
-		int x,y,xOffset,yOffset;
-		Thing CurThing = Things[i];
-
-		x = CurThing.xpos;
-		y = CurThing.ypos;
-		GetServerCoords(&x,&y,&xOffset,&yOffset);
-		switch (CurThing.type)
-		{
-		case kodPlayerBlocking:
-			break;
-		case kodExit:
-			switch(CurThing.angle)
-			{
-			default:
-			case   0: strcpy(direction,"ROTATE_NONE"); break;
-			case  45: strcpy(direction,"ROTATE_315"); break;
-			case  90: strcpy(direction,"ROTATE_270"); break;
-			case 135: strcpy(direction,"ROTATE_225"); break;
-			case 180: strcpy(direction,"ROTATE_180"); break;
-			case 225: strcpy(direction,"ROTATE_135"); break;
-			case 270: strcpy(direction,"ROTATE_90"); break;
-			case 315: strcpy(direction,"ROTATE_45"); break;
-			}
-			wsprintf(buffer,"\tplExits = Cons([%d,%d,%s,%d,%d,%s],plExits);",
-				y,x,GetKodRoomNameByRoomID(CurThing.when),
-				(int)CurThing.xExitPos,(int)CurThing.yExitPos,direction);
-			AppendFile(exitName,buffer);
-			break;
-		case kodMonsterGenerator:
-			wsprintf(buffer,"\tplGenerators = Cons([%d,%d],plGenerators);",y,x);
-			AppendFile(monsterName,buffer);
-			break;
-		case kodEntrance:
-			Things[i].xExitPos = xOffset;
-			Things[i].yExitPos = yOffset;
-			break;
-		case kodExtraPreObject2:
-		case kodExtraPreObject3:
-		case kodExtraPreObject4:
-			break;
-		case kodObject:
-		default:
-			if (CurThing.type >= kodObject)
-			{
-				switch(CurThing.angle)
-				{
-				default:
-				case   0: strcpy(direction,"ANGLE_EAST"); break;
-				case  45: strcpy(direction,"ANGLE_NORTH_EAST"); break;
-				case  90: strcpy(direction,"ANGLE_NORTH"); break;
-				case 135: strcpy(direction,"ANGLE_NORTH_WEST"); break;
-				case 180: strcpy(direction,"ANGLE_WEST"); break;
-				case 225: strcpy(direction,"ANGLE_SOUTH_WEST"); break;
-				case 270: strcpy(direction,"ANGLE_SOUTH"); break;
-				case 315: strcpy(direction,"ANGLE_SOUTH_EAST"); break;
-				}
-				if (CurThing.flags & THING_FLAG_DONTGENERATE)
-				{
-					wsprintf(buffer,"%% **ASIF**\n%% %s\n%%Send(self,@NewHold,#what=XXX,#new_row=%d,#new_col=%d,#fine_row=%d,#fine_col=%d,#new_angle=%s);",
-					CurThing.comment,y,x,yOffset,xOffset,direction,CurThing.comment);
-				}
-				else if (GetNumKodTypes(CurThing.type) > 0)
-				{
-					wsprintf(buffer,"\tSend(self,@NewHold,#what=Create(&%s,#type=%s),"
-						"#new_row=%d,#new_col=%d,#fine_row=%d,#fine_col=%d,#new_angle=%s);",
-						GetKodObjectName(CurThing.type),GetKodTypeName(CurThing.type,CurThing.when),
-						y,x,yOffset,xOffset,direction);
-				}
-				else
-				{
-					wsprintf(buffer,"\tSend(self,@NewHold,#what=Create(&%s),"
-						"#new_row=%d,#new_col=%d,#fine_row=%d,#fine_col=%d,#new_angle=%s);",
-						GetKodObjectName(CurThing.type),y,x,yOffset,xOffset,direction);
-				}
-				AppendFile(itemName,buffer);
-				int angle; // server doesn't parse expressions, so we have to send #'s to the batch
-				switch(CurThing.angle)
-				{
-				default:
-				case   0: angle = 0; break; //strcpy(direction,"ANGLE_EAST"); break;
-				case  45: angle = 7*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_NORTH_EAST"); break;
-				case  90: angle = 6*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_NORTH"); break;
-				case 135: angle = 5*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_NORTH_WEST"); break;
-				case 180: angle = 4*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_WEST"); break;
-				case 225: angle = 3*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_SOUTH_WEST"); break;
-				case 270: angle = 2*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_SOUTH"); break;
-				case 315: angle = 1*KOD_ANGLE/8; break; //strcpy(direction,"ANGLE_SOUTH_EAST"); break;
-				}
-				if (GetNumKodTypes(CurThing.type) > 0)
-				{
-					wsprintf(buffer,"Send object 0 PutInRoom rid int %s classtype class %s "
-						"row int %d col int %d fine_row int %d fine_col int %d angle int %d type int %s",
-						GetKodRoomNameByRoomID(RoomID),GetKodObjectName(CurThing.type),
-						y,x,yOffset,xOffset,angle,GetKodTypeName(CurThing.type,CurThing.when));
-				}
-				else
-				{
-					wsprintf(buffer,"Send object 0 PutInRoom rid int %s classtype class %s "
-						"row int %d col int %d fine_row int %d fine_col int %d angle int %d",
-						GetKodRoomNameByRoomID(RoomID),GetKodObjectName(CurThing.type),
-						y,x,yOffset,xOffset,angle);
-				}
-				AppendFile(batchName,buffer);
-			}
-		}
-	}
-}
-
 /***************************************************************************/
 /*
  * SaveLevelData:  Save current level to given file.
@@ -886,9 +746,6 @@ void SaveLevelData (char *outfile)
 	RESTORE_WORK_MSG();
 
 	CloseLog();
-
-  // Removed 7/25/04 ARK
-//	SaveKodFiles(outfile);
 }
 /***************************************************************************/
 /*
@@ -930,10 +787,10 @@ void ComputeSlopeInfo(SlopeInfo *info, int floor)
 
    assert(ucrossv != 0.0);
 
-   info->plane.a = (int) (uv[0] * FINENESS / ucrossv);
-   info->plane.b = (int) (uv[1] * FINENESS / ucrossv);
-   info->plane.c = (int) (uv[2] * FINENESS / ucrossv);
-   info->plane.d = (int) - (info->plane.a * p[0].x + info->plane.b * p[0].y +
+   info->plane.a = (uv[0] * FINENESS / ucrossv);
+   info->plane.b = (uv[1] * FINENESS / ucrossv);
+   info->plane.c = (uv[2] * FINENESS / ucrossv);
+   info->plane.d = -(info->plane.a * p[0].x + info->plane.b * p[0].y +
 			  info->plane.c * p[0].z);
 
    if (floor != 0) { //floor
@@ -962,16 +819,23 @@ void WriteSlopeInfo(FILE *file, SlopeInfo *info, int floor)
 {
    int i, angle;
    SHORT x, y, z, v;
-
+   float ftemp;
+   
    ComputeSlopeInfo(info, floor); // compute slope needs to know whether its
                                   // a floor or a ceiling
-   
-   WriteBytes(file, &info->plane.a, 4);
-   WriteBytes(file, &info->plane.b, 4);
-   WriteBytes(file, &info->plane.c, 4);
-   WriteBytes(file, &info->plane.d, 4);
-   WriteBytes(file, &info->x, 4);
-   WriteBytes(file, &info->y, 4);
+
+   ftemp = info->plane.a;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->plane.b;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->plane.c;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->plane.d;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->x;
+   WriteBytes(file, &ftemp, 4);
+   ftemp = info->y;
+   WriteBytes(file, &ftemp, 4);
    angle = info->angle * NUMDEGREES / 360;
    WriteBytes(file, &angle, 4);
    for (i=0; i < 3; i++)
@@ -1036,6 +900,9 @@ int FindSidedef(LineDef *l, SideDef *s, Bool positive)
    if ((positive && (l->blak_flags & BF_POS_NO_VTILE)) ||
        (!positive && (l->blak_flags & BF_NEG_NO_VTILE)))
       flags |= WF_NO_VTILE;
+   if ((positive && (l->blak_flags & BF_POS_NO_HTILE)) ||
+       (!positive && (l->blak_flags & BF_NEG_NO_HTILE)))
+      flags |= WF_NO_HTILE;
 
    if (l->blak_flags & BF_MAP_NEVER)
       flags |= WF_MAP_NEVER;

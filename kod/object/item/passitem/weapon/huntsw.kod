@@ -108,8 +108,8 @@ classvars:
    viDamage_min = 10    % the damage done to the user if unworthy
    viDamage_max = 20
 
-   viHits_init_min = 500
-   viHits_init_max = 500
+   viHits_init_min = 600
+   viHits_init_max = 600
 
    viItem_type = ITEMTYPE_WEAPON | ITEMTYPE_SPECIAL
 

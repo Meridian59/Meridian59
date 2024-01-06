@@ -49,7 +49,10 @@ bool SendHttpsRequest(HWND hDlg, const string& domain, const string& resource, c
 
     bool result = false;
 
-    if (::HttpSendRequest(httpRequest, httpHeaderStream.str().c_str(), httpHeaderStream.str().length(), (LPVOID)(requestBody.c_str()), strlen(requestBody.c_str())))
+    if (::HttpSendRequest(httpRequest, httpHeaderStream.str().c_str(),
+                          (DWORD) httpHeaderStream.str().length(),
+                          (LPVOID)(requestBody.c_str()),
+                          (DWORD) strlen(requestBody.c_str())))
     {
         result = true;
         char sBuffer[1025];

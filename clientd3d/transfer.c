@@ -27,7 +27,7 @@ static HANDLE hSemaphore;
 
 static Bool aborted;    // True when user has aborted transfer
 
-static BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void __cdecl DownloadError(HWND hParent, char *fmt, ...);
 static void TransferCloseHandles(void);
 /************************************************************************/
@@ -108,13 +108,6 @@ void __cdecl TransferStart(void *download_info)
          return;
       }
       
-     // Skip non-guest files if we're a guest
-     if (config.guest && !(info->files[i].flags & DF_GUEST))
-     {
-       PostMessage(info->hPostWnd, BK_FILEDONE, 0, i);
-       continue;
-     }
-     
      // If not supposed to transfer file, inform main thread
      if (DownloadCommand(info->files[i].flags) != DF_RETRIEVE)
      {
@@ -279,7 +272,7 @@ void __cdecl DownloadError(HWND hParent, char *fmt, ...)
 /*
  * ErrorDialogProc:  Dialog procedure for displaying error and asking for retry.
  */
-BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

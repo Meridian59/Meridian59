@@ -53,10 +53,6 @@ constants:
    WEAPON_RANGE_MID  = 2
    WEAPON_RANGE_HIGH = 3
 
-   % Quality mods to number of hits
-   WEAPON_LOW_QUALITY_HITS  = -50
-   WEAPON_HIGH_QUALITY_HITS = 100
-   WEAPON_NERUDITE_HITS = 200
 
    % Quality mods to hit modifier
    WEAPON_LOW_QUALITY_HITMOD  = 0
@@ -155,28 +151,6 @@ properties:
 
 messages:
 
-   Constructed()
-   {
-      % Modify the hits depending on the weapon's quality.
-      if viWeaponQuality = WEAPON_QUALITY_LOW
-      {
-         piHits_init = piHits_init + WEAPON_LOW_QUALITY_HITS;
-         piHits = piHits + WEAPON_LOW_QUALITY_HITS;
-      }
-      if viWeaponQuality = WEAPON_QUALITY_HIGH
-      {
-         piHits_init = piHits_init + WEAPON_HIGH_QUALITY_HITS;
-         piHits = piHits + WEAPON_HIGH_QUALITY_HITS;
-      }
-      if viWeaponQuality = WEAPON_NERUDITE
-      {
-         piHits_init = piHits_init + WEAPON_NERUDITE_HITS;
-         piHits = piHits + WEAPON_NERUDITE_HITS;
-      }
-
-      propagate;
-   }
-
    %%% Hard Stats Functions
    %%% (Range, hit chance, damage, etc)
 
@@ -210,7 +184,7 @@ messages:
    "When someone attacks with this weapon, they send us their attack value "
    "and we change it based on quality of weapon"
    {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
+      local iBaseHit, oWeapAtt, i;
 
       iBaseHit = hit_roll;
 
@@ -829,8 +803,6 @@ messages:
 
    SendLookAnimation()
    {
-      local iFlags;
-
       if piHits > 0 OR viBroken_group = $
       {
          propagate;

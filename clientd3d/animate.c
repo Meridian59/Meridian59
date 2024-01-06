@@ -27,7 +27,7 @@
 
 #include "client.h"
 
-#define ANIMATE_INTERVAL 165       // ms between background animation updates
+#define ANIMATE_INTERVAL 8  // ms between background animation updates (8.3333 = 120fps)
 #define FLICKER_LEVEL (LIGHT_LEVELS/2)
 #define FLASH_LEVEL (LIGHT_LEVELS/2)
 #define TIME_FLASH 1000
@@ -72,11 +72,6 @@ void AnimationTimerAbort(void)
       animation_timer = 0;
    }
 }
-/************************************************************************/
-void AnimationSleep(void)
-{
-   Sleep(ANIMATE_INTERVAL);
-}
 
 DWORD GetFrameTime(void)
 {
@@ -111,13 +106,10 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
    ModuleEvent(EVENT_ANIMATE, dt);
 
    /* Send event to non-module child windows */
-   if (config.animate)
-   {
-      Lagbox_Animate(dt);
-   }
+   Lagbox_Animate(dt);
 
    /* Animate the first-person view elements */
-   if (config.animate && GetGameDataValid())
+   if (GetGameDataValid())
    {
       // Avoid short-circuiting OR
       need_redraw |= ObjectsMove(dt);
@@ -380,37 +372,6 @@ Bool AnimateSingle(Animate *a, int num_groups, int dt)
    return need_redraw;
 }
 
-/************************************************************************/
-/*
- * VerifyAnimation:  See if given animation should be performed, given whether
- *   animation is currently on.  If animation should be performed, return True
- *   (this may modify given animation structure if a modified animation should
- *   be performed).  If animation shouldn't be done at all, return False.
- */
-Bool VerifyAnimation(Animate *a)
-{
-   if (config.animate)
-      return True;
-
-   switch (a->animation)
-   {
-   case ANIMATE_NONE:
-      return True;
-      
-   case ANIMATE_CYCLE:
-      return False;
-      
-   case ANIMATE_ONCE:
-      // Skip right to end frame of animation
-      a->animation = ANIMATE_NONE;
-      a->group     = a->group_final;
-      return True;
-
-   default:
-      debug(("Unknown animation type %d in VerifyAnimation\n", a->animation));
-      return False;
-   }
-}
 /************************************************************************/
 /*
  * AnimateStop:  Stop given animation.

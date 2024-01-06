@@ -16,12 +16,12 @@
 static HWND hPasswdDialog = NULL;
 static HWND hPreferencesDialog = NULL;
 
-BOOL CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 // XXX Would be nice to load this from resource file, but that doesn't seem to be possible
 static char EXE_filter[] = "Programs (*.exe)\0*.exe\0All files (*.*)\0*.*\0\0";
 /*****************************************************************************/
-BOOL CALLBACK PasswordDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK PasswordDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hOldPasswd, hNewPasswd1, hNewPasswd2;
    char oldpasswd[MAXPASSWORD + 1], newpasswd1[MAXPASSWORD + 1], newpasswd2[MAXPASSWORD + 1];
@@ -144,7 +144,7 @@ void AbortPreferencesDialog(void)
      EndDialog(hPreferencesDialog, IDCANCEL);
 }
 /*****************************************************************************/
-BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    Bool toolbar_changed, lagbox_changed, temp;
    CommSettings *comm = &config.comm;
@@ -170,6 +170,7 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       CheckDlgButton(hDlg, IDC_BOUNCE, config.bounce);
       CheckDlgButton(hDlg, IDC_TOOLBAR, config.toolbar);
       CheckDlgButton(hDlg, IDS_LATENCY0, config.lagbox);
+      CheckDlgButton(hDlg, ID_SPINNING_CUBE, config.spinning_cube);
       CheckDlgButton(hDlg, IDC_PROFANE, config.antiprofane);
       CheckDlgButton(hDlg, IDC_DRAWMAP, config.drawmap);
       CheckDlgButton(hDlg, IDC_MAP_ANNOTATIONS, config.map_annotations);
@@ -188,9 +189,12 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
 
       Trackbar_SetRange(GetDlgItem(hDlg, IDC_SOUND_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
       Trackbar_SetRange(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
+      Trackbar_SetRange(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
+
       Trackbar_SetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME), config.sound_volume);
       Trackbar_SetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), config.music_volume);
-      
+      Trackbar_SetPos(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), config.ambient_volume);
+
       return TRUE;
 
    case WM_COMMAND:
@@ -227,6 +231,8 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          temp                 = IsDlgButtonChecked(hDlg, IDS_LATENCY0);
          lagbox_changed = (temp != config.lagbox);
          config.lagbox = temp;
+
+         config.spinning_cube = IsDlgButtonChecked(hDlg, ID_SPINNING_CUBE);
          
          if (IsDlgButtonChecked(hDlg, IDC_MUSIC) != config.play_music)
             UserToggleMusic(config.play_music);
@@ -245,9 +251,8 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
             ResetMusicVolume();
          }
 
-         // Don't need to dynamically update sound volume, because
-         // looping sounds are updated as player moves around.
          config.sound_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME));
+         config.ambient_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME));
 
          if( IsDlgButtonChecked( hDlg, IDC_TARGETHALO1 ) == BST_CHECKED )
             config.halocolor = 0;
@@ -283,7 +288,7 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
    return FALSE;
 }
 /*****************************************************************************/
-BOOL CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ProfanityDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    char term[MAXPROFANETERM+1];
 

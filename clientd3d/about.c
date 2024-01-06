@@ -78,7 +78,7 @@ static void AboutLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT ke
 /*
  * AboutDialogProc:  Display info about client.
  */
-BOOL CALLBACK AboutDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AboutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int i;
 
@@ -334,25 +334,6 @@ void AboutTimer(HWND hwnd, UINT id)
 /****************************************************************************/
 void AboutLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
-#if 0
-   int i, index;
-   RECT rect;
-   POINT p;
-
-   GetWindowRect(GetDlgItem(hwnd, IDC_SCROLL), &rect);
-   p.x = rect.left;
-   p.y = rect.top;
-   ScreenToClient(hwnd, &p);
-
-   y = y - p.y + scroll_y;
-   for (i=0; i < num_names; i++)
-      if (y >= names[i].min_y && y <= names[i].max_y)
-      {
-	 index = names[i].index;
-	 if (dudes[index].obj != NULL)
-	    dudes[index].obj->icon_res = names[i].rsc;
-      }
-#else
    RECT rect;
    POINT p;
 
@@ -368,7 +349,6 @@ void AboutLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
       credits_pdib = BitmapsGetPdibByIndex(credits_b, credits_page);
       scroll_y = 0;
    }
-#endif
 }
 /****************************************************************************/
 void AbortAboutDialog(void)

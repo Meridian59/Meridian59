@@ -26,7 +26,7 @@ jobs:
         make -f makefile.linux
   
   
-  build-windows:
+  build-windows-32:
   
     runs-on: windows-latest
     
@@ -36,6 +36,29 @@ jobs:
       with: 
         arch: x86
         
-    - name: make client
+    - name: make client 32-bit
       run: |
         nmake /nologo Bclient Bmodules
+
+    - name: make server 32-bit
+      run: |
+        nmake /nologo Bserver
+
+
+  build-windows-64:
+  
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ilammy/msvc-dev-cmd@v1
+      with: 
+        arch: x64
+        
+    - name: make client 64-bit
+      run: |
+        nmake /nologo Bclient Bmodules
+
+    - name: make server 64-bit
+      run: |
+        nmake /nologo Bserver

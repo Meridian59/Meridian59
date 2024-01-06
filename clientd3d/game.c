@@ -469,14 +469,6 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
    object_node *obj;
    Bool in_room = False;
 
-   /* If animation off, discard animations */
-   if (!VerifyAnimation(new_obj->animate))
-   {
-      ObjectDestroyAndFree(new_obj);
-      list_destroy(overlays);
-      return;
-   }
-
    /* First look for object in room */
    r = GetRoomObjectById(new_obj->id);
    if (r != NULL)
@@ -690,4 +682,14 @@ int ComputeObjectDistance(room_contents_node *r1, room_contents_node *r2)
 player_info *GetPlayerInfo(void)
 {
    return &player;
+}
+
+void SetActiveStatGroup(int stat_group)
+{    
+    config.active_stat_group = stat_group;
+}
+
+int GetActiveStatGroup(void)
+{
+    return config.active_stat_group;
 }

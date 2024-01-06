@@ -48,7 +48,6 @@ BYTE	*selftrgt_bits;
 
 static RawBitmap inventory_bkgnd;              // Background bitmap for inventory area
 
-//static HBITMAP	hbmpScrollBack;		//	ajw xxx Scrollbar texturing bmp.
 static HBRUSH	hbrushScrollBack;
 
 /* Keys to override default actions */
@@ -77,8 +76,6 @@ keymap inventory_key_table[] = {
 { VK_TAB,         KEY_NONE,             A_TABFWD,     (void *) IDC_INVENTORY },
 { VK_TAB,         KEY_SHIFT,            A_TABBACK,    (void *) IDC_INVENTORY },
 { VK_ESCAPE,      KEY_ANY,              A_GOTOMAIN },
-
-//{ 'D',            KEY_NONE,             A_DROP },
 { VK_DELETE,      KEY_NONE,             A_DROP },
 { 'L',            KEY_NONE,             A_LOOKINVENTORY },
 { 'P',            KEY_NONE,             A_PUT },
@@ -102,8 +99,8 @@ keymap inventory_key_table[] = {
 };
 
 /* local function prototypes */
-static long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK InventoryDialogProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
 static void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
@@ -121,6 +118,7 @@ static Bool InventoryItemVisible(int row, int col);
 static void InventoryCursorMove(int action);
 static Bool InventoryReleaseCapture(void);
 static Bool InventoryDropCurrentItem(room_contents_node *container);
+static Bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
@@ -178,7 +176,7 @@ void InventoryBoxCreate(HWND hParent)
 
 	logbrush.lbStyle = BS_DIBPATTERNPT;
 	logbrush.lbColor = DIB_RGB_COLORS;
-	logbrush.lbHatch = (long)ptr;
+	logbrush.lbHatch = (ULONG_PTR) ptr;
 	
 	hbrushScrollBack = CreateBrushIndirect( &logbrush );
 	//	ajw end...
@@ -229,9 +227,6 @@ void InventoryBoxResize(int xsize, int ysize, AREA *view)
    
    inventory_area.x = view->x + view->cx + LEFT_BORDER + 3 * HIGHLIGHT_THICKNESS;
    inventory_area.cx = xsize - inventory_area.x - 3 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH;
-
-//   inventory_area.y = 2 * TOP_BORDER + USERAREA_HEIGHT + GROUPBUTTONS_HEIGHT + EDGETREAT_HEIGHT;
-//   inventory_area.cy = view->y + view->cy - inventory_area.y;
 
    	yMiniMap = 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + MAPTREAT_HEIGHT;
 	iHeightAvailableForMapAndStats = ysize - yMiniMap - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_HEIGHT;
@@ -381,7 +376,6 @@ void InventoryResetFont(void)
  */
 void InventoryChangeColor(void)
 {
-  //  InventoryRedraw();
 }
 /************************************************************************/
 void InventorySetFocus(Bool forward)
@@ -392,7 +386,7 @@ void InventorySetFocus(Bool forward)
 /*
  * InventoryDialogProc:  Dialog procedure for inventory modeless dialog.
  */
-BOOL CALLBACK InventoryDialogProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
@@ -414,9 +408,6 @@ BOOL CALLBACK InventoryDialogProc(HWND hwnd, UINT message, UINT wParam, LONG lPa
        *cinfo->hCurrentDlg = NULL;
      else *cinfo->hCurrentDlg = hwnd;
      return TRUE;
-
-//	case WM_CTLCOLORSCROLLBAR:						// ajw
-//		return (BOOL)hbrushScrollBack;
    }
 
    return FALSE;
@@ -425,7 +416,7 @@ BOOL CALLBACK InventoryDialogProc(HWND hwnd, UINT message, UINT wParam, LONG lPa
 /*
  * InventoryProc:  Subclassed window procedure for inventory area.
  */
-long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    RECT r;
    HDC hdc;
@@ -433,10 +424,8 @@ long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
    switch (message)
    {
    case WM_KEYDOWN:
-      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey) == True)
+      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey))
       	 return 0;
-      break;
-
    case WM_ERASEBKGND:
      // Draw outside of inventory items
      // XXX
@@ -471,6 +460,15 @@ long CALLBACK InventoryProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
    case WM_KILLFOCUS:
 	  StatsDrawBorder();
       InventoryReleaseCapture();
+      break;
+   case WM_SYSKEYDOWN:
+      // Prevent activation of the window's menu bar and propagate to parent
+      if (wParam == VK_F10)
+      {
+          if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey) == True)
+              return 0;
+          break;
+      }
       break;
    }
 
@@ -606,9 +604,9 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
       SelectObject(hdc, GetFont(FONT_STATNUM));
 
       SetTextColor(hdc, GetColor(COLOR_INVNUMBGD));
-      TextOut(hdc, obj_area.x + 1, obj_area.y + 1, temp, strlen(temp));
+      TextOut(hdc, obj_area.x + 1, obj_area.y + 1, temp, (int) strlen(temp));
       SetTextColor(hdc, GetColor(COLOR_INVNUMFGD));
-      TextOut(hdc, obj_area.x, obj_area.y, temp, strlen(temp));      
+      TextOut(hdc, obj_area.x, obj_area.y, temp, (int) strlen(temp));      
    }
 
    // Draw border around area to clear previous cursor (if any)
@@ -676,9 +674,22 @@ void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
    int temp_x, temp_y;
    room_contents_node *r;
+   POINT mouse;
+   AREA inventory_area;
+
+   InventoryGetArea(&inventory_area);
+   GetCursorPos(&mouse);
+   ScreenToClient(cinfo->hMain, &mouse);
 
    if (!InventoryReleaseCapture())
       return;
+
+   // If button was released in inventory area, move selected item to new location in inventory list
+   if (IsInArea(&inventory_area, mouse.x, mouse.y))
+      {
+         InventoryMoveCurrentItem(x, y);
+         return;
+      }
 
    // See if mouse pointer is in main graphics area
    if (!MouseToRoom(&temp_x, &temp_y))
@@ -795,10 +806,6 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
    if (action == A_NOACTION)
       return False;
 
-   // Skip held-down keys, except for moving cursor around
-   if (held_down && !IsCursorAction(action))
-      return True;
-
    item = InventoryGetCurrentItem();
    if (item == NULL)
       id = INVALID_ID;
@@ -839,7 +846,6 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
    {
    case A_TABFWD:
 		TextInputSetFocus(True);	//	ajw
-		//StatsSetFocus(True);
 		break;
 
    case A_TABBACK:
@@ -1062,6 +1068,58 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
    return True;
 }
 /************************************************************************/
+/*
+ * InventoryMoveCurrentItem:  Move the selected item with the inventory cursor 
+ *   to the item at the given (x, y) coordinates, if any. Returns True iff item moved.
+ *   Coordinates (0,0) are at the top left corner of the inventory window,
+ *   increasing as you go to the right and down.
+ */
+Bool InventoryMoveCurrentItem(int x, int y)
+{
+   InvItem *item = InventoryGetCurrentItem();
+   if (item == NULL)
+      return False;
+
+   // Find row and col in absolute coordinates
+   int row = top_row + y / INVENTORY_BOX_HEIGHT;
+   int col = x / INVENTORY_BOX_WIDTH;
+
+   InvItem *drop_position = (InvItem *) list_nth_item(items, row * cols + col);
+   if (drop_position == NULL)
+      return False;
+
+   if (item->obj->id == drop_position->obj->id)
+      return False;
+
+   /* Before we send the move request to the server, we need to convert
+   *   the move index arguments from 0-based to 1-based (Blakod).
+   *   We also need to reverse the list indices because the client
+   *   inventory list is reversed compared to the server Blakod list.
+   */
+
+   int pos_payload = list_get_position(items, (void *)item->obj->id, InventoryCompareIdItem);
+   int pos_target = list_get_position(items, (void *)drop_position->obj->id, InventoryCompareIdItem);
+   int length = list_length(items);
+
+   /* add 1 to targetpos if target pos > payload pos because 
+   *   the destination argument is the index of the item you
+   *   want the moved item to go before.
+   */
+   if (pos_target > pos_payload)
+      pos_target += 1;
+
+   items = list_move_item(items, pos_payload, pos_target);
+   InventoryRedraw();
+
+   // Blakod indices are 1-based, and inventory list is reversed
+   pos_payload = length - pos_payload;
+   pos_target = length - pos_target + 1;
+
+   RequestInventoryMove(pos_payload, pos_target);
+
+   return True;
+}
+/************************************************************************/
 void DisplayInventory(list_type inventory)
 {
    list_type l;
@@ -1121,7 +1179,7 @@ void DisplayUsing(list_type using_list)
 
    /* Select used items */
    for (l = using_list; l != NULL; l = l->next)
-      DisplaySetUsing((ID) l->data, True);
+     DisplaySetUsing(reinterpret_cast<std::intptr_t>(l->data), True);
 }
 /************************************************************************/
 /*
@@ -1179,7 +1237,7 @@ Bool InventoryItemVisible(int row, int col)
 Bool InventoryCompareIdItem(void *idnum, void *item)
 {
    InvItem *temp = (InvItem *) item;
-   return GetObjId((ID) idnum) == GetObjId(temp->obj->id);
+   return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(temp->obj->id);
 }
 /************************************************************************/
 /*

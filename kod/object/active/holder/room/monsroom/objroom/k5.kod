@@ -108,7 +108,7 @@ messages:
 
    FirstUserEntered()
    {
-      local oBramble, lLocation;
+      local lLocation;
 
       for lLocation in plDeadBrambles
       {
@@ -118,9 +118,7 @@ messages:
    }
 
    ObjectGenTimer()
-   {
-      local lLocation;
-   
+   {  
       Send(self,@CreateBramble);
          
       propagate;

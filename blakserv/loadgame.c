@@ -373,7 +373,8 @@ Bool LoadGameListNodes(int file_version)
 
 Bool LoadGameTimer(int file_version)
 {
-	int timer_id,object_id,milliseconds32,milliseconds64;
+	int timer_id,object_id,milliseconds32;
+  INT64 milliseconds64;
 	char buf[100];
 	
 	LoadGameReadInt(&timer_id);
@@ -432,7 +433,7 @@ void LoadAddPropertyName(load_game_class_node *lgc,int prop_old_id,char *prop_na
 	load_game_prop_node *lgp;
 	
 	lgp = &lgc->props[prop_old_id-1];
-	lgp->namelen = strlen( prop_name ) ;
+	lgp->namelen = (int) strlen( prop_name );
 	
 	assert( lgp->namelen );
 

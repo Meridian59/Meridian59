@@ -64,6 +64,11 @@ properties:
 
    pbIn_use = FALSE
 
+   % This cursed ring wants to players to think it's possibly one of the 
+   % beneficial ones.  Once identified, flip this to FALSE because it
+   % doesn't actually use piHits for anything.
+   vbShow_condition = TRUE
+
    piVigorRestThresholdChange = 20
 
 messages:
@@ -77,6 +82,13 @@ messages:
          return;
       }
       
+      propagate;
+   }
+
+   RevealHiddenAttributes()
+   {
+      vbShow_condition = FALSE;
+
       propagate;
    }
 
@@ -100,6 +112,14 @@ messages:
       if (iVigorRestThreshold - piVigorRestThresholdChange < 10)
       {
          piVigorRestThresholdChange = iVigorRestThreshold - 10;
+      }
+
+      % Reveal the true nature of the ring to the player when they put it on, because
+      % at this point, it's pretty obvious it's not helping them.
+      if Send(self, @RevealHiddenAttributes)
+      {
+         Send(self, @RevealHiddenColor);
+         Send(poOwner, @SomethingChanged, #what=self);
       }
 
       Send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_use_rsc);

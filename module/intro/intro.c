@@ -54,9 +54,9 @@ static void IntroInit(void);
 static void IntroShowSplash(void);
 static void IntroDrawLogo(void);
 static void IntroFreeLogo(void);
-static long CALLBACK MainButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
-static void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime);
-static void CALLBACK LightTimerProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime);
+static LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime);
+static void CALLBACK LightTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime);
 /****************************************************************************/
 BOOL WINAPI DllMain(HINSTANCE hModule, DWORD reason, LPVOID reserved)
 {
@@ -242,7 +242,7 @@ void IntroInit(void)
 /*
  * LightTimerProc:  Adjust light level for logo fade.
  */
-void CALLBACK LightTimerProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
+void CALLBACK LightTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 {
   light_level++;
 
@@ -370,7 +370,7 @@ void IntroShowSplash(void)
    timer_id = SetTimer(NULL, 0, MUSIC_DELAY, PlayMusicProc);
 }
 /************************************************************************/
-void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
+void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
 {
    KillTimer(NULL, timer_id);
    timer_id = 0;
@@ -384,7 +384,7 @@ void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
 /*
  * MainButtonProc:  Subclassed window procedure for main button.
  */
-long CALLBACK MainButtonProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

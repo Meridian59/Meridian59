@@ -21,7 +21,7 @@ static char legal_chars[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>";
 
 /********************************************************************/
-BOOL CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hName, hDesc;
 
@@ -58,7 +58,7 @@ BOOL CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       case PSN_APPLY:
 	 VerifySettings();
 	 // Don't quit dialog until we hear result from server
-	 SetWindowLong(hDlg, DWL_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
+	 SetWindowLongPtr(hDlg, DWLP_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
 	 break;
 
       }
@@ -83,7 +83,6 @@ void CharNameGetChoices(char *name, char *desc)
 char *VerifyCharName(char *name)
 {
    char *ptr;
-   int len;
    
    // Skip leading whitespace
    while (*name == ' ')
@@ -95,12 +94,12 @@ char *VerifyCharName(char *name)
       ptr--;
    *(ptr + 1) = 0;
 
-   len = strlen(name);
+   size_t len = strlen(name);
    if (len < MIN_CHARNAME || len > MAX_CHARNAME)
       return NULL;
 
    // Check that name is made up of legal characters
-   if ((int) strspn(name, legal_chars) != len)
+   if (strspn(name, legal_chars) != len)
       return NULL;
 
    return name;

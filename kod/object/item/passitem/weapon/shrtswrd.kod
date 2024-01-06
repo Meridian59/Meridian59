@@ -41,6 +41,9 @@ classvars:
    viWeight = 50
    viBulk = 50
 
+   viHits_init_min = 200
+   viHits_init_max = 250
+
    viGround_group = 1
    viInventory_group = 3
    viBroken_group = 2

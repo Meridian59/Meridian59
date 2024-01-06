@@ -72,9 +72,9 @@ void GameExit(void)
    // Can't close modules here, because WM_DESTROY messages sent to dialogs causes crash.
    // Modules are freed elsewhere.
 
-   SoundClose();
    MusicAbort();
-
+   SoundAbort();
+   
    KeyClose();
    InterfaceClose();
    CloseGame();
@@ -377,13 +377,6 @@ void GameIdle(void)
 
    // Are we the active foreground application?
    AnimationTimerAbort();
-
-   // If animation is off, or we're in the background, sleep to lower CPU load
-   if (!config.animate ||
-       GetWindowLong(GetActiveWindow(), GWL_HINSTANCE) != (LONG)hInst)
-   {
-      AnimationSleep();
-   }
 }
 /****************************************************************************/
 void GameEnterIdle(HWND hwnd, UINT source, HWND hwndSource)

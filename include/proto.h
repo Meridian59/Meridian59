@@ -133,6 +133,7 @@ enum {
    BP_REQ_BUY               = 124,
    BP_REQ_BUY_ITEMS         = 125,
    BP_CHANGE_DESCRIPTION    = 126,
+   BP_REQ_INVENTORY_MOVE    = 127,
 
    BP_PLAYER                = 130,
    BP_STAT                  = 131,
@@ -214,6 +215,7 @@ enum {
    BP_SECTOR_SCROLL         = 236,
    BP_SET_VIEW              = 237,
    BP_RESET_VIEW            = 238,
+   BP_REQ_GET_FROM_CONTAINER  = 239,
 };
 
 // User commands (in BP_USERCOMMAND message)

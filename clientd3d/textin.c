@@ -33,7 +33,7 @@ static Bool skip_selection;
 extern HPALETTE hPal;
 extern int border_index;
 
-static long CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static Bool TextInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
 
 static void CalculateWindowHeight(void)
@@ -167,7 +167,7 @@ void TextInputSetText(char *text, Bool focus)
 /*
  * TextInputProc:  Subclassed window procedure for text box.
  */
-long CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

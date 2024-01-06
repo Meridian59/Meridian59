@@ -96,5 +96,5 @@ Bool CompareBackgroundOverlays(void *b1, void *b2)
  */
 Bool CompareBackgroundOverlayId(void *id, void *b1)
 {
-   return ((BackgroundOverlay *) b1)->obj.id == (ID) id;
+   return ((BackgroundOverlay *) b1)->obj.id == reinterpret_cast<std::intptr_t>(id);
 }

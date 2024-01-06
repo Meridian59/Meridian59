@@ -79,8 +79,8 @@ static HWND hAliasDialog = NULL;
 static HWND hAliasDialog1 = NULL;
 static HWND hAliasDialog2 = NULL;
 
-static BOOL CALLBACK AliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-static BOOL CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 extern Bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
@@ -91,7 +91,7 @@ extern player_info *GetPlayer(void);
  */
 void AliasInit(void)
 {
-   int i, len;
+   int i;
    char temp[10];
    char	fullSection[255];
    char	destName[128];
@@ -113,7 +113,7 @@ void AliasInit(void)
       srcName = "<Unknown>";
    else
       srcName = LookupNameRsc(cinfo->player->name_res);
-   len = strlen(srcName);
+   int len = (int) strlen(srcName);
 
    for (i = 0; i < len; i++)
    {
@@ -134,7 +134,7 @@ void AliasInit(void)
       aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
 
       // Check for CR
-      len = strlen(aliases[i].text);
+    len = (int) strlen(aliases[i].text);
       if (len > 0 && aliases[i].text[len - 1] == '~')
       {
 	 command = A_TEXTINSERT;
@@ -234,7 +234,7 @@ void AliasSave(void)
 
    playerInfo = GetPlayerInfo();
    srcName = LookupNameRsc(cinfo->player->name_res);
-   len = strlen(srcName);
+   len = (int) strlen(srcName);
 
    for (i = 0; i < len; i++)
    {
@@ -547,7 +547,7 @@ void CommandAlias(char *args)
 /*
  * AliasDialogProc:  Dialog procedure for alias dialog.
  */
-BOOL CALLBACK AliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int i;
    HWND hEdit;
@@ -648,7 +648,7 @@ int ListView_GetSelection(HWND hList)
 /*
  * VerbAliasDialogProc:  Dialog procedure for command verb alias dialog.
  */
-BOOL CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

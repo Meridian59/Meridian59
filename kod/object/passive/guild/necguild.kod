@@ -378,7 +378,7 @@ messages:
    "4) Accrue rent."
    "5) Check to see if former members of the guild can once more rejoin the guild."
    {
-     local i, hourhours, timeleft, bPKServer;                    
+     local i, hourhours, timeleft;                    
 
      if send(self,@getguildmaster) = $
        {
@@ -464,7 +464,7 @@ messages:
 
    AccrueRent()
    {
-      local rent, i, hourhours, oLich;
+      local rent, i, hourhours;
 
       if piRentDue < 1
       {
@@ -871,7 +871,7 @@ messages:
    CheckChangeRank(who=$, promoter = $, newrank = $)
    "Bumps the person up a rank, with some limitations: "
    {
-      local who_rank, promoter_rank, i, count, bcount;
+      local who_rank, promoter_rank;
 
       if who=$ or promoter = $ or NewRank = $
         { return FALSE; }
@@ -1016,7 +1016,7 @@ messages:
 
    Vote(who=$,candidate=$)
    {
-      local i, bFound, j, oldvote, newleader;
+      local i, j, oldvote, newleader;
 
        if not send(self,@ismember, #who=who)
           {

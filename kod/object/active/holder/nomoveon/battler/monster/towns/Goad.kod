@@ -31,7 +31,7 @@ resources:
    Goad_icon_rsc = GoadX.bgf
    Goad_desc_rsc = "As a mortal man Goad betrayed his Queen, sending her to her death.  To his dismay, she was only temporarily inconvenienced and now she has bound him here, to serve for all eternity.  His twisted form writhes in constant agony, relieved only briefly by the wash of ecstasy he feels when he oversees the death of another."
 
-   Goad_ad_need_champion1 = "Come my prettys, be not afriad . . . "
+   Goad_ad_need_champion1 = "Come my pretties, be not afraid . . . "
    Goad_ad_need_champion2 = "I can taste your desire  . . . give in to it, there is so much power to be gained."
    Goad_ad_need_champion3 = "It is such a small thing to kill another, won't you dance for me?"
    Goad_ad_need_champion4 = "I must have death!"
@@ -42,7 +42,7 @@ resources:
 
    Goad_no_need = "Be calm little one, your time to die will come."     
    Goad_need_champion = "By ancient law I must first have a Champion.  Give yourself to me."     
-   Goad_dont_need_challenger = "Later my sweet, later.  Enough blood flows through the viens of these fools, I can wait for yours."
+   Goad_dont_need_challenger = "Later my sweet, later.  Enough blood flows through the veins of these fools, I can wait for yours."
    Goad_fight_in_progress = "Yes!  As soon as I have feasted upon these fools you may follow them."
 
    Goad_already_combatant = "So generous . . . but, you are already mine."
@@ -78,7 +78,7 @@ resources:
 
    Goad_must_choose_style = "First things first . . . are we to have a duel or a bloodbath?"     
    Goad_cant_switch = "You can't change that now, worm."
-   Goad_new_combat_style = "Excellent.  I've been thristing for a good %s.  Now, who'll say the magic word, \"champion\"?"
+   Goad_new_combat_style = "Excellent.  I've been thirsting for a good %s.  Now, who'll say the magic word, \"champion\"?"
 
    Goad_style_one_on_one = "duel"
    Goad_style_last_man_standing = "bloodbath"
@@ -105,7 +105,8 @@ resources:
 
    Goad_Draw = "`rFight is a draw.  This is a bug.  Please report it and specify combat type and all actions which led to this message."
    Goad_wont_fight = "`kApparently %s%s is too cowardly to fight.  Cowards should die . . . slowly."
-
+   Goad_no_summons = "I thirst for bloody battle, not magical parlor tricks!"
+   
    Goad_battle_midi_rsc = pk_sb16.mid
 
 classvars:
@@ -146,8 +147,8 @@ properties:
    pbLastMinute = FALSE       %% has the Watcher given the one minute warning?
 
    plUserStats = $         %% stores values for the players' HP, mana,
-               %% and vigor upon entring the battle area,
-               %% which are restored upon leaving the area.
+                           %% and vigor upon entering the battle area,
+                           %% which are restored upon leaving the area.
 
    pbWarned = FALSE      %%Goad warns once before killing slow combatants.
 
@@ -162,10 +163,10 @@ messages:
 
 
    NewOwner(what=$)
-   "If Goad is ever loaded someplace other than the arena of brax, "
-   "go back to brax."
+   "If Goad is ever loaded someplace other than the arena of Brax, "
+   "go back to Brax."
    {
-      %haveta give the room time to be created on a recreateall, so we post.
+      % We must give the room time to be created on a recreateall, so we post.
       post(self,@PostNewOwner);
       propagate;
    }
@@ -266,8 +267,6 @@ messages:
 
    ValidateFight()
    {
-      local oGuild, i;
-
       if (piCombat_Style = STYLE_ONE_ON_ONE or piCombat_Style = STYLE_LAST_MAN_STANDING)
       AND (send(poOwner,@ShrineInUse) = FALSE)
       {
@@ -285,7 +284,7 @@ messages:
        return FALSE;
     }
 
-    AcceptingChallengers() %%How many can brax fit?
+    AcceptingChallengers() %% How many can Brax fit?
     {
        if length(plCombatants) < 2 AND piCombat_Style = STYLE_ONE_ON_ONE
        { return TRUE; }
@@ -314,8 +313,6 @@ messages:
 
     Challenge(who=$)
     {
-      local i, bFound;
-
       if who = poChampion
       {
          send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_champion);
@@ -456,7 +453,7 @@ messages:
       
       if (died = FALSE) and (send(self,@FightInSession) OR ptCommence <> $)
       {
-         debug("Someone tried to renege while fight was in session without dieing. Zuts alors I have missed one.");
+         debug("Someone tried to renege while fight was in session without dying.");
          return;
       }
 
@@ -760,8 +757,6 @@ messages:
    SomeoneSaid(what=$, type = $, string = $)
    "Checks for keywords which activate commands."
    {
-      local i, oActor;
-
       if (not send(self,@FightInSession)) and (ptCommence = $) and isClass(what,&player)
       {
 
@@ -1115,8 +1110,33 @@ messages:
 
    ReqSomethingAttack(what=$,victim=$)
    {
+      % if a fight isnt in session, attack fails.
+      if NOT Send(self,@FightInSession)
+      {
+         return FALSE;
+      }
+
+      % if the victim is not a combatant, attack fails.
+      if IsClass(victim,&Player)
+         AND NOT Send(self,@IsCombatant,#who=victim)
+      {
+         return FALSE;
+      }
+
+      % Monsters attacking players
+      if IsClass(what,&Monster)
+         AND Send(self,@IsCombatant,#who=victim)
+      {
+         propagate;
+      }
+
+      % if the attacker is not a combatant, attack fails.
+      if NOT Send(self,@IsCombatant,#who=what)
+      {
+         return FALSE;
+      }
+
       %% targetless spells: heat, earthquake, umbrella and mana bomb
-      %% return true as long as a fight is on, and 
       if victim = $
         {
          if not send(self,@isCombatant,#who=what)         
@@ -1137,14 +1157,6 @@ messages:
            }
           return TRUE;
         }
-
-      %% monsters attacking players
-      if isClass(what,&monster)
-      AND send(self,@isCombatant,#who=victim)
-      AND send(self,@FightInSession)
-      {
-          propagate;
-      }
 
       %% spells with targets = all the rest of them     
 
@@ -1171,7 +1183,7 @@ messages:
 
    ReqSpellCast(who=$,oSpell = $, lItems = $)
    {
-      local i, spellNum;
+      local i;
 
       % DM spells are never blocked by the watcher
       if send(oSpell,@GetSchool) = SS_DM_COMMAND
@@ -1197,7 +1209,6 @@ messages:
        }
       }
 
-
       %%% Can't cast spells unless a fight is in session
       if ptFight = $
            {
@@ -1208,6 +1219,17 @@ messages:
               return FALSE;
            }
 
+      %%% Summoned Monsters just seem to fall into the lava where they do nothing.
+      %%% These spells are turned off until the room geometry is updated
+      %%% and/or an update allows the lava to kill monsters.
+      if oSpell <> $
+         AND send(oSpell,@IsSummonSpell)
+         {
+            send(self,@SayToOne,#target=who,#message_rsc=Goad_no_summons);
+
+            return FALSE;
+         }
+         
       %%% Certain spells are banned outright      
       if send(oSpell,@SpellBannedInArena)
          {

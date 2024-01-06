@@ -302,7 +302,7 @@ void MDString (char *string, unsigned char *digest)
 {
    int i;
    MD5_CTX context;
-   unsigned int len = strlen (string);
+   unsigned int len = (unsigned int) strlen (string);
    
    MD5Init (&context);
    MD5Update (&context, (unsigned char *)string, len);

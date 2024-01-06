@@ -150,7 +150,7 @@ messages:
    AddLearnAdvice()
    {
       %% Add random response to five spells
-      local i, lFinal, lDialogue, oAbility, sid, oName, lTriggers;
+      local lFinal, lDialogue, oAbility, sid, oName, lTriggers;
 
       if not (viAttributes & MOB_TEACHER) { return; }
 

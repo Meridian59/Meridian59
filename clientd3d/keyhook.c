@@ -21,14 +21,9 @@ static LRESULT CALLBACK MainKeyHook(int code, WPARAM wParam, LPARAM lParam);
  */
 void HookInit(HINSTANCE hInst)
 {
-   HANDLE hTask;
+   DWORD thread_id = GetCurrentThreadId();
 
-   hTask = (HANDLE) GetCurrentThreadId();
-
-   if (hTask == NULL)
-      return;
-
-   hHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) MainKeyHook, NULL, (DWORD) hTask);
+   hHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) MainKeyHook, NULL, thread_id);
    if (hHook == NULL)
       MessageBeep(1);
 }

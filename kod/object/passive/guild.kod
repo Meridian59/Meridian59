@@ -1610,7 +1610,7 @@ messages:
    CheckChangeRank(who=$, promoter = $, newrank = $)
    "Bumps the person up a rank, with some limitations: "
    {
-      local who_rank, promoter_rank, i, count, bcount;
+      local who_rank, promoter_rank;
 
       if who = $ OR promoter = $ OR newrank = $
       {
@@ -1789,7 +1789,7 @@ messages:
 
    Vote(who=$,candidate=$)
    {
-      local i, bFound, j, oldvote, newleader;
+      local i, j, oldvote, newleader;
 
       if NOT Send(self,@ismember, #who=who)
       {

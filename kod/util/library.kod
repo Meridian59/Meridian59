@@ -3584,7 +3584,7 @@ messages:
 
    IsQuestStringMatch(string=$,id=0,goal=$,who=$,mob=$)
    {
-      local i,j,lGoal,bTest,bOld,oQuester,lReward,hinter;
+      local i,j,lGoal,bTest,bOld,lReward,hinter;
 
       if goal=$ { lGoal = Send(self,@GetQuestGoal,#id=id); bOld=False; }
       else {lGoal = goal; bOld=True;}
@@ -3614,8 +3614,8 @@ messages:
          if First(lReward) = QST_REWARD_ID AND
             Send(self,@HasDoneQuestID,#who=who,#questID=Nth(lReward,2))
          {
-            Post(Send(oQuester,@GetOwner),@SomeoneSaid,
-              #what=oQuester,#type=SAY_RESOURCE,#string = QM_already_done);
+            Post(Send(who,@GetOwner),@SomeoneSaid,
+              #what=mob,#type=SAY_RESOURCE,#string = QM_already_done);
             return False;
          }
       }

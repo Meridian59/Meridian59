@@ -167,9 +167,7 @@ messages:
    }
 
    ReqOffer(what = $,item_list = $)
-   {
-      local i, iMoney, oRoomMaint, iNewDays;
-   
+   {  
       % Check for if in the same room.
       if send(what,@GetOwner) <> poOwner
       {

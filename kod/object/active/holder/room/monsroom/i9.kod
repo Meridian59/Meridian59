@@ -163,7 +163,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local ihour,iLight_effect, i, bFound;
+      local ihour,iLight_effect, i;
 
       ihour = Send(SYS,@GetHour);
 

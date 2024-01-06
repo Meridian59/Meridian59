@@ -240,8 +240,6 @@ messages:
    "are cargo, NPC, prize (TBD: deadline). "
    "Returns FALSE if the string is bugged, so we know not to say it."
    {
-      local lParmList, iParmType;
-
       %%%%%%%%%%%%%%%%%%%%%%%%%%%
       % How to kludge quest text
       %--------------------------
@@ -428,7 +426,7 @@ messages:
    "Quest::AssignNextNode) Returns TRUE if successful, FALSE otherwise."
    {
       local oQuester, oQuestEngine, iNodeType, lCargo, cItemClass, iAmount,
-            iQuestType, cMonsterClass, sSay;
+            cMonsterClass, sSay;
 
       sSay = CreateString();
 
@@ -840,7 +838,7 @@ messages:
    
    CompletionCriteriaMet()
    {
-      local lQuesters, oQuester, oQuestEngine, lPrize, lPenalty, sSay;
+      local lQuesters, oQuester, oQuestEngine, lPrize, sSay;
 
       lQuesters = Send(poQuest,@GetQuesters);
 
@@ -1131,7 +1129,7 @@ messages:
 
    AwardPrizeOrPenalty( prize = $, recipients = $ )
    {
-      local i, iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iDays,
+      local iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iDays,
             oBoon, iBoonNum, iPrizeBoon, iPrizeFaction, oQuestEngine, oQuester,
             oLich;
 

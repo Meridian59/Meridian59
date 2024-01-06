@@ -689,7 +689,7 @@ messages:
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE,
                bCheckKarma = TRUE)
    {
-      local iLists, i, oVictim, oRoom, iRand;
+      local i, oVictim, oRoom, iRand;
       
       if NOT IsClass(who,&Player)
       {
@@ -1159,7 +1159,7 @@ messages:
    "This is always TRUE for touch attack spells, because touch attacks"
    "figure their success in player.kod."
    {
-      local num, iRequisiteStat, iability, lJalaInfo, oJalaSpell, lJalaState,
+      local num, iRequisiteStat, lJalaInfo, oJalaSpell, lJalaState,
       iDistance, oTarget, oRing;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);

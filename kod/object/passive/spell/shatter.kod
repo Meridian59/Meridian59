@@ -87,7 +87,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local target, i;
+      local target;
       
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1

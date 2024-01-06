@@ -113,7 +113,7 @@ messages:
 
    DoRescue(who = $)
    {
-      local i, oCurrentRoom, oTargetRoom, oGuild;
+      local oCurrentRoom, oTargetRoom, oGuild;
 
       send(who,@MsgSendUser,#message_rsc=Rescue_Success);
 

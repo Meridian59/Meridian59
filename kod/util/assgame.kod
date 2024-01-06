@@ -278,8 +278,6 @@ messages:
    "Also, put him on the ad list if he's not already, whether or not he's "
    "eligible."
    {
-      local i, bFound;
-
       if who = $
       {
          Debug("Got NULL for who!");
@@ -913,8 +911,6 @@ messages:
    "Returns TRUE if Target is the person before or after Who in the "
    "plCombatant list."
    {
-      local count, index;
-
       if who = $ OR target = $
       {
          Debug("Reached IsLegalOpponent with who or target equal NIL!");

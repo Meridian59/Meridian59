@@ -111,7 +111,7 @@ messages:
 
    Constructor(corpse=$)
    {
-      local iHits_average, oItemAtt;
+      local oItemAtt;
 
       piHits_init = Random(viHits_init_min,viHits_init_max);
       piHits = piHits_init;
@@ -1530,7 +1530,7 @@ messages:
 
    ResetXLATsToShirt()
    {
-      local iSkin_color, iColor, iXlat, iShirt_XLAT;
+      local iShirt_XLAT;
       
       if not Send(self,@ShowShirt)  { return; }
       iShirt_XLAT = Send(poOwner,@GetCurrentShirtColor);

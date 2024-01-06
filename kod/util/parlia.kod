@@ -906,7 +906,7 @@ messages:
 
    CalcIntrigueNumbers()
    {
-      local oPerson, iFaction, iBalFactor;
+      local oPerson, iFaction;
 
       piNumberOfIntriguers = 0;
       piNumberOfPrincess = 0;
@@ -997,7 +997,7 @@ messages:
 
    CalcFactionBonus(base=0,faction=$)
    {
-      local iPower, bNegPower, iMembers, iBalanceFactor, iBalance, iTotal;
+      local iPower, iMembers, iBalanceFactor, iBalance, iTotal;
 
       % This function takes a base number and cranks it through a function of both
       % number of power points accumulated and number of members.

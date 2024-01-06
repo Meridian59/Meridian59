@@ -91,7 +91,6 @@ resources:
    Goad_worship_admin = "Oh how exciting . . . it's %s, %s is sooo important."
    Goad_worship_dm = "Don't except me to grovel to %s, I could care less about a %s of Meridian!"
    Goad_welcome_champion = "All hail %s%s, spiller of blood."
-   Goad_welcome_champion_guild = "Bug.  This message should never occur!"
 
    Goad_invalid_fight = "This fight was invalid for certain reasons, and therefore it has been cancelled."
 
@@ -103,7 +102,6 @@ resources:
 
    Goad_unwanted_give = "~k%s%s ignores your bribe.~n~k"
 
-   Goad_Draw = "`rFight is a draw.  This is a bug.  Please report it and specify combat type and all actions which led to this message."
    Goad_wont_fight = "`kApparently %s%s is too cowardly to fight.  Cowards should die . . . slowly."
    Goad_no_summons = "I thirst for bloody battle, not magical parlor tricks!"
    
@@ -434,14 +432,6 @@ messages:
          {  delay = FIGHT_DELAY_ONE_ON_ONE;  }
 
        ptFight = CreateTimer(self,@FightTimer,delay);
-       return;
-    }
-
-    FightIsDraw()
-    "Called by FightTimer."
-    {
-       send(self,@say,#message_rsc=Goad_draw);
-       send(self,@ClearCombatants);
        return;
     }
 

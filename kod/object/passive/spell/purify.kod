@@ -151,7 +151,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oTarget, lInfo, oSpell, lList, lEnchantmentList;
+      local oTarget;
 
       % If it's only self cast, spoof self as target for following code
       if NOT pbCan_Cast_on_others

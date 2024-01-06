@@ -358,7 +358,7 @@ messages:
 
    UpdateText()
    {
-      local lQuestInfo, iRandomNumber, rText, Temp;
+      local lQuestInfo, iRandomNumber, rText;
       
       lQuestInfo = Send(self,@GetAttributeData,#ItemAtt=IA_QUEST_CARGO);
       iRandomNumber = random(1,15);

@@ -38,7 +38,7 @@
 %type <list_val>	Messages_Block Classvars_Block Properties_Block Resources_Block
 %type <int_val>         Constants_Block constants_list constant_assign
 
-%type <id_val>	  	id var
+%type <id_val>	  	id var loop_variable
 %type <const_val> 	constant resource_const literal
 %type <string_val>	fname
 %type <expr_val>	expression
@@ -257,9 +257,13 @@ assign_stmt:
 	;
 
 for_stmt:
-		FOR id IN expression '{' start_loop statement_list '}' end_loop
+		FOR loop_variable IN expression '{' start_loop statement_list '}' end_loop
 		{ $$ = make_for_stmt($2, $4, $7); }
 	;
+
+loop_variable: 
+    id { make_loop_variable($1); }
+;
 
 while_stmt:
 		WHILE expression '{' start_loop statement_list '}' end_loop

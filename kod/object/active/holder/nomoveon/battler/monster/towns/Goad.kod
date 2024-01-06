@@ -1173,7 +1173,7 @@ messages:
 
    ReqSpellCast(who=$,oSpell = $, lItems = $)
    {
-      local i, spellNum;
+      local i;
 
       % DM spells are never blocked by the watcher
       if send(oSpell,@GetSchool) = SS_DM_COMMAND

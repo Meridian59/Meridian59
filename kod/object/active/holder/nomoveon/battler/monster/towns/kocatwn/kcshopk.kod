@@ -185,7 +185,7 @@ messages:
 
    SetForSale()
    {
-      local i, oJunk1, oJunk2, oJunk3, lForSale;
+      local oJunk1, oJunk2, oJunk3, lForSale;
 
       lForSale = $;
 

@@ -842,7 +842,7 @@ messages:
    }
    PostLichKilled()
    {
-      local oNecro,iDropIndex,oGuildh15,iDropRow,iDropCol,oNecBal,oTreasure,iTeleportThresholdValue;
+      local oNecro,oNecBal,oTreasure;
       if pbIn_Use and poOwner <> $ and isClass(poOwner,&User)
       {
          oNecro = poOwner;

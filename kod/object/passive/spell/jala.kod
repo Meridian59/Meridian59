@@ -103,7 +103,7 @@ messages:
    CastSpell(who=$, iSpellPower=0)
    "Initiation point for the spell."
    {
-      local oRoom, oldVolume, thisVolume, i, iJalaInfo;
+      local oRoom, oldVolume, thisVolume, iJalaInfo;
 
       oRoom = Send(who,@GetOwner);
 

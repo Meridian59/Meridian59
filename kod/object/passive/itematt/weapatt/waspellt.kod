@@ -425,7 +425,7 @@ messages:
 
    ItemBuildDescName(oItem=$,iFakeData=$)
    {  
-      local lData, iData, rName, sMakerInfo;
+      local lData, iData, rName;
 
       if iFakeData = $
       { 

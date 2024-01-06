@@ -355,8 +355,6 @@ messages:
 
    Constructor(name = $,icon = $)
    {
-      local oRoom,lPos;
-
       if name <> $
       {
          vrName = name;
@@ -2188,7 +2186,7 @@ messages:
 
    UserLogonSetPosition()
    {
-      local i,oNew_room;
+      local oNew_room;
 
       if piSave_room <> $
       {
@@ -2448,7 +2446,7 @@ messages:
 
    ToCliPlayer()
    {
-      local rMusic, iLight, rBackground;
+      local rBackground;
 
       AddPacket(1,BP_PLAYER,4,self,4,vrIcon,4,vrName,4,poOwner);
       AddPacket(4,Send(poOwner,@GetRoomResource),4,Send(poOwner,@GetName));
@@ -2638,7 +2636,7 @@ messages:
 
    ToCliStats(group = $)
    {
-      local i,oSpell,oSkill,iCount;
+      local i,iCount;
 
       if not pbLogged_on
       {
@@ -2894,7 +2892,7 @@ messages:
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
-      local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
+      local iCurrentTime, iDelta, iExertion, iHasteLevel,
             iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
 
       % NEW Speedhack detection!
@@ -3552,8 +3550,8 @@ messages:
    "Try to pick up one item (what) and for number items optionally specify"
    "an amount of that item (number)."
    {
-      local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, iNumber, oSplit, oCorpse;
+      local oOldOwner, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
+            iCan_hold, iNumber, oSplit;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3730,7 +3728,7 @@ messages:
 
    UserDrop(what = $,number = $)
    {
-      local i,Item_pos,oNumber;
+      local oNumber;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3828,7 +3826,7 @@ messages:
 
    UserPut(what = $,where = $,number = $)
    {
-      local i, lObjects, lItem_pos, oNumber;
+      local oNumber;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       %  bitflag check instead of function for speed.
@@ -3923,7 +3921,7 @@ messages:
    
    UserObjectContents(what = $)
    {
-      local i,iObjs,oThing,rName,rIcon,lHolding1,lHolding2;
+      local i,iObjs,oThing,lHolding1,lHolding2;
 
       if NOT IsClass(what,&Holder)
          OR (IsClass(what,&Player)
@@ -4375,9 +4373,7 @@ messages:
    }
 
    UserChangeDescription(string = $)
-   {
-      local iCount;
-      
+   {     
       if string = $
       {
          string = psPlayerDescription;
@@ -4597,7 +4593,7 @@ messages:
 
    UserAttack(type = STROKE_NORMAL,what = $)
    {
-      local i, use_weapon, stroke_id, stroke_obj, is_spell;
+      local use_weapon, stroke_id, stroke_obj;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -5420,7 +5416,7 @@ messages:
 
    OfferSubtractNumberItems()
    {
-      local i,j,bFound;
+      local i,j;
 
       for i in plOffer_items
       {
@@ -6094,8 +6090,6 @@ messages:
    SomethingMoved(what=$, new_row=$, new_col=$, fine_row = $, fine_col = $,
                   cause = $, speed = 0)
    {
-      local iRow,iCol,lPos;
-
       if IsClass(what,&DM)
          AND Send(what,@IsDMStealthed)
          AND what <> self
@@ -6464,8 +6458,6 @@ messages:
 
    SomethingChanged(what = $)
    {
-      local rName, rIcon;
-
       if IsClass(what,&DM)
          AND Send(what,@IsDMStealthed)
          AND what <> self
@@ -6504,8 +6496,6 @@ messages:
 
    NewUsing(what = $)
    {
-      local rName,rIcon;
-
       if pbLogged_on
       {
          AddPacket(1,BP_USE,4,what);
@@ -7006,7 +6996,7 @@ messages:
    "Sends the user to their hometown, whether they're logged in or not!\n"
    "Called by constructor for initial placement as well"
    {
-      local oNew_Room,iRow,iCol,oRoom;
+      local oRoom;
 
       oRoom = $;
       if piHomeroom <> $
@@ -7517,7 +7507,7 @@ messages:
    "successtime, failtime.  "
    "Returns TRUE on success, FALSE if illegal parameters provided."
    {
-      local lQH, i, iLength, iTime;
+      local lQH, iTime;
       
       if index = $ 
       {

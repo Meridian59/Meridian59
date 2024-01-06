@@ -313,8 +313,6 @@ messages:
 
    SomethingTryGo(what=$, row=$,  col = $)
    {
-      local oGuild;
-
       if row = 4 AND col = 28
       {
          if send(self,@ReqLegalEntry,#who = what)

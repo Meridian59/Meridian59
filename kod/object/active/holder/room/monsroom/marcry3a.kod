@@ -955,8 +955,6 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
    {
-      local object;
-
       if isClass(what,&DM) AND StringEqual(string,"blink")
       {
          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,

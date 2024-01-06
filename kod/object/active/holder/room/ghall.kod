@@ -328,7 +328,7 @@ messages:
 
    ClaimGuildHall(oGuild = $, rep = $,password = $)
    {
-      local i, thisGuild;
+      local i;
 
       if rep = $
       {
@@ -525,7 +525,7 @@ messages:
 
    GuildLeverFlipped(who=$)
    {
-      local i, j, allies, members, bFound, conq_rsc, oldstatus;
+      local i, j, allies, members, conq_rsc, oldstatus;
 
       oldstatus = piStatus;
 
@@ -1251,7 +1251,7 @@ messages:
 
    SomethingHitHotPlate(what=$, hpid=$)
    {
-      local i, bFound;
+      local i;
 
       if what= $ OR hpid = $
       {

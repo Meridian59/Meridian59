@@ -492,8 +492,6 @@ messages:
 
    RecreateAll()
    {
-      local i;
-
       % Reset our level points.
       vlLevelPoints = [1,2,4,6,8,10];
 
@@ -993,7 +991,7 @@ messages:
 
    SystemUserLogoff(what = $)
    {
-      local i, j, oNew_room;
+      local i, j;
 
       plUsers_logged_on = DelListElem(plUsers_logged_on,what);
 
@@ -1020,7 +1018,7 @@ messages:
 
    AddReflection(who = $, oreflection = $)
    {
-      local i,j;
+      local i;
 
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
@@ -1172,7 +1170,7 @@ messages:
                    type1=STANDARD_RESOURCE,type2=STANDARD_RESOURCE,
                    type3=STANDARD_RESOURCE,type4=STANDARD_RESOURCE)
    {
-      local i,each_obj;
+      local i;
 
       for i in plUsers_logged_on
       {
@@ -1459,7 +1457,7 @@ messages:
 
    UserKilled(what = $,killer = $)
    {
-      local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
+      local i, rMessage, oSoldierShield, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
             war_string1, war_string2, oBook, oMaster;
 
@@ -3535,7 +3533,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i,iTime,iDay,iMinutes;
+      local iTime,iDay,iMinutes;
 
       % This assumption is no longer valid, but it's how we figure things out.
       % Remember that GetTime() returns the UDT time in seconds since
@@ -3704,7 +3702,7 @@ messages:
    ReceiveClient(client_msg = $,number_stuff = $,session_id = $)
    {
       local i,liClient_cmd,oUser,lCharinfo,sName,sDesc,oLookup,iGender,rOldName,bLegal,
-            lBadNameContain,lBadNameIs,sTemp;
+            lBadNameContain,lBadNameIs;
 
       liClient_cmd = First(client_msg);
 
@@ -6488,9 +6486,7 @@ messages:
    }
 
    JokeTimerStageOne()
-   {
-      local oPsycho;
-      
+   {     
       ptRecreateTimer = $;
 
       Send(&Monster,@Killed);

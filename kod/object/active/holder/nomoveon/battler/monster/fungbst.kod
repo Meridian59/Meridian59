@@ -91,8 +91,6 @@ messages:
 
    DoSpasm()
    {
-      local roll;
-
       if piAnimation = ANIM_NONE
       {
          piAnimation = ANIM_SLEEP;

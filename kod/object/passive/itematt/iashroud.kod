@@ -120,8 +120,6 @@ messages:
 
    AddSelfToRandomItem(oItem = $)
    {
-      local iSpellType, iRand;
-
       if oItem = $ { DEBUG("BAD BAD BAD"); return FALSE; }
 
       if send(self,@ReqAddToItem,#oItem=oItem)

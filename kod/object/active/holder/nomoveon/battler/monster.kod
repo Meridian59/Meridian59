@@ -1070,7 +1070,7 @@ messages:
    "We're in Hot pursuit, so either we keep chasing, or we attack."
    "Note that even if we can't move, we can be 'chasing'...."
    {
-      local i,oVictim,iVision,each_obj,iCount, bCast;
+      local oVictim, bCast;
       oVictim = poTarget;
 
       Send(self,@ClearBehavior,#timer=timer);
@@ -1970,7 +1970,7 @@ messages:
    "the lack of distance travelled. This is called from the ChaseTimer."
    "It should probably be combined with DoRandomWalk."
    {
-      local i, iAtan, iDir, iTry_dir, iRand,   iIter;
+      local i, iAtan, iDir, iTry_dir, iIter;
       
       if poOwner=$ OR row_diff=$ OR col_diff=$
       {
@@ -2246,7 +2246,7 @@ messages:
    "Return TRUE if the offer should go through, meaning that the monster will "
    "offer the value of the items in return."
    {
-      local i,j, lArgList, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems;
+      local i, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems;
 
       if item_list = $
       {
@@ -2493,7 +2493,7 @@ messages:
    "Someone just randomly gave us an object we didnt really want."
    "They could be fishing for a quest, so occasionally, lets keep it."
    {
-      local iRnd,oMoney,i,lReward,oLibrary,iQuestID;
+      local i,lReward,oLibrary,iQuestID;
  
       % Quickly, lets check to see if it's a signet ring.  If so, give a
       %  special message.
@@ -2700,7 +2700,7 @@ messages:
 
    SomeoneSaidLevel(what = $,type = $,string = $)
    {
-      local iLevel, oAbility, iNum, rAbility_name;
+      local iLevel;
 
       if (Nth(plFor_Sale,2) = $ AND Nth(plFor_Sale,3) = $)
          OR NOT StringContain(string,monster_level)
@@ -2911,7 +2911,7 @@ messages:
    RandomTimer(test = FALSE)
    "Handle a random timer, and set up the next one."
    {
-      local lAction, iNum, oTarget, i, lActives, oLibrary;
+      local lAction, iNum, oTarget, i, oLibrary;
 
       % Clear spam list
       plSpamList = $;
@@ -3117,7 +3117,7 @@ messages:
    Offer(what = $,item_list = $)
    "Offer the player money in exchange for their goods - MOB_BUYER"
    {
-      local i,iValue_offered,iAdd,x,y;
+      local i,iValue_offered,iAdd,x;
 
       % The Faction Pricing bonus was selling items to NPCs at higher prices
       %  than the new price.  This has been taken out.
@@ -3306,7 +3306,7 @@ messages:
 
    VaultWithdraw(what=$,lItems=$,number_list = $)
    {
-      local i, j, iFee, iCash, lStored, oVault, iBulk, oMoney, bFound,
+      local i, j, iFee, iCash, oVault, iBulk, oMoney, bFound,
             oSafeBox, lNumbers, iCount;
 
       if what=$ OR lItems = $
@@ -3580,7 +3580,7 @@ messages:
 
    BankWithdraw(who = $, amount = 0)
    {
-      local i, iFlag, iAmount, oMoney, oBank, iCan_hold;
+      local iAmount, oMoney, oBank, iCan_hold;
 
       if not Send(self,@MobIsBanker)
       {
@@ -3995,8 +3995,6 @@ messages:
 
    CheckWhyWanted(obj=$, who=$)
    {
-      local value,oMoney;
-
       if IsClass(obj,&SignetRing)
       {
          % Does the signet want this mob? (or vice versa).
@@ -4245,8 +4243,6 @@ messages:
 
    StartBasicTimers()
    {
-      local oRoom;
-
       if IsClass(self,&Revenant)
       {
          return;
@@ -4481,8 +4477,7 @@ messages:
 
    CanDoTeach(who = $, sid = 0, bSkill = FALSE)
    {
-      local oAbility, iVal, iReason, iAmount, rAmount, bitSchools, i, tmp,
-            lSchools;
+      local oAbility, iVal, iReason, iAmount, rAmount, lSchools;
 
       if sid = 0 OR who = $
       { 
@@ -4803,7 +4798,7 @@ messages:
 
    AssembleVaultList(who=$)
    {
-      local oVault, i, j;
+      local oVault;
 
       oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
 
@@ -5273,7 +5268,7 @@ messages:
 
    DispelIllusionEnchantments(report = TRUE, iChance = 100)
    {
-      local i, oSpell, each_obj;
+      local i, oSpell;
 
       for i in plEnchantments 
       {                       
@@ -5290,7 +5285,7 @@ messages:
 
    RemoveSchoolEnchantments(school = $, report=TRUE)
    {
-      local i, oSpell, each_obj;
+      local i, oSpell;
 
       for i in plEnchantments 
       {                       
@@ -5692,7 +5687,7 @@ messages:
 
    AddLearnAdvice()
    {
-      local i, lFinal, lDialogue, oAbility, sid, oName;
+      local lFinal, lDialogue, oAbility, sid, oName;
 
       % Go through the monster's sell list.  If the monster has a spell or 
       %  skill to sell, add it to their dialogue.

@@ -576,7 +576,7 @@ messages:
 
    Killed(what=$, resetScenario=FALSE, guildDisbandDeath=FALSE)
    {
-      local oSpell, oRoom, NumAttackers, i, lichActivated;
+      local NumAttackers, i, lichActivated;
 
       NumAttackers = length(plAttackers);
  

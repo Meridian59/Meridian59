@@ -1439,7 +1439,7 @@ messages:
 
    InformHunters()
    {
-      local i, j, oSpell, state, oSpellCloak, rLocation, lRoomlist, oRoom;
+      local i, j, oSpell, state, oSpellCloak, rLocation, oRoom;
 
       oSpell = Send(SYS,@FindSpellByNum,#Num=SID_HUNT);
       oSpellCloak = Send(SYS,@FindSpellByNum,#Num=SID_CLOAK);
@@ -1476,7 +1476,7 @@ messages:
 
    ShowDesc()
    {
-      local i,oEnchanter, rank, HitPoint_Percent;
+      local HitPoint_Percent;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND poIllusion_set <> $
@@ -1783,7 +1783,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oSnoop, oRoom;
+      local i, oGame, oCaramo, oRoom;
       
       for i in plPassive
       {
@@ -2349,8 +2349,6 @@ messages:
    AddDefaultObjects()
    "Add the objects a player is given when creating a character in newbie zone"
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
-
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
@@ -2384,8 +2382,6 @@ messages:
    AddRealWorldObjects()
    "Add the objects a player is given when character leaves the newbie zone"
    {
-      local lItems,oItem,iSchool;
-
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
@@ -2647,7 +2643,7 @@ messages:
 
    EnchantmentTimer(timer = $)
    {
-      local i,oEnchanter;
+      local i;
  
       for i in plEnchantments
       {
@@ -2889,7 +2885,7 @@ messages:
    ReactivateAllEnchantments()
    "Called when a player logs on."
    {
-      local i, tTimer, iTime, state;
+      local i, iTime, state;
 
       for i in plEnchantments
       {
@@ -2954,7 +2950,7 @@ messages:
 
    RemoveSchoolEnchantments(school = $,report=TRUE)
    {
-      local i, oSpell, each_obj;
+      local i, oSpell;
 
       for i in plEnchantments 
       {                       
@@ -3249,7 +3245,7 @@ messages:
 
    TryUseItem(what = $)
    {
-      local i,iSpace,iUse_type;
+      local i, iUse_type;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3440,7 +3436,7 @@ messages:
 
    TryApplyItem(what = $,apply_on = $)
    {
-      local i,iUse_type;
+      local iUse_type;
       
       if NOT Send(self,@IsHolding,#what=what)
       {
@@ -4170,7 +4166,7 @@ messages:
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
+      local i, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4285,8 +4281,7 @@ messages:
    % This returns the damage done to target "what" before resistances.
    GetDamage(what = $, stroke_obj=$)
    {
-      local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster;
+      local i, iDamage, oStroke, oWeapon, iModBonus, iDamageBonus, oMonster;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4434,8 +4429,7 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell,
-            iLimit;
+      local i, iResistance, oSoldierShield, color_rsc, iDuration, iLimit;
 
       color_rsc = player_hit_color_none;
       
@@ -4682,7 +4676,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local oSoldierShield, iChance, oEnemyGuild;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -4815,7 +4809,7 @@ messages:
 
    GetSomethingMissedYouSound(what = $,weapon_used = $)
    {
-      local i,iRoll;
+      local iRoll;
 
       if Send(self,@LookupPlayerWeapon)
       {
@@ -6436,8 +6430,6 @@ messages:
    "Adds a guildcommand to player's arsenal.  Usually called by resetpowers"
    "in guild.kod."
    {
-      local oCommand;
-
       if Send(self,@HasGuildCommand,#command_num=command_num)
       {
          return FALSE;
@@ -6497,7 +6489,7 @@ messages:
    "Returns TRUE if a spell is in a player's spell list,"
    "FALSE if it is not."
    {
-      local i,oSpell;
+      local i;
 
       for i in plSpells
       {
@@ -6783,7 +6775,7 @@ messages:
    "Admin supported\n"
    "Adds a spell by spell ID to the user's castable list of spells"
    {
-      local i, j, oSpell, lSpell_info, lPrereqs, bFound, iBoundAbility, lEncode;
+      local i, oSpell, lPrereqs, iBoundAbility, lEncode;
       
       if Send(self,@HasSpell,#num=num)
       {
@@ -6999,7 +6991,7 @@ messages:
    FlipSpellAtrophyFlag(SID=0)
    "This spell was used recently, meaning it will NOT atrophy."
    {
-      local i, elemnum, spellnum;
+      local i, elemnum;
       
       elemnum = 0;
       for i in plSpells
@@ -7018,7 +7010,7 @@ messages:
 
    ActivateSpellAtrophy()
    {
-      local i, j, iability, lSchoolsUsed, aSpell, bSpell, bFound, highmark, iAmount;
+      local i, j, iability, aSpell, bSpell, bFound, highmark, iAmount;
 
       % Must get below highmark for atrophy to activate
       iAmount = -2;
@@ -7061,7 +7053,7 @@ messages:
    "Returns TRUE if a Skill is in a player's Skill list,"
    "FALSE if it is not."
    {
-      local i,oSkill;
+      local i;
 
       for i in plSkills
       {
@@ -7257,7 +7249,7 @@ messages:
    "Admin supported\n"
    "Adds a Skill by Skill ID to the user's castable list of Skills"
    {
-      local i,j,oSkill, lSkill_info, lPrereqs, bFound, iBoundAbility;
+      local oSkill, iBoundAbility;
       
       if Send(self,@HasSkill,#num=num)              
       {
@@ -7367,7 +7359,7 @@ messages:
    FlipSkillAtrophyFlag(SKID=0)
    "This Skill was used recently, meaning it will NOT atrophy."
    {
-      local i, elemnum, Skillnum;
+      local i, elemnum;
 
       elemnum = 0;
       for i in plSkills
@@ -7386,7 +7378,7 @@ messages:
 
    ActivateSkillAtrophy()
    {
-      local i, j, iability, lSchoolsUsed, aSkill, bSkill, bFound, highmark, iAmount;
+      local i, j, iability, aSkill, bSkill, bFound, highmark, iAmount;
 
       iAmount = -2;
       highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))*piAdvancement_Points)/20;
@@ -7704,7 +7696,7 @@ messages:
 
    Killed(what = $)
    {
-      local lItems,i, amount, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
+      local lItems,i, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
@@ -8228,7 +8220,7 @@ messages:
    
    DoDance()
    {
-      local i, iSpace;
+      local i;
 
       for i in plUsing
       {
@@ -9977,7 +9969,7 @@ messages:
 
    RecalcLight()
    {
-      local i, iLight, iState, oWeapon, oItemAtt;
+      local i, iLight, iState, oWeapon;
 
       % TODO: Make this into a general check.
 
@@ -10054,7 +10046,7 @@ messages:
 
    RecalibratePlayer()
    {
-      local i, bSoldier, iAmount;
+      local i, bSoldier;
 
       bSoldier = FALSE;
       if Send(self,@FindUsing,#class=&SoldierShield) <> $
@@ -10235,8 +10227,8 @@ messages:
    "if a player can't learn because he has too many competing schools, he needs to know that."    
    {      
       local bSkill, obj, level, school, division, iHave, prev_level,
-            iSamediv, iOtherdiv, aHigh, bHigh, cHigh, iBase, i, temp,
-            nObj, nSID, index, iNeed, nSchool, nLevel, msg, bKnowOne,
+            aHigh, bHigh, cHigh, i, temp,
+            nObj, nSID, index, iNeed, nSchool, nLevel, bKnowOne,
             iWeapon, iKraanan, iShalille, iQor, iFaren, iRiija, iJala, iPoints;
 
       % Phase one.  Assert our data.  Be sure we have been fed a valid spell
@@ -10758,7 +10750,7 @@ messages:
    "(i.e. quits a guild or drops below 30 health).  Also, take steps to ensure "
    "it is not run immediately prior to death."
    {
-      local i, ass_game;
+      local ass_game;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_LOCK)
       {

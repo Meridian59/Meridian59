@@ -73,8 +73,6 @@ messages:
   
    AppendDesc(oItem =$)
    {
-      local lData, oRoom;
-
       AppendTempString(itematt_durable_desc_1);
       AppendTempString(send(oItem,@getname));		
       AppendTempString(itematt_durable_desc_2);

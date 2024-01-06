@@ -64,7 +64,7 @@ messages:
    % Finds ammo and uses it if not used.
    FindLikelyAmmo(who=$,report=FALSE)
    {
-      local oWeapon, oLikelyAmmo, oAmmo, cAmmoType, iAmmoValue, i;
+      local oWeapon, oLikelyAmmo, cAmmoType, iAmmoValue, i;
 
       oWeapon = send(who,@LookupPlayerWeapon);
       if oWeapon = $

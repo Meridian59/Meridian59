@@ -2142,7 +2142,7 @@ messages:
 
    ReqSpellCast(who=$,oSpell = $, lItems = $)
    {
-      local i, spellNum, rTarget;
+      local i, rTarget;
 
       % Spells cast by immortal DMs are not blocked by the watcher
       if IsClass(who,&DM) AND Send(who,@PlayerIsImmortal)

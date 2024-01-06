@@ -117,7 +117,7 @@ messages:
 
    ShowDesc()
    {
-      local oRSC, oTarget, bDo_notch;
+      local oTarget, bDo_notch;
 
       bDo_Notch = FALSE;
       AddPacket(4,BlackDagger_desc_rsc);

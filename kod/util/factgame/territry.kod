@@ -83,8 +83,6 @@ messages:
 
    Constructor()
    {
-      local i;
-
       plFlagStates = $;
 %      Send(self,@Recreate);
       

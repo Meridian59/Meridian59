@@ -79,7 +79,7 @@ messages:
    CastSpell(who = $,spellpower = 0)
    "Called at beginning of spellcast"
    {
-      local oRoom, each_obj, i;
+      local oRoom;
 
       oRoom = Send(who,@GetOwner);
       Send(oRoom,@SetRoomFlag,#Flag=ROOM_JIG,#value=TRUE);

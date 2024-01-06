@@ -162,8 +162,6 @@ messages:
 
    Meld(who=$)
    {
-      local mysticism;
-
       send(who,@MsgSendUser,#message_rsc=corpsenode_meld);          
       send(who,@WaveSendUser,#wave_rsc=uworld_meld_sound);
       send(who,@NewMaxMana,#amount=Send(self,@GetManaAdjust,#who=who),#node_num=piNode_num);

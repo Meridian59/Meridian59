@@ -99,7 +99,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oWeapon, oWeapAtt, iDuration;
+      local oWeapon, oWeapAtt;
 
       oWeapon = first(lTargets);
       if oWeapon = $ or not isClass(oWeapon,&weapon)

@@ -283,8 +283,6 @@ messages:
 
    GetNumberCanHold(what = $)
    {
-      local iBulk_can_hold, iWeight_can_hold, iUnit_bulk, iUnit_weight;
-
       if NOT IsClass(what,&NumberItem)
          OR send(self,@GetBulkMax) = $
          OR send(self,@GetWeightMax) = $
@@ -924,7 +922,7 @@ messages:
 
    GetRandomItem()
    {
-      local iN_items, oItem, iGet, i, j, each_obj;
+      local iN_items, iGet, i, j, each_obj;
 
       iN_items = Send(self,@CountItems);
       if iN_items = 0

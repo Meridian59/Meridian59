@@ -182,9 +182,7 @@ messages:
    }
 
    SetRoomKarma(karma = $)
-   {
-      local karma1, karma2, karma3;
-   
+   {  
       % Change waterfall level.
       if (karma = KVERY_EVIL)
       {       

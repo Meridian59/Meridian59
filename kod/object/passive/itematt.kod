@@ -327,7 +327,7 @@ messages:
    "This must be called.  In fact, this is what all attribute "
    "removing things should call."
    {
-      local iValue, lData;
+      local lData;
 
       lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
       send(self,@RemoveEffects,#oItem=oItem,#lData=lData);              

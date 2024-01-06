@@ -580,7 +580,7 @@ messages:
 
    ResetMonstersInFinal()
    {
-      local i,each_obj,iCount,iRow,iCol;
+      local i,each_obj,iRow,iCol;
 
       for i in plActive
       {

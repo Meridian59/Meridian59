@@ -63,7 +63,7 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oMonster, oBody, oRoom, oScapegoat, iRand, i, each_obj, row, col, iDropChance;
+      local oMonster, oBody, oRoom, oScapegoat, iRand, i, row, col, iDropChance;
       
       oRoom = send(who,@GetOwner);
       row = send(who,@GetRow);

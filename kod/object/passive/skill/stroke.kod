@@ -132,8 +132,6 @@ messages:
    "If a skill requires a special cost or requirement of some sort, that"
    "cost goes here.  Example:  picklocking may require thieves tools."
    {
-      local oOwner, i;
-
       if not send(who,@HasVigor,#amount=viSkillExertion) and vbCheck_Exertion = TRUE
       {
          send(who,@MsgSendUser, #message_rsc=skill_too_tired,#parm1=vrName);
@@ -203,7 +201,7 @@ messages:
    FindDamage(weapon_used=$, who=$, victim=$)
    "We put this here so that we can vary a stroke's damage per weapon."
    {
-      local skill_ability, damage;
+      local damage;
       
       % base weapon damage
       damage = send(weapon_used,@GetDamage,#who=who,#target=victim);

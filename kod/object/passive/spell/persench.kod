@@ -75,7 +75,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local otarget, i;
+      local otarget;
 
       if lTargets = $
       {

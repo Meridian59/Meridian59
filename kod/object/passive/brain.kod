@@ -131,7 +131,7 @@ messages:
    %%% location when this message was processed. Duh.
    SomethingMoved( mob=$, state=$, what=$, new_row=$, new_col=$, ignoreWait= FALSE )
    {
-      local iVisionRange, oTarget;
+      local oTarget;
 
       if what = mob { return; }
       
@@ -265,7 +265,6 @@ messages:
 
    SomethingEntered( mob=$, state=$, what=$, where=$ )
    {
-      local iVision;
       if IsClass(what,&Battler) and not (what = mob)
       {
          if (state&STATE_ATTACK)=0
@@ -360,8 +359,7 @@ messages:
 
    PostChaseTimer( mob = $ )
    {
-      local oTarget,oNearest;
-
+      local oTarget;
 
       oTarget = send(mob,@GetTarget);
       if isClass(oTarget,&user) and
@@ -470,7 +468,7 @@ messages:
    "4. Try to move to optimal range, if possible."
    "5. Otherwise, move around target, but stay in range."
    {
-      local oMaster, oOwner, oMasterRoom, oFrightener, oAlly, iRange, iOpt_range, oForm;
+      local oAlly, iRange, iOpt_range, oForm;
       
       if mob = $ or target = $ { DEBUG("Unreachable!  Called without argument!"); return; }
       
@@ -548,7 +546,7 @@ messages:
    "5. If wounded below viWimpy, either run away, or towards closest ally."
    "6. Otherwise, move towards target."
    {
-      local oMaster, oOwner, oMasterRoom, oFrightener, oAlly, iRange, iOpt_range;
+      local oMaster, oFrightener, oAlly, iRange, iOpt_range;
       
       if mob = $ or target = $ { DEBUG("Unreachable!  Called without argument!"); return; }
       
@@ -640,7 +638,7 @@ messages:
    "we attack."
    {
       %% If iBalance ends up greater than 0, return TRUE.
-      local iBalance, oTarget, iHatred, iKarma1, iKarma2, oMaster, oApparentForm, oApparentTarget,
+      local oTarget, iHatred, iKarma1, iKarma2, oMaster, oApparentForm, oApparentTarget,
         bKarmaHater, iAdd, oMobTarget;      
       
       if mob = $ or what = $ { DEBUG("BadInfo passed to GetHatred!"); return FALSE; }

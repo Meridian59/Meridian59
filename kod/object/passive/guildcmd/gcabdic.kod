@@ -63,7 +63,7 @@ messages:
    DoCommand(who=$, otarget = $)
    "Kicks the target out of the guild!"
    {
-      local yourGuild, myguild, i, lmembers;
+      local yourGuild, myguild;
 
       if IsClass(Send(who,@GetGuild),&NecromancerGuild)
       {

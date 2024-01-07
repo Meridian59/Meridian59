@@ -144,8 +144,6 @@ messages:
 %
    BossKilledTrigger()
    {
-      local i;
-
       % just killed the orc pit boss (opening door, creating treasure...)
       
       % raise the gate

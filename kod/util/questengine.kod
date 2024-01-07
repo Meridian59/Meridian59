@@ -2319,7 +2319,7 @@ Recreate()
 % recreate quest nodes and start timer
 RecreateQuestNodes()
 {
-   local i, iMax, bOK, lNPCs, oNPC, lCargo, lCargo2;
+   local i, iMax, lNPCs, oNPC, lCargo, lCargo2;
 
    plDefaultNPCList = [ send( send( SYS, @GetLibrary ), @SelectQuester ),\
 			send( send( SYS, @GetLibrary ), @SelectQuester ),\
@@ -6026,7 +6026,7 @@ AddQuestNodeTemplate(NPC_modifier = $,
 {
 	% Validity checks
 
-	local NPC, lThisQuestNodeTemplate, iThisQNTIndex;
+	local lThisQuestNodeTemplate, iThisQNTIndex;
 
 	% NPC modifier must be valid
 	if( NPC_modifier = $ )
@@ -6380,8 +6380,6 @@ SetQuestNodeType( index = 0, new_type = $ )
 %%
 SetQuestNodeCargoList( index = 0, new_cargo_list = $ )
 {
-	local oNPC;
-
 	if( send( self, @IsValidQuestNodeTemplate, #index = index ) = FALSE )
 	{
 		return 0;
@@ -6405,8 +6403,6 @@ SetQuestNodeCargoList( index = 0, new_cargo_list = $ )
 %%
 SetQuestNodeMonsterList( index = 0, new_monster_list = $ )
 {
-	local oNPC;
-
 	if( send( self, @IsValidQuestNodeTemplate, #index = index ) = FALSE )
 	{
 		return 0;
@@ -6429,8 +6425,6 @@ SetQuestNodeMonsterList( index = 0, new_monster_list = $ )
 %%
 SetQuestNodePrizeList( index = 0, new_prize_list = $ )
 {
-	local oNPC;
-
 	if( send( self, @IsValidQuestNodeTemplate, #index = index ) = FALSE )
 	{
 		return 0;
@@ -6454,8 +6448,6 @@ SetQuestNodePrizeList( index = 0, new_prize_list = $ )
 %%
 SetQuestNodePenaltyList( index = 0, new_penalty_list = $ )
 {
-	local oNPC;
-
 	if( send( self, @IsValidQuestNodeTemplate, #index = index ) = FALSE )
 	{
 		return 0;
@@ -6644,7 +6636,7 @@ AddQuestTemplate(	num_players = $,
 {
 	% Validity checks
 
-	local iNodeIndex, lThisQuestTemplate, iThisQNTIndex;
+	local iNodeIndex, lThisQuestTemplate;
 
 	% num_players must be valid
 	if( num_players = $ )
@@ -6880,7 +6872,7 @@ CreateQuest( quest_template = 1 )
 {
 	% Needs error-checking!
 
-	local lQuestTemplate, oQuest, oFirstNode; 
+	local lQuestTemplate, oQuest; 
 
 	lQuestTemplate = send( self, @GetQuestTemplate, #index = quest_template );
 	if( lQuestTemplate = $ )
@@ -7097,7 +7089,7 @@ ScheduleQuest(index=0, override=FALSE)
 "Schedules a Quest if the cap hasn't been reached "
 "Also does a QT_SCHEDULE_CHANCE die roll unless override=TRUE."
 {
-   local QT, lActiveQuests, QTindex, iActive, iMaxActive;
+   local QT, lActiveQuests, iActive, iMaxActive;
    
    QT = send(self,@GetQuestTemplate,#index=index);
    if QT = $ {return;}
@@ -7181,7 +7173,7 @@ CheckQuestDeadlines()
    %%
    DeleteActiveQuests()
    {
-      local iQT, oQuest, iStatus, lOcc,oNPC;
+      local iQT, oQuest, iStatus;
       iStatus = piActive;
       if( iStatus )
       {

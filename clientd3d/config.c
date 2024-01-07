@@ -45,10 +45,6 @@ static char INIDownload[]    = "Download";
 static char INIBrowser[]     = "Browser";
 static char INIDefaultBrowser[] = "DefaultBrowser";
 static char INIVersion[]     = "INIVersion";
-static char INIGuest[]       = "Guest";
-static char INIServerLow[]   = "ServerLow";
-static char INIServerHigh[]  = "ServerHigh";
-static char INIServerGuest[] = "ServerGuest";
 static char INILastPass[]    = "Sentinel";
 static char INISoundLibrary[] = "SoundLibrary";
 static char INICacheBalance[] = "CacheBalance";
@@ -56,6 +52,7 @@ static char INIObjectCacheMin[] = "ObjectCacheMin";
 static char INIGridCacheMin[] = "GridCacheMin";
 static char INIMusicVolume[]  = "MusicVolume";
 static char INISoundVolume[]  = "SoundVolume";
+static char INIAmbientVolume[] = "AmbientVolume";
 
 static char interface_section[]= "Interface";
 static char INIDrawMap[]     = "DrawMap";
@@ -191,6 +188,7 @@ void ConfigLoad(void)
    config.play_sound    = GetConfigInt(misc_section, INIPlaySound, True, ini_file);
    config.music_volume    = GetConfigInt(misc_section, INIMusicVolume, 100, ini_file);
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
+   config.ambient_volume    = GetConfigInt(misc_section, INIAmbientVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
 
@@ -239,10 +237,6 @@ void ConfigLoad(void)
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, True, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
 
-   config.guest        = GetConfigInt(misc_section, INIGuest, False, ini_file);
-   config.server_low   = GetConfigInt(misc_section, INIServerLow, 0, ini_file);
-   config.server_high  = GetConfigInt(misc_section, INIServerHigh, 0, ini_file);
-   config.server_guest = GetConfigInt(misc_section, INIServerGuest, 0, ini_file);
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
    /* charlie: 
@@ -299,6 +293,11 @@ void ConfigLoad(void)
    // Default to stat group 5 (INVENTORY)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
+   // Determine if we should be using gpu efficiency mode or not.
+   char config_value[255];
+   GetPrivateProfileString("config", "gpuefficiency", "error", config_value, 255, "./config.ini");
+   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
+
    TimeSettingsLoad();
 }
 /****************************************************************************/
@@ -312,6 +311,7 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIPlaySound, config.play_sound, ini_file);
    WriteConfigInt(misc_section, INIMusicVolume, config.music_volume, ini_file);
    WriteConfigInt(misc_section, INISoundVolume, config.sound_volume, ini_file);
+   WriteConfigInt(misc_section, INIAmbientVolume, config.ambient_volume, ini_file);
    WriteConfigInt(misc_section, INIPlayLoopSounds, config.play_loop_sounds, ini_file);
    WriteConfigInt(misc_section, INIPlayRandomSounds, config.play_random_sounds, ini_file);
    WriteConfigInt(misc_section, INITimeout, config.timeout, ini_file);
@@ -358,11 +358,6 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
    
-   // Don't write out "guest" option; user can't set it
-
-   WriteConfigInt(misc_section, INIServerLow, config.server_low, ini_file);
-   WriteConfigInt(misc_section, INIServerHigh, config.server_high, ini_file);
-   WriteConfigInt(misc_section, INIServerGuest, config.server_guest, ini_file);
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
 
    WriteConfigInt(misc_section, INITextAreaSize, config.text_area_size, ini_file);

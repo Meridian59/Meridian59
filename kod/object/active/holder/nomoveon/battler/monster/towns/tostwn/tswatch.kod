@@ -197,6 +197,10 @@ resources:
       "saying 'Clear all', or add combatants to ensure a valid fight."
    TosWatcher_killed_by_spell = "%s%s was just killed by the %s spell!"
 
+   TosWatcher_summoned_reflection_killed = "%s spoils an illusion, laying bare the deception of %s!"
+   TosWatcher_summoned_twin_killed_other = "%s vanquishes the evil twin of %s!"
+   TosWatcher_summoned_twin_self_kill = "%s overpowers his evil twin!"
+
    TosWatcher_arena_help = \
       "Proceed all subcommands with the DM command.  'Start Tournament' "
       "begins the tournament. 'End tournament' ends the tournament.  'Fight' "
@@ -992,6 +996,40 @@ messages:
    {
       % We handle all death messages here, but not 'win fight' messages.
       % Those are handled after the renege messages.
+
+      % First we handle death of illusions, reflections, twins, and monsters
+      if IsClass(victim,&Reflection) AND
+         Send(self,@IsCombatant,#who=what)
+      {
+         if Send(self,@IsCombatant,#who=Send(victim,@GetIllusionForm))
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_summoned_reflection_killed,
+               #parm1=Send(what,@GetName),#parm2=Send(victim,@GetName));
+
+            propagate;
+         }
+      }
+
+      if IsClass(victim,&EvilTwin) AND
+         Send(self,@IsCombatant,#who=what)
+      {
+         if Send(victim,@GetIllusionForm) = what
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_summoned_twin_self_kill,
+               #parm1=Send(what,@GetName));
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_summoned_twin_killed_other,
+               #parm1=Send(what,@GetName),#parm2=Send(victim,@GetName));
+         }
+         propagate;
+      }
+      % Watcher is silent when a random monster or an apparition is killed
+      if IsClass(victim,&Monster)
+      {
+         propagate;
+      }
 
       if IsClass(what,&Spell) AND Send(self,@isCombatant,#who=victim)
       {
@@ -2019,6 +2057,32 @@ messages:
 
    ReqSomethingAttack(what=$,victim=$)
    {
+      % if a fight isn't in session, attack fails.
+      if NOT Send(self,@FightInSession)
+      {
+         return FALSE;
+      }
+
+      % if the victim is not a combatant, attack fails.
+      if IsClass(victim,&Player)
+         AND NOT Send(self,@IsCombatant,#who=victim)
+      {
+         return FALSE;
+      }
+
+      % Monsters attacking players
+      if IsClass(what,&Monster)
+         AND Send(self,@IsCombatant,#who=victim)
+      {
+         propagate;
+      }
+
+      % if the attacker is not a combatant, attack fails.
+      if NOT Send(self,@IsCombatant,#who=what)
+      {
+         return FALSE;
+      }
+
       % Targetless spells
       if victim = $
       {
@@ -2046,14 +2110,6 @@ messages:
          }
 
          return TRUE;
-      }
-
-      % Monsters attacking players
-      if IsClass(what,&Monster)
-         AND Send(self,@IsCombatant,#who=victim)
-         AND Send(self,@FightInSession)
-      {
-         propagate;
       }
 
       % Spells with targets = all the rest of them     
@@ -2086,7 +2142,7 @@ messages:
 
    ReqSpellCast(who=$,oSpell = $, lItems = $)
    {
-      local i, spellNum, rTarget;
+      local i, rTarget;
 
       % Spells cast by immortal DMs are not blocked by the watcher
       if IsClass(who,&DM) AND Send(who,@PlayerIsImmortal)

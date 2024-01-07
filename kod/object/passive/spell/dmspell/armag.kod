@@ -64,7 +64,7 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local  i, j, oRoom, lActive, each_obji, each_objj;
+      local i, oRoom, lActive, each_obji;
 
       oRoom = Send(who,@GetOwner);
       lActive = Send(oRoom,@GetHolderActive);

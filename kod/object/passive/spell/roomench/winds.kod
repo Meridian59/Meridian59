@@ -158,7 +158,7 @@ messages:
 
    WindsRuinShot(who=$)
    {
-      local oAmmo,iMissChance,iSpellPower,oFire;
+      local iMissChance,iSpellPower;
       
       iSpellpower = send(send(who,@GetOwner),@GetEnchantmentState,#what=self);  
       

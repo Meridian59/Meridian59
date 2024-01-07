@@ -240,10 +240,7 @@ bool UseRetailLoginSystem()
 Bool GetLogin(void)
 {
    admin_mode = False;
-   // Have guests log in automatically
-   if (config.guest)
-      return GuestGetLogin();
-   else if (config.quickstart)
+   if (config.quickstart)
    {
       logged_in = False;
    }
@@ -254,13 +251,6 @@ Bool GetLogin(void)
 	 return False;
       // Go into admin mode if control key is held down
       admin_mode = (GetKeyState(VK_CONTROL) < 0);
-
-      // See if "guest" typed as account name
-      if (!stricmp(config.username, GetString(hInst, IDS_GUEST)))
-      {
-	 config.guest = True;
-	 return GuestGetLogin();
-      }
    }
       
    return True;
@@ -308,21 +298,7 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       /* If we have a default name, go to password edit box */
       Edit_SetText(hUser, config.username);
       Edit_SetSel(hUser, 0, -1);
-      if (config.guest)
-      {
-	 RECT rc;
-	 int bottom;
-	 Edit_SetText(hUser, "GUEST");
-	 Edit_SetText(hPasswd, "GUEST");
-	 EnableWindow(hUser, FALSE);
-	 EnableWindow(hPasswd, FALSE);
-	 EnableWindow(GetDlgItem(hDlg,IDC_OK), FALSE);
-	 GetWindowRect(hGroupBox, &rc);
-	 bottom = rc.bottom + 5;
-	 GetWindowRect(hDlg, &rc);
-	 MoveWindow(hDlg, rc.left, rc.top, rc.right - rc.left, bottom - rc.top, TRUE);
-      }
-      else if (strlen(config.username) > 0)
+      if (strlen(config.username) > 0)
       {
 	 Edit_SetText(hPasswd, config.password);
 	 Edit_SetSel(hPasswd, 0, -1);
@@ -338,15 +314,6 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
    case WM_COMMAND:
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
-      case IDC_GUEST:
-	 strcpy(config.username, "GUEST");
-	 strcpy(config.password, "GUEST");
-	 ConfigSetServerNameByNumber(config.server_guest);
-	 ConfigSetSocketPortByNumber(config.server_guest);
-	 config.comm.server_num = config.server_guest;
-	 EndDialog(hDlg, IDOK);
-	 return TRUE;
-
       case IDC_SIGNUP:
       {
           /* Sign up for an account */

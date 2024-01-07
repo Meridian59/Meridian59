@@ -45,7 +45,7 @@ messages:
 
    AppendDesc(oItem =$)
    {
-      local lData, oRoom;
+      local lData;
       
       lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       AppendTempString(ItemAtt_Engraved_desc_1);
@@ -82,7 +82,7 @@ messages:
 
    RemoveFromItem(oItem=$)
    {
-      local lData, sString, i, bFound;
+      local lData, sString;
 		
       lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_Num);
       sString = nth(lData,3);

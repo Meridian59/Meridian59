@@ -79,6 +79,7 @@ typedef struct {
 		    this id is of type message, then this is the class # */
    int source;   /* Whether this id came from the database file (source = DBASE)
 		    or from a source code file (source = COMPILE) */
+   bool assigned;  // true if this variable was assigned to within a message body
 } *id_type, id_struct;
 
 typedef struct {
@@ -291,6 +292,7 @@ void check_continue(void);
 stmt_type make_prop_stmt(void);
 stmt_type make_if_stmt(expr_type, list_type, list_type);
 stmt_type make_assign_stmt(id_type, expr_type);
+id_type make_loop_variable(id_type id);
 stmt_type make_for_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);
 stmt_type make_call(id_type, list_type);
@@ -310,6 +312,7 @@ class_type make_class(class_type c, list_type resources, list_type classvars,
 void enter_loop(void);
 void leave_loop(void);
 void action_error(const char *fmt, ...);
+void action_warning(const char *fmt, ...);
 void simple_error(const char *fmt, ...);
 void simple_warning(const char *fmt, ...);
 void initialize_parser(void);

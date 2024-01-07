@@ -181,6 +181,7 @@ resources:
       "You can't carry all the items that %s%s has offered you."
 
    user_not_have_number = "You don't have that amount of %s to drop."
+   user_pickup_too_many = "You can't find that amount of %s to pick up."
    user_cant_deal_number = "You can't do anything with %i items."
    user_cant_attack_non_battler = "You can't attack %s%s."
    user_no_say_guild = \
@@ -354,8 +355,6 @@ messages:
 
    Constructor(name = $,icon = $)
    {
-      local oRoom,lPos;
-
       if name <> $
       {
          vrName = name;
@@ -964,6 +963,14 @@ messages:
          oWhat = Nth(client_msg,2);
          Send(self,@UserGet,#what=oWhat);
          
+         return;
+      }
+
+      if liClient_cmd = BP_REQ_GET_FROM_CONTAINER
+      {
+         oWhat = Nth(client_msg,2);
+         Send(self,@UserGet,#what=oWhat,#number=number_stuff);
+
          return;
       }
       
@@ -2179,7 +2186,7 @@ messages:
 
    UserLogonSetPosition()
    {
-      local i,oNew_room;
+      local oNew_room;
 
       if piSave_room <> $
       {
@@ -2439,7 +2446,7 @@ messages:
 
    ToCliPlayer()
    {
-      local rMusic, iLight, rBackground;
+      local rBackground;
 
       AddPacket(1,BP_PLAYER,4,self,4,vrIcon,4,vrName,4,poOwner);
       AddPacket(4,Send(poOwner,@GetRoomResource),4,Send(poOwner,@GetName));
@@ -2629,7 +2636,7 @@ messages:
 
    ToCliStats(group = $)
    {
-      local i,oSpell,oSkill,iCount;
+      local i,iCount;
 
       if not pbLogged_on
       {
@@ -2885,7 +2892,7 @@ messages:
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
-      local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
+      local iCurrentTime, iDelta, iExertion, iHasteLevel,
             iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
 
       % NEW Speedhack detection!
@@ -3539,10 +3546,12 @@ messages:
       return;
    }
 
-   UserGet(what = $)
+   UserGet(what = $, number = $)
+   "Try to pick up one item (what) and for number items optionally specify"
+   "an amount of that item (number)."
    {
-      local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, oSplit, oCorpse;
+      local oOldOwner, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
+            iCan_hold, iNumber, oSplit;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3629,26 +3638,47 @@ messages:
               
          return;
       }
-        
-      if NOT Send(self,@ReqNewHold,#what=what) 
+      % Either we pass in a number or we didn't but can't hold it all
+      if number <> $
+         OR NOT Send(self,@ReqNewHold,#what=what)
       {
          if IsClass(what,&NumberItem)
          {
             iCan_hold = Send(self,@GetNumberCanHold,#what=what);
-            if iCan_hold > 0
+            % iCan_hold of $ intended to signal infinite capacity
+            % Therefore set iCan_hold to number of items requested
+            if iCan_hold = $
+               OR iCan_hold = INFINITE_COUNT
             {
-               oSplit = Send(what,@Split,#number=iCan_hold);
+               iCan_hold = number;
+            }
+            % Get minimum of number or iCan_hold for split
+            iNumber = bound(iCan_hold,$,number);
+            if iNumber > 0
+            {
+               oSplit = Send(what,@Split,#number=iNumber);
+               % Split returns NULL if iNumber is greater than the available total
+               if oSplit = $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=user_pickup_too_many, 
+                     #parm1=Send(what,@GetName));
+                 
+                  return;
+               }
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  Send(self,@MsgSendUser,#message_rsc=user_got_some,
-                       #parm1=Send(what,@GetName));
+                  if iCan_hold < number
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=user_got_some,
+                        #parm1=Send(what,@GetName));
+                  }
                   Send(self,@NewHold,#what=oSplit);
                   
                   return;
                }
                else
                {
-                  Send(what,@AddNumber,#number=iCan_hold);
+                  Send(what,@AddNumber,#number=iNumber);
                   Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
                        #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                   Send(self, @WaveSendUser, #what=self, 
@@ -3667,6 +3697,7 @@ messages:
                return;
             }
          }
+         % Not a number item
          else
          {
             %  KLUDGE!!  -Asif
@@ -3697,7 +3728,7 @@ messages:
 
    UserDrop(what = $,number = $)
    {
-      local i,Item_pos,oNumber;
+      local oNumber;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3795,7 +3826,7 @@ messages:
 
    UserPut(what = $,where = $,number = $)
    {
-      local i, lObjects, lItem_pos, oNumber;
+      local oNumber;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       %  bitflag check instead of function for speed.
@@ -3890,7 +3921,7 @@ messages:
    
    UserObjectContents(what = $)
    {
-      local i,iObjs,oThing,rName,rIcon,lHolding1,lHolding2;
+      local i,iObjs,oThing,lHolding1,lHolding2;
 
       if NOT IsClass(what,&Holder)
          OR (IsClass(what,&Player)
@@ -4342,9 +4373,7 @@ messages:
    }
 
    UserChangeDescription(string = $)
-   {
-      local iCount;
-      
+   {     
       if string = $
       {
          string = psPlayerDescription;
@@ -4564,7 +4593,7 @@ messages:
 
    UserAttack(type = STROKE_NORMAL,what = $)
    {
-      local i, use_weapon, stroke_id, stroke_obj, is_spell;
+      local use_weapon, stroke_id, stroke_obj;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -5387,7 +5416,7 @@ messages:
 
    OfferSubtractNumberItems()
    {
-      local i,j,bFound;
+      local i,j;
 
       for i in plOffer_items
       {
@@ -6061,8 +6090,6 @@ messages:
    SomethingMoved(what=$, new_row=$, new_col=$, fine_row = $, fine_col = $,
                   cause = $, speed = 0)
    {
-      local iRow,iCol,lPos;
-
       if IsClass(what,&DM)
          AND Send(what,@IsDMStealthed)
          AND what <> self
@@ -6431,8 +6458,6 @@ messages:
 
    SomethingChanged(what = $)
    {
-      local rName, rIcon;
-
       if IsClass(what,&DM)
          AND Send(what,@IsDMStealthed)
          AND what <> self
@@ -6471,8 +6496,6 @@ messages:
 
    NewUsing(what = $)
    {
-      local rName,rIcon;
-
       if pbLogged_on
       {
          AddPacket(1,BP_USE,4,what);
@@ -6973,7 +6996,7 @@ messages:
    "Sends the user to their hometown, whether they're logged in or not!\n"
    "Called by constructor for initial placement as well"
    {
-      local oNew_Room,iRow,iCol,oRoom;
+      local oRoom;
 
       oRoom = $;
       if piHomeroom <> $
@@ -7484,7 +7507,7 @@ messages:
    "successtime, failtime.  "
    "Returns TRUE on success, FALSE if illegal parameters provided."
    {
-      local lQH, i, iLength, iTime;
+      local lQH, iTime;
       
       if index = $ 
       {
@@ -7805,9 +7828,13 @@ messages:
 	 if (Length(stuff) > 1)
 	 {
             j = 1;
+            % Note:  The line containing a check for RentableRoom_expiry_warning
+            % can safely be removed once it's done it's job.  By approximately
+            % November 1, 2023.
             while j <= Length(stuff)
             {
                if (Nth(stuff,j+1) = $)
+                 OR Nth(stuff, j + 1) = RentableRoom_expiry_warning
 	       {
 	          Debug("found bad mail",self);
 		  plNew_mail = DelListElem(plNew_mail, lNew_mail);

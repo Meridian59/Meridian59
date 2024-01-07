@@ -641,7 +641,7 @@ messages:
 
    TrySetWallpaper(string=$)
    {
-      local iCream,iBrown,iBlack,iWhite,iBrick,iWood,iStripe,iRetValue;
+      local iCream,iBrown,iBlack,iWhite,iBrick,iWood,iStripe;
 
       if string = $
       {

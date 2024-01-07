@@ -100,7 +100,7 @@ messages:
 
    GenerateItemAtt(diff_seed=0, raw=FALSE, who = $)
    {
-      local diff_bonus, random_x, i, j, index, iChoice, oItem, oItemAtt, lOptions;
+      local diff_bonus, random_x, i, index, iChoice, oItem, oItemAtt, lOptions;
 
       %% The diff seed tells the basic (lowest) level of difficulty that killing
       %% this monster will generate.  A random formula can add or subtract 1 to 5 from 
@@ -222,7 +222,7 @@ messages:
 
    GenerateTreasure(level=1,who=$,mob=$,tokengen=TRUE,corpse=$)
    {
-      local i, lItem_info, iRnd, iCount, oObj, iNumber;
+      local lItem_info, iRnd, iCount, oObj, iNumber;
 
       % Check for a token generation here
       if who <> $

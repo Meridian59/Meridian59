@@ -98,7 +98,7 @@ messages:
 
    DoEffect(what = $, new_row = $, new_col = $)
    {
-      local iHoldTime, oSpell, oWatcher, rMessage;
+      local iHoldTime, oSpell, rMessage;
 
       iHoldTime = 0;
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_SUMMON_WEB);

@@ -174,71 +174,6 @@ static HDIGDRIVER WAVE_init_driver( DWORD rate, WORD bits, WORD chans )
 #endif
 /******************************************************************************/
 /*
- * SoundClose: Close all sound and music devices.
- */
-void SoundClose(void)
-{
-   if (wave_open)
-   {
-#ifdef M59_MSS
-
-      int npFreeUps = 0, i, j;
-      void* apSampleAddresses[SOUND_MAX_VOICES];
-
-      void *pSampleAddress;
-
-      debug(("SoundClose: ending samples\n"));
-
-      // end any samples playing to clean up their handles and memory
-
-      for (j = 0; j < SOUND_MAX_VOICES; j++)
-	 apSampleAddresses[j] = NULL;
-
-      for ( i = 0; i < iNumVoices; i++ )
-      {
-	 //debug(("Releasing sound handle %i\n",i ));
-
-	 pSampleAddress = (void *)AIL_sample_user_data(SampleHandle[i], SOUND_USER_ADDRESS);
-	 AIL_release_sample_handle(SampleHandle[i]);
-
-	 if (pSampleAddress)
-	 {
-	    for (j = 0; j < npFreeUps; j++)
-	    {
-	       if (apSampleAddresses[j] == pSampleAddress)
-	       {
-		  break;
-	       }
-	    }
-	    if (j >= npFreeUps)
-	       apSampleAddresses[npFreeUps++] = pSampleAddress;
-	 }
-      }
-
-      debug(("SoundClose: pausing\n"));
-
-      Sleep(1500);
-
-      debug(("SoundClose: freeing samples\n"));
-
-      for (j = 0; j < npFreeUps; j++)
-	 AIL_mem_free_lock(apSampleAddresses[j]);
-
-      debug(("SoundClose: done\n"));
-
-      // Don't want to shutdown, since music may still be playing
-      // Done in MusicClose() instead
-      //AIL_shutdown();
-
-#else
-      WaveMixCloseChannel(hMixSession, 0, WMIX_ALL);
-      WaveMixCloseSession(hMixSession);
-#endif
-      wave_open = False;
-   }
-}
-/******************************************************************************/
-/*
  * PlayWaveFile:  Send given wave file to mixer to play.
  *   Sound is played at given volume, where 0 = silence and MAX_VOLUME = normal volume
  *	 Looping sounds update volume as player moves using row, col for sound source location
@@ -293,10 +228,11 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 		return 1L;
 	}
 
-	// Set initial volume and rate
-   float vol = (float) volume / MAX_VOLUME;
-   vol = vol * config.sound_volume / CONFIG_MAX_VOLUME;
-	AIL_set_sample_volume_levels( SampleHandle[i], vol, vol );
+	// Set initial volume for both looping and non-looping sounds.
+	float vol = (float)volume / MAX_VOLUME;
+	float multiplier = (flags & SF_LOOP) ? config.ambient_volume : config.sound_volume;
+	vol = vol * multiplier / CONFIG_MAX_VOLUME;
+	AIL_set_sample_volume_levels(SampleHandle[i], vol, vol);
 
 	// If random pitch flag is set, diddle the pitch  by +/- 10%
 	if( flags & SF_RANDOM_PITCH )
@@ -308,6 +244,8 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 	// Set it to loop if flag is set
 	if( flags & SF_LOOP )
 	{
+		vol = ((float)config.ambient_volume / MAX_VOLUME) * max_vol;
+
 		AIL_set_sample_loop_count( SampleHandle[i], 0 );	// 0 = infinite
 //		debug(( "Looping sound on voice %i.\n",i ));
 
@@ -316,12 +254,10 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_X, src_col );
 		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_Y, src_row );
 		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_RADIUS, radius );
-		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_MAXVOL, max_vol );
-//		debug(("Setting volume to %i.\n",volume));
+		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_MAXVOL, vol );
 	}
 
 	// Finally, activate sample
-//	debug(("Playing sound with voice %i, flags=%i.\n",i,flags));
 	AIL_start_sample( SampleHandle[i] );
 	AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_ADDRESS, (S32) pSample );
 
@@ -472,7 +408,7 @@ void UpdateLoopingSounds( int px, int py)
             // debug(("Distance = %i\n",distance));
             // debug(("Setting volume to %i.\n",vol));
             float volume = (float) vol / MAX_VOLUME;
-            volume = volume * config.sound_volume / CONFIG_MAX_VOLUME;
+            volume = volume * config.ambient_volume / CONFIG_MAX_VOLUME;
             AIL_set_sample_volume_levels( SampleHandle[i], volume, volume );
          }
       }

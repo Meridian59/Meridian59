@@ -34,6 +34,7 @@ resources:
    RoomMaintenance_command_rent = "rent"
    RoomMaintenance_command_cost = "cost"
    RoomMaintenance_command_copy_key = "copy key"
+   RoomMaintenance_command_secure = "secure"
    RoomMaintenance_command_change_lock = "change lock"
 
    RoomMaintenance_innkeeper_say_room_rented = \
@@ -164,7 +165,8 @@ messages:
       % Command: Copy Key
       if StringContain(speech, RoomMaintenance_command_copy_key)
       {
-         rSayRsc = send(self, @CopyKey, #who=what, #iLocation=innRid, #iCost=keyCopyCost);
+         rSayRsc = send(self, @CopyKey, #who=what, #iLocation=innRid, #iCost=keyCopyCost,
+            #bSecure=StringContain(speech, RoomMaintenance_command_secure));
 
          % tell the player.
          Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who, #string=rSayRsc);
@@ -263,7 +265,9 @@ messages:
       % Is the item a key copy?  If so, destroy it.
       for oItem in itemList
       {
-         if GetClass(oItem) = &RoomKeyCopy
+         % RoomKeyCopy is the superclass of all room keys, so we need to know if the item
+         % is a room key.  If so, we can then ask it if it's a copy or the original.
+         if IsClass(oItem, &RoomKeyCopy) AND Send(oItem, @IsKeyCopy)
          {
             % Say something and delete the key.
             Send(what, @MsgSendUser, #message_rsc=RoomMaintenance_innkeeper_say_destroy_key_copy_template,
@@ -313,7 +317,7 @@ messages:
       return $;
    }   
 
-   CopyKey(who=$,iLocation=$,iCost=500)
+   CopyKey(who=$, iLocation=$, iCost=500, bSecure=FALSE)
    {
       local lPassive, oObject, oKey, bHasRoomKey, bFound, oMoney;
       
@@ -369,7 +373,7 @@ messages:
       send(oMoney,@SubtractNumber,#number=iCost);
 
       % copy the key and give it to the player.
-      send(who,@NewHold,#what=send(oKey,@Copy));
+      send(who, @NewHold, #what=send(oKey, @Copy, #bSecure=bSecure));
 
       return RoomMaintenance_key_copied;
    }
@@ -405,7 +409,7 @@ messages:
 
    GotRent(who=$,iAmount=0,iCost=150,iLocation=$)
    {
-      local oMoney, iDays, oRoom, iDaysLeft;
+      local oMoney, iDays, oRoom;
 
       oRoom = send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
 
@@ -525,7 +529,7 @@ messages:
 
    RoomDeleted(what=$)
    {
-      local lRoomsRented, iRID;
+      local iRID;
 
       iRID = send(what,@GetRoomNum);
 

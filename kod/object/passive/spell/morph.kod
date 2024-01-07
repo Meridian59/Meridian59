@@ -329,7 +329,7 @@ messages:
 
    EndEnchantment(who = $, state=$,report = TRUE)
    {
-      local changeHP,oIllusion,iIllusion_type;
+      local changeHP;
 
       changeHP = Nth(state,2);
       Send(who,@GainMaxHealth,#amount=(-changeHP));

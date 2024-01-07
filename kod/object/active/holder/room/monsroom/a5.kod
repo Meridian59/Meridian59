@@ -73,8 +73,6 @@ messages:
 
    DiscordTimer()
    {
-      local oPerson;
-
       if plEnchantments <> $
       {
          % Do this the easy way instead of going through the spell.

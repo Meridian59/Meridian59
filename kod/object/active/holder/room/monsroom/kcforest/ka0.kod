@@ -220,7 +220,7 @@ messages:
 
    GetItemNeededClass()
    {
-      local cItemNeeded, iItem, iRand;
+      local cItemNeeded, iRand;
 
       iRand = random(1,2);
 

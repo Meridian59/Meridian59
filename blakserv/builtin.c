@@ -72,9 +72,6 @@ void CreateBuiltIn(void)
 			
 			switch (bi_accounts[i].type)
 			{
-			case ACCOUNT_GUEST : 
-				object_id = CreateObject(GUEST_CLASS,2,p);
-				break;
 			case ACCOUNT_NORMAL :
 				object_id = CreateObject(USER_CLASS,2,p);
 				break;

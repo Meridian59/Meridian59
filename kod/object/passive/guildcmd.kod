@@ -62,7 +62,7 @@ messages:
       else
         {
            rMale = send(oGuild,@getrankname,#rank=viRank_needed,#sex=GENDER_MALE);
-           rMale = send(oGuild,@getrankname,#rank=viRank_needed,#sex=GENDER_FEMALE);
+           rFemale = send(oGuild,@getrankname,#rank=viRank_needed,#sex=GENDER_FEMALE);
            AddPacket(4,guildcommand_desc_rsc,4,rMale,4,rFemale,4,vrDesc);
         }
       return;
@@ -114,8 +114,6 @@ messages:
 
    InitialAbility(who=$)
    {
-      local prereq_stats;
-
       return 99;
    }
 

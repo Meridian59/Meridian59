@@ -292,8 +292,6 @@ messages:
 
    ReqNewOwner(what = $)
    {
-      local i;
-
       if poSpell <> $
       {
          return FALSE;

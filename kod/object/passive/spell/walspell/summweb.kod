@@ -199,9 +199,7 @@ messages:
 
    DoHold(what = $, otarget = $, idurationsecs = $, report=TRUE)
    "Holds target for durationsecs seconds."
-   {
-      local i;
-            
+   {          
       % Can cast spell if the 1 target item is a user
       if iDurationSecs = $
       {

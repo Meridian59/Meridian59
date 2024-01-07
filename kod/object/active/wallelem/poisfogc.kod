@@ -72,7 +72,7 @@ messages:
 
    DoEffect(what = $)
    {
-      local bPoison, oSpell;
+      local oSpell;
       
       if Random(1,100) < piOdds
       {

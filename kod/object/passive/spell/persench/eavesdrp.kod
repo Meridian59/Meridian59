@@ -143,7 +143,7 @@ messages:
    GetStateValue(iSpellPower=$,who=$)
    % Create and place the listener.
    {
-      local oRoom, lRooms, ilength, iRow, iCol, iDrainTime, oListener;
+      local oRoom, lRooms, ilength, iRow, iCol, oListener;
 
       lRooms = send(self,@GetYellList,#who=who);
 

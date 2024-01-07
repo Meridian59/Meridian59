@@ -74,7 +74,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE)
    {
-      local iDamage, iManaFocus, oRoom, oTarget, iDuration;
+      local iDamage, oRoom, oTarget, iDuration;
 
       % Do this now when the spell is being cast.  If we do it in the Constructor,
       %   these spells may not be available

@@ -138,7 +138,7 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local oWeapon, i, lObjects, oObject, rRoom, iRow, iCol, iFineRow, iFineCol;
+      local oWeapon, i, oObject;
 
       if type = SAY_DM
          AND (StringContain(string,admin_create_itematt_command)
@@ -454,8 +454,6 @@ messages:
 
    StartTour(delay = 2000)
    {
-      local i;
-
       piTour_delay = delay;
       piTour_count = 1;
       Send(self,@TourTimer);

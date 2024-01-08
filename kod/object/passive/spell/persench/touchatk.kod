@@ -246,7 +246,7 @@ messages:
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local spell_ability, damage, iPower;
+      local damage, iPower;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);

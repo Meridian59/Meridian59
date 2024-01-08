@@ -610,7 +610,7 @@ messages:
    CanPayReagents(who = $, lTargets = $, iSpellPower = 0)
    {
       local lReagent, cReagentClass, iNumNeeded, bFound, lItems, lLists,
-            oUserObject, iNum, oOwner, oSpell, oRing;
+            oUserObject, iNum, oRing;
 
       if Send(who,@PlayerIsImmortal)
       {
@@ -687,10 +687,9 @@ messages:
    }
 
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE,
-               bMade = FALSE)
+               bCheckKarma = TRUE)
    {
-      local iLists, oUserObject, iNum, i, oOwner, oVictim, oRoom, iRand,
-            oSpell;
+      local i, oVictim, oRoom, iRand;
       
       if NOT IsClass(who,&Player)
       {
@@ -717,7 +716,7 @@ messages:
          Send(who, @MsgSendUser, #message_rsc = vrToo_few_hp);
          return FALSE;
       }
-      
+
       if not bItemCast
       {
          % In a time and position to use the spell?
@@ -795,29 +794,26 @@ messages:
       }
 
       % Moved from CanPayManaVigor, because it doesn't relate to paying vigor 
-      %  or mana!  Spells cast from items should follow Karma restrictions
-
-      % If the spell is being cast by a made item then there are no Karma
-      %  restrictions.
-      if NOT (bMade OR Send(self,@KarmaCheck,#who=who))
+      % or mana!
+      
+      % Spells cast from items should follow Karma restrictions
+      % unless set to bypass them by setting bCheckKarma to FALSE.
+      if bCheckKarma AND NOT Send(self, @KarmaCheck, #who=who)
       {
-         if NOT bItemCast
+         if viSchool = SS_SHALILLE
+         {  
+            Send(who,@MsgSendUser,#message_rsc=spell_not_good_enough,
+                 #parm1=vrName);
+         }
+         else
          {
-            if viSchool = SS_SHALILLE
-            {  
-               Send(who,@MsgSendUser,#message_rsc=spell_not_good_enough,
-                    #parm1=vrName);
-            }
-            else
-            {
-               Send(who,@MsgSendUser,#message_rsc=spell_not_evil_enough,
-                    #parm1=vrName);
-            }
+            Send(who,@MsgSendUser,#message_rsc=spell_not_evil_enough,
+                 #parm1=vrName);
          }
 
          return FALSE;
       }
-      
+
       % Out of range?
       for i in lTargets
       {
@@ -928,8 +924,6 @@ messages:
 
    CanPayMonsterCosts(who=$,lTargets=$,iSpellpower=$)
    {   
-      local oSpell, oRoom;
-
       if NOT Send(self,@CanPayCosts,#who=who,#ltargets=ltargets,
                   #iSpellpower=iSpellpower)
       {
@@ -978,7 +972,7 @@ messages:
    CheckPlayerAttack(who=$,lTargets=$)
    "Checks to see if player can attack said targets."
    {
-      local oRoom, i, lFinalTargets, oTarget;
+      local oRoom, i, lFinalTargets;
 
       % If we don't go outlaw, then don't worry.
       %  This can happen for wall spells: harmful elements cause outlaw
@@ -1165,7 +1159,7 @@ messages:
    "This is always TRUE for touch attack spells, because touch attacks"
    "figure their success in player.kod."
    {
-      local num, iRequisiteStat, iability, lJalaInfo, oJalaSpell, lJalaState,
+      local num, iRequisiteStat, lJalaInfo, oJalaSpell, lJalaState,
       iDistance, oTarget, oRing;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
@@ -1247,7 +1241,7 @@ messages:
    "Check for failed spell here.  A failed spell costs half the mana cost, "
    "half the exertion, and no reagents."
    {
-      local num, iAbility, lReagent, cReagentClass, iLists, lItems,
+      local lReagent, cReagentClass, iLists, lItems,
             iNumNeeded, oUserObject;
       
       if NOT IsClass(who,&Player)
@@ -1599,7 +1593,7 @@ messages:
    "player's primerequisite stat for this spell, the level of the spell"
    "and the level the player has already acquired."
    {
-      local difficulty, iability, intellect, requisitestat, increase_chance,
+      local iability, requisitestat, increase_chance,
             iRandom, iInitialChance, oOwner;
 
       % Monsters can cast spells, can't improve in them.
@@ -1683,7 +1677,7 @@ messages:
 
    GetInitialChance(who=$)
    {
-      local iBonus, iFaction, iFinal;
+      local iBonus, iFinal;
 
       % Give up to a 50% bonus to the initial chance to learn for high intellect.
       iBonus = (viChance_to_increase * Send(who,@GetIntellect)) / 100;
@@ -1978,8 +1972,6 @@ messages:
    "If true, this spell cast will result"
    "in the caster being labeled an outlaw."
    {
-      local i, oRoom, each_obj;
-
       return viOutlaw;
    }
 
@@ -2058,7 +2050,7 @@ messages:
 
    GetSpellPower(who=$)
    {
-      local iSpellPower, i, iTerrain, oRoom, oModifierSpell, iAbilityLoss,
+      local iSpellPower, i, oRoom, oModifierSpell, iAbilityLoss,
             iAbilityGain, iItemModifier, iBase, iPrimaryBonus, iSecondaryBonus,
             iPowerBonus, iShrines;
 
@@ -2288,6 +2280,11 @@ messages:
          return TRUE;
       }
       
+      return FALSE;
+   }
+
+   IsSummonSpell()
+   {
       return FALSE;
    }
 

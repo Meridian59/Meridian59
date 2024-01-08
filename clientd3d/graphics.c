@@ -52,6 +52,8 @@ static steady_clock_time_point lastEndFrame;
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
+static const int defaultMaxFps = 60;
+
 /************************************************************************/
 /*
  * GraphicsAreaCreate:  Create main graphics view window.
@@ -175,9 +177,16 @@ void GraphicsAreaResize(int xsize, int ysize)
    int text_area_height = text_area_size + BOTTOM_BORDER + GetTextInputHeight() + TOP_BORDER + EDGETREAT_HEIGHT * 2;
    text_area_height += config.toolbar ? TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR : MIN_TOP_NOTOOLBAR;
 
-   // Calculate the largest possible viewport size keeping the classic client aspect ratio
+   // Calculate the largest possible viewport size keeping the classic client aspect ratio.
    new_ysize = ysize - text_area_height;
    new_xsize = new_ysize * MAXYX_ASPECT_RATIO;
+
+   if (new_xsize > MAXX)
+   {
+       // Prevent larger resolutions from exceeding the maximum supported width.
+       new_xsize = MAXX;
+       new_ysize = new_xsize / MAXYX_ASPECT_RATIO;
+   }
 
    if ((new_xsize + INVENTORY_MIN_WIDTH) > xsize) {
       new_xsize = xsize - INVENTORY_MIN_WIDTH;
@@ -323,13 +332,15 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
+   auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
    fps = 1000 / max(1, elapsedMilliseconds);
-   if (config.maxFPS)
+
+   if (maxFPS)
    {
-      if (fps > config.maxFPS)
+      if (fps > maxFPS)
       {
           // Clamp the fps to the maximum.
-          int msSleep = (1000 / config.maxFPS) - elapsedMilliseconds;
+          int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
           Sleep(msSleep);
 
           // Reclaulate the fps following the sleep.

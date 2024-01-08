@@ -118,19 +118,5 @@ messages:
       return AVARCLAN_ANTIMAGIC;
    }
 
-   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
-   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
-   {
-      % Penalize skills because there's an obvious chokepoint here.
-      if oSpellSkill <> $
-         AND IsClass(oSpellSkill,&Skill)
-      {
-         return (chance / 10);
-      }
-      
-      return chance;
-   }
-
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

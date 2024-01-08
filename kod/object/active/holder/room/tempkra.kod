@@ -119,9 +119,7 @@ messages:
 
 
    SomethingTryGo(what = $,row = $,col = $)
-   {
-      local lPassive,i,each_obj;
-      
+   {     
       if ((row = 30 AND col = 20)
           OR (row = 31 AND col = 20))
          AND piPosition = DOOR_CLOSED

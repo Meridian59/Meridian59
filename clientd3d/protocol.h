@@ -76,6 +76,7 @@ ToServer(BP_REQ_MOVE, NULL, FinenessClientToKod(y) + KOD_FINENESS, \
 	 FinenessClientToKod(x) + KOD_FINENESS, speed, room)
 #define RequestObjectContents(id)    ToServer(BP_SEND_OBJECT_CONTENTS, NULL, id)
 #define RequestPickup(id)            ToServer(BP_REQ_GET, NULL, id)
+#define RequestPickupFromContainer(obj)   ToServer(BP_REQ_GET_FROM_CONTAINER, NULL, obj)
 #define RequestInventory()           ToServer(BP_REQ_INVENTORY, NULL)
 #define RequestDrop(obj)             ToServer(BP_REQ_DROP, NULL, obj)
 #define RequestInventoryMove(id1, id2) ToServer(BP_REQ_INVENTORY_MOVE, NULL, id1, id2)

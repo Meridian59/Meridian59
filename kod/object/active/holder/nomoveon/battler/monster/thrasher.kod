@@ -183,9 +183,7 @@ messages:
    }
 
    SomethingMoved(what = $,new_row = $,new_col = $)
-   {
-      local iDelay;
-      
+   {     
       % Only care about moving stuff if we're not already moving
       % Only care about non-immortal players we can see and are "close"
       % We only care about players within 7 squares of us.
@@ -372,9 +370,7 @@ messages:
    %%% Animation for spin attack
 
    StartSpin(delay = 200)
-   { 
-      local i;
-   
+   {   
       if poOwner = $
       {
          return;

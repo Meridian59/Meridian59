@@ -133,7 +133,7 @@ messages:
    "Will try to create a monster in the room.  Initroom=TRUE means it's"
    "being called when first player enters."
    {
-      local oMonster,iRoll,iTotal,lMonster_info,iRow,iCol,lPos;
+      local oMonster,iRoll,iTotal,lMonster_info;
 
       if NOT send(self,@IsMonsterCountBelowMax)
          OR NOT pbGenerateMonsters

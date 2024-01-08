@@ -37,6 +37,8 @@
 #define BF_NEG_NORMAL_TDOWN  0x00020000      // - side normal texture top down
 #define BF_POS_NO_VTILE      0x00040000      // + side no vertical tile
 #define BF_NEG_NO_VTILE      0x00080000      // - side no vertical tile
+#define BF_POS_NO_HTILE      0x40000000      // + side no horizontal tile
+#define BF_NEG_NO_HTILE      0x80000000      // - side no horizontal tile
 
 // scrolling texture flags come next
 
@@ -56,6 +58,8 @@
 #define WF_BELOW_TOPDOWN  0x00000080      // Draw lower texture top-down
 #define WF_NORMAL_TOPDOWN 0x00000100      // Draw normal texture top-down
 #define WF_NO_VTILE       0x00000200      // Don't tile texture vertically (must be transparent)
+#define WF_HAS_ANIMATED   0x00000400      // Has animated once and hence is dynamic geometry, required for new client
+#define WF_NO_HTILE       0x00020000      // Don't tile texture horizontally (must be transparent)
 
 // Texture scrolling constants
 #define SCROLL_NONE    0x00000000      // No texture scrolling   

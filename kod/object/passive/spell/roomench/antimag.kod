@@ -72,7 +72,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, iSpellPower=0)
    {
-      local oRoom, iAbility_loss, iAbility;
+      local oRoom;
 
       oRoom = Send(who,@GetOwner);
 
@@ -90,7 +90,7 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oRoom, iAbility;
+      local oRoom;
 
       oRoom = Send(who,@GetOwner);
       

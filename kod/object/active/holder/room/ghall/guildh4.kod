@@ -349,8 +349,6 @@ messages:
 
    CreateStandardObjects()
    {
-      local oNews;
-
       Send(self,@NewHold,#what=Create(&Table),#new_row=31,#new_col=10);
       Send(self,@NewHold,#what=Create(&Table),#new_row=31,#new_col=12);
       Send(self,@NewHold,#what=Create(&Table),#new_row=33,#new_col=18);

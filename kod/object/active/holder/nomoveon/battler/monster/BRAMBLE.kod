@@ -139,8 +139,6 @@ messages:
 
    PeriodicEffect()
    {
-      local i;
-
       ptPeriodic = CreateTimer(self,@PeriodicEffect,Send(self,@GetPeriodicDuration));
       plAffected = $;
 
@@ -149,7 +147,7 @@ messages:
 
    SomethingMoved(what = $, new_row = $, new_col = $)
    {
-      local iRow,iCol,iDamage;
+      local iRow,iCol;
     
       % Determine victim's row and column
       if new_row = $

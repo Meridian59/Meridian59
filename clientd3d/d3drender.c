@@ -7,6 +7,7 @@
 // Meridian is a registered trademark.
 #include "client.h"
 #include <unordered_map>
+#include <chrono>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
 #define	TEX_CACHE_MAX_WORLD		8000000
@@ -29,11 +30,21 @@ inline float FovVertical(long height)
 	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
 
-// Calculates the intensity of an animation based on the frame number.
-// This can be used to cycle in a pattern e.g. for invisibility.
-float animationIntensity(int frameNumber)
+// Update the pChunks animation values as a function of time.
+static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 {
-	return (frameNumber & 3) / 256.0f;
+	auto duration_since_epoch = std::chrono::steady_clock::now().time_since_epoch();
+	int milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch).count();
+	float animationIntensity = (milliseconds & 3) / 256.0f;
+
+	pChunk->st1[0].s -= animationIntensity;
+	pChunk->st1[0].t -= animationIntensity;
+	pChunk->st1[1].s -= animationIntensity;
+	pChunk->st1[1].t += animationIntensity;
+	pChunk->st1[2].s += animationIntensity;
+	pChunk->st1[2].t += animationIntensity;
+	pChunk->st1[3].s += animationIntensity;
+	pChunk->st1[3].t -= animationIntensity;
 }
 
 #define Z_RANGE					(200000.0f)
@@ -5787,7 +5798,9 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 	{
 		case D3DRENDER_WALL_NORMAL:
 			if (pSideDef->flags & WF_NO_VTILE)
-					*flags |= D3DRENDER_NO_VTILE;
+				*flags |= D3DRENDER_NO_VTILE;
+			if (pSideDef->flags & WF_NO_HTILE)
+				*flags |= D3DRENDER_NO_HTILE;
 		break;
 
 		default:
@@ -7166,14 +7179,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-				pChunk->st1[0].s -= animationIntensity(gFrame);
-				pChunk->st1[0].t -= animationIntensity(gFrame);
-				pChunk->st1[1].s -= animationIntensity(gFrame);
-				pChunk->st1[1].t += animationIntensity(gFrame);
-				pChunk->st1[2].s += animationIntensity(gFrame);
-				pChunk->st1[2].t += animationIntensity(gFrame);
-				pChunk->st1[3].s += animationIntensity(gFrame);
-				pChunk->st1[3].t -= animationIntensity(gFrame);
+				updateRenderChunkAnimationIntensity(pChunk);
 			}
 
 			if (
@@ -7822,14 +7828,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							pChunk->st1[3].s = D3DRENDER_CLIP_TO_SCREEN_X(topLeft.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[3].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
 
-							pChunk->st1[0].s -= animationIntensity(gFrame);
-							pChunk->st1[0].t -= animationIntensity(gFrame);
-							pChunk->st1[1].s -= animationIntensity(gFrame);
-							pChunk->st1[1].t += animationIntensity(gFrame);
-							pChunk->st1[2].s += animationIntensity(gFrame);
-							pChunk->st1[2].t += animationIntensity(gFrame);
-							pChunk->st1[3].s += animationIntensity(gFrame);
-							pChunk->st1[3].t -= animationIntensity(gFrame);
+							updateRenderChunkAnimationIntensity(pChunk);
 						}
 
 						if (
@@ -8276,14 +8275,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->st0[3].t = oneOverH;
 		}
 
-		pChunk->st1[0].s -= animationIntensity(gFrame);
-		pChunk->st1[0].t -= animationIntensity(gFrame);
-		pChunk->st1[1].s -= animationIntensity(gFrame);
-		pChunk->st1[1].t += animationIntensity(gFrame);
-		pChunk->st1[2].s += animationIntensity(gFrame);
-		pChunk->st1[2].t += animationIntensity(gFrame);
-		pChunk->st1[3].s += animationIntensity(gFrame);
-		pChunk->st1[3].t -= animationIntensity(gFrame);
+		updateRenderChunkAnimationIntensity(pChunk);
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -8509,14 +8501,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				pChunk->st0[3].t = oneOverH;
 			}
 
-			pChunk->st1[0].s -= animationIntensity(gFrame);
-			pChunk->st1[0].t -= animationIntensity(gFrame);
-			pChunk->st1[1].s -= animationIntensity(gFrame);
-			pChunk->st1[1].t += animationIntensity(gFrame);
-			pChunk->st1[2].s += animationIntensity(gFrame);
-			pChunk->st1[2].t += animationIntensity(gFrame);
-			pChunk->st1[3].s += animationIntensity(gFrame);
-			pChunk->st1[3].t -= animationIntensity(gFrame);
+			updateRenderChunkAnimationIntensity(pChunk);
 
 			pChunk->indices[0] = 1;
 			pChunk->indices[1] = 2;
@@ -9244,6 +9229,14 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
 
+	// Clamp texture V axis if vertical tiling is disabled 
+	auto state = (pChunk->flags & D3DRENDER_NO_VTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, state);
+	
+	// Clamp texture U axis if horizontal tiling is disabled
+	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
+
 	if (gD3DDriverProfile.bFogEnable)
 	{
 		float	end = D3DRenderFogEndCalc(pChunk);
@@ -9296,6 +9289,14 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 	}
+
+	// Clamp texture V axis if vertical tiling is disabled 
+	auto state = (pChunk->flags & D3DRENDER_NO_VTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, state);
+	
+	// Clamp texture U axis if horizontal tiling is disabled
+	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
 
 	if (gD3DDriverProfile.bFogEnable)
 	{

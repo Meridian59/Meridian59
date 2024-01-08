@@ -184,6 +184,8 @@ int CombineFileFlags(int pos_flags, int neg_flags)
       flags |= BF_POS_NORMAL_TDOWN;
    if (pos_flags & WF_NO_VTILE)
       flags |= BF_POS_NO_VTILE;
+   if (pos_flags & WF_NO_HTILE)
+      flags |= BF_POS_NO_HTILE;
 
    if (neg_flags & WF_BACKWARDS)
       flags |= BF_NEG_BACKWARDS;
@@ -201,6 +203,8 @@ int CombineFileFlags(int pos_flags, int neg_flags)
       flags |= BF_NEG_NORMAL_TDOWN;
    if (neg_flags & WF_NO_VTILE)
       flags |= BF_NEG_NO_VTILE;
+   if (neg_flags & WF_NO_HTILE)
+      flags |= BF_NEG_NO_HTILE;
 
    if ((pos_flags & WF_MAP_NEVER) || (neg_flags & WF_MAP_NEVER))
       flags |= BF_MAP_NEVER;

@@ -55,9 +55,7 @@ messages:
    % A player can only pick up an item from a player if he is also killable.
 
    CanGetAffectedItem(lData = $, Who = $, oItem = $, type = 0)
-   {
-      local oCorpse;
-	   
+   {	   
       %% is this the player that died?  He can always get his own stuff.
       if who = nth(lData,3)
          OR NOT IsClass(who,&Player)

@@ -65,7 +65,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oWeapon, oTarget;
+      local oTarget;
    
       oTarget = First(lTargets);
 

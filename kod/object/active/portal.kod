@@ -173,8 +173,6 @@ messages:
 
    SendLightingInformation()
    {
-      local iIntensity;
-
       AddPacket(2,LIGHT_FLAG_ON);
       % Intensity (out of 255)
       % More intense if we're actually active.

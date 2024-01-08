@@ -406,8 +406,6 @@ messages:
 
    TokenGenerationTimer()
    {
-      local i;
-
       ptGenerationTimer = $;
 
       if Send(SYS,@GetTokenGame) = $

@@ -338,7 +338,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",2,267,183,50,14
 END
 
-116 DIALOGEX 0, 0, 256, 236
+116 DIALOGEX 0, 0, 256, 260
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Voreinstellungen"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -354,7 +354,7 @@ BEGIN
     CONTROL         "Namen der Spieler anzeigen",1143,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,38,132,9
     CONTROL         "Anzahl der Gegenstände anzeigen",1148,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     CONTROL         "Zeige Partikeleffekt",1184,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,111,61,126,10
-    GROUPBOX        "Audio Effekte",IDC_STATIC,6,87,245,67,WS_GROUP
+    GROUPBOX        "Audio Effekte",IDC_STATIC,6,87,245,83,WS_GROUP
     CONTROL         "Musik",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,33,9
     CONTROL         "Sounds",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,99,39,9
     CONTROL         "Gleichmäßiger Sound",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,87,99,81,9
@@ -362,18 +362,21 @@ BEGIN
     LTEXT           "Sound Lautstärke",IDC_STATIC,13,117,73,10
     CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,114,159,15
     LTEXT           "Musik Lautstärke",IDC_STATIC,13,134,67,10
-    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,132,159,15
-    GROUPBOX        "Oberfläche",IDC_STATIC,5,157,245,59,WS_GROUP
-    CONTROL         "Icons anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,168,62,9
-    CONTROL         "Iconhilfe an/aus",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,179,68,9
-    CONTROL         "Textfenster beim zurückscrollen einfrieren",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,189,166,10
-    CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,168,77,9
-    CONTROL         "Textfilter an/aus",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,202,77,9
-    PUSHBUTTON      "&Einstellungen",1164,101,200,142,12
-    DEFPUSHBUTTON   "Bestätigen",1,145,219,50,12,WS_GROUP
-    PUSHBUTTON      "Abbrechen",2,201,219,50,12,WS_GROUP
-    CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,179,79,10
-    CONTROL         "Bunter Text",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,168,72,10
+    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,148,159,15
+    LTEXT           "Umgebungs Lautstärke",IDC_STATIC,13,149,76,10
+    CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,131,159,15
+    GROUPBOX        "Oberfläche",IDC_STATIC,5,175,246,70,WS_GROUP
+    CONTROL         "Icons anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,197,62,9
+    CONTROL         "Iconhilfe an/aus",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
+    CONTROL         "Textfenster beim zurückscrollen einfrieren",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,166,10
+    CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,185,77,9
+    CONTROL         "Textfilter an/aus",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,219,77,9
+    PUSHBUTTON      "&Einstellungen",1164,101,217,142,12
+    DEFPUSHBUTTON   "Bestätigen",1,144,240,50,12,WS_GROUP
+    PUSHBUTTON      "Abbrechen",2,200,240,50,12,WS_GROUP
+    CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,196,79,10
+    CONTROL         "Bunter Text",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,185,72,10
+    CONTROL         "Rotierender Würfel",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
 END
 
 110 DIALOG 0, 0, 340, 140
@@ -906,7 +909,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 257, 230
+IDD_SETTINGS DIALOGEX 0, 0, 257, 242
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Preferences"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -922,7 +925,7 @@ BEGIN
     CONTROL         "Draw player names over their heads",IDC_DRAWNAMES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
     CONTROL         "Show amounts for inventory items",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
-    GROUPBOX        "Audio Effects",IDC_STATIC,6,79,245,66,WS_GROUP
+    GROUPBOX        "Audio Effects",IDC_STATIC,6,80,245,82,WS_GROUP
     CONTROL         "Music",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,91,35,9
     CONTROL         "Sounds",IDC_SOUNDFX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,91,44,9
     CONTROL         "Steady Sounds",IDC_LOOPSOUNDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,91,64,9
@@ -931,20 +934,22 @@ BEGIN
     CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
     LTEXT           "Music volume",IDC_STATIC,13,126,53,10
     CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,124,173,15
-    GROUPBOX        "Interface Features",IDC_STATIC,5,148,245,59,WS_GROUP
-    CONTROL         "Show toolbar",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,159,62,9
-    CONTROL         "Show tooltips",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,170,62,9
+    LTEXT           "Ambient volume",IDC_STATIC,13,143,53,10
+    CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,142,173,15
+    GROUPBOX        "Interface Features",IDC_STATIC,6,165,245,59,WS_GROUP
+    CONTROL         "Show toolbar",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,176,62,9
+    CONTROL         "Show tooltips",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,187,62,9
     CONTROL         "Lock text window in place when scrolling back",IDC_SCROLLLOCK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,182,163,9
-    CONTROL         "Filter text profanity",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,193,77,9
-    CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,159,77,9
-    CONTROL         "Show dynamic map",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,170,79,10
-    CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,159,72,10
-    CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,170,72,10
-    PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,101,191,142,12
-    DEFPUSHBUTTON   "OK",IDOK,145,212,50,12,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,201,212,50,12,WS_GROUP
-    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,182,71,9
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,199,163,9
+    CONTROL         "Filter text profanity",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,210,77,9
+    CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,176,77,9
+    CONTROL         "Show dynamic map",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,187,79,10
+    CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,176,72,10
+    CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,187,72,10
+    PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,102,208,142,12
+    DEFPUSHBUTTON   "OK",IDOK,145,227,50,12,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,201,227,50,12,WS_GROUP
+    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,199,71,9
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -1012,7 +1017,7 @@ CAPTION "Buy Items"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     LISTBOX         IDC_COSTLIST,5,20,24,334,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS
-    LISTBOX         IDC_ITEMLIST, 33, 20, 123, 333, LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_ITEMLIST,33,20,123,333,LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
     LISTBOX         IDC_QUANLIST,161,20,24,331,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS
     EDITTEXT        IDC_SELLER,82,358,74,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_TABSTOP
     DEFPUSHBUTTON   "Buy",IDOK,193,317,44,14,WS_GROUP
@@ -1292,7 +1297,7 @@ BEGIN
     LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
     CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,109,168,32,10
     CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,142,168,32,10
-    LTEXT           "There are two servers available: 101 is very active and filled with expert players who love to fight. 102 is less populated, but the players are friendlier and more likely to help out new players.",IDC_STATIC,39,186,220,30
+    LTEXT           "There are two servers available, with 101 being the more active of the two. Players of all types call 101 home: veterans, newbies, players who love to fight, and players who just like to take it easy as they work on their characters.",IDC_STATIC,39,184,220,34
     PUSHBUTTON      "Troubleshoot",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
     DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,150,221,107,14
 END
@@ -1335,6 +1340,7 @@ BEGIN
         LEFTMARGIN, 6
         RIGHTMARGIN, 251
         TOPMARGIN, 6
+        BOTTOMMARGIN, 230
     END
 
     IDD_OFFERRECEIVE, DIALOG

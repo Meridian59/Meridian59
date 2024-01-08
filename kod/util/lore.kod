@@ -320,7 +320,7 @@ messages:
    "This is where we see if a person is appropriate to put in a list."
    "We also make notes of a person's score."
    {
-      local i, lowscore, lowest, lNode;
+      local i, lNode;
 
       if who = $ OR score = $
       {
@@ -547,7 +547,7 @@ messages:
 
    SetBestInList(lList=$,index=0)
    {
-      local j, i, oChosen, bFound;
+      local i, oChosen;
 
       if lList = $
       {

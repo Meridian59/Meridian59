@@ -14,6 +14,9 @@ constants:
 
    include blakston.khd
 
+   SPELL_POWER_INTERCEPT = 40    % Hypothetical zero spell power restorate effect coefficient
+   SPELL_POWER_SLOPE = 400       % 1.12 to 1.51 times faster HP regen, linear effect on time per tick
+
 resources:
 
    Restorate_name_rsc = "restorate"
@@ -37,7 +40,7 @@ classvars:
    viMana = 5           % Mana is amount used upon inititiation
    viManaDrain = 3      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
-   
+      
    viSpellExertion = 10      
    viChance_To_Increase = 20
 
@@ -62,10 +65,10 @@ messages:
    "Reduces time passed in so that health regens faster.  Returns reduced time."
    {
       local iTime;
-
-      iTime = (time * (200-iSpellPower)) / 200;
-
-      return iTime;
+      % Bound time to normal HP regen range before applying spell effect
+      time = bound(time,1000,60000);
+      iTime = (time * (SPELL_POWER_SLOPE - (SPELL_POWER_INTERCEPT + iSpellPower))) / SPELL_POWER_SLOPE;
+      return bound(iTime,670,60000);
    }
 
 

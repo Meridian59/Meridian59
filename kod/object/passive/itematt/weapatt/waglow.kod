@@ -86,7 +86,7 @@ messages:
    ItemUnused(oItem=$,oPlayer=$)
    "Stops Glowing when unwielded."
    {
-      local iLightStr, i;
+      local iLightStr;
 
       iLightStr = Nth(Send(oItem,@GetAttributeData,#ItemAtt=WA_GLOWING),3);
       Send(oPlayer,@LoseLight,#amount=iLightStr);

@@ -74,7 +74,7 @@ messages:
 
    DoEffect(what = $, periodic=FALSE)
    {
-      local iDamage, iMaxDamage, oWatcher, rMessage;
+      local iDamage, iMaxDamage, rMessage;
     
       iDamage = 0;
       iMaxDamage = piMaxDamage;

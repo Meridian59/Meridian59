@@ -16,13 +16,7 @@
 
 #include "blakserv.h"
 
-typedef struct
-{
-	unsigned int data:28;
-	unsigned int tag:4;
-} unsigned_type;
-
-FILE *savefile;
+static FILE *savefile;
 
 #define SaveGameWrite(buf,len) \
 { \

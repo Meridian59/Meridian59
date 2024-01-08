@@ -72,7 +72,7 @@ messages:
    GetTargets(who=$,lTargets=$)
    "This returns a list of valid targets in range."
    {
-      local oRoom, i, each_obj, lFinalTargets, iSpellPower;
+      local oRoom, lFinalTargets, iSpellPower;
 
       lFinalTargets = $;
       iSpellPower = send(self,@GetSpellPower,#who=who);
@@ -100,7 +100,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellpower = 0)
    {
-      local oRoom, lEnchanted, iMana, i ;
+      local oRoom, iMana, i;
       
       if isClass(who,&User)
       {

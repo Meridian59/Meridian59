@@ -48,7 +48,7 @@ messages:
    Delete()
    "Deletes this bank and removes from system's list of banks."
    {
-      local i, j;
+      local i;
       for i in plStored
       {
 	      send(i,@Delete);
@@ -147,7 +147,7 @@ messages:
 
    GetCurrentBulkStored(who=$)
    {
-      local i,j, iBulk;
+      local i, iBulk;
 
       iBulk = 0;
       for i in plStored
@@ -191,7 +191,7 @@ messages:
 
    WithdrawFromStorage(who=$,what=$,count=$)
    {
-      local i, j, oBox, oItem, cClass, currentAmount;
+      local oBox, oItem, cClass, currentAmount;
       
       if who=$ or what=$ 
       { DEBUG("Called with invalid data!"); return; }
@@ -248,7 +248,7 @@ messages:
    "* Deletes the box (which deletes the items in 'em), "
    "* Deletes the list nodes inside the box."
    {
-      local i, j;
+      local i;
 
       for i in plStored
       {

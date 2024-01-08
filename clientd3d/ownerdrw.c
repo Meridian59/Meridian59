@@ -348,9 +348,10 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
-   /* Send object flags for objects with icons in lists for coloring special items.
-   *  Character select screen causes a client crash because the character name is
-   *  obj; this statement causes NULL to be sent in that case 
+   /* 
+      Color special item text if the appropriate flags are set.  The character selection screen
+      sends extra data (lParam) when calling this function, so an if statement was added to 
+      prevent dereferencing a null pointer by setting the parameter to 0 instead.
    */
    if (style & (OD_DRAWOBJ | OD_DRAWICON))
    {

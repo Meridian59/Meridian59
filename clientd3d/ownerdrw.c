@@ -351,7 +351,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
 
    // Color special item text if the appropriate flags are set.
    int flags = 0;
-   if (style & (OD_DRAWOBJ | OD_DRAWICON))
+   if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL) 
       flags = obj->flags;
    crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), flags));
 

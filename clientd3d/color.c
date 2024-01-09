@@ -410,21 +410,19 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 */
 WORD GetItemListColor(HWND hwnd, int type, int flags)
 {
-		if ((flags & OF_ITEM_SPECIAL) != 0)
-				return COLOR_ITEM_SPECIAL_FG;
-		else
-   {
-				switch(type)
-				{
-				case UNSEL_FGD:
-						return COLOR_LISTFGD;
-				case UNSEL_BGD:
-						return COLOR_LISTBGD;
-				case SEL_FGD:
-						return COLOR_LISTSELFGD;
-				case SEL_BGD:
-						return COLOR_LISTSELBGD;
-				}
+	if ((flags & OF_ITEM_SPECIAL) != 0)
+		return COLOR_ITEM_SPECIAL_FG;
+
+	switch(type)
+	{
+		case UNSEL_FGD:
+			return COLOR_LISTFGD;
+		case UNSEL_BGD:
+			return COLOR_LISTBGD;
+		case SEL_FGD:
+			return COLOR_LISTSELFGD;
+		case SEL_BGD:
+			return COLOR_LISTSELBGD;
 	}
 	return 0;
 }

@@ -348,22 +348,15 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
-   /* 
-      Color special item text if the appropriate flags are set.  The character selection screen
-      sends extra data (lParam) when calling this function, so an if statement was added to 
-      prevent dereferencing a null pointer by setting the parameter to 0 instead.
-   */
+
+   // Color special item text if the appropriate flags are set.
+   int flags = 0;
    if (style & (OD_DRAWOBJ | OD_DRAWICON))
-   {
-      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), obj->flags));
-   }
-   else
-   {
-      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), 0));
-   }
+      flags = obj->flags;
+   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), flags));
 
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD, obj->flags));
+	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD, flags));
    if (lpdis->itemState & ODS_DISABLED)
 	crColorText = GetSysColor(COLOR_GRAYTEXT);
 

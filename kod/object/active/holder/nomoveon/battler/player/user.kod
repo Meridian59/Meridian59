@@ -4549,7 +4549,7 @@ messages:
 
       if piFlags & PFLAG_TRANCE
       {
-         Send(self,@BreakTrance,#event=EVENT_USE);
+         Send(self,@BreakTrance,#event=EVENT_USE,#UseWhat=what);
       }
       
       if NOT IsClass(what,&Item) 
@@ -4573,7 +4573,7 @@ messages:
 
       if piFlags & PFLAG_TRANCE
       {
-         Send(self,@BreakTrance,#event=EVENT_USE);
+         Send(self,@BreakTrance,#event=EVENT_USE,#UseWhat=what);
       }
 
       if not IsClass(what,&Item)

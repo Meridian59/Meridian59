@@ -148,7 +148,7 @@ messages:
       return [thisVolume,who,iSpellPower];
    }
 
-   BreakTrance(who=$, event=$, state=$, location=$)
+   BreakTrance(who=$, event=$, state=$, location=$, UseWhat=$)
    "If caster runs out of mana or loses trance, spell ends."
    {
       local oRoom;
@@ -163,6 +163,15 @@ messages:
             OR (event = EVENT_CAST AND Send(Send(SYS, @GetSettings), @CanRecastJalaWithNecklace))
          {
             return FALSE;
+         }
+
+         if event = EVENT_USE
+         {
+            if not IsClass(UseWhat,&Food)
+               OR not IsClass(UseWhat,&Instrument)
+               {
+                  return FALSE;
+               }
          }
 
          % Chance to keep going through a disruption

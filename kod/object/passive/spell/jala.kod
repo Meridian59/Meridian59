@@ -148,7 +148,7 @@ messages:
       return [thisVolume,who,iSpellPower];
    }
 
-   BreakTrance(who=$, event=$, state=$, location=$, UseWhat=$)
+   BreakTrance(who=$, event=$, state=$, location=$, usewhat=$)
    "If caster runs out of mana or loses trance, spell ends."
    {
       local oRoom;
@@ -167,8 +167,8 @@ messages:
 
          if event = EVENT_USE
          {
-            if not IsClass(UseWhat,&Food)
-               OR not IsClass(UseWhat,&Instrument)
+            if NOT IsClass(usewhat,&Food)
+               OR NOT IsClass(usewhat,&Instrument)
                {
                   return FALSE;
                }

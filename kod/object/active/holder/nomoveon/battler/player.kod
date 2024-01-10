@@ -9902,7 +9902,7 @@ messages:
       return;
    }
 
-   BreakTrance(event = 0, what = $)
+   BreakTrance(event = 0, what = $, usewhat = $)
    {
       local i, oEnch,state, bFound, oYellNum, oYellRoom;
 
@@ -9918,7 +9918,7 @@ messages:
                state = Nth(i,3);
             }
 
-            Send(oEnch,@BreakTrance,#who=self,#state=state,#event=event,#what=what);
+            Send(oEnch,@BreakTrance,#who=self,#state=state,#event=event,#what=what,#usewhat=usewhat);
             bFound = TRUE;
          }
       }
@@ -9937,7 +9937,7 @@ messages:
          }
       }
       
-      if Send(poOwner,@BreakTrance,#who=self,#event=event)
+      if Send(poOwner,@BreakTrance,#who=self,#event=event,#usewhat=usewhat)
       {
          bFound = TRUE;
       }

@@ -165,10 +165,10 @@ messages:
             return FALSE;
          }
 
-         if event = EVENT_USE
+         if event = EVENT_USE & usewhat <> $
          {
             if NOT IsClass(usewhat,&Food)
-               OR NOT IsClass(usewhat,&Instrument)
+               AND NOT IsClass(usewhat,&Instrument)
                {
                   return FALSE;
                }

@@ -4942,8 +4942,8 @@ messages:
       local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
             lTreasureItems;
 
-      % Apparitions, etc, provide no treasure
-      if pbIllusion
+      % Apparitions, summoned monsters, etc, provide no treasure
+      if pbIllusion OR vbSummoned
       {
          return;
       }
@@ -5509,6 +5509,12 @@ messages:
          }
       }
 
+      return;
+   }
+
+   RevertControl()
+   {
+      Send(self, @SetMaster, #oMaster=$);
       return;
    }
 

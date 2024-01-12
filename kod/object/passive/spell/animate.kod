@@ -216,6 +216,8 @@ messages:
          Send(oMaster, @MsgSendUser, #message_rsc=Animate_expire_rsc , #parm1=Send(who, @GetDef), #parm2=Send(who, @GetName));
       }
 
+      % Only reset behavior if the monster is still alive, so we don't
+      % mess with the cleanup routine.
       if Send(who, @GetHealth) > 0
       {
          Send(who, @RevertControl);

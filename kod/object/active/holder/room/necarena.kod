@@ -601,7 +601,7 @@ messages:
    ShrineUsed()
    % Can be called by the shrine or a timer so check to kill the timer here as well.
    {
-      local bCalledByShrine,each_obj;    
+      local bCalledByShrine;
 
       bCalledByShrine = FALSE;
 
@@ -622,11 +622,7 @@ messages:
       }
       else
       {
-         for each_obj in plGoToShrine
-         {
-            Send(self,@Teleport,#what=each_obj,#OutOfPlay=TRUE);
-         }
-         plGoToShrine = $;
+         send(self,@DelayedTeleport);
       }
 
       return;

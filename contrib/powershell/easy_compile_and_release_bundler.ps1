@@ -48,7 +48,7 @@ Write-Host "#####################################" -ForegroundColor Cyan
 
 #Check if we are in the Root Directory of the Repository
 Write-Host "Checking Working Directory..." -ForegroundColor Yellow
-$workingDirectory = (Get-Item $PSScriptRoot).Parent.FullName
+$workingDirectory = (Get-Item $PSScriptRoot).Parent.Parent.FullName
 
 #If we are not in the Working Directory, switch to Working Directory
 if( (Get-Location).Path -eq $workingDirectory )
@@ -233,7 +233,7 @@ if( ($null -ne $ServerConfigTemplatePath) -and ($ServerConfigTemplatePath -ne ""
 if($BuildType -eq "DEBUG")
 {
   Write-Host "Copying runLocalClient.ps1 to .\run\localclient Folder..."
-  Copy-Item -Path .\dev-tools\runLocalClient.ps1 -Destination .\run\localclient\runLocalClient.ps1
+  Copy-Item -Path .\contrib\powershell\runLocalClient.ps1 -Destination .\run\localclient\runLocalClient.ps1
 }
 
 #if this is a Release Build, compress the Server and Client to a Zip File, so that it can be deployed more easily

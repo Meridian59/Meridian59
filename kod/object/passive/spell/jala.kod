@@ -169,7 +169,7 @@ messages:
          {
             if NOT IsClass(usewhat,&Food)
                AND NOT IsClass(usewhat,&Instrument)
-               AND NOT IsClass(usewhat,@Potion)
+               AND NOT IsClass(usewhat,&Potion)
                {
                   return FALSE;
                }

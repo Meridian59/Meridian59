@@ -644,7 +644,7 @@ messages:
       {
          Send(self,@Teleport,#what=each_obj,#OutOfPlay=TRUE);
       }
-      % The shrine was dedicated  or the timer expired
+      % The shrine was dedicated or the timer expired
       % Either way - clear the list for next time.
       plGoToShrine = $;
 

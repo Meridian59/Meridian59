@@ -138,12 +138,14 @@ messages:
 
    CheckWatcher(what=$)
    {
-      if poWatcher = $
+      if Send(self,@GetWatcher) = $
       {
          debug("Goad is nil!  Goad should never be nil!  Goad was moved!");
-         poWatcher = what;
-         Send(self,@NewHold,#what=what,#new_row=13,#new_col=20,
+         
+         % Warp the Goad back to his home
+         Send(self,@NewHold,#what=what,#new_row=7,#new_col=13,
               #fine_row=0,#new_angle=ANGLE_WEST);
+         poWatcher = what;
       }
 
       return;
@@ -537,10 +539,11 @@ messages:
    SomethingKilled(what=$,victim=$)
    {
       % You get to goto the shrine if you kill someone with 10 more hps
-      %  than you have.
+      %  than you have or if the victim is sufficiently high level.
       if IsClass(what,&User) AND IsClass(victim, &User)
       {
-         if (Send(what,@GetBaseMaxHealth) + 10) < Send(victim,@GetBaseMaxHealth)
+         if (Send(what,@GetBaseMaxHealth) + 10) <= Send(victim,@GetBaseMaxHealth)
+            OR Send(victim,@GetBaseMaxHealth) >= 140
          {
             plGoToShrine = cons(what,plGotoShrine);
          }
@@ -598,7 +601,7 @@ messages:
    ShrineUsed()
    % Can be called by the shrine or a timer so check to kill the timer here as well.
    {
-      local bCalledByShrine,iCntr;    
+      local bCalledByShrine;
 
       bCalledByShrine = FALSE;
 
@@ -619,13 +622,8 @@ messages:
       }
       else
       {
-         for iCntr in plGoToShrine
-         {
-            Send(iCntr,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
-         }
+         send(self,@DelayedTeleport);
       }
-
-      plGoToShrine = $;
 
       return;
    }  
@@ -640,12 +638,15 @@ messages:
 
    DelayedTeleport()
    {
-      local iCntr;
+      local each_obj;
       
-      for iCntr in plGoToShrine
+      for each_obj in plGoToShrine
       {
-         Send(self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
+         Send(self,@Teleport,#what=each_obj,#OutOfPlay=TRUE);
       }
+      % The shrine was dedicated or the timer expired
+      % Either way - clear the list for next time.
+      plGoToShrine = $;
 
       return;
    }

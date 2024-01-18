@@ -27,6 +27,7 @@ resources:
    Animate_bad_target = "You can't cast animate on %s%s!"
    Animate_failed_rsc = "%s's corpse remains inanimate on the gound."
    Animate_cast_rsc = "%s's corpse pulls itself up off of the ground."
+   Animate_expire_rsc = "Your control over %s%s wanes."
 
    Animate_sound = qanimate.wav
 
@@ -183,6 +184,7 @@ messages:
       iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );
       send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
       send(oRisen,@SetSummoned,#value=TRUE);
+      Send(oRisen, @StartEnchantment, #what=self, #time=iDurationSecs * 1000);
       Post(oRisen,@ResetBehaviorFlags);  
 
       send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
@@ -204,6 +206,26 @@ messages:
       return;      
    }
 
+   EndEnchantment(who=$, report=TRUE)
+   {
+      local oMaster;
+
+      oMaster = Send(who, @GetMaster);
+      if report AND IsClass(oMaster, &User)
+      {
+         Send(oMaster, @MsgSendUser, #message_rsc=Animate_expire_rsc, #parm1=Send(who, @GetDef), #parm2=Send(who, @GetName));
+      }
+
+      % Only reset behavior if the monster is still alive, so we don't
+      % mess with the cleanup routine.
+      if Send(who, @GetHealth) > 0
+      {
+         Send(who, @RevertControl);
+         Post(who, @ResetBehaviorFlags);
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

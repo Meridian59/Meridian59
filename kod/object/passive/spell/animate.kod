@@ -182,7 +182,7 @@ messages:
       }
 
       iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );
-      send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+      send(oRisen,@SetMaster,#oMaster=who);
       send(oRisen,@SetSummoned,#value=TRUE);
       Send(oRisen, @StartEnchantment, #what=self, #time=iDurationSecs * 1000);
       Post(oRisen,@ResetBehaviorFlags);  

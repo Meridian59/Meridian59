@@ -185,29 +185,27 @@ char *GetLastErrorStr(void)
  */
 void CenterWindow(HWND hwnd, HWND hwndParent)
 {
-   RECT rcDlg, rcParent;
-   int screen_width, screen_height, x, y;
-
-   /* If dialog has no parent, then its parent is really the desktop */
-   if (hwndParent == NULL)
-      hwndParent = GetDesktopWindow();
+   RECT rcDlg, rcParent, rcScreen;
+   int x, y;
 
    GetWindowRect(hwndParent, &rcParent);
    GetWindowRect(hwnd, &rcDlg);
 
-   /* Move dialog rectangle to upper left (0, 0) for ease of calculation */
+   // Move dialog box to upper left (0, 0) for ease of calculation
    OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
 
    x = rcParent.left + (rcParent.right - rcParent.left)/2 - rcDlg.right/2;
    y = rcParent.top + (rcParent.bottom - rcParent.top)/2 - rcDlg.bottom/2;
 
+   // Get the monitor information for the parent window
+   MONITORINFO mi;
+   mi.cbSize = sizeof(MONITORINFO);
+   GetMonitorInfo(MonitorFromWindow(hwndParent, MONITOR_DEFAULTTONEAREST), &mi);
+   rcScreen = mi.rcWork;  // Use rcWork for the working area excluding taskbar
 
    // Make sure that child window is completely on the screen
-   screen_width  = GetSystemMetrics(SM_CXSCREEN);
-   screen_height = GetSystemMetrics(SM_CYSCREEN);
-
-   x = max(0, min(x, screen_width  - rcDlg.right));
-   y = max(0, min(y, screen_height - rcDlg.bottom));
+   x = max(rcScreen.left, min(x, rcScreen.right - rcDlg.right));
+   y = max(rcScreen.top, min(y, rcScreen.bottom - rcDlg.bottom));
 
    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }

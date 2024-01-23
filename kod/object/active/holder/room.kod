@@ -3259,7 +3259,8 @@ messages:
             if who = Nth(lState,2)
             {
                bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,
-                              #state=lState,#location=self,#what=what,#usewhat=usewhat);
+                              #state=lState,#what=what,#usewhat=usewhat);
+               debug("Sending Break Trance to Jala");
             }
          }
 

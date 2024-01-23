@@ -9937,8 +9937,12 @@ messages:
          }
       }
       
-      if Send(poOwner,@BreakTrance,#who=self,#event=event,#usewhat=usewhat)
+      if Send(poOwner,@BreakTrance,#who=self,#event=event,#what=what,#usewhat=usewhat)
       {
+         if what = $
+         {
+            debug("What got nulled somehow");
+         }
          bFound = TRUE;
       }
       

@@ -1685,6 +1685,13 @@ messages:
          return;
       }
 
+		% Guard against admin mode mistakes
+		if what = self
+		{
+			Debug("Tried to have room hold itself!");
+			return;
+	   }
+		
       bUser = IsClass(what,&User);
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $

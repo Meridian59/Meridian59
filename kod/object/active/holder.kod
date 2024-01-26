@@ -298,6 +298,13 @@ messages:
    {
       local i,each_obj;
 
+		% Guard against admin mode mistakes
+		if what = self
+		{
+			Debug("Tried to have object hold itself!");
+			return;
+	   }
+		
       if IsClass(what,&NumberItem)
       {
          for i in plPassive

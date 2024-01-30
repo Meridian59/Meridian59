@@ -347,8 +347,8 @@ resources:
    player_cant_dance_resting = \
       "You're sitting right now.  Let's not take this \'getting down\' stuff "
       "too literally, ok?"
-   player_stop_dance = "\
-      You lose your rhythm and settle out of your dancing frenzy." 
+   player_stop_dance = \
+      "You lose your rhythm and settle out of your dancing frenzy." 
 
    player_wave = "You wave your hand."
    player_point = "You point."

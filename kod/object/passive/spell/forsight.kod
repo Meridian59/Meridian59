@@ -48,6 +48,7 @@ resources:
    Foresight_PractitionerOf = "is a practitioner of"
    Foresight_GreatAt = "is great at" 
    Foresight_MasterOf = "is a master of" 
+   Foresight_sound = rforsig.wav
 
 classvars:
 
@@ -64,6 +65,7 @@ classvars:
    viChance_to_increase = 10
 
    viFlash = FLASH_BAD
+   vrSucceed_wav = Foresight_sound
 
 properties:
 

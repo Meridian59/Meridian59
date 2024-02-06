@@ -95,19 +95,19 @@ messages:
       if not Send(oItem,@CanEnchant,#oSpell = self)
       {
          Send(who, @MsgSendUser, #message_rsc=spell_resists,
-             #parm1=send(oItem,@getCapdef),#parm2=send(oItem,@getname));
-	      return;
+            #parm1=send(oItem,@getCapdef),#parm2=send(oItem,@getname));
+         return;
       }
       
       oItemAtt = send(SYS,@finditemattbynum,#num=IA_SHROUD);
 
       send(oItemAtt,@AddToItem,#oItem=oItem,
-          #timer_duration = send(self,@GetDuration,#iSpellPower=iSpellPower),
-          #iPower=random(iSpellPower/20,iSpellPower/10),
-          #random_gen=FALSE);
+         #timer_duration = send(self,@GetDuration,#iSpellPower=iSpellPower),
+         #iPower=random(iSpellPower/20,iSpellPower/10),
+         #random_gen=FALSE);
       Send(who, @MsgSendUser, #message_rsc=shroud_cast_rsc,
-          #parm1=Send(oItem,@GetName), 
-          #state3=send(self,@GetMakerInfo,#who=who));
+         #parm1=Send(oItem,@GetName), 
+         #state3=send(self,@GetMakerInfo,#who=who));
 
       propagate;
    }

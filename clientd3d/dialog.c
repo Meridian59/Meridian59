@@ -629,7 +629,7 @@ void SetDescParams(HWND hParent, int flags)
 * DisplayDescription:  Display given object's description.
 *   Caller must ensure that obj is not deleted while dialog is up.
 *   flags gives info on what user can do with dialog.
-*   hDescParent global is used as parent for this dialog.
+*   hMain is used as the parent for this dialog.
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
@@ -655,7 +655,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
-	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
+	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hMain,
                  DescDialogProc, (LPARAM) &info);
 	
 	TooltipReset();

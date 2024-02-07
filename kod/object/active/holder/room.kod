@@ -3381,7 +3381,7 @@ messages:
    "[timer, spell object, state]."
    {
       local i, oSpell, lJalaInfo;
-
+      lJalaInfo = $;
       for i in plEnchantments
       {
          oSpell = Nth(i,2);
@@ -3390,14 +3390,7 @@ messages:
             lJalaInfo = Cons(i,lJalaInfo);
          }
       }
-      if Length(lJalaInfo) > 0
-      {
-         return lJalaInfo;
-      }
-      else
-      {
-         return $;
-      }
+      return lJalaInfo;
    }
 
    GetShalilleBonus()

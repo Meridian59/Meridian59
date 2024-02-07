@@ -659,6 +659,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
                  DescDialogProc, (LPARAM) &info);
 	
 	TooltipReset();
+	desc_flags=DESC_NONE;
 }
 /************************************************************************/
 /*

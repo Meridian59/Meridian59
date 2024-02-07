@@ -92,7 +92,7 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oRoom, lJalaInfo, lJalaState;
+      local oRoom, lJalaInfo, lJalaElement, lJalaState;
 
       oRoom = Send(who,@GetOwner);
 
@@ -102,26 +102,29 @@ messages:
            #time=send(self,@GetDuration,#iSpellPower=iSpellPower),#iSpellPower=iSpellPower,#lastcall=FALSE);
       Send(who,@SetTranceFlag);
 
-      % See if there's a Jala song going on and try to kill it
-      % Format of lJalaInfo is: [timer, spell object, state]
+      % Iterate over any Jala spells in the room and try to kill them
+      % Format of lJalaInfo is a list of lists: [timer, spell object, state]
       lJalaInfo = send(oRoom,@GetJalaInfo);
 
       if lJalaInfo <> $
       {
-         % Format of lJalaState is: [volume, caster, spellpower]
-         lJalaState = Nth(lJalaInfo,3);
+         for lJalaElement in lJalaInfo
+         {
+            % Format of lJalaState is: [volume, caster, spellpower]
+            lJalaState = Nth(lJalaElement,3);
 
-         if random(iSpellPower/2,iSpellPower) > Nth(lJalaState,1)
-         {
-            % We have blocked the Jala song.
-            send(Nth(lJalaState,2),@MsgSendUser,#message_rsc=Silence_blocked_jala_victim);
-            send(oRoom,@RemoveEnchantment,#what=Nth(lJalaInfo,2));
-         }
-         else
-         {
-            % The Jala song continues on!
-            send(who,@MsgSendUser,#message_rsc=Silence_cant_block_jala_caster);
-            send(Nth(lJalaState,2),@MsgSendUser,#message_rsc=Silence_cant_block_jala_victim);
+            if random(iSpellPower/2,iSpellPower) > Nth(lJalaState,1)
+            {
+               % We have blocked the Jala song.
+               send(Nth(lJalaState,2),@MsgSendUser,#message_rsc=Silence_blocked_jala_victim);
+               send(oRoom,@RemoveEnchantment,#what=Nth(lJalaElement,2));
+            }
+            else
+            {
+               % The Jala song continues on!
+               send(who,@MsgSendUser,#message_rsc=Silence_cant_block_jala_caster);
+               send(Nth(lJalaState,2),@MsgSendUser,#message_rsc=Silence_cant_block_jala_victim);
+            }
          }
       }
 

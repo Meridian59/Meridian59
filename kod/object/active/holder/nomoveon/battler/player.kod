@@ -5473,7 +5473,7 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower, i;
       
       % Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
@@ -5491,12 +5491,15 @@ messages:
 
          if lJalaInfo <> $
          {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Restorate)
+            for i in lJalaInfo
             {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               return Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
-                            #iSpellPower=iJalaPower);
+               oJalaSpell = Nth(i,2);
+               if IsClass(oJalaSpell,&Restorate)
+               {
+                  iJalaPower = Nth(Nth(i,3),3);
+                  return Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
+                              #iSpellPower=iJalaPower);
+               }
             }
          }
       }
@@ -5507,7 +5510,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
+      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, i;
 
       if piMana > piMax_mana
       {
@@ -5530,12 +5533,15 @@ messages:
 
             if lJalaInfo <> $
             {
-               oJalaSpell = Nth(lJalaInfo,2);
-               if IsClass(oJalaSpell,&Rejuvenate)
+               for i in lJalaInfo
                {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
-                  iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
-                               #iSpellPower=iJalaPower);
+                  oJalaSpell = Nth(i,2);
+                  if IsClass(oJalaSpell,&Rejuvenate)
+                  {
+                     iJalaPower = Nth(Nth(i,3),3);
+                     iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
+                                 #iSpellPower=iJalaPower);
+                  }
                }
             }
          
@@ -9751,7 +9757,7 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, lJalaInfo, oJalaSpell, iJalaPower, i;
 
       iTime = 1000 + (30* (51-Send(self,@getStamina))); 
 
@@ -9761,11 +9767,14 @@ messages:
 
          if lJalaInfo <> $
          {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Invigorate)
+            for i in lJalaInfo
             {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
+               oJalaSpell = Nth(i,2);
+               if IsClass(oJalaSpell,&Invigorate)
+               {
+                  iJalaPower = Nth(Nth(i,3),3);
+                  iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
+               }
             }
          }
       }

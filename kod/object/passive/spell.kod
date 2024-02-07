@@ -489,7 +489,7 @@ messages:
    CanCastHere(who = $, where = $, lTargets = $, iSpellPower = 0,
                bItemCast = FALSE, report = TRUE)
    {
-      local oSpell, lState, iJalaPower, oTarget;
+      local oSpell, lState, iJalaPower, oTarget, i;
 
       if IsClass(who,&DM)
       {
@@ -509,7 +509,14 @@ messages:
          {
             % The spell's spellpower is the third element of the state, which
             %  is the third element of Jala info stored by room.
-            iJalaPower = Nth(Nth(Send(where,@GetJalaInfo),3),3);
+            % first get the list of Jala spells in room and iterate over list
+            for i in Send(where,@GetJalaInfo)
+            {
+               if Nth(i,2) = oSpell
+               {
+                  iJalaPower = Nth(Nth(i,3),3);
+               }
+            }
 
             % Does Spellbane overpower the spell?
             % Spellbane always works on monsters that can be silenced
@@ -1160,7 +1167,7 @@ messages:
    "figure their success in player.kod."
    {
       local num, iRequisiteStat, lJalaInfo, oJalaSpell, lJalaState,
-      iDistance, oTarget, oRing;
+      iDistance, oTarget, oRing, lJalaElement, tempnum;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
 
@@ -1182,14 +1189,25 @@ messages:
 
       if lJalaInfo <> $
       {
-         % lJalaInfo is of form: [room timer, spell object, state]
-         oJalaSpell = Nth(lJalaInfo,2);
-         if IsClass(oJalaSpell,&HinderSpell)
+         % Each element of lJalaInfo is of form: [room timer, spell object, state]
+         for lJalaElement in lJalaInfo
          {
-            lJalaState = Nth(lJalaInfo,3);
-            % Jala State is of the form: [volume, caster, spellpower]
-            num = Send(oJalaSpell,@GetAlteredChance,#chance=num,#what=self,
-                       #iSpellPower=Nth(lJalaState,3));
+            oJalaSpell = Nth(lJalaElement,2);
+            if IsClass(oJalaSpell,&HinderSpell)
+            {
+               lJalaState = Nth(lJalaElement,3);
+               % Jala State is of the form: [volume, caster, spellpower]
+               % GetAlteredChance returns either 
+               %    the unchanged chance if oJalaSpell <> viHinderedSchool
+               %    or the altered chance if oJalaSpell = viHinderedSchool
+               %    since we are only looking at HinderSpells we can return the minimum num 
+               tempnum = Send(oJalaSpell,@GetAlteredChance,#chance=num,#what=self,
+                        #iSpellPower=Nth(lJalaState,3));
+               if tempnum < num
+               {
+                  num = tempnum;
+               }
+            }
          }
       }
 

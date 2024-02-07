@@ -3380,18 +3380,24 @@ messages:
    "Returns all the info about the current Jala spell.  Returns a list of "
    "[timer, spell object, state]."
    {
-      local i,oSpell;
+      local i, oSpell, lJalaInfo;
 
       for i in plEnchantments
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = SS_JALA
          {
-            return i;
+            lJalaInfo = Cons(i,lJalaInfo);
          }
       }
-
-      return $;
+      if Length(lJalaInfo) > 0
+      {
+         return lJalaInfo;
+      }
+      else
+      {
+         return $;
+      }
    }
 
    GetShalilleBonus()

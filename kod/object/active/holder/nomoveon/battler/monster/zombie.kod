@@ -67,8 +67,6 @@ properties:
 
    vbSummoned = FALSE
 
-   ptRevertControl = $
-
 messages:
 
    Constructed()
@@ -146,32 +144,6 @@ messages:
    IsUndead()
    {
       return TRUE;
-   }
-
-   SetMaster(oMaster=$,DurationSecs=1)
-   {
-      if (oMaster <> $) and isClass(oMaster,&User)
-      {
-         ptRevertControl = createTimer(self,@RevertControl,(DurationSecs*1000));
-      }
-      propagate;
-   }
-   RevertControl()
-   {
-      ptRevertControl = $;
-      send(self,@SetMaster,#oMaster=$);
-      return;
-   }
-   
-
-   Delete()
-   {
-      if ptRevertControl <> $
-      {
-         deleteTimer(ptRevertControl);
-         ptRevertControl = $;
-      }
-      propagate;
    }
    
 end

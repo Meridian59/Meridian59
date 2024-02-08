@@ -3387,7 +3387,7 @@ messages:
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = SS_JALA
          {
-            lJalaInfo = Cons(i,lJalaInfo);
+            lJalaInfo = cons(i,lJalaInfo);
          }
       }
       return lJalaInfo;

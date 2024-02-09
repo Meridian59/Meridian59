@@ -28,7 +28,7 @@ resources:
    IllusionaryFireWall_failed_rsc = \
       "There is too much summoning magic focused here to create a wall of "
       "fire."
-   IllusionaryFireWall_sound = farenwala822m.wav
+   IllusionaryFireWall_sound = rwallill.wav
 
 classvars:
 

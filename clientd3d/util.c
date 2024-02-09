@@ -188,6 +188,10 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
    RECT rcDlg, rcParent, rcScreen;
    int x, y;
 
+   // If the window to center has no parent, set hwndParent to the main window
+   if (hwndParent == NULL)
+      hwndParent = hMain;
+
    GetWindowRect(hwndParent, &rcParent);
    GetWindowRect(hwnd, &rcDlg);
 

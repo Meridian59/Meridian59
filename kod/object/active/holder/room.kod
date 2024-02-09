@@ -3251,7 +3251,7 @@ messages:
       return viTerrain_Type;
    }
 
-   BreakTrance(who=$, event=$, what=$, usewhat=$)
+   BreakTrance(who=$, event=$, castwhat=$, usewhat=$)
    {
       local i, oEnch, lState, bRetVal;
 
@@ -3265,7 +3265,7 @@ messages:
             lState = Nth(i,3);
             if who = Nth(lState,2)
             {
-               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,#state=lState,#what=what,#usewhat=usewhat);
+               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,#state=lState,#castwhat=castwhat,#usewhat=usewhat);
             }
          }
 
@@ -3276,7 +3276,7 @@ messages:
             lState = Nth(i,3);
             if who = First(lState)
             {
-               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,#state=lState,#location=self,#what=what);
+               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,#state=lState,#location=self,#castwhat=castwhat);
             }
          }
       }

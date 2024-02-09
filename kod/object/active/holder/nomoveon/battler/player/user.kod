@@ -4703,7 +4703,7 @@ messages:
 
       if piFlags & PFLAG_TRANCE
       {
-         Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
+         Send(self,@BreakTrance,#event=EVENT_CAST,#castwhat=oSpell);
       }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
@@ -4776,7 +4776,7 @@ messages:
       % If a player is in a trance, break it
       if piFlags & PFLAG_TRANCE
       {
-         Send(self,@BreakTrance,#event=EVENT_CAST,#what=oCommand);
+         Send(self,@BreakTrance,#event=EVENT_CAST,#castwhat=oCommand);
       }
 
       % Be sure player has guild command.

@@ -332,7 +332,7 @@ messages:
             #parm3=send(poChampion,@getcapdef),#parm4=send(poChampion,@getname));
          Send(self,@SayToOne,#target=poChampion,#message_rsc=Goad_challenge_offered,
             #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
-            #parm3=send(who,@gethimher),#parm4=send(who,@gethimher)); 
+            #parm3=send(who,@gethimher),#parm4=send(who,@getheshe)); 
 
          pbAccept = FALSE;
          ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY); 

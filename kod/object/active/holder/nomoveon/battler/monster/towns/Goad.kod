@@ -334,7 +334,7 @@ messages:
       }
       else
       {
-         Send(self,@say,#message_rsc=Goad_new_combatant,
+         send(self,@say,#message_rsc=Goad_new_combatant,
                   #parm1=send(who,@getcapdef),#parm2=send(who,@getname));
 
           if ptAccept = $
@@ -759,13 +759,13 @@ messages:
          
          if StringEqual(string,"duel")
          {
-            post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what);
+            post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE);
             return FALSE;
          }
          %%Rumble style cut due to insuficient test.
          %if StringEqual(string,"rumble")
          %{
-            %post(self,@ChooseCombat,#style = STYLE_LAST_MAN_STANDING,#actor=what);
+            %post(self,@ChooseCombat,#style = STYLE_LAST_MAN_STANDING);
             %return FALSE;
          %}
       }

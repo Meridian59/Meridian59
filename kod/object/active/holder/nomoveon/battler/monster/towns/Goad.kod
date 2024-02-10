@@ -49,7 +49,8 @@ resources:
    Goad_already_champion = "So generous . . . but, you are already mine."
    Goad_already_have_champion = "So you would be champion?  Nothing could be easier, simply challenge and kill %s%s.  Would you dare to challenge %s?"
 
-   Goad_challenge_offered = "%s%s has challenged you.  Will you crush %s's like the bug %s is?"
+   Goad_challenge_offered = "%s%s has challenged you.  Will you crush %s like the bug %s is?"
+   Goad_challenge_excitement = "%s%s has challenged %s%s to bloody battle!"
    Goad_must_accept = "Hurry fool!! You only have %i seconds left to accept %s%s's challenge."
 
    Goad_cant_renege = "You cannot renege unless you are a combatant!"
@@ -325,6 +326,10 @@ messages:
 
       if piCombat_style = STYLE_ONE_ON_ONE
       {
+         % Tell the room and then ask the champion if they accept
+         Send(self,@say,#message_rsc=Goad_challenge_excitement,
+            #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
+            #parm3=send(poChampion,@getcapdef),#parm4=send(poChampion,@getname));
          Send(self,@SayToOne,#target=poChampion,#message_rsc=Goad_challenge_offered,
             #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
             #parm3=send(who,@gethimher),#parm4=send(who,@gethimher)); 
@@ -1248,24 +1253,6 @@ messages:
       propagate;
    }
 
-   KludgeMessage(who=$)
-   {
-
-      
-      ClearTempString();
-      AppendTempString(send(who,@GetName));
-      AppendTempString(" has challenged you.  Will you crush ");
-      AppendTempString(send(who,@GetHimHer));
-      AppendTempString(" like the bug ");
-      AppendTempString(send(who,@GetHeShe));
-      AppendTempString(" is?");
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-            #string=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
-      return;
-   }
-
-
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

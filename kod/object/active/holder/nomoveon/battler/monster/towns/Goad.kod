@@ -1243,16 +1243,22 @@ messages:
    SomethingEntered(what=$)
    {
 
-      if IsClass(what,&admin) and not send(what,@checkplayerflag,#flag=PFLAG_MORPHED)
-         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS) and not Send(what,@IsHidden)
+      if IsClass(what,&admin)
+         AND NOT Send(what,@IsHidden)
+         AND NOT Send(what,@IsDMStealthed)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
       {
          post(self,@say,#message_rsc=Goad_worship_admin,
             #parm1=send(what,@gettruename),#parm2=send(what,@getheshe));
 
          propagate;
       }
-      if IsClass(what,&DM) and not send(what,@checkplayerflag,#flag=PFLAG_MORPHED)
-         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS) and not Send(who, @IsHidden)
+      if IsClass(what,&DM)  
+         AND NOT Send(what,@IsHidden)
+         AND NOT Send(what,@IsDMStealthed)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
       {
          post(self,@say,#message_rsc=Goad_worship_dm,
             #parm1=send(what,@getlordlady),#parm2=send(what,@getname));

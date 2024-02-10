@@ -1244,7 +1244,7 @@ messages:
    {
 
       if IsClass(what,&admin) and not send(what,@checkplayerflag,#flag=PFLAG_MORPHED)
-         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS)
+         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS) and not Send(what,@IsHidden)
       {
          post(self,@say,#message_rsc=Goad_worship_admin,
             #parm1=send(what,@gettruename),#parm2=send(what,@getheshe));
@@ -1252,7 +1252,7 @@ messages:
          propagate;
       }
       if IsClass(what,&DM) and not send(what,@checkplayerflag,#flag=PFLAG_MORPHED)
-         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS)
+         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS) and not Send(who, @IsHidden)
       {
          post(self,@say,#message_rsc=Goad_worship_dm,
             #parm1=send(what,@getlordlady),#parm2=send(what,@getname));

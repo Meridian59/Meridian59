@@ -1243,7 +1243,7 @@ messages:
    SomethingEntered(what=$)
    {
 
-      if IsClass(what,&admin)
+      if IsClass(what,&Admin)
          AND NOT Send(what,@IsHidden)
          AND NOT Send(what,@IsDMStealthed)
          AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)

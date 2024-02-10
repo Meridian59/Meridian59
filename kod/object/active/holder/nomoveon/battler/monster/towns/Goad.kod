@@ -311,16 +311,16 @@ messages:
     {
       if who = poChampion
       {
-         Send(self,@SayToOne,#target=who,#message_rsc=Goad_Already_champion);
+         send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_champion);
          return;
       }
       if Send(self,@isCombatant,#who=who)
       {
-         Send(self,@SayToOne,#target=who,#message_rsc=Goad_Already_combatant);
+         send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_combatant);
          return;
       }
       
-      If not Send(self,@MaxCombatantCheck,#who=who)
+      If not send(self,@MaxCombatantCheck,#who=who)
       { return FALSE; }
 
       if piCombat_style = STYLE_ONE_ON_ONE
@@ -345,7 +345,7 @@ messages:
             ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
           }
       }
-      Send(self,@newCombatant,#who=who);
+      send(self,@newCombatant,#who=who);
       return;
     }
 

@@ -123,7 +123,7 @@ classvars:
 
 properties:
 
-   piCombat_style = STYLE_NO_FIGHT
+   piCombat_style = STYLE_ONE_ON_ONE
 
    ptAdvert = $               %% every now and then, the Watcher sends off
                               %% a blurb, asking people to fight for him
@@ -311,45 +311,41 @@ messages:
     {
       if who = poChampion
       {
-         send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_champion);
+         Send(self,@SayToOne,#target=who,#message_rsc=Goad_Already_champion);
          return;
       }
-      if send(self,@isCombatant,#who=who)
+      if Send(self,@isCombatant,#who=who)
       {
-         send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_combatant);
-
+         Send(self,@SayToOne,#target=who,#message_rsc=Goad_Already_combatant);
          return;
       }
       
-      If not send(self,@MaxCombatantCheck,#who=who)
+      If not Send(self,@MaxCombatantCheck,#who=who)
       { return FALSE; }
 
       if piCombat_style = STYLE_ONE_ON_ONE
       {
-         %%KLUDGE - REMOVE THIS
-         %send(self,@say,#message_rsc=Goad_challenge_offered,
-            %#parm1=send(who,@getcapdef),#parm2=send(who,@getname),
-            %#parm3=send(who,@gethimher),#parm4=send(who,@gethimher));
-         send(self,@KludgeMessage,#who=who);
-         %%END KLUDGE         
+         Send(self,@SayToOne,#target=poChampion,#message_rsc=Goad_challenge_offered,
+            #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
+            #parm3=send(who,@gethimher),#parm4=send(who,@gethimher)); 
 
          pbAccept = FALSE;
          ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY); 
       }
       else
       {
-         send(self,@say,#message_rsc=Goad_new_combatant,
+         Send(self,@say,#message_rsc=Goad_new_combatant,
                   #parm1=send(who,@getcapdef),#parm2=send(who,@getname));
 
           if ptAccept = $
           {
-             pbAccept = FALSE;
-             send(self,@say,#message_rsc=Goad_more_combatants,
-                 #parm1=30);
-              ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+            pbAccept = FALSE;
+            Send(self,@say,#message_rsc=Goad_more_combatants,
+               #parm1=30);
+            ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
           }
       }
-      send(self,@newCombatant,#who=who);
+      Send(self,@newCombatant,#who=who);
       return;
     }
 
@@ -791,12 +787,9 @@ messages:
    "Someone in the room said 'champion'.  Net effect, if there is no "
    "champion, then make the talker the new champion."
    {
-      if piCombat_style = STYLE_NO_FIGHT
-         {
-           %%Only one style availible: Duel.
-           %send(self,@say,#message_rsc=Goad_must_choose_style);
-           %return;    
-           post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what); 
+      if piCombat_style <> STYLE_ONE_ON_ONE
+         {  
+           Send(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE); 
          }
       if not send(self,@AcceptingChampions)
       {
@@ -831,11 +824,9 @@ messages:
    "the match, but in general, this will fail if there is no champion, and "
    "will succeed only if there is a challenger spot open."
    {
-      if piCombat_style = STYLE_NO_FIGHT
+      if piCombat_style <> STYLE_ONE_ON_ONE
          {
-           post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what);
-           %send(self,@saytoOne,#target=what,#message_rsc=Goad_must_choose_style);
-           %return;     
+           Send(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE);    
          }
       if send(self,@FightInSession)
         {
@@ -893,8 +884,9 @@ messages:
       return;
    }
 
-   ChooseCombat(style = STYLE_NO_FIGHT,actor=$)
+   ChooseCombat(style = STYLE_ONE_ON_ONE)
    {
+      % No changing style if there are already combatants
       if piCombat_style <> STYLE_NO_FIGHT AND plCombatants <> $
       {
          send(self,@say,#message_rsc=Goad_cant_switch);
@@ -1220,24 +1212,14 @@ messages:
       propagate;
    }
 
-   GetCombatName(style = $)
+   GetCombatName()
    {
-     if style = $
-       {
-         if piCombat_style = STYLE_ONE_ON_ONE
-           { return Goad_style_one_on_one; }
-         if piCombat_style = STYLE_LAST_MAN_STANDING
-           { return Goad_style_last_man_standing; }
-         DEBUG("GetCombatName called with invalid fighting style chosen!");
-         return;
-       }
-
-     if style = STYLE_ONE_ON_ONE
-        { return Goad_style_one_on_one; }
-     if style = STYLE_LAST_MAN_STANDING
-        { return Goad_style_last_man_standing; }
-
-     return;
+      if piCombat_style = STYLE_ONE_ON_ONE
+         { return Goad_style_one_on_one; }
+      if piCombat_style = STYLE_LAST_MAN_STANDING
+         { return Goad_style_last_man_standing; }
+      DEBUG("GetCombatName called with invalid fighting style chosen!");
+      return;
    }
 
    SomethingEntered(what=$)

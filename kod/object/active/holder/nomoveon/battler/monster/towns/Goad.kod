@@ -314,7 +314,7 @@ messages:
          send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_champion);
          return;
       }
-      if Send(self,@isCombatant,#who=who)
+      if send(self,@isCombatant,#who=who)
       {
          send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_combatant);
          return;

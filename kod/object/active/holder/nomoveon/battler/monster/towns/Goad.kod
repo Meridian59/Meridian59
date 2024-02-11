@@ -569,20 +569,6 @@ messages:
                    }
                 }
              }
-
-             if oldChamp <> poChampion
-               {
-                  send(self,@say,#message_rsc=Goad_new_champion,
-                    #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname));
-               }
-             else
-               {
-                  send(self,@say,#message_rsc = Goad_retain_title,
-                     #parm1 = send(poChampion,@getcapdef),
-                     #parm2 = send(poChampion,@getName),
-                     #parm3 = send(poChampion,@gethisher));
-               }
-             return;
           }   
           if oldChamp <> poChampion
             {

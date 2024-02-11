@@ -605,7 +605,7 @@ messages:
        local index, i;
 
        %% Tell room to lower maze or get rid of pests, whatever.
-       Send(poOwner,@EndFight,#lCombatants = plCombatants);
+       Send(poOwner,@endfight,#lCombatants = plCombatants);
 
        %% Assume that everyone left in plCombatant is a winner.
 

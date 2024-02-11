@@ -247,8 +247,7 @@ messages:
    SetChampion(who=$)
    {
       if poChampion <> who
-      and (piCombat_style = STYLE_ONE_ON_ONE or
-           piCombat_style = STYLE_LAST_MAN_STANDING)
+         AND piCombat_style = STYLE_ONE_ON_ONE
       {
          poChampion = who;
          return;
@@ -263,12 +262,14 @@ messages:
    }
 
    ValidateFight()
+   "Validate fights with two combatants, with the correct fight style,"
+   "and where the shrine isn't used."
    {
-      if (piCombat_Style = STYLE_ONE_ON_ONE or piCombat_Style = STYLE_LAST_MAN_STANDING)
-      AND (send(poOwner,@ShrineInUse) = FALSE)
+      if piCombat_Style = STYLE_ONE_ON_ONE
+         AND (send(poOwner,@ShrineInUse) = FALSE)
+         AND length(plCombatants = 2)
       {
-         if length(plCombatants) > 1
-            { return TRUE; }
+         return TRUE;
       }
       
       return FALSE;
@@ -281,12 +282,11 @@ messages:
        return FALSE;
     }
 
-    AcceptingChallengers() %% How many can Brax fit?
+    AcceptingChallengers()
     {
        if length(plCombatants) < 2 AND piCombat_Style = STYLE_ONE_ON_ONE
        { return TRUE; }
-       if length(plCombatants) < 6 AND piCombat_Style = STYLE_LAST_MAN_STANDING  
-       { return TRUE; }   
+
        return FALSE;
     }
 
@@ -337,19 +337,7 @@ messages:
          pbAccept = FALSE;
          ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY); 
       }
-      else
-      {
-         send(self,@say,#message_rsc=Goad_new_combatant,
-                  #parm1=send(who,@getcapdef),#parm2=send(who,@getname));
 
-          if ptAccept = $
-          {
-            pbAccept = FALSE;
-            Send(self,@say,#message_rsc=Goad_more_combatants,
-               #parm1=30);
-            ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
-          }
-      }
       send(self,@newCombatant,#who=who);
       return;
     }
@@ -357,7 +345,7 @@ messages:
     MaxCombatantCheck(who=$)
     {
  
-       if length(plCombatants) > 6
+       if length(plCombatants) > 2
        {
          send(self,@SayToOne,#target=who,#message_rsc=Goad_Not_more);
          return FALSE;
@@ -398,10 +386,6 @@ messages:
              #parm3=send(nth(plCombatants,2),@getdef),
              #parm4=send(nth(plCombatants,2),@getname));
          }
-       if piCombat_style = STYLE_LAST_MAN_STANDING
-         {
-           send(self,@say,#message_rsc = Goad_ready_last_man);
-         }
        
        ptCommence=CreateTimer(self,@commencetimer,
           Random(COMMENCE_DELAY_MIN,COMMENCE_DELAY_MAX));
@@ -423,16 +407,10 @@ messages:
     Commence()
     "Called by CommenceTimer."
     {
-       local delay;
-
        send(self,@say,#message_rsc=Goad_commence);
        pbLastMinute = FALSE;
        pbWarned = FALSE;
-       delay = FIGHT_DELAY_LAST_MAN_STANDING;
-       if piCombat_style = STYLE_ONE_ON_ONE
-         {  delay = FIGHT_DELAY_ONE_ON_ONE;  }
-
-       ptFight = CreateTimer(self,@FightTimer,delay);
+       ptFight = CreateTimer(self,@FightTimer,FIGHT_DELAY_ONE_ON_ONE);
        return;
     }
 
@@ -478,18 +456,8 @@ messages:
       }
 
       send(self,@checkforwinner);
-     
-      %% scenario:  champion quits during signup for last man standing.
-      if poChampion = $ and length(plCombatants) >= 2
-      {
-         if piCombat_Style = STYLE_LAST_MAN_STANDING
-         {   
-            %% choose another champion - first player in line will do
-            poChampion = first(plCombatants);
-         }
-      }
-     
-       return;
+
+      return;
     }
 
     SomethingKilled(what=$,victim=$)
@@ -747,19 +715,11 @@ messages:
             post(self,@TrigRenege,#what=what);
             return FALSE;
          }
-         
-         if StringEqual(string,"duel")
-         {
-            post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE);
-            return FALSE;
-         }
       }
       if send(self,@FightInSession)
       {
          if StringEqual(string,"champion")
          or StringEqual(string,"challenge")
-         or StringEqual(string,"duel")
-         or StringEqual(string,"rumble")
          {
             send(what,@msgsenduser,#message_rsc=Goad_not_during_fight);
             return FALSE;
@@ -772,10 +732,9 @@ messages:
    "Someone in the room said 'champion'.  Net effect, if there is no "
    "champion, then make the talker the new champion."
    {
-      if piCombat_style <> STYLE_ONE_ON_ONE
-         {  
-           Send(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE); 
-         }
+      % Set piCombat_style just in case of problems.
+      piCombat_style = STYLE_ONE_ON_ONE
+
       if not send(self,@AcceptingChampions)
       {
          if send(self,@AcceptingChallengers)
@@ -809,10 +768,9 @@ messages:
    "the match, but in general, this will fail if there is no champion, and "
    "will succeed only if there is a challenger spot open."
    {
-      if piCombat_style <> STYLE_ONE_ON_ONE
-         {
-           Send(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE);    
-         }
+      % Set piCombat_style just in case of problems.
+      piCombat_style = STYLE_ONE_ON_ONE
+
       if send(self,@FightInSession)
         {
            send(self,@SayToOne,#target=what,#message_rsc=Goad_fight_in_progress);
@@ -835,10 +793,9 @@ messages:
 
    TrigAccept(what=$)
    {
-      if piCombat_style <> STYLE_ONE_ON_ONE
-      {
-         return FALSE;    %% you can only accept fights in traditional 2 man fights.
-      }
+      % Set piCombat_style just in case of problems.
+      piCombat_style = STYLE_ONE_ON_ONE
+
       if what <> poChampion
       {
          return FALSE;   %% Only the champion can accept a fight from a challenger
@@ -866,23 +823,6 @@ messages:
       else
          { send(self,@SayToOne,#target=what,#message_rsc=Goad_cant_renege); }
 
-      return;
-   }
-
-   ChooseCombat(style = STYLE_ONE_ON_ONE)
-   {
-      % No changing style if there are already combatants
-      if piCombat_style <> STYLE_NO_FIGHT AND plCombatants <> $
-      {
-         send(self,@say,#message_rsc=Goad_cant_switch);
-         return;
-      }
-      piCombat_style = style;
-      if piCombat_style <> STYLE_NO_FIGHT
-      {
-         send(self,@say,#message_rsc=Goad_new_combat_style,
-                   #parm1 = send(self,@getcombatname));
-      }
       return;
    }
 
@@ -1201,8 +1141,6 @@ messages:
    {
       if piCombat_style = STYLE_ONE_ON_ONE
          { return Goad_style_one_on_one; }
-      if piCombat_style = STYLE_LAST_MAN_STANDING
-         { return Goad_style_last_man_standing; }
       DEBUG("GetCombatName called with invalid fighting style chosen!");
       return;
    }

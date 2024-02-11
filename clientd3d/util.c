@@ -188,6 +188,11 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
    RECT rcDlg, rcParent, rcScreen;
    int x, y;
 
+   // BP_LOOK generated dialog box windows will not have a parent.
+   // Centering will not work properly without one.
+   if (hwndParent == NULL)
+      hwndParent = hMain;
+
    GetWindowRect(hwndParent, &rcParent);
    GetWindowRect(hwnd, &rcDlg);
 

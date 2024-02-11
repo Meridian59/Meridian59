@@ -267,7 +267,7 @@ messages:
    {
       if piCombat_Style = STYLE_ONE_ON_ONE
          AND (send(poOwner,@ShrineInUse) = FALSE)
-         AND length(plCombatants = 2)
+         AND length(plCombatants) = 2
       {
          return TRUE;
       }

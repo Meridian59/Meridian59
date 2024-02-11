@@ -733,7 +733,7 @@ messages:
    "champion, then make the talker the new champion."
    {
       % Set piCombat_style just in case of problems.
-      piCombat_style = STYLE_ONE_ON_ONE
+      piCombat_style = STYLE_ONE_ON_ONE;
 
       if not send(self,@AcceptingChampions)
       {
@@ -760,6 +760,7 @@ messages:
          send(self,@Say,#message_rsc=Goad_new_champion,
                     #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname));
       }
+
       return;  
    }
 
@@ -769,7 +770,7 @@ messages:
    "will succeed only if there is a challenger spot open."
    {
       % Set piCombat_style just in case of problems.
-      piCombat_style = STYLE_ONE_ON_ONE
+      piCombat_style = STYLE_ONE_ON_ONE;
 
       if send(self,@FightInSession)
         {
@@ -794,7 +795,7 @@ messages:
    TrigAccept(what=$)
    {
       % Set piCombat_style just in case of problems.
-      piCombat_style = STYLE_ONE_ON_ONE
+      piCombat_style = STYLE_ONE_ON_ONE;
 
       if what <> poChampion
       {

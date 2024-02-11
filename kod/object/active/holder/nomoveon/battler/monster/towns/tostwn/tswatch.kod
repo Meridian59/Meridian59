@@ -2251,10 +2251,7 @@ messages:
    {
       local lSublist, lTemp, i;
 
-      if IsClass(what,&Admin)
-         AND NOT Send(what,@IsDMStealthed)
-         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+      if IsClass(what,&Admin) AND Send(what,@IsGreetable)
       {
          Post(self,@Say,#message_rsc=TosWatcher_worship_admin,
               #parm1=Send(what,@GetTrueName),#parm2=Send(what,@GetHeShe));
@@ -2266,10 +2263,7 @@ messages:
          propagate;
       }
 
-      if IsClass(what,&DM)
-         AND NOT Send(what,@IsDMStealthed)
-         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+      if IsClass(what,&DM) AND Send(what,@IsGreetable)
       {
          Post(self,@Say,#message_rsc=TosWatcher_worship_dm,
               #parm1=Send(what,@GetLordLady),#parm2=Send(what,@GetName));

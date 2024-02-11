@@ -605,7 +605,7 @@ messages:
        local index, i;
 
        %% Tell room to lower maze or get rid of pests, whatever.
-       Send(poOwner,@endfight,#lCombatants = plCombatants);
+       Send(poOwner,@EndFight,#lCombatants = plCombatants);
 
        %% Assume that everyone left in plCombatant is a winner.
 
@@ -767,12 +767,6 @@ messages:
             post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE);
             return FALSE;
          }
-         %%Rumble style cut due to insuficient test.
-         %if StringEqual(string,"rumble")
-         %{
-            %post(self,@ChooseCombat,#style = STYLE_LAST_MAN_STANDING);
-            %return FALSE;
-         %}
       }
       if send(self,@FightInSession)
       {

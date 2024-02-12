@@ -96,6 +96,8 @@ messages:
 
             % Stop the spell, use EVENT_STEER because we want it to break.
             Post(oCaster,@BreakTrance,#event=EVENT_STEER);
+
+            propagate;
          }
       }
 

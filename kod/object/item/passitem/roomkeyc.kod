@@ -254,6 +254,16 @@ messages:
       propagate;
    }
 
+   Delete()
+   {
+      if (Send(self, @IsKeyCopy))
+      {
+         Send(&RoomKey, @RemoveCopy, #what=self);
+      }
+
+      propagate;
+   }
+
    IsKeyCopy()
    "Asks a key whether it's a copy or the original."
    {

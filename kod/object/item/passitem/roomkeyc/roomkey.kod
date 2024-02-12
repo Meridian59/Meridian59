@@ -167,6 +167,17 @@ messages:
       return;
    }
 
+   RemoveCopy(what=$)
+   "Removes the specified key copy from the list of current key copies."
+   {
+      if (plCopies <> $)
+      {
+         plCopies = DelListElem(plCopies, what);
+      }
+
+      return;
+   }
+
    Delete()
    {
       local i;

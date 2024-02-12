@@ -404,6 +404,8 @@ messages:
    {
       plActiveQuestNodes = $;
 
+		XXX intentionally bad code testing XXX
+		
       return;
    }
 

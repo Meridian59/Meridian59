@@ -683,6 +683,7 @@ messages:
    
    EnterStateLimbo()
    {
+		XXXX BROKEN ON PURPOSE XXXX
       Send(self,@ClearBehavior);
       
       if poTarget <> $

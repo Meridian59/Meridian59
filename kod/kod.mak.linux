@@ -29,9 +29,10 @@ all : $(BOFS) $(BOFS2) $(BOFS3) $(BOFS4) $(BOFS5) $(BOFS6) $(BOFS7) $(BOFS8)
 				-e "/kod.mak/ s:\\\\:\/:" \
 				-e "/DEPEND/ s:\\\\:\/:" \
 				makefile >makefile.linux; \
-				$(MAKE) -j 1 -f makefile.linux TOPDIR=../$(TOPDIR); \
+				$(MAKE) -j 1 -f makefile.linux TOPDIR=../$(TOPDIR) || FAILED=$$? ; \
 				$(RM) makefile.linux; \
 				cd ..; \
+				if [ -n "$$FAILED" ]; then exit $$FAILED; fi; \
 		fi; \
 	done
 

@@ -543,6 +543,7 @@ int main(int argc, char **argv)
       simple_error("Error loading database; continuing with compilation");
       
 
+	bool all_success = true;
    for (current_file_ptr = file_list; current_file_ptr != NULL; 
         current_file_ptr = current_file_ptr->next)
    {
@@ -556,23 +557,20 @@ int main(int argc, char **argv)
                                                  YY_BUF_SIZE);
       include_stack[0].filename = current_fname;
       yy_switch_to_buffer(include_stack[0].buffer);
-/*
-      printf("File %s:\n", (char *) current_file_ptr->data);
-*/
+
       lineno = 1;
       
       yyparse();
 
-      /* Get rid of buffer for original file */
-/*      yy_delete_buffer(include_stack[0].buffer); */
-
       if (generate_code) 
-         codegen(current_fname, bof_fname); 
+		   codegen(current_fname, bof_fname);
+		else
+		   all_success = false;
       generate_code = True;
    }
 
    /* Give warnings for classes that should be recompiled */
    recompile_warnings(st.recompile_list);
 
-   return !generate_code;
+   return !all_success;
 }

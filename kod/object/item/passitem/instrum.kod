@@ -48,7 +48,7 @@ messages:
    NewUnused()
    {
       Send(poOwner,@RemoveOverlay,#what=self);
-
+      Send(poOwner,@BreakTrance,#event=EVENT_USE,#usewhat=self);
       propagate;
    }
 

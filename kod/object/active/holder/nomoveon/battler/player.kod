@@ -9905,8 +9905,8 @@ messages:
    BreakTrance(event = 0, castwhat = $, usewhat = $)
    "Sends a BreakTrance message to any trance-holding enchantments."
    "The event is the action causing the broken trance."
-   "If the event is the player casting a spell then castwhat is the ID for that spell."
-   "If the event is the player using an item than usewhat is the ID for that item."
+   "If the event is the player casting a spell then castwhat is that spell object."
+   "If the event is the player using an item than usewhat is that item object."
    {
       local i, oEnch,state, bFound, oYellNum, oYellRoom;
 

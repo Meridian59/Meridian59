@@ -64,7 +64,7 @@ messages:
    {
       local iState;
 
-      iState = iSpellPower + 50;
+      iState = iSpellPower / 10;
       Send(target,@GainLight,#amount=iState);
       
       return iState;

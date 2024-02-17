@@ -91,7 +91,7 @@ messages:
 
       % global effects of the enchantment
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=darkness_on,#what=self);
-      Send(oRoom,@RoomStartEnchantment,#what=self,#state=-(iSpellPower+25),
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=-(iSpellPower*2+25),
            #time=send(self,@GetDuration,#iSpellPower=iSpellPower));
       
       Send(oRoom,@AddBaseLight,#amount=-(iSpellPower+25));

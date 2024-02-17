@@ -70,7 +70,9 @@ messages:
                         [-20, -ATCK_SPELL_ACID ],
                         [-10, -ATCK_SPELL_FIRE ],
                         [-10, ATCK_WEAP_SLASH ],
-                        [-25, ATCK_WEAP_NERUDITE ] ];
+                        [-25, ATCK_WEAP_NERUDITE ],
+                        [-55, -ATCK_SPELL_UNHOLY ]
+                        ];
       propagate;
    }
 

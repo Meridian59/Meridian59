@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SpiritualHammer is Weapon
+VileAxe is Weapon
 
 constants:
 
@@ -16,38 +16,38 @@ constants:
 
 resources:
 
-   spirithammer_name_rsc = "spiritual hammer"
-   spirithammer_icon_rsc = hammer.bgf
-   spirithammer_desc_rsc = \
-      "Inherently having holy blessings, this hammer is even more powerful "
+   vileaxe_name_rsc = "vile axe"
+   vileaxe_icon_rsc = axe.bgf
+   vileaxe_desc_rsc = \
+      "Inherently having unholy blessings, this axe is even more powerful "
       "than the standard variation."
 
-   spirithammer_expires = "Your spiritual hammer disappears in a puff of smoke!"
+   vileaxe_expires = "Your vile axe disappears in a puff of foul spelling smoke!"
 
-   spirithammer_window_overlay_rsc = povhamr.bgf
-   spirithammer_player_overlay = hamrov.bgf
+   vileaxe_window_overlay_rsc = povaxe.bgf
+   vileaxe_player_overlay = axeov.bgf
 
 classvars:
-   vrName = spirithammer_name_rsc
-   vrIcon = spirithammer_icon_rsc
-   vrDesc = spirithammer_desc_rsc
+   vrName = vileaxe_name_rsc
+   vrIcon = vileaxe_icon_rsc
+   vrDesc = vileaxe_desc_rsc
 
-   % Spiritual Hammers are high quality bludgeoning weapons
-   viWeaponType = WEAPON_TYPE_BLUDGEON
+   % Vile Axes are high quality slashing weapons.
+   viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_HIGH
 
-   viProficiency_Needed = SKID_PROFICIENCY_HAMMER
+   viProficiency_Needed = SKID_PROFICIENCY_AXE
 
    viValue_average = 0
    % Light because it's magical.
-   viWeight = 15
-   viBulk = 60
+   viWeight = 17
+   viBulk = 72
 
    viHits_init_min = 350
    viHits_init_max = 400
 
-   vrWeapon_window_overlay = spirithammer_window_overlay_rsc
-   vrWeapon_overlay = spirithammer_player_overlay
+   vrWeapon_window_overlay = vileaxe_window_overlay_rsc
+   vrWeapon_overlay = vileaxe_player_overlay
 
    viGround_group = 1
    viInventory_group = 3
@@ -55,9 +55,9 @@ classvars:
 
 properties:
 
-   piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_BLUDGEON
+   piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_SLASH
    ptLongevity
-   piItem_flags = PT_GRAY_TO_ORANGE
+   piItem_flags = PT_GRAY_TO_DGREEN
 
    piHitBonus = 0
 
@@ -78,7 +78,7 @@ messages:
 
       ptLongevity = CreateTimer(self,@WeaponExpires,ilongevity);
  
-      send(self,@SetSpellFlag,#flag=ATCK_SPELL_HOLY,#value=TRUE);
+      send(self,@SetSpellFlag,#flag=ATCK_SPELL_UNHOLY,#value=TRUE);
 
       propagate;
    }
@@ -89,7 +89,7 @@ messages:
       
       if isclass(poOwner,&Player)
       {
-         send(poOwner,@MsgSendUser,#message_rsc=spirithammer_expires);
+         send(poOwner,@MsgSendUser,#message_rsc=vileaxe_expires);
       }
       
       send(self,@Delete);
@@ -110,7 +110,7 @@ messages:
 
    WeaponHitTarget()
    {
-      % Return here so that spiritual hammers don't get damaged.
+      % Return here so that vile axes don't get damaged.
       return;
    }
 

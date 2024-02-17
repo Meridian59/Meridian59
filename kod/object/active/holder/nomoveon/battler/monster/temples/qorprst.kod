@@ -109,7 +109,7 @@ messages:
       plFor_sale = [$,$,
         [ SID_DARKNESS, SID_DETECT_GOOD,
           SID_ACID_TOUCH, SID_KARAHOLS_CURSE, SID_UNHOLY_WEAPON,
-          SID_ENFEEBLE, SID_HOLD, SID_NODEBURST,
+          SID_ENFEEBLE, SID_HOLD, SID_NODEBURST, SID_VILE_AXE,
           SID_SWAP, SID_DEFILE, SID_INVISIBILITY, SID_CLOAK, SID_POISON_FOG,
           SID_PROFANE_RESONANCE],
        $ ];
@@ -120,6 +120,12 @@ messages:
    CanDoTeach(who=$,sid=0)
    {
       if sid = SID_SWAP
+         AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
+      {
+         return FALSE;
+      }
+
+      if sid = SID_VILE_AXE
          AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
@@ -191,6 +197,33 @@ messages:
          }
          
          return FALSE;
+      }
+
+      if num = SID_VILE_AXE
+      {   	    
+         bFound = FALSE;
+         for i in send(who,@GetSpellList) 
+         {	       
+  	         oSpell = send(SYS,@FindSpellByNum,#num=send(who,@decodespellnum,#compound=i)); 
+  	         if send(oSpell,@GetSchool) = SS_KRAANAN
+  	            AND send(oSpell,@GetLevel) > 2 
+  	         {
+  	            %% player has a high enough level spell in the required school, can learn the spell.
+  	            bFound = TRUE ;
+  	            break;
+            }  
+         }
+         
+	      %% player doesn't have a high enough level spell in the required school, denied
+         if NOT bFound
+         {	       	  
+            if report
+            { 		 
+	            post(self,@saytoone,#target=who,#message_rsc=shalpriestess_not_ready); 
+            }
+            
+  	         return FALSE;	       
+         }
       }
 
       propagate;

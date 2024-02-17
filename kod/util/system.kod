@@ -3037,6 +3037,8 @@ messages:
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
 
+      Send(self,@CreateOneSpellIfNew,#num=SID_VILE_AXE,#class=&CreateVileAxe);
+
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
 

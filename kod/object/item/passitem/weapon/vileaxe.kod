@@ -22,7 +22,7 @@ resources:
       "Inherently having unholy blessings, this axe is even more powerful "
       "than the standard variation."
 
-   vileaxe_expires = "Your vile axe disappears in a puff of foul spelling smoke!"
+   vileaxe_expires = "Your vile axe disappears in a puff of foul smelling smoke!"
 
    vileaxe_window_overlay_rsc = povaxe.bgf
    vileaxe_player_overlay = axeov.bgf

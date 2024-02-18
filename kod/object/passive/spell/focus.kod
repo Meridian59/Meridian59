@@ -107,11 +107,11 @@ messages:
       return;
    }
 
-   BreakTrance( who = $, state = $, event = 0, what = $ )
+   BreakTrance( who = $, state = $, event = 0, castwhat = $ )
    {
       %% Attack Spells (fireballs and lightning bolts) must not break this trance
       if event = EVENT_CAST
-         AND IsClass(what,&AttackSpell)
+         AND IsClass(castwhat,&AttackSpell)
       {
          return;
       }

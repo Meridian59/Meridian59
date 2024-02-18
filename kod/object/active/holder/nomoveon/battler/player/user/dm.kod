@@ -489,6 +489,19 @@ messages:
       return (piDMFlags & DMFLAG_HIDDEN);
    }
 
+   IsGreetable()
+   "Returns TRUE if a player should be greeted by NPCs. Used for arenas."
+   {
+      if NOT Send(self,@IsHidden)
+         AND NOT pbStealth
+         AND NOT Send(self,@IsDMStealthed)
+         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+         {
+            return TRUE;
+         }
+      return FALSE;
+   }
 
    CheckAdvancementPoints()
    {

@@ -108,13 +108,14 @@ messages:
       propagate;
    }
 
-   BreakTrance( who = $, state = $, event = $, what = $ )
+   BreakTrance( who = $, state = $, event = $, castwhat = $ )
    {
-      if event = EVENT_CAST AND what = self
+      if event = EVENT_CAST AND castwhat = self
       {
          propagate;
       }
       
+      % Delete the listener object.
       Send(nth(state,2),@Delete);
       Send(who,@RemoveEnchantment,#what=self,#state=state);
       

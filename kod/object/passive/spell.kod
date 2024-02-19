@@ -489,7 +489,7 @@ messages:
    CanCastHere(who = $, where = $, lTargets = $, iSpellPower = 0,
                bItemCast = FALSE, report = TRUE)
    {
-      local oSpell, lState, iJalaPower, oTarget, i;
+      local oSpell, lState, iJalaPower, oTarget, lJalaElement;
 
       if IsClass(who,&DM)
       {

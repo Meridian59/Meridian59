@@ -209,7 +209,7 @@ messages:
   	            AND send(oSpell,@GetLevel) > 2 
   	         {
   	            %% player has a high enough level spell in the required school, can learn the spell.
-  	            bFound = TRUE ;
+  	            bFound = TRUE;
   	            break;
             }  
          }

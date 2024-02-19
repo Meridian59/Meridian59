@@ -35,7 +35,7 @@ classvars:
    
    viSpell_num = SID_VILE_AXE
    viSchool = SS_QOR
-   viSpell_level = 3
+   viSpell_level = 4
    viMana = 15
    viSpellExertion = 5
    viCast_time = 5000

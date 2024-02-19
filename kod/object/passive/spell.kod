@@ -508,13 +508,13 @@ messages:
          if (Send(where,@IsEnchanted,#what=oSpell))
          {
             % The spell's spellpower is the third element of the state, which
-            %  is the third element of Jala info stored by room.
-            % first get the list of Jala spells in room and iterate over list
-            for i in Send(where,@GetJalaInfo)
+            % is the third element of Jala info element stored by room.
+            % Get the list of Jala spells in room and iterate over list
+            for lJalaElement in Send(where,@GetJalaInfo)
             {
-               if Nth(i,2) = oSpell
+               if Nth(lJalaElement,2) = oSpell
                {
-                  iJalaPower = Nth(Nth(i,3),3);
+                  iJalaPower = Nth(Nth(lJalaElement,3),3);
                }
             }
 

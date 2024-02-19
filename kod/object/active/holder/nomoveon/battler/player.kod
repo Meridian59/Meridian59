@@ -5510,7 +5510,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, i;
+      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, lJalaElement;
 
       if piMana > piMax_mana
       {
@@ -5533,12 +5533,12 @@ messages:
 
             if lJalaInfo <> $
             {
-               for i in lJalaInfo
+               for lJalaElement in lJalaInfo
                {
-                  oJalaSpell = Nth(i,2);
+                  oJalaSpell = Nth(lJalaInfo,2);
                   if IsClass(oJalaSpell,&Rejuvenate)
                   {
-                     iJalaPower = Nth(Nth(i,3),3);
+                     iJalaPower = Nth(Nth(lJalaInfo,3),3);
                      iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
                                  #iSpellPower=iJalaPower);
                   }

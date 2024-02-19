@@ -74,7 +74,7 @@ messages:
    }
 
 
-   CastSpell(who = $, lTargets = $,iSpellPower = $)
+   CastSpell(who = $, lTargets = $, iSpellPower = $)
    {
       local oVileAxe, iLongevity, iToHitBonus;
 

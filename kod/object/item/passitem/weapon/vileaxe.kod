@@ -63,7 +63,7 @@ properties:
 
 messages:
 
-   Constructor(ilongevity=$, iToHitBonus=$)
+   Constructor(ilongevity = $, iToHitBonus = $)
    {
       if ilongevity = $
       {

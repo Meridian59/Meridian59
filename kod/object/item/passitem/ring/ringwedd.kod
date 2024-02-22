@@ -86,27 +86,27 @@ messages:
 
       if what <> $ AND isClass(what,&Player)
       {
+
          if poFirstHeld = $
          {
             poFirstHeld = what;
-
-            propagate;
          }
          
-         if poSecondHeld = $
-         {
-            if what <> poFirstHeld
-            {
-               poSecondHeld = what;
-            }
-         }
          else
          {
-            if what = poFirstHeld
-               OR what = poSecondHeld
+            if poSecondHeld = $
             {
-               send(what,@AddDefenseModifier,#what=self);
+               if what <> poFirstHeld
+               {
+                  poSecondHeld = what;
+               }
             }
+         }
+
+         if what = poFirstHeld
+            OR what = poSecondHeld
+         {
+            send(what,@AddDefenseModifier,#what=self);
          }
       }
       

@@ -32,7 +32,7 @@ resources:
    torch_condition_exc = " is in pristine condition."
    torch_condition_exc_mended = " is in pristine condition, but has been repaired before."
    torch_condition_good = " is slightly burnt, but is otherwise in good condition."
-   torch_condition_med = " is charred and well-used, but still servicable."
+   torch_condition_med = " is charred and well-used, but still serviceable."
    torch_condition_poor = " is nearly exhausted and may not last much longer."
    torch_condition_broken = " is blackened and charred beyond use."
   

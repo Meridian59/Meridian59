@@ -628,7 +628,7 @@ void PlayMusicRsc(ID rsc)
 	  {
         if (!stricmp(LookupNameRsc(rsc), LookupNameRsc(bg_music)))
         {
-		  debug(("DEBUG 11 - Already playing that music.\n" ));
+		  debug(("DEBUG Already playing that music.\n" ));
         return;
         }
         /* Playing music is true, not paused, need new bg music */

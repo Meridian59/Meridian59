@@ -522,7 +522,7 @@ void UnpauseMusic(void)
    mciStatusParms.dwItem = MCI_STATUS_LENGTH;
    dwReturn = mciSendCommand(midi_bg_music_element, MCI_STATUS, 
                              MCI_STATUS_LENGTH, (DWORD_PTR)(LPVOID) &mciStatusParms);
-   if (dwReturn)
+   if (dwReturn == 0)
    {
       DWORD dwLength = mciStatusParms.dwReturn;
       if (music_pos > dwLength)

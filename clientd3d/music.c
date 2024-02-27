@@ -27,10 +27,16 @@ static Bool has_midi = False;    /* Can system play MIDI files? */
 
 static Bool playing_midi = False;  /* Is a MIDI file currently playing as an effect? */
 static Bool playing_music = False;  /* Is a MIDI file currently playing as background? */
+static Bool paused_music = False;   /* Is background music paused? */
+static Bool case_bg = False;   /* For loading midi files: which device to load to */
+static Bool badclosebool = False; /* When closing a midi and posting new 
+                     midi-music - did the close function error?*/
 
 static UINT midi_element;  /* Currently playing MIDI file ID */
+static UINT midi_bg_music_element;  /* Currently playing background music ID */
 
 static ID    bg_music = 0;     /* Resource id of background music MIDI file; 0 if none */
+static ID    latest_music = 0;   /* Resource id of most recent music file played - regardless of type */
 static DWORD music_pos = 0;    /* Current position in background music when paused */
 static DWORD time_format;      /* Time format of current music MIDI file */
 
@@ -132,6 +138,7 @@ void MusicClose(void)
 //	Not used by MSS version
 /*
  * OpenMidiFile:  Open midi file for playing.
+ *   If case_bg: Opens background music file; otherwise, opens jala music file.
  *   Returns 0 if successful; MCI error code otherwise.
  */
 DWORD OpenMidiFile(const char *lpszMIDIFileName)
@@ -146,22 +153,60 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName)
 
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
    debug(("music filename = %s\n", filename));
-
-   memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
-   mciOpenParms.lpstrDeviceType = "sequencer";
-   mciOpenParms.lpstrElementName = filename;
-   if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
+   // Is it a background music or jala music file?
+   if (case_bg)
+   {
+      if (playing_music != 0)
+      {
+         mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
+      }
+      memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
+      mciOpenParms.lpstrDeviceType = "sequencer";
+      mciOpenParms.lpstrElementName = filename;
+      debug(("Loading background music into memory \n"));
+      if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
                                  (DWORD_PTR)(LPVOID) &mciOpenParms)) 
-      return dwReturn;
-
-   midi_element = mciOpenParms.wDeviceID;
-   debug(("midi element = %d\n", midi_element));
-   return 0;
+         return dwReturn;
+      // Save element ID and set flag
+      midi_bg_music_element = mciOpenParms.wDeviceID;
+      playing_music = 1;
+      debug(("midi background element = %d\n", midi_bg_music_element));
+      return 0;
+   }
+   else
+   {
+      if (playing_midi != 0)
+      {
+         mciSendCommand(midi_element, MCI_STOP, 0, 0);
+         if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
+         {
+            // Just debug don't return
+            debug(("Midi Element - mciClose problem\n"));
+         }
+      }
+      memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
+      mciOpenParms.lpstrDeviceType = "sequencer";
+      mciOpenParms.lpstrElementName = filename;
+      debug(("Loading Jala song into memory \n"));
+      if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
+                                 (DWORD_PTR)(LPVOID) &mciOpenParms))
+      { 
+         debug(("can't open MCI OPEN new midi for jala \n"));
+         return dwReturn;
+      }
+      // Save element ID and set flag
+      midi_element = mciOpenParms.wDeviceID;
+      playing_midi = 1;
+      debug(("midi element = %d\n", midi_element));
+      return 0;
+   }
 }
 /******************************************************************************/
 /*
  * PlayMidiFile:  Play given MIDI file and notify given window when done.
  *   Returns 0 if successful, MCI error code otherwise.
+ *   Only used by Jala music files - never background music 
+ *   even if it is a midi file.
  */
 DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 {
@@ -225,10 +270,12 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
    {
       DWORD dwReturn;
       MCI_PLAY_PARMS mciPlayParms;
+      case_bg = False;
 
       if ((dwReturn = OpenMidiFile(fname)) != 0)
       {
-        return dwReturn;
+         debug(("OpenMidiFile error - can't open \n"));
+         return dwReturn;
       }
 
       /*
@@ -237,10 +284,13 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
        * MM_MCINOTIFY message when playback is complete.
        * The window procedure then closes the device.
        */
+      memset(&mciPlayParms, 0, sizeof(MCI_PLAY_PARMS));
+
       mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
       if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
                                     MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
       {
+         debug(("Midi Element - mciPlay problem\n"));
          mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
          return dwReturn;
       }
@@ -264,7 +314,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 
 #ifdef M59_MSS
 	// If a sequence was paused, resume it
-	if (music_pos != 0)
+	if (paused_music)
 	{
 		UnpauseMusic();
 		return 0;
@@ -321,18 +371,23 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    DWORD dwReturn;
    MCI_PLAY_PARMS mciPlayParms;
    char temp[81];
+   case_bg = True;
+
+   // If already playing music, pick up where we left off
+   if (paused_music)
+   {
+      UnpauseMusic();
+      return 0;
+   }
 
    if ((dwReturn = OpenMidiFile(fname)) != 0)
      {
        debug(("OpenMidiFile error code = %d\n", dwReturn));
        mciGetErrorString(dwReturn, temp, 80);
+       strcat(temp, " \n");
        debug((temp));
        return dwReturn;
      }
-
-   /* If already playing music, pick up where we left off */
-   if (music_pos != 0)
-      UnpauseMusic();
 
    /*
     * Begin playback. The window procedure function
@@ -341,18 +396,19 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
     * The window procedure then closes the device.
     */
    mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
-   if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
+   if (dwReturn = mciSendCommand(midi_bg_music_element, MCI_PLAY,
                                  MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
    {
       mciGetErrorString(dwReturn, temp, 80);
+      strcat(temp, " \n");
       debug((temp));
       
-      mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
+      mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
       
       return dwReturn;
    }
 
-   debug(("Playing music file, element = %d\n", midi_element));
+   debug(("Playing music file, element = %d\n", midi_bg_music_element));
    playing_music = True;
    return 0;
 #endif
@@ -377,41 +433,46 @@ DWORD RestartMidiFile(DWORD device)
       mciSendCommand(device, MCI_CLOSE, 0, 0);
       
    }
+   debug(("Restarting MIDI file, element = %d\n", midi_element));
    return dwReturn;
 }
 /******************************************************************************/
 /* 
  * PauseMusic:  Store current position of background music.  Assumes that
  *   music is playing on MIDI device.
+ *   Only room background music can be paused.
  */
 void PauseMusic(void)
 {
-#ifdef M59_MSS
    if (!has_midi)
       return;
+
+#ifdef M59_MSS
 
 	if( AIL_sample_status( hseqBackground ) == SMP_PLAYING )
 		AIL_stop_sample( hseqBackground );
 	// indicate we are paused
-	music_pos = 1;
+	paused_music = True;
 	debug(( "Pausing music.\n" ));
 #else
    MCI_STATUS_PARMS mciStatusParms;
 
-   if (!has_midi)
-      return;
-
    mciStatusParms.dwItem = MCI_STATUS_POSITION;
-   mciSendCommand(midi_element, MCI_STATUS, 
+   mciSendCommand(midi_bg_music_element, MCI_STATUS, 
                   MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    music_pos = mciStatusParms.dwReturn;
 
    /* Get time format */
    mciStatusParms.dwItem = MCI_STATUS_TIME_FORMAT;
-   mciSendCommand(midi_element, MCI_STATUS, 
+   mciSendCommand(midi_bg_music_element, MCI_STATUS, 
                   MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    time_format = mciStatusParms.dwReturn;
 
+   // Pause the music!
+   MCI_GENERIC_PARMS mciPauseParms;
+   mciSendCommand(midi_bg_music_element, MCI_PAUSE, 0, (DWORD_PTR)(LPVOID) &mciPauseParms);
+
+   paused_music = True;
    debug(("Pausing, position = %ld\n", music_pos));
 #endif
 }
@@ -419,67 +480,110 @@ void PauseMusic(void)
 /*
  * UnpauseMusic:  Restore saved position of background music.
  *   Assumes that background music has been restarted.
+ *   Only room background music can be unpaused.
  */
 void UnpauseMusic(void)
 {
-#ifdef M59_MSS
+   char temp[81];
    if (!has_midi)
       return;
+#ifdef M59_MSS
 
-	if (music_pos)
+	if (paused_music)
 		AIL_resume_sample(hseqBackground);
 	else
 		AIL_start_sample(hseqBackground);
 	debug(( "Unpausing music.\n" ));
 #else
+   DWORD dwReturn;
+   MCI_PLAY_PARMS mciPlayParms;
    MCI_SEEK_PARMS mciSeekParms;
    MCI_SET_PARMS  mciSetParms;
 
-   if (!has_midi)
-      return;
-
    /* Set time format */
    mciSetParms.dwTimeFormat = time_format;
-   mciSendCommand(midi_element, MCI_SET,
+   mciSendCommand(midi_bg_music_element, MCI_SET,
                   MCI_SET_TIME_FORMAT, (DWORD_PTR)(LPVOID) &mciSetParms);
 
    mciSeekParms.dwTo = music_pos;
-   mciSendCommand(midi_element, MCI_SEEK,
+   mciSendCommand(midi_bg_music_element, MCI_SEEK,
                   MCI_TO, (DWORD_PTR)(LPVOID) &mciSeekParms);
+   // Unpause the music!
+   mciPlayParms.dwFrom = music_pos;
+   debug(("Music Position:%ld\n", music_pos));
+
+   if (playing_midi)
+   {
+      /* Stop the Jala Song first! */
+      debug(("Unpausing, stopping MIDI\n"));
+      mciSendCommand(midi_element, MCI_STOP, 0, 0);
+      if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
+      {
+         debug(("mciClose problem for Jala music\n"));
+         mciGetErrorString(dwReturn, temp, 80);
+         strcat(temp, " \n");
+         debug((temp));
+      }
+      playing_midi = False;
+   }
+
+   paused_music = False;
+   mciSendCommand(midi_bg_music_element, MCI_PLAY, MCI_FROM, (DWORD_PTR)(LPVOID) &mciPlayParms);
+
    debug(("Unpausing to  position = %ld\n", music_pos));
 #endif
 }
 /******************************************************************************/
 /*
  * PlayMidiRsc:  Play MIDI file associated with given resource number.
+ *
+ * This function handles pausing or stopping music and midi files and
+ * the posts a message which is handled and sends us to NewMusic.
  */
 void PlayMidiRsc(ID rsc)
 {
    debug(("PlayMidiRsc %d\n", rsc));
+   DWORD dwReturn;
+   // Save the rsc as latest_music in case our music is off in the config
+   // This way if we toggle it on we have the correct rsc to play.
+   latest_music = rsc;
 
    if (!config.play_music || !has_midi)      
       return;
-
-   if (playing_music)
+   // playing_music is still true when we are paused 
+   // so check both status before pausing
+   if (playing_music && !paused_music)
    {
       PauseMusic();
-      playing_midi = True;  /* Don't let music start */
 #ifndef M59_MSS
+      // Kill the current Midi then POST - NewMusic type = midi.
       mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
+      playing_midi = False;
 #endif
       PostMessage(hMain, BK_NEWSOUND, SOUND_MIDI, rsc);
       return;
    }
 
 #ifndef M59_MSS
-   /* If sound is already going, stop it and prepare to start new one */
+   /* If NOT playing music and IF playing midi...*/
+   /* Stop the midi and prepare to restart a new one. */
    if (playing_midi)
    {
-      mciSendCommand(midi_element, MCI_CLOSE, 0, 0); 
+      if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
+      {
+         debug(("mciClose problem for Jala music\n"));
+         badclosebool = True;
+      }
+      if (!badclosebool)
+      {
+         playing_midi = False;
+      }
+
       PostMessage(hMain, BK_NEWSOUND, SOUND_MIDI, rsc);
       return;
    }
 #endif
+   // If NOT playing music and NOT playing midi just call NewMusic.
    NewMusic(SOUND_MIDI, rsc);
 }
 /******************************************************************************/
@@ -492,43 +596,47 @@ void PlayMusicRsc(ID rsc)
    debug(("PlayMusicRsc %d\n", rsc));
 
    /* If we're already playing same music file, keep jammin' */
-   if (playing_music)
+   if (playing_music && !paused_music)
    { 
-      if (rsc != 0 && bg_music != 0 && 
-          !stricmp(LookupNameRsc(rsc), LookupNameRsc(bg_music)))
+      if (rsc != 0 && bg_music != 0) 
 	  {
-		  debug(("Already playing that music.\n" ));
+        if (!stricmp(LookupNameRsc(rsc), LookupNameRsc(bg_music)))
+        {
+		  debug(("DEBUG 11 - Already playing that music.\n" ));
         return;
+        }
+        /* Playing music is true, not paused, need new bg music */
+        /* so kill the current background music before continuing. */
+        #ifdef M59_MSS
+			   AIL_end_sample( hseqBackground );
+        #else
+			   mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
+         #endif
 	  }
 	}
-   
-   MusicAbort();
-
+   // Save the rsc as latest_music in case our music is off in the config
+   latest_music = rsc;
+   // Save the rsc as bg_music in case we need to pause and resume.
    bg_music = rsc;
 
    if (!config.play_music || !has_midi || rsc == 0)
       return;
 
-   playing_music = True;
-   music_pos = 0;
-
-#ifndef M59_MSS
-   /* If sound is already going, wait for it to end */
-   if (playing_midi)
-      return;
-#endif   
    NewMusic(SOUND_MUSIC, rsc);
 }
 /******************************************************************************/
 /*
  * NewMusic:  Start playing new music.  type gives type of sound (MIDI, 
  *   music).  rsc gives resource id of file.
+ * Here we convert the rsc to a filename and send a message to
+ * either PlayMusicFile or PlayMidiFile depending on the type.
  */
 void NewMusic(WPARAM type, ID rsc)
 {
    char *filename, fname[MAX_PATH + FILENAME_MAX];
-   
+   debug(("NewMusic Call \n"));
 	// NULL rsc => abort midi in progress
+   // This is vestigial but could be used by KOD to stop music.
 	if( !rsc )
 	{
 		if( ( type == SOUND_MIDI ) && ( playing_midi ) )
@@ -559,8 +667,12 @@ void NewMusic(WPARAM type, ID rsc)
    sprintf(fname, "%s\\%.*s", music_dir, FILENAME_MAX, filename);
 
    switch (type)
-   {
+  {
    case SOUND_MIDI:
+      if (playing_music && !paused_music)
+      {
+         PauseMusic();
+      }
       PlayMidiFile(hMain, fname);
 #ifndef M59_MSS
       debug(("NewMusic MIDI, element = %d\n", midi_element));
@@ -570,7 +682,7 @@ void NewMusic(WPARAM type, ID rsc)
    case SOUND_MUSIC:
       PlayMusicFile(hMain, fname);
 #ifndef M59_MSS
-      debug(("NewMusic music, element = %d\n", midi_element));
+      debug(("NewMusic music, element = %d\n", midi_bg_music_element));
 #endif
       break;
    }
@@ -596,24 +708,18 @@ void AILCALLBACK MIDIDoneCallback(HSAMPLE S)
  */
 void MusicDone(UINT device)
 {
+   /* Loop Jala song */
    if (playing_midi && device == midi_element)
    {
-      playing_midi = False;
-      mciSendCommand(midi_element, MCI_CLOSE, 0, 0);   
-
-      debug(("Stopping MIDI device %d\n", device));
-
-      /* Restart background music if appropriate */
-      if (playing_music)
-         PostMessage(hMain, BK_NEWSOUND, SOUND_MUSIC, bg_music);
+      RestartMidiFile(midi_element);
       return;
    }
 
    /* Loop background music */
-   if (playing_music && device == midi_element)
+   if (playing_music && device == midi_bg_music_element)
    {
-      debug(("Stopping Music device %d\n", device));
-      RestartMidiFile(midi_element);
+      debug(("Looping Music device %d\n", device));
+      RestartMidiFile(midi_bg_music_element);
       return;
    }
 }
@@ -634,11 +740,12 @@ void MusicAbort(void)
 	   AIL_end_sample(hseqImmediate);
 #else
       mciSendCommand(MCI_ALL_DEVICE_ID, MCI_CLOSE, 0, 0);
+      // Kill music and reset flags
+      playing_midi = False;
+      playing_music = False;
+      paused_music = False;
 #endif
    }
-
-   playing_music = False;
-   music_pos = 0;
 }
 /******************************************************************************/
 /*
@@ -647,7 +754,16 @@ void MusicAbort(void)
 void MusicStart(void)
 {
    if (state == STATE_GAME)
-      PlayMusicRsc(bg_music);
+   {
+      if (latest_music != bg_music){
+         PlayMusicRsc(latest_music);
+      }
+      else
+      {
+         case_bg = True;
+         PlayMusicRsc(bg_music);
+      }
+   }
 }
 /******************************************************************************/
 /*

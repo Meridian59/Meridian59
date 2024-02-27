@@ -389,6 +389,17 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
        return dwReturn;
      }
 
+   if (playing_midi)
+   {
+      // We're trying to play BG music, but Midi music is still playging.
+      // This can happen if we toggle music off and on
+      // with an active Jala spell.
+      mciSendCommand(midi_element, MCI_STOP, 0, 0);
+      mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
+      // No need to return - try to close
+      // If we can't close try to play BG music.
+      playing_midi = False;
+   }
    /*
     * Begin playback. The window procedure function
     * for the parent window is notified with an
@@ -423,17 +434,17 @@ DWORD RestartMidiFile(DWORD device)
    DWORD dwReturn;
    MCI_PLAY_PARMS mciPlayParms;
 
-   dwReturn = mciSendCommand(midi_element, MCI_SEEK,
+   dwReturn = mciSendCommand(device, MCI_SEEK,
                              MCI_SEEK_TO_START, (DWORD_PTR)(LPVOID) NULL);
    
    mciPlayParms.dwCallback = (DWORD_PTR) hMain;
    mciPlayParms.dwFrom = 0;
-   if (dwReturn = mciSendCommand(midi_element, MCI_PLAY,
+   if (dwReturn = mciSendCommand(device, MCI_PLAY,
                                  MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) {
       mciSendCommand(device, MCI_CLOSE, 0, 0);
       
    }
-   debug(("Restarting MIDI file, element = %d\n", midi_element));
+   debug(("Restarting MIDI file, element = %d\n", device));
    return dwReturn;
 }
 /******************************************************************************/
@@ -499,12 +510,27 @@ void UnpauseMusic(void)
    MCI_PLAY_PARMS mciPlayParms;
    MCI_SEEK_PARMS mciSeekParms;
    MCI_SET_PARMS  mciSetParms;
+   MCI_STATUS_PARMS mciStatusParms;
 
    /* Set time format */
    mciSetParms.dwTimeFormat = time_format;
    mciSendCommand(midi_bg_music_element, MCI_SET,
                   MCI_SET_TIME_FORMAT, (DWORD_PTR)(LPVOID) &mciSetParms);
 
+   // Check to make sure the position we found is valid
+   memset(&mciStatusParms, 0, sizeof(MCI_STATUS_PARMS));
+   mciStatusParms.dwItem = MCI_STATUS_LENGTH;
+   dwReturn = mciSendCommand(midi_bg_music_element, MCI_STATUS, 
+                             MCI_STATUS_LENGTH, (DWORD_PTR)(LPVOID) &mciStatusParms);
+   if (dwReturn)
+   {
+      DWORD dwLength = mciStatusParms.dwReturn;
+      if (music_pos > dwLength)
+      {
+         debug(("Music position is greater than length, setting to 0\n"));
+         music_pos = 0;
+      }
+   }
    mciSeekParms.dwTo = music_pos;
    mciSendCommand(midi_bg_music_element, MCI_SEEK,
                   MCI_TO, (DWORD_PTR)(LPVOID) &mciSeekParms);
@@ -528,7 +554,7 @@ void UnpauseMusic(void)
    }
 
    paused_music = False;
-   mciSendCommand(midi_bg_music_element, MCI_PLAY, MCI_FROM, (DWORD_PTR)(LPVOID) &mciPlayParms);
+   mciSendCommand(midi_bg_music_element, MCI_PLAY, MCI_FROM | MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms);
 
    debug(("Unpausing to  position = %ld\n", music_pos));
 #endif
@@ -663,7 +689,8 @@ void NewMusic(WPARAM type, ID rsc)
 
 	if( (filename = LookupNameRsc(rsc)) == NULL )
 		return;
-
+   // Sometimes we get here via POST and may need to resave latest_music variable.
+   latest_music = rsc;
    sprintf(fname, "%s\\%.*s", music_dir, FILENAME_MAX, filename);
 
    switch (type)
@@ -696,7 +723,7 @@ void NewMusic(WPARAM type, ID rsc)
 void AILCALLBACK MIDIDoneCallback(HSAMPLE S)
 {
 	debug(( "At callback...\n" ));
-	if (playing_music)
+	if (playing_music && paused_music)
 		UnpauseMusic();
 }
 #else
@@ -744,6 +771,7 @@ void MusicAbort(void)
       playing_midi = False;
       playing_music = False;
       paused_music = False;
+      case_bg = False;
 #endif
    }
 }
@@ -756,12 +784,12 @@ void MusicStart(void)
    if (state == STATE_GAME)
    {
       if (latest_music != bg_music){
-         PlayMusicRsc(latest_music);
+         PlayMidiRsc(latest_music);
       }
       else
       {
          case_bg = True;
-         PlayMusicRsc(bg_music);
+         PlayMusicRsc(latest_music);
       }
    }
 }

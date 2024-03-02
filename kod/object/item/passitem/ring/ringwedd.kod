@@ -115,8 +115,8 @@ messages:
 
    NewUnused(what = $)
    {
-      if what = poFirstHeld
-         OR what = poSecondHeld
+      if (what = poFirstHeld OR what = poSecondHeld)
+         AND poSecondHeld <> $
       {
          Send(what,@RemoveDefenseModifier,#what=self);
       }

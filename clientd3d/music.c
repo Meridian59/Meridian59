@@ -28,9 +28,6 @@ static Bool has_midi = False;    /* Can system play MIDI files? */
 static Bool playing_midi = False;  /* Is a MIDI file currently playing as an effect? */
 static Bool playing_music = False;  /* Is a MIDI file currently playing as background? */
 static Bool paused_music = False;   /* Is background music paused? */
-static Bool case_bg = False;   /* For loading midi files: which device to load to */
-static Bool badclosebool = False; /* When closing a midi and posting new 
-                     midi-music - did the close function error?*/
 
 static UINT midi_element;  /* Currently playing MIDI file ID */
 static UINT midi_bg_music_element;  /* Currently playing background music ID */
@@ -138,10 +135,11 @@ void MusicClose(void)
 //	Not used by MSS version
 /*
  * OpenMidiFile:  Open midi file for playing.
- *   If case_bg: Opens background music file; otherwise, opens jala music file.
+ *   For background room music opens midi_bg_music_element device.
+ *   For any other music (jala) opens midi_element device.
  *   Returns 0 if successful; MCI error code otherwise.
  */
-DWORD OpenMidiFile(const char *lpszMIDIFileName)
+DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
 {
    DWORD dwReturn;
    MCI_OPEN_PARMS mciOpenParms;
@@ -154,26 +152,14 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName)
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
    debug(("music filename = %s\n", filename));
    // Is it a background music or jala music file?
-   if (case_bg)
+   if (device == midi_bg_music_element)
    {
       if (playing_music != 0)
       {
          mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
       }
-      memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
-      mciOpenParms.lpstrDeviceType = "sequencer";
-      mciOpenParms.lpstrElementName = filename;
-      debug(("Loading background music into memory \n"));
-      if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
-                                 (DWORD_PTR)(LPVOID) &mciOpenParms)) 
-         return dwReturn;
-      // Save element ID and set flag
-      midi_bg_music_element = mciOpenParms.wDeviceID;
-      playing_music = 1;
-      debug(("midi background element = %d\n", midi_bg_music_element));
-      return 0;
    }
-   else
+   else if (device == midi_element)
    {
       if (playing_midi != 0)
       {
@@ -184,22 +170,31 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName)
             debug(("Midi Element - mciClose problem\n"));
          }
       }
-      memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
-      mciOpenParms.lpstrDeviceType = "sequencer";
-      mciOpenParms.lpstrElementName = filename;
-      debug(("Loading Jala song into memory \n"));
-      if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
-                                 (DWORD_PTR)(LPVOID) &mciOpenParms))
-      { 
-         debug(("can't open MCI OPEN new midi for jala \n"));
-         return dwReturn;
-      }
-      // Save element ID and set flag
+   }
+   memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
+   mciOpenParms.lpstrDeviceType = "sequencer";
+   mciOpenParms.lpstrElementName = filename;
+   debug(("Loading song into memory \n"));
+   if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
+                              (DWORD_PTR)(LPVOID) &mciOpenParms))
+   { 
+      debug(("can't MCI open new song \n"));
+      return dwReturn;
+   }
+   // Save element ID and set flag
+   if (device == midi_bg_music_element)
+   {
+      midi_bg_music_element = mciOpenParms.wDeviceID;
+      playing_music = 1;
+      debug(("midi_bg_music_element = %d\n", midi_bg_music_element));
+   }
+   else
+   {
       midi_element = mciOpenParms.wDeviceID;
       playing_midi = 1;
       debug(("midi element = %d\n", midi_element));
-      return 0;
    }
+   return 0;
 }
 /******************************************************************************/
 /*
@@ -270,9 +265,8 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
    {
       DWORD dwReturn;
       MCI_PLAY_PARMS mciPlayParms;
-      case_bg = False;
 
-      if ((dwReturn = OpenMidiFile(fname)) != 0)
+      if ((dwReturn = OpenMidiFile(fname, midi_element)) != 0)
       {
          debug(("OpenMidiFile error - can't open \n"));
          return dwReturn;
@@ -371,7 +365,6 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    DWORD dwReturn;
    MCI_PLAY_PARMS mciPlayParms;
    char temp[81];
-   case_bg = True;
 
    // If already playing music, pick up where we left off
    if (paused_music)
@@ -380,7 +373,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
       return 0;
    }
 
-   if ((dwReturn = OpenMidiFile(fname)) != 0)
+   if ((dwReturn = OpenMidiFile(fname, midi_bg_music_element)) != 0)
      {
        debug(("OpenMidiFile error code = %d\n", dwReturn));
        mciGetErrorString(dwReturn, temp, 80);
@@ -550,7 +543,10 @@ void UnpauseMusic(void)
          strcat(temp, " \n");
          debug((temp));
       }
-      playing_midi = False;
+      else
+      {
+         playing_midi = False;
+      }
    }
 
    paused_music = False;
@@ -598,9 +594,8 @@ void PlayMidiRsc(ID rsc)
       if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
       {
          debug(("mciClose problem for Jala music\n"));
-         badclosebool = True;
       }
-      if (!badclosebool)
+      else
       {
          playing_midi = False;
       }
@@ -771,7 +766,6 @@ void MusicAbort(void)
       playing_midi = False;
       playing_music = False;
       paused_music = False;
-      case_bg = False;
 #endif
    }
 }
@@ -783,13 +777,13 @@ void MusicStart(void)
 {
    if (state == STATE_GAME)
    {
-      if (latest_music != bg_music){
-         PlayMidiRsc(latest_music);
+      if (latest_music == bg_music)
+      {
+         PlayMusicRsc(latest_music);
       }
       else
       {
-         case_bg = True;
-         PlayMusicRsc(latest_music);
+         PlayMidiRsc(latest_music);
       }
    }
 }

@@ -301,7 +301,7 @@ messages:
 
       Send(oCaster,@ClearTranceFlag);
       % Send to room: restart the background music.
-      Post(oRoom,@RestartMusicAfterJala);
+      Post(oRoom,@RestartRoomBackgroundMusic);
       
       return;
    }

@@ -673,7 +673,7 @@ void NewMusic(WPARAM type, ID rsc)
 #ifdef M59_MSS
 			AIL_end_sample( hseqBackground );
 #else
-			mciSendCommand(midi_element, MCI_CLOSE, 0, 0); 
+			mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
 #endif
 			playing_music = False;
 			return;

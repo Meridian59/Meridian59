@@ -384,7 +384,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 
    if (playing_midi)
    {
-      // We're trying to play BG music, but Midi music is still playging.
+      // We're trying to play BG music, but Midi music is still playing.
       // This can happen if we toggle music off and on
       // with an active Jala spell.
       mciSendCommand(midi_element, MCI_STOP, 0, 0);
@@ -655,9 +655,8 @@ void PlayMusicRsc(ID rsc)
 void NewMusic(WPARAM type, ID rsc)
 {
    char *filename, fname[MAX_PATH + FILENAME_MAX];
-   debug(("NewMusic Call \n"));
 	// NULL rsc => abort midi in progress
-   // This is vestigial but could be used by KOD to stop music.
+   // This may be vestigial but can be used by KOD to stop music.
 	if( !rsc )
 	{
 		if( ( type == SOUND_MIDI ) && ( playing_midi ) )

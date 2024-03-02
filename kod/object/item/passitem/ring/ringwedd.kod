@@ -103,8 +103,8 @@ messages:
             }
          }
 
-         if what = poFirstHeld
-            OR what = poSecondHeld
+         if (what = poFirstHeld OR what = poSecondHeld)
+            AND poSecondHeld <> $
          {
             send(what,@AddDefenseModifier,#what=self);
          }

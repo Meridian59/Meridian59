@@ -488,7 +488,6 @@ void PauseMusic(void)
  */
 void UnpauseMusic(void)
 {
-   char temp[81];
    if (!has_midi)
       return;
 #ifdef M59_MSS
@@ -500,6 +499,7 @@ void UnpauseMusic(void)
 	debug(( "Unpausing music.\n" ));
 #else
    DWORD dwReturn;
+   char temp[81];
    MCI_PLAY_PARMS mciPlayParms;
    MCI_SEEK_PARMS mciSeekParms;
    MCI_SET_PARMS  mciSetParms;
@@ -565,7 +565,6 @@ void UnpauseMusic(void)
 void PlayMidiRsc(ID rsc)
 {
    debug(("PlayMidiRsc %d\n", rsc));
-   DWORD dwReturn;
    // Save the rsc as latest_music in case our music is off in the config
    // This way if we toggle it on we have the correct rsc to play.
    latest_music = rsc;
@@ -587,6 +586,7 @@ void PlayMidiRsc(ID rsc)
    }
 
 #ifndef M59_MSS
+   DWORD dwReturn;
    /* If NOT playing music and IF playing midi...*/
    /* Stop the midi and prepare to restart a new one. */
    if (playing_midi)

@@ -27,13 +27,14 @@ static Bool has_midi = False;    /* Can system play MIDI files? */
 
 static Bool playing_midi = False;  /* Is a MIDI file currently playing as an effect? */
 static Bool playing_music = False;  /* Is a MIDI file currently playing as background? */
-static Bool paused_music = False;   /* Is background music paused? */
+static Bool isMusicPaused = False;   /* Is background music paused? */
 
 static UINT midi_element;  /* Currently playing MIDI file ID */
 static UINT midi_bg_music_element;  /* Currently playing background music ID */
 
 static ID    bg_music = 0;     /* Resource id of background music MIDI file; 0 if none */
 static ID    latest_music = 0;   /* Resource id of most recent music file played - regardless of type */
+static ID    paused_music = 0;   /* Resource id of the paused music file */
 static DWORD music_pos = 0;    /* Current position in background music when paused */
 static DWORD time_format;      /* Time format of current music MIDI file */
 
@@ -308,7 +309,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 
 #ifdef M59_MSS
 	// If a sequence was paused, resume it
-	if (paused_music)
+	if (isMusicPaused)
 	{
 		UnpauseMusic();
 		return 0;
@@ -367,7 +368,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    char temp[81];
 
    // If already playing music, pick up where we left off
-   if (paused_music)
+   if (isMusicPaused)
    {
       UnpauseMusic();
       return 0;
@@ -456,7 +457,7 @@ void PauseMusic(void)
 	if( AIL_sample_status( hseqBackground ) == SMP_PLAYING )
 		AIL_stop_sample( hseqBackground );
 	// indicate we are paused
-	paused_music = True;
+	isMusicPaused = True;
 	debug(( "Pausing music.\n" ));
 #else
    MCI_STATUS_PARMS mciStatusParms;
@@ -476,7 +477,7 @@ void PauseMusic(void)
    MCI_GENERIC_PARMS mciPauseParms;
    mciSendCommand(midi_bg_music_element, MCI_PAUSE, 0, (DWORD_PTR)(LPVOID) &mciPauseParms);
 
-   paused_music = True;
+   isMusicPaused = True;
    debug(("Pausing, position = %ld\n", music_pos));
 #endif
 }
@@ -492,7 +493,7 @@ void UnpauseMusic(void)
       return;
 #ifdef M59_MSS
 
-	if (paused_music)
+	if (isMusicPaused)
 		AIL_resume_sample(hseqBackground);
 	else
 		AIL_start_sample(hseqBackground);
@@ -549,7 +550,7 @@ void UnpauseMusic(void)
       }
    }
 
-   paused_music = False;
+   isMusicPaused = False;
    mciSendCommand(midi_bg_music_element, MCI_PLAY, MCI_FROM | MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms);
 
    debug(("Unpausing to  position = %ld\n", music_pos));
@@ -573,8 +574,9 @@ void PlayMidiRsc(ID rsc)
       return;
    // playing_music is still true when we are paused 
    // so check both status before pausing
-   if (playing_music && !paused_music)
+   if (playing_music && !isMusicPaused)
    {
+      paused_music = rsc;
       PauseMusic();
 #ifndef M59_MSS
       // Kill the current Midi then POST - NewMusic type = midi.
@@ -617,7 +619,7 @@ void PlayMusicRsc(ID rsc)
    debug(("PlayMusicRsc %d\n", rsc));
 
    /* If we're already playing same music file, keep jammin' */
-   if (playing_music && !paused_music)
+   if (playing_music && !isMusicPaused)
    { 
       if (rsc != 0 && bg_music != 0) 
 	  {
@@ -690,8 +692,9 @@ void NewMusic(WPARAM type, ID rsc)
    switch (type)
   {
    case SOUND_MIDI:
-      if (playing_music && !paused_music)
+      if (playing_music && !isMusicPaused)
       {
+         paused_music = rsc;
          PauseMusic();
       }
       PlayMidiFile(hMain, fname);
@@ -717,7 +720,7 @@ void NewMusic(WPARAM type, ID rsc)
 void AILCALLBACK MIDIDoneCallback(HSAMPLE S)
 {
 	debug(( "At callback...\n" ));
-	if (playing_music && paused_music)
+	if (playing_music && isMusicPaused)
 		UnpauseMusic();
 }
 #else
@@ -764,7 +767,7 @@ void MusicAbort(void)
       // Kill music and reset flags
       playing_midi = False;
       playing_music = False;
-      paused_music = False;
+      isMusicPaused = False;
 #endif
    }
 }

@@ -492,11 +492,23 @@ void UnpauseMusic(void)
    if (!has_midi)
       return;
 #ifdef M59_MSS
-
+   if (playing_midi)
+   {
+      AIL_end_sample(hseqImmediate);
+      playing_midi = False;
+   }
 	if (isMusicPaused)
+   {
 		AIL_resume_sample(hseqBackground);
-	else
+      isMusicPaused = False;
+   }
+   // We are trying to unpause music but its not paused
+   // If needed we can restart the music
+   // but only if we are not playing a new midi song.
+	else if (!playing_midi)
+   {
 		AIL_start_sample(hseqBackground);
+   }
 	debug(( "Unpausing music.\n" ));
 #else
    DWORD dwReturn;

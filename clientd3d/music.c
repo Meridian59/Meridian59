@@ -492,6 +492,7 @@ void UnpauseMusic(void)
    if (!has_midi)
       return;
 #ifdef M59_MSS
+
 	if (isMusicPaused)
 		AIL_resume_sample(hseqBackground);
 	else
@@ -630,7 +631,6 @@ void PlayMusicRsc(ID rsc)
         /* Playing music is true, not paused, need new bg music */
         /* so kill the current background music before continuing. */
         #ifdef M59_MSS
-            debug(("DEBUG AIL_end_sample( hseqBackground )\n" ));
 			   AIL_end_sample( hseqBackground );
         #else
 			   mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 

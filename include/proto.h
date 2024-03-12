@@ -353,7 +353,6 @@ enum {
 
 
 /* Object flag values and masks */
-#define OF_NOMOVEON_MASK 0x00000003
 #define OF_PLAYER        0x00000004    // Set if object is a player
 #define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object

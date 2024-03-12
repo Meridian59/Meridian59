@@ -148,7 +148,7 @@ messages:
       return [thisVolume,who,iSpellPower];
    }
 
-   BreakTrance(who=$, event=$, state=$, location=$)
+   BreakTrance(who=$, state=$, event=$, castwhat=$, location=$, usewhat=$)
    "If caster runs out of mana or loses trance, spell ends."
    {
       local oRoom;
@@ -160,9 +160,24 @@ messages:
          if event = EVENT_DAMAGE
             OR event = EVENT_ATTACK
             OR event = EVENT_RUN
-            OR (event = EVENT_CAST AND Send(Send(SYS, @GetSettings), @CanRecastJalaWithNecklace))
+            OR (event = EVENT_CAST AND Send(Send(SYS, @GetSettings), @CanRecastJalaWithNecklace)
+               AND NOT IsClass(castwhat,&Jala))
          {
             return FALSE;
+         }
+
+         if event = EVENT_USE AND usewhat <> $
+         {
+            % Necklace users can use some items and still sing.
+            % For thematic and practical reasons
+            % they can't eat or drink and sing
+            % and they can't change instruments without losing the tune.
+            if NOT IsClass(usewhat,&Food)
+               AND NOT IsClass(usewhat,&Instrument)
+               AND NOT IsClass(usewhat,&Potion)
+               {
+                  return FALSE;
+               }
          }
 
          % Chance to keep going through a disruption

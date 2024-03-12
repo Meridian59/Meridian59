@@ -24,7 +24,7 @@ typedef DWORD ID;  /* Server id #s */
 #define IsNumberObj(id) (GetObjTag(id) == CLIENT_TAG_NUMBER)
 
 // Object flag values and macros
-#define ObjectMoveonType(obj)    ((obj).flags & OF_NOMOVEON_MASK)
+#define ObjectMoveonType(obj)    ((obj).moveontype)
 
 #define MAX_CHARNAME 30   // Maximum length of character name
 #define MAX_DESCRIPTION 1000  /* Maximum length of character description */

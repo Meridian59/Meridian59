@@ -40,7 +40,7 @@
    ACTIVE = 1
    PASSIVE = 2
 
-   % MoveOn type enum
+   % MOVEON type enum
    MOVEON_YES        = 0
    MOVEON_NO         = 1
    MOVEON_TELEPORTER = 2

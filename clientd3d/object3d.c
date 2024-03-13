@@ -115,6 +115,7 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 	dos.draw   = object->draw;
 	dos.cone   = clip;
 	dos.flags  = object->flags;
+   dos.moveontype = object->moveontype;
 	dos.translation = object->translation;
 	dos.secondtranslation = object->secondtranslation;
 
@@ -333,6 +334,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 
    d.palette = palette;
    d.flags = dos->flags | (dos->effect << 20);
+   d.moveontype = dos->moveontype;
    d.translation = dos->translation;
    d.secondtranslation = dos->secondtranslation;
    rowTimesMAXX = starty * MAXX;

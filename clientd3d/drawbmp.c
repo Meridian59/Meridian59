@@ -421,6 +421,7 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 	
 	y = 0;
 	d.flags = flags;
+	d.moveontype = MOVEON_YES;
 	d.translation = translation;
 	d.secondtranslation = secondtranslation;
 	// Dummy palette for use with special effects--draws at max brightness

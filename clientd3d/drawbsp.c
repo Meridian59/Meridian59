@@ -422,7 +422,7 @@ static void AddObjects(room_type *room)
       dx = r->motion.x - viewer_x;
       dy = r->motion.y - viewer_y;
       dist = GetDistance(dx,dy);
-      if (dist <= 0 || (dist < MIN_DISTANCE && ObjectMoveonType(r->obj) == OF_MOVEON_YES))
+      if (dist <= 0 || (dist < MIN_DISTANCE && r->obj.moveontype == MOVEON_YES))
 	continue;
       
       /* compute angle that object is viewed at */
@@ -455,6 +455,7 @@ static void AddObjects(room_type *room)
       d->draw.group    = r->obj.animate->group;
       d->draw.overlays = *(r->obj.overlays);
       d->draw.flags    = r->obj.flags;
+      d->draw.moveontype = r->obj.moveontype;
       d->draw.translation = r->obj.translation;
       d->draw.secondtranslation = r->obj.secondtranslation;
       d->draw.obj      = r;
@@ -576,6 +577,7 @@ static void AddObjects(room_type *room)
       d->draw.overlays = NULL;
       d->draw.draw     = True;
       d->draw.flags    = 0;
+      d->draw.moveontype = MOVEON_YES;
       d->draw.height   = proj->motion.z;
       d->draw.translation = proj->translation;
       d->draw.secondtranslation = 0;

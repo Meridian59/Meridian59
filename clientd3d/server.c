@@ -327,6 +327,10 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
 
+   BYTE temptype = 0;
+   Extract(ptr, &temptype, 1);
+   item->moveontype = (moveon_type)temptype;
+
    ExtractDLighting(ptr, &item->dLighting);
 
    ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
@@ -359,6 +363,10 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
+
+   BYTE temptype = 0;
+   Extract(ptr, &temptype, 1);
+   item->moveontype = (moveon_type)temptype;
 
    ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
    item->normal_translation = item->translation;
@@ -1141,6 +1149,11 @@ Bool HandlePlayers(char *ptr,long len)
       Extract(&ptr, &obj->flags, SIZE_VALUE);
       len -= SIZE_VALUE;
 
+      BYTE temptype = 0;
+      Extract(&ptr, &temptype, SIZE_TYPE);
+      obj->moveontype = (moveon_type)temptype;
+      len -= 2 * SIZE_TYPE;
+
       list = list_add_item(list, obj);
    }
 
@@ -1170,6 +1183,11 @@ Bool HandleAddPlayer(char *ptr,long len)
    
    Extract(&ptr, &obj->flags, SIZE_VALUE);
    len -= SIZE_VALUE;
+
+   BYTE temptype = 0;
+   Extract(&ptr, &temptype, SIZE_TYPE);
+   obj->moveontype = (moveon_type)temptype;
+   len -= 2 * SIZE_TYPE;
 
    if (len != 0)
    {

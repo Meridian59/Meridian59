@@ -45,6 +45,7 @@ typedef struct {
    Bool      draw;       // True if object should actually be drawn (False = just compute location)
    ViewCone *cone;       // Cone in which to draw object
    int       flags;      // Object flags for special options (invisibility, etc.)
+   moveon_type  moveontype;     // MoveOn type of the object
    int       cutoff;     // Last screen row in which to draw object (to cut off at ground level)
    BYTE      translation;// Color translation type, 0 = none
    BYTE      secondtranslation; // Overriding second translation for all overlays.

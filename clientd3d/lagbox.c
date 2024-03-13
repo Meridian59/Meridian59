@@ -108,6 +108,7 @@ BOOL Lagbox_Create()
 	pobjLagbox->normal_animate.group_low = 1;
 	pobjLagbox->normal_animate.group_high = 1;
 	pobjLagbox->flags = OF_DITHERTRANS;
+	pobjLagbox->moveontype = MOVEON_YES;
 
 	dwLagboxLatency = s_adwLatencyMetric[0];
 

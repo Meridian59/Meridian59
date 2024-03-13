@@ -15,6 +15,7 @@
 // Structure passed to inner loops
 typedef struct {
    int   flags;             // Object flags
+   moveon_type moveontype;  // MOVEON type of the object
    BYTE  translation;       // Palette translation to use
    BYTE  secondtranslation; // Another palette translation to use
    BYTE *start_ptr;         // Points to start of row to draw in

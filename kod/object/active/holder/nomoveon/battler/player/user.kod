@@ -797,7 +797,7 @@ messages:
          % Clear the DRAWFX_INVISIBLE flag of which DRAWFX_BLACK is a subset
          % so the who list dialog box does not color shadowformed names black 
          AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
-         AddPacket(1,0); % MoveOn type, don't need it here.
+         AddPacket(1,0); % MoveOn type
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2525,7 +2525,7 @@ messages:
          % Clear the DRAWFX_INVISIBLE flag of which DRAWFX_BLACK is a subset
          % so the who list dialog box does not color shadowformed names black 
          AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
-         AddPacket(1,0); % MoveOn type, don't need it here.
+         AddPacket(1,0); % MoveOn type
       }
       
       SendPacket(poSession);

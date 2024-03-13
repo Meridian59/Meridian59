@@ -33,6 +33,7 @@ classvars:
    vrIcon = GlowTree_icon
 
    viObject_flags = LOOK_NO
+   viMoveOn_type = MOVEON_NO
 
    viStart_frame = 1
    viEnd_frame = 1

@@ -765,7 +765,7 @@ messages:
          return MOVEON_NO;
       }
 
-      propagate
+      propagate;
    }
 
    ShowDesc()

@@ -754,9 +754,18 @@ messages:
       if NOT pbLook { f = f | LOOK_NO; }
       if pbHanging { f = f | OF_HANGING; }
       if pbFlicker { f = f | FLICKERING_YES; }
-      if pbNoMoveOn { f = f | MOVEON_NO; }
       
       return f;
+   }
+
+   GetMoveOnType()
+   {
+      if pbNoMoveOn
+      {
+         return MOVEON_NO;
+      }
+
+      propagate
    }
 
    ShowDesc()
@@ -1399,7 +1408,7 @@ messages:
       {
          send(oDuplicate,@SetHanging,#value=TRUE);
       }
-      if send(self,@GetObjectFlags) & MOVEON_NO
+      if send(self,@GetMoveOnType) & MOVEON_NO
       {
          send(oDuplicate,@SetNoMoveOn,#value=TRUE);
       }

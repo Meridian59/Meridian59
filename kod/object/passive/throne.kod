@@ -22,6 +22,7 @@ resources:
 
 classvars:
 
+   viMoveOn_type = MOVEON_NO
    vrName = throne_name_rsc
    vrIcon = throne_icon_rsc
    vrDesc = throne_desc_rsc
@@ -34,11 +35,6 @@ messages:
    ReqNewOwner(what = $)
    {
       return False;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO;
    }
 
 

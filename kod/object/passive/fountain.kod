@@ -26,6 +26,7 @@ resources:
 
 classvars:
 
+   viMoveOn_type = MOVEON_NO
    vrName = fountain_name_rsc
    vrIcon = fountain_icon_rsc
    
@@ -99,11 +100,6 @@ messages:
       AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,1);
 
       return;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO;
    }
 
    AmbientLightChanged()

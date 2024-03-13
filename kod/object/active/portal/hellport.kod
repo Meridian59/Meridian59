@@ -36,7 +36,8 @@ classvars:
 
    vrName = hellportal_name_rsc
 
-   viObject_flags = MOVEON_TELEPORTER | DRAWFX_TRANSLUCENT_75
+   viObject_flags = DRAWFX_TRANSLUCENT_75
+   viMoveOn_type = MOVEON_TELEPORTER
 
    viAnimationSpeed = 400
 

@@ -389,8 +389,16 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    // If already playing music, pick up where we left off
    if (isMusicPaused)
    {
-      UnpauseMusic();
-      return 0;
+      if (paused_music == bg_music)
+      {
+		   UnpauseMusic();
+		   return 0;
+      }
+      else
+      {
+         // The music was paused but we need different music so reset the flag
+         isMusicPaused = False;
+      }
    }
 
    if ((dwReturn = OpenMidiFile(fname, midi_bg_music_element)) != 0)

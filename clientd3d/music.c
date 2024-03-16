@@ -524,8 +524,7 @@ void UnpauseMusic(void)
 	if (isMusicPaused)
    {
       isMusicPaused = False;
-      if (paused_music == paused_music)
-		   AIL_resume_sample(hseqBackground);
+		AIL_resume_sample(hseqBackground);
    }
 	debug(( "Unpausing music. latestmusic=%d , bg_music=%d, paused_music=%d\n", latest_music, bg_music, paused_music));
 #else

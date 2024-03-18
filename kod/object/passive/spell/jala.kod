@@ -103,17 +103,23 @@ messages:
    CastSpell(who=$, iSpellPower=0)
    "Initiation point for the spell."
    {
-      local oRoom, oldVolume, thisVolume, iJalaInfo;
+      local oRoom, oldVolume, thisVolume, lJalaInfo, lJalaElement, tempVolume;
 
       oRoom = Send(who,@GetOwner);
 
-      iJalaInfo = Send(oRoom,@GetJalaInfo);
+      lJalaInfo = Send(oRoom,@GetJalaInfo);
       oldVolume = 0;
-
-      if iJalaInfo <> $
+      tempVolume = 0;
+      if lJalaInfo <> $
       {
-         % Our state information is the third item return from JalaInfo
-         oldVolume = Nth(Nth(iJalaInfo,3),1);
+         for lJalaElement in lJalaInfo
+         {
+            tempVolume = Nth(Nth(lJalaElement,3),1);
+            if tempVolume > oldVolume
+            {
+               oldVolume = tempVolume;
+            }
+         }
       }
 
       thisVolume = Send(self,@CalculateVolume,#who=who,

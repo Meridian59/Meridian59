@@ -37,7 +37,7 @@ resources:
    robe_rightarm_female =brd.bgf
 
    robe_condition_exc = " are in immaculate condition."
-   robe_condition_exc_mended = " are in excellent condition, but have been patched before.."
+   robe_condition_exc_mended = " are in excellent condition, but have been patched before."
    robe_condition_good = " are scuffed and slightly worn."
    robe_condition_med = " have a few unsightly rips."
    robe_condition_poor = " are in tatters, and barely holding together."

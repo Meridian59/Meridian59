@@ -19,7 +19,7 @@ resources:
    curepoison_name_rsc = "cure poison"
    curepoison_icon_rsc = icurpoi.bgf
    curepoison_desc_rsc = \
-      "Pure, healing energy fights the effects of poison in the target.  "
+      "Pure, healing energy fights the effects of poison in the target. "
 	   "Requires herbs and elderberries to cast."
    
    curepoison_on = "The power of Shal'ille fights the effects of poison in your blood."

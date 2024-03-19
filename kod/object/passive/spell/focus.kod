@@ -23,7 +23,7 @@ resources:
       "Focuses your magical energy, "
       "regenerating your mana at an accelerated rate and "
       "increasing the damage of natural elemental attack spells. "
-      "Dissipates if your concentration is broken.  "
+      "Dissipates if your concentration is broken. "
       "Requires mushrooms to cast."
 
    manafocus_on = "You feel newly focused magic raging through your body."

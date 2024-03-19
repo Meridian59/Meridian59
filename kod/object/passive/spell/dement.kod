@@ -20,7 +20,7 @@ resources:
    dement_icon_rsc = idement.bgf
    dement_desc_rsc = \
       "Sends the mind of the target reeling with dark, bewildering "
-      "thoughts, making spell casting more difficult for several minutes.  "
+      "thoughts, making spell casting more difficult for several minutes. "
       "Requires solagh and uncut seraphym to cast."
 
    dement_sound = rdement.wav

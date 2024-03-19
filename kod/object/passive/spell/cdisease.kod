@@ -24,7 +24,7 @@ resources:
    curedisease_name_rsc = "cure disease"
    curedisease_icon_rsc = icuredis.bgf
    curedisease_desc_rsc = \
-     "Pure, healing energy purges disease from the target.  "
+     "Pure, healing energy purges disease from the target. "
 	  "Requires herbs and elderberries to cast."
    
    curedisease_on = "The power of Shal'ille burns the disease from your body."

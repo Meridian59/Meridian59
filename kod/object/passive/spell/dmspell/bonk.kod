@@ -22,8 +22,8 @@ resources:
    allinroom_bonk_msg2 = "~bYou wince as %s%s viciously bonks %s%s."
 
    caster_bonk_msg = "~bYou viciously bonk %s%s."
-   bonked_bonk_msg = "~r~B>OUCH<~n~b  You are bonked on the head by %s%s."
-   bonk_desc_rsc = "This bonks a person of your choice.  "
+   bonked_bonk_msg = "~r~B>OUCH<~n~b You are bonked on the head by %s%s."
+   bonk_desc_rsc = "This bonks a person of your choice."
 
 classvars:
    vrName = bonk_name_rsc

@@ -18,7 +18,7 @@ resources:
 
    Archery_name_rsc = "archery"
    Archery_icon_rsc = archrico.bgf
-   Archery_desc_rsc = "Those with this skill find themselves better able to handle any standard bow.  "
+   Archery_desc_rsc = "Those with this skill find themselves better able to handle any standard bow. "
 			"However, the learning curve is tediously slow, and only those with good aim will "
 			"ever truly excel at it."
 

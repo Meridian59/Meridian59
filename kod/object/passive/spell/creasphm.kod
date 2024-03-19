@@ -22,7 +22,7 @@ resources:
    createspiritualhammer_name_rsc = "spiritual hammer"
    createspiritualhammer_icon_rsc = ispirith.bgf
    createspiritualhammer_desc_rsc = \
-      "Materializes a spiritual hammer.  "
+      "Materializes a spiritual hammer. "
       "Requires emeralds and orc teeth to cast."
 
    createspiritualhammer_sound = sspham.wav

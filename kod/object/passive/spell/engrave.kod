@@ -18,7 +18,7 @@ resources:
 
    engrave_name_rsc = "engrave"
    engrave_icon_rsc = iillufrm.bgf
-   engrave_desc_rsc = "Adds a message to an item.  A DM only spell, currently.  "
+   engrave_desc_rsc = "Adds a message to an item. A DM only spell, currently."
 
    engrave_already_engraved = "%s%s already has a message engraved onto it."
    engrave_cant_engrave = "You can't engrave a message on %s%s."

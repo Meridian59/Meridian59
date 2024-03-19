@@ -21,7 +21,7 @@ resources:
    createweapon_name_rsc = "create weapon"
    createweapon_icon_rsc = icremace.bgf
    createweapon_desc_rsc = \
-      "Materializes a weapon.  Requires nothing but a violent will."
+      "Materializes a weapon. Requires nothing but a violent will."
 
    createweapon_spell_intro = "Kraanan Lv. 1: Creates a variety of weapons for use in defeating your foes." 
 

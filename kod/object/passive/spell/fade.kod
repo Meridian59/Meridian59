@@ -22,8 +22,8 @@ resources:
    fade_icon_rsc = ifade.bgf
    fade_desc_rsc = \
       "Temporarily dissolves your physical form leaving "
-      "you invisible.  The spell lasts as long as your trance "
-      "is maintained.  "
+      "you invisible. The spell lasts as long as your trance "
+      "is maintained. "
       "Requires dark angel feather."
    
    fade_already_enchanted = "You are already invisible."

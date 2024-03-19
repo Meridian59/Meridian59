@@ -21,9 +21,9 @@ resources:
    Elusion_name_rsc = "elusion"
    Elusion_icon_rsc = ielusion.bgf
    Elusion_desc_rsc = \
-      "Allows the caster to elude trouble and escape off to another location.  "
+      "Allows the caster to elude trouble and escape off to another location. "
       "A number of destinations may be available, and the caster must call out "
-      "the name of the location he wishes to travel to.  "
+      "the name of the location he wishes to travel to. "
       "Requires the claws of the fearsome kriipa to cast."
 
    Elusion_No_Location_Given = "With no location specified your elusion attempt fails."

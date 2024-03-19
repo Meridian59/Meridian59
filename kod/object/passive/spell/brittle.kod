@@ -19,7 +19,7 @@ resources:
    brittle_icon_rsc = ibrittle.bgf
    brittle_desc_rsc = \
       "Ages the target's weapon by many years, making it "
-      "frail and prone to breaking.  "
+      "frail and prone to breaking. "
       "Requires magic mushrooms and purple mushrooms to cast."
 
    brittle_nothing = "For all of your mystic concentration, nothing seems to happen."
@@ -28,7 +28,7 @@ resources:
 
    brittle_no_weapon = "%s%s isn't wielding anything that you can damage."
    brittle_hunter_sword = "%s%s's Sword of the Hunt repells your spell."
-   brittle_cast_rsc = "%s%s's eyes focus intensely on your weapon.  Your %s takes on a duller cast."
+   brittle_cast_rsc = "%s%s's eyes focus intensely on your weapon. Your %s takes on a duller cast."
    brittle_succeed = "You focus your eyes intensely on %s%s's %s, and it dulls."
 
 classvars:

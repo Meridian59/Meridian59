@@ -18,7 +18,7 @@ resources:
 
    fire_name_rsc = "fire"
    fire_icon_rsc = fibowico.bgf
-   fire_desc_rsc = "Fire is the most basic technique used for shooting a missile weapon.  "
+   fire_desc_rsc = "Fire is the most basic technique used for shooting a missile weapon. "
       "It is not too difficult to learn, but only those with strong aim will be able to master "
       "this skill."
 

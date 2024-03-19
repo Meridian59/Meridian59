@@ -19,9 +19,9 @@ resources:
    earthquake_name_rsc = "earthquake"
    earthquake_icon_rsc = irthquak.bgf
    earthquake_desc_rsc = \
-      "Moves the earth violently causing damage to all beings in the room.  "
+      "Moves the earth violently causing damage to all beings in the room. "
       "The more experienced the caster, the better damage is directed "
-      "to the target and away from the caster.  "
+      "to the target and away from the caster. "
       "Requires red mushrooms and purple mushrooms to cast."
 
    earthquake_first_rsc = \

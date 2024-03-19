@@ -29,7 +29,7 @@ resources:
    discordance_icon_rsc = idiscord.bgf
    discordance_desc_rsc = \
       "Magical energy is unleashed "
-      "which tries to destroy magical enchantments on the room.  "
+      "which tries to destroy magical enchantments on the room. "
       "Requires sapphires to cast."
    
    discordance_on = \

@@ -27,7 +27,7 @@ resources:
 
    hpboon_inc = \
       "A wave of magical energy sweeps through your body, leaving your "
-      "muscles tingling in its wake.  It feels like your skin and flesh "
+      "muscles tingling in its wake. It feels like your skin and flesh "
       "are hardening, becoming more able to withstand cuts and bruises."
    hpboon_dec = \
       "A wave of magical energy sweeps through your body, leaving your "

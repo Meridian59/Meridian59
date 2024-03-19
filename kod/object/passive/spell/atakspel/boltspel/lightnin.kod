@@ -20,7 +20,7 @@ resources:
    lightning_look_icon = ilitning.bgf
    lightning_hit_rsc = "Lightning strikes %s%s!"
    lightning_desc_rsc = \
-      "Hurls a bolt of lightning at the target.  "
+      "Hurls a bolt of lightning at the target. "
       "Requires blue mushrooms and orc teeth to cast."
 
    lightning_sound = fbolt.wav

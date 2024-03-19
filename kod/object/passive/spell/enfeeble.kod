@@ -21,8 +21,8 @@ resources:
    enfeeble_name_rsc = "enfeeble"
    enfeeble_icon_rsc = ienfeebl.bgf
    enfeeble_desc_rsc = \
-      "Drains physical strength from the target.  "   
-      "The effect lasts a few minutes.  "
+      "Drains physical strength from the target. "   
+      "The effect lasts a few minutes. "
       "Requires orc teeth to cast."
 
    enfeeble_sound = qenfeebl.wav

@@ -23,8 +23,8 @@ resources:
    anonymity_name_rsc = "anonymity"
    anonymity_icon_rsc = ianonymo.bgf
    anonymity_desc_rsc = \
-      "Makes you indistinct, and unrecognizable to all but those who you'd like to know its you.  "
-      "Note that Shal'ille can not punish transgressors against you when you are anonymous.  "
+      "Makes you indistinct, and unrecognizable to all but those who you'd like to know its you. "
+      "Note that Shal'ille can not punish transgressors against you when you are anonymous. "
       "Requires rainbow ferns and firesand to cast."
    anonymity_sound = ranonym.wav
    

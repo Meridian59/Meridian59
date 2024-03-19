@@ -32,7 +32,7 @@ resources:
    assess_100_150 = "%s%s possesses near super-human abilities on the battlefield."
    assess_150_up = "%s%s could crush you like a bug!"
 
-   assess_self = "Who?  This person?  A cinch!"
+   assess_self = "Who? This person? A cinch!"
 
 classvars:
 

@@ -25,8 +25,8 @@ resources:
    Insightd_Insight_msg = "~b%s%s looks deeply into your eyes."
    Insight_desc_rsc = \
    "This gazes deep into a person's eyes, and judges their odds of advancing in each spell/skill."
-   "The true percentage appears after the name of the spell or skill.  The first number after that "
-   "is the intellect check, and the second is the requisite stat check.  Note that the req stat "
+   "The true percentage appears after the name of the spell or skill. The first number after that "
+   "is the intellect check, and the second is the requisite stat check. Note that the req stat "
    "check assumes that the target will be around the same level as a fungus beast or mutant ant - "
    "when casting an offensive spell or using a combat skill, your odds go up if you fight tougher monsters."
 

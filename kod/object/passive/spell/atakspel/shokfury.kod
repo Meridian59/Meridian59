@@ -21,7 +21,7 @@ resources:
    ShockingFury_icon_rsc = ishkfury.bgf
 
    ShockingFury_desc_rsc = \
-      "Releases Faren's fury as a large amount of electricity directed at a target at short range.  "
+      "Releases Faren's fury as a large amount of electricity directed at a target at short range. "
       "Requires blue mushrooms and elderberries to cast."
 
    ShockingFury_sound = fzap.wav

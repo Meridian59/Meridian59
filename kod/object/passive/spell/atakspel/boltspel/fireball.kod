@@ -19,7 +19,7 @@ resources:
    fireball_icon_rsc = fireball.bgf
    fireball_look_icon = ifirebal.bgf
    fireball_desc_rsc = \
-      "Sends a ball of flames at the target.  "
+      "Sends a ball of flames at the target. "
       "Requires red mushrooms and orc teeth to cast."
 
    fireball_hit_rsc = "A ball of fire strikes %s%s!"

@@ -20,7 +20,7 @@ resources:
    Flash_icon_rsc = iflash.bgf
    Flash_desc_rsc = \
       "Causes a bright flash, likely to interrupt the concentration of any "
-      "spellcasters in the area or confuse monsters temporarily.  "
+      "spellcasters in the area or confuse monsters temporarily. "
       "Requires the eyes of a dragonfly to cast."
 
    flash_sound = rflash.wav

@@ -25,7 +25,7 @@ resources:
    enchantweapon_name_rsc = "enchant weapon"
    enchantweapon_icon_rsc = ienchant.bgf
    enchantweapon_desc_rsc = \
-      "Dedicates your weapon to Kraanan.  "
+      "Dedicates your weapon to Kraanan. "
       "Requires plenty of elderberry, some orc teeth, and time."
 
    enchantweapon_resists = "%s%s resists your attempts to enchant it."

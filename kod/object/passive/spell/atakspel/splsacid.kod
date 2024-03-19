@@ -21,7 +21,7 @@ resources:
    SplashOfAcid_icon_rsc = isplacid.bgf
 
    SplashOfAcid_desc_rsc = \
-      "Splashes Qor's unholy corrosive acid on a target at short range.  "
+      "Splashes Qor's unholy corrosive acid on a target at short range. "
       "Requires entroot berries to cast."
 
    SplashOfAcid_sound = qacid.wav

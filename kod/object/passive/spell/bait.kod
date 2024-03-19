@@ -19,11 +19,11 @@ resources:
    Bait_name_rsc = "bait"
    Bait_icon_rsc = idistrac.bgf
    Bait_desc_rsc = \
-      "Makes you mighty appetizing to nearby monsters.  The more powerful you are, "
-      "the more likely you are to get the monster's attention.  "
+      "Makes you mighty appetizing to nearby monsters. The more powerful you are, "
+      "the more likely you are to get the monster's attention. "
       "Requires web moss and firesand to cast."
    
-   Bait_success = "The scent of something really yummy fills the air.  Your mouth "
+   Bait_success = "The scent of something really yummy fills the air. Your mouth "
             "involuntarily begins to water, a moment before you realize that "
             "the appetizing smell is coming from you!"
 

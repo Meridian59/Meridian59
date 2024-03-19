@@ -25,7 +25,7 @@ resources:
    artifice_icon_rsc = iartific.bgf
    artifice_desc_rsc = \
 	  "Briefly enchants an item with random powers. "
-	  "Unsuspecting buyers may overvalue the item.  "
+	  "Unsuspecting buyers may overvalue the item. "
 	  "Requires firesand and uncut seraphym."
 
    artifice_sound = rartific.wav

@@ -19,12 +19,12 @@ resources:
    illusionarywounds_icon_rsc = iilluwou.bgf
    illusionarywounds_desc_rsc = \
       "Causes the victim to see imagined wounds, but imagination "
-      "always gives in to one's right mind, assuming one lives so long.  "
+      "always gives in to one's right mind, assuming one lives so long. "
       "Requires solagh and firesand."
 
    illusionarywounds_cast = "Your illusion takes the form of %s."
 
-   illusionarywounds_off = "Hey!  Some of those wounds were illusionary!"
+   illusionarywounds_off = "Hey! Some of those wounds were illusionary!"
    illusionarywounds_sound = riija.wav
 
 classvars:

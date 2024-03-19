@@ -19,7 +19,7 @@ resources:
    Dazzle_name_rsc = "dazzle"
    Dazzle_icon_rsc = idazzle.bgf
    Dazzle_desc_rsc = \
-      "Dazzles the target with the blinding light of Shal'ille's goodness.  "
+      "Dazzles the target with the blinding light of Shal'ille's goodness. "
       "Requires emeralds and purple mushrooms."
    
    Dazzle_caster = "%s%s is now dazzled."

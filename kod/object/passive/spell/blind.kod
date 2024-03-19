@@ -20,7 +20,7 @@ resources:
    blind_icon_rsc = iblind.bgf
    blind_desc_rsc = \
       "The magical force of Qor burns the target's eyes, "
-      "taking away all sight for a brief period.  "
+      "taking away all sight for a brief period. "
       "Requires entroot berries and purple mushrooms to cast."
    
    blind_caster = "%s%s is now blind."

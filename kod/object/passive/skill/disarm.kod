@@ -20,7 +20,7 @@ constants:
 resources:
    Disarm_name_rsc = "disarm"
    Disarm_icon_rsc = idisarm.bgf
-   Disarm_desc_rsc = "A technique that allows a warrior to strike at his or her opponent's weapon.  Often "
+   Disarm_desc_rsc = "A technique that allows a warrior to strike at his or her opponent's weapon. Often "
                      "successful use of this skill will put the opponent at a disadvantage, and occasionally "
                      "throw the weapon from an opponent's grasp."
                      

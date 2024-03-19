@@ -29,7 +29,7 @@ resources:
    DMHold_caster = "%s%s is now held in place by a magical force."
 
    DMHold_on = \
-      "A magical tingling pulses through your body.  You are unable to move."
+      "A magical tingling pulses through your body. You are unable to move."
 
    DMHold_off = \
       "The superior hold lifts and you are able to move once more."

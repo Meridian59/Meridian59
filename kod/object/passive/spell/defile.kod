@@ -23,7 +23,7 @@ resources:
       "In this darkest of rituals, the very spirit of Qor is "
       "summoned to defile the corpse of a murdered innocent, "
       "transforming flesh and blood into magical energy for "
-      "the caster.  "
+      "the caster. "
       "Requires fairy wings and the slain."
 
    defile_cast_rsc = "Your nausea betokens the imminence of Qor."

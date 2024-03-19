@@ -22,15 +22,15 @@ resources:
    MarkOfDishonor_name_rsc = "mark of dishonor"
    MarkOfDishonor_icon_rsc = imarkdis.bgf
    MarkOfDishonor_desc_rsc = \
-      "Allows caster to cast Shal'ille's displeasure upon a target.  Will prevent "
-      "target's life force from exceeding the body's maximum.  For evil targets, "
-      "Shal'ille will cause a loss of vigor.  "
+      "Allows caster to cast Shal'ille's displeasure upon a target. Will prevent "
+      "target's life force from exceeding the body's maximum. For evil targets, "
+      "Shal'ille will cause a loss of vigor. "
       "Requires emeralds to cast."
 
    MarkOfDishonor_sound = smarkdis.wav
 
    MarkOfDishonor_start = \
-      "Shal'ille singles you out for punishment.  Your life energies ebb."
+      "Shal'ille singles you out for punishment. Your life energies ebb."
    MarkOfDishonor_stop  = \
       "Shal'ille's attention turns to more pressing matters."
    MarkOfDishonor_success = "The eyes of Shal'ille turn towards %s%s."

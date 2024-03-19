@@ -22,9 +22,9 @@ resources:
    Distill_icon_rsc = idistill.bgf
    Distill_desc_rsc = \
       "Allows the caster to distill their knowledge of a spell into liquid "
-      "form.  After casting, simply say the name of the spell you want to "
-      "turn into a potion.  "
-      "Requires a ruby and ingredients for the potion.  "
+      "form. After casting, simply say the name of the spell you want to "
+      "turn into a potion. "
+      "Requires a ruby and ingredients for the potion."
 
    Distill_no_message = \
       "With no spell to distill, the spell fizzles into nothing."

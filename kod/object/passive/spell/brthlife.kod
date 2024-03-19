@@ -25,7 +25,7 @@ resources:
    breathoflife_icon_rsc = ibreath.bgf
    breathoflife_desc_rsc = \
       "The great power of Shal'ille takes part of the caster's life force "
-      "and gives it to another person.  "
+      "and gives it to another person. "
       "Requires herbs to cast."
 
    breathoflife_unnecessary_rsc = "%s%s cannot handle additional life force from this spell."

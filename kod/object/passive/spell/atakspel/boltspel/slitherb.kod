@@ -19,7 +19,7 @@ resources:
    Slitherbolt_icon_rsc = orcspel.bgf
    Slitherbolt_hit_rsc = "The slitherbolt strikes %s%s!"
    Slitherbolt_desc_rsc = \
-   "Hurls a bolt of Slitherbolt at the target.  "
+   "Hurls a bolt of Slitherbolt at the target. "
    "Requires blue mushroom and orc teeth to cast."
 
    Slitherbolt_sound = slitherboltwand.wav

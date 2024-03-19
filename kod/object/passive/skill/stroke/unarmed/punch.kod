@@ -17,7 +17,7 @@ constants:
 resources:
    punch_name_rsc = "punch"
    punch_icon_rsc = punchico.bgf
-   punch_desc_rsc = "This is the most basic hand-to-hand combat move.  Can be very strong for a powerful warrior, but is extremely tiring."
+   punch_desc_rsc = "This is the most basic hand-to-hand combat move. Can be very strong for a powerful warrior, but is extremely tiring."
 
    punch_player_was_hit = "%s%s connects a punch solidly on your jaw."
    punch_player_hit_something = "%sYou hit %s%s with a hard right cross."

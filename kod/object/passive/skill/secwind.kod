@@ -20,8 +20,8 @@ resources:
    SecondWind_name_rsc = "second wind"
    SecondWind_icon_rsc = isecwind.bgf
    SecondWind_desc_rsc = "Second wind will give a mighty adventurer the vigor to do strenuous activity "
-                         "even when exhausted.  When near exhaustion, this skill will give a boost to "
-                         "vigor.  It is useless to rest or eat food to regain stamina for a while after "
+                         "even when exhausted. When near exhaustion, this skill will give a boost to "
+                         "vigor. It is useless to rest or eat food to regain stamina for a while after "
                          "gaining a second wind."
 
    SecondWind_skill_intro = "Weaponcraft Lv. 4: The ability to press on even when exhausted."

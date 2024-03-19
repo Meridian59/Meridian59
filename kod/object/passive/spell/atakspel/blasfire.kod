@@ -21,7 +21,7 @@ resources:
    BlastOfFire_icon_rsc = iblfire.bgf
 
    BlastOfFire_desc_rsc = \
-      "Releases Faren's anger as a blast of flame directed at a target at short range.  "
+      "Releases Faren's anger as a blast of flame directed at a target at short range. "
       "Requires red mushrooms and elderberries to cast."
 
    BlastOfFire_sound = fflame.wav

@@ -19,7 +19,7 @@ resources:
    feigndeath_name_rsc = "feign death"
    feigndeath_icon_rsc = ifeignde.bgf
    feigndeath_desc_rsc = \
-      "Makes you appear to be deceased, that hopefully someone won't really make you as such.  "
+      "Makes you appear to be deceased, that hopefully someone won't really make you as such. "
       "Requires solagh and rainbow ferns to cast."
 
    feigndeath_user_killed = "### %s was just killed by %s%s."

@@ -20,9 +20,9 @@ resources:
    FinalRites_icon_rsc = ifinrite.bgf
    FinalRites_desc_rsc = \
       "This is the lengthy formal ceremony performed at funerals to help the "
-      "recently departed soul pass smoothly on to the Underworld.  It may "
+      "recently departed soul pass smoothly on to the Underworld. It may "
       "also be used to force nearby undead back in their graves where they "
-      "belong.  "
+      "belong. "
       "Requires emeralds and dried elderberries, which during the ceremony "
       "are crushed together into a symbolic handful of dust and scattered "
       "into the air."

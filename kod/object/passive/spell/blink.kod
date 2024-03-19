@@ -18,7 +18,7 @@ resources:
    blink_name_rsc = "blink"
    blink_icon_rsc = iblink.bgf
    blink_desc_rsc = \
-     "Teleports you to a central location in the room.  "
+     "Teleports you to a central location in the room. "
 	 "Requires nothing but a will to move."
 
    blink_spell_intro = "Riija Level 1: The Trickster's most basic spell teleports you to the local place of power."

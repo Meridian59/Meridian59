@@ -19,9 +19,9 @@ resources:
    dispelillusion_name_rsc = "dispel illusion"
    dispelillusion_icon_rsc = idispill.bgf
    dispelillusion_desc_rsc = \
-      "Attempts to dispel any illusions in your vicinity.  This powerful "
+      "Attempts to dispel any illusions in your vicinity. This powerful "
       "spell is the bane of the Riija school of magic, but at a significant "
-      "cost in reagents.  "
+      "cost in reagents. "
       "Requires dragonfly eyes, uncut seraphym, and solagh to cast."
 
    dispelillusion_castermsg_rsc = \

@@ -26,7 +26,7 @@ resources:
    curseweapon_desc_rsc = \
       "Makes the target weapon nearly ineffective for a time, "
       "and curses the user to wield it until he or she gains "
-      "divine aid.  "
+      "divine aid. "
       "Requires the blood of a magic-casting beast and teeth of a fierce fighting monster."
 
    curseweapon_sound = qcurweap.wav

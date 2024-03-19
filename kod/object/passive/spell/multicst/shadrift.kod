@@ -19,18 +19,18 @@ resources:
 
    DeathsDoor_name_rsc = "shadow rift"
    DeathsDoor_icon_rsc = ideadoor.bgf
-   DeathsDoor_desc_rsc = "Summons the darkest of magics to warp the fabic of space.  "
+   DeathsDoor_desc_rsc = "Summons the darkest of magics to warp the fabic of space. "
                          "Forms a magical bond between a prism and the area in which it "
-                         "is cast.  Subsequent castings with the same prism cause a mystical "
+                         "is cast. Subsequent castings with the same prism cause a mystical "
                          "portal to form which will transport all who enter it to the exact spot "
-                         "to which the prism was bound.  "
+                         "to which the prism was bound. "
                          "Requires the feathers of a dark angel and a prism. "
    
    DeathsDoor_sound = qdthdoor.wav
 
    DeathsDoor_already = "A cloud of magical force begins to coalesce, but then dissipates, "
       "repelled by the presence of another nearby portal."
-   DeathsDoor_no_lich = "A cloud of magical force begins to coalesce, but then mysteriously dissipates.  "
+   DeathsDoor_no_lich = "A cloud of magical force begins to coalesce, but then mysteriously dissipates. "
       "Perhaps something crucial is missing."
    DeathsDoor_room_loop = "The prism hisses feebly. It must be taken out of the area "
                           "to which it is bound."

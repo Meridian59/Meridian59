@@ -256,7 +256,7 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 	// start playing
 	AIL_start_sample(hseqImmediate);
 
-	debug(( "Playing Jala music file %s. LatestMusic=%d \n", fname, latest_music ));
+	debug(( "Playing midi music file %s. LatestMusic=%d \n", fname, latest_music ));
 	playing_midi = True;
 	return 0;
 #else
@@ -692,7 +692,6 @@ void PlayMusicRsc(ID rsc)
 void NewMusic(WPARAM type, ID rsc)
 {
    char *filename, fname[MAX_PATH + FILENAME_MAX];
-   debug(( "New Music call, playing_midi =%d, playing_music=%d, isMusicPaused=%d\n", playing_midi, playing_music, isMusicPaused));
 	// NULL rsc => abort any songs in progress
 	if( !rsc )
 	{

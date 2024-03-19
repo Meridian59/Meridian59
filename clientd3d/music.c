@@ -322,14 +322,14 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 	}
    if (playing_midi)
    {
-      playing_midi = False;
       AIL_end_sample(hseqImmediate);
+      playing_midi = False;
    }
 
    if (playing_music)
    {
-      playing_music = False;
       AIL_end_sample(hseqBackground);
+      playing_music = False;
    }
 	// free memory from previous background music
 	if (pMIDIBackground)
@@ -519,13 +519,13 @@ void UnpauseMusic(void)
 #ifdef M59_MSS
    if (playing_midi)
    {
-      playing_midi = False;
       AIL_end_sample(hseqImmediate);
+      playing_midi = False;
    }
 	if (isMusicPaused)
    {
-      isMusicPaused = False;
 		AIL_resume_sample(hseqBackground);
+      isMusicPaused = False;
    }
 	debug(( "Unpausing music. bg_music=%d, paused_music=%d\n", bg_music, paused_music));
 #else

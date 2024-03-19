@@ -247,7 +247,8 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 		debug(( "Failed to init music file.\n" ));
 		return 0;
 	}
-
+   // Loop the MIDI until game actions stop it
+	AIL_set_sample_loop_count( hseqImmediate, 0 );
    // Set volume
    float vol = ((float) config.music_volume) / CONFIG_MAX_VOLUME;
 	AIL_set_sample_volume_levels(hseqImmediate, vol, vol );
@@ -255,11 +256,7 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 	// start playing
 	AIL_start_sample(hseqImmediate);
 
-	// Set end-of-sample callback so we can unpause
-	//	the background music when done playing.
-	AIL_register_EOS_callback(hseqImmediate, MIDIDoneCallback);
-
-	debug(( "Playing jala music file %s.\n", fname ));
+	debug(( "Playing Jala music file %s. LatestMusic=%d \n", fname, latest_music ));
 	playing_midi = True;
 	return 0;
 #else
@@ -483,7 +480,6 @@ void PauseMusic(void)
 
 	if( AIL_sample_status( hseqBackground ) == SMP_PLAYING )
    {
-      debug(( "Actually Pausing music here. \n"));
 		AIL_stop_sample( hseqBackground );
    }
 	// indicate we are paused
@@ -514,18 +510,15 @@ void PauseMusic(void)
 /******************************************************************************/
 /*
  * UnpauseMusic:  Restore saved position of background music.
- *   Assumes that background music has been restarted.
  *   Only room background music can be unpaused.
  */
 void UnpauseMusic(void)
 {
    if (!has_midi)
       return;
-   debug(( "Starting to unpause Music \n"));
 #ifdef M59_MSS
    if (playing_midi)
    {
-      debug(( "playing midi was true \n"));
       playing_midi = False;
       AIL_end_sample(hseqImmediate);
    }
@@ -534,7 +527,7 @@ void UnpauseMusic(void)
       isMusicPaused = False;
 		AIL_resume_sample(hseqBackground);
    }
-	debug(( "Unpausing music. latestmusic=%d , bg_music=%d, paused_music=%d\n", latest_music, bg_music, paused_music));
+	debug(( "Unpausing music. bg_music=%d, paused_music=%d\n", bg_music, paused_music));
 #else
    DWORD dwReturn;
    char temp[81];
@@ -658,7 +651,7 @@ void PlayMidiRsc(ID rsc)
  */
 void PlayMusicRsc(ID rsc)
 {
-   debug(("PlayMusicRsc %d, playing_music = %d, isMusicPaused= %d\n", rsc, playing_music, isMusicPaused));
+   debug(("PlayMusicRsc %d\n", rsc));
 
    /* If we're already playing same music file, keep jammin' */
    if (playing_music && !isMusicPaused)
@@ -700,14 +693,12 @@ void NewMusic(WPARAM type, ID rsc)
 {
    char *filename, fname[MAX_PATH + FILENAME_MAX];
    debug(( "New Music call, playing_midi =%d, playing_music=%d, isMusicPaused=%d\n", playing_midi, playing_music, isMusicPaused));
-	// NULL rsc => abort midi in progress
-   // This may be vestigial but can be used by KOD to stop music.
+	// NULL rsc => abort any songs in progress
 	if( !rsc )
 	{
 		if( ( type == SOUND_MIDI ) && ( playing_midi ) )
 		{
 #ifdef M59_MSS
-         debug(( "Not sure how to get here \n"));
 			AIL_end_sample( hseqImmediate );
 #else
 			mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
@@ -717,7 +708,6 @@ void NewMusic(WPARAM type, ID rsc)
 		else if( ( type == SOUND_MUSIC ) && ( playing_music ) )
 		{
 #ifdef M59_MSS
-         debug(( "Not sure how to get here \n"));
 			AIL_end_sample( hseqBackground );
 #else
 			mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
@@ -749,7 +739,6 @@ void NewMusic(WPARAM type, ID rsc)
       break;
 
    case SOUND_MUSIC:
-      debug(( "NewMusic Calls PlayMusicFile\n" ));
       latest_music = rsc;
       PlayMusicFile(hMain, fname);
 #ifndef M59_MSS
@@ -758,27 +747,13 @@ void NewMusic(WPARAM type, ID rsc)
       break;
    }
 }
-#ifdef M59_MSS
-/******************************************************************************/
-/*
- * MIDIDoneCallback:  A MIDI file has finished playing;
- *						unpause the background music if necessary
- */
-void AILCALLBACK MIDIDoneCallback(HSAMPLE S)
-{
-	debug(( "At callback...\n" ));
-	if (playing_music && isMusicPaused){
-		//UnpauseMusic();
-      debug(( "Callback could unpause - not sure if good idea \n"));
-   }
-}
-#else
 /******************************************************************************/
 //	Not used by MSS version
 /*
  * MusicDone:  A MIDI file has finished playing; restart background music 
  *   if appropriate.
  */
+#ifndef M59_MSS
 void MusicDone(UINT device)
 {
    /* Loop Jala song */

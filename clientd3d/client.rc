@@ -600,7 +600,7 @@ END
 STRINGTABLE
 BEGIN
     32                      "O jogo foi temporariamente desligado para manutenção.\nPor favor, tente novamente mais tarde."
-    33                      "Você está sem créditos.\nPara informações sobre compra de créditos, selecione \"Ajuda\" no menu principal"
+    33                      "Você está sem créditos.\nPara informações sobre compra de créditos, selecione Ajuda no menu principal"
     34                      "Por motivos de segurança, você deve digitar a nova senha novamente!"
     35                      "A nova senha deve ter pelo menos %d caracteres."
     38                      "Abortando a transmissão..."

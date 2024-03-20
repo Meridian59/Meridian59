@@ -155,14 +155,14 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
    // Is it a background music or jala music file?
    if (device == midi_bg_music_element)
    {
-      if (playing_music != 0)
+      if (playing_music != False)
       {
          mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
       }
    }
    else if (device == midi_element)
    {
-      if (playing_midi != 0)
+      if (playing_midi != False)
       {
          mciSendCommand(midi_element, MCI_STOP, 0, 0);
          if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
@@ -186,13 +186,13 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
    if (device == midi_bg_music_element)
    {
       midi_bg_music_element = mciOpenParms.wDeviceID;
-      playing_music = 1;
+      playing_music = True;
       debug(("midi_bg_music_element = %d\n", midi_bg_music_element));
    }
    else
    {
       midi_element = mciOpenParms.wDeviceID;
-      playing_midi = 1;
+      playing_midi = True;
       debug(("midi element = %d\n", midi_element));
    }
    return 0;
@@ -388,8 +388,8 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    {
       if (paused_music == bg_music)
       {
-		   UnpauseMusic();
-		   return 0;
+         UnpauseMusic();
+         return 0;
       }
       else
       {
@@ -524,10 +524,10 @@ void UnpauseMusic(void)
    }
 	if (isMusicPaused)
    {
-		AIL_resume_sample(hseqBackground);
+      AIL_resume_sample(hseqBackground);
       isMusicPaused = False;
    }
-	debug(( "Unpausing music. bg_music=%d, paused_music=%d\n", bg_music, paused_music));
+   debug(( "Unpausing music. bg_music=%d, paused_music=%d\n", bg_music, paused_music));
 #else
    DWORD dwReturn;
    char temp[81];
@@ -660,15 +660,15 @@ void PlayMusicRsc(ID rsc)
 	  {
         if (!stricmp(LookupNameRsc(rsc), LookupNameRsc(bg_music)))
         {
-		  debug(("DEBUG Already playing that music.\n" ));
+         debug(("DEBUG Already playing that music.\n" ));
         return;
         }
         /* Playing music is true, not paused, need new bg music */
         /* so kill the current background music before continuing. */
         #ifdef M59_MSS
-			   AIL_end_sample( hseqBackground );
+            AIL_end_sample( hseqBackground );
         #else
-			   mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
+            mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
          #endif
 	  }
 	}

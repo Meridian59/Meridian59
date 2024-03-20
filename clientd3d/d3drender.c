@@ -7025,9 +7025,12 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
 
-		pChunk->zBias = ZBIAS_BASE;
-		// Nodes with a bound height adjust are part of other players' upper bodies.
-		if (pRNode->boundingHeightAdjust == 0)
+		// For players and objects with a bounding height adjustment (such as Tos Fountain), we draw them at the base depth.
+		// This is because they have multiple layers positioned relative to base depth (e.g. behind, in front of and so on).
+		// For everything else we start with the deault z bias which positions them behind these more complex arrangements.
+		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust!=0) ? ZBIAS_BASE : ZBIAS_DEFAULT;
+
+		if (pRNode->obj.flags & OF_GETTABLE)
 		{
 			// Typical items such as reagents, keys, etc. are drawn at the default depth
 			// offset by the number of items already drawn at this location.
@@ -7036,7 +7039,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
 
 			// Increment the counter at the appropriate bin and assign the appropriate zBias.
-			pChunk->zBias = ZBIAS_DEFAULT + (BYTE)depth_adjustment_map[key]++;
+			pChunk->zBias += (BYTE)depth_adjustment_map[key]++;
 		}
 
 		lastDistance = 0;

@@ -277,13 +277,10 @@ messages:
       local oCaster, lActive, each_obj, oRoom, i;
       oCaster = Nth(state,2);
 
-      if where = $
+      oRoom = where;
+      if oRoom = $
       {
          oRoom = Send(oCaster,@GetOwner);
-      }
-      else
-      {
-         oRoom = where;
       }
 
       if pbUserEffects
@@ -301,7 +298,7 @@ messages:
 
       Send(oCaster,@ClearTranceFlag);
       % Send to room: restart the background music.
-      Post(oRoom,@RestartRoomBackgroundMusic);
+      Post(oRoom,@ResendRoomBackgroundMusic);
       
       return;
    }

@@ -732,7 +732,7 @@ END
 
 STRINGTABLE
 BEGIN
-    179                     "Você não consegue ver seu alvo selecionado."
+    179                     "Você não consegue ver o alvo selecionado."
     180                     "Depositar itens"
     187                     "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
     188                     "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."

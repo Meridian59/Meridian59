@@ -311,8 +311,8 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 	{
       if (paused_music == bg_music)
       {
-		   UnpauseMusic();
-		   return 0;
+         UnpauseMusic();
+         return 0;
       }
       else
       {
@@ -366,7 +366,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 
 	// set to loop indefinitely
 	AIL_set_sample_loop_count( hseqBackground, 0 );
-
+   
    // Set volume
    float vol = ((float) config.music_volume) / CONFIG_MAX_VOLUME;
 	AIL_set_sample_volume_levels(hseqBackground, vol, vol );
@@ -480,7 +480,7 @@ void PauseMusic(void)
 
 	if( AIL_sample_status( hseqBackground ) == SMP_PLAYING )
    {
-		AIL_stop_sample( hseqBackground );
+      AIL_stop_sample( hseqBackground );
    }
 	// indicate we are paused
 	isMusicPaused = True;
@@ -522,7 +522,7 @@ void UnpauseMusic(void)
       AIL_end_sample(hseqImmediate);
       playing_midi = False;
    }
-	if (isMusicPaused)
+   if (isMusicPaused)
    {
       AIL_resume_sample(hseqBackground);
       isMusicPaused = False;

@@ -470,7 +470,7 @@ static void AddObjects(room_type *room)
 
       // Set object depth based on "depth" sector flags
       d->draw.depth = sector_depths[SectorDepth(sector_flags)];
-      if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
+      if ((ROOM_OVERRIDE_MASK & GetRoomFlags()) && !(d->draw.flags & OF_HANGING)) // ignore override depths if hanging
       {
 	 switch (SectorDepth(sector_flags)) {
 	 case SF_DEPTH1:

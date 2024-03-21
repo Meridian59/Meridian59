@@ -136,8 +136,10 @@ void MusicClose(void)
 //	Not used by MSS version
 /*
  * OpenMidiFile:  Open midi file for playing.
- *   For background room music opens midi_bg_music_element device.
- *   For any other music (jala) opens midi_element device.
+ *   The device integer argument corresponds to either
+ *   midi_bg_music_element or midi_element.
+ *   background music uses midi_bg_music_element while
+ *   any other gameplay related music uses midi_element.
  *   Returns 0 if successful; MCI error code otherwise.
  */
 DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
@@ -152,7 +154,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
 
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
    debug(("music filename = %s\n", filename));
-   // Is it a background music or jala music file?
+   // Is it a background music or gameplay element music file?
    if (device == midi_bg_music_element)
    {
       if (playing_music != False)
@@ -201,8 +203,8 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
 /*
  * PlayMidiFile:  Play given MIDI file and notify given window when done.
  *   Returns 0 if successful, MCI error code otherwise.
- *   Only used by Jala music files - never background music 
- *   even if it is a midi file.
+ *   Only used by music files associated with gameplay actions
+ *   and never background music, even if the background music is a midi file.
  */
 DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 {
@@ -411,7 +413,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    {
       // We're trying to play BG music, but Midi music is still playing.
       // This can happen if we toggle music off and on
-      // with an active Jala spell.
+      // with an active Jala song.
       mciSendCommand(midi_element, MCI_STOP, 0, 0);
       mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
       // No need to return - try to close
@@ -569,7 +571,7 @@ void UnpauseMusic(void)
       mciSendCommand(midi_element, MCI_STOP, 0, 0);
       if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
       {
-         debug(("mciClose problem for Jala music\n"));
+         debug(("mciClose problem for midi_element\n"));
          mciGetErrorString(dwReturn, temp, 80);
          strcat(temp, " \n");
          debug((temp));
@@ -625,7 +627,7 @@ void PlayMidiRsc(ID rsc)
    {
       if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
       {
-         debug(("mciClose problem for Jala music\n"));
+         debug(("mciClose problem for midi_element\n"));
       }
       else
       {
@@ -657,20 +659,20 @@ void PlayMusicRsc(ID rsc)
    if (playing_music && !isMusicPaused)
    { 
       if (rsc != 0 && bg_music != 0) 
-	  {
-        if (!stricmp(LookupNameRsc(rsc), LookupNameRsc(bg_music)))
-        {
+      {
+         if (!stricmp(LookupNameRsc(rsc), LookupNameRsc(bg_music)))
+         {
          debug(("DEBUG Already playing that music.\n" ));
-        return;
-        }
-        /* Playing music is true, not paused, need new bg music */
-        /* so kill the current background music before continuing. */
-        #ifdef M59_MSS
-            AIL_end_sample( hseqBackground );
-        #else
-            mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
-         #endif
-	  }
+         return;
+         }
+         /* Playing music is true, not paused, need new bg music */
+         /* so kill the current background music before continuing. */
+#ifdef M59_MSS
+         AIL_end_sample( hseqBackground );
+#else
+         mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
+#endif
+      }
 	}
    // Save the rsc as latest_music in case our music is off in the config
    latest_music = rsc;
@@ -755,7 +757,7 @@ void NewMusic(WPARAM type, ID rsc)
 #ifndef M59_MSS
 void MusicDone(UINT device)
 {
-   /* Loop Jala song */
+   /* Loop gameplay-related midi song */
    if (playing_midi && device == midi_element)
    {
       RestartMidiFile(midi_element);
@@ -797,6 +799,9 @@ void MusicAbort(void)
 /******************************************************************************/
 /*
  * MusicStart:  Start playing bg music if any (used when player toggles music on).
+ *   If the latest music rsc matches the bg_music rsc than we use
+ *   use PlayMusicRsc to start the music.  Otherwise we use PlayMidiRsc.
+ *   This maintains the correct music types and booleans.
  */
 void MusicStart(void)
 {

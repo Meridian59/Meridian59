@@ -88,10 +88,10 @@ messages:
          return damage;
       }
       
-      Damage = damage - iPower;      
+      damage = damage - iPower;      
 
       % Results in proficiency percent of 2 * damage bonus
-      iProf = Bound(((iProf*(2*iPower))/100),1,$);
+      iProf = Bound((((iProf+1)*(2*iPower))/100),1,$);
       damage = damage + iProf;
                        
       return damage;
@@ -123,7 +123,7 @@ messages:
       hitroll = hitroll - iPower;
 
       % Results in proficiency percent of 2 * to-hit bonus
-      iProf = Bound(((iProf*(2*iPower))/100),10,$);
+      iProf = Bound((((iProf+1)*(2*iPower))/100),10,$);
       hitroll = hitroll + iProf;
 
       return hitroll;

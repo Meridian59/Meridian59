@@ -2167,6 +2167,13 @@ messages:
             iItemModifier = iItemModifier/2;
          }
       }
+
+      iPowerBonus = Send(Send(SYS,@GetParliament),@GetFactionSpellPowerBonus,
+                         #who=who,#theSpell=self);
+
+      % Bind the bonuses to reasonable values.
+      iPrimaryBonus = bound(iPrimaryBonus,0,30);
+      iSecondaryBonus = bound(iSecondaryBonus,0,10);
       
       if viSchool = SS_JALA
       {
@@ -2177,15 +2184,8 @@ messages:
          %  with normal combat, etc.
          % Secondary bonus is based off of HPs.  Non-mules get bigger bonuses.
          iPrimaryBonus = Send(who,@GetInstrumentLevel);
-         iSecondaryBonus = Send(who,@GetMaxHealth)/12;
+         iSecondaryBonus = bound(Send(who,@GetMaxHealth)/12,0,10);
       }
-
-      iPowerBonus = Send(Send(SYS,@GetParliament),@GetFactionSpellPowerBonus,
-                         #who=who,#theSpell=self);
-
-      % Bind the bonuses to reasonable values.
-      iPrimaryBonus = bound(iPrimaryBonus,0,30);
-      iSecondaryBonus = bound(iSecondaryBonus,0,10);
 
       iSpellPower = iPrimaryBonus + iSecondaryBonus + iPowerBonus + iBase;
            

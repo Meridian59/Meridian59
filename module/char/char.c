@@ -31,7 +31,7 @@ static handler_struct handler_table[] = {
 { BP_CHARINFO_NOT_OK,   HandleCharInfoNotOk },
 { 0, NULL},
 };
-
+BROKEN!
 // Client message table
 client_message msg_table[] = {
 { BP_SEND_CHARACTERS,      { PARAM_END }, },

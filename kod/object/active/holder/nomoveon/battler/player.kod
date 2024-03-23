@@ -4472,14 +4472,6 @@ messages:
          damage = 1;
       }
 
-      if damage > 0
-      {
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_PARALYZED,#flagset=2)
-         {
-            Send(self,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_PARALYZE));
-         }
-      }
-
       if NOT absolute
       {
          % If we have more health than twice our max, no percent limit on damage.

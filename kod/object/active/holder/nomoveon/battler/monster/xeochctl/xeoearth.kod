@@ -79,7 +79,7 @@ messages:
       {
          if iRandom < 40
          {
-            return [SID_SAND_STORM, 10];
+            return [SID_SANDSTORM, 10];
          }
          else
          {

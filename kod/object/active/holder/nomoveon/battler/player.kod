@@ -6787,7 +6787,7 @@ messages:
 %  (which clearly doesn't belong in player; should be in the spell itself) to
 %  make it buyable.  - ARK 10/26/2010
 %
-%      if num = SID_DEATHS_DOOR
+%      if num = SID_SHADOW_RIFT
 %          AND ((NOT Send(self, @IsUsingA,#class=&NecromancerAmulet))
 %               AND (NOT IsClass(self,&Admin)))
 %      {
@@ -9986,7 +9986,7 @@ messages:
       }
       
       iState = Send(self,@GetEnchantedState,
-                    #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHTVISION));
+                    #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION));
       if iState <> $
       {
          iLight = iLight + iState;

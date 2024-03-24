@@ -247,7 +247,7 @@ resources:
    user_goto_jail = "You have been thrown in the Barloque Jail!"
    user_last_known = "the last known location of "
 
-   user_school_shallile = "School of Shal'ille"
+   user_school_shalille = "School of Shal'ille"
    user_school_qor = "School of Qor"
    user_school_kraanan = "School of Kraanan"
    user_school_faren = "School of Faren"
@@ -2735,7 +2735,7 @@ messages:
       }
       
       AddPacket(1,num_schools);
-      AddPacket(4,user_school_shallile);
+      AddPacket(4,user_school_shalille);
       AddPacket(4,user_school_qor);
       AddPacket(4,user_school_kraanan);
       AddPacket(4,user_school_faren);

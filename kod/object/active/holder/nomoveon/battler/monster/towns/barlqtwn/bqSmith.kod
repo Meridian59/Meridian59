@@ -61,7 +61,7 @@ messages:
                      Create(&Hammer),
                      Create(&MetalShield)],
                      $,
-                     [SID_MAGICSHIELD], $ ];
+                     [SID_MAGIC_SHIELD], $ ];
       return;
    }
 

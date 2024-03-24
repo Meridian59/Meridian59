@@ -36,7 +36,7 @@ classvars:
 
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
-   viSpellEffect = SID_MAGICSHIELD
+   viSpellEffect = SID_MAGIC_SHIELD
    viPoisonPercent = 20
    viGoBadDamage = 5
    viColor = XLAT_TO_SKY

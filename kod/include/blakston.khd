@@ -2017,7 +2017,6 @@
    SID_SHALBANE = 118                  % use SID_SHALLILEBANE
    SID_WARPTIME = 122                  % use SID_WARP_TIME
    SID_DETECT_INVIS = 123              % use SID_DETECT_INVISIBILITY
-   SID_PARALYZE = 127                  % use SID_GAZE_OF_THE_BASILISK
    SID_SUMMON_WEB = 136                % use SID_SPIDER_WEB
    SID_REFLECT = 138                   % use SID_DEFECT
    SID_LIGHTNINGWALL = 140             % use SID_LIGHTNING_WALL
@@ -2154,7 +2153,7 @@
    PFLAG2_DETECT_GOOD      = 0x000004
    PFLAG2_DETECT_EVIL      = 0x000008
    PFLAG2_DETECT_INVIS     = 0x000010
-   PFLAG2_PARALYZED        = 0x000020
+   % Not currently used    = 0x000020 
    PFLAG2_HUNTED           = 0x000040
    % DM set only.  No chance of revenants.
    PFLAG2_NOHAUNT          = 0x000080

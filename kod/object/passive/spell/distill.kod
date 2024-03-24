@@ -283,7 +283,7 @@ messages:
       %  point total to reward built characters.
       iPotionPower = Bound(((iAbility * (iSkill + 1)) / 100),20,99);
       iPotionPower = iPotionPower - bound((iLevel*15)
-                     - (Send(caster,@GetMaxHealth)-20),0,$);
+                     - (Send(caster,@GetBaseMaxHealth)-20),0,$);
       iPotionPower = iPotionPower + Random(-20,(iSpellPower/10));
       iPotionPower = Bound(iPotionPower,5,SPELLPOWER_MAXIMUM);
 

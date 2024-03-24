@@ -431,8 +431,8 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
                                  MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
    {
       mciGetErrorString(dwReturn, temp, 80);
-      strcat(temp, " \n");
       debug((temp));
+      debug((" \n"));
       
       mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
       

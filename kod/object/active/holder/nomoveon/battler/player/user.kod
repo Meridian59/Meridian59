@@ -651,6 +651,11 @@ messages:
       Send(self,@BreakTrance);
       pbLogged_on = FALSE;
 
+      if Send(self,@GetFellowship) <> $
+      {
+         Send(Send(self,@GetFellowship),@RemoveFromFellowship,#who=self,#logoff=TRUE);
+      }
+
       Send(self,@CancelIfOffer);
       Send(self,@UserLogoffHook);
 
@@ -2399,8 +2404,10 @@ messages:
                      iFlags = (iFlags | PLAYER_IS_GUILDMATE);
                   }
 
-                  if Send(poGuild,@IsAlly,#otherguild=oOtherGuild)
-                     AND Send(oOtherGuild,@IsAlly,#otherguild=poGuild)
+                  if (Send(poGuild,@IsAlly,#otherguild=oOtherGuild)
+                     AND Send(oOtherGuild,@IsAlly,#otherguild=poGuild))
+                     OR (Send(self,@GetFellowship) <> $
+                        AND Send(self,@GetFellowship) = Send(what,@GetFellowship))
                   {
                      iFlags = (iFlags | PLAYER_IS_FRIEND);
                   }

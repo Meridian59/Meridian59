@@ -40,7 +40,6 @@ DOCDIR      = $(TOPDIR)\doc
 DECODIR     = $(TOPDIR)\blakdeco
 MAKEBGFDIR  = $(TOPDIR)\makebgf
 RESOURCEDIR = $(TOPDIR)\resource
-DIFFDIR     = $(TOPDIR)\blakdiff
 MODULEDIR   = $(TOPDIR)\module
 CRUSHERDIR  = $(TOPDIR)\crusher
 UTILDIR     = $(TOPDIR)\util

@@ -58,13 +58,7 @@ Bcompiler:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bdiff:
-	echo Making $(COMMAND) in $(DIFFDIR)
-	cd $(DIFFDIR)
-	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
-
-Bkod: Bdiff Bcompiler
+Bkod: Bcompiler
 	echo Making $(COMMAND) in $(KODDIR)
 	cd $(KODDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)

@@ -206,7 +206,7 @@ messages:
    {
       local iPower;
       
-      iPower = 20 + (iSpellPower / 3);
+      iPower = iSpellPower / 20;
       
       return random(iPower/2,iPower);
    }

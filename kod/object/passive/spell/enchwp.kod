@@ -21,6 +21,8 @@ resources:
    enchantweapon_fails = "The %s is strangely unaffected by the spell."
    enchantweapon_already_done = \
       "This weapon is already dedicated to Kraanan."
+   enchantweapon_cannot_enchant_nerudite = \
+      "Nerudite cannot be enchanted in such a manner."
 
    enchantweapon_name_rsc = "enchant weapon"
    enchantweapon_icon_rsc = ienchant.bgf
@@ -93,6 +95,11 @@ messages:
       {
 	 Send(who, @MsgSendUser, #message_rsc=enchantweapon_already_done);
 	 return False;
+      }
+      if Send(oWeapon,@CheckTypeFlag,#flag=ATCK_WEAP_NERUDITE)
+      {
+         Send(who,@MsgSendUser,#message_rsc=enchantweapon_cannot_enchant_nerudite);
+         return False;
       }
       propagate;   % Check other things higher up
    }

@@ -77,6 +77,11 @@ messages:
    {
       if send(oItem,@getattackspell) > 0
       { return FALSE; }
+      
+      if Send(oItem,@CheckTypeFlag,#flag=ATCK_WEAP_NERUDITE)
+      {
+         return FALSE;
+      }
 
       return TRUE;
    }

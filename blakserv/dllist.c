@@ -202,7 +202,7 @@ void AddBuiltInDLlist()
 
    static const char *WHITESPACE = " \t\r\n";
    
-   sprintf(filename,"%s%s",ConfigStr(PATH_PACKAGE_FILE),PACKAGE_FILE);
+   snprintf(filename, sizeof(filename), "%s%s",ConfigStr(PATH_PACKAGE_FILE),PACKAGE_FILE);
    
    if ((packagefile = fopen(filename,"rt")) == NULL)
    {

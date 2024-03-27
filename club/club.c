@@ -162,7 +162,7 @@ void RestartClient()
 
    if (!CreateProcess(restart_filename.c_str(),"",NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
    {
-      sprintf(s,GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
+     snprintf(s, sizeof(string), GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
       MessageBox(NULL,s,GetString(hInst, IDS_APPNAME),MB_ICONSTOP);
    }
 }
@@ -211,7 +211,7 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
       SetFocus(GetDlgItem(hwnd, IDCANCEL));
 
       GetDlgItemText(hwnd, IDC_BYTES1, format, sizeof(format));
-      sprintf(string, format, transfer_progress, transfer_file_size);
+      snprintf(string, sizeof(string), format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwnd, IDC_BYTES1, string);
 
       hCtrl = GetDlgItem(hwnd, IDC_ANIMATE1);
@@ -243,7 +243,7 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
    case CM_FILESIZE:
       // Set max value
       transfer_file_size = (int) lParam;
-      sprintf(string, format, transfer_progress, transfer_file_size);
+      snprintf(string, sizeof(string), format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwndMain, IDC_BYTES1, string);
       SendDlgItemMessage(hwnd, IDC_PROGRESS, PBM_SETRANGE, 0,
                          MAKELPARAM(0, transfer_file_size / 100));
@@ -252,7 +252,7 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
    case CM_PROGRESS:
       // Set current value
       transfer_progress = (int) lParam;
-      sprintf(string, format, transfer_progress, transfer_file_size);
+      snprintf(string, sizeof(string), format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwndMain, IDC_BYTES1, string);
       SendDlgItemMessage(hwnd, IDC_PROGRESS, PBM_SETPOS, transfer_progress / 100, 0);
       break;
@@ -290,7 +290,7 @@ void Status(char *fmt, ...)
    va_list marker;
     
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    SetDlgItemText(hwndMain, IDC_STATUS, s);
@@ -306,7 +306,7 @@ void Error(char *fmt, ...)
    va_list marker;
     
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ERROR), hwndMain, ErrorDialogProc, 

@@ -261,7 +261,7 @@ const char * GetStateName(session_node *s)
 				break;
 			}
 
-			if(1+sprintf(buf,"Transferring %i",s->syn->download_count)>50)
+			if(1+snprintf(buf, sizeof(buf), "Transferring %i",s->syn->download_count)>50)
 				eprintf("Overflowed buf in GetStateName session.c");
 
 			str = buf;

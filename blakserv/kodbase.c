@@ -40,7 +40,7 @@ void LoadKodbase(void)
    char *type_char,*t1,*t2,*t3,*t4;
    char load_name[MAX_PATH+FILENAME_MAX];
 
-   sprintf(load_name,"%s%s",ConfigStr(PATH_KODBASE),KODBASE_FILE);
+   snprintf(load_name, sizeof(load_name), "%s%s",ConfigStr(PATH_KODBASE),KODBASE_FILE);
 
    if ((kodbase = fopen(load_name,"rt")) == NULL)
    {

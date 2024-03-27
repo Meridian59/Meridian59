@@ -477,7 +477,7 @@ void LogUserData(session_node *s)
 {
    char buf[500];
 
-   sprintf(buf,"LogUserData/4 got %i from %s, ",s->account->account_id,s->conn.name);
+   snprintf(buf, sizeof(buf), "LogUserData/4 got %i from %s, ",s->account->account_id,s->conn.name);
 
    switch (s->os_type)
    {

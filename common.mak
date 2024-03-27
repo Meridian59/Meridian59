@@ -72,8 +72,7 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /MP enables parallel compiling
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
-	     -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
-             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 /wd4312 \
+             /wd4996 \
 	     -TP -WX -GR- -EHsc- -MP
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox

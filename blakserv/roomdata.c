@@ -365,7 +365,7 @@ Bool LoadRoomFile(char *fname,room_type *file_info)
 {
    char s[MAX_PATH+FILENAME_MAX];
 
-   sprintf(s,"%s%s",ConfigStr(PATH_ROOMS),fname);
+   snprintf(s, sizeof(s), "%s%s",ConfigStr(PATH_ROOMS),fname);
 
    return BSPRooFileLoadServer(s,file_info);
 }

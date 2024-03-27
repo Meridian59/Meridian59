@@ -16,6 +16,8 @@
 #define MAX_CLASSES 100
 #define MAX_HANDLERS 500
 
+static const int TEXT_SIZE = 50000;
+
 /* function prototypes */
 bool open_file(char *s);
 void release_file();
@@ -276,7 +278,7 @@ void dump_bkod()
 {
    opcode_type opcode;
    int i, line;
-   char text[50000];
+   char text[TEXT_SIZE];
    char opcode_char;
    static int last_line = 0;
 
@@ -303,7 +305,7 @@ void dump_bkod()
    case CALL : dump_call(opcode,text); break;
    case RETURN : dump_return(opcode,text); break;
    case DEBUG_LINE : dump_debug_line(opcode,text); break;
-   default : sprintf(text,"INVALID"); break;
+   default : snprintf(text, sizeof(text), "INVALID"); break;
    }
 
    if (dump_hex)
@@ -331,7 +333,7 @@ void dump_unary_assign(opcode_type opcode,char *text)
    dest = get_int();
    source = get_int();
    source_str = strdup(str_constant(source));
-   sprintf(text,"%s %i = %s %s %s",name_var_type(opcode.dest),dest,
+   snprintf(text, TEXT_SIZE, "%s %i = %s %s %s",name_var_type(opcode.dest),dest,
 	   name_unary_operation(info),name_var_type(opcode.source1),
 	   source_str);
 }
@@ -347,7 +349,7 @@ void dump_binary_assign(opcode_type opcode,char *text)
    source2 = get_int();
    source1_str = strdup(str_constant(source1));
    source2_str = strdup(str_constant(source2));
-   sprintf(text,"%s %i = %s %s %s %s %s",name_var_type(opcode.dest),dest,
+   snprintf(text, TEXT_SIZE, "%s %i = %s %s %s %s %s",name_var_type(opcode.dest),dest,
 	   name_var_type(opcode.source1),source1_str,name_binary_operation(info),
 	   name_var_type(opcode.source2),source2_str);
 }
@@ -361,13 +363,13 @@ void dump_goto(opcode_type opcode,char *text)
 
    if (opcode.source1 == 0 && opcode.source2 == GOTO_UNCONDITIONAL)
    {
-      sprintf(text,"Goto absolute %08X",dest_addr+inst_start);
+      snprintf(text, TEXT_SIZE, "Goto absolute %08X",dest_addr+inst_start);
       return;
    }
    else
    {
       var = get_int();
-      sprintf(text,"If %s %s %s goto absolute %08X",
+      snprintf(text, TEXT_SIZE, "If %s %s %s goto absolute %08X",
 	      name_var_type(opcode.source1),str_constant(var),
 	      name_goto_cond(opcode.dest),dest_addr+inst_start);
    }
@@ -385,20 +387,20 @@ void dump_call(opcode_type opcode,char *text)
    {
    case CALL_NO_ASSIGN : /* return value ignored */
    {
-      sprintf(text,"Call %s--",name_function(info));
+      snprintf(text, TEXT_SIZE, "Call %s--",name_function(info));
       break;
    }
    case CALL_ASSIGN_LOCAL_VAR :
    case CALL_ASSIGN_PROPERTY :
    {
       assign_index = get_int();
-      sprintf(text,"%s %s = Call %s\n  : ",name_var_type(opcode.source1),
+      snprintf(text, TEXT_SIZE, "%s %s = Call %s\n  : ",name_var_type(opcode.source1),
 	      str_constant(assign_index),name_function(info));
       break;
    }
    default :
    {
-      sprintf(text,"INVALID");
+      snprintf(text, TEXT_SIZE, "INVALID");
       return;
    }
    }
@@ -426,7 +428,7 @@ void dump_call(opcode_type opcode,char *text)
       if (i != 0)
          strcat(text,", ");
       strcat(text,"Parm id ");
-      sprintf(tempbuf, "%d", name_id);
+      snprintf(tempbuf, sizeof(tempbuf), "%d", name_id);
       strcat(text, tempbuf);
       strcat(text," ");
       strcat(text,name_var_type(parm_type));
@@ -443,13 +445,13 @@ void dump_return(opcode_type return_op,char *text)
    {
    case PROPAGATE :
    {
-      sprintf(text,"Return propagate"); 
+      snprintf(text, TEXT_SIZE, "Return propagate"); 
       break;
    }
    case NO_PROPAGATE :
    {
       ret_val = get_int();
-      sprintf(text,"Return %s %s",name_var_type(return_op.source1),
+      snprintf(text, TEXT_SIZE, "Return %s %s",name_var_type(return_op.source1),
 	      str_constant(ret_val));
       break;
    }
@@ -563,7 +565,7 @@ const char * name_function(int fnum)
    case SQRT: return "Sqrt";
 
    case RANDOM  : return "Random";
-   default : sprintf(s,"Unknown function %i",fnum); return s;
+   default : snprintf(s, sizeof(s), "Unknown function %i",fnum); return s;
    }
 
    /* can't get here */
@@ -597,30 +599,30 @@ char *str_constant(int num)
    {
    case TAG_NIL : 
       if (bc.data == 0) 
-	 sprintf(s,"$");
+	 snprintf(s, sizeof(s), "$");
       else
-	 sprintf(s,"%i",bc.data);
+	 snprintf(s, sizeof(s),"%i",bc.data);
       break;
    case TAG_INT :
-      sprintf(s,"(int %i)",bc.data);
+      snprintf(s, sizeof(s),"(int %i)",bc.data);
       break;
    case TAG_RESOURCE :
-      sprintf(s,"(rsc %i)",bc.data);
+      snprintf(s, sizeof(s),"(rsc %i)",bc.data);
       break;
    case TAG_CLASS :
-      sprintf(s,"(class %i)",bc.data);
+      snprintf(s, sizeof(s),"(class %i)",bc.data);
       break;
    case TAG_MESSAGE :
-      sprintf(s,"(message %i)",bc.data);
+      snprintf(s, sizeof(s),"(message %i)",bc.data);
       break;
    case TAG_DEBUGSTR :
-      sprintf(s,"(debugging string %i)",bc.data);
+      snprintf(s, sizeof(s),"(debugging string %i)",bc.data);
       break;
    case TAG_OVERRIDE :
-      sprintf(s,"(overridden by property %i)",bc.data);
+      snprintf(s, sizeof(s),"(overridden by property %i)",bc.data);
       break;
    default :
-      sprintf(s,"INVALID");
+      snprintf(s, sizeof(s),"INVALID");
       break;
    }
    return s;
@@ -631,7 +633,7 @@ void dump_debug_line(opcode_type opcode,char *text)
    int line;
 
    line = get_int();
-   sprintf(text,"LINE %i",line);
+   snprintf(text, TEXT_SIZE, "LINE %i",line);
 }
 
 int find_linenum(int offset)

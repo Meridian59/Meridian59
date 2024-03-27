@@ -45,25 +45,25 @@ INT64 SaveAll(void)
       We make our own copy since the time functions use a static
       buffer. */
    save_time = GetTime();
-   sprintf(time_str,"%lli",(long long) save_time);
+   snprintf(time_str, sizeof(time_str), "%lli",(long long) save_time);
    
    save_ok = True;
 
    lprintf("Saving game (time stamp %s)...\n", time_str);
    
-   sprintf(save_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
+   snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
    if (SaveGame(save_name) == False)
       save_ok = False;
 
-   sprintf(save_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,time_str);
+   snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,time_str);
    if (SaveStrings(save_name) == False)
       save_ok = False;
 
-   sprintf(save_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,time_str);
+   snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,time_str);
    if (SaveAccounts(save_name) == False)
       save_ok = False;
 
-   sprintf(save_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
+   snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
    if (!SaveDynamicRsc(save_name))
       save_ok = False;
 
@@ -84,7 +84,7 @@ void SaveControlFile(INT64 save_time)
    char save_name[MAX_PATH+FILENAME_MAX];
    FILE *savefile;
 
-   sprintf(save_name,"%s%s",ConfigStr(PATH_LOADSAVE),SAVE_CONTROL_FILE);
+   snprintf(save_name, sizeof(save_name), "%s%s",ConfigStr(PATH_LOADSAVE),SAVE_CONTROL_FILE);
    if ((savefile = fopen(save_name,"wt")) == NULL)
    {
       eprintf("SaveContrtolFile can't open %s to save date/time of successful save!!!\n",

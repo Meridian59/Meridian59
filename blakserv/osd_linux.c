@@ -172,7 +172,7 @@ void StartupPrintf(const char *fmt,...)
 	va_list marker;
 
 	va_start(marker,fmt);
-	vsprintf(s,fmt,marker);
+	vsnprintf(s, sizeof(s), fmt,marker);
 
 
 	if (strlen(s) > 0)

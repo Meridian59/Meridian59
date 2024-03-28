@@ -1,6 +1,6 @@
 # makefile for libarchive
 
-TOPDIR=..
+TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
 # Turn off treating .c files as C++; libarchive code is old-school C

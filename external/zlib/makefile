@@ -1,6 +1,6 @@
 # makefile for zlib
 
-TOPDIR=..
+TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
 # Turn off treating .c files as C++; zlib code is old-school C

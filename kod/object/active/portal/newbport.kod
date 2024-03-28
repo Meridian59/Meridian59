@@ -33,7 +33,7 @@ resources:
 
 classvars:
 
-   viObject_flags = MOVEON_TELEPORTER
+   viMoveOn_type = MOVEON_TELEPORTER
 
 properties:
 

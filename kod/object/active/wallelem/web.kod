@@ -38,7 +38,8 @@ classvars:
    vrIcon = Web_icon_rsc
    vrdesc = Web_desc_rsc
 
-   viObject_flags = LOOK_NO | MOVEON_NOTIFY
+   viObject_flags = LOOK_NO
+   viMoveOn_type = MOVEON_NOTIFY
 
    vrDissipateMessage = web_dissipates
    vrUnaffectedMessage = web_stick0

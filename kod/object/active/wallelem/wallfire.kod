@@ -38,7 +38,8 @@ classvars:
    vrIcon = WallofFire_icon_rsc
    vrdesc = WallofFire_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY | FLICKERING_YES
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | FLICKERING_YES
+   viMoveOn_type = MOVEON_NOTIFY
 
    vrDissipateMessage = firewall_dissipates
    vrUnaffectedMessage = firewall_damage0

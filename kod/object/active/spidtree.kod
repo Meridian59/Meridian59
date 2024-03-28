@@ -30,7 +30,7 @@ classvars:
    vrIcon = SpiderTree_icon_rsc
    vrDesc = SpiderTree_desc_rsc
 
-   viObject_flags = MOVEON_TELEPORTER
+   viMoveOn_type = MOVEON_TELEPORTER
 
 properties:
    

@@ -194,6 +194,7 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE s
    dos.light    = KOD_LIGHT_LEVELS - 1;
    dos.draw     = True;
    dos.flags    = flags;
+   dos.moveontype = MOVEON_YES;
    dos.cone     = &c;
    dos.distance = 1;
    dos.cutoff   = main_viewport_height;

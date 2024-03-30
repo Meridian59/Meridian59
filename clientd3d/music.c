@@ -154,7 +154,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag)
       debug(("Unable to get current directory!\n"));
 
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
-   debug(("music filename = %s, argument = %d\n", filename, deviceflag));
+   debug(("music filename = %s \n", filename));
    // Is it a background music or gameplay element music file?
    if (deviceflag == 1)
    {
@@ -317,7 +317,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 #ifdef M59_MSS
 	// If a sequence was paused and we are trying to play that music
    // then unpause it.
-	if (isMusicPaused)
+   if (isMusicPaused)
 	{
       if (paused_music == bg_music)
       {
@@ -604,7 +604,7 @@ void UnpauseMusic(void)
  * PlayMidiRsc:  Play MIDI file associated with given resource number.
  *
  * This function handles pausing or stopping music and midi files and
- * the posts a message which is handled and sends us to NewMusic.
+ * then posts a message which is handled and sends us to NewMusic.
  */
 void PlayMidiRsc(ID rsc)
 {
@@ -811,7 +811,7 @@ void MusicAbort(void)
 /*
  * MusicStart:  Start playing bg music if any (used when player toggles music on).
  *   If the latest music rsc matches the bg_music rsc than we use
- *   use PlayMusicRsc to start the music.  Otherwise we use PlayMidiRsc.
+ *   PlayMusicRsc to start the music.  Otherwise we use PlayMidiRsc.
  *   This maintains the correct music types and booleans.
  */
 void MusicStart(void)

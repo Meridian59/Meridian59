@@ -29,8 +29,8 @@ static Bool playing_midi = False;  /* Is a MIDI file currently playing as an eff
 static Bool playing_music = False;  /* Is a MIDI file currently playing as background? */
 static Bool isMusicPaused = False;   /* Is background music paused? */
 
-static UINT midi_element;  /* Currently playing MIDI file ID */
-static UINT midi_bg_music_element;  /* Currently playing background music ID */
+static UINT midi_element;  /* Currently playing MIDI MCI device ID */
+static UINT midi_bg_music_element;  /* Currently playing background music MCI device ID */
 
 static ID    bg_music = 0;     /* Resource id of background music MIDI file; 0 if none */
 static ID    latest_music = 0;   /* Resource id of most recent music file played - regardless of type */

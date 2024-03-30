@@ -49,7 +49,7 @@ static BYTE *pMIDIImmediate;
 enum {SOUND_MIDI, SOUND_MUSIC};
 
 /* local functions */
-static DWORD OpenMidiFile(const char *lpszMIDIFileName);
+static DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag);
 static DWORD RestartMidiFile(DWORD device);
 static void PauseMusic(void);
 static void UnpauseMusic(void);
@@ -136,13 +136,14 @@ void MusicClose(void)
 //	Not used by MSS version
 /*
  * OpenMidiFile:  Open midi file for playing.
- *   The device integer argument corresponds to either
- *   midi_bg_music_element or midi_element.
- *   background music uses midi_bg_music_element while
- *   any other gameplay related music uses midi_element.
+ *   The deviceflag integer argument corresponds to either
+ *   midi_bg_music_element (flag = 1) or midi_element (2).
+ *   after opening a new MCI device this flag instructs the client
+ *   what to name the device ID.  Background music is called midi_bg_music_element
+ *   and any other gameplay element music is called midi_element.
  *   Returns 0 if successful; MCI error code otherwise.
  */
-DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
+DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag)
 {
    DWORD dwReturn;
    MCI_OPEN_PARMS mciOpenParms;
@@ -153,16 +154,16 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
       debug(("Unable to get current directory!\n"));
 
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
-   debug(("music filename = %s\n", filename));
+   debug(("music filename = %s, argument = %d\n", filename, deviceflag));
    // Is it a background music or gameplay element music file?
-   if (device == midi_bg_music_element)
+   if (deviceflag == 1)
    {
       if (playing_music != False)
       {
          mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
       }
    }
-   else if (device == midi_element)
+   else if (deviceflag == 2)
    {
       if (playing_midi != False)
       {
@@ -181,11 +182,18 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
    if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
                               (DWORD_PTR)(LPVOID) &mciOpenParms))
    { 
+      // Failed to open the file: Kill the midi devices to stop music
+      // Reset both device IDs to return to a clean state.
       debug(("can't MCI open new song \n"));
+      mciSendCommand(MCI_ALL_DEVICE_ID, MCI_CLOSE, 0, 0);
+      playing_music = False;
+      isMusicPaused = False;
+      midi_element = 0;
+      midi_bg_music_element = 0;
       return dwReturn;
    }
    // Save element ID and set flag
-   if (device == midi_bg_music_element)
+   if (deviceflag == 1)
    {
       midi_bg_music_element = mciOpenParms.wDeviceID;
       playing_music = True;
@@ -197,7 +205,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT device)
       playing_midi = True;
       debug(("midi element = %d\n", midi_element));
    }
-   return 0;
+   return dwReturn;
 }
 /******************************************************************************/
 /*
@@ -265,8 +273,8 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
    {
       DWORD dwReturn;
       MCI_PLAY_PARMS mciPlayParms;
-
-      if ((dwReturn = OpenMidiFile(fname, midi_element)) != 0)
+      // Open file with deviceflag = 2
+      if ((dwReturn = OpenMidiFile(fname, 2)) != 0)
       {
          debug(("OpenMidiFile error - can't open \n"));
          return dwReturn;
@@ -384,11 +392,11 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    DWORD dwReturn;
    MCI_PLAY_PARMS mciPlayParms;
    char temp[81];
-
+	debug(( "Play music file %s. LatestMusic=%d. playing_music=%d, playing_midi=%d \n", fname, latest_music, playing_music, playing_midi ));
    // If already playing music, pick up where we left off
    if (isMusicPaused)
    {
-      if (paused_music == bg_music)
+      if (paused_music == bg_music && playing_music)
       {
          UnpauseMusic();
          return 0;
@@ -399,13 +407,13 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
          isMusicPaused = False;
       }
    }
-
-   if ((dwReturn = OpenMidiFile(fname, midi_bg_music_element)) != 0)
+   // Open file with deviceflag = 1
+   if ((dwReturn = OpenMidiFile(fname, 1)) != 0)
      {
        debug(("OpenMidiFile error code = %d\n", dwReturn));
        mciGetErrorString(dwReturn, temp, 80);
-       strcat(temp, " \n");
        debug((temp));
+       debug((" \n"));
        return dwReturn;
      }
 
@@ -426,6 +434,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
     * MM_MCINOTIFY message when playback is complete.
     * The window procedure then closes the device.
     */
+   memset(&mciPlayParms, 0, sizeof(MCI_PLAY_PARMS));
    mciPlayParms.dwCallback = (DWORD_PTR) hWndNotify;
    if (dwReturn = mciSendCommand(midi_bg_music_element, MCI_PLAY,
                                  MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms)) 
@@ -435,7 +444,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
       debug((" \n"));
       
       mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
-      
+      playing_music = False;
       return dwReturn;
    }
 
@@ -547,16 +556,18 @@ void UnpauseMusic(void)
    memset(&mciStatusParms, 0, sizeof(MCI_STATUS_PARMS));
    mciStatusParms.dwItem = MCI_STATUS_LENGTH;
    dwReturn = mciSendCommand(midi_bg_music_element, MCI_STATUS, 
-                             MCI_STATUS_LENGTH, (DWORD_PTR)(LPVOID) &mciStatusParms);
+                             MCI_STATUS_ITEM, (DWORD_PTR)(LPVOID) &mciStatusParms);
    if (dwReturn == 0)
    {
       DWORD dwLength = mciStatusParms.dwReturn;
-      if (music_pos > dwLength)
+      debug(("Music length = %ld \n", dwLength));
+      if (music_pos + 20 > dwLength)
       {
-         debug(("Music position is greater than length, setting to 0\n"));
+         debug(("Music position near end of song, resetting to 0\n"));
          music_pos = 0;
       }
    }
+
    mciSeekParms.dwTo = music_pos;
    mciSendCommand(midi_bg_music_element, MCI_SEEK,
                   MCI_TO, (DWORD_PTR)(LPVOID) &mciSeekParms);
@@ -573,8 +584,8 @@ void UnpauseMusic(void)
       {
          debug(("mciClose problem for midi_element\n"));
          mciGetErrorString(dwReturn, temp, 80);
-         strcat(temp, " \n");
          debug((temp));
+         debug((" \n"));
       }
       else
       {

@@ -187,6 +187,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag)
       debug(("can't MCI open new song \n"));
       mciSendCommand(MCI_ALL_DEVICE_ID, MCI_CLOSE, 0, 0);
       playing_music = False;
+      playing_midi = False;
       isMusicPaused = False;
       midi_element = 0;
       midi_bg_music_element = 0;
@@ -560,7 +561,6 @@ void UnpauseMusic(void)
    if (dwReturn == 0)
    {
       DWORD dwLength = mciStatusParms.dwReturn;
-      debug(("Music length = %ld \n", dwLength));
       if (music_pos + 20 > dwLength)
       {
          debug(("Music position near end of song, resetting to 0\n"));
@@ -644,10 +644,10 @@ void PlayMidiRsc(ID rsc)
       {
          playing_midi = False;
       }
-
-      PostMessage(hMain, BK_NEWSOUND, SOUND_MIDI, rsc);
-      return;
    }
+   // Always POST new music message if using MCI
+   PostMessage(hMain, BK_NEWSOUND, SOUND_MIDI, rsc);
+   return;
 #endif
    if (playing_midi)
    {

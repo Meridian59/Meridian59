@@ -2417,7 +2417,7 @@ messages:
       % Send special type if special flag is set
       if iFlags & ITEM_SPECIAL_YES
       {
-         AddPacket(4, SPECIAL_TYPE_TOP);
+         AddPacket(4, SPECIAL_TYPE_LEGENDARY);
       }
       else
       {

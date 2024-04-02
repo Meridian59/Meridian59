@@ -56,11 +56,11 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "0,255,255"},		/* COLOR_ITEM_SPECIAL_MAGIC   - cyan */
-	{ "0,255,0"},	    /* COLOR_ITEM_SPECIAL_RARE    - lime  */
-	{ "255,255,0"},	    /* COLOR_ITEM_SPECIAL_TOP     - yellow */
-	{ "252,128,0"},	    /* COLOR_ITEM_SPECIAL_UNKNOWN - orange */
-	{ "255,0,0"},	    /* COLOR_ITEM_SPECIAL_CURSED  - red */
+	{ "0,255,255"},		/* COLOR_ITEM_SPECIAL_MAGIC     - cyan   */
+	{ "0,255,0"},	    /* COLOR_ITEM_SPECIAL_RARE      - lime   */
+	{ "255,255,0"},	    /* COLOR_ITEM_SPECIAL_LEGENDARY - yellow */
+	{ "252,128,0"},	    /* COLOR_ITEM_SPECIAL_UNKNOWN   - orange */
+	{ "255,0,0"},	    /* COLOR_ITEM_SPECIAL_CURSED    - red    */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -423,7 +423,7 @@ WORD GetItemListColor(HWND hwnd, int type, int flags, enum special_type special_
             case SPECIAL_TYPE_RARE:
                 return COLOR_ITEM_SPECIAL_RARE;
             case SPECIAL_TYPE_TOP:
-                return COLOR_ITEM_SPECIAL_TOP;
+                return COLOR_ITEM_SPECIAL_LEGENDARY;
             case SPECIAL_TYPE_UNKNOWN:
                 return COLOR_ITEM_SPECIAL_UNKNOWN;
 			case SPECIAL_TYPE_CURSED:

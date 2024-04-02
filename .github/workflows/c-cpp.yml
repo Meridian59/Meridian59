@@ -38,7 +38,7 @@ jobs:
         
     - name: make client 32-bit
       run: |
-        nmake /nologo Bclient Bmodules
+        nmake /nologo Bclient Bmodules Bupdater
 
     - name: make server 32-bit
       run: |
@@ -57,7 +57,7 @@ jobs:
         
     - name: make client 64-bit
       run: |
-        nmake /nologo Bclient Bmodules
+        nmake /nologo Bclient Bmodules Bupdater
 
     - name: make server 64-bit
       run: |

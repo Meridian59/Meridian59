@@ -1,6 +1,6 @@
 # makefile for libpng
 
-TOPDIR=..
+TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
 LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"

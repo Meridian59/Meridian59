@@ -701,7 +701,7 @@ messages:
    {
       local oSpell, oCaster;
 
-      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATHLINK);
+      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATH_LINK);
 
       if Send(self,@IsEnchanted,#what=oSpell)
       {

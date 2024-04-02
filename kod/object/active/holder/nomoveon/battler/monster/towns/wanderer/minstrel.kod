@@ -86,7 +86,7 @@ messages:
 
    SetForSale()
    {
-      plFor_Sale = [$,$,[SID_TRUTH, SID_MIRTH, SID_MELANCHOLY, SID_SPELLBANE, SID_WARPTIME,
+      plFor_Sale = [$,$,[SID_TRUTH, SID_MIRTH, SID_MELANCHOLY, SID_SPELLBANE, SID_WARP_TIME,
                          SID_JIG, SID_MANA_CONVERGENCE, SID_REJUVENATE, SID_DISHARMONY] ];
       return;
    }

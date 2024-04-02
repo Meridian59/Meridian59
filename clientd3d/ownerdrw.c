@@ -330,6 +330,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    AREA area;
    COLORREF crColorText;
    HBRUSH hColorBg;
+   enum special_type special_type_value = SPECIAL_TYPE_NONE;
 
    if (!lpdis || !IsWindow(lpdis->hwndItem) || !IsWindowVisible(lpdis->hwndItem))
       return;
@@ -341,22 +342,33 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD), 0));
+   // Determine the background color based on the selected state and the special type value - BACKGROUND, do not need flags or enum special type
+   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD), 0, special_type_value));
+
+   // If OD_ONLYSEL flag is set, adjust the background color - BACKGROUND, does not need flags or enum special type
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD, 0));
+      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD, 0, special_type_value));
 
+   // Fill the item rectangle with the background color
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
-
+   // Set text mode of the device context to transparent
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
-   // Color special item text if the appropriate flags are set.
+   // Now we need to do the 2 foreground text options
+   // First get the flags if we are checking for an item not the player object like at the character select screen
+
    int flags = 0;
-   if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL) 
+   // Color special item text if the appropriate flags are set. Do this by getting the flags and the special_type
+   if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
+   {
       flags = obj->flags;
-   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), flags));
+      special_type_value = (enum special_type)obj->special_type; // Retrieve the special type value from the object
+   }
+   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), flags, special_type_value));
 
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD, flags));
+      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD, flags, special_type_value));
+   
    if (lpdis->itemState & ODS_DISABLED)
 	crColorText = GetSysColor(COLOR_GRAYTEXT);
 

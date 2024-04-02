@@ -56,7 +56,11 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "0,255,255"}      /* COLOR_ITEM_SPECIAL_FG */
+	{ "0,255,255"},		/* COLOR_ITEM_SPECIAL_MAGIC   - cyan */
+	{ "0,255,0"},	    /* COLOR_ITEM_SPECIAL_RARE    - lime  */
+	{ "255,255,0"},	    /* COLOR_ITEM_SPECIAL_TOP     - yellow */
+	{ "252,128,0"},	    /* COLOR_ITEM_SPECIAL_UNKNOWN - orange */
+	{ "255,0,0"},	    /* COLOR_ITEM_SPECIAL_CURSED  - red */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -406,13 +410,26 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 *    Doesn't return color itself so that caller can use id to call GetBrush.
 *    Also colors special items.  When the client receives a OF_ITEM_SPECIAL flag
 *    for an object, the client will color the object's text in lists based on the
-*    value of COLOR_ITEM_SPECIAL_FG specified in color.h
+*    value of special_type and the corresponding COLOR_ITEM_SPECIAL in color.h
 */
-WORD GetItemListColor(HWND hwnd, int type, int flags)
+WORD GetItemListColor(HWND hwnd, int type, int flags, enum special_type special_type_value)
 {
 	if ((flags & OF_ITEM_SPECIAL) != 0)
-		return COLOR_ITEM_SPECIAL_FG;
-
+	{
+		switch (special_type_value)
+		{
+            case SPECIAL_TYPE_MAGIC:
+                return COLOR_ITEM_SPECIAL_MAGIC;
+            case SPECIAL_TYPE_RARE:
+                return COLOR_ITEM_SPECIAL_RARE;
+            case SPECIAL_TYPE_TOP:
+                return COLOR_ITEM_SPECIAL_TOP;
+            case SPECIAL_TYPE_UNKNOWN:
+                return COLOR_ITEM_SPECIAL_UNKNOWN;
+			case SPECIAL_TYPE_CURSED:
+                return COLOR_ITEM_SPECIAL_CURSED;
+			}
+		}
 	switch(type)
 	{
 		case UNSEL_FGD:

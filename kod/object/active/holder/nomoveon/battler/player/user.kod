@@ -2414,6 +2414,16 @@ messages:
 
       AddPacket(4,iFlags);
 
+      % Send special type if special flag is set
+      if iFlags & ITEM_SPECIAL_YES
+      {
+         AddPacket(4, SPECIAL_TYPE_TOP);
+      }
+      else
+      {
+         AddPacket(4, 0);
+      }
+
       % Send the lighting information.
       Send(what,@SendLightingInformation);
 

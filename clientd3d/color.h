@@ -38,7 +38,11 @@ enum {
    COLOR_BAR4,            /* Bar graph color #4 (numbers in graphs) */
    COLOR_INVNUMFGD,       /* Inventory number foreground */
    COLOR_INVNUMBGD,       /* Inventory number background */
-   COLOR_ITEM_SPECIAL_FG, /* Color for special items in lists */
+   COLOR_ITEM_SPECIAL_MAGIC,
+   COLOR_ITEM_SPECIAL_RARE,
+   COLOR_ITEM_SPECIAL_TOP,
+   COLOR_ITEM_SPECIAL_UNKNOWN,
+   COLOR_ITEM_SPECIAL_CURSED,
    MAXCOLORS,
 };
 
@@ -62,6 +66,6 @@ void ColorsRestoreDefaults(void);
 M59EXPORT HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
 HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
 
-WORD GetItemListColor(HWND hwnd, int type, int flags);
+WORD GetItemListColor(HWND hwnd, int type, int flags, enum special_type specialtype);
 
 #endif /* #ifndef _COLOR_H */

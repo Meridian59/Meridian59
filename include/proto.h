@@ -492,6 +492,16 @@ enum {
    SL_FLICKER_OFF      = 2,         // Turn flickering off
 };
 
+/* Special item types */
+enum special_type {
+    SPECIAL_TYPE_NONE      = 0,
+    SPECIAL_TYPE_MAGIC     = 1,
+    SPECIAL_TYPE_RARE      = 2,
+    SPECIAL_TYPE_TOP       = 3,
+    SPECIAL_TYPE_UNKNOWN   = 4,
+    SPECIAL_TYPE_CURSED    = 5,
+};
+
 /* Size in bytes of numbers in protocol */
 #define SIZE_TYPE            1
 #define SIZE_ID              4

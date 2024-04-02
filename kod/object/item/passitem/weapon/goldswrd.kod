@@ -27,6 +27,7 @@ resources:
    goldsword_player_overlay = gswordov.bgf
 
 classvars:
+   viObject_flags = ITEM_SPECIAL_YES | GETTABLE_YES % testing special item type
    vrName = goldsword_name_rsc
    vrIcon = goldsword_icon_rsc
    vrDesc = goldsword_desc_rsc

@@ -422,7 +422,7 @@ WORD GetItemListColor(HWND hwnd, int type, int flags, enum special_type special_
                 return COLOR_ITEM_SPECIAL_MAGIC;
             case SPECIAL_TYPE_RARE:
                 return COLOR_ITEM_SPECIAL_RARE;
-            case SPECIAL_TYPE_TOP:
+            case SPECIAL_TYPE_LEGENDARY:
                 return COLOR_ITEM_SPECIAL_LEGENDARY;
             case SPECIAL_TYPE_UNKNOWN:
                 return COLOR_ITEM_SPECIAL_UNKNOWN;

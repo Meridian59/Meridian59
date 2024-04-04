@@ -47,9 +47,10 @@ static BYTE *pMIDIImmediate;
 #endif
 
 enum {SOUND_MIDI, SOUND_MUSIC};
+enum {LOAD_MUSIC, LOAD_MIDI}; /* Arguments for OpenMidiFile MCI device naming */
 
 /* local functions */
-static DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag);
+static DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT loadWhat);
 static DWORD RestartMidiFile(DWORD device);
 static void PauseMusic(void);
 static void UnpauseMusic(void);
@@ -143,7 +144,7 @@ void MusicClose(void)
  *   and any other gameplay element music is called midi_element.
  *   Returns 0 if successful; MCI error code otherwise.
  */
-DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag)
+DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT loadWhat)
 {
    DWORD dwReturn;
    MCI_OPEN_PARMS mciOpenParms;
@@ -156,14 +157,14 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag)
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
    debug(("music filename = %s \n", filename));
    // Is it a background music or gameplay element music file?
-   if (deviceflag == 1)
+   if (loadWhat == LOAD_MUSIC)
    {
       if (playing_music != False)
       {
          mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
       }
    }
-   else if (deviceflag == 2)
+   else if (loadWhat == LOAD_MIDI)
    {
       if (playing_midi != False)
       {
@@ -194,7 +195,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT deviceflag)
       return dwReturn;
    }
    // Save element ID and set flag
-   if (deviceflag == 1)
+   if (loadWhat == LOAD_MUSIC)
    {
       midi_bg_music_element = mciOpenParms.wDeviceID;
       playing_music = True;
@@ -274,10 +275,10 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
    {
       DWORD dwReturn;
       MCI_PLAY_PARMS mciPlayParms;
-      // Open file with deviceflag = 2
-      if ((dwReturn = OpenMidiFile(fname, 2)) != 0)
+      // Open file to midi_element device
+      if ((dwReturn = OpenMidiFile(fname, LOAD_MIDI)) != 0)
       {
-         debug(("OpenMidiFile error - can't open \n"));
+         debug(("OpenMidiFile error - can't open %s \n", fname));
          return dwReturn;
       }
 
@@ -393,7 +394,8 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
    DWORD dwReturn;
    MCI_PLAY_PARMS mciPlayParms;
    char temp[81];
-	debug(( "Play music file %s. LatestMusic=%d. playing_music=%d, playing_midi=%d \n", fname, latest_music, playing_music, playing_midi ));
+   debug(( "Play music file %s. LatestMusic=%d, playing_music=%d, playing_midi=%d \n", 
+            fname, latest_music, playing_music, playing_midi ));
    // If already playing music, pick up where we left off
    if (isMusicPaused)
    {
@@ -408,8 +410,8 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
          isMusicPaused = False;
       }
    }
-   // Open file with deviceflag = 1
-   if ((dwReturn = OpenMidiFile(fname, 1)) != 0)
+   // Open file to midi_bg_music_element device
+   if ((dwReturn = OpenMidiFile(fname, LOAD_MUSIC)) != 0)
      {
        debug(("OpenMidiFile error code = %d\n", dwReturn));
        mciGetErrorString(dwReturn, temp, 80);

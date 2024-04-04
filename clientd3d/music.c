@@ -137,11 +137,10 @@ void MusicClose(void)
 //	Not used by MSS version
 /*
  * OpenMidiFile:  Open midi file for playing.
- *   The deviceflag integer argument corresponds to either
- *   midi_bg_music_element (flag = 1) or midi_element (2).
- *   after opening a new MCI device this flag instructs the client
- *   what to name the device ID.  Background music is called midi_bg_music_element
- *   and any other gameplay element music is called midi_element.
+ *   The loadWhat argument instructs the client
+ *   what to name the opened device ID.  If we pass in LOAD_MUSIC then
+ *   we open the file and set the device ID to midi_bg_music_element.
+ *   If LOAD_MIDI then the device ID is set to midi_element.
  *   Returns 0 if successful; MCI error code otherwise.
  */
 DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT loadWhat)

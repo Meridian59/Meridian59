@@ -125,7 +125,6 @@ messages:
          if oSoldierShield <> $
          {
             iFaction = send(oSoldierShield,@GetFaction);
-            send(oSoldierShield,@SlingOnBack);
          }
 
          if iFaction = FACTION_NEUTRAL
@@ -164,21 +163,6 @@ messages:
 
       vrWeapon_window_overlay = prBowOverlay;
       vrWeapon_overlay = prBowBottom;
-
-      propagate;
-   }
-
-   NewUnused()
-   {
-      local oSoldierShield;
-      
-      % Take shield off back.
-      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
-
-      if oSoldierShield <> $
-      {
-         send(oSoldierShield,@RemoveFromBack);
-      }
 
       propagate;
    }

@@ -3211,23 +3211,6 @@ messages:
             return FALSE;
          }
 
-         % Soldier Shields allow bows or lutes to be wielded even if they
-         %  are taking up all the hand spaces.  But, you can't use a shield, bow,
-         %  lute, and book all simlutaneously!
-         if (IsClass(what,&Bow) OR IsClass(what,&Lute))
-            AND Send(self,@FindUsing,#class=&SoldierShield) <> $
-            AND Send(self,@FindUsing,#class=&Lute) = $
-            AND Send(self,@FindUsing,#class=&Book) = $
-         {
-            % Don't allow them to wield a lute if we already have a bow.
-            % Trying to wield a second bow will unwield the first bow automatically.
-            if NOT IsClass(what,&Lute)
-               OR (Send(self,@FindUsing,#class=&Bow) = $)
-            {
-               return TRUE;
-            }
-         }
-
          if type = ITEM_USE_HAND
          {
             Send(self,@MsgSendUser,#message_rsc=player_use_full_hands);
@@ -3371,6 +3354,43 @@ messages:
       Send(self,@ResetPlayerFlagList);
       
       return TRUE;
+   }
+
+   GetPositionSpace(type=ITEM_USE_HAND)
+   {
+      if type = ITEM_USE_HAND
+      {
+         return viHand_space;
+      }
+      if type = ITEM_USE_BODY
+      {
+         return viBody_space;
+      }
+      if type = ITEM_USE_QUIVER
+      {
+         return viQuiver_space;
+      }
+      if type = ITEM_USE_NECK
+      {
+         return viNeck_space;
+      }
+      if type = ITEM_USE_HEAD
+      {
+         return viHead_space;
+      }
+      if type = ITEM_USE_LEGS
+      {
+         return viLeg_space;
+      }
+      if type = ITEM_USE_FINGER
+      {
+         return viFinger_space;
+      }
+      if type = ITEM_USE_GAUNTLET
+      {
+         return viGauntlet_space;
+      }
+      return 0;
    }
 
    TryUnuseItem(what = $)

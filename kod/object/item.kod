@@ -424,9 +424,21 @@ messages:
    }
 
    NewUsed()
-   {      
+   {
+      local i;
+
       Send(self,@DoPlayerArt);
       
+      for i in Send(poOwner,@GetPlayerUsing)
+      {
+         Send(i,@NewUsedSomething,#what=self);
+      }
+      
+      return;
+   }
+   
+   NewUsedSomething(what = $)
+   {
       return;
    }
 
@@ -482,8 +494,20 @@ messages:
 
    NewUnused()
    {
-      Send(self,@UndoPlayerArt);
+      local i;
 
+      Send(self,@UndoPlayerArt);
+      
+      for i in Send(poOwner,@GetPlayerUsing)
+      {
+         Send(i,@NewUnusedSomething,#what=self);
+      }
+
+      return;
+   }
+   
+   NewUnusedSomething(what=$)
+   {
       return;
    }
 

@@ -613,6 +613,28 @@ messages:
       return 1;
    }
 
+   GetItemTextColor(what = $)
+   "Returns the appropriate text coloring tier for the item."
+   {
+   % first check if it's revealed, if not send unrevealed color.
+   % Then check if it's cursed.  Finally count itematts and if more 
+   % just 1, it's magic, if 2 it's rare if it's 3+ it's legendary
+   % ignore shimmering (created items in the count)
+   % ignore shrouded, bonded (transcendent)
+
+     % if what <> $ 
+     %    AND (Send(self,@IsCursed)) 
+     % {
+         return ITEM_TEXT_COLOR_CURSED;
+     % }
+
+   % ITEM_TEXT_COLOR_MAGIC       = 1
+   % ITEM_TEXT_COLOR_RARE        = 2
+   % ITEM_TEXT_COLOR_LEGENDARY   = 3
+   % ITEM_TEXT_COLOR_UNREVEALED  = 4
+   % return ITEM_TEXT_COLOR_NONE;
+   }
+
    IsCursed()
    "This returns TRUE if a RemoveCurse spell should unuse the item."
    "Since an ItemAtt can curse an item, go through those to check."

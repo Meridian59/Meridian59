@@ -359,7 +359,6 @@ enum {
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
 #define OF_CONTAINER     0x00000020    // Set if player can put objects inside this one
 #define OF_NOEXAMINE     0x00000040    // Set if player CAN'T examine object
-#define OF_ITEM_SPECIAL  0x00000080    // Set for special items to color in lists
 #define OF_OFFERABLE     0x00000200    // Set if object can be offered to
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
@@ -492,15 +491,15 @@ enum {
    SL_FLICKER_OFF      = 2,         // Turn flickering off
 };
 
-/* Special item types */
+/* Item text color types */
 typedef enum {
-    SPECIAL_TYPE_NONE      = 0,
-    SPECIAL_TYPE_MAGIC     = 1,
-    SPECIAL_TYPE_RARE      = 2,
-    SPECIAL_TYPE_LEGENDARY = 3,
-    SPECIAL_TYPE_UNKNOWN   = 4,
-    SPECIAL_TYPE_CURSED    = 5,
-} special_type;
+   ITEM_TEXT_COLOR_NORMAL     = 0,
+   ITEM_TEXT_COLOR_MAGIC      = 1,
+   ITEM_TEXT_COLOR_RARE       = 2,
+   ITEM_TEXT_COLOR_LEGENDARY  = 3,
+   ITEM_TEXT_COLOR_UNREVEALED = 4,
+   ITEM_TEXT_COLOR_CURSED     = 5,
+} item_text_color;
 
 /* Size in bytes of numbers in protocol */
 #define SIZE_TYPE            1

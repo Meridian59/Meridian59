@@ -79,7 +79,7 @@ typedef struct {
 		                     this field gives amount of object */
    DWORD     temp_amount;         /* Scratch field used when user is selecting amount of object */
    int       flags;               /* Flags describing various properties of objects */
-   int       special_type;        // special item type
+   int       text_color_type;     /* Item text color type */
    BYTE      translation;         // Palette translation information
    Animate   *animate;            /* Pointer to current animation (normal or motion animation) */
    list_type *overlays;           /* Pointer to current overlays (normal or motion animation) */

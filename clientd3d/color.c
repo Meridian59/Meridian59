@@ -56,11 +56,11 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "0,255,255"},		/* COLOR_ITEM_SPECIAL_MAGIC     - cyan   */
-	{ "0,255,0"},	    /* COLOR_ITEM_SPECIAL_RARE      - lime   */
-	{ "255,255,0"},	    /* COLOR_ITEM_SPECIAL_LEGENDARY - yellow */
-	{ "252,128,0"},	    /* COLOR_ITEM_SPECIAL_UNKNOWN   - orange */
-	{ "255,0,0"},	    /* COLOR_ITEM_SPECIAL_CURSED    - red    */
+	{ "0,255,255"},		/* COLOR_ITEM_TEXT_MAGIC      - cyan   */
+	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE       - lime   */
+	{ "255,255,0"},	    /* COLOR_ITEM_TEXT_LEGENDARY  - yellow */
+	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNREVEALED - orange */
+	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED     - red    */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -412,22 +412,22 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 *    for an object, the client will color the object's text in lists based on the
 *    value of special_type and the corresponding COLOR_ITEM_SPECIAL in color.h
 */
-WORD GetItemListColor(HWND hwnd, int type, int flags, special_type special_type_value)
+WORD GetItemListColor(HWND hwnd, int type, item_text_color text_color_value)
 {
-	if ((flags & OF_ITEM_SPECIAL) != 0)
+	if (text_color_value != ITEM_TEXT_COLOR_NORMAL)
 	{
-		switch (special_type_value)
+		switch (text_color_value)
 		{
-            case SPECIAL_TYPE_MAGIC:
-                return COLOR_ITEM_SPECIAL_MAGIC;
-            case SPECIAL_TYPE_RARE:
-                return COLOR_ITEM_SPECIAL_RARE;
-            case SPECIAL_TYPE_LEGENDARY:
-                return COLOR_ITEM_SPECIAL_LEGENDARY;
-            case SPECIAL_TYPE_UNKNOWN:
-                return COLOR_ITEM_SPECIAL_UNKNOWN;
-			case SPECIAL_TYPE_CURSED:
-                return COLOR_ITEM_SPECIAL_CURSED;
+            case ITEM_TEXT_COLOR_MAGIC:
+                return COLOR_ITEM_TEXT_MAGIC;
+            case ITEM_TEXT_COLOR_RARE:
+                return COLOR_ITEM_TEXT_RARE;
+            case ITEM_TEXT_COLOR_LEGENDARY:
+                return COLOR_ITEM_TEXT_LEGENDARY;
+            case ITEM_TEXT_COLOR_UNREVEALED:
+                return COLOR_ITEM_TEXT_UNREVEALED;
+			case ITEM_TEXT_COLOR_CURSED:
+                return COLOR_ITEM_TEXT_CURSED;
 			}
 		}
 	switch(type)

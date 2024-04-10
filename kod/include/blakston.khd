@@ -40,13 +40,13 @@
    ACTIVE = 1
    PASSIVE = 2
 
-   %%% SPECIAL type enum
-   SPECIAL_TYPE_NONE      = 0
-   SPECIAL_TYPE_MAGIC     = 1
-   SPECIAL_TYPE_RARE      = 2
-   SPECIAL_TYPE_LEGENDARY = 3
-   SPECIAL_TYPE_UNKNOWN   = 4
-   SPECIAL_TYPE_CURSED    = 5
+   %%% Item text color enum
+   ITEM_TEXT_COLOR_NONE        = 0
+   ITEM_TEXT_COLOR_MAGIC       = 1
+   ITEM_TEXT_COLOR_RARE        = 2
+   ITEM_TEXT_COLOR_LEGENDARY   = 3
+   ITEM_TEXT_COLOR_UNREVEALED  = 4
+   ITEM_TEXT_COLOR_CURSED      = 5
 
    %%% Object flags for client
 
@@ -67,8 +67,6 @@
    LOOK_YES          = 0
    LOOK_NO           = 0x00000040
 
-   ITEM_SPECIAL_YES  = 0x00000080
-   ITEM_SPECIAL_NO   = 0
 
    INVISIBLE_YES     = 0x00000100
    INVISIBLE_NO      = 0

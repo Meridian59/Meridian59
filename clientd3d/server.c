@@ -326,12 +326,7 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
-   Extract(ptr, &item->special_type, SIZE_ID);
-   debug(("special_type: %d\n", (int)item->special_type));
-   if (OF_ITEM_SPECIAL == (OF_ITEM_SPECIAL & item->flags))
-   {
-      debug(("SPECIAL DETECTED"));
-   }
+   Extract(ptr, &item->text_color_type, SIZE_ID);
 
    ExtractDLighting(ptr, &item->dLighting);
 
@@ -365,12 +360,8 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
-   Extract(ptr, &item->special_type, SIZE_ID);
-   debug(("special_type: %d\n", (int)item->special_type));
-   if (OF_ITEM_SPECIAL == (OF_ITEM_SPECIAL & item->flags))
-   {
-      debug(("SPECIAL DETECTED"));
-   }
+   Extract(ptr, &item->text_color_type, SIZE_ID);
+
    ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
    item->normal_translation = item->translation;
    item->secondtranslation = XLAT_FILTERWHITE90;

@@ -2414,15 +2414,16 @@ messages:
 
       AddPacket(4,iFlags);
 
+      AddPacket(4, ITEM_TEXT_COLOR_LEGENDARY);
       % Send special type if special flag is set
-      if iFlags & ITEM_SPECIAL_YES
-      {
-         AddPacket(4, SPECIAL_TYPE_LEGENDARY);
-      }
-      else
-      {
-         AddPacket(4, 0);
-      }
+      %if iFlags & ITEM_SPECIAL_YES
+      %{
+      %   AddPacket(4, SPECIAL_TYPE_LEGENDARY);
+      %}
+      %else
+      %{
+      %   AddPacket(4, 0);
+      %}
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);

@@ -330,7 +330,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    AREA area;
    COLORREF crColorText;
    HBRUSH hColorBg;
-   enum special_type special_type_value = SPECIAL_TYPE_NONE;
+   special_type special_type_value = SPECIAL_TYPE_NONE;
 
    if (!lpdis || !IsWindow(lpdis->hwndItem) || !IsWindowVisible(lpdis->hwndItem))
       return;
@@ -362,7 +362,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
    {
       flags = obj->flags;
-      special_type_value = (enum special_type)obj->special_type; // Retrieve the special type value from the object
+      special_type_value = (special_type)obj->special_type; // Retrieve the special type value from the object
    }
    crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), flags, special_type_value));
 

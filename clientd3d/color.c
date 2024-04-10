@@ -412,7 +412,7 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 *    for an object, the client will color the object's text in lists based on the
 *    value of special_type and the corresponding COLOR_ITEM_SPECIAL in color.h
 */
-WORD GetItemListColor(HWND hwnd, int type, int flags, enum special_type special_type_value)
+WORD GetItemListColor(HWND hwnd, int type, int flags, special_type special_type_value)
 {
 	if ((flags & OF_ITEM_SPECIAL) != 0)
 	{

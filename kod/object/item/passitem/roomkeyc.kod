@@ -102,7 +102,19 @@ messages:
       return oRenter;
    }
 
-   OriginalDeleted()
+   GetMasterKey()
+   "Attempts to look up the master key, if one exists."
+   {
+      local oMaintenance, oRenter, oRoom;
+      oMaintenance = Send(SYS, @GetRentableRoomMaintenance);
+      oRoom = Send(SYS, @FindRoomByNum, #num=piRID);
+      oRenter = Send(self, @GetRenter);
+
+      return Send(oMaintenance, @FindKeyByPlayer, #who=oRenter, #iLocation=Send(oRoom, @GetLocation));
+   }
+
+   OriginalDeleted(bRemoveFromMasterKey=TRUE)
+   "In most cases, bRemoveFromMasterKey should use the default value of TRUE."
    {
       if (poOwner <> $) and isClass(poOwner,&User)
       {
@@ -119,7 +131,7 @@ messages:
          }
       }
       
-      Send(Self, @Delete, #bRemoveFromMasterKey=FALSE);
+      Send(Self, @Delete, #bRemoveFromMasterKey=bRemoveFromMasterKey);
       
       return;
    }
@@ -255,10 +267,15 @@ messages:
    }
 
    Delete(bRemoveFromMasterKey=TRUE)
+   "bRemoveFromMasterKey determines whether or not a key copy is removed from the master "
+   "key's copy list upon deletion. When exeucting this command from the console, this "
+   "should be left as the default value of TRUE."
    {
+      local oMasterKey;
       if (bRemoveFromMasterKey AND Send(self, @IsKeyCopy))
       {
-         Send(&RoomKey, @RemoveCopy, #what=self);
+         oMasterKey = Send(self, @GetMasterKey);
+         Send(oMasterKey, @RemoveCopy, #what=self);
       }
 
       propagate;

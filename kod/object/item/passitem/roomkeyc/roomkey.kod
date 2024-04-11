@@ -52,6 +52,11 @@ properties:
    plCopies = $
 
 messages:
+   GetMasterKey()
+   "This IS the master key!"
+   {
+      return self;
+   }
 
    AppendSpecial()
    "Appends the number of key copies in ciculation to the key's description."
@@ -184,7 +189,11 @@ messages:
       
       for i in plCopies
       {
-         Send(i,@OriginalDeleted);
+         % Trying to remove each copy from the master key list during the
+         % deletion process of the room and this key will cause errors.
+         % It's unnecessary anyway since the copy list is removed when 
+         % this loop is finished.
+         Send(i, @OriginalDeleted, #bRemoveFromMasterKey=FALSE);
       }
       
       plCopies = $;

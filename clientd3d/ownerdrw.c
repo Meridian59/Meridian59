@@ -343,13 +343,13 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    obj = (object_node*)lpdis->itemData;
 
    hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD), text_color_value));
-
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
       hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD, text_color_value));
 
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
-   SetBkMode(lpdis->hDC, TRANSPARENT);
 
+   SetBkMode(lpdis->hDC, TRANSPARENT);
+   
    if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
    {
       text_color_value = (item_text_color)obj->text_color_type;

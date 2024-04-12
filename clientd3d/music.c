@@ -47,7 +47,6 @@ static BYTE *pMIDIImmediate;
 #endif
 
 enum {SOUND_MIDI, SOUND_MUSIC};
-//enum {LOAD_MUSIC, LOAD_MIDI}; /* Arguments for OpenMidiFile MCI device naming */
 typedef enum {BACKGROUND_MUSIC, GAMEPLAY_MUSIC} LoadMusicType;
 
 /* local functions */
@@ -335,11 +334,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
          UnpauseMusic();
          return 0;
       }
-      else
-      {
-         // The music was paused but we need different music so reset the flag
-         isMusicPaused = False;
-      }
+      isMusicPaused = False;
 	}
    if (playing_midi)
    {

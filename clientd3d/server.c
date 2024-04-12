@@ -326,7 +326,7 @@ void ExtractObject(char **ptr, object_node *item, bool includeLight)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
-   Extract(ptr, &item->text_color_type, SIZE_ID);
+   Extract(ptr, &item->rarity, SIZE_ID);
 
    if (includeLight)
       ExtractDLighting(ptr, &item->dLighting);

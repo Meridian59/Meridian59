@@ -412,21 +412,21 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 *    for an object, the client will color the object's text in lists based on the
 *    value of special_type and the corresponding COLOR_ITEM_SPECIAL in color.h
 */
-WORD GetItemListColor(HWND hwnd, int type, item_text_color text_color_value)
+WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade text_color_value)
 {
-	if (text_color_value != ITEM_TEXT_COLOR_NORMAL)
+	if (text_color_value != ITEM_RARITY_GRADE_NORMAL)
 	{
 		switch (text_color_value)
 		{
-            case ITEM_TEXT_COLOR_MAGIC:
+            case ITEM_RARITY_GRADE_MAGIC:
                 return COLOR_ITEM_TEXT_MAGIC;
-            case ITEM_TEXT_COLOR_RARE:
+            case ITEM_RARITY_GRADE_RARE:
                 return COLOR_ITEM_TEXT_RARE;
-            case ITEM_TEXT_COLOR_LEGENDARY:
+            case ITEM_RARITY_GRADE_LEGENDARY:
                 return COLOR_ITEM_TEXT_LEGENDARY;
-            case ITEM_TEXT_COLOR_UNREVEALED:
+            case ITEM_RARITY_GRADE_UNREVEALED:
                 return COLOR_ITEM_TEXT_UNREVEALED;
-			case ITEM_TEXT_COLOR_CURSED:
+			case ITEM_RARITY_GRADE_CURSED:
                 return COLOR_ITEM_TEXT_CURSED;
 			}
 		}

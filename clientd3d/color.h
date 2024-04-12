@@ -66,6 +66,6 @@ void ColorsRestoreDefaults(void);
 M59EXPORT HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
 HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
 
-WORD GetItemListColor(HWND hwnd, int type, item_text_color text_color_value);
+WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade item_rarity_value);
 
 #endif /* #ifndef _COLOR_H */

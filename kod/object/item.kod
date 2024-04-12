@@ -613,7 +613,7 @@ messages:
       return 1;
    }
 
-   GetItemTextColor(what = $)
+   GetItemRarityGrade(what = $)
    "Returns the appropriate text coloring tier for the item."
    {
    % first check if it's revealed, if not send unrevealed color.
@@ -625,7 +625,7 @@ messages:
      % if what <> $ 
      %    AND (Send(self,@IsCursed)) 
      % {
-         return ITEM_TEXT_COLOR_CURSED;
+         return ITEM_RARITY_GRADE_MAGIC;
      % }
 
    % ITEM_TEXT_COLOR_MAGIC       = 1

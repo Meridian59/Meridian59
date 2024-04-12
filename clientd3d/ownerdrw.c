@@ -330,7 +330,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    AREA area;
    COLORREF crColorText;
    HBRUSH hColorBg;
-   item_text_color text_color_value = ITEM_TEXT_COLOR_NORMAL;
+   item_rarity_grade item_rarity_value = ITEM_RARITY_GRADE_NORMAL;
 
    if (!lpdis || !IsWindow(lpdis->hwndItem) || !IsWindowVisible(lpdis->hwndItem))
       return;
@@ -346,34 +346,34 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
                   GetItemListColor(
                      lpdis->hwndItem,
                      (selected? SEL_BGD : UNSEL_BGD),
-                     text_color_value));
+                     item_rarity_value));
 
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
       hColorBg = GetBrush(
                      GetItemListColor(
                         lpdis->hwndItem,
                         UNSEL_BGD,
-                        text_color_value));
+                        item_rarity_value));
 
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
    if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
-      text_color_value = (item_text_color)obj->text_color_type;
+      item_rarity_value = (item_rarity_grade)obj->rarity;
 
    crColorText = GetColor(
                      GetItemListColor(
                         lpdis->hwndItem,
                         (selected ? SEL_FGD : UNSEL_FGD),
-                        text_color_value));
+                        item_rarity_value));
 
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
       crColorText = GetColor(
                         GetItemListColor(
                            lpdis->hwndItem,
                            UNSEL_FGD,
-                           text_color_value));
+                           item_rarity_value));
 
    if (lpdis->itemState & ODS_DISABLED)
 	crColorText = GetSysColor(COLOR_GRAYTEXT);

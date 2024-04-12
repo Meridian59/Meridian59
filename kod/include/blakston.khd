@@ -40,13 +40,13 @@
    ACTIVE = 1
    PASSIVE = 2
 
-   %%% Item text color enum
-   ITEM_TEXT_COLOR_NONE        = 0
-   ITEM_TEXT_COLOR_MAGIC       = 1
-   ITEM_TEXT_COLOR_RARE        = 2
-   ITEM_TEXT_COLOR_LEGENDARY   = 3
-   ITEM_TEXT_COLOR_UNREVEALED  = 4
-   ITEM_TEXT_COLOR_CURSED      = 5
+   %%% Item rarity constants used for object presentation in client
+   ITEM_RARITY_GRADE_NORMAL      = 0
+   ITEM_RARITY_GRADE_MAGIC       = 1
+   ITEM_RARITY_GRADE_RARE        = 2
+   ITEM_RARITY_GRADE_LEGENDARY   = 3
+   ITEM_RARITY_GRADE_UNREVEALED  = 4
+   ITEM_RARITY_GRADE_CURSED      = 5
 
    %%% Object flags for client
 

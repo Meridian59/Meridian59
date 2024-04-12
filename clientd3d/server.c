@@ -316,7 +316,7 @@ void ExtractDLighting(char **ptr, d_lighting *dLighting)
  * ExtractObject: Get an object_node from ptr, and increment
  *   ptr appropriately.  Place data in given object node.
  */
-void ExtractObject(char **ptr, object_node *item, bool includeLight = true)
+void ExtractObject(char **ptr, object_node *item, bool includeLight)
 {  
    Extract(ptr, &item->id, SIZE_ID);
    if (IsNumberObj(item->id))
@@ -353,7 +353,7 @@ void ExtractObject(char **ptr, object_node *item, bool includeLight = true)
 
 void ExtractObjectNoLight(char **ptr, object_node *item)
 {  
-   ExtractObject(ptr, item, false); // Disable light extraction
+   ExtractObject(ptr, item, False); // Disable light extraction
 }
 
 /********************************************************************/
@@ -365,7 +365,7 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
 object_node *ExtractNewObject(char **ptr)
 {
    object_node *item = ObjectGetBlank();
-   ExtractObject(ptr, item, true);
+   ExtractObject(ptr, item);
    return item;
 }
 
@@ -386,7 +386,7 @@ room_contents_node *ExtractNewRoomObject(char **ptr)
    WORD word;
    room_contents_node *r = (room_contents_node *) ZeroSafeMalloc(sizeof(room_contents_node));
 
-   ExtractObject(ptr, &r->obj, true);
+   ExtractObject(ptr, &r->obj);
 
 //   ExtractDLighting(ptr, &r->obj.dLighting);
 
@@ -774,7 +774,7 @@ Bool HandleChange(char *ptr, long len)
    char *start = ptr;
 
    memset(&object,0,sizeof(object));
-   ExtractObject(&ptr, &object, true);
+   ExtractObject(&ptr, &object);
 //   ExtractDLighting(&ptr, &object.dLighting);
    ExtractPaletteTranslation(&ptr,&translation,&effect);
    ExtractAnimation(&ptr, &a);
@@ -944,7 +944,7 @@ Bool HandleLook(char *ptr, long len)
    object_node obj;
 
    memset(&obj,0,sizeof(obj));
-   ExtractObject(&ptr, &obj, true);
+   ExtractObject(&ptr, &obj);
    Extract(&ptr, &flags, 1);
 
    // Remove format string id # & other ids from length
@@ -1038,7 +1038,7 @@ Bool HandleOffer(char *ptr,long len)
 
    memset(&offerer,0,sizeof(offerer));
    /* Object that offered to player */
-   ExtractObject(&ptr, &offerer, true);
+   ExtractObject(&ptr, &offerer);
    len -= (ptr - start);
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
@@ -1169,14 +1169,14 @@ Bool HandleBuyList(char *ptr, long len)
    start = ptr;
    memset(&seller,0,sizeof(seller));
    /* Get seller */
-   ExtractObject(&ptr, &seller, true);
+   ExtractObject(&ptr, &seller);
 //   ExtractDLighting(&ptr, &seller.dLighting);
    Extract(&ptr, &list_len, SIZE_LIST_LEN);
 
    for (i=0; i < list_len; i++)
    {
       buy_obj = (buy_object *) ZeroSafeMalloc(sizeof(buy_object));
-      ExtractObject(&ptr, &buy_obj->obj, true);
+      ExtractObject(&ptr, &buy_obj->obj);
 //	  ExtractDLighting(&ptr, &buy_obj->obj.dLighting);
       Extract(&ptr, &buy_obj->cost, SIZE_COST);
 
@@ -1207,13 +1207,13 @@ Bool HandleWithdrawalList(char *ptr, long len)
    start = ptr;
    memset(&seller,0,sizeof(seller));
    /* Get seller */
-   ExtractObject(&ptr, &seller, true);
+   ExtractObject(&ptr, &seller);
    Extract(&ptr, &list_len, SIZE_LIST_LEN);
 
    for (i=0; i < list_len; i++)
    {
       buy_obj = (buy_object *) ZeroSafeMalloc(sizeof(buy_object));
-      ExtractObject(&ptr, &buy_obj->obj, true);
+      ExtractObject(&ptr, &buy_obj->obj);
       Extract(&ptr, &buy_obj->cost, SIZE_COST);
 
       list = list_add_item(list, buy_obj);

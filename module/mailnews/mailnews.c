@@ -291,7 +291,7 @@ Bool HandleLookNewsgroup(char *ptr, long len)
    Extract(&ptr, &newsgroup, SIZE_NEWSGROUP_ID);
    Extract(&ptr, &permission, 1);
 
-   ExtractObject(&ptr, &obj, true);
+   ExtractObject(&ptr, &obj);
    Extract(&ptr, &resource_id, SIZE_ID);
 
    /* Remove format string id # & other ids from length */

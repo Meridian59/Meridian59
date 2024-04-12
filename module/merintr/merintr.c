@@ -947,7 +947,7 @@ spell *ExtractNewSpell(char **ptr)
 {
    spell *s = (spell *) SafeMalloc(sizeof(spell));
    ZeroMemory(s,sizeof(spell));
-   ExtractObject(ptr, &s->obj, true);
+   ExtractObject(ptr, &s->obj);
    Extract(ptr, &s->num_targets, 1);
    Extract(ptr, &s->school, 1);
    s->school -= 1;  // Convert to 0 based
@@ -961,7 +961,7 @@ skill *ExtractNewSkill(char **ptr)
 {
    skill *s = (skill *) SafeMalloc(sizeof(skill));
    ZeroMemory(s,sizeof(skill));
-   ExtractObject(ptr, &s->obj, true);
+   ExtractObject(ptr, &s->obj);
    return s;
 }  
 /********************************************************************/
@@ -1466,7 +1466,7 @@ Bool HandleLookPlayer(char *ptr, long len)
    char *start = ptr;
    object_node obj;
 
-   ExtractObject(&ptr, &obj, true);
+   ExtractObject(&ptr, &obj);
    Extract(&ptr, &flags, 1);
    Extract(&ptr, &resource_id, SIZE_ID);
 

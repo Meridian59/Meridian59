@@ -491,15 +491,15 @@ enum {
    SL_FLICKER_OFF      = 2,         // Turn flickering off
 };
 
-/* Item text color types */
+/* Item rarity designations used for different object presentations */
 typedef enum {
-   ITEM_TEXT_COLOR_NORMAL     = 0,
-   ITEM_TEXT_COLOR_MAGIC      = 1,
-   ITEM_TEXT_COLOR_RARE       = 2,
-   ITEM_TEXT_COLOR_LEGENDARY  = 3,
-   ITEM_TEXT_COLOR_UNREVEALED = 4,
-   ITEM_TEXT_COLOR_CURSED     = 5,
-} item_text_color;
+   ITEM_RARITY_GRADE_NORMAL     = 0,
+   ITEM_RARITY_GRADE_MAGIC      = 1,
+   ITEM_RARITY_GRADE_RARE       = 2,
+   ITEM_RARITY_GRADE_LEGENDARY  = 3,
+   ITEM_RARITY_GRADE_UNREVEALED = 4,
+   ITEM_RARITY_GRADE_CURSED     = 5,
+} item_rarity_grade;
 
 /* Size in bytes of numbers in protocol */
 #define SIZE_TYPE            1

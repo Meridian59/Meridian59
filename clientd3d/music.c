@@ -176,7 +176,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
          }
          break;
       default:
-         debug(("OpenMidiFile: Invalid musicType\n"));
+         debug(("OpenMidiFile: Invalid musicType, type=%d\n", musicType));
          return 1;
    }
 
@@ -211,7 +211,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
          debug(("midi element = %d\n", midi_element));
          break;
       default:
-         debug(("OpenMidiFile: Invalid musicType\n"));
+         debug(("OpenMidiFile: Invalid musicType, type= %d\n", musicType));
          return 1;
    }
 

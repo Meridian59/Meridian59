@@ -56,9 +56,9 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "0,255,255"},		/* COLOR_ITEM_TEXT_MAGIC      - cyan   */
+	{ "0,128,192"},		/* COLOR_ITEM_TEXT_MAGIC      - cyan   */
 	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE       - lime   */
-	{ "255,255,0"},	    /* COLOR_ITEM_TEXT_LEGENDARY  - yellow */
+	{ "192,196,0"},	    /* COLOR_ITEM_TEXT_LEGENDARY  - yellow */
 	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNREVEALED - orange */
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED     - red    */
 };

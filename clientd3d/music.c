@@ -137,10 +137,10 @@ void MusicClose(void)
 //	Not used by MSS version
 /*
  * OpenMidiFile:  Open midi file for playing.
- *   The loadWhat argument instructs the client
- *   what to name the opened device ID.  If we pass in LOAD_MUSIC then
- *   we open the file and set the device ID to midi_bg_music_element.
- *   If LOAD_MIDI then the device ID is set to midi_element.
+ *   The music type argument instructs the client
+ *   what to name the opened device ID.  If we pass in BACKGROUND_MUSIC
+ *   then we open the file and set the device ID to midi_bg_music_element.
+ *   If GAMEPLAY_MUSIC then the device ID is set to midi_element.
  *   Returns 0 if successful; 1 for bad musicType, and 
  *   an MCI error code otherwise.
  */
@@ -155,7 +155,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
       debug(("Unable to get current directory!\n"));
 
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
-   debug(("music filename = %s \n", filename));
+   debug(("music filename = %s\n", filename));
    // Is it a background music or gameplay element music file?
    switch (musicType) {
       case BACKGROUND_MUSIC:

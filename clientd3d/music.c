@@ -155,7 +155,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
       debug(("Unable to get current directory!\n"));
 
    sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
-   debug(("music filename = %s\n", filename));
+   debug(("music filename = %s \n", filename));
    // Is it a background music or gameplay element music file?
    switch (musicType) {
       case BACKGROUND_MUSIC:

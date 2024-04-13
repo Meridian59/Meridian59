@@ -50,7 +50,7 @@ enum {SOUND_MIDI, SOUND_MUSIC};
 typedef enum {BACKGROUND_MUSIC, GAMEPLAY_MUSIC} LoadMusicType;
 
 /* local functions */
-static DWORD OpenMidiFile(const char *lpszMIDIFileName, UINT loadWhat);
+static DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType);
 static DWORD RestartMidiFile(DWORD device);
 static void PauseMusic(void);
 static void UnpauseMusic(void);

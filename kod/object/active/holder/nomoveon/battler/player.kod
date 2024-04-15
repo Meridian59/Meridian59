@@ -5476,6 +5476,8 @@ messages:
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
+
+      iTime = bound(iTime,1000,60000);
       
       if poOwner <> $
       {
@@ -5493,7 +5495,7 @@ messages:
          }
       }
 
-      return bound(iTime,1000,60000);
+      return iTime;
    }
 
    CalculateManaTime()

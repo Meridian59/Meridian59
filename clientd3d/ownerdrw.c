@@ -72,6 +72,38 @@ int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool qu
    int pos;
 
    name = LookupNameRsc(obj->name_res);
+
+   // Prefix the name based on the object's rarity
+   switch(obj->rarity) 
+   {
+   case ITEM_RARITY_GRADE_NORMAL:
+      // No prefix for normal rarity
+      break;
+   case ITEM_RARITY_GRADE_MAGIC:
+      sprintf(desc, "Magic %s", name);
+      name = desc;
+      break;
+   case ITEM_RARITY_GRADE_RARE:
+      sprintf(desc, "Rare %s", name);
+      name = desc;
+      break;
+   case ITEM_RARITY_GRADE_LEGENDARY:
+      sprintf(desc, "Legendary %s", name);
+      name = desc;
+      break;
+   case ITEM_RARITY_GRADE_UNREVEALED:
+      sprintf(desc, "Mysterious %s", name);
+      name = desc;
+      break;
+   case ITEM_RARITY_GRADE_CURSED:
+      sprintf(desc, "Cursed %s", name);
+      name = desc;
+      break;
+   default:
+      // Handle unknown rarity gracefully (no prefix)
+      break;
+   }
+
    /* If item is a number object, add its amount after the item's name */
    if (quan && IsNumberObj(obj->id))
    {

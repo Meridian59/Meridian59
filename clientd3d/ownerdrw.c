@@ -68,7 +68,10 @@ void WindowEndUpdate(HWND hwnd)
  */
 int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan)
 {
-   char *name, desc[MAXNAME + 15];
+   char prefix[MAXNAME + 15];
+   char nameWithPrefix[MAXNAME + 15];
+   char nameWithQuantity[MAXNAME + 15];
+   char *name;
    int pos;
 
    name = LookupNameRsc(obj->name_res);
@@ -77,44 +80,46 @@ int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool qu
    switch(obj->rarity) 
    {
    case ITEM_RARITY_GRADE_NORMAL:
-      // No prefix for normal rarity
+      strcpy(prefix, ""); // Empty string
       break;
    case ITEM_RARITY_GRADE_MAGIC:
-      sprintf(desc, "Magic %s", name);
-      name = desc;
+      strcpy(prefix, "magic ");
       break;
    case ITEM_RARITY_GRADE_RARE:
-      sprintf(desc, "Rare %s", name);
-      name = desc;
+      strcpy(prefix, "rare ");
       break;
    case ITEM_RARITY_GRADE_LEGENDARY:
-      sprintf(desc, "Legendary %s", name);
-      name = desc;
+      strcpy(prefix, "legendary ");
       break;
    case ITEM_RARITY_GRADE_UNREVEALED:
-      sprintf(desc, "Mysterious %s", name);
-      name = desc;
+      strcpy(prefix, "mysterious ");
       break;
    case ITEM_RARITY_GRADE_CURSED:
-      sprintf(desc, "Cursed %s", name);
-      name = desc;
+      strcpy(prefix, "cursed ");
       break;
    default:
-      // Handle unknown rarity gracefully (no prefix)
+      strcpy(prefix, ""); // Handle unknown rarity gracefully (no prefix)
       break;
    }
 
-   /* If item is a number object, add its amount after the item's name */
+   // Concatenate prefix and name
+   sprintf(nameWithPrefix, "%s%s", prefix, name);
+
+   // If item is a number object and quantity is to be shown, add its amount after the prefixed name
    if (quan && IsNumberObj(obj->id))
    {
-      sprintf(desc, "%d %.*s", obj->amount, MAXNAME, name);
-      name = desc;
+      sprintf(nameWithQuantity, "%d %.*s", obj->amount, MAXNAME, nameWithPrefix);
+      name = nameWithQuantity;
    }
+   else
+   {
+      name = nameWithPrefix;
+   }
+
    /* If player using an object, say so */
    if (IsInUse(obj->id))
    {
-      sprintf(desc, "%.*s %s", MAXNAME, name, GetString(hInst, IDS_INUSE));
-      name = desc;
+      sprintf(name, "%.*s %s", MAXNAME, name, GetString(hInst, IDS_INUSE));
    }
 
    if (index ==  -1)

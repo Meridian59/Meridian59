@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
+#define PAGE_BREAK_CHAR 'Â¶'	  /* For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */
@@ -633,10 +633,11 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *fixed_string, char *url)
+                        char *fixed_string, char *url, int rarity)
 {
 	DescDialogStruct info;
 	int template_id;
+	char desc[MAXNAME + 15];
 	
 	if (hDescDialog != NULL)
 	{
@@ -651,7 +652,44 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.description  = description;
 	info.fixed_string = fixed_string;
 	info.url          = url;
-	
+	info.rarity       = obj->rarity; // Assign rarity information to the structure
+
+    // Prefix the name based on the object's rarity
+    switch(info.rarity) 
+    {
+    case ITEM_RARITY_GRADE_NORMAL:
+       // No prefix for normal rarity
+       break;
+    case ITEM_RARITY_GRADE_MAGIC:
+       sprintf(desc, "magic %s", info.name);
+	   //sprintf(desc, "%s (magic)", info.name);
+       info.name = desc;
+       break;
+    case ITEM_RARITY_GRADE_RARE:
+       sprintf(desc, "rare %s", info.name);
+	   //sprintf(desc, "%s (rare)", info.name);
+       info.name = desc;
+       break;
+    case ITEM_RARITY_GRADE_LEGENDARY:
+       sprintf(desc, "legendary %s", info.name);
+	   //sprintf(desc, "%s (legendary)", info.name);
+       info.name = desc;
+       break;
+    case ITEM_RARITY_GRADE_UNREVEALED:
+       sprintf(desc, "mysterious %s", info.name);
+  	  //sprintf(desc, "%s (mysterious)", info.name);
+       info.name = desc;
+       break;
+    case ITEM_RARITY_GRADE_CURSED:
+       sprintf(desc, "cursed %s", info.name);
+	   //sprintf(desc, "%s (cursed)", info.name);
+       info.name = desc;
+       break;
+    default:
+       // Handle unknown rarity gracefully (no prefix)
+       break;
+    }
+
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	

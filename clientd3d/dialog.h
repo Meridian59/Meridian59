@@ -55,6 +55,7 @@ typedef struct {
    char        *description;
    char        *fixed_string;
    char        *url;
+   int          rarity; /* Item rarity grade */
    int          age;
    int	        numPages;
    int	        currentPage;
@@ -83,7 +84,7 @@ typedef struct {
 
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                                  char* fixed_string, char *url);
+                                  char* fixed_string, char *url, int rarity = ITEM_RARITY_GRADE_NORMAL);
 M59EXPORT void SetDialogFixedString(char* fixed_string);
 
 M59EXPORT list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags);

@@ -658,35 +658,31 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
     switch(info.rarity) 
     {
     case ITEM_RARITY_GRADE_NORMAL:
-       // No prefix for normal rarity
+       // No suffix for normal rarity
        break;
     case ITEM_RARITY_GRADE_MAGIC:
-       sprintf(desc, "magic %s", info.name);
-	   //sprintf(desc, "%s (magic)", info.name);
+       sprintf(desc, "%s (magic)", info.name);
        info.name = desc;
        break;
     case ITEM_RARITY_GRADE_RARE:
-       sprintf(desc, "rare %s", info.name);
-	   //sprintf(desc, "%s (rare)", info.name);
+       sprintf(desc, "%s (rare)", info.name);
        info.name = desc;
        break;
     case ITEM_RARITY_GRADE_LEGENDARY:
-       sprintf(desc, "legendary %s", info.name);
-	   //sprintf(desc, "%s (legendary)", info.name);
+       sprintf(desc, "%s (legendary)", info.name);
        info.name = desc;
        break;
-    case ITEM_RARITY_GRADE_UNREVEALED:
-       sprintf(desc, "mysterious %s", info.name);
-  	  //sprintf(desc, "%s (mysterious)", info.name);
+    case ITEM_RARITY_GRADE_MYSTERIOUS:
+       sprintf(desc, "%s (mysterious)", info.name);
        info.name = desc;
        break;
     case ITEM_RARITY_GRADE_CURSED:
-       sprintf(desc, "cursed %s", info.name);
-	   //sprintf(desc, "%s (cursed)", info.name);
+       sprintf(desc, "%s (cursed)", info.name);
        info.name = desc;
        break;
     default:
        // Handle unknown rarity gracefully (no prefix)
+	   debug(("Unknown rarity grade\n"));
        break;
     }
 

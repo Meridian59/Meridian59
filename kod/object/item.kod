@@ -625,14 +625,14 @@ messages:
      % if what <> $ 
      %    AND (Send(self,@IsCursed)) 
      % {
-         return ITEM_RARITY_GRADE_UNREVEALED;
+         return ITEM_RARITY_GRADE_MYSTERIOUS;
      % }
 
    % ITEM_RARITY_GRADE_NORMAL      = 0
    % ITEM_RARITY_GRADE_MAGIC       = 1
    % ITEM_RARITY_GRADE_RARE        = 2
    % ITEM_RARITY_GRADE_LEGENDARY   = 3
-   % ITEM_RARITY_GRADE_UNREVEALED  = 4
+   % ITEM_RARITY_GRADE_MYSTERIOUS  = 4
    % ITEM_RARITY_GRADE_CURSED      = 5
    % return ITEM_TEXT_COLOR_NONE;
    }

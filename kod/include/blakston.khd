@@ -45,7 +45,7 @@
    ITEM_RARITY_GRADE_MAGIC       = 1
    ITEM_RARITY_GRADE_RARE        = 2
    ITEM_RARITY_GRADE_LEGENDARY   = 3
-   ITEM_RARITY_GRADE_UNREVEALED  = 4
+   ITEM_RARITY_GRADE_MYSTERIOUS  = 4  % Used for unrevealed items
    ITEM_RARITY_GRADE_CURSED      = 5
 
    %%% Object flags for client

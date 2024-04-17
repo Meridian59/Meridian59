@@ -68,52 +68,53 @@ void WindowEndUpdate(HWND hwnd)
  */
 int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan)
 {
-   char prefix[MAXNAME + 15];
-   char nameWithPrefix[MAXNAME + 15];
+   char suffix[MAXNAME + 15];
+   char nameWithSuffix[MAXNAME + 15];
    char nameWithQuantity[MAXNAME + 15];
    char *name;
    int pos;
 
    name = LookupNameRsc(obj->name_res);
 
-   // Prefix the name based on the object's rarity
+   // Suffix the name based on the object's rarity
    switch(obj->rarity) 
    {
    case ITEM_RARITY_GRADE_NORMAL:
-      strcpy(prefix, ""); // Empty string
+      strcpy(suffix, ""); // Empty string
       break;
    case ITEM_RARITY_GRADE_MAGIC:
-      strcpy(prefix, "magic ");
+      strcpy(suffix, " (magic)");
       break;
    case ITEM_RARITY_GRADE_RARE:
-      strcpy(prefix, "rare ");
+      strcpy(suffix, " (rare)");
       break;
    case ITEM_RARITY_GRADE_LEGENDARY:
-      strcpy(prefix, "legendary ");
+      strcpy(suffix, " (legendary)");
       break;
-   case ITEM_RARITY_GRADE_UNREVEALED:
-      strcpy(prefix, "mysterious ");
+   case ITEM_RARITY_GRADE_MYSTERIOUS:
+      strcpy(suffix, " (mysterious)");
       break;
    case ITEM_RARITY_GRADE_CURSED:
-      strcpy(prefix, "cursed ");
+      strcpy(suffix, " (cursed)");
       break;
    default:
-      strcpy(prefix, ""); // Handle unknown rarity gracefully (no prefix)
+      strcpy(suffix, ""); // Handle unknown rarity gracefully (no suffix)
+      debug(("Unknown rarity grade\n"));
       break;
    }
 
-   // Concatenate prefix and name
-   sprintf(nameWithPrefix, "%s%s", prefix, name);
+   // Concatenate suffix and name
+   sprintf(nameWithSuffix, "%s%s", name, suffix);
 
-   // If item is a number object and quantity is to be shown, add its amount after the prefixed name
+   // If item is a number object and quantity is to be shown, add its amount after the suffixed name
    if (quan && IsNumberObj(obj->id))
    {
-      sprintf(nameWithQuantity, "%d %.*s", obj->amount, MAXNAME, nameWithPrefix);
+      sprintf(nameWithQuantity, "%d %.*s", obj->amount, MAXNAME, nameWithSuffix);
       name = nameWithQuantity;
    }
    else
    {
-      name = nameWithPrefix;
+      name = nameWithSuffix;
    }
 
    /* If player using an object, say so */

@@ -275,7 +275,7 @@ resources:
    user_cant_balance = "You can't check any balance here!"
 
    user_appeal = "%s appeals, \"%q~n\""
-   user_first_time_appeal = "### %s has just logged on for the first time."
+   user_first_time_logged_on = "### %s has just logged on for the first time."
    user_did_appeal = "You appeal, \"%q~n\""
 
    user_kill_zone = \
@@ -3159,17 +3159,18 @@ messages:
       lUsers = Send(SYS,@GetUsersLoggedOn);
       for i in lUsers
       {
+         if first_time
+         {
+            Send(i,@MsgSendUser,#message_rsc=user_first_time_logged_on,
+                 #parm1=vrName);
+         }
+         
          if IsClass(i,&DM) AND Send(i,@IsAppealOn)
          {
             if NOT first_time
             {
                Send(i,@MsgSendUser,#message_rsc=user_appeal,#parm1=vrName,
                     #parm2=string);
-            }
-            else
-            {
-               Send(i,@MsgSendUser,#message_rsc=user_first_time_appeal,
-                    #parm1=vrName);
             }
          }
       }

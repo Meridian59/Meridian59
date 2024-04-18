@@ -32,25 +32,25 @@ Blibpng: Bzlib
 	echo Making in $(LIBPNGDIR)
 	cd $(LIBPNGDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
+	cd ..\..
 
 Bzlib:
 	echo Making in $(ZLIBDIR)
 	cd $(ZLIBDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
+	cd ..\..
 
 Blibarchive: Bzlib
 	echo Making in $(LIBARCHIVEDIR)
 	cd $(LIBARCHIVEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
+	cd ..\..
 
 Bwavemix:
 	echo Making in $(WAVEMIXDIR)
 	cd $(WAVEMIXDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
+	cd ..\..
 
 Bcompiler:
 	echo Making $(COMMAND) in $(BLAKCOMPDIR)
@@ -58,13 +58,7 @@ Bcompiler:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bdiff:
-	echo Making $(COMMAND) in $(DIFFDIR)
-	cd $(DIFFDIR)
-	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
-
-Bkod: Bdiff Bcompiler
+Bkod: Bcompiler
 	echo Making $(COMMAND) in $(KODDIR)
 	cd $(KODDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)

@@ -182,7 +182,7 @@ messages:
          }
       }
 
-      if num = SID_SUMMON_POISON_FOG
+      if num = SID_POISON_FOG
          AND NOT send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          if report

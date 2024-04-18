@@ -1,6 +1,6 @@
 # Makefile for wave mixer
 
-TOPDIR=..
+TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
 SOURCEDIR = $(WAVEMIXDIR)

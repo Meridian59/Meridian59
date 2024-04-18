@@ -276,6 +276,6 @@ void AppendNumToTempString(int iNum)
 {
    char numbuf[20];
 
-   sprintf(numbuf, "%d", iNum);
+   snprintf(numbuf, sizeof(numbuf), "%d", iNum);
    AppendTempString(numbuf, (int) strlen(numbuf));
 }

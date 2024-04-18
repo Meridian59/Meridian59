@@ -701,7 +701,7 @@ messages:
    {
       local oSpell, oCaster;
 
-      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATHLINK);
+      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATH_LINK);
 
       if Send(self,@IsEnchanted,#what=oSpell)
       {
@@ -1787,6 +1787,20 @@ messages:
          }
       }
 
+      return;
+   }
+
+   ResendRoomBackgroundMusic()
+   {
+      local i;
+
+      for i in Send(self,@GetHolderActive)
+      {
+         if IsClass(first(i),&user)
+         {
+            Send(first(i),@SendRoomMusic,#music_rsc=prMusic);
+         }
+      }
       return;
    }
 

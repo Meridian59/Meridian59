@@ -1272,7 +1272,7 @@ void AdminMail(int session_id,admin_parm_type parms[],
 	char loadname[MAX_PATH+FILENAME_MAX];
 	char buf[MAIL_BUFSIZE + 2];
 
-	sprintf(loadname, "%s%s",ConfigStr(PATH_FORMS),NOTE_FILE);
+	snprintf(loadname, sizeof(loadname), "%s%s",ConfigStr(PATH_FORMS),NOTE_FILE);
 
 	if ((infile = open(loadname, O_RDONLY | O_TEXT)) == -1)
 	{
@@ -1539,9 +1539,9 @@ void AdminShowObject(int session_id,admin_parm_type parms[],
 		else
 			prop_name = GetPropertyNameByID(c,o->p[i].id);
 		if (prop_name == NULL)
-			sprintf(buf,": #%-19i",o->p[i].id);
+			snprintf(buf, sizeof(buf), ": #%-19i",o->p[i].id);
 		else
-			sprintf(buf,": %-20s",prop_name);
+			snprintf(buf, sizeof(buf), ": %-20s",prop_name);
 		aprintf("%s = %s %s\n",buf,GetTagName(o->p[i].val),
 			GetDataName(o->p[i].val));
 	}
@@ -1792,7 +1792,7 @@ void AdminShowOneAccount(account_node *a)
    if (a->suspend_time > 0)
    {
       // Print suspended time left in hours.
-      sprintf(buff,"%7.1fh",(a->suspend_time - GetTime())/(60.0*60.0));
+      snprintf(buff, sizeof(buff), "%7.1fh",(a->suspend_time - GetTime())/(60.0*60.0));
    }
    else
    {
@@ -2098,7 +2098,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case RANDOM : strcpy(c_name, "Random"); break;
 
 		default :
-			sprintf(c_name,"Unknown (%i)",max_index);
+			snprintf(c_name, sizeof(c_name), "Unknown (%i)",max_index);
 			break;
 		}
 
@@ -2210,9 +2210,9 @@ void AdminShowClass(int session_id,admin_parm_type parms[],
 	{
 		classvar_name = GetClassVarNameByID(c,i);
 		if (classvar_name == NULL)
-			sprintf(buf,": VAR #%-19i",i);
+			snprintf(buf, sizeof(buf), ": VAR #%-19i",i);
 		else
-			sprintf(buf,": VAR %-20s",classvar_name);
+			snprintf(buf, sizeof(buf), ": VAR %-20s",classvar_name);
 		aprintf("%s = %s %s\n",buf,GetTagName(c->vars[i].val),
 				  GetDataName(c->vars[i].val));
 	}

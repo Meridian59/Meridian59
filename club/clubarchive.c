@@ -143,7 +143,7 @@ void Dearchive(const char *dest_path, const char *zip_name)
          break;
       }
       
-      sprintf(msg, GetString(hInst, IDS_CANTUNPACK), GetString(hInst, extraction_error));
+      snprintf(msg, sizeof(msg), GetString(hInst, IDS_CANTUNPACK), GetString(hInst, extraction_error));
       
       if (MessageBox(hwndMain, msg, GetString(hInst, IDS_APPNAME), MB_YESNO) == IDNO)
       {

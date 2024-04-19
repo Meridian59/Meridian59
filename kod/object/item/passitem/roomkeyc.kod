@@ -102,6 +102,17 @@ messages:
       return oRenter;
    }
 
+   GetMasterKey()
+   "Attempts to look up the master key if one exists or $ if not."
+   {
+      local oMaintenance, oRenter, oRoom;
+      oMaintenance = Send(SYS, @GetRentableRoomMaintenance);
+      oRoom = Send(SYS, @FindRoomByNum, #num=piRID);
+      oRenter = Send(self, @GetRenter);
+
+      return Send(oMaintenance, @FindKeyByPlayer, #who=oRenter, #iLocation=Send(oRoom, @GetLocation));
+   }
+
    OriginalDeleted()
    {
       if (poOwner <> $) and isClass(poOwner,&User)
@@ -119,7 +130,7 @@ messages:
          }
       }
       
-      send(self,@Delete);
+      Send(Self, @Delete);
       
       return;
    }
@@ -249,6 +260,21 @@ messages:
          send(self,@NoDropMessage);
            
          return FALSE;
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      local oMasterKey;
+      if (Send(self, @IsKeyCopy))
+      {
+         oMasterKey = Send(self, @GetMasterKey);
+         if (oMasterKey <> $)
+         {
+            Send(oMasterKey, @RemoveCopy, #what=self);
+         }
       }
 
       propagate;

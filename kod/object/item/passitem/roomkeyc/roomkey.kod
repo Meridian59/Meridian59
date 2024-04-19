@@ -155,12 +155,8 @@ messages:
       return;
    }
 
-   RoomExpired(iRID=$)
+   RoomExpired()
    {
-      if (iRID = $) or (iRID <> piRID)
-      {
-         return;
-      }
       if (poOwner <> $) and isClass(poOwner,&User)
       {
          if Send(poOwner,@IsLoggedOn)
@@ -189,11 +185,7 @@ messages:
       
       for i in plCopies
       {
-         % Trying to remove each copy from the master key list during the
-         % deletion process of the room and this key will cause errors.
-         % It's unnecessary anyway since the copy list is removed when 
-         % this loop is finished.
-         Send(i, @OriginalDeleted, #bRemoveFromMasterKey=FALSE);
+         Send(i, @OriginalDeleted);
       }
       
       plCopies = $;

@@ -574,6 +574,12 @@ messages:
    {
       local i, lUsers;
 
+      if IsClass(self,&DM)
+      {
+         % Do not advertise new DM characters
+         return;
+      }
+
       lUsers = Send(SYS,@GetUsersLoggedOn);
       for i in lUsers
       {

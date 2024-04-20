@@ -93,11 +93,6 @@ messages:
       propagate;
    }
 
-   SendFirstTimeLogonMessage()
-   {
-      return;
-   }
-
    PlayerNewCharInfo()
    {
       %debug("player new char info");

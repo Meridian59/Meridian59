@@ -60,6 +60,7 @@ function_type Functions[] = {
 {"LoadRoom",            CREATEROOMDATA,  AEXPRESSION,   ANONE},
 {"GetClass",            GETCLASS,        AEXPRESSION,   ANONE},
 {"GetTime",             GETTIME,         ANONE},
+{"GetTickCount",        GETTICKCOUNT,    ANONE},
 {"CanMoveInRoom",       CANMOVEINROOM,   AEXPRESSION,   AEXPRESSION,AEXPRESSION,
     AEXPRESSION,AEXPRESSION,ANONE},
 {"CanMoveInRoomFine",CANMOVEINROOMFINE,AEXPRESSION,AEXPRESSION,AEXPRESSION,

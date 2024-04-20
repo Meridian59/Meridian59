@@ -557,6 +557,7 @@ const char * name_function(int fnum)
    case MOVELISTELEM : return "MoveListElem";
 
    case GETTIME : return "GetTime";
+   case GETTICKCOUNT : return "GetTickCount";
 
    case ABS: return "Abs";
    case BOUND: return "Bound";

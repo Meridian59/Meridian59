@@ -161,6 +161,7 @@ enum
    MOVELISTELEM = 112,
 
    GETTIME = 120,
+   GETTICKCOUNT = 121,
 
    ABS = 131,
    BOUND = 132,

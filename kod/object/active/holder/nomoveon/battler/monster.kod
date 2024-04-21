@@ -3463,6 +3463,7 @@ messages:
       }
 
       oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
+      
       Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
            #string=Lm_bnkr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
 

@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define PAGE_BREAK_CHAR 'Â¶'	  /* For multi-page descriptions */
+#define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */
@@ -654,7 +654,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.url          = url;
 	info.rarity       = obj->rarity; // Assign rarity information to the structure
 
-    // Prefix the name based on the object's rarity
+    // Suffix the object's rarity
     switch(info.rarity) 
     {
     case ITEM_RARITY_GRADE_NORMAL:
@@ -681,7 +681,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
        info.name = desc;
        break;
     default:
-       // Handle unknown rarity gracefully (no prefix)
+       // Handle unknown rarity gracefully (no suffix)
 	   debug(("Unknown rarity grade\n"));
        break;
     }

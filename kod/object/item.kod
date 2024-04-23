@@ -616,25 +616,47 @@ messages:
    GetItemRarityGrade(what = $)
    "Returns the appropriate text coloring tier for the item."
    {
-   % first check if it's revealed, if not send unrevealed color.
-   % Then check if it's cursed.  Finally count itematts and if more 
-   % just 1, it's magic, if 2 it's rare if it's 3+ it's legendary
-   % ignore shimmering (created items in the count)
-   % ignore shrouded, bonded (transcendent)
+      local irarity, i;
+      irarity = ITEM_RARITY_GRADE_NORMAL;
 
-     % if what <> $ 
-     %    AND (Send(self,@IsCursed)) 
-     % {
-         return ITEM_RARITY_GRADE_MYSTERIOUS;
-     % }
+      % Provide default value if not an item
+      if NOT IsClass(self,&Item)
+      {
+         return ITEM_RARITY_GRADE_NORMAL;
+      }
 
-   % ITEM_RARITY_GRADE_NORMAL      = 0
-   % ITEM_RARITY_GRADE_MAGIC       = 1
-   % ITEM_RARITY_GRADE_RARE        = 2
-   % ITEM_RARITY_GRADE_LEGENDARY   = 3
-   % ITEM_RARITY_GRADE_MYSTERIOUS  = 4
-   % ITEM_RARITY_GRADE_CURSED      = 5
-   % return ITEM_TEXT_COLOR_NONE;
+      if Send(self,@IsCursed)
+      {
+         return ITEM_RARITY_GRADE_CURSED;
+      }
+
+      % Static class rarities
+      if IsClass(self,&helm)               % Magic Spirit Helm
+      {
+         irarity = ITEM_RARITY_GRADE_LEGENDARY;
+      }
+
+      % Want to refactor to check a list of classes to see if 
+      % the item class is in there and assign appropriately
+      if IsClass(self,&KraananCharm)       % Steel Torc
+         OR IsClass(self,&FarenCharm)      % Brass Necklace
+         OR IsClass(self,&QorCharm)        % Monacle
+         OR IsClass(self,&RiijaCharm)      % Feathered Choker
+         OR IsClass(self,&ShalilleCharm)   % Diamond Pendant
+         OR IsClass(self,&MagicBow)
+         OR IsClass(self,&NeruditeBow)
+         OR IsClass(self,&GoldSword)
+      {
+         irarity = ITEM_RARITY_GRADE_RARE;
+      }
+
+      if IsClass(self,&RiijaSword)         % Feathered Choker
+         OR IsClass(self,&Mint)
+      {
+         irarity = ITEM_RARITY_GRADE_MAGIC;
+      }
+      
+      return irarity;
    }
 
    IsCursed()

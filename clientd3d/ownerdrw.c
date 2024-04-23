@@ -362,14 +362,14 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
                   GetItemListColor(
                      lpdis->hwndItem,
                      (selected? SEL_BGD : UNSEL_BGD),
-                     item_rarity_value));
+                     ITEM_RARITY_GRADE_NORMAL));
 
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
       hColorBg = GetBrush(
                      GetItemListColor(
                         lpdis->hwndItem,
                         UNSEL_BGD,
-                        item_rarity_value));
+                        ITEM_RARITY_GRADE_NORMAL));
 
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
 

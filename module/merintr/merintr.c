@@ -332,6 +332,7 @@ static TypedCommand commands[] = {
 { "stand",       CommandStand, },
 { "suicid",      CommandSuicid, },
 { "suicide",     CommandSuicide, },
+{ "reroll",      CommandSuicide, },
 { "neutral",     CommandNeutral, },
 { "happy",       CommandHappy, },
 { "sad",         CommandSad, },

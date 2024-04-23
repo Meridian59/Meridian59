@@ -637,7 +637,6 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 {
 	DescDialogStruct info;
 	int template_id;
-	char desc[MAXNAME + 15];
 	
 	if (hDescDialog != NULL)
 	{
@@ -652,38 +651,16 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.description  = description;
 	info.fixed_string = fixed_string;
 	info.url          = url;
-	info.rarity       = obj->rarity; // Assign rarity information to the structure
+	info.rarity       = obj->rarity;
 
-    // Suffix the object's rarity
-    switch(info.rarity) 
-    {
-    case ITEM_RARITY_GRADE_NORMAL:
-       // No suffix for normal rarity
-       break;
-    case ITEM_RARITY_GRADE_MAGIC:
-       sprintf(desc, "%s (magic)", info.name);
-       info.name = desc;
-       break;
-    case ITEM_RARITY_GRADE_RARE:
-       sprintf(desc, "%s (rare)", info.name);
-       info.name = desc;
-       break;
-    case ITEM_RARITY_GRADE_LEGENDARY:
-       sprintf(desc, "%s (legendary)", info.name);
-       info.name = desc;
-       break;
-    case ITEM_RARITY_GRADE_MYSTERIOUS:
-       sprintf(desc, "%s (mysterious)", info.name);
-       info.name = desc;
-       break;
-    case ITEM_RARITY_GRADE_CURSED:
-       sprintf(desc, "%s (cursed)", info.name);
-       info.name = desc;
-       break;
-    default:
-       // Handle unknown rarity gracefully (no suffix)
-	   debug(("Unknown rarity grade\n"));
-       break;
+	std::string raritySuffix = GetRaritySuffix(info.rarity);
+
+	if (!raritySuffix.empty())
+	{
+        char nameWithSuffix[MAXNAME + 15];
+		snprintf(nameWithSuffix, sizeof(nameWithSuffix),
+		   "%s %s", info.name, raritySuffix.c_str());
+        info.name = nameWithSuffix;
     }
 
 	// Different dialog for players
@@ -694,6 +671,39 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
+}
+/************************************************************************/
+/*
+* GetRaritySuffix:  Provide a rarity suffix based on the given rarity type.
+*/
+std::string GetRaritySuffix(int rarity) 
+{
+	std::string suffix;
+	
+	switch(rarity) {
+        case ITEM_RARITY_GRADE_NORMAL:
+            suffix = "";
+			break;
+        case ITEM_RARITY_GRADE_MAGIC:
+            return GetString(hInst, IDS_RARITY_GRADE_MAGIC);
+			break;
+        case ITEM_RARITY_GRADE_RARE:
+            return GetString(hInst, IDS_RARITY_GRADE_RARE);
+			break;
+        case ITEM_RARITY_GRADE_LEGENDARY:
+            return GetString(hInst, IDS_RARITY_GRADE_LEGENDARY);
+			break;
+        case ITEM_RARITY_GRADE_MYSTERIOUS:
+            return GetString(hInst, IDS_RARITY_GRADE_MYSTERIOUS);
+			break;
+        case ITEM_RARITY_GRADE_CURSED:
+            return GetString(hInst, IDS_RARITY_GRADE_CURSED);
+			break;
+		default:
+            suffix = ""; // Handle unknown rarity gracefully (no suffix)
+
+	}
+	return suffix;
 }
 /************************************************************************/
 /*

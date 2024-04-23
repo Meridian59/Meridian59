@@ -68,61 +68,39 @@ void WindowEndUpdate(HWND hwnd)
  */
 int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan)
 {
-   char suffix[MAXNAME + 15];
+   std::string raritySuffix;
    char nameWithSuffix[MAXNAME + 15];
    char nameWithQuantity[MAXNAME + 15];
-   char *name;
-   int pos;
+   char nameWithItemInUse[MAXNAME + 15];
+   char* name = LookupNameRsc(obj->name_res);
 
-   name = LookupNameRsc(obj->name_res);
+   raritySuffix = GetRaritySuffix(obj->rarity);
 
-   // Suffix the name based on the object's rarity
-   switch(obj->rarity) 
-   {
-   case ITEM_RARITY_GRADE_NORMAL:
-      strcpy(suffix, ""); // Empty string
-      break;
-   case ITEM_RARITY_GRADE_MAGIC:
-      strcpy(suffix, " (magic)");
-      break;
-   case ITEM_RARITY_GRADE_RARE:
-      strcpy(suffix, " (rare)");
-      break;
-   case ITEM_RARITY_GRADE_LEGENDARY:
-      strcpy(suffix, " (legendary)");
-      break;
-   case ITEM_RARITY_GRADE_MYSTERIOUS:
-      strcpy(suffix, " (mysterious)");
-      break;
-   case ITEM_RARITY_GRADE_CURSED:
-      strcpy(suffix, " (cursed)");
-      break;
-   default:
-      strcpy(suffix, ""); // Handle unknown rarity gracefully (no suffix)
-      debug(("Unknown rarity grade\n"));
-      break;
+   // Concatenate name and suffix
+   if (!raritySuffix.empty())
+	{
+      snprintf(nameWithSuffix, sizeof(nameWithSuffix),
+         "%s %s", name, raritySuffix.c_str());
+      name = nameWithSuffix;
    }
-
-   // Concatenate suffix and name
-   sprintf(nameWithSuffix, "%s%s", name, suffix);
 
    // If item is a number object and quantity is to be shown, add its amount after the suffixed name
    if (quan && IsNumberObj(obj->id))
    {
-      sprintf(nameWithQuantity, "%d %.*s", obj->amount, MAXNAME, nameWithSuffix);
+      snprintf(nameWithQuantity, sizeof(nameWithQuantity),
+         "%d %.*s", obj->amount, MAXNAME, name);
       name = nameWithQuantity;
    }
-   else
-   {
-      name = nameWithSuffix;
-   }
 
-   /* If player using an object, say so */
+   // If player using an object, say so
    if (IsInUse(obj->id))
    {
-      sprintf(name, "%.*s %s", MAXNAME, name, GetString(hInst, IDS_INUSE));
+      snprintf(nameWithItemInUse, sizeof(nameWithItemInUse),
+         "%.*s %s", MAXNAME, name, GetString(hInst, IDS_INUSE));
+      name = nameWithItemInUse;
    }
 
+   int pos;
    if (index ==  -1)
       pos = combo ? ComboBox_AddString(hwnd, name) 
 	 : ListBox_AddString(hwnd, name);

@@ -84,7 +84,7 @@ typedef struct {
 
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                                  char* fixed_string, char *url, int rarity = ITEM_RARITY_GRADE_NORMAL);
+                                  char* fixed_string, char *url, int rarity);
 std::string GetRaritySuffix(int rarity);
 M59EXPORT void SetDialogFixedString(char* fixed_string);
 

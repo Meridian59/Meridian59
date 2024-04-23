@@ -963,7 +963,7 @@ Bool HandleLook(char *ptr, long len)
 	 return False;
    }
 
-   DisplayDescription(&obj, flags, (pane? inscr : NULL), msg, NULL);
+   DisplayDescription(&obj, flags, (pane? inscr : NULL), msg, NULL, obj.rarity);
    ObjectDestroy(&obj);
 
    return True;

@@ -58,7 +58,7 @@ static char colorinfo[][15] = {
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
 	{ "0,128,192"},		/* COLOR_ITEM_TEXT_MAGIC      - cyan   */
 	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE       - lime   */
-	{ "192,196,0"},	    /* COLOR_ITEM_TEXT_LEGENDARY  - yellow */
+	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY  - purple */
 	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_MYSTERIOUS - orange */
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED     - red    */
 };

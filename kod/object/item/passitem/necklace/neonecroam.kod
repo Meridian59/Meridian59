@@ -1,0 +1,154 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+NeoNecromancerAmulet is Necklace
+
+constants:
+
+   include blakston.khd
+
+    % Four hours
+    HUNGER_TIME = 240000000
+%   HUNGER_1 = 2   %one session (assuming 3-4 hours of play per day)
+%   HUNGER_2 = 4   %one to two sessions
+%   HUNGER_3 = 6   %two sessions
+%   HUNGER_4 = 8   %two to three sessions
+%   HUNGER_5 = 10  %three sessions
+
+   %BASE_HUNGER_GAIN = 2
+
+resources:
+
+   NeoNecromancerAmulet_name_rsc = "Amulet of the Three"
+   NeoNecromancerAmulet_icon_rsc = necamlet.bgf
+   NeoNecromancerAmulet_desc_rsc = \
+   "There is something deeply disturbing about this amulet.  When you look at it in the corner of your eye, "
+   "you can almost see the evil pouring forth from it."
+
+   NeoNecromancerAmulet_newbie_pickup_good = "Your guardian angel says, \"That amulet is a thing of great "
+      "evil.  Even holding it in your possession would corrupt your soul, and eventually destroy you.\""
+   NeoNecromancerAmulet_newbie_pickup_evil = "Your guardian angel says, \"That amulet holds far too much "
+      "power for you to contain.  You must stay away from it, for now.\""
+
+   NeoNecromancerAmulet_holding_damage_wearing = \
+   "The unholy energy streaming from the Amulet of the Three seeps into you, racking your body with pain as it "
+   "corrupts your soul.  You must do something before it destroys you!"
+   NeoNecromancerAmulet_holding_damage = \
+   "The unholy energy streaming from the Amulet of the Three seeps into you, racking your body with pain as it "
+   "corrupts your soul."
+   NeoNecromancerAmulet_holding_unworthy_wearing = \
+   "The unholy energy streaming from the Amulet of the Three seeps into you, filling you with pleasure even as it "
+   "racks you with pain.  You must somehow remove it before it destroys you!"
+   NeoNecromancerAmulet_holding_unworthy = \
+   "The unholy energy streaming from the Amulet of the Three seeps into you, filling you with pleasure even as it "
+   "racks you with pain.  You feel a strong compulsion to put the amulet on and channel its full power, but you "
+   "know somehow that it would surely destroy you if you did."
+   NeoNecromancerAmulet_holding_tempt = \
+   "The unholy energy streaming from the Amulet of the Three seeps into you, filling you with pleasure.  You "
+   "cannot help but fantasize how wonderful it would feel to put the amulet on and channel its full power."
+
+   
+   NeoNecromancerAmulet_warning = \
+   "As you begin to place the amulet around your neck, you feel a strong sense of foreboding;  this is not likely "
+   "to be a reversible act."
+   NeoNecromancerAmulet_used_unworthy = \
+   "As you put the amulet on, a wave of power flows through your body, setting every nerve on fire with pleasure "
+   "and pain.  The amount of energy flowing into your body is enormous, and growing with every passing second - "
+   "the coppery taste of fear fills your mouth as you realize you may not be able to contain it all."
+   NeoNecromancerAmulet_used_rsc = \
+   "As you put the amulet on, a wave of power flows through your body, setting every nerve on fire with pleasure, "
+   "leaving every cell irrevocably changed in its wake.  Somewhere far inside your mind, underneath the feeling "
+   "of power, you can also feel something else, however - a kind of hunger gnawing at you, growing with every "
+   "passing second."
+
+   NeoNecromancerAmulet_try_unuse_rsc = \
+   "As you try to pull the amulet from your neck, you feel it tug painfully at your insides, as if it were "
+   "magically tethered to your innards, grafted permanently onto the blackest part of your soul."
+
+   NeoNecromancerAmulet_unused_rsc = \
+   "As the Amulet of the Three leaves your body, you feel something else rip free inside you, turning your "
+   "internal organs to jelly."
+
+   NeoNecromancerAmulet_hunger_1 = "You're starting to feel a little hungry."
+   NeoNecromancerAmulet_hunger_2 = "You're definitely hungry now."
+   NeoNecromancerAmulet_hunger_3 = "You are very hungry now.  The hunger is a burning knot somewhere inside your "
+      "skull.  It is time to feed."
+   NeoNecromancerAmulet_hunger_4 = "Your brain is on fire with but one impulse:  you must feed.  Every moment passes "
+      "like molasses, an eternity of suffering."
+   NeoNecromancerAmulet_hunger_5 = "Your body is now in so much pain that you can feel yourself pulling away from it, "
+      "drifting out and away.  You jerk yourself back with great effort - you must feed soon, or you will surely "
+      "be lost."
+
+   NeoNecromancerAmulet_illusion_slipped = "The illusion masking your true features slips, revealing your ghastly "
+      "appearance in all its obscene glory!"
+   NeoNecromancerAmulet_illusion_restored = "Your horrific appearance has once again been cloaked in illusion."
+
+   NeoNecromancerAmulet_hunger_assuaged = "You feel your amulet absorbing %s%s's life energy.  It washes through you "
+      "in waves, slaking your hunger and leaving you feeling strengthened."
+
+   NeoNecromancerAmulet_cant_eat = "You attempt to gag down %s%s, to no avail.  Mortal food will no longer assuage "
+      "the dark hunger that burns within your unholy body."
+
+   NeoNecromancerAmulet_cant_pay = "Your Dark Queen reaches out to grasp your amulet.  "
+      "She holds it for a moment, then pushes you away in disgust.\n"
+      "~kQueen Venya'cyr tells you, \"~rWeak fool. Thou art too hungry thyself to satisfy mine own hunger.~k\""
+   NeoNecromancerAmulet_pay_ouch = "Your Dark Queen reaches out to grasp your amulet.  "
+      "You gasp as she draws your life essence out of you into herself, leaving you drained and weak.\n"
+      "~kQueen Venya'cyr tells you, \"~rI thank thee, my loyal subject.  Thou had best go and feed thyself now.~k\""
+   NeoNecromancerAmulet_pay = "Your Dark Queen reaches out to grasp your amulet.  "
+      "You gasp as she draws your life essence out of you into herself.\n"
+      "~kQueen Venya'cyr tells you, \"~rAh, a truly refreshing soul thou hast.  Thou servest me well, dark one!~k\""
+
+   NeoNecromancerAmulet_drops = "As your essence dissolves away from this plane of existence, the amulet slips out "
+      "of your hands and drops to the ground."
+
+classvars:
+
+   viIndefinite = ARTICLE_AN
+
+   vrName = NeoNecromancerAmulet_name_rsc
+   vrIcon = NeoNecromancerAmulet_icon_rsc
+   vrDesc = NeoNecromancerAmulet_desc_rsc
+
+   viValue_average = 100
+
+   viBulk = 25
+   viWeight = 25
+   viUse_type = ITEM_USE_NECK
+   viItem_type = ITEMTYPE_NECKLACE | ITEMTYPE_SPECIAL
+
+   viUse_Amount = 1
+
+
+   viDamage_min = 10
+   viDamage_max = 20
+
+   viLight_change = 50
+
+properties:
+
+   plStatmods = $
+   
+   piHunger = 0
+   ptHungerTimer = $
+   piHpWorthyThreshold = 100
+
+   pbIllusioned = TRUE
+   piSavedSkinColor = $
+
+   pbOrderDisbanded = FALSE
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

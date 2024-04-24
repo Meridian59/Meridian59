@@ -4938,7 +4938,9 @@ messages:
       plItemTemplates = cons(create(&EagleEyesPotion),plItemTemplates);
 
       plItemTemplates = cons(create(&NecromancerAmulet),plItemTemplates);
+      plItemTemplates = cons(create(&NeoNecromancerAmulet),plItemTemplates);
       plItemTemplates = cons(create(&HunterSword),plItemTemplates);
+      plItemTemplates = cons(create(&NeoHunterSword),plItemTemplates);
       plItemTemplates = cons(create(&Prism),plItemTemplates);
 
       plItemTemplates = cons(create(&SwapWand),plItemTemplates);

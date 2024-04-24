@@ -1,0 +1,129 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+NeoHunterSword is Weapon
+
+constants:
+
+   include blakston.khd
+
+    % Four hours
+    HUNGER_TIME = 240000000
+%   HUNGER_1 = 2   %one session (assuming 3-4 hours of play per day)
+%   HUNGER_2 = 4   %one to two sessions
+%   HUNGER_3 = 6   %two sessions
+%   HUNGER_4 = 8   %two to three sessions
+%   HUNGER_5 = 10  %three sessions
+
+   %BASE_HUNGER_GAIN = 2
+
+resources:
+
+   NeoHunterSword_name_rsc = "Sword of the Hunt"
+   NeoHunterSword_icon_rsc = huntswrd.bgf
+   NeoHunterSword_desc_rsc = \
+      "This weapon is truly a fine piece of workmanship.  Intricate organic carvings "
+      "intertwine along the hilt, enclosing an exquisitely beautiful gem, almost as "
+      "if it were an eye gazing calmly back at you.  Indeed, every now and then out "
+      "of the corner of your eye you almost catch it blinking."
+
+   NeoHunterSword_window_overlay_rsc = povhunts.bgf
+   NeoHunterSword_player_overlay = huntswov.bgf
+
+
+   NeoHunterSword_holding_damage = \
+      "As you pick up the Sword of the Hunt, the carven tendrils on the hilt ~Ibite~I "
+      "your hand!  Taken aback, you fling it to the ground.  That sword does not like "
+      "you;  you'd best leave it alone."
+   NeoHunterSword_holding_damage_using = \
+      "The Sword of the Hunt's roots writhe painfully inside your chest with "
+      "displeasure.  You have done something to invoke the Sword's disapproval!"
+   
+   NeoHunterSword_warning = \
+      "You prepare to pick up the mighty Sword of the Hunt, but it twitches and you "
+      "hesitate for a moment.  This sword appears to be alive, and it may not allow "
+      "you to part with it once you have claimed it as your own.  Are you truly "
+      "prepared for that commitment?"
+   NeoHunterSword_used_rsc = \
+      "You steel your nerve and bravely pick up the Sword of the Hunt.  The hilt "
+      "immediately comes alive, writhing against the palm of your hand.  You gasp "
+      "as you feel invisible roots snaking into your chest and wrapping themselves "
+      "around your heart.  Strangely, you feel no pain throughout this process, "
+      "only a greatly pleasurable feeling of power and a nagging sense of hunger."
+
+   NeoHunterSword_try_unuse_rsc = \
+      "As you try to drop the sword, you feel it tug painfully on the roots that have "
+      "snaked their way inside your body.  This is not likely to be a productive exercise."
+
+   NeoHunterSword_hunger_1 = "Your sword thirsts for the hunt."
+   NeoHunterSword_hunger_2 = "Your sword is growing impatient for a hunt."
+   NeoHunterSword_hunger_3 = "Your sword hungers for impure blood.  It is time to hunt."
+   NeoHunterSword_hunger_4 = "Your sword hungers for impure blood.  Its roots are beginning to draw sustenance "
+      "from your body to compensate."
+   NeoHunterSword_hunger_5 = "Your sword hungers for impure blood.  Its roots twitch painfully inside your chest "
+      "as they suck at your life-essence."
+
+   NeoHunterSword_hunger_assuaged = "Your sword drinks in %s%s's impure blood.  You can feel it course along its roots "
+      "into your body, filling you with energy."
+
+   NeoHunterSword_lose_sword = "Your unworthiness has offended your sword of the hunt.  "
+      "Writhing violently in your hands for a few moments, the sword suddenly springs up and away out of sight."
+
+classvars:
+
+   viIndefinite = ARTICLE_A
+
+   vrName = NeoHunterSword_name_rsc
+   vrIcon = NeoHunterSword_icon_rsc
+   vrDesc = NeoHunterSword_desc_rsc
+
+   vrWeapon_window_overlay = NeoHunterSword_window_overlay_rsc
+   vrWeapon_overlay = NeoHunterSword_player_overlay
+
+   % Hunter swords are high quality thrusting weapons
+   viWeaponType = WEAPON_TYPE_THRUST
+   viWeaponQuality = WEAPON_QUALITY_HIGH
+
+   viProficiency_needed = SKID_PROFICIENCY_SWORD
+
+   viGround_group = 1
+   viInventory_group = 4
+   viBroken_group = 2
+
+   viValue_average = 4000
+   viBulk = 50
+   viWeight = 70
+
+   viDamage_min = 10    % the damage done to the user if unworthy
+   viDamage_max = 20
+
+   viHits_init_min = 600
+   viHits_init_max = 600
+
+   viItem_type = ITEMTYPE_WEAPON | ITEMTYPE_SPECIAL
+
+properties:
+
+   plStatmods = $
+
+   piHunger = 0
+   ptHungerTimer = $
+   piHpWorthyThreshold = 100
+   
+   piAttack_type = ATCK_WEAP_SLASH
+   piAttack_Spell = ATCK_SPELL_HUNTERSWORD
+
+   pbCheapDeath = FALSE
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

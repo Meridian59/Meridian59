@@ -700,7 +700,7 @@ std::string GetRaritySuffix(int rarity)
             return GetString(hInst, IDS_RARITY_GRADE_CURSED);
 			break;
 		default:
-			debug(("Unknown rarity grade\n"));
+			debug(("Unknown rarity grade %d\n", rarity));
             return ""; // Handle unknown rarity gracefully (no suffix)
 	}
 	

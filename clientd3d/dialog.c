@@ -683,8 +683,7 @@ std::string GetRaritySuffix(int rarity)
 	switch(rarity)
 	{
         case ITEM_RARITY_GRADE_NORMAL:
-            suffix = "";
-			break;
+            return "";
         case ITEM_RARITY_GRADE_MAGIC:
             return GetString(hInst, IDS_RARITY_GRADE_MAGIC);
 			break;
@@ -702,7 +701,7 @@ std::string GetRaritySuffix(int rarity)
 			break;
 		default:
 			debug(("Unknown rarity grade\n"));
-            suffix = ""; // Handle unknown rarity gracefully (no suffix)
+            return ""; // Handle unknown rarity gracefully (no suffix)
 	}
 	
 	return suffix;

@@ -80,7 +80,7 @@ int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool qu
    if (!raritySuffix.empty())
 	{
       snprintf(nameWithSuffix, sizeof(nameWithSuffix),
-         "%s %s", name, raritySuffix.c_str());
+         "%s (%s)", name, raritySuffix.c_str());
       name = nameWithSuffix;
    }
 

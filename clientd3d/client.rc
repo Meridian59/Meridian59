@@ -1787,11 +1787,11 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_RARITY_GRADE_MAGIC       "(magic)"
-    IDS_RARITY_GRADE_RARE        "(rare)"
-    IDS_RARITY_GRADE_LEGENDARY   "(legendary)"
-    IDS_RARITY_GRADE_MYSTERIOUS  "(mysterious)"
-    IDS_RARITY_GRADE_CURSED      "(cursed)"
+    IDS_RARITY_GRADE_MAGIC       "magic"
+    IDS_RARITY_GRADE_RARE        "rare"
+    IDS_RARITY_GRADE_LEGENDARY   "legendary"
+    IDS_RARITY_GRADE_MYSTERIOUS  "mysterious"
+    IDS_RARITY_GRADE_CURSED      "cursed"
 END
 
 #endif    // English (United States) resources

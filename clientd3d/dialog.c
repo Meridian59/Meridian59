@@ -659,7 +659,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	{
         char nameWithSuffix[MAXNAME + 15];
 		snprintf(nameWithSuffix, sizeof(nameWithSuffix),
-		   "%s %s", info.name, raritySuffix.c_str());
+		   "%s (%s)", info.name, raritySuffix.c_str());
         info.name = nameWithSuffix;
     }
 

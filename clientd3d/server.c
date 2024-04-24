@@ -353,7 +353,7 @@ void ExtractObject(char **ptr, object_node *item, bool includeLight)
 
 void ExtractObjectNoLight(char **ptr, object_node *item)
 {  
-   ExtractObject(ptr, item, False); // Disable light extraction
+   ExtractObject(ptr, item, false); // Disable light extraction
 }
 
 /********************************************************************/

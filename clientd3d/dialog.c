@@ -692,13 +692,13 @@ std::string GetRaritySuffix(int rarity)
             stringID = IDS_RARITY_GRADE_RARE;
 			break;
         case ITEM_RARITY_GRADE_LEGENDARY:
-            stringID = IDS_RARITY_GRADE_LEGENDARY);
+            stringID = IDS_RARITY_GRADE_LEGENDARY;
 			break;
         case ITEM_RARITY_GRADE_MYSTERIOUS:
-            stringID = IDS_RARITY_GRADE_MYSTERIOUS);
+            stringID = IDS_RARITY_GRADE_MYSTERIOUS;
 			break;
         case ITEM_RARITY_GRADE_CURSED:
-            stringID = IDS_RARITY_GRADE_CURSED);
+            stringID = IDS_RARITY_GRADE_CURSED;
 			break;
 		default:
 			debug(("Unknown rarity grade %d\n", rarity));
@@ -706,7 +706,7 @@ std::string GetRaritySuffix(int rarity)
 	}
 	
 	suffix = GetString(hInst, stringID);
-	
+
 	return suffix;
 }
 /************************************************************************/

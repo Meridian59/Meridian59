@@ -679,30 +679,33 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 std::string GetRaritySuffix(int rarity) 
 {
 	std::string suffix;
+	int stringID;
 	
 	switch(rarity)
 	{
         case ITEM_RARITY_GRADE_NORMAL:
             return "";
         case ITEM_RARITY_GRADE_MAGIC:
-            return GetString(hInst, IDS_RARITY_GRADE_MAGIC);
+            stringID = IDS_RARITY_GRADE_MAGIC;
 			break;
         case ITEM_RARITY_GRADE_RARE:
-            return GetString(hInst, IDS_RARITY_GRADE_RARE);
+            stringID = IDS_RARITY_GRADE_RARE;
 			break;
         case ITEM_RARITY_GRADE_LEGENDARY:
-            return GetString(hInst, IDS_RARITY_GRADE_LEGENDARY);
+            stringID = IDS_RARITY_GRADE_LEGENDARY);
 			break;
         case ITEM_RARITY_GRADE_MYSTERIOUS:
-            return GetString(hInst, IDS_RARITY_GRADE_MYSTERIOUS);
+            stringID = IDS_RARITY_GRADE_MYSTERIOUS);
 			break;
         case ITEM_RARITY_GRADE_CURSED:
-            return GetString(hInst, IDS_RARITY_GRADE_CURSED);
+            stringID = IDS_RARITY_GRADE_CURSED);
 			break;
 		default:
 			debug(("Unknown rarity grade %d\n", rarity));
             return ""; // Handle unknown rarity gracefully (no suffix)
 	}
+	
+	suffix = GetString(hInst, stringID);
 	
 	return suffix;
 }

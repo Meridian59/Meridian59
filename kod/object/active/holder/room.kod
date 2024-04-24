@@ -1790,6 +1790,20 @@ messages:
       return;
    }
 
+   ResendRoomBackgroundMusic()
+   {
+      local i;
+
+      for i in Send(self,@GetHolderActive)
+      {
+         if IsClass(first(i),&user)
+         {
+            Send(first(i),@SendRoomMusic,#music_rsc=prMusic);
+         }
+      }
+      return;
+   }
+
    SendEnchantmentIcons(what = $)
    "Users send this after GC to redisplay the enchantments in the room"
    {

@@ -277,17 +277,14 @@ messages:
       local oCaster, lActive, each_obj, oRoom, i;
       oCaster = Nth(state,2);
 
-      if pbUserEffects
+      oRoom = where;
+      if oRoom = $
       {
-         if where = $
-         {
-            oRoom = Send(oCaster,@GetOwner);
-         }
-         else
-         {
-            oRoom = where;
-         }
-         
+         oRoom = Send(oCaster,@GetOwner);
+      }
+
+      if pbUserEffects
+      {         
          lActive = Send(oRoom,@GetHolderActive);
          for i in lActive
          {
@@ -298,9 +295,10 @@ messages:
 
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_ends,
            #what=self);
-      % Send $ as midi_rsc to end music and resume default.
-      Send(self,@StartMusic,#oCaster=oCaster,#rMusic=$);
+
       Send(oCaster,@ClearTranceFlag);
+      % Send to room: restart the background music.
+      Post(oRoom,@ResendRoomBackgroundMusic);
       
       return;
    }

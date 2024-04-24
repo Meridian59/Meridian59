@@ -1468,8 +1468,13 @@ messages:
 
    Delete()
    {
-      Send(Send(SYS,@GetRentableRoomMaintenance),@RoomDeleted,#what=self);
-      Send(&RoomKey,@RoomExpired,#iRID=piRoom_num);
+      local oMaintenance, oMasterKey;
+
+      oMaintenance = Send(SYS, @GetRentableRoomMaintenance);
+      oMasterKey = Send(oMaintenance, @FindKeyByPlayer, #who=poRenter, #iLocation=viLocation);
+      Send(oMasterKey, @DeleteCopies);
+      Send(oMaintenance, @RoomDeleted,#what=self);
+      Send(oMasterKey, @RoomExpired);
 
       if ptDecoratorArrives <> $
       {

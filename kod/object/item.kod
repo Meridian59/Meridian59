@@ -94,6 +94,8 @@ classvars:
    vrCondition_poor =  item_condition_poor
    vrCondition_broken = item_condition_broken
    
+   viRarity = ITEM_RARITY_GRADE_NORMAL
+
    % Items may have a different appearance once revealed. Values are zero if not applicable.
    viUnrevealedColor = 0
    viRevealedColor = 0
@@ -613,50 +615,14 @@ messages:
       return 1;
    }
 
-   GetItemRarityGrade(what = $)
-   "Returns the appropriate text coloring tier for the item."
+   GetRarity()
    {
-      local irarity, i;
-      irarity = ITEM_RARITY_GRADE_NORMAL;
-
-      % Provide default value if not an item
-      if NOT IsClass(self,&Item)
-      {
-         return ITEM_RARITY_GRADE_NORMAL;
-      }
-
       if Send(self,@IsCursed)
       {
          return ITEM_RARITY_GRADE_CURSED;
       }
 
-      % Static class rarities
-      if IsClass(self,&helm)               % Magic Spirit Helm
-      {
-         irarity = ITEM_RARITY_GRADE_LEGENDARY;
-      }
-
-      % Want to refactor to check a list of classes to see if 
-      % the item class is in there and assign appropriately
-      if IsClass(self,&KraananCharm)       % Steel Torc
-         OR IsClass(self,&FarenCharm)      % Brass Necklace
-         OR IsClass(self,&QorCharm)        % Monacle
-         OR IsClass(self,&RiijaCharm)      % Feathered Choker
-         OR IsClass(self,&ShalilleCharm)   % Diamond Pendant
-         OR IsClass(self,&MagicBow)
-         OR IsClass(self,&NeruditeBow)
-         OR IsClass(self,&GoldSword)
-      {
-         irarity = ITEM_RARITY_GRADE_RARE;
-      }
-
-      if IsClass(self,&RiijaSword)         % Feathered Choker
-         OR IsClass(self,&Mint)
-      {
-         irarity = ITEM_RARITY_GRADE_MAGIC;
-      }
-      
-      return irarity;
+      return viRarity;
    }
 
    IsCursed()

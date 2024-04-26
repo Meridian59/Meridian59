@@ -34,11 +34,6 @@ resources:
    BarloqueInnkeeper_room_rented = "Here is the key to thine room.  I trust you will findest "
       "our rooms to be most well-appointed.  Enjoyest thine stay!"
 
-   BarloqueInnkeeper_cost = \
-      "The rooms here are the finest.  I needeth %i shillings when thou ~Irent~neth a "
-      "~Iroom~n for for 85 days.  After that, I requireth %i per day up front.  Key copies "
-      "costeth %i shillings if thou wishest to share thine room with a special someone."
-
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
 
@@ -160,7 +155,7 @@ messages:
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
          #who=self, #what=what, #innRid=RID_BAR_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
-         #rscRoomRented=BarloqueInnkeeper_room_rented, #rscRoomCost=BarloqueInnkeeper_cost,
+         #rscRoomRented=BarloqueInnkeeper_room_rented,
          #rscChangeLock=BarloqueInnkeeper_change_lock);
       
       propagate;

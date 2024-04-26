@@ -37,14 +37,6 @@ resources:
       "concerns, or if you want in on a rather lucrative prospect that's come to "
       "my attention recently!"
 
-   KocatanInnkeeper_cost = \
-      "You'll not find a better deal on the island!  It costs %i shillings to "
-      "~Irent~n a ~Iroom~n at my fine establishment for 85 days.  If you "
-      "want to stay longer, that'll be %i shillings per day, paid in advance.  "
-      "For a very modest fee of %i shillings, I can even provide you "
-      "with a copy of your room key.  Act now, because this offer won't last "
-      "long!  Space is very limited and my rooms are first-come, first-serve!"
-
    KocatanInnkeeper_days_left = \
       "Thank you, my friend!  I'll have triple this amount for you after "
       "an associate of mine can...  Oh right, you're just paying rent.  Your "
@@ -204,7 +196,7 @@ messages:
       Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
          #who=self, #what=what, #innRid=RID_KOC_INN, #speech=string,
          #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
-         #rscRoomRented=KocatanInnkeeper_room_rented, #rscRoomCost=KocatanInnkeeper_cost,
+         #rscRoomRented=KocatanInnkeeper_room_rented,
          #rscChangeLock=KocatanInnkeeper_change_lock);
 
       propagate;

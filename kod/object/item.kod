@@ -617,12 +617,22 @@ messages:
 
    GetRarity()
    {
-      if Send(self,@IsCursed)
+      local i;
+
+      if Send(self,@HasAnyAttribute)
       {
-         return ITEM_RARITY_GRADE_CURSED;
+         if NOT Send(self,@IsIdentified)
+         {
+            return ITEM_RARITY_GRADE_UNIDENTIFIED;
+         }
+         if Send(self,@IsCursed)
+         {
+            return ITEM_RARITY_GRADE_CURSED;
+         }
       }
 
       return viRarity;
+
    }
 
    IsCursed()
@@ -643,6 +653,23 @@ messages:
       }
 
       return FALSE;
+   }
+
+   IsIdentified()
+   "Returns TRUE if an item has all attributes visible."
+   {
+      local i;
+      
+      for i in plItem_Attributes
+      {
+         if (Send(self,@GetIDStatusFromCompound,#compound=First(i)) = FALSE)
+         {
+            % if any attribute is not identified, return FALSE
+            return FALSE;
+         }
+      }
+
+      return TRUE;
    }
 
    ModifyDefensePower(defense_power = 0)

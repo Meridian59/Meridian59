@@ -617,23 +617,30 @@ messages:
 
    GetRarity()
    {
-      local i;
+      local count;
+      count = 0;
 
-      if Send(self,@HasAnyAttribute)
+      if NOT Send(self,@IsIdentified)
       {
-         if NOT Send(self,@IsIdentified)
-         {
-            return ITEM_RARITY_GRADE_UNIDENTIFIED;
-         }
+         return ITEM_RARITY_GRADE_UNIDENTIFIED;
       }
 
       if Send(self,@IsCursed)
-         {
-            return ITEM_RARITY_GRADE_CURSED;
-         }
+      {
+         return ITEM_RARITY_GRADE_CURSED;
+      }
       
-      return viRarity;
+      if Send(self,@IsMagicRarityGrade)
+      {
+         count = count + 1;
+      }
 
+      if count > 0
+      {
+         return ITEM_RARITY_GRADE_MAGIC;
+      }
+
+      return viRarity;
    }
 
    IsCursed()
@@ -660,17 +667,25 @@ messages:
    "Returns TRUE if an item has all attributes visible."
    {
       local i;
-      
-      for i in plItem_Attributes
+
+      if Send(self,@HasAnyAttribute)
       {
-         if (Send(self,@GetIDStatusFromCompound,#compound=First(i)) = FALSE)
+         for i in plItem_Attributes
          {
-            % if any attribute is not identified, return FALSE
-            return FALSE;
+            if (Send(self,@GetIDStatusFromCompound,#compound=First(i)) = FALSE)
+            {
+               % If any attribute is not identified, return FALSE
+               return FALSE;
+            }
          }
       }
 
       return TRUE;
+   }
+
+   IsMagicRarityGrade()
+   {
+      return FALSE;
    }
 
    ModifyDefensePower(defense_power = 0)

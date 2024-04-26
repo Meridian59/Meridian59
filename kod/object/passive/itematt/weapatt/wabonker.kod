@@ -46,7 +46,12 @@ properties:
    piEffect_Percent = 8
 
 messages:
-  
+
+   IsMagicRarityGrade()
+   {
+      return TRUE;
+   }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions

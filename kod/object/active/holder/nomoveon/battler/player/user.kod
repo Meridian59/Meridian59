@@ -2413,8 +2413,15 @@ messages:
       }
 
       AddPacket(4,iFlags);
-      
-      AddPacket(4, Send(what, @GetRarity));
+
+      if IsClass(what,&Item)
+      {
+         AddPacket(4,Send(what,@GetRarity));
+      }
+      else
+      {
+          AddPacket(4,0);
+      }
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);

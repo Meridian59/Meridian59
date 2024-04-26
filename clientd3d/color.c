@@ -56,11 +56,11 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "141,242,242"},	/* COLOR_ITEM_TEXT_MAGIC      - cyan   */
-	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE       - lime   */
-	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY  - purple */
-	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_MYSTERIOUS - orange */
-	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED     - red    */
+	{ "141,242,242"},	/* COLOR_ITEM_TEXT_MAGIC        - cyan   */
+	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE         - lime   */
+	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY    - purple */
+	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNIDENTIFIED - orange */
+	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -424,8 +424,8 @@ WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade text_color_value)
                 return COLOR_ITEM_TEXT_RARE;
             case ITEM_RARITY_GRADE_LEGENDARY:
                 return COLOR_ITEM_TEXT_LEGENDARY;
-            case ITEM_RARITY_GRADE_MYSTERIOUS:
-                return COLOR_ITEM_TEXT_MYSTERIOUS;
+            case ITEM_RARITY_GRADE_UNIDENTIFIED:
+                return COLOR_ITEM_TEXT_UNIDENTIFIED;
 			case ITEM_RARITY_GRADE_CURSED:
                 return COLOR_ITEM_TEXT_CURSED;
 			}

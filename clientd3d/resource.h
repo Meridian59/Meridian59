@@ -235,7 +235,7 @@
 #define IDS_RARITY_GRADE_MAGIC          206
 #define IDS_RARITY_GRADE_RARE           207
 #define IDS_RARITY_GRADE_LEGENDARY      208
-#define IDS_RARITY_GRADE_MYSTERIOUS     209
+#define IDS_RARITY_GRADE_UNIDENTIFIED   209
 #define IDS_RARITY_GRADE_CURSED         210
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001

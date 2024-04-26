@@ -694,8 +694,8 @@ std::string GetRaritySuffix(int rarity)
         case ITEM_RARITY_GRADE_LEGENDARY:
             stringID = IDS_RARITY_GRADE_LEGENDARY;
 			break;
-        case ITEM_RARITY_GRADE_MYSTERIOUS:
-            stringID = IDS_RARITY_GRADE_MYSTERIOUS;
+        case ITEM_RARITY_GRADE_UNIDENTIFIED:
+            stringID = IDS_RARITY_GRADE_UNIDENTIFIED;
 			break;
         case ITEM_RARITY_GRADE_CURSED:
             stringID = IDS_RARITY_GRADE_CURSED;

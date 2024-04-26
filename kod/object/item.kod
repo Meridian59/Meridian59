@@ -625,12 +625,13 @@ messages:
          {
             return ITEM_RARITY_GRADE_UNIDENTIFIED;
          }
-         if Send(self,@IsCursed)
+      }
+
+      if Send(self,@IsCursed)
          {
             return ITEM_RARITY_GRADE_CURSED;
          }
-      }
-
+      
       return viRarity;
 
    }

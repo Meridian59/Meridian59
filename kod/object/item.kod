@@ -716,6 +716,13 @@ messages:
          }
       }
 
+      % If the assigned class rarity grade is higher than the count
+      % Use it
+      if viRarity > count
+      {
+         return viRarity;
+      }
+
       return count;
    }
 

@@ -29,7 +29,7 @@ resources:
    itemattmagic_desc = "  It glows with magical power."
    itemattmagic_name = "magic %s"
 
-   magic_DM = "musical"
+   magic_DM = "magic"
 
 classvars:
 

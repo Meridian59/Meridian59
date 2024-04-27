@@ -146,6 +146,11 @@ properties:
    % ability to ask questions and socialize.  (Puts a damper on trivia
    % contests too!)  This value can be changed to tweak the penalty in realtime
    piBroadcastManaCostPercent = 50
+   
+   % Greatly diminish the damage output of throwaway outlaws and murderers,
+   % and the damage of PKs against low-hp innocents.
+   pbDiminishPKDamageToNewbies = TRUE
+   pbDiminishPKMuleDamage = TRUE
 
 messages:
 
@@ -352,6 +357,16 @@ messages:
    GetBroadcastManaCostPercent()
    {
       return piBroadcastManaCostPercent;
+   }
+
+   DiminishPKDamageToNewbiesEnabled()
+   {
+      return pbDiminishPKDamageToNewbies;
+   }
+
+   DiminishPKMuleDamageEnabled()
+   {
+      return pbDiminishPKMuleDamage;
    }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

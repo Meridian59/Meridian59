@@ -57,8 +57,6 @@ properties:
    viNutrition = 6
    piNumber = 1
 
-   piItem_flags = PT_BLEND25YELLOW   % Slight golden hue to set it apart from mug of brew
-
 messages:
 
    SendTaste(what = $,apply_on = $)

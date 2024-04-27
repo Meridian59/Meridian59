@@ -107,6 +107,20 @@ messages:
       return vrRealName;
    }
 
+   GetRarity()
+   {
+      if vrName <> vrRealName
+      {
+         return ITEM_RARITY_GRADE_UNIDENTIFIED;
+      }
+   
+      if Send(self,@IsCursed)
+      {
+         return ITEM_RARITY_GRADE_CURSED;
+      }
+      
+      return ITEM_RARITY_GRADE_NORMAL;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -630,14 +630,16 @@ messages:
          return ITEM_RARITY_GRADE_CURSED;
       }
       
-      if Send(self,@IsMagicRarityGrade)
-      {
-         count = count + 1;
-      }
+      count = Send(self,@GetMagicRarityGradeCount);
 
-      if count > 0
+      if count = 1
       {
          return ITEM_RARITY_GRADE_MAGIC;
+      }
+
+      if count > 1
+      {
+         return ITEM_RARITY_GRADE_RARE;
       }
 
       return viRarity;
@@ -683,9 +685,33 @@ messages:
       return TRUE;
    }
 
-   IsMagicRarityGrade()
+
+   HasRarity()
    {
       return FALSE;
+   }
+
+   GetMagicRarityGradeCount()
+   {
+      % walk the list of attributes
+      % for each attribute add 1 to count
+      % return count
+
+      local i, iNum, oItemAtt, count;
+      count = 0;
+
+      for i in plItem_attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+
+         if Send(oItemAtt,@HasRarity)
+         {
+            count = count + 1;
+         }
+      }
+
+      return count;
    }
 
    ModifyDefensePower(defense_power = 0)

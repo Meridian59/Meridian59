@@ -8,15 +8,15 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ItemAttTranscendant is ItemAttribute
+ItemAttMagic is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item will remain in your inventory, even if you die.
+%  This item will assume a rarity grade of Magic
 % 
 %  Form is: 
 %
-%   	[IA_TRANSCENDANT]
+%   	[IA_MAGIC]
 %	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -25,17 +25,17 @@ constants:
    include blakston.khd   
 
 resources:
- 
-   itematttranscendant_desc = "  It glows with a soft, white light."
-   itematttranscendant_name = "transcendant %s"
 
-   transcendant_DM = "transcendant"
+   itemattmagic_desc = "  It glows with magical power."
+   itemattmagic_name = "magic %s"
+
+   magic_DM = "musical"
 
 classvars:
 
-   viItem_Att_Num = IA_TRANSCENDANT
-   vrDesc = itematttranscendant_desc
-   vrName = itematttranscendant_name
+   viItem_Att_Num = IA_MAGIC
+   vrDesc = itemattmagic_desc
+   vrName = itemattmagic_name
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -43,24 +43,20 @@ classvars:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
    viDifficulty = 3
-   vrDM_Trigger = transcendant_DM
+   vrDM_Trigger = magic_DM
 
 properties:
 
    piValue_modifier = 150
    piValue_power_modifier = 0
-  
+
 messages:
 
-   ItemDropOnDeath()
-   {
-      return FALSE; 
-   }
    HasRarity()
    {
       return TRUE;
    }
+
 end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

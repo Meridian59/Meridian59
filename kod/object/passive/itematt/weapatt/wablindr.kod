@@ -64,6 +64,10 @@ messages:
       return TRUE;
    }
 
+   HasRarity()
+   {
+      return TRUE;
+   }
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%

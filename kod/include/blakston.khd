@@ -1663,6 +1663,7 @@
    IA_BONDED               = 18
    IA_MADE                 = 19
    IA_MADE_TRANSCENDANT    = 20
+   IA_MAGIC                = 21 % Used to override rarity grade calculations
 
    % Weapon Attributes.  These are attributes only applied to weapons.
    WA_TRAINING             = 51

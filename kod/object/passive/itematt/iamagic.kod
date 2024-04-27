@@ -22,12 +22,12 @@ ItemAttMagic is ItemAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
-   itemattmagic_desc = "  It glows with magical power."
-   itemattmagic_name = "magic %s"
+   itemattmagic_desc = ""
+   itemattmagic_name = ""
 
    magic_DM = "magic"
 
@@ -36,7 +36,7 @@ classvars:
    viItem_Att_Num = IA_MAGIC
    vrDesc = itemattmagic_desc
    vrName = itemattmagic_name
-   
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Value Functions

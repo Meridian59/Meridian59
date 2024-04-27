@@ -280,6 +280,11 @@ messages:
       return;
    }
 
+   HasRarity()
+   {
+      return TRUE;
+   }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Artifice Spell Functions (also see desc functions)

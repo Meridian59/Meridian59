@@ -135,6 +135,11 @@ messages:
       return;
    }
 
+   HasRarity()
+   {
+      return TRUE;
+   }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Initialization Functions

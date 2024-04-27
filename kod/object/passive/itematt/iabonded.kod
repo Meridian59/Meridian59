@@ -53,7 +53,12 @@ messages:
    ItemCanIdentify()
    {
       return FALSE;
-   }	
+   }
+
+   HasRarity()
+   {
+      return TRUE;
+   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%

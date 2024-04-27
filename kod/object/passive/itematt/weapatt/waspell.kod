@@ -177,7 +177,11 @@ Constructor()
       send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
       return;            
    }
-   
+
+   HasRarity()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

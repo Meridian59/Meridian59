@@ -637,9 +637,14 @@ messages:
          return ITEM_RARITY_GRADE_MAGIC;
       }
 
-      if count > 1
+      if count = 2
       {
          return ITEM_RARITY_GRADE_RARE;
+      }
+
+      if count >= 3
+      {
+         return ITEM_RARITY_GRADE_LEGENDARY;
       }
 
       return viRarity;

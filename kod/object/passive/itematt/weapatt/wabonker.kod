@@ -47,11 +47,6 @@ properties:
 
 messages:
 
-   HasRarity()
-   {
-      return TRUE;
-   }
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions

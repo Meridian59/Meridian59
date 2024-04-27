@@ -57,26 +57,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood - 5);
          return;
       }
-      
-      if why = MOODMOD_ACCEPT_ITEM
-      {
-         if IsClass(what, &OrcPitBossHead)
-         {
-            send(self,@SetMood,#new_mood=piMood + 10);
-            return;
-         }
-         if IsClass(what, &NeruditeOreChunk)
-         {
-            send(self,@SetMood,#new_mood=piMood + 5);
-            return;
-         }
-         if IsClass(what, &InkyCap)
-         {
-            send(self,@SetMood,#new_mood=piMood + 5);
-            return;
-         }
-      }
-      
+
       if(why = MOODMOD_SELL_ITEM)
       {
          send(self,@SetMood,#new_mood=piMood + 1);
@@ -103,7 +84,10 @@ messages:
    ObjectDesired(what = $)
    {
       if Send(what, @CanBeGiventoNPC) AND
-         (Send(self, @IsObjectReagent, #what=what) OR Send(self, @IsObjectSundry, #what=what))
+         (Send(self, @IsObjectReagent, #what=what)
+         OR Send(self, @IsObjectSundry, #what=what)
+         OR IsClass(what, &NeruditeOreChunk)
+         OR IsClass(what, &OrcPitBossHead))
       {
          return TRUE;
       }

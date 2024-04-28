@@ -67,6 +67,7 @@
    LOOK_YES          = 0
    LOOK_NO           = 0x00000040
 
+   % unused       = 0x00000080
 
    INVISIBLE_YES     = 0x00000100
    INVISIBLE_NO      = 0
@@ -1663,6 +1664,7 @@
    IA_BONDED               = 18
    IA_MADE                 = 19
    IA_MADE_TRANSCENDANT    = 20
+
 
    % Weapon Attributes.  These are attributes only applied to weapons.
    WA_TRAINING             = 51

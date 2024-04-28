@@ -697,10 +697,12 @@ messages:
    }
 
    GetMagicRarityGradeCount()
+   "Checks plItem_attributes for HasRarity() = TRUE."
+   "For each attribute with HasRarity = TRUE,  add 1 to count"
+   "Return either viRarity or count, whichever is larger"
+   "This ensures the higher rarity is chosen if in the case "
+   "of competing rarities for an item."
    {
-      % walk the list of attributes
-      % for each attribute add 1 to count
-      % return count
 
       local i, iNum, oItemAtt, count;
       count = 0;
@@ -716,8 +718,7 @@ messages:
          }
       }
 
-      % If the assigned class rarity grade is higher than the count
-      % Use it
+      % Use assigned class rarity grade if it is higher than the count
       if viRarity > count
       {
          return viRarity;

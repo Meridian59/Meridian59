@@ -58,6 +58,7 @@ typedef struct {
    int  ini_version;             /* INI version number; restore defaults if it doesn't match */
 
    Bool draw_names;              /* Draw names over players? */
+   Bool show_rarity;             /* Color and add suffix for item rarities? */
    Bool ignore_all;              /* Ignore EVERYTHING said? */
    Bool no_broadcast;            /* Ignore all broadcasts? */
    char ignore_list[MAX_IGNORE_LIST][MAX_CHARNAME + 1]; /* Usernames to ignore */

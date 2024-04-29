@@ -377,6 +377,9 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
 
    if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
       item_rarity_value = (item_rarity_grade)obj->rarity;
+   
+   if (!config.show_rarity)
+       item_rarity_value = ITEM_RARITY_GRADE_NORMAL;
 
    crColorText = GetColor(
                      GetItemListColor(

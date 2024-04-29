@@ -163,6 +163,7 @@ INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
       
       CheckDlgButton(hDlg, IDC_SCROLLLOCK, config.scroll_lock);
       CheckDlgButton(hDlg, IDC_DRAWNAMES, config.draw_names);
+      CheckDlgButton(hDlg, IDC_RARITY, config.show_rarity);
       CheckDlgButton(hDlg, IDC_TOOLTIPS, config.tooltips);
       CheckDlgButton(hDlg, IDC_PAIN, config.pain);
       CheckDlgButton(hDlg, IDC_INVNUM, config.inventory_num);
@@ -217,6 +218,7 @@ INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
       case IDOK:
          config.scroll_lock   = IsDlgButtonChecked(hDlg, IDC_SCROLLLOCK);
          config.draw_names    = IsDlgButtonChecked(hDlg, IDC_DRAWNAMES);
+         config.show_rarity   = IsDlgButtonChecked(hDlg, IDC_RARITY);
          config.tooltips      = IsDlgButtonChecked(hDlg, IDC_TOOLTIPS);
          config.pain          = IsDlgButtonChecked(hDlg, IDC_PAIN);
          config.inventory_num = IsDlgButtonChecked(hDlg, IDC_INVNUM);

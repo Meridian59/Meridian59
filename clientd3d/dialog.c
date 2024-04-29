@@ -681,6 +681,11 @@ std::string GetRaritySuffix(int rarity)
 	std::string suffix;
 	int stringID;
 	
+	if (!config.show_rarity)
+	{
+		rarity = ITEM_RARITY_GRADE_NORMAL;
+	}
+
 	switch(rarity)
 	{
         case ITEM_RARITY_GRADE_NORMAL:

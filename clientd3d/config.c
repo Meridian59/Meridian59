@@ -93,6 +93,7 @@ static char INIDomainFormat[] = "Domain";
 
 static char users_section[]  = "Users";  /* Section for dealing with other users */
 static char INIDrawNames[]   = "DrawNames";
+static char INIShowRarity[]  = "DrawNames";
 static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";
@@ -200,6 +201,7 @@ void ConfigLoad(void)
 			   config.browser, MAX_PATH, ini_file); 
    
    config.draw_names   = GetConfigInt(users_section, INIDrawNames, True, ini_file);
+   config.show_rarity  = GetConfigInt(users_section, INIShowRarity, True, ini_file);
    config.ignore_all   = GetConfigInt(users_section, INIIgnoreAll, False, ini_file);
    config.no_broadcast = GetConfigInt(users_section, ININoBroadcast, False, ini_file);
 
@@ -324,6 +326,7 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIGridCacheMin, config.GridCacheMin, ini_file);
 
    WriteConfigInt(users_section, INIDrawNames, config.draw_names, ini_file);
+   WriteConfigInt(users_section, INIShowRarity, config.show_rarity, ini_file);
    WriteConfigInt(users_section, INIIgnoreAll, config.ignore_all, ini_file);
    WriteConfigInt(users_section, ININoBroadcast, config.no_broadcast, ini_file);
 

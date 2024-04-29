@@ -67,6 +67,7 @@ messages:
       plResistances = [ [-30, -ATCK_SPELL_UNHOLY ],
                         [-10, -ATCK_SPELL_COLD ],
                         [ 65, ATCK_WEAP_NONMAGIC ] ];
+                        
       propagate;
    }
 

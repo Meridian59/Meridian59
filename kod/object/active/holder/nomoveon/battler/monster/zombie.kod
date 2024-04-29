@@ -73,6 +73,7 @@ messages:
    {
       plResistances = [ [ 50, -ATCK_SPELL_UNHOLY ],
                         [-25, -ATCK_SPELL_HOLY ] ];
+                        
       propagate;
    }
 

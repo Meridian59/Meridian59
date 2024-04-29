@@ -68,6 +68,7 @@ messages:
                         [-20, -ATCK_SPELL_SHOCK ],
                         [ 20, ATCK_WEAP_SLASH ],
 			               [-20, ATCK_WEAP_MAGIC ] ];
+                        
       propagate;
    }
 

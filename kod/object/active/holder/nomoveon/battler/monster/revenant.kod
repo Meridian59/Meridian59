@@ -110,6 +110,7 @@ messages:
    {
       plResistances = [ [ 40, -ATCK_SPELL_ALL ],
                         [ 40, ATCK_WEAP_MAGIC ] ];
+                        
       propagate;
    }
 

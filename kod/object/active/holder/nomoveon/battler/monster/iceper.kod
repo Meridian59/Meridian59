@@ -71,6 +71,7 @@ messages:
    {
    plResistances = [ [-99, -ATCK_SPELL_FIRE ],
                      [ 99, -ATCK_SPELL_COLD ] ];
+                     
    propagate;
    }
 

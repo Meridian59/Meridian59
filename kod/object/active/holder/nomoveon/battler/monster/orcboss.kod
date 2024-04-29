@@ -87,6 +87,7 @@ messages:
                         [ 40, ATCK_WEAP_PIERCE ],
                         [ 20, ATCK_WEAP_SLASH ],
 			               [-25, ATCK_WEAP_MAGIC ] ];
+                        
       propagate;
    }
 

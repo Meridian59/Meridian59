@@ -73,6 +73,7 @@ messages:
                         [-25, -ATCK_SPELL_HOLY ],
                         [ 40, ATCK_WEAP_PIERCE ],
                         [ 20, ATCK_WEAP_SLASH ] ];
+                        
       propagate;
    }
 

@@ -93,8 +93,7 @@ messages:
                         [-20, -ATCK_SPELL_SHOCK ],
                         [ 30, -ATCK_SPELL_FIRE ],
                         [-25, ATCK_WEAP_SLASH ],
-                        [-25, ATCK_WEAP_NERUDITE ]
-                      ];
+                        [-25, ATCK_WEAP_NERUDITE ] ];
 
       propagate;
    }

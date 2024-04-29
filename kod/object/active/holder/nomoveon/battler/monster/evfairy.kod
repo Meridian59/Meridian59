@@ -72,11 +72,10 @@ messages:
 
    Constructor()
    {	  
-      plResistances = [ [ -30, -ATCK_SPELL_HOLY ],
+      plResistances = [ [-30, -ATCK_SPELL_HOLY ],
                         [ 30, -ATCK_SPELL_ALL ],
-                        [ 30, ATCK_WEAP_MAGIC ],
-                        [ 30, -ATCK_SPELL_UNHOLY ]
-                      ];
+                        [ 30, -ATCK_SPELL_UNHOLY ],
+                        [ 30, ATCK_WEAP_MAGIC ] ];
 
       propagate;
    }

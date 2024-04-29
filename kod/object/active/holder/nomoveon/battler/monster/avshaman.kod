@@ -124,8 +124,7 @@ messages:
                         [-20, ATCK_WEAP_NERUDITE ],
                         [ 10, ATCK_WEAP_SLASH ],
                         [ 40, ATCK_WEAP_NONMAGIC ],
-                        [-10, ATCK_WEAP_MAGIC ]
-                      ];
+                        [-10, ATCK_WEAP_MAGIC ] ];
 
       propagate;
    }

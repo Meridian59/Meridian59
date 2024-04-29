@@ -80,14 +80,13 @@ messages:
 
    Constructed()
    {      
-      plResistances = [ [ 90, -ATCK_SPELL_FIRE],
-                        [ 90, -ATCK_SPELL_COLD],
-                        [ 90, -ATCK_SPELL_UNHOLY],
-                        [ 90, -ATCK_SPELL_ACID],
-                        [ 90, ATCK_WEAP_NONMAGIC],
-                        [-50, ATCK_WEAP_MAGIC],
-                        [-50, -ATCK_SPELL_HOLY ]
-                      ];
+      plResistances = [ [ 90, -ATCK_SPELL_FIRE ],
+                        [ 90, -ATCK_SPELL_COLD ],
+                        [ 90, -ATCK_SPELL_UNHOLY ],
+                        [ 90, -ATCK_SPELL_ACID ],
+                        [-50, -ATCK_SPELL_HOLY ],
+                        [ 90, ATCK_WEAP_NONMAGIC ],
+                        [-50, ATCK_WEAP_MAGIC ] ];
 
       propagate;
    }

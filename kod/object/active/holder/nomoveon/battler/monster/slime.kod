@@ -69,9 +69,9 @@ messages:
                         [ 45, -ATCK_SPELL_UNHOLY ],
                         [ 45, -ATCK_SPELL_HOLY ],
                         [ 45, -ATCK_SPELL_ACID ],
+                        [-25, -ATCK_SPELL_COLD ],
                         [ 45, ATCK_WEAP_ALL ],
-			[ 10, ATCK_WEAP_BLUDGEON ],
-                        [-25, -ATCK_SPELL_COLD ] ];
+			               [ 10, ATCK_WEAP_BLUDGEON ] ];
       propagate;
    }
    MonsterAttack(what = $)

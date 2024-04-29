@@ -99,14 +99,13 @@ messages:
    {
 
       % Think brainless frankenstein type mob.  Smash me, beat me, FIRE BAD!!!
-      plResistances = [ [ 50, ATCK_WEAP_PIERCE ],
-                        [ 50, ATCK_WEAP_SLASH ],
-                        [ 50, ATCK_WEAP_BLUDGEON ],
-                        [ 50, -ATCK_SPELL_UNHOLY ],
+      plResistances = [ [ 50, -ATCK_SPELL_UNHOLY ],
                         [ 90, -ATCK_SPELL_SHOCK ],
-                        [ -20, -ATCK_SPELL_FIRE ],
-                        [ -15, -ATCK_SPELL_HOLY ]
-                      ]; 
+                        [-20, -ATCK_SPELL_FIRE ],
+                        [-15, -ATCK_SPELL_HOLY ],
+                        [ 50, ATCK_WEAP_PIERCE ],
+                        [ 50, ATCK_WEAP_SLASH ],
+                        [ 50, ATCK_WEAP_BLUDGEON ] ]; 
 
       Send(self,@SelectAdditionalWeapon);
       Send(self,@TweakBehavior);

@@ -93,10 +93,9 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ -10, ATCK_WEAP_MAGIC ],
-                        [  30, ATCK_WEAP_BLUDGEON ],
-                        [  50, -ATCK_SPELL_QUAKE ]
-                      ];
+      plResistances = [ [-10, ATCK_WEAP_MAGIC ],
+                        [ 50, -ATCK_SPELL_QUAKE ],
+                        [ 30, ATCK_WEAP_BLUDGEON ] ];
 
       piAnimation = ANIM_NONE;
       if poOwner <> $

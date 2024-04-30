@@ -199,7 +199,7 @@ resources:
 
    TosWatcher_summoned_reflection_killed = "%s spoils an illusion, laying bare the deception of %s!"
    TosWatcher_summoned_twin_killed_other = "%s vanquishes the evil twin of %s!"
-   TosWatcher_summoned_twin_self_kill = "%s overpowers his evil twin!"
+   TosWatcher_summoned_twin_self_kill = "%s overpowers their evil twin!"
 
    TosWatcher_arena_help = \
       "Proceed all subcommands with the DM command.  'Start Tournament' "

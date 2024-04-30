@@ -204,24 +204,23 @@ resources:
    user_blocked_send = "%s is ignoring messages from you."
 
    user_cant_suicide = \
-      "You just can't bear to kill yourself because you have too much to live "
-      "for.  You must abdicate the leadership of your guild before you can "
-      "commit suicide."
+      "You just can't bear to reroll. You must abdicate the leadership of "
+      "your guild before you can reroll."
 
    user_cant_suicide_justicar = \
-      "It would be unseemly for such a high official to take his own life!"
+      "It would be unseemly for such a high official to reroll!"
 
    user_cant_suicide_yet = \
-      "You can't seem to kill yourself, you feel you've only just begun this "
+      "You can't seem to reroll, you feel you've only just begun this "
       "life. Give it a day."
 
    user_cant_suicide_token = \
-      "You can't kill yourself now, not when you're the sacred guardian of a "
+      "You can't reroll now, not when you're the sacred guardian of a "
       "Meridian token!"
 
    user_cant_suicide_OOG = \
       "Somehow, even though you deserve it, you are unable to bear the "
-      "thought of killing yourself now."
+      "thought of rerolling now."
 
    user_no_seller = "You can't buy anything here."
 

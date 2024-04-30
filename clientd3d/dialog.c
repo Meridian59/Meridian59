@@ -633,7 +633,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *fixed_string, char *url)
+                        char *fixed_string, char *url, int rarity)
 {
 	DescDialogStruct info;
 	int template_id;
@@ -651,7 +651,18 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.description  = description;
 	info.fixed_string = fixed_string;
 	info.url          = url;
+	info.rarity       = obj->rarity;
 	
+	std::string raritySuffix = GetRaritySuffix(info.rarity);
+
+	if (!raritySuffix.empty())
+	{
+        char nameWithSuffix[MAXNAME + 15];
+		snprintf(nameWithSuffix, sizeof(nameWithSuffix),
+		   "%s (%s)", info.name, raritySuffix.c_str());
+        info.name = nameWithSuffix;
+	}
+
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
@@ -660,6 +671,43 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
+}
+/************************************************************************/
+/*
+* GetRaritySuffix:  Provide a rarity suffix based on the given rarity type.
+*/
+std::string GetRaritySuffix(int rarity)
+{
+	std::string suffix;
+	int stringID;
+
+	switch(rarity)
+	{
+        case ITEM_RARITY_GRADE_NORMAL:
+            return "";
+        case ITEM_RARITY_GRADE_MAGIC:
+            stringID = IDS_RARITY_GRADE_MAGIC;
+			break;
+        case ITEM_RARITY_GRADE_RARE:
+            stringID = IDS_RARITY_GRADE_RARE;
+			break;
+        case ITEM_RARITY_GRADE_LEGENDARY:
+            stringID = IDS_RARITY_GRADE_LEGENDARY;
+			break;
+        case ITEM_RARITY_GRADE_UNIDENTIFIED:
+            stringID = IDS_RARITY_GRADE_UNIDENTIFIED;
+			break;
+        case ITEM_RARITY_GRADE_CURSED:
+            stringID = IDS_RARITY_GRADE_CURSED;
+			break;
+		default:
+			debug(("Unknown rarity grade %d\n", rarity));
+            return ""; // Handle unknown rarity gracefully (no suffix)
+	}
+
+	suffix = GetString(hInst, stringID);
+
+	return suffix;
 }
 /************************************************************************/
 /*

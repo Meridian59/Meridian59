@@ -1785,6 +1785,15 @@ BEGIN
     IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 
+STRINGTABLE
+BEGIN
+    IDS_RARITY_GRADE_MAGIC         "magic"
+    IDS_RARITY_GRADE_RARE          "rare"
+    IDS_RARITY_GRADE_LEGENDARY     "legendary"
+    IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
+    IDS_RARITY_GRADE_CURSED        "cursed"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

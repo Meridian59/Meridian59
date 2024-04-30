@@ -2414,6 +2414,7 @@ messages:
       }
 
       AddPacket(4,iFlags);
+      AddPacket(4,0); % Item rarity grade
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);

@@ -6357,6 +6357,12 @@ messages:
       {
          return 0;
       }
+      
+      % No karma change in arenas.
+      if Send(oRoom,@IsArena)
+      {
+         return 0;
+      }
 
       % No karma changes from killing neutral monsters.
       if bIsMob AND karma_victim = NEUTRAL

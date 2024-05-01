@@ -71,6 +71,7 @@ messages:
                         [-10, ATCK_WEAP_SLASH ],
                         [-25, ATCK_WEAP_NERUDITE ],
                         [ 70, ATCK_WEAP_ALL ] ];
+                        
       propagate;
    }
 

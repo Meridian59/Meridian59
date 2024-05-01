@@ -74,6 +74,7 @@ messages:
                         [ 90, ATCK_WEAP_THRUST ],
                         [ 90, ATCK_WEAP_SLASH ],
                         [ 90, ATCK_WEAP_PIERCE ] ];
+                        
       propagate;
    }
 

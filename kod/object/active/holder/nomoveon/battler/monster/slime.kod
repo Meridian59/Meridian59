@@ -72,6 +72,7 @@ messages:
                         [-25, -ATCK_SPELL_COLD ],
                         [ 45, ATCK_WEAP_ALL ],
 			               [ 10, ATCK_WEAP_BLUDGEON ] ];
+                        
       propagate;
    }
    MonsterAttack(what = $)

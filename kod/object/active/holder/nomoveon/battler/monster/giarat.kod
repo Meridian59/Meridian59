@@ -67,6 +67,7 @@ messages:
       plResistances = [ [-20, -ATCK_SPELL_FIRE ], 
 			               [-10, ATCK_WEAP_BLUDGEON ],
 			               [ 20, ATCK_WEAP_SLASH ] ];
+                        
       propagate;
    }
 

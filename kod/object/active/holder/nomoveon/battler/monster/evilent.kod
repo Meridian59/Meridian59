@@ -101,6 +101,7 @@ messages:
                         [-10, -ATCK_SPELL_FIRE ],
                         [ 50, ATCK_WEAP_BLUDGEON ],
                         [-10, ATCK_WEAP_SLASH ] ];
+                        
       propagate;
    }
 

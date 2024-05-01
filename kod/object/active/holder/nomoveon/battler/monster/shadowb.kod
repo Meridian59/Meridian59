@@ -80,6 +80,7 @@ messages:
                         [-15, -ATCK_SPELL_SHOCK ],
                         [-25, -ATCK_SPELL_HOLY ],
                         [ 60, ATCK_WEAP_SLASH ] ];
+                        
       propagate;
    }
 

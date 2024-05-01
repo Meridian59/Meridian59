@@ -94,6 +94,7 @@ messages:
                         [ 50, -ATCK_SPELL_SHOCK ],
                         [ 75, ATCK_WEAP_NERUDITE ],
                         [-5, ATCK_WEAP_MAGIC ] ];
+                        
       propagate;
    }
 

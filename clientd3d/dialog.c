@@ -678,7 +678,6 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 */
 std::string GetRaritySuffix(int rarity)
 {
-	std::string suffix;
 	int stringID;
 
 	switch(rarity)
@@ -705,9 +704,7 @@ std::string GetRaritySuffix(int rarity)
             return ""; // Handle unknown rarity gracefully (no suffix)
 	}
 
-	suffix = GetString(hInst, stringID);
-
-	return suffix;
+	return GetString(hInst, stringID);
 }
 /************************************************************************/
 /*

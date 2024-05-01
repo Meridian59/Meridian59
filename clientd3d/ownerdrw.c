@@ -98,11 +98,12 @@ int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool qu
    }
 
    int pos;
+   const char* nameCString = name.c_str(); // Convert std::string to LPCTSTR
    if (index ==  -1)
-      pos = combo ? ComboBox_AddString(hwnd, name) 
-	 : ListBox_AddString(hwnd, name);
-   else pos = combo ? ComboBox_InsertString(hwnd, index, name) 
-      : ListBox_InsertString(hwnd, index, name);
+      pos = combo ? ComboBox_AddString(hwnd, nameCString) 
+	 : ListBox_AddString(hwnd, nameCString);
+   else pos = combo ? ComboBox_InsertString(hwnd, index, nameCString) 
+      : ListBox_InsertString(hwnd, index, nameCString);
 
    combo ? ComboBox_SetItemData(hwnd, pos, obj) : ListBox_SetItemData(hwnd, pos, obj);
    return pos;

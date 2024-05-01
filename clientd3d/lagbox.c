@@ -311,7 +311,7 @@ void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify)
 		pszLagboxDescription, 
 		szTooltip,
 		pszLagboxURL,
-		ITEM_RARITY_GRADE_NORMAL);  // Required rarity grade parameter
+		ITEM_RARITY_GRADE_NORMAL);
 	SetDescParams(hWnd, 0);
 
 	latencyDialogActive = false;

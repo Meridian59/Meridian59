@@ -69,34 +69,31 @@ void WindowEndUpdate(HWND hwnd)
 int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan)
 {
    std::string raritySuffix;
-   char nameWithSuffix[MAXNAME + 15];
-   char nameWithQuantity[MAXNAME + 15];
-   char nameWithItemInUse[MAXNAME + 15];
-   char* name = LookupNameRsc(obj->name_res);
+   std::string nameWithSuffix;
+   std::string nameWithQuantity;
+   std::string nameWithItemInUse;
+   std::string name = LookupNameRsc(obj->name_res);
 
    raritySuffix = GetRaritySuffix(obj->rarity);
 
    // Concatenate name and suffix
    if (!raritySuffix.empty())
 	{
-      snprintf(nameWithSuffix, sizeof(nameWithSuffix),
-         "%s (%s)", name, raritySuffix.c_str());
+      nameWithSuffix = name + " (" + raritySuffix + ")";
       name = nameWithSuffix;
    }
 
-   // If item is a number object, add its amount after the item's suffixed name
+   // If item is a number object, prepend its amount to the name
    if (quan && IsNumberObj(obj->id))
    {
-      snprintf(nameWithQuantity, sizeof(nameWithQuantity),
-         "%d %.*s", obj->amount, MAXNAME, name);
+      nameWithQuantity = std::to_string(obj->amount) + " " + name;
       name = nameWithQuantity;
    }
 
    // If player using an object, say so
    if (IsInUse(obj->id))
    {
-      snprintf(nameWithItemInUse, sizeof(nameWithItemInUse),
-         "%.*s %s", MAXNAME, name, GetString(hInst, IDS_INUSE));
+      nameWithItemInUse = name + " " + GetString(hInst, IDS_INUSE);
       name = nameWithItemInUse;
    }
 

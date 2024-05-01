@@ -55,7 +55,7 @@ typedef struct {
    char        *description;
    char        *fixed_string;
    char        *url;
-   int          rarity;      /* Item rarity grade */
+   item_rarity_grade rarity;
    int          age;
    int	        numPages;
    int	        currentPage;

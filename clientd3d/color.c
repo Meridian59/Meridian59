@@ -447,7 +447,7 @@ WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade text_color_value)
 * GetPlayerNameColor:  Return color that player's name should be drawn in,
 *   depending on player's object flags
 */
-COLORREF GetPlayerNameColor(int flags,const char*name)
+COLORREF GetPlayerNameColor(int flags,char*name)
 {
 	if (GetDrawingEffect(flags) == OF_BLACK)
 		return NAME_COLOR_BLACK_FG;

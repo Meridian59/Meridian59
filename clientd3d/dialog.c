@@ -41,7 +41,7 @@ static ChildPlacement desc_controls[] = {
 extern player_info player;
 extern HPALETTE hPal;
 
-static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, const std::string& text)
+static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, const char *text)
 {
 	HFONT hOldFont;
 	LOGFONT newFont;
@@ -57,7 +57,6 @@ static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, cons
 	memcpy(&newFont,GetLogfont(fontNum),sizeof(LOGFONT));
 	GetClientRect(hwnd,&rcWindow);
 	ZeroMemory(&rcText,sizeof(rcText));
-	const char* textCString = text.c_str(); // Convert std::string to LPCTSTR
 	while (!fit)
 	{
 		info->hFontTitle = CreateFontIndirect(&newFont);
@@ -67,7 +66,7 @@ static int SetFontToFitText(DescDialogStruct *info, HWND hwnd, int fontNum, cons
 			break;
 		}
 		hOldFont = (HFONT) SelectObject(hdc,info->hFontTitle);
-		height = DrawText(hdc,textCString,-1,&rcText,DT_CALCRECT | DT_SINGLELINE | DT_NOPREFIX);
+		height = DrawText(hdc,text,-1,&rcText,DT_CALCRECT | DT_SINGLELINE | DT_NOPREFIX);
 		SelectObject(hdc,hOldFont);
 		if (rcText.right <= rcWindow.right)
 			fit = TRUE;
@@ -210,8 +209,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	int height;
 	
 	info = (DescDialogStruct *) GetWindowLongPtr(hDlg, DWLP_USER);
-	const char* nameCString = info->name.c_str(); // Convert std::string to LPCTSTR
-
+	
 	switch (message)
 	{
 	case WM_INITDIALOG:
@@ -226,10 +224,10 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		
 		// Item Name.
 		height = SetFontToFitText(info,GetDlgItem(hDlg, IDC_DESCNAME), 
-			(int)FONT_TITLES, nameCString);
-		SetDlgItemText(hDlg, IDC_DESCNAME, nameCString);
+			(int)FONT_TITLES, info->name);
+		SetDlgItemText(hDlg, IDC_DESCNAME, info->name);
 		hdc = GetDC(hDlg);
-		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags, nameCString));
+		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags,info->name));
 		ReleaseDC(hDlg,hdc);
 		
 		// Item Description.
@@ -387,7 +385,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
-		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags, info->name.c_str()));
+		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;
@@ -635,7 +633,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *fixed_string, char *url, item_rarity_grade rarity)
+                        char *fixed_string, char *url, int rarity)
 {
 	DescDialogStruct info;
 	int template_id;
@@ -655,13 +653,15 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	info.url          = url;
 	info.rarity       = obj->rarity;
 	
-    std::string raritySuffix = GetRaritySuffix(info.rarity);
+	std::string raritySuffix = GetRaritySuffix(info.rarity);
 
-    if (!raritySuffix.empty())
-    {
-        // Append the rarity suffix to the name
-        info.name += " (" + raritySuffix + ")";
-    }
+	if (!raritySuffix.empty())
+	{
+        char nameWithSuffix[MAXNAME + 15];
+		snprintf(nameWithSuffix, sizeof(nameWithSuffix),
+		   "%s (%s)", info.name, raritySuffix.c_str());
+        info.name = nameWithSuffix;
+	}
 
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
@@ -676,7 +676,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 /*
 * GetRaritySuffix:  Provide a rarity suffix based on the given rarity type.
 */
-std::string GetRaritySuffix(item_rarity_grade rarity)
+std::string GetRaritySuffix(int rarity)
 {
 	int stringID;
 

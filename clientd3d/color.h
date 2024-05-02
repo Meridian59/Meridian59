@@ -38,6 +38,11 @@ enum {
    COLOR_BAR4,            /* Bar graph color #4 (numbers in graphs) */
    COLOR_INVNUMFGD,       /* Inventory number foreground */
    COLOR_INVNUMBGD,       /* Inventory number background */
+   COLOR_ITEM_TEXT_MAGIC,
+   COLOR_ITEM_TEXT_RARE,
+   COLOR_ITEM_TEXT_LEGENDARY,
+   COLOR_ITEM_TEXT_UNIDENTIFIED,
+   COLOR_ITEM_TEXT_CURSED,
    MAXCOLORS,
 };
 
@@ -51,7 +56,7 @@ void ColorsCreate(Bool use_defaults);
 void ColorsDestroy(void);
 M59EXPORT COLORREF GetColor(WORD color);
 M59EXPORT HBRUSH GetBrush(WORD color);
-COLORREF GetPlayerNameColor(int flags,char*name);
+COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);
 void UserSelectColors(WORD fg, WORD bg);
@@ -61,6 +66,6 @@ void ColorsRestoreDefaults(void);
 M59EXPORT HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
 HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
 
-WORD GetItemListColor(HWND hwnd, int type);
+WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade item_rarity_value);
 
 #endif /* #ifndef _COLOR_H */

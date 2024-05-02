@@ -633,7 +633,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *fixed_string, char *url, int rarity)
+                        char *fixed_string, char *url, item_rarity_grade rarity)
 {
 	DescDialogStruct info;
 	int template_id;
@@ -676,7 +676,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 /*
 * GetRaritySuffix:  Provide a rarity suffix based on the given rarity type.
 */
-std::string GetRaritySuffix(int rarity)
+std::string GetRaritySuffix(item_rarity_grade rarity)
 {
 	int stringID;
 

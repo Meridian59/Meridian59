@@ -84,8 +84,8 @@ typedef struct {
 
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                                  char* fixed_string, char *url, int rarity);
-std::string GetRaritySuffix(int rarity);
+                                  char* fixed_string, char *url, item_rarity_grade rarity);
+std::string GetRaritySuffix(item_rarity_grade rarity);
 M59EXPORT void SetDialogFixedString(char* fixed_string);
 
 M59EXPORT list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags);

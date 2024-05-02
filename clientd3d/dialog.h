@@ -51,7 +51,7 @@ typedef struct {
 typedef struct {
    object_node *obj;
    BYTE         flags;
-   char        *name;
+   std::string name;
    char        *description;
    char        *fixed_string;
    char        *url;

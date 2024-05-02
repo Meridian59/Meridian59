@@ -224,10 +224,10 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		
 		// Item Name.
 		height = SetFontToFitText(info,GetDlgItem(hDlg, IDC_DESCNAME), 
-			(int)FONT_TITLES, info->name);
-		SetDlgItemText(hDlg, IDC_DESCNAME, info->name);
+			(int)FONT_TITLES, info->name.c_str());
+		SetDlgItemText(hDlg, IDC_DESCNAME, info->name.c_str());
 		hdc = GetDC(hDlg);
-		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags,info->name));
+		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags,info->name.c_str()));
 		ReleaseDC(hDlg,hdc);
 		
 		// Item Description.
@@ -385,7 +385,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
-		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
+		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name.c_str()));
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;
@@ -647,7 +647,9 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	ZeroMemory(&info,sizeof(info));
 	info.obj          = obj;
 	info.flags        = flags;
-	info.name         = LookupNameRsc(obj->name_res);
+	// Load the name into a temporary C-style string
+    char* nameCStr = LookupNameRsc(obj->name_res);
+    info.name = std::string(nameCStr);; // Convert C-style string to std::string
 	info.description  = description;
 	info.fixed_string = fixed_string;
 	info.url          = url;
@@ -657,17 +659,14 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 
 	if (!raritySuffix.empty())
 	{
-        char nameWithSuffix[MAXNAME + 15];
-		snprintf(nameWithSuffix, sizeof(nameWithSuffix),
-		   "%s (%s)", info.name, raritySuffix.c_str());
-        info.name = nameWithSuffix;
+        info.name += " (" + raritySuffix + ")";
 	}
 
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
 	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
-                 DescDialogProc, (LPARAM) &info);
+                 DescDialogProc, reinterpret_cast<LPARAM>(&info));
 	
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);

@@ -647,9 +647,8 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	ZeroMemory(&info,sizeof(info));
 	info.obj          = obj;
 	info.flags        = flags;
-	// Load the name into a temporary C-style string
-    char* nameCStr = LookupNameRsc(obj->name_res);
-    info.name = std::string(nameCStr);; // Convert C-style string to std::string
+    char* nameCStr    = LookupNameRsc(obj->name_res);
+    info.name         = std::string(nameCStr);
 	info.description  = description;
 	info.fixed_string = fixed_string;
 	info.url          = url;

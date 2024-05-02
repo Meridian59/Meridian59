@@ -1484,7 +1484,7 @@ Bool HandleLookPlayer(char *ptr, long len)
    // Get URL
    ExtractString(&ptr, len, url, MAX_URL);
 
-   DisplayDescription(&obj, flags, desc, fixed, url);
+   DisplayDescription(&obj, flags, desc, fixed, url, obj.rarity);
    ObjectDestroy(&obj);
    return True;
 }

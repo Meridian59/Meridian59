@@ -94,6 +94,8 @@ classvars:
    vrCondition_poor =  item_condition_poor
    vrCondition_broken = item_condition_broken
    
+   viRarity = ITEM_RARITY_GRADE_NORMAL
+
    % Items may have a different appearance once revealed. Values are zero if not applicable.
    viUnrevealedColor = 0
    viRevealedColor = 0
@@ -613,6 +615,61 @@ messages:
       return 1;
    }
 
+   GetRarity()
+   {
+      local count;
+      count = 0;
+
+      if NOT Send(self,@IsIdentified)
+      {
+         return ITEM_RARITY_GRADE_UNIDENTIFIED;
+      }
+
+      if Send(self,@IsCursed)
+      {
+         return ITEM_RARITY_GRADE_CURSED;
+      }
+
+      count = Send(self,@GetMagicRarityGradeCount);
+
+      if count = 1
+      {
+         return ITEM_RARITY_GRADE_MAGIC;
+      }
+
+      if count = 2
+      {
+         return ITEM_RARITY_GRADE_RARE;
+      }
+
+      if count >= 3
+      {
+         return ITEM_RARITY_GRADE_LEGENDARY;
+      }
+
+      return viRarity;
+   }
+
+   IsIdentified()
+   "Returns TRUE if an item has all attributes visible."
+   {
+      local i;
+
+      if Send(self,@HasAnyAttribute)
+      {
+         for i in plItem_Attributes
+         {
+            if (Send(self,@GetIDStatusFromCompound,#compound=First(i)) = FALSE)
+            {
+               % If any attribute is not identified, return FALSE
+               return FALSE;
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
    IsCursed()
    "This returns TRUE if a RemoveCurse spell should unuse the item."
    "Since an ItemAtt can curse an item, go through those to check."
@@ -630,6 +687,46 @@ messages:
          }
       }
 
+      return FALSE;
+   }
+
+   GetMagicRarityGradeCount()
+   "Checks plItem_attributes for HasRarity() = TRUE."
+   "For each attribute with HasRarity = TRUE,  add 1 to count"
+   "Return either viRarity or count, whichever is larger"
+   "This ensures the higher rarity is chosen if in the case "
+   "of competing rarities for an item."
+   {
+
+      local i, iNum, oItemAtt, count;
+      count = 0;
+
+      if Send(self,@HasAnyAttribute)
+      {
+         for i in plItem_attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+
+            if Send(oItemAtt,@HasRarity)
+            {
+               count = count + 1;
+            }
+         }
+      }
+
+      % Use assigned class rarity grade if it is higher than the count
+      if viRarity > count
+      {
+         return viRarity;
+      }
+
+      return count;
+   }
+
+   HasRarity()
+   "Returns True if an item attribute is considered rare."
+   {
       return FALSE;
    }
 

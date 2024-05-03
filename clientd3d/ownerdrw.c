@@ -68,28 +68,42 @@ void WindowEndUpdate(HWND hwnd)
  */
 int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan)
 {
-   char *name, desc[MAXNAME + 15];
-   int pos;
+   std::string raritySuffix;
+   std::string nameWithSuffix;
+   std::string nameWithQuantity;
+   std::string nameWithItemInUse;
+   std::string name = LookupNameRsc(obj->name_res);
 
-   name = LookupNameRsc(obj->name_res);
-   /* If item is a number object, add its amount after the item's name */
+   raritySuffix = GetRaritySuffix(obj->rarity);
+
+   // Concatenate name and suffix
+   if (!raritySuffix.empty())
+	{
+      nameWithSuffix = name + " (" + raritySuffix + ")";
+      name = nameWithSuffix;
+   }
+
+   // If item is a number object, prepend its amount to the name
    if (quan && IsNumberObj(obj->id))
    {
-      sprintf(desc, "%d %.*s", obj->amount, MAXNAME, name);
-      name = desc;
-   }
-   /* If player using an object, say so */
-   if (IsInUse(obj->id))
-   {
-      sprintf(desc, "%.*s %s", MAXNAME, name, GetString(hInst, IDS_INUSE));
-      name = desc;
+      nameWithQuantity = std::to_string(obj->amount) + " " + name;
+      name = nameWithQuantity;
    }
 
+   // If player using an object, say so
+   if (IsInUse(obj->id))
+   {
+      nameWithItemInUse = name + " " + GetString(hInst, IDS_INUSE);
+      name = nameWithItemInUse;
+   }
+
+   int pos;
+   const char* nameCString = name.c_str(); // Convert std::string to LPCTSTR
    if (index ==  -1)
-      pos = combo ? ComboBox_AddString(hwnd, name) 
-	 : ListBox_AddString(hwnd, name);
-   else pos = combo ? ComboBox_InsertString(hwnd, index, name) 
-      : ListBox_InsertString(hwnd, index, name);
+      pos = combo ? ComboBox_AddString(hwnd, nameCString) 
+	 : ListBox_AddString(hwnd, nameCString);
+   else pos = combo ? ComboBox_InsertString(hwnd, index, nameCString) 
+      : ListBox_InsertString(hwnd, index, nameCString);
 
    combo ? ComboBox_SetItemData(hwnd, pos, obj) : ListBox_SetItemData(hwnd, pos, obj);
    return pos;
@@ -330,6 +344,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    AREA area;
    COLORREF crColorText;
    HBRUSH hColorBg;
+   item_rarity_grade item_rarity_value = ITEM_RARITY_GRADE_NORMAL;
 
    if (!lpdis || !IsWindow(lpdis->hwndItem) || !IsWindowVisible(lpdis->hwndItem))
       return;
@@ -341,16 +356,39 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD)));
+   hColorBg = GetBrush(
+               GetItemListColor(
+                  lpdis->hwndItem,
+                  (selected? SEL_BGD : UNSEL_BGD),
+                  ITEM_RARITY_GRADE_NORMAL));
+
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD));
+      hColorBg = GetBrush(
+                     GetItemListColor(
+                        lpdis->hwndItem,
+                        UNSEL_BGD,
+                        ITEM_RARITY_GRADE_NORMAL));
 
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
-   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD)));
+
+   if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
+         item_rarity_value = (item_rarity_grade)obj->rarity;
+
+      crColorText = GetColor(
+                        GetItemListColor(
+                           lpdis->hwndItem,
+                           (selected ? SEL_FGD : UNSEL_FGD),
+                           item_rarity_value));
+
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD));
+      crColorText = GetColor(
+                        GetItemListColor(
+                           lpdis->hwndItem,
+                           UNSEL_FGD,
+                           item_rarity_value));
+
    if (lpdis->itemState & ODS_DISABLED)
 	crColorText = GetSysColor(COLOR_GRAYTEXT);
 

@@ -310,7 +310,8 @@ void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify)
 		0/*flags*/,
 		pszLagboxDescription, 
 		szTooltip,
-		pszLagboxURL);
+		pszLagboxURL,
+		ITEM_RARITY_GRADE_NORMAL);
 	SetDescParams(hWnd, 0);
 
 	latencyDialogActive = false;

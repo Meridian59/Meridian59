@@ -56,6 +56,11 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
+	{ "141,242,242"},	/* COLOR_ITEM_TEXT_MAGIC        - cyan   */
+	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE         - lime   */
+	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY    - purple */
+	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNIDENTIFIED - orange */
+	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -403,19 +408,36 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 * GetItemListColor:  Get given color id # for given owner-drawn list box.
 *    (Inventory has different colors than popup dialog lists)
 *    Doesn't return color itself so that caller can use id to call GetBrush.
+*    Also colors item text in lists based on an object's rarity.
 */
-WORD GetItemListColor(HWND hwnd, int type)
+WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade text_color_value)
 {
+	if (text_color_value != ITEM_RARITY_GRADE_NORMAL)
+	{
+		switch (text_color_value)
+		{
+			case ITEM_RARITY_GRADE_MAGIC:
+				return COLOR_ITEM_TEXT_MAGIC;
+			case ITEM_RARITY_GRADE_RARE:
+				return COLOR_ITEM_TEXT_RARE;
+			case ITEM_RARITY_GRADE_LEGENDARY:
+				return COLOR_ITEM_TEXT_LEGENDARY;
+			case ITEM_RARITY_GRADE_UNIDENTIFIED:
+				return COLOR_ITEM_TEXT_UNIDENTIFIED;
+			case ITEM_RARITY_GRADE_CURSED:
+				return COLOR_ITEM_TEXT_CURSED;
+		}
+	}
 	switch(type)
 	{
-	case UNSEL_FGD:
-		return COLOR_LISTFGD;
-	case UNSEL_BGD:
-		return COLOR_LISTBGD;
-	case SEL_FGD:
-		return COLOR_LISTSELFGD;
-	case SEL_BGD:
-		return COLOR_LISTSELBGD;
+		case UNSEL_FGD:
+			return COLOR_LISTFGD;
+		case UNSEL_BGD:
+			return COLOR_LISTBGD;
+		case SEL_FGD:
+			return COLOR_LISTSELFGD;
+		case SEL_BGD:
+			return COLOR_LISTSELBGD;
 	}
 	return 0;
 }
@@ -425,7 +447,7 @@ WORD GetItemListColor(HWND hwnd, int type)
 * GetPlayerNameColor:  Return color that player's name should be drawn in,
 *   depending on player's object flags
 */
-COLORREF GetPlayerNameColor(int flags,char*name)
+COLORREF GetPlayerNameColor(int flags,const char*name)
 {
 	if (GetDrawingEffect(flags) == OF_BLACK)
 		return NAME_COLOR_BLACK_FG;

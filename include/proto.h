@@ -491,6 +491,16 @@ enum {
    SL_FLICKER_OFF      = 2,         // Turn flickering off
 };
 
+/* Item rarity designations used for different object presentations */
+typedef enum {
+   ITEM_RARITY_GRADE_NORMAL       = 0,
+   ITEM_RARITY_GRADE_MAGIC        = 1,
+   ITEM_RARITY_GRADE_RARE         = 2,
+   ITEM_RARITY_GRADE_LEGENDARY    = 3,
+   ITEM_RARITY_GRADE_UNIDENTIFIED = 4,
+   ITEM_RARITY_GRADE_CURSED       = 5,
+} item_rarity_grade;
+
 /* Size in bytes of numbers in protocol */
 #define SIZE_TYPE            1
 #define SIZE_ID              4

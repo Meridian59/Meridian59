@@ -2321,7 +2321,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild;
+      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, rarity;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2415,14 +2415,12 @@ messages:
 
       AddPacket(4,iFlags);
 
+      rarity = 0;
       if IsClass(what,&Item)
       {
-         AddPacket(4,Send(what,@GetRarity));
+         rarity = Send(what,@GetRarity);
       }
-      else
-      {
-          AddPacket(4,0);
-      }
+      AddPacket(4, rarity);
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);

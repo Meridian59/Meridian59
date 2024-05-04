@@ -618,7 +618,6 @@ messages:
    GetRarity()
    {
       local count;
-      count = 0;
 
       if NOT Send(self,@IsIdentified)
       {
@@ -691,9 +690,9 @@ messages:
    }
 
    GetMagicRarityGradeCount()
-   "Checks plItem_attributes for HasRarity() = TRUE."
-   "For each attribute with HasRarity = TRUE,  add 1 to count"
-   "Return either viRarity or count, whichever is larger"
+   "Checks plItem_attributes with GetRarityCountModifier().  "
+   "Adds each attribute's rarity count to the total.  "
+   "Return either viRarity or count, whichever is larger.  "
    "This ensures the higher rarity is chosen if in the case "
    "of competing rarities for an item."
    {
@@ -707,27 +706,22 @@ messages:
          {
             iNum = Send(self,@GetNumFromCompound,#compound=First(i));
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-
-            if Send(oItemAtt,@HasRarity)
-            {
-               count = count + 1;
-            }
+            count = count + Send(oItemAtt,@GetRarityCountModifier);
          }
       }
 
-      % Use assigned class rarity grade if it is higher than the count
-      if viRarity > count
-      {
-         return viRarity;
-      }
-
-      return count;
+      return bound(count, viRarity, $);
    }
 
-   HasRarity()
-   "Returns True if an item attribute is considered rare."
+   GetRarityCountModifier()
+   "Returns a modifier count to an item's rarity grade.  "
+   "Used to modify the rarity grade for an item based on "
+   "notable item attributes.  Positive means increase the "
+   "rarity grade, negative means decrease the rarity grade."
    {
-      return FALSE;
+      local count;
+      count = 0;
+      return count;
    }
 
    ModifyDefensePower(defense_power = 0)

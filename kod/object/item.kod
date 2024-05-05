@@ -710,7 +710,7 @@ messages:
          }
       }
 
-      return bound(count, viRarity, $);
+      return Bound(count, viRarity, $);
    }
 
    GetRarityCountModifier()

@@ -10,7 +10,7 @@
 
 \usepackage{fullpage}
 \usepackage{epsfig}
-\usepackage{fancyh}
+%\usepackage{fancyhdr}
 % \usepackage{changebar}
 
 \setcounter{tocdepth}{1}  % Display contents down to section
@@ -58,11 +58,11 @@ process all files:}
 \newcommand{\plineindent}[2]{\> #1 \> #2 \\}
 
 \include{cover}
-%\pagestyle{plain}
-\pagestyle{fancy}
+\pagestyle{plain}
+%\pagestyle{fancy}
 
-\chead{Meridian 59 Documentation by Andrew and Christopher Kirmse \\}
-\setlength{\headrulewidth}{0in}
+%\fancyhead[C]{Meridian 59 Documentation by Andrew and Christopher Kirmse}
+%\setlength{\headrulewidth}{0in}
 %\tableofcontents
 \include{contents}
 \include{chap1}

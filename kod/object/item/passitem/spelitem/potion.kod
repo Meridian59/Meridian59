@@ -170,7 +170,7 @@ messages:
          return TRUE;
       }
 
-      propagate;
+      return FALSE;
    }
 
 

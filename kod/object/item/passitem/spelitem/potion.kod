@@ -163,6 +163,16 @@ messages:
       return;
    }
 
+   IsIdentified()
+   {
+      if Send(self,@IsLabelled)
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

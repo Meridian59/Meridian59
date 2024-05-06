@@ -719,9 +719,7 @@ messages:
    "notable item attributes.  Positive means increase the "
    "rarity grade, negative means decrease the rarity grade."
    {
-      local count;
-      count = 0;
-      return count;
+      return 0;
    }
 
    ModifyDefensePower(defense_power = 0)

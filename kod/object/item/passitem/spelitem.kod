@@ -442,6 +442,10 @@ messages:
       propagate;
    }
 
+   IsIdentified()
+   {
+      return Send(self, @IsLabelled);
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

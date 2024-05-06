@@ -33,9 +33,6 @@ constants:
 
 resources:
 
-   amulet_unidentified_name_rsc = "magical amulet"
-   amulet_unidentified_description_rsc = "The amulet pulses with magical energy."
-
    shadowAmulet_name_rsc = "Amulet of Shadows"
    shadowamulet_icon_rsc = amulet.bgf
    shadowAmulet_desc_rsc = \
@@ -57,7 +54,9 @@ resources:
 
 classvars:
 
+   vrName = shadowAmulet_name_rsc
    viIndefinite = ARTICLE_AN
+   vrDesc = shadowAmulet_desc_rsc
 
    vrIcon = shadowamulet_icon_rsc
 
@@ -72,15 +71,10 @@ classvars:
    viDefense_change = -150
    viLight_change = 50
 
-   vrRealName = shadowAmulet_name_rsc
-   vrRealDesc = shadowAmulet_desc_rsc
-
 properties:
    
    pbIn_use = FALSE	
-
-   vrName = amulet_unidentified_name_rsc
-   vrDesc = amulet_unidentified_description_rsc
+   pbIdentified = FALSE
 
 messages:
 
@@ -236,28 +230,21 @@ messages:
    RevealHiddenAttributes()
    {
       local bDone;
-
       bDone = FALSE;
 
-      % Reveal the true name and description of the item.
-      if vrName <> vrRealName
+      if pbIdentified = FALSE
       {
-         vrName = vrRealName;
-         vrDesc = vrRealDesc;
-         bDone = TRUE;
+         pbIdentified = TRUE;
+         Send(poOwner, @SomethingChanged, #what=self);
       }
-      
+
       return bDone;
    }
 
-   GetTrueName()
-   {
-      return vrRealName;
-   }
 
    IsIdentified()
    {
-      if vrName <> vrRealName
+      if pbIdentified = FALSE
       {
          return FALSE;
       }

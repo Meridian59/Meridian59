@@ -615,11 +615,12 @@ messages:
       return 1;
    }
 
-   GetRarity()
+   GetRarity(bShow_all = FALSE)
    {
       local count;
 
-      if NOT Send(self,@IsIdentified)
+      if bShow_all = FALSE
+         AND NOT Send(self,@IsIdentified)
       {
          return ITEM_RARITY_GRADE_UNIDENTIFIED;
       }

@@ -107,6 +107,15 @@ messages:
       return vrRealName;
    }
 
+   IsIdentified()
+   {
+      if vrName <> vrRealName
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

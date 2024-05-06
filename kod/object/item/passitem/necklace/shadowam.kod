@@ -93,10 +93,7 @@ messages:
       send(what,@AddDefenseModifier,#what=self);
 
       % Reveal the true nature of the amulet to the player when they put it on
-      if Send(self, @RevealHiddenAttributes)
-      {
-         Send(poOwner, @SomethingChanged, #what=self);
-      }
+      Send(self, @RevealHiddenAttributes);
 
       propagate;
    }
@@ -229,27 +226,18 @@ messages:
 
    RevealHiddenAttributes()
    {
-      local bDone;
-      bDone = FALSE;
-
       if pbIdentified = FALSE
       {
          pbIdentified = TRUE;
          Send(poOwner, @SomethingChanged, #what=self);
       }
 
-      return bDone;
+      return pbIdentified;
    }
-
 
    IsIdentified()
    {
-      if pbIdentified = FALSE
-      {
-         return FALSE;
-      }
-
-      return TRUE;
+      return pbIdentified;
    }
 
 end

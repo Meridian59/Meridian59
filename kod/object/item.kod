@@ -629,7 +629,7 @@ messages:
          return ITEM_RARITY_GRADE_CURSED;
       }
 
-      count = Send(self,@GetMagicRarityGradeCount);
+      count = Send(self,@GetRarityGradeCount);
 
       if count = 1
       {
@@ -689,7 +689,7 @@ messages:
       return FALSE;
    }
 
-   GetMagicRarityGradeCount()
+   GetRarityGradeCount()
    "Checks plItem_attributes with GetRarityCountModifier().  "
    "Adds each attribute's rarity count to the total.  "
    "Return either viRarity or count, whichever is larger.  "

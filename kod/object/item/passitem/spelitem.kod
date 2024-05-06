@@ -442,14 +442,9 @@ messages:
       propagate;
    }
 
-      IsIdentified()
+   IsIdentified()
    {
-      if Send(self,@IsLabelled)
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return Send(self, @IsLabelled);
    }
 
 end

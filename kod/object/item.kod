@@ -615,12 +615,14 @@ messages:
       return 1;
    }
 
-   GetRarity(bShow_all = FALSE)
+   GetRarity()
+   "Returns an item's rarity grade after evaluating if it is identified, "
+   "cursed, has item attributes that modify rarity, and the item's "
+   "assigned class rarity."
    {
       local count;
 
-      if bShow_all = FALSE
-         AND NOT Send(self,@IsIdentified)
+      if NOT Send(self,@IsIdentified)
       {
          return ITEM_RARITY_GRADE_UNIDENTIFIED;
       }
@@ -1783,6 +1785,12 @@ messages:
          return TRUE;
       }
       return FALSE;
+   }
+
+   GetItemClassRarity()
+   "Returns an item's class rarity value."
+   {
+      return viRarity;
    }
 
 end

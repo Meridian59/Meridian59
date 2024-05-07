@@ -2321,7 +2321,8 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, rarity;
+      local iFlags, iEnemyKarma, iSelfKarma, oIllusion,
+            oOtherGuild, rarity, count;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2418,8 +2419,39 @@ messages:
       rarity = 0;
       if IsClass(what,&Item)
       {
-         rarity = Send(what,@GetRarity, #bShow_All=bShow_All);
+         if bShow_All  % Used for identify and reveal "look" rarity assignment
+         {
+            if Send(what,@IsCursed)
+            {
+               rarity = ITEM_RARITY_GRADE_CURSED;
+            }
+
+            count = Send(what,@GetRarityGradeCount);
+
+            if count = 1
+            {
+               rarity = ITEM_RARITY_GRADE_MAGIC;
+            }
+
+            if count = 2
+            {
+               rarity = ITEM_RARITY_GRADE_RARE;
+            }
+
+            if count >= 3
+            {
+               rarity = ITEM_RARITY_GRADE_LEGENDARY;
+            }
+
+            % Choose the higher value between rarity count and class rarity
+            rarity = Bound(rarity,Send(what,@GetItemClassRarity),$);
+         }
+         else
+         {
+            rarity = Send(what,@GetRarity);
+         }
       }
+
       AddPacket(4, rarity);
 
       % Send the lighting information.

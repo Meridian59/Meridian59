@@ -230,9 +230,10 @@ messages:
       {
          pbIdentified = TRUE;
          Send(poOwner, @SomethingChanged, #what=self);
+         return TRUE;
       }
 
-      return pbIdentified;
+      return FALSE;
    }
 
    IsIdentified()

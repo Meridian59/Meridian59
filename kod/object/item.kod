@@ -615,16 +615,22 @@ messages:
       return 1;
    }
 
-   GetRarity()
+   GetRarity(bSkip_Identify = FALSE)
    "Returns an item's rarity grade after evaluating if it is identified, "
    "cursed, has item attributes that modify rarity, and the item's "
-   "assigned class rarity."
+   "assigned class rarity.  The bSkip_Identify parameter is used to "
+   "skip evaluating and assigning an item's unidentified state. This "
+   "is used by identify so an item will show up with the correct rarity "
+   "grade and not as unidentified if it is not revealed."
    {
       local count;
 
-      if NOT Send(self,@IsIdentified)
+      if bSkip_Identify = FALSE
       {
-         return ITEM_RARITY_GRADE_UNIDENTIFIED;
+         if NOT Send(self,@IsIdentified)
+         {
+            return ITEM_RARITY_GRADE_UNIDENTIFIED;
+         }
       }
 
       if Send(self,@IsCursed)
@@ -1785,12 +1791,6 @@ messages:
          return TRUE;
       }
       return FALSE;
-   }
-
-   GetItemClassRarity()
-   "Returns an item's class rarity value."
-   {
-      return viRarity;
    }
 
 end

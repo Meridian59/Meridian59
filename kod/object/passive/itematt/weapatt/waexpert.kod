@@ -129,6 +129,12 @@ messages:
       return hitroll;
    }
 
+   GetRarityCountModifier()
+   {
+      local count;
+      count = 1;
+      return count;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

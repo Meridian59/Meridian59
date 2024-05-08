@@ -303,6 +303,12 @@ messages:
       return iRoom_num;
    }
 
+   GetRarityCountModifier()
+   {
+      local count;
+      count = 1;
+      return count;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

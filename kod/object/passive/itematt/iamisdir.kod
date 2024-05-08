@@ -212,6 +212,12 @@ messages:
       return 12;
    }
 
+   GetRarityCountModifier()
+   {
+      local count;
+      count = 1;
+      return count;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

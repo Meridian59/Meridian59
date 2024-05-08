@@ -2321,8 +2321,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion,
-            oOtherGuild, rarity, count;
+      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, rarity;
 
       % Send given object's id number, name, icon, and animation info
 

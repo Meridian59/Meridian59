@@ -2418,8 +2418,9 @@ messages:
       rarity = 0;
       if IsClass(what,&Item)
       {
-         rarity = Send(what,@GetRarity);
+         rarity = Send(what,@GetRarity,#bSkip_Identify=bShow_All);
       }
+
       AddPacket(4, rarity);
 
       % Send the lighting information.

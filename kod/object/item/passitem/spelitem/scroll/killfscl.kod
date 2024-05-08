@@ -17,7 +17,7 @@ constants:
 resources:
 
    KillingFieldScroll_label_name_rsc = "scroll of killing fields"
-   KillingFieldScroll_icon_rsc = scr07.bgf
+   KillingFieldScroll_icon_rsc = scr05.bgf
    KillingFieldScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 

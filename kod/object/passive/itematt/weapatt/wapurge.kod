@@ -101,9 +101,7 @@ messages:
 
    GetRarityCountModifier()
    {
-      local count;
-      count = 1;
-      return count;
+      return 1;
    }
 
 end

@@ -585,9 +585,7 @@ messages:
    
    GetRarityCountModifier()
    {
-      local count;
-      count = 0;
-      return count;
+      return 0;
    }
 
 end

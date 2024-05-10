@@ -27,7 +27,7 @@ enum {False = 0, True = 1};
 
 #define MAX_BITMAPNAME 32
 
-#define NUM_COLORS 256  // Require bitmaps to have exactly this many colors
+#define NUM_COLORS 4294967296  // 32-bit color depth
 
 typedef struct {
    int   num_indices;   // Number of bitmaps in this group
@@ -55,6 +55,7 @@ typedef struct {
    int  shrink;
    Bool rotate;
    Bool compress;
+   int  color_depth;       // Color depth (8 or 32 bit)
 } Options;
 
 void Error(char *fmt,...);

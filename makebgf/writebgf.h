@@ -12,7 +12,7 @@
 #ifndef _WRITEBGF_H
 #define _WRITEBGF_H
 
-int WriteBGFFile(Bitmaps *bitmaps, Options *opts, char *filename);
+int WriteBGFFile(Bitmaps *bitmaps, Options *opts, char *filename, int color_depth);
 
 #endif /* #ifndef _WRITEBGF_H */
 

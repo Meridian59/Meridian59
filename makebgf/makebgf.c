@@ -364,6 +364,20 @@ int main(int argc, char **argv)
 	 Usage();
 	 exit(0);
 
+      case 'b': // used for 8 bit or 32 bit color depth
+      arg++;
+      if (arg >= argc) {
+         printf("Missing color depth argument\n");
+         break;
+      }
+      int color_depth = atoi(argv[arg]);
+      if (color_depth != 8 && color_depth != 32) {
+         printf("Invalid color depth specified. Use 8 or 32\n");
+         break;
+      }
+      options.color_depth = color_depth;
+      break;
+
       default:
 	 printf("Ignoring unknown option %c\n", argv[arg][1]);
       }

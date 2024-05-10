@@ -31,12 +31,13 @@ static void MappedFileClose(file_node *f);
 
 static int EstimateBGFFileSize(Bitmaps *b);
 static BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options);
+static BOOL WriteBitmap32(file_node *f, PDIB pdib, Options *options);
 /**************************************************************************/
 /*
  * WriteBGFFile:  Write Bitmaps and Options structures out to given filename.
  *   Return FALSE on error.
  */
-BOOL WriteBGFFile(Bitmaps *b, Options *opts, char *filename)
+BOOL WriteBGFFile(Bitmaps *b, Options *opts, char *filename, int color_depth)
 {
    int i, j, temp, max_indices, len;
    Group *g;
@@ -110,8 +111,19 @@ BOOL WriteBGFFile(Bitmaps *b, Options *opts, char *filename)
 	 if (MappedFileWrite(&f, &b->hotspots[i].positions[j].y, 4) < 0) return FALSE;
       }
       
-      // Write out the bytes of the bitmap
-      if (!WriteBitmap(&f, pdib, opts)) return FALSE;
+      // Check color depth option and call appropriate bitmap writing function
+      if (color_depth == 8)
+      {
+        if (!WriteBitmap(&f, pdib, opts)) return FALSE;
+      } 
+      else if (color_depth == 32)
+      {
+        if (!WriteBitmap32(&f, pdib, opts)) return FALSE;
+      }
+      else 
+      {
+      return FALSE; // Invalid color depth option
+      }
    }
 
    // Write out indices
@@ -206,6 +218,64 @@ BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options)
    
    free(buf);
    return True;
+}
+
+/***************************************************************************/
+/*
+ * WriteBitmap32: Write bytes of given 32-bit PDIB out to the given file.
+ *   Return FALSE on error.
+ */
+BOOL WriteBitmap32(file_node *f, PDIB pdib, Options *options)
+{
+    int width, height, row, col, len, temp;
+    BYTE *bits;
+    BYTE *buf, *bufptr;
+
+    width = DibWidth(pdib);
+    height = DibHeight(pdib);
+
+    buf = (BYTE *)malloc(4 * width * height); // Allocate memory for 32-bit bitmap
+    bufptr = buf;
+
+    for (row = 0; row < height; row++)
+    {
+        bits = (BYTE *)DibPtr(pdib) + row * DibWidthBytes(pdib);
+        for (col = 0; col < width; col++)
+        {
+            *bufptr++ = *(bits + 2); // Blue component
+            *bufptr++ = *(bits + 1); // Green component
+            *bufptr++ = *bits;       // Red component
+            *bufptr++ = 0xFF;        // Alpha channel (fully opaque)
+            bits += 3;               // Move to the next pixel
+        }
+    }
+
+    len = 4 * width * height; // Length of the 32-bit bitmap
+
+    // Write the bitmap size
+    if (MappedFileWrite(f, &len, 4) < 0)
+        return FALSE;
+
+    // Write out x and y offsets (assuming no rotation)
+    temp = 0; // Set x offset to 0
+    if (MappedFileWrite(f, &temp, 4) < 0)
+        return FALSE;
+    temp = 0; // Set y offset to 0
+    if (MappedFileWrite(f, &temp, 4) < 0)
+        return FALSE;
+
+    // Leave space for the number of hotspots
+    BYTE numHotspots = 0; // Assuming no hotspots
+    if (MappedFileWrite(f, &numHotspots, 1) < 0)
+        return FALSE;
+
+    // Write the bytes of the bitmap
+    if (MappedFileWrite(f, buf, len) < 0)
+        free(buf); // Free the allocated memory
+        return FALSE;
+
+    free(buf); // Free the allocated memory
+    return TRUE;
 }
 /***************************************************************************/
 /* 

@@ -1,0 +1,499 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Meridian59
+
+  Serverless Meridian 59 account management system
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 20
+    MemorySize: 128
+    Environment:
+      Variables:
+        send_from_email_address: ""
+        send_to_email_address: ""
+        test_emails: "[]"
+        kms_alias: "alias/account-pw"
+        domain_name: "https://www.meridian59.com"
+        region_name: !Ref AWS::Region
+        database_file: "m59_accounts.csv"
+        database_lock_file: "m59_accounts.lock"
+        queue_group_id: "SignUpGroup"
+
+    Tracing: Active
+    LoggingConfig:
+      LogFormat: JSON
+  Api:
+    TracingEnabled: true
+Resources:
+
+#####################    
+## S3 BUKETS      ###
+#####################
+
+  NewM59AccountsToProcessBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: '59-accounts-to-process'
+      VersioningConfiguration:
+        Status: 'Enabled'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  ProcessedM59AccountsBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: '59-processed-accounts-archive'
+      VersioningConfiguration:
+        Status: 'Enabled'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  59AccountsDatabaseBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: '59-accounts-database'
+      VersioningConfiguration:
+        Status: 'Enabled'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+#####################    
+## QUEUES         ###
+#####################
+
+  GameServerCommunicationQueue101:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: 'GameServerCommunicationQueue101.fifo'
+      ContentBasedDeduplication: true
+      MessageRetentionPeriod: 86400 # 1 day in seconds
+      FifoQueue: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt GameServerCommunicationQueue101DeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  GameServerCommunicationQueue101DeadLetterQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: 'GameServerCommunicationQueue101DeadLetterQueue.fifo'
+      MessageRetentionPeriod: 1209600 # 14 days in seconds
+      FifoQueue: true
+
+  GameServerCommunicationQueue102:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: 'GameServerCommunicationQueue102.fifo'
+      ContentBasedDeduplication: true
+      MessageRetentionPeriod: 8640
+      FifoQueue: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt GameServerCommunicationQueue102DeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  GameServerCommunicationQueue102DeadLetterQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: 'GameServerCommunicationQueue102DeadLetterQueue.fifo'
+      MessageRetentionPeriod: 1209600
+      FifoQueue: true
+
+  CompleteQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: 'CompleteQueue.fifo'
+      ContentBasedDeduplication: true
+      MessageRetentionPeriod: 86400
+      FifoQueue: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt CompleteQueueDeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  CompleteQueueDeadLetterQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: 'CompleteQueueDeadLetterQueue.fifo'
+      MessageRetentionPeriod: 1209600
+      FifoQueue: true
+
+
+#####################    
+## UTILS          ###
+#####################
+  M59UtilsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: src/m59utils/
+      CompatibleRuntimes:
+        - python3.12
+
+#####################    
+## CREATE ACCOUNT ###
+#####################
+  CreateAccountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/create_account/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "create_account"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSESFullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+        - ROSAKMSProviderPolicy
+      Architectures:
+        - x86_64
+      Events:
+        CreateAccount:
+          Type: Api 
+          Properties:
+            Path: /create/
+            Method: post
+
+#####################    
+## VERIFY ACCOUNT ###
+#####################
+  VerifyAccountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/verify_account/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "verify_account"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        VerifyAccount:
+          Type: Api
+          Properties:
+            Path: /verify/
+            Method: get
+
+#####################    
+## ACCOUNT COMPLETE #
+#####################
+  CompleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/complete/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "complete"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSESFullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        Complete:
+          Type: Api
+          Properties:
+            Path: /complete/
+            Method: get
+
+#####################    
+## DAILY CLEANUP  ###
+#####################
+  DailyCleanUpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/daily_cleanup/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "daily_cleanup"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSQSFullAccess
+        - AmazonSESFullAccess
+        - AWSCloudFormationFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        DailyCleanUp:
+          Type: Api
+          Properties:
+            Path: /cleanup/
+            Method: get
+        # Run daily at midnight.
+        InvocationLevel:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 0 ? * * *)
+
+#####################    
+## RESET PASSWORD ###
+#####################
+  ResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/reset_password/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "reset_password"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+        - AmazonSESFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        ResetPassword:
+          Type: Api
+          Properties:
+            Path: /reset/
+            Method: post
+
+#####################    
+## VERIFY RESET ###
+#####################
+  VerifyResetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/verify_reset/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "verify_reset"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        VerifyReset:
+          Type: Api
+          Properties:
+            Path: /verify_reset/
+            Method: get
+
+#####################    
+## CHECK VERIFIED ###
+#####################
+  CheckVerifiedFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/check_verified/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "check_verified"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        CheckVerified:
+          Type: Api
+          Properties:
+            Path: /check_verified/
+            Method: post
+
+#####################    
+## RESEND          ##
+#####################
+  ResendFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/resend/
+      Handler: app.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        FunctionUrl: "resend"
+      Layers:
+        - !Ref M59UtilsLayer
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonSQSFullAccess
+        - AWSCloudFormationFullAccess
+        - AmazonSESFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        Resend:
+          Type: Api
+          Properties:
+            Path: /resend/
+            Method: post
+
+
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+Outputs:
+
+#####################    
+## Outputs         ##
+#####################
+
+  CreateAccountApi:
+    Description: API Gateway endpoint URL for Create Account function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/create/"
+  CreateAccountFunction:
+    Description: Create Account Lambda Function ARN
+    Value: !GetAtt CreateAccountFunction.Arn
+  CreateAccountFunctionIamRole:
+    Description: Implicit IAM Role created for Create Account function
+    Value: !GetAtt CreateAccountFunctionRole.Arn
+
+
+  VerifyAccountApi:
+    Description: API Gateway endpoint URL for Verify Account function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/verify/"
+  VerifyAccountFunction:
+    Description: Verify Account Lambda Function ARN
+    Value: !GetAtt VerifyAccountFunction.Arn
+  VerifyAccountFunctionIamRole:
+    Description: Implicit IAM Role created for Verify Account function
+    Value: !GetAtt VerifyAccountFunctionRole.Arn
+
+
+  CompleteApi:
+    Description: API Gateway endpoint URL for Account Created function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/complete/"
+  CompleteFunction:
+    Description: Verify Account Lambda Function ARN
+    Value: !GetAtt CompleteFunction.Arn
+  CompleteFunctionIamRole:
+    Description: Implicit IAM Role created for Verify Account function
+    Value: !GetAtt CompleteFunctionRole.Arn 
+
+
+  ResetPasswordApi:
+    Description: API Gateway endpoint URL for Reset Password function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/reset/"
+  ResetPasswordFunction:
+    Description: Reset Password Lambda Function ARN
+    Value: !GetAtt ResetPasswordFunction.Arn
+  ResetPasswordFunctionIamRole:
+    Description: Implicit IAM Role created for Reset Password function
+    Value: !GetAtt ResetPasswordFunctionRole.Arn
+
+
+  VerifyResetFunctionApi:
+    Description: API Gateway endpoint URL for Verify Reset Password function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/verify_reset/"
+  VerifyResetFunction:
+    Description: Verify Reset Password Lambda Function ARN
+    Value: !GetAtt VerifyResetFunction.Arn
+  VerifyResetFunctionIamRole:
+    Description: Implicit IAM Role created for Verify Reset Password function
+    Value: !GetAtt VerifyResetFunctionRole.Arn
+
+
+  CheckVerifiedApi:
+    Description: API Gateway endpoint URL for Check Verified function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/check_verified/"
+  CheckVerifiedFunction:
+    Description: Check Verified Lambda Function ARN
+    Value: !GetAtt CheckVerifiedFunction.Arn
+  CheckVerifiedFunctionIamRole:
+    Description: Implicit IAM Role created for Check Verified function
+    Value: !GetAtt CheckVerifiedFunctionRole.Arn
+
+
+  ResendApi:
+    Description: API Gateway endpoint URL for Resend function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/resend/"
+  ResendFunction:
+    Description: Resend Lambda Function ARN
+    Value: !GetAtt ResendFunction.Arn
+  ResendFunctionIamRole:
+    Description: Implicit IAM Role created for Resend function
+    Value: !GetAtt ResendFunctionRole.Arn
+
+
+  GameServerCommunicationQueue101URL:
+    Description: 'URL of the SQS Queue: GameServerCommunicationQueue101'
+    Value: !Ref GameServerCommunicationQueue101
+    Export:
+      Name: 'GameServerCommunicationQueue101URL'
+
+
+  GameServerCommunicationQueue102URL:
+    Description: 'URL of the SQS Queue: GameServerCommunicationQueue102'
+    Value: !Ref GameServerCommunicationQueue102
+    Export:
+      Name: 'GameServerCommunicationQueue102URL'
+
+
+  CompleteQueueURL:
+    Description: 'URL of the SQS Queue: CompleteQueue'
+    Value: !Ref CompleteQueue
+    Export:
+      Name: 'CompleteQueueURL'
+
+  
+  NewM59AccountsToProcessBucketName:
+    Description: 'Name of the new accounts to process bucket'
+    Value: !Ref NewM59AccountsToProcessBucket
+    Export:
+      Name: 'NewM59AccountsToProcessBucketName'
+
+
+  ProcessedM59AccountsBucketName:
+    Description: 'Name of the processed account bucket'
+    Value: !Ref ProcessedM59AccountsBucket
+    Export:
+      Name: 'ProcessedM59AccountsBucketNameName'
+
+
+  59AccountsDatabaseBucketName:
+    Description: 'Name of the new accounts to process bucket'
+    Value: !Ref 59AccountsDatabaseBucket
+    Export:
+      Name: '59AccountsDatabaseBucket'

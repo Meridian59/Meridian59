@@ -50,7 +50,7 @@ classvars:
    % What's the basic color of the bow?
    viBaseXLAT = XLAT_TO_GREEN
 
-   viRarity = ITEM_RARITY_GRADE_RARE
+   viRarity = ITEM_RARITY_GRADE_MAGIC
 
 properties:
 

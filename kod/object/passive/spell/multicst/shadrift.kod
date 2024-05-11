@@ -19,11 +19,11 @@ resources:
 
    DeathsDoor_name_rsc = "shadow rift"
    DeathsDoor_icon_rsc = ideadoor.bgf
-   DeathsDoor_desc_rsc = "Summons the darkest of magics to warp the fabic of space.  "
+   DeathsDoor_desc_rsc = "Summons the darkest of magics to warp the very shadows themselves.  "
                          "Forms a magical bond between a prism and the area in which it "
                          "is cast.  Subsequent castings with the same prism cause a mystical "
                          "portal to form which will transport all who enter it to the exact spot "
-                         "to which the prism was bound.  "
+                         "to which the prism was bound.  Such portals can only exist in dark locales."
                          "Requires the feathers of a dark angel and a prism. "
    
    DeathsDoor_sound = qdthdoor.wav
@@ -36,6 +36,7 @@ resources:
                           "to which it is bound."
    DeathsDoor_target_has_portal = "The prism briefly goes clear. Through it you see that "
                           "its target area already contains a portal."
+   DeathsDoor_not_dark_enough = "This area is not dark enough to create a shadow rift!"
 
    DeathsDoor_succeeded = "A shimmering portal springs into being!"
    DeathsDoor_succeeded2 = "The prism hums and shudders."
@@ -115,6 +116,15 @@ messages:
       {
          % Second cast: create a portal to the place where the first cast
 	      % occurred.
+
+          if Send(Send(oPrism,@GetOwner),@GetRoomLight) > LIGHT_DARK
+          {
+             for oCaster in lCasters
+             {
+                Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_not_dark_enough);
+             }
+             return;
+          }
 
 	      % Where the portal leads
          lTargetLocation = send(oPrism,@GetTeleportLocation);  

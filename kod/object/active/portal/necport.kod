@@ -22,6 +22,8 @@ resources:
    NecropolisPortal_icon_rsc = teleport.bgf
 
    NecropolisPortal_closing = "The portal flickers and begins to draw imperceptibly in on itself."
+   NecropolisPortal_stabilized = "As the shadows deepen, the portal stops flickering and slowly grows stable."
+   NecropolisPortal_torch_failure = "The light of your torch causes the portal to dissipate around you!"
    NecropolisPortal_closed = "The portal disappears."
 
 classvars:
@@ -67,6 +69,19 @@ messages:
       % Don't allow monsters to escape through these portals
       if (NOT IsClass(what, &Player)) 
       {
+         return;
+      }
+
+      propagate;
+   }
+
+   TeleportSomething(what=$)
+   "Called when something walks on top of us."
+   {
+      if IsClass(what,&Player) AND Send(what,@FindUsing,#class=&Torch) <> $
+      {
+         Send(what,@MsgSendUser,#message_rsc=NecropolisPortal_torch_failure);
+         Send(self,@ClosePortal);
          return;
       }
 
@@ -140,6 +155,47 @@ messages:
       propagate;
    }
 
+   AmbientLightChanged()
+   {
+      local oPlayer;
+
+      if Send(poOwner,@GetRoomLight) > LIGHT_DARK
+      {
+         for oPlayer in send(poOwner,@GetHolderActive)
+         {
+            if isClass(first(oPlayer),&Player)
+            {
+               Send(first(oPlayer),@MsgSendUser,#message_rsc=NecropolisPortal_closing);
+            }
+         }
+
+         if ptClosePortal <> $
+         {
+            DeleteTimer(ptClosePortal);
+            ptClosePortal = $;
+         }
+
+         ptClosePortal = CreateTimer(self,@ClosePortal,NECROPORTAL_CLOSE_TIME);
+      }
+      else
+      {
+         if ptClosePortal <> $ AND Send(poOwner,@IsUserInRoom)
+         {
+            DeleteTimer(ptClosePortal);
+            ptClosePortal = $;
+
+            for oPlayer in send(poOwner,@GetHolderActive)
+            {
+               if IsClass(first(oPlayer),&Player)
+               {
+                  Send(first(oPlayer),@MsgSendUser,#message_rsc=NecropolisPortal_stabilized);
+               }
+            }
+         }
+
+      }
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

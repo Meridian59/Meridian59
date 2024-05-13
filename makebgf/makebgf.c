@@ -287,9 +287,9 @@ int main(int argc, char **argv)
    options.shrink = 1;
    options.rotate = False;
    options.compress = True;
+   options.color_depth = 8; // Set default color depth to 8-bit
    memset(&b.name, 0, MAX_BITMAPNAME);
 
-   options.color_depth = 0;
 
    /* Parse options */
    for (arg = 1; arg < argc; arg++)

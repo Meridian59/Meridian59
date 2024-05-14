@@ -12,10 +12,10 @@ Globals:
     MemorySize: 128
     Environment:
       Variables:
-        send_from_email_address: ""
-        send_to_email_address: ""
+        send_from_email_address: "meridian59.email@gmail.com"
+        send_to_email_address: "meridian59.email@gmail.com"
         test_emails: "[]"
-        kms_alias: "alias/account-pw"
+        kms_alias: "alias/meridian59-account-key"
         domain_name: "https://www.meridian59.com"
         region_name: !Ref AWS::Region
         database_file: "m59_accounts.csv"
@@ -30,14 +30,14 @@ Globals:
 Resources:
 
 #####################    
-## S3 BUKETS      ###
+## S3 BUCKETS     ###
 #####################
 
   NewM59AccountsToProcessBucket:
     Type: 'AWS::S3::Bucket'
     DeletionPolicy: Retain
     Properties:
-      BucketName: '59-accounts-to-process'
+      BucketName: 'meridian59-accounts-to-process'
       VersioningConfiguration:
         Status: 'Enabled'
       PublicAccessBlockConfiguration:
@@ -50,7 +50,7 @@ Resources:
     Type: 'AWS::S3::Bucket'
     DeletionPolicy: Retain
     Properties:
-      BucketName: '59-processed-accounts-archive'
+      BucketName: 'meridian59-processed-accounts-archive'
       VersioningConfiguration:
         Status: 'Enabled'
       PublicAccessBlockConfiguration:
@@ -63,7 +63,7 @@ Resources:
     Type: 'AWS::S3::Bucket'
     DeletionPolicy: Retain
     Properties:
-      BucketName: '59-accounts-database'
+      BucketName: 'meridian59-accounts-database'
       VersioningConfiguration:
         Status: 'Enabled'
       PublicAccessBlockConfiguration:

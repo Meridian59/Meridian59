@@ -18,7 +18,7 @@ capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
 s3_prefix = "Meridian59"
-region = "us-east-2"
+region = "us-west-2"
 image_repositories = []
 
 [default.package.parameters]

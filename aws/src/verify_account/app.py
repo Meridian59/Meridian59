@@ -61,7 +61,7 @@ def lambda_handler(event, context):
         result = "unknown"
         username = ""
         password = ""
-        if server != "101" or server != "102":
+        if server != "101" and server != "102":
             server = "101"
 
         s3_client = boto3.client("s3")

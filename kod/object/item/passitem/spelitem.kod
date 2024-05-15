@@ -90,7 +90,7 @@ properties:
    pbDisabled = FALSE
 
    % If true, user has to pass spell's karma check.  Otherwise, can always cast.
-   pbCheckKarma = FALSE
+   pbCheckKarma = TRUE
 
 messages:
 
@@ -165,10 +165,27 @@ messages:
       return FALSE;
    }
 
+   GetRequiredKarma()
+   "Returns the karma value required to use the item, or 0 if there's no karma requirement."
+   {
+      local iKarma;
+
+      if (pbCheckKarma)
+      {
+         iKarma = Send(Send(SYS, @FindSpellByNum, #num=viSpellEffect), @GetRequiredKarma);
+      }
+      else
+      {
+         iKarma = 0;
+      }
+
+      return iKarma;
+   }
+
    AppendDesc()
    {
       % Tell player if this has karma restrictions
-      if pbCheckKarma
+      if (pbCheckKarma AND Send(self, @GetRequiredKarma) <> 0)
       {
          AppendTempString("\n\n");
          AppendTempString(vrKarmaDesc);

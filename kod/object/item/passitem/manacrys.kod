@@ -117,6 +117,8 @@ messages:
 
       Send(poOwner,@GainMana,#amount=piStoredMana);
       Post(self,@Delete);
+      % Always break a trance when using a mana crystal for balance reasons.
+      Send(poOwner,@BreakTrance,#event=EVENT_STEER);
 
       return;
    }

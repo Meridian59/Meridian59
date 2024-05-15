@@ -455,29 +455,27 @@ messages:
    
    KarmaCheck(who=$)
    {
+      local iSpellKarma, iUserKarma;
+
       if Send(who,@PlayerIsImmortal)
       {
          return TRUE;
       }
-   
-      if viSchool = SS_SHALILLE
-      {
-         if Send(who,@GetKarma) < (10*viSpell_level)
-         {
-            return FALSE;
-         }
-      }
-      else
-      {
-         if viSchool = SS_QOR
-         {
-            if Send(who,@GetKarma) > -(10*viSpell_level)
-            {
-               return FALSE;
-            }
-         }
-      }
       
+      iSpellKarma = Send(self, @GetRequiredKarma);
+      % Spell has no karma requirement
+      if (iSpellKarma = 0)
+      {
+         return TRUE;
+      }
+
+      iUserKarma = Send(who, @GetKarma);
+      if ((iSpellKarma > 0 AND iUserKarma < iSpellKarma)
+         OR (iSpellKarma < 0 AND iUserKarma > iSpellKarma))
+      {
+         return FALSE;
+      }
+
       return TRUE;
    }
 

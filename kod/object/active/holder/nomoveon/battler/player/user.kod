@@ -3678,7 +3678,7 @@ messages:
                }
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  if iCan_hold < number
+                  if iCan_hold < iNumber
                   {
                      Send(self,@MsgSendUser,#message_rsc=user_got_some,
                         #parm1=Send(what,@GetName));

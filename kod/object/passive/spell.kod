@@ -481,6 +481,24 @@ messages:
       return TRUE;
    }
 
+   GetRequiredKarma()
+   "Returns the karma value required to use the spell, or 0 if there's no karma requirement."
+   {
+      local iKarma;
+
+      iKarma = 0;
+      if (viSchool = SS_QOR)
+      {
+         iKarma = viSpell_level * -10;
+      }
+      if (viSchool = SS_SHALILLE)
+      {
+         iKarma = viSpell_level * 10;
+      }
+
+      return iKarma;
+   }
+
    IsRangedAttack()
    {
       return FALSE;

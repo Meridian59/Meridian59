@@ -78,6 +78,7 @@ properties:
 
    piMinSpellPower = 20
    piMaxSpellPower = 60
+   pbCheckKarma = FALSE
 
 messages:
 

@@ -162,7 +162,7 @@ void RestartClient()
 
    if (!CreateProcess(restart_filename.c_str(),"",NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
    {
-     snprintf(s, sizeof(string), GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
+     snprintf(s, sizeof(s), GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
       MessageBox(NULL,s,GetString(hInst, IDS_APPNAME),MB_ICONSTOP);
    }
 }

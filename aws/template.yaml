@@ -382,7 +382,7 @@ Outputs:
 
   CreateAccountApi:
     Description: API Gateway endpoint URL for Create Account function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/create/"
+    Value: !Sub "https://accounts.meridian59.com/create/"
   CreateAccountFunction:
     Description: Create Account Lambda Function ARN
     Value: !GetAtt CreateAccountFunction.Arn
@@ -393,7 +393,7 @@ Outputs:
 
   VerifyAccountApi:
     Description: API Gateway endpoint URL for Verify Account function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/verify/"
+    Value: !Sub "https://accounts.meridian59.com/verify/"
   VerifyAccountFunction:
     Description: Verify Account Lambda Function ARN
     Value: !GetAtt VerifyAccountFunction.Arn
@@ -404,7 +404,7 @@ Outputs:
 
   CompleteApi:
     Description: API Gateway endpoint URL for Account Created function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/complete/"
+    Value: !Sub "https://accounts.meridian59.com/complete/"
   CompleteFunction:
     Description: Verify Account Lambda Function ARN
     Value: !GetAtt CompleteFunction.Arn
@@ -415,7 +415,7 @@ Outputs:
 
   ResetPasswordApi:
     Description: API Gateway endpoint URL for Reset Password function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/reset/"
+    Value: !Sub "https://accounts.meridian59.com/reset/"
   ResetPasswordFunction:
     Description: Reset Password Lambda Function ARN
     Value: !GetAtt ResetPasswordFunction.Arn
@@ -426,7 +426,7 @@ Outputs:
 
   VerifyResetFunctionApi:
     Description: API Gateway endpoint URL for Verify Reset Password function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/verify_reset/"
+    Value: !Sub "https://accounts.meridian59.com/verify_reset/"
   VerifyResetFunction:
     Description: Verify Reset Password Lambda Function ARN
     Value: !GetAtt VerifyResetFunction.Arn
@@ -437,7 +437,7 @@ Outputs:
 
   CheckVerifiedApi:
     Description: API Gateway endpoint URL for Check Verified function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/check_verified/"
+    Value: !Sub "https://accounts.meridian59.com/check_verified/"
   CheckVerifiedFunction:
     Description: Check Verified Lambda Function ARN
     Value: !GetAtt CheckVerifiedFunction.Arn
@@ -448,7 +448,7 @@ Outputs:
 
   ResendApi:
     Description: API Gateway endpoint URL for Resend function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/resend/"
+    Value: !Sub "https://accounts.meridian59.com/resend/"
   ResendFunction:
     Description: Resend Lambda Function ARN
     Value: !GetAtt ResendFunction.Arn

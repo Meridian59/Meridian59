@@ -164,6 +164,9 @@ messages:
          Send(oTarget,@AddExertion,#amount=200000);
          Send(oTarget,@SetVigorRestThreshold,
                #amount=iVigorRestThreshold-iVigorRestThresholdChange);
+
+         % Ensure player HPs aren't over their natural maximum.
+         Post(oTarget,@NewHealth);
       }
 
       Send(oTarget,@StartEnchantment,#what=self,
@@ -172,9 +175,6 @@ messages:
       Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
       Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
             #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
-
-      % Make sure hps aren't over maximum. Post this so enchantment is finished.
-      Post(oTarget,@NewHealth);
       
       % If being cast on a monster
       if isClass(who,&Monster)

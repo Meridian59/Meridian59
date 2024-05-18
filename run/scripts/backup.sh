@@ -6,7 +6,7 @@ if [ -z "$SERVER" ]; then
   exit 1
 fi
 
-BASE_DIR=/home/ec2-user/Meridian59/run/server
+BASE_DIR=$HOME/Meridian59/run/server
 
 # Delete old saved games
 nice -n 19 find $BASE_DIR/savegame/* -mmin +1440 -delete

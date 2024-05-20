@@ -1404,6 +1404,12 @@ messages:
          % These players can always log into their own guild
          return TRUE;
       }
+      
+      if NOT Send(self,@InFoyer,#who=who)
+      {
+         % Anyone who got inside must be legal
+         return TRUE;
+      }
 
       for i in plLegal_entry
       {
@@ -1427,15 +1433,33 @@ messages:
  
    ReqTakeFromGuildChest(what=$,taker=$)
    {
-      if Send(self,@ReqLegalEntry,#who=taker)
+      if Send(self,@InFoyer,#who=taker)
       {
-         return TRUE;
+         Debug("Player",Send(taker,@GetTrueName),"stealing items from chest in",
+            Send(self,@GetName),"illegally.");
+         return FALSE;
       }
 
-      Debug("Player",Send(taker,@GetTrueName),"stealing items from chest in",
-            Send(self,@GetName),"illegally.");
+      return TRUE;
+   }
 
-      return FALSE;
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   "No one may attack through the door if it's closed."
+   {
+      if (what = $) or (victim = $)
+      {
+         propagate;
+      }
+
+      if Send(self,@InFoyer,#who=what) <> Send(self,@InFoyer,#who=victim)
+      {
+         if GetTime() > piLastDoorOpen + viSeconds_til_close + 1
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
    }
 
    CanHavePlayerPortal()

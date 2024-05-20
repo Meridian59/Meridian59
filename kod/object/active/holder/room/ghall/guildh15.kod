@@ -365,27 +365,6 @@ messages:
       propagate;
    }
 
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
-   "No one may attack through the door if it's closed."
-   {
-      if (what = $) or (victim = $)
-      {
-         propagate;
-      }
-      if send(self,@InFoyer,#who=what) <> send(self,@InFoyer,#who=victim)
-      {
-         if ptEntrance = $      % if the door was closed recently - note that this treats the door as closed the instant it starts closing - oh well.
-         {
-            if isClass(what,&player)
-            {
-               send(what,@SendAttackOutOfRangeMessage,#what=victim,#use_weapon=use_weapon,#stroke_obj=stroke_obj);
-            }
-            return FALSE;
-         }
-      }
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

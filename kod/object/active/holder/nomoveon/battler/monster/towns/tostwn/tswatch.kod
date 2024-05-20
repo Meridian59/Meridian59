@@ -1125,7 +1125,7 @@ messages:
                      if IsClass(j,&Monster)
                         AND NOT (Send(j,@GetBehavior) & AI_NPC)
                      {
-                        Send(j,@Delete);
+                        Post(j,@Delete);
                      }
                   }
                }
@@ -1987,7 +1987,7 @@ messages:
             if IsClass(j,&Monster)
                AND (NOT (Send(j,@GetBehavior) & AI_NPC))
             {
-               Send(j,@Delete);
+               Post(j,@Delete);
             }
 
             % Yuckily, this is the easiest way to deal with this.

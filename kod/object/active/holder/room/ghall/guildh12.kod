@@ -38,8 +38,10 @@ resources:
    guildh12_sealed4 = "Access to the upper wall is denied to non-military personnel."
    guildh12_sealed5 = "All access to the upper levels of the west tower is blocked by an iron "
       "gate.  It would not be wise to violate a lease with the Ko'catan army."
+   guildh12_sealed6 = "The secondary security door has been locked."
 
    guildh12_gong = gong.wav
+   security_door_locked_sound = doorlck.wav
 
    guildh12_lift_up_sound = stoneup2.wav
    guildh12_lift_down_sound = stonedn2.wav
@@ -159,6 +161,23 @@ messages:
            send(self,@OpenEntranceDoor);
            
            return TRUE;
+         }
+      }
+      
+      if (row = 40 OR row = 41) AND col = 9
+      {
+         % The secondary door needs a check, it's technically in the foyer.
+         % This door would teleport wallhackers past the foyer security.
+         % So, to allow for some potential fighting, we give intruders
+         % 20 seconds extra to try get through.
+         % If the InFoyer calculation is ever refined for this hall,
+         % this becomes unnecessary.
+         if GetTime() > Send(self,@GetDoorTimeStamp) + viSeconds_til_close + 21
+            AND NOT Send(self,@CanEnter,#who=what)
+         {
+            Send(what,@MsgSendUser,#message_rsc=guildh12_sealed6);
+            Send(what,@WaveSendUser,#wave_rsc=security_door_locked_sound);
+            return TRUE;
          }
       }
       

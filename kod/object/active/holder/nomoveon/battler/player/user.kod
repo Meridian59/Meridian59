@@ -3083,6 +3083,21 @@ messages:
          }
       }
 
+      % Manual move checks in some rooms 
+      if NOT Send(poOwner,@IsLegalMove,#who=self,
+               #old_row=piRow,#old_col=piCol,
+               #new_row=new_row,#new_col=new_col)
+      {
+         % Illegal move! Reset position.
+         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+               #new_row=piRow,
+               #new_col=piCol,
+               #fine_row=piFine_Row,
+               #fine_col=piFine_Col);
+
+         return;
+      }
+      
       % Update this value for both speedhack detection AND movement detection.
       piLastMoveUpdateTime = GetTime();
 

@@ -216,19 +216,23 @@ messages:
       return;
    }
 
-   InFoyer(who=$)
+   InFoyer(who=$,test_row=0,test_col=0)
    "This returns TRUE if the player is in the foyer area, and FALSE if the "
    "player is in the guild hall proper."
    {
       local iRow, iCol;
-
-      if send(who,@GetOwner) <> self
+ 
+      if who = $
       {
-         return FALSE;
+         % Hypothetical coordinates a player wants to step to
+         iRow = test_row;
+         iCol = test_col;
       }
-
-      iRow = send(who,@GetRow);
-      iCol = send(who,@GetCol);
+      else
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
 
       if iRow >= viFoyer_north AND iRow <= viFoyer_south
          AND iCol <= viFoyer_east AND iCol >= viFoyer_west

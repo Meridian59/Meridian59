@@ -86,14 +86,23 @@ messages:
       propagate;
    }
 
-   InFoyer(who=$)
+   InFoyer(who=$,test_row=0,test_col=0)
    "Due to the multiple foyers in this guild hall, we return which foyer 'who' "
    "is currently in.  Returns FALSE if not in foyer, a positive integer otherwise."
    {
       local iRow, iCol;
 
-      iRow = Send(who,@GetRow);
-      iCol = Send(who,@GetCol);
+      if who = $
+      {
+         % Hypothetical coordinates a player wants to step to
+         iRow = test_row;
+         iCol = test_col;
+      }
+      else
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
 
       if (iRow > 15) AND (iRow < 22) AND (iCol < 9)
       {

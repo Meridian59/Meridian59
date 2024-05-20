@@ -115,12 +115,21 @@ messages:
    }
 
 
-     InFoyer(who=$)
-     {
-       local iRow, iCol;
-
-       iRow = send(who,@getrow);
-       iCol = send(who,@getcol);
+   InFoyer(who=$,test_row=0,test_col=0)
+   {
+      local iRow, iCol;
+ 
+      if who = $
+      {
+         % Hypothetical coordinates a player wants to step to
+         iRow = test_row;
+         iCol = test_col;
+      }
+      else
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
 
        if iRow > 16 or iCol < 4 or iCol > 18
          {

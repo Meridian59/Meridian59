@@ -240,6 +240,33 @@ messages:
       propagate;
    }
 
+   IsLegalMove(who=$,old_row=1,old_col=1,new_row=1,new_col=1)
+   {
+      % Hardcoded movement check, prevent hacking into hall.
+      % No crossing out of foyer unless door is open.
+      if GetTime() > piLastDoorOpen + viSeconds_til_close + 1
+      {
+         if Send(self,@InFoyer,#who=who)
+         {
+            % We're in the foyer. Check if we're trying to move into the hall.
+            if NOT Send(self,@InFoyer,#test_row=new_row,#test_col=new_col)
+            {
+               % Bad player! Fail the attempt.
+               Debug("ALERT!",Send(who,@GetTrueName),who,
+                     "tried to move through closed Guild Hall door ",
+                     Send(self,@GetName)," from ",old_row,old_col,
+                     " to ", new_row, new_col,". Last door opening was ",
+                     GetTime() - piLastDoorOpen,
+                     " seconds ago.");
+
+               return FALSE;
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
    CreateStandardObjects()
    "Two objects that all guild halls have:  newsball and lever."
    {
@@ -314,6 +341,11 @@ messages:
       piLastDoorOpen = GetTime();
 
       return;
+   }
+   
+   GetDoorTimeStamp()
+   {
+      return piLastDoorOpen;
    }
 
    EnteredInTimeWindow()
@@ -893,20 +925,24 @@ messages:
       return;
    }
 
-   InFoyer(who=$)
+   InFoyer(who=$,test_row=0,test_col=0)
    "This returns TRUE if the player is in the foyer area, and FALSE if the "
    "player is in the guild hall proper.  Note that the declared silence area "
    "must now be perfectly rectangular."
    {
       local iRow, iCol;
 
-      if Send(who,@GetOwner) <> self
+      if who = $
       {
-         return FALSE;
+         % Hypothetical coordinates a player wants to step to
+         iRow = test_row;
+         iCol = test_col;
       }
-
-      iRow = Send(who,@GetRow);
-      iCol = Send(who,@GetCol);
+      else
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
 
       if iRow >= viFoyer_north AND iRow <= viFoyer_South
          AND iCol <= viFoyer_east AND iCol >= viFoyer_west

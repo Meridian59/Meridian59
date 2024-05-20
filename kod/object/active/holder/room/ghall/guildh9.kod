@@ -40,6 +40,11 @@ classvars:
    viFoyer_south = 11
    viFoyer_west = 15
    viFoyer_east = 24
+   
+   viVulnerableZoneOneSouth = 11
+   
+   viVulnerableZoneTwoSouth = 16
+   viVulnerableZoneTwoEast = 15
 
    viLever_row = 16
    viLever_col = 10
@@ -188,6 +193,29 @@ messages:
       return;
    }
 
+   InVulnerableZone(who=$)
+   {
+      local iRow, iCol;
+
+      % Abandoned Warehouse has highly unfortunate windows
+      % that enemies can fire through... and vice versa
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if iRow <= viVulnerableZoneOneSouth
+      {
+         return TRUE;
+      }
+
+      if iRow <= viVulnerableZoneTwoSouth
+         AND iCol <= viVulnerableZoneTwoEast
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

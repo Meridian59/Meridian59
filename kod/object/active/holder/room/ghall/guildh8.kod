@@ -62,6 +62,18 @@ classvars:
    viFoyer_west = 8
    viFoyer_south = 31
    viFoyer_east = 10
+   
+   % Chest room
+   viNonVulnerableZoneOneSouth = 17
+   viNonVulnerableZoneOneWest = 24
+   
+   % Switch room
+   viNonVulnerableZoneTwoSouth = 8
+   viNonVulnerableZoneTwoWest = 17
+   
+   % Top left corner in upper river
+   viNonVulnerableZoneThreeSouth = 3
+   viNonVulnerableZoneThreeEast = 13
 
    viInner_teleport_row = 3
    viInner_teleport_col = 14
@@ -339,7 +351,37 @@ messages:
 
       return;
    }
+   
+   InVulnerableZone(who=$)
+   {
+      local iRow, iCol;
 
+      % Sewer Hideout is almost entirely attackable from outside
+      % with the exception of a few hideaways
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if iRow <= viNonVulnerableZoneOneSouth
+         AND iCol >= viNonVulnerableZoneOneWest
+      {
+         return FALSE;
+      }
+
+      if iRow <= viNonVulnerableZoneTwoSouth
+         AND iCol >= viNonVulnerableZoneTwoWest
+      {
+         return FALSE;
+      }
+
+      if iRow <= viNonVulnerableZoneThreeSouth
+         AND iCol <= viNonVulnerableZoneThreeEast
+      {
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

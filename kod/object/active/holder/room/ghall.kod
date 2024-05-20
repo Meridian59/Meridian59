@@ -1452,14 +1452,26 @@ messages:
       }
 
       if Send(self,@InFoyer,#who=what) <> Send(self,@InFoyer,#who=victim)
+         AND GetTime() > piLastDoorOpen + viSeconds_til_close + 1
       {
-         if GetTime() > piLastDoorOpen + viSeconds_til_close + 1
+         if Send(self,@InVulnerableZone,#who=victim)
+         {
+            propagate;
+         }
+         else
          {
             return FALSE;
          }
       }
 
       propagate;
+   }
+   
+   InVulnerableZone(who=$)
+   {
+      % Is the player still attackable even with the door closed?
+      % Some guild halls allow this on purpose.
+      return FALSE;
    }
 
    CanHavePlayerPortal()

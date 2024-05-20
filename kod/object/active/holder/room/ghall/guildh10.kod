@@ -51,6 +51,20 @@ classvars:
    viFoyer_south = 33
    viFoyer_east = 23
    viFoyer_west = 13
+   
+   % Switch maze area
+   viVulnerableZoneOneWest = 8
+   viVulnerableZoneOneSouth = 7
+   viVulnerableZoneOneEast = 13
+   
+   % Hallways adjacent to windows
+   viVulnerableZoneTwoSouth = 4
+   
+   % If the inner door to switch area is open
+   % it can be seen through
+   viVulnerableZoneThreeWest = 8
+   viVulnerableZoneThreeSouth = 10
+   viVulnerableZoneThreeEast = 13
 
    viLever_row = 2
    viLever_col = 14
@@ -393,6 +407,38 @@ messages:
       return;
    }
 
+   InVulnerableZone(who=$)
+   {
+      local iRow, iCol;
+
+      % Jaarba's Abode has windows into the switch room
+      % that can be attacked through
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if iRow <= viVulnerableZoneOneSouth
+         AND iCol >= viVulnerableZoneOneWest
+         AND iCol <= viVulnerableZoneOneEast
+      {
+         return TRUE;
+      }
+
+      if iRow <= viVulnerableZoneTwoSouth
+      {
+         return TRUE;
+      }
+
+      if iRow <= viVulnerableZoneThreeSouth
+         AND iCol >= viVulnerableZoneThreeWest
+         AND iCol <= viVulnerableZoneThreeEast
+         AND ptNorthDoor <> $
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

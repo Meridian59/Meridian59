@@ -51,9 +51,9 @@ messages:
 
       Send(poOwner,@RemoveOverlay,#what=self);
 
-      % The following code ensures that any Jala song ends regardless
+      % The following code ensures that any Jala song ends
       %   when an instrument is unequipped
-      %   regardless of how the instrument was removed.
+      %   regardless of how or why the instrument was removed.
       % We send the message to the room and not to the player
       %   because Room.kod will loop over plEnchantments and direct
       %   the break trance message to the correct spell.

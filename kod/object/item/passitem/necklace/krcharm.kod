@@ -45,6 +45,8 @@ classvars:
 
    viGround_group = 2
 
+   viRarity = ITEM_RARITY_GRADE_RARE
+
 properties:
    
    pbIn_use = False

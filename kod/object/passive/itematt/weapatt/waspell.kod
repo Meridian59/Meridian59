@@ -178,6 +178,10 @@ Constructor()
       return;            
    }
    
+   GetRarityCountModifier()
+   {
+      return 1;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

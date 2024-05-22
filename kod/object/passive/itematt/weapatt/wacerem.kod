@@ -102,5 +102,10 @@ messages:
       return (damage - iPower);
    }
 
+   GetRarityCountModifier()
+   {
+      return 1;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

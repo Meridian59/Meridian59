@@ -462,6 +462,12 @@ messages:
       local oKey, oObj, lPassive;
 
       oKey = $;
+
+      if (who = $ OR iLocation = $)
+      {
+         return oKey;
+      }
+
       lPassive = Send(who, @GetHolderPassive);
 
       for oObj in lPassive

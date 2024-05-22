@@ -646,11 +646,12 @@ messages:
       }
 
       if count = 2
+         OR count = 3
       {
          return ITEM_RARITY_GRADE_RARE;
       }
 
-      if count >= 3
+      if count >= 4
       {
          return ITEM_RARITY_GRADE_LEGENDARY;
       }

@@ -57,6 +57,8 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
+   viRarity = ITEM_RARITY_GRADE_MAGIC
+
 properties:
 
    piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_SLASH

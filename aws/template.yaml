@@ -12,8 +12,7 @@ Globals:
     MemorySize: 128
     Environment:
       Variables:
-        send_from_email_address: "meridian59.email@gmail.com"
-        send_to_email_address: "meridian59.email@gmail.com"
+        send_from_email_address: "support@meridian59.com"
         test_emails: "[]"
         kms_alias: "alias/meridian59-account-key"
         domain_name: "https://www.meridian59.com"

@@ -155,7 +155,12 @@ INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
             char errorStr[256];
 
-            if (SendHttpsRequest(hDlg, domain, resource, ss.str(), response))
+            // Request can take a long time; show waiting cursor
+            SetMainCursor(LoadCursor(NULL, IDC_WAIT));
+            bool success = SendHttpsRequest(hDlg, domain, resource, ss.str(), response);
+            SetMainCursor(LoadCursor(NULL, IDC_ARROW));
+            
+            if (success)
             {
                 string dStr(response.begin(), response.end());
                 char* text = const_cast<char *>(dStr.c_str());

@@ -748,14 +748,14 @@ BEGIN
     194                     "E-mail address is already in use."
     195                     "Passwords are invalid or not not match."
     196                     "Unknown server selected."
-    197                     "Registration Server is Offline."
+    197                     "Registration server is Offline."
     198                     "Signup generated an unknown error, please try again."
-    199                     "/api/signup/"
-    200                     "meridian59.com"
-    201                     "/api/verified/"
-    202                     "Your account is unverified! This is why you cannot login. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't receivedthe activation e-mail to be resent, please press Yes below."
-    203                     "/api/resend/"
-    204                     "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
+    199                     "create"
+    200                     "accounts.meridian59.com"
+    201                     "check_verified"
+    202                     "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail, please press Yes to resend it now."
+    203                     "resend"
+    204                     "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 
 #endif    // German resources
@@ -1282,7 +1282,7 @@ CAPTION " Meridian 59 Sign up for a free account!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
-    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, confirm password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot.",IDC_STATIC,34,11,233,46
+    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, confirm password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,46
     GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,57,244,171
     LTEXT           "E-mail Address",ID_SU_EMAIL,39,76,62,8
     EDITTEXT        IDC_NEW_EMAIL,104,75,150,14,ES_AUTOHSCROLL
@@ -1775,14 +1775,14 @@ BEGIN
     IDS_EMAILINUSE          "E-mail address is already in use.\n"
     IDS_PASSWORDINVALID     "Passwords are invalid or not not match.\n"
     IDS_SERVERUNKNOWN       "Unknown server selected.\n"
-    IDS_SIGNUPOFFLINE       "Registration Server is offline.\n"
+    IDS_SIGNUPOFFLINE       "Registration server is offline.\n"
     IDS_SIGNUPUNKNOWNERROR  "Signup generated an unknown error, please try again.\n"
     IDS_SIGNUPAPI           "create"
     IDS_WEBAPIDOMAIN        "accounts.meridian59.com"
     IDS_VERIFIEDAPI         "check_verified"
-    IDS_UNVERIFIED          "Your account is unverified! This is why you cannot login. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then press Yes below to resend it now."
+    IDS_UNVERIFIED          "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then press Yes below to resend it now."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
+    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 
 STRINGTABLE

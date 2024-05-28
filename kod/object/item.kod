@@ -642,7 +642,7 @@ messages:
 
       if count = 1
       {
-         return ITEM_RARITY_GRADE_MAGIC;
+         return ITEM_RARITY_GRADE_UNCOMMON;
       }
 
       if count = 2
@@ -702,9 +702,8 @@ messages:
    GetRarityGradeCount()
    "Checks plItem_attributes with GetRarityCountModifier().  "
    "Adds each attribute's rarity count to the total.  "
-   "Return either viRarity or count, whichever is larger.  "
-   "This ensures the higher rarity is chosen if in the case "
-   "of competing rarities for an item."
+   "Returns a rarity grade based on the sum of the total and the "
+   "item's class-based viRarity value."
    {
 
       local i, iNum, oItemAtt, count;
@@ -720,7 +719,7 @@ messages:
          }
       }
 
-      return Bound(count, viRarity, $);
+      return (count + viRarity);
    }
 
    GetRarityCountModifier()

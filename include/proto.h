@@ -494,7 +494,7 @@ enum {
 /* Item rarity designations used for different object presentations */
 typedef enum {
    ITEM_RARITY_GRADE_NORMAL       = 0,
-   ITEM_RARITY_GRADE_MAGIC        = 1,
+   ITEM_RARITY_GRADE_UNCOMMON     = 1,
    ITEM_RARITY_GRADE_RARE         = 2,
    ITEM_RARITY_GRADE_LEGENDARY    = 4,
    ITEM_RARITY_GRADE_UNIDENTIFIED = 100,

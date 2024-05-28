@@ -682,8 +682,8 @@ std::string GetRaritySuffix(item_rarity_grade rarity)
 	{
         case ITEM_RARITY_GRADE_NORMAL:
             return "";
-        case ITEM_RARITY_GRADE_MAGIC:
-            stringID = IDS_RARITY_GRADE_MAGIC;
+        case ITEM_RARITY_GRADE_UNCOMMON:
+            stringID = IDS_RARITY_GRADE_UNCOMMON;
 			break;
         case ITEM_RARITY_GRADE_RARE:
             stringID = IDS_RARITY_GRADE_RARE;

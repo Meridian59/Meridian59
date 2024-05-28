@@ -38,7 +38,7 @@ enum {
    COLOR_BAR4,            /* Bar graph color #4 (numbers in graphs) */
    COLOR_INVNUMFGD,       /* Inventory number foreground */
    COLOR_INVNUMBGD,       /* Inventory number background */
-   COLOR_ITEM_TEXT_MAGIC,
+   COLOR_ITEM_TEXT_UNCOMMON,
    COLOR_ITEM_TEXT_RARE,
    COLOR_ITEM_TEXT_LEGENDARY,
    COLOR_ITEM_TEXT_UNIDENTIFIED,

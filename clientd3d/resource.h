@@ -232,7 +232,7 @@
 #define IDS_RESENDAPI                   203
 #define IDS_SIGNUPMSG                   204
 #define IDS_CANTATTACKSELF              205
-#define IDS_RARITY_GRADE_MAGIC          206
+#define IDS_RARITY_GRADE_UNCOMMON       206
 #define IDS_RARITY_GRADE_RARE           207
 #define IDS_RARITY_GRADE_LEGENDARY      208
 #define IDS_RARITY_GRADE_UNIDENTIFIED   209

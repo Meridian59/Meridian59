@@ -56,7 +56,7 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "141,242,242"},	/* COLOR_ITEM_TEXT_MAGIC        - cyan   */
+	{ "141,242,242"},	/* COLOR_ITEM_TEXT_UNCOMMON     - cyan   */
 	{ "0,255,0"},	    /* COLOR_ITEM_TEXT_RARE         - lime   */
 	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY    - purple */
 	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNIDENTIFIED - orange */
@@ -416,8 +416,8 @@ WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade text_color_value)
 	{
 		switch (text_color_value)
 		{
-			case ITEM_RARITY_GRADE_MAGIC:
-				return COLOR_ITEM_TEXT_MAGIC;
+			case ITEM_RARITY_GRADE_UNCOMMON:
+				return COLOR_ITEM_TEXT_UNCOMMON;
 			case ITEM_RARITY_GRADE_RARE:
 				return COLOR_ITEM_TEXT_RARE;
 			case ITEM_RARITY_GRADE_LEGENDARY:

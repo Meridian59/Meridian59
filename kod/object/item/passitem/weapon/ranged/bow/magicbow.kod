@@ -29,7 +29,7 @@ classvars:
    viBulk = 70
    viWeight = 70
 
-   viRarity = ITEM_RARITY_GRADE_MAGIC
+   viRarity = ITEM_RARITY_GRADE_RARE
 
 properties:
 

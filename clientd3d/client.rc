@@ -1787,7 +1787,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_RARITY_GRADE_MAGIC         "magic"
+    IDS_RARITY_GRADE_UNCOMMON      "uncommon"
     IDS_RARITY_GRADE_RARE          "rare"
     IDS_RARITY_GRADE_LEGENDARY     "legendary"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"

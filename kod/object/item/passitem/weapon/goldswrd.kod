@@ -51,7 +51,7 @@ classvars:
    viMin_damage = 2
    viMax_damage = 5
 
-   viRarity = ITEM_RARITY_GRADE_MAGIC
+   viRarity = ITEM_RARITY_GRADE_RARE
 
 properties:
 

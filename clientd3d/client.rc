@@ -1282,7 +1282,7 @@ CAPTION " Meridian 59 Sign up for a free account!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
-    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, confirm password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,46
+    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,46
     GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,57,244,171
     LTEXT           "E-mail Address",ID_SU_EMAIL,39,76,62,8
     EDITTEXT        IDC_NEW_EMAIL,104,75,150,14,ES_AUTOHSCROLL

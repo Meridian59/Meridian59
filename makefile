@@ -11,43 +11,43 @@ TOPDIR=.
 all: Bserver Bclient Bmodules Bkod Bdeco Bupdater Bbbgun Bresource Broomedit
 
 Bserver:
-	echo Making in $(BLAKSERVDIR)
+	echo Making $(COMMAND) in $(BLAKSERVDIR)
 	cd $(BLAKSERVDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
 Bclient: Butil Blibpng Blibarchive Bwavemix
-	echo Making in $(CLIENTDIR)
+	echo Making $(COMMAND) in $(CLIENTDIR)
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
 Bmodules: Bclient
-	echo Making in $(MODULEDIR)
+	echo Making $(COMMAND) in $(MODULEDIR)
 	cd $(MODULEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
 Blibpng: Bzlib
-	echo Making in $(LIBPNGDIR)
+	echo Making $(COMMAND) in $(LIBPNGDIR)
 	cd $(LIBPNGDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..\..
 
 Bzlib:
-	echo Making in $(ZLIBDIR)
+	echo Making $(COMMAND) in $(ZLIBDIR)
 	cd $(ZLIBDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..\..
 
 Blibarchive: Bzlib
-	echo Making in $(LIBARCHIVEDIR)
+	echo Making $(COMMAND) in $(LIBARCHIVEDIR)
 	cd $(LIBARCHIVEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..\..
 
 Bwavemix:
-	echo Making in $(WAVEMIXDIR)
+	echo Making $(COMMAND) in $(WAVEMIXDIR)
 	cd $(WAVEMIXDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..\..

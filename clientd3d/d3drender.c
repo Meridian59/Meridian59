@@ -3252,14 +3252,15 @@ Bool D3DObjectLightingCalc(room_type *room, room_contents_node *pRNode, custom_b
 
 Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 {
-	float	screenW, screenH;
-
    // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling.
    // The original magic numbers used here were 1.75f (width) and 2.25f (height) for 800 by 600.
    // We have now scaled both of these for 1080p from 800 by 600 (2.4 and 1.8 respectively).
    // Giving us the final scaling factors of 4.15f and 4.05f.
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 4.15f);
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 4.05f);
+   float scaleW = config.gpuEfficiency ? 1.75f : 4.15f;
+   float scaleH = config.gpuEfficiency ? 2.25f : 4.05f;
+
+   float screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * scaleW);
+   float screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * scaleH);
 
    if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
    {

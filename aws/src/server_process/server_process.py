@@ -34,31 +34,32 @@ def decrypt_password(ciphertext_base64):
 # Function to send a command to the server and receive the response
 def send_command(command):
     response = ""
-    buffer = ""                                                                                                                                                                                                                                                                              
+    buffer = ""
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as blakserv_sock:
             print(f"Sending command [{command}] to {game_server_ip} {game_server_port}")
-            blakserv_sock.connect((game_server_ip, game_server_port))
-            blakserv_sock.settimeout(10)                                                                                          
+            blakserv_sock.connect((game_server_ip, int(game_server_port)))
+            blakserv_sock.settimeout(10)
             blakserv_sock.sendall(f"{command}\r\n".encode())
+
             while True:
                 try:
-                    data = blakserv_sock.recv(1024).decode('utf-8', 'ignore')
-                    buffer += data                                                                                                                                                                                                                                                   
-                    while "\r\n" in buffer:                                                                                       
-                        line, buffer = buffer.split("\r\n", 1)                                                   
-
-                        # Skip lines that start with '>' (echo of the original command)                                                                               
+                    data = blakserv_sock.recv(1024).decode("utf-8", "ignore")
+                    if not data:  # If data is an empty string, the connection is closed
+                        break
+                    buffer += data
+                    while "\r\n" in buffer:
+                        line, buffer = buffer.split("\r\n", 1)
+                        # Skip lines that start with '>' (echo of the original command)
                         if re.match(r"^>", line):
                             continue
-
-                        response += line + "\r\n"  # Append the processed line to the response                                                                        
-                    break
+                        response += line + "\r\n" # Append the processed line to the response
                 except socket.timeout:
                     print("Socket timeout while receiving data.")
                     break
                 except socket.error as e:
                     print(f"Socket error while receiving data: {e}")
+                    break
     except Exception as e:
         print(f"Error in send_command: {e}")
 
@@ -96,16 +97,21 @@ def create_account(username, password):
     server_response = send_command(f"create automated {username} {password}")
     print(server_response)
     if "Created account" not in server_response:
-       raise Exception("Failed to create user - please try again later.")
+       raise Exception("Failed to `create automated` - please try again later.")
+   
 
     # Extract account number from response
-    x = server_response.split(" ")
-    account_number = x[2].replace(".", "").strip()
+    account_number = 0
+    match = re.search(r'Created account (\d+).', server_response)
+    if match:
+        account_number = match.group(1)
+    else:
+        print("Account number not found in server reponse.")
 
     # Create a user                                       
     user_response = send_command(f"create user {account_number}")
     if not user_response:
-        raise Exception("Failed to create user - please try again later.")
+        raise Exception("Failed to `create user` - please try again later.")
 
     return account_number, user_response
 
@@ -174,4 +180,4 @@ while True:
                 print(f"Exception during message processing: {e}")
     else:
         print("No new messages in the incoming queue. Waiting...")
-        time.sleep(5)  # Wait before polling again if the queue was empty
+        time.sleep(30)  # Wait before polling again if the queue was empty

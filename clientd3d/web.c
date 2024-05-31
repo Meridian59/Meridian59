@@ -19,9 +19,34 @@ using namespace std;
 /*
  * WebLaunchBrowser:  Attempt to run browser on given URL.
  */
-void WebLaunchBrowser(char *url)
+void WebLaunchBrowser(const char *url)
 {
-  ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+    if (url == nullptr || strlen(url) == 0) {
+        debug(("URL string empty\n"));
+        return;
+    }
+
+    std::string urlStr(url);
+
+    if (ContainsSpaces(urlStr)) {
+        debug(("URL contains spaces\n"));
+        return;
+    }
+
+    if (urlStr.find("https://") != 0 && urlStr.find("https://") != 0) {
+        urlStr = "https://" + urlStr;
+    }
+
+    HINSTANCE result = ShellExecute(NULL, "open", urlStr.c_str(), NULL, NULL, SW_SHOWNORMAL);
+    if ((INT_PTR)result <= 32) {
+        debug(("Failed to open URL\n"));
+        return;
+    }
+}
+
+bool ContainsSpaces(const std::string& str)
+{
+    return str.find(' ') != std::string::npos;
 }
 
 // convert c string to wstring

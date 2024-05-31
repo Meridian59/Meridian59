@@ -32,6 +32,7 @@ resources:
    admin_currently_in = "The ROO for `b%s`n is `k`B%s`n."
 
    admin_create_itematt_command = "create item attribute"
+   admin_create_unrevealed_itematt_command = "create unrevealed itematt"
    admin_anonymous_command = "anonymous"
    admin_shadow_command = "shadow"
    admin_relic_command = "relic"
@@ -138,11 +139,12 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local oWeapon, i, oObject;
+      local oWeapon, i, oObject, lItemAttributes, lAttribute;
 
       if type = SAY_DM
          AND (StringContain(string,admin_create_itematt_command)
-              OR StringContain(string,"create itematt"))
+              OR StringContain(string,"create itematt")
+              OR StringContain(string, admin_create_unrevealed_itematt_command))
       {
          %% Only works on weapons for now.
          oWeapon = Send(self,@LookupPlayerWeapon);
@@ -159,6 +161,17 @@ messages:
             if Send(i,@DMCreateItemAtt,#who=self,#string=string,
                     #oWeapon=oWeapon)
             {
+               % Identify the newly-added attribute
+               if (NOT StringContain(string, admin_create_unrevealed_itematt_command))
+               {
+                  lItemAttributes = Send(oWeapon, @GetItemAttributes);
+                  lAttribute = First(lItemAttributes);
+                  if (lAttribute <> $ AND First(lAttribute) mod 2 = 0)
+                  {
+                     SetNth(lAttribute, 1, First(lAttribute) + 1);
+                  }
+               }
+
                if NOT pbStealth
                {
                   Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,

@@ -15,6 +15,11 @@
 
 using namespace std;
 
+static bool ContainsSpaces(const std::string& str)
+{
+    return str.find(' ') != std::string::npos;
+}
+
 /************************************************************************/
 /*
  * WebLaunchBrowser:  Attempt to run browser on given URL.
@@ -33,20 +38,11 @@ void WebLaunchBrowser(const char *url)
         return;
     }
 
-    if (urlStr.find("https://") != 0 && urlStr.find("https://") != 0) {
+    if (urlStr.find("http://") != 0 && urlStr.find("https://") != 0) {
         urlStr = "https://" + urlStr;
     }
 
     HINSTANCE result = ShellExecute(NULL, "open", urlStr.c_str(), NULL, NULL, SW_SHOWNORMAL);
-    if ((INT_PTR)result <= 32) {
-        debug(("Failed to open URL\n"));
-        return;
-    }
-}
-
-bool ContainsSpaces(const std::string& str)
-{
-    return str.find(' ') != std::string::npos;
 }
 
 // convert c string to wstring

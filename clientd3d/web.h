@@ -40,7 +40,6 @@ enum AccountStatusWebResponse
 };
 
 void WebLaunchBrowser(const char *url);
-bool ContainsSpaces(const std::string& str);
 
 // Send a HTTPS request to a given domain and resource.
 bool SendHttpsRequest(HWND hDlg, const std::string& domain, const std::string& resource, const std::string& requestBody, std::wstring& response);

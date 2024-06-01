@@ -44,6 +44,8 @@ classvars:
    viFoyer_south = 33
    viFoyer_east = 23
    viFoyer_west = 13
+   
+   viVulnerableZone_north = 24
 
    viLever_row = 27
    viLever_col = 11
@@ -452,6 +454,17 @@ messages:
       }
 
       return;
+   }
+   
+   InVulnerableZone(who=$)
+   {
+      % This hall has ledges that can be fought from
+      if Send(who,@GetRow) > viVulnerableZone_north
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
    }
 
 

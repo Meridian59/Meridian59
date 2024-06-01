@@ -146,6 +146,19 @@ classvars:
    viFoyer_south = 3
    viFoyer_west = 26
    viFoyer_east = 39
+   
+   % Foyer and ticket booth   
+   viVulnerableZoneOneSouth = 3
+   viVulnerableZoneOneWest = 20
+   
+   % Behind the bar (still barely visible)
+   viVulnerableZoneTwoSouth = 7
+   viVulnerableZoneTwoWest = 18
+   viVulnerableZoneTwoEast = 24
+
+   % Hallway behind ticket booth, only when door is open
+   viVulnerableZoneThreeSouth = 5
+   viVulnerableZoneThreeEast = 21
 
    viLever_row = 11
    viLever_col = 16
@@ -614,6 +627,37 @@ messages:
       return GUILDH14_ZONE_MAIN;
    }
 
+   InVulnerableZone(who=$)
+   {
+      local iRow, iCol;
+
+      % Bookmaker's has a visible ticket booth area
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if iRow <= viVulnerableZoneOneSouth
+         AND iCol >= viVulnerableZoneOneWest
+      {
+         return TRUE;
+      }
+
+      if iRow <= viVulnerableZoneTwoSouth
+         AND iCol >= viVulnerableZoneTwoWest
+         AND iCol <= viVulnerableZoneTwoEast
+      {
+         return TRUE;
+      }
+
+      if iRow <= viVulnerableZoneThreeSouth
+         AND iCol <= viVulnerableZoneThreeEast
+         AND ptCounterDoor <> $
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

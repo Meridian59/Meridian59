@@ -42,7 +42,7 @@ void WebLaunchBrowser(const char *url)
         urlStr = "https://" + urlStr;
     }
 
-    HINSTANCE result = ShellExecute(NULL, "open", urlStr.c_str(), NULL, NULL, SW_SHOWNORMAL);
+    ShellExecute(NULL, "open", urlStr.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
 
 // convert c string to wstring

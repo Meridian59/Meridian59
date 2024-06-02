@@ -10,13 +10,41 @@ from m59utils import util_get_output_value, meridian_domain_name
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+s3_client = boto3.client('s3')
+
+process_bucket_name = util_get_output_value("NewM59AccountsToProcessBucketName")
+audit_bucket_name = util_get_output_value("M59AccountsAuditBucket")
+
+def move_to_audit(accounts_to_delete):
+    for account in accounts_to_delete:
+        account_file = f"{account['email']}_{account['server']}.json"
+        copy_source = {
+            'Bucket': process_bucket_name,
+            'Key': account_file
+        }
+
+        try:
+            # Copy the object to the destination bucket
+            s3_client.copy_object(
+                Bucket=audit_bucket_name,
+                CopySource=copy_source,
+                Key=account_file
+            )
+            logger.info(f"Copied {account_file} to {audit_bucket_name} !")
+
+            # Delete the object from the source bucket
+            s3_client.delete_object(Bucket=process_bucket_name,Key=account_file)
+            logger.info(f"Deleted {account_file} from {process_bucket_name} !")
+
+        except Exception as e:
+            logger.error(f"Error moving {account_file}: {str(e)}")
+
 
 def lambda_handler(event, context):
     start = time.time()
     master_database_key = os.environ["database_file"]
     bucket_name = util_get_output_value("59AccountsDatabaseBucketName")
     object_key_read = os.environ['database_lock_file']
-    s3_client = boto3.client('s3')
 
     send_from_email_address = os.environ["send_from_email_address"]
     aws_region = os.environ["region_name"]
@@ -24,7 +52,6 @@ def lambda_handler(event, context):
     
     accounts_to_add = []
     accounts_to_delete = []
-    process_bucket_name = util_get_output_value("NewM59AccountsToProcessBucketName")
     database_size = 0
     
     try:
@@ -42,39 +69,21 @@ def lambda_handler(event, context):
                 #logger.info("------")
                 
                 account_obj = json.loads(file_content)
-                stamp = datetime.now()
                 if "timestamp" in account_obj and "email" in account_obj:
-                    stamp = datetime.fromisoformat(account_obj["timestamp"])
-                    created = account_obj["created"]
-                    if created == 1:
+                    created = account_obj.get("created")
+                    if created is True:
                         accounts_to_add.append(account_obj)
-                    elif datetime.now() - stamp > datetime.timedelta(days=1) and "verified" not in account_obj:
-                        accounts_to_delete.append(account_obj)
                 else:
-                    # bad data remove it!
-                    logger.info(f"Removing bad data from S3: {file_content}")
-                    accounts_to_delete.append(account_obj)
+                    logger.info(f"Bad data found in: {obj['Key']} - {file_content}")
 
     except Exception as e:
         logger.error(f"Exception during clean: {e}")
         
     if len(accounts_to_add) > 0 or len(accounts_to_delete) > 0 :
-        account_object = ""
         try:
             logger.info(f"Attempting to open S3 {bucket_name}:{master_database_key}")
             file_obj = s3_client.get_object(Bucket=bucket_name, Key=master_database_key)
             file_content = file_obj['Body'].read().decode('utf-8')
-            
-            for account in accounts_to_add:
-                file_content += f"\"{account["username"]}\",\"{account["email"]}\",\"{account["server"]}\",\"{account["account_number"]}\"\n"
-                account_file = f"{account["email"]}_{account["server"]}.json"
-                s3_client.delete_object(Bucket=process_bucket_name, Key=account_file)
-                logger.info(f"Deleted {account_file} as merging to main database !")
-                
-            for account in accounts_to_delete:
-                account_file = f"{account["email"]}_{account["server"]}.json"
-                s3_client.delete_object(Bucket=process_bucket_name, Key=account_file)
-                logger.info(f"Deleted stale {account_file} !")
                 
             # update master database
             if len(accounts_to_add) > 0:
@@ -85,6 +94,9 @@ def lambda_handler(event, context):
                 except Exception as e:
                     logger.error(f"Error writing content to S3: {e}")
                     raise Exception("Error writing content to S3")
+
+            # Move to audit bucket
+            move_to_audit(accounts_to_add)
             
         except Exception as e:
             logger.error(f"Failed to load update accounts and main database {e}")

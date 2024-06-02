@@ -44,6 +44,13 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: "DeleteOldFiles"
+            Status: "Enabled"
+            ExpirationInDays: 90
+            Prefix: ""  # Apply to all objects in the bucket
+            NoncurrentVersionExpirationInDays: 90  # For versioned objects
 
   ProcessedM59AccountsBucket:
     Type: 'AWS::S3::Bucket'
@@ -70,6 +77,26 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+
+  59AccountsAuditBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: 'meridian59-accounts-audit'
+      VersioningConfiguration:
+        Status: 'Enabled'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: "DeleteOldFiles"
+            Status: "Enabled"
+            ExpirationInDays: 90
+            Prefix: ""  # Apply to all objects in the bucket
+            NoncurrentVersionExpirationInDays: 90  # For versioned objects
 
 #####################    
 ## QUEUES         ###
@@ -496,3 +523,9 @@ Outputs:
     Value: !Ref 59AccountsDatabaseBucket
     Export:
       Name: '59AccountsDatabaseBucket'
+
+  M59AccountsAuditBucketName:
+    Description: 'Name of the accounts audit bucket'
+    Value: !Ref 59AccountsAuditBucket
+    Export:
+      Name: 'M59AccountsAuditBucket'

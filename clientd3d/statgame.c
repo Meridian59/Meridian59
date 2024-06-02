@@ -27,6 +27,8 @@ static int window_width = 0;
 
 static POINT previous_mouse_position;
 
+#define ANIMATE_BACKGROUND_SLEEP_MS 50
+
 /****************************************************************************/
 void GameInit(void)
 {
@@ -358,6 +360,11 @@ void GameCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    }
 }
 /****************************************************************************/
+void AnimationSleep(void)
+{
+    Sleep(ANIMATE_BACKGROUND_SLEEP_MS);
+}
+/****************************************************************************/
 void GameTimer(HWND hwnd, UINT id)
 {
    switch (id)
@@ -377,6 +384,12 @@ void GameIdle(void)
 
    // Are we the active foreground application?
    AnimationTimerAbort();
+
+   // If we're in the background, sleep to lower CPU load
+   if (GetWindowLong(GetActiveWindow(), GWL_HINSTANCE) != (LONG)hInst)
+   {
+       AnimationSleep();
+   }
 }
 /****************************************************************************/
 void GameEnterIdle(HWND hwnd, UINT source, HWND hwndSource)

@@ -27,7 +27,7 @@ static int window_width = 0;
 
 static POINT previous_mouse_position;
 
-#define ANIMATE_BACKGROUND_SLEEP_MS 50
+#define ANIMATE_BACKGROUND_SLEEP_MS 1
 
 /****************************************************************************/
 void GameInit(void)
@@ -360,11 +360,6 @@ void GameCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    }
 }
 /****************************************************************************/
-void AnimationSleep(void)
-{
-    Sleep(ANIMATE_BACKGROUND_SLEEP_MS);
-}
-/****************************************************************************/
 void GameTimer(HWND hwnd, UINT id)
 {
    switch (id)
@@ -374,6 +369,18 @@ void GameTimer(HWND hwnd, UINT id)
       break;
    }
 }
+
+void BackgroundSleep()
+{
+    // If we're in the background, sleep to lower CPU load.
+    HWND hWnd = GetForegroundWindow();
+    bool backgroundSleep = (hWnd == NULL) || (GetWindowLongPtr(hWnd, GWLP_HINSTANCE) != (LONG_PTR)hInst);
+
+    if (backgroundSleep)
+    {
+        Sleep(ANIMATE_BACKGROUND_SLEEP_MS);
+    }
+}
 /****************************************************************************/
 void GameIdle(void)
 {
@@ -382,20 +389,15 @@ void GameIdle(void)
    AnimationTimerProc(hMain, 0);
    HandleKeys();
 
-   // Are we the active foreground application?
    AnimationTimerAbort();
-
-   // If we're in the background, sleep to lower CPU load
-   if (GetWindowLong(GetActiveWindow(), GWL_HINSTANCE) != (LONG)hInst)
-   {
-       AnimationSleep();
-   }
+   BackgroundSleep();
 }
 /****************************************************************************/
 void GameEnterIdle(HWND hwnd, UINT source, HWND hwndSource)
 {
-   // When menu or dialog goes up, start animation timer in the background
-   AnimationTimerStart();
+   // When menu or dialog goes up during gameplay, start animation timer in the background
+   if (game_state == GAME_PLAY)
+      AnimationTimerStart();
 }
 /****************************************************************************/
 int GameNotify(HWND hwnd, int idCtrl, NMHDR *pnmh)

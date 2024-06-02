@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 s3_client = boto3.client('s3')
 
 process_bucket_name = util_get_output_value("NewM59AccountsToProcessBucketName")
-audit_bucket_name = util_get_output_value("M59AccountsAuditBucket")
+audit_bucket_name = util_get_output_value("M59AccountsAuditBucketName")
 
 def move_to_audit(accounts_to_delete):
     for account in accounts_to_delete:

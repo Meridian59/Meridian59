@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FrogmanTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_FROGMAN
+   
+   %% frogman drops stuff good for qor and faren builders below 80 hp
+   % Compare to Skeletons - similar level/diff, opposite karma path
+   piDiff_seed = 5
+   piItem_att_chance = 8
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &EntrootBerry, 24 ],
+                     [ &PurpleMushroom, 24 ],
+                     [ &BlueMushroom, 15 ],
+                     [ &Mushroom, 10 ],
+                     [ &ElderBerry, 10 ],
+                     [ &InkyCap, 4],
+                     [ &FairyWing, 4 ],
+                     [ &DarkAngelFeather, 6 ],
+                     [ &ChainArmor,1 ],
+                     [ &MetalShield, 1],
+                     [ &MagicShieldPotion, 1 ]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

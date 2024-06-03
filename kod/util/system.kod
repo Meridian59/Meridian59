@@ -3487,6 +3487,7 @@ messages:
 
       Create(&ThrasherTreasure);
 
+      Create(&FrogmanTreasure);
       return;
    }
 

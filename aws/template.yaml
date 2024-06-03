@@ -52,19 +52,6 @@ Resources:
             Prefix: ""  # Apply to all objects in the bucket
             NoncurrentVersionExpirationInDays: 90  # For versioned objects
 
-  ProcessedM59AccountsBucket:
-    Type: 'AWS::S3::Bucket'
-    DeletionPolicy: Retain
-    Properties:
-      BucketName: 'meridian59-processed-accounts-archive'
-      VersioningConfiguration:
-        Status: 'Enabled'
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-
   59AccountsDatabaseBucket:
     Type: 'AWS::S3::Bucket'
     DeletionPolicy: Retain
@@ -509,14 +496,6 @@ Outputs:
     Value: !Ref NewM59AccountsToProcessBucket
     Export:
       Name: 'NewM59AccountsToProcessBucketName'
-
-
-  ProcessedM59AccountsBucketName:
-    Description: 'Name of the processed account bucket'
-    Value: !Ref ProcessedM59AccountsBucket
-    Export:
-      Name: 'ProcessedM59AccountsBucketNameName'
-
 
   59AccountsDatabaseBucketName:
     Description: 'Name of the new accounts to process bucket'

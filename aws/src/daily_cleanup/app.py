@@ -86,7 +86,11 @@ def lambda_handler(event, context):
             file_content = file_obj['Body'].read().decode('utf-8')
                 
             # update master database
-            if len(accounts_to_add) > 0:
+            if len(accounts_to_add) > 0:  
+                
+                for account in accounts_to_add:
+                    file_content += f"\"{account["username"]}\",\"{account["email"]}\",\"{account["server"]}\",\"{account["account_number"]}\"\n"
+                
                 try:
                     s3_client.put_object(Bucket=bucket_name, Key=master_database_key, Body=file_content)
                     database_size = len(file_content.splitlines())

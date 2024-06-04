@@ -139,13 +139,15 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local oWeapon, i, oObject, lItemAttributes, lAttribute;
+      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute;
 
       if type = SAY_DM
          AND (StringContain(string,admin_create_itematt_command)
               OR StringContain(string,"create itematt")
               OR StringContain(string, admin_create_unrevealed_itematt_command))
       {
+         bShouldRevealAttribute = NOT StringContain(string, admin_create_unrevealed_itematt_command);
+
          %% Only works on weapons for now.
          oWeapon = Send(self,@LookupPlayerWeapon);
          
@@ -162,12 +164,20 @@ messages:
                     #oWeapon=oWeapon)
             {
                % Identify the newly-added attribute
-               if (NOT StringContain(string, admin_create_unrevealed_itematt_command))
+               if (bShouldRevealAttribute)
                {
                   lItemAttributes = Send(oWeapon, @GetItemAttributes);
+
+                  % The first attribute in the list of item attributes is the
+                  % most recently-added attribute.
                   lAttribute = First(lItemAttributes);
+
+                  % The first value in an attribute list is a compound value,
+                  % where the ones digit represents revealed (odd) or 
+                  % unrevealed (even).
                   if (lAttribute <> $ AND First(lAttribute) mod 2 = 0)
                   {
+                     % This sets an unrevealed attribute's status to revealed.
                      SetNth(lAttribute, 1, First(lAttribute) + 1);
                   }
                }

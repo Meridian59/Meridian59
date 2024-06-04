@@ -162,7 +162,7 @@ void AliasInit(void)
 	 aliases[i].cr = True;
       }
 
-   UpdateKeyTables(aliases[i].key, command, aliases[i].text);
+      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
    }
 }
 
@@ -274,7 +274,7 @@ void AliasSave(void)
       }
       WritePrivateProfileString(fullSection, temp, text, cinfo->ini_file);
 
-   UpdateKeyTables(aliases[i].key, command, aliases[i].text);
+      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
    }
 
    strcpy(fullSection, command_section);

@@ -81,7 +81,7 @@ static HWND hAliasDialog2 = NULL;
 
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-
+static void UpdateKeyTables(int key, WORD command, char *text);
 extern Bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
 
@@ -147,12 +147,7 @@ void AliasInit(void)
 	 aliases[i].cr = True;
       }
 
-	  if (gbClassicKeys)
-		AliasSetKey(interface_key_table, aliases[i].key, KEY_NONE, command, aliases[i].text);
-	  else
-		AliasSetKey(gCustomKeys, aliases[i].key, KEY_NONE, command, aliases[i].text);
-
-      AliasSetKey(inventory_key_table, aliases[i].key, KEY_NONE, command, aliases[i].text);
+      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
    }
 }
 
@@ -229,6 +224,7 @@ void AliasSave(void)
    char	destName[128];
    char	*srcName;
    player_info	*playerInfo;
+   WORD command;
 
    destName[0] = '\0';
 
@@ -252,11 +248,18 @@ void AliasSave(void)
       sprintf(temp, "F%d", i + 1);
 
       if (aliases[i].cr)
-	 strcpy(text, aliases[i].text);
+      {
+	      strcpy(text, aliases[i].text);
+         command = A_TEXTCOMMAND;
+      }
       else
-	 sprintf(text, "%s~", aliases[i].text);
-
+      {
+         sprintf(text, "%s~", aliases[i].text);
+         command = A_TEXTINSERT;
+      }
       WritePrivateProfileString(fullSection, temp, text, cinfo->ini_file);
+
+      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
    }
 
    strcpy(fullSection, command_section);
@@ -954,4 +957,19 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
    }
    
    return FALSE;
+}
+
+/****************************************************************************/
+/*
+ * UpdateKeyTables:  Update either the classic or custom keys interfaces table
+ * depending on the client configuration, then also update the inventory key
+ * table so that the hotkey aliases work when the user is in that child window
+ */
+static void UpdateKeyTables(int key, WORD command, char *text)
+{
+   if (gbClassicKeys) 
+      AliasSetKey(interface_key_table, key, KEY_NONE, command, text);
+   else
+      AliasSetKey(gCustomKeys, key, KEY_NONE, command, text);
+   AliasSetKey(inventory_key_table, key, KEY_NONE, command, text);
 }

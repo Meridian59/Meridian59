@@ -44,19 +44,13 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-
-  ProcessedM59AccountsBucket:
-    Type: 'AWS::S3::Bucket'
-    DeletionPolicy: Retain
-    Properties:
-      BucketName: 'meridian59-processed-accounts-archive'
-      VersioningConfiguration:
-        Status: 'Enabled'
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: "DeleteOldFiles"
+            Status: "Enabled"
+            ExpirationInDays: 90
+            Prefix: ""  # Apply to all objects in the bucket
+            NoncurrentVersionExpirationInDays: 90  # For versioned objects
 
   59AccountsDatabaseBucket:
     Type: 'AWS::S3::Bucket'
@@ -70,6 +64,26 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+
+  59AccountsAuditBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: 'meridian59-accounts-audit'
+      VersioningConfiguration:
+        Status: 'Enabled'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: "DeleteOldFiles"
+            Status: "Enabled"
+            ExpirationInDays: 90
+            Prefix: ""  # Apply to all objects in the bucket
+            NoncurrentVersionExpirationInDays: 90  # For versioned objects
 
 #####################    
 ## QUEUES         ###
@@ -483,16 +497,14 @@ Outputs:
     Export:
       Name: 'NewM59AccountsToProcessBucketName'
 
-
-  ProcessedM59AccountsBucketName:
-    Description: 'Name of the processed account bucket'
-    Value: !Ref ProcessedM59AccountsBucket
-    Export:
-      Name: 'ProcessedM59AccountsBucketNameName'
-
-
   59AccountsDatabaseBucketName:
     Description: 'Name of the new accounts to process bucket'
     Value: !Ref 59AccountsDatabaseBucket
     Export:
       Name: '59AccountsDatabaseBucket'
+
+  M59AccountsAuditBucketName:
+    Description: 'Name of the accounts audit bucket'
+    Value: !Ref 59AccountsAuditBucket
+    Export:
+      Name: 'M59AccountsAuditBucket'

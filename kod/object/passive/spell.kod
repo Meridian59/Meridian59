@@ -2130,7 +2130,7 @@ messages:
       if viSchool = SS_QOR
       {
          % Qor strength determined by day or night.
-         iPrimaryBonus =  (2 + Send(SYS,@GetHour));
+         iPrimaryBonus = 2 + (abs(Send(SYS,@GetHour)-12) * 2);
          % Secondary bonus comes from Karma.
          iSecondaryBonus = abs(Send(who,@GetKarma)/10);
 

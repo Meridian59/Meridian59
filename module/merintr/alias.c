@@ -81,24 +81,9 @@ static HWND hAliasDialog2 = NULL;
 
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-
+static void UpdateKeyTables(int key, WORD command, char *text);
 extern Bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
-
-/****************************************************************************/
-/*
- * UpdateKeyTables:  Update either the classic or custom keys interfaces table
- * depending on the client configuration, then also update the inventory key
- * table so that the hotkey aliases work when the user is in that child window
- */
-static void UpdateKeyTables(int key, WORD command, char *text)
-{
-   if (gbClassicKeys) 
-      AliasSetKey(interface_key_table, key, KEY_NONE, command, text);
-   else
-      AliasSetKey(gCustomKeys, key, KEY_NONE, command, text);
-   AliasSetKey(inventory_key_table, key, KEY_NONE, command, text);
-}
 
 /****************************************************************************/
 /*
@@ -972,4 +957,19 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
    }
    
    return FALSE;
+}
+
+/****************************************************************************/
+/*
+ * UpdateKeyTables:  Update either the classic or custom keys interfaces table
+ * depending on the client configuration, then also update the inventory key
+ * table so that the hotkey aliases work when the user is in that child window
+ */
+static void UpdateKeyTables(int key, WORD command, char *text)
+{
+   if (gbClassicKeys) 
+      AliasSetKey(interface_key_table, key, KEY_NONE, command, text);
+   else
+      AliasSetKey(gCustomKeys, key, KEY_NONE, command, text);
+   AliasSetKey(inventory_key_table, key, KEY_NONE, command, text);
 }

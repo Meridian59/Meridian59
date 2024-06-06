@@ -3252,14 +3252,23 @@ Bool D3DObjectLightingCalc(room_type *room, room_contents_node *pRNode, custom_b
 
 Bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 {
-	float	screenW, screenH;
-
-   // Scaling factor for UI elements (Scimtar/shield etc) using original magic number scaling.
-   // The original magic numbers used here were 1.75f (width) and 2.25f (height) for 800 by 600.
-   // We have now scaled both of these for 1080p from 800 by 600 (2.4 and 1.8 respectively).
-   // Giving us the final scaling factors of 4.15f and 4.05f.
-   screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * 4.15f);
-   screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * 4.05f);
+   // Scaling factor for UI elements (Scimtar/shield etc).
+   // Reference resolution and scaling factors for classic 800x600 resolution.
+   const float REFERENCE_WIDTH = 800.0f;
+   const float REFERENCE_HEIGHT = 600.0f;
+   const float REFERENCE_SCALE_W = 1.75f;
+   const float REFERENCE_SCALE_H = 2.25f;
+   
+   // Calculate the scaling factors based on the current resolution.
+   float scaleFactorWidth = gScreenWidth / REFERENCE_WIDTH;
+   float scaleFactorHeight = gScreenHeight / REFERENCE_HEIGHT;
+   
+   // Apply these scaling factors to the original reference scaling factors.
+   float scaleW = REFERENCE_SCALE_W * scaleFactorWidth;
+   float scaleH = REFERENCE_SCALE_H * scaleFactorHeight;
+   
+   float screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * scaleW);
+   float screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * scaleH);
 
    if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
    {

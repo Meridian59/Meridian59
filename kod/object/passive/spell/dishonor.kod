@@ -38,7 +38,7 @@ resources:
    MarkOfDishonor_no_self = \
       "You cannot cast mark of dishonor upon yourself; if you were truly "
       "dishonorable you would not be able to cast Shal'ille's spells."
-   MarkOfDishonor_no_target = "You may only cast %s upon the dishonorable."
+   MarkOfDishonor_vigor_affected = "%s%s appears more lethargic."
 
 classvars:
    vrName = MarkOfDishonor_name_rsc
@@ -140,52 +140,47 @@ messages:
          iKarma = Send(oTarget,@GetKarma);
          iVigorRestThresholdChange = 0;
 
-         % Shal'ille only takes vigor from evil people.
-         if iKarma >= 0
+         % Shal'ille only takes vigor from evil players
+         if iKarma < 0
          {
-            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_no_target,#parm1=vrName);
-            return false;
-         }
+            iVigorRestThreshold = Send(oTarget,@GetVigorRestThreshold);
 
-         iVigorRestThreshold = Send(oTarget,@GetVigorRestThreshold);
-
-         iVigorRestThresholdChange = iKarma * ( iVigorRestThreshold -
+            iVigorRestThresholdChange = iKarma * ( iVigorRestThreshold -
                                     DISHONOR_LOWEST_VIGOR_REST_THRESHOLD )
                                     / MAX_EVIL;
 
-         % Make sure we aren't going to lower target's VigorRestThreshold
-         % below 10, otherwise we could end up increasing the player's
-         % VigorRestThreshold (see player.kod for reason why)
-         if (iVigorRestThreshold - iVigorRestThresholdChange) < 10
-         {
+            % Make sure we aren't going to lower target's VigorRestThreshold
+            % below 10, otherwise we could end up increasing the player's
+            % VigorRestThreshold (see player.kod for reason why)
+            if (iVigorRestThreshold - iVigorRestThresholdChange) < 10
+            {
                iVigorRestThresholdChange = iVigorRestThreshold - 10;
+            }
+
+            Send(oTarget,@AddExertion,#amount=200000);
+            Send(oTarget,@SetVigorRestThreshold,
+               #amount=iVigorRestThreshold-iVigorRestThresholdChange);
+            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_vigor_affected,
+                 #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
          }
 
-         Send(oTarget,@AddExertion,#amount=200000);
-         Send(oTarget,@SetVigorRestThreshold,
-               #amount=iVigorRestThreshold-iVigorRestThresholdChange);
-
-         % Ensure player HPs aren't over their natural maximum.
+         % Ensure player HPs aren't over their natural maximum
          Post(oTarget,@NewHealth);
-      }
-
-      Send(oTarget,@StartEnchantment,#what=self,
+         Send(oTarget,@StartEnchantment,#what=self,
             #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
             #state=iVigorRestThresholdChange);
-      Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
-      Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
-            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
-      
-      % If being cast on a monster
-      if isClass(who,&Monster)
-      {
-         % EnterStateWait will make the monster stop aggro players and put
-         % them on wait-state waiting to aggro again
-         Send(oTarget,@EnterStateWait);
-         Send(oTarget,@StartEnchantment,#what=self,#time=Send(self,@GetDuration),#addicon=FALSE);
-         Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
-            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+         Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
       }
+      else
+      {
+         % Monster becomes enraged when casted upon
+         Post(oTarget,@TargetSwitch,#what=who,#iHatred=1000);
+         Post(oTarget,@EnterStateAttack);
+         Send(oTarget,@StartEnchantment,#what=self,#time=Send(self,@GetDuration));
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
+         #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
       propagate;
    }

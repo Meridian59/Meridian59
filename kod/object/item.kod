@@ -354,6 +354,11 @@ messages:
       return iFinal;
    }
 
+   GetItemAttributes()
+   {
+      return plItem_Attributes;
+   }
+
    GetMaxHits()
    {
       return piHits_init;

@@ -139,6 +139,10 @@ Section "Meridian 59 (required)"
   File "${SOURCEDIR}\waveplay.dll"
   File "${SOURCEDIR}\zlib1.dll"
 
+  File "${SOURCEDIR}\BsSndRpt.exe"
+  File "${SOURCEDIR}\BugSplat.dll"
+  File "${SOURCEDIR}\BugSplatRc.dll"
+
   ; Install font
   StrCpy $FONT_DIR $FONTS
   !insertmacro InstallTTFFont "${SOURCEDIR}\heidelb1.ttf"

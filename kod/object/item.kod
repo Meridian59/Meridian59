@@ -718,7 +718,7 @@ messages:
       if Send(self,@HasAnyAttribute)
       {
          for i in plItem_attributes
-         {  
+         {
             iNum = Send(self,@GetNumFromCompound,#compound=First(i));
             if ((Length(i) >= 2)   % Timers are 2nd in the sublist
                AND (Nth(i,2) <> $) % If timer has a value

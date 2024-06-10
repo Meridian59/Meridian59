@@ -141,69 +141,71 @@ messages:
    {
       local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute;
 
-
-
-      if (type = SAY_DM)
+      % Everything below this point involves checks for commands issued through the SAY_DM
+      % (dm <command here>) channel.
+      if (type <> SAY_DM)
       {
-         bShouldRevealAttribute = NOT StringContain(string, admin_create_unrevealed_itematt_command);
+         propagate;
+      }
+
+      bShouldRevealAttribute = NOT StringContain(string, admin_create_unrevealed_itematt_command);
       
-         % if bShouldRevealAttribute ends up FALSE, we've already passed the 
-         % dialog check for an attempt to create an item attribute.  Otherwise,
-         % check the dialog for the standard item attribute creation strings 
-         if (NOT bShouldRevealAttribute
-            OR StringContain(string,admin_create_itematt_command)
-            OR StringContain(string,"create itematt"))
-         {
-            %% Only works on weapons for now.
-            oWeapon = Send(self,@LookupPlayerWeapon);
+      % if bShouldRevealAttribute ends up FALSE, we've already passed the 
+      % dialog check for an attempt to create an item attribute.  Otherwise,
+      % check the dialog for the standard item attribute creation strings 
+      if (NOT bShouldRevealAttribute
+         OR StringContain(string,admin_create_itematt_command)
+         OR StringContain(string,"create itematt"))
+      {
+         %% Only works on weapons for now.
+         oWeapon = Send(self,@LookupPlayerWeapon);
          
-            if oWeapon= $
-            {   
-               Send(self,@MsgSendUser,#message_rsc=admin_need_weapon);   
+         if oWeapon= $
+         {   
+            Send(self,@MsgSendUser,#message_rsc=admin_need_weapon);   
 
-               return;  
-            }
-
-            for i in Send(SYS,@GetItemAtts)
-            {
-               if Send(i,@DMCreateItemAtt,#who=self,#string=string,
-                       #oWeapon=oWeapon)
-            {
-                  % Identify the newly-added attribute
-                  if (bShouldRevealAttribute)
-                  {
-                     lItemAttributes = Send(oWeapon, @GetItemAttributes);
-
-                     % The first attribute in the list of item attributes is the
-                     % most recently-added attribute.
-                     lAttribute = First(lItemAttributes);
-
-                     % The first value in an attribute list is a compound value,
-                     % where the ones digit represents revealed (odd) or 
-                     % unrevealed (even).
-                     if (lAttribute <> $ AND First(lAttribute) mod 2 = 0)
-                     {
-                        % This sets an unrevealed attribute's status to revealed.
-                        SetNth(lAttribute, 1, First(lAttribute) + 1);
-                     }
-                  }
-   
-                  if NOT pbStealth
-                  {
-                     Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
-                          #string=admin_made_itematt,#parm1=Send(self,@GetName),
-                          #parm2=Send(oWeapon,@GetDef),
-                          #parm3=Send(oWeapon,@GetName));
-                  }
-
-                  return;
-               }
-            }
-         
-            Send(self,@MsgSendUser,#message_rsc=admin_cant_create_itematt);   
-
-            return;
+            return;  
          }
+
+         for i in Send(SYS,@GetItemAtts)
+         {
+            if Send(i,@DMCreateItemAtt,#who=self,#string=string,
+               #oWeapon=oWeapon)
+            {
+               % Identify the newly-added attribute
+               if (bShouldRevealAttribute)
+               {
+                  lItemAttributes = Send(oWeapon, @GetItemAttributes);
+
+                  % The first attribute in the list of item attributes is the
+                  % most recently-added attribute.
+                  lAttribute = First(lItemAttributes);
+
+                  % The first value in an attribute list is a compound value,
+                  % where the ones digit represents revealed (odd) or 
+                  % unrevealed (even).
+                  if (lAttribute <> $ AND First(lAttribute) mod 2 = 0)
+                  {
+                     % This sets an unrevealed attribute's status to revealed.
+                     SetNth(lAttribute, 1, First(lAttribute) + 1);
+                  }
+               }
+   
+               if NOT pbStealth
+               {
+                  Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                     #string=admin_made_itematt,#parm1=Send(self,@GetName),
+                     #parm2=Send(oWeapon,@GetDef),
+                     #parm3=Send(oWeapon,@GetName));
+               }
+
+               return;
+            }
+         }
+         
+         Send(self,@MsgSendUser,#message_rsc=admin_cant_create_itematt);   
+
+         return;
       }
 
       if (StringContain(string,admin_relic_command)
@@ -355,7 +357,7 @@ messages:
       }
 
       %%% Code for placing an ornamental object
-      if type = SAY_DM AND StringContain(string, admin_create_ornamental_object)
+      if StringContain(string, admin_create_ornamental_object)
       {
          oObject = Create(&OrnamentalObject, #type=OO_DUNG);
          Send(oObject, @PlaceAt, #what=self);

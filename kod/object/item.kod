@@ -708,9 +708,7 @@ messages:
    "Checks plItem_attributes with GetRarityCountModifier().  "
    "Adds each attribute's rarity count to the total.  "
    "Returns a rarity grade based on the sum of the total and the "
-   "item's class-based viRarity value.  Ignores item attributes "
-   "that have a timer (except Artifice) since the item attribute "
-   "will eventually wear off."
+   "item's class-based viRarity value."
    {
       local i, iNum, oItemAtt, count;
       count = 0;
@@ -720,13 +718,6 @@ messages:
          for i in plItem_attributes
          {
             iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-            if ((Length(i) >= 2)   % Timers are 2nd in the sublist
-               AND (Nth(i,2) <> $) % If timer has a value
-               AND NOT(iNum = 12)) % If NOT IA_MISDIRECTION / Artifice
-            {
-               continue;
-            }
-
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
             count = count + Send(oItemAtt,@GetRarityCountModifier);
          }

@@ -7,6 +7,7 @@
 // Meridian is a registered trademark.
 #include "client.h"
 #include <unordered_map>
+#include <unordered_set>
 #include <chrono>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
@@ -29,6 +30,8 @@ inline float FovVertical(long height)
 {
 	return height / (float)(main_viewport_height) * (PI / 5.6f);
 }
+
+static const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
 
 // Update the pChunks animation values as a function of time.
 static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
@@ -322,7 +325,6 @@ d3d_render_chunk_new	*D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void					D3DRenderChunkInit(d3d_render_chunk_new *pChunk);
 d3d_render_packet_new	*D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
-float					D3DRenderObjectLightGetNearest(room_contents_node *pRNode);
 void					D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 							Draw3DParams *params, int flags);
 void					D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params,
@@ -426,7 +428,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_LIGHTING, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CLIPPING, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DITHERENABLE, FALSE);
@@ -479,8 +481,8 @@ HRESULT D3DRenderInit(HWND hWnd)
    
    IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
    IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
-   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);		
-   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAXANISOTROPY, gD3DDriverProfile.maxAnisotropy);      
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAXANISOTROPY, gD3DDriverProfile.maxAnisotropy);
 
 	/***************************************************************************/
 	/*                    VERTEX DECLARATIONS                                  */
@@ -760,10 +762,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 		SetZBias(gpD3DDevice, 0);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
-      IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-      IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
 
@@ -783,7 +785,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-      IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+      IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 	}
 
@@ -799,7 +801,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 
 		D3DRenderPoolReset(&gWorldPool, &D3DMaterialWorldPool);
 		D3DCacheSystemReset(&gWorldCacheSystem);
@@ -808,15 +810,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 
+		// restore the correct material and view matrices.
 		MatrixIdentity(&mat);
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 	}
 
-	// restore the correct view matrix
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 
 	// draw world
 	if (draw_world)
@@ -852,7 +853,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
     // finally, skybox is drawn again only where stencil = 1, with z test set to ALWAYS
     // zbias is used to try and cover up as much zfighting as possible.
     D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 254, D3DCMP_LESSEQUAL);
-    D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_ONE, D3DBLEND_ONE);
     D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE, D3DCMP_ALWAYS, 1, D3DSTENCILOP_REPLACE,
                                 D3DSTENCILOP_KEEP, D3DSTENCILOP_KEEP);
     
@@ -906,7 +906,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_ONE, D3DBLEND_ONE);
 		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE, D3DCMP_LESS, 0, D3DSTENCILOP_KEEP,
 			D3DSTENCILOP_KEEP, D3DSTENCILOP_KEEP);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 		if (gD3DDriverProfile.bFogEnable)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
@@ -926,7 +926,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 		if (gD3DDriverProfile.bFogEnable)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 
@@ -945,7 +945,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE, D3DCMP_LESS, 0, D3DSTENCILOP_KEEP,
 			D3DSTENCILOP_KEEP, D3DSTENCILOP_KEEP);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 		if (gD3DDriverProfile.bFogEnable)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
@@ -965,7 +965,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 
 		if (gD3DDriverProfile.bFogEnable)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
@@ -1035,6 +1035,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// draw objects
 	if (draw_objects)
 	{
+		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
+		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
 		timeObjects = timeGetTime();
 
 		if (config.draw_names)
@@ -1070,14 +1074,23 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
+		
+		// Render world objects
 		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, FALSE);
 		D3DRenderObjectsDraw(&gObjectPool, room, params, FALSE);
 		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, FALSE);
+
+		// Render translucent objects
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, TRANSLUCENT_FLAGS);
+		D3DRenderObjectsDraw(&gObjectPool, room, params, TRANSLUCENT_FLAGS);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, TRANSLUCENT_FLAGS);
+
 		D3DRenderProjectilesDrawNew(&gObjectPool, room, params);
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
 
 		SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+		gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
       
 		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
 			gSmallTextureSize, gSmallTextureSize);
@@ -1088,7 +1101,11 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
       
       IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
       IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
-      
+
+	  D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA,
+		  D3DBLEND_INVSRCALPHA);
+
+		// Render invisible world objects
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
 		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, OF_INVISIBLE);
@@ -1100,7 +1117,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		pRNode = GetRoomObjectById(player.id);
 
 		// Rendering of Personal Equipment (Shields, weapons etc)
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+		if ((GetDrawingEffect(pRNode->obj.flags) & OF_INVISIBLE) == OF_INVISIBLE)
 		{
          IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
          IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
@@ -1148,14 +1165,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	{
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 		D3DCacheSystemReset(&gObjectCacheSystem);
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 		D3DPostOverlayEffects(&gObjectPool);
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	}
 
 	// test blur
@@ -1183,8 +1200,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-      IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-      IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
 		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[t],
 			gSmallTextureSize, gSmallTextureSize);
@@ -3093,61 +3110,6 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 			return False;
 		}
 	}
-}
-
-float D3DRenderObjectLightGetNearest(room_contents_node *pRNode)
-{
-	int		numLights;
-	float	lastDistance, distance;
-
-	lastDistance = 0;
-
-	for (numLights = 0; numLights < gDLightCache.numLights; numLights++)
-	{
-		custom_xyz	vector;
-
-		vector.x = pRNode->motion.x - gDLightCache.dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - gDLightCache.dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - gDLightCache.dLights[numLights].xyz.z);
-
-		distance = (vector.x * vector.x) + (vector.y * vector.y) +
-			(vector.z * vector.z);
-		distance = (float)sqrt((double)distance);
-
-		distance /= (gDLightCache.dLights[numLights].xyzScale.x / 2.0f);
-
-		if (0 == numLights)
-			lastDistance = distance;
-		else if (distance < lastDistance)
-			lastDistance = distance;
-	}
-
-	for (numLights = 0; numLights < gDLightCacheDynamic.numLights; numLights++)
-	{
-		custom_xyz	vector;
-
-		vector.x = pRNode->motion.x - gDLightCacheDynamic.dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - gDLightCacheDynamic.dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - gDLightCacheDynamic.dLights[numLights].xyz.z);
-
-		distance = (vector.x * vector.x) + (vector.y * vector.y) +
-			(vector.z * vector.z);
-		distance = (float)sqrt((double)distance);
-
-		distance /= (gDLightCacheDynamic.dLights[numLights].xyzScale.x / 2.0f);
-
-		if (distance < lastDistance)
-			lastDistance = distance;
-	}
-
-	if (gDLightCache.numLights || gDLightCacheDynamic.numLights)
-	{
-		lastDistance = 1.0f - lastDistance;
-		lastDistance = max(0, lastDistance);
-//		lastDistance = 255 * lastDistance;
-	}
-
-	return lastDistance;
 }
 
 Bool D3DObjectLightingCalc(room_type *room, room_contents_node *pRNode, custom_bgra *bgra, DWORD flags)
@@ -6895,6 +6857,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 	// count of objects found at that location.
 	std::unordered_map<int64, int> depth_adjustment_map;
 
+	// drawdata[] may contain more than one entry with the same id.
+	// We need to keep track of those we've already processed to avoid duplicates.
+	std::unordered_set<int> processedIds;
 	// base objects
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
@@ -6909,14 +6874,32 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		if (pRNode->obj.id == player.id)
 			continue;
 
-		if (flags & OF_INVISIBLE)
+		if (processedIds.find(pRNode->obj.id) != processedIds.end())
+			continue;
+		processedIds.insert(pRNode->obj.id);
+
+		// Check for invisible objects
+		bool objInvisible = (pRNode->obj.flags & OF_INVISIBLE) == OF_INVISIBLE;
+		if((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE)
+			if (!objInvisible)
 				continue;
 		}
 		else
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (objInvisible)
+				continue;
+		}
+
+		// Check for translucent objects
+		bool objTranslucent = (pRNode->obj.flags & TRANSLUCENT_FLAGS) != 0;
+		if ((flags & TRANSLUCENT_FLAGS) != 0) {
+			if (!objTranslucent)
+				continue;
+		}
+		else 
+		{
+			if (objTranslucent)
 				continue;
 		}
 
@@ -6956,7 +6939,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 		pChunk->flags = pRNode->obj.flags;
 
-		if (flags & OF_INVISIBLE)
+		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
 			pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 			pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -7075,6 +7058,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_DITHERINVIS)
 			bgra.a = D3DRENDER_TRANS50;
 
+		if (bgra.a != 255)
+			D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+
 		for (i = 0; i < 4; i++)
 		{
 			pChunk->xyz[i].x = xyz[i].x;
@@ -7180,7 +7166,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 			center.z = topLeft.z;
 
-			if (flags & OF_INVISIBLE)
+			if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 			{
 				pChunk->st1[0].s = D3DRENDER_CLIP_TO_SCREEN_X(bottomRight.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[0].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
@@ -7267,7 +7253,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 			MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
-			if (flags & OF_INVISIBLE)
+			if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 			{
 				pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
 			}
@@ -7333,6 +7319,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			pChunk->indices[3] = 3;
 		}
 	}
+
 }
 
 void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params,
@@ -7376,7 +7363,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 		if (pRNode->obj.id == player.id)
 			continue;
 
-		if (flags & OF_INVISIBLE)
+		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
 			if (GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE)
 				continue;
@@ -7644,7 +7631,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 					zBias++;
 
-					if (flags & OF_INVISIBLE)
+					if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 					{
 						pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 						pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -7730,6 +7717,10 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						bgra.a = D3DRENDER_TRANS50;
 					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERINVIS >> 20))
 						bgra.a = D3DRENDER_TRANS50;
+
+					if (bgra.a != 255)
+						D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, 
+							D3DBLEND_INVSRCALPHA);
 
 					for (i = 0; i < 4; i++)
 					{
@@ -7829,7 +7820,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 						center.z = topLeft.z;
 
-						if (flags & OF_INVISIBLE)
+						if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 						{
 							pChunk->st1[0].s = D3DRENDER_CLIP_TO_SCREEN_X(bottomRight.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[0].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
@@ -7927,7 +7918,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 						MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
-						if (flags & OF_INVISIBLE)
+						if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 						{
 							pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
 						}
@@ -8442,7 +8433,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 			pChunk->numPrimitives = pChunk->numVertices - 2;
 			pChunk->xLat0 = xLat0;
 			pChunk->xLat1 = xLat1;
-			
+
 			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
 			{
 				pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
@@ -9604,16 +9595,16 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 	else if (GetDrawingEffect(pChunk->flags) == OF_DITHERINVIS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
-   
+
 	return TRUE;
 }
 
 Bool D3DMaterialEffectPool(d3d_render_pool_new *pPool)
 {
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-   IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-   IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-   IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);

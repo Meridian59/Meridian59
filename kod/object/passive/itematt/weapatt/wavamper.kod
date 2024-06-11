@@ -27,9 +27,8 @@ constants:
 resources:
 
    weapattVamper_desc = "  An unholy glow seems to suck all life from the air around the weapon."      
-   Vamper_dm = "Vamper"
-   Vamper_fail_use = "You are not ready to use %s%s."
-   Vamper_fail_use_karma = "You are not unholy enough to wield this despotic thing."
+   vamper_dm = "Vamper"
+   vamper_fail_use = "You are not ready to use %s%s."
    vamper_worked = "%s%s shudders as %s life is sucked away!"
    vamper_worked_target = "%s%s seems enervated as the metal of %s weapon touches your flesh!"
 
@@ -41,7 +40,7 @@ classvars:
    viItem_Att_Num = WA_Vamper
 
    viDifficulty = 10
-   vrDM_trigger = Vamper_dm
+   vrDM_trigger = vamper_dm
 
 properties:
   
@@ -58,31 +57,34 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
    ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
-   "Wielder has a 1% chance of stealing life from target with any hit."
+   "Wielder has a piEffect_percent chance of stealing life from target with any hit."
    {
+      local iStolen;
+
       if random(1,100) <= piEffect_percent
       {
-	 send(wielder,@GainHealth,#amount = bound(damage,0,8));
-    	 send(wielder, @MsgSendUser, #message_rsc = vamper_worked,
-	    #parm1=send(target,@getcapdef),#parm2=send(target,@GetName),
-	    #parm3=send(target,@GetHisHer));
-    	 send(target, @MsgSendUser, #message_rsc = vamper_worked_target,
-	    #parm1=send(wielder,@getcapdef),#parm2=send(wielder,@GetName),
-	    #parm3=send(wielder,@GetHisHer));
-
-
+         iStolen = bound(damage,0,8);
+         damage = damage + iStolen;
+         Send(wielder,@GainHealth,#amount=iStolen);
+         
+         Send(wielder,@MsgSendUser,#message_rsc=vamper_worked,
+            #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName),
+            #parm3=send(target,@GetHisHer));
+         Send(target,@MsgSendUser,#message_rsc=vamper_worked_target,
+            #parm1=send(wielder,@GetCapDef),#parm2=send(wielder,@GetName),
+            #parm3=send(wielder,@GetHisHer));
       }
-      return Damage;
+      return damage;
    }
 
 
    ItemReqUse(oItem=$,oPlayer=$)
-  {
+   {
       if send(oItem,@GetProf,#who=oPlayer) < 50      
       {
-	 send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use,
-	    #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
-	 return FALSE;      %% this person needs 50% in the weapon's proficiency to use
+         Send(oPlayer,@MsgSendUser,#message_rsc=vamper_fail_use,
+	        #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+         return FALSE;      %% this person needs 50% in the weapon's proficiency to use
       }
       return TRUE;
    }

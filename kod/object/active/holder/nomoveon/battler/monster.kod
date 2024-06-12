@@ -4185,7 +4185,7 @@ messages:
       if IsClass(what,&Armor)
          OR IsClass(what,&Helmet)
          OR IsClass(what,&Gauntlet)
-         OR IsClass(what,&necklace)
+         OR IsClass(what,&Necklace)
          OR IsClass(what,&Shield)
          OR IsClass(what,&Pants)
       {

@@ -35,6 +35,9 @@ resources:
 
    berserkerring_break_rsc = \
       "The berserker ring, having drunk its fill of battle, simply disappears!"
+
+   berserkerring_no_ranged_rsc = \
+      "You push the berserker ring's bloodlust out of your mind as you calm and focus on your distant target."
       
 classvars:
 
@@ -90,17 +93,34 @@ messages:
 
    ModifyHitRoll(who = $, what = $, hit_roll = $)
    {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
-         Send(poOwner,@TryUnuseItem,#what=self);
-         Send(self,@Delete);
+      local oWeapon;
 
-         return hit_roll;
-      }
+      oWeapon = send(who,@GetWeapon);
+
+      if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
+      {
+         piHits = piHits - 1;
+         if piHits <= 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
+            Send(poOwner,@TryUnuseItem,#what=self);
+            Send(self,@Delete);
+
+            return hit_roll;
+         }
       
-      return hit_roll - (Random(15,25) * 10);
+         return hit_roll - (Random(15,25) * 10);
+      }
+      else
+      {
+         if piHits = piHits_init
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_no_ranged_rsc);
+            piHits = piHits - 1;
+         }
+      }
+
+      return hit_roll;
    }
 
    ModifyDamage(who = $, what = $, damage = $)

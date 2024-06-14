@@ -6879,7 +6879,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		processedIds.insert(pRNode->obj.id);
 
 		// Check for invisible objects
-		bool objInvisible = (pRNode->obj.flags & OF_INVISIBLE) == OF_INVISIBLE;
+		bool objInvisible = (pRNode->obj.flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
 		if((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
 			if (!objInvisible)

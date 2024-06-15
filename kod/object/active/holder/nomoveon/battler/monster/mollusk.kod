@@ -96,7 +96,7 @@ messages:
       plResistances = [ [ -10, ATCK_WEAP_MAGIC ],
                         [  30, ATCK_WEAP_BLUDGEON ],
                         [  50, -ATCK_SPELL_QUAKE ],
-                        [ -25, -ATCK_SPELL_UNHOLY ]
+                        [ -5, -ATCK_SPELL_UNHOLY ]
                       ];
 
       piAnimation = ANIM_NONE;

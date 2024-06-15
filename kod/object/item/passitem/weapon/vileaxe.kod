@@ -20,9 +20,9 @@ resources:
    vileaxe_icon_rsc = axe.bgf
    vileaxe_desc_rsc = \
       "Inherently having unholy blessings, this axe is even more powerful "
-      "than the standard variation."
+      "than the standard variety."
 
-   vileaxe_expires = "Your vile axe disappears in a puff of foul smelling smoke!"
+   vileaxe_expires = "Your vile axe disappears in a puff of foul-smelling smoke!"
 
    vileaxe_window_overlay_rsc = povaxe.bgf
    vileaxe_player_overlay = axeov.bgf
@@ -56,7 +56,7 @@ classvars:
 properties:
 
    piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_SLASH
-   ptLongevity
+   ptLongevity % Used to keep track of time before expiration of the vile axe
    piItem_flags = PT_GRAY_TO_DGREEN
 
    piHitBonus = 0

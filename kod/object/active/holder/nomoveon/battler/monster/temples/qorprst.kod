@@ -119,13 +119,7 @@ messages:
    
    CanDoTeach(who=$,sid=0)
    {
-      if sid = SID_SWAP
-         AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
-      {
-         return FALSE;
-      }
-
-      if sid = SID_VILE_AXE
+      if sid = SID_SWAP OR sid = SID_VILE_AXE
          AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;

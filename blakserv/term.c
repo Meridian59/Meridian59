@@ -87,7 +87,7 @@ const char * GetTagName(val_type val)
    case TAG_INVALID : return "INVALID";
    default :
       eprintf("GetTagName warning, can't identify tag %i\n",val.v.tag);
-      sprintf(s,"%i",(int) val.v.tag);
+      snprintf(s, sizeof(s), "%i",(int) val.v.tag);
       return s;
    }
 }
@@ -105,12 +105,12 @@ const char * GetDataName(val_type val)
       r = GetResourceByID(val.v.data);
       if (r == NULL)
       {
-        sprintf(s,"%lli",(long long) val.v.data);
+        snprintf(s, sizeof(s), "%lli",(long long) val.v.data);
 	 return s;
       }
       if (r->resource_name == NULL)
       {
-	 sprintf(s,"%i",r->resource_id);
+        snprintf(s, sizeof(s), "%i",r->resource_id);
 	 return s;
       }
       return r->resource_name;
@@ -119,7 +119,7 @@ const char * GetDataName(val_type val)
       if (c == NULL)
       {
 	 eprintf("GetTagData error, can't find class id %i\n",val.v.data);
-	 sprintf(s,"%lli",(long long) val.v.data);
+	 snprintf(s, sizeof(s),"%lli",(long long) val.v.data);
 	 return s;
       }
       return c->class_name;
@@ -131,7 +131,7 @@ const char * GetDataName(val_type val)
       /* write as positive int so no problem reading in */
       int_val.v.tag = val.v.tag;
       int_val.v.data = val.v.data;
-      sprintf(s,"%lli",(long long) int_val.v.data);
+      snprintf(s, sizeof(s),"%lli",(long long) int_val.v.data);
       return s;
    }
 }

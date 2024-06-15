@@ -455,30 +455,46 @@ messages:
    
    KarmaCheck(who=$)
    {
+      local iSpellKarma, iUserKarma;
+
       if Send(who,@PlayerIsImmortal)
       {
          return TRUE;
       }
-   
-      if viSchool = SS_SHALILLE
-      {
-         if Send(who,@GetKarma) < (10*viSpell_level)
-         {
-            return FALSE;
-         }
-      }
-      else
-      {
-         if viSchool = SS_QOR
-         {
-            if Send(who,@GetKarma) > -(10*viSpell_level)
-            {
-               return FALSE;
-            }
-         }
-      }
       
+      iSpellKarma = Send(self, @GetRequiredKarma);
+      % Spell has no karma requirement
+      if (iSpellKarma = 0)
+      {
+         return TRUE;
+      }
+
+      iUserKarma = Send(who, @GetKarma);
+      if ((iSpellKarma > 0 AND iUserKarma < iSpellKarma)
+         OR (iSpellKarma < 0 AND iUserKarma > iSpellKarma))
+      {
+         return FALSE;
+      }
+
       return TRUE;
+   }
+
+   GetRequiredKarma()
+   "Returns the karma value required to use the spell, or 0 if there's no karma requirement."
+   {
+      local iKarma;
+
+      iKarma = 0;
+      if (viSchool = SS_QOR)
+      {
+         iKarma = viSpell_level * -10;
+      }
+      if (viSchool = SS_SHALILLE)
+      {
+         iKarma = viSpell_level * 10;
+      }
+
+      return iKarma;
    }
 
    IsRangedAttack()
@@ -2114,7 +2130,7 @@ messages:
       if viSchool = SS_QOR
       {
          % Qor strength determined by day or night.
-         iPrimaryBonus =  (2 + Send(SYS,@GetHour));
+         iPrimaryBonus = 2 + (abs(Send(SYS,@GetHour)-12) * 2);
          % Secondary bonus comes from Karma.
          iSecondaryBonus = abs(Send(who,@GetKarma)/10);
 

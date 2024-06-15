@@ -204,24 +204,23 @@ resources:
    user_blocked_send = "%s is ignoring messages from you."
 
    user_cant_suicide = \
-      "You just can't bear to kill yourself because you have too much to live "
-      "for.  You must abdicate the leadership of your guild before you can "
-      "commit suicide."
+      "You just can't bear to reroll. You must abdicate the leadership of "
+      "your guild before you can reroll."
 
    user_cant_suicide_justicar = \
-      "It would be unseemly for such a high official to take his own life!"
+      "It would be unseemly for such a high official to reroll!"
 
    user_cant_suicide_yet = \
-      "You can't seem to kill yourself, you feel you've only just begun this "
+      "You can't seem to reroll, you feel you've only just begun this "
       "life. Give it a day."
 
    user_cant_suicide_token = \
-      "You can't kill yourself now, not when you're the sacred guardian of a "
+      "You can't reroll now, not when you're the sacred guardian of a "
       "Meridian token!"
 
    user_cant_suicide_OOG = \
       "Somehow, even though you deserve it, you are unable to bear the "
-      "thought of killing yourself now."
+      "thought of rerolling now."
 
    user_no_seller = "You can't buy anything here."
 
@@ -247,7 +246,7 @@ resources:
    user_goto_jail = "You have been thrown in the Barloque Jail!"
    user_last_known = "the last known location of "
 
-   user_school_shallile = "School of Shal'ille"
+   user_school_shalille = "School of Shal'ille"
    user_school_qor = "School of Qor"
    user_school_kraanan = "School of Kraanan"
    user_school_faren = "School of Faren"
@@ -2322,7 +2321,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild;
+      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, rarity;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2415,6 +2414,14 @@ messages:
       }
 
       AddPacket(4,iFlags);
+
+      rarity = 0;
+      if IsClass(what,&Item)
+      {
+         rarity = Send(what,@GetRarity,#bSkip_Identify=bShow_All);
+      }
+
+      AddPacket(4, rarity);
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);
@@ -2735,7 +2742,7 @@ messages:
       }
       
       AddPacket(1,num_schools);
-      AddPacket(4,user_school_shallile);
+      AddPacket(4,user_school_shalille);
       AddPacket(4,user_school_qor);
       AddPacket(4,user_school_kraanan);
       AddPacket(4,user_school_faren);
@@ -3339,7 +3346,7 @@ messages:
 
    MidiSendUser(midi_rsc = $)
    {
-      if (midi_rsc <> $) AND (pbLogged_on)
+      if pbLogged_On
       {
          AddPacket(1,BP_PLAY_MIDI);
          if midi_rsc = $
@@ -3671,7 +3678,7 @@ messages:
                }
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  if iCan_hold < number
+                  if iCan_hold < iNumber
                   {
                      Send(self,@MsgSendUser,#message_rsc=user_got_some,
                         #parm1=Send(what,@GetName));

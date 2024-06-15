@@ -33,7 +33,7 @@ void LoadRsc(void)
 	{
 		for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
 		{
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_RSC), it->c_str());
+			snprintf(file_load_path, sizeof(file_load_path), "%s%s",ConfigStr(PATH_RSC), it->c_str());
 			
 			if (RscFileLoad(file_load_path,EachLoadRsc))
 				files_loaded++;

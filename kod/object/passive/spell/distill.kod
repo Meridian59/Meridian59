@@ -283,14 +283,12 @@ messages:
       %  point total to reward built characters.
       iPotionPower = Bound(((iAbility * (iSkill + 1)) / 100),20,99);
       iPotionPower = iPotionPower - bound((iLevel*15)
-                     - (Send(caster,@GetMaxHealth)-20),0,$);
+                     - (Send(caster,@GetBaseMaxHealth)-20),0,$);
       iPotionPower = iPotionPower + Random(-20,(iSpellPower/10));
       iPotionPower = Bound(iPotionPower,5,SPELLPOWER_MAXIMUM);
 
-      % Potion has duration (In days) determined by distill spellpower and
-      %  spell level.
-      iGoBadTime = Bound((iSpellPower / iLevel) / 3,1,7);
-      iGoBadTime = iGoBadTime * 24 * 60 * 60 * 60 * 1000;
+      % Potion never goes bad.
+      iGoBadTime = -1;
 
       oPotion = Create(cPotionClass,#labelled=TRUE,#iSpellPower=iPotionPower,
                        #gobadtime=igobadtime,#maker=caster,#ability=iSkill);

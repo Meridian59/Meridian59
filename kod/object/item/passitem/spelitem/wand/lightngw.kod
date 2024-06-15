@@ -24,7 +24,7 @@ classvars:
 
    vrLabelName = LightningWand_label_name_rsc
    vrIcon = LightningWand_icon_rsc
-   viSpellEffect = SID_LIGHTNING
+   viSpellEffect = SID_LIGHTNING_BOLT
    viColor = XLAT_TO_YELLOW
 
 properties:

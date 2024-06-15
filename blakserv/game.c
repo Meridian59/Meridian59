@@ -353,7 +353,7 @@ void GameWarnLowCredits(session_node *s)
    parm_node blak_parm[1];
    char text[100];
 
-   sprintf(text,"You have only %i credit%s remaining",s->account->credits/100,
+   snprintf(text, sizeof(text), "You have only %i credit%s remaining",s->account->credits/100,
 	   (s->account->credits/100 == 1) ? "" : "s");
 
    SetTempString(text, (int) strlen(text));
@@ -687,7 +687,7 @@ void GameDMCommand(session_node *s,int type,char *str)
 	 dprintf("DM Command GOROOM disabled for DMs; must be Admin.");
 	 break;
       }
-      sprintf(buf,"send object %i teleportto rid int %s",s->game->object_id,str);
+      snprintf(buf, sizeof(buf), "send object %i teleportto rid int %s",s->game->object_id,str);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;
@@ -697,7 +697,7 @@ void GameDMCommand(session_node *s,int type,char *str)
 	 break;
       if (ConfigInt(RIGHTS_GOPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;
-      sprintf(buf,"send object %i admingotoobject what object %s",s->game->object_id,str);
+      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %s",s->game->object_id,str);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;
@@ -707,7 +707,7 @@ void GameDMCommand(session_node *s,int type,char *str)
 	 break;
       if (ConfigInt(RIGHTS_GETPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;
-      sprintf(buf,"send object %s admingotoobject what object %i",str,s->game->object_id);
+      snprintf(buf, sizeof(buf), "send object %s admingotoobject what object %i",str,s->game->object_id);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;

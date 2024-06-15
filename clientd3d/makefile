@@ -22,7 +22,7 @@ LIBS =  \
 
 CFLAGS = $(CFLAGS) -DM59_RETAIL
 LIBS = $(LIBS) \
-       mss32.lib mss32midi.lib
+       mss32.lib mss32midi.lib bugsplat.lib
 
 !endif
 

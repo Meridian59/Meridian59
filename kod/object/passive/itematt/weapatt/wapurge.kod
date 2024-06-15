@@ -99,6 +99,10 @@ messages:
       return damage;
    }
 
+   GetRarityCountModifier()
+   {
+      return 1;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

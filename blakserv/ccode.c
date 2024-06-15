@@ -154,7 +154,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 		return NIL;
 	}
 	
-	sprintf(buf,"[%s] ",BlakodDebugInfo());
+	snprintf(buf, sizeof(buf), "[%s] ",BlakodDebugInfo());
 	
 	for (i=0;i<num_normal_parms;i++)
 	{
@@ -318,7 +318,7 @@ blak_int C_DumpStack(int object_id,local_var_type *local_vars,
 {
 	char buf[2000];
 
-	sprintf(buf,"Stack:\n%s\n",BlakodStackInfo());
+	snprintf(buf, sizeof(buf), "Stack:\n%s\n",BlakodStackInfo());
 	dprintf("%s",buf);
 
 	return NIL;

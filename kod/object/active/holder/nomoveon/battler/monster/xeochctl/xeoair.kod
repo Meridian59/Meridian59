@@ -73,7 +73,7 @@ messages:
 
       if iRandom < 60
       {
-         return [SID_LIGHTNING, 3];
+         return [SID_LIGHTNING_BOLT, 3];
       }
       else
       {
@@ -85,7 +85,7 @@ messages:
          {
             if (iRandom < 80) and (Send(self,@CanCastWallSpell))
             {
-               return [SID_LIGHTNINGWALL, 10];
+               return [SID_LIGHTNING_WALL, 10];
             }
             else
             {

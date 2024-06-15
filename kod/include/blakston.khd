@@ -40,6 +40,14 @@
    ACTIVE = 1
    PASSIVE = 2
 
+   %%% Item rarity constants used for presentation in client
+   ITEM_RARITY_GRADE_NORMAL        = 0
+   ITEM_RARITY_GRADE_UNCOMMON      = 1
+   ITEM_RARITY_GRADE_RARE          = 2
+   ITEM_RARITY_GRADE_LEGENDARY     = 4
+   ITEM_RARITY_GRADE_UNIDENTIFIED  = 100
+   ITEM_RARITY_GRADE_CURSED        = 200
+
    %%% Object flags for client
 
    % 0's are default value
@@ -1996,38 +2004,6 @@
    SID_CRYSTALIZE_MANA = 181
    SID_VILE_AXE = 182
 
-   % Depreciated spell IDs
-   SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT
-   SID_HEAL = 2                        % use SID_MINOR_HEAL
-   SID_NIGHTVISION = 4                 % use SID_NIGHT_VISION
-   SID_MAGICSHIELD = 12                % use SID_MAGIC_SHIELD
-   SID_SUPERSTRENGTH = 17              % use SID_SUPER_STRENGTH
-   SID_VAMPIRIC_TOUCH = 22             % use SID_VAMPIRIC_DRAIN
-   SID_FORCESOFLIGHT = 27              % use SID_FORCES_OF_LIGHT
-   SID_RESISTFIRE = 29                 % use SID_RESIST_FIRE
-   SID_REMOVECURSE = 31                % use SID_REMOVE_CURSE
-   SID_RESIST_GOOD = 35                % use SID_UNHOLY_RESOLVE
-   SID_CREATE_MACE = 56                % use SID_CREATE_WEAPON
-   SID_RESIST_EVIL = 62                % use SID_HOLY_RESOLVE
-   SID_CANNIBALIZE = 73                % use SID_NODEBURST
-   SID_SAND_STORM = 75                 % use SID_SANDSTORM
-   SID_SUMMON_REFLECTION = 99          % use SID_REFLECTION
-   SID_CREATE_SPIRITUAL_HAMMER = 100   % use SID_SPIRITUAL_HAMMER
-   SID_SUMMON_APPARITION = 101         % use SID_APPARITION
-   SID_DEATHLINK = 111                 % use SID_DEATH_LINK
-   SID_SHALBANE = 118                  % use SID_SHALLILEBANE
-   SID_WARPTIME = 122                  % use SID_WARP_TIME
-   SID_DETECT_INVIS = 123              % use SID_DETECT_INVISIBILITY
-   SID_PARALYZE = 127                  % use SID_GAZE_OF_THE_BASILISK
-   SID_SUMMON_WEB = 136                % use SID_SPIDER_WEB
-   SID_REFLECT = 138                   % use SID_DEFECT
-   SID_LIGHTNINGWALL = 140             % use SID_LIGHTNING_WALL
-   SID_BRAMBLEWALL = 141               % use SID_BRAMBLE_WALL
-   SID_SUMMON_POISON_FOG = 144         % use SID_POISON_FOG
-   SID_DEATHS_DOOR = 147               % use SID_SHADOW_RIFT
-   SID_SUMMON_FOG = 150                % use SID_FOG
-   SID_GLOW_WEAPON = 153               % use SID_GLOW
-
    % Boons
    SID_AGILITY_BOON = 190
    SID_AIM_BOON =     191
@@ -2155,7 +2131,7 @@
    PFLAG2_DETECT_GOOD      = 0x000004
    PFLAG2_DETECT_EVIL      = 0x000008
    PFLAG2_DETECT_INVIS     = 0x000010
-   PFLAG2_PARALYZED        = 0x000020
+   % Not currently used    = 0x000020 
    PFLAG2_HUNTED           = 0x000040
    % DM set only.  No chance of revenants.
    PFLAG2_NOHAUNT          = 0x000080

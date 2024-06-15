@@ -80,11 +80,6 @@ messages:
 		return FALSE;
 	}
 
-	ItemCanIdentify()
-	{
-		return FALSE;
-	}
-  
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%
 	%%	Maintenance Routines

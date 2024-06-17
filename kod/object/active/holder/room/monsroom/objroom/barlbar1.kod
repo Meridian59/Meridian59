@@ -24,11 +24,7 @@ resources:
    bar_leave_w1 = "~kMeidei yells at you, \"Thou dost not have my permission to use those stairs!\""
    bar_leave_w2 = "~kMeidei tells you, \"Pray thee, good fellow, do not ascend those stairs.\""
    bar_leave_w3 = "~kMeidei lectures you on how it is impolite to enter his private rooms without first getting permission."
-
-   bar_enter_qor_axe = "These ancient town sewers are quite literally flooded with odd looking amphibious creatures. "
-     "They say they are peaceful folk but they know how to fight! I don't trust them, stay clear of the deepest waters. "
-     "The Qor priestess is rumored to teach select disciples the secrets of a Vile Axe that is a powerful weapon against prey but you didn't hear it from me! "
-     "Now... how about a sampling my fine wines from Jaspers sweet grass prairies region, where the sun always shines?"
+   
 
 classvars:
 
@@ -63,8 +59,7 @@ messages:
       plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1, 14, 10,  5, 0 ],plObject_gen);
       plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1, 10, 8, 32, 54 ],plObject_gen);
       plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  6, 8, 20, 52 ],plObject_gen);
-      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  5, 10, 48, 48 ],plObject_gen);
-      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  8, 14, 32, 34 ],plObject_gen);
+      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  5, 10, 48, 48 ],plObject_gen);      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  8, 14, 32, 34 ],plObject_gen);
       plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1, 13, 14, 0, 32 ],plObject_gen);
 
       propagate;
@@ -167,23 +162,6 @@ messages:
            #new_row=15,#new_col=13,#fine_col=0,#fine_row=0);
 
       propagate;
-   }
-
-   UserEntered(who = $)
-   {
-
-     % todo: add small probability to send this message.
-     %for i in send(who,@GetSpellList) 
-     %{
-         %oSpell = send(SYS,@FindSpellByNum,#num=send(who,@decodespellnum,#compound=i)); 
-         % if send(oSpell,@GetSchool) = SS_QOR AND send(oSpell,@GetLevel) > 2 
-         % {
-               % todo: check if they don't already have the spell!
-               Send(poOwner,@SomeoneSaid,#what=self,#string=bar_enter_qor_axe, #type = SAY_RESOURCE);
-              % break;
-         % }
-    % }
-     propagate;
    }
 
 end

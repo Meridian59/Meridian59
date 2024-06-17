@@ -25,7 +25,7 @@ resources:
    vileaxe_expires = "Your vile axe disappears in a puff of foul-smelling smoke!"
 
    vileaxe_window_overlay_rsc = povaxe.bgf
-   vileaxe_player_overlay = axeov.bgf
+   vileaxe_player_overlay = vaxeov.bgf
 
 classvars:
    vrName = vileaxe_name_rsc

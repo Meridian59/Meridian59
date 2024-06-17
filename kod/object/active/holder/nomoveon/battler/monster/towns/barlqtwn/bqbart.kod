@@ -27,6 +27,11 @@ resources:
    BaBar_entry_welcome = "Hail %s%s, and welcome to my humble tavern!  Praise Shal'ille!"
    BaBar_unwanted_keep = "~k%s%s tells you, \"I thank thee for thy offering.  I shall distribute it to the poor and needy.~n~k\""
 
+   bar_enter_qor_axe = "These ancient town sewers are quite literally flooded with odd looking amphibious creatures. "
+     "They say they are peaceful folk but they know how to fight! I don't trust them, stay clear of the deepest waters. "
+     "The Qor priestess is rumored to teach select disciples the secrets of a Vile Axe that is a powerful weapon against prey but you didn't hear it from me! "
+     "Now... how about a sampling of my fine wines from Jaspers sweet grass prairies region, where the sun always shines?"
+
 
 classvars:
 
@@ -90,7 +95,7 @@ messages:
 
    UserEntered(who = $)
    {
-      local iFlags;
+      local iFlags,i,oSpell;
       
       if send(who,@GetHomeRoom) = RID_MAR_INN 
       {
@@ -113,11 +118,21 @@ messages:
          % don't say welcome to these guys
          propagate;
       }
-      
+
       Post(poOwner,@SomeoneSaid,#what = self, #string=BaBar_entry_welcome,
            #type = SAY_RESOURCE, 
            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
-           
+
+      for i in send(who,@GetSpellList) 
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=send(who,@decodespellnum,#compound=i)); 
+            %if send(oSpell,@GetSchool) = SS_QOR AND send(oSpell,@GetLevel) > 2 
+            %{
+               % todo: check if they don't already have the spell!
+            %   Send(poOwner,@SomeoneSaid,#what=self,#string=bar_enter_qor_axe, #type = SAY_RESOURCE);
+            %   break;
+            %}
+      }
       propagate;
    }
 

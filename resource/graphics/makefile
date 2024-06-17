@@ -17,11 +17,13 @@ BGFS = \
 	$(OUTDIR)\povmystsw.bgf \
 	$(OUTDIR)\splash.bgf \
 	$(OUTDIR)\moon.bgf \
-	$(OUTDIR)\vileaxe.bgf
+	$(OUTDIR)\vileaxe.bgf \
+	$(OUTDIR)\vaxeov.bgf 
 
 all: makedirs $(BGFS)
 
 {$(SOURCEDIR)}.bbg.bgf:
+	@echo "Running command: $(MAKEBGF) -o $@ @$<"
 	$(MAKEBGF) -o $@ @$<
 
 # How to make a BGF from a single bitmap file

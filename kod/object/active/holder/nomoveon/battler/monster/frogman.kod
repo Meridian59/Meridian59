@@ -42,7 +42,7 @@ classvars:
    vrDead_icon = frogman_dead_icon_rsc
    vrDead_name = frogman_dead_name_rsc
 
-   viTreasure_type = TID_MEDIUM_HUMAN
+   viTreasure_type = TID_FROGMAN
 
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_PIERCE

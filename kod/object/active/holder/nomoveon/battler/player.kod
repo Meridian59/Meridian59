@@ -4429,7 +4429,8 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, color_rsc, iDuration, iLimit;
+      local i, iResistance, oSoldierShield, color_rsc, iDuration, iLimit, iMyMaxHP,
+            iPKMaxHp;
 
       color_rsc = player_hit_color_none;
       
@@ -4498,6 +4499,27 @@ messages:
             AND Send(oSoldierShield,@IsEnemyAttack,#what=self,#damage=TRUE)
          {
             damage = (damage * 115)/100;
+         }
+         
+         % Diminish throwaway PK damage output, and diminish PK damage to low hp innocents        
+         if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+            AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         {
+            iMyMaxHP = Send(self,@GetBaseMaxHealth);
+            iPKMaxHP = Send(what,@GetBaseMaxHealth);
+            
+            if Send(Send(SYS, @GetSettings),@DiminishPKDamageToNewbiesEnabled)
+               AND iMyMaxHP < 100
+            {
+               damage = (damage * iMyMaxHP)/100;
+            }
+            if Send(Send(SYS, @GetSettings),@DiminishPKMuleDamageEnabled)
+               AND iPKMaxHP < 100
+            {
+               damage = (damage * iPKMaxHP)/100;
+            }
          }
       }
 

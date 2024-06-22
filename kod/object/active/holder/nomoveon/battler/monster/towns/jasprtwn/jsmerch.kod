@@ -122,7 +122,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood + 2);
       }
       
-      Send(poOwner,@SomeoneSaid,#what=self,#string=JsMer_entry_welcome,
+      Send(who,@SomeoneSaid,#what=self,#string=JsMer_entry_welcome,
            #type=SAY_RESOURCE);
               
       propagate;

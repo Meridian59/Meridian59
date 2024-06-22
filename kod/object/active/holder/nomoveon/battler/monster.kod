@@ -343,6 +343,10 @@ properties:
    piMinDamage = $
    piMaxDamage = $
 
+   
+   % Tracking the last time this monster welcomed a player
+   piLastWelcomeTime = 0
+
 messages:
 
    Constructor()
@@ -2656,6 +2660,7 @@ messages:
          }
       }
 
+      % here!
       % Maybe it was just a simple speech trigger. So, we check and parse.
       lActionList = $;
       lActionList = Send(oLibrary,@SearchSpeechLib,#mob=self,#string=string);
@@ -2972,6 +2977,9 @@ messages:
       local iHour, iMoodMod;
       iHour = Send(SYS,@GetHour);
 
+
+      Debug("Damping mood via AmbientLightChanged() for ",Send(self,@GetTrueName),"");
+
       if iHour = 6
       {
          Send(self,@AffectMood,#why=MOODMOD_DAWN);
@@ -3003,7 +3011,8 @@ messages:
    UserEntered(who = $)
    "A User just entered the room."
    {
-      return;
+      piLastWelcomeTime = GetTime();
+      propagate;
    }
 
    MonsterAttack(what = $)
@@ -5607,8 +5616,9 @@ messages:
 
    SetMood(new_mood = 0)
    {
+      Debug("SetMood ",Send(self,@GetTrueName)," was ",piMood,"");
       piMood = Bound(new_mood,-100,100);
-
+      Debug("SetMood ",Send(self,@GetTrueName)," now ",piMood,"");
       return;
    }
 
@@ -5826,6 +5836,11 @@ messages:
    GetProjectileIcon()
    {
       return;
+   }
+
+   GetLastWelcomeTime()
+   {
+      return piLastWelcomeTime;
    }
 
 

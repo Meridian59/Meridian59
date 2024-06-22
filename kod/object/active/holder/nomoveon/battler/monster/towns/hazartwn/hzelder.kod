@@ -35,9 +35,9 @@ classvars:
 
 messages:
 
-   UserEntered()
+   UserEntered(who = $)
    {
-      Post(poOwner,@someoneSaid,#what=self,#string=HzEl_entry_welcome,
+      Post(who,@someoneSaid,#what=self,#string=HzEl_entry_welcome,
           #type=SAY_RESOURCE);
       propagate;
    }

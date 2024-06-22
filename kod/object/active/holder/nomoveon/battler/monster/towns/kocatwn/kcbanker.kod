@@ -93,7 +93,7 @@ messages:
          % don't welcome these guys
          propagate;
       }
-      Send(poOwner,@SomeoneSaid,#what=self,#string=Kocatanbanker_entry_welcome,
+      Send(who,@SomeoneSaid,#what=self,#string=Kocatanbanker_entry_welcome,
              #type = SAY_RESOURCE);
 
       propagate;

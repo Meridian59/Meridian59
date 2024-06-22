@@ -70,11 +70,8 @@ messages:
    UserEntered(who = $)
    {
       local iFlags;
-      if random(1,10)
-      {
-	 Post(poOwner,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
+	 Post(who,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
              #type = SAY_RESOURCE);
-      }
       iFlags = send( who, @GetObjectFlags );
       if iFlags & PLAYER_PK
       {

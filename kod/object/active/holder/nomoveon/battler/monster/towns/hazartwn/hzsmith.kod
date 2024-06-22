@@ -58,7 +58,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what = self, #string=HzBla_entry_welcome,
+      Post(who,@SomeoneSaid,#what = self, #string=HzBla_entry_welcome,
          #type = SAY_RESOURCE, 
          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
       return;

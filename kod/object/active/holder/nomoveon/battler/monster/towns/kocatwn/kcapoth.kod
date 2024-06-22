@@ -111,7 +111,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanApoth_entry_welcome,
+      Send(who,@SomeoneSaid,#what=self,#string=KocatanApoth_entry_welcome,
            #type=SAY_RESOURCE);
              
       if Send(who,@GetAction) = UA_HAPPY

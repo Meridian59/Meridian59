@@ -3565,6 +3565,7 @@ messages:
       return;
    }
 
+   % Here we RecalcLightAndWeather which in turn adjusts AmbientLightChanged thus SetMood (mood dampening)!
    NewGameHour()
    "Recalculates the light and weather, based on piHour"
    {

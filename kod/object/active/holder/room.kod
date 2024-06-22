@@ -1729,6 +1729,8 @@ messages:
          
          Send(Send(SYS, @GetStatistics), @PlayerEnteredRoom,
               #oRoom = self, #who = what);
+
+         Send(self, @UserEntered, #who = what);
       }
 
       Send(self,@NewHoldObject,#what=what,
@@ -2419,6 +2421,29 @@ messages:
       }
 
       propagate;
+   }
+   
+   UserEntered(who = $)
+   {
+      local i,each_obj,lastWelcomeTime;
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj, &Monster)
+         {
+            lastWelcomeTime = Send(each_obj, @GetLastWelcomeTime);
+            if GetTime() > (lastWelcomeTime + 30)
+            {
+               Send(each_obj,@UserEntered,#who=who);
+            }
+
+            %if random(1,10) < 3
+            %{
+               
+            %}
+         }
+      }
+      return;
    }
 
    LastUserLeft()

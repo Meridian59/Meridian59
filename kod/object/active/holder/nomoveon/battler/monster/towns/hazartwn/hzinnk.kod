@@ -46,5 +46,13 @@ properties:
 messages:
 
 
+   UserEntered(who = $)
+   {
+      Send(who,@SomeoneSaid,#what=self,#string=HazarInnkeeper_welcome,
+              #type = SAY_RESOURCE);
+
+      propagate;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

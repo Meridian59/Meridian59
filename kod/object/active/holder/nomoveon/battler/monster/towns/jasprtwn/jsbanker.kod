@@ -104,7 +104,7 @@ messages:
       {
 	 send( self, @SetMood, #new_mood = piMood + 3 );
       }
-      Post(poOwner,@SomeoneSaid,#what = self, #string=JasperBanker_entry_welcome,
+      Post(who,@SomeoneSaid,#what = self, #string=JasperBanker_entry_welcome,
          #type = SAY_RESOURCE, 
          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
       return;

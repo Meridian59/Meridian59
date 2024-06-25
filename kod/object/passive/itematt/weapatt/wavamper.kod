@@ -57,17 +57,14 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
    ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
-   "Wielder has a 10% chance of stealing life from target with any hit."
+   "Wielder has a piEffect_percent chance of stealing life from target with any hit."
    {
       local iStolen;
 
       if random(1,100) <= piEffect_percent
       {
          iStolen = bound(damage,0,8);
-         iStolen = bound(iStolen,0,Send(target,@GetHealth)-1);
-         iStolen = Send(target,@AssessDamage,#what=wielder,#damage=iStolen,
-                      #report=FALSE,#report_resistance=FALSE,
-                      #aspell=-ATCK_SPELL_UNHOLY,#absolute=TRUE);
+         damage = damage + iStolen;
          Send(wielder,@GainHealth,#amount=iStolen);
          
          Send(wielder,@MsgSendUser,#message_rsc=vamper_worked,

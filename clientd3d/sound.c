@@ -325,6 +325,9 @@ void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, i
 #ifdef M59_MSS
 void SoundDone( HWND hwnd, WPARAM wParam, LPARAM lParam )
 {
+	if (GameGetState() == GAME_NONE)
+		return;
+
 	int i;
 	HSAMPLE hSample;
 	void *pSampleAddress;

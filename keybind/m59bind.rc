@@ -19,6 +19,252 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Brazilian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+142 DIALOGEX 0, 0, 64, 159
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "ALT",1028,17,38,30,14
+    PUSHBUTTON      "STRG",1029,17,58,30,14
+    PUSHBUTTON      "SHIFT",1030,17,78,30,14
+    PUSHBUTTON      "Qualquer",1031,17,98,30,14
+    PUSHBUTTON      "Nenhuma",1059,17,118,30,14
+    PUSHBUTTON      "Cancelar",2,7,138,50,14
+    CTEXT           "Escolha uma tecla",-1,7,7,50,26
+END
+
+136 DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Cursor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Sensibilidade horizontal",-1,111,26,84,8
+    LTEXT           "Sensibilidade vertical",-1,111,69,77,8
+    CONTROL         "",1013,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,107,38,68,17
+    CONTROL         "",1014,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,107,81,68,17
+    LTEXT           "999",1015,178,40,13,8
+    LTEXT           "999",1016,178,82,13,8
+    CONTROL         "Inverter direção do cursor",1001,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,67,10
+    GROUPBOX        "Controle do cursor",-1,95,13,112,97
+END
+
+135 DIALOG 96, 48, 110, 54
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Por favor, pressione um botão (do mouse)",-1,19,18,74,8
+    CTEXT           "Pressionar",1009,40,26,27,8
+END
+
+133 DIALOG 0, 0, 268, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Seleção de alvo"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Próximo alvo",-1,7,9,44,8
+    LTEXT           "Alvo anterior",-1,7,28,38,8
+    LTEXT           "Desmarcar alvo",-1,7,47,44,8
+    LTEXT           "Mirar em si mesmo",-1,7,64,40,18
+    LTEXT           "Tabulação para frente",-1,7,85,43,8
+    LTEXT           "Tabulação para trás",-1,7,104,54,8
+    PUSHBUTTON      "]",1007,65,7,55,14
+    PUSHBUTTON      "[",1008,65,26,55,14
+    PUSHBUTTON      "ESC",1009,65,45,55,14
+    PUSHBUTTON      "Q",1010,65,64,55,14
+    PUSHBUTTON      "TAB",1011,65,83,55,14
+    PUSHBUTTON      "TAB+SHIFT",1012,65,102,55,14
+    LTEXT           "Selecionar alvo",-1,145,7,37,18
+    PUSHBUTTON      "Mouse0",1014,186,7,55,14
+    PUSHBUTTON      "+",1057,123,7,14,14
+    PUSHBUTTON      "+",1051,123,26,14,14
+    PUSHBUTTON      "+",1052,123,45,14,14
+    PUSHBUTTON      "+",1053,123,64,14,14
+    PUSHBUTTON      "+",1054,123,83,14,14
+    PUSHBUTTON      "+",1055,123,102,14,14
+    PUSHBUTTON      "+",1056,244,7,14,14
+END
+
+132 DIALOG 0, 0, 296, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Movimentação"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Para frente",-1,7,9,28,8
+    LTEXT           "Para trás",-1,7,28,35,8
+    LTEXT           "Virar a esquerda",-1,7,47,44,8
+    LTEXT           "Virar a direita",-1,7,66,50,8
+    LTEXT           "Andar para a esquerda",-1,7,85,40,8
+    LTEXT           "Andar para a direita",-1,7,104,45,8
+    LTEXT           "Andar/Correr",-1,152,9,47,8
+    LTEXT           "Olhar para cima",-1,151,29,52,8
+    LTEXT           "Olhar para baixo",-1,151,47,54,8
+    LTEXT           "Olhar para frente",-1,151,66,49,8
+    LTEXT           "Virar para trás",-1,151,86,45,8
+    LTEXT           "Prender visão ao cursor",-1,151,100,36,8
+    LTEXT           "Alternar",-1,151,110,24,8
+    PUSHBUTTON      "E",1006,61,7,55,14
+    PUSHBUTTON      "D",1007,61,26,55,14
+    PUSHBUTTON      "LEFT",1008,61,45,55,14
+    PUSHBUTTON      "RIGHT",1009,61,64,55,14
+    PUSHBUTTON      "S",1010,61,83,55,14
+    PUSHBUTTON      "F",1011,61,102,55,14
+    PUSHBUTTON      "SHIFT",1012,211,7,55,14
+    PUSHBUTTON      "PAGEUP",1013,211,26,55,14
+    PUSHBUTTON      "PAGEDOWN",1014,211,45,55,14
+    PUSHBUTTON      "HOME",1015,211,64,55,14
+    PUSHBUTTON      "END",1016,211,83,55,14
+    PUSHBUTTON      "MOUSE1+ANY",1017,211,102,55,14
+    PUSHBUTTON      "+",1051,119,7,14,14
+    PUSHBUTTON      "+",1040,119,26,14,14
+    PUSHBUTTON      "+",1041,119,45,14,14
+    PUSHBUTTON      "+",1042,119,64,14,14
+    PUSHBUTTON      "+",1043,119,83,14,14
+    PUSHBUTTON      "+",1044,119,102,14,14
+    PUSHBUTTON      "+",1045,269,7,14,14
+    PUSHBUTTON      "+",1046,269,26,14,14
+    PUSHBUTTON      "+",1047,269,45,14,14
+    PUSHBUTTON      "+",1048,269,64,14,14
+    PUSHBUTTON      "+",1049,269,83,14,14
+    PUSHBUTTON      "+",1050,269,102,14,14
+END
+
+131 DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Mapa"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Mapa",-1,7,9,46,8
+    LTEXT           "Ampliar mapa",-1,7,28,46,8
+    LTEXT           "Reduzir mapa",-1,7,47,48,8
+    PUSHBUTTON      "M+SHIFT",1005,67,7,55,14
+    PUSHBUTTON      "ADD",1006,67,26,55,14
+    PUSHBUTTON      "SUBTRACT",1007,67,45,55,14
+    PUSHBUTTON      "+",1040,125,7,14,14
+    PUSHBUTTON      "+",1038,125,26,14,14
+    PUSHBUTTON      "+",1039,125,45,14,14
+END
+
+130 DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interações"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Abrir",-1,7,9,22,8
+    LTEXT           "Pegar itens",-1,7,28,28,8
+    LTEXT           "Ver",-1,7,47,37,8
+    LTEXT           "Examinar",-1,7,66,42,8
+    LTEXT           "Oferecer",-1,7,85,29,8
+    LTEXT           "Comprar",-1,7,104,24,8
+    LTEXT           "Depositar",-1,138,9,32,8
+    LTEXT           "Retirar",-1,138,28,38,8
+    LTEXT           "Atacar",-1,138,47,31,8
+    PUSHBUTTON      "space",1004,53,7,55,14
+    PUSHBUTTON      "g",1005,53,26,55,14
+    PUSHBUTTON      "l",1006,53,45,55,14
+    PUSHBUTTON      "mouse1",1007,53,64,55,14
+    PUSHBUTTON      "o",1008,53,83,55,14
+    PUSHBUTTON      "b",1009,53,102,55,14
+    PUSHBUTTON      "d",1010,179,7,55,14
+    PUSHBUTTON      "w",1011,179,26,55,14
+    PUSHBUTTON      "a",1013,179,45,55,14
+    PUSHBUTTON      "+",1038,111,7,14,14
+    PUSHBUTTON      "+",1030,111,26,14,14
+    PUSHBUTTON      "+",1031,111,45,14,14
+    PUSHBUTTON      "+",1032,111,64,14,14
+    PUSHBUTTON      "+",1033,111,83,14,14
+    PUSHBUTTON      "+",1034,111,102,14,14
+    PUSHBUTTON      "+",1035,237,7,14,14
+    PUSHBUTTON      "+",1036,237,26,14,14
+    PUSHBUTTON      "+",1037,237,45,14,14
+END
+
+129 DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Comunicação"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Falar",-1,7,9,22,8
+    LTEXT           "Usar campo de mensagens",-1,7,26,38,18
+    LTEXT           "Sussurrar",-1,7,47,27,8
+    LTEXT           "Gritar",-1,7,66,20,8
+    LTEXT           "Falar a todos",-1,7,83,33,16
+    LTEXT           "Quem está jogando?",-1,7,104,36,8
+    LTEXT           "Gestos",-1,148,9,21,8
+    PUSHBUTTON      "pagedown+shift",1002,48,7,55,14
+    PUSHBUTTON      "ENTER",1003,48,26,55,14
+    PUSHBUTTON      "T",1004,48,45,55,14
+    PUSHBUTTON      "Y",1005,48,64,55,14
+    PUSHBUTTON      "B",1006,48,83,55,14
+    PUSHBUTTON      "W+SHIFT",1007,48,102,55,14
+    PUSHBUTTON      "pagedown+shift",1008,171,7,55,14
+    PUSHBUTTON      "+",1029,106,7,14,14
+    PUSHBUTTON      "+",1030,106,26,14,14
+    PUSHBUTTON      "+",1031,106,45,14,14
+    PUSHBUTTON      "+",1032,106,64,14,14
+    PUSHBUTTON      "+",1033,106,83,14,14
+    PUSHBUTTON      "+",1034,106,102,14,14
+    PUSHBUTTON      "+",1035,229,7,14,14
+END
+
+102 DIALOGEX 0, 0, 458, 162
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Editor de comandos do Meridian 59"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",1,313,140,42,15
+    PUSHBUTTON      "Cancelar",2,361,141,42,14
+    GROUPBOX        "Opções",-1,314,13,137,102
+    CONTROL         "Configuração de teclas clássica",1000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,27,102,10
+    CONTROL         "Mensagem rápida",1002,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,41,72,10
+    CONTROL         "Sempre correr",1003,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,55,58,10
+    CONTROL         "Luzes dinâmicas",1004,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,83,95,10
+    CONTROL         "Renderização de software",1005,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,97,85,10
+    CONTROL         "Sempre atacar o alvo",1010,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,69,83,10
+    PUSHBUTTON      "Ajuda",1061,409,140,42,15
+    PUSHBUTTON      "Eficiência da GPU",1062,313,121,79,14
+END
+
+100 DIALOG 0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Sobre o m59bind"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,-1,11,17,20,20
+    LTEXT           "Editor de comandos do Meridian 59 - Versão 1.0",1,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Direitos reservados (C) 2024 Andrew e Christopher Kirmse.",2,40,25,144,8
+    DEFPUSHBUTTON   "OK",3,178,7,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    101                     "&Sobre o editor de comandos do Meridian 59"
+END
+
+#endif    // Portuguese (Brazilian) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)

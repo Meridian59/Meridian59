@@ -1115,31 +1115,32 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
 
 		pRNode = GetRoomObjectById(player.id);
-
-		// Rendering of Personal Equipment (Shields, weapons etc)
-		if ((GetDrawingEffect(pRNode->obj.flags) & OF_INVISIBLE) == OF_INVISIBLE)
+		if (pRNode!=nullptr)
 		{
-         IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-         IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
+			// Rendering of Personal Equipment (Shields, weapons etc)
+			if ((GetDrawingEffect(pRNode->obj.flags) & OF_INVISIBLE) == OF_INVISIBLE)
+			{
+			 IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+			 IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
 
-			D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
-			D3DCacheSystemReset(&gObjectCacheSystem);
-			D3DRenderPlayerOverlaysDraw(&gObjectPool, room, params);
-			D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
-			D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
+				D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
+				D3DCacheSystemReset(&gObjectCacheSystem);
+				D3DRenderPlayerOverlaysDraw(&gObjectPool, room, params);
+				D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
+				D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
+			}
+			else
+			{
+			 IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+			 IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+
+				D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
+				D3DCacheSystemReset(&gObjectCacheSystem);
+				D3DRenderPlayerOverlaysDraw(&gObjectPool, room, params);
+				D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
+				D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
+			}
 		}
-		else
-		{
-         IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-         IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
-
-			D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
-			D3DCacheSystemReset(&gObjectCacheSystem);
-			D3DRenderPlayerOverlaysDraw(&gObjectPool, room, params);
-			D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
-			D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
-		}
-
       IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
       IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
@@ -6876,7 +6877,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		processedIds.insert(pRNode->obj.id);
 
 		// Check for invisible objects
-		bool objInvisible = (pRNode->obj.flags & OF_INVISIBLE) == OF_INVISIBLE;
+		bool objInvisible = (pRNode->obj.flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
 		if((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
 			if (!objInvisible)

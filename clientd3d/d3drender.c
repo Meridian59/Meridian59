@@ -5277,9 +5277,6 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 
 void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, room_type* room, Draw3DParams* params)
 {
-	room_contents_node* player_obj;
-	player_obj = GetRoomObjectById(player.id);
-
 	for (list_type list = room->bg_overlays; list != NULL; list = list->next)
 	{
 		BackgroundOverlay* overlay = (BackgroundOverlay*)(list->data);

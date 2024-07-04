@@ -309,7 +309,8 @@ int GetMSDrawFrame(void)
  */
 void RedrawForce(void)
 {
-   if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
+   auto state = GameGetState();
+   if (state == GAME_INVALID || state == GAME_INIT || IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
    {
       need_redraw = False;

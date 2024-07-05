@@ -107,6 +107,28 @@ Bool D3DDriverProfileInit(void)
 	gPresentParam.AutoDepthStencilFormat = D3DFMT_D24S8;
 	gPresentParam.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 
+	// Push the quality up even higher with multisampling
+	if (!config.gpuEfficiency)
+	{
+		// Test for multisample support
+		HRESULT hr;
+		DWORD maxQualityLevels = 0;
+
+		hr = IDirect3D9_CheckDeviceMultiSampleType(
+			gpD3D,
+			D3DADAPTER_DEFAULT,
+			D3DDEVTYPE_HAL,
+			gPresentParam.BackBufferFormat,
+			gPresentParam.Windowed,
+			D3DMULTISAMPLE_16_SAMPLES,
+			&maxQualityLevels);
+
+		if (SUCCEEDED(hr)) {
+			gPresentParam.MultiSampleType = D3DMULTISAMPLE_16_SAMPLES;
+			gPresentParam.MultiSampleQuality = maxQualityLevels - 1;
+		}
+	}
+
 	// first try hardware vertex processing
 	error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
                                    hMain, D3DCREATE_HARDWARE_VERTEXPROCESSING,

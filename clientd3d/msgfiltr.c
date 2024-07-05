@@ -127,11 +127,16 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
        debug(("WHOM_UPDATE NULL user\n"));
        return FALSE;
      }
+     if (!hList)
+     { 
+       debug(("Failed to get handle for IDC_USERLIST\n"));
+       return FALSE;
+     }
      debug(("WHOM_UPDATE, %s user %i\n", (LPCTSTR)(bAdded?"adding":"removing"), pUser->id));
      if (bAdded)
      {
        i = ItemListAddItem(hList, pUser, -1, False);
-       if (!IsUserInIgnoreList(pUser->name_res))
+       if (i != LB_ERR && !IsUserInIgnoreList(pUser->name_res))
 	       ListBox_SetSel(hList, TRUE, i);
      }
      else

@@ -356,7 +356,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   if obj == NULL
+   if (obj == NULL)
       return;
 
    hColorBg = GetBrush(

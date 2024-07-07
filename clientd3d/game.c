@@ -230,7 +230,7 @@ void SetPlayerRemoteView(ID objID, int flags, int height, BYTE light)
       if (flags & REMOTE_VIEW_VALID_HEIGHT)
 	 player.viewHeight = floor + height;
       else if (flags & REMOTE_VIEW_TOP)
-	 player.viewHeight = viewObject->motion.z - 10;
+	 player.viewHeight = viewObject->motion.z + objHeight;
       else if (flags & REMOTE_VIEW_BOTTOM)
 	 player.viewHeight = viewObject->motion.z;
       else if (flags & REMOTE_VIEW_MID)

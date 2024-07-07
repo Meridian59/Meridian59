@@ -13,6 +13,8 @@
 #include "mailnews.h"
 #include "string.h"
 
+#define MAX_HEADER_TEXT 256 // Named constant for buffer size
+
 HWND hReadNewsDialog = NULL;
 
 /* Stuff for making raw times into human-readable times */
@@ -27,9 +29,11 @@ static list_type new_articles = NULL;   /* Build up new articles arriving from s
 static RECT  dlg_rect;        // Screen position of dialog
 
 // Constants for news dialog columns
-#define COL_TITLE 0x0000
-#define COL_POSTER 0x0001
-#define COL_TIME 0x0002
+typedef enum {
+    COL_TITLE = 0,
+    COL_POSTER = 1,
+    COL_TIME = 2
+} NewsColumns;
 
 // Constants used to track sorted column
 static int currentSortColumn = -1;
@@ -44,9 +48,9 @@ static ChildPlacement newsread_controls[] = {
 /* local function prototypes */
 static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserReplyNewsMail(NewsArticle *article);
-void OnColumnClick(LPNMLISTVIEW pLVInfo);
-int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
-void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending);
+static void OnColumnClick(LPNMLISTVIEW pLVInfo);
+static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending);
 
 /****************************************************************************/
 /*
@@ -407,7 +411,7 @@ Bool DateFromSeconds(long seconds, char *str)
    if (t == NULL)
       return False;
 
-   sprintf(str, "%s %s %.2ld, %.4ld %.2ld:%.2ld", 
+   snprintf(str, 50, "%s %s %.2ld, %.4ld %.2ld:%.2ld", 
 	   GetString(hInst, weekdays[t->tm_wday]), GetString(hInst, months[t->tm_mon]), 
 	   t->tm_mday, t->tm_year + 1900, t->tm_hour, t->tm_min);
    return True;
@@ -436,6 +440,31 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
     ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
 }
 
+/****************************************************************************/
+/*
+ * CompareListItems:  Comparison function for sorting items in a list view
+ *   control. This function is used by `ListView_SortItems` to compare two 
+ *   items and determine their sort order based on the specified column and 
+ *   sort direction. It:
+ * 
+ *   - Determines the sort direction and column index from `lParamSort`.
+ *   - Casts `lParam1` and `lParam2` to `NewsArticle` pointers.
+ *   - Constructs stable comparison keys by appending the article index to 
+ *     the title and poster strings.
+ *   - Compares the items based on the specified column and sort direction:
+ *     - `COL_TITLE`: Compares titles (case-insensitive).
+ *     - `COL_POSTER`: Compares posters (case-insensitive).
+ *     - `COL_TIME`: Compares times.
+ * 
+ * Parameters:
+ *   lParam1 - Pointer to the first item (cast to `LPARAM`).
+ *   lParam2 - Pointer to the second item (cast to `LPARAM`).
+ *   lParamSort - Sort parameter which indicates the column to sort by and 
+ *     the sort direction. A positive value indicates ascending order, and a 
+ *     negative value indicates descending order. The absolute value of 
+ *     `lParamSort` indicates the column index (1-based).
+ *
+ */
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
    BOOL bSortAscending = (lParamSort > 0);
@@ -446,66 +475,73 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 
    // `ListView_SortItems` is unstable, so we append the article index for stability
    char title1[MAX_SUBJECT + 10];
-   sprintf(title1, "%s %d", article1->title, article1->num);
+   snprintf(title1, sizeof(title1), "%s %d", article1->title, article1->num);
    char title2[MAX_SUBJECT + 10];
-   sprintf(title2, "%s %d", article2->title, article2->num);
+   snprintf(title2, sizeof(title2), "%s %d", article2->title, article2->num);
 
    char poster1[MAXUSERNAME + 10];
-   sprintf(poster1, "%s %d", article1->poster, article1->num);
+   snprintf(poster1, sizeof(poster1), "%s %d", article1->poster, article1->num);
    char poster2[MAXUSERNAME + 10];
-   sprintf(poster2, "%s %d", article2->poster, article2->num);
+   snprintf(poster2, sizeof(poster2), "%s %d", article2->poster, article2->num);
 
    switch (nColumn)
    {
    case COL_TITLE:
-      if (bSortAscending)
-         return stricmp(title1, title2);
-      return stricmp(title2, title1);
+      return bSortAscending ? stricmp(title1, title2) : stricmp(title2, title1);
    case COL_POSTER:
-      if (bSortAscending)
-         return stricmp(poster1, poster2);
-      return stricmp(poster2, poster1);
+      return bSortAscending ? stricmp(poster1, poster2) : stricmp(poster2, poster1);
    case COL_TIME:
-      if (bSortAscending)
-         return article1->time - article2->time;
-      return article2->time - article1->time;
+      return bSortAscending ? article1->time - article2->time : article2->time - article1->time;
    }
 
    return 0;
 }
 
+/****************************************************************************/
+/*
+ * UpdateColumnHeaders:  Given a list view handle, the index of the sorted 
+ *   column, and a boolean indicating the sort direction, update the header 
+ *   text of the list view columns to indicate the sorted column with a '+' 
+ *   or '-' sign.
+ *
+ * Parameters:
+ *   hListView - Handle to the list view control.
+ *   sortedColumn - Index of the column that is sorted.
+ *   sortAscending - Boolean indicating if the sort direction is ascending 
+ *     (TRUE) or descending (FALSE).
+ */
 void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending)
 {
-    HWND hHeader = ListView_GetHeader(hListView);
-    int columnCount = Header_GetItemCount(hHeader);
+   // Get the handle to the header control associated with the list view
+   HWND hHeader = ListView_GetHeader(hListView);
+   // Get the number of columns in the header
+   int columnCount = Header_GetItemCount(hHeader);
 
-    for (int i = 0; i < columnCount; i++)
-    {
-        TCHAR text[256];
-        HDITEM hdi = {0};
-        hdi.mask = HDI_TEXT;
-        hdi.pszText = text;
-        hdi.cchTextMax = sizeof(text)/sizeof(text[0]);
+   for (int i = 0; i < columnCount; i++)
+   {
+      char text[MAX_HEADER_TEXT]; // Buffer to hold the header text
+      HDITEM hdi = {0}; // Initialize HDITEM structure
+      hdi.mask = HDI_TEXT; // Indicate interest in the text of the header item
+      hdi.pszText = text; // Set the buffer to receive the text
+      hdi.cchTextMax = sizeof(text) / sizeof(text[0]); // Set buffer size
 
-        Header_GetItem(hHeader, i, &hdi);
+      // Get the header item at the current index
+      Header_GetItem(hHeader, i, &hdi);
 
-        // remove any existing '+' or '-' from the text
-        TCHAR *plusPos = _tcschr(text, '+');
-        if (!plusPos) plusPos = _tcschr(text, '-');
-        if (plusPos)
-            *plusPos = '\0';
+      // Remove any existing '+' or '-' from the text
+      char *pos = strpbrk(text, "+-");
+      // Null-terminate the string to remove the character
+      if (pos) *pos = '\0';
 
-        // add '+' or '-' to the sorted column
-        if (i == sortedColumn)
-        {
-            if (sortAscending)
-                _stprintf_s(text, sizeof(text)/sizeof(text[0]), _T("%s +"), text);
-            else
-                _stprintf_s(text, sizeof(text)/sizeof(text[0]), _T("%s -"), text);
-        }
-
-        hdi.mask = HDI_TEXT;
-        hdi.pszText = text;
-        Header_SetItem(hHeader, i, &hdi);
-    }
+      // Add '+' or '-' to the sorted column
+      if (i == sortedColumn)
+      {
+         snprintf(text, sizeof(text), "%s %c", text, sortAscending ? '+' : '-');
+      }
+      
+      // Set the header item at the current index with the updated text
+      hdi.mask = HDI_TEXT;
+      hdi.pszText = text;
+      Header_SetItem(hHeader, i, &hdi);
+   }
 }

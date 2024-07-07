@@ -31,6 +31,10 @@ static RECT dlg_rect; // Screen position of dialog
 #define COL_POSTER 0x0001
 #define COL_TIME 0x0002
 
+// Constants used to track sorted column
+static int currentSortColumn = -1;
+static BOOL currentSortAscending = TRUE;
+
 static ChildPlacement newsread_controls[] = {
     {IDC_NEWSEDIT, RDI_ALL},
     {IDC_NEWSLIST, RDI_RIGHT | RDI_LEFT | RDI_TOP},
@@ -42,6 +46,7 @@ static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wPara
 static void UserReplyNewsMail(NewsArticle *article);
 void OnColumnClick(LPNMLISTVIEW pLVInfo);
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending);
 
 /****************************************************************************/
 /*
@@ -264,7 +269,6 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       if ((((LPNMHDR) lParam)->idFrom == IDC_NEWSLIST) &&
           (((LPNMHDR) lParam)->code == LVN_COLUMNCLICK))
          OnColumnClick((LPNMLISTVIEW) lParam);
-      return TRUE;
 
       if (wParam != IDC_NEWSLIST)
          return TRUE;
@@ -411,25 +415,25 @@ Bool DateFromSeconds(long seconds, char *str)
 
 void OnColumnClick(LPNMLISTVIEW pLVInfo)
 {
-   static int nSortColumn = 0;
-   static BOOL bSortAscending = TRUE;
-   LPARAM lParamSort = 1 + nSortColumn;
+    int nSortColumn = pLVInfo->iSubItem;
+    BOOL bSortAscending = TRUE;
 
-   // get new sort parameters
-   if (pLVInfo->iSubItem == nSortColumn)
-      bSortAscending = !bSortAscending;
-   else
-   {
-      nSortColumn = pLVInfo->iSubItem;
-      bSortAscending = TRUE;
-   }
+    if (nSortColumn == currentSortColumn) {
+        // Toggle sort direction if the same column is clicked again
+        currentSortAscending = !currentSortAscending;
+    } else {
+        // Set ascending order for new column
+        currentSortColumn = nSortColumn;
+        currentSortAscending = TRUE;
+    }
 
-   // combine sort info into a single value we can send to our sort function
-   if (!bSortAscending)
-      lParamSort = -lParamSort;
+    LPARAM lParamSort = (currentSortAscending ? 1 : -1) * (currentSortColumn + 1);
 
-   // sort list
-   ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
+    // Update header text
+    UpdateColumnHeaders(pLVInfo->hdr.hwndFrom, currentSortColumn, currentSortAscending);
+
+    // Sort list
+    ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
 }
 
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
@@ -468,4 +472,40 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
    }
 
    return 0;
+}
+
+void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending)
+{
+    HWND hHeader = ListView_GetHeader(hListView);
+    int columnCount = Header_GetItemCount(hHeader);
+
+    for (int i = 0; i < columnCount; i++)
+    {
+        TCHAR text[256];
+        HDITEM hdi = {0};
+        hdi.mask = HDI_TEXT;
+        hdi.pszText = text;
+        hdi.cchTextMax = sizeof(text)/sizeof(text[0]);
+
+        Header_GetItem(hHeader, i, &hdi);
+
+        // remove any existing '+' or '-' from the text
+        TCHAR *plusPos = _tcschr(text, '+');
+        if (!plusPos) plusPos = _tcschr(text, '-');
+        if (plusPos)
+            *plusPos = '\0';
+
+        // add '+' or '-' to the sorted column
+        if (i == sortedColumn)
+        {
+            if (sortAscending)
+                _stprintf_s(text, sizeof(text)/sizeof(text[0]), _T("%s +"), text);
+            else
+                _stprintf_s(text, sizeof(text)/sizeof(text[0]), _T("%s -"), text);
+        }
+
+        hdi.mask = HDI_TEXT;
+        hdi.pszText = text;
+        Header_SetItem(hHeader, i, &hdi);
+    }
 }

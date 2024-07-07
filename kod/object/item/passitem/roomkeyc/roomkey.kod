@@ -19,7 +19,12 @@ resources:
    RoomKey_name_rsc = "gold room key"
    RoomKey_icon_rsc = roomkey.bgf
    RoomKey_desc_rsc = \
-      "This solid gold key bears an inscription which reads:\n"
+      "This finely-crafted golden key is used to gain "
+      "access to a private room at an inn."
+   RoomKey_appendspecial_rsc = "There's currently "
+   RoomKey_appendspecial_singular_rsc = " copy "
+   RoomKey_appendspecial_plural_rsc = " copies " 
+   RoomKey_appendspecial2_rsc = "of this key in circulation."
 
    RoomKey_vanishes = \
       "Your gold room key dissolves into a strange gold liquid, then "
@@ -47,28 +52,111 @@ properties:
    plCopies = $
 
 messages:
+   GetMasterKey()
+   "This IS the master key!"
+   {
+      return self;
+   }
+
+   AppendSpecial()
+   "Appends the number of key copies in ciculation to the key's description."
+   {
+      local iCopyCount;
+
+      iCopyCount = Send(self, @NumberOfCopies);
+      % If there are no copies of this key in circulation, there's no reason to
+      % add text related to this statistic to the description.
+      if iCopyCount < 1
+      {
+         return;
+      }
+
+      AppendTempString(RoomKey_appendspecial_rsc);
+      AppendTempString(iCopyCount);
+      if iCopyCount = 1
+      {
+         AppendTempString(RoomKey_appendspecial_singular_rsc);
+      }
+      else
+      {
+         AppendTempString(RoomKey_appendspecial_plural_rsc);
+      }
+      AppendTempString(RoomKey_appendspecial2_rsc);
+
+      return;
+   }
+
+   UserLogOn()
+   {
+      local oRoom;
+
+      oRoom = Send(SYS, @FindRoomByNum, #num=piRID);
+      if oRoom <> $
+      {
+         Send(oRoom, @RenterLoggedOn);
+      }
+
+      propagate;
+   }
+
+
 
    OriginalDeleted()
    {
       return;
    }
 
-   Copy()
+   Copy(bSecure=FALSE)
    {
       local oCopy;
       
-      oCopy = Create(&RoomKeyCopy,#iRID=piRID);
+      if bSecure
+      {
+         oCopy = Create(&RoomKeySecureCopy, #iRID=piRID);
+      }
+      else
+      {
+         oCopy = Create(&RoomKeyCopy, #iRID=piRID);
+      }
+
       plCopies = cons(oCopy,plCopies);
       
       return oCopy;
    }
 
-   RoomExpired(iRID=$)
+   NumberOfCopies()
    {
-      if (iRID = $) or (iRID <> piRID)
+      return Length(plCopies);
+   }
+
+   RemoveCopy(what=$)
+   "Removes the specified key copy from the list of current key copies."
+   {
+      if (plCopies <> $)
       {
-         return;
+         plCopies = DelListElem(plCopies, what);
       }
+
+      return;
+   }
+
+   DeleteCopies()
+   {
+      local oKeyCopy;
+      for oKeyCopy in plCopies
+      {
+         % Despite the name, OriginalDeleted just deletes the copy and
+         % informs the user if they're online.
+         Send(oKeyCopy, @OriginalDeleted);
+      }
+
+      plCopies = $;
+
+      return;
+   }
+
+   RoomExpired()
+   {
       if (poOwner <> $) and isClass(poOwner,&User)
       {
          if Send(poOwner,@IsLoggedOn)
@@ -97,7 +185,7 @@ messages:
       
       for i in plCopies
       {
-         Send(i,@OriginalDeleted);
+         Send(i, @OriginalDeleted);
       }
       
       plCopies = $;
@@ -110,6 +198,12 @@ messages:
       }
       
       propagate;
+   }
+
+   IsKeyCopy()
+   "As this is the original/master key to a room, this should be FALSE."
+   {
+      return FALSE;
    }
 
    CanShatter()

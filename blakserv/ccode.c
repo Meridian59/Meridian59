@@ -30,7 +30,7 @@ const char* stristr(const char* pSource, const char* pSearch)
    if (!pSource || !pSearch || !*pSearch)
       return NULL;
 	
-   int nSearch = strlen(pSearch);
+   size_t nSearch = strlen(pSearch);
    // Don't search past the end of pSource
    const char *pEnd = pSource + strlen(pSource) - nSearch;
    while (pSource <= pEnd)
@@ -154,7 +154,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 		return NIL;
 	}
 	
-	sprintf(buf,"[%s] ",BlakodDebugInfo());
+	snprintf(buf, sizeof(buf), "[%s] ",BlakodDebugInfo());
 	
 	for (i=0;i<num_normal_parms;i++)
 	{
@@ -204,7 +204,6 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 			
 		case TAG_STRING :
 			{
-				int lenBuffer, lenString;
 				string_node *snod = GetStringByID(each_val.v.data);
 				
 				if (snod == NULL)
@@ -212,8 +211,8 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 					bprintf("C_Debug can't find string %i\n",each_val.v.data);
 					return NIL;
 				}
-				lenString = snod->len_data;
-				lenBuffer = strlen(buf);
+				int lenString = snod->len_data;
+				size_t lenBuffer = strlen(buf);
 				memcpy(buf + lenBuffer,snod->data,snod->len_data);
 				*(buf + lenBuffer + snod->len_data) = 0;
 			}
@@ -221,11 +220,10 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 			
 		case TAG_TEMP_STRING :
 			{
-				int len_buf;
 				string_node *snod;
 				
 				snod = GetTempString();
-				len_buf = strlen(buf);
+				size_t len_buf = strlen(buf);
 				memcpy(buf + len_buf,snod->data,snod->len_data);
 				*(buf + len_buf + snod->len_data) = 0;
 			}
@@ -253,7 +251,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				}
 				
 				if (c->class_id == USER_CLASS || c->class_id == DM_CLASS ||
-					c->class_id == GUEST_CLASS || c->class_id == ADMIN_CLASS)
+            c->class_id == ADMIN_CLASS)
 				{
 					u = GetUserByObjectID(o->object_id);
 					if (u == NULL)
@@ -320,7 +318,7 @@ blak_int C_DumpStack(int object_id,local_var_type *local_vars,
 {
 	char buf[2000];
 
-	sprintf(buf,"Stack:\n%s\n",BlakodStackInfo());
+	snprintf(buf, sizeof(buf), "Stack:\n%s\n",BlakodStackInfo());
 	dprintf("%s",buf);
 
 	return NIL;
@@ -581,7 +579,7 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
 
    if (*str == NULL)
       return false;
-   *len = strlen(*str);
+   *len = (int) strlen(*str);
    
    return true;
 }
@@ -750,7 +748,7 @@ blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 			return NIL;
 		}
 		s1 = r->resource_val;
-		len1 = strlen( r->resource_val );
+		len1 = (int) strlen( r->resource_val );
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -770,7 +768,7 @@ blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 			s1 = GetClassDebugStr(c,s1_val.v.data);
 			len1 = 0;
 			if (s1 != NULL)
-				len1 = strlen(s1);
+				len1 = (int) strlen(s1);
 			break;
 		}
 		
@@ -947,7 +945,7 @@ blak_int C_SetResource(int object_id,local_var_type *local_vars,
 					str_val.v.data);
 				return NIL;
 			}
-			new_len = strlen(r->resource_val);
+			new_len = (int) strlen(r->resource_val);
 			new_str = r->resource_val;
 			break;
 		}
@@ -1044,7 +1042,7 @@ blak_int C_ParseString(int object_id,local_var_type *local_vars,
 		us because we null terminated the real string*/
 		
 		strcpy(snod->data,each_str);
-		snod->len_data = strlen(snod->data);
+		snod->len_data = (int) strlen(snod->data);
 		
 		SendBlakodMessage(object_id,callback_val.v.data,1,p);
 		
@@ -1109,7 +1107,7 @@ blak_int C_SetString(int object_id,local_var_type *local_vars,
 			return NIL;
 		}
 		//bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
-		SetString(snod,r->resource_val,strlen(r->resource_val));
+		SetString(snod,r->resource_val,(int) strlen(r->resource_val));
 		break;
 		
 	default :
@@ -1183,7 +1181,7 @@ blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 			bprintf("C_AppendTempString can't set from invalid resource %i\n",s_val.v.data);
 			return NIL;
 		}
-		AppendTempString(r->resource_val,strlen(r->resource_val));
+		AppendTempString(r->resource_val,(int) strlen(r->resource_val));
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -1202,7 +1200,7 @@ blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 			strLen = 0;
 			if (pStrConst != NULL)
 			{
-				strLen = strlen(pStrConst);
+				strLen = (int) strlen(pStrConst);
 				AppendTempString(pStrConst,strLen);
 			}
 			else
@@ -1878,6 +1876,48 @@ blak_int C_FindListElem(int object_id,local_var_type *local_vars,
 	}
 	
 	return ret_val.int_val;
+}
+
+blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
+                        int num_normal_parms,parm_node normal_parm_array[],
+                        int num_name_parms,parm_node name_parm_array[])
+{
+	val_type list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                                    normal_parm_array[0].value);
+	
+	if (list_val.v.tag == TAG_NIL)
+	{
+		return NIL;
+	}
+	
+	if (list_val.v.tag != TAG_LIST)
+	{
+		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%i\n",
+            object_id,list_val.v.tag,list_val.v.data);
+		return NIL;
+	}
+
+	val_type n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+                                 normal_parm_array[1].value);
+	if (n_val.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
+            object_id, n_val.v.tag, n_val.v.data);
+    return NIL;
+  }
+
+  val_type m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+                                 normal_parm_array[2].value);
+	if (m_val.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
+            object_id, m_val.v.tag, m_val.v.data);
+    return NIL;
+  }
+
+  MoveListElem(list_val, n_val, m_val);
+
+  return NIL;
 }
 
 blak_int C_GetTime(int object_id,local_var_type *local_vars,

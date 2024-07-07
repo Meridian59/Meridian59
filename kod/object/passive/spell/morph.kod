@@ -18,7 +18,8 @@ constants:
 
 resources:
 
-   morph_scream_wav = pdeath.wav
+   morph_male_scream_wav = pdeath.wav
+   morph_female_scream_wav = pdeathf.wav
 
    morph_name_rsc = "morph"
    morph_icon_rsc = imorph.bgf
@@ -173,7 +174,15 @@ messages:
       % Convert to ms.
       iTime = iTime * 1000;
 
-      Send(oRoom,@SomethingWaveRoom,#what=victim,#wave_rsc=morph_scream_wav);
+      if Send(victim,@GetGender) = GENDER_FEMALE
+      {
+         Send(oRoom,@SomethingWaveRoom,#what=victim,#wave_rsc=morph_female_scream_wav);
+      }
+      else
+      {
+         Send(oRoom,@SomethingWaveRoom,#what=victim,#wave_rsc=morph_male_scream_wav);
+      }
+
       Send(victim,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=MORPH_PAIN_TIME);
 
       Send(victim,@StartEnchantment,#what=self,#time=iTime,#state=[iIllusion_type,changeHP]);
@@ -329,7 +338,7 @@ messages:
 
    EndEnchantment(who = $, state=$,report = TRUE)
    {
-      local changeHP,oIllusion,iIllusion_type;
+      local changeHP;
 
       changeHP = Nth(state,2);
       Send(who,@GainMaxHealth,#amount=(-changeHP));

@@ -44,7 +44,7 @@ void ResetSecurityToken();
 /* Procedures to extract pieces from server messages */
 M59EXPORT void         Extract(char **buf, void *result, UINT numbytes);
 M59EXPORT void         ExtractCoordinates(char **ptr, int *x, int *y);
-M59EXPORT void         ExtractObject(char **ptr, object_node *item);
+M59EXPORT void         ExtractObject(char **ptr, object_node *item, bool includeLight = true);
 M59EXPORT void         ExtractObjectNoLight(char **ptr, object_node *item);
 M59EXPORT void			ExtractDLighting(char **ptr, d_lighting *dLighting);
 M59EXPORT object_node *ExtractNewObject(char **ptr);
@@ -152,6 +152,5 @@ Bool HandleDeleteAllRsc(char *ptr,long len);
 Bool HandleNoCharacters(char *ptr, long len);
 Bool HandleTime(char *ptr, long len);
 Bool HandleGetClient(char *ptr, long len);
-Bool HandleGuest(char *ptr, long len);
 
 #endif /* #ifndef _SERVER_H */

@@ -100,7 +100,7 @@ messages:
 
    Roll(who=$)
    {
-      local aRoll, bRoll, total, rDie1, rDie2;
+      local aRoll, bRoll, rDie1, rDie2;
       if who = $ { debug("Roll called without a who!"); return; }
       
       aRoll = random(1,6);

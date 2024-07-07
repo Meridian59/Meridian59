@@ -9,7 +9,7 @@
 !include WinMessages.nsh
 !include UAC.nsh
 
-!define SOURCEDIR "..\run\installclient"
+!define SOURCEDIR "..\run\webclient"
 
 ; First is default
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
@@ -138,6 +138,10 @@ Section "Meridian 59 (required)"
   File "${SOURCEDIR}\mssmp3.asi"
   File "${SOURCEDIR}\waveplay.dll"
   File "${SOURCEDIR}\zlib1.dll"
+
+  File "${SOURCEDIR}\BsSndRpt.exe"
+  File "${SOURCEDIR}\BugSplat.dll"
+  File "${SOURCEDIR}\BugSplatRc.dll"
 
   ; Install font
   StrCpy $FONT_DIR $FONTS

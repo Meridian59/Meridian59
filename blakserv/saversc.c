@@ -45,7 +45,7 @@ void SaveEachDynamicRsc(resource_node *r);
 Bool SaveDynamicRsc(char *filename)
 {
    int write_int;
-   int written;
+   size_t written;
 
    rscfile = fopen(filename, "wb");
    if (rscfile == NULL)
@@ -85,11 +85,11 @@ void CountEachDynamicRsc(resource_node *r)
 
 void SaveEachDynamicRsc(resource_node *r)
 {
-   int written = fwrite(&r->resource_id, 1, LEN_RSC_ID, rscfile);
+   size_t written = fwrite(&r->resource_id, 1, LEN_RSC_ID, rscfile);
    if (written != LEN_RSC_ID)
       eprintf("SaveEachDynamicRsc 1 error writing to file!\n");
    
-   int write_int = 0;
+   size_t write_int = 0;
    written = fwrite(&write_int, 1, LEN_RSC_TYPE, rscfile);
    if (written != LEN_RSC_TYPE)
       eprintf("SaveEachDynamicRsc 2 error writing to file!\n");

@@ -54,11 +54,11 @@ resources:
 
 classvars:
 
-   viIndefinite = ARTICLE_AN
-
    vrName = shadowAmulet_name_rsc
-   vrIcon = shadowamulet_icon_rsc
+   viIndefinite = ARTICLE_AN
    vrDesc = shadowAmulet_desc_rsc
+
+   vrIcon = shadowamulet_icon_rsc
 
    viValue_average = 100
 
@@ -74,6 +74,7 @@ classvars:
 properties:
    
    pbIn_use = FALSE	
+   pbIdentified = FALSE
 
 messages:
 
@@ -90,6 +91,9 @@ messages:
       send(poOwner,@MsgSendUser,#message_rsc=shadowAmulet_used_rsc);
       send(poOwner,@LoseLight,#amount=viLight_change);
       send(what,@AddDefenseModifier,#what=self);
+
+      % Reveal the true nature of the amulet to the player when they put it on
+      Send(self, @RevealHiddenAttributes);
 
       propagate;
    }
@@ -213,6 +217,28 @@ messages:
    GetLightEffect()
    {
       return -viLight_change;
+   }
+
+   CanIdentify()
+   {
+      return TRUE;
+   }
+
+   RevealHiddenAttributes()
+   {
+      if pbIdentified = FALSE
+      {
+         pbIdentified = TRUE;
+         Send(poOwner, @SomethingChanged, #what=self);
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   IsIdentified()
+   {
+      return pbIdentified;
    }
 
 end

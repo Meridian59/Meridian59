@@ -92,6 +92,8 @@ TConfirmLineDefDialog::TConfirmLineDefDialog (TWindow* parent, TConfirmLineDefDi
 	pBelowNegCheck = newTCheckBox(this, IDC_NEG_BELOW, 0);
 	pNoVTilePosCheck = newTCheckBox(this, IDC_POS_NOVTILE, 0);
 	pNoVTileNegCheck = newTCheckBox(this, IDC_NEG_NOVTILE, 0);
+	pNoHTilePosCheck = newTCheckBox(this, IDC_POS_NOHTILE, 0);
+	pNoHTileNegCheck = newTCheckBox(this, IDC_NEG_NOHTILE, 0);
 
 	pSDAboveCheck[0] = newTCheckBox(this, IDC_SD1_ABOVE_CHECK, 0);
 	pSDAboveCheck[1] = newTCheckBox(this, IDC_SD2_ABOVE_CHECK, 0);
@@ -185,6 +187,8 @@ void TConfirmLineDefDialog::CmOk ()
 	   pXFer->pBelowNegCheck = FALSE;
 	   pXFer->pNoVTilePosCheck = FALSE;
 	   pXFer->pNoVTileNegCheck = FALSE;
+	   pXFer->pNoHTilePosCheck = FALSE;
+	   pXFer->pNoHTileNegCheck = FALSE;
 	}
 
 	for (int i = 0 ; i < 2 ; i++)
@@ -231,6 +235,8 @@ void TConfirmLineDefDialog::EnableFlags()
    pBelowNegCheck->EnableWindow(EnableFL);
    pNoVTilePosCheck->EnableWindow(EnableFL);
    pNoVTileNegCheck->EnableWindow(EnableFL);
+	 pNoHTilePosCheck->EnableWindow(EnableFL);
+   pNoHTileNegCheck->EnableWindow(EnableFL);
    pScrollCheck[0]->EnableWindow(EnableFL);
    pScrollCheck[1]->EnableWindow(EnableFL);
 }

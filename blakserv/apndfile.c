@@ -24,7 +24,7 @@ void AppendTextFile(session_node *s,const char *filename,
    char save_name[MAX_PATH+FILENAME_MAX];
    int i;
 
-   sprintf(save_name,"%s%s",ConfigStr(PATH_FORMS),filename);
+   snprintf(save_name, sizeof(save_name), "%s%s",ConfigStr(PATH_FORMS),filename);
    if ((appendfile = fopen(save_name,"at")) == NULL)
    {
       eprintf("AppendTextFile can't open %s to write out new text!\n",save_name);

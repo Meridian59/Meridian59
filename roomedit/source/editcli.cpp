@@ -710,7 +710,7 @@ void TEditorClient::SetupMenu()
 	}
 	newMiscMenu = GetApplication()->LoadMenu (newMiscMenuID);
 	menu.ModifyMenu (3, MF_BYPOSITION | MF_POPUP,
-							 (UINT)newMiscMenu, newMiscMenuName);
+							 (UINT_PTR)newMiscMenu, newMiscMenuName);
 
 	// Draw the check for the Automatic Layout menu item
 	menu.CheckMenuItem (CM_WINDOW_AUTOLAYOUT, MF_BYCOMMAND |
@@ -1678,29 +1678,10 @@ void TEditorClient::EvKeyDown (UINT key, UINT repeatCount, UINT flags)
 			Scroller->ScrollBy(0, -(long)repeatCount);
 			break;
 		case VK_ESCAPE:
-			// Ignore if "insert object" mode
-			if ( InsertingObject )
-				break;
-
-			// If there's map changes and user don't want to quit, return
-			if ( (MadeChanges || MadeMapChanges) &&
-				 MessageBox ("You have made changes.\n\n"
-							 "Are you sure you want to quit the editor?",
-							 "Quit editor",
-							 MB_YESNO | MB_DEFBUTTON2) == IDNO )
-			{
-				break;
-			}
-			// We cancel all changes made to the map.
-			// The SaveChanges function which will be called after
-			// the WM_CLOSE msg is received by the MainWindow
-			// won't ask the user to save the changes, since we mark
-			// here there were no.
-			MadeChanges = FALSE;
-			MadeMapChanges = FALSE;
-			// Send WM_CLOSE message to main frame
-			GetApplication()->GetMainWindow()->PostMessage(WM_CLOSE);
-			break;
+      // Unselect everything
+      HighlightSelection (TMapDC(this), EditMode, Selected);
+      ForgetSelection (&Selected);
+      break;
 	}
 
 	TLayoutWindow::EvKeyDown(key, repeatCount, flags);
@@ -2417,67 +2398,6 @@ BOOL TEditorClient::CheckStartingPos()
 {
 	// we don't need starting points ARK
 	return TRUE;
-
-#if 0
-	BOOL p1 = FALSE;
-	BOOL p2 = FALSE;
-	BOOL p3 = FALSE;
-	BOOL p4 = FALSE;
-	SHORT dm = 0;
-	SHORT t;
-	for (t = 0; t < NumThings; t++)
-	{
-		SHORT type = Things[t].type;
-
-		if (type == THING_PLAYER1)			p1 = TRUE;
-		if (type == THING_PLAYER2)          p2 = TRUE;
-		if (type == THING_PLAYER3)          p3 = TRUE;
-		if (type == THING_PLAYER4)          p4 = TRUE;
-		if (type == THING_DEATHMATCH)       dm++;
-	}
-
-	if (Expert && p1 == TRUE)
-		return TRUE;
-
-	if (p1 == FALSE)
-	{
-		if ( Confirm ("There is no player 1 starting point. You will not be "
-					  "able to use this level for single player games.\n"
-					  "Do you want to return to the editor ?") == TRUE )
-			return FALSE;
-	}
-
-	if (p2 == FALSE || p3 == FALSE || p4 == FALSE)
-	{
-		if (p4 == FALSE)			t = 4;
-		if (p3 == FALSE)			t = 3;
-		if (p2 == FALSE)			t = 2;
-		if ( Confirm ("There is no player %d starting point. You will not be "
-					  "able to use this level for multi-player games.\n"
-					  "Do you want to return to the editor ?", t) == TRUE )
-			return FALSE;
-	}
-
-	if (dm < 4)
-	{
-		char msg[256];
-
-		if (dm == 0)
-			wsprintf(msg, "There are no DeathMatch starting points.");
-		else if (dm == 1)
-			wsprintf(msg, "There is only one DeathMatch starting point.");
-		else
-			wsprintf(msg, "There are only %d DeathMatch starting points.", dm);
-
-		if ( Confirm ("%s\n"
-					  "You need at least four starting points "
-					  "to play DeathMatch games.\n"
-					  "Do you to want to return to the editor ?", msg) == TRUE )
-			return FALSE;
-	}
-
-	return TRUE;
-#endif
 }
 
 
@@ -2502,12 +2422,6 @@ void TEditorClient::DrawStatusBar()
 	{
 		char msg[MAX_PATH + 80];
 		int len;
-
-		// OK to print stats without level now
-#if 0
-		// We must be editing a level
-		assert (Level != NULL);
-#endif
 
 		// Draw the mode info in the first text gadget of status bar
 		len = wsprintf (msg, "Editing %s on %s",
@@ -2546,21 +2460,6 @@ BOOL TEditorClient::GetWadSaveFileName (char *filename, char * /*levelname*/)
 {
 	char *dotp;
 	int rc;
-
-	// Level variable meaningless now ARK
-#if 0
-	// We must be editing a level
-	assert (Level != NULL);
-
-	// get the default filename
-	if ( stricmp(Level->wadfile->filename, MainWad) == 0 )
-	{
-		strcpy (filename, levelname);
-		strcat (filename, ".roo");
-	}
-	else
-		strcpy (filename, Level->wadfile->filename);
-#endif
 
 	strcpy (filename, LevelName);
 
@@ -2678,10 +2577,6 @@ BOOL TEditorClient::SaveLevel ()
 	}
 	SaveLevelData(filename);
 	strcpy(LevelName, filename);
-
-	// Forget all UNDO datas
-	CleanupUndo();
-	InitUndo();
 
 	return TRUE;
 }
@@ -3865,9 +3760,6 @@ void TEditorClient::CmFileSave ()
 	}
 	SET_HELP_CONTEXT(EDITOR_Save);
 	SaveLevelData(LevelName);
-	// Forget all UNDO datas
-	CleanupUndo();
-	InitUndo();
 
 	DrawStatusBar();
 	RESTORE_HELP_CONTEXT();

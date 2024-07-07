@@ -5,7 +5,7 @@ TOPDIR=..\..
 
 SOURCEDIR = $(TOPDIR)\resource\graphics
 
-.SUFFIXES: .bbg
+.SUFFIXES: .bbg .bmp
 
 BGFS = \
 	$(OUTDIR)\arrowfir.bgf \
@@ -15,10 +15,16 @@ BGFS = \
 	$(OUTDIR)\mystwdov.bgf \
 	$(OUTDIR)\ring3.bgf \
 	$(OUTDIR)\povmystsw.bgf \
+	$(OUTDIR)\splash.bgf \
+	$(OUTDIR)\moon.bgf \
 
 all: makedirs $(BGFS)
 
 {$(SOURCEDIR)}.bbg.bgf:
 	$(MAKEBGF) -o $@ @$<
+
+# How to make a BGF from a single bitmap file
+{$(SOURCEDIR)}.bmp.bgf:
+	$(MAKEBGF) -o $@ 1 $< 1 1 1
 
 !include $(TOPDIR)\rules.mak

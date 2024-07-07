@@ -27,6 +27,9 @@ static Bool interface_created = False;  /* True iff interface has been created *
 extern font_3d				gFont;
 extern d3d_driver_profile	gD3DDriverProfile;
 
+// The last time a text command (such as an alias) was sent
+static DWORD last_text_command_time;
+
 /************************************************************************/
 void InterfaceInitialize(HWND hParent)
 {
@@ -126,17 +129,13 @@ void InterfaceResize(int xsize, int ysize)
 }
 /************************************************************************/
 /* 
- * InterfaceGetMaxSize:  Fill s with maximum allowed main window size.
+ * InterfaceGetMaxSize:  Fill s with primary display monitor max size.
  */
 void InterfaceGetMaxSize(SIZE *s)
 {
-   int factor = config.large_area ? 2 : 1;
-
-   s->cx = MAXX * factor + INVENTORY_MAX_WIDTH + LEFT_BORDER * 3 
-      + 2 * GetSystemMetrics(SM_CXFRAME);
-   s->cy = GetSystemMetrics(SM_CYSCREEN) + 2 * GetSystemMetrics(SM_CYFRAME);
+   s->cx = GetSystemMetrics(SM_CXMAXIMIZED);
+   s->cy = GetSystemMetrics(SM_CYMAXIMIZED);
 }
-
 
 /************************************************************************/
 /* 
@@ -300,61 +299,11 @@ void PerformAction(int action, void *action_data)
    switch (action)
    {
    case A_TABFWD:
-      MainTab((int) action_data, True);
+      MainTab(reinterpret_cast<std::intptr_t>(action_data), True);
       break;
    case A_TABBACK:
-      MainTab((int) action_data, False);
+      MainTab(reinterpret_cast<std::intptr_t>(action_data), False);
       break;
-
-/*   case A_FORWARD:
-   case A_BACKWARD:
-   case A_SLIDELEFT:
-   case A_SLIDERIGHT:
-   case A_FORWARDFAST:
-   case A_BACKWARDFAST:
-      UserMovePlayer(action);
-      break;
-
-   case A_TURNLEFT:
-   case A_TURNRIGHT:
-   case A_TURNFASTLEFT:
-   case A_TURNFASTRIGHT:
-      UserTurnPlayer(action);
-      break;
-
-   case A_FORWARDTURNLEFT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNLEFT);
-      break;
-   case A_FORWARDTURNRIGHT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNRIGHT);
-      break;
-   case A_BACKWARDTURNLEFT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNLEFT);
-      break;
-   case A_BACKWARDTURNRIGHT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNRIGHT);
-      break;
-   case A_FORWARDTURNFASTLEFT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNFASTLEFT);
-      break;
-   case A_FORWARDTURNFASTRIGHT:
-      UserMovePlayer(A_FORWARD);
-      UserTurnPlayer(A_TURNFASTRIGHT);
-      break;
-   case A_BACKWARDTURNFASTLEFT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNFASTLEFT);
-      break;
-   case A_BACKWARDTURNFASTRIGHT:
-      UserMovePlayer(A_BACKWARD);
-      UserTurnPlayer(A_TURNFASTRIGHT);
-      break;*/
-
    case A_ATTACK:
       if ((GetPlayerInfo()->viewID == 0) || (GetPlayerInfo()->viewID == GetPlayerInfo()->id))
 	 UserAttack(action);
@@ -467,7 +416,7 @@ void PerformAction(int action, void *action_data)
 			while (ShowCursor(FALSE) >= 0)
 				ShowCursor(FALSE);
 	   }
-      UserSelect((ID) action_data);
+      UserSelect(reinterpret_cast<std::intptr_t>(action_data));
       break;
 
    case A_BUY:
@@ -483,11 +432,7 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_USERACTION:
-      RequestAction((int) action_data);
-      break;
-
-   case A_MOUSEMOVE:
-      UserMouseMove();
+      RequestAction(reinterpret_cast<std::intptr_t>(action_data));
       break;
 
    case A_MAP:
@@ -530,10 +475,17 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_TEXTCOMMAND:
-      TextInputSetText((char *) action_data, False);
-      ParseGotText((char *) action_data);
-      break;
-
+   {
+       DWORD now = timeGetTime();
+       if (now - last_text_command_time > KEY_NOREPEAT_INTERVAL)
+       {
+           TextInputSetText((char*)action_data, False);
+           ParseGotText((char*)action_data);    
+           last_text_command_time = now;
+       }       
+       
+       break;
+   }
    case A_WHO:
       UserWho();
       break;
@@ -576,7 +528,6 @@ void PerformAction(int action, void *action_data)
 		UserMouselookToggle();
 		break;
 
-#if 1
    case A_DEPOSIT:
       UserDeposit();
       break;
@@ -584,7 +535,6 @@ void PerformAction(int action, void *action_data)
    case A_WITHDRAW:
       UserWithdraw();
       break;
-#endif
    }
 }
 

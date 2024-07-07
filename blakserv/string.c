@@ -98,7 +98,7 @@ Bool IsStringByID(int string_id)
 
 int CreateString(const char *new_str)
 {
-   return CreateStringWithLen(new_str,strlen(new_str));
+  return CreateStringWithLen(new_str, (int) strlen(new_str));
 }
 
 int CreateStringWithLen(const char *buf,int len)
@@ -276,6 +276,6 @@ void AppendNumToTempString(int iNum)
 {
    char numbuf[20];
 
-   sprintf(numbuf, "%d", iNum);
-   AppendTempString(numbuf, strlen(numbuf));
+   snprintf(numbuf, sizeof(numbuf), "%d", iNum);
+   AppendTempString(numbuf, (int) strlen(numbuf));
 }

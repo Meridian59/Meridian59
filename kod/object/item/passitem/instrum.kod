@@ -47,8 +47,21 @@ messages:
 
    NewUnused()
    {
+      local oRoom;
+
       Send(poOwner,@RemoveOverlay,#what=self);
 
+      % The following code ensures that any Jala song ends
+      %   when an instrument is unequipped
+      %   regardless of how or why the instrument was removed.
+      % We send the message to the room and not to the player
+      %   because Room.kod will loop over plEnchantments and direct
+      %   the break trance message to the correct spell.
+      % This prevents server errors in the event the caster is singing
+      %   and has a second trance going such as for morph or elusion.
+
+      oRoom = Send(poOwner,@GetOwner);
+      Send(oRoom,@BreakTrance,#who=poOwner,#event=EVENT_USE,#usewhat=self);
       propagate;
    }
 

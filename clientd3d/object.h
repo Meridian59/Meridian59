@@ -79,6 +79,7 @@ typedef struct {
 		                     this field gives amount of object */
    DWORD     temp_amount;         /* Scratch field used when user is selecting amount of object */
    int       flags;               /* Flags describing various properties of objects */
+   item_rarity_grade rarity;      /* Used to draw object text differently based on rarity tiers */
    BYTE      translation;         // Palette translation information
    Animate   *animate;            /* Pointer to current animation (normal or motion animation) */
    list_type *overlays;           /* Pointer to current overlays (normal or motion animation) */
@@ -109,6 +110,7 @@ M59EXPORT Bool CompareIdObject(void *idnum, void *obj);
 Bool CompareId(void *id1, void *id2);
 Bool CompareIdRoomObject(void *idnum, void *obj);
 int  CompareRoomObjectDistance(void* p1, void* p2);
+int CompareObjectNameAndNumber(void *obj1, void *obj2);
 list_type    OverlayListDestroy(list_type overlays);
 M59EXPORT object_node *ObjectGetBlank(void);
 M59EXPORT object_node *ObjectCopy(object_node *obj);

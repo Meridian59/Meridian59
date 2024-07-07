@@ -50,7 +50,7 @@ messages:
       local iMightChange;
       
       if poStrength_spell = $ 
-      { poStrength_spell = Send(SYS,@FindSpellByNum,#num=SID_SUPERSTRENGTH); }
+      { poStrength_spell = Send(SYS,@FindSpellByNum,#num=SID_SUPER_STRENGTH); }
 
       %%% all super strength spells are now dispelled before palsy begins!
       Send(who,@RemoveEnchantment,#what=poStrength_spell);

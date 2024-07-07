@@ -39,9 +39,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&RedMushroom)],
-                     $,
-                     $];
+      plFor_sale = [ [ Create(&Mushroom),
+                       Create(&RedMushroom),
+                       Create(&BlueMushroom),
+                       Create(&Herbs),
+                       Create(&Elderberry),
+                       Create(&Emerald),
+                       Create(&Flask),
+                       Create(&Torch)
+                   ],
+                   $,$];
       return;
    }
 

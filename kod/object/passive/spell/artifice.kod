@@ -65,7 +65,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oWeapon, oTarget;
+      local oTarget;
    
       oTarget = First(lTargets);
 
@@ -123,6 +123,9 @@ messages:
            
       Send(who,@MsgSendUser,#message_rsc=artifice_cast_rsc,
 	        #parm1=Send(oItem,@GetDef),#parm2=send(oItem,@GetName));
+
+      % Immediately update the rarity presentation in the client
+      Send(Send(oItem,@GetOwner),@SomethingChanged,#what=oItem);
 
       propagate;
    }

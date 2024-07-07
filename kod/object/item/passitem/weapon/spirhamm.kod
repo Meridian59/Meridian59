@@ -43,6 +43,9 @@ classvars:
    viWeight = 15
    viBulk = 60
 
+   viHits_init_min = 350
+   viHits_init_max = 400
+
    vrWeapon_window_overlay = spirithammer_window_overlay_rsc
    vrWeapon_overlay = spirithammer_player_overlay
 
@@ -62,8 +65,6 @@ messages:
 
    Constructor(ilongevity=$, iToHitBonus=$)
    {
-      local oWeapAtt;
-
       if ilongevity = $
       {
          % Default is 1 hour.
@@ -115,7 +116,7 @@ messages:
 
    ModifyHitRoll(hit_roll = 0, target = $)
    {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
+      local iBaseHit, oWeapAtt, i;
 
       iBaseHit = hit_roll;
 

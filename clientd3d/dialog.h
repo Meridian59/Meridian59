@@ -51,10 +51,11 @@ typedef struct {
 typedef struct {
    object_node *obj;
    BYTE         flags;
-   char        *name;
+   std::string name;
    char        *description;
    char        *fixed_string;
    char        *url;
+   item_rarity_grade rarity;
    int          age;
    int	        numPages;
    int	        currentPage;
@@ -83,14 +84,16 @@ typedef struct {
 
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                                  char *extra_string, char *url);
+                                  char* fixed_string, char *url, item_rarity_grade rarity);
+std::string GetRaritySuffix(item_rarity_grade rarity);
+M59EXPORT void SetDialogFixedString(char* fixed_string);
 
 M59EXPORT list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags);
 
-BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK SayDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
-BOOL CALLBACK AmountDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK LookDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SayDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortGameDialogs(void);
 void FilterChangedDescription(char *desc);
 

@@ -22,7 +22,7 @@ LIBS =  \
 
 CFLAGS = $(CFLAGS) -DM59_RETAIL
 LIBS = $(LIBS) \
-       mss32.lib mss32midi.lib
+       mss32.lib mss32midi.lib bugsplat.lib
 
 !endif
 
@@ -53,7 +53,6 @@ OBJS = \
         $(OUTDIR)\statconn.obj \
         $(OUTDIR)\memmap.obj \
         $(OUTDIR)\mapfile.obj \
-        $(OUTDIR)\fastasm.obj \
         $(OUTDIR)\boverlay.obj \
         $(OUTDIR)\web.obj \
         $(OUTDIR)\about.obj \
@@ -69,10 +68,9 @@ OBJS = \
         $(OUTDIR)\cursor.obj \
         $(OUTDIR)\client3d.obj \
         $(OUTDIR)\md5.obj \
-	     $(OUTDIR)\crc.obj \
+        $(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
-        $(OUTDIR)\guest.obj \
         $(OUTDIR)\profane.obj \
         $(OUTDIR)\object.obj \
         $(OUTDIR)\graphics.obj \
@@ -162,9 +160,7 @@ $(OUTDIR)\makepal.exe: $(OUTDIR)\makepal.obj
 
 profile: $(OBJS) client.res $(BLAKNTLIBS) 
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe $(LINKWINDOWSFLAGS)
+$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:$(OUTDIR)\meridian.exe $(LINKWINDOWSFLAGS)
 <<
-#       prep /lc /excall /inc draw3d.obj meridian.exe   
-	prep /ft /excall /inc drawbsp.obj meridian.exe
 
 !include $(TOPDIR)\rules.mak

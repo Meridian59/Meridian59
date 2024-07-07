@@ -87,9 +87,6 @@ constants:
    PANTS_MUL  = 0x0100
    
    BASE_NEED = 105
-
-   % If vigor gets this low, see if second wind skill kicks in.
-   SECONDWIND_THRESHOLD = 25
    
    % How steep is the curve for learning new levels of spells?
    %  A higher number means a greater slope (less points at low levels)
@@ -350,8 +347,8 @@ resources:
    player_cant_dance_resting = \
       "You're sitting right now.  Let's not take this \'getting down\' stuff "
       "too literally, ok?"
-   player_stop_dance = "\
-      You lose your rhythm and settle out of your dancing frenzy." 
+   player_stop_dance = \
+      "You lose your rhythm and settle out of your dancing frenzy." 
 
    player_wave = "You wave your hand."
    player_point = "You point."
@@ -707,7 +704,7 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
-
+   
 classvars:
 
    viHand_space = 2
@@ -875,6 +872,7 @@ properties:
    
    piGender = GENDER_MALE
 
+   % Player vigor thresholds
    piVigor_rest_threshold = 80
 
    % The user's string description, typed when created (and editable in game).
@@ -935,9 +933,6 @@ properties:
 
    piLastDeathTime = 0
 
-   % This keeps the duration of our Second Wind skill's "downtime"
-   ptSecondWind = $
-
    % Measures how long we have to wait before we're rescued.
    ptRescue = $
 
@@ -996,12 +991,6 @@ messages:
       {
          DeleteTimer(ptAdvancement);
          ptAdvancement = $;
-      }
-      
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
       }
 
       Send(self,@CancelRescue);
@@ -1193,69 +1182,11 @@ messages:
    %%% Vigor
 
    NewVigor()
-   "Ensures vigor stays in bounds.  Also checks for second wind skill"
-   "NOTE: Do not modify vigor below SECONDWIND_THRESHOLD if you do not want the skill to kick in."
-   "Vigor display will be driven from here."
+   "Ensures vigor stays in bounds. Vigor display will be driven from here."
    {
-      if piVigor < SECONDWIND_THRESHOLD
-         AND ptSecondWind = $
-         AND Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
-         AND Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self)
-      {
-         Send(self,@StartSecondWind);
-      }
-      
       piVigor = bound(piVigor,1,viMax_vigor);
       Send(self,@DrawVigor);
 
-      return;
-   }
-
-   StartSecondWind()
-   {
-      local oWind, iTime;
-
-      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) = 0
-      {
-         return FALSE;
-      }
-
-      oWind = Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND);
-      iTime = Send(oWind,@GetWaitTime,#who=self);
-      ptSecondWind = CreateTimer(self,@EndSecondWindTimer,iTime);
-      Send(self,@SetVigorRestThreshold,#amount=10);
-      
-      return TRUE;
-   }
-
-   EndSecondWindTimer()
-   {
-      ptSecondWind = $;
-      Send(self,@EndSecondWind);
-      
-      return;
-   }
-
-   EndSecondWind()
-   {
-      local iAmount;
-
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-      }
-      
-      % This prevents repeated triggering of the second wind skill.
-      if piVigor < SECONDWIND_THRESHOLD
-      {
-         piVigor = SECONDWIND_THRESHOLD;
-      }
-
-      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
-      Send(self,@SetVigorRestThreshold,#amount=iAmount);
-      Send(self,@NewVigor);
-      
       return;
    }
 
@@ -1269,11 +1200,11 @@ messages:
       piVigor_rest_threshold = amount;
 
       % Don't go above rest threshold if we're still waiting for Second Wind.
-      if ptSecondWind <> $
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
       {
          piVigor_rest_threshold = 10;
       }
-      
+  
       piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,100);
 
       Send(self,@DrawVigor);
@@ -1285,14 +1216,15 @@ messages:
    {
       local iExertionAdded, iPercentReduced, iVigorLost;
       
+      iExertionAdded = amount;
+
       % If we cannot gain vigor due to Second Wind, return out if trying
       %  to take away exertion
-      if ptSecondWind <> $ AND amount < 0
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
+         AND amount < 0
       {
          return;
       }
-
-      iExertionAdded = amount;
 
       if iExertionAdded > 0
       {
@@ -1319,7 +1251,15 @@ messages:
 
          Send(self,@NewVigor);
       }
-      
+
+      % If Second Wind is available and inactive, and (adjusted) exertion is present, attempt SW
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
+         AND iExertionAdded > 0
+         AND NOT Send(self,@IsEnchanted,#byClass=&SecondWind)
+      {
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),@DoSkill,#who=self);
+      }
+
       return;
    }
 
@@ -1328,8 +1268,11 @@ messages:
    {        
       local iAmount;
 
-      % If we cannot gain vigor (probably due to Second Wind), return out if trying to take away exertion
-      if (ptSecondWind <> $) AND (amount < 0)
+      iAmount = amount;
+
+      % Return if extertion is being added but second wind skill is active
+      if Send(self,@IsEnchanted,#byClass=&SecondWind)
+         AND amount < 0
       {
          return;
       }
@@ -1339,7 +1282,6 @@ messages:
          return;
       }
       
-      iAmount = Amount;
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SANCTUARY) AND amount < 0
       {
          iAmount = 2 * Amount;
@@ -1365,7 +1307,7 @@ messages:
       
       return;
    }
-      
+
    UpdateStomach()
    "Removes consumed food from stomach"
    {
@@ -1497,7 +1439,7 @@ messages:
 
    InformHunters()
    {
-      local i, j, oSpell, state, oSpellCloak, rLocation, lRoomlist, oRoom;
+      local i, j, oSpell, state, oSpellCloak, rLocation, oRoom;
 
       oSpell = Send(SYS,@FindSpellByNum,#Num=SID_HUNT);
       oSpellCloak = Send(SYS,@FindSpellByNum,#Num=SID_CLOAK);
@@ -1534,7 +1476,7 @@ messages:
 
    ShowDesc()
    {
-      local i,oEnchanter, rank, HitPoint_Percent;
+      local HitPoint_Percent;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND poIllusion_set <> $
@@ -1841,7 +1783,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oSnoop, oRoom;
+      local i, oGame, oCaramo, oRoom;
       
       for i in plPassive
       {
@@ -1856,7 +1798,7 @@ messages:
       % Restart Health and Mana timers
       Send(self,@NewHealth);
       Send(self,@NewMana);
-      
+
       Send(self,@SendUserAllWindowOverlays);
 
       if Send(SYS,@GetParliament)<>$
@@ -2407,8 +2349,6 @@ messages:
    AddDefaultObjects()
    "Add the objects a player is given when creating a character in newbie zone"
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
-
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
@@ -2442,8 +2382,6 @@ messages:
    AddRealWorldObjects()
    "Add the objects a player is given when character leaves the newbie zone"
    {
-      local lItems,oItem,iSchool;
-
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
@@ -2705,7 +2643,7 @@ messages:
 
    EnchantmentTimer(timer = $)
    {
-      local i,oEnchanter;
+      local i;
  
       for i in plEnchantments
       {
@@ -2947,7 +2885,7 @@ messages:
    ReactivateAllEnchantments()
    "Called when a player logs on."
    {
-      local i, tTimer, iTime, state;
+      local i, iTime, state;
 
       for i in plEnchantments
       {
@@ -3012,7 +2950,7 @@ messages:
 
    RemoveSchoolEnchantments(school = $,report=TRUE)
    {
-      local i, oSpell, each_obj;
+      local i, oSpell;
 
       for i in plEnchantments 
       {                       
@@ -3111,7 +3049,7 @@ messages:
             Send(self,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_PLAYER);
          }
       }
-      
+
       return;
    }
 
@@ -3307,7 +3245,7 @@ messages:
 
    TryUseItem(what = $)
    {
-      local i,iSpace,iUse_type;
+      local i, iUse_type;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3498,7 +3436,7 @@ messages:
 
    TryApplyItem(what = $,apply_on = $)
    {
-      local i,iUse_type;
+      local iUse_type;
       
       if NOT Send(self,@IsHolding,#what=what)
       {
@@ -4228,7 +4166,7 @@ messages:
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
+      local i, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4343,8 +4281,7 @@ messages:
    % This returns the damage done to target "what" before resistances.
    GetDamage(what = $, stroke_obj=$)
    {
-      local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster;
+      local i, iDamage, oStroke, oWeapon, iModBonus, iDamageBonus, oMonster;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4476,9 +4413,9 @@ messages:
               #use_weapon=Send(self,@GetWeapon));
       }      
 
-      % Morphed?  As a bonus, people in illusionary form get the hit side effect.  :)
+      % Morphed?  Also apply the morphed monster's hit side effects, if any.
       oMonster = Send(self,@GetIllusionForm);
-      if (oMonster <> $)
+      if (oMonster <> $ AND Send(self, @CheckPlayerFlag, #flag=PFLAG_MORPHED))
       {
          Send(oMonster,@HitSideEffect,#what=what);
       }
@@ -4492,8 +4429,7 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell,
-            iLimit;
+      local i, iResistance, oSoldierShield, color_rsc, iDuration, iLimit;
 
       color_rsc = player_hit_color_none;
       
@@ -4534,14 +4470,6 @@ messages:
       if NOT absolute and damage <= 0
       {
          damage = 1;
-      }
-
-      if damage > 0
-      {
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_PARALYZED,#flagset=2)
-         {
-            Send(self,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_PARALYZE));
-         }
       }
 
       if NOT absolute
@@ -4740,7 +4668,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local oSoldierShield, iChance, oEnemyGuild;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -4873,7 +4801,7 @@ messages:
 
    GetSomethingMissedYouSound(what = $,weapon_used = $)
    {
-      local i,iRoll;
+      local iRoll;
 
       if Send(self,@LookupPlayerWeapon)
       {
@@ -5559,7 +5487,7 @@ messages:
             if IsClass(oJalaSpell,&Restorate)
             {
                iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
+               return Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
             }
          }
@@ -6429,6 +6357,12 @@ messages:
       {
          return 0;
       }
+      
+      % No karma change in arenas.
+      if Send(oRoom,@IsArena)
+      {
+         return 0;
+      }
 
       % No karma changes from killing neutral monsters.
       if bIsMob AND karma_victim = NEUTRAL
@@ -6494,8 +6428,6 @@ messages:
    "Adds a guildcommand to player's arsenal.  Usually called by resetpowers"
    "in guild.kod."
    {
-      local oCommand;
-
       if Send(self,@HasGuildCommand,#command_num=command_num)
       {
          return FALSE;
@@ -6555,7 +6487,7 @@ messages:
    "Returns TRUE if a spell is in a player's spell list,"
    "FALSE if it is not."
    {
-      local i,oSpell;
+      local i;
 
       for i in plSpells
       {
@@ -6841,7 +6773,7 @@ messages:
    "Admin supported\n"
    "Adds a spell by spell ID to the user's castable list of spells"
    {
-      local i, j, oSpell, lSpell_info, lPrereqs, bFound, iBoundAbility, lEncode;
+      local i, oSpell, lPrereqs, iBoundAbility, lEncode;
       
       if Send(self,@HasSpell,#num=num)
       {
@@ -6861,7 +6793,7 @@ messages:
 %  (which clearly doesn't belong in player; should be in the spell itself) to
 %  make it buyable.  - ARK 10/26/2010
 %
-%      if num = SID_DEATHS_DOOR
+%      if num = SID_SHADOW_RIFT
 %          AND ((NOT Send(self, @IsUsingA,#class=&NecromancerAmulet))
 %               AND (NOT IsClass(self,&Admin)))
 %      {
@@ -7057,7 +6989,7 @@ messages:
    FlipSpellAtrophyFlag(SID=0)
    "This spell was used recently, meaning it will NOT atrophy."
    {
-      local i, elemnum, spellnum;
+      local i, elemnum;
       
       elemnum = 0;
       for i in plSpells
@@ -7076,7 +7008,7 @@ messages:
 
    ActivateSpellAtrophy()
    {
-      local i, j, iability, lSchoolsUsed, aSpell, bSpell, bFound, highmark, iAmount;
+      local i, j, iability, aSpell, bSpell, bFound, highmark, iAmount;
 
       % Must get below highmark for atrophy to activate
       iAmount = -2;
@@ -7119,7 +7051,7 @@ messages:
    "Returns TRUE if a Skill is in a player's Skill list,"
    "FALSE if it is not."
    {
-      local i,oSkill;
+      local i;
 
       for i in plSkills
       {
@@ -7315,7 +7247,7 @@ messages:
    "Admin supported\n"
    "Adds a Skill by Skill ID to the user's castable list of Skills"
    {
-      local i,j,oSkill, lSkill_info, lPrereqs, bFound, iBoundAbility;
+      local oSkill, iBoundAbility;
       
       if Send(self,@HasSkill,#num=num)              
       {
@@ -7425,7 +7357,7 @@ messages:
    FlipSkillAtrophyFlag(SKID=0)
    "This Skill was used recently, meaning it will NOT atrophy."
    {
-      local i, elemnum, Skillnum;
+      local i, elemnum;
 
       elemnum = 0;
       for i in plSkills
@@ -7444,7 +7376,7 @@ messages:
 
    ActivateSkillAtrophy()
    {
-      local i, j, iability, lSchoolsUsed, aSkill, bSkill, bFound, highmark, iAmount;
+      local i, j, iability, aSkill, bSkill, bFound, highmark, iAmount;
 
       iAmount = -2;
       highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))*piAdvancement_Points)/20;
@@ -7624,14 +7556,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 2;
+               gain = 3;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 1;
+               gain = 2;
                roll = TRUE;
             }
          }
@@ -7656,7 +7588,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
+         if piBase_Max_health < PKILL_ENABLE_HP
          {
             gain = gain + 1;
          }
@@ -7762,7 +7694,7 @@ messages:
 
    Killed(what = $)
    {
-      local lItems,i, amount, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
+      local lItems,i, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
@@ -8286,7 +8218,7 @@ messages:
    
    DoDance()
    {
-      local i, iSpace;
+      local i;
 
       for i in plUsing
       {
@@ -8394,7 +8326,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0);
+         AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
          AddPacket(1,ANIMATE_ONCE, 4,175, 2,1, 2,3, 2,0);
          AddPacket(1,0);
     
@@ -8425,7 +8357,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0);
+         AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
          AddPacket(1,ANIMATE_ONCE,4,300,2,4,2,6,2,iGroup);
          AddPacket(1,1);
          AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
@@ -8460,7 +8392,7 @@ messages:
          AddPacket(4,Send(what,@GetWindowOverlayID)); % supposedly "object id" in client
          AddPacket(4,Send(what,@GetWindowOverlay));
          AddPacket(4,Send(what,@GetName)); % useless field, used to make client parsing easier 
-         AddPacket(4,0);
+         AddPacket(4,0, 4,0); % Flags + item rarity grade
          Send(what,@SendWindowOverlayAnimation);
          Send(what,@SendWindowOverlayOverlays);
     
@@ -9968,7 +9900,11 @@ messages:
       return;
    }
 
-   BreakTrance(event = 0, what = $)
+   BreakTrance(event = 0, castwhat = $, usewhat = $)
+   "Sends a BreakTrance message to any trance-holding enchantments."
+   "The event is the action causing the broken trance."
+   "If the event is the player casting a spell then castwhat is that spell object."
+   "If the event is the player using an item than usewhat is that item object."
    {
       local i, oEnch,state, bFound, oYellNum, oYellRoom;
 
@@ -9983,8 +9919,7 @@ messages:
             {
                state = Nth(i,3);
             }
-
-            Send(oEnch,@BreakTrance,#who=self,#state=state,#event=event,#what=what);
+            Send(oEnch,@BreakTrance,#who=self,#state=state,#event=event,#castwhat=castwhat,#usewhat=usewhat);
             bFound = TRUE;
          }
       }
@@ -10003,7 +9938,7 @@ messages:
          }
       }
       
-      if Send(poOwner,@BreakTrance,#who=self,#event=event)
+      if Send(poOwner,@BreakTrance,#who=self,#event=event,#castwhat=castwhat,#usewhat=usewhat)
       {
          bFound = TRUE;
       }
@@ -10035,7 +9970,7 @@ messages:
 
    RecalcLight()
    {
-      local i, iLight, iState, oWeapon, oItemAtt;
+      local i, iLight, iState, oWeapon;
 
       % TODO: Make this into a general check.
 
@@ -10057,7 +9992,7 @@ messages:
       }
       
       iState = Send(self,@GetEnchantedState,
-                    #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHTVISION));
+                    #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION));
       if iState <> $
       {
          iLight = iLight + iState;
@@ -10112,7 +10047,7 @@ messages:
 
    RecalibratePlayer()
    {
-      local i, bSoldier, iAmount;
+      local i, bSoldier;
 
       bSoldier = FALSE;
       if Send(self,@FindUsing,#class=&SoldierShield) <> $
@@ -10124,15 +10059,6 @@ messages:
       Send(self,@RemoveAllEnchantments);
       Send(self,@RecalcBulkAndWeight);
       Send(self,@ResetPlayerFlagList);
-
-      if ptSecondWind <> $
-      {
-         DeleteTimer(ptSecondWind);
-         ptSecondWind = $;
-      }
-
-      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
-      Send(self,@SetVigorRestThreshold,#amount=iAmount);
 
       % All attack modifiers should be a room enchantment, a personal enchantment
       %  or something they are wearing.  If one still exists, bug.  This is also
@@ -10302,8 +10228,8 @@ messages:
    "if a player can't learn because he has too many competing schools, he needs to know that."    
    {      
       local bSkill, obj, level, school, division, iHave, prev_level,
-            iSamediv, iOtherdiv, aHigh, bHigh, cHigh, iBase, i, temp,
-            nObj, nSID, index, iNeed, nSchool, nLevel, msg, bKnowOne,
+            aHigh, bHigh, cHigh, i, temp,
+            nObj, nSID, index, iNeed, nSchool, nLevel, bKnowOne,
             iWeapon, iKraanan, iShalille, iQor, iFaren, iRiija, iJala, iPoints;
 
       % Phase one.  Assert our data.  Be sure we have been fed a valid spell
@@ -10825,7 +10751,7 @@ messages:
    "(i.e. quits a guild or drops below 30 health).  Also, take steps to ensure "
    "it is not run immediately prior to death."
    {
-      local i, ass_game;
+      local ass_game;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_LOCK)
       {

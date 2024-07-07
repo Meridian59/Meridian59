@@ -15,13 +15,34 @@
 
 using namespace std;
 
+static bool ContainsSpaces(const std::string& str)
+{
+    return str.find(' ') != std::string::npos;
+}
+
 /************************************************************************/
 /*
  * WebLaunchBrowser:  Attempt to run browser on given URL.
  */
-void WebLaunchBrowser(char *url)
+void WebLaunchBrowser(const char *url)
 {
-  ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+    if (url == nullptr || strlen(url) == 0) {
+        debug(("URL string empty\n"));
+        return;
+    }
+
+    std::string urlStr(url);
+
+    if (ContainsSpaces(urlStr)) {
+        debug(("URL contains spaces\n"));
+        return;
+    }
+
+    if (urlStr.find("http://") != 0 && urlStr.find("https://") != 0) {
+        urlStr = "https://" + urlStr;
+    }
+
+    ShellExecute(NULL, "open", urlStr.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
 
 // convert c string to wstring
@@ -49,7 +70,10 @@ bool SendHttpsRequest(HWND hDlg, const string& domain, const string& resource, c
 
     bool result = false;
 
-    if (::HttpSendRequest(httpRequest, httpHeaderStream.str().c_str(), httpHeaderStream.str().length(), (LPVOID)(requestBody.c_str()), strlen(requestBody.c_str())))
+    if (::HttpSendRequest(httpRequest, httpHeaderStream.str().c_str(),
+                          (DWORD) httpHeaderStream.str().length(),
+                          (LPVOID)(requestBody.c_str()),
+                          (DWORD) strlen(requestBody.c_str())))
     {
         result = true;
         char sBuffer[1025];
@@ -59,13 +83,6 @@ bool SendHttpsRequest(HWND hDlg, const string& domain, const string& resource, c
             response = response + CharPToWstring(sBuffer);
             dwRead = 0;
         }
-    }
-    else
-    {
-        // Failed to send http request, show client error popup message.
-        std::stringstream os;
-        os << GetLastError();
-        ClientError(hInst, hDlg, IDS_CANTSIGNUP, os.str().c_str());
     }
 
     ::InternetCloseHandle(httpRequest);

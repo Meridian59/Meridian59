@@ -11,7 +11,7 @@
  * Player enchantments are temporary player modifications, such as super strength.
  * A small icon for each is drawn next to the player's head while the enchantment is in effect.
  *
- * Room enchantments are imilar modifications to the room, such as darkness.
+ * Room enchantments are similar modifications to the room, such as darkness.
  * Icons for these are drawn near the main view window.
  */
 
@@ -43,7 +43,7 @@ static list_type EnchantmentListDestroy(list_type list);
 static Enchantment *EnchantmentDestroy(Enchantment *e);
 static Bool CompareIdEnchantment(void *idnum, void *e);
 static Enchantment *EnchantmentFindByWindow(HWND hwnd);
-static long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
  * EnchantmentsInit:  Called at startup.
@@ -76,7 +76,7 @@ void EnchantmentAdd(BYTE type, object_node *obj)
 			  0, 0, 0, 0, cinfo->hMain, (HMENU) IDC_ENCHANTMENT, hInst, NULL);
    lpfnDefEnchantmentProc = SubclassWindow(e->hwnd, EnchantmentProc);
 
-   TooltipAddWindow(e->hwnd, hInst, (int) LPSTR_TEXTCALLBACK);
+   TooltipAddWindow(e->hwnd, hInst, reinterpret_cast<std::intptr_t>(LPSTR_TEXTCALLBACK));
 
    e->obj  = obj;
    switch (type)
@@ -152,51 +152,14 @@ void EnchantmentsResetData(void)
  */
 void EnchantmentsResize(int xsize, int ysize, AREA *view)
 {
-   RECT rcOffLimits, rcToolbar;
-//	AREA areaMiniMap;
+   RECT rcOffLimits;
 
-//   player_enchant_x     = view->x + view->cx + LEFT_BORDER + USERAREA_WIDTH + LEFT_BORDER;
-//   player_enchant_right = xsize - RIGHT_BORDER;
-
-//   if (cinfo->config->large_area)
-   if (0)
-   {
-		ToolbarGetUnionRect(&rcToolbar);
-
-		// evil hack, but it's not my fault...
-		// this is the actual size of the toolbar, and as of latest version it's always right
-		// if toolbar resizing actually worked properly we wouldn't have to do this
-		if (cinfo->config->toolbar)
-		{
-			if (rcToolbar.right != 146)
-				rcToolbar.right = 146;
-		}
-		else
-			rcToolbar.right = TOOLBAR_X;
-
-		//player_enchant_x     = rcToolbar.right + TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH * 2;
-		player_enchant_x     = rcToolbar.right + TOOLBAR_SEPARATOR_WIDTH;
-		if (cinfo->config->lagbox)
-			player_enchant_x += TOOLBAR_BUTTON_HEIGHT + TOOLBAR_SEPARATOR_WIDTH;
-
-		player_enchant_right = xsize - RIGHT_BORDER;
-		player_enchant_y = TOOLBAR_Y;
-   }
-   else
-   {
-	   player_enchant_x     = view->x + view->cx + LEFT_BORDER + LEFT_BORDER + 2;
-	   player_enchant_right = xsize - RIGHT_BORDER - ENCHANT_SIZE;
-	   player_enchant_y = TOP_BORDER + EDGETREAT_HEIGHT + USERAREA_HEIGHT +
-		   ENCHANT_BORDER + MAPTREAT_HEIGHT;
-//	   player_enchant_y += ENCHANT_SIZE;
-
-	   if (cinfo->config->large_area)
-		   player_enchant_bottom = player_enchant_y +
-			   ((ENCHANT_SIZE + ENCHANT_BORDER) * 2);
-	   else
-		   player_enchant_bottom = player_enchant_y +
-			   ((ENCHANT_SIZE + ENCHANT_BORDER) * 2);
-   }
+   player_enchant_x     = view->x + view->cx + LEFT_BORDER + LEFT_BORDER + 2;
+   player_enchant_right = xsize - RIGHT_BORDER - ENCHANT_SIZE;
+   player_enchant_y = TOP_BORDER + EDGETREAT_HEIGHT + USERAREA_HEIGHT +
+     ENCHANT_BORDER + MAPTREAT_HEIGHT;
+   player_enchant_bottom = player_enchant_y +
+     ((ENCHANT_SIZE + ENCHANT_BORDER) * 2);
 
    room_enchant_x = view->x + view->cx;
    if (cinfo->config->toolbar)
@@ -215,13 +178,6 @@ void EnchantmentsResize(int xsize, int ysize, AREA *view)
       room_enchant_left = rcOffLimits.right;
    }
 
-/*  ajw experimenting xxx
-	CopyCurrentAreaMiniMap( &areaMiniMap );
-	room_enchant_x = areaMiniMap.x + areaMiniMap.cx;
-	room_enchant_y = areaMiniMap.y + ENCHANT_BORDER;
-	room_enchant_left = areaMiniMap.x;
-*/
-	   
 	EnchantmentsMove();
 }
 /************************************************************************/
@@ -243,7 +199,6 @@ void EnchantmentsMovePlayer(void)
    int x, y, width, height;
 
    x = player_enchant_x;
-//   y = EDGETREAT_HEIGHT + USERAREA_HEIGHT + ENCHANT_BORDER * 2 - ENCHANT_SIZE + 2;	//	xxx
    y = player_enchant_y;
    width = ENCHANT_SIZE;
    height = ENCHANT_SIZE;
@@ -253,8 +208,6 @@ void EnchantmentsMovePlayer(void)
 
       if (x + width > player_enchant_right)
       {
-//	 ShowWindow(e->hwnd, SW_HIDE);
-//	 continue;
 		  x = player_enchant_x;
 		  y += height + ENCHANT_BORDER;
       }
@@ -376,7 +329,7 @@ Enchantment *EnchantmentDestroy(Enchantment *e)
  */
 Bool CompareIdEnchantment(void *idnum, void *e)
 {
-   return GetObjId((ID) idnum) == GetObjId(((Enchantment *) e)->obj->id);
+   return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(((Enchantment *) e)->obj->id);
 }
 /************************************************************************/
 /*
@@ -406,7 +359,7 @@ Enchantment *EnchantmentFindByWindow(HWND hwnd)
 /* 
  * EnchantmentProc:  Subclass enchantment windows.
  */
-long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    MSG msg;
    Enchantment *e;

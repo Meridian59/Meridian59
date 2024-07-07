@@ -50,7 +50,7 @@ messages:
    DoCommand(who=$, otarget = $)
    "Kicks the target out of the guild!"
    {
-      local yourGuild,myguild,i,lmembers;
+      local yourGuild,myguild;
 
       if not isClass(oTarget,&guild)
         {

@@ -182,7 +182,6 @@ messages:
    
    NewApplied(what = $,apply_on = $)
    {
-      local oSpell;
       if isClass(apply_on,&User) 
       {
          Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);

@@ -42,10 +42,7 @@ const char * TimeStr(time_t time)
 	if (tm_time == NULL)
 		return "Invalid Time";
 	
-	if (tm_time->tm_mday < 10)
-		time_format = "%b  %#d %Y %H:%M:%S";
-	else
-		time_format = "%b %#d %Y %H:%M:%S";
+  time_format = "%b %d %Y %H:%M:%S";
 	
 	if (strftime(s,sizeof(s),time_format,tm_time) == 0)
 		return "Time string too long";
@@ -99,7 +96,7 @@ const char * RelativeTimeStr(time_t time)
 	
 	amount = (int) (time / (24*60*60));
 	if (amount != 0)
-		sprintf(s,"%i day%s ",amount,amount != 1 ? "s" : "");
+		snprintf(s, sizeof(s), "%i day%s ",amount,amount != 1 ? "s" : "");
 	
 	amount = (time / (60*60)) % 24;
 	if (amount != 0)
@@ -114,7 +111,7 @@ const char * RelativeTimeStr(time_t time)
 		sprintf(s+strlen(s),"%i second%s",amount,amount != 1 ? "s" : "");
 	
 	if (s[0] == 0)
-		sprintf(s,"0 sec");
+		snprintf(s, sizeof(s), "0 sec");
 	
 	return s;
 }

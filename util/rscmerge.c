@@ -150,7 +150,7 @@ bool LoadRscFiles(int num_files, char **filenames)
 /***************************************************************************/
 int main(int argc, char **argv)
 {
-   int arg, len;
+   int arg;
    char *output_filename;
    int output_file_found = 0;
    
@@ -159,7 +159,7 @@ int main(int argc, char **argv)
    
    for (arg = 1; arg < argc; arg++)
    {
-      len = strlen(argv[arg]);
+      size_t len = strlen(argv[arg]);
       if (len == 0)
          break;
       

@@ -94,6 +94,8 @@ classvars:
    vrCondition_poor =  item_condition_poor
    vrCondition_broken = item_condition_broken
    
+   viRarity = ITEM_RARITY_GRADE_NORMAL
+
    % Items may have a different appearance once revealed. Values are zero if not applicable.
    viUnrevealedColor = 0
    viRevealedColor = 0
@@ -111,7 +113,7 @@ messages:
 
    Constructor(corpse=$)
    {
-      local iHits_average, oItemAtt;
+      local oItemAtt;
 
       piHits_init = Random(viHits_init_min,viHits_init_max);
       piHits = piHits_init;
@@ -350,6 +352,11 @@ messages:
       }
       
       return iFinal;
+   }
+
+   GetItemAttributes()
+   {
+      return plItem_Attributes;
    }
 
    GetMaxHits()
@@ -613,6 +620,70 @@ messages:
       return 1;
    }
 
+   GetRarity(bSkip_Identify = FALSE)
+   "Returns an item's rarity grade after evaluating if it is identified, "
+   "cursed, has item attributes that modify rarity, and the item's "
+   "assigned class rarity.  The bSkip_Identify parameter is used to "
+   "skip evaluating and assigning an item's unidentified state. This "
+   "is used by identify so an item will show up with the correct rarity "
+   "grade and not as unidentified if it is not revealed."
+   {
+      local count;
+
+      if bSkip_Identify = FALSE
+      {
+         if NOT Send(self,@IsIdentified)
+         {
+            return ITEM_RARITY_GRADE_UNIDENTIFIED;
+         }
+      }
+
+      if Send(self,@IsCursed)
+      {
+         return ITEM_RARITY_GRADE_CURSED;
+      }
+
+      count = Send(self,@GetRarityGradeCount);
+
+      if count = 1
+      {
+         return ITEM_RARITY_GRADE_UNCOMMON;
+      }
+
+      if count = 2
+         OR count = 3
+      {
+         return ITEM_RARITY_GRADE_RARE;
+      }
+
+      if count >= 4
+      {
+         return ITEM_RARITY_GRADE_LEGENDARY;
+      }
+
+      return viRarity;
+   }
+
+   IsIdentified()
+   "Returns TRUE if an item has all attributes visible."
+   {
+      local i;
+
+      if Send(self,@HasAnyAttribute)
+      {
+         for i in plItem_Attributes
+         {
+            if (Send(self,@GetIDStatusFromCompound,#compound=First(i)) = FALSE)
+            {
+               % If any attribute is not identified, return FALSE
+               return FALSE;
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
    IsCursed()
    "This returns TRUE if a RemoveCurse spell should unuse the item."
    "Since an ItemAtt can curse an item, go through those to check."
@@ -631,6 +702,37 @@ messages:
       }
 
       return FALSE;
+   }
+
+   GetRarityGradeCount()
+   "Checks plItem_attributes with GetRarityCountModifier().  "
+   "Adds each attribute's rarity count to the total.  "
+   "Returns a rarity grade based on the sum of the total and the "
+   "item's class-based viRarity value."
+   {
+      local i, iNum, oItemAtt, count;
+      count = 0;
+
+      if Send(self,@HasAnyAttribute)
+      {
+         for i in plItem_attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            count = count + Send(oItemAtt,@GetRarityCountModifier);
+         }
+      }
+
+      return (count + viRarity);
+   }
+
+   GetRarityCountModifier()
+   "Returns a modifier count to an item's rarity grade.  "
+   "Used to modify the rarity grade for an item based on "
+   "notable item attributes.  Positive means increase the "
+   "rarity grade, negative means decrease the rarity grade."
+   {
+      return 0;
    }
 
    ModifyDefensePower(defense_power = 0)
@@ -1530,7 +1632,7 @@ messages:
 
    ResetXLATsToShirt()
    {
-      local iSkin_color, iColor, iXlat, iShirt_XLAT;
+      local iShirt_XLAT;
       
       if not Send(self,@ShowShirt)  { return; }
       iShirt_XLAT = Send(poOwner,@GetCurrentShirtColor);

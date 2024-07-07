@@ -65,6 +65,13 @@ static WORD NumFileSideDefs;
 static Bool LoadRoom(int infile);
 static BOOL ReadSlopeInfo(int infile, SlopeInfo *info);
 
+// Interpret the given 4-byte buffer as a float or int, depending on room_version
+static float readValue(int buf) {
+  if (room_version < 13)
+    return (float) buf;
+  return *((float *) &buf);
+}
+
 /***************************************************************************/
 /*
  * ReadLevelData: Read in the given room file, and extract Vertices, LineDefs,
@@ -177,6 +184,8 @@ int CombineFileFlags(int pos_flags, int neg_flags)
       flags |= BF_POS_NORMAL_TDOWN;
    if (pos_flags & WF_NO_VTILE)
       flags |= BF_POS_NO_VTILE;
+   if (pos_flags & WF_NO_HTILE)
+      flags |= BF_POS_NO_HTILE;
 
    if (neg_flags & WF_BACKWARDS)
       flags |= BF_NEG_BACKWARDS;
@@ -194,6 +203,8 @@ int CombineFileFlags(int pos_flags, int neg_flags)
       flags |= BF_NEG_NORMAL_TDOWN;
    if (neg_flags & WF_NO_VTILE)
       flags |= BF_NEG_NO_VTILE;
+   if (neg_flags & WF_NO_HTILE)
+      flags |= BF_NEG_NO_HTILE;
 
    if ((pos_flags & WF_MAP_NEVER) || (neg_flags & WF_MAP_NEVER))
       flags |= BF_MAP_NEVER;
@@ -548,13 +559,20 @@ BOOL ReadSlopeInfo(int infile, SlopeInfo *info)
    int x, y;
    int i;
    SHORT z;
+   int temp;
 
-   if (!read(infile, &info->plane.a, 4)) return FALSE;
-   if (!read(infile, &info->plane.b, 4)) return FALSE;
-   if (!read(infile, &info->plane.c, 4)) return FALSE;
-   if (!read(infile, &info->plane.d, 4)) return FALSE;
-   if (!read(infile, &info->x, 4)) return FALSE;
-   if (!read(infile, &info->y, 4)) return FALSE;
+   if (!read(infile, &temp, 4)) return FALSE;
+   info->plane.a = readValue(temp);
+   if (!read(infile, &temp, 4)) return FALSE;
+   info->plane.b = readValue(temp);
+   if (!read(infile, &temp, 4)) return FALSE;
+   info->plane.c = readValue(temp);
+   if (!read(infile, &temp, 4)) return FALSE;
+   info->plane.d = readValue(temp);
+   if (!read(infile, &temp, 4)) return FALSE;
+   info->x = readValue(temp);
+   if (!read(infile, &temp, 4)) return FALSE;
+   info->y = readValue(temp);
    if (!read(infile, &info->angle, 4)) return FALSE;
    info->angle = info->angle * 360 / NUMDEGREES;
 

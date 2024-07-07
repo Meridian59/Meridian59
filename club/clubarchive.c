@@ -30,7 +30,7 @@ static int CopyArchiveData(struct archive *ar, struct archive *aw)
         return ARCHIVE_OK;
      if (r != ARCHIVE_OK)
         return r;
-     r = archive_write_data_block(aw, buff, size, offset);
+     r = (int) archive_write_data_block(aw, buff, size, offset);
      if (r != ARCHIVE_OK)
         return r;
   }
@@ -143,7 +143,7 @@ void Dearchive(const char *dest_path, const char *zip_name)
          break;
       }
       
-      sprintf(msg, GetString(hInst, IDS_CANTUNPACK), GetString(hInst, extraction_error));
+      snprintf(msg, sizeof(msg), GetString(hInst, IDS_CANTUNPACK), GetString(hInst, extraction_error));
       
       if (MessageBox(hwndMain, msg, GetString(hInst, IDS_APPNAME), MB_YESNO) == IDNO)
       {

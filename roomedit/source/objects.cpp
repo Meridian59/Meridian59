@@ -3366,19 +3366,10 @@ BOOL CheckFailed (BOOL fatal, char *format, ...)
 	}
 
 	// Display dialog box
-#if 0
-	rc = ::MessageBox (((TApplication *)::Module)->GetMainWindow()->GetActiveWindow(),
-					   msg,
-					   "Verification failed",
-					   MBStyle | MB_ICONEXCLAMATION);
-#endif
-
-#if 1
 	rc = ::MessageBox (0,
 					   msg,
 					   "Q would not approve...",
 					   MBStyle | MB_ICONEXCLAMATION | MB_TASKMODAL);
-#endif
 
 	return (rc == IDNO);
 }
@@ -3575,41 +3566,6 @@ CheckSectorsEnd:
 
 
 /*
-   display number of objects, etc.
-*/
-/* RP: Replaced by a dialog box */
-#if 0
-void Statistics ()
-{
-	char msg[1024];
-	int len = 0;
-
-	len += wsprintf (&msg[len], "Statistics:\n\n");
-	len += wsprintf (&msg[len], "Number of Things:\t\t%4d (%3luKb)\n",
-					 NumThings,
-					 ((ULONG) NumThings * sizeof(Thing) + 512L) / 1024L);
-	len += wsprintf (&msg[len], "Number of Vertices:\t%5d (%3luKb)\n",
-					 NumVertexes,
-					 ((ULONG) NumVertexes * sizeof(Vertex) + 512L) / 1024L);
-	len += wsprintf (&msg[len],  "Number of LineDefs:\t%5d (%3luKb)\n",
-					 NumLineDefs,
-					 ((ULONG) NumLineDefs * sizeof(LineDef) + 512L) / 1024L);
-	len += wsprintf (&msg[len], "Number of SideDefs:\t%5d (%3luKb)\n",
-					 NumSideDefs,
-					 ((ULONG) NumSideDefs * sizeof(SideDef) + 512L) / 1024L);
-	len += wsprintf (&msg[len], "Number of Sectors:\t%5d (%3luKb)",
-					 NumSectors,
-					 ((ULONG) NumSectors * sizeof(Sector) + 512L) / 1024L);
-
-	::MessageBox (0,
-				  msg,
-				  "Statistics of level objects",
-				  MB_OK | MB_TASKMODAL);
-}
-#endif
-
-
-/*
    check cross-references and delete unused objects
 */
 
@@ -3732,91 +3688,6 @@ BOOL CheckCrossReferences ()
 	pWorkDlg->SetRange(0, 3);
 	pWorkDlg->SetValue(0);
 	pWorkDlg->SetWorkText ("Looking for invalid LineDef flags...");
-
-	// These flags are no longer used ARK
-#if 0
-	// Impassible flag
-	assert (cur == NULL);
-	for (n = 0; n < NumLineDefs; n++)
-	{
-		LineDef *pLineDef = &LineDefs[n];
-		if ( (pLineDef->flags & 0x01) == 0  &&  pLineDef->sidedef2 < 0)
-		{
-			SelectObject (&cur, n);
-		}
-	}
-	pWorkDlg->SetValue(1);
-
-	if (cur != NULL &&
-		(Expert ||
-		 Confirm ("Some LineDefs have only one side but their 'Impassible' "
-				  "flag is not set.\nDo you want to set their flag ?") ) )
-	{
-		while (cur)
-		{
-			LineDefs[cur->objnum].flags |= 0x01;
-			MadeChanges = TRUE;
-			UnSelectObject (&cur, cur->objnum);
-		}
-		rc = TRUE;
-	}
-	ForgetSelection( &cur);
-
-
-	// Two-sided redundant flag
-	assert (cur == NULL);
-	for (n = 0; n < NumLineDefs; n++)
-	{
-		LineDef *pLineDef = &LineDefs[n];
-		if ( (pLineDef->flags & 0x04) != 0  &&  pLineDef->sidedef2 < 0)
-		{
-			SelectObject (&cur, n);
-		}
-	}
-	pWorkDlg->SetValue(2);
-
-	if (cur != NULL &&
-		(Expert ||
-		 Confirm ("Some LineDefs have only one side but their 'Two-sided' bit "
-				  "is set.\nDo you want to clear their flag ?") ) )
-	{
-		while (cur)
-		{
-			LineDefs[cur->objnum].flags &= ~0x04;
-			MadeChanges = TRUE;
-			UnSelectObject( &cur, cur->objnum);
-		}
-		rc = TRUE;
-	}
-	ForgetSelection( &cur);
-
-	// Two-sided missing flag
-	assert (cur == NULL);
-	for (n = 0; n < NumLineDefs; n++)
-	{
-		LineDef *pLineDef = &LineDefs[n];
-		if ( (pLineDef->flags & 0x04) == 0  &&  pLineDef->sidedef2 >= 0)
-		{
-			SelectObject (&cur, n);
-		}
-	}
-	pWorkDlg->SetValue(3);
-
-	if (cur != NULL &&
-		(Expert ||
-		 Confirm ("Some LineDefs have two sides but their 'Two-sided' bit is "
-				  "not set.\nDo you want to set their flag ?") ) )
-	{
-		while (cur)
-		{
-			LineDefs[cur->objnum].flags |= 0x04;
-			MadeChanges = TRUE;
-			UnSelectObject (&cur, cur->objnum);
-		}
-		rc = TRUE;
-	}
-	ForgetSelection (&cur);
-#endif
 
 	//
 	//  Check for unused vertices

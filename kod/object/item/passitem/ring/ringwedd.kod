@@ -31,6 +31,8 @@ classvars:
    vrIcon = ringwedding_icon_rsc
    vrRealDesc = ringwedding_desc_rsc
 
+   vbShow_condition = FALSE
+
    viHits_init_min = 3
    viHits_init_max = 7
 
@@ -155,6 +157,18 @@ messages:
    DestroyDisposable()
    {
       return FALSE;
+   }
+
+   % Negates the ring modifying defense power
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      return defense_power;
+   }
+
+   % Negates the ring modifying defense damage
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   {
+      return damage;
    }
 
 end

@@ -116,7 +116,6 @@ using namespace owl;
 */
 typedef int Bool;               /* Boolean data: true or false */
 
-#include "fixed.h"
 #include "memry.h"
 #include "windeu.h"
 

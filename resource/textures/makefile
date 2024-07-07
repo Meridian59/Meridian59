@@ -17,6 +17,7 @@ BGFS = \
 	$(OUTDIR)\grd20128.bgf \
 	$(OUTDIR)\grd20129.bgf \
 	$(OUTDIR)\grd20130.bgf \
+	$(OUTDIR)\grd50078.bgf \
 
 all: makedirs $(BGFS)
 
@@ -50,7 +51,9 @@ $(OUTDIR)\grd20129.bgf:
 	$(MAKEBGF) -o $@ -n "tos-escape-tunnel-w3" -s 4 1 $** 1 1 1
 
 $(OUTDIR)\grd20130.bgf:
-	$(MAKEBGF) -o $@ -n "mudroot" -s 4 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "mudroot" -s 4 1 $** 1 1 1	
 
+$(OUTDIR)\grd50078.bgf:
+	$(MAKEBGF) -o $@ -n "kocatan wall with blue stripe" -s 4 1 $** 1 1 1
 
 !include $(TOPDIR)\rules.mak

@@ -12,12 +12,19 @@
 
 #include "client.h"
 
+// Standard game cursors.
 static HCURSOR hCursorArrow = NULL;
 static HCURSOR hCursorTarget = NULL;
 static HCURSOR hCursorInside = NULL;
 static HCURSOR hCursorCross = NULL;
 static HCURSOR hCursorGet = NULL;
 static HCURSOR hCursorWait = NULL;
+
+// Resize window cursors.
+static HCURSOR hCursorResizeWE = NULL;
+static HCURSOR hCursorResizeNS = NULL;
+static HCURSOR hCursorResizeNESW = NULL;
+static HCURSOR hCursorResizeNWSE = NULL;
 
 void UserMoveEsc(void)
 {
@@ -61,13 +68,30 @@ void UserMoveCursor(int command, int dy, int dx)
 /* Returns TRUE iff cursor was set                                          */
 BOOL MainSetCursor(HWND hwnd, HWND hwndCursor, UINT codeHitTest, UINT msg)
 {
-#if 0
-	if (hCurrentCursor == NULL)
-		return FALSE;
-	
-	SetCursor(hCurrentCursor);
-	return TRUE;
-#endif
+	switch (codeHitTest) {
+		case HTLEFT:
+		case HTRIGHT:
+			SetMainCursor(hCursorResizeWE);
+			return true;
+		break;
+		case HTTOP:
+		case HTBOTTOM:
+			SetMainCursor(hCursorResizeNS);
+			return true;
+		break;
+		case HTBOTTOMLEFT:
+		case HTTOPRIGHT:
+			SetMainCursor(hCursorResizeNESW);
+			return true;
+		break;
+		case HTBOTTOMRIGHT:
+		case HTTOPLEFT:
+			SetMainCursor(hCursorResizeNWSE);
+			return true;
+		break;
+		default:
+		break;
+	}
 	return GameWindowSetCursor();
 }
 /************************************************************************/
@@ -95,6 +119,10 @@ BOOL GameWindowSetCursor(void)
 		hCursorCross = LoadCursor(hInst, MAKEINTRESOURCE(IDC_CROSSCURSOR));
 		hCursorGet = LoadCursor(hInst, MAKEINTRESOURCE(IDC_GETCURSOR));
 		hCursorWait = LoadCursor(NULL, IDC_WAIT);
+		hCursorResizeWE = LoadCursor(NULL, IDC_SIZEWE);
+		hCursorResizeNS = LoadCursor(NULL, IDC_SIZENS);
+		hCursorResizeNESW = LoadCursor(NULL, IDC_SIZENESW);
+		hCursorResizeNWSE = LoadCursor(NULL, IDC_SIZENWSE);
 	}
 	
 	if (state != STATE_GAME)
@@ -159,13 +187,6 @@ BOOL GameWindowSetCursor(void)
 		
 		if (!ModuleEvent(EVENT_SETCURSOR, cursor))
 			return FALSE;
-		
-		//	ajw Experimentation xxx
-		/*
-		// Don't show cursor on dialogs, menus, etc.
-		if (GetFocus() != hMain)
-		return;
-		*/
 		
 		switch (GameGetState())
 		{

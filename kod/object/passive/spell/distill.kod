@@ -117,7 +117,7 @@ messages:
    "Do we have the ingredients?"
    {
       local lIngredients, lIngredient, cReagentClass, iNumNeeded, bFound,
-            lItems, lLists, oUserObject, iNum, oOwner, oSpell; 
+            lItems, lLists, oUserObject, iNum; 
 
       % Most of this is a modified cut and paste from CanPayReagents() in
       %  Spell superclass.
@@ -190,7 +190,7 @@ messages:
    PayIngredients(caster = $, oTarget = $)
    "Now we're making a potion so remove the ingredients."
    {
-      local num, reqstat, iability, lIngredient, lIngredients,
+      local lIngredient, lIngredients,
             cIngredientClass, iLists, lItems, iNumNeeded,oUserObject;
 
       % Again: Cut and paste from spell.kod
@@ -283,14 +283,12 @@ messages:
       %  point total to reward built characters.
       iPotionPower = Bound(((iAbility * (iSkill + 1)) / 100),20,99);
       iPotionPower = iPotionPower - bound((iLevel*15)
-                     - (Send(caster,@GetMaxHealth)-20),0,$);
+                     - (Send(caster,@GetBaseMaxHealth)-20),0,$);
       iPotionPower = iPotionPower + Random(-20,(iSpellPower/10));
       iPotionPower = Bound(iPotionPower,5,SPELLPOWER_MAXIMUM);
 
-      % Potion has duration (In days) determined by distill spellpower and
-      %  spell level.
-      iGoBadTime = Bound((iSpellPower / iLevel) / 3,1,7);
-      iGoBadTime = iGoBadTime * 24 * 60 * 60 * 60 * 1000;
+      % Potion never goes bad.
+      iGoBadTime = -1;
 
       oPotion = Create(cPotionClass,#labelled=TRUE,#iSpellPower=iPotionPower,
                        #gobadtime=igobadtime,#maker=caster,#ability=iSkill);
@@ -330,7 +328,7 @@ messages:
    SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
    "Check if string is a potion spell.  If it is make it the target."
    {
-      local lSpells, name, oTarget, iAbility, iRand, i;
+      local lSpells, oTarget, iAbility, iRand, i;
 
       lSpells = Send(SYS,@GetSpells);
       iRand = Random(1,100);

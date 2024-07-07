@@ -26,10 +26,10 @@ static WNDPROC lpfnDefListProc; /* Default list box window procedure */
 /* local function prototypes */
 void SendOfferEndDialog(HWND hDlg);
 void RcvOfferEndDialog(HWND hDlg);
-long CALLBACK OfferListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK OfferListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 /************************************************************************/
-BOOL CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hwndSend, hwndReceive;   /* Subwindows */
 
@@ -45,8 +45,8 @@ BOOL CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
       SendMessage(hDlg, BK_SETDLGFONTS, 0, 0);
 
       // Set up owner drawn boxes
-      SetWindowLong(hwndSend, GWL_USERDATA, OD_DRAWOBJ);
-      SetWindowLong(hwndReceive, GWL_USERDATA, OD_DRAWOBJ);
+      SetWindowLongPtr(hwndSend, GWLP_USERDATA, OD_DRAWOBJ);
+      SetWindowLongPtr(hwndReceive, GWLP_USERDATA, OD_DRAWOBJ);
 
       SendInfo = (SendOfferDialogStruct *) lParam;
       
@@ -160,7 +160,7 @@ void SendOfferEndDialog(HWND hDlg)
 
 
 /************************************************************************/
-BOOL CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hwndSend, hwndReceive;
 
@@ -174,8 +174,8 @@ BOOL CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       SendMessage(hDlg, BK_SETDLGFONTS, 0, 0);
 
       // Set up owner drawn boxes
-      SetWindowLong(hwndSend, GWL_USERDATA, OD_DRAWOBJ);
-      SetWindowLong(hwndReceive, GWL_USERDATA, OD_DRAWOBJ);
+      SetWindowLongPtr(hwndSend, GWLP_USERDATA, OD_DRAWOBJ);
+      SetWindowLongPtr(hwndReceive, GWLP_USERDATA, OD_DRAWOBJ);
 
       RcvInfo = (RcvOfferDialogStruct *) lParam;
 
@@ -183,7 +183,7 @@ BOOL CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       ItemListSetContents(hwndReceive, RcvInfo->items, True);
 
       /* Subclass list boxes */
-      lpfnDefListProc = (WNDPROC) GetWindowLong(hwndSend, GWL_WNDPROC);
+      lpfnDefListProc = (WNDPROC) GetWindowLongPtr(hwndSend, GWLP_WNDPROC);
       SubclassWindow(hwndSend, OfferListProc);
       SubclassWindow(hwndReceive, OfferListProc);
 
@@ -300,7 +300,7 @@ void RcvOfferEndDialog(HWND hDlg)
 /*
  * OfferListProc:  Subclassed window procedure for offer list boxes.
  */
-long CALLBACK OfferListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OfferListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    ID id;
 

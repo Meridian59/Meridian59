@@ -530,7 +530,7 @@ messages:
 
    DeliveryEffects(mob=$,who=$,mytoken=$)
    {
-      local i,fact,long,short;
+      local fact,long,short;
 
       long = FALSE;
       short = FALSE;

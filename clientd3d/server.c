@@ -43,7 +43,6 @@ static handler_struct login_handler_table[] = {
 { AP_DELETERSC,         HandleDeleteRsc },
 { AP_DELETEALLRSC,      HandleDeleteAllRsc },
 { AP_NOCHARACTERS,      HandleNoCharacters },
-{ AP_GUEST,             HandleGuest },
 { 0, NULL},   // must end table this way
 }; 
 
@@ -317,7 +316,7 @@ void ExtractDLighting(char **ptr, d_lighting *dLighting)
  * ExtractObject: Get an object_node from ptr, and increment
  *   ptr appropriately.  Place data in given object node.
  */
-void ExtractObject(char **ptr, object_node *item)
+void ExtractObject(char **ptr, object_node *item, bool includeLight)
 {  
    Extract(ptr, &item->id, SIZE_ID);
    if (IsNumberObj(item->id))
@@ -327,8 +326,10 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
+   Extract(ptr, &item->rarity, SIZE_ID);
 
-   ExtractDLighting(ptr, &item->dLighting);
+   if (includeLight)
+      ExtractDLighting(ptr, &item->dLighting);
 
    ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
    item->normal_translation = item->translation;
@@ -352,33 +353,7 @@ void ExtractObject(char **ptr, object_node *item)
 
 void ExtractObjectNoLight(char **ptr, object_node *item)
 {  
-   Extract(ptr, &item->id, SIZE_ID);
-   if (IsNumberObj(item->id))
-      Extract(ptr, &item->amount, SIZE_AMOUNT);
-   else
-      item->amount = 0;
-   Extract(ptr, &item->icon_res, SIZE_ID);
-   Extract(ptr, &item->name_res, SIZE_ID);
-   Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
-
-   ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
-   item->normal_translation = item->translation;
-   item->secondtranslation = XLAT_FILTERWHITE90;
-
-   ExtractAnimation(ptr, &item->normal_animate);
-   item->animate = &item->normal_animate;
-
-   item->normal_overlays = ExtractOverlays(ptr);
-   item->overlays = &item->normal_overlays;
-
-   if (OF_BOUNCING == (OF_BOUNCING & item->flags))
-   {
-      item->bounceTime = (WORD)(rand() % 1000);
-   }
-   if (OF_PHASING == (OF_PHASING & item->flags))
-   {
-      item->phaseTime = (WORD)(rand() % 1000);
-   }
+   ExtractObject(ptr, item, false); // Disable light extraction
 }
 
 /********************************************************************/
@@ -988,7 +963,7 @@ Bool HandleLook(char *ptr, long len)
 	 return False;
    }
 
-   DisplayDescription(&obj, flags, (pane? inscr : NULL), msg, NULL);
+   DisplayDescription(&obj, flags, (pane? inscr : NULL), msg, NULL, obj.rarity);
    ObjectDestroy(&obj);
 
    return True;
@@ -1906,24 +1881,6 @@ Bool HandleGetClient(char *ptr, long len)
 
    DownloadNewClient(hostname, filename);
 
-   return True;
-}
-/********************************************************************/
-Bool HandleGuest(char *ptr, long len)
-{
-   BYTE status;
-   int low, high;
-   char *start = ptr;
-
-   Extract(&ptr, &status, 1);
-   Extract(&ptr, &low, 4);
-   Extract(&ptr, &high, 4);
-   
-   len -= (ptr - start);
-   if (len != 0)
-      return False;
-
-   GuestLoggingIn(status, low, high);
    return True;
 }
 /********************************************************************/

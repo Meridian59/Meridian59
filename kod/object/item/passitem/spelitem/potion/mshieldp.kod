@@ -18,9 +18,9 @@ resources:
 
    MagicShieldPotion_name_rsc = "potion of shielding"
    %MagicShieldPotion_icon_rsc = potion01.bgf
-   MagicShieldPotion_desc_rsc = "This is a glass vial of colored liquid.  "
+   MagicShieldPotion_desc_rsc = "This is a glass vial of pale blue-colored liquid.  "
                         "It smells crisp, clean and refreshing."
-   MagicShieldPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+   MagicShieldPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy pale blue-colored liquid.  "
                         "A slight whiff of it is enough to turn your stomach."
 
 
@@ -36,7 +36,7 @@ classvars:
 
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
-   viSpellEffect = SID_MAGICSHIELD
+   viSpellEffect = SID_MAGIC_SHIELD
    viPoisonPercent = 20
    viGoBadDamage = 5
    viColor = XLAT_TO_SKY

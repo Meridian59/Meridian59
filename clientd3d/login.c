@@ -21,11 +21,25 @@ Bool logged_in;             /* True iff we're past login dialog */
 extern int connection;
 Bool admin_mode;            // True when user wants to go into admin mode
 
-static BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static HWND GetMessageBoxParent(void);
 static void LoginReset(void);
 
 SystemInfo sysinfo;
+
+/****************************************************************************/
+/*
+* UseRetailLoginSystem:  Determine if the retail web api's should be utilized.
+*   Return True iff "retail", official build, is in use (not for the open source version).
+*/
+bool UseRetailLoginSystem()
+{
+#ifdef M59_RETAIL
+    return true;
+#else
+    return false;
+#endif
+}
 
 /****************************************************************************/
 /*  
@@ -115,7 +129,7 @@ void LoginErrorMessage(const char *message, BYTE action)
 void LoginError(int err_string)
 {
    HWND hParent = GetMessageBoxParent();
-   if (err_string == IDS_BADLOGIN)
+   if (UseRetailLoginSystem() && err_string == IDS_BADLOGIN)
    {
        CheckAccountActivation();
    }
@@ -216,21 +230,6 @@ void EnterGame(void)
    encodednum = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
    RequestGame(config.download_time,encodednum,inihost);
 }
-/****************************************************************************/
-
-/****************************************************************************/
-/*
-* UseRetailLoginSystem:  Determine if the retail web api's should be utilized.
-*   Return True iff "retail", official build, is in use (not for the open source version).
-*/
-bool UseRetailLoginSystem()
-{
-#ifdef M59_RETAIL
-    return true;
-#else
-    return false;
-#endif
-}
 
 /****************************************************************************/
 /*
@@ -240,10 +239,7 @@ bool UseRetailLoginSystem()
 Bool GetLogin(void)
 {
    admin_mode = False;
-   // Have guests log in automatically
-   if (config.guest)
-      return GuestGetLogin();
-   else if (config.quickstart)
+   if (config.quickstart)
    {
       logged_in = False;
    }
@@ -254,13 +250,6 @@ Bool GetLogin(void)
 	 return False;
       // Go into admin mode if control key is held down
       admin_mode = (GetKeyState(VK_CONTROL) < 0);
-
-      // See if "guest" typed as account name
-      if (!stricmp(config.username, GetString(hInst, IDS_GUEST)))
-      {
-	 config.guest = True;
-	 return GuestGetLogin();
-      }
    }
       
    return True;
@@ -269,7 +258,7 @@ Bool GetLogin(void)
 /*
  * LoginDialogProc:  Get login information.
  */
-BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hUser, hPasswd;        /* Edit boxes in dialog */
    static HWND hGroupBox, hTryPreviewButton;
@@ -308,21 +297,7 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       /* If we have a default name, go to password edit box */
       Edit_SetText(hUser, config.username);
       Edit_SetSel(hUser, 0, -1);
-      if (config.guest)
-      {
-	 RECT rc;
-	 int bottom;
-	 Edit_SetText(hUser, "GUEST");
-	 Edit_SetText(hPasswd, "GUEST");
-	 EnableWindow(hUser, FALSE);
-	 EnableWindow(hPasswd, FALSE);
-	 EnableWindow(GetDlgItem(hDlg,IDC_OK), FALSE);
-	 GetWindowRect(hGroupBox, &rc);
-	 bottom = rc.bottom + 5;
-	 GetWindowRect(hDlg, &rc);
-	 MoveWindow(hDlg, rc.left, rc.top, rc.right - rc.left, bottom - rc.top, TRUE);
-      }
-      else if (strlen(config.username) > 0)
+      if (strlen(config.username) > 0)
       {
 	 Edit_SetText(hPasswd, config.password);
 	 Edit_SetSel(hPasswd, 0, -1);
@@ -338,15 +313,6 @@ BOOL CALLBACK LoginDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
    case WM_COMMAND:
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
-      case IDC_GUEST:
-	 strcpy(config.username, "GUEST");
-	 strcpy(config.password, "GUEST");
-	 ConfigSetServerNameByNumber(config.server_guest);
-	 ConfigSetSocketPortByNumber(config.server_guest);
-	 config.comm.server_num = config.server_guest;
-	 EndDialog(hDlg, IDOK);
-	 return TRUE;
-
       case IDC_SIGNUP:
       {
           /* Sign up for an account */

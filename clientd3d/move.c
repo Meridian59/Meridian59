@@ -108,7 +108,6 @@ static BSPnode *lastBlockingNode = NULL;
 static int worstDistance = 0;
 
 /* local function prototypes */
-static void CheckPlayerMove();
 static void BounceUser(int dt);
 static int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *new_y, int z);
 static WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_y, int z);
@@ -211,7 +210,7 @@ void UserMovePlayer(int action)
    if (dt <= 0)
       dt = 1;
    
-   if (dt < MOVE_DELAY && config.animate)
+   if (dt < MOVE_DELAY)
    {
       gravityAdjust = 1.0;
       move_distance = move_distance * dt / MOVE_DELAY;
@@ -266,8 +265,6 @@ void UserMovePlayer(int action)
 
    num_steps = max(1, min(STEPS_PER_MOVE, NUM_STEPS_PER_SECOND * dt / 1000));
 
-//   xinc = dx;// / num_steps;
-//   yinc = dy;// / num_steps;
    xinc = dx / num_steps;
    yinc = dy / num_steps;
 
@@ -283,7 +280,6 @@ void UserMovePlayer(int action)
    min_distance2 = min_distance * min_distance;
 
    for (i=0; i < num_steps; i++)
-   //for (i=0; i < 1; i++)
    {
       x = last_x + xinc;
       y = last_y + yinc;
@@ -340,11 +336,6 @@ void UserMovePlayer(int action)
 	    }
 	 }
       }
-      
-      // Don't try to slide to current location
-      if (x == last_x && y == last_y)
-		  x = x;
-//	 break;
       
       // Get around integer divide yuckiness
       if (y < 0)
@@ -405,14 +396,12 @@ void UserMovePlayer(int action)
    // Set new player position
    player_obj->motion.x = x;
    player_obj->motion.y = y;
-   //player_obj->motion.z = z;
 
-   // XXX Don't really need to store position in player, since he is also a room object.
+   // TODO: Don't really need to store position in player, since he is also a room object.
    //     The way things are currently done, we now need to update player.
    player.x = x;
    player.y = y;
 
-   CheckPlayerMove();
    MoveUpdateServer();
 
    // Set up vertical motion, if necessary
@@ -420,21 +409,17 @@ void UserMovePlayer(int action)
    if (z == -1)
       z = player_obj->motion.z;
 
-   if (config.animate)
-   {
-      player_obj->motion.dest_z = z;
+   player_obj->motion.dest_z = z;
 
-      // Only set motion if not already moving that direction
-      if (z > player_obj->motion.z && player_obj->motion.v_z <= 0)
-      {
-	 player_obj->motion.v_z = CLIMB_VELOCITY_0;
-      }
-      else if (z < player_obj->motion.z && player_obj->motion.v_z >= 0)
-      {
-	 player_obj->motion.v_z = FALL_VELOCITY_0;
-      }
+   // Only set motion if not already moving that direction
+   if (z > player_obj->motion.z && player_obj->motion.v_z <= 0)
+   {
+      player_obj->motion.v_z = CLIMB_VELOCITY_0;
    }
-   else player_obj->motion.z = z;
+   else if (z < player_obj->motion.z && player_obj->motion.v_z >= 0)
+   {
+      player_obj->motion.v_z = FALL_VELOCITY_0;
+   }
 
    if (bounce)
       BounceUser(dt);
@@ -472,8 +457,8 @@ void SlideAlongWall(WallData *wall, int xOld, int yOld, int *xNew, int *yNew)
    double num = dx * wall_dx + dy * wall_dy;
    double denom = wall_dx * wall_dx + wall_dy * wall_dy;
     
-   *xNew = xOld + FloatToInt(wall_dx * num / denom);
-   *yNew = yOld + FloatToInt(wall_dy * num / denom);
+   *xNew = xOld + (int) (wall_dx * num / denom);
+   *yNew = yOld + (int) (wall_dy * num / denom);
 }
 
 BSPnode *FindIntersection(BSPnode *node, int xOld, int yOld, int xNew, int yNew, int z,WallData **wallIntersect)
@@ -505,8 +490,8 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 {
    BSPinternal *inode;
    WallData *wall;
-   int a, b, c, plane_distance, old_distance;
-   int newDistance;
+   float a, b, c, plane_distance, old_distance;
+   float newDistance;
 
    if (node == NULL || node->type == BSPleaftype)
       return NULL;
@@ -526,7 +511,7 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
    c = inode->separator.c;
    plane_distance = (a * new_x + b * new_y + c);
    old_distance = (a * old_x + b * old_y + c);
-   newDistance = ABS(plane_distance) >> LOG_FINENESS;
+   newDistance = ABS(plane_distance) / FINENESS;
    if ((newDistance > min_distance) || (ABS(plane_distance) > ABS(old_distance)))
       return NULL;
 
@@ -535,28 +520,29 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
    {
       Sidedef *sidedef;
       Sector *other_sector;
-      int below_height, d0, d1, dx, dy, lenWall2;
-      int minx = min(wall->x0, wall->x1) - min_distance;
-      int maxx = max(wall->x0, wall->x1) + min_distance;
-      int miny = min(wall->y0, wall->y1) - min_distance;
-      int maxy = max(wall->y0, wall->y1) + min_distance;
+      int below_height;
+      float d0, d1, dx, dy, lenWall2;
+      float minx = min(wall->x0, wall->x1) - min_distance;
+      float maxx = max(wall->x0, wall->x1) + min_distance;
+      float miny = min(wall->y0, wall->y1) - min_distance;
+      float maxy = max(wall->y0, wall->y1) + min_distance;
 	 
       // See if we are near the wall itself, and not just the wall's plane
       if ((new_x >= minx) && (new_x <= maxx) && (new_y >= miny) && (new_y <= maxy))
       {
-	 // Skip floor->ceiling wall if player can walk through it
-	 if (SGN(old_distance) > 0)
-	 {
-	    sidedef = wall->pos_sidedef;
-	    other_sector = wall->neg_sector;
-	 }
-	 else
-	 {
-	    sidedef = wall->neg_sidedef;
-	    other_sector = wall->pos_sector;
-	 }
-	 if (sidedef == NULL)
-	    continue;
+        // Skip floor->ceiling wall if player can walk through it
+        if (old_distance > 0.001)
+        {
+          sidedef = wall->pos_sidedef;
+          other_sector = wall->neg_sector;
+        }
+        else
+        {
+          sidedef = wall->neg_sidedef;
+          other_sector = wall->pos_sector;
+        }
+        if (sidedef == NULL)
+          continue;
 
 	 // Check for wading on far side of wall; reduce effective height of wall if found
 	 below_height = 0;
@@ -592,9 +578,9 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 	 lenWall2 = dx * dx + dy * dy;
 	 if (d0 > lenWall2) // d1 is closest vertex
 	 {
-	    int dx = old_x - wall->x1;
-	    int dy = old_y - wall->y1;
-	    int oldEndDist = dx * dx + dy * dy;
+	    float dx = old_x - wall->x1;
+	    float dy = old_y - wall->y1;
+	    float oldEndDist = dx * dx + dy * dy;
 	    if ((d1 < min_distance2) && (d1 <= oldEndDist))
 	    {
 	       return wall;
@@ -602,9 +588,9 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 	 }
 	 else if (d1 > lenWall2) // d0 is closest vertex
 	 {
-	    int dx = old_x - wall->x0;
-	    int dy = old_y - wall->y0;
-	    int oldEndDist = dx * dx + dy * dy;
+      float dx = old_x - wall->x0;
+	    float dy = old_y - wall->y0;
+	    float oldEndDist = dx * dx + dy * dy;
 	    if ((d0 < min_distance2) && (d0 <= oldEndDist))
 	    {
 	       return wall;
@@ -673,10 +659,9 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
             if (!moveReported)
             {
                speed = 10;
-               //if (last_move_action == A_FORWARDFAST || last_move_action == A_BACKWARDFAST)
                if (IsMoveFastAction(last_move_action))
                   speed *= 2;
-               RequestMove(*new_y, *new_x, speed, player.room_id);
+               MoveUpdateServer();
                moveReported = TRUE;
                idLastObjNotify = idObjNotify;
             }
@@ -730,44 +715,6 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
    
    return MOVE_OK;
 }
-
-/************************************************************************/
-/*
- * CheckPlayerMove:  Called whenever the player is relocated, either
- *                   by the server or by the player's own efforts.
- *                   If the player's moving somewhere they shouldn't,
- *                   then we tattle to the server.  We don't stop the
- *                   player from being there; that's up to the server.
- */
-void CheckPlayerMove()
-{
-   room_contents_node *player_obj;
-   BSPleaf* leaf;
-
-   player_obj = GetRoomObjectById(player.id);
-   if (!player_obj)
-      return;
-
-   // Server's trying to move to a place the client finds suspicious.
-   // We undo the move, and tell the server that we're doing it.
-   //
-   leaf = BSPFindLeafByPoint(current_room.tree, player_obj->motion.x, player_obj->motion.y);
-   if (leaf == NULL || leaf->sector == NULL ||
-       (/* current_room->secure_zero */ TRUE && leaf->sector == &current_room.sectors[0]))
-   {
-//    debug(("Player is out of bounds.\n"));
-/*
-      // Set new player position.
-      player_obj->motion.x = server_x;
-      player_obj->motion.y = server_y;
-      player.x = server_x;
-      player.y = server_y;
-
-      MoveUpdateServer();
-*/
-   }
-}
-
 /************************************************************************/
 /*
  * ServerMovedPlayer:  Called whenever the player is relocated by the server.
@@ -785,11 +732,9 @@ void ServerMovedPlayer(void)
    if (!player_obj)
       return;
 
-   CheckPlayerMove();
    RoomObjectSetHeight(player_obj);
    server_x = player_obj->motion.x;
    server_y = player_obj->motion.y;
-   //player_obj->motion.z = GetFloorBase(server_x,server_y);
 
    // Update looping sounds to reflect the player's new position
 //   debug(("Player now at: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS));
@@ -835,12 +780,10 @@ void MoveUpdatePosition(void)
    if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
    {
       debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
-//      speed = 10;
-	  speed = 18;
-//      if (last_move_action == A_FORWARDFAST || last_move_action == A_BACKWARDFAST)
-	  if (IsMoveFastAction(last_move_action))
-	 speed *= 2;
-
+      speed = 18;
+      if (IsMoveFastAction(last_move_action))
+        speed *= 2;
+      
       RequestMove(y, x, speed, player.room_id);
       server_x = x;
       server_y = y;
@@ -912,11 +855,11 @@ void UserTurnPlayer(int action)
    dt = now - last_turn_time;
    if (last_turn_time == 0 || dt <= 0)
       dt = 1;
-   if (dt < TURN_DELAY && config.animate)
+   if (dt < TURN_DELAY)
    {
       delta = delta * dt / TURN_DELAY;
    }
-   else if (dt > (4*TURN_DELAY) && config.animate)
+   else if (dt > (4*TURN_DELAY))
    {
       delta = (delta * (int)(GetFrameTime()) / TURN_DELAY) / 2;
    }
@@ -1019,9 +962,9 @@ void UserFlipPlayer(void)
 
 
 // Move at most HEIGHT_INCREMENT per HEIGHT_DELAY milliseconds
-#define HEIGHT_INCREMENT (MAXY / 4)    
+#define HEIGHT_INCREMENT (CLASSIC_HEIGHT / 4)    
 #define HEIGHT_DELAY     100
-#define HEIGHT_MAX_OFFSET (3 * MAXY / 2)    // Farthest you can look up or down
+#define HEIGHT_MAX_OFFSET (3 * CLASSIC_HEIGHT / 2)    // Farthest you can look up or down
 /************************************************************************/
 /* 
  * BounceUser:  Modify user's height a little to give appearance that 
@@ -1059,11 +1002,11 @@ void PlayerChangeHeight(int dz)
    dt = now - last_time;
    if (last_time == 0 || dt <= 0)
       dt = 1;
-   if (dt < HEIGHT_DELAY && config.animate)
+   if (dt < HEIGHT_DELAY)
    {
       dz = dz * dt / HEIGHT_DELAY;
    }
-   else if (dt > (4*HEIGHT_DELAY) && config.animate)
+   else if (dt > (4*HEIGHT_DELAY))
    {
       dz = (dz * (int)(GetFrameTime()) / HEIGHT_DELAY) / 2;
    }

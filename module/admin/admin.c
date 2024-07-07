@@ -159,7 +159,7 @@ Bool WINAPI EventUserAction(int action, void *action_data)
 
    case A_LOOKINVENTORY:
       // Examining inventory object
-      id = (ID) action_data;
+      id = reinterpret_cast<std::intptr_t>(action_data);
       if (hAdminDlg == NULL || hidden || id == INVALID_ID)
 	 return True;
 

@@ -71,7 +71,7 @@ void TooltipAddWindow(HWND hwnd, HINSTANCE hModule, int name)
    ti.cbSize = sizeof(TOOLINFO); 
    ti.uFlags = TTF_IDISHWND; 
    ti.hwnd = hwnd; 
-   ti.uId = (UINT) hwnd; 
+   ti.uId = (UINT_PTR) hwnd; 
    ti.hinst = hModule; 
    ti.lpszText = MAKEINTRESOURCE(name); 
    
@@ -89,7 +89,7 @@ void TooltipAddWindowCallback(HWND hwnd, HINSTANCE hModule)
    ti.cbSize = sizeof(TOOLINFO); 
    ti.uFlags = TTF_IDISHWND; 
    ti.hwnd = hwnd; 
-   ti.uId = (UINT) hwnd; 
+   ti.uId = (UINT_PTR) hwnd; 
    ti.hinst = hModule; 
    ti.lpszText = LPSTR_TEXTCALLBACK;
    

@@ -365,6 +365,7 @@ properties:
 
    plShrines = $
    plShrine_Powers = $
+   plShrine_Allegiances = $
 
    % Bonus spellpower set by admins for events.
    plBonusSpellpower = $
@@ -426,9 +427,8 @@ messages:
       Send(self,@RecreateAllBrains);
       Send(self,@RecreateLibrary);
       Send(self,@RecreateAllRooms);
-      % Creates the Faction games
       Send(self,@RecreateParliament);
-
+      Send(self,@RecreateShrineAllegiances);
       Send(self,@RecreateAssassinGame);
       Send(self,@RecreateQuestEngine);
       Send(self,@RecreateNodeAttack);
@@ -468,7 +468,6 @@ messages:
 
       Send(self,@RefigureAllAbilityTotals);
       Send(self,@RefigureAllAbilityTotals);
-      Send(self,@RecomputeShrineTotals);
       Send(self,@RecreateLearnAdvice);
 
       psTemp = CreateString();
@@ -493,8 +492,6 @@ messages:
 
    RecreateAll()
    {
-      local i;
-
       % Reset our level points.
       vlLevelPoints = [1,2,4,6,8,10];
 
@@ -524,6 +521,7 @@ messages:
       Send(self,@RecreateLibrary);
       Send(self,@RecreateAllRooms);
       Send(self,@RecreateAssassinGame);
+      Send(self,@RecreateShrineAllegiances);
       % The following two lines are handled in Parliament
       % Send(self,@RecreateTerritoryGame);
       % Send(self,@RecreateTokenGame);
@@ -624,7 +622,6 @@ messages:
       piRecreate_State = RECREATE_PHASE_FIVE;
 
       Send(self,@RecreateLearnAdvice);
-      Send(self,@RecomputeShrineTotals);
       Send(self,@RecreateMonsterTemplates);
       Send(self,@RecreateItemTemplates);
       Send(self,@RecreateMoneyTemplates);
@@ -872,6 +869,13 @@ messages:
    {
       local i;
 
+      % Recreate the hash tables.
+
+      Send(self,@CreateUserTable);
+      Send(self,@CreateRoomTable);
+      Send(self,@CreateSpellTable);
+      Send(self,@CreateItemAttTable);
+      
       % Player maintenance.
 
       for i in plUsers_logged_on
@@ -902,13 +906,6 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
-
-      % Recreate the hash tables.
-
-      Send(self,@CreateUserTable);
-      Send(self,@CreateRoomTable);
-      Send(self,@CreateSpellTable);
-      Send(self,@CreateItemAttTable);
 
       return;
    }
@@ -994,7 +991,7 @@ messages:
 
    SystemUserLogoff(what = $)
    {
-      local i, j, oNew_room;
+      local i, j;
 
       plUsers_logged_on = DelListElem(plUsers_logged_on,what);
 
@@ -1021,7 +1018,7 @@ messages:
 
    AddReflection(who = $, oreflection = $)
    {
-      local i,j;
+      local i;
 
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
@@ -1173,7 +1170,7 @@ messages:
                    type1=STANDARD_RESOURCE,type2=STANDARD_RESOURCE,
                    type3=STANDARD_RESOURCE,type4=STANDARD_RESOURCE)
    {
-      local i,each_obj;
+      local i;
 
       for i in plUsers_logged_on
       {
@@ -1460,7 +1457,7 @@ messages:
 
    UserKilled(what = $,killer = $)
    {
-      local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
+      local i, rMessage, oSoldierShield, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
             war_string1, war_string2, oBook, oMaster;
 
@@ -2339,7 +2336,7 @@ messages:
    "CreateAllRoomsIfNew.\nUNSAFE to call from admin mode, as items"
    "in rooms lose state.  Use RecreateAll instead."
    {
-      local i, bFeast_Hall_Locked, oFeast_Hall;
+      local i, n, shrine, bFeast_Hall_Locked, oFeast_Hall;
 
       if plUsers_logged_on <> $
       {
@@ -2352,6 +2349,20 @@ messages:
       if oFeast_Hall <> $
       {
          bFeast_Hall_Locked = Send(oFeast_Hall, @IsLocked);
+      }
+
+      % Preserve shrine powers
+      plShrine_Allegiances = $;
+      
+      n = Length(plShrines);
+
+      % We build `plShrine_Allegiances` in reverse order to match the order
+      % of `plShrines`, used later when recreating the allegiances
+      while (n > 0)
+      {
+         shrine = Nth(plShrines,n);
+         plShrine_Allegiances = Cons(Send(shrine,@GetAllegiance),plShrine_Allegiances);
+         n = n - 1;
       }
 
       if poParliament <> $
@@ -2720,6 +2731,36 @@ messages:
       return;
    }
 
+   RecreateShrineAllegiances()
+   "Resets shrine allegiances and power levels"
+   {
+      local shrine, n;
+
+      if plShrine_Allegiances <> $
+      {
+         if Length(plShrine_Allegiances) = Length(plShrines)
+         {
+            n = 1;
+
+            for shrine in plShrines
+            {
+               Send(shrine,@SetAllegiance,#allegiance=(Nth(plShrine_Allegiances,n)));
+               n = n + 1;
+            }
+         }
+         else 
+         {
+            Debug("RecreateShrineAllegiances:: Length mismatch between shrines and shrine allegiances");
+         }
+      }
+
+      plShrine_Allegiances = $;
+
+      Send(self,@RecomputeShrineTotals);
+
+      return;
+   }
+
    RecomputeShrineTotals()
    {
       local i, allegiance, power, count;
@@ -2882,7 +2923,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_NODEBURST,#class=&Nodeburst);
       Send(self,@CreateOneSpellIfNew,#num=SID_PURIFY,#class=&Purify);
       Send(self,@CreateOneSpellIfNew,#num=SID_ARMOR_OF_GORT,#class=&ArmorOfGort);
-      Send(self,@CreateOneSpellIfNew,#num=SID_SAND_STORM,#class=&Sandstorm);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SANDSTORM,#class=&Sandstorm);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_FORM,#class=&Shadowform);
       Send(self,@CreateOneSpellIfNew,#num=SID_ILLUSIONARY_FORM,#class=&Illusionaryform);
@@ -2898,7 +2939,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_REFLECTION,#class=&SummonReflection);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_SPIRITUAL_HAMMER,#class=&CreateSpiritualHammer);
-      Send(self,@CreateOneSpellIfNew,#num=SID_SUMMON_APPARITION,#class=&SummonApparition);
+      Send(self,@CreateOneSpellIfNew,#num=SID_APPARITION,#class=&SummonApparition);
       Send(self,@CreateOneSpellIfNew,#num=SID_FORGET,#class=&ForgetSpell);
       Send(self,@CreateOneSpellIfNew,#num=SID_SEDUCE,#class=&Seduce);
 
@@ -2949,12 +2990,12 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SHATTERLOCK,#class=&Shatterlock);
       Send(self,@CreateOneSpellIfNew,#num=SID_LIGHTNING_WALL,#class=&Lightningwall);
       Send(self,@CreateOneSpellIfNew,#num=SID_BRAMBLE_WALL,#class=&bramblewall);
-      Send(self,@CreateOneSpellIfNew,#num=SID_SUMMON_POISON_FOG,#class=&SummonPoisonFog);
+      Send(self,@CreateOneSpellIfNew,#num=SID_POISON_FOG,#class=&SummonPoisonFog);
       Send(self,@CreateOneSpellIfNew,#num=SID_FEIGN_DEATH,#class=&FeignDeath);
       Send(self,@CreateOneSpellIfNew,#num=SID_EVIL_TWIN,#class=&SummonEvilTwin);
       Send(self,@CreateOneSpellIfNew,#num=SID_BOND,#class=&Bond);
       Send(self,@CreateOneSpellIfNew,#num=SID_BLOOD_INHERITANCE,#class=&BloodInheritance);
-      Send(self,@CreateOneSpellIfNew,#num=SID_DEATHS_DOOR,#class=&DeathsDoor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_RIFT,#class=&DeathsDoor);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_BREATH_OF_LIFE,#class=&BreathOfLife);
       Send(self,@CreateOneSpellIfNew,#num=SID_RESIST_ACID,#class=&ResistAcid);
@@ -3492,7 +3533,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i,iTime,iDay,iMinutes;
+      local iTime,iDay,iMinutes;
 
       % This assumption is no longer valid, but it's how we figure things out.
       % Remember that GetTime() returns the UDT time in seconds since
@@ -3661,7 +3702,7 @@ messages:
    ReceiveClient(client_msg = $,number_stuff = $,session_id = $)
    {
       local i,liClient_cmd,oUser,lCharinfo,sName,sDesc,oLookup,iGender,rOldName,bLegal,
-            lBadNameContain,lBadNameIs,sTemp;
+            lBadNameContain,lBadNameIs;
 
       liClient_cmd = First(client_msg);
 
@@ -4795,6 +4836,7 @@ messages:
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
+      plItemTemplates = cons(create(&FireArrow),plItemTemplates);
 
       plItemTemplates = cons(create(&Apple),plItemTemplates);
       plItemTemplates = cons(create(&Bread),plItemTemplates);
@@ -4830,6 +4872,7 @@ messages:
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
       plItemTemplates = cons(create(&VampireWand),plItemTemplates);
       plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
+      plItemTemplates = cons(create(&BonkStick),plItemTemplates);
 
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&LongSword),plItemTemplates);
@@ -4924,6 +4967,7 @@ messages:
 
       plItemTemplates = cons(create(&RoomKey),plItemTemplates);
       plItemTemplates = cons(create(&RoomKeyCopy),plItemTemplates);
+      plItemTemplates = cons(create(&RoomKeySecureCopy),plItemTemplates);
       plItemTemplates = cons(create(&Mint),plItemTemplates);
 
       plItemTemplates = cons(create(&RedHeartStone),plItemTemplates);
@@ -4936,6 +4980,7 @@ messages:
       plItemTemplates = cons(create(&DispellIllusionScroll),plItemTemplates);
       plItemTemplates = cons(create(&FinalRitesScroll),plItemTemplates);
       plItemTemplates = cons(create(&FlashScroll),plItemTemplates);
+      plItemTemplates = cons(create(&ForcesOfLightScroll),plItemTemplates);
       plItemTemplates = cons(create(&HeatScroll),plItemTemplates);
       plItemTemplates = cons(create(&KillingFieldScroll),plItemTemplates);
       plItemTemplates = cons(create(&MartyrScroll),plItemTemplates);
@@ -6441,9 +6486,7 @@ messages:
    }
 
    JokeTimerStageOne()
-   {
-      local oPsycho;
-      
+   {     
       ptRecreateTimer = $;
 
       Send(&Monster,@Killed);

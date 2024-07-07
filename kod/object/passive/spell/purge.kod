@@ -132,7 +132,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oTarget, lInfo, oSpell, lList, lEnchantmentList;
+      local oTarget;
       
       oTarget = First(lTargets);
       if oTarget <> who

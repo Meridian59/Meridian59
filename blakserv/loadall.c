@@ -48,9 +48,9 @@ Bool LoadAll(void)
 		return False;
 	}
 	
-	sprintf(time_str,"%i",last_save_time);
+	snprintf(time_str, sizeof(time_str), "%i",last_save_time);
 	
-	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,time_str);
+	snprintf(load_name, sizeof(load_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,time_str);
 	if (LoadAccounts(load_name) == False)
 	{
 		lprintf("LoadAll error loading accounts, initializing a new game\n");
@@ -81,7 +81,7 @@ Bool LoadAllButAccount(void)
 		return False;
 	}
 	
-	sprintf(time_str,"%i",last_save_time);
+	snprintf(time_str, sizeof(time_str), "%i",last_save_time);
 	
 	return LoadAllButAccountAtTime(time_str);
 }
@@ -93,11 +93,11 @@ Bool LoadAllButAccountAtTime(char *time_str)
 	
 	load_ok = True;
 	
-	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,time_str);
+	snprintf(load_name, sizeof(load_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,time_str);
 	if (LoadBlakodStrings(load_name) == False)
 		load_ok = False;
 	
-	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
+	snprintf(load_name, sizeof(load_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
 	if (!LoadGame(load_name)) 
 	{
 	/* If loadgame failed, create a system object which basically starts
@@ -111,7 +111,7 @@ Bool LoadAllButAccountAtTime(char *time_str)
 		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
 	}
 	
-	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
+	snprintf(load_name, sizeof(load_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
 	LoadDynamicRsc(load_name);
 	
 	return load_ok;
@@ -126,7 +126,7 @@ Bool LoadControlFile(int *last_save_time)
 	int lineno;
 	Bool found_lastsave;
 	
-	sprintf(load_name,"%s%s",ConfigStr(PATH_LOADSAVE),SAVE_CONTROL_FILE);
+	snprintf(load_name, sizeof(load_name), "%s%s",ConfigStr(PATH_LOADSAVE),SAVE_CONTROL_FILE);
 	if ((loadfile = fopen(load_name,"rt")) == NULL)
 		return False;
 	

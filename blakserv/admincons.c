@@ -85,7 +85,7 @@ void LoadAdminConstants(void)
 	{
 		lineno++;
 		
-		name_str = strtok(line,"= \t\n");
+		name_str = strtok(line,"= \t\n\r");
 		
 		if (name_str == NULL)	/* ignore blank lines */
 			continue;
@@ -93,7 +93,7 @@ void LoadAdminConstants(void)
 		if (name_str[0] == '%')	/* ignore comments lines */
 			continue;
 		
-		value_str = strtok(NULL,"= \t\n");
+		value_str = strtok(NULL,"= \t\n\r");
 		
 		if (name_str == NULL || name_str[0] == '%')
 		{

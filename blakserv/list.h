@@ -38,6 +38,9 @@ int SetFirst(int list_id,val_type new_val);
 int SetNth(int n,int list_id,val_type new_val);
 int FindListElem(val_type list_id,val_type list_elem);
 blak_int DelListElem(val_type list_id,val_type list_elem);
+// Move element at index n to index m, both 1-based.
+// m may be up to 1 more than list length (meaning move to the end of the list).
+void MoveListElem(val_type list_id, val_type n, val_type m);
 
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id));
 void MoveListNode(int dest_id,int source_id);

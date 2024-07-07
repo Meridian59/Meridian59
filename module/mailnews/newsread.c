@@ -38,7 +38,7 @@ static ChildPlacement newsread_controls[] = {
 };
 
 /* local function prototypes */
-static BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserReplyNewsMail(NewsArticle *article);
 void OnColumnClick(LPNMLISTVIEW pLVInfo);
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
@@ -109,7 +109,7 @@ void UserReadArticle(char *article)
    SendMessage(hReadNewsDialog, BK_ARTICLE, 0, (LPARAM) article);
 }
 /****************************************************************************/
-BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static ReadNewsDialogStruct *info = NULL;
    static HWND hEdit = NULL;

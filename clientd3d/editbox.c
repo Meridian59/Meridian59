@@ -33,7 +33,7 @@ static keymap editbox_key_table[] = {
 extern HPALETTE hPal;
 
 /* local function prototypes */
-static long CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /************************************************************************/
 /*
  * EditBoxCreate:  Create the edit box.
@@ -106,7 +106,7 @@ void EditBoxGetArea(AREA *a)
 /*
  * EditProc:  Subclassed window procedure for edit box.
  */
-long CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int action;
    void *action_data;
@@ -194,7 +194,7 @@ void EditBoxAddText(char *message, int color, int style)
    int txtlen, msglen;
 
    txtlen = Edit_GetTextLength(hwndText);
-   msglen = strlen(message);
+   msglen = (int) strlen(message);
 
    /* If box is full, get as much as we can fit.  +2 for CR/LF */
    if (txtlen + msglen + 2 > MAX_TEXT)

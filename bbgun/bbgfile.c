@@ -25,7 +25,7 @@ extern int CurrentGroupMember;
 extern int NumBBGs;
 
 static BOOL SaveBBGFile(int bbg, char *filename);
-static BOOL CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static char *BBG_Filter = "Command files\0*.bbg\0All Files\0*.*\0\0";
 /************************************************************************/
@@ -144,7 +144,7 @@ void SaveBBG(void)
    // If in dual bitmap mode, ask to save both anchor and wanderer
    if (config.dual_mode)
    {
-      flags = DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE), hMain, SaveBBGDialogProc);
+     flags = (int) DialogBox(hInst, MAKEINTRESOURCE(IDD_SAVE), hMain, SaveBBGDialogProc);
 
       if (flags == 0)
 	 return;
@@ -285,7 +285,7 @@ void CloseBBG(void)
    DrawIt();
 }
 /************************************************************************/
-BOOL CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    int flags;
 

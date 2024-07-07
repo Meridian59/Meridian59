@@ -357,6 +357,7 @@ messages:
       }
 
       if oRoom = $
+         OR oRoom = self
       {
          send(who,@AdminGoToSafety);
          send(who,@GainHealthNormal,#amount=100);
@@ -610,7 +611,7 @@ messages:
 
    CorpseDecomposed(what = $)
    {
-      local i, each_obj, oDeadPlayer;
+      local i, oDeadPlayer;
 
       for i in plCorpses
       {  

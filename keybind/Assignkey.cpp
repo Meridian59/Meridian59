@@ -56,7 +56,7 @@ BOOL CAssignkey::PreTranslateMessage(MSG* pMsg)
   return CDialog::PreTranslateMessage(pMsg);
 }
 
-int CAssignkey::DoModal() 
+INT_PTR CAssignkey::DoModal() 
 {
   MSG pMsg;
   BOOL bGotMsg;
@@ -134,7 +134,7 @@ int CAssignkey::DoModal()
         if(pMsg.wParam>='A' && pMsg.wParam<='Z')
         {
           bGetbind=FALSE;
-          sprintf(TCNewkey,"%c",pMsg.wParam+32); // +32 changes it to lowercase
+          sprintf(TCNewkey,"%c",(char) pMsg.wParam+32); // +32 changes it to lowercase
           break;
         }
 /*

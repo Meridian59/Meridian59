@@ -45,9 +45,9 @@ void RestartFilename();
 void StartupError();
 void RestartClient();
 void Interface(int how_show);
-long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam);
+LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 void OnTimer(HWND hwnd,int id);
-BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 /************************************************************************/
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_line,int how_show)
@@ -162,7 +162,7 @@ void RestartClient()
 
    if (!CreateProcess(restart_filename.c_str(),"",NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
    {
-      sprintf(s,GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
+     snprintf(s, sizeof(s), GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
       MessageBox(NULL,s,GetString(hInst, IDS_APPNAME),MB_ICONSTOP);
    }
 }
@@ -199,7 +199,7 @@ void Interface(int how_show)
    }
 }
 /************************************************************************/
-long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
+LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)
 {
    HWND hCtrl;
 
@@ -211,7 +211,7 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
       SetFocus(GetDlgItem(hwnd, IDCANCEL));
 
       GetDlgItemText(hwnd, IDC_BYTES1, format, sizeof(format));
-      sprintf(string, format, transfer_progress, transfer_file_size);
+      snprintf(string, sizeof(string), format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwnd, IDC_BYTES1, string);
 
       hCtrl = GetDlgItem(hwnd, IDC_ANIMATE1);
@@ -242,8 +242,8 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
 
    case CM_FILESIZE:
       // Set max value
-     transfer_file_size = lParam;
-      sprintf(string, format, transfer_progress, transfer_file_size);
+      transfer_file_size = (int) lParam;
+      snprintf(string, sizeof(string), format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwndMain, IDC_BYTES1, string);
       SendDlgItemMessage(hwnd, IDC_PROGRESS, PBM_SETRANGE, 0,
                          MAKELPARAM(0, transfer_file_size / 100));
@@ -251,8 +251,8 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
 
    case CM_PROGRESS:
       // Set current value
-      transfer_progress = lParam;
-      sprintf(string, format, transfer_progress, transfer_file_size);
+      transfer_progress = (int) lParam;
+      snprintf(string, sizeof(string), format, transfer_progress, transfer_file_size);
       SetDlgItemText(hwndMain, IDC_BYTES1, string);
       SendDlgItemMessage(hwnd, IDC_PROGRESS, PBM_SETPOS, transfer_progress / 100, 0);
       break;
@@ -290,7 +290,7 @@ void Status(char *fmt, ...)
    va_list marker;
     
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    SetDlgItemText(hwndMain, IDC_STATUS, s);
@@ -301,12 +301,12 @@ void Status(char *fmt, ...)
  */
 void Error(char *fmt, ...)
 {
-   int retval;
+   INT_PTR retval;
    char s[500];
    va_list marker;
     
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ERROR), hwndMain, ErrorDialogProc, 
@@ -320,7 +320,7 @@ void Error(char *fmt, ...)
 /*
  * ErrorDialogProc:  Dialog procedure for displaying error and asking for retry.
  */
-BOOL CALLBACK ErrorDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {

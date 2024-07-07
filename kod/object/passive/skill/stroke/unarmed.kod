@@ -96,7 +96,7 @@ messages:
    FindDamage(who=$)
    "No weapon means we come up with the damage here, not modify a weapon's damage."
    {
-      local damage, might;
+      local damage;
 
       damage = random(1,4);
 

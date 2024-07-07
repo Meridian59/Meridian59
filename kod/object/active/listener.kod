@@ -95,8 +95,6 @@ messages:
    
    SomethingEntered(where = $,what = $)
    {
-      local sTempStr;
-
       if not send(poEnchanted,@IsLoggedOn)
       {
          send(self,@delete);
@@ -119,8 +117,6 @@ messages:
    
    SomethingLeft(where = $,what = $)
    {      
-      local sTempStr;
-
       if not send(poEnchanted,@IsLoggedOn)
       {
          send(self,@delete);

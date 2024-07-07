@@ -29,7 +29,7 @@ extern HWND hStats;
 static int num_visible;             // # of stats visible in list box
 
 static int StatListFindItem(int num);
-static long CALLBACK StatsListProc(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+static LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpellIcon );
 static int  StatsListGetItemHeight(void);
 static void StatsListLButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
@@ -156,7 +156,7 @@ int StatListFindItem(int num)
 /*
  * StatsListProc:  Subclassed window procedure for list box.
  */
-long CALLBACK StatsListProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
@@ -187,9 +187,6 @@ long CALLBACK StatsListProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
    case WM_KILLFOCUS:
       StatsDrawBorder();
       break;
-
-//	case WM_CTLCOLORSCROLLBAR:						// ajw
-//		return (long)GetStockObject( BLACK_BRUSH );		//	xxx
    }
    return CallWindowProc(lpfnDefStatListProc, hwnd, message, wParam, lParam);
 }
@@ -271,12 +268,10 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    r.left += ENCHANT_SIZE + 2;
    // Draw text with drop shadow
    SetTextColor(lpdis->hDC, GetColor(COLOR_STATSBGD));
-   //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
-   DrawText( lpdis->hDC, str, strlen(str), &r, DT_LEFT );
+   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
    OffsetRect(&r, 1, 1);
    SetTextColor(lpdis->hDC, selected ? GetColor(COLOR_HIGHLITE) : GetColor(COLOR_STATSFGD));
-   //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
-   DrawText( lpdis->hDC, str, strlen(str), &r, DT_LEFT );
+   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
 
    SelectObject(lpdis->hDC, hOldFont);
 

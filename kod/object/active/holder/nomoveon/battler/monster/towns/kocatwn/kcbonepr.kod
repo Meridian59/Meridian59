@@ -142,15 +142,15 @@ messages:
    SetForSale()
    {
       plFor_sale = [ $,$,
-                     [SID_DETECT_INVIS,SID_HOLY_RESOLVE,SID_UNHOLY_RESOLVE,
-                      SID_SHALBANE, SID_QORBANE ]];
+                     [SID_DETECT_INVISIBLE,SID_HOLY_RESOLVE,SID_UNHOLY_RESOLVE,
+                      SID_SHALILLEBANE, SID_QORBANE ]];
       return;
    }
 
    AddLearnAdvice()
    {
       %% Add random response to five spells
-      local i, lFinal, lDialogue, oAbility, sid, oName, lTriggers;
+      local lFinal, lDialogue, oAbility, sid, oName, lTriggers;
 
       if not (viAttributes & MOB_TEACHER) { return; }
 

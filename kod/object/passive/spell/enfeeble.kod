@@ -68,7 +68,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local target, i, oPalsy;
+      local target, oPalsy;
       
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
@@ -116,7 +116,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local iMight_change, oTarget, oPalsy;
+      local oTarget, oPalsy;
 
       oTarget = First(lTargets);
       oPalsy = Send(SYS,@FindSpellByNum,#num=SID_PALSY);

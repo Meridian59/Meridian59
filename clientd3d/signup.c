@@ -20,7 +20,7 @@ using namespace std;
 
 Signup* Signup::s_inst = NULL;
 
-static BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam);
+static INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 void Signup::UpdateInputs(HWND hDlg, int enabled)
 {
@@ -50,7 +50,7 @@ INT_PTR ApplyErrorStyleToStaticText(UINT wParam, LONG lParam)
 /*
 * SignUpDialogProc: Manage the signup dialog window callbacks.
 */
-BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
+INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HWND hUsername, hPasswd1, hPasswd2, hEmail, hServer101, hServer102;
 
@@ -155,7 +155,12 @@ BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam
 
             char errorStr[256];
 
-            if (SendHttpsRequest(hDlg, domain, resource, ss.str(), response))
+            // Request can take a long time; show waiting cursor
+            SetMainCursor(LoadCursor(NULL, IDC_WAIT));
+            bool success = SendHttpsRequest(hDlg, domain, resource, ss.str(), response);
+            SetMainCursor(LoadCursor(NULL, IDC_ARROW));
+            
+            if (success)
             {
                 string dStr(response.begin(), response.end());
                 char* text = const_cast<char *>(dStr.c_str());
@@ -246,11 +251,12 @@ BOOL CALLBACK SignUpDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam
             }
             else
             {
-                // Failed during web api call (potential client network issues).
-                LoadString(hInst, IDS_SIGNUPUNKNOWNERROR, errorStr, sizeof(errorStr));
-                ClientError(hInst, hDlg, IDS_SIGNUPFAILED, ss.str().c_str());
+              // Failed to send http request, show client error popup message.
+              std::stringstream os;
+              os << GetLastError();
+              ClientError(hInst, hDlg, IDS_CANTSIGNUP, os.str().c_str());
 
-                su->UpdateInputs(hDlg, TRUE);
+              su->UpdateInputs(hDlg, TRUE);
             }
             return TRUE;
         }

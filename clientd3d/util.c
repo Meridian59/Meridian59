@@ -185,29 +185,32 @@ char *GetLastErrorStr(void)
  */
 void CenterWindow(HWND hwnd, HWND hwndParent)
 {
-   RECT rcDlg, rcParent;
-   int screen_width, screen_height, x, y;
+   RECT rcDlg, rcParent, rcScreen;
+   int x, y;
 
-   /* If dialog has no parent, then its parent is really the desktop */
+   // BP_LOOK generated dialog box windows will not have a parent.
+   // Centering will not work properly without one.
    if (hwndParent == NULL)
-      hwndParent = GetDesktopWindow();
+      hwndParent = hMain;
 
    GetWindowRect(hwndParent, &rcParent);
    GetWindowRect(hwnd, &rcDlg);
 
-   /* Move dialog rectangle to upper left (0, 0) for ease of calculation */
+   // Move dialog box to upper left (0, 0) for ease of calculation
    OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
 
    x = rcParent.left + (rcParent.right - rcParent.left)/2 - rcDlg.right/2;
    y = rcParent.top + (rcParent.bottom - rcParent.top)/2 - rcDlg.bottom/2;
 
+   // Get the monitor information for the parent window
+   MONITORINFO mi;
+   mi.cbSize = sizeof(MONITORINFO);
+   GetMonitorInfo(MonitorFromWindow(hwndParent, MONITOR_DEFAULTTONEAREST), &mi);
+   rcScreen = mi.rcWork;  // Use rcWork for the working area excluding taskbar
 
    // Make sure that child window is completely on the screen
-   screen_width  = GetSystemMetrics(SM_CXSCREEN);
-   screen_height = GetSystemMetrics(SM_CYSCREEN);
-
-   x = max(0, min(x, screen_width  - rcDlg.right));
-   y = max(0, min(y, screen_height - rcDlg.bottom));
+   x = max(rcScreen.left, min(x, rcScreen.right - rcDlg.right));
+   y = max(rcScreen.top, min(y, rcScreen.bottom - rcDlg.bottom));
 
    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }
@@ -314,8 +317,6 @@ Bool HasExtension(char *filename, char *extension)
  */
 Bool GetWorkingDirectory(char *buf, int buflen)
 {
-   int len;
-
    if (getcwd(buf, buflen) == NULL)
    {
       buf[0] = 0;
@@ -323,7 +324,7 @@ Bool GetWorkingDirectory(char *buf, int buflen)
    }
 
    // Add backslash to end of dir if not already there
-   len = strlen(buf);
+   size_t len = strlen(buf);
    if (buf[len - 1] != '\\')
    {
       buf[len] = '\\';
@@ -721,25 +722,4 @@ void InitMenuPopupHandler(HWND hwnd, HMENU hMenu, UINT item, BOOL fSystemMenu)
       EnableMenuItem(hMenu, SC_MOVE, MF_GRAYED);
       EnableMenuItem(hMenu, SC_SIZE, MF_GRAYED);
    }
-}
-
-/********************************************************************/
-/*
- * GetHBitmapFromResource:  Creates a DIB from resources. Returns handle to new DIB.
- *   Added by ajw.
- *   xxx Not sure if this works or is useful for anything. Ended up not using it.
- */
-HBITMAP GetHBitmapFromResource( HMODULE hModule, int bitmap_id )
-{
-	HBITMAP hbmpReturn;
-	BITMAPINFOHEADER* pbmiHeader = GetBitmapResource( hModule, bitmap_id );
-	HDC hDC = GetDC( hMain );
-	BITMAPINFO* pbmInfo = (BITMAPINFO*)SafeMalloc( sizeof(BITMAPINFO) + NUM_COLORS * sizeof(RGBQUAD) );
-	memcpy( &pbmInfo->bmiHeader, pbmiHeader, sizeof(BITMAPINFOHEADER) );
-	SetBMIColors( pbmInfo );
-	hbmpReturn = CreateDIBitmap( hDC, pbmiHeader, CBM_INIT,
-									((BYTE*)pbmiHeader) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD),
-									pbmInfo, DIB_PAL_COLORS );
-	ReleaseDC( hMain, hDC );
-	return hbmpReturn;
 }

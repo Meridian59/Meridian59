@@ -273,7 +273,6 @@ void AdminAddProperty(char *str)
  */
 char *AdminNthToken(char *str, int n)
 {
-   int index;
    char *ptr = str;
 
    do {
@@ -281,7 +280,7 @@ char *AdminNthToken(char *str, int n)
 	 return NULL;
 
       // Skip spaces
-      index = strspn(ptr, whitespace);
+      size_t index = strspn(ptr, whitespace);
       str = ptr + index;
 
       // Move to next token
@@ -444,7 +443,7 @@ void AdminReturnLine(char *str)
  * AdminValueDialogProc:  Dialog procedure for editing a property's value.
  *   lParam of INITDIALOG message is index of property in object list box.
  */
-BOOL CALLBACK AdminValueDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK AdminValueDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static int index;
    int type, i;

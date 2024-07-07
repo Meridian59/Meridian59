@@ -169,7 +169,7 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = $; % [ $, $, [ SID_DEATHS_DOOR ], $ ];
+      plFor_sale = $; % [ $, $, [ SID_SHADOW_RIFT ], $ ];
 
       return;
    }
@@ -187,7 +187,7 @@ messages:
    CanAddSpell(who=$,num=0, report = FALSE)
    "We require that a quest be done before one of the spells can be learned"
    {
-      if num = SID_DEATHS_DOOR
+      if num = SID_SHADOW_RIFT
          AND NOT send(who,@IsUsingA,#class=&NecromancerAmulet)
       {
          if report
@@ -576,7 +576,7 @@ messages:
 
    Killed(what=$, resetScenario=FALSE, guildDisbandDeath=FALSE)
    {
-      local oSpell, oRoom, NumAttackers, i, lichActivated;
+      local NumAttackers, i, lichActivated;
 
       NumAttackers = length(plAttackers);
  

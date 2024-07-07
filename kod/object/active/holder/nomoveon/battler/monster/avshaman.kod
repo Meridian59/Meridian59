@@ -305,7 +305,7 @@ messages:
          {
             if iRandom < 85
             {
-               iSpell = SID_SAND_STORM;
+               iSpell = SID_SANDSTORM;
                iManaCost = 4;
             }
             else

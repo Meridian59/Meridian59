@@ -147,7 +147,7 @@ messages:
 
    SomethingSaidDuringTrance(who=$,string=$)
    {
-      local oPrism, oPrey, lTargets;
+      local oPrey, lTargets;
 
       oPrey = Send(SYS,@FindUserByString,#string=string);
 

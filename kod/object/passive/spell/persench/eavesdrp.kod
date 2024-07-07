@@ -108,13 +108,14 @@ messages:
       propagate;
    }
 
-   BreakTrance( who = $, state = $, event = $, what = $ )
+   BreakTrance( who = $, state = $, event = $, castwhat = $ )
    {
-      if event = EVENT_CAST AND what = self
+      if event = EVENT_CAST AND castwhat = self
       {
          propagate;
       }
       
+      % Delete the listener object.
       Send(nth(state,2),@Delete);
       Send(who,@RemoveEnchantment,#what=self,#state=state);
       
@@ -143,7 +144,7 @@ messages:
    GetStateValue(iSpellPower=$,who=$)
    % Create and place the listener.
    {
-      local oRoom, lRooms, ilength, iRow, iCol, iDrainTime, oListener;
+      local oRoom, lRooms, ilength, iRow, iCol, oListener;
 
       lRooms = send(self,@GetYellList,#who=who);
 

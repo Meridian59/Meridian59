@@ -897,7 +897,7 @@ messages:
    
    GotWantedItem(who=$, obj = 0)
    {
-      local oPlayerObj, i, bGotAll;
+      local oPlayerObj, i;
 
       if not isClass(obj,&HeartStone)
       {

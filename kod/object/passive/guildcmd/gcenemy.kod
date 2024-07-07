@@ -50,7 +50,7 @@ messages:
    DoCommand(who=$, otarget = $)
    "Declares the target an enemy to your guild!"
    {
-      local yourGuild,myguild,i,lmembers;
+      local yourGuild,myguild;
 
       if not isClass(oTarget,&guild)
         {

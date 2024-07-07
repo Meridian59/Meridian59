@@ -42,7 +42,7 @@ void _cdecl dprintf(char *fmt, ...)
 	if (!config.debug)
 		return;
 
-	WriteFile(hStdout, s, strlen(s), &written, NULL);
+	WriteFile(hStdout, s, (int) strlen(s), &written, NULL);
 	if (debug_file != NULL)
 		fputs(s, debug_file);
 }
@@ -97,7 +97,7 @@ static void GenerateCRC16( void )
 }
 
 /************************************************************************/
-long CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	/* See if module wants to handle message */
 	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == False)
@@ -269,6 +269,19 @@ void ClearMessageQueue(void)
 	}
 }
 /************************************************************************/
+void SetUpCrashReporting() {
+#ifdef M59_RETAIL
+  static MiniDmpSender *pSender;
+  static const int VERSION_SIZE = 20;
+  wchar_t version[VERSION_SIZE];
+  _snwprintf(version, VERSION_SIZE, L"%d", VERSION_NUMBER(MAJOR_REV, MINOR_REV));
+  pSender = new MiniDmpSender(L"Meridian59", L"Meridian 59", version,
+                              NULL, MDSF_PREVENTHIJACKING | MDSF_LOGFILE | MDSF_LOG_VERBOSE);
+	SetGlobalCRTExceptionBehavior();
+	SetPerThreadCRTExceptionBehavior();    
+#endif  
+}
+/************************************************************************/
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam,
 				   int nCmdShow)
 {
@@ -277,6 +290,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	BOOL bQuit = FALSE;
 
 	InitCommonControls();
+  SetUpCrashReporting();
 
 	hInst = hInstance;
 
@@ -308,8 +322,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	if (config.debug)
 		CreateDebugWindow();
 
-	if (lpszCmdParam && strlen(lpszCmdParam) > 0)
-		ConfigOverride(lpszCmdParam);
+  ConfigOverride(lpszCmdParam);
 
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);

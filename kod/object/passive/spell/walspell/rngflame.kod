@@ -86,11 +86,9 @@ messages:
 
    PlaceWallElements(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oRoom, iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep,
-            iAngle, iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
-            iHalfFine_Col, oElement, oTarget;
+      local oRoom, iRow, iCol, iAngle, iMaxDamage, iDuration, oElement, oTarget;
 			
-	  oTarget = First(lTargets);
+	 oTarget = First(lTargets);
 
       iAngle = Send(oTarget,@GetAngle);
       iMaxDamage = iSpellPower / 5;

@@ -44,12 +44,13 @@
 #include <d3d9.h>
 
 typedef unsigned char Bool;
+typedef INT64 int64;
 enum {False = 0, True = 1};
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 20  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 29  /* Minor version of client program; must be in [0, 99] */
 
-#define VERSION_NUMBER(major_rev, minor_rev) ((minor_rev + 100) * major_rev)
+#define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 
 #define MAXAMOUNT 9     /* Max # of digits in a server integer */
 #define MAXSTRINGLEN 255 /* Max length of a string loaded from string table */
@@ -72,10 +73,13 @@ enum {False = 0, True = 1};
 
 extern void GetGamePath( char *szGamePath );
 
-extern long CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
 
 extern Bool is_foreground;   // True when program is in the foreground
+
+// Minimum # of milliseconds between non-repeat actions
+#define KEY_NOREPEAT_INTERVAL 400
 
 /* This list of include files is good for precompiled headers */
 /* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
@@ -85,10 +89,10 @@ extern "C" {
 #endif
 
 #ifdef M59_RETAIL
-    // #define to enable Miles Sound System version.  If not defined,
-    // music is played through the default MIDI player, and sound goes through the
-    // ancient wavemix DLL.
-    #define M59_MSS
+  // #define to enable Miles Sound System version.  If not defined,
+  // music is played through the default MIDI player, and sound goes through the
+  // ancient wavemix DLL.
+  #define M59_MSS
 #endif
 
 #ifdef M59_MSS
@@ -122,6 +126,11 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include <stdlib.h>
 #include <crtdbg.h>
 #include <string>
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
 
 #include "resource.h"
 #include "proto.h"
@@ -212,7 +221,6 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "md5.h"
 #include "xlat.h"
 #include "rops.h"
-#include "guest.h"
 #include "ping.h"
 #include "objdraw.h"
 #include "profane.h"

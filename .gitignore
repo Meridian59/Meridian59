@@ -165,6 +165,7 @@ Desktop.ini
 # Build directories
 debug
 release
+.vs/
 
 #############
 ## Python

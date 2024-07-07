@@ -13,6 +13,7 @@ KocatanInnkeeper is KocatanTown
 constants:
 
    include blakston.khd
+   include protocol.khd
 
 resources:
 
@@ -27,7 +28,42 @@ resources:
    kocinn_winknudge = "Thanks!  I'll be sure to let you know how it all turns out!"
    kocataninnkeeper_unwanted_keep = "~k%s%s tells you, \"Thank you.  You won't regret letting me borrow that.~n~k\""
 
-   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wondrous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+
+   % Rentable room stuff.
+   KocatanInnkeeper_room_rented = \
+      "My friend, you definitely know a good deal when you see one!  Please "
+      "enjoy your stay here, and come see me right away if you have any questions, "
+      "concerns, or if you want in on a rather lucrative prospect that's come to "
+      "my attention recently!"
+
+   KocatanInnkeeper_cost = \
+      "You'll not find a better deal on the island!  It costs %i shillings to "
+      "~Irent~n a ~Iroom~n at my fine establishment for 85 days.  If you "
+      "want to stay longer, that'll be %i shillings per day, paid in advance.  "
+      "For a very modest fee of %i shillings, I can even provide you "
+      "with a copy of your room key.  Act now, because this offer won't last "
+      "long!  Space is very limited and my rooms are first-come, first-serve!"
+
+   KocatanInnkeeper_days_left = \
+      "Thank you, my friend!  I'll have triple this amount for you after "
+      "an associate of mine can...  Oh right, you're just paying rent.  Your "
+      "room is paid for up to %i days now, so make yourself right at home!"
+   KocatanInnkeeper_too_long = \
+      "Oh boy, I know of some amazing investment opportunities that could "
+      "make us both rich beyond our wildest dreams with this!  Alas, I'd hate "
+      "to lose my favorite patron and business partner should things not "
+      "quite pan out, so maybe you should hang onto that money for a while "
+      "longer.  Your rent isn't due right now either, but come see me again "
+      "when it is."
+
+   KocatanInnkeeper_destroy_key_copy = \
+      "Oh, you don't want this key copy anymore?  "
+      "Just this once, I'll take it off your hands for free as a courtesy."
+   KocatanInnkeeper_change_lock = \
+      "Alright, your existing key copies will be invalidated right away.  "
+      "If you want new copies, I'll of course be more than happy to sell you "
+      "some at a bargain price."
 
 classvars:
 
@@ -43,6 +79,10 @@ classvars:
    vrUnwanted_keep = kocataninnkeeper_unwanted_keep
 
 properties:   
+
+   piInitialRoomCost = 5000
+   piPerDayCost = 75
+   piKeyCopyCosts = 500
 
 messages:
 
@@ -83,7 +123,7 @@ messages:
 
    CheckForScheme(who=$, obj = 0)
    {
-      local oMoney, oBank, amount;
+      local oMoney, amount;
 
       if not isClass(obj,&Money)
       {
@@ -158,7 +198,40 @@ messages:
            
       return;
    }
-   
+
+   SomeoneSaid(what=$,string=$)
+   {
+      Send(Send(SYS, @GetRentableRoomMaintenance), @ParseInnkeeperCommands,
+         #who=self, #what=what, #innRid=RID_KOC_INN, #speech=string,
+         #initCost=piInitialRoomCost, #perDayCost=piPerDayCost, #keyCopyCost=piKeyCopyCosts,
+         #rscRoomRented=KocatanInnkeeper_room_rented, #rscRoomCost=KocatanInnkeeper_cost,
+         #rscChangeLock=KocatanInnkeeper_change_lock);
+
+      propagate;
+   }
+
+   ReqOffer(what = $,item_list = $)
+   {
+      % Check for if in the same room.
+      if Send(what,@GetOwner) <> poOwner
+      {
+         Debug("ALERT! ",Send(what,@GetTrueName),what," offered items to NPC ",
+               Send(self,@GetTrueName)," from distant RID ",
+               Send(Send(what,@GetOwner),@GetRoomNum));
+
+         return FALSE;
+      }
+
+      if Send(Send(SYS, @GetRentableRoomMaintenance), @ReqOfferedRoomItems, #who=self, #what=what,
+         #itemList=item_list, #innRid=RID_KOC_INN, #perDayCost=piPerDayCost,
+         #rscDaysLeft=KocatanInnkeeper_days_left, #rscTooLong=KocatanInnkeeper_too_long,
+         #rscDestroyKeyCopy=KocatanInnkeeper_destroy_key_copy)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -35,9 +35,10 @@ all : $(BOFS) $(BOFS2) $(BOFS3) $(BOFS4) $(BOFS5) $(BOFS6) $(BOFS7) $(BOFS8)
 			-e "/kod.mak/ s:\\\\:\/:" \
 			-e "/DEPEND/ s:\\\\:\/:" \
 				makefile >makefile.linux; \
-		$(MAKE) -sf makefile.linux TOPDIR=../$(TOPDIR); \
+		$(MAKE) -sf makefile.linux TOPDIR=../$(TOPDIR) || FAILED=$$? ; \
 		$(RM) makefile.linux; \
 		cd ..; \
+		if [ -n "$$FAILED" ]; then exit $$FAILED; fi; \
 	done
 	@echo Copying kodbase.txt and kod include files
 	-@$(CP) $(KODDIR)/kodbase.txt $(BLAKSERVRUNDIR) 2>&1

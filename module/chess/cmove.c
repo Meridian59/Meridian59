@@ -14,6 +14,10 @@
 
 #define SGN(x) ((x) == 0 ? 0 : ((x) > 0 ? 1 : -1))
 
+// Squares king ends up on when castling
+static const int CASTLE_X_LEFT = 2;
+static const int CASTLE_X_RIGHT = 6;
+
 static Bool PathIsClear(Board *b, POINT p1, POINT p2, BYTE color);
 static Bool SquareIsAttacked(Board *b, POINT p, BYTE color);
 static Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color);
@@ -152,7 +156,6 @@ Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color)
 void ChessMovePerform(Board *b, POINT p1, POINT p2, Bool interactive)
 {
    BYTE piece;
-   POINT p3, p4;
    int direction;
 
    piece = b->squares[p1.y][p1.x].piece;
@@ -170,18 +173,19 @@ void ChessMovePerform(Board *b, POINT p1, POINT p2, Bool interactive)
    // If a castling move, move the rook also (assumes move is legal; rook must be in place)
    if (piece == KING && abs(p2.x - p1.x) > 1)
    {
+     POINT p3, p4;
       // Move rook at p3 to new location at p4
       p3.y = p2.y;
       p4.y = p2.y;
-      if (p2.x == 1)
+      if (p2.x == CASTLE_X_LEFT)
       {
-	 p3.x = 0;
-	 p4.x = 2;
+        p3.x = 0;
+        p4.x = 3;
       }
       else
       {
-	 p3.x = 7;
-	 p4.x = 4;
+        p3.x = 7;
+        p4.x = 5;
       }
       PieceMove(b, p3, p4);
    }
@@ -335,13 +339,17 @@ Bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color)
    int i, min_col, max_col;
    BYTE other_color;
    POINT p;
-   
-   // First see if move is a castle attempt
-   if (!((color == WHITE && p2.y == 0 && (p2.x == 1 || p2.x == 5)) ||
-	 (color == BLACK && p2.y == BOARD_HEIGHT - 1 && (p2.x == 1 || p2.x == 5))))
-      return False;
 
-   if (p2.x == 1)
+   // First see if move is a castle attempt
+   if (p2.x != CASTLE_X_LEFT && p2.x != CASTLE_X_RIGHT)
+     return False;
+
+   if (color == WHITE && p2.y != 0)
+     return False;
+   if (color == BLACK && p2.y != BOARD_HEIGHT - 1)
+     return False;
+   
+   if (p2.x == CASTLE_X_LEFT)
       left = True;
    else left = False;
    
@@ -350,32 +358,33 @@ Bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color)
        (!left && !b->pdata[color].can_castle_right))
       return False;
 
+
    // See if path is clear
    if (left)
    {
-      min_col = 1;
-      max_col = 2;
-   }
-   else
-   {
-      min_col = 4;
-      max_col = 6;
-   }
-
-   for (i = min_col; i <= max_col; i++)
-      if (b->squares[p2.y][i].piece != NONE)
-	 return False;
-
-   // See if in check at any king position
-   if (left)
-   {
-      min_col = 1;
+      min_col = CASTLE_X_LEFT;
       max_col = 3;
    }
    else
    {
-      min_col = 3;
-      max_col = 5;
+      min_col = 5;
+      max_col = CASTLE_X_RIGHT;
+   }
+
+   for (i = min_col; i <= max_col; i++)
+     if (b->squares[p2.y][i].piece != NONE)
+       return False;
+
+   // See if in check at any king position
+   if (left)
+   {
+      min_col = CASTLE_X_LEFT;
+      max_col = 4;
+   }
+   else
+   {
+      min_col = 4;
+      max_col = CASTLE_X_RIGHT;
    }
 
    other_color = (color == WHITE) ? BLACK : WHITE;

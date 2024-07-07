@@ -129,7 +129,6 @@ messages:
    "Admin supported\n"
    "Clears and recreates plFor_sale."
    {
-      local lSale;
       plFor_sale = [ [ Create(&Herbs,#number=5),
                        Create(&Mushroom,#number=5),
                        Create(&Elderberry,#number=5),

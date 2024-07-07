@@ -19,7 +19,6 @@
 
 /* Miscellaneous game settings */
 Config config;
-Bool	gLargeArea;
 char inihost[MAXHOST];
 
 // Full pathname of INI file
@@ -30,6 +29,8 @@ char *ini_file;  // Pointer to ini_filename
 // color and font settings in old clients).
 #define INI_VERSION 3
 
+static bool is_steam_install = false;
+
 /* INI file entries */
 static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
@@ -39,16 +40,11 @@ static char INIPlayLoopSounds[]   = "PlayLoopSounds";
 static char INIPlayRandomSounds[]   = "PlayRandomSounds";
 static char INITimeout[]     = "Timeout";
 static char INIUserName[]    = "UserName";
-static char INIAnimate[]     = "Animate";
 static char INIArea[]        = "Area";
 static char INIDownload[]    = "Download";
 static char INIBrowser[]     = "Browser";
 static char INIDefaultBrowser[] = "DefaultBrowser";
 static char INIVersion[]     = "INIVersion";
-static char INIGuest[]       = "Guest";
-static char INIServerLow[]   = "ServerLow";
-static char INIServerHigh[]  = "ServerHigh";
-static char INIServerGuest[] = "ServerGuest";
 static char INILastPass[]    = "Sentinel";
 static char INISoundLibrary[] = "SoundLibrary";
 static char INICacheBalance[] = "CacheBalance";
@@ -56,6 +52,7 @@ static char INIObjectCacheMin[] = "ObjectCacheMin";
 static char INIGridCacheMin[] = "GridCacheMin";
 static char INIMusicVolume[]  = "MusicVolume";
 static char INISoundVolume[]  = "SoundVolume";
+static char INIAmbientVolume[] = "AmbientVolume";
 
 static char interface_section[]= "Interface";
 static char INIDrawMap[]     = "DrawMap";
@@ -72,6 +69,7 @@ static char INIIgnoreProfane[]= "IgnoreProfane";
 static char INIAntiProfane[] = "ProfanityFilter";
 static char INIExtraProfane[]= "ExtraProfaneSearch";
 static char INILagbox[]      = "LatencyMeter";
+static char INISpinningCube[]= "SpinningCube";
 static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
@@ -103,6 +101,10 @@ static char special_section[] = "Special";  /* Section for hidden stuff in INI f
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
+
+static char INITextAreaSize[] = "TextAreaSize";
+
+static char INIActiveStatGroup[] = "ActiveStatGroup";
 
 #ifndef NODPRINTFS
 static char INIShowMapBlocking[]= "ShowMapBlocking";
@@ -186,16 +188,10 @@ void ConfigLoad(void)
    config.play_sound    = GetConfigInt(misc_section, INIPlaySound, True, ini_file);
    config.music_volume    = GetConfigInt(misc_section, INIMusicVolume, 100, ini_file);
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
+   config.ambient_volume    = GetConfigInt(misc_section, INIAmbientVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
-   config.large_area    = GetConfigInt(misc_section, INIArea, False, ini_file);
-   gLargeArea = config.large_area;
-   // Animation option removed 3/4/97 to fix movement bug
-#ifndef NODPRINTFS
-   config.animate       = GetConfigInt(misc_section, INIAnimate, True, ini_file);
-#else
-   config.animate       = True;
-#endif
+
    config.ini_version   = GetConfigInt(misc_section, INIVersion, 0, ini_file);
    config.default_browser = GetConfigInt(misc_section, INIDefaultBrowser, True, ini_file);
    GetPrivateProfileString(misc_section, INIUserName, "", 
@@ -236,14 +232,11 @@ void ConfigLoad(void)
    config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, False, ini_file);
    config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, False, ini_file);
    config.lagbox       = GetConfigInt(interface_section, INILagbox, True, ini_file);
+   config.spinning_cube= GetConfigInt(interface_section, INISpinningCube, False, ini_file);
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, True, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
 
-   config.guest        = GetConfigInt(misc_section, INIGuest, False, ini_file);
-   config.server_low   = GetConfigInt(misc_section, INIServerLow, 0, ini_file);
-   config.server_high  = GetConfigInt(misc_section, INIServerHigh, 0, ini_file);
-   config.server_guest = GetConfigInt(misc_section, INIServerGuest, 0, ini_file);
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
    /* charlie: 
@@ -282,7 +275,7 @@ void ConfigLoad(void)
    config.showUnseenWalls = GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
    config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
    config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
-   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 70, ini_file);
+   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 120, ini_file);
    config.clearCache = GetConfigInt(special_section, INIClearCache, False, ini_file);
    //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
 #else
@@ -294,6 +287,16 @@ void ConfigLoad(void)
    config.maxFPS = FALSE;
    config.clearCache = FALSE;
 #endif // NODPRINTFS
+
+   config.text_area_size = GetConfigInt(misc_section, INITextAreaSize, TEXT_AREA_HEIGHT, ini_file);
+
+   // Default to stat group 5 (INVENTORY)
+   config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
+
+   // Determine if we should be using gpu efficiency mode or not.
+   char config_value[255];
+   GetPrivateProfileString("config", "gpuefficiency", "error", config_value, 255, "./config.ini");
+   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
    TimeSettingsLoad();
 }
@@ -308,11 +311,10 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIPlaySound, config.play_sound, ini_file);
    WriteConfigInt(misc_section, INIMusicVolume, config.music_volume, ini_file);
    WriteConfigInt(misc_section, INISoundVolume, config.sound_volume, ini_file);
+   WriteConfigInt(misc_section, INIAmbientVolume, config.ambient_volume, ini_file);
    WriteConfigInt(misc_section, INIPlayLoopSounds, config.play_loop_sounds, ini_file);
    WriteConfigInt(misc_section, INIPlayRandomSounds, config.play_random_sounds, ini_file);
    WriteConfigInt(misc_section, INITimeout, config.timeout, ini_file);
-   WriteConfigInt(misc_section, INIArea, gLargeArea, ini_file);
-   WriteConfigInt(misc_section, INIAnimate, config.animate, ini_file);
    WriteConfigInt(misc_section, INIVersion, config.ini_version, ini_file);
    WriteConfigInt(misc_section, INIDefaultBrowser, config.default_browser, ini_file);
    WritePrivateProfileString(misc_section, INIBrowser, config.browser, ini_file);
@@ -351,16 +353,16 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INIIgnoreProfane, config.ignoreprofane, ini_file);
    WriteConfigInt(interface_section, INIExtraProfane, config.extraprofane, ini_file);
    WriteConfigInt(interface_section, INILagbox, config.lagbox, ini_file);
+   WriteConfigInt(interface_section, INISpinningCube, config.spinning_cube, ini_file);
    WriteConfigInt(interface_section, INIHaloColor, config.halocolor, ini_file);
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
    
-   // Don't write out "guest" option; user can't set it
-
-   WriteConfigInt(misc_section, INIServerLow, config.server_low, ini_file);
-   WriteConfigInt(misc_section, INIServerHigh, config.server_high, ini_file);
-   WriteConfigInt(misc_section, INIServerGuest, config.server_guest, ini_file);
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
+
+   WriteConfigInt(misc_section, INITextAreaSize, config.text_area_size, ini_file);
+
+   WriteConfigInt(misc_section, INIActiveStatGroup, config.active_stat_group, ini_file);
 
    // "Special" section options NOT saved, so that they're not normally visible
 
@@ -411,6 +413,15 @@ void ConfigOverride(LPCTSTR pszCmdLine)
 	    strcpy(config.password, p);
 	    break;
 
+   case 's':
+   case 'S':
+     // We had a snafu during an update, and now we need to be able to
+     // distinguish between Steam and non-Steam installs.  Specifying -s
+     // means this is a Steam install.
+     debug(("/S: Steam install\n"));
+     is_steam_install = true;
+     break;
+
 	 case 'q':
 	 case 'Q':
 	    debug(("/Q: will try to start quick\n"));
@@ -418,6 +429,17 @@ void ConfigOverride(LPCTSTR pszCmdLine)
 	    break;
 	 }
       }
+   }
+
+   // We had a problem where the Web (non-Steam) client was accidentally
+   // published with a download time of 9999.  To undo this, we
+   // interpret 9999 as the then-current download time of 195.  However,
+   // the Steam version also was set to 9999, and we don't want to
+   // have the Steam version accidentally trying to do a download.  So
+   // we specify a command line flag from Steam to avoid it.
+   // TODO: Remove if/when Steam-only
+   if (!is_steam_install && config.download_time == 9999) {
+     config.download_time = 195;
    }
 }
 /************************************************************************/

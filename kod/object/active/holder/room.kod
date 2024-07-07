@@ -701,7 +701,7 @@ messages:
    {
       local oSpell, oCaster;
 
-      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATHLINK);
+      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATH_LINK);
 
       if Send(self,@IsEnchanted,#what=oSpell)
       {
@@ -1201,28 +1201,7 @@ messages:
       if Send(self,@IsArena)
       {
          oWatcher = Send(self,@GetWatcher);
-
-         % if a fight isnt in session, attack fails.
-         if NOT Send(oWatcher,@FightInSession)
-         {
-            return FALSE;
-         }
-
-         % if the afflicted person is not a combatant, attack fails.
-         if IsClass(victim,&Player)
-            AND NOT Send(oWatcher,@IsCombatant,#who=victim)
-         {
-            return FALSE;
-         }
-
-         % if the caster is not a combatant, attack fails.
-         if NOT Send(oWatcher,@IsCombatant,#who=what)
-         {
-            return FALSE;
-         }
-
-         % Anything else is legal in the Arena.
-         return TRUE;
+         return ((oWatcher = $) OR Send(oWatcher,@ReqSomethingAttack,#what=what,#victim=victim));
       }
       
       if (piRoom_flags & ROOM_NO_MOB_COMBAT)
@@ -1603,7 +1582,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i,each_obj,iWeather, iRand;
+      local iWeather;
 
       % Change weather for background if outdoors and tell everyone the
       %  background changed
@@ -1675,7 +1654,7 @@ messages:
 
    ReqNewHold(what = $,new_row = $,new_col = $)
    {
-      local i,each_obj,square_type;
+      local i,each_obj;
 
       for i in plActive
       {
@@ -1699,13 +1678,20 @@ messages:
            fine_row = FINENESS/2, fine_col = FINENESS/2, session = $,
            merge = TRUE)
    {
-      local i,each_obj,bUser, lLoopSound;
+      local i,each_obj,bUser;
 
       if what = $
       {
          return;
       }
 
+		% Guard against admin mode mistakes
+		if what = self
+		{
+			Debug("Tried to have room hold itself!");
+			return;
+	   }
+		
       bUser = IsClass(what,&User);
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
@@ -1801,6 +1787,20 @@ messages:
          }
       }
 
+      return;
+   }
+
+   ResendRoomBackgroundMusic()
+   {
+      local i;
+
+      for i in Send(self,@GetHolderActive)
+      {
+         if IsClass(first(i),&user)
+         {
+            Send(first(i),@SendRoomMusic,#music_rsc=prMusic);
+         }
+      }
       return;
    }
 
@@ -1906,6 +1906,9 @@ messages:
          propagate;
       }
 
+      % Break trance if the user is in one
+      Send(what,@BreakTrance,#event=EVENT_NEWOWNER);
+
       % unenchant this one occupant
       for i in plEnchantments
       {
@@ -2002,7 +2005,7 @@ messages:
    "<server_validate> is set to false for user moves, which have already been "
    "checked by client (HAHA!)."
    {
-      local i, each_obj, iRow, iCol, iLOS;
+      local iRow, iCol, iLOS;
 
       if new_row > piRows OR new_row < 1 OR new_col > piCols OR new_col < 1
       {
@@ -2769,7 +2772,7 @@ messages:
    SomethingWaveRoom(what = 0,wave_rsc = $)
    "Don't send <what> if not from any particular object"
    {
-      local i,each_obj;
+      local i;
 
       for i in plActive
       {
@@ -2781,7 +2784,7 @@ messages:
 
    EnchantmentTimer(timer = $)
    {
-      local i,oEnchanter;
+      local i;
 
       for i in plEnchantments
       {
@@ -2810,7 +2813,7 @@ messages:
 
    PeriodicEnchantmentTimer(timer = $)
    {
-      local i,oEnchanter;
+      local i;
 
       for i in plEnchantments
       {
@@ -3262,7 +3265,7 @@ messages:
       return viTerrain_Type;
    }
 
-   BreakTrance(who=$, event=$)
+   BreakTrance(who=$, event=$, castwhat=$, usewhat=$)
    {
       local i, oEnch, lState, bRetVal;
 
@@ -3276,8 +3279,7 @@ messages:
             lState = Nth(i,3);
             if who = Nth(lState,2)
             {
-               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,
-                              #state=lState,#location=self);
+               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,#state=lState,#castwhat=castwhat,#usewhat=usewhat);
             }
          }
 
@@ -3288,8 +3290,7 @@ messages:
             lState = Nth(i,3);
             if who = First(lState)
             {
-               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,
-                              #state=lState,#location=self);
+               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,#state=lState,#location=self,#castwhat=castwhat);
             }
          }
       }
@@ -3299,7 +3300,7 @@ messages:
 
    RemoveSchoolEnchantments(school = $,report=TRUE)
    {
-      local i,pSpell,each_obj,oSpell;
+      local i,each_obj,oSpell;
 
       for i in plEnchantments
       {
@@ -3328,7 +3329,7 @@ messages:
 
    DispelIllusionEnchantments(report = TRUE, iChance = 100)
    {
-      local i,pSpell,each_obj,oSpell;
+      local i,each_obj,oSpell;
 
       for i in plEnchantments
       {

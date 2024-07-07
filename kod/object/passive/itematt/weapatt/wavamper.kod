@@ -60,7 +60,6 @@ messages:
    ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
    "Wielder has a 1% chance of stealing life from target with any hit."
    {
-      local oSpell;
       if random(1,100) <= piEffect_percent
       {
 	 send(wielder,@GainHealth,#amount = bound(damage,0,8));
@@ -86,6 +85,11 @@ messages:
 	 return FALSE;      %% this person needs 50% in the weapon's proficiency to use
       }
       return TRUE;
+   }
+
+   GetRarityCountModifier()
+   {
+      return 1;
    }
 
 end

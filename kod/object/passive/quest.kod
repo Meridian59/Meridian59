@@ -80,7 +80,7 @@ Init( template_index = 0, report = FALSE )
 CheckPlayerCriteria( quester_wannabe = $ )
 {
    local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester, iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail,\
-      iRecentTime, iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon;
+      iRecentTime, iFaction, iPower, iTime, iR2, bDebug, i, bHasNegativeBoon;
 
    oQuestEngine = send( SYS, @GetQuestEngine );
    iPlayerRestrict = send(oQuestEngine, @GetQuestPlayerRestrictions, #index = piQuestTemplateIndex );
@@ -561,7 +561,7 @@ QuestHasMoreNodes()
 %%
 AssignNextNode( current_NPC = $ )
 {
-	local oSNPC, oDNPC, iNextQuestNodeTemplate, bDebug;
+	local iNextQuestNodeTemplate, bDebug;
 
    bDebug = send(send( SYS, @GetQuestEngine ), @GetDebugStatus);
 

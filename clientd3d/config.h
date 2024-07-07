@@ -42,7 +42,6 @@ typedef struct {
    Bool save_settings;           /* Save settings on exit? */
    Bool play_music;              /* Does user want to hear music? */
    Bool play_sound;              /* Does user want to hear sound? */
-   Bool large_area;              /* Drawing area size--> 0 = small, nonzero = large */
    int  timeout;                 /* Period of logoff timer */
    char username[MAXUSERNAME+1]; /* User's last login name */
    char password[MAXPASSWORD+1]; /* User's last password (not saved to INI file) */
@@ -52,7 +51,6 @@ typedef struct {
    char browser[MAX_PATH + 1];   /* Full path to user's browser program */
    Bool default_browser;         /* True when browser location was retrieved from registry */
 
-   Bool animate;                 /* Should we draw animations? */
    int  download_time;           /* Time of last successful download */
    Bool auto_connect;            /* Connect immediately upon starting program? */
    Bool debug;                   /* Display debugging window? */
@@ -76,14 +74,12 @@ typedef struct {
    Bool technical;               /* Show technical info such as the connected server number? */
    Bool quickstart;              /* Try to answer all questions with defaults until playing. */
    Bool antiprofane;             /* Kill annoying incoming profanity. */
-   Bool guest;                   /* Automatically log in as "guest"? */
-   int  server_low, server_high; /* Closed interval of legal server numbers for guest logins */
    int	halocolor;					//	0 = red, 1 = blue, 2 = green
 
    Bool lagbox;                  /* Display lag meter? */
+   Bool spinning_cube;           /* Display the classic spinning latency meter */
    Bool ignoreprofane;           /* Kill messages including any profanity. */
    Bool extraprofane;            /* Really search hard for possible hidden profanity. */
-   int  server_guest;            /* Server to try first for guest logins */
    Bool play_loop_sounds;
    Bool play_random_sounds;
    Bool showMapBlocking;
@@ -117,6 +113,17 @@ typedef struct {
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
+   int ambient_volume;         // 0 - 100 (ambient sounds are looping sounds)
+
+   int text_area_size;        /* As a percentage of the client height */
+
+   int active_stat_group; // Which stat group (inventory, skills, spells or stats) is visible.
+
+   // Lowers graphics performance settings for optimized resource usage. 
+   // Reduces max FPS to 60, lowers background texture resolution, 
+   // and switches D3D present mode to D3DPRESENT_INTERVAL_DEFAULT 
+   // for more stable, power-efficient rendering.
+   bool gpuEfficiency;
 } Config;
 
 void ConfigInit(void);

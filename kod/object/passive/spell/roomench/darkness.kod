@@ -85,7 +85,7 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oRoom, iBaseLight;
+      local oRoom;
 
       oRoom = Send(who,@GetOwner);
 

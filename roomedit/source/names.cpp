@@ -536,6 +536,12 @@ char *GetLineDefFlagsName (int flags)
    if (flags & BF_NEG_NO_VTILE)
       strcat( temp, "-V");
    else strcat( temp, "<>");
+	 if (flags & BF_POS_NO_HTILE)
+      strcat( temp, "+H");
+   else strcat( temp, "<>");
+   if (flags & BF_NEG_NO_HTILE)
+      strcat( temp, "-H");
+   else strcat( temp, "<>");
 
    return temp;
 }

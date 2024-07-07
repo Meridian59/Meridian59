@@ -80,7 +80,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $)
    {
-      local target, i;
+      local target;
       
       % Can cast spell if the 1 target item is a corpse
       if Length(lTargets) <> 1
@@ -142,16 +142,8 @@ messages:
 
       if NOT bRecent
       {
-         if abs(send(who,@GetKarma)) < (iSpellpower + 1)
-         {
-            iKarmaAct = bound(iKarmaAct,abs(send(who,@GetKarma)),iSpellpower+1);
-         }
-         else
-         {
-            iKarmaAct = abs(send(who,@GetKarma));
-         }
-
-	      send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
+         iKarmaAct = bound(abs(send(who,@GetKarma)), 0, iSpellpower+1);
+         send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
               #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
       }
 

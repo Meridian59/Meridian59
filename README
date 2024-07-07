@@ -24,15 +24,15 @@ WHAT'S INCLUDED AND NOT INCLUDED
 
 The source to the client, server, game code, Blakod compiler, room
 editor, and all associated tools are included.  The source code to the
-Miles Sound System audio library and the fallback waveplay.dll are not
-included.
+Miles Sound System audio library is not included.  Client builds that you 
+make will use the fallback waveplay audio library instead.
 
 
 BUILD INSTRUCTIONS
 
 The code has been built successfully with Microsoft Visual Studio 2022
 Community Edition, which you can download for free at 
-http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
+https://visualstudio.microsoft.com/downloads/
 
 1. Make sure Visual Studio's binaries are in your path, e.g. by using
 the vcvars32.bat script that comes with Visual Studio.
@@ -99,5 +99,5 @@ ZLIB_LIBRARY points to lib/zlib.lib
 CONTACT INFORMATION
 
 You can contact us at meridian59.email@gmail.com.  Our Web site is
-http://meridian59.com, where you can also read about the history of
+https://meridian59.com, where you can also read about the history of
 the game.

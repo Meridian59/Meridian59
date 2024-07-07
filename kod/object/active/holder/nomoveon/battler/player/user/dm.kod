@@ -489,6 +489,19 @@ messages:
       return (piDMFlags & DMFLAG_HIDDEN);
    }
 
+   IsGreetable()
+   "Returns TRUE if a player should be greeted by NPCs. Used for arenas."
+   {
+      if NOT Send(self,@IsHidden)
+         AND NOT pbStealth
+         AND NOT Send(self,@IsDMStealthed)
+         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+         {
+            return TRUE;
+         }
+      return FALSE;
+   }
 
    CheckAdvancementPoints()
    {
@@ -2144,7 +2157,7 @@ messages:
       Send(self,@AddSpell,#num=SID_FORESIGHT,#iability=99);
       Send(self,@AddSpell,#num=SID_ILLUSIONARY_FORM,#iability=20);
       Send(self,@AddSpell,#num=SID_INVISIBILITY,#iability=20);
-      Send(self,@AddSpell,#num=SID_NIGHTVISION,#iability=99);
+      Send(self,@AddSpell,#num=SID_NIGHT_VISION,#iability=99);
       Send(self,@AddSpell,#num=SID_PAGE,#iability=99);
       Send(self,@AddSpell,#num=SID_SHADOW_FORM,#iability=99);
 
@@ -2213,12 +2226,12 @@ messages:
       Send(self,@AddSpell,#num=SID_DARKNESS,#iability=70);
       Send(self,@AddSpell,#num=SID_DELIVERANCE,#iability=99);
       Send(self,@AddSpell,#num=SID_FEIGN_DEATH,#iability=20);
-      Send(self,@AddSpell,#num=SID_SUMMON_FOG,#iability=99);
+      Send(self,@AddSpell,#num=SID_FOG,#iability=99);
       Send(self,@AddSpell,#num=SID_ILLUSIONARY_FORM,#iability=20);
       Send(self,@AddSpell,#num=SID_INVISIBILITY,#iability=70);
       Send(self,@AddSpell,#num=SID_LIGHT,#iability=70);
       Send(self,@AddSpell,#num=SID_MORPH,#iability=50);
-      Send(self,@AddSpell,#num=SID_NIGHTVISION,#iability=99);
+      Send(self,@AddSpell,#num=SID_NIGHT_VISION,#iability=99);
       Send(self,@AddSpell,#num=SID_PAGE,#iability=99);
       Send(self,@AddSpell,#num=SID_REFLECTION,#iability=20);
       Send(self,@AddSpell,#num=SID_SHADOW_FORM,#iability=99);

@@ -103,8 +103,6 @@ messages:
    ShowDesc()
    "Tells those already in guilds that they cannot ratify unless they quit current guild."
    {
-      local oGuild;
-
       AddPacket(4,treaty_desc_rsc,4,send(poInductorGuild,@getdef),4,Send(poInductorGuild,@GetName),
                  send(poInducteeGuild,@getdef),4,Send(poInducteeGuild,@GetName));
       return;

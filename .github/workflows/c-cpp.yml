@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: make blakserv
       working-directory: blakserv
@@ -26,16 +26,39 @@ jobs:
         make -f makefile.linux
   
   
-  build-windows:
+  build-windows-32:
   
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: ilammy/msvc-dev-cmd@v1
       with: 
         arch: x86
         
-    - name: make client
+    - name: make client 32-bit
       run: |
-        nmake /nologo Bclient Bmodules
+        nmake /nologo Bclient Bmodules Bupdater
+
+    - name: make server 32-bit
+      run: |
+        nmake /nologo Bserver
+
+
+  build-windows-64:
+  
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ilammy/msvc-dev-cmd@v1
+      with: 
+        arch: x64
+        
+    - name: make client 64-bit
+      run: |
+        nmake /nologo Bclient Bmodules Bupdater
+
+    - name: make server 64-bit
+      run: |
+        nmake /nologo Bserver

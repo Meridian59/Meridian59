@@ -186,6 +186,24 @@ void action_error(const char *fmt, ...)
    handle_error();
 }
 /************************************************************************/
+/* action_warning should be used for semantic warnings. */
+void action_warning(const char *fmt, ...)
+{
+   int errline = lineno;
+   va_list marker;
+
+   /* If last token was EOL, report error on previous line */
+   if (!strcmp(yytext, "\n"))
+      errline--;
+
+   fprintf(stderr, "%s(%d): warning: ", current_fname, errline);  
+
+   va_start(marker, fmt);
+   vfprintf(stderr, fmt, marker);
+   va_end(marker);
+   fprintf(stderr, "\n");
+}
+/************************************************************************/
 /* simple_error should be used for other errors. */
 void simple_error(const char *fmt, ...)
 {
@@ -203,7 +221,6 @@ void simple_error(const char *fmt, ...)
 /* simple_warning should be used for all warnings. */
 void simple_warning(const char *fmt, ...)
 {
-
    va_list marker;
 
    printf("  warning: ");
@@ -304,7 +321,7 @@ void recompile_warnings(list_type l)
          column = 0;
       }
       printf("%s  ", name);
-      column += strlen(name) + 2;
+      column += (int) strlen(name) + 2;
       
       /* ((recompile_type) (l->data))->superclass->name); */
    }
@@ -374,7 +391,7 @@ FILE *open_include_file(char *filename)
    /* Loop through include directories and try to open file */
    for (i=0; i < num_include_dirs; i++)
    {
-      sprintf(tempbuf, "%s/%s", include_dirs[i], filename);
+      snprintf(tempbuf, sizeof(tempbuf), "%s/%s", include_dirs[i], filename);
       if ((fin = fopen(tempbuf, "r")) != NULL)
 	 return fin;
    }
@@ -526,6 +543,7 @@ int main(int argc, char **argv)
       simple_error("Error loading database; continuing with compilation");
       
 
+	bool all_success = true;
    for (current_file_ptr = file_list; current_file_ptr != NULL; 
         current_file_ptr = current_file_ptr->next)
    {
@@ -539,23 +557,20 @@ int main(int argc, char **argv)
                                                  YY_BUF_SIZE);
       include_stack[0].filename = current_fname;
       yy_switch_to_buffer(include_stack[0].buffer);
-/*
-      printf("File %s:\n", (char *) current_file_ptr->data);
-*/
+
       lineno = 1;
       
       yyparse();
 
-      /* Get rid of buffer for original file */
-/*      yy_delete_buffer(include_stack[0].buffer); */
-
       if (generate_code) 
-         codegen(current_fname, bof_fname); 
+		   codegen(current_fname, bof_fname);
+		else
+		   all_success = false;
       generate_code = True;
    }
 
    /* Give warnings for classes that should be recompiled */
    recompile_warnings(st.recompile_list);
 
-   return !generate_code;
+   return !all_success;
 }

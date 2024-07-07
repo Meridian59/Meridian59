@@ -58,7 +58,7 @@ void ActionsInit(void)
      return;
 
    InsertMenu(cinfo->main_menu, MENU_POSITION_ACTIONS, MF_STRING | MF_POPUP | MF_BYPOSITION, 
-	      (UINT) actions_menu, GetString(hInst, IDS_ACTIONS));
+              (UINT_PTR) actions_menu, GetString(hInst, IDS_ACTIONS));
    DrawMenuBar(cinfo->hMain);
 
    // Add subitems

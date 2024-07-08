@@ -500,7 +500,7 @@ int IsValidRarity(int rarity) {
       case ITEM_RARITY_GRADE_CURSED:
          return 1; // Valid rarity
       default:
-         debug("Invalid rarity: %d\n", rarity);
+         debug(("Invalid rarity: %d\n", rarity));
          return 0; // Invalid rarity
    }
 }

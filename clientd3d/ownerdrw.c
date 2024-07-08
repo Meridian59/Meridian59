@@ -498,9 +498,9 @@ int IsValidRarity(int rarity) {
       case ITEM_RARITY_GRADE_LEGENDARY:
       case ITEM_RARITY_GRADE_UNIDENTIFIED:
       case ITEM_RARITY_GRADE_CURSED:
-         return 1; // Valid rarity
+         return 1;
       default:
          debug(("Invalid rarity: %d\n", rarity));
-         return 0; // Invalid rarity
+         return 0;
    }
 }

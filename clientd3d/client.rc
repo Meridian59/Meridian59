@@ -1546,6 +1546,9 @@ IDB_VIEWTREAT_BOTTOMLEFT_HILIGHT BITMAP                  "bitmap\\viewtreat_ll_h
 
 IDB_VIEWTREAT_BOTTOMRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_lr_hilight.bmp"
 
+IDB_UPARROW             BITMAP                  "bitmap\\up_arrow.bmp"
+
+IDB_DOWNARROW           BITMAP                  "bitmap\\down_arrow.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

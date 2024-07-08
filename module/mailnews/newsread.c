@@ -38,7 +38,7 @@ typedef enum {
 
 // Constants used to track sorted column
 static int currentSortColumn = -1;
-static BOOL currentSortAscending = TRUE;
+static bool currentSortAscending = TRUE;
 
 static ChildPlacement newsread_controls[] = {
 { IDC_NEWSEDIT,   RDI_ALL },
@@ -74,7 +74,7 @@ void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions
    s.desc           = desc;
 
    DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
-		  ReadNewsDialogProc, (LPARAM) &s);   
+		  ReadNewsDialogProc, (LPARAM) &s);
 }
 /****************************************************************************/
 /*
@@ -485,8 +485,7 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 /*
  * UpdateColumnHeaders:  Given a list view handle, the index of the sorted 
  *   column, and a boolean indicating the sort direction, update the header 
- *   text of the list view columns to indicate the sorted column with a '+' 
- *   or '-' sign.
+ *   of the list view columns to indicate the sorted column.
  *
  * Parameters:
  *   hListView - Handle to the list view control.
@@ -498,34 +497,47 @@ void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending)
 {
    // Get the handle to the header control associated with the list view
    HWND hHeader = ListView_GetHeader(hListView);
+   if (!hHeader)
+       return;  // Ensure we have a valid header handle
+
    // Get the number of columns in the header
    int columnCount = Header_GetItemCount(hHeader);
 
    for (int i = 0; i < columnCount; i++)
    {
-      char text[MAX_HEADER_TEXT];
       HDITEM hdi = {0};
-      hdi.mask = HDI_TEXT;
-      hdi.pszText = text;
-      hdi.cchTextMax = sizeof(text) / sizeof(text[0]);
-
-      // Get the header item at the current index
+      hdi.mask = HDI_FORMAT | HDI_BITMAP;
+      
+      // Get the current format of the header item
       Header_GetItem(hHeader, i, &hdi);
 
-      // Remove any existing '+' or '-' from the text
-      char *pos = strpbrk(text, "+-");
-      // Null-terminate the string to remove the character
-      if (pos) *pos = '\0';
-
-      // Add '+' or '-' to the sorted column
       if (i == sortedColumn)
       {
-         snprintf(text, sizeof(text), "%s %c", text, sortAscending ? '+' : '-');
+         UINT bitmapID = sortAscending ? IDB_UPARROW : IDB_DOWNARROW;
+
+         hdi.fmt |= HDF_BITMAP | HDF_BITMAP_ON_RIGHT;
+
+         HBITMAP hBitmap = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(bitmapID), IMAGE_BITMAP, 0, 0, LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+         if (hBitmap == NULL)
+         {
+            MessageBox(NULL, "Failed to load bitmap!", "Error", MB_OK | MB_ICONERROR);
+         }
+
+         if (hdi.hbm)
+            DeleteObject(hdi.hbm);
+
+         hdi.hbm = hBitmap;
       }
-      
-      // Set the header item at the current index with the updated text
-      hdi.mask = HDI_TEXT;
-      hdi.pszText = text;
+      else
+      {
+         if (hdi.hbm)
+            DeleteObject(hdi.hbm);
+
+         hdi.mask &= ~HDI_BITMAP;
+         hdi.fmt &= ~(HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+      }
+
+      // Set the header item at the current index with the updated details
       Header_SetItem(hHeader, i, &hdi);
    }
 }

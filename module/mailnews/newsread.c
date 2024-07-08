@@ -19,8 +19,8 @@ static const int MAX_HEADER_TEXT = 256;
 HWND hReadNewsDialog = NULL;
 
 // Declare global HBITMAP objects
-HBITMAP hbmUpArrow = NULL;
-HBITMAP hbmDownArrow = NULL;
+static HBITMAP hbmUpArrow = NULL;
+static HBITMAP hbmDownArrow = NULL;
 
 /* Stuff for making raw times into human-readable times */
 static int months[] = 
@@ -142,10 +142,14 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    
    char date[MAXDATE], title[MAX_SUBJECT + MAXDATE + MAXNAME + 10];
 
-    // Load sort arrow bitmaps
-   hbmUpArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+   // Load sort arrow bitmaps
+   hbmUpArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), 
+      MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, 
+      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
 
-   hbmDownArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+   hbmDownArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), 
+      MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, 
+      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
 
    switch (message)
    {
@@ -487,9 +491,10 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
       return bSortAscending ? stricmp(poster1, poster2) : stricmp(poster2, poster1);
    case COL_TIME:
       return bSortAscending ? article1->time - article2->time : article2->time - article1->time;
+   default:
+      debug(("Unhandled column (column #%d) in CompareListItems\n", nColumn));
+      return 0;
    }
-
-   return 0;
 }
 
 void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending)
@@ -497,9 +502,8 @@ void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAsce
    // Get the handle to the header control associated with the list view
    HWND hHeader = ListView_GetHeader(hListView);
    if (!hHeader)
-       return;  // Ensure we have a valid header handle
+       return;
 
-   // Get the number of columns in the header
    int columnCount = Header_GetItemCount(hHeader);
 
    for (int i = 0; i < columnCount; i++)

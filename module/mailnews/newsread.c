@@ -13,7 +13,8 @@
 #include "mailnews.h"
 #include "string.h"
 
-#define MAX_HEADER_TEXT 256 // Named constant for buffer size
+// Named constant for buffer size
+static const int MAX_HEADER_TEXT = 256;
 
 HWND hReadNewsDialog = NULL;
 
@@ -411,7 +412,7 @@ Bool DateFromSeconds(long seconds, char *str)
    if (t == NULL)
       return False;
 
-   snprintf(str, 50, "%s %s %.2ld, %.4ld %.2ld:%.2ld", 
+   snprintf(str, MAXDATE, "%s %s %.2ld, %.4ld %.2ld:%.2ld", 
 	   GetString(hInst, weekdays[t->tm_wday]), GetString(hInst, months[t->tm_mon]), 
 	   t->tm_mday, t->tm_year + 1900, t->tm_hour, t->tm_min);
    return True;
@@ -420,12 +421,15 @@ Bool DateFromSeconds(long seconds, char *str)
 void OnColumnClick(LPNMLISTVIEW pLVInfo)
 {
     int nSortColumn = pLVInfo->iSubItem;
-    BOOL bSortAscending = TRUE;
+    bool bSortAscending = TRUE;
 
-    if (nSortColumn == currentSortColumn) {
+    if (nSortColumn == currentSortColumn) 
+    {
         // Toggle sort direction if the same column is clicked again
         currentSortAscending = !currentSortAscending;
-    } else {
+    } 
+    else 
+    {
         // Set ascending order for new column
         currentSortColumn = nSortColumn;
         currentSortAscending = TRUE;
@@ -442,32 +446,12 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 
 /****************************************************************************/
 /*
- * CompareListItems:  Comparison function for sorting items in a list view
- *   control. This function is used by `ListView_SortItems` to compare two 
- *   items and determine their sort order based on the specified column and 
- *   sort direction. It:
- * 
- *   - Determines the sort direction and column index from `lParamSort`.
- *   - Casts `lParam1` and `lParam2` to `NewsArticle` pointers.
- *   - Constructs stable comparison keys by appending the article index to 
- *     the title and poster strings.
- *   - Compares the items based on the specified column and sort direction:
- *     - `COL_TITLE`: Compares titles (case-insensitive).
- *     - `COL_POSTER`: Compares posters (case-insensitive).
- *     - `COL_TIME`: Compares times.
- * 
- * Parameters:
- *   lParam1 - Pointer to the first item (cast to `LPARAM`).
- *   lParam2 - Pointer to the second item (cast to `LPARAM`).
- *   lParamSort - Sort parameter which indicates the column to sort by and 
- *     the sort direction. A positive value indicates ascending order, and a 
- *     negative value indicates descending order. The absolute value of 
- *     `lParamSort` indicates the column index (1-based).
- *
+ * CompareListItems: Comparison function for sorting items in the news dialog 
+ * list view.
  */
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
-   BOOL bSortAscending = (lParamSort > 0);
+   bool bSortAscending = (lParamSort > 0);
    int nColumn = abs(lParamSort) - 1;
 
    NewsArticle *article1 = (NewsArticle *)lParam1;
@@ -519,11 +503,11 @@ void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending)
 
    for (int i = 0; i < columnCount; i++)
    {
-      char text[MAX_HEADER_TEXT]; // Buffer to hold the header text
-      HDITEM hdi = {0}; // Initialize HDITEM structure
-      hdi.mask = HDI_TEXT; // Indicate interest in the text of the header item
-      hdi.pszText = text; // Set the buffer to receive the text
-      hdi.cchTextMax = sizeof(text) / sizeof(text[0]); // Set buffer size
+      char text[MAX_HEADER_TEXT];
+      HDITEM hdi = {0};
+      hdi.mask = HDI_TEXT;
+      hdi.pszText = text;
+      hdi.cchTextMax = sizeof(text) / sizeof(text[0]);
 
       // Get the header item at the current index
       Header_GetItem(hHeader, i, &hdi);

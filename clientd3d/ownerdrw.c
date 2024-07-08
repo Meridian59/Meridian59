@@ -356,9 +356,6 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   if (obj == NULL)
-      return;
-
    hColorBg = GetBrush(
                GetItemListColor(
                   lpdis->hwndItem,
@@ -377,6 +374,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
    if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
+      if (IsValidRarity(obj->rarity)) 
          item_rarity_value = (item_rarity_grade)obj->rarity;
 
       crColorText = GetColor(
@@ -486,5 +484,23 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
        (SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L) == (LRESULT)lpdis->itemID))
    {
       DrawFocusRect(lpdis->hDC, &lpdis->rcItem);
+   }
+}
+/*****************************************************************************/
+/* 
+ * IsValidRarity:  checks whether a given rarity value is valid
+ */
+int IsValidRarity(int rarity) {
+   switch (rarity) {
+      case ITEM_RARITY_GRADE_NORMAL:
+      case ITEM_RARITY_GRADE_UNCOMMON:
+      case ITEM_RARITY_GRADE_RARE:
+      case ITEM_RARITY_GRADE_LEGENDARY:
+      case ITEM_RARITY_GRADE_UNIDENTIFIED:
+      case ITEM_RARITY_GRADE_CURSED:
+         return 1; // Valid rarity
+      default:
+         debug("Invalid rarity: %d\n", rarity);
+         return 0; // Invalid rarity
    }
 }

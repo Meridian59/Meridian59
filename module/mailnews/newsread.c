@@ -18,6 +18,10 @@ static const int MAX_HEADER_TEXT = 256;
 
 HWND hReadNewsDialog = NULL;
 
+// Declare global HBITMAP objects
+HBITMAP hbmUpArrow = NULL;
+HBITMAP hbmDownArrow = NULL;
+
 /* Stuff for making raw times into human-readable times */
 static int months[] = 
 {IDS_JANUARY, IDS_FEBRUARY, IDS_MARCH, IDS_APRIL, IDS_MAY, IDS_JUNE, IDS_JULY,
@@ -51,7 +55,7 @@ static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wPara
 static void UserReplyNewsMail(NewsArticle *article);
 static void OnColumnClick(LPNMLISTVIEW pLVInfo);
 static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
-static void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending);
+static void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending);
 
 /****************************************************************************/
 /*
@@ -137,7 +141,12 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    NM_LISTVIEW *nm;
    
    char date[MAXDATE], title[MAX_SUBJECT + MAXDATE + MAXNAME + 10];
-   
+
+    // Load sort arrow bitmaps
+   hbmUpArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+
+   hbmDownArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+
    switch (message)
    {
    case WM_INITDIALOG:
@@ -437,9 +446,11 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 
     LPARAM lParamSort = (currentSortAscending ? 1 : -1) * (currentSortColumn + 1);
 
-    // Update header text
-    UpdateColumnHeaders(pLVInfo->hdr.hwndFrom, currentSortColumn, currentSortAscending);
-
+    if (hbmUpArrow != NULL && hbmDownArrow != NULL)
+    {
+       ListView_SetHeaderSortImage(pLVInfo->hdr.hwndFrom, currentSortColumn, currentSortAscending);
+    }
+    
     // Sort list
     ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
 }
@@ -481,19 +492,7 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
    return 0;
 }
 
-/****************************************************************************/
-/*
- * UpdateColumnHeaders:  Given a list view handle, the index of the sorted 
- *   column, and a boolean indicating the sort direction, update the header 
- *   of the list view columns to indicate the sorted column.
- *
- * Parameters:
- *   hListView - Handle to the list view control.
- *   sortedColumn - Index of the column that is sorted.
- *   sortAscending - Boolean indicating if the sort direction is ascending 
- *     (TRUE) or descending (FALSE).
- */
-void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending)
+void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending)
 {
    // Get the handle to the header control associated with the list view
    HWND hHeader = ListView_GetHeader(hListView);
@@ -513,28 +512,13 @@ void UpdateColumnHeaders(HWND hListView, int sortedColumn, BOOL sortAscending)
 
       if (i == sortedColumn)
       {
-         UINT bitmapID = sortAscending ? IDB_UPARROW : IDB_DOWNARROW;
-
-         hdi.fmt |= HDF_BITMAP | HDF_BITMAP_ON_RIGHT;
-
-         HBITMAP hBitmap = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(bitmapID), IMAGE_BITMAP, 0, 0, LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
-         if (hBitmap == NULL)
-         {
-            MessageBox(NULL, "Failed to load bitmap!", "Error", MB_OK | MB_ICONERROR);
-         }
-
-         if (hdi.hbm)
-            DeleteObject(hdi.hbm);
-
-         hdi.hbm = hBitmap;
+         hdi.fmt |= (HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+         hdi.hbm = sortAscending ? hbmUpArrow : hbmDownArrow;
       }
       else
       {
-         if (hdi.hbm)
-            DeleteObject(hdi.hbm);
-
-         hdi.mask &= ~HDI_BITMAP;
          hdi.fmt &= ~(HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+         hdi.hbm = NULL;
       }
 
       // Set the header item at the current index with the updated details

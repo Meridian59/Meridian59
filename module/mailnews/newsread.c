@@ -11,8 +11,16 @@
 
 #include "client.h"
 #include "mailnews.h"
+#include "string.h"
+
+// Named constant for buffer size
+static const int MAX_HEADER_TEXT = 256;
 
 HWND hReadNewsDialog = NULL;
+
+// Declare global HBITMAP objects
+static HBITMAP hbmUpArrow = NULL;
+static HBITMAP hbmDownArrow = NULL;
 
 /* Stuff for making raw times into human-readable times */
 static int months[] = 
@@ -25,6 +33,17 @@ static list_type new_articles = NULL;   /* Build up new articles arriving from s
 
 static RECT  dlg_rect;        // Screen position of dialog
 
+// Constants for news dialog columns
+typedef enum {
+    COL_TITLE = 0,
+    COL_POSTER = 1,
+    COL_TIME = 2
+} NewsColumns;
+
+// Constants used to track sorted column
+static int currentSortColumn = -1;
+static bool currentSortAscending = TRUE;
+
 static ChildPlacement newsread_controls[] = {
 { IDC_NEWSEDIT,   RDI_ALL },
 { IDC_NEWSLIST,   RDI_RIGHT | RDI_LEFT | RDI_TOP },
@@ -34,6 +53,10 @@ static ChildPlacement newsread_controls[] = {
 /* local function prototypes */
 static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserReplyNewsMail(NewsArticle *article);
+static void OnColumnClick(LPNMLISTVIEW pLVInfo);
+static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending);
+
 /****************************************************************************/
 /*
  * UserReadNews:  Bring up read news dialog with index of articles.
@@ -55,7 +78,7 @@ void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions
    s.desc           = desc;
 
    DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
-		  ReadNewsDialogProc, (LPARAM) &s);   
+		  ReadNewsDialogProc, (LPARAM) &s);
 }
 /****************************************************************************/
 /*
@@ -118,7 +141,16 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    NM_LISTVIEW *nm;
    
    char date[MAXDATE], title[MAX_SUBJECT + MAXDATE + MAXNAME + 10];
-   
+
+   // Load sort arrow bitmaps
+   hbmUpArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), 
+      MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, 
+      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+
+   hbmDownArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), 
+      MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, 
+      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+
    switch (message)
    {
    case WM_INITDIALOG:
@@ -253,6 +285,10 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       HANDLE_MSG(hDlg, WM_CTLCOLORDLG, MailCtlColor);
       
    case WM_NOTIFY:
+      if ((((LPNMHDR) lParam)->idFrom == IDC_NEWSLIST) &&
+          (((LPNMHDR) lParam)->code == LVN_COLUMNCLICK))
+         OnColumnClick((LPNMLISTVIEW) lParam);
+
       if (wParam != IDC_NEWSLIST)
 	 return TRUE;
 
@@ -389,8 +425,107 @@ Bool DateFromSeconds(long seconds, char *str)
    if (t == NULL)
       return False;
 
-   sprintf(str, "%s %s %.2ld, %.4ld %.2ld:%.2ld", 
+   snprintf(str, MAXDATE, "%s %s %.2ld, %.4ld %.2ld:%.2ld", 
 	   GetString(hInst, weekdays[t->tm_wday]), GetString(hInst, months[t->tm_mon]), 
 	   t->tm_mday, t->tm_year + 1900, t->tm_hour, t->tm_min);
    return True;
+}
+
+void OnColumnClick(LPNMLISTVIEW pLVInfo)
+{
+    int nSortColumn = pLVInfo->iSubItem;
+    bool bSortAscending = TRUE;
+
+    if (nSortColumn == currentSortColumn) 
+    {
+        // Toggle sort direction if the same column is clicked again
+        currentSortAscending = !currentSortAscending;
+    } 
+    else 
+    {
+        // Set ascending order for new column
+        currentSortColumn = nSortColumn;
+        currentSortAscending = TRUE;
+    }
+
+    LPARAM lParamSort = (currentSortAscending ? 1 : -1) * (currentSortColumn + 1);
+
+    if (hbmUpArrow != NULL && hbmDownArrow != NULL)
+    {
+       ListView_SetHeaderSortImage(pLVInfo->hdr.hwndFrom, currentSortColumn, currentSortAscending);
+    }
+    
+    // Sort list
+    ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
+}
+
+/****************************************************************************/
+/*
+ * CompareListItems: Comparison function for sorting items in the news dialog 
+ * list view.
+ */
+int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+   bool bSortAscending = (lParamSort > 0);
+   int nColumn = abs(lParamSort) - 1;
+
+   NewsArticle *article1 = (NewsArticle *)lParam1;
+   NewsArticle *article2 = (NewsArticle *)lParam2;
+
+   // `ListView_SortItems` is unstable, so we append the article index for stability
+   char title1[MAX_SUBJECT + 10];
+   snprintf(title1, sizeof(title1), "%s %d", article1->title, article1->num);
+   char title2[MAX_SUBJECT + 10];
+   snprintf(title2, sizeof(title2), "%s %d", article2->title, article2->num);
+
+   char poster1[MAXUSERNAME + 10];
+   snprintf(poster1, sizeof(poster1), "%s %d", article1->poster, article1->num);
+   char poster2[MAXUSERNAME + 10];
+   snprintf(poster2, sizeof(poster2), "%s %d", article2->poster, article2->num);
+
+   switch (nColumn)
+   {
+   case COL_TITLE:
+      return bSortAscending ? stricmp(title1, title2) : stricmp(title2, title1);
+   case COL_POSTER:
+      return bSortAscending ? stricmp(poster1, poster2) : stricmp(poster2, poster1);
+   case COL_TIME:
+      return bSortAscending ? article1->time - article2->time : article2->time - article1->time;
+   default:
+      debug(("Unhandled column (column #%d) in CompareListItems\n", nColumn));
+      return 0;
+   }
+}
+
+void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending)
+{
+   // Get the handle to the header control associated with the list view
+   HWND hHeader = ListView_GetHeader(hListView);
+   if (!hHeader)
+       return;
+
+   int columnCount = Header_GetItemCount(hHeader);
+
+   for (int i = 0; i < columnCount; i++)
+   {
+      HDITEM hdi = {0};
+      hdi.mask = HDI_FORMAT | HDI_BITMAP;
+      
+      // Get the current format of the header item
+      Header_GetItem(hHeader, i, &hdi);
+
+      if (i == sortedColumn)
+      {
+         hdi.fmt |= (HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+         hdi.hbm = sortAscending ? hbmUpArrow : hbmDownArrow;
+      }
+      else
+      {
+         hdi.fmt &= ~(HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+         hdi.hbm = NULL;
+      }
+
+      // Set the header item at the current index with the updated details
+      Header_SetItem(hHeader, i, &hdi);
+   }
 }

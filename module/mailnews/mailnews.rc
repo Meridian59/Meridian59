@@ -282,6 +282,8 @@ IDI_LETTER              ICON                    "bitmap\\letter.ico"
 //
 
 IDB_MAILBOX             BITMAP                  "bitmap\\mailbox.bmp"
+IDB_UPARROW             BITMAP                  "bitmap\\up_arrow.bmp"
+IDB_DOWNARROW           BITMAP                  "bitmap\\down_arrow.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

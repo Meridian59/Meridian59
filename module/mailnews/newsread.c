@@ -142,15 +142,6 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    
    char date[MAXDATE], title[MAX_SUBJECT + MAXDATE + MAXNAME + 10];
 
-   // Load sort arrow bitmaps
-   hbmUpArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), 
-      MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, 
-      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
-
-   hbmDownArrow = (HBITMAP)LoadImage(GetModuleHandle(NULL), 
-      MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, 
-      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
-
    switch (message)
    {
    case WM_INITDIALOG:
@@ -206,6 +197,16 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       SetTimer(hDlg, 1, 100, NULL);
 
       hReadNewsDialog = hDlg;
+
+      // Load sort arrow bitmaps
+      hbmUpArrow = (HBITMAP)LoadImage(hInst, 
+         MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, 
+         LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+
+      hbmDownArrow = (HBITMAP)LoadImage(hInst, 
+         MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, 
+         LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+         
       return TRUE;
 
    case WM_SIZE:

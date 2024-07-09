@@ -204,6 +204,8 @@
 #define IDB_VIEWTREAT_BOTTOMLEFT_HILIGHT 177
 #define IDB_VIEWTREAT_BOTTOMRIGHT_HILIGHT 178
 #define IDS_TARGETNOTVISIBLEFORATTACK   179
+#define IDB_UPARROW                     211
+#define IDB_DOWNARROW                   212
 #define IDS_DEPOSIT_ITEMS               180
 #define IDD_ASKDOWNLOAD                 181
 #define IDS_SERVICE_SUCCESS             181

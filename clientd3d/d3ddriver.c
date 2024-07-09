@@ -105,7 +105,11 @@ Bool D3DDriverProfileInit(void)
 	gPresentParam.BackBufferCount = 1;
 	gPresentParam.EnableAutoDepthStencil = TRUE;
 	gPresentParam.AutoDepthStencilFormat = D3DFMT_D24S8;
-	gPresentParam.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+	gPresentParam.Flags = gPresentParam.Flags & ~D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+
+	// default to no multisampling
+	gPresentParam.MultiSampleType = D3DMULTISAMPLE_NONE;
+	gPresentParam.MultiSampleQuality = 0;
 
 	// Push the quality up even higher with multisampling
 	if (!config.gpuEfficiency)

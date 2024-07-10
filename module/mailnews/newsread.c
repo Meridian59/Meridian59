@@ -109,6 +109,11 @@ void ReceiveArticles(WORD newsgroup, BYTE part, BYTE max_part, list_type article
    {
       SendMessage(hReadNewsDialog, BK_ARTICLES, 0, (LPARAM) new_articles);
       last_part = 0;
+      
+      // Set default sort to date column
+      HWND hListView = GetDlgItem(hReadNewsDialog, IDC_NEWSLIST);
+      ListView_SortItems(hListView, CompareListItems, -3);
+      ListView_SetHeaderSortImage(hListView, 2, FALSE);
    }
 }
 /****************************************************************************/

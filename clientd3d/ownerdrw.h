@@ -64,7 +64,6 @@ M59EXPORT int OwnerListCompareItem(HWND hwnd, const COMPAREITEMSTRUCT *lpcis, Bo
 M59EXPORT void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpMeasureItem, Bool combo);
 M59EXPORT BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpDrawItem, Bool combo);
 M59EXPORT BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo);
-M59EXPORT int IsValidRarity(int rarity);
 
 
 #endif /* #ifndef _OWNERDRW_H */

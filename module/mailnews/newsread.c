@@ -271,7 +271,7 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          ListView_EnsureVisible(hList, index, FALSE);
       }
 
-      ListView_SetHeaderSortImage(hList, 2, FALSE);
+      ListView_SetHeaderSortImage(hList, COL_TIME, FALSE);
 
       return TRUE;
 
@@ -538,10 +538,12 @@ void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAsce
 }
 
 /*
-* Resets the news list to it's default sort: date descending
+* Resets the news list to it's default sort: by time, descending
 */
 void ResetListSort(HWND hListView)
 {
-   ListView_SortItems(hListView, CompareListItems, -3); // 1-based column
-   ListView_SetHeaderSortImage(hListView, 2, FALSE); // 0-based column
+   // 1-based column
+   ListView_SortItems(hListView, CompareListItems, -(COL_TIME + 1));
+   // 0-based column
+   ListView_SetHeaderSortImage(hListView, COL_TIME, FALSE);
 }

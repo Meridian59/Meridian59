@@ -56,6 +56,7 @@ static void UserReplyNewsMail(NewsArticle *article);
 static void OnColumnClick(LPNMLISTVIEW pLVInfo);
 static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 static void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending);
+static void ResetListSort(HWND hListView);
 
 /****************************************************************************/
 /*
@@ -109,11 +110,6 @@ void ReceiveArticles(WORD newsgroup, BYTE part, BYTE max_part, list_type article
    {
       SendMessage(hReadNewsDialog, BK_ARTICLES, 0, (LPARAM) new_articles);
       last_part = 0;
-      
-      // Set default sort to date column
-      HWND hListView = GetDlgItem(hReadNewsDialog, IDC_NEWSLIST);
-      ListView_SortItems(hListView, CompareListItems, -3);
-      ListView_SetHeaderSortImage(hListView, 2, FALSE);
    }
 }
 /****************************************************************************/
@@ -274,6 +270,9 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          ListView_SetItemState(hList, index, LVIS_SELECTED, LVIS_SELECTED);
          ListView_EnsureVisible(hList, index, FALSE);
       }
+
+      ListView_SetHeaderSortImage(hList, 2, FALSE);
+
       return TRUE;
 
    case BK_ARTICLE:
@@ -378,11 +377,13 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 	 /* If user posts article, rescan so that it will show up */
 	 if (UserPostArticle(hDlg, info->newsgroup, info->group_name_rsc, NULL))
 	    RequestArticles(info->newsgroup);
+   ResetListSort(hList);
 	 SetFocus(hList);
 	 return TRUE;
 
       case IDC_RESCAN:
 	 RequestArticles(info->newsgroup);
+   ResetListSort(hList);
 	 SetFocus(hList);
 	 return TRUE;
 
@@ -534,4 +535,13 @@ void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAsce
       // Set the header item at the current index with the updated details
       Header_SetItem(hHeader, i, &hdi);
    }
+}
+
+/*
+* Resets the news list to it's default sort: date descending
+*/
+void ResetListSort(HWND hListView)
+{
+   ListView_SortItems(hListView, CompareListItems, -3); // 1-based column
+   ListView_SetHeaderSortImage(hListView, 2, FALSE); // 0-based column
 }

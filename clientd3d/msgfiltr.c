@@ -131,7 +131,7 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
      if (bAdded)
      {
        i = ItemListAddItem(hList, pUser, -1, False);
-       if (!IsUserInIgnoreList(pUser->name_res))
+       if (i != LB_ERR && !IsUserInIgnoreList(pUser->name_res))
 	       ListBox_SetSel(hList, TRUE, i);
      }
      else

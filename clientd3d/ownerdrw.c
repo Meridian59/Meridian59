@@ -374,7 +374,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
    if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
-         item_rarity_value = (item_rarity_grade)obj->rarity;
+      item_rarity_value = (item_rarity_grade)obj->rarity;
 
       crColorText = GetColor(
                         GetItemListColor(
@@ -458,7 +458,15 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    if (style & OD_COLORTEXT)
    {
      // get the color we'd prefer for this particular obj
-     crColorText = GetPlayerNameColor(obj->flags,NULL);
+     if (obj == NULL) 
+     {
+        crColorText = PALETTERGB(255, 255, 255);
+        debug(("Null pointer detected for obj in DrawOwnerListItem\n"));
+     }
+     else
+     {
+        crColorText = GetPlayerNameColor(obj->flags, NULL);
+     }
      
      // draw a black halo around the text just to ensure it is visible
      SetTextColor(lpdis->hDC, RGB(0, 0, 0));

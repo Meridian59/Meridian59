@@ -464,7 +464,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
      }
      else
      {
-        crColorText = NAME_COLOR_NORMAL_FG;
+        crColorText = PALETTERGB(255, 255, 255);
         debug(("Null pointer detected for obj in DrawOwnerListItem\n"));
      }
      

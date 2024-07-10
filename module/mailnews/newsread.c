@@ -538,7 +538,7 @@ void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAsce
 }
 
 /*
-* Resets the news list to it's default sort: by time, descending
+* Resets the news list to its default sort: by time, descending
 */
 void ResetListSort(HWND hListView)
 {

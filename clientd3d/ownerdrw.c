@@ -460,7 +460,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
      // get the color we'd prefer for this particular obj
      if (obj != NULL) 
      {
-        crColorText = GetPlayerNameColor(obj->flags,NULL);
+        crColorText = GetPlayerNameColor(obj->flags, NULL);
      }
      else
      {

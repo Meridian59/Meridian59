@@ -127,11 +127,6 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
        debug(("WHOM_UPDATE NULL user\n"));
        return FALSE;
      }
-     if (!hList)
-     { 
-       debug(("Failed to get handle for IDC_USERLIST\n"));
-       return FALSE;
-     }
      debug(("WHOM_UPDATE, %s user %i\n", (LPCTSTR)(bAdded?"adding":"removing"), pUser->id));
      if (bAdded)
      {

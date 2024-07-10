@@ -458,14 +458,14 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    if (style & OD_COLORTEXT)
    {
      // get the color we'd prefer for this particular obj
-     if (obj != NULL) 
-     {
-        crColorText = GetPlayerNameColor(obj->flags, NULL);
-     }
-     else
+     if (obj == NULL) 
      {
         crColorText = PALETTERGB(255, 255, 255);
         debug(("Null pointer detected for obj in DrawOwnerListItem\n"));
+     }
+     else
+     {
+        crColorText = GetPlayerNameColor(obj->flags, NULL);
      }
      
      // draw a black halo around the text just to ensure it is visible

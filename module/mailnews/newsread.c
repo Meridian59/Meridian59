@@ -538,10 +538,13 @@ void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAsce
 }
 
 /*
-* Resets the news list to it's default sort: date descending
+* Resets the news list to its default sort: date descending
 */
 void ResetListSort(HWND hListView)
 {
-   ListView_SortItems(hListView, CompareListItems, -3); // 1-based column
-   ListView_SetHeaderSortImage(hListView, 2, FALSE); // 0-based column
+   // 1-based column
+   ListView_SortItems(hListView, CompareListItems, -(COL_TITLE + 1));
+   
+   // 0-based column
+   ListView_SetHeaderSortImage(hListView, COL_TITLE, FALSE);
 }

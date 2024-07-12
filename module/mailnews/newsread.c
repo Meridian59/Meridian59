@@ -37,8 +37,9 @@ typedef enum
    COL_TIME = 2
 } NewsColumns;
 
-int currentSortColumn = -1;
-bool currentSortAscending = TRUE;
+// Constants used to track sorted column
+static int currentSortColumn = -1;
+static bool currentSortAscending = TRUE;
 
 static ChildPlacement newsread_controls[] = {
     {IDC_NEWSEDIT, RDI_ALL},
@@ -50,6 +51,8 @@ static ChildPlacement newsread_controls[] = {
 static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserReplyNewsMail(NewsArticle *article);
 static void OnColumnClick(LPNMLISTVIEW pLVInfo);
+static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static void ResetListSort(HWND hListView);
 
 /****************************************************************************/
 /*
@@ -361,13 +364,13 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 	 /* If user posts article, rescan so that it will show up */
 	 if (UserPostArticle(hDlg, info->newsgroup, info->group_name_rsc, NULL))
 	    RequestArticles(info->newsgroup);
-   ResetListSort(hList, COL_TIME);
+   ResetListSort(hList);
 	 SetFocus(hList);
 	 return TRUE;
 
       case IDC_RESCAN:
 	 RequestArticles(info->newsgroup);
-   ResetListSort(hList, COL_TIME);
+   ResetListSort(hList);
 	 SetFocus(hList);
 	 return TRUE;
 
@@ -452,8 +455,8 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 
 /****************************************************************************/
 /*
- * CompareListItems: Comparison function for sorting items in the news dialog
- * list view.
+ * CompareListItems: Comparison function for sorting items in the dialog list
+ * view.
  */
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
@@ -486,4 +489,17 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
       debug(("Unhandled column (column #%d) in CompareListItems\n", nColumn));
       return 0;
    }
+}
+
+/***************************************************************************/
+/*
+* ResetListSort Resets the list sort order and sort indicator image
+*/
+/***************************************************************************/
+void ResetListSort(HWND hListView)
+{
+   // 1-based column
+   ListView_SortItems(hListView, CompareListItems, -(COL_TIME + 1));
+   // 0-based column
+   ListView_SetHeaderSortImage(hListView, COL_TIME, false);
 }

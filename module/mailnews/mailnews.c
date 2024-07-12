@@ -21,8 +21,8 @@ extern HWND hSendMailDlg; /* Non-NULL if Send Mail dialog is up */
 extern HWND hReadMailDlg; /* Non-NULL if Read Mail dialog is up */
 
 // Declare global HBITMAP objects
-extern HBITMAP hbmUpArrow = NULL;
-extern HBITMAP hbmDownArrow = NULL;
+HBITMAP hbmUpArrow = NULL;
+HBITMAP hbmDownArrow = NULL;
 
 /* local function prototypes */
 static Bool HandleMail(char *ptr, long len);
@@ -419,10 +419,10 @@ bool IsNameInIgnoreList(const char *name)
 
 /***************************************************************************/
 /*
- * ListView_SetHeaderSortImage
+ * ListView_SetHeaderSortImage sets sort indicator image for a given ListView provided a column index and sort direction.
  */
 /***************************************************************************/
-void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending)
+void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, bool sortAscending)
 {
    // Get the handle to the header control associated with the list view
    HWND hHeader = ListView_GetHeader(hListView);
@@ -453,17 +453,4 @@ void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAsce
       // Set the header item at the current index with the updated details
       Header_SetItem(hHeader, i, &hdi);
    }
-}
-
-/***************************************************************************/
-/*
-* ResetListSort sorts mail and news list sorting on a column in desc order
-*/
-/***************************************************************************/
-void ResetListSort(HWND hListView, int sortedColumn)
-{
-   // 1-based column
-   ListView_SortItems(hListView, CompareListItems, -(sortedColumn + 1));
-   // 0-based column
-   ListView_SetHeaderSortImage(hListView, sortedColumn, FALSE);
 }

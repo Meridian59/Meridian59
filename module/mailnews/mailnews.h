@@ -43,13 +43,7 @@ extern HINSTANCE hInst;  // module handle
 extern HBITMAP hbmUpArrow;
 extern HBITMAP hbmDownArrow;
 
-// Constants used to track sorted column
-extern int currentSortColumn;
-extern bool currentSortAscending;
-
 bool IsNameInIgnoreList(const char *name);
-int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
-void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, BOOL sortAscending);
-void ResetListSort(HWND hListView, int sortedColumn);
+void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, bool sortAscending);
 
 #endif /* #ifndef _MAILNEWS_H */

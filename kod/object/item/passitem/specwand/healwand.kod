@@ -21,7 +21,7 @@ resources:
    healWand_desc_rsc = "This wand is almost comically decorated by obviously fake gems.  "
        "Still, the wand hums nearly inaudibly, and when you put your hand on it, it is "
        "warm to the touch."
-   healWand_success_wav_rsc = shalille.wav
+   healWand_success_wav_rsc = healwand.wav
    healed_rsc = "You feel better."
    wand_used_rsc = "The wand pulses once in your hand."
    wand_fail_snd = spelfail.wav

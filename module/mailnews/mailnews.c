@@ -419,7 +419,8 @@ bool IsNameInIgnoreList(const char *name)
 
 /***************************************************************************/
 /*
- * ListView_SetHeaderSortImage sets sort indicator image for a given ListView provided a column index and sort direction.
+ * ListView_SetHeaderSortImage sets sort indicator image for a given ListView
+ * provided a column index and sort direction.
  */
 /***************************************************************************/
 void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, bool sortAscending)

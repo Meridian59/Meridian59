@@ -39,7 +39,7 @@ typedef enum
 
 // Constants used to track sorted column
 static int currentSortColumn = -1;
-static bool currentSortAscending = TRUE;
+static bool currentSortAscending = true;
 
 static ChildPlacement newsread_controls[] = {
     {IDC_NEWSEDIT, RDI_ALL},
@@ -428,7 +428,7 @@ Bool DateFromSeconds(long seconds, char *str)
 void OnColumnClick(LPNMLISTVIEW pLVInfo)
 {
    int nSortColumn = pLVInfo->iSubItem;
-   bool bSortAscending = TRUE;
+   bool bSortAscending = true;
 
    if (nSortColumn == currentSortColumn)
    {
@@ -439,7 +439,7 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
    {
       // Set ascending order for new column
       currentSortColumn = nSortColumn;
-      currentSortAscending = TRUE;
+      currentSortAscending = true;
    }
 
    LPARAM lParamSort = (currentSortAscending ? 1 : -1) * (currentSortColumn + 1);

@@ -11,11 +11,35 @@
 
 #include "client.h"
 #include "mailnews.h"
+#include <unordered_map>
+#include <time.h>
+#include <locale>
+#include <iomanip>
+#include <sstream>
 
 extern HWND hReadMailDlg; /* Non-NULL if Read Mail dialog is up */
 extern HWND hSendMailDlg; /* Non-NULL if Send Mail dialog is up */
 
 static RECT dlg_rect; // Screen position of dialog
+
+// Constants for mail dialog columns
+typedef enum
+{
+   COL_ORDER = 0,
+   COL_FROM = 1,
+   COL_SUBJECT = 2,
+   COL_TIME = 3
+} MailColumns;
+
+// Constants used to track sorted column
+static int currentSortColumn = -1;
+static bool currentSortAscending = true;
+
+// Retrieve the user's locale for 
+static const char *localeName = setlocale(LC_ALL, "");
+
+// Hashtable to store converted mail timestamps
+static std::unordered_map<int, time_t> mail_date_map;
 
 static ChildPlacement mailread_controls[] = {
     {IDC_MAILLIST, RDI_TOP | RDI_LEFT | RDI_RIGHT},
@@ -26,6 +50,12 @@ static ChildPlacement mailread_controls[] = {
 /* local function prototypes */
 static INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserMailReply(int msg_num, Bool reply_all);
+static void OnColumnClick(LPNMLISTVIEW pLVInfo);
+static int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static int StringToTimestamp(const char *dateStr);
+static void PrepareMailDateMap(HWND hListView);
+static void ResetMailListSort(HWND hListView);
+
 /****************************************************************************/
 /*
  * UserReadMail:  Tell the server that the user wants to read mail.
@@ -99,6 +129,10 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
       MailGetMessageList();
       RequestReadMail();
+
+      PrepareMailDateMap(hList);
+      ListView_SetHeaderSortImage(hList, COL_ORDER, FALSE);
+
       return TRUE;
 
    case WM_SIZE:
@@ -188,6 +222,10 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       return TRUE;
 
    case WM_NOTIFY:
+      if ((((LPNMHDR)lParam)->idFrom == IDC_MAILLIST) &&
+          (((LPNMHDR)lParam)->code == LVN_COLUMNCLICK))
+         OnColumnClick((LPNMLISTVIEW)lParam);
+
       if (wParam != IDC_MAILLIST)
          return TRUE;
 
@@ -263,6 +301,8 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       case IDC_RESCAN:
          SetDlgItemText(hDlg, IDC_MAILINFO, GetString(hInst, IDS_GETTINGMSGS));
          RequestReadMail();
+         ResetMailListSort(hList);
+         PrepareMailDateMap(hList);
          return TRUE;
 
       case IDC_SEND:
@@ -282,6 +322,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          /* Note:  This code is also used by the WM_CLOSE message */
          MailDeleteMessageList();
          DestroyWindow(hDlg);
+         mail_date_map.clear();
          return TRUE;
       }
       break;
@@ -352,4 +393,143 @@ void UserMailReply(int msg_num, Bool reply_all)
 
    MakeReplySubject(reply->subject, MAX_SUBJECT);
    MailSendReply(hReadMailDlg, reply);
+}
+
+void OnColumnClick(LPNMLISTVIEW pLVInfo)
+{
+   int nSortColumn = pLVInfo->iSubItem;
+   bool bSortAscending = true;
+
+   if (nSortColumn == currentSortColumn)
+   {
+      // Toggle sort direction if the same column is clicked again
+      currentSortAscending = !currentSortAscending;
+   }
+   else
+   {
+      // Set ascending order for new column
+      currentSortColumn = nSortColumn;
+      currentSortAscending = true;
+   }
+
+   LPARAM lParamSort = (currentSortAscending ? 1 : -1) * (currentSortColumn + 1);
+
+   if (hbmUpArrow != NULL && hbmDownArrow != NULL)
+   {
+      ListView_SetHeaderSortImage(pLVInfo->hdr.hwndFrom, currentSortColumn, currentSortAscending);
+   }
+
+   // Sort list
+   ListView_SortItemsEx(pLVInfo->hdr.hwndFrom, CompareMailListItems, lParamSort);
+}
+
+/****************************************************************************/
+/*
+ * CompareMailListItems: Comparison function for sorting items in the dialog
+ * list view.
+ */
+int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+   bool bSortAscending = (lParamSort > 0);
+   int nColumn = abs(lParamSort) - 1;
+   char szBuf1[MAX_SUBJECT], szBuf2[MAX_SUBJECT];
+   int time1 = 0;
+   int time2 = 0;
+
+   HWND hListView = GetDlgItem(hReadMailDlg, IDC_MAILLIST);
+
+   // Extract the msg_num values from the list view items
+   ListView_GetItemText(hListView, lParam1, COL_ORDER, szBuf1, sizeof(szBuf1));
+   ListView_GetItemText(hListView, lParam2, COL_ORDER, szBuf2, sizeof(szBuf2));
+   int msg_num1 = atoi(szBuf1);
+   int msg_num2 = atoi(szBuf2);
+
+   ListView_GetItemText(hListView, lParam1, nColumn, szBuf1, sizeof(szBuf1));
+   ListView_GetItemText(hListView, lParam2, nColumn, szBuf2, sizeof(szBuf2));
+
+   switch (nColumn)
+   {
+   case COL_ORDER:
+      return bSortAscending ? atoi(szBuf1) - atoi(szBuf2) : atoi(szBuf2) - atoi(szBuf1);
+   case COL_FROM:
+      return bSortAscending ? stricmp(szBuf1, szBuf2) : stricmp(szBuf2, szBuf1);
+   case COL_SUBJECT:
+      return bSortAscending ? stricmp(szBuf1, szBuf2) : stricmp(szBuf2, szBuf1);
+   case COL_TIME:
+      time1 = mail_date_map[msg_num1];
+      time2 = mail_date_map[msg_num2];
+
+      return bSortAscending ? (time1 - time2) : (time2 - time1);
+   default:
+      debug(("Unhandled column (column #%d) in CompareMailListItems\n", nColumn));
+      return 0;
+   }
+}
+
+/***************************************************************************/
+/*
+ * StringToTimestamp converts mail date strings to integers for comparison
+ */
+/***************************************************************************/
+int StringToTimestamp(const char *dateStr)
+{
+   struct tm tm = {0};
+   tm.tm_isdst = -1; // Handle daylight saving time
+
+   // Use a string stream to parse the date and time, leveraging locale
+   // to support the translation of month strings.
+   std::istringstream input(dateStr);
+   input.imbue(std::locale(localeName));
+   input >> std::get_time(&tm, "%a %b %d, %Y %H:%M");
+
+   if (input.fail())
+   {
+      debug(("Failed to parse date string: %s\n", dateStr));
+      return 0;
+   }
+
+   time_t timestamp = mktime(&tm);
+
+   // Return timestamp as an int
+   return timestamp;
+}
+
+/***************************************************************************/
+/*
+ * PrepareMailDateMap caches converted mail date string versions for sorting
+ */
+/***************************************************************************/
+void PrepareMailDateMap(HWND hListView)
+{
+   mail_date_map.clear();
+   int itemCount = ListView_GetItemCount(hListView);
+   char szBuf[MAX_SUBJECT];
+   char orderBuf[30];
+
+   for (int i = 0; i < itemCount; ++i)
+   {
+      // Retrieve the value from the first column (COL_ORDER)
+      ListView_GetItemText(hListView, i, COL_ORDER, orderBuf, sizeof(orderBuf));
+      int msg_num = atoi(orderBuf);
+
+      // Retrieve the time string from the time column (COL_TIME)
+      ListView_GetItemText(hListView, i, COL_TIME, szBuf, sizeof(szBuf));
+      int timestamp = StringToTimestamp(szBuf);
+
+      // Store the timestamp in the hash table
+      mail_date_map[msg_num] = timestamp;
+   }
+}
+
+/***************************************************************************/
+/*
+ * ResetMailListSort Resets the list sort order and sort indicator image
+ */
+/***************************************************************************/
+void ResetMailListSort(HWND hListView)
+{
+   // 1-based column
+   ListView_SortItemsEx(hListView, CompareMailListItems, -(COL_ORDER + 1));
+   // 0-based column
+   ListView_SetHeaderSortImage(hListView, COL_ORDER, false);
 }

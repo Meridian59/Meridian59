@@ -23,7 +23,7 @@ extern HWND hSendMailDlg; /* Non-NULL if Send Mail dialog is up */
 
 static RECT dlg_rect; // Screen position of dialog
 
-// Constants for news dialog columns
+// Constants for mail dialog columns
 typedef enum
 {
    COL_ORDER = 0,
@@ -34,7 +34,10 @@ typedef enum
 
 // Constants used to track sorted column
 static int currentSortColumn = -1;
-static bool currentSortAscending = TRUE;
+static bool currentSortAscending = true;
+
+// Retrieve the user's locale for 
+static const char *localeName = setlocale(LC_ALL, "");
 
 // Hashtable to store converted mail timestamps
 static std::unordered_map<int, time_t> mail_date_map;
@@ -127,15 +130,6 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
       MailGetMessageList();
       RequestReadMail();
-
-      // Load sort arrow bitmaps
-      hbmUpArrow = (HBITMAP)LoadImage(hInst,
-                                      MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0,
-                                      LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
-
-      hbmDownArrow = (HBITMAP)LoadImage(hInst,
-                                        MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0,
-                                        LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
 
       PrepareMailDateMap(hList);
       ListView_SetHeaderSortImage(hList, COL_ORDER, FALSE);
@@ -329,6 +323,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          /* Note:  This code is also used by the WM_CLOSE message */
          MailDeleteMessageList();
          DestroyWindow(hDlg);
+         mail_date_map.clear();
          return TRUE;
       }
       break;
@@ -404,7 +399,7 @@ void UserMailReply(int msg_num, Bool reply_all)
 void OnColumnClick(LPNMLISTVIEW pLVInfo)
 {
    int nSortColumn = pLVInfo->iSubItem;
-   bool bSortAscending = TRUE;
+   bool bSortAscending = true;
 
    if (nSortColumn == currentSortColumn)
    {
@@ -415,7 +410,7 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
    {
       // Set ascending order for new column
       currentSortColumn = nSortColumn;
-      currentSortAscending = TRUE;
+      currentSortAscending = true;
    }
 
    LPARAM lParamSort = (currentSortAscending ? 1 : -1) * (currentSortColumn + 1);
@@ -480,27 +475,35 @@ int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamS
 int StringToTimestamp(const char *dateStr)
 {
    struct tm tm = {0};
+   tm.tm_isdst = -1; // Handle daylight saving time
 
-   const char *localeName = setlocale(LC_ALL, "");
+   // Find the first space character after the day of the week
+   const char *remainingStr = std::strchr(dateStr, ' ');
+   if (remainingStr == nullptr)
+   {
+      debug(("Failed to find space after day of the week: %s\n", dateStr));
+      return 0;
+   }
 
-   // Skip the day of the week
-   const char *remainingStr = dateStr + 4;
+   // Skip past the space character
+   remainingStr++;
 
+   // Use a string stream to parse the date and time, leveraging locale
+   // to support the translation of month strings.
    std::istringstream input(remainingStr);
-
    input.imbue(std::locale(localeName));
-
    input >> std::get_time(&tm, "%b %d, %Y %H:%M");
 
    if (input.fail())
    {
-      std::cerr << "Failed to parse date string: " << dateStr << std::endl;
+      debug(("Failed to parse date string: %s\n", dateStr));
       return 0;
    }
 
    time_t timestamp = mktime(&tm);
 
-   return static_cast<int>(timestamp);
+   // Return timestamp as an int
+   return timestamp;
 }
 
 /***************************************************************************/

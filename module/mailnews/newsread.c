@@ -51,8 +51,8 @@ static ChildPlacement newsread_controls[] = {
 static INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserReplyNewsMail(NewsArticle *article);
 static void OnColumnClick(LPNMLISTVIEW pLVInfo);
-static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
-static void ResetListSort(HWND hListView);
+static int CALLBACK CompareNewsListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static void ResetNewsListSort(HWND hListView);
 
 /****************************************************************************/
 /*
@@ -364,13 +364,13 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          /* If user posts article, rescan so that it will show up */
          if (UserPostArticle(hDlg, info->newsgroup, info->group_name_rsc, NULL))
             RequestArticles(info->newsgroup);
-         ResetListSort(hList);
+         ResetNewsListSort(hList);
          SetFocus(hList);
          return TRUE;
 
       case IDC_RESCAN:
          RequestArticles(info->newsgroup);
-         ResetListSort(hList);
+         ResetNewsListSort(hList);
          SetFocus(hList);
          return TRUE;
 
@@ -450,15 +450,15 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
    }
 
    // Sort list
-   ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
+   ListView_SortItems(pLVInfo->hdr.hwndFrom, CompareNewsListItems, lParamSort);
 }
 
 /****************************************************************************/
 /*
- * CompareListItems: Comparison function for sorting items in the dialog list
- * view.
+ * CompareNewsListItems: Comparison function for sorting items in the dialog 
+ * list view.
  */
-int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+int CALLBACK CompareNewsListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
    bool bSortAscending = (lParamSort > 0);
    int nColumn = abs(lParamSort) - 1;
@@ -486,20 +486,20 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
    case COL_TIME:
       return bSortAscending ? article1->time - article2->time : article2->time - article1->time;
    default:
-      debug(("Unhandled column (column #%d) in CompareListItems\n", nColumn));
+      debug(("Unhandled column (column #%d) in CompareNewsListItems\n", nColumn));
       return 0;
    }
 }
 
 /***************************************************************************/
 /*
- * ResetListSort Resets the list sort order and sort indicator image
+ * ResetNewsListSort Resets the list sort order and sort indicator image
  */
 /***************************************************************************/
-void ResetListSort(HWND hListView)
+void ResetNewsListSort(HWND hListView)
 {
    // 1-based column
-   ListView_SortItems(hListView, CompareListItems, -(COL_TIME + 1));
+   ListView_SortItems(hListView, CompareNewsListItems, -(COL_TIME + 1));
    // 0-based column
    ListView_SetHeaderSortImage(hListView, COL_TIME, false);
 }

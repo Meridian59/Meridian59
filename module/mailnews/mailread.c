@@ -44,10 +44,10 @@ static ChildPlacement mailread_controls[] = {
 static INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UserMailReply(int msg_num, Bool reply_all);
 static void OnColumnClick(LPNMLISTVIEW pLVInfo);
-static int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 static int StringToTimestamp(const char *dateStr);
 static void PrepareMailDateMap(HWND hListView);
-static void ResetListSort(HWND hListView);
+static void ResetMailListSort(HWND hListView);
 
 /****************************************************************************/
 /*
@@ -303,7 +303,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       case IDC_RESCAN:
          SetDlgItemText(hDlg, IDC_MAILINFO, GetString(hInst, IDS_GETTINGMSGS));
          RequestReadMail();
-         ResetListSort(hList);
+         ResetMailListSort(hList);
          PrepareMailDateMap(hList);
          return TRUE;
 
@@ -421,15 +421,15 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
    }
 
    // Sort list
-   ListView_SortItemsEx(pLVInfo->hdr.hwndFrom, CompareListItems, lParamSort);
+   ListView_SortItemsEx(pLVInfo->hdr.hwndFrom, CompareMailListItems, lParamSort);
 }
 
 /****************************************************************************/
 /*
- * CompareListItems: Comparison function for sorting items in the dialog list
- * view.
+ * CompareMailListItems: Comparison function for sorting items in the dialog 
+ * list view.
  */
-int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
    bool bSortAscending = (lParamSort > 0);
    int nColumn = abs(lParamSort) - 1;
@@ -462,7 +462,7 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 
       return bSortAscending ? (time1 - time2) : (time2 - time1);
    default:
-      debug(("Unhandled column (column #%d) in CompareListItems\n", nColumn));
+      debug(("Unhandled column (column #%d) in CompareMailListItems\n", nColumn));
       return 0;
    }
 }
@@ -535,13 +535,13 @@ void PrepareMailDateMap(HWND hListView)
 
 /***************************************************************************/
 /*
- * ResetListSort Resets the list sort order and sort indicator image
+ * ResetMailListSort Resets the list sort order and sort indicator image
  */
 /***************************************************************************/
-void ResetListSort(HWND hListView)
+void ResetMailListSort(HWND hListView)
 {
    // 1-based column
-   ListView_SortItemsEx(hListView, CompareListItems, -(COL_ORDER + 1));
+   ListView_SortItemsEx(hListView, CompareMailListItems, -(COL_ORDER + 1));
    // 0-based column
    ListView_SetHeaderSortImage(hListView, COL_ORDER, false);
 }

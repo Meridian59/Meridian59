@@ -484,7 +484,7 @@ int StringToTimestamp(const char *dateStr)
    const char *localeName = setlocale(LC_ALL, "");
 
    // Skip the day of the week
-   const char *remainingStr = dateStr + 4; // Skip first 4 characters ("Sat ")
+   const char *remainingStr = dateStr + 4;
 
    std::istringstream input(remainingStr);
 

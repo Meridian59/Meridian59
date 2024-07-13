@@ -361,18 +361,18 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          return TRUE;
 
       case IDC_NEWSPOST:
-	 /* If user posts article, rescan so that it will show up */
-	 if (UserPostArticle(hDlg, info->newsgroup, info->group_name_rsc, NULL))
-	    RequestArticles(info->newsgroup);
-   ResetListSort(hList);
-	 SetFocus(hList);
-	 return TRUE;
+         /* If user posts article, rescan so that it will show up */
+         if (UserPostArticle(hDlg, info->newsgroup, info->group_name_rsc, NULL))
+            RequestArticles(info->newsgroup);
+         ResetListSort(hList);
+         SetFocus(hList);
+         return TRUE;
 
       case IDC_RESCAN:
-	 RequestArticles(info->newsgroup);
-   ResetListSort(hList);
-	 SetFocus(hList);
-	 return TRUE;
+         RequestArticles(info->newsgroup);
+         ResetListSort(hList);
+         SetFocus(hList);
+         return TRUE;
 
       case IDOK:
       case IDCANCEL:
@@ -493,8 +493,8 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 
 /***************************************************************************/
 /*
-* ResetListSort Resets the list sort order and sort indicator image
-*/
+ * ResetListSort Resets the list sort order and sort indicator image
+ */
 /***************************************************************************/
 void ResetListSort(HWND hListView)
 {

@@ -426,7 +426,8 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 
 /****************************************************************************/
 /*
- * CompareListItems: Comparison function for sorting items in the dialog list view.
+ * CompareListItems: Comparison function for sorting items in the dialog list
+ * view.
  */
 int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
@@ -468,8 +469,8 @@ int CALLBACK CompareListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 
 /***************************************************************************/
 /*
-* StringToTimestamp converts mail date strings to integers for comparison
-*/
+ * StringToTimestamp converts mail date strings to integers for comparison
+ */
 /***************************************************************************/
 int StringToTimestamp(const char *dateStr)
 {
@@ -507,8 +508,8 @@ int StringToTimestamp(const char *dateStr)
 
 /***************************************************************************/
 /*
-* PrepareMailDateMap caches converted mail date string versions for sorting
-*/
+ * PrepareMailDateMap caches converted mail date string versions for sorting
+ */
 /***************************************************************************/
 void PrepareMailDateMap(HWND hListView)
 {
@@ -534,8 +535,8 @@ void PrepareMailDateMap(HWND hListView)
 
 /***************************************************************************/
 /*
-* ResetListSort Resets the list sort order and sort indicator image
-*/
+ * ResetListSort Resets the list sort order and sort indicator image
+ */
 /***************************************************************************/
 void ResetListSort(HWND hListView)
 {

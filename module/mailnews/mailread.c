@@ -15,7 +15,6 @@
 #include <time.h>
 #include <locale>
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 
 extern HWND hReadMailDlg; /* Non-NULL if Read Mail dialog is up */
@@ -477,22 +476,11 @@ int StringToTimestamp(const char *dateStr)
    struct tm tm = {0};
    tm.tm_isdst = -1; // Handle daylight saving time
 
-   // Find the first space character after the day of the week
-   const char *remainingStr = std::strchr(dateStr, ' ');
-   if (remainingStr == nullptr)
-   {
-      debug(("Failed to find space after day of the week: %s\n", dateStr));
-      return 0;
-   }
-
-   // Skip past the space character
-   remainingStr++;
-
    // Use a string stream to parse the date and time, leveraging locale
    // to support the translation of month strings.
-   std::istringstream input(remainingStr);
+   std::istringstream input(dateStr);
    input.imbue(std::locale(localeName));
-   input >> std::get_time(&tm, "%b %d, %Y %H:%M");
+   input >> std::get_time(&tm, "%a %b %d, %Y %H:%M");
 
    if (input.fail())
    {

@@ -20,6 +20,10 @@ Bool        exiting;
 extern HWND hSendMailDlg; /* Non-NULL if Send Mail dialog is up */
 extern HWND hReadMailDlg; /* Non-NULL if Read Mail dialog is up */
 
+// Declare global HBITMAP objects
+HBITMAP hbmUpArrow = NULL;
+HBITMAP hbmDownArrow = NULL;
+
 /* local function prototypes */
 static Bool HandleMail(char *ptr, long len);
 static Bool HandleLookupNames(char *ptr, long len);
@@ -70,6 +74,16 @@ BOOL WINAPI DllMain(HINSTANCE hModule, DWORD reason, LPVOID reserved)
    {
    case DLL_PROCESS_ATTACH:
       hInst = hModule;
+
+      // Load sort arrow bitmaps
+      hbmUpArrow = (HBITMAP)LoadImage(hInst, 
+         MAKEINTRESOURCE(IDB_UPARROW), IMAGE_BITMAP, 0, 0, 
+         LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+
+      hbmDownArrow = (HBITMAP)LoadImage(hInst, 
+         MAKEINTRESOURCE(IDB_DOWNARROW), IMAGE_BITMAP, 0, 0, 
+         LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
+         
       break;
 
    case DLL_PROCESS_DETACH:
@@ -401,4 +415,43 @@ bool IsNameInIgnoreList(const char *name)
         return true;
   }
   return false;
+}
+
+/***************************************************************************/
+/*
+ * ListView_SetHeaderSortImage sets sort indicator image for a given ListView
+ * provided a column index and sort direction.
+ */
+/***************************************************************************/
+void ListView_SetHeaderSortImage(HWND hListView, int sortedColumn, bool sortAscending)
+{
+   // Get the handle to the header control associated with the list view
+   HWND hHeader = ListView_GetHeader(hListView);
+   if (!hHeader)
+       return;
+
+   int columnCount = Header_GetItemCount(hHeader);
+
+   for (int i = 0; i < columnCount; i++)
+   {
+      HDITEM hdi = {0};
+      hdi.mask = HDI_FORMAT | HDI_BITMAP;
+      
+      // Get the current format of the header item
+      Header_GetItem(hHeader, i, &hdi);
+
+      if (i == sortedColumn)
+      {
+         hdi.fmt |= (HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+         hdi.hbm = sortAscending ? hbmUpArrow : hbmDownArrow;
+      }
+      else
+      {
+         hdi.fmt &= ~(HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+         hdi.hbm = NULL;
+      }
+
+      // Set the header item at the current index with the updated details
+      Header_SetItem(hHeader, i, &hdi);
+   }
 }

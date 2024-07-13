@@ -12,6 +12,11 @@
 #include "client.h"
 #include "mailnews.h"
 #include <unordered_map>
+#include <time.h>
+#include <locale>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 extern HWND hReadMailDlg; /* Non-NULL if Read Mail dialog is up */
 extern HWND hSendMailDlg; /* Non-NULL if Send Mail dialog is up */
@@ -426,7 +431,7 @@ void OnColumnClick(LPNMLISTVIEW pLVInfo)
 
 /****************************************************************************/
 /*
- * CompareMailListItems: Comparison function for sorting items in the dialog 
+ * CompareMailListItems: Comparison function for sorting items in the dialog
  * list view.
  */
 int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
@@ -474,36 +479,28 @@ int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamS
 /***************************************************************************/
 int StringToTimestamp(const char *dateStr)
 {
-   struct tm tm = {0}; // Initialize tm to zero
-   char monthStr[4];   // To hold the abbreviated month name
+   struct tm tm = {0};
 
-   // Parse the date-time string
-   if (sscanf(dateStr, "%*3s %3s %d, %d %d:%d",
-              monthStr, &tm.tm_mday, &tm.tm_year, &tm.tm_hour, &tm.tm_min) != 5)
+   const char *localeName = setlocale(LC_ALL, "");
+
+   // Skip the day of the week
+   const char *remainingStr = dateStr + 4; // Skip first 4 characters ("Sat ")
+
+   std::istringstream input(remainingStr);
+
+   input.imbue(std::locale(localeName));
+
+   input >> std::get_time(&tm, "%b %d, %Y %H:%M");
+
+   if (input.fail())
    {
-      // Handle parse error
-      debug(("Failed to parse date string: %s\n", dateStr));
+      std::cerr << "Failed to parse date string: " << dateStr << std::endl;
       return 0;
-   }
-
-   // Adjust the struct tm fields
-   tm.tm_year -= 1900; // Year since 1900
-
-   // Convert month abbreviation to month number
-   const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-   for (int i = 0; i < 12; ++i)
-   {
-      if (strncmp(monthStr, months[i], 3) == 0)
-      {
-         tm.tm_mon = i;
-         break;
-      }
    }
 
    time_t timestamp = mktime(&tm);
 
-   // Convert to time_t and then to int
-   return (int)timestamp;
+   return static_cast<int>(timestamp);
 }
 
 /***************************************************************************/

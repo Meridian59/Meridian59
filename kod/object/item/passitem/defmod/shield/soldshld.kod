@@ -111,7 +111,7 @@ properties:
    % These can change if we put the shield on our back.
    piOverlayHotspot = HS_LEFT_WEAPON
    vrShield_window_overlay = SoldierShield_window_overlay_rsc
-   viUse_amount = 1
+   viUse_amount = 0
    vrShield_overlay = SoldierShield_icon_rsc
 
 messages:
@@ -451,6 +451,60 @@ messages:
       return FALSE;
    }
 
+   ReqUseSomething(what = $)
+   {
+      local iUse_type;
+
+      % No other shields.
+      if what <> $ AND IsClass(what,&Shield)
+      {
+         return FALSE;
+      }
+
+      % We will move out of the way for any other hand items
+      iUse_type = Send(what,@GetItemUseType);
+      if (iUse_type & ITEM_USE_HAND)
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
+   
+   NewUsedSomething(what = $)
+   {
+      local iUse_type;
+
+      iUse_type = Send(what,@GetItemUseType);
+
+      % Item could have been prevented from being equipped by something else,
+      %    so only sling on our backs when it is successfully equipped.
+      % Also, only sling if our hands are definitely full.
+      if (iUse_type & ITEM_USE_HAND)
+         AND NOT Send(poOwner,@CheckPosition,#what=what,#type=ITEM_USE_HAND,#space=Send(poOwner,@GetPositionSpace,#type=ITEM_USE_HAND))
+      {
+         Send(self,@SlingOnBack);
+         return;
+      }
+
+      propagate;
+   }
+   
+   NewUnusedSomething(what = $)
+   {
+      local iUse_type;
+
+      iUse_type = Send(what,@GetItemUseType);
+
+      % Only unsling if we have a free hand.
+      if (iUse_type & ITEM_USE_HAND)
+         AND Send(poOwner,@CheckPosition,#what=what,#type=ITEM_USE_HAND,#space=Send(poOwner,@GetPositionSpace,#type=ITEM_USE_HAND))
+      {
+         Send(self,@RemoveFromBack);
+      }
+      return;
+   }
+
    %%% For putting the shield on our back
 
    % This is used for Bows and Lutes, currently.
@@ -468,9 +522,6 @@ messages:
          %  NOTE: This doesn't actually remove the overlay, just make it appear
          %        "nowhere".
          Send(poOwner,@RemoveWindowOverlay,#what=self);
-
-         % This makes it not take a hand.
-         viUse_amount = 0;
 
          vrShield_overlay = SoldierShield_icon_back_rsc;
          Send(poOwner,@SetOverlay,#what=self);
@@ -492,9 +543,6 @@ messages:
          % Restore the shield window overlay
          vrShield_window_overlay = SoldierShield_window_overlay_rsc;
          Send(poOwner,@SetWindowOverlay,#what=self);
-
-         % This makes it take a hand slot again.
-         viUse_amount = 1;
 
          vrShield_overlay = SoldierShield_icon_rsc;
          Send(poOwner,@SetOverlay,#what=self);

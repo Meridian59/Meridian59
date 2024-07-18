@@ -59,7 +59,6 @@ classvars:
    viSpell_level = 5
 
    viSpellExertion = 50
-   viCast_time = 20000
    viChance_To_Increase = 50
 
    % Drain is amount used every viDrainTime milliseconds
@@ -76,6 +75,14 @@ properties:
 
    % Spell is harmful to the player it's cast upon.
    viHarmful = TRUE
+
+   % Disabled temporarily 
+   % When used on offline targets who log on during it's duration, the target
+   % will be tracked indefinitely. Offline players' timers are "frozen", but 
+   % Hunt introduces an active timer that decouples from the enchantment during
+   % reactivation of timers (when the player logs on). This should be addressed
+   % or the spell reworked before enabling.
+   pbEnabled = FALSE
 
 messages:      
 

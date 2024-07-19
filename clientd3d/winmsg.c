@@ -479,6 +479,10 @@ void MainIdle(void)
 	case STATE_GAME:
 		GameIdle();
 		break;
+
+  case STATE_OFFLINE:
+    Sleep(1);  // Don't hog the CPU
+    break;
 	}
 }
 /****************************************************************************/

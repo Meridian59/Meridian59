@@ -5612,9 +5612,7 @@ messages:
 
    SetMood(new_mood = 0)
    {
-      Debug("SetMood ",Send(self,@GetTrueName)," was ",piMood,"");
       piMood = Bound(new_mood,-100,100);
-      Debug("SetMood ",Send(self,@GetTrueName)," now ",piMood,"");
       return;
    }
 

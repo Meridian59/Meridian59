@@ -2660,7 +2660,6 @@ messages:
          }
       }
 
-      % here!
       % Maybe it was just a simple speech trigger. So, we check and parse.
       lActionList = $;
       lActionList = Send(oLibrary,@SearchSpeechLib,#mob=self,#string=string);
@@ -2976,9 +2975,6 @@ messages:
    {
       local iHour, iMoodMod;
       iHour = Send(SYS,@GetHour);
-
-
-      Debug("Damping mood via AmbientLightChanged() for ",Send(self,@GetTrueName),"");
 
       if iHour = 6
       {

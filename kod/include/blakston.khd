@@ -1333,7 +1333,6 @@
    LIBACT_COUNCILOR_REPORT = 52
    LIBACT_NUMBER_REPORT    = 53
    LIBACT_MANA_NODE_LIST   = 54
-   LIBACT_ENTERED          = 55
 
    % Restriction Vector Flags
    LIBRES_MALE_ONLY        = 0x00001

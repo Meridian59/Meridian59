@@ -92,7 +92,6 @@ resources:
    LM_Haz_entroot_response = "The mummies use the magic of the entroot to keep the magic that animates them sustained.  Perhaps one of them carries entroot."
    LM_haz_smith_buy = "If you happen to come across a stray weapon or armor, I could probably scrounge enough to take it off your hands."
    LM_haz_smith_sell = "I've got a few weapons behind the counter I can show you.  Type BUY."
-   LM_haz_elder_greeting = "Ah, greetings, adventurer!  May your journey be filled with fortune and glory."
    LM_haz_elder_buy = "I have no need of worldly goods."
    LM_haz_elder_sell = "Do I look like a common peddler?  Nay!"
    LM_haz_apoth_buy = "I'm running low on just about everything.  Should you find reagents, I'll happily take them off your hands."
@@ -245,7 +244,7 @@ resources:
    LT_cheat = "cheat"
    LT_liar = "liar"
    LT_scam = "scam"
-   LT_balo = "Balo na’te Din"
+   LT_balo = "Balo naï¿½te Din"
    LT_arm = "arm"
    LT_konima = "konima"
    LT_avar = "avar"
@@ -1269,8 +1268,7 @@ messages:
         [[LT_eric],0,[LIBACT_SAY,LM_haz_eric]],      
        [[LT_ravi],0,[LIBACT_SAY,LM_haz_ravi]],
        [[LT_marcus],0,[LIBACT_SAY,LM_haz_marcus]],      
-       [[LT_tomas],0,[LIBACT_SAY,LM_haz_tomas]],
-      [[LT_hello],0, [LIBACT_SAY,LM_haz_elder_greeting]]  
+       [[LT_tomas],0,[LIBACT_SAY,LM_haz_tomas]]
     ]],plSpeechLib);
      plSpeechLib = Cons(
     [&hazarApothecary,[

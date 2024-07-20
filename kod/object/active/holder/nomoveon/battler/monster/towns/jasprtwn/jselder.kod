@@ -116,7 +116,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood+2);
       }
       
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=JsBar_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=JasperElder_entry_welcome);
           
       propagate;
    }

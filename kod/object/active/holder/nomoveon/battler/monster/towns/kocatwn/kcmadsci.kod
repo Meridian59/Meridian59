@@ -21,8 +21,8 @@ resources:
       "for some twisted experiment, Bahal smiles and chortles to himself.  The moody "
       "little man seems unnaturally obsessed with the horrific and the bizarre."
 
-   KocatanMadScientist_entry_welcome = "Tell me, stranger, have you ever pondered the "
-      "mysteries that lie within the macabre? Come, step closer, let's see what secrets you hold."
+   KocatanMadScientist_entry_welcome = "~kBahal zax'Ot says, \"Tell me, stranger, have you ever pondered the "
+      "mysteries that lie within the macabre? Come, step closer, let's see what secrets you hold.\""
    
 classvars:
 
@@ -74,8 +74,9 @@ messages:
       {
 	 send( self, @SetMood, #new_mood = piMood - 1 );
       }
-      Post(who,@SomeoneSaid,#what = self, #string=KocatanTailor_entry_welcome,
-         #type = SAY_RESOURCE);
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=KocatanMadScientist_entry_welcome);
+
       propagate;
    }
 

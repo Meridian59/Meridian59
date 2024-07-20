@@ -26,7 +26,7 @@ resources:
    % Note: Pritchett's manner of speaking is intentionally bad/incorrect due to him being 
    % a non-native citizen of Barloque
 
-   BqInn_entry_welcome = "I am gladeth to see you, mate."
+   BqInn_entry_welcome = "~kPritchett says, \"I am gladeth to see you, mate.\""
 
    BqInn_mace_sale = "Aye, ye might needeth one of them if ye plan on leavingeth our cultured city. I got some ye can buyeth."
    BqInn_unwanted_give = "~k%s%s tells you, \"Whyfore dost you offer me that?~n~k\""
@@ -84,8 +84,8 @@ messages:
          % don't welcome these guys
          propagate;
       }
-      
-      Send(who,@SomeoneSaid,#what=self,#string=BqInn_entry_welcome,#type=SAY_RESOURCE);
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=BqInn_entry_welcome);
       
       propagate;
    }

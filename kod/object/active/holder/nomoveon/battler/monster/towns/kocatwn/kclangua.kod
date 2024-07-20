@@ -23,7 +23,7 @@ resources:
       "regards most of the adults around him as intellectual inferiors who cannot "
       "appreciate his mind."
 
-   KocatanLanguageMaster_entry_welcome = "Greetings, you have come in search of knowledge?"
+   KocatanLanguageMaster_entry_welcome = "~kQuetzal says, \"Greetings, you have come in search of knowledge?\""
    KocatanLanguageMaster_unwanted_give = "~k%s%s tells you, \"Very interesting, but I don't need it.~n~k\""
 
 classvars:
@@ -56,8 +56,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@SomeoneSaid,#what = self, #string=KocatanLanguageMaster_entry_welcome,
-           #type=SAY_RESOURCE);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=KocatanLanguageMaster_entry_welcome); 
            
       if Send(who,@GetGender) = GENDER_MALE
       {

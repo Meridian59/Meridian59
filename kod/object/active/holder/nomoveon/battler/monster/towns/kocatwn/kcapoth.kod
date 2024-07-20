@@ -22,7 +22,7 @@ resources:
       "the earthly pleasures.  She talks in a soft, husky voice between long "
       "drags on her clay pipe."
 
-   kocatanapoth_entry_welcome = "Peace, love and tranquility to you, friend."
+   kocatanapoth_entry_welcome = "~kZala ix'Mecya says, \"Peace, love and tranquility to you, friend.\""
 
    apoth_potion_riija = "Yes, I do have a potion of forgetfulness.  Quaff it with caution, for it's effects are potent."
    kocatanapoth_herbs_sale = "Why, yes, I could share %s%s from my personal stash with you.  Fresh from the mainland."
@@ -111,9 +111,9 @@ messages:
 
    UserEntered(who = $)
    {
-      Send(who,@SomeoneSaid,#what=self,#string=KocatanApoth_entry_welcome,
-           #type=SAY_RESOURCE);
              
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocatanapoth_entry_welcome);
+
       if Send(who,@GetAction) = UA_HAPPY
       {
          send(self,@SetMood,#new_mood=piMood+3);

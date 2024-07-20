@@ -23,7 +23,7 @@ resources:
       "herself as a woman with a gift for speaking the most colorful parts of the Ko'catan "
       "language."
 
-   kcsmith_entry_welcome = "Greetings!"
+   kcsmith_entry_welcome = "~kIxla cha'Totlak says, \"Greetings!\""
    kcSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Well, I suppose I'll sell you one."
 
 classvars:
@@ -107,8 +107,8 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@SomeoneSaid,#what = self, #string=kcSmith_entry_welcome,
-         #type = SAY_RESOURCE);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kcsmith_entry_welcome);
+
       if Send(who,@GetAction)=UA_WRY
       {
 	 send( self, @SetMood, #new_mood = piMood + 3 );

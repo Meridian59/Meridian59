@@ -24,10 +24,10 @@ resources:
       "smile at every customer who comes through the door.  His down to earth demeanor and "
       "common man approach to his clientele makes him one of the most likable men in Tos."
 
-   TsIK_entry_welcome = "Welcome to Familiars, the most popular bar in the land!"
+   TsIK_entry_welcome = "~kPaddock says, \"Welcome to Familiars, the most popular bar in the land!\""
 
    % Don't sell to these outlaws.
-   TsIK_entry_outlaws = "Rouges, outlaws and murderers are not welcome in this establishment! Get out!"
+   TsIK_entry_outlaws = "Rouges, outlaws and murderers are not my favorite town folk such as you %s - but we will still serve them light snacks and refreshments!"
 
    TsIK_purplemushroom_sale = "Yeah, I got %s%s here. Let's see what kind of deal I can make with you for these little rarities."
    TsIK_orcteeth_sale = "Another customer in the market for %s%s?  I should shut down the bar and just sell these things."
@@ -118,7 +118,6 @@ messages:
    
    UserEntered(who = $)
    {
- 
       if Send(who,@GetAction) = UA_HAPPY
       {
          send(self,@SetMood,#new_mood=piMood + 1);
@@ -129,19 +128,8 @@ messages:
          send(self,@SetMood,#new_mood=piMood - 1);
       }
 
-      debug("Paddock::UserEntered! mood: ",Send(self, @GetMood),"");
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=TsIK_entry_welcome);
 
-      if ((NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-               OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)))
-      {
-         Send(who,@SomeoneSaid,#what=self,#string=TsIK_entry_outlaws,#type=SAY_RESOURCE);
-      }
-      else
-      {
-         Send(who,@SomeoneSaid,#what=self,#string=TsIK_entry_welcome,#type=SAY_RESOURCE);
-      }
-      
-           
       propagate;
    }
 

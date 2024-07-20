@@ -24,7 +24,7 @@ resources:
    JB_need_balance = "Perhaps, If you utilized my bank more... I would offer you a special favor."
    JB_favored_status = "To devoted disciples of Qor's magic, I teach how to blind your foes."
 
-   JasperBanker_entry_welcome = "Hello %s%s, and welcome."
+   JasperBanker_entry_welcome = "~kYevitan says, \"Hello %s%s, and welcome.\""
 
 classvars:
 
@@ -104,9 +104,11 @@ messages:
       {
 	 send( self, @SetMood, #new_mood = piMood + 3 );
       }
-      Post(who,@SomeoneSaid,#what = self, #string=JasperBanker_entry_welcome,
-         #type = SAY_RESOURCE, 
-         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+            #string=JasperBanker_entry_welcome,
+            #parm1=Send(who,@GetDef),
+            #parm2=Send(who,@GetName));
       return;
    }
 

@@ -22,7 +22,7 @@ resources:
       "Colhorr is an established landmark in Marion.  Most of his work consists of fabricating and repairing "
       "farming implements and hardware for the agrarian locals."
 
-   MrBS_entry_welcome = "Huh? Who is that?"
+   MrBS_entry_welcome = "~kColhorr says, \"Huh? Who is that?\""
 
    MarionBlacksmith_unwanted_keep = "~k%s%s tells you, \"Hmmm, okay I guess.~n~k\""
    MarionBlacksmith_unwanted_pay = "~k%s%s tells you, \"Well it certainly looks valuable!~n~k\""
@@ -92,8 +92,8 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@SomeoneSaid,#what=self,#string=MrBs_entry_welcome,
-           #type = SAY_RESOURCE);
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=MrBS_entry_welcome);
               
       return;
    }

@@ -22,7 +22,7 @@ resources:
                         "that incorporates functionality with a powerful art.  The clothes she produces are "
                         "beautiful."
 
-   CnTail_entry_welcome = "Please try not to track mud all over the place."   
+   CnTail_entry_welcome = "~kHester Gilk says, \"Please try not to track mud all over the place.\""   
 
 classvars:
 
@@ -91,9 +91,9 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@SomeoneSaid,#what = self, #string=CnTail_entry_welcome,
-           #type = SAY_RESOURCE);
-         
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=CnTail_entry_welcome);
+
       if send(who,@GetFaction) = FACTION_DUKE
       {
          send(self,@SetMood,#new_mood=piMood - 4);

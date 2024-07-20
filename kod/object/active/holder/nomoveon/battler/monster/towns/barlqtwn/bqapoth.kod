@@ -161,8 +161,8 @@ messages:
          % don't greet these guys
          propagate;
       }
-      
-      Send(who,@SomeoneSaid,#what=self,#string=BqApo_entry_welcome,#type=SAY_RESOURCE);
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=BqApo_entry_welcome);
 
       if Send(who,@GetFaction) = FACTION_PRINCESS
       {

@@ -21,7 +21,7 @@ resources:
    HazarElder_name_rsc = "Rodric d'Stane"
    HazarElder_icon_rsc = mrelder.bgf
    HazarElder_desc_rsc = "The old man looks back at you with eyes that have seen beyond forever."
-   HzEl_entry_welcome = "Welcome, my son.  May the road of your life be the high one."
+   HzEl_entry_welcome = "~kRodric d'Stane says, \"Welcome, my son.  May the road of your life be the high one.\""
 
 classvars:
 
@@ -37,8 +37,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@someoneSaid,#what=self,#string=HzEl_entry_welcome,
-          #type=SAY_RESOURCE);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=HzBar_entry_welcome);
       propagate;
    }
 

@@ -27,8 +27,6 @@ resources:
    HazarInnkeeper_nothing_for_sale = "I don't have anything to sell myself, but ask around - some of the other "
          "folks around here do."
 
-
-   HazarInnkeeper_welcome = "Hello, %s, and welcome to Meridian 59!  Read the sign to start the tutorial."
    
 classvars:
    vrName = Hazar_innkeep_name_rsc
@@ -48,9 +46,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Send(who,@SomeoneSaid,#what=self,#string=HazarInnkeeper_welcome,
-              #type = SAY_RESOURCE);
-
+      % Marcus says hello as part of the initial welcoming text: guest1.kod
       propagate;
    }
 

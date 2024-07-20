@@ -24,7 +24,7 @@ resources:
       "engaging in any new transaction of coins, he quickly washes his hands in the "
       "pedestal of clear water. "
 
-   kocatanbanker_entry_welcome = "Greetings.  We hope to serve you well, your valuables will be safe with us."
+   kocatanbanker_entry_welcome = "~kHuital ko'Nosak says, \"Greetings.  We hope to serve you well, your valuables will be safe with us.\""
    kocatanbanker_unwanted_give = "~k%s%s tells you, \"You mistake me for my brother.  He will store your items.~n~k\""
 
 classvars:
@@ -93,8 +93,8 @@ messages:
          % don't welcome these guys
          propagate;
       }
-      Send(who,@SomeoneSaid,#what=self,#string=Kocatanbanker_entry_welcome,
-             #type = SAY_RESOURCE);
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocatanbanker_entry_welcome); 
 
       propagate;
    }

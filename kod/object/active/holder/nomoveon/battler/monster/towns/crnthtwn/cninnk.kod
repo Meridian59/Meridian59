@@ -23,7 +23,7 @@ resources:
                         "D'Franco is encouraging and tolerant of any good discussion, though his views tend "
                         "to be somewhat conservative."
 
-   CnInn_entry_welcome = "Good day, %s%s."
+   CnInn_entry_welcome = "~kD'Franco says, \"Good day, %s%s.\""
    CnInn_wedding_ring_sale = "~B<wink>~n Found yourself someone special, eh? I'd be honored to offer you %s%s."
    CnInn_not_ready = "I don't think your voice is ready for me to teach you my grandfather's working song.  "
                      "Go talk to Parrin and see what he thinks."
@@ -108,9 +108,8 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@SomeoneSaid,#what = self, #string=CnInn_entry_welcome,
-           #type = SAY_RESOURCE, 
-           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=CnInn_entry_welcome);
            
       if send(who,@GetHomeRoom) = RID_JAS_INN
       {

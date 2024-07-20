@@ -23,7 +23,7 @@ resources:
       "buying and selling reagents and other various notions.  Although his heart doesn't seem to be in "
       "commerce, there can be little doubt Morrigan loves his job. "
 
-   MrIk_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s."
+   MrIk_entry_welcome = "~kMorrigan says, \"Pardon me for saying so, but you look like you could use a rest, %s%s.\""
 
    MarionInnkeeper_room_rented = \
       "Here ya go then.  Hope you enjoy your stay, if you have any problems Tova "
@@ -134,9 +134,11 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(who,@SomeoneSaid,#what=self,#string=MrIk_entry_welcome,
-          #type=SAY_RESOURCE,
-          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+      #string=MrIk_entry_welcome,
+      #parm1=Send(who,@GetDef),
+      #parm2=Send(who,@GetName));
 	 
       propagate;
    }

@@ -23,7 +23,7 @@ resources:
       "vaults as he does in his family. His professional manner shows that he realizes his "
       "customers are often in a hurry to retrieve their goods."
 
-   barloquevaultman_entry_welcome = "Well met!"
+   barloquevaultman_entry_welcome = "~kObert Cair'bre says, \"Well met!\""
 
    barloquevaultman_nogold = "Thou may not use my services to store %s%s."
    barloquevaultman_nocursed = "I cannot take %s%s from thee."
@@ -99,7 +99,7 @@ messages:
       return;
    }
 
-   UserEntered( who = $ )
+   UserEntered(who = $)
    {
       local iFlags;
       if Send(who,@GetAction)=UA_HAPPY
@@ -131,8 +131,8 @@ messages:
 	 % don't welcome these guys
 	 propagate;
       }
-      send(who,@SomeoneSaid,#what=self,#string=barloquevaultman_entry_welcome,
-	 #type = SAY_RESOURCE);
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=barloquevaultman_entry_welcome);
   
       propagate;
    }

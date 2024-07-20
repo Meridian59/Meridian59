@@ -22,7 +22,8 @@ resources:
       "His breathing is somewhat labored and sweat mattes his forehead.  Frisconar is almost as well "
       "known for his keen interest in magical reagents as he is for his dour out look on life."
 
-   TsAp_entry_welcome = "Close the door.  I can't take the draft."
+   TsAp_entry_welcome = "~kFrisconar says, \"Close the door.  I can't take the draft.\""
+
    TsAp_Solagh_sale = "Actually, I happen to have %s%s with which I would be willing to part.  "
       "Ordinarily, I would save it for my own use, but I recently acquired some extra from a wizard who was "
       "passing through town.  I think he makes it himself."
@@ -101,8 +102,6 @@ messages:
 
    UserEntered(who = $)
    {
-      Send(who,@SomeoneSaid,#what=self,#string=TsAp_entry_welcome,
-              #type = SAY_RESOURCE);
               
       if Send(who,@GetAction) = UA_SAD
       {
@@ -113,7 +112,9 @@ messages:
       {
          send(self,@SetMood,#new_mood=piMood - 2);
       }
-      
+
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE, #string=TsAp_entry_welcome);
+
       propagate;
    }
 

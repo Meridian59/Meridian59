@@ -24,7 +24,7 @@ resources:
       "recently when he \"found\" Shal'ille.  Now a hard core believer, he almost drives his own customers "
       "away from his ale."
 
-   BaBar_entry_welcome = "Hail %s%s, and welcome to my humble tavern!  Praise Shal'ille!"
+   BaBar_entry_welcome = "~kMeidei says, \"Hail %s%s, and welcome to my humble tavern!  Praise Shal'ille!\""
    BaBar_unwanted_keep = "~k%s%s tells you, \"I thank thee for thy offering.  I shall distribute it to the poor and needy.~n~k\""
 
 
@@ -114,9 +114,10 @@ messages:
          propagate;
       }
 
-      Send(who,@SomeoneSaid,#what = self, #string=BaBar_entry_welcome,
-           #type = SAY_RESOURCE, 
-           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+            #string=BaBar_entry_welcome,
+            #parm1=Send(who,@GetDef),
+            #parm2=Send(who,@GetName));
            
       propagate;
    }

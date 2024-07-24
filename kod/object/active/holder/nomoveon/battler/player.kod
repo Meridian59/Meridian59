@@ -7653,6 +7653,8 @@ messages:
             AND Send(self,@HasSkill,#num=SKID_PARRY)
          {
             if random(1,100) < 30
+               OR (Send(self,@GetSkillAbility,#Skill_num=SKID_BLOCK) >= 99
+                  AND Send(self,@GetSkillAbility,#Skill_num=SKID_DODGE) >= 99)
             {
                dodgeskill=SKID_PARRY;
             }
@@ -7663,6 +7665,7 @@ messages:
             AND Send(self,@HasSkill,#num=SKID_BLOCK)
          {
             if random(1,100) < 30
+               OR Send(self,@GetSkillAbility,#Skill_num=SKID_DODGE) >= 99
             {
                dodgeskill=SKID_BLOCK;
             }

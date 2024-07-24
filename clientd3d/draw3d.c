@@ -385,10 +385,12 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    long t1,t2,t3;
    static int count = 0;
 
-   // Size of offscreen bitmap.
+   // View area of the player.
+   // A multiplier ensures that objects at the edges of the viewport are still considered visible.
+   // A value of 1.0 causes objects to disappear too quickly, hence 1.1 is used based on empirical testing.
    area.x = area.y = 0;
-   area.cx = CLASSIC_WIDTH * 1.5;
-   area.cy = CLASSIC_HEIGHT * 1.5;
+   area.cx = CLASSIC_WIDTH * SIZE_MULTIPLIER;
+   area.cy = CLASSIC_HEIGHT * SIZE_MULTIPLIER;
 
    // Force size to be even.
    area.cy = area.cy & ~1;

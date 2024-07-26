@@ -16,6 +16,153 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Brazilian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+145 DIALOG  0, 0, 282, 255
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Publicar artigo"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Artigo em um grupo de notícias",-1,10,11,86,8
+    LTEXT           "(agrupar aqui)",1121,99,11,105,8
+    LTEXT           "Assunto:",-1,10,28,28,8
+    EDITTEXT        1117,43,26,228,13,ES_AUTOHSCROLL
+    EDITTEXT        1118,4,55,274,178,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Publicar",1,186,237,43,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",2,232,237,46,14,WS_GROUP
+END
+
+144 DIALOGEX 0, 0, 305, 322
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Grupo de mensagens: "
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "",1001,4,4,297,8
+    CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Responder",1116,5,143,42,12
+    PUSHBUTTON      "Responder ao autor",1125,51,143,58,12,WS_DISABLED
+    PUSHBUTTON      "Escrever mensagem",12,113,143,68,12
+    PUSHBUTTON      "Atualizar",1017,185,143,46,12
+    PUSHBUTTON      "Fechar",1,236,143,41,12
+    EDITTEXT        1118,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+1013 DIALOGEX 0, 0, 283, 338
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Ler mensagens"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,4,275,131
+    PUSHBUTTON      "&Escrever mensagem",1000,4,141,53,12,WS_GROUP
+    PUSHBUTTON      "&Responder",1116,59,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Responder a &todos",1124,97,141,55,12,NOT WS_TABSTOP
+    PUSHBUTTON      "&Atualizar",1017,156,141,45,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Excluir",1018,204,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Fechar",2,243,141,35,12,NOT WS_TABSTOP
+    LTEXT           "",1019,4,157,274,9
+    EDITTEXT        1013,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
+END
+
+111 DIALOG  0, 0, 282, 263
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Enviar email"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Para:",-1,26,6,12,8
+    EDITTEXT        1014,43,4,235,32,ES_MULTILINE | ES_AUTOVSCROLL
+    LTEXT           "Assunto:",-1,14,48,23,8
+    EDITTEXT        1117,43,45,235,14,ES_AUTOHSCROLL
+    EDITTEXT        1013,4,77,274,158,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Enviar",1080,154,245,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",2,228,245,50,14,WS_GROUP
+    LTEXT           "",1004,9,63,249,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    1                       "Verificando nome dos destinatários..."
+    2                       "Assunto: "
+    3                       "Data: "
+    4                       "De: "
+    5                       "Para: "
+    6                       "Re: "
+    7                       "Procurando novas mensagens..."
+    8                       "Você não tem nenhum novo email."
+    9                       "Você só pode editar uma mensagem por vez."
+    10                      "Ler email"
+    11                      "#"
+    12                      "De"
+    13                      "Assunto"
+    14                      "Data"
+    15                      "Mensagem enviada!"
+END
+
+STRINGTABLE 
+BEGIN
+    16                      "Você deve especificar pelo menos um destinatário."
+    17                      "Não foi possível deletar a mensagem de email: %s."
+    18                      "Não foi possível carregar a mensagem de email."
+    19                      "Não foi possível salvar a mensagem de email. Você pode estar sem espaço no dico. Você deseja tentar novamente?"
+    20                      "Nome do destinatário é inválido: %s.\nPor favor, verifique se o nome foi digitado corretamente e tente novamente."
+    21                      "Esta mensagem tem uma quantidade muito grande de destinatários.\n\nVocê deseja enviá-la somente para o primeiro destinatário?"
+    22                      "Você não pode responder esta mensagem."
+END
+
+STRINGTABLE 
+BEGIN
+    32                      "Jan"
+    33                      "Feb"
+    34                      "Mar"
+    35                      "Abr"
+    36                      "Mai"
+    37                      "Jun"
+    38                      "Jul"
+    39                      "Ago"
+    40                      "Set"
+    41                      "Out"
+    42                      "Nov"
+    43                      "Dez"
+    44                      "Seg"
+    45                      "Ter"
+    46                      "Qua"
+    47                      "Qui"
+END
+
+STRINGTABLE 
+BEGIN
+    48                      "Sex"
+    49                      "Sáb"
+    50                      "Dom"
+    51                      "Assunto"
+    52                      "Autor"
+    53                      "Data"
+    IDS_SUBJECT_ENGLISH     "Subject: "
+    IDS_SUBJECT_GERMAN      "Betreff: "
+    IDS_SUBJECT_PORTUGUESE  "Assunto: "
+END
+
+#endif    // Portuguese (Brazilian) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // German (Neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)

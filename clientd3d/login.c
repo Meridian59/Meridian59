@@ -129,67 +129,10 @@ void LoginErrorMessage(const char *message, BYTE action)
 void LoginError(int err_string)
 {
    HWND hParent = GetMessageBoxParent();
-   if (UseRetailLoginSystem() && err_string == IDS_BADLOGIN)
-   {
-       CheckAccountActivation();
-   }
-   else
-   {
-       ClientError(hInst, hParent, err_string);
-   }
+   ClientError(hInst, hParent, err_string);
    config.quickstart = FALSE;
    LoginReset();
 }
-
-void CheckAccountActivation(void)
-{
-    HWND hParent = GetMessageBoxParent();
-
-    // make web api request.
-    char domain[256];
-    LoadString(hInst, IDS_WEBAPIDOMAIN, domain, sizeof(domain));
-    char resource[256];
-    LoadString(hInst, IDS_VERIFIEDAPI, resource, sizeof(resource));
-    wstring response;
-
-    // Build http post body with user input values.
-    stringstream ss;
-    ss << "submit=1";
-    ss << "&username=" << config.username;
-    ss << "&server=" << config.comm.server_num;
-
-    if (SendHttpsRequest(hParent, domain, resource, ss.str(), response))
-    {
-        string dStr(response.begin(), response.end());
-        char* text = const_cast<char *>(dStr.c_str());
-        debug((text));
-
-        char* pEnd = nullptr;
-        long webResponse = strtol(text, &pEnd, 10);
-
-        if (pEnd)
-        {
-            // successfully parsed web api response, check for unverified account.
-            switch (webResponse)
-            {
-            default:
-                ClientError(hInst, hParent, IDS_BADLOGIN);
-                break;
-            case AccountStatusWebResponse::VERIFY:
-            {
-                if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_UNVERIFIED))
-                {
-                    // request re-send of verification email.
-                    LoadString(hInst, IDS_RESENDAPI, resource, sizeof(resource));
-                    SendHttpsRequest(hParent, domain, resource, ss.str(), response);
-                }
-            }
-            break;
-            }
-        }
-    }
-}
-
 /****************************************************************************/
 /*
  * LoginReset:  We've gotten an error from the server in LOGIN state;

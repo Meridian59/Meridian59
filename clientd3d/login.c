@@ -129,14 +129,11 @@ void LoginErrorMessage(const char *message, BYTE action)
 void LoginError(int err_string)
 {
    HWND hParent = GetMessageBoxParent();
-   if (UseRetailLoginSystem() && err_string == IDS_BADLOGIN)
+   if (UseRetailLoginSystem() && err_string == IDS_TOOMANYLOGINS)
    {
-       CheckAccountActivation();
+       CheckAccountActivation();    
    }
-   else
-   {
-       ClientError(hInst, hParent, err_string);
-   }
+   ClientError(hInst, hParent, err_string);
    config.quickstart = FALSE;
    LoginReset();
 }
@@ -172,9 +169,6 @@ void CheckAccountActivation(void)
             // successfully parsed web api response, check for unverified account.
             switch (webResponse)
             {
-            default:
-                ClientError(hInst, hParent, IDS_BADLOGIN);
-                break;
             case AccountStatusWebResponse::VERIFY:
             {
                 if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_UNVERIFIED))

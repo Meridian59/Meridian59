@@ -83,6 +83,8 @@ def lambda_handler(event, context):
     global db_check
     global db_check_latest
     
+    start_time = datetime.utcnow()
+    
     send_from_email_address = os.environ["send_from_email_address"]
     aws_region = os.environ["region_name"]
     domain_name = os.environ["domain_name"] or meridian_domain_name
@@ -91,10 +93,16 @@ def lambda_handler(event, context):
     online, db_check_latest = util_check_online(db_check_latest)
     if not online:
         return {"statusCode": 200, "body": SIGNUP_FAILED}
+    
+    check_online_time = datetime.utcnow()
+    logger.info(f"Checked online status at {check_online_time}, duration: {check_online_time - start_time}")
 
     lookup_email, lookup_username, db_check, db_check_latest = util_load_account_db(
         lookup_email, lookup_username, db_check, db_check_latest
     )
+    
+    load_account_db_time = datetime.utcnow()
+    logger.info(f"Loaded account DB at {load_account_db_time}, duration: {load_account_db_time - check_online_time}")
 
     body = event["body"]
     headers = event["headers"]
@@ -102,14 +110,16 @@ def lambda_handler(event, context):
     ip = "unknown"
 
     try:
-        ip = event["requestContext"]["http"]["sourceIp"]
+        ip = event['requestContext']['identity']['sourceIp']
         hostname = str(socket.gethostbyaddr(ip))
     except:
         logger.error("Failed to get ip address")
 
-    request = util_decode_request_body(body)
-
     logger.info(f"Incoming request from {ip} {hostname}")
+
+    request = util_decode_request_body(body)
+    decode_request_body_time = datetime.utcnow()
+    logger.info(f"Decoded request body at {decode_request_body_time}, duration: {decode_request_body_time - load_account_db_time}")
 
     err = 0
 
@@ -135,6 +145,8 @@ def lambda_handler(event, context):
 
     #  also check in-progress signups (s3 files) in addition to the main database
     email_in_use, username_in_use = signup_in_progress(email_check, username, server)
+    signup_in_progress_time = datetime.utcnow()
+    logger.info(f"Checked signup in progress at {signup_in_progress_time}, duration: {signup_in_progress_time - decode_request_body_time}")
 
     if username_check in lookup_username:
         username_in_use = True
@@ -157,6 +169,9 @@ def lambda_handler(event, context):
     if not util_validate_password(password1, password2):
         logger.error("Invalid passwords provided")
         err = err | SIGNUP_INVALID_PASSWORD
+        
+    validation_time = datetime.utcnow()
+    logger.info(f"Validation completed at {validation_time}, duration: {validation_time - signup_in_progress_time}")
 
     security = util_get_random_string(28)
 
@@ -185,6 +200,7 @@ The Meridian 59 Team
 """
 
         ses_client = boto3.client("ses", region_name=aws_region)
+        email_send_start_time = datetime.utcnow()
         response = ses_client.send_email(
             Destination={"ToAddresses": [email]},
             Message={
@@ -196,9 +212,14 @@ The Meridian 59 Team
             },
             Source=send_from_email_address,
         )
+        email_send_end_time = datetime.utcnow()
+        logger.info(f"Email sent at {email_send_end_time}, duration: {email_send_end_time - email_send_start_time}")
 
         # Use encrypted password for transport to game server
+        password_encrypt_start_time = datetime.utcnow()
         password_cipher = util_encrypt_password(password1)
+        password_encrypt_end_time = datetime.utcnow()
+        logger.info(f"Password encrypted at {password_encrypt_end_time}, duration: {password_encrypt_end_time - password_encrypt_start_time}")
 
         if response:
             # Record new account details to s3 (awaiting verification)
@@ -214,6 +235,7 @@ The Meridian 59 Team
             }
             logger.info(account_object)
             try:
+                s3_write_start_time = datetime.utcnow()
                 account_processing_bucket = util_get_output_value("NewM59AccountsToProcessBucketName")
                 logger.info(f"Sending account object to {account_processing_bucket}")
                 logger.info(account_object)
@@ -221,7 +243,8 @@ The Meridian 59 Team
                 s3_client = boto3.client("s3")
                 object_name = f"{email}_{server}.json"
                 s3_client.put_object(Bucket=account_processing_bucket, Key=object_name, Body=json.dumps(account_object))
-                logger.info(f"New account object written to {account_processing_bucket}/{object_name}")
+                s3_write_end_time = datetime.utcnow()
+                logger.info(f"New account object written to {account_processing_bucket}/{object_name} at {s3_write_end_time}, duration: {s3_write_end_time - s3_write_start_time}")
             except Exception as e:
                 logger.error(f"Error writing content to S3: {e}")
                 err = err | SIGNUP_FAILED

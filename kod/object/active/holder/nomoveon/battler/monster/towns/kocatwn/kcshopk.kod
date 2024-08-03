@@ -29,7 +29,7 @@ resources:
       "arsenal.  Regardless of his apparent lack of organization, Pacal has a remarkable "
       "understanding of exactly what is here and where."
    
-   kocatanShopkeeper_entry_welcome = "~kPacal ix'Anoak says, \"I probably got what you're looking for.... somewhere....\""
+   kocatanShopkeeper_entry_welcome = "I probably got what you're looking for.... somewhere...."
 
    JunkMan_AlreadyHaveOne_rsc = "I've already got one of them to unload, I don't need another right now."
    JunkMan_NumberItem_rsc = "Sorry, my friend, trinkets like those are things I `Bwon't`n take."
@@ -83,7 +83,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood-2);
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocatanShopkeeper_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocatanShopkeeper_entry_welcome);
 
       return;
    }

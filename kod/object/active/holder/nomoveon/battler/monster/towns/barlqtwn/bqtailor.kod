@@ -23,7 +23,7 @@ resources:
       "for one of the more powerful and esteemed members of court. Madelia's other hobby "
       "is to play with the hearts of men and currently has several affairs in the works."
 
-   Batail_entry_welcome = "~kMadelia says, \"Hail %s%s.  What are those dreadful things thou doth wear?\""
+   Batail_entry_welcome = "Hail %s%s.  What are those dreadful things thou doth wear?"
    Batail_unwanted_give = "~k%s%s tells you, \"Thou should seek a proper merchant to sell thy wares.~n~k\""
 
 
@@ -78,7 +78,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
             #string=Batail_entry_welcome,
             #parm1=Send(who,@GetDef),
             #parm2=Send(who,@GetName));

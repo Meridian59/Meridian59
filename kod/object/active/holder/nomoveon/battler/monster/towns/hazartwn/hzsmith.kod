@@ -21,7 +21,7 @@ resources:
    HazarBlacksmith_name_rsc = "Tomas"
    HazarBlacksmith_icon_rsc = bqsmith.bgf
    HazarBlacksmith_desc_rsc = "A maker of unremarkable but reliable weapons, Tomas earns his customers with good comradeship and low prices."
-   HzBla_entry_welcome = "~kTomas says, \"Hello %s%s, and welcome.\""
+   HzBla_entry_welcome = "Hello %s%s, and welcome."
 
 classvars:
 
@@ -58,7 +58,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
             #string=HzBla_entry_welcome,
             #parm1=Send(who,@GetDef),
             #parm2=Send(who,@GetName));

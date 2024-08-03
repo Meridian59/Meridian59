@@ -22,7 +22,7 @@ resources:
       "and not from these parts.  She exudes a sense of peaceful determination; of confidence, serenity, and "
       "purpose."
 
-   Mrhealer_entry_welcome = "~kLady Aftyn says, \"Pardon me for saying so, but you look like you could use a rest, %s%s.  I don't have any rooms for rent right now, but you are welcome to rest here.\""
+   Mrhealer_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s.  I don't have any rooms for rent right now, but you are welcome to rest here."
 
 classvars:
 
@@ -54,7 +54,8 @@ messages:
    UserEntered(who = $)
    {
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=Mrhealer_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=Mrhealer_entry_welcome,
+          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 	 
       propagate;
    }

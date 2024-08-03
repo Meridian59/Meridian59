@@ -22,7 +22,7 @@ resources:
       "Quintor is widely recognized as the finest weaponsmith in the land.  He is also "
       "recognized as a quiet, brooding man who keeps to himself.  Take that as you will."
 
-   JsBla_entry_welcome = "~kQuintor says, \"Hello %s%s, and welcome.\""
+   JsBla_entry_welcome = "Hello %s%s, and welcome."
 
    JsBla_island_items = "I don't deal with nerudite garbage."
 
@@ -141,7 +141,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood+1);
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
       #string=JsBla_entry_welcome,
       #parm1=Send(who,@GetDef),
       #parm2=Send(who,@GetName));

@@ -24,7 +24,7 @@ resources:
       "recently when he \"found\" Shal'ille.  Now a hard core believer, he almost drives his own customers "
       "away from his ale."
 
-   BaBar_entry_welcome = "~kMeidei says, \"Hail %s%s, and welcome to my humble tavern!  Praise Shal'ille!\""
+   BaBar_entry_welcome = "Hail %s%s, and welcome to my humble tavern!  Praise Shal'ille!"
    BaBar_unwanted_keep = "~k%s%s tells you, \"I thank thee for thy offering.  I shall distribute it to the poor and needy.~n~k\""
 
 

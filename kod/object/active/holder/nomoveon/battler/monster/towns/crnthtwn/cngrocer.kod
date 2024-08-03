@@ -22,7 +22,7 @@ resources:
       "Solomon has collected goods and art from unimaginable corners of the known world, and is "
       "rumored to have relics and artifacts from even beyond that."
 
-   CnGro_entry_welcome = "~kSolomon says, \"Oh welcome, welcome, welcome!\""
+   CnGro_entry_welcome = "Oh welcome, welcome, welcome!"
 
    CnGro_unwanted_keep = "~k%s%s tells you, \"What a generous friend I have!  "
          "You bless me with your kindness!~n~k\""
@@ -98,7 +98,7 @@ messages:
    UserEntered(who = $)
    {
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=CnGro_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=CnGro_entry_welcome);
              
       if Send(who,@GetAction) = UA_SAD
       {

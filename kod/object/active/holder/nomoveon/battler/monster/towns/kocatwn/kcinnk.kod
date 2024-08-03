@@ -24,7 +24,7 @@ resources:
      "for a new high risk investment.  He greets you with a confident smile "
      "and a clandestine gleam in his eye."
 
-   kocataninnkeeper_entry_welcome = "~kMoxal ix'Hanak says, \"Welcome, good patron.  I hope you find your stay to be a pleasant one.\""
+   kocataninnkeeper_entry_welcome = "Welcome, good patron.  I hope you find your stay to be a pleasant one."
    kocinn_winknudge = "Thanks!  I'll be sure to let you know how it all turns out!"
    kocataninnkeeper_unwanted_keep = "~k%s%s tells you, \"Thank you.  You won't regret letting me borrow that.~n~k\""
 
@@ -181,7 +181,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood - 2);
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocataninnkeeper_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocataninnkeeper_entry_welcome);
              
       propagate;
    }

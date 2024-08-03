@@ -23,7 +23,7 @@ resources:
                           "He will make time, however, to entertain travelers who hope to share some of the "
                           "wisdom he has gained from a life of secluded meditation."
 
-   JasperElder_entry_welcome = "~kAfiera D'xor says, \"Greetings.  May you live to see my years.\""
+   JasperElder_entry_welcome = "Greetings.  May you live to see my years."
 
    JasperElder_unwanted_keep = "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
    JasperElder_unwanted_pay = "~k%s%s tells you, \"How convenient.~n~k\""
@@ -116,7 +116,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood+2);
       }
       
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=JasperElder_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=JasperElder_entry_welcome);
           
       propagate;
    }

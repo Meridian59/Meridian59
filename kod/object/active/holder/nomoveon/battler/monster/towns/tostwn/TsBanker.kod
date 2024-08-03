@@ -63,7 +63,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered( who = $ )
    {
       if Send(who,@GetAction)=UA_HAPPY
       {

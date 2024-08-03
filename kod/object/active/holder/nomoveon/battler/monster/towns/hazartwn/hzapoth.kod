@@ -21,7 +21,7 @@ resources:
    HazarApothecary_desc_rsc = \
    "A strange man of unknown origin, Ravi is always willing to buy reagents and gems for his inventory-poor shop."
 
-   HzAp_entry_welcome = "~kRavi says, \"Have you anything to sell me?  I'm willing to buy almost anything.\""
+   HzAp_entry_welcome = "Have you anything to sell me?  I'm willing to buy almost anything."
 
 
 classvars:
@@ -61,7 +61,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=HzAp_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=HzAp_entry_welcome);
       propagate;
    }
    

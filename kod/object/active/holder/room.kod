@@ -2427,9 +2427,8 @@ messages:
    {
       local i,each_obj,lastWelcomeTime;
 
-      if isClass(who,&Player)
-         AND (send(who,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-              OR send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE))
+      if send(who,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+              OR send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
       {
          % q: is this check enough top skip players/admins
          debug("Skipping Invisible / anonymous player");
@@ -2442,11 +2441,7 @@ messages:
          % q: is there a better class than %Monster for all NPCs
          if IsClass(each_obj, &Monster)
          {
-            lastWelcomeTime = Send(each_obj, @GetLastWelcomeTime);
-            if GetTime() > (lastWelcomeTime + 30)
-            {
-               Send(each_obj,@UserEntered,#who=who);
-            }
+            Send(each_obj,@UserEntered,#who=who);
          }
       }
       return;

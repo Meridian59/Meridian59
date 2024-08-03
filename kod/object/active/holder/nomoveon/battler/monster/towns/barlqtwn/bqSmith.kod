@@ -28,7 +28,7 @@ resources:
       "get the impression that he is uncomfortable with strangers, but his great size and clear "
       "devotion to Kraanan makes him afraid of no one."
 
-   BQsmith_entry_welcome = "~kFehr'loi Qan says, \"Hello %s%s, and welcome.\""
+   BQsmith_entry_welcome = "Hello %s%s, and welcome."
    BQSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Son of a ...!  Well, I suppose I got no choice but to sell you one."
 
 classvars:
@@ -78,7 +78,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
             #string=BQsmith_entry_welcome,
             #parm1=Send(who,@GetDef),
             #parm2=Send(who,@GetName));

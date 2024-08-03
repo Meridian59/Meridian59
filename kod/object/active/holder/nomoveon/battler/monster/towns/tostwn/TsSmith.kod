@@ -24,7 +24,7 @@ resources:
    TosBlacksmith_icon_rsc = bsmith.bgf
    TosBlacksmith_desc_rsc = "One of the finest blacksmiths in the land, Fehr'loi Qan is known far and wide for his superlative work."
 
-   entry_welcome = "~kFehr'loi Qan says, \"Hello %s%s, and welcome.\""
+   entry_welcome = "Hello %s%s, and welcome."
    TsSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Sheesh!  Well, I suppose I've no choice but to sell you one."
 
 classvars:
@@ -94,7 +94,8 @@ messages:
    UserEntered(who = $)
    {
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=entry_welcome, 
+         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName);
 
       return;
    }

@@ -21,7 +21,7 @@ resources:
    Jasper_Bartender_desc_rsc = \
       "A peevish and sullen man tends this bar.  This is Pietro, the impetuous sot." 
 
-   JsBar_entry_welcome = "~kPietro says, \"Close the door, would you!\""
+   JsBar_entry_welcome = "Close the door, would you!"
 
    JasperBartender_unwanted_keep = "~k%s%s tosses the item into the garbage and sneers, \"Get lost.~n~k\""
    JasperBartender_unwanted_pay = "~k%s%s tells you, \"I'll give you a couple schillings for that, "
@@ -103,8 +103,9 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=JsBar_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=JsBar_entry_welcome);
       send( self, @SetMood, #new_mood = piMood - 2 );
+
       propagate;
    }
    

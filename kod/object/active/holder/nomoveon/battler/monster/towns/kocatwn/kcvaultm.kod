@@ -24,7 +24,7 @@ resources:
       "begrudgingly accommodates the needs of those who wish to store items in the "
       "vault."
 
-   kocatanvaultman_entry_welcome = "~kItzal cha'Nosak says, \"Oh, I've had it up to HERE with your patronizing attitude.\""
+   kocatanvaultman_entry_welcome = "Oh, I've had it up to HERE with your patronizing attitude."
 
 classvars:
 
@@ -72,7 +72,7 @@ messages:
       local iFlags;
 
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocatanvaultman_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocatanvaultman_entry_welcome);
 
       iFlags = send( who, @GetObjectFlags );
       if iFlags & PLAYER_PK

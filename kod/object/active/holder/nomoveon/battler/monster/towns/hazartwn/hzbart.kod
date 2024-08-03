@@ -24,7 +24,7 @@ resources:
    Hazar_Bartender_icon_rsc = tsinnk.bgf
    Hazar_Bartender_desc_rsc = "A grinning and mischievous man stands quietly grinning behind the bar."
 
-   HzBar_entry_welcome = "~kEric d'Jorn says, \"Care for a nice stiff drink?  The house special will knock you on your arse!\""
+   HzBar_entry_welcome = "Care for a nice stiff drink?  The house special will knock you on your arse!"
   
 
    HazarBart_enough = "Entroot berries?  FanTAStic!  Here, let me reward you..."
@@ -68,7 +68,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=HzBar_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=HzBar_entry_welcome);
              
       propagate;
    }

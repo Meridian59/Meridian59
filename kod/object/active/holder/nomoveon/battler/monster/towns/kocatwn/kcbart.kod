@@ -23,7 +23,7 @@ resources:
       "Monster. It is a great honor to be the veteran selected to run this military owned "
       "establishment, but Oxal performs the work with little apparent relish."
 
-   kocatanBartender_entry_welcome = "~kOxal ix'Tokak says, \"What do you want?\""
+   kocatanBartender_entry_welcome = "What do you want?"
    
 classvars:
 
@@ -97,7 +97,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood + 1);
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocatanBartender_entry_welcome); 
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocatanBartender_entry_welcome); 
 
       propagate;
    }

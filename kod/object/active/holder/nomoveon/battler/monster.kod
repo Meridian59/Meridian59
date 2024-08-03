@@ -3007,8 +3007,14 @@ messages:
    UserEntered(who = $)
    "A User just entered the room."
    {
-      piLastWelcomeTime = GetTime();
-      propagate;
+
+      if GetTime() > (lastWelcomeTime + 30)
+      {
+         lastWelcomeTime = GetTime();
+         propagate;
+      }
+ 
+      return;
    }
 
    MonsterAttack(what = $)

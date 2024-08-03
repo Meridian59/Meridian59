@@ -21,7 +21,7 @@ resources:
       "energy which occupies him. Something about him tells you that he has good reason to "
       "be nervous. "
 
-   kocatanTailor_entry_welcome = "~kTepal ix'Zonak says, \"Oh! -- Sorry, you startled me.  Can I help you with something?\""
+   kocatanTailor_entry_welcome = "Oh! -- Sorry, you startled me.  Can I help you with something?"
    kocatantailor_sanctuary = "sanctuary"
    kocatantailor_sanctuary_response = "Ahhh... I could offer you sanctuary... for a price, of course."
    
@@ -146,7 +146,7 @@ messages:
       }
 
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=kocatanTailor_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocatanTailor_entry_welcome);
          
       return;
    }

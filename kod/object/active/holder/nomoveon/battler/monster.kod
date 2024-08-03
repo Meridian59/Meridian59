@@ -5619,6 +5619,7 @@ messages:
    SetMood(new_mood = 0)
    {
       piMood = Bound(new_mood,-100,100);
+
       return;
    }
 

@@ -2425,7 +2425,7 @@ messages:
    
    UserEntered(who = $)
    {
-      local i,each_obj,lastWelcomeTime;
+      local i,each_obj;
 
       if send(who,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
               OR send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)

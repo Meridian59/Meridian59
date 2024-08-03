@@ -3008,9 +3008,9 @@ messages:
    "A User just entered the room."
    {
 
-      if GetTime() > (lastWelcomeTime + 30)
+      if GetTime() > (piLastWelcomeTime + 30)
       {
-         lastWelcomeTime = GetTime();
+         piLastWelcomeTime = GetTime();
          propagate;
       }
  
@@ -5838,12 +5838,6 @@ messages:
    {
       return;
    }
-
-   GetLastWelcomeTime()
-   {
-      return piLastWelcomeTime;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

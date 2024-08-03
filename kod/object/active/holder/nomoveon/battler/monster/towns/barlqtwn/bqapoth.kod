@@ -162,7 +162,7 @@ messages:
          propagate;
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_REOURCE,#string=BqApo_entry_welcome);
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=BqApo_entry_welcome);
 
       if Send(who,@GetFaction) = FACTION_PRINCESS
       {

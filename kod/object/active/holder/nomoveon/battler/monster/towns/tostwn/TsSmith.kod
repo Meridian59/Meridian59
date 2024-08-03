@@ -95,7 +95,7 @@ messages:
    {
 
       Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=entry_welcome, 
-         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName);
+         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
       return;
    }

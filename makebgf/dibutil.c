@@ -187,7 +187,8 @@ PDIB DibReadBitmapInfo(int fh)
 
     if (nNumColors != NUM_COLORS)
     {
-       printf("Expecting %d color bitmap; found %d colors\n", NUM_COLORS, nNumColors);
+       printf("Expecting %llu color bitmap; found %d colors\n",
+          (unsigned long long)NUM_COLORS, nNumColors);
        return NULL;
     }
        

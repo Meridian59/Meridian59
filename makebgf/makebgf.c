@@ -287,7 +287,9 @@ int main(int argc, char **argv)
    options.shrink = 1;
    options.rotate = False;
    options.compress = True;
+   options.color_depth = 8; // Set default color depth to 8-bit
    memset(&b.name, 0, MAX_BITMAPNAME);
+
 
    /* Parse options */
    for (arg = 1; arg < argc; arg++)
@@ -364,6 +366,19 @@ int main(int argc, char **argv)
 	 Usage();
 	 exit(0);
 
+      case 'b': // used for 8 bit or 32 bit color depth
+      arg++;
+      if (arg >= argc) {
+         printf("Missing color depth argument\n");
+         break;
+      }
+      options.color_depth = atoi(argv[arg]);
+      if (options.color_depth != 8 && options.color_depth != 32) {
+         printf("Invalid color depth specified. Use 8 or 32\n");
+         break;
+      }
+      break;
+
       default:
 	 printf("Ignoring unknown option %c\n", argv[arg][1]);
       }
@@ -381,7 +396,7 @@ int main(int argc, char **argv)
    if (!VerifyArguments(&b, &options))
       exit(1);
 
-   if (!WriteBGFFile(&b, &options, output_filename))
+   if (!WriteBGFFile(&b, &options, output_filename, options.color_depth))
       Error("Error writing output file");
 
    return 0;

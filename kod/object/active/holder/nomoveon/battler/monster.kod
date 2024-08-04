@@ -3009,7 +3009,6 @@ messages:
    UserEntered(who = $)
    "A User just entered the room."
    {
-      piLastWelcomeTime = GetTime();
       return;
    }
 
@@ -5837,8 +5836,13 @@ messages:
 
    ReadyForWelcome()
    {
+      if GetTime() > (piLastWelcomeTime + WELCOME_MESSAGE_INTERVAL)
+      {
+         piLastWelcomeTime = GetTime();
+         return TRUE;
+      }
       
-      return GetTime() > (piLastWelcomeTime + WELCOME_MESSAGE_INTERVAL);
+      return FALSE;
    }
 
 end

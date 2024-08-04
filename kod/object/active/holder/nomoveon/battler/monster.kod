@@ -2586,7 +2586,6 @@ messages:
    {
       local i,lActionList, oLibrary,iQuestID,iQuestType, oQuestNode;
 
-      debug("Someone said Monster!!\n");
       % Are we supposed to hear things?
       if (NOT (viAttributes & MOB_LISTEN))
          OR string = $

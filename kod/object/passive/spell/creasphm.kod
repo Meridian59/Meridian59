@@ -16,7 +16,7 @@ constants:
 resources:
 
    createspiritualhammer_cast_rsc = "A spiritual hammer appears."
-   createspiritualhammer_inv_full_rsc = "A spiritual appears in the air before you, "
+   createspiritualhammer_inv_full_rsc = "A spiritual hammer appears in the air before you, "
       "but before you can drop something and grab it, it vanishes."
 
    createspiritualhammer_name_rsc = "spiritual hammer"

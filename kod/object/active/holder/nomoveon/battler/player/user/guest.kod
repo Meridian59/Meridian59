@@ -93,11 +93,6 @@ messages:
       propagate;
    }
 
-   SendFirstTimeAppeal()
-   {
-      return;
-   }
-
    PlayerNewCharInfo()
    {
       %debug("player new char info");

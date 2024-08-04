@@ -93,10 +93,9 @@ messages:
 
    UserEntered(who = $)
    {
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=entry_welcome, 
+      Send(poOwner,@SomeoneSaid,#what = self, #string=entry_welcome,
+         #type = SAY_RESOURCE, 
          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
-
       return;
    }
 

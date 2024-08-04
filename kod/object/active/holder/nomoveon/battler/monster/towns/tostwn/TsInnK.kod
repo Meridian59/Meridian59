@@ -16,6 +16,8 @@ constants:
 
    PADDOCK_YELL_CHANCE = 30
 
+   WELCOME_MESSAGE_INTERVAL = 120
+
 resources:
 
    tosinnkeeper_name_rsc = "Paddock"
@@ -25,9 +27,6 @@ resources:
       "common man approach to his clientele makes him one of the most likable men in Tos."
 
    TsIK_entry_welcome = "Welcome to Familiars, the most popular bar in the land!"
-
-   % Don't sell to these outlaws.
-   TsIK_entry_outlaws = "Rouges, outlaws and murderers are not my favorite town folk such as you %s - but we will still serve them light snacks and refreshments!"
 
    TsIK_purplemushroom_sale = "Yeah, I got %s%s here. Let's see what kind of deal I can make with you for these little rarities."
    TsIK_orcteeth_sale = "Another customer in the market for %s%s?  I should shut down the bar and just sell these things."
@@ -127,9 +126,9 @@ messages:
       {
          send(self,@SetMood,#new_mood=piMood - 1);
       }
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=TsIK_entry_welcome);
-
+      
+      Send(poOwner,@SomeoneSaid,#what=self,#string=TsIK_entry_welcome,#type=SAY_RESOURCE);
+           
       propagate;
    }
 

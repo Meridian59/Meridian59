@@ -113,11 +113,10 @@ messages:
          % don't say welcome to these guys
          propagate;
       }
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
-            #string=BaBar_entry_welcome,
-            #parm1=Send(who,@GetDef),
-            #parm2=Send(who,@GetName));
+      
+      Post(poOwner,@SomeoneSaid,#what = self, #string=BaBar_entry_welcome,
+           #type = SAY_RESOURCE, 
+           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
            
       propagate;
    }

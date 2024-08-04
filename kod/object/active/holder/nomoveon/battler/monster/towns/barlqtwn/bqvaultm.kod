@@ -131,8 +131,8 @@ messages:
 	 % don't welcome these guys
 	 propagate;
       }
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=barloquevaultman_entry_welcome);
+      send(poOwner,@SomeoneSaid,#what=self,#string=barloquevaultman_entry_welcome,
+	 #type = SAY_RESOURCE);
   
       propagate;
    }

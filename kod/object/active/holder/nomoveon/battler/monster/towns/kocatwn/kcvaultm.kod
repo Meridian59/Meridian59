@@ -72,7 +72,8 @@ messages:
       local iFlags;
 
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocatanvaultman_entry_welcome);
+      Send(poOwner,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
+         #type = SAY_RESOURCE);
 
       iFlags = send( who, @GetObjectFlags );
       if iFlags & PLAYER_PK

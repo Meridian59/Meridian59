@@ -32,7 +32,7 @@ resources:
    Ran_orctooth = \
       "I've pulled a few from their rotting skulls up in the mountains. You "
       "see, I know where their burial grounds are, and you could say that "
-      "Iï¿½m a bit of a ~Icollector~I."
+      "I’m a bit of a ~Icollector~I."
 
 classvars:
 
@@ -87,7 +87,7 @@ messages:
       return;
    }
    
-   UserEntered(who=$, what = $)
+   UserEntered(who=$)
    {
       Post(poOwner,@someoneSaid,#what=self,#string=MrEl_entry_welcome,
           #type=SAY_RESOURCE,#parm1=send(who,@GetDef),

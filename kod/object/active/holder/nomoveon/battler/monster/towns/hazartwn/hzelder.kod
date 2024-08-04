@@ -37,7 +37,8 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=HzEl_entry_welcome);
+      Post(poOwner,@someoneSaid,#what=self,#string=HzEl_entry_welcome,
+          #type=SAY_RESOURCE);
       propagate;
    }
 

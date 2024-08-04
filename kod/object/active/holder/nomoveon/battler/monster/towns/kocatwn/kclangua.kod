@@ -56,7 +56,8 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=KocatanLanguageMaster_entry_welcome); 
+      Send(poOwner,@SomeoneSaid,#what = self, #string=KocatanLanguageMaster_entry_welcome,
+           #type=SAY_RESOURCE);
            
       if Send(who,@GetGender) = GENDER_MALE
       {

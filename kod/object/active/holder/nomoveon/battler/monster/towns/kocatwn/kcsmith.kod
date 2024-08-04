@@ -107,8 +107,8 @@ messages:
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kcsmith_entry_welcome);
-
+      Send(poOwner,@SomeoneSaid,#what = self, #string=kcSmith_entry_welcome,
+         #type = SAY_RESOURCE);
       if Send(who,@GetAction)=UA_WRY
       {
 	 send( self, @SetMood, #new_mood = piMood + 3 );

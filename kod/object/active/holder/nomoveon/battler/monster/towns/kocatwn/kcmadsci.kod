@@ -75,7 +75,8 @@ messages:
 	 send( self, @SetMood, #new_mood = piMood - 1 );
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=KocatanMadScientist_entry_welcome);
+      Send(poOwner,@SomeoneSaid,#what = self, #string=KocatanTailor_entry_welcome,
+         #type = SAY_RESOURCE);
 
       propagate;
    }

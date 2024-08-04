@@ -97,8 +97,8 @@ messages:
 
    UserEntered(who = $)
    {
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=CnGro_entry_welcome);
+      Send(poOwner,@SomeoneSaid,#what=self,#string=CnGro_entry_welcome,
+             #type = SAY_RESOURCE);
              
       if Send(who,@GetAction) = UA_SAD
       {

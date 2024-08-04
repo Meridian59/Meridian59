@@ -93,8 +93,8 @@ messages:
          % don't welcome these guys
          propagate;
       }
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=kocatanbanker_entry_welcome); 
+      Send(poOwner,@SomeoneSaid,#what=self,#string=Kocatanbanker_entry_welcome,
+             #type = SAY_RESOURCE);
 
       propagate;
    }

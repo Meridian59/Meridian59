@@ -1729,8 +1729,6 @@ messages:
          
          Send(Send(SYS, @GetStatistics), @PlayerEnteredRoom,
               #oRoom = self, #who = what);
-
-         Send(self, @UserEntered, #who = what);
       }
 
       Send(self,@NewHoldObject,#what=what,
@@ -1773,6 +1771,22 @@ messages:
          {
             Send(self,@FirstUserEntered,#what=what,#new_row=First(new_pos),
                  #new_col=Nth(new_pos,2));
+         }
+
+         for i in plActive
+         {
+            each_obj = First(i);
+            if IsClass(each_obj,&Monster)
+            {
+               if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+                     AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+               {
+                  if Send(each_obj, @ReadyForWelcome)
+                  {
+                     Send(each_obj,@UserEntered,#who=what);
+                  }
+               } 
+            }
          }
 
          % Now send music.
@@ -2422,30 +2436,6 @@ messages:
 
       propagate;
    }  
-   
-   UserEntered(who = $)
-   {
-      local i,each_obj;
-
-      if send(who,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-              OR send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
-      {
-         % q: is this check enough top skip players/admins
-         debug("Skipping Invisible / anonymous player");
-         return;
-      }
-
-      for i in plActive
-      {
-         each_obj = First(i);
-         % q: is there a better class than %Monster for all NPCs
-         if IsClass(each_obj, &Monster)
-         {
-            Send(each_obj,@UserEntered,#who=who);
-         }
-      }
-      return;
-   }
 
    LastUserLeft()
    {

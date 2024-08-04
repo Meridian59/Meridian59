@@ -22,6 +22,8 @@ constants:
    %  learn to qualify for a new spell.
    MONSTER_LEARN_GRADIENT = 15
 
+   WELCOME_MESSAGE_INTERVAL = 30
+
 resources:
 
    monster_percent_q = "%q"
@@ -2584,6 +2586,7 @@ messages:
    {
       local i,lActionList, oLibrary,iQuestID,iQuestType, oQuestNode;
 
+      debug("Someone said Monster!!\n");
       % Are we supposed to hear things?
       if (NOT (viAttributes & MOB_LISTEN))
          OR string = $
@@ -3007,13 +3010,7 @@ messages:
    UserEntered(who = $)
    "A User just entered the room."
    {
-
-      if GetTime() > (piLastWelcomeTime + 30)
-      {
-         piLastWelcomeTime = GetTime();
-         propagate;
-      }
- 
+      piLastWelcomeTime = GetTime();
       return;
    }
 
@@ -5837,6 +5834,12 @@ messages:
    GetProjectileIcon()
    {
       return;
+   }
+
+   ReadyForWelcome()
+   {
+      
+      return GetTime() > (piLastWelcomeTime + WELCOME_MESSAGE_INTERVAL);
    }
 
 end

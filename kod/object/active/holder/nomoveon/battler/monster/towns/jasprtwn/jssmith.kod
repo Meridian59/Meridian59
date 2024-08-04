@@ -140,11 +140,9 @@ messages:
       {
          send(self,@SetMood,#new_mood=piMood+1);
       }
-
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-      #string=JsBla_entry_welcome,
-      #parm1=Send(who,@GetDef),
-      #parm2=Send(who,@GetName));
+      
+      Post(poOwner,@SomeoneSaid,#what=self,#string=JsBla_entry_welcome,
+           #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
       return;
    }

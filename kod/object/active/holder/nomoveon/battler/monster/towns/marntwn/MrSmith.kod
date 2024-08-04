@@ -93,7 +93,8 @@ messages:
    UserEntered(who = $)
    {
 
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=MrBS_entry_welcome);
+      Send(poOwner,@SomeoneSaid,#what=self,#string=MrBs_entry_welcome,
+           #type = SAY_RESOURCE);
               
       return;
    }

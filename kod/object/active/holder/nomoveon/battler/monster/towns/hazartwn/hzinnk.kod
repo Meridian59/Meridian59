@@ -44,12 +44,5 @@ properties:
 messages:
 
 
-   UserEntered(who = $)
-   {
-      % Nothing to see here!
-      % Marcus says hello as part of the initial welcoming text: guest1.kod
-      propagate;
-   }
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

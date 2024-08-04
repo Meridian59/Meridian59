@@ -1773,19 +1773,19 @@ messages:
                  #new_col=Nth(new_pos,2));
          }
 
-         for i in plActive
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
          {
-            each_obj = First(i);
-            if IsClass(each_obj,&Monster)
+            for i in plActive
             {
-               if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-                     AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+               each_obj = First(i);
+               if IsClass(each_obj,&Monster)
                {
-                  if Send(each_obj, @ReadyForWelcome)
-                  {
-                     Send(each_obj,@UserEntered,#who=what);
-                  }
-               } 
+                     if Send(each_obj, @ReadyForWelcome)
+                     {
+                        Send(each_obj,@UserEntered,#who=what);
+                     }
+               }
             }
          }
 

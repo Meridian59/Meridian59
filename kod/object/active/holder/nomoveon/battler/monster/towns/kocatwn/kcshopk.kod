@@ -43,7 +43,7 @@ classvars:
    vrDesc = kocatanShopkeeper_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_BUYER 
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_BUYER | MOB_FULL_TALK
    viOccupation = MOB_ROLE_MERCHANT
 
    % We sell what other people have given us
@@ -83,7 +83,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood-2);
       }
 
-      Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanTailor_entry_welcome,
+      Post(poOwner,@SomeoneSaid,#what=self,#string=kocatanShopkeeper_entry_welcome,
            #type=SAY_RESOURCE);
 
       return;

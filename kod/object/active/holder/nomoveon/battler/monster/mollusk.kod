@@ -20,7 +20,7 @@ constants:
    ANIM_POPUP = 2
    ANIM_THROW = 3
 
-   FRAME_STANDING = 1
+   FRAME_UNDERGROUND = 1
    FRAME_WALK_START = 2
    FRAME_WALK_END = 6
    FRAME_ATTACK_START = 7
@@ -29,7 +29,8 @@ constants:
    FRAME_THROW_END = 14
    FRAME_POPUP_START = 15
    FRAME_POPUP_END = 19
-
+   FRAME_STANDING = 20
+   
    ANIMATION_WALK_SPEED = 80
    ANIMATION_ATTACK_SPEED = 225
    ANIMATION_THROW_SPEED = 80
@@ -39,9 +40,7 @@ constants:
    THROW_CHANCE = 50
    % Distance, squared, we can throw a rock.  It's 10 squares for now.
    ROCK_RANGE_SQUARED = 100
-   % Time from creation to "popping up"
-   POPUP_DELAY = 2500
-
+   
 resources:
 
    MolluskMonster_koc_name_rsc = "kolisith"
@@ -87,7 +86,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   ptActive = $
+   pbSurfaced = FALSE
 
 messages:
 
@@ -98,53 +97,11 @@ messages:
                         [  50, -ATCK_SPELL_QUAKE ]
                       ];
 
-      piAnimation = ANIM_NONE;
-      if poOwner <> $
-      {
-         ptActive = CreateTimer(self,@PopupTimer,POPUP_DELAY);
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
-
       propagate;
-   }
-
-   Delete()
-   {
-      if ptActive <> $
-      {
-         DeleteTimer(ptActive);
-         ptActive = $;
-      }
-
-      propagate;
-   }
-
-   PopupTimer()
-   {
-      ptActive = $;
-      piAnimation = ANIM_POPUP;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-
-      return;
    }
 
    SendAnimation()
    {
-      if piAnimation = ANIM_NONE
-      {
-         if ptActive = $
-         {
-            AddPacket(1,ANIMATE_NONE, 2,FRAME_STANDING);
-         }
-         else
-         {
-            AddPacket(1,ANIMATE_NONE, 2,FRAME_POPUP_START);
-         }         
-
-         return;
-      }
-
       if piAnimation = ANIM_ATTACK
       {
          send(self,@SendAttackAnimation);
@@ -166,7 +123,36 @@ messages:
          return;
       }
 
+      if pbSurfaced
+      {
+         AddPacket(1,ANIMATE_NONE,2,FRAME_STANDING);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,FRAME_UNDERGROUND);
+      }
+
+      return;
+   }
+
+   EnterStateChase()
+   {
+      if NOT pbSurfaced
+      {
+         Send(self,@PopUp);
+      }
+
       propagate;
+   }
+
+   PopUp()
+   {
+      piAnimation = ANIM_POPUP;
+      Send(poOwner,@SomethingChanged,#what=self);
+      pbSurfaced = TRUE;
+      piAnimation = ANIM_NONE;
+
+      return;
    }
 
    SendAttackAnimation()
@@ -210,10 +196,16 @@ messages:
 
    MonsterAttack(what = $)
    {
-      piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-
+      if pbSurfaced
+      {
+         piAnimation = ANIM_ATTACK;
+         Send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+      }
+      else
+      {
+         Send(self,@PopUp);
+      }
       return;
    }
 

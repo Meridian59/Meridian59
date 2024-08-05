@@ -98,6 +98,8 @@ messages:
                         [  50, -ATCK_SPELL_QUAKE ]
                       ];
 
+      Send(self,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
+
       propagate;
    }
 
@@ -149,7 +151,6 @@ messages:
    PopUp()
    {
       ptPostPop = createTimer(self,@PostPop,POPUP_DURATION);
-      Send(self,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
       Send(self,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
 
       piAnimation = ANIM_POPUP;
@@ -210,17 +211,21 @@ messages:
 
    MonsterAttack(what = $)
    {
-      if pbSurfaced
-      {
-         piAnimation = ANIM_ATTACK;
-         Send(poOwner,@SomethingChanged,#what=self);
-         piAnimation = ANIM_NONE;
-      }
-      else
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   TryAttack(what=$,stroke_obj=$)
+   {
+      if NOT pbSurfaced
       {
          Send(self,@PopUp);
       }
-      return;
+
+      propagate;
    }
 
    MonsterCastSpell()

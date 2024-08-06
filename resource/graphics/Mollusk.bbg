@@ -1,11 +1,12 @@
 # Molluskoid
 # 
 # Groups:
-#            1 Standing
-#          2-6 Walking
-#         7-10 Attack
-#        11-14 Throw
-#        15-19 popup
+#            1 Underground
+#            2 Standing
+#          3-7 Walking
+#         8-11 Attack
+#        12-15 Throw
+#        16-20 Popup
 #^Applied to Hotspot: 0
 #*Groups: 19
 #* Unlabeled Group
@@ -28,7 +29,13 @@
 #* Unlabeled Group
 #* Unlabeled Group
 -s 3
-114
+120
+mol000ug.bmp   [0, 0] 
+mol315ug.bmp   [0, 0] 
+mol270ug.bmp   [0, 0] 
+mol180ug.bmp   [0, 0] 
+mol090ug.bmp   [0, 0] 
+mol045ug.bmp   [0, 0]
 mol000sa.bmp   [0, -16] 
 mol315sa.bmp   [0, -12] 
 mol270sa.bmp   [0, -13] 
@@ -143,7 +150,7 @@ mol270pe.bmp   [0, -6]
 mol180pe.bmp   [0, 9] 
 mol090pe.bmp   [0, -10] 
 mol045pe.bmp   [0, -14] 
-19
+20
  8   1 2 3 4 4 4 5 6 
  8   7 8 9 10 10 10 11 12 
  8   13 14 15 16 16 16 17 18 
@@ -162,4 +169,5 @@ mol045pe.bmp   [0, -14]
  8   91 92 93 94 94 94 95 96 
  8   97 98 99 100 100 100 101 102 
  8   103 104 105 106 106 106 107 108 
- 8   109 110 111 112 112 112 113 114 
+ 8   109 110 111 112 112 112 113 114
+ 8   115 116 117 118 118 118 119 120

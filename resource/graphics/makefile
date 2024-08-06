@@ -17,6 +17,7 @@ BGFS = \
 	$(OUTDIR)\povmystsw.bgf \
 	$(OUTDIR)\splash.bgf \
 	$(OUTDIR)\moon.bgf \
+	$(OUTDIR)\mollusk.bgf
 
 all: makedirs $(BGFS)
 

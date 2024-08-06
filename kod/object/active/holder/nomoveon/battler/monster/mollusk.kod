@@ -98,6 +98,7 @@ messages:
                         [  50, -ATCK_SPELL_QUAKE ]
                       ];
 
+      % Spawn stationary
       Send(self,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
 
       propagate;
@@ -151,8 +152,10 @@ messages:
    PopUp()
    {
       ptPostPop = createTimer(self,@PostPop,POPUP_DURATION);
-      Send(self,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
 
+      % Block fight behavior until popup completes
+      Send(self,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+      
       piAnimation = ANIM_POPUP;
       Send(poOwner,@SomethingChanged,#what=self);
       pbSurfaced = TRUE;
@@ -165,7 +168,9 @@ messages:
    {
       ptPostPop = $;
 
-      Send(self,@ResetBehaviorFlags);
+      % Free the mollusk for attack now that it has popped up
+      Send(self,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=FALSE);
+      Send(self,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=FALSE);
       
       return;
    }

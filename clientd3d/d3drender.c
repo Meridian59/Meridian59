@@ -7356,6 +7356,9 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 	anglePitch = PlayerGetHeightOffset();
 
+	// drawdata[] may contain more than one entry with the same id.
+	// We need to keep track of those we've already processed to avoid duplicates.
+	std::unordered_set<int> processedIds;
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
 		list_type	list2;
@@ -7365,6 +7368,10 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 			continue;
 
 		pRNode = drawdata[curObject].u.object.object->draw.obj;
+
+		if (processedIds.find(pRNode->obj.id) != processedIds.end())
+			continue;
+		processedIds.insert(pRNode->obj.id);
 
 		if (pRNode == NULL)
 			continue;
@@ -7380,6 +7387,18 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 		else
 		{
 			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+				continue;
+		}
+
+		// Check for translucent objects
+		bool objTranslucent = (pRNode->obj.flags & TRANSLUCENT_FLAGS) != 0;
+		if ((flags & TRANSLUCENT_FLAGS) != 0) {
+			if (!objTranslucent)
+				continue;
+		}
+		else
+		{
+			if (objTranslucent)
 				continue;
 		}
 

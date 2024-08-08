@@ -47,7 +47,7 @@ constants:
    USER_RUNNING_SPEED = 36
 
    % How many packets incoming per second do we allow?
-   INCOMING_PACKET_THROTTLE = 25
+   INCOMING_PACKET_THROTTLE = 20
 
    % What's the lower threshold for being able to run?  Below this, we can't
    %  run.
@@ -2909,7 +2909,7 @@ messages:
       % NEW Speedhack detection!
       % How this works:
       %   Speedhack works by sending a LOT of little moves very, very quickly.
-      %   Normal players only send 1 movement packet per second, but 
+      %   Normal players only send 4 movement packets per second (MOVE_INTERVAL), but 
       %   speedhackers send more.  Even at low levels, speedhackers will send
       %   more packets per second.  So, we keep track of the number of packets
       %   sent and the number of seconds that happen.  Every movement packet
@@ -2923,9 +2923,11 @@ messages:
       %   allowed over the duration due to rounding errors, etc.
 
       % Check the delta since the last time we moved.  Keep an upper bound on
-      %  the delta, since people could just be moving from rest.
+      % the delta, since people could just be moving from rest.
+      % We divide the piLastMoveUpdateTime by four, since movement 
+      % is being updated 4 times per second (MOVE_INTERVAL) while people are actively moving.
       iCurrentTime = GetTime();
-      iDelta = iCurrentTime - piLastMoveUpdateTime;
+      iDelta = iCurrentTime - (piLastMoveUpdateTime / 4);
 
       %  Make sure this person is not lagging; increment our counter since we
       %  got a move packet, then adjust for last movement time.

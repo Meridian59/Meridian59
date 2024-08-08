@@ -47,7 +47,7 @@ constants:
    USER_RUNNING_SPEED = 36
 
    % How many packets incoming per second do we allow?
-   INCOMING_PACKET_THROTTLE = 5
+   INCOMING_PACKET_THROTTLE = 25
 
    % What's the lower threshold for being able to run?  Below this, we can't
    %  run.

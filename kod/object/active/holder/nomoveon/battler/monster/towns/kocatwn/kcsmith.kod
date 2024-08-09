@@ -107,7 +107,7 @@ messages:
 
    UserEntered(who = $)
    {
-      Send(poOwner,@SomeoneSaid,#what = self, #string=kcSmith_entry_welcome,
+      Post(poOwner,@SomeoneSaid,#what = self, #string=kcSmith_entry_welcome,
          #type = SAY_RESOURCE);
       if Send(who,@GetAction)=UA_WRY
       {

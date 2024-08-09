@@ -72,10 +72,9 @@ messages:
       local iFlags;
       if random(1,10)
       {
-         Send(poOwner,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
-            #type = SAY_RESOURCE);
+	 Post(poOwner,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
+             #type = SAY_RESOURCE);
       }
-
       iFlags = send( who, @GetObjectFlags );
       if iFlags & PLAYER_PK
       {

@@ -7357,7 +7357,9 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 	anglePitch = PlayerGetHeightOffset();
 
 	// drawdata[] may contain more than one entry with the same id.
-	// We need to keep track of those we've already processed to avoid duplicates.
+	// Rendering translucent objects multiple times can cause them to appear less translucent (more opaque).
+	// This happens because each rendering pass compounds the alpha blending, making the object appear more solid than intended.
+	// To prevent this, we need to keep track of those we've already processed to avoid rendering duplicates.
 	std::unordered_set<int> processedIds;
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
@@ -7392,13 +7394,13 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 		// Check for translucent objects
 		bool objTranslucent = (pRNode->obj.flags & TRANSLUCENT_FLAGS) != 0;
-		if ((flags & TRANSLUCENT_FLAGS) != 0) {
-			if (!objTranslucent)
+		if ((flags & TRANSLUCENT_FLAGS) == 0) {
+			if (objTranslucent)
 				continue;
 		}
 		else
 		{
-			if (objTranslucent)
+			if (!objTranslucent)
 				continue;
 		}
 

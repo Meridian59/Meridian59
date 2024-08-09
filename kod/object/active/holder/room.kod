@@ -1773,6 +1773,22 @@ messages:
                  #new_col=Nth(new_pos,2));
          }
 
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+         {
+            for i in plActive
+            {
+               each_obj = First(i);
+               if IsClass(each_obj,&Monster)
+               {
+                     if Send(each_obj, @ReadyForWelcome)
+                     {
+                        Send(each_obj,@UserEntered,#who=what);
+                     }
+               }
+            }
+         }
+
          % Now send music.
          Send(what,@SendRoomMusic,#music_rsc=prMusic);
 

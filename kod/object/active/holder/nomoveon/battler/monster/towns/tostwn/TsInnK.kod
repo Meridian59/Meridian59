@@ -16,6 +16,8 @@ constants:
 
    PADDOCK_YELL_CHANCE = 30
 
+   WELCOME_MESSAGE_INTERVAL = 120
+
 resources:
 
    tosinnkeeper_name_rsc = "Paddock"

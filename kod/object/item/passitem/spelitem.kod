@@ -216,8 +216,16 @@ messages:
       oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
 
       % Get proper targets according to spell, assume that apply_on is our basic target.
-      lTargets = Send(oSpell,@GetTargets,#who=what,#lTargets=[apply_on]);
 
+      if IsClass(self,&Scroll)
+      {
+         lTargets = Send(oSpell,@GetTargets,#who=what);
+      }
+      else
+      {
+         lTargets = Send(oSpell,@GetTargets,#who=what,#lTargets=[apply_on]);
+      }
+      
       if Send(oSpell,@IsHarmful)
          AND IsClass(apply_on,&Monster)
          AND NOT Send(apply_on,@CanMonsterFight,#who=poOwner,#oStroke=self)

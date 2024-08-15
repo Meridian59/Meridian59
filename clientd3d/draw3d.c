@@ -86,7 +86,7 @@ BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
-static void StretchC1To2(BYTE *src,BYTE *dest,int width,int height);
+static void Stretch(BYTE* src, BYTE* dest, int width, int height, int new_width, int new_height, int max_width);
 
 /* local function prototypes */
 static void StretchImage(void);
@@ -341,8 +341,8 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width / 2, main_viewport_width);
-   area.cy = min(params->height / 2, main_viewport_height);
+   area.cx = CLASSIC_WIDTH;
+   area.cy = CLASSIC_HEIGHT;
 
    // Force size to be even
    area.cy = area.cy & ~1;  
@@ -533,30 +533,48 @@ void SetLightingInfo(int sun_x, int sun_y, BYTE intensity)
  */
 void StretchImage(void)
 {
-  StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
+  Stretch(gBits, gBufferBits, area.cx, area.cy, main_viewport_width, main_viewport_height, MAXX);
 }
 /************************************************************************/
-void StretchC1To2(BYTE *src,BYTE *dest,int width,int height)
+void Stretch(BYTE* src, BYTE* dest, int width, int height, int new_width, int new_height, int max_width)
 {
-  register long i,j;
-  register BYTE *s,*d,*d2;
-  
-  /* 1->2 stretch */
-  for(i = 0;i < height;i++)
-  {
-    s = src + i * MAXX;
-    d  = dest + 2 * i * MAXX * 2;
-    d2 = d + MAXX * 2;                // One row offset from dest
-    for(j = 0; j < width; j++)
-    {
-      register BYTE b = *s;
-      *d++ = b;
-      *d++ = b;
-      *d2++ = b;
-      *d2++ = b;
-      s++;
+    // If the new size is exactly the same as the original, perform a direct copy
+    if (new_width == width && new_height == height) {
+        memcpy(dest, src, width * height * sizeof(BYTE));
+        return;
     }
-  }
+
+    // Calculate the scaling ratios
+    int half_new_width = new_width / 2;
+    int x_ratio = (width << 16) / half_new_width;
+    int y_ratio = (height << 16) / new_height;
+
+    int i, j, x, y;
+    BYTE* s, * d, * d2;
+
+    for (i = 0; i < new_height; i++)
+    {
+        // Calculate the y-coordinate in the source image
+        y = (i * y_ratio) >> 16;
+        s = src + y * max_width; // Set source pointer
+
+        // Calculate the destination pointers for the current and next rows
+        d = dest + i * max_width * 2;
+        d2 = d + max_width;
+
+        for (j = 0; j < half_new_width; j++)
+        {
+            // Calculate the x-coordinate in the source image
+            x = (j * x_ratio) >> 16;
+            BYTE b = *(s + x); // Fetch the pixel from the source
+
+            // Write the pixel to the destination, expanding both horizontally and vertically
+            *(d + 2 * j) = b;
+            *(d + 2 * j + 1) = b;
+            *(d2 + 2 * j) = b;
+            *(d2 + 2 * j + 1) = b;
+        }
+    }
 }
 /************************************************************************/
 /*

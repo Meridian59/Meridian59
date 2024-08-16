@@ -86,10 +86,10 @@ BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
-static void Stretch(BYTE* src, BYTE* dest, int width, int height, int new_width, int new_height, int max_width);
-
 /* local function prototypes */
 static void StretchImage(void);
+static void Stretch(BYTE* src, BYTE* dest, int width, int height,
+    int new_width, int new_height, int max_width);
 /************************************************************************/
 /* return TRUE iff successful */
 Bool InitializeGraphics3D(void)
@@ -536,14 +536,20 @@ void StretchImage(void)
   Stretch(gBits, gBufferBits, area.cx, area.cy, main_viewport_width, main_viewport_height, MAXX);
 }
 /************************************************************************/
-void Stretch(BYTE* src, BYTE* dest, int width, int height, int new_width, int new_height, int max_width)
+/************************************************************************/
+/*
+ * Stretch: Function to stretch a source image to a new size while maintaining the aspect ratio.
+ * - src: Pointer to the source image data
+ * - dest: Pointer to the destination image buffer where the stretched image will be stored.
+ * - width: Width of the source image.
+ * - height: Height of the source image.
+ * - new_width: Desired width of the stretched image.
+ * - new_height: Desired height of the stretched image.
+ * - max_width: Maximum width of the destination buffer (used for row size calculations).
+ */
+void Stretch(BYTE* src, BYTE* dest, int width, int height, 
+    int new_width, int new_height, int max_width)
 {
-    // If the new size is exactly the same as the original, perform a direct copy
-    if (new_width == width && new_height == height) {
-        memcpy(dest, src, width * height * sizeof(BYTE));
-        return;
-    }
-
     // Calculate the scaling ratios
     int half_new_width = new_width / 2;
     int x_ratio = (width << 16) / half_new_width;

@@ -41,7 +41,6 @@ extern int border_index;
 
 int main_viewport_width;
 int main_viewport_height;
-extern float player_overlay_scaler;
 
 // Variables to store frame times and FPS
 static std::vector<double> fps_store;
@@ -110,15 +109,19 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
+    // Calculate the scaling factor
+    float scale_x = static_cast<float>(main_viewport_width) / CLASSIC_WIDTH;
+    float scale_y = static_cast<float>(main_viewport_height) / CLASSIC_HEIGHT;
 
-   if (client_x < view.x || client_x > view.x + view.cx ||
-       client_y < view.y || client_y > view.y + view.cy)
-      return False;
+    // Translate client coordinates to room coordinates, considering scaling
+    *x = static_cast<int>((client_x - view.x) / scale_x);
+    *y = static_cast<int>((client_y - view.y) / scale_y);
 
-   *x = (client_x - view.x) / 2;
-   *y = (client_y - view.y) / 2;
+    if (*x < view.x || *x > view.x + view.cx ||
+        *y < view.y || *y > view.y + view.cy)
+        return False;
 
-   return True;
+    return True;
 }
 /************************************************************************/
 /*
@@ -221,7 +224,6 @@ void GraphicsAreaResize(int xsize, int ysize)
    // update main viewport and classic scaler (required for FOV calculations and equipment scaling)
    main_viewport_width = view.cx;
    main_viewport_height = view.cy;
-   player_overlay_scaler = ((float)main_viewport_width) / CLASSIC_WIDTH;
 
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 

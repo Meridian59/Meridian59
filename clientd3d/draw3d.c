@@ -385,8 +385,9 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    long t1,t2,t3;
    static int count = 0;
 
-   // View area of the player.
-   // A multiplier ensures that objects at the edges of the viewport are still considered visible.
+   // View area of the player (as per software renderer view/fov)
+   // As the view and fov are not identical between hardware and software renderer we add a 
+   // small multiplier to ensure that objects at the edges of the viewport are still considered visible.
    // A value of 1.0 causes objects to disappear too quickly, hence 1.1 is used based on empirical testing.
    area.x = area.y = 0;
    area.cx = CLASSIC_WIDTH * SIZE_MULTIPLIER;

@@ -7,15 +7,15 @@ These files manage random and triggered NPC dialog, primarily managed through `.
 After recreating the world (e.g., `send o 0 recreate all`) or during initial startup:
 
 1. Move `dialog.txt` to the server run directory
-1. Execute the admin command `read dialog.txt` to load NPC dialog into the speech library.
+2. Execute the admin command `read dialog.txt` to load NPC dialog into the speech library.
 
 ## Adding New Dialog
 
 To avoid duplicates, new dialog should be adding using iterative `.tab` files:
 
 1. Create a new `.tab` file with the desired dialog.
-1. Convert it to admin commands with `python dialogconvert.py newfile.tab newdialog.txt`
-1. Loading the dialog using `read newdialog.txt` in Blakserv.
+2. Convert it to admin commands with `python dialogconvert.py newfile.tab newdialog.txt`
+3. Loading the dialog using `read newdialog.txt` in Blakserv.
 
 ## Updating Existing Dialog
 

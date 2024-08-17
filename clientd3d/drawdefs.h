@@ -33,7 +33,7 @@
 /* Scaler used to increase the classic view port x,y values */
 #define VIEW_SCALER 5
 
-/* The multiplier ensures that objects at the edges of the viewport are still considered visible. */
+/* Multiplier for hardware renderer view port area  */
 #define SIZE_MULTIPLIER 1.1
 
 /* Maximum values used to create view textures and buffers */

@@ -539,39 +539,36 @@ void StretchImage(void)
 /************************************************************************/
 /*
  * Stretch: Function to stretch a source image to a new size while maintaining the aspect ratio.
- * - src: Pointer to the source image data
- * - dest: Pointer to the destination image buffer where the stretched image will be stored.
- * - width: Width of the source image.
- * - height: Height of the source image.
- * - new_width: Desired width of the stretched image.
- * - new_height: Desired height of the stretched image.
- * - max_width: Maximum width of the destination buffer (used for row size calculations).
+ * - src: Pointer to the source image data (bytes)
+ * - dest: Pointer to the destination image buffer where the stretched image will be stored (bytes).
+ * - width: Width of the source image in pixels.
+ * - height: Height of the source image in pixels.
+ * - new_width: Desired width of the stretched image in pixels.
+ * - new_height: Desired height of the stretched image in pixels.
+ * - row_stride: The row stride in bytes (used for row size calculations).
  */
 void Stretch(BYTE* src, BYTE* dest, int width, int height, 
-    int new_width, int new_height, int max_width)
+    int new_width, int new_height, int row_stride)
 {
     // Calculate the scaling ratios
     int half_new_width = new_width / 2;
     int x_ratio = (width << 16) / half_new_width;
     int y_ratio = (height << 16) / new_height;
 
-    int i, j, x, y;
-    BYTE* s, * d, * d2;
-
-    for (i = 0; i < new_height; i++)
+    for (int i = 0; i < new_height; i++)
     {
         // Calculate the y-coordinate in the source image
-        y = (i * y_ratio) >> 16;
-        s = src + y * max_width; // Set source pointer
+        int y = (i * y_ratio) >> 16;
+        BYTE* s = src + y * row_stride; // Set source pointer
 
         // Calculate the destination pointers for the current and next rows
-        d = dest + i * max_width * 2;
-        d2 = d + max_width;
+        BYTE* d = dest + i * row_stride * 2;
+        BYTE* d2 = d + row_stride;
 
-        for (j = 0; j < half_new_width; j++)
+        for (int j = 0; j < half_new_width; j++)
         {
             // Calculate the x-coordinate in the source image
-            x = (j * x_ratio) >> 16;
+            int x = (j * x_ratio) >> 16;
             BYTE b = *(s + x); // Fetch the pixel from the source
 
             // Write the pixel to the destination, expanding both horizontally and vertically

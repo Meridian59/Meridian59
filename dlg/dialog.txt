@@ -7074,9 +7074,6 @@ send o 0 speechlibquote who class PrincessLiege quote q ~kPrincess Kateriina say
 send o 0 speechlibtrigger who class PrincessLiege trigger q ranks
 send o 0 speechlibquote who class PrincessLiege quote q ~kPrincess Kateriina says, "We are as close as any family, and like a family any member who would think to harm another will be punished and cast out."
 
-send o 0 speechlibtrigger who class PrincessLiege trigger q ranks
-send o 0 speechlibquote who class PrincessLiege quote q ~kPrincess Kateriina says, "We are as close as any family, and like a family any member who would think to harm another will be punished and cast out."
-
 send o 0 speechlibtrigger who class PrincessLiege trigger q sword of the hunt
 send o 0 speechlibquote who class PrincessLiege quote q ~kPrincess Kateriina says, "I have heard that their swords contain magical properties particularly potent against those with black souls."
 
@@ -8080,9 +8077,6 @@ send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Aw, get 
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q BYE
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "See you later. Go kill an Orc."
-
-send o 0 speechlibtrigger who class TosInnKeeper trigger q cor NOTH
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Cor Noth is a nice town. We ought to get a clock tower here."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q cor NOTH
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Cor Noth is a nice town. We ought to get a clock tower here."

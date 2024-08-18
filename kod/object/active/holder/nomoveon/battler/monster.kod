@@ -3876,17 +3876,8 @@ messages:
          }
       }
 
-      Send(self, @ItemBoughtHook, #buyer = what);
-
       return;
    }
-
-   ItemBoughtHook(buyer = $)
-   "Hook called after someone has bought something from us"
-   {
-      return;
-   }
-
 
    %%% Utility messages
 

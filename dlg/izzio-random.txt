@@ -10,9 +10,9 @@ send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "Every journey has
 
 send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "Gold can buy many things, but wisdom is earned on the road."
 
-send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "Fortune favors the prepared, and I’ve got just what you need."
+send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "Fortune favors the prepared, and I've got just what you need."
 
-send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "There’s a story behind every trinket I sell. Care to add your own?"
+send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "There's a story behind every trinket I sell. Care to add your own?"
 
 send o 0 randomlibquote who class Izzio quote q ~kIzzio says, "The best journeys are those where you return with more than you left with."
 

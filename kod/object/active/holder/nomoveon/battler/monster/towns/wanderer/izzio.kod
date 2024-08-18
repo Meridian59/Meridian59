@@ -40,8 +40,6 @@ resources:
 
    izzio_too_many_rsc = "I would take that off your hands but I already have several of those for sale.  I'd rather unload them first."
 
-   Izzio_sold_rsc = "Thanks!  May that bring you good health and wealth."
-
 classvars:
 
    vrName = Izzio_name_rsc
@@ -352,12 +350,6 @@ messages:
       Send(self,@OfferCanceled);
 
       return TRUE;
-   }
-
-   ItemBoughtHook(buyer = $)
-   {
-      Post(poOwner,@SomeoneSaid,#what=self,#string=Izzio_sold_rsc,#type=SAY_RESOURCE);
-      return;
    }
 
    NewHoldObject(what = $)

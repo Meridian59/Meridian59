@@ -117,7 +117,7 @@ messages:
    {
       plMonsters = [ [&Avar, 40], [&AvarChieftain, 35], [&Avarshaman,25] ];  
       plGenerators = [ [13,54], [20,39], [34,39], [44,37], [53,46],
-                       [53,56], [46,66], [33,71], [22,67] ];
+                       [53,56], [46,66], [33,71], [22,67], [70,20], [14,25] ];
 
       % Create the node.
       poNode = Create(&AvarNode,#node_num=NODE_AVAR,#iRoomNum=piRoom_num);

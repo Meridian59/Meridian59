@@ -24,11 +24,12 @@ extern int main_viewport_height;
 // Define field of views with magic numbers for tuning
 inline float FovHorizontal(long width)
 {
-	return width / (float)(main_viewport_width) * (-PI / 3.6f);
+	return width / (float)(main_viewport_width) * (-PI / 3.78f);
 }
+
 inline float FovVertical(long height)
 {
-	return height / (float)(main_viewport_height) * (PI / 5.6f);
+	return height / (float)(main_viewport_height) * (PI / 5.88f);
 }
 
 static const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;

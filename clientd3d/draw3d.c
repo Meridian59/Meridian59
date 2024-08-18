@@ -385,10 +385,10 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    long t1,t2,t3;
    static int count = 0;
 
-   // Size of offscreen bitmap.
+   // View area of the player (as per software renderer view/fov)
    area.x = area.y = 0;
-   area.cx = main_viewport_width;
-   area.cy = main_viewport_height;
+   area.cx = CLASSIC_WIDTH;
+   area.cy = CLASSIC_HEIGHT;
 
    // Force size to be even.
    area.cy = area.cy & ~1;

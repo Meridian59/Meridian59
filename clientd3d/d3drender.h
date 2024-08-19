@@ -35,6 +35,8 @@
 #define D3DRENDER_REDRAW_UPDATE	0x00000001
 #define D3DRENDER_REDRAW_ALL	0x00000002
 
+#define Z_RANGE					(200000.0f)
+
 #define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\
 do	\
 {	\
@@ -150,8 +152,6 @@ extern int		gScreenHeight;
 HRESULT				D3DRenderInit(HWND hWnd);
 void				D3DRenderShutDown(void);
 void				D3DRenderBegin(room_type *room, Draw3DParams *params);
-void				D3DGeometryBuild(room_type *room);
-void				D3DGeometryUpdate(room_type *room);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
@@ -162,7 +162,6 @@ LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
 void				D3DRenderBackgroundSet(ID background);
-void				D3DRenderBackgroundSet2(ID background);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
@@ -170,6 +169,9 @@ d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
 void				*D3DRenderMalloc(unsigned int bytes);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
+
+LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
+	float width, float height);
 
 // material functions
 Bool D3DMaterialNone(d3d_render_chunk_new *pPool);
@@ -214,5 +216,8 @@ Bool D3DMaterialParticlePacket(d3d_render_packet_new *pPacket, d3d_render_cache_
 Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk);
 
 void SandstormInit(void);
+
+void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
+int DistanceGet(int x, int y);
 
 #endif	// __D3DRENDER_H__

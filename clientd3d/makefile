@@ -126,6 +126,7 @@ OBJS = \
         $(OUTDIR)\d3ddriver.obj \
         $(OUTDIR)\d3dparticle.obj \
         $(OUTDIR)\d3drender.obj \
+        $(OUTDIR)\d3drender_objects.obj \
         $(OUTDIR)\matrix.obj \
         $(OUTDIR)\xform.obj \
         $(OUTDIR)\signup.obj\

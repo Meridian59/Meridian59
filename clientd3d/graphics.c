@@ -109,13 +109,21 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
-    // Calculate the scaling factor
-    float scale_x = static_cast<float>(main_viewport_width) / CLASSIC_WIDTH;
-    float scale_y = static_cast<float>(main_viewport_height) / CLASSIC_HEIGHT;
+    if(D3DRenderIsEnabled())
+    { 
+        *x = (client_x - view.x) / 2;
+        *y = (client_y - view.y) / 2;
+    }
+    else
+    {
+        // Calculate the scaling factor
+        float scale_x = static_cast<float>(main_viewport_width) / CLASSIC_WIDTH;
+        float scale_y = static_cast<float>(main_viewport_height) / CLASSIC_HEIGHT;
 
-    // Translate client coordinates to room coordinates, considering scaling
-    *x = static_cast<int>((client_x - view.x) / scale_x);
-    *y = static_cast<int>((client_y - view.y) / scale_y);
+        // Translate client coordinates to room coordinates, considering scaling
+        *x = static_cast<int>((client_x - view.x) / scale_x);
+        *y = static_cast<int>((client_y - view.y) / scale_y);
+    }
 
     if (*x < view.x || *x > view.x + view.cx ||
         *y < view.y || *y > view.y + view.cy)

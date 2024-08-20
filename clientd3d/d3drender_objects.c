@@ -1058,11 +1058,6 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 							tempTop = (topLeft.y * -h / 2) + (h / 2);
 							tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-							tempLeft /= 2;
-							tempRight /= 2;
-							tempTop /= 2;
-							tempBottom /= 2;
-
 							distX = pRNode->motion.x - player.x;
 							distY = pRNode->motion.y - player.y;
 
@@ -1574,11 +1569,6 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 				tempRight = (bottomRight.x * w / 2) + (w / 2);
 				tempTop = (topLeft.y * -h / 2) + (h / 2);
 				tempBottom = (bottomRight.y * -h / 2) + (h / 2);
-
-				tempLeft /= 2;
-				tempRight /= 2;
-				tempTop /= 2;
-				tempBottom /= 2;
 
 				distX = pRNode->motion.x - player.x;
 				distY = pRNode->motion.y - player.y;

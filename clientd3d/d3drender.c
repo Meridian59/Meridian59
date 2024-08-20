@@ -4884,11 +4884,6 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			int tempTop = (topLeft.y * -h / 2) + (h / 2);
 			int tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-			tempLeft /= 2;
-			tempRight /= 2;
-			tempTop /= 2;
-			tempBottom /= 2;
-
 			int distX = bg_overlay_pos.x - player.x;
 			int distY = bg_overlay_pos.y - player.y;
 

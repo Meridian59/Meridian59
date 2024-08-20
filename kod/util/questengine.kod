@@ -7168,6 +7168,22 @@ CheckQuestDeadlines()
       return;
    }
 
+   GetActiveQuests(index = 0)
+   {
+      local lQuestTemplate;
+
+      lQuestTemplate = Send(self,@GetQuestTemplate,#index=index);
+
+      if lQuestTemplate = $
+      {
+         Debug("No quest template found");
+         return;
+      }
+
+      Debug("returning nth active quests");
+      return Nth(lQuestTemplate,QT_ACTIVE_QUESTS);
+   }
+
    %% DeleteActiveQuests()
    % deletes all active quests
    %%
@@ -7327,6 +7343,38 @@ CheckQuestDeadlines()
       return;
    }
 
+   ExpireQuests(index = 0, who = $, report = TRUE)
+   "Given a template, Locate and prematurely expire a player's active quests"
+   {
+      local lQuestTemplate, oQuest, oQuester;
+
+      lQuestTemplate = Send(self,@GetQuestTemplate,#index=index);
+
+      if lQuestTemplate = $
+      {
+         Debug("No quest template found");
+         return;
+      }
+
+      if who = $
+      {
+         Debug("Missing who");
+         return;
+      }
+
+      for oQuest in Send(self,@GetActiveQuests,#index=index)
+      {
+         for oQuester in Send(oQuest,@GetQuesters)
+         {
+            if oQuester = who
+            {
+               Post(Send(oQuest,@GetQuestNode),@DeadlineExpired,#report=report);
+            }
+         }
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

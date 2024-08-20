@@ -11214,8 +11214,9 @@ messages:
             Debug("ResignFaction miscounted number of faction members!");
          }
 
-         % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires. 
-         Send(self,@ExpireQuestByTemplate,#questTemplate=oQuest);
+         % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires.
+
+         Send(oQuestEngine,@ExpireQuests,#index=QST_ID_PRINCESS_SERVICE,#who=self,#report=FALSE);
       }
       
       if piFaction = FACTION_DUKE
@@ -11235,7 +11236,7 @@ messages:
          }
 
          % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires. 
-         Send(self,@ExpireQuestByTemplate,#questTemplate=oQuest);
+         Send(oQuestEngine,@ExpireQuests,#index=QST_ID_DUKE_SERVICE,#who=self,#report=FALSE);
       }
       
       if piFaction = FACTION_REBEL
@@ -11254,7 +11255,7 @@ messages:
          }
          
          % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires. 
-         Send(self,@ExpireQuestByTemplate,#questTemplate=oQuest);
+         Send(oQuestEngine,@ExpireQuests,#index=QST_ID_REBEL_SERVICE,#who=self,#report=FALSE);
       }
       
       Send(self,@ResetFaction,#faction=FACTION_NEUTRAL);
@@ -12234,31 +12235,6 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
-
-   ExpireQuestByTemplate(questTemplate = $)
-   "Locate and prematurely expire the player's active quests for a given template."
-   {
-      local oQuest, oQuester;
-
-      if questTemplate = $
-      {
-         Debug("Trying to expire quest but no quest template provided");
-
-         return;
-      }
-
-      for oQuest in Nth(questTemplate,QT_ACTIVE_QUESTS) {
-         for oQuester in Send(oQuest,@GetQuesters) {
-            if oQuester = self
-            {
-               Post(Send(oQuest,@GetQuestNode),@DeadlineExpired);
-            }
-         }
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

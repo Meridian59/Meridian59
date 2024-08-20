@@ -109,9 +109,9 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
-    // Default scale factors.
-    float scale_x = 2.0f;
-    float scale_y = 2.0f;
+    // Default scale factors for hardware renderer.
+    float scale_x = 1.0f;
+    float scale_y = 1.0f;
 
     if (!D3DRenderIsEnabled())
     { 

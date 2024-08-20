@@ -605,6 +605,11 @@ SetQuestNode( node_object = $ )
 	return;
 }
 
+GetQuestNode()
+{
+   return poQuestNode;
+}
+
 % returns FALSE if time expired (and cancels quest), TRUE if time left
 CheckDeadline( time = 0 )
 {

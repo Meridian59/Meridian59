@@ -109,12 +109,10 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
-    // Default scale factors assume no scaling required.
+    // Default scale factors.
     float scale_x = 2.0f;
     float scale_y = 2.0f;
 
-    // Check if the D3D renderer is not enabled. 
-    // If not enabled, use classic client aspect ratio for scaling.
     if (!D3DRenderIsEnabled())
     { 
         // The software renderer uses the classic client aspect ratio and stretches 

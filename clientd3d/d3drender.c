@@ -7362,12 +7362,13 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 		pRNode = drawdata[curObject].u.object.object->draw.obj;
 
+		if (pRNode == NULL)
+			continue;
+
 		if (processedIds.find(pRNode->obj.id) != processedIds.end())
 			continue;
 		processedIds.insert(pRNode->obj.id);
 
-		if (pRNode == NULL)
-			continue;
 
 		if (pRNode->obj.id == player.id)
 			continue;

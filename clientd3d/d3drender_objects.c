@@ -43,7 +43,7 @@ extern int gNumObjects;
 extern d_light_cache gDLightCache;
 extern d_light_cache gDLightCacheDynamic;
 
-extern long	timeObjects;
+extern long timeObjects;
 
 const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
 

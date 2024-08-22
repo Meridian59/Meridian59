@@ -10,9 +10,9 @@
 // (such as monsters, players, ornaments and vegetation) in the game world.
 // World objects are always drawn when the d3drenderer `draw_objects` is true.
 //
-#ifndef __D3DRENDEROBJECTS_H__
-#define __D3DRENDEROBJECTS_H__
+#ifndef _D3DRENDEROBJECTS_H
+#define _D3DRENDEROBJECTS_H
 
 void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node* pRNode);
 
-#endif	// __D3DRENDEROBJECTS_H__
+#endif	/* #ifndef _D3DRENDEROBJECTS_H */

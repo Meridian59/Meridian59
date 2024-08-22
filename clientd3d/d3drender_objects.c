@@ -47,8 +47,6 @@ static auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLU
 extern player_info player;
 extern RECT gD3DRect;
 
-static D3DMATRIX mat, trans, view, proj, identity;
-
 // Interfaces
 
 static void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool_new* pPool,
@@ -111,8 +109,6 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-		MatrixIdentity(&identity);
-
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
 		D3DRenderNamesDraw3D(&gObjectCacheSystem, &gObjectPool, room, params, &gFont);
@@ -154,6 +150,7 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
 		gSmallTextureSize, gSmallTextureSize);
 
+	D3DMATRIX view, proj;
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);

@@ -40,7 +40,7 @@ extern int gNumObjects;
 extern Vector3D sun_vect;
 extern D3DMATRIX view;
 
-const auto alpha_test_threshold = 128; // Threshold for alpha testing to determine transparency
+static const auto alpha_test_threshold = 128; // Threshold for alpha testing to determine transparency
 extern Bool gWireframe;
 
 extern player_info player;

@@ -6,8 +6,8 @@
 //
 // Meridian is a registered trademark.
 //
-// The render world interface is responsible for rendering the 3d game world
-// (including buildings, scenery, roads and so on). The 3d world is always drawn 
+// The render world interface is responsible for rendering the 3d game world - 
+// it's responsible for drawing the elements of the BSP tree. The 3d world is always drawn 
 // when the d3drenderer `draw_world` is true. It  also includes the
 // functionality to build and maintain the 3d geometry for the world.
 //

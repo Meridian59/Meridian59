@@ -6,8 +6,6 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-#include "d3drender_objects.h"
-#include "d3drender.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <chrono>
@@ -16,9 +14,8 @@
 
 extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 extern LPDIRECT3DVERTEXDECLARATION9 decl2dc;
-extern LPDIRECT3DTEXTURE9 gpBackBufferTexFull;
+extern PDIRECT3DTEXTURE9 gpBackBufferTexFull;
 extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
-extern D3DMATRIX mat, rot, trans, view, proj, identity;
 
 extern d3d_render_pool_new gObjectPool;
 extern d3d_render_cache_system gObjectCacheSystem;
@@ -45,11 +42,12 @@ extern d_light_cache gDLightCacheDynamic;
 
 extern long timeObjects;
 
-const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
+static auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
 
 extern player_info player;
-
 extern RECT gD3DRect;
+
+static D3DMATRIX mat, trans, view, proj, identity;
 
 // Interfaces
 
@@ -70,7 +68,6 @@ static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area)
 extern int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
 extern float FovHorizontal(long width);
 extern float FovVertical(long height);
-
 
 // Update the pChunks animation values as a function of time.
 static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)

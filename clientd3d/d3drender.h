@@ -35,6 +35,7 @@
 #define D3DRENDER_REDRAW_UPDATE	0x00000001
 #define D3DRENDER_REDRAW_ALL	0x00000002
 
+// the far clipping plane distance, which determines the maximum depth of the visible scene.
 #define Z_RANGE					(200000.0f)
 
 #define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\

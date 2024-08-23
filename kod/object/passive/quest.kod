@@ -605,9 +605,11 @@ SetQuestNode( node_object = $ )
 	return;
 }
 
-GetQuestNode()
+ExpireQuest(report = TRUE)
 {
-   return poQuestNode;
+   Send(poQuestNode,@DeadlineExpired,#report=report);
+
+   return;
 }
 
 % returns FALSE if time expired (and cancels quest), TRUE if time left

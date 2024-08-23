@@ -7368,7 +7368,7 @@ CheckQuestDeadlines()
          {
             if oQuester = who
             {
-               Post(Send(oQuest,@GetQuestNode),@DeadlineExpired,#report=report);
+               Post(oQuest,@ExpireQuest);
             }
          }
       }

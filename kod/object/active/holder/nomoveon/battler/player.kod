@@ -11214,7 +11214,7 @@ messages:
             Debug("ResignFaction miscounted number of faction members!");
          }
 
-         % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires.
+         % Prematurely expire the player's active PRINCESS service quest, if present, to avoid faction loss when it organically expires.
 
          Send(oQuestEngine,@ExpireQuests,#index=QST_ID_PRINCESS_SERVICE,#who=self,#report=FALSE);
       }
@@ -11235,7 +11235,7 @@ messages:
             Debug("ResignFaction miscounted number of faction members!");
          }
 
-         % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires. 
+         % Prematurely expire the player's active DUKE service quest, if present, to avoid faction loss when it organically expires. 
          Send(oQuestEngine,@ExpireQuests,#index=QST_ID_DUKE_SERVICE,#who=self,#report=FALSE);
       }
       
@@ -11254,7 +11254,7 @@ messages:
             Debug("ResignFaction miscounted number of faction members!");
          }
          
-         % Prematurely expire any active Rebel service quest, if present, to avoid faction loss when it organically expires. 
+         % Prematurely expire the player's active REBEL service quest, if present, to avoid faction loss when it organically expires. 
          Send(oQuestEngine,@ExpireQuests,#index=QST_ID_REBEL_SERVICE,#who=self,#report=FALSE);
       }
       

@@ -24,11 +24,12 @@ extern int main_viewport_height;
 // Define field of views with magic numbers for tuning
 inline float FovHorizontal(long width)
 {
-	return width / (float)(main_viewport_width) * (-PI / 3.6f);
+	return width / (float)(main_viewport_width) * (-PI / 3.78f);
 }
+
 inline float FovVertical(long height)
 {
-	return height / (float)(main_viewport_height) * (PI / 5.6f);
+	return height / (float)(main_viewport_height) * (PI / 5.88f);
 }
 
 static const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
@@ -5492,11 +5493,6 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			int tempTop = (topLeft.y * -h / 2) + (h / 2);
 			int tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-			tempLeft /= 2;
-			tempRight /= 2;
-			tempTop /= 2;
-			tempBottom /= 2;
-
 			int distX = bg_overlay_pos.x - player.x;
 			int distY = bg_overlay_pos.y - player.y;
 
@@ -7208,11 +7204,6 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				tempTop    = (topLeft.y * -h / 2) + (h / 2);
 				tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-				tempLeft /= 2;
-				tempRight /= 2;
-				tempTop /= 2;
-				tempBottom /= 2;
-
 				distX = pRNode->motion.x - player.x;
 				distY = pRNode->motion.y - player.y;
 
@@ -7371,12 +7362,13 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 		pRNode = drawdata[curObject].u.object.object->draw.obj;
 
+		if (pRNode == NULL)
+			continue;
+
 		if (processedIds.find(pRNode->obj.id) != processedIds.end())
 			continue;
 		processedIds.insert(pRNode->obj.id);
 
-		if (pRNode == NULL)
-			continue;
 
 		if (pRNode->obj.id == player.id)
 			continue;
@@ -7883,11 +7875,6 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							tempRight  = (bottomRight.x * w / 2) + (w / 2);
 							tempTop    = (topLeft.y * -h / 2) + (h / 2);
 							tempBottom = (bottomRight.y * -h / 2) + (h / 2);
-
-							tempLeft /= 2;
-							tempRight /= 2;
-							tempTop /= 2;
-							tempBottom /= 2;
 
 							distX = pRNode->motion.x - player.x;
 							distY = pRNode->motion.y - player.y;

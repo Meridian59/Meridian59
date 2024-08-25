@@ -6,8 +6,7 @@
 //
 // Meridian is a registered trademark.
 //
-// The render textures code to create from resource (png, bfg - regular or swizzled).
-// This also contains the means to set the palette for these textures.
+// The render textures code to create from resource (png, bgf - regular or swizzled).
 //
 #ifndef _D3DRENDERTEXTURES_H
 #define _D3DRENDERTEXTURES_H

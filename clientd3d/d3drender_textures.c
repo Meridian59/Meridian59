@@ -16,7 +16,7 @@ extern d3d_driver_profile gD3DDriverProfile;
 
 // Interfaces
 
-void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
+static void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
 
 // Implementations
 

@@ -1273,6 +1273,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 
 		angle = (pRNode->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
+		if (pRNode->obj.animate == NULL)
+			continue;
+
 		pDib = GetObjectPdib(pRNode->obj.icon_res, angle, pRNode->obj.animate->group);
 
 		if (NULL == pDib)

@@ -99,4 +99,6 @@ void DrawMiniMap(room_type *room, Draw3DParams *params); /* in Draw3d.h */
 void EnterNewRoom3D(room_type *room);
 Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int x, int y, long r);
 
+#define MAX_ITEMS 2400L
+
 #endif /* #ifndef _DRAWBSP_H */

@@ -6,9 +6,11 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <algorithm>
+#include <chrono>
 #include <unordered_map>
 #include <unordered_set>
-#include <chrono>
+#include <vector>
 
 // Variables
 
@@ -1225,7 +1227,27 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 	// drawdata[] may contain more than one entry with the same id.
 	// We need to keep track of those we've already processed to avoid duplicates.
 	std::unordered_set<int> processedIds;
-	// base objects
+
+	// Sorting drawdata based on the draw.id field, with a condition to place non-DrawObjectType items last
+	std::sort(drawdata, drawdata + MAX_ITEMS, [](const DrawItem& a, const DrawItem& b) {
+		// Compare the type field directly, which is a BYTE
+		if (a.type != DrawObjectType && b.type == DrawObjectType) {
+			return false;
+		}
+		if (a.type == DrawObjectType && b.type != DrawObjectType) {
+			return true;
+		}
+
+		// If both items are of the DrawObjectType, compare their draw.id
+		if (a.type == DrawObjectType && b.type == DrawObjectType) {
+			// Compare draw.id from the object union member
+			return a.u.object.object->draw.id < b.u.object.object->draw.id;
+		}
+
+		// If the types are the same and not DrawObjectType, keep the original order (stable sort)
+		return false;
+	});
+
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
 		if (drawdata[curObject].type != DrawObjectType)
@@ -1272,6 +1294,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		dy = pRNode->motion.y - params->viewer_y;
 
 		angle = (pRNode->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
+
+		if (pRNode->obj.animate == NULL)
+			continue;
 
 		pDib = GetObjectPdib(pRNode->obj.icon_res, angle, pRNode->obj.animate->group);
 

@@ -3,7 +3,7 @@
 # 1 standing
 # 2-3 walking
 # 4 fighting
--s 3
+-s 4
 24
 icef000a.bmp   [-72, -24] 
 icef045a.bmp   [-64, -12] 

@@ -2,19 +2,19 @@
 # groups 
 # 1 Held 
 # 2 ready to throw
--s 3
+-s 4
 12
 icsp000h.bmp   [-46, -25] 
 icsp045h.bmp   [-38, -5] 
 icsp090h.bmp   [-98, 3] 
-icsp180h.bmp   [-20, -20] 
-icsp270h.bmp   [-102, 10] 
+icsp180h.bmp   [-67, 5] 
+icsp270h.bmp   [-47, 3] 
 icsp315h.bmp   [-63, 24] 
 icsp000a.bmp   [-12, -5] 
 icsp045a.bmp   [-40, -10] 
 icsp090a.bmp   [-56, 8] 
-icsp180a.bmp   [31, -10] 
-icsp270a.bmp   [-114, 8] 
+icsp180a.bmp   [-11, 13] 
+icsp270a.bmp   [-59, 9] 
 icsp315a.bmp   [-80, 16] 
 2
  8      1   6   5   4   4   4   3   2

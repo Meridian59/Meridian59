@@ -2,26 +2,26 @@
 # groups
 # 1 Held
 # 2-3 attacking
--s 3
+-s 4
 18
 icsw000h.bmp   [-10, -11] 
 icsw045h.bmp   [-11, -1] 
 icsw090h.bmp   [-10, -6] 
-icsw180h.bmp   [-20, -5] 
-icsw270h.bmp   [-79, -8] 
+icsw180h.bmp   [-64, 19] 
+icsw270h.bmp   [-24, -12] 
 icsw315h.bmp   [-53, 32] 
-icsw000a.bmp   [-38, -47] 
+icsw000a.bmp   [-32, -42] 
 icsw045a.bmp   [-46, -36] 
 icsw090a.bmp   [-65, -24] 
-icsw180a.bmp   [38, -39] 
-icsw270a.bmp   [-16, -10] 
+icsw180a.bmp   [-11, -13] 
+icsw270a.bmp   [42, -17] 
 icsw315a.bmp   [-9, -7] 
 icsw000b.bmp   [-15, -3] 
 icsw045b.bmp   [-9, 6] 
 icsw090b.bmp   [7, -5] 
-icsw180b.bmp   [4, -10] 
-icsw270b.bmp   [-74, -17] 
-icsw315b.bmp   [-39, 58] 
+icsw180b.bmp   [-38, 16] 
+icsw270b.bmp   [-7, -22] 
+icsw315b.bmp   [-42, 47] 
 3
  8      1   6   5   4   4   4   3   2
  8      7  12  11  10  10  10   9   8

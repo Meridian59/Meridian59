@@ -8488,6 +8488,11 @@ messages:
       return;
    }
 
+   IsHairVisible()
+   {
+      return poHair_remove = $;
+   }
+
    RemoveOverlayObject(what = $)
    "Removes <what> from plOverlays if it's in there."
    {
@@ -11868,6 +11873,24 @@ messages:
    GetExpression()
    {
       return piAction;
+   }
+
+   % Facial overlays such as face masks and helmets are displayed by statues 
+   % and logoff ghosts. Such overlays (helms/mummy masks) may also require a 
+   % players hair, nose and/or mouth to be hidden to look right.
+   GetFacialOverlay()
+   {
+      local overlay;
+      
+      for overlay in plOverlays
+      {
+         if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
+         {
+            return overlay;
+         }
+      }
+
+      return $;
    }
 
    GetShieldRsc()

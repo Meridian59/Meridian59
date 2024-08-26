@@ -103,6 +103,8 @@ properties:
    prRight_arm = LogoffGhost_default_rarm
    prLeft_arm = LogoffGhost_default_larm
    prLegs = LogoffGhost_default_legs
+   pbIsHairVisible = $
+   prFacialOverlay = $
 
    prWeapon = LogoffGhost_default_sword
    prShield = LogoffGhost_default_shield
@@ -544,7 +546,9 @@ messages:
       piLeft_frame = 1;
       piRight_frame = 1;
       piLegs_frame = 1;
-      piOverlays = 8;
+      % Player has 7 standard overlays:
+      %  right arm, left arm, legs, head, eyes, mouth, nose
+      piOverlays = 7;
 
       if prShield <> $
       {
@@ -566,6 +570,16 @@ messages:
             piRight_frame = 17;
          }
 
+         piOverlays = piOverlays + 1;
+      }
+
+      if prFacialOverlay <> $
+      {
+         piOverlays = piOverlays + 1;
+      }
+
+      if pbIsHairVisible
+      {    
          piOverlays = piOverlays + 1;
       }
 
@@ -619,6 +633,9 @@ messages:
       prShield = Send(poGhostedPlayer,@GetShieldRsc);
       piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
       oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
+
+      prFacialOverlay = Send(poGhostedPlayer,@GetFacialOverlay);
+      pbIsHairVisible = Send(poGhostedPlayer,@IsHairVisible);
 
       piWeapon_translation = 0;
       prBowTop = $;
@@ -708,8 +725,12 @@ messages:
                 1,ANIMATE_NONE, 2,piExpression);
       AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
-      AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
-                1,piHair_translation, 1,ANIMATE_NONE, 2,1);
+  
+      if pbIsHairVisible
+      { 
+         AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
+                  1,piHair_translation, 1,ANIMATE_NONE, 2,1);
+      }
 
       if prShield <> $
       {
@@ -741,6 +762,11 @@ messages:
          }
 
          AddPacket(1,ANIMATE_NONE, 2,piWeapon_frame);
+      }
+
+      if prFacialOverlay <> $
+      {
+         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
       }
 
       return;

@@ -8490,7 +8490,7 @@ messages:
 
    IsHairVisible()
    {
-      return poHairRemove = $;
+      return poHair_remove = $;
    }
 
    RemoveOverlayObject(what = $)

@@ -107,29 +107,32 @@ Bool D3DDriverProfileInit(void)
 	gPresentParam.AutoDepthStencilFormat = D3DFMT_D24S8;
 	gPresentParam.Flags = gPresentParam.Flags & ~D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 
-	// default to no multisampling
+	// default to no multisampling.
 	gPresentParam.MultiSampleType = D3DMULTISAMPLE_NONE;
 	gPresentParam.MultiSampleQuality = 0;
 
-	// Push the quality up even higher with multisampling
+	// Push the quality up even higher with multisampling.
 	if (!config.gpuEfficiency)
 	{
-		// Test for multisample support
+		// Test for multisample support and choose highest possible.
 		HRESULT hr;
 		DWORD maxQualityLevels = 0;
+		for (int i = D3DMULTISAMPLE_NONE; i <= D3DMULTISAMPLE_16_SAMPLES; i++)
+		{
+			hr = IDirect3D9_CheckDeviceMultiSampleType(
+				gpD3D,
+				D3DADAPTER_DEFAULT,
+				D3DDEVTYPE_HAL,
+				gPresentParam.BackBufferFormat,
+				gPresentParam.Windowed,
+				static_cast<D3DMULTISAMPLE_TYPE>(i),
+				&maxQualityLevels);
 
-		hr = IDirect3D9_CheckDeviceMultiSampleType(
-			gpD3D,
-			D3DADAPTER_DEFAULT,
-			D3DDEVTYPE_HAL,
-			gPresentParam.BackBufferFormat,
-			gPresentParam.Windowed,
-			D3DMULTISAMPLE_16_SAMPLES,
-			&maxQualityLevels);
-
-		if (SUCCEEDED(hr)) {
-			gPresentParam.MultiSampleType = D3DMULTISAMPLE_16_SAMPLES;
-			gPresentParam.MultiSampleQuality = maxQualityLevels - 1;
+			if (SUCCEEDED(hr))
+			{
+				gPresentParam.MultiSampleType = static_cast<D3DMULTISAMPLE_TYPE>(i);
+				gPresentParam.MultiSampleQuality = maxQualityLevels - 1;
+			}
 		}
 	}
 

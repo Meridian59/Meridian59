@@ -139,6 +139,9 @@ static void D3DRenderBackgroundsLoad(char* pFilename, int index);
 
 // Implementations
 
+/**
+* Initialize the skybox rendering process
+*/
 void D3DRenderSkyBoxBegin()
 {
 	if (gpSkyboxTextures[0][0] == NULL)
@@ -156,6 +159,9 @@ void D3DRenderSkyBoxBegin()
 	}
 }
 
+/**
+* Function to render the skybox with the current background.
+*/
 void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode, int& angleHeading, int& anglePitch)
 {
 	// Set render states for skybox
@@ -200,6 +206,9 @@ void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 }
 
+/**
+* Function to draw the individual faces of the skybox.
+*/
 void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch)
 {
 	int			i, j;
@@ -268,6 +277,9 @@ void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int angle
 		D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
+/**
+* Set the current background texture for the skybox by background ID.
+*/
 void D3DRenderBackgroundSet(ID background)
 {
 	char* filename = LookupRsc(background);
@@ -292,6 +304,9 @@ void D3DRenderBackgroundSet(ID background)
 	gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 }
 
+/**
+* Shutdown the skybox by releasing all textures.
+*/
 void D3DRenderSkyBoxShutdown()
 {
 	for (int j = 0; j < 5; j++)

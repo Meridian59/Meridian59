@@ -6,7 +6,10 @@
 //
 // Meridian is a registered trademark.
 //
-// Creates and manages the worlds 6-sided skybox.
+// The render skybox focusing on rendering a skybox and managing the background textures 
+// associated with different in-game environments. A skybox is a large cube that surrounds 
+// the player, with textures applied to its inner faces to create the illusion of a 
+// distant 3D environment. 
 //
 #ifndef _D3DRENDERSKYBOX_H
 #define _D3DRENDERSKYBOX_H

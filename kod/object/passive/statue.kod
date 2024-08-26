@@ -64,7 +64,7 @@ properties:
    prRight_arm = $
    prLeft_arm = $
    prLegs = $
-   prOverlays = $
+   plOverlays = $
    prHairRemoved = $
 
    prWeapon = statue_default_sword
@@ -313,7 +313,7 @@ messages:
          }
       }
 
-      for overlay in prOverlays
+      for overlay in plOverlays
       {
          if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
          {
@@ -467,7 +467,7 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      prOverlays = Send(poOriginal,@GetOverlays);  
+      plOverlays = Send(poOriginal,@GetOverlays);  
       prHairRemoved = Send(poOriginal,@GetHairRemoved);
 
       oWeapon = send(poOriginal,@LookUpPlayerWeapon);
@@ -616,7 +616,7 @@ messages:
          }
       }
 
-      for overlay in prOverlays
+      for overlay in plOverlays
       {
          if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
          {

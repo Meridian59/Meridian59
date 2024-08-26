@@ -218,15 +218,24 @@ messages:
    
    EndEnchantment(who = $, report = TRUE, state = $)
    {
-      if send(state,@GetMana) >= (send(who,@getlevel) / 10)
+      % Verify the monster is still alive
+      if Send(who,@GetHealth) > 0
       {
-         Send(state,@LoseMana,#amount=send(who,@getlevel) / 10);
-         Post(who,@StartEnchantment,#what=self,#time=viDrainTime,#state=state);
-         return;
+         if Send(state,@GetMana) >= (Send(who,@getlevel) / 10)
+         {
+            Send(state,@LoseMana,#amount=Send(who,@getlevel) / 10);
+            Post(who,@StartEnchantment,#what=self,#time=viDrainTime,#state=state);
+
+            return;
+         }
+         
+         % Post because this must be done after the enchantment is gone from
+         % the monster's enchantment list
+         Post(who,@ResetBehaviorFlags);
+
+         Send(who,@SetMaster,#oMaster=$);
       }
-      post(who,@ResetBehaviorFlags);   %% this has to be done AFTER the enchantment 
-   				       %% is gone from the monster's ench list - post it    
-      send(who,@SetMaster,#oMaster=$);
+
       return;
    }
 

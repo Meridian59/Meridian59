@@ -103,8 +103,8 @@ properties:
    prRight_arm = LogoffGhost_default_rarm
    prLeft_arm = LogoffGhost_default_larm
    prLegs = LogoffGhost_default_legs
-   prOverlays = $
    prHairRemoved = $
+   plOverlays = $
 
    prWeapon = LogoffGhost_default_sword
    prShield = LogoffGhost_default_shield
@@ -574,10 +574,7 @@ messages:
          piOverlays = piOverlays + 1;
       }
 
-      for overlay in prOverlays
-      {
-         piOverlays = piOverlays + 1;
-      }
+      piOverlays = piOverlays + length(plOverlays);
 
       if prHairRemoved = $
       {    
@@ -635,7 +632,7 @@ messages:
       piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
       oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
 
-      prOverlays = Send(poGhostedPlayer,@GetOverlays);
+      plOverlays = Send(poGhostedPlayer,@GetOverlays);
       prHairRemoved = Send(poGhostedPlayer,@GetHairRemoved);
 
       piWeapon_translation = 0;
@@ -765,7 +762,7 @@ messages:
          AddPacket(1,ANIMATE_NONE, 2,piWeapon_frame);
       }
 
-      for overlay in prOverlays
+      for overlay in plOverlays
       {
          Send(overlay,@SendOverlayInformation,#iAnimation = $);
       }

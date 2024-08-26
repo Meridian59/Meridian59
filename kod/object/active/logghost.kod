@@ -104,7 +104,7 @@ properties:
    prLeft_arm = LogoffGhost_default_larm
    prLegs = LogoffGhost_default_legs
    pbIsHairVisible = $
-   prMaskOrHelm = $
+   prFacialOverlay = $
 
    prWeapon = LogoffGhost_default_sword
    prShield = LogoffGhost_default_shield
@@ -573,7 +573,7 @@ messages:
          piOverlays = piOverlays + 1;
       }
 
-      if prMaskOrHelm <> $
+      if prFacialOverlay <> $
       {
          piOverlays = piOverlays + 1;
       }
@@ -634,7 +634,7 @@ messages:
       piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
       oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
 
-      prMaskOrHelm = Send(poGhostedPlayer,@GetMaskOrHelmRsc);
+      prFacialOverlay = Send(poGhostedPlayer,@GetFacialOverlayRsc);
       pbIsHairVisible = Send(poGhostedPlayer,@IsHairVisible);
 
       piWeapon_translation = 0;
@@ -764,9 +764,9 @@ messages:
          AddPacket(1,ANIMATE_NONE, 2,piWeapon_frame);
       }
 
-      if prMaskOrHelm <> $
+      if prFacialOverlay <> $
       {
-         Send(prMaskOrHelm,@SendOverlayInformation,#iAnimation = $);
+         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
       }
 
       return;

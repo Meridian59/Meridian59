@@ -634,7 +634,7 @@ messages:
       piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
       oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
 
-      prFacialOverlay = Send(poGhostedPlayer,@GetFacialOverlayRsc);
+      prFacialOverlay = Send(poGhostedPlayer,@GetFacialOverlay);
       pbIsHairVisible = Send(poGhostedPlayer,@IsHairVisible);
 
       piWeapon_translation = 0;

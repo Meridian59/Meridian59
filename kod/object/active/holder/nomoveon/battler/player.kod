@@ -11878,7 +11878,7 @@ messages:
    % Facial overlays such as face masks and helmets are displayed by statues 
    % and logoff ghosts. Such overlays (helms/mummy masks) may may also require a 
    % players hair, nose and/or mouth to be hidden to look right.
-   GetFacialOverlayRsc()
+   GetFacialOverlay()
    {
       local overlay;
       

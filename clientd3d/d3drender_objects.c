@@ -1238,11 +1238,11 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		// If both items are of the DrawObjectType, compare their draw.id
 		if (a.type == DrawObjectType && b.type == DrawObjectType) {
 			// Compare draw.id from the object union member
+			// note: drawdata[] may contain more than one entry with the same id so this is not a stable sort.
 			return a.u.object.object->draw.id < b.u.object.object->draw.id;
 		}
 
 		// If the types are the same and not DrawObjectType, keep the original order.
-		// note: drawdata[] may contain more than one entry with the same id so this is not a stable sort.
 		return false;
 	});
 

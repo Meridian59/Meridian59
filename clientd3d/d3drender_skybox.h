@@ -6,13 +6,14 @@
 //
 // Meridian is a registered trademark.
 //
-// The render skybox creates and manages the 3d world skybox.
+// Creates and manages the worlds 6-sided skybox.
 //
 #ifndef _D3DRENDERSKYBOX_H
 #define _D3DRENDERSKYBOX_H
 
 void D3DRenderSkyBoxBegin();
-void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode, int& angleHeading, int& anglePitch);
+void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode, 
+	int& angleHeading, int& anglePitch);
 void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch);
 void D3DRenderSkyBoxShutdown();
 

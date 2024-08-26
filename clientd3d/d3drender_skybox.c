@@ -6,6 +6,7 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <unordered_map>
 
 // Variables
 
@@ -20,7 +21,7 @@ extern D3DMATRIX view;
 
 extern Bool gD3DRedrawAll;
 
-#define SKYBOX_DIMENSIONS	(75000.0f)
+static const float SKYBOX_DIMENSIONS = 75000.0f;
 
 static LPDIRECT3DTEXTURE9 gpSkyboxTextures[5][6];
 int gCurBackground;
@@ -269,21 +270,22 @@ void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int angle
 
 void D3DRenderBackgroundSet(ID background)
 {
-	char* filename = NULL;
-	filename = LookupRsc(background);
+	char* filename = LookupRsc(background);
 
-	if (filename)
+	if (!filename) return;
+
+	static const std::unordered_map<std::string, int> backgroundMap = {
+		{"skya.bgf", 0},
+		{"skyb.bgf", 1},
+		{"skyc.bgf", 2},
+		{"skyd.bgf", 3},
+		{"redsky.bgf", 4}
+	};
+
+	auto it = backgroundMap.find(filename);
+	if (it != backgroundMap.end())
 	{
-		if (strstr(filename, "skya.bgf"))
-			gCurBackground = 0;
-		else if (strstr(filename, "skyb.bgf"))
-			gCurBackground = 1;
-		else if (strstr(filename, "skyc.bgf"))
-			gCurBackground = 2;
-		else if (strstr(filename, "skyd.bgf"))
-			gCurBackground = 3;
-		else if (strstr(filename, "redsky.bgf"))
-			gCurBackground = 4;
+		gCurBackground = it->second;
 	}
 
 	// force a rebuild since static lightmaps might have changed

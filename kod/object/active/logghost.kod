@@ -103,6 +103,8 @@ properties:
    prRight_arm = LogoffGhost_default_rarm
    prLeft_arm = LogoffGhost_default_larm
    prLegs = LogoffGhost_default_legs
+   prOverlays = $
+   PrHairRemoved = $
 
    prWeapon = LogoffGhost_default_sword
    prShield = LogoffGhost_default_shield
@@ -540,11 +542,12 @@ messages:
 
    ResetFrames()
    {
+      local overlay; 
       piIcon_frame = 1;
       piLeft_frame = 1;
       piRight_frame = 1;
       piLegs_frame = 1;
-      piOverlays = 8;
+      piOverlays = 7;
 
       if prShield <> $
       {
@@ -566,6 +569,16 @@ messages:
             piRight_frame = 17;
          }
 
+         piOverlays = piOverlays + 1;
+      }
+
+      for overlay in prOverlays
+      {
+         piOverlays = piOverlays + 1;
+      }
+
+      if PrHairRemoved = $
+      {    
          piOverlays = piOverlays + 1;
       }
 
@@ -620,6 +633,9 @@ messages:
       piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
       oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
 
+      prOverlays = Send(poGhostedPlayer,@GetOverlays);
+      PrHairRemoved = Send(poGhostedPlayer,@GetHairRemoved);
+
       piWeapon_translation = 0;
       prBowTop = $;
 
@@ -661,7 +677,7 @@ messages:
 
    SendOverlays()
    {
-      local iSkin_xlat;
+      local iSkin_xlat, overlay;
 
       % Send overlay bitmap info to user.
 
@@ -708,8 +724,12 @@ messages:
                 1,ANIMATE_NONE, 2,piExpression);
       AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
-      AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
-                1,piHair_translation, 1,ANIMATE_NONE, 2,1);
+  
+      if PrHairRemoved = $
+      { 
+         AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
+                  1,piHair_translation, 1,ANIMATE_NONE, 2,1);
+      }
 
       if prShield <> $
       {
@@ -741,6 +761,11 @@ messages:
          }
 
          AddPacket(1,ANIMATE_NONE, 2,piWeapon_frame);
+      }
+
+      for overlay in prOverlays
+      {
+         Send(overlay,@SendOverlayInformation,#iAnimation = $);
       }
 
       return;

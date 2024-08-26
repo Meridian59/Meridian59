@@ -8488,9 +8488,14 @@ messages:
       return;
    }
 
-   GetOverlays()
+   IsHairVisible()
    {
-      return plOverlays;
+      if poHair_remove = $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    RemoveOverlayObject(what = $)
@@ -8509,11 +8514,6 @@ messages:
       }
 
       return;
-   }
-
-   GetHairRemoved()
-   {
-      return poHair_remove;
    }
 
    RemoveHair(what = $)
@@ -11878,6 +11878,21 @@ messages:
    GetExpression()
    {
       return piAction;
+   }
+
+   GetMaskOrHelmRsc()
+   {
+      local overlay;
+      
+      for overlay in plOverlays
+      {
+         if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
+         {
+            return overlay;
+         }
+      }
+
+      return $;
    }
 
    GetShieldRsc()

@@ -141,7 +141,7 @@ static void D3DRenderBackgroundsLoad(char* pFilename, int index);
 // Implementations
 
 /**
-* Initialize the skybox rendering process
+* Initialize the skybox rendering process.
 */
 void D3DRenderSkyBoxBegin()
 {
@@ -324,6 +324,9 @@ void D3DRenderSkyBoxShutdown()
 }
 
 
+/**
+* Loads a series of PNG images from a specified file and creates textures for the skybox.
+*/
 void D3DRenderBackgroundsLoad(char* pFilename, int index)
 {
 	FILE* pFile;
@@ -378,7 +381,7 @@ void D3DRenderBackgroundsLoad(char* pFilename, int index)
 
 	{
 		int	i;
-		png_bytep	curRow;
+		png_bytep curRow;
 
 		for (i = 0; i < 6; i++)
 		{

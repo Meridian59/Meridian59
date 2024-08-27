@@ -64,8 +64,8 @@ properties:
    prRight_arm = $
    prLeft_arm = $
    prLegs = $
-   plOverlays = $
-   prHairRemoved = $
+   pbIsHairVisible = $
+   prFacialOverlay = $
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
@@ -203,7 +203,6 @@ messages:
 
    ResetFrames()
    {
-      local overlay;
       if piPose = POSE_PUNCH
       {	 
          piIcon_frame = 4;
@@ -313,17 +312,12 @@ messages:
          }
       }
 
-      for overlay in plOverlays
+      if prFacialOverlay <> $
       {
-         if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
-         {
-            % We only add masks and helmets as the statues are configured for animations of weapon/shields
-            % which are impacted by @SendOverlayInformation.
-            piOverlays = piOverlays + 1;
-         }
+         piOverlays = piOverlays + 1;
       }
 
-      if prHairRemoved <> $
+      if not pbIsHairVisible
       {
          piOverlays = piOverlays - 1;
       }
@@ -467,8 +461,8 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      plOverlays = Send(poOriginal,@GetOverlays);  
-      prHairRemoved = Send(poOriginal,@GetHairRemoved);
+      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+      pbIsHairVisible = Send(poOriginal,@IsHairVisible);
 
       oWeapon = send(poOriginal,@LookUpPlayerWeapon);
 
@@ -513,7 +507,7 @@ messages:
 
    SendOverlays()
    {
-      local iSkin_xlat,overlay;
+      local iSkin_xlat;
 
       % Send overlay bitmap info to user.  
 
@@ -556,9 +550,9 @@ messages:
       AddPacket(4,prMouth,1,HS_MOUTH,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,piExpression);
       AddPacket(4,prEyes,1,HS_EYES,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,piExpression);
       AddPacket(4,prNose,1,HS_NOSE,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,1);
- 
-      if prHairRemoved = $
-      {  
+
+      if pbIsHairVisible
+      {
          AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,1,piHair_translation,1,ANIMATE_NONE,2,1);
       }
 
@@ -616,12 +610,9 @@ messages:
          }
       }
 
-      for overlay in plOverlays
+      if prFacialOverlay <> $
       {
-         if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
-         {
-            Send(overlay,@SendOverlayInformation,#iAnimation = $);
-         }
+         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
       }
 
       return;

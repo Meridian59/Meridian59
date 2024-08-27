@@ -52,9 +52,6 @@ resources:
    system_killed_self = "### %q was just slain by %s own folly."
    system_user_killed_room = \
       "### %s have laid claim to yet another poor soul, %q."
-   system_user_killed_bridge_faith = \
-      "### %q just hurled %sself from the cliffs of Riija to find a watery "
-      "grave."
    system_user_killed_token = "### %q lost a token to %s%q."
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
@@ -1507,16 +1504,8 @@ messages:
 
       if IsClass(killer,&Room)
       {
-         if IsClass(killer,&TempleRiija)
-         {
-            rMessage = system_user_killed_bridge_faith;
-            param2 = Send(what,@GetHisHer);
-         }
-         else
-         {
-            rMessage = system_user_killed_room;
-            param2 = Send(what,@GetTrueName);
-         }
+         rMessage = system_user_killed_room;
+         param2 = Send(what,@GetTrueName);
 
          % Eliminate param3 that was set by default
          param3 = $;

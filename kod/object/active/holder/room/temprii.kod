@@ -45,6 +45,8 @@ resources:
    riijadeadmessage4 = "No, thats not it, you don't know what happened..."
    riijadeadmessage5 = "but.... you probably got very lucky."
 
+   user_killed_bridge_faith = "### %s just hurled %sself from the cliffs of Riija to find a watery grave."
+
 classvars:
 
    vrName = room_name_RiijaTemple
@@ -362,8 +364,13 @@ messages:
       row = send(what,@GetRow);
       col = send(what,@GetCol);
 
-      debug(send(what,@GetName),"Hurled self off cliffs");
-      
+      % Riija shames the user by sharing their folly far and wide
+      for i in Send(SYS,@GetUsersLoggedOn)
+      {
+         Send(i,@MsgSendUser,#message_rsc=user_killed_bridge_faith,
+              #parm1=Send(what,@GetTrueName),#parm2=Send(what,@GetHisHer));
+      }
+
       dropped = FALSE;
       for i in send(what,@GetPlayerUsing)
       {

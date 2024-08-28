@@ -217,14 +217,7 @@ messages:
 
       % Get proper targets according to spell, assume that apply_on is our basic target.
 
-      if IsClass(self,&Scroll)
-      {
-         lTargets = Send(oSpell,@GetTargets,#who=what);
-      }
-      else
-      {
-         lTargets = Send(oSpell,@GetTargets,#who=what,#lTargets=[apply_on]);
-      }
+      lTargets = Send(self,@GetTargetsBySpell,#oSpell=oSpell,#who=what,#lTargets=[apply_on]);
       
       if Send(oSpell,@IsHarmful)
          AND IsClass(apply_on,&Monster)
@@ -470,6 +463,11 @@ messages:
    IsIdentified()
    {
       return Send(self, @IsLabelled);
+   }
+
+   GetTargetsBySpell(oSpell = $,who = $,lTargets = $)
+   {
+      return Send(oSpell,@GetTargets,#who=who,#lTargets=lTargets);
    }
 
 end

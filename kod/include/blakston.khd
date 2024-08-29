@@ -2769,6 +2769,7 @@
    QST_ID_DUKE_SOLDIER           = 72
    QST_ID_PRINCESS_SOLDIER       = 73
    QST_ID_REBEL_SOLDIER          = 74
+   QST_ID_MINSTREL_INSIGNIA      = 75
 
    % Quest misc constants
 

@@ -5995,10 +5995,10 @@ RecreateQuestNodes()
    }
    % template #219 is minstrel insignia quest
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS, #NPC_modifier = QN_NPCMOD_SAME,
-         #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &KriipaClaw, 20 ],
+         #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &FineLute, 1 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &PolishedSeraphym, 5 ],
-                        [ QN_PRIZETYPE_ITEMCLASS, &DragonflyEye, 20 ],
-                        [ QN_PRIZETYPE_ITEMCLASS, &ShamanBlood, 10 ] ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &RainbowFern, 20 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &UncutSeraphym, 10 ] ],
          #prizelist = [ [ QN_PRIZETYPE_INSIGNIA ] ],
          #timelimit = 12 * 3600 )    % 12 hrs
    {

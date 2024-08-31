@@ -10285,12 +10285,49 @@ messages:
          return PLAYER_LEARN_ERROR;     
       }
 
-      % Phase two:  get the hard data.
+      % Phase two: If player already has skill we can exit and respond
+      for i in plSkills
+      {
+         nSID=Send(self,@DecodeSkillNum,#compound=i);
+         nobj=Send(SYS,@FindSkillByNum,#num=nSID);
+         
+         if nobj = $ 
+         {
+            Debug("bad data in skill list!");
+
+            return PLAYER_LEARN_ERROR;
+         }
+         
+         if nobj = obj
+         {
+            return PLAYER_LEARN_ALREADY;
+         }
+      }
+
+      for i in plSpells
+      {
+         nSID=Send(self,@DecodeSpellNum,#compound=i);
+         nobj=Send(SYS,@FindSpellByNum,#num=nSID);
+         
+         if nobj = $ 
+         {
+            Debug("bad data in spell list!");
+
+            return PLAYER_LEARN_ERROR;
+         }
+         
+         if nobj = obj
+         {
+            return PLAYER_LEARN_ALREADY;
+         }
+      }
+
+      % Phase three:  get the hard data.
       level = Send(obj,@GetLevel);
       school = Send(obj,@GetSchool);
       division = Send(obj,@GetDivision);      
                   
-      % Phase three.  We begin to find our need.  Start by finding out how many
+      % Phase four.  We begin to find our need.  Start by finding out how many
       %  spells exist at ALL at that level.  While we are going through the spell
       %  skill list, count the spells/skills that count towards our total.  Note
       %  that we only want the top three spells/skills at that school and level.
@@ -10347,18 +10384,6 @@ messages:
          nSID=Send(self,@DecodeSkillNum,#compound=i);
          nobj=Send(SYS,@FindSkillByNum,#num=nSID);
          
-         if nobj = $ 
-         {
-            Debug("bad data in spell list!");
-
-            return PLAYER_LEARN_ERROR;
-         }
-         
-         if nobj = obj
-         {
-            return PLAYER_LEARN_ALREADY;
-         }
-
          nLevel = Send(nobj,@GetLevel);
     
          % Is this in the same school at level N-1?
@@ -10395,13 +10420,6 @@ messages:
       {
          nSID=Send(self,@DecodeSpellNum,#compound=i);
          nobj=Send(SYS,@FindSpellByNum,#num=nSID);
-         
-         if nobj = $ 
-         {
-            Debug("bad data in spell list!");
-
-            return PLAYER_LEARN_ERROR;
-         }
 
          nSchool = Send(nobj,@GetSchool);
          nLevel = Send(nobj,@GetLevel);
@@ -10409,11 +10427,6 @@ messages:
          if (not IsClass(nobj,&Spell)) OR (nLevel> 10)
          {
             continue;
-         }
-         
-         if nobj = obj
-         {
-            return PLAYER_LEARN_ALREADY;
          }
          
          if nSchool = SS_DM_COMMAND

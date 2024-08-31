@@ -229,6 +229,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "d3dcache.h"
 #include "d3drender.h"
 #include "d3drender_objects.h"
+#include "d3drender_materials.h"
 #include "d3drender_skybox.h"
 #include "d3drender_textures.h"
 #include "d3drender_world.h"

@@ -1449,7 +1449,7 @@ properties:
 
 	piQuestTimerDelay = 5 * 60 * 1000    %	used to check if deadlines met and schedule new quests
 	piQuestDeadlineTimerDelay = 60 * 1000     %  goes off once a minute
-	piQuestHistoryRecentTime = 4 * 3600       %  4 hrs - defines what 'recently' means in history restrictions
+	piQuestHistoryRecentTime = 3600           %  1 hr - defines what 'recently' means in history restrictions
 
 	piDebug = FALSE
 	piActive = TRUE                           % set to FALSE to suspend scheduling of new quests

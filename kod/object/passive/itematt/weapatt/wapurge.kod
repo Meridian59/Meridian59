@@ -49,7 +49,7 @@ properties:
   
    piValue_modifier = 200   %% modify the object's price by 100%
    piValue_power_modifier = 10
-   piEffect_percent = 50
+   piEffect_percent = 15
 
 messages:
 

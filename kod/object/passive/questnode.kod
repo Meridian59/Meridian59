@@ -1610,6 +1610,7 @@ messages:
    }
 
    DeadlineExpired(report = TRUE)
+   "Handle deadline expiration and notify player when `report=TRUE`"
    {
       local oQuestEngine, sSay, oQuester, lPenalty, lQuesters, iNodeType;
 

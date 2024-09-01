@@ -11175,7 +11175,7 @@ messages:
 
    ResignFaction()
    {
-      local numMembers, oQuestEngine, oQuest, oFlagPole;
+      local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
 
       oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
@@ -11196,67 +11196,45 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=player_unfactioned);
       }
-      
-      %decrease the max number of loyalty quests by one
+
+      % Decrease the max number of loyalty quests and expire the player's 
+      % current service quest, if one is active 
       if piFaction = FACTION_PRINCESS
       {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_PRINCESS_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,
-                 #index=QST_ID_PRINCESS_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-
-         % Prematurely expire the player's active PRINCESS service quest, if present, to avoid faction loss when it organically expires.
-
-         Send(oQuestEngine,@ExpireQuests,#index=QST_ID_PRINCESS_SERVICE,#who=self,#report=FALSE);
+         iServiceQuestIndex = QST_ID_PRINCESS_SERVICE;
       }
-      
+
       if piFaction = FACTION_DUKE
       {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_DUKE_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_DUKE_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-
-         % Prematurely expire the player's active DUKE service quest, if present, to avoid faction loss when it organically expires. 
-         Send(oQuestEngine,@ExpireQuests,#index=QST_ID_DUKE_SERVICE,#who=self,#report=FALSE);
+         iServiceQuestIndex = QST_ID_DUKE_SERVICE;
       }
-      
+
       if piFaction = FACTION_REBEL
       {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_REBEL_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_REBEL_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-         
-         % Prematurely expire the player's active REBEL service quest, if present, to avoid faction loss when it organically expires. 
-         Send(oQuestEngine,@ExpireQuests,#index=QST_ID_REBEL_SERVICE,#who=self,#report=FALSE);
+         iServiceQuestIndex = QST_ID_REBEL_SERVICE;
       }
+
+      oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                  #index=iServiceQuestIndex);
+      
+      % If the player is on a service quest for the faction they're losing, 
+      % let's expire it to avoid confusion caused by its eventual failure.
+      Send(oQuestEngine,@ExpireQuests,#index=iServiceQuestIndex,#who=self,
+            #report=FALSE);
+
+      % Decrease the max number of loyalty quests by one
+      numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+      if numMembers > 0
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,
+               #index=iServiceQuestIndex,
+               #new_max=(numMembers-1));
+      }
+      else
+      {
+         Debug("ResignFaction miscounted number of faction members!");
+      }
+
       
       Send(self,@ResetFaction,#faction=FACTION_NEUTRAL);
 

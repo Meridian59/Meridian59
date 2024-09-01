@@ -7344,7 +7344,7 @@ CheckQuestDeadlines()
    }
 
    ExpireQuests(index = 0, who = $, report = TRUE)
-   "Given a template, Locate and prematurely expire a player's active quests"
+   "Given a template index, locate and prematurely expire a player's active quests"
    {
       local lQuestTemplate, oQuest, oQuester;
 
@@ -7368,7 +7368,7 @@ CheckQuestDeadlines()
          {
             if oQuester = who
             {
-               Post(oQuest,@ExpireQuest);
+               Post(oQuest,@ExpireQuest,#report=report);
             }
          }
       }

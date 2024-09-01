@@ -11177,6 +11177,8 @@ messages:
    {
       local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
 
+      iServiceQuestIndex = 0;
+
       oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
       {
@@ -11214,27 +11216,29 @@ messages:
          iServiceQuestIndex = QST_ID_REBEL_SERVICE;
       }
 
-      oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                  #index=iServiceQuestIndex);
-      
-      % If the player is on a service quest for the faction they're losing, 
-      % let's expire it to avoid confusion caused by its eventual failure.
-      Send(oQuestEngine,@ExpireQuests,#index=iServiceQuestIndex,#who=self,
-            #report=FALSE);
-
-      % Decrease the max number of loyalty quests by one
-      numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-      if numMembers > 0
+      if iServiceQuestIndex > 0
       {
-         Send(oQuestEngine,@SetQuestMaxActive,
-               #index=iServiceQuestIndex,
-               #new_max=(numMembers-1));
-      }
-      else
-      {
-         Debug("ResignFaction miscounted number of faction members!");
-      }
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                     #index=iServiceQuestIndex);
+         
+         % If the player is on a service quest for the faction they're losing, 
+         % let's expire it to avoid confusion caused by its eventual failure.
+         Send(oQuestEngine,@ExpireQuests,#index=iServiceQuestIndex,#who=self,
+               #report=FALSE);
 
+         % Decrease the max number of loyalty quests by one
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,
+                  #index=iServiceQuestIndex,
+                  #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of faction members!");
+         }
+      }
       
       Send(self,@ResetFaction,#faction=FACTION_NEUTRAL);
 

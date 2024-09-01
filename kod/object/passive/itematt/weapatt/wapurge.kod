@@ -49,7 +49,7 @@ properties:
   
    piValue_modifier = 200   %% modify the object's price by 100%
    piValue_power_modifier = 10
-   piEffect_percent = 15
+   piEffect_percent = 50
 
 messages:
 
@@ -71,28 +71,32 @@ messages:
    %%% Effect Functions
       
    ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
-   "Wielder has a 1% chance of blinding target with any hit."
+   "Wielder has a percent chance of purging target with any hit."
    {
-      local oSpell;
+      local oSpell, oRoom;
 
       if random(1,100) < piEffect_percent
       {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_PURGE);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_PURGE);
          
          %% Gotta have something to try to remove....
          if Send(target,@IsEnchanted)
          {
-            % Try to purge off random(25,75)% of the enchantments.
-            if send(oSpell,@DoPurge,#who=target,#iChance=random(25,75))
+            oRoom = Send(wielder,@GetOwner);
+
+            % Try to purge off random number of the enchantments
+            % Only tell our victim if they lost enchantments
+            if Send(oSpell,@DoPurge,#who=target,#iChance=random(25,75))
             {
-               % Only tell our victim if they lost enchantments.
-               send(target,@MsgSendUser,#message_rsc=purger_worked_target,
-                    #parm1=send(wielder,@GetCapDef),#parm2=send(wielder,@GetName));
+               Send(oSpell,@PlaySpellSound,#room_obj=oRoom,#what=wielder);
+
+               Send(target,@MsgSendUser,#message_rsc=purger_worked_target,
+                    #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
             }
 
-            % Tell the wielder every time we fired so they think it's cool.
-            send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
-                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+            % Tell the wielder every time we fired so they think it's cool
+            Send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
       }
 

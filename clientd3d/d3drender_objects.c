@@ -19,6 +19,8 @@ extern LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 extern PDIRECT3DTEXTURE9 gpBackBufferTexFull;
 extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
 
+extern D3DMATRIX view, proj;
+
 extern d3d_render_pool_new gObjectPool;
 extern d3d_render_cache_system gObjectCacheSystem;
 extern d3d_driver_profile gD3DDriverProfile;
@@ -152,7 +154,6 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
 		gSmallTextureSize, gSmallTextureSize);
 
-	D3DMATRIX view, proj;
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);

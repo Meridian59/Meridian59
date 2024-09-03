@@ -1872,13 +1872,15 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 		float		falloff, invXScale, invYScale, invZScale,
 			invXScaleHalf, invYScaleHalf, invZScaleHalf;
 
-		invXScale = pDLightCache->dLights[numLights].invXYZScale.x;
-		invYScale = pDLightCache->dLights[numLights].invXYZScale.y;
-		invZScale = pDLightCache->dLights[numLights].invXYZScale.z;
+		// Ensures that the lightmaps are applied uniformly without
+		// altering the geometry horizontally
+		invXScale = 1.0;
+		invYScale = 1.0;
+		invZScale = 1.0;
 
-		invXScaleHalf = pDLightCache->dLights[numLights].invXYZScaleHalf.x;
-		invYScaleHalf = pDLightCache->dLights[numLights].invXYZScaleHalf.y;
-		invZScaleHalf = pDLightCache->dLights[numLights].invXYZScaleHalf.z;
+		invXScaleHalf = 0.5;
+		invYScaleHalf = 0.5;
+		invZScaleHalf = 0.5;
 
 		unlit = 0;
 		lightRange = (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) *

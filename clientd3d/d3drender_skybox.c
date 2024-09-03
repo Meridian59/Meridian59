@@ -288,16 +288,13 @@ void D3DRenderBackgroundSet(ID background)
 	if (!filename) return;
 
 	static const std::unordered_map<std::string, int> backgroundMap = {
-		{"skya.bgf", 0},
-		{"skyb.bgf", 1},
-		{"skyc.bgf", 2},
-		{"skyd.bgf", 3},
+		{"2skya.bgf", 0},
+		{"2skyb.bgf", 1},
+		{"2skyc.bgf", 2},
+		{"2skyd.bgf", 3},
 		{"redsky.bgf", 4}
 	};
 
-	// filenames are prefixed with a number, so we need to skip that to match
-	// with an item in our map.
-	filename = filename + 1;
 	auto it = backgroundMap.find(filename);
 	if (it != backgroundMap.end())
 	{

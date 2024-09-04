@@ -465,7 +465,12 @@ messages:
       return Send(self, @IsLabelled);
    }
 
+
+   % This method can be overridden to modify the logic for determining targets
+   % For example, you might override this method to forego selected targets 
+   % altogether, as is the case with &Scroll.
    GetTargetsBySpell(oSpell = $,who = $,lTargets = $)
+   "Returns the list of targets for a given spell"
    {
       return Send(oSpell,@GetTargets,#who=who,#lTargets=lTargets);
    }

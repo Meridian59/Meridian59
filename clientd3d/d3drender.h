@@ -156,11 +156,6 @@ void				D3DRenderBegin(room_type *room, Draw3DParams *params);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
-LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
-LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
-void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
 void				D3DRenderBackgroundSet(ID background);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
@@ -173,48 +168,6 @@ void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
 
 LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
 	float width, float height);
-
-// material functions
-Bool D3DMaterialNone(d3d_render_chunk_new *pPool);
-
-// world
-Bool D3DMaterialWorldPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk);
-Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk);
-Bool D3DMaterialWallMaskPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk);
-
-// lmaps
-Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk);
-Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk);
-
-// objects
-Bool D3DMaterialObjectPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialObjectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk);
-
-// invisible objects
-Bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool);
-Bool D3DMaterialObjectInvisiblePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk);
-
-// effects
-Bool D3DMaterialEffectPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialEffectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialEffectChunk(d3d_render_chunk_new *pChunk);
-
-// blur
-Bool D3DMaterialBlurPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialBlurPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialBlurChunk(d3d_render_chunk_new *pChunk);
-
-// particles
-Bool D3DMaterialParticlePool(d3d_render_pool_new *pPool);
-Bool D3DMaterialParticlePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk);
 
 void SandstormInit(void);
 

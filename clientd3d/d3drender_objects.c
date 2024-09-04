@@ -6,9 +6,11 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <algorithm>
+#include <chrono>
 #include <unordered_map>
 #include <unordered_set>
-#include <chrono>
+#include <vector>
 
 // Variables
 
@@ -16,6 +18,8 @@ extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 extern LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 extern PDIRECT3DTEXTURE9 gpBackBufferTexFull;
 extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
+
+extern D3DMATRIX view, proj;
 
 extern d3d_render_pool_new gObjectPool;
 extern d3d_render_cache_system gObjectCacheSystem;
@@ -150,7 +154,6 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
 		gSmallTextureSize, gSmallTextureSize);
 
-	D3DMATRIX view, proj;
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
@@ -1222,10 +1225,32 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 	// count of objects found at that location.
 	std::unordered_map<int64, int> depth_adjustment_map;
 
+	// As we receive objects in different orders from the BSP walk this can cause inconsistent z-depth ordering.
+	// We now attempt to maintain a consistent view by sorting draw data by their ids.
+	std::sort(drawdata, drawdata + nitems, [](const DrawItem& a, const DrawItem& b) {
+
+		if (a.type != DrawObjectType && b.type == DrawObjectType) {
+			return false;
+		}
+		if (a.type == DrawObjectType && b.type != DrawObjectType) {
+			return true;
+		}
+
+		// If both items are of the DrawObjectType, compare their draw.id
+		if (a.type == DrawObjectType && b.type == DrawObjectType) {
+			// Compare draw.id from the object union member
+			// drawdata[] may contain more than one entry with the same id so this is not a stable sort.
+			return a.u.object.object->draw.id < b.u.object.object->draw.id;
+		}
+
+		// If the types are the same and not DrawObjectType, keep the original order.
+		return false;
+	});
+
 	// drawdata[] may contain more than one entry with the same id.
 	// We need to keep track of those we've already processed to avoid duplicates.
 	std::unordered_set<int> processedIds;
-	// base objects
+
 	for (curObject = 0; curObject < nitems; curObject++)
 	{
 		if (drawdata[curObject].type != DrawObjectType)

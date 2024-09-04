@@ -83,7 +83,12 @@ messages:
 
       return;
    }
-
+   
+   GetTargetsBySpell(oSpell = $,who = $)
+   {
+      % Scrolls do not have targets, so override to ignore SpellItem targeting
+      return Send(oSpell,@GetTargets,#who=who);
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

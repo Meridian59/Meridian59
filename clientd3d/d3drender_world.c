@@ -2406,3 +2406,957 @@ void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheS
 	if (pRenderCache)
 		CACHE_BGRA_UNLOCK(pRenderCache);
 }
+
+/**
+ * Extracts and prepares wall data for rendering by calculating texture coordinates,
+ * vertex positions, and applying lighting and animation effects based on wall type and orientation.
+ */
+int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom_xyz *pXYZ,
+						  custom_st *pST, custom_bgra *pBGRA, unsigned int type, int side)
+{
+	int				top, bottom;
+	int				xOffset, yOffset;
+	Sidedef			*pSideDef;
+	int				drawTopDown;
+	int				paletteIndex;
+	BYTE			light;
+
+	if (pXYZ)
+	{
+		// pos and neg sidedefs have their x and y coords reversed
+		if (side > 0)
+		{
+			pSideDef = pWall->pos_sidedef;
+
+			if (NULL == pWall->pos_sector)
+				light = 0;
+			else
+				light = pWall->pos_sector->light;
+
+			xOffset = pWall->pos_xoffset;
+			yOffset = pWall->pos_yoffset;
+
+			pXYZ[0].x = pWall->x0;
+			pXYZ[3].x = pWall->x1;
+			pXYZ[1].x = pWall->x0;
+			pXYZ[2].x = pWall->x1;
+
+			pXYZ[0].y = pWall->y0;
+			pXYZ[3].y = pWall->y1;
+			pXYZ[1].y = pWall->y0;
+			pXYZ[2].y = pWall->y1;
+
+			switch (type)
+			{
+				case D3DRENDER_WALL_NORMAL:
+				{
+					pXYZ[0].z = pWall->z2;
+					pXYZ[3].z = pWall->zz2;
+					pXYZ[1].z = pWall->z1;
+					pXYZ[2].z = pWall->zz1;
+
+					if (pSideDef->flags & WF_NORMAL_TOPDOWN)
+						drawTopDown = 1;
+					else
+						drawTopDown = 0;
+				}
+				break;
+
+				case D3DRENDER_WALL_BELOW:
+				{
+					if ((pWall->bowtie_bits & BT_BELOW_POS) ||
+						(pWall->bowtie_bits & BT_BELOW_NEG))
+					{
+						pXYZ[0].z = pWall->z1Neg;
+						pXYZ[3].z = pWall->zz1Neg;
+					}
+					else
+					{
+						pXYZ[0].z = pWall->z1;
+						pXYZ[3].z = pWall->zz1;
+					}
+
+					pXYZ[1].z = pWall->z0;
+					pXYZ[2].z = pWall->zz0;
+
+					if (pSideDef->flags & WF_BELOW_TOPDOWN)
+						drawTopDown = 1;
+					else
+						drawTopDown = 0;
+				}
+				break;
+
+				case D3DRENDER_WALL_ABOVE:
+				{
+					pXYZ[0].z = pWall->z3;
+					pXYZ[3].z = pWall->zz3;
+					pXYZ[1].z = pWall->z2;
+					pXYZ[2].z = pWall->zz2;
+
+					if (pSideDef->flags & WF_ABOVE_BOTTOMUP)
+						drawTopDown = 0;
+					else
+						drawTopDown = 1;
+				}
+				break;
+
+				default:
+				break;
+			}
+		}
+		else if (side < 0)
+		{
+			pSideDef = pWall->neg_sidedef;
+
+			if (NULL == pWall->neg_sector)
+				light = 0;
+			else
+				light = pWall->neg_sector->light;
+
+			xOffset = pWall->neg_xoffset;
+			yOffset = pWall->neg_yoffset;
+
+			pXYZ[0].x = (float)pWall->x1;
+			pXYZ[3].x = (float)pWall->x0;
+			pXYZ[1].x = (float)pWall->x1;
+			pXYZ[2].x = (float)pWall->x0;
+
+			pXYZ[0].y = (float)pWall->y1;
+			pXYZ[3].y = (float)pWall->y0;
+			pXYZ[1].y = (float)pWall->y1;
+			pXYZ[2].y = (float)pWall->y0;
+
+			switch (type)
+			{
+				case D3DRENDER_WALL_NORMAL:
+				{
+					pXYZ[0].z = (long)pWall->zz2;
+					pXYZ[3].z = (long)pWall->z2;
+					pXYZ[1].z = (long)pWall->zz1;
+					pXYZ[2].z = (long)pWall->z1;
+
+					if (pSideDef->flags & WF_NORMAL_TOPDOWN)
+						drawTopDown = 1;
+					else
+						drawTopDown = 0;
+				}
+				break;
+
+				case D3DRENDER_WALL_BELOW:
+				{
+					pXYZ[0].z = (long)pWall->zz1;
+					pXYZ[3].z = (long)pWall->z1;
+					pXYZ[1].z = (long)pWall->zz0;
+					pXYZ[2].z = (long)pWall->z0;
+
+					if (pSideDef->flags & WF_BELOW_TOPDOWN)
+						drawTopDown = 1;
+					else
+						drawTopDown = 0;
+				}
+				break;
+
+				case D3DRENDER_WALL_ABOVE:
+				{
+					pXYZ[0].z = (long)pWall->zz3;
+					pXYZ[3].z = (long)pWall->z3;
+					pXYZ[1].z = (long)pWall->zz2;
+					pXYZ[2].z = (long)pWall->z2;
+
+					if (pSideDef->flags & WF_ABOVE_BOTTOMUP)
+						drawTopDown = 0;
+					else
+						drawTopDown = 1;
+				}
+				break;
+
+				default:
+				break;
+			}
+		}
+		else
+			assert(0);
+	}
+
+	*flags = 0;
+
+	if (pSideDef->flags & WF_TRANSPARENT)
+		*flags |= D3DRENDER_TRANSPARENT;
+
+	switch (type)
+	{
+		case D3DRENDER_WALL_NORMAL:
+			if (pSideDef->flags & WF_NO_VTILE)
+				*flags |= D3DRENDER_NO_VTILE;
+			if (pSideDef->flags & WF_NO_HTILE)
+				*flags |= D3DRENDER_NO_HTILE;
+		break;
+
+		default:
+      break;
+	}
+
+	if ((pXYZ) && (pST))
+	{
+		float	invWidth, invHeight, invWidthFudge, invHeightFudge;
+
+		// force a wraparound because many textures in the old client do this, grr
+		yOffset = yOffset << 16;
+		yOffset = yOffset >> 16;
+
+		invWidth = 1.0f / (float)pDib->width;
+		invHeight = 1.0f / (float)pDib->height;
+		invWidthFudge = 1.0f / ((float)pDib->width * PETER_FUDGE);
+		invHeightFudge = 1.0f / ((float)pDib->height * PETER_FUDGE);
+
+		pST[0].s = (float)xOffset * (float)(pDib->shrink) * invHeight;
+		pST[1].s = (float)xOffset * (float)(pDib->shrink) * invHeight;
+		pST[3].s = (float)(pST[0].s + ((float)pWall->length * (float)pDib->shrink) * invHeight);
+		pST[2].s = (float)(pST[1].s + ((float)pWall->length * (float)pDib->shrink) * invHeight);
+
+		if (!drawTopDown)
+		{
+			if (pXYZ[1].z == pXYZ[2].z)
+				bottom = pXYZ[1].z;
+			else
+			{
+				bottom = min(pXYZ[1].z, pXYZ[2].z);
+				bottom = bottom & ~(FINENESS - 1);
+			}
+
+			if (pXYZ[0].z == pXYZ[3].z)
+				top = pXYZ[0].z;
+			else
+			{
+				top = max(pXYZ[0].z, pXYZ[3].z);
+				top = (top + FINENESS - 1) & ~(FINENESS - 1);
+			}
+
+			if (pXYZ[1].z == pXYZ[2].z)
+			{
+				pST[1].t = 1.0f - (((float)yOffset * (float)pDib->shrink)
+					* invWidth);
+				pST[2].t = 1.0f - (((float)yOffset * (float)pDib->shrink)
+					* invWidth);
+			}
+			else
+			{
+				pST[1].t = 1.0f - (((float)yOffset * (float)pDib->shrink)
+					*invWidth);
+				pST[2].t = 1.0f - (((float)yOffset * (float)pDib->shrink)
+					* invWidth);
+				pST[1].t -= ((float)pXYZ[1].z - bottom) * (float)pDib->shrink
+						* invWidthFudge;
+				pST[2].t -= ((float)pXYZ[2].z - bottom) * (float)pDib->shrink
+						* invWidthFudge;
+			}
+
+			pST[0].t = pST[1].t -
+				((float)(pXYZ[0].z - pXYZ[1].z) * (float)pDib->shrink * invWidthFudge);
+			pST[3].t = pST[2].t -
+				((float)(pXYZ[3].z - pXYZ[2].z) * (float)pDib->shrink * invWidthFudge);
+		}
+		else	// else, need to place tex origin at top left
+		{
+			if (pXYZ[0].z == pXYZ[3].z)
+				top = pXYZ[0].z;
+			else
+			{
+				top = max(pXYZ[0].z, pXYZ[3].z);
+				top = (top + FINENESS - 1) & ~(FINENESS - 1);
+			}
+
+			if (pXYZ[1].z == pXYZ[2].z)
+				bottom = pXYZ[1].z;
+			else
+			{
+				bottom = min(pXYZ[1].z, pXYZ[2].z);
+				bottom = bottom & ~(FINENESS - 1);
+			}
+
+			if (pXYZ[0].z == pXYZ[3].z)
+			{
+				pST[0].t = 0.0f;
+				pST[3].t = 0.0f;
+			}
+			else
+			{
+				pST[0].t = ((float)top - pXYZ[0].z) * (float)pDib->shrink
+						* invWidthFudge;
+				pST[3].t = ((float)top - pXYZ[3].z) * (float)pDib->shrink
+						* invWidthFudge;
+			}
+
+			pST[0].t -= ((float)(yOffset * pDib->shrink) * invWidth);
+			pST[3].t -= ((float)(yOffset * pDib->shrink) * invWidth);
+
+			pST[1].t = pST[0].t + ((pXYZ[0].z - pXYZ[1].z) * (float)pDib->shrink
+				* invWidthFudge);
+			pST[2].t = pST[3].t + ((pXYZ[3].z - pXYZ[2].z) * (float)pDib->shrink
+				* invWidthFudge);
+		}
+
+		if (pSideDef->animate != NULL && pSideDef->animate->animation == ANIMATE_SCROLL)
+		{
+			int	i;
+			if (pSideDef->flags & WF_BACKWARDS)
+			{
+				for (i = 0; i < 4; i++)
+				{
+					pST[i].s -= pSideDef->animate->u.scroll.xoffset * pDib->shrink *
+						invHeight;
+					pST[i].t += pSideDef->animate->u.scroll.yoffset * pDib->shrink *
+						invWidth;
+				}
+			}
+			else
+			{
+				for (i = 0; i < 4; i++)
+				{
+					pST[i].s += pSideDef->animate->u.scroll.xoffset * pDib->shrink *
+						invHeight;
+					pST[i].t -= pSideDef->animate->u.scroll.yoffset * pDib->shrink *
+						invWidth;
+				}
+			}
+		}
+
+		if (pSideDef->flags & WF_BACKWARDS)
+		{
+			float	temp;
+
+			temp = pST[3].s;
+			pST[3].s = pST[0].s;
+			pST[0].s = temp;
+
+			temp = pST[2].s;
+			pST[2].s = pST[1].s;
+			pST[1].s = temp;
+		}
+
+		if (*flags & D3DRENDER_NO_VTILE)
+		{
+			if (pST[0].t < 0.0f)
+			{
+				float	tex, wall, ratio, temp;
+
+				tex = pST[1].t - pST[0].t;
+				if (tex == 0)
+					tex = 1.0f;
+				temp = -pST[0].t;
+				ratio = temp / tex;
+
+				wall = pXYZ[0].z - pXYZ[1].z;
+				temp = wall * ratio;
+				pXYZ[0].z -= temp;
+				pST[0].t = 0.0f;
+			}
+			if (pST[3].t < 0.0f)
+			{
+				float	tex, wall, ratio, temp;
+
+				tex = pST[2].t - pST[3].t;
+				if (tex == 0)
+					tex = 1.0f;
+				temp = -pST[3].t;
+				ratio = temp / tex;
+
+				wall = pXYZ[3].z - pXYZ[2].z;
+				temp = wall * ratio;
+				pXYZ[3].z -= temp;
+				pST[3].t = 0.0f;
+			}
+
+			pXYZ[1].z -= 16.0f;
+			pXYZ[2].z -= 16.0f;
+		}
+
+		pST[0].t += 1.0f / pDib->width;
+		pST[3].t += 1.0f / pDib->width;
+		pST[1].t -= 1.0f / pDib->width;
+		pST[2].t -= 1.0f / pDib->width;
+	}
+
+	if (pBGRA)
+	{
+		int	i;
+    float a, b;
+		int	distX, distY, distance;
+		long	lightScale;
+		long lo_end = FINENESS-shade_amount;
+
+		for (i = 0; i < 4; i++)
+		{
+			distX = pXYZ[i].x - player.x;
+			distY = pXYZ[i].y - player.y;
+
+			distance = DistanceGet(distX, distY);
+
+			if (shade_amount != 0)
+			{
+				a = pWall->separator.a;
+				b = pWall->separator.b;
+
+				if (side < 0)
+				{
+					a = -a;
+					b = -b;
+				}
+
+				lightScale = (long)(a * sun_vect.x +
+								b * sun_vect.y) >> LOG_FINENESS;
+
+				lightScale = (lightScale + FINENESS)>>1; // map to 0 to 1 range
+
+				lightScale = lo_end + ((lightScale * shade_amount)>>LOG_FINENESS);
+				
+				if (lightScale > FINENESS)
+					lightScale = FINENESS;
+				else if ( lightScale < 0)
+					lightScale = 0;
+			}
+			else
+				lightScale = FINENESS;
+
+			pWall->lightscale = lightScale;
+
+			if (gD3DDriverProfile.bFogEnable)
+				paletteIndex = GetLightPaletteIndex(FINENESS, light, lightScale, 0);
+			else
+				paletteIndex = GetLightPaletteIndex(distance, light, lightScale, 0);
+
+			if (light <= 127)
+				*flags |= D3DRENDER_NOAMBIENT;
+
+			pBGRA[i].r = pBGRA[i].g = pBGRA[i].b = paletteIndex * COLOR_AMBIENT / 64;
+			pBGRA[i].a = 255;
+		}
+	}
+
+	return 1;
+}
+
+/**
+ * Extracts and processes floor data for rendering, generating vertex positions,
+ * texture coordinates, and applying lighting effects.
+ */
+void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_st *pST,
+							custom_bgra *pBGRA)
+{
+	Sector	*pSector = pNode->u.leaf.sector;
+	int		count;
+	int		left, top;
+	int		paletteIndex;
+	float	oneOverC, inv128, inv64;
+	custom_xyz	intersectTop, intersectLeft;
+	long		lightscale;
+
+	left = top = 0;
+
+	inv128 = 1.0f / (128.0f * PETER_FUDGE);
+	inv64 = 1.0f / (64.0f * PETER_FUDGE);
+
+	// generate texture coordinates
+	if (pSector->sloped_floor)
+	{
+		left = pSector->sloped_floor->p0.x;
+		top = pSector->sloped_floor->p0.y;
+	}
+	else
+	{
+		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+		{
+			if (pNode->u.leaf.poly.p[count].x < left)
+				left = pNode->u.leaf.poly.p[count].x;
+		}
+		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+		{
+			if (pNode->u.leaf.poly.p[count].y < top)
+				top = pNode->u.leaf.poly.p[count].y;
+		}
+	}
+
+	if (pSector->sloped_floor)
+	{
+		oneOverC = 1.0f / pSector->sloped_floor->plane.c;
+	}
+
+	if (pXYZ)
+	{
+		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+		{
+			if (pSector->sloped_floor)
+			{
+				pXYZ[count].x = (float)pNode->u.leaf.poly.p[count].x;
+				pXYZ[count].y = (float)pNode->u.leaf.poly.p[count].y;
+				pXYZ[count].z = (-pSector->sloped_floor->plane.a * pXYZ[count].x -
+					pSector->sloped_floor->plane.b * pXYZ[count].y -
+					pSector->sloped_floor->plane.d) * oneOverC;
+			}
+			else
+			{
+				pXYZ[count].x = (float)pNode->u.leaf.poly.p[count].x;
+				pXYZ[count].y = (float)pNode->u.leaf.poly.p[count].y;
+				pXYZ[count].z = (float)pSector->floor_height;
+			}
+
+			if (pST)
+			{
+				custom_xyz	vectorU, vectorV, vector;
+				float		U, temp;
+
+				if (pSector->sloped_floor)
+				{
+					float	distance;
+
+					// calc distance from top line (vector u)
+					U = ((pXYZ[count].x - pSector->sloped_floor->p0.x) *
+						(pSector->sloped_floor->p1.x - pSector->sloped_floor->p0.x)) +
+						((pXYZ[count].z - pSector->sloped_floor->p0.z) *
+						(pSector->sloped_floor->p1.z - pSector->sloped_floor->p0.z)) +
+						((pXYZ[count].y - pSector->sloped_floor->p0.y) *
+						(pSector->sloped_floor->p1.y - pSector->sloped_floor->p0.y));
+					temp = ((pSector->sloped_floor->p1.x - pSector->sloped_floor->p0.x) *
+						(pSector->sloped_floor->p1.x - pSector->sloped_floor->p0.x)) +
+						((pSector->sloped_floor->p1.z - pSector->sloped_floor->p0.z) *
+						(pSector->sloped_floor->p1.z - pSector->sloped_floor->p0.z)) +
+						((pSector->sloped_floor->p1.y - pSector->sloped_floor->p0.y) *
+						(pSector->sloped_floor->p1.y - pSector->sloped_floor->p0.y));
+
+					if (temp == 0)
+						temp = 1.0f;
+
+					U /= temp;
+
+					intersectTop.x = pSector->sloped_floor->p0.x +
+						U * (pSector->sloped_floor->p1.x - pSector->sloped_floor->p0.x);
+					intersectTop.z = pSector->sloped_floor->p0.z +
+						U * (pSector->sloped_floor->p1.z - pSector->sloped_floor->p0.z);
+					intersectTop.y = pSector->sloped_floor->p0.y +
+						U * (pSector->sloped_floor->p1.y - pSector->sloped_floor->p0.y);
+
+					pST[count].s = (float)sqrt((pXYZ[count].x - intersectTop.x) *
+									(pXYZ[count].x - intersectTop.x) +
+									(pXYZ[count].z - intersectTop.z) *
+									(pXYZ[count].z - intersectTop.z) +
+									(pXYZ[count].y - intersectTop.y) *
+									(pXYZ[count].y - intersectTop.y));
+
+					// calc distance from left line (vector v)
+					U = ((pXYZ[count].x - pSector->sloped_floor->p0.x) *
+						(pSector->sloped_floor->p2.x - pSector->sloped_floor->p0.x)) +
+						((pXYZ[count].z - pSector->sloped_floor->p0.z) *
+						(pSector->sloped_floor->p2.z - pSector->sloped_floor->p0.z)) +
+						((pXYZ[count].y - pSector->sloped_floor->p0.y) *
+						(pSector->sloped_floor->p2.y - pSector->sloped_floor->p0.y));
+					temp = ((pSector->sloped_floor->p2.x - pSector->sloped_floor->p0.x) *
+						(pSector->sloped_floor->p2.x - pSector->sloped_floor->p0.x)) +
+						((pSector->sloped_floor->p2.z - pSector->sloped_floor->p0.z) *
+						(pSector->sloped_floor->p2.z - pSector->sloped_floor->p0.z)) +
+						((pSector->sloped_floor->p2.y - pSector->sloped_floor->p0.y) *
+						(pSector->sloped_floor->p2.y - pSector->sloped_floor->p0.y));
+
+					if (temp == 0)
+						temp = 1.0f;
+
+					U /= temp;
+
+					intersectLeft.x = pSector->sloped_floor->p0.x +
+						U * (pSector->sloped_floor->p2.x - pSector->sloped_floor->p0.x);
+					intersectLeft.z = pSector->sloped_floor->p0.z +
+						U * (pSector->sloped_floor->p2.z - pSector->sloped_floor->p0.z);
+					intersectLeft.y = pSector->sloped_floor->p0.y +
+						U * (pSector->sloped_floor->p2.y - pSector->sloped_floor->p0.y);
+
+					pST[count].t = (float)sqrt((pXYZ[count].x - intersectLeft.x) *
+									(pXYZ[count].x - intersectLeft.x) +
+									(pXYZ[count].z - intersectLeft.z) *
+									(pXYZ[count].z - intersectLeft.z) +
+									(pXYZ[count].y - intersectLeft.y) *
+									(pXYZ[count].y - intersectLeft.y));
+
+					pST[count].s += pSector->ty / 2.0f;
+					pST[count].t += pSector->tx / 2.0f;
+
+					vectorU.x = pSector->sloped_floor->p1.x - pSector->sloped_floor->p0.x;
+					vectorU.z = pSector->sloped_floor->p1.z - pSector->sloped_floor->p0.z;
+					vectorU.y = pSector->sloped_floor->p1.y - pSector->sloped_floor->p0.y;
+
+					distance = (float)sqrt((vectorU.x * vectorU.x) +
+						(vectorU.y * vectorU.y));
+
+					if (distance == 0)
+						distance = 1.0f;
+
+					vectorU.x /= distance;
+					vectorU.z /= distance;
+					vectorU.y /= distance;
+
+					vectorV.x = pSector->sloped_floor->p2.x - pSector->sloped_floor->p0.x;
+					vectorV.z = pSector->sloped_floor->p2.z - pSector->sloped_floor->p0.z;
+					vectorV.y = pSector->sloped_floor->p2.y - pSector->sloped_floor->p0.y;
+
+					distance = (float)sqrt((vectorV.x * vectorV.x) +
+						(vectorV.y * vectorV.y));
+
+					if (distance == 0)
+						distance = 1.0f;
+
+					vectorV.x /= distance;
+					vectorV.z /= distance;
+					vectorV.y /= distance;
+
+					vector.x = pXYZ[count].x - pSector->sloped_floor->p0.x;
+					vector.y = pXYZ[count].y - pSector->sloped_floor->p0.y;
+
+					distance = (float)sqrt((vector.x * vector.x) +
+						(vector.y * vector.y));
+
+					if (distance == 0)
+						distance = 1.0f;
+
+					vector.x /= distance;
+					vector.y /= distance;
+
+					if (((vector.x * vectorU.x) +
+						(vector.y * vectorU.y)) <= 0)
+						pST[count].t = -pST[count].t;
+
+					if (((vector.x * vectorV.x) +
+						(vector.y * vectorV.y)) > 0)
+						pST[count].s = -pST[count].s;
+				}
+				else
+				{
+					pST[count].s = abs(pNode->u.leaf.poly.p[count].y - top) - pSector->ty;
+					pST[count].t = abs(pNode->u.leaf.poly.p[count].x - left) - pSector->tx;
+				}
+
+				if (pSector->animate != NULL && pSector->animate->animation == ANIMATE_SCROLL)
+				{
+					if (pSector->flags & SF_SCROLL_FLOOR)
+					{
+						pST[count].s -= pSector->animate->u.scroll.yoffset;
+						pST[count].t += pSector->animate->u.scroll.xoffset;
+					}
+				}
+
+        pST[count].s *= inv64;
+        pST[count].t *= inv64;
+			}
+		}
+	}
+
+	if (pBGRA)
+	{
+		int	distX, distY, distance;
+
+		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+		{
+			distX = pXYZ[count].x - player.x;
+			distY = pXYZ[count].y - player.y;
+
+			lightscale = FINENESS;
+
+			if (shade_amount != 0)
+			{
+				// floor is sloped, and it's marked as being steep enough to be eligible for
+				// directional lighting
+				if ((pNode->u.leaf.sector->sloped_floor != NULL) &&
+					(pNode->u.leaf.sector->sloped_floor->flags & SLF_DIRECTIONAL))
+				{
+					long lo_end = FINENESS-shade_amount;
+
+					// light scale is based on dot product of surface normal and sun vector
+					lightscale = (long)(pNode->u.leaf.sector->sloped_floor->plane.a * sun_vect.x +
+						pNode->u.leaf.sector->sloped_floor->plane.b * sun_vect.y +
+						pNode->u.leaf.sector->sloped_floor->plane.c * sun_vect.z)>>LOG_FINENESS;
+
+					lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
+
+					lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
+
+					if (lightscale > FINENESS)
+						lightscale = FINENESS;
+					else if ( lightscale < 0)
+						lightscale = 0;
+
+					pNode->u.leaf.sector->sloped_floor->lightscale = lightscale;
+				}
+			}
+			else
+			{ // normal light intensity
+				if (pNode->u.leaf.sector->sloped_floor != NULL)
+					pNode->u.leaf.sector->sloped_floor->lightscale = FINENESS;
+			}
+
+			distance = DistanceGet(distX, distY);
+
+			if (gD3DDriverProfile.bFogEnable)
+				paletteIndex = GetLightPaletteIndex(FINENESS, pSector->light, lightscale, 0);
+			else
+				paletteIndex = GetLightPaletteIndex(distance, pSector->light, lightscale, 0);
+
+			pBGRA[count].r = pBGRA[count].g = pBGRA[count].b = paletteIndex * COLOR_AMBIENT / 64;
+			pBGRA[count].a = 255;
+		}
+	}
+}
+
+/**
+ * Extracts and processes ceiling data for rendering by calculating vertex positions,
+ * texture coordinates, and applying lighting and animation effects.
+ */
+void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_st *pST,
+							custom_bgra *pBGRA)
+{
+	Sector		*pSector = pNode->u.leaf.sector;
+	int			count;
+	int			left, top;
+	int			paletteIndex;
+	float		oneOverC, inv128, inv64;
+	custom_xyz	intersectTop, intersectLeft;
+	long		lightscale;
+
+	left = top = 0;
+
+	inv128 = 1.0f / (128.0f * PETER_FUDGE);
+	inv64 = 1.0f / (64.0f * PETER_FUDGE);
+
+	// generate texture coordinates
+	for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+	{
+		if (pNode->u.leaf.poly.p[count].x < left)
+			left = pNode->u.leaf.poly.p[count].x;
+	}
+	for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+	{
+		if (pNode->u.leaf.poly.p[count].y < top)
+			top = pNode->u.leaf.poly.p[count].y;
+	}
+
+	if (pSector->sloped_ceiling)
+	{
+		// extract plane normal
+		oneOverC = 1.0f / pSector->sloped_ceiling->plane.c;
+	}
+
+	if (pXYZ)
+	{
+		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+		{
+			if (pSector->sloped_ceiling)
+			{
+				pXYZ[count].x = (float)pNode->u.leaf.poly.p[count].x;
+				pXYZ[count].y = (float)pNode->u.leaf.poly.p[count].y;
+				pXYZ[count].z = (-pSector->sloped_ceiling->plane.a * pXYZ[count].x -
+					pSector->sloped_ceiling->plane.b * pXYZ[count].y -
+					pSector->sloped_ceiling->plane.d) * oneOverC;
+			}
+			else
+			{
+				pXYZ[count].x = (float)pNode->u.leaf.poly.p[count].x;
+				pXYZ[count].y = (float)pNode->u.leaf.poly.p[count].y;
+				pXYZ[count].z = (float)pSector->ceiling_height;
+			}
+
+			if (pST)
+			{
+				custom_xyz	vectorU, vectorV, vector;
+				float		U, temp;
+
+				if (pSector->sloped_ceiling)
+				{
+					float	distance;
+
+					// calc distance from top line (vector u)
+					U = ((pXYZ[count].x - pSector->sloped_ceiling->p0.x) *
+						(pSector->sloped_ceiling->p1.x - pSector->sloped_ceiling->p0.x)) +
+						((pXYZ[count].z - pSector->sloped_ceiling->p0.z) *
+						(pSector->sloped_ceiling->p1.z - pSector->sloped_ceiling->p0.z)) +
+						((pXYZ[count].y - pSector->sloped_ceiling->p0.y) *
+						(pSector->sloped_ceiling->p1.y - pSector->sloped_ceiling->p0.y));
+					temp = ((pSector->sloped_ceiling->p1.x - pSector->sloped_ceiling->p0.x) *
+						(pSector->sloped_ceiling->p1.x - pSector->sloped_ceiling->p0.x)) +
+						((pSector->sloped_ceiling->p1.z - pSector->sloped_ceiling->p0.z) *
+						(pSector->sloped_ceiling->p1.z - pSector->sloped_ceiling->p0.z)) +
+						((pSector->sloped_ceiling->p1.y - pSector->sloped_ceiling->p0.y) *
+						(pSector->sloped_ceiling->p1.y - pSector->sloped_ceiling->p0.y));
+
+					if (temp == 0)
+						temp = 1.0f;
+
+					U /= temp;
+
+					intersectTop.x = pSector->sloped_ceiling->p0.x +
+						U * (pSector->sloped_ceiling->p1.x - pSector->sloped_ceiling->p0.x);
+					intersectTop.z = pSector->sloped_ceiling->p0.z +
+						U * (pSector->sloped_ceiling->p1.z - pSector->sloped_ceiling->p0.z);
+					intersectTop.y = pSector->sloped_ceiling->p0.y +
+						U * (pSector->sloped_ceiling->p1.y - pSector->sloped_ceiling->p0.y);
+
+					pST[count].s = (float)sqrt((pXYZ[count].x - intersectTop.x) *
+									(pXYZ[count].x - intersectTop.x) +
+									(pXYZ[count].z - intersectTop.z) *
+									(pXYZ[count].z - intersectTop.z) +
+									(pXYZ[count].y - intersectTop.y) *
+									(pXYZ[count].y - intersectTop.y));
+
+					// calc distance from left line (vector v)
+					U = ((pXYZ[count].x - pSector->sloped_ceiling->p0.x) *
+						(pSector->sloped_ceiling->p2.x - pSector->sloped_ceiling->p0.x)) +
+						((pXYZ[count].z - pSector->sloped_ceiling->p0.z) *
+						(pSector->sloped_ceiling->p2.z - pSector->sloped_ceiling->p0.z)) +
+						((pXYZ[count].y - pSector->sloped_ceiling->p0.y) *
+						(pSector->sloped_ceiling->p2.y - pSector->sloped_ceiling->p0.y));
+					temp = ((pSector->sloped_ceiling->p2.x - pSector->sloped_ceiling->p0.x) *
+						(pSector->sloped_ceiling->p2.x - pSector->sloped_ceiling->p0.x)) +
+						((pSector->sloped_ceiling->p2.z - pSector->sloped_ceiling->p0.z) *
+						(pSector->sloped_ceiling->p2.z - pSector->sloped_ceiling->p0.z)) +
+						((pSector->sloped_ceiling->p2.y - pSector->sloped_ceiling->p0.y) *
+						(pSector->sloped_ceiling->p2.y - pSector->sloped_ceiling->p0.y));
+
+					if (temp == 0)
+						temp = 1.0f;
+
+					U /= temp;
+
+					intersectLeft.x = pSector->sloped_ceiling->p0.x +
+						U * (pSector->sloped_ceiling->p2.x - pSector->sloped_ceiling->p0.x);
+					intersectLeft.z = pSector->sloped_ceiling->p0.z +
+						U * (pSector->sloped_ceiling->p2.z - pSector->sloped_ceiling->p0.z);
+					intersectLeft.y = pSector->sloped_ceiling->p0.y +
+						U * (pSector->sloped_ceiling->p2.y - pSector->sloped_ceiling->p0.y);
+
+					pST[count].t = (float)sqrt((pXYZ[count].x - intersectLeft.x) *
+									(pXYZ[count].x - intersectLeft.x) +
+									(pXYZ[count].z - intersectLeft.z) *
+									(pXYZ[count].z - intersectLeft.z) +
+									(pXYZ[count].y - intersectLeft.y) *
+									(pXYZ[count].y - intersectLeft.y));
+
+					vectorU.x = pSector->sloped_ceiling->p1.x - pSector->sloped_ceiling->p0.x;
+					vectorU.z = pSector->sloped_ceiling->p1.z - pSector->sloped_ceiling->p0.z;
+					vectorU.y = pSector->sloped_ceiling->p1.y - pSector->sloped_ceiling->p0.y;
+
+					distance = (float)sqrt((vectorU.x * vectorU.x) +
+						(vectorU.y * vectorU.y));
+
+					if (distance == 0)
+						distance = 1.0f;
+
+					vectorU.x /= distance;
+					vectorU.z /= distance;
+					vectorU.y /= distance;
+
+					vectorV.x = pSector->sloped_ceiling->p2.x - pSector->sloped_ceiling->p0.x;
+					vectorV.z = pSector->sloped_ceiling->p2.z - pSector->sloped_ceiling->p0.z;
+					vectorV.y = pSector->sloped_ceiling->p2.y - pSector->sloped_ceiling->p0.y;
+
+					distance = (float)sqrt((vectorV.x * vectorV.x) +
+						(vectorV.y * vectorV.y));
+
+					if (distance == 0)
+						distance = 1.0f;
+
+					vectorV.x /= distance;
+					vectorV.z /= distance;
+					vectorV.y /= distance;
+
+					vector.x = pXYZ[count].x - pSector->sloped_ceiling->p0.x;
+					vector.y = pXYZ[count].y - pSector->sloped_ceiling->p0.y;
+
+					distance = (float)sqrt((vector.x * vector.x) +
+						(vector.y * vector.y));
+
+					if (distance == 0)
+						distance = 1.0f;
+
+					vector.x /= distance;
+					vector.y /= distance;
+
+					if (((vector.x * vectorU.x) +
+						(vector.y * vectorU.y)) < 0)
+						pST[count].t = -pST[count].t;
+
+					if (((vector.x * vectorV.x) +
+						(vector.y * vectorV.y)) > 0)
+						pST[count].s = -pST[count].s;
+
+					pST[count].s -= pSector->ty / 2.0f;
+					pST[count].t -= pSector->tx / 2.0f;
+				}
+				else
+				{
+					pST[count].s = abs(pNode->u.leaf.poly.p[count].y - top) - pSector->ty;
+					pST[count].t = abs(pNode->u.leaf.poly.p[count].x - left) - pSector->tx;
+				}
+
+				if (pSector->animate != NULL && pSector->animate->animation == ANIMATE_SCROLL)
+				{
+					if (pSector->flags & SF_SCROLL_CEILING)
+					{
+						pST[count].s -= pSector->animate->u.scroll.yoffset;
+						pST[count].t += pSector->animate->u.scroll.xoffset;
+					}
+				}
+
+            pST[count].s *= inv64;
+            pST[count].t *= inv64;
+			}
+		}
+	}
+
+	if (pBGRA)
+	{
+		int	distX, distY, distance;
+
+		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+		{
+			distX = pXYZ[count].x - player.x;
+			distY = pXYZ[count].y - player.y;
+
+			lightscale = FINENESS;
+
+			if (shade_amount != 0)
+			{
+				if ((pNode->u.leaf.sector->sloped_ceiling != NULL) &&
+					(pNode->u.leaf.sector->sloped_ceiling->flags & SLF_DIRECTIONAL))
+				{
+					long lo_end = FINENESS-shade_amount;
+
+					// light scale is based on dot product of surface normal and sun vector
+					lightscale = (long)(pNode->u.leaf.sector->sloped_ceiling->plane.a * sun_vect.x +
+						pNode->u.leaf.sector->sloped_ceiling->plane.b * sun_vect.y +
+						pNode->u.leaf.sector->sloped_ceiling->plane.a * sun_vect.z)>>LOG_FINENESS;
+
+					lightscale = (lightscale + FINENESS)>>1; // map to 0 to 1 range
+
+					lightscale = lo_end + ((lightscale * shade_amount)>>LOG_FINENESS);
+
+					if (lightscale > FINENESS)
+						lightscale = FINENESS;
+					else if ( lightscale < 0)
+						lightscale = 0;
+
+					pNode->u.leaf.sector->sloped_ceiling->lightscale = lightscale;
+				}
+			}
+			else
+			{
+				if (pNode->u.leaf.sector->sloped_ceiling != NULL)
+					pNode->u.leaf.sector->sloped_ceiling->lightscale = FINENESS;
+			}
+
+			distance = DistanceGet(distX, distY);
+
+			if (gD3DDriverProfile.bFogEnable)
+				paletteIndex = GetLightPaletteIndex(FINENESS, pSector->light, lightscale, 0);
+			else
+				paletteIndex = GetLightPaletteIndex(distance, pSector->light, lightscale, 0);
+
+			pBGRA[count].r = pBGRA[count].g = pBGRA[count].b = paletteIndex * COLOR_AMBIENT / 64;
+			pBGRA[count].a = 255;
+		}
+	}
+}

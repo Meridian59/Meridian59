@@ -126,6 +126,7 @@ OBJS = \
         $(OUTDIR)\d3ddriver.obj \
         $(OUTDIR)\d3dparticle.obj \
         $(OUTDIR)\d3drender.obj \
+        $(OUTDIR)\d3drender_bgoverlays.obj \
         $(OUTDIR)\d3drender_materials.obj \
         $(OUTDIR)\d3drender_objects.obj \
         $(OUTDIR)\d3drender_skybox.obj \

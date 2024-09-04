@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 //
-// .....
+// Responsible for rendering background overlays such as the Sun and Moon within the game's environment.
 //
 #ifndef _D3DRENDERBGOVERLAYS_H
 #define _D3DRENDERBGOVERLAYS_H

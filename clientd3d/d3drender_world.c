@@ -1869,18 +1869,12 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 		float		distance, lightRange;
 		int			unlit;
 		unsigned int	i;
-		float		falloff, invXScale, invYScale, invZScale,
-			invXScaleHalf, invYScaleHalf, invZScaleHalf;
+		float		falloff, scale, scaleHalf;
 
 		// Ensures that the lightmaps are applied uniformly without
 		// altering the geometry horizontally
-		invXScale = 1.0;
-		invYScale = 1.0;
-		invZScale = 1.0;
-
-		invXScaleHalf = 0.5;
-		invYScaleHalf = 0.5;
-		invZScaleHalf = 0.5;
+		scale = 1.0;
+		scaleHalf = scale/2.0f;
 
 		unlit = 0;
 		lightRange = (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) *
@@ -1961,7 +1955,7 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 				for (i = 0; i < 4; i++)
 				{
 					falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) *
-						invXScaleHalf;
+						scaleHalf;
 
 					if (falloff < 0)
 						falloff = -falloff;
@@ -1970,9 +1964,9 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 					falloff = 1.0f - falloff;
 
 					st[i].s = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) *
-						invYScale + 0.5f;
+						scale + 0.5f;
 					st[i].t = (xyz[i].z - pDLightCache->dLights[numLights].xyz.z) *
-						invZScale + 0.5f;
+						scale + 0.5f;
 					bgra[i].b = falloff * pDLightCache->dLights[numLights].color.b;
 					bgra[i].g = falloff * pDLightCache->dLights[numLights].color.g;
 					bgra[i].r = falloff * pDLightCache->dLights[numLights].color.r;
@@ -1984,7 +1978,7 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 				for (i = 0; i < 4; i++)
 				{
 					falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) *
-						invYScaleHalf;
+						scaleHalf;
 
 					if (falloff < 0)
 						falloff = -falloff;
@@ -1993,9 +1987,9 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 					falloff = 1.0f - falloff;
 
 					st[i].s = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) *
-						invXScale + 0.5f;
+						scale + 0.5f;
 					st[i].t = (xyz[i].z - pDLightCache->dLights[numLights].xyz.z) *
-						invZScale + 0.5f;
+						scale + 0.5f;
 					bgra[i].b = falloff * pDLightCache->dLights[numLights].color.b;
 					bgra[i].g = falloff * pDLightCache->dLights[numLights].color.g;
 					bgra[i].r = falloff * pDLightCache->dLights[numLights].color.r;

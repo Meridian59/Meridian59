@@ -607,8 +607,14 @@ SetQuestNode( node_object = $ )
 
 ExpireQuest(report = TRUE)
 {
-   Send(poQuestNode,@DeadlineExpired,#report=report);
-
+   if poQuestNode <> $
+   {
+      Send(poQuestNode,@DeadlineExpired,#report=report);
+   }
+   else
+   {
+      Debug("Quest node no longer exists");
+   }
    return;
 }
 

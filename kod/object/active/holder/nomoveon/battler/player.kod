@@ -1807,7 +1807,7 @@ messages:
             AND (not Send(Send(SYS,@GetParliament),@IsShutdown))
          {
             piFactionTimeUpdated=GetTime();
-            Send(self,@FactionServiceTimer);
+            Send(self,@FactionServiceRoutine);
          }
 
          if Send(self,@PlayerIsIntriguing)
@@ -1884,7 +1884,7 @@ messages:
 
       if piFaction <> FACTION_NEUTRAL
       {
-         Send(self,@factionServiceRoutine,#renew=FALSE);
+         Send(self,@FactionServiceRoutine,#renew=FALSE);
       }
 
       % Stop health and mana timers.
@@ -10971,13 +10971,9 @@ messages:
    FactionServiceTimer(renew=TRUE)
    {
       local iHistory;
-      
-      if ptFactionTimer <> $
-      {
-         DeleteTimer(ptFactionTimer);
-         ptFactionTimer = $;
-      }
-      
+
+      ptFactionTimer = $;
+
       if piFaction = FACTION_NEUTRAL
       {
          return;
@@ -11181,8 +11177,7 @@ messages:
          factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
                           
-      ptFactionTimer = $;
-      Send(Self,@FactionServiceTimer);
+      Send(Self,@FactionServiceRoutine);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       Send(self,@MsgSendUser,#message_rsc=player_join_faction,

@@ -10972,6 +10972,8 @@ messages:
    {
       local iHistory;
 
+      ptFactionTimer = $;
+
       if piFaction = FACTION_NEUTRAL
       {
          return;
@@ -11175,7 +11177,6 @@ messages:
          factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
                           
-      ptFactionTimer = $;
       Send(Self,@FactionServiceRoutine);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);

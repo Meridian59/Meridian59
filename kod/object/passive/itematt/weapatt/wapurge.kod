@@ -84,10 +84,10 @@ messages:
          {
             Send(target,@MsgSendUser,#message_rsc=purger_worked_target,
                #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
-`
+
             % Try to purge off random number of the enchantments
             % Only tell our victim if they lost enchantments
-            Send(oSpell,@CastSpell,#who=self,#lTargets=[target],#iSpellPower=random(25,75));
+            Send(oSpell,@CastSpell,#who=self,#lTargets=[target],#iSpellPower=random(25,75),#bItemCast=TRUE);
          }
 
          % Tell the wielder every time we fired so they think it's cool

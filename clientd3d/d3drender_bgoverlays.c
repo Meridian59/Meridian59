@@ -28,7 +28,8 @@ extern float FovVertical(long height);
 /**
 * Render background overlays in the current room -- for example the Sun and Moon.
 */
-void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, room_type* room, Draw3DParams* params)
+void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, 
+	room_type* room, Draw3DParams* params)
 {
 	MatrixIdentity(&mat);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
@@ -142,23 +143,9 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			pChunk->bgra[j].a = 255;
 		}
 
-		static bool initialized = false;
-		static float u[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		static float v[4] = { 0.0f, 1.0f, 1.0f, 0.0f };
 		const float epsilon = 0.007f; // Small value to adjust UV coordinates inward
-		if (!initialized)
-		{
-			// Set the texture coordinate template with epsilon adjustment once.
-			u[0] = epsilon;
-			v[0] = epsilon;
-			u[1] = 1.0f - epsilon;
-			v[1] = epsilon;
-			u[2] = 1.0f - epsilon;
-			v[2] = 1.0f - epsilon;
-			u[3] = epsilon;
-			v[3] = 1.0f - epsilon;
-			initialized = true;
-		}
+		static const float u[4] = { epsilon, 1.0f - epsilon, 1.0f - epsilon, epsilon };
+		static const float v[4] = { epsilon, epsilon, 1.0f - epsilon, 1.0f - epsilon };
 
 		pChunk->st0[0].s = u[0];
 		pChunk->st0[0].t = v[0];

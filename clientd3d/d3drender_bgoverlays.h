@@ -11,6 +11,7 @@
 #ifndef _D3DRENDERBGOVERLAYS_H
 #define _D3DRENDERBGOVERLAYS_H
 
-void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, room_type* room, Draw3DParams* params);
+void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, 
+	room_type* room, Draw3DParams* params);
 
 #endif	/* #ifndef _D3DRENDERBGOVERLAYS_H */

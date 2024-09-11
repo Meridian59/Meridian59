@@ -27,7 +27,7 @@
 #define MAP_PLAYER_MARKER_SIZE 3
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
-#define MAP_SELF_COLOR          PALETTERGB(0, 255, 255)
+#define MAP_SELF_COLOR          PALETTERGB(0, 0, 255)
 #define MAP_PLAYER_COLOR        PALETTERGB(0, 0, 255)
 #define MAP_OBJECT_COLOR        PALETTERGB(255, 0, 0)
 

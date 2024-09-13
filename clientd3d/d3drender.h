@@ -157,7 +157,6 @@ void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
-void				D3DRenderBackgroundSet(ID background);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);

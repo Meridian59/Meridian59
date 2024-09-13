@@ -696,7 +696,7 @@ messages:
    }
 
    SetFaction(faction=FACTION_NEUTRAL,processClaim=FALSE)
-   "Updates the flag's faction. By default, this updates the faction only, which is needed when the territory game is recreated. Pass `processClaim=TRUE` to notify the territory game of the change."
+   "Updates the flag's faction. If just updating the flag's ownership and nothing else--such as during a recreate--leave the `processClaim` flag as `FALSE`. However, if you're changing the flag as part of an action in an ongoing territory game, set `processClaim=TRUE` so that the territory game can recount flags and persist state changes."
    {
       piFaction = faction;
       if poOwner <> $

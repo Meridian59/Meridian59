@@ -137,6 +137,7 @@ static unsigned char gSkyboxBGRA[] =
 // Interfaces
 
 static void D3DRenderBackgroundsLoad(char* pFilename, int index);
+static void D3DRenderBackgroundSet(ID background);
 
 // Implementations
 

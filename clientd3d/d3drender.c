@@ -165,8 +165,6 @@ extern HDC				gBitsDC;
 
 void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
-void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
-
 
 // new render stuff
 void					D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize);
@@ -184,6 +182,8 @@ void					D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 void					D3DPostOverlayEffects(d3d_render_pool_new *pPool);
 
 void					*D3DRenderMalloc(unsigned int bytes);
+
+static void D3DRenderParticles();
 
 void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
    float bias = z_bias * -0.00001f;
@@ -592,24 +592,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// draw particles
 	if (draw_particles)
 	{
-		list_type	list;
-		emitter		*pEmitter;
-
-		for (list = gParticleSystem.emitterList; list != NULL; list = list->next)
-		{
-			pEmitter = (emitter *)list->data;
-
-			if (pEmitter)
-				D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
-		}
-
-		if (effects.sand)
-		{
-			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
-
-			D3DParticleSystemUpdate(&gParticleSystem, &gParticlePool, &gParticleCacheSystem);
-		}
+		D3DRenderParticles();
 	}
 
 	if (draw_objects)
@@ -634,16 +617,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// post overlay effects
 	if (draw_objects)
 	{
-		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
-		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
-
-		D3DCacheSystemReset(&gObjectCacheSystem);
-		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 		D3DPostOverlayEffects(&gObjectPool);
-		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
-		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	}
 
 	// test blur
@@ -788,6 +762,28 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
 	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
 
+}
+
+void D3DRenderParticles()
+{
+	list_type	list;
+	emitter		*pEmitter;
+
+	for (list = gParticleSystem.emitterList; list != NULL; list = list->next)
+	{
+		pEmitter = (emitter *)list->data;
+
+		if (pEmitter)
+			D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
+	}
+
+	if (effects.sand)
+	{
+		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
+
+		D3DParticleSystemUpdate(&gParticleSystem, &gParticlePool, &gParticleCacheSystem);
+	}
 }
 
 Bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
@@ -1772,6 +1768,13 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 
 void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 {
+	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
+	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
+
+	D3DCacheSystemReset(&gObjectCacheSystem);
+	D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
+
 	static DWORD			timeLastFrame = 0;
 	DWORD					timeCurrent, timeDelta;
 	int						i;
@@ -2169,6 +2172,10 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 			pChunk->indices[3] = 3;
 		}
 	}
+
+	D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
+	D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 }
 
 LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,

@@ -695,8 +695,8 @@ messages:
       return poClaimer;
    }
 
-   SetFaction(faction=FACTION_NEUTRAL,processClaim=TRUE)
-   "Sets the flag's faction and process the claim through the territory game."
+   SetFaction(faction=FACTION_NEUTRAL,processClaim=FALSE)
+   "Updates the flag's faction. By default, this updates the faction only, which is needed when the territory game is recreated. Pass `processClaim=TRUE` to notify the territory game of the change."
    {
       piFaction = faction;
       if poOwner <> $

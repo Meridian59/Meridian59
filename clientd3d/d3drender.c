@@ -183,7 +183,7 @@ void					D3DPostOverlayEffects(d3d_render_pool_new *pPool);
 
 void					*D3DRenderMalloc(unsigned int bytes);
 
-void					D3DRenderParticles();
+static void D3DRenderParticles();
 
 void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
    float bias = z_bias * -0.00001f;

@@ -254,23 +254,23 @@ messages:
 
             if (lRIDs = plTosRIDs) or (lRIDs = plMarionRIDs)
             {
-               send(oFlag,@SetFaction,#faction=FACTION_DUKE);
+               send(oFlag,@SetFaction,#faction=FACTION_DUKE,#processClaim=FALSE);
             }
 
             if (lRIDs = plCorNothRIDs) or (lRIDs = plBarloqueRIDs)
             {
-               send(oFlag,@SetFaction,#faction=FACTION_PRINCESS);
+               send(oFlag,@SetFaction,#faction=FACTION_PRINCESS,#processClaim=FALSE);
             }
 
             if (lRIDs = plJasperRIDs)
             {
                if (random(0,1) = 0)
                {
-                  send(oFlag,@SetFaction,#faction=FACTION_PRINCESS);
+                  send(oFlag,@SetFaction,#faction=FACTION_PRINCESS,#processClaim=FALSE);
                }
                else
                {
-                  send(oFlag,@SetFaction,#faction=FACTION_DUKE);
+                  send(oFlag,@SetFaction,#faction=FACTION_DUKE,#processClaim=FALSE);
                }
             }
 
@@ -313,7 +313,7 @@ messages:
          iLocation = FindListElem(plTosRIDs,iRID);
          if iLocation
          {
-            send(oFlag,@SetFaction,#faction=FACTION_DUKE);
+            send(oFlag,@SetFaction,#faction=FACTION_DUKE,#processClaim=FALSE);
             if iLocation = 1
             {
                % town flag
@@ -324,7 +324,7 @@ messages:
          iLocation = FindListElem(plBarloqueRIDs,iRID);
          if iLocation
          {
-            send(oFlag,@SetFaction,#faction=FACTION_PRINCESS);
+            send(oFlag,@SetFaction,#faction=FACTION_PRINCESS,#processClaim=FALSE);
             if iLocation = 1
             {
                % town flag
@@ -335,7 +335,7 @@ messages:
          iLocation = FindListElem(plJasperRIDs,iRID);
          if iLocation
          {
-            send(oFlag,@SetFaction,#faction=FACTION_REBEL);
+            send(oFlag,@SetFaction,#faction=FACTION_REBEL,#processClaim=FALSE);
             if iLocation = 1
             {
                % town flag
@@ -346,7 +346,7 @@ messages:
          iLocation = FindListElem(plMarionRIDs,iRID);
          if iLocation
          {
-            send(oFlag,@SetFaction,#faction=FACTION_NEUTRAL);
+            send(oFlag,@SetFaction,#faction=FACTION_NEUTRAL,#processClaim=FALSE);
             if iLocation = 1
             {
                % town flag
@@ -357,7 +357,7 @@ messages:
          iLocation = FindListElem(plCorNothRIDs,iRID);
          if iLocation
          {
-            send(oFlag,@SetFaction,#faction=FACTION_NEUTRAL);
+            send(oFlag,@SetFaction,#faction=FACTION_NEUTRAL,#processClaim=FALSE);
             if iLocation = 1
             {
                % town flag
@@ -425,7 +425,7 @@ messages:
             DEBUG("ReloadSavedFlagStates:: got nil flag in",send(oRoom,@GetName));
             continue;
          }
-         send(oFlag,@SetFaction,#faction=nth(plFlagStates,(i+1)));
+         send(oFlag,@SetFaction,#faction=nth(plFlagStates,(i+1)),#processClaim=FALSE);
       }
 
       return;
@@ -564,7 +564,7 @@ messages:
                oFlagpole = send(oRoom,@FindHoldingActive,#class=&FlagPole);
                if send(oFlagPole,@GetFaction) <> (iFaction-1)
                {
-                  send(oFlagPole,@SetFaction,#faction=(iFaction-1));
+                  send(oFlagPole,@SetFaction,#faction=(iFaction-1),#processClaim=TRUE);
                   if report
                   {
                      send(self,@SendBonusTownMessage,#faction=(iFaction-1),#town=lRIDs);
@@ -797,7 +797,7 @@ messages:
             if iRID = first(lRIDs) { continue; }
             oRoom = send(SYS,@FindRoomByNum,#num=iRID);
             oFlag = send(oRoom,@FindHoldingActive,#class=&Flagpole);
-            send(oFlag,@SetFaction,#faction=FACTION_NEUTRAL);
+            send(oFlag,@SetFaction,#faction=FACTION_NEUTRAL,#processClaim=FALSE);
          }
       }
 
@@ -811,7 +811,7 @@ messages:
                if iRID = first(lRIDs) { continue; }
                oRoom = send(SYS,@FindRoomByNum,#num=iRID);
                oFlag = send(oRoom,@FindHoldingActive,#class=&Flagpole);
-               send(oFlag,@SetFaction,#faction=FACTION_DUKE);
+               send(oFlag,@SetFaction,#faction=FACTION_DUKE,#processClaim=FALSE);
                iDukeFlags = iDukeFlags - 1;
             }
          }
@@ -827,7 +827,7 @@ messages:
                if iRID = first(lRIDs) { continue; }
                oRoom = send(SYS,@FindRoomByNum,#num=iRID);
                oFlag = send(oRoom,@FindHoldingActive,#class=&Flagpole);
-               send(oFlag,@SetFaction,#faction=FACTION_PRINCESS);
+               send(oFlag,@SetFaction,#faction=FACTION_PRINCESS,#processClaim=FALSE);
                iPrincessFlags = iPrincessFlags - 1;
             }
          }

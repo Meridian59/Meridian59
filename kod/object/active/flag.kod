@@ -695,8 +695,8 @@ messages:
       return poClaimer;
    }
 
-   SetFaction(faction=FACTION_NEUTRAL)
-   "for admin use"
+   SetFaction(faction=FACTION_NEUTRAL,processClaim=TRUE)
+   "Sets the flag's faction and process the claim through the territory game."
    {
       piFaction = faction;
       if poOwner <> $
@@ -709,7 +709,7 @@ messages:
          }
       }
 
-      if (send(SYS,@GetTerritoryGame) <> $)
+      if (send(SYS,@GetTerritoryGame) <> $) AND processClaim
       {
          send(send(SYS,@GetTerritoryGame),@FlagClaimed,#flag=self);
       }

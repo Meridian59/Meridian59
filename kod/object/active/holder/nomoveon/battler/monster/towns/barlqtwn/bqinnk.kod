@@ -35,9 +35,11 @@ resources:
       "our rooms to be most well-appointed.  Enjoyest thine stay!"
 
    BarloqueInnkeeper_cost = \
-      "The rooms here are the finest.  I needeth %i shillings when thou ~Irent~neth a "
-      "~Iroom~n for for 85 days.  After that, I requireth %i per day up front.  Key copies "
-      "costeth %i shillings if thou wishest to share thine room with a special someone."
+      "The rooms here are the finest.  I needeth %i shillings when thou ~I~Urent~neth a "
+      "~I~Uroom~n for for 85 days.  After that, I requireth %i per day up front.  A ~I~Ucopy~n "
+      "of your ~I~Ukey~n, which may be ~I~Usecure~nth shoudst thou be proneth to losing them, costeth "
+      "%i shillings if thou wishest to share thine room with a special someone.  If thou loseth "
+      "one of thine copies, just let me knoweth and I can ~I~Uchange locks~n free of chargeth!"
 
    BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %i days left at my luxurious inn."
    BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."

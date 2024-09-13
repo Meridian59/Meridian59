@@ -39,11 +39,13 @@ resources:
 
    KocatanInnkeeper_cost = \
       "You'll not find a better deal on the island!  It costs %i shillings to "
-      "~Irent~n a ~Iroom~n at my fine establishment for 85 days.  If you "
+      "~I~Urent~n a ~I~Uroom~n at my fine establishment for 85 days.  If you "
       "want to stay longer, that'll be %i shillings per day, paid in advance.  "
       "For a very modest fee of %i shillings, I can even provide you "
-      "with a copy of your room key.  Act now, because this offer won't last "
-      "long!  Space is very limited and my rooms are first-come, first-serve!"
+      "with an optionally ~I~Usecure~n ~I~Ucopy~n of your room ~I~Ukey~n.  I'll "
+      "even ~I~Uchange locks~n for you if necessary, free of charge!  Act "
+      "now, because this offer won't last long!  Space is very limited and my "
+      "rooms are first-come, first-serve!"
 
    KocatanInnkeeper_days_left = \
       "Thank you, my friend!  I'll have triple this amount for you after "

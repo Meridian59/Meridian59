@@ -33,6 +33,7 @@ resources:
    RoomMaintenance_command_room = "room"
    RoomMaintenance_command_rent = "rent"
    RoomMaintenance_command_cost = "cost"
+   RoomMaintenance_command_help = "help"
    RoomMaintenance_command_copy_key = "copy key"
    RoomMaintenance_command_secure = "secure"
    RoomMaintenance_command_change_lock = "change lock"
@@ -175,7 +176,9 @@ messages:
       }
 
       % Command: Room Cost
-      if StringContain(speech, RoomMaintenance_command_room) AND StringContain(speech, RoomMaintenance_command_cost)
+      if StringContain(speech, RoomMaintenance_command_room) 
+         AND (StringContain(speech, RoomMaintenance_command_cost)
+         OR StringContain(speech, RoomMaintenance_command_help))
       {
          Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who,
             #string=rscRoomCost, 

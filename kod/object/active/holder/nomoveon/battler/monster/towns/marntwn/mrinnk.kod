@@ -31,8 +31,12 @@ resources:
    MarionInnkeeper_cost = \
       "Oh, good, you should rest.  Let me see....  I charge %i shillings to ~Irent~n "
       "a nice ~Iroom~n here for 85 days.  If you wish to stay longer, I charge %i "
-      "per day if you pre-pay.  Key copies, uh, key copies....  Oh, they cost %i "
-      "shillings to make.  I know you'll like your room."
+      "per day if you pre-pay.  Need a ~Icopy~n of your room ~Ikey~n?  Uh, key "
+      "copies....  Oh, they cost %i shillings to make, and can even be ~Isecure~n "
+      "if you want to lower the risk of accidentally losing it.  There was one more "
+      "thing...oh right!  If you lose one of your copied keys, ask me to ~Ichange "
+      "locks~n and I will happily see that it is take care of.  I know you'll like "
+      "your room."
    MarionInnkeeper_days_left = \
       "You like it here, I see.  There are %i days until you should pay me again."
    MarionInnkeeper_too_long = \

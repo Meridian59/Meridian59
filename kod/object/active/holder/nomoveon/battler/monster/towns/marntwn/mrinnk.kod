@@ -29,12 +29,12 @@ resources:
       "Here ya go then.  Hope you enjoy your stay, if you have any problems Tova "
       "will be glad to help you."
    MarionInnkeeper_cost = \
-      "Oh, good, you should rest.  Let me see....  I charge %i shillings to ~I~Urent~n "
-      "a nice ~I~Uroom~n here for 85 days.  If you wish to stay longer, I charge %i "
-      "per day if you pre-pay.  Need a ~I~Ucopy~n of your room ~I~Ukey~n?  Uh, key "
-      "copies....  Oh, they cost %i shillings to make, and can even be ~I~Usecure~n "
+      "Oh, good, you should rest.  Let me see....  I charge %i shillings to ~Irent~n "
+      "a nice ~Iroom~n here for 85 days.  If you wish to stay longer, I charge %i "
+      "per day if you pre-pay.  Need a ~Icopy~n of your room ~Ikey~n?  Uh, key "
+      "copies....  Oh, they cost %i shillings to make, and can even be ~Isecure~n "
       "if you want to lower the risk of accidentally losing it.  There was one more "
-      "thing...oh right!  If you lose one of your copied keys, ask me to ~I~Uchange "
+      "thing...oh right!  If you lose one of your copied keys, ask me to ~Ichange "
       "locks~n and I will happily see that it is take care of.  I know you'll like "
       "your room."
    MarionInnkeeper_days_left = \

@@ -168,8 +168,6 @@ void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
 LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
 	float width, float height);
 
-void SandstormInit(void);
-
 void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
 int DistanceGet(int x, int y);
 

@@ -695,8 +695,8 @@ messages:
       return poClaimer;
    }
 
-   SetFaction(faction=FACTION_NEUTRAL,processClaim=FALSE)
-   "Updates the flag's faction. If just updating the flag's ownership and nothing else--such as during a recreate--leave the `processClaim` flag as `FALSE`. However, if changing the flag as part of an action in an ongoing territory game, set `processClaim=TRUE` so that the territory game can recount flags and persist state changes."
+   SetFaction(faction=FACTION_NEUTRAL)
+   "Admins use `AdminSetFaction` when forcing a faction change to ensure the territory game updates flag counts and persists state changes."
    {
       piFaction = faction;
       if poOwner <> $
@@ -707,11 +707,6 @@ messages:
          {
             ptGenerateTroops = createtimer(self,@GenerateTroops,piGen_time);
          }
-      }
-
-      if (send(SYS,@GetTerritoryGame) <> $) AND processClaim
-      {
-         send(send(SYS,@GetTerritoryGame),@FlagClaimed,#flag=self);
       }
 
       return;
@@ -880,5 +875,18 @@ messages:
       propagate;
    }
 
+   AdminSetFaction(faction=FACTION_NEUTRAL)
+   "Admin supported.\n"
+   "Sets flag's faction and forces the territory game to recount flags and persist state changes."
+   {
+      Send(self,@SetFaction,#faction=faction);
+
+      if (Send(SYS,@GetTerritoryGame) <> $)
+      {
+         Send(Send(SYS,@GetTerritoryGame),@FlagClaimed,#flag=self);
+      }
+      
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

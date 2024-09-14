@@ -566,7 +566,7 @@ resources:
          "I had thought so much better of you.  Oh, well.  I shall watch for a better fool in the future."
 
    minstrelinsignia_trigger = "insignia"
-   minstrelinsignia_assign_2 = "~IAh, an unmarked shield, just like an untuned lyre—it simply won't do! Let me jazz it up with my insignia, but remember, good tunes come with a tip—let's call it a tithe, shall we?~I"
+   minstrelinsignia_assign_2 = "~IAh, an unmarked shield, just like an untuned lyre, it simply won't do! Let me jazz it up with my insignia, but remember, good tunes come with a tip, let's call it a tithe, shall we?~I"
    minstrelinsignia_trigger_2 = "tithe"
    minstrelinsignia_assign_3 = "~II've been hearing some catchy rumors about a new world filled with magical notes and trinkets. Bring me some of those rare goodies, and we'll have a harmony so sweet it'll make the stars hum. Go fetch me %CARGO-consider it your audition for the band!~I"
    minstrelinsignia_success_3 = "~IAh, you've hit all the right notes! Well done, my melodic friend. You've earned a standing ovation!~I"

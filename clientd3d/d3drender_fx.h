@@ -12,9 +12,9 @@
 #ifndef _D3DRENDERFX_H
 #define _D3DRENDERFX_H
 
-void D3DFxInit();
-void D3DRenderParticles();
-void D3DPostOverlayEffects(d3d_render_pool_new *pPool);
 void D3DFxBlurWaver();
+void D3DFxInit();
+void D3DPostOverlayEffects(d3d_render_pool_new *pPool);
+void D3DRenderParticles();
 
 #endif	/* #ifndef _D3DRENDERFX_H */

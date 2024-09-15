@@ -345,8 +345,6 @@ HRESULT D3DRenderInit(HWND hWnd)
 	// This will call D3DRenderFontInit to make sure the font texture is created
 	GraphicsResetFont();
 
-	D3DFxInit();
-
 	playerOldPos.x = 0;
 	playerOldPos.y = 0;
 	playerOldPos.z = 0;

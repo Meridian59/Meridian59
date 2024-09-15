@@ -120,7 +120,12 @@ messages:
          prWeaponOverlay = iceperson_spear;
          piBehavior = AI_MOVE_OPTIMAL_RANGE;
       }
-
+      else
+      {
+         prWeaponOverlay = iceperson_sword;
+         piBehavior = viDefault_behavior;
+      }
+      
       return;
    }
 

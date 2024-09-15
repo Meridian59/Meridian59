@@ -101,7 +101,7 @@ properties:
    piAnimation = ANIM_NONE
    piDrawFX = DRAWFX_TRANSLUCENT_50
 
-   prWeaponOverlay = iceperson_sword % sword as default weapon
+   prWeaponOverlay = iceperson_sword      % sword as default weapon
 
 messages:
 

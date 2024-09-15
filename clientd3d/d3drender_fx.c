@@ -74,9 +74,9 @@ void D3DRenderParticles()
 */
 void SandstormInit(void)
 {
-#define EMITTER_RADIUS	(12)
-#define EMITTER_ENERGY	(40)
-#define EMITTER_HEIGHT	(0)
+	static const int EMITTER_RADIUS = 12;
+	static const int EMITTER_ENERGY = 40;
+	static const int EMITTER_HEIGHT = 0;
 
 	D3DParticleSystemReset(&gParticleSystem);
 	// four corners, blowing around the perimeter

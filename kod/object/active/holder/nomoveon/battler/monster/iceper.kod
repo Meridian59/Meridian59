@@ -24,13 +24,12 @@ constants:
    % GROUP_WOUNDED = 2
    % GROUP_VERY_WOUNDED = 3
 
-   % iceperF
-   FRAME_LEGS_STANDING = 1
-   FRAME_LEGS_ATTACKING = 4
-   FRAME_LEGS_WALK_START = 2
-   FRAME_LEGS_WALK_END = 4
+   FRAME_FEET_STANDING = 1
+   FRAME_FEET_ATTACKING = 4
+   FRAME_FEET_WALK_START = 2
+   FRAME_FEET_WALK_END = 4
 
-   % iceperR
+   % right arm
    FRAME_ARM_STANDING = 1
    FRAME_ARM_ATTACK_START = 2
    FRAME_ARM_ATTACK_END = 3
@@ -52,18 +51,13 @@ resources:
 
    iceperson_koc_name_rsc = "atzmoch"
    iceperson_name_rsc = "ice creature"
-   iceperson_icon_rsc = iceperT.bgf
+   iceperson_icon_rsc = iceper_torso.bgf
    iceperson_desc_rsc = "This is a creature made completely from frozen water!"
 
-   iceperson_head = iceperH.bgf
-   iceperson_armor = iceperA.bgf
-   iceperson_legs = iceperF.bgf
-
-   iceperson_rightarm = iceperR.bgf
-
-   iceperson_spear = icepersp.bgf
-   iceperson_sword = iceperswd.bgf
-   
+   iceperson_rightarm = iceper_rightarm.bgf
+   iceperson_feet = iceper_feet.bgf
+   iceperson_spear = iceper_spear.bgf
+   iceperson_sword = iceper_sword.bgf
    iceperson_spear_projectile = icespflt.bgf
 
    iceperson_dead_icon_rsc = iceperX.bgf
@@ -192,7 +186,7 @@ messages:
    {
       AddPacket(1,3);
 
-      AddPacket(4,iceperson_legs,1,HS_LEGS,1,ANIMATE_CYCLE,4,ANIMATION_WALK_SPEED,2,FRAME_LEGS_WALK_START,2,FRAME_LEGS_WALK_END);
+      AddPacket(4,iceperson_feet,1,HS_LEGS,1,ANIMATE_CYCLE,4,ANIMATION_WALK_SPEED,2,FRAME_FEET_WALK_START,2,FRAME_FEET_WALK_END);
 
       AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND,1,ANIMATE_NONE,2,FRAME_ARM_STANDING);
       
@@ -208,8 +202,8 @@ messages:
 
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(4,iceperson_legs,1,HS_LEGS);
-         AddPacket(1,ANIMATE_NONE,2,FRAME_LEGS_ATTACKING);
+         AddPacket(4,iceperson_feet,1,HS_LEGS);
+         AddPacket(1,ANIMATE_NONE,2,FRAME_FEET_ATTACKING);
          
          AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND);
          AddPacket(1,ANIMATE_ONCE,4,ANIMATION_ATTACK_SPEED,2,FRAME_ARM_ATTACK_START,2,FRAME_ARM_ATTACK_END,2,FRAME_ARM_STANDING);
@@ -220,8 +214,8 @@ messages:
 
       if piAnimation = ANIM_THROW
       {
-         AddPacket(4,iceperson_legs,1,HS_LEGS);
-         AddPacket(1,ANIMATE_NONE,2,FRAME_LEGS_ATTACKING);
+         AddPacket(4,iceperson_feet,1,HS_LEGS);
+         AddPacket(1,ANIMATE_NONE,2,FRAME_FEET_ATTACKING);
          
          AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND);
          AddPacket(1,ANIMATE_ONCE,4,ANIMATION_THROW_SPEED,2,FRAME_ARM_THROW_START,2,FRAME_ARM_THROW_END,2,FRAME_ARM_STANDING);
@@ -232,8 +226,8 @@ messages:
 
       if piAnimation = ANIM_NONE
       {
-         AddPacket(4,iceperson_legs,1,HS_LEGS);
-         AddPacket(1,ANIMATE_NONE,2,FRAME_LEGS_STANDING);
+         AddPacket(4,iceperson_feet,1,HS_LEGS);
+         AddPacket(1,ANIMATE_NONE,2,FRAME_FEET_STANDING);
 
          AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND);
          AddPacket(1,ANIMATE_NONE,2,FRAME_ARM_STANDING);

@@ -7162,8 +7162,12 @@ messages:
       {
          oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=skillName);
-         Send(oRoom, @SomethingWaveRoom, #what=self, 
-              #wave_rsc=player_improved_wav_rsc);
+
+         if NOT (isClass(self,&Admin) AND Send(self,@IsHidden))
+         {
+            Send(oRoom, @SomethingWaveRoom, #what=self, 
+               #wave_rsc=player_improved_wav_rsc);
+         }
       }
       
       if iChange > 0 

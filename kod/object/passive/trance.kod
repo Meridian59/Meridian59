@@ -35,7 +35,7 @@ messages:
    {
       local oWarpTime;
 
-      oWarpTime = Send(SYS,@FindSpellByNum,#num=SID_WARPTIME);
+      oWarpTime = Send(SYS,@FindSpellByNum,#num=SID_WARP_TIME);
       if Send(Send(who,@GetOwner),@IsEnchanted,#what=oWarpTime)
       {
          time = Send(oWarpTime,@GetStretchedTime,#oldtime=time,

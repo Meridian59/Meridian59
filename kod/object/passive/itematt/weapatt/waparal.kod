@@ -61,14 +61,14 @@ messages:
 
       if random(1,100) <= piEffect_percent
       {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
 	 
          %% no duplicates
-         if not Send(target,@IsEnchanted,#what=oSpell)
+         if NOT Send(target,@IsEnchanted,#what=oSpell)
          {	          
-            send(oSpell,@CastSpell,#who=self,#ltargets=[target],#ispellpower=99);
-            send(wielder,@MsgSendUser,#message_rsc=holder_worked,
-                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+            Send(oSpell,@CastSpell,#who=self,#lTargets=[target],#iSpellPower=99,#bItemCast=TRUE);
+            Send(wielder,@MsgSendUser,#message_rsc=holder_worked,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
       }
 
@@ -78,10 +78,10 @@ messages:
    ItemReqUse(oItem=$,oPlayer=$)
    {
       % A person needs 50% in the weapon's proficiency to use
-      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50      
       {
-         send(oPlayer, @MsgSendUser, #message_rsc = paralyzer_fail_use,
-            #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
+         Send(oPlayer,@MsgSendUser,#message_rsc=paralyzer_fail_use,
+            #parm1=Send(oItem,@getdef),#parm2=Send(oItem,@GetName));
 
          return FALSE;      
       }
@@ -89,6 +89,10 @@ messages:
       return TRUE;
    }
 
+   GetRarityCountModifier()
+   {
+      return 1;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

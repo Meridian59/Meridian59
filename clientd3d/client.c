@@ -269,6 +269,19 @@ void ClearMessageQueue(void)
 	}
 }
 /************************************************************************/
+void SetUpCrashReporting() {
+#ifdef M59_RETAIL
+  static MiniDmpSender *pSender;
+  static const int VERSION_SIZE = 20;
+  wchar_t version[VERSION_SIZE];
+  _snwprintf(version, VERSION_SIZE, L"%d", VERSION_NUMBER(MAJOR_REV, MINOR_REV));
+  pSender = new MiniDmpSender(L"Meridian59", L"Meridian 59", version,
+                              NULL, MDSF_PREVENTHIJACKING | MDSF_LOGFILE | MDSF_LOG_VERBOSE);
+	SetGlobalCRTExceptionBehavior();
+	SetPerThreadCRTExceptionBehavior();    
+#endif  
+}
+/************************************************************************/
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam,
 				   int nCmdShow)
 {
@@ -277,6 +290,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	BOOL bQuit = FALSE;
 
 	InitCommonControls();
+  SetUpCrashReporting();
 
 	hInst = hInstance;
 

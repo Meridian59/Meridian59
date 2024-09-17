@@ -28,6 +28,20 @@ static void LoginReset(void);
 SystemInfo sysinfo;
 
 /****************************************************************************/
+/*
+* UseRetailLoginSystem:  Determine if the retail web api's should be utilized.
+*   Return True iff "retail", official build, is in use (not for the open source version).
+*/
+bool UseRetailLoginSystem()
+{
+#ifdef M59_RETAIL
+    return true;
+#else
+    return false;
+#endif
+}
+
+/****************************************************************************/
 /*  
  * LoginInit:  Enter STATE_LOGIN.
  */
@@ -115,14 +129,11 @@ void LoginErrorMessage(const char *message, BYTE action)
 void LoginError(int err_string)
 {
    HWND hParent = GetMessageBoxParent();
-   if (err_string == IDS_BADLOGIN)
+   if (UseRetailLoginSystem() && err_string == IDS_TOOMANYLOGINS)
    {
-       CheckAccountActivation();
+       CheckAccountActivation();    
    }
-   else
-   {
-       ClientError(hInst, hParent, err_string);
-   }
+   ClientError(hInst, hParent, err_string);
    config.quickstart = FALSE;
    LoginReset();
 }
@@ -158,9 +169,6 @@ void CheckAccountActivation(void)
             // successfully parsed web api response, check for unverified account.
             switch (webResponse)
             {
-            default:
-                ClientError(hInst, hParent, IDS_BADLOGIN);
-                break;
             case AccountStatusWebResponse::VERIFY:
             {
                 if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_UNVERIFIED))
@@ -215,21 +223,6 @@ void EnterGame(void)
    DownloadCheckDirs(hMain);
    encodednum = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
    RequestGame(config.download_time,encodednum,inihost);
-}
-/****************************************************************************/
-
-/****************************************************************************/
-/*
-* UseRetailLoginSystem:  Determine if the retail web api's should be utilized.
-*   Return True iff "retail", official build, is in use (not for the open source version).
-*/
-bool UseRetailLoginSystem()
-{
-#ifdef M59_RETAIL
-    return true;
-#else
-    return false;
-#endif
 }
 
 /****************************************************************************/

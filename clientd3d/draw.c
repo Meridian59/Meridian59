@@ -96,7 +96,6 @@ void DrawRoom(HDC hdc, int x, int y, room_type *room, Bool map)
       miniDrawCount = MINIMAP_REDRAW_EVERY_XFRAME;
    }
 
-//   DrawBuffer(742,view.cy/params.stretchfactor,gscreen_ptr);
    SetFrameDrawn(TRUE);
 } 
 

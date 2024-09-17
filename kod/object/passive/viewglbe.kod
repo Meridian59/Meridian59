@@ -60,7 +60,7 @@ messages:
 
       Send(who,@MsgSendUser,#message_rsc=ViewPointGlobe_used);
       send(who,@SetPlayerView,#what=poTargetGlobe,
-            #iFlags=(REMOTE_VIEW_TURN | REMOTE_VIEW_TILT | REMOTE_VIEW_CONTROL | REMOTE_VIEW_TOP));
+            #iFlags=(REMOTE_VIEW_TURN | REMOTE_VIEW_TILT | REMOTE_VIEW_CONTROL | REMOTE_VIEW_BOTTOM));
       
       return True;
    }

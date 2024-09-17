@@ -391,7 +391,7 @@ FILE *open_include_file(char *filename)
    /* Loop through include directories and try to open file */
    for (i=0; i < num_include_dirs; i++)
    {
-      sprintf(tempbuf, "%s/%s", include_dirs[i], filename);
+      snprintf(tempbuf, sizeof(tempbuf), "%s/%s", include_dirs[i], filename);
       if ((fin = fopen(tempbuf, "r")) != NULL)
 	 return fin;
    }

@@ -82,7 +82,7 @@ void dprintf(const char *fmt,...)
    char s[2000];
    va_list marker;
 
-   sprintf(s,"%s|",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s|",TimeStr(GetTime()));
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -100,7 +100,7 @@ void eprintf(const char *fmt,...)
    char s[2000];
    va_list marker;
 
-   sprintf(s,"%s | ",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()));
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -116,7 +116,7 @@ void bprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   sprintf(s,"%s | [%s] ",TimeStr(GetTime()),BlakodDebugInfo());
+   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()),BlakodDebugInfo());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -134,7 +134,7 @@ void lprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   sprintf(s,"%s | ",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()));
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -176,7 +176,8 @@ FILE *CreateFileChannel(int channel_id)
    } else {
        strftime(date_str, sizeof(date_str), "%Y-%m-%d", time_struct);
    }
-   sprintf(channel_file,"%s%s-%s.txt",ConfigStr(PATH_CHANNEL),channel_table[channel_id].file_name, date_str);
+   snprintf(channel_file, sizeof(channel_file),
+            "%s%s-%s.txt",ConfigStr(PATH_CHANNEL),channel_table[channel_id].file_name, date_str);
    pFile = fopen(channel_file, "ab");
 
    return pFile;

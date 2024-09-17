@@ -81,7 +81,7 @@ messages:
    
    SetForSale()
    {
-      plFor_Sale = [$,$,[SID_FIREWALL, SID_MARTYRS_BATTLEGROUND, SID_BRAMBLEWALL, SID_BOND,
+      plFor_Sale = [$,$,[SID_FIREWALL, SID_MARTYRS_BATTLEGROUND, SID_BRAMBLE_WALL, SID_BOND,
                          SID_SILENCE, SID_RING_OF_FLAMES ]];
       return;
    }
@@ -156,7 +156,7 @@ messages:
 
       %% only players who are killable may learn 
       if (not send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         AND (num = SID_BRAMBLEWALL OR num = SID_FIREWALL OR num = SID_RING_OF_FLAMES))
+         AND (num = SID_BRAMBLE_WALL OR num = SID_FIREWALL OR num = SID_RING_OF_FLAMES))
       { 
          if report
          { 

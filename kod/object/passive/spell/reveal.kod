@@ -137,6 +137,8 @@ messages:
             send(oTarget,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
             Send(who,@MsgSendUser,#message_rsc=reveal_strip_misdir, 
                  #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+         % Immediately update the rarity presentation in the client
+         Send(Send(oTarget,@GetOwner),@SomethingChanged,#what=oTarget);
          }
       }
       

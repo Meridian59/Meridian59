@@ -21,11 +21,12 @@
 
 #define MAP_WALL_THICKNESS 1
 #define MAP_PLAYER_THICKNESS 2
-#define MAP_OBJECT_THICKNESS 2
+#define MAP_OBJECT_THICKNESS 3
+
+#define MAP_PLAYER_MARKER_SIZE 3
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
 #define MAP_PLAYER_COLOR        PALETTERGB(0, 0, 255)
-#define MAP_PLAYER_FRONT_COLOR  PALETTERGB(0, 0, 0)   // Pixel at front of player
 #define MAP_OBJECT_COLOR        PALETTERGB(255, 0, 0)
 
 #define MAP_FRIEND_COLOR        PALETTERGB(0, 255, 0)
@@ -477,9 +478,9 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
 
    hOldPen = (HPEN) SelectObject(hdc, hPlayerPen);
 
-   FindOffsets(player.width * 3 / 4, player.angle, &dx, &dy);
-   FindOffsets(player.width / 4, player.angle+NUMDEGREES/4, &ldx, &ldy);
-   FindOffsets(player.width / 4, player.angle-NUMDEGREES/4, &rdx, &rdy);
+   FindOffsets(MAP_PLAYER_MARKER_SIZE * 3, player.angle, &dx, &dy);
+   FindOffsets(MAP_PLAYER_MARKER_SIZE, player.angle+NUMDEGREES/4, &ldx, &ldy);
+   FindOffsets(MAP_PLAYER_MARKER_SIZE, player.angle-NUMDEGREES/4, &rdx, &rdy);
 
    if (config.showMapBlocking)
    {
@@ -491,22 +492,15 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
       Ellipse(hdc, rc.left, rc.top, rc.right+1, rc.bottom+1);
       SelectObject(hdc, hOldBrush);
    }
+   
    x += (int) (player.x * scale);
    y += (int) (player.y * scale);
-   dx = (int) (dx * scale);
-   dy = (int) (dy * scale);
-   ldx = (int) (ldx * scale);
-   ldy = (int) (ldy * scale);
-   rdx = (int) (rdx * scale);
-   rdy = (int) (rdy * scale);
+
    MoveToEx(hdc, x - dx, y - dy, NULL);
    LineTo(hdc, x + dx, y + dy);
    LineTo(hdc, x + ldx, y + ldy);
    LineTo(hdc, x + rdx, y + rdy);
    LineTo(hdc, x + dx, y + dy);
-
-   // Indicate front of player
-   //SetPixel(hdc, x + dx, y + dy, MAP_PLAYER_FRONT_COLOR);
 
    SelectObject(hdc, hOldPen);
 }

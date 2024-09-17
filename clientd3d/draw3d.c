@@ -86,10 +86,10 @@ BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
-static void StretchC1To2(BYTE *src,BYTE *dest,int width,int height);
-
 /* local function prototypes */
 static void StretchImage(void);
+static void Stretch(BYTE* src, BYTE* dest, int width, int height,
+    int new_width, int new_height, int max_width);
 /************************************************************************/
 /* return TRUE iff successful */
 Bool InitializeGraphics3D(void)
@@ -341,8 +341,8 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
-   area.cx = min(params->width / 2, main_viewport_width);
-   area.cy = min(params->height / 2, main_viewport_height);
+   area.cx = CLASSIC_WIDTH;
+   area.cy = CLASSIC_HEIGHT;
 
    // Force size to be even
    area.cy = area.cy & ~1;  
@@ -385,10 +385,10 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    long t1,t2,t3;
    static int count = 0;
 
-   // Size of offscreen bitmap.
+   // View area of the player (as per software renderer view/fov)
    area.x = area.y = 0;
-   area.cx = main_viewport_width;
-   area.cy = main_viewport_height;
+   area.cx = CLASSIC_WIDTH;
+   area.cy = CLASSIC_HEIGHT;
 
    // Force size to be even.
    area.cy = area.cy & ~1;
@@ -533,30 +533,51 @@ void SetLightingInfo(int sun_x, int sun_y, BYTE intensity)
  */
 void StretchImage(void)
 {
-  StretchC1To2(gBits,gBufferBits,area.cx,area.cy);
+  Stretch(gBits, gBufferBits, area.cx, area.cy, main_viewport_width, main_viewport_height, MAXX);
 }
 /************************************************************************/
-void StretchC1To2(BYTE *src,BYTE *dest,int width,int height)
+/************************************************************************/
+/*
+ * Stretch: Function to stretch a source image to a new size while maintaining the aspect ratio.
+ * - src: Pointer to the source image data (bytes)
+ * - dest: Pointer to the destination image buffer where the stretched image will be stored (bytes).
+ * - width: Width of the source image in pixels.
+ * - height: Height of the source image in pixels.
+ * - new_width: Desired width of the stretched image in pixels.
+ * - new_height: Desired height of the stretched image in pixels.
+ * - row_stride: The row stride in bytes (used for row size calculations).
+ */
+void Stretch(BYTE* src, BYTE* dest, int width, int height, 
+    int new_width, int new_height, int row_stride)
 {
-  register long i,j;
-  register BYTE *s,*d,*d2;
-  
-  /* 1->2 stretch */
-  for(i = 0;i < height;i++)
-  {
-    s = src + i * MAXX;
-    d  = dest + 2 * i * MAXX * 2;
-    d2 = d + MAXX * 2;                // One row offset from dest
-    for(j = 0; j < width; j++)
+    // Calculate the scaling ratios
+    int half_new_width = new_width / 2;
+    int x_ratio = (width << 16) / half_new_width;
+    int y_ratio = (height << 16) / new_height;
+
+    for (int i = 0; i < new_height; i++)
     {
-      register BYTE b = *s;
-      *d++ = b;
-      *d++ = b;
-      *d2++ = b;
-      *d2++ = b;
-      s++;
+        // Calculate the y-coordinate in the source image
+        int y = (i * y_ratio) >> 16;
+        BYTE* s = src + y * row_stride; // Set source pointer
+
+        // Calculate the destination pointers for the current and next rows
+        BYTE* d = dest + i * row_stride * 2;
+        BYTE* d2 = d + row_stride;
+
+        for (int j = 0; j < half_new_width; j++)
+        {
+            // Calculate the x-coordinate in the source image
+            int x = (j * x_ratio) >> 16;
+            BYTE b = *(s + x); // Fetch the pixel from the source
+
+            // Write the pixel to the destination, expanding both horizontally and vertically
+            *(d + 2 * j) = b;
+            *(d + 2 * j + 1) = b;
+            *(d2 + 2 * j) = b;
+            *(d2 + 2 * j + 1) = b;
+        }
     }
-  }
 }
 /************************************************************************/
 /*

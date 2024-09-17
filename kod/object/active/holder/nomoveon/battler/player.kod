@@ -1807,7 +1807,7 @@ messages:
             AND (not Send(Send(SYS,@GetParliament),@IsShutdown))
          {
             piFactionTimeUpdated=GetTime();
-            Send(self,@FactionServiceTimer);
+            Send(self,@FactionServiceRoutine);
          }
 
          if Send(self,@PlayerIsIntriguing)
@@ -1884,7 +1884,7 @@ messages:
 
       if piFaction <> FACTION_NEUTRAL
       {
-         Send(self,@factionServiceRoutine,#renew=FALSE);
+         Send(self,@FactionServiceRoutine,#renew=FALSE);
       }
 
       % Stop health and mana timers.
@@ -4472,14 +4472,6 @@ messages:
          damage = 1;
       }
 
-      if damage > 0
-      {
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_PARALYZED,#flagset=2)
-         {
-            Send(self,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_PARALYZE));
-         }
-      }
-
       if NOT absolute
       {
          % If we have more health than twice our max, no percent limit on damage.
@@ -6365,6 +6357,12 @@ messages:
       {
          return 0;
       }
+      
+      % No karma change in arenas.
+      if Send(oRoom,@IsArena)
+      {
+         return 0;
+      }
 
       % No karma changes from killing neutral monsters.
       if bIsMob AND karma_victim = NEUTRAL
@@ -6795,7 +6793,7 @@ messages:
 %  (which clearly doesn't belong in player; should be in the spell itself) to
 %  make it buyable.  - ARK 10/26/2010
 %
-%      if num = SID_DEATHS_DOOR
+%      if num = SID_SHADOW_RIFT
 %          AND ((NOT Send(self, @IsUsingA,#class=&NecromancerAmulet))
 %               AND (NOT IsClass(self,&Admin)))
 %      {
@@ -8328,7 +8326,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0);
+         AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
          AddPacket(1,ANIMATE_ONCE, 4,175, 2,1, 2,3, 2,0);
          AddPacket(1,0);
     
@@ -8359,7 +8357,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0);
+         AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
          AddPacket(1,ANIMATE_ONCE,4,300,2,4,2,6,2,iGroup);
          AddPacket(1,1);
          AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
@@ -8394,7 +8392,7 @@ messages:
          AddPacket(4,Send(what,@GetWindowOverlayID)); % supposedly "object id" in client
          AddPacket(4,Send(what,@GetWindowOverlay));
          AddPacket(4,Send(what,@GetName)); % useless field, used to make client parsing easier 
-         AddPacket(4,0);
+         AddPacket(4,0, 4,0); % Flags + item rarity grade
          Send(what,@SendWindowOverlayAnimation);
          Send(what,@SendWindowOverlayOverlays);
     
@@ -8488,6 +8486,11 @@ messages:
       plOverlays = Cons(what,plOverlays);
 
       return;
+   }
+
+   IsHairVisible()
+   {
+      return poHair_remove = $;
    }
 
    RemoveOverlayObject(what = $)
@@ -9994,7 +9997,7 @@ messages:
       }
       
       iState = Send(self,@GetEnchantedState,
-                    #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHTVISION));
+                    #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION));
       if iState <> $
       {
          iLight = iLight + iState;
@@ -10282,12 +10285,49 @@ messages:
          return PLAYER_LEARN_ERROR;     
       }
 
-      % Phase two:  get the hard data.
+      % Phase two: If player already has skill we can exit and respond
+      for i in plSkills
+      {
+         nSID=Send(self,@DecodeSkillNum,#compound=i);
+         nobj=Send(SYS,@FindSkillByNum,#num=nSID);
+         
+         if nobj = $ 
+         {
+            Debug("bad data in skill list!");
+
+            return PLAYER_LEARN_ERROR;
+         }
+         
+         if nobj = obj
+         {
+            return PLAYER_LEARN_ALREADY;
+         }
+      }
+
+      for i in plSpells
+      {
+         nSID=Send(self,@DecodeSpellNum,#compound=i);
+         nobj=Send(SYS,@FindSpellByNum,#num=nSID);
+         
+         if nobj = $ 
+         {
+            Debug("bad data in spell list!");
+
+            return PLAYER_LEARN_ERROR;
+         }
+         
+         if nobj = obj
+         {
+            return PLAYER_LEARN_ALREADY;
+         }
+      }
+
+      % Phase three:  get the hard data.
       level = Send(obj,@GetLevel);
       school = Send(obj,@GetSchool);
       division = Send(obj,@GetDivision);      
                   
-      % Phase three.  We begin to find our need.  Start by finding out how many
+      % Phase four.  We begin to find our need.  Start by finding out how many
       %  spells exist at ALL at that level.  While we are going through the spell
       %  skill list, count the spells/skills that count towards our total.  Note
       %  that we only want the top three spells/skills at that school and level.
@@ -10344,18 +10384,6 @@ messages:
          nSID=Send(self,@DecodeSkillNum,#compound=i);
          nobj=Send(SYS,@FindSkillByNum,#num=nSID);
          
-         if nobj = $ 
-         {
-            Debug("bad data in spell list!");
-
-            return PLAYER_LEARN_ERROR;
-         }
-         
-         if nobj = obj
-         {
-            return PLAYER_LEARN_ALREADY;
-         }
-
          nLevel = Send(nobj,@GetLevel);
     
          % Is this in the same school at level N-1?
@@ -10392,13 +10420,6 @@ messages:
       {
          nSID=Send(self,@DecodeSpellNum,#compound=i);
          nobj=Send(SYS,@FindSpellByNum,#num=nSID);
-         
-         if nobj = $ 
-         {
-            Debug("bad data in spell list!");
-
-            return PLAYER_LEARN_ERROR;
-         }
 
          nSchool = Send(nobj,@GetSchool);
          nLevel = Send(nobj,@GetLevel);
@@ -10406,11 +10427,6 @@ messages:
          if (not IsClass(nobj,&Spell)) OR (nLevel> 10)
          {
             continue;
-         }
-         
-         if nobj = obj
-         {
-            return PLAYER_LEARN_ALREADY;
          }
          
          if nSchool = SS_DM_COMMAND
@@ -10955,13 +10971,9 @@ messages:
    FactionServiceTimer(renew=TRUE)
    {
       local iHistory;
-      
-      if ptFactionTimer <> $
-      {
-         DeleteTimer(ptFactionTimer);
-         ptFactionTimer = $;
-      }
-      
+
+      ptFactionTimer = $;
+
       if piFaction = FACTION_NEUTRAL
       {
          return;
@@ -11165,8 +11177,7 @@ messages:
          factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
                           
-      ptFactionTimer = $;
-      Send(Self,@FactionServiceTimer);
+      Send(Self,@FactionServiceRoutine);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       Send(self,@MsgSendUser,#message_rsc=player_join_faction,
@@ -11870,6 +11881,24 @@ messages:
    GetExpression()
    {
       return piAction;
+   }
+
+   % Facial overlays such as face masks and helmets are displayed by statues 
+   % and logoff ghosts. Such overlays (helms/mummy masks) may also require a 
+   % players hair, nose and/or mouth to be hidden to look right.
+   GetFacialOverlay()
+   {
+      local overlay;
+      
+      for overlay in plOverlays
+      {
+         if IsClass(overlay,&FaceMask) or IsClass(overlay,&Helmet)
+         {
+            return overlay;
+         }
+      }
+
+      return $;
    }
 
    GetShieldRsc()

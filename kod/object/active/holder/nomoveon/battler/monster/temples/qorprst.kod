@@ -48,7 +48,7 @@ classvars:
 
    viQuestID=QST_ID_QOR_DISCIPLE
    viKarma = -90
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER | MOB_PERM_QUESTER
+   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER | MOB_PERM_QUESTER | MOB_FULL_TALK
    viOccupation = MOB_ROLE_PRIESTESS
 
 messages:
@@ -182,7 +182,7 @@ messages:
          }
       }
 
-      if num = SID_SUMMON_POISON_FOG
+      if num = SID_POISON_FOG
          AND NOT send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          if report

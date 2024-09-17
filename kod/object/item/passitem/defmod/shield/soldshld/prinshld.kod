@@ -153,7 +153,7 @@ messages:
    {
       local iReduction;
 
-      iReduction = ((piFactionRank/3) - 1);
+      iReduction = Bound(((piFactionRank/3) - 1),0,$);
 
       return iReduction;
    }

@@ -41,7 +41,6 @@ extern int border_index;
 
 int main_viewport_width;
 int main_viewport_height;
-extern float player_overlay_scaler;
 
 // Variables to store frame times and FPS
 static std::vector<double> fps_store;
@@ -110,15 +109,29 @@ void ResizeAll(void)
  */
 Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
+    // Default scale factors for hardware renderer.
+    float scale_x = 1.0f;
+    float scale_y = 1.0f;
 
-   if (client_x < view.x || client_x > view.x + view.cx ||
-       client_y < view.y || client_y > view.y + view.cy)
-      return False;
+    if (!D3DRenderIsEnabled())
+    { 
+        // The software renderer uses the classic client aspect ratio and stretches 
+        // the client area to fit the window. We calculate the scaling factors 
+        // based on the ratio of the current viewport size to the classic dimensions.
+        scale_x = static_cast<float>(main_viewport_width) / CLASSIC_WIDTH;
+        scale_y = static_cast<float>(main_viewport_height) / CLASSIC_HEIGHT;
+    }
 
-   *x = (client_x - view.x) / 2;
-   *y = (client_y - view.y) / 2;
+    // Translate client coordinates to room coordinates, considering any scaling factors.
+    *x = static_cast<int>((client_x - view.x) / scale_x);
+    *y = static_cast<int>((client_y - view.y) / scale_y);
 
-   return True;
+    // Check if the translated coordinates are within the valid room bounds.
+    if (*x < view.x || *x > view.x + view.cx ||
+        *y < view.y || *y > view.y + view.cy)
+        return False;
+
+    return True;
 }
 /************************************************************************/
 /*
@@ -221,7 +234,6 @@ void GraphicsAreaResize(int xsize, int ysize)
    // update main viewport and classic scaler (required for FOV calculations and equipment scaling)
    main_viewport_width = view.cx;
    main_viewport_height = view.cy;
-   player_overlay_scaler = ((float)main_viewport_width) / CLASSIC_WIDTH;
 
    D3DRenderResizeDisplay(view.x, view.y, view.cx, view.cy);
 
@@ -309,7 +321,8 @@ int GetMSDrawFrame(void)
  */
 void RedrawForce(void)
 {
-   if (GameGetState() == GAME_INVALID || /*!need_redraw ||*/ IsIconic(hMain) ||
+   auto state = GameGetState();
+   if (state == GAME_INVALID || state == GAME_INIT || IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
    {
       need_redraw = False;

@@ -224,10 +224,10 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		
 		// Item Name.
 		height = SetFontToFitText(info,GetDlgItem(hDlg, IDC_DESCNAME), 
-			(int)FONT_TITLES, info->name);
-		SetDlgItemText(hDlg, IDC_DESCNAME, info->name);
+			(int)FONT_TITLES, info->name.c_str());
+		SetDlgItemText(hDlg, IDC_DESCNAME, info->name.c_str());
 		hdc = GetDC(hDlg);
-		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags,info->name));
+		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags,info->name.c_str()));
 		ReleaseDC(hDlg,hdc);
 		
 		// Item Description.
@@ -385,7 +385,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
-		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
+		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name.c_str()));
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;
@@ -633,7 +633,7 @@ void SetDescParams(HWND hParent, int flags)
 *   extra_string and url are used only in player descriptions.
 */
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
-                        char *fixed_string, char *url)
+                        char *fixed_string, char *url, item_rarity_grade rarity)
 {
 	DescDialogStruct info;
 	int template_id;
@@ -647,19 +647,62 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	ZeroMemory(&info,sizeof(info));
 	info.obj          = obj;
 	info.flags        = flags;
-	info.name         = LookupNameRsc(obj->name_res);
+    char* nameCStr    = LookupNameRsc(obj->name_res);
+    info.name         = std::string(nameCStr);
 	info.description  = description;
 	info.fixed_string = fixed_string;
 	info.url          = url;
+	info.rarity       = obj->rarity;
 	
+	std::string raritySuffix = GetRaritySuffix(info.rarity);
+
+	if (!raritySuffix.empty())
+	{
+        info.name += " (" + raritySuffix + ")";
+	}
+
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
 	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
-                 DescDialogProc, (LPARAM) &info);
+                 DescDialogProc, reinterpret_cast<LPARAM>(&info));
 	
 	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
+}
+/************************************************************************/
+/*
+* GetRaritySuffix:  Provide a rarity suffix based on the given rarity type.
+*/
+std::string GetRaritySuffix(item_rarity_grade rarity)
+{
+	int stringID;
+
+	switch(rarity)
+	{
+        case ITEM_RARITY_GRADE_NORMAL:
+            return "";
+        case ITEM_RARITY_GRADE_UNCOMMON:
+            stringID = IDS_RARITY_GRADE_UNCOMMON;
+			break;
+        case ITEM_RARITY_GRADE_RARE:
+            stringID = IDS_RARITY_GRADE_RARE;
+			break;
+        case ITEM_RARITY_GRADE_LEGENDARY:
+            stringID = IDS_RARITY_GRADE_LEGENDARY;
+			break;
+        case ITEM_RARITY_GRADE_UNIDENTIFIED:
+            stringID = IDS_RARITY_GRADE_UNIDENTIFIED;
+			break;
+        case ITEM_RARITY_GRADE_CURSED:
+            stringID = IDS_RARITY_GRADE_CURSED;
+			break;
+		default:
+			debug(("Unknown rarity grade %d\n", rarity));
+            return ""; // Handle unknown rarity gracefully (no suffix)
+	}
+
+	return GetString(hInst, stringID);
 }
 /************************************************************************/
 /*

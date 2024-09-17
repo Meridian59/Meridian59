@@ -701,7 +701,7 @@ messages:
    {
       local oSpell, oCaster;
 
-      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATHLINK);
+      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATH_LINK);
 
       if Send(self,@IsEnchanted,#what=oSpell)
       {
@@ -1773,6 +1773,22 @@ messages:
                  #new_col=Nth(new_pos,2));
          }
 
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+         {
+            for i in plActive
+            {
+               each_obj = First(i);
+               if IsClass(each_obj,&Monster)
+               {
+                     if Send(each_obj, @ReadyForWelcome)
+                     {
+                        Send(each_obj,@UserEntered,#who=what);
+                     }
+               }
+            }
+         }
+
          % Now send music.
          Send(what,@SendRoomMusic,#music_rsc=prMusic);
 
@@ -1787,6 +1803,20 @@ messages:
          }
       }
 
+      return;
+   }
+
+   ResendRoomBackgroundMusic()
+   {
+      local i;
+
+      for i in Send(self,@GetHolderActive)
+      {
+         if IsClass(first(i),&user)
+         {
+            Send(first(i),@SendRoomMusic,#music_rsc=prMusic);
+         }
+      }
       return;
    }
 

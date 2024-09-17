@@ -204,7 +204,7 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 
 	memcpy(&peer_addr,(long *)&(peer_info.sin_addr),sizeof(struct in_addr));
 	memcpy(&conn.addr, &peer_addr, sizeof(struct in_addr));
-	sprintf(conn.name,"%s",inet_ntoa(peer_addr));
+	snprintf(conn.name, sizeof(conn.name), "%s",inet_ntoa(peer_addr));
 
 	if (connection_type == SOCKET_MAINTENANCE_PORT)
 	{
@@ -349,7 +349,7 @@ void AsyncEachSessionNameLookup(session_node *s)
 
 	if (s->conn.hLookup == name_lookup_handle)
 	{
-		sprintf(s->conn.name,"%s",((struct hostent *)&(s->conn.peer_data))->h_name);
+		snprintf(s->conn.name, sizeof(s->conn.name), "%s",((struct hostent *)&(s->conn.peer_data))->h_name);
 		InterfaceUpdateSession(s);
 	}
 }

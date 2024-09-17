@@ -64,6 +64,8 @@ properties:
    prRight_arm = $
    prLeft_arm = $
    prLegs = $
+   pbIsHairVisible = $
+   prFacialOverlay = $
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
@@ -310,6 +312,16 @@ messages:
          }
       }
 
+      if prFacialOverlay <> $
+      {
+         piOverlays = piOverlays + 1;
+      }
+
+      if not pbIsHairVisible
+      {
+         piOverlays = piOverlays - 1;
+      }
+
       return;
    }
 
@@ -449,6 +461,9 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
+      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+      pbIsHairVisible = Send(poOriginal,@IsHairVisible);
+
       oWeapon = send(poOriginal,@LookUpPlayerWeapon);
 
       prShield = send(poOriginal,@GetShieldRsc);
@@ -535,8 +550,11 @@ messages:
       AddPacket(4,prMouth,1,HS_MOUTH,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,piExpression);
       AddPacket(4,prEyes,1,HS_EYES,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,piExpression);
       AddPacket(4,prNose,1,HS_NOSE,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,1);
-      AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,1,piHair_translation);
-      AddPacket(1,ANIMATE_NONE,2,1); 
+
+      if pbIsHairVisible
+      {
+         AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,1,piHair_translation,1,ANIMATE_NONE,2,1);
+      }
 
       if prShield <> $ and piPose <> POSE_CAST
       {
@@ -590,6 +608,11 @@ messages:
       
             AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);  
          }
+      }
+
+      if prFacialOverlay <> $
+      {
+         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
       }
 
       return;

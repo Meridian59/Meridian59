@@ -30,7 +30,7 @@ LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    1                       "Bem-vindo ao Meridian 59! Clique aqui para começar."
+    1                       "Bem-vindo ao Meridian 59! Clique aqui para iniciar."
 END
 
 #endif    // Portuguese (Brazilian) resources

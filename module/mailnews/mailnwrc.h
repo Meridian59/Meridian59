@@ -57,6 +57,7 @@
 #define IDS_NHEADER3                    53
 #define IDS_SUBJECT_ENGLISH             54
 #define IDS_SUBJECT_GERMAN              55
+#define IDS_SUBJECT_PORTUGUESE          56
 #define IDI_LETTER                      101
 #define IDB_MAILBOX                     102
 #define IDD_MAILSEND                    111

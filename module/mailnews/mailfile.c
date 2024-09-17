@@ -310,8 +310,7 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    char filename[MAX_PATH + FILENAME_MAX];
    char line[MAX_LINE];
    int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
-   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN,
-                      IDS_FROM, IDS_TO, IDS_DATE};
+   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
    char *fields[5], *ptr;
    int i, index;
 
@@ -360,6 +359,7 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
       {
       case IDS_SUBJECT_ENGLISH:
       case IDS_SUBJECT_GERMAN:
+      case IDS_SUBJECT_PORTUGUESE:
          strncpy(info->subject, ptr, MAX_SUBJECT);
          info->subject[MAX_SUBJECT - 1] = 0;
          break;
@@ -405,8 +405,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
 {
    FILE *infile;
    int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
-   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN,
-                      IDS_FROM, IDS_TO, IDS_DATE};
+   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
    int i;
    char *fields[5], *ptr;
    char line[MAX_LINE];
@@ -445,6 +444,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
       {
       case IDS_SUBJECT_ENGLISH:
       case IDS_SUBJECT_GERMAN:
+      case IDS_SUBJECT_PORTUGUESE:
          strncpy(header->subject, ptr, MAX_SUBJECT);
          break;
          

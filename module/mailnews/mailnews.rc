@@ -302,6 +302,7 @@ BEGIN
     53                      "Datum"
     IDS_SUBJECT_ENGLISH     "Subject: "
     IDS_SUBJECT_GERMAN      "Betreff: "
+    IDS_SUBJECT_PORTUGUESE  "Assunto: "
 END
 
 #endif    // German (Neutral) resources
@@ -538,6 +539,7 @@ BEGIN
     IDS_NHEADER3            "Date"
     IDS_SUBJECT_ENGLISH     "Subject: "
     IDS_SUBJECT_GERMAN      "Betreff: "
+    IDS_SUBJECT_PORTUGUESE  "Assunto: "
 END
 
 #endif    // English (U.S.) resources

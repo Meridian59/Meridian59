@@ -204,11 +204,11 @@ CAPTION "Alterar senha"
 FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDI_ICON,-1,4,4,21,20
-    LTEXT           "Mantenha o nome da sua conta e a senha em segredo. Você é o único responsável pela sua conta, independentemente de quem a esteja usando.",-1,39,4,205,27
+    LTEXT           "Mantenha o nome da sua conta e a senha em segredo. Você é o único responsável pela sua conta, independentemente de quem a esteja usando.",-1,39,4,195,27
     GROUPBOX        "Sua senha",-1,40,35,205,76
-    LTEXT           "Senha atual:",-1,52,50,49,8
+    LTEXT           "Senha atual:",-1,49,50,49,8
     EDITTEXT        1096,134,47,102,14,ES_PASSWORD | ES_AUTOHSCROLL
-    LTEXT           "Nova senha:",-1,52,68,57,8
+    LTEXT           "Nova senha:",-1,49,68,57,8
     EDITTEXT        1097,134,66,102,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "Confirmação da nova senha:",-1,49,87,78,8
     EDITTEXT        1098,134,85,102,14,ES_PASSWORD | ES_AUTOHSCROLL
@@ -255,16 +255,16 @@ BEGIN
     PUSHBUTTON      "Criar conta gratuitamente...",1082,137,49,100,14
     EDITTEXT        1076,93,86,143,13,ES_AUTOHSCROLL
     EDITTEXT        1077,93,100,143,13,ES_PASSWORD | ES_AUTOHSCROLL
-    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,93,115,28,10
-    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,122,115,28,10
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,93,118,28,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,122,118,28,10
     DEFPUSHBUTTON   "Entrar",1080,137,131,100,14,WS_GROUP
     ICON            IDI_ICON,-1,6,6,20,20
     LTEXT           "Se você ainda não tem uma conta do Meridian 59, você pode se inscrever gratuitamente em www.meridian59.com.",-1,36,6,206,18
     GROUPBOX        "Novo no Meridian",1196,37,33,207,35
     LTEXT           "Se você ainda não tem uma conta clique aqui.",-1,45,47,87,18
-    LTEXT           "Nome de usuário:",-1,43,88,50,10
-    LTEXT           "Senha:",-1,59,103,31,8
-    LTEXT           "Servidor:",-1,67,115,26,8
+    LTEXT           "Usuário:",-1,43,88,50,10
+    LTEXT           "Senha:",-1,43,103,31,8
+    LTEXT           "Servidor:",-1,43,118,26,8
 END
 
 118 DIALOGEX 0, 0, 239, 378
@@ -319,13 +319,13 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configurações do filtro de texto"
 FONT 8, "MS Sans Serif"
 BEGIN
-    GROUPBOX        "Opções",-1,4,4,229,56
+    GROUPBOX        "Opções",-1,4,4,210,56
     CONTROL         "Ignorar todas as mensagens do filtro de texto",1174,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,11,15,215,10
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,11,15,200,10
     CONTROL         "Substituir todo as palavras do filtro por: ($@#!&&)",1175,
-                    "Button",BS_AUTORADIOBUTTON,11,27,215,10
-    CONTROL         "Busca extra por termos suspeitos.",1179,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,11,44,215,10
-    LTEXT           "Palavras:",-1,241,16,20,8
+                    "Button",BS_AUTORADIOBUTTON,11,27,200,10
+    CONTROL         "Busca extra por termos suspeitos.",1179,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,11,44,200,10
+    LTEXT           "Palavras:",-1,231,16,30,8
     EDITTEXT        1176,271,14,46,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Adicionar",1177,241,30,76,11
     PUSHBUTTON      "Remover",1178,241,43,76,11
@@ -344,39 +344,44 @@ CAPTION "Configurações antecipadas Meridian 59"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Captura de alvo",IDC_STATIC,6,6,91,78,WS_GROUP
-    CONTROL         "Jogadores podem ser atacados",1153,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,73,25
-    CONTROL         "Destaque vermelho",1180,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,45,70,10
-    CONTROL         "Destaque azul",1181,"Button",BS_AUTORADIOBUTTON,14,56,70,10
-    CONTROL         "Destaque verde",1182,"Button",BS_AUTORADIOBUTTON,14,67,70,10
+    CONTROL         "Jogadores podem ser atacados",1153,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,73,20
+    CONTROL         "Destaque vermelho",1180,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,37,70,10
+    CONTROL         "Destaque azul",1181,"Button",BS_AUTORADIOBUTTON,14,48,70,10
+    CONTROL         "Destaque verde",1182,"Button",BS_AUTORADIOBUTTON,14,59,70,10
     GROUPBOX        "Efeitos especiais",IDC_STATIC,104,6,147,78,WS_GROUP
     CONTROL         "Balançar câmera ao andar",1163,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
     CONTROL         "Mostrar dor em impactos",1146,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
-    CONTROL         "Mostrar nomes dos jogadores",1143,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,38,132,9
+    CONTROL         "Mostrar nomes dos jogadores",1143,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
     CONTROL         "Mostrar quantidade de itens",1148,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     CONTROL         "Mostrar efeito de partículas",1184,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,111,61,126,10
     GROUPBOX        "Efeitos de áudio",IDC_STATIC,6,87,245,83,WS_GROUP
-    CONTROL         "Música",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,33,9
-    CONTROL         "Sons",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,99,39,9
-    CONTROL         "Som mono",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,87,99,81,9
-    CONTROL         "Som estéreo",1154,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,99,75,9
-    LTEXT           "Volume do som",IDC_STATIC,13,117,73,10
-    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,114,159,15
-    LTEXT           "Volume da música",IDC_STATIC,13,134,67,10
-    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,148,159,15
-    LTEXT           "Volume do som ambiente",IDC_STATIC,13,149,76,10
-    CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,131,159,15
+    CONTROL         "Música",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,55,9
+    CONTROL         "Sons",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,68,99,55,9
+    CONTROL         "Som mono",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,123,99,55,9
+    CONTROL         "Som estéreo",1154,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,99,55,9
+    LTEXT           "Volume do som",IDC_STATIC,13,117,85,10
+    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,114,145,15
+    LTEXT           "Volume da música",IDC_STATIC,13,132,85,10
+    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,129,145,15
+    LTEXT           "Volume do som ambiente",IDC_STATIC,13,147,85,10
+    CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,144,145,15
     GROUPBOX        "Interface",IDC_STATIC,5,175,246,70,WS_GROUP
+    
+    CONTROL         "Mostrar barra",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
+    CONTROL         "Mostrar latência",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,187,77,9
+    CONTROL         "Texto colorido",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,187,72,10
+    
     CONTROL         "Mostrar ícones",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,197,62,9
-    CONTROL         "Ativar/Desativar ajuda de ícone",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
-    CONTROL         "Congelar janela de texto ao retroceder",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,166,10
-    CONTROL         "Mostrar taxa de transferência",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,185,77,9
-    CONTROL         "Ativar/Desativar filtro de texto",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,219,77,9
-    PUSHBUTTON      "&Configurações",1164,101,217,142,12
-    DEFPUSHBUTTON   "Confirmar",1,144,240,50,12,WS_GROUP
-    PUSHBUTTON      "Cancelar",2,200,240,50,12,WS_GROUP
-    CONTROL         "Mapa dinâmico",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,196,79,10
-    CONTROL         "Texto colorido",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,185,72,10
+    CONTROL         "Mapa dinâmico",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,197,79,10
     CONTROL         "Cubo rotativo",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
+    
+    CONTROL         "Congelar janela de texto ao retroceder",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,166,10
+    
+    CONTROL         "Ativar/Desativar filtro de texto",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,220,140,9
+    PUSHBUTTON      "&Configurações",1164,130,219,70,12
+    
+    DEFPUSHBUTTON   "Confirmar",1,144,246,50,12,WS_GROUP
+    PUSHBUTTON      "Cancelar",2,200,246,50,12,WS_GROUP
 END
 
 110 DIALOG 0, 0, 340, 140

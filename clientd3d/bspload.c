@@ -179,10 +179,8 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    room->num_sectors  = num_sectors;
    room->num_sidedefs = num_sidedefs;
 
-//   BSPDumpTree(room->tree, 0);
-//   D3DGeometryBuild(room);
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
-   SandstormInit();
+
 	playerOldPos.x = 0;
 	playerOldPos.y = 0;
 	playerOldPos.z = 0;

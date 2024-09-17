@@ -313,9 +313,10 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    FILE *infile;
    char filename[MAX_PATH + FILENAME_MAX];
    char line[MAX_LINE];
-   int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
-   char *fields[5], *ptr;
+   int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
+   char **fields = (char **)malloc(num_fields * sizeof(char *));
+   char *ptr;
    int i, index;
 
    if ((index = MailFindIndex(msgnum)) == -1)
@@ -408,12 +409,13 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
 Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
 {
    FILE *infile;
-   int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
-   int i;
-   char *fields[5], *ptr;
+   int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
+   char **fields = (char **)malloc(num_fields * sizeof(char *));
+   char *ptr;
    char line[MAX_LINE];
-
+   int i;
+   
    if ((infile = fopen(filename, "r")) == NULL)
       return False;
    

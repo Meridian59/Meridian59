@@ -161,9 +161,13 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    if (strncmp(message, subject_str, strlen(subject_str)))
    {
       subject_str = GetString(hInst, IDS_SUBJECT_GERMAN);
-      if (strncmp(message, subject_str, strlen(subject_str))) {
-         subject_found = False;
-         subject = "";
+      if (strncmp(message, subject_str, strlen(subject_str))) 
+      {
+         subject_str = GetString(hInst, IDS_SUBJECT_PORTUGUESE);
+         if (strncmp(message, subject_str, strlen(subject_str))) {
+            subject_found = False;
+            subject = "";
+         }
       }
    }
 

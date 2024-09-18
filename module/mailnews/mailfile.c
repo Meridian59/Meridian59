@@ -128,7 +128,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 {
    int index, num_msgs, msgnum;
    char new_msg[MAXMAIL + 200 + MAX_SUBJECT + MAXUSERNAME * MAX_RECIPIENTS];
-   int subject_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE};
+   const int subject_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE};
    int num_subjects = sizeof(subject_ids) / sizeof(subject_ids[0]);
    char *subject = "";
    char *ptr, *subject_str;
@@ -319,7 +319,7 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    FILE *infile;
    char filename[MAX_PATH + FILENAME_MAX];
    char line[MAX_LINE];
-   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
+   const int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
    const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
    auto fields = std::vector<char *>(num_fields, nullptr);
    char *ptr;
@@ -444,7 +444,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
             /* Remove newline at end of line */
             line[strlen(line) - 1] = 0;
             
-            ptr = line + strlen(fields[i].c_str());
+            ptr = line + fields[i].size();
             break;
          }
       }

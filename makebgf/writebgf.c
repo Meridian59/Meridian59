@@ -31,7 +31,7 @@ static void MappedFileClose(file_node *f);
 
 static int EstimateBGFFileSize(Bitmaps *b);
 static BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options);
-static BOOL WriteBitmap32(file_node *f, PDIB pdib, Options *options);
+static BOOL WriteBitmap24(file_node *f, PDIB pdib, Options *options);
 /**************************************************************************/
 /*
  * WriteBGFFile:  Write Bitmaps and Options structures out to given filename.
@@ -116,9 +116,9 @@ BOOL WriteBGFFile(Bitmaps *b, Options *opts, char *filename, int color_depth)
       {
         if (!WriteBitmap(&f, pdib, opts)) return FALSE;
       } 
-      else if (color_depth == 32)
+      else if (color_depth == 24)
       {
-        if (!WriteBitmap32(&f, pdib, opts)) return FALSE;
+        if (!WriteBitmap24(&f, pdib, opts)) return FALSE;
       }
       else 
       {
@@ -222,10 +222,10 @@ BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options)
 
 /***************************************************************************/
 /*
- * WriteBitmap32: Write bytes of given 32-bit PDIB out to the given file.
+ * WriteBitmap24: Write bytes of given 24-bit PDIB out to the given file.
  *   Return FALSE on error.
  */
-BOOL WriteBitmap32(file_node *f, PDIB pdib, Options *options)
+BOOL WriteBitmap24(file_node *f, PDIB pdib, Options *options)
 {
     int width, height, row, col, len, temp;
     BYTE *bits;
@@ -234,7 +234,7 @@ BOOL WriteBitmap32(file_node *f, PDIB pdib, Options *options)
     width = DibWidth(pdib);
     height = DibHeight(pdib);
 
-    buf = (BYTE *)malloc(4 * width * height); // Allocate memory for 32-bit bitmap
+    buf = (BYTE *)malloc(4 * width * height); // Allocate memory for 24-bit bitmap
     bufptr = buf;
 
     for (row = 0; row < height; row++)
@@ -250,7 +250,7 @@ BOOL WriteBitmap32(file_node *f, PDIB pdib, Options *options)
         }
     }
 
-    len = 4 * width * height; // Length of the 32-bit bitmap
+    len = 4 * width * height; // Length of the 24-bit bitmap
 
     // Write the bitmap size
     if (MappedFileWrite(f, &len, 4) < 0)

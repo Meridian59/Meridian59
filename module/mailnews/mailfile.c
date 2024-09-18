@@ -13,6 +13,7 @@
  */
 
 #include <vector>
+#include <string>
 #include "client.h"
 #include "mailnews.h"
 
@@ -416,7 +417,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
    FILE *infile;
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
    const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
-   auto fields = std::vector<char *>(num_fields, nullptr);
+   auto fields = std::vector<std::string>(num_fields);
    char *ptr;
    char line[MAX_LINE];
    int i;
@@ -438,12 +439,12 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
       /* See if we've found a field.  If so, set ptr to just after field */
       for (i=0; i < num_fields; i++)
       {
-         if (!strnicmp(line, fields[i], strlen(fields[i])))
+         if (!fields[i].empty() && !strnicmp(line, fields[i].c_str(), strlen(fields[i].c_str())))
          {
             /* Remove newline at end of line */
             line[strlen(line) - 1] = 0;
             
-            ptr = line + strlen(fields[i]);
+            ptr = line + strlen(fields[i].c_str());
             break;
          }
       }

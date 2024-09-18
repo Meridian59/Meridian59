@@ -51,10 +51,10 @@ BEGIN
     LTEXT           "Vermelho:",1070,251,57,65,8
     LTEXT           "",1063,251,69,74,21
     LTEXT           "",1064,251,102,79,13
-    PUSHBUTTON      "Desistir",1071,266,160,54,14,WS_DISABLED
-    PUSHBUTTON      "Reiniciar jogo",1072,266,179,54,14,WS_DISABLED
-    PUSHBUTTON      "Resetar jogadores",1073,266,198,54,14,WS_DISABLED
-    PUSHBUTTON      "Fechar janela",2,266,217,54,14
+    PUSHBUTTON      "Desistir",1071,261,160,64,14,WS_DISABLED
+    PUSHBUTTON      "Reiniciar jogo",1072,261,179,64,14,WS_DISABLED
+    PUSHBUTTON      "Resetar jogadores",1073,261,198,64,14,WS_DISABLED
+    PUSHBUTTON      "Fechar janela",2,261,217,64,14
 END
 
 

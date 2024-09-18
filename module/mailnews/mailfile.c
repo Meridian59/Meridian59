@@ -12,6 +12,7 @@
  * The item data of each item in the list is the message number.
  */
 
+#include <vector>
 #include "client.h"
 #include "mailnews.h"
 
@@ -126,12 +127,15 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 {
    int index, num_msgs, msgnum;
    char new_msg[MAXMAIL + 200 + MAX_SUBJECT + MAXUSERNAME * MAX_RECIPIENTS];
-   char *subject, *ptr, *subject_str;
+   int subject_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE};
+   int num_subjects = sizeof(subject_ids) / sizeof(subject_ids[0]);
+   char *subject = "";
+   char *ptr, *subject_str;
    int i, num;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
    MailHeader header;
-   Bool subject_found = True;
+   Bool subject_found = False;
 
    if (recipients == NULL)
    {
@@ -156,18 +160,15 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    }
    strcat(new_msg, "\r\n");
 
-   /* Take subject field out of main part of message */
-   subject_str = GetString(hInst, IDS_SUBJECT_ENGLISH);
-   if (strncmp(message, subject_str, strlen(subject_str)))
+   /* Search for subject line */
+   for (int i = 0; i < num_subjects; i++)
    {
-      subject_str = GetString(hInst, IDS_SUBJECT_GERMAN);
-      if (strncmp(message, subject_str, strlen(subject_str))) 
+      subject_str = GetString(hInst, subject_ids[i]);
+
+      if (strncmp(message, subject_str, strlen(subject_str)) == 0)
       {
-         subject_str = GetString(hInst, IDS_SUBJECT_PORTUGUESE);
-         if (strncmp(message, subject_str, strlen(subject_str))) {
-            subject_found = False;
-            subject = "";
-         }
+         subject_found = True;
+         break;
       }
    }
 
@@ -186,6 +187,10 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
          *ptr = 0;
          message = ptr + 1;
       }
+   }
+   else
+   {
+      subject = "";
    }
 
    /* Add "Subject:" field to message */
@@ -314,8 +319,8 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    char filename[MAX_PATH + FILENAME_MAX];
    char line[MAX_LINE];
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
-   int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
-   char **fields = (char **)malloc(num_fields * sizeof(char *));
+   const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
+   auto fields = std::vector<char *>(num_fields, nullptr);
    char *ptr;
    int i, index;
 
@@ -410,8 +415,8 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
 {
    FILE *infile;
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
-   int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
-   char **fields = (char **)malloc(num_fields * sizeof(char *));
+   const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
+   auto fields = std::vector<char *>(num_fields, nullptr);
    char *ptr;
    char line[MAX_LINE];
    int i;

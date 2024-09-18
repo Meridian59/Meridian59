@@ -54,9 +54,9 @@ BEGIN
     PUSHBUTTON      "&Híbrido",1012,43,188,34,12
     LTEXT           "Um generalista que aproveita um pouco das outras duas classes.",-1,87,190,161,8
     LTEXT           "Pontos restantes:",-1,8,215,83,8
-    CONTROL         "",1028,"BlakGraph",0x8,95,214,98,11
-    PUSHBUTTON      "&<< Anterior",1008,219,214,41,12
-    PUSHBUTTON      "Próxima &>>",1009,263,214,41,12
+    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14
+    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14
     LTEXT           "Sua força determina o dano que você causa e sua capacidade de carga.",-1,175,23,132,18
     LTEXT           "Personagens inteligentes podem desenvolver habilidades mais rapidamente.",-1,175,42,134,17
     LTEXT           "Uma alta resistência tem um efeito positivo na sua vitalidade.",-1,175,61,136,17
@@ -75,27 +75,27 @@ BEGIN
     LTEXT           "Gênero:",-1,162,22,39,8
     CONTROL         "Homem",1010,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
     CONTROL         "Mulher",1011,"Button",BS_AUTORADIOBUTTON,263,22,39,10
-    LTEXT           "Cor da pele:",-1,166,42,34,8
+    LTEXT           "Cor da pele:",-1,162,37,44,8
     CONTROL         "",1033,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,213,35,90,15
-    LTEXT           "Branco",-1,215,55,20,8
-    LTEXT           "Negro",-1,287,55,24,8
-    LTEXT           "Cabelo:",-1,187,70,19,8
+    LTEXT           "Branco",-1,215,50,25,8
+    LTEXT           "Negro",-1,287,50,24,8
+    LTEXT           "Cabelo:",-1,166,70,25,8
     PUSHBUTTON      "<",1016,213,69,17,11
     PUSHBUTTON      ">",1017,230,69,17,11,NOT WS_TABSTOP
-    LTEXT           "Cor do cabelo:",-1,173,85,33,8
+    LTEXT           "Cor do cabelo:",-1,166,85,44,8
     PUSHBUTTON      "<",1019,213,84,17,11
     PUSHBUTTON      ">",1022,230,84,17,11,NOT WS_TABSTOP
     LTEXT           "Olhos:",-1,166,100,40,8
     PUSHBUTTON      "<",1018,213,99,17,11,WS_GROUP
     PUSHBUTTON      ">",1024,230,99,17,11,NOT WS_TABSTOP
-    LTEXT           "Nariz:",-1,187,115,19,8
+    LTEXT           "Nariz:",-1,166,115,19,8
     PUSHBUTTON      "<",1020,213,114,17,11,WS_GROUP
     PUSHBUTTON      ">",1025,230,114,17,11,NOT WS_TABSTOP
-    LTEXT           "Boca:",-1,186,130,19,8
+    LTEXT           "Boca:",-1,166,130,19,8
     PUSHBUTTON      "<",1021,213,129,17,11,WS_GROUP
     PUSHBUTTON      ">",1026,230,129,17,11,NOT WS_TABSTOP
-    PUSHBUTTON      "&<< Anterior",1008,213,146,38,14,WS_GROUP
-    PUSHBUTTON      "Próxima &>>",1009,259,146,36,14
+    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14,WS_GROUP
+    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14
 END
 
 142 DIALOGEX 0, 0, 316, 232
@@ -113,9 +113,9 @@ BEGIN
     LTEXT           "Habilidades selecionadas:",-1,195,19,82,8
     LISTBOX         1036,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Pontos de habilidade restantes:",-1,13,215,74,8
-    CONTROL         "",1028,"BlakGraph",0x8,94,214,98,11
-    PUSHBUTTON      "&<< Anterior",1008,222,214,42,14
-    PUSHBUTTON      "Próxima &>>",1009,265,214,40,14,WS_DISABLED
+    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14
+    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14,WS_DISABLED
 END
 
 141 DIALOGEX 0, 0, 316, 232
@@ -135,8 +135,8 @@ BEGIN
     LTEXT           "Não é possível aprender feitiços de Sha Lill e Qor juntos.",-1,13,199,160,8
     LTEXT           "Pontos de habilidade restantes:",-1,13,215,74,8
     CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
-    PUSHBUTTON      "&<< Anterior",1008,220,214,40,12
-    PUSHBUTTON      "Próxima &>>",1009,263,214,41,12
+    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14
+    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14
 END
 
 129 DIALOG  0, 0, 215, 254
@@ -162,8 +162,8 @@ BEGIN
     EDITTEXT        1101,2,26,108,16,ES_AUTOHSCROLL
     LTEXT           "Digite uma descrição para o seu personagem aqui:",-1,2,52,292,8
     EDITTEXT        1000,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
-    PUSHBUTTON      "<< Anterior",1008,220,214,38,14,WS_DISABLED
-    PUSHBUTTON      "Próxima >>",1009,270,214,36,14
+    PUSHBUTTON      "<< Anterior",1008,220,214,44,14,WS_DISABLED
+    PUSHBUTTON      "Próxima >>",1009,266,214,44,14
 END
 
 
@@ -294,7 +294,7 @@ BEGIN
     LTEXT           "Ausgewählte Fertigkeiten:",-1,195,19,82,8
     LISTBOX         1036,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Fertigkeitspunkte übrig:",-1,13,215,74,8
-    CONTROL         "",1028,"BlakGraph",0x8,94,214,98,11
+    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
     PUSHBUTTON      "&<< Zurück",1008,222,214,42,14
     PUSHBUTTON      "Weiter &>>",1009,265,214,40,14,WS_DISABLED
 END

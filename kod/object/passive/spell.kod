@@ -1409,8 +1409,7 @@ messages:
 
       if oRoom <> $
       {
-         if isClass(who,&Admin)
-            AND Send(who, @IsHidden)
+         if isClass(who,&DM) AND Send(who, @IsHidden)
          {
              if oTarget = $
              {

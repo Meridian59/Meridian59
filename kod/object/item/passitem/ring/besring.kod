@@ -90,17 +90,27 @@ messages:
 
    ModifyHitRoll(who = $, what = $, hit_roll = $)
    {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
-         Send(poOwner,@TryUnuseItem,#what=self);
-         Send(self,@Delete);
+      local oWeapon;
 
-         return hit_roll;
+      oWeapon = Send(who,@GetWeapon);
+
+      if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
+      {
+         piHits = piHits - 1;
+         if piHits <= 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
+            Send(poOwner,@TryUnuseItem,#what=self);
+            Send(self,@Delete);
+
+            return hit_roll;
+         }
+
+         return hit_roll - (Random(15,25) * 10);
       }
-      
-      return hit_roll - (Random(15,25) * 10);
+
+      Debug("No BerserkerRing hit");
+      return hit_roll;
    }
 
    ModifyDamage(who = $, what = $, damage = $)

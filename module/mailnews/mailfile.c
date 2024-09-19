@@ -166,7 +166,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    for (int i = 0; i < num_subjects; i++)
    {
       subject_strs[i] = GetString(hInst, subject_ids[i]);
-      if (strncmp(message, subject_strs[i].c_str(), strlen(subject_strs[i].c_str())) == 0)
+      if (strncmp(message, subject_strs[i].c_str(), subject_strs[i].size()) == 0)
       {
          subject_found = True;
          break;
@@ -176,7 +176,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    if (subject_found)
    {
       /* Skip "Subject: " leader */
-      subject = message + strlen(subject_strs[i].c_str());
+      subject = message + subject_strs[i].size();
 
       /* Skip subject line; have to deal with \n (from users) or \r\n (from kod resources) */
       ptr = strchr(subject, '\n');
@@ -439,7 +439,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
       /* See if we've found a field.  If so, set ptr to just after field */
       for (i=0; i < num_fields; i++)
       {
-         if (!fields[i].empty() && !strnicmp(line, fields[i].c_str(), strlen(fields[i].c_str())))
+         if (!fields[i].empty() && !strnicmp(line, fields[i].c_str(), fields[i].size()))
          {
             /* Remove newline at end of line */
             line[strlen(line) - 1] = 0;

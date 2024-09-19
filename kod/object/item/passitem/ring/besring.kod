@@ -50,6 +50,13 @@ classvars:
    
    viValue_average = 200
 
+   viHitrollReduceMin = 15
+   viHitrollReduceMax = 25
+   viHitrollReduceMultiplier = 10
+
+   viDamageModMin = 1
+   viDamageModMax = 4
+
 properties:
 
 
@@ -97,6 +104,7 @@ messages:
       if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
       {
          piHits = piHits - 1;
+
          if piHits <= 0
          {
             Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
@@ -106,10 +114,9 @@ messages:
             return hit_roll;
          }
 
-         return hit_roll - (Random(15,25) * 10);
+         return hit_roll - (Random(viHitrollReduceMin,viHitrollReduceMax) * viHitrollReduceMultiplier);
       }
 
-      Debug("No BerserkerRing hit");
       return hit_roll;
    }
 
@@ -121,7 +128,7 @@ messages:
 
       if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
       {
-         return damage + random(1,4);
+         return damage + random(viDamageModMin,viDamageModMax);
       }
 
       return damage;

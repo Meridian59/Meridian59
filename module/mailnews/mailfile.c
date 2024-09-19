@@ -129,9 +129,10 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    int index, num_msgs, msgnum;
    char new_msg[MAXMAIL + 200 + MAX_SUBJECT + MAXUSERNAME * MAX_RECIPIENTS];
    const int subject_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE};
-   int num_subjects = sizeof(subject_ids) / sizeof(subject_ids[0]);
+   const int num_subjects = sizeof(subject_ids) / sizeof(subject_ids[0]);
+   auto subject_strs = std::vector<std::string>(num_subjects);
    char *subject = "";
-   char *ptr, *subject_str;
+   char *ptr;
    int i, num;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
@@ -164,9 +165,8 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    /* Search for subject line */
    for (int i = 0; i < num_subjects; i++)
    {
-      subject_str = GetString(hInst, subject_ids[i]);
-
-      if (strncmp(message, subject_str, strlen(subject_str)) == 0)
+      subject_strs[i] = GetString(hInst, subject_ids[i]);
+      if (strncmp(message, subject_strs[i].c_str(), strlen(subject_strs[i].c_str())) == 0)
       {
          subject_found = True;
          break;
@@ -176,7 +176,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    if (subject_found)
    {
       /* Skip "Subject: " leader */
-      subject = message + strlen(subject_str);
+      subject = message + strlen(subject_strs[i].c_str());
 
       /* Skip subject line; have to deal with \n (from users) or \r\n (from kod resources) */
       ptr = strchr(subject, '\n');
@@ -195,7 +195,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    }
 
    /* Add "Subject:" field to message */
-   strcat(new_msg, subject_str);
+   strcat(new_msg, subject_strs[i].c_str());
    strcat(new_msg, subject);
    strcat(new_msg, "\r\n");
    
@@ -321,7 +321,7 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    char line[MAX_LINE];
    const int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
    const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
-   auto fields = std::vector<char *>(num_fields, nullptr);
+   auto fields = std::vector<std::string>(num_fields);
    char *ptr;
    int i, index;
 
@@ -353,12 +353,12 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
       /* See if we've found a field.  If so, set ptr to just after field */
       for (i=0; i < num_fields; i++)
       {
-         if (!strncmp(line, fields[i], strlen(fields[i])))
+         if (!fields[i].empty() && !strncmp(line, fields[i].c_str(), strlen(fields[i].c_str())))
          {
             /* Remove newline at end of line */
             line[strlen(line) - 1] = 0;
             
-            ptr = line + strlen(fields[i]);
+            ptr = line + fields[i].size();
             break;
          }
       }

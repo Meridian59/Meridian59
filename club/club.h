@@ -44,8 +44,6 @@
 #include "transfer.h"
 #include <string>
 
-#define sprintf wsprintf
-
 
 /* timer ID's */
 #define TIMER_START_TRANSFER 2

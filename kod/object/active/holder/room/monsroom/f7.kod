@@ -19,6 +19,7 @@ resources:
    room_OutdoorsF7 = f7.roo
    room_name_OutdoorsF7 ="Off the beaten path"
    OutdoorsF7_music = walk1.mid
+   water_soundf7 = wfall2.wav
 
 classvars:
 
@@ -59,6 +60,9 @@ messages:
       plGenerators = [ [9, 32], [24, 39], [20, 35], [34, 10], 
 		      [31, 24], [39, 26], [35, 38], [38, 40], [43, 21],
 		      [45, 32], [30, 5], [45, 15], [20, 26], [16, 46], [15, 15] ];
+      
+      plLooping_sounds = [ [ water_soundf7, 6, 16, 25, 75 ] ];
+
       propagate;
    }
 

@@ -51,7 +51,7 @@ classvars:
 
    viMana = 30
 
-   viSpell_num = SID_DEATHS_DOOR
+   viSpell_num = SID_SHADOW_RIFT
    viSchool = SS_QOR
    viSpell_level = 4
 

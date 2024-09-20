@@ -232,6 +232,11 @@
 #define IDS_RESENDAPI                   203
 #define IDS_SIGNUPMSG                   204
 #define IDS_CANTATTACKSELF              205
+#define IDS_RARITY_GRADE_UNCOMMON       206
+#define IDS_RARITY_GRADE_RARE           207
+#define IDS_RARITY_GRADE_LEGENDARY      208
+#define IDS_RARITY_GRADE_UNIDENTIFIED   209
+#define IDS_RARITY_GRADE_CURSED         210
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001
 #define IDC_ITEMLIST                    1002

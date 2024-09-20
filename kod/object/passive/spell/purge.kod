@@ -130,19 +130,22 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE)
    {
       local oTarget;
       
       oTarget = First(lTargets);
-      if oTarget <> who
+      if NOT bItemCast
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
-              #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
-              #parm3=Send(oTarget,@GetName));
-      }
+         if oTarget <> who
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
+               #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
+               #parm3=Send(oTarget,@GetName));
+         }
       
-      Send(oTarget,@MsgSendUser,#message_rsc=Purge_on);
+         Send(oTarget,@MsgSendUser,#message_rsc=Purge_on);
+      }
 
       % keep tabs on guides/bards, but not admins.
       if IsClass(who, &DM)

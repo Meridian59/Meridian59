@@ -241,7 +241,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",1,74,260,40,14
     CTEXT           "Meridian 59 Client (build %d)",1035,0,4,189,8
-    CTEXT           "Copyright © 1994-2018 Andrew Kirmse and Chris Kirmse",1168,0,15,189,8
+    CTEXT           "Copyright © 1994-2024 Andrew Kirmse and Chris Kirmse",1168,0,15,189,8
     CTEXT           "All rights reserved.",1169,0,25,189,8
     CONTROL         "",1167,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
@@ -723,7 +723,7 @@ END
 
 STRINGTABLE
 BEGIN
-    160                     "http://meridian59.com/serverstatus/"
+    160                     "https://meridian59.com/serverstatus/"
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
@@ -748,14 +748,14 @@ BEGIN
     194                     "E-mail address is already in use."
     195                     "Passwords are invalid or not not match."
     196                     "Unknown server selected."
-    197                     "Registration Server is Offline."
+    197                     "Registration server is Offline."
     198                     "Signup generated an unknown error, please try again."
-    199                     "/api/signup/"
-    200                     "meridian59.com"
-    201                     "/api/verified/"
-    202                     "Your account is unverified! This is why you cannot login. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't receivedthe activation e-mail to be resent, please press Yes below."
-    203                     "/api/resend/"
-    204                     "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
+    199                     "create"
+    200                     "accounts.meridian59.com"
+    201                     "check_verified"
+    202                     "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail, please press Yes to resend it now."
+    203                     "resend"
+    204                     "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 
 #endif    // German resources
@@ -1192,7 +1192,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,74,260,40,14
     CTEXT           "Meridian 59 Client (build %d)",IDC_NUMBER,0,4,189,8
-    CTEXT           "Copyright © 1994-2018 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
+    CTEXT           "Copyright © 1994-2024 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
     CTEXT           "All rights reserved.",IDC_SPECIAL2,0,25,189,8
     CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
@@ -1282,7 +1282,7 @@ CAPTION " Meridian 59 Sign up for a free account!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
-    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, confirm password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot.",IDC_STATIC,34,11,233,46
+    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,46
     GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,57,244,171
     LTEXT           "E-mail Address",ID_SU_EMAIL,39,76,62,8
     EDITTEXT        IDC_NEW_EMAIL,104,75,150,14,ES_AUTOHSCROLL
@@ -1602,7 +1602,7 @@ BEGIN
     IDS_MISSINGRESOURCE     "The game has changed since you logged in.\nSelecting ""Yes"" will automatically download the changed files.\nSelecting ""No"" will continue the game with your outdated files.\n\nAutomatically download new game files?"
     IDS_NOROOMFILE          "There is a problem with your file %s.  Please contact a system administrator to get the correct version."
     IDS_DUPRESOURCE         "Duplicate resource #%d in file %s."
-    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at http://meridian59.com/serverstatus/."
+    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at https://meridian59.com/serverstatus/."
     IDS_LOSTSERVER          "Lost server connection!"
     IDS_SOCKETMESSAGE       "Unexpected socket message type."
 END
@@ -1775,14 +1775,23 @@ BEGIN
     IDS_EMAILINUSE          "E-mail address is already in use.\n"
     IDS_PASSWORDINVALID     "Passwords are invalid or not not match.\n"
     IDS_SERVERUNKNOWN       "Unknown server selected.\n"
-    IDS_SIGNUPOFFLINE       "Registration Server is Offline.\n"
+    IDS_SIGNUPOFFLINE       "Registration server is offline.\n"
     IDS_SIGNUPUNKNOWNERROR  "Signup generated an unknown error, please try again.\n"
-    IDS_SIGNUPAPI           "/api/signup/"
-    IDS_WEBAPIDOMAIN        "meridian59.com"
-    IDS_VERIFIEDAPI         "/api/verified/"
-    IDS_UNVERIFIED          "Your account is unverified! This is why you cannot login. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then pess Yes below to resend it now."
-    IDS_RESENDAPI           "/api/resend/"
-    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can login and play...\n\nCheck your e-mail (%s) to verify your account now."
+    IDS_SIGNUPAPI           "create"
+    IDS_WEBAPIDOMAIN        "accounts.meridian59.com"
+    IDS_VERIFIEDAPI         "check_verified"
+    IDS_UNVERIFIED          "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then press Yes below to resend it now."
+    IDS_RESENDAPI           "resend"
+    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_RARITY_GRADE_UNCOMMON      "uncommon"
+    IDS_RARITY_GRADE_RARE          "rare"
+    IDS_RARITY_GRADE_LEGENDARY     "legendary"
+    IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
+    IDS_RARITY_GRADE_CURSED        "cursed"
 END
 
 #endif    // English (United States) resources

@@ -287,11 +287,7 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 			
 		case WM_BLAK_LOGON :
 			sessions_logged_on++;
-			/*
-			sprintf(buf,"Connections: %i",sessions_logged_on);
-			SetDlgItemText(HWND_STATUS,IDC_CONNECTIONS_BORDER,buf);
-			*/
-			sprintf(buf,"%3i",sessions_logged_on);
+			snprintf(buf, sizeof(buf), "%3i",sessions_logged_on);
 			SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETTEXT,1,(LPARAM)buf);
 			
 			InterfaceAddList((int) lParam);
@@ -301,11 +297,7 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 			sessions_logged_on--;
 			if (sessions_logged_on < 0)
 				eprintf("InterfaceWindowProc sessions_logged_on just went negative!\n");
-				/*
-				sprintf(buf,"Connections: %i",sessions_logged_on);
-				SetDlgItemText(HWND_STATUS,IDC_CONNECTIONS_BORDER,buf);
-			*/
-			sprintf(buf,"%3i",sessions_logged_on);
+			snprintf(buf, sizeof(buf), "%3i",sessions_logged_on);
 			SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETTEXT,1,(LPARAM)buf);
 			
 			InterfaceRemoveList((int) lParam);
@@ -446,7 +438,7 @@ void InterfaceUpdateList(int session_id)
 		}
 		else
 		{
-			sprintf(buf,"%3i",s->account->account_id);
+			snprintf(buf, sizeof(buf), "%3i",s->account->account_id);
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
@@ -549,7 +541,7 @@ void StartupPrintf(const char *fmt,...)
 	va_list marker;
 	
 	va_start(marker,fmt);
-	vsprintf(s,fmt,marker);
+	vsnprintf(s, sizeof(s), fmt,marker);
 	
 	
 	if (strlen(s) > 0)
@@ -890,20 +882,20 @@ void InterfaceDrawText(HWND hwnd)
 	
 	if (TryEnterServerLock())
 	{
-		sprintf(s,"%zu bytes",GetMemoryTotal());
+		snprintf(s, sizeof(s),"%zu bytes",GetMemoryTotal());
 		SetDlgItemText(HWND_STATUS,IDC_MEMORY_VALUE,s);
 		
 		kstat = GetKodStats();
-		sprintf(s,"%s",TimeStr(kstat->system_start_time));
+		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time));
 		SetDlgItemText(HWND_STATUS,IDC_STARTED_VALUE,s);
 		
-		sprintf(s,"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time));
+		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time));
 		SetDlgItemText(HWND_STATUS,IDC_UP_FOR_VALUE,s);
 		
 		if (kstat->interpreting_time/1000.0 < 0.01) 
-			sprintf(s,"0/second");
+			snprintf(s, sizeof(s),"0/second");
 		else
-			sprintf(s,"%i/second",(int)(kstat->num_interpreted/(kstat->interpreting_time/1000.0)));
+			snprintf(s, sizeof(s),"%i/second",(int)(kstat->num_interpreted/(kstat->interpreting_time/1000.0)));
 		SetDlgItemText(HWND_STATUS,IDC_SPEED_VALUE,s);
 		
 		if (IsGameLocked())
@@ -1268,7 +1260,7 @@ void FatalErrorShow(const char *filename,int line,const char *str)
 {
 	char s[5000];
 	
-	sprintf(s,"File %s line %i\r\n\r\n%s",filename,line,str);
+	snprintf(s, sizeof(s),"File %s line %i\r\n\r\n%s",filename,line,str);
 	MessageBox(hwndMain,s,"Fatal Error",MB_ICONSTOP);
 	
 	exit(1);

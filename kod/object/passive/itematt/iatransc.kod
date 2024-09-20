@@ -59,5 +59,10 @@ messages:
       return FALSE; 
    }
  
+   GetRarityCountModifier()
+   {
+      return 1;
+   }
+
 end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

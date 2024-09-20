@@ -48,9 +48,9 @@ typedef INT64 int64;
 enum {False = 0, True = 1};
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 26  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 30  /* Minor version of client program; must be in [0, 99] */
 
-#define VERSION_NUMBER(major_rev, minor_rev) ((minor_rev + 100) * major_rev)
+#define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 
 #define MAXAMOUNT 9     /* Max # of digits in a server integer */
 #define MAXSTRINGLEN 255 /* Max length of a string loaded from string table */
@@ -89,10 +89,10 @@ extern "C" {
 #endif
 
 #ifdef M59_RETAIL
-    // #define to enable Miles Sound System version.  If not defined,
-    // music is played through the default MIDI player, and sound goes through the
-    // ancient wavemix DLL.
-    #define M59_MSS
+  // #define to enable Miles Sound System version.  If not defined,
+  // music is played through the default MIDI player, and sound goes through the
+  // ancient wavemix DLL.
+  #define M59_MSS
 #endif
 
 #ifdef M59_MSS
@@ -126,6 +126,11 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include <stdlib.h>
 #include <crtdbg.h>
 #include <string>
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
 
 #include "resource.h"
 #include "proto.h"
@@ -223,6 +228,13 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "d3dtypes.h"
 #include "d3dcache.h"
 #include "d3drender.h"
+#include "d3drender_bgoverlays.h"
+#include "d3drender_fx.h"
+#include "d3drender_materials.h"
+#include "d3drender_objects.h"
+#include "d3drender_skybox.h"
+#include "d3drender_textures.h"
+#include "d3drender_world.h"
 #include "d3dparticle.h"
 #include "matrix.h"
 #include "xform.h"

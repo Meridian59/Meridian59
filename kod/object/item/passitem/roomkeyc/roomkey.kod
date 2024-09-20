@@ -52,6 +52,11 @@ properties:
    plCopies = $
 
 messages:
+   GetMasterKey()
+   "This IS the master key!"
+   {
+      return self;
+   }
 
    AppendSpecial()
    "Appends the number of key copies in ciculation to the key's description."
@@ -124,6 +129,17 @@ messages:
       return Length(plCopies);
    }
 
+   RemoveCopy(what=$)
+   "Removes the specified key copy from the list of current key copies."
+   {
+      if (plCopies <> $)
+      {
+         plCopies = DelListElem(plCopies, what);
+      }
+
+      return;
+   }
+
    DeleteCopies()
    {
       local oKeyCopy;
@@ -139,12 +155,8 @@ messages:
       return;
    }
 
-   RoomExpired(iRID=$)
+   RoomExpired()
    {
-      if (iRID = $) or (iRID <> piRID)
-      {
-         return;
-      }
       if (poOwner <> $) and isClass(poOwner,&User)
       {
          if Send(poOwner,@IsLoggedOn)
@@ -173,7 +185,7 @@ messages:
       
       for i in plCopies
       {
-         Send(i,@OriginalDeleted);
+         Send(i, @OriginalDeleted);
       }
       
       plCopies = $;

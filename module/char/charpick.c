@@ -110,6 +110,21 @@ void ChooseCharacter(Character *characters, WORD num_characters, char *motd,
    }
 }
 /********************************************************************/
+/*
+ * compareCharacters:  Sorting alphabetically with new character slots always at the end.
+ */
+bool compareCharacters(const Character& a, const Character& b) {
+    // Place characters with flags != 1 (new users) at the end
+    if (a.flags != 1 && b.flags == 1) {
+        return true;
+    }
+    if (a.flags == 1 && b.flags != 1) {
+        return false;
+    }
+    // Neither or both characters are new so compare names case-insensitively
+    return _stricmp(a.name, b.name) < 0;
+}
+/********************************************************************/
 INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    static HWND hList;
@@ -123,17 +138,8 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       hList = GetDlgItem(hDlg, IDC_CHARLIST);
       info = (PickCharStruct *) lParam;
 
-      // Insertion sort alphabetically, with new characters at the end
-      for (i = 1; i < info->num_characters; ++i) {
-         int j = i;
-         
-         while (j > 0 &&
-                ((info->characters[j-1].flags == 1 && info->characters[j].flags != 1) ||
-                 strcmpi(info->characters[j-1].name, info->characters[j].name) > 0)) {
-            std::swap(info->characters[j], info->characters[j - 1]);
-            --j;
-         }
-      }
+      // sort alphabetically, with new characters at the end
+      std::sort(info->characters, info->characters + info->num_characters, compareCharacters);
       
       /* Display characters in list */
       for (i=0; i < info->num_characters; i++)

@@ -19,7 +19,6 @@ extern player_info player;
 // Main client windows current viewport area
 extern int main_viewport_width;
 extern int main_viewport_height;
-float player_overlay_scaler = 1;
 
 /* local function prototypes */
 Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
@@ -216,11 +215,10 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
       return False;
    }
 
-   float scaler = player_overlay_scaler * 0.5f;
-   int dib_width = DibWidth(pdib) * scaler;
-   int dib_height = DibHeight(pdib) * scaler;
-   int dib_x_offset = DibXOffset(pdib) * scaler;
-   int dib_y_offset = DibYOffset(pdib) * scaler;
+   int dib_width = DibWidth(pdib);
+   int dib_height = DibHeight(pdib);
+   int dib_x_offset = DibXOffset(pdib);
+   int dib_y_offset = DibYOffset(pdib);
 
    // Find x position
    switch (hotspot)

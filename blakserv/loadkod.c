@@ -51,8 +51,8 @@ void LoadBof(void)
 	{
       for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
       {
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF), it->c_str());
-			sprintf(file_copy_path,"%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
+        snprintf(file_load_path, sizeof(file_load_path), "%s%s",ConfigStr(PATH_BOF), it->c_str());
+        snprintf(file_copy_path, sizeof(file_copy_path), "%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
 			if (BlakMoveFile(file_load_path,file_copy_path))
 				files_loaded++;
       }
@@ -70,7 +70,7 @@ void LoadBof(void)
 	{
 		for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
 		{
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
+			snprintf(file_load_path, sizeof(file_load_path), "%s%s",ConfigStr(PATH_MEMMAP), it->c_str());
 			
 			if (LoadBofName(file_load_path))
 				files_loaded++;

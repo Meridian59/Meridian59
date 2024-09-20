@@ -36,7 +36,7 @@ classvars:
 
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
-   viSpellEffect = SID_SUPERSTRENGTH
+   viSpellEffect = SID_SUPER_STRENGTH
 
    viPoisonPercent = 20
    viGoBadDamage = 5

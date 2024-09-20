@@ -88,7 +88,7 @@ messages:
          {
             if iRandom < 90
             {
-               return $; % removed for lag reasons: [SID_SUMMON_POISON_FOG, 5];
+               return $; % removed for lag reasons: [SID_POISON_FOG, 5];
             }
             else
             {

@@ -1,0 +1,26 @@
+# NPC Dialog Management
+
+These files manage random and triggered NPC dialog, primarily managed through `.tab` files and converted into admin commands using `dialogconvert.py`.
+
+## Setting Up Dialog
+
+After recreating the world (e.g., `send o 0 recreate all`) or during initial startup:
+
+1. Move `dialog.txt` to the server run directory
+2. Execute the admin command `read dialog.txt` to load NPC dialog into the speech library.
+
+## Adding New Dialog
+
+To avoid duplicates, new dialog should be adding using iterative `.tab` files:
+
+1. Create a new `.tab` file with the desired dialog.
+2. Convert it to admin commands with `python dialogconvert.py newfile.tab newdialog.txt`
+3. Loading the dialog using `read newdialog.txt` in Blakserv.
+
+## Updating Existing Dialog
+
+When updating existing dialog, re-reading the same .tab file will create duplicates. Ensure updates are managed carefully to avoid this.
+
+## Archives
+
+Archived dialog files contain content from past events no longer active in the game.

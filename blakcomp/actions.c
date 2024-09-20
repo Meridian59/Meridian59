@@ -913,7 +913,10 @@ id_type make_loop_variable(id_type id)
    /* Loop variable must be a local, property or parameter */
    auto old_id = lookup_id(id);
    // In body of loop, consider that loop variable has been assigned
-   old_id->assigned = true;
+   if (old_id != NULL) {
+     old_id->assigned = true;
+   }
+
    if (id->type == I_UNDEFINED || id->type == I_MISSING)
       action_error("Unknown identifier %s", id->name);
    else

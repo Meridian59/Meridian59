@@ -1117,15 +1117,15 @@ char *BlakodDebugInfo()
 
 	if (kod_stat.interpreting_class == INVALID_CLASS)
 	{
-		sprintf(s,"Server");
+		snprintf(s, sizeof(s), "Server");
 	}
 	else
 	{
 		c = GetClassByID(kod_stat.interpreting_class);
 		if (c == NULL)
-			sprintf(s,"Invalid class %i",kod_stat.interpreting_class);
+			snprintf(s, sizeof(s), "Invalid class %i",kod_stat.interpreting_class);
 		else
-			sprintf(s,"%s (%i)",c->fname,GetSourceLine(c,bkod));
+			snprintf(s, sizeof(s), "%s (%i)",c->fname,GetSourceLine(c,bkod));
 	}
 	return s;
 }
@@ -1142,13 +1142,13 @@ char *BlakodStackInfo()
 		char s[1000];
 		if (stack[i].class_id == INVALID_CLASS)
 		{
-			sprintf(s,"Server");
+			snprintf(s, sizeof(s), "Server");
 		}
 		else
 		{
 			c = GetClassByID(stack[i].class_id);
 			if (c == NULL)
-				sprintf(s,"Invalid class %i",stack[i].class_id);
+				snprintf(s, sizeof(s), "Invalid class %i",stack[i].class_id);
 			else
 			{
 				char *bp;
@@ -1168,14 +1168,14 @@ char *BlakodStackInfo()
 					class_name = c->class_name;
 				/* use %.*s with a fixed string of pluses to get exactly one plus per
 					propagate depth */
-				sprintf(s,"%.*s%s::%s",stack[i].propagate_depth,"++++++++++++++++++++++",class_name,GetNameByID(stack[i].message_id));
+				snprintf(s, sizeof(s), "%.*s%s::%s",stack[i].propagate_depth,"++++++++++++++++++++++",class_name,GetNameByID(stack[i].message_id));
 				strcat(s,"(");
 				parms[0] = '\0';
 				for (j=0;j<stack[i].num_parms;j++)
 				{
 					val_type val;
 					val.int_val = stack[i].parms[j].value;
-					sprintf(buf2,"#%s=%s %s",GetNameByID(stack[i].parms[j].name_id),
+					snprintf(buf2, sizeof(buf2), "#%s=%s %s",GetNameByID(stack[i].parms[j].name_id),
 							  GetTagName(val),GetDataName(val));
 					if (j > 0)
 						strcat(parms,",");
@@ -1183,7 +1183,7 @@ char *BlakodStackInfo()
 				}
 				strcat(s,parms);
 				strcat(s,")");
-				sprintf(buf2," %s (%i)",c->fname,GetSourceLine(c,bp));
+				snprintf(buf2, sizeof(buf2), " %s (%i)",c->fname,GetSourceLine(c,bp));
 				strcat(s,buf2);
 			}
 		}

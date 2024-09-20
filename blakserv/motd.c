@@ -33,8 +33,8 @@ void LoadMotd(void)
    char file_load_path[MAX_PATH+FILENAME_MAX];
    char file_copy_path[MAX_PATH+FILENAME_MAX];
 
-   sprintf(file_load_path,"%s%s",ConfigStr(PATH_MOTD),MOTD_FILE);
-   sprintf(file_copy_path,"%s%s",ConfigStr(PATH_MEMMAP),MOTD_FILE);
+   snprintf(file_load_path, sizeof(file_load_path), "%s%s",ConfigStr(PATH_MOTD),MOTD_FILE);
+   snprintf(file_copy_path, sizeof(file_copy_path), "%s%s",ConfigStr(PATH_MEMMAP),MOTD_FILE);
 
    /* if there's a new motd file, move it in */
 
@@ -103,7 +103,7 @@ void SetMotd(char *new_motd)
 
    /* write file to memmap directory */
 
-   sprintf(filename,"%s%s",ConfigStr(PATH_MEMMAP),MOTD_FILE);
+   snprintf(filename, sizeof(filename), "%s%s",ConfigStr(PATH_MEMMAP),MOTD_FILE);
 
    fh = open(filename,O_CREAT | O_TRUNC | O_BINARY | O_WRONLY,S_IREAD | S_IWRITE);
 

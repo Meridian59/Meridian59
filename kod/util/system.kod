@@ -52,9 +52,6 @@ resources:
    system_killed_self = "### %q was just slain by %s own folly."
    system_user_killed_room = \
       "### %s have laid claim to yet another poor soul, %q."
-   system_user_killed_bridge_faith = \
-      "### %q just hurled %sself from the cliffs of Riija to find a watery "
-      "grave."
    system_user_killed_token = "### %q lost a token to %s%q."
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
@@ -1507,16 +1504,8 @@ messages:
 
       if IsClass(killer,&Room)
       {
-         if IsClass(killer,&TempleRiija)
-         {
-            rMessage = system_user_killed_bridge_faith;
-            param2 = Send(what,@GetHisHer);
-         }
-         else
-         {
-            rMessage = system_user_killed_room;
-            param2 = Send(what,@GetTrueName);
-         }
+         rMessage = system_user_killed_room;
+         param2 = Send(what,@GetTrueName);
 
          % Eliminate param3 that was set by default
          param3 = $;
@@ -2923,7 +2912,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_NODEBURST,#class=&Nodeburst);
       Send(self,@CreateOneSpellIfNew,#num=SID_PURIFY,#class=&Purify);
       Send(self,@CreateOneSpellIfNew,#num=SID_ARMOR_OF_GORT,#class=&ArmorOfGort);
-      Send(self,@CreateOneSpellIfNew,#num=SID_SAND_STORM,#class=&Sandstorm);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SANDSTORM,#class=&Sandstorm);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_FORM,#class=&Shadowform);
       Send(self,@CreateOneSpellIfNew,#num=SID_ILLUSIONARY_FORM,#class=&Illusionaryform);
@@ -2939,7 +2928,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_REFLECTION,#class=&SummonReflection);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_SPIRITUAL_HAMMER,#class=&CreateSpiritualHammer);
-      Send(self,@CreateOneSpellIfNew,#num=SID_SUMMON_APPARITION,#class=&SummonApparition);
+      Send(self,@CreateOneSpellIfNew,#num=SID_APPARITION,#class=&SummonApparition);
       Send(self,@CreateOneSpellIfNew,#num=SID_FORGET,#class=&ForgetSpell);
       Send(self,@CreateOneSpellIfNew,#num=SID_SEDUCE,#class=&Seduce);
 
@@ -2990,12 +2979,12 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SHATTERLOCK,#class=&Shatterlock);
       Send(self,@CreateOneSpellIfNew,#num=SID_LIGHTNING_WALL,#class=&Lightningwall);
       Send(self,@CreateOneSpellIfNew,#num=SID_BRAMBLE_WALL,#class=&bramblewall);
-      Send(self,@CreateOneSpellIfNew,#num=SID_SUMMON_POISON_FOG,#class=&SummonPoisonFog);
+      Send(self,@CreateOneSpellIfNew,#num=SID_POISON_FOG,#class=&SummonPoisonFog);
       Send(self,@CreateOneSpellIfNew,#num=SID_FEIGN_DEATH,#class=&FeignDeath);
       Send(self,@CreateOneSpellIfNew,#num=SID_EVIL_TWIN,#class=&SummonEvilTwin);
       Send(self,@CreateOneSpellIfNew,#num=SID_BOND,#class=&Bond);
       Send(self,@CreateOneSpellIfNew,#num=SID_BLOOD_INHERITANCE,#class=&BloodInheritance);
-      Send(self,@CreateOneSpellIfNew,#num=SID_DEATHS_DOOR,#class=&DeathsDoor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_RIFT,#class=&DeathsDoor);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_BREATH_OF_LIFE,#class=&BreathOfLife);
       Send(self,@CreateOneSpellIfNew,#num=SID_RESIST_ACID,#class=&ResistAcid);

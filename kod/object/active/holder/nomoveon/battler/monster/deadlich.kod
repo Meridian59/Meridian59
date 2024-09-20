@@ -161,7 +161,7 @@ messages:
    {
 	plFor_sale = [$,$,
 	      [],
-%        [ SID_EVIL_TWIN, SID_SUMMON_POISON_FOG, SID_BLOOD_INHERITANCE ],
+%        [ SID_EVIL_TWIN, SID_POISON_FOG, SID_BLOOD_INHERITANCE ],
        $ ]; 
      return;
    }

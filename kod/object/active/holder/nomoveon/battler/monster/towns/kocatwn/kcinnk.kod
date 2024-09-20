@@ -42,8 +42,10 @@ resources:
       "~Irent~n a ~Iroom~n at my fine establishment for 85 days.  If you "
       "want to stay longer, that'll be %i shillings per day, paid in advance.  "
       "For a very modest fee of %i shillings, I can even provide you "
-      "with a copy of your room key.  Act now, because this offer won't last "
-      "long!  Space is very limited and my rooms are first-come, first-serve!"
+      "with an optionally ~Isecure~n ~Icopy~n of your room ~Ikey~n.  I'll "
+      "even ~Ichange locks~n for you if necessary, free of charge!  Act "
+      "now, because this offer won't last long!  Space is very limited and my "
+      "rooms are first-come, first-serve!"
 
    KocatanInnkeeper_days_left = \
       "Thank you, my friend!  I'll have triple this amount for you after "

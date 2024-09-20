@@ -50,6 +50,13 @@ classvars:
    
    viValue_average = 200
 
+   viHitrollReduceMin = 15
+   viHitrollReduceMax = 25
+   viHitrollReduceMultiplier = 10
+
+   viDamageModMin = 1
+   viDamageModMax = 4
+
 properties:
 
 
@@ -90,17 +97,25 @@ messages:
 
    ModifyHitRoll(who = $, what = $, hit_roll = $)
    {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
-         Send(poOwner,@TryUnuseItem,#what=self);
-         Send(self,@Delete);
+      local oWeapon;
 
-         return hit_roll;
+      oWeapon = Send(who,@GetWeapon);
+
+      if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
+      {
+         piHits = piHits - 1;
+
+         if piHits <= 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
+            Send(poOwner,@TryUnuseItem,#what=self);
+            Send(self,@Delete);
+         }
+
+         return hit_roll - (Random(viHitrollReduceMin,viHitrollReduceMax) * viHitrollReduceMultiplier);
       }
-      
-      return hit_roll - (Random(15,25) * 10);
+
+      return hit_roll;
    }
 
    ModifyDamage(who = $, what = $, damage = $)
@@ -111,7 +126,7 @@ messages:
 
       if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
       {
-         return damage + random(1,4);
+         return damage + random(viDamageModMin,viDamageModMax);
       }
 
       return damage;

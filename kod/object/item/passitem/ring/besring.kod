@@ -110,8 +110,6 @@ messages:
             Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
             Send(poOwner,@TryUnuseItem,#what=self);
             Send(self,@Delete);
-
-            return hit_roll;
          }
 
          return hit_roll - (Random(viHitrollReduceMin,viHitrollReduceMax) * viHitrollReduceMultiplier);

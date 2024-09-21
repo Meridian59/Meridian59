@@ -100,7 +100,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "Salvar configurações &agora",     3029
-        MENUITEM "Salvar configurações ao &sair",    3021
+        MENUITEM "Salvar configurações a&o sair",    3021
     END
     POPUP "&Hilfe"
     BEGIN

@@ -58,7 +58,7 @@ BEGIN
     CONTROL         "",1263,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTASCENDING | LVS_NOLABELWRAP | LVS_NOSORTHEADER | WS_TABSTOP,10,64,199,128,WS_EX_CLIENTEDGE
     PUSHBUTTON      "Confirmar",1,24,205,50,14
     PUSHBUTTON      "Cancelar",2,82,205,50,14
-    PUSHBUTTON      "Teclas de função ...",1264,139,205,76,14
+    PUSHBUTTON      "&Teclas de função ...",1264,139,205,76,14
 END
 
 161 DIALOG  0, 0, 257, 74
@@ -70,7 +70,7 @@ BEGIN
     LTEXT           "Senha da guilda:",1242,10,34,51,8
     EDITTEXT        1239,65,32,101,14,ES_AUTOHSCROLL
     PUSHBUTTON      "Abandonar Salão",1235,171,32,76,14
-    PUSHBUTTON      "Dissolver a guilda",1224,4,56,248,14
+    PUSHBUTTON      "&Dissolver a guilda",1224,4,56,248,14
 END
 
 160 DIALOG  0, 0, 282, 178
@@ -99,14 +99,14 @@ BEGIN
     LISTBOX         1201,4,15,88,89,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Classificação:",-1,98,17,20,8
     COMBOBOX        1213,123,15,132,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Expulsar membro",1212,123,30,132,12
-    PUSHBUTTON      "Transferir cargo para:",1205,98,91,96,12
+    PUSHBUTTON      "E&xpulsar membro",1212,123,30,132,12
+    PUSHBUTTON      "&Transferir cargo para:",1205,98,91,96,12
     LTEXT           "",1209,199,92,105,10,SS_SUNKEN
-    PUSHBUTTON      "Apoiar novo membro:",1203,98,73,96,14
+    PUSHBUTTON      "&Apoiar novo membro:",1203,98,73,96,14
     LTEXT           "",1211,199,75,105,10,SS_SUNKEN
     LTEXT           "Membro apoiado:",-1,98,59,71,8
     LTEXT           "cha",1214,199,58,105,10,SS_SUNKEN
-    PUSHBUTTON      "Sair da guilda",1208,4,106,87,12
+    PUSHBUTTON      "&Sair da guilda",1208,4,106,87,12
     LTEXT           "",1223,124,17,93,8,SS_SUNKEN
     CONTROL         "",1001,"Button",BS_OWNERDRAW,264,4,40,40
 END
@@ -272,7 +272,7 @@ BEGIN
     CONTROL         "",1210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,185,13,9
     DEFPUSHBUTTON   "Confirmar",IDOK,19,208,50,14
     PUSHBUTTON      "Cancelar",IDCANCEL,77,208,50,14
-    PUSHBUTTON      "Tecla de atalho....",1264,136,208,76,14
+    PUSHBUTTON      "Tecla de &atalho....",1264,136,208,76,14
 END
 
 

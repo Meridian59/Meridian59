@@ -38,11 +38,11 @@ BEGIN
         MENUITEM "&Desconectar",                   3062
         MENUITEM "&Preferências",           3060
         MENUITEM "Configurações",               186
-        MENUITEM "Alterar senha",            3506
+        MENUITEM "Alterar &senha",            3506
         MENUITEM SEPARATOR
         MENUITEM "&Imprimir mapa",               3507
         MENUITEM SEPARATOR
-        MENUITEM "&Sair do jogo",            3002
+        MENUITEM "Sair do &jogo",            3002
     END
     POPUP "&Opções"
     BEGIN
@@ -57,23 +57,23 @@ BEGIN
                 MENUITEM "&Feitiços selecionados",            3030
                 MENUITEM "&Números no inventário",         3050
                 MENUITEM "&Propriedades",              3047
-                MENUITEM "Mensagens do sistema",         3504
+                MENUITEM "&Mensagens do sistema",         3504
                 MENUITEM "&Campo de mensagens",                   3032
             END
             POPUP "Seleção de itens"
             BEGIN
-                MENUITEM "Itens não selecionados",       3042
-                MENUITEM "Itens selecionados",     3027
+                MENUITEM "Itens &não selecionados",       3042
+                MENUITEM "Itens &selecionados",     3027
             END
             POPUP "Gráficos de barra"
             BEGIN
-                MENUITEM "&Barras normais",              3500
-                MENUITEM "&Barras completas",             3501
+                MENUITEM "Barras &normais",              3500
+                MENUITEM "Barras &completas",             3501
                 MENUITEM "&Fundo",                3502
-                MENUITEM "Números",                    3505
+                MENUITEM "Nú&meros",                    3505
             END
             MENUITEM "&Editar caixas",           3039
-            MENUITEM "Emails e mensagens",         3028
+            MENUITEM "Emails e &mensagens",         3028
             MENUITEM SEPARATOR
             MENUITEM "&Restaurar configurações",           3025
         END
@@ -85,10 +85,10 @@ BEGIN
                 MENUITEM "&Rótulos",               3049
                 MENUITEM "&Estatísticas",              3019
             END
-            MENUITEM "Inserção do usuário",            3043
-            MENUITEM "Listar caixas",             3015
-            MENUITEM "Títulos",               3017
-            MENUITEM "Emails e mensagens",         3014
+            MENUITEM "Inserção do &usuário",            3043
+            MENUITEM "&Listar caixas",             3015
+            MENUITEM "&Títulos",               3017
+            MENUITEM "Emails e &mensagens",         3014
             POPUP "Imprimir mapa"
             BEGIN
                 MENUITEM "Comentários",                  3510
@@ -99,8 +99,8 @@ BEGIN
             MENUITEM "&Restaurar padrão",           3026
         END
         MENUITEM SEPARATOR
-        MENUITEM "Salvar configurações agora",     3029
-        MENUITEM "Salvar configurações ao sair",    3021
+        MENUITEM "Salvar configurações &agora",     3029
+        MENUITEM "Salvar configurações ao &sair",    3021
     END
     POPUP "&Hilfe"
     BEGIN
@@ -164,8 +164,8 @@ BEGIN
     LTEXT           "Jogadores:",-1,4,7,56,8
     LTEXT           "Selecione um jogador para ignorar todas as suas mensagens.",-1,130,20,101,26
     GROUPBOX        "Mensagens",-1,130,47,101,41,WS_GROUP
-    CONTROL         "Ignorar mensagens",1140,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,59,87,10
-    CONTROL         "Ignorar todos",1141,"Button",BS_AUTOCHECKBOX,139,73,60,10
+    CONTROL         "Ignorar &mensagens",1140,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,59,87,10
+    CONTROL         "Ignorar &todos",1141,"Button",BS_AUTOCHECKBOX,139,73,60,10
     LTEXT           "Nº de jogadores online:",-1,29,365,60,8
     CTEXT           "",1152,99,364,24,11,SS_SUNKEN
     DEFPUSHBUTTON   "Confirmar",1,181,361,50,14,WS_GROUP
@@ -272,9 +272,9 @@ STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Oferecer"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Oferecer:",-1,10,7,31,8
+    LTEXT           "&Oferecer:",-1,10,7,31,8
     LISTBOX         1049,10,20,100,317,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Contraoferta:",-1,126,7,51,8
+    LTEXT           "&Contraoferta:",-1,126,7,51,8
     LISTBOX         1050,126,20,100,315,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Oferecer a:",-1,10,362,43,8
     EDITTEXT        1051,55,360,64,14,ES_AUTOHSCROLL | ES_READONLY | WS_GROUP | NOT WS_TABSTOP
@@ -392,7 +392,7 @@ BEGIN
     DEFPUSHBUTTON   "Confirmar",1,148,115,44,14,WS_GROUP
     PUSHBUTTON      "&Pegar",1140,206,115,44,14,NOT WS_TABSTOP
     PUSHBUTTON      "&Descartar",1138,206,115,44,14
-    PUSHBUTTON      "Largar",1003,262,115,44,14,WS_GROUP
+    PUSHBUTTON      "&Largar",1003,262,115,44,14,WS_GROUP
     PUSHBUTTON      "&Usar",1004,262,115,44,14
     PUSHBUTTON      "&Usar",1141,262,115,44,14
     PUSHBUTTON      "&Largar",1137,262,115,44,14
@@ -413,7 +413,7 @@ BEGIN
     LISTBOX         1002,4,19,127,355,LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Qtd.",1199,138,7,25,8
     LISTBOX         1076,137,19,28,355,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT
-    LTEXT           "Pesquisar item:",-1,169,122,33,8,NOT WS_VISIBLE | WS_DISABLED
+    LTEXT           "&Pesquisar item:",-1,169,122,33,8,NOT WS_VISIBLE | WS_DISABLED
     EDITTEXT        1042,170,135,52,16,ES_AUTOHSCROLL | NOT WS_VISIBLE
     DEFPUSHBUTTON   "Confirmar",1,169,19,53,14,WS_GROUP
     PUSHBUTTON      "Cancelar",2,169,39,53,14,WS_GROUP
@@ -439,7 +439,7 @@ CAPTION "Mensagens de erro!"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "&Confirmar",1,40,103,50,14
-    PUSHBUTTON      "&Cancelar",2,106,103,50,14
+    PUSHBUTTON      "C&ancelar",2,106,103,50,14
     LTEXT           "O seguinte erro ocorreu:",-1,9,8,104,8
     LTEXT           "",1004,12,25,177,44
     LTEXT           "Você gostaria de tentar novamente?",3,42,82,118,8
@@ -475,7 +475,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Selecionar",-1,4,4,100,8
     LISTBOX         1002,4,20,123,135,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Buscar item:",-1,134,95,33,8,NOT WS_VISIBLE | WS_DISABLED
+    LTEXT           "&Buscar item:",-1,134,95,33,8,NOT WS_VISIBLE | WS_DISABLED
     EDITTEXT        1042,136,106,38,16,ES_AUTOHSCROLL | NOT WS_VISIBLE
     DEFPUSHBUTTON   "Confirmar",1,133,21,44,14,WS_GROUP
     PUSHBUTTON      "Cancelar",2,133,41,44,14,WS_GROUP
@@ -517,13 +517,13 @@ STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
 CAPTION "Oferta"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Oferta:",-1,10,7,31,8
+    LTEXT           "&Oferta:",-1,10,7,31,8
     LISTBOX         1050,10,17,103,301,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Oferecer:",-1,126,7,31,8
+    LTEXT           "O&ferecer:",-1,126,7,31,8
     LISTBOX         1049,124,18,102,299,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Oferta de:",-1,10,329,43,8
     EDITTEXT        1051,57,327,66,14,ES_AUTOHSCROLL | ES_READONLY | WS_GROUP | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "Definir itens",1054,138,327,81,14,WS_GROUP
+    DEFPUSHBUTTON   "Definir &itens",1054,138,327,81,14,WS_GROUP
     PUSHBUTTON      "Não enviar nada",1,53,360,58,14,WS_GROUP
     PUSHBUTTON      "Cancelar",2,127,360,52,14,WS_GROUP
     LTEXT           "Selecione itens para enviar..",1055,10,347,217,10

@@ -29,204 +29,8 @@ LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 // Dialog
 //
 
-181 DIALOG  0, 0, 242, 86
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Recriação de personagem"
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Confirmação",-1,7,28,228,33
-    LTEXT           "Confirmar esta ação irá destruir o seu personagem e criar um novo. É de sua responsabilidade iniciar um novo jogo agora.",-1,7,4,235,18
-    LTEXT           "Para confirmação esta ação, insira sua senha:",-1,14,40,106,19
-    EDITTEXT        1260,131,42,97,12,ES_PASSWORD | ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "Confirmar",1,7,65,107,14
-    PUSHBUTTON      "Cancelar",2,120,65,115,14
-END
-
-180 DIALOGEX 0, 0, 219, 223
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Atalhos de comandos"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Para definir um atalho, insira a abreviação na caixa de texto 'Palavra' e, em seguida, escreva o comando completo.""",-1,4,4,215,27
-    GROUPBOX        "",-1,4,29,211,170
-    LTEXT           "Palavra:",-1,10,38,35,8
-    EDITTEXT        1260,59,36,50,12,ES_AUTOHSCROLL
-    EDITTEXT        1261,59,49,149,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "&Definir",1001,118,37,45,11
-    PUSHBUTTON      "&Remover",1002,167,37,40,11
-    LTEXT           "Comando:",-1,10,51,35,8
-    CONTROL         "",1263,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTASCENDING | LVS_NOLABELWRAP | LVS_NOSORTHEADER | WS_TABSTOP,10,64,199,128,WS_EX_CLIENTEDGE
-    PUSHBUTTON      "Confirmar",1,24,205,50,14
-    PUSHBUTTON      "Cancelar",2,82,205,50,14
-    PUSHBUTTON      "&Teclas de função ...",1264,139,205,76,14
-END
-
-161 DIALOG  0, 0, 257, 74
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Sala da guilda",-1,4,4,249,48
-    LTEXT           "Sua guilda não possui uma sala.",1241,10,17,156,8
-    LTEXT           "Senha da guilda:",1242,10,34,51,8
-    EDITTEXT        1239,65,32,101,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "Abandonar Salão",1235,171,32,76,14
-    PUSHBUTTON      "&Dissolver a guilda",1224,4,56,248,14
-END
-
-160 DIALOG  0, 0, 282, 178
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Guildas aliadas:",-1,4,26,62,8
-    LISTBOX         1225,4,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      ">>",1228,84,46,13,12
-    PUSHBUTTON      "<<",1230,84,72,13,12
-    LTEXT           "Guildas neutras:",-1,102,26,52,8
-    LISTBOX         1226,102,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      ">>",1229,182,47,13,12
-    PUSHBUTTON      "<<",1231,182,72,13,12
-    LTEXT           "Guildas inimigas:",-1,200,26,61,8
-    LISTBOX         1227,203,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "",1232,4,161,274,8
-    LTEXT           "Use os botões << e >> para designar alianças amigas e inimigas.",1236,11,4,257,8
-END
-
-159 DIALOGEX 0, 0, 308, 122
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Membros da guilda (nomes em vermelho estão online):",-1,4,4,158,8
-    LISTBOX         1201,4,15,88,89,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Classificação:",-1,98,17,20,8
-    COMBOBOX        1213,123,15,132,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "E&xpulsar membro",1212,123,30,132,12
-    PUSHBUTTON      "&Transferir cargo para:",1205,98,91,96,12
-    LTEXT           "",1209,199,92,105,10,SS_SUNKEN
-    PUSHBUTTON      "&Apoiar novo membro:",1203,98,73,96,14
-    LTEXT           "",1211,199,75,105,10,SS_SUNKEN
-    LTEXT           "Membro apoiado:",-1,98,59,71,8
-    LTEXT           "cha",1214,199,58,105,10,SS_SUNKEN
-    PUSHBUTTON      "&Sair da guilda",1208,4,106,87,12
-    LTEXT           "",1223,124,17,93,8,SS_SUNKEN
-    CONTROL         "",1001,"Button",BS_OWNERDRAW,264,4,40,40
-END
-
-157 DIALOG  0, 0, 183, 92
-STYLE DS_SETFONT | WS_CHILD | WS_CLIPCHILDREN
-FONT 8, "MS Sans Serif"
-BEGIN
-END
-
-143 DIALOG  0, 0, 280, 122
-STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Escudo da guilda:",-1,3,0,120,116
-    CONTROL         "",1001,"Button",BS_OWNERDRAW,7,10,108,102
-    LTEXT           "Selecione uma combinação de cores e desenho:",-1,137,14,190,8
-    LTEXT           "Primeira cor:",-1,138,29,40,8
-    PUSHBUTTON      "<",1019,186,27,17,11,WS_GROUP
-    PUSHBUTTON      ">",1022,204,27,17,11
-    LTEXT           "Segunda cor:",-1,138,44,44,8
-    PUSHBUTTON      "<",1018,186,42,17,11,WS_GROUP
-    PUSHBUTTON      ">",1024,204,42,17,11
-    LTEXT           "Desenho:",-1,138,59,40,8
-    PUSHBUTTON      "<",1016,186,57,17,11,WS_GROUP
-    PUSHBUTTON      ">",1017,204,57,17,11
-    LTEXT           "Desenho criado por %s.",1266,137,77,124,20,SS_SUNKEN
-    PUSHBUTTON      "Reivindicar escudo para minha guilda",1265,137,102,129,13,WS_GROUP
-    LTEXT           "Este desenho não está disponível.",1208,137,68,129,8,NOT WS_VISIBLE
-END
-
-140 DIALOGEX 0, 0, 286, 373
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Configurações do grupo"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Grupos:",-1,8,7,30,8
-    COMBOBOX        1243,8,17,97,65,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Excluir grupo",1244,114,16,58,14,WS_DISABLED
-    LTEXT           "Novo grupo:",1252,180,6,46,8
-    EDITTEXT        1251,180,16,58,14,ES_AUTOHSCROLL
-    LTEXT           "Enviar mensagem para grupo(s) selecionado(s):",-1,8,39,174,8
-    EDITTEXT        1255,8,49,270,14,ES_AUTOHSCROLL
-    LTEXT           "Membros do grupo:",-1,8,73,60,8
-    LTEXT           "(nomes em vermelho estão online)",-1,8,81,82,8
-    LISTBOX         1245,8,91,97,255,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "<< Adicionar",1247,114,91,58,14,WS_DISABLED
-    LTEXT           "Adicionar por nome:",1253,114,111,57,8,WS_DISABLED
-    EDITTEXT        1250,114,122,58,14,ES_AUTOHSCROLL | WS_DISABLED
-    PUSHBUTTON      "Remover",1249,114,149,58,14,WS_DISABLED
-    LTEXT           "Membros logados:",-1,180,80,64,8
-    LISTBOX         1246,180,91,97,255,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "",1256,8,354,174,8
-    PUSHBUTTON      "Finalizar",1254,227,354,50,14
-END
-
-107 DIALOGEX 0, 0, 249, 259
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Alugar uma sala para a guilda"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "Confirmar",1,66,238,50,14
-    PUSHBUTTON      "Cancelar",2,132,238,50,14
-    CONTROL         "",1201,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,16,238,162,WS_EX_CLIENTEDGE
-    LTEXT           "Escolha a sala da guilda:",-1,6,4,89,8
-    LTEXT           "Senha da guilda:",-1,6,219,51,8
-    EDITTEXT        1239,60,217,94,12,ES_AUTOHSCROLL
-    LTEXT           "A senha protege partes da sala da guilda contra acesso não autorizado.",-1,6,204,210,8
-    LTEXT           "Sala da guilda selecionada:",-1,6,186,80,8
-    LTEXT           "",1215,89,185,129,11,SS_SUNKEN
-END
-
-106 DIALOG  0, 0, 165, 122
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LISTBOX         1202,60,32,98,86,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Escolha uma pessoa para convidar:",-1,4,33,51,58
-    PUSHBUTTON      "Convidar",1001,4,106,45,12
-    LTEXT           "Você só pode convidar pessoas na mesma sala que você. Além disso, só pode haver um convite pendente.",-1,4,4,157,24
-END
-
-105 DIALOG  0, 0, 269, 180
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Criar nova guilda"
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Nome da guilda:",-1,9,12,53,8
-    EDITTEXT        1215,66,10,95,14,ES_AUTOHSCROLL
-    GROUPBOX        "Hierarquia da guilda:",-1,10,30,247,114
-    LTEXT           "Homens:",-1,21,45,27,8
-    EDITTEXT        1220,21,57,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1219,21,73,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1218,21,89,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1217,21,105,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1216,21,121,83,14,ES_AUTOHSCROLL
-    LTEXT           "Maior",-1,119,59,28,8
-    LTEXT           "Menor",-1,118,124,33,8
-    LTEXT           "Mulheres:",-1,163,45,25,8
-    EDITTEXT        1226,163,57,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1225,163,73,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1224,163,89,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1223,163,105,83,14,ES_AUTOHSCROLL
-    EDITTEXT        1222,163,121,83,14,ES_AUTOHSCROLL
-    CONTROL         "Criar uma guilda secreta. (A filiação à guilda não será visível)",1221,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,147,240,8
-    LTEXT           "Custo de criação:",-1,10,163,59,8
-    LTEXT           "",1237,74,163,41,10,SS_SUNKEN
-    DEFPUSHBUTTON   "Confirmar",1,156,162,50,14
-    PUSHBUTTON      "Cancelar",2,215,162,50,14
-END
-
-103 DIALOG  0, 0, 184, 93
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-END
-
-102 DIALOG  0, 0, 217, 226
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ALIAS DIALOG 0, 0, 217, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Teclas de atalho"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -234,46 +38,243 @@ BEGIN
     LTEXT           "Comando:",IDC_STATIC,30,4,55,8
     RTEXT           "Entrada Auto:",IDC_STATIC,134,4,77,8
     GROUPBOX        "",3,4,10,208,190
-    RTEXT           "F1",4,13,20,9,8
-    EDITTEXT        1000,30,19,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,21,13,9
-    RTEXT           "F2",5,13,35,9,8
-    EDITTEXT        1001,29,34,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1200,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,35,13,9
-    RTEXT           "F3",6,13,50,9,8
-    EDITTEXT        1002,29,48,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1201,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,50,13,9
-    RTEXT           "F4",7,13,65,9,8
-    EDITTEXT        1003,29,63,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,64,13,9
-    RTEXT           "F5",8,13,80,9,8
-    EDITTEXT        1004,29,78,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1203,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,80,13,9
-    RTEXT           "F6",9,13,95,9,8
-    EDITTEXT        1005,29,92,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1204,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,94,13,9
-    RTEXT           "F7",10,13,110,9,8
-    EDITTEXT        1006,29,107,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1205,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,109,13,9
-    RTEXT           "F8",11,13,125,9,8
-    EDITTEXT        1007,29,122,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1206,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,125,13,9
-    RTEXT           "F9",12,13,140,9,8
-    EDITTEXT        1008,29,137,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1207,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,139,13,9
-    RTEXT           "F10",13,9,155,13,8
-    EDITTEXT        1009,29,153,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1208,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,155,13,9
-    RTEXT           "F11",14,9,170,13,8
-    EDITTEXT        1010,29,168,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1209,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,170,13,9
-    RTEXT           "F12",15,9,185,13,8
-    EDITTEXT        1011,29,184,159,12,ES_AUTOHSCROLL
-    CONTROL         "",1210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,185,13,9
+    RTEXT           "F1",IDC_STATIC,13,20,9,8
+    EDITTEXT        IDC_ALIASF1,30,19,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,21,13,9
+    RTEXT           "F2",IDC_STATIC,13,35,9,8
+    EDITTEXT        IDC_ALIASF2,29,34,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,35,13,9
+    RTEXT           "F3",IDC_STATIC,13,50,9,8
+    EDITTEXT        IDC_ALIASF3,29,48,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,50,13,9
+    RTEXT           "F4",IDC_STATIC,13,65,9,8
+    EDITTEXT        IDC_ALIASF4,29,63,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,64,13,9
+    RTEXT           "F5",IDC_STATIC,13,80,9,8
+    EDITTEXT        IDC_ALIASF5,29,78,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,80,13,9
+    RTEXT           "F6",IDC_STATIC,13,95,9,8
+    EDITTEXT        IDC_ALIASF6,29,92,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,94,13,9
+    RTEXT           "F7",IDC_STATIC,13,110,9,8
+    EDITTEXT        IDC_ALIASF7,29,107,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,109,13,9
+    RTEXT           "F8",IDC_STATIC,13,125,9,8
+    EDITTEXT        IDC_ALIASF8,29,122,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,125,13,9
+    RTEXT           "F9",IDC_STATIC,13,140,9,8
+    EDITTEXT        IDC_ALIASF9,29,137,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,139,13,9
+    RTEXT           "F10",IDC_STATIC,9,155,13,8
+    EDITTEXT        IDC_ALIASF10,29,153,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,155,13,9
+    RTEXT           "F11",IDC_STATIC,9,170,13,8
+    EDITTEXT        IDC_ALIASF11,29,168,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,170,13,9
+    RTEXT           "F12",IDC_STATIC,9,185,13,8
+    EDITTEXT        IDC_ALIASF12,29,184,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,185,13,9
     DEFPUSHBUTTON   "Confirmar",IDOK,19,208,50,14
     PUSHBUTTON      "Cancelar",IDCANCEL,77,208,50,14
     PUSHBUTTON      "Tecla de &atalho....",1264,136,208,76,14
 END
+
+IDD_STATS DIALOG 0, 0, 184, 93
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_INVENTORY DIALOG 0, 0, 183, 92
+STYLE DS_SETFONT | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_GUILDCREATE DIALOG 0, 0, 269, 180
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Criar nova guilda"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Nome da guilda:",IDC_STATIC,9,12,53,8
+    EDITTEXT        IDC_GUILDNAME,66,10,95,14,ES_AUTOHSCROLL
+    GROUPBOX        "Hierarquia da guilda:",IDC_STATIC,10,30,247,114
+    LTEXT           "Homens:",IDC_STATIC,21,45,27,8
+    EDITTEXT        IDC_MRANK5,21,57,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK4,21,73,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK3,21,89,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK2,21,105,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK1,21,121,83,14,ES_AUTOHSCROLL
+    LTEXT           "Maior",IDC_STATIC,119,59,28,8
+    LTEXT           "Menor",IDC_STATIC,118,124,33,8
+    LTEXT           "Mulheres:",IDC_STATIC,163,45,25,8
+    EDITTEXT        IDC_FRANK5,163,57,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK4,163,73,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK3,163,89,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK2,163,105,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK1,163,121,83,14,ES_AUTOHSCROLL
+    CONTROL         "Criar uma guilda secreta. (A filiação à guilda não será visível)",IDC_SECRET,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,147,240,8
+    LTEXT           "Custo de criação:",IDC_STATIC,10,163,59,8
+    LTEXT           "",IDC_GUILD_COST,74,163,41,10,SS_SUNKEN
+    DEFPUSHBUTTON   "Confirmar",IDOK,156,162,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,215,162,50,14
+END
+
+IDD_GUILDHALLS DIALOGEX 0, 0, 249, 259
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Alugar uma sala para a guilda"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "Confirmar",IDOK,66,238,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,132,238,50,14
+    CONTROL         "",IDC_GUILDLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,16,238,162,WS_EX_CLIENTEDGE
+    LTEXT           "Escolha a sala da guilda:",IDC_STATIC,6,4,89,8
+    LTEXT           "Senha da guilda:",IDC_STATIC,6,219,51,8
+    EDITTEXT        IDC_GUILD_PASSWORD,60,217,94,12,ES_AUTOHSCROLL
+    LTEXT           "A senha protege partes da sala da guilda contra acesso não autorizado.",IDC_STATIC,6,204,210,8
+    LTEXT           "Sala da guilda selecionada:",IDC_STATIC,6,186,80,8
+    LTEXT           "",IDC_GUILDNAME,89,185,129,11,SS_SUNKEN
+END
+
+IDD_GUILDINVITE DIALOG 0, 0, 165, 122
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_INROOMLIST,60,32,98,86,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Escolha uma pessoa para convidar:",IDC_STATIC,4,33,51,58
+    PUSHBUTTON      "Convidar",IDC_INVITE,4,106,45,12
+    LTEXT           "Você só pode convidar pessoas na mesma sala que você. Além disso, só pode haver um convite pendente.",IDC_STATIC,4,4,157,24
+END
+
+IDD_GUILDMEMBERS DIALOGEX 0, 0, 308, 122
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Membros da guilda (nomes em vermelho estão online):",IDC_STATIC,4,4,158,8
+    LISTBOX         IDC_GUILDLIST,4,15,88,89,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Classificação:",IDC_STATIC,98,17,20,8
+    COMBOBOX        IDC_RANK,123,15,132,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "E&xpulsar membro",IDC_EXILE,123,30,132,12
+    PUSHBUTTON      "&Transferir cargo para:",IDC_ABDICATE,98,91,96,12
+    LTEXT           "",IDC_ABDICATENAME,199,92,105,10,SS_SUNKEN
+    PUSHBUTTON      "&Apoiar novo membro:",IDC_VOTE,98,73,96,14
+    LTEXT           "",IDC_VOTENAME,199,75,105,10,SS_SUNKEN
+    LTEXT           "Membro apoiado:",IDC_STATIC,98,59,71,8
+    LTEXT           "cha",IDC_CURRENTVOTE,199,58,105,10,SS_SUNKEN
+    PUSHBUTTON      "&Sair da guilda",IDC_RENOUNCE,4,106,87,12
+    LTEXT           "",IDC_RANKDISPLAY,124,17,93,8,SS_SUNKEN
+    CONTROL         "",IDC_SHIELD,"Button",BS_OWNERDRAW,264,4,40,40
+END
+
+IDD_GUILDALLIES DIALOG  0, 0, 282, 178
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Guildas aliadas:",IDC_STATIC,4,26,62,8
+    LISTBOX         IDC_ALLYGUILDS,4,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      ">>",IDC_UNALLY,84,46,13,12
+    PUSHBUTTON      "<<",IDC_ALLY,84,72,13,12
+    LTEXT           "Guildas neutras:",IDC_STATIC,102,26,52,8
+    LISTBOX         IDC_GUILDS,102,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      ">>",IDC_ENEMY,182,47,13,12
+    PUSHBUTTON      "<<",IDC_UNENEMY,182,72,13,12
+    LTEXT           "Guildas inimigas:",IDC_STATIC,200,26,61,8
+    LISTBOX         IDC_ENEMYGUILDS,203,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_GUILDSTATUS,4,161,274,8
+    LTEXT           "Use os botões << e >> para designar alianças amigas e inimigas.",IDC_ALLYLABEL,11,4,257,8
+END
+
+IDD_GUILDMASTER DIALOG 0, 0, 257, 74
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Sala da guilda",IDC_STATIC,4,4,249,48
+    LTEXT           "Sua guilda não possui uma sala.",IDC_NOHALL,10,17,156,8
+    LTEXT           "Senha da guilda:",IDC_LABEL,10,34,51,8
+    EDITTEXT        IDC_GUILD_PASSWORD,65,32,101,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Abandonar Salão",IDC_ABANDON,171,32,76,14
+    PUSHBUTTON      "&Dissolver a guilda",IDC_DISBAND,4,56,248,14
+END
+
+IDD_GROUP DIALOGEX 0, 0, 286, 373
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configurações do grupo"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Grupos:",IDC_STATIC,8,7,30,8
+    COMBOBOX        IDC_GROUPS,8,17,97,65,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Excluir grupo",IDC_DELGROUP,114,16,58,14,WS_DISABLED
+    LTEXT           "Novo grupo:",IDC_NEWGROUPTEXT,180,6,46,8
+    EDITTEXT        IDC_NEWGROUP,180,16,58,14,ES_AUTOHSCROLL
+    LTEXT           "Enviar mensagem para grupo(s) selecionado(s):",IDC_STATIC,8,39,174,8
+    EDITTEXT        IDC_GROUPTELL,8,49,270,14,ES_AUTOHSCROLL
+    LTEXT           "Membros do grupo:",IDC_STATIC,8,73,60,8
+    LTEXT           "(nomes em vermelho estão online)",IDC_STATIC,8,81,82,8
+    LISTBOX         IDC_GROUPMEMBERS,8,91,97,255,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<< Adicionar",IDC_ADDMEMBER,114,91,58,14,WS_DISABLED
+    LTEXT           "Adicionar por nome:",IDC_ADDNAMETEXT,114,111,57,8,WS_DISABLED
+    EDITTEXT        IDC_ADDNAME,114,122,58,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Remover",IDC_DELMEMBER,114,149,58,14,WS_DISABLED
+    LTEXT           "Membros logados:",IDC_STATIC,180,80,64,8
+    LISTBOX         IDC_LOGGEDON,180,91,97,255,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_GROUPSTATUS,8,354,174,8
+    PUSHBUTTON      "Finalizar",IDC_GROUP_DONE,227,354,50,14
+END
+
+IDD_CMDALIAS DIALOGEX 0, 0, 219, 223
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Atalhos de comandos"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Para definir um atalho, insira a abreviação na caixa de texto 'Palavra' e, em seguida, escreva o comando completo.""",IDC_STATIC,4,4,215,27
+    GROUPBOX        "",IDC_STATIC,4,29,211,170
+    LTEXT           "Palavra:",IDC_STATIC,10,38,35,8
+    EDITTEXT        IDC_VERB,59,36,50,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EXPANSION,59,49,149,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Definir",IDC_DEFINE,118,37,45,11
+    PUSHBUTTON      "&Remover",IDC_REMOVE,167,37,40,11
+    LTEXT           "Comando:",IDC_STATIC,10,51,35,8
+    CONTROL         "",IDC_COMMAND_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTASCENDING | LVS_NOLABELWRAP | LVS_NOSORTHEADER | WS_TABSTOP,10,64,199,128,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Confirmar",IDOK,24,205,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,82,205,50,14
+    PUSHBUTTON      "&Teclas de função ...",IDC_TUNNEL,139,205,76,14
+END
+
+IDD_GUILDSHIELD DIALOG 0, 0, 280, 122
+STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Escudo da guilda:",IDC_STATIC,3,0,120,116
+    CONTROL         "",IDC_SHIELD,"Button",BS_OWNERDRAW,7,10,108,102
+    LTEXT           "Selecione uma combinação de cores e desenho:",IDC_STATIC,137,14,190,8
+    LTEXT           "Primeira cor:",IDC_STATIC,138,29,40,8
+    PUSHBUTTON      "<",IDC_COLOR1_PREV,186,27,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_COLOR1_NEXT,204,27,17,11
+    LTEXT           "Segunda cor:",IDC_STATIC,138,44,44,8
+    PUSHBUTTON      "<",IDC_COLOR2_PREV,186,42,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_COLOR2_NEXT,204,42,17,11
+    LTEXT           "Desenho:",IDC_STATIC,138,59,40,8
+    PUSHBUTTON      "<",IDC_PATTERN_PREV,186,57,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_PATTERN_NEXT,204,57,17,11
+    LTEXT           "Desenho criado por %s.",IDC_STATIC_GUILD,137,77,124,20,SS_SUNKEN
+    PUSHBUTTON      "Reivindicar escudo para minha guilda",IDC_ACCEPT,137,102,129,13,WS_GROUP
+    LTEXT           "Este desenho não está disponível.",IDC_RENOUNCE,137,68,129,8,NOT WS_VISIBLE
+END
+
+IDD_SUICIDE DIALOG 0, 0, 242, 86
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Recriação de personagem"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Confirmação",IDC_STATIC,7,28,228,33
+    LTEXT           "Confirmar esta ação irá destruir o seu personagem e criar um novo. É de sua responsabilidade iniciar um novo jogo agora.",IDC_STATIC,7,4,235,18
+    LTEXT           "Para confirmação esta ação, insira sua senha:",IDC_STATIC,14,40,106,19
+    EDITTEXT        1260,131,42,97,12,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Confirmar",IDOK,7,65,107,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,120,65,115,14
+END
+
 
 
 /////////////////////////////////////////////////////////////////////////////

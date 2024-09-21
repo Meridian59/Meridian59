@@ -29,141 +29,141 @@ LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 // Dialog
 //
 
-144 DIALOGEX 0, 0, 316, 232
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",-1,6,4,280,8
-    LTEXT           "Força",-1,38,27,23,8
-    CONTROL         "",1021,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
-    LTEXT           "Inteligência",-1,33,45,28,8
-    CONTROL         "",1022,"BlakGraph",WS_TABSTOP | 0xb,65,43,102,14
-    LTEXT           "Resistência",-1,22,65,39,8
-    CONTROL         "",1023,"BlakGraph",WS_TABSTOP | 0xb,65,62,102,14
-    LTEXT           "Agilidade",-1,20,84,40,8
-    CONTROL         "",1024,"BlakGraph",WS_TABSTOP | 0xb,65,81,102,14
-    LTEXT           "Misticismo",-1,38,103,21,8
-    CONTROL         "",1025,"BlakGraph",WS_TABSTOP | 0xb,65,100,102,14
-    LTEXT           "Mira",-1,20,123,39,8
-    CONTROL         "",1026,"BlakGraph",WS_TABSTOP | 0xb,65,120,102,14
-    GROUPBOX        "Sugestões para leigos",-1,24,139,269,68
-    PUSHBUTTON      "&Mago",1010,43,154,34,12
-    LTEXT           "Aprenda feitiços de várias escolas sem muitas dificuldades.",-1,87,156,119,8
-    PUSHBUTTON      "&Guerreiro",1011,43,171,34,12
-    LTEXT           "Mestre na arte do combate a curta e longa distância.",-1,87,173,172,8
-    PUSHBUTTON      "&Híbrido",1012,43,188,34,12
-    LTEXT           "Um generalista que aproveita um pouco das outras duas classes.",-1,87,190,161,8
-    LTEXT           "Pontos restantes:",-1,8,215,83,8
-    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
-    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14
-    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14
-    LTEXT           "Sua força determina o dano que você causa e sua capacidade de carga.",-1,175,23,132,18
-    LTEXT           "Personagens inteligentes podem desenvolver habilidades mais rapidamente.",-1,175,42,134,17
-    LTEXT           "Uma alta resistência tem um efeito positivo na sua vitalidade.",-1,175,61,136,17
-    LTEXT           "Um guerreiro ágil pode evitar, mais facilmente, o ataque dos oponentes e é mais habilidoso em certas áreas da luta e defesa.",-1,175,80,134,8
-    LTEXT           "Uma alta magia tem um efeito positivo no poder mágico e nos feitiços.",-1,175,99,132,17
-    LTEXT           "Influencia a chance de acerto de feitiços e armas.",-1,175,119,134,18
-END
-
-143 DIALOG  0, 0, 316, 161
-STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Rosto",-1,3,0,150,158
-    CONTROL         "",1001,"Button",BS_OWNERDRAW | WS_TABSTOP,14,18,127,127
-    LTEXT           "Escolha a aparência do seu personagem.",-1,161,5,130,8
-    LTEXT           "Gênero:",-1,162,22,39,8
-    CONTROL         "Homem",1010,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
-    CONTROL         "Mulher",1011,"Button",BS_AUTORADIOBUTTON,263,22,39,10
-    LTEXT           "Cor da pele:",-1,162,37,44,8
-    CONTROL         "",1033,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,213,35,90,15
-    LTEXT           "Branco",-1,215,50,25,8
-    LTEXT           "Negro",-1,287,50,24,8
-    LTEXT           "Cabelo:",-1,166,70,25,8
-    PUSHBUTTON      "<",1016,213,69,17,11
-    PUSHBUTTON      ">",1017,230,69,17,11,NOT WS_TABSTOP
-    LTEXT           "Cor do cabelo:",-1,166,85,44,8
-    PUSHBUTTON      "<",1019,213,84,17,11
-    PUSHBUTTON      ">",1022,230,84,17,11,NOT WS_TABSTOP
-    LTEXT           "Olhos:",-1,166,100,40,8
-    PUSHBUTTON      "<",1018,213,99,17,11,WS_GROUP
-    PUSHBUTTON      ">",1024,230,99,17,11,NOT WS_TABSTOP
-    LTEXT           "Nariz:",-1,166,115,19,8
-    PUSHBUTTON      "<",1020,213,114,17,11,WS_GROUP
-    PUSHBUTTON      ">",1025,230,114,17,11,NOT WS_TABSTOP
-    LTEXT           "Boca:",-1,166,130,19,8
-    PUSHBUTTON      "<",1021,213,129,17,11,WS_GROUP
-    PUSHBUTTON      ">",1026,230,129,17,11,NOT WS_TABSTOP
-    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14,WS_GROUP
-    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14
-END
-
-142 DIALOGEX 0, 0, 316, 232
-STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Escolha as habilidades que seu personagem deve ter desde o início.",-1,13,4,230,8
-    LTEXT           "Habilidades disponíveis:",-1,13,19,76,8
-    LISTBOX         1035,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Adicionar a lista >>",1034,124,31,67,14
-    PUSHBUTTON      "<< Remover da lista",1038,124,47,67,14
-    LTEXT           "",1037,125,116,63,49
-    LTEXT           "Custo:",-1,125,184,25,8
-    LTEXT           "",1039,149,184,20,8
-    LTEXT           "Habilidades selecionadas:",-1,195,19,82,8
-    LISTBOX         1036,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Pontos de habilidade restantes:",-1,13,215,74,8
-    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
-    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14
-    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14,WS_DISABLED
-END
-
-141 DIALOGEX 0, 0, 316, 232
-STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Escolha os seus feitiços iniciais.",-1,13,4,250,8
-    LTEXT           "Feitiços disponíveis:",-1,13,19,62,8
-    LISTBOX         1029,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Adicionar a lista>>",1016,123,31,67,14
-    PUSHBUTTON      "<< Remover da lista",1031,123,47,67,14
-    LTEXT           "",1032,125,116,63,49
-    LTEXT           "Feitiços selecionados:",-1,195,19,68,8
-    LISTBOX         1030,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Custo:",-1,125,184,25,8
-    LTEXT           "",1039,149,184,20,8
-    LTEXT           "Não é possível aprender feitiços de Sha Lill e Qor juntos.",-1,13,199,160,8
-    LTEXT           "Pontos de habilidade restantes:",-1,13,215,74,8
-    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
-    PUSHBUTTON      "&<< Anterior",1008,220,214,44,14
-    PUSHBUTTON      "Próxima &>>",1009,266,214,44,14
-END
-
-129 DIALOG  0, 0, 215, 254
+IDD_CHARPICK DIALOG  0, 0, 215, 254
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Escolha o seu personagem"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         1107,9,9,118,42, LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "Confirmar",1,167,9,39,14,WS_GROUP
-    PUSHBUTTON      "Sair",2,167,27,39,14,WS_GROUP
-    EDITTEXT        1041,10,74,195,101,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
-    CONTROL         "Mensagem atual",-1,"Static",SS_SIMPLE | WS_GROUP,9,64,56,8
-    CONTROL         "",1042,"SysAnimate32",ACS_CENTER | ACS_AUTOPLAY | WS_TABSTOP,10,182,195,32
-    CONTROL         "",1044,"SysAnimate32",ACS_CENTER | ACS_AUTOPLAY | WS_TABSTOP,10,217,195,32
+    LISTBOX         IDC_CHARLIST,9,9,118,42, LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "Confirmar",IDOK,167,9,39,14,WS_GROUP
+    PUSHBUTTON      "Sair",IDCANCEL,167,27,39,14,WS_GROUP
+    EDITTEXT        IDC_MOTD,10,74,195,101,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+    CONTROL         "Mensagem atual",IDC_STATIC,"Static",SS_SIMPLE | WS_GROUP,9,64,56,8
+    CONTROL         "",IDC_ANIMATE3,"SysAnimate32",ACS_CENTER | ACS_AUTOPLAY | WS_TABSTOP,10,182,195,32
+    CONTROL         "",IDC_ANIMATE4,"SysAnimate32",ACS_CENTER | ACS_AUTOPLAY | WS_TABSTOP,10,217,195,32
 END
 
-103 DIALOGEX 0, 0, 316, 232
+IDD_CHARNAME DIALOGEX 0, 0, 316, 232
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Escolha um nome, de 3 a 30 caracteres, para o seu personagem.",-1,2,2,190,8
-    LTEXT           "Você pode usar letras maísculas e/ou minúsculas, números, espaços ou os símbolos seguintes: !@$^&*+=:()[]{}<>;/?|",-1,2,12,196,8,SS_NOPREFIX
-    EDITTEXT        1101,2,26,108,16,ES_AUTOHSCROLL
-    LTEXT           "Digite uma descrição para o seu personagem aqui:",-1,2,52,292,8
-    EDITTEXT        1000,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
-    PUSHBUTTON      "<< Anterior",1008,220,214,44,14,WS_DISABLED
-    PUSHBUTTON      "Próxima >>",1009,266,214,44,14
+    LTEXT           "Escolha um nome, de 3 a 30 caracteres, para o seu personagem.",IDC_STATIC,2,2,190,8
+    LTEXT           "Você pode usar letras maísculas e/ou minúsculas, números, espaços ou os símbolos seguintes: !@$^&*+=:()[]{}<>;/?|",IDC_STATIC,2,12,196,8,SS_NOPREFIX
+    EDITTEXT        IDC_NAME,2,26,108,16,ES_AUTOHSCROLL
+    LTEXT           "Digite uma descrição para o seu personagem aqui:",IDC_STATIC,2,52,292,8
+    EDITTEXT        IDC_DESCRIPTION,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14,WS_DISABLED
+    PUSHBUTTON      "Próxima >>",IDC_NEXT_PAGE,266,214,44,14
+END
+
+IDD_CHARSPELLS DIALOGEX 0, 0, 316, 232
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Escolha os seus feitiços iniciais.",IDC_STATIC,13,4,250,8
+    LTEXT           "Feitiços disponíveis:",IDC_STATIC,13,19,62,8
+    LISTBOX         IDC_SPELLIST1,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Adicionar a lista>>",IDC_ADDSPELL,123,31,67,14
+    PUSHBUTTON      "<< Remover da lista",IDC_REMOVESPELL,123,47,67,14
+    LTEXT           "",IDC_SPELLINFO,125,116,63,49
+    LTEXT           "Feitiços selecionados:",IDC_STATIC,195,19,68,8
+    LISTBOX         IDC_SPELLIST2,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Custo:",IDC_STATIC,125,184,25,8
+    LTEXT           "",IDC_COST2,149,184,20,8
+    LTEXT           "Não é possível aprender feitiços de Sha Lill e Qor juntos.",IDC_STATIC,13,199,160,8
+    LTEXT           "Pontos de habilidade restantes:",IDC_STATIC,13,215,74,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14
+    PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14
+END
+
+IDD_CHARSKILLS DIALOGEX 0, 0, 316, 232
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Escolha as habilidades que seu personagem deve ter desde o início.",IDC_STATIC,13,4,230,8
+    LTEXT           "Habilidades disponíveis:",IDC_STATIC,13,19,76,8
+    LISTBOX         IDC_SKILLIST1,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Adicionar a lista >>",IDC_ADDSKILL,124,31,67,14
+    PUSHBUTTON      "<< Remover da lista",IDC_REMOVESKILL,124,47,67,14
+    LTEXT           "",IDC_SKILLINFO,125,116,63,49
+    LTEXT           "Custo:",IDC_STATIC,125,184,25,8
+    LTEXT           "",IDC_COST2,149,184,20,8
+    LTEXT           "Habilidades selecionadas:",IDC_STATIC,195,19,82,8
+    LISTBOX         IDC_SKILLIST2,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Pontos de habilidade restantes:",IDC_STATIC,13,215,74,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14
+    PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14,WS_DISABLED
+END
+
+IDD_CHARAPPEARANCE DIALOG  0, 0, 316, 161
+STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Rosto",IDC_STATIC,3,0,150,158
+    CONTROL         "",IDC_FACE,"Button",BS_OWNERDRAW | WS_TABSTOP,14,18,127,127
+    LTEXT           "Escolha a aparência do seu personagem.",IDC_STATIC,161,5,130,8
+    LTEXT           "Gênero:",IDC_STATIC,162,22,39,8
+    CONTROL         "Homem",IDC_MALE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
+    CONTROL         "Mulher",IDC_FEMALE,"Button",BS_AUTORADIOBUTTON,263,22,39,10
+    LTEXT           "Cor da pele:",IDC_STATIC,162,37,44,8
+    CONTROL         "",IDC_COLOR,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,213,35,90,15
+    LTEXT           "Branco",IDC_STATIC,215,50,25,8
+    LTEXT           "Negro",IDC_STATIC,287,50,24,8
+    LTEXT           "Cabelo:",IDC_STATIC,166,70,25,8
+    PUSHBUTTON      "<",IDC_HAIR1,213,69,17,11
+    PUSHBUTTON      ">",IDC_HAIR2,230,69,17,11,NOT WS_TABSTOP
+    LTEXT           "Cor do cabelo:",IDC_STATIC,166,85,44,8
+    PUSHBUTTON      "<",IDC_HAIRCOLOR1,213,84,17,11
+    PUSHBUTTON      ">",IDC_HAIRCOLOR2,230,84,17,11,NOT WS_TABSTOP
+    LTEXT           "Olhos:",IDC_STATIC,166,100,40,8
+    PUSHBUTTON      "<",IDC_EYES1,213,99,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_EYES2,230,99,17,11,NOT WS_TABSTOP
+    LTEXT           "Nariz:",IDC_STATIC,166,115,19,8
+    PUSHBUTTON      "<",IDC_NOSE1,213,114,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_NOSE2,230,114,17,11,NOT WS_TABSTOP
+    LTEXT           "Boca:",IDC_STATIC,166,130,19,8
+    PUSHBUTTON      "<",IDC_MOUTH1,213,129,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_MOUTH2,230,129,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14,WS_GROUP
+    PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14
+END
+
+IDD_CHARSTATS DIALOGEX 0, 0, 316, 232
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",IDC_STATIC,6,4,280,8
+    LTEXT           "Força",IDC_STATIC,38,27,23,8
+    CONTROL         "",IDC_CHAR_GRAPH1,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
+    LTEXT           "Inteligência",IDC_STATIC,33,45,28,8
+    CONTROL         "",IDC_CHAR_GRAPH2,"BlakGraph",WS_TABSTOP | 0xb,65,43,102,14
+    LTEXT           "Resistência",IDC_STATIC,22,65,39,8
+    CONTROL         "",IDC_CHAR_GRAPH3,"BlakGraph",WS_TABSTOP | 0xb,65,62,102,14
+    LTEXT           "Agilidade",IDC_STATIC,20,84,40,8
+    CONTROL         "",IDC_CHAR_GRAPH4,"BlakGraph",WS_TABSTOP | 0xb,65,81,102,14
+    LTEXT           "Misticismo",IDC_STATIC,38,103,21,8
+    CONTROL         "",IDC_CHAR_GRAPH5,"BlakGraph",WS_TABSTOP | 0xb,65,100,102,14
+    LTEXT           "Mira",IDC_STATIC,20,123,39,8
+    CONTROL         "",IDC_CHAR_GRAPH6,"BlakGraph",WS_TABSTOP | 0xb,65,120,102,14
+    GROUPBOX        "Sugestões para leigos",IDC_STATIC,24,139,269,68
+    PUSHBUTTON      "&Mago",IDC_MAGE,43,154,34,12
+    LTEXT           "Aprenda feitiços de várias escolas sem muitas dificuldades.",IDC_STATIC,87,156,119,8
+    PUSHBUTTON      "&Guerreiro",IDC_WARRIOR,43,171,34,12
+    LTEXT           "Mestre na arte do combate a curta e longa distância.",IDC_STATIC,87,173,172,8
+    PUSHBUTTON      "&Híbrido",IDC_HYBRID,43,188,34,12
+    LTEXT           "Um generalista que aproveita um pouco das outras duas classes.",IDC_STATIC,87,190,161,8
+    LTEXT           "Pontos restantes:",IDC_STATIC,8,215,83,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14
+    PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14
+    LTEXT           "Sua força determina o dano que você causa e sua capacidade de carga.",IDC_STATIC,175,23,132,18
+    LTEXT           "Personagens inteligentes podem desenvolver habilidades mais rapidamente.",IDC_STATIC,175,42,134,17
+    LTEXT           "Uma alta resistência tem um efeito positivo na sua vitalidade.",IDC_STATIC,175,61,136,17
+    LTEXT           "Um guerreiro ágil pode evitar, mais facilmente, o ataque dos oponentes e é mais habilidoso em certas áreas da luta e defesa.",IDC_STATIC,175,80,134,8
+    LTEXT           "Uma alta magia tem um efeito positivo no poder mágico e nos feitiços.",IDC_STATIC,175,99,132,17
+    LTEXT           "Influencia a chance de acerto de feitiços e armas.",IDC_STATIC,175,119,134,18
 END
 
 

@@ -135,33 +135,33 @@ STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",IDC_STATIC,6,4,280,8
-    LTEXT           "Força",IDC_STATIC,38,27,23,8
+    LTEXT           "Força",IDC_STATIC,22,25,23,8
     CONTROL         "",IDC_CHAR_GRAPH1,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
-    LTEXT           "Inteligência",IDC_STATIC,33,45,28,8
+    LTEXT           "Inteligência",IDC_STATIC,22,44,38,8
     CONTROL         "",IDC_CHAR_GRAPH2,"BlakGraph",WS_TABSTOP | 0xb,65,43,102,14
-    LTEXT           "Resistência",IDC_STATIC,22,65,39,8
+    LTEXT           "Resistência",IDC_STATIC,22,63,39,8
     CONTROL         "",IDC_CHAR_GRAPH3,"BlakGraph",WS_TABSTOP | 0xb,65,62,102,14
-    LTEXT           "Agilidade",IDC_STATIC,20,84,40,8
+    LTEXT           "Agilidade",IDC_STATIC,22,82,40,8
     CONTROL         "",IDC_CHAR_GRAPH4,"BlakGraph",WS_TABSTOP | 0xb,65,81,102,14
-    LTEXT           "Misticismo",IDC_STATIC,38,103,21,8
+    LTEXT           "Misticismo",IDC_STATIC,22,101,28,8
     CONTROL         "",IDC_CHAR_GRAPH5,"BlakGraph",WS_TABSTOP | 0xb,65,100,102,14
-    LTEXT           "Mira",IDC_STATIC,20,123,39,8
+    LTEXT           "Mira",IDC_STATIC,22,120,39,8
     CONTROL         "",IDC_CHAR_GRAPH6,"BlakGraph",WS_TABSTOP | 0xb,65,120,102,14
     GROUPBOX        "Sugestões para leigos",IDC_STATIC,24,139,269,68
-    PUSHBUTTON      "&Mago",IDC_MAGE,43,154,34,12
-    LTEXT           "Aprenda feitiços de várias escolas sem muitas dificuldades.",IDC_STATIC,87,156,119,8
-    PUSHBUTTON      "&Guerreiro",IDC_WARRIOR,43,171,34,12
-    LTEXT           "Mestre na arte do combate a curta e longa distância.",IDC_STATIC,87,173,172,8
-    PUSHBUTTON      "&Híbrido",IDC_HYBRID,43,188,34,12
-    LTEXT           "Um generalista que aproveita um pouco das outras duas classes.",IDC_STATIC,87,190,161,8
+    PUSHBUTTON      "&Mago",IDC_MAGE,35,154,34,12
+    LTEXT           "Aprenda feitiços de várias escolas sem muitas dificuldades.",IDC_STATIC,77,156,200,8
+    PUSHBUTTON      "&Guerreiro",IDC_WARRIOR,35,171,34,12
+    LTEXT           "Mestre na arte do combate a curta e longa distância.",IDC_STATIC,77,173,172,8
+    PUSHBUTTON      "&Híbrido",IDC_HYBRID,35,188,34,12
+    LTEXT           "Um generalista que aproveita um pouco das outras duas classes.",IDC_STATIC,77,190,210,8
     LTEXT           "Pontos restantes:",IDC_STATIC,8,215,83,8
     CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,93,214,98,11
     PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14
     PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14
     LTEXT           "Sua força determina o dano que você causa e sua capacidade de carga.",IDC_STATIC,175,23,132,18
-    LTEXT           "Personagens inteligentes podem desenvolver habilidades mais rapidamente.",IDC_STATIC,175,42,134,17
+    LTEXT           "Personagens inteligentes podem desenvolver habilidades mais rapidamente.",IDC_STATIC,175,42,140,17
     LTEXT           "Uma alta resistência tem um efeito positivo na sua vitalidade.",IDC_STATIC,175,61,136,17
-    LTEXT           "Um guerreiro ágil pode evitar, mais facilmente, o ataque dos oponentes e é mais habilidoso em certas áreas da luta e defesa.",IDC_STATIC,175,80,134,8
+    LTEXT           "Um guerreiro ágil evita ataques facilmente e é habilidoso em áreas de combate.",IDC_STATIC,175,80,135,17
     LTEXT           "Uma alta magia tem um efeito positivo no poder mágico e nos feitiços.",IDC_STATIC,175,99,132,17
     LTEXT           "Influencia a chance de acerto de feitiços e armas.",IDC_STATIC,175,119,134,18
 END

@@ -661,7 +661,7 @@ BEGIN
     91                      "Meridian 59"
     92                      "meridian.ini"
     93                      "&Confirmar"
-    94                      "&Cancelar"
+    94                      "C&ancelar"
     95                      "Comprar"
 END
 

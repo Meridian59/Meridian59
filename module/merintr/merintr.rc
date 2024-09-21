@@ -306,7 +306,7 @@ END
 STRINGTABLE 
 BEGIN
     1                       "Lançar magia"
-    2                       "Magia"
+    2                       "&Magia"
     3                       "Descartar itens"
     4                       "Pegar itens"
     5                       "Falar"
@@ -404,7 +404,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    80                      "Ações"
+    80                      "&Ações"
     81                      "Escola de Sha-Lill"
     82                      "Escola de Kraanan"
     83                      "Escola de Qor"
@@ -413,7 +413,7 @@ BEGIN
     86                      "Magias divinas"
     87                      "Inventário"
     88                      "Digite ""help"" para ver a ajuda"
-    89                      "Quem está jogando"
+    89                      "&Quem está jogando"
     90                      "Comando inválido inserido em atalho. (Pressione F1 ou '?' para ver ajuda)"
     91                      "Esse comando é ambíguo."
     92                      "Atalho de comando definido."
@@ -436,18 +436,18 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MENU_CMDALIAS       "&Atalhos de comandos"
-    IDS_MENU_GUILD          "Configurações da guilda"
-    IDS_MENU_WAVE           "Acenar"
-    IDS_MENU_POINT          "Apontar"
-    IDS_MENU_DANCE          "Dançar"
+    IDS_MENU_GUILD          "&Configurações da guilda"
+    IDS_MENU_WAVE           "Ac&enar"
+    IDS_MENU_POINT          "A&pontar"
+    IDS_MENU_DANCE          "&Dançar"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_HAPPY          "Feliz"
-    IDS_MENU_SAD            "Triste"
-    IDS_MENU_NEUTRAL        "Neutro"
-    IDS_MENU_WRY            "Irônico"
+    IDS_MENU_HAPPY          "&Feliz"
+    IDS_MENU_SAD            "T&riste"
+    IDS_MENU_NEUTRAL        "&Neutro"
+    IDS_MENU_WRY            "&Irônico"
 END
 
 #endif    // Portuguese (Brazilian) resources

@@ -15,6 +15,73 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Brazilian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CHESS DIALOG  0, 0, 338, 239
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Xadrez"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_BOARD,"Button",BS_OWNERDRAW | WS_TABSTOP,9,9,231,224
+    LTEXT           "Branco:",IDC_WHITELABEL,251,15,66,8
+    LTEXT           "",IDC_WHITENAME,251,27,74,21
+    LTEXT           "Vermelho:",IDC_BLACKLABEL,251,57,65,8
+    LTEXT           "",IDC_BLACKNAME,251,69,74,21
+    LTEXT           "",IDC_STATUS,251,102,79,13
+    PUSHBUTTON      "Desistir",IDC_RESIGN,261,160,64,14,WS_DISABLED
+    PUSHBUTTON      "Reiniciar jogo",IDC_RESTART_GAME,261,179,64,14,WS_DISABLED
+    PUSHBUTTON      "Resetar jogadores",IDC_RESETPLAYERS,261,198,64,14,WS_DISABLED
+    PUSHBUTTON      "Fechar janela",IDCANCEL,261,217,64,14
+END
+
+IDD_PROMOTION DIALOG  0, 0, 75, 108
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Promoção do peão"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,12,86,50,14
+    CONTROL         "Rainha",IDC_QUEEN,"Button",BS_AUTORADIOBUTTON,15,13,37,10
+    CONTROL         "Cavalo",IDC_KNIGHT,"Button",BS_AUTORADIOBUTTON,15,30,43,10
+    CONTROL         "Torre",IDC_ROOK,"Button",BS_AUTORADIOBUTTON,15,47,33,10
+    CONTROL         "Bispo",IDC_BISHOP,"Button",BS_AUTORADIOBUTTON,15,64,36,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    1                       "Check!"
+    2                       "Checkmate!"
+    3                       "Branco:"
+    4                       "Vermelho:"
+    5                       "Turno das brancas:"
+    6                       "Turno das vermelhas:"
+    7                       "Afogamento!"
+    8                       "Você tem certeza que deseja desistir?"
+    9                       "Branco desistiu."
+    10                      "Vermelho desistiu."
+END
+
+#endif    // Portuguese (Brazilian) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // German (Neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)

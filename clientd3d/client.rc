@@ -19,6 +19,748 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Brazilian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINMENU MENU
+BEGIN
+    POPUP "&Jogo"
+    BEGIN
+        MENUITEM "&Conectar-se",                    ID_GAME_CONNECT
+        MENUITEM "&Desconectar",                    ID_GAME_DISCONNECT
+        MENUITEM "&Preferências",                   ID_GAME_SETTINGS
+        MENUITEM "Configurações",                   ID_CONFIGMENU
+        MENUITEM "Alterar &senha",                  ID_GAME_PASSWORD, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "&Imprimir mapa",                  ID_GAME_PRINTMAP
+        MENUITEM SEPARATOR
+        MENUITEM "Sair do &jogo",                   ID_GAME_EXIT
+    END
+    POPUP "&Opções"
+    BEGIN
+        MENUITEM "&Música",                         ID_OPTIONS_MUSIC
+        MENUITEM "&Sons",                           ID_OPTIONS_SOUND
+        MENUITEM SEPARATOR
+        POPUP "&Cores"
+        BEGIN
+            POPUP "Janela principal"
+            BEGIN
+                MENUITEM "&Janela do jogo",         ID_COLOR_MAIN
+                MENUITEM "&Feitiços selecionados",  ID_COLOR_HIGHLIGHT
+                MENUITEM "&Números no inventário",  ID_COLOR_INVNUM
+                MENUITEM "&Propriedades",           ID_COLOR_STATS
+                MENUITEM "&Mensagens do sistema",   ID_COLOR_SYSMSG
+                MENUITEM "&Campo de mensagens",     ID_COLOR_TEXT
+            END
+            POPUP "Seleção de itens"
+            BEGIN
+                MENUITEM "Itens &não selecionados", ID_COLOR_LIST
+                MENUITEM "Itens &selecionados",     ID_COLOR_LISTSEL
+            END
+            POPUP "Gráficos de barra"
+            BEGIN
+                MENUITEM "Barras &normais",         ID_COLOR_BAR1
+                MENUITEM "Barras &completas",       ID_COLOR_BAR2
+                MENUITEM "&Fundo",                  ID_COLOR_BAR3
+                MENUITEM "Nú&meros",                ID_COLOR_BAR4
+            END
+            MENUITEM "&Editar caixas",              ID_COLOR_EDIT
+            MENUITEM "Emails e &mensagens",         ID_COLOR_MAIL
+            MENUITEM SEPARATOR
+            MENUITEM "&Restaurar configurações",    ID_COLOR_DEFAULTS
+        END
+        POPUP "&Fonte"
+        BEGIN
+            POPUP "Janela principal"
+            BEGIN
+                MENUITEM "&Texto do jogo",          ID_FONT_GAMETEXT
+                MENUITEM "&Rótulos",                ID_FONT_LABELS
+                MENUITEM "&Estatísticas",           ID_FONT_STATISTICS
+            END
+            MENUITEM "Inserção do &usuário",        ID_FONT_INPUT
+            MENUITEM "&Listar caixas",              ID_FONT_LIST
+            MENUITEM "&Títulos",                    ID_FONT_TITLES
+            MENUITEM "Emails e &mensagens",         ID_FONT_MAIL
+            POPUP "Imprimir mapa"
+            BEGIN
+                MENUITEM "Comentários",             ID_OPTIONS_FONT_MAP_TEXT
+                MENUITEM SEPARATOR
+                MENUITEM "Títulos",                 ID_OPTIONS_FONT_MAP_TITLE
+            END
+            MENUITEM SEPARATOR
+            MENUITEM "&Restaurar padrão",           ID_FONT_DEFAULTS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Salvar configurações &agora",     ID_OPTIONS_SAVENOW
+        MENUITEM "Salvar configurações a&o sair",   ID_OPTIONS_SAVEEXIT
+    END
+    POPUP "&Hilfe"
+    BEGIN
+        MENUITEM "&Conteúdos",                      ID_HELP_CONTENTS
+        MENUITEM SEPARATOR
+        MENUITEM "&Sobre o Meridian 59",            ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ITEMLISTMULTIPLE DIALOGEX 0, 0, 226, 378
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Itens",IDC_STATIC,4,7,50,8
+    LISTBOX         IDC_ITEMLIST,4,19,127,355,LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Qtd.",IDC_STATIC1,138,7,25,8
+    LISTBOX         IDC_QUANLIST,137,19,28,355,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT
+    LTEXT           "&Pesquisar item:",IDC_STATIC,169,122,33,8,NOT WS_VISIBLE | WS_DISABLED
+    EDITTEXT        IDC_ITEMFIND,170,135,52,16,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    DEFPUSHBUTTON   "Confirmar",IDOK,169,19,53,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,169,39,53,14,WS_GROUP
+    PUSHBUTTON      "&Selecionar tudo",IDC_ALL,169,59,53,14,WS_GROUP
+END
+
+IDD_DESC DIALOG 0, 0, 340, 140
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Descrição do objeto"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Confirmar",IDOK,148,115,44,14,WS_GROUP
+    PUSHBUTTON      "&Pegar",IDC_GET,206,115,44,14,NOT WS_TABSTOP
+    PUSHBUTTON      "&Descartar",IDC_DROP,206,115,44,14
+    PUSHBUTTON      "&Largar",IDC_INSIDE,262,115,44,14,WS_GROUP
+    PUSHBUTTON      "&Usar",IDC_ACTIVATE,262,115,44,14
+    PUSHBUTTON      "&Usar",IDC_APPLY,262,115,44,14
+    PUSHBUTTON      "&Largar",IDC_UNUSE,262,115,44,14
+    PUSHBUTTON      "&Usar",IDC_USE,262,115,44,14
+    PUSHBUTTON      "<",IDC_PREV,325,64,9,14
+    PUSHBUTTON      ">",IDC_NEXT,325,92,9,14
+    LTEXT           "",IDC_DESCBITMAP,4,4,118,108,NOT WS_GROUP
+    CONTROL         "NOME DO ITEM",IDC_DESCNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,128,4,193,21
+    EDITTEXT        IDC_DESCFIXED,127,29,193,12,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    EDITTEXT        IDC_DESCBOX,127,42,193,66,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN
+END
+
+IDD_ITEMLISTSINGLE DIALOG 0, 0, 180, 159
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Selecionar",IDC_STATIC,4,4,86,8
+    LISTBOX         IDC_ITEMLIST,4,20,123,135,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Pesquisar item:",IDC_STATIC,135,88,33,8,NOT WS_VISIBLE | WS_DISABLED
+    EDITTEXT        IDC_ITEMFIND,135,100,41,16,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    DEFPUSHBUTTON   "Confirmar",IDOK,132,21,44,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,132,41,44,14,WS_GROUP
+    LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
+END
+
+IDD_SETTINGS DIALOGEX 0, 0, 256, 260
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Configurações antecipadas Meridian 59"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Captura de alvo",IDC_STATIC,6,6,91,78,WS_GROUP
+    CONTROL         "Jogadores podem ser atacados",IDC_SAFETY,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,73,20
+    CONTROL         "Destaque vermelho",IDC_TARGETHALO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,37,70,10
+    CONTROL         "Destaque azul",IDC_TARGETHALO2,"Button",BS_AUTORADIOBUTTON,14,48,70,10
+    CONTROL         "Destaque verde",IDC_TARGETHALO3,"Button",BS_AUTORADIOBUTTON,14,59,70,10
+    GROUPBOX        "Efeitos especiais",IDC_STATIC,104,6,147,78,WS_GROUP
+    CONTROL         "Balançar câmera ao andar",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
+    CONTROL         "Mostrar dor em impactos",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
+    CONTROL         "Mostrar nomes dos jogadores",IDC_DRAWNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
+    CONTROL         "Mostrar quantidade de itens",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
+    GROUPBOX        "Efeitos de áudio",IDC_STATIC,6,87,245,83,WS_GROUP
+    CONTROL         "Música",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,55,9
+    CONTROL         "Sons",IDC_SOUNDFX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,68,99,55,9
+    CONTROL         "Som mono",IDC_LOOPSOUNDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,123,99,55,9
+    CONTROL         "Som estéreo",IDC_RANDSOUNDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,99,55,9
+    LTEXT           "Volume do som",IDC_STATIC,13,117,85,10
+    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,114,145,15
+    LTEXT           "Volume da música",IDC_STATIC,13,132,85,10
+    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,129,145,15
+    LTEXT           "Volume do som ambiente",IDC_STATIC,13,147,85,10
+    CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,144,145,15
+    GROUPBOX        "Interface",IDC_STATIC,5,175,246,70,WS_GROUP
+    CONTROL         "Mostrar ícones",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,197,62,9
+    CONTROL         "Mostrar barra",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
+    CONTROL         "Congelar janela de texto ao retroceder",IDC_SCROLLLOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,166,10    
+    CONTROL         "Ativar/Desativar filtro de texto",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,220,140,9
+    CONTROL         "Mostrar latência",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,187,77,9
+    CONTROL         "Mapa dinâmico",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,197,79,10
+    CONTROL         "Texto colorido",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,187,72,10
+    CONTROL         "Anotações do mapa",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
+    PUSHBUTTON      "&Configurações",IDC_PROFANESETTINGS,130,219,70,12
+    DEFPUSHBUTTON   "Confirmar",IDOK,144,246,50,12,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,200,246,50,12,WS_GROUP
+END
+
+IDD_COLOR DIALOG 0, 0, 201, 92
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Seleção de cor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Exemplo de texto:",IDC_STATIC,7,18,42,8
+    LTEXT           "",IDC_SAMPLETEXT,7,34,125,44
+    PUSHBUTTON      "&Primeiro plano",IDC_FOREGROUND,140,9,54,14
+    PUSHBUTTON      "&Segundo plano",IDC_BACKGROUND,140,27,54,14
+    DEFPUSHBUTTON   "Confirmar",IDOK,140,54,54,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,140,71,54,14,WS_GROUP
+END
+
+IDD_OFFERSEND DIALOGEX 0, 0, 239, 378
+STYLE DS_SETFONT | DS_3DLOOK | WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Oferecer"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "&Oferecer:",IDC_STATIC,10,7,31,8
+    LISTBOX         IDC_OFFERSEND,10,20,100,317,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Contraoferta:",IDC_STATIC,126,7,51,8
+    LISTBOX         IDC_OFFERRECEIVE,126,20,100,315,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Oferecer a:",IDC_STATIC,10,362,43,8
+    EDITTEXT        IDC_OFFEREDIT,55,360,64,14,ES_AUTOHSCROLL | ES_READONLY | WS_GROUP | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Confirmar",IDOK,126,360,42,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,185,360,42,14,WS_GROUP
+    LTEXT           "Aguardando uma contraoferta...",IDC_MESSAGE,10,345,218,9
+END
+
+IDD_OFFERRECEIVE DIALOGEX 0, 0, 239, 379
+STYLE DS_SETFONT | DS_3DLOOK | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
+CAPTION "Oferta"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "&Oferta:",IDC_STATIC,10,7,31,8
+    LISTBOX         IDC_OFFERRECEIVE,10,17,103,301,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "O&ferecer:",IDC_STATIC,126,7,31,8
+    LISTBOX         IDC_OFFERSEND,124,18,102,299,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Oferta de:",IDC_STATIC,10,329,43,8
+    EDITTEXT        IDC_OFFEREDIT,57,327,66,14,ES_AUTOHSCROLL | ES_READONLY | WS_GROUP | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Definir &itens",IDC_SETITEMS,138,327,81,14,WS_GROUP
+    PUSHBUTTON      "Não enviar nada",IDOK,53,360,58,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,127,360,52,14,WS_GROUP
+    LTEXT           "Selecione itens para enviar..",IDC_MESSAGE,10,347,217,10
+END
+
+IDD_AMOUNT DIALOGEX 0, 0, 76, 25
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Quantidade"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_AMOUNTBOX,6,6,41,13,ES_NUMBER
+    CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,40,5,8,14
+    DEFPUSHBUTTON   "OK",IDOK,51,5,21,14,WS_GROUP
+END
+
+IDD_BUY DIALOGEX 0, 0, 243, 379
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Compra de itens"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LISTBOX         IDC_COSTLIST,5,20,24,334,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS
+    LISTBOX         IDC_ITEMLIST,33,20,123,334,LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_QUANLIST,161,20,24,331,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS
+    EDITTEXT        IDC_SELLER,82,358,74,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Compra",IDOK,193,317,44,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,193,335,44,14,WS_GROUP
+    LTEXT           "Preço unitário",IDC_STATIC,7,2,24,16
+    LTEXT           "Itens",IDC_STATIC,33,10,45,8
+    LTEXT           "Custo total:",IDC_STATIC,191,20,48,8
+    CTEXT           "0",IDC_COST,199,33,30,8
+    LTEXT           "Comprar de:",IDC_STATIC,5,361,50,8
+    LTEXT           "Qtd.",IDC_STATIC,161,10,27,8
+END
+
+IDD_LOGIN DIALOGEX 0, 0, 251, 155
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Login do Meridian 59"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Digite aqui seu nome de usuário e senha.",IDC_STATIC,37,75,207,63
+    PUSHBUTTON      "Criar conta gratuitamente...",IDC_SIGNUP,137,49,100,14
+    EDITTEXT        IDC_USERNAME,93,86,143,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORD,93,100,143,13,ES_PASSWORD | ES_AUTOHSCROLL
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,93,118,28,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,122,118,28,10
+    DEFPUSHBUTTON   "Entrar",IDC_OK,137,131,100,14,WS_GROUP
+    ICON            IDI_ICON,IDC_STATIC,6,6,20,20
+    LTEXT           "Se você ainda não tem uma conta do Meridian 59, você pode se inscrever gratuitamente em www.meridian59.com.",IDC_STATIC,36,6,206,18
+    GROUPBOX        "Novo no Meridian",IDC_NEW_TO_MERIDIAN_59,37,33,207,35
+    LTEXT           "Se você ainda não tem uma conta clique aqui.",IDC_STATIC,45,47,87,18
+    LTEXT           "Usuário:",IDC_STATIC,43,88,50,10
+    LTEXT           "Senha:",IDC_STATIC,43,103,31,8
+    LTEXT           "Servidor:",IDC_STATIC,43,118,26,8
+END
+
+IDD_DOWNLOAD DIALOG 0, 0, 252, 146
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Atualização do Meridian 59..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Nome:",IDC_STATIC,15,67,30,8
+    LTEXT           "(nenhum)",IDC_FILENAME,55,67,135,9
+    LTEXT           "Recebido:",IDC_STATIC,16,79,36,9
+    LTEXT           "%d de %d Bytes",IDC_FILESIZE,55,79,134,9
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,199,112,43,14,WS_GROUP
+    CONTROL         "",IDC_FILEGRAPH,"BlakGraph",WS_TABSTOP,16,121,174,11
+    CONTROL         "",IDC_GRAPH,"BlakGraph",WS_TABSTOP,16,90,174,11
+    GROUPBOX        "Pacote:",IDC_STATIC,9,56,188,51
+    CONTROL         "Por favor, aguarde...",IDC_MESSAGE,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,16,45,176,8
+    CONTROL         "",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    GROUPBOX        "Total:",IDC_STATIC,9,108,188,31
+END
+
+IDD_PASSWORD DIALOG 0, 0, 249, 153
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Alterar senha"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ICON,IDC_STATIC,4,4,21,20
+    LTEXT           "Mantenha o nome da sua conta e a senha em segredo. Você é o único responsável pela sua conta, independentemente de quem a esteja usando.",IDC_STATIC,39,4,195,27
+    GROUPBOX        "Sua senha",IDC_STATIC,40,35,205,76
+    LTEXT           "Senha atual:",IDC_STATIC,49,50,49,8
+    EDITTEXT        IDC_OLDPASSWD,134,47,102,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Nova senha:",IDC_STATIC,49,68,57,8
+    EDITTEXT        IDC_NEWPASSWD1,134,66,102,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirmação da nova senha:",IDC_STATIC,49,87,78,8
+    EDITTEXT        IDC_NEWPASSWD2,134,85,102,14,ES_PASSWORD | ES_AUTOHSCROLL
+    PUSHBUTTON      "Alterar senha",IDC_OK,134,104,101,14,WS_GROUP
+    LTEXT           "Nunca forneça seu nome de usuário ou senha a outros jogadores; Você é responsável pela sua conta, não importa quem esteja usando ela.",IDC_STATIC,40,124,205,25
+END
+
+IDD_TIMEOUT DIALOG 0, 0, 149, 81
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Logout timer"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "&Ativar temporizador de logout",IDC_TIMEOUTENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,47,13,74,10
+    LTEXT           "Desconectar após",IDC_STATIC,8,37,46,8
+    EDITTEXT        IDC_TIMEOUTMINUTES,59,35,21,14,ES_AUTOHSCROLL
+    LTEXT           "Minutos de inatividade",IDC_STATIC,87,37,55,8
+    DEFPUSHBUTTON   "OK",IDOK,21,61,45,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,82,61,45,14,WS_GROUP
+    ICON            IDI_CLOCK,IDC_STATIC,8,7,18,20
+END
+
+IDD_MSGBOX DIALOG 0, 0, 236, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Confirmar",IDOK,74,32,44,14
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,126,32,44,14
+    LTEXT           "Mensagem",IDC_TEXT,35,13,183,8
+    ICON            IDI_ICON,IDC_MSGBOXICON,4,7,21,20
+    EDITTEXT        IDC_EDIT,35,0,183,12,ES_MULTILINE | ES_READONLY | NOT WS_VISIBLE | NOT WS_BORDER | NOT WS_TABSTOP
+    PUSHBUTTON      "Confirmar",IDOK2,74,32,44,14
+    PUSHBUTTON      "Cancelar",IDCANCEL2,126,32,44,14
+END
+
+IDD_WHO DIALOGEX 0, 0, 235, 379
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Jogadores atuais:"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Jogadores:",IDC_STATIC,4,7,56,8
+    LISTBOX         IDC_USERLIST,4,20,119,338,LBS_SORT | LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Selecione um jogador para ignorar todas as suas mensagens.",IDC_STATIC,130,20,101,26
+    GROUPBOX        "Mensagens",IDC_STATIC,130,47,101,41,WS_GROUP
+    CONTROL         "Ignorar &mensagens",IDC_BROADCAST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,139,59,87,10
+    CONTROL         "Ignorar &todos",IDC_IGNOREALL,"Button",BS_AUTOCHECKBOX,139,73,60,10
+    LTEXT           "Nº de jogadores online:",IDC_STATIC,29,365,60,8
+    CTEXT           "",IDC_NUMPLAYERS,99,364,24,11,SS_SUNKEN
+    DEFPUSHBUTTON   "Confirmar",IDOK,181,361,50,14,WS_GROUP
+END
+
+IDD_FTPERROR DIALOG 0, 0, 197, 124
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Mensagens de erro!"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Confirmar",IDOK,40,103,50,14
+    PUSHBUTTON      "C&ancelar",IDCANCEL,106,103,50,14
+    LTEXT           "O seguinte erro ocorreu:",IDC_STATIC,9,8,104,8
+    LTEXT           "",IDC_FTPMESSAGE,12,25,177,44
+    LTEXT           "Você gostaria de tentar novamente?",IDC_STATIC,42,82,118,8
+END
+
+IDD_ITEMLISTSORTED DIALOG 0, 0, 181, 159
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Selecionar",IDC_STATIC,4,4,100,8
+    LISTBOX         IDC_ITEMLIST,4,20,123,135,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Buscar item:",IDC_STATIC,134,95,33,8,NOT WS_VISIBLE | WS_DISABLED
+    EDITTEXT        IDC_ITEMFIND,136,106,38,16,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    DEFPUSHBUTTON   "Confirmar",IDOK,133,21,44,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,133,41,44,14,WS_GROUP
+    LISTBOX         IDC_QUANLIST,144,127,28,12,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
+END
+
+IDD_DESCPLAYER DIALOG 0, 0, 338, 157
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Descrição"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_DESCBOX,128,45,206,71,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | WS_VSCROLL
+    EDITTEXT        IDC_URL,179,122,112,13,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Ir para",IDC_URLBUTTON,299,122,35,12
+    DEFPUSHBUTTON   "Confirmar",IDOK,141,139,44,14,WS_GROUP
+    LTEXT           "",IDC_DESCBITMAP,4,4,118,108,NOT WS_GROUP
+    CONTROL         "",IDC_DESCNAME,"Button",BS_OWNERDRAW,128,4,206,24
+    EDITTEXT        IDC_DESCFIXED,128,32,206,12,ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Página inicial:",IDC_URLLABEL,130,124,47,8
+END
+
+IDD_ANNOTATE DIALOG 0, 0, 161, 67
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Legenda do mapa"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Digite o texto desejado aqui:",IDC_STATIC,7,8,118,8
+    EDITTEXT        IDC_ANNOTATE,7,20,145,16,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Confirmar",IDOK,7,46,42,14
+    PUSHBUTTON      "Excluir",IDC_DELETE,58,46,40,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,107,46,47,14
+END
+
+IDD_ABOUT DIALOG 0, 0, 189, 281
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Sobre o Meridian 59"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Dispensar",IDOK,74,260,40,14
+    CTEXT           "Cliente do Meridian 59 (build %d)",IDC_NUMBER,0,4,189,8
+    CTEXT           "Direitos autorais © 1994-2018 Andrew Kirmse e Chris Kirmse",IDC_SPECIAL1,0,15,189,8
+    CTEXT           "Todos os direitos reservados.",IDC_SPECIAL2,0,25,189,8
+    CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
+END
+
+IDD_GUEST DIALOG 0, 0, 186, 95
+STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Cancelar",IDCANCEL,68,74,50,14
+    LTEXT           "Conectando ao Meridian 59",IDC_STATIC,51,11,84,8
+    CONTROL         "",IDC_GUESTBAR,"msctls_progress32",WS_BORDER,18,43,150,14
+    LTEXT           "Pressione o botão abaixo para cancelar a ação",IDC_STATIC,26,22,139,8
+END
+
+IDD_DOWNLOADAD DIALOG 0, 0, 152, 46
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Meridian 59"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,55,26,40,14,WS_GROUP
+    LTEXT           "Realizando manutenção de rotina...",IDC_STATIC,22,9,106,8
+END
+
+IDC_PROFANESETTINGS DIALOG 0, 0, 321, 201
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configurações do filtro de texto"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Opções",IDC_STATIC,4,4,210,56
+    CONTROL         "Ignorar todas as mensagens do filtro de texto",IDC_RADIO1,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,11,15,200,10
+    CONTROL         "Substituir todo as palavras do filtro por: ($@#!&&)",IDC_RADIO2,
+                    "Button",BS_AUTORADIOBUTTON,11,27,200,10
+    CONTROL         "Busca extra por termos suspeitos.",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,11,44,200,10
+    LTEXT           "Palavras:",IDC_STATIC,231,16,30,8
+    EDITTEXT        IDC_EDIT1,271,14,46,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Adicionar",IDC_BUTTON1,241,30,76,11
+    PUSHBUTTON      "Remover",IDC_BUTTON2,241,43,76,11
+    GROUPBOX        "Descrição do filtro de texto:",IDC_STATIC,4,66,313,108
+    LTEXT           "O filtro de texto no Meridian 59 foi incorporado para que você possa decidir se textos questionáveis devem ser exibidos, ignorados ou suavizados. Nenhum filtro de texto pode reconhecer e eliminar todas as palavras indecentes.",IDC_STATIC,10,77,300,25
+    LTEXT           "Você pode expandir o filtro de texto de acordo com suas próprias preferências. Basta digitar a nova palavra a ser filtrada no campo acima à direita. O filtro a adicionará automaticamente a sua lista negra.",IDC_STATIC,10,104,300,26
+    LTEXT           "Pedimos a todos os jogadores que evitem usar palavras e frases que possam ofender outras pessoas.",IDC_STATIC,10,132,300,18
+    LTEXT           "Nós reservamos o direito de advertir, suspender ou até mesmo banir jogadores que se comportem de maneira inadequada.",IDC_STATIC,10,152,300,18
+    DEFPUSHBUTTON   "Confirmar",IDOK,206,183,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,267,183,50,14
+END
+
+IDD_WITHDRAWAL DIALOG 0, 0, 163, 379
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Retirar itens"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_ITEMLIST,7,17,123,319,LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_QUANLIST,135,17,24,319,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS
+    EDITTEXT        IDC_SELLER,86,341,73,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Retirar",IDOK,53,360,56,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,115,360,44,14,WS_GROUP
+    LISTBOX         IDC_COSTLIST,105,4,24,12,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | NOT WS_VISIBLE
+    LTEXT           "Custo:",IDC_STATIC,78,5,23,8,NOT WS_VISIBLE
+    LTEXT           "Gegenstände",IDC_STATIC,7,5,48,8
+    RTEXT           "0",IDC_COST,54,5,17,8,NOT WS_VISIBLE
+    LTEXT           "Retirar de:",IDC_STATIC,7,344,77,8
+    LTEXT           "Qtd.",IDC_STATIC,135,5,25,8
+END
+
+IDD_ASKDOWNLOAD DIALOGEX 0, 0, 248, 188
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Existe uma atualização do Meridian 59 para você"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    ICON            IDI_ICON,IDC_STATIC,7,7,20,20
+    EDITTEXT        IDC_ASK_DOWNLOAD_REASON,35,7,206,27,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_STATICEDGE
+    GROUPBOX        "Informações de Download da atualização",IDC_STATIC,35,47,205,55
+    LTEXT           "(tamanho aproximado de download)",IDC_SIZE_UPDATE,44,61,188,8
+    LTEXT           "(tempo estimado 56.6kbps)",IDC_TIME_UPDATE_566,44,73,188,8
+    LTEXT           "(tempo estimado 28.8kbps)",IDC_TIME_UPDATE_288,44,85,188,8
+    DEFPUSHBUTTON   "&Confirmar",IDC_UPDATE,138,94,93,14
+    GROUPBOX        "Pré-visualização",IDC_STATIC,36,116,205,58
+    LTEXT           "Se você não quiser fazer o download completo da atualização, você pode encontrar uma versão de pré-visualização menor em www.meridian59.com",IDC_STATIC,44,128,188,34
+    PUSHBUTTON      "Oferta...",IDC_BTN_DEMO,138,167,93,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    155, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 201
+    END
+
+    118, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 189
+    END
+
+    116, DIALOG
+    BEGIN
+    END
+
+    1017, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 159
+    END
+
+    1014, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 374
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    1                       "Não foi possível inicializar o soquete!"
+    2                       "Não é possível usar a porta definida!"
+    3                       "Erro de comunicação!"
+    4                       "A mensagem do servidor é muito longa!"
+    5                       "O buffer de leitura está cheio!"
+    9                       "Desde o seu último login, o jogo foi atualizado.\nAo confirmar, os novos arquivos serão copiados automaticamente para o seu computador.\nAo cancelar, tentaremos continuar o jogo com a versão antiga. Atualizar agora?"
+    10                      "O arquivo %s deve estar corrompido.\nTente primeiro corrigir o problema reinstalando o jogo. Se isso não funcionar, entre em contato com nosso suporte ao cliente."
+    12                      "Duplicado: #%d no arquivo %s"
+    13                      "Não é possível usar a porta definida!"
+    14                      "A conexão foi interrompida!"
+    15                      "Problema inesperado no soquete."
+END
+
+STRINGTABLE
+BEGIN
+    17                      "Baixar todos os arquivos do jogo pode demorar muito.\nTem certeza?"
+    18                      "m59bind.exe"
+    19                      "Não foi possível excluir o arquivo %s.\n\nTentar novamente?"
+    20                      "Não foi possível escrever o arquivo %s."
+    21                      "O menu de configuração não pôde ser encontrado. Por favor, reinstale o Meridian 59."
+    24                      "Não consigo me conectar ao servidor!"
+    25                      "Você digitou seu nome de usuário ou senha incorretamente!"
+    26                      "Todos os temporizadores do Windows estão atualmente em uso.\nFeche alguns aplicativos e tente novamente."
+    27                      "Esta conta já está sendo usada."
+    28                      "O servidor de jogo não está disponível.\nPor favor, tente novamente mais tarde."
+    29                      "Muitas tentativas de login."
+    30                      "A tentativa de login já está demorando muito."
+    31                      "Não foi possível mover um ou mais arquivos do diretório %s para o diretório %s. Verifique se o diretório existe e tente baixar novamente."
+END
+
+STRINGTABLE
+BEGIN
+    32                      "O jogo foi temporariamente desligado para manutenção.\nPor favor, tente novamente mais tarde."
+    33                      "Você está sem créditos.\nPara informações sobre compra de créditos, selecione Ajuda no menu principal"
+    34                      "Por motivos de segurança, você deve digitar a nova senha novamente!"
+    35                      "A nova senha deve ter pelo menos %d caracteres."
+    38                      "Abortando a transmissão..."
+    39                      "Você só pode fazer %d entradas de mapa nesta área."
+    41                      "<Desconhecido>"
+    42                      "%s está vazio."
+    44                      "Erro de CRC na mensagem do servidor!"
+    45                      "Você pode aceitar ou recusar a oferta agora."
+    46                      "Aguardando resposta..."
+END
+
+STRINGTABLE
+BEGIN
+    49                      "Deseja realmente encerrar o jogo??"
+    51                      "Deseja realmente encerrar o jogo??"
+    52                      "(Em uso)"
+    53                      "Imortal"
+    54                      "Você digitou sua senha atual incorretamente! A sua senha não foi alterada!"
+    63                      "Senha alterada."
+END
+
+STRINGTABLE
+BEGIN
+    64                      "Endereço:\n"
+    65                      "Número de telefone:\n"
+    66                      "Nome:\n"
+    67                      "Você deve preencher todos os campos para se cadastrar."
+    68                      "Personagem:\n"
+    69                      "Recebendo arquivos..."
+    70                      "Conectando a %s."
+    71                      "Atualizando arquivos do jogo."
+    72                      "Selecione o alvo"
+    73                      "Pegar"
+    74                      "Observar"
+    75                      "Guardar"
+    76                      "Colocar dentro: selecione o objeto"
+    77                      "Colocar dentro: selecione o recipiente"
+    78                      "Usar"
+    79                      "Parar de usar"
+END
+
+STRINGTABLE
+BEGIN
+    80                      "Atacar"
+    81                      "Oferecer"
+    82                      "Oferecer itens"
+    83                      "Usar objeto"
+    84                      "Ativar"
+    85                      "Software\\Classes\\http\\shell\\open\\command"
+    86                      "http://meridian59.com/M59-Help-01.shtml"
+    87                      "O que, por favor?"
+    90                      "Descompactando..."
+    91                      "Meridian 59"
+    92                      "meridian.ini"
+    93                      "&Confirmar"
+    94                      "C&ancelar"
+    95                      "Comprar"
+END
+
+STRINGTABLE
+BEGIN
+    97                      "O programa que atualiza seus arquivos não pode ser iniciado (%s).\nPor favor, contate um administrador do sistema ou nosso serviço de atendimento ao cliente."
+    98                      "Você precisa de uma versão atualizada do Meridian 59.\nGostaria de obtê-la automaticamente?"
+    99                      "Não foi possível copiar o arquivo %s para %s.\n\nTentar novamente?"
+    100                     "A atualização automática falhou devido ao tamanho excessivo da linha de comando.\nPor favor, informe a seguinte linha de comando ao serviço de atendimento ao cliente:\n\n%s"
+    103                     "Não foi possível criar o diretório %s.\nMotivo: %s"
+    105                     "Não foi possível encontrar nenhum arquivo de recurso do jogo.\nPor favor, verifique os diretórios de recursos do jogo e tente novamente."
+    106                     "Não foi possível excluir o arquivo %s.\nExclua manualmente."
+    107                     "Não foi possível descompactar o arquivo %s.\n\nTentar novamente?"
+    108                     "O jogo requer suporte a pelo menos %d cores (modo gráfico).\nA configuração gráfica atual possui apenas %d cores.\n\nAltere o modo gráfico e reinicie o Windows."
+    109                     "Problemas de tamanho com mensagem do servidor."
+    110                     "Nenhum personagem de jogo foi criado para esta conta. Entre em contato com o serviço de atendimento ao cliente."
+    111                     "Erro de transferência; tente reconectar."
+END
+
+STRINGTABLE
+BEGIN
+    112                     "Erro de transferência: Tente novamente."
+    113                     "Não é possível criar arquivos temporários."
+    114                     "Permissões de arquivo insuficientes."
+    115                     "Memória principal insuficiente!"
+    116                     "O arquivo extraído está corrompido."
+    117                     "O disco está cheio."
+    118                     "O arquivo da atualização: %s, possui formato incorreto."
+    119                     "Não é possível encontrar o seguinte arquivo da atualização: %s."
+    120                     "Erro desconhecido"
+    121                     "Convidado"
+    122                     "Todos os servidores do Meridian estão atualmente sobrecarregados. Por favor, tente novamente mais tarde."
+END
+
+STRINGTABLE
+BEGIN
+    128                     "Não há ninguém por perto para você comprar algo."
+    129                     "Não há ninguém por perto para quem você possa oferecer algo."
+    130                     "Não é possível iniciar o navegador da web %s.\nCorrija a entrada no menu Configurações do jogo."
+    134                     "Não é possível encontrar o arquivo: %s, no servidor FTP %s."
+    136                     "Não é possível encontrar os arquivos da atualização."
+    139                     "Erro ao descompactar. Não é possível estabelecer conexão com a Internet."
+    141                     "Não é possível estabelecer conexão com a Internet."
+    142                     "Não é possível estabelecer conexão FTP com: %s."
+    143                     "Erro desconhecido."
+END
+
+STRINGTABLE
+BEGIN
+    145                     "Não é possível salvar o arquivo: %s."
+    146                     "Não é possível ler o arquivo FTP: %s."
+    147                     "Uma conexão perfeita"
+    148                     "Uma conexão muito boa"
+    149                     "Uma conexão boa"
+    150                     "Uma conexão acima da média"
+    151                     "Uma conexão média"
+    152                     "Uma conexão abaixo da média"
+    153                     "Uma conexão relativamente ruim"
+    154                     "Uma conexão ruim"
+    155                     "Uma conexão muito ruim"
+    157                     "Taxa de transferência: %dms"
+    159                     "O dado do cubo indica a qualidade da conexão com o servidor do jogo."
+END
+
+STRINGTABLE
+BEGIN
+    160                     "http://meridian59.com/serverstatus/"
+    161                     "A troca de dados entre computadores sempre leva um certo tempo. Esse período é chamado de 'lag'. A qualidade da sua conexão depende de vários fatores e pode mudar a qualquer momento."
+    162                     "~r< O filtro de texto foi ativado >"
+    163                     "A mensagem enviada foi filtrada.\n\nA mensagem contém palavras que estão no filtro de texto. Por favor, verifique sua mensagem."
+    164                     "http://www.meridian59.com/"
+END
+
+STRINGTABLE
+BEGIN
+    179                     "Você não consegue ver o alvo selecionado."
+    180                     "Depositar itens"
+    187                     "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
+    188                     "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
+    189                     "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
+    190                     "https://meridian59.com/troubleshoot"
+    191                     "Seu cadastro falhou porquê:\n\n%s"
+END
+
+STRINGTABLE
+BEGIN
+    192                     "Nome de usuário é inválido ou já está em uso."
+    193                     "Endereço de email inválido."
+    194                     "Endereço de email já está em uso."
+    195                     "Senhas são inválidas ou não são iguais."
+    196                     "Servidor desconhecido selecionado."
+    197                     "O servidor de cadastro está offline."
+    198                     "Cadastro gerou um erro desconhecido, por favor, tente novamente."
+    199                     "/api/signup/"
+    200                     "meridian59.com"
+    201                     "/api/verified/"
+    202                     "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
+    203                     "/api/resend/"
+    204                     "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
+END
+
+#endif    // Portuguese (Brazilian) resources
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
 // German resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)

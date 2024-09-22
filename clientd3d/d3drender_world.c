@@ -79,6 +79,9 @@ void D3DRenderCeilingExtract(BSPnode* pNode, PDIB pDib, custom_xyz* pXYZ, custom
 int D3DRenderWallExtract(WallData* pWall, PDIB pDib, unsigned int* flags, custom_xyz* pXYZ,
 	custom_st* pST, custom_bgra* pBGRA, unsigned int type, int side);
 
+void D3DGeometryBuildNew(room_type* room, d3d_render_pool_new* pPool, bool transparent_pass);
+void GeometryUpdate(d3d_render_pool_new* pPool, d3d_render_cache_system* pCacheSystem);
+
 extern bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 
 // Implementations
@@ -171,6 +174,46 @@ void D3DRenderWorld(room_type* room, Draw3DParams* params, room_contents_node* p
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 	SetZBias(gpD3DDevice, 1);
+}
+
+/**
+* Render, build and update the static world geometry.
+*/
+void D3DRenderGeometry(room_type* room, Bool gD3DRedrawAll)
+{
+	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
+	{
+		D3DFxInit();
+
+		D3DCacheSystemReset(&gWorldCacheSystemStatic);
+		D3DCacheSystemReset(&gWallMaskCacheSystem);
+
+		D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
+		D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
+
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
+		D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
+		
+		// Second pass: render transparent objects
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
+
+		D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
+
+		gD3DRedrawAll = FALSE;
+	}
+	else if (gD3DRedrawAll & D3DRENDER_REDRAW_UPDATE)
+	{
+		GeometryUpdate(&gWorldPoolStatic, &gWorldCacheSystemStatic);
+		gD3DRedrawAll = FALSE;
+	}
+	else if (gD3DDriverProfile.bFogEnable == FALSE)
+	{
+		GeometryUpdate(&gWorldPoolStatic, &gWorldCacheSystemStatic);
+	}
 }
 
 /**

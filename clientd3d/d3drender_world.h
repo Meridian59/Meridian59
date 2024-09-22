@@ -14,8 +14,7 @@
 #ifndef _D3DRENDERWORLD_H
 #define _D3DRENDERWORLD_H
 
+void D3DRenderGeometry(room_type* room, Bool gD3DRedrawAll);
 void D3DRenderWorld(room_type* room, Draw3DParams* params, room_contents_node* pRNode);
-void D3DGeometryBuildNew(room_type* room, d3d_render_pool_new* pPool, bool transparent_pass);
-void GeometryUpdate(d3d_render_pool_new* pPool, d3d_render_cache_system* pCacheSystem);
 
 #endif	/* #ifndef _D3DRENDERWORLD_H */

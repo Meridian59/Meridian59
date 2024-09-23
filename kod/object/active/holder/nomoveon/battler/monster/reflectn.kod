@@ -360,11 +360,6 @@ messages:
       return 1;
    }
 
-   GetKarma(detect=FALSE)
-   {
-      return Send(poOriginal,@GetKarma);
-   }
-
    GetOffense(what = $, stroke_obj=$)
    {
       return Send(poOriginal,@GetOffense,#what=what,#stroke_obj=stroke_obj);

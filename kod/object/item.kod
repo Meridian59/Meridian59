@@ -1253,6 +1253,13 @@ messages:
       return bDone;
    }
 
+   HideHiddenAttributes()
+   {
+      % TODO: Reverse RevealHiddenAttributes()
+
+      return;
+   }
+
    AddAttributeSpecifics(litemAtt=$)
    "Don't call this directly!  Call this from itematt.kod!"
    {
@@ -1792,6 +1799,19 @@ messages:
          AND Send(self,@GetPaletteTranslation) = (viUnrevealedColor & ITEM_PALETTE_MASK)
       {
          Send(self,@SetPaletteTranslation,#translation=viRevealedColor);
+         return TRUE;
+      }
+      return FALSE;
+   }
+
+   HideHiddenColor()
+   "Hides the item's true color."
+   {
+      if viUnrevealedColor <> 0
+         AND viRevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = (viRevealedColor & ITEM_PALETTE_MASK)
+      {
+         Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
          return TRUE;
       }
       return FALSE;

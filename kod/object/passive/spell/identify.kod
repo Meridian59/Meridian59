@@ -90,13 +90,20 @@ messages:
       local oTarget;
       
       oTarget = First(lTargets);
+      
       Send(who,@MsgSendUser,#message_rsc=identify_working, 
            #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+
+      % Temporarily reveal the item's attributes for display   
+      Send(oTarget,@RevealHiddenAttributes);
+
       Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
       
+      % Remove attributes if not *fully* revealed yet
+      Send(oTarget,@HideHiddenAttributes);
+
       propagate;
    }
-
-
+ 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

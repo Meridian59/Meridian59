@@ -455,7 +455,16 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	Bool draw_particles = can_see;
 	Bool draw_background_overlays = can_see;
 
-	D3DRenderSkyBoxBegin();
+	skybox_render_object skybox_render_object_param(
+        decl1dc,
+        current_room,
+        gD3DDriverProfile,
+        gWorldPool,
+        gWorldCacheSystem,
+        view,
+        gD3DRedrawAll
+    );
+	D3DRenderSkyBoxBegin(&skybox_render_object_param);
 
 	// view element textures
 	if (gFrame == 0)

@@ -10,16 +10,7 @@
 
 // Variables
 
-extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-extern room_type current_room;
-
-extern d3d_driver_profile gD3DDriverProfile;
-extern d3d_render_pool_new gWorldPool;
-extern d3d_render_cache_system gWorldCacheSystem;
-
-extern D3DMATRIX view;
-
-extern Bool gD3DRedrawAll;
+static skybox_render_object* skybox_render_obj;
 
 static const float SKYBOX_DIMENSIONS = 75000.0f;
 static const float SKYBOX_Y = 37000.0f;
@@ -144,8 +135,9 @@ static void D3DRenderBackgroundSet(ID background);
 /**
 * Initialize the skybox rendering process.
 */
-void D3DRenderSkyBoxBegin()
+void D3DRenderSkyBoxBegin(skybox_render_object* skybox_render_obj_param)
 {
+	skybox_render_obj = skybox_render_obj_param;
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
 		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
@@ -154,10 +146,10 @@ void D3DRenderSkyBoxBegin()
 		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
 		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
 	}
-	if (tempBkgnd != current_room.bkgnd)
+	if (tempBkgnd != skybox_render_obj->current_room.bkgnd)
 	{
-		D3DRenderBackgroundSet(current_room.bkgnd);
-		tempBkgnd = current_room.bkgnd;
+		D3DRenderBackgroundSet(skybox_render_obj->current_room.bkgnd);
+		tempBkgnd =skybox_render_obj->current_room.bkgnd;
 	}
 }
 
@@ -187,13 +179,13 @@ void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* 
 
 	// Set vertex shader and declaration for the skybox
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skybox_render_obj->decl1dc);
 
 	// Render the skybox
-	D3DRenderPoolReset(&gWorldPool, &D3DMaterialWorldPool);
-	D3DRenderSkyboxDraw(&gWorldPool, angleHeading, anglePitch);
-	D3DCacheFill(&gWorldCacheSystem, &gWorldPool, 1);
-	D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DRenderPoolReset(&skybox_render_obj->gWorldPool, &D3DMaterialWorldPool);
+	D3DRenderSkyboxDraw(&skybox_render_obj->gWorldPool, angleHeading, anglePitch);
+	D3DCacheFill(&skybox_render_obj->gWorldCacheSystem, &skybox_render_obj->gWorldPool, 1);
+	D3DCacheFlush(&skybox_render_obj->gWorldCacheSystem, &skybox_render_obj->gWorldPool, 1, D3DPT_TRIANGLESTRIP);
 
 	// Restore render states after skybox rendering
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
@@ -205,7 +197,7 @@ void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 
 	// restore the correct view matrix
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &skybox_render_obj->view);
 }
 
 /**
@@ -307,7 +299,7 @@ void D3DRenderBackgroundSet(ID background)
 	}
 
 	// force a rebuild since static lightmaps might have changed
-	gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	skybox_render_obj->gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 }
 
 /**

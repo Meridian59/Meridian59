@@ -18,6 +18,9 @@ constants:
 
    include blakston.khd
 
+   % Percent chance that an item gets damaged when defending.
+   ARMOR_TAKE_DAMAGE_PCT = 75
+
 resources:
 
    RobeInsignia_name_rsc = "robes of the disciple"
@@ -25,6 +28,13 @@ resources:
    RobeInsignia_desc_rsc = \
    	"Heavy and warm, disciple robes typically denote a fervent (and some would say "
       "unhealthy) dedication to one school or another."
+
+   robe_condition_exc = " are in immaculate condition."
+   robe_condition_exc_mended = " are in excellent condition, but have been patched before."
+   robe_condition_good = " are scuffed and slightly worn."
+   robe_condition_med = " have a few unsightly rips."
+   robe_condition_poor = " are in tatters, and barely holding together."
+   robe_condition_broken = " are covered in filth and ripped beyond use."
 
    RobeInsignia_school_info1 = "  These robes bear the insignia of "
    RobeInsignia_school_info2 = " and will give bonuses to spells in that school."
@@ -56,6 +66,15 @@ classvars:
    viBulk = 160
    viWeight = 130
    viValue_average = 2000
+
+   vrCondition_exc = robe_condition_exc 
+   vrCondition_exc_mended = robe_condition_exc_mended 
+   vrCondition_good = robe_condition_good 
+   vrCondition_med = robe_condition_med 
+   vrCondition_poor = robe_condition_poor 
+   vrCondition_broken = robe_condition_broken 
+
+   vbShow_Condition = TRUE
 
 properties:   
 
@@ -429,6 +448,30 @@ messages:
       propagate;
    }
 
+   DefendingHit(who = $,what = $)
+   {
+      if random(1,100) < ARMOR_TAKE_DAMAGE_PCT   
+      {
+         piHits = piHits - 1;
+      }
+      
+      if piHits <= 0
+      {
+         Send(self,@ItemBrokenInBattle);
+      }
+      
+      return;
+   }
+
+   ReqRepair()
+   {
+      return TRUE;
+   }
+
+   CanMend()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

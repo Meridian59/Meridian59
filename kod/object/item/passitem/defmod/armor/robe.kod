@@ -36,13 +36,6 @@ resources:
    robe_leftarm_female = bld.bgf
    robe_rightarm_female =brd.bgf
 
-   robe_condition_exc = " are in immaculate condition."
-   robe_condition_exc_mended = " are in excellent condition, but have been patched before."
-   robe_condition_good = " are scuffed and slightly worn."
-   robe_condition_med = " have a few unsightly rips."
-   robe_condition_poor = " are in tatters, and barely holding together."
-   robe_condition_broken = " are covered in filth and ripped beyond use."
-
 classvars:
 
    vrName = robe_name_rsc
@@ -80,13 +73,8 @@ classvars:
    vrLegs_female = robe_legs_female 
    
    vrPoss_article = object_article_cap_these_rsc
-
-   vrCondition_exc = robe_condition_exc 
-   vrCondition_exc_mended = robe_condition_exc_mended 
-   vrCondition_good = robe_condition_good 
-   vrCondition_med = robe_condition_med 
-   vrCondition_poor = robe_condition_poor 
-   vrCondition_broken = robe_condition_broken 
+   
+   vbShow_Condition = FALSE
 
 properties:   
 
@@ -188,6 +176,20 @@ messages:
       return;
    }
 
+   ReqRepair()
+   {
+      return FALSE;
+   }
+
+   CanMend()
+   {
+      return FALSE;
+   }
+
+   DefendingHit()
+   {
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

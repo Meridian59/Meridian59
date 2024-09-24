@@ -40,11 +40,10 @@ extern int gNumObjects;
 extern Vector3D sun_vect;
 extern D3DMATRIX view;
 
-// The alpha_test_threshold value of 200 was chosen based on tuning through experimentation.
-// This value provided the best visual results for our specific textures and scenes, helping to 
-// prevent unwanted alpha blending between static geometry and the skybox, as well as eliminating 
-// lines that appeared between doorways. It balances visual quality and performance while minimizing
-// transparency issues.
+// Lower values (e.g., 128) resulted in too many semi-transparent pixels being rendered, 
+// causing blending artifacts, especially between the skybox and other static transparent geometry. 
+// Higher values (e.g., 210 or above) resulted in too much transparency being discarded, creating sharp, 
+// noticeable edges where smooth transparency should occur, such as between door archways.
 static const auto alpha_test_threshold = 200;
 
 extern Bool gWireframe;

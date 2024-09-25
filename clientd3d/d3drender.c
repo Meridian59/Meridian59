@@ -537,40 +537,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch);
 	}
 
-	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
-	{
-		D3DFxInit();
-
-		D3DCacheSystemReset(&gWorldCacheSystemStatic);
-		D3DCacheSystemReset(&gWallMaskCacheSystem);
-
-		D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
-		D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
-
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
-		
-		// Second pass: render transparent objects
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
-
-		D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
-
-		gD3DRedrawAll = FALSE;
-	}
-	else if (gD3DRedrawAll & D3DRENDER_REDRAW_UPDATE)
-	{
-		GeometryUpdate(&gWorldPoolStatic, &gWorldCacheSystemStatic);
-		gD3DRedrawAll = FALSE;
-	}
-	else if (gD3DDriverProfile.bFogEnable == FALSE)
-	{
-		GeometryUpdate(&gWorldPoolStatic, &gWorldCacheSystemStatic);
-	}
-
 	// background overlays (e.g. the Sun & Moon)
 	if (draw_background_overlays)
 	{
@@ -580,6 +546,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_world)
 	{
 		D3DRenderWorld(room, params, pRNode);
+		D3DRenderGeometry(room, gD3DRedrawAll);
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -663,8 +630,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		{
 			D3DRenderShutDown();
 			D3DRenderInit(hMain);
-			D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
-			D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
+			gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 		}
 	}
 	if ((gFrame & 255) == 255)

@@ -3062,7 +3062,7 @@ messages:
       {
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,
                         #mob=TRUE,#playername=Send(killer,@GetTrueName),
-                        #good=(Send(self,@GetKarma) > 0),#monstername=vrName,
+                        #karma=Send(self,@GetKarma),#monstername=vrName,
                         #drawfx=viDead_drawfx);       
       }
 

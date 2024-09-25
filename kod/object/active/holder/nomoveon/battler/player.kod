@@ -8166,7 +8166,7 @@ messages:
             return Create(&DeadBody,#icon=player_dead_male_icona_rsc,
                           #name=player_dead_male_name_rsc,
                           #playername=vrName,
-                          #good=(piKarma>0),
+                          #karma=piKarma,
                           #assassinated=Assassinated,
                           #PlayerBodyOverlay=player_dead_male_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
@@ -8179,7 +8179,7 @@ messages:
             return Create(&DeadBody,#icon=player_dead_female_icona_rsc,
                           #name=player_dead_female_name_rsc,
                           #playername=vrName,
-                          #good=(piKarma>0),
+                          #karma=piKarma,
                           #assassinated=Assassinated,
                           #PlayerBodyOverlay=player_dead_female_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
@@ -8193,7 +8193,7 @@ messages:
          % male, default colors
          return Create(&DeadBody,#icon=player_dead_male_icona_rsc,
                        #name=player_dead_male_name_rsc,#playername=vrName,
-                       #good=(piKarma>0),#PlayerBodyOverlay=player_dead_male_iconb_rsc,
+                       #karma=piKarma,#PlayerBodyOverlay=player_dead_male_iconb_rsc,
                        #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                        #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
                        #inKocatan = inKocatan,#DearlyDeparted=self);
@@ -8201,7 +8201,7 @@ messages:
       % female, default colors
       return Create(&DeadBody,#icon=player_dead_female_icona_rsc,
                     #name=player_dead_female_name_rsc,#playername=vrName,
-                    #good=(piKarma>0),#PlayerBodyOverlay=player_dead_female_iconb_rsc,
+                    #karma=piKarma,#PlayerBodyOverlay=player_dead_female_iconb_rsc,
                     #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                     #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
                     #inKocatan = inKocatan,#DearlyDeparted=self);

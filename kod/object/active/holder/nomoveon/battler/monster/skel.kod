@@ -202,7 +202,7 @@ messages:
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,
                         #mob=TRUE,#playername=Send(killer,@GetTrueName),
                         #monstername=vrName,#drawfx=viDead_drawfx,
-                        #PlayerBodyOverlay=vrHeadIcon);
+                        #karma=viKarma,#PlayerBodyOverlay=vrHeadIcon);
       }
       
       return oBody;

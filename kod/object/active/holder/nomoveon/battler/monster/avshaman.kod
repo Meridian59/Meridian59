@@ -464,7 +464,7 @@ messages:
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
                         #BodyTranslation=send(self,@GetClan),
                         #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);         
+                        #karma=viKarma,#monstername=vrName,#drawfx=viDead_drawfx);         
       }
 
       return oBody;  

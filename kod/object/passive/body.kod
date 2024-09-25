@@ -73,7 +73,7 @@ messages:
       pbMob = mob;
       piDrawfx = drawfx;
       prPlayer_name = playername;
-      pbWas_good_player = good; 
+      pbWas_good_player = good;           % Used to track monster karma as well
       pbAssassinated = assassinated;
       prPlayerBodyOverlay = PlayerBodyOverlay;
       piBodyTrans = BodyTranslation;
@@ -184,7 +184,7 @@ messages:
       return;
    }
 
-   WasGoodPlayer()
+   WasGood()
    {
       return pbWas_good_player;
    }
@@ -196,11 +196,6 @@ messages:
 
    GetObjectFlags()
    {
-      if pbMob
-      {
-         return LOOK_NO | piDrawfx;
-      }
-      
       return viObject_flags | piDrawfx;
    }
    

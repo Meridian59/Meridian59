@@ -105,7 +105,7 @@ messages:
 	      return FALSE;
       }
 
-      if NOT Send(target,@WasGoodPlayer)
+      if NOT Send(target,@WasGood)
       {
 	      Send(who,@MsgSendUser,#message_rsc=defile_not_good);           
 

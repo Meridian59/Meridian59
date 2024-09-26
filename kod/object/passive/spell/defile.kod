@@ -21,9 +21,9 @@ resources:
    defile_icon_rsc = idefile.bgf
    defile_desc_rsc = \
       "In this darkest of rituals, the very spirit of Qor is "
-      "summoned to defile the corpse of a murdered innocent, "
-      "transforming flesh and blood into magical energy for "
-      "the caster.  "
+      "summoned to defile the corpse of a vanquished soul, be it "
+      "innocent or beast, transforming flesh and blood into magical "
+      "energy for the caster.  "
       "Requires fairy wings and the slain."
 
    defile_cast_rsc = "Your nausea betokens the imminence of Qor."
@@ -34,7 +34,7 @@ resources:
    defile_max = \
       "If you were to invite more eldritch energy inside of you, there is no "
       "telling what would happen!"
-   defile_not_good = "Qor may only harvest the souls of the good at heart."
+   defile_not_good = "Qor's wrath is swift upon the wicked, draining your mana for daring to defile the corrupt."
 
    defile_sound = qdefile.wav
 
@@ -56,6 +56,11 @@ classvars:
 
    vrSucceed_wav = defile_sound
    vbCastable_in_HappyLand = FALSE
+
+   viKarmaEffect_player_min = 10
+   viKarmaEffect_player_factor = 20    % Mana impact range from 10-30
+   viKarmaEffect_monster_min = 3
+   viKarmaEffect_monster_factor = 500    % Mana impact range from 3-8
 
 properties:
 
@@ -105,19 +110,12 @@ messages:
 	      return FALSE;
       }
 
-      if NOT Send(target,@WasGood)
-      {
-	      Send(who,@MsgSendUser,#message_rsc=defile_not_good);           
-
-	      return FALSE;
-      }
-
       propagate;
    }
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oTarget, oRoom, rRecent, bRecent, iKarmaAct;
+      local oTarget, oRoom, rRecent, bRecent, iKarmaAct, iTargetKarma, iManaAmount;
 
       oTarget = First(lTargets);
       oRoom = Send(who,@GetOwner);
@@ -147,8 +145,37 @@ messages:
               #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
       }
 
-      Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
-      Send(who,@GainMana,#amount=(viMana_bonus+(iSpellPower/3)));
+      iTargetKarma = Send(oTarget,@GetKarma);
+      
+      % Calculate and apply a mana increase/decrease depending on whether 
+      % corpse was a player or monster, and good or bad karma.
+      iManaAmount = 0;
+
+      if Send(oTarget,@WasPlayer)
+      {
+         % Scaling mana impact between 10 and 30 for player corpses
+         iManaAmount = viKarmaEffect_player_min + 
+            (viKarmaEffect_player_factor * abs(iTargetKarma) / 100);
+      }
+      else
+      {
+         % Scaling mana impact between 3 and 8 for monster corpses
+         iManaAmount = viKarmaEffect_monster_min + 
+            (viKarmaEffect_monster_factor * abs(iTargetKarma) / 100);
+      }
+
+      if (iTargetKarma < 0)
+      {
+         Send(who,@LoseMana,#amount=iManaAmount);
+         Send(who,@MsgSendUser,#message_rsc=defile_not_good);
+      }
+      else
+      {
+         Send(who,@GainMana,#amount=iManaAmount);
+         Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
+      }
+
+      % Corpse cleanup
       Send(oTarget,@Delete);
 
       propagate;

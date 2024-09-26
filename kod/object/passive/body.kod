@@ -184,6 +184,11 @@ messages:
       return;
    }
 
+   GetKarma()
+   {
+      return piKarma;
+   }
+   
    WasGood()
    {
       return piKarma > 0;

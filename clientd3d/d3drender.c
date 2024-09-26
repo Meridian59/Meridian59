@@ -460,11 +460,13 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
         current_room,
         gD3DDriverProfile,
         gWorldPool,
-        gWorldCacheSystem,
-        view,
-        gD3DRedrawAll
+        gWorldCacheSystem
     );
-	D3DRenderSkyBoxBegin(&skybox_render_object_param);
+
+	if (D3DRenderSkyBoxBegin(&skybox_render_object_param))
+	{
+		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	}
 
 	// view element textures
 	if (gFrame == 0)
@@ -543,7 +545,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_sky) // Render the skybox first
 	{
-		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch);
+		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch, view);
 	}
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)

@@ -172,7 +172,7 @@ void UserLook(void)
    room_contents_node *r;
 
    if ((square_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK,
-				   0, 0, OF_NOEXAMINE | OF_INVISIBLE)) == NULL)
+				   0, 0, OF_NOEXAMINE | OF_INVISIBLE | OF_SELECTABLE )) == NULL)
       return;
    
    sel_list = DisplayLookList(hMain, GetString(hInst, IDS_LOOK), square_list, LD_SINGLEAUTO);

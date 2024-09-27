@@ -33,6 +33,9 @@ classvars:
    vrAssassinated_desc = deadbody_assassinated_rsc
    viIndefinite = ARTICLE_A
 
+   % Set bodies to appear in select dialog for casting upon
+   viObject_flags = SELECTABLE
+
 properties:
 
    vrName

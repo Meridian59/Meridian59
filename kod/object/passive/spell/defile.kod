@@ -175,23 +175,22 @@ messages:
       {
          % Player corpses
          % Scaling mana impact
-         iManaAmount =  viKarmaEffect_player_min + 
-            (viKarmaEffect_player_factor * (iTargetKarma * iSpellPower) / 
-            (100 * 99)); % Karma max and spellpower max
+         iManaAmount = viKarmaEffect_player_min + 
+              ((viKarmaEffect_player_factor * iTargetKarma) / 100) * 
+              (iSpellPower / 99);
       }
       else
       {
          % Monster corpses
          % Scaling mana formula
          iManaAmount = viKarmaEffect_monster_min + 
-            (viKarmaEffect_monster_factor * (iTargetKarma * iSpellPower) / 
-            (100 * 99)); % Karma max and spellpower max
+              ((viKarmaEffect_monster_factor * iTargetKarma) / 100) * 
+              (iSpellPower / 99); % Karma max and spellpower max
          
          % Do not allow monsters to raise mana above player cap
          bCapMana = TRUE;
       }
-      
-      
+            
       Send(who,@GainMana,#amount=iManaAmount,#bCapped=bCapMana);
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
       
@@ -205,27 +204,30 @@ messages:
    {
       local rRecent, rTarget;
 
-      rTarget = send(target,@GetCorpseName);
-
-      % plRecent is names of corpses defiled across whole server
-
-      for rRecent in plRecent
+      if Send(target,@WasPlayer)
       {
-	      if rRecent = rTarget
-	      {
-	         % no advancement if same body name was defiled recently
-	         return;
-	      }
-      }
+         rTarget = send(target,@GetCorpseName);
 
-      % Chop tail if recent is too long, then add new name to head
-      if length(plRecent) >= DEFILE_RECENT_LIST
-      {
-	      rRecent = Nth(plRecent,DEFILE_RECENT_LIST);
-	      plRecent = DelListElem(plRecent,rRecent);
-      }
+         % plRecent is names of corpses defiled across whole server
 
-      plRecent = cons(rTarget, plRecent);
+         for rRecent in plRecent
+         {
+            if rRecent = rTarget
+            {
+               % no advancement if same body name was defiled recently
+               return;
+            }
+         }
+
+         % Chop tail if recent is too long, then add new name to head
+         if length(plRecent) >= DEFILE_RECENT_LIST
+         {
+            rRecent = Nth(plRecent,DEFILE_RECENT_LIST);
+            plRecent = DelListElem(plRecent,rRecent);
+         }
+
+         plRecent = cons(rTarget, plRecent);
+      }
 
       propagate;
    }

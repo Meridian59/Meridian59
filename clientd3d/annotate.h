@@ -14,7 +14,7 @@
 
 #define MAP_ANNOTATION_SIZE     (2 * FINENESS)    // Size of annotation indicator in FINENESS units
 #define MAP_ANNOTATION_MIN_SIZE 14                // Min size of drawn annotation in pixels
-
+#define MAP_ANNOTATION_MAX_SIZE 30
 #define MAX_ANNOTATIONS    20
 #define MAX_ANNOTATION_LEN 100
 

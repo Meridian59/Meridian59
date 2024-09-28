@@ -145,7 +145,6 @@ extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
 extern Draw3DParams		*p;
 extern int				gNumCalls;
-extern room_type		current_room;
 extern long				shade_amount;
 extern DrawItem			drawdata[];
 extern long				nitems;
@@ -455,7 +454,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	Bool draw_particles = can_see;
 	Bool draw_background_overlays = can_see;
 
-	D3DRenderSkyBoxBegin();
+	if (D3DRenderUpdateSkyBox(room->bkgnd))
+	{
+		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	}
 
 	// view element textures
 	if (gFrame == 0)
@@ -534,7 +536,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_sky) // Render the skybox first
 	{
-		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch);
+		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
+		D3DRenderSkyBox(params, pRNode, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
@@ -718,7 +721,7 @@ void D3DLMapsStaticGet(room_type *room)
 
 		pDib = GetObjectPdib(pProjectile->icon_res, 0, 0);
 
-		GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
+		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
 			max(bottom, pProjectile->motion.z);
@@ -776,7 +779,7 @@ void D3DLMapsStaticGet(room_type *room)
 
 		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
 
-		GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
+		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
 			max(bottom, pRNode->motion.z);
@@ -845,7 +848,7 @@ void D3DLMapsStaticGet(room_type *room)
 		gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
 		gDLightCache.dLights[gDLightCache.numLights].xyz.z = pRNode->motion.z;
 
-		GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
+		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
 
 		gDLightCache.dLights[gDLightCache.numLights].xyz.z =
 			max(bottom, pRNode->motion.z);

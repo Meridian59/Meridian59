@@ -131,7 +131,7 @@ static bool D3DRenderBackgroundSet(ID background);
 // Implementations
 
 /**
-* Initialize the skybox with the current room
+* Initialize the skybox with the current room.
 * Return true the background has changed and false otherwise.
 * If the background has changed, the caller should trigger a redraw all.
 */

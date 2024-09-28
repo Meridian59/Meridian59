@@ -180,13 +180,13 @@ void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* 
 
 	// Set vertex shader and declaration for the skybox
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skyboxRenderParams.decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skyboxRenderParams.vertexDeclaration);
 
 	// Render the skybox
-	D3DRenderPoolReset(&skyboxRenderParams.gWorldPool, &D3DMaterialWorldPool);
-	D3DRenderSkyboxDraw(&skyboxRenderParams.gWorldPool, angleHeading, anglePitch);
-	D3DCacheFill(&skyboxRenderParams.gWorldCacheSystem, &skyboxRenderParams.gWorldPool, 1);
-	D3DCacheFlush(&skyboxRenderParams.gWorldCacheSystem, &skyboxRenderParams.gWorldPool, 1, 
+	D3DRenderPoolReset(&skyboxRenderParams.renderPool, &D3DMaterialWorldPool);
+	D3DRenderSkyboxDraw(&skyboxRenderParams.renderPool, angleHeading, anglePitch);
+	D3DCacheFill(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1);
+	D3DCacheFlush(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1, 
 		D3DPT_TRIANGLESTRIP);
 
 	// Restore render states after skybox rendering

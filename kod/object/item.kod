@@ -1255,9 +1255,19 @@ messages:
 
    HideHiddenAttributes()
    {
-      % TODO: Reverse RevealHiddenAttributes()
+      local i, bDone;
 
-      return;
+      bDone = FALSE;
+      for i in plItem_Attributes
+      {
+         if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
+         {
+            setNth(i,1,(First(i)-1));
+            bDone = TRUE;
+         }
+      }
+      
+      return bDone;
    }
 
    AddAttributeSpecifics(litemAtt=$)

@@ -167,7 +167,7 @@ void				D3DLMapsStaticGet(room_type *room);
 // new render stuff
 void					D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize);
 void					D3DRenderPoolShutdown(d3d_render_pool_new *pPool);
-void					D3DRenderPoolReset(const d3d_render_pool_new *pPool, void *pMaterialFunc);
+void					D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
 d3d_render_packet_new	*D3DRenderPacketNew(d3d_render_pool_new *pPool);
 void					D3DRenderPacketInit(d3d_render_packet_new *pPacket);
 d3d_render_chunk_new	*D3DRenderChunkNew(d3d_render_packet_new *pPacket);

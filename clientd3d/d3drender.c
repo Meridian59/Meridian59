@@ -455,15 +455,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	Bool draw_particles = can_see;
 	Bool draw_background_overlays = can_see;
 
-	skybox_render_object skybox_render_object_param(
-        decl1dc,
-        current_room,
-        gD3DDriverProfile,
-        gWorldPool,
-        gWorldCacheSystem
-    );
+	SkyboxRenderParams skyBoxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem, 
+		current_room);
 
-	if (D3DRenderSkyBoxBegin(&skybox_render_object_param))
+	if (D3DRenderSkyBoxBegin(skyBoxRenderParams))
 	{
 		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 	}

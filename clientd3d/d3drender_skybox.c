@@ -10,7 +10,7 @@
 
 // Variables
 
-static skybox_render_object* skybox_render_obj;
+static SkyboxRenderParams* skyboxRenderParams = nullptr;
 
 static const float SKYBOX_DIMENSIONS = 75000.0f;
 static const float SKYBOX_Y = 37000.0f;
@@ -133,12 +133,13 @@ static bool D3DRenderBackgroundSet(ID background);
 // Implementations
 
 /**
-* Initialize the skybox rendering process.
+* Initialize the skybox with some rendering params.
 * Return true the background has changed and false otherwise.
+* If the background has changed, the caller should trigger a redraw all.
 */
-bool D3DRenderSkyBoxBegin(skybox_render_object* skybox_render_obj_param)
+bool D3DRenderSkyBoxBegin(SkyboxRenderParams& params)
 {
-	skybox_render_obj = skybox_render_obj_param;
+	skyboxRenderParams = &params;
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
 		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
@@ -147,9 +148,9 @@ bool D3DRenderSkyBoxBegin(skybox_render_object* skybox_render_obj_param)
 		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
 		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
 	}
-	if (tempBkgnd != skybox_render_obj->current_room.bkgnd)
+	if (tempBkgnd != skyboxRenderParams->current_room.bkgnd)
 	{
-		tempBkgnd = skybox_render_obj->current_room.bkgnd;
+		tempBkgnd = skyboxRenderParams->current_room.bkgnd;
 		return D3DRenderBackgroundSet(tempBkgnd);
 	}
 	return false;
@@ -159,7 +160,7 @@ bool D3DRenderSkyBoxBegin(skybox_render_object* skybox_render_obj_param)
 * Function to render the skybox with the current background.
 */
 void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode, 
-	int& angleHeading, int& anglePitch, D3DMATRIX& view)
+	int angleHeading, int anglePitch, D3DMATRIX view)
 {
 	// Set render states for skybox
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -182,13 +183,14 @@ void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* 
 
 	// Set vertex shader and declaration for the skybox
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skybox_render_obj->decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skyboxRenderParams->decl1dc);
 
 	// Render the skybox
-	D3DRenderPoolReset(&skybox_render_obj->gWorldPool, &D3DMaterialWorldPool);
-	D3DRenderSkyboxDraw(&skybox_render_obj->gWorldPool, angleHeading, anglePitch);
-	D3DCacheFill(&skybox_render_obj->gWorldCacheSystem, &skybox_render_obj->gWorldPool, 1);
-	D3DCacheFlush(&skybox_render_obj->gWorldCacheSystem, &skybox_render_obj->gWorldPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DRenderPoolReset(&skyboxRenderParams->gWorldPool, &D3DMaterialWorldPool);
+	D3DRenderSkyboxDraw(&skyboxRenderParams->gWorldPool, angleHeading, anglePitch);
+	D3DCacheFill(&skyboxRenderParams->gWorldCacheSystem, &skyboxRenderParams->gWorldPool, 1);
+	D3DCacheFlush(&skyboxRenderParams->gWorldCacheSystem, &skyboxRenderParams->gWorldPool, 1, 
+		D3DPT_TRIANGLESTRIP);
 
 	// Restore render states after skybox rendering
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
@@ -276,6 +278,7 @@ void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int angle
 
 /**
 * Set the current background texture for the skybox by background ID.
+* Returns true if the background was set successfully and false otherwise.
 */
 bool D3DRenderBackgroundSet(ID background)
 {

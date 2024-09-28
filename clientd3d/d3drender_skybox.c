@@ -131,11 +131,11 @@ static bool D3DRenderBackgroundSet(ID background);
 // Implementations
 
 /**
-* Initialize the skybox with the current room.
+* Update the skybox with the current background.
 * Return true the background has changed and false otherwise.
 * If the background has changed, the caller should trigger a redraw all.
 */
-bool D3DRenderSkyBoxBegin(room_type* current_room)
+bool D3DRenderUpdateSkyBox(DWORD background)
 {
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
@@ -145,9 +145,9 @@ bool D3DRenderSkyBoxBegin(room_type* current_room)
 		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
 		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
 	}
-	if (tempBkgnd != current_room->bkgnd)
+	if (tempBkgnd != background)
 	{
-		tempBkgnd = current_room->bkgnd;
+		tempBkgnd = background;
 		return D3DRenderBackgroundSet(tempBkgnd);
 	}
 	return false;
@@ -156,7 +156,7 @@ bool D3DRenderSkyBoxBegin(room_type* current_room)
 /**
 * Function to render the skybox with the current background.
 */
-void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode, 
+void D3DRenderSkyBox(Draw3DParams* params, room_contents_node* pRNode, 
 	int angleHeading, int anglePitch, D3DMATRIX view, const SkyboxRenderParams& skyboxRenderParams)
 {
 	// Set render states for skybox

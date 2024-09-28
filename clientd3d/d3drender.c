@@ -167,7 +167,7 @@ void				D3DLMapsStaticGet(room_type *room);
 // new render stuff
 void					D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize);
 void					D3DRenderPoolShutdown(d3d_render_pool_new *pPool);
-void					D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
+void					D3DRenderPoolReset(const d3d_render_pool_new *pPool, void *pMaterialFunc);
 d3d_render_packet_new	*D3DRenderPacketNew(d3d_render_pool_new *pPool);
 void					D3DRenderPacketInit(d3d_render_packet_new *pPacket);
 d3d_render_chunk_new	*D3DRenderChunkNew(d3d_render_packet_new *pPacket);
@@ -455,7 +455,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	Bool draw_particles = can_see;
 	Bool draw_background_overlays = can_see;
 
-	if (D3DRenderSkyBoxBegin(&current_room))
+	if (D3DRenderUpdateSkyBox(current_room.bkgnd))
 	{
 		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 	}
@@ -538,7 +538,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_sky) // Render the skybox first
 	{
 		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
-		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch, view, skyboxRenderParams);
+		D3DRenderSkyBox(params, pRNode, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)

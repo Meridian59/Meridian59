@@ -455,10 +455,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	Bool draw_particles = can_see;
 	Bool draw_background_overlays = can_see;
 
-	SkyboxRenderParams skyBoxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem, 
-		current_room);
-
-	if (D3DRenderSkyBoxBegin(skyBoxRenderParams))
+	if (D3DRenderSkyBoxBegin(&current_room))
 	{
 		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 	}
@@ -540,7 +537,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_sky) // Render the skybox first
 	{
-		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch, view);
+		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
+		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)

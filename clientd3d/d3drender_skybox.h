@@ -15,29 +15,26 @@
 #define _D3DRENDERSKYBOX_H
 
 struct SkyboxRenderParams {
-    LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-    d3d_driver_profile gD3DDriverProfile;
-    d3d_render_pool_new gWorldPool;
-    d3d_render_cache_system gWorldCacheSystem;
-    room_type current_room;
+    LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
+    d3d_driver_profile driverProfile;
+    mutable d3d_render_pool_new renderPool;
+    mutable d3d_render_cache_system cacheSystem;
 
     SkyboxRenderParams(
-        LPDIRECT3DVERTEXDECLARATION9 decl1dc,
-        d3d_driver_profile driver_profile,
-        d3d_render_pool_new pool,
-        d3d_render_cache_system cache_system,
-        room_type& current_room)
-        : decl1dc(decl1dc),
-          gD3DDriverProfile(driver_profile),
-          gWorldPool(pool),
-          gWorldCacheSystem(cache_system),
-          current_room(current_room)
+        LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
+        d3d_driver_profile driverProfileParam,
+        d3d_render_pool_new renderPoolParam,
+        d3d_render_cache_system cacheSystemParam)
+        : vertexDeclaration(vertexDeclarationParam),
+          driverProfile(driverProfileParam),
+          renderPool(renderPoolParam),
+          cacheSystem(cacheSystemParam)
     {}
 };
 
-bool D3DRenderSkyBoxBegin(SkyboxRenderParams& params);
+bool D3DRenderSkyBoxBegin(room_type* current_room);
 void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode,
-    int angleHeading, int anglePitch, D3DMATRIX view);
+    int angleHeading, int anglePitch, D3DMATRIX view, const SkyboxRenderParams& skyboxRenderParams);
 void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch);
 void D3DRenderSkyBoxShutdown();
 

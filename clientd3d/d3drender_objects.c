@@ -14,16 +14,21 @@
 
 // Variables
 
+/*
 extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 extern LPDIRECT3DVERTEXDECLARATION9 decl2dc;
+*/
 extern PDIRECT3DTEXTURE9 gpBackBufferTexFull;
 extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
 
-extern D3DMATRIX view, proj;
 
+//extern D3DMATRIX view, proj;
+
+/*
 extern d3d_render_pool_new gObjectPool;
 extern d3d_render_cache_system gObjectCacheSystem;
 extern d3d_driver_profile gD3DDriverProfile;
+*/
 
 // Main client windows current viewport area
 extern int main_viewport_width;
@@ -54,16 +59,16 @@ extern RECT gD3DRect;
 // Interfaces
 
 static void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool_new* pPool,
-	room_type* room, Draw3DParams* params, font_3d* pFont);
+	room_type* room, Draw3DParams* params, font_3d* pFont, d3d_driver_profile driverProfile);
 static void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
-	Draw3DParams* params, int flags);
+	Draw3DParams* params, int flags, bool fogEnabled);
 static void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params,
-	BOOL underlays, int flags);
+	BOOL underlays, int flags, bool fogEnabled);
 static void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params);
-static void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params);
+static void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params, bool fogEnabled);
 static void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type overlays,
-	PDIB pDib, room_type* room, Draw3DParams* params, AREA* objArea, BOOL underlays);
-static bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_bgra* bgra, DWORD flags);
+	PDIB pDib, room_type* room, Draw3DParams* params, AREA* objArea, BOOL underlays, bool fogEnabled);
+static bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_bgra* bgra, DWORD flags, bool fogEnabled);
 static int getKerningAmount(font_3d* pFont, char* str, char* ptr);
 static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area);
 
@@ -93,7 +98,8 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 /**
 * The main entry point for rendering objects in the game world.
 */
-void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node* pRNode)
+void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node* pRNode, 
+	const ObjectsRenderParams& objectsRenderParams)
 {
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
@@ -105,7 +111,7 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	if (config.draw_names)
 	{
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
@@ -113,17 +119,18 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
-		D3DCacheSystemReset(&gObjectCacheSystem);
-		D3DRenderNamesDraw3D(&gObjectCacheSystem, &gObjectPool, room, params, &gFont);
-		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
-		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
-		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
+		D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+		D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+		D3DRenderNamesDraw3D(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, room, params, &gFont, 
+			objectsRenderParams.driverProfile);
+		D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
+		D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, objectsRenderParams.driverProfile.magFilter);
+		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, objectsRenderParams.driverProfile.minFilter);
 	}
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
@@ -131,22 +138,22 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
-	D3DCacheSystemReset(&gObjectCacheSystem);
+	D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+	D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
 
 	// Render world objects
-	D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, FALSE);
-	D3DRenderObjectsDraw(&gObjectPool, room, params, FALSE);
-	D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, FALSE);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, FALSE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, FALSE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, FALSE, objectsRenderParams.driverProfile.bFogEnable);
 
 	// Render translucent objects
-	D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, TRANSLUCENT_FLAGS);
-	D3DRenderObjectsDraw(&gObjectPool, room, params, TRANSLUCENT_FLAGS);
-	D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, TRANSLUCENT_FLAGS);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, TRANSLUCENT_FLAGS, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, TRANSLUCENT_FLAGS, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, TRANSLUCENT_FLAGS, objectsRenderParams.driverProfile.bFogEnable);
 
-	D3DRenderProjectilesDraw(&gObjectPool, room, params);
-	D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
-	D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DRenderProjectilesDraw(&objectsRenderParams.renderPool, room, params);
+	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
+	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
@@ -154,23 +161,23 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
 		gSmallTextureSize, gSmallTextureSize);
 
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &objectsRenderParams.view);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &objectsRenderParams.proj);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	// Render invisible world objects
-	D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
-	D3DCacheSystemReset(&gObjectCacheSystem);
-	D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, OF_INVISIBLE);
-	D3DRenderObjectsDraw(&gObjectPool, room, params, OF_INVISIBLE);
-	D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, OF_INVISIBLE);
-	D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
-	D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
+	D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
+	D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, OF_INVISIBLE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, OF_INVISIBLE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, OF_INVISIBLE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
+	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
 	pRNode = GetRoomObjectById(player.id);
 	if (pRNode != nullptr)
@@ -179,28 +186,28 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 		if ((GetDrawingEffect(pRNode->obj.flags) & OF_INVISIBLE) == OF_INVISIBLE)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
+			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
-			D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
-			D3DCacheSystemReset(&gObjectCacheSystem);
-			D3DRenderPlayerOverlaysDraw(&gObjectPool, room, params);
-			D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
-			D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
+			D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
+			D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, objectsRenderParams.driverProfile.bFogEnable);
+			D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
+			D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 		}
 		else
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
-			D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
-			D3DCacheSystemReset(&gObjectCacheSystem);
-			D3DRenderPlayerOverlaysDraw(&gObjectPool, room, params);
-			D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
-			D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
+			D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+			D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, objectsRenderParams.driverProfile.bFogEnable);
+			D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
+			D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		}
 	}
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
 	timeObjects = timeGetTime() - timeObjects;
 }
@@ -209,7 +216,7 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 * Rendering names above objects, such as player names.
 */
 void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool_new* pPool,
-	room_type* room, Draw3DParams* params, font_3d* pFont)
+	room_type* room, Draw3DParams* params, font_3d* pFont, d3d_driver_profile driverProfile)
 {
 	D3DMATRIX			mat, rot, xForm, trans;
 	int					sector_flags, offset;
@@ -334,7 +341,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			}
 			color = base_palette[palette[GetClosestPaletteIndex(fg_color)]];
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0);
+			D3DObjectLightingCalc(room, pRNode, &bgra, 0, driverProfile.bFogEnable);
 
 			glyph_scale = max(bgra.b, bgra.g);
 			glyph_scale = max(glyph_scale, bgra.r);
@@ -503,7 +510,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 * They can be drawn under or over objects.
 */
 void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params,
-	BOOL underlays, int flags)
+	BOOL underlays, int flags, bool fogEnabled)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -904,7 +911,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 					}
 					else
 					{
-						if (D3DObjectLightingCalc(room, pRNode, &bgra, 0))
+						if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
 					}
 
@@ -1123,7 +1130,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 							pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 						}
 
-						D3DObjectLightingCalc(room, pRNode, &bgra, 0);
+						D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
 
 						for (i = 0; i < 4; i++)
 						{
@@ -1196,7 +1203,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 * They may be opaque, invivisble or translucent. We draw these based on the flags passed in.
 */
 void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
-	Draw3DParams* params, int flags)
+	Draw3DParams* params, int flags, bool fogEnabled)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -1433,7 +1440,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		}
 		else
 		{
-			if (D3DObjectLightingCalc(room, pRNode, &bgra, 0))
+			if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
 		}
 
@@ -1647,7 +1654,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 			}
 
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0);
+			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1827,7 +1834,7 @@ void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3
 /**
 * Rendering of player's overlay objects such as scimitars, shields, etc.
 */
-void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params)
+void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params, bool fogEnabled)
 {
 	// Renders UI elements (like Scimitars, shields etc)
 	D3DMATRIX			mat;
@@ -1886,7 +1893,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 
 		if (overlays != NULL)
 			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
-				&objArea, TRUE);
+				&objArea, TRUE, fogEnabled);
 
 		if (obj->flags & OF_SECONDTRANS)
 		{
@@ -1940,7 +1947,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 		}
 		else
 		{
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0);
+			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2004,7 +2011,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 
 		if (overlays != NULL)
 			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
-				&objArea, FALSE);
+				&objArea, FALSE, fogEnabled);
 	}
 }
 
@@ -2012,7 +2019,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 * Rendering of player's overlay overlays as overlays can have overlays too.
 */
 void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type overlays,
-	PDIB pDib, room_type* room, Draw3DParams* params, AREA* objArea, BOOL underlays)
+	PDIB pDib, room_type* room, Draw3DParams* params, AREA* objArea, BOOL underlays, bool fogEnabled)
 {
 	int					pass, depth;
 	room_contents_node* pRNode;
@@ -2176,7 +2183,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type ov
 			}
 			else
 			{
-				D3DObjectLightingCalc(room, pRNode, &bgra, 0);
+				D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
 			}
 
 			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2237,7 +2244,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type ov
 /**
 * Lighting calculations for world objects.
 */
-bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_bgra* bgra, DWORD flags)
+bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_bgra* bgra, DWORD flags, bool fogEnabled)
 {
 	int			light, intDistance, numLights;
 	d_light* pDLight = NULL;
@@ -2303,7 +2310,7 @@ bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_b
 
 	intDistance = DistanceGet(distX, distY);
 
-	if (gD3DDriverProfile.bFogEnable && ((flags & D3DRENDER_NOAMBIENT) == 0))
+	if (fogEnabled && ((flags & D3DRENDER_NOAMBIENT) == 0))
 		intDistance = FINENESS;
 
 	if (pRNode->obj.flags & OF_FLASHING)

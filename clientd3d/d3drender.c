@@ -595,7 +595,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_objects)
 	{
-		D3DRenderObjects(room, params, pRNode);
+		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, gObjectPool, gObjectCacheSystem, view, proj);
+		D3DRenderObjects(room, params, pRNode, objectsRenderParams);
 	}
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);

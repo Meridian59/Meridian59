@@ -158,7 +158,6 @@ struct ObjectsRenderParams {
 };
 
 long D3DRenderObjects(
-    room_contents_node* pRNode,
 	const ObjectsRenderParams& objectsRenderParams, 
     const GameObjectDataParams& gameObjectDataParams, 
     const LightAndTextureParams& lightAndTextureParams,

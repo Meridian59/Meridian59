@@ -608,7 +608,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		PlayerViewParams playerViewParams(&player, gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 
-		timeObjects = D3DRenderObjects(pRNode, objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
+		timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);

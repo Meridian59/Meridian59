@@ -19,12 +19,8 @@ static auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLU
 // Interfaces
 
 static void D3DRenderNamesDraw3D(
-	d3d_render_cache_system* pCacheSystem, 
-	d3d_render_pool_new* pPool,
-	room_type* room, 
-	Draw3DParams* params,
-	d3d_driver_profile driverProfile, 
-	player_info* player, 
+	const ObjectsRenderParams& objectsRenderParams,
+	const PlayerViewParams& playerViewParams,
 	const FontTextureParams& fontTextureParams, 
 	const LightAndTextureParams& lightAndTextureParams);
 
@@ -110,7 +106,6 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 * Returns the total time taken to render all objects.
 */
 long D3DRenderObjects(
-	room_contents_node* pRNode,
 	const ObjectsRenderParams& objectsRenderParams, 
     const GameObjectDataParams& gameObjectDataParams, 
     const LightAndTextureParams& lightAndTextureParams,
@@ -139,15 +134,7 @@ long D3DRenderObjects(
 
 		D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-		D3DRenderNamesDraw3D(
-			&objectsRenderParams.cacheSystem, 
-			&objectsRenderParams.renderPool, 
-			room, 
-			params, 
-			objectsRenderParams.driverProfile, 
-			playerViewParams.player, 
-			fontTextureParams, 
-			lightAndTextureParams);
+		D3DRenderNamesDraw3D(objectsRenderParams, playerViewParams, fontTextureParams, lightAndTextureParams);
 		D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
 		D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, objectsRenderParams.driverProfile.magFilter);
@@ -206,7 +193,7 @@ long D3DRenderObjects(
 	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
 	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
-	pRNode = GetRoomObjectById(playerViewParams.player->id);
+	room_contents_node* pRNode = GetRoomObjectById(playerViewParams.player->id);
 	if (pRNode != nullptr)
 	{
 		// Rendering of Personal Equipment (Shields, weapons etc)
@@ -243,12 +230,8 @@ long D3DRenderObjects(
 * Rendering names above objects, such as player names.
 */
 void D3DRenderNamesDraw3D(
-	d3d_render_cache_system* pCacheSystem, 
-	d3d_render_pool_new* pPool,
-	room_type* room, 
-	Draw3DParams* params, 
-	d3d_driver_profile driverProfile, 
-	player_info* player, 
+	const ObjectsRenderParams& objectsRenderParams,
+	const PlayerViewParams& playerViewParams,
 	const FontTextureParams& fontTextureParams, 
 	const LightAndTextureParams& lightAndTextureParams)
 {
@@ -265,27 +248,27 @@ void D3DRenderNamesDraw3D(
 	d3d_render_chunk_new * pChunk;
 	auto pFont = fontTextureParams.font;
 
-	int angleHeading = params->viewer_angle + 3072;
+	int angleHeading = objectsRenderParams.params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
 
 	int anglePitch = PlayerGetHeightOffset();
 
 	// base objects
-	for (list_type list = room->contents; list != NULL; list = list->next)
+	for (list_type list = objectsRenderParams.room->contents; list != NULL; list = list->next)
 	{
 		float glyph_scale = 255;
 
 		room_contents_node* pRNode = (room_contents_node*)list->data;
 
-		if (pRNode->obj.id == player->id)
+		if (pRNode->obj.id == playerViewParams.player->id)
 			continue;
 
 		if (!(pRNode->obj.flags & OF_PLAYER) || (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE))
 			continue;
 
-		vector.x = pRNode->motion.x - player->x;
-		vector.y = pRNode->motion.y - player->y;
+		vector.x = pRNode->motion.x - playerViewParams.player->x;
+		vector.y = pRNode->motion.y - playerViewParams.player->y;
 
 		float distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
@@ -299,20 +282,20 @@ void D3DRenderNamesDraw3D(
 		if (NULL == pDib)
 			continue;
 
-		dx = pRNode->motion.x - params->viewer_x;
-		dy = pRNode->motion.y - params->viewer_y;
+		dx = pRNode->motion.x - objectsRenderParams.params->viewer_x;
+		dy = pRNode->motion.y - objectsRenderParams.params->viewer_y;
 
 		angle = (pRNode->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
 		char* pName = LookupNameRsc(pRNode->obj.name_res);
 
-		angle = pRNode->angle - (params->viewer_angle + 3072);
+		angle = pRNode->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
 		if (angle < -4096)
 			angle += 4096;
 
 		/* Make sure that object is above the floor. */
-		if (!GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
+		if (!GetRoomHeight(objectsRenderParams.room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
 		{
 			continue;
 		}
@@ -376,7 +359,7 @@ void D3DRenderNamesDraw3D(
 				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			}
 			color = fontTextureParams.basePalette[palette[GetClosestPaletteIndex(fg_color)]];
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0, driverProfile.bFogEnable, player, lightAndTextureParams);
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
 
 			glyph_scale = max(bgra.b, bgra.g);
 			glyph_scale = max(glyph_scale, bgra.r);
@@ -432,7 +415,7 @@ void D3DRenderNamesDraw3D(
 				float height = (st[0].t - st[2].t) * pFont->texHeight * 2.0f / pFont->texScale *
 					(distance / FINENESS);
 
-				pPacket = D3DRenderPacketFindMatch(pPool, pFont->pTexture, NULL, 0, 0, 0);
+				pPacket = D3DRenderPacketFindMatch(&objectsRenderParams.renderPool, pFont->pTexture, NULL, 0, 0, 0);
 				if (NULL == pPacket)
 					return;
 				pChunk = D3DRenderChunkNew(pPacket);

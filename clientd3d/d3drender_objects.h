@@ -13,61 +13,156 @@
 #ifndef _D3DRENDEROBJECTS_H
 #define _D3DRENDEROBJECTS_H
 
-/*
-struct VisibleObjectsParams {
-	int smallTextureSize;
-	int sectorDepths[];
-	long nitems;
-	DrawItem& drawdata[];
-	ObjectRange& visibleObject[];
-	int numVisibleObjects;
-	int numObjects;
-	VisibleObjectsParams(
-		int smallTextureSizeParam, 
-		int sectorDepthsParam[], 
-		long nitemsParam, 
-		DrawItem& drawdataParam[], 
-		ObjectRange& visibleObjectParam[], 
-		int numVisibleObjectsParam, 
-		int numObjectsParam)
-		: smallTextureSize(smallTextureSizeParam),
-		  sectorDepths(sectorDepthsParam),
-		  nitems(nitemsParam),
-		  drawdata(drawdataParam),
-		  visibleObject(visibleObjectParam),
-		  numVisibleObjects(numVisibleObjectsParam),
-		  numObjects(numObjectsParam)
-	{}
+struct PlayerViewParams
+{
+    // Player information
+    player_info* player;
+
+    // Screen dimensions
+    int screenWidth;
+    int screenHeight;
+
+    // Viewport dimensions
+    int viewportWidth;
+    int viewportHeight;
+
+    // D3D viewport rectangle
+    RECT d3dRect;
+
+    // add is fog enabled? and set higher up
+
+    PlayerViewParams(
+        player_info* playerParam,
+        int screenWidthParam,
+        int screenHeightParam,
+        int viewportWidthParam,
+        int viewportHeightParam,
+        RECT d3dRectParam)
+        : player(playerParam),
+          screenWidth(screenWidthParam),
+          screenHeight(screenHeightParam),
+          viewportWidth(viewportWidthParam),
+          viewportHeight(viewportHeightParam),
+          d3dRect(d3dRectParam)
+    {}
 };
-*/
+
+struct FontTextureParams
+{
+    font_3d* font;
+    Color* basePalette;
+    int smallTextureSize;
+    int* sectorDepths;
+
+    FontTextureParams(
+        font_3d* fontParam,
+        Color* basePaletteParam,
+        int smallTextureSizeParam,
+        int* sectorDepthsParam)
+        : font(fontParam),
+          basePalette(basePaletteParam),
+          smallTextureSize(smallTextureSizeParam),
+          sectorDepths(sectorDepthsParam)
+    {}
+};
+
+struct LightAndTextureParams
+{
+    // Light cache details
+    mutable d_light_cache lightCache;
+    mutable d_light_cache lightCacheDynamic;
+
+    // Texture and sector settings
+    int smallTextureSize;
+    int* sectorDepths;
+
+    LightAndTextureParams(
+        const d_light_cache& lightCacheParam,
+        const d_light_cache& lightCacheDynamicParam,
+        int smallTextureSizeParam,
+        int* sectorDepthsParam)
+        : lightCache(lightCacheParam),
+          lightCacheDynamic(lightCacheDynamicParam),
+          smallTextureSize(smallTextureSizeParam),
+          sectorDepths(sectorDepthsParam)
+    {}
+};
+
+struct GameObjectDataParams
+{
+    // Information about draw items and object ranges
+    long numItems;
+    mutable int numVisibleObjects;
+    mutable int numObjects;
+    DrawItem* drawData;
+    ObjectRange* visibleObjects;    // Where objects are on screen
+
+    // Textures for the back buffer
+    PDIRECT3DTEXTURE9 backBufferTexFull;
+    LPDIRECT3DTEXTURE9 (&backBufferTex)[16];
+
+    GameObjectDataParams(
+        long numItemsParam,
+        int numVisibleObjectsParam,
+        int numObjectsParam,
+        DrawItem* drawDataParam,
+        ObjectRange* visibleObjectsParam,
+        PDIRECT3DTEXTURE9 backBufferTexFullParam,
+        LPDIRECT3DTEXTURE9 (&backBufferTexParam)[16])
+        : numItems(numItemsParam),
+          numVisibleObjects(numVisibleObjectsParam),
+          numObjects(numObjectsParam),
+          drawData(drawDataParam),
+          visibleObjects(visibleObjectsParam),
+          backBufferTexFull(backBufferTexFullParam),
+          backBufferTex(backBufferTexParam)
+    {}
+};
+
 struct ObjectsRenderParams {
+
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisible;
 	d3d_driver_profile driverProfile;
+
 	mutable d3d_render_pool_new renderPool;
 	mutable d3d_render_cache_system cacheSystem;
+
 	D3DMATRIX view;
 	D3DMATRIX proj;
 
-	ObjectsRenderParams(
-		LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
-		LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisibleParam,
-		d3d_driver_profile driverProfileParam,
-		d3d_render_pool_new renderPoolParam,
-		d3d_render_cache_system cacheSystemParam,
-		D3DMATRIX viewParam,
-		D3DMATRIX projParam)
-		: vertexDeclaration(vertexDeclarationParam),
-		  vertexDeclarationInvisible(vertexDeclarationInvisibleParam),
-		  driverProfile(driverProfileParam),
-		  renderPool(renderPoolParam),
-		  cacheSystem(cacheSystemParam),
-		  view(viewParam),
-		  proj(projParam)
-	{}
+    room_type* room;
+    Draw3DParams* params;
+
+    ObjectsRenderParams(
+        LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
+        LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisibleParam,
+        d3d_driver_profile driverProfileParam,
+        d3d_render_pool_new renderPoolParam,
+        d3d_render_cache_system cacheSystemParam,
+        D3DMATRIX viewParam,
+        D3DMATRIX projParam,
+        room_type* roomParam, 
+        Draw3DParams* paramsParam
+    )
+        : vertexDeclaration(vertexDeclarationParam),
+          vertexDeclarationInvisible(vertexDeclarationInvisibleParam),
+          driverProfile(driverProfileParam),
+          renderPool(renderPoolParam),
+          cacheSystem(cacheSystemParam),
+          view(viewParam),
+          proj(projParam),
+          room(roomParam),
+          params(paramsParam)
+    {}
 };
 
-void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node* pRNode, 
-	const ObjectsRenderParams& objectsRenderParams);
+long D3DRenderObjects(
+    room_contents_node* pRNode,
+	const ObjectsRenderParams& objectsRenderParams, 
+    const GameObjectDataParams& gameObjectDataParams, 
+    const LightAndTextureParams& lightAndTextureParams,
+    const FontTextureParams& fontTextureParams,
+    const PlayerViewParams& playerViewParams);
 
 #endif	/* #ifndef _D3DRENDEROBJECTS_H */

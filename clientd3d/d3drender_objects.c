@@ -14,63 +14,73 @@
 
 // Variables
 
-/*
-extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-extern LPDIRECT3DVERTEXDECLARATION9 decl2dc;
-*/
-extern PDIRECT3DTEXTURE9 gpBackBufferTexFull;
-extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
-
-
-//extern D3DMATRIX view, proj;
-
-/*
-extern d3d_render_pool_new gObjectPool;
-extern d3d_render_cache_system gObjectCacheSystem;
-extern d3d_driver_profile gD3DDriverProfile;
-*/
-
-// Main client windows current viewport area
-extern int main_viewport_width;
-extern int main_viewport_height;
-
-extern font_3d gFont;
-
-extern Color base_palette[];
-
-extern int gSmallTextureSize;
-extern int sector_depths[];
-extern long nitems;
-extern DrawItem drawdata[];
-extern ObjectRange visible_objects[];    /* Where objects are on screen */
-extern int num_visible_objects;
-extern int gNumObjects;
-
-extern d_light_cache gDLightCache;
-extern d_light_cache gDLightCacheDynamic;
-
-extern long timeObjects;
-
 static auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
-
-extern player_info player;
-extern RECT gD3DRect;
 
 // Interfaces
 
-static void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool_new* pPool,
-	room_type* room, Draw3DParams* params, font_3d* pFont, d3d_driver_profile driverProfile);
-static void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
-	Draw3DParams* params, int flags, bool fogEnabled);
-static void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params,
-	BOOL underlays, int flags, bool fogEnabled);
-static void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params);
-static void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params, bool fogEnabled);
-static void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type overlays,
-	PDIB pDib, room_type* room, Draw3DParams* params, AREA* objArea, BOOL underlays, bool fogEnabled);
-static bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_bgra* bgra, DWORD flags, bool fogEnabled);
+static void D3DRenderNamesDraw3D(
+	d3d_render_cache_system* pCacheSystem, 
+	d3d_render_pool_new* pPool,
+	room_type* room, 
+	Draw3DParams* params,
+	d3d_driver_profile driverProfile, 
+	player_info* player, 
+	const FontTextureParams& fontTextureParams, 
+	const LightAndTextureParams& lightAndTextureParams);
+
+static void D3DRenderObjectsDraw(
+	d3d_render_pool_new* pPool, 
+	room_type* room,
+	Draw3DParams* params, 
+	int flags, 
+	bool fogEnabled,
+	const GameObjectDataParams& gameObjectDataParams, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams);
+
+static void D3DRenderOverlaysDraw(
+	d3d_render_pool_new* pPool, 
+	room_type* room, 
+	Draw3DParams* params,
+	BOOL underlays, 
+	int flags, 
+	bool fogEnabled, 
+	const GameObjectDataParams& gameObjectDataParams, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams);
+
+static int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params);
+
+static void D3DRenderPlayerOverlaysDraw(
+	d3d_render_pool_new* pPool, 
+	room_type* room, 
+	Draw3DParams* params, 
+	bool fogEnabled, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams);
+
+static void D3DRenderPlayerOverlayOverlaysDraw(
+	d3d_render_pool_new* pPool, 
+	list_type overlays,
+	PDIB pDib, room_type* room, 
+	Draw3DParams* params, 
+	AREA* objArea, 
+	BOOL underlays, 
+	bool fogEnabled, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams);
+
+static bool D3DObjectLightingCalc(
+	room_type* room, 
+	room_contents_node* pRNode, 
+	custom_bgra* bgra, 
+	DWORD flags, 
+	bool fogEnabled,
+	const player_info* player,
+	const LightAndTextureParams& lightAndTextureParams);
+
 static int getKerningAmount(font_3d* pFont, char* str, char* ptr);
-static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area);
+static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area, const PlayerViewParams& playerViewParams);
 
 extern int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
 extern float FovHorizontal(long width);
@@ -97,16 +107,24 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 
 /**
 * The main entry point for rendering objects in the game world.
+* Returns the total time taken to render all objects.
 */
-void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node* pRNode, 
-	const ObjectsRenderParams& objectsRenderParams)
+long D3DRenderObjects(
+	room_contents_node* pRNode,
+	const ObjectsRenderParams& objectsRenderParams, 
+    const GameObjectDataParams& gameObjectDataParams, 
+    const LightAndTextureParams& lightAndTextureParams,
+    const FontTextureParams& fontTextureParams,
+    const PlayerViewParams& playerViewParams)
 {
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE); // Ensure Z-write is enabled
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);      // Ensure Z-buffer is enabled
 
-	timeObjects = timeGetTime();
+	long timeObjects = timeGetTime();
+	const auto room = objectsRenderParams.room;
+	const auto params = objectsRenderParams.params;
 
 	if (config.draw_names)
 	{
@@ -121,8 +139,15 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 
 		D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-		D3DRenderNamesDraw3D(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, room, params, &gFont, 
-			objectsRenderParams.driverProfile);
+		D3DRenderNamesDraw3D(
+			&objectsRenderParams.cacheSystem, 
+			&objectsRenderParams.renderPool, 
+			room, 
+			params, 
+			objectsRenderParams.driverProfile, 
+			playerViewParams.player, 
+			fontTextureParams, 
+			lightAndTextureParams);
 		D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
 		D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, objectsRenderParams.driverProfile.magFilter);
@@ -140,26 +165,28 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 
 	D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+	
+	bool fogEnabled = objectsRenderParams.driverProfile.bFogEnable;
 
 	// Render world objects
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, FALSE, objectsRenderParams.driverProfile.bFogEnable);
-	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, FALSE, objectsRenderParams.driverProfile.bFogEnable);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, FALSE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
 
 	// Render translucent objects
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, TRANSLUCENT_FLAGS, objectsRenderParams.driverProfile.bFogEnable);
-	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, TRANSLUCENT_FLAGS, objectsRenderParams.driverProfile.bFogEnable);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, TRANSLUCENT_FLAGS, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
 
-	D3DRenderProjectilesDraw(&objectsRenderParams.renderPool, room, params);
+	gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(&objectsRenderParams.renderPool, room, params);
 	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
 	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 
-	D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
-		gSmallTextureSize, gSmallTextureSize);
+	D3DRenderFramebufferTextureCreate(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0],
+		fontTextureParams.smallTextureSize, fontTextureParams.smallTextureSize);
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &objectsRenderParams.view);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &objectsRenderParams.proj);
@@ -173,13 +200,13 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	// Render invisible world objects
 	D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
 	D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, OF_INVISIBLE, objectsRenderParams.driverProfile.bFogEnable);
-	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, OF_INVISIBLE, objectsRenderParams.driverProfile.bFogEnable);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, OF_INVISIBLE, objectsRenderParams.driverProfile.bFogEnable);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
 	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
 	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
-	pRNode = GetRoomObjectById(player.id);
+	pRNode = GetRoomObjectById(playerViewParams.player->id);
 	if (pRNode != nullptr)
 	{
 		// Rendering of Personal Equipment (Shields, weapons etc)
@@ -190,7 +217,7 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 
 			D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
 			D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, objectsRenderParams.driverProfile.bFogEnable);
+			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
 			D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 		}
@@ -201,7 +228,7 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 
 			D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 			D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, objectsRenderParams.driverProfile.bFogEnable);
+			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
 			D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		}
@@ -209,14 +236,21 @@ void D3DRenderObjects(room_type* room, Draw3DParams* params, room_contents_node*
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
-	timeObjects = timeGetTime() - timeObjects;
+	return timeGetTime() - timeObjects;
 }
 
 /**
 * Rendering names above objects, such as player names.
 */
-void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool_new* pPool,
-	room_type* room, Draw3DParams* params, font_3d* pFont, d3d_driver_profile driverProfile)
+void D3DRenderNamesDraw3D(
+	d3d_render_cache_system* pCacheSystem, 
+	d3d_render_pool_new* pPool,
+	room_type* room, 
+	Draw3DParams* params, 
+	d3d_driver_profile driverProfile, 
+	player_info* player, 
+	const FontTextureParams& fontTextureParams, 
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	D3DMATRIX			mat, rot, xForm, trans;
 	int					sector_flags, offset;
@@ -228,7 +262,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 	Color				color;
 	BYTE* palette;
 	d3d_render_packet_new* pPacket;
-	d3d_render_chunk_new* pChunk;
+	d3d_render_chunk_new * pChunk;
+	auto pFont = fontTextureParams.font;
 
 	int angleHeading = params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
@@ -243,14 +278,14 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 
 		room_contents_node* pRNode = (room_contents_node*)list->data;
 
-		if (pRNode->obj.id == player.id)
+		if (pRNode->obj.id == player->id)
 			continue;
 
 		if (!(pRNode->obj.flags & OF_PLAYER) || (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE))
 			continue;
 
-		vector.x = pRNode->motion.x - player.x;
-		vector.y = pRNode->motion.y - player.y;
+		vector.x = pRNode->motion.x - player->x;
+		vector.y = pRNode->motion.y - player->y;
 
 		float distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
@@ -283,7 +318,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 		}
 
 		// Set object depth based on "depth" sector flags
-		float depth = sector_depths[SectorDepth(sector_flags)];
+		float depth = fontTextureParams.sectorDepths[SectorDepth(sector_flags)];
 
 		if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 		{
@@ -327,7 +362,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 			//     but not here for unknown reason
 			//     so we convert to our base_palette[] PALETTERGB() type.
 			//
-			color = base_palette[LOBYTE(LOWORD(fg_color))];
+			color = fontTextureParams.basePalette[LOBYTE(LOWORD(fg_color))];
 		}
 		else
 		{
@@ -340,8 +375,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 			{
 				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			}
-			color = base_palette[palette[GetClosestPaletteIndex(fg_color)]];
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0, driverProfile.bFogEnable);
+			color = fontTextureParams.basePalette[palette[GetClosestPaletteIndex(fg_color)]];
+			D3DObjectLightingCalc(room, pRNode, &bgra, 0, driverProfile.bFogEnable, player, lightAndTextureParams);
 
 			glyph_scale = max(bgra.b, bgra.g);
 			glyph_scale = max(glyph_scale, bgra.r);
@@ -509,8 +544,16 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system* pCacheSystem, d3d_render_pool
 * Overlays are draw on top of objects (these include player limbs, animations over ornaments).
 * They can be drawn under or over objects.
 */
-void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params,
-	BOOL underlays, int flags, bool fogEnabled)
+void D3DRenderOverlaysDraw(
+	d3d_render_pool_new* pPool, 
+	room_type* room, 
+	Draw3DParams* params,
+	BOOL underlays, 
+	int flags, 
+	bool fogEnabled, 
+	const GameObjectDataParams& gameObjectDataParams, 
+	const PlayerViewParams& playerViewParams, 
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -528,6 +571,8 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 	d3d_render_packet_new* pPacket = NULL;
 	d3d_render_chunk_new* pChunk = NULL;
 
+	player_info* player = playerViewParams.player;
+
 	angleHeading = params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
@@ -539,7 +584,8 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 	// This happens because each rendering pass compounds the alpha blending, making the object appear more solid than intended.
 	// To prevent this, we need to keep track of those we've already processed to avoid rendering duplicates.
 	std::unordered_set<int> processedIds;
-	for (curObject = 0; curObject < nitems; curObject++)
+	auto drawdata = gameObjectDataParams.drawData;
+	for (curObject = 0; curObject < gameObjectDataParams.numItems; curObject++)
 	{
 		list_type	list2;
 		int			pass, depth;
@@ -556,7 +602,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 			continue;
 		processedIds.insert(pRNode->obj.id);
 
-		if (pRNode->obj.id == player.id)
+		if (pRNode->obj.id == player->id)
 			continue;
 
 		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
@@ -869,7 +915,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 					}
 
 					// Set object depth based on "depth" sector flags
-					depthf = sector_depths[SectorDepth(sector_flags)];
+					depthf = lightAndTextureParams.sectorDepths[SectorDepth(sector_flags)];
 
 					if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 					{
@@ -911,7 +957,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 					}
 					else
 					{
-						if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled))
+						if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
 					}
 
@@ -960,7 +1006,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 					pChunk->indices[3] = 3;
 
 					// now add object to visible object list
-					if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != player.id))
+					if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != player->id))
 					{
 						D3DMATRIX	localToScreen, rot, mat;
 						custom_xyzw	topLeft, topRight, bottomLeft, bottomRight, center;
@@ -969,8 +1015,8 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 						int			tempLeft, tempRight, tempTop, tempBottom;
 						int			distX, distY, distance;
 
-						w = gD3DRect.right - gD3DRect.left;
-						h = gD3DRect.bottom - gD3DRect.top;
+						w = playerViewParams.d3dRect.right - playerViewParams.d3dRect.left;
+						h = playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top;
 
 						topLeft.x = pChunk->xyz[3].x;
 						topLeft.y = pChunk->xyz[3].z;
@@ -997,7 +1043,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 						MatrixMultiply(&rot, &rot, &mat);
 						MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 						MatrixMultiply(&mat, &trans, &rot);
-						XformMatrixPerspective(&localToScreen, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 1.0f, Z_RANGE);
+						XformMatrixPerspective(&localToScreen, FovHorizontal(w), FovVertical(h), 1.0f, Z_RANGE);
 						MatrixMultiply(&mat, &pChunk->xForm,
 							&mat);
 						MatrixMultiply(&localToScreen, &mat, &localToScreen);
@@ -1062,15 +1108,15 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 							tempTop = (topLeft.y * -h / 2) + (h / 2);
 							tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-							distX = pRNode->motion.x - player.x;
-							distY = pRNode->motion.y - player.y;
+							distX = pRNode->motion.x - player->x;
+							distY = pRNode->motion.y - player->y;
 
 							distance = DistanceGet(distX, distY);
 
 							if (range == NULL)
 							{
 								// Set up new visible object
-								range = &visible_objects[num_visible_objects];
+								range = &gameObjectDataParams.visibleObjects[gameObjectDataParams.numVisibleObjects];
 								range->id = pRNode->obj.id;
 								range->distance = distance;
 								range->left_col = tempLeft;
@@ -1078,7 +1124,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 								range->top_row = tempTop;
 								range->bottom_row = tempBottom;
 
-								num_visible_objects = ++num_visible_objects > MAXOBJECTS ? MAXOBJECTS : num_visible_objects;
+								gameObjectDataParams.numVisibleObjects = ++gameObjectDataParams.numVisibleObjects > MAXOBJECTS ? MAXOBJECTS : gameObjectDataParams.numVisibleObjects;
 							}
 
 							/* Record boundaries of drawing area */
@@ -1130,7 +1176,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 							pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 						}
 
-						D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
+						D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
 
 						for (i = 0; i < 4; i++)
 						{
@@ -1187,8 +1233,8 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 						pChunk->indices[3] = 3;
 					}
 
-					gNumObjects++;
-				TEMP_END2:
+					gameObjectDataParams.numObjects++;
+				TEMP_END2: // ewww we have a goto.. todo: lets remove
 					{
 						int i = 0;
 					}
@@ -1202,8 +1248,15 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DPa
 * Draw all objects in the room.
 * They may be opaque, invivisble or translucent. We draw these based on the flags passed in.
 */
-void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
-	Draw3DParams* params, int flags, bool fogEnabled)
+void D3DRenderObjectsDraw(
+	d3d_render_pool_new* pPool, 
+	room_type* room,
+	Draw3DParams* params, 
+	int flags, 
+	bool fogEnabled, 
+	const GameObjectDataParams& gameObjectDataParams, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -1226,6 +1279,8 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 
 	anglePitch = PlayerGetHeightOffset();
 
+	auto drawdata = gameObjectDataParams.drawData;
+
 	// We track all objects that are in similar positions in the 3D world.
 	// This is to mitigate z-fighting by incrementing z-depths for each unique object in the same position.
 	// The key is composed of the x and y coordinates of the object and the value is the current
@@ -1234,7 +1289,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 
 	// As we receive objects in different orders from the BSP walk this can cause inconsistent z-depth ordering.
 	// We now attempt to maintain a consistent view by sorting draw data by their ids.
-	std::sort(drawdata, drawdata + nitems, [](const DrawItem& a, const DrawItem& b) {
+	std::sort(drawdata, drawdata + gameObjectDataParams.numItems, [](const DrawItem& a, const DrawItem& b) {
 
 		if (a.type != DrawObjectType && b.type == DrawObjectType) {
 			return false;
@@ -1258,7 +1313,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 	// We need to keep track of those we've already processed to avoid duplicates.
 	std::unordered_set<int> processedIds;
 
-	for (curObject = 0; curObject < nitems; curObject++)
+	for (curObject = 0; curObject < gameObjectDataParams.numItems; curObject++)
 	{
 		if (drawdata[curObject].type != DrawObjectType)
 			continue;
@@ -1268,7 +1323,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		if (pRNode == NULL)
 			continue;
 
-		if (pRNode->obj.id == player.id)
+		if (pRNode->obj.id == playerViewParams.player->id)
 			continue;
 
 		if (processedIds.find(pRNode->obj.id) != processedIds.end())
@@ -1359,7 +1414,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		}
 
 		// Set object depth based on "depth" sector flags
-		depth = sector_depths[SectorDepth(sector_flags)];
+		depth = lightAndTextureParams.sectorDepths[SectorDepth(sector_flags)];
 
 		if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 		{
@@ -1440,7 +1495,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		}
 		else
 		{
-			if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled))
+			if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
 		}
 
@@ -1492,7 +1547,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 		pChunk->indices[3] = 3;
 
 		// now add object to visible object list
-		if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != player.id))
+		if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != playerViewParams.player->id))
 		{
 			D3DMATRIX	localToScreen, rot, mat;
 			custom_xyzw	topLeft, topRight, bottomLeft, bottomRight, center;
@@ -1501,11 +1556,11 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 			int			tempLeft, tempRight, tempTop, tempBottom;
 			int			distX, distY, distance;
 
-			if (pRNode->obj.id == player.id)
+			if (pRNode->obj.id == playerViewParams.player->id)
 				break;
 
-			w = gD3DRect.right - gD3DRect.left;
-			h = gD3DRect.bottom - gD3DRect.top;
+			w = playerViewParams.d3dRect.right - playerViewParams.d3dRect.left;
+			h = playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top;
 
 			topLeft.x = pChunk->xyz[3].x;
 			topLeft.y = pChunk->xyz[3].z;
@@ -1532,7 +1587,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 			MatrixMultiply(&rot, &rot, &mat);
 			MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 			MatrixMultiply(&mat, &trans, &rot);
-			XformMatrixPerspective(&localToScreen, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 1.0f, 2000000.0f);
+			XformMatrixPerspective(&localToScreen, FovHorizontal(w), FovVertical(h), 1.0f, 2000000.0f);
 			MatrixMultiply(&mat, &pChunk->xForm,
 				&mat);
 			MatrixMultiply(&localToScreen, &mat, &localToScreen);
@@ -1596,15 +1651,15 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 				tempTop = (topLeft.y * -h / 2) + (h / 2);
 				tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-				distX = pRNode->motion.x - player.x;
-				distY = pRNode->motion.y - player.y;
+				distX = pRNode->motion.x - playerViewParams.player->x;
+				distY = pRNode->motion.y - playerViewParams.player->y;
 
 				distance = DistanceGet(distX, distY);
 
 				if (range == NULL)
 				{
 					// Set up new visible object
-					range = &visible_objects[num_visible_objects];
+					range = &gameObjectDataParams.visibleObjects[gameObjectDataParams.numVisibleObjects];
 					range->id = pRNode->obj.id;
 					range->distance = distance;
 					range->left_col = tempLeft;
@@ -1612,7 +1667,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 					range->top_row = tempTop;
 					range->bottom_row = tempBottom;
 
-					num_visible_objects = ++num_visible_objects > MAXOBJECTS ? MAXOBJECTS : num_visible_objects;
+					gameObjectDataParams.numVisibleObjects = ++gameObjectDataParams.numVisibleObjects > MAXOBJECTS ? MAXOBJECTS : gameObjectDataParams.numVisibleObjects;
 				}
 
 				// Record boundaries of drawing area
@@ -1654,7 +1709,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 			}
 
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
+			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1715,8 +1770,9 @@ void D3DRenderObjectsDraw(d3d_render_pool_new* pPool, room_type* room,
 
 /**
 * Drawing of projectiles such as arrows and ranged spells such as fireball/lightening bolt.
+* Return the number of projectiles drawn.
 */
-void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params)
+int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params)
 {
 	D3DMATRIX			mat, rot;
 	int					angleHeading, anglePitch;
@@ -1725,6 +1781,7 @@ void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3
 	list_type			list;
 	long				dx, dy, angle;
 	PDIB				pDib;
+	int projectileCount = 0;
 
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
@@ -1757,7 +1814,7 @@ void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3
 
 		pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1, 0);
 		if (NULL == pPacket)
-			return;
+			return projectileCount;
 
 		pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
@@ -1827,14 +1884,22 @@ void D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3
 			pChunk->bgra[i].a = COLOR_MAX;
 		}
 
-		gNumObjects++;
+		projectileCount++;
 	}
+
+	return projectileCount;
 }
 
 /**
 * Rendering of player's overlay objects such as scimitars, shields, etc.
 */
-void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params, bool fogEnabled)
+void D3DRenderPlayerOverlaysDraw(
+	d3d_render_pool_new* pPool, 
+	room_type* room, 
+	Draw3DParams* params, 
+	bool fogEnabled, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	// Renders UI elements (like Scimitars, shields etc)
 	D3DMATRIX			mat;
@@ -1853,8 +1918,8 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
 
-	screenW = (float)(main_viewport_width);
-	screenH = (float)(main_viewport_height);
+	screenW = (float)(playerViewParams.viewportWidth);
+	screenH = (float)(playerViewParams.viewportHeight);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
@@ -1866,7 +1931,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
 	// Get player's object flags for special drawing effects
-	pRNode = GetRoomObjectById(player.id);
+	pRNode = GetRoomObjectById(playerViewParams.player->id);
 	if (pRNode == NULL)
 		flags = 0;
 	else
@@ -1876,7 +1941,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 	{
 		BYTE	xLat0, xLat1;
 
-		PlayerOverlay* pOverlay = &player.poverlays[i];
+		PlayerOverlay* pOverlay = &playerViewParams.player->poverlays[i];
 
 		if (pOverlay->obj == NULL || pOverlay->hotspot == 0)
 			continue;
@@ -1887,13 +1952,13 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 		if (pDib == NULL)
 			continue;
 
-		D3DComputePlayerOverlayArea(pDib, pOverlay->hotspot, &objArea);
+		D3DComputePlayerOverlayArea(pDib, pOverlay->hotspot, &objArea, playerViewParams);
 
 		overlays = *(obj->overlays);
 
 		if (overlays != NULL)
 			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
-				&objArea, TRUE, fogEnabled);
+				&objArea, TRUE, fogEnabled, playerViewParams, lightAndTextureParams);
 
 		if (obj->flags & OF_SECONDTRANS)
 		{
@@ -1947,7 +2012,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 		}
 		else
 		{
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
+			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2011,15 +2076,24 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new* pPool, room_type* room, Dr
 
 		if (overlays != NULL)
 			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
-				&objArea, FALSE, fogEnabled);
+				&objArea, FALSE, fogEnabled, playerViewParams, lightAndTextureParams);
 	}
 }
 
 /**
 * Rendering of player's overlay overlays as overlays can have overlays too.
 */
-void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type overlays,
-	PDIB pDib, room_type* room, Draw3DParams* params, AREA* objArea, BOOL underlays, bool fogEnabled)
+void D3DRenderPlayerOverlayOverlaysDraw(
+	d3d_render_pool_new* pPool, 
+	list_type overlays,
+	PDIB pDib, 
+	room_type* room, 
+	Draw3DParams* params, 
+	AREA* objArea, 
+	BOOL underlays,
+	bool fogEnabled, 
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	int					pass, depth;
 	room_contents_node* pRNode;
@@ -2034,11 +2108,11 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type ov
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
 
-	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;
-	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;
+	screenW = (float)(playerViewParams.d3dRect.right - playerViewParams.d3dRect.left) / (float)playerViewParams.viewportWidth;
+	screenH = (float)(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top) / (float)playerViewParams.viewportHeight;
 
 	// Get player's object flags for special drawing effects
-	pRNode = GetRoomObjectById(player.id);
+	pRNode = GetRoomObjectById(playerViewParams.player->id);
 
 	if (pRNode == NULL)
 		flags = 0;
@@ -2183,7 +2257,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type ov
 			}
 			else
 			{
-				D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled);
+				D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
 			}
 
 			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2244,7 +2318,14 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new* pPool, list_type ov
 /**
 * Lighting calculations for world objects.
 */
-bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_bgra* bgra, DWORD flags, bool fogEnabled)
+bool D3DObjectLightingCalc(
+	room_type* room, 
+	room_contents_node* pRNode, 
+	custom_bgra* bgra, 
+	DWORD flags, 
+	bool fogEnabled,
+	const player_info* player,
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	int			light, intDistance, numLights;
 	d_light* pDLight = NULL;
@@ -2254,45 +2335,45 @@ bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_b
 
 	lastDistance = DLIGHT_SCALE(255);
 
-	for (numLights = 0; numLights < gDLightCache.numLights; numLights++)
+	for (numLights = 0; numLights < lightAndTextureParams.lightCache.numLights; numLights++)
 	{
 		custom_xyz	vector;
 
-		vector.x = pRNode->motion.x - gDLightCache.dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - gDLightCache.dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - gDLightCache.dLights[numLights].xyz.z);
+		vector.x = pRNode->motion.x - lightAndTextureParams.lightCache.dLights[numLights].xyz.x;
+		vector.y = pRNode->motion.y - lightAndTextureParams.lightCache.dLights[numLights].xyz.y;
+		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCache.dLights[numLights].xyz.z);
 
 		distance = (vector.x * vector.x) + (vector.y * vector.y) +
 			(vector.z * vector.z);
 		distance = (float)sqrt((double)distance);
 
-		distance /= (gDLightCache.dLights[numLights].xyzScale.x / 2.0f);
+		distance /= (lightAndTextureParams.lightCache.dLights[numLights].xyzScale.x / 2.0f);
 
 		if (distance < lastDistance)
 		{
 			lastDistance = distance;
-			pDLight = &gDLightCache.dLights[numLights];
+			pDLight = &lightAndTextureParams.lightCache.dLights[numLights];
 		}
 	}
 
-	for (numLights = 0; numLights < gDLightCacheDynamic.numLights; numLights++)
+	for (numLights = 0; numLights < lightAndTextureParams.lightCacheDynamic.numLights; numLights++)
 	{
 		custom_xyz	vector;
 
-		vector.x = pRNode->motion.x - gDLightCacheDynamic.dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - gDLightCacheDynamic.dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - gDLightCacheDynamic.dLights[numLights].xyz.z);
+		vector.x = pRNode->motion.x - lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyz.x;
+		vector.y = pRNode->motion.y - lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyz.y;
+		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyz.z);
 
 		distance = (vector.x * vector.x) + (vector.y * vector.y) +
 			(vector.z * vector.z);
 		distance = (float)sqrt((double)distance);
 
-		distance /= (gDLightCacheDynamic.dLights[numLights].xyzScale.x / 2.0f);
+		distance /= (lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyzScale.x / 2.0f);
 
 		if (distance < lastDistance)
 		{
 			lastDistance = distance;
-			pDLight = &gDLightCacheDynamic.dLights[numLights];
+			pDLight = &lightAndTextureParams.lightCacheDynamic.dLights[numLights];
 		}
 	}
 
@@ -2305,8 +2386,8 @@ bool D3DObjectLightingCalc(room_type* room, room_contents_node* pRNode, custom_b
 	if (light <= 127)
 		bFogDisable = true;
 
-	distX = pRNode->motion.x - player.x;
-	distY = pRNode->motion.y - player.y;
+	distX = pRNode->motion.x - player->x;
+	distY = pRNode->motion.y - player->y;
 
 	intDistance = DistanceGet(distX, distY);
 
@@ -2360,7 +2441,7 @@ int getKerningAmount(font_3d* pFont, char* str, char* ptr) {
 /**
 * Calculate scaling factors for UI elements (Scimtar/shield etc).
 */
-bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area)
+bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area, const PlayerViewParams& playerViewParams)
 {
 	// Reference resolution and scaling factors for classic 800x600 resolution.
 	const float REFERENCE_WIDTH = 800.0f;
@@ -2369,15 +2450,15 @@ bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area)
 	const float REFERENCE_SCALE_H = 2.25f;
 
 	// Calculate the scaling factors based on the current resolution.
-	float scaleFactorWidth = gScreenWidth / REFERENCE_WIDTH;
-	float scaleFactorHeight = gScreenHeight / REFERENCE_HEIGHT;
+	float scaleFactorWidth = playerViewParams.screenWidth / REFERENCE_WIDTH;
+	float scaleFactorHeight = playerViewParams.screenHeight / REFERENCE_HEIGHT;
 
 	// Apply these scaling factors to the original reference scaling factors.
 	float scaleW = REFERENCE_SCALE_W * scaleFactorWidth;
 	float scaleH = REFERENCE_SCALE_H * scaleFactorHeight;
 
-	float screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(main_viewport_width * scaleW);
-	float screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(main_viewport_height * scaleH);
+	float screenW = (float)(playerViewParams.d3dRect.right - playerViewParams.d3dRect.left) / (float)(playerViewParams.viewportWidth * scaleW);
+	float screenH = (float)(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top) / (float)(playerViewParams.viewportHeight * scaleH);
 
 	if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
 	{
@@ -2397,13 +2478,13 @@ bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area)
 	case HOTSPOT_SE:
 	case HOTSPOT_E:
 	case HOTSPOT_NE:
-		obj_area->x = gScreenWidth - DibWidth(pdib) / (float)screenW;
+		obj_area->x = playerViewParams.screenWidth - DibWidth(pdib) / (float)screenW;
 		break;
 
 	case HOTSPOT_N:
 	case HOTSPOT_S:
 	case HOTSPOT_CENTER:
-		obj_area->x = (gScreenWidth - DibWidth(pdib) / (float)screenW) / 2;
+		obj_area->x = (playerViewParams.screenWidth - DibWidth(pdib) / (float)screenW) / 2;
 		break;
 	}
 
@@ -2419,13 +2500,13 @@ bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area)
 	case HOTSPOT_SW:
 	case HOTSPOT_S:
 	case HOTSPOT_SE:
-		obj_area->y = gScreenHeight - DibHeight(pdib) / (float)screenH;
+		obj_area->y = playerViewParams.screenHeight - DibHeight(pdib) / (float)screenH;
 		break;
 
 	case HOTSPOT_W:
 	case HOTSPOT_E:
 	case HOTSPOT_CENTER:
-		obj_area->y = (gScreenHeight - DibHeight(pdib) / (float)screenH) / 2;
+		obj_area->y = (playerViewParams.screenHeight - DibHeight(pdib) / (float)screenH) / 2;
 		break;
 	}
 

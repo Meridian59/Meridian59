@@ -434,14 +434,16 @@ void D3DRenderShutDown(void)
 		gpD3D = NULL;
 	}
 }
-D3DMATRIX	mat, rot, trans, view, proj, identity;
-long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox, timeSetup, timeComplete;
+D3DMATRIX view, mat, rot, trans, proj;
+long timeWorld;
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
 	int			angleHeading, anglePitch;
 	int			curPacket = 0;
 	int			curIndex = 0;
 	room_contents_node *pRNode = nullptr;
+
+	long		timeOverall, timeObjects, timeLMaps, timeSkybox, timeSetup, timeComplete;
 
 	timeOverall = timeGetTime();
 	timeSetup = timeGetTime();
@@ -595,8 +597,18 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_objects)
 	{
-		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, gObjectPool, gObjectCacheSystem, view, proj);
-		D3DRenderObjects(room, params, pRNode, objectsRenderParams);
+		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, gObjectPool, gObjectCacheSystem, view, proj, room, params);
+
+		GameObjectDataParams gameObjectDataParams(nitems, num_visible_objects, gNumObjects, drawdata, visible_objects, 
+			gpBackBufferTexFull, gpBackBufferTex);
+
+		LightAndTextureParams lightAndTextureParams(gDLightCache, gDLightCacheDynamic, gSmallTextureSize, sector_depths);
+
+		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize, sector_depths);
+
+		PlayerViewParams playerViewParams(&player, gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
+
+		timeObjects = D3DRenderObjects(pRNode, objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);

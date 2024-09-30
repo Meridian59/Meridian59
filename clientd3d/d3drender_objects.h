@@ -69,8 +69,8 @@ struct FontTextureParams
 struct LightAndTextureParams
 {
     // Light cache details
-    mutable d_light_cache* lightCache;
-    mutable d_light_cache* lightCacheDynamic;
+    d_light_cache* lightCache;
+    d_light_cache* lightCacheDynamic;
 
     // Texture and sector settings
     int smallTextureSize;
@@ -95,7 +95,7 @@ struct GameObjectDataParams
     int& numVisibleObjects;
     int& numObjects;
     DrawItem* drawData;
-    mutable ObjectRange* visibleObjects;    // Where objects are on screen
+    ObjectRange* visibleObjects;    // Where objects are on screen
 
     // Textures for the back buffer
     PDIRECT3DTEXTURE9 backBufferTexFull;
@@ -125,8 +125,8 @@ struct ObjectsRenderParams {
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisible;
 	d3d_driver_profile driverProfile;
 
-	mutable d3d_render_pool_new* renderPool;
-	mutable d3d_render_cache_system* cacheSystem;
+	d3d_render_pool_new* renderPool;
+	d3d_render_cache_system* cacheSystem;
 
 	D3DMATRIX view;
 	D3DMATRIX proj;

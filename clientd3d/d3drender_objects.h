@@ -69,16 +69,16 @@ struct FontTextureParams
 struct LightAndTextureParams
 {
     // Light cache details
-    mutable d_light_cache lightCache;
-    mutable d_light_cache lightCacheDynamic;
+    mutable d_light_cache* lightCache;
+    mutable d_light_cache* lightCacheDynamic;
 
     // Texture and sector settings
     int smallTextureSize;
     int* sectorDepths;
 
     LightAndTextureParams(
-        const d_light_cache& lightCacheParam,
-        const d_light_cache& lightCacheDynamicParam,
+        d_light_cache* lightCacheParam,
+        d_light_cache* lightCacheDynamicParam,
         int smallTextureSizeParam,
         int* sectorDepthsParam)
         : lightCache(lightCacheParam),
@@ -125,8 +125,8 @@ struct ObjectsRenderParams {
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisible;
 	d3d_driver_profile driverProfile;
 
-	mutable d3d_render_pool_new renderPool;
-	mutable d3d_render_cache_system cacheSystem;
+	mutable d3d_render_pool_new* renderPool;
+	mutable d3d_render_cache_system* cacheSystem;
 
 	D3DMATRIX view;
 	D3DMATRIX proj;
@@ -138,8 +138,8 @@ struct ObjectsRenderParams {
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisibleParam,
         d3d_driver_profile driverProfileParam,
-        d3d_render_pool_new renderPoolParam,
-        d3d_render_cache_system cacheSystemParam,
+        d3d_render_pool_new* renderPoolParam,
+        d3d_render_cache_system* cacheSystemParam,
         D3DMATRIX viewParam,
         D3DMATRIX projParam,
         room_type* roomParam, 

@@ -597,12 +597,12 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_objects)
 	{
-		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, gObjectPool, gObjectCacheSystem, view, proj, room, params);
+		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem, view, proj, room, params);
 
 		GameObjectDataParams gameObjectDataParams(nitems, num_visible_objects, gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
 
-		LightAndTextureParams lightAndTextureParams(gDLightCache, gDLightCacheDynamic, gSmallTextureSize, sector_depths);
+		LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
 		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize, sector_depths);
 

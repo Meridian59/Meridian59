@@ -132,11 +132,11 @@ long D3DRenderObjects(
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-		D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
-		D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+		D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+		D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 		D3DRenderNamesDraw3D(objectsRenderParams, playerViewParams, fontTextureParams, lightAndTextureParams);
-		D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
-		D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
+		D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+		D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, objectsRenderParams.driverProfile.magFilter);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, objectsRenderParams.driverProfile.minFilter);
 	}
@@ -150,24 +150,24 @@ long D3DRenderObjects(
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
-	D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
+	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 	
 	bool fogEnabled = objectsRenderParams.driverProfile.bFogEnable;
 
 	// Render world objects
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 1, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderObjectsDraw(objectsRenderParams.renderPool, room, params, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 0, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
 
 	// Render translucent objects
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 1, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderObjectsDraw(objectsRenderParams.renderPool, room, params, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 0, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
 
-	gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(&objectsRenderParams.renderPool, room, params);
-	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
-	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
+	gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(objectsRenderParams.renderPool, room, params);
+	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
@@ -185,13 +185,13 @@ long D3DRenderObjects(
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	// Render invisible world objects
-	D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
-	D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 1, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderObjectsDraw(&objectsRenderParams.renderPool, room, params, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderOverlaysDraw(&objectsRenderParams.renderPool, room, params, 0, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
-	D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
+	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
+	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
+	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 1, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderObjectsDraw(objectsRenderParams.renderPool, room, params, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 0, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
+	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
 	room_contents_node* pRNode = GetRoomObjectById(playerViewParams.player->id);
 	if (pRNode != nullptr)
@@ -202,22 +202,22 @@ long D3DRenderObjects(
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
-			D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
-			D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
-			D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2);
-			D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
+			D3DRenderPoolReset(objectsRenderParams.renderPool, D3DMaterialObjectInvisiblePool);
+			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
+			D3DRenderPlayerOverlaysDraw(objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
+			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
+			D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 		}
 		else
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
-			D3DRenderPoolReset(&objectsRenderParams.renderPool, &D3DMaterialObjectPool);
-			D3DCacheSystemReset(&objectsRenderParams.cacheSystem);
-			D3DRenderPlayerOverlaysDraw(&objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
-			D3DCacheFill(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1);
-			D3DCacheFlush(&objectsRenderParams.cacheSystem, &objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
+			D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
+			D3DRenderPlayerOverlaysDraw(objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
+			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+			D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		}
 	}
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -415,7 +415,7 @@ void D3DRenderNamesDraw3D(
 				float height = (st[0].t - st[2].t) * pFont->texHeight * 2.0f / pFont->texScale *
 					(distance / FINENESS);
 
-				pPacket = D3DRenderPacketFindMatch(&objectsRenderParams.renderPool, pFont->pTexture, NULL, 0, 0, 0);
+				pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, pFont->pTexture, NULL, 0, 0, 0);
 				if (NULL == pPacket)
 					return;
 				pChunk = D3DRenderChunkNew(pPacket);
@@ -2318,45 +2318,45 @@ bool D3DObjectLightingCalc(
 
 	lastDistance = DLIGHT_SCALE(255);
 
-	for (numLights = 0; numLights < lightAndTextureParams.lightCache.numLights; numLights++)
+	for (numLights = 0; numLights < lightAndTextureParams.lightCache->numLights; numLights++)
 	{
 		custom_xyz	vector;
 
-		vector.x = pRNode->motion.x - lightAndTextureParams.lightCache.dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - lightAndTextureParams.lightCache.dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCache.dLights[numLights].xyz.z);
+		vector.x = pRNode->motion.x - lightAndTextureParams.lightCache->dLights[numLights].xyz.x;
+		vector.y = pRNode->motion.y - lightAndTextureParams.lightCache->dLights[numLights].xyz.y;
+		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCache->dLights[numLights].xyz.z);
 
 		distance = (vector.x * vector.x) + (vector.y * vector.y) +
 			(vector.z * vector.z);
 		distance = (float)sqrt((double)distance);
 
-		distance /= (lightAndTextureParams.lightCache.dLights[numLights].xyzScale.x / 2.0f);
+		distance /= (lightAndTextureParams.lightCache->dLights[numLights].xyzScale.x / 2.0f);
 
 		if (distance < lastDistance)
 		{
 			lastDistance = distance;
-			pDLight = &lightAndTextureParams.lightCache.dLights[numLights];
+			pDLight = &lightAndTextureParams.lightCache->dLights[numLights];
 		}
 	}
 
-	for (numLights = 0; numLights < lightAndTextureParams.lightCacheDynamic.numLights; numLights++)
+	for (numLights = 0; numLights < lightAndTextureParams.lightCacheDynamic->numLights; numLights++)
 	{
 		custom_xyz	vector;
 
-		vector.x = pRNode->motion.x - lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyz.z);
+		vector.x = pRNode->motion.x - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.x;
+		vector.y = pRNode->motion.y - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.y;
+		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.z);
 
 		distance = (vector.x * vector.x) + (vector.y * vector.y) +
 			(vector.z * vector.z);
 		distance = (float)sqrt((double)distance);
 
-		distance /= (lightAndTextureParams.lightCacheDynamic.dLights[numLights].xyzScale.x / 2.0f);
+		distance /= (lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyzScale.x / 2.0f);
 
 		if (distance < lastDistance)
 		{
 			lastDistance = distance;
-			pDLight = &lightAndTextureParams.lightCacheDynamic.dLights[numLights];
+			pDLight = &lightAndTextureParams.lightCacheDynamic->dLights[numLights];
 		}
 	}
 

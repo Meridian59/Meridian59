@@ -156,7 +156,7 @@ struct ObjectsRenderParams {
 };
 
 long D3DRenderObjects(
-	const ObjectsRenderParams& objectsRenderParams, 
+    const ObjectsRenderParams& objectsRenderParams, 
     const GameObjectDataParams& gameObjectDataParams, 
     const LightAndTextureParams& lightAndTextureParams,
     const FontTextureParams& fontTextureParams,

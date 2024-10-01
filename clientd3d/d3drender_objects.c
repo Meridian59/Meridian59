@@ -12,7 +12,7 @@
 #include <unordered_set>
 #include <vector>
 
-// Variables
+// Constants
 
 static const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
 

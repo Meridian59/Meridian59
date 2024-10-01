@@ -50,17 +50,14 @@ struct FontTextureParams
     font_3d* font;
     Color* basePalette;
     int smallTextureSize;
-    int* sectorDepths;
 
     FontTextureParams(
         font_3d* fontParam,
         Color* basePaletteParam,
-        int smallTextureSizeParam,
-        int* sectorDepthsParam)
+        int smallTextureSizeParam)
         : font(fontParam),
           basePalette(basePaletteParam),
-          smallTextureSize(smallTextureSizeParam),
-          sectorDepths(sectorDepthsParam)
+          smallTextureSize(smallTextureSizeParam)
     {}
 };
 

@@ -14,7 +14,7 @@
 
 // Variables
 
-static auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
+static const auto TRANSLUCENT_FLAGS = OF_TRANSLUCENT25 | OF_TRANSLUCENT50 | OF_TRANSLUCENT75 | OF_DITHERTRANS;
 
 // Interfaces
 
@@ -66,10 +66,6 @@ static bool D3DObjectLightingCalc(
 
 static int getKerningAmount(font_3d* pFont, char* str, char* ptr);
 static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area, const PlayerViewParams& playerViewParams);
-
-extern int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
-extern float FovHorizontal(long width);
-extern float FovVertical(long height);
 
 // Update the pChunks animation values as a function of time.
 static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
@@ -288,7 +284,7 @@ void D3DRenderNamesDraw3D(
 		}
 
 		// Set object depth based on "depth" sector flags
-		float depth = fontTextureParams.sectorDepths[SectorDepth(sector_flags)];
+		float depth = lightAndTextureParams.sectorDepths[SectorDepth(sector_flags)];
 
 		if (ROOM_OVERRIDE_MASK & GetRoomFlags()) // if depth flags are normal (no overrides)
 		{

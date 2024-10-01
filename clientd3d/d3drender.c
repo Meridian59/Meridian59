@@ -22,12 +22,12 @@ extern int main_viewport_width;
 extern int main_viewport_height;
 
 // Define field of views with magic numbers for tuning
-inline float FovHorizontal(long width)
+float FovHorizontal(long width)
 {
 	return width / (float)(main_viewport_width) * (-PI / 3.78f);
 }
 
-inline float FovVertical(long height)
+float FovVertical(long height)
 {
 	return height / (float)(main_viewport_height) * (PI / 5.88f);
 }
@@ -159,6 +159,8 @@ extern BYTE				light_rows[MAXY/2+1];      // Strength of light as function of sc
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
+D3DMATRIX view, mat, rot, trans, proj;
+long timeWorld;
 
 void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
@@ -434,8 +436,7 @@ void D3DRenderShutDown(void)
 		gpD3D = NULL;
 	}
 }
-D3DMATRIX view, mat, rot, trans, proj;
-long timeWorld;
+
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
 	int			angleHeading, anglePitch;
@@ -604,7 +605,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
-		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize, sector_depths);
+		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize);
 
 		PlayerViewParams playerViewParams(&player, gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 

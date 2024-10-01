@@ -171,4 +171,11 @@ LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, 
 void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
 int DistanceGet(int x, int y);
 
+int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
+
+bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
+
+float FovHorizontal(long width);
+float FovVertical(long height);
+
 #endif	// __D3DRENDER_H__

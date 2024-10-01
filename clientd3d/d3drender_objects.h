@@ -29,8 +29,6 @@ struct PlayerViewParams
     // D3D viewport rectangle
     RECT d3dRect;
 
-    // add is fog enabled? and set higher up
-
     PlayerViewParams(
         player_info* playerParam,
         int screenWidthParam,

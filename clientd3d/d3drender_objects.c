@@ -25,46 +25,35 @@ static void D3DRenderNamesDraw3D(
 	const LightAndTextureParams& lightAndTextureParams);
 
 static void D3DRenderObjectsDraw(
-	d3d_render_pool_new* pPool, 
-	room_type* room,
-	Draw3DParams* params, 
-	int flags, 
-	bool fogEnabled,
+	const ObjectsRenderParams& objectsRenderParams,
 	const GameObjectDataParams& gameObjectDataParams, 
 	const PlayerViewParams& playerViewParams,
-	const LightAndTextureParams& lightAndTextureParams);
+	const LightAndTextureParams& lightAndTextureParams,
+	int flags);
 
 static void D3DRenderOverlaysDraw(
-	d3d_render_pool_new* pPool, 
-	room_type* room, 
-	Draw3DParams* params,
-	BOOL underlays, 
-	int flags, 
-	bool fogEnabled, 
+	const ObjectsRenderParams& objectsRenderParams,
 	const GameObjectDataParams& gameObjectDataParams, 
 	const PlayerViewParams& playerViewParams,
-	const LightAndTextureParams& lightAndTextureParams);
+	const LightAndTextureParams& lightAndTextureParams,
+	BOOL underlays, 
+	int flags);
 
-static int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params);
+static int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams);
 
 static void D3DRenderPlayerOverlaysDraw(
-	d3d_render_pool_new* pPool, 
-	room_type* room, 
-	Draw3DParams* params, 
-	bool fogEnabled, 
+	const ObjectsRenderParams& objectsRenderParams,
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams);
 
 static void D3DRenderPlayerOverlayOverlaysDraw(
-	d3d_render_pool_new* pPool, 
-	list_type overlays,
-	PDIB pDib, room_type* room, 
-	Draw3DParams* params, 
-	AREA* objArea, 
-	BOOL underlays, 
-	bool fogEnabled, 
+	const ObjectsRenderParams& objectsRenderParams,
 	const PlayerViewParams& playerViewParams,
-	const LightAndTextureParams& lightAndTextureParams);
+	const LightAndTextureParams& lightAndTextureParams,
+	list_type overlays,
+	PDIB pDib, 
+	AREA* objArea, 
+	BOOL underlays);
 
 static bool D3DObjectLightingCalc(
 	room_type* room, 
@@ -152,20 +141,18 @@ long D3DRenderObjects(
 
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
-	
-	bool fogEnabled = objectsRenderParams.driverProfile.bFogEnable;
 
 	// Render world objects
-	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 1, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderObjectsDraw(objectsRenderParams.renderPool, room, params, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 0, FALSE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, FALSE);
+	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, FALSE);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, FALSE);
 
 	// Render translucent objects
-	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 1, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderObjectsDraw(objectsRenderParams.renderPool, room, params, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 0, TRANSLUCENT_FLAGS, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS);
+	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, TRANSLUCENT_FLAGS);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, TRANSLUCENT_FLAGS);
 
-	gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(objectsRenderParams.renderPool, room, params);
+	gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(objectsRenderParams);
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
@@ -187,9 +174,9 @@ long D3DRenderObjects(
 	// Render invisible world objects
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
-	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 1, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderObjectsDraw(objectsRenderParams.renderPool, room, params, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
-	D3DRenderOverlaysDraw(objectsRenderParams.renderPool, room, params, 0, OF_INVISIBLE, fogEnabled, gameObjectDataParams, playerViewParams, lightAndTextureParams);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, OF_INVISIBLE);
+	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, OF_INVISIBLE);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, OF_INVISIBLE);
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
@@ -204,7 +191,7 @@ long D3DRenderObjects(
 
 			D3DRenderPoolReset(objectsRenderParams.renderPool, D3DMaterialObjectInvisiblePool);
 			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
-			D3DRenderPlayerOverlaysDraw(objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
+			D3DRenderPlayerOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
 			D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 		}
@@ -215,7 +202,7 @@ long D3DRenderObjects(
 
 			D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
-			D3DRenderPlayerOverlaysDraw(objectsRenderParams.renderPool, room, params, fogEnabled, playerViewParams, lightAndTextureParams);
+			D3DRenderPlayerOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
 			D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 		}
@@ -528,15 +515,12 @@ void D3DRenderNamesDraw3D(
 * They can be drawn under or over objects.
 */
 void D3DRenderOverlaysDraw(
-	d3d_render_pool_new* pPool, 
-	room_type* room, 
-	Draw3DParams* params,
-	BOOL underlays, 
-	int flags, 
-	bool fogEnabled, 
+	const ObjectsRenderParams& objectsRenderParams,
 	const GameObjectDataParams& gameObjectDataParams, 
 	const PlayerViewParams& playerViewParams, 
-	const LightAndTextureParams& lightAndTextureParams)
+	const LightAndTextureParams& lightAndTextureParams,
+	BOOL underlays, 
+	int flags)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -556,7 +540,7 @@ void D3DRenderOverlaysDraw(
 
 	player_info* player = playerViewParams.player;
 
-	angleHeading = params->viewer_angle + 3072;
+	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
 
@@ -666,8 +650,8 @@ void D3DRenderOverlaysDraw(
 				if (NULL == pOverlay)
 					continue;
 
-				dx = pRNode->motion.x - params->viewer_x;
-				dy = pRNode->motion.y - params->viewer_y;
+				dx = pRNode->motion.x - objectsRenderParams.params->viewer_x;
+				dy = pRNode->motion.y - objectsRenderParams.params->viewer_y;
 
 				angle = (pRNode->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
@@ -849,7 +833,7 @@ void D3DRenderOverlaysDraw(
 						xLat1 = 0;
 					}
 
-					pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDibOv, xLat0, xLat1,
+					pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDibOv, xLat0, xLat1,
 						GetDrawingEffect(pRNode->obj.flags));
 
 					if (NULL == pPacket)
@@ -886,13 +870,13 @@ void D3DRenderOverlaysDraw(
 						pChunk->xyz[i].z = xyz[i].z;
 					}
 
-					angle = pRNode->angle - (params->viewer_angle + 3072);
+					angle = pRNode->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
 					if (angle < -4096)
 						angle += 4096;
 
 					/* Make sure that object is above the floor. */
-					if (!GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
+					if (!GetRoomHeight(objectsRenderParams.room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
 					{
 						continue;
 					}
@@ -940,7 +924,8 @@ void D3DRenderOverlaysDraw(
 					}
 					else
 					{
-						if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams))
+						if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
+							objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
 					}
 
@@ -1024,7 +1009,8 @@ void D3DRenderOverlaysDraw(
 						MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 						MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 						MatrixMultiply(&rot, &rot, &mat);
-						MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
+						MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
+							-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);
 						MatrixMultiply(&mat, &trans, &rot);
 						XformMatrixPerspective(&localToScreen, FovHorizontal(w), FovVertical(h), 1.0f, Z_RANGE);
 						MatrixMultiply(&mat, &pChunk->xForm,
@@ -1130,7 +1116,7 @@ void D3DRenderOverlaysDraw(
 					if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID() &&
 						(GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE))
 					{
-						pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDibOv, xLat0, xLat1,
+						pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDibOv, xLat0, xLat1,
 							GetDrawingEffect(pRNode->obj.flags));
 						if (NULL == pPacket)
 							continue;
@@ -1159,7 +1145,8 @@ void D3DRenderOverlaysDraw(
 							pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 						}
 
-						D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
+						D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, 
+							playerViewParams.player, lightAndTextureParams);
 
 						for (i = 0; i < 4; i++)
 						{
@@ -1232,14 +1219,11 @@ void D3DRenderOverlaysDraw(
 * They may be opaque, invivisble or translucent. We draw these based on the flags passed in.
 */
 void D3DRenderObjectsDraw(
-	d3d_render_pool_new* pPool, 
-	room_type* room,
-	Draw3DParams* params, 
-	int flags, 
-	bool fogEnabled, 
+	const ObjectsRenderParams& objectsRenderParams,
 	const GameObjectDataParams& gameObjectDataParams, 
 	const PlayerViewParams& playerViewParams,
-	const LightAndTextureParams& lightAndTextureParams)
+	const LightAndTextureParams& lightAndTextureParams,
+	int flags)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -1256,7 +1240,7 @@ void D3DRenderObjectsDraw(
 	d3d_render_packet_new* pPacket = NULL;
 	d3d_render_chunk_new* pChunk = NULL;
 
-	angleHeading = params->viewer_angle + 3072;
+	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
 
@@ -1338,8 +1322,8 @@ void D3DRenderObjectsDraw(
 				continue;
 		}
 
-		dx = pRNode->motion.x - params->viewer_x;
-		dy = pRNode->motion.y - params->viewer_y;
+		dx = pRNode->motion.x - objectsRenderParams.params->viewer_x;
+		dy = pRNode->motion.y - objectsRenderParams.params->viewer_y;
 
 		angle = (pRNode->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
@@ -1364,7 +1348,7 @@ void D3DRenderObjectsDraw(
 			xLat1 = 0;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1,
+		pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDib, xLat0, xLat1,
 			GetDrawingEffect(pRNode->obj.flags));
 		if (NULL == pPacket)
 			return;
@@ -1385,13 +1369,13 @@ void D3DRenderObjectsDraw(
 			pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 		}
 
-		angle = pRNode->angle - (params->viewer_angle + 3072);
+		angle = pRNode->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
 		if (angle < -4096)
 			angle += 4096;
 
 		/* Make sure that object is above the floor. */
-		if (!GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
+		if (!GetRoomHeight(objectsRenderParams.room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
 		{
 			continue;
 		}
@@ -1478,7 +1462,8 @@ void D3DRenderObjectsDraw(
 		}
 		else
 		{
-			if (D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams))
+			if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
+				objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
 		}
 
@@ -1568,7 +1553,8 @@ void D3DRenderObjectsDraw(
 			MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 			MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 			MatrixMultiply(&rot, &rot, &mat);
-			MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
+			MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
+				-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);
 			MatrixMultiply(&mat, &trans, &rot);
 			XformMatrixPerspective(&localToScreen, FovHorizontal(w), FovVertical(h), 1.0f, 2000000.0f);
 			MatrixMultiply(&mat, &pChunk->xForm,
@@ -1664,7 +1650,7 @@ void D3DRenderObjectsDraw(
 		if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID() &&
 			(GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE))
 		{
-			pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1,
+			pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDib, xLat0, xLat1,
 				GetDrawingEffect(pRNode->obj.flags));
 			if (NULL == pPacket)
 				return;
@@ -1692,7 +1678,8 @@ void D3DRenderObjectsDraw(
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 			}
 
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, 
+				playerViewParams.player, lightAndTextureParams);
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1755,7 +1742,7 @@ void D3DRenderObjectsDraw(
 * Drawing of projectiles such as arrows and ranged spells such as fireball/lightening bolt.
 * Return the number of projectiles drawn.
 */
-int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3DParams* params)
+int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams)
 {
 	D3DMATRIX			mat, rot;
 	int					angleHeading, anglePitch;
@@ -1769,21 +1756,21 @@ int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3D
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
 
-	angleHeading = params->viewer_angle + 3072;
+	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
 		angleHeading -= 4096;
 
 	anglePitch = PlayerGetHeightOffset();
 
 	// base objects
-	for (list = room->projectiles; list != NULL; list = list->next)
+	for (list = objectsRenderParams.room->projectiles; list != NULL; list = list->next)
 	{
 		BYTE	xLat0, xLat1;
 
 		pProjectile = (Projectile*)list->data;
 
-		dx = pProjectile->motion.x - params->viewer_x;
-		dy = pProjectile->motion.y - params->viewer_y;
+		dx = pProjectile->motion.x - objectsRenderParams.params->viewer_x;
+		dy = pProjectile->motion.y - objectsRenderParams.params->viewer_y;
 
 		angle = (pProjectile->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
@@ -1795,7 +1782,7 @@ int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3D
 		xLat0 = pProjectile->translation;
 		xLat1 = 0;
 
-		pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1, 0);
+		pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDib, xLat0, xLat1, 0);
 		if (NULL == pPacket)
 			return projectileCount;
 
@@ -1811,7 +1798,7 @@ int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3D
 		pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
 		pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 
-		angle = pProjectile->angle - (params->viewer_angle + 3072);
+		angle = pProjectile->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
 		if (angle < -4096)
 			angle += 4096;
@@ -1877,10 +1864,7 @@ int D3DRenderProjectilesDraw(d3d_render_pool_new* pPool, room_type* room, Draw3D
 * Rendering of player's overlay objects such as scimitars, shields, etc.
 */
 void D3DRenderPlayerOverlaysDraw(
-	d3d_render_pool_new* pPool, 
-	room_type* room, 
-	Draw3DParams* params, 
-	bool fogEnabled, 
+	const ObjectsRenderParams& objectsRenderParams,
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams)
 {
@@ -1940,8 +1924,8 @@ void D3DRenderPlayerOverlaysDraw(
 		overlays = *(obj->overlays);
 
 		if (overlays != NULL)
-			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
-				&objArea, TRUE, fogEnabled, playerViewParams, lightAndTextureParams);
+			D3DRenderPlayerOverlayOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams, 
+				overlays, pDib, &objArea, TRUE);
 
 		if (obj->flags & OF_SECONDTRANS)
 		{
@@ -1959,7 +1943,7 @@ void D3DRenderPlayerOverlaysDraw(
 			xLat1 = 0;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1,
+		pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDib, xLat0, xLat1,
 			GetDrawingEffect(pRNode->obj.flags));
 		if (NULL == pPacket)
 			return;
@@ -1995,7 +1979,8 @@ void D3DRenderPlayerOverlaysDraw(
 		}
 		else
 		{
-			D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
+				objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2058,8 +2043,8 @@ void D3DRenderPlayerOverlaysDraw(
 		pChunk->indices[3] = 3;
 
 		if (overlays != NULL)
-			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
-				&objArea, FALSE, fogEnabled, playerViewParams, lightAndTextureParams);
+			D3DRenderPlayerOverlayOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams,
+				overlays, pDib, &objArea, FALSE);
 	}
 }
 
@@ -2067,16 +2052,13 @@ void D3DRenderPlayerOverlaysDraw(
 * Rendering of player's overlay overlays as overlays can have overlays too.
 */
 void D3DRenderPlayerOverlayOverlaysDraw(
-	d3d_render_pool_new* pPool, 
+	const ObjectsRenderParams& objectsRenderParams,
+	const PlayerViewParams& playerViewParams,
+	const LightAndTextureParams& lightAndTextureParams,
 	list_type overlays,
 	PDIB pDib, 
-	room_type* room, 
-	Draw3DParams* params, 
 	AREA* objArea, 
-	BOOL underlays,
-	bool fogEnabled, 
-	const PlayerViewParams& playerViewParams,
-	const LightAndTextureParams& lightAndTextureParams)
+	BOOL underlays)
 {
 	int					pass, depth;
 	room_contents_node* pRNode;
@@ -2203,7 +2185,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 				xLat1 = 0;
 			}
 
-			pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDibOv, xLat0, xLat1,
+			pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDibOv, xLat0, xLat1,
 				GetDrawingEffect(pRNode->obj.flags));
 			if (NULL == pPacket)
 				return;
@@ -2240,7 +2222,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 			}
 			else
 			{
-				D3DObjectLightingCalc(room, pRNode, &bgra, 0, fogEnabled, playerViewParams.player, lightAndTextureParams);
+				D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
 			}
 
 			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))

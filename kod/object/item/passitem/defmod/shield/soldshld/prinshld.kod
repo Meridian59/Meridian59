@@ -165,7 +165,7 @@ messages:
       % Sample numbers for:
       % - FACTION_RANK_MIN = 1
       % - FACTION_RANK_MAX = 10
-      % - MANA_REDUCTION_MAX = 5
+      % - MANA_REDUCTION_MIN = 5
       % - MANA_REDUCTION_MAX = 25
       
       % Faction Rank | iReduction (%)

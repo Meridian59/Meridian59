@@ -1571,7 +1571,7 @@ messages:
          iCost = iCost - 1;
       }
 
-      % Recieve a cost reduction for being a Princess soldier (Details in `prinshld.kod`)
+      % Receive a cost reduction for being a Princess soldier (Details in `prinshld.kod`)
       oPrincessShield = Send(who,@FindUsing,#class=&PrincessShield);
       if oPrincessShield <> $
       { 

@@ -1571,11 +1571,11 @@ messages:
          iCost = iCost - 1;
       }
 
-      % Up to -2 for being a Princess soldier
+      % Receive a cost reduction for being a Princess soldier (Details in `prinshld.kod`)
       oPrincessShield = Send(who,@FindUsing,#class=&PrincessShield);
       if oPrincessShield <> $
-      {
-         iCost = iCost - Send(oPrincessShield,@GetSpellManaReduction);
+      { 
+         iCost = iCost - (iCost * Send(oPrincessShield,@GetSpellManaReduction) + 99) / 100;
       }
       
       return bound(iCost,1,$);

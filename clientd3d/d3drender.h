@@ -178,4 +178,6 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 float FovHorizontal(long width);
 float FovVertical(long height);
 
+bool isFogEnabled();
+
 #endif	// __D3DRENDER_H__

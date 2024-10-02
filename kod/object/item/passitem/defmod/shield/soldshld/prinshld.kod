@@ -171,14 +171,14 @@ messages:
       % Faction Rank | iReduction (%)
       % -------------|---------------
       %       1      |      5
-      %       2      |      6
-      %       3      |      7
-      %       4      |      9
-      %       5      |     10
-      %       6      |     12
-      %       7      |     14
-      %       8      |     17
-      %       9      |     19
+      %       2      |      7
+      %       3      |      9
+      %       4      |     11
+      %       5      |     13
+      %       6      |     16
+      %       7      |     18
+      %       8      |     20
+      %       9      |     22
       %      10      |     25
 
       iReduction = ((piFactionRank - 1) * (MANA_REDUCTION_MAX - MANA_REDUCTION_MIN) / (FACTION_RANK_MAX - FACTION_RANK_MIN)) + MANA_REDUCTION_MIN;

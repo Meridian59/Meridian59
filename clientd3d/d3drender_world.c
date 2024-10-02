@@ -40,10 +40,14 @@ extern int gNumObjects;
 extern Vector3D sun_vect;
 extern D3DMATRIX view;
 
-static const auto alpha_test_threshold = 128; // Threshold for alpha testing to determine transparency
-extern Bool gWireframe;
+// Lower values (e.g., 128) resulted in too many semi-transparent pixels being rendered, 
+// causing blending artifacts, especially between the skybox and other static transparent geometry. 
+// Higher values (e.g., 210 or above) resulted in too much transparency being discarded, creating sharp, 
+// noticeable edges where smooth transparency should occur, such as between door archways.
+static const auto alpha_test_threshold = 200;
 
-extern player_info player;
+extern Bool gWireframe;
+extern player_info player;	
 
 // Interfaces
 

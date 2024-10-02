@@ -36,7 +36,7 @@
 #define MAP_GUILDMATE_COLOR     PALETTERGB(255, 255, 0)
 
 #define MAP_OBJECT_RADIUS (FINENESS / 6)  // Radius of circle drawn for an object
-#define MAP_OBJECT_MAX_SIZE 4             // Maximum size for objects on map
+#define MAP_OBJECT_MAX_RADIUS 4           // Maximum radius for objects on map
 
 #define MAP_ZOOM_INCREMENT 0.1       // Amount to change zoom factor per user command
 #define MAP_ZOOM_DELAY     100       // # of milliseconds between zooming in by INCREMENT
@@ -383,8 +383,8 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
    int dx, dy;
    static int mapObjectDistanceShiftAndSquare = (MAP_OBJECT_DISTANCE >> 4) * (MAP_OBJECT_DISTANCE >> 4);
 
-   // Scale radius, clamping between a minimum of 1 and MAP_OBJECT_MAX_SIZE
-   radius = min(max(1, MAP_OBJECT_RADIUS * scale), MAP_OBJECT_MAX_SIZE);
+   // Scale radius, clamping between a minimum of 1 and the defined maximum
+   radius = min(max(1, MAP_OBJECT_RADIUS * scale), MAP_OBJECT_MAX_RADIUS);
 
    for (l = objects; l != NULL; l = l->next)
    {
@@ -529,8 +529,8 @@ void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, floa
 		new_y =	y + (int) (annotations[i].y * scaleToUse);
 
       // Scale annotation, capping it between the minimum and maximum limits
-      capped_scaled_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_SIZE);
-      radius = max(MAP_ANNOTATION_MIN_SIZE, capped_scaled_size) / 2;
+      capped_scaled_size = min(MAP_ANNOTATION_RADIUS * scaleToUse, MAP_ANNOTATION_MAX_RADIUS);
+      radius = max(MAP_ANNOTATION_MIN_RADIUS, capped_scaled_size);
 
 		if (annotation.bits != NULL)
 		{

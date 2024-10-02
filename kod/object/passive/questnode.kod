@@ -1609,7 +1609,8 @@ messages:
       return piStatus;
    }
 
-   DeadlineExpired()
+   DeadlineExpired(report = TRUE)
+   "Handle deadline expiration and notify player when `report=TRUE`"
    {
       local oQuestEngine, sSay, oQuester, lPenalty, lQuesters, iNodeType;
 
@@ -1649,8 +1650,9 @@ messages:
       }
 
       % notify player by mail
-      if Send(oQuestEngine,@GetQuestNodeFailureHint,
-              #index=piQuestNodeTemplateIndex) <> $
+      if (Send(oQuestEngine,@GetQuestNodeFailureHint,
+              #index=piQuestNodeTemplateIndex) <> $)
+              AND report = TRUE
       {
          sSay = CreateString();
 

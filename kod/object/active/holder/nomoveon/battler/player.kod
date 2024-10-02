@@ -11196,7 +11196,9 @@ messages:
 
    ResignFaction()
    {
-      local numMembers, oQuestEngine, oQuest, oFlagPole;
+      local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
+
+      iServiceQuestIndex = 0;
 
       oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
@@ -11217,51 +11219,41 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=player_unfactioned);
       }
-      
-      %decrease the max number of loyalty quests by one
+
+      % Decrease the max number of loyalty quests and expire the player's 
+      % current service quest, if one is active 
       if piFaction = FACTION_PRINCESS
       {
+         iServiceQuestIndex = QST_ID_PRINCESS_SERVICE;
+      }
+
+      if piFaction = FACTION_DUKE
+      {
+         iServiceQuestIndex = QST_ID_DUKE_SERVICE;
+      }
+
+      if piFaction = FACTION_REBEL
+      {
+         iServiceQuestIndex = QST_ID_REBEL_SERVICE;
+      }
+
+      if iServiceQuestIndex > 0
+      {
          oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_PRINCESS_SERVICE);
+                     #index=iServiceQuestIndex);
+         
+         % If the player is on a service quest for the faction they're losing, 
+         % let's expire it to avoid confusion caused by its eventual failure.
+         Send(oQuestEngine,@ExpireQuests,#index=iServiceQuestIndex,#who=self,
+               #report=FALSE);
+
+         % Decrease the max number of loyalty quests by one
          numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
          if numMembers > 0
          {
             Send(oQuestEngine,@SetQuestMaxActive,
-                 #index=QST_ID_PRINCESS_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-      }
-      
-      if piFaction = FACTION_DUKE
-      {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_DUKE_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_DUKE_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-      }
-      
-      if piFaction = FACTION_REBEL
-      {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_REBEL_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_REBEL_SERVICE,
-                 #new_max=(numMembers-1));
+                  #index=iServiceQuestIndex,
+                  #new_max=(numMembers-1));
          }
          else
          {
@@ -12264,7 +12256,6 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

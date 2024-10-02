@@ -36,7 +36,7 @@ static void D3DRenderOverlaysDraw(
 	const GameObjectDataParams& gameObjectDataParams, 
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams,
-	BOOL underlays, 
+	bool underlays, 
 	int flags);
 
 static int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams);
@@ -53,7 +53,7 @@ static void D3DRenderPlayerOverlayOverlaysDraw(
 	list_type overlays,
 	PDIB pDib, 
 	AREA* objArea, 
-	BOOL underlays);
+	bool underlays);
 
 static bool D3DObjectLightingCalc(
 	room_type* room, 
@@ -139,16 +139,16 @@ long D3DRenderObjects(
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 
 	// Render world objects
-	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, FALSE);
-	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, FALSE);
-	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, FALSE);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, false);
+	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, false);
+	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, false);
 
 	// Render translucent objects
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS);
 	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, TRANSLUCENT_FLAGS);
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, TRANSLUCENT_FLAGS);
 
-	gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(objectsRenderParams);
+	*gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(objectsRenderParams);
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
@@ -515,7 +515,7 @@ void D3DRenderOverlaysDraw(
 	const GameObjectDataParams& gameObjectDataParams, 
 	const PlayerViewParams& playerViewParams, 
 	const LightAndTextureParams& lightAndTextureParams,
-	BOOL underlays, 
+	bool underlays, 
 	int flags)
 {
 	D3DMATRIX			mat, rot, trans;
@@ -529,7 +529,7 @@ void D3DRenderOverlaysDraw(
 	float				lastDistance, invShrink, invOvShrink, invOv2Shrink, depthf;
 	BYTE				xLat0, xLat1, zBias;
 	int					sector_flags;
-	Bool				bHotspot;
+	bool				bHotspot;
 
 	d3d_render_packet_new* pPacket = NULL;
 	d3d_render_chunk_new* pChunk = NULL;
@@ -639,7 +639,7 @@ void D3DRenderOverlaysDraw(
 
 			for (list2 = *pRNode->obj.overlays; list2 != NULL; list2 = list2->next)
 			{
-				bHotspot = FALSE;
+				bHotspot = true;
 
 				pOverlay = (Overlay*)list2->data;
 
@@ -706,7 +706,7 @@ void D3DRenderOverlaysDraw(
 							xyz[i].z -= pDibOv->yoffset * 16.000f * invShrink;
 						}
 
-						bHotspot = TRUE;
+						bHotspot = true;
 					}
 					else
 					{
@@ -798,7 +798,7 @@ void D3DRenderOverlaysDraw(
 										xyz[i].z -= pDibOv->yoffset * 16.000f * invOv2Shrink;
 									}
 
-									bHotspot = TRUE;
+									bHotspot = true;
 								}
 								else
 									continue;
@@ -1081,7 +1081,7 @@ void D3DRenderOverlaysDraw(
 							if (range == NULL)
 							{
 								// Set up new visible object
-								range = &gameObjectDataParams.visibleObjects[gameObjectDataParams.numVisibleObjects];
+								range = &gameObjectDataParams.visibleObjects[*gameObjectDataParams.numVisibleObjects];
 								range->id = pRNode->obj.id;
 								range->distance = distance;
 								range->left_col = tempLeft;
@@ -1089,7 +1089,7 @@ void D3DRenderOverlaysDraw(
 								range->top_row = tempTop;
 								range->bottom_row = tempBottom;
 
-								gameObjectDataParams.numVisibleObjects = ++gameObjectDataParams.numVisibleObjects > MAXOBJECTS ? MAXOBJECTS : gameObjectDataParams.numVisibleObjects;
+								*gameObjectDataParams.numVisibleObjects = min(*gameObjectDataParams.numVisibleObjects + 1, MAXOBJECTS);
 							}
 
 							/* Record boundaries of drawing area */
@@ -1199,7 +1199,7 @@ void D3DRenderOverlaysDraw(
 						pChunk->indices[3] = 3;
 					}
 
-					gameObjectDataParams.numObjects++;
+					*gameObjectDataParams.numObjects++;
 				TEMP_END2: // ewww we have a goto.. todo: lets remove
 					{
 						int i = 0;
@@ -1624,7 +1624,7 @@ void D3DRenderObjectsDraw(
 				if (range == NULL)
 				{
 					// Set up new visible object
-					range = &gameObjectDataParams.visibleObjects[gameObjectDataParams.numVisibleObjects];
+					range = &gameObjectDataParams.visibleObjects[*gameObjectDataParams.numVisibleObjects];
 					range->id = pRNode->obj.id;
 					range->distance = distance;
 					range->left_col = tempLeft;
@@ -1632,7 +1632,7 @@ void D3DRenderObjectsDraw(
 					range->top_row = tempTop;
 					range->bottom_row = tempBottom;
 
-					gameObjectDataParams.numVisibleObjects = ++gameObjectDataParams.numVisibleObjects > MAXOBJECTS ? MAXOBJECTS : gameObjectDataParams.numVisibleObjects;
+					*gameObjectDataParams.numVisibleObjects = min(*gameObjectDataParams.numVisibleObjects + 1, MAXOBJECTS);
 				}
 
 				// Record boundaries of drawing area
@@ -1921,7 +1921,7 @@ void D3DRenderPlayerOverlaysDraw(
 
 		if (overlays != NULL)
 			D3DRenderPlayerOverlayOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams, 
-				overlays, pDib, &objArea, TRUE);
+				overlays, pDib, &objArea, true);
 
 		if (obj->flags & OF_SECONDTRANS)
 		{
@@ -2040,7 +2040,7 @@ void D3DRenderPlayerOverlaysDraw(
 
 		if (overlays != NULL)
 			D3DRenderPlayerOverlayOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams,
-				overlays, pDib, &objArea, FALSE);
+				overlays, pDib, &objArea, false);
 	}
 }
 
@@ -2054,7 +2054,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 	list_type overlays,
 	PDIB pDib, 
 	AREA* objArea, 
-	BOOL underlays)
+	bool underlays)
 {
 	int					pass, depth;
 	room_contents_node* pRNode;

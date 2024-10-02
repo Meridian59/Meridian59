@@ -87,8 +87,8 @@ struct GameObjectDataParams
 {
     // Information about draw items and object ranges
     long numItems;
-    int& numVisibleObjects;
-    int& numObjects;
+    mutable int* numVisibleObjects;
+    mutable int* numObjects;
     DrawItem* drawData;
     ObjectRange* visibleObjects;    // Where objects are on screen
 
@@ -98,8 +98,8 @@ struct GameObjectDataParams
 
     GameObjectDataParams(
         long numItemsParam,
-        int& numVisibleObjectsParam,
-        int& numObjectsParam,
+        int* numVisibleObjectsParam,
+        int* numObjectsParam,
         DrawItem* drawDataParam,
         ObjectRange* visibleObjectsParam,
         PDIRECT3DTEXTURE9 backBufferTexFullParam,

@@ -2313,8 +2313,8 @@ void D3DGeometryBuildNew(
 */
 void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheSystem)
 {
-	auto shadeAmount = getShadeAmount();
-	auto sunVect = getSunVector();
+	const auto shadeAmount = getShadeAmount();
+	const auto sunVect = getSunVector();
 
 	u_int				curPacket, curChunk;
 	u_int				i, numPackets;
@@ -2796,8 +2796,8 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags,
 
 	if (pBGRA)
 	{
-		auto shadeAmount = getShadeAmount();
-		auto sunVect = getSunVector();
+		const auto shadeAmount = getShadeAmount();
+		const auto sunVect = getSunVector();
 		int	i;
 		float a, b;
 		int	distX, distY, distance;
@@ -3079,8 +3079,8 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 
 			lightscale = FINENESS;
 
-			auto shadeAmount = getShadeAmount();
-			auto sunVect = getSunVector();
+			const auto shadeAmount = getShadeAmount();
+			const auto sunVect = getSunVector();
 
 			if (shadeAmount != 0)
 			{
@@ -3343,8 +3343,8 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 
 			lightscale = FINENESS;
 
-			auto shadeAmount = getShadeAmount();
-			auto sunVect = getSunVector();
+			const auto shadeAmount = getShadeAmount();
+			const auto sunVect = getSunVector();
 
 			if (shadeAmount != 0)
 			{

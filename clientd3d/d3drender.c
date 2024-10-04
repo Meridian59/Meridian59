@@ -194,12 +194,12 @@ bool isFogEnabled()
 	return gD3DDriverProfile.bFogEnable;
 }
 
-long getShadeAmount()
+const long getShadeAmount()
 {
 	return shade_amount;
 }
 
-Vector3D getSunVector()
+const Vector3D getSunVector()
 {
 	return sun_vect;
 }

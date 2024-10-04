@@ -101,7 +101,7 @@ resources:
    user_broadcast_echo_str = "You broadcast, \"%q~n\""
    user_send_str = "%s sends, \"%q~n\""
    user_send_one_str = "%s tells you, \"%q~n\""
-   user_said_resource_str = "%s%s says, \"%s~n\""
+   user_said_resource_str = "~n~k%s%s says, \"%s~n\""
    user_emote_str = "%s %q"
    user_echo_str = "%q"
 

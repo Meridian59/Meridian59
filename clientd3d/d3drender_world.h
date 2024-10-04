@@ -19,7 +19,7 @@ struct WorldCacheSystemParams {
     d3d_render_cache_system* worldCacheSystem;
     d3d_render_cache_system* worldCacheSystemStatic;
 
-	d3d_render_cache_system* lMapCacheSystem;
+    d3d_render_cache_system* lMapCacheSystem;
     d3d_render_cache_system* lMapCacheSystemStatic;
 
     d3d_render_cache_system* wallMaskCacheSystem; // geometry
@@ -90,8 +90,8 @@ struct WorldRenderParams {
     const WorldCacheSystemParams& cacheSystemParams;
     const WorldPoolParams& poolParams;
 
-	D3DMATRIX view;
-	D3DMATRIX proj;
+    D3DMATRIX view;
+    D3DMATRIX proj;
 
     room_type* room;
     Draw3DParams* params;

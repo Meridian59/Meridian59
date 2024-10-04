@@ -83,9 +83,9 @@ struct WorldPropertyParams {
 
 struct WorldRenderParams {
 
-	LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
-	LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationSecondary;
-	d3d_driver_profile driverProfile;
+    LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
+    LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationSecondary;
+    d3d_driver_profile driverProfile;
 
     const WorldCacheSystemParams& cacheSystemParams;
     const WorldPoolParams& poolParams;

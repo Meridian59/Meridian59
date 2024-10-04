@@ -22,7 +22,7 @@ struct WorldCacheSystemParams {
 	d3d_render_cache_system* lMapCacheSystem;
     d3d_render_cache_system* lMapCacheSystemStatic;
 
-    d3d_render_cache_system* wallMaskCacheSystem; // geomertry.
+    d3d_render_cache_system* wallMaskCacheSystem; // geometry
 
     WorldCacheSystemParams(
         d3d_render_cache_system* worldCacheSystemParam,
@@ -47,7 +47,7 @@ struct WorldPoolParams {
 	d3d_render_pool_new* lMapPool;
 	d3d_render_pool_new* lMapPoolStatic;
 
-	d3d_render_pool_new* wallMaskPool; // geometry.
+	d3d_render_pool_new* wallMaskPool; // geometry
 
     WorldPoolParams(
         d3d_render_pool_new* worldPoolParam,
@@ -62,6 +62,23 @@ struct WorldPoolParams {
             lMapPoolStatic(lMapPoolStaticParam),
             wallMaskPool(wallMaskPoolParam)
     {}
+};
+
+struct WorldPropertyParams {
+    
+    LPDIRECT3DTEXTURE9 noLookThrough;
+    LPDIRECT3DTEXTURE9 lightOrange;
+
+    Bool* wireFrame;
+
+	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughParam,
+        LPDIRECT3DTEXTURE9 lightOrangeParam,
+        Bool* wireFrameParam, 
+        player_info* playerParam)
+		: noLookThrough(noLookThroughParam),
+		  lightOrange(lightOrangeParam),
+		  wireFrame(wireFrameParam)
+	{}
 };
 
 struct WorldRenderParams {
@@ -100,10 +117,19 @@ struct WorldRenderParams {
           room(roomParam),
           params(paramsParam)
     {}
-};
+}; 
 
-long D3DRenderWorld(const WorldRenderParams& worldRenderParams, const LightAndTextureParams& lightAndTextureParams);
-void D3DGeometryBuildNew(const WorldRenderParams& worldRenderParams, const LightAndTextureParams& lightAndTextureParams, bool transparent_pass);
+long D3DRenderWorld(
+    const WorldRenderParams& worldRenderParams, 
+    const WorldPropertyParams& worldPropertyParams, 
+    const LightAndTextureParams& lightAndTextureParams);
+
+void D3DGeometryBuildNew(
+    const WorldRenderParams& worldRenderParams, 
+    const WorldPropertyParams& worldPropertyParams, 
+    const LightAndTextureParams& lightAndTextureParams, 
+    bool transparent_pass);
+
 void GeometryUpdate(d3d_render_pool_new* pPool, d3d_render_cache_system* pCacheSystem);
 
 #endif	/* #ifndef _D3DRENDERWORLD_H */

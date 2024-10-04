@@ -111,10 +111,6 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
 int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightOffset);
 int  GetFlicker(room_contents_node *obj);
 
-/* 
-void DrawMapAsView(room_type *room, Draw3DParams *params); // defined in drawbsp.h
-void DrawMiniMap(room_type *room, Draw3DParams *params); // defined in drawbsp.h
-*/
 
 #endif /* #ifndef _DRAW3D_H */
 

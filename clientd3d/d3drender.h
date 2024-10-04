@@ -179,5 +179,8 @@ float FovHorizontal(long width);
 float FovVertical(long height);
 
 bool isFogEnabled();
+long getShadeAmount();
+Vector3D getSunVector();
+const player_info* getPlayer();
 
 #endif	// __D3DRENDER_H__

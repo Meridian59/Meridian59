@@ -144,7 +144,6 @@ extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
 extern Draw3DParams		*p;
-extern int				gNumCalls;
 extern long				shade_amount;
 extern DrawItem			drawdata[];
 extern long				nitems;
@@ -160,6 +159,11 @@ extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
 D3DMATRIX view, mat, rot, trans, proj;
+
+const player_info* getPlayer()
+{
+	return &player;
+}
 
 void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
@@ -190,6 +194,15 @@ bool isFogEnabled()
 	return gD3DDriverProfile.bFogEnable;
 }
 
+long getShadeAmount()
+{
+	return shade_amount;
+}
+
+Vector3D getSunVector()
+{
+	return sun_vect;
+}
 
 // externed stuff
 extern void			DrawItemsD3D();
@@ -560,6 +573,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange, &gWireframe, &player);
+
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
 		D3DFxInit();
@@ -573,14 +588,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(worldRenderParams, lightAndTextureParams, false);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 		
 		// Second pass: render transparent objects
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-		D3DGeometryBuildNew(worldRenderParams, lightAndTextureParams, true);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 
 		gD3DRedrawAll = FALSE;
 	}
@@ -602,7 +617,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_world)
 	{
-		timeWorld = D3DRenderWorld(worldRenderParams, lightAndTextureParams);
+		timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -695,8 +710,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		{
 			D3DRenderShutDown();
 			D3DRenderInit(hMain);
-			D3DGeometryBuildNew(worldRenderParams, lightAndTextureParams, false);
-			D3DGeometryBuildNew(worldRenderParams, lightAndTextureParams, true);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 		}
 	}
 	if ((gFrame & 255) == 255)

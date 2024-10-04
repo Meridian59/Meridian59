@@ -98,11 +98,11 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
        continue;
 
      // Set up tooltip for annotation
-     ti.rect.left = view.x + x + (int) ((annotations[i].x - MAP_ANNOTATION_RADIUS) * scale);
-     ti.rect.top  = view.y + y + (int) ((annotations[i].y - MAP_ANNOTATION_RADIUS) * scale);
+     ti.rect.left = view.x + x + (int) ((annotations[i].x - MAP_ANNOTATION_SIZE) * scale);
+     ti.rect.top  = view.y + y + (int) ((annotations[i].y - MAP_ANNOTATION_SIZE) * scale);
 
-     ti.rect.right  = ti.rect.left + (int) (MAP_ANNOTATION_RADIUS * 2 * scale);
-     ti.rect.bottom = ti.rect.top  + (int) (MAP_ANNOTATION_RADIUS * 2 * scale);
+     ti.rect.right  = ti.rect.left + (int) (MAP_ANNOTATION_SIZE * 2 * scale);
+     ti.rect.bottom = ti.rect.top  + (int) (MAP_ANNOTATION_SIZE * 2 * scale);
 
      // Clip tooltip rectangle to graphics view window
      ti.rect.left = max(ti.rect.left, view.x);
@@ -144,8 +144,8 @@ void MapAnnotationClick(int x, int y)
      if (a->text[0] == 0)
        continue;
 
-     if (a->x <= x + MAP_ANNOTATION_RADIUS && a->x >= x - MAP_ANNOTATION_RADIUS &&
-	 a->y <= y + MAP_ANNOTATION_RADIUS && a->y >= y - MAP_ANNOTATION_RADIUS)
+     if (a->x <= x + MAP_ANNOTATION_SIZE && a->x >= x - MAP_ANNOTATION_SIZE &&
+	 a->y <= y + MAP_ANNOTATION_SIZE && a->y >= y - MAP_ANNOTATION_SIZE)
        {
 	 existed = True;
 	 index = i;

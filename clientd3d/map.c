@@ -529,7 +529,7 @@ void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, floa
 		new_y =	y + (int) (annotations[i].y * scaleToUse);
 
       // Scale annotation, capping it between the minimum and maximum limits
-      capped_scaled_size = min(MAP_ANNOTATION_RADIUS * scaleToUse, MAP_ANNOTATION_MAX_RADIUS);
+      capped_scaled_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_RADIUS);
       radius = max(MAP_ANNOTATION_MIN_RADIUS, capped_scaled_size);
 
 		if (annotation.bits != NULL)

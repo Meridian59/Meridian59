@@ -516,9 +516,13 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
  */
 void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap )
 {
-	int i, radius, capped_scaled_size, new_x, new_y;
+	int i, radius, scaled_radius, new_x, new_y;
 
-	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap );
+   // Scale annotation, capping it between the minimum and maximum limits
+   scaled_radius = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_RADIUS);
+   radius = max(MAP_ANNOTATION_MIN_RADIUS, scaled_radius);
+
+	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap, scaled_radius );
 
 	for (i=0; i < MAX_ANNOTATIONS; i++)
 	{
@@ -527,10 +531,6 @@ void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, floa
 
 		new_x = x + (int) (annotations[i].x * scaleToUse);
 		new_y =	y + (int) (annotations[i].y * scaleToUse);
-
-      // Scale annotation, capping it between the minimum and maximum limits
-      capped_scaled_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_RADIUS);
-      radius = max(MAP_ANNOTATION_MIN_RADIUS, capped_scaled_size);
 
 		if (annotation.bits != NULL)
 		{

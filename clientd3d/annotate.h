@@ -25,7 +25,7 @@ typedef struct {
 
 void MapAnnotationsInitialize(void);
 void MapAnnotationGetText(TOOLTIPTEXT *ttt);
-void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap );
+void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap, int radius );
 void MapAnnotationClick(int x, int y);
 void AbortAnnotateDialog(void);
 

@@ -75,7 +75,7 @@ void MapAnnotationGetText(TOOLTIPTEXT *ttt)
 /*
  * MapMoveAnnotations:  Recompute tooltip rectangles for map annotations.
  */
-void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap )
+void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap, int radius )
 {
    int i;
    TOOLINFO ti;
@@ -97,12 +97,11 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
      if (annotations[i].text[0] == 0)
        continue;
 
-     // Set up tooltip for annotation
-     ti.rect.left = view.x + x + (int) ((annotations[i].x - MAP_ANNOTATION_SIZE) * scale);
-     ti.rect.top  = view.y + y + (int) ((annotations[i].y - MAP_ANNOTATION_SIZE) * scale);
-
-     ti.rect.right  = ti.rect.left + (int) (MAP_ANNOTATION_SIZE * 2 * scale);
-     ti.rect.bottom = ti.rect.top  + (int) (MAP_ANNOTATION_SIZE * 2 * scale);
+     // Set up tooltip for annotation using zoomed radius  
+     ti.rect.left = view.x + x + (int) (annotations[i].x * scale) - radius;
+     ti.rect.top  = view.y + y + (int) (annotations[i].y * scale) - radius;
+     ti.rect.right  = ti.rect.left + (int) (radius * 2);
+     ti.rect.bottom = ti.rect.top  + (int) (radius * 2);
 
      // Clip tooltip rectangle to graphics view window
      ti.rect.left = max(ti.rect.left, view.x);

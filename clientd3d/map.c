@@ -19,12 +19,12 @@
 
 #include "client.h"
 
-#define MAP_WALL_THICKNESS 1
-#define MAP_SELF_THICKNESS 2
-#define MAP_PLAYER_THICKNESS 5
-#define MAP_OBJECT_THICKNESS 3
+#define MAP_WALL_THICKNESS 1        // Thickness of wall lines
+#define MAP_SELF_THICKNESS 2        // Stroke thickness of player arrow marker
+#define MAP_PLAYER_THICKNESS 3      // Stroke thickness of other players
+#define MAP_OBJECT_THICKNESS 3      // Stroke thickness of objects
 
-#define MAP_PLAYER_MARKER_SIZE 3
+#define MAP_PLAYER_MARKER_SIZE 3    // Size of player arrow marker
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
 #define MAP_SELF_COLOR          PALETTERGB(0, 0, 255)
@@ -35,8 +35,8 @@
 #define MAP_ENEMY_COLOR         PALETTERGB(255, 0, 0)
 #define MAP_GUILDMATE_COLOR     PALETTERGB(255, 255, 0)
 
-#define MAP_OBJECT_RADIUS (FINENESS / 6)  // Radius of circle drawn for an object
-#define MAP_OBJECT_MAX_RADIUS 4           // Maximum radius for objects on map
+#define MAP_OBJECT_SIZE (FINENESS / 2)  // Size of ellipse drawn for an object
+#define MAP_OBJECT_MAX_SIZE 8           // Maximum size of object ellipses
 
 #define MAP_ZOOM_INCREMENT 0.1       // Amount to change zoom factor per user command
 #define MAP_ZOOM_DELAY     100       // # of milliseconds between zooming in by INCREMENT
@@ -384,7 +384,7 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
    static int mapObjectDistanceShiftAndSquare = (MAP_OBJECT_DISTANCE >> 4) * (MAP_OBJECT_DISTANCE >> 4);
 
    // Scale radius, clamping between a minimum of 1 and the defined maximum
-   radius = min(max(1, MAP_OBJECT_RADIUS * scale), MAP_OBJECT_MAX_RADIUS);
+   radius = min(max(1, (MAP_OBJECT_SIZE * scale)), MAP_OBJECT_MAX_SIZE) / 2;
 
    for (l = objects; l != NULL; l = l->next)
    {

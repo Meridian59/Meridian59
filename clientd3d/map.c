@@ -516,13 +516,13 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
  */
 void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap )
 {
-	int i, radius, scaled_radius, new_x, new_y;
+	int i, adjusted_size, new_x, new_y;
 
    // Scale annotation, capping it between the minimum and maximum limits
-   scaled_radius = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_RADIUS);
-   radius = max(MAP_ANNOTATION_MIN_RADIUS, scaled_radius);
+   adjusted_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_SIZE);
+   adjusted_size = max(MAP_ANNOTATION_MIN_SIZE, adjusted_size);
 
-	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap, scaled_radius );
+	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap, adjusted_size );
 
 	for (i=0; i < MAX_ANNOTATIONS; i++)
 	{
@@ -534,10 +534,10 @@ void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, floa
 
 		if (annotation.bits != NULL)
 		{
-			OffscreenWindowBackground(NULL, new_x - radius, new_y - radius, 
+			OffscreenWindowBackground(NULL, new_x - (adjusted_size / 2), new_y - (adjusted_size / 2), 
 									    annotation.width, annotation.height);
-			OffscreenStretchBlt(hdc, (int) (new_x - radius), (int) (new_y - radius), 
-								  2 * radius, 2 * radius,
+			OffscreenStretchBlt(hdc, (int) (new_x - (adjusted_size / 2)), (int) (new_y - (adjusted_size / 2)), 
+								  adjusted_size, adjusted_size,
 								  annotation.bits, 0, 0, 
 								  annotation.width, annotation.height,
 								  OBB_COPY | OBB_FLIP);

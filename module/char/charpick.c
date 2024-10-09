@@ -130,6 +130,7 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    static HWND hList;
    int index, i;
    Character *c;
+   HBITMAP hBitmap;
 
    switch (message)
    {
@@ -158,11 +159,19 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       Edit_SetText(GetDlgItem(hDlg, IDC_MOTD), info->motd);  
       
       // Display advertisements
-      for (i=0; i < info->num_ads; i++)
+      for (i = 0; i < info->num_ads; i++)
       {
          char filename[MAX_PATH + FILENAME_MAX];
          sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
-         Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
+
+         // Load the BMP file
+         hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+         if (hBitmap == NULL) {
+               MessageBox(hDlg, "Failed to load bitmap image!", "Error", MB_OK | MB_ICONERROR);
+               continue;
+         }
+
+         SendDlgItemMessage(hDlg, animation_controls[i], STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
       }
       
       hPickCharDialog = hDlg;

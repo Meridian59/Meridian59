@@ -959,7 +959,7 @@ void D3DRenderPacketWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsigne
 * Add a wall mask to the render pool
 */
 void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, unsigned int type, int side, 
-	LPDIRECT3DTEXTURE9 noLookThrough, Bool bDynamic)
+	LPDIRECT3DTEXTURE9 noLookThrough, bool bDynamic)
 {
 	Sidedef*		pSideDef;
 	custom_xyz		xyz[4];
@@ -968,8 +968,8 @@ void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, uns
 	unsigned int	flags;
 	PDIB			pDib;
 	int				vertex;
-	Bool			bNoVTile = FALSE;
-	Bool			bNoLookThrough = FALSE;
+	bool			bNoVTile = false;
+	bool			bNoLookThrough = false;
 
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
@@ -1047,17 +1047,17 @@ void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, uns
 	if (pWall->pos_sidedef)
 	{
 		if (pWall->pos_sidedef->flags & WF_NO_VTILE)
-			bNoVTile = TRUE;
+			bNoVTile = true;
 		if (pWall->pos_sidedef->flags & WF_NOLOOKTHROUGH)
-			bNoLookThrough = TRUE;
+			bNoLookThrough = true;
 	}
 
 	if (pWall->neg_sidedef)
 	{
 		if (pWall->neg_sidedef->flags & WF_NO_VTILE)
-			bNoVTile = TRUE;
+			bNoVTile = true;
 		if (pWall->neg_sidedef->flags & WF_NOLOOKTHROUGH)
-			bNoLookThrough = TRUE;
+			bNoLookThrough = true;
 	}
 
 	if (NULL == pDib)
@@ -1065,7 +1065,7 @@ void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, uns
 
 	if ((pSideDef->flags & WF_NOLOOKTHROUGH) == 0)
 	{
-		if ((bNoLookThrough == 0) || (bNoVTile == 0))
+		if (!bNoLookThrough || !bNoVTile)
 			return;
 	}
 
@@ -1254,7 +1254,7 @@ void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, uns
 /*
 * Add a floor mask to the render pool
 */
-void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, Bool bDynamic)
+void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, bool bDynamic)
 {
 	Sector* pSector = pNode->u.leaf.sector;
 	custom_xyz	xyz[MAX_NPTS];
@@ -2313,8 +2313,8 @@ void D3DGeometryBuildNew(
 */
 void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheSystem)
 {
-	const auto shadeAmount = getShadeAmount();
-	const auto sunVect = getSunVector();
+	auto shadeAmount = getShadeAmount();
+	auto sunVect = getSunVector();
 
 	u_int				curPacket, curChunk;
 	u_int				i, numPackets;
@@ -2796,8 +2796,8 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags,
 
 	if (pBGRA)
 	{
-		const auto shadeAmount = getShadeAmount();
-		const auto sunVect = getSunVector();
+		auto shadeAmount = getShadeAmount();
+		auto sunVect = getSunVector();
 		int	i;
 		float a, b;
 		int	distX, distY, distance;
@@ -3079,8 +3079,8 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 
 			lightscale = FINENESS;
 
-			const auto shadeAmount = getShadeAmount();
-			const auto sunVect = getSunVector();
+			auto shadeAmount = getShadeAmount();
+			auto sunVect = getSunVector();
 
 			if (shadeAmount != 0)
 			{
@@ -3343,8 +3343,8 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 
 			lightscale = FINENESS;
 
-			const auto shadeAmount = getShadeAmount();
-			const auto sunVect = getSunVector();
+			auto shadeAmount = getShadeAmount();
+			auto sunVect = getSunVector();
 
 			if (shadeAmount != 0)
 			{

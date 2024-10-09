@@ -74,8 +74,16 @@ void MapAnnotationGetText(TOOLTIPTEXT *ttt)
 /*****************************************************************************/
 /*
  * MapMoveAnnotations:  Recompute tooltip rectangles for map annotations.
+ *
+ * Parameters:
+ *  annotations - An array of MapAnnotation objects containing annotation details
+ *  x           - X-offset to adjust the annotation position relative to the view
+ *  y           - Y-offset to adjust the annotation position relative to the view
+ *  scale       - Map scaling factor applied to annotation positions for zooming
+ *  bMiniMap    - True if minimap, false otherwise
+ *  size        - The full size of the square annotation, already adjusted by the zoom factor and clipped
  */
-void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap )
+void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap, int size )
 {
    int i;
    TOOLINFO ti;
@@ -97,12 +105,11 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
      if (annotations[i].text[0] == 0)
        continue;
 
-     // Set up tooltip for annotation
-     ti.rect.left = view.x + x + (int) ((annotations[i].x - MAP_ANNOTATION_SIZE / 2) * scale);
-     ti.rect.top  = view.y + y + (int) ((annotations[i].y - MAP_ANNOTATION_SIZE / 2) * scale);
-
-     ti.rect.right  = ti.rect.left + (int) (MAP_ANNOTATION_SIZE * scale);
-     ti.rect.bottom = ti.rect.top  + (int) (MAP_ANNOTATION_SIZE * scale);
+     // Set up tooltip for annotation  
+     ti.rect.left = view.x + x + (int) (annotations[i].x * scale) - (size / 2);
+     ti.rect.top  = view.y + y + (int) (annotations[i].y * scale) - (size / 2);
+     ti.rect.right  = ti.rect.left + size;
+     ti.rect.bottom = ti.rect.top  + size;
 
      // Clip tooltip rectangle to graphics view window
      ti.rect.left = max(ti.rect.left, view.x);
@@ -144,8 +151,8 @@ void MapAnnotationClick(int x, int y)
      if (a->text[0] == 0)
        continue;
 
-     if (a->x <= x + MAP_ANNOTATION_SIZE / 2 && a->x >= x - MAP_ANNOTATION_SIZE / 2 &&
-	 a->y <= y + MAP_ANNOTATION_SIZE / 2 && a->y >= y - MAP_ANNOTATION_SIZE / 2)
+     if (a->x <= x + MAP_ANNOTATION_SIZE && a->x >= x - MAP_ANNOTATION_SIZE &&
+	 a->y <= y + MAP_ANNOTATION_SIZE && a->y >= y - MAP_ANNOTATION_SIZE)
        {
 	 existed = True;
 	 index = i;

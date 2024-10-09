@@ -99,7 +99,19 @@ messages:
          bDone = TRUE;
       }
       
+      Send(self,@RevealHiddenColor);      
+      
       return bDone;
+   }
+
+   HideHiddenAttributes()
+   {      
+      vrName = ring_unidentified_name_rsc;
+      vrDesc = ring_unidentified_description_rsc;
+
+      Send(self,@HideHiddenColor);
+
+      propagate;
    }
 
    GetTrueName()

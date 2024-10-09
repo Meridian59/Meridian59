@@ -95,6 +95,11 @@ messages:
       return;
    }
 
+   HideHiddenAttributes()
+   {
+      vrName = Wand_name_rsc;
 
+      propagate;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

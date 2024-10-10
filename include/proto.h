@@ -359,6 +359,7 @@ enum {
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
 #define OF_CONTAINER     0x00000020    // Set if player can put objects inside this one
 #define OF_NOEXAMINE     0x00000040    // Set if player CAN'T examine object
+#define OF_SELECTABLE    0x00000080    // Set if object can be selected
 #define OF_OFFERABLE     0x00000200    // Set if object can be offered to
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated

@@ -33,7 +33,7 @@ struct SkyboxRenderParams {
 };
 
 bool D3DRenderUpdateSkyBox(DWORD background);
-void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, D3DMATRIX view, 
+void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
     const SkyboxRenderParams& skyboxRenderParams);
 void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch);
 void D3DRenderSkyBoxShutdown();

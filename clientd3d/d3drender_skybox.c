@@ -156,7 +156,7 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 /**
 * Function to render the skybox with the current background.
 */
-void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, D3DMATRIX view, 
+void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
 	const SkyboxRenderParams& skyboxRenderParams)
 {
 	// Set render states for skybox

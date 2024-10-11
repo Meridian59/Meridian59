@@ -199,12 +199,7 @@ const Vector3D& getSunVector()
 	return sun_vect;
 }
 
-const std::pair<int,int> getPlayerPosition()
-{
-	return { player.x, player.y };
-}
-
-void setWireframeMode(Bool isEnabled)
+void setWireframeMode(bool isEnabled)
 {
 	gWireframe = isEnabled;
 }

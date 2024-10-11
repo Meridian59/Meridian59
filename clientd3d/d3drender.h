@@ -179,9 +179,9 @@ float FovHorizontal(long width);
 float FovVertical(long height);
 
 bool isFogEnabled();
+// Returns the max shading range (FINENESS-shade_amount) to FINENESS
 long getShadeAmount();
 const Vector3D& getSunVector();
-const std::pair<int,int> getPlayerPosition();
-void setWireframeMode(Bool isEnabled);
+void setWireframeMode(bool isEnabled);
 
 #endif	// __D3DRENDER_H__

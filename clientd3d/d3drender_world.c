@@ -2358,7 +2358,7 @@ void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheS
 
 				for (i = 0; i < pChunk->numVertices; i++)
 				{
-					const auto& player = GetPlayerInfo();
+					const auto* player = GetPlayerInfo();
 					distX = pChunk->xyz[i].x - player->x;
 					distY = pChunk->xyz[i].y - player->y;
 
@@ -2806,7 +2806,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags,
 
 		for (i = 0; i < 4; i++)
 		{
-			const auto& player = GetPlayerInfo();
+			const auto* player = GetPlayerInfo();
 			distX = pXYZ[i].x - player->x;
 			distY = pXYZ[i].y - player->y;
 
@@ -3073,7 +3073,7 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 
 		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
 		{
-			const auto& player = GetPlayerInfo();
+			const auto* player = GetPlayerInfo();
 			distX = pXYZ[count].x - player->x;
 			distY = pXYZ[count].y - player->y;
 
@@ -3337,7 +3337,7 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 
 		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
 		{
-			const auto& player = GetPlayerInfo();
+			const auto* player = GetPlayerInfo();
 			distX = pXYZ[count].x - player->x;
 			distY = pXYZ[count].y - player->y;
 

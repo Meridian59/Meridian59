@@ -181,6 +181,7 @@ float FovVertical(long height);
 bool isFogEnabled();
 long getShadeAmount();
 const Vector3D& getSunVector();
-const player_info* getPlayer();
+const std::pair<int,int> getPlayerPosition();
+void setWireframeMode(Bool isEnabled);
 
 #endif	// __D3DRENDER_H__

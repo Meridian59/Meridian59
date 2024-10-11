@@ -123,12 +123,12 @@ long D3DRenderWorld(
 
 	// Render the wireframe pass to cover cracks in geometry
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ANTIALIASEDLINEENABLE, TRUE);
-	*worldPropertyParams.wireFrame = TRUE;
+	setWireframeMode(TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	D3DCacheFlush(cacheSystem.worldCacheSystemStatic, pools.worldPoolStatic, 1, D3DPT_TRIANGLESTRIP);
 	D3DCacheFlush(cacheSystem.worldCacheSystem, pools.worldPool, 1, D3DPT_TRIANGLESTRIP);
-	*worldPropertyParams.wireFrame = FALSE;
+	setWireframeMode(FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FILLMODE, D3DFILL_SOLID);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ANTIALIASEDLINEENABLE, FALSE);
@@ -2314,7 +2314,7 @@ void D3DGeometryBuildNew(
 void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheSystem)
 {
 	auto shadeAmount = getShadeAmount();
-	auto sunVect = getSunVector();
+	auto& sunVect = getSunVector();
 
 	u_int				curPacket, curChunk;
 	u_int				i, numPackets;
@@ -2358,9 +2358,9 @@ void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheS
 
 				for (i = 0; i < pChunk->numVertices; i++)
 				{
-					const auto& player = getPlayer();
-					distX = pChunk->xyz[i].x - player->x;
-					distY = pChunk->xyz[i].y - player->y;
+					const auto playerPosition = getPlayerPosition();
+					distX = pChunk->xyz[i].x - playerPosition.first;
+					distY = pChunk->xyz[i].y - playerPosition.second;
 
 					distance = DistanceGet(distX, distY);
 
@@ -2797,7 +2797,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags,
 	if (pBGRA)
 	{
 		auto shadeAmount = getShadeAmount();
-		auto sunVect = getSunVector();
+		auto& sunVect = getSunVector();
 		int	i;
 		float a, b;
 		int	distX, distY, distance;
@@ -2806,9 +2806,9 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags,
 
 		for (i = 0; i < 4; i++)
 		{
-			const auto& player = getPlayer();
-			distX = pXYZ[i].x - player->x;
-			distY = pXYZ[i].y - player->y;
+			const auto playerPosition = getPlayerPosition();
+			distX = pXYZ[i].x - playerPosition.first;
+			distY = pXYZ[i].y - playerPosition.second;
 
 			distance = DistanceGet(distX, distY);
 
@@ -3073,14 +3073,14 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 
 		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
 		{
-			const auto& player = getPlayer();
-			distX = pXYZ[count].x - player->x;
-			distY = pXYZ[count].y - player->y;
+			const auto playerPosition = getPlayerPosition();
+			distX = pXYZ[count].x - playerPosition.first;
+			distY = pXYZ[count].y - playerPosition.second;
 
 			lightscale = FINENESS;
 
 			auto shadeAmount = getShadeAmount();
-			auto sunVect = getSunVector();
+			auto& sunVect = getSunVector();
 
 			if (shadeAmount != 0)
 			{
@@ -3337,14 +3337,14 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 
 		for (count = 0; count < pNode->u.leaf.poly.npts; count++)
 		{
-			const auto& player = getPlayer();
-			distX = pXYZ[count].x - player->x;
-			distY = pXYZ[count].y - player->y;
+			const auto playerPosition = getPlayerPosition();
+			distX = pXYZ[count].x - playerPosition.first;
+			distY = pXYZ[count].y - playerPosition.second;
 
 			lightscale = FINENESS;
 
 			auto shadeAmount = getShadeAmount();
-			auto sunVect = getSunVector();
+			auto& sunVect = getSunVector();
 
 			if (shadeAmount != 0)
 			{

@@ -69,15 +69,11 @@ struct WorldPropertyParams {
     LPDIRECT3DTEXTURE9 noLookThrough;
     LPDIRECT3DTEXTURE9 lightOrange;
 
-    Bool* wireFrame;
-
 	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughParam,
         LPDIRECT3DTEXTURE9 lightOrangeParam,
-        Bool* wireFrameParam, 
         player_info* playerParam)
 		: noLookThrough(noLookThroughParam),
-		  lightOrange(lightOrangeParam),
-		  wireFrame(wireFrameParam)
+		  lightOrange(lightOrangeParam)
 	{}
 };
 

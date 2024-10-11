@@ -160,11 +160,6 @@ extern HDC				gBitsDC;
 
 D3DMATRIX view, mat, rot, trans, proj;
 
-const player_info* getPlayer()
-{
-	return &player;
-}
-
 void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
 
@@ -202,6 +197,16 @@ long getShadeAmount()
 const Vector3D& getSunVector()
 {
 	return sun_vect;
+}
+
+const std::pair<int,int> getPlayerPosition()
+{
+	return { player.x, player.y };
+}
+
+void setWireframeMode(Bool isEnabled)
+{
+	gWireframe = isEnabled;
 }
 
 // externed stuff
@@ -573,7 +578,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
-	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange, &gWireframe, &player);
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange, &player);
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{

@@ -2,7 +2,4 @@
   "[rc]": {
     "files.encoding": "windows1252"
   },
-  "[kod]": {
-    "files.encoding": "utf8"
-  }
 }

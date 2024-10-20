@@ -25,6 +25,9 @@ resources:
    guard_dead_icon_rsc = cowX.bgf
    guard_dead_name_rsc = "dead guard cow"
 
+   gcow_sound_attack = cow_atk.wav
+   gcow_sound_death  = cow_dth.wav
+   gcow_sound_aware  = cow_awr.wav
    
 classvars:
 
@@ -46,6 +49,9 @@ classvars:
 
    viGender = GENDER_FEMALE   
 
+   vrSound_miss  = gcow_sound_attack
+   vrSound_aware = gcow_sound_aware
+   vrSound_death = gcow_sound_death
 
 properties:
 

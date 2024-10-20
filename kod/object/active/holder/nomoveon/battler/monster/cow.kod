@@ -34,6 +34,10 @@ resources:
    cow_dead_name_rsc = "dead cow"
    
    cow_dung = "Startled, the poor cow deposits a steaming heap of dung onto the ground."
+
+   cow_sound_attack = cow_atk.wav
+   cow_sound_death  = cow_dth.wav
+   cow_sound_aware  = cow_awr.wav
    
 classvars:
    vrKocName = cow_koc_name_rsc
@@ -46,6 +50,10 @@ classvars:
    viAttributes = MOB_NOFIGHT
    viSpeed = 8
    viLevel = 200
+
+   vrSound_miss  = cow_sound_attack
+   vrSound_aware = cow_sound_aware
+   vrSound_death = cow_sound_death
    
 
 properties:

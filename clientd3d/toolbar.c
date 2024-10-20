@@ -25,7 +25,7 @@
 
 #define MAX_BUTTONS 30
 // Define cooldown period in milliseconds (e.g., 1000 ms = 1 second)
-#define BUTTON_COOLDOWN_PERIOD 250
+#define BUTTON_TOGGLE_COOLDOWN_PERIOD 250
 
 static Button buttons[MAX_BUTTONS];
 static int    num_buttons;           // Number of buttons currently created
@@ -276,7 +276,7 @@ Bool ToolbarSetButtonState(int action, void *action_data, Bool state)
    EnableWindow(b->hwnd, FALSE);
 
    // Start a timer for the cooldown period
-   SetTimer(hMain, (UINT_PTR)b->hwnd, BUTTON_COOLDOWN_PERIOD, (TIMERPROC)ReenableButton);
+   SetTimer(hMain, (UINT_PTR)b->hwnd, BUTTON_TOGGLE_COOLDOWN_PERIOD, (TIMERPROC)ReenableButton);
 
   Button_SetState(b->hwnd, state);
   // Redraw if necessary

@@ -25,7 +25,7 @@
 
 #define MAX_BUTTONS 30
 // Define cooldown period in milliseconds (e.g., 1000 ms = 1 second)
-#define BUTTON_COOLDOWN_PERIOD 500
+#define BUTTON_COOLDOWN_PERIOD 250
 
 static Button buttons[MAX_BUTTONS];
 static int    num_buttons;           // Number of buttons currently created

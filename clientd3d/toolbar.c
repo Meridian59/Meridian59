@@ -24,6 +24,8 @@
 #include "client.h"
 
 #define MAX_BUTTONS 30
+// Define cooldown period in milliseconds (e.g., 1000 ms = 1 second)
+#define BUTTON_COOLDOWN_PERIOD 500
 
 static Button buttons[MAX_BUTTONS];
 static int    num_buttons;           // Number of buttons currently created
@@ -245,6 +247,17 @@ void ToolbarButtonPressed(Button *b)
 
    PerformAction(action, data);
 }
+
+void CALLBACK ReenableButton(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+    // Re-enable the button after the timer expires
+    EnableWindow((HWND)idEvent, TRUE);
+
+    // Stop the timer as we no longer need it
+    KillTimer(hwnd, idEvent);
+}
+
+
 /****************************************************************************/
 /*
  * ToolbarSetButtonState:  Given an action, find the corresponding toolbar button
@@ -258,6 +271,12 @@ Bool ToolbarSetButtonState(int action, void *action_data, Bool state)
   
   if (b == NULL)
     return False;
+
+   // Disable the button to prevent rapid toggling
+   EnableWindow(b->hwnd, FALSE);
+
+   // Start a timer for the cooldown period
+   SetTimer(hMain, (UINT_PTR)b->hwnd, BUTTON_COOLDOWN_PERIOD, (TIMERPROC)ReenableButton);
 
   Button_SetState(b->hwnd, state);
   // Redraw if necessary

@@ -3869,8 +3869,11 @@ messages:
    CanHavePlayerPortal()
    "Return whether it's permissible to have a player-created portal in this room. "
    {
-      % No portals into "historic" (i.e. inaccessible, dead) areas
-      if Send(self, @GetRegion) = RID_HISTORIC
+      % No portals in 
+      % - "historic" (i.e. inaccessible, dead) areas
+      % - "No combat" rooms like inns, adv halls, rented rooms, and others
+      if Send(self,@GetRegion) = RID_HISTORIC
+         OR Send(self,@CheckRoomFlag,#flag=ROOM_NO_COMBAT) 
       {
          return FALSE;
       }

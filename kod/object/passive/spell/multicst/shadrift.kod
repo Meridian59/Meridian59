@@ -81,6 +81,15 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
    {
+      % Ask room if we're allowed to cast here.  For example, portals into 
+      % guild halls are a bad idea.
+      if (NOT Send(Send(who, @GetOwner), @CanHavePlayerPortal))
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
+         
+         return FALSE;
+      }
+
       propagate;
    }
    
@@ -97,17 +106,6 @@ messages:
       if oPrism = $
       {
          DEBUG("PrismCast called with no prism.");
-         return;
-      }
-
-      % Ask room if we're allowed to cast here.  For example, portals into 
-      % guild halls are a bad idea.
-      if (NOT send(send(oPrism, @GetOwner), @CanHavePlayerPortal))
-      {
-         for oCaster in lCasters
-         {
-            Send(oCaster,@MsgSendUser,#message_rsc=spell_bad_location, #parm1=vrName);
-         }
          return;
       }
 

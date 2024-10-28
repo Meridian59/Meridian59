@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
+static const unsigned char PAGE_BREAK_CHAR = 0xB6;	  /* U+00B6 PILCROW SIGN For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */

@@ -36,9 +36,9 @@ void D3DRenderPacketCeilingAdd(BSPnode* pNode, d3d_render_pool_new* pPool, bool 
 
 void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, 
 	unsigned int type, int side, bool dynamic);
-void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, bool bDynamic);
+void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThroughTexture, bool bDynamic);
 void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_type* current_room, 
-	LPDIRECT3DTEXTURE9 noLookThrough, LPDIRECT3DTEXTURE9 lightOrange, bool bDynamic);
+	LPDIRECT3DTEXTURE9 noLookThrough, LPDIRECT3DTEXTURE9 lightOrangeTexture, bool bDynamic);
 
 void D3DRenderLMapPostFloorAdd(BSPnode* pNode, d3d_render_pool_new* pPool, d_light_cache* pDLightCache, bool bDynamic);
 void D3DRenderLMapPostCeilingAdd(BSPnode* pNode, d3d_render_pool_new* pPool, d_light_cache* pDLightCache, bool bDynamic);
@@ -349,7 +349,6 @@ void D3DRenderLMapsPostDraw(
 
 	auto& pools = worldRenderParams.poolParams;
 	auto& cache = worldRenderParams.cacheSystemParams;
-	auto& params = worldRenderParams.params;
 
 	switch (tree->type)
 	{
@@ -364,8 +363,10 @@ void D3DRenderLMapsPostDraw(
 		}
 		return;
 	case BSPinternaltype:
-		side = (a = tree->u.internal.separator.a) * params->viewer_x +
-			(b = tree->u.internal.separator.b) * params->viewer_y +
+	{
+		const auto* player = GetPlayerInfo();
+		side = (a = tree->u.internal.separator.a) * player->x +
+			(b = tree->u.internal.separator.b) * player->y +
 			tree->u.internal.separator.c;
 
 		if (side < 0)
@@ -463,21 +464,21 @@ void D3DRenderLMapsPostDraw(
 				if ((flags & D3DRENDER_WALL_NORMAL) && ((short)pWall->z2 != (short)pWall->z1)
 					|| (pWall->zz2 != pWall->zz1))
 				{
-					D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_NORMAL, side, 
+					D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_NORMAL, side,
 						lightAndTextureParams.lightCache, true);
 				}
 
 				if ((flags & D3DRENDER_WALL_BELOW) && ((short)pWall->z1 != (short)pWall->z0)
 					|| ((short)pWall->zz1 != (short)pWall->zz0))
 				{
-					D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_BELOW, side, 
+					D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_BELOW, side,
 						lightAndTextureParams.lightCache, true);
 				}
 
 				if ((flags & D3DRENDER_WALL_ABOVE) && ((short)pWall->z3 != (short)pWall->z2)
 					|| ((short)pWall->zz3 != (short)pWall->zz2))
 				{
-					D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_ABOVE, side, 
+					D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_ABOVE, side,
 						lightAndTextureParams.lightCache, true);
 				}
 			}
@@ -490,7 +491,7 @@ void D3DRenderLMapsPostDraw(
 			D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, tree->u.internal.pos_side, transparent_pass);
 
 		return;
-
+	}
 	default:
 		debug(("WalkBSPtree lightmaps error!\n"));
 		return;
@@ -514,7 +515,6 @@ void D3DRenderLMapsDynamicPostDraw(
 
 	auto& pools = worldRenderParams.poolParams;
 	auto& cache = worldRenderParams.cacheSystemParams;
-	auto& params = worldRenderParams.params;
 
 	switch (tree->type)
 	{
@@ -525,8 +525,10 @@ void D3DRenderLMapsDynamicPostDraw(
 		return;
 
 	case BSPinternaltype:
-		side = (a = tree->u.internal.separator.a) * params->viewer_x +
-			(b = tree->u.internal.separator.b) * params->viewer_y +
+	{
+		const auto* player = GetPlayerInfo();
+		side = (a = tree->u.internal.separator.a) * player->x +
+			(b = tree->u.internal.separator.b) * player->y +
 			tree->u.internal.separator.c;
 
 		if (side < 0)
@@ -537,10 +539,10 @@ void D3DRenderLMapsDynamicPostDraw(
 
 		/* first, traverse closer side */
 		if (side > 0)
-			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, 
+			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams,
 				tree->u.internal.pos_side, transparent_pass);
 		else
-			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, 
+			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams,
 				tree->u.internal.neg_side, transparent_pass);
 
 		/* then do walls on the separator */
@@ -615,14 +617,14 @@ void D3DRenderLMapsDynamicPostDraw(
 
 		/* lastly, traverse farther side */
 		if (side > 0)
-			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, 
+			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams,
 				tree->u.internal.neg_side, transparent_pass);
 		else
-			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, 
+			D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams,
 				tree->u.internal.pos_side, transparent_pass);
 
 		return;
-
+	}
 	default:
 		debug(("WalkBSPtree lightmaps error!\n"));
 		return;
@@ -1254,7 +1256,7 @@ void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, uns
 /*
 * Add a floor mask to the render pool
 */
-void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, bool bDynamic)
+void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThroughTexture, bool bDynamic)
 {
 	Sector* pSector = pNode->u.leaf.sector;
 	custom_xyz	xyz[MAX_NPTS];
@@ -1266,7 +1268,7 @@ void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3
 
 	D3DRenderFloorExtract(pNode, NULL, xyz, NULL, bgra);
 
-	pPacket = D3DRenderPacketFindMatch(pPool, noLookThrough, NULL, 0, 0, 0);
+	pPacket = D3DRenderPacketFindMatch(pPool, noLookThroughTexture, NULL, 0, 0, 0);
 	if (NULL == pPacket)
 		return;
 	pChunk = D3DRenderChunkNew(pPacket);
@@ -1317,7 +1319,7 @@ void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3
 * Add a ceiling mask to the render pool
 */
 void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_type* current_room, 
-	LPDIRECT3DTEXTURE9 noLookThrough, LPDIRECT3DTEXTURE9 lightOrange, bool bDynamic)
+	LPDIRECT3DTEXTURE9 noLookThroughTexture, LPDIRECT3DTEXTURE9 lightOrangeTexture, bool bDynamic)
 {
 	Sector* pSector = pNode->u.leaf.sector;
 	custom_xyz	xyz[MAX_NPTS];
@@ -1332,7 +1334,7 @@ void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_ty
 
 	D3DRenderCeilingExtract(pNode, NULL, xyz, NULL, bgra);
 
-	pPacket = D3DRenderPacketFindMatch(pPool, noLookThrough, NULL, 0, 0, 0);
+	pPacket = D3DRenderPacketFindMatch(pPool, noLookThroughTexture, NULL, 0, 0, 0);
 	if (NULL == pPacket)
 		return;
 	pChunk = D3DRenderChunkNew(pPacket);
@@ -1383,7 +1385,7 @@ void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_ty
 	{
 		int	vertex, i;
 
-		pPacket = D3DRenderPacketFindMatch(pPool, lightOrange, NULL, 0, 0, 0);
+		pPacket = D3DRenderPacketFindMatch(pPool, lightOrangeTexture, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
 		pChunk = D3DRenderChunkNew(pPacket);
@@ -2269,22 +2271,22 @@ void D3DGeometryBuildNew(
 					if ((flags & D3DRENDER_WALL_NORMAL) && ((short)pWall->z2 != (short)pWall->z1)
 						|| ((short)pWall->zz2 != (short)pWall->zz1))
 					{
-						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_NORMAL, 1, worldPropertyParams.noLookThrough, false);
-						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_NORMAL, -1, worldPropertyParams.noLookThrough, false);
+						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_NORMAL, 1, worldPropertyParams.noLookThroughTexture, false);
+						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_NORMAL, -1, worldPropertyParams.noLookThroughTexture, false);
 					}
 
 					if ((flags & D3DRENDER_WALL_BELOW) && ((short)pWall->z1 != (short)pWall->z0)
 						|| ((short)pWall->zz1 != (short)pWall->zz0))
 					{
-						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_BELOW, 1, worldPropertyParams.noLookThrough, false);
-						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_BELOW, -1, worldPropertyParams.noLookThrough, false);
+						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_BELOW, 1, worldPropertyParams.noLookThroughTexture, false);
+						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_BELOW, -1, worldPropertyParams.noLookThroughTexture, false);
 					}
 
 					if ((flags & D3DRENDER_WALL_ABOVE) && ((short)pWall->z3 != (short)pWall->z2)
 						|| ((short)pWall->zz3 != (short)pWall->zz2))
 					{
-						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_ABOVE, 1, worldPropertyParams.noLookThrough, false);
-						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_ABOVE, -1, worldPropertyParams.noLookThrough, false);
+						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_ABOVE, 1, worldPropertyParams.noLookThroughTexture, false);
+						D3DRenderPacketWallMaskAdd(pWall, pools.wallMaskPool, D3DRENDER_WALL_ABOVE, -1, worldPropertyParams.noLookThroughTexture, false);
 					}
 				}
 
@@ -2293,8 +2295,8 @@ void D3DGeometryBuildNew(
 			case BSPleaftype:
 				if ((pNode->u.leaf.sector->ceiling == NULL) &&
 					(pNode->u.leaf.sector->sloped_floor == NULL))
-					D3DRenderCeilingMaskAdd(pNode, pools.wallMaskPool, room, worldPropertyParams.noLookThrough, 
-						worldPropertyParams.lightOrange, false);
+					D3DRenderCeilingMaskAdd(pNode, pools.wallMaskPool, room, worldPropertyParams.noLookThroughTexture, 
+						worldPropertyParams.lightOrangeTexture, false);
 			break;
 
 			default:
@@ -2303,7 +2305,7 @@ void D3DGeometryBuildNew(
 	}
 
 	{
-		D3DCacheFill(cacheSystem.worldCacheSystemStatic, pools.worldPoolStatic	, 1);
+		D3DCacheFill(cacheSystem.worldCacheSystemStatic, pools.worldPoolStatic, 1);
 		D3DCacheFill(cacheSystem.wallMaskCacheSystem, pools.wallMaskPool, 1);
 	}
 }

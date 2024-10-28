@@ -186,16 +186,6 @@ bool isFogEnabled()
 	return gD3DDriverProfile.bFogEnable;
 }
 
-long getShadeAmount()
-{
-	return shade_amount;
-}
-
-const Vector3D& getSunVector()
-{
-	return sun_vect;
-}
-
 void setWireframeMode(bool isEnabled)
 {
 	gWireframe = isEnabled;
@@ -566,7 +556,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
 		
 	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, 
-		view, proj, room, params);
+		view, proj, room);
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 

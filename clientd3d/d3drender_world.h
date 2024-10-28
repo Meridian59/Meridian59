@@ -66,14 +66,14 @@ struct WorldPoolParams {
 
 struct WorldPropertyParams {
     
-    LPDIRECT3DTEXTURE9 noLookThrough;
-    LPDIRECT3DTEXTURE9 lightOrange;
+    LPDIRECT3DTEXTURE9 noLookThroughTexture;
+    LPDIRECT3DTEXTURE9 lightOrangeTexture;
 
-	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughParam,
-        LPDIRECT3DTEXTURE9 lightOrangeParam,
+	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughTextureParam,
+        LPDIRECT3DTEXTURE9 lightOrangeTextureParam,
         player_info* playerParam)
-		: noLookThrough(noLookThroughParam),
-		  lightOrange(lightOrangeParam)
+		: noLookThroughTexture(noLookThroughTextureParam),
+		  lightOrangeTexture(lightOrangeTextureParam)
 	{}
 };
 
@@ -81,13 +81,13 @@ struct WorldRenderParams {
 
     LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
     LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationSecondary;
-    d3d_driver_profile driverProfile;
+    const d3d_driver_profile& driverProfile;
 
     const WorldCacheSystemParams& cacheSystemParams;
     const WorldPoolParams& poolParams;
 
-    D3DMATRIX view;
-    D3DMATRIX proj;
+    D3DMATRIX& view;
+    D3DMATRIX& proj;
 
     room_type* room;
     Draw3DParams* params;
@@ -95,13 +95,12 @@ struct WorldRenderParams {
     WorldRenderParams(
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationSecondaryParam,
-        d3d_driver_profile driverProfileParam,
+        d3d_driver_profile& driverProfileParam,
         const WorldCacheSystemParams& cacheSystemParamsParam,
         const WorldPoolParams& poolParamsParam,
-        D3DMATRIX viewParam,
-        D3DMATRIX projParam,
-        room_type* roomParam,
-        Draw3DParams* paramsParam
+        D3DMATRIX& viewParam,
+        D3DMATRIX& projParam,
+        room_type* roomParam
     )
         : vertexDeclaration(vertexDeclarationParam),
           vertexDeclarationSecondary(vertexDeclarationSecondaryParam),
@@ -110,8 +109,7 @@ struct WorldRenderParams {
           poolParams(poolParamsParam),
           view(viewParam),
           proj(projParam),
-          room(roomParam),
-          params(paramsParam)
+          room(roomParam)
     {}
 }; 
 

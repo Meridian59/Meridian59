@@ -86,6 +86,16 @@ BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
 
+long getShadeAmount()
+{
+	return shade_amount;
+}
+
+const Vector3D& getSunVector()
+{
+	return sun_vect;
+}
+
 /* local function prototypes */
 static void StretchImage(void);
 static void Stretch(BYTE* src, BYTE* dest, int width, int height,

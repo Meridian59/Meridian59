@@ -102,17 +102,14 @@ def lambda_handler(event, context):
     if username_check not in lookup_username:
         # only accounts in the master database can be reset
         logger.error("Account doesn't exist in master db (needs to be at least 24 hours old) - aborting.")
-        err = err | RESET_FAILURE
         return do_failure()
 
     if not util_valid_server(server):
         logger.error("Invalid server provided - aborting.")
-        err = err | RESET_FAILURE
         return do_failure()
 
     if not util_validate_password(password1, password2):
         logger.error("Invalid new passwords provided - aborting.")
-        err = err | RESET_FAILURE
         return do_failure()
 
     security = util_get_random_string(28)

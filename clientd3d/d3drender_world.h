@@ -86,8 +86,8 @@ struct WorldRenderParams {
     const WorldCacheSystemParams& cacheSystemParams;
     const WorldPoolParams& poolParams;
 
-    D3DMATRIX& view;
-    D3DMATRIX& proj;
+    const D3DMATRIX& view;
+    const D3DMATRIX& proj;
 
     room_type* room;
     Draw3DParams* params;
@@ -98,8 +98,8 @@ struct WorldRenderParams {
         d3d_driver_profile& driverProfileParam,
         const WorldCacheSystemParams& cacheSystemParamsParam,
         const WorldPoolParams& poolParamsParam,
-        D3DMATRIX& viewParam,
-        D3DMATRIX& projParam,
+        const D3DMATRIX& viewParam,
+        const D3DMATRIX& projParam,
         room_type* roomParam
     )
         : vertexDeclaration(vertexDeclarationParam),

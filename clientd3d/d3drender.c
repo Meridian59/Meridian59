@@ -6,9 +6,6 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-#include <unordered_map>
-#include <unordered_set>
-#include <chrono>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
 #define	TEX_CACHE_MAX_WORLD		8000000
@@ -144,8 +141,6 @@ extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
 extern Draw3DParams		*p;
-extern int				gNumCalls;
-extern long				shade_amount;
 extern DrawItem			drawdata[];
 extern long				nitems;
 extern int				sector_depths[];
@@ -153,14 +148,12 @@ extern d3d_driver_profile	gD3DDriverProfile;
 extern BYTE				*gBits;
 extern BYTE				*gBufferBits;
 extern D3DPRESENT_PARAMETERS	gPresentParam;
-extern Vector3D			sun_vect;
 extern long				stretchfactor;
 extern BYTE				light_rows[MAXY/2+1];      // Strength of light as function of screen row
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
 D3DMATRIX view, mat, rot, trans, proj;
-long timeWorld;
 
 void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
@@ -184,6 +177,16 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
    float bias = z_bias * -0.00001f;
    IDirect3DDevice9_SetRenderState(device, D3DRS_DEPTHBIAS,
                                    *((DWORD *) &bias));
+}
+
+bool isFogEnabled()
+{
+	return gD3DDriverProfile.bFogEnable;
+}
+
+void setWireframeMode(bool isEnabled)
+{
+	gWireframe = isEnabled;
 }
 
 // externed stuff
@@ -444,7 +447,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	int			curIndex = 0;
 	room_contents_node *pRNode = nullptr;
 
-	long		timeOverall, timeObjects, timeLMaps, timeSkybox, timeSetup, timeComplete;
+	long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox, timeSetup, timeComplete;
 
 	timeOverall = timeGetTime();
 	timeSetup = timeGetTime();
@@ -540,8 +543,22 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_sky) // Render the skybox first
 	{
 		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
-		D3DRenderSkyBox(params, pRNode, angleHeading, anglePitch, view, skyboxRenderParams);
+		D3DRenderSkyBox(params, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
+
+	// Prepare our rendering parameters
+
+	WorldCacheSystemParams worldCacheSystemParams(&gWorldCacheSystem, &gWorldCacheSystemStatic,
+		&gLMapCacheSystem, &gLMapCacheSystemStatic, &gWallMaskCacheSystem);
+
+	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
+		
+	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, 
+		view, proj, room);
+
+	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
+
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange, &player);
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
@@ -556,14 +573,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 		
 		// Second pass: render transparent objects
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-		D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 
 		gD3DRedrawAll = FALSE;
 	}
@@ -585,7 +602,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_world)
 	{
-		D3DRenderWorld(room, params, pRNode);
+		timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -602,8 +619,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
-
-		LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
 		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize);
 
@@ -680,8 +695,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		{
 			D3DRenderShutDown();
 			D3DRenderInit(hMain);
-			D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
-			D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 		}
 	}
 	if ((gFrame & 255) == 255)

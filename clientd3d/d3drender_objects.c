@@ -138,10 +138,13 @@ long D3DRenderObjects(
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 
-	// Render world objects
+	// Render opaque objects
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, false);
 	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, false);
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, false);
+
+	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	// Render translucent objects
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS);

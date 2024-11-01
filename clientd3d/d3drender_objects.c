@@ -61,7 +61,6 @@ static bool D3DObjectLightingCalc(
 	custom_bgra* bgra, 
 	DWORD flags, 
 	bool fogEnabled,
-	const player_info* player,
 	const LightAndTextureParams& lightAndTextureParams);
 
 static int getKerningAmount(font_3d* pFont, char* str, char* ptr);
@@ -179,7 +178,8 @@ long D3DRenderObjects(
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
-	room_contents_node* pRNode = GetRoomObjectById(playerViewParams.player->id);
+	const auto* player = GetPlayerInfo();
+	room_contents_node* pRNode = GetRoomObjectById(player->id);
 	if (pRNode != nullptr)
 	{
 		// Rendering of Personal Equipment (Shields, weapons etc)
@@ -247,14 +247,15 @@ void D3DRenderNamesDraw3D(
 
 		room_contents_node* pRNode = (room_contents_node*)list->data;
 
-		if (pRNode->obj.id == playerViewParams.player->id)
+		const auto* player = GetPlayerInfo();
+		if (pRNode->obj.id == player->id)
 			continue;
 
 		if (!(pRNode->obj.flags & OF_PLAYER) || (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE))
 			continue;
 
-		vector.x = pRNode->motion.x - playerViewParams.player->x;
-		vector.y = pRNode->motion.y - playerViewParams.player->y;
+		vector.x = pRNode->motion.x - player->x;
+		vector.y = pRNode->motion.y - player->y;
 
 		float distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
@@ -345,7 +346,7 @@ void D3DRenderNamesDraw3D(
 				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			}
 			color = fontTextureParams.basePalette[palette[GetClosestPaletteIndex(fg_color)]];
-			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 			glyph_scale = max(bgra.b, bgra.g);
 			glyph_scale = max(glyph_scale, bgra.r);
@@ -537,7 +538,7 @@ void D3DRenderOverlaysDraw(
 	d3d_render_packet_new* pPacket = NULL;
 	d3d_render_chunk_new* pChunk = NULL;
 
-	player_info* player = playerViewParams.player;
+	const auto* player = GetPlayerInfo();;
 
 	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
@@ -924,7 +925,7 @@ void D3DRenderOverlaysDraw(
 					else
 					{
 						if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
-							objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams))
+							objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
 					}
 
@@ -1144,8 +1145,8 @@ void D3DRenderOverlaysDraw(
 							pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 						}
 
-						D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, 
-							playerViewParams.player, lightAndTextureParams);
+						D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
+							objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 						for (i = 0; i < 4; i++)
 						{
@@ -1289,7 +1290,9 @@ void D3DRenderObjectsDraw(
 		if (pRNode == NULL)
 			continue;
 
-		if (pRNode->obj.id == playerViewParams.player->id)
+		const auto* player = GetPlayerInfo();
+
+		if (pRNode->obj.id == player->id)
 			continue;
 
 		if (processedIds.find(pRNode->obj.id) != processedIds.end())
@@ -1462,7 +1465,7 @@ void D3DRenderObjectsDraw(
 		else
 		{
 			if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
-				objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams))
+				objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
 		}
 
@@ -1514,7 +1517,7 @@ void D3DRenderObjectsDraw(
 		pChunk->indices[3] = 3;
 
 		// now add object to visible object list
-		if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != playerViewParams.player->id))
+		if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != player->id))
 		{
 			D3DMATRIX	localToScreen, rot, mat;
 			custom_xyzw	topLeft, topRight, bottomLeft, bottomRight, center;
@@ -1522,8 +1525,7 @@ void D3DRenderObjectsDraw(
 			int			w, h;
 			int			tempLeft, tempRight, tempTop, tempBottom;
 			int			distX, distY, distance;
-
-			if (pRNode->obj.id == playerViewParams.player->id)
+			if (pRNode->obj.id == player->id)
 				break;
 
 			w = playerViewParams.d3dRect.right - playerViewParams.d3dRect.left;
@@ -1619,8 +1621,8 @@ void D3DRenderObjectsDraw(
 				tempTop = (topLeft.y * -h / 2) + (h / 2);
 				tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-				distX = pRNode->motion.x - playerViewParams.player->x;
-				distY = pRNode->motion.y - playerViewParams.player->y;
+				distX = pRNode->motion.x - player->x;
+				distY = pRNode->motion.y - player->y;
 
 				distance = DistanceGet(distX, distY);
 
@@ -1677,8 +1679,7 @@ void D3DRenderObjectsDraw(
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 			}
 
-			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, 
-				playerViewParams.player, lightAndTextureParams);
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1897,7 +1898,8 @@ void D3DRenderPlayerOverlaysDraw(
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
 	// Get player's object flags for special drawing effects
-	pRNode = GetRoomObjectById(playerViewParams.player->id);
+	const auto* player = GetPlayerInfo();
+	pRNode = GetRoomObjectById(player->id);
 	if (pRNode == NULL)
 		flags = 0;
 	else
@@ -1907,7 +1909,7 @@ void D3DRenderPlayerOverlaysDraw(
 	{
 		BYTE	xLat0, xLat1;
 
-		PlayerOverlay* pOverlay = &playerViewParams.player->poverlays[i];
+		const PlayerOverlay* pOverlay = &player->poverlays[i];
 
 		if (pOverlay->obj == NULL || pOverlay->hotspot == 0)
 			continue;
@@ -1979,7 +1981,7 @@ void D3DRenderPlayerOverlaysDraw(
 		else
 		{
 			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
-				objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
+				objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2076,7 +2078,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 	screenH = (float)(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top) / (float)playerViewParams.viewportHeight;
 
 	// Get player's object flags for special drawing effects
-	pRNode = GetRoomObjectById(playerViewParams.player->id);
+	const auto* player = GetPlayerInfo();
+	pRNode = GetRoomObjectById(player->id);
 
 	if (pRNode == NULL)
 		flags = 0;
@@ -2221,7 +2224,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 			}
 			else
 			{
-				D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
+				D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 			}
 
 			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2288,7 +2291,6 @@ bool D3DObjectLightingCalc(
 	custom_bgra* bgra, 
 	DWORD flags, 
 	bool fogEnabled,
-	const player_info* player,
 	const LightAndTextureParams& lightAndTextureParams)
 {
 	int			light, intDistance, numLights;
@@ -2349,6 +2351,8 @@ bool D3DObjectLightingCalc(
 
 	if (light <= 127)
 		bFogDisable = true;
+
+	const auto* player = GetPlayerInfo();
 
 	distX = pRNode->motion.x - player->x;
 	distY = pRNode->motion.y - player->y;

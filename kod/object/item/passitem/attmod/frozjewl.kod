@@ -26,8 +26,6 @@ resources:
       "aggression, using raw mana to boost elemental touch spells.  "
       "Your hand tingles when you hold it."
 
-   frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."
-
    frozjewel_broken = "Having expended its power, the Jewel of Froz crumbles to crimson dust."
 
 classvars:

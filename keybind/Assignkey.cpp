@@ -107,15 +107,15 @@ INT_PTR CAssignkey::DoModal()
         bGetbind=FALSE;
         strcpy(TCNewkey,"mouse2");
         break;
-      case 0x20b:
+      case WM_XBUTTONDOWN:
         bSkip=TRUE;
         switch(pMsg.wParam)
         {
-        case 0x10020:
+        case XBUTTON1:
           bGetbind=FALSE;
           strcpy(TCNewkey,"mouse3");
           break;
-        case 0x20040:
+        case XBUTTON2:
           bGetbind=FALSE;
           strcpy(TCNewkey,"mouse4");
           break;

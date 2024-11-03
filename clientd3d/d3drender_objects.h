@@ -15,8 +15,6 @@
 
 struct PlayerViewParams
 {
-    // Player information
-    player_info* player;
 
     // Screen dimensions
     int screenWidth;
@@ -30,14 +28,12 @@ struct PlayerViewParams
     RECT d3dRect;
 
     PlayerViewParams(
-        player_info* playerParam,
         int screenWidthParam,
         int screenHeightParam,
         int viewportWidthParam,
         int viewportHeightParam,
         RECT d3dRectParam)
-        : player(playerParam),
-          screenWidth(screenWidthParam),
+        : screenWidth(screenWidthParam),
           screenHeight(screenHeightParam),
           viewportWidth(viewportWidthParam),
           viewportHeight(viewportHeightParam),

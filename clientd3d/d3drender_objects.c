@@ -68,7 +68,7 @@ static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area,
 
 // Functions
 
-bool IsInvisibleEffect(int flags) {
+static bool IsInvisibleEffect(int flags) {
 	return (flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
 }
 
@@ -1657,7 +1657,8 @@ void D3DRenderObjectsDraw(
 		}
 
 		if (pRNode->obj.id != INVALID_ID 
-			&& pRNode->obj.id == GetUserTargetID())
+			&& pRNode->obj.id == GetUserTargetID()
+			&& !IsInvisibleEffect(pRNode->obj.flags))
 		{
 			pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDib, xLat0, xLat1,
 				GetDrawingEffect(pRNode->obj.flags));

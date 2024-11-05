@@ -26,9 +26,7 @@ resources:
       "aggression, using raw mana to boost elemental touch spells.  "
       "Your hand tingles when you hold it."
 
-   frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."
-
-   frozjewel_broken = "The Jewel of Froz now seems quite ordinary."
+   frozjewel_broken = "Having expended its power, the Jewel of Froz crumbles to crimson dust."
 
 classvars:
 
@@ -62,7 +60,7 @@ messages:
          Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
 	           #parm1=Send(self,@GetCapDef),#parm2=vrName);
          Send(poOwner,@TryUnuseItem,#what=self);
-         vrDesc = frozjewel_desc_broken_rsc;
+         Send(self,@Delete);
       
          return hit_roll;
       }

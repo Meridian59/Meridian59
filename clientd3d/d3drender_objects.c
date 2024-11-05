@@ -1905,16 +1905,8 @@ void D3DRenderPlayerOverlaysDraw(
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
 	// Get player's object flags for special drawing effects
-<<<<<<< HEAD
-	pRNode = GetRoomObjectById(playerViewParams.player->id);
-=======
 	const auto* player = GetPlayerInfo();
 	pRNode = GetRoomObjectById(player->id);
-	if (pRNode == NULL)
-		flags = 0;
-	else
-		flags = pRNode->obj.flags;
->>>>>>> master
 
 	for (i = 0; i < NUM_PLAYER_OVERLAYS; i++)
 	{

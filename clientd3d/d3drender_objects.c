@@ -578,6 +578,7 @@ void D3DRenderOverlaysDraw(
 		if (pRNode->obj.id == player->id)
 			continue;
 
+		// Check for invisible objects
 		bool objInvisible = IsInvisibleEffect(pRNode->obj.flags);
 		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{

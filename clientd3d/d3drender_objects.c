@@ -69,6 +69,9 @@ static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area,
 // Functions
 
 static bool IsInvisibleEffect(int flags) {
+	// OF_DITHERINVIS is not treated as invisible in the hardware renderer, instead
+	// it is treated as grey scale and translucent (such as logoff ghosts). 
+	// Without using OF_DITHERINVIS below it would be incorrectly treated as invisible.
 	return (flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
 }
 

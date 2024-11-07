@@ -28,7 +28,7 @@ resources:
 
    frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."
 
-   frozjewel_broken = "Having expended its power, the Jewel of Froz crumbles to crimson dust."
+   frozjewel_broken = "The Jewel of Froz now seems quite ordinary."
 
 classvars:
 
@@ -62,7 +62,7 @@ messages:
          Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
 	           #parm1=Send(self,@GetCapDef),#parm2=vrName);
          Send(poOwner,@TryUnuseItem,#what=self);
-         Send(self,@Delete);
+         vrDesc = frozjewel_desc_broken_rsc;
       
          return hit_roll;
       }

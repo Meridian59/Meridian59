@@ -29,7 +29,7 @@ void D3DFxInit()
 * Updates and renders all active particle emitters, including the sandstorm effect, 
 * in the current frame.
 */
-void D3DRenderParticles(ParticleSystemStructure& pss)
+void D3DRenderParticles(const ParticleSystemStructure& pss)
 {
 	list_type	list;
 	emitter		*pEmitter;
@@ -247,7 +247,7 @@ void SandstormInit(void)
 * Applies post-render overlay effects such as alpha blending, screen flashes, and pain effects, 
 * and resets the rendering cache.
 */
-void D3DPostOverlayEffects(FxRenderSystemStructure& fxrss)
+void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 {
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
@@ -663,7 +663,7 @@ void D3DPostOverlayEffects(FxRenderSystemStructure& fxrss)
 * Creates a blur and wave distortion effects using frame buffers, applying it to the current screen 
 * using a series of textures.
 */
-void D3DFxBlurWaver(FxRenderSystemStructure& fxRss)
+void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 {
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;

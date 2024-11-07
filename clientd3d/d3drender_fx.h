@@ -76,8 +76,8 @@ struct FxRenderSystemStructure {
 };
 
 void D3DFxInit();
-void D3DFxBlurWaver(FxRenderSystemStructure& renderSystemStructure);
-void D3DPostOverlayEffects(FxRenderSystemStructure& fxrss);
-void D3DRenderParticles(ParticleSystemStructure& pss);
+void D3DFxBlurWaver(const FxRenderSystemStructure& renderSystemStructure);
+void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss);
+void D3DRenderParticles(const ParticleSystemStructure& pss);
 
 #endif	/* #ifndef _D3DRENDERFX_H */

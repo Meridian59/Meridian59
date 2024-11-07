@@ -9,10 +9,10 @@
 
 // Variables
 
-extern Color base_palette[];
-extern PALETTEENTRY gPalette[256];
-extern int d3dRenderTextureThreshold;
-extern d3d_driver_profile gD3DDriverProfile;
+//extern Color base_palette[];
+//extern PALETTEENTRY gPalette[256];
+//extern int d3dRenderTextureThreshold;
+//extern d3d_driver_profile gD3DDriverProfile;
 
 // Interfaces
 

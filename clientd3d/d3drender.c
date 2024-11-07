@@ -135,7 +135,6 @@ Bool					gD3DRedrawAll = FALSE;
 int						gTemp = 0;
 Bool					gWireframe;		// this is really bad, I'm sorry
 
-extern player_info		player;
 extern long				viewer_height;
 extern Color			base_palette[];
 extern PDIB				background;         /* Pointer to background bitmap */
@@ -559,7 +558,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
-	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange, &player);
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange);
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
@@ -624,7 +623,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize);
 
-		PlayerViewParams playerViewParams(&player, gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
+		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 
 		timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}

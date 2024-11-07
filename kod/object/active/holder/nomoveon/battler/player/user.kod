@@ -2182,6 +2182,8 @@ messages:
 
       Send(self,@SendUserAllWindowOverlays);
 
+      Send(self,@SendBackgroundObjects);
+
       return;
    }
 
@@ -2216,18 +2218,25 @@ messages:
 
    UserLogonHook()
    {
-      local i;
-      
-      for i in Send(SYS,@GetBackgroundObjects)
-      {
-         Send(i,@AddBackgroundObject,#who=self);
-      }
+      Send(self,@SendBackgroundObjects);
 
       Send(self,@LoadMailNews);
 
       % Count right now as the last time we moved.
       piLastMoveUpdateTime = GetTime();
       piMovesCounter = 0;
+
+      propagate;
+   }
+
+   SendBackgroundObjects()
+   {
+      local i;
+
+      for i in Send(SYS,@GetBackgroundObjects)
+      {
+         Send(i,@AddBackgroundObject,#who=self);
+      }
 
       propagate;
    }

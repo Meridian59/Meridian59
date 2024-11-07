@@ -127,8 +127,8 @@ Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
     *y = static_cast<int>((client_y - view.y) / scale_y);
 
     // Check if the translated coordinates are within the valid room bounds.
-    if (*x < view.x || *x > view.x + view.cx ||
-        *y < view.y || *y > view.y + view.cy)
+    if (*x < 0 || *x > view.cx ||
+        *y < 0 || *y > view.cy)
         return False;
 
     return True;

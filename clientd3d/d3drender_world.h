@@ -70,8 +70,7 @@ struct WorldPropertyParams {
     LPDIRECT3DTEXTURE9 lightOrangeTexture;
 
 	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughTextureParam,
-        LPDIRECT3DTEXTURE9 lightOrangeTextureParam,
-        player_info* playerParam)
+        LPDIRECT3DTEXTURE9 lightOrangeTextureParam)
 		: noLookThroughTexture(noLookThroughTextureParam),
 		  lightOrangeTexture(lightOrangeTextureParam)
 	{}

@@ -10,12 +10,11 @@
 /**
 * Render background overlays in the current room -- for example the Sun and Moon.
 */
-void D3DRenderBackgroundOverlays(BackgroundOverlaysRenderStateParams bgoRenderStateParams, 
-    BackgroundOverlaysSceneParams bgoSceneParams)
+void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoRenderStateParams, 
+    const BackgroundOverlaysSceneParams& bgoSceneParams)
 {
-	auto& mat = bgoRenderStateParams.mat;
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+	MatrixIdentity(&bgoRenderStateParams.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, bgoRenderStateParams.vertexDeclaration);
 
@@ -282,7 +281,7 @@ void D3DRenderBackgroundOverlays(BackgroundOverlaysRenderStateParams bgoRenderSt
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 
 	// restore the correct material and view matrices.
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+	MatrixIdentity(&bgoRenderStateParams.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &bgoRenderStateParams.view);
 }

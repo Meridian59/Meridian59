@@ -17,7 +17,7 @@ struct BackgroundOverlaysRenderStateParams {
     d3d_render_pool_new* worldPool;
     d3d_render_cache_system* worldCacheSystem;
     const D3DMATRIX& view;
-    D3DMATRIX& mat;
+    D3DMATRIX& transformMatrix;
     RECT& d3dRect;
 
     BackgroundOverlaysRenderStateParams(
@@ -26,14 +26,14 @@ struct BackgroundOverlaysRenderStateParams {
         d3d_render_pool_new* worldPoolParam,
         d3d_render_cache_system* worldCacheSystemParam,
         const D3DMATRIX& viewParam,
-        D3DMATRIX& matParam,
+        D3DMATRIX& transformMatrixParam,
         RECT d3dRectParam)
         : vertexDeclaration(vertexDeclarationParam),
           driverProfile(driverProfileParam),
           worldPool(worldPoolParam),
           worldCacheSystem(worldCacheSystemParam),
           view(viewParam),
-          mat(matParam),
+          transformMatrix(transformMatrixParam),
           d3dRect(d3dRectParam) 
     {}
 };
@@ -62,7 +62,7 @@ struct BackgroundOverlaysSceneParams {
     {}
 };
 
-void D3DRenderBackgroundOverlays(BackgroundOverlaysRenderStateParams backgroundOverlaysRenderStateParams, 
-    BackgroundOverlaysSceneParams backgroundOverlaysSceneParams);
+void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& backgroundOverlaysRenderStateParams, 
+    const BackgroundOverlaysSceneParams& backgroundOverlaysSceneParams);
 
 #endif	/* #ifndef _D3DRENDERBGOVERLAYS_H */

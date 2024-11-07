@@ -40,7 +40,7 @@ struct FxRenderSystemStructure {
     LPDIRECT3DTEXTURE9 backBufferTexFull;
     int fullTextureSize;
     int smallTextureSize;
-    const D3DMATRIX& transformMatrix;
+    D3DMATRIX& transformMatrix;
     unsigned int frame;
     int screenWidth;
     int	screenHeight;
@@ -55,7 +55,7 @@ struct FxRenderSystemStructure {
         LPDIRECT3DTEXTURE9 backBufferTexFullParam,
         int fullTextureSizeParam,
         int smallTextureSizeParam,
-        const D3DMATRIX& transformMatrixParam,
+        D3DMATRIX& transformMatrixParam,
         unsigned int frameParam,
         int screenWidthParam,
         int screenHeightParam)

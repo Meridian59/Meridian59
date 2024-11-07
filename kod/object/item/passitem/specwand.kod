@@ -38,6 +38,8 @@ classvars:
 
 properties:
 
+   vrDesc = SpecialWand_desc_rsc
+
 messages:
 
    %the subclass should define what the wand can apply itself to

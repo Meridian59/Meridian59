@@ -40,7 +40,7 @@ struct FxRenderSystemStructure {
     LPDIRECT3DTEXTURE9 backBufferTexFull;
     int fullTextureSize;
     int smallTextureSize;
-    D3DMATRIX& mat;
+    D3DMATRIX& transformMatrix;
     unsigned int frame;
     int screenWidth;
     int	screenHeight;
@@ -55,7 +55,7 @@ struct FxRenderSystemStructure {
         LPDIRECT3DTEXTURE9 backBufferTexFullParam,
         int fullTextureSizeParam,
         int smallTextureSizeParam,
-        D3DMATRIX& matParam,
+        D3DMATRIX& transformMatrixParam,
         unsigned int frameParam,
         int screenWidthParam,
         int screenHeightParam)
@@ -68,7 +68,7 @@ struct FxRenderSystemStructure {
           backBufferTexFull(backBufferTexFullParam),
           fullTextureSize(fullTextureSizeParam),
           smallTextureSize(smallTextureSizeParam),
-          mat(matParam),
+          transformMatrix(transformMatrixParam),
 		  frame(frameParam),
           screenWidth(screenWidthParam),
           screenHeight(screenHeightParam)
@@ -76,8 +76,8 @@ struct FxRenderSystemStructure {
 };
 
 void D3DFxInit();
-void D3DFxBlurWaver(FxRenderSystemStructure renderSystemStructure);
-void D3DPostOverlayEffects(FxRenderSystemStructure fxrss);
-void D3DRenderParticles(ParticleSystemStructure pss);
+void D3DFxBlurWaver(FxRenderSystemStructure& renderSystemStructure);
+void D3DPostOverlayEffects(FxRenderSystemStructure& fxrss);
+void D3DRenderParticles(ParticleSystemStructure& pss);
 
 #endif	/* #ifndef _D3DRENDERFX_H */

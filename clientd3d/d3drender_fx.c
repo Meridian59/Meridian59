@@ -29,7 +29,7 @@ void D3DFxInit()
 * Updates and renders all active particle emitters, including the sandstorm effect, 
 * in the current frame.
 */
-void D3DRenderParticles(ParticleSystemStructure pss)
+void D3DRenderParticles(ParticleSystemStructure& pss)
 {
 	list_type	list;
 	emitter		*pEmitter;
@@ -247,7 +247,7 @@ void SandstormInit(void)
 * Applies post-render overlay effects such as alpha blending, screen flashes, and pain effects, 
 * and resets the rendering cache.
 */
-void D3DPostOverlayEffects(FxRenderSystemStructure fxrss)
+void D3DPostOverlayEffects(FxRenderSystemStructure& fxrss)
 {
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
@@ -663,7 +663,7 @@ void D3DPostOverlayEffects(FxRenderSystemStructure fxrss)
 * Creates a blur and wave distortion effects using frame buffers, applying it to the current screen 
 * using a series of textures.
 */
-void D3DFxBlurWaver(FxRenderSystemStructure fxRss)
+void D3DFxBlurWaver(FxRenderSystemStructure& fxRss)
 {
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
@@ -734,10 +734,10 @@ void D3DFxBlurWaver(FxRenderSystemStructure fxRss)
 		CHUNK_INDEX_SET(pChunk, 3, 3);
 	}
 
-	MatrixIdentity(&fxRss.mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &fxRss.mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &fxRss.mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.mat);
+	MatrixIdentity(&fxRss.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &fxRss.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &fxRss.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);

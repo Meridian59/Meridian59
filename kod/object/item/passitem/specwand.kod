@@ -38,6 +38,8 @@ classvars:
 
 properties:
 
+   vrDesc = SpecialWand_desc_rsc
+
 messages:
 
    %the subclass should define what the wand can apply itself to
@@ -68,7 +70,7 @@ messages:
       {
          Send(poOwner,@MsgSendUser,#message_rsc=SpecialWand_broken,
            #parm1=send(self,@getcapdef),#parm2=send(self,@getname));
-         Send(self,@Delete);
+         vrDesc = SpecialWand_desc_broken_rsc;
       }
       
       return;

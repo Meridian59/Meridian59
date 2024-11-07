@@ -596,7 +596,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// background overlays (e.g. the Sun & Moon)
 	if (draw_background_overlays)
 	{
-		D3DRenderBackgroundOverlays(&gWorldPool, angleHeading, anglePitch, room, params);
+		BackgroundOverlaysRenderStateParams bgoRenderStateParams(decl1dc, gD3DDriverProfile, &gWorldPool, &gWorldCacheSystem, 
+			view, mat, gD3DRect);
+		BackgroundOverlaysSceneParams bgoSceneParams(&num_visible_objects, visible_objects, angleHeading, anglePitch, room, params);
+		D3DRenderBackgroundOverlays(bgoRenderStateParams, bgoSceneParams);
 	}
 
 	if (draw_world)

@@ -7,42 +7,24 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-// Variables
-
-extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-extern d3d_render_pool_new gWorldPool;
-extern d3d_render_cache_system gWorldCacheSystem;
-extern D3DMATRIX view, mat;
-extern player_info player;
-extern RECT gD3DRect;
-extern ObjectRange visible_objects[];    /* Where objects are on screen */
-extern int num_visible_objects;
-
-// Interfaces
-
-extern float FovHorizontal(long width);
-extern float FovVertical(long height);
-
-// Implementations
-
 /**
 * Render background overlays in the current room -- for example the Sun and Moon.
 */
-void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, int anglePitch, 
-	room_type* room, Draw3DParams* params)
+void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoRenderStateParams, 
+    const BackgroundOverlaysSceneParams& bgoSceneParams)
 {
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+	MatrixIdentity(&bgoRenderStateParams.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, bgoRenderStateParams.vertexDeclaration);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 
-	D3DRenderPoolReset(&gWorldPool, &D3DMaterialWorldPool);
-	D3DCacheSystemReset(&gWorldCacheSystem);
+	D3DRenderPoolReset(bgoRenderStateParams.worldPool, &D3DMaterialWorldPool);
+	D3DCacheSystemReset(bgoRenderStateParams.worldCacheSystem);
 
-	for (list_type list = room->bg_overlays; list != NULL; list = list->next)
+	for (list_type list = bgoSceneParams.room->bg_overlays; list != NULL; list = list->next)
 	{
 		BackgroundOverlay* overlay = (BackgroundOverlay*)(list->data);
 
@@ -68,7 +50,7 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		long object_width = DibWidth(pDib) * size_scaler;
 		long object_height = DibHeight(pDib) * size_scaler;
 
-		d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
+		d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(bgoRenderStateParams.worldPool, NULL, pDib, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
 
@@ -95,7 +77,9 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		float angleInRadians = piAngle / 4096.0f;
 		double azimuthalAngle = angleInRadians * 2 * PI;
 		long radius = height_max * 5;
-		double horizontalRadius = sqrt(pow(radius, 2) - pow(mappedHeightValue, 2));
+		double horizontalRadius = sqrt(pow(radius, 2) - pow(mappedHeightValue, 2));		
+
+		const auto& params = bgoSceneParams.params;
 
 		long x = params->viewer_x - (object_width / 2) + horizontalRadius * cos(azimuthalAngle);
 		long y = params->viewer_y - (object_height / 2) + horizontalRadius * sin(azimuthalAngle);
@@ -113,6 +97,9 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
 		const float DEGREES_TO_RADIANS = PI / 180.0f;
 		const float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
+
+		const auto& angleHeading = bgoSceneParams.angleHeading;
+		const auto& anglePitch = bgoSceneParams.anglePitch;
 
 		MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
 		MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
@@ -165,8 +152,10 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		// (e.g. Blinded by the light of the Sun).
 		ObjectRange* range = FindVisibleObjectById(overlay->obj.id);
 
-		int w = gD3DRect.right - gD3DRect.left;
-		int h = gD3DRect.bottom - gD3DRect.top;
+		const auto& d3dRect = bgoRenderStateParams.d3dRect;
+
+		int w = d3dRect.right - d3dRect.left;
+		int h = d3dRect.bottom - d3dRect.top;
 
 		custom_xyzw topLeft;
 		topLeft.x = pChunk->xyz[3].x;
@@ -198,7 +187,7 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		MatrixMultiply(&rot, &rot, &mat);
 		MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 		MatrixMultiply(&mat, &trans, &rot);
-		XformMatrixPerspective(&localToScreen, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 1.0f, 2000000.0f);
+		XformMatrixPerspective(&localToScreen, FovHorizontal(d3dRect.right - d3dRect.left), FovVertical(d3dRect.bottom - d3dRect.top), 1.0f, 2000000.0f);
 		MatrixMultiply(&mat, &pChunk->xForm, &mat);
 		MatrixMultiply(&localToScreen, &mat, &localToScreen);
 
@@ -249,15 +238,16 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 			int tempTop = (topLeft.y * -h / 2) + (h / 2);
 			int tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-			int distX = bg_overlay_pos.x - player.x;
-			int distY = bg_overlay_pos.y - player.y;
+			const auto* player = GetPlayerInfo();
+			int distX = bg_overlay_pos.x - player->x;
+			int distY = bg_overlay_pos.y - player->y;
 
 			int distance = DistanceGet(distX, distY);
 
 			if (range == NULL)
 			{
 				// Set up new visible object.
-				range = &visible_objects[num_visible_objects];
+				range = &bgoSceneParams.visibleObjects[*bgoSceneParams.numVisibleObjects];
 				range->id = overlay->obj.id;
 				range->distance = distance;
 				range->left_col = tempLeft;
@@ -265,7 +255,7 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 				range->top_row = tempTop;
 				range->bottom_row = tempBottom;
 
-				num_visible_objects = min(num_visible_objects + 1, MAXOBJECTS);
+				*bgoSceneParams.numVisibleObjects = min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
 			}
 
 			overlay->rcScreen.left = tempLeft;
@@ -284,14 +274,14 @@ void D3DRenderBackgroundOverlays(d3d_render_pool_new* pPool, int angleHeading, i
 		}
 
 	}
-	D3DCacheFill(&gWorldCacheSystem, &gWorldPool, 1);
-	D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DCacheFill(bgoRenderStateParams.worldCacheSystem, bgoRenderStateParams.worldPool, 1);
+	D3DCacheFlush(bgoRenderStateParams.worldCacheSystem, bgoRenderStateParams.worldPool, 1, D3DPT_TRIANGLESTRIP);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 
 	// restore the correct material and view matrices.
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
+	MatrixIdentity(&bgoRenderStateParams.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &bgoRenderStateParams.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &bgoRenderStateParams.view);
 }

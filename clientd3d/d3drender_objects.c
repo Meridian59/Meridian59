@@ -643,7 +643,7 @@ void D3DRenderOverlaysDraw(
 
 			for (list2 = *pRNode->obj.overlays; list2 != NULL; list2 = list2->next)
 			{
-				bHotspot = true;
+				bHotspot = false;
 
 				pOverlay = (Overlay*)list2->data;
 

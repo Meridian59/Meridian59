@@ -786,9 +786,6 @@ Bool HandleChange(char *ptr, long len)
 
    ChangeObject(&object, translation, effect, &a, overlays);
 
-   // something changed, so we probably need to rebuild static lists
-   gD3DRedrawAll |= D3DRENDER_REDRAW_UPDATE;
-   
    return True;
 }
 /********************************************************************/

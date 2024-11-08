@@ -2036,7 +2036,8 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 void D3DGeometryBuildNew(
 	const WorldRenderParams& worldRenderParams,
 	const WorldPropertyParams& worldPropertyParams,
-	const LightAndTextureParams& lightAndTextureParams)
+	const LightAndTextureParams& lightAndTextureParams, 
+	bool transparent_pass)
 {
 	int			count;
 	BSPnode		*pNode = NULL;
@@ -2055,6 +2056,14 @@ void D3DGeometryBuildNew(
 			case BSPinternaltype:
 				for (pWall = pNode->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
 				{
+
+					// Determine if the wall is transparent
+					bool isTransparent = (pWall->pos_sidedef && pWall->pos_sidedef->flags & WF_TRANSPARENT) ||
+						(pWall->neg_sidedef && pWall->neg_sidedef->flags & WF_TRANSPARENT);
+
+					if (!ShouldRenderInCurrentPass(transparent_pass, isTransparent))
+						continue;
+
 					int	flags, wallFlags;
 
 					flags = 0;

@@ -707,6 +707,12 @@ void DownloadNewClient(char *hostname, char *filename)
   char update_program_path[MAX_PATH];
   char *ptr;
   SystemInfo sysinfo;
+
+  if (IsSteamVersion()) {
+    ClientError(hInst, hMain, IDS_NEED_STEAM_UPDATE, command_line);
+    MainQuit(hMain);
+    exit(1);
+  }
   
   if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
   {

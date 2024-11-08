@@ -75,12 +75,6 @@ long D3DRenderWorld(
 
 	// Adjusted Alpha Testing and Blending
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, alpha_test_threshold);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
 	// Set up texture filtering
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -146,6 +140,9 @@ long D3DRenderWorld(
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 	SetZBias(gpD3DDevice, 1);
+
+	// Disable alpha testing and blending
+	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
 	return timeWorld;
 }
@@ -2039,8 +2036,7 @@ void D3DRenderLMapPostWallAdd(WallData* pWall, d3d_render_pool_new* pPool, unsig
 void D3DGeometryBuildNew(
 	const WorldRenderParams& worldRenderParams,
 	const WorldPropertyParams& worldPropertyParams,
-	const LightAndTextureParams& lightAndTextureParams, 
-	bool transparent_pass)
+	const LightAndTextureParams& lightAndTextureParams)
 {
 	int			count;
 	BSPnode		*pNode = NULL;
@@ -2059,14 +2055,6 @@ void D3DGeometryBuildNew(
 			case BSPinternaltype:
 				for (pWall = pNode->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
 				{
-
-					// Determine if the wall is transparent
-					bool isTransparent = (pWall->pos_sidedef && pWall->pos_sidedef->flags & WF_TRANSPARENT) ||
-						(pWall->neg_sidedef && pWall->neg_sidedef->flags & WF_TRANSPARENT);
-
-					if (!ShouldRenderInCurrentPass(transparent_pass, isTransparent))
-						continue;
-
 					int	flags, wallFlags;
 
 					flags = 0;

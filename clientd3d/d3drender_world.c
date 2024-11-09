@@ -37,7 +37,7 @@ void D3DRenderPacketCeilingAdd(BSPnode* pNode, d3d_render_pool_new* pPool, bool 
 void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, 
 	unsigned int type, int side, bool dynamic);
 void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThroughTexture, bool bDynamic);
-void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_type* current_room, 
+void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, 
 	LPDIRECT3DTEXTURE9 noLookThrough, LPDIRECT3DTEXTURE9 lightOrangeTexture, bool bDynamic);
 
 void D3DRenderLMapPostFloorAdd(BSPnode* pNode, d3d_render_pool_new* pPool, d_light_cache* pDLightCache, bool bDynamic);
@@ -1315,7 +1315,7 @@ void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3
 /*
 * Add a ceiling mask to the render pool
 */
-void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_type* current_room, 
+void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, 
 	LPDIRECT3DTEXTURE9 noLookThroughTexture, LPDIRECT3DTEXTURE9 lightOrangeTexture, bool bDynamic)
 {
 	Sector* pSector = pNode->u.leaf.sector;
@@ -1376,6 +1376,8 @@ void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_ty
 			pChunk->indices[index + 1] = last;
 		}
 	}
+
+	const auto& current_room = getCurrentRoom();
 
 	if ((pSector->sloped_ceiling == NULL) && (pSector->ceiling_height !=
 		current_room->sectors[0].ceiling_height))
@@ -2045,7 +2047,7 @@ void D3DGeometryBuildNew(
 
 	auto& cacheSystem = worldRenderParams.cacheSystemParams;
 	auto& pools = worldRenderParams.poolParams;
-	auto& room = worldRenderParams.room;
+	const auto& room = getCurrentRoom();
 
 	for (count = 0; count < room->num_nodes; count++)
 	{
@@ -2292,7 +2294,7 @@ void D3DGeometryBuildNew(
 			case BSPleaftype:
 				if ((pNode->u.leaf.sector->ceiling == NULL) &&
 					(pNode->u.leaf.sector->sloped_floor == NULL))
-					D3DRenderCeilingMaskAdd(pNode, pools.wallMaskPool, room, worldPropertyParams.noLookThroughTexture, 
+					D3DRenderCeilingMaskAdd(pNode, pools.wallMaskPool, worldPropertyParams.noLookThroughTexture, 
 						worldPropertyParams.lightOrangeTexture, false);
 			break;
 

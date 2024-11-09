@@ -2471,6 +2471,7 @@ BEGIN
     IDS_CANTINIT            "Unable to initialize Internet connection."
     IDS_NOCONNECTION        "Unable to establish connection to %s."
     IDS_BADCALLBACK         "Unknown error (unable to install callback function)."
+	 IDS_NEED_STEAM_UPDATE   "Your client is out of date.  Please go to Steam and update the game."
 END
 
 STRINGTABLE

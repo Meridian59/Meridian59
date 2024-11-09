@@ -652,3 +652,7 @@ void ConfigMenuLaunch(void)
 		ClientError(hInst, hMain, IDS_NOCONFIGMENUEXE, config.browser);
 	}
 }
+
+bool IsSteamVersion() {
+  return is_steam_install;
+}

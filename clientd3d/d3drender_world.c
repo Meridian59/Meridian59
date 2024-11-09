@@ -73,14 +73,8 @@ long D3DRenderWorld(
 
 	auto timeWorld = timeGetTime();
 
-	// Adjusted Alpha Testing and Blending
+	// Enable alpha testing
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, alpha_test_threshold);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
 	// Set up texture filtering
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -146,6 +140,9 @@ long D3DRenderWorld(
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 	SetZBias(gpD3DDevice, 1);
+
+	// Disable alpha testing
+	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
 	return timeWorld;
 }

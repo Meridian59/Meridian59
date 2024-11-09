@@ -451,13 +451,26 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	timeOverall = timeGetTime();
 	timeSetup = timeGetTime();
 
-	// If blind, don't draw anything
-	Bool can_see = !effects.blind;
-	Bool draw_sky = can_see;
-	Bool draw_world = can_see;
-	Bool draw_objects = can_see;
-	Bool draw_particles = can_see;
-	Bool draw_background_overlays = can_see;
+	// Static variable to track the player's previous ability to see. Initialize it only once.
+	static bool can_see = !effects.blind;
+
+	// Determine the current ability to see.
+	bool can_see_now = !effects.blind;
+
+	// Trigger a redraw only if the player was blind, but now can see.
+	if (!can_see && can_see_now) {
+		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	}
+
+	// Update the can_see state for the next frame.
+	can_see = can_see_now;
+
+	// If blind (!can_see), don't draw anything
+	bool draw_sky = can_see;
+	bool draw_world = can_see;
+	bool draw_objects = can_see;
+	bool draw_particles = can_see;
+	bool draw_background_overlays = can_see;
 
 	if (D3DRenderUpdateSkyBox(room->bkgnd))
 	{

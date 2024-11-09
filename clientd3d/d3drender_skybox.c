@@ -194,10 +194,6 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 
-	// Restore alpha blending and alpha testing for subsequent rendering
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-
 	// restore the correct view matrix
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 }

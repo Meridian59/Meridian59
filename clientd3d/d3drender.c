@@ -184,7 +184,7 @@ int getD3dRenderThreshold()
 }
 
 bool IsManagedTexturesEnabled() {
-    return gD3DDriverProfile.bManagedTextures;
+	return gD3DDriverProfile.bManagedTextures;
 }
 
 bool isFogEnabled()
@@ -198,11 +198,11 @@ void setWireframeMode(bool isEnabled)
 }
 
 PALETTEENTRY* GetPalette() {
-    return gPalette;
+	return gPalette;
 }
 
 Color* GetBasePalette() {
-    return base_palette;
+	return base_palette;
 }
 
 // externed stuff

@@ -165,7 +165,7 @@ void D3DRenderWorldLighting(const WorldRenderParams& worldRenderParams, const Li
 		auto& cacheSystem = worldRenderParams.cacheSystemParams;
 		auto& pools = worldRenderParams.poolParams;
 		auto& params = worldRenderParams.params;
-		auto& room = getCurrentRoom();
+		const auto* room = getCurrentRoom();
 
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
@@ -208,7 +208,7 @@ void D3DRenderWorldDraw(const WorldRenderParams& worldRenderParams, bool transpa
 
 	auto& cacheSystem = worldRenderParams.cacheSystemParams;
 	auto& pools = worldRenderParams.poolParams;
-	auto& room = worldRenderParams.room;
+	const auto* room = getCurrentRoom();
 
 	for (count = 0; count < room->num_nodes; count++)
 	{

@@ -649,7 +649,7 @@ BEGIN
     83                      "Usar objeto"
     84                      "Ativar"
     85                      "Software\\Classes\\http\\shell\\open\\command"
-    86                      "http://meridian59.com/M59-Help-01.shtml"
+    86                      "https://meridian59.com/M59-Help-01.shtml"
     87                      "O que, por favor?"
     90                      "Descompactando..."
     91                      "Meridian 59"
@@ -722,11 +722,11 @@ END
 
 STRINGTABLE
 BEGIN
-    160                     "http://meridian59.com/serverstatus/"
+    160                     "https://meridian59.com/serverstatus/"
     161                     "A troca de dados entre computadores sempre leva um certo tempo. Esse período é chamado de 'lag'. A qualidade da sua conexão depende de vários fatores e pode mudar a qualquer momento."
     162                     "~r< O filtro de texto foi ativado >"
     163                     "A mensagem enviada foi filtrada.\n\nA mensagem contém palavras que estão no filtro de texto. Por favor, verifique sua mensagem."
-    164                     "http://www.meridian59.com/"
+    164                     "https://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -1392,7 +1392,7 @@ BEGIN
     83                      "Objekt verwenden"
     84                      "Aktivieren"
     85                      "Software\\Classes\\http\\shell\\open\\command"
-    86                      "http://meridian59.com/M59-Help-01.shtml"
+    86                      "https://meridian59.com/M59-Help-01.shtml"
     87                      "Was bitte?"
     90                      "Entpacken ..."
     91                      "Meridian 59"
@@ -1469,7 +1469,7 @@ BEGIN
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
-    164                     "http://www.meridian59.com/"
+    164                     "https://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -2419,7 +2419,7 @@ BEGIN
     IDS_APPLY               "Apply object"
     IDS_ACTIVATE            "Activate"
     IDS_HTTPKEY             "Software\\Classes\\http\\shell\\open\\command"
-    IDS_HELPFILE            "http://meridian59.com/M59-Help-01.shtml"
+    IDS_HELPFILE            "https://meridian59.com/M59-Help-01.shtml"
     IDS_BADCOMMAND          "What?  (Press F1 or '?' for help.)"
     IDS_DECOMPRESSING       "Decompressing..."
     IDS_APPNAME             "Meridian 59"
@@ -2491,7 +2491,7 @@ BEGIN
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."
-    IDS_HOMEPAGEURL         "http://www.meridian59.com/"
+    IDS_HOMEPAGEURL         "https://www.meridian59.com/"
 END
 
 STRINGTABLE

@@ -44,7 +44,7 @@ typedef struct d3d_driver_profile
 	DWORD					lmapMode;
 	Bool					bZBias;
 	Bool					bCull;
-	Bool					bManagedTextures;
+	bool					bManagedTextures;
 	Bool					bSoftwareRenderer;
 	Bool					bFogEnable;
 } d3d_driver_profile;

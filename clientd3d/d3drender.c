@@ -184,7 +184,7 @@ int getD3dRenderThreshold()
 }
 
 bool IsManagedTexturesEnabled() {
-    return gD3DDriverProfile.bManagedTextures==TRUE;
+    return gD3DDriverProfile.bManagedTextures;
 }
 
 bool isFogEnabled()

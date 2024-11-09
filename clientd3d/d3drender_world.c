@@ -73,7 +73,7 @@ long D3DRenderWorld(
 
 	auto timeWorld = timeGetTime();
 
-	// Adjusted Alpha Testing and Blending
+	// Enable alpha testing
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
 	// Set up texture filtering
@@ -141,7 +141,7 @@ long D3DRenderWorld(
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 	SetZBias(gpD3DDevice, 1);
 
-	// Disable alpha testing and blending
+	// Disable alpha testing
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
 	return timeWorld;

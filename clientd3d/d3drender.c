@@ -91,7 +91,7 @@ BYTE					gViewerLight = 0;
 int						gNumObjects;
 int						gNumVertices;
 int						gNumDPCalls;
-PALETTEENTRY			gPalette[256];
+static PALETTEENTRY		gPalette[256];
 unsigned int			gFrame = 0;
 int						gScreenWidth;
 int						gScreenHeight;
@@ -178,6 +178,15 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
                                    *((DWORD *) &bias));
 }
 
+int getD3dRenderThreshold()
+{
+	return d3dRenderTextureThreshold;
+}
+
+bool IsManagedTexturesEnabled() {
+    return gD3DDriverProfile.bManagedTextures==TRUE;
+}
+
 bool isFogEnabled()
 {
 	return gD3DDriverProfile.bFogEnable;
@@ -186,6 +195,14 @@ bool isFogEnabled()
 void setWireframeMode(bool isEnabled)
 {
 	gWireframe = isEnabled;
+}
+
+PALETTEENTRY* GetPalette() {
+    return gPalette;
+}
+
+Color* GetBasePalette() {
+    return base_palette;
 }
 
 // externed stuff
@@ -635,7 +652,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
 
-		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize);
+		FontTextureParams fontTextureParams(&gFont, gSmallTextureSize);
 
 		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 

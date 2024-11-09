@@ -178,10 +178,18 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 float FovHorizontal(long width);
 float FovVertical(long height);
 
-bool isFogEnabled();
+int getD3dRenderThreshold();
+
 // Returns the max shading range (FINENESS-shade_amount) to FINENESS
 long getShadeAmount();
+
+bool IsManagedTexturesEnabled();
+bool isFogEnabled();
+
 const Vector3D& getSunVector();
 void setWireframeMode(bool isEnabled);
+
+PALETTEENTRY* GetPalette();
+Color* GetBasePalette();
 
 #endif	// __D3DRENDER_H__

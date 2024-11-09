@@ -44,15 +44,12 @@ struct PlayerViewParams
 struct FontTextureParams
 {
     font_3d* font;
-    Color* basePalette;
     int smallTextureSize;
 
     FontTextureParams(
         font_3d* fontParam,
-        Color* basePaletteParam,
         int smallTextureSizeParam)
         : font(fontParam),
-          basePalette(basePaletteParam),
           smallTextureSize(smallTextureSizeParam)
     {}
 };
@@ -128,7 +125,7 @@ struct ObjectsRenderParams {
     ObjectsRenderParams(
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisibleParam,
-        d3d_driver_profile driverProfileParam,
+        d3d_driver_profile& driverProfileParam,
         d3d_render_pool_new* renderPoolParam,
         d3d_render_cache_system* cacheSystemParam,
         D3DMATRIX viewParam,

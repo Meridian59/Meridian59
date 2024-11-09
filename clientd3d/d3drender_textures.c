@@ -477,7 +477,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 	int					k, l, newWidth, newHeight, diffWidth, diffHeight;
 	int					skipValW, skipValH, pitchHalf;
 
-	const auto base_palette = GetBasePalette();
+	const auto* base_palette = GetBasePalette();
 	D3DRenderPaletteSet(0, 0, 0);
 
 	skipValW = skipValH = 1;

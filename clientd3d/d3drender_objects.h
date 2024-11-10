@@ -44,15 +44,12 @@ struct PlayerViewParams
 struct FontTextureParams
 {
     font_3d* font;
-    Color* basePalette;
     int smallTextureSize;
 
     FontTextureParams(
         font_3d* fontParam,
-        Color* basePaletteParam,
         int smallTextureSizeParam)
         : font(fontParam),
-          basePalette(basePaletteParam),
           smallTextureSize(smallTextureSizeParam)
     {}
 };

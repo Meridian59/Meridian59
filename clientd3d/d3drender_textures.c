@@ -28,7 +28,7 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 
 	effect = GetDrawingEffect(flags);
 
-	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
+	auto* palette = GetPalette();
 
 	switch (effect)
 	{
@@ -236,7 +236,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
-	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
+	auto* palette = GetPalette();
 
 	for (si = 0, di = 0; di < newHeight; si++, di++)
 	{
@@ -394,7 +394,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
-	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
+	auto* palette = GetPalette();
 
 	for (si = 0, di = 0; di < newWidth; si++, di++)
 	{
@@ -546,7 +546,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
-	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
+	auto* palette = GetPalette();
 
 	//	for (dj = 0, sj = 0; dj < newHeight; dj++, sj++)
 	for (dj = newHeight - 1, sj = 0; dj >= 0; dj--, sj++)

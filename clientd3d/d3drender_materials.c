@@ -46,8 +46,8 @@ Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
   }
   else
   {
-	  const auto* font = getFont3d();
-	  pTexture = font->pTexture;
+	  const auto& font = getFont3d();
+	  pTexture = font.pTexture;
   }
 
 	if (pTexture)

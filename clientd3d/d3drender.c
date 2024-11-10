@@ -192,9 +192,9 @@ bool isWireframeMode()
 	return gWireframe;
 }
 
-const font_3d* getFont3d()
+const font_3d& getFont3d()
 {
-	return &gFont;
+	return gFont;
 }
 
 const LPDIRECT3DTEXTURE9 getWhiteLightTexture()

@@ -186,7 +186,7 @@ const Vector3D& getSunVector();
 void setWireframeMode(bool isEnabled);
 bool isWireframeMode();
 
-const font_3d* getFont3d();
+const font_3d& getFont3d();
 
 const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
 

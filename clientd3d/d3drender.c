@@ -91,7 +91,7 @@ BYTE					gViewerLight = 0;
 int						gNumObjects;
 int						gNumVertices;
 int						gNumDPCalls;
-static PALETTEENTRY		gPalette[256];
+PALETTEENTRY			gPalette[256];
 unsigned int			gFrame = 0;
 int						gScreenWidth;
 int						gScreenHeight;

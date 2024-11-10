@@ -177,15 +177,6 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
                                    *((DWORD *) &bias));
 }
 
-int getD3dRenderThreshold()
-{
-	return d3dRenderTextureThreshold;
-}
-
-bool IsManagedTexturesEnabled() {
-	return gD3DDriverProfile.bManagedTextures;
-}
-
 bool isFogEnabled()
 {
 	return gD3DDriverProfile.bFogEnable;
@@ -199,14 +190,6 @@ void setWireframeMode(bool isEnabled)
 bool isWireframeMode()
 {
 	return gWireframe;
-}
-
-PALETTEENTRY* GetPalette() {
-	return gPalette;
-}
-
-Color* GetBasePalette() {
-	return base_palette;
 }
 
 const font_3d* getFont3d()

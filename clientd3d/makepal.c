@@ -168,12 +168,6 @@ void WritePalette(char *dir)
    }
    fprintf(palfile, "\n};\n\n");
 
-   // Add getter function for base_palette: resolve best way to do this then we don't need an extern in renderer.
-   // Can this file be removed entirely and just include the generated pal.c?
-   //fprintf(palfile, "const Color* GetBasePalette() {\n");
-   //fprintf(palfile, "    return base_palette;\n");
-   //fprintf(palfile, "}\n\n");
-
    // Write out lighting palettes
    fprintf(palfile, "BYTE  light_palettes[NUM_PALETTES][NUM_COLORS] = {\n");
 

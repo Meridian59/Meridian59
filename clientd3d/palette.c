@@ -118,7 +118,7 @@ HPALETTE InitializePalette(void)
       }
    }
 
-   const auto base_palette = GetBasePalette();
+    const Color (&base_palette)[NUM_COLORS] = getBasePalette();
 
    if (has_palette)
    {

@@ -183,13 +183,20 @@ int getD3dRenderThreshold();
 // Returns the max shading range (FINENESS-shade_amount) to FINENESS
 long getShadeAmount();
 
-bool IsManagedTexturesEnabled();
+bool isManagedTexturesEnabled();
 bool isFogEnabled();
 
 const Vector3D& getSunVector();
 void setWireframeMode(bool isEnabled);
 
+// Global palette array containing 256 color entries used for rendering textures in the current frame.
+// Each PALETTEENTRY holds color information (red, green, blue) and a flag for transparency.
+// This palette is dynamically updated based on the current rendering context.
 PALETTEENTRY* GetPalette();
-Color* GetBasePalette();
+
+// Base palette array containing predefined colors used as a reference for rendering effects.
+// Each Color entry holds RGB values for a specific color.
+// This palette remains constant and is used for color lookups and transformations.
+const Color(&getBasePalette())[NUM_COLORS];
 
 #endif	// __D3DRENDER_H__

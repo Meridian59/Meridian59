@@ -135,7 +135,7 @@ int						gTemp = 0;
 Bool					gWireframe;		// this is really bad, I'm sorry
 
 extern long				viewer_height;
-extern Color			base_palette[];
+extern Color			base_palette[NUM_COLORS];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
@@ -178,13 +178,14 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
                                    *((DWORD *) &bias));
 }
 
+// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
 int getD3dRenderThreshold()
 {
 	return d3dRenderTextureThreshold;
 }
 
-bool IsManagedTexturesEnabled() {
-    return gD3DDriverProfile.bManagedTextures==TRUE;
+bool isManagedTexturesEnabled() {
+    return gD3DDriverProfile.bManagedTextures;
 }
 
 bool isFogEnabled()
@@ -201,7 +202,7 @@ PALETTEENTRY* GetPalette() {
     return gPalette;
 }
 
-Color* GetBasePalette() {
+const Color (&getBasePalette())[NUM_COLORS] {
     return base_palette;
 }
 

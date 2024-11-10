@@ -19,7 +19,7 @@ Set the current pallete in use
 void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 {
 	xlat* pXLat0, * pXLat1;
-	const Color* pPalette = GetBasePalette();
+	const Color (&pPalette)[NUM_COLORS] = getBasePalette();
 	int		i;
 	unsigned int	effect;
 
@@ -28,7 +28,7 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 
 	effect = GetDrawingEffect(flags);
 
-	auto* palette = GetPalette();
+	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
 
 	switch (effect)
 	{
@@ -220,7 +220,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 	pBits = DibPtr(pDib);
 
-	if (IsManagedTexturesEnabled())
+	if (isManagedTexturesEnabled())
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newWidth, newHeight, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &pTexture, NULL);
 	else
@@ -236,7 +236,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
-	auto gPalette = GetPalette();
+	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
 
 	for (si = 0, di = 0; di < newHeight; si++, di++)
 	{
@@ -257,18 +257,18 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 				}
 
 			// 16bit 1555 textures
-			if (gPalette[pBits[si * pDib->width + sj]].peFlags != 0)
+			if (palette[pBits[si * pDib->width + sj]].peFlags != 0)
 			{
 				pPixels16[di * pitchHalf + dj] =
-					(gPalette[pBits[si * pDib->width + sj]].peBlue >> 3) |
-					((gPalette[pBits[si * pDib->width + sj]].peGreen >> 3) << 5) |
-					((gPalette[pBits[si * pDib->width + sj]].peRed >> 3) << 10);
+					(palette[pBits[si * pDib->width + sj]].peBlue >> 3) |
+					((palette[pBits[si * pDib->width + sj]].peGreen >> 3) << 5) |
+					((palette[pBits[si * pDib->width + sj]].peRed >> 3) << 10);
 				pPixels16[di * pitchHalf + dj] |=
-					gPalette[pBits[si * pDib->width + sj]].peFlags ? (1 << 15) : 0;
+					palette[pBits[si * pDib->width + sj]].peFlags ? (1 << 15) : 0;
 
-				lastColor.red = gPalette[pBits[si * pDib->width + sj]].peRed;
-				lastColor.green = gPalette[pBits[si * pDib->width + sj]].peGreen;
-				lastColor.blue = gPalette[pBits[si * pDib->width + sj]].peBlue;
+				lastColor.red = palette[pBits[si * pDib->width + sj]].peRed;
+				lastColor.green = palette[pBits[si * pDib->width + sj]].peGreen;
+				lastColor.blue = palette[pBits[si * pDib->width + sj]].peBlue;
 			}
 			else
 			{
@@ -277,14 +277,14 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 					((lastColor.green >> 3) << 5) |
 					((lastColor.red >> 3) << 10);
 				pPixels16[di * pitchHalf + dj] |=
-					gPalette[pBits[si * pDib->width + sj]].peFlags ? (1 << 15) : 0;
+					palette[pBits[si * pDib->width + sj]].peFlags ? (1 << 15) : 0;
 			}
 		}
 	}
 
 	IDirect3DTexture9_UnlockRect(pTexture, 0);
 
-	if (!IsManagedTexturesEnabled())
+	if (!isManagedTexturesEnabled())
 	{
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newWidth, newHeight, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_DEFAULT, &pTextureFinal, NULL);
@@ -378,7 +378,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 
 	pBits = DibPtr(pDib);
 
-	if (IsManagedTexturesEnabled())
+	if (isManagedTexturesEnabled())
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &pTexture, NULL);
 	else
@@ -394,7 +394,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
-	auto* palette = GetPalette();
+	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
 
 	for (si = 0, di = 0; di < newWidth; si++, di++)
 	{
@@ -442,7 +442,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 
 	IDirect3DTexture9_UnlockRect(pTexture, 0);
 
-	if (!IsManagedTexturesEnabled())
+	if (!isManagedTexturesEnabled())
 	{
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_DEFAULT, &pTextureFinal, NULL);
@@ -477,7 +477,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 	int					k, l, newWidth, newHeight, diffWidth, diffHeight;
 	int					skipValW, skipValH, pitchHalf;
 
-	const auto base_palette = GetBasePalette();
 	D3DRenderPaletteSet(0, 0, 0);
 
 	skipValW = skipValH = 1;
@@ -531,7 +530,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 	pBits = ptr;
 
-	if (IsManagedTexturesEnabled())
+	if (isManagedTexturesEnabled())
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &pTexture, NULL);
 	else
@@ -547,7 +546,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
-	auto* palette = GetPalette();
+	PALETTEENTRY (&palette)[NUM_COLORS] = getPalette();
 
 	//	for (dj = 0, sj = 0; dj < newHeight; dj++, sj++)
 	for (dj = newHeight - 1, sj = 0; dj >= 0; dj--, sj++)
@@ -580,7 +579,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 	IDirect3DTexture9_UnlockRect(pTexture, 0);
 
-	if (!IsManagedTexturesEnabled())
+	if (!isManagedTexturesEnabled())
 	{
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_DEFAULT, &pTextureFinal, NULL);

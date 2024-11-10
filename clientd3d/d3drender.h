@@ -192,4 +192,8 @@ void setWireframeMode(bool isEnabled);
 PALETTEENTRY* GetPalette();
 Color* GetBasePalette();
 
+const font_3d* getFont3d();
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
+
 #endif	// __D3DRENDER_H__

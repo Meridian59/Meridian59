@@ -205,6 +205,16 @@ Color* GetBasePalette() {
 	return base_palette;
 }
 
+const font_3d* getFont3d()
+{
+	return &gFont;
+}
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
+{
+	return gpDLightWhite;
+}
+
 // externed stuff
 extern void			DrawItemsD3D();
 extern Bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);

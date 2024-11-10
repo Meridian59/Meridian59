@@ -694,7 +694,7 @@ int GetActiveStatGroup(void)
     return config.active_stat_group;
 }
 
-const room_type* getCurrentRoom()
+const room_type& getCurrentRoom()
 {
     return &current_room;
 }

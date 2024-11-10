@@ -18,7 +18,7 @@ struct BackgroundOverlaysRenderStateParams {
     d3d_render_cache_system* worldCacheSystem;
     const D3DMATRIX& view;
     D3DMATRIX& transformMatrix;
-    RECT& d3dRect;
+    const RECT& d3dRect;
 
     BackgroundOverlaysRenderStateParams(
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
@@ -27,7 +27,7 @@ struct BackgroundOverlaysRenderStateParams {
         d3d_render_cache_system* worldCacheSystemParam,
         const D3DMATRIX& viewParam,
         D3DMATRIX& transformMatrixParam,
-        RECT d3dRectParam)
+        const RECT& d3dRectParam)
         : vertexDeclaration(vertexDeclarationParam),
           driverProfile(driverProfileParam),
           worldPool(worldPoolParam),

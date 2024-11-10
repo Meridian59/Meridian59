@@ -178,7 +178,6 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
                                    *((DWORD *) &bias));
 }
 
-// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
 int getD3dRenderThreshold()
 {
 	return d3dRenderTextureThreshold;

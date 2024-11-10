@@ -178,6 +178,7 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 float FovHorizontal(long width);
 float FovVertical(long height);
 
+// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
 int getD3dRenderThreshold();
 
 // Returns the max shading range (FINENESS-shade_amount) to FINENESS

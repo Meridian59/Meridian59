@@ -334,8 +334,6 @@ void D3DRenderNamesDraw3D(
 
 		COLORREF fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
 
-		const auto* base_palette = GetBasePalette();
-
 		// Some names never grow darker, they use PALETTEINDEX().
 		if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))
 		{
@@ -343,7 +341,7 @@ void D3DRenderNamesDraw3D(
 			//     but not here for unknown reason
 			//     so we convert to our base_palette[] PALETTERGB() type.
 			//
-			color = base_palette[LOBYTE(LOWORD(fg_color))];
+			color = fontTextureParams.basePalette[LOBYTE(LOWORD(fg_color))];
 		}
 		else
 		{
@@ -356,7 +354,7 @@ void D3DRenderNamesDraw3D(
 			{
 				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			}
-			color = base_palette[palette[GetClosestPaletteIndex(fg_color)]];
+			color = fontTextureParams.basePalette[palette[GetClosestPaletteIndex(fg_color)]];
 			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 			glyph_scale = max(bgra.b, bgra.g);

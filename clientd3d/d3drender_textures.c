@@ -7,6 +7,13 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
+// Variables
+
+extern Color base_palette[];
+extern PALETTEENTRY gPalette[256];
+extern int d3dRenderTextureThreshold;
+extern d3d_driver_profile gD3DDriverProfile;
+
 // Interfaces
 
 static void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
@@ -19,16 +26,15 @@ Set the current pallete in use
 void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 {
 	xlat* pXLat0, * pXLat1;
-	const Color* pPalette = GetBasePalette();
+	Color* pPalette;
 	int		i;
 	unsigned int	effect;
 
 	pXLat0 = FindStandardXlat(xlatID0);
 	pXLat1 = FindStandardXlat(xlatID1);
 
+	pPalette = base_palette;
 	effect = GetDrawingEffect(flags);
-
-	auto* palette = GetPalette();
 
 	switch (effect)
 	{
@@ -37,14 +43,14 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 	case OF_BLACK:
 		for (i = 0; i < 256; i++)
 		{
-			palette[i].peRed = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].red;
-			palette[i].peGreen = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].green;
-			palette[i].peBlue = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].blue;
+			gPalette[i].peRed = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].red;
+			gPalette[i].peGreen = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].green;
+			gPalette[i].peBlue = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].blue;
 
 			if (i == 254)
-				palette[i].peFlags = 0;
+				gPalette[i].peFlags = 0;
 			else
-				palette[i].peFlags = 255;
+				gPalette[i].peFlags = 255;
 		}
 		break;
 
@@ -53,14 +59,14 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 	case OF_TRANSLUCENT75:
 		for (i = 0; i < 256; i++)
 		{
-			palette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
-			palette[i].peGreen = pPalette[fastXLAT(i, pXLat0)].green;
-			palette[i].peBlue = pPalette[fastXLAT(i, pXLat0)].blue;
+			gPalette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
+			gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat0)].green;
+			gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat0)].blue;
 
 			if (i == 254)
-				palette[i].peFlags = 0;
+				gPalette[i].peFlags = 0;
 			else
-				palette[i].peFlags = 255;
+				gPalette[i].peFlags = 255;
 		}
 		break;
 
@@ -75,14 +81,14 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 		{
 			pXLat0 = FindStandardXlat(xlatID0);
 			pXLat1 = FindStandardXlat(xlatID1);
-			palette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
-			palette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
-			palette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
+			gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
+			gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
+			gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
 
 			if (i == 254)
-				palette[i].peFlags = 0;
+				gPalette[i].peFlags = 0;
 			else
-				palette[i].peFlags = 255;
+				gPalette[i].peFlags = 255;
 		}
 		break;
 
@@ -91,28 +97,28 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 		{
 			for (i = 0; i < 256; i++)
 			{
-				palette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
-				palette[i].peGreen = pPalette[fastXLAT(i, pXLat0)].green;
-				palette[i].peBlue = pPalette[fastXLAT(i, pXLat0)].blue;
+				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
+				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat0)].green;
+				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat0)].blue;
 
 				if (i == 254)
-					palette[i].peFlags = 0;
+					gPalette[i].peFlags = 0;
 				else
-					palette[i].peFlags = 255;
+					gPalette[i].peFlags = 255;
 			}
 		}
 		else
 		{
 			for (i = 0; i < 256; i++)
 			{
-				palette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
-				palette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
-				palette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
+				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
+				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
+				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
 
 				if (i == 254)
-					palette[i].peFlags = 0;
+					gPalette[i].peFlags = 0;
 				else
-					palette[i].peFlags = 255;
+					gPalette[i].peFlags = 255;
 			}
 		}
 		break;
@@ -120,28 +126,28 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 	case OF_SECONDTRANS:
 		for (i = 0; i < 256; i++)
 		{
-			palette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
-			palette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
-			palette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
+			gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
+			gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
+			gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
 
 			if (i == 254)
-				palette[i].peFlags = 0;
+				gPalette[i].peFlags = 0;
 			else
-				palette[i].peFlags = 255;
+				gPalette[i].peFlags = 255;
 		}
 		break;
 
 	default:
 		for (i = 0; i < 256; i++)
 		{
-			palette[i].peRed = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].red;
-			palette[i].peGreen = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].green;
-			palette[i].peBlue = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].blue;
+			gPalette[i].peRed = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].red;
+			gPalette[i].peGreen = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].green;
+			gPalette[i].peBlue = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].blue;
 
 			if (i == 254)
-				palette[i].peFlags = 0;
+				gPalette[i].peFlags = 0;
 			else
-				palette[i].peFlags = 255;
+				gPalette[i].peFlags = 255;
 		}
 		break;
 	}
@@ -179,8 +185,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 	while (!(h & pDib->height))
 		h = h >> 1;
-
-	const auto d3dRenderTextureThreshold = getD3dRenderThreshold();
 
 	// if either dimension is less than 256 pixels, round it back up
 	if (pDib->width < d3dRenderTextureThreshold)
@@ -220,7 +224,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 	pBits = DibPtr(pDib);
 
-	if (IsManagedTexturesEnabled())
+	if (gD3DDriverProfile.bManagedTextures)
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newWidth, newHeight, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &pTexture, NULL);
 	else
@@ -235,8 +239,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 	pitchHalf = lockedRect.Pitch / 2;
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
-
-	auto gPalette = GetPalette();
 
 	for (si = 0, di = 0; di < newHeight; si++, di++)
 	{
@@ -284,7 +286,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 	IDirect3DTexture9_UnlockRect(pTexture, 0);
 
-	if (!IsManagedTexturesEnabled())
+	if (gD3DDriverProfile.bManagedTextures == FALSE)
 	{
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newWidth, newHeight, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_DEFAULT, &pTextureFinal, NULL);
@@ -338,8 +340,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 	while (!(h & pDib->height))
 		h = h >> 1;
 
-	const auto d3dRenderTextureThreshold = getD3dRenderThreshold();
-
 	// if either dimension is less than 256 pixels, round it back up
 	if (pDib->width < d3dRenderTextureThreshold)
 	{
@@ -378,7 +378,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 
 	pBits = DibPtr(pDib);
 
-	if (IsManagedTexturesEnabled())
+	if (gD3DDriverProfile.bManagedTextures)
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &pTexture, NULL);
 	else
@@ -393,8 +393,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 	pitchHalf = lockedRect.Pitch / 2;
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
-
-	auto* palette = GetPalette();
 
 	for (si = 0, di = 0; di < newWidth; si++, di++)
 	{
@@ -415,18 +413,18 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 				}
 
 			// 16bit 1555 textures
-			if (palette[pBits[(sj * pDib->width) + si]].peFlags != 0)
+			if (gPalette[pBits[(sj * pDib->width) + si]].peFlags != 0)
 			{
 				pPixels16[di * pitchHalf + dj] =
-					(palette[pBits[(sj * pDib->width) + si]].peBlue >> 3) |
-					((palette[pBits[(sj * pDib->width) + si]].peGreen >> 3) << 5) |
-					((palette[pBits[(sj * pDib->width) + si]].peRed >> 3) << 10);
+					(gPalette[pBits[(sj * pDib->width) + si]].peBlue >> 3) |
+					((gPalette[pBits[(sj * pDib->width) + si]].peGreen >> 3) << 5) |
+					((gPalette[pBits[(sj * pDib->width) + si]].peRed >> 3) << 10);
 				pPixels16[di * pitchHalf + dj] |=
-					palette[pBits[(sj * pDib->width) + si]].peFlags ? (1 << 15) : 0;
+					gPalette[pBits[(sj * pDib->width) + si]].peFlags ? (1 << 15) : 0;
 
-				lastColor.red = palette[pBits[(sj * pDib->width) + si]].peRed;
-				lastColor.green = palette[pBits[(sj * pDib->width) + si]].peGreen;
-				lastColor.blue = palette[pBits[(sj * pDib->width) + si]].peBlue;
+				lastColor.red = gPalette[pBits[(sj * pDib->width) + si]].peRed;
+				lastColor.green = gPalette[pBits[(sj * pDib->width) + si]].peGreen;
+				lastColor.blue = gPalette[pBits[(sj * pDib->width) + si]].peBlue;
 			}
 			else
 			{
@@ -435,14 +433,14 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 					((lastColor.green >> 3) << 5) |
 					((lastColor.red >> 3) << 10);
 				pPixels16[di * pitchHalf + dj] |=
-					palette[pBits[(sj * pDib->width) + si]].peFlags ? (1 << 15) : 0;
+					gPalette[pBits[(sj * pDib->width) + si]].peFlags ? (1 << 15) : 0;
 			}
 		}
 	}
 
 	IDirect3DTexture9_UnlockRect(pTexture, 0);
 
-	if (!IsManagedTexturesEnabled())
+	if (gD3DDriverProfile.bManagedTextures == FALSE)
 	{
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_DEFAULT, &pTextureFinal, NULL);
@@ -477,7 +475,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 	int					k, l, newWidth, newHeight, diffWidth, diffHeight;
 	int					skipValW, skipValH, pitchHalf;
 
-	const auto* base_palette = GetBasePalette();
 	D3DRenderPaletteSet(0, 0, 0);
 
 	skipValW = skipValH = 1;
@@ -490,8 +487,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 	while (!(h & height))
 		h = h >> 1;
-
-	const auto d3dRenderTextureThreshold = getD3dRenderThreshold();
 
 	// if either dimension is less than 256 pixels, round it back up
 	if (width < d3dRenderTextureThreshold)
@@ -531,7 +526,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 	pBits = ptr;
 
-	if (IsManagedTexturesEnabled())
+	if (gD3DDriverProfile.bManagedTextures)
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &pTexture, NULL);
 	else
@@ -546,8 +541,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 	pitchHalf = lockedRect.Pitch / 2;
 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
-
-	auto* palette = GetPalette();
 
 	//	for (dj = 0, sj = 0; dj < newHeight; dj++, sj++)
 	for (dj = newHeight - 1, sj = 0; dj >= 0; dj--, sj++)
@@ -570,17 +563,17 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE* ptr, int width, int 
 
 			// 16bit 1555 textures
 			pPixels16[dj * pitchHalf + di] =
-				(palette[pBits[(sj * width) + si]].peBlue >> 3) |
-				((palette[pBits[(sj * width) + si]].peGreen >> 3) << 5) |
-				((palette[pBits[(sj * width) + si]].peRed >> 3) << 10);
+				(gPalette[pBits[(sj * width) + si]].peBlue >> 3) |
+				((gPalette[pBits[(sj * width) + si]].peGreen >> 3) << 5) |
+				((gPalette[pBits[(sj * width) + si]].peRed >> 3) << 10);
 			pPixels16[dj * pitchHalf + di] |=
-				palette[pBits[(sj * width) + si]].peFlags ? (1 << 15) : 0;
+				gPalette[pBits[(sj * width) + si]].peFlags ? (1 << 15) : 0;
 		}
 	}
 
 	IDirect3DTexture9_UnlockRect(pTexture, 0);
 
-	if (!IsManagedTexturesEnabled())
+	if (gD3DDriverProfile.bManagedTextures == FALSE)
 	{
 		IDirect3DDevice9_CreateTexture(gpD3DDevice, newHeight, newWidth, 1, 0,
 			D3DFMT_A1R5G5B5, D3DPOOL_DEFAULT, &pTextureFinal, NULL);

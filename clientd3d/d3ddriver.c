@@ -383,10 +383,10 @@ Bool D3DDriverProfileInit(void)
 //	if (1)
 	{
 //		gD3DDriverProfile.texMemTotal = (32 * 1024 * 1024);
-		gD3DDriverProfile.bManagedTextures = true;
+		gD3DDriverProfile.bManagedTextures = TRUE;
 	}
 	else
-		gD3DDriverProfile.bManagedTextures = false;
+		gD3DDriverProfile.bManagedTextures = FALSE;
 
 //	gD3DDriverProfile.texMemTotal = (32 * 1024 * 1024);
 	gD3DDriverProfile.texMemTotal /= 4;

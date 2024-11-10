@@ -139,7 +139,6 @@ extern Color			base_palette[];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
-extern Draw3DParams		*p;
 extern DrawItem			drawdata[];
 extern long				nitems;
 extern int				sector_depths[];
@@ -195,6 +194,11 @@ bool isFogEnabled()
 void setWireframeMode(bool isEnabled)
 {
 	gWireframe = isEnabled;
+}
+
+bool isWireframeMode()
+{
+	return gWireframe;
 }
 
 PALETTEENTRY* GetPalette() {
@@ -524,7 +528,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	gNumVertices = 0;
 	gNumDPCalls = 0;
 
-	p = params;
+	setDrawParams(params);
 
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;

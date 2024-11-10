@@ -187,7 +187,9 @@ bool IsManagedTexturesEnabled();
 bool isFogEnabled();
 
 const Vector3D& getSunVector();
+
 void setWireframeMode(bool isEnabled);
+bool isWireframeMode();
 
 PALETTEENTRY* GetPalette();
 Color* GetBasePalette();

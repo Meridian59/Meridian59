@@ -696,5 +696,5 @@ int GetActiveStatGroup(void)
 
 const room_type& getCurrentRoom()
 {
-    return &current_room;
+    return current_room;
 }

@@ -165,7 +165,7 @@ void D3DRenderWorldLighting(const WorldRenderParams& worldRenderParams, const Li
 		auto& cacheSystem = worldRenderParams.cacheSystemParams;
 		auto& pools = worldRenderParams.poolParams;
 		auto& params = worldRenderParams.params;
-		const auto* room = getCurrentRoom();
+		const auto& room = getCurrentRoom();
 
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
@@ -177,14 +177,14 @@ void D3DRenderWorldLighting(const WorldRenderParams& worldRenderParams, const Li
 
 		D3DRenderPoolReset(pools.lMapPool, &D3DMaterialLMapDynamicPool);
 
-		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room->tree, false);
-		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room->tree, false);
+		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room.tree, false);
+		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room.tree, false);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE); // Disable depth writing
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
-		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room->tree, true);
-		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room->tree, true);
+		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room.tree, true);
+		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room.tree, true);
 
 		D3DCacheFill(cacheSystem.lMapCacheSystem, pools.lMapPool, 2);
 		D3DCacheFlush(cacheSystem.lMapCacheSystem, pools.lMapPool, 2, D3DPT_TRIANGLESTRIP);
@@ -208,11 +208,11 @@ void D3DRenderWorldDraw(const WorldRenderParams& worldRenderParams, bool transpa
 
 	auto& cacheSystem = worldRenderParams.cacheSystemParams;
 	auto& pools = worldRenderParams.poolParams;
-	const auto* room = getCurrentRoom();
+	const auto& room = getCurrentRoom();
 
-	for (count = 0; count < room->num_nodes; count++)
+	for (count = 0; count < room.num_nodes; count++)
 	{
-		pNode = &room->nodes[count];
+		pNode = &room.nodes[count];
 
 		switch (pNode->type)
 		{
@@ -1380,7 +1380,7 @@ void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool,
 	const auto& current_room = getCurrentRoom();
 
 	if ((pSector->sloped_ceiling == NULL) && (pSector->ceiling_height !=
-		current_room->sectors[0].ceiling_height))
+		current_room.sectors[0].ceiling_height))
 	{
 		int	vertex, i;
 
@@ -2049,9 +2049,9 @@ void D3DGeometryBuildNew(
 	auto& pools = worldRenderParams.poolParams;
 	const auto& room = getCurrentRoom();
 
-	for (count = 0; count < room->num_nodes; count++)
+	for (count = 0; count < room.num_nodes; count++)
 	{
-		pNode = &room->nodes[count];
+		pNode = &room.nodes[count];
 
 		switch (pNode->type)
 		{
@@ -2142,9 +2142,9 @@ void D3DGeometryBuildNew(
 		D3DCacheSystemReset(cacheSystem.worldCacheSystemStatic);
 		D3DRenderPoolReset(pools.lMapPoolStatic, &D3DMaterialLMapDynamicPool);
 
-		for (count = 0; count < room->num_nodes; count++)
+		for (count = 0; count < room.num_nodes; count++)
 		{
-			pNode = &room->nodes[count];
+			pNode = &room.nodes[count];
 
 			switch (pNode->type)
 			{
@@ -2225,9 +2225,9 @@ void D3DGeometryBuildNew(
 		D3DCacheFill(cacheSystem.lMapCacheSystemStatic, pools.lMapPoolStatic, 2);
 	}
 
-	for (count = 0; count < room->num_nodes; count++)
+	for (count = 0; count < room.num_nodes; count++)
 	{
-		pNode = &room->nodes[count];
+		pNode = &room.nodes[count];
 
 		switch (pNode->type)
 		{

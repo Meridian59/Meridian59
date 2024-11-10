@@ -69,7 +69,7 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 
 	if (isWireframeMode())
 	{
-		if (pChunk->pSector == &current_room->sectors[0])
+		if (pChunk->pSector == &current_room.sectors[0])
 			return FALSE;
 	}
 
@@ -77,7 +77,7 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
-			if (pChunk->pSector->ceiling == current_room->sectors[0].ceiling)
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 				SetZBias(gpD3DDevice, 0);
 			else
             SetZBias(gpD3DDevice, ZBIAS_WORLD);
@@ -115,9 +115,9 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 
 	if (isWireframeMode())
 	{
-		if (pChunk->pSector == &current_room->sectors[0])
+		if (pChunk->pSector == &current_room.sectors[0])
 		{
-			if ((pChunk->pSector->ceiling == current_room->sectors[0].ceiling) &&
+			if ((pChunk->pSector->ceiling == current_room.sectors[0].ceiling) &&
 				(pChunk->pSector->ceiling != NULL))
 				return FALSE;
 		}
@@ -143,7 +143,7 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
-			if (pChunk->pSector->ceiling == current_room->sectors[0].ceiling)
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 				SetZBias(gpD3DDevice, 0);
 			else
 				SetZBias(gpD3DDevice, ZBIAS_WORLD);
@@ -263,7 +263,7 @@ Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 		if (pChunk->pSector)
 		{
 			const auto& current_room = getCurrentRoom();
-			if (pChunk->pSector->ceiling == current_room->sectors[0].ceiling)
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 				SetZBias(gpD3DDevice, 0);
 			else
 				SetZBias(gpD3DDevice, ZBIAS_WORLD);
@@ -286,7 +286,7 @@ Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 		if (pChunk->pSector)
 		{
 			const auto& current_room = getCurrentRoom();
-			if (pChunk->pSector->ceiling == current_room->sectors[0].ceiling)
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 				SetZBias(gpD3DDevice, 0);
 			else
 				SetZBias(gpD3DDevice, ZBIAS_WORLD);
@@ -626,10 +626,10 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 	const auto& current_room = getCurrentRoom();
 	const auto& drawParams = getDrawParams();
 	if (pChunk->flags & D3DRENDER_NOAMBIENT)
-		end = (16384 + (light * FINENESS) + (drawParams->viewer_light * 64));
+		end = (16384 + (light * FINENESS) + (drawParams.viewer_light * 64));
 	else
-		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams->viewer_light * 64) +
-		(current_room->ambient_light * FINENESS));
+		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
+		(current_room.ambient_light * FINENESS));
 
 	return end;
 }

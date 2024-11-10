@@ -649,7 +649,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
 
-		FontTextureParams fontTextureParams(&gFont, gSmallTextureSize);
+		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize);
 
 		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 

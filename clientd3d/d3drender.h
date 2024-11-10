@@ -178,10 +178,9 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 float FovHorizontal(long width);
 float FovVertical(long height);
 
+bool isFogEnabled();
 // Returns the max shading range (FINENESS-shade_amount) to FINENESS
 long getShadeAmount();
-
-bool isFogEnabled();
 
 const Vector3D& getSunVector();
 

@@ -574,8 +574,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
-		D3DFxInit();
-
 		D3DCacheSystemReset(&gWorldCacheSystemStatic);
 		D3DCacheSystemReset(&gWallMaskCacheSystem);
 

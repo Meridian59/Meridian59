@@ -114,7 +114,7 @@ struct ObjectsRenderParams {
 
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisible;
-	d3d_driver_profile driverProfile;
+	const d3d_driver_profile& driverProfile;
 
 	d3d_render_pool_new* renderPool;
 	d3d_render_cache_system* cacheSystem;
@@ -128,7 +128,7 @@ struct ObjectsRenderParams {
     ObjectsRenderParams(
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisibleParam,
-        d3d_driver_profile driverProfileParam,
+        const d3d_driver_profile& driverProfileParam,
         d3d_render_pool_new* renderPoolParam,
         d3d_render_cache_system* cacheSystemParam,
         D3DMATRIX viewParam,

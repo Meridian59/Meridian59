@@ -180,8 +180,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    room->num_sidedefs = num_sidedefs;
 
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
-    
-    D3DFxInit();
+   D3DFxInit();
 
 	playerOldPos.x = 0;
 	playerOldPos.y = 0;

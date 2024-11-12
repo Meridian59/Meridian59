@@ -191,8 +191,8 @@ messages:
       
       if send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
       {
-         send(self,@AddToItem,#oItem=oWeapon, #state1=iSpellType,
-              #random_gen=TRUE);
+         send(self,@AddToItem,#oItem=oWeapon,#state1=iSpellType,
+              #timer_duration=86400000,#random_gen=TRUE);
               
          return TRUE;
       }

@@ -51,7 +51,7 @@ classvars:
    viMana = 0
 
    viCast_time = 10000
-   viChance_to_Increase = 100
+   viChance_to_Increase = 50
 
    vrSucceed_wav = defile_sound
    vbCastable_in_HappyLand = FALSE

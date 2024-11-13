@@ -94,9 +94,10 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		bg_overlay_pos.y = y;
 		bg_overlay_pos.z = z;
 
-		D3DMATRIX rot, mat;
+		D3DMATRIX rot, mat, spin;
 		MatrixIdentity(&mat);
 		MatrixIdentity(&rot);
+		MatrixIdentity(&spin);
 
 		const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
 		const float DEGREES_TO_RADIANS = PI / 180.0f;
@@ -107,6 +108,9 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 
 		MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
 		MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
+		// Rotate to match orientation of the original asset images.
+		MatrixRotateZ(&spin, -90.0f * DEGREES_TO_RADIANS); 
+		MatrixMultiply(&rot, &rot, &spin);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);

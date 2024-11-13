@@ -23,7 +23,7 @@
 
 #include "client.h"
 
-#define MAX_OBJS_PER_LEAF 100
+#define MAX_OBJS_PER_LEAF 1000
 
 // Decimal places for computing fraction along wall
 #define LOG_FRACTION 12

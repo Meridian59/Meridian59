@@ -190,4 +190,6 @@ const font_3d& getFont3d();
 
 const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
 
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
+
 #endif	// __D3DRENDER_H__

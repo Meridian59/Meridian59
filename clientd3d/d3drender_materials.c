@@ -423,6 +423,8 @@ Bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
                                          D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 
+	IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9*)getBackBufferTextureZero());
+
 	return TRUE;
 }
 

@@ -202,6 +202,11 @@ const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
 	return gpDLightWhite;
 }
 
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+{
+	return gpBackBufferTex[0];
+}
+
 // externed stuff
 extern void			DrawItemsD3D();
 extern Bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);

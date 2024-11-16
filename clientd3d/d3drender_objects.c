@@ -202,10 +202,6 @@ long D3DRenderObjects(
 			D3DRenderPlayerOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
 			D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
-			if (isFogEnabled())
-			{
-				IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9*)gameObjectDataParams.backBufferTex[0]);
-			}
 		}
 		else
 		{

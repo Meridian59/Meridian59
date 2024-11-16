@@ -47,11 +47,11 @@ IDD_CHARNAME DIALOGEX 0, 0, 316, 232
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Escolha um nome, de 3 a 30 caracteres, para o seu personagem.",IDC_STATIC,2,2,190,8
-    LTEXT           "Você pode usar letras maísculas e/ou minúsculas, números, espaços ou os símbolos seguintes: !@$^&*+=:()[]{}<>;/?|",IDC_STATIC,2,12,196,8,SS_NOPREFIX
-    EDITTEXT        IDC_NAME,2,26,108,16,ES_AUTOHSCROLL
-    LTEXT           "Digite uma descrição para o seu personagem aqui:",IDC_STATIC,2,52,292,8
-    EDITTEXT        IDC_DESCRIPTION,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    LTEXT           "Escolha um nome, de 3 a 30 caracteres, para o seu personagem.",IDC_STATIC,2,7,220,8
+    LTEXT           "Você pode usar letras maísculas e/ou minúsculas, números, espaços ou os símbolos seguintes: !@$^&*+=:()[]{}<>;/?|",IDC_STATIC,2,17,256,16,SS_NOPREFIX
+    EDITTEXT        IDC_NAME,2,36,108,16,ES_AUTOHSCROLL
+    LTEXT           "Digite uma descrição para o seu personagem aqui:",IDC_STATIC,2,62,292,8
+    EDITTEXT        IDC_DESCRIPTION,2,74,302,118,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
     PUSHBUTTON      "<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14,WS_DISABLED
     PUSHBUTTON      "Próxima >>",IDC_NEXT_PAGE,266,214,44,14
 END
@@ -103,7 +103,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     GROUPBOX        "Rosto",IDC_STATIC,3,0,150,158
     CONTROL         "",IDC_FACE,"Button",BS_OWNERDRAW | WS_TABSTOP,14,18,127,127
-    LTEXT           "Escolha a aparência do seu personagem.",IDC_STATIC,161,5,130,8
+    LTEXT           "Escolha a aparência do seu personagem.",IDC_STATIC,161,5,144,8
     LTEXT           "Gênero:",IDC_STATIC,162,22,39,8
     CONTROL         "Homem",IDC_MALE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
     CONTROL         "Mulher",IDC_FEMALE,"Button",BS_AUTORADIOBUTTON,263,22,39,10
@@ -112,20 +112,20 @@ BEGIN
     LTEXT           "Branco",IDC_STATIC,215,50,25,8
     LTEXT           "Negro",IDC_STATIC,287,50,24,8
     LTEXT           "Cabelo:",IDC_STATIC,166,70,25,8
-    PUSHBUTTON      "<",IDC_HAIR1,213,69,17,11
-    PUSHBUTTON      ">",IDC_HAIR2,230,69,17,11,NOT WS_TABSTOP
-    LTEXT           "Cor do cabelo:",IDC_STATIC,166,85,44,8
-    PUSHBUTTON      "<",IDC_HAIRCOLOR1,213,84,17,11
-    PUSHBUTTON      ">",IDC_HAIRCOLOR2,230,84,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_HAIR1,218,69,17,11
+    PUSHBUTTON      ">",IDC_HAIR2,235,69,17,11,NOT WS_TABSTOP
+    LTEXT           "Cor do cabelo:",IDC_STATIC,166,85,48,8
+    PUSHBUTTON      "<",IDC_HAIRCOLOR1,218,84,17,11
+    PUSHBUTTON      ">",IDC_HAIRCOLOR2,235,84,17,11,NOT WS_TABSTOP
     LTEXT           "Olhos:",IDC_STATIC,166,100,40,8
-    PUSHBUTTON      "<",IDC_EYES1,213,99,17,11,WS_GROUP
-    PUSHBUTTON      ">",IDC_EYES2,230,99,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_EYES1,218,99,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_EYES2,235,99,17,11,NOT WS_TABSTOP
     LTEXT           "Nariz:",IDC_STATIC,166,115,19,8
-    PUSHBUTTON      "<",IDC_NOSE1,213,114,17,11,WS_GROUP
-    PUSHBUTTON      ">",IDC_NOSE2,230,114,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_NOSE1,218,114,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_NOSE2,235,114,17,11,NOT WS_TABSTOP
     LTEXT           "Boca:",IDC_STATIC,166,130,19,8
-    PUSHBUTTON      "<",IDC_MOUTH1,213,129,17,11,WS_GROUP
-    PUSHBUTTON      ">",IDC_MOUTH2,230,129,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_MOUTH1,218,129,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_MOUTH2,235,129,17,11,NOT WS_TABSTOP
     PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14,WS_GROUP
     PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14
 END
@@ -134,7 +134,7 @@ IDD_CHARSTATS DIALOGEX 0, 0, 316, 232
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",IDC_STATIC,6,4,280,8
+    LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",IDC_STATIC,6,4,280,18
     LTEXT           "Força",IDC_STATIC,22,25,23,8
     CONTROL         "",IDC_CHAR_GRAPH1,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
     LTEXT           "Inteligência",IDC_STATIC,22,44,38,8

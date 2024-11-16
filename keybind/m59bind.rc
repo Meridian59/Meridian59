@@ -191,8 +191,8 @@ BEGIN
     LTEXT           "Alvo anterior",IDC_STATIC,7,28,48,8
     LTEXT           "Desmarcar alvo",IDC_STATIC,7,47,54,8
     LTEXT           "Mirar em si mesmo",IDC_STATIC,7,62,40,18
-    LTEXT           "Alternar para próxima janela",IDC_STATIC,7,82,55,18
-    LTEXT           "Alternar para janela anterior",IDC_STATIC,7,101,55,18
+    LTEXT           "Alternar a próxima janela",IDC_STATIC,7,82,55,18
+    LTEXT           "Alternar a janela anterior",IDC_STATIC,7,101,55,18
     LTEXT           "Selecionar alvo",IDC_STATIC,152,7,37,18
     PUSHBUTTON      "]",IDC_TARGETNEXT,65,7,55,14
     PUSHBUTTON      "[",IDC_TARGETPREVIOUS,65,26,55,14

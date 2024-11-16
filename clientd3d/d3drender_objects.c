@@ -198,6 +198,11 @@ long D3DRenderObjects(
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
 			D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
+			if (isFogEnabled())
+			{
+				IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9*)gameObjectDataParams.backBufferTex[0]);
+			}
+
 			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 			D3DRenderPlayerOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);

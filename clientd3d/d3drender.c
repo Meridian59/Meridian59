@@ -91,7 +91,7 @@ BYTE					gViewerLight = 0;
 int						gNumObjects;
 int						gNumVertices;
 int						gNumDPCalls;
-PALETTEENTRY			gPalette[256];
+static PALETTEENTRY		gPalette[256];
 int						gScreenWidth;
 int						gScreenHeight;
 
@@ -136,7 +136,7 @@ int						gTemp = 0;
 Bool					gWireframe;		// this is really bad, I'm sorry
 
 extern long				viewer_height;
-extern Color			base_palette[];
+extern Color			base_palette[NUM_COLORS];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
@@ -178,6 +178,15 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
                                    *((DWORD *) &bias));
 }
 
+int getD3dRenderThreshold()
+{
+	return d3dRenderTextureThreshold;
+}
+
+bool isManagedTexturesEnabled() {
+    return gD3DDriverProfile.bManagedTextures;
+}
+
 bool isFogEnabled()
 {
 	return gD3DDriverProfile.bFogEnable;
@@ -186,6 +195,16 @@ bool isFogEnabled()
 void setWireframeMode(bool isEnabled)
 {
 	gWireframe = isEnabled;
+}
+
+PALETTEENTRY* getPalette()
+{
+    return gPalette;
+}
+
+const Color(&getBasePalette())[NUM_COLORS]
+{
+	return base_palette;
 }
 
 bool isWireframeMode()
@@ -654,7 +673,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
 
-		FontTextureParams fontTextureParams(&gFont, base_palette, gSmallTextureSize);
+		FontTextureParams fontTextureParams(&gFont, gSmallTextureSize);
 
 		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 

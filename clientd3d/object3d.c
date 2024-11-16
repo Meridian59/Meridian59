@@ -45,9 +45,7 @@ extern BYTE *gBits;                /* Actual pixels of bitmap */
 extern player_info player;
 extern long viewer_height;      /* Viewer's height above floor, in fine coordinates */
 
-extern long horizon;
-
-extern Color base_palette[];         
+extern long horizon;      
 
 static RECT orect;  /* Hold rectangle actually occupied by last object drawn */
 
@@ -759,6 +757,8 @@ void DrawObjectDecorations(DrawnObject *object)
    // Give a shadowed look to be visible on all color backgrounds
    fg_color = GetPlayerNameColor(r->obj.flags,name);
    bg_color = NAME_COLOR_NORMAL_BG;
+
+   const auto& base_palette = getBasePalette();
 
    // Some names never grow darker, they use PALETTEINDEX().
    if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))

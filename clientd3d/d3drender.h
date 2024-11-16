@@ -178,9 +178,15 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 float FovHorizontal(long width);
 float FovVertical(long height);
 
-bool isFogEnabled();
+// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
+int getD3dRenderThreshold();
+
 // Returns the max shading range (FINENESS-shade_amount) to FINENESS
 long getShadeAmount();
+
+bool isManagedTexturesEnabled();
+bool isFogEnabled();
+
 const Vector3D& getSunVector();
 
 void setWireframeMode(bool isEnabled);
@@ -191,5 +197,13 @@ const font_3d& getFont3d();
 const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
 
 const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
+
+// Global palette array containing 256 color entries used for rendering textures in the current frame.
+// This palette is dynamically updated based on the current rendering context.
+PALETTEENTRY* getPalette();
+
+// Base palette array containing predefined colors used as a reference for rendering effects.
+// This palette remains constant and is used for color lookups and transformations.
+const Color(&getBasePalette())[NUM_COLORS];
 
 #endif	// __D3DRENDER_H__

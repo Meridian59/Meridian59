@@ -68,7 +68,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Falar",IDC_STATIC,7,9,22,8
     LTEXT           "Usar campo de mensagens",IDC_STATIC,7,24,48,18
-    LTEXT           "Sussurrar",IDC_STATIC,7,47,27,8
+    LTEXT           "Sussurrar",IDC_STATIC,7,47,30,8
     LTEXT           "Gritar",IDC_STATIC,7,66,20,8
     LTEXT           "Falar a todos",IDC_STATIC,7,82,33,16
     LTEXT           "Quem está jogando?",IDC_STATIC,7,101,48,18
@@ -154,8 +154,8 @@ BEGIN
     LTEXT           "Olhar para cima",IDC_STATIC,151,29,52,8
     LTEXT           "Olhar para baixo",IDC_STATIC,151,47,54,8
     LTEXT           "Olhar para frente",IDC_STATIC,151,66,54,8
-    LTEXT           "Virar para trás",IDC_STATIC,151,86,45,8
-    LTEXT           "Prender visão ao cursor alternar",IDC_STATIC,151,100,60,20
+    LTEXT           "Girar para trás",IDC_STATIC,151,85,45,8
+    LTEXT           "Alternar para Fixar visão ao cursor ",IDC_STATIC,151,100,60,20
     PUSHBUTTON      "E",IDC_FORWARD,61,7,55,14
     PUSHBUTTON      "D",IDC_BACKWARD,61,26,55,14
     PUSHBUTTON      "LEFT",IDC_LEFT,61,45,55,14
@@ -191,8 +191,8 @@ BEGIN
     LTEXT           "Alvo anterior",IDC_STATIC,7,28,48,8
     LTEXT           "Desmarcar alvo",IDC_STATIC,7,47,54,8
     LTEXT           "Mirar em si mesmo",IDC_STATIC,7,62,40,18
-    LTEXT           "Tabulação para frente",IDC_STATIC,7,82,43,18
-    LTEXT           "Tabulação para trás",IDC_STATIC,7,101,43,18
+    LTEXT           "Alternar para próxima janela",IDC_STATIC,7,82,55,18
+    LTEXT           "Alternar para janela anterior",IDC_STATIC,7,101,55,18
     LTEXT           "Selecionar alvo",IDC_STATIC,152,7,37,18
     PUSHBUTTON      "]",IDC_TARGETNEXT,65,7,55,14
     PUSHBUTTON      "[",IDC_TARGETPREVIOUS,65,26,55,14
@@ -229,7 +229,7 @@ BEGIN
     CONTROL         "",IDC_MOUSEYSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,137,81,68,17
     LTEXT           "999",IDC_MOUSEXSCALEVALUE,208,40,13,8
     LTEXT           "999",IDC_MOUSEYSCALEVALUE,208,82,13,8
-    CONTROL         "Inverter direçãodo cursor",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,95,10
+    CONTROL         "Inverter direção do cursor",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,95,10
     GROUPBOX        "Controle do cursor",IDC_STATIC,125,13,112,97
 END
 

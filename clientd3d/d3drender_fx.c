@@ -734,7 +734,6 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 		CHUNK_INDEX_SET(pChunk, 3, 3);
 	}
 
-	MatrixIdentity(&fxRss.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &fxRss.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &fxRss.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);

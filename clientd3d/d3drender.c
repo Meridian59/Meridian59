@@ -655,6 +655,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// apply blur and wave distortion effects
 	if (effects.blur || effects.waver)
 	{
+		MatrixIdentity(&mat);
 		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 

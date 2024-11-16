@@ -7,20 +7,6 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-// Variables
-
-extern d3d_driver_profile gD3DDriverProfile;
-
-extern LPDIRECT3DTEXTURE9 gpDLightWhite;
-extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
-
-extern font_3d gFont;
-extern Bool gWireframe;
-
-extern room_type current_room;
-
-extern Draw3DParams* p;
-
 // Interfaces
 
 float D3DRenderFogEndCalc(d3d_render_chunk_new* pChunk);
@@ -58,8 +44,11 @@ Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
     else if (pPacket->pDib)
       pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, 0);
   }
-  else 
-    pTexture = gFont.pTexture;
+  else
+  {
+	  const auto& font = getFont3d();
+	  pTexture = font.pTexture;
+  }
 
 	if (pTexture)
 		IDirect3DDevice9_SetTexture(
@@ -76,7 +65,9 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 	if ((pChunk->flags & D3DRENDER_WORLD_OBJ))
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
-	if (gWireframe)
+	const auto& current_room = getCurrentRoom();
+
+	if (isWireframeMode())
 	{
 		if (pChunk->pSector == &current_room.sectors[0])
 			return FALSE;
@@ -105,7 +96,7 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
 
-	if (gD3DDriverProfile.bFogEnable)
+	if (isFogEnabled())
 	{
 		float	end = D3DRenderFogEndCalc(pChunk);
 
@@ -120,7 +111,9 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
  */
 Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 {
-	if (gWireframe)
+	const auto& current_room = getCurrentRoom();
+
+	if (isWireframeMode())
 	{
 		if (pChunk->pSector == &current_room.sectors[0])
 		{
@@ -169,7 +162,7 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	state = (pChunk->flags & D3DRENDER_NO_HTILE) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP;
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, state);
 
-	if (gD3DDriverProfile.bFogEnable)
+	if (isFogEnabled())
 	{
 		float	end = D3DRenderFogEndCalc(pChunk);
 
@@ -232,7 +225,8 @@ Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
                                          D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) gpDLightWhite);
+	const auto& whiteLightTexture = getWhiteLightTexture();
+	IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) whiteLightTexture);
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, 0);
@@ -268,6 +262,7 @@ Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
+			const auto& current_room = getCurrentRoom();
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 				SetZBias(gpD3DDevice, 0);
 			else
@@ -290,6 +285,7 @@ Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
+			const auto& current_room = getCurrentRoom();
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 				SetZBias(gpD3DDevice, 0);
 			else
@@ -387,7 +383,7 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	}
 
-	if (gD3DDriverProfile.bFogEnable)
+	if (isFogEnabled())
 	{
 		float	end;
 
@@ -427,8 +423,7 @@ Bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
                                          D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 
-	IDirect3DDevice9_SetTexture(
-      gpD3DDevice, 1, (IDirect3DBaseTexture9 *) gpBackBufferTex[0]);
+	IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9*)getBackBufferTextureZero());
 
 	return TRUE;
 }
@@ -630,10 +625,12 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 	// GetLightPalette(), LightChanged3D(), and LIGHT_INDEX() for more info
 	// note: sectors with the no ambient flag attenuate twice as fast in the old client.
 	// bug or not, it needs to be emulated here...
+	const auto& current_room = getCurrentRoom();
+	const auto& drawParams = getDrawParams();
 	if (pChunk->flags & D3DRENDER_NOAMBIENT)
-		end = (16384 + (light * FINENESS) + (p->viewer_light * 64));
+		end = (16384 + (light * FINENESS) + (drawParams.viewer_light * 64));
 	else
-		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (p->viewer_light * 64) +
+		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
 		(current_room.ambient_light * FINENESS));
 
 	return end;

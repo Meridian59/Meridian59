@@ -37,7 +37,7 @@ void D3DRenderPacketCeilingAdd(BSPnode* pNode, d3d_render_pool_new* pPool, bool 
 void D3DRenderPacketWallMaskAdd(WallData* pWall, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThrough, 
 	unsigned int type, int side, bool dynamic);
 void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3DTEXTURE9 noLookThroughTexture, bool bDynamic);
-void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_type* current_room, 
+void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, 
 	LPDIRECT3DTEXTURE9 noLookThrough, LPDIRECT3DTEXTURE9 lightOrangeTexture, bool bDynamic);
 
 void D3DRenderLMapPostFloorAdd(BSPnode* pNode, d3d_render_pool_new* pPool, d_light_cache* pDLightCache, bool bDynamic);
@@ -164,8 +164,8 @@ void D3DRenderWorldLighting(const WorldRenderParams& worldRenderParams, const Li
 
 		auto& cacheSystem = worldRenderParams.cacheSystemParams;
 		auto& pools = worldRenderParams.poolParams;
-		auto& room = worldRenderParams.room;
 		auto& params = worldRenderParams.params;
+		const auto& room = getCurrentRoom();
 
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
@@ -177,14 +177,14 @@ void D3DRenderWorldLighting(const WorldRenderParams& worldRenderParams, const Li
 
 		D3DRenderPoolReset(pools.lMapPool, &D3DMaterialLMapDynamicPool);
 
-		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room->tree, false);
-		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room->tree, false);
+		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room.tree, false);
+		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room.tree, false);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE); // Disable depth writing
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
-		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room->tree, true);
-		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room->tree, true);
+		D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room.tree, true);
+		D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room.tree, true);
 
 		D3DCacheFill(cacheSystem.lMapCacheSystem, pools.lMapPool, 2);
 		D3DCacheFlush(cacheSystem.lMapCacheSystem, pools.lMapPool, 2, D3DPT_TRIANGLESTRIP);
@@ -208,11 +208,11 @@ void D3DRenderWorldDraw(const WorldRenderParams& worldRenderParams, bool transpa
 
 	auto& cacheSystem = worldRenderParams.cacheSystemParams;
 	auto& pools = worldRenderParams.poolParams;
-	auto& room = worldRenderParams.room;
+	const auto& room = getCurrentRoom();
 
-	for (count = 0; count < room->num_nodes; count++)
+	for (count = 0; count < room.num_nodes; count++)
 	{
-		pNode = &room->nodes[count];
+		pNode = &room.nodes[count];
 
 		switch (pNode->type)
 		{
@@ -1315,7 +1315,7 @@ void D3DRenderFloorMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, LPDIRECT3
 /*
 * Add a ceiling mask to the render pool
 */
-void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_type* current_room, 
+void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, 
 	LPDIRECT3DTEXTURE9 noLookThroughTexture, LPDIRECT3DTEXTURE9 lightOrangeTexture, bool bDynamic)
 {
 	Sector* pSector = pNode->u.leaf.sector;
@@ -1377,8 +1377,10 @@ void D3DRenderCeilingMaskAdd(BSPnode* pNode, d3d_render_pool_new* pPool, room_ty
 		}
 	}
 
+	const auto& current_room = getCurrentRoom();
+
 	if ((pSector->sloped_ceiling == NULL) && (pSector->ceiling_height !=
-		current_room->sectors[0].ceiling_height))
+		current_room.sectors[0].ceiling_height))
 	{
 		int	vertex, i;
 
@@ -2045,11 +2047,11 @@ void D3DGeometryBuildNew(
 
 	auto& cacheSystem = worldRenderParams.cacheSystemParams;
 	auto& pools = worldRenderParams.poolParams;
-	auto& room = worldRenderParams.room;
+	const auto& room = getCurrentRoom();
 
-	for (count = 0; count < room->num_nodes; count++)
+	for (count = 0; count < room.num_nodes; count++)
 	{
-		pNode = &room->nodes[count];
+		pNode = &room.nodes[count];
 
 		switch (pNode->type)
 		{
@@ -2140,9 +2142,9 @@ void D3DGeometryBuildNew(
 		D3DCacheSystemReset(cacheSystem.worldCacheSystemStatic);
 		D3DRenderPoolReset(pools.lMapPoolStatic, &D3DMaterialLMapDynamicPool);
 
-		for (count = 0; count < room->num_nodes; count++)
+		for (count = 0; count < room.num_nodes; count++)
 		{
-			pNode = &room->nodes[count];
+			pNode = &room.nodes[count];
 
 			switch (pNode->type)
 			{
@@ -2223,9 +2225,9 @@ void D3DGeometryBuildNew(
 		D3DCacheFill(cacheSystem.lMapCacheSystemStatic, pools.lMapPoolStatic, 2);
 	}
 
-	for (count = 0; count < room->num_nodes; count++)
+	for (count = 0; count < room.num_nodes; count++)
 	{
-		pNode = &room->nodes[count];
+		pNode = &room.nodes[count];
 
 		switch (pNode->type)
 		{
@@ -2292,7 +2294,7 @@ void D3DGeometryBuildNew(
 			case BSPleaftype:
 				if ((pNode->u.leaf.sector->ceiling == NULL) &&
 					(pNode->u.leaf.sector->sloped_floor == NULL))
-					D3DRenderCeilingMaskAdd(pNode, pools.wallMaskPool, room, worldPropertyParams.noLookThroughTexture, 
+					D3DRenderCeilingMaskAdd(pNode, pools.wallMaskPool, worldPropertyParams.noLookThroughTexture, 
 						worldPropertyParams.lightOrangeTexture, false);
 			break;
 

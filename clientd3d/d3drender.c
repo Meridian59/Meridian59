@@ -92,9 +92,10 @@ int						gNumObjects;
 int						gNumVertices;
 int						gNumDPCalls;
 static PALETTEENTRY		gPalette[256];
-unsigned int			gFrame = 0;
 int						gScreenWidth;
 int						gScreenHeight;
+
+static unsigned int		gFrame = 0;
 
 // The size of the main full size render buffer and also a smaller buffer for effects.
 // The smaller buffer is used for effects that don't need full resolution.
@@ -139,7 +140,6 @@ extern Color			base_palette[NUM_COLORS];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
-extern Draw3DParams		*p;
 extern DrawItem			drawdata[];
 extern long				nitems;
 extern int				sector_depths[];
@@ -197,12 +197,34 @@ void setWireframeMode(bool isEnabled)
 	gWireframe = isEnabled;
 }
 
-PALETTEENTRY* getPalette() {
+PALETTEENTRY* getPalette()
+{
     return gPalette;
 }
 
-const Color (&getBasePalette())[NUM_COLORS] {
-    return base_palette;
+const Color(&getBasePalette())[NUM_COLORS]
+{
+	return base_palette;
+}
+
+bool isWireframeMode()
+{
+	return gWireframe;
+}
+
+const font_3d& getFont3d()
+{
+	return gFont;
+}
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
+{
+	return gpDLightWhite;
+}
+
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+{
+	return gpBackBufferTex[0];
 }
 
 // externed stuff
@@ -514,7 +536,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	gNumVertices = 0;
 	gNumDPCalls = 0;
 
-	p = params;
+	setDrawParams(params);
 
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;
@@ -583,7 +605,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
 		
 	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, 
-		view, proj, room);
+		view, proj);
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
@@ -591,8 +613,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
-		D3DFxInit();
-
 		D3DCacheSystemReset(&gWorldCacheSystemStatic);
 		D3DCacheSystemReset(&gWallMaskCacheSystem);
 
@@ -642,7 +662,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_particles)
 	{
-		D3DRenderParticles();
+		ParticleSystemStructure particleSystemStructure(decl1dc, playerDeltaPos, &gParticlePool, &gParticleCacheSystem);
+		D3DRenderParticles(particleSystemStructure);
 	}
 
 	if (draw_objects)
@@ -673,16 +694,21 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
+	FxRenderSystemStructure fxRenderSystemStructure(decl1dc, &gObjectPool, &gObjectCacheSystem, 
+		&gEffectPool, &gEffectCacheSystem, gpBackBufferTex, gpBackBufferTexFull, 
+		gFullTextureSize, gSmallTextureSize, mat, gFrame, gScreenWidth, gScreenHeight);
+
 	// post overlay effects
 	if (draw_objects)
 	{
-		D3DPostOverlayEffects(&gObjectPool);
+		D3DPostOverlayEffects(fxRenderSystemStructure);
 	}
 
-	// test blur
+	// apply blur and wave distortion effects
 	if (effects.blur || effects.waver)
 	{
-		D3DFxBlurWaver();
+		MatrixIdentity(&mat);
+		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 
 	timeComplete = timeGetTime();

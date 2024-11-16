@@ -28,7 +28,7 @@
 
 #define LIGHT_NEUTRAL 192       // Light level of sector drawn at ambient light level
 
-// Memporary maximum on # of objects in room 
+// Maximum on # of objects in room 
 #define MAXOBJECTS 2000
 
 #define MAX_OBJS_PER_SQUARE 30

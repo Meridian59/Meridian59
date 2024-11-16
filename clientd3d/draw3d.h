@@ -31,7 +31,7 @@
 // Maximum # of objects in room 
 #define MAXOBJECTS 2000
 
-#define MAX_OBJS_PER_SQUARE 30
+#define MAX_OBJS_PER_SQUARE 10
 
 #define BITMAP_WIDTH 64  
 #define LOG_BITMAP_WIDTH 6

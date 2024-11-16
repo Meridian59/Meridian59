@@ -758,7 +758,7 @@ void DrawObjectDecorations(DrawnObject *object)
    fg_color = GetPlayerNameColor(r->obj.flags,name);
    bg_color = NAME_COLOR_NORMAL_BG;
 
-   const Color (&base_palette)[NUM_COLORS] = getBasePalette();
+   const auto& base_palette = getBasePalette();
 
    // Some names never grow darker, they use PALETTEINDEX().
    if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))

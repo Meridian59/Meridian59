@@ -191,12 +191,10 @@ const Vector3D& getSunVector();
 void setWireframeMode(bool isEnabled);
 
 // Global palette array containing 256 color entries used for rendering textures in the current frame.
-// Each PALETTEENTRY holds color information (red, green, blue) and a flag for transparency.
 // This palette is dynamically updated based on the current rendering context.
-PALETTEENTRY* GetPalette();
+PALETTEENTRY* getPalette();
 
 // Base palette array containing predefined colors used as a reference for rendering effects.
-// Each Color entry holds RGB values for a specific color.
 // This palette remains constant and is used for color lookups and transformations.
 const Color(&getBasePalette())[NUM_COLORS];
 

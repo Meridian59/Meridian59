@@ -197,7 +197,7 @@ void setWireframeMode(bool isEnabled)
 	gWireframe = isEnabled;
 }
 
-PALETTEENTRY* GetPalette() {
+PALETTEENTRY* getPalette() {
     return gPalette;
 }
 

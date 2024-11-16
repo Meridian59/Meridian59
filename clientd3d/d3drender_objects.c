@@ -334,7 +334,7 @@ void D3DRenderNamesDraw3D(
 
 		COLORREF fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
 
-		const Color (&base_palette)[NUM_COLORS] = getBasePalette();
+		const auto& base_palette = getBasePalette();
 
 		// Some names never grow darker, they use PALETTEINDEX().
 		if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))

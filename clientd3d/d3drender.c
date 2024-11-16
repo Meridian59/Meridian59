@@ -140,7 +140,6 @@ extern Color			base_palette[];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
-extern Draw3DParams		*p;
 extern DrawItem			drawdata[];
 extern long				nitems;
 extern int				sector_depths[];
@@ -187,6 +186,26 @@ bool isFogEnabled()
 void setWireframeMode(bool isEnabled)
 {
 	gWireframe = isEnabled;
+}
+
+bool isWireframeMode()
+{
+	return gWireframe;
+}
+
+const font_3d& getFont3d()
+{
+	return gFont;
+}
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
+{
+	return gpDLightWhite;
+}
+
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+{
+	return gpBackBufferTex[0];
 }
 
 // externed stuff
@@ -498,7 +517,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	gNumVertices = 0;
 	gNumDPCalls = 0;
 
-	p = params;
+	setDrawParams(params);
 
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;
@@ -567,7 +586,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
 		
 	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, 
-		view, proj, room);
+		view, proj);
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 

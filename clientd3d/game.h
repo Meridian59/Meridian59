@@ -115,4 +115,6 @@ M59EXPORT player_info *GetPlayerInfo(void);
 M59EXPORT void SetActiveStatGroup(int stat_group);
 M59EXPORT int GetActiveStatGroup(void);
 
+const room_type& getCurrentRoom();
+
 #endif _GAME_H

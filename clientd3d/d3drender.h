@@ -182,6 +182,14 @@ bool isFogEnabled();
 // Returns the max shading range (FINENESS-shade_amount) to FINENESS
 long getShadeAmount();
 const Vector3D& getSunVector();
+
 void setWireframeMode(bool isEnabled);
+bool isWireframeMode();
+
+const font_3d& getFont3d();
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
+
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
 
 #endif	// __D3DRENDER_H__

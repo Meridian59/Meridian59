@@ -111,6 +111,9 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
 int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightOffset);
 int  GetFlicker(room_contents_node *obj);
 
+const Draw3DParams& getDrawParams();
+void setDrawParams(Draw3DParams* newDrawParams);
+
 
 #endif /* #ifndef _DRAW3D_H */
 

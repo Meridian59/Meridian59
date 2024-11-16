@@ -92,9 +92,10 @@ int						gNumObjects;
 int						gNumVertices;
 int						gNumDPCalls;
 PALETTEENTRY			gPalette[256];
-unsigned int			gFrame = 0;
 int						gScreenWidth;
 int						gScreenHeight;
+
+static unsigned int		gFrame = 0;
 
 // The size of the main full size render buffer and also a smaller buffer for effects.
 // The smaller buffer is used for effects that don't need full resolution.
@@ -623,7 +624,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_particles)
 	{
-		D3DRenderParticles();
+		ParticleSystemStructure particleSystemStructure(decl1dc, playerDeltaPos, &gParticlePool, &gParticleCacheSystem);
+		D3DRenderParticles(particleSystemStructure);
 	}
 
 	if (draw_objects)
@@ -654,16 +656,21 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
+	FxRenderSystemStructure fxRenderSystemStructure(decl1dc, &gObjectPool, &gObjectCacheSystem, 
+		&gEffectPool, &gEffectCacheSystem, gpBackBufferTex, gpBackBufferTexFull, 
+		gFullTextureSize, gSmallTextureSize, mat, gFrame, gScreenWidth, gScreenHeight);
+
 	// post overlay effects
 	if (draw_objects)
 	{
-		D3DPostOverlayEffects(&gObjectPool);
+		D3DPostOverlayEffects(fxRenderSystemStructure);
 	}
 
-	// test blur
+	// apply blur and wave distortion effects
 	if (effects.blur || effects.waver)
 	{
-		D3DFxBlurWaver();
+		MatrixIdentity(&mat);
+		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 
 	timeComplete = timeGetTime();

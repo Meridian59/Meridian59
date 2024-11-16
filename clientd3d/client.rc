@@ -102,7 +102,7 @@ BEGIN
         MENUITEM "Salvar configurações &agora",     ID_OPTIONS_SAVENOW
         MENUITEM "Salvar configurações a&o sair",   ID_OPTIONS_SAVEEXIT
     END
-    POPUP "&Hilfe"
+    POPUP "&Ajuda"
     BEGIN
         MENUITEM "&Conteúdos",                      ID_HELP_CONTENTS
         MENUITEM SEPARATOR

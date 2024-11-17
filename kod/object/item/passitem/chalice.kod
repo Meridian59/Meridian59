@@ -168,11 +168,11 @@ messages:
       if (IsClass(what,&Player))
       {
          % Prevent use just after attacking someone (as rescue/elusion)
-         if Send(who, @GetLastPlayerAttackTime) + 
+         if Send(what, @GetLastPlayerAttackTime) + 
             Send(Send(SYS, @GetSettings), @TeleportAttackDelaySec) >
             GetTime()
          {
-            Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
+            Send(what, @MsgSendUser, #message_rsc = chalice_cant_use_pkill);
             return FALSE;
          }
 

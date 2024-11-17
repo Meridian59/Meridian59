@@ -167,15 +167,15 @@ messages:
    {
       if (IsClass(what,&Player))
       {
-         % Prevent use if you're red.  This is because player killers
-         % were using this to escape too easily after kills.
-         if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-		     OR Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         % Prevent use just after attacking someone (as rescue/elusion)
+         if Send(who, @GetLastPlayerAttackTime) + 
+            Send(Send(SYS, @GetSettings), @TeleportAttackDelaySec) >
+            GetTime()
          {
-            Send(what, @MsgSendUser, #message_rsc = chalice_cant_use_pkill);
+            Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
             return FALSE;
          }
-         
+
          % Prevent use if you can't fight.
          if Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT)
          {

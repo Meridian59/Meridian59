@@ -28,7 +28,7 @@ resources:
    chalice_use = "You sip a bit of the water out of the Chalice of Rain."
    chalice_empty = "The Chalice of Rain crumbles to dust in your hand as you sip the last bit of water from it."
    chalice_combine = "You pour the water from one Chalice into the other."
-   chalice_cant_use_pkill = "Only innocents may partake of the chalice."
+   chalice_cant_use_pkill = "Only those who have walked the path of peace may partake of the chalice."
    chalice_refilled = "The Chalice of Rain glows faintly for a moment, renewed by the spirit of Shal'ille that permeates the area."
    chalice_refilled_sound = water_scoop01.wav
 

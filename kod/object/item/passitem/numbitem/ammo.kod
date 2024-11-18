@@ -35,7 +35,12 @@ classvars:
    viAmmo_type = AMMO_ARROW     
 
    viGround_group = 2
-   viInventory_group = 1   
+   viInventory_group = 1
+
+   viProjectileFlag = PROJ_FLAG_NONE
+   viProjectileLightFlags = LIGHT_FLAG_NONE
+   viProjectileLightIntensity = 0
+   viProjectileLightColor = LIGHT_LIGHTNING
 
 properties:
 
@@ -81,8 +86,17 @@ messages:
 
    GetProjectileLightFlags()
    {
-      % No lighting information.
-      return LIGHT_FLAG_NONE;
+      return viProjectileLightFlags;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      return viProjectileLightIntensity;
+   }
+
+   GetProjectileLightColor()
+   {
+      return viProjectileLightColor;
    }
 
    GetDamage()

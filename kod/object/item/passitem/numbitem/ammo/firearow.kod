@@ -46,6 +46,15 @@ properties:
    piNumber = 10
    piAttack_spell = ATCK_SPELL_FIRE
 
+   viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255 (not as bright as a fireball)
+   viProjectileLightIntensity = 50
+   % Color is red like the tip of the fire arrow.
+   viProjectileLightColor = LIGHT_BRED
+
 messages:
 
    GetDamage()

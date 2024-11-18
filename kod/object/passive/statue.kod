@@ -92,7 +92,6 @@ properties:
 
    piOverlays = 8
    piColor = 0
-   piUpgraded = FALSE
 
 messages:
 

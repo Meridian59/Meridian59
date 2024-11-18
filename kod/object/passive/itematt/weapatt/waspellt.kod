@@ -36,8 +36,8 @@ constants:
 
    include blakston.khd
 
-   ONE_HOUR_IN_MILLISECONDS = 3600000
-   ONE_DAY_IN_MILLISECONDS = 86400000
+   ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1 * 1000
+   ONE_DAY_IN_MILLISECONDS = 60 * 60 * 24 * 1000
 
 resources:
    

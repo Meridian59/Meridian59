@@ -69,12 +69,12 @@ messages:
 
    CanPayCosts(who=$,lTargets=$)
    {
-      % check for enchantment already applied
+      local oIvisibilitySpell;
+      % Remove existing ivisibility spell if it exists
       if Send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
       {
-         Send(who,@MsgSendUser,#message_rsc=fade_already_enchanted);
-         
-         return FALSE;
+         oIvisibilitySpell = Send(SYS,@FindSpellByNum,#num=SID_INVISIBILITY);
+         Send(who,@RemoveEnchantment,#what=oIvisibilitySpell);
       }
       
       propagate;

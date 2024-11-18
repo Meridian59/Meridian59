@@ -516,9 +516,9 @@ messages:
 
       if pbIsHairVisible = $
       {
-         % We added ability to show facial overlays but for existing statues it will 
-         % have the number of overlays already calculated, this number may be incorrect.
-         % To upgrade the statue we reset the frames having first correct set the new properties.
+         % We added the ability to show facial overlays on statues but for existing statues 
+         % the number of overlays was already calculated and this number may be incorrect!
+         % To upgrade the statue we reset the frames having first correctly set the new properties.
          Debug("Upgrading an old statue");
          prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
          pbIsHairVisible = Send(poOriginal,@IsHairVisible);

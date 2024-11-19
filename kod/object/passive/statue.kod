@@ -521,7 +521,6 @@ messages:
       local iSkin_xlat;
 
       % Send overlay bitmap info to user.  
-
       % Player has 8 standard overlays: right arm, left arm, legs, head, eyes, 
       % mouth, nose, hair
 

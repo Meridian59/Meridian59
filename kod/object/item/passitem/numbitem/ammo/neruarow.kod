@@ -60,6 +60,8 @@ messages:
 
          return random(3,8);
       }
+      % can't reclaim an exploded neruodite arrow.
+      Send(self,@DoReclaim,#who=who,#target=target);
 
       return random(2,6);
    }

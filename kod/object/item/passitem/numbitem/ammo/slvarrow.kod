@@ -62,6 +62,8 @@ messages:
          return random(5,10);
       }
 
+      Send(self,@DoReclaim,#who=who,#target=target);
+
       return random(2,6);
    }
 

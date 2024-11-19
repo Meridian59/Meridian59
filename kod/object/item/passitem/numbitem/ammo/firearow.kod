@@ -48,8 +48,9 @@ properties:
 
 messages:
 
-   GetDamage()
+   GetDamage(who=$,target=$)
    {
+      Send(self,@DoReclaim,#who=who,#target=target);
       return Random(2,6);
    }
 

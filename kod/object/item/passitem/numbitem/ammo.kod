@@ -22,6 +22,11 @@ resources:
    ammo_icon_rsc = fireball.bgf
    ammo_desc_rsc = "This is a bit of ammunition for something or other.."
 
+   arrow_reclaimable = "~ISwift and skilled, your arrow flies true, undamaged and ready to be reclaimed!"
+   arrow_claimed = "~IYour attackers arrow lands in one piece, in your body!"
+
+   arrow_reclaim_sound = arrow_impact.wav
+
 classvars:
 
    vrName = ammo_name_rsc
@@ -85,8 +90,9 @@ messages:
       return LIGHT_FLAG_NONE;
    }
 
-   GetDamage()
+   GetDamage(who=$,target=$)
    {
+      Send(self,@DoReclaim,#who=who,#target=target);
       return Random(1,5);
    }
 
@@ -145,6 +151,68 @@ messages:
    CheckSpellFlag(flag = 0)
    {
       return  (piAttack_spell & flag);
+   }
+
+   DoReclaim(who=$,target=$)
+   {
+      local atype, poArrow, iArrowReclaimChance;
+       % When hit by an arrow from range by a bow, it may be reclaimable.
+      if IsClass(who,&Player)
+      {
+         Debug("Attacker is a player.");
+         if(IsClass(Send(who,@GetWeapon), &Bow))
+         {
+            %Debug("Attacker is holding a practice bow.");
+            %Debug("Attack type: ",atype);
+            %Debug("Attack type ATCK_WEAP_SILVER: ",ATCK_WEAP_SILVER);
+            %Debug("Attack type ATCK_WEAP_NERUDITE: ",ATCK_WEAP_NERUDITE);
+            %Debug("Attack type ATCK_WEAP_PIERCE: ",ATCK_WEAP_PIERCE);
+            atype = Send(self,@GetAttackType);
+            if atype & ATCK_WEAP_PIERCE % we can just do this now using is class.. actually don't even need this can just use the class to create!
+            {
+               if(IsClass(Send(who,@GetWeapon),&PracticeBow))
+               {
+                  % While learning bow we use Fire proficiency to determine reclaim chance.
+                  Debug("Practice bow so using Fire proficiency!");
+                  iArrowReclaimChance = Send(who,@getskillability,#skill_num=SKID_FIRE) / 2;
+               }
+               else
+               {
+                  % For all other bows we use Archery proficiency to determine reclaim chance.
+                  Debug("Regular bow so using Archery proficiency!");
+                  iArrowReclaimChance = Send(who,@getskillability,#skill_num=SKID_PROFICIENCY_BOW) / 5;
+               }
+               
+               if (Random(1,100) < iArrowReclaimChance)
+               {
+                  if GetClass(self) = &FireArrow
+                  {
+                     % Fire arrows get extinguished when they hit a target!
+                     poArrow = Create(&Arrow,#number=1);
+                  }
+                  else
+                  {
+                     poArrow = Create(GetClass(self),#number=1);
+                  }
+                  Post(who,@MsgSendUser,#message_rsc=arrow_reclaimable);
+                  if IsClass(target,&Player)
+                  {
+                     Post(target,@MsgSendUser,#message_rsc=arrow_claimed);
+                  }
+
+                  Send(target,@NewHold,#what=poArrow);
+
+                  if arrow_reclaim_sound <> $
+                  {
+                     Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=target,#wave_rsc=arrow_reclaim_sound,
+                        #flags=SOUND_RANDOM_PITCH);
+                  }
+
+               }
+            }
+         }
+      }
+      return;
    }
 
 

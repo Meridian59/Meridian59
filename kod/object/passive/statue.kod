@@ -524,7 +524,7 @@ messages:
 
       % Player has 8 standard overlays: right arm, left arm, legs, head, eyes, 
       % mouth, nose, hair
-
+      
       %% number of overlays
       AddPacket(1, piOverlays);
 

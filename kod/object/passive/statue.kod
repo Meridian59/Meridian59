@@ -513,6 +513,7 @@ messages:
       prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
       Send(self,@ResetFrames);
+      return;
    }
 
    SendOverlays()

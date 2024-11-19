@@ -6431,12 +6431,12 @@ messages:
    }
 
    UpgradeStatues()
-   "One time upgrade statues to cater for new facial overlays, added in 1.3.2 / client 732."
-   "Save to run a second time, if you dare."
+   "One time upgrade for all Statues to support for new facial overlays"
+   " added in patch 1.3.2 / client 732. Safe to run a multiple tmes, if you wish."
    {
       local room,plPassiveObjects,i,each_obj,statues_upgraded;
       debug("Statues upgrade started");
-      statues_upgraded = 0
+      statues_upgraded = 0;
       for room in plRooms
       {
          plPassiveObjects = Send(room, @GetPlPassive);
@@ -6445,13 +6445,12 @@ messages:
             each_obj = Send(room,@HolderExtractObject,#data=i);
             if IsClass(each_obj, &Statue)
             {
-               debug("Found a statue: %s upgrading", Send(each_obj, @GetName));
                Send(each_obj, @UpgradeStatue);
-               statues_upgraded = (statues_upgraded+1)
+               statues_upgraded = statues_upgraded+1;
             }
          }
       }
-      debug("%i statues successfully upgraded", statues_upgraded);
+      debug("Total statues upgraded: ", statues_upgraded);
       return;
    }
 

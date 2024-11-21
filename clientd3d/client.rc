@@ -523,6 +523,32 @@ BEGIN
     PUSHBUTTON      "Oferta...",IDC_BTN_DEMO,138,167,93,14
 END
 
+IDD_SIGNUP DIALOGEX 0, 0, 288, 253
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Meridian 59 Cadastre-se para uma conta gratuita!"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    ICON            IDI_ICON,IDC_STATIC,7,6,20,20
+    LTEXT           "Criar uma conta é fácil: insira o seu e-mail, nome de usuário, senha, escolha um servidor e clique em Criar Conta. Você receberá um e-mail para ativar a conta. Problemas? Clique em Solucionar Problemas.",IDC_STATIC,34,11,230,46
+    GROUPBOX        "Insira as Informações da Sua Nova Conta",IDC_STATIC,23,47,244,181
+    LTEXT           "Endereço de E-mail",ID_SU_EMAIL,39,67,62,8
+    EDITTEXT        IDC_NEW_EMAIL,134,65,129,14,ES_AUTOHSCROLL
+    RTEXT           "Usado para verificação da conta e para redefinir sua senha.",IDC_STATIC,27,81,235,11
+    LTEXT           "Nome de Usuário Desejado",ID_SU_USERNAME,39,96,90,10
+    EDITTEXT        IDC_NEW_USERNAME,134,94,129,14,ES_AUTOHSCROLL
+    LTEXT           "Senha",ID_SU_PW1,39,113,51,10
+    EDITTEXT        IDC_NEW_PW1,134,111,129,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirmar Senha",ID_SU_PW2,39,130,69,10
+    EDITTEXT        IDC_NEW_PW2,134,128,129,14,ES_PASSWORD | ES_AUTOHSCROLL
+    RTEXT           "O Nome de Usuário e a Senha devem ter entre 6 e 32 caracteres sem espaços.",IDC_STATIC,97,145,165,18
+    LTEXT           "Servidor:",ID_SU_SERVER,39,168,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,168,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,168,32,10
+    LTEXT           "Existem dois servidores, com o 101 sendo o mais ativo. Jogadores de todos os tipos jogam no 101: veteranos, iniciantes, combatentes e quem prefere jogar casualmente.",IDC_STATIC,39,184,220,34
+    PUSHBUTTON      "Solucionar Problemas",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
+    DEFPUSHBUTTON   "Criar Conta",IDC_SIGNUP_OK,150,221,107,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -566,195 +592,203 @@ END
 
 STRINGTABLE
 BEGIN
-    1                       "Não foi possível inicializar o soquete!"
-    2                       "Não é possível usar a porta definida!"
-    3                       "Erro de comunicação!"
-    4                       "A mensagem do servidor é muito longa!"
-    5                       "O buffer de leitura está cheio!"
-    9                       "Desde o seu último login, o jogo foi atualizado.\nAo confirmar, os novos arquivos serão copiados automaticamente para o seu computador.\nAo cancelar, tentaremos continuar o jogo com a versão antiga. Atualizar agora?"
-    10                      "O arquivo %s deve estar corrompido.\nTente primeiro corrigir o problema reinstalando o jogo. Se isso não funcionar, entre em contato com nosso suporte ao cliente."
-    12                      "Duplicado: #%d no arquivo %s"
-    13                      "Não é possível usar a porta definida!"
-    14                      "A conexão foi interrompida!"
-    15                      "Problema inesperado no soquete."
+    IDS_CANTINITSOCKET      "Não foi possível inicializar o soquete!"
+    IDS_CANTWRITE           "Não é possível usar a porta definida!"
+    IDS_COMERROR            "Erro de comunicação!"
+    IDS_MESSAGETOOLONG      "A mensagem do servidor é muito longa!"
+    IDS_READOVERFLOW        "O buffer de leitura está cheio!"
+    IDS_MISSINGRESOURCE     "Desde o seu último login, o jogo foi atualizado.\nAo confirmar, os novos arquivos serão copiados automaticamente para o seu computador.\nAo cancelar, tentaremos continuar o jogo com a versão antiga. Atualizar agora?"
+    IDS_NOROOMFILE          "O arquivo %s deve estar corrompido.\nTente primeiro corrigir o problema reinstalando o jogo. Se isso não funcionar, entre em contato com nosso suporte ao cliente."
+    IDS_DUPRESOURCE         "Duplicado: #%d no arquivo %s"
+    IDS_SOCKETOPEN          "Não é possível usar a porta definida!"
+    IDS_LOSTSERVER          "A conexão foi interrompida!"
+    IDS_SOCKETMESSAGE       "Problema inesperado no soquete."
 END
 
 STRINGTABLE
 BEGIN
-    17                      "Baixar todos os arquivos do jogo pode demorar muito.\nTem certeza?"
-    18                      "m59bind.exe"
-    19                      "Não foi possível excluir o arquivo %s.\n\nTentar novamente?"
-    20                      "Não foi possível escrever o arquivo %s."
-    21                      "O menu de configuração não pôde ser encontrado. Por favor, reinstale o Meridian 59."
-    24                      "Não consigo me conectar ao servidor!"
-    25                      "Você digitou seu nome de usuário ou senha incorretamente!"
-    26                      "Todos os temporizadores do Windows estão atualmente em uso.\nFeche alguns aplicativos e tente novamente."
-    27                      "Esta conta já está sendo usada."
-    28                      "O servidor de jogo não está disponível.\nPor favor, tente novamente mais tarde."
-    29                      "Muitas tentativas de login."
-    30                      "A tentativa de login já está demorando muito."
-    31                      "Não foi possível mover um ou mais arquivos do diretório %s para o diretório %s. Verifique se o diretório existe e tente baixar novamente."
+    IDS_DOWNLOADALL         "Baixar todos os arquivos do jogo pode demorar muito.\nTem certeza?"
+    IDS_CONFIGMENUEXE       "m59bind.exe"
+    IDS_CANTDELETEFILE      "Não foi possível excluir o arquivo %s.\n\nTentar novamente?"
+    IDS_CANTWRITEFILE       "Não foi possível escrever o arquivo %s."
+    IDS_NOCONFIGMENUEXE     "O menu de configuração não pôde ser encontrado. Por favor, reinstale o Meridian 59."
+    IDS_CONNECTERROR        "Não consigo me conectar ao servidor!"
+    IDS_BADLOGIN            "Você digitou seu nome de usuário ou senha incorretamente!"
+    IDS_NOTIMERS            "Todos os temporizadores do Windows estão atualmente em uso.\nFeche alguns aplicativos e tente novamente."
+    IDS_ACCOUNTUSED         "Esta conta já está sendo usada."
+    IDS_SYSTEMDOWN          "O servidor de jogo não está disponível.\nPor favor, tente novamente mais tarde."
+    IDS_TOOMANYLOGINS       "Muitas tentativas de login."
+    IDS_TIMEOUT             "A tentativa de login já está demorando muito."
+    IDS_CANTRENAME          "Não foi possível mover um ou mais arquivos do diretório %s para o diretório %s. Verifique se o diretório existe e tente baixar novamente."
 END
 
 STRINGTABLE
 BEGIN
-    32                      "O jogo foi temporariamente desligado para manutenção.\nPor favor, tente novamente mais tarde."
-    33                      "Você está sem créditos.\nPara informações sobre compra de créditos, selecione Ajuda no menu principal"
-    34                      "Por motivos de segurança, você deve digitar a nova senha novamente!"
-    35                      "A nova senha deve ter pelo menos %d caracteres."
-    38                      "Abortando a transmissão..."
-    39                      "Você só pode fazer %d entradas de mapa nesta área."
-    41                      "<Desconhecido>"
-    42                      "%s está vazio."
-    44                      "Erro de CRC na mensagem do servidor!"
-    45                      "Você pode aceitar ou recusar a oferta agora."
-    46                      "Aguardando resposta..."
+    IDS_NOGAME              "O jogo foi temporariamente desligado para manutenção.\nPor favor, tente novamente mais tarde."
+    IDS_NOCREDITS           "Você está sem créditos.\nPara informações sobre compra de créditos, selecione Ajuda no menu principal"
+    IDS_PASSWDMATCH         "Por motivos de segurança, você deve digitar a nova senha novamente!"
+    IDS_PASSWDLENGTH        "A nova senha deve ter pelo menos %d caracteres."
+    IDS_ABORTTRANSFER       "Abortando a transmissão..."
+    IDS_ANNOTATIONSFULL     "Você só pode fazer %d entradas de mapa nesta área."
+    IDS_UNKNOWN             "<Desconhecido>"
+    IDS_EMPTY               "%s está vazio."
+    IDS_CRCERROR            "Erro de CRC na mensagem do servidor!"
+    IDS_GOTOFFER            "Você pode aceitar ou recusar a oferta agora."
+    IDS_WAITRESPONSE        "Aguardando resposta..."
 END
 
 STRINGTABLE
 BEGIN
-    49                      "Deseja realmente encerrar o jogo??"
-    51                      "Deseja realmente encerrar o jogo??"
-    52                      "(Em uso)"
-    53                      "Imortal"
-    54                      "Você digitou sua senha atual incorretamente! A sua senha não foi alterada!"
-    63                      "Senha alterada."
+    IDS_QUIT                "Deseja realmente encerrar o jogo??"
+    IDS_LOGOFF              "Deseja realmente encerrar o jogo??"
+    IDS_INUSE               "(Em uso)"
+    IDS_AGELESS             "Imortal"
+    IDS_PASSWORDNOTCHANGED  "Você digitou sua senha atual incorretamente! A sua senha não foi alterada!"
+    IDS_PASSWORDCHANGED     "Senha alterada."
 END
 
 STRINGTABLE
 BEGIN
-    64                      "Endereço:\n"
-    65                      "Número de telefone:\n"
-    66                      "Nome:\n"
-    67                      "Você deve preencher todos os campos para se cadastrar."
-    68                      "Personagem:\n"
-    69                      "Recebendo arquivos..."
-    70                      "Conectando a %s."
-    71                      "Atualizando arquivos do jogo."
-    72                      "Selecione o alvo"
-    73                      "Pegar"
-    74                      "Observar"
-    75                      "Guardar"
-    76                      "Colocar dentro: selecione o objeto"
-    77                      "Colocar dentro: selecione o recipiente"
-    78                      "Usar"
-    79                      "Parar de usar"
+    IDS_ADDRESS         "Endereço:\n"
+    IDS_PHONENUM        "Número de telefone:\n"
+    IDS_NAME            "Nome:\n"
+    IDS_NOREGISTER      "Você deve preencher todos os campos para se cadastrar."
+    IDS_CHARNAME        "Personagem:\n"
+    IDS_RETRIEVING      "Recebendo arquivos..."
+    IDS_CONNECTING      "Conectando a %s."
+    IDS_DOWNLOADING     "Atualizando arquivos do jogo."
+    IDS_GETTARGET       "Selecione o alvo"
+    IDS_GET             "Pegar"
+    IDS_LOOK            "Observar"
+    IDS_DROP            "Guardar"
+    IDS_PUT1            "Colocar dentro: selecione o objeto"
+    IDS_PUT2            "Colocar dentro: selecione o recipiente"
+    IDS_USE             "Usar"
+    IDS_UNUSE           "Parar de usar"
 END
 
 STRINGTABLE
 BEGIN
-    80                      "Atacar"
-    81                      "Oferecer"
-    82                      "Oferecer itens"
-    83                      "Usar objeto"
-    84                      "Ativar"
-    85                      "Software\\Classes\\http\\shell\\open\\command"
-    86                      "https://meridian59.com/M59-Help-01.shtml"
-    87                      "O que, por favor?"
-    90                      "Descompactando..."
-    91                      "Meridian 59"
-    92                      "meridian.ini"
-    93                      "&Confirmar"
-    94                      "C&ancelar"
-    95                      "Comprar"
+    IDS_ATTACK                  "Atacar"
+    IDS_OFFERTO                 "Oferecer"
+    IDS_OFFERITEMS              "Oferecer itens"
+    IDS_APPLY                   "Usar objeto"
+    IDS_ACTIVATE                "Ativar"
+    IDS_HTTPKEY                 "Software\\Classes\\http\\shell\\open\\command"
+    IDS_BADCOMMAND              "O que, por favor?"
+    IDS_DECOMPRESSING           "Descompactando..."
+    IDS_HELPFILE                "https://www.meridian59.com/guides/"
+    IDS_APPNAME                 "Meridian 59"
+    IDS_INIFILE                 "meridian.ini"
+    IDS_YES                     "&Confirmar"
+    IDS_NO                      "C&ancelar"
+    IDS_BUYFROM                 "Comprar"
 END
 
 STRINGTABLE
 BEGIN
-    97                      "O programa que atualiza seus arquivos não pode ser iniciado (%s).\nPor favor, contate um administrador do sistema ou nosso serviço de atendimento ao cliente."
-    98                      "Você precisa de uma versão atualizada do Meridian 59.\nGostaria de obtê-la automaticamente?"
-    99                      "Não foi possível copiar o arquivo %s para %s.\n\nTentar novamente?"
-    100                     "A atualização automática falhou devido ao tamanho excessivo da linha de comando.\nPor favor, informe a seguinte linha de comando ao serviço de atendimento ao cliente:\n\n%s"
-    103                     "Não foi possível criar o diretório %s.\nMotivo: %s"
-    105                     "Não foi possível encontrar nenhum arquivo de recurso do jogo.\nPor favor, verifique os diretórios de recursos do jogo e tente novamente."
-    106                     "Não foi possível excluir o arquivo %s.\nExclua manualmente."
-    107                     "Não foi possível descompactar o arquivo %s.\n\nTentar novamente?"
-    108                     "O jogo requer suporte a pelo menos %d cores (modo gráfico).\nA configuração gráfica atual possui apenas %d cores.\n\nAltere o modo gráfico e reinicie o Windows."
-    109                     "Problemas de tamanho com mensagem do servidor."
-    110                     "Nenhum personagem de jogo foi criado para esta conta. Entre em contato com o serviço de atendimento ao cliente."
-    111                     "Erro de transferência; tente reconectar."
+    IDS_CANTUPDATE      "O programa que atualiza seus arquivos não pode ser iniciado (%s).\nPor favor, contate um administrador do sistema ou nosso serviço de atendimento ao cliente."
+    IDS_NEEDNEWVERSION  "Você precisa de uma versão atualizada do Meridian 59.\nGostaria de obtê-la automaticamente?"
+    IDS_CANTMOVE        "Não foi possível copiar o arquivo %s para %s.\n\nTentar novamente?"
+    IDS_LONGCMDLINE     "A atualização automática falhou devido ao tamanho excessivo da linha de comando.\nPor favor, informe a seguinte linha de comando ao serviço de atendimento ao cliente:\n\n%s"
+    IDS_CANTMAKEDIR     "Não foi possível criar o diretório %s.\nMotivo: %s"
+    IDS_NORSCS          "Não foi possível encontrar nenhum arquivo de recurso do jogo.\nPor favor, verifique os diretórios de recursos do jogo e tente novamente."
+    IDS_CANTDELETE      "Não foi possível excluir o arquivo %s.\nExclua manualmente."
+    IDS_CANTUNPACK      "Não foi possível descompactar o arquivo %s.\n\nTentar novamente?"
+    IDS_TOOFEWCOLORS    "O jogo requer suporte a pelo menos %d cores (modo gráfico).\nA configuração gráfica atual possui apenas %d cores.\n\nAltere o modo gráfico e reinicie o Windows."
+    IDS_BADLENGTH       "Problemas de tamanho com mensagem do servidor."
+    IDS_NOCHARACTERS    "Nenhum personagem de jogo foi criado para esta conta. Entre em contato com o serviço de atendimento ao cliente."
+    IDS_TRANSMITERROR   "Erro de transferência; tente reconectar."
 END
 
 STRINGTABLE
 BEGIN
-    112                     "Erro de transferência: Tente novamente."
-    113                     "Não é possível criar arquivos temporários."
-    114                     "Permissões de arquivo insuficientes."
-    115                     "Memória principal insuficiente!"
-    116                     "O arquivo extraído está corrompido."
-    117                     "O disco está cheio."
-    118                     "O arquivo da atualização: %s, possui formato incorreto."
-    119                     "Não é possível encontrar o seguinte arquivo da atualização: %s."
-    120                     "Erro desconhecido"
-    121                     "Convidado"
-    122                     "Todos os servidores do Meridian estão atualmente sobrecarregados. Por favor, tente novamente mais tarde."
+    IDS_CANTUNCOMPRESS      "Erro de transferência: Tente novamente."
+    IDS_BADTEMPFILE         "Não é possível criar arquivos temporários."
+    IDS_BADPERMISSION       "Permissões de arquivo insuficientes."
+    IDS_BADMEM              "Memória principal insuficiente!"
+    IDS_BADARCHIVE          "O arquivo extraído está corrompido."
+    IDS_DISKFULL            "O disco está cheio."
+    IDS_BADARCHIVE2         "O arquivo da atualização: %s, possui formato incorreto."
+    IDS_MISSINGARCHIVE      "Não é possível encontrar o seguinte arquivo da atualização: %s."
+    IDS_UNKNOWNERROR        "Erro desconhecido"
+    IDS_GUEST               "Convidado"
+    IDS_GUESTFULL           "Todos os servidores do Meridian estão atualmente sobrecarregados. Por favor, tente novamente mais tarde."
 END
 
 STRINGTABLE
 BEGIN
-    128                     "Não há ninguém por perto para você comprar algo."
-    129                     "Não há ninguém por perto para quem você possa oferecer algo."
-    130                     "Não é possível iniciar o navegador da web %s.\nCorrija a entrada no menu Configurações do jogo."
-    134                     "Não é possível encontrar o arquivo: %s, no servidor FTP %s."
-    136                     "Não é possível encontrar os arquivos da atualização."
-    139                     "Erro ao descompactar. Não é possível estabelecer conexão com a Internet."
-    141                     "Não é possível estabelecer conexão com a Internet."
-    142                     "Não é possível estabelecer conexão FTP com: %s."
-    143                     "Erro desconhecido."
+    IDS_NOSELLERS       "Não há ninguém por perto para você comprar algo."
+    IDS_NOOFFERERS      "Não há ninguém por perto para quem você possa oferecer algo."
+    IDS_NOBROWSER       "Não é possível iniciar o navegador da web %s.\nCorrija a entrada no menu Configurações do jogo."
+    IDS_CANTFINDFILE    "Não é possível encontrar o arquivo: %s, no servidor FTP %s."
+    IDS_MISSINGFILE     "Não é possível encontrar os arquivos da atualização."
+    IDS_DEARCHIVEERROR  "Erro ao descompactar. Não é possível estabelecer conexão com a Internet."
+    IDS_CANTINIT        "Não é possível estabelecer conexão com a Internet."
+    IDS_NOCONNECTION    "Não é possível estabelecer conexão FTP com: %s."
+    IDS_BADCALLBACK     "Erro desconhecido."
 END
 
 STRINGTABLE
 BEGIN
-    145                     "Não é possível salvar o arquivo: %s."
-    146                     "Não é possível ler o arquivo FTP: %s."
-    147                     "Uma conexão perfeita"
-    148                     "Uma conexão muito boa"
-    149                     "Uma conexão boa"
-    150                     "Uma conexão acima da média"
-    151                     "Uma conexão média"
-    152                     "Uma conexão abaixo da média"
-    153                     "Uma conexão relativamente ruim"
-    154                     "Uma conexão ruim"
-    155                     "Uma conexão muito ruim"
-    157                     "Taxa de transferência: %dms"
-    159                     "O dado do cubo indica a qualidade da conexão com o servidor do jogo."
+    IDS_CANTWRITELOCALFILE           "Não é possível salvar o arquivo: %s."
+    IDS_CANTREADFTPFILE              "Não é possível ler o arquivo FTP: %s."
+    IDS_LATENCY0                     "Uma conexão perfeita"
+    IDS_LATENCY1                     "Uma conexão muito boa"
+    IDS_LATENCY2                     "Uma conexão boa"
+    IDS_LATENCY3                     "Uma conexão acima da média"
+    IDS_LATENCY4                     "Uma conexão média"
+    IDS_LATENCY5                     "Uma conexão abaixo da média"
+    IDS_LATENCY6                     "Uma conexão relativamente ruim"
+    IDS_LATENCY7                     "Uma conexão ruim"
+    IDS_LATENCY8                     "Uma conexão muito ruim"
+    IDS_LATENCYMETRIC                "Taxa de transferência: %dms"
+    IDS_LAGBOXSUBNAME                "O dado do cubo indica a qualidade da conexão com o servidor do jogo."
 END
 
 STRINGTABLE
 BEGIN
-    160                     "https://meridian59.com/serverstatus/"
-    161                     "A troca de dados entre computadores sempre leva um certo tempo. Esse período é chamado de 'lag'. A qualidade da sua conexão depende de vários fatores e pode mudar a qualquer momento."
-    162                     "~r< O filtro de texto foi ativado >"
-    163                     "A mensagem enviada foi filtrada.\n\nA mensagem contém palavras que estão no filtro de texto. Por favor, verifique sua mensagem."
-    164                     "https://www.meridian59.com/"
+    IDS_LAGBOXDESC          "A troca de dados entre computadores sempre leva um certo tempo. Esse período é chamado de 'lag'. A qualidade da sua conexão depende de vários fatores e pode mudar a qualquer momento."
+    IDS_PROFANITYREMOVED    "~r< O filtro de texto foi ativado >"
+    IDS_PROFANITYWARNING    "A mensagem enviada foi filtrada.\n\nA mensagem contém palavras que estão no filtro de texto. Por favor, verifique sua mensagem."
+    IDS_HOMEPAGEURL         "https://www.meridian59.com/"
 END
 
 STRINGTABLE
 BEGIN
-    179                     "Você não consegue ver o alvo selecionado."
-    180                     "Depositar itens"
-    187                     "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
-    188                     "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
-    189                     "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
-    190                     "https://meridian59.com/troubleshoot"
-    191                     "Seu cadastro falhou porquê:\n\n%s"
+    IDS_TARGETNOTVISIBLEFORATTACK   "Você não consegue ver o alvo selecionado."
+    IDS_DEPOSIT_ITEMS               "Depositar itens"
+    IDS_CANTSENDREQUEST             "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
+    IDS_CANTGETFILESIZE             "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
+    IDS_CANTSIGNUP                  "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
+    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_SIGNUPFAILED                "Seu cadastro falhou porquê:\n\n%s"
 END
 
 STRINGTABLE
 BEGIN
-    192                     "Nome de usuário é inválido ou já está em uso."
-    193                     "Endereço de email inválido."
-    194                     "Endereço de email já está em uso."
-    195                     "Senhas são inválidas ou não são iguais."
-    196                     "Servidor desconhecido selecionado."
-    197                     "O servidor de cadastro está offline."
-    198                     "Cadastro gerou um erro desconhecido, por favor, tente novamente."
-    199                     "/api/signup/"
-    200                     "meridian59.com"
-    201                     "/api/verified/"
-    202                     "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
-    203                     "/api/resend/"
-    204                     "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
+    IDS_USERNAMEINVALID     "Nome de usuário é inválido ou já está em uso."
+    IDS_EMAILINVALID        "Endereço de email inválido."
+    IDS_EMAILINUSE          "Endereço de email já está em uso."
+    IDS_PASSWORDINVALID     "Senhas são inválidas ou não são iguais."
+    IDS_SERVERUNKNOWN       "Servidor desconhecido selecionado."
+    IDS_SIGNUPOFFLINE       "O servidor de cadastro está offline."
+    IDS_SIGNUPUNKNOWNERROR  "Cadastro gerou um erro desconhecido, por favor, tente novamente."
+    IDS_SIGNUPAPI           "create"
+    IDS_WEBAPIDOMAIN        "accounts.meridian59.com"
+    IDS_VERIFIEDAPI         "check_verified"
+    IDS_UNVERIFIED          "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
+    IDS_RESENDAPI           "resend"
+    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_RARITY_GRADE_UNCOMMON      "uncommon"
+    IDS_RARITY_GRADE_RARE          "rare"
+    IDS_RARITY_GRADE_LEGENDARY     "legendary"
+    IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
+    IDS_RARITY_GRADE_CURSED        "cursed"
 END
 
 #endif    // Portuguese (Brazilian) resources
@@ -2344,7 +2378,7 @@ BEGIN
     IDS_MISSINGRESOURCE     "The game has changed since you logged in.\nSelecting ""Yes"" will automatically download the changed files.\nSelecting ""No"" will continue the game with your outdated files.\n\nAutomatically download new game files?"
     IDS_NOROOMFILE          "There is a problem with your file %s.  Please contact a system administrator to get the correct version."
     IDS_DUPRESOURCE         "Duplicate resource #%d in file %s."
-    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at https://meridian59.com/serverstatus/."
+    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down."
     IDS_LOSTSERVER          "Lost server connection!"
     IDS_SOCKETMESSAGE       "Unexpected socket message type."
 END
@@ -2419,7 +2453,7 @@ BEGIN
     IDS_APPLY               "Apply object"
     IDS_ACTIVATE            "Activate"
     IDS_HTTPKEY             "Software\\Classes\\http\\shell\\open\\command"
-    IDS_HELPFILE            "https://meridian59.com/M59-Help-01.shtml"
+    IDS_HELPFILE            "https://www.meridian59.com/guides/"
     IDS_BADCOMMAND          "What?  (Press F1 or '?' for help.)"
     IDS_DECOMPRESSING       "Decompressing..."
     IDS_APPNAME             "Meridian 59"

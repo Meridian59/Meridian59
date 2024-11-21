@@ -49,17 +49,16 @@ EXSTYLE WS_EX_APPWINDOW
 CAPTION "Editor de comandos do Meridian 59"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,313,140,42,15
-    PUSHBUTTON      "Cancelar",IDCANCEL,361,141,42,14
-    GROUPBOX        "Opções",IDC_STATIC,314,13,137,102
-    CONTROL         "Configuração de teclas clássica",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,27,102,10
+    DEFPUSHBUTTON   "OK",IDOK,358,140,42,15
+    PUSHBUTTON      "Cancelar",IDCANCEL,406,141,42,14
+    GROUPBOX        "Opções",IDC_STATIC,314,13,137,114
+    CONTROL         "Configuração de teclas clássica",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,27,115,10
     CONTROL         "Mensagem rápida",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,41,72,10
     CONTROL         "Sempre correr",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,55,58,10
-    CONTROL         "Luzes dinâmicas",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,83,95,10
-    CONTROL         "Renderização de software",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,97,85,10
     CONTROL         "Sempre atacar o alvo",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,69,83,10
-    PUSHBUTTON      "Ajuda",IDC_MAINHELP,409,140,42,15
-    PUSHBUTTON      "Eficiência da GPU",IDC_GPU_EFFICIENCY,313,121,79,14
+    CONTROL         "Luzes dinâmicas",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,83,95,10
+    CONTROL         "Renderização de software",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,97,100,10
+    CONTROL         "Eficiência da GPU", IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,323,111,75,10
 END
 
 IDD_COMMUNICATION DIALOG 0, 0, 258, 138
@@ -68,26 +67,26 @@ CAPTION "Comunicação"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Falar",IDC_STATIC,7,9,22,8
-    LTEXT           "Usar campo de mensagens",IDC_STATIC,7,26,38,18
-    LTEXT           "Sussurrar",IDC_STATIC,7,47,27,8
+    LTEXT           "Usar campo de mensagens",IDC_STATIC,7,24,48,18
+    LTEXT           "Sussurrar",IDC_STATIC,7,47,30,8
     LTEXT           "Gritar",IDC_STATIC,7,66,20,8
-    LTEXT           "Falar a todos",IDC_STATIC,7,83,33,16
-    LTEXT           "Quem está jogando?",IDC_STATIC,7,104,36,8
+    LTEXT           "Falar a todos",IDC_STATIC,7,82,33,16
+    LTEXT           "Quem está jogando?",IDC_STATIC,7,101,48,18
     LTEXT           "Gestos",IDC_STATIC,148,9,21,8
-    PUSHBUTTON      "pagedown+shift",IDC_SAY,48,7,55,14
-    PUSHBUTTON      "ENTER",IDC_CHAT,48,26,55,14
-    PUSHBUTTON      "T",IDC_TELL,48,45,55,14
-    PUSHBUTTON      "Y",IDC_YELL,48,64,55,14
-    PUSHBUTTON      "B",IDC_BROADCAST,48,83,55,14
-    PUSHBUTTON      "W+SHIFT",IDC_WHO,48,102,55,14
-    PUSHBUTTON      "pagedown+shift",IDC_EMOTE,171,7,55,14
-    PUSHBUTTON      "+",IDC_SAY_MOD,106,7,14,14
-    PUSHBUTTON      "+",IDC_CHAT_MOD,106,26,14,14
-    PUSHBUTTON      "+",IDC_TELL_MOD,106,45,14,14
-    PUSHBUTTON      "+",IDC_YELL_MOD,106,64,14,14
-    PUSHBUTTON      "+",IDC_BROADCAST_MOD,106,83,14,14
-    PUSHBUTTON      "+",IDC_WHO_MOD,106,102,14,14
-    PUSHBUTTON      "+",IDC_EMOTE_MOD,229,7,14,14
+    PUSHBUTTON      "pagedown+shift",IDC_SAY,58,7,55,14
+    PUSHBUTTON      "ENTER",IDC_CHAT,58,26,55,14
+    PUSHBUTTON      "T",IDC_TELL,58,45,55,14
+    PUSHBUTTON      "Y",IDC_YELL,58,64,55,14
+    PUSHBUTTON      "B",IDC_BROADCAST,58,83,55,14
+    PUSHBUTTON      "W+SHIFT",IDC_WHO,58,102,55,14
+    PUSHBUTTON      "pagedown+shift",IDC_EMOTE,181,7,55,14
+    PUSHBUTTON      "+",IDC_SAY_MOD,116,7,14,14
+    PUSHBUTTON      "+",IDC_CHAT_MOD,116,26,14,14
+    PUSHBUTTON      "+",IDC_TELL_MOD,116,45,14,14
+    PUSHBUTTON      "+",IDC_YELL_MOD,116,64,14,14
+    PUSHBUTTON      "+",IDC_BROADCAST_MOD,116,83,14,14
+    PUSHBUTTON      "+",IDC_WHO_MOD,116,102,14,14
+    PUSHBUTTON      "+",IDC_EMOTE_MOD,239,7,14,14
 END
 
 IDD_INTERACTION DIALOG 0, 0, 258, 138
@@ -145,19 +144,18 @@ STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Movimentação"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Para frente",IDC_STATIC,7,9,28,8
-    LTEXT           "Para trás",IDC_STATIC,7,28,35,8
-    LTEXT           "Virar a esquerda",IDC_STATIC,7,47,44,8
-    LTEXT           "Virar a direita",IDC_STATIC,7,66,50,8
-    LTEXT           "Andar para a esquerda",IDC_STATIC,7,85,40,8
-    LTEXT           "Andar para a direita",IDC_STATIC,7,104,45,8
+    LTEXT           "Andar para frente",IDC_STATIC,7,6,48,18
+    LTEXT           "Andar para trás",IDC_STATIC,7,28,48,8
+    LTEXT           "Virar a esquerda",IDC_STATIC,7,43,48,18
+    LTEXT           "Virar a direita",IDC_STATIC,7,66,48,18
+    LTEXT           "Ir para a esquerda",IDC_STATIC,7,82,48,18
+    LTEXT           "Ir para a direita",IDC_STATIC,7,101,44,18
     LTEXT           "Andar/Correr",IDC_STATIC,152,9,47,8
     LTEXT           "Olhar para cima",IDC_STATIC,151,29,52,8
     LTEXT           "Olhar para baixo",IDC_STATIC,151,47,54,8
-    LTEXT           "Olhar para frente",IDC_STATIC,151,66,49,8
-    LTEXT           "Virar para trás",IDC_STATIC,151,86,45,8
-    LTEXT           "Prender visão ao cursor",IDC_STATIC,151,100,36,8
-    LTEXT           "Alternar",IDC_STATIC,151,110,24,8
+    LTEXT           "Olhar para frente",IDC_STATIC,151,66,54,8
+    LTEXT           "Girar para trás",IDC_STATIC,151,85,45,8
+    LTEXT           "Alternar para Fixar visão ao cursor ",IDC_STATIC,151,100,60,20
     PUSHBUTTON      "E",IDC_FORWARD,61,7,55,14
     PUSHBUTTON      "D",IDC_BACKWARD,61,26,55,14
     PUSHBUTTON      "LEFT",IDC_LEFT,61,45,55,14
@@ -190,26 +188,26 @@ CAPTION "Seleção de alvo"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Próximo alvo",IDC_STATIC,7,9,44,8
-    LTEXT           "Alvo anterior",IDC_STATIC,7,28,38,8
-    LTEXT           "Desmarcar alvo",IDC_STATIC,7,47,44,8
-    LTEXT           "Mirar em si mesmo",IDC_STATIC,7,64,40,18
-    LTEXT           "Tabulação para frente",IDC_STATIC,7,85,43,8
-    LTEXT           "Tabulação para trás",IDC_STATIC,7,104,54,8
+    LTEXT           "Alvo anterior",IDC_STATIC,7,28,48,8
+    LTEXT           "Desmarcar alvo",IDC_STATIC,7,47,54,8
+    LTEXT           "Mirar em si mesmo",IDC_STATIC,7,62,40,18
+    LTEXT           "Alternar a próxima janela",IDC_STATIC,7,82,55,18
+    LTEXT           "Alternar a janela anterior",IDC_STATIC,7,101,55,18
+    LTEXT           "Selecionar alvo",IDC_STATIC,152,7,37,18
     PUSHBUTTON      "]",IDC_TARGETNEXT,65,7,55,14
     PUSHBUTTON      "[",IDC_TARGETPREVIOUS,65,26,55,14
     PUSHBUTTON      "ESC",IDC_TARGETCLEAR,65,45,55,14
     PUSHBUTTON      "Q",IDC_TARGETSELF,65,64,55,14
     PUSHBUTTON      "TAB",IDC_TABFORWARD,65,83,55,14
     PUSHBUTTON      "TAB+SHIFT",IDC_TABBACKWARD,65,102,55,14
-    LTEXT           "Selecionar alvo",IDC_STATIC,145,7,37,18
-    PUSHBUTTON      "Mouse0",IDC_SELECTTARGET,186,7,55,14
+    PUSHBUTTON      "Mouse0",IDC_SELECTTARGET,196,7,55,14
     PUSHBUTTON      "+",IDC_TARGETNEXT_MOD,123,7,14,14
     PUSHBUTTON      "+",IDC_TARGETPREVIOUS_MOD,123,26,14,14
     PUSHBUTTON      "+",IDC_TARGETCLEAR_MOD,123,45,14,14
     PUSHBUTTON      "+",IDC_TARGETSELF_MOD,123,64,14,14
     PUSHBUTTON      "+",IDC_TABFORWARD_MOD,123,83,14,14
     PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,123,102,14,14
-    PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,244,7,14,14
+    PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,254,7,14,14
 END
 
 IDD_ASSIGNKEY DIALOG 96, 48, 110, 54
@@ -225,14 +223,14 @@ STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Cursor"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Sensibilidade horizontal",IDC_STATIC,111,26,84,8
-    LTEXT           "Sensibilidade vertical",IDC_STATIC,111,69,77,8
-    CONTROL         "",IDC_MOUSEXSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,107,38,68,17
-    CONTROL         "",IDC_MOUSEYSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,107,81,68,17
-    LTEXT           "999",IDC_MOUSEXSCALEVALUE,178,40,13,8
-    LTEXT           "999",IDC_MOUSEYSCALEVALUE,178,82,13,8
-    CONTROL         "Inverter direção do cursor",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,67,10
-    GROUPBOX        "Controle do cursor",IDC_STATIC,95,13,112,97
+    LTEXT           "Sensibilidade horizontal",IDC_STATIC,141,26,84,8
+    LTEXT           "Sensibilidade vertical",IDC_STATIC,141,69,77,8
+    CONTROL         "",IDC_MOUSEXSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,137,38,68,17
+    CONTROL         "",IDC_MOUSEYSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,137,81,68,17
+    LTEXT           "999",IDC_MOUSEXSCALEVALUE,208,40,13,8
+    LTEXT           "999",IDC_MOUSEYSCALEVALUE,208,82,13,8
+    CONTROL         "Inverter direção do cursor",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,95,10
+    GROUPBOX        "Controle do cursor",IDC_STATIC,125,13,112,97
 END
 
 IDD_MODIFIER DIALOGEX 0, 0, 64, 159

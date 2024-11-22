@@ -507,9 +507,11 @@ messages:
 
    UpgradeStatue()
    {
-      % We added the ability to show facial overlays on statues but for existing statues 
+
+      % We added the ability to show facial overlays (patch 1.3.2 / client 732) but for existing statues 
       % the number of overlays was already calculated and this number may be incorrect!
       % To upgrade the statue we reset the frames having first correctly set the new properties.
+      % Function to be removed after is has been run via "send class" from admin mode on the server.
       prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
       Send(self,@ResetFrames);

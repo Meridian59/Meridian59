@@ -6430,14 +6430,6 @@ messages:
       return Send(oHall,@ChooseStatues);
    }
 
-   UpgradeStatues()
-   "One time upgrade for all Statues to support for new facial overlays"
-   " added in patch 1.3.2 / client 732. Safe to run a multiple tmes, if you wish."
-   {
-      Send(&Statue, @UpgradeStatue);
-      return;
-   }
-
    %%% Dynamic lighting
 
    GetRGB(iRed = 0, iGreen = 0, iBlue = 0, bPercent = TRUE, bNegative = FALSE)

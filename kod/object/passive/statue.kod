@@ -510,7 +510,7 @@ messages:
 
       % We added the ability to show facial overlays (patch 1.3.2 / client 732).
       % To upgrade the statue we reset the frames having first correctly set the new properties.
-      % This function to be removed after is has been run via "send class" from admin mode on the server.
+      % This function to be removed after it has been run via "send class" from admin mode on the server.
       prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
       Send(self,@ResetFrames);

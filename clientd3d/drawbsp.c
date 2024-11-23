@@ -23,7 +23,9 @@
 
 #include "client.h"
 
-#define MAX_OBJS_PER_LEAF 100
+#include <algorithm>
+
+#define MAX_OBJS_PER_LEAF 250
 
 // Decimal places for computing fraction along wall
 #define LOG_FRACTION 12
@@ -2248,7 +2250,7 @@ static void WalkWall(WallData *wall, long side)
 static void WalkObjects(ObjectData *objects)
 {
    ObjectData *object;
-   long num,i,j;
+   long num,i;
    ObjectData *sort[MAX_OBJS_PER_LEAF];
    long x,y,a,b;
    long left,right;
@@ -2268,15 +2270,10 @@ static void WalkObjects(ObjectData *objects)
       }
    }
 
-   /* simple bubble sort, closest first */
-   for(i=0; i<num-1; i++)
-      for(j=i+1; j<num; j++)
-	 if (sort[i]->draw.distance > sort[j]->draw.distance)
-	 {
-	    ObjectData *tmp = sort[i];
-	    sort[i] = sort[j];
-	    sort[j] = tmp;
-	 }
+   // sort, closest first
+   std::sort(sort, sort + num, [](ObjectData* a, ObjectData* b) {
+      return a->draw.distance < b->draw.distance;
+   });
 
    for(i=0; i<num; i++)
    {

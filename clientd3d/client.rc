@@ -18,6 +18,9 @@
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
+// Default to English for fallback
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
 /////////////////////////////////////////////////////////////////////////////
 // Brazilian resources
 
@@ -674,12 +677,9 @@ BEGIN
     IDS_OFFERITEMS              "Oferecer itens"
     IDS_APPLY                   "Usar objeto"
     IDS_ACTIVATE                "Ativar"
-    IDS_HTTPKEY                 "Software\\Classes\\http\\shell\\open\\command"
     IDS_BADCOMMAND              "O que, por favor?"
     IDS_DECOMPRESSING           "Descompactando..."
-    IDS_HELPFILE                "https://www.meridian59.com/guides/"
     IDS_APPNAME                 "Meridian 59"
-    IDS_INIFILE                 "meridian.ini"
     IDS_YES                     "&Confirmar"
     IDS_NO                      "C&ancelar"
     IDS_BUYFROM                 "Comprar"
@@ -751,7 +751,6 @@ BEGIN
     IDS_LAGBOXDESC          "A troca de dados entre computadores sempre leva um certo tempo. Esse período é chamado de 'lag'. A qualidade da sua conexão depende de vários fatores e pode mudar a qualquer momento."
     IDS_PROFANITYREMOVED    "~r< O filtro de texto foi ativado >"
     IDS_PROFANITYWARNING    "A mensagem enviada foi filtrada.\n\nA mensagem contém palavras que estão no filtro de texto. Por favor, verifique sua mensagem."
-    IDS_HOMEPAGEURL         "https://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -761,7 +760,6 @@ BEGIN
     IDS_CANTSENDREQUEST             "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
     IDS_CANTGETFILESIZE             "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
     IDS_CANTSIGNUP                  "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Seu cadastro falhou porquê:\n\n%s"
 END
 
@@ -774,11 +772,7 @@ BEGIN
     IDS_SERVERUNKNOWN       "Servidor desconhecido selecionado."
     IDS_SIGNUPOFFLINE       "O servidor de cadastro está offline."
     IDS_SIGNUPUNKNOWNERROR  "Cadastro gerou um erro desconhecido, por favor, tente novamente."
-    IDS_SIGNUPAPI           "create"
-    IDS_WEBAPIDOMAIN        "accounts.meridian59.com"
-    IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
-    IDS_RESENDAPI           "resend"
     IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
 END
 
@@ -1359,7 +1353,6 @@ END
 STRINGTABLE
 BEGIN
     17                      "Alle Spiel-Dateien zu herunterzuladen kann sehr lange dauern.\nBist Du sicher?"
-    18                      "m59bind.exe"
     19                      "Kann Datei %s nicht löschen.\n\nErneut versuchen?"
     20                      "Kann Datei %s nicht schreiben."
     21                      "Das Konfigurationsmenü konnte nicht gefunden werden! Bitte installiere Meridian 59 neu."
@@ -1425,12 +1418,9 @@ BEGIN
     82                      "Gegenstände anbieten"
     83                      "Objekt verwenden"
     84                      "Aktivieren"
-    85                      "Software\\Classes\\http\\shell\\open\\command"
-    86                      "https://meridian59.com/M59-Help-01.shtml"
     87                      "Was bitte?"
     90                      "Entpacken ..."
     91                      "Meridian 59"
-    92                      "meridian.ini"
     93                      "&Bestätigen"
     94                      "&Abbrechen"
     95                      "Kaufen"
@@ -1499,11 +1489,9 @@ END
 
 STRINGTABLE
 BEGIN
-    160                     "https://meridian59.com/serverstatus/"
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
-    164                     "https://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -1513,7 +1501,6 @@ BEGIN
     187                     "Unable to send an HTTP request for the file %s to the server %s."
     188                     "Unable to get size of file %s from the server %s."
     189                     "Failed to contact the signup server, please check your network settings and try again (%s)."
-    190                     "https://meridian59.com/troubleshoot"
     191                     "Your signup failed because:\n\n%s"
 END
 
@@ -1526,11 +1513,7 @@ BEGIN
     196                     "Unknown server selected."
     197                     "Registration server is Offline."
     198                     "Signup generated an unknown error, please try again."
-    199                     "create"
-    200                     "accounts.meridian59.com"
-    201                     "check_verified"
     202                     "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail, please press Yes to resend it now."
-    203                     "resend"
     204                     "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 

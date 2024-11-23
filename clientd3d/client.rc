@@ -754,7 +754,6 @@ BEGIN
     IDS_LAGBOXDESC          "A troca de dados entre computadores sempre leva um certo tempo. Esse período é chamado de 'lag'. A qualidade da sua conexão depende de vários fatores e pode mudar a qualquer momento."
     IDS_PROFANITYREMOVED    "~r< O filtro de texto foi ativado >"
     IDS_PROFANITYWARNING    "A mensagem enviada foi filtrada.\n\nA mensagem contém palavras que estão no filtro de texto. Por favor, verifique sua mensagem."
-    IDS_HOMEPAGEURL         "https://www.meridian59.com/"
 END
 
 STRINGTABLE

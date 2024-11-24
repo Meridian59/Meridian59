@@ -477,9 +477,9 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Neuerschaffung eines Charakters"
 FONT 8, "MS Sans Serif"
 BEGIN
-    GROUPBOX        "√úberpr√ºfung",-1,7,28,228,33
-    LTEXT           "Harakiri zerst√∂rt Deinen Charakter und legt einen neuen an.  Es ist alleine Deine Verantwortung, jetzt ein neues Spiel zu beginnen.",-1,7,4,235,18
-    LTEXT           "Zur Best√§tigung gibst Du jetzt bitte Dein g√ºltiges Passwort ein:",-1,14,40,106,19
+    GROUPBOX        "‹berpr¸fung",-1,7,28,228,33
+    LTEXT           "Harakiri zerstˆrt Deinen Charakter und legt einen neuen an.  Es ist alleine Deine Verantwortung, jetzt ein neues Spiel zu beginnen.",-1,7,4,235,18
+    LTEXT           "Zur Best‰tigung gibst Du jetzt bitte Dein g¸ltiges Passwort ein:",-1,14,40,106,19
     EDITTEXT        1260,131,42,97,12,ES_PASSWORD | ES_AUTOHSCROLL
     DEFPUSHBUTTON   "Harakiri",1,7,65,107,14
     PUSHBUTTON      "Abbrechen",2,120,65,115,14
@@ -490,7 +490,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Kurzbefehle"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Um einen Kurzbefehl zu definieren mu√ü die Abk√ºrzung bei Wort eingetragen werden und danach der Befehl ausgeschrieben werden. BEISPIEL: Wort: lacht   Kurzbefehl: ego lacht.""",-1,4,4,215,27
+    LTEXT           "Um einen Kurzbefehl zu definieren muﬂ die Abk¸rzung bei Wort eingetragen werden und danach der Befehl ausgeschrieben werden. BEISPIEL: Wort: lacht   Kurzbefehl: ego lacht.""",-1,4,4,215,27
     GROUPBOX        "",-1,4,29,211,170
     LTEXT           "Wort:",-1,10,38,18,8
     EDITTEXT        1260,49,36,50,12,ES_AUTOHSCROLL
@@ -499,7 +499,7 @@ BEGIN
     PUSHBUTTON      "&Entfernen",1002,157,37,50,11
     LTEXT           "Befehl:",-1,10,51,23,8
     CONTROL         "",1263,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTASCENDING | LVS_NOLABELWRAP | LVS_NOSORTHEADER | WS_TABSTOP,10,64,199,128,WS_EX_CLIENTEDGE
-    PUSHBUTTON      "Best√§tigen",1,24,205,50,14
+    PUSHBUTTON      "Best‰tigen",1,24,205,50,14
     PUSHBUTTON      "Abbrechen",2,82,205,50,14
     PUSHBUTTON      "Funktionstasten ...",1264,139,205,76,14
 END
@@ -513,14 +513,14 @@ BEGIN
     LTEXT           "Gildenpasswort:",1242,10,34,51,8
     EDITTEXT        1239,65,32,101,14,ES_AUTOHSCROLL
     PUSHBUTTON      "Gildenhalle aufgeben!",1235,171,32,76,14
-    PUSHBUTTON      "Ja, hiermit best√§tige ich die Aufl√∂sung meiner Gilde!",1224,4,56,248,14
+    PUSHBUTTON      "Ja, hiermit best‰tige ich die Auflˆsung meiner Gilde!",1224,4,56,248,14
 END
 
 160 DIALOG  0, 0, 282, 178
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Verb√ºndete Gilden:",-1,4,26,62,8
+    LTEXT           "Verb¸ndete Gilden:",-1,4,26,62,8
     LISTBOX         1225,4,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      ">>",1228,84,46,13,12
     PUSHBUTTON      "<<",1230,84,72,13,12
@@ -531,7 +531,7 @@ BEGIN
     LTEXT           "Verfeindete Gilden:",-1,200,26,61,8
     LISTBOX         1227,203,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "",1232,4,161,274,8
-    LTEXT           "Benutze die << und >> Tasten um Allianzen zu schlie√üen oder Feinde zu erkl√§ren.",1236,11,4,257,8
+    LTEXT           "Benutze die << und >> Tasten um Allianzen zu schlieﬂen oder Feinde zu erkl‰ren.",1236,11,4,257,8
 END
 
 159 DIALOGEX 0, 0, 308, 122
@@ -545,9 +545,9 @@ BEGIN
     PUSHBUTTON      "Mitglied &rauswerfen",1212,123,30,132,12
     PUSHBUTTON      "Den Rang &abtreten an:",1205,98,91,96,12
     LTEXT           "",1209,199,92,105,10,SS_SUNKEN
-    PUSHBUTTON      "Neues Mitglied &unterst√ºtzen:",1203,98,73,96,14
+    PUSHBUTTON      "Neues Mitglied &unterst¸tzen:",1203,98,73,96,14
     LTEXT           "",1211,199,75,105,10,SS_SUNKEN
-    LTEXT           "Unterst√ºtztes Mitglied:",-1,98,59,71,8
+    LTEXT           "Unterst¸tztes Mitglied:",-1,98,59,71,8
     LTEXT           "cha",1214,199,58,105,10,SS_SUNKEN
     PUSHBUTTON      "Die Gilde &verlassen",1208,4,106,87,12
     LTEXT           "",1223,124,17,93,8,SS_SUNKEN
@@ -566,7 +566,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     GROUPBOX        "Gildenschild:",-1,3,0,120,116
     CONTROL         "",1001,"Button",BS_OWNERDRAW,7,10,108,102
-    LTEXT           "W√§hle eine Farb- && Musterkombination:",-1,137,14,128,8
+    LTEXT           "W‰hle eine Farb- && Musterkombination:",-1,137,14,128,8
     LTEXT           "Farbe 1:",-1,148,29,27,8
     PUSHBUTTON      "<",1019,181,27,17,11,WS_GROUP
     PUSHBUTTON      ">",1022,199,27,17,11
@@ -576,9 +576,9 @@ BEGIN
     LTEXT           "Muster:",-1,147,59,24,8
     PUSHBUTTON      "<",1016,181,57,17,11,WS_GROUP
     PUSHBUTTON      ">",1017,199,57,17,11
-    LTEXT           "Das Design wurde bereits von der Gilde %s gew√§hlt.",1266,137,77,124,20,SS_SUNKEN
+    LTEXT           "Das Design wurde bereits von der Gilde %s gew‰hlt.",1266,137,77,124,20,SS_SUNKEN
     PUSHBUTTON      "Anspruch auf das Design erheben.",1265,137,102,129,13,WS_GROUP
-    LTEXT           "Das Design ist nicht verf√ºgbar.",1208,137,68,129,8,NOT WS_VISIBLE
+    LTEXT           "Das Design ist nicht verf¸gbar.",1208,137,68,129,8,NOT WS_VISIBLE
 END
 
 140 DIALOGEX 0, 0, 286, 373
@@ -588,10 +588,10 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     LTEXT           "Gruppen:",-1,8,7,30,8
     COMBOBOX        1243,8,17,97,65,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Gruppe l√∂schen",1244,114,16,58,14,WS_DISABLED
+    PUSHBUTTON      "Gruppe lˆschen",1244,114,16,58,14,WS_DISABLED
     LTEXT           "Neue Gruppe:",1252,180,6,46,8
     EDITTEXT        1251,180,16,58,14,ES_AUTOHSCROLL
-    LTEXT           "Eine Nachricht an die ausgew√§hlte Gruppe versenden:",-1,8,39,174,8
+    LTEXT           "Eine Nachricht an die ausgew‰hlte Gruppe versenden:",-1,8,39,174,8
     EDITTEXT        1255,8,49,270,14,ES_AUTOHSCROLL
     LTEXT           "Gruppenmitglieder:",-1,8,73,60,8
     LTEXT           "(rote Namen sind im Spiel)",-1,8,81,82,8
@@ -603,7 +603,7 @@ BEGIN
     LTEXT           "Anwesende Spieler:",-1,180,80,64,8
     LISTBOX         1246,180,91,97,255,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "",1256,8,354,174,8
-    PUSHBUTTON      "Best√§tigen",1254,227,354,50,14
+    PUSHBUTTON      "Best‰tigen",1254,227,354,50,14
 END
 
 107 DIALOGEX 0, 0, 249, 259
@@ -611,14 +611,14 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eine Gildenhalle mieten"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "Best√§tigen",1,66,238,50,14
+    DEFPUSHBUTTON   "Best‰tigen",1,102,194,50,14
     PUSHBUTTON      "Abbrechen",2,132,238,50,14
     CONTROL         "",1201,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,16,238,162,WS_EX_CLIENTEDGE
-    LTEXT           "W√§hle eine Gildenhalle aus:",-1,6,4,89,8
+    LTEXT           "W‰hle eine Gildenhalle aus:",-1,6,4,89,8
     LTEXT           "Gildenpasswort:",-1,6,219,51,8
     EDITTEXT        1239,60,217,94,12,ES_AUTOHSCROLL
-    LTEXT           "Das Passwort sch√ºtzt Teile der Gildenhalle vor unbefugtem Zugriff.",-1,6,204,210,8
-    LTEXT           "Ausgew√§hlte Gildenhalle:",-1,6,186,80,8
+    LTEXT           "Das Passwort sch¸tzt Teile der Gildenhalle vor unbefugtem Zugriff.",-1,6,204,210,8
+    LTEXT           "Ausgew‰hlte Gildenhalle:",-1,6,186,80,8
     LTEXT           "",1215,89,185,129,11,SS_SUNKEN
 END
 
@@ -627,9 +627,9 @@ STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
     LISTBOX         1202,60,32,98,86,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "W√§hle die Person, der Du die Einladung √ºberreichen willst:",-1,4,33,51,58
+    LTEXT           "W‰hle die Person, der Du die Einladung ¸berreichen willst:",-1,4,33,51,58
     PUSHBUTTON      "Einladen",1001,4,106,45,12
-    LTEXT           "Du kannst nur Spieler zum Beitritt auffordern, die sich im gleichen Raum befinden. Au√üerdem darf nur eine Einladung ausstehen.",-1,4,4,157,24
+    LTEXT           "Du kannst nur Spieler zum Beitritt auffordern, die sich im gleichen Raum befinden. Auﬂerdem darf nur eine Einladung ausstehen.",-1,4,4,157,24
 END
 
 105 DIALOG  0, 0, 269, 180
@@ -640,13 +640,13 @@ BEGIN
     LTEXT           "Name der Gilde:",-1,9,12,53,8
     EDITTEXT        1215,66,10,95,14,ES_AUTOHSCROLL
     GROUPBOX        "Rangfolge in der Gilde:",-1,10,30,247,114
-    LTEXT           "M√§nner:",-1,21,45,27,8
+    LTEXT           "M‰nner:",-1,21,45,27,8
     EDITTEXT        1220,21,57,83,14,ES_AUTOHSCROLL
     EDITTEXT        1219,21,73,83,14,ES_AUTOHSCROLL
     EDITTEXT        1218,21,89,83,14,ES_AUTOHSCROLL
     EDITTEXT        1217,21,105,83,14,ES_AUTOHSCROLL
     EDITTEXT        1216,21,121,83,14,ES_AUTOHSCROLL
-    LTEXT           "h√∂chster",-1,119,59,28,8
+    LTEXT           "hˆchster",-1,119,59,28,8
     LTEXT           "niedrigster",-1,118,124,33,8
     LTEXT           "Frauen:",-1,163,45,25,8
     EDITTEXT        1226,163,57,83,14,ES_AUTOHSCROLL
@@ -654,11 +654,11 @@ BEGIN
     EDITTEXT        1224,163,89,83,14,ES_AUTOHSCROLL
     EDITTEXT        1223,163,105,83,14,ES_AUTOHSCROLL
     EDITTEXT        1222,163,121,83,14,ES_AUTOHSCROLL
-    CONTROL         "eine geheime Gilde gr√ºnden. (Die Gildenangeh√∂rigkeit ist nicht sichtbar)",1221,
+    CONTROL         "eine geheime Gilde gr¸nden. (Die Gildenangehˆrigkeit ist nicht sichtbar)",1221,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,147,240,8
-    LTEXT           "Gr√ºndungskosten:",-1,10,163,59,8
+    LTEXT           "Gr¸ndungskosten:",-1,10,163,59,8
     LTEXT           "",1237,74,163,41,10,SS_SUNKEN
-    DEFPUSHBUTTON   "Best√§tigen",1,156,162,50,14
+    DEFPUSHBUTTON   "Best‰tigen",1,156,162,50,14
     PUSHBUTTON      "Abbrechen",2,215,162,50,14
 END
 
@@ -713,7 +713,7 @@ BEGIN
     RTEXT           "F12",15,9,185,13,8
     EDITTEXT        1011,29,184,159,12,ES_AUTOHSCROLL
     CONTROL         "",1210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,185,13,9
-    DEFPUSHBUTTON   "Best√§tigen",IDOK,19,208,50,14
+    DEFPUSHBUTTON   "Best‰tigen",IDOK,19,208,50,14
     PUSHBUTTON      "Abbrechen",IDCANCEL,77,208,50,14
     PUSHBUTTON      "Kurzbefehle....",1264,136,208,76,14
 END
@@ -749,9 +749,9 @@ END
 STRINGTABLE 
 BEGIN
     1                       "Zaubern"
-    2                       "&Zauberspr√ºche"
-    3                       "Gegenst√§nde wegwerfen"
-    4                       "Gegenst√§nde nehmen"
+    2                       "&Zauberspr¸che"
+    3                       "Gegenst‰nde wegwerfen"
+    4                       "Gegenst‰nde nehmen"
     5                       "Sagen"
     6                       "Zaubern"
     7                       "Kartenmodus"
@@ -761,25 +761,25 @@ BEGIN
     11                      "Lebenskraft"
     12                      "Zauberkraft"
     13                      "Ausdauer"
-    14                      "L√§cheln"
+    14                      "L‰cheln"
     15                      "Grimmig"
 END
 
 STRINGTABLE 
 BEGIN
     16                      "Niemand mit diesem Namen ist im Spiel."
-    17                      "Dieser Name tritt h√§ufiger auf."
-    18                      "Der Name dieser Gruppe tritt h√§ufiger auf."
-    19                      "Du kannst keine zus√§tzlichen Gruppen mehr anlegen."
+    17                      "Dieser Name tritt h‰ufiger auf."
+    18                      "Der Name dieser Gruppe tritt h‰ufiger auf."
+    19                      "Du kannst keine zus‰tzlichen Gruppen mehr anlegen."
     20                      "Die %.*s-Gruppe ist voll."
     21                      "Niemand von dieser Gruppe ist im Spiel."
     22                      "Es gibt keine Gruppe mit diesem Namen."
     23                      "Es gibt bereits eine Gruppe mit diesem Namen."
-    24                      "Der Name dieses Zauberspruchs tritt h√§ufiger auf."
+    24                      "Der Name dieses Zauberspruchs tritt h‰ufiger auf."
     25                      "Es gibt keinen Zauber mit diesem Namen."
-    26                      "Bist Du Dir auch wirklich sicher, diesen Charakter zu l√∂schen? \nDiese Entscheidung ist unwiderruflich."
-    27                      "Du mu√üt angeben wieviel Du abheben m√∂chtest."
-    28                      "Du mu√üt angeben wieviel Du einzahlen m√∂chtest."
+    26                      "Bist Du Dir auch wirklich sicher, diesen Charakter zu lˆschen? \nDiese Entscheidung ist unwiderruflich."
+    27                      "Du muﬂt angeben wieviel Du abheben mˆchtest."
+    28                      "Du muﬂt angeben wieviel Du einzahlen mˆchtest."
     29                      "Diese Gruppe ist voll."
     30                      "Der Spieler konnte nicht in die Gruppe aufgenommen werden."
     31                      "Es konnte keine neue Gruppe angelegt werden."
@@ -791,17 +791,17 @@ BEGIN
     33                      "Mitglieder der %.*s-Gruppe (~rrot~n = im Spiel):"
     34                      "Du hast keine Gruppen angelegt."
     35                      "Du hast folgende Gruppen angelegt:"
-    36                      "Gruppe wurde gel√∂scht."
+    36                      "Gruppe wurde gelˆscht."
     37                      "%d Name wurde aus der Gruppe entfernt."
     38                      "Die Gruppe wurde erstellt."
     39                      "Du rastest."
-    40                      "Du h√∂rst auf Dich auszuruhen."
+    40                      "Du hˆrst auf Dich auszuruhen."
     41                      "Du ruhst Dich bereits aus."
     42                      "Du ruhst Dich gar nicht aus."
     43                      "Du kannst keine Zauber sprechen, solange Du rastest."
     44                      "Du kannst Deine Arme nicht bewegen um den Zauber zu sprechen!"
     45                      "Gebe ""suicide"" ein, um einen neuen Charakter zu erschaffen."
-    46                      "Du mu√üt einen Gildennamen festlegen."
+    46                      "Du muﬂt einen Gildennamen festlegen."
     47                      "Meridian 59 --- %s"
 END
 
@@ -820,8 +820,8 @@ BEGIN
     58                      "Heldin"
     59                      "Gildenmeisterin"
     60                      "Die Gilde %s sieht Dich weder als Feind noch als Freund."
-    61                      "Willst Du die Gilde wirklich aufl√∂sen?"
-    62                      "Die Gilde %s sieht Dich als Verb√ºndeten an."
+    61                      "Willst Du die Gilde wirklich auflˆsen?"
+    62                      "Die Gilde %s sieht Dich als Verb¸ndeten an."
     63                      "Die Gilde %s sieht Dich als Feind an."
 END
 
@@ -831,17 +831,17 @@ BEGIN
     65                      "Gildeneinstellungen"
     66                      "Einladen"
     67                      "Mitgliedschaft"
-    68                      "B√ºndnisse"
+    68                      "B¸ndnisse"
     69                      "Gildenmeister"
     70                      "Niemand"
     71                      "Fertig"
     72                      "Kosten"
-    73                      "T√§gliche Miete"
+    73                      "T‰gliche Miete"
     74                      "Name der Gilde"
-    75                      "Du mu√üt ein Gildenpasswort festlegen."
+    75                      "Du muﬂt ein Gildenpasswort festlegen."
     76                      "Schild"
     77                      "Eigenschaften"
-    78                      "Zauberspr√ºche"
+    78                      "Zauberspr¸che"
     79                      "Fertigkeiten"
 END
 
@@ -857,17 +857,17 @@ BEGIN
     87                      "Inventar"
     88                      "Was bitte? Benutz die Hilfe ""help""."
     89                      "&Wer spielt"
-    90                      "Eine ung√ºltige Anweisung wurde f√ºr den Kurzbefehl festgelegt."
-    91                      "Diesen Befehl gibt es h√§ufiger."
+    90                      "Eine ung¸ltige Anweisung wurde f¸r den Kurzbefehl festgelegt."
+    91                      "Diesen Befehl gibt es h‰ufiger."
     92                      "Der Kurzbefehl wurde definiert."
-    93                      "Der Kurzbefehl wurde gel√∂scht."
+    93                      "Der Kurzbefehl wurde gelˆscht."
     94                      "Wort"
     95                      "Befehl"
 END
 
 STRINGTABLE 
 BEGIN
-    191                     "Du kannst das ausgew√§hlte Ziel nicht sehen."
+    191                     "Du kannst das ausgew‰hlte Ziel nicht sehen."
 END
 
 STRINGTABLE 
@@ -887,7 +887,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_HAPPY          "Gl√º&cklich"
+    IDS_MENU_HAPPY          "Gl¸&cklich"
     IDS_MENU_SAD            "T&raurig"
     IDS_MENU_NEUTRAL        "&Neutral"
     IDS_MENU_WRY            "Gri&mmig"

@@ -1304,6 +1304,31 @@ BEGIN
     PUSHBUTTON      "Angebot...",IDC_BTN_DEMO,138,167,93,14
 END
 
+IDD_SIGNUP DIALOGEX 0, 0, 288, 253
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Meridian 59 Kostenloses Konto erstellen!"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    ICON            IDI_ICON,IDC_STATIC,7,6,20,20
+    LTEXT           "Erstellen Sie ein Konto, indem Sie eine gültige E-Mail, einen Benutzernamen und ein Passwort eingeben, einen Server auswählen und auf Konto erstellen klicken. Sie erhalten eine E-Mail zur Aktivierung. Bei Problemen klicken Sie auf Problembehandlung.",IDC_STATIC,34,11,233,46
+    GROUPBOX        "Geben Sie Ihre neuen Kontoinformationen ein",IDC_STATIC,23,57,244,171
+    LTEXT           "E-Mail-Adresse",ID_SU_EMAIL,39,76,62,8
+    EDITTEXT        IDC_NEW_EMAIL,134,75,120,14,ES_AUTOHSCROLL
+    RTEXT           "Für Verifizierung und Passwort-Reset.",IDC_STATIC,35,91,219,11
+    LTEXT           "Gewünschter Benutzername",ID_SU_USERNAME,39,106,90,10
+    EDITTEXT        IDC_NEW_USERNAME,134,104,120,14,ES_AUTOHSCROLL
+    LTEXT           "Passwort",ID_SU_PW1,39,123,51,10
+    EDITTEXT        IDC_NEW_PW1,134,121,120,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Passwort bestätigen",ID_SU_PW2,39,140,69,10
+    EDITTEXT        IDC_NEW_PW2,134,138,120,14,ES_PASSWORD | ES_AUTOHSCROLL
+    RTEXT           "Benutzername und Passwort: 6-32 Zeichen, keine Leerzeichen.",IDC_STATIC,26,155,227,11
+    LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,168,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,168,32,10
+    LTEXT           "Es stehen zwei Server zur Verfügung, wobei 101 der aktivere der beiden ist. Spieler aller Art nennen 101 ihr Zuhause: Veteranen, Neulinge, Spieler, die gerne kämpfen, und Spieler, die es ruhig angehen lassen und an ihren Charakteren arbeiten.",IDC_STATIC,39,184,220,34
+    PUSHBUTTON      "Problembehandlung",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
+    DEFPUSHBUTTON   "Konto erstellen",IDC_SIGNUP_OK,150,221,107,14
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //

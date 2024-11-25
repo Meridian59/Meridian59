@@ -18,7 +18,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Brazilian resources
 
@@ -681,6 +680,7 @@ BEGIN
     IDS_HELPFILE                "https://www.meridian59.com/guides/"
     IDS_BADCOMMAND              "O que, por favor?"
     IDS_DECOMPRESSING           "Descompactando..."
+    IDS_HELPFILE                "https://www.meridian59.com/guides/"
     IDS_APPNAME                 "Meridian 59"
     IDS_INIFILE                 "meridian.ini"
     IDS_YES                     "&Confirmar"

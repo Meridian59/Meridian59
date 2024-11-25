@@ -17,9 +17,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Brazilian resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
 #ifdef _WIN32
-LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+LANGUAGE LANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN
 #pragma code_page(1252)
 #endif //_WIN32
 
@@ -35,15 +35,12 @@ CAPTION "Atualizando o Meridian 59..."
 CLASS "club (Andrew & Christopher Kirmse)"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | 
-                    ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
-    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,
-                    10,59,182,12
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,0,59,182,12
     LTEXT           "Recebido:",IDC_STATIC,10,75,32,8
     LTEXT           "%d de %d bytes",IDC_BYTES1,48,75,143,8
     DEFPUSHBUTTON   "Cancelar",IDCANCEL,202,59,40,12,WS_GROUP
-    CONTROL         "Inicializando processo...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,10,47,182,9
+    CONTROL         "Inicializando processo...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,10,47,182,9
 END
 
 IDD_ERROR DIALOG DISCARDABLE  0, 0, 197, 124
@@ -136,15 +133,12 @@ CAPTION "Updating Meridian 59..."
 CLASS "club (Andrew & Christopher Kirmse)"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | 
-                    ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
-    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,
-                    10,59,182,12
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,10,59,182,12
     LTEXT           "Empfangen:",IDC_STATIC,10,75,32,8
     LTEXT           "%d von %d bytes",IDC_BYTES1,48,75,143,8
     DEFPUSHBUTTON   "Abbrechen",IDCANCEL,202,59,40,12,WS_GROUP
-    CONTROL         "Bitte warten...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,10,47,182,9
+    CONTROL         "Bitte warten...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,10,47,182,9
 END
 
 IDD_ERROR DIALOG DISCARDABLE  0, 0, 197, 124
@@ -237,15 +231,12 @@ CAPTION "Updating Meridian 59..."
 CLASS "club (Andrew & Christopher Kirmse)"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | 
-                    ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
-    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,
-                    10,59,182,12
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,10,59,182,12
     LTEXT           "Received:",IDC_STATIC,10,75,32,8
     LTEXT           "%d of %d bytes",IDC_BYTES1,48,75,143,8
     DEFPUSHBUTTON   "Cancel",IDCANCEL,202,59,40,12,WS_GROUP
-    CONTROL         "Initializing...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,10,47,182,9
+    CONTROL         "Initializing...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,10,47,182,9
 END
 
 IDD_ERROR DIALOG DISCARDABLE  0, 0, 197, 124

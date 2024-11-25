@@ -677,9 +677,12 @@ BEGIN
     IDS_OFFERITEMS              "Oferecer itens"
     IDS_APPLY                   "Usar objeto"
     IDS_ACTIVATE                "Ativar"
+    IDS_HTTPKEY                 "Software\\Classes\\http\\shell\\open\\command"
     IDS_BADCOMMAND              "O que, por favor?"
     IDS_DECOMPRESSING           "Descompactando..."
+    IDS_HELPFILE                "https://www.meridian59.com/guides/"
     IDS_APPNAME                 "Meridian 59"
+    IDS_INIFILE                 "meridian.ini"
     IDS_YES                     "&Confirmar"
     IDS_NO                      "C&ancelar"
     IDS_BUYFROM                 "Comprar"
@@ -760,6 +763,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
     IDS_CANTGETFILESIZE             "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
     IDS_CANTSIGNUP                  "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
+    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Seu cadastro falhou porquê:\n\n%s"
 END
 
@@ -1353,6 +1357,7 @@ END
 STRINGTABLE
 BEGIN
     17                      "Alle Spiel-Dateien zu herunterzuladen kann sehr lange dauern.\nBist Du sicher?"
+    18                      "m59bind.exe"
     19                      "Kann Datei %s nicht löschen.\n\nErneut versuchen?"
     20                      "Kann Datei %s nicht schreiben."
     21                      "Das Konfigurationsmenü konnte nicht gefunden werden! Bitte installiere Meridian 59 neu."
@@ -1418,9 +1423,12 @@ BEGIN
     82                      "Gegenstände anbieten"
     83                      "Objekt verwenden"
     84                      "Aktivieren"
+    85                      "Software\\Classes\\http\\shell\\open\\command"
+    86                      "https://meridian59.com/M59-Help-01.shtml"
     87                      "Was bitte?"
     90                      "Entpacken ..."
     91                      "Meridian 59"
+    92                      "meridian.ini"
     93                      "&Bestätigen"
     94                      "&Abbrechen"
     95                      "Kaufen"
@@ -1489,9 +1497,11 @@ END
 
 STRINGTABLE
 BEGIN
+    160                     "https://meridian59.com/serverstatus/"
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
+    164                     "https://www.meridian59.com/"
 END
 
 STRINGTABLE
@@ -1501,6 +1511,7 @@ BEGIN
     187                     "Unable to send an HTTP request for the file %s to the server %s."
     188                     "Unable to get size of file %s from the server %s."
     189                     "Failed to contact the signup server, please check your network settings and try again (%s)."
+    190                     "https://meridian59.com/troubleshoot"
     191                     "Your signup failed because:\n\n%s"
 END
 
@@ -1513,7 +1524,11 @@ BEGIN
     196                     "Unknown server selected."
     197                     "Registration server is Offline."
     198                     "Signup generated an unknown error, please try again."
+    199                     "create"
+    200                     "accounts.meridian59.com"
+    201                     "check_verified"
     202                     "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail, please press Yes to resend it now."
+    203                     "resend"
     204                     "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
 END
 

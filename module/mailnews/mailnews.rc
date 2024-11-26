@@ -18,7 +18,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Brazilian resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
 #ifdef _WIN32
 LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 #pragma code_page(1252)
@@ -101,62 +101,62 @@ END
 
 STRINGTABLE 
 BEGIN
-    1                       "Verificando nome dos destinatários..."
-    2                       "Assunto: "
-    3                       "Data: "
-    4                       "De: "
-    5                       "Para: "
-    6                       "Re: "
-    7                       "Procurando novas mensagens..."
-    8                       "Você não tem nenhum novo email."
-    9                       "Você só pode editar uma mensagem por vez."
-    10                      "Ler email"
-    11                      "#"
-    12                      "De"
-    13                      "Assunto"
-    14                      "Data"
-    15                      "Mensagem enviada!"
+    IDS_CHECKNAMES          "Verificando nome dos destinatários..."
+    IDS_SUBJECT             "Assunto: "
+    IDS_DATE                "Data: "
+    IDS_FROM                "De: "
+    IDS_TO                  "Para: "
+    IDS_RE                  "Re: "
+    IDS_GETTINGMSGS         "Procurando novas mensagens..."
+    IDS_NONEWMAIL           "Você não tem nenhum novo email."
+    IDS_MAILONEDIALOG       "Você só pode editar uma mensagem por vez."
+    IDS_READMAIL            "Ler email"
+    IDS_MHEADER1            "#"
+    IDS_MHEADER2            "De"
+    IDS_MHEADER3            "Assunto"
+    IDS_MHEADER4            "Data"
+    IDS_MESSAGESENT         "Mensagem enviada!"
 END
 
 STRINGTABLE 
 BEGIN
-    16                      "Você deve especificar pelo menos um destinatário."
-    17                      "Não foi possível deletar a mensagem de email: %s."
-    18                      "Não foi possível carregar a mensagem de email."
-    19                      "Não foi possível salvar a mensagem de email. Você pode estar sem espaço no dico. Você deseja tentar novamente?"
-    20                      "Nome do destinatário é inválido: %s.\nPor favor, verifique se o nome foi digitado corretamente e tente novamente."
-    21                      "Esta mensagem tem uma quantidade muito grande de destinatários.\n\nVocê deseja enviá-la somente para o primeiro destinatário?"
-    22                      "Você não pode responder esta mensagem."
+    IDS_NORECIPIENTS        "Você deve especificar pelo menos um destinatário."
+    IDS_CANTDELETEMAIL      "Não foi possível deletar a mensagem de email: %s."
+    IDS_CANTLOADMSG         "Não foi possível carregar a mensagem de email."
+    IDS_SAVEFAILED          "Não foi possível salvar a mensagem de email. Você pode estar sem espaço no dico. Você deseja tentar novamente?"
+    IDS_BADNAME             "Nome do destinatário é inválido: %s.\nPor favor, verifique se o nome foi digitado corretamente e tente novamente."
+    IDS_TOOMANYRECIPIENTS   "Esta mensagem tem uma quantidade muito grande de destinatários.\n\nVocê deseja enviá-la somente para o primeiro destinatário?"
+    IDS_CANTREPLY           "Você não pode responder esta mensagem."
 END
 
 STRINGTABLE 
 BEGIN
-    32                      "Jan"
-    33                      "Feb"
-    34                      "Mar"
-    35                      "Abr"
-    36                      "Mai"
-    37                      "Jun"
-    38                      "Jul"
-    39                      "Ago"
-    40                      "Set"
-    41                      "Out"
-    42                      "Nov"
-    43                      "Dez"
-    44                      "Seg"
-    45                      "Ter"
-    46                      "Qua"
-    47                      "Qui"
+    IDS_JANUARY             "Jan"
+    IDS_FEBRUARY            "Feb"
+    IDS_MARCH               "Mar"
+    IDS_APRIL               "Abr"
+    IDS_MAY                 "Mai"
+    IDS_JUNE                "Jun"
+    IDS_JULY                "Jul"
+    IDS_AUGUST              "Ago"
+    IDS_SEPTEMBER           "Set"
+    IDS_OCTOBER             "Out"
+    IDS_NOVEMBER            "Nov"
+    IDS_DECEMBER            "Dez"
+    IDS_MONDAY              "Seg"
+    IDS_TUESDAY             "Ter"
+    IDS_WEDNESDAY           "Qua"
+    IDS_THURSDAY            "Qui"
 END
 
 STRINGTABLE 
 BEGIN
-    48                      "Sex"
-    49                      "Sáb"
-    50                      "Dom"
-    51                      "Assunto"
-    52                      "Autor"
-    53                      "Data"
+    IDS_FRIDAY              "Sex"
+    IDS_SATURDAY            "Sáb"
+    IDS_SUNDAY              "Dom"
+    IDS_NHEADER1            "Assunto"
+    IDS_NHEADER2            "Autor"
+    IDS_NHEADER3            "Data"
     IDS_SUBJECT_ENGLISH     "Subject: "
     IDS_SUBJECT_GERMAN      "Betreff: "
     IDS_SUBJECT_PORTUGUESE  "Assunto: "
@@ -180,64 +180,64 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-145 DIALOG  0, 0, 282, 255
-STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Artikel veröffentlichen"
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Artikel in einer Newsgroup",-1,10,11,86,8
-    LTEXT           "(hier gruppieren)",1121,99,11,105,8
-    LTEXT           "Betreff",-1,10,28,28,8
-    EDITTEXT        1117,43,26,228,13,ES_AUTOHSCROLL
-    EDITTEXT        1118,4,55,274,178,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
-    PUSHBUTTON      "&Versenden",1,186,237,43,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",2,232,237,46,14,WS_GROUP
-END
-
-144 DIALOGEX 0, 0, 305, 322
-STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Nachrichtenkugel: "
-FONT 8, "MS Sans Serif", 0, 0, 0x1
-BEGIN
-    LTEXT           "",1001,4,4,297,8
-    CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
-    PUSHBUTTON      "Antworten",1116,5,143,42,12
-    PUSHBUTTON      "A&utor antworten",1125,51,143,58,12,WS_DISABLED
-    PUSHBUTTON      "&Nachricht verfassen",12,113,143,68,12
-    PUSHBUTTON      "A&ktualisieren",1017,185,143,46,12
-    PUSHBUTTON      "Schließen",1,236,143,41,12
-    EDITTEXT        1118,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
-END
-
-1013 DIALOGEX 0, 0, 283, 338
+IDD_MAILREAD DIALOGEX 0, 0, 283, 338
 STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Nachrichten Lesen"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,4,4,275,131
-    PUSHBUTTON      "&Brief schreiben",1000,4,141,53,12,WS_GROUP
-    PUSHBUTTON      "&Antworten",1116,59,141,35,12,NOT WS_TABSTOP
-    PUSHBUTTON      "Antwort an &Alle",1124,97,141,55,12,NOT WS_TABSTOP
-    PUSHBUTTON      "A&ktualisieren",1017,156,141,45,12,NOT WS_TABSTOP
-    PUSHBUTTON      "Löschen",1018,204,141,35,12,NOT WS_TABSTOP
-    PUSHBUTTON      "Schließen",2,243,141,35,12,NOT WS_TABSTOP
-    LTEXT           "",1019,4,157,274,9
-    EDITTEXT        1013,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
+    CONTROL         "",IDC_MAILLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,4,4,275,131
+    PUSHBUTTON      "&Brief schreiben",IDC_SEND,4,141,53,12,WS_GROUP
+    PUSHBUTTON      "&Antworten",IDC_REPLY,59,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Antwort an &Alle",IDC_REPLYALL,97,141,55,12,NOT WS_TABSTOP
+    PUSHBUTTON      "A&ktualisieren",IDC_RESCAN,156,141,45,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Löschen",IDC_DELETEMSG,204,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Schließen",IDCANCEL,243,141,35,12,NOT WS_TABSTOP
+    LTEXT           "",IDC_MAILINFO,4,157,274,9
+    EDITTEXT        IDC_MAILEDIT,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
 END
 
-111 DIALOG  0, 0, 282, 263
+IDD_MAILSEND DIALOG  0, 0, 282, 263
 STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Nachricht versenden"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "An:",-1,26,6,12,8
-    EDITTEXT        1014,43,4,235,32,ES_MULTILINE | ES_AUTOVSCROLL
-    LTEXT           "Betreff:",-1,14,48,23,8
-    EDITTEXT        1117,43,45,235,14,ES_AUTOHSCROLL
-    EDITTEXT        1013,4,77,274,158,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
-    PUSHBUTTON      "&Versenden",1080,154,245,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",2,228,245,50,14,WS_GROUP
-    LTEXT           "",1004,9,63,249,10
+    LTEXT           "An:",IDC_STATIC,26,6,12,8
+    EDITTEXT        IDC_RECIPIENTS,43,4,235,32,ES_MULTILINE | ES_AUTOVSCROLL
+    LTEXT           "Betreff:",IDC_STATIC,14,48,23,8
+    EDITTEXT        IDC_SUBJECT,43,45,235,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MAILEDIT,4,77,274,158,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Versenden",IDC_OK,154,245,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,228,245,50,14,WS_GROUP
+    LTEXT           "",IDC_SENDMAILMSG,9,63,249,10
+END
+
+IDD_NEWSPOST DIALOG  0, 0, 282, 255
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Artikel veröffentlichen"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Artikel in einer Newsgroup",IDC_STATIC,10,11,86,8
+    LTEXT           "(hier gruppieren)",IDC_GROUPNAME,99,11,105,8
+    LTEXT           "Betreff",IDC_STATIC,10,28,28,8
+    EDITTEXT        IDC_SUBJECT,43,26,228,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_NEWSEDIT,4,55,274,178,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Versenden",IDOK,186,237,43,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,232,237,46,14,WS_GROUP
+END
+
+IDD_NEWSREAD DIALOGEX 0, 0, 305, 322
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Nachrichtenkugel: "
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_NEWSDESC,4,4,297,8
+    CONTROL         "",IDC_NEWSLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Antworten",IDC_REPLY,5,143,42,12
+    PUSHBUTTON      "A&utor antworten",IDC_REPLYMAIL,51,143,58,12,WS_DISABLED
+    PUSHBUTTON      "&Nachricht verfassen",IDC_NEWSPOST,113,143,68,12
+    PUSHBUTTON      "A&ktualisieren",IDC_RESCAN,185,143,46,12
+    PUSHBUTTON      "Schließen",IDOK,236,143,41,12
+    EDITTEXT        IDC_NEWSEDIT,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
 END
 
 
@@ -248,62 +248,62 @@ END
 
 STRINGTABLE 
 BEGIN
-    1                       "Die Empfänger werden überprüft ..."
-    2                       "Betreff: "
-    3                       "Datum: "
-    4                       "Von: "
-    5                       "An: "
-    6                       "Aw: "
-    7                       "Suche nach einer neuen Nachricht..."
-    8                       "Du hast eine neue Nachricht."
-    9                       "Du kannst nur eine Nachricht gleichzeitig bearbeiten."
-    10                      "Du hast keine neue Nachrichten"
-    11                      "#"
-    12                      "Von"
-    13                      "Betreff"
-    14                      "Datum"
-    15                      "Nachricht versendet."
+    IDS_CHECKNAMES          "Die Empfänger werden überprüft ..."
+    IDS_SUBJECT             "Betreff: "
+    IDS_DATE                "Datum: "
+    IDS_FROM                "Von: "
+    IDS_TO                  "An: "
+    IDS_RE                  "Aw: "
+    IDS_GETTINGMSGS         "Suche nach einer neuen Nachricht..."
+    IDS_NONEWMAIL           "Du hast eine neue Nachricht."
+    IDS_MAILONEDIALOG       "Du kannst nur eine Nachricht gleichzeitig bearbeiten."
+    IDS_READMAIL            "Du hast keine neue Nachrichten"
+    IDS_MHEADER1            "#"
+    IDS_MHEADER2            "Von"
+    IDS_MHEADER3            "Betreff"
+    IDS_MHEADER4            "Datum"
+    IDS_MESSAGESENT         "Nachricht versendet."
 END
 
 STRINGTABLE 
 BEGIN
-    16                      "Du mußt zumindest einen Empfänger festlegen."
-    17                      "Die Nachricht %s kann nicht gelöscht werden."
-    18                      "Die Nachrichten können nicht empfangen werden."
-    19                      "Die Nachricht kann nicht gespeichert werden. Vielleicht ist nicht mehr genügend Festplattenspeicher frei?"
-    20                      "Der Empfängername %s ist ungültig.\nÜberprüfe die Schreibweise und versuche es noch einmal."
-    21                      "Diese Nachricht kann nicht an soviele Empfänger versandt werden.\nWillst Du Sie and die ersten %d Empfänger versenden?"
-    22                      "Du kannst auf diese Nachricht nicht antworten."
+    IDS_NORECIPIENTS        "Du mußt zumindest einen Empfänger festlegen."
+    IDS_CANTDELETEMAIL      "Die Nachricht %s kann nicht gelöscht werden."
+    IDS_CANTLOADMSG         "Die Nachrichten können nicht empfangen werden."
+    IDS_SAVEFAILED          "Die Nachricht kann nicht gespeichert werden. Vielleicht ist nicht mehr genügend Festplattenspeicher frei?"
+    IDS_BADNAME             "Der Empfängername %s ist ungültig.\nÜberprüfe die Schreibweise und versuche es noch einmal."
+    IDS_TOOMANYRECIPIENTS   "Diese Nachricht kann nicht an soviele Empfänger versandt werden.\nWillst Du Sie and die ersten %d Empfänger versenden?"
+    IDS_CANTREPLY           "Du kannst auf diese Nachricht nicht antworten."
 END
 
 STRINGTABLE 
 BEGIN
-    32                      "Jan"
-    33                      "Feb"
-    34                      "Mär"
-    35                      "Apr"
-    36                      "Mai"
-    37                      "Jun"
-    38                      "Jul"
-    39                      "Aug"
-    40                      "Sep"
-    41                      "Okt"
-    42                      "Nov"
-    43                      "Dez"
-    44                      "Mon"
-    45                      "Die"
-    46                      "Mi"
-    47                      "Don"
+    IDS_JANUARY             "Jan"
+    IDS_FEBRUARY            "Feb"
+    IDS_MARCH               "Mär"
+    IDS_APRIL               "Apr"
+    IDS_MAY                 "Mai"
+    IDS_JUNE                "Jun"
+    IDS_JULY                "Jul"
+    IDS_AUGUST              "Aug"
+    IDS_SEPTEMBER           "Sep"
+    IDS_OCTOBER             "Okt"
+    IDS_NOVEMBER            "Nov"
+    IDS_DECEMBER            "Dez"
+    IDS_MONDAY              "Mon"
+    IDS_TUESDAY             "Die"
+    IDS_WEDNESDAY           "Mi"
+    IDS_THURSDAY            "Don"
 END
 
 STRINGTABLE 
 BEGIN
-    48                      "Fre"
-    49                      "Sam"
-    50                      "Son"
-    51                      "Betreff"
-    52                      "Autor"
-    53                      "Datum"
+    IDS_FRIDAY              "Fre"
+    IDS_SATURDAY            "Sam"
+    IDS_SUNDAY              "Son"
+    IDS_NHEADER1            "Betreff"
+    IDS_NHEADER2            "Autor"
+    IDS_NHEADER3            "Datum"
     IDS_SUBJECT_ENGLISH     "Subject: "
     IDS_SUBJECT_GERMAN      "Betreff: "
     IDS_SUBJECT_PORTUGUESE  "Assunto: "

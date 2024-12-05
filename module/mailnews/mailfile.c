@@ -133,7 +133,6 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    auto subject_strs = std::vector<std::string>(num_subjects);
    char *subject = "";
    char *ptr;
-   int i, num;
    int subject_id_index = 0;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
@@ -155,7 +154,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 
    /* Add recipients' names */
    num = 0;
-   for (i = 0; i < num_recipients; i++)
+   for (int i = 0; i < num_recipients; i++)
    {
       if (num++ > 0)
          strcat(new_msg, ", "); 

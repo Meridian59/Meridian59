@@ -133,6 +133,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    auto subject_strs = std::vector<std::string>(num_subjects);
    char *subject = "";
    char *ptr;
+   int num;
    int subject_id_index = 0;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];

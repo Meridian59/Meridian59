@@ -134,7 +134,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    char *subject = "";
    char *ptr;
    int i, num;
-   int subject_id_index = 1;
+   int subject_id_index = 0;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
    MailHeader header;

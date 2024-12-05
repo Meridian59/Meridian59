@@ -134,6 +134,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    char *subject = "";
    char *ptr;
    int i, num;
+   int subject_id_index = 1;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
    MailHeader header;
@@ -168,6 +169,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
       subject_strs[i] = GetString(hInst, subject_ids[i]);
       if (strncmp(message, subject_strs[i].c_str(), subject_strs[i].size()) == 0)
       {
+         subject_id_index = i;
          subject_found = True;
          break;
       }
@@ -175,8 +177,8 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 
    if (subject_found)
    {
-      /* Skip "Subject: " leader */
-      subject = message + subject_strs[i].size();
+      /* Skip "Subject: " or other translation leading string */
+      subject = message + subject_strs[subject_id_index].size();
 
       /* Skip subject line; have to deal with \n (from users) or \r\n (from kod resources) */
       ptr = strchr(subject, '\n');
@@ -195,7 +197,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    }
 
    /* Add "Subject:" field to message */
-   strcat(new_msg, subject_strs[i].c_str());
+   strcat(new_msg, subject_strs[subject_id_index].c_str());
    strcat(new_msg, subject);
    strcat(new_msg, "\r\n");
    

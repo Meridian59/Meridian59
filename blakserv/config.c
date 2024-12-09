@@ -263,7 +263,7 @@ const char * AddConfig(int config_id,const char *config_data,int config_type,int
 
    c->is_dynamic = is_dynamic;
 
-   strcpy(s,config_data);
+   strncpy(s,config_data, sizeof(s));
 
    switch (config_type)
    {

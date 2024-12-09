@@ -168,7 +168,7 @@ Bool ModuleLoadByRsc(ID name_rsc)
   // LoadLibrary can find libraries from places you don't want them.  We
   // specify the full path.
   GetWorkingDirectory(working_dir, MAX_PATH);
-  sprintf(full_filename, "%s\\%s%s", working_dir, module_dir, filename);
+  snprintf(full_filename, sizeof(full_filename), "%s\\%s%s", working_dir, module_dir, filename);
   
   info = ModuleLoadByName(full_filename);
   if (info == NULL)

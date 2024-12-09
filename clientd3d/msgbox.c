@@ -44,14 +44,14 @@ void _cdecl ClientError(HINSTANCE hModule, HWND hParent, int fmt_id, ...)
 
    if (LoadString(hModule, (int) fmt_id, fmt, ERROR_LENGTH - 1) == 0)
    {
-      sprintf(msg, "Can't load message string #%d", fmt_id);
+      snprintf(msg, sizeof(msg), "Can't load message string #%d", fmt_id);
       ClientMessageBox(hParent, msg, szAppName, MB_APPLMODAL);
       SetFocus(hwndFocus);
       return;
    }
 
    va_start(marker, fmt_id);
-   vsprintf(msg, fmt, marker);
+   vsnprintf(msg, sizeof(msg), fmt, marker);
    va_end(marker);
 
    ClientMessageBox(hParent, msg, szAppName, MB_APPLMODAL | MB_ICONEXCLAMATION);
@@ -75,14 +75,14 @@ void _cdecl Info(HINSTANCE hModule, HWND hParent, int fmt_id, ...)
 
    if (LoadString(hModule, fmt_id, fmt, ERROR_LENGTH - 1) == 0)
    {
-      sprintf(msg, "Can't load message string #%d", fmt_id);
+      snprintf(msg, sizeof(msg), "Can't load message string #%d", fmt_id);
       ClientMessageBox(hParent, msg, "Blakston Error", MB_APPLMODAL);
       SetFocus(hwndFocus);
       return;
    }
 
    va_start(marker, fmt_id);
-   vsprintf(msg, fmt, marker);
+   vsnprintf(msg, sizeof(msg), fmt, marker);
    va_end(marker);
    
    ClientMessageBox(hParent, msg, szAppName, MB_APPLMODAL | MB_ICONINFORMATION);
@@ -106,7 +106,7 @@ Bool _cdecl AreYouSure(HINSTANCE hModule, HWND hParent, int defbutton, int fmt_i
    fmt = GetString(hModule, fmt_id);
 
    va_start(marker, fmt_id);
-   vsprintf(msg, fmt, marker);
+   vsnprintf(msg, sizeof(msg), fmt, marker);
    va_end(marker);
    
    if (defbutton == YES_BUTTON)

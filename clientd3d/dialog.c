@@ -559,7 +559,7 @@ INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 		MoveWindow(hDlg, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
 			dlg_rect.bottom - dlg_rect.top, FALSE);
 		
-		sprintf(buf, "%u", info->amount);
+		snprintf(buf, sizeof(buf), "%u", info->amount);
 		Edit_SetText(hEdit, buf);
 		Edit_LimitText(hEdit, MAXAMOUNT);
 		

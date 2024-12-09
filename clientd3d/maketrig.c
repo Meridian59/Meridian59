@@ -63,7 +63,7 @@ int main(int argc, char **argv)
    viewer_distance = VIEWER_DISTANCE;
 
    /* First spew the header file */
-   sprintf(tempbuf, "%s\\%s", dir, header_file);
+   snprintf(tempbuf, sizeof(tempbuf), "%s\\%s", dir, header_file);
    headerfile = fopen(tempbuf, "wt");
 
    if (headerfile == NULL)
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
    fclose(headerfile);
 
    /* Now write out the tables themselves */
-   sprintf(tempbuf, "%s\\%s", dir, table_file);
+   snprintf(tempbuf, sizeof(tempbuf), "%s\\%s", dir, table_file);
    tablefile = fopen(tempbuf, "wt");
 
    if (tablefile == NULL)

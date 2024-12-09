@@ -109,7 +109,7 @@ void ColorsCreate(Bool use_defaults)
 				strcpy(str, colorinfo[i]);
 			else
 			{
-				sprintf(name, "Color%d", i);
+				snprintf(name, sizeof(name), "Color%d", i);
 				GetPrivateProfileString(color_section, name, colorinfo[i], str, 100, ini_file);
 			}
 
@@ -202,9 +202,9 @@ void ColorsSave(void)
 
 	for (i=0; i < MAXCOLORS; i++)
 	{
-		sprintf(str, "%d,%d,%d",
+		snprintf(str, sizeof(str), "%d,%d,%d",
 			GetRValue(colors[i]), GetGValue(colors[i]), GetBValue(colors[i]));
-		sprintf(name, "Color%d", i);
+		snprintf(name, sizeof(name), "Color%d", i);
 
 		WritePrivateProfileString(color_section, name, str, ini_file);
 	}

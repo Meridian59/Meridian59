@@ -184,15 +184,15 @@ BOOL AboutInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    CenterWindow(hDlg, GetParent(hDlg));
 
    GetDlgItemText(hDlg, IDC_NUMBER, format, 80);
-   sprintf(buffer, format, MAJOR_REV*100+MINOR_REV);
+   snprintf(buffer, sizeof(buffer), format, MAJOR_REV*100+MINOR_REV);
    SetDlgItemText(hDlg, IDC_NUMBER, buffer);
 
    if (config.technical)
    {
-	sprintf(buffer, "Client Software Version %d:%d", MAJOR_REV, MINOR_REV);
+     snprintf(buffer, sizeof(buffer), "Client Software Version %d:%d", MAJOR_REV, MINOR_REV);
 	SetDlgItemText(hDlg, IDC_SPECIAL1, buffer);
 
-	sprintf(buffer, "Server Host Address %s:%d",
+	snprintf(buffer, sizeof(buffer), "Server Host Address %s:%d",
 		(LPCTSTR)config.comm.hostname, config.comm.sockport);
 	SetDlgItemText(hDlg, IDC_SPECIAL2, buffer);
    }

@@ -326,7 +326,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	{
 		char buf[256];
 		DWORD err = GetLastError();
-		sprintf(buf, "Error - Couldn't Create Client Window : %d", err);
+		snprintf(buf, sizeof(buf), "Error - Couldn't Create Client Window : %d", err);
 		MessageBox(NULL, buf, "ERROR!", MB_OK);
 		MainQuit(hMain);
 		exit(1);

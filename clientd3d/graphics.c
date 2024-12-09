@@ -384,7 +384,7 @@ void RedrawForce(void)
         RECT rc,lagBox;
         double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
         char buffer[32];
-        sprintf(buffer, "FPS=%d (%.1fms)        ", average_fps, milliseconds);
+        snprintf(buffer, sizeof(buffer), "FPS=%d (%.1fms)        ", average_fps, milliseconds);
         ZeroMemory(&rc,sizeof(rc));
 
         rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);

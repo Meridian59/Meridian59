@@ -63,7 +63,7 @@ Bool LoadAll(void)
 		return False;
 	
 	/* can't use TimeStr() in an xprintf because it uses TimeStr() too */
-	strcpy(time_str,TimeStr(last_save_time));
+	strncpy(time_str,TimeStr(last_save_time), sizeof(time_str));
 	lprintf("LoadAll loaded game saved at %s\n",time_str);
 	
 	return True;

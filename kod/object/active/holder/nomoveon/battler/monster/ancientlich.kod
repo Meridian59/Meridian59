@@ -1,0 +1,463 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AncientLich is Monster
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   ancient_lich_name_rsc = "ancient lich"
+   ancient_lich_icon_rsc = lichb.bgf
+   ancient_lich_desc_rsc = \
+      "Through some dark pact made ages ago, this lich's ghastly corpse "
+      "has been kept alive by dark magicks.  Sheer power emanates forcibly from her "
+      "eyes, an intense gaze which strikes fear into your heart.  "
+      "The centuries have apparently taken their toll on her physical form, "
+      "however, as her skin is a mess of rotting flesh writhing with worms.  "
+      
+   ancient_lich_dead_icon_rsc = lichbx.bgf
+   ancient_lich_dead_name_rsc = "The remains of an ancient lich"
+
+   ancient_lich_sound_miss = lich_atk.wav
+   ancient_lich_sound_death = lich_die.wav
+   ancient_lich_sound_aware = lich_awr.wav
+
+   ancient_lich_cast_spell = "The lich summons forth the darkness!!"
+   ancient_lich_cast_sound = necro01.wav
+
+   ancient_lich_death_blow    = "Your final blow has slain the %s!"
+   ancient_lich_single_killer = "You have singlehandedly banished the %s from this plane of reality!"
+   ancient_lich_double_killer = "The %s has been driven from this plane of reality, "
+      "thanks to you and your comrade!"
+   ancient_lich_helper_killer = "The %s has been driven from this plane of reality, "
+      "thanks to you and your comrades!"
+   ancient_lich_no_truce      = "The %s's evil presence dispels your truce before you can even cast it."
+
+   ancient_lich_darkbolt = gob.bgf
+
+classvars:
+
+   vrName = ancient_lich_name_rsc
+   vrIcon = ancient_lich_icon_rsc
+   vrDesc = ancient_lich_desc_rsc
+   vrDead_icon = ancient_lich_dead_icon_rsc
+   vrDead_name = ancient_lich_dead_name_rsc
+   viDefinite = ARTICLE_THE
+   viIndefinite = ARTICLE_AN
+   viGender = GENDER_FEMALE
+
+   viTreasure_type = TID_LICH
+   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_MAGIC + ATCK_WEAP_CLAW
+   viAttack_spell = 0
+   viLevel = 200
+   viDifficulty = 9
+   viKarma = -100
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE \
+      | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT | AI_FIGHT_NEWBIESAFE
+   viAttributes = 0
+
+   vrSound_miss = ancient_lich_sound_miss
+   vrSound_aware = ancient_lich_sound_aware
+   vrSound_death = ancient_lich_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+   % List of player objects which attack her, used for the credit messages
+   % sent to everyone who participates when she is slain.
+   plAttackers = $
+
+   piBlindAttackChance = 15       % Chance she'll attack with blind
+   piBlindCounterChance = 7       % Chance she'll counter a spell or arrow with blind
+   piMagicResistance = 60         % Chance she'll resist a harmful spell outright
+   piBlindDurationMin = 20  % seconds
+   piBlindDurationMax = 30  % seconds
+
+messages:
+
+   Constructed(oNecromancerGuild=$)
+   {
+      pimax_Hit_Points = pimax_hit_Points * 2;
+      piHit_Points = pimax_hit_points;
+
+      plResistances = [ [ 60, -ATCK_SPELL_ALL],
+                        [ 60,  ATCK_WEAP_ALL],
+                        [-20,  ATCK_WEAP_NERUDITE ],
+                        [-20,  ATCK_WEAP_BLUDGEON ],
+                        [-60,  ATCK_WEAP_SILVER ],
+                        [ 90, -ATCK_SPELL_COLD],
+                        [ 90, -ATCK_SPELL_UNHOLY ],
+                        [ 30, -ATCK_SPELL_ACID ],
+                        [-20, -ATCK_SPELL_SHOCK],
+                        [-20, -ATCK_SPELL_FIRE ],
+                        [-40, -ATCK_SPELL_HOLY ],
+                        [-90, -ATCK_SPELL_HUNTERSWORD ]
+                      ];
+                        
+      propagate;
+   }
+
+   Delete()
+   {
+      plAttackers = $;
+
+      propagate;
+   }
+   
+   AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
+   "This is called when something causes damage to us"
+   {
+      local i;
+
+      for i in plAttackers
+      {
+         if i = what
+         {
+            propagate;
+         }
+      }
+
+      plAttackers = cons(what,plAttackers);
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   DoCast()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+
+   GetProjectileIcon()
+   {
+      return ancient_lich_darkbolt;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_TRANSLATION,1,PT_GRAY_TO_BLACK);
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      % There probably should be ligthing information, since it's magical-type.
+      return LIGHT_FLAG_NONE;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,80,2,2,2,5);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,3);
+
+      return;
+   }
+
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,150,2,6,2,9,2,1);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if IsClass(who, &DM) AND Send(who, @PlayerIsImmortal)
+      {
+         propagate;
+      }
+
+      if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)
+      {  
+         Send(who,@MsgSendUser,#message_rsc=ancient_lich_no_truce, #parm1=vrName);            
+
+         return FALSE; 
+      }
+
+      if ((Random(1,piBlindCounterChance) = 1) OR (send(oSpell,@GetSchool)=SS_QOR))
+         AND send(self,@CanSee,#what=who)
+      {
+         send(self,@MonsterCastAttackSpell,#what=who);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   {
+      if use_weapon <> $
+      {
+         if IsClass(use_weapon,&RangedWeapon)
+            AND victim = self
+            AND send(self,@CanSee,#what=what)
+            AND random(1,piBlindCounterChance) = 1 
+         {
+            send(self,@MonsterCastAttackSpell,#What=what);
+
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   MonsterCastAttackSpell(what=$)
+   {
+      local oSpell, iRandom, oTarget;
+
+      if what = $
+      {
+         oTarget = poTarget;
+      }
+      else
+      {
+         oTarget = what;
+      }
+
+      if not send(self,@CanSee,#what=poTarget)
+      {
+         return;
+      }
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLIND);
+      iRandom = Random(piBlindDurationMin,piBlindDurationMax);
+
+      if NOT send(poowner,@ReqSomethingAttack,#what=self,#victim=poTarget,#use_weapon=self)
+      {
+         return;
+      }
+
+      Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=ancient_lich_cast_sound);
+      Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=ancient_lich_cast_spell,#what=self);
+      Send(self,@DoCast);
+      Send(oSpell,@DoBlind,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
+
+      return; 
+   }
+
+   AttackTimer( timer = $ )
+   "We were bashing on something before, and now its time to hit it again."
+   {
+      local oSpell, iRandom;
+      
+      iRandom = Random(1,piBlindAttackChance);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLIND);
+      Send(self,@ClearBehavior,#timer=timer);
+
+      %%% sanity checks
+      if poOwner = $
+      {
+         debug("Unreachable. Null Owner"); 
+         Send(self,@EnterStateLimbo);
+
+         return;
+      }
+
+      if poTarget=$
+      {
+         debug("Unreachable. Null poTarget","monster",self); 
+         Send(self,@EnterStateWait);
+
+         return;
+      }
+
+      Send(self,@FindNewTarget);
+      if NOT Send(self,@CanReach,#what=poTarget) 
+         AND send(poTarget,@IsEnchanted,#what=oSpell)
+      {
+         Send(self,@EnterStateChase,#Target=poTarget);
+
+         return;
+      }
+      else
+      {
+         if NOT Send(self,@CanReach,#what=poTarget) 
+         {
+            Send(self,@MonsterCastAttackSpell);
+            Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+
+            return;
+         }
+      }
+ 
+      if NOT Send(poTarget,@IsEnchanted,#what=oSpell)
+         AND iRandom = 1
+      { 
+         Send(self,@MonsterCastAttackSpell); 
+      }
+      else 
+      {
+         Send(self,@TryAttack,#what=poTarget); 
+      }
+
+      Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+
+      return;
+   }
+
+   FindNewTarget()
+   {
+      local oBlind, lActive, iRandom, iDistance, iBestDistance, i, each_obj;
+
+      % Only one in three people are considered eligable 
+      % targets.  The closest is targeted.  Held people
+      % aren't considered - he deals with his current 
+      % target first.  Only people in view are considered.
+   
+      oBlind = send(SYS,@FindSpellByNum,#num=SID_BLIND);
+      lActive = send(poOwner,@getholderactive);
+      iRandom = Random(1,30);
+      iBestDistance = 10000;
+
+      if send(poTarget,@isenchanted,#what=oBlind)
+      {
+         for i in lActive
+         {
+            each_obj = send(poOwner,@HolderExtractObject,#data=i);
+            iDistance = Send(self,@SquaredDistanceTo,#what=each_obj);
+
+            if isClass(each_obj,&User)
+               AND Send(self,@CanSee,#what=each_obj)
+               AND NOT send(each_obj,@isenchanted,#what=oBlind)
+               AND (iRandom < 10 OR iDistance < iBestDistance)
+               AND NOT send(self,@isAlly,#target=each_obj)
+            {
+               Debug("TargetChange:",each_obj);
+               iBestDistance = iDistance;
+               poTarget = each_obj;
+
+               if iRandom < 5
+               {
+                  return;
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   Killed(what=$)
+   {
+      local NumAttackers, i;
+
+      NumAttackers = length(plAttackers);
+ 
+      for i in plAttackers
+      {
+         if i = what
+         {
+            Send(i,@MsgSendUser,#message_rsc=ancient_lich_death_blow, #parm1=vrName );      
+            if NumAttackers = 1
+            {
+               Send(i,@MsgSendUser,#message_rsc=ancient_lich_single_killer, #parm1=vrName );
+            }
+         }
+
+         if NumAttackers = 2 and i <> what
+         {
+            Send(i,@MsgSendUser,#message_rsc=ancient_lich_double_killer, #parm1=vrName );
+         }
+
+         if NumAttackers > 2 and i <> what
+         {
+            Send(i,@MsgSendUser,#message_rsc=ancient_lich_helper_killer, #parm1=vrName );
+         }
+      }
+
+      propagate;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+   SpellResist(oSpell=$,who=$,iSpellpower=$)
+   {
+      local iResistChance;
+
+      if IsClass(who,&DM) AND Send(who, @PlayerIsImmortal)
+      {
+         return FALSE;
+      }
+ 
+      if (Send(oSpell,@IsHarmful))
+      {
+         % Unaffected by qor spells.  Period.
+         if (Send(oSpell,@GetSchool) = SS_QOR)
+         {
+            return TRUE;
+         }
+      
+         iResistChance = piMagicResistance;
+         if IsClass(oSpell,&Dazzle)
+         {
+            % extra 50% chance to resist.
+            iResistChance = (iResistChance * 150)/100;
+         }
+
+         if (iSpellPower < 30) or (random(0,100) < iResistChance)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   IsUndead()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

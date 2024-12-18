@@ -6939,22 +6939,35 @@ messages:
    "This sets one of the many hometowns to be the initial hometown."
    {
       local rand;
+      rand = random(1,8);
       
-      rand = random(1,10);    
-      
-      if rand < 4
+      if rand = 1
       {
          piHomeroom = RID_MAR_INN;
-      }   
+      }
       else
       {
-         if rand > 7
+         if rand = 2
          {
-            piHomeroom = RID_JAS_INN;
+            piHomeroom = RID_COR_INN;
          }
          else
          {
-            piHomeroom = RID_COR_INN;
+            if rand = 3
+            {
+               piHomeroom = RID_JAS_INN;
+            }
+            else
+            {
+               if rand < 6
+               {
+                  piHomeroom = RID_BAR_INN;
+               }
+               else
+               {
+                  piHomeroom = RID_TOS_INN;
+               }
+            }
          }
       }
       

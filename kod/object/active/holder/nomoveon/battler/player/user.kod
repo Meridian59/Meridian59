@@ -6939,7 +6939,7 @@ messages:
    "This sets one of the many hometowns to be the initial hometown."
    {
       local rand;
-      rand = random(1,8);
+      rand = random(1,5);
       
       if rand = 1
       {
@@ -6959,7 +6959,7 @@ messages:
             }
             else
             {
-               if rand < 6
+               if rand = 4
                {
                   piHomeroom = RID_BAR_INN;
                }

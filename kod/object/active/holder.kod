@@ -967,7 +967,7 @@ messages:
       }
       
       % Should never be reached
-      debug("Inconsistancy in plActive or plPassive");
+      debug("Inconsistency in plActive or plPassive");
       
       return;    
    }

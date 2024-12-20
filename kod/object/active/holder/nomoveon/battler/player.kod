@@ -434,7 +434,7 @@ resources:
       "city of Barloque there is a clerk named Caramo which handles the "
       "election of the position of Justicar.  The Justicar pardons those that "
       "have been flagged as outlaws and murderers.  Unless you wish to see "
-      "such villians get pardons, it is important to be active in voting."
+      "such villains get pardons, it is important to be active in voting."
       "\n\n"
       "I must warn you that engaging in lethal combat against other players "
       "may soil your good name.  If you strike an innocent, or cast "
@@ -463,7 +463,7 @@ resources:
       "\n\n"
       "%s"
       "\n\n"
-      "Finally, some last bits of advice as I depart.  Do not dispair if "
+      "Finally, some last bits of advice as I depart.  Do not despair if "
       "you are sent to the underworld by some monster or even another "
       "player.  Death is part of the cycle, and learning to recover from "
       "death is important.  Put some items away in the vault in Barloque for "
@@ -561,7 +561,7 @@ resources:
       "\n\n"
       "Lastly, if you wish to leave this land for a bit, merely log off.  "
       "When you log on, you will reappear where you left.  However for "
-      "reasons of saftey, it is highly recommended that you do so in a safe "
+      "reasons of safety, it is highly recommended that you do so in a safe "
       "place, such as an inn.  If you log off outside an inn, you may take "
       "losses similar to death as your soul did not leave the land "
       "completely when you logged off."
@@ -3487,7 +3487,7 @@ messages:
 
    AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
    "Will not let a person attack someone who isnt pkill_enabled."
-   "Wll not let a person who isnt pkill_enabled attack another person."
+   "Will not let a person who isnt pkill_enabled attack another person."
    {
       local oRoom;
       
@@ -4661,7 +4661,7 @@ messages:
 
    GetWeaponSwingBonus()
    {
-      % Separate out the number of groups of swings (the bonus) fromt he proficiency number.
+      % Separate out the number of groups of swings (the bonus) from the proficiency number.
       return piWeaponInfo/1000;
    }
 
@@ -7886,7 +7886,7 @@ messages:
 
          Post(self,@EvaluatePKStatus);
 
-         % Let SoldierShields know we died.  It handles itself as apropriate.
+         % Let SoldierShields know we died.  It handles itself as appropriate.
          oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
          if oSoldierShield <> $
          {

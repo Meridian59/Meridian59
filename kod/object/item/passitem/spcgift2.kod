@@ -40,8 +40,6 @@ classvars:
 
    viValue_average = 30
 
-   vrGift_open_wav = gift_open_wav
-
 properties:
 
    poContents = $
@@ -122,7 +120,7 @@ messages:
       send(poOwner,@MsgSendUser,#message_rsc=SpecialGiftTwo_open,
            #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
 
-      Send(what,@WaveSendUser,#wave_rsc=vrGift_open_wav);
+      Send(what,@WaveSendUser,#wave_rsc=gift_open_wav);
 
       oldOwner = poOwner;
       send(poOwner,@LeaveHold,#what=self);

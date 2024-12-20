@@ -47,8 +47,6 @@ classvars:
 
    viValue_average = 30
 
-   vrGift_open_wav = gift_open_wav
-
 properties:
 
    poGiftGiver = $     %% if poGiftGIver = $, then it's from the gods.
@@ -181,7 +179,7 @@ messages:
       send(poOwner,@MsgSendUser,#message_rsc=gift_open,
            #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
       
-      Send(what,@WaveSendUser,#wave_rsc=vrGift_open_wav);
+      Send(what,@WaveSendUser,#wave_rsc=gift_open_wav);
 
       oldOwner = poOwner;
       send(poOwner,@LeaveHold,#what=self);

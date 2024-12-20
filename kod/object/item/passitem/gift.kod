@@ -47,8 +47,6 @@ classvars:
 
    viValue_average = 30
 
-   vrGift_open_wav = gift_open_wav
-
 properties:
 
    poGiftGiver = $     %% if poGiftGIver = $, then it's from the gods.

@@ -328,7 +328,7 @@ messages:
       return pbHometownPenaltiesEnable;
    }
    
-   % Returns if a player should recive a 'penalty' for logging of in a safe zone
+   % Returns if a player should receive a 'penalty' for logging off in a safe zone
    LogSafePenaltyEnable()
    {
       return pbLogSafePenaltyEnable;

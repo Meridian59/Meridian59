@@ -53,7 +53,7 @@ properties:
    poInductor = $            %% person who offers the treaty
    poInductee = $            %% person who is offered the treaty
    poInductorGuild = $       %% guild offering the treaty
-   poInducteeGuild = $       %% guild recieving the treaty
+   poInducteeGuild = $       %% guild receiving the treaty
 
    ptRatify = $
 

@@ -24,7 +24,7 @@ resources:
    WarLetter_icon_rsc = scr01.bgf
    WarLetter_desc_closed_rsc = \
       "This is a rather simple letter.  It is tied closed with a simple string "
-      "which looks easily removeable."
+      "which looks easily removable."
    WarLetter_desc_opened_rsc = \
       "This is a rather simple letter written in an easily readable script."
    WarLetter_intro_rsc = \
@@ -61,7 +61,7 @@ resources:
       "enhance yourself or to your point of view in my eyes.\n"
       "  First, one should not defend the acts of a murderer.  I know you will deny "
       "this accusation, but the tone of your previous correspondence leaves no doubt "
-      "that you hold this person in high reguard.  Although certain members of our "
+      "that you hold this person in high regard.  Although certain members of our "
       "society see nothing wrong with murder to accomplish their tasks, I believe the "
       "more visible members of our society should be above that.\n"
       "  Furthermore, I cannot agree with your support of any talks of rebellion.  I "
@@ -85,7 +85,7 @@ resources:
       "  As I have told you before, I do not know who plotted against the Duke.  I "
       "have heard some interesting rumors that perhaps it was not one person that "
       "murdered in cold blood, but rather several people plotting together.  People "
-      "have said that too much seemingly plausable information is spreading "
+      "have said that too much seemingly plausible information is spreading "
       "through the lands to be restricted to just one person.\n"
       "  I do not know what to think.  The roving troops of both factions frighten "
       "me, and I often find myself wishing for the more calm and peaceful days of "
@@ -125,14 +125,14 @@ resources:
 
    Warletter_text7_rsc = \
       "My friend, dear %s\n"
-      "  Allow me to appologize for my last letter.  I truly cannot say what madness "
+      "  Allow me to apologize for my last letter.  I truly cannot say what madness "
       "took over my thoughts and prevented me from thinking rationally.  All I can "
       "say is that your response set my thinking straight.\n"
       "  I wish all my friends were as level-headed as you are.  I fear that perhaps "
       "the idle chatter of some of my other acquaintances influenced my thinking for "
       "the worse.  I should be more mindful of the company I keep.\n"
       "  I will take measures to guard against this type of thought in the future.\n\n"
-      "Again, my deepest appologies,\n%s"
+      "Again, my deepest apologies,\n%s"
 
    Warletter_text8_rsc = \
       "Dear %s,\n"
@@ -218,7 +218,7 @@ resources:
       "many adventurers out these days slaying monsters.\n"
       "  Is our society to blame for this?  With the rampant killing of monsters, it "
       "makes sense in a twisted way that one may turn against his fellow travellers.  "
-      "it would not suprise me that this is exactly what caused the murder of the Duke.  "
+      "it would not surprise me that this is exactly what caused the murder of the Duke.  "
       "But, does violence need violence to end the madness?\n"
       "  Well, I shall not bore you further with my thoughts.  I hope that there are "
       "brighter days in the future for us.  Unfortunately, all anyone can see currently "

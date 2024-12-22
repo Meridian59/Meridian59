@@ -28,7 +28,7 @@ constants:
    GOOD_COLOR = 82
    BAD_COLOR =  83
 
-   % How much wait between suicides?  Curently 10 minutes.
+   % How much wait between suicides?  Currently 10 minutes.
    SUICIDE_REPEAT_TIME = 600 
 
    % What's the length of the Posting timer check? Currently 30 mins.
@@ -5778,7 +5778,7 @@ messages:
       {
         if i < 1
         {
-           Debug("Bad withdrawl quantity", i, "from user", self);
+           Debug("Bad withdrawal quantity", i, "from user", self);
            return;
         }
       }

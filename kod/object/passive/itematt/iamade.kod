@@ -13,13 +13,13 @@ ItemAttMade is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  This item was made by a player.  It is considered worthless by shopkeepers and
-%  will disapear when the ittematt timer fires.
+%  will disappear when the ittematt timer fires.
 %
 %  Form is: 
 %
 %   	[IA_MADE, tTimer ]
 %
-%  tTimer :: timer counting down until the item disapears.
+%  tTimer :: timer counting down until the item disappears.
 %  iNumber :: number of items we're keeping track of, -1 for items that aren't NumberItems
 %	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -92,7 +92,7 @@ messages:
   }
 
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
-   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "The stroke may choose its own damage give or receive message.  Otherwise "
    "player.kod will just choose a default - which is true for most weapon-based"
    "combat strokes (but not true for most punch strokes or touch spells."
    {

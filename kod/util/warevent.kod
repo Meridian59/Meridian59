@@ -42,7 +42,7 @@ resources:
       "~B~rWar has been declared!\n"
       "~kYou may choose to join a side by using a war pendant found in your inventory.  "
       "The pendant you use will determine which side you are part of for this battle.  "
-      "Each side can be identfied by the color of their shirt or robe; neutral characters "
+      "Each side can be identified by the color of their shirt or robe; neutral characters "
       "are dressed in grey.  Any kill scored by your side against an opposing non-neutral "
       "character will be recorded.  The results of this battle will be announced at the "
       "end of the war.  Good luck!"

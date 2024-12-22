@@ -1324,7 +1324,7 @@ messages:
       local iBonus, iFaction;
 
       % Rationale behind the numbers:
-      % This number is subtracted from regeneration time (measured in miliseconds).
+      % This number is subtracted from regeneration time (measured in milliseconds).
       % Non-intriguing mortals get a small bonus of 200.
       % Maximum normal power is 700.
 

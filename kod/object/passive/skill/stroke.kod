@@ -155,7 +155,7 @@ messages:
    GetExertion()
    "Sword strokes vary in their vigor cost."
    {
-      % Return amount of vigor (hundreths) to cast skill
+      % Return amount of vigor (hundredths) to cast skill
       return viSkill_Exertion;
    }
 
@@ -300,7 +300,7 @@ messages:
    }
 
    PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
-   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "The stroke may choose its own damage give or receive message.  Otherwise "
    "player.kod will offer the default 'You killed the whatever' message."
    {
       if vrPlayer_killed_Something = $
@@ -315,7 +315,7 @@ messages:
    }
 
    PlayerWasKilledMsg(who=$,attacker=$,damage=$)
-   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "The stroke may choose its own damage give or receive message.  Otherwise "
    "player.kod will just choose a default - as it does for most strokes."
    {
       if vrPlayer_was_hit = $

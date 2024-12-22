@@ -766,7 +766,7 @@ messages:
             post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what);
             return FALSE;
          }
-         %%Rumble style cut due to insuficient test.
+         %%Rumble style cut due to insufficient test.
          %if StringEqual(string,"rumble")
          %{
             %post(self,@ChooseCombat,#style = STYLE_LAST_MAN_STANDING,#actor=what);
@@ -793,7 +793,7 @@ messages:
    {
       if piCombat_style = STYLE_NO_FIGHT
          {
-           %%Only one style availible: Duel.
+           %%Only one style available: Duel.
            %send(self,@say,#message_rsc=Goad_must_choose_style);
            %return;    
            post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what); 
@@ -1090,7 +1090,7 @@ messages:
 
    ReqSomethingAttack(what=$,victim=$)
    {
-      % if a fight isnt in session, attack fails.
+      % if a fight isn't in session, attack fails.
       if NOT Send(self,@FightInSession)
       {
          return FALSE;

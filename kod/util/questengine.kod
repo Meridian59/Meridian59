@@ -256,7 +256,7 @@ resources:
          "realm.  These plants may change the course of history.  They are an antidote to a terrible disease that "
          "is beginning to spread through the land.  Come to me when thou would learn from me, friend."
    fadelearn_failure_4 = "Subject:  Plant growth formula\n"
-         "Thy dallience hath cost not only to yourself the posssibility of learning my magicks, but also to "
+         "Thy dallience hath cost not only to yourself the possibility of learning my magicks, but also to "
          "the entire realm a chance to resist a new disease that is slowly spreading.  I hope thou dost not catch "
          "it thyself.  That would be a fine bit of justice, eh?  Trouble me no further, knave."
 
@@ -760,7 +760,7 @@ resources:
       "I have reported you to the justicar, and henceforth you are to be considered an outlaw."
    catering_failure_3_h = "Subject: you stole the food for the party!\n"
       "I have spoken to a wizard friend of mine, and he has ensured that you will suffer for your dishonesty."
-   catering_success_3 = "Ah, what a mouthwatering spread!  Here is your comission, I thank you for your speed."
+   catering_success_3 = "Ah, what a mouthwatering spread!  Here is your commission, I thank you for your speed."
 
    apothecary_assign_2 = "%NPC has need of these %INDEF_CARGO%CARGO, please take them to %HIMHER_NPC.  "
       "Thievery of any of the items will result in your being labelled an outlaw.  "
@@ -893,7 +893,7 @@ resources:
       "I have more important concerns at this moment.  Leave my presence, as I have nothing to say to you."
    necrowarning2_failure_2 = "Subject: My letter\n"
       "You have failed your friends and the folk of Meridian for ages to come.  They are doomed to an "
-      "existence beseiged by dreadful malice and you choose not to give them a warning?  Your failure will "
+      "existence besieged by dreadful malice and you choose not to give them a warning?  Your failure will "
       "cost lives.  I hope you can live with that."
    necrowarning2_success_3 = "She listens not, but no matter.  She has been warned.  Thank you, brave soul.  "
       "Take this as your material reward for your service to the people of Meridian."
@@ -1150,7 +1150,7 @@ resources:
       "That could get expensive.  I wonder where he plans to get the money "
       "from."
    murder_jonas_m_5 = \
-      "Somone said that the Princess and Jonas have been becoming quite "
+      "Someone said that the Princess and Jonas have been becoming quite "
       "good friends lately.  Maybe she hired him to kill the Duke?  He is"
       "always looking to prove his fighting ability."
    murder_jonas_c_1 = \
@@ -1175,7 +1175,7 @@ resources:
       "Well, travellers have told me that they see Miriana dancing in the "
       "woods with a knife.  Where did she get a weapon?"
    murder_miriana_w_2 = \
-      "Somone said that Miriana once cut a spider in half with some strange "
+      "Someone said that Miriana once cut a spider in half with some strange "
       "magic.  The wound looked more like a weapon stroke than typical "
       "magical damage, they said."
    murder_miriana_w_3 = \
@@ -1183,7 +1183,7 @@ resources:
       "heard Miriana running through the woods screaming something about "
       "Faren and wanting her weapon back.  What could that mean?"
    murder_miriana_w_4 = \
-      "Somone said that Miriana knew the true power of the spell called "
+      "Someone said that Miriana knew the true power of the spell called "
       "'Nodeburst'.  I wonder what she does with all that power?"
    murder_miriana_w_5 = \
       "I once heard that the living trees used to cast their lightning "
@@ -1427,10 +1427,10 @@ resources:
             % (any of the guards questioned will refuse to speak about that night)
    murder_random_w_1 = \
       "Bah!  This whole thing is ridiculous.  The fact is the Duke just couldn't wait to start "
-      "the feast and Akardius is too embarassed to admit that his uncle ate himself to death."
+      "the feast and Akardius is too embarrassed to admit that his uncle ate himself to death."
    murder_random_c_1 = \
       "I heard that Akardius took the Duke's body to a healer, even though he was dead.  "
-      "I guess he was really desperate to save him."  % (Tie-in to Lady Aftyn dialoge.)
+      "I guess he was really desperate to save him."  % (Tie-in to Lady Aftyn dialogue.)
    murder_random_m_1 = \
       "Well, there have been a lot of rumors flying around about Maleval or the Princess or you name it.  "
       "Some fool probably even suspects me.  But I wouldn't be surprised if the Duke had some "
@@ -5795,7 +5795,7 @@ RecreateQuestNodes()
    {
       debug( "Error building QN #205" );
    }
-   % template #206 is brining in the Lute.
+   % template #206 is bringing in the Lute.
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS,
          #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &Lute, 1 ] ],
          #timelimit = 6 * 3600 )  % time limit is 6 hours

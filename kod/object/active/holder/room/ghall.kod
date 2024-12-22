@@ -156,7 +156,7 @@ properties:
 
    pbSecretDoorOpen = FALSE
 
-   % pbBetrayed = TRUE anytime a guild member is the conquerer.
+   % pbBetrayed = TRUE anytime a guild member is the conqueror.
    pbBetrayed = FALSE
 
    % If this is true, a single player took over the guild hall (he probably
@@ -826,7 +826,7 @@ messages:
       }
       else
       {
-         % The guild hall was conquered, but was unclaimed by the conquerers.
+         % The guild hall was conquered, but was unclaimed by the conquerors.
          % The guild hall is now available for anyone to rent again.
 
          if piStatus = STATUS_CONQUERED

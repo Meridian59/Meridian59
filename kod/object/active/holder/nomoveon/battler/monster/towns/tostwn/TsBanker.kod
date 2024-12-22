@@ -105,7 +105,7 @@ messages:
       {
          %Every so often, we want to declare the gem to be fake and delete.
          %Else we want to give them the money for it and delete the gem
-         %If they cant hold the money, we return the gems(return false)
+         %If they can't hold the money, we return the gems (return false)
          if Send(obj,@GetNumber)<4 
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,

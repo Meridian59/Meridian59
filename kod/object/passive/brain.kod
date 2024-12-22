@@ -751,7 +751,7 @@ messages:
       
       if oTarget <> $
       {	 
-        %% if either of them is targetting our master, that goes against them.
+        %% if either of them is targeting our master, that goes against them.
         if oTarget = oMaster		    { iHatred = (iHatred + 60); }
 
         %% if they are fighting us, that's a little less important

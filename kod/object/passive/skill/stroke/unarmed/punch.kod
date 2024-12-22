@@ -68,7 +68,7 @@ properties:
 messages:
 
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
-   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "The stroke may choose its own damage give or receive message.  Otherwise "
    "player.kod will just choose a default."
    {
        send(who,@msgsenduser,#message_rsc=vrPlayer_was_hit,
@@ -77,7 +77,7 @@ messages:
    }
 
    PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
-   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "The stroke may choose its own damage give or receive message.  Otherwise "
    "player.kod will offer the default 'You killed the whatever' message."
    {
       % Is this really necessary?  Can't we just use the messages defined in battler instead?

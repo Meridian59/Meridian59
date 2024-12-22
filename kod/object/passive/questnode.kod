@@ -236,7 +236,7 @@ messages:
    }
 
    SubstituteParms(saystring = $, NPC = $, him_her_npc = $, quester = $)
-   "Substitutes hint parameters into saystring; allowed values for parm type "
+   "Substitutes hint parameters into saystring; allowed values for param type "
    "are cargo, NPC, prize (TBD: deadline). "
    "Returns FALSE if the string is bugged, so we know not to say it."
    {
@@ -526,7 +526,7 @@ messages:
             if IsClass(pCargo,&NumberItem)
             {
                % give the player a fresh copy of NumberItems to avoid any
-               % object merging wierdness.
+               % object merging weirdness.
                Send(oQuester,@NewHold,
                     #what=Create(cItemClass,#number=iAmount));
             }

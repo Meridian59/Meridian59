@@ -29,7 +29,7 @@ resources:
    riijatemple_door3 = "~kThe Monk of Riija says, \"The inner cloister ~I~ris not for ~gyour ~bfeet ~Bto ~B~rtread~n~k.\""
    riijatemple_door4 = "~kThe Monk of Riija says, \"~b~BIt is forbidden ~r~Bfor you to ~gdescend into the ~I~kabyssal catacombs ~n~gbeneath the ~Btemple~n~k.\""
    riijatemple_door5 = "~kThe Monk of Riija says, \"~rIt would be best if you avoided ~b`Ithat`I~r door~n~k.\""
-   riijatemple_door6 = "~kThe Monk of Riija says, \"~BThat ~rdoor ~gleads ~bnowhere.  ~IThat is ~I~gnot to say ~kan empty ~rroom ~Bor ~B~ga blank wall ~rlies beyond it.  ~b`INowhere`I ~gis an infinate purgatory ~Bthat ~rswallows all that enter~n~k.\""
+   riijatemple_door6 = "~kThe Monk of Riija says, \"~BThat ~rdoor ~gleads ~bnowhere.  ~IThat is ~I~gnot to say ~kan empty ~rroom ~Bor ~B~ga blank wall ~rlies beyond it.  ~b`INowhere`I ~gis an infinite purgatory ~Bthat ~rswallows all that enter~n~k.\""
 
    riijatemple_sound = down2.wav
 
@@ -42,7 +42,7 @@ resources:
    riijadeadmessage1 = "Are you dead?"
    riijadeadmessage2 = "No, this isn't what death feels like..."
    riijadeadmessage3 = "it doesn't hurt so much."
-   riijadeadmessage4 = "No, thats not it, you don't know what happened..."
+   riijadeadmessage4 = "No, that's not it, you don't know what happened..."
    riijadeadmessage5 = "but.... you probably got very lucky."
 
    user_killed_bridge_faith = "### %s just hurled %sself from the cliffs of Riija to find a watery grave."

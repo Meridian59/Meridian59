@@ -4616,7 +4616,7 @@ messages:
 
    SystemRemoveFromChampionLists(oldChamp=$)
    {
-      % Should send to all Watchers, but unfortuantely there is no Watcher class.
+      % Should send to all Watchers, but unfortunately there is no Watcher class.
       % The "Goad" watcher was poorly written and doesn't even handle this method.
       Send(&TosWatcher, @removefromchampionlists, #oldChamp = oldChamp);
       return;
@@ -5329,7 +5329,7 @@ messages:
       % reset below to nil, is a list of two element lists.  The first element
       % is the IA_ or WA_ constant of the item attribute.  The second element
       % is a rough numerical chance (from 1 to 100) that this has of coming up.
-      % note that this is all dependant on what other numbers at this seed
+      % note that this is all dependent on what other numbers at this seed
       % level state.  For example, a line such as
       %
       %         [ 9,[[IA_TYPE1, 80],[IA_TYPE2,80],[IA_TYPE3,20],[IA_TYPE4,20]]]

@@ -407,7 +407,8 @@ messages:
 
    SetTertiaryState(state3=$)
    "NOT Defined for each individual enchantment."
-   "Since state3 is used for labling info it is best to do it in the superclass so that all enchantments can use it."
+   "Since state3 is used for labeling info, it is best to do it "
+   "in the superclass so that all enchantments can use it."
    {
       return state3;
    }
@@ -542,7 +543,7 @@ messages:
 
       %% Basic rule of thumb: an Item Att can increase the price of an item by
       %% 150%, 200%, or 250%.  Choose these values so that all items tend to 
-      %% have similiar prices, so you can't tell an item's value from them.
+      %% have similar prices, so you can't tell an item's value from them.
       %% Curses drop an item's price by 50%.
 
       %% piValue_modifier is in the form of a percentage (100, 150, 200, 250).  

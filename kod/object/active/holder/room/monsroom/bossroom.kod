@@ -159,7 +159,7 @@ messages:
    ResetBoss()
    {
       local i, oTempMonster, oTempTreasure;
-      % these are unecessary, but just to be safe...
+      % these are unnecessary, but just to be safe...
       piWaitingToStartBossResetTimer = FALSE;
       piReadyToResetBoss = FALSE;
       

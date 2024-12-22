@@ -434,7 +434,7 @@ resources:
       "city of Barloque there is a clerk named Caramo which handles the "
       "election of the position of Justicar.  The Justicar pardons those that "
       "have been flagged as outlaws and murderers.  Unless you wish to see "
-      "such villians get pardons, it is important to be active in voting."
+      "such villains get pardons, it is important to be active in voting."
       "\n\n"
       "I must warn you that engaging in lethal combat against other players "
       "may soil your good name.  If you strike an innocent, or cast "
@@ -463,7 +463,7 @@ resources:
       "\n\n"
       "%s"
       "\n\n"
-      "Finally, some last bits of advice as I depart.  Do not dispair if "
+      "Finally, some last bits of advice as I depart.  Do not despair if "
       "you are sent to the underworld by some monster or even another "
       "player.  Death is part of the cycle, and learning to recover from "
       "death is important.  Put some items away in the vault in Barloque for "
@@ -561,7 +561,7 @@ resources:
       "\n\n"
       "Lastly, if you wish to leave this land for a bit, merely log off.  "
       "When you log on, you will reappear where you left.  However for "
-      "reasons of saftey, it is highly recommended that you do so in a safe "
+      "reasons of safety, it is highly recommended that you do so in a safe "
       "place, such as an inn.  If you log off outside an inn, you may take "
       "losses similar to death as your soul did not leave the land "
       "completely when you logged off."
@@ -804,7 +804,7 @@ properties:
    piMax_Mana = 20
    piMana = 20
 
-   % piKarma is measured in hundreths of karma units
+   % piKarma is measured in hundredths of karma units
    piKarma = 0
 
    % Percent stomach is full.
@@ -3486,8 +3486,8 @@ messages:
    }
 
    AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
-   "Will not let a person attack someone who isnt pkill_enabled."
-   "Wll not let a person who isnt pkill_enabled attack another person."
+   "Will not let a person attack someone who isn't pkill_enabled."
+   "Will not let a person who isn't pkill_enabled attack another person."
    {
       local oRoom;
       
@@ -4001,7 +4001,7 @@ messages:
 
       oFinalTarget = oTarget;
 
-      % Strange case of us targetting something that someone else is holding.
+      % Strange case of us targeting something that someone else is holding.
       %  This cannot be owned by us, since we already checked that.
       if oTargetOwner <> $
          AND IsClass(oTargetOwner,&Battler)
@@ -4051,7 +4051,7 @@ messages:
          %  something behind you.  "Behind you" is defined as behind the line defined
          %  by the cardinal directions that are the closest to being perpendicular to the
          %  player's direction vector.  For example, if you're facing mostly east, then
-         %  the cardinal direction direction line runs north/south; in essense, anything
+         %  the cardinal direction direction line runs north/south; in essence, anything
          %  that is further west than you is "behind" you.  The more interesting cases
          %  are when the player is facing one of the corner directions.  We calculate
          %  the equation of the line using the point-slope formula and determine which
@@ -4661,7 +4661,7 @@ messages:
 
    GetWeaponSwingBonus()
    {
-      % Separate out the number of groups of swings (the bonus) fromt he proficiency number.
+      % Separate out the number of groups of swings (the bonus) from the proficiency number.
       return piWeaponInfo/1000;
    }
 
@@ -5704,7 +5704,7 @@ messages:
    }
 
    NewLight()
-   "Call this everytime player light is changed."
+   "Call this every time player light is changed."
    {      
       Send(self,@SourceLightChanged);
       
@@ -5756,7 +5756,7 @@ messages:
       %           OOOOOOOOOOOOOO......             (. is space to max)
       %     -->   OOOOOOOOOO......
       %     which could result in death!
-      %     the behavior could be made assymetrical,
+      %     the behavior could be made asymmetrical,
       %           OOOOOOOOOOOOOO......
       %     -->   OOOOOOOOOOOOOO..
       %     but what about this case?
@@ -5765,7 +5765,7 @@ messages:
       %     the left is obviously abusable - compound it with the first gain above,
       %     and by putting on and removing a circlet we gain health!
       %     the right might be ok, and is closest to the current scheme,
-      %     but this introduces even more assymmetry and thus makes me nervous.
+      %     but this introduces even more asymmetry and thus makes me nervous.
       %     so my first pass is to do nothing to health here:
       %
       %if piHealth > piMax_health { piHealth = piMax_health; }
@@ -6255,7 +6255,7 @@ messages:
    }
 
    AddKarma(amount = 0)
-   "Adds argument (which must be in hundreths of karma units) to karma"
+   "Adds argument (which must be in hundredths of karma units) to karma"
    {
       piKarma = piKarma + amount;
       Send(self,@NewKarma);
@@ -7886,7 +7886,7 @@ messages:
 
          Post(self,@EvaluatePKStatus);
 
-         % Let SoldierShields know we died.  It handles itself as apropriate.
+         % Let SoldierShields know we died.  It handles itself as appropriate.
          oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
          if oSoldierShield <> $
          {

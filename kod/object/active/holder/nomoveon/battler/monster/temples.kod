@@ -42,7 +42,7 @@ messages:
    }
 
    Constructor()
-   "We start a permanent quest for becomming a disciple"
+   "We start a permanent quest for becoming a disciple"
    {
       Send(self,@InitPermQuest);
       

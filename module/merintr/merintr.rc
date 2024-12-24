@@ -130,9 +130,9 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,132,238,50,14
     CONTROL         "",IDC_GUILDLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,16,238,162,WS_EX_CLIENTEDGE
     LTEXT           "Escolha a sala da guilda:",IDC_STATIC,6,4,89,8
-    LTEXT           "Senha da guilda:",IDC_STATIC,6,219,51,8
-    EDITTEXT        IDC_GUILD_PASSWORD,60,217,94,12,ES_AUTOHSCROLL
-    LTEXT           "A senha protege partes da sala da guilda contra acesso não autorizado.",IDC_STATIC,6,204,210,8
+    LTEXT           "Senha da guilda:",IDC_STATIC,6,219,71,8
+    EDITTEXT        IDC_GUILD_PASSWORD,80,217,94,12,ES_AUTOHSCROLL
+    LTEXT           "A senha protege partes da sala da guilda contra acesso não autorizado.",IDC_STATIC,6,204,230,8
     LTEXT           "Sala da guilda selecionada:",IDC_STATIC,6,186,80,8
     LTEXT           "",IDC_GUILDNAME,89,185,129,11,SS_SUNKEN
 END

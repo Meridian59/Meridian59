@@ -11,7 +11,7 @@ ende
 feld
 iif # NPC speech sometimes uses ~i text flag to italicize text
 kno
-lightnin # lighting resource name
+lightnin # lightnin.bgf resource name
 nd
 NEast
 noth

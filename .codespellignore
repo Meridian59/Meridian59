@@ -1,33 +1,48 @@
-# The following words are intentionally added to the ignore list because they are valid Meridian 59 codebase words.
-asssign # AssassinSign class used in Assassin's game
+asssign
+# AssassinSign class used in Assassin's game
 commend
-crate # triggers "create" correction suggestion
-crystalize # Jala spell name "crystalize mana"
+crate
+# triggers "create" correction suggestion
+crystalize
+# Jala spell name "crystalize mana"
 crystalized
 crystalizing
-cunt # triggers "count" correction suggestion, used by plNaughtyWords list in system.kod
-dispell # Kraanan spell name
+cunt
+# triggers "count" correction suggestion, used by plNaughtyWords list in system.kod
+dispell
+# Kraanan spell name
 ende
 feld
-iif # NPC speech sometimes uses ~i text flag to italicize text
+iif
+# NPC speech sometimes uses ~i text flag to italicize text
 kno
-lightnin # lightnin.bgf resource name
+lightnin
+# lightnin.bgf resource name
 nd
 NEast
 noth
-ore # triggers "or" correction suggestion
-posession # player object session variable name, used for sending server data to players
+ore
+# triggers "or" correction suggestion
+posession
+# player object session variable name, used for sending server data to players
 singe
-somethin # resource name for generic object
+somethin
+# resource name for generic object
 stings
-te # triggers "be", "we" spelling suggestions, speech particle used in Ko'catan island language 
-tought # tough treasure class
-tranport # DM resource sound effect ("tranport.wav")
-transcendant # item attribute property and trigger word
+te
+# triggers "be", "we" spelling suggestions, speech particle used in Ko'catan island language 
+tought
+# tough treasure class
+tranport
+# DM resource sound effect ("tranport.wav")
+transcendant
+# item attribute property and trigger word
 tread
-trestype # treasure type class
+trestype
+# treasure type class
 vie
-villify # admin spell name
+villify
+# admin spell name
 wast
 wee
 wither

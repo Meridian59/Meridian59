@@ -1,3 +1,9 @@
+# The following words are intentionally added to the ignore list because they are valid Meridian 59 codebase words.
+# Meridian 59 is a game that includes unique terms, such as spell names, which may trigger spellcheckers.
+# Examples include "Crystalize Mana" (a specific spell) and "Villify" (another spell). These terms are correct
+# within the game's context and should not be flagged as misspellings.
+# Other words may be included such as "crate" which is not a misspelling, but it is close enough to common 
+# misspellings of "create" that it will trigger Codespell to suggest review.
 asssign
 commend
 crate

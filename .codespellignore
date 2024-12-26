@@ -1,48 +1,49 @@
-asssign
+# This file is an ignore word list used by Codespell in the GitHub Actions Pipeline
 # AssassinSign class used in Assassin's game
+asssign
 commend
-crate
 # triggers "create" correction suggestion
-crystalize
+crate
 # Jala spell name "crystalize mana"
+crystalize
 crystalized
 crystalizing
-cunt
 # triggers "count" correction suggestion, used by plNaughtyWords list in system.kod
-dispell
+cunt
 # Kraanan spell name
+dispell
 ende
 feld
-iif
 # NPC speech sometimes uses ~i text flag to italicize text
+iif
 kno
-lightnin
 # lightnin.bgf resource name
+lightnin
 nd
 NEast
 noth
-ore
 # triggers "or" correction suggestion
-posession
+ore
 # player object session variable name, used for sending server data to players
+posession
 singe
-somethin
 # resource name for generic object
+somethin
 stings
-te
 # triggers "be", "we" spelling suggestions, speech particle used in Ko'catan island language 
-tought
+te
 # tough treasure class
-tranport
+tought
 # DM resource sound effect ("tranport.wav")
-transcendant
+tranport
 # item attribute property and trigger word
+transcendant
 tread
-trestype
 # treasure type class
+trestype
 vie
-villify
 # admin spell name
+villify
 wast
 wee
 wither

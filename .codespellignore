@@ -1,0 +1,49 @@
+# This file is an ignore word list used by Codespell in the GitHub Actions Pipeline
+# AssassinSign class used in Assassin's game
+asssign
+commend
+# triggers "create" correction suggestion
+crate
+# Jala spell name "crystalize mana"
+crystalize
+crystalized
+crystalizing
+# triggers "count" correction suggestion, used by plNaughtyWords list in system.kod
+cunt
+# Kraanan spell name
+dispell
+ende
+feld
+# NPC speech sometimes uses ~i text flag to italicize text
+iif
+kno
+# lightnin.bgf resource name
+lightnin
+nd
+NEast
+noth
+# triggers "or" correction suggestion
+ore
+# player object session variable name, used for sending server data to players
+posession
+singe
+# resource name for generic object
+somethin
+stings
+# triggers "be", "we" spelling suggestions, speech particle used in Ko'catan island language 
+te
+# tough treasure class
+tought
+# DM resource sound effect ("tranport.wav")
+tranport
+# item attribute property and trigger word
+transcendant
+tread
+# treasure type class
+trestype
+vie
+# admin spell name
+villify
+wast
+wee
+wither

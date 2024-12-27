@@ -138,6 +138,8 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		static const float u[4] = { epsilon, 1.0f - epsilon, 1.0f - epsilon, epsilon };
 		static const float v[4] = { epsilon, epsilon, 1.0f - epsilon, 1.0f - epsilon };
 
+		// Normally, you'd assign these in a predictable (e.g., top-left to bottom-right) order. 
+		// Here, we intentionally swap certain indices to mirror the texture along the X-axis.
 		pChunk->st0[0].s = u[1];
 		pChunk->st0[0].t = v[0];
 		pChunk->st0[1].s = u[0];

@@ -61,11 +61,19 @@ static bool D3DObjectLightingCalc(
 	custom_bgra* bgra, 
 	DWORD flags, 
 	bool fogEnabled,
-	const player_info* player,
 	const LightAndTextureParams& lightAndTextureParams);
 
 static int getKerningAmount(font_3d* pFont, char* str, char* ptr);
 static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area, const PlayerViewParams& playerViewParams);
+
+// Functions
+
+static bool IsInvisibleEffect(int flags) {
+	// OF_DITHERINVIS is not treated as invisible in the hardware renderer, instead
+	// it is treated as grey scale and translucent (such as logoff ghosts). 
+	// Without using OF_DITHERINVIS below it would be incorrectly treated as invisible.
+	return (flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
+}
 
 // Update the pChunks animation values as a function of time.
 static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
@@ -138,10 +146,13 @@ long D3DRenderObjects(
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 
-	// Render world objects
+	// Render opaque objects
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, false);
 	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, false);
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, false);
+
+	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	// Render translucent objects
 	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS);
@@ -176,16 +187,17 @@ long D3DRenderObjects(
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2, D3DPT_TRIANGLESTRIP);
 
-	room_contents_node* pRNode = GetRoomObjectById(playerViewParams.player->id);
+	const auto* player = GetPlayerInfo();
+	room_contents_node* pRNode = GetRoomObjectById(player->id);
 	if (pRNode != nullptr)
 	{
 		// Rendering of Personal Equipment (Shields, weapons etc)
-		if ((GetDrawingEffect(pRNode->obj.flags) & OF_INVISIBLE) == OF_INVISIBLE)
+		if (IsInvisibleEffect(pRNode->obj.flags))
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
-			D3DRenderPoolReset(objectsRenderParams.renderPool, D3DMaterialObjectInvisiblePool);
+			D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
 			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 			D3DRenderPlayerOverlaysDraw(objectsRenderParams, playerViewParams, lightAndTextureParams);
 			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 2);
@@ -244,14 +256,15 @@ void D3DRenderNamesDraw3D(
 
 		room_contents_node* pRNode = (room_contents_node*)list->data;
 
-		if (pRNode->obj.id == playerViewParams.player->id)
+		const auto* player = GetPlayerInfo();
+		if (pRNode->obj.id == player->id)
 			continue;
 
-		if (!(pRNode->obj.flags & OF_PLAYER) || (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE))
+		if (!(pRNode->obj.flags & OF_PLAYER) || IsInvisibleEffect(pRNode->obj.flags))
 			continue;
 
-		vector.x = pRNode->motion.x - playerViewParams.player->x;
-		vector.y = pRNode->motion.y - playerViewParams.player->y;
+		vector.x = pRNode->motion.x - player->x;
+		vector.y = pRNode->motion.y - player->y;
 
 		float distance = sqrtf((vector.x * vector.x) + (vector.y * vector.y));
 		if (distance <= 0)
@@ -321,6 +334,8 @@ void D3DRenderNamesDraw3D(
 
 		COLORREF fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
 
+		const auto& base_palette = getBasePalette();
+
 		// Some names never grow darker, they use PALETTEINDEX().
 		if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))
 		{
@@ -328,7 +343,7 @@ void D3DRenderNamesDraw3D(
 			//     but not here for unknown reason
 			//     so we convert to our base_palette[] PALETTERGB() type.
 			//
-			color = fontTextureParams.basePalette[LOBYTE(LOWORD(fg_color))];
+			color = base_palette[LOBYTE(LOWORD(fg_color))];
 		}
 		else
 		{
@@ -341,8 +356,8 @@ void D3DRenderNamesDraw3D(
 			{
 				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			}
-			color = fontTextureParams.basePalette[palette[GetClosestPaletteIndex(fg_color)]];
-			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
+			color = base_palette[palette[GetClosestPaletteIndex(fg_color)]];
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 			glyph_scale = max(bgra.b, bgra.g);
 			glyph_scale = max(glyph_scale, bgra.r);
@@ -534,7 +549,7 @@ void D3DRenderOverlaysDraw(
 	d3d_render_packet_new* pPacket = NULL;
 	d3d_render_chunk_new* pChunk = NULL;
 
-	player_info* player = playerViewParams.player;
+	const auto* player = GetPlayerInfo();;
 
 	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
 	if (angleHeading >= 4096)
@@ -568,14 +583,16 @@ void D3DRenderOverlaysDraw(
 		if (pRNode->obj.id == player->id)
 			continue;
 
+		// Check for invisible objects
+		bool objInvisible = IsInvisibleEffect(pRNode->obj.flags);
 		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE)
+			if (!objInvisible)
 				continue;
 		}
 		else
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (objInvisible)
 				continue;
 		}
 
@@ -639,7 +656,7 @@ void D3DRenderOverlaysDraw(
 
 			for (list2 = *pRNode->obj.overlays; list2 != NULL; list2 = list2->next)
 			{
-				bHotspot = true;
+				bHotspot = false;
 
 				pOverlay = (Overlay*)list2->data;
 
@@ -848,7 +865,7 @@ void D3DRenderOverlaysDraw(
 
 					zBias++;
 
-					if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
+					if (IsInvisibleEffect(pRNode->obj.flags))
 					{
 						pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 						pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -921,7 +938,7 @@ void D3DRenderOverlaysDraw(
 					else
 					{
 						if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
-							objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams))
+							objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
 					}
 
@@ -1039,7 +1056,7 @@ void D3DRenderOverlaysDraw(
 						center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 						center.z = topLeft.z;
 
-						if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
+						if (IsInvisibleEffect(flags))
 						{
 							pChunk->st1[0].s = D3DRENDER_CLIP_TO_SCREEN_X(bottomRight.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[0].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
@@ -1109,8 +1126,9 @@ void D3DRenderOverlaysDraw(
 						}
 					}
 
-					if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID() &&
-						(GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE))
+					if (pRNode->obj.id != INVALID_ID 
+						&& pRNode->obj.id == GetUserTargetID() 
+						&& !IsInvisibleEffect(pRNode->obj.flags))
 					{
 						pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDibOv, xLat0, xLat1,
 							GetDrawingEffect(pRNode->obj.flags));
@@ -1132,7 +1150,7 @@ void D3DRenderOverlaysDraw(
 
 						MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
-						if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
+						if (IsInvisibleEffect(pRNode->obj.flags))
 						{
 							pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
 						}
@@ -1141,8 +1159,8 @@ void D3DRenderOverlaysDraw(
 							pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 						}
 
-						D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, 
-							playerViewParams.player, lightAndTextureParams);
+						D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
+							objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 						for (i = 0; i < 4; i++)
 						{
@@ -1286,7 +1304,9 @@ void D3DRenderObjectsDraw(
 		if (pRNode == NULL)
 			continue;
 
-		if (pRNode->obj.id == playerViewParams.player->id)
+		const auto* player = GetPlayerInfo();
+
+		if (pRNode->obj.id == player->id)
 			continue;
 
 		if (processedIds.find(pRNode->obj.id) != processedIds.end())
@@ -1294,7 +1314,7 @@ void D3DRenderObjectsDraw(
 		processedIds.insert(pRNode->obj.id);
 
 		// Check for invisible objects
-		bool objInvisible = (pRNode->obj.flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
+		bool objInvisible = IsInvisibleEffect(pRNode->obj.flags);
 		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
 		{
 			if (!objInvisible)
@@ -1354,7 +1374,7 @@ void D3DRenderObjectsDraw(
 
 		pChunk->flags = pRNode->obj.flags;
 
-		if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
+		if (IsInvisibleEffect(pRNode->obj.flags))
 		{
 			pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 			pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -1437,17 +1457,13 @@ void D3DRenderObjectsDraw(
 		// For everything else we start with the deault z bias which positions them behind these more complex arrangements.
 		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust != 0) ? ZBIAS_BASE : ZBIAS_DEFAULT;
 
-		if (pRNode->obj.flags & OF_GETTABLE)
-		{
-			// Typical items such as reagents, keys, etc. are drawn at the default depth
-			// offset by the number of items already drawn at this location.
 
-			// Combine objects x and y position into a single int64 for the map key.
-			int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
+		// All objects are drawn at the default depth offset by the number of items already drawn at this location.
+		// Combine objects x and y position into a single int64 for the map key.
+		int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
 
-			// Increment the counter at the appropriate bin and assign the appropriate zBias.
-			pChunk->zBias += (BYTE)depth_adjustment_map[key]++;
-		}
+		// Increment the counter at the appropriate bin and assign the appropriate zBias.
+		pChunk->zBias += (BYTE)depth_adjustment_map[key]++;
 
 		lastDistance = 0;
 
@@ -1459,7 +1475,7 @@ void D3DRenderObjectsDraw(
 		else
 		{
 			if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
-				objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams))
+				objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
 		}
 
@@ -1511,7 +1527,7 @@ void D3DRenderObjectsDraw(
 		pChunk->indices[3] = 3;
 
 		// now add object to visible object list
-		if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != playerViewParams.player->id))
+		if ((pRNode->obj.id != INVALID_ID) && (pRNode->obj.id != player->id))
 		{
 			D3DMATRIX	localToScreen, rot, mat;
 			custom_xyzw	topLeft, topRight, bottomLeft, bottomRight, center;
@@ -1519,8 +1535,7 @@ void D3DRenderObjectsDraw(
 			int			w, h;
 			int			tempLeft, tempRight, tempTop, tempBottom;
 			int			distX, distY, distance;
-
-			if (pRNode->obj.id == playerViewParams.player->id)
+			if (pRNode->obj.id == player->id)
 				break;
 
 			w = playerViewParams.d3dRect.right - playerViewParams.d3dRect.left;
@@ -1583,7 +1598,7 @@ void D3DRenderObjectsDraw(
 			center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 			center.z = topLeft.z;
 
-			if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
+			if (IsInvisibleEffect(pRNode->obj.flags))
 			{
 				pChunk->st1[0].s = D3DRENDER_CLIP_TO_SCREEN_X(bottomRight.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[0].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
@@ -1616,8 +1631,8 @@ void D3DRenderObjectsDraw(
 				tempTop = (topLeft.y * -h / 2) + (h / 2);
 				tempBottom = (bottomRight.y * -h / 2) + (h / 2);
 
-				distX = pRNode->motion.x - playerViewParams.player->x;
-				distY = pRNode->motion.y - playerViewParams.player->y;
+				distX = pRNode->motion.x - player->x;
+				distY = pRNode->motion.y - player->y;
 
 				distance = DistanceGet(distX, distY);
 
@@ -1643,8 +1658,9 @@ void D3DRenderObjectsDraw(
 			}
 		}
 
-		if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID() &&
-			(GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE))
+		if (pRNode->obj.id != INVALID_ID 
+			&& pRNode->obj.id == GetUserTargetID()
+			&& !IsInvisibleEffect(pRNode->obj.flags))
 		{
 			pPacket = D3DRenderPacketFindMatch(objectsRenderParams.renderPool, NULL, pDib, xLat0, xLat1,
 				GetDrawingEffect(pRNode->obj.flags));
@@ -1665,7 +1681,7 @@ void D3DRenderObjectsDraw(
 
 			MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
-			if ((flags & OF_INVISIBLE) == OF_INVISIBLE)
+			if (IsInvisibleEffect(pRNode->obj.flags))
 			{
 				pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
 			}
@@ -1674,8 +1690,7 @@ void D3DRenderObjectsDraw(
 				pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 			}
 
-			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, 
-				playerViewParams.player, lightAndTextureParams);
+			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1876,7 +1891,6 @@ void D3DRenderPlayerOverlaysDraw(
 	int i, count;
 	object_node* obj;
 	list_type overlays;
-	int flags;
 
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
@@ -1894,17 +1908,14 @@ void D3DRenderPlayerOverlaysDraw(
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
 	// Get player's object flags for special drawing effects
-	pRNode = GetRoomObjectById(playerViewParams.player->id);
-	if (pRNode == NULL)
-		flags = 0;
-	else
-		flags = pRNode->obj.flags;
+	const auto* player = GetPlayerInfo();
+	pRNode = GetRoomObjectById(player->id);
 
 	for (i = 0; i < NUM_PLAYER_OVERLAYS; i++)
 	{
 		BYTE	xLat0, xLat1;
 
-		PlayerOverlay* pOverlay = &playerViewParams.player->poverlays[i];
+		const PlayerOverlay* pOverlay = &player->poverlays[i];
 
 		if (pOverlay->obj == NULL || pOverlay->hotspot == 0)
 			continue;
@@ -1953,7 +1964,7 @@ void D3DRenderPlayerOverlaysDraw(
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
 
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+		if (IsInvisibleEffect(pRNode->obj.flags))
 		{
 			pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 			pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -1976,7 +1987,7 @@ void D3DRenderPlayerOverlaysDraw(
 		else
 		{
 			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
-				objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
+				objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 		}
 
 		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -1997,7 +2008,7 @@ void D3DRenderPlayerOverlaysDraw(
 
 		for (count = 0; count < 4; count++)
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (IsInvisibleEffect(pRNode->obj.flags))
 			{
 				pChunk->st1[count].s = pChunk->xyz[count].x / gScreenWidth;
 				pChunk->st1[count].t = pChunk->xyz[count].z / gScreenHeight;
@@ -2073,7 +2084,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 	screenH = (float)(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top) / (float)playerViewParams.viewportHeight;
 
 	// Get player's object flags for special drawing effects
-	pRNode = GetRoomObjectById(playerViewParams.player->id);
+	const auto* player = GetPlayerInfo();
+	pRNode = GetRoomObjectById(player->id);
 
 	if (pRNode == NULL)
 		flags = 0;
@@ -2196,7 +2208,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 			pChunk->xLat0 = xLat0;
 			pChunk->xLat1 = xLat1;
 
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (IsInvisibleEffect(pRNode->obj.flags))
 			{
 				pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 				pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -2218,7 +2230,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 			}
 			else
 			{
-				D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, playerViewParams.player, lightAndTextureParams);
+				D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 			}
 
 			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -2234,7 +2246,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 
 			for (i = 0; i < 4; i++)
 			{
-				if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+				if (IsInvisibleEffect(pRNode->obj.flags))
 				{
 					pChunk->st1[i].s = xyz[i].x / gScreenWidth;
 					pChunk->st1[i].t = xyz[i].z / gScreenHeight;
@@ -2285,7 +2297,6 @@ bool D3DObjectLightingCalc(
 	custom_bgra* bgra, 
 	DWORD flags, 
 	bool fogEnabled,
-	const player_info* player,
 	const LightAndTextureParams& lightAndTextureParams)
 {
 	int			light, intDistance, numLights;
@@ -2346,6 +2357,8 @@ bool D3DObjectLightingCalc(
 
 	if (light <= 127)
 		bFogDisable = true;
+
+	const auto* player = GetPlayerInfo();
 
 	distX = pRNode->motion.x - player->x;
 	distY = pRNode->motion.y - player->y;

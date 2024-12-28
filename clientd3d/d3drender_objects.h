@@ -15,8 +15,6 @@
 
 struct PlayerViewParams
 {
-    // Player information
-    player_info* player;
 
     // Screen dimensions
     int screenWidth;
@@ -30,14 +28,12 @@ struct PlayerViewParams
     RECT d3dRect;
 
     PlayerViewParams(
-        player_info* playerParam,
         int screenWidthParam,
         int screenHeightParam,
         int viewportWidthParam,
         int viewportHeightParam,
         RECT d3dRectParam)
-        : player(playerParam),
-          screenWidth(screenWidthParam),
+        : screenWidth(screenWidthParam),
           screenHeight(screenHeightParam),
           viewportWidth(viewportWidthParam),
           viewportHeight(viewportHeightParam),
@@ -48,15 +44,12 @@ struct PlayerViewParams
 struct FontTextureParams
 {
     font_3d* font;
-    Color* basePalette;
     int smallTextureSize;
 
     FontTextureParams(
         font_3d* fontParam,
-        Color* basePaletteParam,
         int smallTextureSizeParam)
         : font(fontParam),
-          basePalette(basePaletteParam),
           smallTextureSize(smallTextureSizeParam)
     {}
 };
@@ -118,7 +111,7 @@ struct ObjectsRenderParams {
 
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
 	LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisible;
-	d3d_driver_profile driverProfile;
+	const d3d_driver_profile& driverProfile;
 
 	d3d_render_pool_new* renderPool;
 	d3d_render_cache_system* cacheSystem;
@@ -132,7 +125,7 @@ struct ObjectsRenderParams {
     ObjectsRenderParams(
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
         LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationInvisibleParam,
-        d3d_driver_profile driverProfileParam,
+        const d3d_driver_profile& driverProfileParam,
         d3d_render_pool_new* renderPoolParam,
         d3d_render_cache_system* cacheSystemParam,
         D3DMATRIX viewParam,

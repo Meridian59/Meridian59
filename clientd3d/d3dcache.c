@@ -7,7 +7,6 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-int	gNumCalls;
 extern int						gNumDPCalls;
 extern d3d_render_cache			gTempCache;
 

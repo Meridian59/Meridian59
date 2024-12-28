@@ -32,7 +32,7 @@ resources:
    Brambles_damage2 = \
       "As you walk through the patch of bramble, they scratch at that hard to "
       "reach itch for you."
-   Brambles_damage3 = "Thats okay, you didn't need that piece of skin anyway."
+   Brambles_damage3 = "That's okay, you didn't need that piece of skin anyway."
    Brambles_damage4 = \
       "You just about lose your pants as the patch of bramble grabs at them."
    Brambles_damage5 = "Ow ow ow ow ow ow ow..."

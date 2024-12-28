@@ -96,7 +96,7 @@ properties:
    % Delays sending winners to the shrine - for suspense.
    ptGoToShrineTimer = $  
 
-   % Keeps track of whether or not a given start possition is occupied.
+   % Keeps track of whether or not a given start position is occupied.
    plOccupied = $
 
    poShrine = $

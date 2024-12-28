@@ -28,7 +28,7 @@ constants:
    GOOD_COLOR = 82
    BAD_COLOR =  83
 
-   % How much wait between suicides?  Curently 10 minutes.
+   % How much wait between suicides?  Currently 10 minutes.
    SUICIDE_REPEAT_TIME = 600 
 
    % What's the length of the Posting timer check? Currently 30 mins.
@@ -2182,6 +2182,8 @@ messages:
 
       Send(self,@SendUserAllWindowOverlays);
 
+      Send(self,@SendBackgroundObjects);
+
       return;
    }
 
@@ -2216,12 +2218,7 @@ messages:
 
    UserLogonHook()
    {
-      local i;
-      
-      for i in Send(SYS,@GetBackgroundObjects)
-      {
-         Send(i,@AddBackgroundObject,#who=self);
-      }
+      Send(self,@SendBackgroundObjects);
 
       Send(self,@LoadMailNews);
 
@@ -2230,6 +2227,18 @@ messages:
       piMovesCounter = 0;
 
       propagate;
+   }
+
+   SendBackgroundObjects()
+   {
+      local i;
+
+      for i in Send(SYS,@GetBackgroundObjects)
+      {
+         Send(i,@AddBackgroundObject,#who=self);
+      }
+
+      return;
    }
 
    LoadMailNews()
@@ -5769,7 +5778,7 @@ messages:
       {
         if i < 1
         {
-           Debug("Bad withdrawl quantity", i, "from user", self);
+           Debug("Bad withdrawal quantity", i, "from user", self);
            return;
         }
       }

@@ -74,7 +74,7 @@ messages:
       % Gotta be an item.
       % Can't be something we wanna keep out of vaults.
       % Can't be money.
-      % Can't be a gift, unless we're allowing it for some wierd reason....
+      % Can't be a gift, unless we're allowing it for some weird reason....
       if (NOT isClass(obj,&Item))
          OR (NOT Send(obj,@CanBeStoredInVault))
          OR isClass(obj,&Money)

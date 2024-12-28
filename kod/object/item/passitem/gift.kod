@@ -24,6 +24,7 @@ resources:
       "your patronage."
 
    gift_open = "With unbridled delight, you open the gift to find %s%s inside!"
+   gift_open_wav = unwrap.wav
 
    gift_desc_1 = "This is a neatly wrapped present.  A tag attached to the bow reads, 'From "
    gift_desc_2 = " with love'."
@@ -177,6 +178,8 @@ messages:
 
       send(poOwner,@MsgSendUser,#message_rsc=gift_open,
            #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
+      
+      Send(what,@WaveSendUser,#wave_rsc=gift_open_wav);
 
       oldOwner = poOwner;
       send(poOwner,@LeaveHold,#what=self);
@@ -184,7 +187,7 @@ messages:
       send(oldOwner,@NewHold,#what=poContents);
 
       % Note that this RecalcBulkAndWeight is entirely superfluous,
-      %  but we'll leave it here as a safeguard against future wierdness.
+      %  but we'll leave it here as a safeguard against future weirdness.
       send(oldOwner,@RecalcBulkAndWeight);
       if send(self,@HasAttribute,#ItemAtt=IA_BONDED)
       {

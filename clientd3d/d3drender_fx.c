@@ -9,24 +9,7 @@
 
 // Variables
 
-static particle_system gParticleSystem;
-
-extern custom_xyz playerDeltaPos;
-extern LPDIRECT3DVERTEXDECLARATION9 decl0dc;
-extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-
-extern d3d_render_pool_new gParticlePool;
-extern d3d_render_cache_system gParticleCacheSystem;
-extern d3d_render_cache_system	gObjectCacheSystem;
-extern d3d_render_pool_new gObjectPool;
-extern unsigned int gFrame;
-extern LPDIRECT3DTEXTURE9 gpBackBufferTex[16];
-extern LPDIRECT3DTEXTURE9 gpBackBufferTexFull;
-extern int gFullTextureSize;
-extern int gSmallTextureSize;
-extern d3d_render_cache_system gEffectCacheSystem;
-extern d3d_render_pool_new gEffectPool;
-extern D3DMATRIX mat;
+static particle_system particleSystem;
 
 // Interfaces
 
@@ -46,25 +29,25 @@ void D3DFxInit()
 * Updates and renders all active particle emitters, including the sandstorm effect, 
 * in the current frame.
 */
-void D3DRenderParticles()
+void D3DRenderParticles(const ParticleSystemStructure& pss)
 {
 	list_type	list;
 	emitter		*pEmitter;
 
-	for (list = gParticleSystem.emitterList; list != NULL; list = list->next)
+	for (list = particleSystem.emitterList; list != NULL; list = list->next)
 	{
 		pEmitter = (emitter *)list->data;
 
 		if (pEmitter)
-			D3DParticleEmitterUpdate(pEmitter, playerDeltaPos.x, playerDeltaPos.y, playerDeltaPos.z);
+			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
 	}
 
 	if (effects.sand)
 	{
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
 
-		D3DParticleSystemUpdate(&gParticleSystem, &gParticlePool, &gParticleCacheSystem);
+		D3DParticleSystemUpdate(&particleSystem, pss.particlePool, pss.particleCacheSystem);
 	}
 }
 
@@ -78,30 +61,30 @@ void SandstormInit(void)
 	static const int EMITTER_ENERGY = 40;
 	static const int EMITTER_HEIGHT = 0;
 
-	D3DParticleSystemReset(&gParticleSystem);
+	D3DParticleSystemReset(&particleSystem);
 	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		500.0f, 0, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
@@ -110,28 +93,28 @@ void SandstormInit(void)
 		1, 1024, 2);
 
 	// four corners, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		353.55f, -353.55f, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		-353.55f, -353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
@@ -140,28 +123,28 @@ void SandstormInit(void)
 		1, 1024, 2);
 
 	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
 		500.0f, 0.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
@@ -170,28 +153,28 @@ void SandstormInit(void)
 		1, 1024, 2);
 
 	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		500.0f, 0, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
@@ -200,28 +183,28 @@ void SandstormInit(void)
 		1, 1024, 2);
 
 	// four corners, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		353.55f, -353.55f, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		-353.55f, -353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
@@ -230,28 +213,28 @@ void SandstormInit(void)
 		1, 1024, 2);
 
 	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
 		500.0f, 0.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
-	D3DParticleEmitterInit(&gParticleSystem,
+	D3DParticleEmitterInit(&particleSystem,
 		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
@@ -264,14 +247,14 @@ void SandstormInit(void)
 * Applies post-render overlay effects such as alpha blending, screen flashes, and pain effects, 
 * and resets the rendering cache.
 */
-void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
+void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 {
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
-	D3DCacheSystemReset(&gObjectCacheSystem);
-	D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
+	D3DCacheSystemReset(fxrss.objectCacheSystem);
+	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
 
 	static DWORD			timeLastFrame = 0;
 	DWORD					timeCurrent, timeDelta;
@@ -407,7 +390,7 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 			effects.duration = 0;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
+		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
 		pChunk = D3DRenderChunkNew(pPacket);
@@ -424,14 +407,14 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
 		}
 
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
+		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -555,7 +538,7 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 			break;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
+		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
 		pChunk = D3DRenderChunkNew(pPacket);
@@ -572,14 +555,14 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
 		}
 
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
+		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -597,7 +580,7 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = max(whiteout, 200);
 
-		pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
+		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
 		pChunk = D3DRenderChunkNew(pPacket);
@@ -614,14 +597,14 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteout);
 		}
 
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
+		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
@@ -638,7 +621,7 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 
 			pain = pain * 204 / 2000;
 
-			pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
+			pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 			if (NULL == pPacket)
 				return;
 			pChunk = D3DRenderChunkNew(pPacket);
@@ -655,14 +638,14 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, pain);
 			}
 
-			CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
-			CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-			CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight));
-			CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight));
+			CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+				D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+			CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+				D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+			CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+				D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+			CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+				D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
 
 			pChunk->indices[0] = 1;
 			pChunk->indices[1] = 2;
@@ -671,16 +654,16 @@ void D3DPostOverlayEffects(d3d_render_pool_new *pPool)
 		}
 	}
 
-	D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
-	D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DCacheFill(fxrss.objectCacheSystem, fxrss.objectPool, 1);
+	D3DCacheFlush(fxrss.objectCacheSystem, fxrss.objectPool, 1, D3DPT_TRIANGLESTRIP);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 }
 
 /**
-* Creates a blur and wave distortion effect using frame buffers, applying it to the current screen 
+* Creates a blur and wave distortion effects using frame buffers, applying it to the current screen 
 * using a series of textures.
 */
-void D3DFxBlurWaver()
+void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 {
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
@@ -688,9 +671,9 @@ void D3DFxBlurWaver()
 	static int				offset = 0;
 	static int				offsetDir = 1;
 
-	t = gFrame & 7;
+	t = fxRss.frame & 7;
 
-	if (gFrame & 63)
+	if (fxRss.frame & 63)
 	{
 		offset += offsetDir;
 
@@ -705,35 +688,35 @@ void D3DFxBlurWaver()
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
 
-	D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[t],
-		gSmallTextureSize, gSmallTextureSize);
+	D3DRenderFramebufferTextureCreate(fxRss.backBufferTexFull, fxRss.backBufferTex[t],
+		fxRss.smallTextureSize, fxRss.smallTextureSize);
 
-	D3DCacheSystemReset(&gEffectCacheSystem);
-	D3DRenderPoolReset(&gEffectPool, &D3DMaterialBlurPool);
+	D3DCacheSystemReset(fxRss.effectCacheSystem);
+	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);
 
 	for (i = 0; i <= 7; i++)
 	{
-		pPacket = D3DRenderPacketNew(&gEffectPool);
+		pPacket = D3DRenderPacketNew(fxRss.effectPool);
 		if (NULL == pPacket)
 			return;
 		pChunk = D3DRenderChunkNew(pPacket);
 		pPacket->pMaterialFctn = D3DMaterialBlurPacket;
 		pChunk->pMaterialFctn = D3DMaterialBlurChunk;
-		pPacket->pTexture = gpBackBufferTex[i];
+		pPacket->pTexture = fxRss.backBufferTex[i];
 		pChunk->numIndices = pChunk->numVertices = 4;
 		pChunk->numPrimitives = pChunk->numVertices - 2;
 		MatrixIdentity(&pChunk->xForm);
 
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(-offset, gScreenWidth),
-			0, D3DRENDER_SCREEN_TO_CLIP_Y(-offset, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(-offset, gScreenWidth),
-			0, D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight + offset, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth + offset, gScreenWidth),
-			0, D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight + offset, gScreenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth + offset, gScreenWidth),
-			0, D3DRENDER_SCREEN_TO_CLIP_Y(-offset, gScreenHeight));
+		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(-offset, fxRss.screenWidth),
+			0, D3DRENDER_SCREEN_TO_CLIP_Y(-offset, fxRss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(-offset, fxRss.screenWidth),
+			0, D3DRENDER_SCREEN_TO_CLIP_Y(fxRss.screenHeight + offset, fxRss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxRss.screenWidth + offset, fxRss.screenWidth),
+			0, D3DRENDER_SCREEN_TO_CLIP_Y(fxRss.screenHeight + offset, fxRss.screenHeight));
+		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxRss.screenWidth + offset, fxRss.screenWidth),
+			0, D3DRENDER_SCREEN_TO_CLIP_Y(-offset, fxRss.screenHeight));
 
 		CHUNK_ST0_SET(pChunk, 0, 0.0f, 0.0f);
 		CHUNK_ST0_SET(pChunk, 1, 0.0f, 1.0f);
@@ -751,17 +734,16 @@ void D3DFxBlurWaver()
 		CHUNK_INDEX_SET(pChunk, 3, 3);
 	}
 
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &fxRss.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &fxRss.transformMatrix);
+	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	D3DCacheFill(&gEffectCacheSystem, &gEffectPool, 1);
-	D3DCacheFlush(&gEffectCacheSystem, &gEffectPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DCacheFill(fxRss.effectCacheSystem, fxRss.effectPool, 1);
+	D3DCacheFlush(fxRss.effectCacheSystem, fxRss.effectPool, 1, D3DPT_TRIANGLESTRIP);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 }

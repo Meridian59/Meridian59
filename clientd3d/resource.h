@@ -237,6 +237,7 @@
 #define IDS_RARITY_GRADE_LEGENDARY      208
 #define IDS_RARITY_GRADE_UNIDENTIFIED   209
 #define IDS_RARITY_GRADE_CURSED         210
+#define IDS_NEED_STEAM_UPDATE           211
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001
 #define IDC_ITEMLIST                    1002

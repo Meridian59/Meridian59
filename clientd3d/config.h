@@ -149,6 +149,9 @@ M59EXPORT BOOL WriteConfigInt(char *section, char *key, int value, char *fname);
 void ConfigSetServerNameByNumber(int num);
 void ConfigSetSocketPortByNumber(int num);
 
+// Is this the Steam version of the client?  (e.g. this has its own update system)
+bool IsSteamVersion();
+  
 #define LIBRARY_NIL 0
 #define LIBRARY_MSS 1
 #define LIBRARY_MIX 2

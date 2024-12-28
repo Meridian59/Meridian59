@@ -156,8 +156,8 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 /**
 * Function to render the skybox with the current background.
 */
-void D3DRenderSkyBox(Draw3DParams* params, room_contents_node* pRNode, 
-	int angleHeading, int anglePitch, D3DMATRIX view, const SkyboxRenderParams& skyboxRenderParams)
+void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
+	const SkyboxRenderParams& skyboxRenderParams)
 {
 	// Set render states for skybox
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -193,10 +193,6 @@ void D3DRenderSkyBox(Draw3DParams* params, room_contents_node* pRNode,
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
-
-	// Restore alpha blending and alpha testing for subsequent rendering
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 
 	// restore the correct view matrix
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);

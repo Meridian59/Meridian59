@@ -175,13 +175,13 @@ INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
       kb = bytes / 1024;
       mb = kb / 1024;
       if ((int)info->num_files < 2)
-         sprintf(buffer,"There is one file %d bytes in size.",size);
+        snprintf(buffer, sizeof(buffer), "There is one file %d bytes in size.",size);
       else if (kb < 1.0)
-         sprintf(buffer,"There are %d files totaling %d bytes in size.",(int)info->num_files,size);
+        snprintf(buffer, sizeof(buffer), "There are %d files totaling %d bytes in size.",(int)info->num_files,size);
       else if (mb < 1.0)
-         sprintf(buffer,"There are %d files totaling %.1f Kb in size.",(int)info->num_files,kb);
+        snprintf(buffer, sizeof(buffer), "There are %d files totaling %.1f Kb in size.",(int)info->num_files,kb);
       else
-         sprintf(buffer,"There are %d files totaling %.1f Mb in size.",(int)info->num_files,mb);
+        snprintf(buffer, sizeof(buffer), "There are %d files totaling %.1f Mb in size.",(int)info->num_files,mb);
       SetWindowText(GetDlgItem(hDlg,IDC_SIZE_UPDATE),buffer);
       
       seconds = floor(bytes / 5600.0 + 10.0);
@@ -189,11 +189,11 @@ INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
       hours = minutes / 60.0;
       
       if (hours > 1.0)
-         sprintf(buffer,"Estimating %.1f hours with a 56k modem.",hours);
+         snprintf(buffer, sizeof(buffer), "Estimating %.1f hours with a 56k modem.",hours);
       else if (minutes > 1.0)
-         sprintf(buffer,"Estimating %.1f minutes with a 56k modem.",minutes);
+         snprintf(buffer, sizeof(buffer), "Estimating %.1f minutes with a 56k modem.",minutes);
       else 
-         sprintf(buffer,"Estimating %.0f seconds with a 56k modem.",seconds);
+         snprintf(buffer, sizeof(buffer), "Estimating %.0f seconds with a 56k modem.",seconds);
       SetWindowText(GetDlgItem(hDlg,IDC_TIME_UPDATE_566),buffer);
       
       seconds = floor(bytes / 2800.0 + 10.0);
@@ -201,11 +201,11 @@ INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
       hours = minutes / 60.0;
       
       if (hours > 1.0)
-         sprintf(buffer,"Estimating %.1f hours with a 28k modem.",hours);
+         snprintf(buffer, sizeof(buffer), "Estimating %.1f hours with a 28k modem.",hours);
       else if (minutes > 1.0)
-         sprintf(buffer,"Estimating %.1f minutes with a 28k modem.",minutes);
+         snprintf(buffer, sizeof(buffer), "Estimating %.1f minutes with a 28k modem.",minutes);
       else 
-         sprintf(buffer,"Estimating %.0f seconds with a 28k modem.",seconds);
+         snprintf(buffer, sizeof(buffer), "Estimating %.0f seconds with a 28k modem.",seconds);
       SetWindowText(GetDlgItem(hDlg,IDC_TIME_UPDATE_288),buffer);
       
       //SetWindowText(GetDlgItem(hDlg,IDC_BTN_DEMO),info->demoPath);
@@ -269,7 +269,7 @@ INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       PostMessage(hDlg, BK_TRANSFERSTART, 0, 0);
 
       GetDlgItemText(hDlg, IDC_FILESIZE, format, sizeof(format));
-      sprintf(temp, format, (int)0, (int)0);
+      snprintf(temp, sizeof(temp), format, (int)0, (int)0);
       SetDlgItemText(hDlg, IDC_FILESIZE, temp);
 
       return TRUE;
@@ -295,7 +295,7 @@ INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
       SetDlgItemText(hDlg, IDC_FILENAME, info->files[wParam].filename);
       total = lParam;
-      sprintf(temp, format, 0, total);
+      snprintf(temp, sizeof(temp), format, 0, total);
       SetDlgItemText(hDlg, IDC_FILESIZE, temp);
       SendDlgItemMessage(hDlg, IDC_GRAPH, GRPH_POSSET, 0, 0);
       SendDlgItemMessage(hDlg, IDC_GRAPH, GRPH_RANGESET, 0, total);
@@ -307,7 +307,7 @@ INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       SendDlgItemMessage(hDlg, IDC_GRAPH, GRPH_POSSET, 0, lParam);
 
       // Update this file's progress text message.
-      sprintf(temp, format, (int)lParam, (int)total);
+      snprintf(temp, sizeof(temp), format, (int)lParam, (int)total);
       SetDlgItemText(hDlg, IDC_FILESIZE, temp);
 
       // Compute the fraction for the overall graph.
@@ -377,7 +377,7 @@ void _cdecl TransferMessage(char *fmt, ...)
       return;
 
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    SetDlgItemText(hDownloadDialog, IDC_MESSAGE, s);
@@ -413,7 +413,7 @@ Bool DownloadDone(DownloadFileInfo *file_info)
    char zip_name[MAX_PATH + FILENAME_MAX];    // Name of uncompressed file
    char *destination_dir;
 
-   sprintf(zip_name, "%s\\%s", download_dir, file_info->filename);
+   snprintf(zip_name, sizeof(zip_name), "%s\\%s", download_dir, file_info->filename);
 
    switch (DownloadLocation(file_info->flags))
    {
@@ -455,7 +455,7 @@ Bool DownloadDone(DownloadFileInfo *file_info)
    switch (DownloadCommand(file_info->flags))
    {
    case DF_DELETE:
-      sprintf(zip_name, "%s\\%s", destination_dir, file_info->filename);
+      snprintf(zip_name, sizeof(zip_name), "%s\\%s", destination_dir, file_info->filename);
       if (!DownloadDeleteFile(zip_name))
          return False;
       break;
@@ -707,6 +707,12 @@ void DownloadNewClient(char *hostname, char *filename)
   char update_program_path[MAX_PATH];
   char *ptr;
   SystemInfo sysinfo;
+
+  if (IsSteamVersion()) {
+    ClientError(hInst, hMain, IDS_NEED_STEAM_UPDATE, command_line);
+    MainQuit(hMain);
+    exit(1);
+  }
   
   if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
   {
@@ -726,11 +732,11 @@ void DownloadNewClient(char *hostname, char *filename)
     // We can, however, update anything in the current directory (usually
     // in the user's private directory).  So we first look for club.exe there,
     // and only fall back to the one in Program files if it's not there.
-    sprintf(update_program_path, "%s\\%s", run_dir, update_program);
+    snprintf(update_program_path, sizeof(update_program_path), "%s\\%s", run_dir, update_program);
     if (!FileExists(update_program_path))
-       sprintf(update_program_path, "%s\\%s", client_directory, update_program);
+       snprintf(update_program_path, sizeof(update_program_path), "%s\\%s", client_directory, update_program);
     
-    sprintf(command_line, "\"%s\" UPDATE \"%s\" \"%s\" \"%s\\%s\" \"%s\"", 
+    snprintf(command_line, sizeof(command_line), "\"%s\" UPDATE \"%s\" \"%s\" \"%s\\%s\" \"%s\"", 
             exe_name, hostname, filename, download_dir, update_filename,
             client_directory);
     

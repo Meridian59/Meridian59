@@ -361,7 +361,7 @@ FILE *open_file(char *fname)
    FILE *fin;
 
    /* Add .kod extension if necessary */
-   set_extension(temp, fname, ".kod");
+   set_extension(temp, sizeof(temp), fname, ".kod");
    
    if ((fin = fopen(temp, "r")) == NULL)
    {
@@ -373,7 +373,7 @@ FILE *open_file(char *fname)
 
    /* Construct object code filename */
    bof_fname = strdup(fname);
-   set_extension(bof_fname, bof_fname, ".bof");
+   set_extension(bof_fname, sizeof(bof_fname), bof_fname, ".bof");
 
    return fin;
 }

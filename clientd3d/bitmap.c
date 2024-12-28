@@ -121,7 +121,7 @@ grid_bitmap_type LoadGridBitmap(ID gridnum)
    char fname[MAX_PATH + FILENAME_MAX], game_path[MAX_PATH];
 
    GetGamePath( game_path );
-   sprintf(fname, "%s%s\\%s%05ld.%s", game_path, BITMAP_DIR, BITMAP_PREFIX, gridnum, BITMAP_EXTENSION);
+   snprintf(fname, sizeof(fname), "%s%s\\%s%05ld.%s", game_path, BITMAP_DIR, BITMAP_PREFIX, gridnum, BITMAP_EXTENSION);
    
    grid = (grid_bitmap_type) SafeMalloc(sizeof(grid_bitmap_struct));
 
@@ -153,7 +153,7 @@ object_bitmap_type LoadObjectBitmap(ID rscnum)
       return NULL;
    }
    GetGamePath( game_path );
-   sprintf(fname, "%s%s\\%.*s", game_path, BITMAP_DIR, FILENAME_MAX, basename);
+   snprintf(fname, sizeof(fname), "%s%s\\%.*s", game_path, BITMAP_DIR, FILENAME_MAX, basename);
    
    obj = (object_bitmap_type) SafeMalloc(sizeof(object_bitmap_struct));
 

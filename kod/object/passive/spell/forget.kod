@@ -143,7 +143,7 @@ messages:
       %   twice, this isn't a problem, and can make the spell more dynamic
       %   in that there is a failure clause, in that a player won't lose as
       %   many spells/skills.  It also protects players who don't have many
-      %   skills from losing all that thay do have
+      %   skills from losing all that they do have
        
       while iPowerLeft > 0
       {

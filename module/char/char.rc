@@ -18,7 +18,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Brazilian resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
 #ifdef _WIN32
 LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 #pragma code_page(1252)
@@ -47,11 +47,11 @@ IDD_CHARNAME DIALOGEX 0, 0, 316, 232
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Escolha um nome, de 3 a 30 caracteres, para o seu personagem.",IDC_STATIC,2,2,190,8
-    LTEXT           "Você pode usar letras maísculas e/ou minúsculas, números, espaços ou os símbolos seguintes: !@$^&*+=:()[]{}<>;/?|",IDC_STATIC,2,12,196,8,SS_NOPREFIX
-    EDITTEXT        IDC_NAME,2,26,108,16,ES_AUTOHSCROLL
-    LTEXT           "Digite uma descrição para o seu personagem aqui:",IDC_STATIC,2,52,292,8
-    EDITTEXT        IDC_DESCRIPTION,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    LTEXT           "Escolha um nome, de 3 a 30 caracteres, para o seu personagem.",IDC_STATIC,2,7,220,8
+    LTEXT           "Você pode usar letras maísculas e/ou minúsculas, números, espaços ou os símbolos seguintes: !@$^&*+=:()[]{}<>;/?|",IDC_STATIC,2,17,256,16,SS_NOPREFIX
+    EDITTEXT        IDC_NAME,2,36,108,16,ES_AUTOHSCROLL
+    LTEXT           "Digite uma descrição para o seu personagem aqui:",IDC_STATIC,2,62,292,8
+    EDITTEXT        IDC_DESCRIPTION,2,74,302,118,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
     PUSHBUTTON      "<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14,WS_DISABLED
     PUSHBUTTON      "Próxima >>",IDC_NEXT_PAGE,266,214,44,14
 END
@@ -103,7 +103,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     GROUPBOX        "Rosto",IDC_STATIC,3,0,150,158
     CONTROL         "",IDC_FACE,"Button",BS_OWNERDRAW | WS_TABSTOP,14,18,127,127
-    LTEXT           "Escolha a aparência do seu personagem.",IDC_STATIC,161,5,130,8
+    LTEXT           "Escolha a aparência do seu personagem.",IDC_STATIC,161,5,144,8
     LTEXT           "Gênero:",IDC_STATIC,162,22,39,8
     CONTROL         "Homem",IDC_MALE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
     CONTROL         "Mulher",IDC_FEMALE,"Button",BS_AUTORADIOBUTTON,263,22,39,10
@@ -112,20 +112,20 @@ BEGIN
     LTEXT           "Branco",IDC_STATIC,215,50,25,8
     LTEXT           "Negro",IDC_STATIC,287,50,24,8
     LTEXT           "Cabelo:",IDC_STATIC,166,70,25,8
-    PUSHBUTTON      "<",IDC_HAIR1,213,69,17,11
-    PUSHBUTTON      ">",IDC_HAIR2,230,69,17,11,NOT WS_TABSTOP
-    LTEXT           "Cor do cabelo:",IDC_STATIC,166,85,44,8
-    PUSHBUTTON      "<",IDC_HAIRCOLOR1,213,84,17,11
-    PUSHBUTTON      ">",IDC_HAIRCOLOR2,230,84,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_HAIR1,218,69,17,11
+    PUSHBUTTON      ">",IDC_HAIR2,235,69,17,11,NOT WS_TABSTOP
+    LTEXT           "Cor do cabelo:",IDC_STATIC,166,85,48,8
+    PUSHBUTTON      "<",IDC_HAIRCOLOR1,218,84,17,11
+    PUSHBUTTON      ">",IDC_HAIRCOLOR2,235,84,17,11,NOT WS_TABSTOP
     LTEXT           "Olhos:",IDC_STATIC,166,100,40,8
-    PUSHBUTTON      "<",IDC_EYES1,213,99,17,11,WS_GROUP
-    PUSHBUTTON      ">",IDC_EYES2,230,99,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_EYES1,218,99,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_EYES2,235,99,17,11,NOT WS_TABSTOP
     LTEXT           "Nariz:",IDC_STATIC,166,115,19,8
-    PUSHBUTTON      "<",IDC_NOSE1,213,114,17,11,WS_GROUP
-    PUSHBUTTON      ">",IDC_NOSE2,230,114,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_NOSE1,218,114,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_NOSE2,235,114,17,11,NOT WS_TABSTOP
     LTEXT           "Boca:",IDC_STATIC,166,130,19,8
-    PUSHBUTTON      "<",IDC_MOUTH1,213,129,17,11,WS_GROUP
-    PUSHBUTTON      ">",IDC_MOUTH2,230,129,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "<",IDC_MOUTH1,218,129,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_MOUTH2,235,129,17,11,NOT WS_TABSTOP
     PUSHBUTTON      "&<< Anterior",IDC_PREVIOUS_PAGE,220,214,44,14,WS_GROUP
     PUSHBUTTON      "Próxima &>>",IDC_NEXT_PAGE,266,214,44,14
 END
@@ -134,7 +134,7 @@ IDD_CHARSTATS DIALOGEX 0, 0, 316, 232
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",IDC_STATIC,6,4,280,8
+    LTEXT           "Defina as estatísticas do seu personagem. Escolha com sabedoria, pois estas configurações são permanentes.",IDC_STATIC,6,4,280,18
     LTEXT           "Força",IDC_STATIC,22,25,23,8
     CONTROL         "",IDC_CHAR_GRAPH1,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
     LTEXT           "Inteligência",IDC_STATIC,22,44,38,8
@@ -174,22 +174,22 @@ END
 
 STRINGTABLE 
 BEGIN
-    1                       "Você tem certeza que deseja deletar %s?"
-    3                       "Seu nome deve conter pelo menos %d caracteres e deve consistir apenas de caracteres legais."
-    4                       "Esse nome já está sendo usado por outra pessoa."
-    5                       "Você tem alguns pontos restantes que podem ser usados em estatísticas, você tem certeza que deseja descartar estes pontos?"
-    6                       "Você tem alguns pontos restantes que podem ser usado em feitiços e/ou habilidades, você tem certeza que deseja descartar estes pontos?"
+    IDS_DELETECHAR          "Você tem certeza que deseja deletar %s?"
+    IDS_BADCHARNAME         "Seu nome deve conter pelo menos %d caracteres e deve consistir apenas de caracteres legais."
+    IDS_CHARNAMEUSED        "Esse nome já está sendo usado por outra pessoa."
+    IDS_STATPOINTSLEFT      "Você tem alguns pontos restantes que podem ser usados em estatísticas, você tem certeza que deseja descartar estes pontos?"
+    IDS_SPELLPOINTSLEFT     "Você tem alguns pontos restantes que podem ser usado em feitiços e/ou habilidades, você tem certeza que deseja descartar estes pontos?"
 END
 
 STRINGTABLE 
 BEGIN
-    16                      "Nome"
-    17                      "Feitiços"
-    18                      "Habilidades"
-    19                      "Aparência"
-    20                      "Estatísticas"
-    21                      "Modifique o seu personagem"
-    22                      "<Novo personagem>"
+    IDS_CHAR_NAME           "Nome"
+    IDS_CHARSPELLS          "Feitiços"
+    IDS_CHARSKILLS          "Habilidades"
+    IDS_CHARAPPEARANCE      "Aparência"
+    IDS_CHARSTATS           "Estatísticas"
+    IDS_DIALOGTITLE         "Modifique o seu personagem"
+    IDS_NEWCHARACTER        "<Novo personagem>"
 END
 
 #endif    // Portuguese (Brazilian) resources
@@ -210,141 +210,141 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-144 DIALOGEX 0, 0, 316, 232
-STYLE DS_SETFONT | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Wähle die Eigenschaftswerte Deines Charakters wohl überlegt, denn sie sind permanent.",-1,6,4,280,8
-    LTEXT           "Stärke",-1,38,27,23,8
-    CONTROL         "",1021,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
-    LTEXT           "Klugheit",-1,33,45,28,8
-    CONTROL         "",1022,"BlakGraph",WS_TABSTOP | 0xb,65,43,102,14
-    LTEXT           "Konstitution",-1,22,65,39,8
-    CONTROL         "",1023,"BlakGraph",WS_TABSTOP | 0xb,65,62,102,14
-    LTEXT           "Gewandheit",-1,20,84,40,8
-    CONTROL         "",1024,"BlakGraph",WS_TABSTOP | 0xb,65,81,102,14
-    LTEXT           "Magie",-1,38,103,21,8
-    CONTROL         "",1025,"BlakGraph",WS_TABSTOP | 0xb,65,100,102,14
-    LTEXT           "Genauigkeit",-1,20,123,39,8
-    CONTROL         "",1026,"BlakGraph",WS_TABSTOP | 0xb,65,120,102,14
-    GROUPBOX        "Hilfe für Einsteiger",-1,24,139,269,68
-    PUSHBUTTON      "&Magier",1010,43,154,34,12
-    LTEXT           "Konzentriere dich auf Zauberschulen.",-1,87,156,119,8
-    PUSHBUTTON      "&Krieger",1011,43,171,34,12
-    LTEXT           "Konzentriere dich auf Waffenfertigkeiten und Kraanan.",-1,87,173,172,8
-    PUSHBUTTON      "&Hybrid",1012,43,188,34,12
-    LTEXT           "Wende Magie und Waffenfertigkeiten an.",-1,87,190,161,8
-    LTEXT           "Eigenschaftspunkte übrig:",-1,8,215,83,8
-    CONTROL         "",1028,"BlakGraph",0x8,95,214,98,11
-    PUSHBUTTON      "&<< Zurück",1008,219,214,41,12
-    PUSHBUTTON      "Weiter &>>",1009,263,214,41,12
-    LTEXT           "Deine Stärke bestimmt den Schaden, den Du anrichtest und Deine Tragkraft.",-1,175,23,132,18
-    LTEXT           "Kluge Charaktere können schneller ihre Fähigkeiten ausbauen und neue erlernen.",-1,175,42,134,17
-    LTEXT           "Eine hohe Konstitution wirkt sich positiv auf die Lebenskraft und Ausdauer aus.",-1,175,61,136,17
-    LTEXT           "Krieger benötigen eine hohe Gewandheit um ihre Waffen wirkungsvoll einzusetzen.",-1,175,80,134,8
-    LTEXT           "Eine hohe Magie wirkt sich positiv auf die Zauberkraft und die Zaubersprüche aus.",-1,175,99,132,17
-    LTEXT           "Beeinflußt die Trefferwarscheinlichkeit von Zaubersprüchen und Waffen.",-1,175,119,134,18
-END
-
-143 DIALOG  0, 0, 316, 161
-STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Portrait",-1,3,0,150,158
-    CONTROL         "",1001,"Button",BS_OWNERDRAW | WS_TABSTOP,14,18,127,127
-    LTEXT           "Wähle das Aussehen Deines Charakters.",-1,161,5,130,8
-    LTEXT           "Geschlecht:",-1,162,22,39,8
-    CONTROL         "Männlich",1010,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
-    CONTROL         "Weiblich",1011,"Button",BS_AUTORADIOBUTTON,263,22,39,10
-    LTEXT           "Hautfarbe:",-1,166,42,34,8
-    CONTROL         "",1033,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,213,35,90,15
-    LTEXT           "heller",-1,215,55,20,8
-    LTEXT           "dunkler",-1,287,55,24,8
-    LTEXT           "Frisur:",-1,187,70,19,8
-    PUSHBUTTON      "<",1016,213,69,17,11
-    PUSHBUTTON      ">",1017,230,69,17,11,NOT WS_TABSTOP
-    LTEXT           "Haarfarbe:",-1,173,85,33,8
-    PUSHBUTTON      "<",1019,213,84,17,11
-    PUSHBUTTON      ">",1022,230,84,17,11,NOT WS_TABSTOP
-    LTEXT           "Augenfarbe:",-1,166,100,40,8
-    PUSHBUTTON      "<",1018,213,99,17,11,WS_GROUP
-    PUSHBUTTON      ">",1024,230,99,17,11,NOT WS_TABSTOP
-    LTEXT           "Nase:",-1,187,115,19,8
-    PUSHBUTTON      "<",1020,213,114,17,11,WS_GROUP
-    PUSHBUTTON      ">",1025,230,114,17,11,NOT WS_TABSTOP
-    LTEXT           "Mund:",-1,186,130,19,8
-    PUSHBUTTON      "<",1021,213,129,17,11,WS_GROUP
-    PUSHBUTTON      ">",1026,230,129,17,11,NOT WS_TABSTOP
-    PUSHBUTTON      "&<< Zurück",1008,213,146,38,14,WS_GROUP
-    PUSHBUTTON      "Weiter &>>",1009,259,146,36,14
-END
-
-142 DIALOGEX 0, 0, 316, 232
-STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Wähle die Zaubersprüche, die Dein Charakter von Anfang an haben soll.",-1,13,4,230,8
-    LTEXT           "Verfügbare Fertigkeiten:",-1,13,19,76,8
-    LISTBOX         1035,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Hinzufügen >>",1034,124,31,67,14
-    PUSHBUTTON      "<< Entfernen",1038,124,47,67,14
-    LTEXT           "",1037,125,116,63,49
-    LTEXT           "Kosten:",-1,125,184,25,8
-    LTEXT           "",1039,149,184,20,8
-    LTEXT           "Ausgewählte Fertigkeiten:",-1,195,19,82,8
-    LISTBOX         1036,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Fertigkeitspunkte übrig:",-1,13,215,74,8
-    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
-    PUSHBUTTON      "&<< Zurück",1008,222,214,42,14
-    PUSHBUTTON      "Weiter &>>",1009,265,214,40,14,WS_DISABLED
-END
-
-141 DIALOGEX 0, 0, 316, 232
-STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Wähle die Zaubersprüche, die Dein Charakter von Anfang an beherrschen soll.",-1,13,4,250,8
-    LTEXT           "Verfügbare Zauber:",-1,13,19,62,8
-    LISTBOX         1029,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Hinzufügen >>",1016,123,31,67,14
-    PUSHBUTTON      "<< Entfernen",1031,123,47,67,14
-    LTEXT           "",1032,125,116,63,49
-    LTEXT           "Ausgewählte Zauber:",-1,195,19,68,8
-    LISTBOX         1030,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Kosten:",-1,125,184,25,8
-    LTEXT           "",1039,149,184,20,8
-    LTEXT           "Sha Lill und Qor sollte man nicht zusammen lernen.",-1,13,199,160,8
-    LTEXT           "Fertigkeitspunkte übrig:",-1,13,215,74,8
-    CONTROL         "",1028,"BlakGraph",0x8,93,214,98,11
-    PUSHBUTTON      "&<< Zurück",1008,220,214,40,12
-    PUSHBUTTON      "Weiter &>>",1009,263,214,41,12
-END
-
-129 DIALOG  0, 0, 215, 254
+IDD_CHARPICK DIALOG  0, 0, 215, 254
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Wähle Deinen Charakter"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         1107,9,9,118,42, LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "Bestätigen",1,167,9,39,14,WS_GROUP
-    PUSHBUTTON      "Ausloggen",2,167,27,39,14,WS_GROUP
-    EDITTEXT        1041,10,74,195,101,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
-    CONTROL         "Aktuelle Meldung",-1,"Static",SS_SIMPLE | WS_GROUP,9,64,56,8
-    CONTROL         "",IDC_ANIMATE3,"Static",SS_BITMAP | WS_TABSTOP,10,182,195,32
-    CONTROL         "",IDC_ANIMATE4,"Static",SS_BITMAP | WS_TABSTOP,10,217,195,32
+    LISTBOX         IDC_CHARLIST,9,9,118,42, LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "Bestätigen",IDOK,167,9,39,14,WS_GROUP
+    PUSHBUTTON      "Ausloggen",IDCANCEL,167,27,39,14,WS_GROUP
+    EDITTEXT        IDC_MOTD,10,74,195,101,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+    CONTROL         "Aktuelle Meldung",IDC_STATIC,"Static",SS_SIMPLE | WS_GROUP,9,64,56,8
+    CONTROL         "",IDC_ANIMATE3,"SysAnimate32",ACS_CENTER | ACS_AUTOPLAY | WS_TABSTOP,10,182,195,32
+    CONTROL         "",IDC_ANIMATE4,"SysAnimate32",ACS_CENTER | ACS_AUTOPLAY | WS_TABSTOP,10,217,195,32
 END
 
-103 DIALOGEX 0, 0, 316, 232
+IDD_CHARNAME DIALOGEX 0, 0, 316, 232
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Hier muß der Name Deines Charakters eingegeben werden.",-1,2,2,190,8
-    LTEXT           "Erlaubt sind Groß-, Kleinbuchstaben, Zahlen und Leerzeichen!",-1,2,12,196,8,SS_NOPREFIX
-    EDITTEXT        1101,2,26,108,16,ES_AUTOHSCROLL
-    LTEXT           "Hier kannst Du eine Beschreibung Deines Charakters eingeben. Du kannst sie noch ändern:",-1,2,52,292,8
-    EDITTEXT        1000,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
-    PUSHBUTTON      "<< Zurück",1008,220,214,38,14,WS_DISABLED
-    PUSHBUTTON      "Weiter >>",1009,270,214,36,14
+    LTEXT           "Hier muß der Name Deines Charakters eingegeben werden.",IDC_STATIC,2,2,190,8
+    LTEXT           "Erlaubt sind Groß-, Kleinbuchstaben, Zahlen und Leerzeichen!",IDC_STATIC,2,12,196,8,SS_NOPREFIX
+    EDITTEXT        IDC_NAME,2,26,108,16,ES_AUTOHSCROLL
+    LTEXT           "Hier kannst Du eine Beschreibung Deines Charakters eingeben. Du kannst sie noch ändern:",IDC_STATIC,2,52,292,8
+    EDITTEXT        IDC_DESCRIPTION,2,64,302,138,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "<< Zurück",IDC_PREVIOUS_PAGE,220,214,38,14,WS_DISABLED
+    PUSHBUTTON      "Weiter >>",IDC_NEXT_PAGE,270,214,36,14
+END
+
+IDD_CHARSPELLS DIALOGEX 0, 0, 316, 232
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Wähle die Zaubersprüche, die Dein Charakter von Anfang an beherrschen soll.",IDC_STATIC,13,4,250,8
+    LTEXT           "Verfügbare Zauber:",IDC_STATIC,13,19,62,8
+    LISTBOX         IDC_SPELLIST1,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Hinzufügen >>",IDC_ADDSPELL,123,31,67,14
+    PUSHBUTTON      "<< Entfernen",IDC_REMOVESPELL,123,47,67,14
+    LTEXT           "",IDC_SPELLINFO,125,116,63,49
+    LTEXT           "Ausgewählte Zauber:",IDC_STATIC,195,19,68,8
+    LISTBOX         IDC_SPELLIST2,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Kosten:",IDC_STATIC,125,184,25,8
+    LTEXT           "",IDC_COST2,149,184,20,8
+    LTEXT           "Sha Lill und Qor sollte man nicht zusammen lernen.",IDC_STATIC,13,199,160,8
+    LTEXT           "Fertigkeitspunkte übrig:",IDC_STATIC,13,215,74,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Zurück",IDC_PREVIOUS_PAGE,220,214,40,12
+    PUSHBUTTON      "Weiter &>>",IDC_NEXT_PAGE,263,214,41,12
+END
+
+IDD_CHARSKILLS DIALOGEX 0, 0, 316, 232
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Wähle die Zaubersprüche, die Dein Charakter von Anfang an haben soll.",IDC_STATIC,13,4,230,8
+    LTEXT           "Verfügbare Fertigkeiten:",IDC_STATIC,13,19,76,8
+    LISTBOX         IDC_SKILLIST1,13,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Hinzufügen >>",IDC_ADDSKILL,124,31,67,14
+    PUSHBUTTON      "<< Entfernen",IDC_REMOVESKILL,124,47,67,14
+    LTEXT           "",IDC_SKILLINFO,125,116,63,49
+    LTEXT           "Kosten:",IDC_STATIC,125,184,25,8
+    LTEXT           "",IDC_COST2,149,184,20,8
+    LTEXT           "Ausgewählte Fertigkeiten:",IDC_STATIC,195,19,82,8
+    LISTBOX         IDC_SKILLIST2,195,31,105,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Fertigkeitspunkte übrig:",IDC_STATIC,13,215,74,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,93,214,98,11
+    PUSHBUTTON      "&<< Zurück",IDC_PREVIOUS_PAGE,222,214,42,14
+    PUSHBUTTON      "Weiter &>>",IDC_NEXT_PAGE,265,214,40,14,WS_DISABLED
+END
+
+IDD_CHARAPPEARANCE DIALOG  0, 0, 316, 161
+STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Portrait",IDC_STATIC,3,0,150,158
+    CONTROL         "",IDC_FACE,"Button",BS_OWNERDRAW | WS_TABSTOP,14,18,127,127
+    LTEXT           "Wähle das Aussehen Deines Charakters.",IDC_STATIC,161,5,130,8
+    LTEXT           "Geschlecht:",IDC_STATIC,162,22,39,8
+    CONTROL         "Männlich",IDC_MALE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,213,22,45,8
+    CONTROL         "Weiblich",IDC_FEMALE,"Button",BS_AUTORADIOBUTTON,263,22,39,10
+    LTEXT           "Hautfarbe:",IDC_STATIC,166,42,34,8
+    CONTROL         "",IDC_COLOR,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,213,35,90,15
+    LTEXT           "heller",IDC_STATIC,215,55,20,8
+    LTEXT           "dunkler",IDC_STATIC,287,55,24,8
+    LTEXT           "Frisur:",IDC_STATIC,187,70,19,8
+    PUSHBUTTON      "<",IDC_HAIR1,213,69,17,11
+    PUSHBUTTON      ">",IDC_HAIR2,230,69,17,11,NOT WS_TABSTOP
+    LTEXT           "Haarfarbe:",IDC_STATIC,173,85,33,8
+    PUSHBUTTON      "<",IDC_HAIRCOLOR1,213,84,17,11
+    PUSHBUTTON      ">",IDC_HAIRCOLOR2,230,84,17,11,NOT WS_TABSTOP
+    LTEXT           "Augenfarbe:",IDC_STATIC,166,100,40,8
+    PUSHBUTTON      "<",IDC_EYES1,213,99,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_EYES2,230,99,17,11,NOT WS_TABSTOP
+    LTEXT           "Nase:",IDC_STATIC,187,115,19,8
+    PUSHBUTTON      "<",IDC_NOSE1,213,114,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_NOSE2,230,114,17,11,NOT WS_TABSTOP
+    LTEXT           "Mund:",IDC_STATIC,186,130,19,8
+    PUSHBUTTON      "<",IDC_MOUTH1,213,129,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_MOUTH2,230,129,17,11,NOT WS_TABSTOP
+    PUSHBUTTON      "&<< Zurück",IDC_PREVIOUS_PAGE,213,146,38,14,WS_GROUP
+    PUSHBUTTON      "Weiter &>>",IDC_NEXT_PAGE,259,146,36,14
+END
+
+IDD_CHARSTATS DIALOGEX 0, 0, 316, 232
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Wähle die Eigenschaftswerte Deines Charakters wohl überlegt, denn sie sind permanent.",IDC_STATIC,6,4,280,8
+    LTEXT           "Stärke",IDC_STATIC,38,27,23,8
+    CONTROL         "",IDC_CHAR_GRAPH1,"BlakGraph",WS_TABSTOP | 0xb,65,24,102,14
+    LTEXT           "Klugheit",IDC_STATIC,33,45,28,8
+    CONTROL         "",IDC_CHAR_GRAPH2,"BlakGraph",WS_TABSTOP | 0xb,65,43,102,14
+    LTEXT           "Konstitution",IDC_STATIC,22,65,39,8
+    CONTROL         "",IDC_CHAR_GRAPH3,"BlakGraph",WS_TABSTOP | 0xb,65,62,102,14
+    LTEXT           "Gewandheit",IDC_STATIC,20,84,40,8
+    CONTROL         "",IDC_CHAR_GRAPH4,"BlakGraph",WS_TABSTOP | 0xb,65,81,102,14
+    LTEXT           "Magie",IDC_STATIC,38,103,21,8
+    CONTROL         "",IDC_CHAR_GRAPH5,"BlakGraph",WS_TABSTOP | 0xb,65,100,102,14
+    LTEXT           "Genauigkeit",IDC_STATIC,20,123,39,8
+    CONTROL         "",IDC_CHAR_GRAPH6,"BlakGraph",WS_TABSTOP | 0xb,65,120,102,14
+    GROUPBOX        "Hilfe für Einsteiger",IDC_STATIC,24,139,269,68
+    PUSHBUTTON      "&Magier",IDC_MAGE,43,154,34,12
+    LTEXT           "Konzentriere dich auf Zauberschulen.",IDC_STATIC,87,156,119,8
+    PUSHBUTTON      "&Krieger",IDC_WARRIOR,43,171,34,12
+    LTEXT           "Konzentriere dich auf Waffenfertigkeiten und Kraanan.",IDC_STATIC,87,173,172,8
+    PUSHBUTTON      "&Hybrid",IDC_HYBRID,43,188,34,12
+    LTEXT           "Wende Magie und Waffenfertigkeiten an.",IDC_STATIC,87,190,161,8
+    LTEXT           "Eigenschaftspunkte übrig:",IDC_STATIC,8,215,83,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,95,214,98,11
+    PUSHBUTTON      "&<< Zurück",IDC_PREVIOUS_PAGE,219,214,41,12
+    PUSHBUTTON      "Weiter &>>",IDC_NEXT_PAGE,263,214,41,12
+    LTEXT           "Deine Stärke bestimmt den Schaden, den Du anrichtest und Deine Tragkraft.",IDC_STATIC,175,23,132,18
+    LTEXT           "Kluge Charaktere können schneller ihre Fähigkeiten ausbauen und neue erlernen.",IDC_STATIC,175,42,134,17
+    LTEXT           "Eine hohe Konstitution wirkt sich positiv auf die Lebenskraft und Ausdauer aus.",IDC_STATIC,175,61,136,17
+    LTEXT           "Krieger benötigen eine hohe Gewandheit um ihre Waffen wirkungsvoll einzusetzen.",IDC_STATIC,175,80,134,8
+    LTEXT           "Eine hohe Magie wirkt sich positiv auf die Zauberkraft und die Zaubersprüche aus.",IDC_STATIC,175,99,132,17
+    LTEXT           "Beeinflußt die Trefferwarscheinlichkeit von Zaubersprüchen und Waffen.",IDC_STATIC,175,119,134,18
 END
 
 
@@ -355,22 +355,22 @@ END
 
 STRINGTABLE 
 BEGIN
-    1                       "Willst Du %s wirklich löschen?"
-    3                       "Der Name Deines Charakters muß mindestens %d Zeichen lang sein und nur reguläre Zeichen enthalten."
-    4                       "Dieser Name ist bereits vergeben."
-    5                       "Du hast noch einige Eigenschaftspunkte übrig. Willst Du diese wirklich verfallen lassen?"
-    6                       "Du hast noch einige Fertigkeitspunkte übrig. Willst Du diese wirklich verfallen lassen?"
+    IDS_DELETECHAR          "Willst Du %s wirklich löschen?"
+    IDS_BADCHARNAME         "Der Name Deines Charakters muß mindestens %d Zeichen lang sein und nur reguläre Zeichen enthalten."
+    IDS_CHARNAMEUSED        "Dieser Name ist bereits vergeben."
+    IDS_STATPOINTSLEFT      "Du hast noch einige Eigenschaftspunkte übrig. Willst Du diese wirklich verfallen lassen?"
+    IDS_SPELLPOINTSLEFT     "Du hast noch einige Fertigkeitspunkte übrig. Willst Du diese wirklich verfallen lassen?"
 END
 
 STRINGTABLE 
 BEGIN
-    16                      "Name"
-    17                      "Zaubersprüche"
-    18                      "Fertigkeiten"
-    19                      "Aussehen"
-    20                      "Eigenschaften"
-    21                      "Erschaffe Deinen Charakter"
-    22                      "<unbekannt>"
+    IDS_CHAR_NAME           "Name"
+    IDS_CHARSPELLS          "Zaubersprüche"
+    IDS_CHARSKILLS          "Fertigkeiten"
+    IDS_CHARAPPEARANCE      "Aussehen"
+    IDS_CHARSTATS           "Eigenschaften"
+    IDS_DIALOGTITLE         "Erschaffe Deinen Charakter"
+    IDS_NEWCHARACTER        "<unbekannt>"
 END
 
 #endif    // German (Neutral) resources

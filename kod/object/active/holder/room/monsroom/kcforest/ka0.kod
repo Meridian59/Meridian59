@@ -19,7 +19,7 @@ constants:
    % How long is the shrine around?  10 minutes, in milliseconds.
    PUZZLE_RESTART_TIME = 10*60*1000
 
-   % A small delay efore the next item is shown, in milliseconds.
+   % A small delay before the next item is shown, in milliseconds.
    NEXT_ITEM_DELAY = 5000
 
 resources:

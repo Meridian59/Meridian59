@@ -154,7 +154,7 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
    if (!GetWorkingDirectory(current_dir, MAX_PATH))
       debug(("Unable to get current directory!\n"));
 
-   sprintf(filename, "%s%s", current_dir, lpszMIDIFileName);
+   snprintf(filename, sizeof(filename), "%s%s", current_dir, lpszMIDIFileName);
    debug(("music filename = %s \n", filename));
    // Is it a background music or gameplay element music file?
    switch (musicType) {
@@ -737,7 +737,7 @@ void NewMusic(WPARAM type, ID rsc)
 		return;
    // Sometimes we get here via POST and may need to resave latest_music variable.
    latest_music = rsc;
-   sprintf(fname, "%s\\%.*s", music_dir, FILENAME_MAX, filename);
+   snprintf(fname, sizeof(fname), "%s\\%.*s", music_dir, FILENAME_MAX, filename);
 
    switch (type)
   {

@@ -139,7 +139,7 @@ messages:
    {
       local lAllTargets, oGuildHall, sRoomName, bFound, oRoom;
 
-      % Check if string is a location.  If it is, and the caster has sufficent spellpower make 
+      % Check if string is a location.  If it is, and the caster has sufficient spellpower make 
       %   it the target.  Get percent in the target spell.  If not there or fail check bail and print failure.
 
       send(who,@BreakTrance,#event=EVENT_STEER);  %% don't print fizzle message

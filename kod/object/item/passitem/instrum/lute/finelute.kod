@@ -19,9 +19,9 @@ resources:
    FineLute_name_rsc = "fine lute"
    FineLute_icon_rsc = music.bgf
    FineLute_overlay_rsc = luteov.bgf
-   FineLute_desc_rsc = "The lute is of a higher quality than most lutes.   "
+   FineLute_desc_rsc = "The lute is of a higher quality than most lutes.  "
         "The instrument has been constructed flawlessly and the dark stain was obviously applied by a master craftsman.  "
-		  "Its pine construction offers a richer sound than the more common rosewoods lutes."
+		  "Its pine construction offers a richer sound than the more common rosewood lutes."
 
 classvars:
 

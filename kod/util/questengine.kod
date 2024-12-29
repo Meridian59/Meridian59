@@ -565,6 +565,14 @@ resources:
    monkinsignia_failure_3 = "Subject: Insignia\n"
          "I had thought so much better of you.  Oh, well.  I shall watch for a better fool in the future."
 
+   minstrelinsignia_trigger = "insignia"
+   minstrelinsignia_assign_2 = "~IAh, an unmarked shield, just like an untuned lyre, it simply won't do! Let me jazz it up with my insignia, but remember, good tunes come with a tip, let's call it a tithe, shall we?~I"
+   minstrelinsignia_trigger_2 = "tithe"
+   minstrelinsignia_assign_3 = "~II've been hearing some catchy rumors about a new world filled with magical notes and trinkets. Bring me some of those rare goodies, and we'll have a harmony so sweet it'll make the stars hum. Go fetch me %CARGO-consider it your audition for the band!~I"
+   minstrelinsignia_success_3 = "~IAh, you've hit all the right notes! Well done, my melodic friend. You've earned a standing ovation!~I"
+   minstrelinsignia_failure_3 = "Subject: Insignia\n"
+         "Oh dear, that performance fell flat! I was hoping for a virtuoso, but it seems I'll need to find another bard for the encore. Perhaps you'll strike the right chord next time?"
+
    factioninsignia_trigger = "insignia"
    factioninsignia_assign_2 = "I see you have a shield with colors, but no insignia.  If you would care to earn "
          "mine, I have a mission for you."
@@ -2298,7 +2306,17 @@ Recreate()
 			      100,
 			      [[ Q_R2_HAS_HEALTH_LEVEL, 75 ], [ Q_R2_DOES_NOT_HAVE_ITEM, &RebelShield ]]
 			                                    ], plQuestTemplates );
-
+   
+   % QST_ID_MINSTREL_INSIGNIA
+   plQuestTemplates = cons([  piDefaultNumPlayers,\
+			      piDefaultQuestType,\
+			      Q_PLAYER_NOTTRIED_RECENTLY,\
+			      [ 217, 218, 219 ],\
+			      20,\
+			      [],\
+			      100,
+			      [ [ Q_R2_HAS_ITEM, &GuildShield ] ]
+			                                    ], plQuestTemplates );
 
    % now we fix up the faction service quests, since they need to have as many scheduled as members
    for i in Send(Send(SYS,@GetParliament),@GetFactionList) {
@@ -5950,6 +5968,47 @@ RecreateQuestNodes()
    else
    {
       debug( "Error building QN #216" );
+   }
+
+   % template #217 is minstrel insignia quest
+   if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE,
+         #cargolist = [ minstrelinsignia_trigger ] )
+   {
+      lNPCs = $;
+      for oNPC in send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &Minstrel ) { lNPCs = cons( oNPC, lNPCs );}
+      send( self, @SetQuestNodeNPCList, #index = 217, #new_NPC_list = lNPCs );
+   }
+   else
+   {
+      debug( "Error building QN #217" );
+   }
+   % template #218 is minstrel insignia quest
+   if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
+         #cargolist = [ minstrelinsignia_trigger_2 ],
+         #timelimit = 60 )    % 1 minute
+   {
+      send( self, @SetQuestNodeAssignHint, #index = 218, #new_hint = minstrelinsignia_assign_2 );
+   }
+   else
+   {
+      debug( "Error building QN #218" );
+   }
+   % template #219 is minstrel insignia quest
+   if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS, #NPC_modifier = QN_NPCMOD_SAME,
+         #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &FineLute, 1 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &PolishedSeraphym, 5 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &RainbowFern, 20 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &UncutSeraphym, 10 ] ],
+         #prizelist = [ [ QN_PRIZETYPE_INSIGNIA ] ],
+         #timelimit = 12 * 3600 )    % 12 hrs
+   {
+      send( self, @SetQuestNodeAssignHint, #index = 219, #new_hint = minstrelinsignia_assign_3 );
+      send( self, @SetQuestNodeSuccessHint, #index = 219, #new_hint = minstrelinsignia_success_3 );
+      send( self, @SetQuestNodeFailureHint, #index = 219, #new_hint = minstrelinsignia_failure_3 );
+   }
+   else
+   {
+      debug( "Error building QN #219" );
    }
 
 

@@ -404,7 +404,7 @@ resources:
    stunteddwarf_success_4 = "Ah, well.  If you ever hear anyone mention a stunted dwarf, you be sure to find out "
          "what you can."
    stunteddwarf_assign_6 = "Ah, you need a recipe for your garden variety stunted dwarf, eh?  Tell you what.  "
-         "Prove to me you're hero enough to drink one, and I�ll give you the recipe.  Go kill a kriipa for me."
+         "Prove to me you're hero enough to drink one, and I'll give you the recipe.  Go kill a kriipa for me."
    stunteddwarf_success_6 = "Fine job, %NAME.  Take this recipe."
    stunteddwarf_failure_6 = "Subject: Stunted Dwarf\n"
          "I see you have wisely forgotten about having a stunted dwarf.  It is, after all, not a drink for the "

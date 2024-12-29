@@ -5666,9 +5666,7 @@ RecreateQuestNodes()
                [ QN_PRIZETYPE_ITEMCLASS, &GoldShield, 1 ],\
                [ QN_PRIZETYPE_ITEMCLASS, &ScaleArmor, 1 ],\
                [ QN_PRIZETYPE_ITEMCLASS, &Axe, 1 ],\
-               [ QN_PRIZETYPE_ITEMCLASS, &LongSword, 1 ],\
-               [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],\
-               [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ] ],\
+               [ QN_PRIZETYPE_ITEMCLASS, &LongSword, 1 ] ],\
             #prizelist = [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_UPDATE ],
                           [ QN_PRIZETYPE_SCHEDULE_QUEST, QST_ID_REBEL_SERVICE ] ],
             #penaltylist = [ [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_NEUTRAL ] ] ],
@@ -5706,10 +5704,7 @@ RecreateQuestNodes()
                [ QN_PRIZETYPE_ITEMCLASS, &Bread, 50 ],\
                [ QN_PRIZETYPE_ITEMCLASS, &Apple, 50 ],\
 		         [ QN_PRIZETYPE_ITEMCLASS, &Snack, 50 ],\
-		         [ QN_PRIZETYPE_ITEMCLASS, &Meatpie, 50 ],\
-               [ QN_PRIZETYPE_ITEMCLASS, &Knightshield, 1 ],\
-               [ QN_PRIZETYPE_ITEMCLASS, &Scimitar, 1 ],\
-               [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ] ],\
+		         [ QN_PRIZETYPE_ITEMCLASS, &Meatpie, 50 ] ],\
             #prizelist = [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_REBEL ] ],
             #timelimit = 3600 )
    {

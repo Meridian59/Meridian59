@@ -5659,13 +5659,13 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate,\
             #NPC_modifier = QN_NPCMOD_SAME,\
             #questnode_type = QN_TYPE_ITEMFINDCLASS,\
-            #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &SimpleHelm, 1 ],\
+            #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &GoldShield, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Knightshield, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &LongSword, 1 ],\
-		           [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],\
+		           [ QN_PRIZETYPE_ITEMCLASS, &Hammer, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Scimitar, 1 ],\
-		           [ QN_PRIZETYPE_ITEMCLASS, &NeruditeSword, 1 ] ],\
+		           [ QN_PRIZETYPE_ITEMCLASS, &Axe, 1 ] ],\
             #prizelist = [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_UPDATE ],
                           [ QN_PRIZETYPE_SCHEDULE_QUEST, QST_ID_REBEL_SERVICE ] ],
             #penaltylist = [ [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_NEUTRAL ] ] ],
@@ -5695,13 +5695,13 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate,\
             #NPC_modifier = QN_NPCMOD_SAME,\
             #questnode_type = QN_TYPE_ITEMFINDCLASS,\
-            #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],\
-		           [ QN_PRIZETYPE_ITEMCLASS, &SimpleHelm, 1 ],\
+            #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &ScaleArmor, 1 ],\
+		           [ QN_PRIZETYPE_ITEMCLASS, &GoldShield, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Knightshield, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ],\
-		           [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],\
+		           [ QN_PRIZETYPE_ITEMCLASS, &Hammer, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Scimitar, 1 ],\
-		           [ QN_PRIZETYPE_ITEMCLASS, &Scimitar, 1 ] ],\
+		           [ QN_PRIZETYPE_ITEMCLASS, &Axe, 1 ] ],\
             #prizelist = [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_REBEL ] ],
             #timelimit = 3600 )
    {

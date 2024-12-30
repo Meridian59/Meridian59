@@ -230,6 +230,24 @@ void simple_warning(const char *fmt, ...)
    printf("\n");
 }
 /************************************************************************/
+// Return value of hex digit, or -1 if none.
+int read_escape_char(unsigned char c)
+{
+  if (c >= '0' && c <= '9')
+  {
+    return c - '0';
+  }
+  if (c >= 'a' && c <= 'f')
+  {
+    return c - 'a';
+  }
+  if (c >= 'A' && c <= 'F')
+  {
+    return c - 'A';
+  }
+  return -1;
+}
+/************************************************************************/
 /*
  * assemble_string:  Convert a Blakod multiple-line string into a
  *   plain string, without starting and ending quotes, and with escape
@@ -237,65 +255,91 @@ void simple_warning(const char *fmt, ...)
  */
 char *assemble_string(char *str)
 {
-   char *new_str = strdup(str);
-   char *rd, *wt;
-   int inside_quotes = 1;
+   unsigned char *new_str = reinterpret_cast<unsigned char *>(strdup(str));
+   bool inside_quotes = true;
 
-   rd = new_str;
-   wt = new_str;
+   unsigned char *rd = new_str;
+   unsigned char *wt = new_str;
 
    while (*rd != '\0')
    {
-      /* Throw out junk outside quotes */
-      if (!inside_quotes && *rd != '"')
-      {
-	 if (*rd == '\n')
-	    lineno++;
-	 rd++;
-	 continue;
-      }
-	 
-      switch (*rd)
-      {
-      case '\\':
-	 rd++;
-	 
-	 /* Look for special characters */
-	 switch (*rd)
-	 {
-	 case 'n':
-	    *wt = '\r';    /* Ugh.. CR-LF pair for Windows ugliness */
-	    wt++;
-	    *wt = '\n';
-	    wt++;
-	    break;
+     // Disallow high-bit ASCII to make files UTF-8 clean
+     if (*rd > 127)
+     {
+       yyerror("Illegal character in string");
+     }
+     
+     /* Throw out junk outside quotes */
+     if (!inside_quotes && *rd != '"')
+     {
+       if (*rd == '\n')
+         lineno++;
+       rd++;
+       continue;
+     }
+     
+     switch (*rd)
+     {
+     case '\\':
+       rd++;
+       
+       /* Look for special characters */
+       switch (*rd)
+       {
+       case 'n':
+         *wt = '\r';    /* Ugh.. CR-LF pair for Windows ugliness */
+         wt++;
+         *wt = '\n';
+         wt++;
+         break;
 
-	 default:
-	    *wt = *rd;
-	    wt++;
-	    break;
-	    
-	 }
-	 break;
-
-      case '"':  /* Ignore quotes */
-	 inside_quotes = 1 - inside_quotes;
-	 break;
-
-      case '\n': /* Ignore newlines */
-	 lineno++;
-	 break;
-
-      default:
-	 *wt = *rd;
-	 wt++;
-	 break;
-      }
-
-      rd++;
+       case 'x': {
+         // Look for \xnn escape sequence
+         rd++;
+         int escape_val_1 = read_escape_char(*rd);
+         if (escape_val_1 < 0)
+         {
+           yyerror("Illegal escape sequence");
+           break;
+         }
+         rd++;
+         int escape_val_2 = read_escape_char(*rd);
+         if (escape_val_2 < 0)
+         {
+           yyerror("Illegal escape sequence");
+           break;
+         }
+         *wt = (16 * escape_val_1) + escape_val_2;
+         break;
+       }
+         
+       default:
+         *wt = *rd;
+         wt++;
+         break;
+         
+       }
+       break;
+       
+     case '"':  /* Ignore quotes */
+       inside_quotes = !inside_quotes;
+       break;
+       
+     case '\n': /* Ignore newlines */
+       lineno++;
+       break;
+       
+     default:
+       *wt = *rd;
+       wt++;
+       break;
+     }
+     
+     rd++;
    }
    *wt = '\0';
-   return new_str;
+
+   return (char *) new_str;
 }
 /************************************************************************/
 /* 

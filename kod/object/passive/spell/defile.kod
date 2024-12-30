@@ -58,19 +58,20 @@ classvars:
 
    % Mana Effect Variables
 
-   % Changing this value will adjust the base mana. 
-   % Increasing it raises the minimum mana across the board.
+   % Minimum mana gained when defiling a player corpse. 
+   % Increasing this raises the baseline mana gain.
    viKarmaEffect_player_min = 5
 
-   % This determines how strongly karma and spellpower influence the mana change. 
-   % Increasing it will result in a larger difference between the minimum and maximum mana.
+   % Scaling factor for how much karma and spellpower influence mana gain from player corpses. 
+   % Increasing this widens the gap between minimum and maximum mana.
    viKarmaEffect_player_factor = 25
 
-   % Changing this value will adjust the base mana. 
-   % Increasing it raises the minimum mana across the board.
+   % Minimum mana gained when defiling a monster corpse. 
+   % Increasing this raises the baseline mana gain.
    viKarmaEffect_monster_min = 3
-   % This determines how strongly karma and spellpower influence the mana change. 
-   % Increasing it will result in a larger difference between the minimum and maximum mana.
+
+   % Scaling factor for how much karma and spellpower influence mana gain from monster corpses. 
+   % Increasing this widens the gap between minimum and maximum mana.
    viKarmaEffect_monster_factor = 5
 
 properties:

@@ -87,29 +87,26 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local oTarget, bKeepRevealed;
+      local oTarget;
       
-      bKeepRevealed = FALSE;
       oTarget = First(lTargets);
       
       Send(who,@MsgSendUser,#message_rsc=identify_working, 
            #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
 
-      % If the item has already been identified, don't hide its properties later
+      % If the item has already been identified, simply show it
+      % Otherwise, reveal the hidden attributes, show the item, then hide the attributes
       if Send(oTarget,@IsIdentified)
       {  
-         bKeepRevealed = TRUE;
+         Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
       } 
-
-      Send(oTarget,@RevealHiddenAttributes);
-
-      Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
-      
-      % Remove attributes if not *fully* revealed yet
-      if NOT bKeepRevealed
+      else
       {
+         Send(oTarget,@RevealHiddenAttributes);
+         Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
          Send(oTarget,@HideHiddenAttributes);
       }
+      
       propagate;
    }
  

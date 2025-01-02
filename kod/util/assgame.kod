@@ -73,7 +73,7 @@ resources:
 
    AssGame_not_viable = "Subject: Insufficient combatants.\n"
       "Alas, not enough warriors have answered the call for the "
-      "Challenge of the Dark Blades. Fear not — I shall send word to "
+      "Challenge of the Dark Blades. Fear not - I shall send word to "
       "summon you again soon and the contest shall begin anew. "
       "Keep your blade close at hand... the fight awaits.\n\n"
       "-- Roq, the Dark Blade"

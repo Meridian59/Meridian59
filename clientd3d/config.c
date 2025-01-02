@@ -299,7 +299,7 @@ void ConfigLoad(void)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
    // Determine if we should be using gpu efficiency mode or not.
-   Bool one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
+   auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
 	   "gpuefficiencyonetimeflip", False, config_ini_file);
    if (!one_time_gpu_efficiency_enablement)
    {

@@ -104,7 +104,7 @@ static char INITechnical[]    = "Technical";
 
 static char config_ini_file[] = "./config.ini";
 static char config_section[] = "config";
-static char INIGpuEfficiencyMode[] = "gpuefficiency";
+static char INIGpuEfficiency [] = "gpuefficiency";
 static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
 
 static char INITextAreaSize[] = "TextAreaSize";
@@ -306,12 +306,12 @@ void ConfigLoad(void)
 	  // Perform one-time flip to enable GPU efficiency mode.
       config.gpuEfficiency = true;
       WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini_file);
-	  WritePrivateProfileString(config_section, INIGpuEfficiencyMode, "true", config_ini_file);
+	  WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini_file);
    }
    else
    {
       char config_value[255];
-      GetPrivateProfileString(config_section, INIGpuEfficiencyMode, "true", config_value, 255, config_ini_file);
+      GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 255, config_ini_file);
       config.gpuEfficiency = (0 == strcmp(config_value, "true"));
    }
 

@@ -306,7 +306,7 @@ void ConfigLoad(void)
 	  // Perform one-time flip to enable GPU efficiency mode.
       config.gpuEfficiency = true;
       WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini_file);
-	  WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini_file);
+      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini_file);
    }
    else
    {

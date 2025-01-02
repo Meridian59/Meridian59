@@ -1132,7 +1132,7 @@ messages:
    IsViableGame()
    "If the game is viable (i.e. there are enough combatants) start the match."
    {
-      local i, poGift;
+      local i;
       if Length(plCombatants) > 1
       {
          return TRUE;

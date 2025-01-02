@@ -304,8 +304,8 @@ void ConfigLoad(void)
    if (!one_time_gpu_efficiency_enablement)
    {
       // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
-	  // This is to ensure players start from a clean slate with maximum performance.
-	  // After this one-time flip, future player's preference will be respected.
+      // This is to ensure players start from a clean slate with maximum performance.
+      // After this one-time flip, future changes to gpu efficiency preferences will be respected.
       config.gpuEfficiency = true;
       WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini_file);
       WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini_file);

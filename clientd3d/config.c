@@ -295,7 +295,7 @@ void ConfigLoad(void)
 
    // Determine if we should be using gpu efficiency mode or not.
    char config_value[255];
-   GetPrivateProfileString("config", "gpuefficiency", "error", config_value, 255, "./config.ini");
+   GetPrivateProfileString("config", "gpuefficiency", "true", config_value, 255, "./config.ini");
    config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
    TimeSettingsLoad();

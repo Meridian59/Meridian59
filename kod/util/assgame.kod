@@ -71,7 +71,7 @@ resources:
       "%q has won the challenge of the dark blades.\n\n"
       "-- Roq, the Dark Blade"
 
-   AssGame_not_viable = "Subject: insufficent combatants.\n"
+   AssGame_not_viable = "Subject: insufficient combatants.\n"
       "The Assassin's Game is not viable at this time.  The game will "
       "start anew soon enough. Feast on my gift then retrieve your "
       "blade once more.\n\n-- Roq, the Dark Blade"

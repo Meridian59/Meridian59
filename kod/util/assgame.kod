@@ -1142,7 +1142,7 @@ messages:
          Send(i,@ReceiveNestedMail,#nest_list=[4,AssGame_not_viable],
             #from=assgame_roq,#dest_list=[i]);
          poGift = Create(&InkyCap,#number=2);
-         Send(target,@NewHold,#what=poGift);
+         Send(i,@NewHold,#what=poGift);
       }
 
       return FALSE;

@@ -156,7 +156,7 @@ messages:
    DoReclaim(who=$,target=$)
    {
       local atype, poArrow, iArrowReclaimChance;
-       % When hit by an arrow from range by a bow, it may be reclaimable.
+      % When hit by an arrow from range by a Players bow, it may be reclaimable.
       if IsClass(who,&Player)
       {
          if(IsClass(Send(who,@GetWeapon), &Bow))

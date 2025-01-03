@@ -303,7 +303,7 @@ void ConfigLoad(void)
 	   "gpuefficiencyonetimeflip", False, config_ini_file);
    if (one_time_gpu_efficiency_enablement)
    {
-      char config_value[255];
+      char config_value[10];
       GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
 		  sizeof(config_value), config_ini_file);
       config.gpuEfficiency = (0 == strcmp(config_value, "true"));

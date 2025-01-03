@@ -159,27 +159,19 @@ messages:
        % When hit by an arrow from range by a bow, it may be reclaimable.
       if IsClass(who,&Player)
       {
-         Debug("Attacker is a player.");
          if(IsClass(Send(who,@GetWeapon), &Bow))
          {
-            %Debug("Attacker is holding a practice bow.");
-            %Debug("Attack type: ",atype);
-            %Debug("Attack type ATCK_WEAP_SILVER: ",ATCK_WEAP_SILVER);
-            %Debug("Attack type ATCK_WEAP_NERUDITE: ",ATCK_WEAP_NERUDITE);
-            %Debug("Attack type ATCK_WEAP_PIERCE: ",ATCK_WEAP_PIERCE);
             atype = Send(self,@GetAttackType);
             if atype & ATCK_WEAP_PIERCE % we can just do this now using is class.. actually don't even need this can just use the class to create!
             {
                if(IsClass(Send(who,@GetWeapon),&PracticeBow))
                {
                   % While learning bow we use Fire proficiency to determine reclaim chance.
-                  Debug("Practice bow so using Fire proficiency!");
                   iArrowReclaimChance = Send(who,@getskillability,#skill_num=SKID_FIRE) / 2;
                }
                else
                {
                   % For all other bows we use Archery proficiency to determine reclaim chance.
-                  Debug("Regular bow so using Archery proficiency!");
                   iArrowReclaimChance = Send(who,@getskillability,#skill_num=SKID_PROFICIENCY_BOW) / 5;
                }
                

@@ -124,7 +124,7 @@ void __cdecl TransferStart(void *download_info)
        continue;
      }
      
-      sprintf(filename, "%s%s", info->path, info->files[i].filename);
+      snprintf(filename, sizeof(filename), "%s%s", info->path, info->files[i].filename);
 
       hFile = HttpOpenRequest(hSession, NULL, filename, NULL, NULL,
                               mime_types,
@@ -160,7 +160,7 @@ void __cdecl TransferStart(void *download_info)
 
       PostMessage(info->hPostWnd, BK_FILESIZE, i, file_size);
       
-      sprintf(local_filename, "%s\\%s", download_dir, info->files[i].filename);
+      snprintf(local_filename, sizeof(local_filename), "%s\\%s", download_dir, info->files[i].filename);
       
       outfile = open(local_filename, O_BINARY | O_RDWR | O_CREAT, S_IWRITE | S_IREAD);
       if (outfile <= 0)
@@ -255,7 +255,7 @@ void __cdecl DownloadError(HWND hParent, char *fmt, ...)
    if (!was_aborted)
    {
       va_start(marker,fmt);
-      vsprintf(s,fmt,marker);
+      vsnprintf(s, sizeof(s), fmt,marker);
       va_end(marker);
       
       retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_FTPERROR), hMain, ErrorDialogProc, 

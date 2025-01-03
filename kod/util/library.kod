@@ -245,7 +245,7 @@ resources:
    LT_cheat = "cheat"
    LT_liar = "liar"
    LT_scam = "scam"
-   LT_balo = "Balo na’te Din"
+   LT_balo = "Balo na'te Din"
    LT_arm = "arm"
    LT_konima = "konima"
    LT_avar = "avar"
@@ -580,7 +580,7 @@ resources:
    FC_117 = "You shall fall into something profitable before the moon and sun align."
    FC_118 = "A newsball is a wicked way to spread a rumor."
    FC_119 = "Wait not for friends to save your own skin; but be ready to save theirs."
-   FC_120 = "Seeking the power you know you already posess is foolhardy. Use it."
+   FC_120 = "Seeking the power you know you already possess is foolhardy. Use it."
    FC_121 = "Forge an alliance before it is too late."
    FC_122 = "Pay attention to those who gather yet do not speak openly."
    FC_123 = "There are three who will conspire against you today."
@@ -917,7 +917,7 @@ messages:
    "Dereferences the three main library lists (yeah garbage collection)"
    "Since the moblib should be used mainly for random quests, this will"
    "cause some mucky problems, unless we clear the quests as well."
-   "basically, you shouldnt be deleting this object"
+   "Basically, you shouldn't be deleting this object."
    {
       local i;
       
@@ -2147,13 +2147,13 @@ messages:
                            bKtContainK = false;
                            bKContainKt = true;
                         }
-                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supercedes "ant")
+                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supersedes "ant")
                            iKey = 0;
                            if( length(j) > 3 )
                               { iKey = Nth(j,4); }
                            lActionList = [Nth(j,3), GetClass(First(i)), iKey];
                            ktriggered = k;
-                           iCount = 0;             % reset the counter, since we've superceded the whole set of options we were picking randomly amongst
+                           iCount = 0;             % reset the counter, since we've superseded the whole set of options we were picking randomly amongst
                            break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
                         }
                         else {
@@ -2293,13 +2293,13 @@ messages:
                            bKtContainK = false;
                            bKContainKt = true;
                         }
-                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supercedes "ant")
+                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supersedes "ant")
                            iKey = 0;
                            if( length(j) > 3 )
                               { iKey = Nth(j,4); }
                            lActionList = [Nth(j,3), First(i), iKey];
                            ktriggered = k;
-                           iCount = 0;             % reset the counter, since we've superceded the whole set of options we were picking randomly amongst
+                           iCount = 0;             % reset the counter, since we've superseded the whole set of options we were picking randomly amongst
                            break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
                         }
                         else {
@@ -2509,7 +2509,7 @@ messages:
       % returns key used
       % new class added if npc_class not found -- be careful! no way to error check this? xxxAJM;
       % mood only set on initial create
-      % if mood_change is sent, creates a mood_change trigger isntead of a quote trigger
+      % if mood_change is sent, creates a mood_change trigger instead of a quote trigger
 
       local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch, iNumTriggers, lNewAction;
       if( keynum = -1 )
@@ -3320,7 +3320,7 @@ messages:
 
    DeleteExtraQuests()
    "This walks the list of quests, and deletes any that dont mesh."
-   "I.E. if the quester doesnt have the id as its questid, the quest is junked."
+   "I.E. if the quester doesn't have the id as its questid, the quest is junked."
    {
       local i; 
       for i in plQuests
@@ -3593,7 +3593,7 @@ messages:
     
       for i in lGoal { if not StringContain(string,i) {return False;} }
 
-      %The player said all the keywords, make sure they werent guessing all
+      %The player said all the keywords, make sure they weren't guessing all
       
       for i in plQuestDictionary
       {
@@ -3896,7 +3896,7 @@ messages:
 
 %   (DISABLED -- AJM)
    QuestGenerationTimer()
-   "We only add a quest if there arent that many in existance. Unless the"
+   "We only add a quest if there aren't that many in existence. Unless the "
    "random number dictates that we should."
    {
 %      local iRnd,iQuester;
@@ -4397,7 +4397,7 @@ messages:
   % offered is the one desired, and then gives a bonus money amount. If its
   % not the proper ring, its returned to the player. If it is the right ring
   % the newbie is again added to the plSignetNewbies list. The SignetRing
-  % class is removed from the mob's plWantedItem list. It is also unregisterd
+  % class is removed from the mob's plWantedItem list. It is also unregistered
   % from the library (removed from the plSignetRings list).
   %
   % If needed, the ClearSignets routine in the library can be called to do

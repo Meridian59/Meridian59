@@ -894,7 +894,7 @@ messages:
    }
 
    ResetObjectType(type=0,const=FALSE)
-   "We keep this seperate so you can call this dynamically."
+   "We keep this separate so you can call this dynamically."
    {
       if type = 0 { debug("Not assigned an id!"); return;}
 

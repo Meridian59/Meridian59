@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Brazilian resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
 #ifdef _WIN32
 LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 #pragma code_page(1252)
@@ -30,7 +30,7 @@ LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    1                       "Bem-vindo ao Meridian 59! Clique aqui para iniciar."
+    IDS_INTRO   "Bem-vindo ao Meridian 59! Clique aqui para iniciar."
 END
 
 #endif    // Portuguese (Brazilian) resources
@@ -53,7 +53,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    1                       "Willkommen zu Meridian 59! Zum Start hier klicken!"
+    IDS_INTRO   "Willkommen zu Meridian 59! Zum Start hier klicken!"
 END
 
 #endif    // German (Neutral) resources
@@ -104,7 +104,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_INTRO               "Click here to log on!"
+    IDS_INTRO   "Click here to log on!"
 END
 
 #endif    // English (U.S.) resources

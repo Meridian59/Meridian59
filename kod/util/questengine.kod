@@ -256,7 +256,7 @@ resources:
          "realm.  These plants may change the course of history.  They are an antidote to a terrible disease that "
          "is beginning to spread through the land.  Come to me when thou would learn from me, friend."
    fadelearn_failure_4 = "Subject:  Plant growth formula\n"
-         "Thy dallience hath cost not only to yourself the posssibility of learning my magicks, but also to "
+         "Thy dallience hath cost not only to yourself the possibility of learning my magicks, but also to "
          "the entire realm a chance to resist a new disease that is slowly spreading.  I hope thou dost not catch "
          "it thyself.  That would be a fine bit of justice, eh?  Trouble me no further, knave."
 
@@ -400,11 +400,11 @@ resources:
    stunteddwarf_assign_3 = "Ah, an ancient drink.  Actually, the recipe has been lost in time, although I hear "
          "that %NPC might know of it."
    stunteddwarf_trigger_4 = "myth"
-   stunteddwarf_assign_4 = "Stunted dwarf?  Ha!  That’s just a myth, and you tell %HIMHER_NPC I said that!"
+   stunteddwarf_assign_4 = "Stunted dwarf?  Ha!  That's just a myth, and you tell %HIMHER_NPC I said that!"
    stunteddwarf_success_4 = "Ah, well.  If you ever hear anyone mention a stunted dwarf, you be sure to find out "
          "what you can."
    stunteddwarf_assign_6 = "Ah, you need a recipe for your garden variety stunted dwarf, eh?  Tell you what.  "
-         "Prove to me you’re hero enough to drink one, and I’ll give you the recipe.  Go kill a kriipa for me."
+         "Prove to me you're hero enough to drink one, and I'll give you the recipe.  Go kill a kriipa for me."
    stunteddwarf_success_6 = "Fine job, %NAME.  Take this recipe."
    stunteddwarf_failure_6 = "Subject: Stunted Dwarf\n"
          "I see you have wisely forgotten about having a stunted dwarf.  It is, after all, not a drink for the "
@@ -412,7 +412,7 @@ resources:
    stunteddwarf_success_7 = "How remarkable!  You must be a persistent one, %NAME.  I must give you something "
          "equally rare in return."
 
-   hypochondriac_assign_2 = "Thank god you’re here!  I think I’m dying!  I’ve got %CARGO!  Go to %NPC and "
+   hypochondriac_assign_2 = "Thank god you're here!  I think I'm dying!  I've got %CARGO!  Go to %NPC and "
          "ask %HIMHER_NPC about a cure for it!"
    hypochondriac_trigger_2a = "paragolisys"
    hypochondriac_trigger_2b = "miriatetosis"
@@ -422,7 +422,7 @@ resources:
          "It's a good thing someone else came by and saved me from my ailment!  Surely you would have left me "
          "to slowly waste away into a painful, lingering death."
    hypochondriac_trigger_3 = "sacchaqua"
-   hypochondriac_assign_3 = "Ah, he’s dying, eh?  Well, why don’t you go to %NPC and say that Frisconar "
+   hypochondriac_assign_3 = "Ah, he's dying, eh?  Well, why don't you go to %NPC and say that Frisconar "
          "needs another Sacchaqua potion."
    hypochondriac_failure_3 = "Subject: Frisconar's unending ailments\n"
          "Guess you gave up on old Frisconar.  I don't blame you, I don't have much patience for his fussing "
@@ -430,7 +430,7 @@ resources:
    hypochondriac_assign_4 = "How very amusing.  You would think an accomplished Apothecary like Frisconar "
          "would know that this is nothing more than sugar water.  Well, take this to him."
    hypochondriac_success_4 = "Oh, thank the gods!  I ... I was seeing stars!  The light at the end of the tunnel!  "
-         "I’m alive!  Here, take this %PRIZE - I owe it to you for saving my life!"
+         "I'm alive!  Here, take this %PRIZE - I owe it to you for saving my life!"
    hypochondriac_failure_4 = "Subject: O woe is me!\n"
          "Where have you been?!  I am finished now, for sure.  As I write this, my sight dims until I can barely "
          "see the paper before me.  My breath is short and causes me great pain.  My search for a cure to my "
@@ -537,8 +537,8 @@ resources:
          "we'll have a little toast - ~ITo the foolish masses, who offer up their feeble bodies of blood and bone to "
          "be swallowed by silent stones or jigging delusory puppet-gods.~I"
 
-   polishquest_assign = "Excuse me.  I’ve been honing my jewelling skills, and I was wondering if you have any "
-         "uncut gems of any sort.  If you do, I’d be happy to polish them and give you one of the result."
+   polishquest_assign = "Excuse me.  I've been honing my jewelling skills, and I was wondering if you have any "
+         "uncut gems of any sort.  If you do, I'd be happy to polish them and give you one of the result."
    polishquest_success = "Ah, thank you.  Allow me to reward you."
    polishquest_failure = "Subject: Gem polishing\n"
          "Never mind about the uncut gems, I found some from someone else.  Thanks, though."
@@ -565,6 +565,14 @@ resources:
    monkinsignia_failure_3 = "Subject: Insignia\n"
          "I had thought so much better of you.  Oh, well.  I shall watch for a better fool in the future."
 
+   minstrelinsignia_trigger = "insignia"
+   minstrelinsignia_assign_2 = "~IAh, an unmarked shield, just like an untuned lyre, it simply won't do! Let me jazz it up with my insignia, but remember, good tunes come with a tip, let's call it a tithe, shall we?~I"
+   minstrelinsignia_trigger_2 = "tithe"
+   minstrelinsignia_assign_3 = "~II've been hearing some catchy rumors about a new world filled with magical notes and trinkets. Bring me some of those rare goodies, and we'll have a harmony so sweet it'll make the stars hum. Go fetch me %CARGO-consider it your audition for the band!~I"
+   minstrelinsignia_success_3 = "~IAh, you've hit all the right notes! Well done, my melodic friend. You've earned a standing ovation!~I"
+   minstrelinsignia_failure_3 = "Subject: Insignia\n"
+         "Oh dear, that performance fell flat! I was hoping for a virtuoso, but it seems I'll need to find another bard for the encore. Perhaps you'll strike the right chord next time?"
+
    factioninsignia_trigger = "insignia"
    factioninsignia_assign_2 = "I see you have a shield with colors, but no insignia.  If you would care to earn "
          "mine, I have a mission for you."
@@ -572,7 +580,7 @@ resources:
    factioninsignia_assign_3 = "In the midst of this political chaos, subjects openly consort against me.  "
          "Fortunately, I have spies in place which keep an eye on their connivings.  Reportedly, %NPC "
          "has been conferring with %CARGO, and I am naturally quite intrigued by whatever they talked about.  "
-         "Do me a favor, mention that person’s name to our friend %NPC, and repeat for me word for "
+         "Do me a favor, mention that person's name to our friend %NPC, and repeat for me word for "
          "word what is told to you."
    factioninsignia_trigger_3a = "Esseldi"
    factioninsignia_trigger_3b = "Drechx"
@@ -581,12 +589,12 @@ resources:
    factioninsignia_trigger_3e = "Alzahakar"
    factioninsignia_trigger_3f = "Priestess Qerti'nya"
    factioninsignia_trigger_3g = "Priestess Xiana"
-   factioninsignia_trigger_3h = "Jonas d’Accor"
+   factioninsignia_trigger_3h = "Jonas d'Accor"
    factioninsignia_failure_3 = "Subject: Insignia mission\n"
          "My disappointment is profound.  I had thought that certainly, you would be more reliable than the "
          "common thugs and unreliable swine that make up my spy network.  Apparently, you are below them."
    factioninsignia_assign_4 = "%CARGO."
-   factioninsignia_trigger_4a = "Uh... I don’t really know what you're talking about"
+   factioninsignia_trigger_4a = "Uh... I don't really know what you're talking about"
    factioninsignia_trigger_4b = "An outstanding citizen.  It's been a while since we last had a good talk"
    factioninsignia_trigger_4c = "Ah, yes!  We were just chatting about what a fine job the Princess is doing"
    factioninsignia_trigger_4d = "Ah, yes!  We were just chatting about what a fine job the Duke is doing"
@@ -615,7 +623,7 @@ resources:
          "for trying, though."
 
    moxalscam1_assign_2 = "Ah, friend and fellow dreamer!  I think I have found the perfect opportunity for us!  "
-         "It can’t fail!  Surely you want to hear more about this golden opportunity!"
+         "It can't fail!  Surely you want to hear more about this golden opportunity!"
    moxalscam1_trigger_2 = "opportunity"
    moxalscam1_assign_3 = "Simple!  Just take this letter to %NPC.  "
          "Before you know it, the cash will start rolling in!"
@@ -627,30 +635,30 @@ resources:
    moxalscam1_failure_4 = "Subject: Where's my money?!?!\n"
          "You promised me shillings, and lots of them!  Where are they?  You kept them for yourself, didn't you?  "
          "I won't forget your treachery...  Watch your back, thief."
-   moxalscam1_success_5 = "Hmmm...  Apparently, this person thinks I’m a complete idiot.  I’m somewhat surprised "
+   moxalscam1_success_5 = "Hmmm...  Apparently, this person thinks I'm a complete idiot.  I'm somewhat surprised "
          "that YOU fell for it.  Ah well, since you went to all this trouble, let me give you a little something.  "
          "Here."
 
-   moxalscam2_assign_2 = "Early last week I had a great idea, and I’ve been trying to convince %NPC to help me "
-         "finance it.  Look, if you convince %HIMHER_NPC, I’ll split the returns with both of you 50/50/50."
+   moxalscam2_assign_2 = "Early last week I had a great idea, and I've been trying to convince %NPC to help me "
+         "finance it.  Look, if you convince %HIMHER_NPC, I'll split the returns with both of you 50/50/50."
    moxalscam2_failure = "Subject: My wayward partner!\n"
          "Well, sheesh!  You didn't have to help me, but you said you would...  I mean no one was twisting "
          "your arm, right?  Well, come back when your gut tells you it's time to make some serious shillings."
    moxalscam2_assign_3 = "Oh, Riija, let me guess.  Moxal sent you.  "
-         "Well, tell him, AGAIN, that I’m not interested."
+         "Well, tell him, AGAIN, that I'm not interested."
    moxalscam2_trigger_3 = "not interested"
-   moxalscam2_assign_4 = "Now, now, now.  Maybe you didn’t try hard enough.  Try again, and be sure to remind "
+   moxalscam2_assign_4 = "Now, now, now.  Maybe you didn't try hard enough.  Try again, and be sure to remind "
          "%HIMHER_NPC about the tenfold - no, HUNDREDFOLD - return."
    moxalscam2_assign_5 = "SHEESH, WHAT IS IT WITH YOU PEOPLE?  Look, Moxal is either a pie-eyed fool or a total "
-         "thief, I haven’t figured out which, but only a total idiot would give him money.  "
-         "Tell him I’m NOT INTERESTED."
+         "thief, I haven't figured out which, but only a total idiot would give him money.  "
+         "Tell him I'm NOT INTERESTED."
    moxalscam2_success_5 = "*-sigh-*  Ah, well, %SOURCE_NPC was not of strong enough stomach, I guess.  "
-         "I don’t suppose YOU have 100,000 shillings to invest in a moderately risky venture?"
+         "I don't suppose YOU have 100,000 shillings to invest in a moderately risky venture?"
 
    letter_trigger = "need a courier"
    council_letter_assign = "Why yes I do.  Take this letter to the councilor %NPC as fast as possible.  "
          "He will pay for the service."
-   council_letter_success = "I’ve been expecting this letter.  Thank you, %NAME.  Here is your fee."
+   council_letter_success = "I've been expecting this letter.  Thank you, %NAME.  Here is your fee."
    council_letter_failure = "Subject:  The letter I entrusted to you\n"
          "%NPC did not get my letter in time.  I shall find another courier in the future."
 
@@ -760,7 +768,7 @@ resources:
       "I have reported you to the justicar, and henceforth you are to be considered an outlaw."
    catering_failure_3_h = "Subject: you stole the food for the party!\n"
       "I have spoken to a wizard friend of mine, and he has ensured that you will suffer for your dishonesty."
-   catering_success_3 = "Ah, what a mouthwatering spread!  Here is your comission, I thank you for your speed."
+   catering_success_3 = "Ah, what a mouthwatering spread!  Here is your commission, I thank you for your speed."
 
    apothecary_assign_2 = "%NPC has need of these %INDEF_CARGO%CARGO, please take them to %HIMHER_NPC.  "
       "Thievery of any of the items will result in your being labelled an outlaw.  "
@@ -893,7 +901,7 @@ resources:
       "I have more important concerns at this moment.  Leave my presence, as I have nothing to say to you."
    necrowarning2_failure_2 = "Subject: My letter\n"
       "You have failed your friends and the folk of Meridian for ages to come.  They are doomed to an "
-      "existence beseiged by dreadful malice and you choose not to give them a warning?  Your failure will "
+      "existence besieged by dreadful malice and you choose not to give them a warning?  Your failure will "
       "cost lives.  I hope you can live with that."
    necrowarning2_success_3 = "She listens not, but no matter.  She has been warned.  Thank you, brave soul.  "
       "Take this as your material reward for your service to the people of Meridian."
@@ -1150,7 +1158,7 @@ resources:
       "That could get expensive.  I wonder where he plans to get the money "
       "from."
    murder_jonas_m_5 = \
-      "Somone said that the Princess and Jonas have been becoming quite "
+      "Someone said that the Princess and Jonas have been becoming quite "
       "good friends lately.  Maybe she hired him to kill the Duke?  He is"
       "always looking to prove his fighting ability."
    murder_jonas_c_1 = \
@@ -1175,7 +1183,7 @@ resources:
       "Well, travellers have told me that they see Miriana dancing in the "
       "woods with a knife.  Where did she get a weapon?"
    murder_miriana_w_2 = \
-      "Somone said that Miriana once cut a spider in half with some strange "
+      "Someone said that Miriana once cut a spider in half with some strange "
       "magic.  The wound looked more like a weapon stroke than typical "
       "magical damage, they said."
    murder_miriana_w_3 = \
@@ -1183,7 +1191,7 @@ resources:
       "heard Miriana running through the woods screaming something about "
       "Faren and wanting her weapon back.  What could that mean?"
    murder_miriana_w_4 = \
-      "Somone said that Miriana knew the true power of the spell called "
+      "Someone said that Miriana knew the true power of the spell called "
       "'Nodeburst'.  I wonder what she does with all that power?"
    murder_miriana_w_5 = \
       "I once heard that the living trees used to cast their lightning "
@@ -1427,10 +1435,10 @@ resources:
             % (any of the guards questioned will refuse to speak about that night)
    murder_random_w_1 = \
       "Bah!  This whole thing is ridiculous.  The fact is the Duke just couldn't wait to start "
-      "the feast and Akardius is too embarassed to admit that his uncle ate himself to death."
+      "the feast and Akardius is too embarrassed to admit that his uncle ate himself to death."
    murder_random_c_1 = \
       "I heard that Akardius took the Duke's body to a healer, even though he was dead.  "
-      "I guess he was really desperate to save him."  % (Tie-in to Lady Aftyn dialoge.)
+      "I guess he was really desperate to save him."  % (Tie-in to Lady Aftyn dialogue.)
    murder_random_m_1 = \
       "Well, there have been a lot of rumors flying around about Maleval or the Princess or you name it.  "
       "Some fool probably even suspects me.  But I wouldn't be surprised if the Duke had some "
@@ -1449,7 +1457,7 @@ properties:
 
 	piQuestTimerDelay = 5 * 60 * 1000    %	used to check if deadlines met and schedule new quests
 	piQuestDeadlineTimerDelay = 60 * 1000     %  goes off once a minute
-	piQuestHistoryRecentTime = 4 * 3600       %  4 hrs - defines what 'recently' means in history restrictions
+	piQuestHistoryRecentTime = 3600           %  1 hr - defines what 'recently' means in history restrictions
 
 	piDebug = FALSE
 	piActive = TRUE                           % set to FALSE to suspend scheduling of new quests
@@ -2298,7 +2306,17 @@ Recreate()
 			      100,
 			      [[ Q_R2_HAS_HEALTH_LEVEL, 75 ], [ Q_R2_DOES_NOT_HAVE_ITEM, &RebelShield ]]
 			                                    ], plQuestTemplates );
-
+   
+   % QST_ID_MINSTREL_INSIGNIA
+   plQuestTemplates = cons([  piDefaultNumPlayers,\
+			      piDefaultQuestType,\
+			      Q_PLAYER_NOTTRIED_RECENTLY,\
+			      [ 217, 218, 219 ],\
+			      20,\
+			      [],\
+			      100,
+			      [ [ Q_R2_HAS_ITEM, &GuildShield ] ]
+			                                    ], plQuestTemplates );
 
    % now we fix up the faction service quests, since they need to have as many scheduled as members
    for i in Send(Send(SYS,@GetParliament),@GetFactionList) {
@@ -5795,7 +5813,7 @@ RecreateQuestNodes()
    {
       debug( "Error building QN #205" );
    }
-   % template #206 is brining in the Lute.
+   % template #206 is bringing in the Lute.
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS,
          #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &Lute, 1 ] ],
          #timelimit = 6 * 3600 )  % time limit is 6 hours
@@ -5950,6 +5968,47 @@ RecreateQuestNodes()
    else
    {
       debug( "Error building QN #216" );
+   }
+
+   % template #217 is minstrel insignia quest
+   if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE,
+         #cargolist = [ minstrelinsignia_trigger ] )
+   {
+      lNPCs = $;
+      for oNPC in send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &Minstrel ) { lNPCs = cons( oNPC, lNPCs );}
+      send( self, @SetQuestNodeNPCList, #index = 217, #new_NPC_list = lNPCs );
+   }
+   else
+   {
+      debug( "Error building QN #217" );
+   }
+   % template #218 is minstrel insignia quest
+   if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
+         #cargolist = [ minstrelinsignia_trigger_2 ],
+         #timelimit = 60 )    % 1 minute
+   {
+      send( self, @SetQuestNodeAssignHint, #index = 218, #new_hint = minstrelinsignia_assign_2 );
+   }
+   else
+   {
+      debug( "Error building QN #218" );
+   }
+   % template #219 is minstrel insignia quest
+   if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS, #NPC_modifier = QN_NPCMOD_SAME,
+         #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &FineLute, 1 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &PolishedSeraphym, 5 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &RainbowFern, 20 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &UncutSeraphym, 10 ] ],
+         #prizelist = [ [ QN_PRIZETYPE_INSIGNIA ] ],
+         #timelimit = 12 * 3600 )    % 12 hrs
+   {
+      send( self, @SetQuestNodeAssignHint, #index = 219, #new_hint = minstrelinsignia_assign_3 );
+      send( self, @SetQuestNodeSuccessHint, #index = 219, #new_hint = minstrelinsignia_success_3 );
+      send( self, @SetQuestNodeFailureHint, #index = 219, #new_hint = minstrelinsignia_failure_3 );
+   }
+   else
+   {
+      debug( "Error building QN #219" );
    }
 
 

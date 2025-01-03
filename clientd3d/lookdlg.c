@@ -312,7 +312,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	    amount = 1;
 	 obj->temp_amount = amount;
 	 ListBox_DeleteString(info->hwndQuanList,i);
-	 sprintf(temp, "%d", amount);
+	 snprintf(temp, sizeof(temp), "%d", amount);
 	 ListBox_InsertString(info->hwndQuanList,i,temp);
 	 ListBox_SetItemData(info->hwndQuanList,i,amount);
       }
@@ -346,7 +346,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	       amount = obj->amount;
 	    else
 	       amount = 1;
-	    sprintf(temp, "%d", amount);
+	    snprintf(temp, sizeof(temp), "%d", amount);
 	 }
 	 else
 	 {
@@ -392,7 +392,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 		  ListBox_DeleteString(info->hwndQuanList,index);
 		  if (amount > 0)
 		  {
-		     sprintf(temp, "%d", amount);
+         snprintf(temp, sizeof(temp), "%d", amount);
 		     ListBox_InsertString(info->hwndQuanList, index, temp);
 		  }
 		  else

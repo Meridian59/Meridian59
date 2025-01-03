@@ -80,7 +80,7 @@ properties:
    piNorthEndRow = $    %%The northern most safe row in piPenatration.
    piSouthEndRow = $    %%The southern most safe row in piPenatration. 
                         %%(All rows in piPenatration between these points are safe)
-   piDirection = $      %%The dirrection in which the maze is being run.  EAST = 1 WEST = -1
+   piDirection = $      %%The direction in which the maze is being run.  EAST = 1 WEST = -1
                         %%So that piPenatration + piDirection = the next row
    piNextSafeRow = $    %%The row of the next safe spot in (piPenatration + piDirection)
    pbInMaze = FALSE     %%Set to true while the runner is in the maze.
@@ -413,7 +413,7 @@ messages:
          piSouthEndRow = iCurrentRow;   
       }
 
-      %%Got good data, Use current row possition as one or both end points.  iNextSafeRow is the next safe row.
+      %%Got good data, Use current row position as one or both end points.  iNextSafeRow is the next safe row.
 
       if iNextSafeRow = iCurrentRow
       %%Then it is both endpoints

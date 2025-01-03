@@ -351,7 +351,7 @@ void GraphCtlPaint(HWND hwnd)
    // Draw value of stat, if appropriate
    if (info->style & GCS_NUMBER)
    {
-      sprintf(temp, "%d", info->current_value);
+      snprintf(temp, sizeof(temp), "%d", info->current_value);
 
       SetBkMode(hdc, TRANSPARENT);
       SelectObject(hdc, GetFont(FONT_STATNUM));

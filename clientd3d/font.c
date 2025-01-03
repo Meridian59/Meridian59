@@ -72,7 +72,7 @@ void FontsCreate(Bool use_defaults)
 	 strcpy(str, fontinfo[i]);
       else
       {
-	 sprintf(name, "Font%d", i);
+        snprintf(name, sizeof(name), "Font%d", i);
 	 GetPrivateProfileString(font_section, name, fontinfo[i], str, MAX_FONTNAME, ini_file);
       }
 
@@ -188,12 +188,12 @@ void FontsSave(void)
       if (GetObject(fonts[i], sizeof(LOGFONT), &lf) == 0)
 	 GetObject(hDefaultFont, sizeof(LOGFONT), &lf);
       
-      sprintf(str, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s", 
+      snprintf(str, sizeof(str), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s", 
 	      lf.lfHeight, lf.lfWidth, lf.lfEscapement, lf.lfOrientation,
 	      lf.lfWeight, lf.lfItalic, lf.lfUnderline, lf.lfStrikeOut,
 	      lf.lfCharSet, lf.lfOutPrecision, lf.lfClipPrecision,
 	      lf.lfQuality, lf.lfPitchAndFamily, lf.lfFaceName);
-      sprintf(name, "Font%d", i);
+      snprintf(name, sizeof(name), "Font%d", i);
 
       WritePrivateProfileString(font_section, name, str, ini_file);
    }

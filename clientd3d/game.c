@@ -179,7 +179,7 @@ void _cdecl GameMessagePrintf(char *fmt, ...)
    va_list marker;
 
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    GameMessage(s);

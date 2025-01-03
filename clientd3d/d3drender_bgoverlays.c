@@ -94,10 +94,9 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		bg_overlay_pos.y = y;
 		bg_overlay_pos.z = z;
 
-		D3DMATRIX rot, mat, spin;
+		D3DMATRIX rot, mat;
 		MatrixIdentity(&mat);
 		MatrixIdentity(&rot);
-		MatrixIdentity(&spin);
 
 		const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
 		const float DEGREES_TO_RADIANS = PI / 180.0f;
@@ -108,9 +107,6 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 
 		MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
 		MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
-		// Rotate to match orientation of the original asset images.
-		MatrixRotateZ(&spin, -90.0f * DEGREES_TO_RADIANS); 
-		MatrixMultiply(&rot, &rot, &spin);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);
@@ -142,13 +138,15 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		static const float u[4] = { epsilon, 1.0f - epsilon, 1.0f - epsilon, epsilon };
 		static const float v[4] = { epsilon, epsilon, 1.0f - epsilon, 1.0f - epsilon };
 
-		pChunk->st0[0].s = u[0];
+		// Normally, you'd assign these in a predictable (e.g., top-left to bottom-right) order. 
+		// Here, we intentionally swap certain indices to mirror the texture along the X-axis.
+		pChunk->st0[0].s = u[1];
 		pChunk->st0[0].t = v[0];
-		pChunk->st0[1].s = u[1];
+		pChunk->st0[1].s = u[0];
 		pChunk->st0[1].t = v[1];
-		pChunk->st0[2].s = u[2];
+		pChunk->st0[2].s = u[3];
 		pChunk->st0[2].t = v[2];
-		pChunk->st0[3].s = u[3];
+		pChunk->st0[3].s = u[2];
 		pChunk->st0[3].t = v[3];
 
 		pChunk->indices[0] = 1;

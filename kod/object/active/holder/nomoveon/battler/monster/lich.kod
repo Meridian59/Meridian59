@@ -368,7 +368,7 @@ messages:
    GetProjectileLightFlags()
    {
       % No lighting information.
-      % There probably should be ligthing information, since it's magical-type.
+      % There probably should be lighting information, since it's magical-type.
       return LIGHT_FLAG_NONE;
    }
 
@@ -536,9 +536,9 @@ messages:
    {
       local oBlind, lActive, iRandom, iDistance, iBestDistance, i, each_obj;
 
-      % Only one in three people are considered eligable 
+      % Only one in three people are considered eligible 
       % targets.  The closest is targeted.  Held people
-      % aren't considered - he deals with his current 
+      % aren't considered - she deals with her current 
       % target first.  Only people in view are considered.
    
       oBlind = send(SYS,@FindSpellByNum,#num=SID_BLIND);

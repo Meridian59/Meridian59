@@ -20,7 +20,7 @@ WeapAttSpellType is WeaponAttribute
 %
 %      [WA_ATTACKSPELLTYPE, timer, spell_attack_type ]
 %   
-%       timer::the length of time, from 1 to 25 realtime hours,
+%       timer::the length of time, from 1 to 24 realtime hours,
 %         that the enchantment lasts (depending on spell factors).
 %       spell_attack_type : as defined in blakston.khd.
 %          examples: ATCK_SPELL_FIRE, ATCK_SPELL_UNHOLY, ATCK_SPELL_ACID
@@ -35,6 +35,9 @@ WeapAttSpellType is WeaponAttribute
 constants:
 
    include blakston.khd
+
+   ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1 * 1000
+   ONE_DAY_IN_MILLISECONDS = 60 * 60 * 24 * 1000
 
 resources:
    
@@ -115,7 +118,8 @@ messages:
       {
          rName = iaSpellType_acid;
       }
-         
+      
+      AppendTempString("  ");
       AppendTempString(rName);
 
       % If not faked, then add maker information if available.
@@ -191,8 +195,8 @@ messages:
       
       if send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
       {
-         send(self,@AddToItem,#oItem=oWeapon, #state1=iSpellType,
-              #random_gen=TRUE);
+         send(self,@AddToItem,#oItem=oWeapon,#state1=iSpellType,
+              #timer_duration=ONE_DAY_IN_MILLISECONDS,#random_gen=TRUE);
               
          return TRUE;
       }
@@ -264,7 +268,8 @@ messages:
       if send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oItem)
       {
          send(self,@AddToItem,#oItem=oItem,#state1=iSpellType,
-              #timer_duration=random(3600000,86400000),#random_gen=TRUE);
+              #timer_duration=random(ONE_HOUR_IN_MILLISECONDS,ONE_DAY_IN_MILLISECONDS),
+              #random_gen=TRUE);
       }
       
       return;

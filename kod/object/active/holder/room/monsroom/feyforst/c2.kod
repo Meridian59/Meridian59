@@ -24,7 +24,7 @@ resources:
       "~IVictorious, the elhai invite all of those pure of heart to drink "
       "deeply from their mana node."
    c2_dirhai_win = \
-      "~ITriumphant in their dark victory, the dirhai invite any of similiar "
+      "~ITriumphant in their dark victory, the dirhai invite any of similar "
       "scruples to meld with the node."
    waterfall_sound_outdoorsc2 = wfall2.wav
 

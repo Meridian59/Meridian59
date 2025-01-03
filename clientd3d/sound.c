@@ -314,7 +314,7 @@ void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, i
    }
 
    GetGamePath(game_path);
-   sprintf(fname, "%s%s\\%.*s", game_path, sound_dir, FILENAME_MAX, filename);
+   snprintf(fname, sizeof(fname), "%s%s\\%.*s", game_path, sound_dir, FILENAME_MAX, filename);
    
    PlayWaveFile(hMain, fname, volume, flags, row, col, radius, max_vol);
 }

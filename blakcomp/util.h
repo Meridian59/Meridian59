@@ -24,7 +24,7 @@ void SafeFree(void *ptr);
 
 char *strtolower(char *);
 int string_hash(const char *name, int max);
-void set_extension(char *newfile, const char *filename, const char *extension);
+void set_extension(char *newfile, int newfile_len, const char *filename, const char *extension);
 
 list_type list_create(void *newdata);
 list_type list_add_item(list_type l, void *newdata);

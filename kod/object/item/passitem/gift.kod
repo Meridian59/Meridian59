@@ -47,8 +47,6 @@ classvars:
 
    viValue_average = 30
 
-   vrGift_open_wav = gift_open_wav
-
 properties:
 
    poGiftGiver = $     %% if poGiftGIver = $, then it's from the gods.
@@ -189,7 +187,7 @@ messages:
       send(oldOwner,@NewHold,#what=poContents);
 
       % Note that this RecalcBulkAndWeight is entirely superfluous,
-      %  but we'll leave it here as a safeguard against future wierdness.
+      %  but we'll leave it here as a safeguard against future weirdness.
       send(oldOwner,@RecalcBulkAndWeight);
       if send(self,@HasAttribute,#ItemAtt=IA_BONDED)
       {

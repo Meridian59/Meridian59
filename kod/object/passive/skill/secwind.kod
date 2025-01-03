@@ -149,7 +149,7 @@ messages:
    %
 
    EndEnchantment(who=$,state=$,report=TRUE)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       local iAmount;
 
@@ -166,7 +166,7 @@ messages:
    }
 
    RemoveEnchantmentEffects(who=$,state=$,report=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       Send(self,@EndEnchantment,#who=who,#report=report,#state=state);
 
@@ -174,43 +174,43 @@ messages:
    }
 
    ShowEnchantmentIcon(type=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return viShow_enchantment_icon & 0x02;
    }
 
    IsPersonalEnchantment()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return TRUE;
    }
 
    SetSpellPlayerFlag(who=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return;
    }
 
    AffectsMaxMana()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return FALSE;
    }
 
    IsPeriodic()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return FALSE;
    }
 
    RestartEnchantmentEffect(who=$, state=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return;
    }
 
    IsHarmful()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return FALSE;
    }

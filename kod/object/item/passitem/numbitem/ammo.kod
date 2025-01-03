@@ -162,7 +162,7 @@ messages:
          if(IsClass(Send(who,@GetWeapon), &Bow))
          {
             atype = Send(self,@GetAttackType);
-            if atype & ATCK_WEAP_PIERCE % we can just do this now using is class.. actually don't even need this can just use the class to create!
+            if atype & ATCK_WEAP_PIERCE
             {
                if(IsClass(Send(who,@GetWeapon),&PracticeBow))
                {
@@ -179,7 +179,7 @@ messages:
                {
                   if GetClass(self) = &FireArrow
                   {
-                     % Fire arrows get extinguished when they hit a target!
+                     % Fire arrows get extinguished, becoming regular, when they hit a target!
                      poArrow = Create(&Arrow,#number=1);
                   }
                   else

@@ -525,18 +525,6 @@ messages:
 
       % Player has 8 standard overlays: right arm, left arm, legs, head, eyes, 
       % mouth, nose, hair
-
-      if pbIsHairVisible = $
-      {
-         % We added the ability to show facial overlays on statues but for existing statues 
-         % the number of overlays was already calculated and this number may be incorrect!
-         % To upgrade the statue we reset the frames having first correctly set the new properties.
-         Debug("Upgrading an old statue");
-         prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
-         pbIsHairVisible = Send(poOriginal,@IsHairVisible);
-         Send(self,@ResetFrames);
-         Debug("Upgrade of statue complete.");
-      }
       
       %% number of overlays
       AddPacket(1, piOverlays);

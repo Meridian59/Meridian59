@@ -310,8 +310,7 @@ void ConfigLoad(void)
    }
    else
    {
-      // TODO: Added January 2025 - removed after the next update as essentially all existing users 
-	  // will presumably run it after that.
+      // TODO: Added January 2025 - remove after the next update when everyone will have been reset.
       // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
       // This is to ensure players start from a clean slate with maximum performance.
       // After this one-time flip, future changes to gpu efficiency preferences will be respected.

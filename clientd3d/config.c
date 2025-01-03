@@ -169,7 +169,7 @@ void ConfigInit(void)
 
    //memset(&config,0,sizeof(config));
    GetGamePath( dir );
-   sprintf(ini_filename, "%s%s", dir, GetString(hInst, IDS_INIFILE));
+   snprintf(ini_filename, sizeof(ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILE));
    ini_file = ini_filename;
 }
 /****************************************************************************/
@@ -574,7 +574,7 @@ int GetConfigInt(char *section, char *key, int default_value, char *fname)
 {
    char buf[MAX_INTSTR], temp[MAX_INTSTR];
 
-   sprintf(temp, "%d", default_value);
+   snprintf(temp, sizeof(temp), "%d", default_value);
 
    if (GetPrivateProfileString(section, key, temp, buf, MAX_INTSTR, fname) == 0)
       return default_value;
@@ -589,7 +589,7 @@ BOOL WriteConfigInt(char *section, char *key, int value, char *fname)
 {
    char buf[MAX_INTSTR];
 
-   sprintf(buf, "%d", value);
+   snprintf(buf, sizeof(buf), "%d", value);
    return WritePrivateProfileString(section, key, buf, fname);
 }
 
@@ -599,7 +599,7 @@ BOOL WriteConfigInt(char *section, char *key, int value, char *fname)
  */
 void ConfigSetServerNameByNumber(int num)
 {
-   sprintf(config.comm.hostname, config.comm.domainformat, num);
+   snprintf(config.comm.hostname, sizeof(config.comm.hostname), config.comm.domainformat, num);
 }
 
 /********************************************************************/
@@ -627,7 +627,7 @@ void ConfigSetSocketPortByNumber(int num)
    ** appear, just change DefaultSockPortFormat.
    */
 
-   sprintf(buf, DefaultSockPortFormat, (num % 100));
+   snprintf(buf, sizeof(buf), DefaultSockPortFormat, (num % 100));
 
    config.comm.sockport = atoi(buf);
 }
@@ -638,7 +638,7 @@ void ConfigMenuLaunch(void)
 	PROCESS_INFORMATION pi;
 	char command_line[MAX_CMDLINE];
 
-	sprintf(command_line, "%s", "m59bind.exe");
+	snprintf(command_line, sizeof(command_line), "%s", "m59bind.exe");
 
 	memset(&si, sizeof(si), 0);
 	si.cb = sizeof(si);

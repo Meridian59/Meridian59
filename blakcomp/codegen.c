@@ -931,7 +931,7 @@ void codegen(char *kod_fname, char *bof_fname)
    if (codegen_ok)
    {
       char temp[256];
-      set_extension(temp, bof_fname, ".rsc");
+      set_extension(temp, sizeof(temp), bof_fname, ".rsc");
       write_resources(temp);
       save_kodbase();
    }

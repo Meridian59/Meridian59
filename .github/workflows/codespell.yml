@@ -1,0 +1,23 @@
+name: Spellcheck Blakod
+
+on: 
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+  
+jobs:
+  codespell:
+    name: .kod spellchecker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Codespell
+        uses: codespell-project/actions-codespell@v2
+        with:
+          path: kod
+          ignore_words_file: .codespellignore

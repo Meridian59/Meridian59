@@ -610,7 +610,7 @@ messages:
    {
       % Gain vigor
       send(poOwner, @AddExertion, #amount = -amount*10000); % regain (amount) vigor points
-      % satsify hunger
+      % satisfy hunger
       piFineHunger = piFineHunger - amount;
       while piFineHunger < 0 {
          piHunger = piHunger - 1;

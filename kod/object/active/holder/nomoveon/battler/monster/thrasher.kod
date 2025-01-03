@@ -172,7 +172,7 @@ messages:
    % of that going back to sleep crap. Wussy statues. =)
 
    TweakBehavior()
-   "Our default behavior is to not be noticable as a monster."
+   "Our default behavior is to not be noticeable as a monster."
    {
       if viSpeed = SPEED_NONE
       {

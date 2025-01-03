@@ -21,7 +21,7 @@ resources:
    SpectralMummy_icon_rsc = mummy.bgf
    SpectralMummy_desc_rsc = \
       "This poor creature was once a person who was mummified in an ancient ritual and put "
-      "to rest in the crypt.  Ages have passed and only the spirit of the orignial person "
+      "to rest in the crypt.  Ages have passed and only the spirit of the original person "
       "remains.  It has been dead and mummified for so long it has forgotten what it originally "
       "looked like and now wanders this plane as a spectral being, appearing as it did when it "
       "was originally put to rest."

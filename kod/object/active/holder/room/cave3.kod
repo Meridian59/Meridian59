@@ -122,7 +122,7 @@ messages:
          }
       }
 
-   % Brax enterance
+   % Brax entrance
       if IsClass(what,&Player)
       {
          if row = 28 AND col=73

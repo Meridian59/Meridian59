@@ -53,7 +53,7 @@ INT_PTR CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
       else 
       {
 	 CheckDlgButton(hDlg, IDC_TIMEOUTENABLE, TRUE);
-	 sprintf(temp, "%d", config.timeout);
+	 snprintf(temp, sizeof(temp), "%d", config.timeout);
       }
 
       Edit_SetText(hMinutes, temp);

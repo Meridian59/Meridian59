@@ -49,11 +49,11 @@ char *strtolower(char *s)
  * set_extension: Set newfile to filename with its extension set to the
  *    given string.
  */
-void set_extension(char *newfile, const char *filename, const char *extension)
+void set_extension(char *newfile, int newfile_len, const char *filename, const char *extension)
 {
    char *ptr;
 
-   strcpy(newfile, filename);
+   strncpy(newfile, filename, newfile_len);
 
    ptr = strrchr(newfile, '\\');  /* Find last component of path */
    if (ptr == NULL)

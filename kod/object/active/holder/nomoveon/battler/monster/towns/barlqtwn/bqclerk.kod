@@ -128,7 +128,7 @@ resources:
       "In faith, they must step forward into hither court area first."
    barloque_clerk_already_pardoned = \
       "Your Honor, that person hath already been pardoned for murder.  "
-      "The Crown doth not look kindly upon unrepetant murderers and will "
+      "The Crown doth not look kindly upon unrepentant murderers and will "
       "allow not another pardon this term."
    barloque_clerk_citizen_unknown = \
       "Your Honor, there is no record of a citizen by such name."

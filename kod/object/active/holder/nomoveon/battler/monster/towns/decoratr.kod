@@ -370,7 +370,7 @@ messages:
          poCurrentObject = oObject;
       }
 
-      % A note on how the "TrySet*" fuctions work.
+      % A note on how the "TrySet*" functions work.
       % Return values:
       % TRUE means we could change it.
       % FALSE means that is not available

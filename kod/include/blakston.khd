@@ -142,7 +142,7 @@
    LIGHT_FLAG_DYNAMIC = 0x0002
    LIGHT_FLAG_WAVERING = 0x0004
 
-   % Color constants for dynamic lights, in hexidecimal form.
+   % Color constants for dynamic lights, in hexadecimal form.
    % Bright colors, 100% saturation
    LIGHT_BWHITE  = 0x7FFF
    LIGHT_BRED    = 0x7C00
@@ -767,7 +767,7 @@
    RID_NEWB_MAX = 1018
 
    % Settlement and Island 2000-2499
-   % Needs to be seperate so it counts as a different 'zone'
+   % Needs to be separate so it counts as a different 'zone'
    RID_KOCATAN = 2000
    RID_KOC_INN = 2001
    RID_KOC_APOTH = 2002
@@ -833,7 +833,7 @@
    % Dungeons
 
    % Orc Caves 2500-2600
-   % Needs to be seperate so it counts as a different 'zone'
+   % Needs to be separate so it counts as a different 'zone'
    RID_ORC_CAVE1 = 2500
    RID_ORC_CAVE2 = 2501
    RID_ORC_CAVE3 = 2502
@@ -866,11 +866,11 @@
    RID_RENTABLE_START = 10000
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % RID Constants with .roo extentions.                           %
+   % RID Constants with .roo extensions.                           %
    % Only ones different from regular RID constants are listed.    %
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   % RID Constants with .roo extentions.
+   % RID Constants with .roo extensions.
    % Only ones different from regular RID constants are listed.
 
 
@@ -1398,10 +1398,10 @@
    MOB_SMITH            = 0x00200   % Can repair things (NOT IMPLEMENTED)
    MOB_TEACHER          = 0x00400   % Has skills or spells for sale
    MOB_ONE_TREASURE     = 0x00800   % Always generates one treasure item
-   MOB_LOCAL_ONLY       = 0x01000   % Allows random/listen without heirarchy
-   MOB_NOAGRESS         = 0x02000   % Wont attack until molested
-   MOB_KARMA_AG         = 0x04000   % Wont attack players of like karma
-   MOB_FULL_TALK        = 0x08000   % Isnt affected by the say ranges
+   MOB_LOCAL_ONLY       = 0x01000   % Allows random/listen without hierarchy
+   MOB_NOAGRESS         = 0x02000   % Won't attack until molested
+   MOB_KARMA_AG         = 0x04000   % Won't attack players of like karma
+   MOB_FULL_TALK        = 0x08000   % Isn't affected by the say ranges
    MOB_COND_SELLER      = 0x10000   % Has things that must be asked for
    MOB_PERM_QUESTER     = 0x20000   % is a perm questor
    MOB_LAWFUL           = 0x40000   % Won't publicly do business with murderers
@@ -1736,7 +1736,7 @@
 
    % Used for resistances and damage messages.
 
-   % Physial attack types
+   % Physical attack types
    ATCK_WEAP_ALL         = 0x00001
    % Every weapon is either magic or nonmagic.
    ATCK_WEAP_NONMAGIC    = 0x00002
@@ -2456,9 +2456,9 @@
    REMOTE_VIEW_MOVE        = 0x00000001
    REMOTE_VIEW_TURN        = 0x00000002
    REMOTE_VIEW_TILT        = 0x00000004
-   % Not implimented yet
+   % Not implemented yet
    REMOTE_VIEW_CAST        = 0x00000008
-   % Not implimented yet
+   % Not implemented yet
    REMOTE_VIEW_LOOK        = 0x00000010
    REMOTE_VIEW_TOP         = 0x00000100
    REMOTE_VIEW_BOTTOM      = 0x00000200
@@ -2769,6 +2769,7 @@
    QST_ID_DUKE_SOLDIER           = 72
    QST_ID_PRINCESS_SOLDIER       = 73
    QST_ID_REBEL_SOLDIER          = 74
+   QST_ID_MINSTREL_INSIGNIA      = 75
 
    % Quest misc constants
 

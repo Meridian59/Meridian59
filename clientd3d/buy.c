@@ -171,7 +171,7 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
       else
 	 amount = 1;
       cost = buy_obj->cost; // this WAS for a group: buy_obj->cost / amount;
-      sprintf(temp, "%d", cost);
+      snprintf(temp, sizeof(temp), "%d", cost);
       ListBox_InsertString(info->hwndCostList, index, temp);
       ListBox_SetItemData(info->hwndCostList, index, cost);
       ListBox_InsertString(info->hwndQuanList, index, " ");
@@ -223,7 +223,7 @@ static void ClickOnQuantity(HWND hDlg, BOOL bLimitToAmount)
 	    ListBox_DeleteString(info->hwndQuanList,index);
 	    if (amount > 0)
 	    {
-	       sprintf(temp, "%d", amount);
+         snprintf(temp, sizeof(temp), "%d", amount);
 	       ListBox_InsertString(info->hwndQuanList, index, temp);
 	    }
 	    else
@@ -276,7 +276,7 @@ static void HandleSelectionChange(void)
 	 amount = obj->amount;
       else
 	 amount = 1;
-      sprintf(temp, "%d", amount);
+      snprintf(temp, sizeof(temp), "%d", amount);
    }
    else
    {
@@ -408,7 +408,7 @@ void UpdateCost(void)
    }
 
    /* Draw new total cost */
-   sprintf(temp, "%d", info->cost);
+   snprintf(temp, sizeof(temp), "%d", info->cost);
    SetWindowText(info->hwndCost, temp);
 }
 /************************************************************************/

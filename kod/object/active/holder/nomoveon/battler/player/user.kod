@@ -3688,7 +3688,7 @@ messages:
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
                   % Possible conditions: iNumber is less than number argument
-                  %   becauses iCan_hold was less than number OR
+                  %   because iCan_hold was less than number OR
                   %   iNumber equals iCan_hold and number is $ OR
                   %   iNumber equals number and we don't need to send user_got_some
                   % Note that if number argument is null and we can hold the whole stack

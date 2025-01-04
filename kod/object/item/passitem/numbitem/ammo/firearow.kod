@@ -51,7 +51,7 @@ properties:
    % Projectile lighting information.
    viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
    % Medium light range, out of 255 (not as bright as a fireball)
-   viProjectileLightIntensity = 50
+   viProjectileLightIntensity = 20
    % Color is red like the tip of the fire arrow.
    viProjectileLightColor = LIGHT_BRED
 

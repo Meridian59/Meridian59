@@ -784,6 +784,12 @@ Bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 	return TRUE;
 }
 
+// Range from 2000 (Minimum noticable) to 9490 (Fireball)
+static float scaleProjectileLightIntensity(int intensity)
+{
+	return 2000.0f + ((9490.0f - 2000.0f) * ((intensity)-1.0f) / 254.0f);
+}	
+
 void D3DLMapsStaticGet(room_type *room)
 {
 	room_contents_node	*pRNode;
@@ -792,6 +798,7 @@ void D3DLMapsStaticGet(room_type *room)
 	int					sector_flags;
 	PDIB				pDib;
 
+	// projectiles such as a fireballs and arrows.
 	for (list = room->projectiles; list != NULL; list = list->next)
 	{
 		Projectile	*pProjectile = (Projectile *)list->data;
@@ -817,12 +824,12 @@ void D3DLMapsStaticGet(room_type *room)
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
 				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
+		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x = 
+			scaleProjectileLightIntensity(pProjectile->dLighting.intensity);
+		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y = 
+			scaleProjectileLightIntensity(pProjectile->dLighting.intensity);
+		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z = 
+			scaleProjectileLightIntensity(pProjectile->dLighting.intensity);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
 			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;

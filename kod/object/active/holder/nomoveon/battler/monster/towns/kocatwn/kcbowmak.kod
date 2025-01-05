@@ -35,7 +35,7 @@ classvars:
    vrDesc = KocatanBowMaker_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER
    viOccupation = MOB_ROLE_BLACKSMITH
 
    viGender = GENDER_FEMALE

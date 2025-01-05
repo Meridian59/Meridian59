@@ -25,6 +25,26 @@ resources:
          "I have claws from several Kriipa I've killed in the jungle.  The Kriipa is a truly"
          "fearsome beast, as I'm sure you know, and a hunter who wishes to obtain their claws must pay for them"
          "in blood spilt in battle.  You will understand, then, that my price for them is high."
+   
+   KocatanBowMaker_NeruditeArrow_sale = \
+         "You're after a bit more bite in your shots, hmm? Then the nerudite arrow is what you seek. "
+         "I carve the green stone arrowheads by hand - delicate work, but it lends them extra force. "
+         "If that stone shatters on impact, it can be downright fatal for whatever poor beast - "
+         "or unlucky soul - stands in your way. Of course, true craftsmanship doesn't come cheap. "
+         "Still interested? Then let's see how many your coinpurse can manage."
+
+   KocatanBowMaker_FireArrow_sale = \
+         "Looking to scorch your prey, are you? These fire arrows are fitted with searing-hot, enchanted heads -"
+         "perfect for setting flammable foes alight. Don't mistake that glow for mere show; "
+         "they can burn straight through flesh and wood alike, if you aim true. "
+         "Quality like this doesn't come cheap, of course. Ready to part with your coin?"
+
+   KocatanBowMaker_SilverArrow_sale = \
+         "If you plan to make short work of the undead, you'll want these. The clean edge "
+         "tears flesh and sinew alike, leaving wounds few creatures can shrug off - especially those "
+         "that crawl from the grave. Quality doesn't come cheap, though. Care to buy?"
+
+
    KocatanBowMaker_unwanted_give = "~k%s%s tells you, \"I have enough of those type of supplies to hold us through the summer.~n~k\""
 
    
@@ -103,12 +123,27 @@ messages:
 
    InitCondSale()
    {
-      local oObj;
+      local oObj,oObj2,oObj3,oObj4;
 
       oObj=Create(&KriipaClaw,#number=4);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[Send(oObj,@GetName)],
            #action=[LIBACT_CONDITIONAL,oObj,250,KocatanBowMaker_KriipaClaw_sale]);
+
+      oObj2=Create(&NeruditeArrow,#number=50);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj2,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj2,50,KocatanBowMaker_NeruditeArrow_sale]);
+
+      oObj3=Create(&SilverArrow,#number=50);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj3,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj3,60,KocatanBowMaker_SilverArrow_sale]);
+
+      oObj4=Create(&FireArrow,#number=50);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj4,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj4,70,KocatanBowMaker_FireArrow_sale]);
 
       return;
    }

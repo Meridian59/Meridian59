@@ -33,12 +33,6 @@ resources:
          "or unlucky soul - stands in your way. Of course, true craftsmanship doesn't come cheap. "
          "Still interested? Then let's see how many your coinpurse can manage."
 
-   KocatanBowMaker_FireArrow_sale = \
-         "Looking to scorch your prey, are you? These fire arrows are fitted with searing-hot, enchanted heads -"
-         "perfect for setting flammable foes alight. Don't mistake that glow for mere show; "
-         "they can burn straight through flesh and wood alike, if you aim true. "
-         "Quality like this doesn't come cheap, of course. Ready to part with your coin?"
-
    KocatanBowMaker_SilverArrow_sale = \
          "If you plan to make short work of the undead, you'll want these. The clean edge "
          "tears flesh and sinew alike, leaving wounds few creatures can shrug off - especially those "
@@ -123,7 +117,7 @@ messages:
 
    InitCondSale()
    {
-      local oObj,oObj2,oObj3,oObj4;
+      local oObj,oObj2,oObj3;
 
       oObj=Create(&KriipaClaw,#number=4);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
@@ -139,11 +133,6 @@ messages:
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[Send(oObj3,@GetName)],
            #action=[LIBACT_CONDITIONAL,oObj3,60,KocatanBowMaker_SilverArrow_sale]);
-
-      oObj4=Create(&FireArrow,#number=50);
-      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj4,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj4,70,KocatanBowMaker_FireArrow_sale]);
 
       return;
    }

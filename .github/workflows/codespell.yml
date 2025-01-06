@@ -22,4 +22,4 @@ jobs:
             kod
             dlg/npc.tab
           ignore_words_file: .codespellignore
-          args: --skip "[~`][a-zA-Z]"
+          args: --regex "^[^~`]*[~`][a-zA-Z]"

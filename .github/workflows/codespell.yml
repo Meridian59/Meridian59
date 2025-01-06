@@ -1,4 +1,4 @@
-name: Spellcheck Blakod
+name: Spellcheck
 
 on: 
   push:
@@ -9,15 +9,16 @@ on:
   
 jobs:
   codespell:
-    name: .kod spellchecker
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Codespell
+      - name: Spellcheck
         uses: codespell-project/actions-codespell@v2
         with:
-          path: kod
+          path: |
+            kod
+            dlg/npc.tab
           ignore_words_file: .codespellignore

@@ -71,7 +71,7 @@ messages:
    {
       local oIvisibilitySpell;
       % Remove existing ivisibility spell if it exists
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+      if Send(who,@IsEnchanted,#byClass=&Invisibility)
       {
          oIvisibilitySpell = Send(SYS,@FindSpellByNum,#num=SID_INVISIBILITY);
          Send(who,@RemoveEnchantment,#what=oIvisibilitySpell);

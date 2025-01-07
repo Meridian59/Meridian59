@@ -1,4 +1,4 @@
 [codespell]
-files = kod, dlg/npc.tab
+file = kod, dlg/npc.tab
 ignore-words-list = .codespellignore
 skip = .*~[a-zA-Z],.*`[a-zA-Z]

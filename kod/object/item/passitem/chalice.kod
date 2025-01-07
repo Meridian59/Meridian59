@@ -175,7 +175,6 @@ messages:
             Send(what, @MsgSendUser, #message_rsc = chalice_cant_use_pkill);
             return FALSE;
          }
-
          % Prevent use if you can't fight.
          if Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT)
          {

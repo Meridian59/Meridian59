@@ -18,4 +18,4 @@ jobs:
 
       - name: Run codespell
         run: |
-          codespell --ignore-regex "[~`][a-zA-Z]+" --ignore-words .codespellignore dlg/npc.tab kod
+          codespell --ignore-regex '[~`][a-zA-Z]+' --ignore-words .codespellignore dlg/npc.tab kod

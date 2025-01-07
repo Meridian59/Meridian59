@@ -27,7 +27,7 @@ resources:
          "in blood spilt in battle.  You will understand, then, that my price for them is high."
    KocatanBowMaker_unwanted_give = "~k%s%s tells you, \"I have enough of those type of supplies to hold us through the summer.~n~k\""
 
-   KocatanBowMaker_welcome_rsc = "Welcome, traveler. If you've come seeking a fine bow, you've chosen well. "
+   KocatanBowMaker_welcome_rsc = "If you've come seeking a fine bow, you've chosen well. "
       "I craft each weapon to perfection - no idle chatter, no needless pleasantries. "
       "State your purpose and have your coin ready. Now, what do you need?"
 

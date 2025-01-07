@@ -32,7 +32,7 @@ classvars:
    vrDesc = fire_arrow_desc_rsc
 
    viAmmo_type = AMMO_ARROW
-   viValue_average = 20
+   viValue_average = 50
 
    viGround_group = 4
    viInventory_group = 3
@@ -53,7 +53,7 @@ properties:
    % Medium light range, out of 255 (not as bright as a fireball)
    viProjectileLightIntensity = 20
    % Color is red like the tip of the fire arrow.
-   viProjectileLightColor = LIGHT_BRED
+   viProjectileLightColor = LIGHT_DRED
 
 messages:
 

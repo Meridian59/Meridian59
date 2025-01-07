@@ -1,2 +1,4 @@
 [codespell]
-ignore-regex = .*~[a-zA-Z],.*`[a-zA-Z]
+path = kod dlg/npc.tab
+ignore-words = .codespellignore
+ignore-regex = [~`][a-zA-Z]+

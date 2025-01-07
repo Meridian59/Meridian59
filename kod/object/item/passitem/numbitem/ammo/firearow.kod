@@ -32,7 +32,7 @@ classvars:
    vrDesc = fire_arrow_desc_rsc
 
    viAmmo_type = AMMO_ARROW
-   viValue_average = 50
+   viValue_average = 20
 
    viGround_group = 4
    viInventory_group = 3

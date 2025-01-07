@@ -17,9 +17,3 @@ jobs:
 
       - name: Spellcheck
         uses: codespell-project/actions-codespell@v2
-        with:
-          path: |
-            kod
-            dlg/npc.tab
-          ignore_words_file: .codespellignore
-          args: --regex "^[^~`]*[~`][a-zA-Z]"

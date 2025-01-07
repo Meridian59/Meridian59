@@ -13,15 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Codespell
+      - name: Install codespell
         run: pip install codespell
 
-      - name: Verify Codespell Config
+      - name: Run codespell
         run: |
-          echo "Checking .codespellrc and .codespellignore files..."
-          ls -la
-          cat .codespellrc || echo ".codespellrc not found"
-          cat .codespellignore || echo ".codespellignore not found"
-
-      - name: Run Codespell with Debugging
-        run: codespell --config .codespellrc --debug
+          codespell --ignore-regex "[~`][a-zA-Z]+" --ignore-words .codespellignore dlg/npc.tab kod

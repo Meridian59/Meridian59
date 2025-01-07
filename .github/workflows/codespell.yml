@@ -1,21 +1,27 @@
 name: Spellcheck
 
-on: 
+on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  workflow_dispatch:
-  
+
 jobs:
   codespell:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Spellcheck
-        uses: codespell-project/actions-codespell@v2
-        with:
-          config = .codespellrc
+      - name: Install Codespell
+        run: pip install codespell
+
+      - name: Verify Codespell Config
+        run: |
+          echo "Checking .codespellrc and .codespellignore files..."
+          ls -la
+          cat .codespellrc || echo ".codespellrc not found"
+          cat .codespellignore || echo ".codespellignore not found"
+
+      - name: Run Codespell with Debugging
+        run: codespell --config .codespellrc --debug

@@ -21,3 +21,4 @@ jobs:
           path: |
             kod
             dlg/npc.tab
+          ignore_words_file: .codespellignore

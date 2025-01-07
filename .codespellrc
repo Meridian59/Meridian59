@@ -1,3 +1,2 @@
 [codespell]
-exclude-file = .codespellignore
-skip = .*~[a-zA-Z],.*`[a-zA-Z]
+ignore-regex = .*~[a-zA-Z],.*`[a-zA-Z]

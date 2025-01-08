@@ -43,7 +43,7 @@ void UserSelect(ID target)
       SetFocus(hMain);
       
       /* See if user clicked on an object--even if not, go back to normal mode */
-      square_list = GetObjects3D(x, y, 0, OF_SELECTABLE, OF_NOEXAMINE);
+      square_list = GetObjects3D(x, y, 0, 0, OF_NOEXAMINE);
       
       GameSetState(GAME_PLAY);
       

@@ -353,19 +353,19 @@ enum {
 
 
 /* Object flag values and masks */
-#define OF_NOMOVEON_MASK 0x00000003
-#define OF_PLAYER        0x00000004    // Set if object is a player
-#define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
-#define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
-#define OF_CONTAINER     0x00000020    // Set if player can put objects inside this one
-#define OF_NOEXAMINE     0x00000040    // Set if player CAN'T examine object
-#define OF_SELECTABLE    0x00000080    // Set if object can be selected
-#define OF_OFFERABLE     0x00000200    // Set if object can be offered to
-#define OF_BUYABLE       0x00000400    // Set if object can be bought from
-#define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
-#define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
-#define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
-#define OF_PLAYER_MASK   0x0001C000    // Mask to get player flag bits
+#define OF_NOMOVEON_MASK   0x00000003
+#define OF_PLAYER          0x00000004    // Set if object is a player
+#define OF_ATTACKABLE      0x00000008    // Set if object is legal target for an attack
+#define OF_GETTABLE        0x00000010    // Set if player can try to pick up object
+#define OF_CONTAINER       0x00000020    // Set if player can put objects inside this one
+#define OF_NOEXAMINE       0x00000040    // Set if player CAN'T examine object
+#define OF_UTILITY_TARGET  0x00000080    // Set if object can be targeted for non-combat purposes
+#define OF_OFFERABLE       0x00000200    // Set if object can be offered to
+#define OF_BUYABLE         0x00000400    // Set if object can be bought from
+#define OF_ACTIVATABLE     0x00000800    // Set if object can be activated
+#define OF_APPLYABLE       0x00001000    // Set if object can be applied to another object
+#define OF_SAFETY          0x00002000    // Set if player has safety on (self only)
+#define OF_PLAYER_MASK     0x0001C000    // Mask to get player flag bits
 
 #define OF_HANGING       0x00010000    // Overlaps with PF_CREATOR.
                                        //     FALSE for most objects.

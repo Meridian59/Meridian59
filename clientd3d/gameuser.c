@@ -688,7 +688,7 @@ void UserTargetNextOrPrevious(Bool bTargetNext)
 
 	//	Get list of visible objects.
 	//	xxx use something like OF_ATTACKABLE?
-	object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE, OF_INVISIBLE);
+	object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE | OF_SELECTABLE, OF_INVISIBLE);
 	
 	//	There doesn't seem to be a "list_find_item()"-like proc that returns position of an item in a list,
 	//	so I'll just iterate through the list myself.

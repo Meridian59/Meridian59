@@ -36,7 +36,9 @@ classvars:
    viWeight = 25
    viValue_average = 200
 
-   viInventory_group = 2
+   viInventory_group = 1
+   viGround_group = 2
+   viBroken_group = 3
 
 properties:
    

@@ -5551,17 +5551,7 @@ messages:
       % This is the only place we need piStomach to be correct
       Send(self,@UpdateStomach);
 
-      % Prevent eating if player has active second wind enchantment
-      % Allow potions to be used as their effect isn't on Vigor
-      if what <> $
-      AND NOT IsClass(what,&Potion)
-      AND NOT IsClass(what,&Flask)
-      AND Send(self,@IsEnchanted,#byClass=&SecondWind)
-      {
-         Send(self,@MsgSendUser,#message_rsc=player_not_hungry_sw);
-         return FALSE;
-      }
-
+      % Are we too full to eat and drink?
       if (piStomach + filling) > 100
       {
          if what = $ OR NOT Send(what,@IsBeverage)
@@ -5575,7 +5565,29 @@ messages:
          
          return FALSE;
       }
-      
+
+      % Prevent eating if player has active second wind enchantment
+      % Allow potions and flasks to be used as their effect isn't on vigor
+      % A special exception is made for mints: they will increase our mana
+      %     but they do not increase our vigor as 
+      %     AddExertion checks for SecondWind
+
+      if what <> $
+      AND Send(self,@IsEnchanted,#byClass=&SecondWind)
+      {
+         if Send(what,@IsItemType,#type=ITEMTYPE_FOOD)
+         {
+            if IsClass(what,&Mint)
+            {
+               return TRUE;
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_not_hungry_sw);
+               return FALSE;
+            }
+         }
+      }
       return TRUE;
    }
 

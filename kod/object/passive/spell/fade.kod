@@ -69,12 +69,12 @@ messages:
 
    CanPayCosts(who=$,lTargets=$)
    {
-      local oIvisibilitySpell;
-      % Remove existing ivisibility spell if it exists
+      local oInvisibilitySpell;
+      % Remove existing invisibility spell if it exists
       if Send(who,@IsEnchanted,#byClass=&Invisibility)
       {
-         oIvisibilitySpell = Send(SYS,@FindSpellByNum,#num=SID_INVISIBILITY);
-         Send(who,@RemoveEnchantment,#what=oIvisibilitySpell);
+         oInvisibilitySpell = Send(SYS,@FindSpellByNum,#num=SID_INVISIBILITY);
+         Send(who,@RemoveEnchantment,#what=oInvisibilitySpell);
       }
       
       propagate;

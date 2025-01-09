@@ -25,8 +25,6 @@ resources:
       "you invisible.  The spell lasts as long as your trance "
       "is maintained.  "
       "Requires dark angel feather."
-   
-   fade_already_enchanted = "You are already invisible."
 
    fade_on = "Your physical form fades from existence leaving only a shimmering apparition."
    fade_off = "Your physical form is visible once more."

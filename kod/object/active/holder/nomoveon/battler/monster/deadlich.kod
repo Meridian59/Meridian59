@@ -128,7 +128,7 @@ messages:
    if pbIllusioned
    { return; }
 
-   Post(poOwner,@SomeoneSaid,#what=self,#string=lich_respel, #type=SAY_MESSAGE);
+   Post(poOwner,@SomeoneSaid,#what=self,#string=deadLich_respel, #type=SAY_MESSAGE);
 
    pbIllusioned = TRUE;
    send(poOwner,@Somethingchanged,#what=self);

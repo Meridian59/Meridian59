@@ -4672,6 +4672,7 @@ messages:
       plMonsterTemplates = cons(create(&DragonFlyQueen),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Kriipa),plMonsterTemplates);
 
+      plMonsterTemplates = cons(create(&GenericLich),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Lich),plMonsterTemplates);
       plMonsterTemplates = cons(create(&BatteredSkeleton),plMonsterTemplates);
       plMonsterTemplates = cons(create(&TuskedSkeleton),plMonsterTemplates);
@@ -4701,9 +4702,6 @@ messages:
       plMonsterTemplates = cons(create(&DuskRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
-
-      plMonsterTemplates = cons(create(&AncientLich),plMonsterTemplates);
-
 
       return;
    }

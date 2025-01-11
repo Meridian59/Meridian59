@@ -74,7 +74,7 @@ def lambda_handler(event, context):
     ip = "unknown"
 
     try:
-        ip = event["requestContext"]["http"]["sourceIp"]
+        ip = event["requestContext"]["identity"]["sourceIp"]
         hostname = str(socket.gethostbyaddr(ip))
     except:
         logger.error("Failed to get ip address")
@@ -97,25 +97,20 @@ def lambda_handler(event, context):
     server = request["server"].strip()
 
     # Check if email already in use for the same server
-    username_in_use = False
     username_check = f"{username}_{server}"
 
     if username_check not in lookup_username:
         # only accounts in the master database can be reset
-        logger.error("account doesn't exist in master db (could be in progress)")
-        err = err | RESET_FAILURE
-
-    if not util_valid_username(username) or username_in_use:
-        logger.error("Invalid username provided")
-        err = err | RESET_FAILURE
+        logger.error("Account doesn't exist in master db (needs to be at least 24 hours old) - aborting.")
+        return do_failure()
 
     if not util_valid_server(server):
-        logger.error("Invalid server provided")
-        err = err | RESET_FAILURE
+        logger.error("Invalid server provided - aborting.")
+        return do_failure()
 
     if not util_validate_password(password1, password2):
-        logger.error("Invalid passwords provided")
-        err = err | RESET_FAILURE
+        logger.error("Invalid new passwords provided - aborting.")
+        return do_failure()
 
     security = util_get_random_string(28)
 
@@ -123,9 +118,13 @@ def lambda_handler(event, context):
 
     email = details[0]
     account = details[1]
+    
+    if email == "" or len(email) == 0:
+        logger.error("Account email was not found in the database - aborting.")
+        return do_failure()
 
     if account == "" or len(account) == 0:
-        logger.error("Required request fields missing!")
+        logger.error("Account number was not found in the database - aborting.")
         return do_failure()
 
     if err == 0:
@@ -180,7 +179,7 @@ The Meridian 59 Team
                 bucket_name = util_get_output_value("NewM59AccountsToProcessBucketName")
                 object_name = f"{email}_{server}_reset.json"
                 s3_client.put_object(Bucket=bucket_name, Key=object_name, Body=json.dumps(account_object))
-                logger.info(f"New account object written to {bucket_name}/{object_name}")
+                logger.info(f"New account password reset file written to {bucket_name}/{object_name}")
             except Exception as e:
                 logger.error(f"Error writing content to S3: {e}")
                 err = err | RESET_FAILURE

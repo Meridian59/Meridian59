@@ -114,7 +114,7 @@ messages:
    }
 
    AddBackgroundObject(who = $)
-   "Called by user upon logon"
+   "Sends the background overlay to the client specified by the 'who' parameter."
    {
       Send(who,@ToCliAddBackgroundOverlay,#what=self);
       return;

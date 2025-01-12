@@ -27,7 +27,7 @@ resources:
    brittle_sound = fbrit.wav
 
    brittle_no_weapon = "%s%s isn't wielding anything that you can damage."
-   brittle_hunter_sword = "%s%s's Sword of the Hunt repells your spell."
+   brittle_hunter_sword = "%s%s's Sword of the Hunt repels your spell."
    brittle_cast_rsc = "%s%s's eyes focus intensely on your weapon.  Your %s takes on a duller cast."
    brittle_succeed = "You focus your eyes intensely on %s%s's %s, and it dulls."
 

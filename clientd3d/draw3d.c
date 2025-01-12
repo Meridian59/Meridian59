@@ -54,7 +54,7 @@ ViewElement ViewElements[NUM_VIEW_ELEMENTS] = {
 
 
 /* Drawing parameters passed in */
-Draw3DParams *p;
+Draw3DParams *drawParams;
 
 extern player_info player;
 extern HPALETTE hPal;
@@ -85,6 +85,16 @@ extern BYTE light_palettes[NUM_PALETTES][NUM_COLORS];
 BYTE light_rows[MAXY/2+1];      // Strength of light as function of screen row
 
 PDIB background;                      /* Pointer to background bitmap */
+
+long getShadeAmount()
+{
+	return shade_amount;
+}
+
+const Vector3D& getSunVector()
+{
+	return sun_vect;
+}
 
 /* local function prototypes */
 static void StretchImage(void);
@@ -337,7 +347,7 @@ void DrawRoom3D(room_type *room, Draw3DParams *params)
    static int count = 0;
    
    /* write stuff in static variables */
-   p = params;
+   drawParams = params;
    
    /* Size of offscreen bitmap */
    area.x = area.y = 0;
@@ -397,7 +407,7 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    // Horizon is used by drawbsp.c to determine which objects are visible.
    horizon = area.cy / 2 + PlayerGetHeightOffset();
 
-   p = params;
+   drawParams = params;
    num_visible_objects = 0;
 
    t1=timeGetTime();
@@ -702,7 +712,7 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
 	 LIGHT_LEVELS / MAX_LIGHT;  // Scale from 0-255 to # of palettes
 
    }
-   else index = LIGHT_INDEX(distance, (int) p->viewer_light, 0) * LIGHT_LEVELS / MAX_LIGHT
+   else index = LIGHT_INDEX(distance, (int) drawParams->viewer_light, 0) * LIGHT_LEVELS / MAX_LIGHT
       + (int) sector_light / 2;
 
    if ((scale != FINENESS) && (sector_light > 127))
@@ -742,7 +752,7 @@ int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightO
 	 LIGHT_LEVELS / MAX_LIGHT;  // Scale from 0-255 to # of palettes
 
    }
-   else index = LIGHT_INDEX(distance, (int) p->viewer_light, 0) * LIGHT_LEVELS / MAX_LIGHT
+   else index = LIGHT_INDEX(distance, (int) drawParams->viewer_light, 0) * LIGHT_LEVELS / MAX_LIGHT
       + (int) sector_light / 2;
 
    if ((scale != FINENESS) && (sector_light > 127))
@@ -796,4 +806,14 @@ void DrawMiniMap(room_type *room, Draw3DParams *params)
    MapDraw(gMiniMapDC, gMiniMapBits, &area, room, MINIMAP_MAX_AREA, TRUE);
    num_visible_objects = num_visible_object_SavedForMiniMapHack; // restore
    RecopyRoom3D(params->hdc, areaMiniMap.x, areaMiniMap.y, area.cx, area.cy,TRUE);
+}
+
+const Draw3DParams& getDrawParams()
+{
+	return *drawParams;
+}
+
+void setDrawParams(Draw3DParams* newDrawParams)
+{
+	drawParams = newDrawParams;
 }

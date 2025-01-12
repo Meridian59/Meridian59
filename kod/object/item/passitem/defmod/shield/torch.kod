@@ -290,7 +290,7 @@ messages:
       return;  
    }
 
-   % Gives a bonus to Faren spells since it's firey!
+   % Gives a bonus to Faren spells since it's fiery!
    GetBaseSpellModifier(oSpell=$)
    {
       if oSpell <> $ AND send(oSpell,@GetSchool) = SS_FAREN

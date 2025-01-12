@@ -10,9 +10,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MolluskMonster is Monster
 
-% TODO: Make the creature hide in his shell until he's aware of someone or
-%       he's attacked.
-
 constants:
 
    include blakston.khd
@@ -20,16 +17,17 @@ constants:
    ANIM_POPUP = 2
    ANIM_THROW = 3
 
-   FRAME_STANDING = 1
-   FRAME_WALK_START = 2
-   FRAME_WALK_END = 6
-   FRAME_ATTACK_START = 7
-   FRAME_ATTACK_END = 10
-   FRAME_THROW_START = 11
-   FRAME_THROW_END = 14
-   FRAME_POPUP_START = 15
-   FRAME_POPUP_END = 19
-
+   FRAME_UNDERGROUND = 1
+   FRAME_STANDING = 2
+   FRAME_WALK_START = 3
+   FRAME_WALK_END = 7
+   FRAME_ATTACK_START = 8
+   FRAME_ATTACK_END = 11
+   FRAME_THROW_START = 12
+   FRAME_THROW_END = 15
+   FRAME_POPUP_START = 16
+   FRAME_POPUP_END = 20
+   
    ANIMATION_WALK_SPEED = 80
    ANIMATION_ATTACK_SPEED = 225
    ANIMATION_THROW_SPEED = 80
@@ -39,9 +37,9 @@ constants:
    THROW_CHANCE = 50
    % Distance, squared, we can throw a rock.  It's 10 squares for now.
    ROCK_RANGE_SQUARED = 100
-   % Time from creation to "popping up"
-   POPUP_DELAY = 2500
-
+   % Time to emerge from underground
+   POPUP_DURATION = (FRAME_POPUP_END - FRAME_POPUP_START + 1) * ANIMATION_POPUP_SPEED 
+   
 resources:
 
    MolluskMonster_koc_name_rsc = "kolisith"
@@ -87,7 +85,9 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   ptActive = $
+   pbSurfaced = FALSE
+
+   ptPostPop = $
 
 messages:
 
@@ -98,53 +98,14 @@ messages:
                         [  50, -ATCK_SPELL_QUAKE ]
                       ];
 
-      piAnimation = ANIM_NONE;
-      if poOwner <> $
-      {
-         ptActive = CreateTimer(self,@PopupTimer,POPUP_DELAY);
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
+      % Spawn stationary
+      Send(self,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
 
       propagate;
-   }
-
-   Delete()
-   {
-      if ptActive <> $
-      {
-         DeleteTimer(ptActive);
-         ptActive = $;
-      }
-
-      propagate;
-   }
-
-   PopupTimer()
-   {
-      ptActive = $;
-      piAnimation = ANIM_POPUP;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-
-      return;
    }
 
    SendAnimation()
    {
-      if piAnimation = ANIM_NONE
-      {
-         if ptActive = $
-         {
-            AddPacket(1,ANIMATE_NONE, 2,FRAME_STANDING);
-         }
-         else
-         {
-            AddPacket(1,ANIMATE_NONE, 2,FRAME_POPUP_START);
-         }         
-
-         return;
-      }
-
       if piAnimation = ANIM_ATTACK
       {
          send(self,@SendAttackAnimation);
@@ -166,7 +127,52 @@ messages:
          return;
       }
 
+      if pbSurfaced
+      {
+         AddPacket(1,ANIMATE_NONE,2,FRAME_STANDING);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,FRAME_UNDERGROUND);
+      }
+
+      return;
+   }
+
+   EnterStateChase()
+   {
+      if NOT pbSurfaced
+      {
+         Send(self,@PopUp);
+      }
+
       propagate;
+   }
+
+   PopUp()
+   {
+      ptPostPop = createTimer(self,@PostPop,POPUP_DURATION);
+
+      % Block fight behavior until popup completes
+      Send(self,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+      
+      piAnimation = ANIM_POPUP;
+      Send(poOwner,@SomethingChanged,#what=self);
+      pbSurfaced = TRUE;
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   PostPop()
+   {
+      ptPostPop = $;
+
+      % Free the mollusk for attack now that it has popped up
+      Send(self,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=FALSE);
+      Send(self,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=FALSE);
+      
+      return;
    }
 
    SendAttackAnimation()
@@ -213,8 +219,18 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-
+      
       return;
+   }
+
+   TryAttack(what=$,stroke_obj=$)
+   {
+      if NOT pbSurfaced
+      {
+         Send(self,@PopUp);
+      }
+
+      propagate;
    }
 
    MonsterCastSpell()
@@ -277,6 +293,16 @@ messages:
       return LIGHT_FLAG_NONE;
    }
 
+   Delete()
+   {
+      if ptPostPop <> $
+      {
+         DeleteTimer(ptPostPop);
+         ptPostPop = $;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

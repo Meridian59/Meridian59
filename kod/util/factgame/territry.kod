@@ -564,7 +564,13 @@ messages:
                oFlagpole = send(oRoom,@FindHoldingActive,#class=&FlagPole);
                if send(oFlagPole,@GetFaction) <> (iFaction-1)
                {
-                  send(oFlagPole,@SetFaction,#faction=(iFaction-1));
+                  Send(oFlagPole,@SetFaction,#faction=(iFaction-1));
+
+                  if (Send(SYS,@GetTerritoryGame) <> $)
+                  {
+                     Send(self,@FlagClaimed,#flag=oFlagPole);
+                  }
+
                   if report
                   {
                      send(self,@SendBonusTownMessage,#faction=(iFaction-1),#town=lRIDs);

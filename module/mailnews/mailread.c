@@ -479,7 +479,17 @@ int StringToTimestamp(const char *dateStr)
    // Use a string stream to parse the date and time, leveraging locale
    // to support the translation of month strings.
    std::istringstream input(dateStr);
-   input.imbue(std::locale(localeName));
+
+   try
+   {
+      input.imbue(std::locale(localeName));
+   }
+   catch (const std::runtime_error &e)
+   {
+      debug(("Failed to set locale: %s. Falling back to default.\n", e.what()));
+      input.imbue(std::locale("C"));
+   }
+   
    input >> std::get_time(&tm, "%a %b %d, %Y %H:%M");
 
    if (input.fail())

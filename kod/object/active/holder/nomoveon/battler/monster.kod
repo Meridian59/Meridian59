@@ -809,7 +809,7 @@ messages:
    %%% Sensory Inputs
    
    NewOwner(what = $)
-   "Monster just entered this room. Right now, thats only possible on a"
+   "Monster just entered this room. Right now, that's only possible on a "
    "creation. So, lets pause for a few beats if we got users."
    {
       if what = $
@@ -832,7 +832,7 @@ messages:
    FirstUserEntered(what = $,new_row = $,new_col = $)
    "Since we've already been notified in SomethingEntered that a user got"
    "here, we have already handled the case that the user was plunked down"
-   "near a non-fighting and agressive mob. So, lets just start our timers."
+   "near a non-fighting and aggressive mob. So, let's just start our timers."
    {
       piWalkingEffort = 0;
 
@@ -886,8 +886,8 @@ messages:
    }
 
    SomethingAttacked(what = $,victim = $,use_weapon = $)
-   "We may have been assaulted by something, so lets return fire if "
-   "appropriateIf were already fighting this person, this doesnt interrupt "
+   "We may have been assaulted by something, so let's return fire if "
+   "appropriate. If we are already fighting this person, this doesn't interrupt "
    "our plans."
    {
       % Getting hit revitalizes my will to walk.
@@ -1143,9 +1143,9 @@ messages:
    MoveTimer( timer = $ )
    "Time to move a notch. I would REALLY like it to redo this so that the "
    "Monsters move on a finer grid than the row/col (perhaps 16finerow?) "
-   "But just havent had the time. Anyway, we want to wander unless for "
+   "But just haven't had the time. Anyway, we want to wander unless for "
    "some reason we are restricted not to. We do check to see if there is "
-   "someone to chase if we are the agressive type. If we cant physically "
+   "someone to chase if we are the aggressive type. If we can't physically "
    "move, then we still keep the timer open for its healing/etc."
    {
       Send(self,@ClearBehavior,#timer=timer);
@@ -1281,7 +1281,7 @@ messages:
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
          AND (Send(poOwner,@GetEnchantmentState,#what=oSpell) <> $)
       {
-         % Reduce chance to 2/3 by multplying base by 3/2
+         % Reduce chance to 2/3 by multiplying base by 3/2
          base = (3 * base) / 2;
       }
 
@@ -2468,7 +2468,7 @@ messages:
       else
       {
          % We musta wanted the item for some other reason. So do special stuff
-         % If we get a FALSE return, it means we didnt keep the item.
+         % If we get a FALSE return, it means we didn't keep the item.
          if NOT Send(self,@CheckWhyWanted,#obj=obj,#who=who)
          {
             return;
@@ -2498,7 +2498,7 @@ messages:
    }
 
    GotUnwantedItem(obj = $, who = $)
-   "Someone just randomly gave us an object we didnt really want."
+   "Someone just randomly gave us an object we didn't really want. "
    "They could be fishing for a quest, so occasionally, lets keep it."
    {
       local i,lReward,oLibrary,iQuestID;
@@ -2654,7 +2654,7 @@ messages:
          }
       }
 
-      % If it wasnt a current quest, maybe it was an old quest.
+      % If it wasn't a current quest, maybe it was an old quest.
       for i in Send(oLibrary,@GetOldPhrases,#mob=self)
       {
          if Send(oLibrary,@IsQuestStringMatch,

@@ -57,7 +57,8 @@ resources:
    Decorator_painting_instructions = \
       "Please stand near where you'd like the painting and say 'here'.  I can only "
       "hang it in four different spots, but I'll do my best to fit your needs."
-   Decorator_object_placement = "Please stand where you'd like the object and say 'here'."
+   Decorator_object_placement = "Please stand where you'd like the object, look in the "
+      "direction it should face, and say 'here'."
    Decorator_object_removal = "Please stand nearer the object you'd like removed."
 
    Decorator_bed_blocked = \
@@ -370,7 +371,7 @@ messages:
          poCurrentObject = oObject;
       }
 
-      % A note on how the "TrySet*" fuctions work.
+      % A note on how the "TrySet*" functions work.
       % Return values:
       % TRUE means we could change it.
       % FALSE means that is not available

@@ -28,10 +28,10 @@
 
 #define LIGHT_NEUTRAL 192       // Light level of sector drawn at ambient light level
 
-// XXX Temporary maximum on # of objects in room 
+// Maximum # of objects in room 
 #define MAXOBJECTS 2000
 
-#define MAX_OBJS_PER_SQUARE 3
+#define MAX_OBJS_PER_SQUARE 10
 
 #define BITMAP_WIDTH 64  
 #define LOG_BITMAP_WIDTH 6
@@ -111,10 +111,9 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
 int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightOffset);
 int  GetFlicker(room_contents_node *obj);
 
-/* 
-void DrawMapAsView(room_type *room, Draw3DParams *params); // defined in drawbsp.h
-void DrawMiniMap(room_type *room, Draw3DParams *params); // defined in drawbsp.h
-*/
+const Draw3DParams& getDrawParams();
+void setDrawParams(Draw3DParams* newDrawParams);
+
 
 #endif /* #ifndef _DRAW3D_H */
 

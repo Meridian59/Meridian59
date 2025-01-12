@@ -14,6 +14,104 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Brazilian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
+#ifdef _WIN32
+LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN_DLG DIALOG DISCARDABLE  0, 0, 252, 93
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Atualizando o Meridian 59..."
+CLASS "club (Andrew & Christopher Kirmse)"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,0,59,182,12
+    LTEXT           "Recebido:",IDC_STATIC,10,75,32,8
+    LTEXT           "%d de %d bytes",IDC_BYTES1,48,75,143,8
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,202,59,40,12,WS_GROUP
+    CONTROL         "Inicializando processo...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,10,47,182,9
+END
+
+IDD_ERROR DIALOG DISCARDABLE  0, 0, 197, 124
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Erro"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Sim",IDOK,40,103,50,14
+    PUSHBUTTON      "Não",IDCANCEL,106,103,50,14
+    LTEXT           "O seguinte erro ocorreu:",IDC_STATIC,9,8,104,8
+    LTEXT           "",IDC_MESSAGE,12,25,177,44
+    LTEXT           "Você deseja de tentar novamente?",IDC_STATIC,64,82,68,8
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CANTUNCOMPRESS      "Não foi possível comprimir o arquivo: %s.\nMotivo: %s.\n\nVocê deseja tentar novamente?"
+    IDS_BADTEMPFILE         "Não foi possível criar um arquivo temporário."
+    IDS_BADPERMISSION       "Não foi possível realizar atualização. O programa não tem as permissões necessárias para modificar arquivos."
+    IDS_BADMEM              "Você não memória suficiente disponível."
+    IDS_BADARCHIVE          "O arquivo baixado está corrompido."
+    IDS_DISKFULL            "O seu disco rígido está cheio. Você não espaço suficiente disponível na memória."
+    IDS_BADARCHIVE2         "O seguinte arquivo baixado está corrompido: %s.\n\nPor favor, tente baixa-lo novamente."
+    IDS_MISSINGARCHIVE      "Não foi possível encontrar o seguinte arquivo baixado: %s."
+    IDS_BADSTARTUP          "Atualizações futura do Meridian 59 serão recebidas automaticamentes."
+    IDS_CANTRESTART         "O seguinte erro ocorreu: %s, reiniciando %s.\n\nEntre em contato com o suporte ao cliente."
+    IDS_CANTCONNECT         "Não foi possível se conectar a %s para fazer a transferência de arquivos."
+    IDS_CANTFINDFILE        "Não foi possível encontrar o arquivo: %s, no servidor %s.\nErro: %d (%s)"
+    IDS_FTPFAILED           "Não foi possível baixar o novo executável.\n\nVocê deseja de tentar novamente?"
+    IDS_MISSINGFILE         "Não foi possível encontrar o arquivo baixado."
+    IDS_FILECORRUPT         "O arquivo baixado está corrompido."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_APPNAME             "Atualização do Meridian 59"
+    IDS_STARTING            "Inicializando..."
+    IDS_RETRIEVING          "Buscando %s."
+    IDS_RECEIVED1           "Recebidos %i de %i bytes."
+    IDS_RECEIVED2           "Recebidos %i bytes."
+    IDS_UNARCHIVING         "Desarquivando..."
+    IDS_RESTARTING          "Reiniciando aplicação..."
+    IDS_CONNECTING          "Conectando a %s..."
+    IDS_READBLOCK           "Pacotes recebidos."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CANTUNPACK          "Um erro ocorreu ao descompactar arquivos; Motivo: %s\n\nVocê deseja tentar novamente?"
+    IDS_DEARCHIVEERROR      "Houve um erro ao descompactar."
+    IDS_UNKNOWNERROR        "Houve um erro de tipo desconhecido."
+    IDS_CANTINIT            "Não foi possível se conectar a internet.\nErro: %d (%s)"
+    IDS_NOCONNECTION        "Não foi possível estabelecer uma conexão com %s.\nErro: %d (%s)"
+    IDS_BADCALLBACK         "Houve um erro interno.\nErro: %d (%s)"
+    IDS_CANTOPENFTPFILE     "Não foi possível abrir o arquivo %s remotamente\nErro: %d (%s)"
+    IDS_CANTWRITELOCALFILE  "Não foi possível escrever no arquivo local: %s\nErro: %d (%s)"
+    IDS_CANTREADFTPFILE     "Não foi possível ler o arquivo remoto: %s.\nErro: %d (%s)"
+    IDS_CANTRENAME          "Não foi possível renomear o arquivo descompactado.\nCertifique-se de que você fechou todas as instâncias do Meridian 59 que você possa ter executadas em seu computador e tente novamente."
+    IDS_CANTSENDREQUEST     "Não foi possível requisitar o arquivo: %s, no servidor %s.\nErro: %d (%s)"
+    IDS_CANTGETFILESIZE     "Não foi possível retornar o tamanho do arquivo: %s, no servidor %s.\nErro: %d (%s)"
+END
+
+#endif    // Portuguese (Brazilian) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
@@ -34,15 +132,12 @@ CAPTION "Updating Meridian 59..."
 CLASS "club (Andrew & Christopher Kirmse)"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | 
-                    ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
-    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,
-                    10,59,182,12
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,10,59,182,12
     LTEXT           "Empfangen:",IDC_STATIC,10,75,32,8
     LTEXT           "%d von %d bytes",IDC_BYTES1,48,75,143,8
     DEFPUSHBUTTON   "Abbrechen",IDCANCEL,202,59,40,12,WS_GROUP
-    CONTROL         "Bitte warten...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,10,47,182,9
+    CONTROL         "Bitte warten...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,10,47,182,9
 END
 
 IDD_ERROR DIALOG DISCARDABLE  0, 0, 197, 124
@@ -135,15 +230,12 @@ CAPTION "Updating Meridian 59..."
 CLASS "club (Andrew & Christopher Kirmse)"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | 
-                    ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
-    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,
-                    10,59,182,12
+    CONTROL         "Animate1",IDC_ANIMATE1,"SysAnimate32",ACS_CENTER | ACS_TRANSPARENT | ACS_AUTOPLAY | WS_TABSTOP,9,10,190,30
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,10,59,182,12
     LTEXT           "Received:",IDC_STATIC,10,75,32,8
     LTEXT           "%d of %d bytes",IDC_BYTES1,48,75,143,8
     DEFPUSHBUTTON   "Cancel",IDCANCEL,202,59,40,12,WS_GROUP
-    CONTROL         "Initializing...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,10,47,182,9
+    CONTROL         "Initializing...",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,10,47,182,9
 END
 
 IDD_ERROR DIALOG DISCARDABLE  0, 0, 197, 124

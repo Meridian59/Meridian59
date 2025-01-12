@@ -639,7 +639,7 @@ void InterfaceCreateTabControl(HWND hwnd)
     lf.lfClipPrecision = 2;
     lf.lfQuality = 1;
     lf.lfPitchAndFamily = 49;
-    strcpy(lf.lfFaceName,"Terminal");
+    strncpy(lf.lfFaceName,"Terminal", sizeof(lf.lfFaceName));
     
     font = CreateFontIndirect(&lf);
     if (font != NULL)

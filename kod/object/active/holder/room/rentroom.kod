@@ -501,7 +501,7 @@ messages:
       return TRUE;
    }
 
-   % A note on how the "TrySet*" fuctions work.
+   % A note on how the "TrySet*" functions work.
    % Return values:
    % TRUE means we could change it.
    % FALSE means that is not available
@@ -934,7 +934,7 @@ messages:
             oDecorativeObject = Create(getClass(template)); 
          }
 
-         Send(self,@NewHold,#what=oDecorativeObject,
+         Send(self,@NewHold,#what=oDecorativeObject,#new_angle=Send(who,@GetAngle),
              #new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol),
              #fine_row=iSnapFineRow,#fine_col=iSnapFineCol);
 

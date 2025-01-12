@@ -38,7 +38,6 @@ DECODIR     = $(TOPDIR)/blakdeco
 MAKEBGFDIR  = $(TOPDIR)/makebgf
 RESOURCEDIR = $(TOPDIR)/resource
 MODULEDIR   = $(TOPDIR)/module
-CRUSHERDIR  = $(TOPDIR)/crusher
 UTILDIR     = $(TOPDIR)/util
 SPROCKETDIR = $(TOPDIR)/sprocket
 CLUBDIR     = $(TOPDIR)/club

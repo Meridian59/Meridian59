@@ -48,7 +48,7 @@ typedef INT64 int64;
 enum {False = 0, True = 1};
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 30  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 33  /* Minor version of client program; must be in [0, 99] */
 
 #define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 
@@ -227,11 +227,18 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "png.h"
 #include "d3dtypes.h"
 #include "d3dcache.h"
+#include "d3ddriver.h"
 #include "d3drender.h"
+#include "d3drender_bgoverlays.h"
+#include "d3drender_fx.h"
+#include "d3drender_materials.h"
+#include "d3drender_objects.h"
+#include "d3drender_skybox.h"
+#include "d3drender_textures.h"
+#include "d3drender_world.h"
 #include "d3dparticle.h"
 #include "matrix.h"
 #include "xform.h"
-#include "d3ddriver.h"
 #include "rscload.h"
 #include "crc.h"
 #include "zlib.h"

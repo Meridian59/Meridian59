@@ -33,6 +33,7 @@ resources:
    RoomMaintenance_command_room = "room"
    RoomMaintenance_command_rent = "rent"
    RoomMaintenance_command_cost = "cost"
+   RoomMaintenance_command_help = "help"
    RoomMaintenance_command_copy_key = "copy key"
    RoomMaintenance_command_secure = "secure"
    RoomMaintenance_command_change_lock = "change lock"
@@ -175,7 +176,9 @@ messages:
       }
 
       % Command: Room Cost
-      if StringContain(speech, RoomMaintenance_command_room) AND StringContain(speech, RoomMaintenance_command_cost)
+      if StringContain(speech, RoomMaintenance_command_room) 
+         AND (StringContain(speech, RoomMaintenance_command_cost)
+         OR StringContain(speech, RoomMaintenance_command_help))
       {
          Post(Send(who, @GetOwner), @SomeoneSaid, #type=SAY_RESOURCE, #what=who,
             #string=rscRoomCost, 
@@ -382,7 +385,7 @@ messages:
    "If the player has a gold room key, this command will delete any "
    "existing copies of it and notify any player holding such a copy.\n"
    "Returns a string resource for the NPC to respond with based on "
-   "an unsuccessful result, or $ on succcess as an indicator for the "
+   "an unsuccessful result, or $ on success as an indicator for the "
    "NPC to respond with a confirmation line specific to them."
    {
       local oKey;
@@ -445,7 +448,7 @@ messages:
 
       if oMoney = $ OR Send(oMoney,@GetNumber) < iAmount
       {
-         % Something wierd went on here.  Don't give a message, just bail.
+         % Something weird went on here.  Don't give a message, just bail.
          return $;
       }
 

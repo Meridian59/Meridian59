@@ -179,7 +179,7 @@ void _cdecl GameMessagePrintf(char *fmt, ...)
    va_list marker;
 
    va_start(marker,fmt);
-   vsprintf(s,fmt,marker);
+   vsnprintf(s, sizeof(s), fmt,marker);
    va_end(marker);
 
    GameMessage(s);
@@ -692,4 +692,9 @@ void SetActiveStatGroup(int stat_group)
 int GetActiveStatGroup(void)
 {
     return config.active_stat_group;
+}
+
+const room_type& getCurrentRoom()
+{
+    return current_room;
 }

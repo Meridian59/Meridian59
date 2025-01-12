@@ -292,7 +292,7 @@ messages:
    }
 
    ImproveAbility(who=$,target=$,bonus=0)
-   "Made a seperate area by Damion, 3/24."
+   "Made a separate area by Damion, 3/24."
    "Put initial random check first to reduce server load."
    "ImproveAbility depends on four factors:  a player's intellect, the"
    "player's primerequisite stat for this spell, the level of the spell"

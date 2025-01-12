@@ -83,7 +83,7 @@ messages:
             AND NOT (send(oMonster,@GetBehavior) & AI_NPC)
             AND (send(oMonster,@IsUndead))
          {
-            % Use the "detect" option for the monster's karma incase we're trying to turn an event monster.
+            % Use the "detect" option for the monster's karma in case we're trying to turn an event monster.
             iChance = (iSpellPower*3/4) + (send(who,@GetBaseMaxHealth) - send(oMonster,@GetLevel)/2)
                                         + (send(who,@GetKarma) - send(oMonster,@GetKarma,#detect=TRUE));
                                         

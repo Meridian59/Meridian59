@@ -127,8 +127,8 @@ Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
     *y = static_cast<int>((client_y - view.y) / scale_y);
 
     // Check if the translated coordinates are within the valid room bounds.
-    if (*x < view.x || *x > view.x + view.cx ||
-        *y < view.y || *y > view.y + view.cy)
+    if (*x < 0 || *x > view.cx ||
+        *y < 0 || *y > view.cy)
         return False;
 
     return True;
@@ -384,7 +384,7 @@ void RedrawForce(void)
         RECT rc,lagBox;
         double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
         char buffer[32];
-        sprintf(buffer, "FPS=%d (%.1fms)        ", average_fps, milliseconds);
+        snprintf(buffer, sizeof(buffer), "FPS=%d (%.1fms)        ", average_fps, milliseconds);
         ZeroMemory(&rc,sizeof(rc));
 
         rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);

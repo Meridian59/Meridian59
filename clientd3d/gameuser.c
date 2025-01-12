@@ -14,7 +14,6 @@
 #define ATTACK_DELAY 1000  // Minimum number of milliseconds between user attacks
 
 extern player_info player;
-extern room_type current_room;
 
 static SendOfferDialogStruct info; /* Stuff to send to offer dialog */
 
@@ -778,11 +777,8 @@ void UserMouselookToggle(void)
 	if (FALSE == gbMouselook)
 	{
 		RECT		rect;
-//		WINDOWINFO	windowInfo;
 		POINT	pt, center;
-//		int		x, y;
 
-//		GetWindowInfo(hMain, &windowInfo);
 		GetClientRect(hMain, &rect);
 		pt.x = rect.left;
 		pt.y = rect.top;
@@ -794,16 +790,7 @@ void UserMouselookToggle(void)
 		center.x += gD3DRect.left + pt.x;
 		center.y += gD3DRect.top + pt.y;
 
-//		x = (gD3DRect.right - gD3DRect.left) / 2;
-//		y = (gD3DRect.bottom - gD3DRect.top) / 2;
-
-//		x += gD3DRect.left + windowInfo.rcClient.left;
-//		y += gD3DRect.top + windowInfo.rcClient.top;
-
 		gbMouselook = TRUE;
-//		GetClientRect(hMain, &rect);
-//		GetCursorPos(&pt);
-//		SetCursorPos(rect.right / 2, rect.bottom / 2);
 		SetCursorPos(center.x, center.y);
 		while (ShowCursor(FALSE) >= 0)
 			ShowCursor(FALSE);

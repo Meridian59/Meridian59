@@ -295,7 +295,7 @@ messages:
 
    OwnerDied(what=$,logoff=FALSE)
    "Called when our owner dies due to 'what', or with 'logoff' to apply a "
-   "penalty reguardless."
+   "penalty regardless."
    {
       local oSoldierShield;
 

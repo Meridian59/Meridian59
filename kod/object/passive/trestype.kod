@@ -41,7 +41,7 @@ messages:
          propagate;
       }
 
-      % normalize treasure wieghts to total 100%
+      % normalize treasure weights to total 100%
       if plTreasure <> $
       {
          iAdjust = 0;

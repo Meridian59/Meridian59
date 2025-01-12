@@ -12,6 +12,8 @@
  * The item data of each item in the list is the message number.
  */
 
+#include <vector>
+#include <string>
 #include "client.h"
 #include "mailnews.h"
 
@@ -126,12 +128,17 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 {
    int index, num_msgs, msgnum;
    char new_msg[MAXMAIL + 200 + MAX_SUBJECT + MAXUSERNAME * MAX_RECIPIENTS];
-   char *subject, *ptr, *subject_str;
-   int i, num;
+   const int subject_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE};
+   const int num_subjects = sizeof(subject_ids) / sizeof(subject_ids[0]);
+   auto subject_strs = std::vector<std::string>(num_subjects);
+   char *subject = "";
+   char *ptr;
+   int num;
+   int subject_id_index = 0;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
    MailHeader header;
-   Bool subject_found = True;
+   Bool subject_found = False;
 
    if (recipients == NULL)
    {
@@ -148,7 +155,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 
    /* Add recipients' names */
    num = 0;
-   for (i = 0; i < num_recipients; i++)
+   for (int i = 0; i < num_recipients; i++)
    {
       if (num++ > 0)
          strcat(new_msg, ", "); 
@@ -156,21 +163,22 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    }
    strcat(new_msg, "\r\n");
 
-   /* Take subject field out of main part of message */
-   subject_str = GetString(hInst, IDS_SUBJECT_ENGLISH);
-   if (strncmp(message, subject_str, strlen(subject_str)))
+   /* Search for subject line */
+   for (int i = 0; i < num_subjects; i++)
    {
-      subject_str = GetString(hInst, IDS_SUBJECT_GERMAN);
-      if (strncmp(message, subject_str, strlen(subject_str))) {
-         subject_found = False;
-         subject = "";
+      subject_strs[i] = GetString(hInst, subject_ids[i]);
+      if (strncmp(message, subject_strs[i].c_str(), subject_strs[i].size()) == 0)
+      {
+         subject_id_index = i;
+         subject_found = True;
+         break;
       }
    }
 
    if (subject_found)
    {
-      /* Skip "Subject: " leader */
-      subject = message + strlen(subject_str);
+      /* Skip "Subject: " or other translation leading string */
+      subject = message + subject_strs[subject_id_index].size();
 
       /* Skip subject line; have to deal with \n (from users) or \r\n (from kod resources) */
       ptr = strchr(subject, '\n');
@@ -183,9 +191,13 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
          message = ptr + 1;
       }
    }
+   else
+   {
+      subject = "";
+   }
 
    /* Add "Subject:" field to message */
-   strcat(new_msg, subject_str);
+   strcat(new_msg, subject_strs[subject_id_index].c_str());
    strcat(new_msg, subject);
    strcat(new_msg, "\r\n");
    
@@ -309,10 +321,10 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    FILE *infile;
    char filename[MAX_PATH + FILENAME_MAX];
    char line[MAX_LINE];
-   int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
-   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN,
-                      IDS_FROM, IDS_TO, IDS_DATE};
-   char *fields[5], *ptr;
+   const int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
+   const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
+   auto fields = std::vector<std::string>(num_fields);
+   char *ptr;
    int i, index;
 
    if ((index = MailFindIndex(msgnum)) == -1)
@@ -343,12 +355,12 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
       /* See if we've found a field.  If so, set ptr to just after field */
       for (i=0; i < num_fields; i++)
       {
-         if (!strncmp(line, fields[i], strlen(fields[i])))
+         if (!fields[i].empty() && !strncmp(line, fields[i].c_str(), strlen(fields[i].c_str())))
          {
             /* Remove newline at end of line */
             line[strlen(line) - 1] = 0;
             
-            ptr = line + strlen(fields[i]);
+            ptr = line + fields[i].size();
             break;
          }
       }
@@ -360,6 +372,7 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
       {
       case IDS_SUBJECT_ENGLISH:
       case IDS_SUBJECT_GERMAN:
+      case IDS_SUBJECT_PORTUGUESE:
          strncpy(info->subject, ptr, MAX_SUBJECT);
          info->subject[MAX_SUBJECT - 1] = 0;
          break;
@@ -404,13 +417,13 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
 Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
 {
    FILE *infile;
-   int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
-   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN,
-                      IDS_FROM, IDS_TO, IDS_DATE};
-   int i;
-   char *fields[5], *ptr;
+   int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE, IDS_FROM, IDS_TO, IDS_DATE};
+   const int num_fields = sizeof(field_ids) / sizeof(field_ids[0]);
+   auto fields = std::vector<std::string>(num_fields);
+   char *ptr;
    char line[MAX_LINE];
-
+   int i;
+   
    if ((infile = fopen(filename, "r")) == NULL)
       return False;
    
@@ -428,12 +441,12 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
       /* See if we've found a field.  If so, set ptr to just after field */
       for (i=0; i < num_fields; i++)
       {
-         if (!strnicmp(line, fields[i], strlen(fields[i])))
+         if (!fields[i].empty() && !strnicmp(line, fields[i].c_str(), fields[i].size()))
          {
             /* Remove newline at end of line */
             line[strlen(line) - 1] = 0;
             
-            ptr = line + strlen(fields[i]);
+            ptr = line + fields[i].size();
             break;
          }
       }
@@ -445,6 +458,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
       {
       case IDS_SUBJECT_ENGLISH:
       case IDS_SUBJECT_GERMAN:
+      case IDS_SUBJECT_PORTUGUESE:
          strncpy(header->subject, ptr, MAX_SUBJECT);
          break;
          

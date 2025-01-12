@@ -27,7 +27,7 @@ resources:
    BqApo_entry_welcome = "Congratulations! Thou hath found the best shop in the land."
    BqApo_unwanted_give = "~k%s%s tells you, \"I fear that I have no use for thy offering.  Mayhaps thou should seek to sell it at another establishment.~n~k\""
 
-   BqApo_firesand_sale = "Looking for %s%s?  I happend to have imported some from the island of Ko'catan."
+   BqApo_firesand_sale = "Looking for %s%s?  I happened to have imported some from the island of Ko'catan."
 
 classvars:
 

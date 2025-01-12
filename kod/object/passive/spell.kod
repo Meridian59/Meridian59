@@ -68,7 +68,7 @@ resources:
       "Your hands are too full to cast spells that would affect others."
 
    spell_unlawful_outlaw = \
-      "Shal'ille frowns upon your assitance to unlawful citizens."
+      "Shal'ille frowns upon your assistance to unlawful citizens."
 
    spell_failed_by_chance = "You were unsuccessful in casting %s."
    spell_spellbane_stopped = \
@@ -573,7 +573,7 @@ messages:
             oTarget = first(lTargets);
          }
 
-         % Stop players from interfereing
+         % Stop players from interfering
          % If the room does not allow the attack, then the spell fails if the caster
          % cannot "help" the target (IE, the target attacked "recently").
          % Only count non-harmful spells here.  Attacks are caught in other places.
@@ -1107,8 +1107,8 @@ messages:
       for i in lFinalTargets
       {
          % Remove an element from the list if:
-         % - We've targetted ourself with a spell that's not single-target
-         %   (if we targetted ourself with a single-target spell, it was
+         % - We've targeted ourself with a spell that's not single-target
+         %   (if we targeted ourself with a single-target spell, it was
          %    probably intentional.  We stop this behavior in most spell
          %    subclasses if it is not allowed).
          % - Target isn't a Battler
@@ -1409,16 +1409,15 @@ messages:
 
       if oRoom <> $
       {
-         if isClass(who,&Admin)
-            AND Send(who, @IsHidden)
+         if isClass(who,&DM) AND Send(who,@IsHidden)
          {
              if oTarget = $
              {
-                 Debug("ADMIN:",Send(who,@GetTrueName),"cast",Send(Self,@GetName),"while hidden.");
+                 Debug("DM:",Send(who,@GetTrueName),"cast",Send(Self,@GetName),"while hidden.");
              }               
              else
              {
-                 Debug("ADMIN:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetTrueName),"while hidden.");
+                 Debug("DM:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetTrueName),"while hidden.");
              }
               
             return;
@@ -1572,11 +1571,11 @@ messages:
          iCost = iCost - 1;
       }
 
-      % Up to -2 for being a Princess soldier
+      % Receive a cost reduction for being a Princess soldier (Details in `prinshld.kod`)
       oPrincessShield = Send(who,@FindUsing,#class=&PrincessShield);
       if oPrincessShield <> $
-      {
-         iCost = iCost - Send(oPrincessShield,@GetSpellManaReduction);
+      { 
+         iCost = iCost - (iCost * Send(oPrincessShield,@GetSpellManaReduction) + 99) / 100;
       }
       
       return bound(iCost,1,$);
@@ -1603,7 +1602,7 @@ messages:
    }
 
    ImproveAbility(who=$,target=$)
-   "Made a seperate area by Damion, 3/24."
+   "Made a separate area by Damion, 3/24."
    "Put initial random check first to reduce server load."
    "ImproveAbility depends on four factors:  a player's intellect, the"
    "player's primerequisite stat for this spell, the level of the spell"
@@ -1768,7 +1767,7 @@ messages:
 
    GetExertion()
    {
-      % Return amount of vigor (hundreths) to cast spell
+      % Return amount of vigor (hundredths) to cast spell
       return viSpellExertion;
    }
 

@@ -118,7 +118,6 @@ messages:
       % at this point, it's pretty obvious it's not helping them.
       if Send(self, @RevealHiddenAttributes)
       {
-         Send(self, @RevealHiddenColor);
          Send(poOwner, @SomethingChanged, #what=self);
       }
 

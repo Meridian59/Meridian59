@@ -1237,6 +1237,7 @@ messages:
    }
 
    RevealHiddenAttributes()
+   "Reveals the item's attributes, returning TRUE if any were hidden."
    {
       local i, bDone;
 
@@ -1251,6 +1252,22 @@ messages:
       }
       
       return bDone;
+   }
+
+   HideHiddenAttributes()
+   "Hides the item's hidden attributes."
+   {
+      local i;
+
+      for i in plItem_Attributes
+      {
+         if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
+         {
+            setNth(i,1,(First(i)-1));
+         }
+      }
+
+      return;
    }
 
    AddAttributeSpecifics(litemAtt=$)
@@ -1792,9 +1809,22 @@ messages:
          AND Send(self,@GetPaletteTranslation) = (viUnrevealedColor & ITEM_PALETTE_MASK)
       {
          Send(self,@SetPaletteTranslation,#translation=viRevealedColor);
-         return TRUE;
       }
-      return FALSE;
+
+      return;
+   }
+
+   HideHiddenColor()
+   "Hides the item's true color."
+   {
+      if viUnrevealedColor <> 0
+         AND viRevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = (viRevealedColor & ITEM_PALETTE_MASK)
+      {
+         Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
+      }
+
+      return;
    }
 
 end

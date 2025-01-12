@@ -10,8 +10,6 @@
  */
 #include "client.h"
 
-extern player_info player;
-extern room_type current_room;
 extern int sector_depths[];
 
 /************************************************************************/

@@ -15,6 +15,73 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Brazilian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
+#ifdef _WIN32
+LANGUAGE LANG_PORTUGUESE, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CHESS DIALOG  0, 0, 338, 239
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Xadrez"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_BOARD,"Button",BS_OWNERDRAW | WS_TABSTOP,9,9,231,224
+    LTEXT           "Branco:",IDC_WHITELABEL,251,15,66,8
+    LTEXT           "",IDC_WHITENAME,251,27,74,21
+    LTEXT           "Vermelho:",IDC_BLACKLABEL,251,57,65,8
+    LTEXT           "",IDC_BLACKNAME,251,69,74,21
+    LTEXT           "",IDC_STATUS,251,102,79,13
+    PUSHBUTTON      "Desistir",IDC_RESIGN,261,160,64,14,WS_DISABLED
+    PUSHBUTTON      "Reiniciar jogo",IDC_RESTART_GAME,261,179,64,14,WS_DISABLED
+    PUSHBUTTON      "Resetar jogadores",IDC_RESETPLAYERS,261,198,64,14,WS_DISABLED
+    PUSHBUTTON      "Fechar janela",IDCANCEL,261,217,64,14
+END
+
+IDD_PROMOTION DIALOG  0, 0, 75, 108
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Promoção do peão"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,12,86,50,14
+    CONTROL         "Rainha",IDC_QUEEN,"Button",BS_AUTORADIOBUTTON,15,13,37,10
+    CONTROL         "Cavalo",IDC_KNIGHT,"Button",BS_AUTORADIOBUTTON,15,30,43,10
+    CONTROL         "Torre",IDC_ROOK,"Button",BS_AUTORADIOBUTTON,15,47,33,10
+    CONTROL         "Bispo",IDC_BISHOP,"Button",BS_AUTORADIOBUTTON,15,64,36,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_CHECK               "Check!"
+    IDS_CHECKMATE           "Checkmate!"
+    IDS_WHITE               "Branco:"
+    IDS_BLACK               "Vermelho:"
+    IDS_WHITEMOVE           "Turno das brancas:"
+    IDS_BLACKMOVE           "Turno das vermelhas:"
+    IDS_STALEMATE           "Afogamento!"
+    IDS_ASKRESIGN           "Você tem certeza que deseja desistir?"
+    IDS_WHITERESIGN         "Branco desistiu."
+    IDS_BLACKRESIGN         "Vermelho desistiu."
+END
+
+#endif    // Portuguese (Brazilian) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // German (Neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
@@ -28,33 +95,33 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-105 DIALOG  0, 0, 75, 108
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Bauernumwandlung"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "OK",1,12,86,50,14
-    CONTROL         "Dame",1068,"Button",BS_AUTORADIOBUTTON,15,13,37,10
-    CONTROL         "Springer",1065,"Button",BS_AUTORADIOBUTTON,15,30,43,10
-    CONTROL         "Turm",1067,"Button",BS_AUTORADIOBUTTON,15,47,33,10
-    CONTROL         "Läufer",1066,"Button",BS_AUTORADIOBUTTON,15,64,36,8
-END
-
-101 DIALOG  0, 0, 338, 239
+IDD_CHESS DIALOG  0, 0, 338, 239
 STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Schach"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "",1061,"Button",BS_OWNERDRAW | WS_TABSTOP,9,9,231,224
-    LTEXT           "Weiss:",1069,251,15,66,8
-    LTEXT           "",1062,251,27,74,21
-    LTEXT           "Rot:",1070,251,57,65,8
-    LTEXT           "",1063,251,69,74,21
-    LTEXT           "",1064,251,102,79,13
-    PUSHBUTTON      "Aufgeben",1071,266,160,54,14,WS_DISABLED
-    PUSHBUTTON      "Neustarten",1072,266,179,54,14,WS_DISABLED
-    PUSHBUTTON      "Spieler resetten",1073,266,198,54,14,WS_DISABLED
-    PUSHBUTTON      "Schließen",2,266,217,54,14
+    CONTROL         "",IDC_BOARD,"Button",BS_OWNERDRAW | WS_TABSTOP,9,9,231,224
+    LTEXT           "Weiss:",IDC_WHITELABEL,251,15,66,8
+    LTEXT           "",IDC_WHITENAME,251,27,74,21
+    LTEXT           "Rot:",IDC_BLACKLABEL,251,57,65,8
+    LTEXT           "",IDC_BLACKNAME,251,69,74,21
+    LTEXT           "",IDC_STATUS,251,102,79,13
+    PUSHBUTTON      "Aufgeben",IDC_RESIGN,266,160,54,14,WS_DISABLED
+    PUSHBUTTON      "Neustarten",IDC_RESTART_GAME,266,179,54,14,WS_DISABLED
+    PUSHBUTTON      "Spieler resetten",IDC_RESETPLAYERS,266,198,54,14,WS_DISABLED
+    PUSHBUTTON      "Schließen",IDCANCEL,266,217,54,14
+END
+
+IDD_PROMOTION DIALOG  0, 0, 75, 108
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Bauernumwandlung"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,12,86,50,14
+    CONTROL         "Dame",IDC_QUEEN,"Button",BS_AUTORADIOBUTTON,15,13,37,10
+    CONTROL         "Springer",IDC_KNIGHT,"Button",BS_AUTORADIOBUTTON,15,30,43,10
+    CONTROL         "Turm",IDC_ROOK,"Button",BS_AUTORADIOBUTTON,15,47,33,10
+    CONTROL         "Läufer",IDC_BISHOP,"Button",BS_AUTORADIOBUTTON,15,64,36,8
 END
 
 
@@ -65,16 +132,16 @@ END
 
 STRINGTABLE 
 BEGIN
-    1                       "Schach!"
-    2                       "Schachmatt!"
-    3                       "Weiss:"
-    4                       "Rot:"
-    5                       "Weiss (am Zug):"
-    6                       "Rot (am Zug):"
-    7                       "Patt!"
-    8                       "Willst Du wirklich aufgeben?"
-    9                       "Weiss hat aufgegeben."
-    10                      "Rot hat aufgegeben."
+    IDS_CHECK               "Schach!"
+    IDS_CHECKMATE           "Schachmatt!"
+    IDS_WHITE               "Weiss:"
+    IDS_BLACK               "Rot:"
+    IDS_WHITEMOVE           "Weiss (am Zug):"
+    IDS_BLACKMOVE           "Rot (am Zug):"
+    IDS_STALEMATE           "Patt!"
+    IDS_ASKRESIGN           "Willst Du wirklich aufgeben?"
+    IDS_WHITERESIGN         "Weiss hat aufgegeben."
+    IDS_BLACKRESIGN         "Rot hat aufgegeben."
 END
 
 #endif    // German (Neutral) resources

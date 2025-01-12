@@ -1369,7 +1369,7 @@ messages:
 
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
    "This takes a spell/skill that who is trying to advance and modifies the "
-   "improve_chance.  This supercedes (but still supports) the ROOM_HARD_LEARN "
+   "improve_chance.  This supersedes (but still supports) the ROOM_HARD_LEARN "
    "flag."
    {
       if Send(self,@CheckRoomFlag,#flag=ROOM_HARD_LEARN)
@@ -1751,7 +1751,7 @@ messages:
          AND Send(what,@GetOwner) <> $
          AND IsClass(Send(what,@GetOwner),&Player)
       {
-         % Check the time currently left on the dipose timer.  Reset the timer
+         % Check the time currently left on the dispose timer.  Reset the timer
          %  to a minute if we have less than a minute left.  This should cut
          %  down on cases of someone dropping an object and it being cleaned up
          %  immediately afterwards.
@@ -3869,8 +3869,11 @@ messages:
    CanHavePlayerPortal()
    "Return whether it's permissible to have a player-created portal in this room. "
    {
-      % No portals into "historic" (i.e. inaccessible, dead) areas
-      if Send(self, @GetRegion) = RID_HISTORIC
+      % No portals in 
+      % - "historic" (i.e. inaccessible, dead) areas
+      % - "No combat" rooms like inns, adv halls, rented rooms, and others
+      if Send(self,@GetRegion) = RID_HISTORIC
+         OR Send(self,@CheckRoomFlag,#flag=ROOM_NO_COMBAT) 
       {
          return FALSE;
       }

@@ -105,6 +105,18 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+		case WM_MOUSEWHEEL:
+		{
+				if (state == STATE_GAME)
+				{
+						int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+						int direction = (zDelta > 0) ? 1 : -1; // Scroll up is positive, scroll down is negative
+						MapZoom(direction);
+						return 0;
+				}
+				break;
+		}
+
 		HANDLE_MSG(hwnd, WM_CREATE, MainInit);
 		HANDLE_MSG(hwnd, WM_PAINT, MainExpose);
 		HANDLE_MSG(hwnd, WM_DESTROY, MainQuit);
@@ -129,6 +141,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_MBUTTONDOWN, MainMouseMButtonDown);
 		HANDLE_MSG(hwnd, WM_LBUTTONDBLCLK, MainMouseLButtonDown);
 		HANDLE_MSG(hwnd, WM_LBUTTONUP, MainMouseLButtonUp);
+
 		HANDLE_MSG(hwnd, WM_MOUSEMOVE, MainMouseMove);
 		HANDLE_MSG(hwnd, WM_VSCROLL,MainVScroll);
 
@@ -313,7 +326,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	{
 		char buf[256];
 		DWORD err = GetLastError();
-		sprintf(buf, "Error - Couldn't Create Client Window : %d", err);
+		snprintf(buf, sizeof(buf), "Error - Couldn't Create Client Window : %d", err);
 		MessageBox(NULL, buf, "ERROR!", MB_OK);
 		MainQuit(hMain);
 		exit(1);

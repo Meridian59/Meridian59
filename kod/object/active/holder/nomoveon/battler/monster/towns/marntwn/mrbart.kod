@@ -31,7 +31,7 @@ resources:
 
    tova_unwanted_keep = "~k%s%s tells you, \"Well, how nice of you.  A gift.~n~k\""
    tova_unwanted_pay = "~k%s%s tells you, \"What an interesting item!~n~k\""
-   tova_unwanted_give = "~k%s%s tells you, \"Ha, ha, you've got to be kidding me, stranger! This is a tavern, not a gypsy’s tent!~n~k\""
+   tova_unwanted_give = "~k%s%s tells you, \"Ha, ha, you've got to be kidding me, stranger! This is a tavern, not a gypsy's tent!~n~k\""
 
 
 classvars:

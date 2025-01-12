@@ -172,7 +172,7 @@ FILE *CreateFileChannel(int channel_id)
    t = time(NULL);
    time_struct = localtime(&t);
    if (time_struct == NULL) {
-       strcpy(date_str, "unknown");
+       strncpy(date_str, "unknown", sizeof(date_str));
    } else {
        strftime(date_str, sizeof(date_str), "%Y-%m-%d", time_struct);
    }

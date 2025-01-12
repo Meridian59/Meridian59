@@ -411,7 +411,7 @@ CheckPlayerCriteria( quester_wannabe = $ )
          }
       }
       if first(iR2) = Q_R2_HAS_HEALTH_LEVEL {
-         if send(quester_wannabe,@GetMaxHealth) < nth(iR2, 2) {
+         if send(quester_wannabe,@GetBaseMaxHealth) < nth(iR2, 2) {
             if bDebug { debug("failed Q_R2_HAS_HEALTH_LEVEL."); }
             return FALSE;
          }
@@ -603,6 +603,19 @@ SetQuestNode( node_object = $ )
 {
 	poQuestNode = node_object;
 	return;
+}
+
+ExpireQuest(report = TRUE)
+{
+   if poQuestNode <> $
+   {
+      Send(poQuestNode,@DeadlineExpired,#report=report);
+   }
+   else
+   {
+      Debug("Quest node no longer exists");
+   }
+   return;
 }
 
 % returns FALSE if time expired (and cancels quest), TRUE if time left

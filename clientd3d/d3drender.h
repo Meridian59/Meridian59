@@ -35,6 +35,9 @@
 #define D3DRENDER_REDRAW_UPDATE	0x00000001
 #define D3DRENDER_REDRAW_ALL	0x00000002
 
+// the far clipping plane distance, which determines the maximum depth of the visible scene.
+#define Z_RANGE					(200000.0f)
+
 #define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\
 do	\
 {	\
@@ -150,19 +153,10 @@ extern int		gScreenHeight;
 HRESULT				D3DRenderInit(HWND hWnd);
 void				D3DRenderShutDown(void);
 void				D3DRenderBegin(room_type *room, Draw3DParams *params);
-void				D3DGeometryBuild(room_type *room);
-void				D3DGeometryUpdate(room_type *room);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
-LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
-LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
-void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
-void				D3DRenderBackgroundSet(ID background);
-void				D3DRenderBackgroundSet2(ID background);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
@@ -171,48 +165,45 @@ void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
 void				*D3DRenderMalloc(unsigned int bytes);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
 
-// material functions
-Bool D3DMaterialNone(d3d_render_chunk_new *pPool);
+LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
+	float width, float height);
 
-// world
-Bool D3DMaterialWorldPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk);
-Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk);
-Bool D3DMaterialWallMaskPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk);
+void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
+int DistanceGet(int x, int y);
 
-// lmaps
-Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk);
-Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk);
+int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
 
-// objects
-Bool D3DMaterialObjectPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialObjectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk);
+bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 
-// invisible objects
-Bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool);
-Bool D3DMaterialObjectInvisiblePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk);
+float FovHorizontal(long width);
+float FovVertical(long height);
 
-// effects
-Bool D3DMaterialEffectPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialEffectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialEffectChunk(d3d_render_chunk_new *pChunk);
+// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
+int getD3dRenderThreshold();
 
-// blur
-Bool D3DMaterialBlurPool(d3d_render_pool_new *pPool);
-Bool D3DMaterialBlurPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialBlurChunk(d3d_render_chunk_new *pChunk);
+// Returns the max shading range (FINENESS-shade_amount) to FINENESS
+long getShadeAmount();
 
-// particles
-Bool D3DMaterialParticlePool(d3d_render_pool_new *pPool);
-Bool D3DMaterialParticlePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
-Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk);
+bool isManagedTexturesEnabled();
+bool isFogEnabled();
 
-void SandstormInit(void);
+const Vector3D& getSunVector();
+
+void setWireframeMode(bool isEnabled);
+bool isWireframeMode();
+
+const font_3d& getFont3d();
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
+
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
+
+// Global palette array containing 256 color entries used for rendering textures in the current frame.
+// This palette is dynamically updated based on the current rendering context.
+PALETTEENTRY* getPalette();
+
+// Base palette array containing predefined colors used as a reference for rendering effects.
+// This palette remains constant and is used for color lookups and transformations.
+const Color(&getBasePalette())[NUM_COLORS];
 
 #endif	// __D3DRENDER_H__

@@ -340,16 +340,6 @@ messages:
       return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
    }
 
-   GetKarma(detect=FALSE)
-   {
-      if detect
-      {
-         return send(poOriginal,@GetKarma);
-      }
-      
-      propagate;
-   }
-
    SomethingChanged(what=$)
    {
       if what = poOriginal

@@ -46,7 +46,7 @@ classvars:
    % viPostCast_time is in seconds, since it works off GetTime()
    viPostCast_time = 1
 
-   % Can non-PK characers use this song?
+   % Can non-PK characters use this song?
    vbCanNewbieSing = TRUE     
 
 properties:
@@ -91,7 +91,7 @@ messages:
    {
       local iVolume;
 
-      % This should be a funcion of the spellpower AND the amount of mana
+      % This should be a function of the spellpower AND the amount of mana
       %  used to upkeep the spell AND quality of the instrument.
       % Multiply the numerator by 1000 to break viDrainTime down to seconds
       %  without risking a divide by for small durations.

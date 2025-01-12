@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
+static const unsigned char PAGE_BREAK_CHAR = 0xB6;	  /* U+00B6 PILCROW SIGN For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */
@@ -559,7 +559,7 @@ INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 		MoveWindow(hDlg, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
 			dlg_rect.bottom - dlg_rect.top, FALSE);
 		
-		sprintf(buf, "%u", info->amount);
+		snprintf(buf, sizeof(buf), "%u", info->amount);
 		Edit_SetText(hEdit, buf);
 		Edit_LimitText(hEdit, MAXAMOUNT);
 		

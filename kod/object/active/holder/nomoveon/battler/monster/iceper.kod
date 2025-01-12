@@ -52,7 +52,10 @@ resources:
    iceperson_koc_name_rsc = "atzmoch"
    iceperson_name_rsc = "ice creature"
    iceperson_icon_rsc = iceper_torso.bgf
-   iceperson_desc_rsc = "This is a creature made completely from frozen water!"
+   iceperson_desc_rsc = "Frost clings to every inch of the crystalline figure,"
+      " its jagged limbs glimmering in the pale light.  The air around it crackles"
+      " with an icy stillness, not born of malice but of a resolve to protect"
+      " something greater."
 
    iceperson_rightarm = iceper_rightarm.bgf
    iceperson_feet = iceper_feet.bgf
@@ -77,9 +80,10 @@ classvars:
    vrDead_name = iceperson_dead_name_rsc
 
    viTreasure_type = TID_NONE
-   viSpeed = SPEED_AVERAGE
+   viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_THRUST
    viAttack_spell = ATCK_SPELL_COLD
+   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER |  AI_MOVE_FLEE_FRIGHTENERS |  AI_MOVE_REGROUP
    viAttributes = 0
    viLevel = 90
    viDifficulty = 8
@@ -101,7 +105,23 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ -99, -ATCK_SPELL_FIRE ],[ 99, -ATCK_SPELL_COLD ]];
+      plResistances = [ [ 99, -ATCK_SPELL_COLD ],
+                        [-30, -ATCK_SPELL_FIRE ],
+                        [ 40, ATCK_WEAP_PIERCE ],
+                        [ 30, ATCK_WEAP_THRUST],
+                        [ 20, ATCK_SPELL_SHOCK ],
+                        [ 20, ATCK_SPELL_ALL ],
+                        [ 20, ATCK_WEAP_SLASH],
+                        [-10, ATCK_WEAP_BLUDGEON ],
+                        [-10, ATCK_SPELL_ACID ],
+                        [-20, ATCK_SPELL_QUAKE ] ];
+
+      plTreasure = [ [ &Waterskin, 30 ],
+                     [ &Sapphire, 25 ],
+                     [ &Diamond, 25 ],
+                     [ &InkyCap, 10 ],
+                     [ &PurpleMushroom, 5 ]
+                     [ &FireRing, 5 ] ];
 
       % Random weapon selection
       Send(self,@SetWeapon);

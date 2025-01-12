@@ -120,7 +120,7 @@ messages:
                      [ &Sapphire, 25 ],
                      [ &Diamond, 25 ],
                      [ &InkyCap, 10 ],
-                     [ &PurpleMushroom, 5 ]
+                     [ &PurpleMushroom, 5 ],
                      [ &FireRing, 5 ] ];
 
       % Random weapon selection

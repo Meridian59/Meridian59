@@ -576,7 +576,7 @@ void SynchedSendMenuChoice(session_node *s)
 
 void SynchedGotoGame(session_node *s,int last_download_time)
 {
-   int num_new_files;
+   int num_new_files, move_interval = 0;
    char *str;
    
    /* first check to see if they can goto game (if they have >= 1 char) */
@@ -661,6 +661,17 @@ void SynchedGotoGame(session_node *s,int last_download_time)
    }
 
    // All set to go to game mode.
+
+   move_interval = ConfigInt(UPDATE_MOVE_INTERVAL);
+   // Sanity check to ensure move_interval isn't 0 or negative
+   if (move_interval <= 0)
+   {
+      move_interval = DEFAULT_MOVE_INTERVAL; // Use a default value if invalid
+   }
+
+   AddByteToPacket(AP_MOVE_INTERVAL);
+   AddIntToPacket(move_interval);
+   SendPacket(s->session_id);
 
    AddByteToPacket(AP_GAME);
    SendPacket(s->session_id);

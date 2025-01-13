@@ -13,6 +13,8 @@
 #ifndef _SYNCHED_H
 #define _SYNCHED_H
 
+#define DEFAULT_MOVE_INTERVAL 1000
+
 typedef struct
 {
    int failed_tries;

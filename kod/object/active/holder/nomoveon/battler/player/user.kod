@@ -58,7 +58,7 @@ constants:
    MOVEMENT_DELTA_LAG_THRESHOLD = 5
 
    % If piMovesCount goes over this, we have a suspected speedhacker.
-   MOVEMENT_COUNT_THRESHOLD = 2
+   MOVEMENT_COUNT_THRESHOLD = 4
 
    % Speedhack/cheating detection:
    % What's the maximum number of times we should log a violation?
@@ -2939,7 +2939,7 @@ messages:
       %  Make sure this person is not lagging; increment our counter since we
       %  got a move packet, then adjust for last movement time.
       %  Also make sure we don't go too far negative.
-      piMovesCounter = (piMovesCounter + 1) - iDelta;
+      piMovesCounter = (piMovesCounter + 1) - (iDelta * 2);
       piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
 
       % Check for cheating by sending more move packets than allowed.

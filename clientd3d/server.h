@@ -129,6 +129,7 @@ Bool HandleEchoPing(char *ptr, long len);
 Bool HandleSectorLight(char *ptr, long len);
 Bool HandleSetView(char *ptr, long len);
 Bool HandleResetView(char *ptr, long len);
+Bool HandleMoveInterval(char *ptr, long len);
 
 /* Login mode handlers */
 Bool HandleLoginOk(char *ptr,long len);

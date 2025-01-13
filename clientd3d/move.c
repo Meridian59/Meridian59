@@ -54,7 +54,7 @@
 
 #define MAX_STEP_HEIGHT (HeightKodToClient(24)) // Max vertical step size (FINENESS units)
 
-#define MOVE_INTERVAL  1000            // Inform server at most once per this many milliseconds
+#define MOVE_INTERVAL  500            // Inform server at most once per this many milliseconds
 #define MOVE_THRESHOLD (FINENESS / 4)  // Inform server only of moves at least this large
 #define MOVE_THRESHOLD2 (MOVE_THRESHOLD * MOVE_THRESHOLD)
 #define TIME_THRESHOLD 1000
@@ -88,6 +88,7 @@ enum { MOVE_BLOCKED = 1, MOVE_OK, MOVE_CHANGED, };
 extern player_info player;
 extern room_type current_room;
 extern int sector_depths[];
+extern int move_interval;
 
 static DWORD server_time = 0;           // Last time we informed server of our position
 static DWORD last_splash = 0;           // Time of the last play of the splash wading sound
@@ -749,8 +750,11 @@ void MoveUpdateServer(void)
    DWORD now = timeGetTime();
    int angle;
 
+   // Debug statement to log the value of move_interval
+   debug(("MoveUpdateServer: move_interval = %d\n", move_interval));
+   
    // Inform server if necessary
-   if (now - server_time < MOVE_INTERVAL || !pos_valid)
+   if (now - server_time < (DWORD) move_interval || !pos_valid)
       return;
 
    MoveUpdatePosition();

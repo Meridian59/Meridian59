@@ -14,6 +14,7 @@
 #define _SYNCHED_H
 
 #define DEFAULT_MOVE_INTERVAL 1000
+#define DEFAULT_MOVE_COUNT_THRESHOLD 2
 
 typedef struct
 {

@@ -44,7 +44,6 @@ static handler_struct login_handler_table[] = {
 { AP_DELETERSC,         HandleDeleteRsc },
 { AP_DELETEALLRSC,      HandleDeleteAllRsc },
 { AP_NOCHARACTERS,      HandleNoCharacters },
-{ AP_MOVE_INTERVAL,     HandleMoveInterval },
 { 0, NULL},   // must end table this way
 }; 
 
@@ -1652,8 +1651,23 @@ Bool HandleLoginFailed(char *ptr, long len)
 /********************************************************************/
 Bool HandleEnterGame(char *ptr, long len)
 {
-   if (len != 0)
+   int interval;
+
+   if (len < 4)
       return False;
+
+   Extract(&ptr, &interval, 4);   
+
+   // Sanity check to ensure interval isn't negative or zero
+   if (interval <= 0)
+   {
+      return False;
+   }
+
+   debug(("HandleMoveInterval: interval = %d\n", interval));
+
+   move_interval = interval;
+
    MainSetState(STATE_GAME);
    return True;
 }
@@ -1907,23 +1921,5 @@ Bool HandleSetView(char *ptr, long len)
       return False;
 
    SetPlayerRemoteView(objID,viewFlags,viewHeight,viewLight);
-   return True;
-}
-
-Bool HandleMoveInterval(char *ptr, long len)
-{
-   int interval;
-
-   Extract(&ptr, &interval, 4);
-
-   // Sanity check to ensure interval isn't negative or zero
-   if (interval <= 0)
-   {
-      return False; // Invalid interval, return False to indicate an error
-   }
-
-   move_interval = interval;
-   debug(("SetMoveInterval: move_interval set to %d\n", move_interval));
-
    return True;
 }

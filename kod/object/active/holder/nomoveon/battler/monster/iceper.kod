@@ -80,6 +80,7 @@ classvars:
    vrDead_name = iceperson_dead_name_rsc
 
    viTreasure_type = TID_ICE_PERSON
+   
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_THRUST
    viAttack_spell = ATCK_SPELL_COLD

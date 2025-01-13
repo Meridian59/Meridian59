@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IcepersonTreasure is TreasureType
+IcePersonTreasure is TreasureType
 
 constants:
    
@@ -20,8 +20,8 @@ classvars:
 properties:
    
    piTreasure_num = TID_ICE_PERSON
-   piItem_att_chance = 10
-   piDiff_seed = 10
+   piItem_att_chance = 4
+   piDiff_seed = 6
 
 
 messages:
@@ -34,7 +34,6 @@ messages:
                      [ &InkyCap, 10 ],
                      [ &PurpleMushroom, 5 ],
                      [ &FireRing, 5 ] ];
-      ];
 
       propagate;
    }

@@ -750,9 +750,6 @@ void MoveUpdateServer(void)
    DWORD now = timeGetTime();
    int angle;
 
-   // Debug statement to log the value of move_interval
-   debug(("MoveUpdateServer: move_interval = %d\n", move_interval));
-   
    // Inform server if necessary
    if (now - server_time < (DWORD) move_interval || !pos_valid)
       return;

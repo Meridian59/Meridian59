@@ -5548,6 +5548,7 @@ messages:
 
    ReqEatSomething(filling = 0, what = $)
    {
+      local i;
       % This is the only place we need piStomach to be correct
       Send(self,@UpdateStomach);
 
@@ -5566,24 +5567,14 @@ messages:
          return FALSE;
       }
 
-      % Prevent eating if player has active second wind enchantment
-      % Allow potions and flasks to be used as their effect isn't on vigor
-      % A special exception is made for mints: they will increase our mana
-      %     but they do not increase our vigor as 
-      %     AddExertion checks for SecondWind
-
+      % An enchantment may prevent eating food - ie Second Wind
+      % Loop over the enchantments to check
       if what <> $
-      AND Send(self,@IsEnchanted,#byClass=&SecondWind)
       {
-         if Send(what,@IsItemType,#type=ITEMTYPE_FOOD)
+         for i in plEnchantments
          {
-            if IsClass(what,&Mint)
+            if Send(nth(i,2),@PreventsEating,#what=what)
             {
-               return TRUE;
-            }
-            else
-            {
-               Send(self,@MsgSendUser,#message_rsc=player_not_hungry_sw);
                return FALSE;
             }
          }

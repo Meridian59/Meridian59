@@ -222,5 +222,27 @@ messages:
       return FALSE;
    }
 
+   PreventsEating(what=$)
+   "Returns if an enchantment should stop a player from eating"
+   {
+      if what <> $
+      {
+         % Prevent consumption of food - except mints for the mana effect
+         if Send(what,@IsItemType,#type=ITEMTYPE_FOOD)
+         {
+            if IsClass(what,&Mint)
+            {
+               return FALSE;
+            }
+
+            Send(self,@MsgSendUser,#message_rsc=player_not_hungry_sw);
+            return TRUE;
+         }
+      }
+
+      % The default case is we can eat - for potions, flasks, etc
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

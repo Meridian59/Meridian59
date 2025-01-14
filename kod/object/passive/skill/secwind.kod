@@ -28,6 +28,7 @@ resources:
 
    SecondWind_success = "You catch your second wind!"
    SecondWind_finished = "You feel more relaxed as your second wind dissipates."
+   player_not_hungry = "Still feeling a surge of vitality, you have no interest in food or drink right now."
    SecondWind_sound = wscndwnd.wav
 
 classvars:
@@ -235,7 +236,7 @@ messages:
                return FALSE;
             }
 
-            Send(self,@MsgSendUser,#message_rsc=player_not_hungry_sw);
+            Send(self,@MsgSendUser,#message_rsc=player_not_hungry);
             return TRUE;
          }
       }

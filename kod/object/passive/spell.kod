@@ -2444,6 +2444,13 @@ messages:
       return 1;
    }
 
+   PreventsEating(what=$)
+   "Returns if an enchantment should stop a player from eating"
+   {
+      return FALSE;
+   }
+
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

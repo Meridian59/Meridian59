@@ -223,7 +223,7 @@ messages:
       return FALSE;
    }
 
-   PreventsEating(what=$)
+   PreventsEating(what=$, who=$)
    "Returns if an enchantment should stop a player from eating"
    {
       if what <> $
@@ -235,9 +235,11 @@ messages:
             {
                return FALSE;
             }
-
-            Send(self,@MsgSendUser,#message_rsc=player_not_hungry);
-            return TRUE;
+            if who <> $
+            {
+               Send(who,@MsgSendUser,#message_rsc=player_not_hungry);
+               return TRUE;
+            }
          }
       }
 

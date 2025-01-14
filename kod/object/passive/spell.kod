@@ -2444,7 +2444,7 @@ messages:
       return 1;
    }
 
-   PreventsEating(what=$)
+   PreventsEating(what=$, who=$)
    "Returns if an enchantment should stop a player from eating"
    {
       return FALSE;

@@ -1,11 +1,16 @@
 # Wand of healing
 # groups
-# 1 normal/ground
-# 2 examine
+# 1 display
+# 2 dropped
+# 3 broken
+
 -s 5
-2
-healwndb.bmp   [0, 0] 
-healwnda.bmp   [0, 0]
-2
- 1      1   
- 1      2
+3
+healwand-inv.bmp          [0, 0]
+healwand-drop.bmp         [0, 0]
+healwand-drop-broken.bmp  [0, 0]
+
+3
+1       1   
+1       2
+1       3

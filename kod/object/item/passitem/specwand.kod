@@ -71,6 +71,8 @@ messages:
          Send(poOwner,@MsgSendUser,#message_rsc=SpecialWand_broken,
            #parm1=send(self,@getcapdef),#parm2=send(self,@getname));
          vrDesc = SpecialWand_desc_broken_rsc;
+
+         Send(poOwner,@SomethingChanged,#what=self);
       }
       
       return;

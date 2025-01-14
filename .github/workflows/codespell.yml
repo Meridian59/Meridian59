@@ -1,23 +1,21 @@
-name: Spellcheck Blakod
+name: Spellcheck
 
-on: 
+on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  workflow_dispatch:
-  
+
 jobs:
   codespell:
-    name: .kod spellchecker
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Codespell
-        uses: codespell-project/actions-codespell@v2
-        with:
-          path: kod
-          ignore_words_file: .codespellignore
+      - name: Install codespell
+        run: pip install codespell
+
+      - name: Run codespell
+        run: |
+          codespell --ignore-regex '[~`][a-zA-Z]+' --ignore-words .codespellignore dlg/npc.tab kod

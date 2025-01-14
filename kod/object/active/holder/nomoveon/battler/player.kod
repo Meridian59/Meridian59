@@ -321,7 +321,6 @@ resources:
    player_desc_enchanted_none = "%q"
    player_desc_enchanted = "%s has %s%s.\n\n%s"
    
-   player_not_hungry_sw = "Still feeling a surge of vitality, you are uninterested in food or drink right now."
    player_too_full = "You are too full to eat."
    player_too_full_drink = "You are too full to drink."
 

@@ -153,20 +153,6 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 		break;
 		
 	default :
-		  // Get the current time
-        time_t rawtime;
-        struct tm *timeinfo;
-        char buffer[80];
-
-        time(&rawtime);
-        timeinfo = localtime(&rawtime);
-
-        // Format the time as "YYYY-MM-DD HH:MM:SS"
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-
-        // Log the user command with timestamp and client identifier
-        eprintf("[%s] User command received from client %d\n", buffer, session_id);
-
 		/* don't need to do anything, just parse the normal message */;
 		/* counting was already done in game.c, so don't need to add here */
 	}

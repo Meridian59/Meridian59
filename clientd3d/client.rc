@@ -1221,7 +1221,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,74,260,40,14
     CTEXT           "Meridian 59 Client (build %d)",IDC_NUMBER,0,4,189,8
-    CTEXT           "Copyright © 1994-2024 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
+    CTEXT           "Copyright © 1994-2025 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
     CTEXT           "All rights reserved.",IDC_SPECIAL2,0,25,189,8
     CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
@@ -2009,7 +2009,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,74,260,40,14
     CTEXT           "Meridian 59 Client (build %d)",IDC_NUMBER,0,4,189,8
-    CTEXT           "Copyright © 1994-2024 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
+    CTEXT           "Copyright © 1994-2025 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
     CTEXT           "All rights reserved.",IDC_SPECIAL2,0,25,189,8
     CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END

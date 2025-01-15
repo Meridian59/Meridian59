@@ -70,6 +70,13 @@ resources:
    AssGame_mail_winner = "Subject: One has risen above the others.\n"
       "%q has won the challenge of the dark blades.\n\n"
       "-- Roq, the Dark Blade"
+
+   AssGame_not_viable = "Subject: Insufficient combatants.\n"
+      "Alas, not enough warriors have answered the call for the "
+      "Challenge of the Dark Blades. Fear not - I shall send word to "
+      "summon you again soon and the contest shall begin anew. "
+      "Keep your blade close at hand... the fight awaits.\n\n"
+      "-- Roq, the Dark Blade"
    
    Assgame_go_wav = assassin.wav
    AssGame_roq = "Roq, the Dark Blade"
@@ -1125,9 +1132,17 @@ messages:
    IsViableGame()
    "If the game is viable (i.e. there are enough combatants) start the match."
    {
+      local i;
       if Length(plCombatants) > 1
       {
          return TRUE;
+      }
+
+      % inform the lonely soul that the game is not viable.
+      for i in plCombatants
+      {
+         Send(i,@ReceiveNestedMail,#nest_list=[4,AssGame_not_viable],
+            #from=assgame_roq,#dest_list=[i]);
       }
 
       return FALSE;

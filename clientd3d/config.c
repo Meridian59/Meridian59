@@ -21,11 +21,11 @@
 Config config;
 char inihost[MAXHOST];
 
-// full pathname of INI file (maintained via game>preferences) : meridian.ini
+// Full pathname of meridian.ini (maintained in-game via the Game>Preferences menu)
 static char ini_filename[MAX_PATH + FILENAME_MAX];
 char *ini_file;  // Pointer to ini_filename
 
-// full pathname of config INI file (maintained via game>configuration m59bind) : config.ini
+// Full pathname of config.ini (currently maintained by m59bind)
 static char config_ini_filename[MAX_PATH + FILENAME_MAX];
 char *config_ini_file;  // Pointer to config_ini_filename
 
@@ -35,8 +35,8 @@ char *config_ini_file;  // Pointer to config_ini_filename
 
 static bool is_steam_install = false;
 
-/* meridian.ini INI file entries (preferences) */
-static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
+/* meridian.ini file entries (preferences) */
+static char misc_section[]   = "Miscellaneous";  /* Section of meridian.ini for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
 static char INIPlayMusic[]   = "PlayMusic";
 static char INIPlaySound[]   = "PlaySound";
@@ -78,7 +78,7 @@ static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
 
-static char window_section[] = "Window";         /* Section in INI file for window info */
+static char window_section[] = "Window";         /* Section in meridian.ini for window info */
 static char INILeft[]        = "NormalLeft";
 static char INIRight[]       = "NormalRight";
 static char INITop[]         = "NormalTop";
@@ -87,7 +87,7 @@ static char INIShow[]        = "Show";
 static char INIMaxX[]        = "MaxX";
 static char INIMaxY[]        = "MaxY";
 
-static char comm_section[]   = "Comm";  /* Section for comm stuff in INI file */
+static char comm_section[]   = "Comm";  /* Section for comm stuff in meridian.ini */
 static char INIPort[]        = "Port";
 static char INIRedialDelay[] = "RedialDelay";
 static char INIHostname[]    = "Hostname";
@@ -95,19 +95,19 @@ static char INISockPort[]    = "SocketPort";
 static char INIServerNum[]   = "ServerNumber";
 static char INIDomainFormat[] = "Domain";
 
-static char users_section[]  = "Users";  /* Section for dealing with other users */
+static char users_section[]  = "Users";  /* Section for dealing with other users in meridian.ini */
 static char INIDrawNames[]   = "DrawNames";
 static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";
 
-static char special_section[] = "Special";  /* Section for hidden stuff in INI file */
+static char special_section[] = "Special";  /* Section for hidden stuff in in meridian.ini */
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
 
-/* config.ini INI file entries (preferences) */
-static char config_section[] = "config";  /* Section for configuration stuff in config INI file */
+/* config.ini file entries (preferences) */
+static char config_section[] = "config";  /* Section for configuration stuff in config.ini */
 static char INIGpuEfficiency [] = "gpuefficiency";
 static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
 
@@ -169,8 +169,8 @@ void SaveSettings(void)
 
 /****************************************************************************/
 /*
- * ConfigInit:  Find name of INI file.  This function must be called before
- *   using the ini_file variable to read from or write to the INI file.
+ * ConfigInit:  Find name of INI files.  This function must be called before
+ *   using the ini_file/config_ini_file variables to read from or write to the files.
  */
 void ConfigInit(void)
 {
@@ -178,7 +178,7 @@ void ConfigInit(void)
 
    GetGamePath( dir );
 
-   // Retrieve the INI file names for both meridian.ini (preferences) and config.ini (configuration)
+   // Retrieve the filenames for meridian.ini (preferences) and config.ini (configuration)
    snprintf(ini_filename, sizeof(ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILE));
    ini_file = ini_filename;
 

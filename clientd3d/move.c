@@ -774,13 +774,22 @@ void MoveUpdatePosition(void)
 {
    int x, y;
    BYTE speed;
+   DWORD current_time;
+   time_t rawtime;
+   struct tm * timeinfo;
+   char buffer[9]; // Buffer to hold HH:MM:SS
 
    x = player.x;
    y = player.y;
 
    if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
    {
-      debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
+      current_time = timeGetTime();
+      time(&rawtime);
+      timeinfo = localtime(&rawtime);
+      strftime(buffer, sizeof(buffer), "%H:%M:%S", timeinfo);
+      
+      debug(("[%s] MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", buffer, x, server_y, y));
       speed = 18;
       if (IsMoveFastAction(last_move_action))
         speed *= 2;
@@ -788,7 +797,7 @@ void MoveUpdatePosition(void)
       RequestMove(y, x, speed, player.room_id);
       server_x = x;
       server_y = y;
-      server_time = timeGetTime();
+      server_time = current_time;
    }
 }
 /************************************************************************/

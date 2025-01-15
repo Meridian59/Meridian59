@@ -578,7 +578,6 @@ void SynchedGotoGame(session_node *s,int last_download_time)
 {
    int num_new_files;
    int move_interval = DEFAULT_MOVE_INTERVAL; 
-   int move_count_threshold = DEFAULT_MOVE_COUNT_THRESHOLD;
    char *str;
    
    /* first check to see if they can goto game (if they have >= 1 char) */
@@ -664,8 +663,8 @@ void SynchedGotoGame(session_node *s,int last_download_time)
 
    // All set to go to game mode.
 
+   // Sync the client's move interval with the server's
    move_interval = ConfigInt(UPDATE_MOVE_INTERVAL);
-   // Sanity check to ensure it isn't 0 or negative
    if (move_interval <= 0)
    {
       move_interval = DEFAULT_MOVE_INTERVAL;

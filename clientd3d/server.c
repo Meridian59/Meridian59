@@ -1651,22 +1651,23 @@ Bool HandleLoginFailed(char *ptr, long len)
 /********************************************************************/
 Bool HandleEnterGame(char *ptr, long len)
 {
-   int interval;
+   int server_move_interval;
 
    if (len < 4)
       return False;
 
-   Extract(&ptr, &interval, 4);   
+   Extract(&ptr, &server_move_interval, 4);   
 
-   // Sanity check to ensure interval isn't negative or zero
-   if (interval <= 0)
+   // Sanity check to ensure move interval isn't negative or zero
+   if (server_move_interval <= 0)
    {
       return False;
    }
 
-   debug(("HandleMoveInterval: interval = %d\n", interval));
+   debug(("Client move interval set by server: %d\n", server_move_interval));
 
-   move_interval = interval;
+   // Set the client extern variable to the server move interval
+   move_interval = server_move_interval;
 
    MainSetState(STATE_GAME);
    return True;

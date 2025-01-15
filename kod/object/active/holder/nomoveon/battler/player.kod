@@ -5572,7 +5572,7 @@ messages:
       {
          for i in plEnchantments
          {
-            if Send(nth(i,2),@PreventsEating,#what=what,#who=self)
+            if NOT Send(nth(i,2),@ReqEatSomething,#what=what,#who=self)
             {
                return FALSE;
             }

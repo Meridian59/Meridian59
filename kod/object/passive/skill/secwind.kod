@@ -223,8 +223,8 @@ messages:
       return FALSE;
    }
 
-   PreventsEating(what=$, who=$)
-   "Returns if an enchantment should stop a player from eating"
+   ReqEatSomething(what=$, who=$)
+   "Returns if an enchantment allows the player to eat as they normally can"
    {
       if what <> $
       {
@@ -233,18 +233,15 @@ messages:
          {
             if IsClass(what,&Mint)
             {
-               return FALSE;
-            }
-            if who <> $
-            {
-               Send(who,@MsgSendUser,#message_rsc=player_not_hungry);
                return TRUE;
             }
+            Send(who,@MsgSendUser,#message_rsc=player_not_hungry);
+            return FALSE;
          }
       }
 
       % The default case is we can eat - for potions, flasks, etc
-      return FALSE;
+      return TRUE;
    }
 
 end

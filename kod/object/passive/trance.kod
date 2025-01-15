@@ -133,10 +133,10 @@ messages:
       return FALSE;
    }
 
-   PreventsEating(what=$, who=$)
-   "Returns if an enchantment should stop a player from eating"
+   ReqEatSomething(what=$, who=$)
+   "Returns if an enchantment allows the player to eat as they normally can"
    {
-      return FALSE;
+      return TRUE;
    }
 
 end

@@ -57,12 +57,11 @@ constants:
    %  (in seconds).
    MOVEMENT_DELTA_LAG_THRESHOLD = 5
 
-   % If piMovesCount goes over this, we have a suspected speedhacker.
-   MOVEMENT_COUNT_THRESHOLD = 2
-
    % Speedhack/cheating detection:
    % What's the maximum number of times we should log a violation?
    MAX_LOGGED_THRESHOLD = 25
+
+   MOVE_COUNT_THRESHOLD = 2
 
 resources:
 
@@ -350,6 +349,10 @@ properties:
 
    piCheaterLogs = 0
 
+   % If piMovesCount goes over this, we have a suspected speedhacker.
+   % Will be updated from server config during UserLogon() if threshold has changed.
+   piMoveCountThreshold = 2
+
 messages:
 
    Constructor(name = $,icon = $)
@@ -582,6 +585,8 @@ messages:
       poSession = session_id;
       pbLogged_on = TRUE;
 
+      Send(self,@UpdatePlayerMoveCountThreshold);
+
       if piLastLoginTime = 0 AND piLast_Restart_Time = 0
       {
          Debug("Sending first time appeal");
@@ -638,6 +643,25 @@ messages:
 
       Send(self,@ToCliSpellSchools);
       Send(self,@UserLogonHook);
+
+      return;
+   }
+
+   UpdatePlayerMoveCountThreshold()
+   "Updates the user's move count threshold from the server config"
+   {
+      local move_count;
+      
+      move_count = GetServerConfigValue(SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
+      
+      if move_count > 0 AND piMoveCountThreshold <> move_count
+      {
+         piMoveCountThreshold = move_count;
+      }
+      else
+      {
+         piMoveCountThreshold = MOVE_COUNT_THRESHOLD;
+      }
 
       return;
    }
@@ -1394,6 +1418,7 @@ messages:
          
          return;
       }
+
 
       if NOT bSpam
       {
@@ -2918,7 +2943,7 @@ messages:
       % NEW Speedhack detection!
       % How this works:
       %   Speedhack works by sending a LOT of little moves very, very quickly.
-      %   Normal players only send 1 movement packet per second, but 
+      %   Normal players send 2-3 movement packets per second, but 
       %   speedhackers send more.  Even at low levels, speedhackers will send
       %   more packets per second.  So, we keep track of the number of packets
       %   sent and the number of seconds that happen.  Every movement packet
@@ -2944,7 +2969,7 @@ messages:
 
       % Check for cheating by sending more move packets than allowed.
       % Don't log too many cheat detections, because it'll fill up our logs.
-      if piMovesCounter > MOVEMENT_COUNT_THRESHOLD
+      if piMovesCounter > piMoveCountThreshold
          AND piCheaterLogs < MAX_LOGGED_THRESHOLD
       {
          piCheaterLogs = piCheaterLogs + 1;

@@ -21,9 +21,13 @@
 Config config;
 char inihost[MAXHOST];
 
-// Full pathname of INI file
+// full pathname of INI file (maintained via game>preferences) : meridian.ini
 static char ini_filename[MAX_PATH + FILENAME_MAX];
 char *ini_file;  // Pointer to ini_filename
+
+// full pathname of config INI file (maintained via game>configuration m59bind) : config.ini
+static char config_ini_filename[MAX_PATH + FILENAME_MAX];
+char *config_ini_file;  // Pointer to config_ini_filename
 
 // If version doesn't match that in INI file, restore default colors and fonts (used to change
 // color and font settings in old clients).
@@ -31,7 +35,7 @@ char *ini_file;  // Pointer to ini_filename
 
 static bool is_steam_install = false;
 
-/* INI file entries */
+/* meridian.ini INI file entries (preferences) */
 static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
 static char INIPlayMusic[]   = "PlayMusic";
@@ -102,7 +106,7 @@ static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
 
-static char config_ini_file[] = "./config.ini";
+/* config.ini INI file entries (preferences) */
 static char config_section[] = "config";  /* Section for configuration stuff in config INI file */
 static char INIGpuEfficiency [] = "gpuefficiency";
 static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
@@ -172,10 +176,15 @@ void ConfigInit(void)
 {
    char dir[MAX_PATH];
 
-   //memset(&config,0,sizeof(config));
    GetGamePath( dir );
+
+   // Retrieve the INI file names for both meridian.ini (preferences) and config.ini (configuration)
    snprintf(ini_filename, sizeof(ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILE));
    ini_file = ini_filename;
+
+   snprintf(config_ini_filename, sizeof(config_ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILECONFIG));
+   config_ini_file = config_ini_filename;
+
 }
 /****************************************************************************/
 /*

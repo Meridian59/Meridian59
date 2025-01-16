@@ -2364,7 +2364,7 @@ blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
 
 	config_node *cnode = GetConfigByID(config_id.v.data);
 
-	if (cnode == NULL)
+	if (cnode == NULL || cnode->config_id == INVALID_CONFIG)
 	{
 		bprintf("C_GetServerConfigValue can't find config id %i\n", config_id.v.data);
 		return NIL;
@@ -2373,16 +2373,16 @@ blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
 	switch (cnode->config_type)
 	{
 	case CONFIG_STR:
-			ret_val.v.data = CreateString(cnode->config_str_value);
-			ret_val.v.tag = TAG_STRING;
-			break;
+		ret_val.v.data = CreateString(cnode->config_str_value);
+		ret_val.v.tag = TAG_STRING;
+		break;
 	case CONFIG_INT:
-			ret_val.v.data = cnode->config_int_value;
-			ret_val.v.tag = TAG_INT;
-			break;
+		ret_val.v.data = cnode->config_int_value;
+		ret_val.v.tag = TAG_INT;
+		break;
 	default:
-			bprintf("C_GetServerConfigValue: Unknown config node type\n");
-			return NIL;
+		bprintf("C_GetServerConfigValue: Unknown config node type\n");
+		return NIL;
 	}
 
 	return ret_val.int_val;

@@ -654,7 +654,7 @@ messages:
       
       move_count = GetServerConfigValue(SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
       
-      if move_count > 0 AND piMoveCountThreshold <> move_count
+      if move_count <> $ AND move_count > 0 AND piMoveCountThreshold <> move_count
       {
          piMoveCountThreshold = move_count;
       }

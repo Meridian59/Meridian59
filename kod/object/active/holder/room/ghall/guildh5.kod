@@ -337,7 +337,7 @@ messages:
 
       if row = 24 AND (col = 14 OR col = 15 OR col = 21 OR col = 22) AND ptMainDoor = $
       {
-         if send(self,@CanEnter,#who=what)
+         if send(self,@ReqLegalEntry,#who=what)
          {
             send(self,@OpenEntranceDoor);
 

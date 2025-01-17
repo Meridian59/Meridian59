@@ -103,7 +103,7 @@ messages:
    {
       if row = 11 AND col = 13
       {
-       	if send(self,@CanEnter,#who=what)
+       	if send(self,@ReqLegalEntry,#who=what)
 	      {
             send(self,@openEntrancedoor);
 

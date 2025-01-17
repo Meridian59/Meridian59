@@ -125,7 +125,7 @@ messages:
    {
       if (row >= 2 AND row <= 4) AND col = 8
       {
-         if send(self,@CanEnter,#who = what)
+         if send(self,@ReqLegalEntry,#who = what)
          {
             send(self,@OpenEntranceDoor);
 

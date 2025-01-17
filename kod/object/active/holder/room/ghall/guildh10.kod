@@ -197,7 +197,7 @@ messages:
            }
          if row = 16 and col = 11
          {
-	    if send(self,@CanEnter,#who = what)
+	    if send(self,@ReqLegalEntry,#who = what)
 	    {
 	       send(self,@openentrancedoor);
 	       return TRUE;

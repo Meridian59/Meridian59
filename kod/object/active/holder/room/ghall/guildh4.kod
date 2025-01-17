@@ -336,7 +336,7 @@ messages:
 
       if row = 43 AND (col < 26 AND col > 23)
       {
-         if send(self,@CanEnter,#who=what)
+         if send(self,@ReqLegalEntry,#who=what)
          {
             send(self,@OpenEntranceDoor);
 

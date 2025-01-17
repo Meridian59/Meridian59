@@ -105,7 +105,7 @@ messages:
    {
       if row = 18 AND col = 10
       {
-         if Send(self,@ReqLegalEntry,#who = what)
+         if Send(self,@CanEnter,#who = what)
          {
             Send(self,@OpenEntrancedoor);
 

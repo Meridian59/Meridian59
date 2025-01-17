@@ -177,7 +177,7 @@ messages:
 
       if row = 18 AND col = 29
          AND ptEntranceDoor = $
-         AND send(self,@ReqLegalEntry,#who = what)
+         AND send(self,@CanEnter,#who = what)
       {
          send(self,@OpenEntranceDoor);
       }

@@ -156,7 +156,7 @@ messages:
          count = count + 1;
       }                                                                        
 
-      if Send(self,@ReqLegalEntry,#who = what)
+      if Send(self,@CanEnter,#who = what)
       {
          if row = 18 AND col = 9     
          {

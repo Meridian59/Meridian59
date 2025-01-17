@@ -110,7 +110,7 @@ messages:
    {
       if row = 5 and col = 8
       {
-         if send(self,@ReqLegalEntry,#who = what)
+         if send(self,@CanEnter,#who = what)
          {
             send(self,@openEntrancedoor);
 

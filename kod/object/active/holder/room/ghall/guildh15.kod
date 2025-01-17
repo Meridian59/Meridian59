@@ -139,7 +139,7 @@ messages:
    {
       if ((row = 12) or (row = 13) or (row = 14) ) and ((col = 31) or (col = 32) or (col = 33))         
       {
-         if send(self,@ReqLegalEntry,#who = what)
+         if send(self,@CanEnter,#who = what)
          {
             send(self,@openEntrancedoor);
             return TRUE;

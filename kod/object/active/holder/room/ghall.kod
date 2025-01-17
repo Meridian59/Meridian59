@@ -1037,9 +1037,8 @@ messages:
    }
 
    CanEnter(who=$)
-   "Only guild members and their allies can enter the guild, but not their "
-   "apprentices.  Also determines who can log off safely and remain inside "
-   "the guild hall."
+   "Return TRUE if the player is allowed to use the entrance door and log "
+   "off safely inside the hall, through membership or alliance, and rank."
    {
       local oGuild;
 
@@ -1355,14 +1354,17 @@ messages:
    }  
 
    ReqLegalEntry(who=$)
+   "Returns TRUE if the player is in the guild hall legally; otherwise."
    {
       local i;
-
-      if Send(self,@CanEnter,#who=who)
+      
+      % Unowned guild halls are always open
+      if poGuild_Owner = $
       {
          return TRUE;
       }
 
+      % Check the legal entry list
       for i in plLegal_entry
       {
          if i = who
@@ -1371,8 +1373,8 @@ messages:
          }
       }
 
-      % Okay, we're pretty sure this is a bastard PKK wuss.
-      Debug("Player",Send(who,@GetTrueName),"broke into guild hall",
+      % This player did not enter the guild hall legally, through the hotplate system.
+      Debug("Player",Send(who,@GetTrueName),"entered a guild hall illegally",
             Send(self,@GetName),"illegally!");
 
       return FALSE;

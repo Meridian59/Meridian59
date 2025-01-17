@@ -295,7 +295,7 @@ messages:
    {
       if row = 21 AND (col = 8 OR col = 9)
       {
-         if send(self,@ReqLegalEntry,#who=what)
+         if send(self,@CanEnter,#who=what)
          {
            send(self,@OpenEntranceDoor);
 

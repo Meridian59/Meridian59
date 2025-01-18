@@ -216,8 +216,8 @@ classvars:
                                 
    viTreasure_type = TID_NONE
 
-   % Random delay from delay to 1.50*delay
-   viRandom_delay = 40000
+   % Random delay from delay to 2.50*delay
+   viRandom_delay = 120000
    % from delay to 1.33*delay
    viSpasm_delay  = 15000
 
@@ -2964,8 +2964,7 @@ messages:
       
       if NOT test
       {
-         ptRandom=CreateTimer(self,@RandomTimer,
-                              viRandom_delay + Random(0,viRandom_delay/2));
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay * Random(2, 5) / 2);
       }
 
       return;
@@ -4247,8 +4246,7 @@ messages:
 
       if (viAttributes & MOB_RANDOM)
       {
-         ptRandom = CreateTimer(self,@RandomTimer,
-                                viRandom_delay+Random(0,viRandom_delay/2));
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay * Random(2, 5) / 2);
       }
 
       if (viAttributes & MOB_SPASM)

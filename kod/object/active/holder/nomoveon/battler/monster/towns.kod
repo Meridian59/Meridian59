@@ -32,6 +32,13 @@ properties:
    piFace_translation = PT_GRAY_TO_SKIN1
    piHair_translation = PT_HAIR_DKBROWN
 
+   % Tracking the last time this NPC welcomed a player
+   piLastWelcomeTime = 0
+
+   % Minimum interval (in seconds) between NPC welcome messages to prevent excessive 
+   % chatter when a player enters their room.
+   piWelcomeTimeInterval = 120
+
 messages:
 
    CanMorphTo()
@@ -45,6 +52,19 @@ messages:
       send(what,@Delete);
 
       return;
+   }
+
+   % True if the NPC is ready to say a welcoming message to players
+   %  who have entered their room.
+   ReadyForWelcome()
+   {
+      if GetTime() > (piLastWelcomeTime + piWelcomeTimeInterval)
+      {
+         piLastWelcomeTime = GetTime();
+         return TRUE;
+      }
+      
+      return FALSE;
    }
 
 end

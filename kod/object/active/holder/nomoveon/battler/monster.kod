@@ -22,10 +22,6 @@ constants:
    %  learn to qualify for a new spell.
    MONSTER_LEARN_GRADIENT = 15
 
-   % Default interval in seconds between welcome messages from npcs when a 
-   %  player enters their room.
-   WELCOME_MESSAGE_INTERVAL = 30
-
 resources:
 
    monster_percent_q = "%q"
@@ -350,6 +346,10 @@ properties:
    
    % Tracking the last time this monster welcomed a player
    piLastWelcomeTime = 0
+
+   % Minimum interval (in seconds) between NPC welcome messages to prevent excessive 
+   % chatter when a player enters their room.
+   piWelcomeTimeInterval = 120
 
 messages:
 
@@ -5831,7 +5831,7 @@ messages:
    %  who have entered their room.
    ReadyForWelcome()
    {
-      if GetTime() > (piLastWelcomeTime + WELCOME_MESSAGE_INTERVAL)
+      if GetTime() > (piLastWelcomeTime + piWelcomeTimeInterval)
       {
          piLastWelcomeTime = GetTime();
          return TRUE;

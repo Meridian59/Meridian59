@@ -16,8 +16,6 @@ constants:
 
    PADDOCK_YELL_CHANCE = 30
 
-   WELCOME_MESSAGE_INTERVAL = 120
-
 resources:
 
    tosinnkeeper_name_rsc = "Paddock"
@@ -43,6 +41,9 @@ classvars:
    viMerchant_markup = MERCHANT_DISCOUNT
 
 properties:
+
+   % We know that Familiars is a popular bar, so we'll set Paddock's welcome interval to 4 minutes.
+   piWelcomeTimeInterval = 240
 
 messages:
 

@@ -2964,8 +2964,7 @@ messages:
       
       if NOT test
       {
-         ptRandom = CreateTimer(self,@RandomTimer,
-                                viRandom_delay + Random(0, (viRandom_delay * 3) / 2));
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay * Random(2, 5) / 2);
       }
 
       return;
@@ -4247,8 +4246,7 @@ messages:
 
       if (viAttributes & MOB_RANDOM)
       {
-         ptRandom = CreateTimer(self,@RandomTimer,
-                              viRandom_delay + Random(0, (viRandom_delay * 3) / 2));
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay * Random(2, 5) / 2);
       }
 
       if (viAttributes & MOB_SPASM)

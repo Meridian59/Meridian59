@@ -96,7 +96,7 @@ classvars:
    vrSound_death = iceperson_sound_death
 
    viDead_drawfx = DRAWFX_TRANSLUCENT_50
-   
+
 properties:
 
    piAnimation = ANIM_NONE
@@ -288,7 +288,7 @@ messages:
    GetProjectileLightIntensity()
    {
       % Medium light radius for projectile.  Out of 255 levels.
-      return 125;
+      return 20;
    }
 
    GetProjectileLightColor()
@@ -303,8 +303,8 @@ messages:
 
    SendLightingInformation()
    {
-      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-      AddPacket(1,5); % 5 out of 255 intensity of light
+      AddPacket(2,LIGHT_FLAG_ON);
+      AddPacket(1,1); % 5 out of 255 intensity of light
       AddPacket(2,LIGHT_WHITE);
 
       return;

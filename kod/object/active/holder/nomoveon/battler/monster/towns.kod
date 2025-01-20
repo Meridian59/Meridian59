@@ -26,6 +26,10 @@ classvars:
 
    viSpeed = SPEED_AVERAGE
 
+   % Minimum interval (in seconds) between NPC welcome messages to prevent excessive 
+   % chatter when a player enters their room.
+   viWelcomeTimeInterval = 120
+
 properties:
    
    % Palette translations; used only for NPCs that use player face parts
@@ -34,10 +38,6 @@ properties:
 
    % Tracking the last time this NPC welcomed a player
    piLastWelcomeTime = 0
-
-   % Minimum interval (in seconds) between NPC welcome messages to prevent excessive 
-   % chatter when a player enters their room.
-   piWelcomeTimeInterval = 120
 
 messages:
 
@@ -57,7 +57,7 @@ messages:
    UserEntered(who = $)
    "A User just entered the room."
    {
-      if GetTime() > (piLastWelcomeTime + piWelcomeTimeInterval)
+      if GetTime() > (piLastWelcomeTime + viWelcomeTimeInterval)
       {
          piLastWelcomeTime = GetTime();
          Send(self,@WelcomeUser,#who=who);

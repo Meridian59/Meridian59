@@ -40,10 +40,11 @@ classvars:
    viOccupation = MOB_ROLE_INNKEEPER
    viMerchant_markup = MERCHANT_DISCOUNT
 
+   % We know that Familiars is a popular bar, so we'll set Paddock's welcome interval to 4 minutes.
+   viWelcomeTimeInterval = 240
+
 properties:
 
-   % We know that Familiars is a popular bar, so we'll set Paddock's welcome interval to 4 minutes.
-   piWelcomeTimeInterval = 240
 
 messages:
 

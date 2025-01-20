@@ -133,6 +133,11 @@ messages:
       return FALSE;
    }
 
+   ReqEatSomething(what=$, who=$)
+   "Returns if an enchantment allows the player to eat as they normally can"
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

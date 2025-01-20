@@ -5547,9 +5547,11 @@ messages:
 
    ReqEatSomething(filling = 0, what = $)
    {
+      local i;
       % This is the only place we need piStomach to be correct
       Send(self,@UpdateStomach);
 
+      % Are we too full to eat and drink?
       if (piStomach + filling) > 100
       {
          if what = $ OR NOT Send(what,@IsBeverage)
@@ -5563,7 +5565,19 @@ messages:
          
          return FALSE;
       }
-      
+
+      % An enchantment may prevent eating food - ie Second Wind
+      % Loop over the enchantments to check
+      if what <> $
+      {
+         for i in plEnchantments
+         {
+            if NOT Send(nth(i,2),@ReqEatSomething,#what=what,#who=self)
+            {
+               return FALSE;
+            }
+         }
+      }
       return TRUE;
    }
 

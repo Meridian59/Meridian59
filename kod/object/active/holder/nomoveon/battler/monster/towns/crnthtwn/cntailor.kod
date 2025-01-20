@@ -89,7 +89,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what = self, #string=CnTail_entry_welcome,
            #type = SAY_RESOURCE);

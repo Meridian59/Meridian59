@@ -71,7 +71,7 @@ messages:
       propagate;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if NOT Send(who,@GetFaction) = FACTION_NEUTRAL
       {

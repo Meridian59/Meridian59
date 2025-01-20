@@ -67,7 +67,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       if random(1,10)

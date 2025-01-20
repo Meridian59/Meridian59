@@ -54,17 +54,16 @@ messages:
       return;
    }
 
-   % True if the NPC is ready to say a welcoming message to players
-   %  who have entered their room.
-   ReadyForWelcome()
+   UserEntered(who = $)
+   "A User just entered the room."
    {
       if GetTime() > (piLastWelcomeTime + piWelcomeTimeInterval)
       {
          piLastWelcomeTime = GetTime();
-         return TRUE;
+         Send(self,@WelcomeUser,#who=who);
       }
       
-      return FALSE;
+      return;
    }
 
 end

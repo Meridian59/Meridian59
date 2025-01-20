@@ -68,7 +68,7 @@ properties:
 
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if send(who,@GetHomeRoom) = RID_BAR_INN
       {

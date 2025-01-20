@@ -1779,13 +1779,7 @@ messages:
             for i in plActive
             {
                each_obj = First(i);
-               if IsClass(each_obj,&Towns)
-               {
-                     if Send(each_obj,@ReadyForWelcome)
-                     {
-                        Send(each_obj,@UserEntered,#who=what);
-                     }
-               }
+               Send(each_obj,@UserEntered,#who=what);
             }
          }
 

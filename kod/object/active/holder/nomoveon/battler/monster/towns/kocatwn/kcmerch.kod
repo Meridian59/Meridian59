@@ -94,7 +94,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
 

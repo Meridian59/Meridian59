@@ -52,7 +52,7 @@ properties:
 
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       

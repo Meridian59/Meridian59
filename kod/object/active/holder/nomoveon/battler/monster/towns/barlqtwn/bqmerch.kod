@@ -42,7 +42,7 @@ properties:
    
 messages:
 
-   UserEntered( who = $ )
+   WelcomeUser( who = $ )
    {
       local iFlags;
       iFlags = send( who, @GetObjectFlags );

@@ -80,7 +80,7 @@ properties:
    
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if Send(who,@GetGender) = GENDER_FEMALE
       {

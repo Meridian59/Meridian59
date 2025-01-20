@@ -152,7 +152,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if send(who,@GetHomeRoom) = RID_TOS_INN
       {

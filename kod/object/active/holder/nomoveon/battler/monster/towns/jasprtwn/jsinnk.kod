@@ -36,7 +36,7 @@ properties:
    
 messages:
 
-   UserEntered(who = $)
+   UserEnter(who = $)
    {
       send(self,@SetMood,#new_mood=piMood + 1);
       

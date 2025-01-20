@@ -101,7 +101,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEnter(who = $)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#string=JsBar_entry_welcome,
              #type = SAY_RESOURCE);

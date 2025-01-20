@@ -79,7 +79,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEnter(who = $)
    {
       if Send(who,@GetGender) = GENDER_MALE
       {

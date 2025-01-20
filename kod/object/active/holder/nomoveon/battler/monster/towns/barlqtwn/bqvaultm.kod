@@ -99,7 +99,7 @@ messages:
       return;
    }
 
-   UserEntered( who = $ )
+   WelcomeUser( who = $ )
    {
       local iFlags;
       if Send(who,@GetAction)=UA_HAPPY

@@ -168,7 +168,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if Send(who,@GetAction) = UA_HAPPY
       {

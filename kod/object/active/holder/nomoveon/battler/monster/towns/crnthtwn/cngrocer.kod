@@ -95,7 +95,7 @@ messages:
       return FALSE;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#string=CnGro_entry_welcome,
              #type = SAY_RESOURCE);

@@ -8,6 +8,32 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Ice Creature Overview
+
+% The ice creature is a mid-to-high level monster built to challenge players with a mix of 
+% melee and ranged combat mechanics. Here’s what makes it stand out:
+
+% **Combat Mechanics**:
+% - Can spawn with either a melee weapon (sword) or unarmed.
+% - Unarmed variants generate an ice spear for melee or ranged attacks during chases.
+% - Displays dynamic visual indicators for its damage state: default, wounded, and very wounded.
+
+% **Attributes**:
+% - Strong resistance to cold-based attacks, with moderate resistance to piercing and shock damage.
+% - Vulnerable to fire, acid, and quake-based attacks.
+% - Shows intelligent behavior, such as regrouping during combat and fleeing from frighteners.
+
+% **Special Features**:
+% - Uses overlays for weapons and appearance, like Troops and Living Statues.
+% - Temporarily disables spear throws after each attack using a timer to prevent spamming.
+
+% **Design Notes**:
+% - Designed as a high-level, high-karma mob
+% - Offers a strategic challenge, making it a good opponent for experienced players.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Iceperson is Monster
 
 constants:
@@ -19,10 +45,10 @@ constants:
    THROW_CHANCE = 5
    THROW_RANGE_SQUARED = 666
 
-   % damage levels - incomplete assets
-   % GROUP_DEFAULT = 1
-   % GROUP_WOUNDED = 2
-   % GROUP_VERY_WOUNDED = 3
+   % Damage levels - artwork is not comprehensive
+   GROUP_DEFAULT = 1
+   GROUP_WOUNDED = 2
+   GROUP_VERY_WOUNDED = 3
 
    FRAME_FEET_STANDING = 1
    FRAME_FEET_ATTACKING = 4
@@ -84,7 +110,7 @@ classvars:
    
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_PIERCE
-   % viAttack_spell = ATCK_SPELL_COLD
+   viAttack_spell = ATCK_SPELL_COLD
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER |  AI_MOVE_FLEE_FRIGHTENERS |  AI_MOVE_REGROUP
    viAttributes = 0
    viLevel = 90
@@ -101,16 +127,20 @@ classvars:
 properties:
 
    pbThrow = FALSE
+
    piDrawFX = DRAWFX_TRANSLUCENT_75
+
+   prWeaponOverlay = $
+
    ptSpearTimer = $
-   prWeaponOverlay = $      % empty-handed as default weapon
+   piSpearWaitTime = 10000
 
 messages:
 
    Constructor()
    {
       % Random weapon selection
-      Send(self,@RandomizeVariant);
+      Send(self,@SetWeapon);
 
       propagate;
    }
@@ -118,7 +148,6 @@ messages:
    Constructed()
    {
       plResistances = [ [ 99, -ATCK_SPELL_COLD ],
-                        [-30, -ATCK_SPELL_FIRE ],
                         [ 40, ATCK_WEAP_PIERCE ],
                         [ 30, ATCK_WEAP_THRUST],
                         [ 20, ATCK_SPELL_SHOCK ],
@@ -126,17 +155,20 @@ messages:
                         [ 20, ATCK_WEAP_SLASH],
                         [-10, ATCK_WEAP_BLUDGEON ],
                         [-10, ATCK_SPELL_ACID ],
-                        [-20, ATCK_SPELL_QUAKE ] ];
+                        [-20, ATCK_SPELL_QUAKE ],
+                        [-30, -ATCK_SPELL_FIRE ] ];
 
       propagate;
    }
 
-   RandomizeVariant()
+   SetWeapon()
    "Creates some randomness in whether the instance is strictly melee (sword) "
    " or has a ranged attack (occasional ice spear)."
    {
       local iRandom;
+
       iRandom = random(0,1);
+
       if iRandom = 1
       {
          prWeaponOverlay = iceperson_sword;
@@ -146,50 +178,37 @@ messages:
    }
 
    EnterStateChase()
-   "Ranged variants will spawn a spear to throw at escaping targets."
+   "Unarmed variant will spawn a spear to throw at targets that run."
    {
-      if prWeaponOverlay = $
+      if prWeaponOverlay = $ AND ptSpearTimer = $
       {
-         Send(self,@SpawnIceSpear);
+         Send(self,@ResetIceSpear);
       }
 
       propagate;
    }
 
-   SpawnIceSpear()
+   ResetIceSpear()
    {
-      if ptSpearTimer = $
-      {
-         prWeaponOverlay = iceperson_spear;
-         Send(poOwner,@SomethingChanged,#what=self);
+      ptSpearTimer = $;
       
-      }
+      prWeaponOverlay = iceperson_spear;
+      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=iceperson_sound_aware);
+
       return;
    }
 
-   ClearIceSpear()
+   IceSpearTimer()
    {
-      local waitTime;
-
-      % 10s wait time
-      waitTime = 10000;
-
       prWeaponOverlay = $;
       Send(poOwner,@SomethingChanged,#what=self);
 
-      ptSpearTimer = CreateTimer(self,@ClearSpearTimer,waitTime);
+      ptSpearTimer = CreateTimer(self,@ResetIceSpear,piSpearWaitTime);
 
       return;
    }
 
-   ClearSpearTimer()
-   {
-      ptSpearTimer = $;
-
-      return;
-   }
-
-   % Used for defense messages
    GetParryAbility(stroke_obj=$)
    {
       if (stroke_obj <> $) AND NOT Send(stroke_obj,@CanParry)
@@ -203,7 +222,6 @@ messages:
    {
       if (prWeaponOverlay = iceperson_spear)
       {
-         % Spell in this case is the spear projectile
          return TRUE;
       }
 
@@ -236,7 +254,8 @@ messages:
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
       
-      Post(self,@ClearIceSpear);
+      % Timer to temporarily disable spear throws
+      Post(self,@IceSpearTimer);
 
       return;
    }
@@ -259,19 +278,23 @@ messages:
       return;
    }
 
+   % Animate the torso overlay to reflect damage as hit points decrease.
+   % Note: The ice creature's artwork depicts damage only from the forward-facing angle.
    SendAnimation()
    {
       local iGroup;
 
-      iGroup = 1;
+      iGroup = GROUP_DEFAULT;
 
-      if piHit_points < (2*viLevel/3)
+      % Animate to the appropriate torso overlay as hit points drop, revealing
+      % damage. Note: the artwork only shows damage from the forward-facing angle.
+      if piHit_points < (2 * viLevel / 3)
       {
-	      iGroup = 2;
+	      iGroup = GROUP_WOUNDED;
       }
-      if piHit_points < (viLevel/3)
+      if piHit_points < (viLevel / 3)
       {
-	      iGroup = 3;
+	      iGroup = GROUP_VERY_WOUNDED;
       }
 
       AddPacket(1,ANIMATE_NONE,2,iGroup);
@@ -427,6 +450,7 @@ messages:
       
       propagate;
    }
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

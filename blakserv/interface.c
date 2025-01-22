@@ -586,7 +586,6 @@ void StartupComplete()
 void InterfaceCreate(HWND hwnd,WPARAM wParam,LPARAM lParam)
 {
 	SetWindowText(hwnd,BlakServNameString());
-	CenterWindow(hwnd, NULL);
 }
 
 void InterfaceCreateTabControl(HWND hwnd) 

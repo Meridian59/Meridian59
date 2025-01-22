@@ -131,7 +131,7 @@ messages:
       
       Send(poOwner,@SomeoneSaid,#what=self,#string=TsIK_entry_welcome,#type=SAY_RESOURCE);
            
-      propagate;
+      return;
    }
 
    SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS_HALF, fine_col = FINENESS_HALF)

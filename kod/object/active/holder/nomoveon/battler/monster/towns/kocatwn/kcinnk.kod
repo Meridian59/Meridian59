@@ -186,7 +186,7 @@ messages:
       Send(poOwner,@SomeoneSaid,#what=self,#string=Kocataninnkeeper_entry_welcome,
              #type = SAY_RESOURCE);
              
-      propagate;
+      return;
    }
 
    InitCondSale()

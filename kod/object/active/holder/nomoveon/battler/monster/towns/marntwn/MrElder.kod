@@ -93,7 +93,7 @@ messages:
           #type=SAY_RESOURCE,#parm1=send(who,@GetDef),
           #parm2=Send(who,@GetName));
           
-      propagate;
+      return;
    }
 
 

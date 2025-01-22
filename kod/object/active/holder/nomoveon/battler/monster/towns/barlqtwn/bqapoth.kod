@@ -174,7 +174,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood + 1);
       }
       
-      propagate;
+      return;
    }
    
 end

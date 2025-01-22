@@ -47,7 +47,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood-4);
       }
       
-      propagate;
+      return;
    }
 
    AffectMood(what=$,why=$)

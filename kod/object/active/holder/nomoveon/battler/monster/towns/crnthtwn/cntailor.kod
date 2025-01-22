@@ -98,7 +98,7 @@ messages:
       {
          send(self,@SetMood,#new_mood=piMood - 4);
          
-         propagate;
+         return;
       }
       
       if send(who,@GetFaction) = FACTION_PRINCESS
@@ -110,7 +110,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood + 2);
       }
       
-      propagate;
+      return;
    }
 
 end

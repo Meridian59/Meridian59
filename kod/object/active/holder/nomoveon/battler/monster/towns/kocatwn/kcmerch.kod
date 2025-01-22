@@ -130,7 +130,7 @@ messages:
          }
       }
       
-      propagate;
+      return;
    }
 
    SetForSale()

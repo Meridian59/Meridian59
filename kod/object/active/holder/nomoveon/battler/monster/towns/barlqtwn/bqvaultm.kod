@@ -123,18 +123,18 @@ messages:
       {
 	 send( self, @SetMood, #new_mood = piMood - 2 );
 	 % don't welcome these guys
-	 propagate;
+	 return;
       }
       if iFlags & PLAYER_OUTLAW
       {
 	 send( self, @SetMood, #new_mood = piMood - 1 );
 	 % don't welcome these guys
-	 propagate;
+	 return;
       }
       send(poOwner,@SomeoneSaid,#what=self,#string=barloquevaultman_entry_welcome,
 	 #type = SAY_RESOURCE);
   
-      propagate;
+      return;
    }
 
    GetVaultNum()

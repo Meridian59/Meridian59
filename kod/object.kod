@@ -688,7 +688,6 @@ messages:
    
    UserEntered(who = $)
    {
-
       return;
    }
 

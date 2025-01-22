@@ -43,8 +43,8 @@ classvars:
 
 properties:
 
-   viNutrition = 3
    viFilling = 6
+   viNutrition = 3
    piNumber = 2
 
 messages:

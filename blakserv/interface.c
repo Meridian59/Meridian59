@@ -1046,12 +1046,9 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
     RECT rcDlg, rcParent, rcScreen;
     int x, y;
 
-    #define min(a, b) ((a) < (b) ? (a) : (b))
-    #define max(a, b) ((a) > (b) ? (a) : (b))
-
     if (hwndParent == NULL)
         hwndParent = GetDesktopWindow();
-  
+
     GetWindowRect(hwndParent, &rcParent);
     GetWindowRect(hwnd, &rcDlg);
 
@@ -1071,8 +1068,8 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
         rcScreen = mi.rcWork;  // Use working area excluding taskbar
 
         // Adjust position to ensure the child window is fully visible
-        x = max(rcScreen.left, min(x, rcScreen.right - rcDlg.right));
-        y = max(rcScreen.top, min(y, rcScreen.bottom - rcDlg.bottom));
+        x = std::max(rcScreen.left, std::min(x, rcScreen.right - rcDlg.right));
+		y = std::max(rcScreen.top, std::min(y, rcScreen.bottom - rcDlg.bottom));
     }
     else
     {
@@ -1085,9 +1082,6 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
     }
 
     SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
-
-    #undef min
-    #undef max
 }
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)

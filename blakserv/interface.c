@@ -22,6 +22,7 @@
 	
 */
 
+#define NOMINMAX
 #include "blakserv.h"
 #include <mmsystem.h>
 #include <windowsx.h>
@@ -1068,8 +1069,8 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
         rcScreen = mi.rcWork;  // Use working area excluding taskbar
 
         // Adjust position to ensure the child window is fully visible
-        x = std::max(rcScreen.left, std::min(x, rcScreen.right - rcDlg.right));
-		y = std::max(rcScreen.top, std::min(y, rcScreen.bottom - rcDlg.bottom));
+        x = std::max<LONG>(rcScreen.left, std::min<LONG>(x, rcScreen.right - rcDlg.right));
+		y = std::max<LONG>(rcScreen.top, std::min<LONG>(y, rcScreen.bottom - rcDlg.bottom));
     }
     else
     {

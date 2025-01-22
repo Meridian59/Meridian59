@@ -1088,12 +1088,11 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)
 {
 	char s[2000];
-	HWND hwndParent = GetParent(hwnd);
 	
 	switch (message)
 	{
 	case WM_INITDIALOG :
-        CenterWindow(hwnd, hwndParent);
+        CenterWindow(hwnd, GetParent(hwnd));
 		
 		Edit_LimitText(GetDlgItem(hwnd,IDC_MOTD),sizeof(s)-1);
 		

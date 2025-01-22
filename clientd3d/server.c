@@ -1664,8 +1664,6 @@ Bool HandleEnterGame(char *ptr, long len)
       return False;
    }
 
-   debug(("Client move interval set by server: %d\n", server_move_interval));
-
    // Set the client extern variable to the server move interval
    move_interval = server_move_interval;
 

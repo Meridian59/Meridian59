@@ -17,9 +17,10 @@
 */
 
 #include "blakserv.h"
-#include "config.h"
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
+
+static const int server_config_whitelist[] = { UPDATE_MOVE_COUNT_THRESHOLD };
 
 // global buffers for zero-terminated string manipulation
 static char buf0[LEN_MAX_CLIENT_MSG+1];
@@ -2346,6 +2347,17 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+bool IsAllowedConfigID(int config_id) {
+	int whitelist_size = sizeof(server_config_whitelist) / sizeof(server_config_whitelist[0]);
+
+	for (int i = 0; i < whitelist_size; i++) {
+		if (server_config_whitelist[i] == config_id) {
+			return true;
+		}
+	}
+	return false;
+}
+
 blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
@@ -2360,6 +2372,11 @@ blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
 		bprintf("C_GetServerConfigValue can't set from non-int %i,%i\n",
 			config_id.v.tag,config_id.v.data);
 		return NIL;
+	}
+
+	if (!IsAllowedConfigID(config_id.v.data)) {
+			bprintf("C_GetServerConfigValue: Config ID %i is not allowed\n", config_id.v.data);
+			return NIL;
 	}
 
 	config_node *cnode = GetConfigByID(config_id.v.data);

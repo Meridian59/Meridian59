@@ -61,8 +61,6 @@ constants:
    % What's the maximum number of times we should log a violation?
    MAX_LOGGED_THRESHOLD = 25
 
-   MOVE_COUNT_THRESHOLD = 2
-
 resources:
 
    user_name_rsc = "user name"
@@ -351,6 +349,7 @@ properties:
 
    % If piMovesCount goes over this, we have a suspected speedhacker.
    % Will be updated from server config during UserLogon() if threshold has changed.
+   piMoveInterval = 1000
    piMoveCountThreshold = 2
 
 messages:
@@ -585,7 +584,7 @@ messages:
       poSession = session_id;
       pbLogged_on = TRUE;
 
-      Send(self,@UpdatePlayerMoveCountThreshold);
+      Send(self,@UpdatePlayerMoveProperties);
 
       if piLastLoginTime = 0 AND piLast_Restart_Time = 0
       {
@@ -647,21 +646,11 @@ messages:
       return;
    }
 
-   UpdatePlayerMoveCountThreshold()
-   "Updates the user's move count threshold from the server config"
+   UpdatePlayerMoveProperties()
+   "Updates properties needed for monitoring player movement."
    {
-      local move_count;
-      
-      move_count = GetServerConfigValue(SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
-      
-      if move_count <> $ AND move_count > 0 AND piMoveCountThreshold <> move_count
-      {
-         piMoveCountThreshold = move_count;
-      }
-      else
-      {
-         piMoveCountThreshold = MOVE_COUNT_THRESHOLD;
-      }
+      piMoveInterval = Send(SYS,@GetMoveInterval);
+      piMoveCountThreshold = Send(SYS,@GetMoveThreshold);
 
       return;
    }
@@ -2937,24 +2926,23 @@ messages:
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
-      local iCurrentTime, iDelta, iExertion, iHasteLevel,
+      local iCurrentTime, iDelta, iExertion, iHasteLevel, iDecayFactor, 
             iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
 
       % NEW Speedhack detection!
       % How this works:
       %   Speedhack works by sending a LOT of little moves very, very quickly.
-      %   Normal players send 2-3 movement packets per second, but 
-      %   speedhackers send more.  Even at low levels, speedhackers will send
-      %   more packets per second.  So, we keep track of the number of packets
-      %   sent and the number of seconds that happen.  Every movement packet
-      %   sent increases our piMovesCounter by one.  Every second that passes
-      %   decreases it by one.  (In actuality, we subtact the time difference
-      %   from when movement packets were sent.)  We have to average this over
-      %   time, because lag can cause packets to be delayed and all show up in
-      %   one second.
+      %   Normal players send 2-3 movement packets per second depending on the
+      %   server's MoveInterval configuration, but speedhackers send more.  
+      %   Even at low levels, speedhackers will send more packets per second.
+      %   So, we keep track of the number of packets sent and the number of seconds 
+      %   that happen.  Every movement packet sent increases our piMovesCounter by 
+      %   one.  Every second that passes decreases it by a decay based on the server's
+      %   MoveInterval value.  We have to average this over time, because lag can cause 
+      %   packets to be delayed and all show up in one second.
       %
-      %   We currently allow for players to have up to 3 more moves than 
-      %   allowed over the duration due to rounding errors, etc.
+      %   We currently allow for players to have up to MOVEMENT_DELTA_LAG_THRESHOLD 
+      %   more moves than allowed over the duration due to rounding errors, etc.
 
       % Check the delta since the last time we moved.  Keep an upper bound on
       %  the delta, since people could just be moving from rest.
@@ -2964,9 +2952,12 @@ messages:
       %  Make sure this person is not lagging; increment our counter since we
       %  got a move packet, then adjust for last movement time.
       %  Also make sure we don't go too far negative.
-      piMovesCounter = (piMovesCounter + 1) - iDelta;
-      piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
 
+      iDecayFactor = 1000 / piMoveInterval;
+
+      piMovesCounter = (piMovesCounter + 1) - (iDelta * iDecayFactor);
+      piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
+      
       % Check for cheating by sending more move packets than allowed.
       % Don't log too many cheat detections, because it'll fill up our logs.
       if piMovesCounter > piMoveCountThreshold

@@ -41,6 +41,9 @@ constants:
    RECREATE_PHASE_FOUR = 4
    RECREATE_PHASE_FIVE = 5
 
+   MOVE_INTERVAL = 1000
+   MOVE_COUNT_THRESHOLD = 2
+
 resources:
 
    system_user_killed = "### %q was just killed by %s%q."
@@ -399,6 +402,10 @@ properties:
    % What server-wide flags are we using?
    piServerFlags = 0
 
+   % Server config values
+   piMoveInterval = $
+   piMoveCountThreshold = $
+
 messages:
 
    GetName()
@@ -411,6 +418,8 @@ messages:
       % This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
 
+      Send(self,@RetrieveServerConfigValues);
+      
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
 
@@ -472,6 +481,48 @@ messages:
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
       return;
+   }
+
+   RetrieveServerConfigValues()
+   "Retrieves server config values needed for operation."
+   {
+      piMoveInterval = Send(self,@RetrieveServerConfigValue,#config_id=SERVER_CONFIG_MOVE_INTERVAL);
+      if piMoveInterval = $
+      {
+         piMoveInterval = MOVE_INTERVAL;
+      }
+
+      piMoveCountThreshold = Send(self,@RetrieveServerConfigValue,#config_id=SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
+      if piMoveCountThreshold = $
+      {
+         piMoveCountThreshold = MOVE_COUNT_THRESHOLD;
+      }
+
+      return;
+   }
+
+   RetrieveServerConfigValue(config_id=$)
+   {
+      local config_value;
+
+      config_value = GetServerConfigValue(config_id);
+
+      if config_value = $
+      {
+         return;
+      }
+
+      return config_value;
+   }
+
+   GetMoveInterval()
+   {
+      return piMoveInterval;
+   }
+
+   GetMoveThreshold()
+   {
+      return piMoveCountThreshold;
    }
 
    ResetRecreateAll()

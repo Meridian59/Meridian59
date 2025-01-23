@@ -22,7 +22,6 @@
 	
 */
 
-#define NOMINMAX
 #include "blakserv.h"
 #include <mmsystem.h>
 #include <windowsx.h>

@@ -347,8 +347,7 @@ properties:
 
    piCheaterLogs = 0
 
-   % If piMovesCount goes over this, we have a suspected speedhacker.
-   % Will be updated from server config during UserLogon() if threshold has changed.
+   % Default movement properties updated at logon
    piMoveInterval = 1000
    piMoveCountThreshold = 2
 

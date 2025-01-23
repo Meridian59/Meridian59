@@ -35,11 +35,11 @@ classvars:
 
 messages:
 
-   UserEnter(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@someoneSaid,#what=self,#string=HzEl_entry_welcome,
           #type=SAY_RESOURCE);
-      propagate;
+      return;
    }
 
    

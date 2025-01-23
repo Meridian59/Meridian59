@@ -59,11 +59,11 @@ messages:
       return False;
    }
 
-   UserEnter(who = $)
+   WelcomeUser(who = $)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#string=HzAp_entry_welcome,
               #type = SAY_RESOURCE);
-      propagate;
+      return;
    }
    
 

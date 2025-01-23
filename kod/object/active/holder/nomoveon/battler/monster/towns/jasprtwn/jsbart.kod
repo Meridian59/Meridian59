@@ -101,13 +101,13 @@ messages:
       return;
    }
 
-   UserEnter(who = $)
+   WelcomeUser(who = $)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#string=JsBar_entry_welcome,
              #type = SAY_RESOURCE);
       send( self, @SetMood, #new_mood = piMood - 2 );
 
-      propagate;
+      return;
    }
    
 end

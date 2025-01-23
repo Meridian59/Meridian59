@@ -109,7 +109,7 @@ messages:
       return;
    }
 
-   UserEnter(who = $)
+   WelcomeUser(who = $)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanApoth_entry_welcome,
            #type=SAY_RESOURCE);
@@ -124,7 +124,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood-3);
       }
       
-      propagate;
+      return;
    }
    
  

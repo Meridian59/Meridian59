@@ -20,7 +20,7 @@
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
-static const int server_config_whitelist[] = { UPDATE_MOVE_COUNT_THRESHOLD };
+static const int server_config_whitelist[] = { UPDATE_MOVE_INTERVAL, UPDATE_MOVE_COUNT_THRESHOLD };
 
 // global buffers for zero-terminated string manipulation
 static char buf0[LEN_MAX_CLIENT_MSG+1];

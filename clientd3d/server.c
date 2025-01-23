@@ -20,6 +20,7 @@
 
 extern Bool				gD3DRedrawAll;
 int move_interval;
+static const int MINIMUM_MOVE_INTERVAL = 250;
 
 static handler_struct connecting_handler_table[] = {
 { 0, NULL},   // must end table this way
@@ -1656,11 +1657,12 @@ Bool HandleEnterGame(char *ptr, long len)
    if (len < 4)
       return False;
 
-   Extract(&ptr, &server_move_interval, 4);   
+   Extract(&ptr, &server_move_interval, 4);
 
-   // Sanity check to ensure move interval isn't negative or zero
-   if (server_move_interval <= 0)
+   // Sanity check to ensure move interval isn't too aggressive or invalid
+   if (server_move_interval < MINIMUM_MOVE_INTERVAL)
    {
+      debug(("MoveInterval %i lower than minimum threshold %i.\n", server_move_interval, MINIMUM_MOVE_INTERVAL));
       return False;
    }
 

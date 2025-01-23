@@ -79,7 +79,7 @@ messages:
       return;
    }
 
-   return(who = $)
+   WelcomeUser(who = $)
    {
       if Send(who,@GetGender) = GENDER_MALE
       {

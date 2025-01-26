@@ -3,11 +3,11 @@
 
 -s 2
 6
-icspr000.bmp     [0, -200]
-icspr045.bmp     [0, -200]
-icspr090.bmp     [0, -200]
-icspr180.bmp     [0, -200]
-icspr270.bmp     [0, -200]
-icspr315.bmp     [0, -200]
+icspr000.bmp
+icspr045.bmp
+icspr090.bmp
+icspr180.bmp
+icspr270.bmp
+icspr315.bmp
 1
 8   1    6    5   4    4   4    3   2

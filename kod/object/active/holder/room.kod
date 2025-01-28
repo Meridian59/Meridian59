@@ -26,6 +26,7 @@ resources:
 
    room_door_is_locked = "This door is locked."
    room_sound_locked = doorlck.wav
+   room_sound_locked_female = doorlckf.wav
 
    room_move_req_no = "You're unable to change rooms."
 
@@ -2750,7 +2751,7 @@ messages:
                   Send(what,@MsgSendUser,#message_rsc=room_door_is_locked);
                }
 
-               Send(what,@WaveSendUser,#wave_rsc=room_sound_locked);
+               Send(self,@SendLockedRoomSound,#who=what);
 
                return TRUE;
             }
@@ -3954,6 +3955,20 @@ messages:
             }
          }
       }
+      return;
+   }
+
+   SendLockedRoomSound(who=$)
+   {
+      if Send(who,@GetGender) = GENDER_FEMALE
+      {
+         Send(who,@WaveSendUser,#wave_rsc=room_sound_locked_female);
+      }
+      else
+      {
+         Send(who,@WaveSendUser,#wave_rsc=room_sound_locked);
+      }
+
       return;
    }
 

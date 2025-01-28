@@ -31,6 +31,7 @@ static ChildPlacement desc_controls[] = {
 	{ IDC_USE,         RDI_BOTTOM },
 	{ IDC_UNUSE,       RDI_BOTTOM },
 	{ IDC_INSIDE,      RDI_BOTTOM },
+	{ IDC_APPLY,       RDI_BOTTOM },
 	{ IDC_ACTIVATE,    RDI_BOTTOM },
 	{ IDC_URLLABEL,    RDI_BOTTOM },
 	{ IDC_URLBUTTON,   RDI_BOTTOM },

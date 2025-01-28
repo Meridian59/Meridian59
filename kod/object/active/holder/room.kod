@@ -2751,7 +2751,7 @@ messages:
                   Send(what,@MsgSendUser,#message_rsc=room_door_is_locked);
                }
 
-               Send(self,@DoorLockedSound,#what=what);
+               Send(self,@SendLockedRoomSound,#who=what);
 
                return TRUE;
             }
@@ -3958,15 +3958,15 @@ messages:
       return;
    }
 
-   DoorLockedSound(what=$)
+   SendLockedRoomSound(who=$)
    {
-      if Send(what,@GetGender) = GENDER_FEMALE
+      if Send(who,@GetGender) = GENDER_FEMALE
       {
-         Send(what,@WaveSendUser,#wave_rsc=room_sound_locked_female);
+         Send(who,@WaveSendUser,#wave_rsc=room_sound_locked_female);
       }
       else
       {
-         Send(what,@WaveSendUser,#wave_rsc=room_sound_locked);
+         Send(who,@WaveSendUser,#wave_rsc=room_sound_locked);
       }
 
       return;

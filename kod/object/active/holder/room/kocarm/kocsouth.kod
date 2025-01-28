@@ -142,7 +142,7 @@ messages:
          AND NOT send(send(SYS,@FindRoomByNum,#num=RID_GUILDH13),@CanEnter,#who=what)
       {
          send(what,@MsgSendUser,#message_rsc=kocatansouth_guild_locked);
-         Send(self,@DoorLockedSound,#what=what);
+         Send(self,@SendLockedRoomSound,#who=what);
 
          return TRUE;
       }

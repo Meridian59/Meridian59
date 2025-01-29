@@ -3452,6 +3452,7 @@ messages:
       Create(&ZombieTreasure);
       Create(&EntTreasure);
       Create(&MummyTreasure);
+      Create(&FrogmanTreasure);
 
       Create(&CaveOrcTreasure);
       Create(&OrcWizardTreasure);

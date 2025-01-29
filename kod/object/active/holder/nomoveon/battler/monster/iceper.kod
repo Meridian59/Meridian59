@@ -73,6 +73,9 @@ constants:
    ANIMATION_ATTACK_SPEED = 200
    ANIMATION_THROW_SPEED = 200
 
+   SPEAR_WAIT_TIME = 10000 % Minimum time between spear throws
+   SPEAR_THROW_ANIMATION_DELAY = 200 % Time to allow for throw animation to complete
+
 resources:
 
    iceperson_koc_name_rsc = "atzmoch"
@@ -133,7 +136,7 @@ properties:
    prWeaponOverlay = $
 
    ptSpearTimer = $
-   piSpearWaitTime = 10000
+   ptSpearThrowAnimationDelayTimer = $
 
 messages:
 
@@ -178,21 +181,22 @@ messages:
    }
 
    EnterStateChase()
-   "Unarmed variant will spawn a spear to throw at targets that run."
+   "Unarmed variant will generate a spear weapon when entering chase state."
    {
       if prWeaponOverlay = $ AND ptSpearTimer = $
       {
-         Send(self,@ResetIceSpear);
+         Send(self,@GenerateIceSpear);
       }
 
       propagate;
    }
 
-   ResetIceSpear()
+   GenerateIceSpear()
    {
       ptSpearTimer = $;
       
       prWeaponOverlay = iceperson_spear;
+      
       Send(poOwner,@SomethingChanged,#what=self);
       Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=iceperson_sound_aware);
 
@@ -201,26 +205,22 @@ messages:
 
    IceSpearTimer()
    {
+      ptSpearThrowAnimationDelayTimer = $;
+
+      % Clears the spear overlay until generated again
       prWeaponOverlay = $;
       Send(poOwner,@SomethingChanged,#what=self);
 
-      ptSpearTimer = CreateTimer(self,@ResetIceSpear,piSpearWaitTime);
+      % Start a timer to generate a spear again
+      ptSpearTimer = CreateTimer(self,@GenerateIceSpear,SPEAR_WAIT_TIME);
 
       return;
    }
 
-   GetParryAbility(stroke_obj=$)
-   {
-      if (stroke_obj <> $) AND NOT Send(stroke_obj,@CanParry)
-      {
-         return 0;
-      }
-      return (viDifficulty*10)/2;
-   }
-
    MonsterCanCastSpell()
    {
-      if (prWeaponOverlay = iceperson_spear)
+      % Can cast a spell (throw a spear) only if equipped
+      if prWeaponOverlay = iceperson_spear
       {
          return TRUE;
       }
@@ -254,9 +254,10 @@ messages:
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
       
-      % Timer to temporarily disable spear throws
-      Post(self,@IceSpearTimer);
-
+      % A bit of a hack to prevent the spear throw animation from not completing
+      % by forcing a short delay before the next animation can be sent.
+      ptSpearThrowAnimationDelayTimer = CreateTimer(self,@IceSpearTimer,SPEAR_THROW_ANIMATION_DELAY);
+      
       return;
    }
 
@@ -330,7 +331,7 @@ messages:
 
    SendOverlays()
    {
-      if prWeaponOverlay <> $
+      if prWeaponOverlay <> $ AND piAnimation <> ANIM_THROW
       {
          AddPacket(1,3);
       }
@@ -368,7 +369,7 @@ messages:
          }
       }
       
-      if prWeaponOverlay <> $
+      if prWeaponOverlay <> $ AND piAnimation <> ANIM_THROW
       {
          AddPacket(4,prWeaponOverlay,1,HS_RIGHT_WEAPON);
 
@@ -430,6 +431,15 @@ messages:
       return;
    }
    
+   GetParryAbility(stroke_obj=$)
+   {
+      if (stroke_obj <> $) AND NOT Send(stroke_obj,@CanParry)
+      {
+         return 0;
+      }
+      return (viDifficulty*10)/2;
+   }
+   
    GetOptimalRange()
    {
       return random(8,15);
@@ -446,6 +456,12 @@ messages:
       {
          DeleteTimer(ptSpearTimer);
          ptSpearTimer = $;
+      }
+
+      if ptSpearThrowAnimationDelayTimer <> $
+      {
+         DeleteTimer(ptSpearThrowAnimationDelayTimer);
+         ptSpearThrowAnimationDelayTimer = $;
       }
       
       propagate;

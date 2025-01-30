@@ -886,7 +886,7 @@ messages:
          return RID_KOCATAN;
       }
 
-      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13) or (prRoom = KocatanRentableRoom_roo)
+      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13) or (vrName = KocatanRentableRoom_name)
       {
          return RID_KOCATAN;
       }

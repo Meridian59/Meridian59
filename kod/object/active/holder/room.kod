@@ -871,8 +871,7 @@ messages:
       % this is ugly to do it here, but was lowest risk to add as an emergency patch
       % change this later by overriding GetRegion() please!
 	  
-	  local lRoom_data;
-	  lRoom_data = Send(self,@GetLocation);
+	  local LocRentedRoom;
 
       if (piRoom_num >= RID_GUEST_BASE) and (piRoom_num < RID_NEWB_BASE)
       {
@@ -888,8 +887,15 @@ messages:
       {
          return RID_KOCATAN;
       }
-
-      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13) or (lRoom_data = RID_KOC_INN)
+	  
+      % Rentable rooms are not using piRoom_num like other rooms.
+      % To distinguish a rented room on the kocatan island from one on mainland
+      % we are using GetLocation to retrieve which Inn the rented room belongs to,
+      % if it belongs to RID_KOC_INN we return RID_KOCATAN  
+	  
+      LocRentedRoom = Send(self,@GetLocation);
+	  
+      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13) or (LocRentedRoom = RID_KOC_INN)
       {
          return RID_KOCATAN;
       }

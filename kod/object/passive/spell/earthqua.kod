@@ -91,7 +91,7 @@ messages:
       return 0;
    }
 
-   GetTargets(who=$,lTargets=$)
+   GetTargets(who=$, lTargets=$)
    "This returns a list of valid targets in the room."
    {
       local oRoom, i, each_obj, lFinalTargets;
@@ -157,8 +157,8 @@ messages:
 
             if NOT bItemCast
             {
-               iDamage = Send(self, @ComputeDamage, 
- 	       	       	      #who=who, #target=who, #severity=severity);
+               iDamage = Send(self,@ComputeDamage,#who=who,#target=who,
+                              #severity=severity);
             }
             else
             {
@@ -171,7 +171,7 @@ messages:
                     #aspell=viAttack_spell,#report=FALSE) = $
             {
                Send(who,@MsgSendUser,#message_rsc=earthquake_killed_self);
-               post(who,@KilledSomething,#what=AssessWhat,#use_weapon=self);
+               Post(who,@KilledSomething,#what=AssessWhat,#use_weapon=self);
             }
             else
             {
@@ -319,34 +319,33 @@ messages:
    "Return the damage to be applied to the given target, taking into account "
    "distance."
    {
-       local iPercent, iDistance_squared, iMax_distance_squared,
-         iZero_distance_squared, iDamage;
+      local iPercent, iDistance_squared, iMax_distance_squared,
+      iZero_distance_squared, iDamage;
 
-       % Do full damage within viMax_damage_distance, zero damage outside
-       % viZero_damage_distance, and an amount that falls off with distance
-       % between the two.
-       iPercent = 100;
-       iDistance_squared = Send(who, @SquaredDistanceTo, #what=target);
-       iMax_distance_squared = viMax_damage_distance * viMax_damage_distance;
-       iZero_distance_squared = viZero_damage_distance * viZero_damage_distance;
-       if iDistance_squared > iMax_distance_squared
-       {
-           if iDistance_squared > iZero_distance_squared
-           {
-               iPercent = 0;
-           }
-           else
-           {
-	       iPercent = 100 * (iZero_distance_squared - iDistance_squared) /
-                                (iZero_Distance_squared - iMax_distance_squared);
-           }
-       }
-       % debug("percent = ", iPercent);
-       iDamage = (Random(viMin_damage,viMax_damage) * severity) * iPercent / 100;
-       % debug("for object ", Send(target, @GetName), " damage = ", iDamage); 
-       return iDamage;
+      % Do full damage within viMax_damage_distance, zero damage outside
+      % viZero_damage_distance, and an amount that falls off with distance
+      % between the two.
+      iPercent = 100;
+      iDistance_squared = Send(who, @SquaredDistanceTo, #what=target);
+      iMax_distance_squared = viMax_damage_distance * viMax_damage_distance;
+      iZero_distance_squared = viZero_damage_distance * viZero_damage_distance;
+      if iDistance_squared > iMax_distance_squared
+      {
+         if iDistance_squared > iZero_distance_squared
+         {
+            iPercent = 0;
+         }
+         else
+         {
+            iPercent = 100 * (iZero_distance_squared - iDistance_squared) /
+                              (iZero_Distance_squared - iMax_distance_squared);
+         }
+      }
+      
+      iDamage = (Random(viMin_damage,viMax_damage) * severity) * iPercent / 100;
+      
+      return iDamage;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

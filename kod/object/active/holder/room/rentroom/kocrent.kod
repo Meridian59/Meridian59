@@ -123,6 +123,17 @@ messages:
 
       return;
    }
+   
+   GetRegion()
+   {
+      % Rentable rooms are not using piRoom_num like other rooms.
+      % To distinguish a rented room on the kocatan island from one on mainland
+      % we are using GetRegion to return where the rented room belongs to,
+      % in this case RID_KOCATAN
+	  
+      return RID_KOCATAN;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

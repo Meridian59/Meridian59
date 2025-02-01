@@ -886,11 +886,6 @@ messages:
          return RID_KOCATAN;
       }
 
-      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13)
-      {
-         return RID_KOCATAN;
-      }
-
       if (piRoom_num >= RID_ORC_CAVE1) and (piRoom_num <= RID_ORC_CAVE_END)
       {
          return RID_ORC_CAVE1;
@@ -899,16 +894,6 @@ messages:
       if (piRoom_num >= RID_BRAX_START) and (piRoom_num <= RID_BRAX_END)
       {
          return RID_BRAX;
-      }
-
-      if piRoom_num = RID_GUILDH15
-      {
-         return RID_BRAX;
-      }
-
-      if piRoom_num = RID_OUTOFGRACE
-      {
-         return RID_OUTOFGRACE;
       }
 
       return RID_DEFAULT;

@@ -20,6 +20,8 @@
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
+static const int server_config_whitelist[] = { UPDATE_MOVE_INTERVAL, UPDATE_MOVE_COUNT_THRESHOLD };
+
 // global buffers for zero-terminated string manipulation
 static char buf0[LEN_MAX_CLIENT_MSG+1];
 static char buf1[LEN_MAX_CLIENT_MSG+1];
@@ -2342,5 +2344,63 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = number;
 	
+	return ret_val.int_val;
+}
+
+bool IsAllowedConfigID(int config_id) {
+	int whitelist_size = sizeof(server_config_whitelist) / sizeof(server_config_whitelist[0]);
+
+	for (int i = 0; i < whitelist_size; i++) {
+		if (server_config_whitelist[i] == config_id) {
+			return true;
+		}
+	}
+	return false;
+}
+
+blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
+				int num_normal_parms,parm_node normal_parm_array[],
+				int num_name_parms,parm_node name_parm_array[])
+{
+	val_type config_id, ret_val;
+		
+	config_id = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+		normal_parm_array[0].value);
+  
+	if (config_id.v.tag != TAG_INT)
+	{
+		bprintf("C_GetServerConfigValue can't set from non-int %i,%i\n",
+			config_id.v.tag,config_id.v.data);
+		return NIL;
+	}
+
+	if (!IsAllowedConfigID(config_id.v.data)) {
+			bprintf("C_GetServerConfigValue: Config ID %i is not allowed\n", config_id.v.data);
+			return NIL;
+	}
+
+	config_node *cnode = GetConfigByID(config_id.v.data);
+
+	if (cnode == NULL || cnode->config_id == INVALID_CONFIG)
+	{
+		bprintf("C_GetServerConfigValue can't find config id %i\n", config_id.v.data);
+		return NIL;
+	}
+
+	switch (cnode->config_type)
+	{
+	case CONFIG_STR:
+		ret_val.v.data = CreateString(cnode->config_str_value);
+		ret_val.v.tag = TAG_STRING;
+		break;
+	case CONFIG_INT:
+		ret_val.v.data = cnode->config_int_value;
+		ret_val.v.tag = TAG_INT;
+		break;
+	default:
+		bprintf("C_GetServerConfigValue: Unknown config node type\n");
+		return NIL;
+	}
+
 	return ret_val.int_val;
 }

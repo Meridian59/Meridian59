@@ -21,9 +21,13 @@
 Config config;
 char inihost[MAXHOST];
 
-// Full pathname of INI file
+// Full pathname of meridian.ini (maintained in-game via the Game>Preferences menu)
 static char ini_filename[MAX_PATH + FILENAME_MAX];
 char *ini_file;  // Pointer to ini_filename
+
+// Full pathname of config.ini (currently maintained by m59bind)
+static char config_ini_filename[MAX_PATH + FILENAME_MAX];
+char *config_ini_file;  // Pointer to config_ini_filename
 
 // If version doesn't match that in INI file, restore default colors and fonts (used to change
 // color and font settings in old clients).
@@ -31,8 +35,8 @@ char *ini_file;  // Pointer to ini_filename
 
 static bool is_steam_install = false;
 
-/* INI file entries */
-static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
+/* meridian.ini file entries (preferences) */
+static char misc_section[]   = "Miscellaneous";  /* Section of meridian.ini for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
 static char INIPlayMusic[]   = "PlayMusic";
 static char INIPlaySound[]   = "PlaySound";
@@ -74,7 +78,7 @@ static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
 
-static char window_section[] = "Window";         /* Section in INI file for window info */
+static char window_section[] = "Window";         /* Section in meridian.ini for window info */
 static char INILeft[]        = "NormalLeft";
 static char INIRight[]       = "NormalRight";
 static char INITop[]         = "NormalTop";
@@ -83,7 +87,7 @@ static char INIShow[]        = "Show";
 static char INIMaxX[]        = "MaxX";
 static char INIMaxY[]        = "MaxY";
 
-static char comm_section[]   = "Comm";  /* Section for comm stuff in INI file */
+static char comm_section[]   = "Comm";  /* Section for comm stuff in meridian.ini */
 static char INIPort[]        = "Port";
 static char INIRedialDelay[] = "RedialDelay";
 static char INIHostname[]    = "Hostname";
@@ -91,16 +95,21 @@ static char INISockPort[]    = "SocketPort";
 static char INIServerNum[]   = "ServerNumber";
 static char INIDomainFormat[] = "Domain";
 
-static char users_section[]  = "Users";  /* Section for dealing with other users */
+static char users_section[]  = "Users";  /* Section for dealing with other users in meridian.ini */
 static char INIDrawNames[]   = "DrawNames";
 static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";
 
-static char special_section[] = "Special";  /* Section for hidden stuff in INI file */
+static char special_section[] = "Special";  /* Section for hidden stuff in in meridian.ini */
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
+
+/* config.ini file entries (preferences) */
+static char config_section[] = "config";  /* Section for configuration stuff in config.ini */
+static char INIGpuEfficiency [] = "gpuefficiency";
+static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
 
 static char INITextAreaSize[] = "TextAreaSize";
 
@@ -160,17 +169,22 @@ void SaveSettings(void)
 
 /****************************************************************************/
 /*
- * ConfigInit:  Find name of INI file.  This function must be called before
- *   using the ini_file variable to read from or write to the INI file.
+ * ConfigInit:  Find name of INI files.  This function must be called before
+ *   using the ini_file/config_ini_file variables to read from or write to the files.
  */
 void ConfigInit(void)
 {
    char dir[MAX_PATH];
 
-   //memset(&config,0,sizeof(config));
    GetGamePath( dir );
+
+   // Retrieve the filenames for meridian.ini (preferences) and config.ini (configuration)
    snprintf(ini_filename, sizeof(ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILE));
    ini_file = ini_filename;
+
+   snprintf(config_ini_filename, sizeof(config_ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILECONFIG));
+   config_ini_file = config_ini_filename;
+
 }
 /****************************************************************************/
 /*
@@ -294,9 +308,25 @@ void ConfigLoad(void)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
    // Determine if we should be using gpu efficiency mode or not.
-   char config_value[255];
-   GetPrivateProfileString("config", "gpuefficiency", "error", config_value, 255, "./config.ini");
-   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
+   auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
+	   "gpuefficiencyonetimeflip", False, config_ini_file);
+   if (one_time_gpu_efficiency_enablement)
+   {
+      char config_value[10];
+      GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
+		  sizeof(config_value), config_ini_file);
+      config.gpuEfficiency = (0 == strcmp(config_value, "true"));
+   }
+   else
+   {
+      // TODO: Added January 2025 - remove after the next update when everyone will have been reset.
+      // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
+      // This is to ensure players start from a clean slate with maximum performance.
+      // After this one-time flip, future changes to gpu efficiency preferences will be respected.
+      config.gpuEfficiency = true;
+      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini_file);
+      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini_file);
+   }
 
    TimeSettingsLoad();
 }

@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FrogmanTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_FROGMAN
+   piDiff_seed = 5
+   piItem_att_chance = 3
+
+messages:  
+   
+      constructed()
+   {
+         plTreasure = [ [ &BlueMushroom, 24 ],
+                        [ &Mushroom, 24 ],
+                        [ &ElderBerry, 24 ],
+                        [ &EntrootBerry, 9 ],
+                        [ &PurpleMushroom, 9 ],
+                        [ &DarkAngelFeather, 5 ],
+                        [ &InkyCap, 4],
+                        [ &MagicShieldPotion, 1 ]
+                     ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

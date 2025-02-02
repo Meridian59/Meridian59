@@ -52,7 +52,7 @@ properties:
 
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       
@@ -62,7 +62,7 @@ messages:
       {
          send(self,@SetMood,#new_mood=piMood - 3);
          
-         propagate;
+         return;
       }
       
       if send( who, @GetHomeRoom ) = RID_MAR_INN
@@ -70,7 +70,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood + 1);
       }
       
-      propagate;
+      return;
    }
 
    GotUnwantedItem(obj=$,who=$)

@@ -54,7 +54,7 @@ messages:
 
 
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanLanguageMaster_entry_welcome,
            #type=SAY_RESOURCE);

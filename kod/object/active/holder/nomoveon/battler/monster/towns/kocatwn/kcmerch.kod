@@ -94,7 +94,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
 
@@ -130,7 +130,7 @@ messages:
          }
       }
       
-      propagate;
+      return;
    }
 
    SetForSale()

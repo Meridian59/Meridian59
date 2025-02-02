@@ -96,7 +96,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       
@@ -119,7 +119,7 @@ messages:
       Post(poOwner,@someoneSaid,#what=self,#string=JasperElder_entry_welcome,
           #type=SAY_RESOURCE);
           
-      propagate;
+      return;
    }
    
 end

@@ -76,7 +76,7 @@ messages:
    }
 
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what = self, #string=BQSmith_entry_welcome,
          #type = SAY_RESOURCE, 

@@ -88,7 +88,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       
@@ -118,7 +118,7 @@ messages:
            #type = SAY_RESOURCE, 
            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
            
-      propagate;
+      return;
    }
 
    SetForSale()

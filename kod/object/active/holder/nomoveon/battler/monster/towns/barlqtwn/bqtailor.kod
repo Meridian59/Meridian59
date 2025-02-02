@@ -76,7 +76,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what = self, #string=Batail_entry_welcome,
          #type = SAY_RESOURCE, 

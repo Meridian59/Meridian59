@@ -62,7 +62,7 @@ messages:
       propagate;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
 

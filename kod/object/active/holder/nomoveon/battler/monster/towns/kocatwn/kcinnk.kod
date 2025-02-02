@@ -168,7 +168,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if Send(who,@GetAction) = UA_HAPPY
       {
@@ -186,7 +186,7 @@ messages:
       Send(poOwner,@SomeoneSaid,#what=self,#string=Kocataninnkeeper_entry_welcome,
              #type = SAY_RESOURCE);
              
-      propagate;
+      return;
    }
 
    InitCondSale()

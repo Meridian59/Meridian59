@@ -15,7 +15,6 @@ dispell
 ende
 feld
 # NPC speech sometimes uses ~i text flag to italicize text
-iif
 kno
 # lightnin.bgf resource name
 lightnin
@@ -24,11 +23,14 @@ NEast
 noth
 # triggers "or" correction suggestion
 ore
+patter
 # player object session variable name, used for sending server data to players
 posession
+revered
 singe
 # resource name for generic object
 somethin
+sting
 stings
 # triggers "be", "we" spelling suggestions, speech particle used in Ko'catan island language 
 te
@@ -46,4 +48,11 @@ vie
 villify
 wast
 wee
+whit
+wit
 wither
+# Drunk NPC Pietro's intentional misspellings
+becuz
+mane
+nothin
+schow

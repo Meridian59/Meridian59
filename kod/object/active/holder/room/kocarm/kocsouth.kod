@@ -33,7 +33,6 @@ resources:
       "As you touch the door, you hear the bolt mechanism slide home, locking itself.  "
       "Apparently, this door is magically safeguarded against guild non-members such as "
       "yourself."
-   kocatansouth_guild_sound_locked = doorlck.wav
 
 classvars:
 
@@ -143,7 +142,7 @@ messages:
          AND NOT send(send(SYS,@FindRoomByNum,#num=RID_GUILDH13),@CanEnter,#who=what)
       {
          send(what,@MsgSendUser,#message_rsc=kocatansouth_guild_locked);
-         Send(what,@WaveSendUser,#wave_rsc=kocatansouth_guild_sound_locked);
+         Send(self,@SendLockedRoomSound,#who=what);
 
          return TRUE;
       }

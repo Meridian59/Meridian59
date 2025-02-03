@@ -1358,14 +1358,8 @@ messages:
    {
       local i;
 
-      if poGuild_Owner = $
+      if Send(self,@CanEnter,#who=who)
       {
-         return TRUE;
-      }
-
-      if poGuild_owner = Send(who,@GetGuild)
-      {
-         % These players can always log into their own guild
          return TRUE;
       }
 

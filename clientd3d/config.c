@@ -28,7 +28,7 @@ static char ini_filename[MAX_PATH + FILENAME_MAX];
 char *ini_file;  // Pointer to ini_filename
 
 // Full pathname of config.ini (currently maintained by m59bind)
-static char config_ini_filename[MAX_PATH + FILENAME_MAX];
+static char config_ini[MAX_PATH + FILENAME_MAX];
 
 // If version doesn't match that in INI file, restore default colors and fonts (used to change
 // color and font settings in old clients).
@@ -37,7 +37,7 @@ static char config_ini_filename[MAX_PATH + FILENAME_MAX];
 static bool is_steam_install = false;
 
 /* meridian.ini file entries (preferences) */
-static char misc_section[]   = "Miscellaneous";  /* Section of meridian.ini for config stuff */
+static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
 static char INIPlayMusic[]   = "PlayMusic";
 static char INIPlaySound[]   = "PlaySound";
@@ -79,7 +79,7 @@ static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
 
-static char window_section[] = "Window";         /* Section for window info */
+static char window_section[] = "Window";         /* Section INI file for window info */
 static char INILeft[]        = "NormalLeft";
 static char INIRight[]       = "NormalRight";
 static char INITop[]         = "NormalTop";
@@ -88,7 +88,7 @@ static char INIShow[]        = "Show";
 static char INIMaxX[]        = "MaxX";
 static char INIMaxY[]        = "MaxY";
 
-static char comm_section[]   = "Comm";  /* Section for comm stuff */
+static char comm_section[]   = "Comm";  /* Section for comm stuff in INI file  */
 static char INIPort[]        = "Port";
 static char INIRedialDelay[] = "RedialDelay";
 static char INIHostname[]    = "Hostname";
@@ -102,7 +102,7 @@ static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";
 
-static char special_section[] = "Special";  /* Section for hidden stuff */
+static char special_section[] = "Special";  /* Section for hidden stuff in INI file  */
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
@@ -170,8 +170,8 @@ void SaveSettings(void)
 
 /****************************************************************************/
 /*
- * ConfigInit:  Find name of INI files.  This function must be called before
- *   using the ini_file/config_ini_file variables to read from or write to the files.
+ * ConfigInit:  Find filenames of INI files.  This function must be called before
+ *   using the ini_file/config_ini variables to read from or write to the files.
  */
 void ConfigInit(void)
 {
@@ -183,7 +183,7 @@ void ConfigInit(void)
    snprintf(ini_filename, sizeof(ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILE));
    ini_file = ini_filename;
 
-   snprintf(config_ini_filename, sizeof(config_ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILECONFIG));
+   snprintf(config_ini, sizeof(config_ini), "%s%s", dir, GetString(hInst, IDS_INIFILECONFIG));
 
 }
 /****************************************************************************/
@@ -309,24 +309,25 @@ void ConfigLoad(void)
 
    // Determine if we should be using gpu efficiency mode or not.
    auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
-	   "gpuefficiencyonetimeflip", False, config_ini_filename);
+	   "gpuefficiencyonetimeflip", False, config_ini);
    if (one_time_gpu_efficiency_enablement)
    {
       char config_value[10];
       GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
-		  sizeof(config_value), config_ini_filename);
+		  sizeof(config_value), config_ini);
       config.gpuEfficiency = (0 == strcmp(config_value, "true"));
    }
    else
    {
       // TODO: Added February 2025 - remove after the next update when everyone will have been reset.
+	  // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
+
       // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
       // This is to ensure players start from a clean slate with maximum performance.
       // After this one-time flip, future changes to gpu efficiency preferences will be respected.
-	  // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
       config.gpuEfficiency = true;
-      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini_filename);
-      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini_filename);
+      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini);
+      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini);
    }
 
    TimeSettingsLoad();

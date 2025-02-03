@@ -79,7 +79,7 @@ static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
 
-static char window_section[] = "Window";         /* Section INI file for window info */
+static char window_section[] = "Window";         /* Section in INI file for window info */
 static char INILeft[]        = "NormalLeft";
 static char INIRight[]       = "NormalRight";
 static char INITop[]         = "NormalTop";
@@ -88,7 +88,7 @@ static char INIShow[]        = "Show";
 static char INIMaxX[]        = "MaxX";
 static char INIMaxY[]        = "MaxY";
 
-static char comm_section[]   = "Comm";  /* Section for comm stuff in INI file  */
+static char comm_section[]   = "Comm";  /* Section for comm stuff in INI file */
 static char INIPort[]        = "Port";
 static char INIRedialDelay[] = "RedialDelay";
 static char INIHostname[]    = "Hostname";
@@ -102,7 +102,7 @@ static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";
 
-static char special_section[] = "Special";  /* Section for hidden stuff in INI file  */
+static char special_section[] = "Special";  /* Section for hidden stuff in INI file */
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
@@ -320,7 +320,7 @@ void ConfigLoad(void)
    else
    {
       // TODO: Added February 2025 - remove after the next update when everyone will have been reset.
-	  // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
+      // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
 
       // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
       // This is to ensure players start from a clean slate with maximum performance.

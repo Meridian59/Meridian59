@@ -12,7 +12,7 @@ WeapAttParalyzer is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This weapon has a chance to blind the opponent every time it does
+%  This weapon has a chance to hold the opponent every time it does
 %     damage.
 %
 %  Form is: 

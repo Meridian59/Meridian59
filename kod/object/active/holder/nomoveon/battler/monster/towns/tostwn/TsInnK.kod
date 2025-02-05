@@ -45,7 +45,6 @@ classvars:
 
 properties:
 
-
 messages:
 
    AffectMood(why = $, what = $)

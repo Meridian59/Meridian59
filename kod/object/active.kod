@@ -27,7 +27,7 @@ messages:
    }
 
    UserEntered(who = $)
-   "Triggered when a user enters the room."
+   "A User just entered the room."
    {
       return;
    }

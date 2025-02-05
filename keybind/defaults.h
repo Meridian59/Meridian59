@@ -14,7 +14,7 @@
 #define DEF_DYNAMIC "true"
 #define DEF_SOFTWARE "false"
 #define DEF_ATTACKONTARGET "false"
-#define DEF_GPU_EFFICIENCY "false"
+#define DEF_GPU_EFFICIENCY "true"
 
 // Communication
 #define DEF_BROADCAST "b"

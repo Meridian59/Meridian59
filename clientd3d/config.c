@@ -21,9 +21,14 @@
 Config config;
 char inihost[MAXHOST];
 
-// Full pathname of INI file
+// We use two different INI files: meridian.ini (for preferences) and config.ini (for configuration)
+
+// Full pathname of meridian.ini (maintained in-game)
 static char ini_filename[MAX_PATH + FILENAME_MAX];
 char *ini_file;  // Pointer to ini_filename
+
+// Full pathname of config.ini (currently maintained by m59bind)
+static char config_ini[MAX_PATH + FILENAME_MAX];
 
 // If version doesn't match that in INI file, restore default colors and fonts (used to change
 // color and font settings in old clients).
@@ -31,7 +36,7 @@ char *ini_file;  // Pointer to ini_filename
 
 static bool is_steam_install = false;
 
-/* INI file entries */
+/* meridian.ini file entries (preferences) */
 static char misc_section[]   = "Miscellaneous";  /* Section of INI file for config stuff */
 static char INISaveOnExit[]  = "SaveOnExit";
 static char INIPlayMusic[]   = "PlayMusic";
@@ -102,6 +107,11 @@ static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
 
+/* config.ini file entries (preferences) */
+static char config_section[] = "config";  /* Section for configuration stuff */
+static char INIGpuEfficiency[] = "gpuefficiency";
+static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
+
 static char INITextAreaSize[] = "TextAreaSize";
 
 static char INIActiveStatGroup[] = "ActiveStatGroup";
@@ -160,17 +170,20 @@ void SaveSettings(void)
 
 /****************************************************************************/
 /*
- * ConfigInit:  Find name of INI file.  This function must be called before
- *   using the ini_file variable to read from or write to the INI file.
+ * ConfigInit:  Find filenames of INI files.  This function must be called before
+ *   using the ini_file/config_ini variables to read from or write to the files.
  */
 void ConfigInit(void)
 {
    char dir[MAX_PATH];
 
-   //memset(&config,0,sizeof(config));
    GetGamePath( dir );
+
+   // Retrieve the filenames for meridian.ini (preferences) and config.ini (configuration)
    snprintf(ini_filename, sizeof(ini_filename), "%s%s", dir, GetString(hInst, IDS_INIFILE));
    ini_file = ini_filename;
+
+   snprintf(config_ini, sizeof(config_ini), "%s%s", dir, GetString(hInst, IDS_INIFILECONFIG));
 }
 /****************************************************************************/
 /*
@@ -294,9 +307,27 @@ void ConfigLoad(void)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
    // Determine if we should be using gpu efficiency mode or not.
-   char config_value[255];
-   GetPrivateProfileString("config", "gpuefficiency", "error", config_value, 255, "./config.ini");
-   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
+   auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
+	   "gpuefficiencyonetimeflip", False, config_ini);
+   if (one_time_gpu_efficiency_enablement)
+   {
+      char config_value[10];
+      GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
+		  sizeof(config_value), config_ini);
+      config.gpuEfficiency = (0 == strcmp(config_value, "true"));
+   }
+   else
+   {
+      // TODO: Added February 2025 - remove after the next update when everyone will have been reset.
+      // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
+
+      // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
+      // This is to ensure players start from a clean slate with maximum performance.
+      // After this one-time flip, future changes to gpu efficiency preferences will be respected.
+      config.gpuEfficiency = true;
+      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, True, config_ini);
+      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini);
+   }
 
    TimeSettingsLoad();
 }

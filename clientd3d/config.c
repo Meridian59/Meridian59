@@ -109,7 +109,7 @@ static char INITechnical[]    = "Technical";
 
 /* config.ini file entries (preferences) */
 static char config_section[] = "config";  /* Section for configuration stuff */
-static char INIGpuEfficiency [] = "gpuefficiency";
+static char INIGpuEfficiency[] = "gpuefficiency";
 static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
 
 static char INITextAreaSize[] = "TextAreaSize";
@@ -184,7 +184,6 @@ void ConfigInit(void)
    ini_file = ini_filename;
 
    snprintf(config_ini, sizeof(config_ini), "%s%s", dir, GetString(hInst, IDS_INIFILECONFIG));
-
 }
 /****************************************************************************/
 /*
@@ -326,7 +325,7 @@ void ConfigLoad(void)
       // This is to ensure players start from a clean slate with maximum performance.
       // After this one-time flip, future changes to gpu efficiency preferences will be respected.
       config.gpuEfficiency = true;
-      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, config.gpuEfficiency, config_ini);
+      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, True, config_ini);
       WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini);
    }
 

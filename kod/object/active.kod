@@ -26,5 +26,11 @@ messages:
       return ACTIVE;
    }
 
+   UserEntered(who = $)
+   "Triggered when a user enters the room."
+   {
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

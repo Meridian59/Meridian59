@@ -28,7 +28,7 @@ classvars:
 
    % Minimum interval (in seconds) between NPC welcome messages to prevent excessive 
    % chatter when a player enters their room.
-   viWelcomeTimeInterval = 120
+   viWelcomeTimeInterval = 2 * 60
 
 properties:
    

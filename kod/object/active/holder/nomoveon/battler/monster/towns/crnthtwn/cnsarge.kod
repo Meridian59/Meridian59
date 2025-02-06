@@ -39,7 +39,7 @@ properties:
    
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if send(who,@GetFaction) = FACTION_DUKE
       {

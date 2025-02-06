@@ -106,7 +106,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       
@@ -125,7 +125,7 @@ messages:
       Send(poOwner,@SomeoneSaid,#what=self,#string=JsMer_entry_welcome,
            #type=SAY_RESOURCE);
               
-      propagate;
+      return;
    }
    
 end

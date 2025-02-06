@@ -46,13 +46,13 @@ properties:
    
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if NOT ( Send(who,@GetFaction) = FACTION_NEUTRAL )
       {
 	 send( self, @SetMood, #new_mood = piMood - 3 );
       }
-      propagate;
+      return;
    }
 
    AffectMood(what=$,why=$)

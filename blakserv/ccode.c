@@ -20,7 +20,11 @@
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
-static const int server_config_whitelist[] = { UPDATE_MOVE_INTERVAL, UPDATE_MOVE_COUNT_THRESHOLD };
+// A list of values allowed to be retrieved from the server config.
+static std::vector<int> server_config_whitelist = {
+	UPDATE_MOVE_INTERVAL, 
+	UPDATE_MOVE_COUNT_THRESHOLD
+};
 
 // global buffers for zero-terminated string manipulation
 static char buf0[LEN_MAX_CLIENT_MSG+1];
@@ -2347,15 +2351,9 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-bool IsAllowedConfigID(int config_id) {
-	int whitelist_size = sizeof(server_config_whitelist) / sizeof(server_config_whitelist[0]);
-
-	for (int i = 0; i < whitelist_size; i++) {
-		if (server_config_whitelist[i] == config_id) {
-			return true;
-		}
-	}
-	return false;
+static bool IsAllowedConfigID(int config_id) {
+	// Returns TRUE if the config id is in the whitelist.
+	return std::find(server_config_whitelist.begin(), server_config_whitelist.end(), config_id) != server_config_whitelist.end();
 }
 
 blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,

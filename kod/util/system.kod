@@ -41,8 +41,9 @@ constants:
    RECREATE_PHASE_FOUR = 4
    RECREATE_PHASE_FIVE = 5
 
-   MOVE_INTERVAL = 1000
-   MOVE_COUNT_THRESHOLD = 2
+   % Default server config values
+   SERVER_CONFIG_DEFAULT_MOVE_INTERVAL = 1000
+   SERVER_CONFIG_DEFAULT_MOVE_COUNT_THRESHOLD = 2
 
 resources:
 
@@ -418,8 +419,6 @@ messages:
       % This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
 
-      Send(self,@RetrieveServerConfigValues);
-      
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
 
@@ -483,36 +482,22 @@ messages:
       return;
    }
 
-   RetrieveServerConfigValues()
-   "Retrieves server config values needed for operation."
+   InitializeServerConfigValues()
+   "Initializes system properties from server config settings, falling back to defaults if no config value is set."
    {
-      piMoveInterval = Send(self,@RetrieveServerConfigValue,#config_id=SERVER_CONFIG_MOVE_INTERVAL);
+      piMoveInterval = GetServerConfigValue(SERVER_CONFIG_MOVE_INTERVAL);
       if piMoveInterval = $
       {
-         piMoveInterval = MOVE_INTERVAL;
+         piMoveInterval = SERVER_CONFIG_DEFAULT_MOVE_INTERVAL;
       }
 
-      piMoveCountThreshold = Send(self,@RetrieveServerConfigValue,#config_id=SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
+      piMoveCountThreshold = GetServerConfigValue(SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
       if piMoveCountThreshold = $
       {
-         piMoveCountThreshold = MOVE_COUNT_THRESHOLD;
+         piMoveCountThreshold = SERVER_CONFIG_DEFAULT_MOVE_COUNT_THRESHOLD;
       }
 
       return;
-   }
-
-   RetrieveServerConfigValue(config_id=$)
-   {
-      local config_value;
-
-      config_value = GetServerConfigValue(config_id);
-
-      if config_value = $
-      {
-         return;
-      }
-
-      return config_value;
    }
 
    GetMoveInterval()
@@ -954,6 +939,8 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
+
+      Send(self,@InitializeServerConfigValues);
 
       return;
    }

@@ -37,7 +37,7 @@ properties:
 
    prMusic = cave2_music
 
-   piBaseLight = LIGHT_DARK
+   piBaseLight = LIGHT_MIN
 
    piOutside_factor = OUTDOORS_2
 

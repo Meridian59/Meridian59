@@ -67,9 +67,9 @@ messages:
            #new_row=6,#new_col=3);
       Send(self,@NewHold,#what=Create(&Brazier),
            #new_row=6,#new_col=7);
-%      Send(self,@NewHold,#what=Create(&Brazier),
-%           #new_row=3,#new_col=3,#fine_col=0,#fine_row=0);
-%      (no light circle for this brazier)
+      Send(self,@NewHold,#what=Create(&Brazier),
+          #new_row=3,#new_col=3,#fine_col=15,#fine_row=20);
+     
       propagate;
    }
 

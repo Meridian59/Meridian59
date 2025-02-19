@@ -5499,7 +5499,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
+      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, iSpellPower;
 
       if piMana > piMax_mana
       {
@@ -5538,7 +5538,8 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
          if Send(self,@IsEnchanted,#what=oSpell)
          {
-            iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
+            iSpellPower = send(oSpell,@GetSpellPower,#who=self);
+            iTime = Send(oSpell,@AdjustManaTime,#time=iTime,#iSpellPower=iSpellPower);
          }
       }
 

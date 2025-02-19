@@ -120,7 +120,7 @@ messages:
       return;
    }
    
-   AdjustManaTime(time=0, iSpellPower=0)
+   AdjustManaTime(time = 0, iSpellPower = 0)
    "Reduces time passed in so that mana regens faster.  Returns reduced time."
    {
       local iTime;

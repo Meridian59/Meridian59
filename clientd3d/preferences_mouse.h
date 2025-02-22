@@ -36,7 +36,6 @@ public:
 	BOOL	m_invert;
 	//}}AFX_DATA
 
-
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CMousePage)

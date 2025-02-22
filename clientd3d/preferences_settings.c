@@ -156,5 +156,4 @@ void CGeneralSettingsPage::SaveSettings()
 	}
 
 	EditBoxSetNormalFormat();
-
 }

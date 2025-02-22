@@ -325,12 +325,10 @@ void CPreferencesPropertySheet::OnOkButtonClicked()
 
     // Close the dialog and return IDOK
     EndDialog(IDOK);
-
 }
 
 void CPreferencesPropertySheet::OnCloseButtonClicked()
 {
-
     OnClose(); // Call the base class OnCancel method
 }
 
@@ -345,8 +343,6 @@ void CPreferencesPropertySheet::UpdateAllPreferences()
 
 void CPreferencesPropertySheet::RestoreDefaults(void)
 {
-    // todo: fix this and link up somehow
-
     wchar_t szBuffer[256];  // Use wchar_t explicitly instead of TCHAR
 
     MultiByteToWideChar(CP_ACP, 0, DEF_INVERT, -1, szBuffer, 256);

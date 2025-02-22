@@ -238,7 +238,6 @@
 #define IDS_RARITY_GRADE_UNIDENTIFIED   209
 #define IDS_RARITY_GRADE_CURSED         210
 #define IDS_NEED_STEAM_UPDATE           211
-#define IDI_PREFERENCES					212
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001
 #define IDC_ITEMLIST                    1002
@@ -490,7 +489,6 @@
 #define ID_HELP_REQUEST_CS              3511
 #define IDM_DRAW_MAP                    3512
 #define IDS_INIFILECONFIG               3513
-
 #define IDC_CLASSIC						3514
 #define IDC_INVERT                      3515
 #define IDC_QUICKCHAT                   3516
@@ -502,7 +500,6 @@
 #define IDC_RESTOREDEFAULTS				3522
 #define IDC_GPU_EFFICIENCY				3523
 #define IDD_OPTIONS						3524
-
 #define IDC_FORWARD                     3525
 #define IDC_BACKWARD                    3526
 #define IDC_LEFT                        3527

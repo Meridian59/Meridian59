@@ -136,19 +136,19 @@ OBJS = \
         $(OUTDIR)\matrix.obj \
         $(OUTDIR)\xform.obj \
         $(OUTDIR)\signup.obj\
-		$(OUTDIR)\stdafx.obj\
-		$(OUTDIR)\preferences.obj\
-		$(OUTDIR)\preferences_common.obj\
-		$(OUTDIR)\preferences_assignkey.obj\
-		$(OUTDIR)\preferences_settings.obj\
-		$(OUTDIR)\preferences_profanity.obj\
-		$(OUTDIR)\preferences_options.obj\
-		$(OUTDIR)\preferences_movement.obj\
-		$(OUTDIR)\preferences_modifier.obj\
-		$(OUTDIR)\preferences_interaction.obj\
-		$(OUTDIR)\preferences_targeting.obj\
-		$(OUTDIR)\preferences_map.obj\
-		$(OUTDIR)\preferences_mouse.obj\
+        $(OUTDIR)\stdafx.obj\
+        $(OUTDIR)\preferences.obj\
+        $(OUTDIR)\preferences_common.obj\
+        $(OUTDIR)\preferences_assignkey.obj\
+        $(OUTDIR)\preferences_settings.obj\
+        $(OUTDIR)\preferences_profanity.obj\
+        $(OUTDIR)\preferences_options.obj\
+        $(OUTDIR)\preferences_movement.obj\
+        $(OUTDIR)\preferences_modifier.obj\
+        $(OUTDIR)\preferences_interaction.obj\
+        $(OUTDIR)\preferences_targeting.obj\
+        $(OUTDIR)\preferences_map.obj\
+        $(OUTDIR)\preferences_mouse.obj\
 
 $(OUTDIR)\trig.c $(OUTDIR)\trig.h: $(OUTDIR)\maketrig.exe
 	$(OUTDIR)\maketrig.exe $(OUTDIR)

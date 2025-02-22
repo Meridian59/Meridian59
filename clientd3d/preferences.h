@@ -29,7 +29,7 @@ protected:
     CGeneralSettingsPage m_GeneralSettingsPage;
     COptionsPage m_OptionsPage;
     CMovementPage m_MovementPage;
-	CInteractionPage m_InteractionPage;
+    CInteractionPage m_InteractionPage;
     CTargetingPage m_TargetingPage;
     CMapPage m_MapPage;
     CMousePage m_MousePage;

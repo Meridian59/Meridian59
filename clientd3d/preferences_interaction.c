@@ -52,7 +52,6 @@ void CInteractionPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CInteractionPage, CPropertyPage)
 	//{{AFX_MSG_MAP(CInteractionPage)
 	ON_BN_CLICKED(IDC_ATTACK, OnAttack)

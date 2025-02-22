@@ -223,8 +223,6 @@ BOOL CPreferencesPropertySheet::OnInitDialog()
 
 void CPreferencesPropertySheet::OnClose()
 {
-    // Call the base class OnCancel method to close the dialog
-    CPropertySheet::OnClose();
 }
 
 void CPreferencesPropertySheet::UpdateINIFile()
@@ -331,7 +329,8 @@ void CPreferencesPropertySheet::OnOkButtonClicked()
 
 void CPreferencesPropertySheet::OnCloseButtonClicked()
 {
-    OnClose(); // Call the base class OnCancel method
+    // Close the dialog and return IDOK
+    EndDialog(IDOK);
 }
 
 void CPreferencesPropertySheet::UpdateAllPreferences()

@@ -103,55 +103,11 @@ BOOL CInteractionPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	//ReadConfigSettings();
 	UpdateDialogData();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
-
-void CInteractionPage::ReadConfigSettings()
-{
-	CString strSection = _T("keys");
-	TCHAR ReturnedString[MAX_KEYVALUELEN];
-	DWORD nSize = MAX_KEYVALUELEN;
-
-	// Get the current working directory
-	TCHAR currentDir[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, currentDir);
-
-	// Construct the full path to the config.ini file
-	CString iniFilePath;
-	iniFilePath.Format(_T("%s\\config.ini"), currentDir);
-
-	GetPrivateProfileString(strSection, _T("attack"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCAttack, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("buy"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCBuy, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("deposit"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCDeposit, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("examine"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCExamine, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("look"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCLook, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("offer"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCOffer, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("open"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCOpen, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("pickup"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCPickup, ReturnedString);
-
-	GetPrivateProfileString(strSection, _T("withdraw"), _T(""), ReturnedString, nSize, iniFilePath);
-	_tcscpy(TCWithdraw, ReturnedString);
-}
-
 
 void CInteractionPage::ProcessButtonPressed(TCHAR* TCButtonstring, CButton* modifier, int nID, HWND m_hWnd)
 {

@@ -27,7 +27,6 @@ public:
 	~CInteractionPage();
 
 	void UpdateDialogData();
-	void ReadConfigSettings();
 	void ProcessModifierPressed(TCHAR* TCString, int nID, HWND m_hWnd);
 	void ProcessButtonPressed(TCHAR* TCButtonstring, CButton* modifier, int nID, HWND m_hWnd);
 

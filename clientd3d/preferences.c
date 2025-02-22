@@ -90,6 +90,7 @@ CPreferencesPropertySheet::CPreferencesPropertySheet(UINT nIDCaption, CWnd* pPar
 {
     AddPage(&m_GeneralSettingsPage);
     AddPage(&m_OptionsPage);
+    AddPage(&m_CommunicationPage);
     AddPage(&m_MovementPage);
     AddPage(&m_InteractionPage);
     AddPage(&m_TargetingPage);
@@ -102,6 +103,7 @@ CPreferencesPropertySheet::CPreferencesPropertySheet(LPCTSTR pszCaption, CWnd* p
 {
     AddPage(&m_GeneralSettingsPage);
     AddPage(&m_OptionsPage);
+    AddPage(&m_CommunicationPage);
     AddPage(&m_MovementPage);
 	AddPage(&m_InteractionPage);
     AddPage(&m_TargetingPage);

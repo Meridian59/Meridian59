@@ -598,6 +598,8 @@
 #define IDC_EMOTE						3620
 #define IDC_EMOTE_MOD					3621
 #define IDC_BROADCAST_MOD				3622
+#define IDD_COMMUNICATION				3623
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

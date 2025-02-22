@@ -6,6 +6,7 @@
 #include "preferences_settings.h"
 #include "preferences_common.h"
 #include "preferences_options.h"
+#include "preferences_communication.h"
 #include "preferences_movement.h"
 #include "preferences_interaction.h"
 #include "preferences_targeting.h"
@@ -29,6 +30,7 @@ protected:
     CGeneralSettingsPage m_GeneralSettingsPage;
     COptionsPage m_OptionsPage;
     CMovementPage m_MovementPage;
+    CCommunicationPage m_CommunicationPage;
     CInteractionPage m_InteractionPage;
     CTargetingPage m_TargetingPage;
     CMapPage m_MapPage;

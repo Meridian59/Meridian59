@@ -8,8 +8,9 @@
 /*
  * winmenu.c:  Handle main client window menu.
  */
-
+#include "stdafx.h"
 #include "client.h"
+#include "preferences.h"
 
 static HMENU menu;          // Main menu
 
@@ -113,10 +114,13 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       break;
 
    case ID_GAME_SETTINGS:
-      if (DialogBox(hInst, MAKEINTRESOURCE(IDD_SETTINGS), hMain, PreferencesDialogProc) == IDOK)
       {
-         ModuleEvent(EVENT_CONFIGCHANGED);
-         MenuDisplaySettings(hMain);
+          CPreferencesPropertySheet propSheet(_T("Meridian 59 Preferences"), CWnd::FromHandle(hMain));
+         
+          if (propSheet.DoModal() == IDOK)
+          {
+                ModuleEvent(EVENT_CONFIGCHANGED);
+          }
       }
       break;
 

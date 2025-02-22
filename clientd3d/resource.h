@@ -585,7 +585,19 @@
 #define MIN_MOUSEYSCALE					3607
 #define MAX_MOUSEYSCALE					3608
 #define TIC_MOUSEYSCALE					3609
-
+#define IDC_SAY							3610
+#define IDC_SAY_MOD						3611
+#define IDC_CHAT						3612
+#define IDC_CHAT_MOD					3613
+#define IDC_TELL						3614
+#define IDC_TELL_MOD					3615
+#define IDC_YELL						3616
+#define IDC_YELL_MOD					3617
+#define IDC_WHO							3618
+#define IDC_WHO_MOD						3619
+#define IDC_EMOTE						3620
+#define IDC_EMOTE_MOD					3621
+#define IDC_BROADCAST_MOD				3622
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

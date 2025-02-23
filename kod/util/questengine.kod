@@ -7275,8 +7275,25 @@ CheckQuestDeadlines()
 %%
    ClearAllQuests()
    {
+      local oRoom, oObject, each_obj;
+
       send( self, @DeleteActiveQuests );
       send( self, @Suspend );
+
+      % Clear all quest nodes from monsters
+      for oRoom in Send(SYS,@GetRooms)
+      {
+         for oObject in Send(oRoom,@GetHolderActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=oObject);
+         
+            if IsClass(each_obj,&Monster)
+            {
+               Send(each_obj,@ClearActiveQuests);
+            }
+         }
+      }
+      
       plQuestTemplates = $;
       plDefaultNPCList = $;
       plQuestNodeTemplates = $;
@@ -7393,11 +7410,12 @@ CheckQuestDeadlines()
       return;
    }
 
-   Jumpstart()
-   "A quick and dirty way to get things running again."
+   Reset()
+   "Resets the quest engine: clears and rebuilds quests and recreates the quest nodes."
    {
-      send(self,@Recreate);
-      send(self,@RecreateQuestNodes);
+      Send(self,@ClearAllQuests);
+      Send(self,@Recreate);
+      Send(self,@RecreateQuestNodes);
 
       return;
    }

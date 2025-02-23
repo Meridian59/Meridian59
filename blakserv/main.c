@@ -127,7 +127,6 @@ void MainServer()
 	
 	UnpauseTimers();
 
-	InitAPIServer();
 	
 	//SetWindowText(hwndMain, ConfigStr(CONSOLE_CAPTION));
 

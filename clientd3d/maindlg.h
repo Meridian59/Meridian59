@@ -24,7 +24,6 @@ INT_PTR CALLBACK CommSettingsDialogProc(HWND hDlg, UINT message, WPARAM wParam, 
 INT_PTR CALLBACK PasswordDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK RegisterDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK AdminNoteDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-INT_PTR CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 void AbortPasswordDialog(void);
 void AbortPreferencesDialog(void);

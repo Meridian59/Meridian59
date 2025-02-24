@@ -1,18 +1,20 @@
-#ifndef API_DISPATCH_H
-#define API_DISPATCH_H
+#ifndef APIFN_H
+#define APIFN_H
 
-#include <Python.h>
+#include <Python.h>  // Include the Python headers
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Function prototypes
-PyObject* api_get_online_players(PyObject* self, PyObject* args);
-PyObject* api_get_server_status(PyObject* self, PyObject* args);
+PyObject* py_get_online_players(PyObject* self, PyObject* args);
+PyObject* py_get_server_status(PyObject* self, PyObject* args);
+PyObject* py_signal_console(PyObject* self, PyObject* args);
+PyObject* py_admin_page(PyObject* self, PyObject* args);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // API_DISPATCH_H
+#endif // APIFN_H

@@ -21,7 +21,7 @@ resources:
    StoneTroll_icon_rsc = Troll.bgf
    StoneTroll_desc_rsc = \
       "Given the ominous task of guarding the Heart of Zjiria, this stone troll "
-      "glares darkly at all passerbyers.  You have a feeling you better start running."
+      "glares darkly at all passersby.  You have a feeling you'd better start running."
 
    StoneTroll_desc2_rsc = "This stone troll is the grey-skinned brother of his "
       "more common brother.  Stone trolls were driven into the mountains ages "

@@ -620,7 +620,24 @@
 #define IDC_ATTACK2                     3629
 #define IDC_ATTACK_MOD2                 3630
 #define IDI_KEYBIND						3631
-
+#define IDS_WARNING_TITLE				3632
+#define IDS_SOFTWARERENDERER_WARN		3633
+#define IDS_HELP_TITLE					3634
+#define IDS_BINDING_HELP				3635
+#define IDS_NOTICE_TITLE				3636
+#define IDS_CLASSIC_BIND_WARNING		3637
+#define IDS_SETTINGS_RESTART			3638
+#define IDS_PREFERENCES					3639
+#define IDS_OPTIONS						3640
+#define IDS_MOVE						3641
+#define IDS_COMMS						3642
+#define IDS_INTERACT					3643
+#define IDS_TARGET						3644
+#define IDS_MAP							3645
+#define IDS_MOUSE						3646
+#define IDS_DUPLICATE_BINDINGS			3647
+#define IDS_DEFAULT_ARE_YOU_SURE		3657
+#define IDS_RESTORE_DEFAULTS			3658
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

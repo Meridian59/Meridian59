@@ -1003,6 +1003,29 @@ BEGIN
     IDS_RARITY_GRADE_CURSED        "amaldiçoado"
 END
 
+STRINGTABLE
+BEGIN
+	IDS_WARNING_TITLE			    "Aviso"
+    IDS_SOFTWARERENDERER_WARN		"O renderizador de software pode ter sido ativado devido a um problema com a configuração do seu vídeo.\n\t\t Desativá-lo pode fazer com que o jogo não funcione."
+	IDS_HELP_TITLE					"Ajuda"
+	IDS_BINDING_HELP 				"Como vincular um comando:\n\n * Clique no botão ao lado do comando que deseja vincular. Esse botão mostrará a tecla atualmente atribuída ao comando.\n\n * Quando a janela pop-up aparecer, pressione e solte a tecla e/ou o botão do mouse\n que deseja vincular a esse comando. Por exemplo, pressionar o botão ao lado de\n 'avançar' e pressionar a tecla W fará com que essa seja a nova tecla para avançar.\n\n * Teclas modificadoras como Shift, Alt e Ctrl podem ser usadas em combinação com a tecla principal (exemplo: W+Shift).\n\n * Se desejar alterar apenas a tecla modificadora de um comando, pressione o botão\n marcado com um '+' ao lado do botão de vínculo e selecione uma tecla modificadora da lista exibida.\n\n * O modificador 'Qualquer' significa que qualquer tecla modificadora pode ser pressionada junto com a tecla principal,\n e ainda funcionará. Assim, W+qualquer significa que W+Shift, W+Alt, W+Ctrl e apenas W executarão o comando especificado.\n\n * Se cometer um erro, você pode pressionar o botão 'Restaurar Padrões' para redefinir todas as atribuições de teclas para os padrões.\n\n * Quando terminar de configurar, pressione 'OK' para salvar e sair.\n Ou pressione 'Cancelar' para sair sem salvar suas alterações."
+	IDS_NOTICE_TITLE				"Notificação"
+	IDS_CLASSIC_BIND_WARNING 		"Ativar 'Configuração Clássica de Teclas' fará com que o jogo ignore as atribuições de teclas!"
+	IDS_SETTINGS_RESTART			"Você deve reiniciar o cliente Meridian 59 para que as novas configurações e atribuições de teclas tenham efeito."
+	IDS_PREFERENCES					"Preferências do Meridian 59"
+	IDS_OPTIONS						"Opções"
+	IDS_MOVE						"Movimento"
+	IDS_COMMS						"Comunicação"
+	IDS_INTERACT					"Interação"
+	IDS_TARGET						"Alvo"
+	IDS_MAP							"Mapa"
+	IDS_MOUSE						"Mouse"
+	IDS_DUPLICATE_BINDINGS			"Foi detectada uma duplicação de atribuições para a mesma tecla.\nIsso pode fazer com que alguns comandos não funcionem em\nMeridian 59. Verifique suas atribuições de teclas."
+	IDS_DEFAULT_ARE_YOU_SURE		"Tem certeza de que deseja restaurar todas as configurações para os valores padrão?"
+	IDS_RESTORE_DEFAULTS			"Restaurar Padrões"
+END
+
+
 #endif    // Portuguese (Brazilian) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1994,6 +2017,29 @@ BEGIN
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentifiziert"
     IDS_RARITY_GRADE_CURSED        "verflucht"
 END
+
+STRINGTABLE
+BEGIN
+	IDS_WARNING_TITLE			    "Warnung"
+    IDS_SOFTWARERENDERER_WARN		"Die Software-Rendering-Funktion wurde möglicherweise aufgrund eines Problems mit Ihrer Videoeinstellung aktiviert.\n\t\t Das Deaktivieren kann dazu führen, dass das Spiel nicht mehr läuft."
+	IDS_HELP_TITLE					"Hilfe"
+	IDS_BINDING_HELP 				"So binden Sie einen Befehl:\n\n * Klicken Sie auf die Schaltfläche neben dem Befehl, den Sie binden möchten. Diese Schaltfläche zeigt die aktuell zugewiesene Taste an.\n\n * Wenn das Popup-Fenster erscheint, drücken und lassen Sie die Taste und/oder Maustaste los,\n die Sie diesem Befehl zuweisen möchten. Zum Beispiel: Wenn Sie die Schaltfläche neben\n 'vorwärts' drücken und die W-Taste betätigen, wird diese zur neuen Vorwärts-Taste.\n\n * Modifikatortasten wie Shift, Alt und Strg können in Kombination mit der Haupttaste verwendet werden (Beispiel: W+Shift).\n\n * Wenn Sie nur die Modifikatortaste eines Befehls ändern möchten, drücken Sie die mit '+' markierte Schaltfläche\n neben der Bindungsschaltfläche und wählen Sie eine Modifikatortaste aus der angezeigten Liste aus.\n\n * Die 'Beliebig'-Modifikation bedeutet, dass jede Modifikatortaste zusammen mit der Taste gedrückt werden kann,\n und sie wird dennoch funktionieren. Zum Beispiel bedeutet W+beliebig, dass W+Shift, W+Alt, W+Strg und nur W den Befehl ausführen.\n\n * Falls Sie einen Fehler machen, können Sie die Schaltfläche 'Standardwerte wiederherstellen' drücken, um alle Bindungen\n auf die Standardwerte zurückzusetzen.\n\n * Wenn Sie Ihre Einstellungen abgeschlossen haben, drücken Sie 'OK', um zu speichern und zu beenden.\n Oder Sie können 'Abbrechen' drücken, um zu beenden, ohne Ihre Änderungen zu speichern."
+	IDS_NOTICE_TITLE				"Hinweis"
+	IDS_CLASSIC_BIND_WARNING 		"Das Aktivieren der 'Klassischen Tastenkonfiguration' führt dazu, dass das Spiel die Tastenzuweisungen ignoriert!"
+	IDS_SETTINGS_RESTART			"Sie müssen den Meridian 59-Client neu starten, bevor die neuen Bindungen oder Einstellungen wirksam werden."
+	IDS_PREFERENCES					"Meridian 59 Einstellungen"
+	IDS_OPTIONS						"Optionen"
+	IDS_MOVE						"Bewegung"
+	IDS_COMMS						"Kommunikation"
+	IDS_INTERACT					"Interaktion"
+	IDS_TARGET						"Zielerfassung"
+	IDS_MAP							"Karte"
+	IDS_MOUSE						"Maus"
+	IDS_DUPLICATE_BINDINGS			"Doppelte Tastenzuweisungen für dieselbe Taste wurden erkannt.\nDies könnte dazu führen, dass einige Befehle in Meridian 59 nicht funktionieren.\nBitte überprüfen Sie Ihre Bindungen."
+	IDS_DEFAULT_ARE_YOU_SURE		"Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte zurücksetzen möchten?"
+	IDS_RESTORE_DEFAULTS			"Standardwerte wiederherstellen"
+END
+
 
 #endif    // German resources
 /////////////////////////////////////////////////////////////////////////////
@@ -3246,6 +3292,29 @@ BEGIN
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
     IDS_RARITY_GRADE_CURSED        "cursed"
 END
+
+STRINGTABLE
+BEGIN
+	IDS_WARNING_TITLE			    "Warning"
+    IDS_SOFTWARERENDERER_WARN		"Software renderer may have been activated due to a problem with your video setup.\n\t\t Disabling may cause the game not to run."
+	IDS_HELP_TITLE					"Help"
+	IDS_BINDING_HELP 				"To bind a command:\n\n * Click on the button next to the command you want to bind. This button will\n show the key currently bound to the command.\n\n * When the popup appears, press and release the key and/or mouse button\n you want to bind to that command. For example, pressing the button next to\n 'forward' and pressing the W key will make that the new walk forward key.\n\n * Modifier keys such as shift, alt, control may be used in combination with the\n main key when binding a command (example: W+shift).\n\n * If you wish to change only the modifier key of a command, press the button\n marked with a '+' next to the binding button and select a modifier key from\n the list shown.\n\n * The 'Any' modifier means that any modifier key can be pressed with the key\n and it will still work. So, W+any means that W+shift, W+alt, W+ctrl, and just\n W will do the specified command.\n\n * If you make a mistake you may press the 'Restore Defaults' button and all of\n the bindings will be set to the default.\n\n * Once you have finished your settings, press 'OK' to save and quit. Or you\n can press 'Cancel' to quit without saving your changes."
+	IDS_NOTICE_TITLE				"Notice"
+	IDS_CLASSIC_BIND_WARNING 		"Activating 'Classic Key Bindings' will cause the game to ignore the key bindings!"
+	IDS_SETTINGS_RESTART			"You must restart the Meridian 59 client before the new bindings or settings will take effect."
+	IDS_PREFERENCES					"Meridian 59 Preferences"
+	IDS_OPTIONS						"Options"
+	IDS_MOVE						"Move"
+	IDS_COMMS						"Comms"
+	IDS_INTERACT					"Interact"
+	IDS_TARGET						"Target"
+	IDS_MAP							"Map"
+	IDS_MOUSE						"Mouse"
+	IDS_DUPLICATE_BINDINGS			"Duplicate bindings for the same key have been detected.\nThis could cause some commands to not work on\nMeridian 59.  Please double check your bindings."
+	IDS_DEFAULT_ARE_YOU_SURE		"Are you sure you want to restore all settings to their default?"
+	IDS_RESTORE_DEFAULTS			"Restore Defaults"
+END
+
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

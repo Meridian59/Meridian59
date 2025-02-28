@@ -1,145 +1,143 @@
-#include "preferences.h"
 #include "client.h"
-#include "resource.h"
 
 #include <vector>
 
 // Preferences constants
 
-constexpr int MAX_KEYVALUELEN = 128;
+static constexpr int MAX_KEYVALUELEN = 128;
 
-constexpr int MODIFIER_NONE = 0;
-constexpr int MODIFIER_ALT = 1;
-constexpr int MODIFIER_CTRL = 2;
-constexpr int MODIFIER_SHIFT = 3;
-constexpr int MODIFIER_ANY = 4;
+static constexpr int MODIFIER_NONE = 0;
+static constexpr int MODIFIER_ALT = 1;
+static constexpr int MODIFIER_CTRL = 2;
+static constexpr int MODIFIER_SHIFT = 3;
+static constexpr int MODIFIER_ANY = 4;
 
-const char* TCModifiers[5] = { "none", "alt", "ctrl", "shift", "any" };
+static const char* TCModifiers[5] = { "none", "alt", "ctrl", "shift", "any" };
 
 // Preferences state
 
-bool bUpdateINI = false;
+static bool bUpdateINI = false;
 
-char TCNewkey[MAX_KEYVALUELEN];
+static char TCNewkey[MAX_KEYVALUELEN];
 
-bool bInvert;
-int iMouselookXscale;
-int iMouselookYscale;
+static bool bInvert;
+static int iMouselookXscale;
+static int iMouselookYscale;
 
-bool m_alwaysrun;
-bool m_classic;
-bool m_dynamic;
-bool m_quickchat;
-bool m_software;
-bool m_attackontarget;
-bool m_gpuefficiency;
+static bool m_alwaysrun;
+static bool m_classic;
+static bool m_dynamic;
+static bool m_quickchat;
+static bool m_software;
+static bool m_attackontarget;
+static bool m_gpuefficiency;
 
-char TCBroadcast[MAX_KEYVALUELEN];
-char TCChat[MAX_KEYVALUELEN];
-char TCEmote[MAX_KEYVALUELEN];
-char TCSay[MAX_KEYVALUELEN];
-char TCTell[MAX_KEYVALUELEN];
-char TCWho[MAX_KEYVALUELEN];
-char TCYell[MAX_KEYVALUELEN];
+static char TCBroadcast[MAX_KEYVALUELEN];
+static char TCChat[MAX_KEYVALUELEN];
+static char TCEmote[MAX_KEYVALUELEN];
+static char TCSay[MAX_KEYVALUELEN];
+static char TCTell[MAX_KEYVALUELEN];
+static char TCWho[MAX_KEYVALUELEN];
+static char TCYell[MAX_KEYVALUELEN];
 
-char TCAttack[MAX_KEYVALUELEN];
-char TCBuy[MAX_KEYVALUELEN];
-char TCDeposit[MAX_KEYVALUELEN];
-char TCExamine[MAX_KEYVALUELEN];
-char TCLook[MAX_KEYVALUELEN];
-char TCOffer[MAX_KEYVALUELEN];
-char TCOpen[MAX_KEYVALUELEN];
-char TCPickup[MAX_KEYVALUELEN];
-char TCWithdraw[MAX_KEYVALUELEN];
+static char TCAttack[MAX_KEYVALUELEN];
+static char TCBuy[MAX_KEYVALUELEN];
+static char TCDeposit[MAX_KEYVALUELEN];
+static char TCExamine[MAX_KEYVALUELEN];
+static char TCLook[MAX_KEYVALUELEN];
+static char TCOffer[MAX_KEYVALUELEN];
+static char TCOpen[MAX_KEYVALUELEN];
+static char TCPickup[MAX_KEYVALUELEN];
+static char TCWithdraw[MAX_KEYVALUELEN];
 
-char TCBackward[MAX_KEYVALUELEN];
-char TCFlip[MAX_KEYVALUELEN];
-char TCForward[MAX_KEYVALUELEN];
-char TCLeft[MAX_KEYVALUELEN];
-char TCLookdown[MAX_KEYVALUELEN];
-char TCLookstraight[MAX_KEYVALUELEN];
-char TCLookup[MAX_KEYVALUELEN];
-char TCMouselooktoggle[MAX_KEYVALUELEN];
-char TCRight[MAX_KEYVALUELEN];
-char TCRunwalk[MAX_KEYVALUELEN];
-char TCSlideleft[MAX_KEYVALUELEN];
-char TCSlideright[MAX_KEYVALUELEN];
+static char TCBackward[MAX_KEYVALUELEN];
+static char TCFlip[MAX_KEYVALUELEN];
+static char TCForward[MAX_KEYVALUELEN];
+static char TCLeft[MAX_KEYVALUELEN];
+static char TCLookdown[MAX_KEYVALUELEN];
+static char TCLookstraight[MAX_KEYVALUELEN];
+static char TCLookup[MAX_KEYVALUELEN];
+static char TCMouselooktoggle[MAX_KEYVALUELEN];
+static char TCRight[MAX_KEYVALUELEN];
+static char TCRunwalk[MAX_KEYVALUELEN];
+static char TCSlideleft[MAX_KEYVALUELEN];
+static char TCSlideright[MAX_KEYVALUELEN];
 
-char TCTabbackward[MAX_KEYVALUELEN];
-char TCTabforward[MAX_KEYVALUELEN];
-char TCTargetclear[MAX_KEYVALUELEN];
-char TCTargetnext[MAX_KEYVALUELEN];
-char TCTargetprevious[MAX_KEYVALUELEN];
-char TCTargetself[MAX_KEYVALUELEN];
-char TCSelecttarget[MAX_KEYVALUELEN];
+static char TCTabbackward[MAX_KEYVALUELEN];
+static char TCTabforward[MAX_KEYVALUELEN];
+static char TCTargetclear[MAX_KEYVALUELEN];
+static char TCTargetnext[MAX_KEYVALUELEN];
+static char TCTargetprevious[MAX_KEYVALUELEN];
+static char TCTargetself[MAX_KEYVALUELEN];
+static char TCSelecttarget[MAX_KEYVALUELEN];
 
-char TCMap[MAX_KEYVALUELEN];
-char TCMapzoomin[MAX_KEYVALUELEN];
-char TCMapzoomout[MAX_KEYVALUELEN];
+static char TCMap[MAX_KEYVALUELEN];
+static char TCMapzoomin[MAX_KEYVALUELEN];
+static char TCMapzoomout[MAX_KEYVALUELEN];
 
 // Default values
 
 // BOOL values
-const char* const DEF_CLASSIC = "false";
-const char* const DEF_QUICKCHAT = "false";
-const char* const DEF_ALWAYSRUN = "true";
-const char* const DEF_DYNAMIC = "true";
-const char* const DEF_SOFTWARE = "false";
-const char* const DEF_ATTACKONTARGET = "false";
-const char* const DEF_GPU_EFFICIENCY = "true";
+static const char* const DEF_CLASSIC = "false";
+static const char* const DEF_QUICKCHAT = "false";
+static const char* const DEF_ALWAYSRUN = "true";
+static const char* const DEF_DYNAMIC = "true";
+static const char* const DEF_SOFTWARE = "false";
+static const char* const DEF_ATTACKONTARGET = "false";
+static const char* const DEF_GPU_EFFICIENCY = "true";
 
 // Communication
-const char* const DEF_BROADCAST = "b";
-const char* const DEF_CHAT = "enter";
-const char* const DEF_EMOTE = ";";
-const char* const DEF_SAY = "f";
-const char* const DEF_TELL = "t";
-const char* const DEF_WHO = "w+ctrl";
-const char* const DEF_YELL = "y";
+static const char* const DEF_BROADCAST = "b";
+static const char* const DEF_CHAT = "enter";
+static const char* const DEF_EMOTE = ";";
+static const char* const DEF_SAY = "f";
+static const char* const DEF_TELL = "t";
+static const char* const DEF_WHO = "w+ctrl";
+static const char* const DEF_YELL = "y";
 
 // Interaction
-const char* const DEF_ATTACK = "e+any";
-const char* const DEF_BUY = "b+shift";
-const char* const DEF_DEPOSIT = "i+shift";
-const char* const DEF_EXAMINE = "mouse1+any";
-const char* const DEF_LOOK = "l";
-const char* const DEF_OFFER = "o+ctrl";
-const char* const DEF_OPEN = "space";
-const char* const DEF_PICKUP = "g";
-const char* const DEF_WITHDRAW = "o+shift";
+static const char* const DEF_ATTACK = "e+any";
+static const char* const DEF_BUY = "b+shift";
+static const char* const DEF_DEPOSIT = "i+shift";
+static const char* const DEF_EXAMINE = "mouse1+any";
+static const char* const DEF_LOOK = "l";
+static const char* const DEF_OFFER = "o+ctrl";
+static const char* const DEF_OPEN = "space";
+static const char* const DEF_PICKUP = "g";
+static const char* const DEF_WITHDRAW = "o+shift";
 
 // Movement
-const char* const DEF_BACKWARD = "s";
-const char* const DEF_FLIP = "end";
-const char* const DEF_FORWARD = "w";
-const char* const DEF_LEFT = "left";
-const char* const DEF_LOOKDOWN = "pagedown";
-const char* const DEF_LOOKSTRAIGHT = "home";
-const char* const DEF_LOOKUP = "pageup";
-const char* const DEF_MOUSELOOKTOGGLE = "c+any";
-const char* const DEF_RIGHT = "right";
-const char* const DEF_RUNWALK = "shift";
-const char* const DEF_SLIDELEFT = "a";
-const char* const DEF_SLIDERIGHT = "d";
+static const char* const DEF_BACKWARD = "s";
+static const char* const DEF_FLIP = "end";
+static const char* const DEF_FORWARD = "w";
+static const char* const DEF_LEFT = "left";
+static const char* const DEF_LOOKDOWN = "pagedown";
+static const char* const DEF_LOOKSTRAIGHT = "home";
+static const char* const DEF_LOOKUP = "pageup";
+static const char* const DEF_MOUSELOOKTOGGLE = "c+any";
+static const char* const DEF_RIGHT = "right";
+static const char* const DEF_RUNWALK = "shift";
+static const char* const DEF_SLIDELEFT = "a";
+static const char* const DEF_SLIDERIGHT = "d";
 
 // Targeting
-const char* const DEF_TABBACKWARD = "tab+shift";
-const char* const DEF_TABFORWARD = "tab";
-const char* const DEF_TARGETCLEAR = "esc";
-const char* const DEF_TARGETNEXT = "]";
-const char* const DEF_TARGETPREVIOUS = "[";
-const char* const DEF_TARGETSELF = "q";
-const char* const DEF_MOUSETARGET = "mouse0";
+static const char* const DEF_TABBACKWARD = "tab+shift";
+static const char* const DEF_TABFORWARD = "tab";
+static const char* const DEF_TARGETCLEAR = "esc";
+static const char* const DEF_TARGETNEXT = "]";
+static const char* const DEF_TARGETPREVIOUS = "[";
+static const char* const DEF_TARGETSELF = "q";
+static const char* const DEF_MOUSETARGET = "mouse0";
 
 // Map
-const char* const DEF_MAP = "m+shift";
-const char* const DEF_MAPZOOMIN = "add";
-const char* const DEF_MAPZOOMOUT = "subtract";
+static const char* const DEF_MAP = "m+shift";
+static const char* const DEF_MAPZOOMIN = "add";
+static const char* const DEF_MAPZOOMOUT = "subtract";
 
 // Mouse
-const char* const DEF_INVERT = "false";
-const int DEF_MOUSELOOKXSCALE = 15;
-const int DEF_MOUSELOOKYSCALE = 9;
+static const char* const DEF_INVERT = "false";
+static const int DEF_MOUSELOOKXSCALE = 15;
+static const int DEF_MOUSELOOKYSCALE = 9;
 
 // Message to tell our sub tabs to refresh their data
 #define WM_USER_REINITDIALOG (WM_USER + 1)
@@ -174,24 +172,25 @@ std::vector<TabInfo> tabs = {
 };
 
 // Helpers
-void BooltoString(bool bValue, char *TCValue)
+static void BoolToString(bool bValue, char *TCValue)
 {
     if (bValue)
-        strcpy(TCValue, "true");
+        strncpy(TCValue, "true", sizeof("true"));
     else
-        strcpy(TCValue, "false");
+        strncpy(TCValue, "false", sizeof("false"));
 }
 
-bool StringtoBool(const char *TCValue)
+static bool StringToBool(const char *TCValue)
 {
     char lowerValue[MAX_KEYVALUELEN];
-    strcpy(lowerValue, TCValue);
+    strncpy(lowerValue, TCValue, MAX_KEYVALUELEN - 1);
+    lowerValue[MAX_KEYVALUELEN - 1] = '\0';
     for (char *p = lowerValue; *p; ++p) *p = tolower(*p);
 
     return strcmp(lowerValue, "true") == 0;
 }
 
-bool WritePrivateProfileStringIfChanged(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpString, LPCTSTR lpFileName)
+static bool WritePrivateProfileStringIfChanged(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpString, LPCTSTR lpFileName)
 {
     char currentValue[MAX_KEYVALUELEN];
     DWORD nSize = MAX_KEYVALUELEN;
@@ -210,7 +209,7 @@ bool WritePrivateProfileStringIfChanged(LPCTSTR lpAppName, LPCTSTR lpKeyName, LP
     return false;
 }
 
-void UpdateINIFile()
+static void UpdateINIFile()
 {
     // Get the current working directory
     char currentDir[MAX_PATH];
@@ -236,7 +235,7 @@ void UpdateINIFile()
     settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "attackontarget", m_attackontarget ? "true" : "false", strINIFile);
     settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "gpuefficiency", m_gpuefficiency ? "true" : "false", strINIFile);
 
-    BooltoString(bInvert, Value);
+    BoolToString(bInvert, Value);
     settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "invertmouse", Value, strINIFile);
     snprintf(Value, sizeof(Value), "%d", iMouselookXscale);
     settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "mouselookxscale", Value, strINIFile);
@@ -246,61 +245,61 @@ void UpdateINIFile()
     strSection = "keys";
 
     // Communication
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "broadcast", TCBroadcast, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "chat", TCChat, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "emote", TCEmote, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "say", TCSay, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "tell", TCTell, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "who", TCWho, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "yell", TCYell, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "broadcast", TCBroadcast, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "chat", TCChat, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "emote", TCEmote, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "say", TCSay, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "tell", TCTell, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "who", TCWho, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "yell", TCYell, strINIFile);
 
     // Interaction
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "attack", TCAttack, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "buy", TCBuy, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "deposit", TCDeposit, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "examine", TCExamine, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "look", TCLook, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "offer", TCOffer, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "open", TCOpen, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "pickup", TCPickup, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "withdraw", TCWithdraw, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "attack", TCAttack, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "buy", TCBuy, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "deposit", TCDeposit, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "examine", TCExamine, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "look", TCLook, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "offer", TCOffer, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "open", TCOpen, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "pickup", TCPickup, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "withdraw", TCWithdraw, strINIFile);
 
     // Movement
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "backward", TCBackward, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "flip", TCFlip, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "forward", TCForward, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "left", TCLeft, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "lookdown", TCLookdown, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "lookstraight", TCLookstraight, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "lookup", TCLookup, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "mouselooktoggle", TCMouselooktoggle, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "right", TCRight, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "run/walk", TCRunwalk, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "slideleft", TCSlideleft, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "slideright", TCSlideright, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "backward", TCBackward, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "flip", TCFlip, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "forward", TCForward, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "left", TCLeft, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "lookdown", TCLookdown, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "lookstraight", TCLookstraight, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "lookup", TCLookup, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "mouselooktoggle", TCMouselooktoggle, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "right", TCRight, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "run/walk", TCRunwalk, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "slideleft", TCSlideleft, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "slideright", TCSlideright, strINIFile);
 
     // Targeting
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "tabbackward", TCTabbackward, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "tabforward", TCTabforward, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "targetclear", TCTargetclear, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "targetnext", TCTargetnext, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "targetprevious", TCTargetprevious, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "targetself", TCTargetself, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "mousetarget", TCSelecttarget, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "tabbackward", TCTabbackward, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "tabforward", TCTabforward, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "targetclear", TCTargetclear, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "targetnext", TCTargetnext, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "targetprevious", TCTargetprevious, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "targetself", TCTargetself, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "mousetarget", TCSelecttarget, strINIFile);
 
     // Map
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "map", TCMap, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "mapzoomin", TCMapzoomin, strINIFile);
-    settingsChanged |= WritePrivateProfileStringIfChanged(strSection, "mapzoomout", TCMapzoomout, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "map", TCMap, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "mapzoomin", TCMapzoomin, strINIFile);
+    settingsChanged = settingsChanged || WritePrivateProfileStringIfChanged(strSection, "mapzoomout", TCMapzoomout, strINIFile);
 
     // Alert that changes to config.ini will require a client restart (e.g. graphic preferences)
     if (settingsChanged)
     {
-        MessageBox(NULL, "You must restart the Meridian 59 client before the new bindings or settings will take effect.", "Notice", MB_OK | MB_APPLMODAL);
+        MessageBox(NULL, GetString(hInst, IDS_SETTINGS_RESTART), GetString(hInst, IDS_NOTICE_TITLE), MB_OK | MB_APPLMODAL | MB_ICONINFORMATION);
     }
 }
 
-void ReadINIFile()
+static void ReadINIFile()
 {
     char strSection[MAX_KEYVALUELEN];
     DWORD nSize = MAX_KEYVALUELEN;
@@ -314,7 +313,7 @@ void ReadINIFile()
     char strINIFile[MAX_PATH];
     snprintf(strINIFile, sizeof(strINIFile), "%s\\config.ini", currentDir);
 
-    strcpy(strSection, "config");
+    strncpy(strSection, "config", sizeof("config"));
 
     GetPrivateProfileString(strSection, "classickeybindings", "false", ReturnedString, nSize, strINIFile);
     m_classic = strcmp(ReturnedString, "true") == 0;
@@ -337,10 +336,13 @@ void ReadINIFile()
     GetPrivateProfileString(strSection, "gpuefficiency", "false", ReturnedString, nSize, strINIFile);
     m_gpuefficiency = strcmp(ReturnedString, "true") == 0;
 
+    GetPrivateProfileString(strSection, "invertmouse", "false", ReturnedString, nSize, strINIFile);
+    bInvert = strcmp(ReturnedString, "true") == 0;
+
     iMouselookXscale = GetPrivateProfileInt(strSection, "mouselookxscale", DEF_MOUSELOOKXSCALE, strINIFile);
     iMouselookYscale = GetPrivateProfileInt(strSection, "mouselookyscale", DEF_MOUSELOOKYSCALE, strINIFile);
 
-    strcpy(strSection, "keys");
+    strncpy(strSection, "keys", sizeof("keys"));
 
     // Communication
     GetPrivateProfileString(strSection, "broadcast", DEF_BROADCAST, TCBroadcast, nSize, strINIFile);
@@ -391,7 +393,7 @@ void ReadINIFile()
     GetPrivateProfileString(strSection, "mapzoomout", DEF_MAPZOOMOUT, TCMapzoomout, nSize, strINIFile);
 }
 
-bool IsModifier(const char *TCValue)
+static bool IsModifier(const char *TCValue)
 {
     for (unsigned int i = MODIFIER_ALT; i < MODIFIER_ANY; i++)
     {
@@ -403,7 +405,7 @@ bool IsModifier(const char *TCValue)
     return false;
 }
 
-void InitModifierButton(const char *TCButtonstring, HWND modifier)
+static void InitModifierButton(const char *TCButtonstring, HWND modifier)
 {
     if (IsModifier(TCButtonstring))
     {
@@ -412,14 +414,14 @@ void InitModifierButton(const char *TCButtonstring, HWND modifier)
     }
 }
 
-void AppendModifier(char *TCString, int iAppend)
+static void AppendModifier(char *TCString, int iAppend)
 {
     char TCAppend[128];
 
     if (iAppend > MODIFIER_NONE && iAppend <= MODIFIER_ANY)
     {
-        strcpy(TCAppend, "+");
-        strcat(TCAppend, TCModifiers[iAppend]);
+        strncpy(TCAppend, "+", sizeof("+"));
+        strncat(TCAppend, TCModifiers[iAppend], sizeof(TCAppend) - strlen(TCAppend) - 1);
     }
     else
     {
@@ -428,15 +430,15 @@ void AppendModifier(char *TCString, int iAppend)
 
     if (strlen(TCString) > 0)
     {
-        strcat(TCString, TCAppend);
+        strncat(TCString, TCAppend, sizeof(TCString) - strlen(TCString) - 1);
     }
     else
     {
-        strcpy(TCString, TCAppend);
+        strncpy(TCString, TCAppend, sizeof(TCAppend));
     }
 }
 
-void StripOffModifier(char *TCValue)
+static void StripOffModifier(char *TCValue)
 {
     for (unsigned int i = 0; i < strlen(TCValue); i++)
     {
@@ -448,7 +450,7 @@ void StripOffModifier(char *TCValue)
     }
 }
 
-bool CheckforDuplicateBind(const char *TCCompare)
+static bool CheckforDuplicateBind(const char *TCCompare)
 {
     if (strcmp(TCCompare, TCBroadcast) == 0 && TCCompare != TCBroadcast) return true;
     if (strcmp(TCCompare, TCChat) == 0 && TCCompare != TCChat) return true;
@@ -495,21 +497,19 @@ bool CheckforDuplicateBind(const char *TCCompare)
     return false;
 }
 
-void CheckforDuplicateBindM(const char *TCCompare)
+static void CheckforDuplicateBindM(const char *TCCompare)
 {
     if (CheckforDuplicateBind(TCCompare))
     {
-        MessageBox(NULL, "Duplicate bindings for the same key have been detected.\n"
-            "This could cause some commands to not work on\n"
-            "Meridian 59.  Please double check your bindings.", "Warning", MB_OK);
+        MessageBox(NULL, GetString(hInst, IDS_DUPLICATE_BINDINGS), GetString(hInst, IDS_WARNING_TITLE), MB_OK | MB_ICONEXCLAMATION);
     }
 }
 
 // Function to handle key assignment
-void AssignKey(HWND hDlg, TCHAR* TCButtonstring, int nID) {
+static void AssignKey(HWND hDlg, TCHAR* TCButtonstring, int nID) {
     // Show the Assign Key dialog
     if (DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ASSIGNKEY), hDlg, AssignKeyDlgProc) == IDOK) {
-        strcpy(TCButtonstring, TCNewkey);
+        strncpy(TCButtonstring, TCNewkey, sizeof(TCNewkey));
         SetDlgItemText(hDlg, nID, TCButtonstring);
         CheckforDuplicateBindM(TCButtonstring);
     }
@@ -556,7 +556,7 @@ INT_PTR CALLBACK ModifierDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 }
 
 // Function to handle key modification
-void ModifyKey(HWND hDlg, TCHAR* TCString, int nID) {
+static void ModifyKey(HWND hDlg, TCHAR* TCString, int nID) {
     // Show the Modifier dialog
     if (DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_MODIFIER), hDlg, ModifierDlgProc) == IDOK) {
         strcat(TCString, "+");
@@ -568,60 +568,60 @@ void ModifyKey(HWND hDlg, TCHAR* TCString, int nID) {
     }
 }
 
-void RestoreDefaults(HWND hDlg)
+static void RestoreDefaults(HWND hDlg)
 {
     wchar_t szBuffer[256];
     char szBufferA[256];
 
     MultiByteToWideChar(CP_ACP, 0, DEF_INVERT, -1, szBuffer, 256);
     WideCharToMultiByte(CP_ACP, 0, szBuffer, -1, szBufferA, 256, NULL, NULL);
-    bInvert = StringtoBool(szBufferA);
+    bInvert = StringToBool(szBufferA);
 
     iMouselookXscale = DEF_MOUSELOOKXSCALE;
     iMouselookYscale = DEF_MOUSELOOKYSCALE;
 
-    strcpy(TCBroadcast, DEF_BROADCAST);
-    strcpy(TCChat, DEF_CHAT);
-    strcpy(TCEmote, DEF_EMOTE);
-    strcpy(TCSay, DEF_SAY);
-    strcpy(TCTell, DEF_TELL);
-    strcpy(TCWho, DEF_WHO);
-    strcpy(TCYell, DEF_YELL);
+    strncpy(TCBroadcast, DEF_BROADCAST, sizeof(DEF_BROADCAST));
+    strncpy(TCChat, DEF_CHAT, sizeof(DEF_CHAT));
+    strncpy(TCEmote, DEF_EMOTE, sizeof(DEF_EMOTE));
+    strncpy(TCSay, DEF_SAY, sizeof(DEF_SAY));
+    strncpy(TCTell, DEF_TELL, sizeof(DEF_TELL));
+    strncpy(TCWho, DEF_WHO, sizeof(DEF_WHO));
+    strncpy(TCYell, DEF_YELL, sizeof(DEF_YELL));
 
-    strcpy(TCAttack, DEF_ATTACK);
-    strcpy(TCBuy, DEF_BUY);
-    strcpy(TCDeposit, DEF_DEPOSIT);
-    strcpy(TCExamine, DEF_EXAMINE);
-    strcpy(TCLook, DEF_LOOK);
-    strcpy(TCOffer, DEF_OFFER);
-    strcpy(TCOpen, DEF_OPEN);
-    strcpy(TCPickup, DEF_PICKUP);
-    strcpy(TCWithdraw, DEF_WITHDRAW);
+    strncpy(TCAttack, DEF_ATTACK, sizeof(DEF_ATTACK));
+    strncpy(TCBuy, DEF_BUY, sizeof(DEF_BUY));
+    strncpy(TCDeposit, DEF_DEPOSIT, sizeof(DEF_DEPOSIT));
+    strncpy(TCExamine, DEF_EXAMINE, sizeof(DEF_EXAMINE));
+    strncpy(TCLook, DEF_LOOK, sizeof(DEF_LOOK));
+    strncpy(TCOffer, DEF_OFFER, sizeof(DEF_OFFER));
+    strncpy(TCOpen, DEF_OPEN, sizeof(DEF_OPEN));
+    strncpy(TCPickup, DEF_PICKUP, sizeof(DEF_PICKUP));
+    strncpy(TCWithdraw, DEF_WITHDRAW, sizeof(DEF_WITHDRAW));
 
-    strcpy(TCBackward, DEF_BACKWARD);
-    strcpy(TCFlip, DEF_FLIP);
-    strcpy(TCForward, DEF_FORWARD);
-    strcpy(TCLeft, DEF_LEFT);
-    strcpy(TCLookdown, DEF_LOOKDOWN);
-    strcpy(TCLookstraight, DEF_LOOKSTRAIGHT);
-    strcpy(TCLookup, DEF_LOOKUP);
-    strcpy(TCMouselooktoggle, DEF_MOUSELOOKTOGGLE);
-    strcpy(TCRight, DEF_RIGHT);
-    strcpy(TCRunwalk, DEF_RUNWALK);
-    strcpy(TCSlideleft, DEF_SLIDELEFT);
-    strcpy(TCSlideright, DEF_SLIDERIGHT);
+    strncpy(TCBackward, DEF_BACKWARD, sizeof(DEF_BACKWARD));
+    strncpy(TCFlip, DEF_FLIP, sizeof(DEF_FLIP));
+    strncpy(TCForward, DEF_FORWARD, sizeof(DEF_FORWARD));
+    strncpy(TCLeft, DEF_LEFT, sizeof(DEF_LEFT));
+    strncpy(TCLookdown, DEF_LOOKDOWN, sizeof(DEF_LOOKDOWN));
+    strncpy(TCLookstraight, DEF_LOOKSTRAIGHT, sizeof(DEF_LOOKSTRAIGHT));
+    strncpy(TCLookup, DEF_LOOKUP, sizeof(DEF_LOOKUP));
+    strncpy(TCMouselooktoggle, DEF_MOUSELOOKTOGGLE, sizeof(DEF_MOUSELOOKTOGGLE));
+    strncpy(TCRight, DEF_RIGHT, sizeof(DEF_RIGHT));
+    strncpy(TCRunwalk, DEF_RUNWALK, sizeof(DEF_RUNWALK));
+    strncpy(TCSlideleft, DEF_SLIDELEFT, sizeof(DEF_SLIDELEFT));
+    strncpy(TCSlideright, DEF_SLIDERIGHT, sizeof(DEF_SLIDERIGHT));
 
-    strcpy(TCTabbackward, DEF_TABBACKWARD);
-    strcpy(TCTabforward, DEF_TABFORWARD);
-    strcpy(TCTargetclear, DEF_TARGETCLEAR);
-    strcpy(TCTargetnext, DEF_TARGETNEXT);
-    strcpy(TCTargetprevious, DEF_TARGETPREVIOUS);
-    strcpy(TCTargetself, DEF_TARGETSELF);
-    strcpy(TCSelecttarget, DEF_MOUSETARGET);
+    strncpy(TCTabbackward, DEF_TABBACKWARD, sizeof(DEF_TABBACKWARD));
+    strncpy(TCTabforward, DEF_TABFORWARD, sizeof(DEF_TABFORWARD));
+    strncpy(TCTargetclear, DEF_TARGETCLEAR, sizeof(DEF_TARGETCLEAR));
+    strncpy(TCTargetnext, DEF_TARGETNEXT, sizeof(DEF_TARGETNEXT));
+    strncpy(TCTargetprevious, DEF_TARGETPREVIOUS, sizeof(DEF_TARGETPREVIOUS));
+    strncpy(TCTargetself, DEF_TARGETSELF, sizeof(DEF_TARGETSELF));
+    strncpy(TCSelecttarget, DEF_MOUSETARGET, sizeof(DEF_MOUSETARGET));
 
-    strcpy(TCMap, DEF_MAP);
-    strcpy(TCMapzoomin, DEF_MAPZOOMIN);
-    strcpy(TCMapzoomout, DEF_MAPZOOMOUT);
+    strncpy(TCMap, DEF_MAP, sizeof(DEF_MAP));
+    strncpy(TCMapzoomin, DEF_MAPZOOMIN, sizeof(DEF_MAPZOOMIN));
+    strncpy(TCMapzoomout, DEF_MAPZOOMOUT, sizeof(DEF_MAPZOOMOUT));
 
     // Update the options dialog with the default settings.
     CheckDlgButton(hDlg, IDC_ALWAYSRUN, m_alwaysrun);
@@ -641,7 +641,7 @@ void RestoreDefaults(HWND hDlg)
 }
 
 // Function to initialize mouse settings
-void InitializeMouseSettings(HWND hDlg) {
+static void InitializeMouseSettings(HWND hDlg) {
     CheckDlgButton(hDlg, IDC_INVERT, bInvert ? BST_CHECKED : BST_UNCHECKED);
     SendMessage(GetDlgItem(hDlg, IDC_MOUSEXSCALE), TBM_SETRANGE, TRUE, MAKELONG(0, 100));
     SendMessage(GetDlgItem(hDlg, IDC_MOUSEXSCALE), TBM_SETPOS, TRUE, iMouselookXscale);
@@ -669,7 +669,7 @@ void InitializeMouseSettings(HWND hDlg) {
 }
 
 // Dialog procedure for the Mouse Preferences dialog
-INT_PTR CALLBACK MousePreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK MousePreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_USER_REINITDIALOG:
     case WM_INITDIALOG:
@@ -710,7 +710,7 @@ INT_PTR CALLBACK MousePreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam,
 }
 
 // Function to initialize map key bindings
-void InitializeMapKeyBindings(HWND hDlg) {
+static void InitializeMapKeyBindings(HWND hDlg) {
     SetDlgItemText(hDlg, IDC_MAP, TCMap);
     SetDlgItemText(hDlg, IDC_MAPZOOMIN, TCMapzoomin);
     SetDlgItemText(hDlg, IDC_MAPZOOMOUT, TCMapzoomout);
@@ -722,7 +722,7 @@ void InitializeMapKeyBindings(HWND hDlg) {
 }
 
 // Dialog procedure for the Map Preferences dialog
-INT_PTR CALLBACK MapPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK MapPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_USER_REINITDIALOG:
     case WM_INITDIALOG:
@@ -768,8 +768,7 @@ INT_PTR CALLBACK MapPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, L
     return (INT_PTR)FALSE;
 }
 
-// Function to initialize targeting key bindings
-void InitializeTargetingKeyBindings(HWND hDlg) {
+static void InitializeTargetingKeyBindings(HWND hDlg) {
     SetDlgItemText(hDlg, IDC_TABBACKWARD, TCTabbackward);
     SetDlgItemText(hDlg, IDC_TABFORWARD, TCTabforward);
     SetDlgItemText(hDlg, IDC_TARGETCLEAR, TCTargetclear);
@@ -789,7 +788,7 @@ void InitializeTargetingKeyBindings(HWND hDlg) {
 }
 
 // Dialog procedure for the Targeting Preferences dialog
-INT_PTR CALLBACK TargetingPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK TargetingPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_INITDIALOG:
     case WM_USER_REINITDIALOG:
@@ -860,7 +859,7 @@ INT_PTR CALLBACK TargetingPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wPa
 }
 
 // Function to initialize interaction key bindings
-void InitializeInteractionKeyBindings(HWND hDlg) {
+static void InitializeInteractionKeyBindings(HWND hDlg) {
     SetDlgItemText(hDlg, IDC_ATTACK, TCAttack);
     SetDlgItemText(hDlg, IDC_BUY, TCBuy);
     SetDlgItemText(hDlg, IDC_DEPOSIT, TCDeposit);
@@ -884,7 +883,7 @@ void InitializeInteractionKeyBindings(HWND hDlg) {
 }
 
 // Dialog procedure for the Interaction Preferences dialog
-INT_PTR CALLBACK InteractionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK InteractionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_INITDIALOG:
     case WM_USER_REINITDIALOG:
@@ -966,8 +965,7 @@ INT_PTR CALLBACK InteractionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM w
     return (INT_PTR)FALSE;
 }
 
-// Implementation of OptionsPreferencesDlgProc
-INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
@@ -989,7 +987,7 @@ INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wPara
             m_classic = IsDlgButtonChecked(hDlg, IDC_CLASSIC);
             if (m_classic)
             {
-                MessageBox(hDlg, "Activating \"Classic Key Bindings\" will cause the game to ignore the key bindings!", "Notice", MB_OK);
+                MessageBox(hDlg, GetString(hInst, IDS_CLASSIC_BIND_WARNING), GetString(hInst, IDS_NOTICE_TITLE), MB_OK | MB_ICONEXCLAMATION);
             }
             break;
 
@@ -997,34 +995,20 @@ INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wPara
             m_software = IsDlgButtonChecked(hDlg, IDC_SOFTWARE);
             if (!m_software)
             {
-                MessageBox(hDlg, "Software renderer may have been activated due to a problem with your video setup.\n\t\t Disabling may cause the game not to run.", "Warning", MB_OK);
+                MessageBox(hDlg, GetString(hInst, IDS_SOFTWARERENDERER_WARN), GetString(hInst, IDS_WARNING_TITLE), MB_OK | MB_ICONEXCLAMATION);
             }
             break;
 
         case IDC_MAINHELP:
-            MessageBox(hDlg, "To bind a command:\n\n"
-                "* Click on the button next to the command you want to bind. This button will\n"
-                "  show the key currently bound to the command\n\n"
-                "* When the popup appears, press and release the key and/or mouse button\n"
-                "  you want to bind to that command. For example, pressing the button next to\n"
-                "  \"forward\" and pressing the W key will make that the new walk forward key.\n\n"
-                "* Modifier keys such as shift, alt, control may be used in combination with the\n"
-                "  main key when binding a command (example: W+shift).\n\n"
-                "* If you wish to change only the modifier key of a command, press the button\n"
-                "  marked with a '+' next to the binding button and select a modifier key from\n"
-                "  the list shown.\n\n"
-                "* The \"Any\" modifier means that any modifier key can be pressed with the key\n"
-                "  and it will still work. So, W+any means that W+shift, W+alt, W+ctrl, and just\n"
-                "  W will do the specified command.\n\n"
-                "* If you make a mistake you may press the \"Restore Defaults\" button and all of\n"
-                "  the bindings will be set to the default.\n\n"
-                "* Once you have finished your settings, press \"OK\" to save and quit. Or you\n"
-                "  can press \"Cancel\" to quit without saving your changes.",
-                "Help", MB_OK);
+            {
+	            char bindingHelpText[2048];
+	            LoadString (hInst, IDS_BINDING_HELP, bindingHelpText, 2048);
+                MessageBox(hDlg, bindingHelpText, GetString(hInst, IDS_HELP_TITLE), MB_OK | MB_ICONINFORMATION);
+            }
             break;
 
         case IDC_RESTOREDEFAULTS:
-            if (MessageBox(hDlg, "Are you sure you want to restore all settings to their default?", "Restore Defaults", MB_YESNO) == IDYES)
+            if (MessageBox(hDlg, GetString(hInst, IDS_DEFAULT_ARE_YOU_SURE), GetString(hInst, IDS_RESTORE_DEFAULTS), MB_YESNO | MB_ICONQUESTION) == IDYES)
             {
                 RestoreDefaults(hDlg);
             }
@@ -1072,8 +1056,7 @@ INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wPara
     return (INT_PTR)FALSE;
 }
 
-// Implementation of ProfanitySettingsDlgProc
-INT_PTR CALLBACK ProfanitySettingsDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK ProfanitySettingsDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
@@ -1131,8 +1114,7 @@ INT_PTR CALLBACK ProfanitySettingsDlgProc(HWND hDlg, UINT message, WPARAM wParam
     return (INT_PTR)FALSE;
 }
 
-// Implementation of CommonPreferencesDlgProc
-INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
@@ -1229,7 +1211,7 @@ INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam
 }
 
 // Hook procedure to capture keyboard events
-LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
     if (nCode == HC_ACTION) {
         KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
         if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYUP) {
@@ -1255,73 +1237,73 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 
                 switch (vkCode) {
                 case VK_BACK:
-                    strcpy(TCNewkey, "backspace");
+                    strncpy(TCNewkey, "backspace", sizeof("backspace"));
                     break;
                 case VK_TAB:
-                    strcpy(TCNewkey, "tab");
+                    strncpy(TCNewkey, "tab", sizeof("tab"));
                     break;
                 case VK_RETURN:
-                    strcpy(TCNewkey, "enter");
+                    strncpy(TCNewkey, "enter", sizeof("enter"));
                     break;
                 case VK_ESCAPE:
-                    strcpy(TCNewkey, "esc");
+                    strncpy(TCNewkey, "esc", sizeof("esc"));
                     break;
                 case VK_SPACE:
-                    strcpy(TCNewkey, "space");
+                    strncpy(TCNewkey, "space", sizeof("space"));
                     break;
                 case VK_PRIOR:
-                    strcpy(TCNewkey, "pageup");
+                    strncpy(TCNewkey, "pageup", sizeof("pageup"));
                     break;
                 case VK_NEXT:
-                    strcpy(TCNewkey, "pagedown");
+                    strncpy(TCNewkey, "pagedown", sizeof("pagedown"));
                     break;
                 case VK_END:
-                    strcpy(TCNewkey, "end");
+                    strncpy(TCNewkey, "end", sizeof("end"));
                     break;
                 case VK_HOME:
-                    strcpy(TCNewkey, "home");
+                    strncpy(TCNewkey, "home", sizeof("home"));
                     break;
                 case VK_LEFT:
-                    strcpy(TCNewkey, "left");
+                    strncpy(TCNewkey, "left", sizeof("left"));
                     break;
                 case VK_UP:
-                    strcpy(TCNewkey, "up");
+                    strncpy(TCNewkey, "up", sizeof("up"));
                     break;
                 case VK_RIGHT:
-                    strcpy(TCNewkey, "right");
+                    strncpy(TCNewkey, "right", sizeof("right"));
                     break;
                 case VK_DOWN:
-                    strcpy(TCNewkey, "down");
+                    strncpy(TCNewkey, "down", sizeof("down"));
                     break;
                 case VK_DELETE:
-                    strcpy(TCNewkey, "delete");
+                    strncpy(TCNewkey, "delete", sizeof("delete"));
                     break;
                 case VK_ADD:
-                    strcpy(TCNewkey, "add");
+                    strncpy(TCNewkey, "add", sizeof("add"));
                     break;
                 case VK_SUBTRACT:
-                    strcpy(TCNewkey, "subtract");
+                    strncpy(TCNewkey, "subtract", sizeof("subtract"));
                     break;
                 case 0xba:
-                    strcpy(TCNewkey, ";");
+                    strncpy(TCNewkey, ";", sizeof(";"));
                     break;
                 case 0xbc:
-                    strcpy(TCNewkey, ",");
+                    strncpy(TCNewkey, ",", sizeof(","));
                     break;
                 case 0xbe:
-                    strcpy(TCNewkey, ".");
+                    strncpy(TCNewkey, ".", sizeof("."));
                     break;
                 case 0xdb:
-                    strcpy(TCNewkey, "[");
+                    strncpy(TCNewkey, "[", sizeof("["));
                     break;
                 case 0xdc:
-                    strcpy(TCNewkey, "\\");
+                    strncpy(TCNewkey, "\\", sizeof("\\"));
                     break;
                 case 0xdd:
-                    strcpy(TCNewkey, "]");
+                    strncpy(TCNewkey, "]", sizeof("]"));
                     break;
                 case 0xde:
-                    strcpy(TCNewkey, "'");
+                    strncpy(TCNewkey, "'", sizeof("'"));
                     break;
                 }
 
@@ -1338,17 +1320,17 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
                 case VK_SHIFT:
                 case VK_LSHIFT:
                 case VK_RSHIFT:
-                    strcpy(TCNewkey, "shift");
+                    strncpy(TCNewkey, "shift", sizeof("shift"));
                     break;
                 case VK_CONTROL:
                 case VK_LCONTROL:
                 case VK_RCONTROL:
-                    strcpy(TCNewkey, "ctrl");
+                    strncpy(TCNewkey, "ctrl", sizeof("ctrl"));
                     break;
                 case VK_MENU:
                 case VK_LMENU:
                 case VK_RMENU:
-                    strcpy(TCNewkey, "alt");
+                    strncpy(TCNewkey, "alt", sizeof("alt"));
                     break;
                 }
 
@@ -1364,11 +1346,11 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 }
 
 // Dialog procedure for the Assign Key dialog
-INT_PTR CALLBACK AssignKeyDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK AssignKeyDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_INITDIALOG:
         // Initialize variables
-        strcpy(TCNewkey, "");
+        strncpy(TCNewkey, "", 1);
         iModifier = MODIFIER_NONE;
         SetCapture(hDlg);
         SetFocus(hDlg);
@@ -1377,25 +1359,25 @@ INT_PTR CALLBACK AssignKeyDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
         return (INT_PTR)TRUE;
 
     case WM_LBUTTONDOWN:
-        strcpy(TCNewkey, "mouse0");
+        strncpy(TCNewkey, "mouse0", sizeof("mouse0"));
         EndDialog(hDlg, IDOK);
         return (INT_PTR)TRUE;
 
     case WM_RBUTTONDOWN:
-        strcpy(TCNewkey, "mouse1");
+        strncpy(TCNewkey, "mouse1", sizeof("mouse1"));
         EndDialog(hDlg, IDOK);
         return (INT_PTR)TRUE;
 
     case WM_MBUTTONDOWN:
-        strcpy(TCNewkey, "mouse2");
+        strncpy(TCNewkey, "mouse2", sizeof("mouse2"));
         EndDialog(hDlg, IDOK);
         return (INT_PTR)TRUE;
 
     case WM_XBUTTONDOWN:
         if (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) {
-            strcpy(TCNewkey, "mouse3");
+            strncpy(TCNewkey, "mouse3", sizeof("mouse3"));
         } else if (GET_XBUTTON_WPARAM(wParam) == XBUTTON2) {
-            strcpy(TCNewkey, "mouse4");
+            strncpy(TCNewkey, "mouse4", sizeof("mouse4"));
         }
         if (strlen(TCNewkey) > 0) {
             EndDialog(hDlg, IDOK);
@@ -1419,7 +1401,7 @@ INT_PTR CALLBACK AssignKeyDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 }
 
 // Function to initialize key bindings
-void InitializeKeyBindings(HWND hDlg) {
+static void InitializeKeyBindings(HWND hDlg) {
     SetDlgItemText(hDlg, IDC_BROADCAST, TCBroadcast);
     SetDlgItemText(hDlg, IDC_CHAT, TCChat);
     SetDlgItemText(hDlg, IDC_EMOTE, TCEmote);
@@ -1429,8 +1411,7 @@ void InitializeKeyBindings(HWND hDlg) {
     SetDlgItemText(hDlg, IDC_YELL, TCYell);
 }
 
-// Implementation of CommunicationPreferencesDlgProc
-INT_PTR CALLBACK CommunicationPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK CommunicationPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_INITDIALOG:
     case WM_USER_REINITDIALOG:
@@ -1501,7 +1482,7 @@ INT_PTR CALLBACK CommunicationPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
 }
 
 // Function to initialize movement key bindings
-void InitializeMovementKeyBindings(HWND hDlg) {
+static void InitializeMovementKeyBindings(HWND hDlg) {
     SetDlgItemText(hDlg, IDC_FORWARD, TCForward);
     SetDlgItemText(hDlg, IDC_BACKWARD, TCBackward);
     SetDlgItemText(hDlg, IDC_LEFT, TCLeft);
@@ -1531,7 +1512,7 @@ void InitializeMovementKeyBindings(HWND hDlg) {
 }
 
 // Dialog procedure for the Movement Preferences dialog
-INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_INITDIALOG:
         InitializeMovementKeyBindings(hDlg);
@@ -1630,7 +1611,7 @@ INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wPar
     return (INT_PTR)FALSE;
 }
 
-LRESULT CALLBACK PropSheetSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK PropSheetSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                                        UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
     if (uMsg == WM_SHOWWINDOW && wParam == TRUE)
@@ -1663,7 +1644,7 @@ LRESULT CALLBACK PropSheetSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
-int CALLBACK PropSheetCallback(HWND hwndDlg, UINT uMsg, LPARAM lParam)
+static int CALLBACK PropSheetCallback(HWND hwndDlg, UINT uMsg, LPARAM lParam)
 {
     if (uMsg == PSCB_INITIALIZED && hwndDlg)
     {

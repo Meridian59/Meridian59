@@ -1691,7 +1691,7 @@ void ShowPreferencesDialog(HWND hWndParent)
     psh.nPages = static_cast<UINT>(psp.size());
     psh.nStartPage = 0;
     psh.ppsp = psp.data();
-    // As a homage to the late keybind we include its icon (RIP Feb 2012-2025)
+    // As a homage to the late keybind we include its icon (RIP Feb 2001-2025)
     psh.pszIcon = MAKEINTRESOURCE(IDI_KEYBIND);
 
     // Create the property sheet

@@ -636,8 +636,8 @@
 #define IDS_MAP                         3645
 #define IDS_MOUSE                       3646
 #define IDS_DUPLICATE_BINDINGS          3647
-#define IDS_DEFAULT_ARE_YOU_SURE        3657
-#define IDS_RESTORE_DEFAULTS            3658
+#define IDS_DEFAULT_ARE_YOU_SURE        3648
+#define IDS_RESTORE_DEFAULTS            3649
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

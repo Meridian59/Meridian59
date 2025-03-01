@@ -3296,7 +3296,7 @@ END
 STRINGTABLE
 BEGIN
 	IDS_WARNING_TITLE			    "Warning"
-    IDS_SOFTWARERENDERER_WARN		"Software renderer may have been activated due to a problem with your video setup.\n\t\t Disabling may cause the game not to run."
+    IDS_SOFTWARERENDERER_WARN		"Software renderer may have been activated due to a problem with your video setup.\n\n\t\t Disabling may cause the game not to run."
 	IDS_HELP_TITLE					"Help"
 	IDS_BINDING_HELP 				"To bind a command:\n\n * Click on the button next to the command you want to bind. This button will\n show the key currently bound to the command.\n\n * When the popup appears, press and release the key and/or mouse button\n you want to bind to that command. For example, pressing the button next to\n 'forward' and pressing the W key will make that the new walk forward key.\n\n * Modifier keys such as shift, alt, control may be used in combination with the\n main key when binding a command (example: W+shift).\n\n * If you wish to change only the modifier key of a command, press the button\n marked with a '+' next to the binding button and select a modifier key from\n the list shown.\n\n * The 'Any' modifier means that any modifier key can be pressed with the key\n and it will still work. So, W+any means that W+shift, W+alt, W+ctrl, and just\n W will do the specified command.\n\n * If you make a mistake you may press the 'Restore Defaults' button and all of\n the bindings will be set to the default.\n\n * Once you have finished your settings, press 'OK' to save and quit. Or you\n can press 'Cancel' to quit without saving your changes."
 	IDS_NOTICE_TITLE				"Notice"

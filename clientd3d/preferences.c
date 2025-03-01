@@ -155,20 +155,20 @@ INT_PTR CALLBACK MousePreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam,
 
 // Sub tab info strucuture and definitions
 struct TabInfo {
-    const char* title;
+    int title;
     int templateId;
     DLGPROC dlgProc;
 };
 
 std::vector<TabInfo> tabs = {
-    {"Preferences", IDD_SETTINGS, CommonPreferencesDlgProc},
-    {"Options", IDD_OPTIONS, OptionsPreferencesDlgProc},
-    {"Move", IDD_MOVEMENT, MovementPreferencesDlgProc},
-    {"Comms", IDD_COMMUNICATION, CommunicationPreferencesDlgProc},
-    {"Interact", IDD_INTERACTION, InteractionPreferencesDlgProc},
-    {"Target", IDD_TARGETING, TargetingPreferencesDlgProc},
-    {"Map", IDD_MAP, MapPreferencesDlgProc},
-    {"Mouse", IDD_MOUSE, MousePreferencesDlgProc}
+    {IDS_PREFERENCES, IDD_SETTINGS, CommonPreferencesDlgProc},
+    {IDS_OPTIONS, IDD_OPTIONS, OptionsPreferencesDlgProc},
+    {IDS_MOVE, IDD_MOVEMENT, MovementPreferencesDlgProc},
+    {IDS_COMMS, IDD_COMMUNICATION, CommunicationPreferencesDlgProc},
+    {IDS_INTERACT, IDD_INTERACTION, InteractionPreferencesDlgProc},
+    {IDS_TARGET, IDD_TARGETING, TargetingPreferencesDlgProc},
+    {IDS_MAP, IDD_MAP, MapPreferencesDlgProc},
+    {IDS_MOUSE, IDD_MOUSE, MousePreferencesDlgProc}
 };
 
 // Helpers
@@ -1676,7 +1676,7 @@ void ShowPreferencesDialog(HWND hWndParent)
         psp[i].pszTemplate = MAKEINTRESOURCE(tabs[i].templateId);
         psp[i].pszIcon = NULL;
         psp[i].pfnDlgProc = tabs[i].dlgProc;
-        psp[i].pszTitle = tabs[i].title;
+        psp[i].pszTitle = GetString(hInst, tabs[i].title);
         psp[i].lParam = 0;
     }
 
@@ -1687,7 +1687,7 @@ void ShowPreferencesDialog(HWND hWndParent)
     psh.pfnCallback = PropSheetCallback;
     psh.hwndParent = hWndParent;
     psh.hInstance = GetModuleHandle(NULL);
-    psh.pszCaption = "Meridian 59 Preferences";
+    psh.pszCaption = GetString(hInst, IDS_PREFERENCES);
     psh.nPages = static_cast<UINT>(psp.size());
     psh.nStartPage = 0;
     psh.ppsp = psp.data();

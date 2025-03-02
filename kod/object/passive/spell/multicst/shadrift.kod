@@ -16,7 +16,6 @@ constants:
 
 resources:
 
-
    DeathsDoor_name_rsc = "shadow rift"
    DeathsDoor_icon_rsc = ideadoor.bgf
    DeathsDoor_desc_rsc = "Summons the darkest of magics to warp the fabic of space.  "
@@ -64,12 +63,10 @@ classvars:
 
    viCast_time = 0    % in milliseconds
 
-
-properties:                     
+properties:
 
    viMultiCast_Spellpower = 1500 % 5 minutes for 3 @ 20%, 70 secs for 7 @ 99%
-messages:      
-
+messages:
 
    ResetReagents()
    {
@@ -83,7 +80,7 @@ messages:
    {
       % Ask room if we're allowed to cast here.  For example, portals into 
       % guild halls are a bad idea.
-      if (NOT Send(Send(who, @GetOwner), @CanHavePlayerPortal))
+      if (NOT Send(Send(who,@GetOwner),@CanHavePlayerPortal))
       {
          Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
          
@@ -98,10 +95,9 @@ messages:
       propagate;
    }
 
-   PrismCast(spellpower = 0, lCasters=$, lTargets=$, oPrism=$, lLocation=$) 
+   PrismCast(spellpower = 0, lCasters = $, lTargets = $, oPrism = $, lLocation = $) 
    {
-      local oCaster, oNecroPortal,lPortalLocation,lTargetLocation,
-        oTargetRoom;
+      local oCaster, oNecroPortal, lPortalLocation, lTargetLocation, oTargetRoom;
       
       if oPrism = $
       {
@@ -109,30 +105,31 @@ messages:
          return;
       }
 
-      if send(oPrism,@GetTeleportLocation)
+      if Send(oPrism,@GetTeleportLocation)
       {
          % Second cast: create a portal to the place where the first cast
 	      % occurred.
 
 	      % Where the portal leads
-         lTargetLocation = send(oPrism,@GetTeleportLocation);  
+         lTargetLocation = Send(oPrism,@GetTeleportLocation);  
          
 	      % Where the portal gets put
-         lPortalLocation = send(self,@GetPortalLocation,#what=oPrism);  
+         lPortalLocation = Send(self,@GetPortalLocation,#what=oPrism);  
          
 	      % Fail if target is the current room to prevent portal to itself
-	      oTargetRoom = Send(SYS, @FindRoomByNum, #num = first(lTargetLocation));
-	      if oTargetRoom = send(oPrism, @GetOwner)
+	      oTargetRoom = Send(SYS,@FindRoomByNum,#num=First(lTargetLocation));
+	      if oTargetRoom = Send(oPrism,@GetOwner)
 	      {
             for oCaster in lCasters
             {
                Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_room_loop);
             }
+
             return;
 	      }
          
 	      % Fail if target room already has a portal, to prevent infinite loops
-	      if send(oTargetRoom, @FindHoldingActive, #class=&Portal) 
+	      if Send(oTargetRoom,@FindHoldingActive,#class=&Portal) 
 	      {
             for oCaster in lCasters
             {
@@ -141,30 +138,29 @@ messages:
 	         return;
 	      }
          
-         oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation);
-	      Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
+         oNecroPortal = Create(&NecropolisPortal,#lLocation=lTargetLocation);
+	      Send(oNecroPortal,@SetTarget,#lTarget=lTargetLocation);
          
-         send(Send(SYS, @FindRoomByNum, #num = first(lPortalLocation)),
-         @NewHold,#what=oNecroPortal,
-         #new_row=nth(lPortalLocation,2),#new_col=nth(lPortalLocation,3),
-         #fine_row=nth(lPortalLocation,4),#fine_col=nth(lPortalLocation,5));
+         Send(Send(SYS,@FindRoomByNum,#num=First(lPortalLocation)),
+            @NewHold,#what=oNecroPortal,
+            #new_row=Nth(lPortalLocation,2),#new_col=Nth(lPortalLocation,3),
+            #fine_row=Nth(lPortalLocation,4),#fine_col=Nth(lPortalLocation,5));
          
          for oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_succeeded);
-         }  
+         }
       }
       else
       {
          % First cast: prism records location where portal will lead after
 	      % the second cast.
-         send(oPrism,@LearnLocation,#lLocation=send(self,@GetPortalLocation,#what=oPrism));
+         Send(oPrism,@LearnLocation,#lLocation=Send(self,@GetPortalLocation,#what=oPrism));
          
          for oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_succeeded2);
-         }         
-         
+         }
       }
       
       return;
@@ -172,24 +168,26 @@ messages:
 
    GetPortalLocation(what = $)
    {
-      local oRoom,iRow,iCol,iFineRow,iFineCol,llocation;
+      local oRoom, iRow, iCol, iFineRow, iFineCol, lLocation;
       
-      oRoom = send(what,@GetOwner);
+      oRoom = Send(what,@GetOwner);
 
-      if oRoom = $ OR NOT isClass(oRoom,&room)
-      { debug("Got non room owner in GetPortalLocation");  return; }
+      if (oRoom = $ OR NOT isClass(oRoom,&Room))
+      { 
+         debug("Got non room owner in GetPortalLocation");
          
-      irow=send(what,@GetRow);
-      icol=send(what,@GetCol);
-      ifinerow=send(what,@GetFineRow);
-      ifinecol=send(what,@GetFineCol);
+         return; 
+      }
+         
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+      iFineRow = Send(what,@GetFineRow);
+      iFineCol = Send(what,@GetFineCol);
 
-
-      lLocation = [ Send(oRoom, @GetRoomNum), iRow,iCol,iFineRow,iFineCol ];
+      lLocation = [ Send(oRoom,@GetRoomNum), iRow, iCol, iFineRow, iFineCol ];
 
       return lLocation;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

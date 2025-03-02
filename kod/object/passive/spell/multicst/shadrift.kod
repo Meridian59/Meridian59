@@ -38,7 +38,7 @@ resources:
 
    DeathsDoor_succeeded = "A shimmering portal springs into being!"
    DeathsDoor_succeeded2 = "The prism hums and shudders."
-   deathsDoor_necros_only = "Without an Amulet to summon the power of the Three, you cannot hope to summon a shadow rift."
+   DeathsDoor_necros_only = "Without an Amulet to summon the power of the Three, you cannot hope to summon a shadow rift."
 
 classvars:
 

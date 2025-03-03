@@ -9,7 +9,6 @@
  * winmenu.c:  Handle main client window menu.
  */
 #include "client.h"
-#include "preferences.h"
 
 static HMENU menu;          // Main menu
 

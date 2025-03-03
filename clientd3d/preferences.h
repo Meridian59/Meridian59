@@ -8,8 +8,6 @@
 #ifndef _PREFERENCES_H
 #define _PREFERENCES_H
 
-#pragma once
-
 void ShowPreferencesDialog(HWND hWndParent);
 
 #endif	/* #ifndef _PREFERENCES_H */

@@ -750,7 +750,7 @@ resources:
       "I have reported your theft of %CARGO to a wizard friend of mine, and he has ensured that you will suffer for your dishonesty."
 
    catering_assign_2 = "Perhaps you can help me.  I am having a private party and my errand boy has become ill.  "
-      "will you help me by delivering the food?  %NPC is catering the party and knows where the food needs to go, "
+      "Will you help me by delivering the food?  %NPC is catering the party and knows where the food needs to go, "
       "just ask %HIMHER_NPC about the catering assignment.  "
       "You will be amply rewarded when you have completed the delivery.  Please hurry."
    catering_failure_2 = "Subject: Catering\n"

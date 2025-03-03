@@ -39,7 +39,6 @@ BEGIN
         MENUITEM "&Conectar-se",                    ID_GAME_CONNECT
         MENUITEM "&Desconectar",                    ID_GAME_DISCONNECT
         MENUITEM "&Preferências",                   ID_GAME_SETTINGS
-        MENUITEM "Configurações",                   ID_CONFIGMENU
         MENUITEM "Alterar &senha",                  ID_GAME_PASSWORD, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "&Imprimir mapa",                  ID_GAME_PRINTMAP
@@ -819,7 +818,6 @@ BEGIN
         MENUITEM "&Einwählen",                  ID_GAME_CONNECT
         MENUITEM "&Auflegen",                   ID_GAME_DISCONNECT
         MENUITEM "&Voreinstellungen",           ID_GAME_SETTINGS
-        MENUITEM "Konfiguration",               ID_CONFIGMENU
         MENUITEM "Pass&wort ändern",            ID_GAME_PASSWORD
         MENUITEM SEPARATOR
         MENUITEM "&Drucke Karte",               ID_GAME_PRINTMAP
@@ -1600,7 +1598,6 @@ BEGIN
         MENUITEM "&Connect",                    ID_GAME_CONNECT
         MENUITEM "&Disconnect",                 ID_GAME_DISCONNECT
         MENUITEM "&Preferences",                ID_GAME_SETTINGS
-        MENUITEM "Configuration",               ID_CONFIGMENU
         MENUITEM "Change pass&word",            ID_GAME_PASSWORD, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "Print &Map",                  ID_GAME_PRINTMAP

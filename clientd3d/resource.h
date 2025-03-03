@@ -211,7 +211,6 @@
 #define IDS_SERVICE_FAILURE             182
 #define ID_OPTIONS_LOGOUTTIMER          184
 #define ID_OPTIONS_LOGOUTTIMER185       185
-#define ID_CONFIGMENU                   186
 #define IDS_CANTSENDREQUEST             187
 #define IDS_CANTGETFILESIZE             188
 #define IDS_CANTSIGNUP                  189

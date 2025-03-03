@@ -663,27 +663,6 @@ void ConfigSetSocketPortByNumber(int num)
    config.comm.sockport = atoi(buf);
 }
 
-void ConfigMenuLaunch(void)
-{
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	char command_line[MAX_CMDLINE];
-
-	snprintf(command_line, sizeof(command_line), "%s", "m59bind.exe");
-
-	memset(&si, sizeof(si), 0);
-	si.cb = sizeof(si);
-	GetStartupInfo(&si); /* shouldn't need to do this.  very weird */
-
-	if (!CreateProcess(NULL, command_line,
-		NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
-	{
-		debug(("Failed running configuration menu program %s\n", command_line));
-
-		ClientError(hInst, hMain, IDS_NOCONFIGMENUEXE, config.browser);
-	}
-}
-
 bool IsSteamVersion() {
   return is_steam_install;
 }

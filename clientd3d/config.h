@@ -134,7 +134,6 @@ void SaveSettings(void);
 
 void ConfigLoad(void);
 void ConfigSave(void);
-void ConfigMenuLaunch(void);
 
 void WindowSettingsSave(void);
 void WindowSettingsLoad(WINDOWPLACEMENT *w);

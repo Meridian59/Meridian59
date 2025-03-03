@@ -1643,7 +1643,6 @@ void ShowPreferencesDialog(HWND hWndParent)
     std::vector<PROPSHEETPAGE> psp(tabs.size());
     PROPSHEETHEADER psh;
 
-
     ReadINIFile();
 
     tabTitles.clear();
@@ -1657,7 +1656,6 @@ void ShowPreferencesDialog(HWND hWndParent)
         psp[i].pszTemplate = MAKEINTRESOURCE(tabs[i].templateId);
         psp[i].pszIcon = NULL;
         psp[i].pfnDlgProc = tabs[i].dlgProc;
-        // issue
         char tabTitle[2048] = { 0 };
         LoadString(hInst, tabs[i].title, tabTitle, 2048);
 		tabTitles.emplace_back(tabTitle);

@@ -17,6 +17,9 @@ static const char* TCModifiers[5] = { "none", "alt", "ctrl", "shift", "any" };
 
 // Preferences state
 
+static int iModifier;
+static HHOOK hHook = NULL;
+
 static bool bUpdateINI = false;
 
 static char TCNewkey[MAX_KEYVALUELEN];
@@ -160,9 +163,9 @@ struct TabInfo {
     int templateId;
     DLGPROC dlgProc;
 };
-std::vector<std::string> tabTitles;
+static std::vector<std::string> tabTitles;
 
-std::vector<TabInfo> tabs = {
+static const std::vector<TabInfo> tabs = {
     {IDS_PREFERENCES, IDD_SETTINGS, CommonPreferencesDlgProc},
     {IDS_OPTIONS, IDD_OPTIONS, OptionsPreferencesDlgProc},
     {IDS_MOVE, IDD_MOVEMENT, MovementPreferencesDlgProc},
@@ -177,7 +180,7 @@ std::vector<TabInfo> tabs = {
 static void BoolToString(bool bValue, char *TCValue)
 {
     const char* value = bValue ? "true" : "false";
-    snprintf(TCValue, sizeof(TCValue), "%s", value);
+    snprintf(TCValue, MAX_KEYVALUELEN, "%s", value);
 }
 
 static bool StringToBool(const char *TCValue)
@@ -422,13 +425,8 @@ static void AppendModifier(char *TCString, int iAppend)
         TCAppend[0] = '+';
         TCAppend[1] = '\0';
         strncat(TCAppend, TCModifiers[iAppend], sizeof(TCAppend) - strlen(TCAppend) - 1);
+        strncat(TCString, TCAppend, MAX_KEYVALUELEN - strlen(TCString) - 1);
     }
-    else
-    {
-        return;
-    }
-
-    strncat(TCString, TCAppend, MAX_KEYVALUELEN - strlen(TCString) - 1);
 }
 
 static void StripOffModifier(char *TCValue)
@@ -508,9 +506,6 @@ static void AssignKey(HWND hDlg, TCHAR* TCButtonstring, int nID) {
     }
 }
 
-int iModifier;
-HHOOK hHook = NULL;
-
 // Dialog procedure for the Modifier dialog
 INT_PTR CALLBACK ModifierDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -570,12 +565,7 @@ static void ModifyKey(HWND hDlg, TCHAR* TCString, int nID)
 
 static void RestoreDefaults(HWND hDlg)
 {
-    wchar_t szBuffer[256];
-    char szBufferA[256];
-
-    MultiByteToWideChar(CP_ACP, 0, DEF_INVERT, -1, szBuffer, 256);
-    WideCharToMultiByte(CP_ACP, 0, szBuffer, -1, szBufferA, 256, NULL, NULL);
-    bInvert = StringToBool(szBufferA);
+    bInvert = StringToBool(DEF_INVERT);
 
     iMouselookXscale = DEF_MOUSELOOKXSCALE;
     iMouselookYscale = DEF_MOUSELOOKYSCALE;
@@ -622,7 +612,6 @@ static void RestoreDefaults(HWND hDlg)
     strcpy_s(TCMap, sizeof(TCMap), DEF_MAP);
     strcpy_s(TCMapzoomin, sizeof(TCMapzoomin), DEF_MAPZOOMIN);
     strcpy_s(TCMapzoomout, sizeof(TCMapzoomout), DEF_MAPZOOMOUT);
-
 
     // Update the options dialog with the default settings.
     CheckDlgButton(hDlg, IDC_ALWAYSRUN, m_alwaysrun);
@@ -1577,10 +1566,6 @@ static INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPAR
         if (((LPNMHDR)lParam)->code == PSN_APPLY) {
             // Save settings
             UpdateINIFile();
-            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, PSNRET_NOERROR);
-            return (INT_PTR)TRUE;
-        } else if (((LPNMHDR)lParam)->code == PSN_RESET) {
-            // Handle Cancel button
             SetWindowLongPtr(hDlg, DWLP_MSGRESULT, PSNRET_NOERROR);
             return (INT_PTR)TRUE;
         }

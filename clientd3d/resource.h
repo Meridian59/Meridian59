@@ -22,7 +22,6 @@
 #define IDS_LOSTSERVER                  14
 #define IDS_SOCKETMESSAGE               15
 #define IDS_DOWNLOADALL                 17
-#define IDS_CONFIGMENUEXE               18
 #define IDS_CANTDELETEFILE              19
 #define IDS_CANTWRITEFILE               20
 #define IDS_UPLOADMSG                   21

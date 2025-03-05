@@ -21,13 +21,14 @@
 Config config;
 char inihost[MAXHOST];
 
-// We use two different INI files: meridian.ini (for preferences) and config.ini (for configuration)
+// We use two different INI files: meridian.ini (for original preferences) 
+// and config.ini (for key/mouse bindings and graphic settings)
 
-// Full pathname of meridian.ini (maintained in-game)
+// Full pathname of meridian.ini
 static char ini_filename[MAX_PATH + FILENAME_MAX];
 char *ini_file;  // Pointer to ini_filename
 
-// Full pathname of config.ini (currently maintained by m59bind)
+// Full pathname of config.ini
 static char config_ini[MAX_PATH + FILENAME_MAX];
 
 // If version doesn't match that in INI file, restore default colors and fonts (used to change

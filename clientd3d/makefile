@@ -136,7 +136,7 @@ OBJS = \
         $(OUTDIR)\matrix.obj \
         $(OUTDIR)\xform.obj \
         $(OUTDIR)\signup.obj\
-
+        $(OUTDIR)\preferences.obj\
 
 $(OUTDIR)\trig.c $(OUTDIR)\trig.h: $(OUTDIR)\maketrig.exe
 	$(OUTDIR)\maketrig.exe $(OUTDIR)

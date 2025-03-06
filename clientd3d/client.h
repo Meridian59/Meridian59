@@ -243,6 +243,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "crc.h"
 #include "zlib.h"
 #include "signup.h"
+#include "preferences.h"
 
 // Only include externs if compiling main client
 #ifdef BLAKCLIENT

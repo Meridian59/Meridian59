@@ -39,7 +39,6 @@ BEGIN
         MENUITEM "&Conectar-se",                    ID_GAME_CONNECT
         MENUITEM "&Desconectar",                    ID_GAME_DISCONNECT
         MENUITEM "&Preferências",                   ID_GAME_SETTINGS
-        MENUITEM "Configurações",                   ID_CONFIGMENU
         MENUITEM "Alterar &senha",                  ID_GAME_PASSWORD, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "&Imprimir mapa",                  ID_GAME_PRINTMAP
@@ -818,7 +817,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Baixar todos os arquivos do jogo pode demorar muito.\nTem certeza?"
-    IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Não foi possível excluir o arquivo %s.\n\nTentar novamente?"
     IDS_CANTWRITEFILE       "Não foi possível escrever o arquivo %s."
     IDS_NOCONFIGMENUEXE     "O menu de configuração não pôde ser encontrado. Por favor, reinstale o Meridian 59."
@@ -1051,7 +1049,6 @@ BEGIN
         MENUITEM "&Einwählen",                  ID_GAME_CONNECT
         MENUITEM "&Auflegen",                   ID_GAME_DISCONNECT
         MENUITEM "&Voreinstellungen",           ID_GAME_SETTINGS
-        MENUITEM "Konfiguration",               ID_CONFIGMENU
         MENUITEM "Pass&wort ändern",            ID_GAME_PASSWORD
         MENUITEM SEPARATOR
         MENUITEM "&Drucke Karte",               ID_GAME_PRINTMAP
@@ -1833,7 +1830,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Alle Spiel-Dateien zu herunterzuladen kann sehr lange dauern.\nBist Du sicher?"
-    IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Kann Datei %s nicht löschen.\n\nErneut versuchen?"
     IDS_CANTWRITEFILE       "Kann Datei %s nicht schreiben."
     IDS_NOCONFIGMENUEXE     "Das Konfigurationsmenü konnte nicht gefunden werden! Bitte installiere Meridian 59 neu."
@@ -2068,7 +2064,6 @@ BEGIN
         MENUITEM "&Connect",                    ID_GAME_CONNECT
         MENUITEM "&Disconnect",                 ID_GAME_DISCONNECT
         MENUITEM "&Preferences",                ID_GAME_SETTINGS
-        MENUITEM "Configuration",               ID_CONFIGMENU
         MENUITEM "Change pass&word",            ID_GAME_PASSWORD, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "Print &Map",                  ID_GAME_PRINTMAP
@@ -3109,7 +3104,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Downloading all game files may take a long time.\nAre you sure you want to do this?"
-    IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Can't delete the file %s.\n\nTry again?"
     IDS_CANTWRITEFILE       "Can't write to file %s."
     IDS_NOCONFIGMENUEXE     "Configuration menu not found!  Please uninstall and reinstall Meridian 59"

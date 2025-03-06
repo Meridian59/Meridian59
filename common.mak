@@ -41,7 +41,6 @@ MODULEDIR   = $(TOPDIR)\module
 UTILDIR     = $(TOPDIR)\util
 SPROCKETDIR = $(TOPDIR)\sprocket
 CLUBDIR     = $(TOPDIR)\club
-KEYBINDDIR  = $(TOPDIR)\keybind
 
 # 3rd party libraries
 EXTERNALDIR = $(TOPDIR)\external

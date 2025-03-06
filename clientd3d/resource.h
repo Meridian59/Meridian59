@@ -22,7 +22,6 @@
 #define IDS_LOSTSERVER                  14
 #define IDS_SOCKETMESSAGE               15
 #define IDS_DOWNLOADALL                 17
-#define IDS_CONFIGMENUEXE               18
 #define IDS_CANTDELETEFILE              19
 #define IDS_CANTWRITEFILE               20
 #define IDS_UPLOADMSG                   21
@@ -211,7 +210,6 @@
 #define IDS_SERVICE_FAILURE             182
 #define ID_OPTIONS_LOGOUTTIMER          184
 #define ID_OPTIONS_LOGOUTTIMER185       185
-#define ID_CONFIGMENU                   186
 #define IDS_CANTSENDREQUEST             187
 #define IDS_CANTGETFILESIZE             188
 #define IDS_CANTSIGNUP                  189

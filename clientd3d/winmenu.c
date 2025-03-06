@@ -118,10 +118,6 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       }
       break;
 
-  case ID_CONFIGMENU:
-	  ConfigMenuLaunch();
-      break;
-
    case ID_GAME_PASSWORD:
       PerformAction(A_CHANGEPASSWORD, NULL);
       break;

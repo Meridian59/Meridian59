@@ -100,12 +100,6 @@ Bbbgun:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bkeybind:
-	echo Making $(COMMAND) in $(KEYBINDDIR)
-	cd $(KEYBINDDIR)
-	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
-
 Broomedit:
 	echo Making $(COMMAND) in $(ROOMEDITDIR)
 	cd $(ROOMEDITDIR)

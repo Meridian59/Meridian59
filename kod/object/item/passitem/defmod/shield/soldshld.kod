@@ -190,7 +190,7 @@ messages:
    {
       % Ranges from 1-10
       piFactionRank = piFactionRank + amount;
-      piFactionRank = bound(piFactionRank,1,10);
+      piFactionRank = bound(piFactionRank,1,20);
 
       Send(self,@UpdateRankPowers);
 

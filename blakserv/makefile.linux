@@ -81,6 +81,7 @@ OBJS =  \
 	$(OUTDIR)/critical_section.obj \
 	$(OUTDIR)/mutex_linux.obj \
 	$(OUTDIR)/osd_linux.obj \
+	$(OUTDIR)/apifn.obj \
 
 
 all : makedirs $(OUTDIR)/blakserv

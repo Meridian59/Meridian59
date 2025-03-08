@@ -83,8 +83,17 @@ messages:
        iAbility=send(who,@GetSkillAbility,#skill_num=viSkill_num);
        num = ((100-reqstat)*iAbility/100) + reqstat;
        num = (num + 1 + modifier) / DISARM_FACTOR;
-       
-       if random(1,100) < num
+
+       if(num < 1)
+       {
+         num = 1;
+       }
+       else
+       {
+         num = num * 10;
+       }
+
+       if random(1,1000) < num
        {
          return TRUE;
        }

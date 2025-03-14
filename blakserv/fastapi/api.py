@@ -5,6 +5,17 @@ import asyncio
 router = APIRouter()
 client = MaintenanceClient()
 
+def check_access(response: str):
+    """
+    Check if the server denies access to the command.
+    Raises an HTTPException if access is denied.
+    """
+    if "You do not have access to this command." in response:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have access to this command."
+        )
+
 @router.get("/admin/who")
 async def get_online_players():
     """
@@ -16,6 +27,8 @@ async def get_online_players():
             None, client.send_command, "who"
         )
         
+        check_access(response)
+
         # Parse the response
         lines = response.split('\r\n')
         players = []
@@ -159,6 +172,8 @@ async def get_memory_usage():
         response = await asyncio.get_event_loop().run_in_executor(
             None, client.send_command, "show memory"
         )
+
+        check_access(response)
         
         lines = [line.strip() for line in response.split('\r\n')]
         memory_data = {
@@ -211,5 +226,153 @@ async def get_memory_usage():
             "memory": memory_data
         }
         
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-clock")
+async def show_clock():
+    """
+    Show clock information
+    """
+    try:
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, "show clock"
+        )
+
+        check_access(response)
+
+        # Parse the response
+        if "Current server clock reads" in response:
+            parts = response.split(" ")
+            try:
+                # Find the part that contains the epoch time
+                epoch_time_index = parts.index("reads") + 1
+                epoch_time = int(parts[epoch_time_index])
+                date_time = " ".join(parts[epoch_time_index + 1:]).strip("().")
+                return {
+                    "status": "success",
+                    "epoch_time": epoch_time,
+                    "date_time": date_time
+                }
+            except (ValueError, IndexError) as e:
+                raise HTTPException(status_code=500, detail="Error parsing response: " + str(e))
+        else:
+            raise HTTPException(status_code=500, detail="Unexpected response format")
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-accounts")
+async def show_accounts():
+    """
+    Show all accounts
+    """
+    try:
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, "show accounts"
+        )
+
+        check_access(response)
+
+        # Parse the response
+        lines = response.split('\r\n')
+        accounts = []
+        
+        for line in lines:
+            parts = line.split()
+            if len(parts) >= 6:
+                account = {
+                    "account": parts[0],
+                    "name": parts[1],
+                    "suspended": parts[2] if parts[2] != "" else None,
+                    "credits": float(parts[3]),
+                    "last_login": " ".join(parts[4:])
+                }
+                accounts.append(account)
+        
+        return {
+            "status": "success",
+            "accounts": accounts
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-account/{account}")
+async def show_account(account: str):
+    """
+    Show details for a specific account by name or number.
+    """
+    try:
+        # Send the command with the account parameter
+        command = f"show account {account}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the account does not exist
+        if f"Cannot find account {account}" in response:
+            raise HTTPException(status_code=404, detail=f"Account {account} not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        account_data = {}
+        user_data = []
+
+        # Parse account details
+        parsing_users = False
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            if line.startswith("Acct") and "Object" in line:  # Start of user details
+                parsing_users = True
+                continue
+
+            if line.startswith("Acct") and "Credits" in line:  # Skip account header
+                continue
+
+            if not parsing_users:  # Parse account summary
+                # Extract fields based on spaces
+                parts = line.split(maxsplit=4)  # Split into at most 5 parts
+                if len(parts) >= 5:
+                    account = parts[0]  # First field: account
+                    name = parts[1]  # Second field: name
+                    credits = float(parts[2])  # Third field: credits
+                    last_login = " ".join(parts[3:])  # Remaining fields: last_login
+
+                    account_data = {
+                        "account": account,
+                        "name": name,
+                        "credits": credits,
+                        "last_login": last_login
+                    }
+            elif parsing_users:  # Parse user details
+                parts = line.split(maxsplit=4)  # Split into at most 4 parts
+                if len(parts) == 4:
+                    user_data.append({
+                        "account": parts[0],
+                        "object": parts[1],
+                        "class": parts[2],
+                        "name": parts[3]
+                    })
+
+        # Ensure account_data is not empty
+        if not account_data:
+            raise HTTPException(status_code=404, detail="Account not found or invalid response format.")
+
+        return {
+            "status": "success",
+            "account": account_data,
+            "users": user_data
+        }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

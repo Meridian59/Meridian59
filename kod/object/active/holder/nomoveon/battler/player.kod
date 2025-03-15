@@ -3234,7 +3234,17 @@ messages:
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=player_use_full);
+            if (
+               (IsClass(what,&Pants) AND (Send(self,@FindUsing,#class=&Robe) <> $))
+               OR ((IsClass(what,&Robe) AND (Send(self,@FindUsing,#class=&Pants) <> $))))
+            {
+               % Players can wear pants and a robe at the same time.
+               return TRUE;
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_use_full);
+            }
          }
          
          return FALSE;  
@@ -8719,6 +8729,13 @@ messages:
    "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
+      if Send(self,@FindUsing,#class=&Robes) <> $ 
+         AND IsClass(new_legs,&Pants) 
+      {
+         % Player is wearing a robe so We don't show pants here as they are underneath.
+         return;
+      }
+
       poLegs_set = what;
       prLegs = new_legs;
 
@@ -8734,22 +8751,33 @@ messages:
    }
 
    ResetPlayerLegs()
-   "Sets our icon to its natural, un-panted state."
+   "Sets our players legs to show their pants (equipt or un-panted state)."
    {
+      local pants_in_use, translation;
       poLegs_set = $;
 
-      if piGender = GENDER_MALE
+      pants_in_use = Send(self,@FindUsing,#class=&Pants);
+      if pants_in_use = $
       {
-         prLegs = player_legs_a_rsc;
+         translation = Send(self,@GetDefaultPantsTranslation);
+         if piGender = GENDER_MALE
+         {
+            prLegs = player_legs_a_rsc;
+         }
+         else
+         {
+            prLegs = player_legs_b_rsc;
+         }
       }
       else
       {
-         prLegs = player_legs_b_rsc;
+         prLegs = Send(pants_in_use,@GetLegs,#who=self);
+         translation = Send(pants_in_use,@GetPaletteTranslation);
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | 
-                            (Send(self,@GetDefaultPantsTranslation) * PLAYER_TRANSLATION_LEGS_MUL); 
+                           (translation * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
       {      

@@ -128,6 +128,7 @@ messages:
    {
       if send(what,@GetItemUseType) & ITEM_USE_LEGS
          AND NOT IsClass(what,&Robe)
+         AND NOT IsClass(what,&Pants)
       {
          if Send(poOwner,@TryUnuseItem,#what=self)
          {

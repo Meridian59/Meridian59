@@ -126,7 +126,8 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      if send(what,@GetItemUseType) & ~ITEM_USE_LEGS
+      if (NOT IsClass(what,&Pants) 
+         AND NOT IsClass(what,&Shirt))
       {
          if Send(poOwner,@TryUnuseItem,#what=self)
          {

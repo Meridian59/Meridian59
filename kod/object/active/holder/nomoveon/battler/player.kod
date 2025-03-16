@@ -8729,8 +8729,8 @@ messages:
    "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
-      if Send(self,@FindUsing,#class=&Robes) <> $ 
-         AND IsClass(new_legs,&Pants) 
+      if Send(self,@FindUsing,#class=&Robe) <> $ 
+         AND IsClass(what,&Pants) 
       {
          % Player is wearing a robe so We don't show pants here as they are underneath.
          return;
@@ -8753,7 +8753,14 @@ messages:
    ResetPlayerLegs()
    "Sets our players legs to show their pants (equipt or un-panted state)."
    {
-      local pants_in_use, translation;
+      local robes_in_use, pants_in_use, translation;
+      robes_in_use = Send(self,@FindUsing,#class=&Robe);
+      if robes_in_use <> $
+      {
+         % We still have our robes on (regardless of what's changing beneath).
+         return;
+      }
+
       poLegs_set = $;
 
       pants_in_use = Send(self,@FindUsing,#class=&Pants);

@@ -3376,6 +3376,7 @@ messages:
       {
          Send(poOwner,@SomethingUsed,#what=self,#use_item=what);
       }
+      
       Send(self,@ResetPlayerFlagList);
       
       return TRUE;

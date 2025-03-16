@@ -8750,13 +8750,13 @@ messages:
    }
 
    ResetPlayerLegs()
-   "Sets our players legs to show their pants (equipt or un-panted state)."
+   "Sets our players legs to show their robes, pants (equipped or un-panted state)."
    {
       local robes_in_use, pants_in_use, translation;
       robes_in_use = Send(self,@FindUsing,#class=&Robe);
       if robes_in_use <> $
       {
-         % We still have our robes on (regardless of what's changing beneath).
+         % Player is wearing robes (regardless of what's changed beneath).
          return;
       }
 

@@ -3234,8 +3234,7 @@ messages:
          }
          else
          {
-            if (
-               (IsClass(what,&Pants) AND (Send(self,@FindUsing,#class=&Robe) <> $))
+            if ((IsClass(what,&Pants) AND (Send(self,@FindUsing,#class=&Robe) <> $))
                OR ((IsClass(what,&Robe) AND (Send(self,@FindUsing,#class=&Pants) <> $))))
             {
                % Players can wear pants and a robe at the same time.
@@ -3377,7 +3376,7 @@ messages:
       {
          Send(poOwner,@SomethingUsed,#what=self,#use_item=what);
       }
-      
+
       Send(self,@ResetPlayerFlagList);
       
       return TRUE;

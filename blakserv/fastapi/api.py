@@ -376,3 +376,81 @@ async def show_account(account: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-belong/{object_id}")
+async def show_belong(object_id: int):
+    """
+    Show objects owned by a specific object ID.
+    """
+    try:
+        # Send the command with the object ID parameter
+        command = f"show belong {object_id}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the object does not exist
+        if f"{object_id} owns the following objects -" not in response:
+            raise HTTPException(status_code=404, detail=f"Object {object_id} not found or owns no objects.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        owner = None
+        objects = []
+        current_object = None
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Identify the owner object
+            if line.endswith("owns the following objects -"):
+                owner = int(line.split()[0])
+                continue
+
+            # Start of a new object block
+            if line.startswith(":< OBJECT"):
+                if current_object:  # Save the previous object
+                    objects.append(current_object)
+                parts = line.split()
+                current_object = {
+                    "object_id": int(parts[2]),
+                    "class": parts[-1],
+                    "properties": {}
+                }
+                continue
+
+            # End of an object block
+            if line.startswith(":>"):
+                if current_object:
+                    objects.append(current_object)
+                    current_object = None
+                continue
+
+            # Parse object properties
+            if current_object and line.startswith(":"):
+                parts = line.split("=", 1)
+                key = parts[0].strip(": ").strip()
+                value = parts[1].strip() if len(parts) > 1 else None
+                current_object["properties"][key] = value
+
+        # Ensure the last object is added
+        if current_object:
+            objects.append(current_object)
+
+        # Return the parsed data
+        return {
+            "status": "success",
+            "owner": owner,
+            "objects": objects
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -454,3 +454,76 @@ async def show_belong(object_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-class/{name}")
+async def show_class(name: str):
+    """
+    Show details for a specific class by name.
+    """
+    try:
+        # Normalize the class name to match the expected case
+        normalized_name = name.capitalize()
+
+        # Send the command with the normalized class name
+        command = f"show class {normalized_name}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the class does not exist
+        if f"CLASS {normalized_name}" not in response:
+            raise HTTPException(status_code=404, detail=f"Class {name} not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        class_data = {
+            "name": None,
+            "id": None,
+            "file": None,
+            "variables": [],
+            "messages": []
+        }
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Parse the class header
+            if line.startswith(":< CLASS"):
+                parts = line.split()
+                class_data["name"] = parts[2]
+                class_data["id"] = int(parts[3].strip("()"))
+                class_data["file"] = parts[4]
+                continue
+
+            # Parse variables
+            if line.startswith(": VAR"):
+                parts = line.split("=", 1)
+                variable_name = parts[0].strip(": VAR").strip()
+                variable_value = parts[1].strip() if len(parts) > 1 else None
+                class_data["variables"].append({
+                    "name": variable_name,
+                    "value": variable_value
+                })
+                continue
+
+            # Parse messages
+            if line.startswith(": MSG"):
+                message_name = line.strip(": MSG").strip()
+                class_data["messages"].append(message_name)
+                continue
+
+        return {
+            "status": "success",
+            "class": class_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

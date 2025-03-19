@@ -622,3 +622,48 @@ async def show_constant(constant_name: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-list/{list_id}")
+async def show_list(list_id: int):
+    """
+    Show the elements of a list by its ID.
+    """
+    try:
+        # Send the command
+        command = f"show list {list_id}"
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, client.send_command, command)
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Parse the response
+        lines = response.split('\r\n')
+        if len(lines) < 3 or not lines[1].startswith(":<") or not lines[-1].startswith(":>"):
+            raise HTTPException(status_code=404, detail=f"List '{list_id}' not found or invalid response format.")
+
+        # Extract list elements
+        list_elements = []
+        for line in lines[2:-1]:  # Skip the first two lines (command echo and :<) and the last line (:>)
+            line = line.strip()
+            if line.startswith(":"):
+                parts = line.split(None, 2)  # Split into type and value
+                if len(parts) == 3 and parts[1] != "[" and parts[1] != "]":  # Skip structural markers
+                    element_type = parts[1].strip(":")  # Remove the leading colon
+                    element_value = parts[2].strip()
+                    list_elements.append({
+                        "type": element_type,
+                        "value": element_value
+                    })
+
+        return {
+            "status": "success",
+            "list_id": list_id,
+            "elements": list_elements
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

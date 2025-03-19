@@ -527,3 +527,57 @@ async def show_class(name: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-configuration")
+async def show_configuration():
+    """
+    Show the server configuration.
+    """
+    try:
+        command = "show configuration"
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, client.send_command, command)
+
+        print("Raw response:", repr(response))
+
+        check_access(response)
+
+        lines = response.split('\r\n')
+        configuration = {}
+        current_section = None
+        current_key = None
+
+        for line in lines:
+            line = line.strip()
+            print("Processing line:", repr(line))
+
+            if not line or line.startswith(">"):
+                continue
+
+            if line.startswith("[") and line.endswith("]"):
+                current_section = line.strip("[]")
+                configuration[current_section] = {}
+                current_key = None
+                print(f"New section: {current_section}")
+                continue
+
+            if current_section:
+                parts = line.split(None, 1)  # Split by whitespace once
+                if len(parts) == 2:
+                    key, value = parts
+                    configuration[current_section][key.strip()] = value.strip()
+                    current_key = key.strip()
+                    print(f"Added key-value pair: {key} = {value}")
+                elif current_key:
+                    configuration[current_section][current_key] += f" {line.strip()}"
+                    print(f"Appended to key {current_key}: {line.strip()}")
+
+        print("Final configuration:", configuration)
+
+        return {
+            "status": "success",
+            "configuration": configuration
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

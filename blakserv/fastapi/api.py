@@ -581,3 +581,44 @@ async def show_configuration():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-constant/{constant_name}")
+async def show_constant(constant_name: str):
+    """
+    Show the value of a constant by its name.
+    """
+    try:
+        # Send the command
+        command = f"show constant {constant_name}"
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, client.send_command, command)
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Parse the response
+        lines = response.split('\r\n')
+        if len(lines) < 2 or "There is no value for" in lines[1]:
+            raise HTTPException(status_code=404, detail=f"Constant '{constant_name}' not found.")
+
+        # Extract the constant value from the second line
+        parts = lines[1].split("=", 1)
+        if len(parts) != 2:
+            raise HTTPException(status_code=500, detail="Unexpected response format.")
+
+        constant_name = parts[0].strip()
+        constant_value = parts[1].strip()
+
+        return {
+            "status": "success",
+            "constant": {
+                "name": constant_name,
+                "value": constant_value
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

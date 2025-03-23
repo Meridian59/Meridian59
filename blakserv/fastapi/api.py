@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from maintenance import MaintenanceClient
-import asyncio
+import asyncio, re
 
 router = APIRouter()
 client = MaintenanceClient()
@@ -663,6 +663,41 @@ async def show_list(list_id: int):
             "status": "success",
             "list_id": list_id,
             "elements": list_elements
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-listnode/{list_id}")
+async def show_listnode(list_id: int):
+    """
+    Show the details of a specific list node by its ID.
+    """
+    try:
+        # Send the command
+        command = f"show listnode {list_id}"
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, client.send_command, command)
+
+        print("Raw response:", repr(response))
+        check_access(response)
+
+        # Attempt to find 'first' and 'rest' with regex
+        first_match = re.search(r"first\s*=\s*([A-Z$]+)\s+(.+)", response)
+        rest_match = re.search(r"rest\s*=\s*([A-Z$]+)\s+(.+)", response)
+
+        if not first_match or not rest_match:
+            raise HTTPException(status_code=500, detail="Could not parse first or rest values.")
+
+        # Parse 'first' and 'rest'
+        first_parsed = {"type": first_match.group(1), "value": first_match.group(2).strip()}
+        rest_parsed = {"type": rest_match.group(1), "value": rest_match.group(2).strip()}
+
+        return {
+            "status": "success",
+            "list_id": list_id,
+            "first": first_parsed,
+            "rest": rest_parsed
         }
 
     except Exception as e:

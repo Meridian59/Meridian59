@@ -702,3 +702,72 @@ async def show_listnode(list_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-message/{class_identifier}/{message_identifier}")
+async def show_message(class_identifier: str, message_identifier: str):
+    """
+    Show details for a specific message by its class and message identifiers.
+    
+    Args:
+        class_identifier (str): The class name or ID.
+        message_identifier (str): The message name or ID.
+    """
+    try:
+        # Send the command with the class and message identifiers
+        command = f"show message {class_identifier} {message_identifier}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Parse the response
+        lines = response.split('\r\n')
+        parsed_data = {
+            "class": None,
+            "message": None,
+            "parameters": [],
+            "description": None
+        }
+
+        in_parameters_section = False
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if line.startswith("CLASS"):
+                parsed_data["class"] = line.split(":", 1)[1].strip()
+            elif line.startswith("MESSAGE"):
+                parsed_data["message"] = line.split(":", 1)[1].strip()
+            elif line.startswith("Parameters:"):
+                in_parameters_section = True
+            elif in_parameters_section:
+                if line.startswith("----"):  # End of parameters section
+                    in_parameters_section = False
+                elif line:  # Parse parameter line
+                    parts = line.split(None, 2)
+                    if len(parts) == 3:
+                        parsed_data["parameters"].append({
+                            "name": parts[0],
+                            "type": parts[1],
+                            "value": parts[2]
+                        })
+            elif line.startswith("No description"):
+                parsed_data["description"] = "No description"
+
+        # Ensure all required fields are populated
+        if not parsed_data["class"] or not parsed_data["message"]:
+            raise HTTPException(status_code=500, detail="Failed to parse class or message details.")
+
+        return {
+            "status": "success",
+            "class": parsed_data["class"],
+            "message": parsed_data["message"],
+            "parameters": parsed_data["parameters"],
+            "description": parsed_data["description"]
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

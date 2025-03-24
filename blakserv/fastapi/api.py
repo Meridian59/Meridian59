@@ -771,3 +771,136 @@ async def show_message(class_identifier: str, message_identifier: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-name/{character_name}")
+async def show_name(character_name: str):
+    """
+    Show the object ID of a specific character by their name.
+    
+    Args:
+        character_name (str): The name of the character to query.
+    """
+    try:
+        # Send the command
+        command = f"show name {character_name}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the character does not exist
+        if f"Cannot find user with name {character_name}" in response:
+            raise HTTPException(status_code=404, detail=f"Character '{character_name}' not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        object_id = None
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Parse the object ID from the line starting with ":< object"
+            if line.startswith(":< object"):
+                parts = line.split()
+                if len(parts) == 3 and parts[1] == "object":
+                    object_id = int(parts[2])
+                    break
+
+        # Ensure object_id is found
+        if object_id is None:
+            raise HTTPException(status_code=500, detail="Failed to parse object ID from response.")
+
+        return {
+            "status": "success",
+            "character_name": character_name,
+            "object_id": object_id
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-object/{object_id}")
+async def show_object(object_id: int):
+    """
+    Show the details of a specific object by its ID.
+    
+    Args:
+        object_id (int): The ID of the object to query.
+    """
+    try:
+        # Send the command
+        command = f"show object {object_id}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the object does not exist
+        if f"Cannot find object {object_id}" in response:
+            raise HTTPException(status_code=404, detail=f"Object {object_id} not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        object_data = {
+            "object_id": object_id,
+            "class": None,
+            "properties": {}
+        }
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Handle combined lines (split on "\n:")
+            if "\n:" in line:
+                sub_lines = line.split("\n:")
+                for sub_line in sub_lines:
+                    sub_line = sub_line.strip()
+                    if sub_line.startswith(":"):
+                        sub_line = sub_line[1:]  # Remove leading ":"
+                    parts = sub_line.split("=", 1)
+                    if len(parts) == 2:
+                        key = parts[0].strip()
+                        value = parts[1].strip()
+                        object_data["properties"][key] = value
+                continue
+
+            # Parse the object class
+            if line.startswith(":< OBJECT"):
+                parts = line.split()
+                if len(parts) >= 5 and parts[3] == "is" and parts[4] == "CLASS":
+                    object_data["class"] = parts[5]
+                continue
+
+            # Parse object properties
+            if line.startswith(":"):
+                parts = line.split("=", 1)
+                if len(parts) == 2:
+                    key = parts[0].strip(": ").strip()
+                    value = parts[1].strip()
+                    object_data["properties"][key] = value
+
+        # Ensure the class is found
+        if not object_data["class"]:
+            raise HTTPException(status_code=500, detail="Failed to parse object class from response.")
+
+        return {
+            "status": "success",
+            "object": object_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

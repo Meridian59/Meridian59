@@ -904,3 +904,58 @@ async def show_object(object_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-string/{string_id}")
+async def show_string(string_id: int):
+    """
+    Show the content of a specific string by its ID.
+    
+    Args:
+        string_id (int): The ID of the string to query.
+    """
+    try:
+        # Send the command
+        command = f"show string {string_id}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the string does not exist
+        if f"Cannot find string {string_id}" in response:
+            raise HTTPException(status_code=404, detail=f"String {string_id} not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        string_content = []
+        in_string_section = False
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            if line.startswith("-------------------------------------------"):
+                # Toggle the string section flag
+                in_string_section = not in_string_section
+                continue
+
+            if in_string_section:
+                string_content.append(line)
+
+        # Join the string content, even if it's empty
+        content = "\n".join(string_content).strip()
+
+        return {
+            "status": "success",
+            "string_id": string_id,
+            "content": content
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

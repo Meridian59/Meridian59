@@ -1066,3 +1066,63 @@ async def show_user(username: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-resource/{resource_identifier}")
+async def show_resource(resource_identifier: str):
+    """
+    Show details for a specific resource by its ID or name.
+    
+    Args:
+        resource_identifier (str): The ID (int) or name (string) of the resource to query.
+    """
+    try:
+        # Send the command
+        command = f"show resource {resource_identifier}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the resource does not exist
+        if "There is no resource with id" in response or "There is no resource named" in response:
+            raise HTTPException(status_code=404, detail=f"Resource '{resource_identifier}' not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        resource_data = {}
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Parse the resource details
+            if line.startswith("ID"):
+                # Skip the header line
+                continue
+            elif line:
+                parts = line.split(None, 3)  # Split into at most 4 parts
+                if len(parts) == 4:
+                    resource_data = {
+                        "id": int(parts[0]),
+                        "name": parts[1],
+                        "value": parts[3]
+                    }
+                break
+
+        # Ensure resource data is found
+        if not resource_data:
+            raise HTTPException(status_code=500, detail="Failed to parse resource data from response.")
+
+        return {
+            "status": "success",
+            "resource": resource_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

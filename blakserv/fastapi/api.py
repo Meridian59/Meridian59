@@ -1005,3 +1005,64 @@ async def show_usage():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-user/{username}")
+async def show_user(username: str):
+    """
+    Show details for a specific user by their username.
+    
+    Args:
+        username (str): The username to query.
+    """
+    try:
+        # Send the command
+        command = f"show user {username}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the user does not exist
+        if f"Cannot find user {username}" in response:
+            raise HTTPException(status_code=404, detail=f"User '{username}' not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        user_data = {}
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Parse the user details
+            if line.startswith("Acct"):
+                # Skip the header line
+                continue
+            elif line:
+                parts = line.split()
+                if len(parts) >= 4:
+                    user_data = {
+                        "account": int(parts[0]),
+                        "object_id": int(parts[1]),
+                        "class": parts[2],
+                        "name": parts[3]
+                    }
+                break
+
+        # Ensure user data is found
+        if not user_data:
+            raise HTTPException(status_code=500, detail="Failed to parse user data from response.")
+
+        return {
+            "status": "success",
+            "user": user_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

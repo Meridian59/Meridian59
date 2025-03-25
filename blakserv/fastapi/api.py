@@ -959,3 +959,49 @@ async def show_string(string_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-usage")
+async def show_usage():
+    """
+    Show the current server usage, including the number of active sessions.
+    """
+    try:
+        # Send the command
+        command = "show usage"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Parse the response
+        lines = response.split('\r\n')
+        usage_data = {}
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Parse the sessions line
+            if line.startswith(":< sessions"):
+                parts = line.split()
+                if len(parts) == 3 and parts[1] == "sessions":
+                    usage_data["sessions"] = int(parts[2])
+                break
+
+        # Ensure sessions data is found
+        if "sessions" not in usage_data:
+            raise HTTPException(status_code=500, detail="Failed to parse usage data from response.")
+
+        return {
+            "status": "success",
+            "usage": usage_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1298,3 +1298,65 @@ async def set_account_name(account_id: int, new_name: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/set-account-object/{account_id}/{object_id}")
+async def set_account_object(account_id: int, object_id: int):
+    """
+    Associate an object with a specific account by its ID.
+
+    Args:
+        account_id (int): The ID of the account to update.
+        object_id (int): The ID of the object to associate with the account.
+    """
+    try:
+        # Send the command
+        command = f"set account object {account_id} {object_id}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Handle specific error cases
+        if f"Cannot find account {account_id}" in response:
+            raise HTTPException(status_code=404, detail=f"Account {account_id} not found.")
+        if f"Object {object_id} does not exist" in response:
+            raise HTTPException(status_code=404, detail=f"Object {object_id} does not exist.")
+
+        # Handle warnings
+        warning_message = None
+        if "warning:" in response.lower():
+            warning_match = re.search(r"(warning:.*?expect\.)", response, re.IGNORECASE)
+            if warning_match:
+                warning_message = warning_match.group(1).strip()
+
+        # Check if the response indicates success
+        if f"Associated account {account_id} with object {object_id}" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set account object. Unexpected response.")
+
+        # Extract old and new account names from the response
+        old_account_name = None
+        new_account_name = None
+        match = re.search(r"Removing user object \d+ from the old account \d+.", response)
+        if match:
+            old_account_name = match.group(0).split("from the old account")[1].strip().strip(".")
+
+        match_new = re.search(r"Associated account \d+ with object \d+ as a user.", response)
+        if match_new:
+            new_account_name = match_new.group(0).split("Associated account")[1].split("with object")[0].strip()
+
+        return {
+            "status": "success",
+            "account_id": account_id,
+            "object_id": object_id,
+            "old_account_name": old_account_name,
+            "new_account_name": new_account_name,
+            "warning_message": warning_message
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

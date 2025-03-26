@@ -1126,3 +1126,71 @@ async def show_resource(resource_identifier: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-table/{table_id}")
+async def show_table(table_id: int):
+    """
+    Show details for a specific table by its ID.
+
+    Args:
+        table_id (int): The ID of the table to query.
+    """
+    try:
+        # Send the command
+        command = f"show table {table_id}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the table does not exist
+        if f"Cannot find table {table_id}" in response:
+            raise HTTPException(status_code=404, detail=f"Table {table_id} not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        table_data = {
+            "table_id": table_id,
+            "size": None,
+            "entries": []
+        }
+
+        # Extract table size
+        size_match = re.search(rf"Table {table_id} \(size (\d+)\)", response)
+        if size_match:
+            table_data["size"] = int(size_match.group(1))
+
+        # Ensure we have a valid table size
+        if table_data["size"] is None:
+            raise HTTPException(status_code=500, detail="Failed to parse table data from response.")
+
+        # Regex pattern to match hash entries with both INT and RESOURCE keys
+        entry_pattern = re.compile(r"hash\s+(\d+)\s*:\s*((?:\(key (INT|RESOURCE) \d+ val OBJECT \d+\)\s*)+)")
+
+        for match in entry_pattern.finditer(response):
+            hash_key = int(match.group(1))
+            key_val_pairs = match.group(2)
+
+            # Extract all (key TYPE <value> val OBJECT <value>) pairs
+            pairs = re.findall(r"\(key (INT|RESOURCE) (\d+) val OBJECT (\d+)\)", key_val_pairs)
+
+            for key_type, key_value, val_value in pairs:
+                table_data["entries"].append({
+                    "hash": hash_key,
+                    "key_type": key_type,
+                    "key": int(key_value),
+                    "value": int(val_value)
+                })
+
+        return {
+            "status": "success",
+            "table": table_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

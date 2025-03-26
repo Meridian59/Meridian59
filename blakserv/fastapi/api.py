@@ -1360,3 +1360,46 @@ async def set_account_object(account_id: int, object_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/set-account-password/{account_id}")
+async def set_account_password(account_id: int, new_password: str):
+    """
+    Set a new password for a specific account by its ID.
+
+    Args:
+        account_id (int): The ID of the account to update.
+        new_password (str): The new password to set for the account.
+    """
+    try:
+        # Send the command
+        command = f"set account password {account_id} {new_password}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the account does not exist
+        if f"Cannot find account {account_id}" in response:
+            raise HTTPException(status_code=404, detail=f"Account {account_id} not found.")
+
+        # Check if the response indicates success
+        match = re.search(r"Set password for account (\d+) \((.*?)\)\.", response)
+        if not match:
+            raise HTTPException(status_code=500, detail="Failed to set account password. Unexpected response.")
+
+        account_id = int(match.group(1))
+        account_name = match.group(2)
+
+        return {
+            "status": "success",
+            "account_id": account_id,
+            "account_name": account_name
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1251,3 +1251,50 @@ async def show_timer(timer_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/set-account-name/{account_id}")
+async def set_account_name(account_id: int, new_name: str):
+    """
+    Set a new name for a specific account by its ID.
+
+    Args:
+        account_id (int): The ID of the account to update.
+        new_name (str): The new name to set for the account.
+    """
+    try:
+        # Send the command
+        command = f"set account name {account_id} {new_name}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the account does not exist
+        if f"Cannot find account {account_id}" in response:
+            raise HTTPException(status_code=404, detail=f"Account {account_id} not found.")
+
+        # Check if the response indicates success
+        if f"Changing name of account {account_id}" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set account name. Unexpected response.")
+
+        # Extract old and new account names from the response
+        match = re.search(r"Changing name of account \d+ from '(.*?)' to '(.*?)'\.", response)
+        if not match:
+            raise HTTPException(status_code=500, detail="Failed to parse account name change response.")
+
+        old_account_name, new_account_name = match.groups()
+
+        return {
+            "status": "success",
+            "account_id": account_id,
+            "old_account_name": old_account_name,
+            "new_account_name": new_account_name
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1194,3 +1194,60 @@ async def show_table(table_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/show-timer/{timer_id}")
+async def show_timer(timer_id: int):
+    """
+    Show details for a specific timer by its ID.
+
+    Args:
+        timer_id (int): The ID of the timer to query.
+    """
+    try:
+        # Send the command
+        command = f"show timer {timer_id}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the timer does not exist
+        if f"Cannot find timer {timer_id}" in response:
+            raise HTTPException(status_code=404, detail=f"Timer {timer_id} not found.")
+
+        # Parse the response
+        lines = response.split('\r\n')
+        timer_data = {}
+
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith(">"):  # Skip empty lines and command echo
+                continue
+
+            # Parse the timer details
+            parts = line.split()
+            if len(parts) == 4 and parts[0].isdigit():
+                timer_data = {
+                    "timer_id": int(parts[0]),
+                    "remaining_ms": int(parts[1]),
+                    "object_id": int(parts[2]),
+                    "message": parts[3]
+                }
+                break
+
+        # Ensure timer data is found
+        if not timer_data:
+            raise HTTPException(status_code=500, detail="Failed to parse timer data from response.")
+
+        return {
+            "status": "success",
+            "timer": timer_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

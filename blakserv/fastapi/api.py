@@ -1403,3 +1403,52 @@ async def set_account_password(account_id: int, new_password: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/set-class")
+async def set_class(class_name: str, var_name: str, value_type: str, value: str):
+    """
+    Set a class variable for a specific class.
+
+    Args:
+        class_name (str): The name of the class to modify.
+        var_name (str): The name of the class variable to set.
+        value_type (str): The type of the value (e.g., "int", "string").
+        value (str): The value to set for the class variable.
+    """
+    try:
+        # Send the command
+        command = f"set class {class_name} {var_name} {value_type} {value}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Handle specific error cases
+        if f"Cannot find class named {class_name}" in response:
+            raise HTTPException(status_code=404, detail=f"Class '{class_name}' not found.")
+        if f"Cannot find classvar named {var_name}" in response:
+            raise HTTPException(status_code=404, detail=f"Class variable '{var_name}' not found in class '{class_name}'.")
+        if f"'{value_type}' is not a tag." in response:
+            raise HTTPException(status_code=400, detail=f"Invalid value type '{value_type}'.")
+        if f"'{value}' is not valid data." in response:
+            raise HTTPException(status_code=400, detail=f"Invalid value '{value}' for type '{value_type}'.")
+
+        # Check if the response indicates success
+        if f"> set class {class_name} {var_name} {value_type} {value}" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set class variable. Unexpected response.")
+
+        return {
+            "status": "success",
+            "class_name": class_name,
+            "var_name": var_name,
+            "value_type": value_type,
+            "value": value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

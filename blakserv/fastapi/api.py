@@ -1516,3 +1516,133 @@ async def set_object(object_id: int, property_name: str, value_type: str, value:
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/set-config-boolean")
+async def set_config_boolean(group: str, name: str, value: str):
+    """
+    Set a boolean configuration option.
+
+    Args:
+        group (str): The configuration group (e.g., Socket).
+        name (str): The name of the configuration option.
+        value (str): The value to set (e.g., 'Yes' or 'No').
+    """
+    try:
+        # Send the command
+        command = f"set config boolean {group} {name} {value}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Missing parameter" in response:
+            raise HTTPException(status_code=400, detail="Missing required parameters.")
+        if "Boolean configuration options must be 'yes' or 'no'" in response:
+            raise HTTPException(status_code=400, detail="Boolean configuration options must be 'Yes' or 'No'.")
+        if "Unable to find configure group" in response:
+            raise HTTPException(status_code=404, detail=f"Unable to find configure group {group} name {name}.")
+        if "This configure option is not a boolean" in response:
+            raise HTTPException(status_code=400, detail=f"Configuration option {group} {name} is not a boolean.")
+
+        # Check if the response indicates success
+        if f"Configure option group {group} name {name} is now set to" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set boolean configuration. Unexpected response.")
+
+        return {
+            "status": "success",
+            "group": group,
+            "name": name,
+            "value": value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/set-config-integer")
+async def set_config_integer(group: str, name: str, value: int):
+    """
+    Set an integer configuration option.
+
+    Args:
+        group (str): The configuration group (e.g., Login).
+        name (str): The name of the configuration option.
+        value (int): The value to set.
+    """
+    try:
+        # Send the command
+        command = f"set config int {group} {name} {value}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Missing parameter" in response:
+            raise HTTPException(status_code=400, detail="Missing required parameters.")
+        if "Unable to find configure group" in response:
+            raise HTTPException(status_code=404, detail=f"Unable to find configure group {group} name {name}.")
+        if "This configure option is not an integer" in response:
+            raise HTTPException(status_code=400, detail=f"Configuration option {group} {name} is not an integer.")
+
+        # Check if the response indicates success
+        if f"Configure option group {group} name {name} is now set to" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set integer configuration. Unexpected response.")
+
+        return {
+            "status": "success",
+            "group": group,
+            "name": name,
+            "value": value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/set-config-string")
+async def set_config_string(group: str, name: str, value: str):
+    """
+    Set a string configuration option.
+
+    Args:
+        group (str): The configuration group (e.g., Email).
+        name (str): The name of the configuration option.
+        value (str): The value to set.
+    """
+    try:
+        # Send the command
+        command = f"set config string {group} {name} {value}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Missing parameter" in response:
+            raise HTTPException(status_code=400, detail="Missing required parameters.")
+        if "Unable to find configure group" in response:
+            raise HTTPException(status_code=404, detail=f"Unable to find configure group {group} name {name}.")
+        if "This configure option is not a string" in response:
+            raise HTTPException(status_code=400, detail=f"Configuration option {group} {name} is not a string.")
+
+        # Check if the response indicates success
+        if f"Configure option group {group} name {name} is now set to" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set string configuration. Unexpected response.")
+
+        return {
+            "status": "success",
+            "group": group,
+            "name": name,
+            "value": value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

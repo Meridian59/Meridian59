@@ -1452,3 +1452,67 @@ async def set_class(class_name: str, var_name: str, value_type: str, value: str)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/set-object")
+async def set_object(object_id: int, property_name: str, value_type: str, value: str):
+    """
+    Set a property of a specific object.
+
+    Args:
+        object_id (int): The ID of the object to modify.
+        property_name (str): The name of the property to set.
+        value_type (str): The type of the value (e.g., "int", "string").
+        value (str): The value to set for the property.
+    """
+    try:
+        # Send the command
+        command = f"set object {object_id} {property_name} {value_type} {value}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Handle specific error cases
+        if "Invalid object id" in response:
+            raise HTTPException(status_code=404, detail=f"Invalid object ID {object_id} (or it has been deleted).")
+
+        if "Property" in response and "doesn't exist" in response:
+            # Extract the class name and ID from the response
+            match = re.search(r"Property .* doesn't exist \(at least for CLASS (\w+) \((\d+)\)\)", response)
+            if match:
+                target_class_name = match.group(1)
+                target_class_id = match.group(2)
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Property '{property_name}' doesn't exist (at least for CLASS {target_class_name} ({target_class_id}))."
+                )
+            else:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Property '{property_name}' doesn't exist (at least for the object's class)."
+                )
+
+        if f"'{value_type}' is not a tag." in response:
+            raise HTTPException(status_code=400, detail=f"Invalid value type '{value_type}'.")
+        if f"'{value}' is not valid data." in response:
+            raise HTTPException(status_code=400, detail=f"Invalid value '{value}' for type '{value_type}'.")
+
+        # Check if the response indicates success
+        if f"> set object {object_id} {property_name} {value_type} {value}" not in response:
+            raise HTTPException(status_code=500, detail="Failed to set object property. Unexpected response.")
+
+        return {
+            "status": "success",
+            "object_id": object_id,
+            "property_name": property_name,
+            "value_type": value_type,
+            "value": value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

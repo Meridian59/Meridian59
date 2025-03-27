@@ -1561,7 +1561,6 @@ async def set_config_boolean(group: str, name: str, value: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/admin/set-config-integer")
 async def set_config_integer(group: str, name: str, value: int):
     """
@@ -1604,7 +1603,6 @@ async def set_config_integer(group: str, name: str, value: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/admin/set-config-string")
 async def set_config_string(group: str, name: str, value: str):
     """
@@ -1642,6 +1640,188 @@ async def set_config_string(group: str, name: str, value: str):
             "group": group,
             "name": name,
             "value": value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/suspend-account")
+async def suspend_account(hours: int, account_identifier: str):
+    """
+    Suspend an account for a specified number of hours.
+
+    Args:
+        hours (int): The number of hours to suspend the account.
+        account_identifier (str): The account name or ID to suspend.
+    """
+    try:
+        # Send the command
+        command = f"suspend account {hours} {account_identifier}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Missing parameter" in response:
+            raise HTTPException(status_code=400, detail="Missing required parameters.")
+        if "Cannot find account" in response:
+            raise HTTPException(status_code=404, detail=f"Account '{account_identifier}' not found.")
+        if "Suspension of account" in response and "failed" in response:
+            raise HTTPException(status_code=500, detail=f"Failed to suspend account '{account_identifier}'.")
+
+        # Check if the response indicates success
+        match = re.search(r"Account (\d+) \((.*?)\) is suspended until (.+)\.", response)
+        if not match:
+            raise HTTPException(status_code=500, detail="Unexpected response format.")
+
+        # Extract account details from the response
+        account_id = match.group(1)
+        account_name = match.group(2)
+        suspended_until = match.group(3)
+
+        return {
+            "status": "success",
+            "account_identifier": account_identifier,
+            "account_id": account_id,
+            "account_name": account_name,
+            "hours_added": hours,
+            "suspended_until": suspended_until
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/unsuspend-account")
+async def unsuspend_account(account_identifier: str):
+    """
+    Unsuspend an account immediately.
+
+    Args:
+        account_identifier (str): The account name or ID to unsuspend.
+    """
+    try:
+        # Send the command
+        command = f"unsuspend account {account_identifier}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Cannot find account" in response:
+            raise HTTPException(status_code=404, detail=f"Account '{account_identifier}' not found.")
+        if "is unsuspended" not in response:
+            raise HTTPException(status_code=500, detail="Unexpected response format.")
+
+        # Extract account details from the response
+        match = re.search(r"Account (\d+) \((.*?)\) is unsuspended\.", response)
+        if not match:
+            raise HTTPException(status_code=500, detail="Failed to parse unsuspend response.")
+
+        account_id = match.group(1)
+        account_name = match.group(2)
+
+        return {
+            "status": "success",
+            "account_identifier": account_identifier,
+            "account_id": account_id,
+            "account_name": account_name
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/suspend-user")
+async def suspend_user(hours: int, username: str):
+    """
+    Suspend a user for a specified number of hours.
+
+    Args:
+        hours (int): The number of hours to suspend the user.
+        username (str): The name of the user to suspend.
+    """
+    try:
+        # Send the command
+        command = f"suspend user {hours} {username}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Missing parameter" in response:
+            raise HTTPException(status_code=400, detail="Missing required parameters.")
+        if "Cannot find user" in response:
+            raise HTTPException(status_code=404, detail=f"User '{username}' not found.")
+        if "Suspension of account" in response and "failed" in response:
+            raise HTTPException(status_code=500, detail=f"Failed to suspend user '{username}'.")
+
+        # Check if the response indicates success
+        match = re.search(r"Account (\d+) \((.*?)\) is suspended until (.+)\.", response)
+        if not match:
+            raise HTTPException(status_code=500, detail="Unexpected response format.")
+
+        # Extract account details from the response
+        account_id = match.group(1)
+        account_name = match.group(2)
+        suspended_until = match.group(3)
+
+        return {
+            "status": "success",
+            "username": username,
+            "account_id": account_id,
+            "account_name": account_name,
+            "hours_added": hours,
+            "suspended_until": suspended_until
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/unsuspend-user")
+async def unsuspend_user(username: str):
+    """
+    Unsuspend a user immediately.
+
+    Args:
+        username (str): The name of the user to unsuspend.
+    """
+    try:
+        # Send the command
+        command = f"unsuspend user {username}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Cannot find user" in response:
+            raise HTTPException(status_code=404, detail=f"User '{username}' not found.")
+        if "is unsuspended" not in response:
+            raise HTTPException(status_code=500, detail="Unexpected response format.")
+
+        # Extract account details from the response
+        match = re.search(r"Account (\d+) \((.*?)\) is unsuspended\.", response)
+        if not match:
+            raise HTTPException(status_code=500, detail="Failed to parse unsuspend response.")
+
+        account_id = match.group(1)
+        account_name = match.group(2)
+
+        return {
+            "status": "success",
+            "username": username,
+            "account_id": account_id,
+            "account_name": account_name
         }
 
     except Exception as e:

@@ -1826,3 +1826,66 @@ async def unsuspend_user(username: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/send-object")
+async def send_object(
+    object_id: int,
+    message: str,
+    param1: str = None,
+    param2: str = None,
+    param3: str = None,
+    param4: str = None,
+    param5: str = None,
+    param6: str = None,
+    param7: str = None,
+    param8: str = None
+):
+    """
+    Send a message to a specific object.
+
+    Args:
+        object_id (int): The ID of the object to send the message to.
+        message (str): The message to send to the object.
+        param1 to param8 (str, optional): Optional parameters.
+    """
+    try:
+        # Build the command
+        command = f"send object {object_id} {message}"
+        for param in [param1, param2, param3, param4, param5, param6, param7, param8]:
+            if param:
+                command += f" {param}"
+
+        # Send the command
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Invalid object id" in response:
+            raise HTTPException(status_code=404, detail=f"Object ID {object_id} not found or invalid.")
+        if "Unknown message" in response:
+            raise HTTPException(status_code=400, detail=f"Unknown message '{message}' for object {object_id}.")
+        if "Invalid parameter" in response:
+            raise HTTPException(status_code=400, detail="Invalid parameter provided.")
+
+        # Check if the response includes the expected return message
+        match = re.search(r":< return from OBJECT \d+ MESSAGE .*?\r\n: (.*?)\r\n:>", response, re.DOTALL)
+        if not match:
+            raise HTTPException(status_code=500, detail="Unexpected response format.")
+
+        # Extract the return value from the response
+        return_value = match.group(1).strip()
+
+        return {
+            "status": "success",
+            "object_id": object_id,
+            "message": message,
+            "parameters": [param for param in [param1, param2, param3, param4, param5, param6, param7, param8] if param],
+            "return": return_value
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

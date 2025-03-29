@@ -827,8 +827,13 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			admin_parm[i] = (admin_parm_type)num;
 			break;
 		case R :
-			/* remember how strtok works to see why this works */
-			admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
+			// Don't go off end of string if parameter is missing
+      if (prev_tok + strlen(prev_tok) >= command + strlen(command))
+      {
+        admin_parm[i] = (admin_parm_type) (command + strlen(command));
+      } else {
+        admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
+      }
 			/* now make sure no more params */
 			prev_tok = NULL;
 			break;

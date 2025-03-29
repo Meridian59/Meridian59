@@ -158,10 +158,11 @@ messages:
       return FALSE;
    }
 
-   CountHoldingHowMany(class = $)
-   "Does not count quantity in a numbitem (500 apples counts as 1)"
+   CountHoldingHowMany(class = $, lExcludeClasses = $)
+   "Counts objects of the given class, excluding specified classes, "
+   "ignoring quantity in numbitem (500 apples counts as 1)."
    {
-      local n,i,each_obj;
+      local n;
 
       if class = $
       {
@@ -170,25 +171,48 @@ messages:
 
       n = 0;
 
-      for i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         if isClass(each_obj, class)
-         {
-            n = n + 1;
-         }
-      }
-
-      for i in plPassive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         if isClass(each_obj, class)
-         {
-            n = n + 1;
-         }
-      }
+      % Count matching objects in both active and passive lists
+      n = Send(self,@CountMatchingObjects,#object_list=plActive,
+           #class=class,#lExcludeClasses=lExcludeClasses);
+      n = n + Send(self,@CountMatchingObjects,#object_list=plPassive,
+           #class=class,#lExcludeClasses=lExcludeClasses);
 
       return n;
+   }
+
+   CountMatchingObjects(object_list = $, class = $, lExcludeClasses = $)
+   "Helper function to count objects of a given class, excluding specified classes"
+   {
+      local i, each_obj, lExclude, count;
+
+      count = 0;
+      
+      for i in object_list
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(each_obj, class)
+         {
+            % Only increment if no excluded classes or doesn't match any excluded class
+            count = count + 1;
+            
+            % Check excluded classes if any exist
+            if lExcludeClasses <> $
+            {
+               lExclude = lExcludeClasses;
+               while lExclude <> $
+               {
+                  if IsClass(each_obj, First(lExclude))
+                  {
+                     count = count - 1;
+                     break;
+                  }
+                  lExclude = Rest(lExclude);
+               }
+            }
+         }
+      }
+
+      return count;
    }
 
    CountHoldingSummoned()

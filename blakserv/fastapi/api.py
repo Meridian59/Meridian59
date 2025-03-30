@@ -805,9 +805,12 @@ async def show_name(character_name: str):
 async def show_object(object_id: int):
     """
     Show the details of a specific object by its ID.
-    
+
     Args:
         object_id (int): The ID of the object to query.
+
+    Returns:
+        JSON response with the object details.
     """
     try:
         # Send the command
@@ -834,23 +837,11 @@ async def show_object(object_id: int):
             "properties": {}
         }
 
+        current_property = None
+
         for line in lines:
             line = line.strip()
             if not line or line.startswith(">"):  # Skip empty lines and command echo
-                continue
-
-            # Handle combined lines (split on "\n:")
-            if "\n:" in line:
-                sub_lines = line.split("\n:")
-                for sub_line in sub_lines:
-                    sub_line = sub_line.strip()
-                    if sub_line.startswith(":"):
-                        sub_line = sub_line[1:]  # Remove leading ":"
-                    parts = sub_line.split("=", 1)
-                    if len(parts) == 2:
-                        key = parts[0].strip()
-                        value = parts[1].strip()
-                        object_data["properties"][key] = value
                 continue
 
             # Parse the object class
@@ -860,13 +851,23 @@ async def show_object(object_id: int):
                     object_data["class"] = parts[5]
                 continue
 
-            # Parse object properties
-            if line.startswith(":"):
-                parts = line.split("=", 1)
-                if len(parts) == 2:
-                    key = parts[0].strip(": ").strip()
-                    value = parts[1].strip()
-                    object_data["properties"][key] = value
+            # Handle multi-line properties
+            if "=" in line:
+                # If there's a current property, save it
+                if current_property:
+                    key, value = current_property.split("=", 1)
+                    object_data["properties"][key.strip(": ").strip()] = value.strip()
+
+                # Start a new property
+                current_property = line
+            elif current_property:
+                # Append to the current property if the line doesn't start a new one
+                current_property += " " + line
+
+        # Add the last property if it exists
+        if current_property:
+            key, value = current_property.split("=", 1)
+            object_data["properties"][key.strip(": ").strip()] = value.strip()
 
         # Ensure the class is found
         if not object_data["class"]:

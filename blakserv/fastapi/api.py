@@ -2166,3 +2166,172 @@ async def unlock():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/reload-game")
+async def reload_game(save_time: int = 0):
+    """
+    Reload the game from a specific save time.
+
+    Args:
+        save_time (int, optional): The save time to reload from. Defaults to 0 (last save).
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = f"reload game {save_time}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response includes expected output
+        if "Unloading game... done." in response and "Loading game... done." in response:
+            return {
+                "status": "success",
+                "message": f"Game reloaded successfully from save time {save_time}.",
+                "save_time": save_time,
+                "raw_response": response.strip()
+            }
+
+        # If no reliable output, assume success
+        return {
+            "status": "success",
+            "message": "Command sent successfully.",
+            "save_time": save_time,
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/reload-motd")
+async def reload_motd():
+    """
+    Reload the message of the day from the file.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "reload motd"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response indicates success
+        if "Reloading motd..." in response and "done." in response:
+            return {
+                "status": "success",
+                "message": "MOTD reloaded successfully.",
+                "raw_response": response.strip()
+            }
+
+        # If no reliable output, assume success
+        return {
+            "status": "success",
+            "message": "Command sent successfully.",
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        # Handle the case where the connection is forcibly closed or other issues
+        if "forcibly closed by the remote host" in str(e):
+            return {
+                "status": "success",
+                "message": "MOTD reloaded successfully. Connection was forcibly closed by the server.",
+                "raw_response": None
+            }
+
+        # Raise other exceptions as usual
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/reload-packages")
+async def reload_packages():
+    """
+    Rescan the upload directory for packages.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "reload packages"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response indicates success
+        if "Reloading packages... done." not in response:
+            raise HTTPException(status_code=500, detail="Failed to reload packages. Unexpected response.")
+
+        return {
+            "status": "success",
+            "message": "Packages reloaded successfully.",
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/reload-system")
+async def reload_system():
+    """
+    Save the game and reload all kod, motd, and other system components.
+
+    Returns:
+        JSON response indicating success or failure for each step.
+    """
+    try:
+        # Send the command
+        command = "reload system"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Normalize the response by removing extra whitespace and combining lines
+        normalized_response = " ".join(response.split())
+
+        # Parse the response for specific steps
+        garbage_collection_success = "Garbage collecting and saving game... done." in normalized_response
+        unloading_success = "Unloading game, kodbase, and .bof ... done." in normalized_response
+        loading_success = "Loading game, kodbase, and .bof ... done." in normalized_response
+
+        # Return structured response
+        return {
+            "status": "success",
+            "steps": {
+                "garbage_collection": "success" if garbage_collection_success else "failed",
+                "saving_game": "success" if garbage_collection_success else "failed",
+                "reloading_components": "success" if unloading_success and loading_success else "failed"
+            },
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

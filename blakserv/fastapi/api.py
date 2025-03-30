@@ -856,7 +856,7 @@ async def show_object(object_id: int):
                 # If there's a current property, save it
                 if current_property:
                     key, value = current_property.split("=", 1)
-                    object_data["properties"][key.strip(": ").strip()] = value.strip()
+                    object_data["properties"][key.strip(": ").strip()] = value.strip().rstrip(":>").strip()
 
                 # Start a new property
                 current_property = line
@@ -867,7 +867,7 @@ async def show_object(object_id: int):
         # Add the last property if it exists
         if current_property:
             key, value = current_property.split("=", 1)
-            object_data["properties"][key.strip(": ").strip()] = value.strip()
+            object_data["properties"][key.strip(": ").strip()] = value.strip().rstrip(":>").strip()
 
         # Ensure the class is found
         if not object_data["class"]:

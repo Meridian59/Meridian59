@@ -2067,3 +2067,102 @@ async def terminate_nosave():
 
         # Raise other exceptions as usual
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/mark")
+async def mark():
+    """
+    Add a marker to the server logs.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "mark"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Since there is no output for the `mark` command, assume success if no exception occurs
+        return {
+            "status": "success",
+            "message": "Marker added to the server logs.",
+            "raw_response": response.strip() if response else None
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/lock")
+async def lock(reason: str = "The game is temporarily closed for maintenance."):
+    """
+    Lock the game, preventing new players from joining.
+
+    Args:
+        reason (str, optional): The reason for locking the game. Defaults to a maintenance message.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = f"lock {reason}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response indicates success
+        if f"Locking game <{reason}>" not in response:
+            raise HTTPException(status_code=500, detail="Failed to lock the game. Unexpected response.")
+
+        return {
+            "status": "success",
+            "message": f"Game locked successfully with reason: {reason}",
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/unlock")
+async def unlock():
+    """
+    Unlock the game, allowing new players to join.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "unlock"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response indicates success
+        if "Unlocking game." not in response:
+            raise HTTPException(status_code=500, detail="Failed to unlock the game. Unexpected response.")
+
+        return {
+            "status": "success",
+            "message": "Game unlocked successfully.",
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

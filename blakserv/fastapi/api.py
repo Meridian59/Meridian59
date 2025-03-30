@@ -2408,3 +2408,40 @@ async def admin_read(filename: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/say")
+async def admin_say(message: str):
+    """
+    Send a message to all logged in admins.  Note: shows up only in admin mode (not in game text).
+
+    Args:
+        message (str): The message to send to .
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the adminsay command with the message
+        command = f"say {message}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response indicates success
+        if "Said." not in response:
+            raise HTTPException(status_code=500, detail="Failed to send message. Unexpected response.")
+
+        return {
+            "status": "success",
+            "message": f"Sent message: {message}",
+            "raw_response": response.strip()
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

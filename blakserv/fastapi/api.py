@@ -1975,3 +1975,95 @@ async def save_configuration():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/terminate-save")
+async def terminate_save():
+    """
+    Terminate the server after saving the game state.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "terminate save"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Check if the response indicates saving and termination
+        save_complete = "Garbage collecting and saving game... done." in response
+        termination_confirmed = "Terminating server. All connections, including yours, about to be lost" in response
+
+        # If the expected output is received, return success
+        if save_complete and termination_confirmed:
+            return {
+                "status": "success",
+                "message": "Server termination initiated after saving.",
+                "save_complete": save_complete,
+                "termination_confirmed": termination_confirmed,
+                "raw_response": response.strip()
+            }
+
+        # If the expected output is not received, raise an error
+        raise HTTPException(status_code=500, detail="Failed to terminate server with save. Unexpected response.")
+
+    except Exception as e:
+        # Handle the case where the connection is forcibly closed
+        if "forcibly closed by the remote host" in str(e):
+            return {
+                "status": "success",
+                "message": "Server termination initiated after saving. Connection was forcibly closed by the server.",
+                "save_complete": True,
+                "termination_confirmed": True,
+                "raw_response": response.strip() if 'response' in locals() else None
+            }
+
+        # Raise other exceptions as usual
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/terminate-nosave")
+async def terminate_nosave():
+    """
+    Terminate the server without saving the game state.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "terminate nosave"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if access is denied
+        check_access(response)
+
+        # Since terminate nosave does not provide output, assume success if no exception occurs
+        return {
+            "status": "success",
+            "message": "Server termination initiated without saving.",
+            "raw_response": response.strip() if response else None
+        }
+
+    except Exception as e:
+        # Handle the case where the connection is forcibly closed
+        if "forcibly closed by the remote host" in str(e):
+            return {
+                "status": "success",
+                "message": "Server termination initiated without saving. Connection was forcibly closed by the server.",
+                "raw_response": None
+            }
+
+        # Raise other exceptions as usual
+        raise HTTPException(status_code=500, detail=str(e))

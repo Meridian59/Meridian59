@@ -2335,3 +2335,76 @@ async def reload_system():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/read/{filename}")
+async def admin_read(filename: str):
+    """
+    Read the contents of a file on the server, execute each line as a command,
+    and capture the output for each command.
+
+    Args:
+        filename (str): The name of the file to read.
+
+    Returns:
+        JSON response with the file contents and the output for each command.
+    """
+    try:
+        # Send the command to read the file
+        command = f"read {filename}"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Check if the file could not be opened
+        if f"Error opening {filename}" in response:
+            raise HTTPException(status_code=404, detail=f"File '{filename}' not found or cannot be opened.")
+
+        # Parse the response to extract commands and their outputs
+        lines = response.split('\r\n')
+        command_outputs = []
+        current_command = None
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Detect a command line (starts with ">>")
+            if line.startswith(">>"):
+                # If there's a previous command, add it to the results
+                if current_command:
+                    command_outputs.append(current_command)
+
+                # Start a new command
+                current_command = {
+                    "command": line[2:].strip(),  # Remove ">>" and trim
+                    "response": ""
+                }
+            elif current_command:
+                # Append the line to the current command's response
+                current_command["response"] += line + "\n"
+
+        # Add the last command if it exists
+        if current_command:
+            command_outputs.append(current_command)
+
+        # Clean up responses (strip trailing newlines)
+        for cmd in command_outputs:
+            cmd["response"] = cmd["response"].strip()
+
+        # Check for access denial on a per-command basis
+        for cmd in command_outputs:
+            if "You do not have access to this command." in cmd["response"]:
+                cmd["error"] = "Access denied for this command."
+
+        return {
+            "status": "success",
+            "filename": filename,
+            "commands": command_outputs
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

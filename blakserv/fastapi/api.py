@@ -19,8 +19,8 @@ def check_access(response: str):
 @router.get("/admin/who")
 async def get_online_players():
     """
-    Get list of all online players
-    Returns structured JSON with player information
+    Get list of all online players.
+    Returns structured JSON with player information, including objectID if present.
     """
     try:
         response = await asyncio.get_event_loop().run_in_executor(
@@ -45,13 +45,24 @@ async def get_online_players():
                         # Split on multiple spaces
                         parts = [p for p in player_line.split() if p.strip()]
                         if len(parts) >= 6:  # Ensure we have enough parts
+                            location = " ".join(parts[5:])
+                            object_id = None
+
+                            # Extract objectID from location if present
+                            if "(" in location and ")" in location:
+                                try:
+                                    object_id = int(location.split("(")[-1].split(")")[0])
+                                except ValueError:
+                                    object_id = None
+
                             player = {
                                 "name": parts[0],
                                 "activity": parts[1] if parts[1] != "No" else None,
                                 "version": parts[2] if parts[2] != "No" else None,
                                 "session": parts[3],
                                 "ip": parts[4],
-                                "location": " ".join(parts[5:])
+                                "location": location,
+                                "objectID": object_id
                             }
                             players.append(player)
                 break

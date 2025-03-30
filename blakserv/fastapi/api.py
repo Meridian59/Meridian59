@@ -1873,18 +1873,140 @@ async def send_object(
 
         # Check if the response includes the expected return message
         match = re.search(r":< return from OBJECT \d+ MESSAGE .*?\r\n: (.*?)\r\n:>", response, re.DOTALL)
-        if not match:
-            raise HTTPException(status_code=500, detail="Unexpected response format.")
-
-        # Extract the return value from the response
-        return_value = match.group(1).strip()
+        return_value = match.group(1).strip() if match else None
 
         return {
             "status": "success",
             "object_id": object_id,
             "message": message,
             "parameters": [param for param in [param1, param2, param3, param4, param5, param6, param7, param8] if param],
-            "return": return_value
+            "return": return_value,
+            "raw_response": response.strip()  # Include the raw response for debugging
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/send-class")
+async def send_class(
+    class_name: str,
+    message: str,
+    param1: str = None,
+    param2: str = None,
+    param3: str = None,
+    param4: str = None,
+    param5: str = None,
+    param6: str = None,
+    param7: str = None,
+    param8: str = None
+):
+    """
+    Send a message to all instances of a specific class.
+
+    Args:
+        class_name (str): The name of the class to send the message to.
+        message (str): The message to send to the class instances.
+        param1 to param8 (str, optional): Optional parameters.
+    """
+    try:
+        # Build the command
+        command = f"send class {class_name} {message}"
+        for param in [param1, param2, param3, param4, param5, param6, param7, param8]:
+            if param:
+                command += f" {param}"
+
+        # Send the command
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Invalid class name" in response:
+            raise HTTPException(status_code=404, detail=f"Class '{class_name}' not found or invalid.")
+        if "Unknown message" in response:
+            raise HTTPException(status_code=400, detail=f"Unknown message '{message}' for class '{class_name}'.")
+        if "Invalid parameter" in response:
+            raise HTTPException(status_code=400, detail="Invalid parameter provided.")
+
+        # Check if the response includes the expected return message
+        match = re.search(r":< (\d+) instance\(s\) sent MESSAGE \d+ .*?\r\n:>", response, re.DOTALL)
+        instances_sent = int(match.group(1)) if match else None
+
+        return {
+            "status": "success",
+            "class_name": class_name,
+            "message": message,
+            "parameters": [param for param in [param1, param2, param3, param4, param5, param6, param7, param8] if param],
+            "instances_sent": instances_sent,
+            "raw_response": response.strip()  # Include the raw response for debugging
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/save-game")
+async def save_game():
+    """
+    Save the game state, performing garbage collection first.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "save game"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Garbage collecting and saving game" not in response:
+            raise HTTPException(status_code=500, detail="Failed to save game. Unexpected response.")
+
+        # Extract save time if available
+        match = re.search(r"Save time is \((\d+)\)", response)
+        save_time = int(match.group(1)) if match else None
+
+        return {
+            "status": "success",
+            "message": "Game saved successfully.",
+            "save_time": save_time
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/save-configuration")
+async def save_configuration():
+    """
+    Save the server configuration to the configuration file.
+
+    Returns:
+        JSON response indicating success or failure.
+    """
+    try:
+        # Send the command
+        command = "save configuration"
+        response = await asyncio.get_event_loop().run_in_executor(
+            None, client.send_command, command
+        )
+
+        # Debug the raw response
+        print("Raw response:", repr(response))
+
+        # Handle specific error cases
+        if "Configuration saved." not in response:
+            raise HTTPException(status_code=500, detail="Failed to save configuration. Unexpected response.")
+
+        return {
+            "status": "success",
+            "message": "Configuration saved successfully."
         }
 
     except Exception as e:

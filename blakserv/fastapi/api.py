@@ -262,42 +262,6 @@ async def show_clock():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/admin/show-accounts")
-async def show_accounts():
-    """
-    Show all accounts
-    """
-    try:
-        response = await asyncio.get_event_loop().run_in_executor(
-            None, client.send_command, "show accounts"
-        )
-
-        check_access(response)
-
-        # Parse the response
-        lines = response.split('\r\n')
-        accounts = []
-        
-        for line in lines:
-            parts = line.split()
-            if len(parts) >= 6:
-                account = {
-                    "account": parts[0],
-                    "name": parts[1],
-                    "suspended": parts[2] if parts[2] != "" else None,
-                    "credits": float(parts[3]),
-                    "last_login": " ".join(parts[4:])
-                }
-                accounts.append(account)
-        
-        return {
-            "status": "success",
-            "accounts": accounts
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @router.get("/admin/show-account/{account}")
 async def show_account(account: str):
     """

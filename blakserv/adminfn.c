@@ -4391,8 +4391,6 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	lprintf("AdminReloadGame\n");
 
 	/* make sure no one in game */
-	AdminHangupAll(session_id, parms, num_blak_parm, blak_parm);
-
 	accounts_in_game = 0;
 	ForEachSession(AdminReloadGameEachSession);
 	if (accounts_in_game > 0)
@@ -4401,6 +4399,8 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 			accounts_in_game,accounts_in_game == 1 ? "person is" : "people are");
 		return;
 	}
+
+  AdminHangupAll(session_id, parms, num_blak_parm, blak_parm);
 
 	aprintf("Unloading game... ");
 	AdminSendBufferList();

@@ -169,8 +169,6 @@ messages:
          return 0;
       }
 
-      n = 0;
-
       % Count matching objects in both active and passive lists
       n = Send(self,@CountMatchingObjects,#object_list=plActive,
            #class=class,#lExcludeClasses=lExcludeClasses);
@@ -195,19 +193,15 @@ messages:
             % Only increment if no excluded classes or doesn't match any excluded class
             count = count + 1;
             
-            % Check excluded classes if any exist
-            if lExcludeClasses <> $
+            lExclude = lExcludeClasses;
+            while lExclude <> $
             {
-               lExclude = lExcludeClasses;
-               while lExclude <> $
+               if IsClass(each_obj, First(lExclude))
                {
-                  if IsClass(each_obj, First(lExclude))
-                  {
-                     count = count - 1;
-                     break;
-                  }
-                  lExclude = Rest(lExclude);
+                  count = count - 1;
+                  break;
                }
+               lExclude = Rest(lExclude);
             }
          }
       }

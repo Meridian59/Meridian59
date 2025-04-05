@@ -116,9 +116,6 @@ classvars:
 
 properties:
 
-   plBraxRIDs = $
-
-
    prRoom = room_OutdoorsG9
    prMusic = OutdoorsG9_music
    piRoom_num = RID_G9
@@ -166,10 +163,6 @@ messages:
    Constructed()
    {
       local oMovingSpire;
-
-      plBraxRIDs = [ RID_BRAX_START, RID_NEC_CAVES, RID_NEC_GRAVEYARD, RID_BRAX, 
-                     RID_BRAX_CASTLE1, RID_BRAX_CASTLE2, RID_BRAX_BUILDING1, 
-                     RID_BRAX_BUILDING2, RID_BRAX_END ];
 
       plMonsters = [ [&Orc, 80], [&DeathSpider, 20] ];
       
@@ -237,7 +230,7 @@ messages:
                             #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
       plOuterSpires = cons(oMovingSpire, plOuterSpires);
 
-      Post(self,@ReturnPuzzleToInitialState);
+      Post(self,@ActivateLevers);
 
       propagate;
    }
@@ -428,17 +421,7 @@ messages:
 
    PuzzleSolved()
    {
-      if ptResetPuzzle <> $
-      {
-         DeleteTimer(ptResetPuzzle);
-         ptResetPuzzle = $;
-      }
-
-      if ptActivateLevers <> $
-      {
-         DeleteTimer(ptActivateLevers);
-         ptActivateLevers = $;
-      }
+      Send(self,@DeleteTimers);
 
       ptResetPuzzle = CreateTimer(self,@ReturnPuzzleToInitialState,PUZZLE_TIMELIMIT);
 
@@ -497,17 +480,18 @@ messages:
    BroadcastPuzzleSolved()
    "Notifies rooms and players that the puzzle has been solved."
    {
-      local i, iRID, oRoom, oPlayer;
+      local i, oRoom, oPlayer;
       
-      for iRID in plBraxRIDs
+      for oRoom in Send(SYS,@GetRooms)
       {
-         oRoom = Send(SYS,@FindRoomByNum,#num=iRID);
+         % Skip room if not in Brax
+         if Send(oRoom,@GetRegion) <> RID_BRAX
+         {
+            continue;
+         }
 
-         % Rumble Brax rooms
-         Send(oRoom,@Rumble,#duration=3000,#disruption=0); % TODO: Check for players?
-
-         % Play rumble throughout Brax
-         % Send(oRoom,@SomethingWaveRoom,#wave_rsc=G9_platform_distant_sound); % TODO: Check for players? 
+         % Rumble room
+         Send(oRoom,@Rumble,#duration=3000,#disruption=0);
 
          % Send a message to all players in the room
          for i in Send(oRoom,@GetHolderActive)
@@ -760,17 +744,7 @@ messages:
 
    AdminResetPuzzle()
    {
-      if ptResetPuzzle <> $
-      {
-         DeleteTimer(ptResetPuzzle);
-         ptResetPuzzle = $;
-      }
-
-      if ptActivateLevers <> $
-      {
-         DeleteTimer(ptActivateLevers);
-         ptActivateLevers = $;
-      }
+      Send(self,@DeleteTimers);
 
       ptResetPuzzle = CreateTimer(self,@ReturnPuzzleToInitialState,10);
 
@@ -779,17 +753,7 @@ messages:
    
    Delete()
    {
-      if ptResetPuzzle <> $
-      {
-         DeleteTimer(ptResetPuzzle);
-         ptResetPuzzle = $;
-      }
-
-      if ptActivateLevers <> $
-      {
-         DeleteTimer(ptActivateLevers);
-         ptActivateLevers = $;
-      }
+      Send(self,@DeleteTimers);
 
       if poPlatform <> $
       {
@@ -838,6 +802,23 @@ messages:
       poSELever = $;
       
       propagate;
+   }
+
+   DeleteTimers()
+   {
+      if ptResetPuzzle <> $
+      {
+         DeleteTimer(ptResetPuzzle);
+         ptResetPuzzle = $;
+      }
+
+      if ptActivateLevers <> $
+      {
+         DeleteTimer(ptActivateLevers);
+         ptActivateLevers = $;
+      }
+
+      return;
    }
 
 end

@@ -39,6 +39,7 @@ classvars:
 
 properties:
 
+   piPreviousKarma = FEYNODE_GOOD
    piKarma = 0
 
 messages:
@@ -70,8 +71,15 @@ messages:
    }
 
    StripUsers()
+   "Strip users based on their karma."
    {
       local lUsers, i;
+
+      % If the karma hasn't changed to opposite, don't strip users.
+      if (piPreviousKarma = piKarma)
+      {
+         return;
+      }
 
       lUsers = Send(SYS,@GetUsers);
       if piKarma = FEYNODE_GOOD
@@ -100,6 +108,8 @@ messages:
             }
          }
       }
+
+      piPreviousKarma = piKarma;
 
       return;
    }

@@ -13,7 +13,7 @@ FeyNode is ManaNode
 % FeyNode has three properties that make it distinct:
 % 1) It gives twice as much mana
 % 2) Only people of matching karma can meld with it.
-% 3) When created, it strips everyone of opposing mana of their link
+% 3) When created, if polarity flips, it strips everyone of opposing mana of their link
 
 constants:
 
@@ -75,7 +75,7 @@ messages:
    {
       local lUsers, i;
 
-      % If the karma hasn't changed to opposite, don't strip users.
+      % If the karma hasn't changed to the opposite polarity, don't strip users.
       if (piPreviousKarma = piKarma)
       {
          return;

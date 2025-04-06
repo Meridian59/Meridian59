@@ -55,6 +55,8 @@ static int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM 
 static int StringToTimestamp(const char *dateStr);
 static void PrepareMailDateMap(HWND hListView);
 static void ResetMailListSort(HWND hListView);
+static int DeleteSelectedMessages(HWND hList);
+static void UpdateButtonStates(HWND hDlg, HWND hList);
 
 /****************************************************************************/
 /*
@@ -84,7 +86,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    static HWND hEdit, hList;
    static int mail_index; /* Number of currently displayed message, -1 if none */
    MailHeader *header;
-   int index, msg_num, count;
+   int index, msg_num, lastIndex, count;
    char str[MAX_HEADERLINE], msg[MAXMAIL];
    MINMAXINFO *lpmmi;
    LV_COLUMN lvcol;
@@ -125,6 +127,10 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
       mail_index = -1;
 
+      EnableWindow(GetDlgItem(hDlg, IDC_REPLY), FALSE);
+      EnableWindow(GetDlgItem(hDlg, IDC_REPLYALL), FALSE);
+      EnableWindow(GetDlgItem(hDlg, IDC_DELETEMSG), FALSE);
+
       SetFocus(hReadMailDlg);
 
       MailGetMessageList();
@@ -132,6 +138,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
       PrepareMailDateMap(hList);
       ListView_SetHeaderSortImage(hList, COL_ORDER, FALSE);
+
 
       return TRUE;
 
@@ -248,6 +255,8 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          break;
 
       case LVN_ITEMCHANGED:
+         UpdateButtonStates(hDlg, hList);
+
          // New item selected; get its message number
          lvitem.mask = LVIF_STATE | LVIF_PARAM;
          lvitem.stateMask = LVIS_SELECTED;
@@ -280,22 +289,27 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       switch (GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDC_DELETEMSG:
-         if (!ListViewGetCurrentData(hList, &index, &msg_num))
-            return TRUE;
-
-         if (MailDeleteMessage(msg_num) == True)
-         {
-            /* Display new current message, if any */
-            Edit_SetText(hEdit, "");
-            ListView_DeleteItem(hList, index);
-
-            count = ListView_GetItemCount(hList);
-            if (count == 0)
+         // Confirm if deleting multiple messages
+         count = ListView_GetSelectedCount(hList);
+         if (count > 1) {
+            if (!AreYouSure(hInst, hReadMailDlg, NO_BUTTON, IDS_DELETEMULTIPLE, count))
                return TRUE;
+         }
 
-            index = min(index, count - 1); // in case last message deleted
+         lastIndex = DeleteSelectedMessages(hList);
+         Edit_SetText(hEdit, "");
+
+         // Get new count of messages after deletion
+         count = ListView_GetItemCount(hList);
+
+         // If there are still messages, select the nearest message
+         if (count > 0) {
+            // If lastIndex is valid, use it as reference point
+            // Otherwise start from beginning           
+            int index = (lastIndex >= 0) ? min(lastIndex, count - 1) : 0;
             ListView_SetItemState(hList, index, LVIS_SELECTED, LVIS_SELECTED);
          }
+
          return TRUE;
 
       case IDC_RESCAN:
@@ -542,4 +556,38 @@ void ResetMailListSort(HWND hListView)
    ListView_SortItemsEx(hListView, CompareMailListItems, -(COL_ORDER + 1));
    // 0-based column
    ListView_SetHeaderSortImage(hListView, COL_ORDER, false);
+}
+
+/*
+* DeleteSelectedMessages: Deletes all selected messages from the list view
+*/
+int DeleteSelectedMessages(HWND hList) {
+   int i;
+   int count = ListView_GetItemCount(hList);
+   int lastSelectedIndex = -1;
+   
+   for (i = count - 1; i >= 0; i--) {
+      if (ListView_GetItemState(hList, i, LVIS_SELECTED)) {
+         LV_ITEM lvitem;
+         lvitem.mask = LVIF_PARAM;
+         lvitem.iItem = i;
+         lvitem.iSubItem = 0;
+         ListView_GetItem(hList, &lvitem);
+         
+         if (MailDeleteMessage((int)lvitem.lParam)) {
+            ListView_DeleteItem(hList, i);
+            lastSelectedIndex = i;
+         }
+      }
+   }
+   
+   // Return the index where the last selected item
+   return lastSelectedIndex;
+}
+
+static void UpdateButtonStates(HWND hDlg, HWND hList) {
+   int selectedCount = ListView_GetSelectedCount(hList);
+   EnableWindow(GetDlgItem(hDlg, IDC_REPLY), selectedCount == 1);
+   EnableWindow(GetDlgItem(hDlg, IDC_REPLYALL), selectedCount == 1);
+   EnableWindow(GetDlgItem(hDlg, IDC_DELETEMSG), selectedCount > 0);
 }

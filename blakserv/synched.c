@@ -18,6 +18,8 @@
 
 #include "blakserv.h"
 
+static const int DEFAULT_MOVE_INTERVAL = 1000;
+
 /* local function prototypes */
 void SynchedProtocolParse(session_node *s,client_msg *msg);
 void SynchedAcceptLogin(session_node *s,char *name,char *password);
@@ -662,7 +664,15 @@ void SynchedGotoGame(session_node *s,int last_download_time)
 
    // All set to go to game mode.
 
+   // Sync the client's move interval with the server's
+   int move_interval = ConfigInt(UPDATE_MOVE_INTERVAL);
+   if (move_interval <= 0)
+   {
+      move_interval = DEFAULT_MOVE_INTERVAL;
+   }
+
    AddByteToPacket(AP_GAME);
+   AddIntToPacket(move_interval);
    SendPacket(s->session_id);
    
    SetSessionState(s,STATE_GAME);

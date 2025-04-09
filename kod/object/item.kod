@@ -1827,5 +1827,15 @@ messages:
       return;
    }
 
+   DropsOnUnsafeLogoff()
+   "Returns TRUE if the item can be dropped by logoff ghosts."
+   {
+      % Excluded from unsafe logoff penalties:
+      % - Anything that won't be dropped on death
+      % - Anything with the IA_MADE attribute (create weapon, create food)
+      return Send(self,@DropOnDeath) AND 
+         NOT Send(self,@HasAttribute,#ItemAtt=IA_MADE);
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

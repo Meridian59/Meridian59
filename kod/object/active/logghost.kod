@@ -32,6 +32,7 @@ resources:
 
    LogoffGhost_penalty_mail_Sender = "Your guardian angel"
 
+   % TODO: Add something about items unaffected by penalties
    LogoffGhost_penalty_mail = "Subject: Penalties for logging off in an unsafe area\n"
       "You have suffered some penalties for logging off in an unsafe area:\n"
       "You lost %q items, %q spell points, and %q skill points."
@@ -246,7 +247,7 @@ messages:
             LossAmount, iNumItemsInventory, numItemsLost, iLoops, iStamina,
             iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
             lSkills, iSkillAbility, numSkillPointsLost, iEquivDeath,
-            oSoldierShield;
+            oSoldierShield, oItem;
 
       % Sanity check: Are they logged on?
       If Send(poGhostedPlayer,@IsLoggedOn)
@@ -282,7 +283,7 @@ messages:
       {
          % just drop everything
          i = 1;
-         while i <= iNumItemsInventory
+         while i <= Send(poGhostedPlayer,@GetNumItemsInInventory)
          {
             if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
             {
@@ -294,33 +295,68 @@ messages:
       }
       else
       {
+         debug("LogoffGhost: Starting drop process for",Send(poGhostedPlayer,@GetTrueName),
+               "- Need to drop",LossCounter,"items from",numItemsLost,"total items",
+               "- PenaltyCounter:",penaltyCounter,"of",iEquivDeath);
+
          while LossCounter > 0 AND iNumItemsInventory > 0
          {
-            % try to drop a Random item
             iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
-            i = Random(1,iNumItemsInventory);
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            
+            % Sanity check
+            if iNumItemsInventory = 0
             {
-               % If the Random drop fails, scan through and drop the first one
-               %  we can.
-               i = 1;
-               while i <= iNumItemsInventory
-                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,
-                                  #targetGhost=self)
-               {
-                  i = i + 1;
-               }
-
-               % If we got all the way through the inventory without dropping
-               %  anything, bail.
-               if i > Send(poGhostedPlayer,@GetNumItemsInInventory)
-               {
-                  LossCounter = 1;
-               }
+               break;
             }
 
-            LossCounter = LossCounter - 1;
+            % Start from a random position in inventory since starting at the
+            % beginning or end would let players protect items by placing them
+            % strategically in their inventory
+            i = Random(1,iNumItemsInventory);
+            iStart = i;
+            bLooped = FALSE;
+            
+            % Keep trying until we've checked every slot once
+            while (i <> iStart OR NOT bLooped)
+            {
+               % Check if current item is included in logoff penalties
+               oItem = Send(poGhostedPlayer,@FindItemByIndex,#index=i);
+               if oItem <> $ AND Send(oItem,@DropsOnUnsafeLogoff)
+               {
+                  % Try to drop the item
+                  if Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+                  {
+                     % Item was dropped, so decrement the losses handed out
+                     LossCounter = LossCounter - 1;
+                     iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+                     
+                     % When we drop an item, all items after it shift down one slot
+                     % So we need to stay at the same index to check what shifted into this position
+                     i = i - 1;  % Counteract the i + 1 that happens next
+                     break;
+                  }
+               }
+               
+               % Move to next slot
+               i = i + 1;
+               if i > iNumItemsInventory
+               {
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+            
+            % If we checked every slot and couldn't drop anything, bail out
+            if i = iStart AND bLooped
+            {
+               break;
+            }
          }
+
+         debug("LogoffGhost: Drop process complete for",Send(poGhostedPlayer,@GetTrueName),
+               "- Started with",numItemsLost,"items,",
+               "dropped",(numItemsLost - iNumItemsInventory),"items,",
+               "remaining:",iNumItemsInventory);
       }
 
       % Correct the number of items lost by subtracting out the items left in

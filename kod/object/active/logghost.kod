@@ -247,7 +247,7 @@ messages:
             LossAmount, iNumItemsInventory, numItemsLost, iLoops, iStamina,
             iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
             lSkills, iSkillAbility, numSkillPointsLost, iEquivDeath,
-            oSoldierShield, oItem;
+            oSoldierShield, oItem, iItemsDropped;
 
       % Sanity check: Are they logged on?
       If Send(poGhostedPlayer,@IsLoggedOn)
@@ -295,9 +295,13 @@ messages:
       }
       else
       {
-         debug("LogoffGhost: Starting drop process for",Send(poGhostedPlayer,@GetTrueName),
-               "- Need to drop",LossCounter,"items from",numItemsLost,"total items",
-               "- PenaltyCounter:",penaltyCounter,"of",iEquivDeath);
+         % Log initial state
+         debug("LogoffGhost:",Send(poGhostedPlayer,@GetTrueName),
+               "- Initial inventory:",iNumItemsInventory,"items",
+               "- Need to drop:",LossCounter,"items",
+               "- Penalty:",penaltyCounter,"of",iEquivDeath);
+
+         iItemsDropped = 0;
 
          while LossCounter > 0 AND iNumItemsInventory > 0
          {
@@ -314,9 +318,11 @@ messages:
             % strategically in their inventory
             i = Random(1,iNumItemsInventory);
             iStart = i;
+
+            % Track if we've looped through the inventory 
             bLooped = FALSE;
             
-            % Keep trying until we've checked every slot once
+            % Try each inventory slot once, starting from and returning to a random position
             while (i <> iStart OR NOT bLooped)
             {
                % Check if current item is included in logoff penalties
@@ -326,18 +332,19 @@ messages:
                   % Try to drop the item
                   if Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
                   {
+                     iItemsDropped = iItemsDropped + 1;
+                     debug("LogoffGhost: Dropped item",iItemsDropped,":",
+                           Send(oItem,@GetName),"at index",i);
+
                      % Item was dropped, so decrement the losses handed out
                      LossCounter = LossCounter - 1;
                      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
                      
-                     % When we drop an item, all items after it shift down one slot
-                     % So we need to stay at the same index to check what shifted into this position
-                     i = i - 1;  % Counteract the i + 1 that happens next
-                     break;
+                     continue; % Try this slot again (we don't advance the index)
                   }
                }
                
-               % Move to next slot
+               % Advance to next slot, wrapping around to start if needed
                i = i + 1;
                if i > iNumItemsInventory
                {
@@ -346,17 +353,21 @@ messages:
                }
             }
             
-            % If we checked every slot and couldn't drop anything, bail out
+            % Exit if we've checked every slot without finding droppable items
             if i = iStart AND bLooped
             {
+               debug("LogoffGhost: No more droppable items found.",
+                     "Still need to drop:",LossCounter,"items");
                break;
             }
          }
 
-         debug("LogoffGhost: Drop process complete for",Send(poGhostedPlayer,@GetTrueName),
-               "- Started with",numItemsLost,"items,",
-               "dropped",(numItemsLost - iNumItemsInventory),"items,",
-               "remaining:",iNumItemsInventory);
+         % Log final state with complete summary
+         debug("LogoffGhost: Drop complete for",Send(poGhostedPlayer,@GetTrueName),
+               "- Started with:",numItemsLost,"items",
+               "- Dropped:",iItemsDropped,"items",
+               "- Attempted to drop:",LossCounter + iItemsDropped,"items",
+               "- Remaining:",iNumItemsInventory,"items");
       }
 
       % Correct the number of items lost by subtracting out the items left in

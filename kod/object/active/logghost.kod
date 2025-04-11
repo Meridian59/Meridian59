@@ -246,7 +246,8 @@ messages:
             LossAmount, iNumItemsInventory, numItemsLost, iLoops, iStamina,
             iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
             lSkills, iSkillAbility, numSkillPointsLost, iEquivDeath,
-            oSoldierShield;
+            oSoldierShield, oItem, lDroppableItems, iNumToDrop, iRandomIndex, 
+            iItemsDropped, lDropList;
 
       % Sanity check: Are they logged on?
       If Send(poGhostedPlayer,@IsLoggedOn)
@@ -282,7 +283,7 @@ messages:
       {
          % just drop everything
          i = 1;
-         while i <= iNumItemsInventory
+         while i <= Send(poGhostedPlayer,@GetNumItemsInInventory)
          {
             if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
             {
@@ -294,33 +295,67 @@ messages:
       }
       else
       {
-         while LossCounter > 0 AND iNumItemsInventory > 0
+         % For partial drop penalties, we first build a list of items that can 
+         % be dropped. Then we randomly select items from that list to create 
+         % a drop list. We then drop all items in the drop list.
+
+         % Build list of droppable items
+         lDroppableItems = $;
+         i = 1;
+
+         while i <= Send(poGhostedPlayer,@GetNumItemsInInventory)
          {
-            % try to drop a Random item
-            iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
-            i = Random(1,iNumItemsInventory);
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            oItem = Send(poGhostedPlayer,@FindItemByIndex,#index=i);
+            if oItem <> $ AND Send(oItem,@DropsOnUnsafeLogoff)
             {
-               % If the Random drop fails, scan through and drop the first one
-               %  we can.
-               i = 1;
-               while i <= iNumItemsInventory
-                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,
-                                  #targetGhost=self)
-               {
-                  i = i + 1;
-               }
-
-               % If we got all the way through the inventory without dropping
-               %  anything, bail.
-               if i > Send(poGhostedPlayer,@GetNumItemsInInventory)
-               {
-                  LossCounter = 1;
-               }
+               lDroppableItems = Cons(oItem, lDroppableItems);
             }
-
-            LossCounter = LossCounter - 1;
+            i = i + 1;
          }
+
+         % Log initial state
+         debug("LogoffGhost:",Send(poGhostedPlayer,@GetTrueName),
+               "- Initial inventory:",numItemsLost,"items",
+               "- Need to drop:",LossCounter,"items",
+               "- Droppable items:",Length(lDroppableItems),"items",
+               "- Penalty:",penaltyCounter,"of",iEquivDeath);
+
+         % Calculate how many items to actually drop
+         iNumToDrop = Bound(LossCounter, 0, Length(lDroppableItems));
+         iItemsDropped = 0;
+
+         % Build drop list by randomly selecting items
+         lDropList = $;
+         while iNumToDrop > 0 AND Length(lDroppableItems) > 0
+         {
+            % Pick a random item from our list of droppables
+            iRandomIndex = Random(1, Length(lDroppableItems));
+            oItem = Nth(lDroppableItems, iRandomIndex);
+            
+            % Add to drop list and remove from droppable list
+            lDropList = Cons(oItem, lDropList);
+            lDroppableItems = DelListElem(lDroppableItems, oItem);
+            iNumToDrop = iNumToDrop - 1;
+         }
+
+         % Now drop all items in the drop list
+         for oItem in lDropList
+         {
+            if Send(poGhostedPlayer,@DropItem,#droppedItem=oItem,#targetGhost=self)
+            {
+               iItemsDropped = iItemsDropped + 1;
+               debug("LogoffGhost: Dropped item",iItemsDropped,":",
+                     Send(oItem,@GetName),"at index",i);
+            }
+         }
+
+         % Log final state
+         debug("LogoffGhost: Drop complete for",Send(poGhostedPlayer,@GetTrueName),
+               "- Started with:",numItemsLost,"items", 
+               "- Dropped:",iItemsDropped,"items",
+               "- Attempted to drop:",iNumToDrop + iItemsDropped,"items",
+               "- Remaining:",Send(poGhostedPlayer,@GetNumItemsInInventory),"items");
+
       }
 
       % Correct the number of items lost by subtracting out the items left in

@@ -32,7 +32,6 @@ resources:
 
    LogoffGhost_penalty_mail_Sender = "Your guardian angel"
 
-   % TODO: Add something about items unaffected by penalties
    LogoffGhost_penalty_mail = "Subject: Penalties for logging off in an unsafe area\n"
       "You have suffered some penalties for logging off in an unsafe area:\n"
       "You lost %q items, %q spell points, and %q skill points."

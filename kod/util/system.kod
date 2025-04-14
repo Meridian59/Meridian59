@@ -4703,6 +4703,9 @@ messages:
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
 
+      plMonsterTemplates = cons(create(&AncientLich),plMonsterTemplates);
+
+
       return;
    }
 

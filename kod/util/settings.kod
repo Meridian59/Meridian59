@@ -93,6 +93,9 @@ properties:
    % Time in seconds that ghosts will last before taking a penalty
    piLogoffPenaltyGhostTime = 600
 
+   % Time in seconds after attack a player that prevents getting a free penalty
+   piLogoffPenaltyPvPTime = 12 * 60 * 60 % 12 hours
+
    %
    % Guild hall settings
    %
@@ -342,6 +345,11 @@ messages:
    GetLogoffPenaltyGhostTime()
    {
       return piLogoffPenaltyGhostTime;
+   }
+
+   GetLogoffPenaltyPvPTime()
+   {
+      return piLogoffPenaltyPvPTime;
    }
 
    AlwaysCheckMonsterChasers()

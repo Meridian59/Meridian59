@@ -270,11 +270,22 @@ messages:
       numItemsLost = Send(poGhostedPlayer,@GetNumItemsInInventory);
       LossCounter = Send(poGhostedPlayer,@GetNumItemsInInventory)
                     * penaltyCounter / iEquivDeath;
-
-      if penaltyCounter < iEquivDeath
-         AND Random(1,iEquivDeath-1) < penaltyCounter
+ 
+      if penaltyCounter < iEquivDeath 
       {
-         LossCounter = LossCounter + 1;
+         % If the player recently attacked someone within the last 6 hours, they can't get a free penalty
+         if Send(poGhostedPlayer,@GetLastPlayerAttackTime) + 
+            Send(Send(SYS,@GetSettings),@GetLogoffPenaltyPvPTime) > GetTime()
+         {
+            LossCounter = LossCounter + 1;
+         }
+         else
+         {
+            if Random(1,iEquivDeath-1) < penaltyCounter
+            {
+               LossCounter = LossCounter + 1;
+            }
+         }
       }
 
       iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);

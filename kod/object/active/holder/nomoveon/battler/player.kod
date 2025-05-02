@@ -2436,6 +2436,12 @@ messages:
 
    DropItem(droppedItem=$, targetGhost=$, dropRoom=$, dropRow=0, dropCol=0,
             index=$, merge=TRUE)
+   % Removes the specified item (by object or index) from the player's inventory and drops it in the specified location.
+   % Returns TRUE if the item was successfully dropped, FALSE otherwise.
+   %
+   % IMPORTANT: This function is assumed NOT to add items to the inventory.
+   % If this behavior changes, review all code that loops over inventory and calls DropItem,
+   % as it may result in infinite loops or other unintended consequences.
    {
       local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
       

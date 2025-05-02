@@ -282,13 +282,17 @@ messages:
       {
          % just drop everything
          i = 1;
-         while i <= iNumItemsInventory AND Send(poGhostedPlayer,@GetNumItemsInInventory) > 0
+         while i <= iNumItemsInventory
          {
             if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
             {
                % Don't need to increment unless the item stayed in the
                %  inventory.
                i = i + 1;
+            }
+            else
+            {
+               iNumItemsInventory = iNumItemsInventory - 1;
             }
          }
       }

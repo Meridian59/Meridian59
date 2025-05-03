@@ -290,8 +290,8 @@ messages:
             }
             else
             {
-               % Don't need to increment unless the item stayed in the
-               %  inventory.
+               % Only increment the index if the item could not be dropped and
+               % remained in inventory.
                i = i + 1;
             }
          }

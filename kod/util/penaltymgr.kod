@@ -1,0 +1,354 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+%
+% This class provides a simple, deterministic penalty system for application
+% across unsafe logoffs, death, or other events where penalty is warranted.
+%
+% How it works:
+%   - Each penalty type (items, spells, skills) has a base loss amount.
+%   - Murderers and PVPers get a multiplier.
+%   - Item loss: If the total penalty severity exceeds the maximum allowed, we drop
+%     random items until the severity is correct.
+%   - Spell and skill loss: We reduce the spell points of a random spell until the severity is correct.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PenaltyManager is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+properties:
+
+  % Base number of items to drop
+  piBaseItemsLost = 2
+
+  % Base number of spell points to lose
+  piFlatSpellPointsLost = 1
+
+  % Base number of skill points to lose
+  piFlatSkillPointsLost = 1
+
+  % Multiplier for murderers and those flagged for PVP
+  piMurdererMultiplier = 4
+  piPVPMultiplier = 2
+
+messages:
+
+  Constructor()
+  {
+    Send(self,@Recreate);
+
+    return;
+  }
+
+  Recreate()
+  {
+    return;
+  }
+
+  InflictPenalties(who=$, dropTarget=$)
+  {
+    local iMultiplier, itemsLost, spellLost, skillLost;
+
+    % Sanity check: Are they logged on?
+    if Send(who,@IsLoggedOn)
+    {
+        return;
+    }
+
+    % Determine multiplier
+    iMultiplier = 1;
+    
+    if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+    {
+      iMultiplier = piMurdererMultiplier;
+    }
+    else 
+    {
+      if Send(who,@IsPVPOptedIn)
+      {
+        iMultiplier = piPVPMultiplier;
+      }
+    }
+
+    % Calculate penalties
+    itemsLost = piBaseItemsLost * iMultiplier;
+    spellLost = piFlatSpellPointsLost * iMultiplier;
+    skillLost = piFlatSkillPointsLost * iMultiplier;
+    
+    debug("InflictPenalties: itemsLost=", itemsLost, " spellLost=", spellLost, " skillLost=", skillLost, " multiplier=", iMultiplier);
+
+    % Drop items
+    itemsLost = Send(self,@ApplyItemPenalty,#who=who,#dropTarget=dropTarget,#lossCounter=itemsLost);
+    debug("ApplyItemPenalty: numItemsLost=", itemsLost);
+
+    % Lose maxhealth
+    Send(self,@ApplyHealthPenalty,#who=who);
+
+    % Lose spell ability
+    spellLost = Send(self,@ApplySpellPenalty,#who=who,#lossCounter=spellLost);
+    debug("ApplySpellPenalty: numSpellPointsLost=", spellLost);
+
+    % Lose skill ability
+    skillLost = Send(self,@ApplySkillPenalty,#who=who,#lossCounter=skillLost);
+    debug("ApplySkillPenalty: numSkillPointsLost=", skillLost);
+
+    return [itemsLost, spellLost, skillLost];
+  }
+
+  ApplyItemPenalty(who=$, dropTarget=$, lossCounter=$)
+  "Drops items from the player's inventory based on penalty severity. Returns the number of items lost."
+  {
+    local i, numItemsLost, iNumItemsInventory;
+
+    numItemsLost = Send(who,@GetNumItemsInInventory);
+    iNumItemsInventory = numItemsLost;
+    if lossCounter >= iNumItemsInventory
+    {
+        % Just drop everything
+        i = 1;
+        while i <= iNumItemsInventory
+        {
+          if Send(who,@DropItem,#index=i,#targetGhost=dropTarget)
+          {
+              iNumItemsInventory = iNumItemsInventory - 1;
+          }
+          else
+          {
+              % Only increment the index if the item could not be dropped and
+              % remained in inventory.
+              i = i + 1;
+          }
+        }
+    }
+    else
+    {
+        % Drop random items until lossCounter is depleted
+        while lossCounter > 0 AND iNumItemsInventory > 0
+        {
+          iNumItemsInventory = Send(who,@GetNumItemsInInventory);
+          i = Random(1,iNumItemsInventory);
+          if NOT Send(who,@DropItem,#index=i,#targetGhost=dropTarget) % TODO: use room, col, row params
+          {
+              % If random drop fails, try sequentially
+              i = 1;
+              while i <= iNumItemsInventory
+                    AND NOT Send(who,@DropItem,#index=i,#targetGhost=dropTarget)
+              {
+                i = i + 1;
+              }
+
+              % If nothing dropped, break out
+              if i > Send(who,@GetNumItemsInInventory)
+              {
+                lossCounter = 1;
+              }
+          }
+
+          lossCounter = lossCounter - 1;
+        }
+    }
+
+    % Calculate actual number of items lost
+    iNumItemsInventory = Send(who,@GetNumItemsInInventory);
+    numItemsLost = numItemsLost - iNumItemsInventory;
+
+    return numItemsLost;
+  }
+
+  ApplyHealthPenalty(who=$)
+  "Reduces the player's max health based on penalty severity."
+  {
+    Send(who,@GainBaseMaxHealth,#amount=-1);
+    
+    debug("ApplyHealthPenalty: penalty applied to", who);
+
+    return;
+  }
+
+  ApplySpellPenalty(who=$, lossCounter=$)
+  "Reduces the player's spell abilities based on penalty severity. Returns the number of spell points lost."
+  {
+    local i, bLooped, BaseLossAmount, iLoops, iSpellAbility,
+          iAbilityNum, numSpellPointsLost, iStart, lSpells, LossAmount;
+
+    numSpellPointsLost = 0;
+    
+    lSpells = Send(who,@GetSpellList);
+    if lSpells <> $
+    {
+        % Murderers lose more
+        if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+        {
+          BaseLossAmount = -2;
+        }
+        else 
+        {
+          BaseLossAmount = -1;
+        }
+
+        % Reduce all spells if LossCounter is high
+        if (lossCounter > Length(lSpells))
+        {
+          i = 0;
+          iLoops = lossCounter / Length(lSpells);
+          while i < Length(lSpells)
+          {
+              i = i + 1;
+              iSpellAbility = Send(who,@DecodeSpellAbility,
+                                  #compound=Nth(lSpells,i));
+              LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+              iAbilityNum = Send(who,@DecodeSpellNum,
+                                #compound=Nth(lSpells,i));
+              Send(who,@ChangeSpellAbility,
+                  #spell_num=iAbilityNum,#amount=LossAmount);
+              numSpellPointsLost = (numSpellPointsLost - LossAmount);
+          }
+        }
+
+        % Randomly reduce spells until LossCounter is depleted
+        iLoops = 0;
+        lossCounter = lossCounter - (numSpellPointsLost/BaseLossAmount);
+        while (lossCounter > 0) and (iLoops < 200)
+        {
+          iLoops = iLoops + 1;
+          % This tells us if we've looped back to one yet.
+          bLooped = FALSE;
+          % Try to lower a Random spell.
+          i = Random(1,Length(lSpells));
+
+          iStart = i;
+          % If the Random lower fails, scan through and lower the first one
+          %  we can.
+          while (i <> iStart OR NOT bLooped)
+                AND (Send(who,@DecodeSpellAbility,
+                          #compound=Nth(lSpells,i)) < 6)
+          {
+              i = i + 1;
+              if i > Length(lSpells) AND NOT bLooped
+              {
+                % We get one free reset (since we started in the middle
+                %  somewhere)
+                i = 1;
+                bLooped = TRUE;
+              }
+          }
+
+          % If we got all the way through the spell list without lowering
+          %  anything, bail.
+          if i = iStart AND bLooped
+          {
+              lossCounter = 0;
+
+              break;
+          }
+
+          iAbilityNum = Send(who,@DecodeSpellNum,
+                              #compound=Nth(lSpells,i));
+          Send(who,@ChangeSpellAbility,
+                #spell_num=iAbilityNum,#amount=BaseLossAmount);
+          numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+          lossCounter = lossCounter - 1;
+        }
+    }
+
+    return numSpellPointsLost;
+  }
+
+  ApplySkillPenalty(who=$, lossCounter=$)
+  "Reduces the player's skill abilities based on penalty severity. Returns the number of skill points lost."
+  {
+    local i, bLooped, BaseLossAmount, iLoops, iSkillAbility,
+          iAbilityNum, numSkillPointsLost, iStart, lSkills, LossAmount;
+
+    numSkillPointsLost = 0;
+    lSkills = Send(who,@GetSkillList);
+
+    if (lSkills <> $)
+    {
+        % Murderers lose more
+        if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+        {
+          BaseLossAmount = -2;
+        }
+        else
+        {
+          BaseLossAmount = -1;
+        }
+
+        % Reduce all skills if lossCounter is high
+        if lossCounter > Length(lSkills)
+        {
+          i = 0;
+          iLoops = lossCounter/Length(lSkills);
+          while i < Length(lSkills)
+          {
+              i = i + 1;
+              iSkillAbility = Send(who,@DecodeSkillAbility,
+                                  #compound=Nth(lSkills,i));
+              LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+              iAbilityNum = Send(who,@DecodeSkillNum,
+                                #compound=Nth(lSkills,i));
+              Send(who,@ChangeSkillAbility,
+                  #skill_num=iAbilityNum,#amount=LossAmount);
+              numSkillPointsLost = numSkillPointsLost - LossAmount;
+          }
+        }
+
+        % Randomly reduce skills until lossCounter is depleted
+        iLoops = 0;
+        lossCounter = lossCounter - (numSkillPointsLost/BaseLossAmount);
+        while lossCounter > 0 AND iLoops < 100
+        {
+          iLoops = iLoops + 1;
+          % This tells us if we've looped back to one yet.
+          bLooped = FALSE;
+          % Try to lower a Random skill.
+          i = Random(1,Length(lSkills));
+          iStart = i;
+
+          % If the random lower fails, scan through and lower the first one
+          %  we can.
+          while (i <> iStart OR NOT bLooped)
+                AND (Send(who,@DecodeSkillAbility,
+                          #compound=Nth(lSkills,i)) < 6)
+          {
+              i = i + 1;
+              if i > Length(lSkills) AND NOT bLooped
+              {
+                % We get one free reset since we started in the middle
+                %  somewhere
+                i = 1;
+                bLooped = TRUE;
+              }
+          }
+          % If we got all the way through the skill list without lowering
+          %  anything, bail.
+          if i = iStart AND bLooped
+          {
+              lossCounter = 0;
+
+              break;
+          }
+
+          iAbilityNum = Send(who,@DecodeSkillNum,
+                              #compound=Nth(lSkills,i));
+          Send(who,@ChangeSkillAbility,
+                #skill_num=iAbilityNum,#amount=BaseLossAmount);
+          numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+          lossCounter = lossCounter - 1;
+        }
+    }
+
+    return numSkillPointsLost;
+  }
+
+end

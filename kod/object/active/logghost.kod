@@ -187,6 +187,8 @@ messages:
 
    PenaltyTrigger()
    {
+      local penaltyResults, iItemsLost, iSpellLost, iSkillLost, oSoldierShield;
+
       ptPenaltyTimer = $;
 
       % if player is logged on, some special case didn't get caught!
@@ -202,7 +204,42 @@ messages:
       {
          if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          {
-            Send(self,@InflictPenalties);
+            %
+            % Temporary logic to test the new Penalty Manager as a replacement
+            % for the old logoff penalty system.
+            %
+            if Send(SYS,@UsePenaltyManager)
+            {
+               penaltyResults = Send(Send(SYS,@GetPenaltyManager),@InflictPenalties,#who=poGhostedPlayer,#dropTarget=self);
+
+               iItemsLost = Nth(penaltyResults,1);
+               iSpellLost = Nth(penaltyResults,2);
+               iSkillLost = Nth(penaltyResults,3);
+
+               prItemsLost = Send(SYS,@IntToString,#num=iItemsLost);
+               prSpellPointsLost = Send(SYS,@IntToString,#num=iSpellLost);
+               prSkillPointsLost = Send(SYS,@IntToString,#num=iSkillLost);
+
+               Send(poGhostedPlayer,@ReceiveNestedMail,
+                  #from=LogoffGhost_penalty_mail_Sender,
+                  #dest_list=[poGhostedPlayer],
+                  #nest_list=[4,LogoffGhost_penalty_mail, 4,prItemsLost,
+                              4,prSpellPointsLost, 4,prSkillPointsLost]);
+
+               % Notify faction shield if needed
+               oSoldierShield = Send(poGhostedPlayer,@FindUsing,#class=&SoldierShield);
+               if oSoldierShield <> $
+               {
+                  Send(oSoldierShield,@OwnerDied,#logoff=TRUE);
+               }
+               
+               % Reset the time to avoid any funny business like potential double penalties.
+               Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
+            }
+            else
+            {
+               Send(self,@InflictPenalties);
+            }
          }
          else
          {

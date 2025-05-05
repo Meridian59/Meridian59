@@ -2560,6 +2560,15 @@ messages:
       return;
    }
 
+   GuildHasEnemies()
+   {
+      if poGuild <> $
+      {
+         return Send(poGuild,@HasEnemies);
+      }
+      return FALSE;
+   }
+
    GetAnimation()
    {
       return piAnimation;
@@ -11062,6 +11071,15 @@ messages:
       return;
    }
 
+   PlayerIsFactionSoldier()
+   {
+      if Send(self,@FindUsing,#class=&SoldierShield) <> $
+      {
+         return TRUE;
+      }
+      return FALSE;
+   }
+
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {
@@ -12276,6 +12294,29 @@ messages:
    {
       plDonationYears = DelListElem(plDonationYears, year);
       return;
+   }
+
+   IsPVPOptedIn()
+   "Returns TRUE if the player has opted into PvP gameplay, FALSE otherwise."
+   {
+      % This includes:
+      %  - Players who recently attacked someone
+      %  - Murderers
+      %  - Outlaws
+      %  - Members of guilds at war
+      %  - Faction soldiers who have recently been an aggressor (i.e. Those engaging in PVP)
+      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         OR Send(self,@GuildHasEnemies)
+         OR (Send(self,@PlayerIsFactionSoldier)
+            AND Send(self,@GetLastPlayerAttackTime) + 
+            Send(Send(SYS,@GetSettings),@GetPVPPenaltyCooldownTime) > GetTime())
+      {
+         debug("IsPVPOptedIn: TRUE");
+         
+         return TRUE;
+      }
+      return FALSE;
    }
 
 end

@@ -399,6 +399,10 @@ properties:
    % What server-wide flags are we using?
    piServerFlags = 0
 
+   % Penalty Manager object and flag to enable it
+   poPenaltyManager = $
+   pbUsePenaltyManager = FALSE
+
 messages:
 
    GetName()
@@ -469,6 +473,8 @@ messages:
 
       psTemp = CreateString();
 
+      poPenaltyManager = Create(&PenaltyManager);
+
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
       return;
@@ -530,6 +536,7 @@ messages:
       ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,3000);
 
       Send(self,@RecreateVisibleCargoTypes);
+      Send(self,@RecreatePenaltyManager);
 
       return system_please_wait_rsc;
    }
@@ -6562,6 +6569,31 @@ messages:
       }
       return total;
    }
+
+   RecreatePenaltyManager()
+   {
+      if poPenaltyManager <> $
+      {
+         Send(poPenaltyManager,@Recreate);
+      }
+      else
+      {
+         poPenaltyManager = Create(&PenaltyManager);
+      }
+
+      return TRUE;
+   }
+
+   GetPenaltyManager()
+   {
+      return poPenaltyManager;
+   }
+
+   UsePenaltyManager()
+   {
+      return pbUsePenaltyManager;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

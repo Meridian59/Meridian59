@@ -111,6 +111,7 @@ messages:
 
     numItemsLost = Send(who,@GetNumItemsInInventory);
     iNumItemsInventory = numItemsLost;
+
     if lossCounter >= iNumItemsInventory
     {
         % Just drop everything
@@ -136,12 +137,12 @@ messages:
         {
           iNumItemsInventory = Send(who,@GetNumItemsInInventory);
           i = Random(1,iNumItemsInventory);
+
           if NOT Send(who,@DropItem,#index=i,#targetGhost=dropTarget) % TODO: use room, col, row params
           {
               % If random drop fails, try sequentially
               i = 1;
-              while i <= iNumItemsInventory
-                    AND NOT Send(who,@DropItem,#index=i,#targetGhost=dropTarget)
+              while (i <= iNumItemsInventory) AND NOT Send(who,@DropItem,#index=i,#targetGhost=dropTarget)
               {
                 i = i + 1;
               }
@@ -203,13 +204,10 @@ messages:
           while i < Length(lSpells)
           {
               i = i + 1;
-              iSpellAbility = Send(who,@DecodeSpellAbility,
-                                  #compound=Nth(lSpells,i));
+              iSpellAbility = Send(who,@DecodeSpellAbility,#compound=Nth(lSpells,i));
               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
-              iAbilityNum = Send(who,@DecodeSpellNum,
-                                #compound=Nth(lSpells,i));
-              Send(who,@ChangeSpellAbility,
-                  #spell_num=iAbilityNum,#amount=LossAmount);
+              iAbilityNum = Send(who,@DecodeSpellNum,#compound=Nth(lSpells,i));
+              Send(who,@ChangeSpellAbility,#spell_num=iAbilityNum,#amount=LossAmount);
               numSpellPointsLost = (numSpellPointsLost - LossAmount);
           }
         }
@@ -217,6 +215,7 @@ messages:
         % Randomly reduce spells until LossCounter is depleted
         iLoops = 0;
         lossCounter = lossCounter - (numSpellPointsLost/BaseLossAmount);
+
         while (lossCounter > 0) and (iLoops < 200)
         {
           iLoops = iLoops + 1;
@@ -229,10 +228,10 @@ messages:
           % If the Random lower fails, scan through and lower the first one
           %  we can.
           while (i <> iStart OR NOT bLooped)
-                AND (Send(who,@DecodeSpellAbility,
-                          #compound=Nth(lSpells,i)) < 6)
+                AND (Send(who,@DecodeSpellAbility,#compound=Nth(lSpells,i)) < 6)
           {
               i = i + 1;
+
               if i > Length(lSpells) AND NOT bLooped
               {
                 % We get one free reset (since we started in the middle
@@ -244,17 +243,15 @@ messages:
 
           % If we got all the way through the spell list without lowering
           %  anything, bail.
-          if i = iStart AND bLooped
+          if (i = iStart) AND bLooped
           {
               lossCounter = 0;
 
               break;
           }
 
-          iAbilityNum = Send(who,@DecodeSpellNum,
-                              #compound=Nth(lSpells,i));
-          Send(who,@ChangeSpellAbility,
-                #spell_num=iAbilityNum,#amount=BaseLossAmount);
+          iAbilityNum = Send(who,@DecodeSpellNum,#compound=Nth(lSpells,i));
+          Send(who,@ChangeSpellAbility,#spell_num=iAbilityNum,#amount=BaseLossAmount);
           numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
           lossCounter = lossCounter - 1;
         }
@@ -289,16 +286,14 @@ messages:
         {
           i = 0;
           iLoops = lossCounter/Length(lSkills);
+
           while i < Length(lSkills)
           {
               i = i + 1;
-              iSkillAbility = Send(who,@DecodeSkillAbility,
-                                  #compound=Nth(lSkills,i));
+              iSkillAbility = Send(who,@DecodeSkillAbility,#compound=Nth(lSkills,i));
               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
-              iAbilityNum = Send(who,@DecodeSkillNum,
-                                #compound=Nth(lSkills,i));
-              Send(who,@ChangeSkillAbility,
-                  #skill_num=iAbilityNum,#amount=LossAmount);
+              iAbilityNum = Send(who,@DecodeSkillNum,#compound=Nth(lSkills,i));
+              Send(who,@ChangeSkillAbility,#skill_num=iAbilityNum,#amount=LossAmount);
               numSkillPointsLost = numSkillPointsLost - LossAmount;
           }
         }
@@ -306,7 +301,8 @@ messages:
         % Randomly reduce skills until lossCounter is depleted
         iLoops = 0;
         lossCounter = lossCounter - (numSkillPointsLost/BaseLossAmount);
-        while lossCounter > 0 AND iLoops < 100
+
+        while (lossCounter > 0) AND (iLoops < 100)
         {
           iLoops = iLoops + 1;
           % This tells us if we've looped back to one yet.
@@ -318,11 +314,11 @@ messages:
           % If the random lower fails, scan through and lower the first one
           %  we can.
           while (i <> iStart OR NOT bLooped)
-                AND (Send(who,@DecodeSkillAbility,
-                          #compound=Nth(lSkills,i)) < 6)
+                AND (Send(who,@DecodeSkillAbility,#compound=Nth(lSkills,i)) < 6)
           {
               i = i + 1;
-              if i > Length(lSkills) AND NOT bLooped
+
+              if (i > Length(lSkills)) AND NOT bLooped
               {
                 % We get one free reset since we started in the middle
                 %  somewhere
@@ -332,17 +328,15 @@ messages:
           }
           % If we got all the way through the skill list without lowering
           %  anything, bail.
-          if i = iStart AND bLooped
+          if (i = iStart) AND bLooped
           {
               lossCounter = 0;
 
               break;
           }
 
-          iAbilityNum = Send(who,@DecodeSkillNum,
-                              #compound=Nth(lSkills,i));
-          Send(who,@ChangeSkillAbility,
-                #skill_num=iAbilityNum,#amount=BaseLossAmount);
+          iAbilityNum = Send(who,@DecodeSkillNum,#compound=Nth(lSkills,i));
+          Send(who,@ChangeSkillAbility,#skill_num=iAbilityNum,#amount=BaseLossAmount);
           numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
           lossCounter = lossCounter - 1;
         }

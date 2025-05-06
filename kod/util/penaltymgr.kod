@@ -56,7 +56,7 @@ messages:
 
   InflictPenalties(who=$, dropTarget=$)
   {
-    local iMultiplier, itemsLost, spellLost, skillLost;
+    local iMultiplier, iItemLoss, iSpellsLoss, iSkillLoss;
 
     % Sanity check: Are they logged on?
     if Send(who,@IsLoggedOn)
@@ -80,37 +80,37 @@ messages:
     }
 
     % Calculate penalties
-    itemsLost = piBaseItemsLost * iMultiplier;
-    spellLost = piFlatSpellPointsLost * iMultiplier;
-    skillLost = piFlatSkillPointsLost * iMultiplier;
+    iItemLoss = piBaseItemsLost * iMultiplier;
+    iSpellsLoss = piFlatSpellPointsLost * iMultiplier;
+    iSkillLoss = piFlatSkillPointsLost * iMultiplier;
     
-    debug("InflictPenalties: itemsLost=", itemsLost, " spellLost=", spellLost, " skillLost=", skillLost, " multiplier=", iMultiplier);
+    debug("InflictPenalties: iItemLoss=", iItemLoss, " iSpellsLoss=", iSpellsLoss, " iSkillLoss=", iSkillLoss, " multiplier=", iMultiplier);
 
     % Drop items
-    itemsLost = Send(self,@ApplyItemPenalty,#who=who,#dropTarget=dropTarget,#lossCounter=itemsLost);
-    debug("ApplyItemPenalty: numItemsLost=", itemsLost);
+    iItemLoss = Send(self,@ApplyItemPenalty,#who=who,#dropTarget=dropTarget,#lossCounter=iItemLoss);
+    debug("ApplyItemPenalty: iItemLoss=", iItemLoss);
 
     % Lose maxhealth
     Send(self,@ApplyHealthPenalty,#who=who);
 
     % Lose spell ability
-    spellLost = Send(self,@ApplySpellPenalty,#who=who,#lossCounter=spellLost);
-    debug("ApplySpellPenalty: numSpellPointsLost=", spellLost);
+    iSpellsLoss = Send(self,@ApplySpellPenalty,#who=who,#lossCounter=iSpellsLoss);
+    debug("ApplySpellPenalty: iPointsLoss=", iSpellsLoss);
 
     % Lose skill ability
-    skillLost = Send(self,@ApplySkillPenalty,#who=who,#lossCounter=skillLost);
-    debug("ApplySkillPenalty: numSkillPointsLost=", skillLost);
+    iSkillLoss = Send(self,@ApplySkillPenalty,#who=who,#lossCounter=iSkillLoss);
+    debug("ApplySkillPenalty: iPointsLoss=", iSkillLoss);
 
-    return [itemsLost, spellLost, skillLost];
+    return [iItemLoss, iSpellsLoss, iSkillLoss];
   }
 
   ApplyItemPenalty(who=$, dropTarget=$, lossCounter=$)
   "Drops items from the player's inventory based on penalty severity. Returns the number of items lost."
   {
-    local i, numItemsLost, iNumItemsInventory;
+    local i, iItemLoss, iNumItemsInventory;
 
-    numItemsLost = Send(who,@GetNumItemsInInventory);
-    iNumItemsInventory = numItemsLost;
+    iItemLoss = Send(who,@GetNumItemsInInventory);
+    iNumItemsInventory = iItemLoss;
 
     if lossCounter >= iNumItemsInventory
     {
@@ -160,9 +160,9 @@ messages:
 
     % Calculate actual number of items lost
     iNumItemsInventory = Send(who,@GetNumItemsInInventory);
-    numItemsLost = numItemsLost - iNumItemsInventory;
+    iItemLoss = iItemLoss - iNumItemsInventory;
 
-    return numItemsLost;
+    return iItemLoss;
   }
 
   ApplyHealthPenalty(who=$)
@@ -178,10 +178,10 @@ messages:
   ApplySpellPenalty(who=$, lossCounter=$)
   "Reduces the player's spell abilities based on penalty severity. Returns the number of spell points lost."
   {
-    local i, bLooped, BaseLossAmount, iLoops, iSpellAbility,
-          iAbilityNum, numSpellPointsLost, iStart, lSpells, LossAmount;
+    local i, bLooped, iBaseLossAmount, iLoops, iSpellAbility,
+          iAbilityNum, iPointsLoss, iStart, lSpells, iLossAmount;
 
-    numSpellPointsLost = 0;
+    iPointsLoss = 0;
     
     lSpells = Send(who,@GetSpellList);
     if lSpells <> $
@@ -189,11 +189,11 @@ messages:
         % Murderers lose more
         if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
         {
-          BaseLossAmount = -2;
+          iBaseLossAmount = -2;
         }
         else 
         {
-          BaseLossAmount = -1;
+          iBaseLossAmount = -1;
         }
 
         % Reduce all spells if LossCounter is high
@@ -205,16 +205,16 @@ messages:
           {
               i = i + 1;
               iSpellAbility = Send(who,@DecodeSpellAbility,#compound=Nth(lSpells,i));
-              LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+              iLossAmount = Bound(iBaseLossAmount*iLoops,$,-(iSpellAbility-5));
               iAbilityNum = Send(who,@DecodeSpellNum,#compound=Nth(lSpells,i));
-              Send(who,@ChangeSpellAbility,#spell_num=iAbilityNum,#amount=LossAmount);
-              numSpellPointsLost = (numSpellPointsLost - LossAmount);
+              Send(who,@ChangeSpellAbility,#spell_num=iAbilityNum,#amount=iLossAmount);
+              iPointsLoss = (iPointsLoss - iLossAmount);
           }
         }
 
         % Randomly reduce spells until LossCounter is depleted
         iLoops = 0;
-        lossCounter = lossCounter - (numSpellPointsLost/BaseLossAmount);
+        lossCounter = lossCounter - (iPointsLoss/iBaseLossAmount);
 
         while (lossCounter > 0) and (iLoops < 200)
         {
@@ -251,22 +251,22 @@ messages:
           }
 
           iAbilityNum = Send(who,@DecodeSpellNum,#compound=Nth(lSpells,i));
-          Send(who,@ChangeSpellAbility,#spell_num=iAbilityNum,#amount=BaseLossAmount);
-          numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+          Send(who,@ChangeSpellAbility,#spell_num=iAbilityNum,#amount=iBaseLossAmount);
+          iPointsLoss = iPointsLoss - iBaseLossAmount;
           lossCounter = lossCounter - 1;
         }
     }
 
-    return numSpellPointsLost;
+    return iPointsLoss;
   }
 
   ApplySkillPenalty(who=$, lossCounter=$)
   "Reduces the player's skill abilities based on penalty severity. Returns the number of skill points lost."
   {
-    local i, bLooped, BaseLossAmount, iLoops, iSkillAbility,
-          iAbilityNum, numSkillPointsLost, iStart, lSkills, LossAmount;
+    local i, bLooped, iBaseLossAmount, iLoops, iSkillAbility,
+          iAbilityNum, iPointsLoss, iStart, lSkills, iLossAmount;
 
-    numSkillPointsLost = 0;
+    iPointsLoss = 0;
     lSkills = Send(who,@GetSkillList);
 
     if (lSkills <> $)
@@ -274,11 +274,11 @@ messages:
         % Murderers lose more
         if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
         {
-          BaseLossAmount = -2;
+          iBaseLossAmount = -2;
         }
         else
         {
-          BaseLossAmount = -1;
+          iBaseLossAmount = -1;
         }
 
         % Reduce all skills if lossCounter is high
@@ -291,16 +291,16 @@ messages:
           {
               i = i + 1;
               iSkillAbility = Send(who,@DecodeSkillAbility,#compound=Nth(lSkills,i));
-              LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+              iLossAmount = bound((iBaseLossAmount*iLoops),$,-(iSkillAbility-5));
               iAbilityNum = Send(who,@DecodeSkillNum,#compound=Nth(lSkills,i));
-              Send(who,@ChangeSkillAbility,#skill_num=iAbilityNum,#amount=LossAmount);
-              numSkillPointsLost = numSkillPointsLost - LossAmount;
+              Send(who,@ChangeSkillAbility,#skill_num=iAbilityNum,#amount=iLossAmount);
+              iPointsLoss = iPointsLoss - iLossAmount;
           }
         }
 
         % Randomly reduce skills until lossCounter is depleted
         iLoops = 0;
-        lossCounter = lossCounter - (numSkillPointsLost/BaseLossAmount);
+        lossCounter = lossCounter - (iPointsLoss/iBaseLossAmount);
 
         while (lossCounter > 0) AND (iLoops < 100)
         {
@@ -336,13 +336,13 @@ messages:
           }
 
           iAbilityNum = Send(who,@DecodeSkillNum,#compound=Nth(lSkills,i));
-          Send(who,@ChangeSkillAbility,#skill_num=iAbilityNum,#amount=BaseLossAmount);
-          numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+          Send(who,@ChangeSkillAbility,#skill_num=iAbilityNum,#amount=iBaseLossAmount);
+          iPointsLoss = iPointsLoss - iBaseLossAmount;
           lossCounter = lossCounter - 1;
         }
     }
 
-    return numSkillPointsLost;
+    return iPointsLoss;
   }
 
 end

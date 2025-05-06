@@ -210,8 +210,19 @@ messages:
             %
             if Send(SYS,@UsePenaltyManager)
             {
-               penaltyResults = Send(Send(SYS,@GetPenaltyManager),@InflictPenalties,#who=poGhostedPlayer,#dropTarget=self);
-
+               % "Free penalty" check for passive players
+               % Eligible players get up to `@GetLogoffPenaltyFreeCount` free penalties
+               if NOT Send(poGhostedPlayer,@IsPVPOptedIn) 
+                     AND Send(poGhostedPlayer,@GetLogoffPenaltyCount) <= Send(SYS,@GetLogoffPenaltyFreeLimit)
+               {
+                  % Give free penalty, but increment the counter so next time they get penalized
+                  Send(poGhostedPlayer,@IncrementLogoffPenaltyCount);
+                  penaltyResults = [0, 0, 0];
+               }
+               else {
+                  penaltyResults = Send(Send(SYS,@GetPenaltyManager),@InflictPenalties,#who=poGhostedPlayer,#dropTarget=self);
+               }
+               
                iItemsLost = Nth(penaltyResults,1);
                iSpellLost = Nth(penaltyResults,2);
                iSkillLost = Nth(penaltyResults,3);

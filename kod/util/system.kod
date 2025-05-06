@@ -403,6 +403,9 @@ properties:
    poPenaltyManager = $
    pbUsePenaltyManager = FALSE
 
+   % Number of penalty-free logoffs eligible players receive before cooldown kicks in
+   piLogoffPenaltyFreeLimit = 3
+
 messages:
 
    GetName()
@@ -6592,6 +6595,11 @@ messages:
    UsePenaltyManager()
    {
       return pbUsePenaltyManager;
+   }
+
+   GetLogoffPenaltyFreeLimit()
+   {
+      return piLogoffPenaltyFreeLimit;
    }
 
 end

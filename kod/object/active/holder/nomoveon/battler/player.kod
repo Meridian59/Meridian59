@@ -12304,12 +12304,12 @@ messages:
       %  - Murderers
       %  - Outlaws
       %  - Members of guilds at war
-      %  - Faction soldiers who have recently been an aggressor (i.e. Those engaging in PVP)
+      %  - Anyone having recently been an aggressor, including faction soldiers and any other 
+      %     PVP systems that may be added in the future.
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          OR Send(self,@GuildHasEnemies)
-         OR (Send(self,@PlayerIsFactionSoldier)
-            AND Send(self,@GetLastPlayerAttackTime) + 
+         OR (Send(self,@GetLastPlayerAttackTime) + 
             Send(Send(SYS,@GetSettings),@GetPVPPenaltyCooldownTime) > GetTime())
       {
          debug("IsPVPOptedIn: TRUE");

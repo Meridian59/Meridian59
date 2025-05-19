@@ -200,7 +200,7 @@ resources:
          "of a lightless sky and a bloody moon."
    qordisciple_assign = "`rYou wish to be surrounded by the ineffable embrace of our patron Mistress.  "
          "Your judgement is keen but what of your loyalty?  To prove this to me you must invoke Mistress Qor to "
-         "%NPC, thus:  %CARGO  After that, return and tell me you are done and we shall revel in the beauty of "
+         "%NPC, thus: \"%CARGO\"  After that, return and tell me you are done and we shall revel in the beauty of "
          "corruption."
    qordisciple_success = "`rYou have fulfilled my wishes. You are not only wise but tenacious.  Seek me out when you "
          "would learn more of Qor's spells of power."

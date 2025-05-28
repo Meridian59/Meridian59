@@ -128,60 +128,64 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
  *   edit annotation that was clicked on, or add a new annotation.
  *		Modified by ajw 5/19/97. Annotations made possible only in MiniMap.
  */
-void MapAnnotationClick(int x, int y) {
-  int i, index;
-  MapAnnotation *a;
-  Bool existed; // True if editing an existing annotation
+void MapAnnotationClick(int x, int y)
+{
+   int i, index;
+   MapAnnotation *a;
+   Bool existed;  // True if editing an existing annotation
 
-  //  int stretchfactor = config.large_area ? 2 : 1;
+   MapScreenToRoom(&x, &y, TRUE);
 
-  //  // Map doesn't change with large or small graphics area; undo strechfactor
-  //  correction x *= stretchfactor; y *= stretchfactor;
+   // See if close to an annotation
+   index = -1;
+   existed = False;
+   for (i = 0; i < MAX_ANNOTATIONS; i++)
+   {
+      a = &current_room.annotations[i];
+      if (a->text[0] == 0)
+         continue;
 
-  MapScreenToRoom(&x, &y, TRUE);
-
-  // See if close to an annotation
-  index = -1;
-  existed = False;
-  for (i = 0; i < MAX_ANNOTATIONS; i++) {
-    a = &current_room.annotations[i];
-    if (a->text[0] == 0)
-      continue;
-
-    if (a->x <= x + MAP_ANNOTATION_SIZE && a->x >= x - MAP_ANNOTATION_SIZE &&
-        a->y <= y + MAP_ANNOTATION_SIZE && a->y >= y - MAP_ANNOTATION_SIZE) {
-      existed = True;
-      index = i;
-      break;
-    }
-  }
-
-  if (index == -1) {
-    // Look for a free annotation slot
-    for (i = 0; i < MAX_ANNOTATIONS; i++) {
-      if (current_room.annotations[i].text[0] == 0) {
-        index = i;
-        break;
+      if (a->x <= x + MAP_ANNOTATION_SIZE && a->x >= x - MAP_ANNOTATION_SIZE &&
+          a->y <= y + MAP_ANNOTATION_SIZE && a->y >= y - MAP_ANNOTATION_SIZE)
+      {
+         existed = True;
+         index = i;
+         break;
       }
-    }
-    if (index == -1) {
-      GameMessagePrintf(GetString(hInst, IDS_ANNOTATIONSFULL), MAX_ANNOTATIONS);
-      return;
-    }
-  }
+   }
 
-  if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain,
-                     MapAnnotationDialogProc, (LPARAM)index) == IDOK) {
-    current_room.annotations_changed = True;
-    if (!existed) {
-      current_room.annotations[index].x = x;
-      current_room.annotations[index].y = y;
-    }
-  }
+   if (index == -1)
+   {
+      // Look for a free annotation slot
+      for (i = 0; i < MAX_ANNOTATIONS; i++)
+      {
+         if (current_room.annotations[i].text[0] == 0)
+         {
+            index = i;
+            break;
+         }
+      }
+      if (index == -1)
+      {
+         GameMessagePrintf(GetString(hInst, IDS_ANNOTATIONSFULL), MAX_ANNOTATIONS);
+         return;
+      }
+   }
 
-  TooltipReset();
+   if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
+                      (LPARAM) index) == IDOK)
+   {
+      current_room.annotations_changed = True;
+      if (!existed)
+      {
+         current_room.annotations[index].x = x;
+         current_room.annotations[index].y = y;
+      }
+   }
 
-  RedrawAll(); // In case we added or removed an annotation
+   TooltipReset();
+
+   RedrawAll();  // In case we added or removed an annotation
 }
 /*****************************************************************************/
 /*

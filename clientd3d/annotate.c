@@ -134,6 +134,9 @@ void MapAnnotationClick(int x, int y)
    MapAnnotation *a;
    Bool existed;  // True if editing an existing annotation
 
+   if (!config.map_annotations)
+     return;
+
    MapScreenToRoom(&x, &y, TRUE);
 
    // See if close to an annotation

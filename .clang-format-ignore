@@ -1,0 +1,12 @@
+# First, ignore everything
+*
+
+# Then, unignore specific directories
+!blakcomp/
+!blakdeco/
+!blakdiff/
+!blakserv/
+!clientd3d/
+!club/
+!makebgf/
+!module/

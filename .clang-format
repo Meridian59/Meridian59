@@ -1,0 +1,32 @@
+---
+Language: Cpp
+
+# Basic formatting rules
+IndentWidth: 3
+TabWidth: 3
+UseTab: Never
+
+# Braces
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterEnum: true
+  AfterNamespace: true
+  AfterControlStatement: true
+  BeforeElse: true
+  BeforeCatch: true
+
+# Comments
+SpacesBeforeTrailingComments: 2
+
+# Spacing
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: true
+SpaceBeforeAssignmentOperators: true
+
+# Line breaks
+ColumnLimit: 120
+MaxEmptyLinesToKeep: 1

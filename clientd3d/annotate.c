@@ -54,8 +54,8 @@ void MapAnnotationGetText(TOOLTIPTEXT *ttt)
 {
   int index;
 
-//   if (!MapVisible())
-//      return;
+   if (!config.map_annotations || !config.drawmap)
+      return;
 
   index = ttt->hdr.idFrom;
 
@@ -134,7 +134,7 @@ void MapAnnotationClick(int x, int y)
    MapAnnotation *a;
    Bool existed;  // True if editing an existing annotation
 
-   if (!config.map_annotations)
+   if (!config.map_annotations || !config.drawmap)
      return;
 
    MapScreenToRoom(&x, &y, TRUE);
@@ -175,6 +175,10 @@ void MapAnnotationClick(int x, int y)
       }
    }
 
+   // Clear any open tooltips
+   HWND hToolTips = TooltipGetControl();
+   SendMessage(hToolTips, TTM_POP, 0, 0);
+
    if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
                       (LPARAM) index) == IDOK)
    {
@@ -185,8 +189,6 @@ void MapAnnotationClick(int x, int y)
          current_room.annotations[index].y = y;
       }
    }
-
-   TooltipReset();
 
    RedrawAll();  // In case we added or removed an annotation
 }

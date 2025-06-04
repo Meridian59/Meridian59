@@ -665,10 +665,11 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
+	TooltipReset();
+	
 	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
                  DescDialogProc, reinterpret_cast<LPARAM>(&info));
 	
-	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
 }
 /************************************************************************/

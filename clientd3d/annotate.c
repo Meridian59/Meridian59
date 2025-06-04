@@ -175,9 +175,7 @@ void MapAnnotationClick(int x, int y)
       }
    }
 
-   // Clear any open tooltips
-   HWND hToolTips = TooltipGetControl();
-   SendMessage(hToolTips, TTM_POP, 0, 0);
+   TooltipReset();
 
    if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
                       (LPARAM) index) == IDOK)

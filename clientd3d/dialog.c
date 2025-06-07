@@ -736,6 +736,7 @@ void AbortGameDialogs(void)
 /************************************************************************/
 /*
 * SafeDialogBoxParam:  A wrapper for DialogBoxParam that resets tooltips when a dialog is opened.
+*   This is necessary because tooltips are not reset when a dialog is opened.
 */
 INT_PTR __stdcall SafeDialogBoxParam(HINSTANCE hInstance, LPCSTR lpTemplate, HWND hWndParent, DLGPROC lpDialogFunc, LPARAM dwInitParam)
 {

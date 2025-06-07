@@ -82,7 +82,7 @@ void FreeCurrentUsers(void)
 */
 void UserWho(void)
 {
-	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
+	SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
 		WhoDialogProc, (LPARAM) current_users);
 }
 

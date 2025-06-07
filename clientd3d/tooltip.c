@@ -106,19 +106,9 @@ HWND TooltipGetControl(void)
 }
 /****************************************************************************/
 /*
- * TooltipReset:  When a modal dialog box is displayed, window messages from the
- *   dialog's parent (e.g. the main window) don't get relayed to the tooltip, since
- *   the dialog handles them.  This causes the tooltip to get a mouse down event, but
- *   no mouse up event, which makes the tooltips break.  Here we simulate the mouse
- *   up events to fake out the tooltip after a dialog is dismissed.
+ * TooltipReset:  Clear any open tooltips
  */
 void TooltipReset(void)
 {
-  MSG msg;
-  
-  msg.hwnd = hMain;
-  msg.message = WM_LBUTTONUP;
-  SendMessage(hToolTips, TTM_RELAYEVENT, TRUE, (LPARAM) &msg);
-  msg.message = WM_RBUTTONUP;
-  SendMessage(hToolTips, TTM_RELAYEVENT, TRUE, (LPARAM) &msg);
+  SendMessage(hToolTips, TTM_POP, 0, 0);
 }

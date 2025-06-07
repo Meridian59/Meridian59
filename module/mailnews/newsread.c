@@ -74,7 +74,7 @@ void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions
    s.permissions = permissions;
    s.desc = desc;
 
-   DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
+   SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
                   ReadNewsDialogProc, (LPARAM)&s);
 }
 /****************************************************************************/

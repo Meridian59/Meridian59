@@ -473,7 +473,7 @@ void BuyList(object_node seller, list_type items)
 
    if (hwndBuyDialog == NULL)
       /* Give user list of things to select from */
-      DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_BUY), hMain, BuyDialogProc, (LPARAM) &dlg_info);
+      SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_BUY), hMain, BuyDialogProc, (LPARAM) &dlg_info);
 
    ObjectListDestroy(items);
 }
@@ -495,7 +495,7 @@ void WithdrawalList(object_node seller, list_type items)
 
    if (hwndBuyDialog == NULL)
       /* Give user list of things to select from */
-      DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WITHDRAWAL), hMain, WithdrawalDialogProc, (LPARAM) &dlg_info);
+      SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WITHDRAWAL), hMain, WithdrawalDialogProc, (LPARAM) &dlg_info);
 
    ObjectListDestroy(items);
 }

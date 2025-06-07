@@ -146,7 +146,7 @@ int ClientMessageBox(HWND hwndParent, const char *text, char *title, UINT style)
    s.title = title;
    s.style = style;
 
-   retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_MSGBOX), hwndParent, 
+   retval = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_MSGBOX), hwndParent, 
 			   ClientMsgBoxProc, (LPARAM) &s);
    box_up = False;
    return retval;

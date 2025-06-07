@@ -280,7 +280,7 @@ void AdminDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
 
       index = ListBox_GetCurSel(hwndCtl);
       if (index != LB_ERR)
-	 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ADMINVALUE), hDlg, AdminValueDialogProc, index);
+	 SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ADMINVALUE), hDlg, AdminValueDialogProc, index);
       break;
 
    case IDC_OWNERBUTTON:
@@ -560,7 +560,7 @@ INT_PTR CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 Bool AdminGetString(HWND hParent, char *buf)
 {
    int retval;
-   retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ADMINSTRING), hParent, 
+   retval = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ADMINSTRING), hParent, 
 			   AdminStringDialogProc, (LPARAM) buf);
    
    if (retval == IDCANCEL)

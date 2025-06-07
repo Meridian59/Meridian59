@@ -479,7 +479,7 @@ Bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int st
    dlg_info.minAmount = minValue;
    dlg_info.maxAmount = maxValue;
    
-   if (IDCANCEL == DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AMOUNT), hParent,
+   if (IDCANCEL == SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AMOUNT), hParent,
       AmountDialogProc, (LPARAM) &dlg_info))
       return False;  /* Don't select item */
 
@@ -596,14 +596,14 @@ list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags)
 
    /* If multiple selections allowed, make list box multiple select */
    if (flags & LD_MULTIPLESEL)
-      valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTMULTIPLE), hParent,
+      valid = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTMULTIPLE), hParent,
 			     LookDialogProc, (LPARAM) &dlg_info);
    else 
       if (flags & LD_SORT)
-	 valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTSORTED), hParent,
+	 valid = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTSORTED), hParent,
 				LookDialogProc, (LPARAM) &dlg_info);
       else
-	 valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTSINGLE), hParent,
+	 valid = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTSINGLE), hParent,
 				LookDialogProc, (LPARAM) &dlg_info);
 
    if( info != NULL )

@@ -258,7 +258,7 @@ void __cdecl DownloadError(HWND hParent, char *fmt, ...)
       vsnprintf(s, sizeof(s), fmt,marker);
       va_end(marker);
       
-      retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_FTPERROR), hMain, ErrorDialogProc, 
+      retval = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_FTPERROR), hMain, ErrorDialogProc, 
 			   (LPARAM) s);
       
       if (retval == IDOK)

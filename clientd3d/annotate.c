@@ -175,9 +175,7 @@ void MapAnnotationClick(int x, int y)
       }
    }
 
-   TooltipReset();
-
-   if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
+   if (SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
                       (LPARAM) index) == IDOK)
    {
       current_room.annotations_changed = True;

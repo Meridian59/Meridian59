@@ -665,9 +665,7 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
-	TooltipReset();
-	
-	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
+	SafeDialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
                  DescDialogProc, reinterpret_cast<LPARAM>(&info));
 	
 	SetDescParams(NULL, DESC_NONE);
@@ -734,4 +732,13 @@ void AbortGameDialogs(void)
 	AbortAnnotateDialog();
 	AbortPasswordDialog();
 	AbortPreferencesDialog();
+}
+/************************************************************************/
+/*
+* SafeDialogBoxParam:  A wrapper for DialogBoxParam that resets tooltips when a dialog is opened.
+*/
+INT_PTR __stdcall SafeDialogBoxParam(HINSTANCE hInstance, LPCSTR lpTemplate, HWND hWndParent, DLGPROC lpDialogFunc, LPARAM dwInitParam)
+{
+    TooltipReset();
+    return DialogBoxParam(hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
 }

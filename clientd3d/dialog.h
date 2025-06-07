@@ -81,7 +81,7 @@ typedef struct {
    DWORD minAmount;	      /* minimum allowable value */
 } AmountDialogStruct;
 
-M59EXPORT INT_PTR __stdcall SafeDialogBoxParam(HINSTANCE hInstance, LPCSTR lpTemplate, HWND hWndParent, DLGPROC lpDialogFunc, LPARAM dwInitParam);
+M59EXPORT INT_PTR SafeDialogBoxParam(HINSTANCE hInstance, LPCSTR lpTemplate, HWND hWndParent, DLGPROC lpDialogFunc, LPARAM dwInitParam);
 
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 

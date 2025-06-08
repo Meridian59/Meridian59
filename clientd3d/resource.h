@@ -636,7 +636,8 @@
 #define IDS_DUPLICATE_BINDINGS          3647
 #define IDS_DEFAULT_ARE_YOU_SURE        3648
 #define IDS_RESTORE_DEFAULTS            3649
-#define IDS_PREFERENCES_TITLE			3650
+#define IDS_PREFERENCES_TITLE	          3650
+#define IDS_INTRO                       3651
 
 // Next default values for new objects
 // 

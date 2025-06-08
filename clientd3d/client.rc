@@ -998,6 +998,7 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "lendário"
     IDS_RARITY_GRADE_UNIDENTIFIED  "não identificado"
     IDS_RARITY_GRADE_CURSED        "amaldiçoado"
+    IDS_INTRO   "Bem-vindo ao Meridian 59! Clique aqui para iniciar."
 END
 
 STRINGTABLE
@@ -2010,6 +2011,7 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "legendär"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentifiziert"
     IDS_RARITY_GRADE_CURSED        "verflucht"
+    IDS_INTRO   "Willkommen zu Meridian 59! Zum Start hier klicken!"
 END
 
 STRINGTABLE
@@ -3010,7 +3012,7 @@ IDI_KEYBIND				ICON					"bitmap\\m59bind.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
+ // Bitmap
 //
 
 IDB_BACKGROUND          BITMAP                  "bitmap\\bkgnd.bmp"
@@ -3036,7 +3038,6 @@ IDB_VIEWTREAT_TOPRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_ur_hil
 IDB_VIEWTREAT_BOTTOMLEFT_HILIGHT BITMAP                  "bitmap\\viewtreat_ll_hilight.bmp"
 
 IDB_VIEWTREAT_BOTTOMRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_lr_hilight.bmp"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3284,6 +3285,7 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "legendary"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
     IDS_RARITY_GRADE_CURSED        "cursed"
+    IDS_INTRO   "Click here to log on!"
 END
 
 STRINGTABLE

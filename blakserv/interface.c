@@ -1184,6 +1184,7 @@ INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, 
     {
     case WM_INITDIALOG:
         SetDlgItemText(hDlg, IDC_MESSAGE_EDIT, (LPCTSTR)lParam);
+		CenterWindow(hDlg, GetParent(hDlg));
         return TRUE;
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)

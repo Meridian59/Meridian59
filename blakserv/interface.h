@@ -43,4 +43,7 @@ void StartAsyncPortalSocket(SOCKET sock);
 
 void FatalErrorShow(const char *filename,int line,const char *str);
 
+INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
+
 #endif

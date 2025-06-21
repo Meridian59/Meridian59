@@ -2534,6 +2534,7 @@ messages:
       for i in lUsers
       {
          rName = Send(i,@GetTrueName);
+
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
          % Clear the DRAWFX_INVISIBLE flag of which DRAWFX_BLACK is a subset
          % so the who list dialog box does not color shadowformed names black 

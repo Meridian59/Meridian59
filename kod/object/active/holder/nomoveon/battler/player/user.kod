@@ -2540,6 +2540,7 @@ messages:
          % so the who list dialog box does not color shadowformed names black 
          AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
       }
+
       SendPacket(poSession);
       
       return;

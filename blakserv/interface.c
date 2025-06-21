@@ -124,6 +124,9 @@ void InterfaceRemoveList(int session_id);
 void InterfaceUpdateList(int session_id);
 void InterfaceUpdateAdmin(void);
 
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
+
+
 void InitInterface(void)
 {
 	HANDLE hThread;
@@ -1197,9 +1200,9 @@ INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, 
     return FALSE;
 }
 
-void ShowCopyableMessageDialog(HWND hwndParent, const char *message)
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message)
 {
-    DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COPYABLE_MESSAGE), hwndParent, CopyableMessageDlgProc, (LPARAM)message);
+	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COPYABLE_MESSAGE), hwndParent, CopyableMessageDlgProc, (LPARAM)message);
 }
 
 LRESULT CALLBACK InterfaceAdminInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -43,8 +43,4 @@ void StartAsyncPortalSocket(SOCKET sock);
 
 void FatalErrorShow(const char *filename,int line,const char *str);
 
-#ifdef _WIN32
-void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
-#endif
-
 #endif

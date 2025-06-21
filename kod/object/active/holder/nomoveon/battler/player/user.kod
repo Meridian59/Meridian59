@@ -2533,14 +2533,23 @@ messages:
       AddPacket(1,BP_PLAYERS,2,Length(lUsers));
       for i in lUsers
       {
+         if SEnd(i,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            AND Send(i,@GetIllusionForm) <> $
+         {
+            % If the user is morphed, we send the illusion form's name.
+            rName = Send(Send(i,@GetIllusionForm),@GetTrueName);
+         }
+         else
+         {
+            % Otherwise, we send the user's true name.
          rName = Send(i,@GetTrueName);
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
          % Clear the DRAWFX_INVISIBLE flag of which DRAWFX_BLACK is a subset
          % so the who list dialog box does not color shadowformed names black 
          AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         }
       }
-      
       SendPacket(poSession);
       
       return;

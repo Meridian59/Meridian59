@@ -449,11 +449,17 @@ WORD GetItemListColor(HWND hwnd, int type, item_rarity_grade text_color_value)
 */
 COLORREF GetPlayerNameColor(int flags,const char*name)
 {
+    debug(("GetPlayerNameColor: flags=0x%08X name=%s\n", flags, name));
 	if (GetDrawingEffect(flags) == OF_BLACK)
 		return NAME_COLOR_BLACK_FG;
+	
+    // If morphed, temporarily add OF_PLAYER for name coloring
+    int color_flags = flags;
+    if (flags & OF_MORPH)
+        color_flags |= OF_PLAYER;
 
-	switch (GetPlayerFlags(flags))
-	{
+    switch (GetPlayerFlags(color_flags))
+    {
 		case PF_DM:
 			return NAME_COLOR_DM_FG;
 		case PF_KILLER:

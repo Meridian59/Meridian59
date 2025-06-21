@@ -2533,22 +2533,11 @@ messages:
       AddPacket(1,BP_PLAYERS,2,Length(lUsers));
       for i in lUsers
       {
-         if SEnd(i,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-            AND Send(i,@GetIllusionForm) <> $
-         {
-            % If the user is morphed, we send the illusion form's name.
-            rName = Send(Send(i,@GetIllusionForm),@GetTrueName);
-         }
-         else
-         {
-            % Otherwise, we send the user's true name.
          rName = Send(i,@GetTrueName);
-
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
          % Clear the DRAWFX_INVISIBLE flag of which DRAWFX_BLACK is a subset
          % so the who list dialog box does not color shadowformed names black 
          AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
-         }
       }
       SendPacket(poSession);
       
@@ -7316,16 +7305,24 @@ messages:
 
       oIllusion = Send(self,@GetIllusionForm);
 
-      % If we're morphed, get rid of any "player" flags
+      % If we're morphed, get rid of certain "player" flags
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND oIllusion <> $
          AND IsClass(oIllusion,&Monster)
       {
-         iFlags = (iFlags & ~USER_YES & ~OFFER_YES & ~PLAYER_PK
-                   & ~PLAYER_OUTLAW);
-         iFlags = (iFlags & ~PLAYER_DM & ~PLAYER_CREATOR & ~PLAYER_SUPER);
-      }
+         iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
+         iFlags = iFlags | MORPHED_YES;
 
+         % Recheck and add PK/OUTLAW flags if appropriate
+         if piFlags & PFLAG_MURDERER
+         {
+            iFlags = iFlags | PLAYER_PK;
+         }
+         if piFlags & PFLAG_OUTLAW
+         {
+            iFlags = iFlags | PLAYER_OUTLAW;
+         }
+      }
       return iFlags;
    }
 

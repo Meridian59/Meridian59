@@ -126,7 +126,6 @@ void InterfaceUpdateAdmin(void);
 
 static void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
 
-
 void InitInterface(void)
 {
 	HANDLE hThread;

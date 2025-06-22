@@ -7314,6 +7314,7 @@ messages:
       {
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
+      
       return iFlags;
    }
 

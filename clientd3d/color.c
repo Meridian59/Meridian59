@@ -451,8 +451,9 @@ COLORREF GetPlayerNameColor(int flags,const char*name)
 {
 	if (GetDrawingEffect(flags) == OF_BLACK)
 		return NAME_COLOR_BLACK_FG;
-    switch (GetPlayerFlags(flags))
-    {
+
+	switch (GetPlayerFlags(flags))
+	{
 		case PF_DM:
 			return NAME_COLOR_DM_FG;
 		case PF_KILLER:

@@ -7313,7 +7313,6 @@ messages:
          AND IsClass(oIllusion,&Monster)
       {
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
-         iFlags = iFlags | MORPHED_YES;
       }
       return iFlags;
    }

@@ -451,13 +451,7 @@ COLORREF GetPlayerNameColor(int flags,const char*name)
 {
 	if (GetDrawingEffect(flags) == OF_BLACK)
 		return NAME_COLOR_BLACK_FG;
-	
-	/* If morphed, temporarily add OF_PLAYER for name coloring */
-    int color_flags = flags;
-    if (flags & OF_MORPHED)
-        color_flags |= OF_PLAYER;
-
-    switch (GetPlayerFlags(color_flags))
+    switch (GetPlayerFlags(flags))
     {
 		case PF_DM:
 			return NAME_COLOR_DM_FG;

@@ -461,16 +461,16 @@ COLORREF GetPlayerNameColor(int flags,const char*name)
     {
 		case PF_DM:
 			return NAME_COLOR_DM_FG;
+		case PF_KILLER:
+			return NAME_COLOR_KILLER_FG;
+		case PF_OUTLAW:
+			return NAME_COLOR_OUTLAW_FG;
 		case PF_CREATOR:
 			return NAME_COLOR_CREATOR_FG;
 		case PF_SUPER:
 			return NAME_COLOR_SUPER_FG;
 		case PF_EVENTCHAR:
 			return NAME_COLOR_EVENT_FG;
-		case PF_KILLER:
-			return NAME_COLOR_KILLER_FG;
-		case PF_OUTLAW:
-			return NAME_COLOR_OUTLAW_FG;
             
     default:
 			return NAME_COLOR_NORMAL_FG;

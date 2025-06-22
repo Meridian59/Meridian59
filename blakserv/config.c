@@ -206,6 +206,9 @@ config_table_type config_table[] =
 { SERVICE_USERNAME,       T, "Username",      CONFIG_STR,   "m59ftp" },
 { SERVICE_PASSWORD,       T, "Password",      CONFIG_STR,   "b58Iz3xp" },
 
+{ WEBHOOK_GROUP,        F, "[Webhooks]",    CONFIG_GROUP, "" },
+{ WEBHOOK_USERKILLED,   F, "UserKilled",    CONFIG_STR,   "" },
+
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
 { BLAKOD_MAX_STATEMENTS,  T, "MaxStatements", CONFIG_INT,   "20000000" },
 

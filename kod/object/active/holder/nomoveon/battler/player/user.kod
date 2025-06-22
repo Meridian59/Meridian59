@@ -6239,8 +6239,11 @@ messages:
    SomeoneSaid(what = $, type = $, string = $, parm1 = $, parm2 = $, parm3 = $,
                parm4= $, parm5 = $, parm6 = $, parm7 = $, parm8 = $)
    {
+      
       local rSay_format,rName;
-
+      Debug("SomeoneSaid: about to call SendDiscordWebhook");
+      SendDiscordWebhook("someone said something!");
+      Debug("SomeoneSaid: finished calling SendDiscordWebhook");
       if pbLogged_on
       {
          % if it's a say resource, it's from a monster or object probably.

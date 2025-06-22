@@ -2344,3 +2344,121 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	
 	return ret_val.int_val;
 }
+
+// Send a message to a Discord webhook URL using HTTP POST.
+// Parameters: content (string)
+// Returns 1 on success, 0 on failure, NIL on error.
+blak_int C_SendDiscordWebhook(int object_id, local_var_type *local_vars,
+    int num_normal_parms, parm_node normal_parm_array[],
+    int num_name_parms, parm_node name_parm_array[])
+{
+    val_type msg_val, ret_val;
+    const char *content;
+    int content_len;
+    int success = 0;
+
+    // Debug: Function called
+    bprintf("C_SendDiscordWebhook: called\n");
+
+    // Get content
+    msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+    if (!LookupString(msg_val, "C_SendDiscordWebhook", &content, &content_len)) {
+        bprintf("C_SendDiscordWebhook: LookupString failed\n");
+        return NIL;
+    }
+
+    // Debug: Show content
+    bprintf("C_SendDiscordWebhook: content = '%.*s'\n", content_len, content);
+
+    // Get webhook URL from config
+    char *webhook_url = ConfigStr(WEBHOOK_USERKILLED); // Or use a more generic config key if needed
+    if (!webhook_url || !*webhook_url) {
+        bprintf("C_SendDiscordWebhook: webhook_url missing or empty\n");
+        return NIL;
+    }
+
+    // Debug: Show webhook URL
+    bprintf("C_SendDiscordWebhook: webhook_url = '%s'\n", webhook_url);
+
+#ifdef BLAK_PLATFORM_WINDOWS
+    HINTERNET hSession = NULL, hConnect = NULL, hRequest = NULL;
+    char host[256], path[1024];
+    int port = 443;
+    char *slash;
+    char postData[2048];
+
+    // Parse host and path from webhook_url (expects https://host/path)
+    const char *url_ptr = webhook_url;
+    if (strncmp(url_ptr, "https://", 8) == 0)
+        url_ptr += 8;
+    strncpy(host, url_ptr, sizeof(host) - 1);
+    host[sizeof(host) - 1] = 0;
+    slash = strchr(host, '/');
+    if (!slash) {
+        bprintf("C_SendDiscordWebhook: failed to parse host/path\n");
+        return NIL;
+    }
+    *slash = 0;
+    snprintf(path, sizeof(path), "%s", url_ptr + (slash - host));
+    snprintf(postData, sizeof(postData), "{\"content\":\"%.*s\"}", content_len, content);
+
+    bprintf("C_SendDiscordWebhook: host = '%s', path = '%s'\n", host, path);
+    bprintf("C_SendDiscordWebhook: postData = '%s'\n", postData);
+
+    hSession = InternetOpenA("Meridian59", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+    if (hSession) {
+        hConnect = InternetConnectA(hSession, host, port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
+        if (hConnect) {
+            const char *acceptTypes[] = { "application/json", NULL };
+            hRequest = HttpOpenRequestA(hConnect, "POST", path, NULL, NULL, acceptTypes,
+                INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE, 0);
+            if (hRequest) {
+                const char *headers = "Content-Type: application/json\r\n";
+                if (HttpSendRequestA(hRequest, headers, (DWORD)strlen(headers), postData, (DWORD)strlen(postData))) {
+                    bprintf("C_SendDiscordWebhook: HttpSendRequestA succeeded\n");
+                    success = 1;
+                } else {
+                    bprintf("C_SendDiscordWebhook: HttpSendRequestA failed\n");
+                }
+                InternetCloseHandle(hRequest);
+            } else {
+                bprintf("C_SendDiscordWebhook: HttpOpenRequestA failed\n");
+            }
+            InternetCloseHandle(hConnect);
+        } else {
+            bprintf("C_SendDiscordWebhook: InternetConnectA failed\n");
+        }
+        InternetCloseHandle(hSession);
+    } else {
+        bprintf("C_SendDiscordWebhook: InternetOpenA failed\n");
+    }
+#else
+    CURL *curl = curl_easy_init();
+    if (curl) {
+        struct curl_slist *headers = NULL;
+        char postData[2048];
+        snprintf(postData, sizeof(postData), "{\"content\":\"%.*s\"}", content_len, content);
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_URL, webhook_url);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        CURLcode res = curl_easy_perform(curl);
+        if (res == CURLE_OK) {
+            bprintf("C_SendDiscordWebhook: curl_easy_perform succeeded\n");
+            success = 1;
+        } else {
+            bprintf("C_SendDiscordWebhook: curl_easy_perform failed, code %d\n", res);
+        }
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+    } else {
+        bprintf("C_SendDiscordWebhook: curl_easy_init failed\n");
+    }
+#endif
+
+    bprintf("C_SendDiscordWebhook: returning %d\n", success);
+
+    ret_val.v.tag = TAG_INT;
+    ret_val.v.data = success;
+    return ret_val.int_val;
+}

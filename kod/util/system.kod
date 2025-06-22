@@ -1637,6 +1637,9 @@ messages:
               #parm7=param7,#type3=STRING_RESOURCE,#type5=type5,#type7=type7);
       }
 
+      % Send a Discord webhook notification
+      SendDiscordWebhook(rMessage);
+
       return;
    }
 

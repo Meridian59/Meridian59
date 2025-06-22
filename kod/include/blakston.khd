@@ -67,7 +67,7 @@
    LOOK_YES          = 0
    LOOK_NO           = 0x00000040
 
-   % unused = 0x00000080
+   % unused       = 0x00000080
 
    INVISIBLE_YES     = 0x00000100
    INVISIBLE_NO      = 0

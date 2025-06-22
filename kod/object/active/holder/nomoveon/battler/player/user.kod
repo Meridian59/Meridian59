@@ -7314,16 +7314,6 @@ messages:
       {
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
          iFlags = iFlags | MORPHED_YES;
-
-         % Recheck and add PK/OUTLAW flags if appropriate
-         if piFlags & PFLAG_MURDERER
-         {
-            iFlags = iFlags | PLAYER_PK;
-         }
-         if piFlags & PFLAG_OUTLAW
-         {
-            iFlags = iFlags | PLAYER_OUTLAW;
-         }
       }
       return iFlags;
    }

@@ -10,7 +10,7 @@ CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
 
 SOURCEDIR = .
 
-LIBS = -lpthread
+LIBS = -lpthread -lcurl
 
 OBJS =  \
 	$(OUTDIR)/main.obj \

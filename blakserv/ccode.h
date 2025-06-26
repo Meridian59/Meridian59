@@ -10,6 +10,18 @@
  *
  */
 
+#include <thread>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+#include <queue>
+#include <string>
+
+extern std::atomic<bool> webhook_worker_running;
+extern std::thread webhook_worker;
+extern std::condition_variable webhook_cv;
+void WebhookWorkerFunc();
+
 #ifndef _CCODE_H
 #define _CCODE_H
 

@@ -107,6 +107,10 @@ void MainServer()
 	LoadAdminConstants();
 	
 	PauseTimers();
+	// Start Discord webhook worker
+	lprintf("Starting Discord webhook worker thread\n");
+    webhook_worker_running = true;
+    webhook_worker = std::thread(WebhookWorkerFunc);
 	
 	if (LoadAll() == True)
 	{
@@ -155,7 +159,11 @@ void MainExitServer()
 	ExitAsyncConnections();
 	
 	CloseAllSessions(); /* gotta do this before anything, cause it uses kod, accounts */
-	
+	webhook_worker_running = false;
+    webhook_cv.notify_all();
+    if (webhook_worker.joinable())
+        webhook_worker.join();
+
 	CloseDefaultChannels();
 	
 	ResetLoadMotd();

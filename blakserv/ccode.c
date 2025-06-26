@@ -2421,7 +2421,7 @@ blak_int C_SendDiscordWebhook(int object_id, local_var_type *local_vars,
 
 // --- Blocking HTTP logic, runs in worker thread ---
 void SendDiscordWebhookBlocking(const std::string& content) {
-    char *webhook_url = ConfigStr(WEBHOOK_USERKILLED);
+    char *webhook_url = ConfigStr(WEBHOOK_DEFAULT);
     if (!webhook_url || !*webhook_url) {
         bprintf("SendDiscordWebhookBlocking: webhook_url missing or empty\n");
         return;

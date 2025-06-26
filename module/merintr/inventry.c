@@ -98,6 +98,26 @@ keymap inventory_key_table[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
+#define COLOR_ITEM_UNCOMMON     RGB(141,242,242)
+#define COLOR_ITEM_RARE         RGB(0,255,0)
+#define COLOR_ITEM_LEGENDARY    RGB(255,0,255)
+#define COLOR_ITEM_UNIDENTIFIED RGB(252,128,0)
+#define COLOR_ITEM_CURSED       RGB(255,0,0)
+#define COLOR_ITEM_DEFAULT      RGB(255,255,255) // fallback
+
+static COLORREF GetItemRarityColor(item_rarity_grade rarity)
+{
+    switch (rarity)
+    {
+        case ITEM_RARITY_GRADE_UNCOMMON:     return COLOR_ITEM_UNCOMMON;
+        case ITEM_RARITY_GRADE_RARE:         return COLOR_ITEM_RARE;
+        case ITEM_RARITY_GRADE_LEGENDARY:    return COLOR_ITEM_LEGENDARY;
+        case ITEM_RARITY_GRADE_UNIDENTIFIED: return COLOR_ITEM_UNIDENTIFIED;
+        case ITEM_RARITY_GRADE_CURSED:       return COLOR_ITEM_CURSED;
+        default:                             return COLOR_ITEM_DEFAULT;
+    }
+}
+
 /* local function prototypes */
 static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -614,6 +634,68 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
    {
       DrawWindowBackgroundBorder(&inventory_bkgnd, hdc, &obj_area, INVENTORY_OBJECT_BORDER, 
 				 inventory_area.x + obj_area.x, inventory_area.y + obj_area.y, -1, NULL);
+   }
+
+   // Add rarity color if item is not normal; with 3D/inset effect
+   if (item->obj && item->obj->rarity != ITEM_RARITY_GRADE_NORMAL) {
+      COLORREF rarityColor = GetItemRarityColor(item->obj->rarity);
+
+      // Square size and position
+      int boxSize = 6;
+      int right = area.x + INVENTORY_BOX_WIDTH - 2;
+      int left  = right - boxSize;
+      int top   = area.y + 2;
+      int bottom= top + boxSize;
+
+      // Draw main colored square
+      HBRUSH hBrush = CreateSolidBrush(rarityColor);
+      RECT rc = { left, top, right, bottom };
+      FillRect(hdc, &rc, hBrush);
+      DeleteObject(hBrush);
+
+      // Draw outline for extra definition
+      HPEN hPenOutline = CreatePen(PS_SOLID, 1, RGB(180,180,180));
+      HGDIOBJ oldPen = SelectObject(hdc, hPenOutline);
+      MoveToEx(hdc, left, top, NULL);
+      LineTo(hdc, right-1, top);
+      LineTo(hdc, right-1, bottom-1);
+      LineTo(hdc, left, bottom-1);
+      LineTo(hdc, left, top);
+      SelectObject(hdc, oldPen);
+      DeleteObject(hPenOutline);
+
+      // Draw 3D effect: shadow (top/left), highlight (bottom/right)
+      COLORREF shadow = RGB(
+         max(GetRValue(rarityColor) - 80, 0),
+         max(GetGValue(rarityColor) - 80, 0),
+         max(GetBValue(rarityColor) - 80, 0)
+      );
+      COLORREF highlight = RGB(
+         min(GetRValue(rarityColor) + 80, 255),
+         min(GetGValue(rarityColor) + 80, 255),
+         min(GetBValue(rarityColor) + 80, 255)
+      );
+
+      HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
+      HPEN hPenHighlight = CreatePen(PS_SOLID, 1, highlight);
+
+      // Top and left edges (shadow)
+      oldPen = SelectObject(hdc, hPenShadow);
+      MoveToEx(hdc, left+1, top+1, NULL);
+      LineTo(hdc, right-2, top+1);
+      MoveToEx(hdc, left+1, top+1, NULL);
+      LineTo(hdc, left+1, bottom-2);
+
+      // Bottom and right edges (highlight)
+      SelectObject(hdc, hPenHighlight);
+      MoveToEx(hdc, left+1, bottom-2, NULL);
+      LineTo(hdc, right-2, bottom-2);
+      MoveToEx(hdc, right-2, top+1, NULL);
+      LineTo(hdc, right-2, bottom-2);
+
+      SelectObject(hdc, oldPen);
+      DeleteObject(hPenShadow);
+      DeleteObject(hPenHighlight);
    }
 
    ReleaseDC(hwndInv, hdc);

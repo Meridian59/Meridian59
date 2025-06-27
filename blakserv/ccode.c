@@ -18,6 +18,13 @@
 
 #include "blakserv.h"
 
+#ifdef BLAK_PLATFORM_WINDOWS
+#include <windows.h>
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
 // global buffers for zero-terminated string manipulation
@@ -2343,4 +2350,51 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	ret_val.v.data = number;
 	
 	return ret_val.int_val;
+}
+
+void SendWebhookToPipe(const char* message, int len) {
+#ifdef BLAK_PLATFORM_WINDOWS
+    HANDLE hPipe = CreateFileA(
+        "\\\\.\\pipe\\m59apiwebhook",
+        GENERIC_WRITE,
+        0,
+        NULL,
+        OPEN_EXISTING,
+        0,
+        NULL
+    );
+    if (hPipe == INVALID_HANDLE_VALUE) {
+        bprintf("SendWebhookToPipe: Could not open pipe (err=%lu)\n", GetLastError());
+        return;
+    }
+    DWORD bytesWritten;
+    WriteFile(hPipe, message, (DWORD)len, &bytesWritten, NULL);
+    CloseHandle(hPipe);
+#else
+    int fd = open("/tmp/m59apiwebhook", O_WRONLY | O_NONBLOCK);
+    if (fd == -1) {
+        perror("SendWebhookToPipe: open");
+        return;
+    }
+    write(fd, message, len);
+    close(fd);
+#endif
+}
+
+blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
+    int num_normal_parms, parm_node normal_parm_array[],
+    int num_name_parms, parm_node name_parm_array[])
+{
+    val_type msg_val;
+    const char *content;
+    int content_len;
+
+    msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+    if (!LookupString(msg_val, "C_SendWebhook", &content, &content_len)) {
+        bprintf("C_SendWebhook: LookupString failed\n");
+        return NIL;
+    }
+
+    SendWebhookToPipe(content, content_len);
+    return 1;
 }

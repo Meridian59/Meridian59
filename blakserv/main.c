@@ -107,7 +107,6 @@ void MainServer()
 	LoadAdminConstants();
 	
 	PauseTimers();
-	// Start Discord webhook worker
 	
 	if (LoadAll() == True)
 	{
@@ -156,6 +155,7 @@ void MainExitServer()
 	ExitAsyncConnections();
 	
 	CloseAllSessions(); /* gotta do this before anything, cause it uses kod, accounts */
+
 	CloseDefaultChannels();
 	
 	ResetLoadMotd();

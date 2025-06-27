@@ -2355,7 +2355,7 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 void SendWebhookToPipe(const char* message, int len) {
 #ifdef _WIN32
     HANDLE hPipe = CreateFileA(
-        "\\\\.\\pipe\\m59webhook",
+        "\\\\.\\pipe\\m59apiwebhook",
         GENERIC_WRITE,
         0,
         NULL,
@@ -2371,7 +2371,7 @@ void SendWebhookToPipe(const char* message, int len) {
     WriteFile(hPipe, message, (DWORD)len, &bytesWritten, NULL);
     CloseHandle(hPipe);
 #else
-    int fd = open("/tmp/m59webhook", O_WRONLY | O_NONBLOCK);
+    int fd = open("/tmp/m59apiwebhook", O_WRONLY | O_NONBLOCK);
     if (fd == -1) {
         perror("SendWebhookToPipe: open");
         return;

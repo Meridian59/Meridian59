@@ -22,7 +22,6 @@
 #include <io.h>
 #include <process.h>
 #include "mutex_windows.h"
-#include <wininet.h>
 
 typedef int socklen_t;
 

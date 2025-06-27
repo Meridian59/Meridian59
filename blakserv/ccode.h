@@ -10,18 +10,6 @@
  *
  */
 
-#include <thread>
-#include <atomic>
-#include <condition_variable>
-#include <mutex>
-#include <queue>
-#include <string>
-
-extern std::atomic<bool> webhook_worker_running;
-extern std::thread webhook_worker;
-extern std::condition_variable webhook_cv;
-void WebhookWorkerFunc();
-
 #ifndef _CCODE_H
 #define _CCODE_H
 
@@ -257,13 +245,10 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 		  int num_normal_parms,parm_node normal_parm_array[],
 		  int num_name_parms,parm_node name_parm_array[]);
 
-blak_int C_SendDiscordWebhook(int object_id, local_var_type *local_vars,
-    int num_normal_parms, parm_node normal_parm_array[],
-    int num_name_parms, parm_node name_parm_array[]);
-
 
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len);
 bool FuzzyBufferEqual(const char *s1,int len1,const char *s2,int len2);
 bool FuzzyBufferContain(const char *s1,int len1,const char *s2,int len2);
+void SendWebhookToPipe(const char* message, int len);
 
 #endif

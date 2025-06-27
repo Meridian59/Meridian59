@@ -1638,7 +1638,7 @@ messages:
       }
 
       % Send a Discord webhook notification
-      SendDiscordWebhook(rMessage);
+      SendWebhook(rMessage);
 
       return;
    }

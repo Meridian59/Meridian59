@@ -10,7 +10,7 @@ BLAKSERVLINKFLAGS = /STACK:10000000 /map /debug $(LINKWINDOWSFLAGS)
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib  wininet.lib
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \

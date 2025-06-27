@@ -31,8 +31,6 @@
 #include "critical_section.h"
 #include "mutex_linux.h"
 
-#include <curl/curl.h>
-
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0
 #define O_TEXT 0

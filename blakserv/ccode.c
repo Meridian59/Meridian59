@@ -17,27 +17,6 @@
 */
 
 #include "blakserv.h"
-#include <queue>
-#include <mutex>
-#include <condition_variable>
-#include <thread>
-#include <atomic>
-#include <string>
-
-// --- Discord webhook async queue and worker ---
-struct webhook_job_t {
-    std::string content;
-};
-
- std::queue<webhook_job_t> webhook_queue;
- std::mutex webhook_mutex;
- std::condition_variable webhook_cv;
- std::atomic<bool> webhook_worker_running(false);
- std::thread webhook_worker;
-
-// Forward declarations
-void WebhookWorkerFunc();
-void SendDiscordWebhookBlocking(const std::string& content);
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
@@ -2365,28 +2344,45 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	
 	return ret_val.int_val;
 }
-void WebhookWorkerFunc() {
-    bprintf("WebhookWorkerFunc: started\n");
-    while (webhook_worker_running) {
-        std::unique_lock<std::mutex> lock(webhook_mutex);
-        webhook_cv.wait(lock, [] { return !webhook_queue.empty() || !webhook_worker_running; });
 
-        while (!webhook_queue.empty()) {
-            webhook_job_t job = webhook_queue.front();
-            webhook_queue.pop();
-            lock.unlock();
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
-            bprintf("WebhookWorkerFunc: sending webhook: %s\n", job.content.c_str());
-            SendDiscordWebhookBlocking(job.content);
-
-            lock.lock();
-        }
+void SendWebhookToPipe(const char* message, int len) {
+#ifdef _WIN32
+    HANDLE hPipe = CreateFileA(
+        "\\\\.\\pipe\\m59webhook",
+        GENERIC_WRITE,
+        0,
+        NULL,
+        OPEN_EXISTING,
+        0,
+        NULL
+    );
+    if (hPipe == INVALID_HANDLE_VALUE) {
+        bprintf("SendWebhookToPipe: Could not open pipe (err=%lu)\n", GetLastError());
+        return;
     }
-    bprintf("WebhookWorkerFunc: exiting\n");
+    DWORD bytesWritten;
+    WriteFile(hPipe, message, (DWORD)len, &bytesWritten, NULL);
+    CloseHandle(hPipe);
+#else
+    int fd = open("/tmp/m59webhook", O_WRONLY | O_NONBLOCK);
+    if (fd == -1) {
+        perror("SendWebhookToPipe: open");
+        return;
+    }
+    write(fd, message, len);
+    close(fd);
+#endif
 }
 
 
-blak_int C_SendDiscordWebhook(int object_id, local_var_type *local_vars,
+blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int num_normal_parms, parm_node normal_parm_array[],
     int num_name_parms, parm_node name_parm_array[])
 {
@@ -2394,112 +2390,12 @@ blak_int C_SendDiscordWebhook(int object_id, local_var_type *local_vars,
     const char *content;
     int content_len;
 
-    bprintf("C_SendDiscordWebhook: called\n");
-
     msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
-    if (!LookupString(msg_val, "C_SendDiscordWebhook", &content, &content_len)) {
-        bprintf("C_SendDiscordWebhook: LookupString failed\n");
+    if (!LookupString(msg_val, "C_SendWebhook", &content, &content_len)) {
+        bprintf("C_SendWebhook: LookupString failed\n");
         return NIL;
     }
 
-    bprintf("C_SendDiscordWebhook: content = '%.*s'\n", content_len, content);
-
-    webhook_job_t job;
-    job.content = std::string(content, content_len);
-
-    {
-        std::lock_guard<std::mutex> lock(webhook_mutex);
-        webhook_queue.push(job);
-    }
-    webhook_cv.notify_one();
-
-    bprintf("C_SendDiscordWebhook: job queued\n");
-
-    // Return immediately, do not block
+    SendWebhookToPipe(content, content_len);
     return 1;
-}
-
-// --- Blocking HTTP logic, runs in worker thread ---
-void SendDiscordWebhookBlocking(const std::string& content) {
-    char *webhook_url = ConfigStr(WEBHOOK_DEFAULT);
-    if (!webhook_url || !*webhook_url) {
-        bprintf("SendDiscordWebhookBlocking: webhook_url missing or empty\n");
-        return;
-    }
-
-    bprintf("SendDiscordWebhookBlocking: webhook_url = '%s'\n", webhook_url);
-    bprintf("SendDiscordWebhookBlocking: content = '%s'\n", content.c_str());
-
-#ifdef BLAK_PLATFORM_WINDOWS
-    HINTERNET hSession = NULL, hConnect = NULL, hRequest = NULL;
-    char host[256], path[1024];
-    int port = 443;
-    char *slash;
-    char postData[2048];
-
-    // Parse host and path from webhook_url (expects https://host/path)
-    const char *url_ptr = webhook_url;
-    if (strncmp(url_ptr, "https://", 8) == 0)
-        url_ptr += 8;
-    strncpy(host, url_ptr, sizeof(host) - 1);
-    host[sizeof(host) - 1] = 0;
-    slash = strchr(host, '/');
-    if (!slash) {
-        bprintf("SendDiscordWebhookBlocking: failed to parse host/path\n");
-        return;
-    }
-    *slash = 0;
-    snprintf(path, sizeof(path), "%s", url_ptr + (slash - host));
-    snprintf(postData, sizeof(postData), "{\"content\":\"%s\"}", content.c_str());
-
-    bprintf("SendDiscordWebhookBlocking: host = '%s', path = '%s'\n", host, path);
-    bprintf("SendDiscordWebhookBlocking: postData = '%s'\n", postData);
-
-    hSession = InternetOpenA("Meridian59", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-    if (hSession) {
-        hConnect = InternetConnectA(hSession, host, port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
-        if (hConnect) {
-            const char *acceptTypes[] = { "application/json", NULL };
-            hRequest = HttpOpenRequestA(hConnect, "POST", path, NULL, NULL, acceptTypes,
-                INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE, 0);
-            if (hRequest) {
-                const char *headers = "Content-Type: application/json\r\n";
-                if (HttpSendRequestA(hRequest, headers, (DWORD)strlen(headers), postData, (DWORD)strlen(postData))) {
-                    bprintf("SendDiscordWebhookBlocking: HttpSendRequestA succeeded\n");
-                } else {
-                    bprintf("SendDiscordWebhookBlocking: HttpSendRequestA failed\n");
-                }
-                InternetCloseHandle(hRequest);
-            } else {
-                bprintf("SendDiscordWebhookBlocking: HttpOpenRequestA failed\n");
-            }
-            InternetCloseHandle(hConnect);
-        } else {
-            bprintf("SendDiscordWebhookBlocking: InternetConnectA failed\n");
-        }
-        InternetCloseHandle(hSession);
-    } else {
-        bprintf("SendDiscordWebhookBlocking: InternetOpenA failed\n");
-    }
-#else
-    CURL *curl = curl_easy_init();
-    if (curl) {
-        struct curl_slist *headers = NULL;
-        std::string postData = "{\"content\":\"" + content + "\"}";
-        headers = curl_slist_append(headers, "Content-Type: application/json");
-        curl_easy_setopt(curl, CURLOPT_URL, webhook_url);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        CURLcode res = curl_easy_perform(curl);
-        if (res == CURLE_OK) {
-            bprintf("SendDiscordWebhookBlocking: curl_easy_perform succeeded\n");
-        } else {
-            bprintf("SendDiscordWebhookBlocking: curl_easy_perform failed, code %d\n", res);
-        }
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
-    } else {
-        bprintf("SendDiscordWebhookBlocking: curl_easy_init failed\n");
-    }
-#endif
 }

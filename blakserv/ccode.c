@@ -18,6 +18,13 @@
 
 #include "blakserv.h"
 
+#ifdef BLAK_PLATFORM_WINDOWS
+#include <windows.h>
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
 // global buffers for zero-terminated string manipulation
@@ -2345,15 +2352,8 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-
 void SendWebhookToPipe(const char* message, int len) {
-#ifdef _WIN32
+#ifdef BLAK_PLATFORM_WINDOWS
     HANDLE hPipe = CreateFileA(
         "\\\\.\\pipe\\m59apiwebhook",
         GENERIC_WRITE,
@@ -2380,7 +2380,6 @@ void SendWebhookToPipe(const char* message, int len) {
     close(fd);
 #endif
 }
-
 
 blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int num_normal_parms, parm_node normal_parm_array[],

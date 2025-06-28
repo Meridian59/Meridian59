@@ -22,7 +22,7 @@ resources:
    shroud_name_rsc = "shroud"
    shroud_icon_rsc = ishroud.bgf
    shroud_desc_rsc = \
-	"Used to protect a warrior's tools against polluting magics.  Requires a large amount of inexpensive reagents."
+	"Used to protect a warrior's tools against polluting magics.  Requires mushrooms, elderberries, and herbs to cast."
    shroud_lable_rsc = "Shrouder."
    
 

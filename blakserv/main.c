@@ -155,7 +155,7 @@ void MainExitServer()
 	ExitAsyncConnections();
 	
 	CloseAllSessions(); /* gotta do this before anything, cause it uses kod, accounts */
-
+	
 	CloseDefaultChannels();
 	
 	ResetLoadMotd();

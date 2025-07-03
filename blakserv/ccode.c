@@ -2381,13 +2381,13 @@ void SendWebhookRoundRobin(const char* message, int len) {
             return;
         }
     }
-	// If we reach here, all pipes were unavailable
+
 }
 #else
 #include <time.h>
 #define NUM_WEBHOOK_PIPES 1
 void SendWebhookRoundRobin(const char* message, int len) {
-    // For Linux, add timestamp and send to /tmp/m59apiwebhook1 (single pipe for now)
+    // For Linux use a single pipe
     char full_message[1024];
     time_t now = time(NULL);
 	

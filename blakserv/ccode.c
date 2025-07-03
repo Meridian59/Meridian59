@@ -2362,7 +2362,7 @@ void SendWebhookRoundRobin(const char* message, int len) {
     char full_message[1024];
     time_t now = time(NULL);
     int msg_len = snprintf(full_message, sizeof(full_message),
-         "{\"timestamp\":%ld,\"message\":%.*s}", (long)now, len, message);
+         "{\"timestamp\":%ld,\"message\":\"%.*s\"}", (long)now, len, message);
     if (msg_len < 0 || msg_len >= (int)sizeof(full_message)) {
 		// If snprintf fails or the message is too long, truncate it
         msg_len = (int)sizeof(full_message) - 1;
@@ -2390,8 +2390,8 @@ void SendWebhookRoundRobin(const char* message, int len) {
     // For Linux, add timestamp and send to /tmp/m59apiwebhook1 (single pipe for now)
     char full_message[1024];
     time_t now = time(NULL);
-    int msg_len = snprintf(full_message, sizeof(full_message),
-         "{\"timestamp\":%ld,\"message\":%.*s}", (long)now, len, message);
+    snprintf(full_message, sizeof(full_message),
+         "{\"timestamp\":%ld,\"message\":\"%.*s\"}", (long)now, len, message);
     if (msg_len < 0 || msg_len >= (int)sizeof(full_message)) {
         msg_len = (int)sizeof(full_message) - 1;
         full_message[msg_len] = '\0';

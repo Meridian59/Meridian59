@@ -89,9 +89,7 @@ properties:
 
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
-   
-   % Time in seconds that ghosts will last before taking a penalty
-   piLogoffPenaltyGhostTime = 600
+
 
    %
    % Guild hall settings
@@ -146,6 +144,12 @@ properties:
    % ability to ask questions and socialize.  (Puts a damper on trivia
    % contests too!)  This value can be changed to tweak the penalty in realtime
    piBroadcastManaCostPercent = 50
+
+   % Time in seconds that ghosts will last before taking a penalty
+   piLogoffPenaltyGhostTime = 600
+
+   % Time in seconds one must cooldown after attacking someone before penalties are downgraded
+   piPVPPenaltyCooldownTime = 10 * 60
 
 messages:
 
@@ -353,5 +357,11 @@ messages:
    {
       return piBroadcastManaCostPercent;
    }
+
+   GetPVPPenaltyCooldownTime()
+   {
+      return piPVPPenaltyCooldownTime;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

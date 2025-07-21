@@ -202,6 +202,7 @@ resources:
          "Your judgement is keen but what of your loyalty?  To prove this to me you must invoke Mistress Qor to "
          "%NPC, thus: \"%CARGO\"  After that, return and tell me you are done and we shall revel in the beauty of "
          "corruption."
+   qordisciple_invoke_success = "That is a vile utterance. You would speak such corruption aloud? There is no place for your Mistress here."
    qordisciple_success = "`rYou have fulfilled my wishes. You are not only wise but tenacious.  Seek me out when you "
          "would learn more of Qor's spells of power."
    qordisciple_failure = "Subject: Qor has deemed you unworthy\n"
@@ -3077,6 +3078,7 @@ RecreateQuestNodes()
       lNPCs = cons(first(send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &JasperInnKeeper )),lNPCs);
       send( self, @SetQuestNodeNPCList, #index = 43, #new_NPC_list = lNPCs );
       send( self, @SetQuestNodeAssignHint, #index = 43, #new_hint = qordisciple_assign );
+      send( self, @SetQuestNodeSuccessHint, #index = 43, #new_hint = qordisciple_invoke_success );
       send( self, @SetQuestNodeFailureHint, #index = 43, #new_hint = qordisciple_failure );
    }
    else

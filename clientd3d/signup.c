@@ -48,6 +48,24 @@ INT_PTR ApplyErrorStyleToStaticText(UINT wParam, LONG lParam)
 }
 
 /*
+ * EditSubclassProc to support select all on the signup edit fields.
+ */
+LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass,
+                                  DWORD_PTR dwRefData)
+{
+   if (msg == WM_KEYDOWN)
+   {
+      if ((GetKeyState(VK_CONTROL) & 0x8000) && wParam == 'A')
+      {
+         SendMessage(hwnd, EM_SETSEL, 0, -1);
+         return 0;  // handled
+      }
+   }
+
+   return DefSubclassProc(hwnd, msg, wParam, lParam);
+}
+
+/*
 * SignUpDialogProc: Manage the signup dialog window callbacks.
 */
 INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -81,6 +99,11 @@ INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
         Edit_LimitText(hPasswd1, MAXPASSWORD);
         Edit_LimitText(hPasswd2, MAXPASSWORD);
         Edit_LimitText(hEmail, MAXEMAIL);
+
+        SetWindowSubclass(hUsername, EditSubclassProc, 0, 0);
+        SetWindowSubclass(hPasswd1, EditSubclassProc, 0, 0);
+        SetWindowSubclass(hPasswd2, EditSubclassProc, 0, 0);
+        SetWindowSubclass(hEmail, EditSubclassProc, 0, 0);
 
         su->SetWebApiResponse(0);
 

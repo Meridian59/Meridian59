@@ -13,13 +13,13 @@
 #define _ROOMANIM_H
 
 // Number of milliseconds per pixel scrolled for various scrolling texture speeds
-#define SCROLL_SLOW_PERIOD 12
+#define SCROLL_SLOW_PERIOD   12
 #define SCROLL_MEDIUM_PERIOD 6
-#define SCROLL_FAST_PERIOD 2
+#define SCROLL_FAST_PERIOD   2
 
-#define SCROLL_WALL_SLOW_PERIOD 96
+#define SCROLL_WALL_SLOW_PERIOD   96
 #define SCROLL_WALL_MEDIUM_PERIOD 32
-#define SCROLL_WALL_FAST_PERIOD 8
+#define SCROLL_WALL_FAST_PERIOD   8
 
 // Number of milliseconds between flickering a light
 #define FLICKER_PERIOD 100
@@ -64,7 +64,7 @@ typedef struct
 // Hold state of a room bitmap's animation
 typedef struct
 {
-   BYTE animation; /* How to animate bitmap; constants in animate.h */
+   BYTE animation;  // How to animate bitmap; constants in animate.h
 
    union
    {

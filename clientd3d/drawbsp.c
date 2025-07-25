@@ -41,16 +41,16 @@
    (b) = (tmp)
 #define LERP(a, b, t) ((a) + ((((b) - (a)) * (t)) >> LOG_FINENESS))
 
-static ID viewer_id;            /* Id of player's object */
-static long viewer_angle;       /* Angle of viewing in pseudo degrees */
-static long viewer_x, viewer_y; /* Position of player in fine coordinates */
+static ID viewer_id;             // Id of player's object
+static long viewer_angle;        // Angle of viewing in pseudo degrees
+static long viewer_x, viewer_y;  // Position of player in fine coordinates
 
-long viewer_height; /* Viewer's height above floor, in fine coordinates */
+long viewer_height;  // Viewer's height above floor, in fine coordinates
 
-extern PDIB background; /* Pointer to background bitmap */
+extern PDIB background;  // Pointer to background bitmap
 
-static long screen_width;  /* width of screen */
-static long screen_width2; /* half width of screen */
+static long screen_width;   // width of screen
+static long screen_width2;  // half width of screen
 
 static list_type background_overlays;
 
@@ -65,21 +65,21 @@ extern long shade_amount;
 
 extern BOOL bg_overlayVisible;
 
-/* vector pointing in direction of player's view */
+// vector pointing in direction of player's view
 static long center_a, center_b;
-/* frustum edge parameters */
+// frustum edge parameters
 static long left_a, left_b, right_a, right_b;
 
-/* return distance along viewer sight line */
+// return distance along viewer sight line
 #define GetDistance(x, y) ((center_a * (x) + center_b * (y)) / (1 << (FIX_DECIMAL - 6)))
 
 static int world_width = 3328;
 
-/* Hold info on objects to be drawn */
+// Hold info on objects to be drawn
 static ObjectData objectdata[MAXOBJECTS];
 static long nobjects;
 
-/* Hold info on items (walls, ceilings, floors, objects) to be drawn */
+// Hold info on items (walls, ceilings, floors, objects) to be drawn
 #define MAX_ITEMS 2400L
 DrawItem drawdata[MAX_ITEMS];
 long nitems;
@@ -88,7 +88,7 @@ static float fpytex;
 static float fpyinc;
 static DWORD tex_offset;
 
-/* flag that controls whether background is done incrementally or all at once */
+// flag that controls whether background is done incrementally or all at once
 static Bool incremental_background = False;
 /* Count the number of background cones.  If incremental_background is
  * False, background cones are counted in add_up and add_dn.  If
@@ -193,7 +193,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
          else if (side0 <= -epsilon && side1 <= -epsilon)
             tree = neg;
          else
-         { /* object segment crosses separator! */
+         {  // object segment crosses separator!
             float f = side0 / (side0 - side1);
             long xmid = (int) (object->x0 + f * (object->x1 - object->x0));
             long ymid = (int) (object->y0 + f * (object->y1 - object->y0));
@@ -217,7 +217,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
                res |= AddObject(pos, side0 > 0 ? object : copy);
             if (neg)
                res |= AddObject(neg, side0 > 0 ? copy : object);
-            return res; /* return true if object added on either side */
+            return res;  // return true if object added on either side
          }
          break;
 
@@ -281,7 +281,7 @@ Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x
    {
       if (tree == NULL)
       {
-         /* debug(("GetRoomHeight got NULL tree\n")); */
+         // debug(("GetRoomHeight got NULL tree\n"));
          return False;
       }
 
@@ -327,7 +327,7 @@ Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int
    {
       if (tree == NULL)
       {
-         /* debug(("GetRoomHeightRad got NULL tree\n")); */
+         // debug(("GetRoomHeightRad got NULL tree\n"));
          return False;
       }
 
@@ -415,21 +415,21 @@ static void AddObjects(room_type *room)
 
       r->visible = False;
 
-      /* don't add ourselves to tree */
+      // don't add ourselves to tree
       if (r->obj.id == viewer_id)
          continue;
 
-      /* compute and check distance */
+      // compute and check distance
       dx = r->motion.x - viewer_x;
       dy = r->motion.y - viewer_y;
       dist = GetDistance(dx, dy);
       if (dist <= 0 || (dist < MIN_DISTANCE && ObjectMoveonType(r->obj) == OF_MOVEON_YES))
          continue;
 
-      /* compute angle that object is viewed at */
+      // compute angle that object is viewed at
       angle = (r->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
-      /* compute width of bitmap from this angle */
+      // compute width of bitmap from this angle
       if (!GetObjectSize(r->obj.icon_res, r->obj.animate->group, angle, *(r->obj.overlays), &width, &height))
          continue;
 
@@ -460,7 +460,7 @@ static void AddObjects(room_type *room)
       d->draw.obj = r;
       d->draw.depth = 0;
 
-      /* Make sure that object is above the floor. */
+      // Make sure that object is above the floor.
       if (!GetRoomHeight(room->tree, &top, &bottom, &sector_flags, r->motion.x, r->motion.y))
       {
          nobjects--;
@@ -501,7 +501,7 @@ static void AddObjects(room_type *room)
       d->ncones = 0;
       d->ncones_ptr = &d->ncones;
 
-      /* set center field */
+      // set center field
       a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
       b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
@@ -511,7 +511,7 @@ static void AddObjects(room_type *room)
       }
       d->draw.center = (a * screen_width + screen_width2) / (a + b);
 
-      /* Don't draw more than a few objects per square, but always draw monsters and players */
+      // Don't draw more than a few objects per square, but always draw monsters and players
       d->draw.draw = True;
       count = 0;
       if (!(r->obj.flags & OF_ATTACKABLE))
@@ -543,17 +543,17 @@ static void AddObjects(room_type *room)
          return;
       }
 
-      /* compute and check distance */
+      // compute and check distance
       dx = proj->motion.x - viewer_x;
       dy = proj->motion.y - viewer_y;
       dist = GetDistance(dx, dy);
       if (dist <= 0)
          continue;
 
-      /* compute angle that projectile is viewed at */
+      // compute angle that projectile is viewed at
       angle = (proj->angle - intATan2(-dy, -dx)) & NUMDEGREES_MASK;
 
-      /* find width of bitmap */
+      // find width of bitmap
       if (!GetObjectSize(proj->icon_res, proj->animate.group, angle, NULL, &width, &height))
          continue;
 
@@ -584,7 +584,7 @@ static void AddObjects(room_type *room)
       d->ncones_ptr = &d->ncones;
       d->draw.obj = NULL;
 
-      /* set center field */
+      // set center field
       a = (left_a * dx + left_b * dy) / FINENESS;
       b = (right_a * dx + right_b * dy) / FINENESS;
       if (a + b <= 0)
@@ -681,21 +681,21 @@ static void AddObjects(room_type *room)
 typedef struct ConeTreeNode
 {
    ViewCone cone;
-   int height;                        /* height of subtree rooted at node */
-   struct ConeTreeNode *parent;       /* up the cone tree   */
-   struct ConeTreeNode *left, *right; /* down the cone tree */
-   struct ConeTreeNode *prev, *next;  /* pre-order walk     */
+   int height;                         // height of subtree rooted at node
+   struct ConeTreeNode *parent;        // up the cone tree
+   struct ConeTreeNode *left, *right;  // down the cone tree
+   struct ConeTreeNode *prev, *next;   // pre-order walk
 } ConeTreeNode;
 
-/* pointer to root node of cone tree */
+// pointer to root node of cone tree
 static ConeTreeNode *cone_tree_root;
 
-/* cone tree storage and free list */
+// cone tree storage and free list
 static ConeTreeNode cone_node_array[MAXX];
 static int allocd_cone_nodes;
 static ConeTreeNode *free_cone_node_list;
 
-/* anchors for threading doubly-linked list */
+// anchors for threading doubly-linked list
 static ConeTreeNode start_anchor, end_anchor;
 
 #define CHECK_DEPTH 0
@@ -706,7 +706,7 @@ static max_depth;
 static void init_cone_tree()
 {
    ConeTreeNode *c;
-   //  debug(("init_cone_tree\n"));
+   // debug(("init_cone_tree\n"));
 
    c = cone_tree_root = &cone_node_array[0];
    free_cone_node_list = NULL;
@@ -754,12 +754,12 @@ static void print_cone_tree(void)
    debug(("\n"));
 }
 
-/* finds lowest-columned cone with some pixels >= column <col> */
-/* O(h) time */
+// finds lowest-columned cone with some pixels >= column <col>
+// O(h) time
 static ConeTreeNode *search_for_first(long col)
 {
    ConeTreeNode *root = cone_tree_root;
-   ConeTreeNode *sofar = &end_anchor; /* lowest-columned cone found so far */
+   ConeTreeNode *sofar = &end_anchor;  // lowest-columned cone found so far
 #if CHECK_DEPTH
    int depth = 0;
 #endif
@@ -819,7 +819,7 @@ loop:
  * the first interval if <low_half> is True, and returns a pointer to
  * the node representing the second interval if <low_half> is False.
  */
-/* O(h) time. */
+// O(h) time.
 static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
 {
    ConeTreeNode *new_node, *prev, *next;
@@ -831,7 +831,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
    blakassert(col >= node->cone.leftedge);
    blakassert(col < node->cone.rightedge);
 
-   /* allocate new node */
+   // allocate new node
    new_node = free_cone_node_list;
    if (new_node != NULL)
       free_cone_node_list = new_node->next;
@@ -840,7 +840,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
 
    blakassert(allocd_cone_nodes < MAXX);
 
-   /* copy cone */
+   // copy cone
    new_node->cone = node->cone;
    new_node->parent = node;
 
@@ -858,7 +858,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
 
    if (lh <= rh)
    {
-      /* initialize new */
+      // initialize new
       new_node->left = left;
       if (left != NULL)
          left->parent = new_node;
@@ -866,11 +866,11 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
       new_node->height = lh + 1;
       new_node->cone.rightedge = col;
 
-      /* modify node */
+      // modify node
       node->left = new_node;
       node->cone.leftedge = col + 1;
 
-      /* update doubly-linked list */
+      // update doubly-linked list
       prev = node->prev;
       new_node->prev = prev;
       prev->next = new_node;
@@ -887,7 +887,7 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
    }
    else
    {
-      /* initialize new */
+      // initialize new
       new_node->left = NULL;
       new_node->right = right;
       if (right != NULL)
@@ -895,11 +895,11 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
       new_node->height = rh + 1;
       new_node->cone.leftedge = col + 1;
 
-      /* modify node */
+      // modify node
       node->right = new_node;
       node->cone.rightedge = col;
 
-      /* update doubly-linked list */
+      // update doubly-linked list
       next = node->next;
       new_node->next = next;
       next->prev = new_node;
@@ -916,15 +916,15 @@ static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
    }
 }
 
-/* O(1) time. */
+// O(1) time.
 static void delete_cone(ConeTreeNode *node)
 {
    ConeTreeNode *prev, *next;
    ConeTreeNode *left, *right, *parent;
-   ConeTreeNode *new_node; /* new replaces node in tree */
-                           //  debug(("delete_cone\n"));
+   ConeTreeNode *new_node;  // new replaces node in tree
+                            //  debug(("delete_cone\n"));
 
-   /* splice tree */
+   // splice tree
    left = node->left;
    right = node->right;
    parent = node->parent;
@@ -935,16 +935,16 @@ static void delete_cone(ConeTreeNode *node)
       new_node = right;
    else if (right == NULL)
       new_node = left;
-   else if (next == right) /* right has no left child */
+   else if (next == right)  // right has no left child
    {
       new_node = right;
-      new_node->left = left; /* splice left into new node */
+      new_node->left = left;  // splice left into new node
       left->parent = new_node;
    }
-   else if (prev == left) /* left has no right child */
+   else if (prev == left)  // left has no right child
    {
       new_node = left;
-      new_node->right = right; /* splice right into new node */
+      new_node->right = right;  // splice right into new node
       right->parent = new_node;
    }
    else
@@ -954,7 +954,7 @@ static void delete_cone(ConeTreeNode *node)
       new_node = next;
       blakassert(new_node->left == NULL);
 
-      /* splice new out of current location in tree */
+      // splice new out of current location in tree
       p = new_node->parent;
       blakassert(p);
       c = new_node->right;
@@ -964,7 +964,7 @@ static void delete_cone(ConeTreeNode *node)
       p->left = c;
       update_height(p);
 
-      /* splice new into where node was */
+      // splice new into where node was
       new_node->left = left;
       left->parent = new_node;
       new_node->right = right;
@@ -972,7 +972,7 @@ static void delete_cone(ConeTreeNode *node)
       new_node->height = node->height;
    }
 
-   /* update doubly-linked list */
+   // update doubly-linked list
    prev->next = next;
    // XXX Added this check ARK
    if (next != NULL)
@@ -994,7 +994,7 @@ static void delete_cone(ConeTreeNode *node)
       update_height(new_node);
    }
 
-   /* add freed node to free list */
+   // add freed node to free list
    node->next = free_cone_node_list;
    free_cone_node_list = node;
 
@@ -1082,12 +1082,12 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
    blakassert(col1 < MAXX);
    for (c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
    {
-      next = c->next; /* get next pointer now, before we munge c */
+      next = c->next;  // get next pointer now, before we munge c
 
       c0 = max(col0, c->cone.leftedge);
       c1 = min(col1, c->cone.rightedge);
 
-      /* some common subexpressions */
+      // some common subexpressions
       a_topb = a * c->cone.top_b;
       a_topd = a * c->cone.top_d;
       topa_b = c->cone.top_a * b;
@@ -1098,11 +1098,11 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
       {
          if (a_topb * c1 + a_topd + slack <= topa_b * c1 + topa_d)
          {
-            /* both c0 and c1 columns of the item are visible */
+            // both c0 and c1 columns of the item are visible
          }
          else
          {
-            /* right side of item isn't visible - get a smaller c1 */
+            // right side of item isn't visible - get a smaller c1
             denom = topa_b - a_topb;
             num = a_topd - topa_d;
             cmid = num / denom;
@@ -1112,7 +1112,7 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
       }
       else if (a_topb * c1 + a_topd + slack <= topa_b * c1 + topa_d)
       {
-         /* left side of item isn't visible - get a bigger c0 */
+         // left side of item isn't visible - get a bigger c0
          denom = topa_b - a_topb;
          num = a_topd - topa_d;
          if (denom > 0)
@@ -1123,12 +1123,12 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
             c0 = cmid;
       }
       else
-         continue; /* item can't be seen in this cone */
+         continue;  // item can't be seen in this cone
 
-      /* we now know we can see the object */
+      // we now know we can see the object
       viewable = True;
 
-      /* make cones for non-overlapping regions */
+      // make cones for non-overlapping regions
       if (c0 > c->cone.leftedge)
          c = split_cone(c, c0 - 1, False);
       if (c1 < c->cone.rightedge)
@@ -1148,7 +1148,7 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
          }
          else
          {
-            /* right bottom of new item is lower than cone */
+            // right bottom of new item is lower than cone
             denom = a_botb - bota_b;
             num = bota_d - a_botd;
             if (denom > 0)
@@ -1158,7 +1158,7 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
 
             if (additem)
             {
-               /* add right part of item to draw list */
+               // add right part of item to draw list
                if (nitems >= MAX_ITEMS)
                {
                   debug(("out of item memory add_up 1\n"));
@@ -1178,14 +1178,14 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
       }
       else if (bota_b * c1 + bota_d < a_botb * c1 + a_botd)
       {
-         /* left bottom of new item is lower than cone */
+         // left bottom of new item is lower than cone
          denom = a_botb - bota_b;
          num = bota_d - a_botd;
          cmid = num / denom;
 
          if (additem)
          {
-            /* add left part of item to draw list */
+            // add left part of item to draw list
             if (nitems >= MAX_ITEMS)
             {
                debug(("out of item memory add_up 2\n"));
@@ -1204,10 +1204,10 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
       }
       else
       {
-         /* new item is completely lower than cone */
+         // new item is completely lower than cone
          if (additem)
          {
-            /* add item to draw list */
+            // add item to draw list
             if (nitems >= MAX_ITEMS)
             {
                debug(("out of item memory add_up 3\n"));
@@ -1221,7 +1221,7 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
          else
             background_cones++;
 
-         /* cone is filled - remove it from cone tree */
+         // cone is filled - remove it from cone tree
          delete_cone(c);
          continue;
       }
@@ -1237,7 +1237,7 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
          }
          else
          {
-            /* add item to draw list */
+            // add item to draw list
             if (nitems >= MAX_ITEMS)
             {
                debug(("out of item memory add_up 4\n"));
@@ -1259,10 +1259,10 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
       else
          background_cones++;
 
-      /* calculate remnant cone */
+      // calculate remnant cone
       c->cone.top_a = a;
       c->cone.top_b = b;
-      c->cone.top_d = d + 1; /* +1 should give no overlap, no gap!!! */
+      c->cone.top_d = d + 1;  // +1 should give no overlap, no gap!!!
       merge_cone(c);
    }
    merge_cone(c);
@@ -1292,9 +1292,9 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
    blakassert(col1 < MAXX);
    for (c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
    {
-      next = c->next; /* get next pointer now, before we munge c */
+      next = c->next;  // get next pointer now, before we munge c
 
-      /* get left and right edges of item under consideration */
+      // get left and right edges of item under consideration
       c0 = max(col0, c->cone.leftedge);
       c1 = min(col1, c->cone.rightedge);
 
@@ -1304,16 +1304,16 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       bota_d = c->cone.bot_a * d;
       slack = a * c->cone.bot_a * SLACK_PIXELS;
 
-      /* check to see if c0 and c1 are tight enough */
+      // check to see if c0 and c1 are tight enough
       if (bota_b * c0 + bota_d + slack <= a_botb * c0 + a_botd)
       {
          if (bota_b * c1 + bota_d + slack <= a_botb * c1 + a_botd)
          {
-            /* both c0 and c1 columns of the item are visible */
+            // both c0 and c1 columns of the item are visible
          }
          else
          {
-            /* right side of item isn't visible - get a smaller c1 */
+            // right side of item isn't visible - get a smaller c1
             denom = a_botb - bota_b;
             num = bota_d - a_botd;
             cmid = num / denom;
@@ -1323,7 +1323,7 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       }
       else if (bota_b * c1 + bota_d + slack <= a_botb * c1 + a_botd)
       {
-         /* left side of item isn't visible - get a bigger c0 */
+         // left side of item isn't visible - get a bigger c0
          denom = a_botb - bota_b;
          num = bota_d - a_botd;
          if (denom > 0)
@@ -1334,11 +1334,11 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
             c0 = cmid;
       }
       else
-         continue; /* item can't be seen in this cone */
+         continue;  // item can't be seen in this cone
 
       viewable = True;
 
-      /* make cones for non-overlapping regions */
+      // make cones for non-overlapping regions
       if (c0 > c->cone.leftedge)
          c = split_cone(c, c0 - 1, False);
       if (c1 < c->cone.rightedge)
@@ -1358,7 +1358,7 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
          }
          else
          {
-            /* right top of new item is higher than cone */
+            // right top of new item is higher than cone
             denom = a_topb - topa_b;
             num = topa_d - a_topd;
             if (denom > 0)
@@ -1368,7 +1368,7 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
 
             if (additem)
             {
-               /* add right part of item to draw list */
+               // add right part of item to draw list
                if (nitems >= MAX_ITEMS)
                {
                   debug(("out of item memory add_dn 1\n"));
@@ -1388,14 +1388,14 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       }
       else if (topa_b * c1 + topa_d > a_topb * c1 + a_topd)
       {
-         /* left top of new item is higher than cone */
+         // left top of new item is higher than cone
          denom = a_topb - topa_b;
          num = topa_d - a_topd;
          cmid = num / denom;
 
          if (additem)
          {
-            /* add left part of item to draw list */
+            // add left part of item to draw list
             if (nitems >= MAX_ITEMS)
             {
                debug(("out of item memory add_dn 2\n"));
@@ -1414,10 +1414,10 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       }
       else
       {
-         /* new item is completely higher than cone */
+         // new item is completely higher than cone
          if (additem)
          {
-            /* add item to draw list */
+            // add item to draw list
             if (nitems >= MAX_ITEMS)
             {
                debug(("out of item memory add_dn 3\n"));
@@ -1431,7 +1431,7 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
          else
             background_cones++;
 
-         /* cone is filled - remove it from cone tree */
+         // cone is filled - remove it from cone tree
          delete_cone(c);
          continue;
       }
@@ -1447,7 +1447,7 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
          }
          else
          {
-            /* add item to draw list */
+            // add item to draw list
             if (nitems >= MAX_ITEMS)
             {
                debug(("out of item memory add_dn 4\n"));
@@ -1469,10 +1469,10 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       else
          background_cones++;
 
-      /* calculate remnant cone */
+      // calculate remnant cone
       c->cone.bot_a = a;
       c->cone.bot_b = b;
-      c->cone.bot_d = d - 1; /* -1 should give no overlap, no gap!!! */
+      c->cone.bot_d = d - 1;  // -1 should give no overlap, no gap!!!
       merge_cone(c);
    }
    merge_cone(c);
@@ -1491,28 +1491,28 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
  * of a wall that bounds a sloped sector.
  */
 int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
-                    long *t1, /* special parameters for sloped walls */
+                    long *t1,  // special parameters for sloped walls
                     long *col0, float *d0, long *col1, float *d1)
 {
    float left0, right0, left1, right1;
    float x, y;
    long t, tleft, tright;
 
-   /* go to viewer-relative coords */
+   // go to viewer-relative coords
    x0 -= viewer_x;
    y0 -= viewer_y;
    x1 -= viewer_x;
    y1 -= viewer_y;
 
-   /* calculate perpindicular distance of endpoints from left and right view frustum bounds */
-   /* positive distance is in viewable half-space (both positive => in view frustum) */
+   // calculate perpindicular distance of endpoints from left and right view frustum bounds
+   // positive distance is in viewable half-space (both positive => in view frustum)
    left0 = (left_a * x0 + left_b * y0) / FINENESS;
    right0 = (right_a * x0 + right_b * y0) / FINENESS;
    left1 = (left_a * x1 + left_b * y1) / FINENESS;
    right1 = (right_a * x1 + right_b * y1) / FINENESS;
 
-   /* make sure left and right are not both zero.  If they are,   */
-   /* move them to a point that maps to the center of the screen. */
+   // make sure left and right are not both zero.  If they are,
+   // move them to a point that maps to the center of the screen.
    if (right0 < 1.0f && right0 >= -1.0f)
       right0 = 1.0f;
    if (right1 < 1.0f && right1 >= -1.0f)
@@ -1520,16 +1520,16 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
    if (left0 < 0)
    {
       if (left1 < 0)
-         return 0; /* wall completely behind left ray */
+         return 0;  // wall completely behind left ray
       if (right0 < 0)
       {
          if (right1 < 0)
-            return 0; /* wall completely behind right ray */
-         /* quad 3 to quad 0 wall */
+            return 0;  // wall completely behind right ray
+         // quad 3 to quad 0 wall
          tleft = ((-left0) * FINENESS) / (left1 - left0);
          tright = ((-right0) * FINENESS) / (right1 - right0);
          if (tleft > tright)
-         { /* left of viewer */
+         {  // left of viewer
             x = x0 + (((x1 - x0) * tleft) / FINENESS);
             y = y0 + (((y1 - y0) * tleft) / FINENESS);
             *col0 = 0;
@@ -1541,7 +1541,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
             *t1 = FINENESS;
          }
          else
-         { /* right of viewer */
+         {  // right of viewer
             x = x0 + (((x1 - x0) * tright) / FINENESS);
             y = y0 + (((y1 - y0) * tright) / FINENESS);
             *col0 = screen_width;
@@ -1554,7 +1554,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
          }
       }
       else if (right1 < 0)
-      { /* quad 1 to quad 2 wall */
+      {  // quad 1 to quad 2 wall
          t = ((-left0) * FINENESS) / (left1 - left0);
          x = x0 + (((x1 - x0) * t) / FINENESS);
          y = y0 + (((y1 - y0) * t) / FINENESS);
@@ -1573,7 +1573,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
          *t1 = t;
       }
       else
-      { /* quad 1 to quad 0 wall */
+      {  // quad 1 to quad 0 wall
          t = ((-left0) * FINENESS) / (left1 - left0);
          x = x0 + (((x1 - x0) * t) / FINENESS);
          y = y0 + (((y1 - y0) * t) / FINENESS);
@@ -1591,12 +1591,12 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
       if (right1 < 0)
       {
          if (right0 < 0)
-            return 0; /* wall completely behind right ray */
-         /* quad 0 to quad 3 wall */
+            return 0;  // wall completely behind right ray
+         // quad 0 to quad 3 wall
          tleft = (left0 * FINENESS) / (left0 - left1);
          tright = (right0 * FINENESS) / (right0 - right1);
          if (tleft < tright)
-         { /* left of viewer */
+         {  // left of viewer
             *col0 = (left0 * screen_width + screen_width2) / (left0 + right0);
             *d0 = GetDistance(x0, y0);
             *t0 = 0;
@@ -1608,7 +1608,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
             *t1 = tleft;
          }
          else
-         { /* right of viewer */
+         {  // right of viewer
             *col0 = (left0 * screen_width + screen_width2) / (left0 + right0);
             *d0 = GetDistance(x0, y0);
             *t0 = 0;
@@ -1621,7 +1621,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
          }
       }
       else if (right0 < 0)
-      { /* quad 2 to quad 1 wall */
+      {  // quad 2 to quad 1 wall
          t = ((-right0) * FINENESS) / (right1 - right0);
          x = x0 + (((x1 - x0) * t) / FINENESS);
          y = y0 + (((y1 - y0) * t) / FINENESS);
@@ -1640,7 +1640,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
          *t1 = t;
       }
       else
-      { /* quad 0 to quad 1 wall */
+      {  // quad 0 to quad 1 wall
          *col0 = (left0 * screen_width + screen_width2) / (left0 + right0);
          *d0 = GetDistance(x0, y0);
          *t0 = 0;
@@ -1656,8 +1656,8 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
    else if (right0 < 0)
    {
       if (right1 < 0)
-         return 0; /* wall completely behind right ray */
-      /* quad 2 to quad 0 wall */
+         return 0;  // wall completely behind right ray
+      // quad 2 to quad 0 wall
       t = ((-right0) * FINENESS) / (right1 - right0);
       x = x0 + (((x1 - x0) * t) / FINENESS);
       y = y0 + (((y1 - y0) * t) / FINENESS);
@@ -1670,7 +1670,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
       *t1 = FINENESS;
    }
    else if (right1 < 0)
-   { /* quad 0 to quad 2 wall */
+   {  // quad 0 to quad 2 wall
       *col0 = (left0 * screen_width + screen_width2) / (left0 + right0);
       *d0 = GetDistance(x0, y0);
       *t0 = 0;
@@ -1683,7 +1683,7 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
       *t1 = t;
    }
    else
-   { /* quad 0 to quad 0 wall */
+   {  // quad 0 to quad 0 wall
       *col0 = (left0 * screen_width + screen_width2) / (left0 + right0);
       *d0 = GetDistance(x0, y0);
       *t0 = 0;
@@ -1762,7 +1762,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
             d = center_a * x1 + center_b * y1;
             if (d < 0)
             {
-               return True; /* all behind viewer */
+               return True;  // all behind viewer
             }
          }
       }
@@ -1775,7 +1775,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 
    if (l0 < 0 && l1 < 0 && l2 < 0 && l3 < 0)
    {
-      return True; /* all in quadrants 1&3 */
+      return True;  // all in quadrants 1&3
    }
 
    r0 = right_a * x0 + right_b * y0;
@@ -1785,7 +1785,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 
    if (r0 < 0 && r1 < 0 && r2 < 0 && r3 < 0)
    {
-      return True; /* all in quadrants 2&3 */
+      return True;  // all in quadrants 2&3
    }
 
    l0 >>= FIX_DECIMAL - 6;
@@ -1821,7 +1821,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
    if (offleftedge)
       col0 = 0;
    else
-   { /* find minimum column */
+   {  // find minimum column
       col0 = screen_width;
       if (r0 > 0)
          col0 = min(col0, (screen_width * l0 + screen_width2) / (l0 + r0));
@@ -1836,7 +1836,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
    if (offrightedge)
       col1 = screen_width;
    else
-   { /* find maximum column */
+   {  // find maximum column
       col1 = 0;
       if (l0 > 0)
          col1 = max(col1, (screen_width * l0 + screen_width2) / (l0 + r0));
@@ -2030,7 +2030,7 @@ static void WalkWall(WallData *wall, long side)
    DrawItem *item;
    Sidedef *sidedef;
 
-   /* Skip if nothing on this side */
+   // Skip if nothing on this side
    if (side > 0)
       sidedef = wall->pos_sidedef;
    else
@@ -2113,7 +2113,7 @@ static void WalkWall(WallData *wall, long side)
       zz3 = LERP(wall->z3, zz3, t1);
    }
 
-   /* put col0 on the left */
+   // put col0 on the left
    if (col1 < col0)
    {
       long tmp;
@@ -2125,7 +2125,7 @@ static void WalkWall(WallData *wall, long side)
       SWAP(z3, zz3, tmp);
    }
 
-   col1--; /* fix overlap! */
+   col1--;  // fix overlap!
    if (col1 < col0)
       return;
 
@@ -2148,7 +2148,7 @@ static void WalkWall(WallData *wall, long side)
       if (toprow1 > MAXCLIPROW)
          toprow1 = MAXCLIPROW;
 
-      /* calculate top of wall coefficients */
+      // calculate top of wall coefficients
       if (col0 == col1)
       {
          a = 1;
@@ -2187,7 +2187,7 @@ static void WalkWall(WallData *wall, long side)
       if (botrow1 > MAXCLIPROW)
          botrow1 = MAXCLIPROW;
 
-      /* calculate bottom of wall coefficients */
+      // calculate bottom of wall coefficients
       if (col0 == col1)
       {
          a = 1;
@@ -2249,7 +2249,7 @@ static void WalkWall(WallData *wall, long side)
          if (col1 < c->cone.rightedge)
             c = split_cone(c, col1, True);
 
-         /* add wall to draw list */
+         // add wall to draw list
          if (nitems >= MAX_ITEMS)
          {
             debug(("out of item memory Walk Wall 2\n"));
@@ -2262,7 +2262,7 @@ static void WalkWall(WallData *wall, long side)
          item->u.wall.wall_type = WALL_NORMAL;
          item->cone = c->cone;
 
-         /* delete cone */
+         // delete cone
          delete_cone(c);
       }
    }
@@ -2320,7 +2320,7 @@ static void WalkObjects(ObjectData *objects)
       }
       right = (a * screen_width + screen_width2) / (a + b);
 
-      right--; /* fix overlap */
+      right--;  // fix overlap
 
       if (right >= MAXX)
          right = MAXX - 1;
@@ -2488,7 +2488,7 @@ static void WalkLeaf(BSPleaf *leaf)
          sloped_ceiling->lightscale = FINENESS;
    }
 
-   /* find close and far walls */
+   // find close and far walls
    for (i = 0; i < leaf->poly.npts; i++)
    {
       if (!world_to_screen(x0 = leaf->poly.p[i].x, y0 = leaf->poly.p[i].y, x1 = leaf->poly.p[i + 1].x,
@@ -2636,7 +2636,7 @@ static void WalkBSPtree(BSPnode *tree)
    if (!tree)
       return;
 
-   /* don't open box if not in view */
+   // don't open box if not in view
    if (Bbox_shadowed(tree->bbox.x0, tree->bbox.y0, tree->bbox.x1, tree->bbox.y1))
    {
       /*
@@ -2682,17 +2682,17 @@ static void WalkBSPtree(BSPnode *tree)
       else
          lightscale = FINENESS;
 
-      /* first, traverse closer side */
+      // first, traverse closer side
       if (side > 0)
          WalkBSPtree(tree->u.internal.pos_side);
       else
          WalkBSPtree(tree->u.internal.neg_side);
 
-      /* if entire screen is covered, we're done */
+      // if entire screen is covered, we're done
       if (cone_tree_root == NULL)
          return;
 
-      /* then do walls on the separator */
+      // then do walls on the separator
       if (side != 0)
       {
          WallList list;
@@ -2709,7 +2709,7 @@ static void WalkBSPtree(BSPnode *tree)
          }
       }
 
-      /* lastly, traverse farther side */
+      // lastly, traverse farther side
       if (side > 0)
          WalkBSPtree(tree->u.internal.neg_side);
       else
@@ -2727,13 +2727,13 @@ static void WalkBSPtree(BSPnode *tree)
  * each object type, plus the iterator DrawItems.
  *****************************************************************/
 
-/* for debugging, draw wall cones as blocks instead of texture-mapped */
+// for debugging, draw wall cones as blocks instead of texture-mapped
 #define DRAW_WALL_CONES 0
-/* for debugging, draw leaf cones as blocks instead of texture-mapped */
+// for debugging, draw leaf cones as blocks instead of texture-mapped
 #define DRAW_LEAF_CONES 0
-/* for debugging, draw object cones as blocks instead of texture-mapped */
+// for debugging, draw object cones as blocks instead of texture-mapped
 #define DRAW_OBJ_CONES 0
-/* for debugging, draw all cone outlines */
+// for debugging, draw all cone outlines
 #define DRAW_CONE_OUTLINES 0
 
 static char fillcolor;
@@ -3019,7 +3019,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       return;
    }
 
-   if (/*wallflagtranslucent*/ FALSE)
+   if (FALSE)
    {
       pBiXlat = FindStandardBiXlat(BIXLAT_BLEND50);
    }
@@ -3055,23 +3055,23 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
       if (clipstart < 0)
       {
-         /* debug(("small clipstart: %d\n", clipstart)); */
+         // debug(("small clipstart: %d\n", clipstart));
          clipstart = 0;
       }
       if (clipend >= area.cy)
       {
-         /* debug(("large clipend: %d (%d)\n", clipend, (int)area.cy)); */
+         // debug(("large clipend: %d (%d)\n", clipend, (int)area.cy));
          clipend = area.cy - 1;
       }
 
       if (clipstart > clipend)
          continue;
 
-      /* find the equation ax + by = 0 of the column ray */
+      // find the equation ax + by = 0 of the column ray
       a = -center_b - ((center_a * (col - screen_width2)) >> LOG_VIEWER_DISTANCE);
       b = center_a - ((center_b * (col - screen_width2)) >> LOG_VIEWER_DISTANCE);
 
-      /* compute fraction along wall, in fixed point */
+      // compute fraction along wall, in fixed point
       z0 = (a * x0 + b * y0) / FINENESS;
       z1 = (a * x1 + b * y1) / FINENESS;
 
@@ -3093,13 +3093,13 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       rowstart = horizon + ((viewer_height - top) << LOG_VIEWER_DISTANCE) / d;
       rowend = horizon + ((viewer_height - bottom) << LOG_VIEWER_DISTANCE) / d;
 
-      /* extend wall to cover entire cone - ensures there's no holes! */
+      // extend wall to cover entire cone - ensures there's no holes!
       if (rowstart > clipstart)
          rowstart = clipstart;
       if (rowend < clipend)
          rowend = clipend;
 
-      /* get palette */
+      // get palette
       palette = GetLightPalette(d, light, BSPwall->lightscale, 0);
 
       // Tile wall bitmap vertically -- BITMAP_HEIGHT bitmap is FINENESS tall
@@ -3113,7 +3113,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
       screen_ptr = gBits + col + clipend * MAXX;
 
-      /*  PICK OUT GRAPHIC TO DISPLAY */
+      // PICK OUT GRAPHIC TO DISPLAY
       if (hasMipMaps)
       {
          int lastFrame = (int) BitmapsInGroup(grid->bmaps, group) - 1;
@@ -3303,7 +3303,7 @@ void biLerp(FixedPoint u_1, FixedPoint u_2, FixedPoint v_1, FixedPoint v_2, long
    //  different from the usual case in order to gain higher precision.
    // For a good discussion of the midpoint algorith, check Folley, Van Dam, for the derivation.
 
-   if ((ax > au) && (ax > av)) /* x dominant for both u & v */
+   if ((ax > au) && (ax > av))  // x dominant for both u & v
    {
       du = au - fpMul(FIXED_ONE_HALF + ((su >= 0) ? uround - u : u - uround), ax);
       dv = av - fpMul(FIXED_ONE_HALF + ((sv >= 0) ? vround - v : v - vround), ax);
@@ -3328,7 +3328,7 @@ void biLerp(FixedPoint u_1, FixedPoint u_2, FixedPoint v_1, FixedPoint v_2, long
          dv += av;
       } while (--count);
    }
-   else if ((ax > av) && (ax <= au)) /* x dominant over v & u dominant over x */
+   else if ((ax > av) && (ax <= au))  // x dominant over v & u dominant over x
    {
       du = fpMul(FIXED_ONE + uround - u, ax) - (au >> 1);
       dv = av - fpMul(FIXED_ONE_HALF + ((sv >= 0) ? vround - v : v - vround), ax);
@@ -3353,7 +3353,7 @@ void biLerp(FixedPoint u_1, FixedPoint u_2, FixedPoint v_1, FixedPoint v_2, long
          dv += av;
       } while (--count);
    }
-   else if ((ax <= av) && (ax > au)) /* x dominant over u & v dominant over x */
+   else if ((ax <= av) && (ax > au))  // x dominant over u & v dominant over x
    {
       du = au - fpMul(FIXED_ONE_HALF + ((su >= 0) ? uround - u : u - uround), ax);
       dv = fpMul(FIXED_ONE + vround - v, ax) - (av >> 1);
@@ -3378,7 +3378,7 @@ void biLerp(FixedPoint u_1, FixedPoint u_2, FixedPoint v_1, FixedPoint v_2, long
          dv -= av;
       } while (--count);
    }
-   else if ((ax <= au) && (ax <= av)) /* u & v both dominant */
+   else if ((ax <= au) && (ax <= av))  // u & v both dominant
    {
       du = fpMul(FIXED_ONE + uround - u, ax) - (au >> 1);
       dv = fpMul(FIXED_ONE + vround - v, ax) - (av >> 1);
@@ -3551,14 +3551,14 @@ static void doDrawSloped(ViewCone *c, BSPleaf *leaf, BYTE floor)
 
       if (top_b > 0)
       {
-         /* x <= ay-d / b, b>0 */
+         // x <= ay-d / b, b>0
          col = (top_a * row - top_d) / top_b;
          if (col < maxcol)
             maxcol = col;
       }
       else if (top_b < 0)
       {
-         /* x >= ay-d / b, b<0 */
+         // x >= ay-d / b, b<0
          col = (top_a * row - top_d + top_b + 1) / top_b;
          if (col > mincol)
             mincol = col;
@@ -3566,14 +3566,14 @@ static void doDrawSloped(ViewCone *c, BSPleaf *leaf, BYTE floor)
 
       if (bot_b > 0)
       {
-         /* x >= ay-d / b, b>0 */
+         // x >= ay-d / b, b>0
          col = (bot_a * row - bot_d + bot_b - 1) / bot_b;
          if (col > mincol)
             mincol = col;
       }
       else if (bot_b < 0)
       {
-         /* x <= ay-d / b, b<0 */
+         // x <= ay-d / b, b<0
          col = (bot_a * row - bot_d) / bot_b;
          if (col < maxcol)
             maxcol = col;
@@ -3761,14 +3761,14 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
 
       if (c->top_b > 0)
       {
-         /* x <= ay-d / b, b>0 */
+         // x <= ay-d / b, b>0
          col = (c->top_a * row - c->top_d) / c->top_b;
          if (col < maxcol)
             maxcol = col;
       }
       else if (c->top_b < 0)
       {
-         /* x >= ay-d / b, b<0 */
+         // x >= ay-d / b, b<0
          col = (c->top_a * row - c->top_d + c->top_b + 1) / c->top_b;
          if (col > mincol)
             mincol = col;
@@ -3776,14 +3776,14 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
 
       if (c->bot_b > 0)
       {
-         /* x >= ay-d / b, b>0 */
+         // x >= ay-d / b, b>0
          col = (c->bot_a * row - c->bot_d + c->bot_b - 1) / c->bot_b;
          if (col > mincol)
             mincol = col;
       }
       else if (c->bot_b < 0)
       {
-         /* x <= ay-d / b, b<0 */
+         // x <= ay-d / b, b<0
          col = (c->bot_a * row - c->bot_d) / c->bot_b;
          if (col < maxcol)
             maxcol = col;
@@ -3797,7 +3797,7 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
          continue;
       }
 
-      /* get palette */
+      // get palette
       palette = GetLightPalette(d, leaf->sector->light, shade, 0);
 
       sector = leaf->sector;
@@ -3832,7 +3832,7 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
 
       end_screen_ptr = screen_ptr + (maxcol - mincol);
 
-      /* Allow 64x64 or 128x128 leaf bitmaps */
+      // Allow 64x64 or 128x128 leaf bitmaps
       if (tex_width == BITMAP_WIDTH * 2)
          while (screen_ptr <= end_screen_ptr)
          {
@@ -3900,7 +3900,7 @@ static void DrawItems()
    //   debug(("nitems:%ld depth:%ld max:%ld\n", nitems, max_depth, allocd_cone_nodes));
    //   debug(("nitems:%ld maxcones:%ld\n", nitems, allocd_cone_nodes));
 
-   /* return; */ /* uncomment this to measure overhead for making draw list.*/
+   // return; // uncomment this to measure overhead for making draw list.
 
    for (item = drawdata + nitems - 1; item >= drawdata; item--)
    {
@@ -3982,14 +3982,14 @@ static void doDrawBackground(ViewCone *c)
 
       if (c->top_b > 0)
       {
-         /* x <= ay-d / b, b>0 */
+         // x <= ay-d / b, b>0
          col = (c->top_a * row - c->top_d) / c->top_b;
          if (col < maxcol)
             maxcol = col;
       }
       else if (c->top_b < 0)
       {
-         /* x >= ay-d / b, b<0 */
+         // x >= ay-d / b, b<0
          col = (c->top_a * row - c->top_d + c->top_b + 1) / c->top_b;
          if (col > mincol)
             mincol = col;
@@ -3997,14 +3997,14 @@ static void doDrawBackground(ViewCone *c)
 
       if (c->bot_b > 0)
       {
-         /* x >= ay-d / b, b>0 */
+         // x >= ay-d / b, b>0
          col = (c->bot_a * row - c->bot_d + c->bot_b - 1) / c->bot_b;
          if (col > mincol)
             mincol = col;
       }
       else if (c->bot_b < 0)
       {
-         /* x <= ay-d / b, b<0 */
+         // x <= ay-d / b, b<0
          col = (c->bot_a * row - c->bot_d) / c->bot_b;
          if (col < maxcol)
             maxcol = col;
@@ -4071,7 +4071,7 @@ static void doDrawBackground(ViewCone *c)
       px += screen_width2;
       py = horizon - overlay->y;
 
-      /* adjust for center of bitmap */
+      // adjust for center of bitmap
       px -= over_width / 2;
       py -= over_height / 2;
 
@@ -4089,14 +4089,14 @@ static void doDrawBackground(ViewCone *c)
 
          if (c->top_b > 0)
          {
-            /* x <= ay-d / b, b>0 */
+            // x <= ay-d / b, b>0
             col = (c->top_a * row - c->top_d) / c->top_b;
             if (col < maxcol)
                maxcol = col;
          }
          else if (c->top_b < 0)
          {
-            /* x >= ay-d / b, b<0 */
+            // x >= ay-d / b, b<0
             col = (c->top_a * row - c->top_d + c->top_b + 1) / c->top_b;
             if (col > mincol)
                mincol = col;
@@ -4104,14 +4104,14 @@ static void doDrawBackground(ViewCone *c)
 
          if (c->bot_b > 0)
          {
-            /* x >= ay-d / b, b>0 */
+            // x >= ay-d / b, b>0
             col = (c->bot_a * row - c->bot_d + c->bot_b - 1) / c->bot_b;
             if (col > mincol)
                mincol = col;
          }
          else if (c->bot_b < 0)
          {
-            /* x <= ay-d / b, b<0 */
+            // x <= ay-d / b, b<0
             col = (c->bot_a * row - c->bot_d) / c->bot_b;
             if (col < maxcol)
                maxcol = col;
@@ -4187,8 +4187,8 @@ static Bool check_viewer_height(BSPnode *tree)
          neg = tree->u.internal.neg_side;
          if (side == 0)
          {
-            /* make sure we satisfy height restriction on both sides! */
-            /* this isn't quite right, but it's close */
+            // make sure we satisfy height restriction on both sides!
+            // this isn't quite right, but it's close
             Bool ok = True;
             if (pos)
                ok = ok && check_viewer_height(pos);
@@ -4293,7 +4293,7 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
    if (draw)
       bg_overlayVisible = FALSE;
 
-   /* set up some drawing parameters */
+   // set up some drawing parameters
    viewer_id = params->player_id;
    viewer_x = params->viewer_x;
    viewer_y = params->viewer_y;
@@ -4304,12 +4304,12 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
 
    background_overlays = room->bg_overlays;
 
-   /* make sure viewer is below ceiling and above floor */
+   // make sure viewer is below ceiling and above floor
    if (!check_viewer_height(room->tree))
       return;
 
-   /* find equations that bound viewing frustum */
-   /* keep 10 = FIX_DECIMAL-6 bits of accuracy */
+   // find equations that bound viewing frustum
+   // keep 10 = FIX_DECIMAL-6 bits of accuracy
    center_a = COS(viewer_angle) >> 6;
    center_b = SIN(viewer_angle) >> 6;
 
@@ -4319,10 +4319,10 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
    right_a = center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
    right_b = -center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
 
-   /* add moving objects to BSP tree */
+   // add moving objects to BSP tree
    AddObjects(room);
 
-   /* set up original view cone */
+   // set up original view cone
    init_cone_tree();
 
 #if DRAW_WALL_CONES || DRAW_LEAF_CONES || DRAW_OBJ_CONES
@@ -4350,17 +4350,17 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
          SetMappingValues(room->sectors[index].sloped_ceiling);
    }
 
-   /* find items in view */
+   // find items in view
    WalkBSPtree(room->tree);
 
    if (draw)
    {
-      /* draw background in still-exposed cones */
+      // draw background in still-exposed cones
       if (incremental_background)
          for (c = start_anchor.next; c != &end_anchor; c = c->next)
             doDrawBackground(&c->cone);
 
-      /* draw items, back to front */
+      // draw items, back to front
       DrawItems();
 
 #if DRAW_CONE_OUTLINES

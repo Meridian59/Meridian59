@@ -20,7 +20,11 @@ BraceWrapping:
   BeforeCatch: true
 
 # Comments
+AlignTrailingComments: true
 SpacesBeforeTrailingComments: 2
+ReflowComments: true
+SpacesInLineCommentPrefix:
+  Maximum: 1
 
 # Spacing
 SpaceBeforeParens: ControlStatements
@@ -30,3 +34,6 @@ SpaceBeforeAssignmentOperators: true
 # Line breaks
 ColumnLimit: 120
 MaxEmptyLinesToKeep: 1
+
+# Alignment
+AlignConsecutiveMacros: true

@@ -47,7 +47,7 @@ INT_PTR ApplyErrorStyleToStaticText(UINT wParam, LONG lParam)
 }
 
 // Returns true if all characters are ASCII alphanumeric (a requirement for account usernames and passwords).
-bool IsValidNonEmptyAscii(const std::wstring &wstr)
+static bool IsValidNonEmptyAscii(const std::wstring &wstr)
 {
    if (wstr.empty())
       return false;

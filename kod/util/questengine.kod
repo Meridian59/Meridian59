@@ -20,6 +20,12 @@ constants:
 
    QUEST_MAX_NUM_PLAYERS = 5
    QUEST_MAX_MAX_ACTIVE = 100
+
+   % Health difference thresholds for qualitative feedback
+   HEALTH_DIFF_CLOSE = 10     % Very close - just a little more needed
+   HEALTH_DIFF_NEAR = 25      % Getting close  
+   HEALTH_DIFF_MODERATE = 50  % Still needs work
+   HEALTH_DIFF_FAR = 100      % Far from requirement
    
 % Field names for a QuestTemplate
 %	QT_NUM_PLAYERS       = 1
@@ -43,6 +49,7 @@ constants:
 	QNT_SUCCESS_HINT  = 9
 	QNT_FAILURE_HINT  = 10
 	QNT_TIME_LIMIT    = 11
+   QNT_RESTRICTION_HINTS = 12
 
 resources:
 
@@ -74,6 +81,14 @@ resources:
 	five = "five"
 	six = "six"
 	seven = "seven"
+
+	% School descriptions used in restriction hints
+	school_descriptor_shalille = "the healing arts"
+	school_descriptor_qor = "the darker arts"
+	school_descriptor_kraanan = "the ways of war"
+	school_descriptor_faren = "the ways of nature"
+	school_descriptor_jala = "the art of song and melody"
+	school_descriptor_riija = "the art of illusion"
 
 	default_message = "Red Sky begins before the next full moon."
 	chess_move = "%q to %q %q"
@@ -1447,6 +1462,63 @@ resources:
       "Some fool probably even suspects me.  But I wouldn't be surprised if the Duke had some "
       "secret lover; looks like a crime of passion to me."
 
+	% Default restriction hint messages
+	default_restriction_generic = "You don't meet the requirements for this task."
+
+	default_restriction_karma_same = "Your view of the world doesn't match mine. Come back when it does."
+	default_restriction_karma_different = "Your outlook is too close to mine. Come back when you've changed."
+	default_restriction_karma_good = "Your heart's too dark for this task. Come back when you walk a better path."
+	default_restriction_karma_neutral = "Your path leans too far in one direction. Come back when you've found balance."
+	default_restriction_karma_evil = "Your virtue makes you weak. Come back when you've let it go."
+
+	default_restriction_faction_duke = "Your allegiance lies elsewhere. Come back when you serve the Duke."
+	default_restriction_faction_neutral = "You must be neutral to join a faction. If you are already aligned with another, you must first renounce your allegiance. If you are already a member of this faction, there is no need to join again."
+	default_restriction_faction_princess = "Your allegiance lies elsewhere. Come back when you're loyal to the Princess."
+	default_restriction_faction_rebel = "Your allegiance lies elsewhere. Come back when you stand with the rebels."
+	default_restriction_faction_same = "Your loyalties don't match mine. Come back when they do."
+	default_restriction_faction_different = "Our loyalties are too alike. I need someone who pledges their allegiance to a different cause."
+	default_restriction_faction_in = "Your side holds no sway right now. Come back when you're in power."
+	default_restriction_faction_out = "Your side rules for now. Come back when you've lost that grip."
+
+	default_restriction_newbie = "Your skills are beyond this. Move along."
+	default_restriction_not_newbie = "Your inexperience shows. Come back once you've learned the ropes."
+	default_restriction_murderer = "Your hands are too clean for this task. Come back when they're stained."
+	default_restriction_not_murderer = "Your past is soaked in blood. Come back when you've washed it away."
+	default_restriction_outlaw = "Your respect for the law makes this impossible. Come back when you've cast it aside."
+	default_restriction_not_outlaw = "Your name carries too much trouble. Come back when you've earned some trust."
+	default_restriction_lawful = "Your record is too tarnished. Come back when you're known to walk the line."
+   
+	default_restriction_not_succeeded_recently = "You've already proven yourself. There's nothing more to gain right now."
+	default_restriction_not_succeeded = "You've already completed this. There's nothing left to offer you."
+	default_restriction_not_failed_recently = "You've already failed at this task. Come back when you've succeeded."
+	default_restriction_not_failed = "You've failed this task. There will be no second chance."
+	default_restriction_not_tried_recently = "The memory of your failure is still too recent. Return another day."
+	default_restriction_not_tried = "Your attempt was your only chance. It's done."
+
+	default_restriction_intriguing = "You need more time to mature. Return when you've grown stronger."
+	default_restriction_guildmaster = "This burden falls to guildmasters alone. Earn your place, then return."
+
+	requirement_token = "%REQUIREMENT"
+	default_restriction_skill = "You must know %REQUIREMENT to take on this task."
+	default_restriction_skill_generic = "You don't have the skill needed for this task."
+	default_restriction_spell = "You must know the spell %REQUIREMENT to attempt this."
+	default_restriction_spell_generic = "You don't know the spell needed for this task."
+	default_restriction_spell_school = "You require deeper training in %REQUIREMENT to begin."
+	default_restriction_spell_school_generic = "You're not trained in the ways needed for this task."
+	default_restriction_has_item = "You must have a %REQUIREMENT for this task."
+	default_restriction_has_item_generic = "You're missing an item needed for this task."
+	default_restriction_using_item = "You must equip a %REQUIREMENT for this task."
+	default_restriction_using_item_generic = "You must equip the proper item for this task."
+	default_restriction_health = "You need to be %REQUIREMENT for this task."
+	default_restriction_health_generic = "Your health is too low for this task."
+	default_restriction_does_not_have_item = "You need %REQUIREMENT to take on this task."
+	default_restriction_does_not_have_item_generic = "You don't have the item you need for this task."
+
+	default_restriction_health_close = "just a bit tougher"
+	default_restriction_health_near = "a bit stronger"
+	default_restriction_health_moderate = "considerably stronger"
+	default_restriction_health_far = "much stronger"
+	default_restriction_health_very_far = "significantly stronger"
 
    questEngine_report_sender = "Quest Engine"
    questEngine_report_1 = "Subject: Report: Quest %q\n"
@@ -6079,7 +6151,8 @@ RecreateQuestNodes()
 	%		assign hint,
 	%		success hint,
 	%		failure hint
-	%		time limit	]
+	%		time limit,
+	%		restriction hints ]
 %%
 AddQuestNodeTemplate(NPC_modifier = $,
 	             questnode_type = $,
@@ -6087,7 +6160,8 @@ AddQuestNodeTemplate(NPC_modifier = $,
 	             monsterlist = $,
 	             prizelist = $, 
 	             penaltylist = $,
-	             timelimit = 0 )
+	             timelimit = 0,
+	             restriction_hints = $ )
 {
 	% Validity checks
 
@@ -6144,7 +6218,7 @@ AddQuestNodeTemplate(NPC_modifier = $,
 	}
 
 	lThisQuestNodeTemplate = [ plDefaultNPCList, NPC_modifier, questnode_type,\
-		cargolist, monsterlist, prizelist, penaltylist, CreateString(), CreateString(), CreateString(), timelimit ];
+		cargolist, monsterlist, prizelist, penaltylist, CreateString(), CreateString(), CreateString(), timelimit, $ ];
 
 	%	Can only add to front of list
 	plQuestNodeTemplates = Cons( lThisQuestNodeTemplate, plQuestNodeTemplates );
@@ -7459,5 +7533,411 @@ CheckQuestDeadlines()
       return;
    }
 
+   GetRestrictionHint( quest_template_index = 0, who = $, quest_node_index = 0, restriction_type = $ )
+   "Search restrictions hints and returns the first restriction hint that matches the node's restriction types."
+   {
+      local lRestrictionHints, iHintType, sHint, sResult, i;
+
+      % Get any overriding restriction hints from the quest node template
+      lRestrictionHints = Send(self,@GetTemplateRestrictionHints,#index=quest_node_index);
+      
+      if lRestrictionHints <> $
+      {
+         for i in lRestrictionHints
+         {
+            iHintType = First(i);
+            sHint = Nth(i,2);
+
+            return sHint;
+         }
+      }
+
+      % If no overriding hints are found, use defaults
+
+      % Tokenized hints
+
+      if restriction_type = Q_R2_HAS_HEALTH_LEVEL
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_health,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_health_generic;
+      }
+      if restriction_type = Q_R2_HAS_SKILL
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_skill,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_skill_generic;
+      }
+      if restriction_type = Q_R2_HAS_SPELL
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_spell,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_spell_generic;
+      }
+      if restriction_type = Q_R2_HAS_ITEM
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_has_item,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_has_item_generic;
+      }
+      if restriction_type = Q_R2_DOES_NOT_HAVE_ITEM
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_does_not_have_item,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_does_not_have_item_generic;
+      }
+      if restriction_type = Q_R2_USING_ITEM
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_using_item,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_using_item_generic;
+      }
+      if restriction_type = Q_R2_HAS_SPELL_SCHOOL
+      {
+         sResult = Send(self,@BuildRestrict2HintMessage,#who=who,#hint=default_restriction_spell_school,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+         if sResult <> $
+         {
+            return sResult;
+         }
+         return default_restriction_spell_school_generic;
+      }
+
+      % Static hints
+
+      if restriction_type = Q_PLAYER_FACTION_DUKE
+      {
+         return default_restriction_faction_duke;
+      }
+      if restriction_type = Q_PLAYER_FACTION_PRINCESS
+      {
+         return default_restriction_faction_princess;
+      }
+      if restriction_type = Q_PLAYER_FACTION_NEUTRAL
+      {
+         return default_restriction_faction_neutral;
+      }
+      if restriction_type = Q_PLAYER_FACTION_REBEL
+      {
+         return default_restriction_faction_rebel;
+      }
+      if restriction_type = Q_PLAYER_FACTION_SAME
+      {
+         return default_restriction_faction_same;
+      }
+      if restriction_type = Q_PLAYER_FACTION_DIFFERENT
+      {
+         return default_restriction_faction_different;
+      }
+      if restriction_type = Q_PLAYER_FACTION_IN
+      {
+         return default_restriction_faction_in;
+      }
+      if restriction_type = Q_PLAYER_FACTION_OUT
+      {
+         return default_restriction_faction_out;
+      }
+      if restriction_type = Q_PLAYER_KARMA_SAME
+      {
+         return default_restriction_karma_same;
+      }
+      if restriction_type = Q_PLAYER_KARMA_DIFFERENT
+      {
+         return default_restriction_karma_different;
+      }
+      if restriction_type = Q_PLAYER_KARMA_GOOD
+      {
+         return default_restriction_karma_good;
+      }
+      if restriction_type = Q_PLAYER_KARMA_NEUTRAL
+      {
+         return default_restriction_karma_neutral;
+      }
+      if restriction_type = Q_PLAYER_KARMA_EVIL
+      {
+         return default_restriction_karma_evil;
+      }
+      if restriction_type = Q_PLAYER_NEWBIE
+      {
+         return default_restriction_newbie;
+      }
+      if restriction_type = Q_PLAYER_NOTNEWBIE
+      {
+         return default_restriction_not_newbie;
+      }
+      if restriction_type = Q_PLAYER_MURDERER
+      {
+         return default_restriction_murderer;
+      }
+      if restriction_type = Q_PLAYER_NOTMURDERER
+      {
+         return default_restriction_not_murderer;
+      }
+      if restriction_type = Q_PLAYER_OUTLAW
+      {
+         return default_restriction_outlaw;
+      }
+      if restriction_type = Q_PLAYER_NOTOUTLAW
+      {
+         return default_restriction_not_outlaw;
+      }
+      if restriction_type = Q_PLAYER_LAWFUL
+      {
+         return default_restriction_lawful;
+      }
+      if restriction_type = Q_PLAYER_INTRIGUING
+      {
+         return default_restriction_intriguing;
+      }
+      if restriction_type = Q_PLAYER_GUILDMASTER
+      {
+         return default_restriction_guildmaster;
+      }
+      if restriction_type = Q_PLAYER_NOTSUCCEEDED_RECENTLY
+      {
+         return default_restriction_not_succeeded_recently;
+      }
+      if restriction_type = Q_PLAYER_NOTSUCCEEDED
+      {
+         return default_restriction_not_succeeded;
+      }
+      if restriction_type = Q_PLAYER_NOTFAILED_RECENTLY
+      {
+         return default_restriction_not_failed_recently;
+      }
+      if restriction_type = Q_PLAYER_NOTFAILED
+      {
+         return default_restriction_not_failed;
+      }
+      if restriction_type = Q_PLAYER_NOTTRIED_RECENTLY
+      {
+         return default_restriction_not_tried_recently;
+      }
+      if restriction_type = Q_PLAYER_NOTTRIED
+      {
+         return default_restriction_not_tried;
+      }
+
+      return default_restriction_generic;
+   }
+   
+   BuildRestrict2HintMessage( who = $, hint = $, quest_template_index = $, restriction_type = $ )
+   "Replaces %REQUIREMENT token in tokenized hint messages with specific requirement"
+   {
+      local sReplacement, sHint, oDataParam, oRestrict2Data, iRequiredHealth, iPlayerHealth, iHealthDifference, oTempItem;
+
+      oRestrict2Data = Send(self,@GetRestrict2Data,#quest_template_index=quest_template_index,#restrict2_type=restriction_type);
+
+      if oRestrict2Data = $
+      {
+         return $;
+      }
+   
+      sReplacement = CreateString();
+      
+      if restriction_type = Q_R2_HAS_SKILL
+      {
+         oDataParam = Send(SYS,@FindSkillByNum,#num=Nth(oRestrict2Data, 2));
+         if oDataParam <> $
+         {
+            SetString(sReplacement,Send(oDataParam,@GetName));
+         }
+         else
+         {
+            debug("Missing Q_R2_HAS_SKILL restrict2 data for ", restriction_type, " on quest template ", quest_template_index);
+         }
+      }
+      if restriction_type = Q_R2_HAS_SPELL
+      {
+         oDataParam = Send(SYS,@FindSpellByNum,#num=Nth(oRestrict2Data, 2));
+         if oDataParam <> $
+         {
+            SetString(sReplacement,Send(oDataParam,@GetName));
+         }
+         else
+         {
+            debug("Missing Q_R2_HAS_SPELL restrict2 data for ", restriction_type, " on quest template ", quest_template_index);
+         }
+      }
+      if restriction_type = Q_R2_HAS_SPELL_SCHOOL
+      {
+         oDataParam = Send(self,@GetSchoolDescriptor,#iSchool=Nth(oRestrict2Data, 2));
+         if oDataParam <> $
+         {
+            SetString(sReplacement,oDataParam);
+         }
+         else
+         {
+            debug("Missing Q_R2_HAS_SPELL_SCHOOL restrict2 data for ", restriction_type, " on quest template ", quest_template_index);
+         }
+      }
+      if restriction_type = Q_R2_HAS_ITEM OR restriction_type = Q_R2_DOES_NOT_HAVE_ITEM
+      {
+         oDataParam = Nth(oRestrict2Data, 2);
+         if oDataParam <> $
+         {
+            % TODO: Is there a better way to handle this?
+            oTempItem = Create(oDataParam);
+            SetString(sReplacement,Send(oTempItem,@GetName));
+            Send(oTempItem,@Delete);
+         }
+         else
+         {
+            debug("Missing Q_R2_HAS_ITEM/Q_R2_DOES_NOT_HAVE_ITEM restrict2 data for ", restriction_type, " on quest template ", quest_template_index);
+         }
+      }
+      if restriction_type = Q_R2_HAS_HEALTH_LEVEL
+      {
+         iRequiredHealth = Nth(oRestrict2Data, 2);
+         iPlayerHealth = Send(who,@GetBaseMaxHealth);
+         iHealthDifference = iRequiredHealth - iPlayerHealth;
+
+         if iHealthDifference <= HEALTH_DIFF_CLOSE
+         {
+            SetString(sReplacement, default_restriction_health_close);
+         }
+         else
+         {
+            if iHealthDifference <= HEALTH_DIFF_NEAR
+            {
+               SetString(sReplacement, default_restriction_health_near);
+            }
+            else
+            {
+               if iHealthDifference <= HEALTH_DIFF_MODERATE
+               {
+                  SetString(sReplacement, default_restriction_health_moderate);
+               }
+               else
+               {
+                  if iHealthDifference <= HEALTH_DIFF_FAR
+                  {
+                     SetString(sReplacement, default_restriction_health_far);
+                  }
+                  else
+                  {
+                     SetString(sReplacement, default_restriction_health_very_far);
+                  }
+               }
+            }
+         }
+      }
+
+      sHint = CreateString();
+      SetString(sHint, hint);
+      StringSubstitute(sHint, requirement_token, sReplacement);
+      
+      return sHint;
+   }
+
+   GetTemplateRestrictionHints( index = 0 )
+   "Returns the list of restriction hints for a quest node template, or $ if no hints are configured"
+   {
+      local lTemplate;
+            
+      lTemplate = Send(self,@GetQuestNodeTemplate,#index=index);
+      if lTemplate = $
+      {
+         return $;
+      }
+      
+      if Length(lTemplate) >= QNT_RESTRICTION_HINTS
+      {
+         return Nth(lTemplate, QNT_RESTRICTION_HINTS);
+      }
+      
+      return $;
+   }
+
+   SetQuestNodeRestrictionHints( index = 0, restriction_hints = $ )
+   "Sets the restriction hints for a quest node template"
+   {
+      local lTemplate;
+      
+      if Send(self,@IsValidQuestNodeTemplate,#index=index) = FALSE
+      {
+         return 0;
+      }
+      
+      lTemplate = Send(self,@GetQuestNodeTemplate,#index=index);
+      
+      SetNth(Send(self,@GetQuestNodeTemplate,#index=index), QNT_RESTRICTION_HINTS, restriction_hints);
+
+      return 1;
+   }
+
+   GetRestrict2Data( quest_template_index = $, restrict2_type = $ )
+   "Returns the restriction data for a restrict2 type (special restrictions) from its quest template"
+   {
+      local lPlayerRestrict2, i, lRestrictionEntry;
+
+      lPlayerRestrict2 = Send(self,@GetQuestPlayerRestrictions2,#index=quest_template_index);
+      if lPlayerRestrict2 <> $
+      {
+         for i in lPlayerRestrict2
+         {
+            lRestrictionEntry = i;
+            if First(lRestrictionEntry) = restrict2_type
+            {
+               return lRestrictionEntry;
+            }
+         }
+      }
+      
+      return $;
+   }
+
+   GetSchoolDescriptor(iSchool=-1)
+   "Returns the school descriptor for a school number, used when building tokenized hints."
+   {
+      if iSchool = SS_SHALILLE
+      {
+         return school_descriptor_shalille;
+      }
+
+      if iSchool = SS_RIIJA
+      {
+         return school_descriptor_riija;
+      }
+      
+      if iSchool = SS_QOR
+      {
+         return school_descriptor_qor;
+      }
+      
+      if iSchool = SS_KRAANAN
+      {
+         return school_descriptor_kraanan;
+      }
+      
+      if iSchool = SS_FAREN
+      {
+         return school_descriptor_faren;
+      }
+      
+      if iSchool = SS_JALA
+      {
+         return school_descriptor_jala;
+      }
+
+      return $;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

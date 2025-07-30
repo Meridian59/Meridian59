@@ -12,7 +12,6 @@
 *  interacting with the meridian59.com web api.
 */
 #include "client.h"
-#include <algorithm>
 #include <vector>
 #include <sstream>
 
@@ -45,6 +44,68 @@ INT_PTR ApplyErrorStyleToStaticText(UINT wParam, LONG lParam)
     SetTextColor(hdcStatic, RGB(255, 0, 0));
     SetBkMode(hdcStatic, TRANSPARENT);
     return (INT_PTR)hBrush;
+}
+
+// Returns true if all characters are ASCII alphanumeric (a requirement for account usernames and passwords).
+static bool IsValidNonEmptyAscii(const std::wstring &wstr)
+{
+   if (wstr.empty())
+      return false;
+
+   for (wchar_t ch : wstr)
+   {
+      if (ch > 0x7F)
+         return false;
+   }
+   return true;
+}
+
+void ShowSignupErrors(HWND hDlg, long errorFlags)
+{
+   char errorStr[256];
+   stringstream ss;
+   for (int errorCaseIt = SignUpWebResponse::ERROR_INVALIDUSERNAME; errorCaseIt != SignUpWebResponse::ERROR_FAILED;
+        ++errorCaseIt)
+   {
+      SignUpWebResponse errorCase = static_cast<SignUpWebResponse>(errorCaseIt);
+      if ((errorCase & errorFlags))
+      {
+         int errorMessage = 0;
+         switch (errorCase)
+         {
+         case SignUpWebResponse::ERROR_INVALIDUSERNAME:
+            errorMessage = IDS_USERNAMEINVALID;
+            break;
+         case SignUpWebResponse::ERROR_INVAILDEMAIL:
+            errorMessage = IDS_EMAILINVALID;
+            break;
+         case SignUpWebResponse::ERROR_EMAILINUSE:
+            errorMessage = IDS_EMAILINUSE;
+            break;
+         case SignUpWebResponse::ERROR_PASSWORDSINVALID:
+            errorMessage = IDS_PASSWORDINVALID;
+            break;
+         case SignUpWebResponse::ERROR_INVALIDSERVER:
+            errorMessage = IDS_SERVERUNKNOWN;
+            break;
+         case SignUpWebResponse::ERROR_OFFLINE:
+            errorMessage = IDS_SIGNUPOFFLINE;
+            break;
+         case SignUpWebResponse::ERROR_FAILED:
+            errorMessage = IDS_SIGNUPUNKNOWNERROR;
+            break;
+         default:
+            break;
+         }
+         LoadString(hInst, errorMessage, errorStr, sizeof(errorStr));
+         if (errorMessage && errorStr[0])
+         {
+            ss << " - ";
+            ss << errorStr;
+         }
+      }
+   }
+   ClientError(hInst, hDlg, IDS_SIGNUPFAILED, ss.str().c_str());
 }
 
 /*
@@ -148,18 +209,19 @@ INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
             LoadString(hInst, IDS_SIGNUPAPI, resource, sizeof(resource));
             wstring response;
 
-            // New account detail holders used to pass to the web api.
-            char username[MAXUSERNAME + 1];
-            char email[MAXEMAIL + 1];
-            char password1[MAXPASSWORD + 1];
-            char password2[MAXPASSWORD + 1];
-            int  server = 101;
 
-            // Get the new account details.
-            Edit_GetText(GetDlgItem(hDlg, IDC_NEW_USERNAME), username, MAXUSERNAME + 1);
-            Edit_GetText(GetDlgItem(hDlg, IDC_NEW_PW1), password1, MAXPASSWORD + 1);
-            Edit_GetText(GetDlgItem(hDlg, IDC_NEW_PW2), password2, MAXPASSWORD + 1);
-            Edit_GetText(GetDlgItem(hDlg, IDC_NEW_EMAIL), email, MAXEMAIL + 1);
+            // Use wide char buffers for password fields
+            wchar_t username[MAXUSERNAME + 1];
+            wchar_t email[MAXEMAIL + 1];
+            wchar_t password1[MAXPASSWORD + 1];
+            wchar_t password2[MAXPASSWORD + 1];
+            int server = 101;
+
+            // Get the new account details as wide strings
+            GetDlgItemTextW(hDlg, IDC_NEW_USERNAME, username, MAXUSERNAME + 1);
+            GetDlgItemTextW(hDlg, IDC_NEW_PW1, password1, MAXPASSWORD + 1);
+            GetDlgItemTextW(hDlg, IDC_NEW_PW2, password2, MAXPASSWORD + 1);
+            GetDlgItemTextW(hDlg, IDC_NEW_EMAIL, email, MAXEMAIL + 1);
 
             // Determine the users choice of server.
             if (!SendDlgItemMessage(hDlg, IDC_SERVER_101, BM_GETCHECK, 0, 0))
@@ -167,16 +229,59 @@ INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
                 server = 102;
             }
 
+            // Validate username
+            bool clientSideValidationError = false;
+            long clientError = 0;
+            if (!IsValidNonEmptyAscii(username))
+            {
+               clientError |= SignUpWebResponse::ERROR_INVALIDUSERNAME;
+               clientSideValidationError = true;
+            }
+
+            // Validate password1 and password2
+            if (!IsValidNonEmptyAscii(password1) || !IsValidNonEmptyAscii(password2) 
+                || wcscmp(password1, password2) != 0)
+            {
+               clientError |= SignUpWebResponse::ERROR_PASSWORDSINVALID;
+               clientSideValidationError = true;
+            }
+
+            // Validate email (ASCII printable, you may want a stricter check)
+            if (!IsValidNonEmptyAscii(email))
+            {
+               clientError |= SignUpWebResponse::ERROR_INVAILDEMAIL;
+               clientSideValidationError = true;
+            }
+
+            if (clientSideValidationError)
+            {
+               su->SetWebApiResponse(clientError);
+               su->UpdateInputs(hDlg, TRUE);
+               InvalidateRect(hDlg, NULL, TRUE);
+               ShowSignupErrors(hDlg, clientError);
+               return TRUE;
+            }
+
+            // Convert wide strings to ansi strings for the web api request.
+            auto WideToAnsi = [](const wchar_t *wstr) -> std::string {
+               char buffer[512];
+               wcstombs(buffer, wstr, sizeof(buffer));
+               return std::string(buffer);
+            };
+
+            std::string username_ansi = WideToAnsi(username);
+            std::string email_ansi = WideToAnsi(email);
+            std::string password1_ansi = WideToAnsi(password1);
+            std::string password2_ansi = WideToAnsi(password2);
+
             // Build http post body with user input values.
             stringstream ss;
             ss << "submit=1";
-            ss << "&username=" << username;
-            ss << "&email=" << email;
-            ss << "&pw1=" << password1;
-            ss << "&pw2=" << password2;
+            ss << "&username=" << username_ansi;
+            ss << "&email=" << email_ansi;
+            ss << "&pw1=" << password1_ansi;
+            ss << "&pw2=" << password2_ansi;
             ss << "&server=" << server;
-
-            char errorStr[256];
 
             // Request can take a long time; show waiting cursor
             SetMainCursor(LoadCursor(NULL, IDC_WAIT));
@@ -223,53 +328,9 @@ INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
                     // Refresh static text colors.
                     InvalidateRect(hDlg, NULL, TRUE);
-
-                    // Determine the errors and build list description for players.
-                    stringstream ss;
-                    for (int errorCaseIt = SignUpWebResponse::ERROR_INVALIDUSERNAME; errorCaseIt != SignUpWebResponse::ERROR_FAILED; ++errorCaseIt)
-                    {
-                        SignUpWebResponse errorCase = static_cast<SignUpWebResponse>(errorCaseIt);
-                        if ((errorCase & su->GetWebApiResponse()))
-                        {
-                            int errorMessage = 0;
-
-                            switch (errorCase)
-                            {
-                            case SignUpWebResponse::ERROR_INVALIDUSERNAME:
-                                errorMessage = IDS_USERNAMEINVALID;
-                                break;
-                            case SignUpWebResponse::ERROR_INVAILDEMAIL:
-                                errorMessage = IDS_EMAILINVALID;
-                                break;
-                            case SignUpWebResponse::ERROR_EMAILINUSE:
-                                errorMessage = IDS_EMAILINUSE;
-                                break;
-                            case SignUpWebResponse::ERROR_PASSWORDSINVALID:
-                                errorMessage = IDS_PASSWORDINVALID;
-                                break;
-                            case SignUpWebResponse::ERROR_INVALIDSERVER:
-                                errorMessage = IDS_SERVERUNKNOWN;
-                                break;
-                            case SignUpWebResponse::ERROR_OFFLINE:
-                                errorMessage = IDS_SIGNUPOFFLINE;
-                                break;
-                            case SignUpWebResponse::ERROR_FAILED:
-                                errorMessage = IDS_SIGNUPUNKNOWNERROR;
-                                break;
-                            default:
-                                // unknown error
-                                break;
-                            }
-
-                            LoadString(hInst, errorMessage, errorStr, sizeof(errorStr));
-                            if (errorMessage && errorStr)
-                            {
-                                ss << " - ";
-                                ss << errorStr;
-                            }
-                        }
-                    }
-                    ClientError(hInst, hDlg, IDS_SIGNUPFAILED, ss.str().c_str());
+                    
+                    // Show errors from web api response.
+                    ShowSignupErrors(hDlg, su->GetWebApiResponse());
                 }
             }
             else
@@ -343,5 +404,5 @@ INT_PTR CALLBACK SignUpDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
 bool Signup::GetSignUp()
 {
-    return DialogBox(hInst, MAKEINTRESOURCE(IDD_SIGNUP), hMain, SignUpDialogProc) == IDCANCEL;
+    return DialogBoxW(hInst, MAKEINTRESOURCEW(IDD_SIGNUP), hMain, SignUpDialogProc) == IDCANCEL;
 };

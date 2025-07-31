@@ -625,7 +625,7 @@ messages:
    "met to award prize/penalty."
    {
       local lQuesters, iDistance, iType, oQuester, bOnQuest, iNumber,
-            lMonster, oMonster, bFound;
+            lMonster, oMonster, bFound, oQuestEngine, oRestrictionHint, iRestrictionType, iQuestTemplateIndex;
 
       % if the player isn't on this quest, bail out here
       if piStatus <> QN_STATUS_WAITING_FOR_PLAYERS
@@ -801,10 +801,36 @@ messages:
       % Validate status and select quester(s) if needed
       if piStatus = QN_STATUS_WAITING_FOR_PLAYERS
       {
-         % Does the person still qualify for the quest?
-         if Send(poQuest,@CheckPlayerCriteria,#quester_wannabe=who_tried) <> 1
+         % Check if the player qualifies for the quest and if not, look to tell them why
+         iRestrictionType = Send(poQuest,@CheckPlayerCriteria,#quester_wannabe=who_tried);
+
+         if iRestrictionType <> 1
          {
-            return FALSE;
+            if iRestrictionType > 1 AND iType = QN_TYPE_MESSAGE
+            {
+               oQuestEngine = Send(SYS,@GetQuestEngine);
+               iQuestTemplateIndex = Send(poQuest,@GetQuestTemplateIndex);
+
+               oRestrictionHint = Send(oQuestEngine,@GetRestrictionHint,
+                  #who=who_tried,
+                  #quest_template_index=iQuestTemplateIndex,
+                  #quest_node_index=piQuestNodeTemplateIndex,
+                  #restriction_type=iRestrictionType);
+
+               if oRestrictionHint <> $
+               {
+                  Send(who_tried,@MsgSendUser,#message_rsc=NPC_quote_to_one,
+                     #parm1=Send(poDestNPC,@GetCapDef),
+                     #parm2=Send(poDestNPC,@GetName),
+                     #type3=STRING_RESOURCE,#parm3=oRestrictionHint);
+               }
+               else
+               {
+                  debug("No restriction hint found for restriction type:", iRestrictionType, "for quest template index:", iQuestTemplateIndex, "and quest node index:", piQuestNodeTemplateIndex);
+               }
+            }
+
+            return TRUE;
          }
 
          % This quester meets the criteria, so add him to the list

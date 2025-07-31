@@ -75,12 +75,12 @@ Init( template_index = 0, report = FALSE )
 }
 
 %% CheckPlayerCriteria()
-%	Return TRUE if player eligible, otherwise FALSE
+%	Return TRUE if player eligible
+%	Return FALSE OR restriction ID if player not eligible
 %%
 CheckPlayerCriteria( quester_wannabe = $ )
 {
-   local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester, iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail,\
-      iRecentTime, iFaction, iPower, iTime, iR2, bDebug, i, bHasNegativeBoon;
+   local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester, iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail, iRecentTime, iFaction, iPower, iTime, iR2, bDebug;
 
    oQuestEngine = send( SYS, @GetQuestEngine );
    iPlayerRestrict = send(oQuestEngine, @GetQuestPlayerRestrictions, #index = piQuestTemplateIndex );
@@ -96,6 +96,7 @@ CheckPlayerCriteria( quester_wannabe = $ )
       for oQuester in send(oQuest,@GetQuesters) {
          %if bDebug { debug("Found a quest assigned to ",send(oQuester,@getName)); }
          if quester_wannabe = oQuester {
+            % TODO: Should we send them the assign hint again? What would this mean for quests shared amongst multiple NPCs?
             if bDebug { debug("failed duplicate quest check."); }
             return FALSE;
          }
@@ -111,7 +112,7 @@ CheckPlayerCriteria( quester_wannabe = $ )
          if( iRestrict = Q_PLAYER_KARMA_DIFFERENT )
          {
             if bDebug { debug("failed Q_PLAYER_KARMA_DIFFERENT."); }
-            return FALSE;
+            return Q_PLAYER_KARMA_DIFFERENT;
          }
       }
       else
@@ -119,24 +120,24 @@ CheckPlayerCriteria( quester_wannabe = $ )
          if( iRestrict = Q_PLAYER_KARMA_SAME )
          {
             if bDebug { debug("failed Q_PLAYER_KARMA_SAME."); }
-            return FALSE;
+            return Q_PLAYER_KARMA_SAME;
          }
       }
       iKarma = send( quester_wannabe, @GetKarma );
       if( ( iRestrict = Q_PLAYER_KARMA_GOOD ) AND ( iKarma < 10 ) )
       {
          if bDebug { debug("failed Q_PLAYER_KARMA_GOOD."); }
-         return FALSE;
+         return Q_PLAYER_KARMA_GOOD;
       }
       if( ( iRestrict = Q_PLAYER_KARMA_EVIL ) AND ( iKarma > -10 ) )
       {
          if bDebug { debug("failed Q_PLAYER_KARMA_EVIL."); }
-         return FALSE;
+         return Q_PLAYER_KARMA_EVIL;
       }
       if( ( iRestrict = Q_PLAYER_KARMA_NEUTRAL ) AND ( abs( iKarma ) > 10 ) )
       {
          if bDebug { debug("failed Q_PLAYER_KARMA_NEUTRAL."); }
-         return FALSE;
+         return Q_PLAYER_KARMA_NEUTRAL;
       }
    }
 
@@ -149,43 +150,43 @@ CheckPlayerCriteria( quester_wannabe = $ )
       if( ( iRestrict = Q_PLAYER_FACTION_DUKE ) AND ( iFaction <> FACTION_DUKE ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_DUKE."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_DUKE;
       }
       if( ( iRestrict = Q_PLAYER_FACTION_NEUTRAL ) AND ( iFaction <> FACTION_NEUTRAL ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_NEUTRAL."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_NEUTRAL;
       }
       if( ( iRestrict = Q_PLAYER_FACTION_PRINCESS ) AND ( iFaction <> FACTION_PRINCESS ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_PRINCESS."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_PRINCESS;
       }
       if( ( iRestrict = Q_PLAYER_FACTION_REBEL ) AND ( iFaction <> FACTION_REBEL ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_REBEL."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_REBEL;
       }
       if( ( iRestrict = Q_PLAYER_FACTION_SAME ) AND ( iFaction <> send( oCurrentNPC, @GetFaction ) ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_SAME."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_SAME;
       }
       if( ( iRestrict = Q_PLAYER_FACTION_DIFFERENT ) AND ( iFaction = send( oCurrentNPC, @GetFaction ) ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_DIFFERENT."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_DIFFERENT;
       }
       iPower = Send( send( SYS, @GetParliament ), @GetPower, #faction = iFaction );
       if( ( iRestrict = Q_PLAYER_FACTION_IN ) AND ( iPower < FACTION_IN_POWER ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_IN."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_IN;
       }
       if( ( iRestrict = Q_PLAYER_FACTION_OUT ) AND ( iPower > FACTION_OUT_POWER ) )
       {
          if bDebug { debug("failed Q_PLAYER_FACTION_OUT."); }
-         return FALSE;
+         return Q_PLAYER_FACTION_OUT;
       }
    }
 
@@ -197,32 +198,32 @@ CheckPlayerCriteria( quester_wannabe = $ )
                (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE) = PFLAG_PKILL_ENABLE)
       {
          if bDebug { debug("failed Q_PLAYER_NEWBIE."); }
-         return FALSE;
+         return Q_PLAYER_NEWBIE;
       }
       if (iRestrict & Q_PLAYER_NOTNEWBIE) and 
                (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE) <> PFLAG_PKILL_ENABLE)
       {
          if bDebug { debug("failed Q_PLAYER_NOTNEWBIE."); }
-         return FALSE;
+         return Q_PLAYER_NOTNEWBIE;
       }
       if (iRestrict & Q_PLAYER_MURDERER) and 
                (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_MURDERER) <> PFLAG_MURDERER)
       {
          if bDebug { debug("failed Q_PLAYER_MURDERER."); }
-         return FALSE;
+         return Q_PLAYER_MURDERER;
       }
       %if ((iRestrict = Q_PLAYER_NOTMURDERER) or (iRestrict = Q_PLAYER_LAWFUL)) and 
       if (iRestrict & Q_PLAYER_NOTMURDERER) and 
                (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_MURDERER) = PFLAG_MURDERER)
       {
          if bDebug { debug("failed Q_PLAYER_NOTMURDERER/Q_PLAYER_LAWFUL."); }
-         return FALSE;
+         return Q_PLAYER_NOTMURDERER;
       }
       if (iRestrict & Q_PLAYER_OUTLAW) and 
                (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_OUTLAW) <> PFLAG_OUTLAW)
       {
          if bDebug { debug("failed Q_PLAYER_OUTLAW."); }
-         return FALSE;
+         return Q_PLAYER_OUTLAW;
       }
       %if ((iRestrict = Q_PLAYER_NOTOUTLAW) or (iRestrict = Q_PLAYER_LAWFUL)) and 
       if (iRestrict & Q_PLAYER_NOTOUTLAW)
@@ -231,32 +232,43 @@ CheckPlayerCriteria( quester_wannabe = $ )
          {
             if (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_OUTLAW) = PFLAG_OUTLAW)
             {
-               if bDebug { debug("failed Q_PLAYER_NOTOUTLAW/Q_PLAYER_LAWFUL."); }
-               return FALSE;
+               if bDebug { debug("failed Q_PLAYER_NOTOUTLAW."); }
+               return Q_PLAYER_NOTOUTLAW;
             }
          }
          else
          {
             % substitute for outlaw status in happyland
-            if send(quester_wannabe,@IsEnchanted,#byClass=&Boon)
+            if Send(self,@HasNegativeBoon,#who=quester_wannabe)
             {
-               bHasNegativeBoon = FALSE;
-               for i in send(quester_wannabe,@GetEnchantmentList)
-               {
-                  if isClass(nth(i,2),&Boon)
-                  {
-                     if nth(i,3) < 0
-                     {
-                        bHasNegativeBoon = TRUE;
-                        break;
-                     }
-                  }
-               }
-               if bHasNegativeBoon
-               {
-                  if bDebug { debug("failed Q_PLAYER_NOTOUTLAW/Q_PLAYER_LAWFUL through happyland means (negative boon)."); }
-                  return FALSE;
-               }
+               if bDebug { debug("failed Q_PLAYER_NOTOUTLAW through happyland means (negative boon)."); }
+               return Q_PLAYER_NOTOUTLAW;
+            }
+         }
+      }
+      if (iRestrict & Q_PLAYER_LAWFUL)
+      {
+         if (Send(quester_wannabe,@checkplayerflag,#flag=PFLAG_MURDERER) = PFLAG_MURDERER)
+         {
+            if bDebug { debug("failed Q_PLAYER_LAWFUL (murderer)."); }
+            return Q_PLAYER_LAWFUL;
+         }
+
+         if Send(SYS,@IsPKAllowed)
+         {
+            if (Send(quester_wannabe,@checkplayerflag,#flag=PFLAG_OUTLAW) = PFLAG_OUTLAW)
+            {
+               if bDebug { debug("failed Q_PLAYER_LAWFUL (outlaw)."); }
+               return Q_PLAYER_LAWFUL;
+            }
+         }
+         else
+         {
+            % substitute for outlaw status in happyland
+            if Send(self,@HasNegativeBoon,#who=quester_wannabe)
+            {
+               if bDebug { debug("failed Q_PLAYER_LAWFUL through happyland means (negative boon)."); }
+               return Q_PLAYER_LAWFUL;
             }
          }
       }
@@ -298,13 +310,13 @@ CheckPlayerCriteria( quester_wannabe = $ )
                ( ( iTime - iSucceed ) < iRecentTime ) )
       {
          if bDebug { debug("failed Q_PLAYER_NOTSUCCEEDED_RECENTLY."); }
-         return FALSE;
+         return Q_PLAYER_NOTSUCCEEDED_RECENTLY;
       }
       if( ( (iRestrict & Q_PLAYER_NOTFAILED_RECENTLY) = Q_PLAYER_NOTFAILED_RECENTLY ) AND
                ( ( iTime - iFail ) < iRecentTime ) )
       {
-         if bDebug { debug("failed Q_PLAYER_NOTSUCCEEDED_RECENTLY."); }
-         return FALSE;
+         if bDebug { debug("failed Q_PLAYER_NOTFAILED_RECENTLY."); }
+         return Q_PLAYER_NOTFAILED_RECENTLY;
       }
 
 %      if( ( iRestrict = Q_PLAYER_NOTTRIED_RECENTLY ) AND
@@ -316,13 +328,13 @@ CheckPlayerCriteria( quester_wannabe = $ )
             ( ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0 ) )
       {
          if bDebug { debug("failed Q_PLAYER_NOTSUCCEEDED."); }
-         return FALSE;
+         return Q_PLAYER_NOTSUCCEEDED;
       }
       if( ( (iRestrict & Q_PLAYER_NOTFAILED) = Q_PLAYER_NOTFAILED ) AND
             ( ( iHistory & QUEST_HISTORY_FAILURE ) <> 0 ) )
       {
          if bDebug { debug("failed Q_PLAYER_NOTFAILED."); }
-         return FALSE;
+         return Q_PLAYER_NOTFAILED;
       }
 %      if( ( iRestrict = Q_PLAYER_NOTTRIED ) AND ( iHistory <> 0 ) )
 %      {
@@ -333,7 +345,7 @@ CheckPlayerCriteria( quester_wannabe = $ )
    if( ( iPlayerRestrict & Q_PLAYER_INTRIGUING ) AND ( NOT send( quester_wannabe, @PlayerIsIntriguing ) ) )
    {
       if bDebug { debug("failed Q_PLAYER_INTRIGUING."); }
-      return FALSE;
+      return Q_PLAYER_INTRIGUING;
    }
    
    if  ( iPlayerRestrict & Q_PLAYER_GUILDMASTER ) AND
@@ -342,13 +354,14 @@ CheckPlayerCriteria( quester_wannabe = $ )
          (not send(send(quester_wannabe, @GetGuild),@HasGuildColors)) )
    {
       if bDebug { debug("failed Q_PLAYER_GUILDMASTER."); }
-      return FALSE;
+      return Q_PLAYER_GUILDMASTER;
    }
 
    if bDebug > 1 { debug("checking plPlayerRestrict2 restrictions."); }
    for iR2 in plPlayerRestrict2 {
       if first(iR2) = Q_R2_QN_ASSIGNABLE {
          if nth(iR2, 2) = FALSE {
+            if bDebug { debug("Q_R2_QN_ASSIGNABLE"); }
             return FALSE;
          }
       }
@@ -357,13 +370,13 @@ CheckPlayerCriteria( quester_wannabe = $ )
                (nth(iR2, 2) = $)    % note that this means if quester's guild = $, we return false.
          {
             if bDebug { debug("failed Q_R2_IS_GUILD_MEMBER_OF."); }
-            return FALSE;
+            return Q_R2_IS_GUILD_MEMBER_OF;
          }
       }
       if first(iR2) = Q_R2_IS_PLAYER {
          if quester_wannabe <> nth(iR2, 2) {
             if bDebug { debug("failed Q_R2_IS_PLAYER."); }
-            return FALSE;
+            return Q_R2_IS_PLAYER;
          }
       }
       if first(iR2) = Q_R2_HAS_SKILL {
@@ -371,7 +384,7 @@ CheckPlayerCriteria( quester_wannabe = $ )
                (send(quester_wannabe,@GetSkillAbility,#Skill_num=nth(iR2, 2)) < nth(iR2, 3))
          {
             if bDebug { debug("failed Q_R2_HAS_SKILL."); }
-            return FALSE;
+            return Q_R2_HAS_SKILL;
          }
       }
       if first(iR2) = Q_R2_HAS_SPELL {
@@ -379,13 +392,13 @@ CheckPlayerCriteria( quester_wannabe = $ )
                (send(quester_wannabe,@GetSpellAbility,#Spell_num=nth(iR2, 2)) < nth(iR2, 3))
          {
             if bDebug { debug("failed Q_R2_HAS_SPELL."); }
-            return FALSE;
+            return Q_R2_HAS_SPELL;
          }
       }
       if first(iR2) = Q_R2_HAS_SPELL_SCHOOL {
          if send(quester_wannabe,@GetNumSpellsInSchool,#school=nth(iR2, 2)) < nth(iR2, 3) {
             if bDebug { debug("failed Q_R2_HAS_SPELL_SCHOOL."); }
-            return FALSE;
+            return Q_R2_HAS_SPELL_SCHOOL;
          }
       }
       if first(iR2) = Q_R2_HAS_ITEM {
@@ -393,7 +406,7 @@ CheckPlayerCriteria( quester_wannabe = $ )
                and (send(quester_wannabe,@FindHoldingActive,#class=nth(iR2, 2)) = $)
          {
             if bDebug { debug("failed Q_R2_HAS_ITEM."); }
-            return FALSE;
+            return Q_R2_HAS_ITEM;
          }
       }
       if first(iR2) = Q_R2_DOES_NOT_HAVE_ITEM {
@@ -401,29 +414,29 @@ CheckPlayerCriteria( quester_wannabe = $ )
                OR (send(quester_wannabe,@FindHoldingActive,#class=nth(iR2, 2)) <> $)
          {
             if bDebug { debug("failed Q_R2_DOES_NOT_HAVE_ITEM."); }
-            return FALSE;
+            return Q_R2_DOES_NOT_HAVE_ITEM;
          }
       }
       if first(iR2) = Q_R2_USING_ITEM {
          if not send(quester_wannabe,@IsUsingA,#class=nth(iR2, 2)) {
             if bDebug { debug("failed Q_R2_USING_ITEM."); }
-            return FALSE;
+            return Q_R2_USING_ITEM;
          }
       }
       if first(iR2) = Q_R2_HAS_HEALTH_LEVEL {
          if send(quester_wannabe,@GetBaseMaxHealth) < nth(iR2, 2) {
             if bDebug { debug("failed Q_R2_HAS_HEALTH_LEVEL."); }
-            return FALSE;
+            return Q_R2_HAS_HEALTH_LEVEL;
          }
       }
       if first(iR2) = Q_R2_NUM_AMULETS {
          if send(send(SYS,@GetNecromancerBalance),@GetNumAmulets) < nth(iR2, 2) {
             if bDebug { debug("failed Q_R2_NUM_AMULETS."); }
-            return FALSE;
+            return Q_R2_NUM_AMULETS;
          }
          if send(quester_wannabe,@GetGuild) <> $ {
             if bDebug { debug("failed Q_R2_NUM_AMULETS. - guilded"); }
-            return FALSE;
+            return Q_R2_NUM_AMULETS;
          }
          %oLich = send(send(SYS,@FindRoomByNum,#num=RID_GUILDH15),@FindHoldingActive,#class=&DeadLich);
          %if oLich = $ or send(oLich,@GetNumAmulets) < nth(iR2, 2) {
@@ -435,6 +448,28 @@ CheckPlayerCriteria( quester_wannabe = $ )
 
    if bDebug { debug("passed restrictions!"); }
    return TRUE;
+}
+
+HasNegativeBoon(who=$)
+"Returns TRUE if the player has any negative boon enchantments."
+{
+   local i;
+
+   if Send(who,@IsEnchanted,#byClass=&Boon)
+   {
+      for i in Send(who,@GetEnchantmentList)
+      {
+         if IsClass(Nth(i,2),&Boon)
+         {
+            if Nth(i,3) < 0
+            {
+               return TRUE;
+            }
+         }
+      }
+   }
+
+   return FALSE;
 }
 
 %%%%%%%%%%

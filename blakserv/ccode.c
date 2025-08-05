@@ -2378,63 +2378,63 @@ static Bool PointInPoly(int fx, int fy, server_polygon *poly)
 blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
                          int num_name_parms, parm_node name_parm_array[])
 {
-   val_type room_v, row_v, col_v, fr_v, fc_v, id_list_v;
+   val_type room_val, row_val, col_val, fr_val, fc_val, id_list_val;
 
    if (num_normal_parms != 6)
    {
       bprintf("PIS early exit: wrong number of parameters\n");
       return NIL;
    }
-   room_v = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
-   row_v = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
-   col_v = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
-   fr_v = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
-   fc_v = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
-   id_list_v = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
+   room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+   row_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+   col_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+   fr_val = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+   fc_val = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
+   id_list_val = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
 
-   if (room_v.v.tag != TAG_ROOM_DATA)
+   if (room_val.v.tag != TAG_ROOM_DATA)
    {
       bprintf("PIS early exit: bad room tag\n");
       return NIL;
    }
 
-   if (row_v.v.tag != TAG_INT)
+   if (row_val.v.tag != TAG_INT)
    {
       bprintf("PIS early exit: bad row tag\n");
       return NIL;
    }
 
-   if (col_v.v.tag != TAG_INT)
+   if (col_val.v.tag != TAG_INT)
    {
       bprintf("PIS early exit: bad col tag\n");
       return NIL;
    }
 
-   if (fr_v.v.tag != TAG_INT)
+   if (fr_val.v.tag != TAG_INT)
    {
       bprintf("PIS early exit: bad fr tag\n");
       return NIL;
    }
 
-   if (id_list_v.v.tag == TAG_INT)
+   if (id_list_val.v.tag == TAG_INT)
    {
       val_type temp, nil_val;
       temp.v.tag = TAG_INT;
-      temp.v.data = id_list_v.v.data;
+      temp.v.data = id_list_val.v.data;
 
       nil_val.v.tag = TAG_INT;
 			nil_val.v.data = 0;
 
-      id_list_v.v.data = Cons(temp, nil_val);
-      id_list_v.v.tag = TAG_LIST;
+      id_list_val.v.data = Cons(temp, nil_val);
+      id_list_val.v.tag = TAG_LIST;
    }
-   else if (id_list_v.v.tag != TAG_LIST)
+   else if (id_list_val.v.tag != TAG_LIST)
    {
       bprintf("PIS early exit: 6th parameter must be a list of IDs or a single ID\n");
       return NIL;
    }
 
-   roomdata_node *rd = GetRoomDataByID(room_v.v.data);
+   roomdata_node *rd = GetRoomDataByID(room_val.v.data);
    if (!rd || !rd->file_info.sectors)
    {
       return NIL;
@@ -2443,14 +2443,14 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
    room_type *r = &rd->file_info;
 
    // remember that kod uses 1-based arrays and we don't
-   int row0 = (int) row_v.v.data - 1;
-   int col0 = (int) col_v.v.data - 1;
+   int row0 = (int) row_val.v.data - 1;
+   int col0 = (int) col_val.v.data - 1;
 
    // Now, we need to convert the kod coordinates to coordinates that match the room data
-   int fine_x = (int) ((long long) (col0 * FINENESS) + fc_v.v.data) * 16;
-   int fine_y = (int) ((long long) (row0 * FINENESS) + fr_v.v.data) * 16;
+   int fine_x = (int) ((long long) (col0 * FINENESS) + fc_val.v.data) * 16;
+   int fine_y = (int) ((long long) (row0 * FINENESS) + fr_val.v.data) * 16;
 
-   val_type current_list = id_list_v;
+   val_type current_list = id_list_val;
 
    while (current_list.v.tag == TAG_LIST)
    {

@@ -90,7 +90,7 @@ resources:
    guildhall_new_occupants = "~B%s has been rented to new owners."
    guildhall_someone_rented = "Someone has already rented this guild hall."
 
-   guildhall_teleported = "You stumble, and are teleported to the foyer."
+   guildhall_teleported = "You blink and find yourself in the foyer."
 
    guildhall_newsball = "news"
    guildhall_newsdesc = "This is the latest guild news."
@@ -189,11 +189,13 @@ properties:
    ptEntrance = $
 
    % Timer for checking the door sector for players
-   ptSectorCheck = $
+   ptEntranceCheck = $
 
-   % Time to wait before checking the door sector for players
+   % Default time to wait before checking the door sector for lingering players
+   % Subclasses should override with the value of door delay.
    piEntranceTimeout = 10000
 
+   % Door sector ID(s) (single or array) monitored for players lingering after doors close.
    plDoorSectors = $
 
 messages:
@@ -1034,30 +1036,30 @@ messages:
       Send(self,@CloseEntranceDoorLogic);
       Send(self,@CloseEntranceDoorSound);
 
-      ptSectorCheck = CreateTimer(self,@CheckDoorSector,piEntranceTimeout);
+      ptEntranceCheck = CreateTimer(self,@CheckDoorSector,piEntranceTimeout);
 
       return;
    }
 
    CloseEntranceDoorLogic()
+   "Override to perform room-specific door closing logic."
    {
       return;
    }
 
    CheckDoorSector()
+   "Checks for players lingering in the door sector and teleports them to the foyer."
    {
       local i, oObject;
 
-      ptSectorCheck = $;
+      ptEntranceCheck = $;
 
       if plDoorSectors = $
       {
-         debug("CheckDoorSector: No door sectors set!");
+         debug("Missing door sector(s) when checking door sector(s) for players.");
          return;
       }
 
-      % Check if any players in the room are in the door sector
-      % If so, teleport them to the foyer
       for i in plActive
       {
          oObject = First(i);
@@ -1155,10 +1157,10 @@ messages:
          ptEntrance = $;
       }
 
-      if ptSectorCheck <> $
+      if ptEntranceCheck <> $
       {
-         DeleteTimer(ptSectorCheck);
-         ptSectorCheck = $;
+         DeleteTimer(ptEntranceCheck);
+         ptEntranceCheck = $;
       }
 
       propagate;

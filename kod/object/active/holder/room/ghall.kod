@@ -90,6 +90,8 @@ resources:
    guildhall_new_occupants = "~B%s has been rented to new owners."
    guildhall_someone_rented = "Someone has already rented this guild hall."
 
+   guildhall_teleported = "You stumble, and are teleported to the foyer."
+
    guildhall_newsball = "news"
    guildhall_newsdesc = "This is the latest guild news."
 
@@ -183,6 +185,16 @@ properties:
    plLegal_Entry = $
 
    piLastDoorOpen = 0
+
+   ptEntrance = $
+
+   % Timer for checking the door sector for players
+   ptSectorCheck = $
+
+   % Time to wait before checking the door sector for players
+   piEntranceTimeout = 10000
+
+   plDoorSectors = $
 
 messages:
 
@@ -1015,6 +1027,58 @@ messages:
       return;
    }
 
+   CloseEntranceDoor()
+   {
+      ptEntrance = $;
+
+      Send(self,@CloseEntranceDoorLogic);
+      Send(self,@CloseEntranceDoorSound);
+
+      ptSectorCheck = CreateTimer(self,@CheckDoorSector,piEntranceTimeout);
+
+      return;
+   }
+
+   CloseEntranceDoorLogic()
+   {
+      return;
+   }
+
+   CheckDoorSector()
+   {
+      local i, oObject;
+
+      ptSectorCheck = $;
+
+      if plDoorSectors = $
+      {
+         debug("CheckDoorSector: No door sectors set!");
+         return;
+      }
+
+      % Check if any players in the room are in the door sector
+      % If so, teleport them to the foyer
+      for i in plActive
+      {
+         oObject = First(i);
+         if IsClass(oObject,&Player)
+         {
+            if PointInSector(prmRoom,
+               Send(oObject,@GetRow),
+               Send(oObject,@GetCol),
+               Send(oObject,@GetFineRow),
+               Send(oObject,@GetFineCol),
+               plDoorSectors)
+            {
+               Send(oObject,@MsgSendUser,#message_rsc=guildhall_teleported);
+               Send(self,@Teleport,#what=oObject,#foyer=TRUE);
+            }
+         }
+      }
+      
+      return;
+   }
+
    CloseEntranceDoorSound()
    {
       Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_close_sound); 
@@ -1083,6 +1147,18 @@ messages:
       {
          DeleteTimer(ptConquer);
          ptConquer = $;
+      }
+
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
+      }
+
+      if ptSectorCheck <> $
+      {
+         DeleteTimer(ptSectorCheck);
+         ptSectorCheck = $;
       }
 
       propagate;

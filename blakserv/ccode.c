@@ -18,6 +18,10 @@
 
 #include "blakserv.h"
 
+#ifndef FINENESS
+#define FINENESS 64
+#endif
+
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
 // global buffers for zero-terminated string manipulation
@@ -2343,4 +2347,167 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	ret_val.v.data = number;
 	
 	return ret_val.int_val;
+}
+
+static Bool PointInPoly(int fx, int fy, server_polygon *poly)
+{
+   if (!poly || poly->num_vertices < 3)
+      return False;
+
+   Bool inside = False;
+   for (int i = 0, j = poly->num_vertices - 1; i < poly->num_vertices; j = i++)
+   {
+      int xi = poly->vertices_x[i], yi = poly->vertices_y[i];
+      int xj = poly->vertices_x[j], yj = poly->vertices_y[j];
+
+      int dy = yj - yi;
+      if (dy == 0)
+         continue;
+
+      if ((yi > fy) != (yj > fy))
+      {
+         double x_int = (double) (xj - xi) * (double) (fy - yi) / (double) (yj - yi) + xi;
+
+         if (fx < x_int)
+            inside = !inside;
+      }
+   }
+   return inside;
+}
+
+blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+                         int num_name_parms, parm_node name_parm_array[])
+{
+   val_type room_v, row_v, col_v, fr_v, fc_v, id_list_v;
+
+   if (num_normal_parms != 6)
+   {
+      bprintf("PIS early exit: wrong number of parameters\n");
+      return NIL;
+   }
+   room_v = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+   row_v = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+   col_v = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+   fr_v = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+   fc_v = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
+   id_list_v = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
+
+   if (room_v.v.tag != TAG_ROOM_DATA)
+   {
+      bprintf("PIS early exit: bad room tag\n");
+      return NIL;
+   }
+
+   if (row_v.v.tag != TAG_INT)
+   {
+      bprintf("PIS early exit: bad row tag\n");
+      return NIL;
+   }
+
+   if (col_v.v.tag != TAG_INT)
+   {
+      bprintf("PIS early exit: bad col tag\n");
+      return NIL;
+   }
+
+   if (fr_v.v.tag != TAG_INT)
+   {
+      bprintf("PIS early exit: bad fr tag\n");
+      return NIL;
+   }
+
+   if (id_list_v.v.tag == TAG_INT)
+   {
+      val_type temp, nil_val;
+      temp.v.tag = TAG_INT;
+      temp.v.data = id_list_v.v.data;
+
+      nil_val.v.tag = TAG_INT;
+			nil_val.v.data = 0;
+
+      id_list_v.v.data = Cons(temp, nil_val);
+      id_list_v.v.tag = TAG_LIST;
+   }
+   else if (id_list_v.v.tag != TAG_LIST)
+   {
+      bprintf("PIS early exit: 6th parameter must be a list of IDs or a single ID\n");
+      return NIL;
+   }
+
+   roomdata_node *rd = GetRoomDataByID(room_v.v.data);
+   if (!rd || !rd->file_info.sectors)
+   {
+      return NIL;
+   }
+
+   room_type *r = &rd->file_info;
+
+   // remember that kod uses 1-based arrays and we don't
+   int row0 = (int) row_v.v.data - 1;
+   int col0 = (int) col_v.v.data - 1;
+
+   // Now, we need to convert the kod coordinates to coordinates that match the room data
+   int fine_x = (int) ((long long) (col0 * FINENESS) + fc_v.v.data) * 16;
+   int fine_y = (int) ((long long) (row0 * FINENESS) + fr_v.v.data) * 16;
+
+   val_type current_list = id_list_v;
+
+   while (current_list.v.tag == TAG_LIST)
+   {
+      val_type first_elem;
+      first_elem.int_val = First(current_list.v.data);
+
+      if (first_elem.v.tag == TAG_INT)
+      {
+         int wanted_id = (int) first_elem.v.data;
+
+         for (int i = 0; i < r->num_sectors; i++)
+         {
+            if (r->sectors[i].id != wanted_id)
+            {
+               // Skip sectors that don't match the wanted user id
+               continue;
+            }
+
+            for (int p = 0; p < r->sectors[i].num_polygons; p++)
+            {
+               // First, check if the sector has polygons
+               if (r->sectors[i].polygons == NULL)
+               {
+                  continue;
+               }
+
+               // Check if the polygon index is valid
+               if (p >= r->sectors[i].num_polygons)
+               {
+                  continue;
+               }
+
+               server_polygon *poly = &r->sectors[i].polygons[p];
+
+               // Check if the polygon has valid data
+               if (!poly->vertices_x || !poly->vertices_y || poly->num_vertices < 3)
+               {
+                  continue;
+               }
+
+               Bool hit = PointInPoly(fine_x, fine_y, poly);
+
+               if (hit)
+               {
+                  val_type ret;
+                  ret.v.tag = TAG_INT;
+                  ret.v.data = True;
+                  return ret.int_val;
+               }
+            }
+         }
+      }
+			current_list.int_val = Rest(current_list.v.data);
+   }
+
+   val_type ret;
+   ret.v.tag = TAG_INT;
+   ret.v.data = False;
+   return ret.int_val;
 }

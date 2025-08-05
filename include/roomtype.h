@@ -12,6 +12,20 @@
 #ifndef _ROOMTYPE_H
 #define _ROOMTYPE_H
 
+typedef struct {
+   int num_vertices;
+   int *vertices_x;
+   int *vertices_y;
+} server_polygon;
+
+typedef struct
+{
+   int id; // server id
+   int num_polygons;
+   int polygon_capacity;
+   server_polygon *polygons;
+} server_sector;
+
 /* Room contents to draw */
 typedef struct
 {
@@ -29,6 +43,8 @@ typedef struct
 
    int security;          /* Security number, unique to each roo file, to ensure that client
                              loads the correct roo file */
+   server_sector *sectors;
+   int num_sectors;
 } room_type;
 
 #endif /* #ifndef _ROOMTYPE_H */

@@ -195,6 +195,8 @@ resources:
 
    monster_default_attack = "attack"
 
+   NPC_restrict_quote_to_one = "~k%s%s tells you, \"%q~n~k\""
+
 classvars:
 
    vrKocName = monster_koc_name
@@ -342,6 +344,8 @@ properties:
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
+
+   plPendingRestrictHints = $
 
 messages:
 
@@ -2625,6 +2629,8 @@ messages:
                return;
             }
          }
+
+         Send(self,@FlushPendingQuestRestrictHint,#who=what);
       } 
 
       %% Old quest stuff (and old old quest stuff)
@@ -5817,5 +5823,56 @@ messages:
       return;
    }
 
+   QueueQuestRestrictHint(who = $, hint = $)
+   "Used by the quest engine to store a hint for the player during the quest restriction check."
+   {
+      local oRestrictionHint;
+
+      if (hint = $ OR who = $)
+      {
+         debug("QueueQuestRestrictHint called with nil who or hint", who, hint);
+         return;
+      }
+
+      for oRestrictionHint in plPendingRestrictHints
+      {
+         if First(oRestrictionHint) = who
+         {
+            return;
+         }
+      }
+
+      plPendingRestrictHints = Cons([who,hint],plPendingRestrictHints);
+
+      return;
+   }
+
+   FlushPendingQuestRestrictHint(who = $)
+   {
+      local oRestrictionHint;
+
+      if (who = $ OR plPendingRestrictHints = $)
+      {
+         debug("FlushPendingQuestRestrictHint called with nil who or plPendingRestrictHints", who, plPendingRestrictHints);
+         return;
+      }
+
+      for oRestrictionHint in plPendingRestrictHints
+      {
+         if First(oRestrictionHint) = who
+         {            
+            Send(who,@MsgSendUser,#message_rsc=NPC_restrict_quote_to_one,
+              #parm1=Send(self,@GetCapDef),
+              #parm2=Send(self,@GetName),
+              #type3=STRING_RESOURCE,#parm3=Nth(oRestrictionHint,2));
+            
+            plPendingRestrictHints = DelListElem(plPendingRestrictHints, oRestrictionHint);
+            
+            return;
+         }
+      }
+
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

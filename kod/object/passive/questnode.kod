@@ -819,10 +819,11 @@ messages:
 
                if oRestrictionHint <> $
                {
-                  Send(who_tried,@MsgSendUser,#message_rsc=NPC_quote_to_one,
-                     #parm1=Send(poDestNPC,@GetCapDef),
-                     #parm2=Send(poDestNPC,@GetName),
-                     #type3=STRING_RESOURCE,#parm3=oRestrictionHint);
+                  % Message nodes may share triggers. On eligibility failure we queue (not send) a 
+                  % restriction hint and return FALSE so other nodes can be tried. After iterating 
+                  % all nodes, we flush at most one queued hint to the speaking player if none 
+                  % succeeded. On success, any queued hint for that player is cleared.
+                  Send(poDestNPC,@QueueQuestRestrictHint,#who=who_tried,#hint=oRestrictionHint);
                }
                else
                {
@@ -830,7 +831,7 @@ messages:
                }
             }
 
-            return TRUE;
+            return FALSE;
          }
 
          % This quester meets the criteria, so add him to the list

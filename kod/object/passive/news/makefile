@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\news.bof
-BOFS = newsanno.bof newsgld.bof newsjust.bof newsadv.bof GuildWarNews.bof
+BOFS = newsanno.bof newsgld.bof newsjust.bof newsadv.bof GuildWarNews.bof territorynews.bof
 
 !include $(KODDIR)\kod.mak

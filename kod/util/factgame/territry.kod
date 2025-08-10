@@ -26,6 +26,7 @@ resources:
    TerritoryGame_rebel = "the rebel Jonas"
    TerritoryGame_unfactioned = "the unfactioned"
 
+   TerritoryGame_bonus_territory_title = "~I%s now %s the city of %s!"
    TerritoryGame_bonus_territory = "~IHaving claimed %q, %s now also %s the city of %s!"
    TerritoryGame_control = "control"
    TerritoryGame_controls = "controls"
@@ -39,6 +40,16 @@ resources:
    TerritoryGame_her = "her"
    TerritoryGame_his = "his"
    TerritoryGame_their = "their"
+
+   territory_string_title_1 = " now "
+   territory_string_title_2 = " "
+   territory_string_title_3 = "!"
+
+   territory_string_body_1 = "Having claimed "
+   territory_string_body_2 = ", "
+   territory_string_body_3 = " now also "
+   territory_string_body_4 = " the city of "
+   territory_string_body_5 = "!"
 
 properties:
 
@@ -585,7 +596,7 @@ messages:
 
    SendBonusTownMessage(faction=$,town=$)
    {
-      local i, sTowns, rFaction, rControls, rCity;
+      local i, sTowns, rFaction, rControls, rCity, oBook, territory_news_title, territory_news_body;
 
       sTowns = createString();
       clearTempString();
@@ -645,6 +656,33 @@ messages:
                #parm1=sTowns,#type1=STRING_RESOURCE,
                #parm2=rFaction,#parm3=rControls,#parm4=rCity);
       }
+
+      ClearTempString();
+      AppendTempString(rFaction); 
+      AppendTempString(territory_string_title_1); 
+      AppendTempString(rControls);
+      AppendTempString(territory_string_title_2); 
+      AppendTempString(rCity); 
+      AppendTempString(territory_string_title_3);
+      territory_news_title = CreateString(); 
+      SetString(territory_news_title, GetTempString());
+
+      ClearTempString();
+      AppendTempString(territory_string_body_1); 
+      AppendTempString(sTowns); 
+      AppendTempString(territory_string_body_2);
+      AppendTempString(rFaction); 
+      AppendTempString(territory_string_body_3); 
+      AppendTempString(rControls);
+      AppendTempString(territory_string_body_4); 
+      AppendTempString(rCity); 
+      AppendTempString(territory_string_body_5);
+      territory_news_body = CreateString(); 
+      SetString(territory_news_body, GetTempString());
+
+      % Post to the territory news
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
+      Send(oBook,@PostNews,#what=Create(&CorNothAmbassador),#title=territory_news_title,#body=territory_news_body);
 
       return;
    }

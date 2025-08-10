@@ -1,0 +1,32 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TerritoryNewsLink is NewsLink
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   territorynewslink_icon_rsc = jbook.bgf
+   territorynewslink_name_rsc = "Territory War Dispatches"
+   territorynewslink_desc_rsc = "Faction claims, battles, and city control across the territories."
+
+properties:
+
+   vrName = territorynewslink_name_rsc
+   vrDesc = territorynewslink_desc_rsc
+   vrIcon = territorynewslink_icon_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

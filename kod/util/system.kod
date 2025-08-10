@@ -65,6 +65,16 @@ resources:
 
    system_admin_message = "%q"
 
+   faction_war_kill_title_1 = " bested by "
+   faction_war_kill_title_2 = "."
+   faction_war_kill_body_1 = " has been bested by faction rival "
+   faction_war_kill_body_2 = " during a land claim attempt"
+   faction_war_kill_body_3 = "."
+   faction_war_kill_body_4 = "\n--------------------------------"
+   faction_war_kill_body_5 = "\nLocation: "
+   faction_war_kill_body_6 = "\nFactions: "
+   faction_war_kill_body_7 = " vs "
+
    system_char_module = char.dll
 
    % charinfo stuff
@@ -1456,7 +1466,8 @@ messages:
    {
       local i, rMessage, oSoldierShield, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
-            war_string1, war_string2, oBook, oMaster;
+            war_string1, war_string2, oRoom, oFlag, oBook, oMaster, oParl, 
+            territory_news_title, territory_news_body, rVicFaction, rKilFaction;
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -1551,6 +1562,59 @@ messages:
                {
                   rMessage = system_user_killed_shield;
                   % Parameters set by default
+
+                  ClearTempString();
+                  AppendTempString(Send(what,@GetTrueName));
+                  AppendTempString(faction_war_kill_title_1);
+                  AppendTempString(Send(killer,@GetTrueName));
+                  AppendTempString(faction_war_kill_title_2);
+                  territory_news_title = CreateString();
+                  SetString(territory_news_title, GetTempString());
+
+                  ClearTempString();
+                  AppendTempString(Send(what,@GetTrueName));
+                  AppendTempString(faction_war_kill_body_1);
+                  AppendTempString(Send(killer,@GetTrueName));
+
+                  oRoom = Send(what,@GetOwner);
+                  oParl = Send(SYS,@GetParliament);
+                  oFlag = Send(oRoom,@FindHoldingActive,#class=&Flagpole);
+
+                  if (oFlag <> $ AND Send(oFlag,@IsClaimAttemptInProgress))
+                  {
+                     AppendTempString(faction_war_kill_body_2);
+                  } 
+
+                  AppendTempString(faction_war_kill_body_3);
+                  AppendTempString(faction_war_kill_body_4);
+                                    
+                  if (oParl <> $)
+                  {
+                     rVicFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(what,@GetFaction));
+                     rKilFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(killer,@GetFaction));
+                  }
+
+                  if (oRoom <> $)
+                  {
+                     AppendTempString(faction_war_kill_body_5);
+                     AppendTempString(Send(oRoom,@GetName));
+                  }
+
+                  if (rVicFaction <> $ AND rKilFaction <> $)
+                  {
+                     AppendTempString(faction_war_kill_body_6);
+                     AppendTempString(rVicFaction);
+                     AppendTempString(faction_war_kill_body_7);
+                     AppendTempString(rKilFaction);
+                  }
+
+                  territory_news_body = CreateString();
+                  SetString(territory_news_body, GetTempString());
+
+                  % Post to the territory news
+                  oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
+                  Send(oBook,@PostNews,#what=Create(&CorNothAmbassador),#title=territory_news_title,      
+                     #body=territory_news_body);
                }
 
                % A guild war?

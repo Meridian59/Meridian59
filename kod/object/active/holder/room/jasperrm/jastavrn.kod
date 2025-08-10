@@ -20,9 +20,7 @@ resources:
    room_name_JasperTavern = "Pietro's Wicked Brews"
 
    jasbar_music = bar.mid
-   jastav_adv_icon = jbook.bgf
-   jastav_adv_name = "Tales of Adventure"
-   jastav_adv_desc = "Stories from the people of Meridian, collected by Bards"
+
 classvars:
 
    vrName = room_name_jaspertavern
@@ -50,9 +48,6 @@ messages:
 
       Send(self,@NewHold,#what=Create(&JasperBartender),
 	   #new_row=15,#new_col=6,#new_angle=ANGLE_NORTH);
-
-      oNews = Create(&Newslink,#nid=NID_ADVENTURE,#name=jastav_adv_name,#icon=jastav_adv_icon,#desc=jastav_adv_desc);
-      Send(self,@NewHold,#what=oNews,#new_row=16,#new_col=2,#fine_row=8,#fine_col=32,#new_angle = ANGLE_NORTH_EAST);
 
 % Stools N of Bar
       Send(self,@NewHold,#what=Create(&BarStool),
@@ -119,6 +114,9 @@ messages:
       Send(self,@NewHold,#what=Create(&Brazier),
 	   #new_row=10,#new_col=8,#fine_col=0,#fine_row=0);
 
+      oNews = Create(&TerritoryNewsLink,#nid=NID_TERRITORY_NEWS);
+      Send(self,@NewHold,#what=oNews,#new_row=16,#new_col=2,
+         #fine_row=8,#fine_col=32,#new_angle=ANGLE_NORTH_EAST);
 
       propagate;
    }

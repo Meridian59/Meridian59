@@ -56,6 +56,8 @@ messages:
 
    CreateStandardObjects()
    {
+      local oNews;
+      
       % throne
 
       Send(self,@NewHold,#what=Create(&PrincessGuard),
@@ -73,7 +75,12 @@ messages:
       Send(self,@NewHold,#what=Create(&Throne),
            #new_row=33,#new_col=23,#fine_col=48,#new_angle=ANGLE_NORTH);
 
-   propagate;
+
+      oNews = Create(&TerritoryNewsLink,#nid=NID_TERRITORY_NEWS);
+      Send(self,@NewHold,#what=oNews,#new_row=29,#new_col=19,
+         #fine_row=32,#fine_col=23,#new_angle=ANGLE_NORTH_EAST);
+
+      propagate;
    }
 
 

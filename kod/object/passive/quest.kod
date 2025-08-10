@@ -96,7 +96,6 @@ CheckPlayerCriteria( quester_wannabe = $ )
       for oQuester in send(oQuest,@GetQuesters) {
          %if bDebug { debug("Found a quest assigned to ",send(oQuester,@getName)); }
          if quester_wannabe = oQuester {
-            % TODO: Should we send them the assign hint again? What would this mean for quests shared amongst multiple NPCs?
             if bDebug { debug("failed duplicate quest check."); }
             return FALSE;
          }

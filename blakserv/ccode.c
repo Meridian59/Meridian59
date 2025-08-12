@@ -2344,3 +2344,109 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	
 	return ret_val.int_val;
 }
+
+blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+                       int num_name_parms, parm_node name_parm_array[])
+{
+   const char *string1 = NULL;
+   
+   // Get the string to build
+   val_type string_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+	 int len1 = 0;
+   int use_args = num_normal_parms - 1;
+
+   if (!LookupString(string_val, "C_BuildString", &string1, &len1))
+      return NIL;
+
+   // Validate the string parameters
+   const char *params[MAX_C_PARMS];
+   int params_len[MAX_C_PARMS];
+	 
+	 for (int i = 0; i < use_args; i++)
+   {
+      val_type val = RetrieveValue(object_id, local_vars, normal_parm_array[i + 1].type, normal_parm_array[i + 1].value);
+      if (!LookupString(val, "C_BuildString", &params[i], &params_len[i]))
+         return NIL;
+   }
+
+   // Pass 1: Walk the string to compute the exact length needed by simulating
+	 // substitutions (%s adds the next params length, %% adds 1, unknown %X adds 2).
+	 // This lets us allocate the exact memory needed for the output string.
+   int output_len = 0, arg_i = 0;
+   for (int i = 0; i < len1;)
+   {
+      char ch = string1[i];
+      if (ch == '%' && (i + 1) < len1)
+      {
+         char next = string1[i + 1];
+         if (next == 's')
+         {
+            output_len += (arg_i < use_args) ? params_len[arg_i++] : 2;
+            i += 2;
+            continue;
+         }
+         if (next == '%')
+         {
+            output_len += 1;
+            i += 2;
+            continue;  // literal '%'
+         }
+         // Unknown specifier: copy the '%' and next char literally
+         output_len += 2;
+         i += 2;
+         continue;
+      }
+      ++output_len;
+      ++i;
+   }
+
+   // Pass 2: Walk the string again and write into the allocated buffer. 
+   char *output = (char *) AllocateMemory(MALLOC_ID_STRING, output_len + 1);
+   int w = 0;
+   arg_i = 0;
+
+   for (int i = 0; i < len1;)
+   {
+      char ch = string1[i];
+      if (ch == '%' && (i + 1) < len1)
+      {
+         char next = string1[i + 1];
+         if (next == 's')
+         {
+            if (arg_i < use_args)
+            {
+               int len = params_len[arg_i];
+               memcpy(output + w, params[arg_i], len);
+               w += len;
+               ++arg_i;
+            }
+            else
+            {
+               output[w++] = '%';
+               output[w++] = 's';
+            }
+            i += 2;
+            continue;
+         }
+         if (next == '%')
+         {
+            output[w++] = '%';
+            i += 2;
+            continue;
+         }
+         output[w++] = '%';
+         output[w++] = next;
+         i += 2;
+         continue;
+      }
+      output[w++] = ch;
+      ++i;
+   }
+   output[w] = '\0';
+
+	 val_type ret; 
+	 ret.v.tag = TAG_STRING; 
+	 ret.v.data = CreateStringWithLen(output, w);
+	 FreeMemory(MALLOC_ID_STRING, output, output_len + 1);
+	 return ret.int_val;
+}

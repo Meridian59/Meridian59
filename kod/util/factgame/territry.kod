@@ -668,7 +668,7 @@ messages:
       SetString(territory_news_title, GetTempString());
 
       ClearTempString();
-      AppendTempString(territory_string_body_1); 
+      AppendTempString(territory_string_body_1);
       AppendTempString(sTowns); 
       AppendTempString(territory_string_body_2);
       AppendTempString(rFaction); 
@@ -682,7 +682,8 @@ messages:
 
       % Post to the territory news
       oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
-      Send(oBook,@PostNews,#what=Create(&CorNothAmbassador),#title=territory_news_title,#body=territory_news_body);
+      Send(oBook,@PostNews,#what=Create(&CorNothAmbassador),
+         #title=territory_news_title,#body=territory_news_body);
 
       return;
    }

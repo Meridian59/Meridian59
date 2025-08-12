@@ -106,9 +106,9 @@ messages:
       if oNews = $
       {
          oNews = Create(&TerritoryNews,#nid=NID_TERRITORY_NEWS);
+         Send(self,@NewHold,#what=oNews,#new_row=15,#new_col=16,
+            #fine_row=24,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
       }
-      Send(self,@NewHold,#what=oNews,#new_row=15,#new_col=16,
-         #fine_row=24,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
 
       propagate;
    }

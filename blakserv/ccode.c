@@ -2349,6 +2349,9 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+/**
+ * PointInPoly: Returns True if point (fx, fy) lies inside the given polygon.
+ */
 static Bool PointInPoly(int fx, int fy, server_polygon *poly)
 {
    if (!poly || poly->num_vertices < 3)
@@ -2375,6 +2378,11 @@ static Bool PointInPoly(int fx, int fy, server_polygon *poly)
    return inside;
 }
 
+/**
+ * C_PointInSector: Tests whether a fine-grained room coordinate falls inside any polygon of sectors
+ * matching given ID(s).
+ * Expects 6 params: room data, row, col, fine-row (fr), fine-col (fc), and an ID or list of IDs.
+ */
 blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
                          int num_name_parms, parm_node name_parm_array[])
 {

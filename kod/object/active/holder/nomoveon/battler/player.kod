@@ -2722,15 +2722,24 @@ messages:
       {
          oTimer = $;
       }
-      else 
+      else
       {
-         if lastcall
+         if NOT Send(self,@IsLoggedOn)
          {
-            oTimer = CreateTimer(self,@EnchantmentTimer,time);
+            % Player is offline. Store time in frozen integer format.
+            oTimer = time;
          }
          else
          {
-            oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+            % Player is online. Create a timer.
+            if lastcall
+            {
+               oTimer = CreateTimer(self,@EnchantmentTimer,time);
+            }
+            else
+            {
+               oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+            }
          }
       }
 

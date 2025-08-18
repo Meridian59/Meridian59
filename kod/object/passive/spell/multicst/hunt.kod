@@ -225,6 +225,17 @@ messages:
       return FALSE;
    }
 
+   RestartEnchantmentEffect(who=$, state=$)
+   {
+      Send(who,@MsgSendUser,#message_rsc=hunt_gain_trackers);
+
+      return;
+   }
+
+   ShowEnchantmentIcon(type=$)
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

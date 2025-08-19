@@ -2483,7 +2483,6 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
          if (list->first.v.tag == TAG_INT)
          {
             sector_id = list->first.v.data;
-            bprintf("Processing sector ID: %d\n", sector_id);
             sector_ids.push_back(sector_id);
          }
          else

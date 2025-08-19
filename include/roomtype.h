@@ -12,11 +12,11 @@
 #ifndef _ROOMTYPE_H
 #define _ROOMTYPE_H
 
-typedef struct {
+struct server_polygon {
    int num_vertices;
    int *vertices_x;
    int *vertices_y;
-} server_polygon;
+};
 
 typedef struct
 {

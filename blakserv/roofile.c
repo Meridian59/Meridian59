@@ -23,39 +23,33 @@ static unsigned char room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
 #define SF_SLOPED_FLOOR   0x00000400
 #define SF_SLOPED_CEILING 0x00000800
 
-static int readFloatAsInt(int fd)
-{
-   float f;
-   if (read(fd, &f, 4) != 4)
-      return 0;
-   return (int) f;
-}
-
-static int readInt(int fd)              /* 4-byte little-endian signed int   */
+static int readInt(FILE *fd)              /* 4-byte little-endian signed int   */
 {
    int v;
-   if (read(fd, &v, 4) != 4) return -1;
+   if (fread(&v, sizeof(int), 1, fd) != 1)
+      return -1;
    return v;
 }
 
-static short readShort(int fd)          /* 2-byte little-endian signed short */
+static short readShort(FILE *fd)          /* 2-byte little-endian signed short */
 {
    short v;
-   if (read(fd, &v, 2) != 2) return -1;
+   if (fread(&v, sizeof(short), 1, fd) != 1)
+      return -1;
    return v;
 }
 
-static unsigned char readByte(int fd)   /* 1-byte unsigned                   */
+static unsigned char readByte(FILE *fd)   /* 1-byte unsigned                   */
 {
    unsigned char v = 0;
-   read(fd, &v, 1);
+   fread(&v, 1, 1, fd);
    return v;
 }
 
-static int readCoord(int fd, Bool as_float)
+static int readCoord(FILE *fd, Bool as_float)
 {
    char buf[4];
-   if (read(fd, buf, 4) != 4)
+   if (fread(buf, 4, 1, fd) != 1)
       return 0;
 
    if (as_float)
@@ -69,19 +63,19 @@ static int readCoord(int fd, Bool as_float)
 /*
  * LoadSectorPolygons:  Load the polygons for each sector from the BSP tree
  */
-static void LoadSectorPolygons(int fd, long nodes_start, int num_nodes, room_type *room, const char *fname, Bool coords_are_floats)
+static void LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_type *room, const char *fname, Bool coords_are_floats)
 {
-   lseek(fd, nodes_start, SEEK_SET);
+   fseek(fd, nodes_start, SEEK_SET);
 
    for (int n = 0; n < num_nodes; n++)
    {
       unsigned char type;
-      read(fd, &type, 1);
-      lseek(fd, 16, SEEK_CUR); /* skip bbox */
+      fread(&type, 1, 1, fd);
+      fseek(fd, 16, SEEK_CUR); /* skip bbox */
 
       if (type == 1)
       {
-         lseek(fd, 12 + 2 + 2 + 2, SEEK_CUR);
+         fseek(fd, 12 + 2 + 2 + 2, SEEK_CUR);
       }
       else if (type == 2)
       {
@@ -136,7 +130,7 @@ static void LoadSectorPolygons(int fd, long nodes_start, int num_nodes, room_typ
          }
          else
          {
-            lseek(fd, num_pts * 8, SEEK_CUR);
+            fseek(fd, num_pts * 8, SEEK_CUR);
          }
       }
       else
@@ -152,50 +146,54 @@ static void LoadSectorPolygons(int fd, long nodes_start, int num_nodes, room_typ
  */
 Bool BSPRooFileLoadServer(char *fname, room_type *room)
 {
-   int infile, i, temp, roo_version;
+   FILE *infile;
+   int i, temp, roo_version;
    unsigned char byte;
 
-   infile = open(fname, O_BINARY | O_RDONLY);
-   if (infile < 0)
+   infile = fopen(fname, "rb");
+   if (!infile)
+   {
+      bprintf("BSPRooFileLoadServer: Failed to open file %s\n", fname);
       return False;
+   }
 
    // Header check
    for (i = 0; i < 4; i++)
-      if (read(infile, &byte, 1) != 1 || byte != room_magic[i])
+      if (fread(&byte, 1, 1, infile) != 1 || byte != room_magic[i])
       {
-         close(infile);
+         fclose(infile);
          return False;
       }
 
-   if (read(infile, &roo_version, 4) != 4 || roo_version < ROO_VERSION)
+   if (fread(&roo_version, 4, 1, infile) != 1 || roo_version < ROO_VERSION)
    {
-      close(infile);
+      fclose(infile);
       return False;
    }
 
    /* security (unused in loader) */
-   if (read(infile, &room->security, 4) != 4)
+   if (fread(&room->security, 4, 1, infile) != 1)
    {
-      close(infile);
+      fclose(infile);
       return False;
    }
 
    /* absolute offsets to main (client) and server sections */
    int main_off, server_off;
-   if (read(infile, &main_off, 4) != 4)
+   if (fread(&main_off, 4, 1, infile) != 1)
    {
-      close(infile);
+      fclose(infile);
       return False;
    }
-   if (read(infile, &server_off, 4) != 4)
+   if (fread(&server_off, 4, 1, infile) != 1)
    {
-      close(infile);
+      fclose(infile);
       return False;
    }
 
    // Client section
    // Sector metadata and BSP polygons
-   lseek(infile, main_off, SEEK_SET);
+   fseek(infile, main_off, SEEK_SET);
 
    // Read in and ignore room width and height (not used on server)
    int room_w = readInt(infile);
@@ -211,7 +209,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    readInt(infile);
 
    // Sector metadata
-   lseek(infile, sector_off, SEEK_SET);
+   fseek(infile, sector_off, SEEK_SET);
    int num_sectors = readShort(infile);
 
    room->num_sectors = num_sectors;
@@ -237,9 +235,9 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
          readByte(infile);            // animate_speed
 
          if (flags & SF_SLOPED_FLOOR)
-            lseek(infile, 46, SEEK_CUR); // 46-byte floor-slope record
+            fseek(infile, 46, SEEK_CUR); // 46-byte floor-slope record
          if (flags & SF_SLOPED_CEILING)
-            lseek(infile, 46, SEEK_CUR); // 46-byte ceiling-slope record
+            fseek(infile, 46, SEEK_CUR); // 46-byte ceiling-slope record
 
          ss->num_polygons = 0;
          ss->polygons = NULL;
@@ -247,7 +245,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    }
 
    // Sector polygons
-   lseek(infile, node_off, SEEK_SET);
+   fseek(infile, node_off, SEEK_SET);
    int num_nodes = readShort(infile);
 
    Bool coords_are_floats = (roo_version >= 13);
@@ -255,18 +253,18 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    
    // Server section
    // Rows / cols / grids (unchanged)
-   lseek(infile, server_off, SEEK_SET);
+   fseek(infile, server_off, SEEK_SET);
 
-   if (read(infile, &temp, 4) != 4)
+   if (fread(&temp, 4, 1, infile) != 1)
    {
-      close(infile);
+      fclose(infile);
       return False;
    }
    
    room->rows = (short) temp;
-   if (read(infile, &temp, 4) != 4)
+   if (fread(&temp, 4, 1, infile) != 1)
    {
-      close(infile);
+      fclose(infile);
       return False;
    }
 
@@ -278,18 +276,18 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    for (i = 0; i < room->rows; i++)
    {
       room->grid[i] = (unsigned char *) AllocateMemory(MALLOC_ID_ROOM, room->cols);
-      if (read(infile, room->grid[i], room->cols) != room->cols)
+      if (fread(room->grid[i], room->cols, 1, infile) != 1)
       {
-         close(infile);
+         fclose(infile);
          return False;
       }
    }
    for (i = 0; i < room->rows; i++)
    {
       room->flags[i] = (unsigned char *) AllocateMemory(MALLOC_ID_ROOM, room->cols);
-      if (read(infile, room->flags[i], room->cols) != room->cols)
+      if (fread(room->flags[i], room->cols, 1, infile) != 1)
       {
-         close(infile);
+         fclose(infile);
          return False;
       }
    }
@@ -302,15 +300,15 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       for (i = 0; i < room->rows; i++)
       {
          room->monster_grid[i] = (unsigned char *) AllocateMemory(MALLOC_ID_ROOM, room->cols);
-         if (read(infile, room->monster_grid[i], room->cols) != room->cols)
+         if (fread(room->monster_grid[i], room->cols, 1, infile) != 1)
          {
-            close(infile);
+            fclose(infile);
             return False;
          }
       }
    }
 
-   close(infile);
+   fclose(infile);
    return True;
 }
 /*********************************************************************************************/

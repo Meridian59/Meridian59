@@ -464,9 +464,15 @@ BOOL CostListDrawItem(const DRAWITEMSTRUCT *lpdis)
  */
 void BuyList(object_node seller, list_type items)
 {
+   list_type sorted_list, l;
    BuyDialogStruct dlg_info;
+   sorted_list = NULL;
 
-   dlg_info.items = items;
+   // Separate contents into number items and other items and alpha sort
+   for (l = items; l != NULL; l = l->next)
+      sorted_list = list_add_sorted_item(sorted_list, (l->data), CompareObjectNameAndNumber);
+   
+   dlg_info.items = sorted_list;
    dlg_info.seller_id = seller.id;
    dlg_info.seller_name = seller.name_res;
    dlg_info.cost = 0;
@@ -475,6 +481,7 @@ void BuyList(object_node seller, list_type items)
       /* Give user list of things to select from */
       SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_BUY), hMain, BuyDialogProc, (LPARAM) &dlg_info);
 
+   list_delete(sorted_list);
    ObjectListDestroy(items);
 }
 /*****************************************************************************/
@@ -486,9 +493,15 @@ void BuyList(object_node seller, list_type items)
  */
 void WithdrawalList(object_node seller, list_type items)
 {
+   list_type sorted_list, l;
    BuyDialogStruct dlg_info;
+   sorted_list = NULL;
 
-   dlg_info.items = items;
+   // Separate contents into number items and other items and alpha sort
+   for (l = items; l != NULL; l = l->next)
+      sorted_list = list_add_sorted_item(sorted_list, (l->data), CompareObjectNameAndNumber);
+   
+   dlg_info.items = sorted_list;
    dlg_info.seller_id = seller.id;
    dlg_info.seller_name = seller.name_res;
    dlg_info.cost = 0;
@@ -497,5 +510,6 @@ void WithdrawalList(object_node seller, list_type items)
       /* Give user list of things to select from */
       SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WITHDRAWAL), hMain, WithdrawalDialogProc, (LPARAM) &dlg_info);
 
+   list_delete(sorted_list);
    ObjectListDestroy(items);
 }

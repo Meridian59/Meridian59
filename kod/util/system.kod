@@ -6562,6 +6562,19 @@ messages:
       }
       return total;
    }
+
+   BuildStringTest(what=$,killer=$)
+   {
+      local sString;
+
+      sString = BuildString(system_user_killed_guild,
+         Send(what,@GetTrueName),
+         Send(killer,@GetTrueName));
+
+      debug("BuildStringTest: ", sString);
+
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

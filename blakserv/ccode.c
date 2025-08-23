@@ -24,6 +24,12 @@
 static char buf0[LEN_MAX_CLIENT_MSG+1];
 static char buf1[LEN_MAX_CLIENT_MSG+1];
 
+// Fineness units consistent with Blakod
+static const int FINENESS = 64;
+
+// Scaling factor to convert server coordinates to polygon vertex coordinates
+static const int POLYGON_COORD_SCALE = 16;
+
 /* just like strstr, except any case-insensitive match will be returned */
 const char* stristr(const char* pSource, const char* pSearch)
 {
@@ -2343,4 +2349,200 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	ret_val.v.data = number;
 	
 	return ret_val.int_val;
+}
+
+/**
+ * PointInPoly: Returns True if point (fx, fy) lies inside the given polygon.
+ */
+static bool PointInPoly(int fx, int fy, const server_polygon &poly)
+{
+   if (poly.num_vertices < 3)
+      return False;
+
+   bool inside = False;
+   for (int i = 0, j = poly.num_vertices - 1; i < poly.num_vertices; j = i++)
+   {
+      int xi = poly.vertices_x[i], yi = poly.vertices_y[i];
+      int xj = poly.vertices_x[j], yj = poly.vertices_y[j];
+
+      int dy = yj - yi;
+      if (dy == 0)
+         continue;
+
+      if ((yi > fy) != (yj > fy))
+      {
+         double x_int = (double) (xj - xi) * (double) (fy - yi) / (double) (yj - yi) + xi;
+
+         if (fx < x_int)
+            inside = !inside;
+      }
+   }
+   return inside;
+}
+
+/**
+ * C_PointInSector: Tests whether a fine-grained room coordinate falls inside any polygon of sectors
+ * matching given ID(s).
+ * Expects 6 params: room data, row, col, fine-row (fr), fine-col (fc), and an ID or list of IDs.
+ */
+blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+                         int num_name_parms, parm_node name_parm_array[])
+{
+   val_type room_val, row_val, col_val, fr_val, fc_val, id_list_val;
+   std::vector<int> sector_ids;
+   int sector_id;
+
+   if (num_normal_parms != 6)
+   {
+      bprintf("C_PointInSector has wrong number of parameters\n");
+      return NIL;
+   }
+   room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+   row_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+   col_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+   fr_val = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+   fc_val = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
+   id_list_val = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
+
+   if (room_val.v.tag != TAG_ROOM_DATA)
+   {
+      bprintf("C_PointInSector has bad room tag\n");
+      return NIL;
+   }
+
+   if (row_val.v.tag != TAG_INT)
+   {
+      bprintf("C_PointInSector has bad row tag\n");
+      return NIL;
+   }
+
+   if (col_val.v.tag != TAG_INT)
+   {
+      bprintf("C_PointInSector has bad col tag\n");
+      return NIL;
+   }
+
+   if (fr_val.v.tag != TAG_INT)
+   {
+      bprintf("C_PointInSector has bad fr tag\n");
+      return NIL;
+   }
+
+   if (id_list_val.v.tag == TAG_INT)
+   {
+      val_type temp, nil_val;
+      temp.v.tag = TAG_INT;
+      temp.v.data = id_list_val.v.data;
+
+      nil_val.v.tag = TAG_INT;
+      nil_val.v.data = 0;
+
+      id_list_val.v.data = Cons(temp, nil_val);
+      id_list_val.v.tag = TAG_LIST;
+   }
+   else if (id_list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_PointInSector has bad 6th parameter tag, expected list or int\n");
+      return NIL;
+   }
+
+   roomdata_node *rd = GetRoomDataByID(room_val.v.data);
+   if (!rd || !rd->file_info.sectors)
+   {
+      bprintf("C_PointInSector has bad room id passed in: %i\n", room_val.v.data);
+      return NIL;
+   }
+
+   room_type *r = &rd->file_info;
+
+   // remember that kod uses 1-based arrays and we don't
+   int row0 = (int) row_val.v.data - 1;
+   int col0 = (int) col_val.v.data - 1;
+
+   // Now, we need to convert the kod coordinates to coordinates that match the room data
+   int fine_x = (int) ((long long) (col0 * FINENESS) + fc_val.v.data) * POLYGON_COORD_SCALE;
+   int fine_y = (int) ((long long) (row0 * FINENESS) + fr_val.v.data) * POLYGON_COORD_SCALE;
+
+   // Build the vector of sector ids
+   if (id_list_val.v.tag == TAG_INT)
+   {
+      sector_id = (int) id_list_val.v.data;
+      sector_ids.push_back(sector_id);
+   }
+   else if (id_list_val.v.tag == TAG_LIST)
+   {
+      list_node *list = GetListNodeByID(id_list_val.v.data);
+      if (!list)
+      {
+         bprintf("C_PointInSector failed to get list node by id: %i\n", id_list_val.v.data);
+         return NIL;
+      }
+
+      while (list != NULL)
+      {
+         if (list->first.v.tag == TAG_INT)
+         {
+            sector_id = list->first.v.data;
+            sector_ids.push_back(sector_id);
+         }
+         else
+         {
+            bprintf("C_PointInSector: Sector list element is not an integer\n");
+         }
+
+         if (list->rest.v.tag == TAG_LIST)
+         {
+            list = GetListNodeByID(list->rest.v.data);
+         }
+         else
+         {
+            break;
+         }
+      }
+   }
+   else
+   {
+      bprintf("C_PointInSector has bad 6th parameter tag, expected list or int\n");
+      return NIL;
+   }
+
+   for (int sector_id : sector_ids)
+   {
+      for (int i = 0; i < r->num_sectors; i++)
+      {
+         if (r->sectors[i].id != sector_id)
+         {
+            continue;
+         }
+
+         // Found matching sector, check polygons
+         for (int p = 0; p < r->sectors[i].num_polygons; p++)
+         {
+            // First, check if the sector has polygons
+            if (r->sectors[i].polygons == NULL || p >= r->sectors[i].num_polygons)
+            {
+               continue;
+            }
+
+            server_polygon *poly = &r->sectors[i].polygons[p];
+            if (!poly->vertices_x || !poly->vertices_y || poly->num_vertices < 3)
+            {
+               continue;
+            }
+
+            if (PointInPoly(fine_x, fine_y, *poly))
+            {
+               val_type ret;
+               ret.v.tag = TAG_INT;
+               ret.v.data = True;
+               return ret.int_val;
+            }
+         }
+      }
+   }
+
+   val_type ret;
+   ret.v.tag = TAG_INT;
+   ret.v.data = False;
+   return ret.int_val;
 }

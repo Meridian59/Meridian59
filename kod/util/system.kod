@@ -6562,6 +6562,16 @@ messages:
       }
       return total;
    }
+
+   UpdateWhoListForAll()
+   {
+      local i;
+      for i in Send(self,@GetUsersLoggedOn)
+      {
+         Send(i,@ToCliPlayers);
+      }
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

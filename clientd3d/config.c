@@ -99,7 +99,7 @@ static char INIDomainFormat[] = "Domain";
 
 static char users_section[]  = "Users";  /* Section for dealing with other users */
 static char INIDrawNames[]   = "DrawNames";
-static char INIShowRarity[]  = "DrawInvRarities";
+static char INIShowRarity[]  = "DrawInventoryRarities";
 static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";

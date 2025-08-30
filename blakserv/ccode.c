@@ -2352,21 +2352,20 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 }
 
 /**
- * PointInPoly: Returns True if point (fx, fy) lies inside the given polygon.
+ * IsPointInPoly: Returns True if point (fx, fy) lies inside the given polygon.
  */
-static bool PointInPoly(int fx, int fy, const server_polygon &poly)
+static bool IsPointInPoly(int fx, int fy, const server_polygon &poly)
 {
    if (poly.num_vertices < 3)
-      return False;
+      return false;
 
-   bool inside = False;
+   bool inside = false;
    for (int i = 0, j = poly.num_vertices - 1; i < poly.num_vertices; j = i++)
    {
       int xi = poly.vertices_x[i], yi = poly.vertices_y[i];
       int xj = poly.vertices_x[j], yj = poly.vertices_y[j];
 
-      int dy = yj - yi;
-      if (dy == 0)
+      if (yj - yi == 0)
          continue;
 
       if ((yi > fy) != (yj > fy))
@@ -2381,20 +2380,19 @@ static bool PointInPoly(int fx, int fy, const server_polygon &poly)
 }
 
 /**
- * C_PointInSector: Tests whether a fine-grained room coordinate falls inside any polygon of sectors
+ * C_IsPointInSector: Tests whether a fine-grained room coordinate falls inside any polygon of sectors
  * matching given ID(s).
  * Expects 6 params: room data, row, col, fine-row (fr), fine-col (fc), and an ID or list of IDs.
  */
-blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
                          int num_name_parms, parm_node name_parm_array[])
 {
    val_type room_val, row_val, col_val, fr_val, fc_val, id_list_val;
-   std::vector<int> sector_ids;
    int sector_id;
 
    if (num_normal_parms != 6)
    {
-      bprintf("C_PointInSector has wrong number of parameters\n");
+      bprintf("C_IsPointInSector has wrong number of parameters\n");
       return NIL;
    }
    room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2406,25 +2404,25 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
 
    if (room_val.v.tag != TAG_ROOM_DATA)
    {
-      bprintf("C_PointInSector has bad room tag\n");
+      bprintf("C_IsPointInSector has bad room tag\n");
       return NIL;
    }
 
    if (row_val.v.tag != TAG_INT)
    {
-      bprintf("C_PointInSector has bad row tag\n");
+      bprintf("C_IsPointInSector has bad row tag\n");
       return NIL;
    }
 
    if (col_val.v.tag != TAG_INT)
    {
-      bprintf("C_PointInSector has bad col tag\n");
+      bprintf("C_IsPointInSector has bad col tag\n");
       return NIL;
    }
 
    if (fr_val.v.tag != TAG_INT)
    {
-      bprintf("C_PointInSector has bad fr tag\n");
+      bprintf("C_IsPointInSector has bad fr tag\n");
       return NIL;
    }
 
@@ -2442,14 +2440,14 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
    }
    else if (id_list_val.v.tag != TAG_LIST)
    {
-      bprintf("C_PointInSector has bad 6th parameter tag, expected list or int\n");
+      bprintf("C_IsPointInSector has bad sector_ids parameter tag, expected list or int\n");
       return NIL;
    }
 
    roomdata_node *rd = GetRoomDataByID(room_val.v.data);
    if (!rd || !rd->file_info.sectors)
    {
-      bprintf("C_PointInSector has bad room id passed in: %i\n", room_val.v.data);
+      bprintf("C_IsPointInSector has bad room id passed in: %i\n", room_val.v.data);
       return NIL;
    }
 
@@ -2464,7 +2462,9 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
    int fine_y = (int) ((long long) (row0 * FINENESS) + fr_val.v.data) * POLYGON_COORD_SCALE;
 
    // Build the vector of sector ids
-   if (id_list_val.v.tag == TAG_INT)
+   std::vector<int> sector_ids;
+   
+	 if (id_list_val.v.tag == TAG_INT)
    {
       sector_id = (int) id_list_val.v.data;
       sector_ids.push_back(sector_id);
@@ -2474,7 +2474,7 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
       list_node *list = GetListNodeByID(id_list_val.v.data);
       if (!list)
       {
-         bprintf("C_PointInSector failed to get list node by id: %i\n", id_list_val.v.data);
+         bprintf("C_IsPointInSector failed to get list node by id: %i\n", id_list_val.v.data);
          return NIL;
       }
 
@@ -2487,7 +2487,7 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
          }
          else
          {
-            bprintf("C_PointInSector: Sector list element is not an integer\n");
+            bprintf("C_IsPointInSector: Sector id list element is not an integer\n");
          }
 
          if (list->rest.v.tag == TAG_LIST)
@@ -2496,47 +2496,49 @@ blak_int C_PointInSector(int object_id, local_var_type *local_vars, int num_norm
          }
          else
          {
-            break;
+						break;
          }
       }
    }
    else
    {
-      bprintf("C_PointInSector has bad 6th parameter tag, expected list or int\n");
+      bprintf("C_IsPointInSector has bad sector_ids parameter tag, expected list or int\n");
       return NIL;
    }
 
    for (int sector_id : sector_ids)
    {
+      server_sector *ss = nullptr;
       for (int i = 0; i < r->num_sectors; i++)
       {
-         if (r->sectors[i].id != sector_id)
+         if (r->sectors[i].id == sector_id)
+         {
+            ss = &r->sectors[i];
+            break;
+         }
+      }
+
+      if (!ss)
+      {
+         bprintf("C_IsPointInSector: Sector id not found in room: %i\n", sector_id, room_val.v.data);
+         continue;
+      }
+
+      // Found matching sector, check polygons
+      for (int p = 0; p < ss->num_polygons; p++)
+      {
+         const server_polygon &poly = ss->polygons[p];
+         if (!poly.vertices_x || !poly.vertices_y || poly.num_vertices < 3)
          {
             continue;
          }
 
-         // Found matching sector, check polygons
-         for (int p = 0; p < r->sectors[i].num_polygons; p++)
+         if (IsPointInPoly(fine_x, fine_y, poly))
          {
-            // First, check if the sector has polygons
-            if (r->sectors[i].polygons == NULL || p >= r->sectors[i].num_polygons)
-            {
-               continue;
-            }
-
-            server_polygon *poly = &r->sectors[i].polygons[p];
-            if (!poly->vertices_x || !poly->vertices_y || poly->num_vertices < 3)
-            {
-               continue;
-            }
-
-            if (PointInPoly(fine_x, fine_y, *poly))
-            {
-               val_type ret;
-               ret.v.tag = TAG_INT;
-               ret.v.data = True;
-               return ret.int_val;
-            }
+            val_type ret;
+            ret.v.tag = TAG_INT;
+            ret.v.data = True;
+            return ret.int_val;
          }
       }
    }

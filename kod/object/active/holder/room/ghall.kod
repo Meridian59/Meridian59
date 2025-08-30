@@ -1065,7 +1065,7 @@ messages:
          oObject = First(i);
          if IsClass(oObject,&Player)
          {
-            if PointInSector(prmRoom,
+            if IsPointInSector(prmRoom,
                Send(oObject,@GetRow),
                Send(oObject,@GetCol),
                Send(oObject,@GetFineRow),

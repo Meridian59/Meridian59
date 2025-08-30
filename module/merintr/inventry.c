@@ -643,10 +643,10 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          COLORREF rarityColor = GetItemRarityColor(item->obj->rarity);
 
          // Square size and position
-         int boxSize = 6;
-         int right = area.x + INVENTORY_BOX_WIDTH - 2;
+         int boxSize = 10;
+         int right = area.x + INVENTORY_BOX_WIDTH - 4;
          int left  = right - boxSize;
-         int top   = area.y + 2;
+         int top   = area.y + 4;
          int bottom= top + boxSize;
 
          // Draw main colored square
@@ -655,49 +655,59 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          FillRect(hdc, &rc, hBrush);
          DeleteObject(hBrush);
 
-         // Draw outline for extra definition
-         HPEN hPenOutline = CreatePen(PS_SOLID, 1, RGB(180,180,180));
-         HGDIOBJ oldPen = SelectObject(hdc, hPenOutline);
-         MoveToEx(hdc, left, top, NULL);
-         LineTo(hdc, right-1, top);
-         LineTo(hdc, right-1, bottom-1);
-         LineTo(hdc, left, bottom-1);
-         LineTo(hdc, left, top);
-         SelectObject(hdc, oldPen);
-         DeleteObject(hPenOutline);
-
          // Draw 3D effect: shadow (top/left), highlight (bottom/right)
+         COLORREF highlight = RGB(255,255,255);
+
+         HBRUSH hBrushHighlight = CreateSolidBrush(highlight);
+
+         int highlightSize = 4;
+         RECT rcHighlight = { 
+            left + 1, 
+            top + 1, 
+            left + highlightSize, 
+            top + highlightSize 
+         };
+         FillRect(hdc, &rcHighlight, hBrushHighlight);
+         DeleteObject(hBrushHighlight);
+
+         // Draw outline for inset effect - top and left edges (dark)
+         HPEN hPenDark = CreatePen(PS_SOLID, 1, RGB(40,40,40));
+         HGDIOBJ oldPen = SelectObject(hdc, hPenDark);
+         MoveToEx(hdc, left-1, top-1, NULL);
+         LineTo(hdc, right-1, top-1);  // Top edge (stop before corner)
+         MoveToEx(hdc, left-1, top-1, NULL);
+         LineTo(hdc, left-1, bottom-1); // Left edge (stop before corner)
+         SelectObject(hdc, oldPen);
+         DeleteObject(hPenDark);
+
+         // Draw outline for inset effect - bottom and right edges (light)
+         HPEN hPenLight = CreatePen(PS_SOLID, 1, RGB(150,150,150));
+         SelectObject(hdc, hPenLight);
+         MoveToEx(hdc, left-1, bottom, NULL);
+         LineTo(hdc, right-1, bottom); // Bottom edge (stop before corner)
+         MoveToEx(hdc, right, top-1, NULL);
+         LineTo(hdc, right, bottom-1); // Right edge (stop before corner)
+         SelectObject(hdc, oldPen);
+         DeleteObject(hPenLight);
+
          COLORREF shadow = RGB(
-            max(GetRValue(rarityColor) - 80, 0),
-            max(GetGValue(rarityColor) - 80, 0),
-            max(GetBValue(rarityColor) - 80, 0)
+            max(GetRValue(rarityColor) - 125, 0),
+            max(GetGValue(rarityColor) - 125, 0),
+            max(GetBValue(rarityColor) - 125, 0)
          );
-         COLORREF highlight = RGB(
-            min(GetRValue(rarityColor) + 80, 255),
-            min(GetGValue(rarityColor) + 80, 255),
-            min(GetBValue(rarityColor) + 80, 255)
-         );
-
          HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
-         HPEN hPenHighlight = CreatePen(PS_SOLID, 1, highlight);
-
-         // Top and left edges (shadow)
          oldPen = SelectObject(hdc, hPenShadow);
-         MoveToEx(hdc, left+1, top+1, NULL);
-         LineTo(hdc, right-2, top+1);
-         MoveToEx(hdc, left+1, top+1, NULL);
-         LineTo(hdc, left+1, bottom-2);
 
-         // Bottom and right edges (highlight)
-         SelectObject(hdc, hPenHighlight);
-         MoveToEx(hdc, left+1, bottom-2, NULL);
-         LineTo(hdc, right-2, bottom-2);
-         MoveToEx(hdc, right-2, top+1, NULL);
-         LineTo(hdc, right-2, bottom-2);
-
+         MoveToEx(hdc, left, bottom-1, NULL);
+         LineTo(hdc, right, bottom-1);
+         MoveToEx(hdc, right-1, top, NULL);
+         LineTo(hdc, right-1, bottom);
+         
          SelectObject(hdc, oldPen);
          DeleteObject(hPenShadow);
-         DeleteObject(hPenHighlight);
+
+         DeleteObject(hPenDark);
+         DeleteObject(hPenLight);
       }
    }
 

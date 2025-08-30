@@ -180,7 +180,7 @@ BEGIN
     CONTROL         "Balançar câmera ao andar",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
     CONTROL         "Mostrar dor em impactos",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
     CONTROL         "Mostrar nomes dos jogadores",IDC_DRAWNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
-    CONTROL         "Mostrar raridade dos itens do inventario",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
+    CONTROL         "Mostrar raridade dos itens do inventário",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
     CONTROL         "Mostrar quantidade de itens",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     GROUPBOX        "Efeitos de áudio",IDC_STATIC,6,87,245,83,WS_GROUP
     CONTROL         "Música",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,55,9
@@ -1191,7 +1191,7 @@ BEGIN
     CONTROL         "Schrittschwankungen anzeigen",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
     CONTROL         "Schmerzen bei Treffern anzeigen",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
     CONTROL         "Namen der Spieler anzeigen",IDC_DRAWNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,38,132,9
-    CONTROL         "Seltenheit der Inventargegenstande anzeigen",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
+    CONTROL         "Seltenheit der Inventargegenstände anzeigen",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
     CONTROL         "Anzahl der Gegenstände anzeigen",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     GROUPBOX        "Audio Effekte",IDC_STATIC,6,87,245,83,WS_GROUP
     CONTROL         "Musik",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,33,9

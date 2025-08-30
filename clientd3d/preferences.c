@@ -1098,6 +1098,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
         // Initialize dialog with current settings
         CheckDlgButton(hDlg, IDC_SCROLLLOCK, config.scroll_lock);
         CheckDlgButton(hDlg, IDC_DRAWNAMES, config.draw_names);
+        CheckDlgButton(hDlg, IDC_INV_RARITY, config.show_inventory_rarity);
         CheckDlgButton(hDlg, IDC_TOOLTIPS, config.tooltips);
         CheckDlgButton(hDlg, IDC_PAIN, config.pain);
         CheckDlgButton(hDlg, IDC_INVNUM, config.inventory_num);
@@ -1148,6 +1149,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             // Save settings (config is persisted on close of the meridian executable)
             config.scroll_lock = IsDlgButtonChecked(hDlg, IDC_SCROLLLOCK);
             config.draw_names = IsDlgButtonChecked(hDlg, IDC_DRAWNAMES);
+            config.show_inventory_rarity = IsDlgButtonChecked(hDlg, IDC_INV_RARITY);
             config.tooltips = IsDlgButtonChecked(hDlg, IDC_TOOLTIPS);
             config.pain = IsDlgButtonChecked(hDlg, IDC_PAIN);
             config.inventory_num = IsDlgButtonChecked(hDlg, IDC_INVNUM);

@@ -1156,8 +1156,12 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.antiprofane = IsDlgButtonChecked(hDlg, IDC_PROFANE);
             config.drawmap = IsDlgButtonChecked(hDlg, IDC_DRAWMAP);
             config.map_annotations = IsDlgButtonChecked(hDlg, IDC_MAP_ANNOTATIONS);
-            config.toolbar = IsDlgButtonChecked(hDlg, IDC_TOOLBAR);
-            config.lagbox = IsDlgButtonChecked(hDlg, IDS_LATENCY0);
+            bool temp = IsDlgButtonChecked(hDlg, IDC_TOOLBAR);
+            bool toolbar_changed = (temp != (bool) config.toolbar);
+            config.toolbar = temp;
+            temp = IsDlgButtonChecked(hDlg, IDS_LATENCY0);
+            bool lagbox_changed = (temp != (bool) config.lagbox);
+            config.lagbox = temp;
             config.spinning_cube = IsDlgButtonChecked(hDlg, ID_SPINNING_CUBE);
             config.play_music = IsDlgButtonChecked(hDlg, IDC_MUSIC);
             config.play_sound = IsDlgButtonChecked(hDlg, IDC_SOUNDFX);
@@ -1171,6 +1175,12 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.music_volume = SendMessage(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), TBM_GETPOS, 0, 0);
             config.ambient_volume = SendMessage(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), TBM_GETPOS, 0, 0);
 
+            // Redraw main window to reflect new settings
+            if (toolbar_changed || lagbox_changed)
+            {
+              ResizeAll();
+            }
+            
             EndDialog(hDlg, LOWORD(wParam));
             return (INT_PTR)TRUE;
         }

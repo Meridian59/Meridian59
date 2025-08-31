@@ -640,14 +640,14 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
    {
       // Add rarity color with 3D/inset effect if item is not normal
       if (item->obj && item->obj->rarity != ITEM_RARITY_GRADE_NORMAL) {
-         COLORREF rarityColor = GetItemRarityColor(item->obj->rarity);
+         const COLORREF rarityColor = GetItemRarityColor(item->obj->rarity);
 
          // Square size and position
-         int boxSize = 10;
-         int right = area.x + INVENTORY_BOX_WIDTH - 4;
-         int left  = right - boxSize;
-         int top   = area.y + 4;
-         int bottom= top + boxSize;
+         const int boxSize = 10;
+         const int right = area.x + INVENTORY_BOX_WIDTH - 4;
+         const int left  = right - boxSize;
+         const int top   = area.y + 4;
+         const int bottom= top + boxSize;
 
          // Draw main colored square
          HBRUSH hBrush = CreateSolidBrush(rarityColor);
@@ -656,11 +656,11 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          DeleteObject(hBrush);
 
          // Draw 3D effect: shadow (top/left), highlight (bottom/right)
-         COLORREF highlight = RGB(255,255,255);
+         const COLORREF highlight = RGB(255,255,255);
 
          HBRUSH hBrushHighlight = CreateSolidBrush(highlight);
 
-         int highlightSize = 4;
+         const int highlightSize = 4;
          RECT rcHighlight = { 
             left + 1, 
             top + 1, 

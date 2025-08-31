@@ -638,7 +638,7 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
 
    if (cinfo->config->show_inventory_rarity)
    {
-      // Add rarity color if item is not normal; with 3D/inset effect
+      // Add rarity color with 3D/inset effect if item is not normal
       if (item->obj && item->obj->rarity != ITEM_RARITY_GRADE_NORMAL) {
          COLORREF rarityColor = GetItemRarityColor(item->obj->rarity);
 
@@ -691,9 +691,9 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          DeleteObject(hPenLight);
 
          COLORREF shadow = RGB(
-            max(GetRValue(rarityColor) - 125, 0),
-            max(GetGValue(rarityColor) - 125, 0),
-            max(GetBValue(rarityColor) - 125, 0)
+            max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT , 0),
+            max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT , 0),
+            max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT , 0)
          );
          HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
          oldPen = SelectObject(hdc, hPenShadow);
@@ -704,8 +704,8 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          LineTo(hdc, right-1, bottom);
          
          SelectObject(hdc, oldPen);
-         DeleteObject(hPenShadow);
 
+         DeleteObject(hPenShadow);
          DeleteObject(hPenDark);
          DeleteObject(hPenLight);
       }

@@ -445,6 +445,7 @@ void InterfaceConfigChanged(void)
          SendSafety(0);
       else SendSafety(1);
    }
+   InventoryRedraw();
 }
 
 /* utility functions */

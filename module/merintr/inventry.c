@@ -105,19 +105,6 @@ static const int COLOR_ITEM_UNIDENTIFIED = RGB(252,128,0);
 static const int COLOR_ITEM_CURSED       = RGB(255,0,0);
 static const int COLOR_ITEM_DEFAULT      = RGB(255,255,255);
 
-static COLORREF GetItemRarityColor(item_rarity_grade rarity)
-{
-    switch (rarity)
-    {
-        case ITEM_RARITY_GRADE_UNCOMMON:     return COLOR_ITEM_UNCOMMON;
-        case ITEM_RARITY_GRADE_RARE:         return COLOR_ITEM_RARE;
-        case ITEM_RARITY_GRADE_LEGENDARY:    return COLOR_ITEM_LEGENDARY;
-        case ITEM_RARITY_GRADE_UNIDENTIFIED: return COLOR_ITEM_UNIDENTIFIED;
-        case ITEM_RARITY_GRADE_CURSED:       return COLOR_ITEM_CURSED;
-        default:                             return COLOR_ITEM_DEFAULT;
-    }
-}
-
 /* local function prototypes */
 static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -142,6 +129,22 @@ static Bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
+/************************************************************************/
+/*
+ * GetItemRarityColor:  Get the color associated with an item's rarity.
+ */
+static COLORREF GetItemRarityColor(item_rarity_grade rarity)
+{
+    switch (rarity)
+    {
+        case ITEM_RARITY_GRADE_UNCOMMON:     return COLOR_ITEM_UNCOMMON;
+        case ITEM_RARITY_GRADE_RARE:         return COLOR_ITEM_RARE;
+        case ITEM_RARITY_GRADE_LEGENDARY:    return COLOR_ITEM_LEGENDARY;
+        case ITEM_RARITY_GRADE_UNIDENTIFIED: return COLOR_ITEM_UNIDENTIFIED;
+        case ITEM_RARITY_GRADE_CURSED:       return COLOR_ITEM_CURSED;
+        default:                             return COLOR_ITEM_DEFAULT;
+    }
+}
 /************************************************************************/
 /*
  * InventoryBoxCreate:  Create the inventory list box.

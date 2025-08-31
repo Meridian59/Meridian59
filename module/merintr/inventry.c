@@ -661,7 +661,7 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          // Draw 3D effect: shadow (top/left), highlight (bottom/right)
          const COLORREF highlight = RGB(255,255,255);
 
-         HBRUSH hBrushHighlight = CreateSolidBrush(highlight);
+         const HBRUSH hBrushHighlight = CreateSolidBrush(highlight);
 
          const int highlightSize = 4;
          RECT rcHighlight = { 

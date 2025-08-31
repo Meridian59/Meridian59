@@ -88,11 +88,6 @@ void GraphicsToggleMap(void)
 void ResizeAll(void)
 {
    RECT r;
-   
-   GetWindowRect(hMain, &r);
-   //MoveWindow(hMain, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
-   MoveWindow(hMain, 0, 0, 1024, 768, TRUE);
-
    GetClientRect(hMain, &r);
    MainResize(hMain, SIZE_RESTORED, r.right - r.left, r.bottom - r.top);
    InvalidateRect(hMain, NULL, TRUE);

@@ -54,12 +54,20 @@ void MapFileInitialize(void)
       return;
 
    bool file_exists = (stat(map_filename, &s) == 0);
+   if (file_exists)
+   {
+     mapfile = fopen(map_filename, "r+b");
+   }
+   else
+   {
+     // File doesn't exist; create a new one
+     mapfile = fopen(map_filename, "w+b");
+   }
    
-   mapfile = fopen(map_filename, "r+b");
    if (mapfile == nullptr)
    {
-      debug(("Couldn't open map file\n"));
-      return;
+     debug(("Couldn't open map file\n"));
+     return;
    }
 
    if (!MapFileVerifyHeader(mapfile, file_exists))
@@ -96,7 +104,7 @@ bool MapFileVerifyHeader(FILE *file, bool file_exists)
      for (i=0; i < 4; i++)
        if (fread(&byte, 1, 1, file) != 1 || byte != map_magic[i])
          return false;
-     if (fread(&version, 4, 1, file) != 4 || version > MAPFILE_VERSION)
+     if (fread(&version, 1, 4, file) != 4 || version > MAPFILE_VERSION)
      {
        debug(("Bad map file version %d; expecting %d\n", version, MAPFILE_VERSION));
        return false;
@@ -107,13 +115,13 @@ bool MapFileVerifyHeader(FILE *file, bool file_exists)
      if (fwrite(map_magic, 1, 4, file) != 4)
        return false;
      version = MAPFILE_VERSION;
-     if (fwrite(&version, 4, 1, file) != 4)
+     if (fwrite(&version, 1, 4, file) != 4)
        return false;
      
      // Write out empty header table
      int temp = 0;
      for (i=0; i < MAPFILE_TOP_TABLE_SIZE; i++)
-       if (fwrite(&temp, 4, 1, file) != 4)
+       if (fwrite(&temp, 1, 4, file) != 4)
          return false;
    }
    return true;
@@ -136,7 +144,7 @@ bool MapFileLoadRoom(room_type *room)
    if (!MapFileFindRoom(room->security, false))
       return false;
 
-   if (fread(&num_walls, 4, 1, mapfile) != 4)
+   if (fread(&num_walls, 1, 4, mapfile) != 4)
       return false;
 
    if (num_walls != room->num_walls)
@@ -157,7 +165,7 @@ bool MapFileLoadRoom(room_type *room)
      room->walls[i].seen = ((byte & (1 << offset)) != 0) ? True : False;
    }
    
-   if (fread(&room->annotations_offset, 4, 1, mapfile) != 4)
+   if (fread(&room->annotations_offset, 1, 4, mapfile) != 4)
      return false;
    
    // Read annotations if present
@@ -166,15 +174,15 @@ bool MapFileLoadRoom(room_type *room)
      fseek(mapfile, room->annotations_offset, SEEK_SET);
      
      // Read # of annotations
-     if (fread(&num_annotations, 4, 1, mapfile) != 4)
+     if (fread(&num_annotations, 1, 4, mapfile) != 4)
        return false;
      num_annotations = min(num_annotations, MAX_ANNOTATIONS);
      
      for (i=0; i < num_annotations; i++)
      {
-       if (fread(&room->annotations[i].x, 4, 1, mapfile) != 4)
+       if (fread(&room->annotations[i].x, 1, 4, mapfile) != 4)
          return false;
-       if (fread(&room->annotations[i].y, 4, 1, mapfile) != 4)
+       if (fread(&room->annotations[i].y, 1, 4, mapfile) != 4)
          return false;
        if (fread(room->annotations[i].text, MAX_ANNOTATION_LEN, 1, mapfile) != MAX_ANNOTATION_LEN)
          return false;
@@ -203,7 +211,7 @@ bool MapFileSaveRoom(room_type *room)
       return false;
    }
 
-   if (fwrite(&room->num_walls, 4, 1, mapfile) != 4)
+   if (fwrite(&room->num_walls, 1, 4, mapfile) != 4)
       return false;
 
    byte = 0;
@@ -226,7 +234,7 @@ bool MapFileSaveRoom(room_type *room)
        return false;
    
    // Write out offset of annotations; write placeholder first in case at end of file
-   if (fwrite(&temp, 4, 1, mapfile) != 4)
+   if (fwrite(&temp, 1, 4, mapfile) != 4)
      return false;
    
    // See if adding annotations for the first time
@@ -234,7 +242,7 @@ bool MapFileSaveRoom(room_type *room)
      room->annotations_offset = FileSize(mapfile);
    
    fseek(mapfile, -4, SEEK_CUR);
-   if (fwrite(&room->annotations_offset, 4, 1, mapfile) != 4)
+   if (fwrite(&room->annotations_offset, 1, 4, mapfile) != 4)
      return false;
 
    // Write out annotations if they've changed
@@ -242,14 +250,14 @@ bool MapFileSaveRoom(room_type *room)
    {
      fseek(mapfile, room->annotations_offset, SEEK_SET);
      temp = MAX_ANNOTATIONS;
-     if (fwrite(&temp, 4, 1, mapfile) != 4)
+     if (fwrite(&temp, 1, 4, mapfile) != 4)
        return false;
      
      for (i=0; i < MAX_ANNOTATIONS; i++)
      {
-       if (fwrite(&room->annotations[i].x, 4, 1, mapfile) != 4)
+       if (fwrite(&room->annotations[i].x, 1, 4, mapfile) != 4)
          return false;
-       if (fwrite(&room->annotations[i].y, 4, 1, mapfile) != 4)
+       if (fwrite(&room->annotations[i].y, 1, 4, mapfile) != 4)
          return false;
        if (fwrite(room->annotations[i].text, MAX_ANNOTATION_LEN, 1, mapfile) != MAX_ANNOTATION_LEN)
          return false;
@@ -276,7 +284,7 @@ bool MapFileFindRoom(int security, bool create)
    pos = 8 + 4 * (abs(security) % MAPFILE_TOP_TABLE_SIZE);
    fseek(mapfile, pos, SEEK_SET);
 
-   if (fread(&pos, 4, 1, mapfile) != 4) return false;
+   if (fread(&pos, 1, 4, mapfile) != 4) return false;
 
    // Create new offset table if none is there
    if (pos == 0)
@@ -286,33 +294,33 @@ bool MapFileFindRoom(int security, bool create)
 
       fseek(mapfile, -4, SEEK_CUR);
       pos = FileSize(mapfile);
-      if (fwrite(&pos, 4, 1, mapfile) != 4) return false;
+      if (fwrite(&pos, 1, 4, mapfile) != 4) return false;
       
       fseek(mapfile, pos, SEEK_SET);
       next_table = 0;
-      if (fwrite(&next_table, 4, 1, mapfile) != 4) return false;
+      if (fwrite(&next_table, 1, 4, mapfile) != 4) return false;
 
       // Fill in empty table, to reserve space in file
       for (i=0; i < MAPFILE_LOWER_TABLE_SIZE; i++)
       {
         temp = 0;
-        if (fwrite(&temp, 4, 1, mapfile) != 4) return false;
-        if (fwrite(&temp, 4, 1, mapfile) != 4) return false;
+        if (fwrite(&temp, 1, 4, mapfile) != 4) return false;
+        if (fwrite(&temp, 1, 4, mapfile) != 4) return false;
       }
    }
 
    // Go to offset table
    fseek(mapfile, pos, SEEK_SET);
 
-   if (fread(&next_table, 4, 1, mapfile) != 4) return false;
+   if (fread(&next_table, 1, 4, mapfile) != 4) return false;
 
    // Search table linearly
    // XXX If not found, check next table or add table
    bool found = false;
    for (i=0; i < MAPFILE_LOWER_TABLE_SIZE; i++)
    {
-     if (fread(&file_security, 4, 1, mapfile) != 4) return false;
-     if (fread(&pos, 4, 1, mapfile) != 4) return false;
+     if (fread(&file_security, 1, 4, mapfile) != 4) return false;
+     if (fread(&pos, 1, 4, mapfile) != 4) return false;
      if (file_security == 0)
        break;
      if (file_security == security)
@@ -336,8 +344,8 @@ bool MapFileFindRoom(int security, bool create)
       // Add map info entry
       fseek(mapfile, -8, SEEK_CUR);
       pos = FileSize(mapfile);
-      if (fwrite(&security, 4, 1, mapfile) != 4) return false;
-      if (fwrite(&pos, 4, 1, mapfile) != 4) return false;
+      if (fwrite(&security, 1, 4, mapfile) != 4) return false;
+      if (fwrite(&pos, 1, 4, mapfile) != 4) return false;
    }
 
    // Go to map info

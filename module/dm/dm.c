@@ -15,7 +15,7 @@
 HINSTANCE hInst;              // Handle of this DLL
 
 ClientInfo *cinfo;         // Holds data passed from main client
-Bool        exiting;
+bool        exiting;
 
 /* local function prototypes */
 static Bool HandleAdmin(char *ptr, long len);
@@ -77,14 +77,14 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    info->priority   = PRIORITY_NORMAL;
    info->module_id  = MODULE_ID;
    cinfo = client_info;    // Save client info for our use later
-   exiting = False;
+   exiting = false;
 
    KeyAddTable(GAME_PLAY, dm_key_table);
 }
 /****************************************************************************/
 void WINAPI ModuleExit(void)
 {
-   exiting = True;
+   exiting = true;
    PostMessage(cinfo->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
 }
 /****************************************************************************/
@@ -92,17 +92,17 @@ void WINAPI ModuleExit(void)
  * EVENT_SERVERMSG
  */
 /****************************************************************************/
-Bool WINAPI EventServerMessage(char *message, long len)
+bool WINAPI EventServerMessage(char *message, long len)
 {
-   Bool retval;
+   bool retval;
 
    retval = LookupMessage(message, len, handler_table);
 
    // If we handle message, don't pass it on to anyone else
-   if (retval == True)
-     return False;
+   if (retval == true)
+     return false;
 
-   return True;    // Allow other modules to get other messages
+   return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
 Bool HandleAdmin(char *ptr, long len)
@@ -117,27 +117,27 @@ Bool HandleAdmin(char *ptr, long len)
    message[length] = 0;
 
 //   GameMessage(message);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_TEXTCOMMAND
  */
 /****************************************************************************/
-Bool WINAPI EventTextCommand(char *str)
+bool WINAPI EventTextCommand(char *str)
 {
    // Parse command, and don't pass it on if we handle it
    if (ParseCommand(str, commands))
-      return False;
+      return false;
 
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_USERACTION
  */
 /****************************************************************************/
-Bool WINAPI EventUserAction(int action, void *action_data)
+bool WINAPI EventUserAction(int action, void *action_data)
 {
    int x, y;
    list_type objects;
@@ -163,21 +163,21 @@ Bool WINAPI EventUserAction(int action, void *action_data)
 
    case A_LOOKMOUSE: /* user 'looks' on main window */
       if (!GetQEditorDlg() && !GetGChannelDlg())
-	 return True;
+	 return true;
 
       if (!MouseToRoom(&x, &y))
-	 return True;
+	 return true;
 
       objects = GetObjects3D(x, y, 0, 0, 0);
       if (objects == NULL)
-	 return True;
+	 return true;
 
       /* Get details of object */
       obj = (object_node *) (objects->data);
       if (!obj)
       {
 	 debug(("clicked, but nothing\n"));
-	 return True;
+	 return true;
       }
 
       strcpy(buf, LookupNameRsc(obj->name_res));
@@ -185,31 +185,31 @@ Bool WINAPI EventUserAction(int action, void *action_data)
       {
 	 debug(("gchannel needs to hear we clicked on '%s' (flags = 0x08X)\n", buf, obj->flags));
 	 SendMessage(GetGChannelDlg(), DMDLGM_CLICKEDUSER, 0, (LPARAM)buf);
-	 return False;
+	 return false;
       }
 
       if (GetQEditorDlg())
       {
 	 debug(("qeditor needs to hear we clicked on '%s'\n", buf));
 	 SendMessage(GetQEditorDlg(), DMDLGM_CLICKEDUSER, 0, (LPARAM)buf);
-	 return False;
+	 return false;
       }
 
       break;
 
    case A_LOOKINVENTORY: /* user 'looks' on inventory window */
       if (!GetQEditorDlg() /* && !GetGChannelDlg() */)
-	 return True;
+	 return true;
 
       id = reinterpret_cast<std::intptr_t>(action_data);
       if (id == INVALID_ID)
-	 return True;
+	 return true;
 
       break;
 
    default: 
-      return True;
+      return true;
    }
 
-   return False;
+   return false;
 }

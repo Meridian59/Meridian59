@@ -12,9 +12,9 @@
 #ifndef _CMOVE_H
 #define _CMOVE_H
 
-Bool ChessMoveIsLegal(Board *b, POINT p1, POINT p2, BYTE color);
-void ChessMovePerform(Board *b, POINT p1, POINT p2, Bool interactive);
-Bool IsInCheck(Board *b, BYTE color);
-Bool HasLegalMove(Board *b, BYTE color);
+bool ChessMoveIsLegal(Board *b, POINT p1, POINT p2, BYTE color);
+void ChessMovePerform(Board *b, POINT p1, POINT p2, bool interactive);
+bool IsInCheck(Board *b, BYTE color);
+bool HasLegalMove(Board *b, BYTE color);
 
 #endif /* #ifndef _CMOVE_H */

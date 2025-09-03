@@ -7,14 +7,11 @@
 #include <windowsx.h>
 #include <stdio.h>
 
-typedef unsigned char Bool;
-enum {False = 0, True = 1};
-
 #define NUM_BYTES 5   // # of bytes to read from server (< amount in 1 message)
 
 static SOCKET sock;      // Socket
 
-static Bool debug = False;   // Print debugging messages when True
+static bool debug = dalse;   // Print debugging messages when true
 
 /************************************************************************/
 void Usage(void)
@@ -42,27 +39,27 @@ void dprintf(char *fmt,...)
 /********************************************************************/
 /*
  * OpenSocketConnection: Open a connection, given the host and socket #.
- *   Returns True on success.
+ *   Returns true on success.
  */
-Bool OpenSocketConnection(char *host, int sock_port)
+bool OpenSocketConnection(char *host, int sock_port)
 {
    WSADATA WSAData;
    SOCKADDR_IN dest_sin;
    PHOSTENT phe;
-   Bool success = False;
+   bool success = false;
    long addr;
 
    if (WSAStartup(MAKEWORD(1,1), &WSAData) != 0) 
    {
       dprintf("Can't initialize Winsock!\n");
-      return False;
+      return false;
    }
 
    sock = socket(AF_INET,SOCK_STREAM,0);
    if (sock == INVALID_SOCKET) 
    {
       dprintf("Error on call to socket; error # was %d\n", WSAGetLastError());
-      return False;
+      return false;
    }
 
    // Try to interpret host as an address with "." notation
@@ -70,7 +67,7 @@ Bool OpenSocketConnection(char *host, int sock_port)
    if (addr != -1)
    {
       dest_sin.sin_addr.s_addr = addr;
-      success = True;
+      success = true;
    }
    else
    {
@@ -79,14 +76,14 @@ Bool OpenSocketConnection(char *host, int sock_port)
       if (phe != NULL)
       {
 	 memcpy((char *)&(dest_sin.sin_addr), phe->h_addr, phe->h_length);
-	 success = True;
+	 success = true;
       }
    }
 
    if (!success) 
    {
       dprintf("Error on gethostbyname; error # was %d.\n", WSAGetLastError());
-      return False;
+      return false;
    }   
 
    dest_sin.sin_family = AF_INET;
@@ -96,18 +93,18 @@ Bool OpenSocketConnection(char *host, int sock_port)
       if (WSAGetLastError() != WSAEWOULDBLOCK)
       {
 	 dprintf("Error on connect; error # was %d\n", WSAGetLastError());
-	 return False;
+	 return false;
       }
 
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
  * CanReadBytes:  Tries to read NUM_BYTES bytes from sock, with the given
- *   timeout (in seconds).  Returns True iff bytes are read.
+ *   timeout (in seconds).  Returns true iff bytes are read.
  *   Sets sock to non-blocking mode.
  */
-Bool CanReadBytes(int timeout)
+bool CanReadBytes(int timeout)
 {
    u_long temp = 1;
    int retval;
@@ -119,7 +116,7 @@ Bool CanReadBytes(int timeout)
    {
       dprintf("Setting socket to non-blocking mode failed, error was %d\n",
 	     WSAGetLastError());
-      return False;
+      return false;
    }
 
    FD_ZERO(&set);
@@ -133,18 +130,18 @@ Bool CanReadBytes(int timeout)
    {
    case 0:
       dprintf("Read timed out\n");
-      return False;
+      return false;
 
    case SOCKET_ERROR:
       dprintf("Error in select, code = %d\n", WSAGetLastError());
-      return False;
+      return false;
       
    case 1:
       break;
 
    default:
       dprintf("Select got unexpected return value %d\n", retval);
-      return False;
+      return false;
    }
 
    // Try to read bytes
@@ -157,18 +154,18 @@ Bool CanReadBytes(int timeout)
 
    case 0:
       dprintf("Connection closed during read\n");
-      return False;
+      return false;
 
    case SOCKET_ERROR:
       dprintf("Error in recv, code = %d\n", WSAGetLastError());
-      return False;
+      return false;
 
    default:
       dprintf("Recv got unexpected return value %d\n", retval);
-      return False;
+      return false;
    }
 
-   return True;
+   return true;
 }
 /************************************************************************/
 int main(int argc, char **argv)
@@ -188,7 +185,7 @@ int main(int argc, char **argv)
       {
       case 'D':
       case 'd':
-	 debug = True;
+	 debug = true;
 	 break;
 
       default:

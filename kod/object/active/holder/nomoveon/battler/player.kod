@@ -3725,6 +3725,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=player_aggressor);
                Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
                Send(self,@EvaluatePKStatus,#dbug=TRUE);
+               Send(SYS,@UpdateWhoListForAll);
             }
          }
       }
@@ -4771,6 +4772,7 @@ messages:
                      Send(self,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=TRUE);
                      Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
                      Send(self,@EvaluatePKStatus,#dbug=TRUE);
+                     Send(SYS,@UpdateWhoListForAll);
                   }
    
                   % Does the lucky murderer win a Revenant?

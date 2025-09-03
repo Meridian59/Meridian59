@@ -21,10 +21,10 @@ void ModulesClose(void);
 void ModulesExitGame(void);
 
 ModuleInfo * ModuleLoadByName(char *filename);
-Bool ModuleLoadByRsc(ID name_rsc);
-Bool ModuleExitByRsc(ID name_rsc);
-Bool ModuleExitById(int module_id);
-Bool ModuleUnloadById(int module_id);
+bool ModuleLoadByRsc(ID name_rsc);
+bool ModuleExitByRsc(ID name_rsc);
+bool ModuleExitById(int module_id);
+bool ModuleUnloadById(int module_id);
 void ModulesEnterGame(void);
 
 /* event handler */

@@ -391,7 +391,7 @@ room_contents_node *ExtractNewRoomObject(char **ptr)
 //   ExtractDLighting(ptr, &r->obj.dLighting);
 
    ExtractCoordinates(ptr, &r->motion.x, &r->motion.y);
-   r->moving = False;
+   r->moving = false;
 
    Extract(ptr, &word, SIZE_ANGLE);
    r->angle = ANGLE_STOC(word);   
@@ -399,7 +399,7 @@ room_contents_node *ExtractNewRoomObject(char **ptr)
    ExtractPaletteTranslation(ptr,&r->motion.translation,&r->motion.effect);
    ExtractAnimation(ptr, &r->motion.animate);
    r->motion.overlays = ExtractOverlays(ptr);
-   r->motion.move_animating = False;
+   r->motion.move_animating = false;
 
    return r;
 }
@@ -490,10 +490,10 @@ WORD ExtractString(char **ptr, long len, char *message, int max_chars)
  * using on the first byte of the packet.  The server can tell us a
  * new value to mangle/unmangle with, every now and then.
  */
-Bool DesecureByServerToken(char *message, int len)
+bool DesecureByServerToken(char *message, int len)
 {
    if (!message || len <= 0)
-      return False;
+      return false;
 
    *message = (*message) ^ (server_secure_token & 0xFF);
 
@@ -507,7 +507,7 @@ Bool DesecureByServerToken(char *message, int len)
 	     server_sliding_token = GetSecurityRedbook();
    }
 
-   return True;
+   return true;
 }
 /********************************************************************/
 /*
@@ -516,10 +516,10 @@ Bool DesecureByServerToken(char *message, int len)
  *   the first byte of the message should be the type (BP_CREATE, etc.).
  *   Return True iff message has correct format.
  */
-Bool HandleMessage(char *message, int len)
+bool HandleMessage(char *message, int len)
 {
    HandlerTable table;
-   Bool handled;
+   bool handled;
 
    DesecureByServerToken(message, len);
 
@@ -557,11 +557,11 @@ Bool HandleMessage(char *message, int len)
  *   Return True iff message successfully handled by one of the message handlers
  *   in the table.
  */
-Bool LookupMessage(char *message, int len, HandlerTable table)
+bool LookupMessage(char *message, int len, HandlerTable table)
 {
    char *ptr;
    unsigned char type;
-   Bool success = False;
+   bool success = False;
    int index;
 
    memcpy(&type, message, SIZE_TYPE);

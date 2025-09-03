@@ -25,10 +25,10 @@ typedef struct {
 extern "C" {
 #endif
 
-Bool LoadResources(void);
+bool LoadResources(void);
 void FreeResources(void);
 void ChangeResource(ID res, char *value);
-Bool LoadRoomFile(char *fname, room_type *r);
+bool LoadRoomFile(char *fname, room_type *r);
 M59EXPORT char *GetString(HINSTANCE hModule, ID idnum);
 void MissingResource(void);
 void DeleteRscFiles(list_type files);

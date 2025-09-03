@@ -58,13 +58,13 @@ M59EXPORT list_type    ExtractOverlays(char **ptr);
 M59EXPORT void         ExtractOverlay(char **ptr, Overlay *overlay);
 BackgroundOverlay *ExtractNewBackgroundOverlay(char **ptr);
 
-Bool HandleMessage(char *message, int len);
+bool HandleMessage(char *message, int len);
 void WaitForMessage(WORD type);
 void ClearWaitMessage(void);
 
 // This procedure is used by modules to parse their private message tables, as well
 // as by the client for parsing of all server messages.
-M59EXPORT Bool LookupMessage(char *message, int len, HandlerTable table);
+M59EXPORT bool LookupMessage(char *message, int len, HandlerTable table);
 
 /* Game mode handlers */
 Bool HandlePlayer(char *ptr, long len);

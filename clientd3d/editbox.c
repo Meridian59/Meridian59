@@ -82,7 +82,7 @@ void EditBoxResize(int xsize, int ysize, AREA view)
 	      TRUE);
 
    WindowBeginUpdate(hwndText);
-   EditBoxScroll(hwndText, True);  /* Recalculate # of lines in edit box */
+   EditBoxScroll(hwndText, true);  /* Recalculate # of lines in edit box */
    WindowEndUpdate(hwndText);
 
    /* Highlight will be turned on later */

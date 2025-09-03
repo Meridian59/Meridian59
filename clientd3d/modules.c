@@ -65,7 +65,7 @@ extern DWORD       latency;
 
 /* local function prototypes */
 static int  CompareModulesByPriority(void *m1, void *m2);
-static Bool CompareModulesById(void *m1, void *m2);
+static bool CompareModulesById(void *m1, void *m2);
 static void ModuleExitByInfo(ModuleInfo *info);
 /******************************************************************************/
 /*
@@ -130,7 +130,7 @@ int CompareModulesByPriority(void *m1, void *m2)
 /*
  * CompareModulesById:  Return True iff modules have same module id.
  */
-Bool CompareModulesById(void *m1, void *m2)
+bool CompareModulesById(void *m1, void *m2)
 {
    return ((ModuleInfo *) m1)->module_id == ((ModuleInfo *) m2)->module_id;
 }
@@ -139,7 +139,7 @@ Bool CompareModulesById(void *m1, void *m2)
  * ModuleLoadByRsc:  Load the module with filename given by the name_rsc resource.
  *   Return True iff successful.
  */
-Bool ModuleLoadByRsc(ID name_rsc)
+bool ModuleLoadByRsc(ID name_rsc)
 {
   char *filename;
   char full_filename[MAX_PATH + FILENAME_MAX];
@@ -228,7 +228,7 @@ ModuleInfo * ModuleLoadByName(char *filename)
  *   if it is present.
  *   Returns True iff module is present.
  */
-Bool ModuleExitByRsc(ID name_rsc)
+bool ModuleExitByRsc(ID name_rsc)
 {
    list_type l;
    ModuleInfo *info;
@@ -251,7 +251,7 @@ Bool ModuleExitByRsc(ID name_rsc)
  *   if it is present.
  *   Returns True iff module is present.
  */
-Bool ModuleExitById(int module_id)
+bool ModuleExitById(int module_id)
 {
    list_type l;
    ModuleInfo *info;
@@ -291,7 +291,7 @@ void ModuleExitByInfo(ModuleInfo *info)
  *   causing a crash.  Instead, use ModuleExitByRsc.  A module with a dialog should
  *   post a message to the main window to remove itself after its dialogs are destroyed.
  */
-Bool ModuleUnloadById(int module_id)
+bool ModuleUnloadById(int module_id)
 {
    list_type l;
    ModuleInfo *info;
@@ -422,7 +422,7 @@ Bool _cdecl ModuleEvent(int event, ...)
 {
    list_type l;
    EventHandlerProc lpfn;
-   Bool retval;
+   bool retval;
    int index;
    va_list marker;
 

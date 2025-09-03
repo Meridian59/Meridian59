@@ -439,7 +439,7 @@ void OfferCanceled(void)
 /*
  * OfferInProgress:  Return True iff one of the offer dialogs is up.
  */
-Bool OfferInProgress(void)
+bool OfferInProgress(void)
 {
    return hSendOfferDlg != NULL || hRcvOfferDlg != NULL;
 }

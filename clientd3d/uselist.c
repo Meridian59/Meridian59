@@ -63,7 +63,7 @@ void UnuseObject(ID obj_id)
 }
 /************************************************************************/
 /*
- * IsInUse:  Return True iff the object with the given id is in use.
+ * IsInUse:  Return true iff the object with the given id is in use.
  */
 bool IsInUse(ID obj_id)
 {

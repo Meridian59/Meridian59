@@ -22,7 +22,7 @@ IDC_MAIN, 0, IDC_TEXTINPUT,
 };
 static int NUMTABS = (sizeof(tab_order) / sizeof(int));
     
-static Bool interface_created = False;  /* True iff interface has been created */
+static bool interface_created = false;  /* true iff interface has been created */
 
 extern font_3d				gFont;
 extern d3d_driver_profile	gD3DDriverProfile;
@@ -45,7 +45,7 @@ void InterfaceInitialize(HWND hParent)
 
    MapAnnotationsInitialize();
    
-   interface_created = True;
+   interface_created = true;
 
    /* Send resize message so that subwindows can size themselves */
    GetClientRect(hMain,&r);
@@ -80,7 +80,7 @@ void InterfaceClose(void)
    Lagbox_Destroy();
    
    //InvalidateRect(hMain, NULL, TRUE);
-   interface_created = False;
+   interface_created = false;
 }
 /************************************************************************/
 /*
@@ -190,9 +190,9 @@ void GameChangeColor(void)
 /*
  * MainTab:  Switch focus when user presses TAB on main window.
  *   ctrl is the id of the control which currently has the focus.
- *   Forward should be True if TAB pressed, False if Shift+TAB pressed.
+ *   Forward should be true if TAB pressed, false if Shift+TAB pressed.
  */
-void MainTab(int ctrl, Bool forward)
+void MainTab(int ctrl, bool forward)
 {
    int i, next_index = -1, direction;
 
@@ -237,7 +237,7 @@ void MainTab(int ctrl, Bool forward)
 void PerformAction(int action, void *action_data)
 {
    // See if a module wants to handle this action
-   if (ModuleEvent(EVENT_USERACTION, action, action_data) == False)
+   if (ModuleEvent(EVENT_USERACTION, action, action_data) == false)
       return;
 
    if (1)
@@ -299,10 +299,10 @@ void PerformAction(int action, void *action_data)
    switch (action)
    {
    case A_TABFWD:
-      MainTab(reinterpret_cast<std::intptr_t>(action_data), True);
+      MainTab(reinterpret_cast<std::intptr_t>(action_data), true);
       break;
    case A_TABBACK:
-      MainTab(reinterpret_cast<std::intptr_t>(action_data), False);
+      MainTab(reinterpret_cast<std::intptr_t>(action_data), false);
       break;
    case A_ATTACK:
       if ((GetPlayerInfo()->viewID == 0) || (GetPlayerInfo()->viewID == GetPlayerInfo()->id))
@@ -407,7 +407,7 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_GOTOSAY:   /* User pressed quote; move focus to text input box */
-      TextInputSetFocus(True);  // Pretend that moving forward in window list; no harm here
+      TextInputSetFocus(true);  // Pretend that moving forward in window list; no harm here
       break;
 
    case A_SELECT:
@@ -471,7 +471,7 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_TEXTINSERT:
-      TextInputSetText((char *) action_data, True);
+      TextInputSetText((char *) action_data, true);
       break;
 
    case A_TEXTCOMMAND:
@@ -479,7 +479,7 @@ void PerformAction(int action, void *action_data)
        DWORD now = timeGetTime();
        if (now - last_text_command_time > KEY_NOREPEAT_INTERVAL)
        {
-           TextInputSetText((char*)action_data, False);
+           TextInputSetText((char*)action_data, false);
            ParseGotText((char*)action_data);    
            last_text_command_time = now;
        }       
@@ -507,13 +507,13 @@ void PerformAction(int action, void *action_data)
       break;
 
    case A_TARGETPREVIOUS:
-      UserTargetNextOrPrevious( False );
+      UserTargetNextOrPrevious( false );
 	  // need to force userarea to redraw whenever target changes
 	  ModuleEvent(EVENT_USERACTION, action, action_data);
       break;
 
    case A_TARGETNEXT:
-      UserTargetNextOrPrevious( True );
+      UserTargetNextOrPrevious( true );
 	  // need to force userarea to redraw whenever target changes
 	  ModuleEvent(EVENT_USERACTION, action, action_data);
       break;

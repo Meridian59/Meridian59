@@ -106,9 +106,9 @@ typedef struct {
    int			boundingHeightAdjust;	// adjustment in height from overlays
 } room_contents_node;
 
-M59EXPORT Bool CompareIdObject(void *idnum, void *obj);
-Bool CompareId(void *id1, void *id2);
-Bool CompareIdRoomObject(void *idnum, void *obj);
+M59EXPORT bool CompareIdObject(void *idnum, void *obj);
+bool CompareId(void *id1, void *id2);
+bool CompareIdRoomObject(void *idnum, void *obj);
 int  CompareRoomObjectDistance(void* p1, void* p2);
 int CompareObjectNameAndNumber(void *obj1, void *obj2);
 list_type    OverlayListDestroy(list_type overlays);

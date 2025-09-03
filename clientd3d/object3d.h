@@ -42,7 +42,7 @@ typedef struct {
    PDIB      pdib;       // Object bitmap
    int       distance;   // Distance to object in FINENESS units
    BYTE      light;      // Light level to draw object
-   bool      draw;       // True if object should actually be drawn (False = just compute location)
+   bool      draw;       // true if object should actually be drawn (false = just compute location)
    ViewCone *cone;       // Cone in which to draw object
    int       flags;      // Object flags for special options (invisibility, etc.)
    int       cutoff;     // Last screen row in which to draw object (to cut off at ground level)

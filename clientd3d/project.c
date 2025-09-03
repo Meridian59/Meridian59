@@ -24,7 +24,7 @@ extern player_info player;
 /*
  * CompareProjectiles:  Utility comparison function for use with lists.
  */
-Bool CompareProjectiles(void *p1, void *p2)
+bool CompareProjectiles(void *p1, void *p2)
 {
    return (Projectile *) p1 == (Projectile *) p2;
 }

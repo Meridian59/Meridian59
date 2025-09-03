@@ -26,7 +26,7 @@
 enum { GAME_NONE = 0, GAME_PLAY = 1, GAME_RESYNC = 2, GAME_INIT = 3,
     GAME_WAIT = 4, GAME_INVALID = 5, GAME_SELECT = 6, };
 
-/* Return True iff user actions shouldn't be processed in given game state */
+/* Return true iff user actions shouldn't be processed in given game state */
 #define IsWaitingGameState(s) ((s) == GAME_WAIT || (s) == GAME_INVALID || (s) == GAME_NONE)
 
 void GameInit(void);

@@ -25,8 +25,8 @@ static ID idTarget = INVALID_ID;		//	Target object, or INVALID_ID if no target s
 static void ApplyCallback(ID obj2);
 static void SetDescParamsByRoomObject(room_contents_node *r, HWND hwnd);
 
-extern BOOL		gbMouselook;
-extern RECT		gD3DRect;
+extern bool gbMouselook;
+extern RECT gD3DRect;
 /************************************************************************/
 /*
  * UserInventoryList:  Bring up a dialog for user to select multiple objects
@@ -774,7 +774,7 @@ ID GetUserTargetID()
 
 void UserMouselookToggle(void)
 {
-	if (FALSE == gbMouselook)
+	if (false == gbMouselook)
 	{
 		RECT		rect;
 		POINT	pt, center;
@@ -790,14 +790,14 @@ void UserMouselookToggle(void)
 		center.x += gD3DRect.left + pt.x;
 		center.y += gD3DRect.top + pt.y;
 
-		gbMouselook = TRUE;
+		gbMouselook = true;
 		SetCursorPos(center.x, center.y);
 		while (ShowCursor(FALSE) >= 0)
 			ShowCursor(FALSE);
 	}
 	else
 	{
-		gbMouselook = FALSE;
+		gbMouselook = false;
 		while (ShowCursor(TRUE) < 0)
 			ShowCursor(TRUE);
 	}

@@ -17,7 +17,7 @@ static HMODULE hRichEditLib;
 bool is_foreground;   // true when program is in the foreground charlie: i want to access this elsewhere.
 
 extern HPALETTE hPal;
-extern BOOL		gbMouselook;
+extern bool gbMouselook;
 
 int connection;  /* Current connection to server: CON_NONE, CON_SERIAL, ... */
 int state;       /* Current client mode: terminal, game, blank, login, ... */

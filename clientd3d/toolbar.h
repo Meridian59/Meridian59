@@ -44,7 +44,7 @@ typedef struct {
    void   *action_data2; // Data associated with untoggle action
    BYTE   *bits;         // Pointer to bits of bitmap for button
    int     x;            // x position of button on main window
-   bool    pressed;      // True when button is pressed in (only applies if button is a toggle)
+   bool    pressed;      // true when button is pressed in (only applies if button is a toggle)
 } Button;
 
 void ToolbarCreate(void);

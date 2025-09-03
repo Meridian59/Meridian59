@@ -93,7 +93,7 @@ void StatsNumResize(list_type stats)
    int x, y, height, count, num_stats;
    list_type l;
    AREA stats_area;
-   Bool has_scrollbar = False;
+   bool has_scrollbar = false;
 
    StatsGetArea(&stats_area);
 
@@ -118,7 +118,7 @@ void StatsNumResize(list_type stats)
    }
 
    if (num_visible < num_stats)
-      has_scrollbar = True;
+      has_scrollbar = true;
    
    top_stat = min(top_stat, num_stats - num_visible);
 
@@ -281,7 +281,7 @@ void DisplayNumericStat(Statistic *s)
    AREA stats_area;
    AREA a;
 
-	//	ajw - Avoid drawing if Inventory is selected as the "group".
+	// Avoid drawing if Inventory is selected as the "group".
 	if( StatsGetCurrentGroup() == STATS_INVENTORY )
 		return;
 	
@@ -342,9 +342,9 @@ void DisplayNumericStat(Statistic *s)
 
 /************************************************************************/
 /*
- * ShowStatsNum:  ajw - Shows or hides numeric stats.
+ * ShowStatsNum:  Shows or hides numeric stats.
  */
-void ShowStatsNum( Bool bShow, list_type stats )
+void ShowStatsNum(bool bShow, list_type stats)
 {
 	list_type l;
 

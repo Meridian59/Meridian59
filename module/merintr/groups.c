@@ -112,7 +112,7 @@ int GroupAdd(char *group_name, char *args)
    UserGroup g;
    int index, i, num_added;
    char *ptr, *name;
-   Bool add_name;
+   bool add_name;
 
    num_added = 0;
    index = FindGroupByName(group_name);
@@ -142,11 +142,11 @@ int GroupAdd(char *group_name, char *args)
       }
 
       // Check for duplicates
-      add_name = True;
+      add_name = true;
       for (i=0; i < g.num_users; i++)
 	 if (!stricmp(g.names[i], name))
 	 {
-	    add_name = False;
+	    add_name = false;
 	    break;
 	 }
       
@@ -166,9 +166,9 @@ int GroupAdd(char *group_name, char *args)
 /****************************************************************************/
 /*
  * GroupDelete:  Remove the group with the given name.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool GroupDelete(char *group_name)
+bool GroupDelete(char *group_name)
 {
    int index, i;
 
@@ -177,11 +177,11 @@ Bool GroupDelete(char *group_name)
    {
    case GROUP_NOMATCH:
       GameMessage(GetString(hInst, IDS_BADGROUPNAME));
-      return False;
+      return false;
 
    case GROUP_AMBIGUOUS:
       GameMessage(GetString(hInst, IDS_DUPLICATEGROUPNAME));
-      return False;
+      return false;
    }
 
    group_name = groups[index];
@@ -194,7 +194,7 @@ Bool GroupDelete(char *group_name)
       strcpy(groups[i], groups[i + 1]);
 
    num_groups--;
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
@@ -257,9 +257,9 @@ int GroupDeleteNames(char *group_name, char *args)
 /****************************************************************************/
 /*
  * GroupNew:  Create a new group with the given name.
- *   Return True if group created.
+ *   Return true if group created.
  */
-Bool GroupNew(char *group_name)
+bool GroupNew(char *group_name)
 {
    int i;
    UserGroup g;
@@ -275,7 +275,7 @@ Bool GroupNew(char *group_name)
       if (!stricmp(group_name, groups[i]))
       {
 	 GameMessage(GetString(hInst, IDS_ALREADYGROUP));
-	 return False;
+	 return false;
       }
 
 
@@ -286,7 +286,7 @@ Bool GroupNew(char *group_name)
 
    g.num_users = 0;
    GroupSave(group_name, &g);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
@@ -381,10 +381,10 @@ int FindGroupByName(char *name)
    char *group_name, *ptr;
    int match, max_match;
    int best_index;
-   Bool tied;            // True if a different index matches as well as best_index
+   bool tied;            // true if a different index matches as well as best_index
 
    max_match = 0;
-   tied = False;
+   tied = false;
    for (index = 0; index < num_groups; index++)
    {
       group_name = groups[index];
@@ -413,10 +413,10 @@ int FindGroupByName(char *name)
       {
 	 max_match = match;
 	 best_index = index;
-	 tied = False;
+	 tied = false;
       }
       else if (match == max_match)
-	 tied = True;
+	 tied = true;
    }
    
    if (max_match == 0)
@@ -429,15 +429,15 @@ int FindGroupByName(char *name)
 }
 /****************************************************************************/
 /*
- * GroupNameMatches:  Return True iff the given string exactly matches
+ * GroupNameMatches:  Return true iff the given string exactly matches
  *   the name of the group with the given index.
  */
-Bool GroupNameMatches(char *name, int index)
+bool GroupNameMatches(char *name, int index)
 {
    if (index < 0 || index >= num_groups)
-      return False;
+      return false;
 
    if (!stricmp(name, groups[index]))
-      return True;
-   return False;
+      return true;
+   return false;
 }

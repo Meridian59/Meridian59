@@ -27,8 +27,8 @@ static int num_default_buttons = (sizeof(default_buttons) / sizeof(AddButton));
 // Player/game data that's known only in module
 PInfo pinfo;
 
-// True when we've told server to change safety flag; prevents multiple requests
-static Bool safety_flipped;  
+// true when we've told server to change safety flag; prevents multiple requests
+static bool safety_flipped;  
 
 /****************************************************************************/
 /*
@@ -64,8 +64,8 @@ void InterfaceInit(void)
    CopyCurrentView(&area);
    InterfaceResizeModule(r.right, r.bottom, &area);
 
-   pinfo.resting = False;
-   safety_flipped = False;
+   pinfo.resting = false;
+   safety_flipped = false;
 
    if (pinfo.resting)
       RequestRest();
@@ -143,23 +143,23 @@ void InterfaceRedrawModule(HDC hdc)
 }
 
 /****************************************************************************/
-Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    switch (lpdis->CtlID)
    {
    case IDC_USERAREA:
       UserAreaRedraw();
-      return False;
+      return false;
 
    case IDC_STATS:
       StatsDrawNumItem(hwnd, lpdis);
-      return False;
+      return false;
 
    case IDC_ENCHANTMENT:
       EnchantmentDrawItem(hwnd, lpdis);
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }
 /****************************************************************************/
 void InterfaceResetData(void)
@@ -194,9 +194,9 @@ void InterfaceNewRoom(void)
 /****************************************************************************/
 /*
  * InterfaceTab:  User is moving focus from given control in given direction.
- *   Return False iff event should not be sent to other modules (i.e. handled here)
+ *   Return false iff event should not be sent to other modules (i.e. handled here)
  */
-Bool InterfaceTab(int control, Bool forward)
+bool InterfaceTab(int control, bool forward)
 {
    switch (control)
    {
@@ -208,7 +208,7 @@ Bool InterfaceTab(int control, Bool forward)
 			InventorySetFocus( forward );
 		else
 			StatsSetFocus( forward );
-      return False;
+      return false;
 
    case IDC_MAINTEXT:
    case IDC_TEXTINPUT:
@@ -220,17 +220,17 @@ Bool InterfaceTab(int control, Bool forward)
 		else
 			StatsSetFocus( forward );
 
-      return False;
+      return false;
       
    }
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
- * InterfaceAction:  User wants to perform given action.  Return True iff
+ * InterfaceAction:  User wants to perform given action.  Return true iff
  *   action should be passed along for further processing.
  */
-Bool InterfaceAction(int action, void *action_data)
+bool InterfaceAction(int action, void *action_data)
 {
    POINT mouse;
    AREA a;
@@ -242,7 +242,7 @@ Bool InterfaceAction(int action, void *action_data)
        (IsMoveAction(action) || IsAttackAction(action)))
    {
       //      debug(("Can't do while resting\n"));
-      return False;
+      return false;
    }
 
    switch (action)
@@ -253,7 +253,7 @@ Bool InterfaceAction(int action, void *action_data)
 	case A_TARGETPREVIOUS:
 	case A_ATTACK:
 	   UserAreaRedraw();
-	   return True;
+	   return true;
    break;
 
    case A_FORWARDFAST:
@@ -261,7 +261,7 @@ Bool InterfaceAction(int action, void *action_data)
       if (pinfo.vigor < MIN_VIGOR)
       {
 	 PerformAction(A_FORWARD, NULL);
-	 return False;
+	 return false;
       }
       break;
 
@@ -269,7 +269,7 @@ Bool InterfaceAction(int action, void *action_data)
       if (pinfo.vigor < MIN_VIGOR)
       {
 	 PerformAction(A_BACKWARD, NULL);
-	 return False;
+	 return false;
       }
       break;
 
@@ -277,7 +277,7 @@ Bool InterfaceAction(int action, void *action_data)
 		if (pinfo.vigor < MIN_VIGOR)
 		{
 			PerformAction(A_SLIDELEFT, NULL);
-			return False;
+			return false;
 		}
 	break;
 
@@ -285,7 +285,7 @@ Bool InterfaceAction(int action, void *action_data)
 		if (pinfo.vigor < MIN_VIGOR)
 		{
 			PerformAction(A_SLIDERIGHT, NULL);
-			return False;
+			return false;
 		}
 	break;
 
@@ -293,7 +293,7 @@ Bool InterfaceAction(int action, void *action_data)
 		if (pinfo.vigor < MIN_VIGOR)
 		{
 			PerformAction(A_SLIDELEFTFORWARD, NULL);
-			return False;
+			return false;
 		}
 	break;
 
@@ -301,7 +301,7 @@ Bool InterfaceAction(int action, void *action_data)
 		if (pinfo.vigor < MIN_VIGOR)
 		{
 			PerformAction(A_SLIDELEFTBACKWARD, NULL);
-			return False;
+			return false;
 		}
 	break;
 
@@ -309,7 +309,7 @@ Bool InterfaceAction(int action, void *action_data)
 		if (pinfo.vigor < MIN_VIGOR)
 		{
 			PerformAction(A_SLIDERIGHTFORWARD, NULL);
-			return False;
+			return false;
 		}
 	break;
 
@@ -317,13 +317,13 @@ Bool InterfaceAction(int action, void *action_data)
 		if (pinfo.vigor < MIN_VIGOR)
 		{
 			PerformAction(A_SLIDERIGHTBACKWARD, NULL);
-			return False;
+			return false;
 		}
 	break;
 
    case A_CAST:
       UserCastSpell();
-      return False;
+      return false;
 
    case A_CASTSPELL:  // action_data is pointer to spell
       if (GetPlayer()->viewID && (GetPlayer()->viewID != GetPlayer()->id))
@@ -331,28 +331,28 @@ Bool InterfaceAction(int action, void *action_data)
 	 if (!(GetPlayer()->viewFlags & REMOTE_VIEW_CAST))
 	 {
 	    GameMessage(GetString(hInst, IDS_SPELLPARALYZED));
-	    return False;
+	    return false;
 	 }
       }
       if (cinfo->effects->paralyzed)
       {
 	 GameMessage(GetString(hInst, IDS_SPELLPARALYZED));
-	 return False;
+	 return false;
       }
 
       if (pinfo.resting)
       {
 	 GameMessage(GetString(hInst, IDS_SPELLRESTING));
-	 return False;
+	 return false;
       }
 
       SpellCast((spell *) action_data);
 
-      return False;
+      return false;
 
    case A_GO:
       if (pinfo.resting)
-	 return False;
+	 return false;
       break;
 
    case A_ENDDRAG:   // action_data is ID of object being dragged
@@ -378,12 +378,12 @@ Bool InterfaceAction(int action, void *action_data)
       break;
 
    case A_TABFWD:
-      return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), True);
+      return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), true);
    case A_TABBACK:
-      return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), False);
+      return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), false);
    }
 
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
@@ -392,7 +392,7 @@ Bool InterfaceAction(int action, void *action_data)
 void InterfaceUserChanged(void)
 {
    room_contents_node *r;
-   Bool new_safety;
+   bool new_safety;
 
    UserAreaRedraw();
    AliasInit();
@@ -410,12 +410,12 @@ void InterfaceUserChanged(void)
       {
          if (!safety_flipped)
             SendSafety(0);
-         safety_flipped = True;
+         safety_flipped = true;
       }
       else 
       {
-         pinfo.aggressive = cinfo->config->aggressive = False;
-         safety_flipped = False;
+         pinfo.aggressive = cinfo->config->aggressive = false;
+         safety_flipped = false;
       }
    }
    else 
@@ -424,12 +424,12 @@ void InterfaceUserChanged(void)
       {
          if (!safety_flipped)
             SendSafety(1);
-         safety_flipped = True;
+         safety_flipped = true;
       }
       else 
       {
-         pinfo.aggressive = cinfo->config->aggressive = True;
-         safety_flipped = False;
+         pinfo.aggressive = cinfo->config->aggressive = true;
+         safety_flipped = false;
       }
 
    }
@@ -438,7 +438,7 @@ void InterfaceUserChanged(void)
 void InterfaceConfigChanged(void)
 {
    // See if user changed safety flag
-   if (pinfo.aggressive != cinfo->config->aggressive)
+  if (pinfo.aggressive != (bool) cinfo->config->aggressive)
    {
       pinfo.aggressive = cinfo->config->aggressive;
       if (pinfo.aggressive)
@@ -464,8 +464,8 @@ void InterfaceConfigChanged(void)
 char *GetPlayerName(char *str, char **next)
 {
    char *ptr, *retval, *last_ptr;
-   Bool quoted = False;
-   Bool ambiguous = False;
+   bool quoted = false;
+   bool ambiguous = false;
 
    if (str == NULL)
       return NULL;
@@ -480,7 +480,7 @@ char *GetPlayerName(char *str, char **next)
    // See if name is quoted
    if (*str == '\"')
    {
-      quoted = True;
+      quoted = true;
       retval = str + 1;
    }
    else retval = str;
@@ -521,7 +521,7 @@ char *GetPlayerName(char *str, char **next)
       {
 	 // if we're not quoted
 	 //
-	 Bool wasambiguous = ambiguous;
+	 bool wasambiguous = ambiguous;
 	 ambiguous = (INVALID_ID == FindPlayerByName(retval));
 	 if (ambiguous)
 	 {
@@ -566,10 +566,10 @@ ID FindPlayerByName(char *name)
    char *player, *ptr;
    int match, max_match;
    ID best_player;
-   Bool tied;            // True if a different player matches as well as best_player
+   bool tied;            // true if a different player matches as well as best_player
 
    max_match = 0;
-   tied = False;
+   tied = false;
    for (l = *(cinfo->current_users); l != NULL; l = l->next)
    {
       object_node *obj = (object_node *) (l->data);
@@ -602,10 +602,10 @@ ID FindPlayerByName(char *name)
       {
 	 max_match = match;
 	 best_player = obj->id;
-	 tied = False;
+	 tied = false;
       }
       else if (match == max_match)
-	 tied = True;
+	 tied = true;
    }
    
    if (max_match == 0)

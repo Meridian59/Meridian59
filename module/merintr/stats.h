@@ -63,8 +63,8 @@ void StatsDestroy(void);
 void StatsResize(int xsize, int ysize, AREA *view);
 void StatsResetFont(void);
 void StatsChangeColor(void);
-Bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
-void StatsSetFocus(Bool forward);
+bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+void StatsSetFocus(bool forward);
 void StatsDrawBorder(void);
 void StatsGetArea(AREA *a);
 int  StatsGetCurrentGroup(void);
@@ -77,7 +77,7 @@ void StatChange(BYTE group, Statistic *s);
 void StatsReceiveGroup(BYTE group, list_type l);
 
 void DisplayStatGroup(BYTE group, list_type l);
-void DisplayInventoryAsStatGroup( BYTE group );
-void StatsShowGroup( Bool bShow );
+void DisplayInventoryAsStatGroup(BYTE group);
+void StatsShowGroup(bool bShow);
 
 #endif /* #ifndef _STATS_H */

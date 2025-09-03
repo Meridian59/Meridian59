@@ -42,7 +42,7 @@ void SaveEachDynamicRsc(resource_node *r);
 
 /* SaveDynamicRsc
    This function writes the dynamic rscs into one file, for save games */
-Bool SaveDynamicRsc(char *filename)
+bool SaveDynamicRsc(char *filename)
 {
    int write_int;
    size_t written;
@@ -51,7 +51,7 @@ Bool SaveDynamicRsc(char *filename)
    if (rscfile == NULL)
    {
       eprintf("SaveDynamicRsc can't open %s to save 'em!\n",filename);
-      return False;
+      return false;
    }      
 
    written = fwrite(magic_num, 1, RSC_MAGIC_LEN, rscfile);
@@ -75,7 +75,7 @@ Bool SaveDynamicRsc(char *filename)
 
    fclose(rscfile);
 
-   return True;
+   return true;
 }
 
 void CountEachDynamicRsc(resource_node *r)

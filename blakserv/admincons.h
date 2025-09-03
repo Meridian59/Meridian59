@@ -23,7 +23,7 @@ typedef struct admin_constant_struct
 void InitAdminConstants(void);
 void ResetAdminConstants(void);
 void LoadAdminConstants(void);
-Bool LookupAdminConstant(const char *name,int *ret_ptr);
+bool LookupAdminConstant(const char *name,int *ret_ptr);
 
 
 #endif

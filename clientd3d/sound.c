@@ -15,7 +15,7 @@
 #include "client.h"
 static char sound_dir[] = "resource";   /* Directory for sound files */
 
-static Bool wave_open = False;   /* Is Wavemix open & ready to play sounds? */
+static bool wave_open = false;   /* Is Wavemix open & ready to play sounds? */
 
 static HANDLE hMixSession; /* Handle for Wavemix DLL */
 
@@ -105,7 +105,7 @@ void SoundInitialize(void)
 	debug(( "MSS digital sound initialized successfully.\n" ));
 	debug(( "%i simultaneous voices available.\n", iNumVoices ));
 
-	wave_open = True;
+	wave_open = true;
    }
 
 #else
@@ -113,7 +113,7 @@ void SoundInitialize(void)
    {
    MCI_SYSINFO_PARMS mciSysinfoParms;
    DWORD num_devices, retval;
-   Bool has_wave = False;
+   bool has_wave = false;
 
    /* See if WAV player is present */
    mciSysinfoParms.lpstrReturn = (LPSTR) &num_devices;
@@ -122,7 +122,7 @@ void SoundInitialize(void)
    retval = mciSendCommand(0, MCI_SYSINFO, MCI_SYSINFO_QUANTITY,
                            (DWORD_PTR) &mciSysinfoParms);
    if (retval == 0 && num_devices > 0)
-      has_wave = True;
+      has_wave = true;
 
    /* Start Wave mixer */
    if (has_wave)
@@ -130,19 +130,19 @@ void SoundInitialize(void)
       if ((hMixSession = WaveMixInit()) == NULL)
       {
 	 debug(("WaveMixInit returned error\n"));
-	 wave_open = False;
+	 wave_open = false;
       }
-      else wave_open = True;
+      else wave_open = true;
 
       if (WaveMixOpenChannel(hMixSession, 0, WMIX_ALL))
       {
 	 debug(("WaveMixOpenChannel returned error\n"));
-	 wave_open = False;
+	 wave_open = false;
       }
       if (WaveMixActivate(hMixSession, TRUE) != MMSYSERR_NOERROR)
       {
 	 debug(("WaveMixActivate returned error\n"));
-	 wave_open = False;
+	 wave_open = false;
       }
    }
    }

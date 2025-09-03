@@ -27,10 +27,10 @@ ClientInfo *c;         // Holds data passed from main client
 bool exiting;
 
 /* local function prototypes */
-static Bool HandleUserCommand(char *ptr, long len);
-static Bool HandleGameState(char *ptr, long len);
-static Bool HandleGameStart(char *ptr, long len);
-static Bool HandleGamePlayer(char *ptr, long len);
+static bool HandleUserCommand(char *ptr, long len);
+static bool HandleGameState(char *ptr, long len);
+static bool HandleGameStart(char *ptr, long len);
+static bool HandleGamePlayer(char *ptr, long len);
 
 // Server message handler table
 static handler_struct handler_table[] = {
@@ -148,7 +148,7 @@ bool WINAPI EventServerMessage(char *message, long len)
    return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
-Bool HandleUserCommand(char *ptr, long len)
+bool HandleUserCommand(char *ptr, long len)
 {
    BYTE type;
    int index;
@@ -180,7 +180,7 @@ Bool HandleUserCommand(char *ptr, long len)
    return false;
 }
 /********************************************************************/
-Bool HandleGameState(char *ptr, long len)
+bool HandleGameState(char *ptr, long len)
 {
    ID game;
    unsigned char state[BOARD_STATE_LEN + 1];
@@ -203,7 +203,7 @@ Bool HandleGameState(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleGameStart(char *ptr, long len)
+bool HandleGameStart(char *ptr, long len)
 {
    char *start = ptr;
    BYTE player_num;
@@ -243,7 +243,7 @@ Bool HandleGameStart(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleGamePlayer(char *ptr, long len)
+bool HandleGamePlayer(char *ptr, long len)
 {
    char name[MAXUSERNAME + 1];
    BYTE player_num;

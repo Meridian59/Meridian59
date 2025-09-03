@@ -20,7 +20,7 @@ ClientInfo *c;         // Holds data passed from main client
 bool exiting;
 
 /* local function prototypes */
-static Bool HandleAdmin(char *ptr, long len);
+static bool HandleAdmin(char *ptr, long len);
 
 // Server message handler table
 static handler_struct handler_table[] = {
@@ -99,7 +99,7 @@ bool WINAPI EventServerMessage(char *message, long len)
    return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
-Bool HandleAdmin(char *ptr, long len)
+bool HandleAdmin(char *ptr, long len)
 {
    char message[COMBUFSIZE];
    WORD length;

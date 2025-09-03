@@ -34,14 +34,14 @@ BOOL ParseGotText(char *str)
 /*
  * ParseCommand:  Parse given string according to given 
  *   command table and call the appropriate function.
- *   Return True iff a command was matched.
+ *   Return true iff a command was matched.
  */
-Bool ParseCommand(char *str, TypedCommand *commands)
+bool ParseCommand(char *str, TypedCommand *commands)
 {
    char *ptr1, *ptr2;
    int max_index;  // Index of best matching command
    int index, match, max_match;
-   Bool tied;            // True if a different index matches as well as best_index
+   bool tied;            // true if a different index matches as well as best_index
 
    // Skip initial spaces
    while (*str == ' ')
@@ -94,14 +94,14 @@ Bool ParseCommand(char *str, TypedCommand *commands)
 	 max_index = index;
       }
       else if (match == max_match)
-	 tied = True;
+	 tied = true;
       index++;
    }
 
    if (max_match == 0)
-      return False;
+      return false;
 
-   // Allow "tied" to be True; first command listed will be chosen
+   // Allow "tied" to be true; first command listed will be chosen
 
    // Skip command
    ptr1 = str;
@@ -113,5 +113,5 @@ Bool ParseCommand(char *str, TypedCommand *commands)
       ptr1++;
    (*commands[max_index].proc)(ptr1);
 
-   return True;
+   return true;
 }

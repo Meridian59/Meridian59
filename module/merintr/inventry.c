@@ -109,7 +109,7 @@ static bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyF
 static void ToggleUse(ID obj_id);
 static void InventoryDisplayScrollbar(void);
 static void InventoryScrollRange(void);
-static Bool InventoryCompareIdItem(void *idnum, void *item);
+static bool InventoryCompareIdItem(void *idnum, void *item);
 static void InventoryDrawSingleItem(InvItem *item, int row, int col);
 static void InventoryRedrawSingleItem(InvItem *item);
 static InvItem *InventoryGetCurrentItem(void);
@@ -1234,7 +1234,7 @@ bool InventoryItemVisible(int row, int col)
  * InventoryCompareIdItem: Compare an id # with an inventory item; return true iff they
  *    have the same id #.
  */
-Bool InventoryCompareIdItem(void *idnum, void *item)
+bool InventoryCompareIdItem(void *idnum, void *item)
 {
    InvItem *temp = (InvItem *) item;
    return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(temp->obj->id);

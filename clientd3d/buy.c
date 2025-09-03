@@ -165,7 +165,7 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
       DWORD amount = 1;
       DWORD cost;
       buy_object *buy_obj = (buy_object *) l->data;
-      index = ItemListAddItem(info->hwndItemList, &buy_obj->obj, -1, False);
+      index = ItemListAddItem(info->hwndItemList, &buy_obj->obj, -1, false);
       if (IsNumberObj(buy_obj->obj.id))
 	 amount = buy_obj->obj.amount;
       else
@@ -418,7 +418,6 @@ void UpdateCost(void)
 BOOL CostListDrawItem(const DRAWITEMSTRUCT *lpdis)
 {
    HBRUSH hbrush;
-   Bool selected = False; /* Never draw highlight */
    int dc_state;
 
    /* If box is empty, do nothing */

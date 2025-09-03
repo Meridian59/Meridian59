@@ -43,9 +43,7 @@
 
 #include <d3d9.h>
 
-typedef unsigned char Bool;
 typedef INT64 int64;
-enum {False = 0, True = 1};
 
 #define MAJOR_REV 7   /* Major version of client program */
 #define MINOR_REV 35  /* Minor version of client program; must be in [0, 99] */
@@ -76,7 +74,7 @@ extern void GetGamePath( char *szGamePath );
 extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
 
-extern Bool is_foreground;   // True when program is in the foreground
+extern bool is_foreground;   // True when program is in the foreground
 
 // Minimum # of milliseconds between non-repeat actions
 #define KEY_NOREPEAT_INTERVAL 400

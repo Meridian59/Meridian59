@@ -27,12 +27,12 @@ typedef struct {
    int  whiteout;     // # of milliseconds remaining in whiteout effect (0 if off)
       
    int  view_dx, view_dy, view_dz;  // Draw player offset by this amount (to shake screen)
-   Bool paralyzed; // True when user shouldn't be allowed to move
-   Bool blind;     // True when user can't see anything
+   bool paralyzed; // true when user shouldn't be allowed to move
+   bool blind;     // true when user can't see anything
 
-   Bool raining;   // True when weather is rainy
-   Bool snowing;   // True when weather is snowy
-   Bool sand;      // True when in sandstorm
+   bool raining;   // true when weather is rainy
+   bool snowing;   // true when weather is snowy
+   bool sand;      // true when in sandstorm
 
    ID   wadingsound;  // ID of wav resource for wading in current room
    ID   ambientsound; // ID of wav resource played constantly in current room
@@ -44,8 +44,8 @@ typedef struct {
 
 void EffectsInit(void);
 void EffectsExit(void);
-Bool IsBlind(void);
-Bool PerformEffect(WORD effect, char *ptr, int len);
-Bool AnimateEffects(int dt);
+bool IsBlind(void);
+bool PerformEffect(WORD effect, char *ptr, int len);
+bool AnimateEffects(int dt);
 
 #endif /* #ifndef _EFFECT_H */

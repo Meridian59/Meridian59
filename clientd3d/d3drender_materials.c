@@ -16,7 +16,7 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new* pChunk);
 /**
  * Configures the rendering device to use modulated color and alpha stages for world material rendering.
  */
-Bool D3DMaterialWorldPool(d3d_render_pool_new *pPool)
+bool D3DMaterialWorldPool(d3d_render_pool_new *pPool)
 {
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
@@ -26,13 +26,13 @@ Bool D3DMaterialWorldPool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
                                          D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Binds the appropriate texture to the device for a world packet and sets it for rendering.
  */
-Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
 
@@ -54,13 +54,13 @@ Bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
 		IDirect3DDevice9_SetTexture(
          gpD3DDevice, 0, (IDirect3DBaseTexture9 *) pTexture);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures rendering states for a dynamic chunk in the world, including transformations and fog.
  */
-Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 {
 	if ((pChunk->flags & D3DRENDER_WORLD_OBJ))
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
@@ -70,7 +70,7 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 	if (isWireframeMode())
 	{
 		if (pChunk->pSector == &current_room.sectors[0])
-			return FALSE;
+			return false;
 	}
 
 	if (pChunk->pSideDef == NULL)
@@ -103,13 +103,13 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGEND, *(DWORD *)(&end));
 	}
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures rendering states for a static chunk in the world, excluding certain animated sectors.
  */
-Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 {
 	const auto& current_room = getCurrentRoom();
 
@@ -119,25 +119,25 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		{
 			if ((pChunk->pSector->ceiling == current_room.sectors[0].ceiling) &&
 				(pChunk->pSector->ceiling != NULL))
-				return FALSE;
+				return false;
 		}
 	}
 
 	if (pChunk->pSector)
 		if (pChunk->pSector->flags & SF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSectorPos)
 		if (pChunk->pSectorPos->flags & SF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSectorNeg)
 		if (pChunk->pSectorNeg->flags & SF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSideDef)
 		if (pChunk->pSideDef->flags & WF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSideDef == NULL)
 	{
@@ -169,13 +169,13 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGEND, *(DWORD *)(&end));
 	}
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device for wall mask materials, similar to world materials.
  */
-Bool D3DMaterialWallMaskPool(d3d_render_pool_new *pPool)
+bool D3DMaterialWallMaskPool(d3d_render_pool_new *pPool)
 {
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
@@ -184,13 +184,13 @@ Bool D3DMaterialWallMaskPool(d3d_render_pool_new *pPool)
                                          D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
                                          D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures rendering states for mask chunks, including culling mode and Z-bias.
  */
-Bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
 {
 	if (pChunk->flags & D3DRENDER_NOCULL)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -199,21 +199,21 @@ Bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
 
 	SetZBias(gpD3DDevice, pChunk->zBias);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * A placeholder function for rendering chunks with no specific material.
  */
-Bool D3DMaterialNone(d3d_render_chunk_new *pPool)
+bool D3DMaterialNone(d3d_render_chunk_new *pPool)
 {
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device for dynamic light map materials, setting up multiple texture stages.
  */
-Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
+bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
 {
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
                                          D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
@@ -233,13 +233,13 @@ Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_MODULATE, D3DTA_CURRENT, D3DTA_TEXTURE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_SELECTARG2, D3DTA_CURRENT, D3DTA_TEXTURE);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Binds the appropriate texture to the device for a dynamic light map packet and sets it for rendering.
  */
-Bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
 
@@ -251,12 +251,12 @@ Bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cac
 	if (pTexture)
 		IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9 *) pTexture);
 
-	return TRUE;
+	return true;
 }
 /**
  * Configures rendering states for a dynamic light map chunk, including Z-bias adjustments.
  */
-Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 {
 	if (pChunk->pSideDef == NULL)
 	{
@@ -272,14 +272,14 @@ Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 	else
 		SetZBias(gpD3DDevice, ZBIAS_WORLD);
 
-	return TRUE;
+	return true;
 }
 
 
 /**
  * Configures rendering states for a static light map chunk, including Z-bias adjustments and exclusions for animated sectors.
  */
-Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 {
 	if (pChunk->pSideDef == NULL)
 	{
@@ -297,40 +297,40 @@ Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 
 	if (pChunk->pSector)
 		if (pChunk->pSector->flags & SF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSectorPos)
 		if (pChunk->pSectorPos->flags & SF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSectorNeg)
 		if (pChunk->pSectorNeg->flags & SF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
 	if (pChunk->pSideDef)
 		if (pChunk->pSideDef->flags & WF_HAS_ANIMATED)
-			return FALSE;
+			return false;
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device to use modulated color and alpha stages for object material rendering.
  */
-Bool D3DMaterialObjectPool(d3d_render_pool_new *pPool)
+bool D3DMaterialObjectPool(d3d_render_pool_new *pPool)
 {
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Binds the appropriate texture to the device for an object packet and sets it for rendering.
  */
-Bool D3DMaterialObjectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialObjectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
 
@@ -342,13 +342,13 @@ Bool D3DMaterialObjectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sy
 	if (pTexture)
 		IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) pTexture);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures rendering states for an object chunk, including transformations, Z-bias, and alpha settings.
  */
-Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 {
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
@@ -391,13 +391,13 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGEND, *(DWORD *)(&end));
 	}
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device for invisible object materials, including texture sampling and filter settings.
  */
-Bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool)
+bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool)
 {
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
                                          D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -425,13 +425,13 @@ Bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool)
 
 	IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9*)getBackBufferTextureZero());
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Binds the appropriate texture to the device for an invisible object packet and sets it for rendering.
  */
-Bool D3DMaterialObjectInvisiblePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialObjectInvisiblePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
 
@@ -443,13 +443,13 @@ Bool D3DMaterialObjectInvisiblePacket(d3d_render_packet_new *pPacket, d3d_render
 	if (pTexture)
 		IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) pTexture);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures rendering states for an invisible object chunk, including transformations, Z-bias, and alpha settings.
  */
-Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 {
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
@@ -471,13 +471,13 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device for effect materials, including alpha blending and color stages.
  */
-Bool D3DMaterialEffectPool(d3d_render_pool_new *pPool)
+bool D3DMaterialEffectPool(d3d_render_pool_new *pPool)
 {
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
@@ -489,13 +489,13 @@ Bool D3DMaterialEffectPool(d3d_render_pool_new *pPool)
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_DIFFUSE, 0);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Binds the appropriate texture to the device for an effect packet and sets it for rendering.
  */
-Bool D3DMaterialEffectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialEffectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
 
@@ -506,26 +506,26 @@ Bool D3DMaterialEffectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sy
 		IDirect3DDevice9_SetTexture(
          gpD3DDevice, 0, (IDirect3DBaseTexture9 *) pTexture);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device for blur materials, setting up color and alpha stages.
  */
-Bool D3DMaterialBlurPool(d3d_render_pool_new *pPool)
+bool D3DMaterialBlurPool(d3d_render_pool_new *pPool)
 {
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * Binds the appropriate texture to the device for a blur packet and sets it for rendering.
  */
-Bool D3DMaterialBlurPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialBlurPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
 
@@ -536,21 +536,21 @@ Bool D3DMaterialBlurPacket(d3d_render_packet_new *pPacket, d3d_render_cache_syst
 		IDirect3DDevice9_SetTexture(gpD3DDevice, 0,
                                   (IDirect3DBaseTexture9 *) pTexture);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * A placeholder function for rendering blur chunks with no specific additional material setup required.
  */
-Bool D3DMaterialBlurChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialBlurChunk(d3d_render_chunk_new *pChunk)
 {
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures the rendering device for particle materials, including alpha blending and color stages.
  */
-Bool D3DMaterialParticlePool(d3d_render_pool_new *pPool)
+bool D3DMaterialParticlePool(d3d_render_pool_new *pPool)
 {
    IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
@@ -562,33 +562,33 @@ Bool D3DMaterialParticlePool(d3d_render_pool_new *pPool)
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * A placeholder function for rendering particle packets with no specific material setup required.
  */
-Bool D3DMaterialParticlePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
+bool D3DMaterialParticlePacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem)
 {
-	return TRUE;
+	return true;
 }
 
 /**
  * Configures rendering states for a particle chunk, including transformations.
  */
-Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk)
 {
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
-	return TRUE;
+	return true;
 }
 
 /**
  * A placeholder function for rendering effect chunks with no specific additional material setup required.
  */
-Bool D3DMaterialEffectChunk(d3d_render_chunk_new *pChunk)
+bool D3DMaterialEffectChunk(d3d_render_chunk_new *pChunk)
 {
-	return TRUE;
+	return true;
 }
 
 /**

@@ -82,7 +82,7 @@ void CALLBACK StartupTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime
 void AddCharsStartup(char *message, int len)
 {
    int i;
-   Bool done = False;
+   bool done = false;
 
    for (i=0; i < len; i++)
    {
@@ -97,7 +97,7 @@ void AddCharsStartup(char *message, int len)
       /* If we reach end of server string, win */
       if (pos == INITSTR_LENGTH)
       {
-	 done = True;
+	 done = true;
 	 break;
       }
    }

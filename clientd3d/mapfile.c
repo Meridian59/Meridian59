@@ -162,7 +162,7 @@ bool MapFileLoadRoom(room_type *room)
        if (fread(&byte, 1, 1, mapfile) != 1)
          return false;
      }
-     room->walls[i].seen = ((byte & (1 << offset)) != 0) ? True : False;
+     room->walls[i].seen = ((byte & (1 << offset)) != 0) ? true : false;
    }
    
    if (fread(&room->annotations_offset, 1, 4, mapfile) != 4)

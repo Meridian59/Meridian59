@@ -120,7 +120,7 @@ void InterfaceGetMaxSize(SIZE *s);
 void GameChangeFont(void);
 void GameChangeColor(void);
 
-void MainTab(int ctrl, Bool forward);
+void MainTab(int ctrl, bool forward);
 
 M59EXPORT void PerformAction(int action, void *action_data);
 

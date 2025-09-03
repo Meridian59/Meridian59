@@ -23,6 +23,6 @@ typedef struct {
 } TypedCommand;
 
 BOOL ParseGotText(char *str);
-M59EXPORT Bool ParseCommand(char *str, TypedCommand *commands);
+M59EXPORT bool ParseCommand(char *str, TypedCommand *commands);
 
 #endif /* #ifndef _PARSE_H */

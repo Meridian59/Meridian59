@@ -52,7 +52,7 @@ static ClientInfo client_info;
 
 static char module_dir[] = "resource\\";
 
-static bool first_load;               // True when FIRST DLL is loaded
+static bool first_load;               // true when FIRST DLL is loaded
 
 extern room_type   current_room;
 extern HWND        hCurrentDlg;
@@ -128,7 +128,7 @@ int CompareModulesByPriority(void *m1, void *m2)
 }
 /******************************************************************************/
 /*
- * CompareModulesById:  Return True iff modules have same module id.
+ * CompareModulesById:  Return true iff modules have same module id.
  */
 bool CompareModulesById(void *m1, void *m2)
 {
@@ -137,7 +137,7 @@ bool CompareModulesById(void *m1, void *m2)
 /******************************************************************************/
 /*
  * ModuleLoadByRsc:  Load the module with filename given by the name_rsc resource.
- *   Return True iff successful.
+ *   Return true iff successful.
  */
 bool ModuleLoadByRsc(ID name_rsc)
 {
@@ -154,7 +154,7 @@ bool ModuleLoadByRsc(ID name_rsc)
     if (info->rsc == name_rsc)
     {
       debug(("Module with resource #%d already loaded\n", name_rsc));
-      return False;
+      return false;
     }
   }
   
@@ -162,7 +162,7 @@ bool ModuleLoadByRsc(ID name_rsc)
   if (filename == NULL)
   {
     debug(("Couldn't find module filename for resource %d\n", name_rsc));
-    return False;
+    return false;
   }
   
   // LoadLibrary can find libraries from places you don't want them.  We
@@ -172,10 +172,10 @@ bool ModuleLoadByRsc(ID name_rsc)
   
   info = ModuleLoadByName(full_filename);
   if (info == NULL)
-    return False;
+    return false;
   
   info->rsc = name_rsc;
-  return True;
+  return true;
 }
 /******************************************************************************/
 /*
@@ -226,7 +226,7 @@ ModuleInfo * ModuleLoadByName(char *filename)
 /*
  * ModuleExitByRsc:   Tell the module with the given resource filename to exit,
  *   if it is present.
- *   Returns True iff module is present.
+ *   Returns true iff module is present.
  */
 bool ModuleExitByRsc(ID name_rsc)
 {
@@ -240,16 +240,16 @@ bool ModuleExitByRsc(ID name_rsc)
       if (info->rsc == name_rsc)
       {
 	 ModuleExitByInfo(info);
-	 return True;
+	 return true;
       }
    }
-   return False;
+   return false;
 }
 /******************************************************************************/
 /*
  * ModuleExitById:   Tell the module with the given module id to exit,
  *   if it is present.
- *   Returns True iff module is present.
+ *   Returns true iff module is present.
  */
 bool ModuleExitById(int module_id)
 {
@@ -263,10 +263,10 @@ bool ModuleExitById(int module_id)
       if (info->module_id == module_id)
       {
 	 ModuleExitByInfo(info);
-	 return True;
+	 return true;
       }
    }
-   return False;
+   return false;
 }
 /******************************************************************************/
 /*
@@ -284,7 +284,7 @@ void ModuleExitByInfo(ModuleInfo *info)
 /*
  * ModuleUnloadById:   Unload the module with the given unique module id,
  *   if it is present.
- *   Returns True iff module is present.
+ *   Returns true iff module is present.
  *
  *   Important:  Do not unload a module if it may have a dialog up.  The dialog
  *   procedure will be removed; however the dialog might still receive messages,
@@ -306,11 +306,11 @@ bool ModuleUnloadById(int module_id)
 	 FreeLibrary(info->handle);
 	 module_list = list_delete_item(module_list, info, CompareModulesById);
 	 SafeFree(info);
-	 return True;
+	 return true;
       }
    }
    debug(("ModuleUnloadById couldn't find module %d to unload\n", module_id));
-   return False;
+   return false;
 }
 /******************************************************************************/
 /*
@@ -335,53 +335,53 @@ void ModulesExitGame(void)
 
 /******************************************************************************/
 #ifdef __cplusplus
-typedef Bool (WINAPI *EventHandlerProc)(...);
+typedef bool (WINAPI *EventHandlerProc)(...);
 #else
-typedef Bool (WINAPI *EventHandlerProc)();
+typedef bool (WINAPI *EventHandlerProc)();
 #endif
-typedef Bool (*EventProc)(ModuleInfo *info, EventHandlerProc handler_proc, va_list v_list);
+typedef bool (*EventProc)(ModuleInfo *info, EventHandlerProc handler_proc, va_list v_list);
 
-typedef Bool (WINAPI *EventHandlerServerMsgProc)(char *, DWORD);
-typedef Bool (WINAPI *EventHandlerKeyProc)(HWND, UINT, BOOL, int, UINT);
-typedef Bool (WINAPI *EventHandlerActionProc)(int, void *);
-typedef Bool (WINAPI *EventHandlerMouseClickProc)(HWND, BOOL, int, int, UINT);
-typedef Bool (WINAPI *EventHandlerFontChangedProc)(WORD, LOGFONT *);
-typedef Bool (WINAPI *EventHandlerColorChangedProc)(WORD, COLORREF);
-typedef Bool (WINAPI *EventHandlerMenuItemProc)(int);
-typedef Bool (WINAPI *EventHandlerStateChangedProc)(int, int);
-typedef Bool (WINAPI *EventHandlerWindowMsgProc)(HWND, UINT, WPARAM, LPARAM);
-typedef Bool (WINAPI *EventHandlerAnimateProc)(int);
-typedef Bool (WINAPI *EventHandlerToolbarButtonProc)(Button *);
-typedef Bool (WINAPI *EventHandlerTextCommandProc)(char *);
-typedef Bool (WINAPI *EventHandlerResizeProc)(int, int, AREA *);
-typedef Bool (WINAPI *EventHandlerRedrawProc)(HDC);
-typedef Bool (WINAPI *EventHandlerDrawItemProc)(HWND, DRAWITEMSTRUCT *);
-typedef Bool (WINAPI *EventHandlerInventoryProc)(int, void *);
-typedef Bool (WINAPI *EventHandlerSetCursorProc)(HCURSOR);
+typedef bool (WINAPI *EventHandlerServerMsgProc)(char *, DWORD);
+typedef bool (WINAPI *EventHandlerKeyProc)(HWND, UINT, BOOL, int, UINT);
+typedef bool (WINAPI *EventHandlerActionProc)(int, void *);
+typedef bool (WINAPI *EventHandlerMouseClickProc)(HWND, BOOL, int, int, UINT);
+typedef bool (WINAPI *EventHandlerFontChangedProc)(WORD, LOGFONT *);
+typedef bool (WINAPI *EventHandlerColorChangedProc)(WORD, COLORREF);
+typedef bool (WINAPI *EventHandlerMenuItemProc)(int);
+typedef bool (WINAPI *EventHandlerStateChangedProc)(int, int);
+typedef bool (WINAPI *EventHandlerWindowMsgProc)(HWND, UINT, WPARAM, LPARAM);
+typedef bool (WINAPI *EventHandlerAnimateProc)(int);
+typedef bool (WINAPI *EventHandlerToolbarButtonProc)(Button *);
+typedef bool (WINAPI *EventHandlerTextCommandProc)(char *);
+typedef bool (WINAPI *EventHandlerResizeProc)(int, int, AREA *);
+typedef bool (WINAPI *EventHandlerRedrawProc)(HDC);
+typedef bool (WINAPI *EventHandlerDrawItemProc)(HWND, DRAWITEMSTRUCT *);
+typedef bool (WINAPI *EventHandlerInventoryProc)(int, void *);
+typedef bool (WINAPI *EventHandlerSetCursorProc)(HCURSOR);
 
-static Bool ModuleEventServerMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventKey(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventAction(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventMouseClick(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventColorChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventMenuItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventModuleMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventStateChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventWindowMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventAnimate(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventToolbarButton(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventTextCommand(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventResize(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventUserChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventRedraw(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventDrawItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventResetData(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventInventory(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventSetCursor(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventNewRoom(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventSetFocus(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
-static Bool ModuleEventConfigChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventServerMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventKey(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventAction(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventMouseClick(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventColorChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventMenuItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventModuleMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventStateChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventWindowMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventAnimate(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventToolbarButton(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventTextCommand(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventResize(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventUserChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventRedraw(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventDrawItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventResetData(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventInventory(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventSetCursor(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventNewRoom(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventSetFocus(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
+static bool ModuleEventConfigChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list);
 
 
 typedef struct {
@@ -418,7 +418,7 @@ static event_entry events[] = {
 };
 
 /******************************************************************************/
-Bool _cdecl ModuleEvent(int event, ...)
+bool _cdecl ModuleEvent(int event, ...)
 {
    list_type l;
    EventHandlerProc lpfn;
@@ -435,7 +435,7 @@ Bool _cdecl ModuleEvent(int event, ...)
    if (events[index].event_code == 0 || events[index].handler == NULL)
    {
       debug(("ModuleEvent found unknown event type %d\n", event));
-      return True;
+      return true;
    }
 
    // See if any modules want this message
@@ -456,18 +456,18 @@ Bool _cdecl ModuleEvent(int event, ...)
 	    va_start(marker, event);
 	    retval = (*events[index].handler)(info, lpfn, marker);
 	    va_end(marker);
-	    if (retval == False)
-	       return False;
+	    if (retval == false)
+	       return false;
 	 }
 	 else debug(("Module missing event handler for event %d\n", event));
       }
    }
-   return True;
+   return true;
 }
 
 /* functions to unpack varargs list and pass on to module */
 /******************************************************************************/
-Bool ModuleEventServerMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventServerMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    char *message = va_arg(v_list, char *);
    DWORD len     = va_arg(v_list, DWORD);
@@ -475,7 +475,7 @@ Bool ModuleEventServerMsg(ModuleInfo *info, EventHandlerProc module_proc, va_lis
    return (*((EventHandlerServerMsgProc) module_proc))(message, len);
 }
 /******************************************************************************/
-Bool ModuleEventKey(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventKey(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    HWND hwnd   = va_arg(v_list, HWND);
    UINT vk     = va_arg(v_list, UINT);
@@ -486,7 +486,7 @@ Bool ModuleEventKey(ModuleInfo *info, EventHandlerProc module_proc, va_list v_li
    return (*((EventHandlerKeyProc) module_proc))(hwnd, vk, fDown, cRepeat, flags);
 }
 /******************************************************************************/
-Bool ModuleEventAction(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventAction(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int action = va_arg(v_list, int);
    void *data = va_arg(v_list, void *);
@@ -494,7 +494,7 @@ Bool ModuleEventAction(ModuleInfo *info, EventHandlerProc module_proc, va_list v
    return (*((EventHandlerActionProc) module_proc))(action, data);
 }
 /******************************************************************************/
-Bool ModuleEventMouseClick(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventMouseClick(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    HWND hwnd   = va_arg(v_list, HWND);
    BOOL fDoubleClick = va_arg(v_list, BOOL);
@@ -505,7 +505,7 @@ Bool ModuleEventMouseClick(ModuleInfo *info, EventHandlerProc module_proc, va_li
    return (*((EventHandlerMouseClickProc) module_proc))(hwnd, fDoubleClick, x, y, keyFlags);
 }
 /******************************************************************************/
-Bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    WORD font_id  = va_arg(v_list, WORD);
    LOGFONT *font = va_arg(v_list, LOGFONT *);
@@ -513,7 +513,7 @@ Bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_l
    return (*((EventHandlerFontChangedProc) module_proc))(font_id, font);
 }
 /******************************************************************************/
-Bool ModuleEventColorChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventColorChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    WORD color_id  = va_arg(v_list, WORD);
    COLORREF color = va_arg(v_list, COLORREF);
@@ -521,27 +521,27 @@ Bool ModuleEventColorChanged(ModuleInfo *info, EventHandlerProc module_proc, va_
    return (*((EventHandlerColorChangedProc) module_proc))(color_id, color);
 }
 /******************************************************************************/
-Bool ModuleEventMenuItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventMenuItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int id  = va_arg(v_list, int);
 
    return (*((EventHandlerMenuItemProc) module_proc))(id);
 }
 /******************************************************************************/
-Bool ModuleEventModuleMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventModuleMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int module_id  = va_arg(v_list, int);
    va_list params = va_arg(v_list, va_list);
 
    // Only send message to target module
    if (module_id != info->module_id)
-      return True;
+      return true;
 
    (*module_proc)(params);
-   return False;
+   return false;
 }
 /******************************************************************************/
-Bool ModuleEventStateChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventStateChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int old_state  = va_arg(v_list, int);
    int new_state  = va_arg(v_list, int);
@@ -549,7 +549,7 @@ Bool ModuleEventStateChanged(ModuleInfo *info, EventHandlerProc module_proc, va_
    return (*((EventHandlerStateChangedProc) module_proc))(old_state, new_state);
 }
 /******************************************************************************/
-Bool ModuleEventWindowMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventWindowMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    HWND   hwnd    = va_arg(v_list, HWND);
    UINT   message = va_arg(v_list, UINT);
@@ -559,25 +559,25 @@ Bool ModuleEventWindowMsg(ModuleInfo *info, EventHandlerProc module_proc, va_lis
    return (*((EventHandlerWindowMsgProc) module_proc))(hwnd, message, wParam, lParam);
 }
 /******************************************************************************/
-Bool ModuleEventAnimate(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventAnimate(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int dt  = va_arg(v_list, int);
    return (*((EventHandlerAnimateProc) module_proc))(dt);
 }
 /******************************************************************************/
-Bool ModuleEventToolbarButton(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventToolbarButton(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    Button *b = va_arg(v_list, Button *);
    return (*((EventHandlerToolbarButtonProc) module_proc))(b);
 }
 /******************************************************************************/
-Bool ModuleEventTextCommand(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventTextCommand(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    char *str = va_arg(v_list, char *);
    return (*((EventHandlerTextCommandProc) module_proc))(str);
 }
 /******************************************************************************/
-Bool ModuleEventResize(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventResize(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int xsize  = va_arg(v_list, int);
    int ysize  = va_arg(v_list, int);
@@ -586,31 +586,31 @@ Bool ModuleEventResize(ModuleInfo *info, EventHandlerProc module_proc, va_list v
    return (*((EventHandlerResizeProc) module_proc))(xsize, ysize, view);
 }
 /******************************************************************************/
-Bool ModuleEventUserChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventUserChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    return (*module_proc)();
 }
 /******************************************************************************/
-Bool ModuleEventRedraw(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventRedraw(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    HDC    hdc    = va_arg(v_list, HDC);
 
    return (*((EventHandlerRedrawProc) module_proc))(hdc);
 }
 /******************************************************************************/
-Bool ModuleEventDrawItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventDrawItem(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    HWND   hwnd    = va_arg(v_list, HWND);
    DRAWITEMSTRUCT *lpdis = va_arg(v_list, DRAWITEMSTRUCT *);
    return (*((EventHandlerDrawItemProc) module_proc))(hwnd, lpdis);
 }
 /******************************************************************************/
-Bool ModuleEventResetData(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventResetData(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    return (*module_proc)();
 }
 /******************************************************************************/
-Bool ModuleEventInventory(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventInventory(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int command = va_arg(v_list, int);
    void *data  = va_arg(v_list, void *);
@@ -618,24 +618,24 @@ Bool ModuleEventInventory(ModuleInfo *info, EventHandlerProc module_proc, va_lis
    return (*((EventHandlerInventoryProc) module_proc))(command, data);
 }
 /******************************************************************************/
-Bool ModuleEventSetCursor(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventSetCursor(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    HCURSOR cursor  = va_arg(v_list, HCURSOR);
 
    return (*((EventHandlerSetCursorProc) module_proc))(cursor);
 }
 /******************************************************************************/
-Bool ModuleEventNewRoom(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventNewRoom(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    return (*module_proc)();
 }
 /******************************************************************************/
-Bool ModuleEventSetFocus(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventSetFocus(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    return (*module_proc)();
 }
 /******************************************************************************/
-Bool ModuleEventConfigChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
+bool ModuleEventConfigChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    return (*module_proc)();
 }

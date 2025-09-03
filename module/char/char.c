@@ -18,10 +18,10 @@ HINSTANCE hInst;            // Handle of this DLL
 ClientInfo *cinfo;         // Holds data passed from main client
 bool        exiting;
 
-static Bool HandleCharacters(char *ptr,long len);
-static Bool HandleCharInfo(char *ptr,long len);
-static Bool HandleCharInfoOk(char *ptr, long len);
-static Bool HandleCharInfoNotOk(char *ptr, long len);
+static bool HandleCharacters(char *ptr,long len);
+static bool HandleCharInfo(char *ptr,long len);
+static bool HandleCharInfoOk(char *ptr, long len);
+static bool HandleCharInfoNotOk(char *ptr, long len);
 
 // Server message handler table
 static handler_struct handler_table[] = {
@@ -91,7 +91,7 @@ bool WINAPI EventServerMessage(char *message, long len)
    return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
-Bool HandleCharacters(char *ptr, long len)
+bool HandleCharacters(char *ptr, long len)
 {
    char *start = ptr;
    WORD num_characters, i, string_len;
@@ -144,7 +144,7 @@ Bool HandleCharacters(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleCharInfo(char *ptr, long len)
+bool HandleCharInfo(char *ptr, long len)
 {
    CharAppearance *ap;
    char *start = ptr;
@@ -242,7 +242,7 @@ Bool HandleCharInfo(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleCharInfoOk(char *ptr, long len)
+bool HandleCharInfoOk(char *ptr, long len)
 {
    extern ID char_to_use;
    ID char_returned = 0;
@@ -260,7 +260,7 @@ Bool HandleCharInfoOk(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleCharInfoNotOk(char *ptr, long len)
+bool HandleCharInfoNotOk(char *ptr, long len)
 {
    if (len != 0)
       return false;

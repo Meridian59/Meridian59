@@ -28,7 +28,7 @@ bool ModuleUnloadById(int module_id);
 void ModulesEnterGame(void);
 
 /* event handler */
-M59EXPORT Bool _cdecl ModuleEvent(int event, ...);
+M59EXPORT bool _cdecl ModuleEvent(int event, ...);
 
 typedef void (WINAPI *ModuleProc)(ModuleInfo *module_info, ClientInfo *client_info);
 typedef void (WINAPI *ModuleExitProc)();

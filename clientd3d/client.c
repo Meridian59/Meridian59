@@ -100,7 +100,7 @@ static void GenerateCRC16( void )
 LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	/* See if module wants to handle message */
-	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == False)
+	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == false)
 		return 0;
 
 	switch (message)
@@ -126,12 +126,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_SYSKEYDOWN:
-		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == True)
+		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == true)
 			return 0;
 		break;  // Pass message on to Windows for default menu handling
 
 	case WM_SYSKEYUP:
-		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == True)
+		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == true)
 			return 0;
 		break;  // Pass message on to Windows for default menu handling
 

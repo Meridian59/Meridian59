@@ -20,27 +20,27 @@ bool        exiting;
 
 bool		gbClassicKeys = false;
 
-static Bool HandleSpells(char *ptr,long len);
-static Bool HandleAddSpell(char *ptr,long len);
-static Bool HandleRemoveSpell(char *ptr,long len);
-static Bool HandleSkills(char *ptr,long len);
-static Bool HandleAddSkill(char *ptr,long len);
-static Bool HandleRemoveSkill(char *ptr,long len);
-static Bool HandleStat(char *ptr,long len);
-static Bool HandleStatGroup(char *ptr,long len);
-static Bool HandleStatGroups(char *ptr, long len);
-static Bool HandleAddEnchantment(char *ptr, long len);
-static Bool HandleRemoveEnchantment(char *ptr, long len);
-static Bool HandleUserCommand(char *ptr, long len);
-static Bool HandleGuildInfo(char *ptr, long len);
-static Bool HandleGuildAsk(char *ptr, long len);
-static Bool HandleGuildList(char *ptr, long len);
-static Bool HandleGuildHalls(char *ptr, long len);
-static Bool HandleGuildShield(char *ptr, long len);
-static Bool HandleGuildShields(char *ptr, long len);
-static Bool HandleLookPlayer(char *ptr, long len);
-static Bool HandleSendQuit(char *ptr, long len);
-static Bool HandleSpellSchools(char *ptr, long len);
+static bool HandleSpells(char *ptr,long len);
+static bool HandleAddSpell(char *ptr,long len);
+static bool HandleRemoveSpell(char *ptr,long len);
+static bool HandleSkills(char *ptr,long len);
+static bool HandleAddSkill(char *ptr,long len);
+static bool HandleRemoveSkill(char *ptr,long len);
+static bool HandleStat(char *ptr,long len);
+static bool HandleStatGroup(char *ptr,long len);
+static bool HandleStatGroups(char *ptr, long len);
+static bool HandleAddEnchantment(char *ptr, long len);
+static bool HandleRemoveEnchantment(char *ptr, long len);
+static bool HandleUserCommand(char *ptr, long len);
+static bool HandleGuildInfo(char *ptr, long len);
+static bool HandleGuildAsk(char *ptr, long len);
+static bool HandleGuildList(char *ptr, long len);
+static bool HandleGuildHalls(char *ptr, long len);
+static bool HandleGuildShield(char *ptr, long len);
+static bool HandleGuildShields(char *ptr, long len);
+static bool HandleLookPlayer(char *ptr, long len);
+static bool HandleSendQuit(char *ptr, long len);
+static bool HandleSpellSchools(char *ptr, long len);
 static void CustomConfigInit(void);
 
 // Server message handler table
@@ -1002,7 +1002,7 @@ bool ExtractStatistic(char **ptr, Statistic *s)
    return true;
 }
 /********************************************************************/
-Bool HandleSpells(char *ptr,long len)
+bool HandleSpells(char *ptr,long len)
 {
    WORD list_len, i;
    list_type list = NULL;
@@ -1027,7 +1027,7 @@ Bool HandleSpells(char *ptr,long len)
    return true;
 }
 /********************************************************************/
-Bool HandleAddSpell(char *ptr, long len)
+bool HandleAddSpell(char *ptr, long len)
 {
    spell *sp;
    char *start = ptr;
@@ -1044,7 +1044,7 @@ Bool HandleAddSpell(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleRemoveSpell(char *ptr, long len)
+bool HandleRemoveSpell(char *ptr, long len)
 {
    ID spell_id;
 
@@ -1056,7 +1056,7 @@ Bool HandleRemoveSpell(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleSkills(char *ptr,long len)
+bool HandleSkills(char *ptr,long len)
 {
    WORD list_len, i;
    list_type list = NULL;
@@ -1081,7 +1081,7 @@ Bool HandleSkills(char *ptr,long len)
    return true;
 }
 /********************************************************************/
-Bool HandleAddSkill(char *ptr, long len)
+bool HandleAddSkill(char *ptr, long len)
 {
    skill *sp;
    char *start = ptr;
@@ -1098,7 +1098,7 @@ Bool HandleAddSkill(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleRemoveSkill(char *ptr, long len)
+bool HandleRemoveSkill(char *ptr, long len)
 {
    ID skill_id;
 
@@ -1110,7 +1110,7 @@ Bool HandleRemoveSkill(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleStat(char *ptr, long len)
+bool HandleStat(char *ptr, long len)
 {
    BYTE group;
    Statistic s;
@@ -1128,7 +1128,7 @@ Bool HandleStat(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleStatGroup(char *ptr, long len)
+bool HandleStatGroup(char *ptr, long len)
 {
    list_type stat_list = NULL;
    BYTE group, list_len;
@@ -1164,7 +1164,7 @@ Bool HandleStatGroup(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleStatGroups(char *ptr, long len)
+bool HandleStatGroups(char *ptr, long len)
 {
    char *start = ptr;
    BYTE num_groups;
@@ -1184,7 +1184,7 @@ Bool HandleStatGroups(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleAddEnchantment(char *ptr, long len)
+bool HandleAddEnchantment(char *ptr, long len)
 {
    BYTE type;
    object_node *obj;
@@ -1204,7 +1204,7 @@ Bool HandleAddEnchantment(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleRemoveEnchantment(char *ptr, long len)
+bool HandleRemoveEnchantment(char *ptr, long len)
 {
    BYTE type;
    ID obj_id;
@@ -1221,7 +1221,7 @@ Bool HandleRemoveEnchantment(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleUserCommand(char *ptr, long len)
+bool HandleUserCommand(char *ptr, long len)
 {
    BYTE type;
    int index;
@@ -1255,7 +1255,7 @@ Bool HandleUserCommand(char *ptr, long len)
    return false;   // Pass on to other modules
 }
 /********************************************************************/
-Bool HandleGuildInfo(char *ptr, long len)
+bool HandleGuildInfo(char *ptr, long len)
 {
    char *start = ptr;
    GuildConfigDialogStruct info;
@@ -1314,7 +1314,7 @@ Bool HandleGuildInfo(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleGuildAsk(char *ptr, long len)
+bool HandleGuildAsk(char *ptr, long len)
 {
   int cost1, cost2;
   
@@ -1328,7 +1328,7 @@ Bool HandleGuildAsk(char *ptr, long len)
   return true;
 }
 /********************************************************************/
-Bool HandleGuildList(char *ptr, long len)
+bool HandleGuildList(char *ptr, long len)
 {
    list_type guild_list;
    IDList other_guilds[4];
@@ -1375,7 +1375,7 @@ Bool HandleGuildList(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleGuildShield(char *ptr, long len)
+bool HandleGuildShield(char *ptr, long len)
 {
    char name[MAX_GUILD_NAME + 1];  // Name of guild
    ID id;
@@ -1401,7 +1401,7 @@ Bool HandleGuildShield(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleGuildShields(char *ptr, long len)
+bool HandleGuildShields(char *ptr, long len)
 {
    list_type shield_list;
    WORD num_guildshields;
@@ -1429,7 +1429,7 @@ Bool HandleGuildShields(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleGuildHalls(char *ptr, long len)
+bool HandleGuildHalls(char *ptr, long len)
 {
    char *start = ptr;
    WORD num_halls;
@@ -1457,7 +1457,7 @@ Bool HandleGuildHalls(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleLookPlayer(char *ptr, long len)
+bool HandleLookPlayer(char *ptr, long len)
 {
    char description[MAXMESSAGE], fixed_string[MAXMESSAGE], url[MAX_URL + 1];
    char* desc = description;
@@ -1489,7 +1489,7 @@ Bool HandleLookPlayer(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleSendQuit(char *ptr, long len)
+bool HandleSendQuit(char *ptr, long len)
 {
   if (len != 0)
     return false;
@@ -1497,7 +1497,7 @@ Bool HandleSendQuit(char *ptr, long len)
   return true;
 }
 /********************************************************************/
-Bool HandleSpellSchools(char *ptr, long len)
+bool HandleSpellSchools(char *ptr, long len)
 {
   BYTE num;
   int i;

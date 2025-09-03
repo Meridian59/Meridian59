@@ -29,7 +29,7 @@ typedef struct {
 static StatCache stat_cache;        // Cache stat groups we've retrieved from server already
 
 /* local function prototypes */
-static Bool CompareStats(void *s1, void *s2);
+static bool CompareStats(void *s1, void *s2);
 /************************************************************************/
 void StatCacheCreate(void)
 {
@@ -54,7 +54,7 @@ void StatCacheDestroy(void)
 /*
  * CompareStats: Compare two statistics based on num field.
  */
-Bool CompareStats(void *s1, void *s2)
+bool CompareStats(void *s1, void *s2)
 {
    return ((Statistic *) s1)->num == ((Statistic *) s2)->num;
 }

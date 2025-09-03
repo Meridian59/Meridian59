@@ -25,11 +25,11 @@ HBITMAP hbmUpArrow = NULL;
 HBITMAP hbmDownArrow = NULL;
 
 /* local function prototypes */
-static Bool HandleMail(char *ptr, long len);
-static Bool HandleLookupNames(char *ptr, long len);
-static Bool HandleArticles(char *ptr, long len);
-static Bool HandleArticle(char *ptr, long len);
-static Bool HandleLookNewsgroup(char *ptr, long len);
+static bool HandleMail(char *ptr, long len);
+static bool HandleLookupNames(char *ptr, long len);
+static bool HandleArticles(char *ptr, long len);
+static bool HandleArticle(char *ptr, long len);
+static bool HandleLookNewsgroup(char *ptr, long len);
 static void RegisterWindowClasses(void);
 static void CommandMail(char *args);
 
@@ -169,7 +169,7 @@ bool WINAPI EventServerMessage(char *message, long len)
    return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
-Bool HandleMail(char *ptr, long len)
+bool HandleMail(char *ptr, long len)
 {
    long index;
    WORD num_recipients, i;
@@ -223,7 +223,7 @@ Bool HandleMail(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleArticles(char *ptr, long len)
+bool HandleArticles(char *ptr, long len)
 {
    WORD newsgroup;
    WORD num_articles;
@@ -276,7 +276,7 @@ Bool HandleArticles(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleArticle(char *ptr, long len)
+bool HandleArticle(char *ptr, long len)
 {
    char article[MAXMESSAGE + 1];
 
@@ -288,7 +288,7 @@ Bool HandleArticle(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleLookNewsgroup(char *ptr, long len)
+bool HandleLookNewsgroup(char *ptr, long len)
 {
    ID resource_id;
    WORD newsgroup;
@@ -317,7 +317,7 @@ Bool HandleLookNewsgroup(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-Bool HandleLookupNames(char *ptr, long len)
+bool HandleLookupNames(char *ptr, long len)
 {
    WORD num_objects;
    int i;

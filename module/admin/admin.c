@@ -13,11 +13,11 @@
 #include "admin.h"
 
 HINSTANCE hInst;                 // Handle of this DLL
-extern Bool   hidden;         // True when dialog exists but is hidden
+extern bool   hidden;         // true when dialog exists but is hidden
 
 ClientInfo *c;         // Holds data passed from main client
 
-Bool exiting;
+bool exiting;
 
 /* local function prototypes */
 static Bool HandleAdmin(char *ptr, long len);
@@ -64,14 +64,14 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    info->priority   = PRIORITY_NORMAL;
    info->module_id  = MODULE_ID;
    c = client_info;    // Save client info for our use later
-   exiting = False;
+   exiting = false;
 
    KeyAddTable(GAME_PLAY, admin_key_table);
 }
 /****************************************************************************/
 void WINAPI ModuleExit(void)
 {
-   exiting = True;
+   exiting = true;
 
    KeyRemoveTable(GAME_PLAY, admin_key_table);
 
@@ -86,17 +86,17 @@ void WINAPI ModuleExit(void)
  * EVENT_SERVERMSG
  */
 /****************************************************************************/
-Bool WINAPI EventServerMessage(char *message, long len)
+bool WINAPI EventServerMessage(char *message, long len)
 {
-   Bool retval;
+   bool retval;
 
    retval = LookupMessage(message, len, handler_table);
 
    // If we handle message, don't pass it on to anyone else
-   if (retval == True)
-     return False;
+   if (retval == true)
+     return false;
 
-   return True;    // Allow other modules to get other messages
+   return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
 Bool HandleAdmin(char *ptr, long len)
@@ -112,14 +112,14 @@ Bool HandleAdmin(char *ptr, long len)
 
    if (hAdminDlg != NULL)
       SendMessage(hAdminDlg, BK_GOTTEXT, 0, (LPARAM) message);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_USERACTION
  */
 /****************************************************************************/
-Bool WINAPI EventUserAction(int action, void *action_data)
+bool WINAPI EventUserAction(int action, void *action_data)
 {
    int x, y;
    list_type objects;
@@ -137,18 +137,18 @@ Bool WINAPI EventUserAction(int action, void *action_data)
 	 ShowWindow(hAdminDlg, SW_SHOWNORMAL);
 	 SetFocus(hAdminDlg);
       }
-      hidden = False;
+      hidden = false;
 
       break;
 
    case A_LOOKMOUSE:
       /* We're looking for a user clicking on main window */
       if (hAdminDlg == NULL || hidden || !MouseToRoom(&x, &y))
-	 return True;
+	 return true;
       
       objects = GetObjects3D(x, y, 0, 0, 0);
       if (objects == NULL)
-	 return True;
+	 return true;
 
       obj = (object_node *) (objects->data);
       
@@ -161,7 +161,7 @@ Bool WINAPI EventUserAction(int action, void *action_data)
       // Examining inventory object
       id = reinterpret_cast<std::intptr_t>(action_data);
       if (hAdminDlg == NULL || hidden || id == INVALID_ID)
-	 return True;
+	 return true;
 
       /* Get details of object */
       sprintf(buf, "show object %d", GetObjId(id));
@@ -169,31 +169,31 @@ Bool WINAPI EventUserAction(int action, void *action_data)
       break;
 
    default: 
-      return True;
+      return true;
    }
-   return False;
+   return false;
 }
 /****************************************************************************/
 /*
  * EVENT_FONTCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
+bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
 {
    if (hAdminDlg != NULL)
       SendMessage(hAdminDlg, BK_SETDLGFONTS, 0, 0);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_RESETDATA
  */
 /****************************************************************************/
-Bool WINAPI EventResetData(void)
+bool WINAPI EventResetData(void)
 {
    // Clear all object info from dialog, since these might have changed
    if (hAdminDlg != NULL)
       SendMessage(hAdminDlg, BK_RESETDATA, 0, 0);
-   return True;
+   return true;
 }
 

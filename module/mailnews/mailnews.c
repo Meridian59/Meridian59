@@ -15,7 +15,7 @@
 HINSTANCE hInst;          // Handle of this DLL
 
 ClientInfo *cinfo;     // Holds data passed from main client
-Bool        exiting;
+bool        exiting;
 
 extern HWND hSendMailDlg; /* Non-NULL if Send Mail dialog is up */
 extern HWND hReadMailDlg; /* Non-NULL if Read Mail dialog is up */
@@ -102,7 +102,7 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    info->module_id  = MODULE_ID;
 
    cinfo = client_info;    // Save client info for our use later
-   exiting = False;
+   exiting = false;
 
    RegisterWindowClasses();
 
@@ -116,9 +116,9 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
 /****************************************************************************/
 void WINAPI ModuleExit(void)
 {
-   Bool has_dialog = False, retval;
+   bool has_dialog = false, retval;
 
-   exiting = True;
+   exiting = true;
 
    has_dialog = AbortMailDialogs();
    retval = AbortNewsDialogs();
@@ -156,17 +156,17 @@ void RegisterWindowClasses(void)
  * EVENT_SERVERMSG
  */
 /****************************************************************************/
-Bool WINAPI EventServerMessage(char *message, long len)
+bool WINAPI EventServerMessage(char *message, long len)
 {
-   Bool retval;
+   bool retval;
 
    retval = LookupMessage(message, len, handler_table);
 
    // If we handle message, don't pass it on to anyone else
-   if (retval == True)
-     return False;
+   if (retval == true)
+     return false;
 
-   return True;    // Allow other modules to get other messages
+   return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
 Bool HandleMail(char *ptr, long len)
@@ -185,7 +185,7 @@ Bool HandleMail(char *ptr, long len)
    len -= 4;
    len = ExtractString(&ptr, len, sender, MAXUSERNAME);
    if (len == -1)
-      return False;
+      return false;
    Extract(&ptr, &msg_time, SIZE_TIME);
    Extract(&ptr, &num_recipients, SIZE_NUM_RECIPIENTS);
    len -= SIZE_TIME + SIZE_NUM_RECIPIENTS;
@@ -194,21 +194,21 @@ Bool HandleMail(char *ptr, long len)
    if (num_recipients > MAX_RECIPIENTS)
    {
       RequestDeleteMail(index);
-      return False;
+      return false;
    }
 
    /* If no recipients, then there is no more mail */
    if (num_recipients == 0)
    {
       MailNewMessage(0, sender, 0, NULL, NULL, 0);
-      return True;
+      return true;
    }
 
    for (i=0; i < num_recipients; i++)
    {
       len = ExtractString(&ptr, len, recipients[i], MAXUSERNAME);
       if (len == -1)
-         return False;
+         return false;
    }
    
    Extract(&ptr, &resource_id, SIZE_ID);
@@ -216,11 +216,11 @@ Bool HandleMail(char *ptr, long len)
    
    /* Remove format string id # & other ids from length */
    if (!CheckServerMessage(&msg, &ptr, len, resource_id))
-      return False;
+      return false;
 
    MailNewMessage(index, sender, num_recipients, recipients, msg, msg_time);
 
-   return True;
+   return true;
 }
 /********************************************************************/
 Bool HandleArticles(char *ptr, long len)
@@ -233,7 +233,7 @@ Bool HandleArticles(char *ptr, long len)
    int i;
 
    if (len < SIZE_NEWSGROUP_ID + 2 * SIZE_PART + 2)
-      return False;
+      return false;
 
    Extract(&ptr, &newsgroup, SIZE_NEWSGROUP_ID);
    Extract(&ptr, &part, SIZE_PART);
@@ -246,7 +246,7 @@ Bool HandleArticles(char *ptr, long len)
       if (len < 4 + SIZE_TIME)
       {
 	 list_destroy(list);
-	 return False;
+	 return false;
       }
       len -= 4 + SIZE_TIME;
 
@@ -257,23 +257,23 @@ Bool HandleArticles(char *ptr, long len)
       if (len == -1)
       {
 	 list_destroy(list);
-	 return False;
+	 return false;
       }
 
       len = ExtractString(&ptr, len, article->title, MAX_SUBJECT);
       if (len == -1)
       {
 	 list_destroy(list);
-	 return False;
+	 return false;
       }
       list = list_add_item(list, article);     
    }
 
    if (len != 0)
-      return False;
+      return false;
 
    ReceiveArticles(newsgroup, part, max_part, list);
-   return True;
+   return true;
 }
 /********************************************************************/
 Bool HandleArticle(char *ptr, long len)
@@ -282,10 +282,10 @@ Bool HandleArticle(char *ptr, long len)
 
    len = ExtractString(&ptr, len, article, MAXMESSAGE);
    if (len != 0)
-      return False;
+      return false;
 
    UserReadArticle(article);
-   return True;
+   return true;
 }
 /********************************************************************/
 Bool HandleLookNewsgroup(char *ptr, long len)
@@ -300,7 +300,7 @@ Bool HandleLookNewsgroup(char *ptr, long len)
 
    temp_len = SIZE_NEWSGROUP_ID + 1 + SIZE_ID * 4 + SIZE_ANIMATE;
    if (len < temp_len)
-      return False;
+      return false;
 
    Extract(&ptr, &newsgroup, SIZE_NEWSGROUP_ID);
    Extract(&ptr, &permission, 1);
@@ -310,11 +310,11 @@ Bool HandleLookNewsgroup(char *ptr, long len)
 
    /* Remove format string id # & other ids from length */
    if (!CheckServerMessage(&msg, &ptr, len - temp_len, resource_id))
-      return False;
+      return false;
 
    UserReadNews(&obj, msg, newsgroup, permission);
 
-   return True;
+   return true;
 }
 /********************************************************************/
 Bool HandleLookupNames(char *ptr, long len)
@@ -329,7 +329,7 @@ Bool HandleLookupNames(char *ptr, long len)
    if (num_objects > MAX_RECIPIENTS)
    {
       debug(("Too many recipients %d\n", (int) num_objects));
-      return False;
+      return false;
    }
    
    for (i=0; i < num_objects; i++)
@@ -339,27 +339,27 @@ Bool HandleLookupNames(char *ptr, long len)
    if (len != 0)
    {
       SafeFree(objs);
-      return False;
+      return false;
    }
 
    MailRecipientsReceived(num_objects, objs);
    
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_USERACTION
  */
 /****************************************************************************/
-Bool WINAPI EventUserAction(int action, void *user_action)
+bool WINAPI EventUserAction(int action, void *user_action)
 {
    if (action != A_MAILREAD)
-      return True;
+      return true;
 
    if (!IsWaitingGameState(GameGetState()))
       UserReadMail();
 
-   return False;
+   return false;
 }
 /****************************************************************************/
 void CommandMail(char *args)
@@ -371,33 +371,33 @@ void CommandMail(char *args)
  * EVENT_FONTCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
+bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
 {
    MailChangeFonts();
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_COLORCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventColorChanged(WORD color_id, COLORREF color)
+bool WINAPI EventColorChanged(WORD color_id, COLORREF color)
 {
    MailChangeColor();
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_TEXTCOMMAND
  */
 /****************************************************************************/
-Bool WINAPI EventTextCommand(char *str)
+bool WINAPI EventTextCommand(char *str)
 {
    // Parse command, and don't pass it on if we handle it
    if (ParseCommand(str, commands))
-      return False;
+      return false;
 
-   return True;
+   return true;
 }
 
 /***************************************************************************/

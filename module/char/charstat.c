@@ -40,7 +40,7 @@ static int suggested_stats[][NUM_STATS] = {
 static int  stat_points = STAT_POINTS_INITIAL;   // # of stat points remaining
 static HWND hPoints;                             // Handle of "points left" graph control
 
-static Bool controls_created = False;     // True after graph controls have been created
+static bool controls_created = false;     // true after graph controls have been created
 
 static WNDPROC lpfnDefGraphProc;  /* Default graph control window procedure */
 
@@ -82,7 +82,7 @@ void CharStatsInit(HWND hDlg)
    int i;
    HWND hGraph;
 
-   controls_created = False;
+   controls_created = false;
    stat_points = STAT_POINTS_INITIAL;
    // Initialize graph controls
    for (i=0; i < NUM_CHAR_STATS; i++)
@@ -109,7 +109,7 @@ void CharStatsInit(HWND hDlg)
    SendMessage(hPoints, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
    SendMessage(hPoints, GRPH_RANGESET, 0, STAT_POINTS_INITIAL);
 
-   controls_created = True;
+   controls_created = true;
 }
 /********************************************************************/
 /*

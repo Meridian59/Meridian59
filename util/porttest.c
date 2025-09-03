@@ -11,7 +11,7 @@
 
 static SOCKET sock;      // Socket
 
-static bool debug = dalse;   // Print debugging messages when true
+static bool debug = false;   // Print debugging messages when true
 
 /************************************************************************/
 void Usage(void)

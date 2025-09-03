@@ -51,7 +51,7 @@ typedef struct {
    float     speed;							// keep history of speed to allow for auto correction
    Animate   animate;                      // Object animation when moving
    list_type overlays;                     // Overlays (and animation) to use when moving
-   Bool      move_animating;               // True when move animation is being displayed
+   bool      move_animating;               // True when move animation is being displayed
    BYTE      translation;                  // Palette translation when object is moving
    BYTE	     effect;			   // Display effect when object is moving
 } Motion;
@@ -99,10 +99,10 @@ typedef struct {
 typedef struct {
    object_node obj;
    long        angle;             /* Angle object is facing, in [0, NUMDEGREES) */
-   Bool        moving;            /* True iff object in the middle of an interpolated move */
+   bool        moving;            /* True iff object in the middle of an interpolated move */
    Motion      motion;            /* Current state of object's motion (includes position) */
    int         distance;          /* Distance from player to object; may not be valid */
-   Bool        visible;           // True when object is visible in current frame
+   bool        visible;           // True when object is visible in current frame
    int			boundingHeightAdjust;	// adjustment in height from overlays
 } room_contents_node;
 
@@ -122,6 +122,6 @@ room_contents_node *RoomObjectDestroyAndFree(room_contents_node *r);
 M59EXPORT list_type    RoomObjectListDestroy(list_type obj_list);
 void         RoomObjectSetHeight(room_contents_node *r);
 void         ObjectStopAnimation(object_node *obj);
-void         RoomObjectSetAnimation(room_contents_node *r, Bool move);
+void         RoomObjectSetAnimation(room_contents_node *r, bool move);
 
 #endif /* #ifndef _OBJECT_H */

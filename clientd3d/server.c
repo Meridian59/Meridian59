@@ -18,7 +18,7 @@
 
 #include "client.h"
 
-extern Bool				gD3DRedrawAll;
+extern int gD3DRedrawAll;
 
 static handler_struct connecting_handler_table[] = {
 { 0, NULL},   // must end table this way

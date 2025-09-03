@@ -65,7 +65,7 @@ void UnuseObject(ID obj_id)
 /*
  * IsInUse:  Return True iff the object with the given id is in use.
  */
-Bool IsInUse(ID obj_id)
+bool IsInUse(ID obj_id)
 {
    return (list_find_item(use_list, (void *) obj_id, CompareId) != NULL);
 }

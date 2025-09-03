@@ -406,9 +406,9 @@ void UserUnuse(void)
 /************************************************************************/
 /*
  * UserToggleMusic: Called when user turns music on or off.
- *   music_on is True iff user just turned music on.
+ *   music_on is true iff user just turned music on.
  */
-void UserToggleMusic(Bool music_on)
+void UserToggleMusic(bool music_on)
 {
    if (music_on)
       MusicStart();
@@ -678,7 +678,7 @@ void SetDescParamsByRoomObject(room_contents_node *r, HWND hwnd)
  * UserTargetNextOrPrevious:  Called when the user asks to target "next" object. Sets idTarget.
  *								ajw
  */
-void UserTargetNextOrPrevious(Bool bTargetNext)
+void UserTargetNextOrPrevious(bool bTargetNext)
 {
 	list_type	object_list;
 	int			iListIndex = 0;
@@ -750,7 +750,7 @@ void UserTargetNextOrPrevious(Bool bTargetNext)
  */
 void SetUserTargetID(ID idTargetNew)
 {
-	extern Bool map;
+	extern bool map;
 
 	if (map)
 		idTargetNew = INVALID_ID;
@@ -803,7 +803,7 @@ void UserMouselookToggle(void)
 	}
 }
 
-Bool UserMouselookIsEnabled(void)
+bool UserMouselookIsEnabled(void)
 {
 	return gbMouselook;
 }

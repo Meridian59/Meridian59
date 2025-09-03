@@ -225,7 +225,7 @@ typedef struct WallData
 
    float x0, y0, x1, y1;  // coordinates of wall start and end
 
-   Bool seen;  // True iff part of this wall has been drawn
+   bool seen;  // True iff part of this wall has been drawn
 
    // for bowtie handling
    BYTE bowtie_bits;  // flags set indicating a bowtie & it's orientation

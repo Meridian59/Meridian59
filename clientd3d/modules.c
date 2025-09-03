@@ -52,14 +52,14 @@ static ClientInfo client_info;
 
 static char module_dir[] = "resource\\";
 
-static Bool first_load;               // True when FIRST DLL is loaded
+static bool first_load;               // True when FIRST DLL is loaded
 
 extern room_type   current_room;
 extern HWND        hCurrentDlg;
 extern list_type   current_users;
 extern player_info player;
 extern HPALETTE    hPal;
-extern Bool        map;
+extern bool        map;
 extern BYTE        light_palettes[NUM_PALETTES][NUM_COLORS];
 extern DWORD       latency;
 
@@ -73,7 +73,7 @@ static void ModuleExitByInfo(ModuleInfo *info);
  */
 void ModulesInit(void)
 {
-   first_load = True;
+   first_load = true;
 
    // Initialize client data sent to modules
    client_info.hMain         = hMain;
@@ -219,7 +219,7 @@ ModuleInfo * ModuleLoadByName(char *filename)
    module_list = list_add_sorted_item(module_list, info, CompareModulesByPriority);
 
    debug(("Successfully loaded DLL %s, handle = %08x\n", filename, hModule));
-   first_load = False;
+   first_load = false;
    return info;
 }
 /******************************************************************************/

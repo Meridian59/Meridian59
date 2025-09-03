@@ -418,7 +418,6 @@ void UpdateCost(void)
 BOOL CostListDrawItem(const DRAWITEMSTRUCT *lpdis)
 {
    HBRUSH hbrush;
-   Bool selected = False; /* Never draw highlight */
    int dc_state;
 
    /* If box is empty, do nothing */

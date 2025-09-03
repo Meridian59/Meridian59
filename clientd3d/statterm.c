@@ -20,7 +20,7 @@ static WNDPROC lpfnDefInputProc; /* Default edit window procedure */
 static char    *buf;             /* Buffer to store stuff coming from server */
 static int     pos = 0;          /* Current position in buf */
 
-extern Bool admin_mode;            // True when user wants to go into admin mode
+extern bool admin_mode;            // true when user wants to go into admin mode
 
 /* local function prototypes */
 
@@ -31,7 +31,7 @@ void TermInit(void)
 {
    RECT r;
 
-   admin_mode = False;     // Don't re-enter admin mode after leaving 
+   admin_mode = false;     // Don't re-enter admin mode after leaving 
 
    /* clear the window for our use */
    InvalidateRect(hMain,NULL,TRUE); 
@@ -93,7 +93,7 @@ void TermChangeFont(void)
 
    /* Rescroll, since bigger font means fewer lines fit. */
    WindowBeginUpdate(hwndHistory);
-   EditBoxScroll(hwndHistory, False);
+   EditBoxScroll(hwndHistory, false);
    WindowEndUpdate(hwndHistory);
 }
 /************************************************************************/
@@ -212,7 +212,7 @@ void DoneCharsTerm(void)
    Edit_ReplaceSel(hwndHistory, buf);
 
    /* Scroll new string into view */
-   EditBoxScroll(hwndHistory, False);
+   EditBoxScroll(hwndHistory, false);
 
    WindowEndUpdate(hwndHistory);
    pos = 0;

@@ -280,7 +280,7 @@ void ObjectStopAnimation(object_node *obj)
  * RoomObjectSetAnimation:  Set animation for given room object to move animation
  *   if "move" is True, and normal animation otherwise.
  */
-void RoomObjectSetAnimation(room_contents_node *r, Bool move)
+void RoomObjectSetAnimation(room_contents_node *r, bool move)
 {
   if (move)
   {

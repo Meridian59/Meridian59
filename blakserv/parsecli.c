@@ -110,7 +110,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 	unsigned short len_str;
 	
 	val_type number_stuff;
-	Bool found_number_stuff;
+	bool found_number_stuff;
 	
 	msg_byte_offset = 0;
 	
@@ -163,7 +163,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 		return;
 	}
 	
-	found_number_stuff = False;
+	found_number_stuff = false;
 	i = command.v.data;
 	
 	list_index = MAX_CLIENT_PARMS-1-command_table[i].num_parms;
@@ -268,7 +268,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 					len_list = temp.v.data;
 					list_val.int_val = NIL;
 					
-					found_number_stuff = True;
+					found_number_stuff = true;
 					number_stuff.int_val = NIL;
 					
 					/* dprintf("got list length %i,type %i\n",len_list,
@@ -381,7 +381,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 						eprintf("ParseClientSendBlakod found more than one number parm\n");
 					
 					/* grab the number */
-					found_number_stuff = True;
+					found_number_stuff = true;
 					number_stuff.v.data = (int)(*(int *)(msg_data+msg_byte_offset));
 					number_stuff.v.tag = TAG_INT;
 					msg_byte_offset += 4;

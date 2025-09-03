@@ -63,7 +63,7 @@ HWND hwndTab_page;
 HWND tab_pages[NUM_TAB_PAGES];
 HWND tab_about;
 
-Bool is_about;
+bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
@@ -83,7 +83,7 @@ static FARPROC lpfnDefAdminResponseProc;
 #define STATUS_CONNECTION_WIDTH 30
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
-Bool is_timer_pending;
+bool is_timer_pending;
 
 #define ADMIN_RESPONSE_SIZE (256 * 1024)
 
@@ -131,8 +131,8 @@ void InitInterface(void)
 	HANDLE hThread;
 	
 	sessions_logged_on = 0;
-	is_timer_pending = False;
-	is_about = False;
+	is_timer_pending = false;
+	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -1130,7 +1130,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = True;
+		is_about = true;
 		
 		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());

@@ -12,10 +12,6 @@
 #ifndef _MODULES_H
 #define _MODULES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void ModulesInit(void);
 void ModulesClose(void);
 void ModulesExitGame(void);
@@ -33,8 +29,4 @@ M59EXPORT bool _cdecl ModuleEvent(int event, ...);
 typedef void (WINAPI *ModuleProc)(ModuleInfo *module_info, ClientInfo *client_info);
 typedef void (WINAPI *ModuleExitProc)();
   
-#ifdef __cplusplus
-};
-#endif
-
 #endif /* #ifndef _MODULES_H */

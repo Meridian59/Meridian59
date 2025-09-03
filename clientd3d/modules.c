@@ -334,11 +334,7 @@ void ModulesExitGame(void)
 }
 
 /******************************************************************************/
-#ifdef __cplusplus
 typedef bool (WINAPI *EventHandlerProc)(...);
-#else
-typedef bool (WINAPI *EventHandlerProc)();
-#endif
 typedef bool (*EventProc)(ModuleInfo *info, EventHandlerProc handler_proc, va_list v_list);
 
 typedef bool (WINAPI *EventHandlerServerMsgProc)(char *, DWORD);

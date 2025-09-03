@@ -27,10 +27,6 @@
 enum { STATE_OFFLINE, STATE_TERM, STATE_GAME, STATE_STARTUP, STATE_LOGIN, 
 	  STATE_DOWNLOAD, STATE_INIT, STATE_CONNECTING, };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void StartHelp(void);
 
 BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
@@ -69,9 +65,5 @@ int  MainNotify(HWND hwnd, int idCtrl, NMHDR *pnmh);
 void MainActivateApp(HWND hwnd, BOOL fActivate, DWORD dwThreadId);
 
 void MainReadSocket(HWND hwnd, int SelectType, SOCKET s, int error);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* #ifndef _WINMSG_H */

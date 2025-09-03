@@ -80,11 +80,6 @@ extern bool is_foreground;   // True when program is in the foreground
 #define KEY_NOREPEAT_INTERVAL 400
 
 /* This list of include files is good for precompiled headers */
-/* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef M59_RETAIL
   // #define to enable Miles Sound System version.  If not defined,
@@ -98,18 +93,14 @@ extern "C" {
 ((fn)((hwnd), (int)(wParam), (lParam)), 0L)
 #define MAX_VOLUME 50
 #else
+extern "C" {
 #include "wavemix.h"
+}
 #endif
    
 #define VOLUME_CUTOFF_DISTANCE 16
 
-#ifdef __cplusplus
-};
-
 #define M59EXPORT extern "C"
-#else
-#define M59EXPORT /* nothing */
-#endif
 
 // Remove debugging strings in final version
 #ifndef NODPRINTFS

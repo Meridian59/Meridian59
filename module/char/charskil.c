@@ -95,7 +95,7 @@ void CharSkillsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
       index2 = ListBox_AddString(hList2, LookupNameRsc(s->name_res));
       ListBox_SetItemData(hList2, index2, s);
-      s->chosen = True;
+      s->chosen = true;
       ListBox_DeleteString(hList1, index1);
 
       ListBox_SetCurSel(hList1, min(index1, ListBox_GetCount(hList1) - 1));
@@ -114,7 +114,7 @@ void CharSkillsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
       index1 = ListBox_AddString(hList1, LookupNameRsc(s->name_res));
       ListBox_SetItemData(hList1, index1, s);
-      s->chosen = False;
+      s->chosen = false;
       ListBox_DeleteString(hList2, index2);
 
       ListBox_SetCurSel(hList2, min(index2, ListBox_GetCount(hList2) - 1));

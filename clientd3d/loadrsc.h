@@ -21,10 +21,6 @@ typedef struct {
    char *data;
 } *resource_type, resource_struct;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 bool LoadResources(void);
 void FreeResources(void);
 void ChangeResource(ID res, char *value);
@@ -37,10 +33,6 @@ void DeleteAllRscFiles(void);
 M59EXPORT char *LookupRsc(ID idnum);
 M59EXPORT char *LookupNameRsc(ID idnum);
 M59EXPORT char *LookupRscNoError(ID idnum);
-
-#ifdef __cplusplus
-};
-#endif
 
 #endif /* #ifndef _LOADRSC_H */
 

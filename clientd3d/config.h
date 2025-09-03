@@ -22,10 +22,6 @@
 
 #define CONFIG_MAX_VOLUME 100  // Max value of sound / music volume settings
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Communication settings
 typedef struct {
    WORD  timeout;                 /* # of seconds to wait before redialing */
@@ -154,9 +150,5 @@ bool IsSteamVersion();
 #define LIBRARY_NIL 0
 #define LIBRARY_MSS 1
 #define LIBRARY_MIX 2
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* #ifndef _CONFIG_H */

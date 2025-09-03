@@ -26,7 +26,7 @@ typedef struct
 {
    WORD  key;       // Key to assign alias to
    char  text[MAX_ALIASLEN + 1];      // Text command for alias
-   Bool  cr;        // True iff alias is a self-contained command (add CR to end)
+   bool  cr;        // true iff alias is a self-contained command (add CR to end)
 } HotkeyAlias;
 
 typedef struct
@@ -37,18 +37,18 @@ typedef struct
 
 static HotkeyAlias aliases[] =
 {
-   { VK_F1,   "help",     True, },
-   { VK_F2,   "rest",     True, },
-   { VK_F3,   "stand",    True, },
-   { VK_F4,   "neutral",  True, },
-   { VK_F5,   "happy",    True, },
-   { VK_F6,   "sad",      True, },
-   { VK_F7,   "wry",      True, },
-   { VK_F8,   "wave",     True, },
-   { VK_F9,   "point",    True, },
-   { VK_F10,  "addgroup", True, },
-   { VK_F11,  "mail",     True, },
-   { VK_F12,  "quit",     True, },
+   { VK_F1,   "help",     true, },
+   { VK_F2,   "rest",     true, },
+   { VK_F3,   "stand",    true, },
+   { VK_F4,   "neutral",  true, },
+   { VK_F5,   "happy",    true, },
+   { VK_F6,   "sad",      true, },
+   { VK_F7,   "wry",      true, },
+   { VK_F8,   "wave",     true, },
+   { VK_F9,   "point",    true, },
+   { VK_F10,  "addgroup", true, },
+   { VK_F11,  "mail",     true, },
+   { VK_F12,  "quit",     true, },
 };
 
 static VerbAlias* _apVerbAliases = NULL;
@@ -82,7 +82,7 @@ static HWND hAliasDialog2 = NULL;
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UpdateKeyTables(int key, WORD command, char *text);
-extern Bool	gbClassicKeys;
+extern bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
 
 /****************************************************************************/
@@ -139,12 +139,12 @@ void AliasInit(void)
       {
 	 command = A_TEXTINSERT;
 	 aliases[i].text[len - 1] = 0;
-	 aliases[i].cr = False;
+	 aliases[i].cr = false;
       }
       else 
       {
 	 command = A_TEXTCOMMAND;
-	 aliases[i].cr = True;
+	 aliases[i].cr = true;
       }
 
       UpdateKeyTables(aliases[i].key, command, aliases[i].text);

@@ -6560,6 +6560,43 @@ messages:
       }
       return total;
    }
+
+   FindBadMonsterEffects()
+   "Find monsters where piDrawfx was incorrectly set to $"
+   {
+      local room, i, active;
+
+      for room in plRooms
+      {
+         for i in Send(room, @GetHolderActive)
+         {
+            active = Send(room, @HolderExtractObject, #data=i);
+            if IsClass(active, &Monster) 
+            {
+               if ($ = Send(active, @GetDrawFX)) 
+               {
+                  debug("Object", active, "has $ piDrawfx");
+               }
+            }
+         }  
+      }
+
+      return;
+   }
+
+   FindBadRoomTextures()
+   "Find rooms where the sector ID for texture changes was incorrectly set to $"
+   {
+      local room;
+
+      for room in plRooms
+      {
+         Send(room, @FindBadTextureChanges);
+      }
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

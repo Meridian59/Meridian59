@@ -381,7 +381,7 @@ messages:
          }
 
          iLoops = 0;
-         LossCounter = LossCounter - (numSpellPointsLost/BaseLossAmount);
+         LossCounter = LossCounter - (numSpellPointsLost/Abs(BaseLossAmount));
          while (LossCounter > 0) and (iLoops < 200)
          {
             iLoops = iLoops + 1;
@@ -457,7 +457,7 @@ messages:
          }
 
          iLoops = 0;
-         LossCounter = LossCounter - (numSkillPointsLost/BaseLossAmount);
+         LossCounter = LossCounter - (numSkillPointsLost/Abs(BaseLossAmount));
          while LossCounter > 0 AND iLoops < 100
          {
             iLoops = iLoops + 1;

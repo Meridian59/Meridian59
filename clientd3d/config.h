@@ -120,7 +120,7 @@ typedef struct {
    // and switches D3D present mode to D3DPRESENT_INTERVAL_DEFAULT 
    // for more stable, power-efficient rendering.
    bool gpuEfficiency;
-   Bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
+   bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
 } Config;
 
 void ConfigInit(void);

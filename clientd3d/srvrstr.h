@@ -22,7 +22,7 @@ enum {
    STYLE_RESET     = 3,
 };
 
-M59EXPORT Bool CheckServerMessage(char** message, char **params, long len, ID fmt_id);
+M59EXPORT bool CheckServerMessage(char** message, char **params, long len, ID fmt_id);
 M59EXPORT void DisplayServerMessage(char *message, COLORREF start_color, BYTE start_style);
 M59EXPORT void DisplayMessage(char *message, COLORREF start_color, BYTE start_style);
 

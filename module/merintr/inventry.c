@@ -28,7 +28,7 @@ static int inventory_bg_index;  // Palette index of color to use for window bg b
 
 typedef struct {
    object_node *obj;            // Pointer to node for object in inventory list
-   Bool         is_using;       // True iff item is in use
+   bool         is_using;       // true iff item is in use
 } InvItem;
 
 static list_type items;         // List of InvItem structures for items in inventory
@@ -38,9 +38,9 @@ static int rows, cols;          // # of rows and columns visible in inventory ar
 static int top_row;             // Row # currently displayed at top of inventory
 
 static int cursor_row, cursor_col;  // Absolute position of currently selected item
-static Bool has_scrollbar;      // True when scroll bar displayed
+static bool has_scrollbar;      // true when scroll bar displayed
 
-static Bool capture;            // True when inventory has mouse capture
+static bool capture;            // true when inventory has mouse capture
 
 static BYTE *cursor_bits;       // Bitmap for inventory cursor
 BYTE *inuse_bits;        // Bitmap for in-use highlight
@@ -108,24 +108,24 @@ static const int COLOR_ITEM_DEFAULT      = RGB(255,255,255);
 /* local function prototypes */
 static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
+static bool InventoryKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags);
 static void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
 static void InventoryRButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
-static Bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
+static bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void ToggleUse(ID obj_id);
 static void InventoryDisplayScrollbar(void);
 static void InventoryScrollRange(void);
-static Bool InventoryCompareIdItem(void *idnum, void *item);
+static bool InventoryCompareIdItem(void *idnum, void *item);
 static void InventoryDrawSingleItem(InvItem *item, int row, int col);
 static void InventoryRedrawSingleItem(InvItem *item);
 static InvItem *InventoryGetCurrentItem(void);
 static ID   InventoryGetCurrentId(void);
-static Bool InventoryItemVisible(int row, int col);
+static bool InventoryItemVisible(int row, int col);
 static void InventoryCursorMove(int action);
-static Bool InventoryReleaseCapture(void);
-static Bool InventoryDropCurrentItem(room_contents_node *container);
-static Bool InventoryMoveCurrentItem(int x, int y);
+static bool InventoryReleaseCapture(void);
+static bool InventoryDropCurrentItem(room_contents_node *container);
+static bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
@@ -173,7 +173,7 @@ void InventoryBoxCreate(HWND hParent)
    top_row = 0;
    cursor_row = cursor_col = -1;
    items = NULL;
-   capture = False;
+   capture = false;
 
    // Get bitmaps for cursor and in-use highlight
    ptr = GetBitmapResource(hInst, IDB_INVCURSOR);
@@ -297,7 +297,7 @@ void InventoryDisplayScrollbar(void)
 	      TRUE);
 
    InventoryScrollRange();
-	if( StatsGetCurrentGroup() == STATS_INVENTORY )		//	ajw
+	if( StatsGetCurrentGroup() == STATS_INVENTORY )
 	{
 		ShowWindow(hwndInvDialog, SW_SHOWNORMAL);
 		ShowWindow(hwndInvScroll, has_scrollbar ? SW_SHOWNORMAL : SW_HIDE);
@@ -401,7 +401,7 @@ void InventoryChangeColor(void)
 {
 }
 /************************************************************************/
-void InventorySetFocus(Bool forward)
+void InventorySetFocus(bool forward)
 {
    SetFocus(hwndInv);
 }
@@ -488,7 +488,7 @@ LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       // Prevent activation of the window's menu bar and propagate to parent
       if (wParam == VK_F10)
       {
-          if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey) == True)
+          if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey) == true)
               return 0;
           break;
       }
@@ -502,10 +502,10 @@ LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
 /*
  * InventoryDrawItem:  Handle WM_DRAWITEM messages for inventory.
  */
-Bool InventoryDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool InventoryDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    InventoryRedraw();
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
@@ -585,7 +585,7 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
    HDC hdc;
    AREA area, obj_area;
    char temp[MAXAMOUNT + 1];
-   Bool draw_cursor;
+   bool draw_cursor;
    
    area.x = col * INVENTORY_BOX_WIDTH;
    area.y =  row * INVENTORY_BOX_HEIGHT;
@@ -613,8 +613,8 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
 		      INVENTORY_OBJECT_WIDTH, INVENTORY_OBJECT_HEIGHT, 
 		      inuse_bits, 0, 0, INVENTORY_OBJECT_WIDTH, OBB_FLIP | OBB_TRANSPARENT);
 
-   DrawObject(hdc, item->obj, item->obj->animate->group, True, &obj_area, NULL, 
-	      INVENTORY_OBJECT_BORDER, INVENTORY_OBJECT_BORDER, 0, False);
+   DrawObject(hdc, item->obj, item->obj->animate->group, true, &obj_area, NULL, 
+	      INVENTORY_OBJECT_BORDER, INVENTORY_OBJECT_BORDER, 0, false);
 
    OffscreenCopy(hdc, area.x, area.y, INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT, 0, 0);
 
@@ -749,7 +749,7 @@ void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 {
    if (fDoubleClick)
    {
-      InventoryKey(hwnd, VK_LDBLCLK, True, 0, keyFlags);
+      InventoryKey(hwnd, VK_LDBLCLK, true, 0, keyFlags);
       return;
    }
 
@@ -757,10 +757,10 @@ void InventoryLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
    if (InventoryClick(hwnd, fDoubleClick, x, y, keyFlags))
    {
       // Handle user action
-      InventoryKey(hwnd, VK_LBUTTON, True, 0, keyFlags);
+      InventoryKey(hwnd, VK_LBUTTON, true, 0, keyFlags);
 
       SetCapture(hwndInv);
-      capture = True;
+      capture = true;
       SetMainCursor(LoadCursor(cinfo->hInst, MAKEINTRESOURCE(IDC_DROPCURSOR)));
    }
 }
@@ -812,30 +812,30 @@ void InventoryRButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
    if (InventoryClick(hwnd, fDoubleClick, x, y, keyFlags))
    {
       // Handle user action
-      InventoryKey(hwnd, VK_RBUTTON, True, 0, keyFlags);
+      InventoryKey(hwnd, VK_RBUTTON, true, 0, keyFlags);
    }
 }
 /************************************************************************/
 /*
  * InventoryReleaseCapture:  Release mouse capture, if inventory has it.
- *   Return True iff inventory had mouse capture.
+ *   Return true iff inventory had mouse capture.
  */
-Bool InventoryReleaseCapture(void)
+bool InventoryReleaseCapture(void)
 {
    if (!capture)
-      return False;
+      return false;
 
    ReleaseCapture();
-   capture = False;
+   capture = false;
    GameWindowSetCursor();
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
  * InventoryClick:  User clicked on inventory box.
- *   Return True iff processing of click should continue.
+ *   Return true iff processing of click should continue.
  */
-Bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
    int row, col, old_row, old_col, index;
    InvItem *item;
@@ -849,7 +849,7 @@ Bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
    case GAME_PLAY:
       SetFocus(hwnd);
       if (!InventoryItemVisible(row, col))
-	 return False;
+	 return false;
 
       old_row = cursor_row;
       old_col = cursor_col;
@@ -879,30 +879,30 @@ Bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
          if (item != NULL)
             SelectedObject(item->obj->id);
       }
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }      
 /************************************************************************/
 /*
  * InventoryKey:  User pressed a key on the inventory list.  
- *   Return True iff key should NOT be passed on to Windows for default processing.
+ *   Return true iff key should NOT be passed on to Windows for default processing.
  */
-Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
+bool InventoryKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 {
    ID id;
-   Bool held_down = (flags & 0x4000) ? True : False;  /* Is key being held down? */
+   bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    int action, params;
    InvItem *item;
    void *action_data;
-   Bool inform;
+   bool inform;
 
    UserDidSomething();
    
    /* See if inventory handles this key specially */
    action = TranslateKey(key, inventory_key_table, &action_data); 
    if (action == A_NOACTION)
-      return False;
+      return false;
 
    item = InventoryGetCurrentItem();
    if (item == NULL)
@@ -910,7 +910,7 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
    else id = item->obj->id;
 
    // See if we should inform modules about event
-   inform = True;
+   inform = true;
    switch (action)
    {
    case A_TABFWD:
@@ -926,24 +926,24 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
       break;
 
    default:
-      inform = False;   // Modules will be informed in PerformAction call below
+      inform = false;   // Modules will be informed in PerformAction call below
    }
 
    // See if a module wants to handle this action
    if (inform)
-      if (ModuleEvent(EVENT_USERACTION, action, action_data) == False)
-	 return True;
+      if (ModuleEvent(EVENT_USERACTION, action, action_data) == false)
+	 return true;
 
    if (IsCursorAction(action))
    {
       InventoryCursorMove(action);
-      return True;
+      return true;
    }
 
    switch (action)
    {
    case A_TABFWD:
-		TextInputSetFocus(True);	//	ajw
+		TextInputSetFocus(true);
 		break;
 
    case A_TABBACK:
@@ -1003,7 +1003,7 @@ Bool InventoryKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
       PerformAction(action, action_data);
       break;
    }
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
@@ -1093,7 +1093,7 @@ void InventoryAddItem(object_node *obj)
 
    new_item = (InvItem *) SafeMalloc(sizeof(InvItem));
    new_item->obj = obj;
-   new_item->is_using = False;
+   new_item->is_using = false;
    items = list_add_item(items, new_item);
 
    num_items++;
@@ -1144,39 +1144,39 @@ void InventoryRemoveItem(ID id)
  * InventoryDropCurrentItem:  Drop the item with the inventory cursor, if any.
  *   If container is not NULL, put item in the container.
  *   Ask user for amount of object if appropriate.
- *   Return True iff object dropped.
+ *   Return true iff object dropped.
  */
-Bool InventoryDropCurrentItem(room_contents_node *container)
+bool InventoryDropCurrentItem(room_contents_node *container)
 {
    int x, y;
    InvItem *item;
 
    item = InventoryGetCurrentItem();
    if (item == NULL)
-      return False;
+      return false;
 
    x = cursor_col * INVENTORY_BOX_WIDTH;
    y = (cursor_row - top_row + 1) * INVENTORY_BOX_HEIGHT;
    if (!GetAmount(cinfo->hMain, hwndInv, item->obj, x, y))
-      return False;
+      return false;
 
    if (container == NULL)
       RequestDrop(item->obj);
    else RequestPut(item->obj, container->obj.id);
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
  * InventoryMoveCurrentItem:  Move the selected item with the inventory cursor 
- *   to the item at the given (x, y) coordinates, if any. Returns True iff item moved.
+ *   to the item at the given (x, y) coordinates, if any. Returns true iff item moved.
  *   Coordinates (0,0) are at the top left corner of the inventory window,
  *   increasing as you go to the right and down.
  */
-Bool InventoryMoveCurrentItem(int x, int y)
+bool InventoryMoveCurrentItem(int x, int y)
 {
    InvItem *item = InventoryGetCurrentItem();
    if (item == NULL)
-      return False;
+      return false;
 
    // Find row and col in absolute coordinates
    int row = top_row + y / INVENTORY_BOX_HEIGHT;
@@ -1184,10 +1184,10 @@ Bool InventoryMoveCurrentItem(int x, int y)
 
    InvItem *drop_position = (InvItem *) list_nth_item(items, row * cols + col);
    if (drop_position == NULL)
-      return False;
+      return false;
 
    if (item->obj->id == drop_position->obj->id)
-      return False;
+      return false;
 
    /* Before we send the move request to the server, we need to convert
    *   the move index arguments from 0-based to 1-based (Blakod).
@@ -1215,7 +1215,7 @@ Bool InventoryMoveCurrentItem(int x, int y)
 
    RequestInventoryMove(pos_payload, pos_target);
 
-   return True;
+   return true;
 }
 /************************************************************************/
 void DisplayInventory(list_type inventory)
@@ -1245,9 +1245,9 @@ void DisplayInventory(list_type inventory)
 /************************************************************************/
 /*
  * DisplaySetUsing:  Change selections in inventory to reflect the fact that
- *   player is using (using = True) or not using (using = False) given item.
+ *   player is using (using = true) or not using (using = false) given item.
  */
-void DisplaySetUsing(ID obj_id, Bool is_using)
+void DisplaySetUsing(ID obj_id, bool is_using)
 {
    InvItem *item;
    
@@ -1272,12 +1272,12 @@ void DisplayUsing(list_type using_list)
    for (l = items; l != NULL; l = l->next)
    {
       InvItem *item = (InvItem *) (l->data);
-      item->is_using = False;
+      item->is_using = false;
    }
 
    /* Select used items */
    for (l = using_list; l != NULL; l = l->next)
-     DisplaySetUsing(reinterpret_cast<std::intptr_t>(l->data), True);
+     DisplaySetUsing(reinterpret_cast<std::intptr_t>(l->data), true);
 }
 /************************************************************************/
 /*
@@ -1319,20 +1319,20 @@ InvItem *InventoryGetCurrentItem(void)
 }
 /************************************************************************/
 /*
- * InventoryItemVisible: Return True iff an item at the given (row, col) 
+ * InventoryItemVisible: Return true iff an item at the given (row, col) 
  *   in absolute coordinates is visible.
  */
-Bool InventoryItemVisible(int row, int col)
+bool InventoryItemVisible(int row, int col)
 {
    return (row >= top_row && row < top_row + rows) && (col >= 0 && col < cols) &&
       (row * cols + col < num_items);
 }
 /************************************************************************/
 /*
- * InventoryCompareIdItem: Compare an id # with an inventory item; return True iff they
+ * InventoryCompareIdItem: Compare an id # with an inventory item; return true iff they
  *    have the same id #.
  */
-Bool InventoryCompareIdItem(void *idnum, void *item)
+bool InventoryCompareIdItem(void *idnum, void *item)
 {
    InvItem *temp = (InvItem *) item;
    return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(temp->obj->id);
@@ -1346,7 +1346,7 @@ void InventoryGetArea(AREA *area)
    memcpy(area, &inventory_area, sizeof(AREA));
 }
 /************************************************************************/
-Bool InventoryMouseCaptured(void)
+bool InventoryMouseCaptured(void)
 {
    return capture;
 }
@@ -1359,7 +1359,7 @@ Bool InventoryMouseCaptured(void)
  */
 void AnimateInventory(int dt)
 {
-   Bool need_redraw;
+   bool need_redraw;
    int index;
    list_type l;
 
@@ -1384,9 +1384,9 @@ void AnimateInventory(int dt)
 
 /************************************************************************/
 /*
- * ShowInventory, HideInventory: Added by ajw.
+ * ShowInventory
  */
-void ShowInventory( Bool bShow )
+void ShowInventory(bool bShow)
 {
 	ShowWindow( hwndInvDialog, bShow ? SW_SHOWNORMAL : SW_HIDE );
 	ShowWindow( hwndInvScroll, bShow && has_scrollbar ? SW_SHOWNORMAL : SW_HIDE );

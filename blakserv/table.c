@@ -28,7 +28,7 @@ static char buf0[LEN_MAX_CLIENT_MSG+1];
 void FreeTable(table_node *tn);
 hash_node * AllocateTableEntry(val_type key_val,val_type data_val);
 
-Bool EqualTableEntry(val_type s1_val,val_type s2_val);
+bool EqualTableEntry(val_type s1_val,val_type s2_val);
 unsigned int GetTableHash(val_type val);
 
 
@@ -209,7 +209,7 @@ void InsertTable(int table_id,val_type key_val,val_type data_val)
 
    index = GetTableHash(key_val) % tn->size;
 
-   if (ConfigBool(DEBUG_HASH) == True)
+   if (ConfigBool(DEBUG_HASH) == true)
       dprintf("Insert tbl %i, index %i, key %i,%i\n",table_id,index,key_val.v.tag,key_val.v.data);
    
    /* insert in front of list */
@@ -237,7 +237,7 @@ blak_int GetTableEntry(int table_id,val_type key_val)
    while (hn != NULL)
    {
       if (EqualTableEntry(hn->key_val,key_val))
-	 return hn->data_val.int_val;
+        return hn->data_val.int_val;
       hn = hn->next;
    }
    return NIL;
@@ -290,7 +290,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
 	   key_val.v.data,table_id);
 }
 
-Bool EqualTableEntry(val_type s1_val,val_type s2_val)
+bool EqualTableEntry(val_type s1_val,val_type s2_val)
 {
    char *s1,*s2;
    size_t len1,len2;
@@ -309,7 +309,7 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
 	 bprintf("EqualTableEntry can't find resource %i,%i\n",
 		 s1_val.v.tag,s1_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
+	 return false;
       }
       s1 = r->resource_val;
       len1 = strlen(r->resource_val);
@@ -322,7 +322,7 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
 	 bprintf("EqualTableEntry can't find string %i,%i\n",
 		 s1_val.v.tag,s1_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
+	 return false;
       }
       s1 = snod->data;
       len1 = snod->len_data;
@@ -345,7 +345,7 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
 	 bprintf("EqualTableEntry can't find resource %i,%i\n",
 		 s2_val.v.tag,s2_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
+	 return false;
       }
       s2 = r->resource_val;
       len2 = strlen(r->resource_val);
@@ -358,7 +358,7 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
 	 bprintf("EqualTableEntry can't find string %i,%i\n",
 		 s2_val.v.tag,s2_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
+	 return false;
       }
       s2 = snod->data;
       len2 = snod->len_data;
@@ -381,7 +381,7 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
       eprintf("EqualTableEntry can't match %i,%i with %i,%i\n",
 	      s1_val.v.tag,s1_val.v.data,s2_val.v.tag,s2_val.v.data);
 		eprintf("%s\n",BlakodStackInfo());
-      return False;
+      return false;
    }
 
    return FuzzyBufferEqual(s1, (int) len1, s2, (int) len2);

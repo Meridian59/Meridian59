@@ -92,14 +92,14 @@ extern int sector_depths[];
 static DWORD server_time = 0;           // Last time we informed server of our position
 static DWORD last_splash = 0;           // Time of the last play of the splash wading sound
 
-static Bool pos_valid = FALSE;          // True when server_x and server_y are valid
+static bool pos_valid = false;          // true when server_x and server_y are valid
 static int  server_x = 0, server_y = 0; // Last position we've told server we are, in FINENESS units
 static int  server_angle = 0;           // Last angle we've told server we have, in server angle units
 static int  last_move_action = 0;       // Last movement action; used to determine speed of motion
 
 static int  min_distance = 48;          // Minimum distance player is allowed to get to wall
 static int  min_distance2 = 48*48;  	// Minimum distance squared
-static Bool blocked = FALSE;            // Set to true when a move hits a wall
+static bool blocked = false;            // Set to true when a move hits a wall
 
 static WallData *worstWall = NULL;
 WallData *lastBlockingWall = NULL;
@@ -123,7 +123,7 @@ void ResetPlayerPosition(void)
    min_distance2 = min_distance * min_distance;
 }
 
-BOOL	gbMouselook = FALSE;
+bool gbMouselook = false;
 
 extern double gravityAdjust;
 
@@ -145,8 +145,8 @@ void UserMovePlayer(int action)
    DWORD now;
    room_contents_node *player_obj;
    static DWORD last_move_time = 0;
-   Bool bounce = True;
-   Bool changed_square = False;
+   bool bounce = true;
+   bool changed_square = false;
    BSPleaf *leaf;
 
    if (effects.paralyzed)
@@ -379,7 +379,7 @@ void UserMovePlayer(int action)
 	 x = last_x;
 	 y = last_y;
 	 z = last_z;
-	 bounce = False;
+	 bounce = false;
 	 break;
       }
       else if (retval == MOVE_CHANGED)
@@ -626,7 +626,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
    int old_distance, new_distance;
    WallData *wall;
    BYTE speed;
-   BOOL moveReported = FALSE;
+   bool moveReported = false;
    int idObjNotify = -1;
    
    for (l = room->contents; l != NULL; l = l->next)
@@ -662,7 +662,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
                if (IsMoveFastAction(last_move_action))
                   speed *= 2;
                MoveUpdateServer();
-               moveReported = TRUE;
+               moveReported = true;
                idLastObjNotify = idObjNotify;
             }
          }
@@ -793,9 +793,9 @@ void MoveUpdatePosition(void)
 /************************************************************************/
 /*
  * MoveSetValidity:  valid tells whether our knowledge of the player's position
- *   is correct.  This should be False during initialization.
+ *   is correct.  This should be false during initialization.
  */ 
-void MoveSetValidity(Bool valid)
+void MoveSetValidity(bool valid)
 {
    room_contents_node *player_obj;
 

@@ -192,7 +192,7 @@ char * GetBkodPtr(void)
 
 /* used by object.c to see if creation of object should call
 SendTopLevelBlakodMessage or SendBlakodMessage */
-Bool IsInterpreting(void)
+bool IsInterpreting(void)
 {
 	return bkod != NULL;
 }
@@ -538,7 +538,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	
 	int i,j;
 	char *inst_start;
-	Bool found_parm;
+	bool found_parm;
 	
 	num_locals = get_byte();
 	num_parms = get_byte();
@@ -575,7 +575,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		parm_init_value.int_val = get_blakint();
 		
 		/* look if we have a value for this parm */
-		found_parm = False;
+		found_parm = false;
 		j = 0;			/* don't assume sorted for now */
 		while (j < num_sent_parms)
 		{
@@ -584,7 +584,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 			/* assuming no RetrieveValue needed here, since InterpretCall
 				does that for us */
 				local_vars.locals[i].int_val = sent_parms[j].value;
-				found_parm = True;
+				found_parm = true;
 				j++;
 				break;
 			}
@@ -903,7 +903,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 #endif
 		
 		if (source1_data.v.tag != source2_data.v.tag)
-			source1_data.v.data = False;
+			source1_data.v.data = false;
 		else
 			source1_data.v.data = source1_data.v.data == source2_data.v.data;
 		source1_data.v.tag = TAG_INT;
@@ -926,7 +926,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 #endif
 		
 		if (source1_data.v.tag != source2_data.v.tag)
-			source1_data.v.data = True; 
+			source1_data.v.data = true; 
 		else
 			source1_data.v.data = source1_data.v.data != source2_data.v.data;
 		source1_data.v.tag = TAG_INT;

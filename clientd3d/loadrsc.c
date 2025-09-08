@@ -30,17 +30,17 @@ static char room_dir[] = "resource";
 static char rsb_spec[] = "*.rsb";
 static char rsc_spec[] = "*.rsc";
 
-static Bool ignore_duplicates;  // Don't complain about duplicate rscs when True
+static bool ignore_duplicates;  // Don't complain about duplicate rscs when true
 
 /* local function prototypes */
 static DWORD ResourceHash(void *resource, DWORD tablesize);
-static Bool  ResourceCompare(void *r1, void *r2);
+static bool  ResourceCompare(void *r1, void *r2);
 static DWORD IdHash(void *idnum, DWORD tablesize);
-static Bool  IdResourceCompare(void *idnum, void *r1);
+static bool  IdResourceCompare(void *idnum, void *r1);
 static void  FreeRsc(void *entry);
 static bool  RscAddCallback(char *fname, int res, char *string);
-static Bool  LoadRscFiles(char *filespec);
-static Bool  LoadRscFilesSorted(char *filespec);
+static bool  LoadRscFiles(char *filespec);
+static bool  LoadRscFilesSorted(char *filespec);
 /******************************************************************************/
 /*
 * GetString:  Load and return resource string with given resource identifier.
@@ -65,9 +65,9 @@ DWORD IdHash(void *idnum, DWORD tablesize)
 	return *((ID *) idnum) % tablesize;
 }
 /******************************************************************************/
-Bool IdResourceCompare(void *idnum, void *r1)
+bool IdResourceCompare(void *idnum, void *r1)
 {
-	return (Bool) (*((ID *) idnum) == ((resource_type) r1)->idnum);
+	return (*((ID *) idnum) == ((resource_type) r1)->idnum);
 }
 /******************************************************************************/
 DWORD ResourceHash(void *resource, DWORD tablesize)
@@ -75,9 +75,9 @@ DWORD ResourceHash(void *resource, DWORD tablesize)
 	return (((resource_type) resource)->idnum) % tablesize;
 }
 /******************************************************************************/
-Bool ResourceCompare(void *r1, void *r2)
+bool ResourceCompare(void *r1, void *r2)
 {
-	return (Bool) (((resource_type) r1)->idnum == ((resource_type) r2)->idnum);
+	return (((resource_type) r1)->idnum == ((resource_type) r2)->idnum);
 }
 /******************************************************************************/
 /*
@@ -90,16 +90,16 @@ int CompareFilenames(void *f1, void *f2)
 /******************************************************************************/
 /*
 * LoadResources: Load all resources into a newly allocated table.
-*   Return True on success, False iff no resource files found.
+*   Return true on success, false iff no resource files found.
 */
-Bool LoadResources(void)
+bool LoadResources(void)
 {
-	Bool rsc_loaded, rsb_loaded;
+	bool rsc_loaded, rsb_loaded;
 	
 	/* Initialize new table */
 	t = table_create(TABLE_SIZE);
 	
-	ignore_duplicates = True;
+	ignore_duplicates = true;
 	// Load combined rscs, then normal rscs
 	rsb_loaded = LoadRscFilesSorted(rsb_spec);
 	rsc_loaded = LoadRscFiles(rsc_spec);
@@ -112,22 +112,22 @@ Bool LoadResources(void)
 	RscAddCallback("", LAGBOXICON_RSC, "ilagbox.bgf");
 	RscAddCallback("", LAGBOXNAME_RSC, "Latency");
 	
-	ignore_duplicates = False;
+	ignore_duplicates = false;
 	
 	if (!rsb_loaded && !rsc_loaded)
 	{
 		debug(("Couldn't load any resources!\n"));
-		return False;
+		return false;
 	}
 	
-	return True;
+	return true;
 }
 /******************************************************************************/
 /*
 * LoadRscFiles:  Load all the resource files with the given filespec.
-*   Returns True iff any was loaded.
+*   Returns true iff any was loaded.
 */
-Bool LoadRscFiles(char *filespec)
+bool LoadRscFiles(char *filespec)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA file_info;
@@ -138,7 +138,7 @@ Bool LoadRscFiles(char *filespec)
 	
 	hFindFile = FindFirstFile(file_load_path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
-		return False;
+		return false;
 	
 	for(;;)
 	{
@@ -158,15 +158,15 @@ Bool LoadRscFiles(char *filespec)
 	
 	FindClose(hFindFile);
 	
-	return True;
+	return true;
 }
 /******************************************************************************/
 /*
 * LoadRscFilesSorted:  Load all the resource files with the given filespec, in 
 *   sorted filename order.
-*   Returns True iff any was loaded.
+*   Returns true iff any was loaded.
 */
-Bool LoadRscFilesSorted(char *filespec)
+bool LoadRscFilesSorted(char *filespec)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA file_info;
@@ -178,7 +178,7 @@ Bool LoadRscFilesSorted(char *filespec)
 	
 	hFindFile = FindFirstFile(file_load_path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
-		return False;
+		return false;
 	
 	filenames = NULL;
 	for(;;)
@@ -205,7 +205,7 @@ Bool LoadRscFilesSorted(char *filespec)
 	FindClose(hFindFile);
 	
 	list_destroy(filenames);
-	return True;
+	return true;
 }
 /******************************************************************************/
 void ChangeResource(ID res, char *value)
@@ -346,25 +346,25 @@ void MissingResource(void)
 	return;
 #else
 	/* Maximum of one of these dialogs at a time */
-	static Bool dialog_up = False;
+	static bool dialog_up = false;
 	
 	if (dialog_up)
 		return;
 	
-	dialog_up = True;
+	dialog_up = true;
 	if (!AreYouSure(hInst, hMain, YES_BUTTON, IDS_MISSINGRESOURCE))
 		return;
 	
 	RequestQuit();
-	dialog_up = False;
+	dialog_up = false;
 #endif
 }
 /******************************************************************************/
 /*
 * LoadRoomFile:  Load the room description file given by fname into the 
-*   given room structure.  Returns True iff successful.
+*   given room structure.  Returns true iff successful.
 */
-Bool LoadRoomFile(char *fname, room_type *r)
+bool LoadRoomFile(char *fname, room_type *r)
 {
 	char filename[MAX_PATH + FILENAME_MAX], game_path[MAX_PATH];
 	

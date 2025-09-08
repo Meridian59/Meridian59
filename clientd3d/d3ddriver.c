@@ -32,17 +32,17 @@ extern int gFullTextureSize;
 extern int gSmallTextureSize;
 extern int d3dRenderTextureThreshold;
 
-Bool D3DDriverProfileInit(void)
+bool D3DDriverProfileInit(void)
 {
 	FILE					*pFile;
-	Bool					bProblem = FALSE;
-	Bool					bDisable = FALSE;
+	bool					bProblem = false;
+	bool					bDisable = false;
 	char					config_setting[255];
 
 	pFile = fopen("d3dlog.txt", "w+t");
 	assert(pFile);
 
-	gD3DEnabled = FALSE;
+	gD3DEnabled = false;
 
 	// first check to make sure user isn't forcing software rendering
 	GetPrivateProfileString("config", "softwarerenderer", "error", config_setting, 255, "./config.ini");
@@ -50,7 +50,7 @@ Bool D3DDriverProfileInit(void)
 
 	if (0 == strcmp(config_setting, "true"))
 	{
-		gD3DDriverProfile.bSoftwareRenderer = TRUE;
+		gD3DDriverProfile.bSoftwareRenderer = true;
 
 		return FALSE;
 	}
@@ -67,7 +67,7 @@ Bool D3DDriverProfileInit(void)
 			NULL, MB_OK);
 		fclose(pFile);
 
-		gD3DDriverProfile.bSoftwareRenderer = TRUE;
+		gD3DDriverProfile.bSoftwareRenderer = true;
 
 		return FALSE;
 	}

@@ -142,8 +142,8 @@ static int   DefaultTimeout       = 20;
  */
 void LoadSettings(void)
 {
-   FontsCreate(False);
-   ColorsCreate(False);
+   FontsCreate(false);
+   ColorsCreate(false);
    CommLoadSettings();
    ConfigLoad();
    LoadProfaneTerms();
@@ -198,27 +198,27 @@ void ConfigLoad(void)
    char *start, *ptr;
    char ignore_string[MAX_IGNORE_LIST * (MAX_CHARNAME + 1) + 1];
    
-   config.save_settings = GetConfigInt(misc_section, INISaveOnExit, True, ini_file);
-   config.play_music    = GetConfigInt(misc_section, INIPlayMusic, True, ini_file);
-   config.play_sound    = GetConfigInt(misc_section, INIPlaySound, True, ini_file);
+   config.save_settings = GetConfigInt(misc_section, INISaveOnExit, true, ini_file);
+   config.play_music    = GetConfigInt(misc_section, INIPlayMusic, true, ini_file);
+   config.play_sound    = GetConfigInt(misc_section, INIPlaySound, true, ini_file);
    config.music_volume    = GetConfigInt(misc_section, INIMusicVolume, 100, ini_file);
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
    config.ambient_volume    = GetConfigInt(misc_section, INIAmbientVolume, 100, ini_file);
-   config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
-   config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
+   config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, true, ini_file);
+   config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, true, ini_file);
 
    config.ini_version   = GetConfigInt(misc_section, INIVersion, 0, ini_file);
-   config.default_browser = GetConfigInt(misc_section, INIDefaultBrowser, True, ini_file);
+   config.default_browser = GetConfigInt(misc_section, INIDefaultBrowser, true, ini_file);
    GetPrivateProfileString(misc_section, INIUserName, "", 
 			   config.username, MAXUSERNAME, ini_file); 
    GetPrivateProfileString(misc_section, INIBrowser, "", 
 			   config.browser, MAX_PATH, ini_file); 
    
-   config.draw_names   = GetConfigInt(users_section, INIDrawNames, True, ini_file);
-   config.show_inventory_rarity   = GetConfigInt(users_section, INIShowRarity, True, ini_file);
+   config.draw_names   = GetConfigInt(users_section, INIDrawNames, true, ini_file);
+   config.show_inventory_rarity   = GetConfigInt(users_section, INIShowRarity, true, ini_file);
    
-   config.ignore_all   = GetConfigInt(users_section, INIIgnoreAll, False, ini_file);
-   config.no_broadcast = GetConfigInt(users_section, ININoBroadcast, False, ini_file);
+   config.ignore_all   = GetConfigInt(users_section, INIIgnoreAll, false, ini_file);
+   config.no_broadcast = GetConfigInt(users_section, ININoBroadcast, false, ini_file);
 
    GetPrivateProfileString(users_section, INIIgnoreList, "", 
                            ignore_string, sizeof(ignore_string), ini_file);
@@ -236,23 +236,23 @@ void ConfigLoad(void)
      ++ptr;
    }
    
-   config.scroll_lock  = GetConfigInt(interface_section, INIScrollLock, False, ini_file);
-   config.drawmap      = GetConfigInt(interface_section, INIDrawMap, True, ini_file);
-   config.tooltips     = GetConfigInt(interface_section, INITooltips, True, ini_file);
-   config.inventory_num= GetConfigInt(interface_section, INIInventory, True, ini_file);
-   config.aggressive   = GetConfigInt(interface_section, INIAggressive, False, ini_file);
-   config.bounce       = GetConfigInt(interface_section, INIBounce, True, ini_file);
-   config.toolbar      = GetConfigInt(interface_section, INIToolbar, True, ini_file);
-   config.pain         = GetConfigInt(interface_section, INIPainFX, True, ini_file);
-   config.weather      = GetConfigInt(interface_section, INIWeatherFX, False, ini_file);
-   config.antiprofane  = GetConfigInt(interface_section, INIAntiProfane, True, ini_file);
-   config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, False, ini_file);
-   config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, False, ini_file);
-   config.lagbox       = GetConfigInt(interface_section, INILagbox, True, ini_file);
-   config.spinning_cube= GetConfigInt(interface_section, INISpinningCube, False, ini_file);
+   config.scroll_lock  = GetConfigInt(interface_section, INIScrollLock, false, ini_file);
+   config.drawmap      = GetConfigInt(interface_section, INIDrawMap, true, ini_file);
+   config.tooltips     = GetConfigInt(interface_section, INITooltips, true, ini_file);
+   config.inventory_num= GetConfigInt(interface_section, INIInventory, true, ini_file);
+   config.aggressive   = GetConfigInt(interface_section, INIAggressive, false, ini_file);
+   config.bounce       = GetConfigInt(interface_section, INIBounce, true, ini_file);
+   config.toolbar      = GetConfigInt(interface_section, INIToolbar, true, ini_file);
+   config.pain         = GetConfigInt(interface_section, INIPainFX, true, ini_file);
+   config.weather      = GetConfigInt(interface_section, INIWeatherFX, false, ini_file);
+   config.antiprofane  = GetConfigInt(interface_section, INIAntiProfane, true, ini_file);
+   config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, false, ini_file);
+   config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, false, ini_file);
+   config.lagbox       = GetConfigInt(interface_section, INILagbox, true, ini_file);
+   config.spinning_cube= GetConfigInt(interface_section, INISpinningCube, false, ini_file);
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
-   config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, True, ini_file);
-   config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
+   config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, true, ini_file);
+   config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, true, ini_file);
 
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
@@ -273,18 +273,18 @@ void ConfigLoad(void)
    config.soundLibrary = GetConfigInt(misc_section, INISoundLibrary, LIBRARY_MSS, ini_file);
 
 #ifdef NODPRINTFS
-   config.debug    = False;
-   config.security = True;
+   config.debug    = false;
+   config.security = true;
    config.timeout  = DefaultTimeout;
 #else
    config.debug = 
-      GetConfigInt(special_section, INIDebug, False, ini_file);
+      GetConfigInt(special_section, INIDebug, false, ini_file);
    config.security = 
-      GetConfigInt(special_section, INISecurity, True, ini_file);
+      GetConfigInt(special_section, INISecurity, true, ini_file);
    config.timeout = GetConfigInt(misc_section, INITimeout, DefaultTimeout, ini_file);
 #endif
 
-   config.technical = GetConfigInt(special_section, INITechnical, False, ini_file);
+   config.technical = GetConfigInt(special_section, INITechnical, false, ini_file);
 
 #ifndef NODPRINTFS
    config.showMapBlocking = GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
@@ -293,7 +293,7 @@ void ConfigLoad(void)
    config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
    config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
    config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 120, ini_file);
-   config.clearCache = GetConfigInt(special_section, INIClearCache, False, ini_file);
+   config.clearCache = GetConfigInt(special_section, INIClearCache, false, ini_file);
    //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
 #else
    config.showMapBlocking = FALSE;
@@ -312,7 +312,7 @@ void ConfigLoad(void)
 
    // Determine if we should be using gpu efficiency mode or not.
    auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
-	   "gpuefficiencyonetimeflip", False, config_ini);
+	   "gpuefficiencyonetimeflip", false, config_ini);
    if (one_time_gpu_efficiency_enablement)
    {
       char config_value[10];
@@ -329,7 +329,7 @@ void ConfigLoad(void)
       // This is to ensure players start from a clean slate with maximum performance.
       // After this one-time flip, future changes to gpu efficiency preferences will be respected.
       config.gpuEfficiency = true;
-      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, True, config_ini);
+      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, true, config_ini);
       WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini);
    }
 
@@ -528,7 +528,7 @@ void WindowSettingsLoad(WINDOWPLACEMENT *w)
 /********************************************************************/
 /*
  * CommLoadSettings:  Load comm parameters from INI file.
- *  If use_defaults is False, try to load fonts from INI file.
+ *  If use_defaults is false, try to load fonts from INI file.
  *  Otherwise use default comm settings.
  */
 void CommLoadSettings(void)
@@ -559,12 +559,12 @@ void CommLoadSettings(void)
    if (config.comm.sockport == -1)
    {
       // We have no socket number set in the .ini file.
-      config.comm.constant_port = False;
+      config.comm.constant_port = false;
       ConfigSetSocketPortByNumber(config.comm.server_num);
    }
    else
    {
-      config.comm.constant_port = True;
+      config.comm.constant_port = true;
    }
 
 }
@@ -621,7 +621,7 @@ int GetConfigInt(char *section, char *key, int default_value, char *fname)
 /*
  * WriteConfigInt:  32-bit version of WritePrivateProfileInt
  */
-BOOL WriteConfigInt(char *section, char *key, int value, char *fname)
+bool WriteConfigInt(char *section, char *key, int value, char *fname)
 {
    char buf[MAX_INTSTR];
 

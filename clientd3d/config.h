@@ -22,26 +22,22 @@
 
 #define CONFIG_MAX_VOLUME 100  // Max value of sound / music volume settings
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Communication settings
 typedef struct {
    WORD  timeout;                 /* # of seconds to wait before redialing */
    
    char  hostname[MAXHOST + 1];   /* Hostname of server for socket connections */
    int   sockport;                /* Port server listens on for socket connections */
-   Bool  constant_port;           /* Is the port constant, or does it change per server? */
+   bool  constant_port;           /* Is the port constant, or does it change per server? */
    int   server_num;              /* Server number to connect to (influences hostname) */
    char  domainformat[MAXHOST + 1];
 } CommSettings;
 
 // Structure to hold user configurations
 typedef struct {
-   Bool save_settings;           /* Save settings on exit? */
-   Bool play_music;              /* Does user want to hear music? */
-   Bool play_sound;              /* Does user want to hear sound? */
+   bool save_settings;           /* Save settings on exit? */
+   bool play_music;              /* Does user want to hear music? */
+   bool play_sound;              /* Does user want to hear sound? */
    int  timeout;                 /* Period of logoff timer */
    char username[MAXUSERNAME+1]; /* User's last login name */
    char password[MAXPASSWORD+1]; /* User's last password (not saved to INI file) */
@@ -49,67 +45,67 @@ typedef struct {
    CommSettings comm;            /* Communication settings */
 
    char browser[MAX_PATH + 1];   /* Full path to user's browser program */
-   Bool default_browser;         /* True when browser location was retrieved from registry */
+   bool default_browser;         /* True when browser location was retrieved from registry */
 
    int  download_time;           /* Time of last successful download */
-   Bool auto_connect;            /* Connect immediately upon starting program? */
-   Bool debug;                   /* Display debugging window? */
-   Bool security;                /* Use room security? */
+   bool auto_connect;            /* Connect immediately upon starting program? */
+   bool debug;                   /* Display debugging window? */
+   bool security;                /* Use room security? */
    int  ini_version;             /* INI version number; restore defaults if it doesn't match */
 
-   Bool draw_names;              /* Draw names over players? */
-   Bool ignore_all;              /* Ignore EVERYTHING said? */
-   Bool no_broadcast;            /* Ignore all broadcasts? */
+   bool draw_names;              /* Draw names over players? */
+   bool ignore_all;              /* Ignore EVERYTHING said? */
+   bool no_broadcast;            /* Ignore all broadcasts? */
    char ignore_list[MAX_IGNORE_LIST][MAX_CHARNAME + 1]; /* Usernames to ignore */
 
-   Bool scroll_lock;             /* Don't scroll main edit box if scrolled back */
-   Bool tooltips;                /* Display tooltips? */
-   Bool inventory_num;           /* Display amounts for number items in inventory? */
-   Bool aggressive;              /* Allowed to attack other players? */
-   Bool bounce;                  /* Display player "bouncing" animation? */
-   Bool toolbar;                 /* Display toolbar? */
+   bool scroll_lock;             /* Don't scroll main edit box if scrolled back */
+   bool tooltips;                /* Display tooltips? */
+   bool inventory_num;           /* Display amounts for number items in inventory? */
+   bool aggressive;              /* Allowed to attack other players? */
+   bool bounce;                  /* Display player "bouncing" animation? */
+   bool toolbar;                 /* Display toolbar? */
 
-   Bool pain;                    /* Display pain effect on hits? */
-   Bool weather;                 /* Display weather effects? */
-   Bool technical;               /* Show technical info such as the connected server number? */
-   Bool quickstart;              /* Try to answer all questions with defaults until playing. */
-   Bool antiprofane;             /* Kill annoying incoming profanity. */
+   bool pain;                    /* Display pain effect on hits? */
+   bool weather;                 /* Display weather effects? */
+   bool technical;               /* Show technical info such as the connected server number? */
+   bool quickstart;              /* Try to answer all questions with defaults until playing. */
+   bool antiprofane;             /* Kill annoying incoming profanity. */
    int	halocolor;					//	0 = red, 1 = blue, 2 = green
 
-   Bool lagbox;                  /* Display lag meter? */
-   Bool spinning_cube;           /* Display the classic spinning latency meter */
-   Bool ignoreprofane;           /* Kill messages including any profanity. */
-   Bool extraprofane;            /* Really search hard for possible hidden profanity. */
-   Bool play_loop_sounds;
-   Bool play_random_sounds;
-   Bool showMapBlocking;
-   Bool showFPS;
-   Bool showUnseenWalls;
-   Bool showUnseenMonsters;
-   Bool avoidDownloadAskDialog;
+   bool lagbox;                  /* Display lag meter? */
+   bool spinning_cube;           /* Display the classic spinning latency meter */
+   bool ignoreprofane;           /* Kill messages including any profanity. */
+   bool extraprofane;            /* Really search hard for possible hidden profanity. */
+   bool play_loop_sounds;
+   bool play_random_sounds;
+   bool showMapBlocking;
+   bool showFPS;
+   bool showUnseenWalls;
+   bool showUnseenMonsters;
+   bool avoidDownloadAskDialog;
    int  maxFPS;		 /* Slow machine down for rendering to this frames per second */
-   Bool drawmap;
-   Bool clearCache;
+   bool drawmap;
+   bool clearCache;
 
-   Bool colorcodes;
+   bool colorcodes;
    int lastPasswordChange;
 
    int soundLibrary;
-   Bool rosterbmps;         // unused, should be removed
+   bool rosterbmps;         // unused, should be removed
    int CacheBalance;			 /* controls the balance between the object and grid caches */
    int ObjectCacheMin;			 /* minimum size of the object cache */
    int GridCacheMin;			 /* minimum size of the grid cache */
 
    // stuff for new client
-   BOOL	bAlwaysRun;
-   BOOL bAttackOnTarget;
-   BOOL	bQuickChat;
-   BOOL bInvertMouse;
-   BOOL bDynamicLighting;
+   bool	bAlwaysRun;
+   bool bAttackOnTarget;
+   bool	bQuickChat;
+   bool bInvertMouse;
+   bool bDynamicLighting;
    int	mouselookXScale;
    int	mouselookYScale;
 
-   Bool map_annotations;       /* Display annotations on map? */
+   bool map_annotations;       /* Display annotations on map? */
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
@@ -143,8 +139,8 @@ void TimeSettingsLoad(void);
 void TimeSettingsSave(int download_time);
 
 M59EXPORT int GetConfigInt(char *section, char *key, int default_value, char *fname);
-BOOL WritePrivateProfileInt(char *section, char *key, int value, char *fname);
-M59EXPORT BOOL WriteConfigInt(char *section, char *key, int value, char *fname);
+bool WritePrivateProfileInt(char *section, char *key, int value, char *fname);
+M59EXPORT bool WriteConfigInt(char *section, char *key, int value, char *fname);
 
 void ConfigSetServerNameByNumber(int num);
 void ConfigSetSocketPortByNumber(int num);
@@ -155,9 +151,5 @@ bool IsSteamVersion();
 #define LIBRARY_NIL 0
 #define LIBRARY_MSS 1
 #define LIBRARY_MIX 2
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* #ifndef _CONFIG_H */

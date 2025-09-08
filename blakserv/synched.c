@@ -31,7 +31,7 @@ void SynchedAddDelFile(char *str);
 void SynchedInit(session_node *s)
 {
    /* if you ever get here, you ARE running our client */
-   s->blak_client = True;
+   s->blak_client = true;
    
    s->syn = (synched_data *)s->session_state_data;
 
@@ -73,7 +73,7 @@ void SynchedProcessSessionBuffer(session_node *s)
    /* need to copy only as many bytes as we can hold */
    while (s->receive_list != NULL)
    {
-      if (PeekSessionBytes(s,HEADERBYTES,&msg) == False)
+      if (PeekSessionBytes(s,HEADERBYTES,&msg) == false)
 	 return;
 
       if (msg.len != msg.len_verify || msg.seqno != 0)
@@ -95,7 +95,7 @@ void SynchedProcessSessionBuffer(session_node *s)
       }
       
       /* now read the header for real, plus the actual data */
-      if (ReadSessionBytes(s,msg.len+HEADERBYTES,&msg) == False)
+      if (ReadSessionBytes(s,msg.len+HEADERBYTES,&msg) == false)
 	 return;
 
 #if 0
@@ -112,7 +112,7 @@ void SynchedProcessSessionBuffer(session_node *s)
       SynchedProtocolParse(s,&msg);
 
       /* if hung up, don't touch */
-      if (s->hangup == True)
+      if (s->hangup == true)
 	 return;
 
       if (s->state != STATE_SYNCHED)
@@ -435,7 +435,7 @@ void VerifyLogin(session_node *s)
    char *str;
    LogUserData(s);
 
-   s->login_verified = True;
+   s->login_verified = true;
 
    AddByteToPacket(AP_LOGINOK);
    AddByteToPacket((char)(s->account->type));

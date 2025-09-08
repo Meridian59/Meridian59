@@ -216,7 +216,6 @@ void ConfigLoad(void)
    
    config.draw_names   = GetConfigInt(users_section, INIDrawNames, true, ini_file);
    config.show_inventory_rarity   = GetConfigInt(users_section, INIShowRarity, true, ini_file);
-   
    config.ignore_all   = GetConfigInt(users_section, INIIgnoreAll, false, ini_file);
    config.no_broadcast = GetConfigInt(users_section, ININoBroadcast, false, ini_file);
 

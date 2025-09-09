@@ -13,6 +13,6 @@
 #ifndef _LOADGAME_H
 #define _LOADGAME_H
 
-Bool LoadGame(char *filename);
+bool LoadGame(char *filename);
 
 #endif

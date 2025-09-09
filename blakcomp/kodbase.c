@@ -18,15 +18,15 @@ static const char *basefile = "kodbase.txt";
 
 #define MAX_LINE 128
 
-int build_superclasses(list_type classes);
-int init_tables(int id_count, int res_count);
-int load_add_class(char *class_name, int class_id, int superclass_id, char *superclass_name);
-int load_add_message(char *message_name, int message_id);
-int load_add_resource(char *resource_name, int resource_id);
-int load_add_parameter(char *parm_name, int);
-int load_add_property(char *prop_name, int);
-int load_add_classvar(char *name, int classvar_id);
-int load_add_external(char *name, int idnum, int type);
+bool build_superclasses(list_type classes);
+bool init_tables(int id_count, int res_count);
+bool load_add_class(char *class_name, int class_id, int superclass_id, char *superclass_name);
+bool load_add_message(char *message_name, int message_id);
+bool load_add_resource(char *resource_name, int resource_id);
+bool load_add_parameter(char *parm_name, int);
+bool load_add_property(char *prop_name, int);
+bool load_add_classvar(char *name, int classvar_id);
+bool load_add_external(char *name, int idnum, int type);
 
 /* current_class holds pointer to class info of class we're currently reading in */
 class_type current_class = NULL;
@@ -52,7 +52,7 @@ void set_kodbase_filename(char *filename)
 /*
  * load_kodbase - reads the kodbase.txt file into memory, returns success/failure
  */
-int load_kodbase(void)
+bool load_kodbase(void)
 {
    FILE *kodbase;
    char line[MAX_LINE+1];
@@ -64,7 +64,7 @@ int load_kodbase(void)
    if ((kodbase = fopen(basefile, "rt")) == NULL)
    {
       simple_warning("Unable to open database file %s", basefile);
-      return True;
+      return true;
    }
 
    kodbase_line = 0;
@@ -77,7 +77,7 @@ int load_kodbase(void)
       {
 	 database_error("Bad type character");
 	 fclose(kodbase);
-	 return False;
+	 return false;
       }
 
       t1 = strtok(NULL," \t\n");
@@ -92,7 +92,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad type character");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -101,7 +101,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad class entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 
 	 /* Error if missing superclass name */
@@ -109,7 +109,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad class entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -118,7 +118,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad message entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -127,7 +127,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad resource entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -136,7 +136,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad parameter entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -145,7 +145,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad property entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -154,7 +154,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad classvar entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -163,7 +163,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad external class entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -172,7 +172,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad external message entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -181,7 +181,7 @@ int load_kodbase(void)
 	 {
 	    database_error("Bad external parameter entry");
 	    fclose(kodbase);
-	    return False;
+	    return false;
 	 }
 	 break;
 
@@ -193,23 +193,23 @@ int load_kodbase(void)
    if (!build_superclasses(st.classes))
    {
       fclose(kodbase);
-      return False;
+      return false;
    }
    
    fclose(kodbase);
-   return True;
+   return true;
 }
 /**********************************************************************/
-int init_tables(int id_count, int res_count)
+bool init_tables(int id_count, int res_count)
 {
    st.maxid = id_count;
    st.maxresources = res_count;
    st.classes = NULL;
-   return True;
+   return true;
 }
 /**********************************************************************/
-/* Return False on error, True on success */
-int load_add_class(char *class_name, int class_id, int superclass_id, char *superclass_name)
+/* Return false on error, true on success */
+bool load_add_class(char *class_name, int class_id, int superclass_id, char *superclass_name)
 {
    /* Build up a class data structure for the new class. */
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
@@ -223,7 +223,7 @@ int load_add_class(char *class_name, int class_id, int superclass_id, char *supe
 
    c->class_id = id;
    c->properties = c->messages = c->resources = c->classvars = NULL;
-   c->is_new = False;  /* Don't generate code for this class */
+   c->is_new = false;  /* Don't generate code for this class */
    /* Store superclass id # in pointer for now.  Id # will be converted to pointer
     * when build_superclasses below is called. */
    c->superclass = (class_type)(intptr_t) superclass_id;
@@ -239,11 +239,11 @@ int load_add_class(char *class_name, int class_id, int superclass_id, char *supe
     * the database file is preserved. 
     */
    if (table_insert(st.globalvars, (void *) id, id_hash, id_compare) == 0)
-      return True;
-   else return False;
+      return true;
+   else return false;
 }
 /**********************************************************************/
-int load_add_message(char *message_name, int message_id)
+bool load_add_message(char *message_name, int message_id)
 {
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
    message_handler_type m = (message_handler_type) SafeMalloc(sizeof(message_handler_struct));
@@ -272,10 +272,10 @@ int load_add_message(char *message_name, int message_id)
    st.curmessage = message_id;
    /* OK if message already in table; just ignore return value */
    table_insert(st.globalvars, (void *) id, id_hash, id_compare);
-   return True;
+   return true;
 }
 /**********************************************************************/
-int load_add_resource(char *resource_name, int resource_id)
+bool load_add_resource(char *resource_name, int resource_id)
 {
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
    resource_type r = (resource_type) SafeMalloc(sizeof(resource_struct));
@@ -296,10 +296,10 @@ int load_add_resource(char *resource_name, int resource_id)
 
    /* OK if parameter already in table; just ignore return value */
    table_insert(st.globalvars, (void *) id, id_hash, id_compare);
-   return True;
+   return true;
 }
 /**********************************************************************/
-int load_add_parameter(char *parm_name, int parm_id)
+bool load_add_parameter(char *parm_name, int parm_id)
 {
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
    param_type p = (param_type) SafeMalloc(sizeof(param_struct));
@@ -320,10 +320,10 @@ int load_add_parameter(char *parm_name, int parm_id)
 
    /* OK if parameter already in table; just ignore return value */
    table_insert(st.globalvars, (void *) id, id_hash, id_compare);
-   return True;
+   return true;
 }
 /**********************************************************************/
-int load_add_property(char *prop_name, int property_id)
+bool load_add_property(char *prop_name, int property_id)
 {
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
    property_type p = (property_type) SafeMalloc(sizeof(property_struct));
@@ -343,10 +343,10 @@ int load_add_property(char *prop_name, int property_id)
       simple_error("Property appears outside of class in database file");
    current_class->properties = list_add_item(current_class->properties, (void *) p);
 
-   return True;
+   return true;
 }
 /**********************************************************************/
-int load_add_classvar(char *name, int classvar_id)
+bool load_add_classvar(char *name, int classvar_id)
 {
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
    classvar_type c = (classvar_type) SafeMalloc(sizeof(classvar_struct));
@@ -366,10 +366,10 @@ int load_add_classvar(char *name, int classvar_id)
       simple_error("Classvar appears outside of class in database file");
    current_class->classvars = list_add_item(current_class->classvars, (void *) c);
 
-   return True;
+   return true;
 }
 /**********************************************************************/
-int load_add_external(char *name, int idnum, int type)
+bool load_add_external(char *name, int idnum, int type)
 {
    id_type id = (id_type) SafeMalloc(sizeof(id_struct));
 
@@ -380,8 +380,8 @@ int load_add_external(char *name, int idnum, int type)
    id->source = type;
 
    if (table_insert(st.missingvars, (void *) id, id_hash, id_compare) == 0)
-      return True;
-   return False;
+      return true;
+   return false;
 }
 /**********************************************************************/
 /*
@@ -390,7 +390,7 @@ int load_add_external(char *name, int idnum, int type)
  *   We store the superclass id #s in the superclass pointers as they
  *   are read in load_add_class above; here we find the actual pointers.
  */
-int build_superclasses(list_type classes)
+bool build_superclasses(list_type classes)
 {
    list_type temp, l = classes;
    int superclass_idnum;
@@ -416,7 +416,7 @@ int build_superclasses(list_type classes)
       }
       l = l->next;
    }
-   return True;
+   return true;
 }
 /**********************************************************************/
 /* 
@@ -523,9 +523,9 @@ void save_class_list(FILE *kodbase, list_type c)
 /**********************************************************************/
 /*
  * save_kodbase: Writes out the new database file based on class list
- *              passed in from parser.  Returns True iff successful.
+ *              passed in from parser.  Returns true iff successful.
  */
-int save_kodbase()
+bool save_kodbase()
 {
    FILE *kodbase;
    int numexternals;
@@ -534,7 +534,7 @@ int save_kodbase()
    if ((kodbase = fopen(basefile, "wt")) == NULL)
    {
       simple_error("Unable to open database file %s", basefile);
-      return False;
+      return false;
    }
   
    /* First, write out status line of # of identifiers & resources */
@@ -551,5 +551,5 @@ int save_kodbase()
       simple_warning("%d unresolved externals", numexternals);
 
    fclose(kodbase);
-   return True;
+   return true;
 }

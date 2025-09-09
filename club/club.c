@@ -22,9 +22,9 @@
 HINSTANCE hInst;
 HWND hwndMain;
 
-Bool success;
+bool success;
 
-static Bool retry = True;   // True when an error occurs and user asks to retry
+static bool retry = true;   // true when an error occurs and user asks to retry
 
 std::string restart_filename;
 
@@ -40,7 +40,7 @@ std::string transfer_local_filename;
 std::string dest_path;
 
 /* local function prototypes */
-Bool ParseCommandLine(const char *args);
+bool ParseCommandLine(const char *args);
 void RestartFilename();
 void StartupError();
 void RestartClient();
@@ -56,7 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_li
 
    InitCommonControls();
 
-   success = False; /* whether the copy compeletely succeeded */
+   success = false; /* whether the copy compeletely succeeded */
 
    if (ParseCommandLine(command_line))
    {
@@ -66,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_li
    if (success)
       RestartClient();
 
-   if (success == False)
+   if (success == false)
       return 1;
    
    return 0;
@@ -115,7 +115,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
    return args;
 }
 /************************************************************************/
-Bool ParseCommandLine(const char *args)
+bool ParseCommandLine(const char *args)
 {
    std::string argstring(args);
    std::vector<std::string> arguments = split(argstring, ' ');
@@ -123,13 +123,13 @@ Bool ParseCommandLine(const char *args)
    if (arguments.size() != 6)
    {
       StartupError();
-      return False;
+      return false;
    }
    
    if (arguments[1] != "UPDATE")
    {
       StartupError();
-      return False;
+      return false;
    }
 
    restart_filename = arguments[0];
@@ -141,7 +141,7 @@ Bool ParseCommandLine(const char *args)
 
    dest_path = arguments[5];
 
-   return True;
+   return true;
 }
 /************************************************************************/
 void StartupError()
@@ -313,8 +313,8 @@ void Error(char *fmt, ...)
 			   (LPARAM) s);
 
    if (retval == IDOK)
-      retry = True;
-   else retry = False;
+      retry = true;
+   else retry = false;
 }
 /*****************************************************************************/
 /*

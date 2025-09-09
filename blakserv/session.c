@@ -120,7 +120,7 @@ session_node *AllocateSession(void)
 
 	for (i=0;i<num_sessions;i++)
 	{
-		if (sessions[i].connected == False)
+		if (sessions[i].connected == false)
 			break;
 	}
 
@@ -138,17 +138,17 @@ session_node *AllocateSession(void)
 	sessions[i].active = i < ConfigInt(SESSION_MAX_ACTIVE);
 
 	sessions[i].session_id = i;
-	sessions[i].blak_client = False;
-	sessions[i].login_verified = False;
-	sessions[i].hangup = False;
+	sessions[i].blak_client = false;
+	sessions[i].login_verified = false;
+	sessions[i].hangup = false;
 	sessions[i].account = NULL;
-	sessions[i].exiting_state = False;
+	sessions[i].exiting_state = false;
 	sessions[i].receive_list = NULL;
 	sessions[i].receive_index = 0;
 	sessions[i].send_list = NULL;
 	sessions[i].version_major = 0;
 	sessions[i].version_minor = 0;
-	sessions[i].seeds_hacked = False;
+	sessions[i].seeds_hacked = false;
 	sessions[i].secure_token = 0;
 	sessions[i].sliding_token = NULL;
 
@@ -183,7 +183,7 @@ session_node * GetSessionBySocket(SOCKET sock)
 
 	for (i=0;i<num_sessions;i++)
 		if (sessions[i].connected && sessions[i].conn.type == CONN_SOCKET &&
-			sessions[i].conn.socket == sock && sessions[i].hangup == False)
+			sessions[i].conn.socket == sock && sessions[i].hangup == false)
 		{
 			return &sessions[i];
 		}
@@ -384,7 +384,7 @@ session_node * CreateSession(connection_node conn)
 		session->muxSend = MutexCreate();
 	}
 
-	session->connected = True;
+	session->connected = true;
 	session->connected_time = GetTime();
 
 	/* dprintf("CreateSession making session %i\n",session->session_id); */
@@ -420,7 +420,7 @@ void CloseSession(int session_id)
 
 	EnterSessionLock();
 
-	s->connected = False;
+	s->connected = false;
 
 	if (!s->exiting_state)	/* if a write error occurred during an exit, don't */
 		ExitSessionState(s);	/* go into infinite loop */
@@ -482,7 +482,7 @@ void CloseSession(int session_id)
 
 void HangupSession(session_node *s)
 {
-	s->hangup = True;
+	s->hangup = true;
 
 	/* set event so that main loop will check it out */
 	SignalSession(s->session_id);
@@ -540,7 +540,7 @@ void PollSession(int session_id)
 
 		/* someone hung up session or if the read/write thread for this session is dead,
 	hang it up. */
-	if (s->hangup == True)
+	if (s->hangup == true)
 	{
 		CloseSession(s->session_id);
 		return;
@@ -687,13 +687,13 @@ int GetSessionReadBytes(session_node *s)
 
 /* if possible, read num_bytes from session.  If not possible,
 return false and write nothing.  DO NOT pass in 0 bytes to read. */
-Bool ReadSessionBytes(session_node *s,int num_bytes,void *buf)
+bool ReadSessionBytes(session_node *s,int num_bytes,void *buf)
 {
 	buffer_node *bn,*blist;
 	int copied,copy_bytes;
 
 	if (GetSessionReadBytes(s) < num_bytes)
-		return False;
+		return false;
 
 	blist = s->receive_list;
 
@@ -701,7 +701,7 @@ Bool ReadSessionBytes(session_node *s,int num_bytes,void *buf)
 	{
 		memcpy(buf,blist->buf + s->receive_index,num_bytes);
 		s->receive_index += num_bytes;
-		return True;
+		return true;
 	}
 
 	/* reading at least as many bytes as there are in first buffer */
@@ -732,25 +732,25 @@ Bool ReadSessionBytes(session_node *s,int num_bytes,void *buf)
 	    }
 	}
 	s->receive_index = copy_bytes;
-	return True;
+	return true;
 }
 
 /* if possible, peek at num_bytes from session.  If not possible,
 return false and write nothing.  DO NOT pass in 0 bytes to read. */
-Bool PeekSessionBytes(session_node *s,int num_bytes,void *buf)
+bool PeekSessionBytes(session_node *s,int num_bytes,void *buf)
 {
 	buffer_node *bn,*blist;
 	int copied,copy_bytes;
 
 	if (GetSessionReadBytes(s) < num_bytes)
-		return False;
+		return false;
 
 	blist = s->receive_list;
 
 	if (blist->len_buf - s->receive_index > num_bytes)
 	{
 		memcpy(buf,blist->buf + s->receive_index,num_bytes);
-		return True;
+		return true;
 	}
 
 	/* reading at least as many bytes as there are in first buffer */
@@ -771,7 +771,7 @@ Bool PeekSessionBytes(session_node *s,int num_bytes,void *buf)
 	    bn = bn->next;
 	}
 
-	return True;
+	return true;
 }
 
 void SendClientStr(int session_id,char *str)

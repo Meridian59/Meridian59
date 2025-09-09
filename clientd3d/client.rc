@@ -970,7 +970,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
     IDS_CANTGETFILESIZE             "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
     IDS_CANTSIGNUP                  "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT                "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Seu cadastro falhou porquê:\n\n%s"
 END
 
@@ -988,7 +988,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
+    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\r\n\r\nAntes de entrar e começar a jogar...\r\n\r\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
 END
 
 STRINGTABLE
@@ -998,6 +998,7 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "lendário"
     IDS_RARITY_GRADE_UNIDENTIFIED  "não identificado"
     IDS_RARITY_GRADE_CURSED        "amaldiçoado"
+    IDS_INTRO   "Bem-vindo ao Meridian 59! Clique aqui para iniciar."
 END
 
 STRINGTABLE
@@ -1957,7 +1958,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Es konnte keine HTTP-Anfrage für die Datei %s an den Server %s gesendet werden."
     IDS_CANTGETFILESIZE             "Die Dateigröße von %s konnte vom Server %s nicht abgerufen werden."
     IDS_CANTSIGNUP                  "Es konnte keine Verbindung zum Registrierungsserver hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkeinstellungen und versuchen Sie es erneut (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT                "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Die Registrierung ist fehlgeschlagen, weil:\n\n%s"
 END
 
@@ -2000,7 +2001,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Ihr Konto ist nicht verifiziert! Aus diesem Grund können Sie sich nicht einloggen. Bitte überprüfen Sie Ihre E-Mail-Adresse (einschließlich Junk-Ordner!) und klicken Sie auf den Aktivierungslink. Wenn Sie die Aktivierungs-E-Mail nicht erhalten haben, klicken Sie unten auf 'Ja', um sie erneut zu senden."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Ihr neues Konto [%s] wurde erfolgreich erstellt!\n\nBevor Sie sich einloggen und spielen können...\n\nÜberprüfen Sie jetzt Ihre E-Mail (%s), um Ihr Konto zu verifizieren."
+    IDS_SIGNUPMSG           "Ihr neues Konto [%s] wurde erfolgreich erstellt!\r\n\r\nBevor Sie sich einloggen und spielen können...\r\n\r\nÜberprüfen Sie jetzt Ihre E-Mail (%s), um Ihr Konto zu verifizieren."
 END
 
 STRINGTABLE
@@ -2010,6 +2011,7 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "legendär"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentifiziert"
     IDS_RARITY_GRADE_CURSED        "verflucht"
+    IDS_INTRO   "Willkommen zu Meridian 59! Zum Start hier klicken!"
 END
 
 STRINGTABLE
@@ -3010,7 +3012,7 @@ IDI_KEYBIND				ICON					"bitmap\\m59bind.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
+ // Bitmap
 //
 
 IDB_BACKGROUND          BITMAP                  "bitmap\\bkgnd.bmp"
@@ -3036,7 +3038,6 @@ IDB_VIEWTREAT_TOPRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_ur_hil
 IDB_VIEWTREAT_BOTTOMLEFT_HILIGHT BITMAP                  "bitmap\\viewtreat_ll_hilight.bmp"
 
 IDB_VIEWTREAT_BOTTOMRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_lr_hilight.bmp"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3231,7 +3232,7 @@ BEGIN
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
     IDS_CANTSIGNUP          "Failed to contact the signup server, please check your network settings and try again (%s)."
-    IDS_TROUBLESHOOT        "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT        "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED        "Your sign up failed because:\n\n%s"
 END
 
@@ -3265,7 +3266,7 @@ BEGIN
     IDS_USERNAMEINVALID     "Username is invalid or already in use.\n"
     IDS_EMAILINVALID        "E-mail address is invalid.\n"
     IDS_EMAILINUSE          "E-mail address is already in use.\n"
-    IDS_PASSWORDINVALID     "Passwords are invalid or not not match.\n"
+    IDS_PASSWORDINVALID     "Passwords are invalid or do not match.\n"
     IDS_SERVERUNKNOWN       "Unknown server selected.\n"
     IDS_SIGNUPOFFLINE       "Registration server is offline.\n"
     IDS_SIGNUPUNKNOWNERROR  "Signup generated an unknown error, please try again.\n"
@@ -3274,7 +3275,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then press Yes below to resend it now."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
+    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\r\n\r\nBefore you can log in and play...\r\n\r\nCheck your e-mail (%s) to verify your account now."
 END
 
 STRINGTABLE
@@ -3284,6 +3285,7 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "legendary"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
     IDS_RARITY_GRADE_CURSED        "cursed"
+    IDS_INTRO   "Click here to log on!"
 END
 
 STRINGTABLE

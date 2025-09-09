@@ -21,7 +21,7 @@ static AREA edit_area;
 
 // When adding text, keep track of whether the player has scrolled back, so that
 // we shouldn't scroll the added text into view.
-static Bool scrolled_back;  
+static bool scrolled_back;  
 
 static keymap editbox_key_table[] = {
 { VK_TAB,         KEY_NONE,             A_TABFWD,   (void *) IDC_MAINTEXT },
@@ -82,13 +82,13 @@ void EditBoxResize(int xsize, int ysize, AREA view)
 	      TRUE);
 
    WindowBeginUpdate(hwndText);
-   EditBoxScroll(hwndText, True);  /* Recalculate # of lines in edit box */
+   EditBoxScroll(hwndText, true);  /* Recalculate # of lines in edit box */
    WindowEndUpdate(hwndText);
 
    /* Highlight will be turned on later */
 }
 /************************************************************************/
-void EditBoxSetFocus(Bool forward) 
+void EditBoxSetFocus(bool forward) 
 {
    TextInputSetFocus(forward);
 }
@@ -180,7 +180,7 @@ void EditBoxEndAdd(void)
 {
    /* Scroll new string into view */
    if (!scrolled_back || !config.scroll_lock)
-      EditBoxScroll(hwndText, True);
+      EditBoxScroll(hwndText, true);
 
    WindowEndUpdate(hwndText);
 }
@@ -271,7 +271,7 @@ void EditBoxResetFont(void)
 
    /* Rescroll, since bigger font means fewer lines fit. */
    WindowBeginUpdate(hwndText);
-   EditBoxScroll(hwndText, True);
+   EditBoxScroll(hwndText, true);
    WindowEndUpdate(hwndText);
 }
 /************************************************************************/

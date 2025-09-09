@@ -19,7 +19,7 @@ typedef struct {
    UINT style;
 } MsgBoxStruct;
 
-static Bool error_dialog_up = False;
+static bool error_dialog_up = false;
 
 static INT_PTR CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /************************************************************************/
@@ -40,7 +40,7 @@ void _cdecl ClientError(HINSTANCE hModule, HWND hParent, int fmt_id, ...)
    if (error_dialog_up)
       return;
 
-   error_dialog_up = True;
+   error_dialog_up = true;
 
    if (LoadString(hModule, (int) fmt_id, fmt, ERROR_LENGTH - 1) == 0)
    {
@@ -57,7 +57,7 @@ void _cdecl ClientError(HINSTANCE hModule, HWND hParent, int fmt_id, ...)
    ClientMessageBox(hParent, msg, szAppName, MB_APPLMODAL | MB_ICONEXCLAMATION);
    SetFocus(hwndFocus);
 
-   error_dialog_up = False;
+   error_dialog_up = false;
 }
 /************************************************************************/
 /*
@@ -90,13 +90,13 @@ void _cdecl Info(HINSTANCE hModule, HWND hParent, int fmt_id, ...)
 }
 /************************************************************************/
 /*
- * AreYouSure:  Bring up message box, and return True iff
+ * AreYouSure:  Bring up message box, and return true iff
  *   user selects "Yes".  
  *   defbutton should be YES_BUTTON or NO_BUTTON to indicate default button.
  *   fmt_id is RC-file resource identifier (NOT Blakston resource id) of format string.
  *   Restores focus to window that had the focus on entry.
  */
-Bool _cdecl AreYouSure(HINSTANCE hModule, HWND hParent, int defbutton, int fmt_id, ...)
+bool _cdecl AreYouSure(HINSTANCE hModule, HWND hParent, int defbutton, int fmt_id, ...)
 {
    char msg[ERROR_LENGTH], *fmt;
    HWND hwndFocus = GetFocus();
@@ -131,7 +131,7 @@ Bool _cdecl AreYouSure(HINSTANCE hModule, HWND hParent, int defbutton, int fmt_i
 int ClientMessageBox(HWND hwndParent, const char *text, char *title, UINT style)
 {
    MsgBoxStruct s;
-   static Bool box_up = False;
+   static bool box_up = false;
    int retval;
 
    if (box_up)
@@ -140,15 +140,15 @@ int ClientMessageBox(HWND hwndParent, const char *text, char *title, UINT style)
       return 0;
    }
 
-   box_up = True;
+   box_up = true;
 
    s.text = text;
    s.title = title;
    s.style = style;
 
-   retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_MSGBOX), hwndParent, 
+   retval = SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_MSGBOX), hwndParent, 
 			   ClientMsgBoxProc, (LPARAM) &s);
-   box_up = False;
+   box_up = false;
    return retval;
 } 
 /************************************************************************/
@@ -212,21 +212,21 @@ INT_PTR CALLBACK ClientMsgBoxProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
       GetWindowRect(hDlg, &dlg_rect);
       MoveWindow(hDlg, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
 		 dlg_rect.bottom - dlg_rect.top + yincrease, FALSE);
-      ResizeDialogItem(hDlg, hText, &dlg_rect, RDI_ALL, False);
+      ResizeDialogItem(hDlg, hText, &dlg_rect, RDI_ALL, false);
 
       // Move buttons; center OK button if it's the only one
       if (button_style == MB_OK)
       {
-	 ResizeDialogItem(hDlg, hOK, &dlg_rect, RDI_BOTTOM | RDI_HCENTER, False);
+	 ResizeDialogItem(hDlg, hOK, &dlg_rect, RDI_BOTTOM | RDI_HCENTER, false);
 	 ShowWindow(hCancel, SW_HIDE);
 	 ShowWindow(hCancel2, SW_HIDE);
       }
       else 
       {
-	 ResizeDialogItem(hDlg, hOK, &dlg_rect, RDI_BOTTOM, False);
-	 ResizeDialogItem(hDlg, hCancel, &dlg_rect, RDI_BOTTOM, False);
-	 ResizeDialogItem(hDlg, hOK2, &dlg_rect, RDI_BOTTOM, False);
-	 ResizeDialogItem(hDlg, hCancel2, &dlg_rect, RDI_BOTTOM, False);
+	 ResizeDialogItem(hDlg, hOK, &dlg_rect, RDI_BOTTOM, false);
+	 ResizeDialogItem(hDlg, hCancel, &dlg_rect, RDI_BOTTOM, false);
+	 ResizeDialogItem(hDlg, hOK2, &dlg_rect, RDI_BOTTOM, false);
+	 ResizeDialogItem(hDlg, hCancel2, &dlg_rect, RDI_BOTTOM, false);
       }
 
       SetWindowText(hDlg, s->title);

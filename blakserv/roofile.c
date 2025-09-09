@@ -22,45 +22,45 @@ static unsigned char room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
 /*********************************************************************************************/
 /*
  * BSPRooFileLoadServer:  Fill "room" with server-relevant data from given roo file.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool BSPRooFileLoadServer(char *fname, room_type *room)
+bool BSPRooFileLoadServer(char *fname, room_type *room)
 {
    int infile, i, j, temp,roo_version;
    unsigned char byte;
 
    infile = open(fname, O_BINARY | O_RDONLY);
    if (infile < 0)
-      return False;
+      return false;
 
    // Check magic number and version
    for (i = 0; i < 4; i++)
       if (read(infile, &byte, 1) != 1 || byte != room_magic[i])
-      { close(infile); return False; }
+      { close(infile); return false; }
 
    if (read(infile, &roo_version, 4) != 4 || roo_version < ROO_VERSION)
-   { close(infile); return False; }
+   { close(infile); return false; }
 
    // Read room security
    if (read(infile, &room->security, 4) != 4)
-   { close(infile); return False; }
+   { close(infile); return false; }
 
    // Skip pointer to client info
    if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   { close(infile); return false; }
 
    // Read pointer to server info and seek there
    if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   { close(infile); return false; }
    lseek(infile, temp, SEEK_SET);
 
    // Read size of room
    if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   { close(infile); return false; }
    room->rows = static_cast<short>(temp);
 
    if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   { close(infile); return false; }
    room->cols = static_cast<short>(temp);
 
    // Allocate and read movement grid
@@ -75,7 +75,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 	 FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(char *));
 
 	 close(infile);
-	 return False;
+	 return false;
       }
    }
 
@@ -91,7 +91,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 	 FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(char *));
 
 	 close(infile);
-	 return False;
+	 return false;
       }
    }
 
@@ -112,7 +112,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 			   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
 			   
 			   close(infile);
-			   return False;
+			   return false;
 		   }
 	   }
 	   /*
@@ -133,7 +133,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 	 
    close(infile);
 
-   return True;
+   return true;
 }
 /*********************************************************************************************/
 /*

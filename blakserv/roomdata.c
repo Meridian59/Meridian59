@@ -22,7 +22,7 @@ roomdata_node *roomdata;
 blak_int num_roomdata;
 
 /* local function prototypes */
-Bool LoadRoomFile(char *fname,room_type *file_info);
+bool LoadRoomFile(char *fname,room_type *file_info);
 
 #define signum(a) ((a)<0 ? -1 : ((a) > 0 ? 1 : 0))
 
@@ -111,11 +111,11 @@ roomdata_node * GetRoomDataByID(int id)
    return NULL;
 }
 
-Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
+bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
 {
    int dir_row,dir_col;
-   Bool allow,debug;
-   Bool bad_to;
+   bool allow,debug;
+   bool bad_to;
 
    // Must support to_row/to_col which is outside the bounds of the grid.
    // Therefore, must not actually access the grid in those cases.
@@ -126,23 +126,23 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    {
       if (debug)
 	 dprintf("-- invalid room, false\n");
-      return False;
+      return false;
    }
 
    /* if not headed into room, don't access grid variables */
 
-   bad_to = False;
+   bad_to = false;
    if (to_row < 0 || to_row >= r->file_info.rows)
    {
       if (debug)
 	 dprintf("-- not going into room row, false\n");
-      bad_to = True;
+      bad_to = true;
    }
    if (to_col < 0 || to_col >= r->file_info.cols)
    {
       if (debug)
 	 dprintf("-- not going into room col, false\n");
-      bad_to = True;
+      bad_to = true;
    }
 
    /* if it's inside a wall or an unwalkable floor, it's no good */
@@ -155,7 +155,7 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    {
       if (debug)
 	 dprintf("-- flag grid said no floor, false\n");
-      return False;
+      return false;
    }
    
    /* if not currently in room, must be fine */
@@ -163,13 +163,13 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    {
       if (debug)
 	 dprintf("-- not in current room row, true\n");
-      return True;
+      return true;
    }
    if (from_col < 0 || from_col >= r->file_info.cols)
    {
       if (debug)
 	 dprintf("-- not in current room col, true\n");
-      return True;
+      return true;
    }
 
    /*
@@ -181,7 +181,7 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
       if (debug)
 	 dprintf("-- allowing teleport\n");
 
-      return True; /* teleport */
+      return true; /* teleport */
    }
 
    dir_row = signum(to_row-from_row);
@@ -192,7 +192,7 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
       if (debug)
 	 dprintf("-- not moving, true\n");
 
-      return True; /* no move */
+      return true; /* no move */
    }
 
    /* one of these cases WILL be true */
@@ -233,11 +233,11 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    return (allow != 0);
 }
 
-Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
+bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
 {
    int dir_row,dir_col;
-   Bool allow,debug;
-   Bool bad_to;
+   bool allow,debug;
+   bool bad_to;
 
    // Must support to_row/to_col which is outside the bounds of the grid.
    // Therefore, must not actually access the grid in those cases.
@@ -248,23 +248,23 @@ Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    {
       if (debug)
 	 dprintf("-- invalid room, false\n");
-      return False;
+      return false;
    }
 
    /* if not headed into room, don't access grid variables */
 
-   bad_to = False;
+   bad_to = false;
    if (to_row < 0 || to_row >= r->file_info.rows)
    {
       if (debug)
 	 dprintf("-- not going into room row, false\n");
-      bad_to = True;
+      bad_to = true;
    }
    if (to_col < 0 || to_col >= r->file_info.cols)
    {
       if (debug)
 	 dprintf("-- not going into room col, false\n");
-      bad_to = True;
+      bad_to = true;
    }
 
    /* if it's inside a wall or an unwalkable floor, it's no good */
@@ -277,7 +277,7 @@ Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    {
       if (debug)
 	 dprintf("-- flag grid said no floor, false\n");
-      return False;
+      return false;
    }
    
    /* if not currently in room, must be fine */
@@ -285,13 +285,13 @@ Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    {
       if (debug)
 	 dprintf("-- not in current room row, true\n");
-      return True;
+      return true;
    }
    if (from_col < 0 || from_col >= r->file_info.cols)
    {
       if (debug)
 	 dprintf("-- not in current room col, true\n");
-      return True;
+      return true;
    }
 
    /*
@@ -303,7 +303,7 @@ Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
       if (debug)
 	 dprintf("-- allowing teleport\n");
 
-      return True; /* teleport */
+      return true; /* teleport */
    }
 
    dir_row = signum(to_row-from_row);
@@ -314,14 +314,14 @@ Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
       if (debug)
 	 dprintf("-- not moving, true\n");
 
-      return True; /* no move */
+      return true; /* no move */
    }
 
    if (r->file_info.monster_grid == NULL)
    {
 	   bprintf("CanMoveInRoomFine has no monster grid for %i\n",
 			   r->roomdata_id);
-	   return True;
+	   return true;
    }
    /* one of these cases WILL be true */
 
@@ -361,7 +361,7 @@ Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    return (allow != 0);
 }
 
-Bool LoadRoomFile(char *fname,room_type *file_info)
+bool LoadRoomFile(char *fname,room_type *file_info)
 {
    char s[MAX_PATH+FILENAME_MAX];
 

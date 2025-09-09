@@ -64,12 +64,12 @@ void WriteChannelBuffer(int channel_id,char *s)
 }
 
 /* this is executed in the interface thread */
-Bool IsNewChannelText()
+bool IsNewChannelText()
 {
-   Bool is_new;
+   bool is_new;
 
    EnterCriticalSection(&csChannel_buffers);
-   is_new = (Bool)(head_buffer != tail_buffer);
+   is_new = (head_buffer != tail_buffer);
    LeaveCriticalSection(&csChannel_buffers);
    
    return is_new;

@@ -85,7 +85,7 @@ void InitProfiling(void);
 void InitBkodInterpret(void);
 kod_statistics * GetKodStats(void);
 char * GetBkodPtr(void);
-Bool IsInterpreting(void);
+bool IsInterpreting(void);
 
 void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 

@@ -143,7 +143,6 @@ typedef std::vector<std::string> StringVector;
 
 #include "btime.h"
 
-#include "bool.h"
 #include "rscload.h"
 #include "roomtype.h"
 #include "bkod.h"

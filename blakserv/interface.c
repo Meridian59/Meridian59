@@ -63,7 +63,7 @@ HWND hwndTab_page;
 HWND tab_pages[NUM_TAB_PAGES];
 HWND tab_about;
 
-Bool is_about;
+bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
@@ -83,7 +83,7 @@ static FARPROC lpfnDefAdminResponseProc;
 #define STATUS_CONNECTION_WIDTH 30
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
-Bool is_timer_pending;
+bool is_timer_pending;
 
 #define ADMIN_RESPONSE_SIZE (256 * 1024)
 
@@ -124,13 +124,15 @@ void InterfaceRemoveList(int session_id);
 void InterfaceUpdateList(int session_id);
 void InterfaceUpdateAdmin(void);
 
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
+
 void InitInterface(void)
 {
 	HANDLE hThread;
 	
 	sessions_logged_on = 0;
-	is_timer_pending = False;
-	is_about = False;
+	is_timer_pending = false;
+	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -1128,7 +1130,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = True;
+		is_about = true;
 		
 		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
@@ -1171,10 +1173,35 @@ void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
 			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-			MessageBox(hwndMain,s,BlakServNameString(),MB_OK | MB_ICONINFORMATION);
+        	ShowCopyableMessageDialog(hwndMain, s);
 		}
 		break;
 	}
+}
+
+
+INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        SetDlgItemText(hDlg, IDC_MESSAGE_EDIT, (LPCTSTR)lParam);
+		CenterWindow(hDlg, GetParent(hDlg));
+        return TRUE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message)
+{
+	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COPYABLE_MESSAGE), hwndParent, CopyableMessageDlgProc, (LPARAM)message);
 }
 
 LRESULT CALLBACK InterfaceAdminInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -83,7 +83,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    KeySetLastNorepeatTime();
 
    // See if module wants to handle menu selection
-   if (ModuleEvent(EVENT_MENUITEM, id) == False)
+   if (ModuleEvent(EVENT_MENUITEM, id) == false)
       return;
    
    /* Handle menu selections */

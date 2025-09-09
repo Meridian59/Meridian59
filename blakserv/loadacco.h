@@ -13,6 +13,6 @@
 #ifndef _LOADACCO_H
 #define _LOADACCO_H
 
-Bool LoadAccounts(char *filename);
+bool LoadAccounts(char *filename);
 
 #endif

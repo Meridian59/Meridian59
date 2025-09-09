@@ -2436,6 +2436,12 @@ messages:
    {
       local i,each_obj;
 
+      if sector = $
+      {
+         debug("SetSector called with missing sector ID");
+         return;
+      }
+
       % tell everyone in the room at the moment about the change
 
       for i in plActive
@@ -3967,6 +3973,21 @@ messages:
          if First(i) = $ 
          {
             debug("Room", piRoom_num, "id", self, "has bad texture change", i);
+         }
+      }
+
+      return;
+   }
+
+   FindBadSectorChanges()
+   "Print any sector changes with $ as the sector ID"
+   {
+      local i;
+      for i in plSector_changes
+      {
+         if First(i) = $ 
+         {
+            debug("Room", piRoom_num, "id", self, "has bad sector change", i);
          }
       }
 

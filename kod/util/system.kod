@@ -6597,6 +6597,19 @@ messages:
       return;
    }
 
+   FindBadRoomSectors()
+   "Find rooms where the sector ID for animations was incorrectly set to $"
+   {
+      local room;
+
+      for room in plRooms
+      {
+         Send(room, @FindBadSectorChanges);
+      }
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

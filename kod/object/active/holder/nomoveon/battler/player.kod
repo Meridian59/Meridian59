@@ -1019,6 +1019,9 @@ messages:
       
       Send(Send(SYS,@GetAssassinGame),@RemoveFromGame,#who=self);
       Send(Send(SYS,@GetLore),@PlayerSuicides,#who=self);
+      Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=-1);
+      Send(SYS, @RecreatedUser, #what=self);  % Clear bank, vault, etc.
+
       plSchools = $;
       
       propagate;

@@ -308,27 +308,10 @@ void ConfigLoad(void)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
    // Determine if we should be using gpu efficiency mode or not.
-   auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
-	   "gpuefficiencyonetimeflip", false, config_ini);
-   if (one_time_gpu_efficiency_enablement)
-   {
-      char config_value[10];
-      GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
-		  sizeof(config_value), config_ini);
-      config.gpuEfficiency = (0 == strcmp(config_value, "true"));
-   }
-   else
-   {
-      // TODO: Added February 2025 - remove after the next update when everyone will have been reset.
-      // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
-
-      // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
-      // This is to ensure players start from a clean slate with maximum performance.
-      // After this one-time flip, future changes to gpu efficiency preferences will be respected.
-      config.gpuEfficiency = true;
-      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, true, config_ini);
-      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini);
-   }
+   char config_value[10];
+   GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
+	   sizeof(config_value), config_ini);
+   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
    TimeSettingsLoad();
 }

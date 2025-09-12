@@ -101,6 +101,7 @@ messages:
    ReqUseSomething(what = $)
    {
       if send(what,@getitemusetype) & ITEM_USE_LEGS
+         AND NOT IsClass(what,&Robe)
       {
          if Send(poOwner,@TryUnuseItem,#what=self)
          {

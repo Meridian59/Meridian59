@@ -71,14 +71,14 @@ void GameClientExit(session_node *s)
 
 void GameExit(session_node *s)
 {
-   s->exiting_state = True;	/* in case the write fails, don't let it call us again */
+   s->exiting_state = true;	/* in case the write fails, don't let it call us again */
 
    if (s->game->object_id == INVALID_OBJECT)
       GameClientExit(s);
    else
       ClientHangupToBlakod(s);
 
-   s->exiting_state = False;
+   s->exiting_state = false;
 }
 
 void GameProcessSessionTimer(session_node *s)
@@ -144,7 +144,7 @@ void GameProcessSessionBuffer(session_node *s)
    /* need to copy only as many bytes as we can hold */
    while (s->receive_list != NULL)
    {
-      if (PeekSessionBytes(s,HEADERBYTES,&msg) == False)
+      if (PeekSessionBytes(s,HEADERBYTES,&msg) == false)
 	 return;
 
       if (msg.len != msg.len_verify)
@@ -166,7 +166,7 @@ void GameProcessSessionBuffer(session_node *s)
       }
       
       /* now read the header for real, plus the actual data */
-      if (ReadSessionBytes(s,msg.len+HEADERBYTES,&msg) == False)
+      if (ReadSessionBytes(s,msg.len+HEADERBYTES,&msg) == false)
 	 return;
 
       /* dprintf("got crc %08x\n",msg.crc16); */
@@ -183,7 +183,7 @@ void GameProcessSessionBuffer(session_node *s)
 
       if (msg.crc16 != security && !s->seeds_hacked)
       {
-			s->seeds_hacked = True;
+			s->seeds_hacked = true;
 			if (ConfigBool(SECURITY_LOG_SPOOFS))
 			{
 				lprintf("GameProcessSessionBuffer found invalid security account %i\n",
@@ -222,7 +222,7 @@ void GameProcessSessionBuffer(session_node *s)
       }
       
       /* if hung up, don't touch */
-      if (s->hangup == True)
+      if (s->hangup == true)
 	 return;
 
       if (s->state != STATE_GAME)
@@ -275,7 +275,7 @@ void GameSyncProcessSessionBuffer(session_node *s)
 
    while (s->receive_list != NULL)
    {
-      if (ReadSessionBytes(s,1,&ch) == False)
+      if (ReadSessionBytes(s,1,&ch) == false)
 	 return;
       
       GameSyncInputChar(s,ch);

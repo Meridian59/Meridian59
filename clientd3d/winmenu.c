@@ -8,7 +8,6 @@
 /*
  * winmenu.c:  Handle main client window menu.
  */
-
 #include "client.h"
 
 static HMENU menu;          // Main menu
@@ -84,7 +83,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    KeySetLastNorepeatTime();
 
    // See if module wants to handle menu selection
-   if (ModuleEvent(EVENT_MENUITEM, id) == False)
+   if (ModuleEvent(EVENT_MENUITEM, id) == false)
       return;
    
    /* Handle menu selections */
@@ -113,15 +112,10 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       break;
 
    case ID_GAME_SETTINGS:
-      if (DialogBox(hInst, MAKEINTRESOURCE(IDD_SETTINGS), hMain, PreferencesDialogProc) == IDOK)
       {
+         ShowPreferencesDialog(hMain);
          ModuleEvent(EVENT_CONFIGCHANGED);
-         MenuDisplaySettings(hMain);
       }
-      break;
-
-  case ID_CONFIGMENU:
-	  ConfigMenuLaunch();
       break;
 
    case ID_GAME_PASSWORD:

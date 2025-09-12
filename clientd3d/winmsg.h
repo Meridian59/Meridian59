@@ -27,10 +27,6 @@
 enum { STATE_OFFLINE, STATE_TERM, STATE_GAME, STATE_STARTUP, STATE_LOGIN, 
 	  STATE_DOWNLOAD, STATE_INIT, STATE_CONNECTING, };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void StartHelp(void);
 
 BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
@@ -43,7 +39,7 @@ void MainChangeColor(void);
 void MainChangeFont(void);
 
 void MainExpose(HWND hwnd);
-Bool MainKey(HWND hwnd, UINT vk,BOOL fDown,int cRepeat,UINT flags);
+bool MainKey(HWND hwnd, UINT vk,BOOL fDown,int cRepeat,UINT flags);
 void MainChar(HWND hwnd, char ch, int cRepeat);
 void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
@@ -60,18 +56,14 @@ void MainMinMaxInfo(HWND hwnd, MINMAXINFO FAR *lpmmi);
 void MainMove(HWND hwnd, int x, int y);
 void MainSetFocus(HWND hwnd, HWND hwndOldFocus);
 void MainKillFocus(HWND hwnd, HWND hwndNewFocus);
-Bool MainDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool MainDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void MainPaletteChanged(HWND hwnd, HWND hwndPaletteChange);
-Bool MainQueryNewPalette(HWND hwnd);
+bool MainQueryNewPalette(HWND hwnd);
 void MainIdle(void);
 void MainEnterIdle(HWND hwnd, UINT source, HWND hwndSource);
 int  MainNotify(HWND hwnd, int idCtrl, NMHDR *pnmh);
 void MainActivateApp(HWND hwnd, BOOL fActivate, DWORD dwThreadId);
 
 void MainReadSocket(HWND hwnd, int SelectType, SOCKET s, int error);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* #ifndef _WINMSG_H */

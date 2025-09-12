@@ -1,10 +1,20 @@
-# sapphire
+# Jewel of Froz
+# groups
+# 1 display
+# 2 ground
+# 3 broken - inventory
+# 4 broken - ground
+# 5 active
 -s 10
-3
-frozdisp.bmp
-frozdrop.bmp
-frozdsp2.bmp
-3
+5
+froz-display.bmp
+froz-ground.bmp
+froz-broken-inventory.bmp
+froz-broken-ground.bmp
+froz-active.bmp
+5
 1 1
 1 2
 1 3
+1 4
+1 5

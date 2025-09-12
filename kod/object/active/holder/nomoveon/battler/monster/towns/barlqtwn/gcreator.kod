@@ -80,14 +80,14 @@ properties:
    
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if Send(who,@GetGender) = GENDER_FEMALE
       {
          send(self,@SetMood,#new_mood=piMood+1);
       }
       
-      propagate;
+      return;
    }
 
    SomeoneSaid(what=$,string=$)

@@ -63,7 +63,7 @@ HWND hwndTab_page;
 HWND tab_pages[NUM_TAB_PAGES];
 HWND tab_about;
 
-Bool is_about;
+bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
@@ -83,7 +83,7 @@ static FARPROC lpfnDefAdminResponseProc;
 #define STATUS_CONNECTION_WIDTH 30
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
-Bool is_timer_pending;
+bool is_timer_pending;
 
 #define ADMIN_RESPONSE_SIZE (256 * 1024)
 
@@ -124,13 +124,15 @@ void InterfaceRemoveList(int session_id);
 void InterfaceUpdateList(int session_id);
 void InterfaceUpdateAdmin(void);
 
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
+
 void InitInterface(void)
 {
 	HANDLE hThread;
 	
 	sessions_logged_on = 0;
-	is_timer_pending = False;
-	is_about = False;
+	is_timer_pending = false;
+	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -1027,40 +1029,61 @@ void InterfaceReloadSystem()
 	LeaveServerLock();
 }
 
-/* stolen from client, 9/19/95
-*
-* CenterWindow: Center one window over another.  Also ensure that the
-*   centered window (hwnd) is completely on the screen.  
-*   Call when processing the WM_INITDIALOG message of dialogs, or
-*   WM_CREATE in WndProcs. 
+/* 
+* CenterWindow: Centers the child window (hwnd) over the parent window 
+*   (hwndParent) while ensuring it's fully visible on the screen, even 
+*   across multiple monitors. The window is positioned within the 
+*   working area of the monitor, excluding taskbars. If hwndParent is NULL, 
+*   the desktop window is used as the parent.
+*   
+* Parameters:
+*   hwnd        - Handle to the child window.
+*   hwndParent  - Handle to the parent window. NULL uses the desktop.
+*   
+* Call this function during WM_INITDIALOG or WM_CREATE to center dialog 
+* boxes or other child windows.
 */
 void CenterWindow(HWND hwnd, HWND hwndParent)
 {
-	RECT rcDlg, rcParent;
-	int screen_width, screen_height, x, y;
-	
-	/* If dialog has no parent, then its parent is really the desktop */
-	if (hwndParent == NULL)
-		hwndParent = GetDesktopWindow();
-	
-	GetWindowRect(hwndParent, &rcParent);
-	GetWindowRect(hwnd, &rcDlg);
-	
-	/* Move dialog rectangle to upper left (0, 0) for ease of calculation */
-	OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
-	
-	x = rcParent.left + (rcParent.right - rcParent.left)/2 - rcDlg.right/2;
-	y = rcParent.top + (rcParent.bottom - rcParent.top)/2 - rcDlg.bottom/2;
-	
-	
-	/* Make sure that child window is completely on the screen */
-	screen_width  = GetSystemMetrics(SM_CXSCREEN);
-	screen_height = GetSystemMetrics(SM_CYSCREEN);
-	
-	x = std::max(0, std::min(x, (int) (screen_width  - rcDlg.right)));
-   y = std::max(0, std::min(y, (int) (screen_height - rcDlg.bottom)));
-	
-	SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+    RECT rcDlg, rcParent, rcScreen;
+    int x, y;
+
+    if (hwndParent == NULL)
+        hwndParent = GetDesktopWindow();
+
+    GetWindowRect(hwndParent, &rcParent);
+    GetWindowRect(hwnd, &rcDlg);
+
+    // Move dialog rectangle to upper left (0, 0) for ease of calculation
+    OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
+
+    // Default position: center over parent window
+    x = rcParent.left + (rcParent.right - rcParent.left) / 2 - rcDlg.right / 2;
+    y = rcParent.top + (rcParent.bottom - rcParent.top) / 2 - rcDlg.bottom / 2;
+
+    // Get the monitor information for the parent window
+    MONITORINFO mi;
+    mi.cbSize = sizeof(MONITORINFO);
+    HMONITOR hMonitor = MonitorFromWindow(hwndParent, MONITOR_DEFAULTTONEAREST);
+    if (GetMonitorInfo(hMonitor, &mi))
+    {
+        rcScreen = mi.rcWork;  // Use working area excluding taskbar
+
+        // Adjust position to ensure the child window is fully visible
+        x = std::max<LONG>(rcScreen.left, std::min<LONG>(x, rcScreen.right - rcDlg.right));
+		y = std::max<LONG>(rcScreen.top, std::min<LONG>(y, rcScreen.bottom - rcDlg.bottom));
+    }
+    else
+    {
+        // Fallback to center the window on the primary monitor if monitor info fails
+        int screen_width = GetSystemMetrics(SM_CXSCREEN);
+        int screen_height = GetSystemMetrics(SM_CYSCREEN);
+
+        x = (screen_width - rcDlg.right) / 2;
+        y = (screen_height - rcDlg.bottom) / 2;
+    }
+
+    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)
@@ -1070,7 +1093,7 @@ INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		CenterWindow(hwnd,NULL);
+        CenterWindow(hwnd, GetParent(hwnd));
 		
 		Edit_LimitText(GetDlgItem(hwnd,IDC_MOTD),sizeof(s)-1);
 		
@@ -1107,7 +1130,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = True;
+		is_about = true;
 		
 		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
@@ -1150,10 +1173,35 @@ void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
 			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-			MessageBox(hwndMain,s,BlakServNameString(),MB_OK | MB_ICONINFORMATION);
+        	ShowCopyableMessageDialog(hwndMain, s);
 		}
 		break;
 	}
+}
+
+
+INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        SetDlgItemText(hDlg, IDC_MESSAGE_EDIT, (LPCTSTR)lParam);
+		CenterWindow(hDlg, GetParent(hDlg));
+        return TRUE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message)
+{
+	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COPYABLE_MESSAGE), hwndParent, CopyableMessageDlgProc, (LPARAM)message);
 }
 
 LRESULT CALLBACK InterfaceAdminInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

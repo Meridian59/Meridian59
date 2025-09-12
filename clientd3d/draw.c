@@ -26,10 +26,10 @@ extern player_info player;
 /*
  * DrawRoom:  Draw the given room on the given DC, by first drawing
  *   it all offscreen, then copying.
- *   map is True if we should draw a map of the room over the normal 3D view.
+ *   map is true if we should draw a map of the room over the normal 3D view.
  *   Requires that room is valid.
  */
-void DrawRoom(HDC hdc, int x, int y, room_type *room, Bool map)
+void DrawRoom(HDC hdc, int x, int y, room_type *room, bool map)
 {
    Draw3DParams params;
    AREA view;
@@ -315,10 +315,10 @@ HDC CreateMemBitmap(int width, int height, HBITMAP *gOldBitmap, BYTE **gBits)
    return gDC;
 }
 /************************************************************************/
-Bool DrawInitialize(void)
+bool DrawInitialize(void)
 {
-   if (InitializeGraphics3D() == False)
-      return False;
+   if (InitializeGraphics3D() == false)
+      return false;
 
    CacheInitialize();
    DrawBitmapInitialize();
@@ -331,7 +331,7 @@ Bool DrawInitialize(void)
 //   border_index = GetClosestPaletteIndex(RGB(188, 152, 108));
    border_index = GetClosestPaletteIndex(RGB(103, 103, 103));
 
-   return True;
+   return true;
 }
 /************************************************************************/
 void DrawClose(void)

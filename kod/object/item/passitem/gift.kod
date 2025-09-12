@@ -182,7 +182,6 @@ messages:
       Send(what,@WaveSendUser,#wave_rsc=gift_open_wav);
 
       oldOwner = poOwner;
-      send(poOwner,@LeaveHold,#what=self);
       send(self,@NewOwner,#what=$);
       send(oldOwner,@NewHold,#what=poContents);
 

@@ -62,12 +62,12 @@ typedef struct
 {
    int session_id;
    connection_node conn;
-   Bool active;			/* False if we're gonna hang 'em up
+   bool active;			/* false if we're gonna hang 'em up
 				   because too many people online */
-   Bool connected;
+   bool connected;
    INT64 connected_time;
    int state;
-   Bool hangup;                 /* if set, PollSessions will hang us up next time 'round */
+   bool hangup;                 /* if set, PollSessions will hang us up next time 'round */
    INT64 timer;			/* time to call its state timer */
 
    char session_state_data[SESSION_STATE_BYTES];
@@ -84,8 +84,8 @@ typedef struct
    };
 
    account_node *account;
-   Bool login_verified;         /* Portal said they're ok */
-   Bool blak_client;		/* if they are running our client */
+   bool login_verified;         /* Portal said they're ok */
+   bool blak_client;		/* if they are running our client */
 
    /* data about the user's machine, only valid if blak_client is true */
    char version_major;		/* version of client */
@@ -103,14 +103,14 @@ typedef struct
    int bandwidth;
    int reserved;
 
-   Bool exiting_state;		/* true iff in ExitXXX, so errors on writing don't inf loop */
+   bool exiting_state;		/* true iff in ExitXXX, so errors on writing don't inf loop */
 				/* only needs to be set if you write, so it's only in exitgame */
 
    int last_download_time; /* as reported by the client.  Needed to communicate from
 			      synched mode to upload mode */
 
    unsigned int seeds[SEED_COUNT]; /* for security in game mode */
-   Bool seeds_hacked;
+   bool seeds_hacked;
    unsigned int secure_token;
    const char* sliding_token;
 
@@ -177,8 +177,8 @@ void SetSessionState(session_node *s,int state);
 void SetSessionTimer(session_node *s,int seconds);
 void ClearSessionTimer(session_node *s);
 int GetSessionReadBytes(session_node *s);
-Bool ReadSessionBytes(session_node *s,int num_bytes,void *buf);
-Bool PeekSessionBytes(session_node *s,int num_bytes,void *buf);
+bool ReadSessionBytes(session_node *s,int num_bytes,void *buf);
+bool PeekSessionBytes(session_node *s,int num_bytes,void *buf);
 void SendClientStr(int session_id,char *str);
 void SendClient(int session_id,char *data,unsigned short len_data);
 void SendClientBufferList(int session_id,buffer_node *blist);

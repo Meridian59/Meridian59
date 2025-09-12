@@ -284,10 +284,14 @@ messages:
          i = 1;
          while i <= iNumItemsInventory
          {
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            if Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
             {
-               % Don't need to increment unless the item stayed in the
-               %  inventory.
+               iNumItemsInventory = iNumItemsInventory - 1;
+            }
+            else
+            {
+               % Only increment the index if the item could not be dropped and
+               % remained in inventory.
                i = i + 1;
             }
          }

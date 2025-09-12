@@ -131,9 +131,9 @@ LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 
 AREA					gD3DView;
-Bool					gD3DRedrawAll = FALSE;
+int           gD3DRedrawAll = 0;
 int						gTemp = 0;
-Bool					gWireframe;		// this is really bad, I'm sorry
+bool					gWireframe;		// this is really bad, I'm sorry
 
 extern long				viewer_height;
 extern Color			base_palette[NUM_COLORS];
@@ -229,7 +229,7 @@ const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
 
 // externed stuff
 extern void			DrawItemsD3D();
-extern Bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
+extern bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 extern void			UpdateRoom3D(room_type *room, Draw3DParams *params);
 
 int DistanceGet(int x, int y)
@@ -768,20 +768,20 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 }
 
-Bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
+bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 {
 	if (dLight->objID != pRNode->obj.id)
-		return FALSE;
+		return false;
 	if (dLight->xyzScale.x != DLIGHT_SCALE(pRNode->obj.dLighting.intensity))
-		return FALSE;
+		return false;
 	if (dLight->color.b != (pRNode->obj.dLighting.color & 31) * 255 / 31)
-		return FALSE;
+		return false;
 	if (dLight->color.g != ((pRNode->obj.dLighting.color >> 5) & 31) * 255 / 31)
-		return FALSE;
+		return false;
 	if (dLight->color.r != ((pRNode->obj.dLighting.color >> 10) & 31) * 255 / 31)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 // Range from 2000 (Minimum noticable) to 9490 (Fireball)
@@ -996,7 +996,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 	{
 		if (tree == NULL)
 		{
-			return False;
+			return false;
 		}
 
 		switch(tree->type)
@@ -1022,7 +1022,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 
 			default:
 				debug(("add_object error!\n"));
-			return False;
+			return false;
 		}
 	}
 }

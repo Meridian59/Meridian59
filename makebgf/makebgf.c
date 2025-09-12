@@ -226,7 +226,7 @@ void CommandFileLoad(char *filename, int *argc, char ***argv, int pos)
 /*
  * VerifyArguments:  Return True iff Bitmaps structure is valid.
  */
-Bool VerifyArguments(Bitmaps *b, Options *options)
+bool VerifyArguments(Bitmaps *b, Options *options)
 {
    int i, j;
 
@@ -237,7 +237,7 @@ Bool VerifyArguments(Bitmaps *b, Options *options)
 	    Error("Bitmap #%d in group %d is out of range (max is %d)",
 		  b->groups[i].indices[j] + 1, i + 1, b->num_bitmaps);
    }
-   return True;
+   return true;
 }
 /**************************************************************************/
 void Error(char *fmt,...)
@@ -285,8 +285,8 @@ int main(int argc, char **argv)
    Options options;
 
    options.shrink = 1;
-   options.rotate = False;
-   options.compress = True;
+   options.rotate = false;
+   options.compress = true;
    memset(&b.name, 0, MAX_BITMAPNAME);
 
    /* Parse options */
@@ -353,11 +353,11 @@ int main(int argc, char **argv)
 	 break;
 
       case 'r':
-	 options.rotate = True;
+	 options.rotate = true;
 	 break;
 
       case 'x':
-	 options.compress = False;
+	 options.compress = false;
 	 break;
 
       case '?':

@@ -27,6 +27,9 @@ resources:
          "in blood spilt in battle.  You will understand, then, that my price for them is high."
    KocatanBowMaker_unwanted_give = "~k%s%s tells you, \"I have enough of those type of supplies to hold us through the summer.~n~k\""
 
+   KocatanBowMaker_welcome_rsc = "If you've come seeking a fine bow, you've chosen well. "
+      "State your purpose and have your coin ready. Now, what do you need?"
+
    
 classvars:
 
@@ -35,7 +38,7 @@ classvars:
    vrDesc = KocatanBowMaker_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER
    viOccupation = MOB_ROLE_BLACKSMITH
 
    viGender = GENDER_FEMALE
@@ -76,7 +79,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if Send(who,@GetGender) = GENDER_MALE
       {
@@ -87,6 +90,9 @@ messages:
       {
          send(self,@SetMood,#new_mood=piMood + 2);
       }
+
+      Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanBowMaker_welcome_rsc,
+              #type = SAY_RESOURCE);
 
       return;
    }

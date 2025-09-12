@@ -76,18 +76,18 @@ int AllocateListNode(void)
 	return num_nodes++;
 }
 
-Bool LoadList(int list_id,val_type first,val_type rest)
+bool LoadList(int list_id,val_type first,val_type rest)
 {
 	if (AllocateListNode() != list_id)
 	{
 		eprintf("LoadList didn't make list id %i\n",list_id);
-		return False;
+		return false;
 	}
 	
 	list_nodes[list_id].first = first;
 	list_nodes[list_id].rest = rest;
 	
-	return True;
+	return true;
 }
 
 list_node *GetListNodeByID(int list_id)
@@ -100,12 +100,12 @@ list_node *GetListNodeByID(int list_id)
 	return &list_nodes[list_id];
 }
 
-Bool IsListNodeByID(int list_id)
+bool IsListNodeByID(int list_id)
 {
 	if (list_id < 0 || list_id >= num_nodes)
-		return False;
+		return false;
 	
-	return True;
+	return true;
 }
 
 blak_int First(int list_id)

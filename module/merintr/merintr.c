@@ -16,31 +16,31 @@
 HINSTANCE hInst;              // Handle of this DLL
 
 ClientInfo *cinfo;         // Holds data passed from main client
-Bool        exiting;
+bool        exiting;
 
-Bool		gbClassicKeys = FALSE;
+bool		gbClassicKeys = false;
 
-static Bool HandleSpells(char *ptr,long len);
-static Bool HandleAddSpell(char *ptr,long len);
-static Bool HandleRemoveSpell(char *ptr,long len);
-static Bool HandleSkills(char *ptr,long len);
-static Bool HandleAddSkill(char *ptr,long len);
-static Bool HandleRemoveSkill(char *ptr,long len);
-static Bool HandleStat(char *ptr,long len);
-static Bool HandleStatGroup(char *ptr,long len);
-static Bool HandleStatGroups(char *ptr, long len);
-static Bool HandleAddEnchantment(char *ptr, long len);
-static Bool HandleRemoveEnchantment(char *ptr, long len);
-static Bool HandleUserCommand(char *ptr, long len);
-static Bool HandleGuildInfo(char *ptr, long len);
-static Bool HandleGuildAsk(char *ptr, long len);
-static Bool HandleGuildList(char *ptr, long len);
-static Bool HandleGuildHalls(char *ptr, long len);
-static Bool HandleGuildShield(char *ptr, long len);
-static Bool HandleGuildShields(char *ptr, long len);
-static Bool HandleLookPlayer(char *ptr, long len);
-static Bool HandleSendQuit(char *ptr, long len);
-static Bool HandleSpellSchools(char *ptr, long len);
+static bool HandleSpells(char *ptr,long len);
+static bool HandleAddSpell(char *ptr,long len);
+static bool HandleRemoveSpell(char *ptr,long len);
+static bool HandleSkills(char *ptr,long len);
+static bool HandleAddSkill(char *ptr,long len);
+static bool HandleRemoveSkill(char *ptr,long len);
+static bool HandleStat(char *ptr,long len);
+static bool HandleStatGroup(char *ptr,long len);
+static bool HandleStatGroups(char *ptr, long len);
+static bool HandleAddEnchantment(char *ptr, long len);
+static bool HandleRemoveEnchantment(char *ptr, long len);
+static bool HandleUserCommand(char *ptr, long len);
+static bool HandleGuildInfo(char *ptr, long len);
+static bool HandleGuildAsk(char *ptr, long len);
+static bool HandleGuildList(char *ptr, long len);
+static bool HandleGuildHalls(char *ptr, long len);
+static bool HandleGuildShield(char *ptr, long len);
+static bool HandleGuildShields(char *ptr, long len);
+static bool HandleLookPlayer(char *ptr, long len);
+static bool HandleSendQuit(char *ptr, long len);
+static bool HandleSpellSchools(char *ptr, long len);
 static void CustomConfigInit(void);
 
 // Server message handler table
@@ -584,7 +584,7 @@ extern int GetActiveStatGroup(void);
 
 /* local function prototypes */
 static spell       *ExtractNewSpell(char **ptr);
-static Bool         ExtractStatistic(char **ptr, Statistic *s);
+static bool         ExtractStatistic(char **ptr, Statistic *s);
 /****************************************************************************/
 BOOL WINAPI DllMain(HINSTANCE hModule, DWORD reason, LPVOID reserved)
 {
@@ -611,7 +611,7 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    info->module_id  = MODULE_ID;
    cinfo = client_info;    // Save client info for our use later
 
-   exiting = False;
+   exiting = false;
 
    // Add game key tables
    //KeyAddTable(GAME_PLAY, interface_key_table);
@@ -631,7 +631,7 @@ void WINAPI ModuleExit(void)
 
    FreeVerbAliases();
 
-   exiting = True;
+   exiting = true;
    InterfaceExit();
 }
 
@@ -641,17 +641,17 @@ void WINAPI ModuleExit(void)
  * EVENT_SERVERMSG
  */
 /****************************************************************************/
-Bool WINAPI EventServerMessage(char *message, long len)
+bool WINAPI EventServerMessage(char *message, long len)
 {
-   Bool retval;
+   bool retval;
 
    retval = LookupMessage(message, len, handler_table);
 
    // If we handle message, don't pass it on to anyone else
-   if (retval == True)
-     return False;
+   if (retval == true)
+     return false;
 
-   return True;    // Allow other modules to get other messages
+   return true;    // Allow other modules to get other messages
 }
 
 void CustomConfigInit(void)
@@ -968,9 +968,9 @@ skill *ExtractNewSkill(char **ptr)
 /********************************************************************/
 /*
  * ExtractStatistic: Fill s with data fom ptr, and increment ptr appropriately.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool ExtractStatistic(char **ptr, Statistic *s)
+bool ExtractStatistic(char **ptr, Statistic *s)
 {
    Extract(ptr, &s->num, SIZE_STAT_NUM);
    Extract(ptr, &s->name_res, SIZE_ID);
@@ -997,12 +997,12 @@ Bool ExtractStatistic(char **ptr, Statistic *s)
       
    default:
       debug(("ExtractStatistic got unknown stat type %d\n", (int) s->type));
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSpells(char *ptr,long len)
+bool HandleSpells(char *ptr,long len)
 {
    WORD list_len, i;
    list_type list = NULL;
@@ -1021,13 +1021,13 @@ Bool HandleSpells(char *ptr,long len)
    if (len != 0)
    {
       ObjectListDestroy(list);
-      return False;
+      return false;
    }   
    SetSpells(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleAddSpell(char *ptr, long len)
+bool HandleAddSpell(char *ptr, long len)
 {
    spell *sp;
    char *start = ptr;
@@ -1038,25 +1038,25 @@ Bool HandleAddSpell(char *ptr, long len)
    if (len != 0)
    {
       SafeFree(sp);
-      return False;
+      return false;
    }
    AddSpell(sp);   
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleRemoveSpell(char *ptr, long len)
+bool HandleRemoveSpell(char *ptr, long len)
 {
    ID spell_id;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
    Extract(&ptr, &spell_id, SIZE_ID);   
    RemoveSpell(spell_id);
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSkills(char *ptr,long len)
+bool HandleSkills(char *ptr,long len)
 {
    WORD list_len, i;
    list_type list = NULL;
@@ -1075,13 +1075,13 @@ Bool HandleSkills(char *ptr,long len)
    if (len != 0)
    {
       ObjectListDestroy(list);
-      return False;
+      return false;
    }   
    SetSkills(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleAddSkill(char *ptr, long len)
+bool HandleAddSkill(char *ptr, long len)
 {
    skill *sp;
    char *start = ptr;
@@ -1092,43 +1092,43 @@ Bool HandleAddSkill(char *ptr, long len)
    if (len != 0)
    {
       SafeFree(sp);
-      return False;
+      return false;
    }
    AddSkill(sp);   
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleRemoveSkill(char *ptr, long len)
+bool HandleRemoveSkill(char *ptr, long len)
 {
    ID skill_id;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
    Extract(&ptr, &skill_id, SIZE_ID);   
    RemoveSkill(skill_id);
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleStat(char *ptr, long len)
+bool HandleStat(char *ptr, long len)
 {
    BYTE group;
    Statistic s;
    char *start = ptr;
 
    Extract(&ptr, &group, SIZE_GROUP);
-   if (ExtractStatistic(&ptr, &s) == False)
-      return False;
+   if (ExtractStatistic(&ptr, &s) == false)
+      return false;
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
    
    StatChange(group, &s);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleStatGroup(char *ptr, long len)
+bool HandleStatGroup(char *ptr, long len)
 {
    list_type stat_list = NULL;
    BYTE group, list_len;
@@ -1136,7 +1136,7 @@ Bool HandleStatGroup(char *ptr, long len)
    char *start = ptr;
 
    if (len < SIZE_GROUP + SIZE_NUM_STATS)
-      return False;
+      return false;
 
    Extract(&ptr, &group, SIZE_GROUP);
    Extract(&ptr, &list_len, SIZE_NUM_STATS);
@@ -1145,10 +1145,10 @@ Bool HandleStatGroup(char *ptr, long len)
    {
       Statistic *s = (Statistic *) SafeMalloc(sizeof(Statistic));
 
-      if (ExtractStatistic(&ptr, s) == False)
+      if (ExtractStatistic(&ptr, s) == false)
       {
 	 list_destroy(stat_list);
-	 return False;
+	 return false;
       }
       stat_list = list_add_item(stat_list, s);
    }
@@ -1157,14 +1157,14 @@ Bool HandleStatGroup(char *ptr, long len)
    if (len != 0)
    {
       list_destroy(stat_list);
-      return False;
+      return false;
    }
 
    StatsReceiveGroup(group, stat_list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleStatGroups(char *ptr, long len)
+bool HandleStatGroups(char *ptr, long len)
 {
    char *start = ptr;
    BYTE num_groups;
@@ -1178,13 +1178,13 @@ Bool HandleStatGroups(char *ptr, long len)
    
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    StatsGroupsInfo(num_groups, names);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleAddEnchantment(char *ptr, long len)
+bool HandleAddEnchantment(char *ptr, long len)
 {
    BYTE type;
    object_node *obj;
@@ -1197,14 +1197,14 @@ Bool HandleAddEnchantment(char *ptr, long len)
    if (len != 0)
    {
       ObjectDestroy(obj);
-      return False;
+      return false;
    }
 
    EnchantmentAdd(type, obj);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleRemoveEnchantment(char *ptr, long len)
+bool HandleRemoveEnchantment(char *ptr, long len)
 {
    BYTE type;
    ID obj_id;
@@ -1215,17 +1215,17 @@ Bool HandleRemoveEnchantment(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    EnchantmentRemove(type, obj_id);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleUserCommand(char *ptr, long len)
+bool HandleUserCommand(char *ptr, long len)
 {
    BYTE type;
    int index;
-   Bool success;
+   bool success;
 
    UserAreaRedraw();
 
@@ -1244,18 +1244,18 @@ Bool HandleUserCommand(char *ptr, long len)
 	    if (!success)
 	    {
 	       debug(("Error in user command message of type %d from server\n", type));
-	       return False;
+	       return false;
 	    }
-	    return True;
+	    return true;
 	 }
 	 break;
       }
       index++;
    }
-   return False;   // Pass on to other modules
+   return false;   // Pass on to other modules
 }
 /********************************************************************/
-Bool HandleGuildInfo(char *ptr, long len)
+bool HandleGuildInfo(char *ptr, long len)
 {
    char *start = ptr;
    GuildConfigDialogStruct info;
@@ -1289,7 +1289,7 @@ Bool HandleGuildInfo(char *ptr, long len)
    len -= 2;
 
    if (info.num_users > MAX_GUILD_USERS)
-      return False;
+      return false;
 
    for (i = 0; i < info.num_users; i++)
    {
@@ -1298,7 +1298,7 @@ Bool HandleGuildInfo(char *ptr, long len)
       len -= SIZE_ID;
       len = ExtractString(&ptr, len, member->name, MAXUSERNAME);
       if (len == -1)
-	 return False;
+	 return false;
 
       Extract(&ptr, &member->rank, 1);
       Extract(&ptr, &member->gender, 1);
@@ -1306,29 +1306,29 @@ Bool HandleGuildInfo(char *ptr, long len)
    }
 
    if (len != 0)
-      return False;
+      return false;
 
    GuildShieldInit();		//	Initialize Guild Shield page.
 
    GuildConfigInitInfo(&info);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGuildAsk(char *ptr, long len)
+bool HandleGuildAsk(char *ptr, long len)
 {
   int cost1, cost2;
   
   if (len != 8)
-    return False;
+    return false;
 
   Extract(&ptr, &cost1, 4);
   Extract(&ptr, &cost2, 4);
 
   GuildCreate(cost1, cost2);
-  return True;
+  return true;
 }
 /********************************************************************/
-Bool HandleGuildList(char *ptr, long len)
+bool HandleGuildList(char *ptr, long len)
 {
    list_type guild_list;
    IDList other_guilds[4];
@@ -1367,15 +1367,15 @@ Bool HandleGuildList(char *ptr, long len)
       list_destroy(guild_list);
       for (i=0; i < 4; i++)
 	 IDListDelete(other_guilds[i]);
-      return False;
+      return false;
    }
    
    GuildGotList(guild_list, other_guilds[0], other_guilds[1], other_guilds[2], other_guilds[3]);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGuildShield(char *ptr, long len)
+bool HandleGuildShield(char *ptr, long len)
 {
    char name[MAX_GUILD_NAME + 1];  // Name of guild
    ID id;
@@ -1394,14 +1394,14 @@ Bool HandleGuildShield(char *ptr, long len)
    len -= 3;
 
    if (len != 0)
-      return False;
+      return false;
 
    GuildGotShield(id, name, color1, color2, pattern);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGuildShields(char *ptr, long len)
+bool HandleGuildShields(char *ptr, long len)
 {
    list_type shield_list;
    WORD num_guildshields;
@@ -1421,15 +1421,15 @@ Bool HandleGuildShields(char *ptr, long len)
    if (len != 0)
    {
       list_destroy(shield_list);
-      return False;
+      return false;
    }
 
    GuildGotShields(shield_list);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGuildHalls(char *ptr, long len)
+bool HandleGuildHalls(char *ptr, long len)
 {
    char *start = ptr;
    WORD num_halls;
@@ -1450,14 +1450,14 @@ Bool HandleGuildHalls(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    GuildHallsReceived(num_halls, halls);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLookPlayer(char *ptr, long len)
+bool HandleLookPlayer(char *ptr, long len)
 {
    char description[MAXMESSAGE], fixed_string[MAXMESSAGE], url[MAX_URL + 1];
    char* desc = description;
@@ -1475,7 +1475,7 @@ Bool HandleLookPlayer(char *ptr, long len)
 
    /* Remove format string id # & other ids from length */
    if (!CheckServerMessage(&desc, &ptr, len, resource_id))
-      return False;
+      return false;
 
    // Get fixed string (extra info)
    ExtractString(&ptr, len, fixed, MAXMESSAGE);
@@ -1486,18 +1486,18 @@ Bool HandleLookPlayer(char *ptr, long len)
 
    DisplayDescription(&obj, flags, desc, fixed, url, obj.rarity);
    ObjectDestroy(&obj);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSendQuit(char *ptr, long len)
+bool HandleSendQuit(char *ptr, long len)
 {
   if (len != 0)
-    return False;
+    return false;
   RequestQuit();
-  return True;
+  return true;
 }
 /********************************************************************/
-Bool HandleSpellSchools(char *ptr, long len)
+bool HandleSpellSchools(char *ptr, long len)
 {
   BYTE num;
   int i;
@@ -1513,16 +1513,16 @@ Bool HandleSpellSchools(char *ptr, long len)
 
   len -= (ptr - start);
   if (len != 0)
-    return False;
+    return false;
   
-  return True;
+  return true;
 }
 /****************************************************************************/
 /*
  * EVENT_MOUSECLICK
  */
 /****************************************************************************/
-Bool WINAPI EventMouseClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+bool WINAPI EventMouseClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
    if (fDoubleClick)
       PerformAction(A_ACTIVATEMOUSE, NULL);
@@ -1532,17 +1532,17 @@ Bool WINAPI EventMouseClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT key
    {
       SetFocus(cinfo->hMain);
       PerformAction(A_SELECT, NULL);
-      return False;
+      return false;
    }
 
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_USERACTION
  */
 /****************************************************************************/
-Bool WINAPI EventUserAction(int action, void *action_data)
+bool WINAPI EventUserAction(int action, void *action_data)
 {
    return InterfaceAction(action, action_data);
 }
@@ -1551,62 +1551,62 @@ Bool WINAPI EventUserAction(int action, void *action_data)
  * EVENT_FONTCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
+bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
 {
    InterfaceFontChanged(font_id, font);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_COLORCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventColorChanged(WORD color_id, COLORREF color)
+bool WINAPI EventColorChanged(WORD color_id, COLORREF color)
 {
    InterfaceColorChanged(color_id, color);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_STATECHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventStateChanged(int old_state, int new_state)
+bool WINAPI EventStateChanged(int old_state, int new_state)
 {
    if (new_state == GAME_INVALID)
    {
    }
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_MENUITEM
  */
 /****************************************************************************/
-Bool WINAPI EventMenuItem(int id)
+bool WINAPI EventMenuItem(int id)
 {
    // Check for spell menu items
    if (id >= ID_SPELL && id < ID_SPELL + MAX_SPELLS)
    {
       MenuSpellChosen(id);
-      return False;  // Don't pass this menu item on
+      return false;  // Don't pass this menu item on
    }
 
    // Check for action menu items
    if (id >= ID_ACTION && id < ID_ACTION + MAX_ACTIONS)
    {
       MenuActionChosen(id);
-      return False;  // Don't pass this menu item on
+      return false;  // Don't pass this menu item on
    }
 
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_TEXTCOMMAND
  */
 /****************************************************************************/
-Bool WINAPI EventTextCommand(char *str)
+bool WINAPI EventTextCommand(char *str)
 {
    static BOOL bRecursing = FALSE;
    BOOL bReturn = TRUE;
@@ -1636,37 +1636,37 @@ Bool WINAPI EventTextCommand(char *str)
  * EVENT_RESIZE
  */
 /****************************************************************************/
-Bool WINAPI EventResize(int xsize, int ysize, AREA *view)
+bool WINAPI EventResize(int xsize, int ysize, AREA *view)
 {
    InterfaceResizeModule(xsize, ysize, view);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_USERCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventUserChanged(void)
+bool WINAPI EventUserChanged(void)
 {
    InterfaceUserChanged();
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_REDRAW
  */
 /****************************************************************************/
-Bool WINAPI EventRedraw(HDC hdc)
+bool WINAPI EventRedraw(HDC hdc)
 {
    InterfaceRedrawModule(hdc);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_DRAWITEM
  */
 /****************************************************************************/
-Bool WINAPI EventDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool WINAPI EventDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    return InterfaceDrawItem(hwnd, lpdis);
 }
@@ -1675,24 +1675,24 @@ Bool WINAPI EventDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
  * EVENT_RESETDATA
  */
 /****************************************************************************/
-Bool WINAPI EventResetData(void)
+bool WINAPI EventResetData(void)
 {
    InterfaceResetData();
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_INVENTORY
  */
 /****************************************************************************/
-Bool WINAPI EventInventory(int command, void *data)
+bool WINAPI EventInventory(int command, void *data)
 {
    switch (command)
    {
    case INVENTORY_SET:
       DisplayInventory(cinfo->player->inventory);
-      StatsShowGroup( False );
-      ShowInventory( True );
+      StatsShowGroup( false );
+      ShowInventory( true );
       DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
       break;
 
@@ -1700,8 +1700,8 @@ Bool WINAPI EventInventory(int command, void *data)
       InventoryAddItem((object_node *) data);
 
       //DisplayInventory(cinfo->player->inventory);
-      StatsShowGroup( False );
-      ShowInventory( True );
+      StatsShowGroup( false );
+      ShowInventory( true );
       DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
 
       break;
@@ -1711,11 +1711,11 @@ Bool WINAPI EventInventory(int command, void *data)
       break;
 
    case INVENTORY_USE:
-      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), True);
+      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), true);
       break;
 
    case INVENTORY_UNUSE:
-      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), False);
+      DisplaySetUsing(reinterpret_cast<std::intptr_t>(data), false);
       break;
 
    case INVENTORY_CHANGE:
@@ -1726,14 +1726,14 @@ Bool WINAPI EventInventory(int command, void *data)
       DisplayUsing((list_type) data);
       break;
    }
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_ANIMATE
  */
 /****************************************************************************/
-Bool WINAPI EventAnimate(int dt)
+bool WINAPI EventAnimate(int dt)
 {
    room_contents_node *r;
 
@@ -1745,41 +1745,41 @@ Bool WINAPI EventAnimate(int dt)
    if (r != NULL && GetDrawingEffect(r->obj.flags) == OF_INVISIBLE)
       UserAreaRedraw();
    
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_SETCURSOR
  */
 /****************************************************************************/
-Bool WINAPI EventSetCursor(HCURSOR cursor)
+bool WINAPI EventSetCursor(HCURSOR cursor)
 {
    if (GameGetState() == GAME_PLAY && InventoryMouseCaptured())
    {
       SetMainCursor(LoadCursor(cinfo->hInst, MAKEINTRESOURCE(IDC_DROPCURSOR)));
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_NEWROOM
  */
 /****************************************************************************/
-Bool WINAPI EventNewRoom(void)
+bool WINAPI EventNewRoom(void)
 {
    InterfaceNewRoom();
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_CONFIGCHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventConfigChanged(void)
+bool WINAPI EventConfigChanged(void)
 {
    InterfaceConfigChanged();
-   return True;
+   return true;
 }
 
 player_info *GetPlayer(void)

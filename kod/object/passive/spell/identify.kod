@@ -66,7 +66,7 @@ messages:
       oTarget = First(lTargets);
 
       % Check that target is a weapon or armor
-      if NOT (IsClass(oTarget,&Item) AND send(oTarget,@CanIdentify))
+      if NOT (IsClass(oTarget,&Item) AND Send(oTarget,@CanIdentify))
       {
          if NOT bItemCast
          {
@@ -90,13 +90,25 @@ messages:
       local oTarget;
       
       oTarget = First(lTargets);
+      
       Send(who,@MsgSendUser,#message_rsc=identify_working, 
            #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
-      Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
+
+      % If the item has already been identified, simply show it
+      % Otherwise, reveal the hidden attributes, show the item, then hide the attributes
+      if Send(oTarget,@IsIdentified)
+      {  
+         Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
+      } 
+      else
+      {
+         Send(oTarget,@RevealHiddenAttributes);
+         Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
+         Send(oTarget,@HideHiddenAttributes);
+      }
       
       propagate;
    }
-
-
+ 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

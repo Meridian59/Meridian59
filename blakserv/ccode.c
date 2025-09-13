@@ -2397,7 +2397,7 @@ blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal
 
       // Now do the actual formatting: substitute {} placeholders with our arguments
       std::string fmt_str(string1, len1);
-      std::string result = fmt::vformat(fmt_str, fmt::format_args(format_args.data(), format_args.size()));
+      std::string result = fmt::vformat(fmt_str, fmt::format_args(format_args.data(), static_cast<int>(format_args.size())));
 
       val_type ret;
       ret.v.tag = TAG_STRING;

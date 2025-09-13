@@ -2537,7 +2537,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
          {
             val_type ret;
             ret.v.tag = TAG_INT;
-            ret.v.data = True;
+            ret.v.data = true;
             return ret.int_val;
          }
       }
@@ -2545,6 +2545,6 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
 
    val_type ret;
    ret.v.tag = TAG_INT;
-   ret.v.data = False;
+   ret.v.data = false;
    return ret.int_val;
 }

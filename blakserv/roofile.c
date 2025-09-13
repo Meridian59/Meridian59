@@ -46,7 +46,7 @@ static unsigned char readByte(FILE *fd)   /* 1-byte unsigned                   *
    return v;
 }
 
-static int readCoord(FILE *fd, Bool as_float)
+static int readCoord(FILE *fd, bool as_float)
 {
    char buf[4];
    if (fread(buf, 4, 1, fd) != 1)
@@ -63,7 +63,7 @@ static int readCoord(FILE *fd, Bool as_float)
 /*
  * LoadSectorPolygons:  Load the polygons for each sector from the BSP tree
  */
-static void LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_type *room, const char *fname, Bool coords_are_floats)
+static void LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_type *room, const char *fname, bool coords_are_floats)
 {
    fseek(fd, nodes_start, SEEK_SET);
 
@@ -248,7 +248,7 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
    fseek(infile, node_off, SEEK_SET);
    int num_nodes = readShort(infile);
 
-   Bool coords_are_floats = (roo_version >= 13);
+   bool coords_are_floats = (roo_version >= 13);
    LoadSectorPolygons(infile, node_off + 2, num_nodes, room, fname, coords_are_floats);
    
    // Server section

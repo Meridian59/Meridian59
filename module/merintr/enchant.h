@@ -21,7 +21,7 @@ void EnchantmentAdd(BYTE type, object_node *obj);
 void EnchantmentRemove(BYTE type, ID obj_id);
 
 void EnchantmentsResetData(void);
-Bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void EnchantmentsResize(int xsize, int ysize, AREA *view);
 void EnchantmentsRedraw(void);
 void EnchantmentsNewRoom(void);

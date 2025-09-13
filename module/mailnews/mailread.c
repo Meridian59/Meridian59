@@ -49,7 +49,7 @@ static ChildPlacement mailread_controls[] = {
 
 /* local function prototypes */
 static INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-static void UserMailReply(int msg_num, Bool reply_all);
+static void UserMailReply(int msg_num, bool reply_all);
 static void OnColumnClick(LPNMLISTVIEW pLVInfo);
 static int CALLBACK CompareMailListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 static int StringToTimestamp(const char *dateStr);
@@ -271,7 +271,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          if (msg_num == mail_index)
             break;
 
-         if (MailLoadMessage(msg_num, MAXMAIL, msg) == False)
+         if (MailLoadMessage(msg_num, MAXMAIL, msg) == false)
          {
             ClientError(hInst, hReadMailDlg, IDS_CANTLOADMSG);
             break;
@@ -329,7 +329,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          if (!ListViewGetCurrentData(hList, &index, &msg_num))
             return TRUE;
 
-         UserMailReply(msg_num, (Bool)(GET_WM_COMMAND_ID(wParam, lParam) == IDC_REPLYALL));
+         UserMailReply(msg_num, (GET_WM_COMMAND_ID(wParam, lParam) == IDC_REPLYALL));
          return TRUE;
 
       case IDCANCEL:
@@ -347,9 +347,9 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 /*
  * ListViewGetCurrentData:  Set index to index of currently selected item
  *   in given list view control, and data to its lParam value.
- * Return True if a selected item is found, False otherwise.
+ * Return true if a selected item is found, false otherwise.
  */
-Bool ListViewGetCurrentData(HWND hList, int *index, int *data)
+bool ListViewGetCurrentData(HWND hList, int *index, int *data)
 {
    int i, num;
    LV_ITEM lvitem;
@@ -368,17 +368,17 @@ Bool ListViewGetCurrentData(HWND hList, int *index, int *data)
       {
          *index = i;
          *data = lvitem.lParam;
-         return True;
+         return true;
       }
    }
-   return False;
+   return false;
 }
 /****************************************************************************/
 /*
- * UserMailReply:  Set up a reply to the given message.  If reply_all is True, reply to
+ * UserMailReply:  Set up a reply to the given message.  If reply_all is true, reply to
  *   all recipients of given message number; otherwise reply just to sender.
  */
-void UserMailReply(int msg_num, Bool reply_all)
+void UserMailReply(int msg_num, bool reply_all)
 {
    MailInfo *reply;
 

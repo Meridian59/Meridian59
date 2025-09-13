@@ -57,9 +57,9 @@ typedef struct {
 
 static list_type key_tables;  // List of KeyTableListEntries
 
-#define IsDown(k) ((k) & 0x80)    // True when given key status indicates key is down
+#define IsDown(k) ((k) & 0x80)    // true when given key status indicates key is down
 
-static Bool CompareKeyTableListEntries(void *p1, void *p2);
+static bool CompareKeyTableListEntries(void *p1, void *p2);
 static void KeyInitHack(void);
 
 extern keymap	gCustomKeys[];
@@ -109,7 +109,7 @@ void KeyRemoveTable(int game_state, KeyTable table)
    key_tables = list_delete_item(key_tables, table, CompareKeyTableListEntries);
 }
 /************************************************************************/
-Bool CompareKeyTableListEntries(void *p1, void *p2)
+bool CompareKeyTableListEntries(void *p1, void *p2)
 {
    KeyTableListEntry *e1 = (KeyTableListEntry *) p1;
    KeyTableListEntry *e2 = (KeyTableListEntry *) p2;
@@ -170,13 +170,13 @@ int TranslateKey(UINT vk_key, KeyTable table, void **data)
  */
 void HandleKeys(void)
 {
-   Bool norepeat;
+   bool norepeat;
    BYTE keys[NUM_KEYS];
    int action, i, j;
    DWORD now;
    int actions[MAX_ACTIONS];  // Holds actions we've already done
    int num_actions;           // Number of valid entries in actions
-   Bool moved, turned, already_done;
+   bool moved, turned, already_done;
    KeyTable table;
    void *action_data;
    list_type l;
@@ -204,8 +204,8 @@ void HandleKeys(void)
 
       /* Perform action for ALL keys that are down; this allows multiple arrow keys to work */
       /* First, mark all actions that correspond to keys that are down */
-      norepeat = False;
-      moved = turned = False;
+      norepeat = false;
+      moved = turned = false;
       for (i = 1; i < NUM_KEYS; i++)
       {
 	 if (!IsDown(keys[i]))
@@ -216,10 +216,10 @@ void HandleKeys(void)
 	    continue;
 	 
 	 // Perform action at most once
-	 already_done = False;
+	 already_done = false;
 	 for (j=0; j < num_actions; j++)
 	    if (actions[j] == action)
-	       already_done = True;
+	       already_done = true;
 	 
 	 if (already_done || num_actions == MAX_ACTIONS)
 	    continue;
@@ -229,7 +229,7 @@ void HandleKeys(void)
 	 /* Only repeat for moving actions and a few others */
 	 if (!RepeatAction(action))
 	    if (now - last_norepeat_time >= KEY_NOREPEAT_INTERVAL)
-	       norepeat = True;
+	       norepeat = true;
 	    else continue;    // Action retried too soon
 	 
 	if (IsMoveAction(action))
@@ -240,7 +240,7 @@ void HandleKeys(void)
 			int	tempKey = i;
 			int	tempAction;
 
-			moved = True;
+			moved = true;
 
 			for (; tempKey < NUM_KEYS; tempKey++)
 			{
@@ -375,7 +375,7 @@ void HandleKeys(void)
 	 if (IsTurnAction(action))
 	    if (turned)
 	       continue;
-	    else turned = True;
+	    else turned = true;
 	 
 	 // If we're doing a non-repeat action, remember the time so that we don't repeat it
 	 if (norepeat)

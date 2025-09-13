@@ -151,9 +151,9 @@ DWORD string_hash(char *name, DWORD max_val)
 /************************************************************************/
 /*
  * MakeDirectory:  Create directory of given name, if it doesn't already exist.
- *   Returns True if directory exists or was successfully created.
+ *   Returns true if directory exists or was successfully created.
  */
-Bool MakeDirectory(char *name)
+bool MakeDirectory(char *name)
 {
    struct stat s;
 
@@ -221,14 +221,14 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
  *   the contents of the edit box flash, so surround calls to it with
  *   WindowBeginUpdate/WindowEndUpdate.
  *
- *   When scrollback is True, the edit box is scrolled back from the bottom
- *   of the edit box; when it is False, the edit box is scrolled to the bottom
+ *   When scrollback is true, the edit box is scrolled back from the bottom
+ *   of the edit box; when it is false, the edit box is scrolled to the bottom
  *   of the edit box.  For some unknown reason, under Windows 95, scrolling an edit
  *   box to the bottom does NOT put the last line of text at the top of the window,
  *   though the documentation says it does.
  * NOTE:  Assumes that the edit box has a constant font height.
  */
-void EditBoxScroll(HWND hEdit, Bool scrollback)
+void EditBoxScroll(HWND hEdit, bool scrollback)
 {
    RECT r;
    int screen_lines, new_lines, current_line;
@@ -259,11 +259,11 @@ void EditBoxScroll(HWND hEdit, Bool scrollback)
 }
 /************************************************************************/
 /*
- * EditBoxLastVisible:  Return True iff the last line of text in the given edit
+ * EditBoxLastVisible:  Return true iff the last line of text in the given edit
  *   box is visible.
  * NOTE:  Assumes that the edit box has a constant font height.
  */
-Bool EditBoxLastVisible(HWND hEdit)
+bool EditBoxLastVisible(HWND hEdit)
 {
    RECT r;
    int screen_lines, num_lines, first_line;
@@ -284,20 +284,20 @@ Bool EditBoxLastVisible(HWND hEdit)
    num_lines = Edit_GetLineCount(hEdit);
 
    if (first_line + screen_lines >= num_lines - 1)
-      return True;
-   return False;
+      return true;
+   return false;
 }
 /*****************************************************************************/
 /*
- * HasExtension:  Return True iff given filename (with path) has given extension.
+ * HasExtension:  Return true iff given filename (with path) has given extension.
  *   extension should not contain a period.
  */
-Bool HasExtension(char *filename, char *extension)
+bool HasExtension(char *filename, char *extension)
 {
    char *ptr, *ext;
 
    if (filename == NULL || extension == NULL)
-      return False;
+      return false;
 
    /* Find last component of path */
    ptr = strrchr(filename, '\\');
@@ -306,21 +306,21 @@ Bool HasExtension(char *filename, char *extension)
    else ext = strchr(ptr + 1, '.');
 
    if (ext == NULL)
-      return False;
+      return false;
    return !strcmp(ext + 1, extension);
 }
 /*****************************************************************************/
 /*
  * GetWorkingDirectory:  Fill given buffer with current working directory, which
  *   will end with a backslash.  If directory name doesn't fit in buffer, set
- *   buffer to empty string and return False, else return True.
+ *   buffer to empty string and return false, else return true.
  */
-Bool GetWorkingDirectory(char *buf, int buflen)
+bool GetWorkingDirectory(char *buf, int buflen)
 {
    if (getcwd(buf, buflen) == NULL)
    {
       buf[0] = 0;
-      return False;
+      return false;
    }
 
    // Add backslash to end of dir if not already there
@@ -330,7 +330,7 @@ Bool GetWorkingDirectory(char *buf, int buflen)
       buf[len] = '\\';
       buf[len + 1] = 0;
    }
-   return True;
+   return true;
 }
 /*****************************************************************************/
 /*
@@ -369,9 +369,9 @@ void UnionArea(AREA *a, AREA *a1, AREA *a2)
 }
 /*****************************************************************************/
 /*
- * IsInArea:  Return True iff point is in area.
+ * IsInArea:  Return true iff point is in area.
  */
-Bool IsInArea(AREA *area, int x, int y)
+bool IsInArea(AREA *area, int x, int y)
 {
    return (x >= area->x && x < area->x + area->cx &&
 	   y >= area->y && y < area->y + area->cy);
@@ -519,7 +519,7 @@ void GetSystemStats(SystemInfo *s)
  *     RDI_VPIN:    Keep vert. center of dialog item same distance from vert. center of dialog
  *   redraw tells if dialog item should be redrawn
  */
-void ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, Bool redraw)
+void ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, bool redraw)
 {
    RECT dlg_rect, item_rect;
    POINT p;
@@ -612,7 +612,7 @@ void ResizeDialog(HWND hDlg, RECT *dlg_rect, ChildPlacement *children)
       hCtrl = GetDlgItem(hDlg, children[i].id);
       if (GetWindowLong(hCtrl, GWL_STYLE) & WS_VISIBLE)
 	 ResizeDialogItem(hDlg, GetDlgItem(hDlg, children[i].id), dlg_rect,
-			  children[i].placement, False);
+			  children[i].placement, false);
    }
    InvalidateRect(hDlg, NULL, TRUE);
    GetWindowRect(hDlg, dlg_rect);
@@ -694,20 +694,20 @@ BITMAPINFOHEADER *GetBitmapResource(HMODULE hModule, int bitmap_id)
 /********************************************************************/
 /*
  * GetBitmapResourceInfo:  Load bitmap from resources and fill in RawBitmap structure.
- *   Returns True on success.
+ *   Returns true on success.
  */
-Bool GetBitmapResourceInfo(HMODULE hModule, int bitmap_id, RawBitmap *b)
+bool GetBitmapResourceInfo(HMODULE hModule, int bitmap_id, RawBitmap *b)
 {
   BITMAPINFOHEADER *ptr;
 
   ptr = GetBitmapResource(hModule, bitmap_id);
   if (ptr == NULL)
-    return False;
+    return false;
 
   b->bits   = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
   b->width  = ptr->biWidth;
   b->height = ptr->biHeight;
-  return True;
+  return true;
 }
 /********************************************************************/
 /*

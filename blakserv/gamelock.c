@@ -16,7 +16,7 @@
 
 #include "blakserv.h"
 
-Bool game_lock;
+bool game_lock;
 char reason_str[400];
 
 void InitGameLock()
@@ -26,16 +26,16 @@ void InitGameLock()
 
 void SetGameLock(char *str)
 {
-   game_lock = True;
+   game_lock = true;
    strncpy(reason_str,str,400);
 }
 
 void SetGameUnlock()
 {
-   game_lock = False;
+   game_lock = false;
 }
 
-Bool IsGameLocked()
+bool IsGameLocked()
 {
    return game_lock;
 }

@@ -34,7 +34,7 @@ typedef struct {
 				 */
 } *loop_type, loop_struct;
 
-extern int codegen_ok;          /* Did codegen complete successfully? */
+extern bool codegen_ok;          /* Did codegen complete successfully? */
 
 void OutputOpcode(FILE *outfile, opcode_type opcode);
 void OutputByte(FILE *outfile, BYTE datum);
@@ -48,7 +48,7 @@ void codegen_error(const char *fmt, ...);
 int const_to_int(const_type c);
 int set_source_id(opcode_type *opcode, int sourcenum, expr_type e);
 int set_dest_id(opcode_type *opcode, id_type id);
-int is_base_level(expr_type e);
+bool is_base_level(expr_type e);
 id_type make_temp_var(int idnum);
 int flatten_expr(expr_type e, id_type destvar, int maxlocal);
 int simplify_expr(expr_type expr, int maxlocal);

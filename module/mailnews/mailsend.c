@@ -30,7 +30,7 @@ static ChildPlacement mailsend_controls[] = {
 };
 
 static void SendMailInitialize(HWND hDlg, MailInfo *reply);
-static Bool SendMailMessage(HWND hDlg);
+static bool SendMailMessage(HWND hDlg);
 static INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
@@ -216,9 +216,9 @@ void SendMailInitialize(HWND hDlg, MailInfo *reply)
 /*
  * SendMailMessage:  hDlg is filled in with mail message info; build up message
  *   and ask server to validate recipient names.
- *   Return True if message successfully sent.
+ *   Return true if message successfully sent.
  */
-Bool SendMailMessage(HWND hDlg)
+bool SendMailMessage(HWND hDlg)
 {
    char line[MAX_LINE + 1], *ptr, *temp;
    int i, j, k;
@@ -239,7 +239,7 @@ Bool SendMailMessage(HWND hDlg)
 	 {
 	    SafeFree(info);
 	    info = NULL;
-	    return False;
+	    return false;
 	 }
 	 break;
       }
@@ -266,7 +266,7 @@ Bool SendMailMessage(HWND hDlg)
    if (info->num_recipients == 0)
    {
       ClientError(hInst, hDlg, IDS_NORECIPIENTS);
-      return False;
+      return false;
    }
 
    // Remove duplicate recipients
@@ -296,7 +296,7 @@ Bool SendMailMessage(HWND hDlg)
    EnableWindow(GetDlgItem(hDlg, IDC_OK), FALSE);
    SetDlgItemText(hDlg, IDC_SENDMAILMSG, GetString(hInst, IDS_CHECKNAMES));
 
-   return True;
+   return true;
 }
 /*****************************************************************************/
 /*
@@ -308,7 +308,7 @@ void MailRecipientsReceived(WORD num_objects, ID *objs)
    int i, len, chars;
    HWND hEdit;
    char buf[MAXMAIL + MAX_SUBJECT + 20];
-   Bool names_legal;
+   bool names_legal;
 
    if (hSendMailDlg == NULL || info == NULL)
       return;
@@ -322,13 +322,13 @@ void MailRecipientsReceived(WORD num_objects, ID *objs)
    }
 
    // Verify that object numbers are legal
-   names_legal = True;
+   names_legal = true;
    for (i=0; i < num_objects; i++)
       if (objs[i] == 0)
       {
 	 ClientError(hInst, hSendMailDlg, IDS_BADNAME, info->recipients[i]);
 	 SetDlgItemText(hSendMailDlg, IDC_SENDMAILMSG, "");
-	 names_legal = False;
+	 names_legal = false;
 	 break;
       }
 
@@ -395,11 +395,11 @@ void MailChangeColor(void)
 }
 /****************************************************************************/
 /*
- * AbortMailDialogs:  Close mail dialogs.  Return True iff any was open.
+ * AbortMailDialogs:  Close mail dialogs.  Return true iff any was open.
  */
-Bool AbortMailDialogs(void)
+bool AbortMailDialogs(void)
 {
-   Bool retval = False;
+   bool retval = false;
 
    // If we're in the middle of sending a message, stop
    if (info != NULL)
@@ -411,13 +411,13 @@ Bool AbortMailDialogs(void)
    if (hSendMailDlg != NULL)
    {
       SendMessage(hSendMailDlg, WM_CLOSE, 0, 0);
-      retval = True;
+      retval = true;
    }
 
    if (hReadMailDlg != NULL)
    {
       SendMessage(hReadMailDlg, WM_CLOSE, 0, 0);
-      retval = True;
+      retval = true;
    }
    return retval;
 }

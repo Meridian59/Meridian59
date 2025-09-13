@@ -32,15 +32,15 @@ INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
  * UserPostArticle:  User wants to post an article to given newsgroup.
  *   Pop up article posting dialog.
  *   title should be NULL to have no default subject line.
- *   Returns True iff user actually posted article.
+ *   Returns true iff user actually posted article.
  */
-Bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title)
+bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title)
 {
    PostNewsDialogStruct s;
    int retval;
 
    if (hPostNewsDialog != NULL)
-      return False;
+      return false;
 
    s.newsgroup = newsgroup;
    s.subject = title;
@@ -49,8 +49,8 @@ Bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title)
 			   PostNewsDialogProc, (LPARAM) &s);
 
    if (retval == IDOK)
-      return True;
-   return False;
+      return true;
+   return false;
 }
 /****************************************************************************/
 INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -181,21 +181,21 @@ void MakeReplySubject(char *subject, int max_chars)
 }
 /****************************************************************************/
 /*
- * AbortNewsDialogs:  Kill off any news dialogs that are up.  Return True iff any was up.
+ * AbortNewsDialogs:  Kill off any news dialogs that are up.  Return true iff any was up.
  */
-Bool AbortNewsDialogs(void)
+bool AbortNewsDialogs(void)
 {
-   Bool retval = False; 
+   bool retval = false; 
 
    if (hPostNewsDialog != NULL)
    {
       SendMessage(hPostNewsDialog, WM_COMMAND, IDCANCEL, 0);
-      retval = True;
+      retval = true;
    }
    if (hReadNewsDialog != NULL)
    {
       SendMessage(hReadNewsDialog, WM_COMMAND, IDCANCEL, 0);
-      retval = True;
+      retval = true;
    }
    return retval;
 }

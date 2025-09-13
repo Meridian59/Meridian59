@@ -89,10 +89,10 @@ static float fpyinc;
 static DWORD tex_offset;
 
 // flag that controls whether background is done incrementally or all at once
-static Bool incremental_background = False;
+static bool incremental_background = false;
 /* Count the number of background cones.  If incremental_background is
- * False, background cones are counted in add_up and add_dn.  If
- * incremental_background is True, they are counted in doDrawBackground.
+ * false, background cones are counted in add_up and add_dn.  If
+ * incremental_background is true, they are counted in doDrawBackground.
  */
 static int background_cones = MAX_ITEMS;
 
@@ -151,13 +151,13 @@ BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
 /*
  * AddObject:  Add object to the object list of some leaf in tree, and set the parent pointer of
  *   object to its containing leaf.
- * Return True iff object successfully added.
+ * Return true iff object successfully added.
  */
-static Bool AddObject(BSPnode *tree, ObjectData *object)
+static bool AddObject(BSPnode *tree, ObjectData *object)
 {
    float side0, side1;
    BSPnode *pos, *neg;
-   Bool res;
+   bool res;
 
    while (1)
    {
@@ -165,7 +165,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
       {
          debug(("add_object got NULL tree for object %d!\n", object->draw.id));
          object->parent = NULL;
-         return False;
+         return false;
       }
 
       switch (tree->type)
@@ -175,7 +175,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
          tree->u.leaf.objects = object;
          object->parent = &tree->u.leaf;
          object->draw.light = tree->u.leaf.sector->light;
-         return True;
+         return true;
 
       case BSPinternaltype:
          side0 = tree->u.internal.separator.a * object->x0 + tree->u.internal.separator.b * object->y0 +
@@ -202,7 +202,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
             if (nobjects >= MAXOBJECTS)
             {
                debug(("out of object memory\n"));
-               return False;
+               return false;
             }
             copy = &objectdata[nobjects++];
 
@@ -212,7 +212,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
             copy->x0 = xmid;
             copy->y0 = ymid;
 
-            res = False;
+            res = false;
             if (pos)
                res |= AddObject(pos, side0 > 0 ? object : copy);
             if (neg)
@@ -223,7 +223,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
 
       default:
          debug(("add_object error!\n"));
-         return False;
+         return false;
       }
    }
 }
@@ -269,10 +269,10 @@ long GetCeilingHeight(long x, long y, Sector *sector)
 /*****************************************************************************/
 /*
  * GetRoomHeight: sets floor and ceiling to the height of the floor and
- * the ceiling at room coordinates (x,y).  Returns True if everything went
- * ok, and False otherwise.
+ * the ceiling at room coordinates (x,y).  Returns true if everything went
+ * ok, and false otherwise.
  */
-Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x, long y)
+bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x, long y)
 {
    long side;
    BSPnode *pos, *neg;
@@ -282,7 +282,7 @@ Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x
       if (tree == NULL)
       {
          // debug(("GetRoomHeight got NULL tree\n"));
-         return False;
+         return false;
       }
 
       switch (tree->type)
@@ -291,7 +291,7 @@ Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x
          *floor = GetFloorHeight(x, y, tree->u.leaf.sector);
          *ceiling = GetCeilingHeight(x, y, tree->u.leaf.sector);
          *flags = tree->u.leaf.sector->flags;
-         return True;
+         return true;
 
       case BSPinternaltype:
          side = tree->u.internal.separator.a * x + tree->u.internal.separator.b * y + tree->u.internal.separator.c;
@@ -306,7 +306,7 @@ Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x
 
       default:
          debug(("GetRoomHeight error!\n"));
-         return False;
+         return false;
       }
    }
 }
@@ -314,11 +314,11 @@ Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x
 /*
  * GetRoomHeightRad: sets floor and ceiling to the maximum height of the
  * floor and the minimum height of the ceiling within a radius r of
- * room coordinates (x,y).  Returns True if everything went ok, and False
+ * room coordinates (x,y).  Returns true if everything went ok, and false
  * otherwise.  This routine is conservative in that sometimes points
  * outside the circle of radius r of (x,y) will be included in the min/max.
  */
-Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int x, int y, long r)
+bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int x, int y, long r)
 {
    long side;
    BSPnode *pos, *neg;
@@ -328,7 +328,7 @@ Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int
       if (tree == NULL)
       {
          // debug(("GetRoomHeightRad got NULL tree\n"));
-         return False;
+         return false;
       }
 
       switch (tree->type)
@@ -337,7 +337,7 @@ Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int
          *floor = tree->u.leaf.sector->floor_height;
          *ceiling = tree->u.leaf.sector->ceiling_height;
          *flags = tree->u.leaf.sector->flags;
-         return True;
+         return true;
 
       case BSPinternaltype:
          side = tree->u.internal.separator.a * x + tree->u.internal.separator.b * y + tree->u.internal.separator.c;
@@ -354,9 +354,9 @@ Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int
          else
          {
             int cel, flr, flgs;
-            if (GetRoomHeightRad(pos, ceiling, floor, flags, x, y, r) == True)
+            if (GetRoomHeightRad(pos, ceiling, floor, flags, x, y, r) == true)
             {
-               if (GetRoomHeightRad(neg, (long *) &cel, (long *) &flr, &flgs, x, y, r) == True)
+               if (GetRoomHeightRad(neg, (long *) &cel, (long *) &flr, &flgs, x, y, r) == true)
                {
                   if (cel < *ceiling)
                      *ceiling = cel;
@@ -366,9 +366,9 @@ Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int
                      // Take "depth" flags from highest floor
                      *flags = flgs;
                   }
-                  return True;
+                  return true;
                }
-               return True;
+               return true;
             }
             else
                return GetRoomHeightRad(neg, ceiling, floor, flags, x, y, r);
@@ -377,7 +377,7 @@ Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int
 
       default:
          debug(("GetRoomHeightRad error!\n"));
-         return False;
+         return false;
       }
    }
 }
@@ -413,7 +413,7 @@ static void AddObjects(room_type *room)
    {
       r = (room_contents_node *) (l->data);
 
-      r->visible = False;
+      r->visible = false;
 
       // don't add ourselves to tree
       if (r->obj.id == viewer_id)
@@ -512,7 +512,7 @@ static void AddObjects(room_type *room)
       d->draw.center = (a * screen_width + screen_width2) / (a + b);
 
       // Don't draw more than a few objects per square, but always draw monsters and players
-      d->draw.draw = True;
+      d->draw.draw = true;
       count = 0;
       if (!(r->obj.flags & OF_ATTACKABLE))
          for (temp_list = l->next; temp_list != NULL; temp_list = temp_list->next)
@@ -522,13 +522,13 @@ static void AddObjects(room_type *room)
                 FineToSquare(other_obj->motion.y) == FineToSquare(r->motion.y))
                if (count++ > MAX_OBJS_PER_SQUARE)
                {
-                  d->draw.draw = False;
+                  d->draw.draw = false;
                   break;
                }
          }
 
       //      debug(("Adding object %d\n", r->obj.id));
-      if (AddObject(room->tree, d) == False)
+      if (AddObject(room->tree, d) == false)
          nobjects--;
    }
 
@@ -575,7 +575,7 @@ static void AddObjects(room_type *room)
       d->draw.icon_res = proj->icon_res;
       d->draw.group = proj->animate.group;
       d->draw.overlays = NULL;
-      d->draw.draw = True;
+      d->draw.draw = true;
       d->draw.flags = 0;
       d->draw.height = proj->motion.z;
       d->draw.translation = proj->translation;
@@ -594,7 +594,7 @@ static void AddObjects(room_type *room)
       }
       d->draw.center = (a * screen_width + screen_width2) / (a + b);
 
-      if (AddObject(room->tree, d) == False)
+      if (AddObject(room->tree, d) == false)
          nobjects--;
    }
 }
@@ -816,11 +816,11 @@ loop:
 
 /* split cone <node> into [node->cone.leftedge,col] and
  * [col+1,node->cone.rightedge].  Returns pointer to the node representing
- * the first interval if <low_half> is True, and returns a pointer to
- * the node representing the second interval if <low_half> is False.
+ * the first interval if <low_half> is true, and returns a pointer to
+ * the node representing the second interval if <low_half> is false.
  */
 // O(h) time.
-static ConeTreeNode *split_cone(ConeTreeNode *node, int col, Bool low_half)
+static ConeTreeNode *split_cone(ConeTreeNode *node, int col, bool low_half)
 {
    ConeTreeNode *new_node, *prev, *next;
    ConeTreeNode *left, *right;
@@ -1062,22 +1062,22 @@ static void merge_cone(ConeTreeNode *node)
 /*****************************************************************************/
 /* Add item <item> to the draw list, where the item includes all pixels
  * above (a,b,d) between columns col0 and col1, inclusive.  Remove from
- * the remaining cones all of these pixels.  Returns True if any of the
+ * the remaining cones all of these pixels.  Returns true if any of the
  * item is actually visible.
  * "above (a,b,d)" means having coordinates (x,y) such that ay <= bx+d
  */
 /*****************************************************************************/
-static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, long col1)
+static bool add_up(DrawItem *item_template, long a, long b, long d, long col0, long col1)
 {
    ConeTreeNode *c, *next;
    DrawItem *item = NULL;
    long c0, c1, cmid;
    int64 num, denom;
-   Bool viewable = False;
+   bool viewable = false;
    int64 a_topb, a_topd, topa_b, topa_d;
    int64 a_botb, a_botd, bota_b, bota_d;
    int64 slack;
-   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
+   bool additem = item_template->type != DrawBackgroundType || incremental_background;
 
    blakassert(col1 < MAXX);
    for (c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
@@ -1126,13 +1126,13 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
          continue;  // item can't be seen in this cone
 
       // we now know we can see the object
-      viewable = True;
+      viewable = true;
 
       // make cones for non-overlapping regions
       if (c0 > c->cone.leftedge)
-         c = split_cone(c, c0 - 1, False);
+         c = split_cone(c, c0 - 1, false);
       if (c1 < c->cone.rightedge)
-         c = split_cone(c, c1, True);
+         c = split_cone(c, c1, true);
 
       a_botb = a * c->cone.bot_b;
       a_botd = a * c->cone.bot_d;
@@ -1272,22 +1272,22 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
 /*****************************************************************************/
 /* Add item <item> to the draw list, where the item includes all pixels
  * below (a,b,d) between columns col0 and col1, inclusive.  Remove from
- * the remaining cones all of these pixels.  Returns True if any of the
+ * the remaining cones all of these pixels.  Returns true if any of the
  * object is actually visible.
  * "below (a,b,d)" means having coordinates (x,y) such that ay >= bx+d
  */
 /*****************************************************************************/
-static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, long col1)
+static bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, long col1)
 {
    ConeTreeNode *c, *next;
    DrawItem *item = NULL;
    long c0, c1, cmid;
    int64 num, denom;
-   Bool viewable = False;
+   bool viewable = false;
    int64 a_botb, a_botd, bota_b, bota_d;
    int64 a_topb, a_topd, topa_b, topa_d;
    int64 slack;
-   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
+   bool additem = item_template->type != DrawBackgroundType || incremental_background;
 
    blakassert(col1 < MAXX);
    for (c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
@@ -1336,13 +1336,13 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       else
          continue;  // item can't be seen in this cone
 
-      viewable = True;
+      viewable = true;
 
       // make cones for non-overlapping regions
       if (c0 > c->cone.leftedge)
-         c = split_cone(c, c0 - 1, False);
+         c = split_cone(c, c0 - 1, false);
       if (c1 < c->cone.rightedge)
-         c = split_cone(c, c1, True);
+         c = split_cone(c, c1, true);
 
       a_topb = a * c->cone.top_b;
       a_topd = a * c->cone.top_d;
@@ -1734,10 +1734,10 @@ int world_to_screen(float x0, float y0, float x1, float y1, long *t0,
 
 /*****************************************************************************/
 /* Determine whether the bounding box (x0,y0,x1,y1) is viewable.
- * Returns True if it is definitely not visible.  Returns False otherwise.
- * A return value of False does NOT guarantee visibility.
+ * Returns true if it is definitely not visible.  Returns false otherwise.
+ * A return value of false does NOT guarantee visibility.
  */
-Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
+bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 {
    long d;
 
@@ -1762,7 +1762,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
             d = center_a * x1 + center_b * y1;
             if (d < 0)
             {
-               return True;  // all behind viewer
+               return true;  // all behind viewer
             }
          }
       }
@@ -1775,7 +1775,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 
    if (l0 < 0 && l1 < 0 && l2 < 0 && l3 < 0)
    {
-      return True;  // all in quadrants 1&3
+      return true;  // all in quadrants 1&3
    }
 
    r0 = right_a * x0 + right_b * y0;
@@ -1785,7 +1785,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 
    if (r0 < 0 && r1 < 0 && r2 < 0 && r3 < 0)
    {
-      return True;  // all in quadrants 2&3
+      return true;  // all in quadrants 2&3
    }
 
    l0 >>= FIX_DECIMAL - 6;
@@ -2170,7 +2170,7 @@ static void WalkWall(WallData *wall, long side)
       item_template.u.wall.side = SGN(side);
       item_template.u.wall.wall_type = WALL_BELOW;
       if (add_dn(&item_template, a, b, d, col0, col1))
-         wall->seen = True;
+         wall->seen = true;
    }
 
    // Look for above wall
@@ -2209,7 +2209,7 @@ static void WalkWall(WallData *wall, long side)
       item_template.u.wall.side = SGN(side);
       item_template.u.wall.wall_type = WALL_ABOVE;
       if (add_up(&item_template, a, b, d, col0, col1))
-         wall->seen = True;
+         wall->seen = true;
    }
 
    // Look for normal wall
@@ -2222,7 +2222,7 @@ static void WalkWall(WallData *wall, long side)
       for (c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
       {
          next = c->next;
-         wall->seen = True;
+         wall->seen = true;
 
          if (sidedef->flags & WF_TRANSPARENT && !(sidedef->flags & WF_NOLOOKTHROUGH))
          {
@@ -2245,9 +2245,9 @@ static void WalkWall(WallData *wall, long side)
          }
 
          if (col0 > c->cone.leftedge)
-            c = split_cone(c, col0 - 1, False);
+            c = split_cone(c, col0 - 1, false);
          if (col1 < c->cone.rightedge)
-            c = split_cone(c, col1, True);
+            c = split_cone(c, col1, true);
 
          // add wall to draw list
          if (nitems >= MAX_ITEMS)
@@ -2339,7 +2339,7 @@ static void WalkObjects(ObjectData *objects)
          if (object->draw.obj != NULL)
          {
             r = (room_contents_node *) object->draw.obj;
-            r->visible = True;
+            r->visible = true;
          }
 
          item->cone = c->cone;
@@ -2360,7 +2360,7 @@ static void WalkObjects(ObjectData *objects)
  * account sloped floors
  *
  */
-Bool EyeAboveFloor(Sector *sector)
+bool EyeAboveFloor(Sector *sector)
 {
    if (sector->sloped_floor != NULL)
    {
@@ -2378,7 +2378,7 @@ Bool EyeAboveFloor(Sector *sector)
  * account sloped floors
  *
  */
-Bool EyeBelowCeiling(Sector *sector)
+bool EyeBelowCeiling(Sector *sector)
 {
    if (sector->sloped_ceiling != NULL)
    {
@@ -2403,7 +2403,7 @@ static void WalkLeaf(BSPleaf *leaf)
    long t0, t1, height, height0, height1;
    SlopeData *sloped_floor = leaf->sector->sloped_floor;  // only a tiny bit faster but much easier to read
    SlopeData *sloped_ceiling = leaf->sector->sloped_ceiling;
-   Bool process_floor, process_ceiling;
+   bool process_floor, process_ceiling;
    Vector3D surface_norm;
    long lightscale;
 
@@ -2836,8 +2836,8 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    BYTE *square_base_ptr;
    int length, top, bottom;
    Sidedef *sidedef;
-   Bool top_down;
-   Bool no_vtile;  // True when wall texture doesn't tile vertically
+   bool top_down;
+   bool no_vtile;  // true when wall texture doesn't tile vertically
    bixlat *pBiXlat = NULL;
 
 #if DRAW_WALL_CONES
@@ -2906,7 +2906,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    //         drawing the background to the whole area, and
    //         using the slower transparent drawing support for upper, normal *and* lower.
 
-   no_vtile = False;
+   no_vtile = false;
    switch (wall->wall_type)
    {
    case WALL_ABOVE:
@@ -3010,7 +3010,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       top_down = ((sidedef->flags & WF_NORMAL_TOPDOWN) != 0);
 
       if (transparent && (sidedef->flags & WF_NO_VTILE))
-         no_vtile = True;
+         no_vtile = true;
 
       break;
 
@@ -3922,10 +3922,10 @@ static void DrawItems()
          doDrawBackground(&item->cone);
          break;
       case DrawSlopedFloorType:
-         doDrawSloped(&item->cone, item->u.slope.leaf, True);
+         doDrawSloped(&item->cone, item->u.slope.leaf, true);
          break;
       case DrawSlopedCeilingType:
-         doDrawSloped(&item->cone, item->u.slope.leaf, False);
+         doDrawSloped(&item->cone, item->u.slope.leaf, false);
          break;
       default:
          debug(("DrawItemList error!\n"));
@@ -4143,7 +4143,7 @@ static void doDrawBackground(ViewCone *c)
  * returns true.
  **********************************************************************/
 #define MIN_HEIGHT_DIFF 10
-static Bool check_viewer_height(BSPnode *tree)
+static bool check_viewer_height(BSPnode *tree)
 {
    long side;
    long floorheight, ceilingheight;
@@ -4154,7 +4154,7 @@ static Bool check_viewer_height(BSPnode *tree)
       if (tree == NULL)
       {
          debug(("check_viewer_height got NULL tree\n"));
-         return False;
+         return false;
       }
 
       switch (tree->type)
@@ -4173,11 +4173,11 @@ static Bool check_viewer_height(BSPnode *tree)
          if (viewer_height > ceilingheight - MIN_HEIGHT_DIFF)
          {
             debug(("not enough room between floor and ceiling!!!\n"));
-            return True;
+            return true;
 
-            return False;
+            return false;
          }
-         return True;
+         return true;
 
       case BSPinternaltype:
          side = tree->u.internal.separator.a * viewer_x + tree->u.internal.separator.b * viewer_y +
@@ -4189,7 +4189,7 @@ static Bool check_viewer_height(BSPnode *tree)
          {
             // make sure we satisfy height restriction on both sides!
             // this isn't quite right, but it's close
-            Bool ok = True;
+            bool ok = true;
             if (pos)
                ok = ok && check_viewer_height(pos);
             if (neg)
@@ -4204,7 +4204,7 @@ static Bool check_viewer_height(BSPnode *tree)
 
       default:
          debug(("check_viewer_height error!\n"));
-         return False;
+         return false;
       }
    }
 }
@@ -4280,9 +4280,9 @@ static void SetMappingValues(SlopeData *slope)
 /**********************************************************************
  * DrawBSP: draw view of player standing at (x,y) (in FINENESS coords)
  *          with view width `width'.
- *  If draw is False, just trace BSP tree without drawing anything.
+ *  If draw is false, just trace BSP tree without drawing anything.
  **********************************************************************/
-void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
+void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
 {
    ConeTreeNode *c;
    long index;
@@ -4331,13 +4331,13 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
 
    if (background_cones > 40)
    {
-      incremental_background = False;
+      incremental_background = false;
       if (draw)
          doDrawBackground(&cone_tree_root->cone);
    }
    else
    {
-      incremental_background = True;
+      incremental_background = true;
    }
    background_cones = 0;
 

@@ -144,7 +144,7 @@ static void LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_t
 /*
  * BSPRooFileLoadServer:  Load the room data from the given roo file
  */
-Bool BSPRooFileLoadServer(char *fname, room_type *room)
+bool BSPRooFileLoadServer(char *fname, room_type *room)
 {
    FILE *infile;
    int i, temp, roo_version;
@@ -154,7 +154,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    if (!infile)
    {
       bprintf("BSPRooFileLoadServer: Failed to open file %s\n", fname);
-      return False;
+      return false;
    }
 
    // Header check
@@ -162,20 +162,20 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       if (fread(&byte, 1, 1, infile) != 1 || byte != room_magic[i])
       {
          fclose(infile);
-         return False;
+         return false;
       }
 
    if (fread(&roo_version, 4, 1, infile) != 1 || roo_version < ROO_VERSION)
    {
       fclose(infile);
-      return False;
+      return false;
    }
 
    /* security (unused in loader) */
    if (fread(&room->security, 4, 1, infile) != 1)
    {
       fclose(infile);
-      return False;
+      return false;
    }
 
    /* absolute offsets to main (client) and server sections */
@@ -183,12 +183,12 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    if (fread(&main_off, 4, 1, infile) != 1)
    {
       fclose(infile);
-      return False;
+      return false;
    }
    if (fread(&server_off, 4, 1, infile) != 1)
    {
       fclose(infile);
-      return False;
+      return false;
    }
 
    // Client section
@@ -258,14 +258,14 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    if (fread(&temp, 4, 1, infile) != 1)
    {
       fclose(infile);
-      return False;
+      return false;
    }
    
    room->rows = (short) temp;
    if (fread(&temp, 4, 1, infile) != 1)
    {
       fclose(infile);
-      return False;
+      return false;
    }
 
    room->cols = (short) temp;
@@ -279,7 +279,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       if (fread(room->grid[i], room->cols, 1, infile) != 1)
       {
          fclose(infile);
-         return False;
+         return false;
       }
    }
    for (i = 0; i < room->rows; i++)
@@ -288,7 +288,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       if (fread(room->flags[i], room->cols, 1, infile) != 1)
       {
          fclose(infile);
-         return False;
+         return false;
       }
    }
 
@@ -303,13 +303,13 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
          if (fread(room->monster_grid[i], room->cols, 1, infile) != 1)
          {
             fclose(infile);
-            return False;
+            return false;
          }
       }
    }
 
    fclose(infile);
-   return True;
+   return true;
 }
 /*********************************************************************************************/
 /*

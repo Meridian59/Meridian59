@@ -24,7 +24,7 @@ void InitUser(void);
 void ResetUser(void);
 void ClearUser(void);
 user_node * CreateNewUser(int account_id,int class_id);
-Bool AssociateUser(int account_id,int object_id);
+bool AssociateUser(int account_id,int object_id);
 void LoadUser(int account_id,int object_id);
 void ChangeUserObjectID(int new_id,int prev_id);
 int DeleteUserByAccountID(int account_id);

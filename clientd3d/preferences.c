@@ -1122,14 +1122,13 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
 
         CheckDlgButton(hDlg, IDC_COLORCODES, config.colorcodes);
 
-        SendMessage(GetDlgItem(hDlg, IDC_SOUND_VOLUME), TBM_SETRANGE, FALSE, MAKELONG(0, CONFIG_MAX_VOLUME));
-        SendMessage(GetDlgItem(hDlg, IDC_SOUND_VOLUME), TBM_SETPOS, TRUE, config.sound_volume);
+        Trackbar_SetRange(GetDlgItem(hDlg, IDC_SOUND_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
+        Trackbar_SetRange(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
+        Trackbar_SetRange(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
 
-        SendMessage(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), TBM_SETRANGE, FALSE, MAKELONG(0, CONFIG_MAX_VOLUME));
-        SendMessage(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), TBM_SETPOS, TRUE, config.music_volume);
-
-        SendMessage(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), TBM_SETRANGE, FALSE, MAKELONG(0, CONFIG_MAX_VOLUME));
-        SendMessage(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), TBM_SETPOS, TRUE, config.ambient_volume);
+        Trackbar_SetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME), config.sound_volume);
+        Trackbar_SetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), config.music_volume);
+        Trackbar_SetPos(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), config.ambient_volume);
 
         return (INT_PTR)TRUE;
     }
@@ -1156,21 +1155,42 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.antiprofane = IsDlgButtonChecked(hDlg, IDC_PROFANE);
             config.drawmap = IsDlgButtonChecked(hDlg, IDC_DRAWMAP);
             config.map_annotations = IsDlgButtonChecked(hDlg, IDC_MAP_ANNOTATIONS);
-            config.toolbar = IsDlgButtonChecked(hDlg, IDC_TOOLBAR);
-            config.lagbox = IsDlgButtonChecked(hDlg, IDS_LATENCY0);
+            bool temp = IsDlgButtonChecked(hDlg, IDC_TOOLBAR);
+            bool toolbar_changed = (temp != (bool) config.toolbar);
+            config.toolbar = temp;
+            temp = IsDlgButtonChecked(hDlg, IDS_LATENCY0);
+            bool lagbox_changed = (temp != (bool) config.lagbox);
+            config.lagbox = temp;
             config.spinning_cube = IsDlgButtonChecked(hDlg, ID_SPINNING_CUBE);
             config.play_music = IsDlgButtonChecked(hDlg, IDC_MUSIC);
+            UserToggleMusic(config.play_music);
             config.play_sound = IsDlgButtonChecked(hDlg, IDC_SOUNDFX);
             config.play_loop_sounds = IsDlgButtonChecked(hDlg, IDC_LOOPSOUNDS);
             config.play_random_sounds = IsDlgButtonChecked(hDlg, IDC_RANDSOUNDS);
+            if (!config.play_sound)
+              SoundAbort();
             config.halocolor = IsDlgButtonChecked(hDlg, IDC_TARGETHALO1) == BST_CHECKED ? 0 :
                                IsDlgButtonChecked(hDlg, IDC_TARGETHALO2) == BST_CHECKED ? 1 : 2;
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);
 
-            config.sound_volume = SendMessage(GetDlgItem(hDlg, IDC_SOUND_VOLUME), TBM_GETPOS, 0, 0);
-            config.music_volume = SendMessage(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), TBM_GETPOS, 0, 0);
-            config.ambient_volume = SendMessage(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), TBM_GETPOS, 0, 0);
+            config.sound_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME));
+            config.ambient_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME));
+            auto new_val = Trackbar_GetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME));
+            if (new_val != config.music_volume)
+            {
+              config.music_volume = new_val;
+              ResetMusicVolume();
+            }
+            
+            // Redraw main window to reflect new settings
+            if (toolbar_changed || lagbox_changed)
+            {
+              ResizeAll();
+            }
 
+            // Update checked/unchecked menus for any changes
+            MenuDisplaySettings(hMain);
+            
             EndDialog(hDlg, LOWORD(wParam));
             return (INT_PTR)TRUE;
         }

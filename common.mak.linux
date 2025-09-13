@@ -42,6 +42,7 @@ UTILDIR     = $(TOPDIR)/util
 SPROCKETDIR = $(TOPDIR)/sprocket
 CLUBDIR     = $(TOPDIR)/club
 WAVEMIXDIR  = $(TOPDIR)/wavemix
+FMTLIBDIR   = $(TOPDIR)/fmtlib
 
 BLAKBINDIR = $(TOPDIR)/bin
 BLAKLIBDIR = $(TOPDIR)/lib
@@ -102,4 +103,4 @@ MAKEBGF = $(BLAKBINDIR)/makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(FMTLIBDIR)/fmt

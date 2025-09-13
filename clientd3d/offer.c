@@ -99,7 +99,7 @@ INT_PTR CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
    case BK_COUNTEROFFER:
       /* Update receive list */
       receive_items = (list_type) lParam;
-      ItemListSetContents(hwndReceive, receive_items, True);
+      ItemListSetContents(hwndReceive, receive_items, true);
 
       /* Enable Accept button */
       ShowWindow(hwndReceive, SW_NORMAL);
@@ -180,7 +180,7 @@ INT_PTR CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       RcvInfo = (RcvOfferDialogStruct *) lParam;
 
       /* Display offered items in list */
-      ItemListSetContents(hwndReceive, RcvInfo->items, True);
+      ItemListSetContents(hwndReceive, RcvInfo->items, true);
 
       /* Subclass list boxes */
       lpfnDefListProc = (WNDPROC) GetWindowLongPtr(hwndSend, GWLP_WNDPROC);
@@ -236,7 +236,7 @@ INT_PTR CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    case BK_COUNTEROFFERED:
       /* Display items we counteroffered */
       send_items = (list_type) lParam;
-      ItemListSetContents(hwndSend, send_items, True);      
+      ItemListSetContents(hwndSend, send_items, true);      
       return TRUE;
 
    case WM_COMMAND:
@@ -437,9 +437,9 @@ void OfferCanceled(void)
 }
 /************************************************************************/
 /*
- * OfferInProgress:  Return True iff one of the offer dialogs is up.
+ * OfferInProgress:  Return true iff one of the offer dialogs is up.
  */
-Bool OfferInProgress(void)
+bool OfferInProgress(void)
 {
    return hSendOfferDlg != NULL || hRcvOfferDlg != NULL;
 }

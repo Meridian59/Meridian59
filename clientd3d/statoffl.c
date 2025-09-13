@@ -29,7 +29,7 @@ static POINT button_origin;      /* Upper left corner of button */
 static char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
 static char *splash_music    = "resource\\main.mid";    // Music file to play
 
-static Bool showing_splash;      // True when displaying splash screen
+static bool showing_splash;      // true when displaying splash screen
 
 static WNDPROC lpfnDefButtonProc; /* Default button window procedure */
 
@@ -50,7 +50,7 @@ void OfflineInit(void)
 {
    connection = CON_NONE;
    ResetSecurityToken();
-   showing_splash = False;
+   showing_splash = false;
 
    if (config.quickstart)
    {
@@ -166,7 +166,7 @@ void IntroShowSplash(void)
    }
    if (showing_splash)
      return;
-   showing_splash = True;
+   showing_splash = true;
 
    hwndDialButton = CreateWindow("button", NULL, 
 		WS_CHILD | WS_VISIBLE,

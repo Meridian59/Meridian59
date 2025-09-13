@@ -16,12 +16,12 @@
 HINSTANCE hInst;            // Handle of this DLL
 
 ClientInfo *cinfo;         // Holds data passed from main client
-Bool        exiting;
+bool        exiting;
 
-static Bool HandleCharacters(char *ptr,long len);
-static Bool HandleCharInfo(char *ptr,long len);
-static Bool HandleCharInfoOk(char *ptr, long len);
-static Bool HandleCharInfoNotOk(char *ptr, long len);
+static bool HandleCharacters(char *ptr,long len);
+static bool HandleCharInfo(char *ptr,long len);
+static bool HandleCharInfoOk(char *ptr, long len);
+static bool HandleCharInfoNotOk(char *ptr, long len);
 
 // Server message handler table
 static handler_struct handler_table[] = {
@@ -67,7 +67,7 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    info->module_id  = MODULE_ID;
    cinfo = client_info;    // Save client info for our use later
 
-   exiting = False;
+   exiting = false;
    // Ask server for characters to pick from
    RequestCharacters();
 }
@@ -78,20 +78,20 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
  * EVENT_SERVERMSG
  */
 /****************************************************************************/
-Bool WINAPI EventServerMessage(char *message, long len)
+bool WINAPI EventServerMessage(char *message, long len)
 {
-   Bool retval;
+   bool retval;
 
    retval = LookupMessage(message, len, handler_table);
 
    // If we handle message, don't pass it on to anyone else
-   if (retval == True)
-     return False;
+   if (retval == true)
+     return false;
 
-   return True;    // Allow other modules to get other messages
+   return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
-Bool HandleCharacters(char *ptr, long len)
+bool HandleCharacters(char *ptr, long len)
 {
    char *start = ptr;
    WORD num_characters, i, string_len;
@@ -124,7 +124,7 @@ Bool HandleCharacters(char *ptr, long len)
    if (num_ads > MAX_ADVERTISEMENTS)
    {
       CharactersDestroy(characters, num_characters);
-      return False;
+      return false;
    }
 
    for (i=0; i < num_ads; i++)
@@ -137,14 +137,14 @@ Bool HandleCharacters(char *ptr, long len)
    if (len != 0)
    {
       CharactersDestroy(characters, num_characters);
-      return False;
+      return false;
    }   
 
    ChooseCharacter(characters, num_characters, message, num_ads, ads, cinfo->config->quickstart);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleCharInfo(char *ptr, long len)
+bool HandleCharInfo(char *ptr, long len)
 {
    CharAppearance *ap;
    char *start = ptr;
@@ -208,7 +208,7 @@ Bool HandleCharInfo(char *ptr, long len)
       Extract(&ptr, &s->desc_res, SIZE_ID);
       Extract(&ptr, &s->cost, 4);
       Extract(&ptr, &s->school, 1);
-      s->chosen = False;
+      s->chosen = false;
 
       spells = list_add_item(spells, s);
    }
@@ -224,7 +224,7 @@ Bool HandleCharInfo(char *ptr, long len)
       Extract(&ptr, &s->name_res, SIZE_ID);
       Extract(&ptr, &s->desc_res, SIZE_ID);
       Extract(&ptr, &s->cost, 4);
-      s->chosen = False;
+      s->chosen = false;
 
       skills = list_add_item(skills, s);
    }
@@ -235,14 +235,14 @@ Bool HandleCharInfo(char *ptr, long len)
       CharAppearanceDestroy(ap);
       list_destroy(spells);
       list_destroy(skills);
-      return False;
+      return false;
    }
    
    MakeChar(ap, spells, skills);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleCharInfoOk(char *ptr, long len)
+bool HandleCharInfoOk(char *ptr, long len)
 {
    extern ID char_to_use;
    ID char_returned = 0;
@@ -253,26 +253,26 @@ Bool HandleCharInfoOk(char *ptr, long len)
 
    len -= SIZE_ID;
    if (len != 0)
-      return False;
+      return false;
 
    char_to_use = char_returned;
    CharInfoValid();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleCharInfoNotOk(char *ptr, long len)
+bool HandleCharInfoNotOk(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    CharInfoInvalid();
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_STATECHANGED
  */
 /****************************************************************************/
-Bool WINAPI EventStateChanged(int old_state, int new_state)
+bool WINAPI EventStateChanged(int old_state, int new_state)
 {
    if (old_state == GAME_PICKCHAR && new_state != GAME_PICKCHAR)
    {
@@ -280,5 +280,5 @@ Bool WINAPI EventStateChanged(int old_state, int new_state)
       UpdateWindow(cinfo->hMain);
       AbortCharDialogs();
    }
-   return True;
+   return true;
 }

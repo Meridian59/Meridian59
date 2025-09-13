@@ -29,20 +29,20 @@ extern int gD3DEnabled;
 // to flicker identically
 static int flicker_amount;
 
-static Bool AnimateSectors(room_type *room, int dt);
-static Bool AnimateSidedefs(room_type *room, int dt);
+static bool AnimateSectors(room_type *room, int dt);
+static bool AnimateSidedefs(room_type *room, int dt);
 static int RoomAnimateSingle(RoomAnimate *ra, int dt);
 static void SectorAdjustHeight(room_type *room, Sector *s, BYTE type, int height);
 static void SidedefDoAnimation(room_type *room, Sidedef *s, int return_code);
 static void SectorDoAnimation(room_type *room, Sector *s, int return_code);
 /************************************************************************/
 /*
- * AnimateRoom:  Animate wall and floor textures; return True iff any was animated.
+ * AnimateRoom:  Animate wall and floor textures; return true iff any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */
-Bool AnimateRoom(room_type *room, int dt)
+bool AnimateRoom(room_type *room, int dt)
 {
-   Bool retval, need_redraw = False;
+   bool retval, need_redraw = false;
 
    retval = AnimateSectors(room, dt);
    need_redraw = need_redraw || retval;
@@ -54,13 +54,13 @@ Bool AnimateRoom(room_type *room, int dt)
 }
 /************************************************************************/
 /*
- * AnimateSectors:  Animate floor textures; return True iff any was animated.
+ * AnimateSectors:  Animate floor textures; return true iff any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */
-Bool AnimateSectors(room_type *room, int dt)
+bool AnimateSectors(room_type *room, int dt)
 {
    int i, ras_retval;
-   Bool need_redraw = False;
+   bool need_redraw = false;
 
    // Setup flickering for this frame
    flicker_amount = rand();
@@ -83,19 +83,19 @@ Bool AnimateSectors(room_type *room, int dt)
          SafeFree(s->animate);
          s->animate = NULL;
       }
-      need_redraw = True;
+      need_redraw = true;
    }
    return need_redraw;
 }
 /************************************************************************/
 /*
- * AnimateSidedefs:  Animate wall textures; return True iff any was animated.
+ * AnimateSidedefs:  Animate wall textures; return true iff any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */
-Bool AnimateSidedefs(room_type *room, int dt)
+bool AnimateSidedefs(room_type *room, int dt)
 {
    int i, ras_retval;
-   Bool need_redraw = False;
+   bool need_redraw = false;
 
    for (i = 0; i < room->num_sidedefs; i++)
    {
@@ -116,7 +116,7 @@ Bool AnimateSidedefs(room_type *room, int dt)
          s->animate = NULL;
       }
 
-      need_redraw = True;
+      need_redraw = true;
    }
    return need_redraw;
 }
@@ -506,7 +506,7 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
    switch (ra->animation)
    {
    case ANIMATE_ROOM_BITMAP:
-      if (AnimateSingle(&ra->u.bitmap.a, 0, dt) == False)
+      if (AnimateSingle(&ra->u.bitmap.a, 0, dt) == false)
          return RAS_NONE;
 
       if (ra->u.bitmap.a.animation == ANIMATE_NONE)

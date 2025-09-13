@@ -19,8 +19,8 @@
  *   string.  The initial format string is given by the fmt_id resource, and the
  *   parameters are in params.  The result is placed in message.  Len is the # of bytes
  *   in params.
- *   Returns True iff len bytes of parameters are used in assembling message, otherwise
- *   False, which indicates an error in the message from the server.
+ *   Returns true iff len bytes of parameters are used in assembling message, otherwise
+ *   false, which indicates an error in the message from the server.
  *   The allowed printf-style format characters are:
  *   %d or %i    a literal integer
  *   %q          a literal string
@@ -28,7 +28,7 @@
  *               contain other format characters.  If so, they are matched with 
  *               parameters from params AFTER the initial string's parameters.
  */
-Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
+bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 {
    char *fmt, *next_ptr; /* next_ptr points into format string fmt */
    char tempfmt[MAXMESSAGE], format[MAXMESSAGE], *param_ptr = *params;
@@ -36,7 +36,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    char *rsc, type_char, *orig_message;
    DWORD field, num_chars;
    WORD string_len;
-   Bool done = False;
+   bool done = false;
 
    /* qparams are %q parameters; we need to save their positions and replace them last, 
     * even after %s (in case replacement %q string contains a literal %s) */
@@ -50,13 +50,13 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
     * the resource string itself instead of filling the caller's limited buffer.
     */
    if (!msg || !*msg)
-      return False;
+      return false;
    message = *msg;
 
    /* Get format string from resources */
    fmt = LookupRsc(fmt_id);
    if (fmt == NULL)
-      return False;
+      return false;
 
    /* Is there anything to format at all?
     * Or can we return the "format" resource as-is?
@@ -76,7 +76,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    if (!*rsc)
    {
       *msg = fmt;
-      return True;
+      return true;
    }
 
    /* Prepare to format into the caller's message buffer. */
@@ -85,7 +85,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    /* Keep looping through string until there's nothing left to replace */
    while (!done)
    {
-      done = True;  /* We'll be done if we don't find any %s's */
+      done = true;  /* We'll be done if we don't find any %s's */
 
       /* Find first format field */
       next_ptr = strchr(fmt, '%');
@@ -124,7 +124,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	 case 's':
 	    /* See if there are enough bytes left */
 	    if (len < SIZE_ID)
-	       return False;
+	       return false;
 	    
 	    /* Interpret next field as an integer */
 	    memcpy(&field, param_ptr, SIZE_ID);
@@ -134,9 +134,9 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	    /* Look up resource strings; use integers immediately */
 	    if (type_char == 's')
 	    {
-	       done = False;
+	       done = false;
 	       if ((rsc = LookupRsc(field)) == NULL)
-		  return False;
+		  return false;
 
 	       num_chars = sprintf(message, tempfmt, rsc);
 	    }	 
@@ -151,7 +151,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	 case 'q':     /* Literal string from server */
 	    /* Store location; we will perform replacement later */	    
 	    if (len < SIZE_STRING_LEN)
-	       return False;
+	       return false;
 	    
 	    /* We can only hold a certain # of qparams */
 	    if (num_qparams <= MAXQPARAMS)
@@ -162,7 +162,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	    param_ptr += SIZE_STRING_LEN;
 	    len -= SIZE_STRING_LEN;
 	    if (len < string_len)
-	       return False;
+	       return false;
 	    
 	    /* Mark this position with qparam # */
 	    if (num_qparams <= MAXQPARAMS)
@@ -244,7 +244,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    /* Copy over last part of string */
    strcpy(message, fmt);
 
-   return True;
+   return true;
 }
 /************************************************************************/
 

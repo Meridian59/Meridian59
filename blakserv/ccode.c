@@ -474,14 +474,14 @@ blak_int C_IsClass(int object_id,local_var_type *local_vars,
 		if (c->class_id == class_val.v.data)
 		{
 			ret_val.v.tag = TAG_INT;
-			ret_val.v.data = True;
+			ret_val.v.data = true;
 			return ret_val.int_val;
 		}
 		c = c->super_ptr;
 	} while (c != NULL);
 	
 	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = False;
+	ret_val.v.data = false;
 	return ret_val.int_val;
 }
 
@@ -1766,9 +1766,9 @@ blak_int C_IsList(int object_id,local_var_type *local_vars,
 	
 	ret_val.v.tag = TAG_INT;
 	if (var_check.v.tag == TAG_LIST || var_check.v.tag == TAG_NIL)
-		ret_val.v.data = True;
+		ret_val.v.data = true;
 	else
-		ret_val.v.data = False;
+		ret_val.v.data = false;
 	
 	return ret_val.int_val;
 }
@@ -2235,9 +2235,9 @@ blak_int C_IsObject(int object_id,local_var_type *local_vars,
 	
 	ret_val.v.tag = TAG_INT;
 	if (var_check.v.tag == TAG_OBJECT && GetObjectByID(var_check.v.data))
-		ret_val.v.data = True;
+		ret_val.v.data = true;
 	else
-		ret_val.v.data = False;
+		ret_val.v.data = false;
 	
 	return ret_val.int_val;
 }

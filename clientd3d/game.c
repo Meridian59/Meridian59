@@ -13,17 +13,17 @@
 
 player_info player;
 room_type current_room;
-BOOL dataValid = FALSE;
+bool dataValid = false;
 
-/* This flag is True before we get the first player info message from the server,
+/* This flag is true before we get the first player info message from the server,
  * and when we're not in the game.  We use it to keep track of entering the game,
  * so that we can load stuff from the INI file only the first time we get a player
  * info message for a given player.
  */
-static Bool first_entry;
-static BOOL frameDrawn = FALSE;           
+static bool first_entry;
+static bool frameDrawn = false;           
 
-void SetGameDataValid(BOOL flag)
+void SetGameDataValid(bool flag)
 {
    dataValid = flag;
 }
@@ -57,7 +57,7 @@ void InitializeGame(void)
    LoadResources();
       
    dataValid = FALSE;
-   first_entry = True;
+   first_entry = true;
 
    current_room.contents    = NULL;
    current_room.projectiles = NULL;
@@ -71,7 +71,7 @@ void InitializeGame(void)
 
    EffectsInit();
 
-   MoveSetValidity(False);
+   MoveSetValidity(false);
    srand((unsigned) time(NULL));
 }
 /************************************************************************/
@@ -82,7 +82,7 @@ void InitializeGame(void)
  */
 void ResetUserData(void)
 {
-   SetGameDataValid(FALSE);
+   SetGameDataValid(false);
    ModuleEvent(EVENT_RESETDATA);
 
    /* Kill off look dialog, if present; its data is stale */
@@ -94,7 +94,7 @@ void ResetUserData(void)
       SendCancelOffer();  /* Let server know that we are canceling offer */
    }
 
-   MoveSetValidity(False);
+   MoveSetValidity(false);
    GameSetState(GAME_INVALID);  /* Our data is bad until we hear from server */
 
    current_room.contents    = RoomObjectListDestroy(current_room.contents);
@@ -124,7 +124,7 @@ void ResetUserData(void)
 /************************************************************************/
 void CloseGame(void)
 {
-   SetGameDataValid(FALSE);
+   SetGameDataValid(false);
    MapExitRoom(&current_room);
    BackgroundOverlaysReset();
 
@@ -141,7 +141,7 @@ void CloseGame(void)
    FreeCurrentUsers();
    FreeResources();
 
-   first_entry = True;
+   first_entry = true;
 }
 /************************************************************************/
 /*
@@ -302,7 +302,7 @@ void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id)
       ClientError(hInst, hMain, IDS_NOROOMFILE, fname);
    }
 
-   first_entry = False;
+   first_entry = false;
 
    EnterNewRoom();
 }
@@ -392,11 +392,11 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
    ModuleEvent(EVENT_NEWROOM);
 
    /* Now it's ok for user to do actions */
-   SetGameDataValid(TRUE);
+   SetGameDataValid(true);
 
    GameSetState(GAME_PLAY);
 
-   MoveSetValidity(True);
+   MoveSetValidity(true);
 
    /* Redraw room */
    RedrawAll();
@@ -467,7 +467,7 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
 {
    room_contents_node *r;
    object_node *obj;
-   Bool in_room = False;
+   bool in_room = false;
 
    /* First look for object in room */
    r = GetRoomObjectById(new_obj->id);
@@ -481,7 +481,7 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
       memcpy(&r->obj, new_obj, sizeof(object_node));
       memcpy(&r->motion.animate, a, sizeof(Animate));
       r->motion.overlays = overlays;
-      r->motion.move_animating = False;
+      r->motion.move_animating = false;
       if (255 != translation)
 	 r->motion.translation = translation;
       if (255 != effect)
@@ -497,7 +497,7 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
       // Object may have changed its effects such as OF_HANGING.
       RoomObjectSetHeight(r);
 
-      in_room = True;
+      in_room = true;
       RedrawAll();
    }
 

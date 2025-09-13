@@ -13,6 +13,6 @@
 #ifndef _SAVEACCO_H
 #define _SAVEACCO_H
 
-Bool SaveAccounts(char *filename);
+bool SaveAccounts(char *filename);
 
 #endif

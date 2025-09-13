@@ -107,10 +107,6 @@ enum { A_NOACTION = 0,
 #define RepeatAction(a) (IsMoveAction(a) || IsTurnAction(a) || IsCursorAction(a) || \
 			 IsViewAction(a) || IsMapMoveAction(a))
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void InterfaceInitialize(HWND hParent);
 void InterfaceResize(int xsize, int ysize);
 void InterfaceClose(void);
@@ -120,12 +116,8 @@ void InterfaceGetMaxSize(SIZE *s);
 void GameChangeFont(void);
 void GameChangeColor(void);
 
-void MainTab(int ctrl, Bool forward);
+void MainTab(int ctrl, bool forward);
 
 M59EXPORT void PerformAction(int action, void *action_data);
-
-#ifdef __cplusplus
-};
-#endif
 
 #endif /* #ifndef _INTRFACE_H */

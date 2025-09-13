@@ -56,6 +56,8 @@ resources:
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
       "### %q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
+
+   system_user_killed_test = "{1} was killed by {0} {2:d} times."
       
    guildwar_kill_title1 = " has slaughtered "
    guildwar_kill_body1 = "Let it be known that "
@@ -6567,9 +6569,10 @@ messages:
    {
       local sString;
 
-      sString = BuildString(system_user_killed_guild,
+      sString = BuildString(system_user_killed_test,
          Send(what,@GetTrueName),
-         Send(killer,@GetTrueName));
+         Send(killer,@GetTrueName),
+         5);
 
       debug("BuildStringTest: ", sString);
 

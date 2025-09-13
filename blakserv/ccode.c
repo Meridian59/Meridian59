@@ -17,6 +17,8 @@
 */
 
 #include "blakserv.h"
+#define FMT_HEADER_ONLY
+#include "fmt/format.h"
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
@@ -2347,111 +2349,64 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 
 /**
  * C_BuildString: Builds a new string from a format string and substitution arguments.
- * Replaces `%s` with the next argument string and `%%` with a literal '%'.
- * All other `%X` sequences are copied literally, and unmatched `%s` remain unchanged.
+ * Uses fmtlib with support for both string and integer arguments.
+ * Format string should use {} tokens (e.g., "{0}", "{1:d}", etc.)
  */
 blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
                        int num_name_parms, parm_node name_parm_array[])
 {
    const char *string1 = NULL;
-   
-   // Get the string to build
-   val_type string_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
-	 int len1 = 0;
-   int use_args = num_normal_parms - 1;
+   int len1 = 0;
 
+   // Get the format string
+   val_type string_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
    if (!LookupString(string_val, "C_BuildString", &string1, &len1))
       return NIL;
 
-   // Validate the string parameters
-   const char *params[MAX_C_PARMS];
-   int params_len[MAX_C_PARMS];
-	 
-	 for (int i = 0; i < use_args; i++)
-   {
-      val_type val = RetrieveValue(object_id, local_vars, normal_parm_array[i + 1].type, normal_parm_array[i + 1].value);
-      if (!LookupString(val, "C_BuildString", &params[i], &params_len[i]))
-         return NIL;
-   }
+   int use_args = num_normal_parms - 1;
 
-   // Pass 1: Walk the string to compute the exact length needed by simulating
-	 // substitutions (%s adds the next params length, %% adds 1, unknown %X adds 2).
-	 // This lets us allocate the exact memory needed for the output string.
-   int output_len = 0, arg_i = 0;
-   for (int i = 0; i < len1;)
+   try
    {
-      char ch = string1[i];
-      if (ch == '%' && (i + 1) < len1)
+      std::vector<fmt::basic_format_arg<fmt::format_context>> format_args;
+      format_args.reserve(use_args);
+
+      // Storage for string data (must stay alive during formatting)
+      std::vector<std::string> string_storage;
+      string_storage.reserve(use_args);
+
+      for (int i = 0; i < use_args; i++)
       {
-         char next = string1[i + 1];
-         if (next == 's')
+         val_type val = RetrieveValue(object_id, local_vars, normal_parm_array[i + 1].type, normal_parm_array[i + 1].value);
+
+         if (val.v.tag == TAG_INT)
          {
-            output_len += (arg_i < use_args) ? params_len[arg_i++] : 2;
-            i += 2;
-            continue;
+            // Keep integers as integers for {:d}, {:x}, etc. formatting
+            format_args.push_back(fmt::detail::make_arg<fmt::format_context>(static_cast<int>(val.v.data)));
          }
-         if (next == '%')
+         else
          {
-            output_len += 1;
-            i += 2;
-            continue;  // literal '%'
+            const char *param_str = NULL;
+            int param_len = 0;
+            if (!LookupString(val, "C_BuildString", &param_str, &param_len))
+               return NIL;
+
+            string_storage.emplace_back(param_str, param_len);
+            format_args.push_back(fmt::detail::make_arg<fmt::format_context>(string_storage.back()));
          }
-         // Unknown specifier: copy the '%' and next char literally
-         output_len += 2;
-         i += 2;
-         continue;
       }
-      ++output_len;
-      ++i;
+
+      // Now do the actual formatting: substitute {} placeholders with our arguments
+      std::string fmt_str(string1, len1);
+      std::string result = fmt::vformat(fmt_str, fmt::format_args(format_args.data(), format_args.size()));
+
+      val_type ret;
+      ret.v.tag = TAG_STRING;
+      ret.v.data = CreateStringWithLen(result.c_str(), static_cast<int>(result.length()));
+      return ret.int_val;
    }
-
-   // Pass 2: Walk the string again and write into the allocated buffer. 
-   char *output = (char *) AllocateMemory(MALLOC_ID_STRING, output_len + 1);
-   int w = 0;
-   arg_i = 0;
-
-   for (int i = 0; i < len1;)
+   catch (const std::exception &e)
    {
-      char ch = string1[i];
-      if (ch == '%' && (i + 1) < len1)
-      {
-         char next = string1[i + 1];
-         if (next == 's')
-         {
-            if (arg_i < use_args)
-            {
-               int len = params_len[arg_i];
-               memcpy(output + w, params[arg_i], len);
-               w += len;
-               ++arg_i;
-            }
-            else
-            {
-               output[w++] = '%';
-               output[w++] = 's';
-            }
-            i += 2;
-            continue;
-         }
-         if (next == '%')
-         {
-            output[w++] = '%';
-            i += 2;
-            continue;
-         }
-         output[w++] = '%';
-         output[w++] = next;
-         i += 2;
-         continue;
-      }
-      output[w++] = ch;
-      ++i;
+      bprintf("C_BuildString format error: %s\n", e.what());
+      return NIL;
    }
-   output[w] = '\0';
-
-	 val_type ret; 
-	 ret.v.tag = TAG_STRING; 
-	 ret.v.data = CreateStringWithLen(output, w);
-	 FreeMemory(MALLOC_ID_STRING, output, output_len + 1);
-	 return ret.int_val;
 }

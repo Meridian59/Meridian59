@@ -225,7 +225,7 @@ void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y,
                           UINT keyFlags) {
   /* See if a module wants to handle mouse click */
-  if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
+  if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
     return;
 
   UserDidSomething();
@@ -235,7 +235,7 @@ void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y,
 void MainMouseRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y,
                           UINT keyFlags) {
   /* See if a module wants to handle mouse click */
-  if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
+  if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
     return;
 
   UserDidSomething();

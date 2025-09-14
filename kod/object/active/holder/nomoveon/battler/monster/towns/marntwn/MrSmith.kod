@@ -90,7 +90,7 @@ messages:
       return FALSE;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what=self,#string=MrBs_entry_welcome,
            #type = SAY_RESOURCE);

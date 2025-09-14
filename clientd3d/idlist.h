@@ -15,7 +15,7 @@
 typedef list_type IDList;
 
 M59EXPORT IDList IDListDelete(IDList id_list);
-M59EXPORT Bool IDListMember(IDList id_list, ID name_res);
+M59EXPORT bool IDListMember(IDList id_list, ID name_res);
 M59EXPORT IDList IDListAdd(IDList id_list, ID name_res);
 M59EXPORT IDList IDListRemove(IDList id_list, ID name_res);
 

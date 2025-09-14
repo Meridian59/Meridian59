@@ -21,7 +21,7 @@ static COLORREF logged_on_color  = PALETTERGB(255, 0, 0);
 static HWND hGroupDialog;
 
 static void GroupCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify);
-static Bool GetCurrentGroupName(HWND hDlg, char *group_name);
+static bool GetCurrentGroupName(HWND hDlg, char *group_name);
 static INT_PTR CALLBACK GroupDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK GroupEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK PlayerEditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -107,7 +107,7 @@ void GroupCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
    char say_string[MAXSAY + 1];
    UserGroup g;
    HWND hList, hwndFocus, hCombo;
-   Bool legal_index;
+   bool legal_index;
 
    switch(ctrl_id)
    {
@@ -300,10 +300,10 @@ void GroupCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 /****************************************************************************/
 /*
  * GetCurrentGroupName:  Fill in group_name with name of currently selected
- *   group in group list box and return True, if a group is selected.
- *   Otherwise return False.
+ *   group in group list box and return true, if a group is selected.
+ *   Otherwise return false.
  */
-Bool GetCurrentGroupName(HWND hDlg, char *group_name)
+bool GetCurrentGroupName(HWND hDlg, char *group_name)
 {
    int index;
    HWND hCombo;
@@ -312,10 +312,10 @@ Bool GetCurrentGroupName(HWND hDlg, char *group_name)
    index = ComboBox_GetCurSel(hCombo);
    
    if (index == CB_ERR)
-     return False;
+     return false;
    
    ComboBox_GetText(hCombo, group_name, MAX_GROUPNAME);
-   return True;
+   return true;
 }
 /****************************************************************************/
 void AbortGroupDialog(void)

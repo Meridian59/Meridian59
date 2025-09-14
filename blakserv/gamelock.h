@@ -16,7 +16,7 @@
 void InitGameLock(void);
 void SetGameLock(char *str);
 void SetGameUnlock(void);
-Bool IsGameLocked(void);
+bool IsGameLocked(void);
 char * GetGameLockedReason(void);
 
 #endif

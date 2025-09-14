@@ -44,18 +44,18 @@ typedef struct {
    void   *action_data2; // Data associated with untoggle action
    BYTE   *bits;         // Pointer to bits of bitmap for button
    int     x;            // x position of button on main window
-   Bool    pressed;      // True when button is pressed in (only applies if button is a toggle)
+   bool    pressed;      // true when button is pressed in (only applies if button is a toggle)
 } Button;
 
 void ToolbarCreate(void);
 void ToolbarDestroy(void);
 void ToolbarResize(int xsize, int ysize, AREA view);
 
-M59EXPORT Bool __cdecl ToolbarAddButton(AddButton *s);
-M59EXPORT Bool ToolbarSetButtonState(int action, void *action_data, Bool state);
+M59EXPORT bool __cdecl ToolbarAddButton(AddButton *s);
+M59EXPORT bool ToolbarSetButtonState(int action, void *action_data, bool state);
 M59EXPORT void ToolbarGetUnionRect(RECT* prcRect);
 
 void ToolbarCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
-Bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 
 #endif /* #ifndef _TOOLBAR_H */

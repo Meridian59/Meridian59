@@ -1827,5 +1827,15 @@ messages:
       return;
    }
 
+   FindBadItemFlags() 
+   "Print object ID if item is in an illegal state"
+   {
+      if piItem_flags = $ 
+      {
+         debug("Item", self, "has $ piItem_flags");
+      }
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

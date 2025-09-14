@@ -26,7 +26,7 @@ void MainServer();
 void MainExitServer();
 
 DWORD main_thread_id;
-static Bool in_main_loop = False;
+static bool in_main_loop = false;
 
 #ifdef BLAK_PLATFORM_WINDOWS
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
 #endif
 
-Bool InMainLoop(void)
+bool InMainLoop(void)
 {
    return in_main_loop;
 }
@@ -108,7 +108,7 @@ void MainServer()
 	
 	PauseTimers();
 	
-	if (LoadAll() == True)
+	if (LoadAll() == true)
 	{
 	/* this loaded_game_msg tells it to disconnect all blakod info about sessions,
 		* that were logged on when we saved */
@@ -140,7 +140,7 @@ void MainServer()
 
     AsyncSocketStart();
 
-    in_main_loop = True;
+    in_main_loop = true;
 
     RunMainLoop();
 	/* returns if server terminated */

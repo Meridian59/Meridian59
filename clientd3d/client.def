@@ -26,6 +26,7 @@ EXPORTS
 	ResetUserData
 	WebLaunchBrowser
 	InitMenuPopupHandler
+	SafeDialogBoxParam
 
 ; Keyboard handling
 	KeyAddTable

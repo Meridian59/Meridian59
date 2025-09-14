@@ -96,13 +96,13 @@ void InsertAccount(account_node *a)
    }
 }
 
-Bool CreateAccount(char *name,char *password,int type,int *account_id)
+bool CreateAccount(char *name,char *password,int type,int *account_id)
 {
    char buf[ENCRYPT_LEN+1];
    account_node *a;
 
 	if (GetAccountByName(name) != NULL)
-		return False;
+		return false;
 
    a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
    a->account_id = next_account_id++;
@@ -123,7 +123,7 @@ Bool CreateAccount(char *name,char *password,int type,int *account_id)
    InsertAccount(a);
 
 	*account_id = a->account_id;
-	return True;
+	return true;
 }
 
 int CreateAccountSecurePassword(const char *name,const char *password,int type)
@@ -232,7 +232,7 @@ void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_lo
 
 /* DeleteAccount
    Make sure if you call this you remove all users w/ this account too. */
-Bool DeleteAccount(int account_id)
+bool DeleteAccount(int account_id)
 {
    account_node *a,*temp;
 
@@ -246,7 +246,7 @@ Bool DeleteAccount(int account_id)
       FreeMemory(MALLOC_ID_ACCOUNT,a->name,strlen(a->name)+1);
       FreeMemory(MALLOC_ID_ACCOUNT,a->password,strlen(a->password)+1);
       FreeMemory(MALLOC_ID_ACCOUNT,a,sizeof(account_node));
-      return True;
+      return true;
    }
    
    while (a != NULL)
@@ -260,12 +260,12 @@ Bool DeleteAccount(int account_id)
 	 FreeMemory(MALLOC_ID_ACCOUNT,temp->name,strlen(temp->name)+1);
 	 FreeMemory(MALLOC_ID_ACCOUNT,temp->password,strlen(temp->password)+1);
 	 FreeMemory(MALLOC_ID_ACCOUNT,temp,sizeof(account_node));
-	 return True;
+	 return true;
       }
       a = a->next;
    }
 
-   return False;
+   return false;
 }
 
 void SetAccountName(account_node *a,char *name)
@@ -293,7 +293,7 @@ void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password)
    strcpy(a->password,password);
 }
 
-Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
+bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
 {
    session_node *s;
    INT64 now = GetTime();
@@ -303,13 +303,13 @@ Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
    if (suspend_time < 0)
    {
       eprintf("SuspendAccountAbsolute: invalid suspend time %lld; ignored\n",suspend_time);
-      return False;
+      return false;
    }
 
    if (a == NULL || a->account_id == 0)
    {
       eprintf("SuspendAccountAbsolute: cannot suspend account\n");
-      return False;
+      return false;
    }
 
    /* check for lifting suspension */
@@ -326,7 +326,7 @@ Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
 	         a->account_id, a->name);
       }
       a->suspend_time = 0;
-      return True;
+      return true;
    }
 
    /* suspension going into effect or remaining in effect */
@@ -348,10 +348,10 @@ Bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
       }
    }
 
-   return True;
+   return true;
 }
 
-Bool SuspendAccountRelative(account_node *a, int hours)
+bool SuspendAccountRelative(account_node *a, int hours)
 {
    INT64 suspend_time;
 

@@ -39,7 +39,6 @@ BEGIN
         MENUITEM "&Conectar-se",                    ID_GAME_CONNECT
         MENUITEM "&Desconectar",                    ID_GAME_DISCONNECT
         MENUITEM "&Preferências",                   ID_GAME_SETTINGS
-        MENUITEM "Configurações",                   ID_CONFIGMENU
         MENUITEM "Alterar &senha",                  ID_GAME_PASSWORD, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "&Imprimir mapa",                  ID_GAME_PRINTMAP
@@ -167,7 +166,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 256, 260
+IDD_SETTINGS DIALOGEX 0, 0, 256, 250
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Configurações antecipadas Meridian 59"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -196,15 +195,14 @@ BEGIN
     GROUPBOX        "Interface",IDC_STATIC,5,175,246,70,WS_GROUP
     CONTROL         "Mostrar ícones",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,197,62,9
     CONTROL         "Mostrar barra",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
-    CONTROL         "Congelar janela de texto ao retroceder",IDC_SCROLLLOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,166,10    
-    CONTROL         "Ativar/Desativar filtro de texto",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,220,140,9
+    CONTROL         "Congelar janela de texto ao retroceder",IDC_SCROLLLOCK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,133,10
+    CONTROL         "Ativar/Desativar filtro de texto",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,218,105,8
     CONTROL         "Mostrar latência",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,187,77,9
     CONTROL         "Mapa dinâmico",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,197,79,10
     CONTROL         "Texto colorido",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,187,72,10
     CONTROL         "Anotações do mapa",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
-    PUSHBUTTON      "&Configurações",IDC_PROFANESETTINGS,130,219,70,12
-    DEFPUSHBUTTON   "OK",IDOK,144,246,50,12,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,200,246,50,12,WS_GROUP
+    PUSHBUTTON      "&Configurações",IDC_PROFANESETTINGS,169,225,70,12
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -551,6 +549,214 @@ BEGIN
     DEFPUSHBUTTON   "Criar Conta",IDC_SIGNUP_OK,150,221,107,14
 END
 
+IDD_PREFERENCES DIALOGEX 0, 0, 476, 391
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_TARGETCURSOR,"SysTabControl32",0x0,6,6,464,373
+END
+
+IDD_OPTIONS DIALOGEX 0, 0, 135, 163
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Editor de comandos do Meridian 59"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Opções",IDC_STATIC,6,5,124,114
+    CONTROL         "Configuração de teclas clássica",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,19,110,10
+    CONTROL         "Mensagem rápida",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,33,72,10
+    CONTROL         "Sempre correr",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,47,58,10
+    CONTROL         "Sempre atacar o alvo",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,61,83,10
+    CONTROL         "Luzes dinâmicas",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,75,95,10
+    CONTROL         "Renderização de software",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,89,100,10
+    CONTROL         "Eficiência da GPU",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,103,75,10
+END
+
+IDD_COMMUNICATION DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Comunicação"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Falar",IDC_STATIC,7,9,22,8
+    LTEXT           "Usar campo de mensagens",IDC_STATIC,7,24,48,18
+    LTEXT           "Sussurrar",IDC_STATIC,7,47,30,8
+    LTEXT           "Gritar",IDC_STATIC,7,66,20,8
+    LTEXT           "Falar a todos",IDC_STATIC,7,82,33,16
+    LTEXT           "Quem está jogando?",IDC_STATIC,7,101,48,18
+    LTEXT           "Gestos",IDC_STATIC,148,9,21,8
+    PUSHBUTTON      "pagedown+shift",IDC_SAY,58,7,55,14
+    PUSHBUTTON      "ENTER",IDC_CHAT,58,26,55,14
+    PUSHBUTTON      "T",IDC_TELL,58,45,55,14
+    PUSHBUTTON      "Y",IDC_YELL,58,64,55,14
+    PUSHBUTTON      "B",IDC_BROADCAST,58,83,55,14
+    PUSHBUTTON      "W+SHIFT",IDC_WHO,58,102,55,14
+    PUSHBUTTON      "pagedown+shift",IDC_EMOTE,181,7,55,14
+    PUSHBUTTON      "+",IDC_SAY_MOD,116,7,14,14
+    PUSHBUTTON      "+",IDC_CHAT_MOD,116,26,14,14
+    PUSHBUTTON      "+",IDC_TELL_MOD,116,45,14,14
+    PUSHBUTTON      "+",IDC_YELL_MOD,116,64,14,14
+    PUSHBUTTON      "+",IDC_BROADCAST_MOD,116,83,14,14
+    PUSHBUTTON      "+",IDC_WHO_MOD,116,102,14,14
+    PUSHBUTTON      "+",IDC_EMOTE_MOD,239,7,14,14
+END
+
+IDD_INTERACTION DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interações"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Abrir",IDC_STATIC,7,9,22,8
+    LTEXT           "Pegar itens",IDC_STATIC,7,28,28,8
+    LTEXT           "Ver",IDC_STATIC,7,47,37,8
+    LTEXT           "Examinar",IDC_STATIC,7,66,42,8
+    LTEXT           "Oferecer",IDC_STATIC,7,85,29,8
+    LTEXT           "Comprar",IDC_STATIC,7,104,24,8
+    LTEXT           "Depositar",IDC_STATIC,138,9,32,8
+    LTEXT           "Retirar",IDC_STATIC,138,28,38,8
+    LTEXT           "Atacar",IDC_STATIC,138,47,31,8
+    PUSHBUTTON      "space",IDC_OPEN,53,7,55,14
+    PUSHBUTTON      "g",IDC_PICKUP,53,26,55,14
+    PUSHBUTTON      "l",IDC_LOOK,53,45,55,14
+    PUSHBUTTON      "mouse1",IDC_EXAMINE,53,64,55,14
+    PUSHBUTTON      "o",IDC_OFFER,53,83,55,14
+    PUSHBUTTON      "b",IDC_BUY,53,102,55,14
+    PUSHBUTTON      "d",IDC_DEPOSIT,179,7,55,14
+    PUSHBUTTON      "w",IDC_WITHDRAW,179,26,55,14
+    PUSHBUTTON      "a",IDC_ATTACK,179,45,55,14
+    PUSHBUTTON      "+",IDC_OPEN_MOD,111,7,14,14
+    PUSHBUTTON      "+",IDC_PICKUP_MOD,111,26,14,14
+    PUSHBUTTON      "+",IDC_LOOK_MOD,111,45,14,14
+    PUSHBUTTON      "+",IDC_EXAMINE_MOD,111,64,14,14
+    PUSHBUTTON      "+",IDC_OFFER_MOD,111,83,14,14
+    PUSHBUTTON      "+",IDC_BUY_MOD,111,102,14,14
+    PUSHBUTTON      "+",IDC_DEPOSIT_MOD,237,7,14,14
+    PUSHBUTTON      "+",IDC_WITHDRAW_MOD,237,26,14,14
+    PUSHBUTTON      "+",IDC_ATTACK_MOD,237,45,14,14
+END
+
+IDD_MAP DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Mapa"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Mapa",IDC_STATIC,7,9,46,8
+    LTEXT           "Ampliar mapa",IDC_STATIC,7,28,46,8
+    LTEXT           "Reduzir mapa",IDC_STATIC,7,47,48,8
+    PUSHBUTTON      "M+SHIFT",IDC_MAP,67,7,55,14
+    PUSHBUTTON      "ADD",IDC_MAPZOOMIN,67,26,55,14
+    PUSHBUTTON      "SUBTRACT",IDC_MAPZOOMOUT,67,45,55,14
+    PUSHBUTTON      "+",IDC_MAP_MOD,125,7,14,14
+    PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,125,26,14,14
+    PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,125,45,14,14
+END
+
+IDD_MOVEMENT DIALOG 0, 0, 296, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Movimentação"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Andar para frente",IDC_STATIC,7,6,48,18
+    LTEXT           "Andar para trás",IDC_STATIC,7,28,48,8
+    LTEXT           "Virar a esquerda",IDC_STATIC,7,43,48,18
+    LTEXT           "Virar a direita",IDC_STATIC,7,66,48,18
+    LTEXT           "Ir para a esquerda",IDC_STATIC,7,82,48,18
+    LTEXT           "Ir para a direita",IDC_STATIC,7,101,44,18
+    LTEXT           "Andar/Correr",IDC_STATIC,152,9,47,8
+    LTEXT           "Olhar para cima",IDC_STATIC,151,29,52,8
+    LTEXT           "Olhar para baixo",IDC_STATIC,151,47,54,8
+    LTEXT           "Olhar para frente",IDC_STATIC,151,66,54,8
+    LTEXT           "Girar para trás",IDC_STATIC,151,85,45,8
+    LTEXT           "Alternar para Fixar visão ao cursor ",IDC_STATIC,151,100,60,20
+    PUSHBUTTON      "E",IDC_FORWARD,61,7,55,14
+    PUSHBUTTON      "D",IDC_BACKWARD,61,26,55,14
+    PUSHBUTTON      "LEFT",IDC_LEFT,61,45,55,14
+    PUSHBUTTON      "RIGHT",IDC_RIGHT,61,64,55,14
+    PUSHBUTTON      "S",IDC_SLIDELEFT,61,83,55,14
+    PUSHBUTTON      "F",IDC_SLIDERIGHT,61,102,55,14
+    PUSHBUTTON      "SHIFT",IDC_RUNWALK,211,7,55,14
+    PUSHBUTTON      "PAGEUP",IDC_LOOKUP,211,26,55,14
+    PUSHBUTTON      "PAGEDOWN",IDC_LOOKDOWN,211,45,55,14
+    PUSHBUTTON      "HOME",IDC_LOOKSTRAIGHT,211,64,55,14
+    PUSHBUTTON      "END",IDC_FLIP,211,83,55,14
+    PUSHBUTTON      "MOUSE1+ANY",IDC_MOUSELOOKTOGGLE,211,102,55,14
+    PUSHBUTTON      "+",IDC_FORWARD_MOD,119,7,14,14
+    PUSHBUTTON      "+",IDC_BACKWARD_MOD,119,26,14,14
+    PUSHBUTTON      "+",IDC_LEFT_MOD,119,45,14,14
+    PUSHBUTTON      "+",IDC_RIGHT_MOD,119,64,14,14
+    PUSHBUTTON      "+",IDC_SLIDELEFT_MOD,119,83,14,14
+    PUSHBUTTON      "+",IDC_SLIDERIGHT_MOD,119,102,14,14
+    PUSHBUTTON      "+",IDC_RUNWALK_MOD,269,7,14,14
+    PUSHBUTTON      "+",IDC_LOOKUP_MOD,269,26,14,14
+    PUSHBUTTON      "+",IDC_LOOKDOWN_MOD,269,45,14,14
+    PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,269,64,14,14
+    PUSHBUTTON      "+",IDC_FLIP_MOD,269,83,14,14
+    PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,269,102,14,14
+END
+
+IDD_TARGETING DIALOG 0, 0, 268, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Seleção de alvo"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Próximo alvo",IDC_STATIC,7,9,44,8
+    LTEXT           "Alvo anterior",IDC_STATIC,7,28,48,8
+    LTEXT           "Desmarcar alvo",IDC_STATIC,7,47,54,8
+    LTEXT           "Mirar em si mesmo",IDC_STATIC,7,62,40,18
+    LTEXT           "Alternar a próxima janela",IDC_STATIC,7,82,55,18
+    LTEXT           "Alternar a janela anterior",IDC_STATIC,7,101,55,18
+    LTEXT           "Selecionar alvo",IDC_STATIC,152,7,37,18
+    PUSHBUTTON      "]",IDC_TARGETNEXT,65,7,55,14
+    PUSHBUTTON      "[",IDC_TARGETPREVIOUS,65,26,55,14
+    PUSHBUTTON      "ESC",IDC_TARGETCLEAR,65,45,55,14
+    PUSHBUTTON      "Q",IDC_TARGETSELF,65,64,55,14
+    PUSHBUTTON      "TAB",IDC_TABFORWARD,65,83,55,14
+    PUSHBUTTON      "TAB+SHIFT",IDC_TABBACKWARD,65,102,55,14
+    PUSHBUTTON      "Mouse0",IDC_SELECTTARGET,196,7,55,14
+    PUSHBUTTON      "+",IDC_TARGETNEXT_MOD,123,7,14,14
+    PUSHBUTTON      "+",IDC_TARGETPREVIOUS_MOD,123,26,14,14
+    PUSHBUTTON      "+",IDC_TARGETCLEAR_MOD,123,45,14,14
+    PUSHBUTTON      "+",IDC_TARGETSELF_MOD,123,64,14,14
+    PUSHBUTTON      "+",IDC_TABFORWARD_MOD,123,83,14,14
+    PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,123,102,14,14
+    PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,254,7,14,14
+END
+
+IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Por favor, pressione um botão (do mouse)",IDC_STATIC,19,18,74,8
+    CTEXT           "Pressionar",IDC_ASSIGNFOR,40,26,27,8
+END
+
+IDD_MOUSE DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Cursor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Sensibilidade horizontal",IDC_STATIC,141,26,84,8
+    LTEXT           "Sensibilidade vertical",IDC_STATIC,141,69,77,8
+    CONTROL         "",IDC_MOUSEXSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,137,38,68,17
+    CONTROL         "",IDC_MOUSEYSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,137,81,68,17
+    LTEXT           "999",IDC_MOUSEXSCALEVALUE,208,40,13,8
+    LTEXT           "999",IDC_MOUSEYSCALEVALUE,208,82,13,8
+    CONTROL         "Inverter direção do cursor",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,95,10
+    GROUPBOX        "Controle do cursor",IDC_STATIC,125,13,112,97
+END
+
+IDD_MODIFIER DIALOGEX 0, 0, 64, 159
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "ALT",IDC_ALT,17,38,30,14
+    PUSHBUTTON      "STRG",IDC_CTRL,17,58,30,14
+    PUSHBUTTON      "SHIFT",IDC_SHIFT,17,78,30,14
+    PUSHBUTTON      "Qualquer",IDC_ANY,17,98,30,14
+    PUSHBUTTON      "Nenhuma",IDC_NONE,17,118,30,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,7,138,50,14
+    CTEXT           "Escolha uma tecla",IDC_STATIC,7,7,50,26
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -610,7 +816,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Baixar todos os arquivos do jogo pode demorar muito.\nTem certeza?"
-    IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Não foi possível excluir o arquivo %s.\n\nTentar novamente?"
     IDS_CANTWRITEFILE       "Não foi possível escrever o arquivo %s."
     IDS_NOCONFIGMENUEXE     "O menu de configuração não pôde ser encontrado. Por favor, reinstale o Meridian 59."
@@ -682,6 +887,7 @@ BEGIN
     IDS_DECOMPRESSING           "Descompactando..."
     IDS_APPNAME                 "Meridian 59"
     IDS_INIFILE                 "meridian.ini"
+    IDS_INIFILECONFIG           "config.ini"
     IDS_YES                     "&Confirmar"
     IDS_NO                      "C&ancelar"
     IDS_BUYFROM                 "Comprar"
@@ -764,7 +970,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
     IDS_CANTGETFILESIZE             "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
     IDS_CANTSIGNUP                  "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT                "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Seu cadastro falhou porquê:\n\n%s"
 END
 
@@ -782,7 +988,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
+    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\r\n\r\nAntes de entrar e começar a jogar...\r\n\r\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
 END
 
 STRINGTABLE
@@ -792,7 +998,32 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "lendário"
     IDS_RARITY_GRADE_UNIDENTIFIED  "não identificado"
     IDS_RARITY_GRADE_CURSED        "amaldiçoado"
+    IDS_INTRO   "Bem-vindo ao Meridian 59! Clique aqui para iniciar."
 END
+
+STRINGTABLE
+BEGIN
+	IDS_WARNING_TITLE			    "Aviso"
+    IDS_SOFTWARERENDERER_WARN		"O renderizador de software pode ter sido ativado devido a um problema com a configuração do seu vídeo.\n\t\t Desativá-lo pode fazer com que o jogo não funcione."
+	IDS_HELP_TITLE					"Ajuda"
+	IDS_BINDING_HELP 				"Como vincular um comando:\n\n * Clique no botão ao lado do comando que deseja vincular. Esse botão mostrará a tecla atualmente atribuída ao comando.\n\n * Quando a janela pop-up aparecer, pressione e solte a tecla e/ou o botão do mouse\n que deseja vincular a esse comando. Por exemplo, pressionar o botão ao lado de\n 'avançar' e pressionar a tecla W fará com que essa seja a nova tecla para avançar.\n\n * Teclas modificadoras como Shift, Alt e Ctrl podem ser usadas em combinação com a tecla principal (exemplo: W+Shift).\n\n * Se desejar alterar apenas a tecla modificadora de um comando, pressione o botão\n marcado com um '+' ao lado do botão de vínculo e selecione uma tecla modificadora da lista exibida.\n\n * O modificador 'Qualquer' significa que qualquer tecla modificadora pode ser pressionada junto com a tecla principal,\n e ainda funcionará. Assim, W+qualquer significa que W+Shift, W+Alt, W+Ctrl e apenas W executarão o comando especificado.\n\n * Se cometer um erro, você pode pressionar o botão 'Restaurar Padrões' para redefinir todas as atribuições de teclas para os padrões.\n\n * Quando terminar de configurar, pressione 'OK' para salvar e sair.\n Ou pressione 'Cancelar' para sair sem salvar suas alterações."
+	IDS_NOTICE_TITLE				"Notificação"
+	IDS_CLASSIC_BIND_WARNING 		"Ativar 'Configuração Clássica de Teclas' fará com que o jogo ignore as atribuições de teclas!"
+	IDS_SETTINGS_RESTART			"Você deve reiniciar o cliente Meridian 59 para que as novas configurações e atribuições de teclas tenham efeito."
+	IDS_PREFERENCES_TITLE			"Preferências do Meridian 59"
+	IDS_PREFERENCES					"Preferências"
+	IDS_OPTIONS						"Opções"
+	IDS_MOVE						"Movimento"
+	IDS_COMMS						"Comunicação"
+	IDS_INTERACT					"Interação"
+	IDS_TARGET						"Alvo"
+	IDS_MAP							"Mapa"
+	IDS_MOUSE						"Mouse"
+	IDS_DUPLICATE_BINDINGS			"Foi detectada uma duplicação de atribuições para a mesma tecla.\nIsso pode fazer com que alguns comandos não funcionem em\nMeridian 59. Verifique suas atribuições de teclas."
+	IDS_DEFAULT_ARE_YOU_SURE		"Tem certeza de que deseja restaurar todas as configurações para os valores padrão?"
+	IDS_RESTORE_DEFAULTS			"Restaurar Padrões"
+END
+
 
 #endif    // Portuguese (Brazilian) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -818,7 +1049,6 @@ BEGIN
         MENUITEM "&Einwählen",                  ID_GAME_CONNECT
         MENUITEM "&Auflegen",                   ID_GAME_DISCONNECT
         MENUITEM "&Voreinstellungen",           ID_GAME_SETTINGS
-        MENUITEM "Konfiguration",               ID_CONFIGMENU
         MENUITEM "Pass&wort ändern",            ID_GAME_PASSWORD
         MENUITEM SEPARATOR
         MENUITEM "&Drucke Karte",               ID_GAME_PRINTMAP
@@ -979,8 +1209,6 @@ BEGIN
     CONTROL         "Übertragungsrate anzeigen",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,185,77,9
     CONTROL         "Textfilter an/aus",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,219,77,9
     PUSHBUTTON      "&Einstellungen",IDC_PROFANESETTINGS,101,217,142,12
-    DEFPUSHBUTTON   "Bestätigen",IDOK,144,240,50,12,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,200,240,50,12,WS_GROUP
     CONTROL         "Dynamische Karte",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,196,79,10
     CONTROL         "Bunter Text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,185,72,10
     CONTROL         "Rotierender Würfel",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
@@ -1330,6 +1558,218 @@ BEGIN
     DEFPUSHBUTTON   "Konto erstellen",IDC_SIGNUP_OK,150,221,107,14
 END
 
+IDD_PREFERENCES DIALOGEX 0, 0, 476, 391
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_TARGETCURSOR,"SysTabControl32",0x0,6,6,464,373
+END
+
+IDD_OPTIONS DIALOGEX 0, 0, 151, 163
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Meridian 59 Bind Editor"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Optionen",IDC_STATIC,5,3,137,102
+    CONTROL         "klassische Tastenbelegung",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,17,102,10
+    CONTROL         "schnelles Chatten",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,29,72,10
+    CONTROL         "immer Laufen",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,41,58,10
+    CONTROL         "Angriff bei Zielanwahl",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,53,83,10
+    CONTROL         "dynamische Beleuchtung",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,65,95,10
+    CONTROL         "Software-Grafikmodus",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,77,85,10
+    CONTROL         "GPU Efficiency",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,89,75,10
+    PUSHBUTTON      "Hilfe",IDC_MAINHELP,100,130,42,15
+    PUSHBUTTON      "Standardeinstellungen",IDC_RESTOREDEFAULTS,4,111,79,14
+END
+
+IDD_COMMUNICATION DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Kommunikation"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Sagen",IDC_STATIC,7,9,22,8
+    LTEXT           "Chatfenster aktivieren",IDC_STATIC,7,26,38,18
+    LTEXT           "Mitteilen",IDC_STATIC,7,47,27,8
+    LTEXT           "Rufen",IDC_STATIC,7,66,20,8
+    LTEXT           "Mitteilung an alle",IDC_STATIC,7,83,33,16
+    LTEXT           "Wer spielt?",IDC_STATIC,7,104,36,8
+    LTEXT           "Emote",IDC_STATIC,148,9,21,8
+    PUSHBUTTON      "pagedown+shift",IDC_SAY,48,7,55,14
+    PUSHBUTTON      "ENTER",IDC_CHAT,48,26,55,14
+    PUSHBUTTON      "T",IDC_TELL,48,45,55,14
+    PUSHBUTTON      "Y",IDC_YELL,48,64,55,14
+    PUSHBUTTON      "B",IDC_BROADCAST,48,83,55,14
+    PUSHBUTTON      "W+SHIFT",IDC_WHO,48,102,55,14
+    PUSHBUTTON      "pagedown+shift",IDC_EMOTE,171,7,55,14
+    PUSHBUTTON      "+",IDC_SAY_MOD,106,7,14,14
+    PUSHBUTTON      "+",IDC_CHAT_MOD,106,26,14,14
+    PUSHBUTTON      "+",IDC_TELL_MOD,106,45,14,14
+    PUSHBUTTON      "+",IDC_YELL_MOD,106,64,14,14
+    PUSHBUTTON      "+",IDC_BROADCAST_MOD,106,83,14,14
+    PUSHBUTTON      "+",IDC_WHO_MOD,106,102,14,14
+    PUSHBUTTON      "+",IDC_EMOTE_MOD,229,7,14,14
+END
+
+IDD_INTERACTION DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interaktion"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Öffnen",IDC_STATIC,7,9,22,8
+    LTEXT           "Nehmen",IDC_STATIC,7,28,28,8
+    LTEXT           "Anschauen",IDC_STATIC,7,47,37,8
+    LTEXT           "Untersuchen",IDC_STATIC,7,66,42,8
+    LTEXT           "Anbieten",IDC_STATIC,7,85,29,8
+    LTEXT           "Kaufen",IDC_STATIC,7,104,24,8
+    LTEXT           "Einzahlen",IDC_STATIC,138,9,32,8
+    LTEXT           "Wegwerfen",IDC_STATIC,138,28,38,8
+    LTEXT           "Angreifen",IDC_STATIC,138,47,31,8
+    PUSHBUTTON      "space",IDC_OPEN,53,7,55,14
+    PUSHBUTTON      "g",IDC_PICKUP,53,26,55,14
+    PUSHBUTTON      "l",IDC_LOOK,53,45,55,14
+    PUSHBUTTON      "mouse1",IDC_EXAMINE,53,64,55,14
+    PUSHBUTTON      "o",IDC_OFFER,53,83,55,14
+    PUSHBUTTON      "b",IDC_BUY,53,102,55,14
+    PUSHBUTTON      "d",IDC_DEPOSIT,179,7,55,14
+    PUSHBUTTON      "w",IDC_WITHDRAW,179,26,55,14
+    PUSHBUTTON      "a",IDC_ATTACK,179,45,55,14
+    PUSHBUTTON      "+",IDC_OPEN_MOD,111,7,14,14
+    PUSHBUTTON      "+",IDC_PICKUP_MOD,111,26,14,14
+    PUSHBUTTON      "+",IDC_LOOK_MOD,111,45,14,14
+    PUSHBUTTON      "+",IDC_EXAMINE_MOD,111,64,14,14
+    PUSHBUTTON      "+",IDC_OFFER_MOD,111,83,14,14
+    PUSHBUTTON      "+",IDC_BUY_MOD,111,102,14,14
+    PUSHBUTTON      "+",IDC_DEPOSIT_MOD,237,7,14,14
+    PUSHBUTTON      "+",IDC_WITHDRAW_MOD,237,26,14,14
+    PUSHBUTTON      "+",IDC_ATTACK_MOD,237,45,14,14
+END
+
+IDD_MAP DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Karte"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Karte aufrufen",IDC_STATIC,7,9,46,8
+    LTEXT           "Hineinzoomen",IDC_STATIC,7,28,46,8
+    LTEXT           "Hinauszoomen",IDC_STATIC,7,47,48,8
+    PUSHBUTTON      "M+SHIFT",IDC_MAP,67,7,55,14
+    PUSHBUTTON      "ADD",IDC_MAPZOOMIN,67,26,55,14
+    PUSHBUTTON      "SUBTRACT",IDC_MAPZOOMOUT,67,45,55,14
+    PUSHBUTTON      "+",IDC_MAP_MOD,125,7,14,14
+    PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,125,26,14,14
+    PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,125,45,14,14
+END
+
+IDD_MOVEMENT DIALOG 0, 0, 296, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Bewegung"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Vorwärts",IDC_STATIC,7,9,28,8
+    LTEXT           "Rückwärts",IDC_STATIC,7,28,35,8
+    LTEXT           "Drehung links",IDC_STATIC,7,47,44,8
+    LTEXT           "Drehung rechts",IDC_STATIC,7,66,50,8
+    LTEXT           "Seitlich links",IDC_STATIC,7,85,40,8
+    LTEXT           "Seitlich rechts",IDC_STATIC,7,104,45,8
+    LTEXT           "Laufen/Gehen",IDC_STATIC,152,9,47,8
+    LTEXT           "Blick nach oben",IDC_STATIC,151,29,52,8
+    LTEXT           "Blick nach unten",IDC_STATIC,151,47,54,8
+    LTEXT           "Blick zentrieren",IDC_STATIC,151,66,49,8
+    LTEXT           "Drehung 180°",IDC_STATIC,151,86,45,8
+    LTEXT           "Mouselook",IDC_STATIC,151,100,36,8
+    LTEXT           "an/aus",IDC_STATIC,151,110,24,8
+    PUSHBUTTON      "E",IDC_FORWARD,61,7,55,14
+    PUSHBUTTON      "D",IDC_BACKWARD,61,26,55,14
+    PUSHBUTTON      "LEFT",IDC_LEFT,61,45,55,14
+    PUSHBUTTON      "RIGHT",IDC_RIGHT,61,64,55,14
+    PUSHBUTTON      "S",IDC_SLIDELEFT,61,83,55,14
+    PUSHBUTTON      "F",IDC_SLIDERIGHT,61,102,55,14
+    PUSHBUTTON      "SHIFT",IDC_RUNWALK,211,7,55,14
+    PUSHBUTTON      "PAGEUP",IDC_LOOKUP,211,26,55,14
+    PUSHBUTTON      "PAGEDOWN",IDC_LOOKDOWN,211,45,55,14
+    PUSHBUTTON      "HOME",IDC_LOOKSTRAIGHT,211,64,55,14
+    PUSHBUTTON      "END",IDC_FLIP,211,83,55,14
+    PUSHBUTTON      "MOUSE1+ANY",IDC_MOUSELOOKTOGGLE,211,102,55,14
+    PUSHBUTTON      "+",IDC_FORWARD_MOD,119,7,14,14
+    PUSHBUTTON      "+",IDC_BACKWARD_MOD,119,26,14,14
+    PUSHBUTTON      "+",IDC_LEFT_MOD,119,45,14,14
+    PUSHBUTTON      "+",IDC_RIGHT_MOD,119,64,14,14
+    PUSHBUTTON      "+",IDC_SLIDELEFT_MOD,119,83,14,14
+    PUSHBUTTON      "+",IDC_SLIDERIGHT_MOD,119,102,14,14
+    PUSHBUTTON      "+",IDC_RUNWALK_MOD,269,7,14,14
+    PUSHBUTTON      "+",IDC_LOOKUP_MOD,269,26,14,14
+    PUSHBUTTON      "+",IDC_LOOKDOWN_MOD,269,45,14,14
+    PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,269,64,14,14
+    PUSHBUTTON      "+",IDC_FLIP_MOD,269,83,14,14
+    PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,269,102,14,14
+END
+
+IDD_TARGETING DIALOG 0, 0, 268, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Zielanwahl"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Nächstes Ziel",IDC_STATIC,7,9,44,8
+    LTEXT           "Voriges Ziel",IDC_STATIC,7,28,38,8
+    LTEXT           "Ziel aufheben",IDC_STATIC,7,47,44,8
+    LTEXT           "Sich selbst anvisieren",IDC_STATIC,7,64,40,18
+    LTEXT           "Tabulator vor",IDC_STATIC,7,85,43,8
+    LTEXT           "Tabulator zurück",IDC_STATIC,7,104,54,8
+    PUSHBUTTON      "]",IDC_TARGETNEXT,65,7,55,14
+    PUSHBUTTON      "[",IDC_TARGETPREVIOUS,65,26,55,14
+    PUSHBUTTON      "ESC",IDC_TARGETCLEAR,65,45,55,14
+    PUSHBUTTON      "Q",IDC_TARGETSELF,65,64,55,14
+    PUSHBUTTON      "TAB",IDC_TABFORWARD,65,83,55,14
+    PUSHBUTTON      "TAB+SHIFT",IDC_TABBACKWARD,65,102,55,14
+    LTEXT           "Ziel auswählen",IDC_STATIC,145,7,37,18
+    PUSHBUTTON      "Mouse0",IDC_SELECTTARGET,186,7,55,14
+    PUSHBUTTON      "+",IDC_TARGETNEXT_MOD,123,7,14,14
+    PUSHBUTTON      "+",IDC_TARGETPREVIOUS_MOD,123,26,14,14
+    PUSHBUTTON      "+",IDC_TARGETCLEAR_MOD,123,45,14,14
+    PUSHBUTTON      "+",IDC_TARGETSELF_MOD,123,64,14,14
+    PUSHBUTTON      "+",IDC_TABFORWARD_MOD,123,83,14,14
+    PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,123,102,14,14
+    PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,244,7,14,14
+END
+
+IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Bitte eine (Maus)-Taste",IDC_STATIC,19,18,74,8
+    CTEXT           "drücken",IDC_ASSIGNFOR,40,26,27,8
+END
+
+IDD_MOUSE DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Mouse"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "horizontale Empfindlichkeit",IDC_STATIC,111,26,84,8
+    LTEXT           "vertikale Empfindlichkeit",IDC_STATIC,111,69,77,8
+    CONTROL         "",IDC_MOUSEXSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,107,38,68,17
+    CONTROL         "",IDC_MOUSEYSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,107,81,68,17
+    LTEXT           "999",IDC_MOUSEXSCALEVALUE,178,40,13,8
+    LTEXT           "999",IDC_MOUSEYSCALEVALUE,178,82,13,8
+    CONTROL         "Maus umkehren",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,67,10
+    GROUPBOX        "Mouselook",IDC_STATIC,95,13,112,97
+END
+
+IDD_MODIFIER DIALOGEX 0, 0, 64, 159
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "ALT",IDC_ALT,17,38,30,14
+    PUSHBUTTON      "STRG",IDC_CTRL,17,58,30,14
+    PUSHBUTTON      "SHIFT",IDC_SHIFT,17,78,30,14
+    PUSHBUTTON      "Jede",IDC_ANY,17,98,30,14
+    PUSHBUTTON      "Keine",IDC_NONE,17,118,30,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,7,138,50,14
+    CTEXT           "Wähle eine Modifikations- taste",IDC_STATIC,7,7,50,26
+END
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -1388,7 +1828,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Alle Spiel-Dateien zu herunterzuladen kann sehr lange dauern.\nBist Du sicher?"
-    IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Kann Datei %s nicht löschen.\n\nErneut versuchen?"
     IDS_CANTWRITEFILE       "Kann Datei %s nicht schreiben."
     IDS_NOCONFIGMENUEXE     "Das Konfigurationsmenü konnte nicht gefunden werden! Bitte installiere Meridian 59 neu."
@@ -1460,6 +1899,7 @@ BEGIN
     IDS_DECOMPRESSING       "Entpacken ..."
     IDS_APPNAME             "Meridian 59"
     IDS_INIFILE             "meridian.ini"
+    IDS_INIFILECONFIG       "config.ini"
     IDS_YES                 "&Bestätigen"
     IDS_NO                  "&Abbrechen"
     IDS_BUYFROM             "Kaufen"
@@ -1518,7 +1958,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Es konnte keine HTTP-Anfrage für die Datei %s an den Server %s gesendet werden."
     IDS_CANTGETFILESIZE             "Die Dateigröße von %s konnte vom Server %s nicht abgerufen werden."
     IDS_CANTSIGNUP                  "Es konnte keine Verbindung zum Registrierungsserver hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkeinstellungen und versuchen Sie es erneut (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT                "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Die Registrierung ist fehlgeschlagen, weil:\n\n%s"
 END
 
@@ -1561,7 +2001,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Ihr Konto ist nicht verifiziert! Aus diesem Grund können Sie sich nicht einloggen. Bitte überprüfen Sie Ihre E-Mail-Adresse (einschließlich Junk-Ordner!) und klicken Sie auf den Aktivierungslink. Wenn Sie die Aktivierungs-E-Mail nicht erhalten haben, klicken Sie unten auf 'Ja', um sie erneut zu senden."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Ihr neues Konto [%s] wurde erfolgreich erstellt!\n\nBevor Sie sich einloggen und spielen können...\n\nÜberprüfen Sie jetzt Ihre E-Mail (%s), um Ihr Konto zu verifizieren."
+    IDS_SIGNUPMSG           "Ihr neues Konto [%s] wurde erfolgreich erstellt!\r\n\r\nBevor Sie sich einloggen und spielen können...\r\n\r\nÜberprüfen Sie jetzt Ihre E-Mail (%s), um Ihr Konto zu verifizieren."
 END
 
 STRINGTABLE
@@ -1571,7 +2011,32 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "legendär"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentifiziert"
     IDS_RARITY_GRADE_CURSED        "verflucht"
+    IDS_INTRO   "Willkommen zu Meridian 59! Zum Start hier klicken!"
 END
+
+STRINGTABLE
+BEGIN
+	IDS_WARNING_TITLE			    "Warnung"
+    IDS_SOFTWARERENDERER_WARN		"Die Software-Rendering-Funktion wurde möglicherweise aufgrund eines Problems mit Ihrer Videoeinstellung aktiviert.\n\t\t Das Deaktivieren kann dazu führen, dass das Spiel nicht mehr läuft."
+	IDS_HELP_TITLE					"Hilfe"
+	IDS_BINDING_HELP 				"So binden Sie einen Befehl:\n\n * Klicken Sie auf die Schaltfläche neben dem Befehl, den Sie binden möchten. Diese Schaltfläche zeigt die aktuell zugewiesene Taste an.\n\n * Wenn das Popup-Fenster erscheint, drücken und lassen Sie die Taste und/oder Maustaste los,\n die Sie diesem Befehl zuweisen möchten. Zum Beispiel: Wenn Sie die Schaltfläche neben\n 'vorwärts' drücken und die W-Taste betätigen, wird diese zur neuen Vorwärts-Taste.\n\n * Modifikatortasten wie Shift, Alt und Strg können in Kombination mit der Haupttaste verwendet werden (Beispiel: W+Shift).\n\n * Wenn Sie nur die Modifikatortaste eines Befehls ändern möchten, drücken Sie die mit '+' markierte Schaltfläche\n neben der Bindungsschaltfläche und wählen Sie eine Modifikatortaste aus der angezeigten Liste aus.\n\n * Die 'Beliebig'-Modifikation bedeutet, dass jede Modifikatortaste zusammen mit der Taste gedrückt werden kann,\n und sie wird dennoch funktionieren. Zum Beispiel bedeutet W+beliebig, dass W+Shift, W+Alt, W+Strg und nur W den Befehl ausführen.\n\n * Falls Sie einen Fehler machen, können Sie die Schaltfläche 'Standardwerte wiederherstellen' drücken, um alle Bindungen\n auf die Standardwerte zurückzusetzen.\n\n * Wenn Sie Ihre Einstellungen abgeschlossen haben, drücken Sie 'OK', um zu speichern und zu beenden.\n Oder Sie können 'Abbrechen' drücken, um zu beenden, ohne Ihre Änderungen zu speichern."
+	IDS_NOTICE_TITLE				"Hinweis"
+	IDS_CLASSIC_BIND_WARNING 		"Das Aktivieren der 'Klassischen Tastenkonfiguration' führt dazu, dass das Spiel die Tastenzuweisungen ignoriert!"
+	IDS_SETTINGS_RESTART			"Sie müssen den Meridian 59-Client neu starten, bevor die neuen Bindungen oder Einstellungen wirksam werden."
+	IDS_PREFERENCES_TITLE			"Meridian 59 Einstellungen"
+	IDS_PREFERENCES					"Einstellungen"
+	IDS_OPTIONS						"Optionen"
+	IDS_MOVE						"Bewegung"
+	IDS_COMMS						"Kommunikation"
+	IDS_INTERACT					"Interaktion"
+	IDS_TARGET						"Zielerfassung"
+	IDS_MAP							"Karte"
+	IDS_MOUSE						"Maus"
+	IDS_DUPLICATE_BINDINGS			"Doppelte Tastenzuweisungen für dieselbe Taste wurden erkannt.\nDies könnte dazu führen, dass einige Befehle in Meridian 59 nicht funktionieren.\nBitte überprüfen Sie Ihre Bindungen."
+	IDS_DEFAULT_ARE_YOU_SURE		"Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte zurücksetzen möchten?"
+	IDS_RESTORE_DEFAULTS			"Standardwerte wiederherstellen"
+END
+
 
 #endif    // German resources
 /////////////////////////////////////////////////////////////////////////////
@@ -1598,7 +2063,6 @@ BEGIN
         MENUITEM "&Connect",                    ID_GAME_CONNECT
         MENUITEM "&Disconnect",                 ID_GAME_DISCONNECT
         MENUITEM "&Preferences",                ID_GAME_SETTINGS
-        MENUITEM "Configuration",               ID_CONFIGMENU
         MENUITEM "Change pass&word",            ID_GAME_PASSWORD, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "Print &Map",                  ID_GAME_PRINTMAP
@@ -1757,15 +2221,13 @@ BEGIN
     CONTROL         "Show toolbar",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,176,62,9
     CONTROL         "Show tooltips",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,187,62,9
     CONTROL         "Lock text window in place when scrolling back",IDC_SCROLLLOCK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,199,163,9
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,199,159,9
     CONTROL         "Filter text profanity",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,210,77,9
     CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,176,77,9
     CONTROL         "Show dynamic map",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,187,79,10
     CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,176,72,10
     CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,187,72,10
     PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,102,208,142,12
-    DEFPUSHBUTTON   "OK",IDOK,145,227,50,12,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,201,227,50,12,WS_GROUP
     CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,199,71,9
 END
 
@@ -2119,6 +2581,218 @@ BEGIN
     DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,150,221,107,14
 END
 
+IDD_PREFERENCES DIALOGEX 0, 0, 476, 391
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Meridian 59 Preferences"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_TARGETCURSOR,"SysTabControl32",0x0,6,6,464,373
+END
+
+IDD_OPTIONS DIALOGEX 0, 0, 124, 163
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Options"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Options",IDC_STATIC,7,7,110,114
+    CONTROL         "Classic Key Bindings",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,24,81,10
+    CONTROL         "Quick Chat",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,38,51,10
+    CONTROL         "Always Run",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,52,53,10
+    CONTROL         "Dynamic Lighting",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,80,70,10
+    CONTROL         "Software Renderer",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,94,75,10
+    CONTROL         "Attack On Target",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,66,73,10
+    PUSHBUTTON      "Help",IDC_MAINHELP,87,140,30,15
+    PUSHBUTTON      "Restore Defaults",IDC_RESTOREDEFAULTS,47,122,70,15
+    CONTROL         "GPU Efficiency",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,107,75,10
+END
+
+IDD_MOVEMENT DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Movement"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Forward",IDC_STATIC,7,9,26,8
+    LTEXT           "Backward",IDC_STATIC,7,28,33,8
+    LTEXT           "Turn Left",IDC_STATIC,7,47,30,8
+    LTEXT           "Turn Right",IDC_STATIC,7,66,34,8
+    LTEXT           "Slide Left",IDC_STATIC,7,85,30,8
+    LTEXT           "Slide Right",IDC_STATIC,7,104,35,8
+    LTEXT           "Run/Walk",IDC_STATIC,126,9,34,8
+    LTEXT           "Look Up",IDC_STATIC,126,29,28,8
+    LTEXT           "Look Down",IDC_STATIC,126,47,38,8
+    LTEXT           "Look Straight",IDC_STATIC,126,66,43,8
+    LTEXT           "Flip",IDC_STATIC,126,86,12,8
+    LTEXT           "Mouselook",IDC_STATIC,126,105,36,8
+    LTEXT           "Toggle",IDC_STATIC,126,114,23,8
+    PUSHBUTTON      "E",IDC_FORWARD,44,7,55,14
+    PUSHBUTTON      "D",IDC_BACKWARD,44,26,55,14
+    PUSHBUTTON      "LEFT",IDC_LEFT,44,45,55,14
+    PUSHBUTTON      "RIGHT",IDC_RIGHT,44,64,55,14
+    PUSHBUTTON      "S",IDC_SLIDELEFT,44,83,55,14
+    PUSHBUTTON      "F",IDC_SLIDERIGHT,44,102,55,14
+    PUSHBUTTON      "SHIFT",IDC_RUNWALK,171,7,55,14
+    PUSHBUTTON      "PAGEUP",IDC_LOOKUP,171,26,55,14
+    PUSHBUTTON      "PAGEDOWN",IDC_LOOKDOWN,171,45,55,14
+    PUSHBUTTON      "HOME",IDC_LOOKSTRAIGHT,171,64,55,14
+    PUSHBUTTON      "END",IDC_FLIP,171,83,55,14
+    PUSHBUTTON      "MOUSE1+ANY",IDC_MOUSELOOKTOGGLE,171,102,55,14
+    PUSHBUTTON      "+",IDC_FORWARD_MOD,102,7,14,14
+    PUSHBUTTON      "+",IDC_BACKWARD_MOD,102,26,14,14
+    PUSHBUTTON      "+",IDC_LEFT_MOD,102,45,14,14
+    PUSHBUTTON      "+",IDC_RIGHT_MOD,102,64,14,14
+    PUSHBUTTON      "+",IDC_SLIDELEFT_MOD,102,83,14,14
+    PUSHBUTTON      "+",IDC_SLIDERIGHT_MOD,102,102,14,14
+    PUSHBUTTON      "+",IDC_RUNWALK_MOD,229,7,14,14
+    PUSHBUTTON      "+",IDC_LOOKUP_MOD,229,26,14,14
+    PUSHBUTTON      "+",IDC_LOOKDOWN_MOD,229,45,14,14
+    PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,229,64,14,14
+    PUSHBUTTON      "+",IDC_FLIP_MOD,229,83,14,14
+    PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,229,102,14,14
+END
+
+IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Press a key or",IDC_STATIC,32,18,46,8
+    LTEXT           "a mouse button",IDC_ASSIGNFOR,30,27,50,8
+END
+
+IDD_MOUSE DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Mouse"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Mouselook X Scale",IDC_STATIC,102,26,62,8
+    LTEXT           "Mouselook Y Scale",IDC_STATIC,102,66,62,8
+    CONTROL         "Slider1",IDC_MOUSEXSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,97,38,68,17
+    CONTROL         "Slider1",IDC_MOUSEYSCALE,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,97,81,68,17
+    LTEXT           "999",IDC_MOUSEXSCALEVALUE,168,40,13,8
+    LTEXT           "999",IDC_MOUSEYSCALEVALUE,168,82,13,8
+    CONTROL         "Invert Mouse",IDC_INVERT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,18,57,10
+    GROUPBOX        "Mouse Scale",IDC_STATIC,85,13,112,97
+END
+
+IDD_MODIFIER DIALOGEX 0, 0, 64, 153
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Alt",IDC_ALT,17,30,30,14
+    PUSHBUTTON      "Ctrl",IDC_CTRL,17,50,30,14
+    PUSHBUTTON      "Shift",IDC_SHIFT,17,70,30,14
+    PUSHBUTTON      "Any",IDC_ANY,17,90,30,14
+    PUSHBUTTON      "None",IDC_NONE,17,110,30,14
+    PUSHBUTTON      "Cancel",IDCANCEL,7,132,50,14
+    CTEXT           "Choose a modifier key:",IDC_STATIC,7,7,50,20
+END
+
+IDD_COMMUNICATION DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Communication"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Say",IDC_STATIC,7,9,13,8
+    LTEXT           "Chat",IDC_STATIC,7,28,16,8
+    LTEXT           "Tell",IDC_STATIC,7,47,12,8
+    LTEXT           "Yell",IDC_STATIC,7,66,12,8
+    LTEXT           "Broadcast",IDC_STATIC,7,85,33,8
+    LTEXT           "Who",IDC_STATIC,7,104,16,8
+    LTEXT           "Emote",IDC_STATIC,148,9,21,8
+    PUSHBUTTON      "pagedown+shift",IDC_SAY,44,7,55,14
+    PUSHBUTTON      "ENTER",IDC_CHAT,44,26,55,14
+    PUSHBUTTON      "T",IDC_TELL,44,45,55,14
+    PUSHBUTTON      "Y",IDC_YELL,44,64,55,14
+    PUSHBUTTON      "B",IDC_BROADCAST,44,83,55,14
+    PUSHBUTTON      "W+SHIFT",IDC_WHO,44,102,55,14
+    PUSHBUTTON      "pagedown+shift",IDC_EMOTE,171,7,55,14
+    PUSHBUTTON      "+",IDC_SAY_MOD,102,7,14,14
+    PUSHBUTTON      "+",IDC_CHAT_MOD,102,26,14,14
+    PUSHBUTTON      "+",IDC_TELL_MOD,102,45,14,14
+    PUSHBUTTON      "+",IDC_YELL_MOD,102,64,14,14
+    PUSHBUTTON      "+",IDC_BROADCAST_MOD,102,83,14,14
+    PUSHBUTTON      "+",IDC_WHO_MOD,102,102,14,14
+    PUSHBUTTON      "+",IDC_EMOTE_MOD,229,7,14,14
+END
+
+IDD_INTERACTION DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interaction"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Open",IDC_STATIC,7,9,18,8
+    LTEXT           "Pickup",IDC_STATIC,7,28,23,8
+    LTEXT           "Look",IDC_STATIC,7,47,17,8
+    LTEXT           "Examine",IDC_STATIC,7,66,28,8
+    LTEXT           "Offer",IDC_STATIC,7,85,16,8
+    LTEXT           "Buy",IDC_STATIC,7,104,13,8
+    LTEXT           "Deposit",IDC_STATIC,138,9,25,8
+    LTEXT           "Withdraw",IDC_STATIC,138,28,31,8
+    LTEXT           "Attack",IDC_STATIC,138,49,22,8
+    PUSHBUTTON      "space",IDC_OPEN,44,7,55,14
+    PUSHBUTTON      "g",IDC_PICKUP,44,26,55,14
+    PUSHBUTTON      "l",IDC_LOOK,44,45,55,14
+    PUSHBUTTON      "mouse1",IDC_EXAMINE,44,64,55,14
+    PUSHBUTTON      "o",IDC_OFFER,44,83,55,14
+    PUSHBUTTON      "b",IDC_BUY,44,102,55,14
+    PUSHBUTTON      "d",IDC_DEPOSIT,171,7,55,14
+    PUSHBUTTON      "w",IDC_WITHDRAW,171,26,55,14
+    PUSHBUTTON      "a",IDC_ATTACK,171,45,55,14
+    PUSHBUTTON      "+",IDC_OPEN_MOD,102,7,14,14
+    PUSHBUTTON      "+",IDC_PICKUP_MOD,102,26,14,14
+    PUSHBUTTON      "+",IDC_LOOK_MOD,102,45,14,14
+    PUSHBUTTON      "+",IDC_EXAMINE_MOD,102,64,14,14
+    PUSHBUTTON      "+",IDC_OFFER_MOD,102,83,14,14
+    PUSHBUTTON      "+",IDC_BUY_MOD,102,102,14,14
+    PUSHBUTTON      "+",IDC_DEPOSIT_MOD,229,7,14,14
+    PUSHBUTTON      "+",IDC_WITHDRAW_MOD,229,26,14,14
+    PUSHBUTTON      "+",IDC_ATTACK_MOD,229,45,14,14
+END
+
+IDD_TARGETING DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Targeting"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Target Next",IDC_STATIC,7,9,38,8
+    LTEXT           "Target Previous",IDC_STATIC,7,28,51,8
+    LTEXT           "Target Clear",IDC_STATIC,7,47,40,8
+    LTEXT           "Target Self",IDC_STATIC,7,66,36,8
+    LTEXT           "Tab Forward",IDC_STATIC,7,85,41,8
+    LTEXT           "Tab Backward",IDC_STATIC,7,104,48,8
+    PUSHBUTTON      "]",IDC_TARGETNEXT,60,7,55,14
+    PUSHBUTTON      "[",IDC_TARGETPREVIOUS,60,26,55,14
+    PUSHBUTTON      "ESC",IDC_TARGETCLEAR,60,45,55,14
+    PUSHBUTTON      "Q",IDC_TARGETSELF,60,64,55,14
+    PUSHBUTTON      "TAB",IDC_TABFORWARD,60,83,55,14
+    PUSHBUTTON      "TAB+SHIFT",IDC_TABBACKWARD,60,102,55,14
+    LTEXT           "Select Target",IDC_STATIC,145,7,24,18
+    PUSHBUTTON      "Mouse0",IDC_SELECTTARGET,171,7,55,14
+    PUSHBUTTON      "+",IDC_TARGETNEXT_MOD,118,7,14,14
+    PUSHBUTTON      "+",IDC_TARGETPREVIOUS_MOD,118,26,14,14
+    PUSHBUTTON      "+",IDC_TARGETCLEAR_MOD,118,45,14,14
+    PUSHBUTTON      "+",IDC_TARGETSELF_MOD,118,64,14,14
+    PUSHBUTTON      "+",IDC_TABFORWARD_MOD,118,83,14,14
+    PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,118,102,14,14
+    PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,229,7,14,14
+END
+
+IDD_MAP DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Map"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Map",IDC_STATIC,7,9,15,8
+    LTEXT           "Map Zoom In",IDC_STATIC,7,28,43,8
+    LTEXT           "Map Zoom Out",IDC_STATIC,7,47,48,8
+    PUSHBUTTON      "M+SHIFT",IDC_MAP,60,7,55,14
+    PUSHBUTTON      "ADD",IDC_MAPZOOMIN,60,26,55,14
+    PUSHBUTTON      "SUBTRACT",IDC_MAPZOOMOUT,60,45,55,14
+    PUSHBUTTON      "+",IDC_MAP_MOD,118,7,14,14
+    PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,118,26,14,14
+    PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,118,45,14,14
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2333,10 +3007,12 @@ IDI_OFFER               ICON                    "bitmap\\offer.ico"
 
 IDB_BLUEWHO             ICON                    "bitmap\\blue.ico"
 
+IDI_KEYBIND				ICON					"bitmap\\m59bind.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
+ // Bitmap
 //
 
 IDB_BACKGROUND          BITMAP                  "bitmap\\bkgnd.bmp"
@@ -2362,7 +3038,6 @@ IDB_VIEWTREAT_TOPRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_ur_hil
 IDB_VIEWTREAT_BOTTOMLEFT_HILIGHT BITMAP                  "bitmap\\viewtreat_ll_hilight.bmp"
 
 IDB_VIEWTREAT_BOTTOMRIGHT_HILIGHT BITMAP                  "bitmap\\viewtreat_lr_hilight.bmp"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2427,7 +3102,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Downloading all game files may take a long time.\nAre you sure you want to do this?"
-    IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Can't delete the file %s.\n\nTry again?"
     IDS_CANTWRITEFILE       "Can't write to file %s."
     IDS_NOCONFIGMENUEXE     "Configuration menu not found!  Please uninstall and reinstall Meridian 59"
@@ -2499,6 +3173,7 @@ BEGIN
     IDS_DECOMPRESSING       "Decompressing..."
     IDS_APPNAME             "Meridian 59"
     IDS_INIFILE             "meridian.ini"
+    IDS_INIFILECONFIG       "config.ini"
     IDS_YES                 "&Yes"
     IDS_NO                  "&No"
     IDS_BUYFROM             "Buy from"
@@ -2557,7 +3232,7 @@ BEGIN
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
     IDS_CANTSIGNUP          "Failed to contact the signup server, please check your network settings and try again (%s)."
-    IDS_TROUBLESHOOT        "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT        "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED        "Your sign up failed because:\n\n%s"
 END
 
@@ -2591,7 +3266,7 @@ BEGIN
     IDS_USERNAMEINVALID     "Username is invalid or already in use.\n"
     IDS_EMAILINVALID        "E-mail address is invalid.\n"
     IDS_EMAILINUSE          "E-mail address is already in use.\n"
-    IDS_PASSWORDINVALID     "Passwords are invalid or not not match.\n"
+    IDS_PASSWORDINVALID     "Passwords are invalid or do not match.\n"
     IDS_SERVERUNKNOWN       "Unknown server selected.\n"
     IDS_SIGNUPOFFLINE       "Registration server is offline.\n"
     IDS_SIGNUPUNKNOWNERROR  "Signup generated an unknown error, please try again.\n"
@@ -2600,7 +3275,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then press Yes below to resend it now."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
+    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\r\n\r\nBefore you can log in and play...\r\n\r\nCheck your e-mail (%s) to verify your account now."
 END
 
 STRINGTABLE
@@ -2610,7 +3285,32 @@ BEGIN
     IDS_RARITY_GRADE_LEGENDARY     "legendary"
     IDS_RARITY_GRADE_UNIDENTIFIED  "unidentified"
     IDS_RARITY_GRADE_CURSED        "cursed"
+    IDS_INTRO   "Click here to log on!"
 END
+
+STRINGTABLE
+BEGIN
+	IDS_WARNING_TITLE			    "Warning"
+    IDS_SOFTWARERENDERER_WARN		"Software renderer may have been activated due to a problem with your video setup.\n\n\t\t Disabling may cause the game not to run."
+	IDS_HELP_TITLE					"Help"
+	IDS_BINDING_HELP 				"To bind a command:\n\n * Click on the button next to the command you want to bind. This button will\n show the key currently bound to the command.\n\n * When the popup appears, press and release the key and/or mouse button\n you want to bind to that command. For example, pressing the button next to\n 'forward' and pressing the W key will make that the new walk forward key.\n\n * Modifier keys such as shift, alt, control may be used in combination with the\n main key when binding a command (example: W+shift).\n\n * If you wish to change only the modifier key of a command, press the button\n marked with a '+' next to the binding button and select a modifier key from\n the list shown.\n\n * The 'Any' modifier means that any modifier key can be pressed with the key\n and it will still work. So, W+any means that W+shift, W+alt, W+ctrl, and just\n W will do the specified command.\n\n * If you make a mistake you may press the 'Restore Defaults' button and all of\n the bindings will be set to the default.\n\n * Once you have finished your settings, press 'OK' to save and quit. Or you\n can press 'Cancel' to quit without saving your changes."
+	IDS_NOTICE_TITLE				"Notice"
+	IDS_CLASSIC_BIND_WARNING 		"Activating 'Classic Key Bindings' will cause the game to ignore the key bindings!"
+	IDS_SETTINGS_RESTART			"You must restart the Meridian 59 client before the new bindings or settings will take effect."
+	IDS_PREFERENCES_TITLE			"Meridian 59 Preferences"
+	IDS_PREFERENCES					"Preferences"
+	IDS_OPTIONS						"Options"
+	IDS_MOVE						"Move"
+	IDS_COMMS						"Comms"
+	IDS_INTERACT					"Interact"
+	IDS_TARGET						"Target"
+	IDS_MAP							"Map"
+	IDS_MOUSE						"Mouse"
+	IDS_DUPLICATE_BINDINGS			"Duplicate bindings for the same key have been detected.\nThis could cause some commands to not work on\nMeridian 59.  Please double check your bindings."
+	IDS_DEFAULT_ARE_YOU_SURE		"Are you sure you want to restore all settings to their default?"
+	IDS_RESTORE_DEFAULTS			"Restore Defaults"
+END
+
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

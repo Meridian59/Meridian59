@@ -40,7 +40,7 @@ classvars:
    vrIcon = kocatanTradeMaster_icon_rsc
    vrDesc = kocatanTradeMaster_desc_rsc
 
-   viMerchant_markup = MERCHANT_EXPENSIVE
+   viMerchant_markup = MERCHANT_RIPOFF
 
    viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_BUYER | MOB_COND_SELLER
    viOccupation = MOB_ROLE_MERCHANT
@@ -94,7 +94,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
 
@@ -130,7 +130,7 @@ messages:
          }
       }
       
-      propagate;
+      return;
    }
 
    SetForSale()

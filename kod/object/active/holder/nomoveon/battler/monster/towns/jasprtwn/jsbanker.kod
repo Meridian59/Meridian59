@@ -77,7 +77,7 @@ messages:
       return viBank;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       iFlags = send( who, @GetObjectFlags );

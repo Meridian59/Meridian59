@@ -103,7 +103,7 @@ int AllocateObject(int class_id)
 
    objects[num_objects].object_id = num_objects;
    objects[num_objects].class_id = class_id;
-   objects[num_objects].deleted = False;
+   objects[num_objects].deleted = false;
    objects[num_objects].num_props = 1 + c->num_properties;
    objects[num_objects].p = (prop_type *)AllocateMemory(MALLOC_ID_OBJECT_PROPERTIES,
 							sizeof(prop_type)*(1+c->num_properties));
@@ -164,12 +164,12 @@ object_node * GetObjectByID(int object_id)
    return &objects[object_id];
 }
 
-Bool IsObjectByID(int object_id)
+bool IsObjectByID(int object_id)
 {
    if (object_id < 0 || object_id >= num_objects || objects[object_id].deleted)
-      return False;
+      return false;
 
-   return True;
+   return true;
 }
 
 object_node * GetObjectByIDEvenDeleted(int object_id)
@@ -227,7 +227,7 @@ int CreateObject(int class_id,int num_parms,parm_node parms[])
    return new_object_id;
 }
 
-Bool LoadObject(int object_id,char *class_name)
+bool LoadObject(int object_id,char *class_name)
 {
    class_node *c;
 
@@ -235,13 +235,13 @@ Bool LoadObject(int object_id,char *class_name)
    if (c == NULL) 
    {
       eprintf("LoadObject can't find class name %s\n",class_name);
-      return False;
+      return false;
    }
 
    if (AllocateObject(c->class_id) != object_id)
    {
       eprintf("LoadObject didn't make object id %i\n",object_id);
-      return False;
+      return false;
    }
 
    /* set self = prop 0 */
@@ -254,10 +254,10 @@ Bool LoadObject(int object_id,char *class_name)
     */
    SetObjectProperties(object_id,c);
 
-   return True;
+   return true;
 }
 
-Bool SetObjectPropertyByName(int object_id,char *prop_name,val_type val)
+bool SetObjectPropertyByName(int object_id,char *prop_name,val_type val)
 {
    object_node *o;
    class_node *c;
@@ -267,7 +267,7 @@ Bool SetObjectPropertyByName(int object_id,char *prop_name,val_type val)
    if (o == NULL)
    {
       eprintf("SetObjectPropertyByName can't find object %i\n",object_id);
-      return False;
+      return false;
    }
 
    c = GetClassByID(o->class_id);
@@ -275,7 +275,7 @@ Bool SetObjectPropertyByName(int object_id,char *prop_name,val_type val)
    {
       eprintf("SetObjectPropertyByName can't find class %i\n",
 	      o->class_id);
-      return False;
+      return false;
    }
 
    property_id = GetPropertyIDByName(c,prop_name);
@@ -283,25 +283,25 @@ Bool SetObjectPropertyByName(int object_id,char *prop_name,val_type val)
    {
       eprintf("SetObjectPropertyByName can't find property %s in class %s (%i)\n",
 	      prop_name, c->class_name, c->class_id);
-      return False;
+      return false;
    }
 
    if (o->num_props <= property_id)
    {
       eprintf("SetObjectPropertyByName property index/id %i not in object %i class %s (%i)\n",
 	      property_id,object_id,c->class_name,c->class_id);
-      return False;
+      return false;
    }
    
    if (o->p[property_id].id != property_id)
    {
       eprintf("SetObjectPropertyByName property index/id mismatch %i %i\n",
 	      property_id,o->p[property_id].id);
-      return False;
+      return false;
    }
 
    o->p[property_id].val = val;
-   return True;
+   return true;
 }
 
 void SetObjectProperties(int object_id,class_node *c)
@@ -349,7 +349,7 @@ void DeleteBlakodObject(int object_id)
    /* now remove object */
 
    FreeMemory(MALLOC_ID_OBJECT_PROPERTIES,o->p,sizeof(prop_type)*(1+c->num_properties));
-   o->deleted = True;
+   o->deleted = true;
 }   
 
 void ForEachObject(void (*callback_func)(object_node *o))

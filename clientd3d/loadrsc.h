@@ -21,14 +21,10 @@ typedef struct {
    char *data;
 } *resource_type, resource_struct;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-Bool LoadResources(void);
+bool LoadResources(void);
 void FreeResources(void);
 void ChangeResource(ID res, char *value);
-Bool LoadRoomFile(char *fname, room_type *r);
+bool LoadRoomFile(char *fname, room_type *r);
 M59EXPORT char *GetString(HINSTANCE hModule, ID idnum);
 void MissingResource(void);
 void DeleteRscFiles(list_type files);
@@ -37,10 +33,6 @@ void DeleteAllRscFiles(void);
 M59EXPORT char *LookupRsc(ID idnum);
 M59EXPORT char *LookupNameRsc(ID idnum);
 M59EXPORT char *LookupRscNoError(ID idnum);
-
-#ifdef __cplusplus
-};
-#endif
 
 #endif /* #ifndef _LOADRSC_H */
 

@@ -371,7 +371,7 @@ messages:
                i = i + 1;
                iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
                                     #compound=Nth(lSpells,i));
-               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+               LossAmount = Bound(BaseLossAmount*iLoops,-(iSpellAbility-5),$);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
                                   #compound=Nth(lSpells,i));
                Send(poGhostedPlayer,@ChangeSpellAbility,
@@ -447,7 +447,7 @@ messages:
                i = i + 1;
                iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
                                     #compound=Nth(lSkills,i));
-               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+               LossAmount = bound((BaseLossAmount*iLoops),-(iSkillAbility-5),$);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
                                   #compound=Nth(lSkills,i));
                Send(poGhostedPlayer,@ChangeSkillAbility,

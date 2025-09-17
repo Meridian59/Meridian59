@@ -650,7 +650,7 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          const int right = area.x + INVENTORY_BOX_WIDTH - 4;
          const int left  = right - boxSize;
          const int top   = area.y + 4;
-         const int bottom= top + boxSize;
+         const int bottom = top + boxSize;
 
          // Draw main colored square
          HBRUSH hBrush = CreateSolidBrush(rarityColor);

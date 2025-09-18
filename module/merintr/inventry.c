@@ -98,12 +98,12 @@ keymap inventory_key_table[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
-static const int COLOR_ITEM_UNCOMMON     = RGB(141,242,242);
-static const int COLOR_ITEM_RARE         = RGB(0,255,0);
-static const int COLOR_ITEM_LEGENDARY    = RGB(255,0,255);
-static const int COLOR_ITEM_UNIDENTIFIED = RGB(252,128,0);
-static const int COLOR_ITEM_CURSED       = RGB(255,0,0);
-static const int COLOR_ITEM_DEFAULT      = RGB(255,255,255);
+static const COLORREF COLOR_ITEM_UNCOMMON     = RGB(141,242,242);  // cyan
+static const COLORREF COLOR_ITEM_RARE         = RGB(0,255,0);      // lime
+static const COLORREF COLOR_ITEM_LEGENDARY    = RGB(255,0,255);    // purple
+static const COLORREF COLOR_ITEM_UNIDENTIFIED = RGB(252,128,0);    // orange
+static const COLORREF COLOR_ITEM_CURSED       = RGB(255,0,0);      // red
+static const COLORREF COLOR_ITEM_DEFAULT      = RGB(255,255,255);
 
 /* local function prototypes */
 static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -260,7 +260,6 @@ messages:
 
          if (iLongRange = piRange
              OR iDistanceSquared <= (piRange * piRange))
-            AND send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          {
             return TRUE;
          }

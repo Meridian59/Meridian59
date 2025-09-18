@@ -679,7 +679,7 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          MoveToEx(hdc, left-1, top-1, NULL);
          LineTo(hdc, right-1, top-1);  // Top edge (stop before corner)
          MoveToEx(hdc, left-1, top-1, NULL);
-         LineTo(hdc, left-1, bottom-1); // Left edge (stop before corner)
+         LineTo(hdc, left-1, bottom-1);  // Left edge (stop before corner)
          SelectObject(hdc, oldPen);
          DeleteObject(hPenDark);
 
@@ -687,16 +687,16 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          HPEN hPenLight = CreatePen(PS_SOLID, 1, RGB(150,150,150));
          SelectObject(hdc, hPenLight);
          MoveToEx(hdc, left-1, bottom, NULL);
-         LineTo(hdc, right-1, bottom); // Bottom edge (stop before corner)
+         LineTo(hdc, right-1, bottom);  // Bottom edge (stop before corner)
          MoveToEx(hdc, right, top-1, NULL);
-         LineTo(hdc, right, bottom-1); // Right edge (stop before corner)
+         LineTo(hdc, right, bottom-1);  // Right edge (stop before corner)
          SelectObject(hdc, oldPen);
          DeleteObject(hPenLight);
 
          COLORREF shadow = RGB(
-            max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT , 0),
-            max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT , 0),
-            max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT , 0)
+            max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0)
          );
          HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
          oldPen = SelectObject(hdc, hPenShadow);

@@ -2572,7 +2572,7 @@ BEGIN
     EDITTEXT        IDC_NEW_PW1,104,111,149,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "Confirm Password",ID_SU_PW2,39,130,69,10
     EDITTEXT        IDC_NEW_PW2,104,128,149,14,ES_PASSWORD | ES_AUTOHSCROLL
-    LTEXT           "Usernames and passwords must be 6-32 characters long and cannot contain spaces. Usernames may include only letters and numbers. Passwords may include English letters, numbers, and symbol\n\r(no accented characters).",IDC_STATIC,38,148,220,33
+    LTEXT           "Usernames and passwords must be 6-32 characters long and cannot contain spaces. Usernames may include only letters and numbers. Passwords may include English letters, numbers, and symbols\n\r(no accented characters).",IDC_STATIC,38,148,220,33
     LTEXT           "Server:",ID_SU_SERVER,39,185,50,8
     CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,106,185,32,10
     CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,139,185,32,10

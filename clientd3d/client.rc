@@ -540,7 +540,7 @@ BEGIN
     EDITTEXT        IDC_NEW_PW1,134,108,129,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "Confirmar Senha",ID_SU_PW2,39,127,69,10
     EDITTEXT        IDC_NEW_PW2,134,125,129,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "Nomes de usuário e senhas devem ter entre 6 e 32 caracteres e não podem conter espaços. Nomes de usuário podem incluir apenas letras e números. Senhas podem incluir letras em inglês, números e símbolos (sem caracteres acentuados).",IDC_STATIC,39,142,223,33
+    LTEXT           "Nomes de usuário e senhas devem ter entre 6 e 32 caracteres e não podem conter espaços. Nomes de usuário podem incluir apenas letras e números. Senhas podem incluir letras em inglês, números e símbolos (sem caracteres acentuados).",IDC_STATIC,39,142,223,33
     LTEXT           "Servidor:",ID_SU_SERVER,39,178,50,8
     CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,178,32,10
     CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,178,32,10
@@ -1549,11 +1549,11 @@ BEGIN
     EDITTEXT        IDC_NEW_PW1,134,117,120,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "Passwort bestätigen",ID_SU_PW2,39,140,69,10
     EDITTEXT        IDC_NEW_PW2,134,138,120,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "Benutzernamen und Passwörter müssen 6-32 Zeichen lang sein und dürfen keine Leerzeichen enthalten. Benutzernamen dürfen nur Buchstaben und Zahlen enthalten. Passwörter dürfen englische Buchstaben, Zahlen und Symbole enthalten (keine Akzentbuchstaben).",IDC_STATIC,39,154,214,23
-    LTEXT           "Server:",ID_SU_SERVER,39,182,50,8
-    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,182,32,10
-    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,182,32,10
-    LTEXT           "Es stehen zwei Server zur Verfügung, wobei 101 der aktivere der beiden ist. Spieler aller Art nennen 101 ihr Zuhause: Veteranen, Neulinge, Spieler, die gerne kämpfen, und Spieler, die es ruhig angehen lassen und an ihren Charakteren arbeiten.",IDC_STATIC,39,196,220,34
+    LTEXT           "Benutzernamen und Passwörter müssen 6-32 Zeichen lang sein und dürfen keine Leerzeichen enthalten. Benutzernamen dürfen nur Buchstaben und Zahlen enthalten. Passwörter dürfen englische Buchstaben, Zahlen und Symbole enthalten (keine Akzentbuchstaben).",IDC_STATIC,39,154,214,23
+    LTEXT           "Server:",ID_SU_SERVER,39,184,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,184,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,184,32,10
+    LTEXT           "Es stehen zwei Server zur Verfügung, wobei 101 der aktivere der beiden ist. Spieler aller Art nennen 101 ihr Zuhause: Veteranen, Neulinge, Spieler, die gerne kämpfen, und Spieler, die es ruhig angehen lassen und an ihren Charakteren arbeiten.",IDC_STATIC,39,198,220,34
     PUSHBUTTON      "Problembehandlung",IDC_SIGNUP_TROUBLESHOOT,54,233,74,14
     DEFPUSHBUTTON   "Konto erstellen",IDC_SIGNUP_OK,150,233,107,14
 END
@@ -2563,20 +2563,20 @@ BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
     LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,43
     GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,50,244,193
-    LTEXT           "E-mail Address",ID_SU_EMAIL,39,69,62,8
-    EDITTEXT        IDC_NEW_EMAIL,104,68,150,14,ES_AUTOHSCROLL
-    RTEXT           "Used for account verification and to reset your password.",IDC_STATIC,35,84,219,11
-    LTEXT           "Desired Username",ID_SU_USERNAME,39,99,67,10
-    EDITTEXT        IDC_NEW_USERNAME,104,97,149,14,ES_AUTOHSCROLL
-    LTEXT           "Password",ID_SU_PW1,39,116,51,10
-    EDITTEXT        IDC_NEW_PW1,104,114,149,14,ES_PASSWORD | ES_AUTOHSCROLL
-    LTEXT           "Confirm Password",ID_SU_PW2,39,133,69,10
-    EDITTEXT        IDC_NEW_PW2,104,131,149,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "Usernames and passwords must be 6-32 characters long and cannot contain spaces. Usernames may include only letters and numbers. Passwords may include English letters, numbers, and symbols (no accented characters).",IDC_STATIC,37,148,216,33
-    LTEXT           "Server:",ID_SU_SERVER,39,183,50,8
-    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,106,183,32,10
-    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,139,183,32,10
-    LTEXT           "There are two servers available, with 101 being the more active of the two. Players of all types call 101 home: veterans, newbies, players who love to fight, and players who just like to take it easy as they work on their characters.",IDC_STATIC,39,197,214,34
+    LTEXT           "E-mail Address",ID_SU_EMAIL,39,66,62,8
+    EDITTEXT        IDC_NEW_EMAIL,104,65,150,14,ES_AUTOHSCROLL
+    RTEXT           "Used for account verification and to reset your password.",IDC_STATIC,35,81,219,11
+    LTEXT           "Desired Username",ID_SU_USERNAME,39,96,67,10
+    EDITTEXT        IDC_NEW_USERNAME,104,94,149,14,ES_AUTOHSCROLL
+    LTEXT           "Password",ID_SU_PW1,39,113,51,10
+    EDITTEXT        IDC_NEW_PW1,104,111,149,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirm Password",ID_SU_PW2,39,130,69,10
+    EDITTEXT        IDC_NEW_PW2,104,128,149,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Usernames and passwords must be 6-32 characters long and cannot contain spaces. Usernames may include only letters and numbers. Passwords may include English letters, numbers, and symbol\n\r(no accented characters).",IDC_STATIC,38,148,220,33
+    LTEXT           "Server:",ID_SU_SERVER,39,185,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,106,185,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,139,185,32,10
+    LTEXT           "There are two servers available, with 101 being the more active of the two. Players of all types call 101 home: veterans, newbies, players who love to fight, and players who just like to take it easy as they work on their characters.",IDC_STATIC,39,199,214,34
     PUSHBUTTON      "Troubleshoot",IDC_SIGNUP_TROUBLESHOOT,53,235,74,14
     DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,139,235,107,14
 END

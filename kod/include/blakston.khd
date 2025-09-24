@@ -2829,17 +2829,17 @@
    % quest player restrictions2
    %        used for restrictions which require parameter passing/setting
    %        and for overflow from above
-   Q_R2_QN_ASSIGNABLE            = 0   % [Q_R2_, boolean]            (is this quest in an assignable state?)
-   Q_R2_IS_GUILD_MEMBER_OF       = 1   % [Q_R2_, guild]              (guild = $ always returns false)
-   Q_R2_IS_PLAYER                = 2   % [Q_R2_, player]             (player = $ always returns false)
-   Q_R2_HAS_SKILL                = 3   % [Q_R2_, skill, ability]     (default ability = 1)
-   Q_R2_HAS_SPELL                = 4   % [Q_R2_, spell, ability]     (default ability = 1)
-   Q_R2_HAS_SPELL_SCHOOL         = 5   % [Q_R2_, school, numspells]  (default numspells = 1)
-   Q_R2_HAS_ITEM                 = 6   % [Q_R2_, itemclass]
-   Q_R2_USING_ITEM               = 7   % [Q_R2_, itemclass]
-   Q_R2_NUM_AMULETS              = 8   % [Q_R2_, minNumAmulets]
-   Q_R2_HAS_HEALTH_LEVEL         = 9   % [Q_R2_, minHPs]             (calls GetMaxHealth)
-   Q_R2_DOES_NOT_HAVE_ITEM       = 10  % [Q_R2_, itemclass]
+   Q_R2_QN_ASSIGNABLE            = 0xB0   % [Q_R2_, boolean]            (is this quest in an assignable state?)
+   Q_R2_IS_GUILD_MEMBER_OF       = 0xB1   % [Q_R2_, guild]              (guild = $ always returns false)
+   Q_R2_IS_PLAYER                = 0xB2   % [Q_R2_, player]             (player = $ always returns false)
+   Q_R2_HAS_SKILL                = 0xB3   % [Q_R2_, skill, ability]     (default ability = 1)
+   Q_R2_HAS_SPELL                = 0xB4   % [Q_R2_, spell, ability]     (default ability = 1)
+   Q_R2_HAS_SPELL_SCHOOL         = 0xB5   % [Q_R2_, school, numspells]  (default numspells = 1)
+   Q_R2_HAS_ITEM                 = 0xB6   % [Q_R2_, itemclass]
+   Q_R2_USING_ITEM               = 0xB7   % [Q_R2_, itemclass]
+   Q_R2_NUM_AMULETS              = 0xB8   % [Q_R2_, minNumAmulets]
+   Q_R2_HAS_HEALTH_LEVEL         = 0xB9   % [Q_R2_, minHPs]             (calls GetMaxHealth)
+   Q_R2_DOES_NOT_HAVE_ITEM       = 0xBA   % [Q_R2_, itemclass]
 
    QUEST_HISTORY_MASK           = 0x0FFFFFF           % bits used in player quest history compound to indicate quest index
    QUEST_HISTORY_SUCCESS           = 0x1000000

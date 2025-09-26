@@ -163,7 +163,6 @@ static bool AddObject(BSPnode *tree, ObjectData *object)
    {
       if (tree == NULL)
       {
-         debug(("add_object got NULL tree for object %d!\n", object->draw.id));
          object->parent = NULL;
          return false;
       }

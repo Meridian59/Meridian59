@@ -202,7 +202,7 @@ messages:
          %% self-delete orphaned wall elements
          if poOwner = $ OR NOT IsClass(poOwner,&Room)
          {
-            Post(self, @Delete);
+            Post(self,@Delete);
             return;
          }
 

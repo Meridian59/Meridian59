@@ -3,7 +3,7 @@ divert(-1)#                                                  -*- Autoconf -*-
 # Base M4 layer.
 # Requires GNU M4.
 #
-# Copyright (C) 1999-2012 Free Software Foundation, Inc.
+# Copyright (C) 1999-2017, 2020 Free Software Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -23,7 +23,7 @@ divert(-1)#                                                  -*- Autoconf -*-
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by Akim Demaille.
 
@@ -2000,7 +2000,7 @@ m4_define([_m4_defun_once],
 
 # m4_pattern_forbid(ERE, [WHY])
 # -----------------------------
-# Declare that no token matching the forbidden extended regular
+# Declare that no token matching the forbidden perl extended regular
 # expression ERE should be seen in the output unless...
 m4_define([m4_pattern_forbid], [])
 
@@ -2008,7 +2008,7 @@ m4_define([m4_pattern_forbid], [])
 # m4_pattern_allow(ERE)
 # ---------------------
 # ... that token also matches the allowed extended regular expression ERE.
-# Both used via traces.
+# Both used via traces, by autom4te post-processing.
 m4_define([m4_pattern_allow], [])
 
 
@@ -2080,13 +2080,19 @@ m4_if([$0], [m4_require], [[m4_defun]], [[AC_DEFUN]])['d macro])])]dnl
 #
 # This is called frequently, so minimize the number of macro invocations
 # by avoiding dnl and other overhead on the common path.
+# The use of a witness macro protecting the warning allows aclocal
+# to silence any warnings when probing for what macros are required
+# and must therefore be located, when using the Autoconf-without-aclocal-m4
+# autom4te language.  For more background, see:
+# https://lists.gnu.org/archive/html/automake-patches/2012-11/msg00035.html
 m4_define([_m4_require_call],
 [m4_pushdef([_m4_divert_grow], m4_decr(_m4_divert_grow))]dnl
 [m4_pushdef([_m4_diverting([$1])])m4_pushdef([_m4_diverting], [$1])]dnl
 [m4_divert_push(_m4_divert_grow, [-])]dnl
 [m4_if([$2], [], [$1], [$2])
 m4_provide_if([$1], [m4_set_remove([_m4_provide], [$1])],
-  [m4_warn([syntax], [$1 is m4_require'd but not m4_defun'd])])]dnl
+  [m4_ifndef([m4_require_silent_probe],
+    [m4_warn([syntax], [$1 is m4_require'd but not m4_defun'd])])])]dnl
 [_m4_divert_raw($3)_m4_undivert(_m4_divert_grow)]dnl
 [m4_divert_pop(_m4_divert_grow)_m4_popdef([_m4_divert_grow],
 [_m4_diverting([$1])], [_m4_diverting])])
@@ -2101,7 +2107,7 @@ m4_define([_m4_require_check],
 [m4_if(_m4_defn([_m4_diverting]), [$2], [m4_ignore],
        m4_ifdef([_m4_diverting([$2])], [-]), [-], [m4_warn([syntax],
    [$3: `$1' was expanded before it was required
-http://www.gnu.org/software/autoconf/manual/autoconf.html#Expanded-Before-Required])_m4_require_call],
+https://www.gnu.org/software/autoconf/manual/autoconf.html#Expanded-Before-Required])_m4_require_call],
        [m4_ignore])])
 
 
@@ -2405,6 +2411,27 @@ m4_define([m4_strip],
 m4_define([m4_normalize],
 [m4_strip(m4_flatten([$1]))])
 
+
+# m4_validate_w(STRING)
+# ---------------------
+# Expands into m4_normalize(m4_expand([STRING])), but if that is not
+# the same as just m4_normalize([STRING]), issue a warning.
+#
+# This is used in several Autoconf macros that take a
+# whitespace-separated list of symbols as an argument.  Ideally that
+# list would not be expanded before use, but several packages used
+# `dnl' to put comments inside those lists, so they must be expanded
+# for compatibility's sake.
+m4_define([m4_validate_w],
+[_m4_validate_w(m4_normalize([$1]), m4_normalize(m4_expand([$1])))])
+
+m4_define([_m4_validate_w],
+[m4_if([$1], [$2], [],
+  [m4_warn([obsolete], [whitespace-separated list contains macros;
+in a future version of Autoconf they will not be expanded]dnl
+m4_if(m4_bregexp([$1], [\bdn[l]\b]), -1, [], [
+note: `dn@&t@l' is a macro]))])dnl
+[$2]])
 
 
 # m4_join(SEP, ARG1, ARG2...)
@@ -3120,7 +3147,8 @@ m4_define([m4_set_empty],
 # guaranteed.  This is faster than the corresponding m4_foreach([VAR],
 #   m4_indir([m4_dquote]m4_set_listc([SET])), [ACTION])
 m4_define([m4_set_foreach],
-[m4_pushdef([$2])m4_set_map_sep([$1], [m4_define([$2],], [)$3])])
+[m4_pushdef([$2])m4_set_map_sep([$1],
+[m4_define([$2],], [)$3])m4_popdef([$2])])
 
 # m4_set_intersection(SET1, SET2)
 # -------------------------------

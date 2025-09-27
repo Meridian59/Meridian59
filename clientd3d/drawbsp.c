@@ -3698,9 +3698,9 @@ static void doDrawLeaf(BSPleaf *leaf, ViewCone *c, PDIB texture, int height, cha
 
    long shade;
 
-   register int tx, ty, tx_inc, ty_inc;
-   register BYTE *palette, *bits;
-   register BYTE *screen_ptr, *end_screen_ptr;
+   int tx, ty, tx_inc, ty_inc;
+   BYTE *palette, *bits;
+   BYTE *screen_ptr, *end_screen_ptr;
    Sector *sector;
 
 #if DRAW_LEAF_CONES

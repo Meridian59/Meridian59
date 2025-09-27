@@ -138,8 +138,8 @@ void set_extension(char *newfile, char *filename, char *extension)
  */
 DWORD string_hash(char *name, DWORD max_val)
 {
-  register char *cp;
-  register DWORD k;
+  char *cp;
+  DWORD k;
 
   cp = name;
   k = 0;

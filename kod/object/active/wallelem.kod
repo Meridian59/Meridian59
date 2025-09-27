@@ -199,6 +199,13 @@ messages:
 
       if vbPeriodic
       {
+         %% self-delete orphaned wall elements
+         if poOwner = $ OR NOT IsClass(poOwner,&Room)
+         {
+            Post(self, @Delete);
+            return;
+         }
+
          for i in send(poOwner,@GetHolderActive)
          {
             oObject = send(poOwner,@HolderExtractobject,#data=i);

@@ -2381,7 +2381,7 @@ blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal
          if (val.v.tag == TAG_INT)
          {
             // Keep integers as integers for {:d}, {:x}, etc. formatting
-            format_args.push_back(fmt::detail::make_arg<fmt::format_context>(static_cast<int>(val.v.data)));
+            format_args.emplace_back(static_cast<int>(val.v.data));
          }
          else
          {
@@ -2391,7 +2391,7 @@ blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal
                return NIL;
 
             string_storage.emplace_back(param_str, param_len);
-            format_args.push_back(fmt::detail::make_arg<fmt::format_context>(string_storage.back()));
+            format_args.emplace_back(string_storage.back());
          }
       }
 

@@ -19,7 +19,7 @@
 
 Mutex muxServer;
 
-Mutex csQuit;
+Mutex muxQuit;
 bool quit;
 
 void InitInterfaceLocks()
@@ -27,7 +27,7 @@ void InitInterfaceLocks()
    muxServer = MutexCreate();
 
    quit = false;
-   csQuit = MutexCreate();
+   muxQuit = MutexCreate();
 }
 
 void EnterServerLock()
@@ -47,22 +47,22 @@ void LeaveServerLock()
 
 void SetQuit()
 {
-   MutexAcquire(csQuit);   
+   MutexAcquire(muxQuit);   
    quit = true;
 
 #ifdef BLAK_PLATFORM_WINDOWS
    PostThreadMessage(main_thread_id,WM_QUIT,0,0);
 #endif
-   MutexRelease(csQuit);
+   MutexRelease(muxQuit);
 }
 
 bool GetQuit()
 {
    bool copy_quit;
 
-   MutexAcquire(csQuit);   
+   MutexAcquire(muxQuit);   
    copy_quit = quit;
-   MutexRelease(csQuit);
+   MutexRelease(muxQuit);
 
    return copy_quit;
 }

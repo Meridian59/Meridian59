@@ -23,13 +23,13 @@ buffer_node *buffers;
 int next_buffer_id;
 
 
-Mutex csBuffers; /* protects our buffers list */
+Mutex mutex_buffers; /* protects our buffers list */
 
 void InitBufferPool(void)
 {
    buffers = NULL;
    next_buffer_id = 1;
-   csBuffers = MutexCreate();
+   mutex_buffers = MutexCreate();
 }
 
 /* this frees buffers we have sitting around, but ones in action are still
@@ -38,7 +38,7 @@ void ResetBufferPool(void)
 {
    buffer_node *bn,*temp;
 
-   MutexAcquire(csBuffers);
+   MutexAcquire(mutex_buffers);
    /* dprintf("ResetBufferPool begin\n"); */
 
    /* test out debug junk: buffers->buf[BUFFER_SIZE] = 12; */
@@ -59,14 +59,14 @@ void ResetBufferPool(void)
    }
    buffers = NULL;
    /* dprintf("ResetBufferPool end\n"); */
-   MutexRelease(csBuffers);
+   MutexRelease(mutex_buffers);
 }
 
 buffer_node * GetBuffer(void)
 {
    buffer_node *bn;
 
-   MutexAcquire(csBuffers);
+   MutexAcquire(mutex_buffers);
    if (buffers == NULL)
    {
       bn = (buffer_node *) AllocateMemory(MALLOC_ID_BUFFER,sizeof(buffer_node));
@@ -93,7 +93,7 @@ buffer_node * GetBuffer(void)
       bn->buffer_id = next_buffer_id++;
       /* dprintf("Reuse 0x%08x\n",bn); */
    }
-   MutexRelease(csBuffers);
+   MutexRelease(mutex_buffers);
 
    return bn;
 }
@@ -101,7 +101,7 @@ buffer_node * GetBuffer(void)
 void DeleteBuffer(buffer_node *bn)
 {
    /* dprintf("Del 0x%08x\n",bn); */
-   MutexAcquire(csBuffers);
+   MutexAcquire(mutex_buffers);
    if (bn->size_prebuf != BUFFER_SIZE + HEADERBYTES)
    {
       eprintf("DeleteBuffer got overwrite of a buffer size!!!");
@@ -110,7 +110,7 @@ void DeleteBuffer(buffer_node *bn)
 
    bn->next = buffers;
    buffers = bn;
-   MutexRelease(csBuffers);
+   MutexRelease(mutex_buffers);
 }
 
 /* adds a block of bytes to a buffer list, potentially adding more buffers to

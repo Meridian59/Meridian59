@@ -85,7 +85,7 @@ static FARPROC lpfnDefAdminResponseProc;
 #define WIN_TIMER_ID 1
 bool is_timer_pending;
 
-#define ADMIN_RESPONSE_SIZE (20048 * 1024)
+#define ADMIN_RESPONSE_SIZE (256 * 1024)
 
 char admin_response_buf[ADMIN_RESPONSE_SIZE+1];
 int len_admin_response_buf;

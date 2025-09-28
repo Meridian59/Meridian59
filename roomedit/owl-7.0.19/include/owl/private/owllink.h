@@ -113,21 +113,23 @@
 
 // Compose the appropriate pragma link directive.
 
-#pragma comment(lib,                          \
-  OWL_LIB_NAME \
-  OWL_LIB_DELIMITER \
-  OWL_LIB_VERSION \
-  OWL_LIB_DELIMITER \
-  OWL_LIB_COMPILER \
-  OWL_LIB_COMPILER_VERSION \
-  OWL_LIB_DELIMITER \
-  OWL_LIB_PLATFORM \
-  OWL_LIB_DELIMITER \
-  OWL_LIB_COMPAT \
-  OWL_LIB_DEBUG \
-  OWL_LIB_THREADING \
-  OWL_LIB_CHARACTERTYPE \
-  OWL_LIB_IMPORT \
-  ".lib")
+// Disable auto-linking with a very specific name.
+// See https://sourceforge.net/p/owlnext/discussion/97175/thread/2ebbc20f4e/
+//#pragma comment(lib,                          \
+//  OWL_LIB_NAME \
+//  OWL_LIB_DELIMITER \
+//  OWL_LIB_VERSION \
+//  OWL_LIB_DELIMITER \
+//  OWL_LIB_COMPILER \
+//  OWL_LIB_COMPILER_VERSION \
+//  OWL_LIB_DELIMITER \
+//  OWL_LIB_PLATFORM \
+//  OWL_LIB_DELIMITER \
+//  OWL_LIB_COMPAT \
+//  OWL_LIB_DEBUG \
+//  OWL_LIB_THREADING \
+//  OWL_LIB_CHARACTERTYPE \
+//  OWL_LIB_IMPORT \
+//  ".lib")
 
 #endif // OWL_PRIVATE_OWLLINK_H

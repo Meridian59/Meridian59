@@ -1,0 +1,847 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{8D9A716F-D90B-4BA6-95B8-9DCCC64F0EBA}</ProjectGuid>
+        <ProjectVersion>18.3</ProjectVersion>
+        <FrameworkType>None</FrameworkType>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <TargetedPlatforms>2</TargetedPlatforms>
+        <AppType>StaticLibrary</AppType>
+        <OWLNextVersion Condition="'$(OWLNextVersion)'==''">7.x.x</OWLNextVersion>
+        <OWLNextCompilerVersion Condition="'$(OWLNextCompilerVersion)'==''">xxx</OWLNextCompilerVersion>
+        <OWLNextCompatibility Condition="'$(OWLNextCompatibility)'==''"></OWLNextCompatibility>
+        <OWLNextUnicode Condition="'$(OWLNextUnicode)'==''"></OWLNextUnicode>
+        <OWLNextSetup Condition="'$(OWLNextSetup)'==''">true</OWLNextSetup>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+        <Cfg_2_Win64>true</Cfg_2_Win64>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>owl</SanitizedProjectName>
+        <ProjectType>CppStaticLibrary</ProjectType>
+        <Multithreaded>true</Multithreaded>
+        <Manifest_File>None</Manifest_File>
+        <VerInfo_Locale>1026</VerInfo_Locale>
+        <BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
+        <TLIB_PageSize>2048</TLIB_PageSize>
+        <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
+        <SystemIncludePath>$(CG_64_BOOST_ROOT);$(BDSINCLUDE);$(BDSINCLUDE)\dinkumware64;$(BDSINCLUDE)\windows\crtl;$(BDSINCLUDE)\windows\sdk</SystemIncludePath>
+        <IncludePath>..\;..\..\..\include</IncludePath>
+        <IntermediateOutputDir>$(Platform)\$(Config)-$(OWLNextCompatibility)t$(OWLNextUnicode)</IntermediateOutputDir>
+        <BRCC_OutputDir>$(IntermediateOutputDir)</BRCC_OutputDir>    
+        <FinalOutputDir>$(IntermediateOutputDir)</FinalOutputDir>
+        <Defines>_USE_OWL_CM_EXIT;$(Defines)</Defines>
+        <SubProcessesNumber Condition="'$(SubProcessesNumber)'==''">1</SubProcessesNumber>
+        <BCC_EnableBatchCompilation Condition="'$(SubProcessesNumber)'!='1'">true</BCC_EnableBatchCompilation>
+        <RunBCCOutOfProcess Condition="'$(SubProcessesNumber)'!='1'">true</RunBCCOutOfProcess>
+        <BCC_PCHName_Clang Condition="'$(SubProcessesNumber)'=='1'">pch.h</BCC_PCHName_Clang>
+        <Defines Condition="'$(SubProcessesNumber)'=='1'">_OWLPCH;$(Defines)</Defines>
+        <Defines Condition="'$(OWLNextCompatibility)'=='5'">OWL5_COMPAT;$(Defines)</Defines>
+        <_TCHARMapping>char</_TCHARMapping>
+        <_TCHARMapping Condition="'$(OWLNextUnicode)'=='u'">wchar_t</_TCHARMapping>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <Defines>_DEBUG;$(Defines)</Defines>
+        <BCC_OptimizeForSpeed>false</BCC_OptimizeForSpeed>
+        <BCC_DisableOptimizations>true</BCC_DisableOptimizations>
+        <BCC_InlineFunctionExpansion>false</BCC_InlineFunctionExpansion>
+        <BCC_UseRegisterVariables>None</BCC_UseRegisterVariables>
+        <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
+        <BCC_StackFrames>true</BCC_StackFrames>
+        <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
+        <BCC_EnableCPPExceptions>true</BCC_EnableCPPExceptions>
+        <BCC_DisableFramePtrElimOpt>true</BCC_DisableFramePtrElimOpt>
+        <BCC_DisableSpellChecking>true</BCC_DisableSpellChecking>
+        <CLANG_UnwindTables>true</CLANG_UnwindTables>
+        <TASM_DisplaySourceLines>true</TASM_DisplaySourceLines>
+        <TASM_Debugging>Full</TASM_Debugging>
+        <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
+        <ILINK_LibraryPath>$(BDSLIB)\$(PLATFORM)\debug;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\debug\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <Defines>NDEBUG;$(Defines)</Defines>
+        <BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
+        <TASM_Debugging>None</TASM_Debugging>
+    </PropertyGroup>
+    <ItemGroup>
+        <PCHCompile Include="pch.h" Condition="'$(SubProcessesNumber)'=='1'">
+            <BuildOrder>0</BuildOrder>
+            <PCH>true</PCH>
+        </PCHCompile>
+        <CppCompile Include="..\animctrl.cpp">
+            <BuildOrder>203</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\appdict.cpp">
+            <BuildOrder>208</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\applicat.cpp">
+            <BuildOrder>132</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\bardescr.cpp">
+            <BuildOrder>186</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\bitmap.cpp">
+            <BuildOrder>1</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\bitmapga.cpp">
+            <BuildOrder>2</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\bitset.cpp">
+            <BuildOrder>3</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\brush.cpp">
+            <BuildOrder>133</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\btntextg.cpp">
+            <BuildOrder>4</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\button.cpp">
+            <BuildOrder>134</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\buttonga.cpp">
+            <BuildOrder>5</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\castable.cpp">
+            <BuildOrder>6</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\celarray.cpp">
+            <BuildOrder>7</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\checkbox.cpp">
+            <BuildOrder>135</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\checklst.cpp">
+            <BuildOrder>8</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\checks.cpp">
+            <BuildOrder>9</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\chooseco.cpp">
+            <BuildOrder>10</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\choosefo.cpp">
+            <BuildOrder>11</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\clipboar.cpp">
+            <BuildOrder>12</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\clipview.cpp">
+            <BuildOrder>13</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\cmdline.cpp">
+            <BuildOrder>14</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\codepages.cpp">
+            <BuildOrder>15</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\colmnhdr.cpp">
+            <BuildOrder>15</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\color.cpp">
+            <BuildOrder>16</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\combobex.cpp">
+            <BuildOrder>187</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\combobox.cpp">
+            <BuildOrder>136</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\commctrl.cpp">
+            <BuildOrder>208</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\commdial.cpp">
+            <BuildOrder>17</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\commview.cpp">
+            <BuildOrder>188</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\configfl.cpp">
+            <BuildOrder>18</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\control.cpp">
+            <BuildOrder>137</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\controlb.cpp">
+            <BuildOrder>19</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\controlg.cpp">
+            <BuildOrder>20</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\coolbar.cpp">
+            <BuildOrder>21</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\createdc.cpp">
+            <BuildOrder>22</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\cursor.cpp">
+            <BuildOrder>23</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\date.cpp">
+            <BuildOrder>24</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\dateio.cpp">
+            <BuildOrder>25</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\datep.cpp">
+            <BuildOrder>26</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\datetime.cpp">
+            <BuildOrder>189</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\dc.cpp">
+            <BuildOrder>27</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\decframe.cpp">
+            <BuildOrder>138</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\decmdifr.cpp">
+            <BuildOrder>139</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\diaginit.cpp">
+            <BuildOrder>28</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\dialog.cpp">
+            <BuildOrder>140</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\dib.cpp">
+            <BuildOrder>141</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\dibdc.cpp">
+            <BuildOrder>29</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\dibitmap.cpp">
+            <BuildOrder>142</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\docking.cpp">
+            <BuildOrder>143</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\docmanag.cpp">
+            <BuildOrder>144</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\doctpl.cpp">
+            <BuildOrder>145</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\document.cpp">
+            <BuildOrder>146</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\draglist.cpp">
+            <BuildOrder>190</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\drawitem.cpp">
+            <BuildOrder>191</BuildOrder>
+        </CppCompile>
+        <None Include="..\dumpstack.cpp">
+            <Exclude>True</Exclude>
+            <BuildOrder>31</BuildOrder>
+        </None>
+        <CppCompile Include="..\edit.cpp">
+            <BuildOrder>147</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\editfile.cpp">
+            <BuildOrder>148</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\editsear.cpp">
+            <BuildOrder>149</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\editview.cpp">
+            <BuildOrder>150</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\eventhan.cpp">
+            <BuildOrder>32</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\exbase.cpp">
+            <BuildOrder>33</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\except.cpp">
+            <BuildOrder>34</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\file.cpp">
+            <BuildOrder>151</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\filedoc.cpp">
+            <BuildOrder>152</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\filename.cpp">
+            <BuildOrder>153</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\filtval.cpp">
+            <BuildOrder>154</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\findrepl.cpp">
+            <BuildOrder>155</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\flatctrl.cpp">
+            <BuildOrder>35</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\floatfra.cpp">
+            <BuildOrder>156</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\font.cpp">
+            <BuildOrder>36</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\framewin.cpp">
+            <BuildOrder>157</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\fscroll.cpp">
+            <BuildOrder>204</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\functor.cpp">
+            <BuildOrder>37</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\gadget.cpp">
+            <BuildOrder>38</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\gadgetli.cpp">
+            <BuildOrder>39</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\gadgetwi.cpp">
+            <BuildOrder>40</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\gauge.cpp">
+            <BuildOrder>41</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\gdibase.cpp">
+            <BuildOrder>42</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\gdiobjec.cpp">
+            <BuildOrder>43</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\geometrp.cpp">
+            <BuildOrder>44</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\geometrs.cpp">
+            <BuildOrder>45</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\geometry.cpp">
+            <BuildOrder>46</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\global.cpp">
+            <BuildOrder>205</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\glyphbtn.cpp">
+            <BuildOrder>158</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\groupbox.cpp">
+            <BuildOrder>159</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\hlpmanag.cpp">
+            <BuildOrder>192</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\hotkey.cpp">
+            <BuildOrder>47</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\hslider.cpp">
+            <BuildOrder>160</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\icon.cpp">
+            <BuildOrder>48</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\imagelst.cpp">
+            <BuildOrder>49</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\inputdia.cpp">
+            <BuildOrder>161</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\ipaddres.cpp">
+            <BuildOrder>193</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\layoutwi.cpp">
+            <BuildOrder>50</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\listbox.cpp">
+            <BuildOrder>162</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\listboxview.cpp">
+            <BuildOrder>163</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\listviewctrl.cpp">
+            <BuildOrder>194</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\locale.cpp">
+            <BuildOrder>55</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\localeco.cpp">
+            <BuildOrder>56</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\localeid.cpp">
+            <BuildOrder>57</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\lookval.cpp">
+            <BuildOrder>164</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\mailer.cpp">
+            <BuildOrder>58</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\main.cpp">
+            <BuildOrder>206</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\mci.cpp">
+            <BuildOrder>59</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\mciwav.cpp">
+            <BuildOrder>60</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\mdichild.cpp">
+            <BuildOrder>165</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\mdiclien.cpp">
+            <BuildOrder>166</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\mdiframe.cpp">
+            <BuildOrder>167</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\memcbox.cpp">
+            <BuildOrder>168</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\memory.cpp">
+            <BuildOrder>61</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\memorydc.cpp">
+            <BuildOrder>62</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\menu.cpp">
+            <BuildOrder>63</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\menudesc.cpp">
+            <BuildOrder>169</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\menugadg.cpp">
+            <BuildOrder>64</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\messageb.cpp">
+            <BuildOrder>65</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\metafile.cpp">
+            <BuildOrder>66</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\metafldc.cpp">
+            <BuildOrder>67</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\modegad.cpp">
+            <BuildOrder>68</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\module.cpp">
+            <BuildOrder>131</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\modversi.cpp">
+            <BuildOrder>69</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\monthcal.cpp">
+            <BuildOrder>195</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\msgthred.cpp">
+            <BuildOrder>70</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\notetab.cpp">
+            <BuildOrder>71</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\objstrm.cpp">
+            <BuildOrder>72</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\opensave.cpp">
+            <BuildOrder>170</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\owl.cpp">
+            <BuildOrder>73</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\pager.cpp">
+            <BuildOrder>196</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\paintdc.cpp">
+            <BuildOrder>74</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\palette.cpp">
+            <BuildOrder>75</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\panespli.cpp">
+            <BuildOrder>76</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\pen.cpp">
+            <BuildOrder>77</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\picker.cpp">
+            <BuildOrder>171</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\picklist.cpp">
+            <BuildOrder>78</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\pictval.cpp">
+            <BuildOrder>172</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\pictwind.cpp">
+            <BuildOrder>79</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\popupgad.cpp">
+            <BuildOrder>80</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\preview.cpp">
+            <BuildOrder>81</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\prevwin.cpp">
+            <BuildOrder>82</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\printdc.cpp">
+            <BuildOrder>83</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\printdia.cpp">
+            <BuildOrder>173</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\printer.cpp">
+            <BuildOrder>174</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\printout.cpp">
+            <BuildOrder>175</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\profile.cpp">
+            <BuildOrder>84</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\progressbar.cpp">
+            <BuildOrder>85</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\propsht.cpp">
+            <BuildOrder>86</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\psview.cpp">
+            <BuildOrder>87</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\radiobut.cpp">
+            <BuildOrder>176</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\rangeval.cpp">
+            <BuildOrder>177</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\rcntfile.cpp">
+            <BuildOrder>88</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\regexp.cpp">
+            <BuildOrder>89</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\regheap.cpp">
+            <BuildOrder>90</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\region.cpp">
+            <BuildOrder>91</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\registry.cpp">
+            <BuildOrder>51</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\reglink.cpp">
+            <BuildOrder>92</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\resource.cpp">
+            <BuildOrder>93</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\richedit.cpp">
+            <BuildOrder>209</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\richedpr.cpp">
+            <BuildOrder>197</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\richedv.cpp">
+            <BuildOrder>198</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\rolldial.cpp">
+            <BuildOrder>94</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\scrollba.cpp">
+            <BuildOrder>178</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\scroller.cpp">
+            <BuildOrder>179</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\serialze.cpp">
+            <BuildOrder>95</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\shellitm.cpp">
+            <BuildOrder>199</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\shelwapi.cpp">
+            <BuildOrder>200</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\slider.cpp">
+            <BuildOrder>180</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\splashwi.cpp">
+            <BuildOrder>96</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\static.cpp">
+            <BuildOrder>181</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\statusba.cpp">
+            <BuildOrder>97</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\swindow.cpp">
+            <BuildOrder>98</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\system.cpp">
+            <BuildOrder>52</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\tabbed.cpp">
+            <BuildOrder>99</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\tabctrl.cpp">
+            <BuildOrder>100</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\textgadg.cpp">
+            <BuildOrder>101</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\theme.cpp">
+            <BuildOrder>102</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\thread.cpp">
+            <BuildOrder>201</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\time.cpp">
+            <BuildOrder>103</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\timegadg.cpp">
+            <BuildOrder>104</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\timeio.cpp">
+            <BuildOrder>105</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\timep.cpp">
+            <BuildOrder>106</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\tinycapt.cpp">
+            <BuildOrder>182</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\toolbox.cpp">
+            <BuildOrder>107</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\tooltip.cpp">
+            <BuildOrder>108</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\tracewnd.cpp">
+            <BuildOrder>109</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\transfer.cpp">
+            <BuildOrder>110</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\transferbuffer.cpp">
+            <BuildOrder>111</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\trayicon.cpp">
+            <BuildOrder>53</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\treeviewctrl.cpp">
+            <BuildOrder>202</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\uiborder.cpp">
+            <BuildOrder>112</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\uiface.cpp">
+            <BuildOrder>113</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\uihandle.cpp">
+            <BuildOrder>114</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\uimetric.cpp">
+            <BuildOrder>115</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\uipart.cpp">
+            <BuildOrder>116</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\updown.cpp">
+            <BuildOrder>117</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\ustring.cpp">
+            <BuildOrder>119</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\validate.cpp">
+            <BuildOrder>183</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\version.cpp">
+            <BuildOrder>120</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\view.cpp">
+            <BuildOrder>184</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\vslider.cpp">
+            <BuildOrder>185</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\window.cpp">
+            <BuildOrder>121</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\windowdc.cpp">
+            <BuildOrder>122</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\winmain.cpp">
+            <BuildOrder>207</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\winsock.cpp">
+            <BuildOrder>54</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wskaddr.cpp">
+            <BuildOrder>123</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wskerr.cpp">
+            <BuildOrder>124</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wskhostm.cpp">
+            <BuildOrder>125</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wskservm.cpp">
+            <BuildOrder>126</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wsksock.cpp">
+            <BuildOrder>127</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wsksockd.cpp">
+            <BuildOrder>128</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wsksockm.cpp">
+            <BuildOrder>129</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\wsyscls.cpp">
+            <BuildOrder>130</BuildOrder>
+        </CppCompile>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>CPlusPlusBuilder.Personality.12</Borland.Personality>
+        <Borland.ProjectType>CppStaticLibrary</Borland.ProjectType>
+        <BorlandProject>
+            <CPlusPlusBuilder.Personality>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+                    <VersionInfo Name="MajorVer">1</VersionInfo>
+                    <VersionInfo Name="MinorVer">0</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">0</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1026</VersionInfo>
+                    <VersionInfo Name="CodePage">1251</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName"/>
+                    <VersionInfoKeys Name="FileDescription"/>
+                    <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright"/>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename"/>
+                    <VersionInfoKeys Name="ProductName"/>
+                    <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                    <VersionInfoKeys Name="CFBundleName"/>
+                    <VersionInfoKeys Name="CFBundleDisplayName"/>
+                    <VersionInfoKeys Name="CFBundleIdentifier"/>
+                    <VersionInfoKeys Name="CFBundleVersion"/>
+                    <VersionInfoKeys Name="CFBundlePackageType"/>
+                    <VersionInfoKeys Name="CFBundleSignature"/>
+                    <VersionInfoKeys Name="CFBundleAllowMixedLocalizations"/>
+                    <VersionInfoKeys Name="CFBundleExecutable"/>
+                </VersionInfoKeys>
+                <ProjectProperties>
+                    <ProjectProperties Name="AutoShowDeps">False</ProjectProperties>
+                    <ProjectProperties Name="ManagePaths">True</ProjectProperties>
+                    <ProjectProperties Name="VerifyPackages">True</ProjectProperties>
+                    <ProjectProperties Name="IndexFiles">False</ProjectProperties>
+                </ProjectProperties>
+            </CPlusPlusBuilder.Personality>
+            <Deployment/>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Cpp.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Cpp.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+    <PropertyGroup Condition="'$(OWLNextSetup)'=='true'">
+        <PreBuildEvent>..\..\update_version_header.bat ..\..\.. ..\version.h ..\..\..\include\owl\version.h</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win32'">
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy $(OUTPUTPATH) ..\..\..\lib\owl-$(OWLNextVersion)-c$(OWLNextCompilerVersion)-x86-$(OWLNextCompatibility)dt$(OWLNextUnicode).lib</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy $(OUTPUTPATH) ..\..\..\lib\owl-$(OWLNextVersion)-c$(OWLNextCompilerVersion)-x64-$(OWLNextCompatibility)dt$(OWLNextUnicode).lib</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy $(OUTPUTPATH) ..\..\..\lib\owl-$(OWLNextVersion)-c$(OWLNextCompilerVersion)-x86-$(OWLNextCompatibility)t$(OWLNextUnicode).lib</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy $(OUTPUTPATH) ..\..\..\lib\owl-$(OWLNextVersion)-c$(OWLNextCompilerVersion)-x64-$(OWLNextCompatibility)t$(OWLNextUnicode).lib</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+</Project>

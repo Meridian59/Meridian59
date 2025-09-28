@@ -5,9 +5,9 @@ TOPDIR=..
 
 SOURCEDIR = $(ROOMEDITDIR)\source
 RESDIR = $(ROOMEDITDIR)\res
-OWLSOURCEDIR = $(ROOMEDITDIR)\owl-6.43\source\owlcore
-OWLINCLUDEDIR = $(ROOMEDITDIR)\owl-6.43\include
-OWLOUTDIR = $(ROOMEDITDIR)\owl-6.43\$(OUTDIR)
+OWLSOURCEDIR = $(ROOMEDITDIR)\owl-7.0.19\source\owlcore
+OWLINCLUDEDIR = $(ROOMEDITDIR)\owl-7.0.19\include
+OWLOUTDIR = $(ROOMEDITDIR)\owl-7.0.19\$(OUTDIR)
 OWLLIBNAME = owl.lib
 
 # /GR: Needs RTTI
@@ -75,7 +75,7 @@ OBJS = \
 LIBS = \
 	$(OWLOUTDIR)\$(OWLLIBNAME) \
 	zlib.lib \
-	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
+	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib comdlg32.lib
 
 OWLOBJS = \
 	$(OWLOUTDIR)\animctrl.obj \
@@ -273,7 +273,6 @@ OWLOBJS = \
 	$(OWLOUTDIR)\uimetric.obj \
 	$(OWLOUTDIR)\uipart.obj \
 	$(OWLOUTDIR)\updown.obj \
-	$(OWLOUTDIR)\urllink.obj \
 	$(OWLOUTDIR)\ustring.obj \
 	$(OWLOUTDIR)\validate.obj \
 	$(OWLOUTDIR)\version.obj \

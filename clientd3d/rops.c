@@ -174,7 +174,7 @@ void BlurDib(BYTE* pabyBits, int width, int height, int amount)
 	//PERFORMANCE
 {
 	int i, j;
-	register BYTE* pbyPixel;
+	BYTE* pbyPixel;
 	BYTE* pbyEnd;
 	BYTE byNew;
 
@@ -212,7 +212,7 @@ void WaverDib(BYTE* pabyBits, int width, int height, int offset)
 	//PERFORMANCE
 {
 	int i, j;
-	register BYTE* pbyPixel;
+	BYTE* pbyPixel;
 
 	if (!pabyBits)
 		return;

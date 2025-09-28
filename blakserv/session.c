@@ -27,7 +27,7 @@ int num_sessions;
 
 int transmitted_bytes; /* keep a tab on bandwidth use */
 
-CRITICAL_SECTION csSessions; /* need to add/remove or search through list of sessions */
+Mutex mutex_sessions; /* need to add/remove or search through list of sessions */
 
 /* local function prototypes */
 session_node *AllocateSession(void);
@@ -78,7 +78,7 @@ void InitSession()
 		FatalError("sizeof(resync_data) must be <= SESSION_STATE_BYTES");
 
 
-	InitializeCriticalSection(&csSessions);
+	mutex_sessions = MutexCreate();
 }
 
 int GetEpoch()
@@ -105,12 +105,12 @@ void ResetTransmittedBytes()
 
 void EnterSessionLock(void)
 {
-	EnterCriticalSection(&csSessions);
+	MutexAcquire(mutex_sessions);
 }
 
 void LeaveSessionLock(void)
 {
-	LeaveCriticalSection(&csSessions);
+	MutexRelease(mutex_sessions);
 }
 
 

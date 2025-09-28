@@ -78,8 +78,7 @@ OBJS =  \
 	$(OUTDIR)/stringinthash.obj \
 	$(OUTDIR)/intstringhash.obj \
 	$(OUTDIR)/sprocket.obj \
-	$(OUTDIR)/critical_section.obj \
-	$(OUTDIR)/mutex_linux.obj \
+	$(OUTDIR)/mutex_impl.obj \
 	$(OUTDIR)/osd_linux.obj \
 
 

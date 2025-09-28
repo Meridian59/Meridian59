@@ -21,7 +21,6 @@
 #include <crtdbg.h>
 #include <io.h>
 #include <process.h>
-#include "mutex_windows.h"
 
 typedef int socklen_t;
 

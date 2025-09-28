@@ -215,7 +215,7 @@ enum
 
 config_node configs[NUM_CONFIG_VALUES];
 
-CRITICAL_SECTION csDynamic_config;
+Mutex csDynamic_config;
 
 
 /* local function prototypes */
@@ -235,7 +235,7 @@ void InitConfig(void)
       configs[i].config_str_value = NULL;
    }
 
-   InitializeCriticalSection(&csDynamic_config);
+   csDynamic_config = MutexCreate();
 }
 
 void ResetConfig(void)
@@ -347,12 +347,12 @@ config_node * GetConfigByID(int config_id)
 
 void LockDynamicConfig(void)
 {
-   EnterCriticalSection(&csDynamic_config);
+   MutexAcquire(csDynamic_config);
 }
 
 void UnlockDynamicConfig(void)
 {
-   LeaveCriticalSection(&csDynamic_config);
+   MutexRelease(csDynamic_config);
 }
 
 void ForEachConfigNode(void (*callback_func)(config_node *c,const char *config_name,const char *default_str))

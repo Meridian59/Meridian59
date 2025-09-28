@@ -142,6 +142,7 @@ typedef std::vector<std::string> StringVector;
 #include <cinttypes>
 
 #include "btime.h"
+#include "mutex_impl.h"
 
 #include "rscload.h"
 #include "roomtype.h"

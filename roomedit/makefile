@@ -17,6 +17,12 @@ OWLLIBNAME = owl.lib
 CFLAGS = $(CFLAGS:-GR-=-GR) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)\include -I$(OWLINCLUDEDIR) -I$(RESDIR) \
 	/wd4244 /wd4018
 
+# We specify NODEFAULTLIB because OWL has a #pragma(comment, lib) that auto-includes a magic library name
+# that we don't generate.  This flag disables that auto-include, but the downside is that we have to
+# a zillion required libs manually in $(LIBS).
+# See https://sourceforge.net/p/owlnext/discussion/97175/thread/2ebbc20f4e/
+LINKFLAGS = $(LINKFLAGS) /NODEFAULTLIB
+
 #
 # Dependency List
 #
@@ -75,7 +81,9 @@ OBJS = \
 LIBS = \
 	$(OWLOUTDIR)\$(OWLLIBNAME) \
 	zlib.lib \
-	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib comdlg32.lib
+	kernel32.lib user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib comctl32.lib comdlg32.lib gdiplus.lib \
+	uuid.lib libcmt.lib libcpmt.lib libucrt.lib libvcruntime.lib \
+	oldnames.lib \
 
 OWLOBJS = \
 	$(OWLOUTDIR)\animctrl.obj \

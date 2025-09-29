@@ -4704,7 +4704,10 @@ messages:
          }
       }
       
-      Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      if poOwner <> $ 
+      {
+         Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      }
 
       % Let our shield know we killed something.
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
@@ -6383,7 +6386,7 @@ messages:
       }
       
       % No karma change in arenas.
-      if Send(oRoom,@IsArena)
+      if oRoom <> $ AND Send(oRoom,@IsArena)
       {
          return 0;
       }

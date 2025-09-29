@@ -11,7 +11,7 @@ OBJS = \
 all: makedirs $(BLAKLIBDIR)\fmtlib.lib
 
 $(BLAKLIBDIR)\fmtlib.lib: $(OBJS)
-    $(LIBPRG) $** $(LIBS) -out:$@
+    $(LIBPRG) $** -out:$@
 
 # Compile rules for source files
 $(OUTDIR)\format.obj: src\format.cc

@@ -117,7 +117,6 @@
 #  define FMT_NOINLINE
 #endif
 
-// GCC 4.9 doesn't support qualified names in specializations.
 namespace std {
 template <typename T> struct iterator_traits<fmt::basic_appender<T>> {
   using iterator_category = output_iterator_tag;
@@ -151,6 +150,20 @@ FMT_END_NAMESPACE
       ::fmt::detail::assert_fail(__FILE__, __LINE__, (x).what())
 #  endif  // FMT_USE_EXCEPTIONS
 #endif    // FMT_THROW
+
+#ifdef FMT_NO_UNIQUE_ADDRESS
+// Use the provided definition.
+#elif FMT_CPLUSPLUS < 202002L
+// Not supported.
+#elif FMT_HAS_CPP_ATTRIBUTE(no_unique_address)
+#  define FMT_NO_UNIQUE_ADDRESS [[no_unique_address]]
+// VS2019 v16.10 and later except clang-cl (https://reviews.llvm.org/D110485).
+#elif FMT_MSC_VERSION >= 1929 && !FMT_CLANG_VERSION
+#  define FMT_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
+#endif
+#ifndef FMT_NO_UNIQUE_ADDRESS
+#  define FMT_NO_UNIQUE_ADDRESS
+#endif
 
 // Defining FMT_REDUCE_INT_INSTANTIATIONS to 1, will reduce the number of
 // integer formatter template instantiations to just one by only using the
@@ -228,9 +241,7 @@ FMT_CONSTEXPR inline void abort_fuzzing_if(bool condition) {
 #if defined(FMT_USE_STRING_VIEW)
 template <typename Char> using std_string_view = std::basic_string_view<Char>;
 #else
-template <typename Char> struct std_string_view {
-  operator basic_string_view<Char>() const;
-};
+template <typename T> struct std_string_view {};
 #endif
 
 template <typename Char, Char... C> struct string_literal {
@@ -706,7 +717,7 @@ using is_integer =
 
 #if defined(FMT_USE_FLOAT128)
 // Use the provided definition.
-#elif FMT_CLANG_VERSION >= 309 && FMT_HAS_INCLUDE(<quadmath.h>)
+#elif FMT_CLANG_VERSION && FMT_HAS_INCLUDE(<quadmath.h>)
 #  define FMT_USE_FLOAT128 1
 #elif FMT_GCC_VERSION && defined(_GLIBCXX_USE_FLOAT128) && \
     !defined(__STRICT_ANSI__)
@@ -722,10 +733,11 @@ struct float128 {};
 
 template <typename T> using is_float128 = std::is_same<T, float128>;
 
-template <typename T> struct is_floating_point : std::is_floating_point<T> {};
-template <> struct is_floating_point<float128> : std::true_type {};
+template <typename T>
+using is_floating_point =
+    bool_constant<std::is_floating_point<T>::value || is_float128<T>::value>;
 
-template <typename T, bool = is_floating_point<T>::value>
+template <typename T, bool = std::is_floating_point<T>::value>
 struct is_fast_float : bool_constant<std::numeric_limits<T>::is_iec559 &&
                                      sizeof(T) <= sizeof(double)> {};
 template <typename T> struct is_fast_float<T, false> : std::false_type {};
@@ -1205,7 +1217,7 @@ FMT_CONSTEXPR FMT_INLINE auto format_decimal(Char* out, UInt value,
 }
 
 template <typename Char, typename UInt, typename OutputIt,
-          FMT_ENABLE_IF(!std::is_pointer<remove_cvref_t<OutputIt>>::value)>
+          FMT_ENABLE_IF(is_back_insert_iterator<OutputIt>::value)>
 FMT_CONSTEXPR auto format_decimal(OutputIt out, UInt value, int num_digits)
     -> OutputIt {
   if (auto ptr = to_pointer<Char>(out, to_unsigned(num_digits))) {
@@ -1613,7 +1625,7 @@ constexpr auto convert_float(T value) -> convert_float_result<T> {
 }
 
 template <typename Char, typename OutputIt>
-FMT_CONSTEXPR FMT_NOINLINE auto fill(OutputIt it, size_t n,
+FMT_NOINLINE FMT_CONSTEXPR auto fill(OutputIt it, size_t n,
                                      const basic_specs& specs) -> OutputIt {
   auto fill_size = specs.fill_size();
   if (fill_size == 1) return detail::fill_n(it, n, specs.fill_unit<Char>());
@@ -1841,9 +1853,7 @@ template <typename Char> class digit_grouping {
   }
 
  public:
-  template <typename Locale,
-            FMT_ENABLE_IF(std::is_same<Locale, locale_ref>::value)>
-  explicit digit_grouping(Locale loc, bool localized = true) {
+  explicit digit_grouping(locale_ref loc, bool localized = true) {
     if (!localized) return;
     auto sep = thousands_sep<Char>(loc);
     grouping_ = sep.grouping;
@@ -2332,7 +2342,7 @@ template <typename Char, typename OutputIt, typename DecimalFP,
           typename Grouping = digit_grouping<Char>>
 FMT_CONSTEXPR20 auto do_write_float(OutputIt out, const DecimalFP& f,
                                     const format_specs& specs, sign s,
-                                    int exp_upper, locale_ref loc) -> OutputIt {
+                                    locale_ref loc) -> OutputIt {
   auto significand = f.significand;
   int significand_size = get_significand_size(f);
   const Char zero = static_cast<Char>('0');
@@ -2348,7 +2358,7 @@ FMT_CONSTEXPR20 auto do_write_float(OutputIt out, const DecimalFP& f,
     if (specs.type() == presentation_type::fixed) return false;
     // Use the fixed notation if the exponent is in [exp_lower, exp_upper),
     // e.g. 0.0001 instead of 1e-04. Otherwise use the exponent notation.
-    const int exp_lower = -4;
+    const int exp_lower = -4, exp_upper = 16;
     return output_exp < exp_lower ||
            output_exp >= (specs.precision > 0 ? specs.precision : exp_upper);
   };
@@ -2451,13 +2461,12 @@ template <typename Char> class fallback_digit_grouping {
 template <typename Char, typename OutputIt, typename DecimalFP>
 FMT_CONSTEXPR20 auto write_float(OutputIt out, const DecimalFP& f,
                                  const format_specs& specs, sign s,
-                                 int exp_upper, locale_ref loc) -> OutputIt {
+                                 locale_ref loc) -> OutputIt {
   if (is_constant_evaluated()) {
     return do_write_float<Char, OutputIt, DecimalFP,
-                          fallback_digit_grouping<Char>>(out, f, specs, s,
-                                                         exp_upper, loc);
+                          fallback_digit_grouping<Char>>(out, f, specs, s, loc);
   } else {
-    return do_write_float<Char>(out, f, specs, s, exp_upper, loc);
+    return do_write_float<Char>(out, f, specs, s, loc);
   }
 }
 
@@ -2472,8 +2481,8 @@ template <typename T>
 struct has_isfinite<T, enable_if_t<sizeof(std::isfinite(T())) != 0>>
     : std::true_type {};
 
-template <typename T,
-          FMT_ENABLE_IF(is_floating_point<T>::value&& has_isfinite<T>::value)>
+template <typename T, FMT_ENABLE_IF(std::is_floating_point<T>::value&&
+                                        has_isfinite<T>::value)>
 FMT_CONSTEXPR20 auto isfinite(T value) -> bool {
   constexpr T inf = T(std::numeric_limits<double>::infinity());
   if (is_constant_evaluated())
@@ -3289,14 +3298,6 @@ FMT_CONSTEXPR20 auto format_float(Float value, int precision,
   return exp;
 }
 
-// Numbers with exponents greater or equal to the returned value will use
-// the exponential notation.
-template <typename T> constexpr auto exp_upper() -> int {
-  return std::numeric_limits<T>::digits10 != 0
-             ? min_of(16, std::numeric_limits<T>::digits10 + 1)
-             : 16;
-}
-
 template <typename Char, typename OutputIt, typename T>
 FMT_CONSTEXPR20 auto write_float(OutputIt out, T value, format_specs specs,
                                  locale_ref loc) -> OutputIt {
@@ -3312,7 +3313,6 @@ FMT_CONSTEXPR20 auto write_float(OutputIt out, T value, format_specs specs,
     if (specs.width != 0) --specs.width;
   }
 
-  constexpr int exp_upper = detail::exp_upper<T>();
   int precision = specs.precision;
   if (precision < 0) {
     if (specs.type() != presentation_type::none) {
@@ -3321,7 +3321,7 @@ FMT_CONSTEXPR20 auto write_float(OutputIt out, T value, format_specs specs,
       // Use Dragonbox for the shortest format.
       using floaty = conditional_t<sizeof(T) >= sizeof(double), double, float>;
       auto dec = dragonbox::to_decimal(static_cast<floaty>(value));
-      return write_float<Char>(out, dec, specs, s, exp_upper, loc);
+      return write_float<Char>(out, dec, specs, s, loc);
     }
   }
 
@@ -3349,7 +3349,7 @@ FMT_CONSTEXPR20 auto write_float(OutputIt out, T value, format_specs specs,
 
   specs.precision = precision;
   auto f = big_decimal_fp{buffer.data(), static_cast<int>(buffer.size()), exp};
-  return write_float<Char>(out, f, specs, s, exp_upper, loc);
+  return write_float<Char>(out, f, specs, s, loc);
 }
 
 template <typename Char, typename OutputIt, typename T,
@@ -3376,7 +3376,7 @@ FMT_CONSTEXPR20 auto write(OutputIt out, T value) -> OutputIt {
     return write_nonfinite<Char>(out, std::isnan(value), specs, s);
 
   auto dec = dragonbox::to_decimal(static_cast<floaty>(value));
-  return write_float<Char>(out, dec, specs, s, exp_upper<T>(), {});
+  return write_float<Char>(out, dec, specs, s, {});
 }
 
 template <typename Char, typename OutputIt, typename T,
@@ -3652,12 +3652,6 @@ FMT_CONSTEXPR auto native_formatter<T, Char, TYPE>::format(
                       specs_.precision_ref, ctx);
   return write<Char>(ctx.out(), val, specs, ctx.locale());
 }
-
-// DEPRECATED! https://github.com/fmtlib/fmt/issues/4292.
-template <typename T, typename Enable = void>
-struct is_locale : std::false_type {};
-template <typename T>
-struct is_locale<T, void_t<decltype(T::classic())>> : std::true_type {};
 
 // DEPRECATED!
 template <typename Char = char> struct vformat_args {
@@ -3980,7 +3974,8 @@ template <typename T, typename Char = char> struct nested_formatter {
     write(basic_appender<Char>(buf));
     auto specs = format_specs();
     specs.width = width_;
-    specs.copy_fill_from(specs_);
+    specs.set_fill(
+        basic_string_view<Char>(specs_.fill<Char>(), specs_.fill_size()));
     specs.set_align(specs_.align());
     return detail::write<Char>(
         ctx.out(), basic_string_view<Char>(buf.data(), buf.size()), specs);
@@ -4140,46 +4135,41 @@ FMT_API void format_system_error(detail::buffer<char>& out, int error_code,
 // Can be used to report errors from destructors.
 FMT_API void report_system_error(int error_code, const char* message) noexcept;
 
-template <typename Locale, FMT_ENABLE_IF(detail::is_locale<Locale>::value)>
-inline auto vformat(const Locale& loc, string_view fmt, format_args args)
+inline auto vformat(detail::locale_ref loc, string_view fmt, format_args args)
     -> std::string {
   auto buf = memory_buffer();
-  detail::vformat_to(buf, fmt, args, detail::locale_ref(loc));
+  detail::vformat_to(buf, fmt, args, loc);
   return {buf.data(), buf.size()};
 }
 
-template <typename Locale, typename... T,
-          FMT_ENABLE_IF(detail::is_locale<Locale>::value)>
-FMT_INLINE auto format(const Locale& loc, format_string<T...> fmt, T&&... args)
-    -> std::string {
+template <typename... T>
+FMT_INLINE auto format(detail::locale_ref loc, format_string<T...> fmt,
+                       T&&... args) -> std::string {
   return vformat(loc, fmt.str, vargs<T...>{{args...}});
 }
 
-template <typename OutputIt, typename Locale,
+template <typename OutputIt,
           FMT_ENABLE_IF(detail::is_output_iterator<OutputIt, char>::value)>
-auto vformat_to(OutputIt out, const Locale& loc, string_view fmt,
+auto vformat_to(OutputIt out, detail::locale_ref loc, string_view fmt,
                 format_args args) -> OutputIt {
   auto&& buf = detail::get_buffer<char>(out);
-  detail::vformat_to(buf, fmt, args, detail::locale_ref(loc));
+  detail::vformat_to(buf, fmt, args, loc);
   return detail::get_iterator(buf, out);
 }
 
-template <typename OutputIt, typename Locale, typename... T,
-          FMT_ENABLE_IF(detail::is_output_iterator<OutputIt, char>::value&&
-                            detail::is_locale<Locale>::value)>
-FMT_INLINE auto format_to(OutputIt out, const Locale& loc,
+template <typename OutputIt, typename... T,
+          FMT_ENABLE_IF(detail::is_output_iterator<OutputIt, char>::value)>
+FMT_INLINE auto format_to(OutputIt out, detail::locale_ref loc,
                           format_string<T...> fmt, T&&... args) -> OutputIt {
   return fmt::vformat_to(out, loc, fmt.str, vargs<T...>{{args...}});
 }
 
-template <typename Locale, typename... T,
-          FMT_ENABLE_IF(detail::is_locale<Locale>::value)>
-FMT_NODISCARD FMT_INLINE auto formatted_size(const Locale& loc,
+template <typename... T>
+FMT_NODISCARD FMT_INLINE auto formatted_size(detail::locale_ref loc,
                                              format_string<T...> fmt,
                                              T&&... args) -> size_t {
   auto buf = detail::counting_buffer<>();
-  detail::vformat_to(buf, fmt.str, vargs<T...>{{args...}},
-                     detail::locale_ref(loc));
+  detail::vformat_to(buf, fmt.str, vargs<T...>{{args...}}, loc);
   return buf.count();
 }
 

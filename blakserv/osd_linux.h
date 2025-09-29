@@ -26,7 +26,6 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/time.h>
-#include <sys/epoll.h>
 
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0
@@ -96,5 +95,9 @@ HANDLE StartAsyncNameLookup(char *peer_addr,char *buf);
 void StartAsyncSession(void *s);
 
 void FatalErrorShow(const char *filename,int line,const char *str);
+
+bool IsAcceptingSocket(int sock);
+int GetAcceptingSocketConnectionType(int sock);
+void AddAcceptingSocket(int sock, int connection_type);
 
 #endif

@@ -82,6 +82,18 @@ OBJS =  \
 	$(OUTDIR)/osd_linux.obj \
 
 
+ifdef BLAK_PLATFORM_MAC
+
+# Clang complains loudly about sprintf being deprecated
+CFLAGS += -Wno-error=deprecated-declarations
+OBJS += $(OUTDIR)/osd_kqueue.obj
+
+else
+
+OBJS += $(OUTDIR)/osd_epoll.obj
+
+endif
+
 all : makedirs $(OUTDIR)/blakserv
 
 $(OUTDIR)/rscload.obj : $(TOPDIR)/util/rscload.c

@@ -71,8 +71,9 @@ messages:
 
    CastSpell(who = $,iSpellPower=0, lTargets = $)
    {
-      % If it's only self cast, spoof self as target for following code
-      if NOT vbCanCastonOthers
+      % If it's only self cast, spoof self as target for following code.
+      % (ltargets could be non-$ if spell is cast by an item)
+      if NOT vbCanCastOnOthers AND lTargets = $
       {
          lTargets = Cons(who, lTargets);
       }

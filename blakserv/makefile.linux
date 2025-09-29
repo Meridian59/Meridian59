@@ -6,7 +6,7 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR) -I $(TOPDIR)/external/fmtlib/fmt -pthread
+CFLAGS += -I $(BLAKINCLUDEDIR) -I $(TOPDIR)/external/fmtlib -pthread
 
 SOURCEDIR = .
 

@@ -531,7 +531,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       new_password[len] = 0; /* null terminate string */
       index += 2 + len;
 
-      if (strcmp(s->account->password,password))
+      if (s->account->password == password)
       {
 	 AddByteToPacket(BP_PASSWORD_NOT_OK);
 	 SendPacket(s->session_id);

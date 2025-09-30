@@ -327,8 +327,7 @@ void SynchedAcceptLogin(session_node *s,char *name,char *password)
    a = AccountLoginByName(name); /* maps the GUEST_ACCOUNT_NAME into a real account */
 
    /* bad username, bad password, or suspended? */
-   if (a == NULL ||
-       (strcmp(a->password,password) != 0))
+   if (a == NULL || a->password != password)
    {
       s->syn->failed_tries++;
       if (s->syn->failed_tries == ConfigInt(LOGIN_MAX_ATTEMPTS))

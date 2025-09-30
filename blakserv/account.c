@@ -51,8 +51,6 @@ void ResetAccount(void)
    while (a != NULL)
    {
       temp = a->next;
-      FreeMemory(MALLOC_ID_ACCOUNT,a->name,strlen(a->name)+1);
-      FreeMemory(MALLOC_ID_ACCOUNT,a->password,strlen(a->password)+1);
       FreeMemory(MALLOC_ID_ACCOUNT,a,sizeof(account_node));
       a = temp;
    }
@@ -107,14 +105,11 @@ bool CreateAccount(char *name,char *password,int type,int *account_id)
    a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
    a->account_id = next_account_id++;
 
-   a->name = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(name)+1);
-   strcpy(a->name,name);
+   a->name = name;
  
    MDString(password,(unsigned char *) buf);
    buf[ENCRYPT_LEN] = 0;
-   a->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(buf)+1);
-   strcpy(a->password,buf);
-
+   a->password = buf;
    a->type = type;
    a->last_login_time = 0;
    a->suspend_time = 0;
@@ -145,12 +140,8 @@ int CreateAccountSecurePassword(const char *name,const char *password,int type)
    a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
    a->account_id = next_account_id++;
 
-   a->name = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(name)+1);
-   strcpy(a->name,name);
-
-   a->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(buf)+1);
-   strcpy(a->password,buf);
-
+   a->name = name;
+   a->password = buf;
    a->type = type;
    a->last_login_time = 0;
    a->suspend_time = 0;
@@ -190,12 +181,8 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
    if (account_id >= next_account_id)
       next_account_id = account_id+1;
 
-   a->name = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(name)+1);
-   strcpy(a->name,name);
-
-   a->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(buf)+1);
-   strcpy(a->password,buf);
-
+   a->name = name;
+   a->password = buf;
    a->type = type;
    a->last_login_time = 0;
    a->suspend_time = 0;
@@ -211,17 +198,16 @@ void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_lo
 {
    account_node *a;
 
-   a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
+   a = new account_node;
+   // XXX Account for memory
+   // (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
 
    a->account_id = account_id;
    if (account_id >= next_account_id)
       next_account_id = account_id + 1;
 
-   a->name = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(name)+1);
-   strcpy(a->name,name);
-   a->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(password)+1);
-   strcpy(a->password,password);
-
+   a->name = name;
+   a->password = password;
    a->type = type;
    a->last_login_time = last_login_time;
    a->suspend_time = suspend_time;
@@ -243,9 +229,7 @@ bool DeleteAccount(int account_id)
    {
       accounts = a->next;
       
-      FreeMemory(MALLOC_ID_ACCOUNT,a->name,strlen(a->name)+1);
-      FreeMemory(MALLOC_ID_ACCOUNT,a->password,strlen(a->password)+1);
-      FreeMemory(MALLOC_ID_ACCOUNT,a,sizeof(account_node));
+      delete a; // XXX FreeMemory(MALLOC_ID_ACCOUNT,a,sizeof(account_node));
       return true;
    }
    
@@ -254,13 +238,11 @@ bool DeleteAccount(int account_id)
       temp = a->next;
       if (temp != NULL && temp->account_id == account_id)
       {
-	 /* remove from list, then free memory */
-	 a->next = temp->next;
-
-	 FreeMemory(MALLOC_ID_ACCOUNT,temp->name,strlen(temp->name)+1);
-	 FreeMemory(MALLOC_ID_ACCOUNT,temp->password,strlen(temp->password)+1);
-	 FreeMemory(MALLOC_ID_ACCOUNT,temp,sizeof(account_node));
-	 return true;
+        /* remove from list, then free memory */
+        a->next = temp->next;
+        
+        delete temp; // XXX FreeMemory(MALLOC_ID_ACCOUNT,temp,sizeof(account_node));
+        return true;
       }
       a = a->next;
    }
@@ -270,27 +252,21 @@ bool DeleteAccount(int account_id)
 
 void SetAccountName(account_node *a,char *name)
 {
-   FreeMemory(MALLOC_ID_ACCOUNT,a->name,strlen(a->name)+1);
-   a->name = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(name)+1);
-   strcpy(a->name,name);
+   a->name = name;
 }
 
 void SetAccountPassword(account_node *a,char *password)
 {
    char buf[ENCRYPT_LEN+1];
 
-   FreeMemory(MALLOC_ID_ACCOUNT,a->password,strlen(a->password)+1);
    MDString(password,(unsigned char *) buf);
    buf[ENCRYPT_LEN] = 0;
-   a->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(buf)+1);
-   strcpy(a->password,buf);
+   a->password = buf;
 }
 
 void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password)
 {
-   FreeMemory(MALLOC_ID_ACCOUNT,a->password,strlen(a->password)+1);
-   a->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,strlen(password)+1);
-   strcpy(a->password,password);
+   a->password = password;
 }
 
 bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
@@ -401,9 +377,9 @@ account_node * GetAccountByName(const char *name)
    a = accounts;
    while (a != NULL)
    {
-      if (!stricmp(a->name,name))
-	 return a;
-      a = a->next;
+     if (a->name == name)
+       return a;
+     a = a->next;
    }
    return NULL;
 }
@@ -415,7 +391,7 @@ account_node * AccountLoginByName(char *name)
    a = accounts;
    while (a != NULL)
    {
-     if (!stricmp(a->name,name))
+     if (a->name == name)
      {
        /* give administrators credits every time they login */
        /*

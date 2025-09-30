@@ -70,14 +70,8 @@ bool is_about;
 #define HWND_ADMIN tab_pages[2]
 
 /* subclass admin edit window to get enter and tab keys */
-
-#ifdef STRICT
 static WNDPROC lpfnDefAdminInputProc;
 static WNDPROC lpfnDefAdminResponseProc;
-#else
-static FARPROC lpfnDefAdminInputProc;
-static FARPROC lpfnDefAdminResponseProc;
-#endif
 
 /* status window stuff--make a timer to clear it every once in a while */
 #define STATUS_CONNECTION_WIDTH 30

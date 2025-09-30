@@ -464,12 +464,12 @@ void CloseSession(int session_id)
 		}
 
 		if (!MutexClose(s->muxSend))
-			eprintf("CloseSession error (%s) closing send mutex %i in session %i\n",
-			GetLastErrorStr(),s->muxSend,s->session_id);
+			eprintf("CloseSession error (%s) closing send mutex %p in session %i\n",
+              GetLastErrorStr(), (void *) s->muxSend,s->session_id);
 
 		if (!MutexClose(s->muxReceive))
-			eprintf("CloseSession error (%s) closing receive mutex %i in session %i\n",
-			GetLastErrorStr(),s->muxReceive,s->session_id);
+			eprintf("CloseSession error (%s) closing receive mutex %p in session %i\n",
+              GetLastErrorStr(), (void *) s->muxReceive,s->session_id);
 
 		CloseConnection(s->conn);
 	}

@@ -837,7 +837,7 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case DIV :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't div 2 vars %i,%lli and %i,%lli\n",
+			bprintf("InterpretBinaryAssign can't div 2 vars %i,%li and %i,%li\n",
 				source1_data.v.tag,source1_data.v.data,
 				source2_data.v.tag,source2_data.v.data);
 			break;

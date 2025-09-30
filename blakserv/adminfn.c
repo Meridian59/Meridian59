@@ -679,7 +679,7 @@ void TryAdminCommand(int session_id,char *admin_command)
 	admin_session_id = session_id;
 
 	if (blist != NULL)
-		eprintf("TryAdminCommand entered with blist = %08x!\n",blist);
+		eprintf("TryAdminCommand entered with blist = %p!\n", (void *) blist);
 
 	blist = NULL;
 

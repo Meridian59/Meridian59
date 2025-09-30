@@ -40,7 +40,7 @@ void AppendTextFile(session_node *s,const char *filename,
 
    fprintf(appendfile,"-------------------------------------------\n");
    fprintf(appendfile,"From account %i, %s\n",s->account->account_id,s->account->name);
-   fprintf(appendfile,"%s\n\n",TimeStr(GetTime()));
+   fprintf(appendfile,"%s\n\n",TimeStr(GetTime()).c_str());
    for (i=0;i<len;i++)
       fprintf(appendfile,"%c",text[i]);
    fprintf(appendfile,"\n\n");

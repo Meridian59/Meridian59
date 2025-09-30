@@ -30,9 +30,19 @@ void OpenDefaultChannels(void);
 void CloseDefaultChannels(void);
 void FlushDefaultChannels(void);
 
-void dprintf(const char *fmt,...);
-void eprintf(const char *fmt,...);
-void bprintf(const char *fmt,...);  /* blakod errors, goes to channel e */
-void lprintf(const char *fmt,...);
+// Give warnings on these functions if arguments don't match format (gcc only)
+#if defined(__GNUC__)
+    #define PRINTF_FORMAT(string_index, first_to_check) \
+        __attribute__((format(printf, string_index, first_to_check)))
+#elif defined(_MSC_VER)
+    #define PRINTF_FORMAT(string_index, first_to_check)
+#else
+    #define PRINTF_FORMAT(string_index, first_to_check)
+#endif
+
+void dprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
+void eprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
+void bprintf(const char *fmt,...) PRINTF_FORMAT(1,2);  /* blakod errors, goes to channel e */
+void lprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
 
 #endif

@@ -61,7 +61,7 @@ typedef struct admin_table_struct
 
 void AdminSendBufferList(void);
 
-void aprintf(const char *fmt,...);
+void aprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
 void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
@@ -1085,7 +1085,7 @@ void AdminSaveConfiguration(int session_id,admin_parm_type parms[],
 
 	fprintf(configfile,"# %s\n",BlakServLongVersionString());
 	fprintf(configfile,"# Configuration file automatically generated at %s\n",
-		TimeStr(GetTime()));
+          TimeStr(GetTime()).c_str());
 	fprintf(configfile,"# -------------------------------------------\n");
 
 
@@ -1320,10 +1320,10 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 
 	kstat = GetKodStats();
 
-	aprintf("Current time is %s\n",TimeStr(now));
+	aprintf("Current time is %s\n",TimeStr(now).c_str());
 	aprintf("System started at %s (up for %s = %lli seconds)\n",
-		TimeStr(kstat->system_start_time),
-          RelativeTimeStr((int) (now - kstat->system_start_time)),
+          TimeStr(kstat->system_start_time).c_str(),
+          RelativeTimeStr((int) (now - kstat->system_start_time)).c_str(),
 		now - kstat->system_start_time);
 
 	aprintf("----\n");

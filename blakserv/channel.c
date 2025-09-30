@@ -82,7 +82,7 @@ void dprintf(const char *fmt,...)
    char s[2000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s|",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s|",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -100,7 +100,7 @@ void eprintf(const char *fmt,...)
    char s[2000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -116,7 +116,7 @@ void bprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()),BlakodDebugInfo());
+   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()).c_str(),BlakodDebugInfo());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -134,7 +134,7 @@ void lprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);

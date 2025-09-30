@@ -103,7 +103,7 @@ void SaveControlFile(INT64 save_time)
    fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"#\n");
-   fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time));
+   fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time).c_str());
    fprintf(savefile,"#\n");
    fprintf(savefile,"\n");
    fprintf(savefile,"LASTSAVE %lli\n",(long long) save_time);

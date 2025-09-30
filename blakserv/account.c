@@ -298,8 +298,8 @@ bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
       }
       else
       {
-	 lprintf("Suspension of account %i (%s) lifted\n",
-	         a->account_id, a->name);
+        lprintf("Suspension of account %i (%s) lifted\n",
+                a->account_id, a->name.c_str());
       }
       a->suspend_time = 0;
       return true;
@@ -310,7 +310,7 @@ bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
    a->suspend_time = suspend_time;
 
    lprintf("Suspended account %i (%s) until %s\n",
-           a->account_id, a->name, TimeStr(suspend_time).c_str());
+           a->account_id, a->name.c_str(), TimeStr(suspend_time).c_str());
 
    s = GetSessionByAccount(a);
    if (s != NULL)
@@ -457,7 +457,7 @@ void DeleteAccountAndAssociatedUsersByID(int account_id)
    }
 
    lprintf("Attempting delete of account %i (%s) (last login %s)\n",
-           account_id, a->name, TimeStr(a->last_login_time).c_str());
+           account_id, a->name.c_str(), TimeStr(a->last_login_time).c_str());
 
    ForEachUserByAccountID(AdminDeleteEachUserObject,account_id);
    

@@ -34,8 +34,6 @@ void FlushDefaultChannels(void);
 #if defined(__GNUC__)
     #define PRINTF_FORMAT(string_index, first_to_check) \
         __attribute__((format(printf, string_index, first_to_check)))
-#elif defined(_MSC_VER)
-    #define PRINTF_FORMAT(string_index, first_to_check)
 #else
     #define PRINTF_FORMAT(string_index, first_to_check)
 #endif

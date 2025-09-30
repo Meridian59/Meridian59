@@ -92,7 +92,7 @@ blak_int C_SendPacket(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (temp.v.tag != TAG_SESSION)
 	{
-		bprintf("C_SendPacket object %i can't send to non-session %i,%i\n",
+		bprintf("C_SendPacket object %i can't send to non-session %i,%li\n",
 			object_id,temp.v.tag,temp.v.data);
 		return NIL;
 	}
@@ -112,7 +112,7 @@ blak_int C_SendCopyPacket(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (temp.v.tag != TAG_SESSION)
 	{
-		bprintf("C_SendPacket object %i can't send to non-session %i,%i\n",
+		bprintf("C_SendPacket object %i can't send to non-session %i,%li\n",
 			object_id,temp.v.tag,temp.v.data);
 		return NIL;
 	}
@@ -208,7 +208,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				
 				if (snod == NULL)
 				{
-					bprintf("C_Debug can't find string %i\n",each_val.v.data);
+					bprintf("C_Debug can't find string %li\n",each_val.v.data);
 					return NIL;
 				}
 				int lenString = snod->len_data;
@@ -288,7 +288,7 @@ blak_int C_GetInactiveTime(int object_id,local_var_type *local_vars,
 	
 	if (session_val.v.tag != TAG_SESSION)
 	{
-		bprintf("C_GetInactiveTime can't use non-session %i,%i\n",
+		bprintf("C_GetInactiveTime can't use non-session %i,%li\n",
 			session_val.v.tag,session_val.v.data);
 		return NIL;
 	}
@@ -296,12 +296,12 @@ blak_int C_GetInactiveTime(int object_id,local_var_type *local_vars,
 	s = GetSessionByID(session_val.v.data);
 	if (s == NULL)
 	{
-		bprintf("C_GetInactiveTime can't find session %i\n",session_val.v.data);
+		bprintf("C_GetInactiveTime can't find session %li\n",session_val.v.data);
 		return NIL;
 	}
 	if (s->state != STATE_GAME)
 	{
-		bprintf("C_GetInactiveTime can't use session %i in state %i\n",
+		bprintf("C_GetInactiveTime can't use session %li in state %i\n",
 			session_val.v.data,s->state);
 		return NIL;
 	}
@@ -335,7 +335,7 @@ blak_int C_SendMessage(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (message_val.v.tag != TAG_MESSAGE)
 	{
-		bprintf("C_SendMessage OBJECT %i can't send non-message %i,%i\n",
+		bprintf("C_SendMessage OBJECT %i can't send non-message %i,%li\n",
 			object_id,message_val.v.tag,message_val.v.data);
 		return NIL;
 	}
@@ -358,7 +358,7 @@ blak_int C_SendMessage(int object_id,local_var_type *local_vars,
 	else if (object_val.v.tag != TAG_OBJECT)
 	{
 		/* assumes object_id (the current 'self') is a valid object */
-		bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+		bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%li) to non-object %i,%li\n",
 			object_id,
 			GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
 			GetNameByID(message_val.v.data), message_val.v.data,
@@ -383,7 +383,7 @@ blak_int C_PostMessage(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (message_val.v.tag != TAG_MESSAGE)
 	{
-		bprintf("C_PostMessage OBJECT %i can't send non-messsage %i,%i\n",
+		bprintf("C_PostMessage OBJECT %i can't send non-messsage %i,%li\n",
 			object_id,message_val.v.tag,message_val.v.data);
 		return NIL;
 	}
@@ -393,7 +393,7 @@ blak_int C_PostMessage(int object_id,local_var_type *local_vars,
 	if (object_val.v.tag != TAG_OBJECT)
 	{
 		/* assumes object_id (the current 'self') is a valid object */
-		bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+		bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%li) to non-object %i,%li\n",
 			object_id,
 			GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
 			GetNameByID(message_val.v.data), message_val.v.data,
@@ -416,7 +416,7 @@ blak_int C_CreateObject(int object_id,local_var_type *local_vars,
 			     normal_parm_array[0].value);
 	if (class_val.v.tag != TAG_CLASS)
 	{
-		bprintf("C_CreateObject can't create non-class %i,%i\n",
+		bprintf("C_CreateObject can't create non-class %i,%li\n",
 			class_val.v.tag,class_val.v.data);
 		return NIL;
 	}
@@ -438,7 +438,7 @@ blak_int C_IsClass(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (object_val.v.tag != TAG_OBJECT)
 	{
-		bprintf("C_IsClass can't deal with non-object %i,%i\n",
+		bprintf("C_IsClass can't deal with non-object %i,%li\n",
 			object_val.v.tag,object_val.v.data);
 		return NIL;
 	}
@@ -447,7 +447,7 @@ blak_int C_IsClass(int object_id,local_var_type *local_vars,
 			     normal_parm_array[1].value);
 	if (class_val.v.tag != TAG_CLASS)
 	{
-		bprintf("C_IsClass can't look for non-class %i,%i\n",
+		bprintf("C_IsClass can't look for non-class %i,%li\n",
 			class_val.v.tag,class_val.v.data);
 		return NIL;
 	}
@@ -455,7 +455,7 @@ blak_int C_IsClass(int object_id,local_var_type *local_vars,
 	o = GetObjectByID(object_val.v.data);
 	if (o == NULL)
 	{
-		bprintf("C_IsClass can't find object %i\n",object_val.v.data);
+		bprintf("C_IsClass can't find object %li\n",object_val.v.data);
 		return NIL;
 	}
 	
@@ -494,7 +494,7 @@ blak_int C_GetClass(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (object_val.v.tag != TAG_OBJECT)
 	{
-		bprintf("C_GetClass can't deal with non-object %i,%i\n",
+		bprintf("C_GetClass can't deal with non-object %i,%li\n",
 			object_val.v.tag,object_val.v.data);
 		return NIL;
 	}
@@ -502,7 +502,7 @@ blak_int C_GetClass(int object_id,local_var_type *local_vars,
 	o = GetObjectByID(object_val.v.data);
 	if (o == NULL)
 	{
-		bprintf("C_GetClass can't find object %i\n",object_val.v.data);
+		bprintf("C_GetClass can't find object %li\n",object_val.v.data);
 		return NIL;
 	}
 	
@@ -526,7 +526,7 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
 		snod = GetStringByID(val.v.data);
 		if (snod == NULL)
 		{
-			bprintf( "%s can't use invalid string %i,%i\n",
+			bprintf( "%s can't use invalid string %i,%li\n",
                   function_name, val.v.tag, val.v.data );
 			return false;
 		}
@@ -542,8 +542,8 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
 		r = GetResourceByID(val.v.data);
 		if( r == NULL )
 		{
-			bprintf( "%s can't use invalid resource %i as string\n",
-                  function_name, val.v.data );
+			bprintf( "%s can't use invalid resource %li as string\n",
+                  function_name, val.v.data);
 			return false;
 		}
 		*str = r->resource_val;
@@ -572,7 +572,7 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
       return false;
    
 	default :
-		bprintf( "%s can't use with non-string thing %i,%i\n",
+		bprintf( "%s can't use with non-string thing %i,%li\n",
                function_name, val.v.tag, val.v.data );
 		return false;
 	}
@@ -706,7 +706,7 @@ blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	
 	if (snod0 == NULL)
 	{
-		bprintf( "C_StringSub can't modify first argument non-string %i,%i\n",
+		bprintf( "C_StringSub can't modify first argument non-string %i,%li\n",
 			s0_val.v.tag, s0_val.v.data );
 		return NIL;
 	}
@@ -720,7 +720,7 @@ blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		snod1 = GetStringByID( s1_val.v.data);
 		if( snod1 == NULL )
 		{
-			bprintf( "C_StringSub can't sub for invalid string %i,%i\n",
+			bprintf( "C_StringSub can't sub for invalid string %i,%li\n",
 				s1_val.v.tag, s1_val.v.data );
 			return NIL;
 		}
@@ -744,7 +744,7 @@ blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		r = GetResourceByID( s1_val.v.data );
 		if( r == NULL )
 		{
-			bprintf( "C_StringSub can't sub for invalid resource %i\n", s1_val.v.data );
+			bprintf( "C_StringSub can't sub for invalid resource %li\n", s1_val.v.data);
 			return NIL;
 		}
 		s1 = r->resource_val;
@@ -777,14 +777,14 @@ blak_int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		return NIL;
 		
 	default :
-		bprintf( "C_StringSub can't sub for non-string thing %i,%i\n",
+		bprintf( "C_StringSub can't sub for non-string thing %i,%li\n",
 			s1_val.v.tag, s1_val.v.data );
 		return NIL;
 	}
 	
 	if( ( len1 < 1 ) || ( len1 > LEN_MAX_CLIENT_MSG ) )
 	{
-		bprintf( "C_StringSub can't sub for null string %i,%i\n",
+		bprintf( "C_StringSub can't sub for null string %i,%li\n",
 			s1_val.v.tag, s1_val.v.data );
 		return NIL;
 	}
@@ -914,14 +914,14 @@ blak_int C_SetResource(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (drsc_val.v.tag != TAG_RESOURCE)
 	{
-		bprintf("C_SetResource can't set non-resource %i,%i\n",
+		bprintf("C_SetResource can't set non-resource %i,%li\n",
 			drsc_val.v.tag,drsc_val.v.data);
 		return NIL;
 	}
 	
 	if (drsc_val.v.data < MIN_DYNAMIC_RSC)
 	{
-		bprintf("C_SetResource can't set non-dynamic resource %i,%i\n",
+		bprintf("C_SetResource can't set non-dynamic resource %i,%li\n",
 			drsc_val.v.tag,drsc_val.v.data);
 		return NIL;
 	}
@@ -941,7 +941,7 @@ blak_int C_SetResource(int object_id,local_var_type *local_vars,
 			r = GetResourceByID(str_val.v.data);
 			if (r == NULL)
 			{
-				bprintf("C_SetResource can't set from bad resource %i\n",
+				bprintf("C_SetResource can't set from bad resource %li\n",
 					str_val.v.data);
 				return NIL;
 			}
@@ -950,7 +950,7 @@ blak_int C_SetResource(int object_id,local_var_type *local_vars,
 			break;
 		}
 	default :
-		bprintf("C_SetResource can't set from non temp string %i,%i\n",
+		bprintf("C_SetResource can't set from non temp string %i,%li\n",
 			str_val.v.tag,str_val.v.data);
 		return NIL;
 	}
@@ -998,7 +998,7 @@ blak_int C_ParseString(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (parse_str_val.v.tag != TAG_TEMP_STRING)
 	{
-		bprintf("C_ParseString can't parse non-temp string %i,%i\n",
+		bprintf("C_ParseString can't parse non-temp string %i,%li\n",
 			parse_str_val.v.tag,parse_str_val.v.data);
 		return NIL;
 	}
@@ -1011,7 +1011,7 @@ blak_int C_ParseString(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (separator_str_val.v.tag != TAG_DEBUGSTR)
 	{
-		bprintf("C_ParseString can't use separator non-debugstr %i,%i\n",
+		bprintf("C_ParseString can't use separator non-debugstr %i,%li\n",
 			separator_str_val.v.tag,separator_str_val.v.data);
 		return NIL;
 	}
@@ -1021,7 +1021,7 @@ blak_int C_ParseString(int object_id,local_var_type *local_vars,
 		normal_parm_array[2].value);
 	if (callback_val.v.tag != TAG_MESSAGE)
 	{
-		bprintf("C_ParseString can't callback non-message %i,%i\n",
+		bprintf("C_ParseString can't callback non-message %i,%li\n",
 			callback_val.v.tag,callback_val.v.data);
 		return NIL;
 	}
@@ -1064,7 +1064,7 @@ blak_int C_SetString(int object_id,local_var_type *local_vars,
 	
 	if (s1_val.v.tag != TAG_STRING)
 	{
-		bprintf("C_SetString can't set non-string %i,%i\n",
+		bprintf("C_SetString can't set non-string %i,%li\n",
 			s1_val.v.tag,s1_val.v.data);
 		return NIL;
 	}
@@ -1072,7 +1072,7 @@ blak_int C_SetString(int object_id,local_var_type *local_vars,
 	snod = GetStringByID(s1_val.v.data);
 	if (snod == NULL)
 	{
-		bprintf("C_SetString can't set invalid string %i,%i\n",
+		bprintf("C_SetString can't set invalid string %i,%li\n",
 			s1_val.v.tag,s1_val.v.data);
 		return NIL;
 	}
@@ -1085,7 +1085,7 @@ blak_int C_SetString(int object_id,local_var_type *local_vars,
 		snod2 = GetStringByID( s2_val.v.data);
 		if( snod2 == NULL )
 		{
-			bprintf( "C_SetString can't find string %i,%i\n",
+			bprintf( "C_SetString can't find string %i,%li\n",
 				s2_val.v.tag, s2_val.v.data );
 			return NIL;
 		}
@@ -1103,7 +1103,7 @@ blak_int C_SetString(int object_id,local_var_type *local_vars,
 		r = GetResourceByID(s2_val.v.data);
 		if (r == NULL)
 		{
-			bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
+			bprintf("C_SetString can't set from invalid resource %li\n",s2_val.v.data);
 			return NIL;
 		}
 		//bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
@@ -1111,7 +1111,7 @@ blak_int C_SetString(int object_id,local_var_type *local_vars,
 		break;
 		
 	default :
-		bprintf("C_SetString can't set from non-string thing %i,%i\n",
+		bprintf("C_SetString can't set from non-string thing %i,%li\n",
 			s2_val.v.tag,s2_val.v.data);
 		return NIL;
 	}
@@ -1164,7 +1164,7 @@ blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 		snod = GetStringByID( s_val.v.data);
 		if(snod == NULL )
 		{
-			bprintf( "C_AppendTempString can't find string %i,%i\n", s_val.v.tag, s_val.v.data );
+			bprintf( "C_AppendTempString can't find string %i,%li\n", s_val.v.tag, s_val.v.data );
 			return NIL;
 		}
 		AppendTempString(snod->data,snod->len_data);
@@ -1178,7 +1178,7 @@ blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 		r = GetResourceByID(s_val.v.data);
 		if (r == NULL)
 		{
-			bprintf("C_AppendTempString can't set from invalid resource %i\n",s_val.v.data);
+			bprintf("C_AppendTempString can't set from invalid resource %li\n",s_val.v.data);
 			return NIL;
 		}
 		AppendTempString(r->resource_val,(int) strlen(r->resource_val));
@@ -1216,7 +1216,7 @@ blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 		break;
 		
 	default :
-		bprintf("C_AppendTempString can't set from non-string thing %i,%i\n",s_val.v.tag,s_val.v.data);
+		bprintf("C_AppendTempString can't set from non-string thing %i,%li\n",s_val.v.tag,s_val.v.data);
 		return NIL;
 	}
 	return NIL;
@@ -1306,7 +1306,7 @@ blak_int C_CreateTimer(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (object_val.v.tag != TAG_OBJECT)
 	{
-		bprintf("C_CreateTimer can't create a timer for non-object %i,%i\n",
+		bprintf("C_CreateTimer can't create a timer for non-object %i,%li\n",
 			object_val.v.tag,object_val.v.data);
 		return NIL;
 	}
@@ -1315,7 +1315,7 @@ blak_int C_CreateTimer(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (message_val.v.tag != TAG_MESSAGE)
 	{
-		bprintf("C_CreateTimer can't create timer w/ non-message id %i,%i\n",
+		bprintf("C_CreateTimer can't create timer w/ non-message id %i,%li\n",
 			message_val.v.tag,message_val.v.data);
 		return NIL;
 	}
@@ -1325,14 +1325,14 @@ blak_int C_CreateTimer(int object_id,local_var_type *local_vars,
 	
 	if (time_val.v.tag != TAG_INT || time_val.v.data < 0)
 	{
-		bprintf("C_CreateTimer can't create timer in negative int %i,%i milliseconds\n",
+		bprintf("C_CreateTimer can't create timer in negative int %i,%li milliseconds\n",
 			time_val.v.tag,time_val.v.data);
 		return NIL;
 	}
 	
 	if (GetMessageByID(o->class_id,message_val.v.data,NULL) == NULL)
 	{
-		bprintf("C_CreateTimer can't create timer w/ message %i not for class %i\n",
+		bprintf("C_CreateTimer can't create timer w/ message %li not for class %i\n",
 			message_val.v.data,o->class_id);
 		return NIL;
 	}
@@ -1354,7 +1354,7 @@ blak_int C_DeleteTimer(int object_id,local_var_type *local_vars,
 			     normal_parm_array[0].value);
 	if (timer_val.v.tag != TAG_TIMER)
 	{
-		bprintf("C_DeleteTimer can't delete non-timer %i,%i\n",
+		bprintf("C_DeleteTimer can't delete non-timer %i,%li\n",
 			timer_val.v.tag,timer_val.v.data);
 		return NIL;
 	}
@@ -1375,7 +1375,7 @@ blak_int C_GetTimeRemaining(int object_id,local_var_type *local_vars,
 			     normal_parm_array[0].value);
 	if (timer_val.v.tag != TAG_TIMER)
 	{
-		bprintf("C_GetTimeRemaining can't use non-timer %i,%i\n",
+		bprintf("C_GetTimeRemaining can't use non-timer %i,%li\n",
 			timer_val.v.tag,timer_val.v.data);
 		return NIL;
 	}
@@ -1383,7 +1383,7 @@ blak_int C_GetTimeRemaining(int object_id,local_var_type *local_vars,
 	t = GetTimerByID(timer_val.v.data);
 	if (t == NULL)
 	{
-		bprintf("C_GetTimeRemaining can't find timer %i,%i\n",
+		bprintf("C_GetTimeRemaining can't find timer %i,%li\n",
 			timer_val.v.tag,timer_val.v.data);
 		return NIL;
 	}
@@ -1406,7 +1406,7 @@ blak_int C_LoadRoom(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (room_val.v.tag != TAG_RESOURCE)
 	{
-		bprintf("C_CreateRoomData can't use non-resource %i,%i\n",
+		bprintf("C_CreateRoomData can't use non-resource %i,%li\n",
 			room_val.v.tag,room_val.v.data);
 		return NIL;
 	}
@@ -1425,7 +1425,7 @@ blak_int C_RoomData(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
-		bprintf("C_RoomSize can't operate on non-room %i,%i\n",
+		bprintf("C_RoomSize can't operate on non-room %i,%li\n",
 			room_val.v.tag,room_val.v.data);
 		return NIL;
 	}
@@ -1433,7 +1433,7 @@ blak_int C_RoomData(int object_id,local_var_type *local_vars,
 	room = GetRoomDataByID(room_val.v.data);
 	if (room == NULL)
 	{
-		bprintf("C_RoomSize can't find room id %i\n",room_val.v.data);
+		bprintf("C_RoomSize can't find room id %li\n",room_val.v.data);
 		return NIL;
 	}
 	
@@ -1485,35 +1485,35 @@ blak_int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
 	
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
-		bprintf("C_CanMoveInRoom can't use non room %i,%i\n",
+		bprintf("C_CanMoveInRoom can't use non room %i,%li\n",
 			room_val.v.tag,room_val.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (row_source.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoom row source can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoom row source can't use non int %i,%li\n",
 			row_source.v.tag,row_source.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (col_source.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoom col source can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoom col source can't use non int %i,%li\n",
 			col_source.v.tag,col_source.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (row_dest.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoom col dest can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoom col dest can't use non int %i,%li\n",
 			row_dest.v.tag,row_dest.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (col_dest.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoom col dest can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoom col dest can't use non int %i,%li\n",
 			col_dest.v.tag,col_dest.v.data);
 		return ret_val.int_val;
 	}
@@ -1521,7 +1521,7 @@ blak_int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
-		bprintf("C_CanMoveInRoom can't find room %i\n",room_val.v.data);
+		bprintf("C_CanMoveInRoom can't find room %li\n",room_val.v.data);
 		return ret_val.int_val;
 	}
 	
@@ -1561,35 +1561,35 @@ blak_int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	
 	if (room_val.v.tag != TAG_ROOM_DATA)
 	{
-		bprintf("C_CanMoveInRoomFine can't use non room %i,%i\n",
+		bprintf("C_CanMoveInRoomFine can't use non room %i,%li\n",
 			room_val.v.tag,room_val.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (row_source.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoomFine row source can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoomFine row source can't use non int %i,%li\n",
 			row_source.v.tag,row_source.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (col_source.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoomFine col source can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoomFine col source can't use non int %i,%li\n",
 			col_source.v.tag,col_source.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (row_dest.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoomFine col dest can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoomFine col dest can't use non int %i,%li\n",
 			row_dest.v.tag,row_dest.v.data);
 		return ret_val.int_val;
 	}
 	
 	if (col_dest.v.tag != TAG_INT)
 	{
-		bprintf("C_CanMoveInRoomFine col dest can't use non int %i,%i\n",
+		bprintf("C_CanMoveInRoomFine col dest can't use non int %i,%li\n",
 			col_dest.v.tag,col_dest.v.data);
 		return ret_val.int_val;
 	}
@@ -1597,7 +1597,7 @@ blak_int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	r = GetRoomDataByID(room_val.v.data);
 	if (r == NULL)
 	{
-		bprintf("C_CanMoveInRoomFine can't find room %i\n",room_val.v.data);
+		bprintf("C_CanMoveInRoomFine can't find room %li\n",room_val.v.data);
 		return ret_val.int_val;
 	}
 	
@@ -1635,13 +1635,13 @@ blak_int C_First(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_First object %i can't take First of a non-list %i,%i\n",
+		bprintf("C_First object %i can't take First of a non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
 	if (!IsListNodeByID(list_val.v.data))
 	{
-		bprintf("C_First object %i can't take First of an invalid list %i,%i\n",
+		bprintf("C_First object %i can't take First of an invalid list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1658,13 +1658,13 @@ blak_int C_Rest(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_Rest object %i can't take Rest of a non-list %i,%i\n",
+		bprintf("C_Rest object %i can't take Rest of a non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
 	if (!IsListNodeByID(list_val.v.data))
 	{
-		bprintf("C_Rest object %i can't take Rest of an invalid list %i,%i\n",
+		bprintf("C_Rest object %i can't take Rest of an invalid list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1689,7 +1689,7 @@ blak_int C_Length(int object_id,local_var_type *local_vars,
 	
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_Length object %i can't take Length of a non-list %i,%i\n",
+		bprintf("C_Length object %i can't take Length of a non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1708,13 +1708,13 @@ blak_int C_Nth(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_Nth object %i can't take Nth of a non-list %i,%i\n",
+		bprintf("C_Nth object %i can't take Nth of a non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
 	if (!IsListNodeByID(list_val.v.data))
 	{
-		bprintf("C_Nth object %i can't take Nth of an invalid list %i,%i\n",
+		bprintf("C_Nth object %i can't take Nth of an invalid list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1723,7 +1723,7 @@ blak_int C_Nth(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (n_val.v.tag != TAG_INT)
 	{
-		bprintf("C_Nth can't take Nth with n = non-int %i,%i\n",
+		bprintf("C_Nth can't take Nth with n = non-int %i,%li\n",
 			n_val.v.tag,n_val.v.data);
 		return NIL;
 	}
@@ -1781,7 +1781,7 @@ blak_int C_SetFirst(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_SetFirst object %i can't set elem of non-list %i,%i\n",
+		bprintf("C_SetFirst object %i can't set elem of non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1802,7 +1802,7 @@ blak_int C_SetNth(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_SetFirst object %i can't set elem of non-list %i,%i\n",
+		bprintf("C_SetFirst object %i can't set elem of non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1810,7 +1810,7 @@ blak_int C_SetNth(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (n_val.v.tag != TAG_INT)
 	{
-		bprintf("C_SetNth object %i can't take Nth with n = non-int %i,%i\n",
+		bprintf("C_SetNth object %i can't take Nth with n = non-int %i,%li\n",
 			object_id,n_val.v.tag,n_val.v.data);
 		return NIL;
 	}
@@ -1831,7 +1831,7 @@ blak_int C_DelListElem(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_DelListElem object %i can't delete elem from non-list %i,%i\n",
+		bprintf("C_DelListElem object %i can't delete elem from non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1860,7 +1860,7 @@ blak_int C_FindListElem(int object_id,local_var_type *local_vars,
 	
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_FindListElem object %i can't find elem in non-list %i,%i\n",
+		bprintf("C_FindListElem object %i can't find elem in non-list %i,%li\n",
 			object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1892,7 +1892,7 @@ blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
 	
 	if (list_val.v.tag != TAG_LIST)
 	{
-		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%i\n",
+		bprintf("C_MoveListElem object %i can't move elem in non-list %i,%li\n",
             object_id,list_val.v.tag,list_val.v.data);
 		return NIL;
 	}
@@ -1901,7 +1901,7 @@ blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
                                  normal_parm_array[1].value);
 	if (n_val.v.tag != TAG_INT)
 	{
-		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
+		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%li\n",
             object_id, n_val.v.tag, n_val.v.data);
     return NIL;
   }
@@ -1910,7 +1910,7 @@ blak_int C_MoveListElem(int object_id,local_var_type *local_vars,
                                  normal_parm_array[2].value);
 	if (m_val.v.tag != TAG_INT)
 	{
-		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%i\n",
+		bprintf("C_MoveListElem object %i can't lookup non-int index %i,%li\n",
             object_id, m_val.v.tag, m_val.v.data);
     return NIL;
   }
@@ -1953,14 +1953,14 @@ blak_int C_Random(int object_id,local_var_type *local_vars,
 		normal_parm_array[1].value);
 	if (low_bound.v.tag != TAG_INT || high_bound.v.tag != TAG_INT)
 	{
-		bprintf("C_Random got an invalid boundary %i,%i or %i,%i\n",
+		bprintf("C_Random got an invalid boundary %i,%li or %i,%li\n",
 			low_bound.v.tag,low_bound.v.data,high_bound.v.tag,
 			high_bound.v.data);
 		return NIL;
 	}
 	if (low_bound.v.data > high_bound.v.data)
 	{
-		bprintf("C_Random got low > high boundary %i and %i\n",
+		bprintf("C_Random got low > high boundary %li and %li\n",
 			low_bound.v.data,high_bound.v.data);
 		return NIL;
 	}
@@ -1990,7 +1990,7 @@ blak_int C_Abs(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_Abs can't use %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_Abs can't use %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	
@@ -2013,7 +2013,7 @@ blak_int C_Sqrt(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_Sqrt can't use %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_Sqrt can't use %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	if (int_val.v.data & (1 << 27))
@@ -2038,7 +2038,7 @@ blak_int C_Bound(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_Bound can't use %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_Bound can't use %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	
@@ -2048,7 +2048,7 @@ blak_int C_Bound(int object_id,local_var_type *local_vars,
 	{
 		if (min_val.v.tag != TAG_INT)
 		{
-			bprintf("C_Bound can't use min bound %i,%i\n",min_val.v.tag,min_val.v.data);
+			bprintf("C_Bound can't use min bound %i,%li\n",min_val.v.tag,min_val.v.data);
 			return NIL;
 		}
 		if (int_val.v.data < min_val.v.data)
@@ -2061,7 +2061,7 @@ blak_int C_Bound(int object_id,local_var_type *local_vars,
 	{
 		if (max_val.v.tag != TAG_INT)
 		{
-			bprintf("C_Bound can't use max bound %i,%i\n",max_val.v.tag,max_val.v.data);
+			bprintf("C_Bound can't use max bound %i,%li\n",max_val.v.tag,max_val.v.data);
 			return NIL;
 		}
 		if (int_val.v.data > max_val.v.data)
@@ -2095,7 +2095,7 @@ blak_int C_AddTableEntry(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_AddTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_AddTableEntry can't use table id %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	
@@ -2120,7 +2120,7 @@ blak_int C_GetTableEntry(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_GetTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_GetTableEntry can't use table id %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	
@@ -2142,7 +2142,7 @@ blak_int C_DeleteTableEntry(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_DeleteTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_DeleteTableEntry can't use table id %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	
@@ -2164,7 +2164,7 @@ blak_int C_DeleteTable(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (int_val.v.tag != TAG_INT)
 	{
-		bprintf("C_DeleteTable can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_DeleteTable can't use table id %i,%li\n",int_val.v.tag,int_val.v.data);
 		return NIL;
 	}
 	
@@ -2186,14 +2186,14 @@ blak_int C_RecycleUser(int object_id,local_var_type *local_vars,
 		normal_parm_array[0].value);
 	if (object_val.v.tag != TAG_OBJECT)
 	{
-		bprintf("C_RecycleUser can't recycle non-object %i,%i\n",object_val.v.tag,object_val.v.data);
+		bprintf("C_RecycleUser can't recycle non-object %i,%li\n",object_val.v.tag,object_val.v.data);
 		return NIL;
 	}
 	
 	o = GetObjectByID(object_val.v.data);
 	if (o == NULL)
 	{
-		bprintf("C_RecycleUser can't find object %i\n",object_val.v.data);
+		bprintf("C_RecycleUser can't find object %li\n",object_val.v.data);
 		return NIL;
 	}
 	
@@ -2201,7 +2201,7 @@ blak_int C_RecycleUser(int object_id,local_var_type *local_vars,
 	old_user = GetUserByObjectID(o->object_id);
 	if (old_user == NULL)
 	{
-		bprintf("C_RecycleUser can't find user which is object %i\n",object_val.v.data);
+		bprintf("C_RecycleUser can't find user which is object %li\n",object_val.v.data);
 		return NIL;
 	}
 	
@@ -2255,7 +2255,7 @@ blak_int C_MinigameNumberToString(int object_id,local_var_type *local_vars,
 	
 	if (s1_val.v.tag != TAG_STRING)
 	{
-		bprintf("C_MinigameNumberToString can't set non-string %i,%i\n",
+		bprintf("C_MinigameNumberToString can't set non-string %i,%li\n",
 			s1_val.v.tag,s1_val.v.data);
 		return NIL;
 	}
@@ -2263,7 +2263,7 @@ blak_int C_MinigameNumberToString(int object_id,local_var_type *local_vars,
 	snod = GetStringByID(s1_val.v.data);
 	if (snod == NULL)
 	{
-		bprintf("C_MinigameNumberToString can't set invalid string %i,%i\n",
+		bprintf("C_MinigameNumberToString can't set invalid string %i,%li\n",
 			s1_val.v.tag,s1_val.v.data);
 		return NIL;
 	}
@@ -2273,7 +2273,7 @@ blak_int C_MinigameNumberToString(int object_id,local_var_type *local_vars,
 
 	if (s2_val.v.tag != TAG_INT)
 	{
-		bprintf("C_MinigameNumberToString can't set from non-int %i,%i\n",
+		bprintf("C_MinigameNumberToString can't set from non-int %i,%li\n",
 			s2_val.v.tag,s2_val.v.data);
 		return NIL;
 	}
@@ -2313,7 +2313,7 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	
 	if (s1_val.v.tag != TAG_STRING)
 	{
-		bprintf("C_MinigameNumberToString can't set non-string %i,%i\n",
+		bprintf("C_MinigameNumberToString can't set non-string %i,%li\n",
 			s1_val.v.tag,s1_val.v.data);
 		return NIL;
 	}
@@ -2321,7 +2321,7 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	snod = GetStringByID(s1_val.v.data);
 	if (snod == NULL)
 	{
-		bprintf("C_MinigameNumberToString can't set invalid string %i,%i\n",
+		bprintf("C_MinigameNumberToString can't set invalid string %i,%li\n",
 			s1_val.v.tag,s1_val.v.data);
 		return NIL;
 	}

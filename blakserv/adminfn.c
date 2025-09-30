@@ -612,7 +612,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 
 	if (len_buf > BUFFER_SIZE)
 	{
-		eprintf("SendAdminBuffer sent only first %lu bytes of requested buffer,\n",BUFFER_SIZE);
+		eprintf("SendAdminBuffer sent only first %i bytes of requested buffer,\n",BUFFER_SIZE);
 		len_buf = BUFFER_SIZE;
 	}
 	else if (len_buf < 0 || !buf)
@@ -636,7 +636,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 		SendPacket(admin_session_id);
 		break;
 	default :
-		eprintf("SendAdminBuffer called, SESSION %lu state %lu is not admin or game\n",
+		eprintf("SendAdminBuffer called, SESSION %i state %i is not admin or game\n",
 			session->session_id,session->state);
 	}
 }
@@ -672,7 +672,7 @@ void TryAdminCommand(int session_id,char *admin_command)
 	s = GetSessionByID(session_id);
 	if (s == NULL)
 	{
-		eprintf("TryAdminCommand got invalid SESSION %lu\n",session_id);
+		eprintf("TryAdminCommand got invalid SESSION %i\n",session_id);
 		return;
 	}
 
@@ -720,7 +720,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 	s = GetSessionByID(session_id);
 	if (s == NULL)
 	{
-     eprintf("AdminTable got invalid SESSION %lu\n",session_id);
+     eprintf("AdminTable got invalid SESSION %i\n",session_id);
      return;
 	}
 	if (command == NULL || !stricmp(command,"HELP") || !stricmp(command,"?"))
@@ -803,7 +803,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			parm_str = strtok(NULL," \t\n");
 			if (parm_str == NULL)
 			{
-				aprintf("Missing parameter %lu.\n",i+1);
+				aprintf("Missing parameter %i.\n",i+1);
 				return;
 			}
 			prev_tok = parm_str;
@@ -849,13 +849,13 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			parm_str = strtok(NULL," \t\n");
 			if (parm_str == NULL)
 			{
-				aprintf("Blakod parameter %lu needs tag and value.\n",i+1);
+				aprintf("Blakod parameter %i needs tag and value.\n",i+1);
 				return;
 			}
 			num = GetTagNum(parm_str);
 			if (num == INVALID_TAG)
 			{
-				aprintf("Blakod parameter %lu has invalid tag.\n",i+1);
+				aprintf("Blakod parameter %i has invalid tag.\n",i+1);
 				return;
 			}
 			blak_val.v.tag = num;
@@ -866,7 +866,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				parm_str = strtok( NULL, "" );	// Get rest of line for "quote" type parameter
 				if (parm_str == NULL)
 				{
-					aprintf("Blakod parameter %lu needs value\n",i+1);
+					aprintf("Blakod parameter %i needs value\n",i+1);
 					return;
 				}
 
@@ -888,7 +888,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				parm_str = strtok(NULL," \t\n");
 				if (parm_str == NULL)
 				{
-					aprintf("Blakod parameter %lu needs value.\n",i+1);
+					aprintf("Blakod parameter %i needs value.\n",i+1);
 					return;
 				}
 				if (0 == stricmp("SELF", parm_str) && blak_val.v.tag == TAG_OBJECT &&
@@ -910,7 +910,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 					num = GetDataNum(blak_val.v.tag,parm_str);
 					if (num == INVALID_DATA)
 					{
-						aprintf("Blakod parameter %lu has invalid data.\n",i+1);
+						aprintf("Blakod parameter %i has invalid data.\n",i+1);
 						return;
 					}
 
@@ -921,7 +921,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 
 				if (AdminIsValidBlakParm(blak_val) == false)
 				{
-					aprintf("Blakod parameter %lu references invalid data.\n",i+1);
+					aprintf("Blakod parameter %i references invalid data.\n",i+1);
 					return;
 				}
 
@@ -1067,7 +1067,7 @@ void AdminSaveGame(int session_id,admin_parm_type parms[],
 
 	SendBlakodEndSystemEvent(SYSEVENT_SAVE);
 
-	aprintf("done.  Save time is (%lli).\n", save_time);
+	aprintf("done.  Save time is (%li).\n", save_time);
 	UnpauseTimers();
 }
 
@@ -1202,12 +1202,12 @@ void AdminWhoEachSession(session_node *s)
 			{
 				r = GetResourceByID(name_val.v.data);
 				if (r == NULL)
-					aprintf("Invalid resource id %i",name_val.v.data);
+					aprintf("Invalid resource id %li",name_val.v.data);
 				else
 					aprintf("%s",r->resource_val);
 			}
 			else
-				aprintf("Non-resource %i,%i",name_val.v.tag,name_val.v.data);
+				aprintf("Non-resource %i,%li",name_val.v.tag,name_val.v.data);
 			aprintf(" (%i)",s->game->object_id);
 		}
 	}
@@ -1321,13 +1321,13 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	kstat = GetKodStats();
 
 	aprintf("Current time is %s\n",TimeStr(now).c_str());
-	aprintf("System started at %s (up for %s = %lli seconds)\n",
+	aprintf("System started at %s (up for %s = %li seconds)\n",
           TimeStr(kstat->system_start_time).c_str(),
           RelativeTimeStr((int) (now - kstat->system_start_time)).c_str(),
 		now - kstat->system_start_time);
 
 	aprintf("----\n");
-	aprintf("Interpreted %i.%09i billion total instructions in %lli seconds\n",
+	aprintf("Interpreted %i.%09i billion total instructions in %li seconds\n",
 		kstat->billions_interpreted,kstat->num_interpreted,
 		kstat->interpreting_time/1000);
 	aprintf("Handled %i top level messages, total %i messages\n",
@@ -1381,7 +1381,7 @@ void AdminShowMemory(int session_id,admin_parm_type parms[],
 
 	size_t total = 0;
 
-	aprintf("%s\n",TimeStr(GetTime()));
+	aprintf("%s\n",TimeStr(GetTime()).c_str());
 	for (int i=0;i<GetNumMemoryStats();i++)
 	{
 		aprintf("%-20s %8lu\n",GetMemoryStatName(i),mstat->allocated[i]);
@@ -1656,12 +1656,12 @@ void AdminShowOneUser(user_node *u)
 	{
 		r = GetResourceByID(name_val.v.data);
 		if (r == NULL)
-			aprintf("Invalid resource id %i.",name_val.v.data);
+			aprintf("Invalid resource id %li.",name_val.v.data);
 		else
 			aprintf("%s",r->resource_val);
 	}
 	else
-		aprintf("Non-resource %i,%i.",name_val.v.tag,name_val.v.data);
+		aprintf("Non-resource %i,%li.",name_val.v.tag,name_val.v.data);
 	aprintf("\n");
 }
 
@@ -1797,7 +1797,7 @@ void AdminShowOneAccount(account_node *a)
    }
 
 	aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n",a->account_id,ch,a->name,
-        buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time));
+          buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time).c_str());
 }
 
 void AdminShowResource(int session_id,admin_parm_type parms[],
@@ -1900,7 +1900,7 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 {
 	INT64 now = GetTime();
 
-	aprintf("Current server clock reads %lli (%s).\n", now, TimeStr(now));
+	aprintf("Current server clock reads %li (%s).\n", now, TimeStr(now).c_str());
 }
 
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],
@@ -1994,11 +1994,11 @@ void AdminShowEachSysTimer(systimer_node *st)
 	case SYST_RESET_POOL : s = "Reset buffer pool"; break;
 	default : s = "Unknown"; break;
 	}
-	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period));
-	aprintf("%-15s ",RelativeTimeStr(st->time));
+	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period).c_str());
+	aprintf("%-15s ",RelativeTimeStr(st->time).c_str());
 
 	if (st->enabled)
-		aprintf("%-22s",TimeStr(st->next_time_activate));
+		aprintf("%-22s",TimeStr(st->next_time_activate).c_str());
 	else
 		aprintf("Disabled");
 	aprintf("\n");
@@ -3203,7 +3203,7 @@ void AdminSuspendUser(int session_id,admin_parm_type parms[],
 	else
 	{
 		aprintf("Account %i (%s) is suspended until %s.\n",
-			a->account_id, a->name, TimeStr(a->suspend_time));
+            a->account_id, a->name, TimeStr(a->suspend_time).c_str());
 	}
 }
 
@@ -3267,7 +3267,7 @@ void AdminSuspendAccount(int session_id,admin_parm_type parms[],
 	else
 	{
 		aprintf("Account %i (%s) is suspended until %s.\n",
-			a->account_id, a->name, TimeStr(a->suspend_time));
+            a->account_id, a->name, TimeStr(a->suspend_time).c_str());
 	}
 }
 

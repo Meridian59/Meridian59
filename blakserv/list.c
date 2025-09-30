@@ -175,7 +175,7 @@ blak_int Nth(int n,int list_id)
 		}
 		if (l->rest.v.tag != TAG_LIST)
 		{
-			bprintf("Nth can't go past end of list %i,%i\n",
+			bprintf("Nth can't go past end of list %i,%li\n",
 				l->rest.v.tag,l->rest.v.data);
 			return NIL;
 		}
@@ -211,7 +211,7 @@ int SetNth(int n,int list_id,val_type new_val)
 		}
 		if (l->rest.v.tag != TAG_LIST)
 		{
-			bprintf("SetNth can't go past end o' list %i,%i\n",
+			bprintf("SetNth can't go past end o' list %i,%li\n",
 				l->rest.v.tag,l->rest.v.data);
 			return NIL;
 		}
@@ -277,7 +277,7 @@ blak_int DelListElem(val_type list_id,val_type list_elem)
 		return list_id.int_val;
 	}
 	
-	bprintf("DelListElem can't find elem %i,%i in list id %i\n",
+	bprintf("DelListElem can't find elem %i,%li in list id %li\n",
 		list_elem.v.tag,list_elem.v.data,list_id.v.data);
 	
 	return list_id.int_val;
@@ -305,13 +305,13 @@ void MoveListElem(val_type list_id, val_type n, val_type m)
   int dest_index = m.v.data;
   if (source_index <= 0 || source_index > (int) node_contents.size())
   {
-    bprintf("MoveListElem got source index out of range %i in list %i\n",
+    bprintf("MoveListElem got source index out of range %i in list %li\n",
             source_index, list_id.v.data);
     return;
   }
   if (dest_index <= 0 || dest_index > (int) node_contents.size() + 1)
   {
-    bprintf("MoveListElem got destination index out of range %i in list %i\n",
+    bprintf("MoveListElem got destination index out of range %i in list %li\n",
             dest_index, list_id.v.data);
     return;
   }

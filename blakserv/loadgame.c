@@ -81,7 +81,7 @@ ishash_type load_game_resources;
 \
 	if (len > max_len-1) \
    { \
-      eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,max_len); \
+     eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,(int) max_len); \
       return false; \
    } \
 \
@@ -262,7 +262,7 @@ bool LoadGameParse(char *filename)
 				return false;
 			break;
 		default :
-			eprintf("LoadGameFile found invalid command byte %u at offset %i in %s\n",
+			eprintf("LoadGameFile found invalid command byte %u at offset %li in %s\n",
                  cmd,ftell(loadfile.file),filename);
 			return false;
 		}

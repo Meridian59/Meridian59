@@ -118,13 +118,13 @@ const char * GetDataName(val_type val)
       c = GetClassByID(val.v.data);
       if (c == NULL)
       {
-	 eprintf("GetTagData error, can't find class id %lli\n",val.v.data);
+	 eprintf("GetTagData error, can't find class id %li\n",val.v.data);
 	 snprintf(s, sizeof(s),"%lli",(long long) val.v.data);
 	 return s;
       }
       return c->class_name;
    case TAG_MESSAGE :
-      eprintf("GetTagData error, message tag saving not supported %lli\n",val.v.data);
+      eprintf("GetTagData error, message tag saving not supported %li\n",val.v.data);
 
       /* fall through */
    default :

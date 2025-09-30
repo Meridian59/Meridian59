@@ -319,7 +319,7 @@ bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
 
    if (r->file_info.monster_grid == NULL)
    {
-	   bprintf("CanMoveInRoomFine has no monster grid for %i\n",
+	   bprintf("CanMoveInRoomFine has no monster grid for %li\n",
 			   r->roomdata_id);
 	   return true;
    }

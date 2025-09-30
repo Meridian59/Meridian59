@@ -111,7 +111,7 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       if (GetKodStats()->debugging)
       {
 	 if (local_vars->locals[data].v.tag == TAG_INVALID)
-	    eprintf("[%s] RetrieveValue got value of local or parameter that was uninitialized (INVALID " PRId64 ")\n",
+	    eprintf("[%s] RetrieveValue got value of local or parameter that was uninitialized (INVALID %" PRId64 ")\n",
 	       BlakodDebugInfo(),local_vars->locals[data].v.data);
       }
       return *(val_type *)&local_vars->locals[data].int_val;
@@ -129,7 +129,7 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       if (GetKodStats()->debugging)
       {
 	 if (o->p[data].val.v.tag == TAG_INVALID)
-	    eprintf("[%s] RetrieveValue got value of property that was uninitialized (INVALID " PRId64 ")\n",
+	    eprintf("[%s] RetrieveValue got value of property that was uninitialized (INVALID %" PRId64 ")\n",
 	       BlakodDebugInfo(),local_vars->locals[data].v.data);
       }
       return *(val_type *)&o->p[data].val.int_val; 
@@ -159,7 +159,7 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       }
       if (data >= c->num_vars || data < 0)
       {
-	 eprintf("[%s] RetrieveValue can't retrieve invalid class var " PRId64 " in OBJECT %i CLASS %s (%i)\n",
+	 eprintf("[%s] RetrieveValue can't retrieve invalid class var %" PRId64 " in OBJECT %i CLASS %s (%i)\n",
                  BlakodDebugInfo(),data,object_id,c->class_name,c->class_id);
 	 ret_val.int_val = NIL;
 	 return ret_val;

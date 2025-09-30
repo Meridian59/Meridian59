@@ -84,8 +84,6 @@ OBJS =  \
 
 ifdef BLAK_PLATFORM_MAC
 
-# Clang complains loudly about sprintf being deprecated
-CFLAGS += -Wno-error=deprecated-declarations
 OBJS += $(OUTDIR)/osd_kqueue.obj
 
 else

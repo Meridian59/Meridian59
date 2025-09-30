@@ -138,7 +138,7 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 	int i;
 	val_type each_val;
 	class_node *c;
-	char buf[2000];
+  std::string buf;
 	kod_statistics *kstat;
 	
 	/* need the current interpreting class in case there are debug strings,
@@ -154,17 +154,19 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 		return NIL;
 	}
 	
-	snprintf(buf, sizeof(buf), "[%s] ",BlakodDebugInfo());
+  buf += "[";
+  buf += BlakodDebugInfo();
+  buf += "] ";
 	
 	for (i=0;i<num_normal_parms;i++)
 	{
 		each_val = RetrieveValue(object_id,local_vars,normal_parm_array[i].type,
-			normal_parm_array[i].value);
+                             normal_parm_array[i].value);
 		
 		switch (each_val.v.tag)
 		{
 		case TAG_DEBUGSTR :
-			sprintf(buf+strlen(buf),"%s",GetClassDebugStr(c,each_val.v.data));
+			buf += GetClassDebugStr(c,each_val.v.data);
 			break;
 			
 		case TAG_RESOURCE :
@@ -173,17 +175,17 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				r = GetResourceByID(each_val.v.data);
 				if (r == NULL)
 				{
-					sprintf(buf+strlen(buf),"<unknown RESOURCE %lli>", (long long) each_val.v.data);
+					buf += "<unknown RESOURCE " + std::to_string(each_val.v.data) + ">";
 				}
 				else
 				{
-					sprintf(buf+strlen(buf),"%s",r->resource_val);
+					buf += r->resource_val;
 				}
 			}
 			break;
 			
 		case TAG_INT :
-			sprintf(buf+strlen(buf),"%d",(int)each_val.v.data);
+			buf += std::to_string(each_val.v.data);
 			break;
 			
 		case TAG_CLASS :
@@ -192,12 +194,12 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				c = GetClassByID(each_val.v.data);
 				if (c == NULL)
 				{
-					sprintf(buf+strlen(buf),"<unknown CLASS %lli>", (long long) each_val.v.data);
+					buf += "<unknown CLASS " + std::to_string(each_val.v.data) + ">";
 				}
 				else
 				{
-					strcat(buf,"&");
-					strcat(buf,c->class_name);
+					buf += "&";
+					buf += c->class_name;
 				}
 			}
 			break;
@@ -211,21 +213,14 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 					bprintf("C_Debug can't find string %" PRId64 "\n",each_val.v.data);
 					return NIL;
 				}
-				int lenString = snod->len_data;
-				size_t lenBuffer = strlen(buf);
-				memcpy(buf + lenBuffer,snod->data,snod->len_data);
-				*(buf + lenBuffer + snod->len_data) = 0;
+        buf.append(snod->data, snod->len_data);
 			}
 			break;
 			
 		case TAG_TEMP_STRING :
 			{
-				string_node *snod;
-				
-				snod = GetTempString();
-				size_t len_buf = strlen(buf);
-				memcpy(buf + len_buf,snod->data,snod->len_data);
-				*(buf + len_buf + snod->len_data) = 0;
+				string_node *snod = GetTempString();
+        buf.append(snod->data, snod->len_data);
 			}
 			break;
 			
@@ -240,13 +235,13 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 				o = GetObjectByID(each_val.v.data);
 				if (o == NULL)
 				{
-					sprintf(buf+strlen(buf),"<OBJECT %lli invalid>",(long long) each_val.v.data);
+					buf += "<OBJECT " + std::to_string(each_val.v.data) + " invalid>";
 					break;
 				}
 				c = GetClassByID(o->class_id);
 				if (c == NULL)
 				{
-					sprintf(buf+strlen(buf),"<OBJECT %lli unknown class>",(long long) each_val.v.data);
+					buf += "<OBJECT " + std::to_string(each_val.v.data) + " unknown class>";
 					break;
 				}
 				
@@ -256,23 +251,25 @@ blak_int C_Debug(int object_id,local_var_type *local_vars,
 					u = GetUserByObjectID(o->object_id);
 					if (u == NULL)
 					{
-						sprintf(buf+strlen(buf),"<OBJECT %lli broken user>",(long long) each_val.v.data);
+						buf += "<OBJECT " + std::to_string(each_val.v.data) + " broken user>";
 						break;
 					}
-					sprintf(buf+strlen(buf),"ACCOUNT %i OBJECT %lli",u->account_id,(long long) each_val.v.data);
+					buf += "ACCOUNT " + std::to_string(u->account_id) + " OBJECT " + std::to_string(each_val.v.data);
 					break;
 				}
 			}
 			//FALLTHRU
 		default :
-			sprintf(buf+strlen(buf),"%s %s",GetTagName(each_val),GetDataName(each_val));
+			buf += GetTagName(each_val);
+      buf += " ";
+      buf += GetDataName(each_val);
 			break;
       }
       
       if (i != num_normal_parms-1)
-		  sprintf(buf+strlen(buf),",");
+        buf += ",";
    }
-   dprintf("%s\n",buf);
+   dprintf("%s\n",buf.c_str());
    return NIL;
 }
 

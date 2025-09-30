@@ -210,7 +210,7 @@ void InsertTable(int table_id,val_type key_val,val_type data_val)
    index = GetTableHash(key_val) % tn->size;
 
    if (ConfigBool(DEBUG_HASH) == true)
-      dprintf("Insert tbl %i, index %i, key %i,%i\n",table_id,index,key_val.v.tag,key_val.v.data);
+      dprintf("Insert tbl %i, index %i, key %i,%li\n",table_id,index,key_val.v.tag,key_val.v.data);
    
    /* insert in front of list */
    hn = AllocateTableEntry(key_val,data_val);
@@ -260,7 +260,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
 
    if (tn->table[index] == NULL)
    {
-      dprintf("DeleteTableEntry can't delete %i,%i from table %i\n",key_val.v.tag,
+      dprintf("DeleteTableEntry can't delete %i,%li from table %i\n",key_val.v.tag,
 	      key_val.v.data,table_id);
       return;
    }
@@ -286,7 +286,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
       }
       hn = hn->next;
    }
-   dprintf("DeleteTableEntry can't delete %i,%i from table %i\n",key_val.v.tag,
+   dprintf("DeleteTableEntry can't delete %i,%li from table %i\n",key_val.v.tag,
 	   key_val.v.data,table_id);
 }
 
@@ -306,7 +306,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       r = GetResourceByID(s1_val.v.data);
       if (r == NULL)
       {
-	 bprintf("EqualTableEntry can't find resource %i,%i\n",
+	 bprintf("EqualTableEntry can't find resource %i,%li\n",
 		 s1_val.v.tag,s1_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
 	 return false;
@@ -319,7 +319,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       snod = GetStringByID(s1_val.v.data);
       if (snod == NULL)
       {
-	 bprintf("EqualTableEntry can't find string %i,%i\n",
+	 bprintf("EqualTableEntry can't find string %i,%li\n",
 		 s1_val.v.tag,s1_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
 	 return false;
@@ -342,7 +342,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       r = GetResourceByID(s2_val.v.data);
       if (r == NULL)
       {
-	 bprintf("EqualTableEntry can't find resource %i,%i\n",
+	 bprintf("EqualTableEntry can't find resource %i,%li\n",
 		 s2_val.v.tag,s2_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
 	 return false;
@@ -355,8 +355,8 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       snod = GetStringByID(s2_val.v.data);
       if (snod == NULL)
       {
-	 bprintf("EqualTableEntry can't find string %i,%i\n",
-		 s2_val.v.tag,s2_val.v.data);
+	 bprintf("EqualTableEntry can't find string %i,%li\n",
+           s2_val.v.tag,s2_val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
 	 return false;
       }
@@ -378,7 +378,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
    /* mismatch */
    if (s1 == NULL || s2 == NULL)
    {
-      eprintf("EqualTableEntry can't match %i,%i with %i,%i\n",
+      eprintf("EqualTableEntry can't match %i,%li with %i,%li\n",
 	      s1_val.v.tag,s1_val.v.data,s2_val.v.tag,s2_val.v.data);
 		eprintf("%s\n",BlakodStackInfo());
       return false;
@@ -400,7 +400,7 @@ unsigned int GetTableHash(val_type val)
       r = GetResourceByID(val.v.data);
       if (r == NULL)
       {
-	 bprintf("GetTableHash can't find resource %i\n",val.v.data);
+	 bprintf("GetTableHash can't find resource %li\n",val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
 	 return 0;
       }
@@ -412,7 +412,7 @@ unsigned int GetTableHash(val_type val)
       snod = GetStringByID(val.v.data);
       if (snod == NULL)
       {
-	 bprintf("GetTableHash can't find string %i\n",val.v.data);
+	 bprintf("GetTableHash can't find string %li\n",val.v.data);
 	 eprintf("%s\n",BlakodStackInfo());
 	 return 0;
       }

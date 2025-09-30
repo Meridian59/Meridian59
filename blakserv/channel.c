@@ -37,6 +37,11 @@ channel_node channel[NUM_CHANNELS];
 void WriteStrChannel(int channel_id,char *s);
 FILE *CreateFileChannel(int channel_id);
 
+std::string obj_to_string(int tag, INT64 data)
+{
+  return std::to_string(tag) + "," + std::to_string(data);
+}
+
 void OpenDefaultChannels()
 {
    int i;
@@ -82,7 +87,7 @@ void dprintf(const char *fmt,...)
    char s[2000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s|",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s|",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -100,7 +105,7 @@ void eprintf(const char *fmt,...)
    char s[2000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -116,7 +121,7 @@ void bprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()),BlakodDebugInfo());
+   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()).c_str(),BlakodDebugInfo());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
@@ -134,7 +139,7 @@ void lprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()));
+   snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);

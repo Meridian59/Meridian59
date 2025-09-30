@@ -390,7 +390,7 @@ void InterfaceAddList(int session_id)
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
-	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
@@ -444,7 +444,7 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
-		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}
@@ -888,10 +888,10 @@ void InterfaceDrawText(HWND hwnd)
 		SetDlgItemText(HWND_STATUS,IDC_MEMORY_VALUE,s);
 		
 		kstat = GetKodStats();
-		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time));
+		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_STARTED_VALUE,s);
 		
-		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time));
+		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_UP_FOR_VALUE,s);
 		
 		if (kstat->interpreting_time/1000.0 < 0.01) 

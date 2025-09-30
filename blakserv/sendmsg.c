@@ -614,7 +614,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 			dprintf("  Local variables:\n");
 			for (i=0;i<local_vars.num_locals;i++)
 			{
-				dprintf("  %3i : %s %5li\n",
+				dprintf("  %3i : %s %5" PRId64 "\n",
 					i,
 					GetTagName(local_vars.locals[i]),
 					local_vars.locals[i].v.data);
@@ -682,7 +682,7 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 	if (kod_stat.debugging)
 	{
 		if (new_data.v.tag == TAG_INVALID)
-			eprintf("[%s] StoreValue trying to assign with uninitialized data (INVALID %li)\n",
+			eprintf("[%s] StoreValue trying to assign with uninitialized data (INVALID %" PRId64 ")\n",
 			BlakodDebugInfo(),new_data.v.data);
 	}
 	
@@ -748,8 +748,8 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 	case NOT : 
 		if (source_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretUnaryAssign can't not non-int %i,%li\n",
-				source_data.v.tag,source_data.v.data);
+			bprintf("InterpretUnaryAssign can't not non-int %s\n",
+              fmt(source_data));
 			break;
 		}
 		source_data.v.data = !source_data.v.data;
@@ -757,8 +757,8 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 	case NEGATE :
 		if (source_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretUnaryAssign can't negate non-int %i,%li\n",
-				source_data.v.tag,source_data.v.data);
+			bprintf("InterpretUnaryAssign can't negate non-int %s\n",
+              fmt(source_data));
 			break;
 		}
 		source_data.v.data = -source_data.v.data;
@@ -768,8 +768,8 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 	case BITWISE_NOT :
 		if (source_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretUnaryAssign can't bitwise not non-int %i,%li\n",
-				source_data.v.tag,source_data.v.data);
+			bprintf("InterpretUnaryAssign can't bitwise not non-int %s\n",
+              fmt(source_data));
 			break;
 		}
 		source_data.v.data = ~source_data.v.data;
@@ -807,9 +807,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case ADD : 
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't add 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't add 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data += source2_data.v.data;
@@ -817,9 +816,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case SUBTRACT :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't sub 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't sub 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data -= source2_data.v.data;
@@ -827,9 +825,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case MULTIPLY :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't mult 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't mult 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data *= source2_data.v.data;
@@ -837,9 +834,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case DIV :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't div 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't div 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		if (source2_data.v.data == 0)
@@ -852,9 +848,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case MOD :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't mod 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't mod 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		if (source2_data.v.data == 0)
@@ -868,9 +863,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case AND :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't and 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't and 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data && source2_data.v.data;
@@ -878,9 +872,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case OR :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't or 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't or 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data || source2_data.v.data;
@@ -895,9 +888,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 		if (source1_data.v.tag != source2_data.v.tag &&
 			source1_data.v.tag != TAG_NIL && source2_data.v.tag != TAG_NIL)
 		{
-			bprintf("InterpretBinaryAssign can't = 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't = 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 #endif
@@ -918,9 +910,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 		if (source1_data.v.tag != source2_data.v.tag &&
 			source1_data.v.tag != TAG_NIL && source2_data.v.tag != TAG_NIL)
 		{
-			bprintf("InterpretBinaryAssign can't <> 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't <> 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 #endif
@@ -934,9 +925,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case LESS_THAN :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't < 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't < 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data < source2_data.v.data;
@@ -944,9 +934,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case GREATER_THAN :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't > 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't > 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data > source2_data.v.data;
@@ -954,9 +943,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case LESS_EQUAL :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't <= 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't <= 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data <= source2_data.v.data;
@@ -964,9 +952,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case GREATER_EQUAL :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't >= 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't >= 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data >= source2_data.v.data;
@@ -974,9 +961,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case BITWISE_AND :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't and 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't and 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data & source2_data.v.data;
@@ -984,9 +970,8 @@ void InterpretBinaryAssign(int object_id,local_var_type *local_vars,opcode_type 
 	case BITWISE_OR :
 		if (source1_data.v.tag != TAG_INT || source2_data.v.tag != TAG_INT)
 		{
-			bprintf("InterpretBinaryAssign can't or 2 vars %i,%li and %i,%li\n",
-				source1_data.v.tag,source1_data.v.data,
-				source2_data.v.tag,source2_data.v.data);
+			bprintf("InterpretBinaryAssign can't or 2 vars %s and %s\n",
+              fmt(source1_data), fmt(source2_data));
 			break;
 		}
 		source1_data.v.data = source1_data.v.data | source2_data.v.data;

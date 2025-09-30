@@ -159,7 +159,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 	
 	if (command_table[command.v.data].client_parms[0].type_parm == INVALID_PARM)
 	{
-		eprintf("ParseClientSendBlakod got invalid command %li\n",command.v.data);
+		eprintf("ParseClientSendBlakod got invalid command %" PRId64 "\n",command.v.data);
 		return;
 	}
 	
@@ -246,8 +246,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %li\n",
-						temp.v.data);
+					eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 "\n",
+                  temp.v.data);
 					return;
 				}
 				
@@ -294,8 +294,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 							if (/* temp.v.tag == TAG_OBJECT && */
 								NULL == GetObjectByID(temp.v.data))
 							{
-								eprintf("ParseClientSendBlakod got invalid object reference %li in a list\n",
-									temp.v.data);
+								eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 " in a list\n",
+                        temp.v.data);
 								return;
 							}
 							
@@ -351,8 +351,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %li\n",
-						temp.v.data);
+					eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 "\n",
+                  temp.v.data);
 					return;
 				}
 				
@@ -366,8 +366,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %li\n",
-						temp.v.data);
+					eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 "\n",
+                  temp.v.data);
 					return;
 				}
 				

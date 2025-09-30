@@ -45,4 +45,8 @@ void eprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
 void bprintf(const char *fmt,...) PRINTF_FORMAT(1,2);  /* blakod errors, goes to channel e */
 void lprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
 
+// Helper macro to print out a Blakod value via a printf-style function
+std::string obj_to_string(int tag, INT64 data);
+#define fmt(value) obj_to_string(value.v.tag, value.v.data).c_str()
+
 #endif

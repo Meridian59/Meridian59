@@ -37,6 +37,11 @@ channel_node channel[NUM_CHANNELS];
 void WriteStrChannel(int channel_id,char *s);
 FILE *CreateFileChannel(int channel_id);
 
+std::string obj_to_string(int tag, INT64 data)
+{
+  return std::to_string(tag) + "," + std::to_string(data);
+}
+
 void OpenDefaultChannels()
 {
    int i;

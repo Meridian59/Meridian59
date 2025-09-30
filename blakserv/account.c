@@ -302,7 +302,7 @@ bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
 
    if (suspend_time < 0)
    {
-      eprintf("SuspendAccountAbsolute: invalid suspend time %ld; ignored\n",suspend_time);
+      eprintf("SuspendAccountAbsolute: invalid suspend time %" PRId64 "; ignored\n",suspend_time);
       return false;
    }
 

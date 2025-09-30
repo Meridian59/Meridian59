@@ -538,7 +538,7 @@ void LoadGameTranslateVal(val_type *pval)
 		lgc = GetLoadGameClassByID(pval->v.data);
 		if (lgc == NULL)
 		{
-			eprintf("LoadGameTranslateVal unable to get class %li\n",pval->v.data);
+			eprintf("LoadGameTranslateVal unable to get class %" PRId64 "\n",pval->v.data);
 			break;
 		}
 		c = GetClassByName(lgc->class_name);
@@ -559,7 +559,7 @@ void LoadGameTranslateVal(val_type *pval)
 		resource_name = GetLoadGameResourceByID(pval->v.data);
 		if (resource_name == NULL)
 		{
-			eprintf("LoadGameTranslateVal unable to get resource %li\n",pval->v.data);
+			eprintf("LoadGameTranslateVal unable to get resource %" PRId64 "\n",pval->v.data);
 			break;
 		}
 

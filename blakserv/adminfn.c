@@ -1067,7 +1067,7 @@ void AdminSaveGame(int session_id,admin_parm_type parms[],
 
 	SendBlakodEndSystemEvent(SYSEVENT_SAVE);
 
-	aprintf("done.  Save time is (%li).\n", save_time);
+	aprintf("done.  Save time is (%" PRId64 ").\n", save_time);
 	UnpauseTimers();
 }
 
@@ -1202,12 +1202,12 @@ void AdminWhoEachSession(session_node *s)
 			{
 				r = GetResourceByID(name_val.v.data);
 				if (r == NULL)
-					aprintf("Invalid resource id %li",name_val.v.data);
+					aprintf("Invalid resource id %" PRId64,name_val.v.data);
 				else
 					aprintf("%s",r->resource_val);
 			}
 			else
-				aprintf("Non-resource %i,%li",name_val.v.tag,name_val.v.data);
+				aprintf("Non-resource %s",fmt(name_val));
 			aprintf(" (%i)",s->game->object_id);
 		}
 	}
@@ -1321,13 +1321,13 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	kstat = GetKodStats();
 
 	aprintf("Current time is %s\n",TimeStr(now).c_str());
-	aprintf("System started at %s (up for %s = %li seconds)\n",
+	aprintf("System started at %s (up for %s = %" PRId64 " seconds)\n",
           TimeStr(kstat->system_start_time).c_str(),
           RelativeTimeStr((int) (now - kstat->system_start_time)).c_str(),
-		now - kstat->system_start_time);
+          now - kstat->system_start_time);
 
 	aprintf("----\n");
-	aprintf("Interpreted %i.%09i billion total instructions in %li seconds\n",
+	aprintf("Interpreted %i.%09i billion total instructions in %" PRId64 " seconds\n",
 		kstat->billions_interpreted,kstat->num_interpreted,
 		kstat->interpreting_time/1000);
 	aprintf("Handled %i top level messages, total %i messages\n",
@@ -1656,12 +1656,12 @@ void AdminShowOneUser(user_node *u)
 	{
 		r = GetResourceByID(name_val.v.data);
 		if (r == NULL)
-			aprintf("Invalid resource id %li.",name_val.v.data);
+			aprintf("Invalid resource id %" PRId64 ".",name_val.v.data);
 		else
 			aprintf("%s",r->resource_val);
 	}
 	else
-		aprintf("Non-resource %i,%li.",name_val.v.tag,name_val.v.data);
+		aprintf("Non-resource %s.",fmt(name_val));
 	aprintf("\n");
 }
 
@@ -1900,7 +1900,7 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 {
 	INT64 now = GetTime();
 
-	aprintf("Current server clock reads %li (%s).\n", now, TimeStr(now).c_str());
+	aprintf("Current server clock reads %" PRId64 " (%s).\n", now, TimeStr(now).c_str());
 }
 
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],

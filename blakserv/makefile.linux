@@ -6,11 +6,11 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
+CFLAGS += -I $(BLAKINCLUDEDIR)
 
 SOURCEDIR = .
 
-LIBS = -lpthread
+LIBS =
 
 OBJS =  \
 	$(OUTDIR)/main.obj \

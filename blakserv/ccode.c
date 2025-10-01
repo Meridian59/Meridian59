@@ -312,10 +312,8 @@ blak_int C_DumpStack(int object_id,local_var_type *local_vars,
 					  int num_normal_parms,parm_node normal_parm_array[],
 					  int num_name_parms,parm_node name_parm_array[])
 {
-	char buf[2000];
-
-	snprintf(buf, sizeof(buf), "Stack:\n%s\n",BlakodStackInfo());
-	dprintf("%s",buf);
+  std::string buf = "Stack:\n" + BlakodStackInfo() + "\n";
+	dprintf("%s",buf.c_str());
 
 	return NIL;
 }

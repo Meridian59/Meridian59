@@ -1095,89 +1095,97 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode)
 	}
 }
 
-char *BlakodDebugInfo()
+std::string BlakodDebugInfo()
 {
-	static char s[100];
-	class_node *c;
+  std::string s;
 
 	if (kod_stat.interpreting_class == INVALID_CLASS)
 	{
-		snprintf(s, sizeof(s), "Server");
+		s = "Server";
 	}
 	else
 	{
-		c = GetClassByID(kod_stat.interpreting_class);
+		class_node *c = GetClassByID(kod_stat.interpreting_class);
 		if (c == NULL)
-			snprintf(s, sizeof(s), "Invalid class %i",kod_stat.interpreting_class);
+			s = "Invalid class " + std::to_string(kod_stat.interpreting_class);
 		else
-			snprintf(s, sizeof(s), "%s (%i)",c->fname,GetSourceLine(c,bkod));
+    {
+      s = c->fname;
+      s += " (";
+      s += std::to_string(GetSourceLine(c,bkod));
+      s += ")";
+    }
 	}
 	return s;
 }
 
-char *BlakodStackInfo()
+std::string BlakodStackInfo()
 {
-	static char buf[5000];
+  std::string buf;
 	class_node *c;
 	int i;
 
-	buf[0] = '\0';
 	for (i=message_depth-1;i>=0;i--)
 	{
-		char s[1000];
+    std::string s;
 		if (stack[i].class_id == INVALID_CLASS)
 		{
-			snprintf(s, sizeof(s), "Server");
+			s = "Server";
 		}
 		else
 		{
 			c = GetClassByID(stack[i].class_id);
 			if (c == NULL)
-				snprintf(s, sizeof(s), "Invalid class %i",stack[i].class_id);
+				s = "Invalid class %i" + std::to_string(stack[i].class_id);
 			else
 			{
-				char *bp;
-				const char *class_name;
-				char buf2[200];
-				char parms[800];
-				int j;
+        std::string buf2;
+        std::string parms;
 
 				/* for current frame, stack[] has pointer at beginning of function;
 					use current pointer instead */
-				bp = stack[i].bkod_ptr;
+				char *bp = stack[i].bkod_ptr;
 				if (i == message_depth-1)
 					bp = bkod;
 
-				class_name = "(unknown)";
+				const char *class_name = "(unknown)";
 				if (c->class_name)
 					class_name = c->class_name;
-				/* use %.*s with a fixed string of pluses to get exactly one plus per
-					propagate depth */
-				snprintf(s, sizeof(s), "%.*s%s::%s",stack[i].propagate_depth,"++++++++++++++++++++++",class_name,GetNameByID(stack[i].message_id));
-				strcat(s,"(");
-				parms[0] = '\0';
-				for (j=0;j<stack[i].num_parms;j++)
+				/* exactly one plus per propagate depth */
+        s += std::string(stack[i].propagate_depth, '+');
+        s += class_name;
+        s += "::";
+        s += GetNameByID(stack[i].message_id);
+                 
+				s += "(";
+				for (int j=0;j<stack[i].num_parms;j++)
 				{
 					val_type val;
 					val.int_val = stack[i].parms[j].value;
-					snprintf(buf2, sizeof(buf2), "#%s=%s %s",GetNameByID(stack[i].parms[j].name_id),
-							  GetTagName(val),GetDataName(val));
+          buf2 = "#";
+          buf2 += GetNameByID(stack[i].parms[j].name_id);
+          buf2 += "=";
+          buf2 += GetTagName(val);
+          buf2 += " ";
+          buf2 += GetDataName(val);
 					if (j > 0)
-						strcat(parms,",");
-					strcat(parms,buf2);
+						parms += ",";
+					parms += buf2;
 				}
-				strcat(s,parms);
-				strcat(s,")");
-				snprintf(buf2, sizeof(buf2), " %s (%i)",c->fname,GetSourceLine(c,bp));
-				strcat(s,buf2);
+				s += parms;
+				s += ") ";
+        s += c->fname;
+        s += " (";
+        s += std::to_string(GetSourceLine(c,bp));
+        s += ")";
 			}
 		}
 		if (i < message_depth-1)
-			strcat(buf,"\n");
-		strcat(buf,s);
-		if (strlen(buf) > sizeof(buf) - 1000)
+			buf += "\n";
+		buf += s;
+		if (buf.size() > 5000)
 		{
-			strcat(buf,"\n...and more");
+			buf += "\n...and more";
 			break;
 		}
 	}

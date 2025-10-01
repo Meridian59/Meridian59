@@ -92,8 +92,8 @@ void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parm
 blak_int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 blak_int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 int SendBlakodClassMessage(int class_id,int message_id,int num_params,parm_node parm[]);
-char *BlakodDebugInfo(void);
-char *BlakodStackInfo(void);
+std::string BlakodDebugInfo(void);
+std::string BlakodStackInfo(void);
 
 /* this function used in sendmsg.c and ccode.c, but called all the time! */
 

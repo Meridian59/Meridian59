@@ -246,13 +246,10 @@ void ResetConfig(void)
 /* returns error string, NULL if ok */
 const char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic)
 {
-   config_node *c;
-   size_t len;
    int num;
-   struct stat file_stat;
    char s[MAX_CONFIG_LINE];
 
-   c = GetConfigByID(config_id);
+   config_node *c = GetConfigByID(config_id);
    if (c != NULL)
       return "config option listed more than once";
 

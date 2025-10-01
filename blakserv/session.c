@@ -202,20 +202,6 @@ void ForEachSession(void (*callback_func)(session_node *s))
 		if (sessions[i].connected)
 			callback_func(&sessions[i]);
 }
-/*
-int GetUsedSessions()
-{
-int i,used;
-
-  used = 0;
-
-	for (i=1;i<num_sessions;i++)
-	if (sessions[i].connected)
-	used++;
-
-	  return used;
-	  }
-*/
 
 const char * GetStateName(session_node *s)
 {

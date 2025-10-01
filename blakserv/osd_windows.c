@@ -89,18 +89,3 @@ char * GetLastErrorStr()
 		(LPTSTR) &error_str,0,NULL);
 	return error_str;
 }
-
-bool BlakMoveFile(const char *source, const char *dest)
-{
-   if (!CopyFile(source,dest,FALSE))
-   {
-      eprintf("BlakMoveFile error moving %s to %s (%s)\n",source,dest,GetLastErrorStr());
-      return false;
-   }
-   if (!DeleteFile(source))
-   {
-      eprintf("BlakMoveFile error deleting %s (%s)\n",source,GetLastErrorStr());
-      return false;
-   }
-   return true;
-}

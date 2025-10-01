@@ -60,11 +60,6 @@ char * GetLastErrorStr()
 {
    return strerror(errno);
 }
-bool BlakMoveFile(const char *source, const char *dest)
-{
-   // Doesn't work across filesystems, but probably fine for our purposes.
-   return rename(source, dest) == 0;
-}
 
 void InitInterface(void)
 {

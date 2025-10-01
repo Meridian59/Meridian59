@@ -14,4 +14,6 @@
 // Return true on success.
 bool FindMatchingFiles(const char *path, const char *extension, StringVector *files);
 
+bool BlakMoveFile(const char *source, const char *dest);
+
 #endif

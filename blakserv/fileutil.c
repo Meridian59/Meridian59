@@ -12,6 +12,8 @@ namespace fs = std::filesystem;
 
 bool FindMatchingFiles(const char *path, const char *extension, StringVector *files)
 {
+  files->clear();
+  
   if (!fs::is_directory(path))
   {
     eprintf("Tried to enumerate contents of bad directory %s\n", path);
@@ -31,5 +33,17 @@ bool FindMatchingFiles(const char *path, const char *extension, StringVector *fi
     return false;
   }
     
+  return true;
+}
+
+bool BlakMoveFile(const char *source, const char *dest)
+{
+  try {
+    fs::rename(source, dest);
+  } catch (const fs::filesystem_error& e) {
+    eprintf("Error moving file %s: %s\n", source, e.what());
+    return false;
+  }
+  
   return true;
 }

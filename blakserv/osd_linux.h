@@ -67,8 +67,6 @@ void RunMainLoop(void);
 int GetLastError();
 char * GetLastErrorStr();
 
-bool BlakMoveFile(const char *source, const char *dest);
-
 void InitInterface(void);
 
 int GetUsedSessions(void);

@@ -268,23 +268,24 @@ const char * AddConfig(int config_id,const char *config_data,int config_type,int
       break;
 
    case CONFIG_PATH :
-      len = strlen(s);
-
-      if (s[len-1] == '\\' || s[len-1] == '/')
-		  s[len-1] = 0;
-
-      if (stat(s,&file_stat) != 0 || !(file_stat.st_mode & S_IFDIR))
-		  return "invalid path--not found";
-
-#ifdef BLAK_PLATFORM_WINDOWS
-      if (s[len-1] != ':')
-		  strcat(s,"\\");
-#elif BLAK_PLATFORM_LINUX
-	  strcat(s,"/");
-#endif
-      c->config_str_value = (char *)AllocateMemory(MALLOC_ID_CONFIG,strlen(s)+1);
-      strcpy(c->config_str_value,s);
+   {
+      std::string path(s);
+      // Remove any trailing file separator
+      if (!path.empty() && (path.back() == '/' || path.back() == '\\'))
+      {
+        path.pop_back();
+      }
+      
+      if (!std::filesystem::is_directory(path))
+        return "invalid path--not found";
+      
+      // Add trailing file separator to make later concatenation easier
+      path.push_back(std::filesystem::path::preferred_separator);
+      
+      c->config_str_value = (char *)AllocateMemory(MALLOC_ID_CONFIG,path.size()+1);
+      strcpy(c->config_str_value, path.c_str());
       break;
+   }
 
    case CONFIG_INT :
       if (sscanf(s,"%i",&num) != 1)

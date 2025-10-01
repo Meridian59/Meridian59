@@ -144,6 +144,7 @@ typedef std::vector<std::string> StringVector;
 
 #include "btime.h"
 #include "mutex_impl.h"
+#include "fileutil.h"
 
 #include "rscload.h"
 #include "roomtype.h"

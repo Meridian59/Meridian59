@@ -27,10 +27,6 @@ typedef int socklen_t;
 void RunMainLoop(void);
 char * GetLastErrorStr();
 
-// Fill in "files" with the names of all files matching the given pattern.
-// Return true on success.
-bool FindMatchingFiles(const char *path, const char *extension, StringVector *files);
-
 bool BlakMoveFile(const char *source, const char *dest);
 
 // a lot of stuff that really belongs here is in interface.h instead

@@ -60,33 +60,6 @@ char * GetLastErrorStr()
 {
    return strerror(errno);
 }
-
-bool FindMatchingFiles(const char *path, const char *extension, std::vector<std::string> *files)
-{
-	struct dirent *entry;
-	DIR *dir = opendir(path);
-	if (dir == NULL)
-		return false;
-
-   files->clear();
-	std::string ext(extension);
-	while ((entry = readdir(dir)) != 0)
-	{
-		std::string filename = entry->d_name;
-		if (filename != "." && filename != "..")
-		{
-			if (filename.length() >= ext.length())
-				if (filename.compare(filename.length() - ext.length(), ext.length(), ext) == 0) {
-					files->push_back(filename);
-				}
-		}
-	}
-
-	closedir(dir);
-
-	return true;
-}
-
 bool BlakMoveFile(const char *source, const char *dest)
 {
    // Doesn't work across filesystems, but probably fine for our purposes.

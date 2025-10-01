@@ -67,10 +67,6 @@ void RunMainLoop(void);
 int GetLastError();
 char * GetLastErrorStr();
 
-// Fill in "files" with the names of all files matching the given pattern.
-// Return true on success.
-bool FindMatchingFiles(const char *path, const char *extension, StringVector *files);
-
 bool BlakMoveFile(const char *source, const char *dest);
 
 void InitInterface(void);

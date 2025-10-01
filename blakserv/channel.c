@@ -124,7 +124,7 @@ void bprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()).c_str(),BlakodDebugInfo());
+   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()).c_str(),BlakodDebugInfo().c_str());
 
    va_start(marker,fmt);
    vsnprintf(s+strlen(s), sizeof(s) - MAX_TIME_SIZE, fmt,marker);

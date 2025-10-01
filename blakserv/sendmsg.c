@@ -547,10 +547,10 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	if (local_vars.num_locals > MAX_LOCALS)
 	{
 		dprintf("InterpretAtMessage found too many locals and parms for OBJECT %i CLASS %s MESSAGE %s (%s) aborting and returning NIL\n",
-			object_id,
-			c? c->class_name : "(unknown)",
-			m? GetNameByID(m->message_id) : "(unknown)",
-			BlakodDebugInfo());
+            object_id,
+            c? c->class_name : "(unknown)",
+            m? GetNameByID(m->message_id) : "(unknown)",
+            BlakodDebugInfo().c_str());
 		(*ret_val).int_val = NIL;
 		return RETURN_NO_PROPAGATE;
 	}
@@ -606,10 +606,10 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 			
 			dprintf("Infinite loop at depth %i\n", message_depth);
 			dprintf("  OBJECT %i CLASS %s MESSAGE %s (%s) aborting and returning NIL\n",
-				object_id,
-				c? c->class_name : "(unknown)",
-				m? GetNameByID(m->message_id) : "(unknown)",
-				BlakodDebugInfo());
+              object_id,
+              c? c->class_name : "(unknown)",
+              m? GetNameByID(m->message_id) : "(unknown)",
+              BlakodDebugInfo().c_str());
 			
 			dprintf("  Local variables:\n");
 			for (i=0;i<local_vars.num_locals;i++)
@@ -683,7 +683,7 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 	{
 		if (new_data.v.tag == TAG_INVALID)
 			eprintf("[%s] StoreValue trying to assign with uninitialized data (INVALID %" PRId64 ")\n",
-			BlakodDebugInfo(),new_data.v.data);
+              BlakodDebugInfo().c_str(),new_data.v.data);
 	}
 	
 	switch (data_type)
@@ -692,7 +692,7 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 		if (data < 0 || data >= local_vars->num_locals)
 		{
 			eprintf("[%s] StoreValue can't write to illegal local var %i\n",
-				BlakodDebugInfo(),data);
+              BlakodDebugInfo().c_str(),data);
 			return;
 		}
 		local_vars->locals[data].int_val = new_data.int_val;
@@ -703,21 +703,21 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 		if (o == NULL)
 		{
 			eprintf("[%s] StoreValue can't find object %i\n",
-				BlakodDebugInfo(),object_id);
+              BlakodDebugInfo().c_str(),object_id);
 			return;
 		}
 		class_data = GetClassByID(o->class_id);
 		if (class_data == NULL)
 		{
 			eprintf("[%s] StoreValue can't find class id %i\n",
-				BlakodDebugInfo(),o->class_id);
+              BlakodDebugInfo().c_str(),o->class_id);
 			return;
 		}
 		/* equal to num_properties is ok, because self = prop 0 */
 		if (data < 0 || data > class_data->num_properties) 
 		{
 			eprintf("[%s] StoreValue can't write to illegal property %i (max %i)\n",
-				BlakodDebugInfo(),data,class_data->num_properties);
+              BlakodDebugInfo().c_str(),data,class_data->num_properties);
 			return;
 		}
 		o->p[data].val.int_val = new_data.int_val; 
@@ -725,7 +725,7 @@ __inline void StoreValue(int object_id,local_var_type *local_vars,int data_type,
 		
 	default :
 		eprintf("[%s] StoreValue can't identify type %i\n",
-			BlakodDebugInfo(),data_type); 
+            BlakodDebugInfo().c_str(),data_type); 
 		break;
 	}
 }

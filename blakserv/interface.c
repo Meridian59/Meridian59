@@ -1167,19 +1167,19 @@ void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
 			int sel = ListBox_GetCurSel(hwndCtl);
-            if (sel == LB_ERR)  // nothing selected
-                return;
+			if (sel == LB_ERR)  // nothing selected
+				return;
 
-            int len = ListBox_GetTextLen(hwndCtl, sel);
-            if (len == LB_ERR)  // couldn’t get length
-                return;
+			int len = ListBox_GetTextLen(hwndCtl, sel);
+			if (len == LB_ERR)  // couldn’t get length
+				return;
 			
-			if (len > 0 && len < sizeof(s))
-            {
+			if (len < (int)sizeof(s))
+			{
 				ListBox_GetText(hwndCtl, sel, s);
-        		ShowCopyableMessageDialog(hwndMain, s);
+				ShowCopyableMessageDialog(hwndMain, s);
 			}
-			else if (len >= sizeof(s))
+			else
 			{
 				char warning[200];
 				snprintf(warning, sizeof(warning), 
@@ -1187,8 +1187,8 @@ void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 					"Maximum supported: %zu characters.", len, sizeof(s)-1);
 				ShowCopyableMessageDialog(hwndMain, warning);
 			}
-			break;
 		}
+		break;
 	}
 }
 

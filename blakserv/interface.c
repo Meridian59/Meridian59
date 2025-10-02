@@ -1171,7 +1171,7 @@ void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 				return;
 
 			int len = ListBox_GetTextLen(hwndCtl, sel);
-			if (len == LB_ERR)  // couldn’t get length
+			if (len == LB_ERR)
 				return;
 			
 			if (len < (int)sizeof(s))

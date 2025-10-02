@@ -1166,10 +1166,29 @@ void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 	case LBN_DBLCLK :
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
-			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-        	ShowCopyableMessageDialog(hwndMain, s);
+			int sel = ListBox_GetCurSel(hwndCtl);
+            if (sel == LB_ERR)  // nothing selected
+                return;
+
+            int len = ListBox_GetTextLen(hwndCtl, sel);
+            if (len == LB_ERR)  // couldn’t get length
+                return;
+			
+			if (len > 0 && len < sizeof(s))
+            {
+				ListBox_GetText(hwndCtl, sel, s);
+        		ShowCopyableMessageDialog(hwndMain, s);
+			}
+			else if (len >= sizeof(s))
+			{
+				char warning[200];
+				snprintf(warning, sizeof(warning), 
+					"Debug message too long to display (%d characters).\n"
+					"Maximum supported: %zu characters.", len, sizeof(s)-1);
+				ShowCopyableMessageDialog(hwndMain, warning);
+			}
+			break;
 		}
-		break;
 	}
 }
 

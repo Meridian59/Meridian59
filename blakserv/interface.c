@@ -1159,15 +1159,34 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 
 void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 {
-	char s[400];
+	char s[CHANBUF_SIZE];
 	
 	switch (codeNotify)
 	{
 	case LBN_DBLCLK :
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
-			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-        	ShowCopyableMessageDialog(hwndMain, s);
+			int sel = ListBox_GetCurSel(hwndCtl);
+			if (sel == LB_ERR)  // nothing selected
+				return;
+
+			int len = ListBox_GetTextLen(hwndCtl, sel);
+			if (len == LB_ERR)
+				return;
+			
+			if (len < (int)sizeof(s))
+			{
+				ListBox_GetText(hwndCtl, sel, s);
+				ShowCopyableMessageDialog(hwndMain, s);
+			}
+			else
+			{
+				char warning[200];
+				snprintf(warning, sizeof(warning), 
+					"Debug message too long to display (%d characters).\n"
+					"Maximum supported: %zu characters.", len, sizeof(s)-1);
+				ShowCopyableMessageDialog(hwndMain, warning);
+			}
 		}
 		break;
 	}

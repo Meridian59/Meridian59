@@ -15,7 +15,7 @@
 
 enum
 {
-   CHANBUF_SIZE = 1000
+   CHANBUF_SIZE = 2000
 };
 
 typedef struct

@@ -1159,7 +1159,7 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 
 void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 {
-	char s[2000];
+	char s[CHANBUF_SIZE];
 	
 	switch (codeNotify)
 	{

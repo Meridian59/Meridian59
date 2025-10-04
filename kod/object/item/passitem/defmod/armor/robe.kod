@@ -126,10 +126,19 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      if (NOT IsClass(what,&Robe) 
-         AND NOT IsClass(what,&Pants) 
-         AND NOT IsClass(what,&Shirt))
+      local iUseType;
+      iUseType = send(what,@GetItemUseType);
+      
+      % Check if the item conflicts with robe's use types (legs or body/shirt)
+      if (iUseType & ITEM_USE_LEGS) OR (iUseType & ITEM_USE_BODY) OR (iUseType & ITEM_USE_SHIRT)
       {
+         % Check if this robe is compatible with the item being equipped
+         if Send(self,@IsCompatibleWithItem,#what=what)
+         {
+            propagate;
+         }
+         
+         % This is conflicting armor - try to unequip the robe
          if Send(poOwner,@TryUnuseItem,#what=self)
          {
             propagate;
@@ -187,6 +196,18 @@ messages:
       }
 
       return;
+   }
+
+   IsCompatibleWithItem(what = $)
+   "Robes are compatible with pants and shirts, allowing layered clothing combinations."
+   {
+      % Robes can be worn with pants and shirts
+      if IsClass(what, &Pants) OR IsClass(what, &Shirt)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
    }
 
 

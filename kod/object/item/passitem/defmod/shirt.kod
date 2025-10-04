@@ -211,6 +211,18 @@ messages:
       return TRUE;
    }
 
+   IsCompatibleWithItem(what = $)
+   "Shirts are compatible with robes, allowing layered clothing combinations."
+   {
+      % Shirts can be worn with robes
+      if IsClass(what, &Robe)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

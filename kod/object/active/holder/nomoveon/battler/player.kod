@@ -3197,7 +3197,7 @@ messages:
 
    CheckPosition(what=$,type=$,space=0)
    {
-      local i, iSpace;
+      local i, iSpace, bAllowCombination;
 
       if space = 0 OR type = $ OR what = $
       {
@@ -3243,16 +3243,29 @@ messages:
          }
          else
          {
-            if ((IsClass(what,&Pants) AND (Send(self,@FindUsing,#class=&Robe) <> $))
-               OR ((IsClass(what,&Robe) AND (Send(self,@FindUsing,#class=&Pants) <> $))))
+            % Check for compatible item combinations using the new compatibility system
+            bAllowCombination = FALSE;
+            
+            for i in plUsing
             {
-               % Players can wear pants and a robe at the same time.
+               if Send(i,@GetItemUseType) & type
+               {
+                  % Found conflicting item - check if they're compatible with each other
+                  if Send(what,@IsCompatibleWithItem,#what=i) OR Send(i,@IsCompatibleWithItem,#what=what)
+                  {
+                     bAllowCombination = TRUE;
+                     break;
+                  }
+               }
+            }
+            
+            if bAllowCombination
+            {
                return TRUE;
             }
-            else
-            {
-               Send(self,@MsgSendUser,#message_rsc=player_use_full);
-            }
+            
+            % For all other conflicts, space is full
+            Send(self,@MsgSendUser,#message_rsc=player_use_full);
          }
          
          return FALSE;  
@@ -8743,7 +8756,7 @@ messages:
       if Send(self,@FindUsing,#class=&Robe) <> $ 
          AND IsClass(what,&Pants) 
       {
-         % Player is wearing a robe so We don't show pants here as they are underneath.
+         % Player is wearing a robe so we don't show pants here as they are underneath.
          return;
       }
 

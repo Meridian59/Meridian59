@@ -126,30 +126,19 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      local iUseType;
-      iUseType = send(what,@GetItemUseType);
-      
-      % Check if the item conflicts with robe's use types (legs or body/shirt)
-      if (iUseType & ITEM_USE_LEGS) OR (iUseType & ITEM_USE_BODY) OR (iUseType & ITEM_USE_SHIRT)
+      % Check if this robe is compatible with the item being equipped
+      if Send(self,@IsCompatibleWithItem,#what=what)
       {
-         % Check if this robe is compatible with the item being equipped
-         if Send(self,@IsCompatibleWithItem,#what=what)
-         {
-            propagate;
-         }
-         
-         % This is conflicting armor - try to unequip the robe
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
+         propagate;
       }
-
-      propagate;
+      
+      % This is conflicting armor - try to unequip the robe
+      if Send(poOwner,@TryUnuseItem,#what=self)
+      {
+         propagate;
+      }
+      
+      return FALSE;
    }
 
    HasSkinTones()

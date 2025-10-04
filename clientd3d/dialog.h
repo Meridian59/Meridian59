@@ -30,7 +30,7 @@ typedef struct {
    /* These fields are used internally in the dialog: */
    HWND hwndListBox, hwndQuanList, hwndFind;  /* Handles of child items */
    WNDPROC lpfnDefLookProc;     /* Default list box window procedure */   
-   Bool   *selected;            /* Array of booleans; true if item at index is selected */
+   bool   *selected;            /* Array of booleans; true if item at index is selected */
 } LookDialogStruct;
 
 // Flags for description dialog
@@ -81,6 +81,7 @@ typedef struct {
    DWORD minAmount;	      /* minimum allowable value */
 } AmountDialogStruct;
 
+M59EXPORT INT_PTR SafeDialogBoxParam(HINSTANCE hInstance, LPCSTR lpTemplate, HWND hWndParent, DLGPROC lpDialogFunc, LPARAM dwInitParam);
 
 M59EXPORT void SetDescParams(HWND hParent, int flags);
 M59EXPORT void DisplayDescription(object_node *obj, BYTE flags, char *description, 
@@ -96,14 +97,13 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortGameDialogs(void);
 void FilterChangedDescription(char *desc);
-
 void AnimateDescription(int dt);
 
 /* lookdlg.c */
 
 void AbortLookList(void);
-M59EXPORT Bool GetAmount(HWND hParent, HWND hwnd, object_node *obj, int x, int y);
-M59EXPORT Bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int startValue, int minValue, int maxValue);
-M59EXPORT Bool GetAmountListBox(HWND hList, int index);
+M59EXPORT bool GetAmount(HWND hParent, HWND hwnd, object_node *obj, int x, int y);
+M59EXPORT bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int startValue, int minValue, int maxValue);
+M59EXPORT bool GetAmountListBox(HWND hList, int index);
 
 #endif /* #ifndef _DIALOG_H */

@@ -1019,6 +1019,9 @@ messages:
       
       Send(Send(SYS,@GetAssassinGame),@RemoveFromGame,#who=self);
       Send(Send(SYS,@GetLore),@PlayerSuicides,#who=self);
+      Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=-1);
+      Send(SYS, @RecreatedUser, #what=self);  % Clear bank, vault, etc.
+
       plSchools = $;
       
       propagate;
@@ -2436,6 +2439,12 @@ messages:
 
    DropItem(droppedItem=$, targetGhost=$, dropRoom=$, dropRow=0, dropCol=0,
             index=$, merge=TRUE)
+   % Removes the specified item (by object or index) from the player's inventory and drops it in the specified location.
+   % Returns TRUE if the item was successfully dropped, FALSE otherwise.
+   %
+   % IMPORTANT: This function is assumed NOT to add items to the inventory.
+   % If this behavior changes, review all code that loops over inventory and calls DropItem,
+   % as it may result in infinite loops or other unintended consequences.
    {
       local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
       
@@ -4704,7 +4713,10 @@ messages:
          }
       }
       
-      Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      if poOwner <> $ 
+      {
+         Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      }
 
       % Let our shield know we killed something.
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
@@ -6383,7 +6395,7 @@ messages:
       }
       
       % No karma change in arenas.
-      if Send(oRoom,@IsArena)
+      if oRoom <> $ AND Send(oRoom,@IsArena)
       {
          return 0;
       }

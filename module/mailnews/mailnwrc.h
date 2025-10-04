@@ -83,6 +83,7 @@
 #define IDC_GROUPNAME                   1121
 #define IDC_REPLYALL                    1124
 #define IDC_REPLYMAIL                   1125
+#define IDS_DELETEMULTIPLE              1126
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

@@ -423,9 +423,9 @@ TEditorClient::~TEditorClient ()
 // TEditorClient
 // -------------
 //
-char far* TEditorClient::GetClassName ()
+TWindowClassName TEditorClient::GetWindowClassName ()
 {
-	return "WinDEUEditor";
+	return TWindowClassName{"WinDEUEditor"};
 }
 
 

@@ -51,10 +51,6 @@
 #ifndef _GRAPHCTL_H
 #define _GRAPHCTL_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Styles */
 #define GCS_INPUT    0x0001L    /* Include to get handle user input */
 #define GCS_SLIDER   0x0002L    /* Include to display slider */
@@ -85,13 +81,9 @@ enum {
    GRAPH_NUMCOLORS,
 };
 
-Bool GraphCtlRegister(HINSTANCE hInst);
-Bool GraphCtlUnregister(HINSTANCE hInst);
+bool GraphCtlRegister(HINSTANCE hInst);
+bool GraphCtlUnregister(HINSTANCE hInst);
 M59EXPORT char *GraphCtlGetClassName(void);
 M59EXPORT LRESULT CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-#ifdef __cplusplus
-};
-#endif
 
 #endif /* #ifndef _GRAPHCTL_H */

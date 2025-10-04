@@ -49,7 +49,7 @@ void MaintenanceProcessSessionBuffer(session_node *s)
 
    while (s->receive_list != NULL)
    {
-      if (ReadSessionBytes(s,1,&ch) == False)
+      if (ReadSessionBytes(s,1,&ch) == false)
           return;
 
       /* give up receive mutex, so the interface/socket thread can
@@ -69,7 +69,7 @@ void MaintenanceProcessSessionBuffer(session_node *s)
       }
 
       /* any character could change our state.  if so, leave */
-      if (s->hangup == True || s->state != STATE_MAINTENANCE)
+      if (s->hangup == true || s->state != STATE_MAINTENANCE)
          return;
    }
 }

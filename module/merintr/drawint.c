@@ -190,7 +190,7 @@ static InterfaceElement elements[NUM_ELEMENTS] = {
 
 typedef struct {
   InterfaceElement element;
-  Bool vertical;              // True = repeat vertically, False = repeat horizontally
+  bool vertical;              // true = repeat vertically, false = repeat horizontally
   int end;                    // X or Y coordinate to stop repeating element
 } InterfaceRepeater;
 
@@ -202,50 +202,50 @@ typedef struct {
 // Elements that are drawn repeatedly along a line
 static InterfaceRepeater repeaters[NUM_REPEATERS] = {
   // Main graphics view items
-  { IDB_TOP,        0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_BOTTOM,     0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_LEFT,       0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_RIGHT,      0,   0,    NULL,   0,   0,  True,  0, },
+  { IDB_TOP,        0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_BOTTOM,     0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_LEFT,       0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_RIGHT,      0,   0,    NULL,   0,   0,  true,  0, },
 
   // Inventory items
-  { IDB_ITOP,       0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_IBOTTOM,    0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_ILEFT,      0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_IRIGHT,     0,   0,    NULL,   0,   0,  True,  0, },
+  { IDB_ITOP,       0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_IBOTTOM,    0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_ILEFT,      0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_IRIGHT,     0,   0,    NULL,   0,   0,  true,  0, },
 
   // Stats items
-  { IDB_STOP,       0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_SBOTTOM,    0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_SLEFT,      0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_SRIGHT,     0,   0,    NULL,   0,   0,  True,  0, },
+  { IDB_STOP,       0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_SBOTTOM,    0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_SLEFT,      0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_SRIGHT,     0,   0,    NULL,   0,   0,  true,  0, },
 
   // Edge treatment - ajw
-  { IDB_EUREPEAT,    0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_EBREPEAT,    0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_ELREPEAT,    0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_ERREPEAT,    0,   0,    NULL,   0,   0,  True,  0, },
+  { IDB_EUREPEAT,    0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_EBREPEAT,    0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_ELREPEAT,    0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_ERREPEAT,    0,   0,    NULL,   0,   0,  true,  0, },
 
   // Map treatment - ajw
-  { IDB_MUREPEAT,   0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_MLREPEAT,   0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_MRREPEAT,   0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_MBREPEAT,   0,   0,    NULL,   0,   0,  False, 0, },
+  { IDB_MUREPEAT,   0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_MLREPEAT,   0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_MRREPEAT,   0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_MBREPEAT,   0,   0,    NULL,   0,   0,  false, 0, },
 
   // EditBox treatment - ajw
-  { IDB_BUREPEAT,   0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_BBREPEAT,   0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_BLREPEAT,   0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_BRREPEAT,   0,   0,    NULL,   0,   0,  True,  0, },
+  { IDB_BUREPEAT,   0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_BBREPEAT,   0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_BLREPEAT,   0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_BRREPEAT,   0,   0,    NULL,   0,   0,  true,  0, },
 
   // personal enchantment treatment - mistery
-  { IDB_MUREPEAT,   0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_MLREPEAT,   0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_MRREPEAT,   0,   0,    NULL,   0,   0,  True,  0, },
-  { IDB_MBREPEAT,   0,   0,    NULL,   0,   0,  False, 0, },
+  { IDB_MUREPEAT,   0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_MLREPEAT,   0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_MRREPEAT,   0,   0,    NULL,   0,   0,  true,  0, },
+  { IDB_MBREPEAT,   0,   0,    NULL,   0,   0,  false, 0, },
 
   // Graph bar items
-  { IDB_BARTOP,     0,   0,    NULL,   0,   0,  False, 0, },
-  { IDB_BARBOTTOM,  0,   0,    NULL,   0,   0,  False, 0, },
+  { IDB_BARTOP,     0,   0,    NULL,   0,   0,  false, 0, },
+  { IDB_BARBOTTOM,  0,   0,    NULL,   0,   0,  false, 0, },
 };
 
 // Indices of interface elements in "repeaters"
@@ -771,7 +771,7 @@ void InterfaceDrawElements(HDC hdc)
 {
   int i, x, y;
   InterfaceElement *e;
-  Bool vertical;
+  bool vertical;
 
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
@@ -832,7 +832,7 @@ void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a )
 {
   int i, x, y;
   InterfaceElement *e;
-  Bool vertical;
+  bool vertical;
 
   elements[ELEMENT_BARRIGHT].x = a->cx;
 

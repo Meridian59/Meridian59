@@ -1061,7 +1061,10 @@ messages:
 
       % Carry out attack
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-      Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      if poBrain <> $   % Attack could cause our death in some cases
+      {
+         Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      }
 
       return;
    }
@@ -5066,7 +5069,7 @@ messages:
             return TRUE;
          }
       
-         if Send(poOwner,@CountHoldingHowMany,#class=&Player) > 1
+         if Send(poOwner,@CountHoldingHowMany,#class=&Player,#lExcludeClasses=[&DM]) > 1
          {
             Send(self,@Say,#message_rsc=monster_refuse_service);
             Send(self,@SayToOne,#target=who,

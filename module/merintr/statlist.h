@@ -21,6 +21,6 @@ void StatsListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis);
 BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatsListCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
-void ShowStatsList( Bool bShow );	//	ajw
+void ShowStatsList(bool bShow);
 
 #endif /* #ifndef _STATLIST_H */

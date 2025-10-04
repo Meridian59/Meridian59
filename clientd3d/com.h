@@ -17,10 +17,10 @@ enum { CON_NONE, CON_SOCKET };  /* Connection types */
 #define COMBUFSIZE 40000  /* Size of send and receive buffers */
 
 int ReadServer(void);
-Bool SendServer(char *buf, unsigned int numbytes);
-Bool WriteServer(char *buf,unsigned int numbytes);
+bool SendServer(char *buf, unsigned int numbytes);
+bool WriteServer(char *buf,unsigned int numbytes);
 void CloseSocketConnection(void);
-Bool OpenSocketConnection(char *hostname, int sock_port);
+bool OpenSocketConnection(char *hostname, int sock_port);
 void CloseConnection(void);
 
 void CommGetSettings(void);
@@ -29,7 +29,7 @@ void CommSaveSettings(void);
 
 void ProcessMsgBuffer(void);
 
-Bool StartReadNotification(void);
+bool StartReadNotification(void);
 void EndReadNotification(void);
 
 #define NUM_STREAMS 5

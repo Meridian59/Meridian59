@@ -1,0 +1,26 @@
+//-------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+// Copyright (c) 1998 by Yura Bidus
+//
+// .RH file for TUrlLink
+//----------------------------------------------------------------------------
+#if !defined(OWLEXT_URLLINK_RH)
+#define OWLEXT_URLLINK_RH
+
+//
+// The index from which the error strings start in resource file
+//
+#define IDS_PATHNOTFOUND        32718
+#define IDS_FILENOTFOUIND       32719
+#define IDS_FILEINVALID         32720
+#define IDS_ACCESSDENIED        32721
+#define IDS_INVALIDASSOC        32722
+#define IDS_DDEBISY             32723
+#define IDS_DDEFAILED           32724
+#define IDS_DDETYMEOUT          32725
+#define IDS_NOINSTANCE          32726
+#define IDS_SHAREDERROR         32727
+#define IDS_UNCKNOWNERR         32728
+
+
+#endif  //  OWLEXT_URLLINK_RH

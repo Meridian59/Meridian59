@@ -14,10 +14,10 @@
 
 static HMODULE hRichEditLib; 
 
-Bool is_foreground;   // True when program is in the foreground charlie: i want to access this elsewhere.
+bool is_foreground;   // true when program is in the foreground charlie: i want to access this elsewhere.
 
 extern HPALETTE hPal;
-extern BOOL		gbMouselook;
+extern bool gbMouselook;
 
 int connection;  /* Current connection to server: CON_NONE, CON_SERIAL, ... */
 int state;       /* Current client mode: terminal, game, blank, login, ... */
@@ -188,19 +188,19 @@ void MainExpose(HWND hwnd)
 	}
 }
 /****************************************************************************/
-/* Return True iff message should NOT be passed to Windows for default processing */
-Bool MainKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+/* Return true iff message should NOT be passed to Windows for default processing */
+bool MainKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
 	/* See if a module wants to handle key */
-	if (ModuleEvent(EVENT_KEY, hwnd, vk, fDown, cRepeat, flags) == False)
-		return True;
+	if (ModuleEvent(EVENT_KEY, hwnd, vk, fDown, cRepeat, flags) == false)
+		return true;
 	
 	switch (state)
 	{
 	case STATE_GAME:
 		return GameKey(hwnd, vk, fDown, cRepeat, flags);
 	}
-	return False;
+	return false;
 }
 
 /****************************************************************************/
@@ -211,7 +211,7 @@ void MainChar(HWND hwnd,char ch,int cRepeat)
 void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
 	/* See if a module wants to handle mouse click */
-	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
+	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
 		return;
 	
 	switch (state)
@@ -225,7 +225,7 @@ void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
 	/* See if a module wants to handle mouse click */
-	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
+	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
 		return;
 	
 	switch (state)
@@ -239,7 +239,7 @@ void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 void MainMouseRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
 	/* See if a module wants to handle mouse click */
-	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
+	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
 		return;
 	
 	switch (state)
@@ -398,14 +398,14 @@ void MainMenuSelect(HWND hwnd, HMENU hmenu, int item, HMENU hmenuPopup, UINT fla
 	}
 }
 /****************************************************************************/
-Bool MainDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool MainDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
 	switch (state)
 	{
 	case STATE_GAME:
 		return GameDrawItem(hwnd, lpdis);
 	}
-	return False;
+	return false;
 }
 /****************************************************************************/
 void MainPaletteChanged(HWND hwnd, HWND hwndPaletteChange)
@@ -414,10 +414,10 @@ void MainPaletteChanged(HWND hwnd, HWND hwndPaletteChange)
 		PaletteActivate(is_foreground);
 }
 /****************************************************************************/
-Bool MainQueryNewPalette(HWND hwnd)
+bool MainQueryNewPalette(HWND hwnd)
 {
 	PaletteActivate(is_foreground);
-	return True;
+	return true;
 }
 
 /****************************************************************************/

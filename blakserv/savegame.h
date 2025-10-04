@@ -24,6 +24,6 @@ enum
    SAVE_GAME_USER = 7
 };
 
-Bool SaveGame(char *filename);
+bool SaveGame(char *filename);
 
 #endif

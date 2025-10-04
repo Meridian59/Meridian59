@@ -126,20 +126,19 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      if send(what,@GetItemUseType) & ITEM_USE_LEGS
-         AND NOT IsClass(what,&Robe)
+      % Check if this robe is compatible with the item being equipped
+      if Send(self,@IsCompatibleWithItem,#what=what)
       {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
+         propagate;
       }
-
-      propagate;
+      
+      % This is conflicting armor - try to unequip the robe
+      if Send(poOwner,@TryUnuseItem,#what=self)
+      {
+         propagate;
+      }
+      
+      return FALSE;
    }
 
    HasSkinTones()
@@ -186,6 +185,18 @@ messages:
       }
 
       return;
+   }
+
+   IsCompatibleWithItem(what = $)
+   "Robes are compatible with pants and shirts, allowing layered clothing combinations."
+   {
+      % Robes can be worn with pants and shirts
+      if IsClass(what, &Pants) OR IsClass(what, &Shirt)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
    }
 
 

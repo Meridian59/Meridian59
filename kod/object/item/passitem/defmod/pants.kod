@@ -102,6 +102,13 @@ messages:
    {
       if send(what,@getitemusetype) & ITEM_USE_LEGS
       {
+         % Check if this item is compatible with pants
+         if Send(self,@IsCompatibleWithItem,#what=what)
+         {
+            propagate;
+         }
+         
+         % Not compatible - try to unequip the pants
          if Send(poOwner,@TryUnuseItem,#what=self)
          {
             propagate;
@@ -133,6 +140,18 @@ messages:
    IsPlural()
    {
       return TRUE;
+   }
+
+   IsCompatibleWithItem(what = $)
+   "Pants are compatible with robes, allowing layered clothing combinations."
+   {
+      % Pants can be worn with robes
+      if IsClass(what, &Robe)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
    }
 
 

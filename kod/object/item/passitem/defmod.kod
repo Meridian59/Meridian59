@@ -166,6 +166,15 @@ messages:
       return TRUE; 
    }
 
+   IsCompatibleWithItem(what = $)
+   "Returns TRUE if this item can be worn together with the given item, FALSE otherwise."
+   "Default behavior: no special compatibility, rely on use type conflicts only."
+   {
+      % Default implementation - no special compatibility rules
+      % Individual items can override this to define specific compatibility
+      return FALSE;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

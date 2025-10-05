@@ -63,27 +63,21 @@ HWND hwndTab_page;
 HWND tab_pages[NUM_TAB_PAGES];
 HWND tab_about;
 
-Bool is_about;
+bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
 #define HWND_ADMIN tab_pages[2]
 
 /* subclass admin edit window to get enter and tab keys */
-
-#ifdef STRICT
 static WNDPROC lpfnDefAdminInputProc;
 static WNDPROC lpfnDefAdminResponseProc;
-#else
-static FARPROC lpfnDefAdminInputProc;
-static FARPROC lpfnDefAdminResponseProc;
-#endif
 
 /* status window stuff--make a timer to clear it every once in a while */
 #define STATUS_CONNECTION_WIDTH 30
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
-Bool is_timer_pending;
+bool is_timer_pending;
 
 #define ADMIN_RESPONSE_SIZE (256 * 1024)
 
@@ -124,13 +118,15 @@ void InterfaceRemoveList(int session_id);
 void InterfaceUpdateList(int session_id);
 void InterfaceUpdateAdmin(void);
 
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
+
 void InitInterface(void)
 {
 	HANDLE hThread;
 	
 	sessions_logged_on = 0;
-	is_timer_pending = False;
-	is_about = False;
+	is_timer_pending = false;
+	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -388,7 +384,7 @@ void InterfaceAddList(int session_id)
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
-	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
@@ -442,7 +438,7 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
-		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}
@@ -886,10 +882,10 @@ void InterfaceDrawText(HWND hwnd)
 		SetDlgItemText(HWND_STATUS,IDC_MEMORY_VALUE,s);
 		
 		kstat = GetKodStats();
-		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time));
+		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_STARTED_VALUE,s);
 		
-		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time));
+		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_UP_FOR_VALUE,s);
 		
 		if (kstat->interpreting_time/1000.0 < 0.01) 
@@ -1128,7 +1124,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = True;
+		is_about = true;
 		
 		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
@@ -1163,18 +1159,62 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 
 void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 {
-	char s[400];
+	char s[CHANBUF_SIZE];
 	
 	switch (codeNotify)
 	{
 	case LBN_DBLCLK :
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
-			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-			MessageBox(hwndMain,s,BlakServNameString(),MB_OK | MB_ICONINFORMATION);
+			int sel = ListBox_GetCurSel(hwndCtl);
+			if (sel == LB_ERR)  // nothing selected
+				return;
+
+			int len = ListBox_GetTextLen(hwndCtl, sel);
+			if (len == LB_ERR)
+				return;
+			
+			if (len < (int)sizeof(s))
+			{
+				ListBox_GetText(hwndCtl, sel, s);
+				ShowCopyableMessageDialog(hwndMain, s);
+			}
+			else
+			{
+				char warning[200];
+				snprintf(warning, sizeof(warning), 
+					"Debug message too long to display (%d characters).\n"
+					"Maximum supported: %zu characters.", len, sizeof(s)-1);
+				ShowCopyableMessageDialog(hwndMain, warning);
+			}
 		}
 		break;
 	}
+}
+
+
+INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        SetDlgItemText(hDlg, IDC_MESSAGE_EDIT, (LPCTSTR)lParam);
+		CenterWindow(hDlg, GetParent(hDlg));
+        return TRUE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message)
+{
+	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COPYABLE_MESSAGE), hwndParent, CopyableMessageDlgProc, (LPARAM)message);
 }
 
 LRESULT CALLBACK InterfaceAdminInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

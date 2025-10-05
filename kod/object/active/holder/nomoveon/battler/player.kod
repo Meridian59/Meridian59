@@ -1019,6 +1019,9 @@ messages:
       
       Send(Send(SYS,@GetAssassinGame),@RemoveFromGame,#who=self);
       Send(Send(SYS,@GetLore),@PlayerSuicides,#who=self);
+      Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=-1);
+      Send(SYS, @RecreatedUser, #what=self);  % Clear bank, vault, etc.
+
       plSchools = $;
       
       propagate;
@@ -4702,7 +4705,10 @@ messages:
          }
       }
       
-      Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      if poOwner <> $ 
+      {
+         Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      }
 
       % Let our shield know we killed something.
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
@@ -6382,7 +6388,7 @@ messages:
       }
       
       % No karma change in arenas.
-      if Send(oRoom,@IsArena)
+      if oRoom <> $ AND Send(oRoom,@IsArena)
       {
          return 0;
       }

@@ -1,0 +1,18 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for THSlider and TVSlider
+//----------------------------------------------------------------------------
+
+#include <owl/slider.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+IDB_HSLIDERTHUMB BITMAP "owl/res/hslider.bmp"
+IDB_VSLIDERTHUMB BITMAP "owl/res/vslider.bmp"

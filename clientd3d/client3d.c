@@ -45,7 +45,7 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags)
    list_type new_list = NULL;
    room_contents_node *r;
    int i, pos_effect, neg_effect, obj_flags;
-   extern Bool map;
+   extern bool map;
 
    if (IsBlind())
       return NULL;
@@ -124,7 +124,7 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags)
 room_contents_node *GetObjectByPosition(int x, int y, int distance, int pos_flags, int neg_flags)
 {
    room_contents_node *r;
-   extern Bool map;
+   extern bool map;
    int i;
 
    if (IsBlind())
@@ -198,18 +198,18 @@ int GetPointFloor(int x, int y)
 /************************************************************************/
 /*
  * GetPointFloor:  Set floor to height of floor at (x, y), and ceiling to height
- *   of ceiling.  If (x, y) is not in a leaf node, return False; otherwise return True.
+ *   of ceiling.  If (x, y) is not in a leaf node, return false; otherwise return true.
  */
-Bool GetPointHeights(int x, int y, int *floor, int *ceiling)
+bool GetPointHeights(int x, int y, int *floor, int *ceiling)
 {
    BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, x, y);
 
    if (leaf == NULL || leaf->sector == NULL)
-      return False;
+      return false;
 
    *floor   = GetFloorHeight(x, y, leaf->sector);
    *ceiling = GetCeilingHeight(x, y, leaf->sector);
-   return True;
+   return true;
 }
 /************************************************************************/
 PDIB GetPointCeilingTexture(int x, int y)

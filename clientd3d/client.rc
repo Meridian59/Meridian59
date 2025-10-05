@@ -529,24 +529,24 @@ CAPTION "Meridian 59 Cadastre-se para uma conta gratuita!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
-    LTEXT           "Criar uma conta é fácil: insira o seu e-mail, nome de usuário, senha, escolha um servidor e clique em Criar Conta. Você receberá um e-mail para ativar a conta. Problemas? Clique em Solucionar Problemas.",IDC_STATIC,34,11,230,46
-    GROUPBOX        "Insira as Informações da Sua Nova Conta",IDC_STATIC,23,47,244,181
-    LTEXT           "Endereço de E-mail",ID_SU_EMAIL,39,67,62,8
-    EDITTEXT        IDC_NEW_EMAIL,134,65,129,14,ES_AUTOHSCROLL
-    RTEXT           "Usado para verificação da conta e para redefinir sua senha.",IDC_STATIC,27,81,235,11
-    LTEXT           "Nome de Usuário Desejado",ID_SU_USERNAME,39,96,90,10
-    EDITTEXT        IDC_NEW_USERNAME,134,94,129,14,ES_AUTOHSCROLL
-    LTEXT           "Senha",ID_SU_PW1,39,113,51,10
-    EDITTEXT        IDC_NEW_PW1,134,111,129,14,ES_PASSWORD | ES_AUTOHSCROLL
-    LTEXT           "Confirmar Senha",ID_SU_PW2,39,130,69,10
-    EDITTEXT        IDC_NEW_PW2,134,128,129,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "O Nome de Usuário e a Senha devem ter entre 6 e 32 caracteres sem espaços.",IDC_STATIC,97,145,165,18
-    LTEXT           "Servidor:",ID_SU_SERVER,39,168,50,8
-    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,168,32,10
-    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,168,32,10
-    LTEXT           "Existem dois servidores, com o 101 sendo o mais ativo. Jogadores de todos os tipos jogam no 101: veteranos, iniciantes, combatentes e quem prefere jogar casualmente.",IDC_STATIC,39,184,220,34
-    PUSHBUTTON      "Solucionar Problemas",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
-    DEFPUSHBUTTON   "Criar Conta",IDC_SIGNUP_OK,150,221,107,14
+    LTEXT           "Criar uma conta é fácil: insira o seu e-mail, nome de usuário, senha, escolha um servidor e clique em Criar Conta. Você receberá um e-mail para ativar a conta. Problemas? Clique em Solucionar Problemas.",IDC_STATIC,34,11,230,35
+    GROUPBOX        "Insira as Informações da Sua Nova Conta",IDC_STATIC,23,43,245,197
+    LTEXT           "Endereço de E-mail",ID_SU_EMAIL,39,64,62,8
+    EDITTEXT        IDC_NEW_EMAIL,134,62,129,14,ES_AUTOHSCROLL
+    RTEXT           "Usado para verificação da conta e para redefinir sua senha.",IDC_STATIC,27,78,235,11
+    LTEXT           "Nome de Usuário Desejado",ID_SU_USERNAME,39,93,90,10
+    EDITTEXT        IDC_NEW_USERNAME,134,91,129,14,ES_AUTOHSCROLL
+    LTEXT           "Senha",ID_SU_PW1,39,110,51,10
+    EDITTEXT        IDC_NEW_PW1,134,108,129,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirmar Senha",ID_SU_PW2,39,127,69,10
+    EDITTEXT        IDC_NEW_PW2,134,125,129,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Nomes de usuário e senhas devem ter entre 6 e 32 caracteres e não podem conter espaços. Nomes de usuário podem incluir apenas letras e números. Senhas podem incluir letras em inglês, números e símbolos (sem caracteres acentuados).",IDC_STATIC,39,142,223,33
+    LTEXT           "Servidor:",ID_SU_SERVER,39,178,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,178,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,178,32,10
+    LTEXT           "Existem dois servidores, com o 101 sendo o mais ativo. Jogadores de todos os tipos jogam no 101: veteranos, iniciantes, combatentes e quem prefere jogar casualmente.",IDC_STATIC,39,193,220,34
+    PUSHBUTTON      "Solucionar Problemas",IDC_SIGNUP_TROUBLESHOOT,54,232,74,14
+    DEFPUSHBUTTON   "Criar Conta",IDC_SIGNUP_OK,147,232,107,14
 END
 
 IDD_PREFERENCES DIALOGEX 0, 0, 476, 391
@@ -970,7 +970,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Não foi possível enviar uma request HTTP para o arquivo %s do servidor %s."
     IDS_CANTGETFILESIZE             "Não foi possível retornar o tamanho do arquivo: %s, do servidor %s."
     IDS_CANTSIGNUP                  "Não foi possível entrar em contato com o servidor de cadastro, por favor verifique sua conexão e tente novamente (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT                "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Seu cadastro falhou porquê:\n\n%s"
 END
 
@@ -988,7 +988,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Sua conta não foi verificada!. Por favor verifique o seu email (inclusive a pasta de spam!) e entre no link de ativação. Se você não tiver recebido o link de verificação da sua conta, pressione Sim no botão abaixo."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\n\nAntes de entrar e começar a jogar...\n\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
+    IDS_SIGNUPMSG           "Sua nova conta [%s] foi criada com sucesso!\r\n\r\nAntes de entrar e começar a jogar...\r\n\r\nPor-favor verifique o seu endereço de e-mail (%s) para verificar a sua conta."
 END
 
 STRINGTABLE
@@ -1538,24 +1538,24 @@ CAPTION "Meridian 59 Kostenloses Konto erstellen!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
-    LTEXT           "Erstellen Sie ein Konto, indem Sie eine gültige E-Mail, einen Benutzernamen und ein Passwort eingeben, einen Server auswählen und auf Konto erstellen klicken. Sie erhalten eine E-Mail zur Aktivierung. Bei Problemen klicken Sie auf Problembehandlung.",IDC_STATIC,34,11,233,46
-    GROUPBOX        "Geben Sie Ihre neuen Kontoinformationen ein",IDC_STATIC,23,57,244,171
-    LTEXT           "E-Mail-Adresse",ID_SU_EMAIL,39,76,62,8
-    EDITTEXT        IDC_NEW_EMAIL,134,75,120,14,ES_AUTOHSCROLL
-    RTEXT           "Für Verifizierung und Passwort-Reset.",IDC_STATIC,35,91,219,11
-    LTEXT           "Gewünschter Benutzername",ID_SU_USERNAME,39,106,90,10
-    EDITTEXT        IDC_NEW_USERNAME,134,104,120,14,ES_AUTOHSCROLL
-    LTEXT           "Passwort",ID_SU_PW1,39,123,51,10
-    EDITTEXT        IDC_NEW_PW1,134,121,120,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Erstellen Sie ein Konto, indem Sie eine gültige E-Mail, einen Benutzernamen und ein Passwort eingeben, einen Server auswählen und auf Konto erstellen klicken. Sie erhalten eine E-Mail zur Aktivierung. Bei Problemen klicken Sie auf Problembehandlung.",IDC_STATIC,34,11,233,36
+    GROUPBOX        "Geben Sie Ihre neuen Kontoinformationen ein",IDC_STATIC,23,55,245,186
+    LTEXT           "E-Mail-Adresse",ID_SU_EMAIL,39,72,62,8
+    EDITTEXT        IDC_NEW_EMAIL,134,71,120,14,ES_AUTOHSCROLL
+    RTEXT           "Für Verifizierung und Passwort-Reset.",IDC_STATIC,35,87,219,11
+    LTEXT           "Gewünschter Benutzername",ID_SU_USERNAME,39,102,90,10
+    EDITTEXT        IDC_NEW_USERNAME,134,100,120,14,ES_AUTOHSCROLL
+    LTEXT           "Passwort",ID_SU_PW1,39,119,51,10
+    EDITTEXT        IDC_NEW_PW1,134,117,120,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "Passwort bestätigen",ID_SU_PW2,39,140,69,10
     EDITTEXT        IDC_NEW_PW2,134,138,120,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "Benutzername und Passwort: 6-32 Zeichen, keine Leerzeichen.",IDC_STATIC,26,155,227,11
-    LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
-    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,168,32,10
-    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,168,32,10
-    LTEXT           "Es stehen zwei Server zur Verfügung, wobei 101 der aktivere der beiden ist. Spieler aller Art nennen 101 ihr Zuhause: Veteranen, Neulinge, Spieler, die gerne kämpfen, und Spieler, die es ruhig angehen lassen und an ihren Charakteren arbeiten.",IDC_STATIC,39,184,220,34
-    PUSHBUTTON      "Problembehandlung",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
-    DEFPUSHBUTTON   "Konto erstellen",IDC_SIGNUP_OK,150,221,107,14
+    LTEXT           "Benutzernamen und Passwörter müssen 6-32 Zeichen lang sein und dürfen keine Leerzeichen enthalten. Benutzernamen dürfen nur Buchstaben und Zahlen enthalten. Passwörter dürfen englische Buchstaben, Zahlen und Symbole enthalten (keine Akzentbuchstaben).",IDC_STATIC,39,154,214,23
+    LTEXT           "Server:",ID_SU_SERVER,39,184,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,134,184,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,167,184,32,10
+    LTEXT           "Es stehen zwei Server zur Verfügung, wobei 101 der aktivere der beiden ist. Spieler aller Art nennen 101 ihr Zuhause: Veteranen, Neulinge, Spieler, die gerne kämpfen, und Spieler, die es ruhig angehen lassen und an ihren Charakteren arbeiten.",IDC_STATIC,39,198,220,34
+    PUSHBUTTON      "Problembehandlung",IDC_SIGNUP_TROUBLESHOOT,54,233,74,14
+    DEFPUSHBUTTON   "Konto erstellen",IDC_SIGNUP_OK,150,233,107,14
 END
 
 IDD_PREFERENCES DIALOGEX 0, 0, 476, 391
@@ -1958,7 +1958,7 @@ BEGIN
     IDS_CANTSENDREQUEST             "Es konnte keine HTTP-Anfrage für die Datei %s an den Server %s gesendet werden."
     IDS_CANTGETFILESIZE             "Die Dateigröße von %s konnte vom Server %s nicht abgerufen werden."
     IDS_CANTSIGNUP                  "Es konnte keine Verbindung zum Registrierungsserver hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkeinstellungen und versuchen Sie es erneut (%s)."
-    IDS_TROUBLESHOOT                "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT                "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED                "Die Registrierung ist fehlgeschlagen, weil:\n\n%s"
 END
 
@@ -2001,7 +2001,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Ihr Konto ist nicht verifiziert! Aus diesem Grund können Sie sich nicht einloggen. Bitte überprüfen Sie Ihre E-Mail-Adresse (einschließlich Junk-Ordner!) und klicken Sie auf den Aktivierungslink. Wenn Sie die Aktivierungs-E-Mail nicht erhalten haben, klicken Sie unten auf 'Ja', um sie erneut zu senden."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Ihr neues Konto [%s] wurde erfolgreich erstellt!\n\nBevor Sie sich einloggen und spielen können...\n\nÜberprüfen Sie jetzt Ihre E-Mail (%s), um Ihr Konto zu verifizieren."
+    IDS_SIGNUPMSG           "Ihr neues Konto [%s] wurde erfolgreich erstellt!\r\n\r\nBevor Sie sich einloggen und spielen können...\r\n\r\nÜberprüfen Sie jetzt Ihre E-Mail (%s), um Ihr Konto zu verifizieren."
 END
 
 STRINGTABLE
@@ -2557,28 +2557,28 @@ END
 
 IDD_SIGNUP DIALOGEX 0, 0, 288, 253
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-CAPTION " Meridian 59 Sign up for a free account!"
+CAPTION "Meridian 59 Sign up for a free account!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_STATIC,7,6,20,20
-    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,46
-    GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,57,244,171
-    LTEXT           "E-mail Address",ID_SU_EMAIL,39,76,62,8
-    EDITTEXT        IDC_NEW_EMAIL,104,75,150,14,ES_AUTOHSCROLL
-    RTEXT           "Used for account verification and to reset your password.",IDC_STATIC,35,91,219,11
-    LTEXT           "Desired Username",ID_SU_USERNAME,39,106,67,10
-    EDITTEXT        IDC_NEW_USERNAME,104,104,149,14,ES_AUTOHSCROLL
-    LTEXT           "Password",ID_SU_PW1,39,123,51,10
-    EDITTEXT        IDC_NEW_PW1,104,121,149,14,ES_PASSWORD | ES_AUTOHSCROLL
-    LTEXT           "Confirm Password",ID_SU_PW2,39,140,69,10
-    EDITTEXT        IDC_NEW_PW2,104,138,149,14,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "Username and Password must be 6-32 characters without whitespace.",IDC_STATIC,26,155,227,11
-    LTEXT           "Server:",ID_SU_SERVER,39,168,50,8
-    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,109,168,32,10
-    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,142,168,32,10
-    LTEXT           "There are two servers available, with 101 being the more active of the two. Players of all types call 101 home: veterans, newbies, players who love to fight, and players who just like to take it easy as they work on their characters.",IDC_STATIC,39,184,220,34
-    PUSHBUTTON      "Troubleshoot",IDC_SIGNUP_TROUBLESHOOT,54,221,74,14
-    DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,150,221,107,14
+    LTEXT           "Creating an account is easy - simply provide a valid e-mail, username, password, pick a server and hit Create Account. You will be sent a verification e-mail, follow the link to activate your account and login. Any problems, hit the Troubleshoot button.",IDC_STATIC,34,11,233,43
+    GROUPBOX        "Enter Your New Account Information",IDC_STATIC,23,50,244,193
+    LTEXT           "E-mail Address",ID_SU_EMAIL,39,66,62,8
+    EDITTEXT        IDC_NEW_EMAIL,104,65,150,14,ES_AUTOHSCROLL
+    RTEXT           "Used for account verification and to reset your password.",IDC_STATIC,35,81,219,11
+    LTEXT           "Desired Username",ID_SU_USERNAME,39,96,67,10
+    EDITTEXT        IDC_NEW_USERNAME,104,94,149,14,ES_AUTOHSCROLL
+    LTEXT           "Password",ID_SU_PW1,39,113,51,10
+    EDITTEXT        IDC_NEW_PW1,104,111,149,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirm Password",ID_SU_PW2,39,130,69,10
+    EDITTEXT        IDC_NEW_PW2,104,128,149,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Usernames and passwords must be 6-32 characters long and cannot contain spaces. Usernames may include only letters and numbers. Passwords may include English letters, numbers, and symbols\n\r(no accented characters).",IDC_STATIC,38,148,220,33
+    LTEXT           "Server:",ID_SU_SERVER,39,185,50,8
+    CONTROL         "101",IDC_SERVER_101,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,106,185,32,10
+    CONTROL         "102",IDC_SERVER_102,"Button",BS_AUTORADIOBUTTON,139,185,32,10
+    LTEXT           "There are two servers available, with 101 being the more active of the two. Players of all types call 101 home: veterans, newbies, players who love to fight, and players who just like to take it easy as they work on their characters.",IDC_STATIC,39,199,214,34
+    PUSHBUTTON      "Troubleshoot",IDC_SIGNUP_TROUBLESHOOT,53,235,74,14
+    DEFPUSHBUTTON   "Create Account",IDC_SIGNUP_OK,139,235,107,14
 END
 
 IDD_PREFERENCES DIALOGEX 0, 0, 476, 391
@@ -3232,7 +3232,7 @@ BEGIN
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
     IDS_CANTSIGNUP          "Failed to contact the signup server, please check your network settings and try again (%s)."
-    IDS_TROUBLESHOOT        "https://meridian59.com/troubleshoot/"
+    IDS_TROUBLESHOOT        "https://www.meridian59.com/troubleshoot/"
     IDS_SIGNUPFAILED        "Your sign up failed because:\n\n%s"
 END
 
@@ -3266,7 +3266,7 @@ BEGIN
     IDS_USERNAMEINVALID     "Username is invalid or already in use.\n"
     IDS_EMAILINVALID        "E-mail address is invalid.\n"
     IDS_EMAILINUSE          "E-mail address is already in use.\n"
-    IDS_PASSWORDINVALID     "Passwords are invalid or not not match.\n"
+    IDS_PASSWORDINVALID     "Passwords are invalid or do not match.\n"
     IDS_SERVERUNKNOWN       "Unknown server selected.\n"
     IDS_SIGNUPOFFLINE       "Registration server is offline.\n"
     IDS_SIGNUPUNKNOWNERROR  "Signup generated an unknown error, please try again.\n"
@@ -3275,7 +3275,7 @@ BEGIN
     IDS_VERIFIEDAPI         "check_verified"
     IDS_UNVERIFIED          "Your account is unverified! This is why you cannot log in. Please check your e-mail address (including Junk folders!) and press the activation link. If you haven't received the activation e-mail - then press Yes below to resend it now."
     IDS_RESENDAPI           "resend"
-    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\n\nBefore you can log in and play...\n\nCheck your e-mail (%s) to verify your account now."
+    IDS_SIGNUPMSG           "Your new account [%s] was successfully created!\r\n\r\nBefore you can log in and play...\r\n\r\nCheck your e-mail (%s) to verify your account now."
 END
 
 STRINGTABLE

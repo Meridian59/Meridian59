@@ -23,11 +23,11 @@
 
 static char music_dir[] = "resource";   /* Directory for sound files */
 
-static Bool has_midi = False;    /* Can system play MIDI files? */
+static bool has_midi = false;    /* Can system play MIDI files? */
 
-static Bool playing_midi = False;  /* Is a MIDI file currently playing as an effect? */
-static Bool playing_music = False;  /* Is a MIDI file currently playing as background? */
-static Bool isMusicPaused = False;   /* Is background music paused? */
+static bool playing_midi = false;  /* Is a MIDI file currently playing as an effect? */
+static bool playing_music = false;  /* Is a MIDI file currently playing as background? */
+static bool isMusicPaused = false;   /* Is background music paused? */
 
 static UINT midi_element;  /* Currently playing MIDI MCI device ID */
 static UINT midi_bg_music_element;  /* Currently playing background music MCI device ID */
@@ -81,7 +81,7 @@ void MusicInitialize(void)
 	if (hDigitalDriver == NULL)
 	{
 		debug(( "MSS digital sound failed to initialize, error = %s.\n", AIL_last_error() ));
-		has_midi = False;
+		has_midi = false;
 		return;
 	}
 
@@ -91,12 +91,12 @@ void MusicInitialize(void)
 	if( ( hseqBackground == NULL ) || ( hseqImmediate == NULL ) )
 	{
 		debug(( "MSS digital sound failed to allocate 2 handles.\n" ));
-		has_midi = False;
+		has_midi = false;
 		return;
 	}
 
 	debug(( "MSS digital sound initialized successfully.\n" ));
-	has_midi = True;
+	has_midi = true;
 #else
    MCI_SYSINFO_PARMS mciSysinfoParms;
    DWORD num_devices, retval;
@@ -108,7 +108,7 @@ void MusicInitialize(void)
                            (DWORD_PTR) &mciSysinfoParms);
    if (retval == 0 && num_devices > 0)
    {
-      has_midi = True;
+      has_midi = true;
       ResetMusicVolume();
    }
 #endif // M59_MSS
@@ -159,13 +159,13 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
    // Is it a background music or gameplay element music file?
    switch (musicType) {
       case BACKGROUND_MUSIC:
-         if (playing_music != False) 
+         if (playing_music != false) 
          {
             mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
          }
          break;
       case GAMEPLAY_MUSIC:
-         if (playing_midi != False) 
+         if (playing_midi != false) 
          {
             mciSendCommand(midi_element, MCI_STOP, 0, 0);
             if (dwReturn = mciSendCommand(midi_element, MCI_CLOSE, 0, 0))
@@ -191,9 +191,9 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
       // Reset both device IDs to return to a clean state.
       debug(("can't MCI open new song \n"));
       mciSendCommand(MCI_ALL_DEVICE_ID, MCI_CLOSE, 0, 0);
-      playing_music = False;
-      playing_midi = False;
-      isMusicPaused = False;
+      playing_music = false;
+      playing_midi = false;
+      isMusicPaused = false;
       midi_element = 0;
       midi_bg_music_element = 0;
       return dwReturn;
@@ -202,12 +202,12 @@ DWORD OpenMidiFile(const char *lpszMIDIFileName, LoadMusicType musicType)
    switch (musicType) {
       case BACKGROUND_MUSIC:
          midi_bg_music_element = mciOpenParms.wDeviceID;
-         playing_music = True;
+         playing_music = true;
          debug(("midi_bg_music_element = %d\n", midi_bg_music_element));
          break;
       case GAMEPLAY_MUSIC:
          midi_element = mciOpenParms.wDeviceID;
-         playing_midi = True;
+         playing_midi = true;
          debug(("midi element = %d\n", midi_element));
          break;
       default:
@@ -277,7 +277,7 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 	AIL_start_sample(hseqImmediate);
 
 	debug(( "Playing midi music file %s. LatestMusic=%d \n", fname, latest_music ));
-	playing_midi = True;
+	playing_midi = true;
 	return 0;
 #else
    {
@@ -308,7 +308,7 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
       }
       
       debug(("Playing MIDI file, element = %d\n", midi_element));
-      playing_midi = True;
+      playing_midi = true;
       return 0;
    }
 #endif
@@ -334,18 +334,18 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
          UnpauseMusic();
          return 0;
       }
-      isMusicPaused = False;
+      isMusicPaused = false;
 	}
    if (playing_midi)
    {
       AIL_end_sample(hseqImmediate);
-      playing_midi = False;
+      playing_midi = false;
    }
 
    if (playing_music)
    {
       AIL_end_sample(hseqBackground);
-      playing_music = False;
+      playing_music = false;
    }
 	// free memory from previous background music
 	if (pMIDIBackground)
@@ -390,7 +390,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 	// start playing
 	AIL_start_sample( hseqBackground );
 	debug(( "Playing music file %s.\n", filename.c_str() ));
-	playing_music = True;
+	playing_music = true;
 	return 0;
 
 
@@ -409,7 +409,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
          return 0;
       }
       // The music was paused but we need different music so reset the flag
-      isMusicPaused = False;
+      isMusicPaused = false;
    }
    // Open file to midi_bg_music_element device
    if ((dwReturn = OpenMidiFile(fname, BACKGROUND_MUSIC)) != 0)
@@ -430,7 +430,7 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
       mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
       // No need to return - try to close
       // If we can't close try to play BG music.
-      playing_midi = False;
+      playing_midi = false;
    }
    /*
     * Begin playback. The window procedure function
@@ -448,12 +448,12 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
       debug((" \n"));
       
       mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0);
-      playing_music = False;
+      playing_music = false;
       return dwReturn;
    }
 
    debug(("Playing music file, element = %d\n", midi_bg_music_element));
-   playing_music = True;
+   playing_music = true;
    return 0;
 #endif
 }
@@ -498,7 +498,7 @@ void PauseMusic(void)
       AIL_stop_sample( hseqBackground );
    }
 	// indicate we are paused
-	isMusicPaused = True;
+	isMusicPaused = true;
 	debug(( "Pausing music.\n" ));
 #else
    MCI_STATUS_PARMS mciStatusParms;
@@ -518,7 +518,7 @@ void PauseMusic(void)
    MCI_GENERIC_PARMS mciPauseParms;
    mciSendCommand(midi_bg_music_element, MCI_PAUSE, 0, (DWORD_PTR)(LPVOID) &mciPauseParms);
 
-   isMusicPaused = True;
+   isMusicPaused = true;
    debug(("Pausing, position = %ld\n", music_pos));
 #endif
 }
@@ -535,12 +535,12 @@ void UnpauseMusic(void)
    if (playing_midi)
    {
       AIL_end_sample(hseqImmediate);
-      playing_midi = False;
+      playing_midi = false;
    }
    if (isMusicPaused)
    {
       AIL_resume_sample(hseqBackground);
-      isMusicPaused = False;
+      isMusicPaused = false;
    }
    debug(( "Unpausing music. bg_music=%d, paused_music=%d\n", bg_music, paused_music));
 #else
@@ -592,11 +592,11 @@ void UnpauseMusic(void)
       }
       else
       {
-         playing_midi = False;
+         playing_midi = false;
       }
    }
 
-   isMusicPaused = False;
+   isMusicPaused = false;
    mciSendCommand(midi_bg_music_element, MCI_PLAY, MCI_FROM | MCI_NOTIFY, (DWORD_PTR)(LPVOID) &mciPlayParms);
 
    debug(("Unpausing to  position = %ld\n", music_pos));
@@ -627,7 +627,7 @@ void PlayMidiRsc(ID rsc)
 #ifndef M59_MSS
       // Kill the current Midi then POST - NewMusic type = midi.
       mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
-      playing_midi = False;
+      playing_midi = false;
 #endif
       PostMessage(hMain, BK_NEWSOUND, SOUND_MIDI, rsc);
       return;
@@ -645,7 +645,7 @@ void PlayMidiRsc(ID rsc)
       }
       else
       {
-         playing_midi = False;
+         playing_midi = false;
       }
    }
    // Always POST new music message if using MCI
@@ -718,7 +718,7 @@ void NewMusic(WPARAM type, ID rsc)
 #else
 			mciSendCommand(midi_element, MCI_CLOSE, 0, 0);
 #endif
-			playing_midi = False;
+			playing_midi = false;
 		}
 		else if( ( type == SOUND_MUSIC ) && ( playing_music ) )
 		{
@@ -727,7 +727,7 @@ void NewMusic(WPARAM type, ID rsc)
 #else
 			mciSendCommand(midi_bg_music_element, MCI_CLOSE, 0, 0); 
 #endif
-			playing_music = False;
+			playing_music = false;
 			return;
 		}
 		return;
@@ -805,9 +805,9 @@ void MusicAbort(void)
       mciSendCommand(MCI_ALL_DEVICE_ID, MCI_CLOSE, 0, 0);
 #endif
       // reset all the flags
-      playing_midi = False;
-      playing_music = False;
-      isMusicPaused = False;
+      playing_midi = false;
+      playing_music = false;
+      isMusicPaused = false;
    }
 }
 /******************************************************************************/

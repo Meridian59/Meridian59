@@ -46,21 +46,21 @@ void GoToGame(ID character)
 /********************************************************************/
 void AbortCharDialogs(void)
 {
-   Bool has_dialog = False;
+   bool has_dialog = false;
 
    if (hPickCharDialog != NULL)
    {
-      has_dialog = True;
+      has_dialog = true;
       EndDialog(hPickCharDialog, IDCANCEL);
    }
    if (hMakeCharDialog != NULL)
    {
-      has_dialog = True;
+      has_dialog = true;
       PropSheet_PressButton(hMakeCharDialog, PSBTN_CANCEL);
       // Hide in case another dialog pops up; for some reason the property sheet lingers awhile
       ShowWindow(hMakeCharDialog, SW_HIDE);
    }
-   exiting = True;
+   exiting = true;
 
    if (!has_dialog)
       PostMessage(cinfo->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);

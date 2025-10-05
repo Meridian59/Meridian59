@@ -22,26 +22,26 @@ void InventoryBoxCreate(HWND hParent);
 void InventoryBoxDestroy(void);
 void InventoryBoxResize(int xsize, int ysize, AREA *view);
 void InventoryRedraw(void);
-Bool InventoryDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool InventoryDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void InventoryResetFont(void);
 void InventoryChangeColor(void);
-void InventorySetFocus(Bool forward);
+void InventorySetFocus(bool forward);
 void InventoryChangeItem(object_node *obj);
 void InventorySelChange(void);
 void InventoryGetArea(AREA *area);
 void InventoryResetData(void);
-Bool InventoryMouseCaptured(void);
+bool InventoryMouseCaptured(void);
 
 void InventoryAddItem(object_node *obj);
 void InventoryRemoveItem(ID id);
 void DisplayInventory(list_type inventory);
 
-void DisplaySetUsing(ID obj_id, Bool is_using);
+void DisplaySetUsing(ID obj_id, bool is_using);
 void DisplayUsing(list_type using_list);
 
 void AnimateInventory(int dt);
 
-void ShowInventory( Bool bShow );
+void ShowInventory(bool bShow);
 HWND GetHwndInv();
 RawBitmap* pinventory_bkgnd();
 

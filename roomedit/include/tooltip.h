@@ -135,7 +135,7 @@ class TToolTip : private TWindow
 
 protected:
 	void	GetWindowClass (WNDCLASS &wc);
-	LPSTR	GetClassName ();
+	TWindowClassName GetWindowClassName ();
 
 	void 	Paint (TDC &dc, BOOL erase, TRect &rc);
 	void	EvTimer (UINT uiTimerId);

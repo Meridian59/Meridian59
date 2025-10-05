@@ -24,7 +24,7 @@ extern player_info player;
 /*
  * CompareProjectiles:  Utility comparison function for use with lists.
  */
-Bool CompareProjectiles(void *p1, void *p2)
+bool CompareProjectiles(void *p1, void *p2)
 {
    return (Projectile *) p1 == (Projectile *) p2;
 }
@@ -102,12 +102,12 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
  *   dt is number of milliseconds since last time animation timer went off.
  * Return True iff some projectile moved.
  */
-Bool ProjectilesMove(int dt)
+bool ProjectilesMove(int dt)
 {
    list_type l, next;
 
    if (current_room.projectiles == NULL)
-      return False;
+      return false;
 
    // Have to be careful here, since deleting items from list as we go down it
    l = current_room.projectiles;
@@ -129,5 +129,5 @@ Bool ProjectilesMove(int dt)
       l = next;
    }
 
-   return True;
+   return true;
 }

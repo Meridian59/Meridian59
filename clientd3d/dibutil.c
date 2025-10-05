@@ -15,19 +15,19 @@ static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
 #define BGF_VERSION 10
 
-static Bool DibOpenFileReal(char *szFile, Bitmaps *b);
-static Bool DibReadBits(file_node *f, PDIB pdib, int version);
+static bool DibOpenFileReal(char *szFile, Bitmaps *b);
+static bool DibReadBits(file_node *f, PDIB pdib, int version);
 /************************************************************************/
 /*
  * DibOpenFile: Load the bitmaps in the file given by filename into the
  *   given bitmap structure.  Return TRUE on success.
  */
-Bool DibOpenFile(char *szFile, Bitmaps *b)
+bool DibOpenFile(char *szFile, Bitmaps *b)
 {
    return DibOpenFileReal(szFile, b);
 }
 /************************************************************************/
-Bool DibOpenFileReal(char *szFile, Bitmaps *b)
+bool DibOpenFileReal(char *szFile, Bitmaps *b)
 {
    file_node f;
    DWORD   dwLen, dwBits;
@@ -37,7 +37,7 @@ Bool DibOpenFileReal(char *szFile, Bitmaps *b)
    char		*start, *end;
 
    if (!CliMappedFileOpenRead(szFile, &f))
-      return False;
+      return false;
 
    // Check magic number
    for (i=0; i < 4; i++)
@@ -199,16 +199,16 @@ Bool DibOpenFileReal(char *szFile, Bitmaps *b)
    }
    
    MappedFileClose(&f);
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
  * DibReadBits:  Read bits of an image into the given PDIB.  The file pointer
  *   for f must be positioned at the start of the image information.
  *   version is version of BGF file.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool DibReadBits(file_node *f, PDIB pdib, int version)
+bool DibReadBits(file_node *f, PDIB pdib, int version)
 {
    BYTE *bits, type;
    int length, temp, compressed_length, retval;
@@ -218,32 +218,32 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
    length = DibWidth(pdib) * DibHeight(pdib);
 
    // See if image is compressed
-   if (CliMappedFileRead(f, &type, 1) != 1) return False;
+   if (CliMappedFileRead(f, &type, 1) != 1) return false;
 
    switch (type)
    {
    case 0:
-      if (CliMappedFileRead(f, &temp, 4) != 4) return False;  // Skip unused bytes
-      if (CliMappedFileRead(f, bits, length) != length) return False;
+      if (CliMappedFileRead(f, &temp, 4) != 4) return false;  // Skip unused bytes
+      if (CliMappedFileRead(f, bits, length) != length) return false;
       break;
    case 1:
-      if (CliMappedFileRead(f, &compressed_length, 4) != 4) return False;
+      if (CliMappedFileRead(f, &compressed_length, 4) != 4) return false;
 
       len = length;
       retval = uncompress((Bytef *) bits, &len, (const Bytef *) f->ptr, compressed_length);
       if (retval != Z_OK)
       {
          debug(("DibReadBits error during decompression: %d\n", retval));
-         return False;
+         return false;
       }
 
       f->ptr += compressed_length;
       break;
    default:
       debug(("DibReadBits got bad type byte %d\n", (int) type));
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }
 /************************************************************************/
 /*

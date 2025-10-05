@@ -110,7 +110,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 	unsigned short len_str;
 	
 	val_type number_stuff;
-	Bool found_number_stuff;
+	bool found_number_stuff;
 	
 	msg_byte_offset = 0;
 	
@@ -159,11 +159,11 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 	
 	if (command_table[command.v.data].client_parms[0].type_parm == INVALID_PARM)
 	{
-		eprintf("ParseClientSendBlakod got invalid command %i\n",command.v.data);
+		eprintf("ParseClientSendBlakod got invalid command %" PRId64 "\n",command.v.data);
 		return;
 	}
 	
-	found_number_stuff = False;
+	found_number_stuff = false;
 	i = command.v.data;
 	
 	list_index = MAX_CLIENT_PARMS-1-command_table[i].num_parms;
@@ -246,8 +246,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %i\n",
-						temp.v.data);
+					eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 "\n",
+                  temp.v.data);
 					return;
 				}
 				
@@ -268,7 +268,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 					len_list = temp.v.data;
 					list_val.int_val = NIL;
 					
-					found_number_stuff = True;
+					found_number_stuff = true;
 					number_stuff.int_val = NIL;
 					
 					/* dprintf("got list length %i,type %i\n",len_list,
@@ -294,8 +294,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 							if (/* temp.v.tag == TAG_OBJECT && */
 								NULL == GetObjectByID(temp.v.data))
 							{
-								eprintf("ParseClientSendBlakod got invalid object reference %i in a list\n",
-									temp.v.data);
+								eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 " in a list\n",
+                        temp.v.data);
 								return;
 							}
 							
@@ -351,8 +351,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %i\n",
-						temp.v.data);
+					eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 "\n",
+                  temp.v.data);
 					return;
 				}
 				
@@ -366,8 +366,8 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				if (temp.v.tag == TAG_OBJECT &&
 					NULL == GetObjectByID(temp.v.data))
 				{
-					eprintf("ParseClientSendBlakod got invalid object reference %i\n",
-						temp.v.data);
+					eprintf("ParseClientSendBlakod got invalid object reference %" PRId64 "\n",
+                  temp.v.data);
 					return;
 				}
 				
@@ -381,7 +381,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 						eprintf("ParseClientSendBlakod found more than one number parm\n");
 					
 					/* grab the number */
-					found_number_stuff = True;
+					found_number_stuff = true;
 					number_stuff.v.data = (int)(*(int *)(msg_data+msg_byte_offset));
 					number_stuff.v.tag = TAG_INT;
 					msg_byte_offset += 4;

@@ -61,7 +61,7 @@ static int button_border = 0;         // Height of area reserved for buttons
 /* local function prototypes */
 static void StatsCreateButtons(void);
 static LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static void StatsMoveButtonFocus(HWND button, Bool forward);
+static void StatsMoveButtonFocus(HWND button, bool forward);
 /************************************************************************/
 /*
  * StatButtonsCreate:  Load bitmaps for stat buttons.
@@ -292,7 +292,7 @@ LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
      return 1;
 
    case WM_KEYDOWN:
-      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, StatInputKey) == True)
+      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, StatInputKey) == true)
       	 return 0;
       break;
 
@@ -306,11 +306,11 @@ LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 /************************************************************************/
 /*
  * StatInputKey:  User pressed a key on stat group button or list box.
- *   Return True iff key should NOT be passed on to Windows for default processing.
+ *   Return true iff key should NOT be passed on to Windows for default processing.
  */
-Bool StatInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
+bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 {
-   Bool held_down = (flags & 0x4000) ? True : False;  /* Is key being held down? */
+   bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    int action;
    void *action_data;
 
@@ -319,22 +319,22 @@ Bool StatInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
    /* See if stat button handles this key */
    action = TranslateKey(key, stats_key_table, &action_data); 
    if (action == A_NOACTION)
-      return False;
+      return false;
 
    switch(action)
    {
    case A_TABFWD:
-      TextInputSetFocus(True);
+      TextInputSetFocus(true);
       break;
    case A_TABBACK:
 		SetFocus(cinfo->hMain);	//	ajw
-		//InventorySetFocus(False);
+		//InventorySetFocus(false);
 		break;
    case A_NEXT:
-      StatsMoveButtonFocus(hwnd, True);
+      StatsMoveButtonFocus(hwnd, true);
       break;
    case A_PREV:
-      StatsMoveButtonFocus(hwnd, False);
+      StatsMoveButtonFocus(hwnd, false);
       break;
 
    default:
@@ -342,18 +342,18 @@ Bool StatInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
 	 PerformAction(action, action_data);
       break;
    }
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
  * StatButtonDrawItem:  Draw stat button for given DRAWITEMSTRUCT structure.
  */
-Bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
 	int group, xSrc;
 	int xDest;
 	StatButton *button;
-	Bool bPressed = False;
+	bool bPressed = false;
 
 	switch (lpdis->itemAction)
 	{
@@ -370,7 +370,7 @@ Bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 			button = &buttons[group];
 			// Pick image to draw, depending on whether button is pressed
 			if( lpdis->itemState & ODS_SELECTED || StatsGetCurrentGroup() == group + 2 )
-				bPressed = True;
+				bPressed = true;
 
 			SelectPalette(lpdis->hDC, cinfo->hPal, FALSE);
 //			OffscreenWindowBackground( NULL, button->x, button->y, button->width, button->height );
@@ -401,9 +401,9 @@ Bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
                          (BYTE *) button->bitsRight, xSrc, 0, 2 * button->iWidthRight,
                          OBB_FLIP | OBB_COPY | OBB_TRANSPARENT );
 		}
-		return True;
+		return true;
 	}
-	return False;
+	return false;
 }
 /************************************************************************/
 /*
@@ -428,22 +428,22 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		if( StatsGetCurrentGroup() == STATS_INVENTORY )
 		{
 			//	Inventory must be going away.
-			ShowInventory( False );
-//			StatsShowGroup( True );
+			ShowInventory( false );
+//			StatsShowGroup( true );
 		}
 		if( group == STATS_INVENTORY )
 		{
 			//	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.
 			InvalidateRect( buttons[ StatsGetCurrentGroup()-2 ].hwnd, NULL, FALSE );
 
-			StatsShowGroup( False );
-			ShowInventory( True );
+			StatsShowGroup( false );
+			ShowInventory( true );
 			DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
 		}
 		else
 		{
 			// Check stat cache; if group not present, ask server
-			if (StatCacheGetEntry(group, &stat_list) == True)
+			if (StatCacheGetEntry(group, &stat_list) == true)
 				DisplayStatGroup((BYTE) group, stat_list);
 			else
 			{
@@ -453,7 +453,7 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		}
 	}
 	if( StatsGetCurrentGroup() == STATS_INVENTORY )
-		InventorySetFocus( True );		//	Force focus to leave stats group window after button within it was pushed.
+		InventorySetFocus( true );		//	Force focus to leave stats group window after button within it was pushed.
 	//	[ xxx Still broken - click on Inv when it is already selected, but drag off of button and release. ]
 }
 
@@ -462,7 +462,7 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
  * StatsMoveButtonFocus:  Focus is currently on given button; move focus forward
  *   or backward, depending on "forward".
  */
-void StatsMoveButtonFocus(HWND button, Bool forward)
+void StatsMoveButtonFocus(HWND button, bool forward)
 {
    int num = StatsFindGroupByHwnd(button);
    int dx = forward ? +1 : -1;

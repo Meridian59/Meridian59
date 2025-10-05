@@ -30,7 +30,7 @@ enum {
    MAXFONTS,
 };
 
-void FontsCreate(Bool use_defaults);
+void FontsCreate(bool use_defaults);
 void FontsDestroy(void);
 M59EXPORT HFONT GetFont(WORD font);
 void FontsSave(void);

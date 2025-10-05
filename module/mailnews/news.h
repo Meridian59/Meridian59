@@ -41,14 +41,14 @@ typedef struct {
    list_type articles;         /* Used internally; should not be set by caller */
 } ReadNewsDialogStruct;
 
-Bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title);
+bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title);
 void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions);
 void UserReadArticle(char *article);
 
 void MakeReplySubject(char *subject, int max_chars);
 
 void ReceiveArticles(WORD newsgroup, BYTE part, BYTE max_part, list_type articles);
-Bool AbortNewsDialogs(void);
-Bool DateFromSeconds(long seconds, char *str);
+bool AbortNewsDialogs(void);
+bool DateFromSeconds(long seconds, char *str);
 
 #endif /* #ifndef _NEWS_H */

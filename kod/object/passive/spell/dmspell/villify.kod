@@ -95,7 +95,6 @@ messages:
             send(i,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=False);
             send(i,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=True);
             post(i,@EvaluatePKStatus);
-            Send(SYS,@UpdateWhoListForAll);
             
             continue;
          }
@@ -106,7 +105,6 @@ messages:
          send(i,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=True);
          send(i,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=False);
          post(i,@EvaluatePKStatus);
-         Send(SYS,@UpdateWhoListForAll);
       }
 
       propagate;

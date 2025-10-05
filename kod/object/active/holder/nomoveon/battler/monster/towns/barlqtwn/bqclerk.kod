@@ -529,7 +529,6 @@ messages:
       piPardonedMurderers = piPardonedMurderers + 1;
 
       plPardons = cons(who, plPardons);
-      Send(SYS,@UpdateWhoListForAll);
 
       return;
    }
@@ -543,7 +542,6 @@ messages:
       Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
 
       piPardonedOutlaws = piPardonedOutlaws + 1;
-      Send(SYS,@UpdateWhoListForAll);
 
       return;
    }

@@ -70,7 +70,6 @@ messages:
 	    Send(i,@setplayerflag,#flag=PFLAG_MURDERER,#value=false); 
             Send(i,@setplayerflag,#flag=PFLAG_OUTLAW,#value=false); 
             post(i,@evaluatePKstatus);
-       Send(SYS,@UpdateWhoListForAll);
 	 }
 	 else
 	 {

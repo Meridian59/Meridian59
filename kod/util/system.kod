@@ -6570,6 +6570,7 @@ messages:
       }
       return;
    }
+
    FindBadMonsterEffects()
    "Find monsters where piDrawfx was incorrectly set to $"
    {

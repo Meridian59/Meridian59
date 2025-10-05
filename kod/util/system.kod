@@ -33,6 +33,9 @@ constants:
    % Six minutes, in ms.
    GUILD_MAINTENANCE_DELAY = 360000
 
+   % Skip expensive ops if online player count exceeds this
+   CROWDED_SERVER_THRESHOLD = 100
+
    RECREATE_NOT = -1
    RECREATE_WAITING = 0
    RECREATE_PHASE_ONE = 1
@@ -6559,6 +6562,16 @@ messages:
          total = total + Send(i,@CleanBadMail);
       }
       return total;
+   }
+
+   IsServerCrowded()
+   "Returns TRUE if server has too many players online for expensive operations"
+   {
+      local iPlayersOnline;
+
+      iPlayersOnline = Length(Send(self,@GetUsersLoggedOn));
+
+      return (iPlayersOnline >= CROWDED_SERVER_THRESHOLD);
    }
 
    UpdateWhoListForAll()

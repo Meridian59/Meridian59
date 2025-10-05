@@ -1091,7 +1091,11 @@ messages:
          % Update who list for murderer/outlaw changes
          if (flag & (PFLAG_MURDERER | PFLAG_OUTLAW))
          {
-            Send(SYS,@UpdateWhoListForAll);
+            % Only update who list if server isn't too busy
+            if NOT Send(SYS,@IsServerCrowded)
+            {
+               Send(SYS,@UpdateWhoListForAll);
+            }
          }
 
          % Tell room about change in case there are ramifications

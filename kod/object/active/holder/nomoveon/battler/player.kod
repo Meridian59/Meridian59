@@ -1084,13 +1084,25 @@ messages:
             piFlags2=piFlags2 | flag ;
          }
       }
-      
-      if (poOwner <> $)
-         AND (flagset = 1)
-         AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
+
+      % Update who list and room for PK-related flag changes (both setting AND clearing)
+      if flagset = 1 AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
       {
-         % Tell room about change in case there are ramifications.
-         Send(poOwner,@SomethingChanged,#what=self);
+         % Update who list for murderer/outlaw changes
+         if (flag & (PFLAG_MURDERER | PFLAG_OUTLAW))
+         {
+            % Only update who list if server isn't too busy
+            if NOT Send(SYS,@IsServerCrowded)
+            {
+               Send(SYS,@UpdateWhoListForAll);
+            }
+         }
+
+         % Tell room about change in case there are ramifications
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
       }
       
       return;

@@ -31,7 +31,7 @@ constants:
 
 resources:
  
-   itematt_made_desc = "  It shimmers insubstantially."
+   itematt_made_desc = "It shimmers insubstantially."
    iaMade_gone = "Your %s disappears in a puff of smoke."
    
 classvars:

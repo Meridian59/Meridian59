@@ -221,7 +221,7 @@ messages:
    }
 
    CreateDesc(bShowAll=FALSE)
-   "Creates the item's full description text by combining the base description "
+   "Returns the item's full description text by combining the base description "
    "with attribute descriptions and condition information. When bShowAll is FALSE, "
    "unidentified attributes show a generic message and misdirection attributes "
    "display their fake descriptions alongside real attributes. When bShowAll is "

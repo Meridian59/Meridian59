@@ -3268,15 +3268,17 @@ messages:
          }
          else
          {
-            % Check for compatible item combinations using the new compatibility system
+            % Check if items can be worn in the same slot despite conflicts
             bAllowCombination = FALSE;
             
             for i in plUsing
             {
                if Send(i,@GetItemUseType) & type
                {
-                  % Found conflicting item - check if they're compatible with each other
-                  if Send(what,@IsCompatibleWithItem,#what=i) OR Send(i,@IsCompatibleWithItem,#what=what)
+                  % Found conflicting item - check if they can be worn together (bidirectional)
+                  % Check use type to ensure we're dealing with wearable items (not weapons)
+                  if (Send(what,@CanBeWornInSameSlotWith,#what=i) 
+                          OR Send(i,@CanBeWornInSameSlotWith,#what=what))
                   {
                      bAllowCombination = TRUE;
                      break;
@@ -8822,7 +8824,7 @@ messages:
    }
 
    ResetPlayerLegs()
-   "Sets our players legs to show their robes, pants (equipped or un-panted state)."
+   "Sets our player's legs to show their robes, pants (equipped or un-panted state)."
    {
       local robes_in_use, pants_in_use, translation;
       robes_in_use = Send(self,@FindUsing,#class=&Robe);

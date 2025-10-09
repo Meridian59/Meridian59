@@ -126,19 +126,30 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      % Check if this robe is compatible with the item being equipped
-      if Send(self,@IsCompatibleWithItem,#what=what)
+      local iWhatUseType;
+      
+      iWhatUseType = Send(what,@GetItemUseType);
+      
+      % Check if the item conflicts with robe's use types
+      if iWhatUseType & viUse_type
       {
-         propagate;
+         % Check if this robe can be worn in the same slot as the item (bidirectional check)
+         if Send(self,@CanBeWornInSameSlotWith,#what=what) 
+            OR Send(what,@CanBeWornInSameSlotWith,#what=self)
+         {
+            propagate;
+         }
+         
+         % This is conflicting armor - try to unequip the robe
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         
+         return FALSE;
       }
       
-      % This is conflicting armor - try to unequip the robe
-      if Send(poOwner,@TryUnuseItem,#what=self)
-      {
-         propagate;
-      }
-      
-      return FALSE;
+      propagate;
    }
 
    HasSkinTones()
@@ -187,10 +198,13 @@ messages:
       return;
    }
 
-   IsCompatibleWithItem(what = $)
-   "Robes are compatible with pants and shirts, allowing layered clothing combinations."
+   CanBeWornInSameSlotWith(what = $)
+   "Robes can be worn in the same slot as pants and shirts despite overlapping use types."
+   "Robes use ITEM_USE_BODY | ITEM_USE_LEGS, but can still be worn with:"
+   "- Pants (which also use ITEM_USE_LEGS)"
+   "- Shirts (which use ITEM_USE_SHIRT, visual overlap only)"
    {
-      % Robes can be worn with pants and shirts
+      % Robes can be worn simultaneously with pants and shirts
       if IsClass(what, &Pants) OR IsClass(what, &Shirt)
       {
          return TRUE;

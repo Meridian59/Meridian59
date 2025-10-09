@@ -65,7 +65,8 @@ properties:
    prLeft_arm = $
    prLegs = $
    pbIsHairVisible = $
-   prFacialOverlay = $
+   prFacialOverlay = $ % DEPRECATED: Use poFacialOverlay instead. Kept for save compatibility.
+   poFacialOverlay = $ % Facial overlay object (e.g., mask)
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
@@ -312,7 +313,7 @@ messages:
          }
       }
 
-      if prFacialOverlay <> $
+      if poFacialOverlay <> $ or prFacialOverlay <> $
       {
          piOverlays = piOverlays + 1;
       }
@@ -461,7 +462,18 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+      % Bootstrap old prFacialOverlay to new poFacialOverlay
+      if prFacialOverlay <> $ AND poFacialOverlay = $
+      {
+         poFacialOverlay = prFacialOverlay;
+         prFacialOverlay = $;
+      }
+      else
+      {
+         % Set the facial overlay object from the original player
+         poFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+      }
+      
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
 
       oWeapon = send(poOriginal,@LookUpPlayerWeapon);
@@ -507,7 +519,7 @@ messages:
 
    SendOverlays()
    {
-      local iSkin_xlat;
+      local iSkin_xlat, rOverlay;
 
       % Send overlay bitmap info to user.  
 
@@ -610,9 +622,19 @@ messages:
          }
       }
 
-      if prFacialOverlay <> $
+      if poFacialOverlay <> $ AND poOriginal <> $
       {
-         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
+         
+         % Use GetOverlayForOwner to get the correct gender-specific overlay
+         rOverlay = Send(poFacialOverlay,@GetOverlayForOwner,#owner=poOriginal);
+         
+         % Only add overlay if we got a valid resource
+         if rOverlay <> $
+         {
+            AddPacket(4,rOverlay);
+            AddPacket(1,Send(poFacialOverlay,@GetOverlayHotspot));
+            Send(poFacialOverlay,@SendOverlayAnimation);
+         }
       }
 
       return;

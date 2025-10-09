@@ -58,6 +58,17 @@ messages:
       return vrMaleIcon; 
    }
 
+   GetOverlayForOwner(owner = $)
+   "Returns the gender-specific overlay for a given owner (used by statues)."
+   {
+      if owner <> $ AND send(owner,@GetGender) = GENDER_FEMALE
+      {
+         return vrFemaleIcon;
+      }
+      
+      return vrMaleIcon; 
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

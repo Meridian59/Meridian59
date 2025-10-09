@@ -220,46 +220,76 @@ messages:
       return;
    }
 
-   CreateDesc(bShowall=FALSE)
+   CreateDesc(bShowAll=FALSE)
+   "Returns the item's full description text by combining the base description "
+   "with attribute descriptions and condition information. When bShowAll is FALSE, "
+   "unidentified attributes show a generic message and misdirection attributes "
+   "display their fake descriptions alongside real attributes. When bShowAll is "
+   "TRUE, all attributes including misdirection are revealed. The description "
+   "uses proper formatting with line breaks separating the base description, "
+   "attributes section, and condition information."
    {
-      local bAlreadyBlind, bIdentified, oItemAtt, i, iNum;
+      local bAlreadyBlind, bFirstAttribute, bIdentified, oItemAtt, i, iNum;
 
       bAlreadyBlind = FALSE;
+      bFirstAttribute = TRUE;
       ClearTempString();
       Send(self,@DoBaseDesc);
 
-      if Send(self,@HasAttribute,#ItemAtt=IA_MISDIRECTION) AND NOT bShowAll
+      % Add line break before attributes if any exist
+      if plItem_Attributes <> $
       {
-         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
-         Send(oItemAtt,@AppendMisdirectedDesc,#oItem=self,
-              #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+         AppendTempString("\n\n");
       }
-      else
-      {
-         for i in plItem_Attributes
-         {
-            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-            bIdentified = Send(self,@GetIDStatusFromCompound,
-                               #compound=First(i));
 
-            if NOT (bIdentified OR bShowAll)
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+
+         % Misdirection: show fake attribute even if real one is hidden
+         if iNum = IA_MISDIRECTION AND NOT bShowAll
+         {
+            % But we still want to show the fake attribute it creates
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+            if NOT bFirstAttribute
             {
-               if bAlreadyBlind
-               {
-                  continue;
-               }
-               else
-               {
-                  AppendTempString(itematt_generic);
-                  bAlreadyBlind = TRUE;
-               }
+               AppendTempString("  ");
             }
-            else
+            Send(oItemAtt,@AppendMisdirectedDesc,
+               #oItem=self,
+               #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+            bFirstAttribute = FALSE;
+            continue;
+         }
+
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         bIdentified = Send(self,@GetIDStatusFromCompound,#compound=First(i));
+
+         % Handle unidentified attributes - show generic message once, then skip others
+         if NOT (bIdentified OR bShowAll)
+         {
+            if NOT bAlreadyBlind
             {
-               Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+               if NOT bFirstAttribute
+               {
+                  AppendTempString("  ");
+               }
+               AppendTempString(itematt_generic);
+               bFirstAttribute = FALSE;
+               bAlreadyBlind = TRUE;
             }
-         }       
+            continue;
+         }
+         else
+         {
+            % Add spacing and append actual attribute description
+            if NOT bFirstAttribute
+            {
+               AppendTempString("  ");
+            }
+            Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+            bFirstAttribute = FALSE;
+         }
       }
 
       % Special things for number items, etc.
@@ -1824,6 +1854,16 @@ messages:
          Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
       }
 
+      return;
+   }
+
+   FindBadItemFlags() 
+   "Print object ID if item is in an illegal state"
+   {
+      if piItem_flags = $ 
+      {
+         debug("Item", self, "has $ piItem_flags");
+      }
       return;
    }
 

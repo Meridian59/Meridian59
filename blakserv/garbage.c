@@ -286,7 +286,7 @@ void RenumberListNodeReferences(val_type *vlist_ptr)
    
    if (l->garbage_ref == REFERENCED || l->garbage_ref == UNREFERENCED)
    {
-      eprintf("RenumberListNodeReferences unrenumbered list node %i\n",
+      eprintf("RenumberListNodeReferences unrenumbered list node %" PRId64 "\n",
 	      vlist_ptr->v.data);
       return;
    }
@@ -527,7 +527,8 @@ void ResetTimerReference(val_type *vtimer_ptr)
    t = GetTimerByID(vtimer_ptr->v.data);
    if (t == NULL)
    {
-      eprintf("ResetTimerReference found a reference to non-existent timer %i\n",vtimer_ptr->v.data);
+      eprintf("ResetTimerReference found a reference to non-existent timer %" PRId64 "\n",
+              vtimer_ptr->v.data);
       return;
    }
 
@@ -617,8 +618,8 @@ void ResetStringReference(val_type *vlist_ptr)
 
    if (snod->garbage_ref == REFERENCED || snod->garbage_ref == UNREFERENCED)
    {
-      eprintf("RenumberStringReferences unrenumbered string node %i\n",
-	      vlist_ptr->v.data);
+      eprintf("RenumberStringReferences unrenumbered string node %" PRId64 "\n",
+              vlist_ptr->v.data);
       return;
    }
 

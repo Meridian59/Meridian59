@@ -607,8 +607,8 @@ void GameSendEachUserChoice(user_node *u)
    name_val.int_val = SendTopLevelBlakodMessage(u->object_id,USER_NAME_MSG,0,NULL);
    if (name_val.v.tag != TAG_RESOURCE)
    {
-      eprintf("GameSendEachUserChoice object %i has non-resource name %i,%i\n",
-	      u->object_id,name_val.v.tag,name_val.v.data);
+      eprintf("GameSendEachUserChoice object %i has non-resource name %s\n",
+              u->object_id,fmt(name_val));
       AddStringToPacket(0,"");
    }
    else
@@ -616,7 +616,7 @@ void GameSendEachUserChoice(user_node *u)
       r = GetResourceByID(name_val.v.data);
       if (r == NULL)
       {
-	 bprintf("GameSendEachUserChoice can't find resource %i as a resource/string\n",
+	 bprintf("GameSendEachUserChoice can't find resource %" PRId64 " as a resource/string\n",
 		 name_val.v.data);
 	    return;
       }

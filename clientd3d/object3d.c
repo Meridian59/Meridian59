@@ -398,7 +398,7 @@ bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, bool bTargetSelectEf
         while (screen_ptr <= end_screen_ptr)
         {
           /* Don't draw transparent pixels */
-          register BYTE color = *(row_bits + (x >> FIX_DECIMAL));
+          BYTE color = *(row_bits + (x >> FIX_DECIMAL));
           if (color != TRANSPARENT_INDEX)
             *screen_ptr = palette[color];
           

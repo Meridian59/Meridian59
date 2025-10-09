@@ -607,7 +607,7 @@ void XlatDib(BYTE* pabyBits, int width, int height, xlat* pXlat)
 	{
 		int row = i;
 		//BUGBUG: if flipped dib, row = height - 1 - i;
-		register BYTE* pbyPixel = pabyBits + row*width;
+		BYTE* pbyPixel = pabyBits + row*width;
 		BYTE* pbyEnd = pbyPixel + width;
 		while (pbyPixel < pbyEnd)
 		{

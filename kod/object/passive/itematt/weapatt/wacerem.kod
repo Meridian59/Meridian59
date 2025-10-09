@@ -27,7 +27,7 @@ constants:
    include blakston.khd   
 
 resources:
-   weapattcerem_desc = "  Beautiful and ornate, this weapon is obviously "
+   weapattcerem_desc = "Beautiful and ornate, this weapon is obviously "
       "unsuitable for blood combat, though it might provide "
    weapattcerem_desc2 = " edge in games and tourneys."   
    weapatt_ceremonial_name = "ceremonial %s"

@@ -70,14 +70,8 @@ bool is_about;
 #define HWND_ADMIN tab_pages[2]
 
 /* subclass admin edit window to get enter and tab keys */
-
-#ifdef STRICT
 static WNDPROC lpfnDefAdminInputProc;
 static WNDPROC lpfnDefAdminResponseProc;
-#else
-static FARPROC lpfnDefAdminInputProc;
-static FARPROC lpfnDefAdminResponseProc;
-#endif
 
 /* status window stuff--make a timer to clear it every once in a while */
 #define STATUS_CONNECTION_WIDTH 30
@@ -390,7 +384,7 @@ void InterfaceAddList(int session_id)
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
-	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
@@ -444,7 +438,7 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
-		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}
@@ -888,10 +882,10 @@ void InterfaceDrawText(HWND hwnd)
 		SetDlgItemText(HWND_STATUS,IDC_MEMORY_VALUE,s);
 		
 		kstat = GetKodStats();
-		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time));
+		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_STARTED_VALUE,s);
 		
-		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time));
+		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_UP_FOR_VALUE,s);
 		
 		if (kstat->interpreting_time/1000.0 < 0.01) 
@@ -1165,15 +1159,34 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 
 void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 {
-	char s[400];
+	char s[CHANBUF_SIZE];
 	
 	switch (codeNotify)
 	{
 	case LBN_DBLCLK :
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
-			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-        	ShowCopyableMessageDialog(hwndMain, s);
+			int sel = ListBox_GetCurSel(hwndCtl);
+			if (sel == LB_ERR)  // nothing selected
+				return;
+
+			int len = ListBox_GetTextLen(hwndCtl, sel);
+			if (len == LB_ERR)
+				return;
+			
+			if (len < (int)sizeof(s))
+			{
+				ListBox_GetText(hwndCtl, sel, s);
+				ShowCopyableMessageDialog(hwndMain, s);
+			}
+			else
+			{
+				char warning[200];
+				snprintf(warning, sizeof(warning), 
+					"Debug message too long to display (%d characters).\n"
+					"Maximum supported: %zu characters.", len, sizeof(s)-1);
+				ShowCopyableMessageDialog(hwndMain, warning);
+			}
 		}
 		break;
 	}

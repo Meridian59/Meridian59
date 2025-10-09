@@ -6,11 +6,11 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
+CFLAGS += -I $(BLAKINCLUDEDIR)
 
 SOURCEDIR = .
 
-LIBS = -lpthread
+LIBS =
 
 OBJS =  \
 	$(OUTDIR)/main.obj \
@@ -78,10 +78,20 @@ OBJS =  \
 	$(OUTDIR)/stringinthash.obj \
 	$(OUTDIR)/intstringhash.obj \
 	$(OUTDIR)/sprocket.obj \
-	$(OUTDIR)/critical_section.obj \
-	$(OUTDIR)/mutex_linux.obj \
+	$(OUTDIR)/mutex_impl.obj \
+	$(OUTDIR)/fileutil.obj \
 	$(OUTDIR)/osd_linux.obj \
 
+
+ifdef BLAK_PLATFORM_MAC
+
+OBJS += $(OUTDIR)/osd_kqueue.obj
+
+else
+
+OBJS += $(OUTDIR)/osd_epoll.obj
+
+endif
 
 all : makedirs $(OUTDIR)/blakserv
 

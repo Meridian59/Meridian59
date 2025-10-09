@@ -3275,8 +3275,6 @@ messages:
             {
                if Send(i,@GetItemUseType) & type
                {
-                  % Found conflicting item - check if they can be worn together (bidirectional)
-                  % Check use type to ensure we're dealing with wearable items (not weapons)
                   if (Send(what,@CanBeWornInSameSlotWith,#what=i) 
                           OR Send(i,@CanBeWornInSameSlotWith,#what=what))
                   {

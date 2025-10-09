@@ -148,7 +148,7 @@ messages:
          
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -200,9 +200,6 @@ messages:
 
    CanBeWornInSameSlotWith(what = $)
    "Robes can be worn in the same slot as pants and shirts despite overlapping use types."
-   "Robes use ITEM_USE_BODY | ITEM_USE_LEGS, but can still be worn with:"
-   "- Pants (which also use ITEM_USE_LEGS)"
-   "- Shirts (which use ITEM_USE_SHIRT, visual overlap only)"
    {
       % Robes can be worn simultaneously with pants and shirts
       if IsClass(what, &Pants) OR IsClass(what, &Shirt)

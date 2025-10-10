@@ -27,7 +27,7 @@ constants:
 
 resources:
 
-   weapattpurger_desc = "  The sign of Psychochild is engraved on the weapon."      
+   weapattpurger_desc = "The sign of Psychochild is engraved on the weapon."      
    purger_fail_use = "You are not yet ready to use %s%s."
    purger_worked_user = "Your weapon tears at the magic surrounding %s%s."
    purger_worked_target = "%s%s's weapon tears at the magic surrounding you!"

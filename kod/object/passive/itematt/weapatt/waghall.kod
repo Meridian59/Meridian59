@@ -31,7 +31,7 @@ constants:
 
 resources:
 
-   weapattguildhalldesc= "  The crest of "
+   weapattguildhalldesc= "The crest of "
    weapattguildhalldesc2 = " is inscribed on the hilt of the weapon, suggesting "
    weapattguildhalldesc3 = " bonus in the defense of that hall."
    weapattdefender_name = "%s of the defender"

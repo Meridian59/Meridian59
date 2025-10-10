@@ -92,17 +92,6 @@ messages:
       return helm_icon_male_rsc; 
    }
 
-   GetOverlayForOwner(owner = $)
-   "Returns the gender-specific overlay for a given owner (used by statues)."
-   {
-      if owner <> $ AND send(owner,@GetGender) = GENDER_FEMALE
-      {
-         return helm_icon_female_rsc;
-      }
-      
-      return helm_icon_male_rsc; 
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

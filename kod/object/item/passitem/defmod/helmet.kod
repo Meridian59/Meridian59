@@ -81,12 +81,6 @@ messages:
       return vrIcon; 
    }
 
-   GetOverlayForOwner(owner = $)
-   "Returns the overlay for a given owner (used by statues). Default implementation."
-   {
-      return vrIcon;
-   }
-
    GetOverlayHotspot(animation = $)
    {
       return HS_TOUPEE;

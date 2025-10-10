@@ -91,12 +91,6 @@ messages:
    {
       return circlet_overlay_rsc;
    }
-
-   GetOverlayForOwner(owner = $)
-   "Returns the overlay for a given owner (used by statues)."
-   {
-      return circlet_overlay_rsc;
-   }
    
    AdjustsMaxMana()
    {

@@ -59,12 +59,6 @@ messages:
       % Uses different file for the overlay.
       return IvyCirclet_overlay_rsc;
    }
-
-   GetOverlayForOwner(owner = $)
-   "Returns the overlay for a given owner (used by statues)."
-   {
-      return IvyCirclet_overlay_rsc;
-   }
    
    GetResistanceModifiers()
    {

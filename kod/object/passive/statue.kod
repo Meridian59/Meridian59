@@ -65,8 +65,7 @@ properties:
    prLeft_arm = $
    prLegs = $
    pbIsHairVisible = $
-   prFacialOverlay = $ % DEPRECATED: Use poFacialOverlay instead. Kept for save compatibility.
-   poFacialOverlay = $ % Facial overlay object (e.g., mask)
+   prFacialOverlay = $ % Facial overlay resource (e.g., mask)
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
@@ -313,7 +312,7 @@ messages:
          }
       }
 
-      if poFacialOverlay <> $ or prFacialOverlay <> $
+      if prFacialOverlay <> $
       {
          piOverlays = piOverlays + 1;
       }
@@ -439,7 +438,7 @@ messages:
 
    SetStatue(original = $)
    {      
-      local oWeapon, oShield;
+      local oWeapon, oShield, oMask;
 
       if original = $ OR NOT IsClass(original,&User)
       {
@@ -462,16 +461,15 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      % Bootstrap old prFacialOverlay to new poFacialOverlay
-      if prFacialOverlay <> $ AND poFacialOverlay = $
+      % Get the facial overlay object and store its gender-specific resource
+      prFacialOverlay = $;
+      if Send(poOriginal,@GetFacialOverlay) <> $
       {
-         poFacialOverlay = prFacialOverlay;
-         prFacialOverlay = $;
-      }
-      else
-      {
-         % Set the facial overlay object from the original player
-         poFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+         oMask = Send(poOriginal,@GetFacialOverlay);
+         if oMask <> $
+         {
+            prFacialOverlay = Send(oMask,@GetOverlay);
+         }
       }
       
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
@@ -622,18 +620,22 @@ messages:
          }
       }
 
-      if poFacialOverlay <> $ AND poOriginal <> $
+      if prFacialOverlay <> $
       {
-         
-         % Use GetOverlayForOwner to get the correct gender-specific overlay
-         rOverlay = Send(poFacialOverlay,@GetOverlayForOwner,#owner=poOriginal);
-         
-         % Only add overlay if we got a valid resource
-         if rOverlay <> $
+         % Check if prFacialOverlay is an object (legacy) or a resource (new)
+         if IsObject(prFacialOverlay)
          {
-            AddPacket(4,rOverlay);
-            AddPacket(1,Send(poFacialOverlay,@GetOverlayHotspot));
-            Send(poFacialOverlay,@SendOverlayAnimation);
+            % Legacy: prFacialOverlay is an object reference, convert to resource
+            % The mask object should already have its owner set, just get the overlay
+            prFacialOverlay = Send(prFacialOverlay,@GetOverlay);
+         }
+         
+         % prFacialOverlay is now a resource, use it directly
+         if prFacialOverlay <> $
+         {
+            AddPacket(4,prFacialOverlay);
+            AddPacket(1,HS_TOUPEE);
+            AddPacket(1,ANIMATE_NONE,2,1);
          }
       }
 

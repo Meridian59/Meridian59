@@ -517,7 +517,7 @@ messages:
 
    SendOverlays()
    {
-      local iSkin_xlat, rOverlay;
+      local iSkin_xlat;
 
       % Send overlay bitmap info to user.  
 

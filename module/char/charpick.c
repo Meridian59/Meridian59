@@ -166,12 +166,9 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
          // Load the BMP file
          hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-         if (hBitmap == NULL) {
-               MessageBox(hDlg, "Failed to load bitmap image!", "Error", MB_OK | MB_ICONERROR);
-               continue;
+         if (hBitmap != NULL) {
+           SendDlgItemMessage(hDlg, animation_controls[i], STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
          }
-
-         SendDlgItemMessage(hDlg, animation_controls[i], STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
       }
       
       hPickCharDialog = hDlg;

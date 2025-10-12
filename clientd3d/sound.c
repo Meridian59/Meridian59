@@ -187,6 +187,16 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 
 #ifdef M59_MSS
 
+	// Quick configuration escape for looping and random sounds.
+   if ((flags & SF_LOOP) && (!config.play_loop_sounds))
+   {
+      return 0;
+   }
+   if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
+   {
+      return 0;
+   }
+
 	int i, iRandomPitch;
 	void FAR *pSample;
 	debug(("Reading sound file %s.\n",fname));
@@ -197,18 +207,6 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 	{
 		debug(( "Error reading sound file %s.\n", fname ));
 		return 1L;
-	}
-
-	// Quick configuration escape for looping and random sounds.
-	if ((flags & SF_LOOP) && (!config.play_loop_sounds))
-	{
-		AIL_mem_free_lock(pSample);
-		return 0;
-	}
-	if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
-	{
-		AIL_mem_free_lock(pSample);
-		return 0;
 	}
 
 	// Find an HSAMPLE to play it

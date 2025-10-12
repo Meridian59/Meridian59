@@ -199,16 +199,23 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 		return 1L;
 	}
 
-	// Quick configuration escape for especially annoying sound types.
+	// Quick configuration escape for looping and random sounds.
 	if ((flags & SF_LOOP) && (!config.play_loop_sounds))
+	{
+		AIL_mem_free_lock(pSample);
 		return 0;
+	}
 	if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
+	{
+		AIL_mem_free_lock(pSample);
 		return 0;
+	}
 
 	// Find an HSAMPLE to play it
 	for( i=0; i < iNumVoices; i++ )
 	{
-		if( AIL_sample_user_data( SampleHandle[i], SOUND_USER_ADDRESS ) == 0 )
+		if (AIL_sample_user_data(SampleHandle[i], SOUND_USER_ADDRESS) == 0 &&
+			AIL_sample_status(SampleHandle[i]) == SMP_DONE)
 			break;
 	}
 
@@ -257,12 +264,14 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_MAXVOL, vol );
 	}
 
-	// Finally, activate sample
-	AIL_start_sample( SampleHandle[i] );
-	AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_ADDRESS, (S32) pSample );
+	// Set user data BEFORE starting sample
+	AIL_set_sample_user_data(SampleHandle[i], SOUND_USER_ADDRESS, (S32) pSample);
 
-	//	register callback to free memory allocated
-	AIL_register_EOS_callback( SampleHandle[i], SoundDoneCallback );
+	// Start sample BEFORE registering callback
+	AIL_start_sample(SampleHandle[i]);
+
+	// Register callback LAST - after sample is fully initialized
+	AIL_register_EOS_callback(SampleHandle[i], SoundDoneCallback);
 
 	return 0;
 #else

@@ -322,7 +322,7 @@ messages:
    "Removes the player from the combat proceedings.  Also, removes their "
    "dagger.  Also, lets others know that player is gone."
    {
-      local i, bFound, oOpponent;
+      local i, bFound, oOpponent, oDagger;
 
       if who = $
       {
@@ -361,7 +361,11 @@ messages:
 
             plCombatants = DelListElem(plCombatants,i);
             bFound = TRUE;
-            Send(Send(self,@GetDagger,#who=who),@delete);
+            oDagger = Send(self,@GetDagger,#who=who);
+            if oDagger <> $
+            {
+               Send(oDagger, @delete);
+            }
                
             if wincheck
             {

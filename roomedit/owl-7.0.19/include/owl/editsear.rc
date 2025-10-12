@@ -1,0 +1,71 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TEditSearch
+//----------------------------------------------------------------------------
+
+#include <owl/editsear.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+CM_EDITFIND BITMAP "owl/res/find.bmp"
+CM_EDITFINDNEXT BITMAP "owl/res/findnext.bmp"
+CM_EDITUNDO BITMAP "owl/res/undo.bmp"
+CM_EDITCUT BITMAP "owl/res/cut.bmp"
+CM_EDITCOPY BITMAP "owl/res/copy.bmp"
+CM_EDITPASTE BITMAP "owl/res/paste.bmp"
+
+IDA_EDITSEARCH ACCELERATORS
+{
+  "Z", CM_EDITUNDO, VIRTKEY, CONTROL
+  "X", CM_EDITCUT, VIRTKEY, CONTROL
+  "C", CM_EDITCOPY, VIRTKEY, CONTROL
+  "V", CM_EDITPASTE, VIRTKEY, CONTROL
+  VK_DELETE, CM_EDITDELETE, VIRTKEY
+  VK_DELETE, CM_EDITCLEAR, VIRTKEY, CONTROL
+  VK_F3, CM_EDITFINDNEXT, VIRTKEY
+}
+
+IDM_EDITSEARCH MENU
+{
+  Popup "&Edit"
+  {
+    MENUITEM "&Undo\aCtrl+Z", CM_EDITUNDO
+    MENUITEM SEPARATOR
+    MENUITEM "Cu&t\aCtrl+X", CM_EDITCUT
+    MENUITEM "&Copy\aCtrl+C", CM_EDITCOPY
+    MENUITEM "&Paste\aCtrl+V", CM_EDITPASTE
+    MENUITEM "&Delete\aDel", CM_EDITDELETE
+    MENUITEM "C&lear All\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "&Search"
+  {
+    MENUITEM "&Find...", CM_EDITFIND
+    MENUITEM "&Replace...", CM_EDITREPLACE
+    MENUITEM "&Next\aF3", CM_EDITFINDNEXT
+  }
+}
+
+STRINGTABLE
+{
+  CM_EDITUNDO-1, "Editing commands, undo and Clipboard access"
+  CM_EDITUNDO, "Undo the last action"
+  CM_EDITCUT, "Cut the selection and put it on the Clipboard"
+  CM_EDITCOPY, "Copy the selection to the Clipboard"
+  CM_EDITPASTE, "Insert the Clipboard contents at the caret"
+  CM_EDITDELETE, "Delete the selection"
+  CM_EDITCLEAR, "Clear the document"
+  CM_EDITADD, "Insert a new line"
+  CM_EDITEDIT, "Edit the current line"
+  CM_EDITFIND, "Find the specified text"
+  CM_EDITREPLACE, "Find the specified text and change it"
+  CM_EDITFINDNEXT,"Find the next match"
+
+  IDS_CANNOTFIND, "Cannot find ""%s""."
+}

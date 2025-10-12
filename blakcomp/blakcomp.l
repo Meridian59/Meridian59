@@ -239,11 +239,11 @@ int read_escape_char(unsigned char c)
   }
   if (c >= 'a' && c <= 'f')
   {
-    return c - 'a';
+    return c - 'a' + 10;
   }
   if (c >= 'A' && c <= 'F')
   {
-    return c - 'A';
+    return c - 'A' + 10;
   }
   return -1;
 }
@@ -310,6 +310,7 @@ char *assemble_string(char *str)
            break;
          }
          *wt = (16 * escape_val_1) + escape_val_2;
+         wt++;
          break;
        }
          

@@ -65,7 +65,7 @@ properties:
    prLeft_arm = $
    prLegs = $
    pbIsHairVisible = $
-   prFacialOverlay = $ % Facial overlay resource (e.g., mask)
+   prFacialOverlay = $ % Facial overlay resource (e.g. mask)
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
@@ -636,7 +636,7 @@ messages:
          }
       }
 
-      % Facial overlay (e.g., mask)
+      % Facial overlay (e.g. mask)
       if prFacialOverlay <> $
       {
          AddPacket(4,prFacialOverlay);

@@ -6633,6 +6633,14 @@ messages:
       return;
    }
 
+   PostPatchUpdates()
+   "Runs one-time update functions after a patch. Call via 'send object 0 PostPatchUpdates' 
+   from admin mode, then remove completed update functions from this method."
+   {
+      Send(&Statue, @UpgradeStatue);
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

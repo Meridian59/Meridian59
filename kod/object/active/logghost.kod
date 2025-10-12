@@ -373,14 +373,7 @@ messages:
                                     #compound=Nth(lSpells,i));
                % Players shouldn't lose their last 5% from logoff penalties to avoid
                % complete skill loss spiral
-               if iSpellAbility > 5
-               {
-                  LossAmount = Bound(BaseLossAmount*iLoops,$,iSpellAbility-5);
-               }
-               else
-               {
-                  LossAmount = 0;
-               }
+               LossAmount = Bound(BaseLossAmount*iLoops,0,iSpellAbility-5);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
                                   #compound=Nth(lSpells,i));
                Send(poGhostedPlayer,@ChangeSpellAbility,
@@ -458,14 +451,7 @@ messages:
                                     #compound=Nth(lSkills,i));
                % Players shouldn't lose their last 5% from logoff penalties to avoid
                % complete skill loss spiral
-               if iSkillAbility > 5
-               {
-                  LossAmount = Bound(BaseLossAmount*iLoops,$,iSkillAbility-5);
-               }
-               else
-               {
-                  LossAmount = 0;
-               }
+               LossAmount = Bound(BaseLossAmount*iLoops,0,iSkillAbility-5);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
                                   #compound=Nth(lSkills,i));
                Send(poGhostedPlayer,@ChangeSkillAbility,

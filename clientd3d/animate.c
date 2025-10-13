@@ -173,8 +173,22 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
    {
-      obj->lightAdjust = rand() % FLICKER_LEVEL;
-      need_redraw = true;
+      // Initialize timer on first use
+      if (obj->flickerTime == 0)
+         obj->flickerTime = FLICKER_PERIOD;
+      
+      // Check if time to flicker (handle unsigned DWORD properly)
+      if (obj->flickerTime <= (DWORD)min(dt, 50))
+      {
+         int flicker_value = rand() % FLICKER_LEVEL;       
+         obj->flickerTime = FLICKER_PERIOD;
+         obj->lightAdjust = flicker_value;
+         need_redraw = true;
+      }
+      else
+      {
+         obj->flickerTime -= min(dt, 50);
+      }
    }
 
    if (OF_FLASHING == (OF_BOUNCING & obj->flags))
@@ -371,11 +385,7 @@ bool AnimateSingle(Animate *a, int num_groups, int dt)
 
    return need_redraw;
 }
-
 /************************************************************************/
-/*
- * AnimateStop:  Stop given animation.
- */
 void AnimateStop(Animate *a)
 {
    // Stop cycle and one-time animations; leave others alone

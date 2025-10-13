@@ -385,7 +385,11 @@ bool AnimateSingle(Animate *a, int num_groups, int dt)
 
    return need_redraw;
 }
+
 /************************************************************************/
+/*
+ * AnimateStop:  Stop given animation.
+ */
 void AnimateStop(Animate *a)
 {
    // Stop cycle and one-time animations; leave others alone

@@ -177,7 +177,7 @@ bool AnimateObject(object_node *obj, int dt)
       if (obj->flickerTime == 0)
          obj->flickerTime = FLICKER_PERIOD;
       
-      // Check if time to flicker (handle unsigned DWORD properly)
+      // Check if time to flicker
       if (obj->flickerTime <= (DWORD)min(dt, 50))
       {
          int flicker_value = rand() % FLICKER_LEVEL;       

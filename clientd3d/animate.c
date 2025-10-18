@@ -34,6 +34,7 @@
 
 static int  animation_timer = 0;   // id of animation timer, or 0 if none
 static DWORD timeLastFrame;
+static int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
 
 #define TIME_FULL_OBJECT_PHASE 1800
 static int phaseStates[] = {
@@ -173,21 +174,16 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
    {
-      // Initialize timer on first use
-      if (obj->flickerTime == 0)
-         obj->flickerTime = FLICKER_PERIOD;
+      // Use global flicker timer that counts down
+      flickerTimer -= dt;
       
       // Check if time to flicker
-      if (obj->flickerTime <= (DWORD)min(dt, 50))
+      if (flickerTimer <= 0)
       {
-         int flicker_value = rand() % FLICKER_LEVEL;       
-         obj->flickerTime = FLICKER_PERIOD;
+         int flicker_value = rand() % FLICKER_LEVEL;
+         flickerTimer = FLICKER_PERIOD;  // Reset timer
          obj->lightAdjust = flicker_value;
          need_redraw = true;
-      }
-      else
-      {
-         obj->flickerTime -= min(dt, 50);
       }
    }
 

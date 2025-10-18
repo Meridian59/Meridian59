@@ -88,7 +88,6 @@ typedef struct {
    BYTE      normal_translation;  // Palette translation when not moving
    BYTE      secondtranslation;   // Overriding, additional second translation.
    WORD	     bounceTime;
-   DWORD	 flickerTime;        // For time-based flickering
    WORD	     phaseTime;
    int	     boundingHeight;
    int	     boundingWidth;

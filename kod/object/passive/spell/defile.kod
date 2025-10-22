@@ -21,9 +21,9 @@ resources:
    defile_icon_rsc = idefile.bgf
    defile_desc_rsc = \
       "In this darkest of rituals, the very spirit of Qor is "
-      "summoned to defile the corpse of a murdered innocent, "
-      "transforming flesh and blood into magical energy for "
-      "the caster.  "
+      "summoned to defile the corpse of a vanquished soul, be it "
+      "innocent or beast, transforming flesh and blood into magical "
+      "energy for the caster.  "
       "Requires fairy wings and the slain."
 
    defile_cast_rsc = "Your nausea betokens the imminence of Qor."
@@ -49,13 +49,30 @@ classvars:
 
    viSpell_level = 3
    viMana = 0
-   viMana_bonus = 10
 
    viCast_time = 10000
-   viChance_to_Increase = 100
+   viChance_to_Increase = 50
 
    vrSucceed_wav = defile_sound
    vbCastable_in_HappyLand = FALSE
+
+   % Mana Effect Variables
+
+   % Minimum mana gained when defiling a player corpse. 
+   % Increasing this raises the baseline mana gain.
+   viKarmaEffect_player_min = 5
+
+   % Scaling factor for how much karma and spellpower influence mana gain from player corpses. 
+   % Increasing this widens the gap between minimum and maximum mana.
+   viKarmaEffect_player_factor = 25
+
+   % Minimum mana gained when defiling a monster corpse. 
+   % Increasing this raises the baseline mana gain.
+   viKarmaEffect_monster_min = 3
+
+   % Scaling factor for how much karma and spellpower influence mana gain from monster corpses. 
+   % Increasing this widens the gap between minimum and maximum mana.
+   viKarmaEffect_monster_factor = 5
 
 properties:
 
@@ -105,7 +122,7 @@ messages:
 	      return FALSE;
       }
 
-      if NOT Send(target,@WasGoodPlayer)
+      if NOT Send(target,@WasGood)
       {
 	      Send(who,@MsgSendUser,#message_rsc=defile_not_good);           
 
@@ -117,7 +134,9 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oTarget, oRoom, rRecent, bRecent, iKarmaAct;
+      local oTarget, oRoom, rRecent, bRecent, iKarmaAct, iTargetKarma, iManaAmount, bCapMana;
+
+      bCapMana = FALSE;
 
       oTarget = First(lTargets);
       oRoom = Send(who,@GetOwner);
@@ -142,13 +161,41 @@ messages:
 
       if NOT bRecent
       {
-         iKarmaAct = bound(abs(send(who,@GetKarma)), 0, iSpellpower+1);
+         iKarmaAct = bound(abs(send(who,@GetKarma)), 0, iSpellPower+1);
          send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
               #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
       }
 
+      iTargetKarma = Send(oTarget,@GetKarma);
+      
+      % Calculate and apply a mana increase/decrease depending on whether 
+      % corpse was a player or monster.
+      iManaAmount = 0;
+
+      if Send(oTarget,@WasPlayer)
+      {
+         % Player corpses
+         % Scaling mana impact
+         iManaAmount = viKarmaEffect_player_min + 
+              ((viKarmaEffect_player_factor * iTargetKarma) / 100) * 
+              (iSpellPower / 99);
+      }
+      else
+      {
+         % Monster corpses
+         % Scaling mana formula
+         iManaAmount = viKarmaEffect_monster_min + 
+              ((viKarmaEffect_monster_factor * iTargetKarma) / 100) * 
+              (iSpellPower / 99); % Karma max and spellpower max
+         
+         % Do not allow monsters to raise mana above player cap
+         bCapMana = TRUE;
+      }
+            
+      Send(who,@GainMana,#amount=iManaAmount,#bCapped=bCapMana);
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
-      Send(who,@GainMana,#amount=(viMana_bonus+(iSpellPower/3)));
+      
+      % Corpse cleanup
       Send(oTarget,@Delete);
 
       propagate;
@@ -158,27 +205,30 @@ messages:
    {
       local rRecent, rTarget;
 
-      rTarget = send(target,@GetCorpseName);
-
-      % plRecent is names of corpses defiled across whole server
-
-      for rRecent in plRecent
+      if Send(target,@WasPlayer)
       {
-	      if rRecent = rTarget
-	      {
-	         % no advancement if same body name was defiled recently
-	         return;
-	      }
-      }
+         rTarget = send(target,@GetCorpseName);
 
-      % Chop tail if recent is too long, then add new name to head
-      if length(plRecent) >= DEFILE_RECENT_LIST
-      {
-	      rRecent = Nth(plRecent,DEFILE_RECENT_LIST);
-	      plRecent = DelListElem(plRecent,rRecent);
-      }
+         % plRecent is names of corpses defiled across whole server
 
-      plRecent = cons(rTarget, plRecent);
+         for rRecent in plRecent
+         {
+            if rRecent = rTarget
+            {
+               % no advancement if same body name was defiled recently
+               return;
+            }
+         }
+
+         % Chop tail if recent is too long, then add new name to head
+         if length(plRecent) >= DEFILE_RECENT_LIST
+         {
+            rRecent = Nth(plRecent,DEFILE_RECENT_LIST);
+            plRecent = DelListElem(plRecent,rRecent);
+         }
+
+         plRecent = cons(rTarget, plRecent);
+      }
 
       propagate;
    }

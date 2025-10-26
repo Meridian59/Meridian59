@@ -257,6 +257,7 @@ classvars:
    vrTeach_quest_needed = monster_teach_quest_needed
    vrNothing_for_sale = Lm_nothing_for_sale
    vrMrcnt_too_costly = Lm_mrcnt_too_costly
+   vrBuyer_unwanted = Lm_buyer_unwanted
    vrMonster_healing = Lm_monster_healing
 
    % Obsolete, but still included here for safety's sake.
@@ -2344,7 +2345,7 @@ messages:
             if NOT Send(self,@ObjectDesired,#what=i)
             {
                Send(self,@SayToOne,#target=what,
-                    #message_rsc=Lm_buyer_unwanted);
+                    #message_rsc=vrBuyer_unwanted);
 
                return FALSE;
             }

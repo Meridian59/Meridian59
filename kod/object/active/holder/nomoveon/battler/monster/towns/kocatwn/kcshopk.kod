@@ -45,6 +45,8 @@ classvars:
 
    viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_BUYER | MOB_FULL_TALK
    viOccupation = MOB_ROLE_MERCHANT
+   
+   vrBuyer_unwanted = JunkMan_Not_Interested
 
    % We sell what other people have given us
    vbSellFromInventory = TRUE
@@ -216,7 +218,8 @@ messages:
 
       if length(first(plFor_Sale)) > MAX_FORSALE
       {
-         return FALSE;
+         Post(poOwner,@SomeoneSaid,#what=self,#string=JunkMan_Full_rsc,#type=SAY_RESOURCE);
+		 return FALSE;
       }
 
       for i in first(plFor_Sale)
@@ -224,10 +227,21 @@ messages:
          if GetClass(i) = GetClass(what)
          {
             if IsClass(i,&NumberItem)
-               AND (send(what,@GetNumber) + send(i,@GetNumber)) < NUMBER_ITEM_MAX
             {
-               return TRUE;
+               % Only accept stackable items if we don't have too many of them.
+               if (send(what,@GetNumber) + send(i,@GetNumber)) < NUMBER_ITEM_MAX
+			   {
+			      return TRUE;
+			   }
+			   else
+			   {
+			      Post(poOwner,@SomeoneSaid,#what=self,#string=JunkMan_NumberItem_rsc,#type=SAY_RESOURCE);
+			   }
             }
+			else
+			{
+			   Post(poOwner,@SomeoneSaid,#what=self,#string=JunkMan_AlreadyHaveOne_rsc,#type=SAY_RESOURCE);
+			}
 
             return FALSE;
          }

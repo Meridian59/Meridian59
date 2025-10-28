@@ -2342,7 +2342,7 @@ messages:
                return FALSE;
             }
 
-            if NOT Send(self,@ObjectDesired,#what=i)
+            if NOT Send(self,@ObjectDesired,#what=i,#who=what)
             {
                Send(self,@SayToOne,#target=what,
                     #message_rsc=vrBuyer_unwanted);
@@ -4698,7 +4698,7 @@ messages:
       return viAttributes;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$, who=$)
    "This is set in individual buyers.  It allows them to pick and choose"
    "what they want to buy."
    {

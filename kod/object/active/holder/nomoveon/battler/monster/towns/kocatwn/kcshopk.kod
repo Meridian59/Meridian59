@@ -33,8 +33,10 @@ resources:
 
    JunkMan_AlreadyHaveOne_rsc = "I've already got one of them to unload, I don't need another right now."
    JunkMan_NumberItem_rsc = "Sorry, my friend, trinkets like those are things I `Bwon't`n take."
-   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but mine are all full too!"  
-   JunkMan_Not_Interested = "I thank ye, but I am not interested."
+   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but my inventory is all full!"  
+   JunkMan_Not_Interested = "I thank you, but I am not interested."
+   
+   JunkMan_too_many_rsc = "Sorry, my friend, but I already have a ~Ihuge~I collection of those for sale.  I'd rather unload them first."
 
 classvars:
 
@@ -204,7 +206,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$,report=TRUE)
+   ObjectDesired(what=$,who=$,report=TRUE)
    "This is set in individual buyers.  It allows them to pick and choose"
    "what they want to buy."
    {
@@ -218,7 +220,7 @@ messages:
 
       if length(first(plFor_Sale)) > MAX_FORSALE
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=JunkMan_Full_rsc,#type=SAY_RESOURCE);
+         Post(self,@SayToOne,#target=who,#message_rsc=JunkMan_Full_rsc);
 		 return FALSE;
       }
 
@@ -228,19 +230,19 @@ messages:
          {
             if IsClass(i,&NumberItem)
             {
-               % Only accept stackable items if we don't have too many of them.
+			   % Only accept stackable items if we don't have too many of them.
                if (send(what,@GetNumber) + send(i,@GetNumber)) < NUMBER_ITEM_MAX
 			   {
 			      return TRUE;
 			   }
 			   else
 			   {
-			      Post(poOwner,@SomeoneSaid,#what=self,#string=JunkMan_NumberItem_rsc,#type=SAY_RESOURCE);
+				  Post(self,@SayToOne,#target=who,#message_rsc=JunkMan_too_many_rsc);
 			   }
             }
 			else
 			{
-			   Post(poOwner,@SomeoneSaid,#what=self,#string=JunkMan_AlreadyHaveOne_rsc,#type=SAY_RESOURCE);
+			   Post(self,@SayToOne,#target=who,#message_rsc=JunkMan_AlreadyHaveOne_rsc);
 			}
 
             return FALSE;

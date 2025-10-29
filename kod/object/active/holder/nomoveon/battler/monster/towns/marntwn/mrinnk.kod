@@ -110,7 +110,7 @@ messages:
       propagate;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(self,@IsObjectSundry,#what=what)
          OR Send(self,@IsObjectReagent,#what=what)

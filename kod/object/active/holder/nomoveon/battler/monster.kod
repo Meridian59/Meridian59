@@ -4700,7 +4700,8 @@ messages:
 
    ObjectDesired(what=$, who=$)
    "This is set in individual buyers.  It allows them to pick and choose"
-   "what they want to buy."
+   "what they want to buy.  The 'who' parameter also allows buyers to"
+   "use SayToOne to tell a player directly why they refused an offer."
    {
       return TRUE;
    }

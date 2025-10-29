@@ -33,7 +33,7 @@ resources:
 
    JunkMan_AlreadyHaveOne_rsc = "I've already got one of them to unload, I don't need another right now."
    JunkMan_NumberItem_rsc = "Sorry, my friend, trinkets like those are things I `Bwon't`n take."
-   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but my inventory is all full!"  
+   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but mine are all full too!" 
    JunkMan_Not_Interested = "I thank you, but I am not interested."
    
    JunkMan_too_many_rsc = "Sorry, my friend, but I already have a ~Ihuge~I collection of those for sale.  I'd rather unload them first."
@@ -220,7 +220,7 @@ messages:
 
       if length(first(plFor_Sale)) > MAX_FORSALE
       {
-         Post(self,@SayToOne,#target=who,#message_rsc=JunkMan_Full_rsc);
+         Send(self,@SayToOne,#target=who,#message_rsc=JunkMan_Full_rsc);
 		 return FALSE;
       }
 
@@ -235,14 +235,11 @@ messages:
 			   {
 			      return TRUE;
 			   }
-			   else
-			   {
-				  Post(self,@SayToOne,#target=who,#message_rsc=JunkMan_too_many_rsc);
-			   }
+			   Send(self,@SayToOne,#target=who,#message_rsc=JunkMan_too_many_rsc);
             }
 			else
 			{
-			   Post(self,@SayToOne,#target=who,#message_rsc=JunkMan_AlreadyHaveOne_rsc);
+			   Send(self,@SayToOne,#target=who,#message_rsc=JunkMan_AlreadyHaveOne_rsc);
 			}
 
             return FALSE;

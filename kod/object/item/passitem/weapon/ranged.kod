@@ -214,7 +214,16 @@ messages:
    % This returns the weapon's attack name.  For ranged weapons, return the ammo name.
    GetAttackName()
    {
-      return ranged_ammo_name;      
+	  % This helps gets the name of the ammo used from its owner.
+	  local i;
+	  for i in send(poOwner,@GetPlayerUsing)
+      {
+         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         {
+			return Send(i,@GetName);
+         }
+      }
+	  return ranged_ammo_name;      
    }
    
 end

@@ -111,6 +111,9 @@ messages:
          if oLikelyAmmo <> $
          {
             send(who,@TryUseItem,#what=oLikelyAmmo);
+			% Inform the user that they auto-equipped some arrows.
+	        send(who,@MsgSendUser,#message_rsc=fire_new_ammo,
+               #parm1=send(oLikelyAmmo,@GetName));
          }
       }
 
@@ -150,9 +153,6 @@ messages:
          send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
          return;
       }
-
-      send(who,@MsgSendUser,#message_rsc=fire_new_ammo,
-        #parm1=send(oAmmo,@GetName));
 
       send(send(who,@GetOwner),@SomethingShot,#who=who,
         #target=send(who,@GetKillTarget), #projectile=oAmmo);

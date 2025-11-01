@@ -36,6 +36,10 @@ classvars:
 
    viGround_group = 2
    viInventory_group = 1   
+   
+   % Since ammunition is mostly referred to as plural, we have the singular
+   % version for the occasions we need it.
+   vrAmmo_singular = "ammo"
 
 properties:
 
@@ -93,6 +97,23 @@ messages:
    GetAmmoType()
    {
       return viAmmo_type;
+   }
+   
+   % Again, ammo is often referred to as plural.
+   GetName()
+   {
+   	  if piNumber = 1 AND vrAmmo_singular <> $
+      {
+         return vrAmmo_singular;
+      }
+      
+      propagate;
+   }
+   
+   % Sometimes the singular name is needed regardless of the quantity.
+   GetSingularName()
+   {
+      return vrAmmo_singular;
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

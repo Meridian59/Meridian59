@@ -24,6 +24,8 @@ resources:
    fire_arrow_desc_rsc = \
       "The enchanted, searing-hot heads of these arrows glow menacingly, "
       "making them the clear choice for taking aim against flammable targets."
+   
+   fire_arrow_name_singular_rsc = "fire arrow"
 
 classvars:
 
@@ -40,6 +42,8 @@ classvars:
 
    viBulk = 4
    viWeight = 4
+   
+   vrAmmo_singular = fire_arrow_name_singular_rsc
 
 properties:
 

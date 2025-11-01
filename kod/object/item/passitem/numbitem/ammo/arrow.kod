@@ -24,6 +24,8 @@ resources:
    arrow_desc_rsc = \
 	"Slender and straight with jungle bird feathers for guidance, "
 	"this is standard ammunition for a bow."
+   
+   arrow_name_singular_rsc = "arrow"
 
 classvars:
 
@@ -40,6 +42,8 @@ classvars:
 
    viBulk = 4
    viWeight = 4
+   
+   vrAmmo_singular = arrow_name_singular_rsc
 
 properties:
 

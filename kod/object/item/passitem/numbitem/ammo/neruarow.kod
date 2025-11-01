@@ -22,8 +22,10 @@ resources:
       "These carved arrowheads do a little more damage than standard arrows, "
       "but should the small green stone shatter under the impact, it could "
       "prove fatal to the victim."
-
+   
+   nerudite_arrow_name_singular_rsc = "nerudite arrow"
    nerudite_arrow_explodes = "The nerudite arrowhead shatters!"
+   
 
 classvars:
 
@@ -40,6 +42,8 @@ classvars:
 
    viBulk = 4
    viWeight = 5
+   
+   vrAmmo_singular = nerudite_arrow_name_singular_rsc
 
 properties:
 

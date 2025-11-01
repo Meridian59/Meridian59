@@ -220,7 +220,7 @@ messages:
       {
          if send(i,@GetItemUseType) = ITEM_USE_QUIVER
          {
-			return Send(i,@GetName);
+			return Send(i,@GetSingularName);
          }
       }
 	  return ranged_ammo_name;      

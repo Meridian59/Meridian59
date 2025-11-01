@@ -26,6 +26,7 @@ resources:
       "Some archers have found these to be the nock of choice for battling the undead."
 
    silver_arrow_burns_you = "The silver arrowhead stings your undead flesh!"
+   silver_arrow_name_singular_rsc = "silver arrow"
 
 classvars:
 
@@ -42,6 +43,8 @@ classvars:
 
    viBulk = 4
    viWeight = 5
+   
+   vrAmmo_singular = silver_arrow_name_singular_rsc
 
 properties:
 

@@ -3477,6 +3477,7 @@ messages:
       Create(&DarkAngelTreasure);
 
       Create(&ThrasherTreasure);
+      Create(&IcePersonTreasure);
 
       return;
    }

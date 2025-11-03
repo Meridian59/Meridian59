@@ -18,8 +18,8 @@ enum { ACCOUNT_NORMAL = 0, ACCOUNT_ADMIN = 1, ACCOUNT_DM = 2, ACCOUNT_GUEST = 3}
 typedef struct account_node_struct
 {
    int account_id;
-   char *name;
-   char *password;
+   std::string name;
+   std::string password;
    int type;
    int credits;			/* remember, stored as 1/100 of a credit */
    INT64 last_login_time;

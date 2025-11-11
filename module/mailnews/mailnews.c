@@ -260,7 +260,7 @@ bool HandleArticles(char *ptr, long len)
 	 return false;
       }
 
-      len = ExtractString(&ptr, len, article->title, MAX_SUBJECT);
+      len = ExtractString(&ptr, len, article->title, MAX_NEWS_SUBJECT);
       if (len == -1)
       {
 	 list_destroy(list);
@@ -270,7 +270,10 @@ bool HandleArticles(char *ptr, long len)
    }
 
    if (len != 0)
-      return false;
+   {
+     list_destroy(list);
+     return false;
+   }
 
    ReceiveArticles(newsgroup, part, max_part, list);
    return true;

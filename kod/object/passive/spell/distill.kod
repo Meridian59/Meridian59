@@ -37,7 +37,7 @@ resources:
       "Your knowledge of %s is unsteady and you are not certain how to "
       "proceed."
 
-   Distill_sound = Jdistill.wav
+   Distill_sound = jala.wav
 
 classvars:
 

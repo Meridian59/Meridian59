@@ -176,9 +176,11 @@ messages:
       if iForm <> -1
       {
          % don't print fizzle message.
-         Send(who,@BreakTrance,#event=EVENT_STEER);  
+         Send(who,@BreakTrance,#event=EVENT_STEER);
          Send(self,@PerformIllusionaryForm,#caster=who,#victim=who,
               #iIllusion_type=iForm,#iSpellpower=iSpellpower);
+		 % Play casting SFX here since it doesn't play on a 'fizzle'.
+		 Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=spell_sound_riija);
       }
 
       return;

@@ -1621,16 +1621,16 @@ messages:
    GetWeatherEffect(what=$)
    "Gets render effect from weather type."
    {
-		if what = WEATHER_RAIN
-		{
-		   return EFFECT_RAINING;
-		}
-		if what = WEATHER_SNOW
-		{
-		   return EFFECT_SNOWING;
-		}
-		debug("Couldn't find valid weather effect. Setting to weather_clear.");
-		return EFFECT_CLEARWEATHER;
+        if what = WEATHER_RAIN
+        {
+           return EFFECT_RAINING;
+        }
+        if what = WEATHER_SNOW
+        {
+           return EFFECT_SNOWING;
+        }
+        debug("Couldn't find valid weather effect. Setting to weather_clear.");
+        return EFFECT_CLEARWEATHER;
    }
 
    RecalculateDirectionalLight()

@@ -164,7 +164,6 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)
 	//PERFORMANCE
 {
-	// Credit goes to Gar for this snow code. Made some adjustments here.
 	int allrun, allblow, alllength, alldropwidth;
 
 	if (!pabyBits)

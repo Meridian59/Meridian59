@@ -79,6 +79,9 @@ resources:
    dm_afternoon_command = "afternoon"
    dm_evening_command = "evening"
    dm_night_command = "night"
+   dm_weather_clear_command = "weather clear"
+   dm_weather_rain_command = "weather rain"
+   dm_weather_snow_command = "weather snow"
    dm_restore_time_command = "restore time"
    dm_call_monster_command = "call monster"
    dm_npc_chat_command = "npc chat"
@@ -1319,6 +1322,27 @@ messages:
       {
          Send(SYS,@SetHour,#num=23);
          
+         return;
+      }
+	  
+	  if StringEqual(string,dm_weather_clear_command)
+         OR StringEqual(string,"weather clear")
+      {
+		 Send(poOwner,@SetRoomWeather,#what=WEATHER_CLEAR);
+         return;
+      }
+	  
+      if StringEqual(string,dm_weather_rain_command)
+         OR StringEqual(string,"weather rain")
+      {
+		 Send(poOwner,@SetRoomWeather,#what=WEATHER_RAIN);
+         return;
+      }
+      
+	  if StringEqual(string,dm_weather_snow_command)
+         OR StringEqual(string,"weather snow")
+      {
+		 Send(poOwner,@SetRoomWeather,#what=WEATHER_SNOW);
          return;
       }
 

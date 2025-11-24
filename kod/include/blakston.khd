@@ -1138,6 +1138,10 @@
    WEATHER_DAWN = 6
    WEATHER_DAWN_STORMY = 7
 
+   WEATHER_CLEAR = 1
+   WEATHER_RAIN = 2
+   WEATHER_SNOW = 3
+   
    % Trees (linked to group numbers in the tree top/bottom .bgf)
    TREE_OAK = 1
    TREE_ELM = 2

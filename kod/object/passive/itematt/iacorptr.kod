@@ -35,11 +35,13 @@ constants:
 resources:
  
    corpsepointer_no_loot = "You reach for %s%s, but you can't get past %s picking over the loot of the kill."
+   itematt_corpse_desc = "This item can only be picked up by "
+   itematt_corpse_desc_generic = "This item can only be picked up by its killer."
    
 classvars:
 
    viItem_Att_Num = IA_CORPSEPOINTER
-   vrDesc = resource_blank
+   vrDesc = itematt_corpse_desc
 
 properties:
   
@@ -71,6 +73,42 @@ messages:
       }   
 
       return TRUE;
+   }
+
+   AppendDesc(oItem=$, lData=$)
+   "Append a human-readable description for corpse-pointer items."
+   {
+      local oCorpse, rKillerName;
+
+      % If we don't have proper attribute data, fall back to a generic
+      % description so the attribute still shows up as visible.
+      if lData = $ OR NOT IsList(lData)
+      {
+         AppendTempString(itematt_corpse_desc_generic);
+         return;
+      }
+
+      oCorpse = Nth(lData,3);
+      if oCorpse = $
+      {
+         AppendTempString(itematt_corpse_desc_generic);
+         return;
+      }
+
+      % GetCorpseName actually returns the killer's name, not the corpse's name.
+      % The corpse object stores who killed the monster in prPlayer_name.
+      rKillerName = Send(oCorpse,@GetCorpseName);
+      if rKillerName = $
+      {
+         AppendTempString(itematt_corpse_desc_generic);
+         return;
+      }
+
+      AppendTempString("This item can only be picked up by ");
+      AppendTempString(rKillerName);
+      AppendTempString(".");
+
+      return;
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

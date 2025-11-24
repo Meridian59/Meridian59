@@ -490,6 +490,16 @@ messages:
       return;
    }
 
+   HasVisibleDesc()
+   "Return TRUE if this attribute has a description that should be displayed to players."
+   {
+      if vrDesc = ""
+      {
+         return FALSE;
+      }
+      return TRUE;
+   }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%   Treasure Functions

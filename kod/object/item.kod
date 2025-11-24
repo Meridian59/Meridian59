@@ -147,7 +147,7 @@ messages:
       %  weapon.
       local rItem_condition, iHit_percent;
 
-      if vbShow_Condition
+      if (vbShow_condition OR vbShow_Condition)
          AND piHits_init > 0
       {
          rItem_condition = vrCondition_exc;
@@ -193,7 +193,6 @@ messages:
             }
          }
       
-         AppendTempString("\n\n");
          AppendTempString(vrPoss_Article);
          AppendTempString(Send(self,@GetName));
          AppendTempString(rItem_condition);
@@ -229,15 +228,41 @@ messages:
    "uses proper formatting with line breaks separating the base description, "
    "attributes section, and condition information."
    {
-      local bAlreadyBlind, bFirstAttribute, bIdentified, oItemAtt, i, iNum;
+      local bAlreadyBlind, bFirstAttribute, bIdentified, oItemAtt, i, iNum, bHasVisibleAttributes;
 
       bAlreadyBlind = FALSE;
       bFirstAttribute = TRUE;
       ClearTempString();
       Send(self,@DoBaseDesc);
 
-      % Add line break before attributes if any exist
+      % Check if any attributes will display text. IA_MISDIRECTION always shows
+      % (creates fake desc), others check HasVisibleDesc.
+      bHasVisibleAttributes = FALSE;
       if plItem_Attributes <> $
+      {
+         for i in plItem_Attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+
+            % IA_MISDIRECTION produces a visible fake attribute even when
+            % the real one is hidden; treat it as visible for separator
+            % purposes.
+            if iNum = IA_MISDIRECTION
+            {
+               bHasVisibleAttributes = TRUE;
+               break;
+            }
+
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            if oItemAtt <> $ AND Send(oItemAtt,@HasVisibleDesc)
+            {
+               bHasVisibleAttributes = TRUE;
+               break;
+            }
+         }
+      }
+
+      if bHasVisibleAttributes
       {
          AppendTempString("\n\n");
       }
@@ -293,6 +318,13 @@ messages:
       }
 
       % Special things for number items, etc.
+      % Insert condition separator only if AppendDesc will output condition text.
+      if vbShow_condition AND piHits_init > 0
+      {
+         % Only append separator if we already added base description or attributes
+         AppendTempString("\n\n");
+      }
+
       Send(self,@AppendDesc);  
       
       return;

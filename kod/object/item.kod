@@ -220,77 +220,95 @@ messages:
    }
 
    CreateDesc(bShowAll=FALSE)
-   "Returns the item's full description text by combining the base description "
-   "with attribute descriptions and condition information. When bShowAll is FALSE, "
-   "unidentified attributes show a generic message and misdirection attributes "
-   "display their fake descriptions alongside real attributes. When bShowAll is "
-   "TRUE, all attributes including misdirection are revealed. The description "
-   "uses proper formatting with line breaks separating the base description, "
-   "attributes section, and condition information."
+   "Returns the item's full description text by combining the base description, "
+   "attribute descriptions, and condition information."
    {
-      local bAlreadyBlind, bFirstAttribute, bIdentified, oItemAtt, i, iNum, bHasVisibleAttributes;
-
-      bAlreadyBlind = FALSE;
-      bFirstAttribute = TRUE;
       ClearTempString();
       Send(self,@DoBaseDesc);
-
-      % Check if any attributes will display text. IA_MISDIRECTION always shows
-      % (creates fake desc), others check HasVisibleDesc.
-      bHasVisibleAttributes = FALSE;
-      if plItem_Attributes <> $
-      {
-         for i in plItem_Attributes
-         {
-            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-
-            % IA_MISDIRECTION produces a visible fake attribute even when
-            % the real one is hidden; treat it as visible for separator
-            % purposes.
-            if iNum = IA_MISDIRECTION
-            {
-               bHasVisibleAttributes = TRUE;
-               break;
-            }
-
-            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-            if oItemAtt <> $ AND Send(oItemAtt,@GetDesc) <> resource_blank
-            {
-               bHasVisibleAttributes = TRUE;
-               break;
-            }
-         }
-      }
-
+      Send(self,@AppendAttributeDescriptions,#bShowAll=bShowAll);
+      Send(self,@AppendConditionDescription);
+      
+      return;
+   }
+   
+   AppendAttributeDescriptions(bShowAll=FALSE)
+   "Adds all visible attribute descriptions to the temp string with formatting."
+   {
+      local bAlreadyBlind, bFirstAttribute, bHasVisibleAttributes;
+      
+      bHasVisibleAttributes = Send(self,@HasVisibleAttributes,#bShowAll=bShowAll);
       if bHasVisibleAttributes
       {
          AppendTempString("\n\n");
       }
-
+      
+      bAlreadyBlind = FALSE;
+      bFirstAttribute = TRUE;
+      
+      Send(self,@ProcessAttributeList,#bShowAll=bShowAll,
+           #bAlreadyBlind=bAlreadyBlind,#bFirstAttribute=bFirstAttribute);
+      
+      return;
+   }
+   
+   HasVisibleAttributes(bShowAll=FALSE)
+   "Returns TRUE if any attributes will display visible text."
+   {
+      local i, iNum, oItemAtt;
+      
+      if plItem_Attributes = $
+      {
+         return FALSE;
+      }
+      
       for i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-
-         % Misdirection: show fake attribute even if real one is hidden
+         
+         % IA_MISDIRECTION always shows (creates fake desc)
+         if iNum = IA_MISDIRECTION
+         {
+            return TRUE;
+         }
+         
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if oItemAtt <> $ AND Send(oItemAtt,@GetDesc) <> resource_blank
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+   
+   ProcessAttributeList(bShowAll=FALSE, bAlreadyBlind=FALSE, bFirstAttribute=TRUE)
+   "Processes the attribute list and appends descriptions."
+   {
+      local i, iNum, oItemAtt, bIdentified;
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         
+         % Handle misdirection special case
          if iNum = IA_MISDIRECTION AND NOT bShowAll
          {
-            % But we still want to show the fake attribute it creates
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
             if NOT bFirstAttribute
             {
                AppendTempString("  ");
             }
             Send(oItemAtt,@AppendMisdirectedDesc,
-               #oItem=self,
-               #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+                 #oItem=self,
+                 #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
             bFirstAttribute = FALSE;
             continue;
          }
-
+         
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
          bIdentified = Send(self,@GetIDStatusFromCompound,#compound=First(i));
-
-         % Handle unidentified attributes - show generic message once, then skip others
+         
+         % Handle unidentified attributes
          if NOT (bIdentified OR bShowAll)
          {
             if NOT bAlreadyBlind
@@ -305,33 +323,36 @@ messages:
             }
             continue;
          }
-         else
+         
+         % Skip invisible attributes 
+         if Send(oItemAtt,@GetDesc) = resource_blank
          {
-            % Skip attributes that use resource_blank (invisible attributes)
-            if Send(oItemAtt,@GetDesc) = resource_blank
-            {
-               continue;
-            }
-            
-            % Add spacing and append actual attribute description
-            if NOT bFirstAttribute
-            {
-               AppendTempString("  ");
-            }
-            Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
-            bFirstAttribute = FALSE;
+            continue;
          }
+         
+         % Add spacing and append description
+         if NOT bFirstAttribute
+         {
+            AppendTempString("  ");
+         }
+         Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+         bFirstAttribute = FALSE;
       }
-
-      % Special things for number items, etc.
+      
+      return;
+   }
+   
+   AppendConditionDescription()
+   "Adds condition information to the temp string if applicable."
+   {
       % Insert condition separator only if AppendDesc will output condition text.
       if vbShow_condition AND piHits_init > 0
       {
          % Only append separator if we already added base description or attributes
          AppendTempString("\n\n");
       }
-
-      Send(self,@AppendDesc);  
+      
+      Send(self,@AppendDesc);
       
       return;
    }

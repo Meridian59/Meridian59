@@ -589,5 +589,18 @@ messages:
       return 0;
    }
 
+   GetDesc()
+   "Returns the description resource for this attribute."
+   {
+      return vrDesc;
+   }
+
+   AppendDesc(oItem=$, lData=$)
+   "Appends this attribute's description to the temp string."
+   {
+      AppendTempString(vrDesc);
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

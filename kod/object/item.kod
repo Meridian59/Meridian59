@@ -299,15 +299,15 @@ messages:
                AppendTempString("  ");
             }
             Send(oItemAtt,@AppendMisdirectedDesc,
-                 #oItem=self,
-                 #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+               #oItem=self,
+               #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
             bFirstAttribute = FALSE;
             continue;
          }
-         
+
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
          bIdentified = Send(self,@GetIDStatusFromCompound,#compound=First(i));
-         
+
          % Handle unidentified attributes
          if NOT (bIdentified OR bShowAll)
          {
@@ -323,13 +323,13 @@ messages:
             }
             continue;
          }
-         
+
          % Skip invisible attributes 
          if Send(oItemAtt,@GetDesc) = resource_blank
          {
             continue;
          }
-         
+
          % Add spacing and append description
          if NOT bFirstAttribute
          {
@@ -338,7 +338,7 @@ messages:
          Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
          bFirstAttribute = FALSE;
       }
-      
+
       return;
    }
    

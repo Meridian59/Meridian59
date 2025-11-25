@@ -15,24 +15,26 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 	pParticleSystem->emitterList = NULL;
 }
 
-emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, int timerBase)
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, int timerBase, 
+								bool groundDestroy)
 {
 	emitter	*pEmitter = NULL;
 
 	if (pParticleSystem == NULL)
-		return 0;
+		return nullptr;
 
 	pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
 
 	if (pEmitter == NULL)
-		return 0;
+		return nullptr;
 
 	memset(pEmitter, 0, sizeof(emitter));
-	
+
 	pEmitter->numParticles = 0;
 	pEmitter->energy = energy;
 	pEmitter->timer = timerBase;
 	pEmitter->timerBase = timerBase;
+	pEmitter->groundDestroy = groundDestroy;
 	
 	return pEmitter;
 }
@@ -61,15 +63,14 @@ void D3DParticleEmitterSetRandom(emitter *pEmitter, bool bRandomize, int randomP
 	pEmitter->randomPos = randomPos;
 	pEmitter->randomRot = randomRot;
 }
-void D3DParticleEmitterSetBGRA(emitter *pEmitter, unsigned char b, unsigned char g, 
-							unsigned char r, unsigned char a)
+void D3DParticleEmitterSetBGRA(emitter *pEmitter, const struct custom_bgra* newBGRA)
 {
-	pEmitter->bgra.b = b;
-	pEmitter->bgra.g = g;
-	pEmitter->bgra.r = r;
-	pEmitter->bgra.a = a;	
+	pEmitter->bgra.b = newBGRA->b;
+	pEmitter->bgra.g = newBGRA->g;
+	pEmitter->bgra.r = newBGRA->r;
+	pEmitter->bgra.a = newBGRA->a;	
 }
-void D3DParticleEmitterFinalize(particle_system *pParticleSystem, emitter *pEmitter)
+void D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter)
 {
 	if (NULL == pParticleSystem->emitterList)
 		pParticleSystem->emitterList =
@@ -77,7 +78,6 @@ void D3DParticleEmitterFinalize(particle_system *pParticleSystem, emitter *pEmit
 	else
 		list_add_item(pParticleSystem->emitterList, pEmitter);
 }
-
 
 void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
 {
@@ -115,6 +115,16 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 			}
 			else
 			{
+				PDIB pdibCeiling = NULL;
+				pdibCeiling = GetPointCeilingTexture(pParticle->pos.x, pParticle->pos.y);
+				if (pEmitter->groundDestroy && pdibCeiling)
+				{
+					D3DParticleDestroy(pParticle);
+					pEmitter->numParticles--;
+
+					continue;
+				}
+				
 				custom_xyzw	velocity;
 
 				velocity.x = pParticle->velocity.x;
@@ -141,6 +151,14 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 				pParticle->pos.x += pParticle->velocity.x;
 				pParticle->pos.y += pParticle->velocity.y;
 				pParticle->pos.z += pParticle->velocity.z;
+
+				// If we don't allow this type of particle to survive inside the ground, destroy it.
+				if ((pEmitter->groundDestroy) && (pParticle->pos.z < GetPointFloor(pParticle->pos.x, pParticle->pos.y)))
+				{
+					pParticle->energy = 0;
+
+					continue;
+				}
 
 				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
 				assert(pPacket);

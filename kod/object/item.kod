@@ -254,7 +254,7 @@ messages:
             }
 
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-            if oItemAtt <> $ AND Send(oItemAtt,@HasVisibleDesc)
+            if oItemAtt <> $ AND Send(oItemAtt,@GetDesc) <> resource_blank
             {
                bHasVisibleAttributes = TRUE;
                break;
@@ -307,6 +307,12 @@ messages:
          }
          else
          {
+            % Skip attributes that use resource_blank (invisible attributes)
+            if Send(oItemAtt,@GetDesc) = resource_blank
+            {
+               continue;
+            }
+            
             % Add spacing and append actual attribute description
             if NOT bFirstAttribute
             {

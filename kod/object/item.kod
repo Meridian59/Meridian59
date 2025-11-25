@@ -147,7 +147,7 @@ messages:
       %  weapon.
       local rItem_condition, iHit_percent;
 
-      if (vbShow_condition OR vbShow_Condition)
+      if vbShow_Condition
          AND piHits_init > 0
       {
          rItem_condition = vrCondition_exc;

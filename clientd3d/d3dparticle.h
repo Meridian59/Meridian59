@@ -8,16 +8,7 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	128
-#define SANDSTORM_R		226
-#define SANDSTORM_G		153
-#define SANDSTORM_B		6
-#define SANDSTORM_A		255
-
-#define RAIN_R			128
-#define RAIN_G			128
-#define RAIN_B			128
-#define RAIN_A			128
+#define MAX_PARTICLES	512 // was 128
 
 typedef struct particle
 {
@@ -33,19 +24,20 @@ typedef struct particle
 
 typedef struct emitter
 {
-	int			numParticles;
-	int			energy;
-	int			timer;
-	int			timerBase;
-	int			randomPos;
-	int			randomRot;
-	custom_xyz	pos;
-	custom_xyz	delta;
-	custom_xyz	velocity;
-	custom_xyz	rotation;
-	custom_bgra	bgra;
-	particle	particles[MAX_PARTICLES];
-	bool		bRandomize;
+	int				numParticles;
+	int				energy;
+	int				timer;
+	int				timerBase;
+	int				randomPos;
+	int				randomRot;
+	custom_xyz		pos;
+	custom_xyz		delta;
+	custom_xyz		velocity;
+	custom_xyz		rotation;
+	custom_bgra		bgra;
+	particle		particles[MAX_PARTICLES];
+	bool			bRandomize;
+	bool			groundDestroy;
 } emitter;
 
 typedef struct particle_system
@@ -54,14 +46,22 @@ typedef struct particle_system
 	list_type	emitterList;
 } particle_system;
 
-void	D3DParticleSystemReset(particle_system *pParticleSystem);
-void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
-							float velX, float velY, float velZ, unsigned char b, unsigned char g,
-							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos, int randomRot);
-void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
+void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
+void		D3DParticleSystemReset(particle_system *pParticleSystem);
+
+emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, int timerBase, 
+							bool groundDestroy);
+void		D3DParticleEmitterSetPos(emitter *pEmitter, float posX, float posY, float posZ);
+void		D3DParticleEmitterSetVel(emitter *pEmitter, float velX, float velY, float velZ);
+void		D3DParticleEmitterSetRot(emitter *pEmitter, float rotX, float rotY, float rotZ);
+void		D3DParticleEmitterSetBGRA(emitter *pEmitter, const struct custom_bgra* newBGRA);
+void		D3DParticleEmitterSetRandom(emitter *pEmitter, bool bRandomize, int randomPos, 
+							float randomRot);
+void		D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter);
+
+void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 //void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
-void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
+void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
 
 #endif

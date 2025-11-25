@@ -64,7 +64,7 @@ void SandDib(BYTE* pabyBits, int width, int height, int drops)
 }
 
 /***************************************************************************/
-#if 0
+
 void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)
 	//PERFORMANCE
 {
@@ -156,7 +156,7 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		}
 	}
 }
-#endif
+
 /***************************************************************************/
 
 void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)

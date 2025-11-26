@@ -193,7 +193,6 @@ messages:
             }
          }
       
-         AppendTempString("\n\n");
          AppendTempString(vrPoss_Article);
          AppendTempString(Send(self,@GetName));
          AppendTempString(rItem_condition);
@@ -221,35 +220,82 @@ messages:
    }
 
    CreateDesc(bShowAll=FALSE)
-   "Returns the item's full description text by combining the base description "
-   "with attribute descriptions and condition information. When bShowAll is FALSE, "
-   "unidentified attributes show a generic message and misdirection attributes "
-   "display their fake descriptions alongside real attributes. When bShowAll is "
-   "TRUE, all attributes including misdirection are revealed. The description "
-   "uses proper formatting with line breaks separating the base description, "
-   "attributes section, and condition information."
+   "Returns the item's full description text by combining the base description, "
+   "attribute descriptions, and condition information. When bShowAll is TRUE, "
+   "all attributes are shown including unidentified ones and misdirection "
+   "attributes display their real descriptions instead of fake ones."
    {
-      local bAlreadyBlind, bFirstAttribute, bIdentified, oItemAtt, i, iNum;
-
-      bAlreadyBlind = FALSE;
-      bFirstAttribute = TRUE;
       ClearTempString();
       Send(self,@DoBaseDesc);
-
-      % Add line break before attributes if any exist
-      if plItem_Attributes <> $
+      Send(self,@AppendAttributeDescriptions,#bShowAll=bShowAll);
+      Send(self,@AppendConditionDescription);
+      
+      return;
+   }
+   
+   AppendAttributeDescriptions(bShowAll=FALSE)
+   "Adds all visible attribute descriptions to the temp string with formatting. "
+   "When bShowAll is TRUE, all attributes including misdirection are revealed."
+   {
+      local bHasVisibleAttributes;
+      
+      bHasVisibleAttributes = Send(self,@HasVisibleAttributes,#bShowAll=bShowAll);
+      if bHasVisibleAttributes
       {
          AppendTempString("\n\n");
       }
-
+      
+      Send(self,@ProcessAttributeList,#bShowAll=bShowAll,
+           #bAlreadyBlind=FALSE,#bFirstAttribute=TRUE);
+      
+      return;
+   }
+   
+   HasVisibleAttributes(bShowAll=FALSE)
+   "Returns TRUE if any attributes will display visible text. The bShowAll "
+   "parameter affects visibility by including unidentified attributes in the check."
+   {
+      local i, iNum, oItemAtt;
+      
+      if plItem_Attributes = $
+      {
+         return FALSE;
+      }
+      
       for i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-
-         % Misdirection: show fake attribute even if real one is hidden
+         
+         % IA_MISDIRECTION always shows (creates fake desc)
+         if iNum = IA_MISDIRECTION
+         {
+            return TRUE;
+         }
+         
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if oItemAtt <> $ AND Send(oItemAtt,@GetDesc) <> resource_blank
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+   
+   ProcessAttributeList(bShowAll=FALSE, bAlreadyBlind=FALSE, bFirstAttribute=TRUE)
+   "Processes the attribute list and appends descriptions to the temp string. When "
+   "bShowAll is TRUE, unidentified attributes are shown and misdirection displays "
+   "real descriptions instead of fake ones."
+   {
+      local i, iNum, oItemAtt, bIdentified;
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         
+         % Handle misdirection special case
          if iNum = IA_MISDIRECTION AND NOT bShowAll
          {
-            % But we still want to show the fake attribute it creates
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
             if NOT bFirstAttribute
             {
@@ -265,7 +311,7 @@ messages:
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
          bIdentified = Send(self,@GetIDStatusFromCompound,#compound=First(i));
 
-         % Handle unidentified attributes - show generic message once, then skip others
+         % Handle unidentified attributes
          if NOT (bIdentified OR bShowAll)
          {
             if NOT bAlreadyBlind
@@ -280,20 +326,36 @@ messages:
             }
             continue;
          }
-         else
+
+         % Skip invisible attributes 
+         if Send(oItemAtt,@GetDesc) = resource_blank
          {
-            % Add spacing and append actual attribute description
-            if NOT bFirstAttribute
-            {
-               AppendTempString("  ");
-            }
-            Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
-            bFirstAttribute = FALSE;
+            continue;
          }
+
+         % Add spacing and append description
+         if NOT bFirstAttribute
+         {
+            AppendTempString("  ");
+         }
+         Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+         bFirstAttribute = FALSE;
       }
 
-      % Special things for number items, etc.
-      Send(self,@AppendDesc);  
+      return;
+   }
+   
+   AppendConditionDescription()
+   "Adds condition information to the temp string if applicable."
+   {
+      % Insert condition separator only if AppendDesc will output condition text.
+      if vbShow_condition AND piHits_init > 0
+      {
+         % Only append separator if we already added base description or attributes
+         AppendTempString("\n\n");
+      }
+      
+      Send(self,@AppendDesc);
       
       return;
    }

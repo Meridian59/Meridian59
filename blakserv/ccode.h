@@ -253,6 +253,5 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len);
 bool FuzzyBufferEqual(const char *s1,int len1,const char *s2,int len2);
 bool FuzzyBufferContain(const char *s1,int len1,const char *s2,int len2);
-void SendWebhookToPipe(const char* message, int len);
 
 #endif

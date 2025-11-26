@@ -210,8 +210,8 @@ config_table_type config_table[] =
 { BLAKOD_MAX_STATEMENTS,  F, "MaxStatements", CONFIG_INT,   "100000" },
 
 { WEBHOOK_GROUP,          F, "[Webhook]",     CONFIG_GROUP, "" },
-{ WEBHOOK_ENABLED,        T, "Enabled",       CONFIG_BOOL,  "No" },
-{ WEBHOOK_PREFIX,         T, "Prefix",        CONFIG_STR,   "" },
+{ WEBHOOK_ENABLED,        F, "Enabled",       CONFIG_BOOL,  "No" },
+{ WEBHOOK_PREFIX,         F, "Prefix",        CONFIG_STR,   "" },
 
 };
 

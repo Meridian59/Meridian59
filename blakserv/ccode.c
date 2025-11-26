@@ -2352,60 +2352,7 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-// --- BEGIN MULTI-PIPE WEBHOOK SUPPORT ---
-#ifdef BLAK_PLATFORM_WINDOWS
-#include <time.h>
-#define NUM_WEBHOOK_PIPES 10
 
-void SendWebhookRoundRobin(const char* message, int len) {
-    static int last_pipe_index = 0;
-    char full_message[1024];
-    time_t now = time(NULL);
-    int msg_len = snprintf(full_message, sizeof(full_message),
-         "{\"timestamp\":%ld,\"message\":\"%.*s\"}", (long)now, len, message);
-    if (msg_len < 0 || msg_len >= (int)sizeof(full_message)) {
-		// If snprintf fails or the message is too long, truncate it
-        msg_len = (int)sizeof(full_message) - 1;
-        full_message[msg_len] = '\0';
-    }
-    for (int i = 0; i < NUM_WEBHOOK_PIPES; ++i) {
-        int pipe_index = (last_pipe_index + i) % NUM_WEBHOOK_PIPES;
-        char pipe_name[64];
-        snprintf(pipe_name, sizeof(pipe_name), "\\\\.\\pipe\\m59apiwebhook%d", pipe_index + 1);
-        HANDLE hPipe = CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-        if (hPipe != INVALID_HANDLE_VALUE) {
-            DWORD bytesWritten;
-            WriteFile(hPipe, full_message, (DWORD)msg_len, &bytesWritten, NULL);
-            CloseHandle(hPipe);
-            last_pipe_index = (pipe_index + 1) % NUM_WEBHOOK_PIPES;
-            return;
-        }
-    }
-
-}
-#else
-#include <time.h>
-#define NUM_WEBHOOK_PIPES 1
-void SendWebhookRoundRobin(const char* message, int len) {
-    // For Linux use a single pipe
-    char full_message[1024];
-    time_t now = time(NULL);
-	
-    int msg_len = snprintf(full_message, sizeof(full_message),
-         "{\"timestamp\":%ld,\"message\":\"%.*s\"}", (long)now, len, message);
-    if (msg_len < 0 || msg_len >= (int)sizeof(full_message)) {
-        msg_len = (int)sizeof(full_message) - 1;
-        full_message[msg_len] = '\0';
-    }
-    int fd = open("/tmp/m59apiwebhook1", O_WRONLY | O_NONBLOCK);
-    if (fd == -1) {
-        return;
-    }
-    write(fd, full_message, msg_len);
-    close(fd);
-}
-#endif
-// --- END MULTI-PIPE WEBHOOK SUPPORT ---
 
 blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int num_normal_parms, parm_node normal_parm_array[],
@@ -2421,6 +2368,6 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
         return NIL;
     }
 
-    SendWebhookRoundRobin(content, content_len);
+    SendWebhookMessage(content, content_len);
     return 1;
 }

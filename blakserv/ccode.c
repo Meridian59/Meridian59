@@ -18,13 +18,6 @@
 
 #include "blakserv.h"
 
-#ifdef BLAK_PLATFORM_WINDOWS
-#include <windows.h>
-#else
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
 // global buffers for zero-terminated string manipulation

@@ -221,7 +221,9 @@ messages:
 
    CreateDesc(bShowAll=FALSE)
    "Returns the item's full description text by combining the base description, "
-   "attribute descriptions, and condition information."
+   "attribute descriptions, and condition information. When bShowAll is TRUE, "
+   "all attributes are shown including unidentified ones and misdirection "
+   "attributes display their real descriptions instead of fake ones."
    {
       ClearTempString();
       Send(self,@DoBaseDesc);
@@ -232,7 +234,8 @@ messages:
    }
    
    AppendAttributeDescriptions(bShowAll=FALSE)
-   "Adds all visible attribute descriptions to the temp string with formatting."
+   "Adds all visible attribute descriptions to the temp string with formatting. "
+   "When bShowAll is TRUE, all attributes including misdirection are revealed."
    {
       local bAlreadyBlind, bFirstAttribute, bHasVisibleAttributes;
       
@@ -252,7 +255,8 @@ messages:
    }
    
    HasVisibleAttributes(bShowAll=FALSE)
-   "Returns TRUE if any attributes will display visible text."
+   "Returns TRUE if any attributes will display visible text. The bShowAll "
+   "parameter affects visibility by including unidentified attributes in the check."
    {
       local i, iNum, oItemAtt;
       
@@ -282,7 +286,9 @@ messages:
    }
    
    ProcessAttributeList(bShowAll=FALSE, bAlreadyBlind=FALSE, bFirstAttribute=TRUE)
-   "Processes the attribute list and appends descriptions."
+   "Processes the attribute list and appends descriptions. When bShowAll is TRUE, "
+   "unidentified attributes are shown and misdirection displays real descriptions "
+   "instead of fake ones."
    {
       local i, iNum, oItemAtt, bIdentified;
       

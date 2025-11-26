@@ -283,9 +283,9 @@ messages:
    }
    
    ProcessAttributeList(bShowAll=FALSE, bAlreadyBlind=FALSE, bFirstAttribute=TRUE)
-   "Processes the attribute list and appends descriptions. When bShowAll is TRUE, "
-   "unidentified attributes are shown and misdirection displays real descriptions "
-   "instead of fake ones."
+   "Processes the attribute list and appends descriptions to the temp string. When "
+   "bShowAll is TRUE, unidentified attributes are shown and misdirection displays "
+   "real descriptions instead of fake ones."
    {
       local i, iNum, oItemAtt, bIdentified;
       

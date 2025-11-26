@@ -4,6 +4,55 @@ The Meridian 59 webhook system enables the game server to send real-time notific
 
 **Note: Webhooks are disabled by default.** You must enable them in your server configuration.
 
+## Quick Start
+
+### 1. Enable Webhooks
+Add this to your `blakserv.cfg` configuration file:
+```ini
+[Webhook]
+Enabled              Yes
+```
+
+**Optional - For multiple servers on same machine:**
+```ini
+[Webhook]
+Enabled              Yes
+Prefix               server1
+```
+
+### 2. Install Webhook Listener
+```bash
+pip install m59api
+```
+
+### 3. Configure Discord Webhook (Required for Discord integration)
+Set the Discord webhook URL environment variable:
+
+**Windows PowerShell:**
+```powershell
+$env:DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/your/webhook/url"
+```
+
+**Linux/macOS:**
+```bash
+export DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your/webhook/url"
+```
+
+To get a Discord webhook URL: Server Settings ? Integrations ? Webhooks ? Create New Webhook
+
+### 4. Start the Services (Order is Important!)
+```bash
+# Terminal 1: Start webhook listener FIRST
+m59api webhook
+
+# Terminal 2: Start your M59 server SECOND
+./blakserv
+```
+
+**?? Important:** The webhook listener must be started before the M59 server, as the server connects to pipes created by the listener.
+
+That's it! Game events will now appear in Discord.
+
 ## Architecture Overview
 
 The webhook system uses a **client-server pipe architecture**:
@@ -207,20 +256,20 @@ SendWebhookMessage("Server started", 14);
 ## Configuration
 
 ### Server Configuration File
-Add this section to your Blakserv configuration file:
+Add this section to your `blakserv.cfg` configuration file:
 
 ```ini
 [Webhook]
-Enabled = Yes
-Prefix = 
+Enabled              Yes
+Prefix               
 ```
 
 **Configuration Options:**
 - **Enabled**: `Yes` to enable webhooks, `No` to disable (default: `No`)
-- **Prefix**: Optional prefix for pipe names (default: empty)
+- **Prefix**: Optional prefix for pipe names (default: empty, use spaces for alignment)
 
 ### Basic Setup (Single Server)
-1. Set `Enabled = Yes` in config file
+1. Set `Enabled              Yes` in `blakserv.cfg` (note: use spaces, not `=`)
 2. No other configuration needed - default pipe names work automatically
 
 ### Multi-Server Setup
@@ -283,10 +332,18 @@ Both platforms now provide identical performance characteristics and multi-serve
 ### Common Issues
 
 **"No webhook messages appearing"**
-- Verify webhook listener is running and creating pipes
-- Check Discord webhook URL configuration  
-- Ensure Blakod is calling `SendWebhook()`
-- Ensure webhook system is enabled in main.c (uncomment InitWebhooks)
+
+**Required Setup Checklist:**
+1. ? **blakserv.cfg configured**: Add `[Webhook]` section with `Enabled              Yes` 
+2. ? **Discord webhook URL set**: Configure `DISCORD_WEBHOOK_URL` environment variable
+3. ? **Webhook listener started FIRST**: Run `m59api webhook` before starting server
+4. ? **Server recompiled**: Rebuild server with webhook code included
+5. ? **Blakod calling webhooks**: Ensure game code calls `SendWebhook()` functions
+
+**Common Errors:**
+- `"No webhook URL set"`: Missing `DISCORD_WEBHOOK_URL` environment variable
+- `"configstr found id 130 is dynamic"`: Need to recompile server with latest webhook code  
+- `"Client not connected"`: Webhook listener not running or started after server
 
 **"Multiple servers conflicting"**  
 - System should handle this automatically
@@ -308,15 +365,3 @@ Enable webhook debugging by checking pipe connection status and message flow in 
 - Messages are sent locally only (no network access from M59 server)
 - m59api handles all external network communication
 - Webhook URLs should be kept secure
-
-## Future Enhancements
-
-Possible future improvements:
-- Configuration file support for pipe settings
-- Additional webhook destinations beyond Discord
-- Message queuing for reliability
-- Metrics and monitoring integration
-
----
-
-*This webhook system addresses performance concerns raised in code review by implementing persistent pipe connections, proper cross-platform support, and clean separation of concerns between game server and external service communication.*

@@ -245,11 +245,8 @@ messages:
          AppendTempString("\n\n");
       }
       
-      bAlreadyBlind = FALSE;
-      bFirstAttribute = TRUE;
-      
       Send(self,@ProcessAttributeList,#bShowAll=bShowAll,
-           #bAlreadyBlind=bAlreadyBlind,#bFirstAttribute=bFirstAttribute);
+           #bAlreadyBlind=FALSE,#bFirstAttribute=TRUE);
       
       return;
    }

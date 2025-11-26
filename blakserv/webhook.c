@@ -213,7 +213,7 @@ static void format_json_message(const char *message, int len, char *output, size
     time_t now = time(NULL);
     
     // Truncate message if too long
-    int max_msg_len = output_size - 50;
+    int max_msg_len = (int)(output_size - 50);
     if (len > max_msg_len) {
         len = max_msg_len;
     }

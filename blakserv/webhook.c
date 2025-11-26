@@ -129,7 +129,7 @@ bool SendWebhookMessage(const char* message, int len)
 
     char json_message[1024];
     format_json_message(message, len, json_message, sizeof(json_message));
-    int json_len = strlen(json_message);
+    int json_len = (int)strlen(json_message);
 
 #ifdef BLAK_PLATFORM_WINDOWS
     // Try to send to Windows pipes using round-robin

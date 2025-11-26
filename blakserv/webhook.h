@@ -29,8 +29,8 @@
   - Only 1 system call per message vs 3 in naive implementation
 
   PLATFORM SUPPORT:
-  - Windows: Named pipes (\\.\pipe\*webhook*)
-  - Linux/macOS: FIFO pipes (/tmp/*webhook*)
+  - Windows: Named pipes (e.g., \\\\.\\pipe\\webhook1-10)
+  - Linux/macOS: FIFO pipes (e.g., /tmp/webhook1-10)
   
 */
 

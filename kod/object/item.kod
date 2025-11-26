@@ -237,7 +237,7 @@ messages:
    "Adds all visible attribute descriptions to the temp string with formatting. "
    "When bShowAll is TRUE, all attributes including misdirection are revealed."
    {
-      local bAlreadyBlind, bFirstAttribute, bHasVisibleAttributes;
+      local bHasVisibleAttributes;
       
       bHasVisibleAttributes = Send(self,@HasVisibleAttributes,#bShowAll=bShowAll);
       if bHasVisibleAttributes

@@ -207,7 +207,11 @@ config_table_type config_table[] =
 { SERVICE_PASSWORD,       T, "Password",      CONFIG_STR,   "b58Iz3xp" },
 
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
-{ BLAKOD_MAX_STATEMENTS,  T, "MaxStatements", CONFIG_INT,   "20000000" },
+{ BLAKOD_MAX_STATEMENTS,  F, "MaxStatements", CONFIG_INT,   "100000" },
+
+{ WEBHOOK_GROUP,          F, "[Webhook]",     CONFIG_GROUP, "" },
+{ WEBHOOK_ENABLED,        T, "Enabled",       CONFIG_BOOL,  "No" },
+{ WEBHOOK_PREFIX,         T, "Prefix",        CONFIG_STR,   "" },
 
 };
 

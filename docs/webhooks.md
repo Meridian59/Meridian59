@@ -2,6 +2,8 @@
 
 The Meridian 59 webhook system enables the game server to send real-time notifications to external services (like Discord) via named pipes or FIFO pipes. This system is designed for performance, reliability, and multi-server support.
 
+**Note: Webhooks are disabled by default.** You must enable them in your server configuration.
+
 ## Architecture Overview
 
 The webhook system uses a **client-server pipe architecture**:
@@ -204,19 +206,38 @@ SendWebhookMessage("Server started", 14);
 
 ## Configuration
 
+### Server Configuration File
+Add this section to your Blakserv configuration file:
+
+```ini
+[Webhook]
+Enabled = Yes
+Prefix = 
+```
+
+**Configuration Options:**
+- **Enabled**: `Yes` to enable webhooks, `No` to disable (default: `No`)
+- **Prefix**: Optional prefix for pipe names (default: empty)
+
 ### Basic Setup (Single Server)
-No configuration needed. Default pipe names work automatically.
+1. Set `Enabled = Yes` in config file
+2. No other configuration needed - default pipe names work automatically
 
 ### Multi-Server Setup
-If running multiple server instances, no special configuration is required - the system automatically distributes across available pipes.
+If running multiple server instances:
+1. Set `Enabled = Yes` in all server config files
+2. No other configuration needed - automatic pipe distribution handles everything
 
 ### Custom Prefixes (Advanced)
-For explicit control, webhook prefixes can be used:
+For explicit control over pipe naming, set a prefix in config:
 
-```c
-InitWebhooks("server1");  // Creates server1_m59apiwebhook1, etc.
-InitWebhooks("server2");  // Creates server2_m59apiwebhook1, etc.
+```ini
+[Webhook]
+Enabled = Yes
+Prefix = server1
 ```
+
+This creates pipes like `server1_m59apiwebhook1`, `server1_m59apiwebhook2`, etc.
 
 For example, using m59api as the webhook listener:
 ```bash

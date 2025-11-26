@@ -54,9 +54,17 @@ bool InitWebhooks(const char* prefix)
         return true;
     }
 
-    // Store pipe prefix
+    // Check if webhooks are enabled in config
+    if (!ConfigBool(WEBHOOK_ENABLED)) {
+        return false; // Webhooks disabled, return success but don't initialize
+    }
+
+    // Store pipe prefix (use config if none provided)
+    const char* config_prefix = ConfigStr(WEBHOOK_PREFIX);
     if (prefix && *prefix) {
         snprintf(pipe_prefix, sizeof(pipe_prefix), "%s_", prefix);
+    } else if (config_prefix && *config_prefix) {
+        snprintf(pipe_prefix, sizeof(pipe_prefix), "%s_", config_prefix);
     } else {
         pipe_prefix[0] = '\0';
     }
@@ -111,6 +119,11 @@ void ShutdownWebhooks(void)
 bool SendWebhookMessage(const char* message, int len)
 {
     if (!webhook_initialized || !message || len <= 0) {
+        return false;
+    }
+    
+    // Double-check config setting (in case it was changed dynamically)
+    if (!ConfigBool(WEBHOOK_ENABLED)) {
         return false;
     }
 

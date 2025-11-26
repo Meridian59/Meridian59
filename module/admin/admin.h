@@ -35,7 +35,7 @@ extern client_message admin_msg_table[];
 extern HINSTANCE   hInst;          // Handle of this DLL
 extern HWND        hAdminDlg;
 extern ClientInfo *c;              // Holds data passed from main client
-extern Bool        exiting;        // True when module is exiting and should be unloaded
+extern bool        exiting;        // True when module is exiting and should be unloaded
 
 extern char        command[];      // Admin command typed by user
 extern int         current_obj;    // Object we're currently displaying, if any

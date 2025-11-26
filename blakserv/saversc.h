@@ -13,6 +13,6 @@
 #ifndef _SAVERSC_H
 #define _SAVERSC_H
 
-Bool SaveDynamicRsc(char *filename);
+bool SaveDynamicRsc(char *filename);
 
 #endif

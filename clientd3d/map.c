@@ -51,7 +51,7 @@ static HPEN hFriendPen, hEnemyPen, hGuildmatePen;
 
 static float zoom;              // Factor to zoom in on map
 
-static BOOL bDrawBackgroundStatic = False;
+static BOOL bDrawBackgroundStatic = false;
 
 // To go from room coordinates (rx, xy) to screen coordinates (sx, sy):
 // sx = xoffset + rx * scale
@@ -85,7 +85,7 @@ static void MapDrawWall(HDC hdc, int x, int y, float scale, WallData *wall);
 static void MapDrawPlayer(HDC hdc, int x, int y, float scale);
 static void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale);
 static void MapDrawWalls(HDC hdc, int x, int y, float scale, room_type *room);
-static void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap );
+static void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap );
 
 void MapSetWallPositions(room_type *room, float scale, int numWalls)
 {
@@ -184,7 +184,7 @@ void MapClose(void)
  *   bits points to the bitmap in hdc.
  *   width gives the width of the bitmap in hdc.
  */
-void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool bMiniMap )
+void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool bMiniMap )
 {
    RECT rect;
    AREA view;
@@ -199,7 +199,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
       if( bDrawBackgroundStatic )
       {
 	 DrawWindowBackgroundMem(&map_bkgnd, bits, &rect, width, view.x, view.y);
-	 bDrawBackgroundStatic = False;
+	 bDrawBackgroundStatic = false;
       }
    else
       DrawWindowBackgroundMem(&map_bkgnd, bits, &rect, width, (int)( player.x * scaleMiniMap ), (int)( player.y * scaleMiniMap ) );
@@ -514,7 +514,7 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
  * MapDrawAnnotations:  Draw spots identifying map annotations.
  *   (x, y) is the upper-left corner of the drawing area on hdc.
  */
-void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap )
+void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap )
 {
 	int i, adjusted_size, new_x, new_y;
 
@@ -554,10 +554,10 @@ void MapEnterRoom(room_type *room)
    int i;
 
    for (i = 0; i < room->num_walls; i++)
-      room->walls[i].seen = False;
+      room->walls[i].seen = false;
 
    memset(room->annotations, 0, MAX_ANNOTATIONS * sizeof(MapAnnotation));
-   room->annotations_changed = False;
+   room->annotations_changed = false;
    room->annotations_offset = 0;
 
    // Load map from file
@@ -607,7 +607,7 @@ void MapZoom(int direction)
    fMapCacheValid = FALSE;
 
    //	Set flag that keeps background of the map fixed for the next draw.
-   bDrawBackgroundStatic = True;
+   bDrawBackgroundStatic = true;
 
    RedrawAll();
 }
@@ -616,7 +616,7 @@ void MapZoom(int direction)
  * MapScreenToRoom:  Given (x, y) in pixels measured from the origin of the graphics
  *   window, modify (x, y) to give the room coordinates on this location on the map.
  */
-void MapScreenToRoom( int *x, int *y, Bool bMiniMap )
+void MapScreenToRoom( int *x, int *y, bool bMiniMap )
 {
    if( !bMiniMap )
    {
@@ -635,10 +635,10 @@ void MapScreenToRoom( int *x, int *y, Bool bMiniMap )
 }
 /*****************************************************************************/
 /*
- * MapShowAllWalls:  Set all walls in current room to seen (show = True)
- *   or hidden (show = False).
+ * MapShowAllWalls:  Set all walls in current room to seen (show = true)
+ *   or hidden (show = false).
  */
-void MapShowAllWalls(room_type *room, Bool show)
+void MapShowAllWalls(room_type *room, bool show)
 {
    WallData *wall;
    int i;
@@ -655,10 +655,10 @@ void MapShowAllWalls(room_type *room, Bool show)
 	 continue;
 
       if (show && !(sidedef->flags & WF_MAP_NEVER))
-	wall->seen = True;
+	wall->seen = true;
 
       if (!show && !(sidedef->flags & WF_MAP_ALWAYS))
-	wall->seen = False;
+	wall->seen = false;
      }
 }
 

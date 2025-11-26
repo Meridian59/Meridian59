@@ -15,10 +15,10 @@
 
 void InitTime();
 time_t GetTime();
-const char * TimeStr(time_t time);
-const char * ShortTimeStr(time_t time);
-const char * FileTimeStr(time_t time);
-const char * RelativeTimeStr(time_t time);
+std::string TimeStr(time_t time);
+std::string ShortTimeStr(time_t time);
+std::string FileTimeStr(time_t time);
+std::string RelativeTimeStr(time_t time);
 UINT64 GetMilliCount();
 
 #endif

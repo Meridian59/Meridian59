@@ -22,7 +22,7 @@
 void AcceptSocketConnections(int socket_port,int connection_type);
 void AsyncEachSessionNameLookup(session_node *s);
 
-Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr);
+bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr);
 
 void AsyncSocketClose(SOCKET sock);
 void AsyncSocketWrite(SOCKET sock);
@@ -269,7 +269,7 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 #define IN_ADDR_HELPER(x) x.s_addr
 #endif
 
-Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
+bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
 {
 	IN_ADDR mask;
 	int i;
@@ -320,9 +320,9 @@ Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
 			dprintf("%u\n",b3);
 			dprintf("%u\n",b4);
 	*/
-		return True;
+		return true;
 	}
-	return False;
+	return false;
 }
 
 static HANDLE name_lookup_handle;

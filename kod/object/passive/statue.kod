@@ -65,7 +65,7 @@ properties:
    prLeft_arm = $
    prLegs = $
    pbIsHairVisible = $
-   prFacialOverlay = $
+   prFacialOverlay = $ % Facial overlay resource (e.g. mask)
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
@@ -438,7 +438,7 @@ messages:
 
    SetStatue(original = $)
    {      
-      local oWeapon, oShield;
+      local oWeapon, oShield, oMask;
 
       if original = $ OR NOT IsClass(original,&User)
       {
@@ -461,7 +461,14 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+      % Get the facial overlay object and store its gender-specific resource
+      prFacialOverlay = $;
+      oMask = Send(poOriginal,@GetFacialOverlay);
+      if oMask <> $
+      {
+         prFacialOverlay = Send(oMask,@GetOverlay);
+      }
+      
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
 
       oWeapon = send(poOriginal,@LookUpPlayerWeapon);
@@ -507,13 +514,20 @@ messages:
 
    UpgradeStatue()
    {
-
-      % We added the ability to show facial overlays (patch 1.3.2 / client 732).
-      % To upgrade the statue we reset the frames having first correctly set the new properties.
+      % Legacy statues stored facial overlay as an object reference. Convert to resource.
+      % Facial overlays (masks) added in patch 1.3.2 / client 732.
+      % https://github.com/Meridian59/Meridian59/issues/1268
       % This function to be removed after it has been run via "send class" from admin mode on the server.
-      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
-      pbIsHairVisible = Send(poOriginal,@IsHairVisible);
-      Send(self,@ResetFrames);
+
+      % Check if prFacialOverlay is an object (legacy)
+      if IsObject(prFacialOverlay)
+      {
+         % Legacy: prFacialOverlay is an object reference, convert to resource
+         % The mask object should already have its owner set, just get the overlay
+         prFacialOverlay = Send(prFacialOverlay,@GetOverlay);
+         Send(self,@ResetFrames);
+      }
+      
       return;
    }
 
@@ -622,9 +636,12 @@ messages:
          }
       }
 
+      % Facial overlay (e.g. mask)
       if prFacialOverlay <> $
       {
-         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
+         AddPacket(4,prFacialOverlay);
+         AddPacket(1,HS_TOUPEE);
+         AddPacket(1,ANIMATE_NONE,2,1);
       }
 
       return;

@@ -29,7 +29,7 @@ static unsigned char magic_num[] = { 'B', 'O', 'F', 0xFF };
 loaded_bof_node *mem_files;
 
 /* local function prototypes */
-Bool LoadBofName(char *fname);
+bool LoadBofName(char *fname);
 void AddFileMem(char *fname,char *ptr,int size);
 void FindClasses(char *fmem,char *fname);
 void FindMessages(char *fmem,int class_id,bof_dispatch *dispatch);
@@ -103,13 +103,13 @@ void ResetLoadBof(void)
 	mem_files = NULL;
 }
 
-Bool LoadBofName(char *fname)
+bool LoadBofName(char *fname)
 {
    FILE *f = fopen(fname, "rb");
 	if (f == NULL)
    {
       eprintf("LoadBofName can't open %s\n", fname);
-		return False;
+		return false;
    }
 
    for (int i = 0; i < BOF_MAGIC_LEN; ++i)
@@ -119,7 +119,7 @@ Bool LoadBofName(char *fname)
       {
          eprintf("LoadBofName %s is not in BOF format\n", fname);
          fclose(f);
-         return False;
+         return false;
       }
    }
    
@@ -128,7 +128,7 @@ Bool LoadBofName(char *fname)
 	{
 		eprintf("LoadBofName %s can't understand bof version != 5\n",fname);
       fclose(f);
-		return False;
+		return false;
 	}
    
    // Go back to start of file and read the whole thing into memory.
@@ -142,14 +142,14 @@ Bool LoadBofName(char *fname)
    if (fread(ptr, 1, file_size, f) != file_size)
    {
       fclose(f);
-      return False;
+      return false;
    }
 
    fclose(f);
 
 	AddFileMem(fname,ptr,file_size);
 	
-	return True;
+	return true;
 }
 
 /* add a filename and mapped ptr to the list of loaded files */

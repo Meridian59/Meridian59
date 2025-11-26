@@ -26,10 +26,6 @@
 #include <direct.h>
 #include "wininet.h"
 
-#define Bool char
-#define True 1
-#define False 0
-
 /* our special window messages */
 #define CM_DEARCHIVE  (WM_USER + 1002)
 #define CM_ASYNCDONE  (WM_USER + 1003)
@@ -58,6 +54,6 @@ extern std::string transfer_machine;
 extern std::string transfer_filename;
 extern std::string transfer_local_filename;
 
-extern Bool success;
+extern bool success;
 
 #endif

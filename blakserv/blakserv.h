@@ -140,10 +140,12 @@ typedef std::vector<std::string> StringVector;
 #include <time.h>
 #include <math.h>
 #include <cinttypes>
+#include <filesystem>
 
 #include "btime.h"
+#include "mutex_impl.h"
+#include "fileutil.h"
 
-#include "bool.h"
 #include "rscload.h"
 #include "roomtype.h"
 #include "bkod.h"

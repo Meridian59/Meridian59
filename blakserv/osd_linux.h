@@ -26,10 +26,6 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/time.h>
-#include <sys/epoll.h>
-
-#include "critical_section.h"
-#include "mutex_linux.h"
 
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0
@@ -71,12 +67,6 @@ void RunMainLoop(void);
 int GetLastError();
 char * GetLastErrorStr();
 
-// Fill in "files" with the names of all files matching the given pattern.
-// Return true on success.
-bool FindMatchingFiles(const char *path, const char *extension, StringVector *files);
-
-bool BlakMoveFile(const char *source, const char *dest);
-
 void InitInterface(void);
 
 int GetUsedSessions(void);
@@ -99,5 +89,9 @@ HANDLE StartAsyncNameLookup(char *peer_addr,char *buf);
 void StartAsyncSession(void *s);
 
 void FatalErrorShow(const char *filename,int line,const char *str);
+
+bool IsAcceptingSocket(int sock);
+int GetAcceptingSocketConnectionType(int sock);
+void AddAcceptingSocket(int sock, int connection_type);
 
 #endif

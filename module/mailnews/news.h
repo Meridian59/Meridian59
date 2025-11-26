@@ -13,6 +13,10 @@
 #define _NEWS_H
 
 #define MAXARTICLE 4096      /* Max length of news article */
+// Max length of a news article subject.  This needs to be larger than a mail subject
+// line, because some news articles are auto-generated and have longer subjects than are
+// allowed to users.
+static const int MAX_NEWS_SUBJECT = 300;
 
 /* Permissions to be able to read and post news */
 #define NEWS_READ 0x01
@@ -24,7 +28,7 @@ typedef struct
    long num;                       /* Index # of article */
    long time;                      /* Time article was posted */
    char poster[MAXUSERNAME];       /* Person who posted article */
-   char title[MAX_SUBJECT];        /* Title string of article */
+   char title[MAX_NEWS_SUBJECT];   /* Title string of article */
 } NewsArticle;
 
 typedef struct {
@@ -41,14 +45,14 @@ typedef struct {
    list_type articles;         /* Used internally; should not be set by caller */
 } ReadNewsDialogStruct;
 
-Bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title);
+bool UserPostArticle(HWND hParent, WORD newsgroup, ID name_rsc, char *title);
 void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions);
 void UserReadArticle(char *article);
 
 void MakeReplySubject(char *subject, int max_chars);
 
 void ReceiveArticles(WORD newsgroup, BYTE part, BYTE max_part, list_type articles);
-Bool AbortNewsDialogs(void);
-Bool DateFromSeconds(long seconds, char *str);
+bool AbortNewsDialogs(void);
+bool DateFromSeconds(long seconds, char *str);
 
 #endif /* #ifndef _NEWS_H */

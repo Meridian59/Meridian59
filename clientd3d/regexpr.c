@@ -1746,7 +1746,7 @@ int main()
 			(unsigned char)exp.buffer[pos++]);
 	      break;
 	    case Cexact:
-	      sprintf(buf, "exact '%c' 0x%x", exp.buffer[pos],
+	      snprintf(buf, sizeof(buf), "exact '%c' 0x%x", exp.buffer[pos],
 		      (unsigned char)exp.buffer[pos]);
 	      pos++;
 	      break;
@@ -1754,13 +1754,13 @@ int main()
 	      strcpy(buf, "anychar");
 	      break;
 	    case Cstart_memory:
-	      sprintf(buf, "start_memory %d", exp.buffer[pos++]);
+	      snprintf(buf, sizeof(buf), "start_memory %d", exp.buffer[pos++]);
 	      break;
 	    case Cend_memory:
-	      sprintf(buf, "end_memory %d", exp.buffer[pos++]);
+	      snprintf(buf, sizeof(buf), "end_memory %d", exp.buffer[pos++]);
 	      break;
 	    case Cmatch_memory:
-	      sprintf(buf, "match_memory %d", exp.buffer[pos++]);
+	      snprintf(buf, sizeof(buf), "match_memory %d", exp.buffer[pos++]);
 	      break;
 	    case Cjump:
 	    case Cdummy_failure_jump:
@@ -1791,7 +1791,7 @@ int main()
 		  cp = "unknown jump";
 		  break;
 		}
-	      sprintf(buf, "%s %d", cp, a + pos);
+	      snprintf(buf, sizeof(buf), "%s %d", cp, a + pos);
 	      break;
 	    case Cbegbuf:
 	      strcpy(buf,"begbuf");
@@ -1812,7 +1812,7 @@ int main()
 	      strcpy(buf,"notwordbound");
 	      break;
 	    default:
-	      sprintf(buf, "unknown code %d",
+	      snprintf(buf, sizeof(buf), "unknown code %d",
 		      (unsigned char)exp.buffer[pos - 1]);
 	      break;
 	    }

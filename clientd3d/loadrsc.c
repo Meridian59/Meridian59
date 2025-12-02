@@ -134,7 +134,7 @@ bool LoadRscFiles(const char *filespec)
 	char file_load_path[MAX_PATH + FILENAME_MAX], game_path[MAX_PATH];
 	
 	GetGamePath( game_path );
-	sprintf(file_load_path,"%s%s\\%s", game_path, resource_dir, filespec);
+	snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, filespec);
 	
 	hFindFile = FindFirstFile(file_load_path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
@@ -146,7 +146,7 @@ bool LoadRscFiles(const char *filespec)
 		if (!(file_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
 			/* Add subdirectory name, using file_load_path as temporary */
-			sprintf(file_load_path, "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
+			snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
 			_RPT1(_CRT_WARN,"Loading File : %s\n",file_load_path); 
 			if (!RscFileLoad(file_load_path, RscAddCallback))
 				debug(("Can't load resource file %s\n", file_info.cFileName));
@@ -174,7 +174,7 @@ bool LoadRscFilesSorted(const char *filespec)
 	list_type filenames, l;
 	
 	GetGamePath( game_path );
-	sprintf(file_load_path,"%s%s\\%s", game_path, resource_dir, filespec);
+	snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, filespec);
 	
 	hFindFile = FindFirstFile(file_load_path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
@@ -194,7 +194,7 @@ bool LoadRscFilesSorted(const char *filespec)
 	for (l = filenames; l != NULL; l = l->next)
 	{
 		/* Add subdirectory name, using file_load_path as temporary */
-		sprintf(file_load_path, "%s%s\\%s", game_path, resource_dir, (char *) (l->data));  
+		snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, (char *) (l->data));  
 		
 		_RPT1(_CRT_WARN,"Loading File : %s\n",file_load_path); 
 		
@@ -370,7 +370,7 @@ bool LoadRoomFile(char *fname, room_type *r)
 	
 	GetGamePath( game_path );
 	/* Add directory to filename */
-	sprintf(filename, "%s%s\\%.*s", game_path, room_dir, FILENAME_MAX, fname);
+	snprintf(filename, sizeof(filename), "%s%s\\%.*s", game_path, room_dir, FILENAME_MAX, fname);
 	
 	return BSPRooFileLoad(filename, r);
 }
@@ -391,7 +391,7 @@ void DeleteRscFiles(list_type files)
 	{
 		fname = (char *) l->data;
 		
-		sprintf(filename, "%s%s\\%.*s", game_path, resource_dir, FILENAME_MAX, fname);
+		snprintf(filename, sizeof(filename), "%s%s\\%.*s", game_path, resource_dir, FILENAME_MAX, fname);
 		
 		/* If file doesn't exist, we're ok */
 		if (stat(filename, &s) != 0)
@@ -420,7 +420,7 @@ void DeleteAllRscFiles(void)
 	DownloadSetTime(0);
 	
 	debug(("Deleting all resource files\n"));
-	sprintf(path, "%s%s\\*.*", game_path, resource_dir);
+	snprintf(path, sizeof(path), "%s%s\\*.*", game_path, resource_dir);
 	
 	hFindFile = FindFirstFile(path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
@@ -431,7 +431,7 @@ void DeleteAllRscFiles(void)
 		// Skip directories
 		if (!(file_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			sprintf(path, "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
+			snprintf(path, sizeof(path), "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
 			
 			if (unlink(path) != 0)
 				ClientError(hInst, hMain, IDS_CANTDELETE, path);

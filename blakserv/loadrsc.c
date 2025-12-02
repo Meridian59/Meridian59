@@ -20,7 +20,7 @@
 #define RSC_EXTENSION ".rsc"
 
 /* local function prototypes */
-bool EachLoadRsc(char *filename,int resource_num, char *string);
+bool EachLoadRsc(char *filename,int resource_num, const char *string);
 bool LoadDynamicRscName(char *filename);
 
 void LoadRsc(void)
@@ -47,7 +47,7 @@ void LoadRsc(void)
 	*/
 }
 
-bool EachLoadRsc(char *filename,int resource_num,char *string)
+bool EachLoadRsc(char *filename,int resource_num,const char *string)
 {
 	AddResource(resource_num,string);
 	return true;

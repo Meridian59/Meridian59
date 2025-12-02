@@ -78,7 +78,7 @@ void RunMainLoop(void)
    }
 }
 
-char * GetLastErrorStr()
+const char * GetLastErrorStr()
 {
 	const char *error_str;
 	

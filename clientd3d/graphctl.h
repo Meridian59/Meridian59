@@ -83,7 +83,7 @@ enum {
 
 bool GraphCtlRegister(HINSTANCE hInst);
 bool GraphCtlUnregister(HINSTANCE hInst);
-M59EXPORT char *GraphCtlGetClassName(void);
+M59EXPORT const char *GraphCtlGetClassName(void);
 M59EXPORT LRESULT CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #endif /* #ifndef _GRAPHCTL_H */

@@ -125,7 +125,7 @@ int re_exec(char *s);
    matches the regular expression (that is, a matching part is found
    anywhere in the string). */
 
-char *re_replace_all(regexp_t bufp, char *string, char *with, int (*verifycallback)(char*,int,int));
+char *re_replace_all(regexp_t bufp, char *string, const char *with, int (*verifycallback)(char*,int,int));
 /* Utility function.  This returns a malloc'd result of a global
  * search and replace using the regular expression on the given string.
  * Supports register replacements (such as \31) defined in the regular

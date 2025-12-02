@@ -248,7 +248,7 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 }
 /************************************************************************/
 
-static char *format_chars = "`~"; // Characters that start a format code
+static const char *format_chars = "`~"; // Characters that start a format code
 
 // FormatCode types
 #define CODE_COLOR 0x01

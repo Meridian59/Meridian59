@@ -1588,13 +1588,13 @@ static int re_expandalloc(char **buffer, int *allocated, int atleast, int chunk)
 char *re_replace_all(
    regexp_t bufp,
    char *string,
-   char *with,
+   const char *with,
    int (*verifycallback)(char*,int,int))
 {
 	int found, prevend, i;
 	char *result;
 	int build;
-	char *parse;
+	const char *parse;
 	int resultalloc;
 	struct re_registers regstruct;
 	regexp_registers_t regs = &regstruct;

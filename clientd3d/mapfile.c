@@ -31,7 +31,7 @@ static const int MAPFILE_VERSION = 1;
 static const int MAPFILE_TOP_TABLE_SIZE = 100;      // # of entries in top level table
 static const int MAPFILE_LOWER_TABLE_SIZE = 100;    // # of entries in a single offset table
 
-static char *map_directory = "mail";
+static const char *map_directory = "mail";
 static const char *map_filename  = "mail\\game.map";
 
 static const char map_magic[] = {0x4D, 0x41, 0x50, 0x0F};

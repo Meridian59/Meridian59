@@ -47,8 +47,8 @@ typedef struct
   SHORT  health;  /* Number of health points, 0 = not alive */
   SHORT  speed;   /* Speed of the Thing (if alive) */
   SHORT  damage;  /* Number of damage points, 0 = no damage */ /*! Explain */
-  char  *sprite;  /* Sprite to display - (4 chars for name + 2/4 for frame) */
-  char  *name;    /* Name of the Thing (18 chars max) */
+  const char  *sprite;  /* Sprite to display - (4 chars for name + 2/4 for frame) */
+  const char  *name;    /* Name of the Thing (18 chars max) */
   USHORT props;    /* Properties (flags), see TP_* defines */
 } ThingDesc;
 
@@ -672,7 +672,7 @@ static ThingDesc HThingInfo2[MAXHTHINGINFO2 + 1 - MINHTHINGINFO2] =
 	Get the name of a Thing.
 */
 
-char *GetThingName(SHORT type)
+const char *GetThingName(SHORT type)
 {
   static char temp[20];
 
@@ -706,7 +706,7 @@ char *GetThingName(SHORT type)
    Get the sprite name of a thing.
 */
 
-char *GetThingPicName(SHORT type)
+const char *GetThingPicName(SHORT type)
 {
   if (DoomVersion < 16)
 	{
@@ -1030,7 +1030,7 @@ int GetThingColour(SHORT type)
    get the name of the angle
 */
 
-char *GetAngleName (SHORT angle)
+const char *GetAngleName (SHORT angle)
 {
    switch (angle)
    {
@@ -1064,7 +1064,7 @@ char *GetAngleName (SHORT angle)
    get string of when something will appear
 */
 
-char *GetWhenName (SHORT when)
+const char *GetWhenName (SHORT when)
 {
    static char temp[ 40];
 

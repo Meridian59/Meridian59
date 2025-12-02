@@ -26,8 +26,8 @@ static int button_width, button_height;
 static POINT bm_origin;          /* Upper left corner of bitmap */
 static POINT button_origin;      /* Upper left corner of button */
 
-static char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
-static char *splash_music    = "resource\\main.mid";    // Music file to play
+static const char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
+static const char *splash_music    = "resource\\main.mid";    // Music file to play
 
 static bool showing_splash;      // true when displaying splash screen
 

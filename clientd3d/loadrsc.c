@@ -25,10 +25,10 @@
 
 static Table *t;      /* Hash table of all resources loaded in */
 
-static char resource_dir[] = "resource";
-static char room_dir[] = "resource";
-static char rsb_spec[] = "*.rsb";
-static char rsc_spec[] = "*.rsc";
+static const char resource_dir[] = "resource";
+static const char room_dir[] = "resource";
+static const char rsb_spec[] = "*.rsb";
+static const char rsc_spec[] = "*.rsc";
 
 static bool ignore_duplicates;  // Don't complain about duplicate rscs when true
 
@@ -38,9 +38,9 @@ static bool  ResourceCompare(void *r1, void *r2);
 static DWORD IdHash(void *idnum, DWORD tablesize);
 static bool  IdResourceCompare(void *idnum, void *r1);
 static void  FreeRsc(void *entry);
-static bool  RscAddCallback(char *fname, int res, char *string);
-static bool  LoadRscFiles(char *filespec);
-static bool  LoadRscFilesSorted(char *filespec);
+static bool  RscAddCallback(const char *fname, int res, const char *string);
+static bool  LoadRscFiles(const char *filespec);
+static bool  LoadRscFilesSorted(const char *filespec);
 /******************************************************************************/
 /*
 * GetString:  Load and return resource string with given resource identifier.
@@ -127,7 +127,7 @@ bool LoadResources(void)
 * LoadRscFiles:  Load all the resource files with the given filespec.
 *   Returns true iff any was loaded.
 */
-bool LoadRscFiles(char *filespec)
+bool LoadRscFiles(const char *filespec)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA file_info;
@@ -166,7 +166,7 @@ bool LoadRscFiles(char *filespec)
 *   sorted filename order.
 *   Returns true iff any was loaded.
 */
-bool LoadRscFilesSorted(char *filespec)
+bool LoadRscFilesSorted(const char *filespec)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA file_info;
@@ -240,7 +240,7 @@ void FreeResources(void)
 * RscAddCallback:  Called for each new resource that's loaded from a file.
 *   Add given resource to table.
 */
-bool RscAddCallback(char *fname, int res, char *string)
+bool RscAddCallback(const char *fname, int res, const char *string)
 {
 	resource_type entry, r;
 	

@@ -80,7 +80,7 @@ void RunMainLoop(void)
 
 char * GetLastErrorStr()
 {
-	char *error_str;
+	const char *error_str;
 	
 	error_str = "No error string"; /* in case the call  fails */
 	

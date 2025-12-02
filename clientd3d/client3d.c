@@ -212,20 +212,6 @@ bool GetPointHeights(int x, int y, int *floor, int *ceiling)
    return true;
 }
 /************************************************************************/
-/*
- * GetPointCeiling:  Return sector height at (x, y).  If (x, y) is not in
- *   a leaf node, return -1.
- */
-int GetPointCeiling(int x, int y)
-{
-   BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, x, y);
-
-   if (leaf == NULL || leaf->sector == NULL)
-      return -1;
-
-   return GetCeilingHeight(x, y, leaf->sector);
-}
-/************************************************************************/
 PDIB GetPointCeilingTexture(int x, int y)
 {
 	BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, x, y);

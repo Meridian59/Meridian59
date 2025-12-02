@@ -8,7 +8,7 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	512 // was 128
+const int MAX_PARTICLES = 128;
 
 typedef struct particle
 {
@@ -36,8 +36,9 @@ typedef struct emitter
 	custom_xyz		rotation;
 	custom_bgra		bgra;
 	particle		particles[MAX_PARTICLES];
-	bool			bRandomize;
-	bool			groundDestroy;
+	// bWeatherEffect makes particles clear when hitting ceilings or floors. It also
+	// randomzies velocity.z a bit, and also ignores randomPos for the z-axis.
+	bool			bWeatherEffect;
 } emitter;
 
 typedef struct particle_system
@@ -50,13 +51,12 @@ void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float 
 void		D3DParticleSystemReset(particle_system *pParticleSystem);
 
 emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, int timerBase, 
-							bool groundDestroy);
+							bool bWeatherEffect);
 void		D3DParticleEmitterSetPos(emitter *pEmitter, float posX, float posY, float posZ);
 void		D3DParticleEmitterSetVel(emitter *pEmitter, float velX, float velY, float velZ);
 void		D3DParticleEmitterSetRot(emitter *pEmitter, float rotX, float rotY, float rotZ);
-void		D3DParticleEmitterSetBGRA(emitter *pEmitter, const struct custom_bgra* newBGRA);
-void		D3DParticleEmitterSetRandom(emitter *pEmitter, bool bRandomize, int randomPos, 
-							float randomRot);
+void		D3DParticleEmitterSetBGRA(emitter *pEmitter, const custom_bgra &newBGRA);
+void		D3DParticleEmitterSetRandom(emitter *pEmitter, int randomPos, int randomRot);
 void		D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter);
 
 void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);

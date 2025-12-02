@@ -65,7 +65,7 @@ void SandDib(BYTE* pabyBits, int width, int height, int drops)
 
 /***************************************************************************/
 
-void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)
+void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int torch)
 	//PERFORMANCE
 {
 	int allrun, allblow, alllength;
@@ -74,7 +74,7 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		return;
 
 	// compute the droplet length
-	alllength = 20;
+	alllength = 16;
 
 	// compute the droplet run and blow (less run is more slant)
 	int delta;
@@ -106,16 +106,6 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		delta = (windheading+NUMDEGREES/2) - heading;
 	}
 
-	/*
-	delta = delta * alllength * windstrength / (NUMDEGREES/4) / 100;
-
-	if (delta == 0)
-		allrun = 10000;
-	else
-		allrun = alllength / delta;
-	if (allrun <= 0)
-		allrun = 1;
-	*/
 	allrun = 3;
 
 	while (drops--)
@@ -130,8 +120,8 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 
 		// choose a random droplet type
 		pXlat = (rand() & 0x10)?
-			FindStandardXlat(XLAT_BLEND25BLUE) :
-			FindStandardXlat(XLAT_BLEND50BLUE);
+			FindStandardXlat(XLAT_BLEND30WHITE) :
+			FindStandardXlat(XLAT_BLEND50WHITE);
 
 		// if we have local light source, small chance of doing an XLAT_BLEND75YELLOW
 		if (torch && ((rand() % 100) < 10))
@@ -159,7 +149,7 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 
 /***************************************************************************/
 
-void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)
+void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int torch)
 	//PERFORMANCE
 {
 	int allrun, allblow, alllength, alldropwidth;
@@ -168,8 +158,8 @@ void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		return;
 
 	// compute the droplet length and width
-	alllength = 3;
-	alldropwidth = 2;
+	alllength = 5;
+	alldropwidth = 1;
 
 	// compute the droplet run and blow (less run is more slant)
 	int delta;
@@ -215,7 +205,7 @@ void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		int y = rand() % (height-(length/2));
 
 		// white snow
-		pXlat = FindStandardXlat(XLAT_BLEND100WHITE);
+		pXlat = FindStandardXlat(XLAT_BLEND80WHITE);
 
 		// while more length and we're still inside dib,
 		while (length && x >= 0 && x < width && y < height)

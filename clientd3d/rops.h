@@ -14,8 +14,8 @@
 
 /***************************************************************************/
 
-M59EXPORT void RainDib(BYTE* pabyBits, int width, int height, int level, int heading, int windheading, int windstrength, int torch);
-M59EXPORT void SnowDib(BYTE* pabyBits, int width, int height, int level, int heading, int windheading, int windstrength, int torch);
+M59EXPORT void RainDib(BYTE* pabyBits, int width, int height, int level, int heading, int windheading, int torch);
+M59EXPORT void SnowDib(BYTE* pabyBits, int width, int height, int level, int heading, int windheading, int torch);
 M59EXPORT void BlurDib(BYTE* pabyBits, int width, int height, int amount);
 M59EXPORT void WaverDib(BYTE* pabyBits, int width, int height, int amount);
 M59EXPORT void SandDib(BYTE* pabyBits, int width, int height, int level);

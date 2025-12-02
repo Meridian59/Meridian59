@@ -462,7 +462,7 @@ void FreeProfaneTerms()
 // in the string as a whole.  The more "visible" the word boundaries
 // are, the more likely it was an intentional curse.
 //
-int VerifyProfaneUsage(char* string, int from, int to)
+int VerifyProfaneUsage(const char* string, int from, int to)
 {
 	BOOL bStart = FALSE;
 	BOOL bEnd = FALSE;
@@ -509,7 +509,7 @@ int VerifyProfaneUsage(char* string, int from, int to)
 	//
 	{
 		BOOL bBroken = FALSE;
-		char* p = string+from;
+		const char* p = string+from;
 		while (*p && p < string+to)
 		{
 			while ((*p == '~' || *p == '`') && *(p+1) && p < string+to)
@@ -529,7 +529,7 @@ int VerifyProfaneUsage(char* string, int from, int to)
 	//
 	{
 		BOOL bExtended = FALSE;
-		char* p = string+from;
+		const char* p = string+from;
 		while (*p && p < string+to)
 		{
 			if (*p & 0x80)
@@ -543,7 +543,7 @@ int VerifyProfaneUsage(char* string, int from, int to)
 	return FALSE;
 }
 
-BOOL ContainsProfaneTerms(char* pszText)
+BOOL ContainsProfaneTerms(const char* pszText)
 {
 	struct re_registers regs;
 	int i, a;
@@ -567,7 +567,7 @@ BOOL ContainsProfaneTerms(char* pszText)
 	return FALSE;
 }
 
-char* CleanseProfaneString(char* pszText)
+char* CleanseProfaneString(const char* pszText)
 {
 	char* ping = strdup(pszText);
 	char* pong = NULL;

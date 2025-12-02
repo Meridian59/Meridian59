@@ -87,15 +87,15 @@ int re_match(regexp_t compiled, char *string, int size, int pos,
    matched and -2 if an error (such as failure stack overflow) is
    encountered. */
 
-int re_match_2(regexp_t compiled, char *string1, int size1,
-	      char *string2, int size2, int pos, regexp_registers_t regs,
-	       int mstop);
+int re_match_2(regexp_t compiled, const char *string1, int size1,
+               const char *string2, int size2, int pos, regexp_registers_t regs,
+               int mstop);
 /* This tries to match the regexp to the concatenation of string1 and
    string2.  This returns the length of the matched portion, or -1 if the
    pattern could not be matched and -2 if an error (such as failure stack
    overflow) is encountered. */
 
-int re_search(regexp_t compiled, char *string, int size, int startpos,
+int re_search(regexp_t compiled, const char *string, int size, int startpos,
 	      int range, regexp_registers_t regs);
 /* This rearches for a substring matching the regexp.  This returns the first
    index at which a match is found.  range specifies at how many positions to
@@ -104,8 +104,8 @@ int re_search(regexp_t compiled, char *string, int size, int startpos,
    which a match must not go.  This returns -1 if no match is found, and
    -2 if an error (such as failure stack overflow) is encountered. */
 
-int re_search_2(regexp_t compiled, char *string1, int size1,
-		char *string2, int size2, int startpos, int range,
+int re_search_2(regexp_t compiled, const char *string1, int size1,
+		const char *string2, int size2, int startpos, int range,
 		regexp_registers_t regs, int mstop);
 /* This is like re_search, but search from the concatenation of string1 and
    string2.  */
@@ -125,7 +125,7 @@ int re_exec(char *s);
    matches the regular expression (that is, a matching part is found
    anywhere in the string). */
 
-char *re_replace_all(regexp_t bufp, char *string, const char *with, int (*verifycallback)(char*,int,int));
+char *re_replace_all(regexp_t bufp, const char *string, const char *with, int (*verifycallback)(const char*,int,int));
 /* Utility function.  This returns a malloc'd result of a global
  * search and replace using the regular expression on the given string.
  * Supports register replacements (such as \31) defined in the regular

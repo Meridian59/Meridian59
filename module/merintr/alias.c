@@ -56,7 +56,7 @@ static int _nVerbAliases = 0;
 static int _nAllocated = 0;
 #define CHUNKSIZE 10
 
-static char* _szDefaultVerbAliases =
+static const char* _szDefaultVerbAliases =
    "chuckle=emote chuckles.\0"
    "giggle=emote giggles.\0"
    "hail=tellguild Hail Guildmembers!\0"
@@ -95,7 +95,7 @@ void AliasInit(void)
    char temp[10];
    char	fullSection[255];
    char	destName[128];
-   char	*srcName;
+   const char *srcName;
    WORD command;
    player_info	*playerInfo;
 
@@ -153,8 +153,7 @@ void AliasInit(void)
 
 void CmdAliasInit(void)
 {
-	// Command Aliases
-    char* pVerb;
+    // Command Aliases
     char* pCommand;
     int nAllocated = 1024;
     char* pSection = (char *) SafeMalloc(nAllocated);
@@ -184,10 +183,14 @@ void CmdAliasInit(void)
        }
     }
     
-    pVerb = pSection;
     if (!pSection || !pSection[0])
-       pVerb = _szDefaultVerbAliases;
-    
+    {
+      if (pSection)
+        SafeFree(pSection);
+      pSection = strdup(_szDefaultVerbAliases);
+    }
+
+    char *pVerb = pSection;
     while (*pVerb)
     {
        pCommand = strtok(pVerb, "=");
@@ -438,8 +441,6 @@ BOOL ParseVerbAlias(char* pInput)
 
    pArgs = strtok(pVerb, " \t\r\n");
    pArgs = strtok(NULL, "\r\n");
-   if (!pArgs)
-      pArgs = "";
 
    for (i = 0; i < _nVerbAliases; i++)
    {
@@ -474,18 +475,16 @@ BOOL ParseVerbAlias(char* pInput)
    //
    pVerb = _apVerbAliases[iMatch].text;
    strcpy(accum, pVerb);
+   char* pBefore = pVerb;
+   char* pAfter = strstr(pVerb, "~~");
+   
+   if (pAfter && pArgs && (strlen(pVerb)+strlen(pArgs) < MAXSAY))
    {
-      char* pBefore = pVerb;
-      char* pAfter = strstr(pVerb, "~~");
-
-      if (pAfter && (strlen(pVerb)+strlen(pArgs) < MAXSAY))
-      {
-	 strcpy(accum+(pAfter-pBefore), pArgs);
-	 strcat(accum, pAfter+2);
-	 pVerb = accum;
-      }
+     strcpy(accum+(pAfter-pBefore), pArgs);
+     strcat(accum, pAfter+2);
+     pVerb = accum;
    }
-
+   
    bInvalid = ModuleEvent(EVENT_TEXTCOMMAND, accum);
    if (bInvalid)
       GameMessage(GetString(hInst, IDS_INVALIDALIAS));

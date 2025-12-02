@@ -894,7 +894,7 @@ bool InventoryKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
    bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    int action, params;
    InvItem *item;
-   void *action_data;
+   const void *action_data;
    bool inform;
 
    UserDidSomething();

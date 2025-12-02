@@ -75,7 +75,7 @@ void BasicWadSeek (WadPtr wadfile, long offset)
    find an entry in the master directory
 */
 
-MDirPtr FindMasterDir (MDirPtr from, char *name)
+MDirPtr FindMasterDir (MDirPtr from, const char *name)
 {
 	while (from)
 	{
@@ -269,7 +269,7 @@ void ReadBytes (FILE *file, void *addr, long size)
    output bytes to a binary file with error checking
 */
 
-void WriteBytes (FILE *file, void *addr, long size)
+void WriteBytes (FILE *file, const void *addr, long size)
 {
 	BYTE *ptr = (BYTE *)addr;
 

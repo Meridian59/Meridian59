@@ -246,6 +246,9 @@ properties:
 
    pbUser_in_room = FALSE
 
+   % Used to set type of weather to render. Default is clear weather.
+   piWeather_type = WEATHER_CLEAR
+
    % For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    %  resources
    plPeriodic_sounds = $
@@ -1591,6 +1594,44 @@ messages:
 
       return;
    }
+   
+   SetRoomWeather(what=$)
+   "Sets weather effects to this room."
+   {
+      local i, each_obj;
+	  
+      piWeather_type = what;
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Player)
+         {
+            % Clear out previous weather before applying any new ones.
+		    Send(each_obj,@EffectSendUser,#what=each_obj,#effect=EFFECT_CLEARWEATHER);
+            if piWeather_type <> WEATHER_CLEAR
+			{
+			   Send(each_obj,@EffectSendUser,#what=each_obj,
+			      #effect=Send(self, @GetWeatherEffect, #what=piWeather_type));
+			}
+         }
+      }
+      return;
+   }
+   
+   GetWeatherEffect(what=$)
+   "Gets render effect from weather type."
+   {
+        if what = WEATHER_RAIN
+        {
+           return EFFECT_RAINING;
+        }
+        if what = WEATHER_SNOW
+        {
+           return EFFECT_SNOWING;
+        }
+        debug("Couldn't find valid weather effect. Setting to weather_clear.");
+        return EFFECT_CLEARWEATHER;
+   }
 
    RecalculateDirectionalLight()
    {
@@ -1781,6 +1822,13 @@ messages:
             Send(each_obj,@StartEnchantmentNewOccupant,#who=what,
                  #state=(Nth(i,3)));
          }
+		 
+		 % add weather effects
+		 if (piWeather_type <> WEATHER_CLEAR)
+		 {
+			Send(what,@EffectSendUser,#what=what,
+			   #effect=Send(self, @GetWeatherEffect, #what=piWeather_type));
+		 }
       }
 
       return;
@@ -1919,6 +1967,9 @@ messages:
             propagate;
          }
       }
+	  
+	  % Remove weather effects caused by this room.
+	  Send(what,@EffectSendUser,#what=what,#effect=EFFECT_CLEARWEATHER);
 
       Send(self,@LastUserLeft,#what=what);
 

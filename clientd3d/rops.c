@@ -64,8 +64,8 @@ void SandDib(BYTE* pabyBits, int width, int height, int drops)
 }
 
 /***************************************************************************/
-#if 0
-void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)
+
+void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int torch)
 	//PERFORMANCE
 {
 	int allrun, allblow, alllength;
@@ -74,51 +74,39 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		return;
 
 	// compute the droplet length
-	alllength = 20;
+	alllength = 16;
 
 	// compute the droplet run and blow (less run is more slant)
+	int delta;
+	if (windheading >= (heading+NUMDEGREES/2))
+		windheading -= NUMDEGREES;
+
+	if ((windheading > heading) && (windheading < (heading+NUMDEGREES/4)))
 	{
-		int delta;
-		if (windheading >= (heading+NUMDEGREES/2))
-			windheading -= NUMDEGREES;
-
-		if ((windheading > heading) && (windheading < (heading+NUMDEGREES/4)))
-		{
-			// over my shoulder from left to right
-			allblow = 1;
-			delta = windheading - heading;
-		}
-		else if ((windheading < heading) && (windheading > (heading-NUMDEGREES/4)))
-		{
-			// over my shoulder from right to left
-			allblow = -1;
-			delta = heading - windheading;
-		}
-		else if ((windheading > heading+NUMDEGREES/4))
-		{
-			// in my face from left to right
-			allblow = 1;
-			delta = heading - (windheading+NUMDEGREES/2);
-		}
-		else
-		{
-			// in my face from right to left
-			allblow = -1;
-			delta = (windheading+NUMDEGREES/2) - heading;
-		}
-
-/*
-		delta = delta * alllength * windstrength / (NUMDEGREES/4) / 100;
-
-		if (delta == 0)
-			allrun = 10000;
-		else
-			allrun = alllength / delta;
-		if (allrun <= 0)
-			allrun = 1;
-*/
-		allrun = 3;
+		// over my shoulder from left to right
+		allblow = 1;
+		delta = windheading - heading;
 	}
+	else if ((windheading < heading) && (windheading > (heading-NUMDEGREES/4)))
+	{
+		// over my shoulder from right to left
+		allblow = -1;
+		delta = heading - windheading;
+	}
+	else if ((windheading > heading+NUMDEGREES/4))
+	{
+		// in my face from left to right
+		allblow = 1;
+		delta = heading - (windheading+NUMDEGREES/2);
+	}
+	else
+	{
+		// in my face from right to left
+		allblow = -1;
+		delta = (windheading+NUMDEGREES/2) - heading;
+	}
+
+	allrun = 3;
 
 	while (drops--)
 	{
@@ -132,8 +120,8 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 
 		// choose a random droplet type
 		pXlat = (rand() & 0x10)?
-			FindStandardXlat(XLAT_BLEND25BLUE) :
-			FindStandardXlat(XLAT_BLEND50BLUE);
+			FindStandardXlat(XLAT_BLEND30WHITE) :
+			FindStandardXlat(XLAT_BLEND50WHITE);
 
 		// if we have local light source, small chance of doing an XLAT_BLEND75YELLOW
 		if (torch && ((rand() % 100) < 10))
@@ -158,12 +146,92 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 		}
 	}
 }
-#endif
+
 /***************************************************************************/
 
-void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int windstrength, int torch)
+void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading, int torch)
 	//PERFORMANCE
 {
+	int allrun, allblow, alllength, alldropwidth;
+
+	if (!pabyBits)
+		return;
+
+	// compute the droplet length and width
+	alllength = 5;
+	alldropwidth = 1;
+
+	// compute the droplet run and blow (less run is more slant)
+	int delta;
+	if (windheading >= (heading+NUMDEGREES/2))
+		windheading -= NUMDEGREES;
+
+	if ((windheading > heading) && (windheading < (heading+NUMDEGREES/4)))
+	{
+		// over my shoulder from left to right
+		allblow = 1;
+		delta = windheading - heading;
+	}
+	else if ((windheading < heading) && (windheading > (heading-NUMDEGREES/4)))
+	{
+		// over my shoulder from right to left
+		allblow = -1;
+		delta = heading - windheading;
+	}
+	else if ((windheading > heading+NUMDEGREES/4))
+	{
+		// in my face from left to right
+		allblow = 1;
+		delta = heading - (windheading+NUMDEGREES/2);
+	}
+	else
+	{
+		// in my face from right to left
+		allblow = -1;
+		delta = (windheading+NUMDEGREES/2) - heading;
+	}
+
+	allrun = 5;
+
+	while (drops--)
+	{
+		int run = rand() % allrun;
+		int length = alllength;
+		int dropwidth = alldropwidth;
+		xlat* pXlat;
+
+		// choose a random start point
+		int x = rand() % (width - (dropwidth/2));
+		int y = rand() % (height-(length/2));
+
+		// white snow
+		pXlat = FindStandardXlat(XLAT_BLEND80WHITE);
+
+		// while more length and we're still inside dib,
+		while (length && x >= 0 && x < width && y < height)
+		{
+			dropwidth = alldropwidth;
+			// draw the droplet
+			BYTE* pbyPixel = pabyBits + x + y*width;
+			*pbyPixel = fastXLAT(*pbyPixel, pXlat);
+			while (dropwidth)
+			{
+				BYTE* pbyPixel = pabyBits + (x+dropwidth) + y*width;
+				*pbyPixel = fastXLAT(*pbyPixel, pXlat);
+				dropwidth--;
+				}
+
+			// move down the length of the droplet
+			run--;
+			y++;
+			if (run <= 0)
+			{
+				run = allrun;
+				x += allblow;
+			}
+			length--;
+		}
+	}
 }
 
 /***************************************************************************/

@@ -99,6 +99,11 @@ void MainServer()
 	InitTable();
 	AddBuiltInDLlist();
 	
+	/* Initialize webhook system - controlled by [Webhook] Enabled config setting
+	   Multiple servers are automatically supported - each server claims an available pipe
+	   from the pool of 10 pipes created by external webhook listeners */
+	InitWebhooks(NULL);
+	
 	LoadMotd();
 	LoadBof();
 	LoadRsc();
@@ -176,6 +181,8 @@ void MainExitServer()
 	ResetObject();
 	ResetMessage();
 	ResetClass();
+	
+	ShutdownWebhooks();
 	
 	ResetConfig();
 	

@@ -279,5 +279,7 @@ extern DWORD main_thread_id;
 #include "maintenance.h"
 #include "block.h"
 
+#include "webhook.h"
+
 #endif
 

@@ -128,8 +128,19 @@ bool SendWebhookMessage(const char* message, int len)
     }
 
     char json_message[1024];
-    format_json_message(message, len, json_message, sizeof(json_message));
-    int json_len = (int)strlen(json_message);
+    const char* message_to_send;
+    int json_len;
+    
+    // If message already starts with '{', assume it's already JSON and skip wrapping
+    if (message[0] == '{') {
+        message_to_send = message;
+        json_len = len;
+    } else {
+        // Legacy format: wrap plain text in JSON with timestamp
+        format_json_message(message, len, json_message, sizeof(json_message));
+        message_to_send = json_message;
+        json_len = (int)strlen(json_message);
+    }
 
 #ifdef BLAK_PLATFORM_WINDOWS
     // Try to send to Windows pipes using round-robin
@@ -150,7 +161,7 @@ bool SendWebhookMessage(const char* message, int len)
         // Try to send message
         if (pipe_connected[pipe_index]) {
             DWORD bytes_written;
-            BOOL success = WriteFile(pipe_handles[pipe_index], json_message, (DWORD)json_len, &bytes_written, NULL);
+            BOOL success = WriteFile(pipe_handles[pipe_index], message_to_send, (DWORD)json_len, &bytes_written, NULL);
             
             if (success && bytes_written == (DWORD)json_len) {
                 last_pipe_index = (pipe_index + 1) % num_pipes;
@@ -181,7 +192,7 @@ bool SendWebhookMessage(const char* message, int len)
         
         // Try to send message
         if (pipe_connected[pipe_index]) {
-            ssize_t bytes_written = write(pipe_fds[pipe_index], json_message, json_len);
+            ssize_t bytes_written = write(pipe_fds[pipe_index], message_to_send, json_len);
             
             if (bytes_written == json_len) {
                 last_pipe_index = (pipe_index + 1) % num_pipes;

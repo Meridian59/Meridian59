@@ -2399,7 +2399,7 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
                 "%I64d", value_val.v.data);
 #else
             json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos,
-                "%ld", value_val.v.data);
+                "%lld", (long long)value_val.v.data);
 #endif
         } else if (value_val.v.tag == TAG_NIL) {
             json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos, "null");
@@ -2410,7 +2410,7 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
                 "%I64d", value_val.v.data);
 #else
             json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos,
-                "%ld", value_val.v.data);
+                "%lld", (long long)value_val.v.data);
 #endif
         }
         

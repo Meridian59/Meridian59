@@ -1466,37 +1466,6 @@ messages:
          return;
       }
 
-      % Send webhook notification for player death
-      if IsClass(what,&User)
-      {
-         if IsClass(killer,&User) AND killer <> what
-         {
-            % Player killed by another player
-            SendWebhook("[DEATH] Player killed by another player");
-         }
-         else
-         {
-            if killer = what
-            {
-               % Player killed themselves
-               SendWebhook("[DEATH] Player died by their own hand");
-            }
-            else
-            {
-               if IsClass(killer,&Room)
-               {
-                  % Player killed by room (environmental)
-                  SendWebhook("[DEATH] Player died to environmental hazards");
-               }
-               else
-               {
-                  % Player killed by monster or other
-                  SendWebhook("[DEATH] Player was killed by monster");
-               }
-            }
-         }
-      }
-
       if isClass(what,&User) AND isClass(killer,&User)
       {
          % Could be a war kill.  Check for it.
@@ -1668,6 +1637,17 @@ messages:
               #parm2=param2,#parm3=param3,#parm4=param4,#parm5=param5,#parm6=param6,
               #parm7=param7,#type3=STRING_RESOURCE,#type5=type5,#type7=type7);
       }
+
+      % Send structured event data to webhook listeners
+      SendWebhook("UserKilled",
+         "rMessage", rMessage,
+         "param1", Send(what,@GetTrueName),
+         "param2", param2,
+         "param3", param3,
+         "param4", param4,
+         "param5", param5,
+         "param6", param6,
+         "param7", param7);
 
       return;
    }

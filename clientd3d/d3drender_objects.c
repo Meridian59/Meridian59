@@ -2368,7 +2368,7 @@ bool D3DObjectLightingCalc(
 	if (fogEnabled && ((flags & D3DRENDER_NOAMBIENT) == 0))
 		intDistance = FINENESS;
 
-	if (pRNode->obj.flags & OF_FLASHING)
+	if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
 		light = GetLightPaletteIndex(intDistance, light, FINENESS,
 			pRNode->obj.lightAdjust);
 	else
@@ -2387,6 +2387,15 @@ bool D3DObjectLightingCalc(
 		bgra->b = min(COLOR_AMBIENT, bgra->b + (lastDistance * pDLight->color.b / COLOR_AMBIENT));
 		bgra->g = min(COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
 		bgra->r = min(COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
+		
+		// Apply flickering adjustment to the combined lighting (base + dynamic)
+		if (pRNode->obj.flags & OF_FLASHING)
+		{
+			float adjustment = (float)pRNode->obj.lightAdjust / (float)FLICKER_LEVEL;
+			bgra->b = min(COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));
+			bgra->g = min(COLOR_AMBIENT, bgra->g + (bgra->g * adjustment));
+			bgra->r = min(COLOR_AMBIENT, bgra->r + (bgra->r * adjustment));
+		}
 	}
 	else
 	{

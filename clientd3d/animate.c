@@ -28,13 +28,17 @@
 #include "client.h"
 
 #define ANIMATE_INTERVAL 8  // ms between background animation updates (8.3333 = 120fps)
-#define FLICKER_LEVEL (LIGHT_LEVELS/2)
 #define FLASH_LEVEL (LIGHT_LEVELS/2)
 #define TIME_FLASH 1000
 
 static int  animation_timer = 0;   // id of animation timer, or 0 if none
 static DWORD timeLastFrame;
 static int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
+
+// Flicker animation constants
+#define FLICKER_HASH_PRIME 7919      // Prime number for spreading object IDs
+#define FLICKER_HASH_MODULO 10000    // Modulo for hash normalization
+#define FLICKER_WAVE_COUNT 5         // Number of sine waves to combine
 
 #define TIME_FULL_OBJECT_PHASE 1800
 static int phaseStates[] = {
@@ -174,17 +178,29 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
    {
-      // Use global flicker timer that counts down
-      flickerTimer -= dt;
+      // Dramatic campfire-style flicker with independent per-object timing
+      obj->flickerTime += dt;
       
-      // Check if time to flicker
-      if (flickerTimer <= 0)
-      {
-         int flicker_value = rand() % FLICKER_LEVEL;
-         flickerTimer = FLICKER_PERIOD;  // Reset timer
-         obj->lightAdjust = flicker_value;
-         need_redraw = true;
-      }
+      // Spread object IDs using hash to ensure nearby IDs get different phases
+      float phaseOffset = (float)((obj->id * FLICKER_HASH_PRIME) % FLICKER_HASH_MODULO) 
+                         / (float)FLICKER_HASH_MODULO * 2.0f * PI;
+      float t = ((float)obj->flickerTime / 1000.0f) + phaseOffset;
+
+      // Combine multiple sine waves at different frequencies for organic flickering
+      // Using prime frequencies prevents synchronization between lights
+      float flicker = 0.0f;
+      flicker += sinf(t * 3.14f) * 1.3f;   // Slow wave (? frequency)
+      flicker += sinf(t * 7.0f) * 1.1f;    // Medium-fast wave  
+      flicker += sinf(t * 11.0f) * 0.9f;   // Fast wave
+      flicker += sinf(t * 2.0f) * 1.4f;    // Medium wave
+      flicker += sinf(t * 0.62f) * 1.2f;   // Very slow wave
+      
+      // Normalize to 0.0-1.0 range (5.9 is sum of wave amplitudes, 2.9 is offset)
+      flicker = (flicker + 2.9f) / 5.9f;
+      flicker = max(0.0f, min(1.0f, flicker));
+      
+      obj->lightAdjust = (int)(flicker * FLICKER_LEVEL);
+      need_redraw = true;
    }
 
    if (OF_FLASHING == (OF_BOUNCING & obj->flags))
@@ -192,7 +208,7 @@ bool AnimateObject(object_node *obj, int dt)
       DWORD angleFlash;
       obj->bounceTime += min(dt,50);
       if (obj->bounceTime > TIME_FLASH)
-	 obj->bounceTime -= TIME_FLASH;
+         obj->bounceTime -= TIME_FLASH;
       angleFlash = NUMDEGREES * obj->bounceTime / TIME_FLASH;
       obj->lightAdjust = FIXED_TO_INT(fpMul(FLASH_LEVEL, SIN(angleFlash)));
       need_redraw = true;
@@ -203,7 +219,7 @@ bool AnimateObject(object_node *obj, int dt)
       object_bitmap_type obj_bmap;
       obj_bmap = FindObjectBitmap(obj->icon_res);
       if (obj_bmap != NULL)
-	 need_redraw |= AnimateSingle(obj->animate, BitmapsNumGroups(obj_bmap->bmaps), dt);
+         need_redraw |= AnimateSingle(obj->animate, BitmapsNumGroups(obj_bmap->bmaps), dt);
    }
    
    if (OF_PHASING == (OF_PHASING & obj->flags))
@@ -211,7 +227,7 @@ bool AnimateObject(object_node *obj, int dt)
       int anglePhase;
       obj->phaseTime += min(dt,40);
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
-	 obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
+         obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;
       obj->flags = (~OF_EFFECT_MASK & obj->flags) | phaseStates[anglePhase];
       need_redraw = true;

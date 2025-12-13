@@ -18,7 +18,7 @@
 typedef void (*CommandProc)(char *args);
 
 typedef struct {
-   char *name;         // String user types to invoke command
+   const char *name;         // String user types to invoke command
    CommandProc proc;   // Procedure to call when command found
 } TypedCommand;
 

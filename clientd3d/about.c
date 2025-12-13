@@ -25,7 +25,7 @@ static int dude_y;
 #define DUDE_MAX_HEIGHT 150
 
 static HWND hAboutDlg;
-static char *credits_filename = "resource\\about.bgf";
+static const char *credits_filename = "resource\\about.bgf";
 static Bitmaps credits_b;          // Info on scrolling bitmap
 static int credits_page = 0;  // which graphics page to show;
 static PDIB credits_pdib;  // Actual pdib for scrolling bitmap
@@ -39,7 +39,7 @@ static int timer_id;
 static int scroll_width, scroll_height;  // Size of scrolling window
 static int scroll_y;       // Current y position in scrolling bitmap
 
-static char *sounds[] = { "resource\\swrdmtl1.wav", 
+static const char *sounds[] = { "resource\\swrdmtl1.wav", 
 			  "resource\\swrdmtl2.wav", 
 			  "resource\\swrdmtl3.wav",
 			  "resource\\patk.wav",

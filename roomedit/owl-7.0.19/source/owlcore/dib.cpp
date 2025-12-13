@@ -340,7 +340,7 @@ int
 TDib::FindColor(const TColor& color)
 {
   for (int entry = 0; entry < NumClrs; entry++)
-    if (color == GetColors()[entry])  // Small data model requires this order
+    if (color == TColor{GetColors()[entry]})  // Small data model requires this order
       return entry;
   return -1;
 }
@@ -356,7 +356,7 @@ TDib::MapColor(const TColor& fromColor, const TColor& toColor, bool mapAll)
 {
   int count = 0;
   for (int entry = 0; entry < NumClrs; entry++)
-    if (fromColor == GetColors()[entry]) {  // Small data model requires this order
+    if (fromColor == TColor{GetColors()[entry]}) {  // Small data model requires this order
       GetColors()[entry] = toColor;
       count++;
       if (!mapAll)

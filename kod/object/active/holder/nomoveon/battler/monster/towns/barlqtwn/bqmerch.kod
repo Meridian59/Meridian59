@@ -110,7 +110,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if isClass(what,&NumberItem) and
          send(what,@GetNumber) > 25

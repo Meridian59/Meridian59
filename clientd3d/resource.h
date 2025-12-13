@@ -353,6 +353,7 @@
 #define IDC_IGNOREALL                   1141
 #define IDC_APPLY                       1141
 #define IDC_DRAWNAMES                   1143
+#define IDC_INV_RARITY                  1144
 #define IDC_SCROLLLOCK                  1145
 #define IDC_PAIN                        1146
 #define IDC_TOOLTIPS                    1147

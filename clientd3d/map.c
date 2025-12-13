@@ -888,7 +888,7 @@ void PrintMap(BOOL useDefault)
       doc.lpszDocName = buffer;
 
       StartDoc(pageSetup.hDC,&doc);
-      wsprintf(buffer,"Map of %s",LookupNameRsc(player.room_name_res));
+      snprintf(buffer, sizeof(buffer), "Map of %s",LookupNameRsc(player.room_name_res));
 
       GetClipBox(pageSetup.hDC,&rcPage);
       rcPage.top += GetDeviceCaps(pageSetup.hDC, LOGPIXELSY) / 2;

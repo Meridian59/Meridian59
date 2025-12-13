@@ -38,7 +38,8 @@ BOOL ParseGotText(char *str)
  */
 bool ParseCommand(char *str, TypedCommand *commands)
 {
-   char *ptr1, *ptr2;
+   char *ptr1;
+   const char *ptr2;
    int max_index;  // Index of best matching command
    int index, match, max_match;
    bool tied;            // true if a different index matches as well as best_index

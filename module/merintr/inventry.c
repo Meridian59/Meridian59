@@ -98,6 +98,13 @@ keymap inventory_key_table[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
+static const COLORREF COLOR_ITEM_UNCOMMON     = RGB(141,242,242);  // cyan
+static const COLORREF COLOR_ITEM_RARE         = RGB(0,255,0);      // lime
+static const COLORREF COLOR_ITEM_LEGENDARY    = RGB(255,0,255);    // purple
+static const COLORREF COLOR_ITEM_UNIDENTIFIED = RGB(252,128,0);    // orange
+static const COLORREF COLOR_ITEM_CURSED       = RGB(255,0,0);      // red
+static const COLORREF COLOR_ITEM_DEFAULT      = RGB(255,255,255);
+
 /* local function prototypes */
 static LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -122,6 +129,22 @@ static bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
+/************************************************************************/
+/*
+ * GetItemRarityColor:  Get the color associated with an item's rarity.
+ */
+static COLORREF GetItemRarityColor(item_rarity_grade rarity)
+{
+    switch (rarity)
+    {
+        case ITEM_RARITY_GRADE_UNCOMMON:     return COLOR_ITEM_UNCOMMON;
+        case ITEM_RARITY_GRADE_RARE:         return COLOR_ITEM_RARE;
+        case ITEM_RARITY_GRADE_LEGENDARY:    return COLOR_ITEM_LEGENDARY;
+        case ITEM_RARITY_GRADE_UNIDENTIFIED: return COLOR_ITEM_UNIDENTIFIED;
+        case ITEM_RARITY_GRADE_CURSED:       return COLOR_ITEM_CURSED;
+        default:                             return COLOR_ITEM_DEFAULT;
+    }
+}
 /************************************************************************/
 /*
  * InventoryBoxCreate:  Create the inventory list box.
@@ -616,6 +639,81 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
 				 inventory_area.x + obj_area.x, inventory_area.y + obj_area.y, -1, NULL);
    }
 
+   if (cinfo->config->show_inventory_rarity)
+   {
+      // Add rarity color with 3D/inset effect if item is not normal
+      if (item->obj && item->obj->rarity != ITEM_RARITY_GRADE_NORMAL) {
+         const COLORREF rarityColor = GetItemRarityColor(item->obj->rarity);
+
+         // Square size and position
+         const int boxSize = 10;
+         const int right = area.x + INVENTORY_BOX_WIDTH - 4;
+         const int left  = right - boxSize;
+         const int top   = area.y + 4;
+         const int bottom = top + boxSize;
+
+         // Draw main colored square
+         HBRUSH hBrush = CreateSolidBrush(rarityColor);
+         RECT rc = { left, top, right, bottom };
+         FillRect(hdc, &rc, hBrush);
+         DeleteObject(hBrush);
+
+         // Draw 3D effect: shadow (top/left), highlight (bottom/right)
+         const COLORREF highlight = RGB(255,255,255);
+
+         const HBRUSH hBrushHighlight = CreateSolidBrush(highlight);
+
+         const int highlightSize = 4;
+         RECT rcHighlight = { 
+            left + 1, 
+            top + 1, 
+            left + highlightSize, 
+            top + highlightSize 
+         };
+         FillRect(hdc, &rcHighlight, hBrushHighlight);
+         DeleteObject(hBrushHighlight);
+
+         // Draw outline for inset effect - top and left edges (dark)
+         HPEN hPenDark = CreatePen(PS_SOLID, 1, RGB(40,40,40));
+         HGDIOBJ oldPen = SelectObject(hdc, hPenDark);
+         MoveToEx(hdc, left-1, top-1, NULL);
+         LineTo(hdc, right-1, top-1);  // Top edge (stop before corner)
+         MoveToEx(hdc, left-1, top-1, NULL);
+         LineTo(hdc, left-1, bottom-1);  // Left edge (stop before corner)
+         SelectObject(hdc, oldPen);
+         DeleteObject(hPenDark);
+
+         // Draw outline for inset effect - bottom and right edges (light)
+         HPEN hPenLight = CreatePen(PS_SOLID, 1, RGB(150,150,150));
+         SelectObject(hdc, hPenLight);
+         MoveToEx(hdc, left-1, bottom, NULL);
+         LineTo(hdc, right-1, bottom);  // Bottom edge (stop before corner)
+         MoveToEx(hdc, right, top-1, NULL);
+         LineTo(hdc, right, bottom-1);  // Right edge (stop before corner)
+         SelectObject(hdc, oldPen);
+         DeleteObject(hPenLight);
+
+         COLORREF shadow = RGB(
+            max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0)
+         );
+         HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
+         oldPen = SelectObject(hdc, hPenShadow);
+
+         MoveToEx(hdc, left, bottom-1, NULL);
+         LineTo(hdc, right, bottom-1);
+         MoveToEx(hdc, right-1, top, NULL);
+         LineTo(hdc, right-1, bottom);
+         
+         SelectObject(hdc, oldPen);
+
+         DeleteObject(hPenShadow);
+         DeleteObject(hPenDark);
+         DeleteObject(hPenLight);
+      }
+   }
+
    ReleaseDC(hwndInv, hdc);
 }
 /************************************************************************/
@@ -796,7 +894,7 @@ bool InventoryKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
    bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    int action, params;
    InvItem *item;
-   void *action_data;
+   const void *action_data;
    bool inform;
 
    UserDidSomething();

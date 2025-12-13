@@ -33,8 +33,10 @@ resources:
 
    JunkMan_AlreadyHaveOne_rsc = "I've already got one of them to unload, I don't need another right now."
    JunkMan_NumberItem_rsc = "Sorry, my friend, trinkets like those are things I `Bwon't`n take."
-   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but mine are all full too!"  
-   JunkMan_Not_Interested = "I thank ye, but I am not interested."
+   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but mine are all full too!" 
+   JunkMan_Not_Interested = "I thank you, but I am not interested."
+   
+   JunkMan_too_many_rsc = "Sorry, my friend, but I already have a ~Ihuge~I collection of those for sale.  I'd rather unload them first."
 
 classvars:
 
@@ -45,6 +47,8 @@ classvars:
 
    viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_BUYER | MOB_FULL_TALK
    viOccupation = MOB_ROLE_MERCHANT
+   
+   vrBuyer_unwanted = JunkMan_Not_Interested
 
    % We sell what other people have given us
    vbSellFromInventory = TRUE
@@ -202,7 +206,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$,report=TRUE)
+   ObjectDesired(what=$,who=$,report=TRUE)
    "This is set in individual buyers.  It allows them to pick and choose"
    "what they want to buy."
    {
@@ -216,7 +220,8 @@ messages:
 
       if length(first(plFor_Sale)) > MAX_FORSALE
       {
-         return FALSE;
+         Send(self,@SayToOne,#target=who,#message_rsc=JunkMan_Full_rsc);
+		 return FALSE;
       }
 
       for i in first(plFor_Sale)
@@ -224,10 +229,18 @@ messages:
          if GetClass(i) = GetClass(what)
          {
             if IsClass(i,&NumberItem)
-               AND (send(what,@GetNumber) + send(i,@GetNumber)) < NUMBER_ITEM_MAX
             {
-               return TRUE;
+			   % Only accept stackable items if we don't have too many of them.
+               if (send(what,@GetNumber) + send(i,@GetNumber)) < NUMBER_ITEM_MAX
+			   {
+			      return TRUE;
+			   }
+			   Send(self,@SayToOne,#target=who,#message_rsc=JunkMan_too_many_rsc);
             }
+			else
+			{
+			   Send(self,@SayToOne,#target=who,#message_rsc=JunkMan_AlreadyHaveOne_rsc);
+			}
 
             return FALSE;
          }

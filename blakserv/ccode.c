@@ -2394,24 +2394,14 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
                 json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos, "null");
             }
         } else if (value_val.v.tag == TAG_INT) {
-#ifdef BLAK_PLATFORM_WINDOWS
             json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos,
-                "%I64d", value_val.v.data);
-#else
-            json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos,
-                "%lld", (long long)value_val.v.data);
-#endif
+                "%" PRId64, value_val.v.data);
         } else if (value_val.v.tag == TAG_NIL) {
             json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos, "null");
         } else {
             // For objects or other types, try to get their name or use ID
-#ifdef BLAK_PLATFORM_WINDOWS
             json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos,
-                "%I64d", value_val.v.data);
-#else
-            json_pos += snprintf(json_buffer + json_pos, sizeof(json_buffer) - json_pos,
-                "%lld", (long long)value_val.v.data);
-#endif
+                "%" PRId64, value_val.v.data);
         }
         
         if (json_pos >= sizeof(json_buffer) - 10) {

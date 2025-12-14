@@ -49,7 +49,7 @@ m59api webhook
 ./blakserv
 ```
 
-**?? Important:** The webhook listener must be started before the M59 server, as the server connects to pipes created by the listener.
+**?? Important:** The webhook listener must be started before the M59 server, as the server connects to pipes created by the listener. If you start the server first, webhooks will silently fail - the server will run normally but no webhook messages will be sent. You would need to start the webhook listener and then restart the server to fix this.
 
 That's it! Game events will now appear in Discord.
 
@@ -119,48 +119,48 @@ graph TB
     subgraph "Multiple M59 Servers"
         S1[M59 Server 1]
         S2[M59 Server 2]
-        S3[M59 Server 3]
     end
     
-    subgraph "Pipe Infrastructure"
+    subgraph "Pipe Infrastructure (Shared Pool)"
         P1[m59apiwebhook1]
         P2[m59apiwebhook2]
         P3[m59apiwebhook3]
-        P4[m59apiwebhook4-10]
+        P4[m59apiwebhook4]
+        P5[m59apiwebhook5-10...]
     end
     
     subgraph "Webhook Listener Processing"
         L1[Listener 1]
         L2[Listener 2]
         L3[Listener 3]
-        L4[Listeners 4-10]
+        L4[Listener 4]
+        L5[Listeners 5-10...]
     end
     
     subgraph "Discord"
         D[Discord Channel]
     end
     
-    S1 -.->|claims| P1
-    S2 -.->|claims| P2
-    S3 -.->|claims| P3
+    S1 -.->|round-robin| P1
+    S1 -.->|round-robin| P2
+    S1 -.->|round-robin| P3
+    S2 -.->|round-robin| P4
+    S2 -.->|round-robin| P5
     
     P1 --> L1
     P2 --> L2
     P3 --> L3
     P4 --> L4
+    P5 --> L5
     
     L1 --> D
     L2 --> D
     L3 --> D
     L4 --> D
-    
-    style S1 fill:#e1f5fe
-    style S2 fill:#e8f5e8
-    style S3 fill:#fff3e0
-    style P1 fill:#e1f5fe
-    style P2 fill:#e8f5e8
-    style P3 fill:#fff3e0
+    L5 --> D
 ```
+
+**Note:** Each server connects to multiple pipes and uses round-robin load balancing across them. Server 1 might use pipes 1-5, Server 2 would use remaining pipes 6-10. This provides better load distribution than one pipe per server.
 
 ## How It Works
 
@@ -180,10 +180,10 @@ When the webhook listener starts, it creates multiple named pipes to handle conn
 ### 2. Connection (M59 server side)
 When the Meridian 59 server starts:
 
-1. **Initialization**: `InitWebhooks()` prepares the webhook subsystem
-2. **Connection**: Server attempts to connect to available pipes in sequence
-3. **Claiming**: First available pipe is "claimed" and kept open for performance
-4. **Messaging**: `SendWebhookMessage()` writes to the claimed pipe
+1. **Initialization**: `InitWebhooks()` prepares internal state (does not connect pipes yet)
+2. **Lazy Connection**: On first message send, server attempts to connect to available pipes
+3. **Claiming**: First available pipe is claimed and kept open for subsequent messages
+4. **Messaging**: `SendWebhookMessage()` writes to the connected pipe
 5. **Cleanup**: `ShutdownWebhooks()` closes connections on server shutdown
 
 ### 3. Message Flow
@@ -203,13 +203,18 @@ When the Meridian 59 server starts:
 The system automatically handles multiple M59 servers on the same machine:
 
 ### Automatic Pipe Distribution
-- **Server 1**: Claims `m59apiwebhook1`
-- **Server 2**: Finds `m59apiwebhook1` busy ? Claims `m59apiwebhook2`  
-- **Server 3**: Finds `m59apiwebhook1,2` busy ? Claims `m59apiwebhook3`
-- Up to **10 concurrent servers** supported per webhook listener instance
+
+Each server connects to multiple pipes and uses round-robin load balancing across them. When multiple servers run on the same machine:
+
+- **Server 1**: Connects to first available pipes (e.g., pipes 1-5) and rotates messages across them
+- **Server 2**: Connects to remaining available pipes (e.g., pipes 6-10) and rotates messages across them
+- Up to **10 concurrent servers** supported if each uses one pipe, or **2-3 high-traffic servers** if each uses multiple pipes
+
+**Note:** Each server tries to connect to all pipes in the pool but will only succeed on pipes not already claimed by other servers. This provides automatic load distribution without manual configuration.
 
 ### Load Balancing
-Each server uses round-robin selection across multiple pipes for better distribution and fault tolerance.
+
+Each server uses round-robin selection across its connected pipes for better distribution and fault tolerance. This means a single high-traffic server can spread its load across multiple pipes for better throughput.
 
 ### High-Traffic Performance
 The multi-pipe architecture prevents message dropping during high-traffic scenarios:
@@ -230,9 +235,10 @@ All messages processed simultaneously without blocking
 ## Performance Features
 
 ### Persistent Connections
-- **Problem**: Opening/closing pipes for every message is expensive (3 system calls per message)
-- **Solution**: Pipes are opened once during server startup and kept open
-- **Result**: Only 1 system call per message (WriteFile/write)
+
+- **Problem**: Opening/closing pipes for every message is expensive
+- **Solution**: Pipes are connected on-demand and kept open for subsequent messages
+- **Result**: Only one write operation per message after initial connection
 
 ### Non-blocking Operations  
 - Pipe operations use `O_NONBLOCK` flags to prevent server blocking
@@ -240,14 +246,88 @@ All messages processed simultaneously without blocking
 
 ## Usage
 
-### Blakod Integration
+### Message Formats
+
+The `SendWebhook` function supports two message formats:
+
+#### 1. Simple String Messages
+
+For basic notifications, send a plain text string:
+
 ```blakod
-// Send a webhook message from Blakod
-SendWebhook("Player login: " + GetPlayerName(player));
-SendWebhook("Death message: " + killer + " killed " + victim);
+SendWebhook("Player login: Bob");
+SendWebhook("Server shutting down in 5 minutes");
 ```
 
-### C Code Integration  
+Output format (wrapped in JSON automatically):
+
+```json
+{"timestamp": 1702339200, "message": "Player login: Bob"}
+```
+
+#### 2. Structured Event Messages
+
+For complex events with parameters, send structured JSON data:
+
+```blakod
+SendWebhook("UserKilled",
+    "param1", victim_name,
+    "param2", killer_article,
+    "param3", killer_name,
+    "rMessage", death_message_template);
+```
+
+Output format (raw JSON):
+
+```json
+{
+  "event": "UserKilled",
+  "params": {
+    "rMessage": "### The notorious murderer, %q, has been killed by %s%q.",
+    "param1": "victim_name",
+    "param2": "",
+    "param3": "killer_name"
+  }
+}
+```
+
+**Benefits of structured events:**
+
+- External services can format messages without game server updates
+- Supports localization and customization
+- Event types enable different Discord formatting per event
+
+### Built-in Event: Player Deaths
+
+Player death events are automatically sent from `system.kod::UserKilled()`:
+
+- Includes death type (PvP, monster, suicide, environmental)
+- Contains victim and killer information
+- Provides guild war and soldier shield context
+- Sends message template with all parameters
+
+The external webhook listener can format these however desired without modifying game code.
+
+### Blakod Integration
+
+```blakod
+// Simple message
+SendWebhook("Player login: " + GetPlayerName(player));
+
+// Structured event (from system.kod::UserKilled)
+SendWebhook("UserKilled",
+   "rMessage", rMessage,
+   "param1", Send(what,@GetTrueName),
+   "param2", param2,
+   "param3", param3,
+   "param4", param4,
+   "param5", param5,
+   "param6", param6,
+   "param7", param7);
+```
+
+### C Code Integration
+
 ```c
 // Send webhook message from C code
 SendWebhookMessage("Server started", 14);
@@ -255,30 +335,37 @@ SendWebhookMessage("Server started", 14);
 
 ## Configuration
 
+
 ### Server Configuration File
+
 Add this section to your `blakserv.cfg` configuration file:
 
 ```ini
 [Webhook]
 Enabled              Yes
-Prefix               
+Prefix
 ```
 
 **Configuration Options:**
+
 - **Enabled**: `Yes` to enable webhooks, `No` to disable (default: `No`)
 - **Prefix**: Optional prefix for pipe names (default: empty, use spaces for alignment)
 
 ### Basic Setup (Single Server)
+
 1. Set `Enabled              Yes` in `blakserv.cfg` (note: use spaces, not `=`)
 2. No other configuration needed - default pipe names work automatically
 
 ### Multi-Server Setup
+
 If running multiple server instances:
+
 1. Set `Enabled = Yes` in all server config files
 2. No other configuration needed - automatic pipe distribution handles everything
 
 ### Custom Prefixes (Advanced)
-For explicit control over pipe naming, set a prefix in config:
+
+For explicit control over pipe naming, set a prefix in your server's config file:
 
 ```ini
 [Webhook]
@@ -288,41 +375,50 @@ Prefix = server1
 
 This creates pipes like `server1_m59apiwebhook1`, `server1_m59apiwebhook2`, etc.
 
+**Note:** The pipe prefix is read from the server's `blakserv.cfg` configuration file, not passed as a function parameter. Each server instance can use a different config file with its own prefix setting.
+
 For example, using m59api as the webhook listener:
+
 ```bash
 pip install m59api
 python -m m59api --webhook-prefix server1
-python -m m59api --webhook-prefix server2  
+python -m m59api --webhook-prefix server2
 ```
 
 ## Implementation Details
 
 ### Files
+
 - **webhook.h**: Function declarations and constants
 - **webhook.c**: Cross-platform implementation
 - **ccode.c**: Blakod function `C_SendWebhook()`
 - **main.c**: Initialization and shutdown integration
 
 ### Key Functions
+
 - `InitWebhooks(prefix)`: Initialize webhook system
-- `ShutdownWebhooks()`: Cleanup resources  
+- `ShutdownWebhooks()`: Cleanup resources
 - `SendWebhookMessage(message, len)`: Send message via pipe
 - `C_SendWebhook()`: Blakod-accessible function
 
 ### Cross-Platform Support
+
 The system uses `#ifdef BLAK_PLATFORM_WINDOWS` blocks to handle platform differences:
 
 **Windows**: Named pipes via CreateFileA/WriteFile/CloseHandle
+
 - Creates 10 concurrent pipe servers for high throughput
 - Each pipe runs in its own thread for parallel processing
 
-**Linux/macOS**: FIFO pipes via open/write/close  
+**Linux/macOS**: FIFO pipes via open/write/close
+
 - Creates 10 concurrent FIFO listeners for high throughput
 - Each FIFO runs in its own async task for parallel processing
 
 Both platforms now provide identical performance characteristics and multi-server support.
 
 ### Error Handling
+
 - Graceful handling of unavailable pipes (webhook listener not running)
 - Automatic retry and failover across multiple pipes
 - No impact on game performance if webhook system is unavailable
@@ -331,32 +427,37 @@ Both platforms now provide identical performance characteristics and multi-serve
 
 ### Common Issues
 
-**"No webhook messages appearing"**
+#### No webhook messages appearing
 
 **Required Setup Checklist:**
-1. ? **blakserv.cfg configured**: Add `[Webhook]` section with `Enabled              Yes` 
+
+1. ? **blakserv.cfg configured**: Add `[Webhook]` section with `Enabled              Yes`
 2. ? **Discord webhook URL set**: Configure `DISCORD_WEBHOOK_URL` environment variable
 3. ? **Webhook listener started FIRST**: Run `m59api webhook` before starting server
 4. ? **Server recompiled**: Rebuild server with webhook code included
 5. ? **Blakod calling webhooks**: Ensure game code calls `SendWebhook()` functions
 
 **Common Errors:**
+
 - `"No webhook URL set"`: Missing `DISCORD_WEBHOOK_URL` environment variable
-- `"configstr found id 130 is dynamic"`: Need to recompile server with latest webhook code  
+- `"configstr found id 130 is dynamic"`: Need to recompile server with latest webhook code
 - `"Client not connected"`: Webhook listener not running or started after server
 
-**"Multiple servers conflicting"**  
+#### Multiple servers conflicting
+
 - System should handle this automatically
 - Check that different servers are claiming different pipe numbers
 - Consider using custom prefixes if needed
 
-**"Performance issues"**
+#### Performance issues
+
 - Webhook system is designed for minimal performance impact
 - 10 concurrent pipes handle high-traffic scenarios without blocking
 - Messages are processed in parallel across multiple pipes/FIFOs
 - If issues persist, webhook system can be disabled
 
 ### Debug Information
+
 Enable webhook debugging by checking pipe connection status and message flow in server logs.
 
 ## Security Considerations

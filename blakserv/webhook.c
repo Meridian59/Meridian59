@@ -15,38 +15,22 @@
 */
 
 #include "blakserv.h"
-#include "webhook.h"
-#include <time.h>
-
-#ifdef BLAK_PLATFORM_WINDOWS
-#include <windows.h>
-#else
-#include <fcntl.h>
-#include <unistd.h>
-#endif
 
 // Configuration constants
-static const int MAX_WEBHOOK_PIPES_WINDOWS = 10;
-static const int MAX_WEBHOOK_PIPES_UNIX = 10;
+static const int MAX_WEBHOOK_PIPES = 10;
 
 // Global state for persistent pipe connections
 static bool webhook_initialized = false;
 static char pipe_prefix[64] = "";
 static int last_pipe_index = 0;
-
-#ifdef BLAK_PLATFORM_WINDOWS
-static HANDLE pipe_handles[10];
-static bool pipe_connected[10];
-static int num_pipes = MAX_WEBHOOK_PIPES_WINDOWS;
-#else
-static int pipe_fds[10];
-static bool pipe_connected[10];
-static int num_pipes = MAX_WEBHOOK_PIPES_UNIX;
-#endif
+static HANDLE pipe_handles[MAX_WEBHOOK_PIPES];
+static bool pipe_connected[MAX_WEBHOOK_PIPES];
 
 // Helper functions
 static void generate_pipe_name(int pipe_index, char *buffer, size_t buffer_size);
 static void format_json_message(const char *message, int len, char *output, size_t output_size);
+static HANDLE open_webhook_pipe(const char *pipe_name);
+static bool write_webhook_pipe(HANDLE handle, const char *data, int len);
 
 bool InitWebhooks(const char* prefix)
 {
@@ -56,7 +40,7 @@ bool InitWebhooks(const char* prefix)
 
     // Check if webhooks are enabled in config
     if (!ConfigBool(WEBHOOK_ENABLED)) {
-        return false; // Webhooks disabled, return success but don't initialize
+        return true; // Webhooks are disabled, nothing to initialize
     }
 
     // Store pipe prefix (use config if none provided)
@@ -69,19 +53,11 @@ bool InitWebhooks(const char* prefix)
         pipe_prefix[0] = '\0';
     }
 
-#ifdef BLAK_PLATFORM_WINDOWS
-    // Initialize Windows pipe handles
-    for (int i = 0; i < num_pipes; i++) {
+    // Initialize pipe handles
+    for (int i = 0; i < MAX_WEBHOOK_PIPES; i++) {
         pipe_handles[i] = INVALID_HANDLE_VALUE;
         pipe_connected[i] = false;
     }
-#else
-    // Initialize Unix pipes
-    for (int i = 0; i < num_pipes; i++) {
-        pipe_fds[i] = -1;
-        pipe_connected[i] = false;
-    }
-#endif
 
     webhook_initialized = true;
     return true;
@@ -93,25 +69,14 @@ void ShutdownWebhooks(void)
         return;
     }
 
-#ifdef BLAK_PLATFORM_WINDOWS
-    // Close all Windows pipe handles
-    for (int i = 0; i < num_pipes; i++) {
+    // Close all pipe handles
+    for (int i = 0; i < MAX_WEBHOOK_PIPES; i++) {
         if (pipe_connected[i] && pipe_handles[i] != INVALID_HANDLE_VALUE) {
             CloseHandle(pipe_handles[i]);
             pipe_handles[i] = INVALID_HANDLE_VALUE;
             pipe_connected[i] = false;
         }
     }
-#else
-    // Close all Unix pipes
-    for (int i = 0; i < num_pipes; i++) {
-        if (pipe_connected[i] && pipe_fds[i] >= 0) {
-            close(pipe_fds[i]);
-            pipe_fds[i] = -1;
-            pipe_connected[i] = false;
-        }
-    }
-#endif
 
     webhook_initialized = false;
 }
@@ -142,16 +107,15 @@ bool SendWebhookMessage(const char* message, int len)
         json_len = (int)strlen(json_message);
     }
 
-#ifdef BLAK_PLATFORM_WINDOWS
-    // Try to send to Windows pipes using round-robin
-    for (int i = 0; i < num_pipes; i++) {
-        int pipe_index = (last_pipe_index + i) % num_pipes;
+    // Try to send using round-robin across all pipes
+    for (int i = 0; i < MAX_WEBHOOK_PIPES; i++) {
+        int pipe_index = (last_pipe_index + i) % MAX_WEBHOOK_PIPES;
         
         // Try to connect if not already connected
         if (!pipe_connected[pipe_index]) {
             char pipe_name[128];
             generate_pipe_name(pipe_index + 1, pipe_name, sizeof(pipe_name));
-            pipe_handles[pipe_index] = CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+            pipe_handles[pipe_index] = open_webhook_pipe(pipe_name);
             
             if (pipe_handles[pipe_index] != INVALID_HANDLE_VALUE) {
                 pipe_connected[pipe_index] = true;
@@ -160,11 +124,8 @@ bool SendWebhookMessage(const char* message, int len)
         
         // Try to send message
         if (pipe_connected[pipe_index]) {
-            DWORD bytes_written;
-            BOOL success = WriteFile(pipe_handles[pipe_index], message_to_send, (DWORD)json_len, &bytes_written, NULL);
-            
-            if (success && bytes_written == (DWORD)json_len) {
-                last_pipe_index = (pipe_index + 1) % num_pipes;
+            if (write_webhook_pipe(pipe_handles[pipe_index], message_to_send, json_len)) {
+                last_pipe_index = (pipe_index + 1) % MAX_WEBHOOK_PIPES;
                 return true;
             } else {
                 // Write failed, disconnect
@@ -174,38 +135,6 @@ bool SendWebhookMessage(const char* message, int len)
             }
         }
     }
-#else
-    // Unix/Linux implementation with round-robin like Windows
-    for (int i = 0; i < num_pipes; i++) {
-        int pipe_index = (last_pipe_index + i) % num_pipes;
-        
-        // Try to connect if not already connected
-        if (!pipe_connected[pipe_index]) {
-            char pipe_name[128];
-            generate_pipe_name(pipe_index + 1, pipe_name, sizeof(pipe_name));
-            pipe_fds[pipe_index] = open(pipe_name, O_WRONLY | O_NONBLOCK);
-            
-            if (pipe_fds[pipe_index] >= 0) {
-                pipe_connected[pipe_index] = true;
-            }
-        }
-        
-        // Try to send message
-        if (pipe_connected[pipe_index]) {
-            ssize_t bytes_written = write(pipe_fds[pipe_index], message_to_send, json_len);
-            
-            if (bytes_written == json_len) {
-                last_pipe_index = (pipe_index + 1) % num_pipes;
-                return true;
-            } else {
-                // Write failed, disconnect
-                close(pipe_fds[pipe_index]);
-                pipe_fds[pipe_index] = -1;
-                pipe_connected[pipe_index] = false;
-            }
-        }
-    }
-#endif
 
     return false;
 }
@@ -230,4 +159,25 @@ static void format_json_message(const char *message, int len, char *output, size
     }
 
     snprintf(output, output_size, "{\"timestamp\":%ld,\"message\":\"%.*s\"}", (long)now, len, message);
+}
+
+static HANDLE open_webhook_pipe(const char *pipe_name)
+{
+#ifdef BLAK_PLATFORM_WINDOWS
+    return CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+#else
+    return open(pipe_name, O_WRONLY | O_NONBLOCK);
+#endif
+}
+
+static bool write_webhook_pipe(HANDLE handle, const char *data, int len)
+{
+#ifdef BLAK_PLATFORM_WINDOWS
+    DWORD bytes_written;
+    BOOL success = WriteFile(handle, data, (DWORD)len, &bytes_written, NULL);
+    return success && bytes_written == (DWORD)len;
+#else
+    ssize_t bytes_written = write(handle, data, len);
+    return bytes_written == len;
+#endif
 }

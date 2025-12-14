@@ -1639,15 +1639,18 @@ messages:
       }
 
       % Send structured event data to webhook listeners
-      SendWebhook("UserKilled",
-         "rMessage", rMessage,
-         "param1", Send(what,@GetTrueName),
-         "param2", param2,
-         "param3", param3,
-         "param4", param4,
-         "param5", param5,
-         "param6", param6,
-         "param7", param7);
+      if NOT Send(self,@GetChaosNight)
+      {
+         SendWebhook("UserKilled",
+            "rMessage", rMessage,
+            "param1", Send(what,@GetTrueName),
+            "param2", param2,
+            "param3", param3,
+            "param4", param4,
+            "param5", param5,
+            "param6", param6,
+            "param7", param7);
+      }
 
       return;
    }

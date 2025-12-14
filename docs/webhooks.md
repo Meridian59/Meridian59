@@ -306,6 +306,8 @@ Player death events are automatically sent from `system.kod::UserKilled()`:
 - Provides guild war and soldier shield context
 - Sends message template with all parameters
 
+**Note:** Death webhooks are automatically disabled during Blood Frenzies (Chaos Night) to prevent spam from hundreds of arcade-style deaths. Normal gameplay deaths are still sent.
+
 The external webhook listener can format these however desired without modifying game code.
 
 ### Blakod Integration

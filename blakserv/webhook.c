@@ -32,7 +32,7 @@ static void format_json_message(const char *message, int len, char *output, size
 static HANDLE open_webhook_pipe(const char *pipe_name);
 static bool write_webhook_pipe(HANDLE handle, const char *data, int len);
 
-bool InitWebhooks(const char* prefix)
+bool InitWebhooks(void)
 {
     if (webhook_initialized) {
         return true;
@@ -43,11 +43,9 @@ bool InitWebhooks(const char* prefix)
         return true; // Webhooks are disabled, nothing to initialize
     }
 
-    // Store pipe prefix (use config if none provided)
+    // Store pipe prefix from config
     const char* config_prefix = ConfigStr(WEBHOOK_PREFIX);
-    if (prefix && *prefix) {
-        snprintf(pipe_prefix, sizeof(pipe_prefix), "%s_", prefix);
-    } else if (config_prefix && *config_prefix) {
+    if (config_prefix && *config_prefix) {
         snprintf(pipe_prefix, sizeof(pipe_prefix), "%s_", config_prefix);
     } else {
         pipe_prefix[0] = '\0';

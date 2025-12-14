@@ -18,19 +18,18 @@
   [M59 Server] --pipe--> [Webhook Listener] --HTTP--> [Discord/Webhooks]
 
   MULTI-SERVER SUPPORT:
-  - External webhook listeners create multiple pipe servers (webhookN, where N=1-10)
+  - External webhook listeners create multiple pipe servers (m59apiwebhook1-10)
   - Each M59 server instance automatically claims an available pipe
   - Up to 10 concurrent servers supported per webhook listener instance
   - No configuration needed - automatic pipe distribution
 
   PERFORMANCE:
-  - Pipes are opened once at startup and kept open (not per-message)
+  - Pipes are connected on-demand and kept open for performance
   - Non-blocking operations prevent game server blocking
-  - Only 1 system call per message vs 3 in naive implementation
 
   PLATFORM SUPPORT:
-  - Windows: Named pipes (e.g., \\\\.\\pipe\\webhook1-10)
-  - Linux/macOS: FIFO pipes (e.g., /tmp/webhook1-10)
+  - Windows: Named pipes (e.g., \\\\.\\pipe\\m59apiwebhook1)
+  - Linux/macOS: FIFO pipes (e.g., /tmp/m59apiwebhook1)
   
 */
 
@@ -39,15 +38,14 @@
 
 /**
  * Initialize the webhook system.
- * Sets up pipe connections and prepares for message delivery.
+ * Prepares internal state for message delivery. Pipes are connected lazily on first use.
  * Should be called once during server startup.
  * 
- * @param pipe_prefix Optional prefix for pipe names (e.g., "101" -> "101_m59apiwebhook1")
- *                   Pass NULL or empty string for default behavior ("m59apiwebhook1")
- *                   Default works for single-server setups, prefix needed for multi-server
+ * Pipe prefix is controlled via [Webhook] Prefix in blakserv.cfg.
+ * 
  * @return True if initialization successful, false otherwise
  */
-bool InitWebhooks(const char* pipe_prefix);
+bool InitWebhooks(void);
 
 /**
  * Shutdown the webhook system.
@@ -58,12 +56,13 @@ void ShutdownWebhooks(void);
 
 /**
  * Send a message via webhook pipes.
- * Formats the message as JSON with timestamp and sends to available pipes.
- * Non-blocking operation - if no pipes are available, message is dropped.
+ * Plain text messages are wrapped in JSON with timestamp. Messages starting with '{'
+ * are sent as-is (raw JSON). Uses round-robin across pipes for load distribution.
+ * Non-blocking operation - returns false if no pipes are connected.
  * 
- * @param message The message content to send
+ * @param message The message content to send (plain text or JSON)
  * @param len Length of the message
- * @return True if message was sent to at least one pipe, false otherwise
+ * @return True if message was sent successfully, false otherwise
  */
 bool SendWebhookMessage(const char* message, int len);
 

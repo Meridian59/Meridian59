@@ -244,6 +244,32 @@ All messages processed simultaneously without blocking
 - Pipe operations use `O_NONBLOCK` flags to prevent server blocking
 - Failed pipe writes are handled gracefully without affecting game performance
 
+### Intelligent Error Handling
+
+The webhook system distinguishes between temporary and permanent pipe errors:
+
+**Temporary Errors (buffer full):**
+- **Symptom**: Pipe write returns `EAGAIN`/`EWOULDBLOCK` (Linux) or `ERROR_PIPE_BUSY` (Windows)
+- **Cause**: Webhook listener is slow (e.g., Discord rate limiting, processing delay)
+- **Action**: Keep pipe open, try next pipe in round-robin rotation
+- **Result**: Message dropped but pipe remains connected for next message
+
+**Permanent Errors (pipe broken):**
+- **Symptom**: `EPIPE`, `EBADF` (Linux) or other Windows pipe errors
+- **Cause**: Webhook listener disconnected or crashed
+- **Action**: Close pipe and mark as disconnected
+- **Result**: Will attempt to reconnect on next message send
+
+**Backpressure Behavior:**
+
+If all webhook consumers are slow or unavailable:
+1. Server tries all 10 pipes in round-robin order
+2. Each full pipe is skipped (not closed)
+3. Message is dropped if all pipes are full
+4. Once consumers catch up, existing pipes work immediately (no reconnection needed)
+
+This design prevents the "reconnection thrashing" problem where temporary slowdowns would cause expensive pipe close/reopen cycles. Messages may be dropped under extreme load, but the game server maintains optimal performance.
+
 ## Usage
 
 ### Message Formats

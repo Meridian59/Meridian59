@@ -125,12 +125,12 @@ bool SendWebhookMessage(const char* message, int len)
             if (write_webhook_pipe(pipe_handles[pipe_index], message_to_send, json_len)) {
                 last_pipe_index = (pipe_index + 1) % MAX_WEBHOOK_PIPES;
                 return true;
-            } else {
-                // Write failed, disconnect
-                CloseHandle(pipe_handles[pipe_index]);
-                pipe_handles[pipe_index] = INVALID_HANDLE_VALUE;
-                pipe_connected[pipe_index] = false;
             }
+            
+            // Write failed, disconnect
+            CloseHandle(pipe_handles[pipe_index]);
+            pipe_handles[pipe_index] = INVALID_HANDLE_VALUE;
+            pipe_connected[pipe_index] = false;
         }
     }
 

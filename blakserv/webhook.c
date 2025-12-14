@@ -30,7 +30,7 @@ static bool pipe_connected[MAX_WEBHOOK_PIPES];
 static void generate_pipe_name(int pipe_index, char *buffer, size_t buffer_size);
 static void format_json_message(const char *message, int len, char *output, size_t output_size);
 static HANDLE open_webhook_pipe(const char *pipe_name);
-static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *should_close);
+static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *is_permanent_error);
 
 bool InitWebhooks(void)
 {
@@ -122,14 +122,14 @@ bool SendWebhookMessage(const char* message, int len)
         
         // Try to send message
         if (pipe_connected[pipe_index]) {
-            bool should_close = false;
-            if (write_webhook_pipe(pipe_handles[pipe_index], message_to_send, json_len, &should_close)) {
+            bool is_permanent_error = false;
+            if (write_webhook_pipe(pipe_handles[pipe_index], message_to_send, json_len, &is_permanent_error)) {
                 last_pipe_index = (pipe_index + 1) % MAX_WEBHOOK_PIPES;
                 return true;
             }
             
             // Write failed - only close pipe if it's a real error (not just buffer full)
-            if (should_close) {
+            if (is_permanent_error) {
                 CloseHandle(pipe_handles[pipe_index]);
                 pipe_handles[pipe_index] = INVALID_HANDLE_VALUE;
                 pipe_connected[pipe_index] = false;
@@ -171,7 +171,13 @@ static HANDLE open_webhook_pipe(const char *pipe_name)
 #endif
 }
 
-static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *should_close)
+/*
+ * write_webhook_pipe:  Write data to webhook pipe. Distinguishes temporary errors
+ *    (buffer full, partial write) from permanent errors (broken pipe) via 
+ *    is_permanent_error output parameter. 
+ *    Returns true if full message sent, false otherwise.
+ */
+static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *is_permanent_error)
 {
 #ifdef BLAK_PLATFORM_WINDOWS
     DWORD bytes_written;
@@ -185,10 +191,10 @@ static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *s
     if (!success) {
         DWORD error = GetLastError();
         // ERROR_PIPE_BUSY or ERROR_NO_DATA means pipe is temporarily full
-        *should_close = (error != ERROR_PIPE_BUSY && error != ERROR_NO_DATA);
+        *is_permanent_error = (error != ERROR_PIPE_BUSY && error != ERROR_NO_DATA);
     } else {
-        // Partial write - treat as permanent error
-        *should_close = true;
+        // Partial write - treat as temporary error to avoid sending truncated messages
+        *is_permanent_error = false;
     }
     return false;
 #else
@@ -201,10 +207,10 @@ static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *s
     // Check if pipe buffer is full (temporary) vs broken (permanent)
     if (bytes_written == -1) {
         // EAGAIN/EWOULDBLOCK means pipe buffer is full but pipe is still valid
-        *should_close = (errno != EAGAIN && errno != EWOULDBLOCK);
+        *is_permanent_error = (errno != EAGAIN && errno != EWOULDBLOCK);
     } else {
-        // Partial write - treat as permanent error
-        *should_close = true;
+        // Partial write - treat as temporary error to avoid sending truncated messages
+        *is_permanent_error = false;
     }
     return false;
 #endif

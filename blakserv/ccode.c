@@ -2319,7 +2319,7 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
         }
 
         SendWebhookMessage(content, content_len);
-        return 1;
+        return NIL;
     }
     
     // Handle JSON style: event name + key-value pairs
@@ -2404,5 +2404,5 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     
     // Send the webhook message
     SendWebhookMessage(json.c_str(), (int)json.length());
-    return 1;
+    return NIL;
 }

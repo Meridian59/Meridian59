@@ -75,18 +75,14 @@ graph LR
         E[Webhook Subsystem]
     end
     
-    subgraph "Pipe Communication"
-        F[Named Pipes/FIFOs]
+    subgraph "10-Pipe Pool"
         F1[m59apiwebhook1]
         F2[m59apiwebhook2]
-        F3[m59apiwebhook...]
-        F --> F1
-        F --> F2  
-        F --> F3
+        F3[m59apiwebhook3-10...]
     end
     
     subgraph "Webhook Listener (Python)"
-        G[Pipe Listeners]
+        G[10 Pipe Listeners]
         H[Message Parser]
         I[Discord Formatter]
     end
@@ -100,9 +96,9 @@ graph LR
     B --> D
     C --> D
     D --> E
-    E --> F1
-    E --> F2
-    E --> F3
+    E -->|Round-robin| F1
+    E -.-> F2
+    E -.-> F3
     F1 --> G
     F2 --> G
     F3 --> G
@@ -112,55 +108,77 @@ graph LR
     I --> K
 ```
 
-### Multi-Server Distribution
+### Multi-Server Support
+
+Running multiple M59 servers on the same machine requires using **prefixes** to create separate pipe pools.
+
+**Why prefixes are required:**
+- Each server needs its own Discord channel (to know which server an event came from)
+- Named pipes only allow one writer at a time
+- Without prefixes, servers would compete for the same 10 pipes
+
+**Setup Example (2 servers):**
+
+```ini
+# Server 1: blakserv1.cfg
+[Webhook]
+Enabled = Yes
+Prefix = server1
+
+# Server 2: blakserv2.cfg
+[Webhook]
+Enabled = Yes
+Prefix = server2
+```
+
+**Start webhook listeners (different Discord channels):**
+
+```bash
+# Terminal 1 - Server 1 events go to #server1-events channel
+DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/.../server1" m59api webhook --webhook-prefix server1
+
+# Terminal 2 - Server 2 events go to #server2-events channel
+DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/.../server2" m59api webhook --webhook-prefix server2
+```
+
+**Result:**
+- Server 1: Uses `server1_m59apiwebhook1-10` ? Discord #server1-events channel
+- Server 2: Uses `server2_m59apiwebhook1-10` ? Discord #server2-events channel
+- Total: 20 pipes on same machine, complete isolation
+
+**Architecture:**
 
 ```mermaid
 graph TB
-    subgraph "Multiple M59 Servers"
-        S1[M59 Server 1]
-        S2[M59 Server 2]
+    subgraph "M59 Servers on Same Machine"
+        S1[Server 1<br/>Prefix: server1]
+        S2[Server 2<br/>Prefix: server2]
     end
     
-    subgraph "Pipe Infrastructure (Shared Pool)"
-        P1[m59apiwebhook1]
-        P2[m59apiwebhook2]
-        P3[m59apiwebhook3]
-        P4[m59apiwebhook4]
-        P5[m59apiwebhook5-10...]
+    subgraph "Isolated Pipe Pools"
+        P1G[server1_m59apiwebhook1-10]
+        P2G[server2_m59apiwebhook1-10]
     end
     
-    subgraph "Webhook Listener Processing"
-        L1[Listener 1]
-        L2[Listener 2]
-        L3[Listener 3]
-        L4[Listener 4]
-        L5[Listeners 5-10...]
+    subgraph "Webhook Listeners"
+        L1[m59api instance 1]
+        L2[m59api instance 2]
     end
     
     subgraph "Discord"
-        D[Discord Channel]
+        D1[#server1-events]
+        D2[#server2-events]
     end
     
-    S1 -.->|round-robin| P1
-    S1 -.->|round-robin| P2
-    S1 -.->|round-robin| P3
-    S2 -.->|round-robin| P4
-    S2 -.->|round-robin| P5
+    S1 -->|Round-robin| P1G
+    S2 -->|Round-robin| P2G
     
-    P1 --> L1
-    P2 --> L2
-    P3 --> L3
-    P4 --> L4
-    P5 --> L5
+    P1G --> L1
+    P2G --> L2
     
-    L1 --> D
-    L2 --> D
-    L3 --> D
-    L4 --> D
-    L5 --> D
+    L1 --> D1
+    L2 --> D2
 ```
-
-**Note:** Each server connects to multiple pipes and uses round-robin load balancing across them. Server 1 might use pipes 1-5, Server 2 would use remaining pipes 6-10. This provides better load distribution than one pipe per server.
 
 ## How It Works
 
@@ -198,23 +216,11 @@ When the Meridian 59 server starts:
 8. Discord posts to channel
 ```
 
-## Multi-Server Support
-
-The system automatically handles multiple M59 servers on the same machine:
-
-### Automatic Pipe Distribution
-
-Each server connects to multiple pipes and uses round-robin load balancing across them. When multiple servers run on the same machine:
-
-- **Server 1**: Connects to first available pipes (e.g., pipes 1-5) and rotates messages across them
-- **Server 2**: Connects to remaining available pipes (e.g., pipes 6-10) and rotates messages across them
-- Up to **10 concurrent servers** supported if each uses one pipe, or **2-3 high-traffic servers** if each uses multiple pipes
-
-**Note:** Each server tries to connect to all pipes in the pool but will only succeed on pipes not already claimed by other servers. This provides automatic load distribution without manual configuration.
+## Performance Features
 
 ### Load Balancing
 
-Each server uses round-robin selection across its connected pipes for better distribution and fault tolerance. This means a single high-traffic server can spread its load across multiple pipes for better throughput.
+Each server uses round-robin selection across its 10 connected pipes for better distribution and fault tolerance. This allows a high-traffic server to spread its load across multiple pipes for better throughput.
 
 ### High-Traffic Performance
 The multi-pipe architecture prevents message dropping during high-traffic scenarios:
@@ -260,15 +266,37 @@ The webhook system distinguishes between temporary and permanent pipe errors:
 - **Action**: Close pipe and mark as disconnected
 - **Result**: Will attempt to reconnect on next message send
 
+**Partial Write Handling:**
+
+With non-blocking pipes, it's possible for a pipe buffer to be almost (but not completely) full, resulting in a partial write where only some bytes are sent. To prevent truncated messages from reaching the webhook listener:
+
+- **Partial write detected**: If fewer bytes are written than requested
+- **Action**: Treat as temporary error, keep pipe open, drop entire message
+- **Result**: Webhook listener never receives incomplete/corrupted JSON
+
+This ensures message integrity at the cost of dropping messages under unusual conditions.
+
 **Backpressure Behavior:**
 
 If all webhook consumers are slow or unavailable:
 1. Server tries all 10 pipes in round-robin order
-2. Each full pipe is skipped (not closed)
-3. Message is dropped if all pipes are full
+2. Each full/partially-full pipe is skipped (not closed)
+3. Message is dropped if all pipes are full or can't accept complete message
 4. Once consumers catch up, existing pipes work immediately (no reconnection needed)
 
-This design prevents the "reconnection thrashing" problem where temporary slowdowns would cause expensive pipe close/reopen cycles. Messages may be dropped under extreme load, but the game server maintains optimal performance.
+This design prevents the "reconnection thrashing" problem where temporary slowdowns would cause expensive pipe close/reopen cycles. Messages may be dropped under extreme load, but the game server maintains performance and message integrity.
+
+**Example Flow (All Pipes Full):**
+
+When the webhook listener is temporarily slow and all pipe buffers are full:
+
+1. **Pipe 1**: Attempt write ? Partial write or `EAGAIN`/`EWOULDBLOCK` ? Pipe stays open, try next
+2. **Pipe 2**: Attempt write ? Buffer full ? Pipe stays open, try next
+3. **Pipe 3-9**: Same result ? All pipes remain connected
+4. **Pipe 10**: Attempt write ? Buffer full ? All pipes exhausted
+5. **Result**: Message dropped, all 10 pipes remain open and ready
+
+Once the webhook listener catches up and processes buffered messages, the next webhook send succeeds immediately on the first available pipe without any reconnection overhead.
 
 ## Usage
 
@@ -386,14 +414,11 @@ Prefix
 
 ### Multi-Server Setup
 
-If running multiple server instances:
+If running multiple server instances on the same machine, **you must use prefixes**. See the "Multi-Server Support" section above for detailed setup instructions.
 
-1. Set `Enabled = Yes` in all server config files
-2. No other configuration needed - automatic pipe distribution handles everything
+### Custom Prefixes
 
-### Custom Prefixes (Advanced)
-
-For explicit control over pipe naming, set a prefix in your server's config file:
+For custom pipe naming, set a prefix in your server's config file:
 
 ```ini
 [Webhook]

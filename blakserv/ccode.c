@@ -2403,6 +2403,6 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     json += "}}";
     
     // Send the webhook message
-    SendWebhookMessage(json.c_str(), json.length());
+    SendWebhookMessage(json.c_str(), (int)json.length());
     return 1;
 }

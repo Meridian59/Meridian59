@@ -30,7 +30,7 @@ static bool pipe_connected[MAX_WEBHOOK_PIPES];
 static void generate_pipe_name(int pipe_index, char *buffer, size_t buffer_size);
 static void format_json_message(const char *message, int len, char *output, size_t output_size);
 static HANDLE open_webhook_pipe(const char *pipe_name);
-static bool write_webhook_pipe(HANDLE handle, const char *data, int len);
+static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *should_close);
 
 bool InitWebhooks(void)
 {
@@ -122,15 +122,18 @@ bool SendWebhookMessage(const char* message, int len)
         
         // Try to send message
         if (pipe_connected[pipe_index]) {
-            if (write_webhook_pipe(pipe_handles[pipe_index], message_to_send, json_len)) {
+            bool should_close = false;
+            if (write_webhook_pipe(pipe_handles[pipe_index], message_to_send, json_len, &should_close)) {
                 last_pipe_index = (pipe_index + 1) % MAX_WEBHOOK_PIPES;
                 return true;
             }
             
-            // Write failed, disconnect
-            CloseHandle(pipe_handles[pipe_index]);
-            pipe_handles[pipe_index] = INVALID_HANDLE_VALUE;
-            pipe_connected[pipe_index] = false;
+            // Write failed - only close pipe if it's a real error (not just buffer full)
+            if (should_close) {
+                CloseHandle(pipe_handles[pipe_index]);
+                pipe_handles[pipe_index] = INVALID_HANDLE_VALUE;
+                pipe_connected[pipe_index] = false;
+            }
         }
     }
 
@@ -168,14 +171,41 @@ static HANDLE open_webhook_pipe(const char *pipe_name)
 #endif
 }
 
-static bool write_webhook_pipe(HANDLE handle, const char *data, int len)
+static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *should_close)
 {
 #ifdef BLAK_PLATFORM_WINDOWS
     DWORD bytes_written;
     BOOL success = WriteFile(handle, data, (DWORD)len, &bytes_written, NULL);
-    return success && bytes_written == (DWORD)len;
+    
+    if (success && bytes_written == (DWORD)len) {
+        return true;
+    }
+    
+    // Check if pipe buffer is full (temporary) vs broken (permanent)
+    if (!success) {
+        DWORD error = GetLastError();
+        // ERROR_PIPE_BUSY or ERROR_NO_DATA means pipe is temporarily full
+        *should_close = (error != ERROR_PIPE_BUSY && error != ERROR_NO_DATA);
+    } else {
+        // Partial write - treat as permanent error
+        *should_close = true;
+    }
+    return false;
 #else
     ssize_t bytes_written = write(handle, data, len);
-    return bytes_written == len;
+    
+    if (bytes_written == len) {
+        return true;
+    }
+    
+    // Check if pipe buffer is full (temporary) vs broken (permanent)
+    if (bytes_written == -1) {
+        // EAGAIN/EWOULDBLOCK means pipe buffer is full but pipe is still valid
+        *should_close = (errno != EAGAIN && errno != EWOULDBLOCK);
+    } else {
+        // Partial write - treat as permanent error
+        *should_close = true;
+    }
+    return false;
 #endif
 }

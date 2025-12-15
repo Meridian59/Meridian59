@@ -268,13 +268,14 @@ The webhook system distinguishes between temporary and permanent pipe errors:
 
 **Partial Write Handling:**
 
-With non-blocking pipes, it's possible for a pipe buffer to be almost (but not completely) full, resulting in a partial write where only some bytes are sent. To prevent truncated messages from reaching the webhook listener:
+With non-blocking pipes, it's possible for a pipe buffer to be almost (but not completely) full, resulting in a partial write where only some bytes are sent. To prevent corrupted messages:
 
 - **Partial write detected**: If fewer bytes are written than requested
-- **Action**: Treat as temporary error, keep pipe open, drop entire message
-- **Result**: Webhook listener never receives incomplete/corrupted JSON
+- **Action**: Close the pipe immediately (treat as permanent error)
+- **Reason**: Partial data already in pipe buffer would be read by listener, causing corruption
+- **Result**: Pipe is closed and will reconnect on next message, preventing any partial data from being delivered
 
-This ensures message integrity at the cost of dropping messages under unusual conditions.
+This ensures message integrity by sacrificing the pipe connection rather than allowing corrupted JSON to reach the webhook listener.
 
 **Backpressure Behavior:**
 

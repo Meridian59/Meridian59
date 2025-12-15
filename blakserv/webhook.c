@@ -165,7 +165,18 @@ static void format_json_message(const char *message, int len, char *output, size
 static HANDLE open_webhook_pipe(const char *pipe_name)
 {
 #ifdef BLAK_PLATFORM_WINDOWS
-    return CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE handle = CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    
+    if (handle != INVALID_HANDLE_VALUE) {
+        // Set pipe to non-blocking mode
+        DWORD mode = PIPE_NOWAIT;
+        if (!SetNamedPipeHandleState(handle, &mode, NULL, NULL)) {
+            CloseHandle(handle);
+            return INVALID_HANDLE_VALUE;
+        }
+    }
+    
+    return handle;
 #else
     return open(pipe_name, O_WRONLY | O_NONBLOCK);
 #endif

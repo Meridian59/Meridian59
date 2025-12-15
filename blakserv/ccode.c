@@ -2337,9 +2337,6 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
         return NIL;
     }
     
-    // Build JSON using std::string
-    json.reserve(4096);
-    
     // Start building JSON: {"event": "EventName", "params": {
     json += "{\"event\":\"";
     json.append(event_name, event_len);

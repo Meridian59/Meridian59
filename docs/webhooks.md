@@ -514,6 +514,26 @@ Both platforms now provide identical performance characteristics and multi-serve
 
 Enable webhook debugging by checking pipe connection status and message flow in server logs.
 
+## Known Limitations
+
+### Partial Write Corruption
+
+In rare circumstances, if a pipe buffer becomes nearly full, a write operation may complete partially (e.g., 5 of 10 bytes written). When this occurs:
+
+- The partial data already in the pipe buffer will be read by the listener, resulting in one corrupted message
+- The server detects the partial write and immediately closes the pipe to prevent further corruption
+- The server attempts to send the full message on a different pipe
+- The closed pipe can be reopened cleanly on subsequent connection attempts
+
+**Why this is acceptable:**
+
+- Partial writes are extremely rare with properly-sized messages and non-blocking I/O
+- Only a single message gets corrupted (not all future messages on that pipe)
+- The listener can detect and discard malformed JSON
+- Preventing this would require message-level protocols (sequence numbers, acknowledgments, checksums) which add significant complexity for minimal benefit
+
+The current implementation prioritizes simplicity and performance.
+
 ## Security Considerations
 
 - Pipes are created with appropriate permissions

@@ -204,8 +204,8 @@ static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *i
         // ERROR_PIPE_BUSY or ERROR_NO_DATA means pipe is temporarily full
         *is_permanent_error = (error != ERROR_PIPE_BUSY && error != ERROR_NO_DATA);
     } else {
-        // Partial write - treat as temporary error to avoid sending truncated messages
-        *is_permanent_error = false;
+        // Partial write - close pipe to prevent partial data from being read
+        *is_permanent_error = true;
     }
     return false;
 #else
@@ -220,8 +220,8 @@ static bool write_webhook_pipe(HANDLE handle, const char *data, int len, bool *i
         // EAGAIN/EWOULDBLOCK means pipe buffer is full but pipe is still valid
         *is_permanent_error = (errno != EAGAIN && errno != EWOULDBLOCK);
     } else {
-        // Partial write - treat as temporary error to avoid sending truncated messages
-        *is_permanent_error = false;
+        // Partial write - close pipe to prevent partial data from being read
+        *is_permanent_error = true;
     }
     return false;
 #endif

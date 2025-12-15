@@ -1638,6 +1638,20 @@ messages:
               #parm7=param7,#type3=STRING_RESOURCE,#type5=type5,#type7=type7);
       }
 
+      % Send structured event data to webhook listeners
+      if NOT Send(self,@GetChaosNight)
+      {
+         SendWebhook("UserKilled",
+            "rMessage", rMessage,
+            "param1", Send(what,@GetTrueName),
+            "param2", param2,
+            "param3", param3,
+            "param4", param4,
+            "param5", param5,
+            "param6", param6,
+            "param7", param7);
+      }
+
       return;
    }
 

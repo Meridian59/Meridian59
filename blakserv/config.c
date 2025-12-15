@@ -206,6 +206,10 @@ config_table_type config_table[] =
 { BLAKOD_GROUP,           false, "[Blakod]",      CONFIG_GROUP, "" },
 { BLAKOD_MAX_STATEMENTS,  true, "MaxStatements", CONFIG_INT,   "20000000" },
 
+{ WEBHOOK_GROUP,          false, "[Webhook]",     CONFIG_GROUP, "" },
+{ WEBHOOK_ENABLED,        false, "Enabled",       CONFIG_BOOL,  "No" },
+{ WEBHOOK_PREFIX,         false, "Prefix",        CONFIG_STR,   "" },
+
 };
 
 enum

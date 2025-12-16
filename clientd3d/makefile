@@ -8,7 +8,13 @@ SOURCEDIR = $(CLIENTDIR)
 # Need to put build dir in include path, because trig and palette
 # generated files are there.
 CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
+
+# Select OpenAL library path based on target platform
+!if "$(PLATFORM)" == "x64"
+LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win64
+!else
 LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win32
+!endif
 
 LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \

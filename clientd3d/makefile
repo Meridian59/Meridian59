@@ -8,12 +8,13 @@ SOURCEDIR = $(CLIENTDIR)
 # Need to put build dir in include path, because trig and palette
 # generated files are there.
 CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
+LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win32
 
 LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
 	 ws2_32.lib comctl32.lib advapi32.lib \
 	 winmm.lib libarchive.lib rscload.lib wininet.lib \
-	 ole32.lib waveplay.lib \
+	 ole32.lib waveplay.lib OpenAL32.lib \
 	 d3d9.lib libpng.lib zlib.lib
 
 # Setting RETAIL=1 turns on the Miles Sound System, which we can't
@@ -106,6 +107,7 @@ OBJS = \
         $(OUTDIR)\say.obj \
         $(OUTDIR)\sound.obj \
         $(OUTDIR)\music.obj \
+        $(OUTDIR)\audio_openal.obj \
         $(OUTDIR)\key.obj \
         $(OUTDIR)\buy.obj \
         $(OUTDIR)\statstrt.obj \

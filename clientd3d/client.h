@@ -184,6 +184,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "config.h"
 #include "palette.h"
 #include "sound.h"
+#include "audio_openal.h"
 #include "module.h"     // header common to client and module files
 #include "modules.h"
 #include "textin.h"

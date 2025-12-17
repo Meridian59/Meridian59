@@ -183,14 +183,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
 
-#ifndef M59_MSS
 	case MM_MCINOTIFY:  /* MIDI file has finished playing */
 		if (wParam != MCI_NOTIFY_SUCCESSFUL)
 			break;
 
 		MusicDone(LOWORD(lParam));
 		break;
-#endif
 
 	case BK_NEWSOUND:
 		NewMusic(wParam, lParam);

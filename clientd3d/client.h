@@ -81,22 +81,11 @@ extern bool is_foreground;   // True when program is in the foreground
 
 /* This list of include files is good for precompiled headers */
 
-#ifdef M59_RETAIL
-  // #define to enable Miles Sound System version.  If not defined,
-  // music is played through the default MIDI player, and sound goes through the
-  // ancient wavemix DLL.
-  #define M59_MSS
-#endif
-
-#ifdef M59_MSS
+/* Default to OpenAL path; remove legacy MSS/wavemix as the default.
+   Provide compatibility macros expected elsewhere in the codebase. */
 #define HANDLE_MM_WOM_DONE(hwnd, wParam, lParam, fn) \
-((fn)((hwnd), (int)(wParam), (lParam)), 0L)
+    ((fn)((hwnd), (int)(wParam), (lParam)), 0L)
 #define MAX_VOLUME 50
-#else
-extern "C" {
-#include "wavemix.h"
-}
-#endif
    
 #define VOLUME_CUTOFF_DISTANCE 16
 

@@ -16,7 +16,7 @@ Bserver:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bclient: Butil Blibpng Blibarchive Bwavemix
+Bclient: Butil Blibpng Blibarchive
 	echo Making $(COMMAND) in $(CLIENTDIR)
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
@@ -46,11 +46,7 @@ Blibarchive: Bzlib
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..\..
 
-Bwavemix:
-	echo Making $(COMMAND) in $(WAVEMIXDIR)
-	cd $(WAVEMIXDIR)
-	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..\..
+
 
 Bcompiler:
 	echo Making $(COMMAND) in $(BLAKCOMPDIR)

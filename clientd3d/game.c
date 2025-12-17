@@ -402,6 +402,10 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
    RedrawAll();
 
    ModuleEvent(EVENT_USERCHANGED);
+
+   /* Finalize ambient transition: stop any previous-room ambients that were
+      not re-registered during room loading. */
+   Sound_EndAmbientTransition();
 }
 /************************************************************************/
 void TurnObject(ID object_id, WORD angle)

@@ -41,7 +41,7 @@ MODULEDIR   = $(TOPDIR)/module
 UTILDIR     = $(TOPDIR)/util
 SPROCKETDIR = $(TOPDIR)/sprocket
 CLUBDIR     = $(TOPDIR)/club
-WAVEMIXDIR  = $(TOPDIR)/wavemix
+/* WAVEMIX removed: not built by default */
 
 BLAKBINDIR = $(TOPDIR)/bin
 BLAKLIBDIR = $(TOPDIR)/lib

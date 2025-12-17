@@ -629,4 +629,39 @@ void SoundStopAll(void)
    }
 }
 
+/*
+ * Audio_StopSourcesForFilename: Stop any sources currently playing the
+ * buffer associated with `filename` (case-insensitive match against cache).
+ */
+void Audio_StopSourcesForFilename(const char* filename)
+{
+   if (!g_initialized || filename == NULL)
+      return;
+
+   // Find buffer in cache
+   ALuint targetBuffer = 0;
+   for (int i = 0; i < g_cacheCount; i++)
+   {
+      if (_stricmp(g_bufferCache[i].filename, filename) == 0)
+      {
+         targetBuffer = g_bufferCache[i].buffer;
+         break;
+      }
+   }
+   if (targetBuffer == 0)
+      return;
+
+   // Stop any source using this buffer
+   for (int i = 0; i < g_numSources; i++)
+   {
+      ALint buf = 0;
+      alGetSourcei(g_sources[i], AL_BUFFER, &buf);
+      if ((ALuint)buf == targetBuffer)
+      {
+         alSourceStop(g_sources[i]);
+         alSourcei(g_sources[i], AL_BUFFER, 0);
+      }
+   }
+}
+
 

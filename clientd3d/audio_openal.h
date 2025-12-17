@@ -30,6 +30,9 @@ bool SoundPlayWave(const char* filename, int volume, BYTE flags,
 // Stop all sounds
 void SoundStopAll(void);
 
+// Stop any playing sources that are using the given filename's buffer
+void Audio_StopSourcesForFilename(const char* filename);
+
 // Listener position update for 3D audio (called each frame)
 void AudioUpdateListener(float x, float y, float z, 
                          float forwardX, float forwardY, float forwardZ);

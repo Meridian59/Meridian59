@@ -17,11 +17,11 @@ LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win32
 !endif
 
 LIBS =  \
-	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
-	 ws2_32.lib comctl32.lib advapi32.lib \
-	 winmm.lib libarchive.lib rscload.lib wininet.lib \
-	 ole32.lib waveplay.lib OpenAL32.lib \
-	 d3d9.lib libpng.lib zlib.lib
+ 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
+ 	 ws2_32.lib comctl32.lib advapi32.lib \
+ 	 winmm.lib libarchive.lib rscload.lib wininet.lib \
+ 	 ole32.lib OpenAL32.lib \
+ 	 d3d9.lib libpng.lib zlib.lib
 
 # Setting RETAIL=1 turns on the Miles Sound System, which we can't
 # put in the open source version
@@ -29,7 +29,7 @@ LIBS =  \
 
 CFLAGS = $(CFLAGS) -DM59_RETAIL
 LIBS = $(LIBS) \
-       mss32.lib mss32midi.lib bugsplat.lib
+        bugsplat.lib
 
 !endif
 

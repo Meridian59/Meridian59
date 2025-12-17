@@ -91,6 +91,7 @@ typedef struct {
    int lastPasswordChange;
 
    int soundLibrary;
+   bool use_openal;            // Use OpenAL Soft instead of MSS/wavemix
    bool rosterbmps;         // unused, should be removed
    int CacheBalance;			 /* controls the balance between the object and grid caches */
    int ObjectCacheMin;			 /* minimum size of the object cache */

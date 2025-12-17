@@ -324,6 +324,26 @@ DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
 	if (!has_midi)
 		return 0;
 
+   // Route to OpenAL if enabled
+   if (config.use_openal)
+   {
+      // Convert .mid extension to .ogg for OpenAL
+      std::string filename(fname);
+      std::transform(filename.begin(), filename.end(), filename.begin(),
+                     [](unsigned char c){ return std::tolower(c); });
+      filename = std::regex_replace(filename, std::regex("\\.mid$"), ".ogg");
+      
+      // Call OpenAL music player
+      if (MusicPlay(filename.c_str(), TRUE))
+      {
+         playing_music = true;
+         debug(("PlayMusicFile: OpenAL playing %s\n", filename.c_str()));
+         return 0;
+      }
+      debug(("PlayMusicFile: OpenAL failed to play %s\n", filename.c_str()));
+      return 1;
+   }
+
 #ifdef M59_MSS
 	// If a sequence was paused and we are trying to play that music
    // then unpause it.

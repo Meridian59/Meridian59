@@ -270,6 +270,7 @@ void ConfigLoad(void)
    if( config.CacheBalance > 90 ) config.CacheBalance = 90 ;
 
    config.soundLibrary = GetConfigInt(misc_section, INISoundLibrary, LIBRARY_MSS, ini_file);
+   config.use_openal = true;  // Use OpenAL by default
 
 #ifdef NODPRINTFS
    config.debug    = false;

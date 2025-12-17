@@ -39,10 +39,16 @@ static 	HDIGDRIVER hDriver;					// handle to the digital audio driver
  */
 void SoundInitialize(void)
 {
-
    if (config.soundLibrary == LIBRARY_NIL)
    {
       wave_open = FALSE;
+      return;
+   }
+
+   // Skip MSS initialization if using OpenAL
+   if (config.use_openal)
+   {
+      wave_open = TRUE;
       return;
    }
 
@@ -185,6 +191,12 @@ UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 {
    if (!wave_open)
       return TRUE;
+
+   // Use OpenAL if enabled
+   if (config.use_openal)
+   {
+      return SoundPlayWave(fname, volume, flags, src_row, src_col, radius, max_vol) ? 0 : 1;
+   }
 
 #ifdef M59_MSS
 
@@ -396,6 +408,13 @@ void AILCALLBACK SoundDoneCallback( HSAMPLE S )
  */
 void UpdateLoopingSounds( int px, int py)
 {
+   // OpenAL handles this automatically via listener position
+   if (config.use_openal)
+   {
+      AudioUpdateListener((float)px, 0.0f, (float)py, 0.0f, 0.0f, -1.0f);
+      return;
+   }
+
 #ifdef M59_MSS
    int i;
 

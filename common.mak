@@ -44,7 +44,6 @@ CLUBDIR     = $(TOPDIR)\club
 
 # 3rd party libraries
 EXTERNALDIR = $(TOPDIR)\external
-# WAVEMIX removed: no longer building wavemix external
 LIBARCHIVEDIR = $(EXTERNALDIR)\libarchive
 LIBPNGDIR   = $(EXTERNALDIR)\libpng
 ZLIBDIR     = $(EXTERNALDIR)\zlib

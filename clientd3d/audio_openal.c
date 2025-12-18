@@ -17,9 +17,8 @@
 #include <AL/alext.h>
 #include <AL/efx.h>
 
-// STB Vorbis for OGG decoding
-#define STB_VORBIS_NO_PUSHDATA_API
-#include "stb_vorbis.c"
+// STB Vorbis for OGG decoding (compiled separately with STB_VORBIS_NO_PUSHDATA_API)
+extern "C" int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
 
 // Configuration
 static const int MAX_AUDIO_SOURCES = 32;
@@ -252,6 +251,7 @@ static ALuint LoadOGGFile(const char* filename)
 bool MusicPlay(const char* filename, bool loop)
 {
    ALuint newBuffer;
+   ALint sourceState;
 
    if (!g_initialized)
    {
@@ -261,9 +261,26 @@ bool MusicPlay(const char* filename, bool loop)
 
    debug(("MusicPlay: %s (loop=%d)\n", filename, loop));
 
-   // Stop current music if playing
-   if (g_musicPlaying)
-      MusicStop();
+   // Always stop any currently playing music unconditionally
+   // This ensures we stop even if our flag got out of sync with OpenAL state
+   alSourceStop(g_musicSource);
+   alSourcei(g_musicSource, AL_BUFFER, 0);  // Detach buffer
+
+   // Verify the source actually stopped (defensive check)
+   alGetSourcei(g_musicSource, AL_SOURCE_STATE, &sourceState);
+   if (sourceState == AL_PLAYING)
+   {
+      debug(("MusicPlay: Warning - source still playing after stop!\n"));
+   }
+
+   // Delete old buffer if we had one (now safe since source is stopped and detached)
+   if (g_musicBuffer != 0)
+   {
+      alDeleteBuffers(1, &g_musicBuffer);
+      g_musicBuffer = 0;
+   }
+
+   g_musicPlaying = false;
 
    // Load OGG file (filename already includes path)
    newBuffer = LoadOGGFile(filename);
@@ -271,13 +288,6 @@ bool MusicPlay(const char* filename, bool loop)
    {
       debug(("MusicPlay: Failed to load %s\n", filename));
       return false;
-   }
-
-   // Delete old buffer if we had one
-   if (g_musicBuffer != 0)
-   {
-      alDeleteBuffers(1, &g_musicBuffer);
-      g_musicBuffer = 0;
    }
 
    g_musicBuffer = newBuffer;

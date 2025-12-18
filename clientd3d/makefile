@@ -114,6 +114,7 @@ OBJS = \
         $(OUTDIR)\sound.obj \
         $(OUTDIR)\music.obj \
         $(OUTDIR)\audio_openal.obj \
+        $(OUTDIR)\stb_vorbis.obj \
         $(OUTDIR)\key.obj \
         $(OUTDIR)\buy.obj \
         $(OUTDIR)\statstrt.obj \
@@ -157,6 +158,9 @@ $(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
 
 $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
+
+$(OUTDIR)\stb_vorbis.obj : $(SOURCEDIR)\stb_vorbis.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) -DSTB_VORBIS_NO_PUSHDATA_API /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<

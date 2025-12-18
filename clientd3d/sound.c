@@ -91,6 +91,7 @@ void Sound_RegisterAmbientFilenameWithCategory(const char *filename, int categor
 				// shift down
 				for (int j = i; j < prev_ambient_count - 1; j++)
 					prev_ambients[j] = prev_ambients[j+1];
+				prev_ambients[prev_ambient_count - 1].name = NULL;
 				prev_ambient_count--;
 				i--;
 			}
@@ -109,14 +110,15 @@ void Sound_EndAmbientTransition(void)
 {
 	if (!ambient_cleanup_pending)
 		return;
+
 	for (int i = 0; i < prev_ambient_count; i++)
 	{
 		if (prev_ambients[i].name)
 			Audio_StopSourcesForFilename(prev_ambients[i].name);
 	}
 
+	// Only clear prev_ambients - keep curr_ambients so they become prev on next transition!
 	free_ambient_list_entries(prev_ambients, &prev_ambient_count);
-	free_ambient_list_entries(curr_ambients, &curr_ambient_count);
 	ambient_cleanup_pending = FALSE;
 }
 
@@ -132,6 +134,7 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 {
 	char pathbuf[MAX_PATH];
 	bool played = false;
+	const char *actual_path = NULL;  // Track which path was actually used
 
 	(void)hwnd; /* callback window unused for OpenAL path */
 
@@ -146,16 +149,31 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 		snprintf(pathbuf, MAX_PATH, "%s\\%s", sound_dir, fname);
 		debug(("PlayWaveFile: trying %s\n", pathbuf));
 		played = SoundPlayWave(pathbuf, volume, flags, src_row, src_col, radius, max_vol);
-		if (!played)
+		if (played)
+		{
+			actual_path = pathbuf;
+		}
+		else
 		{
 			debug(("PlayWaveFile: trying %s\n", fname));
 			played = SoundPlayWave(fname, volume, flags, src_row, src_col, radius, max_vol);
+			if (played)
+				actual_path = fname;
 		}
 	}
 	else
 	{
 		debug(("PlayWaveFile: trying %s\n", fname));
 		played = SoundPlayWave(fname, volume, flags, src_row, src_col, radius, max_vol);
+		if (played)
+			actual_path = fname;
+	}
+
+	/* If this is a looping ambient and it played, register the actual path used
+	   so Audio_StopSourcesForFilename can find it in the buffer cache. */
+	if (played && (flags & SF_LOOP) && actual_path)
+	{
+		Sound_RegisterAmbientFilename(actual_path);
 	}
 
 	return played ? 0 : 1;
@@ -182,12 +200,7 @@ M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int
 
 	debug(("PlayWaveRsc: rsc=%d -> %s\n", rsc, name));
 
-	/* Forward to PlayWaveFile which will try both name and resource-prefixed path */
-	/* If this is a looping ambient, register it for ambient tracking. */
-	if (flags & SF_LOOP)
-	{
-		Sound_RegisterAmbientFilename(name);
-	}
+	/* Forward to PlayWaveFile which handles path resolution and ambient tracking */
 	PlayWaveFile(hMain, name, volume, flags, row, col, radius, max_vol);
 }
 

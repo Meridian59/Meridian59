@@ -52,7 +52,6 @@ static char INIBrowser[]     = "Browser";
 static char INIDefaultBrowser[] = "DefaultBrowser";
 static char INIVersion[]     = "INIVersion";
 static char INILastPass[]    = "Sentinel";
-static char INISoundLibrary[] = "SoundLibrary";
 static char INICacheBalance[] = "CacheBalance";
 static char INIObjectCacheMin[] = "ObjectCacheMin";
 static char INIGridCacheMin[] = "GridCacheMin";
@@ -265,12 +264,10 @@ void ConfigLoad(void)
    config.CacheBalance   = GetConfigInt(misc_section, INICacheBalance,        70, ini_file);
    config.ObjectCacheMin = GetConfigInt(misc_section, INIObjectCacheMin, 6000000, ini_file);
    config.GridCacheMin = GetConfigInt(misc_section, INIGridCacheMin,   4000000, ini_file);
+   config.soundLibrary = 0; /* Reserved for struct layout compatibility */
 
    if( config.CacheBalance < 10 ) config.CacheBalance = 10 ;
    if( config.CacheBalance > 90 ) config.CacheBalance = 90 ;
-
-   config.soundLibrary = GetConfigInt(misc_section, INISoundLibrary, LIBRARY_MSS, ini_file);
-   config.use_openal = true;  // Use OpenAL by default
 
 #ifdef NODPRINTFS
    config.debug    = false;

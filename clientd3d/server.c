@@ -1262,6 +1262,10 @@ bool HandlePlayWave(char *ptr,long len)
    return true;
 }
 /********************************************************************/
+/*
+ * HandlePlayMidi: Legacy server protocol handler for BP_PLAY_MIDI.
+ * Kept for backward compatibility with server; forwards to PlayMusicRsc.
+ */
 bool HandlePlayMidi(char *ptr,long len)
 {
    ID rsc;

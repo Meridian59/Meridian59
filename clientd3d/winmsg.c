@@ -131,13 +131,8 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hRichEditLib = LoadLibrary("riched32.dll");
 	InitCommonControls();
 	
+	AudioInit(hwnd);
 	MusicInitialize();
-	
-	// Initialize OpenAL early if enabled, so music can play during offline state
-	if (config.use_openal)
-	{
-		AudioInit(hwnd);
-	}
 	
 	SetMainCursor(LoadCursor(NULL, IDC_ARROW));
 	

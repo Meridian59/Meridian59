@@ -312,6 +312,8 @@ void MusicStop(void)
       return;
 
    alSourceStop(g_musicSource);
+   // Detach buffer from source before any future buffer deletion
+   alSourcei(g_musicSource, AL_BUFFER, 0);
    g_musicPlaying = false;
 }
 

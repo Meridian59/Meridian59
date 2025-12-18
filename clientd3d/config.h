@@ -90,9 +90,8 @@ typedef struct {
    bool colorcodes;
    int lastPasswordChange;
 
-   int soundLibrary;
-   bool use_openal;            // Use OpenAL Soft instead of MSS/wavemix
-   bool rosterbmps;         // unused, should be removed
+   int soundLibrary;             /* Reserved for struct layout compatibility */
+   bool rosterbmps;              /* Reserved for struct layout compatibility */
    int CacheBalance;			 /* controls the balance between the object and grid caches */
    int ObjectCacheMin;			 /* minimum size of the object cache */
    int GridCacheMin;			 /* minimum size of the grid cache */
@@ -148,9 +147,5 @@ void ConfigSetSocketPortByNumber(int num);
 
 // Is this the Steam version of the client?  (e.g. this has its own update system)
 bool IsSteamVersion();
-  
-#define LIBRARY_NIL 0
-#define LIBRARY_MSS 1
-#define LIBRARY_MIX 2
 
 #endif /* #ifndef _CONFIG_H */

@@ -1,9 +1,8 @@
 // Meridian 59
 /*
- * music.c:  Music playback (OGG/WAV only).
+ * music.c:  Music playback via OpenAL Soft (OGG/WAV).
  *
- * Background music is played via the OpenAL engine. Legacy MIDI/MP3
- * extensions are mapped to .ogg for compatibility. Keep this file C++.
+ * MIDI/MP3 file extensions are mapped to .ogg for compatibility.
  */
 
 #include "client.h"
@@ -19,6 +18,7 @@ static char music_dir[] = "resource";   /* Directory for music files */
 static bool playing_music = false;  /* Is a music file currently playing as background? */
 static ID bg_music = 0;     /* Resource id of background music file; 0 if none */
 static ID latest_music = 0; /* Most recent music resource id */
+static char current_music_file[MAX_PATH] = ""; /* Filename of currently playing music */
 
 enum {SOUND_MUSIC};
 
@@ -39,6 +39,10 @@ void MusicClose(void)
 }
 
 /******************************************************************************/
+/*
+ * PlayMidiFile: Legacy compatibility shim for server protocol BP_PLAY_MIDI.
+ * Maps .mid/.midi/.mp3 extensions to .ogg and plays via OpenAL.
+ */
 DWORD PlayMidiFile(HWND hWndNotify, char *fname)
 {
    (void)hWndNotify;
@@ -51,10 +55,10 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
    if (MusicPlay(lower.c_str(), TRUE))
    {
       playing_music = true;
-      debug(("PlayMidiFile: OpenAL playing %s\n", lower.c_str()));
+      debug(("PlayMidiFile (legacy compat): OpenAL playing %s\n", lower.c_str()));
       return 0;
    }
-   debug(("PlayMidiFile: failed to play %s\n", lower.c_str()));
+   debug(("PlayMidiFile (legacy compat): failed to play %s\n", lower.c_str()));
    return 1;
 }
 
@@ -111,6 +115,9 @@ static void PlayMusicFileInternal(const char *fname)
 }
 
 /******************************************************************************/
+/*
+ * PlayMidiRsc: Legacy compatibility shim. Forwards to PlayMusicRsc.
+ */
 void PlayMidiRsc(ID rsc)
 {
    PlayMusicRsc(rsc);
@@ -119,6 +126,9 @@ void PlayMidiRsc(ID rsc)
 /******************************************************************************/
 void PlayMusicRsc(ID rsc)
 {
+   char *filename;
+   char fname[MAX_PATH + FILENAME_MAX];
+
    debug(("PlayMusicRsc %d\n", rsc));
    /* Begin ambient transition: mark current ambients so newly-started
       ambients for the new room can be registered and protected. */
@@ -131,6 +141,7 @@ void PlayMusicRsc(ID rsc)
       playing_music = false;
       bg_music = 0;
       latest_music = 0;
+      current_music_file[0] = '\0';
       return;
    }
 
@@ -140,11 +151,29 @@ void PlayMusicRsc(ID rsc)
    if (!config.play_music)
       return;
 
+   // Look up the filename for this resource
+   if ((filename = LookupNameRsc(rsc)) == NULL)
+      return;
+
+   snprintf(fname, sizeof(fname), "%s\\%.*s", music_dir, FILENAME_MAX, filename);
+
+   // Check if this is the same music file already playing (by filename, not resource ID)
+   // Different rooms may use different resource IDs for the same music file
+   if (playing_music && _stricmp(current_music_file, fname) == 0)
+   {
+      debug(("PlayMusicRsc: same music file already playing (%s), not restarting\n", fname));
+      return;
+   }
+
    // Stop current background music; ambient sounds remain unaffected here.
    MusicStop();
    playing_music = false;
 
-   NewMusic(SOUND_MUSIC, rsc);
+   // Store the new music filename before playing
+   strncpy(current_music_file, fname, sizeof(current_music_file) - 1);
+   current_music_file[sizeof(current_music_file) - 1] = '\0';
+
+   PlayMusicFile(hMain, fname);
 }
 
 /******************************************************************************/
@@ -159,6 +188,7 @@ void NewMusic(WPARAM type, ID rsc)
    {
       MusicStop();
       playing_music = false;
+      current_music_file[0] = '\0';
       return;
    }
 
@@ -167,6 +197,21 @@ void NewMusic(WPARAM type, ID rsc)
 
    latest_music = rsc;
    snprintf(fname, sizeof(fname), "%s\\%.*s", music_dir, FILENAME_MAX, filename);
+
+   // Check if the same music file is already playing
+   if (playing_music && _stricmp(current_music_file, fname) == 0)
+   {
+      debug(("NewMusic: same music file already playing (%s), not restarting\n", fname));
+      return;
+   }
+
+   // Stop current music before playing new one
+   MusicStop();
+   playing_music = false;
+
+   // Store the new music filename before playing
+   strncpy(current_music_file, fname, sizeof(current_music_file) - 1);
+   current_music_file[sizeof(current_music_file) - 1] = '\0';
 
    PlayMusicFile(hMain, fname);
 }

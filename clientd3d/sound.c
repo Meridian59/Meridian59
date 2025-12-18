@@ -1,5 +1,4 @@
-// Meridian 59 sound.c - minimal OpenAL-compatible stubs
-// Replaces legacy wavemix/MSS code with safe no-op implementations
+// Meridian 59 sound.c - sound effects via OpenAL Soft
 
 #include "client.h"
 
@@ -192,7 +191,7 @@ M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int
 	PlayWaveFile(hMain, name, volume, flags, row, col, radius, max_vol);
 }
 
-/* PlayMidiRsc and PlayMusicRsc implemented in music.c */
+/* PlayMidiRsc (legacy shim) and PlayMusicRsc implemented in music.c */
 
 M59EXPORT void SoundAbort(void)
 {

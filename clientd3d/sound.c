@@ -3,10 +3,10 @@
 #include "client.h"
 
 static char sound_dir[] = "resource";   /* Directory for sound files */
-static BOOL wave_open = FALSE;
+static bool wave_open = false;
 
 /* Ambient tracking for room transitions */
-#define MAX_AMBIENTS 256
+static const int MAX_AMBIENTS = 256;
 struct AmbientEntry {
 	char *name;
 	int category;
@@ -16,7 +16,7 @@ static AmbientEntry prev_ambients[MAX_AMBIENTS];
 static int prev_ambient_count = 0;
 static AmbientEntry curr_ambients[MAX_AMBIENTS];
 static int curr_ambient_count = 0;
-static BOOL ambient_cleanup_pending = FALSE;
+static bool ambient_cleanup_pending = false;
 
 // Forward to audio layer helper
 void Audio_StopSourcesForFilename(const char* filename);
@@ -46,7 +46,7 @@ void Sound_BeginAmbientTransition(void)
 	prev_ambient_count = curr_ambient_count;
 	// clear current
 	free_ambient_list_entries(curr_ambients, &curr_ambient_count);
-	ambient_cleanup_pending = TRUE;
+	ambient_cleanup_pending = true;
 }
 
 /* Register a looping ambient filename as active for the new room. */
@@ -119,13 +119,13 @@ void Sound_EndAmbientTransition(void)
 
 	// Only clear prev_ambients - keep curr_ambients so they become prev on next transition!
 	free_ambient_list_entries(prev_ambients, &prev_ambient_count);
-	ambient_cleanup_pending = FALSE;
+	ambient_cleanup_pending = false;
 }
 
 void SoundInitialize(void)
 {
 	/* Initialize audio backend here if desired. For now, mark closed. */
-	wave_open = FALSE;
+	wave_open = false;
 }
 
 M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,

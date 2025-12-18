@@ -21,11 +21,6 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
                                      BYTE flags, int src_row, int src_col, int radius,
                                      int max_vol);
 
-/* SoundDone is invoked via the MM_WOM_DONE message; with OpenAL this is
-   effectively a no-op. The third parameter comes from the window message
-   LPARAM, so use `LPARAM` here to match call sites. */
-void SoundDone(HWND hwnd, int iChannel, LPARAM lpWave);
-
 M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol);
 M59EXPORT void PlayMidiRsc(ID rsc);
 M59EXPORT void PlayMusicRsc(ID rsc);

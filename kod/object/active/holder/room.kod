@@ -256,7 +256,7 @@ properties:
    piClimate = CLIMATE_TEMPERATE
    
    % Chance for a mountain climate to turn local rain to snow.
-   piMountain_snow_chance = 40
+   piMountain_snow_chance = 60
 
    % For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    %  resources
@@ -296,11 +296,18 @@ messages:
       ptDispose = CreateTimer(self,@DisposeTimer,iDelay);
       piRoom_flags = viPermanent_flags;
 	  
+	  % If outdoor factor is zero, it's safe to say it's completely indoors.
 	  if piOutside_factor = 0
 	  {
 	     pbPrecipitation_enabled = false;
 	  }
 
+      % Automatically set the climate to tropical if it's on Ko'catan.
+      if (piRoom_num >= RID_KOCATAN) and (piRoom_num <= RID_KOCATAN_END)
+      {
+         piClimate = CLIMATE_TROPICAL;
+      }
+	  
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
 
@@ -1502,7 +1509,7 @@ messages:
       }
       if iDayPhase = WEATHER_DAY AND iWeather <> WEATHER_CLEAR 
       {
-         prBackground = background_kocatan_afternoon_sky;
+         prBackground = background_afternoon_cloudy_sky;
       }
 
       if iDayPhase = WEATHER_DUSK AND iWeather = WEATHER_CLEAR 
@@ -1511,7 +1518,7 @@ messages:
       }
       if iDayPhase = WEATHER_DUSK AND iWeather <> WEATHER_CLEAR 
       {
-         prBackground = background_kocatan_evening_sky;
+         prBackground = background_evening_cloudy_sky;
       }
 
       if iDayPhase = WEATHER_DAWN AND iWeather = WEATHER_CLEAR
@@ -1520,7 +1527,7 @@ messages:
       }
       if iDayPhase = WEATHER_DAWN AND iWeather <> WEATHER_CLEAR
       {
-         prBackground = background_kocatan_morning_sky;
+         prBackground = background_morning_cloudy_sky;
       }
 
       if iDayPhase = WEATHER_NIGHT AND iWeather = WEATHER_CLEAR 
@@ -1529,7 +1536,7 @@ messages:
       }
       if iDayPhase = WEATHER_NIGHT AND iWeather <> WEATHER_CLEAR 
       {
-         prBackground = background_kocatan_night_sky;
+         prBackground = background_night_cloudy_sky;
       }
 	  
       return;
@@ -1603,7 +1610,7 @@ messages:
       }
 
       Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=iWeather);
-	  Send(self,@SetRoomWeather,#iWeather=iWeather);
+	  Send(self,@SetRoomWeather,#what=iWeather);
       Send(self,@RecalculateDirectionalLight);
 
       Send(self,@AmbientLightChanged);
@@ -1621,13 +1628,13 @@ messages:
 	  % First, adjust new weather based on the climate.
 	  newWeather = what;
 	  
-	  % Tropical rooms like Ko'catan doesn't get snow.
+	  % Tropical areas like Ko'catan doesn't get snow.
 	  if piClimate = CLIMATE_TROPICAL AND newWeather = WEATHER_SNOW
 	  {
          newWeather = WEATHER_RAIN;
 	  }
 	  
-	  % Mountain areas have a chance to pour snow instead of rain.
+	  % Each mountain area has a chance to snow instead of rain.
 	  if piClimate = CLIMATE_MOUNTAIN AND newWeather = WEATHER_RAIN
 	  {
          if Random(1,100) <= piMountain_snow_chance
@@ -1657,23 +1664,26 @@ messages:
    {
 	  local i,each_obj,newEffect;
 	  
-	  pbPrecipitation_enabled = what;
-	  if pbPrecipitation_enabled = true
+	  if pbPrecipitation_enabled <> what
 	  {
-	     newEffect = Send(self, @GetWeatherEffect, #what=piWeather_type);
-	  }
-	  else
-	  {
-	     newEffect = EFFECT_CLEARWEATHER;
-	  }
+	     pbPrecipitation_enabled = what;
+	     if pbPrecipitation_enabled = true
+	     {
+	        newEffect = Send(self, @GetWeatherEffect, #what=piWeather_type);
+	     }
+	     else
+	     {
+	        newEffect = EFFECT_CLEARWEATHER;
+	     }
 		 
-	  for i in plActive
-	  {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&Player)
-         {
-			Send(each_obj,@EffectSendUser,#what=each_obj,#effect=newEffect);
-         }
+	     for i in plActive
+	     {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&Player)
+            {
+		   	Send(each_obj,@EffectSendUser,#what=each_obj,#effect=newEffect);
+            }
+	     }
 	  }
 	  return;
    }

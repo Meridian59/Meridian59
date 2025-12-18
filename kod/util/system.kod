@@ -284,9 +284,9 @@ properties:
    piDayPhase = WEATHER_DAY
    piCurrent_weather = WEATHER_CLEAR
    
-   % Default precipitation is rain whenever it gets stormy.
-   % Admins can change it to snow for winter seasons.
-   piMain_precipitation = WEATHER_RAIN
+   % Seasons affect what weather happens in different climates.
+   % For now, it's just used to apply rain to every room.
+   piSeason = WEATHER_RAIN
 
    % This sets the hourly intervals within a day for checking if the weather
    % should change.  Setting this to 0 turns off the hourly checks, while
@@ -296,7 +296,7 @@ properties:
    % Percentage chance to shift weather based on the current weather.
    piClearToCloudy = 20
    piCloudyToClear = 30
-   piCloudyToStormy = 30
+   piCloudyToStormy = 40
    piStormyToCloudy = 75
 
    poLibrary = $
@@ -1107,7 +1107,7 @@ messages:
    SetHour(num = $)
    {
       piHour = num mod 24;
-      Send(self,@NewGameHour);
+      Send(self,@NewGameHour,#bTimeAdjusted=true);
       return;
    }
 
@@ -3542,26 +3542,31 @@ messages:
    "Used by DMs to directly set the global weather."
    {
       local i;
-   
-      piCurrent_weather = what;
-	  for i in plRooms
-      {
-         Send(i,@RecalcLightAndWeather);
-      }
+      
+	  if piCurrent_weather <> what
+	  {
+         piCurrent_weather = what;
+	     for i in plRooms
+         {
+            Send(i,@RecalcLightAndWeather);
+         }
+	  }
       return;
    }
    
-   SetMainPrecipitation(what=$)
-   "Used by DMs to directly set the weather."
+   SetSeason(what=$)
+   "Used by DMs to set global season. For now it only uses rain/snow."
    {
-      local i;
+	  local i;
 	  
-	  piMain_precipitation = what;
-	  for i in plRooms
-      {
-         Send(i,@RecalcLightAndWeather);
-      }
-
+	  if piSeason <> what
+	  {
+	     piSeason = what;
+		 for i in plRooms
+         {
+            Send(i,@RecalcLightAndWeather);
+         }
+	  }
 	  return;
    }
 
@@ -3591,49 +3596,53 @@ messages:
    RecalcWeatherConditions()
    "Determines randomly if the weather shifts, based on the current weather."
    {
-	  if piCurrent_weather = WEATHER_CLEAR
+	  local randomResult;
+	  randomResult = Random(1,100);
+	  
+	  if piCurrent_weather = WEATHER_CLEAR AND randomResult <= piClearToCloudy
 	  {
-	        if Random(1,100) <= piClearToCloudy
-			{
-			      piCurrent_weather = WEATHER_CLOUDY;
-			}
-	  }  
-	  if piCurrent_weather = WEATHER_CLOUDY
+         piCurrent_weather = WEATHER_CLOUDY;
+		 return;
+	  }
+
+	  if piCurrent_weather = WEATHER_CLOUDY 
+	                          AND randomResult < piCloudyToClear
 	  {
-			if Random(1,100) < piCloudyToClear
-			{
-			      piCurrent_weather = WEATHER_CLEAR;
-			}
-			else
-			{
-				  if Random(1,100) < (piCloudyToClear + piCloudyToStormy)
-			      {
-			            piCurrent_weather = piMain_precipitation;
-			      }
-			}
-	  }	   
+		piCurrent_weather = WEATHER_CLEAR;
+		return;
+      }
+	  else
+	  {
+         if piCurrent_weather = WEATHER_CLOUDY 
+		                         AND randomResult < (piCloudyToClear + piCloudyToStormy)
+         {
+	        piCurrent_weather = piSeason;
+			return;
+		 }
+      }
+
 	  if piCurrent_weather = WEATHER_RAIN OR piCurrent_weather = WEATHER_SNOW
 	  {
-	        if Random(1,100) <= piStormyToCloudy
-			{
-			      piCurrent_weather = WEATHER_CLOUDY;
-			}
-	  }	  
-	  
+	     if randomResult <= piStormyToCloudy
+		 {
+			piCurrent_weather = WEATHER_CLOUDY;
+         }
+	  }
 	  return;
    }
 
-   NewGameHour()
+   NewGameHour(bTimeAdjusted=false)
    "Recalculates the light and weather, based on piHour"
    {
       local i,iLight_hour;
 
-      % Weather is recalculated at hourly intervals every day.
-	  if piWeatherInterval > 0 AND piWeatherInterval <= 24
+      % Weather is recalculated at hourly intervals every day. If the time
+	  % was manually adjusted with SetHour(), then we ignore this recalculation.
+	  if piWeatherInterval > 0 AND piWeatherInterval <= 24 AND bTimeAdjusted = false
 	  {
 	     if (piHour mod piWeatherInterval) = 0
 	     {
-	        Send(self,@RecalcWeatherConditions);
+			Send(self,@RecalcWeatherConditions);
          }
 	  }
 

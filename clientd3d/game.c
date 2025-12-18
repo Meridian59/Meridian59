@@ -403,9 +403,9 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
 
    ModuleEvent(EVENT_USERCHANGED);
 
-   /* Finalize ambient transition: stop any previous-room ambients that were
-      not re-registered during room loading. */
-   Sound_EndAmbientTransition();
+   /* Finalize looping sound transition: stop any previous-room looping sounds
+      that were not re-registered during room loading. */
+   Sound_EndLoopingSoundTransition();
 }
 /************************************************************************/
 void TurnObject(ID object_id, WORD angle)

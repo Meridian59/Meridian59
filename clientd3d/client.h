@@ -81,8 +81,6 @@ extern bool is_foreground;   // True when program is in the foreground
 
 /* This list of include files is good for precompiled headers */
 
-#define HANDLE_MM_WOM_DONE(hwnd, wParam, lParam, fn) \
-    ((fn)((hwnd), (int)(wParam), (lParam)), 0L)
 #define MAX_VOLUME 50
    
 #define VOLUME_CUTOFF_DISTANCE 16
@@ -102,6 +100,8 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include <stdlib.h>
 #include <crtdbg.h>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 #ifdef M59_RETAIL
   // Minidump reporting

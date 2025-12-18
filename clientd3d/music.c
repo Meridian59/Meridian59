@@ -130,9 +130,9 @@ void PlayMusicRsc(ID rsc)
    char fname[MAX_PATH + FILENAME_MAX];
 
    debug(("PlayMusicRsc %d\n", rsc));
-   /* Begin ambient transition: mark current ambients so newly-started
-      ambients for the new room can be registered and protected. */
-   Sound_BeginAmbientTransition();
+   /* Begin looping sound transition: mark current looping sounds so newly-started
+      sounds for the new room can be registered and protected. */
+   Sound_BeginLoopingSoundTransition();
 
    if (rsc == 0)
    {
@@ -156,6 +156,18 @@ void PlayMusicRsc(ID rsc)
       return;
 
    snprintf(fname, sizeof(fname), "%s\\%.*s", music_dir, FILENAME_MAX, filename);
+
+   // Apply legacy extension conversion (.mid/.midi/.mp3 -> .ogg)
+   std::string fname_str(fname);
+   std::string lower = fname_str;
+   std::transform(lower.begin(), lower.end(), lower.begin(),
+                  [](unsigned char c){ return std::tolower(c); });
+   if (std::regex_search(lower, std::regex("\\.(mid|midi|mp3)$")))
+   {
+      fname_str = std::regex_replace(lower, std::regex("\\.(mid|midi|mp3)$"), ".ogg");
+      strncpy(fname, fname_str.c_str(), sizeof(fname) - 1);
+      fname[sizeof(fname) - 1] = '\0';
+   }
 
    // Check if this is the same music file already playing (by filename, not resource ID)
    // Different rooms may use different resource IDs for the same music file

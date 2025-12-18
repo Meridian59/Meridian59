@@ -5,121 +5,67 @@
 static char sound_dir[] = "resource";   /* Directory for sound files */
 static bool wave_open = false;
 
-/* Ambient tracking for room transitions */
-static const int MAX_AMBIENTS = 256;
-struct AmbientEntry {
-	char *name;
-	int category;
-};
-
-static AmbientEntry prev_ambients[MAX_AMBIENTS];
-static int prev_ambient_count = 0;
-static AmbientEntry curr_ambients[MAX_AMBIENTS];
-static int curr_ambient_count = 0;
-static bool ambient_cleanup_pending = false;
+/* Looping sound tracking for room transitions */
+static std::vector<std::string> prev_looping;
+static std::vector<std::string> curr_looping;
+static bool looping_cleanup_pending = false;
 
 // Forward to audio layer helper
 void Audio_StopSourcesForFilename(const char* filename);
 
-static void free_ambient_list_entries(AmbientEntry *list, int *count)
+// Case-insensitive string comparison helper
+static bool iequals(const std::string &a, const std::string &b)
 {
-	for (int i = 0; i < *count; i++)
-	{
-		free(list[i].name);
-		list[i].name = NULL;
-		list[i].category = 0;
-	}
-	*count = 0;
+	return _stricmp(a.c_str(), b.c_str()) == 0;
 }
 
-/* Mark current looping ambients for cleanup; newly registered ambients
-   will be recorded in curr_ambients and protected from cleanup. */
-void Sound_BeginAmbientTransition(void)
+/* Mark current looping sounds for cleanup; newly registered sounds
+   will be recorded in curr_looping and protected from cleanup. */
+void Sound_BeginLoopingSoundTransition(void)
 {
-	// move current (curr) into prev
-	free_ambient_list_entries(prev_ambients, &prev_ambient_count);
-	for (int i = 0; i < curr_ambient_count && i < MAX_AMBIENTS; i++)
-	{
-		prev_ambients[i].name = _strdup(curr_ambients[i].name);
-		prev_ambients[i].category = curr_ambients[i].category;
-	}
-	prev_ambient_count = curr_ambient_count;
-	// clear current
-	free_ambient_list_entries(curr_ambients, &curr_ambient_count);
-	ambient_cleanup_pending = true;
+	// move current into prev
+	prev_looping = std::move(curr_looping);
+	curr_looping.clear();
+	looping_cleanup_pending = true;
 }
 
-/* Register a looping ambient filename as active for the new room. */
-static int infer_category_from_name(const char *name)
+/* Register a looping sound filename as active for the new room. */
+void Sound_RegisterLoopingSound(const std::string &filename)
 {
-	if (!name) return SOUND_CAT_ATMOS;
-	char lower[MAX_PATH];
-	strncpy_s(lower, MAX_PATH, name, _TRUNCATE);
-	_strlwr_s(lower, MAX_PATH);
-	// Basic heuristics
-	if (strstr(lower, "fountain") || strstr(lower, "water") || strstr(lower, "flow") || strstr(lower, "gurgle"))
-		return SOUND_CAT_STEADY;
-	return SOUND_CAT_ATMOS;
-}
-
-void Sound_RegisterAmbientFilenameWithCategory(const char *filename, int category)
-{
-	if (!filename || filename[0] == '\0')
+	if (filename.empty())
 		return;
 
 	// add to curr if not present
-	for (int i = 0; i < curr_ambient_count; i++)
+	for (const auto &s : curr_looping)
 	{
-		if (_stricmp(curr_ambients[i].name, filename) == 0)
+		if (iequals(s, filename))
 			return;
 	}
-	if (curr_ambient_count < MAX_AMBIENTS)
-	{
-		curr_ambients[curr_ambient_count].name = _strdup(filename);
-		curr_ambients[curr_ambient_count].category = category;
-		curr_ambient_count++;
-	}
+	curr_looping.push_back(filename);
 
 	// If cleanup pending, remove this filename from prev list so it won't be stopped
-	if (ambient_cleanup_pending)
+	if (looping_cleanup_pending)
 	{
-		for (int i = 0; i < prev_ambient_count; i++)
-		{
-			if (_stricmp(prev_ambients[i].name, filename) == 0)
-			{
-				free(prev_ambients[i].name);
-				// shift down
-				for (int j = i; j < prev_ambient_count - 1; j++)
-					prev_ambients[j] = prev_ambients[j+1];
-				prev_ambients[prev_ambient_count - 1].name = NULL;
-				prev_ambient_count--;
-				i--;
-			}
-		}
+		auto it = std::remove_if(prev_looping.begin(), prev_looping.end(),
+			[&filename](const std::string &s) { return iequals(s, filename); });
+		prev_looping.erase(it, prev_looping.end());
 	}
 }
 
-void Sound_RegisterAmbientFilename(const char *filename)
+/* Stop any looping sounds that remain in prev (not re-registered) */
+void Sound_EndLoopingSoundTransition(void)
 {
-	int cat = infer_category_from_name(filename);
-	Sound_RegisterAmbientFilenameWithCategory(filename, cat);
-}
-
-/* Stop any ambients that remain in prev_ambients (not re-registered) */
-void Sound_EndAmbientTransition(void)
-{
-	if (!ambient_cleanup_pending)
+	if (!looping_cleanup_pending)
 		return;
 
-	for (int i = 0; i < prev_ambient_count; i++)
+	for (const auto &s : prev_looping)
 	{
-		if (prev_ambients[i].name)
-			Audio_StopSourcesForFilename(prev_ambients[i].name);
+		Audio_StopSourcesForFilename(s.c_str());
 	}
 
-	// Only clear prev_ambients - keep curr_ambients so they become prev on next transition!
-	free_ambient_list_entries(prev_ambients, &prev_ambient_count);
-	ambient_cleanup_pending = false;
+	// Only clear prev - keep curr so they become prev on next transition
+	prev_looping.clear();
+	looping_cleanup_pending = false;
 }
 
 void SoundInitialize(void)
@@ -169,11 +115,11 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 			actual_path = fname;
 	}
 
-	/* If this is a looping ambient and it played, register the actual path used
+	/* If this is a looping sound and it played, register the actual path used
 	   so Audio_StopSourcesForFilename can find it in the buffer cache. */
 	if (played && (flags & SF_LOOP) && actual_path)
 	{
-		Sound_RegisterAmbientFilename(actual_path);
+		Sound_RegisterLoopingSound(actual_path);
 	}
 
 	return played ? 0 : 1;

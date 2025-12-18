@@ -36,13 +36,13 @@ M59EXPORT void PlayMusicRsc(ID rsc);
     `Sound_EndAmbientTransition()` to stop any ambients that were present
     previously but not re-registered.
  */
-typedef enum {
+enum SoundCategory {
       SOUND_CAT_ACTION = 0,  // one-shot action sounds
       SOUND_CAT_MUSIC,       // background music (OGG)
       SOUND_CAT_STEADY,      // steady sounds like fountains
       SOUND_CAT_ATMOS,       // atmospheric sounds like birds
       SOUND_CAT_UI           // UI/global FX
-} SoundCategory;
+};
 
 void Sound_BeginAmbientTransition(void);
 void Sound_RegisterAmbientFilenameWithCategory(const char *filename, SoundCategory cat);

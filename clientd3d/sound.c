@@ -7,10 +7,10 @@ static BOOL wave_open = FALSE;
 
 /* Ambient tracking for room transitions */
 #define MAX_AMBIENTS 256
-typedef struct {
+struct AmbientEntry {
 	char *name;
 	int category;
-} AmbientEntry;
+};
 
 static AmbientEntry prev_ambients[MAX_AMBIENTS];
 static int prev_ambient_count = 0;

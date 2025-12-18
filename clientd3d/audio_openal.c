@@ -35,10 +35,10 @@ static int g_numBuffers = 0;
 static bool g_initialized = false;
 
 // Buffer cache for loaded WAV files
-typedef struct {
+struct BufferCacheEntry {
    char filename[MAX_PATH];
    ALuint buffer;
-} BufferCacheEntry;
+};
 
 static BufferCacheEntry g_bufferCache[MAX_AUDIO_BUFFERS];
 static int g_cacheCount = 0;

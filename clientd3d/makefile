@@ -7,7 +7,7 @@ SOURCEDIR = $(CLIENTDIR)
 
 # Need to put build dir in include path, because trig and palette
 # generated files are there.
-CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
+CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT -DSTB_VORBIS_NO_PUSHDATA_API
 
 # Select OpenAL library path based on target platform
 !if "$(PLATFORM)" == "x64"
@@ -158,9 +158,6 @@ $(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
 
 $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
-
-$(OUTDIR)\stb_vorbis.obj : $(SOURCEDIR)\stb_vorbis.c
-	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) -DSTB_VORBIS_NO_PUSHDATA_API /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<

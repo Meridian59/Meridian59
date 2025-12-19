@@ -39,13 +39,13 @@ void MusicClose(void)
 
 /******************************************************************************/
 /*
- * PlayMidiFile: Legacy compatibility shim for server protocol BP_PLAY_MIDI.
- * Maps .mid/.midi/.mp3 extensions to .ogg and plays via OpenAL.
+ * PlayMidiFile: Returns true if music started successfully.
+ * Legacy shim for BP_PLAY_MIDI; maps .mid/.midi/.mp3 to .ogg.
  */
-DWORD PlayMidiFile(HWND hWndNotify, char *fname)
+bool PlayMidiFile(HWND hWndNotify, char *fname)
 {
    (void)hWndNotify;
-   if (!fname) return 1;
+   if (!fname) return false;
    std::string filename(fname);
    std::string lower = filename;
    std::transform(lower.begin(), lower.end(), lower.begin(),
@@ -55,19 +55,20 @@ DWORD PlayMidiFile(HWND hWndNotify, char *fname)
    {
       playing_music = true;
       debug(("PlayMidiFile (legacy compat): OpenAL playing %s\n", lower.c_str()));
-      return 0;
+      return true;
    }
    debug(("PlayMidiFile (legacy compat): failed to play %s\n", lower.c_str()));
-   return 1;
+   return false;
 }
 
 /******************************************************************************/
-DWORD PlayMusicFile(HWND hWndNotify, const char *fname)
+// Returns true if music started successfully.
+bool PlayMusicFile(HWND hWndNotify, const char *fname)
 {
    (void)hWndNotify;
-   if (!fname) return 1;
+   if (!fname) return false;
    PlayMusicFileInternal(fname);
-   return playing_music ? 0 : 1;
+   return playing_music;
 }
 
 static void PlayMusicFileInternal(const char *fname)

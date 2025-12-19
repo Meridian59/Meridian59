@@ -11,7 +11,6 @@
  */
 
 #include "client.h"
-#include "audio_openal.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alext.h>

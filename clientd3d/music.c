@@ -11,7 +11,6 @@
 #include <cctype>
 #include <regex>
 #include <string>
-#include "audio_openal.h"
 
 static char music_dir[] = "resource";   /* Directory for music files */
 

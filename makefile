@@ -46,8 +46,6 @@ Blibarchive: Bzlib
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..\..
 
-
-
 Bcompiler:
 	echo Making $(COMMAND) in $(BLAKCOMPDIR)
 	cd $(BLAKCOMPDIR)

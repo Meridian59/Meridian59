@@ -51,7 +51,7 @@ bool PlayMidiFile(HWND hWndNotify, char *fname)
    std::transform(lower.begin(), lower.end(), lower.begin(),
                   [](unsigned char c){ return std::tolower(c); });
    lower = std::regex_replace(lower, std::regex("\\.(mid|midi|mp3)$"), ".ogg");
-   if (MusicPlay(lower.c_str(), TRUE))
+   if (MusicPlay(lower.c_str(), true))
    {
       playing_music = true;
       debug(("PlayMidiFile (legacy compat): OpenAL playing %s\n", lower.c_str()));
@@ -89,7 +89,7 @@ static void PlayMusicFileInternal(const char *fname)
    MusicStop();
 
    // Try to play the filename directly first
-   if (MusicPlay(filename.c_str(), TRUE))
+   if (MusicPlay(filename.c_str(), true))
    {
       playing_music = true;
       debug(("PlayMusicFile: OpenAL playing %s\n", filename.c_str()));
@@ -103,7 +103,7 @@ static void PlayMusicFileInternal(const char *fname)
    if (!has_path)
    {
       std::string pathbuf = std::string(music_dir) + "\\" + filename;
-      if (MusicPlay(pathbuf.c_str(), TRUE))
+      if (MusicPlay(pathbuf.c_str(), true))
       {
          playing_music = true;
          debug(("PlayMusicFile: OpenAL playing %s\n", pathbuf.c_str()));

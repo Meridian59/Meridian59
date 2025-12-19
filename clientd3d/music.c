@@ -44,7 +44,6 @@ void MusicClose(void)
  */
 bool PlayMidiFile(HWND hWndNotify, char *fname)
 {
-   (void)hWndNotify;
    if (!fname) return false;
    std::string filename(fname);
    std::string lower = filename;
@@ -65,7 +64,6 @@ bool PlayMidiFile(HWND hWndNotify, char *fname)
 // Returns true if music started successfully.
 bool PlayMusicFile(HWND hWndNotify, const char *fname)
 {
-   (void)hWndNotify;
    if (!fname) return false;
    PlayMusicFileInternal(fname);
    return playing_music;
@@ -194,8 +192,6 @@ void NewMusic(WPARAM type, ID rsc)
    char *filename;
    char fname[MAX_PATH + FILENAME_MAX];
 
-   (void)type;
-
    if (!rsc)
    {
       MusicStop();
@@ -231,7 +227,6 @@ void NewMusic(WPARAM type, ID rsc)
 /******************************************************************************/
 void MusicDone(UINT device)
 {
-   (void)device;
 }
 
 /******************************************************************************/

@@ -92,8 +92,6 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	bool played = false;
 	const char *actual_path = NULL;  // Track which path was actually used
 
-	(void)hwnd; /* callback window unused for OpenAL path */
-
 	if (!fname || fname[0] == '\0')
 		return 1;
 
@@ -167,7 +165,6 @@ M59EXPORT void SoundAbort(void)
 
 void NewSound(WPARAM type, ID rsc)
 {
-	(void)type; (void)rsc;
 }
 
 /*

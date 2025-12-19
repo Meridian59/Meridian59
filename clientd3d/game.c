@@ -313,7 +313,7 @@ void EnterNewRoom(void)
 
    DrawGridBorder();   
 
-   SoundAbort();  // Turn off looping sounds
+   SoundStopAll();  // Turn off looping sounds from previous room
 
    //	Clear any user selected target.
 	SetUserTargetID( INVALID_ID );

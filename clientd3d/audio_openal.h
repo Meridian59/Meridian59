@@ -34,7 +34,7 @@ void SoundStopAll(void);
 // Stop any playing sources that are using the given filename's buffer
 void Audio_StopSourcesForFilename(const char* filename);
 
-// Listener position update for 3D audio (called each frame)
+// Sets the listener's position and facing direction for 3D audio
 void AudioUpdateListener(float x, float y, float z, 
                          float forwardX, float forwardY, float forwardZ);
 

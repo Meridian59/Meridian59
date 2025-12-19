@@ -70,8 +70,10 @@ void Sound_EndLoopingSoundTransition(void)
 
 void SoundInitialize(void)
 {
-	/* Initialize audio backend here if desired. For now, mark closed. */
-	wave_open = false;
+	if (AudioInit(hMain))
+		wave_open = true;
+	else
+		wave_open = false;
 }
 
 /*
@@ -157,7 +159,9 @@ M59EXPORT void SoundAbort(void)
 {
 	if (wave_open)
 	{
-		/* Stop all playing sounds via OpenAL backend if implemented */
+		SoundStopAll();
+		AudioShutdown();
+		wave_open = false;
 	}
 }
 

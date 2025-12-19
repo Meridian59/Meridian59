@@ -48,7 +48,6 @@ void GameInit(void)
    KeyInit();
    DrawInitialize();
    SoundInitialize();
-   AudioInit(hMain);
    MapFileInitialize();
 
    GameSetState(GAME_INVALID);
@@ -77,7 +76,6 @@ void GameExit(void)
 
    MusicAbort();
    SoundAbort();
-   AudioShutdown();
    
    KeyClose();
    InterfaceClose();

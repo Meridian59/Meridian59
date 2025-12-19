@@ -159,6 +159,9 @@ $(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
 $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
+$(OUTDIR)\stb_vorbis.obj : $(TOPDIR)\external\stb\stb_vorbis.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
+
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<
 $(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS) /NODEFAULTLIB:libc

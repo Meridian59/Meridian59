@@ -2,7 +2,7 @@
 
 #include "client.h"
 
-static char sound_dir[] = "resource";   /* Directory for sound files */
+static const char sound_dir[] = "resource";
 static bool wave_open = false;
 
 /* Looping sound tracking for room transitions */

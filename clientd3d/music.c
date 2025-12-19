@@ -12,7 +12,7 @@
 #include <regex>
 #include <string>
 
-static char music_dir[] = "resource";   /* Directory for music files */
+static const char music_dir[] = "resource";
 
 static bool playing_music = false;  /* Is a music file currently playing as background? */
 static ID bg_music = 0;     /* Resource id of background music file; 0 if none */

@@ -37,6 +37,6 @@ void Sound_EndLoopingSoundTransition(void);
 
 M59EXPORT void SoundAbort(void);
 void NewSound(WPARAM type, ID rsc);
-void UpdateLoopingSounds( int px, int py);
+void UpdateLoopingSounds(int px, int py, int angle);
 
 #endif /* #ifndef _SOUND_H */

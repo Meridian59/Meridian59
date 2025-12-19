@@ -115,6 +115,9 @@ bool AudioInit(HWND hWnd)
    ALfloat listenerOri[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }; // forward, up
    alListenerfv(AL_ORIENTATION, listenerOri);
 
+   // Use linear distance model for predictable 3D audio falloff
+   alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+
    g_initialized = true;
    debug(("AudioInit: OpenAL initialized successfully\n"));
    
@@ -174,7 +177,10 @@ void AudioShutdown(void)
 }
 
 /*
- * LoadOGGFile: Load an OGG Vorbis file into an OpenAL buffer
+ * LoadOGGFile: Returns an OpenAL buffer ID for the decoded OGG file, or 0 on failure.
+ * Decodes an OGG Vorbis file via stb_vorbis and uploads to OpenAL.
+ * Note: OGG buffers are NOT cached because music playback deletes buffers
+ * after use. Sound effects use WAV format which is cached.
  */
 static ALuint LoadOGGFile(const char* filename)
 {
@@ -350,19 +356,22 @@ bool MusicIsPlaying(void)
 /*
  * LoadWAVFile: Load a WAV file into an OpenAL buffer
  * Returns buffer ID on success, 0 on failure
+ * Handles non-standard WAV files with extra chunks before fmt
  */
 static ALuint LoadWAVFile(const char* filename)
 {
    FILE* file;
    char chunkID[4];
-   DWORD chunkSize;
-   WORD audioFormat, numChannels, bitsPerSample;
-   DWORD sampleRate, byteRate;
-   WORD blockAlign;
+   DWORD chunkSize, riffSize;
+   WORD audioFormat = 0, numChannels = 0, bitsPerSample = 0;
+   DWORD sampleRate = 0;
    BYTE* data = NULL;
    DWORD dataSize = 0;
    ALuint buffer = 0;
    ALenum format;
+   bool foundFmt = false;
+   bool foundData = false;
+   long riffEnd;
 
    // Check cache first
    for (int i = 0; i < g_cacheCount; i++)
@@ -381,66 +390,89 @@ static ALuint LoadWAVFile(const char* filename)
    }
 
    // Read RIFF header
-   fread(chunkID, 1, 4, file);
-   if (memcmp(chunkID, "RIFF", 4) != 0)
+   if (fread(chunkID, 1, 4, file) != 4 || memcmp(chunkID, "RIFF", 4) != 0)
    {
       debug(("LoadWAVFile: Not a WAV file: %s\n", filename));
       fclose(file);
       return 0;
    }
 
-   fread(&chunkSize, 4, 1, file);
-   fread(chunkID, 1, 4, file);
-   if (memcmp(chunkID, "WAVE", 4) != 0)
+   if (fread(&riffSize, 4, 1, file) != 1)
+   {
+      debug(("LoadWAVFile: Truncated header: %s\n", filename));
+      fclose(file);
+      return 0;
+   }
+   riffEnd = 8 + riffSize;  // Position where RIFF chunk ends
+
+   if (fread(chunkID, 1, 4, file) != 4 || memcmp(chunkID, "WAVE", 4) != 0)
    {
       debug(("LoadWAVFile: Not a WAV file: %s\n", filename));
       fclose(file);
       return 0;
    }
 
-   // Read fmt chunk
-   fread(chunkID, 1, 4, file);
-   if (memcmp(chunkID, "fmt ", 4) != 0)
-   {
-      debug(("LoadWAVFile: Missing fmt chunk: %s\n", filename));
-      fclose(file);
-      return 0;
-   }
-
-   fread(&chunkSize, 4, 1, file);
-   fread(&audioFormat, 2, 1, file);
-   fread(&numChannels, 2, 1, file);
-   fread(&sampleRate, 4, 1, file);
-   fread(&byteRate, 4, 1, file);
-   fread(&blockAlign, 2, 1, file);
-   fread(&bitsPerSample, 2, 1, file);
-
-   // Skip any extra format bytes
-   if (chunkSize > 16)
-      fseek(file, chunkSize - 16, SEEK_CUR);
-
-   // Find data chunk
-   while (1)
+   // Search for fmt and data chunks
+   while (!foundData && ftell(file) < riffEnd)
    {
       if (fread(chunkID, 1, 4, file) != 4)
          break;
       if (fread(&chunkSize, 4, 1, file) != 1)
          break;
 
-      if (memcmp(chunkID, "data", 4) == 0)
+      if (memcmp(chunkID, "fmt ", 4) == 0)
       {
+         // Read format chunk
+         WORD blockAlign;
+         DWORD byteRate;
+         if (chunkSize < 16)
+         {
+            debug(("LoadWAVFile: fmt chunk too small: %s\n", filename));
+            break;
+         }
+         fread(&audioFormat, 2, 1, file);
+         fread(&numChannels, 2, 1, file);
+         fread(&sampleRate, 4, 1, file);
+         fread(&byteRate, 4, 1, file);
+         fread(&blockAlign, 2, 1, file);
+         fread(&bitsPerSample, 2, 1, file);
+         // Skip any extra format bytes
+         if (chunkSize > 16)
+            fseek(file, chunkSize - 16, SEEK_CUR);
+         foundFmt = true;
+      }
+      else if (memcmp(chunkID, "data", 4) == 0)
+      {
+         if (!foundFmt)
+         {
+            debug(("LoadWAVFile: data chunk before fmt chunk: %s\n", filename));
+            break;
+         }
          dataSize = chunkSize;
          data = (BYTE*)malloc(dataSize);
          if (data && fread(data, 1, dataSize, file) == dataSize)
-            break;
-         free(data);
-         data = NULL;
+            foundData = true;
+         else
+         {
+            free(data);
+            data = NULL;
+         }
          break;
       }
-      fseek(file, chunkSize, SEEK_CUR);
+      else
+      {
+         // Skip unknown chunk (JUNK, LIST, bext, etc.)
+         fseek(file, chunkSize, SEEK_CUR);
+      }
    }
 
    fclose(file);
+
+   if (!foundFmt)
+   {
+      debug(("LoadWAVFile: Missing fmt chunk: %s\n", filename));
+      return 0;
+   }
 
    if (!data)
    {
@@ -486,11 +518,13 @@ static ALuint LoadWAVFile(const char* filename)
 }
 
 /*
- * SoundPlayWave: Play WAV file with 3D positioning
- * Matches PlayWaveFile signature from sound.c
+ * SoundPlay: Returns true if the sound was successfully started.
+ * Plays a sound file via OpenAL with volume control, optional looping,
+ * and 3D positioning based on row/col coordinates.
+ * Supports OGG and WAV formats (tries OGG first for better quality/compression).
  */
-bool SoundPlayWave(const char* filename, int volume, BYTE flags,
-                   int src_row, int src_col, int radius, int max_vol)
+bool SoundPlay(const char* filename, int volume, BYTE flags,
+               int src_row, int src_col, int radius, int max_vol)
 {
    if (!g_initialized)
       return false;
@@ -501,8 +535,10 @@ bool SoundPlayWave(const char* filename, int volume, BYTE flags,
    if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
       return true;
 
-   // Load WAV file
-   ALuint buffer = LoadWAVFile(filename);
+   // Try loading as OGG first (better compression), then WAV as fallback
+   ALuint buffer = LoadOGGFile(filename);
+   if (buffer == 0)
+      buffer = LoadWAVFile(filename);
    if (buffer == 0)
       return false;
 
@@ -519,11 +555,8 @@ bool SoundPlayWave(const char* filename, int volume, BYTE flags,
             alGetSourcei(g_sources[i], AL_BUFFER, &sourceBuffer);
             if (sourceBuffer == (ALint)buffer)
             {
-               // Already playing this looping sound, just update volume/position
-               float gain = (float)volume / 255.0f;
-               gain *= (float)config.ambient_volume / 100.0f;
-               alSourcef(g_sources[i], AL_GAIN, gain);
-               alSource3f(g_sources[i], AL_POSITION, (float)src_col, 0.0f, (float)src_row);
+               // Already playing this looping sound - no need to restart
+               // OpenAL handles distance attenuation automatically via listener position
                return true;
             }
          }
@@ -545,7 +578,7 @@ bool SoundPlayWave(const char* filename, int volume, BYTE flags,
 
    if (sourceIndex == -1)
    {
-      debug(("SoundPlayWave: No available sources\n"));
+      debug(("SoundPlay: No available sources\n"));
       return false;
    }
 
@@ -554,37 +587,47 @@ bool SoundPlayWave(const char* filename, int volume, BYTE flags,
    // Attach buffer
    alSourcei(source, AL_BUFFER, buffer);
 
-   // Set volume (convert from 0-255 to 0.0-1.0)
-   float gain = (float)volume / 255.0f;
-   if (flags & SF_LOOP)
+   // Determine if this is a positional sound (has valid position coordinates)
+   bool isPositional = (flags & SF_LOOP) && (src_row > 0 || src_col > 0);
+
+   if (isPositional)
+   {
+      // 3D positional sound - negate X to convert game coords to OpenAL coords
+      alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
+      alSource3f(source, AL_POSITION, -(float)src_col, 0.0f, (float)src_row);
+
+      // Distance attenuation: full volume within 1 tile, silent at radius
+      alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
+      alSourcef(source, AL_MAX_DISTANCE, (float)radius);
+      alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
+
+      float gain = (float)max_vol / (float)MAX_VOLUME;
       gain *= (float)config.ambient_volume / 100.0f;
+      alSourcef(source, AL_GAIN, gain);
+
+      debug(("SoundPlay: 3D sound at (%d,%d), radius=%d, gain=%.2f\n",
+             src_col, src_row, radius, gain));
+   }
    else
-      gain *= (float)config.sound_volume / 100.0f;
-   alSourcef(source, AL_GAIN, gain);
+   {
+      // Non-positional sound: play at listener position
+      alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
+      alSource3f(source, AL_POSITION, 0.0f, 0.0f, 0.0f);
+
+      // Set volume (convert from 0-255 to 0.0-1.0 for legacy interface)
+      float gain = (float)volume / 255.0f;
+      if (flags & SF_LOOP)
+         gain *= (float)config.ambient_volume / 100.0f;
+      else
+         gain *= (float)config.sound_volume / 100.0f;
+      alSourcef(source, AL_GAIN, gain);
+
+      debug(("SoundPlay: Starting sound, gain=%.2f, loop=%d\n",
+             gain, (flags & SF_LOOP) ? 1 : 0));
+   }
 
    // Set looping
    alSourcei(source, AL_LOOPING, (flags & SF_LOOP) ? AL_TRUE : AL_FALSE);
-
-   // Set 3D position (simple for now - just use row/col as x/z)
-   if (flags & SF_LOOP)
-   {
-      // Positional sound
-      alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
-      alSource3f(source, AL_POSITION, (float)src_col, 0.0f, (float)src_row);
-      
-      // Set distance attenuation based on radius
-      if (radius > 0)
-      {
-         alSourcef(source, AL_REFERENCE_DISTANCE, (float)radius * 0.5f);
-         alSourcef(source, AL_MAX_DISTANCE, (float)radius);
-      }
-   }
-   else
-   {
-      // Non-positional (UI sound)
-      alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
-      alSource3f(source, AL_POSITION, 0.0f, 0.0f, 0.0f);
-   }
 
    // Random pitch variation if requested
    if (flags & SF_RANDOM_PITCH)
@@ -602,7 +645,7 @@ bool SoundPlayWave(const char* filename, int volume, BYTE flags,
 
    if (alGetError() != AL_NO_ERROR)
    {
-      debug(("SoundPlayWave: Failed to play\n"));
+      debug(("SoundPlay: Failed to play\n"));
       return false;
    }
 
@@ -619,10 +662,9 @@ void AudioUpdateListener(float x, float y, float z,
    if (!g_initialized)
       return;
 
-   // Update position
-   alListener3f(AL_POSITION, x, y, z);
+   // Negate X to convert game coords to OpenAL coords (left-handed to right-handed)
+   alListener3f(AL_POSITION, -x, y, z);
 
-   // Update orientation (forward + up vectors)
    ALfloat ori[] = { forwardX, forwardY, forwardZ, 0.0f, 1.0f, 0.0f };
    alListenerfv(AL_ORIENTATION, ori);
 }

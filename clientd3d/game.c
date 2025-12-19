@@ -380,6 +380,9 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
       player.y = r->motion.y;
       r->motion.z = GetFloorBase(player.x,player.y);
       player.angle = r->angle;
+
+      // Initialize the 3D audio listener position for the new room
+      UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
    }
 
    // Set z coordinates of all objects
@@ -633,9 +636,10 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
       {
 	 volume = maxvolume - (distance * maxvolume / cutoff) ;
       }
-      // debug(("Distance = %i\n",distance));
-      // debug(("Setting volume to %i.\n",volume));
+      debug(("GamePlaySound: distance=%i, cutoff=%i\n", distance, cutoff));
    }
+   debug(("GamePlaySound: volume=%i, flags=0x%02X, row=%i, col=%i\n",
+         volume, flags, src_row, src_col));
    PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
 }
 /************************************************************************/

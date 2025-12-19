@@ -23,9 +23,10 @@ void MusicStop(void);
 void MusicSetVolume(float volume); // 0.0 to 1.0
 bool MusicIsPlaying(void);
 
-// WAV sound playback (matches PlayWaveFile signature)
-bool SoundPlayWave(const char* filename, int volume, BYTE flags, 
-                   int src_row, int src_col, int radius, int max_vol);
+// Returns true if sound started successfully; supports OGG and WAV formats,
+// looping, and 3D positioning
+bool SoundPlay(const char* filename, int volume, BYTE flags, 
+               int src_row, int src_col, int radius, int max_vol);
 
 // Stop all sounds
 void SoundStopAll(void);

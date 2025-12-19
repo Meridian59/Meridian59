@@ -74,6 +74,14 @@ void SoundInitialize(void)
 	wave_open = false;
 }
 
+/*
+ * PlayWaveFile: Returns 0 on success, 1 on failure.
+ * Plays a sound effect via OpenAL with optional 3D positioning and looping.
+ * Looping sounds are automatically registered for room transition cleanup.
+ *
+ * Note: The function name is retained for legacy compatibility with external
+ * modules that import it. Supports both WAV and OGG formats.
+ */
 M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 							BYTE flags, int src_row, int src_col, int radius,
 							int max_vol)
@@ -94,7 +102,7 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	{
 		snprintf(pathbuf, MAX_PATH, "%s\\%s", sound_dir, fname);
 		debug(("PlayWaveFile: trying %s\n", pathbuf));
-		played = SoundPlayWave(pathbuf, volume, flags, src_row, src_col, radius, max_vol);
+		played = SoundPlay(pathbuf, volume, flags, src_row, src_col, radius, max_vol);
 		if (played)
 		{
 			actual_path = pathbuf;
@@ -102,7 +110,7 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 		else
 		{
 			debug(("PlayWaveFile: trying %s\n", fname));
-			played = SoundPlayWave(fname, volume, flags, src_row, src_col, radius, max_vol);
+			played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol);
 			if (played)
 				actual_path = fname;
 		}
@@ -110,7 +118,7 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	else
 	{
 		debug(("PlayWaveFile: trying %s\n", fname));
-		played = SoundPlayWave(fname, volume, flags, src_row, src_col, radius, max_vol);
+		played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol);
 		if (played)
 			actual_path = fname;
 	}
@@ -158,7 +166,19 @@ void NewSound(WPARAM type, ID rsc)
 	(void)type; (void)rsc;
 }
 
-void UpdateLoopingSounds(int px, int py)
+/*
+ * UpdateLoopingSounds: Updates 3D audio listener from player position and angle.
+ * Angle uses game units (4096 = 360 degrees, 0 = east).
+ */
+void UpdateLoopingSounds(int px, int py, int angle)
 {
-	(void)px; (void)py;
+	double radians = (double)angle * (2.0 * 3.14159265358979) / 4096.0;
+	float forwardX = (float)cos(radians);
+	float forwardZ = (float)-sin(radians);  // Negate so north faces -Z
+	
+	debug(("UpdateLoopingSounds: pos=(%d,%d), angle=%d, forward=(%.2f,%.2f)\n",
+	       px, py, angle, forwardX, forwardZ));
+	
+	// Update OpenAL listener position and orientation
+	AudioUpdateListener((float)px, 0.0f, (float)py, forwardX, 0.0f, forwardZ);
 }

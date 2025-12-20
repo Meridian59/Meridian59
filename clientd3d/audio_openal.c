@@ -185,16 +185,26 @@ void AudioShutdown(void)
 /*
  * LoadOGGFile: Returns an OpenAL buffer ID for the decoded OGG file, or 0 on failure.
  * Decodes an OGG Vorbis file via stb_vorbis and uploads to OpenAL.
- * Note: OGG buffers are NOT cached because music playback deletes buffers
- * after use. Sound effects use WAV format which is cached.
+ * When useCache is true, buffers are cached and reused (for sound effects).
+ * When useCache is false, buffers are not cached (for music, which deletes
+ * buffers after use).
  */
-static ALuint LoadOGGFile(const char* filename)
+static ALuint LoadOGGFile(const char* filename, bool useCache)
 {
    ALuint buffer = 0;
    int channels, sample_rate;
    short* decoded;
    int num_samples;
    ALenum format;
+
+   if (useCache)
+   {
+      for (int i = 0; i < g_cacheCount; i++)
+      {
+         if (_stricmp(g_bufferCache[i].filename, filename) == 0)
+            return g_bufferCache[i].buffer;
+      }
+   }
 
    debug(("LoadOGGFile: Attempting to load %s\n", filename));
 
@@ -253,6 +263,13 @@ static ALuint LoadOGGFile(const char* filename)
       return 0;
    }
 
+   if (useCache && g_cacheCount < MAX_AUDIO_BUFFERS)
+   {
+      strncpy_s(g_bufferCache[g_cacheCount].filename, MAX_PATH, filename, _TRUNCATE);
+      g_bufferCache[g_cacheCount].buffer = buffer;
+      g_cacheCount++;
+   }
+
    debug(("LoadOGGFile [OpenAL]: %s OK\n", filename));
    return buffer;
 }
@@ -295,7 +312,7 @@ bool MusicPlay(const char* filename, bool loop)
    g_musicPlaying = false;
 
    // Load OGG file (filename already includes path)
-   newBuffer = LoadOGGFile(filename);
+   newBuffer = LoadOGGFile(filename, false);
    if (newBuffer == 0)
    {
       debug(("MusicPlay: Failed to load %s\n", filename));
@@ -545,7 +562,7 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    ALuint buffer = 0;
    const char* ext = strrchr(filename, '.');
    if (ext && (_stricmp(ext, ".ogg") == 0))
-      buffer = LoadOGGFile(filename);
+      buffer = LoadOGGFile(filename, true);
    else
       buffer = LoadWAVFile(filename);
    if (buffer == 0)

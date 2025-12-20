@@ -383,19 +383,6 @@ bool MusicIsPlaying(void)
  */
 static ALuint LoadWAVFile(const char* filename)
 {
-   FILE* file;
-   char chunkID[4];
-   DWORD chunkSize, riffSize;
-   WORD audioFormat = 0, numChannels = 0, bitsPerSample = 0;
-   DWORD sampleRate = 0;
-   BYTE* data = NULL;
-   DWORD dataSize = 0;
-   ALuint buffer = 0;
-   ALenum format;
-   bool foundFmt = false;
-   bool foundData = false;
-   long riffEnd;
-
    // Check cache first
    for (int i = 0; i < g_cacheCount; i++)
    {
@@ -406,6 +393,7 @@ static ALuint LoadWAVFile(const char* filename)
    }
 
    // Open file
+   FILE* file;
    if (fopen_s(&file, filename, "rb") != 0 || file == NULL)
    {
       debug(("LoadWAVFile: Cannot open %s\n", filename));
@@ -413,6 +401,7 @@ static ALuint LoadWAVFile(const char* filename)
    }
 
    // Read RIFF header
+   char chunkID[4];
    if (fread(chunkID, 1, 4, file) != 4 || memcmp(chunkID, "RIFF", 4) != 0)
    {
       debug(("LoadWAVFile: Not a WAV file: %s\n", filename));
@@ -420,13 +409,14 @@ static ALuint LoadWAVFile(const char* filename)
       return 0;
    }
 
+   DWORD riffSize;
    if (fread(&riffSize, 4, 1, file) != 1)
    {
       debug(("LoadWAVFile: Truncated header: %s\n", filename));
       fclose(file);
       return 0;
    }
-   riffEnd = 8 + riffSize;  // Position where RIFF chunk ends
+   long riffEnd = 8 + riffSize;  // Position where RIFF chunk ends
 
    if (fread(chunkID, 1, 4, file) != 4 || memcmp(chunkID, "WAVE", 4) != 0)
    {
@@ -436,8 +426,16 @@ static ALuint LoadWAVFile(const char* filename)
    }
 
    // Search for fmt and data chunks
+   // These are set inside the loop but used after it exits
+   WORD audioFormat = 0, numChannels = 0, bitsPerSample = 0;
+   DWORD sampleRate = 0, dataSize = 0;
+   BYTE* data = NULL;
+   bool foundFmt = false;
+   bool foundData = false;
+
    while (!foundData && ftell(file) < riffEnd)
    {
+      DWORD chunkSize;
       if (fread(chunkID, 1, 4, file) != 4)
          break;
       if (fread(&chunkSize, 4, 1, file) != 1)
@@ -445,14 +443,13 @@ static ALuint LoadWAVFile(const char* filename)
 
       if (memcmp(chunkID, "fmt ", 4) == 0)
       {
-         // Read format chunk
-         WORD blockAlign;
-         DWORD byteRate;
          if (chunkSize < 16)
          {
             debug(("LoadWAVFile: fmt chunk too small: %s\n", filename));
             break;
          }
+         WORD blockAlign;
+         DWORD byteRate;
          fread(&audioFormat, 2, 1, file);
          fread(&numChannels, 2, 1, file);
          fread(&sampleRate, 4, 1, file);
@@ -504,12 +501,14 @@ static ALuint LoadWAVFile(const char* filename)
    }
 
    // Determine OpenAL format
+   ALenum format;
    if (numChannels == 1)
       format = (bitsPerSample == 8) ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
    else
       format = (bitsPerSample == 8) ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16;
 
    // Create OpenAL buffer
+   ALuint buffer;
    alGenBuffers(1, &buffer);
    if (alGetError() != AL_NO_ERROR)
    {

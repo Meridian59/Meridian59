@@ -70,10 +70,7 @@ void Sound_EndLoopingSoundTransition(void)
 
 void SoundInitialize(void)
 {
-	if (AudioInit(hMain))
-		wave_open = true;
-	else
-		wave_open = false;
+	wave_open = AudioInit(hMain);
 }
 
 /*

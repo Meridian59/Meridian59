@@ -16,14 +16,11 @@
 
 void SoundInitialize(void);
 
-bool PlayMidiFile(HWND hWndNotify, char *fname);
 M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
                                      BYTE flags, int src_row, int src_col, int radius,
                                      int max_vol);
 
 M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol);
-M59EXPORT void PlayMidiRsc(ID rsc);
-M59EXPORT void PlayMusicRsc(ID rsc);
 
 void Sound_BeginLoopingSoundTransition(void);
 void Sound_RegisterLoopingSound(const std::string &filename);

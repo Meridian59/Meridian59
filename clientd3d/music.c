@@ -9,8 +9,10 @@
 
 #include <algorithm>
 #include <cctype>
-#include <regex>
+#include <filesystem>
 #include <string>
+
+namespace fs = std::filesystem;
 
 static const char music_dir[] = "resource";
 
@@ -23,6 +25,23 @@ enum {SOUND_MUSIC};
 
 /* local functions */
 static void PlayMusicFileInternal(const std::string& fname);
+
+/*
+ * ConvertLegacyMusicExtension: Returns path with .ogg extension if original
+ * was .mid/.midi/.mp3, otherwise returns path unchanged.
+ */
+static std::string ConvertLegacyMusicExtension(const std::string& filepath)
+{
+   fs::path p(filepath);
+   std::string ext = p.extension().string();
+   std::transform(ext.begin(), ext.end(), ext.begin(),
+                  [](unsigned char c){ return std::tolower(c); });
+   if (ext == ".mid" || ext == ".midi" || ext == ".mp3")
+   {
+      p.replace_extension(".ogg");
+   }
+   return p.string();
+}
 
 /******************************************************************************/
 void MusicInitialize(void)
@@ -45,18 +64,14 @@ void MusicClose(void)
 bool PlayMidiFile(HWND hWndNotify, char *fname)
 {
    if (!fname) return false;
-   std::string filename(fname);
-   std::string lower = filename;
-   std::transform(lower.begin(), lower.end(), lower.begin(),
-                  [](unsigned char c){ return std::tolower(c); });
-   lower = std::regex_replace(lower, std::regex("\\.(mid|midi|mp3)$"), ".ogg");
-   if (MusicPlay(lower.c_str(), true))
+   std::string filename = ConvertLegacyMusicExtension(fname);
+   if (MusicPlay(filename.c_str(), true))
    {
       playing_music = true;
-      debug(("PlayMidiFile (legacy compat): OpenAL playing %s\n", lower.c_str()));
+      debug(("PlayMidiFile (legacy compat): OpenAL playing %s\n", filename.c_str()));
       return true;
    }
-   debug(("PlayMidiFile (legacy compat): failed to play %s\n", lower.c_str()));
+   debug(("PlayMidiFile (legacy compat): failed to play %s\n", filename.c_str()));
    return false;
 }
 
@@ -71,16 +86,7 @@ bool PlayMusicFile(HWND hWndNotify, const char *fname)
 
 static void PlayMusicFileInternal(const std::string& fname)
 {
-   std::string filename = fname;
-   std::string lower = filename;
-   std::transform(lower.begin(), lower.end(), lower.begin(),
-                  [](unsigned char c){ return std::tolower(c); });
-
-   // Map legacy extensions to .ogg when appropriate
-   if (std::regex_search(lower, std::regex("\\.(mid|midi|mp3)$")))
-   {
-      filename = std::regex_replace(lower, std::regex("\\.(mid|midi|mp3)$"), ".ogg");
-   }
+   std::string filename = ConvertLegacyMusicExtension(fname);
 
    // Stop any currently playing music before attempting new track
    MusicStop();
@@ -154,17 +160,9 @@ void PlayMusicRsc(ID rsc)
 
    snprintf(fname, sizeof(fname), "%s\\%.*s", music_dir, FILENAME_MAX, filename);
 
-   // Apply legacy extension conversion (.mid/.midi/.mp3 -> .ogg)
-   std::string fname_str(fname);
-   std::string lower = fname_str;
-   std::transform(lower.begin(), lower.end(), lower.begin(),
-                  [](unsigned char c){ return std::tolower(c); });
-   if (std::regex_search(lower, std::regex("\\.(mid|midi|mp3)$")))
-   {
-      fname_str = std::regex_replace(lower, std::regex("\\.(mid|midi|mp3)$"), ".ogg");
-      strncpy(fname, fname_str.c_str(), sizeof(fname) - 1);
-      fname[sizeof(fname) - 1] = '\0';
-   }
+   std::string fname_str = ConvertLegacyMusicExtension(fname);
+   strncpy(fname, fname_str.c_str(), sizeof(fname) - 1);
+   fname[sizeof(fname) - 1] = '\0';
 
    // Check if this is the same music file already playing (by filename, not resource ID)
    // Different rooms may use different resource IDs for the same music file

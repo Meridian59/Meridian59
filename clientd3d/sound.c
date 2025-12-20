@@ -155,8 +155,7 @@ M59EXPORT void SoundAbort(void)
 	if (wave_open)
 	{
 		SoundStopAll();
-		AudioShutdown();
-		wave_open = false;
+		MusicStop();
 	}
 }
 

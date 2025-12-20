@@ -100,10 +100,7 @@ static void PlayMusicFileInternal(const std::string& fname)
    }
 
    // If that failed and filename is a bare name, try prefixed with music_dir
-   bool has_path = (filename.find('\\') != std::string::npos) ||
-                   (filename.find('/') != std::string::npos) ||
-                   (filename.find(':') != std::string::npos);
-   if (!has_path)
+   if (!fs::path(filename).has_parent_path())
    {
       std::string pathbuf = (fs::path(music_dir) / filename).string();
       if (MusicPlay(pathbuf.c_str(), true))

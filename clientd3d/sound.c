@@ -1,6 +1,7 @@
 // Meridian 59 sound.c - sound effects via OpenAL Soft
 
 #include "client.h"
+#include "drawdefs.h"
 
 static const char sound_dir[] = "resource";
 static bool wave_open = false;
@@ -169,7 +170,7 @@ void NewSound(WPARAM type, ID rsc)
  */
 void UpdateLoopingSounds(int px, int py, int angle)
 {
-	double radians = (double)angle * (2.0 * 3.14159265358979) / 4096.0;
+	float radians = DegToRad(angle);
 	float forwardX = (float)cos(radians);
 	float forwardZ = (float)-sin(radians);  // Negate so north faces -Z
 	

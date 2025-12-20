@@ -534,9 +534,12 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
       return true;
 
-   // Try loading as OGG first (better compression), then WAV as fallback
-   ALuint buffer = LoadOGGFile(filename);
-   if (buffer == 0)
+   // Dispatch to appropriate loader based on file extension
+   ALuint buffer = 0;
+   const char* ext = strrchr(filename, '.');
+   if (ext && (_stricmp(ext, ".ogg") == 0))
+      buffer = LoadOGGFile(filename);
+   else
       buffer = LoadWAVFile(filename);
    if (buffer == 0)
       return false;

@@ -17,7 +17,7 @@
 void SoundInitialize(void);
 
 bool PlayMidiFile(HWND hWndNotify, char *fname);
-M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
+M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
                                      BYTE flags, int src_row, int src_col, int radius,
                                      int max_vol);
 

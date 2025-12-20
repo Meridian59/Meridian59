@@ -77,14 +77,12 @@ void SoundInitialize(void)
 }
 
 /*
- * PlayWaveFile: Returns 0 on success, 1 on failure.
+ * PlayWaveFile: Returns true if sound started successfully, false on failure.
  * Plays a sound effect via OpenAL with optional 3D positioning and looping.
  * Looping sounds are automatically registered for room transition cleanup.
- *
- * Note: The function name is retained for legacy compatibility with external
- * modules that import it. Supports both WAV and OGG formats.
+ * Supports both WAV and OGG formats.
  */
-M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
+M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 							BYTE flags, int src_row, int src_col, int radius,
 							int max_vol)
 {
@@ -93,7 +91,7 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	const char *actual_path = NULL;  // Track which path was actually used
 
 	if (!fname || fname[0] == '\0')
-		return 1;
+		return false;
 
 	/* If name appears to be a bare filename (no path), try resource dir first
 	   to avoid noisy "cannot open" logs for the working directory lookup. */
@@ -130,7 +128,7 @@ M59EXPORT UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
 		Sound_RegisterLoopingSound(actual_path);
 	}
 
-	return played ? 0 : 1;
+	return played;
 }
 
 M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol)

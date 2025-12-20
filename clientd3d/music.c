@@ -22,7 +22,7 @@ static char current_music_file[MAX_PATH] = ""; /* Filename of currently playing 
 enum {SOUND_MUSIC};
 
 /* local functions */
-static void PlayMusicFileInternal(const char *fname);
+static void PlayMusicFileInternal(const std::string& fname);
 
 /******************************************************************************/
 void MusicInitialize(void)
@@ -69,10 +69,9 @@ bool PlayMusicFile(HWND hWndNotify, const char *fname)
    return playing_music;
 }
 
-static void PlayMusicFileInternal(const char *fname)
+static void PlayMusicFileInternal(const std::string& fname)
 {
-   if (!fname) return;
-   std::string filename(fname);
+   std::string filename = fname;
    std::string lower = filename;
    std::transform(lower.begin(), lower.end(), lower.begin(),
                   [](unsigned char c){ return std::tolower(c); });

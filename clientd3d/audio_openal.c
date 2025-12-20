@@ -686,6 +686,26 @@ void SoundStopAll(void)
 }
 
 /*
+ * SoundStopLooping: Stop only looping sounds, allowing one-shot sounds to finish.
+ * Used during room transitions to stop ambient loops while preserving normal sounds.
+ */
+void SoundStopLooping(void)
+{
+   if (!g_initialized)
+      return;
+
+   for (int i = 0; i < g_numSources; i++)
+   {
+      ALint looping;
+      alGetSourcei(g_sources[i], AL_LOOPING, &looping);
+      if (looping == AL_TRUE)
+      {
+         alSourceStop(g_sources[i]);
+      }
+   }
+}
+
+/*
  * Audio_StopSourcesForFilename: Stop any sources currently playing the
  * buffer associated with `filename` (case-insensitive match against cache).
  */

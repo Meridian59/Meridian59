@@ -28,8 +28,10 @@ bool MusicIsPlaying(void);
 bool SoundPlay(const char* filename, int volume, BYTE flags, 
                int src_row, int src_col, int radius, int max_vol);
 
-// Stop all sounds
 void SoundStopAll(void);
+
+// Stop only looping sounds
+void SoundStopLooping(void);
 
 // Stop any playing sources that are using the given filename's buffer
 void Audio_StopSourcesForFilename(const char* filename);

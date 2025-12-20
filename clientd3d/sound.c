@@ -19,8 +19,7 @@ static bool iequals(const std::string &a, const std::string &b)
 	return _stricmp(a.c_str(), b.c_str()) == 0;
 }
 
-/* Mark current looping sounds for cleanup; newly registered sounds
-   will be recorded in curr_looping and protected from cleanup. */
+/* Marks all currently tracked looping sounds for potential cleanup. */
 void Sound_BeginLoopingSoundTransition(void)
 {
 	// move current into prev
@@ -29,7 +28,7 @@ void Sound_BeginLoopingSoundTransition(void)
 	looping_cleanup_pending = true;
 }
 
-/* Register a looping sound filename as active for the new room. */
+/* Registers a looping sound as active, protecting it from cleanup. */
 void Sound_RegisterLoopingSound(const std::string &filename)
 {
 	if (filename.empty())
@@ -52,7 +51,7 @@ void Sound_RegisterLoopingSound(const std::string &filename)
 	}
 }
 
-/* Stop any looping sounds that remain in prev (not re-registered) */
+/* Stops any looping sounds that were not re-registered since the last Begin call. */
 void Sound_EndLoopingSoundTransition(void)
 {
 	if (!looping_cleanup_pending)

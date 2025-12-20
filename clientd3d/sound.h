@@ -25,12 +25,6 @@ M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int
 M59EXPORT void PlayMidiRsc(ID rsc);
 M59EXPORT void PlayMusicRsc(ID rsc);
 
-/* Looping sound transition helpers: call `Sound_BeginLoopingSoundTransition()`
-   before loading a new room. As looping sounds are started they will be
-   registered automatically. After room loading completes, call
-   `Sound_EndLoopingSoundTransition()` to stop any looping sounds from the
-   previous room that were not re-registered for the new room.
- */
 void Sound_BeginLoopingSoundTransition(void);
 void Sound_RegisterLoopingSound(const std::string &filename);
 void Sound_EndLoopingSoundTransition(void);

@@ -23,8 +23,7 @@ static bool iequals(const std::string &a, const std::string &b)
 /* Marks all currently tracked looping sounds for potential cleanup. */
 void Sound_BeginLoopingSoundTransition(void)
 {
-	// move current into prev
-	prev_looping = std::move(curr_looping);
+	prev_looping = curr_looping;
 	curr_looping.clear();
 	looping_cleanup_pending = true;
 }

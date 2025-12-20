@@ -81,10 +81,10 @@ resources:
    iceperson_koc_name_rsc = "atzmoch"
    iceperson_name_rsc = "ice creature"
    iceperson_icon_rsc = iceper_torso.bgf
-   iceperson_desc_rsc = "Frost clings to every inch of the crystalline figure,"
-      " its jagged limbs glimmering in the pale light.  The air around it crackles"
-      " with an icy stillness, not born of malice but of a resolve to protect"
-      " something greater."
+   iceperson_desc_rsc = "This is a creature made completely from frozen water! Frost"
+      " clings to every inch of the crystalline figure, its jagged limbs glimmering in"
+      " the pale light. The air around it crackles with an icy stillness, not born of"
+      " malice but of a resolve to protect something greater."
 
    iceperson_rightarm = iceper_rightarm.bgf
    iceperson_feet = iceper_feet.bgf
@@ -111,7 +111,7 @@ classvars:
 
    viTreasure_type = TID_ICE_PERSON
    
-   viSpeed = SPEED_AVERAGE
+   viSpeed = SPEED_SLOW
    viAttack_type = ATCK_WEAP_PIERCE
    viAttack_spell = ATCK_SPELL_COLD
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER |  AI_MOVE_FLEE_FRIGHTENERS |  AI_MOVE_REGROUP
@@ -125,13 +125,13 @@ classvars:
    vrSound_aware = iceperson_sound_aware
    vrSound_death = iceperson_sound_death
 
-   viDead_drawfx = DRAWFX_TRANSLUCENT_75
+   % viDead_drawfx = DRAWFX_TRANSLUCENT_25
 
 properties:
 
    pbThrow = FALSE
 
-   piDrawFX = DRAWFX_TRANSLUCENT_75
+   % piDrawFX = DRAWFX_TRANSLUCENT_25
 
    prWeaponOverlay = $
 

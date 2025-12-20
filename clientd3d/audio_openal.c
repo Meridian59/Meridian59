@@ -149,7 +149,14 @@ void AudioShutdown(void)
       g_numSources = 0;
    }
 
-   // Delete buffers
+   // Delete cached WAV buffers
+   for (int i = 0; i < g_cacheCount; i++)
+   {
+      alDeleteBuffers(1, &g_bufferCache[i].buffer);
+   }
+   g_cacheCount = 0;
+
+   // Delete pre-allocated buffers (if any were used)
    if (g_numBuffers > 0)
    {
       alDeleteBuffers(g_numBuffers, g_buffers);

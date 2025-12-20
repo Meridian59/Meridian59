@@ -76,7 +76,11 @@ bool PlayMidiFile(HWND hWndNotify, char *fname)
 }
 
 /******************************************************************************/
-// Returns true if music started successfully.
+/*
+ * PlayMusicFile: Returns true if the new music file started playing, false if
+ * it failed to load or play. Note: any previously playing music is stopped
+ * before attempting to load the new file, regardless of success or failure.
+ */
 bool PlayMusicFile(HWND hWndNotify, const char *fname)
 {
    if (!fname) return false;

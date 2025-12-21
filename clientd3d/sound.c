@@ -144,8 +144,6 @@ M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int
 	PlayWaveFile(hMain, name, volume, flags, row, col, radius, max_vol);
 }
 
-/* PlayMidiRsc (legacy shim) and PlayMusicRsc implemented in music.c */
-
 M59EXPORT void SoundAbort(void)
 {
 	if (wave_open)

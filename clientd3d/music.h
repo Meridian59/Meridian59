@@ -18,7 +18,6 @@ void MusicClose(void);
 /* Legacy compatibility shims for old protocol */
 bool PlayMidiFile(HWND hWndNotify, char *fname);
 M59EXPORT bool PlayMusicFile(HWND hWndNotify, const char *fname);
-M59EXPORT void PlayMidiRsc(ID rsc);  /* Legacy: forwards to PlayMusicRsc */
 M59EXPORT void PlayMusicRsc(ID rsc);
 
 void MusicDone(UINT device);

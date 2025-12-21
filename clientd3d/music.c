@@ -117,15 +117,6 @@ static void PlayMusicFileInternal(const std::string& fname)
 }
 
 /******************************************************************************/
-/*
- * PlayMidiRsc: Legacy compatibility shim. Forwards to PlayMusicRsc.
- */
-void PlayMidiRsc(ID rsc)
-{
-   PlayMusicRsc(rsc);
-}
-
-/******************************************************************************/
 void PlayMusicRsc(ID rsc)
 {
    char *filename;

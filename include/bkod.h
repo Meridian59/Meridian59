@@ -178,6 +178,7 @@ enum
    ISOBJECT = 161,
 
    RANDOM = 201,
+   SENDWEBHOOK = 202,
 };
 
 enum

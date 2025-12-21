@@ -27,7 +27,7 @@ int num_sessions;
 
 int transmitted_bytes; /* keep a tab on bandwidth use */
 
-CRITICAL_SECTION csSessions; /* need to add/remove or search through list of sessions */
+Mutex mutex_sessions; /* need to add/remove or search through list of sessions */
 
 /* local function prototypes */
 session_node *AllocateSession(void);
@@ -78,7 +78,7 @@ void InitSession()
 		FatalError("sizeof(resync_data) must be <= SESSION_STATE_BYTES");
 
 
-	InitializeCriticalSection(&csSessions);
+	mutex_sessions = MutexCreate();
 }
 
 int GetEpoch()
@@ -105,12 +105,12 @@ void ResetTransmittedBytes()
 
 void EnterSessionLock(void)
 {
-	EnterCriticalSection(&csSessions);
+	MutexAcquire(mutex_sessions);
 }
 
 void LeaveSessionLock(void)
 {
-	LeaveCriticalSection(&csSessions);
+	MutexRelease(mutex_sessions);
 }
 
 
@@ -202,20 +202,6 @@ void ForEachSession(void (*callback_func)(session_node *s))
 		if (sessions[i].connected)
 			callback_func(&sessions[i]);
 }
-/*
-int GetUsedSessions()
-{
-int i,used;
-
-  used = 0;
-
-	for (i=1;i<num_sessions;i++)
-	if (sessions[i].connected)
-	used++;
-
-	  return used;
-	  }
-*/
 
 const char * GetStateName(session_node *s)
 {
@@ -464,12 +450,12 @@ void CloseSession(int session_id)
 		}
 
 		if (!MutexClose(s->muxSend))
-			eprintf("CloseSession error (%s) closing send mutex %i in session %i\n",
-			GetLastErrorStr(),s->muxSend,s->session_id);
+			eprintf("CloseSession error (%s) closing send mutex %p in session %i\n",
+              GetLastErrorStr(), (void *) s->muxSend,s->session_id);
 
 		if (!MutexClose(s->muxReceive))
-			eprintf("CloseSession error (%s) closing receive mutex %i in session %i\n",
-			GetLastErrorStr(),s->muxReceive,s->session_id);
+			eprintf("CloseSession error (%s) closing receive mutex %p in session %i\n",
+              GetLastErrorStr(), (void *) s->muxReceive,s->session_id);
 
 		CloseConnection(s->conn);
 	}

@@ -78,9 +78,9 @@ void RunMainLoop(void)
    }
 }
 
-char * GetLastErrorStr()
+const char * GetLastErrorStr()
 {
-	char *error_str;
+	const char *error_str;
 	
 	error_str = "No error string"; /* in case the call  fails */
 	
@@ -88,41 +88,4 @@ char * GetLastErrorStr()
 		NULL,GetLastError(),MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US),
 		(LPTSTR) &error_str,0,NULL);
 	return error_str;
-}
-
-bool FindMatchingFiles(const char *path, const char *extension, std::vector<std::string> *files)
-{
-	HANDLE hFindFile;
-	WIN32_FIND_DATA search_data;
-	
-	std::string path_spec(path);
-	path_spec.append("\\*");
-	path_spec.append(extension);
-	files->clear();
-	hFindFile = FindFirstFile(path_spec.c_str(), &search_data);
-	if (hFindFile == INVALID_HANDLE_VALUE)
-		return false;
-   
-	do
-	{
-		files->push_back(search_data.cFileName);
-	} while (FindNextFile(hFindFile,&search_data));
-	FindClose(hFindFile);
-	
-	return true;
-}
-
-bool BlakMoveFile(const char *source, const char *dest)
-{
-   if (!CopyFile(source,dest,FALSE))
-   {
-      eprintf("BlakMoveFile error moving %s to %s (%s)\n",source,dest,GetLastErrorStr());
-      return false;
-   }
-   if (!DeleteFile(source))
-   {
-      eprintf("BlakMoveFile error deleting %s (%s)\n",source,GetLastErrorStr());
-      return false;
-   }
-   return true;
 }

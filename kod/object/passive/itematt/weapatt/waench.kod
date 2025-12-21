@@ -36,7 +36,7 @@ constants:
 resources:
    
    waEnchant_gone = "Your %s suddenly seems a little more... ordinary."
-   waEnchanted = " This weapon has been dedicated to Kraanan's glory."
+   waEnchanted = "This weapon has been dedicated to Kraanan's glory."
    waEnchanted_name = "enchanted %s"
    enchanted_dm = "enchanted"
 

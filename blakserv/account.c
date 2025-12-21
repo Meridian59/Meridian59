@@ -302,7 +302,7 @@ bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
 
    if (suspend_time < 0)
    {
-      eprintf("SuspendAccountAbsolute: invalid suspend time %lld; ignored\n",suspend_time);
+      eprintf("SuspendAccountAbsolute: invalid suspend time %" PRId64 "; ignored\n",suspend_time);
       return false;
    }
 
@@ -334,7 +334,7 @@ bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)
    a->suspend_time = suspend_time;
 
    lprintf("Suspended account %i (%s) until %s\n",
-           a->account_id, a->name, TimeStr(suspend_time));
+           a->account_id, a->name, TimeStr(suspend_time).c_str());
 
    s = GetSessionByAccount(a);
    if (s != NULL)
@@ -481,7 +481,7 @@ void DeleteAccountAndAssociatedUsersByID(int account_id)
    }
 
    lprintf("Attempting delete of account %i (%s) (last login %s)\n",
-           account_id, a->name, TimeStr(a->last_login_time));
+           account_id, a->name, TimeStr(a->last_login_time).c_str());
 
    ForEachUserByAccountID(AdminDeleteEachUserObject,account_id);
    

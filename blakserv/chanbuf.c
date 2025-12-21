@@ -27,20 +27,20 @@ channel_buffer_node channel_buffers[MAX_BUFFERS];
 int head_buffer;
 int tail_buffer;
 
-CRITICAL_SECTION csChannel_buffers; /* protects all the variables above */
+Mutex mutex_channel_buffers; /* protects all the variables above */
 
 void InitChannelBuffer()
 {
    head_buffer = 0;
    tail_buffer = 0;
-   InitializeCriticalSection(&csChannel_buffers);
+   mutex_channel_buffers = MutexCreate();
 }
 
 void WriteChannelBuffer(int channel_id,char *s)
 {
    const char *str = s;
 
-   EnterCriticalSection(&csChannel_buffers);
+   MutexAcquire(mutex_channel_buffers);
 
    if (((head_buffer+1) % MAX_BUFFERS) != tail_buffer)
    {
@@ -58,7 +58,7 @@ void WriteChannelBuffer(int channel_id,char *s)
 
       head_buffer = (head_buffer+1) % MAX_BUFFERS;
    }
-   LeaveCriticalSection(&csChannel_buffers);
+   MutexRelease(mutex_channel_buffers);
 
    InterfaceUpdateChannel();
 }
@@ -68,9 +68,9 @@ bool IsNewChannelText()
 {
    bool is_new;
 
-   EnterCriticalSection(&csChannel_buffers);
+   MutexAcquire(mutex_channel_buffers);
    is_new = (head_buffer != tail_buffer);
-   LeaveCriticalSection(&csChannel_buffers);
+   MutexRelease(mutex_channel_buffers);
    
    return is_new;
 }
@@ -81,7 +81,7 @@ bool IsNewChannelText()
 /* this is executed in the interface thread */
 channel_buffer_node * GetChannelBuffer()
 {
-   EnterCriticalSection(&csChannel_buffers);
+   MutexAcquire(mutex_channel_buffers);
 
    return &channel_buffers[tail_buffer];
 }
@@ -91,6 +91,6 @@ void DoneChannelBuffer()
 {
    tail_buffer = (tail_buffer+1) % MAX_BUFFERS;
 
-   LeaveCriticalSection(&csChannel_buffers);
+   MutexRelease(mutex_channel_buffers);
 }
 

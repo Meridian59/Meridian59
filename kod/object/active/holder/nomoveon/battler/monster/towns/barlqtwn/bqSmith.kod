@@ -45,7 +45,7 @@ properties:
    
 messages:
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(what,@CanBeGiventoNPC) and 
          (Send(Self,@IsObjectWearable,#what=what) OR

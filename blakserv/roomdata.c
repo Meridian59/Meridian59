@@ -149,7 +149,7 @@ bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    
    if (debug)
       dprintf("room %i, from row %i, col %i to row %i, col %i\n",
-	      r,from_row,from_col,to_row,to_col);
+              (int) r->roomdata_id,from_row,from_col,to_row,to_col);
    if (!bad_to &&
        (r->file_info.flags[to_row][to_col] & ROOM_FLAG_WALKABLE) == 0)
    {
@@ -271,7 +271,7 @@ bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    
    if (debug)
       dprintf("room %i, from row %i, col %i to row %i, col %i\n",
-	      r,from_row,from_col,to_row,to_col);
+              (int) r->roomdata_id,from_row,from_col,to_row,to_col);
    if (!bad_to &&
        (r->file_info.flags[to_row][to_col] & ROOM_FLAG_WALKABLE) == 0)
    {
@@ -320,7 +320,7 @@ bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    if (r->file_info.monster_grid == NULL)
    {
 	   bprintf("CanMoveInRoomFine has no monster grid for %i\n",
-			   r->roomdata_id);
+             (int) r->roomdata_id);
 	   return true;
    }
    /* one of these cases WILL be true */

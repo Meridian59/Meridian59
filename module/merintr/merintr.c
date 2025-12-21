@@ -355,7 +355,7 @@ typedef struct action_label
 {
 	char	label[32];
 	int		action;
-	void	*data;
+	const void *data;
 } action_label;
 
 static ascii_key	gAsciiKeyMap[] =

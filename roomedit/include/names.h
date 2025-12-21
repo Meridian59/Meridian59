@@ -77,15 +77,15 @@
 */
 
 /* from names.cpp */
-char *GetObjectTypeName (SHORT objtype);
-char *GetObjectsTypeName (SHORT objtype);
-char *GetEditModeName (SHORT objtype);
-char *GetLineDefTypeName (SHORT type);
-char *GetLineDefTypeLongName (SHORT type);
-char *GetLineDefFlagsName (int flags);
-char *GetLineDefFlagsLongName (SHORT flags);
-char *GetSectorTypeName (SHORT type);
-char *GetSectorTypeLongName (SHORT type);
+const char *GetObjectTypeName (SHORT objtype);
+const char *GetObjectsTypeName (SHORT objtype);
+const char *GetEditModeName (SHORT objtype);
+const char *GetLineDefTypeName (SHORT type);
+const char *GetLineDefTypeLongName (SHORT type);
+const char *GetLineDefFlagsName (int flags);
+const char *GetLineDefFlagsLongName (SHORT flags);
+const char *GetSectorTypeName (SHORT type);
+const char *GetSectorTypeLongName (SHORT type);
 
 BOOL IsDoomLevelName (char *name, int doomVersion);
 BOOL IsDoom1LevelName (char *name);

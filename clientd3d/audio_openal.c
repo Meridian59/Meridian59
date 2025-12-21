@@ -16,30 +16,58 @@
 #include <AL/alext.h>
 #include <AL/efx.h>
 
+#include <functional>
+#include <list>
+#include <unordered_map>
+
 // STB Vorbis for OGG decoding (compiled separately with STB_VORBIS_NO_PUSHDATA_API)
 extern "C" int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
 
 // Configuration
 static const int MAX_AUDIO_SOURCES = 32;
-static const int MAX_AUDIO_BUFFERS = 256;
+static const int MAX_CACHED_BUFFERS = 256;
 
 // Global state
 static ALCdevice* g_device = NULL;
 static ALCcontext* g_context = NULL;
 static ALuint g_sources[MAX_AUDIO_SOURCES];
-static ALuint g_buffers[MAX_AUDIO_BUFFERS];
 static int g_numSources = 0;
-static int g_numBuffers = 0;
 static bool g_initialized = false;
 
-// Buffer cache for loaded WAV files
-struct BufferCacheEntry {
-   char filename[MAX_PATH];
+// LRU buffer cache: list ordered by recency (front = newest), map for O(1) lookup.
+struct CacheNode {
+   std::string filename;
    ALuint buffer;
 };
 
-static BufferCacheEntry g_bufferCache[MAX_AUDIO_BUFFERS];
-static int g_cacheCount = 0;
+struct CaseInsensitiveHash {
+   size_t operator()(const std::string& s) const {
+      std::string lower;
+      lower.reserve(s.size());
+      for (char c : s)
+         lower.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c))));
+      return std::hash<std::string>{}(lower);
+   }
+};
+
+// Case-insensitive equality using standard C++ locale-independent comparison
+struct CaseInsensitiveEqual {
+   bool operator()(const std::string& a, const std::string& b) const {
+      if (a.size() != b.size())
+         return false;
+      for (size_t i = 0; i < a.size(); ++i)
+      {
+         if (std::tolower(static_cast<unsigned char>(a[i])) !=
+             std::tolower(static_cast<unsigned char>(b[i])))
+            return false;
+      }
+      return true;
+   }
+};
+
+static std::list<CacheNode> g_cacheList;
+static std::unordered_map<std::string, std::list<CacheNode>::iterator,
+                          CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
 // Music state
 static ALuint g_musicSource = 0;
@@ -149,19 +177,13 @@ void AudioShutdown(void)
       g_numSources = 0;
    }
 
-   // Delete cached WAV buffers
-   for (int i = 0; i < g_cacheCount; i++)
+   // Delete all cached buffers
+   for (auto& node : g_cacheList)
    {
-      alDeleteBuffers(1, &g_bufferCache[i].buffer);
+      alDeleteBuffers(1, &node.buffer);
    }
-   g_cacheCount = 0;
-
-   // Delete pre-allocated buffers (if any were used)
-   if (g_numBuffers > 0)
-   {
-      alDeleteBuffers(g_numBuffers, g_buffers);
-      g_numBuffers = 0;
-   }
+   g_cacheList.clear();
+   g_cacheMap.clear();
 
    // Destroy context
    if (g_context)
@@ -183,13 +205,92 @@ void AudioShutdown(void)
 }
 
 /*
- * LoadOGGFile: Returns an OpenAL buffer ID for the decoded OGG file, or 0 on failure.
- * Decodes an OGG Vorbis file via stb_vorbis and uploads to OpenAL.
- * When useCache is true, buffers are cached and reused (for sound effects).
- * When useCache is false, buffers are not cached (for music, which deletes
- * buffers after use).
+ * IsBufferInUse: Returns true if the buffer is currently being played by any source.
+ * Used to prevent evicting buffers that are actively playing.
  */
-static ALuint LoadOGGFile(const char* filename, bool useCache)
+static bool IsBufferInUse(ALuint buffer)
+{
+   for (int i = 0; i < g_numSources; i++)
+   {
+      ALint state, sourceBuffer;
+      alGetSourcei(g_sources[i], AL_SOURCE_STATE, &state);
+      if (state == AL_PLAYING || state == AL_PAUSED)
+      {
+         alGetSourcei(g_sources[i], AL_BUFFER, &sourceBuffer);
+         if (sourceBuffer == (ALint)buffer)
+            return true;
+      }
+   }
+   return false;
+}
+
+/*
+ * FindCachedBuffer: Returns cached buffer ID for filename, or 0 if not cached.
+ * On cache hit, moves the entry to front of LRU list (marks as recently used).
+ */
+static ALuint FindCachedBuffer(const char* filename)
+{
+   auto it = g_cacheMap.find(filename);
+   if (it == g_cacheMap.end())
+      return 0;
+
+   // Move to front of list (mark as most recently used)
+   g_cacheList.splice(g_cacheList.begin(), g_cacheList, it->second);
+   return it->second->buffer;
+}
+
+/*
+ * CacheBuffer: Stores buffer in cache for later reuse.
+ * If cache is full, evicts the least-recently-used buffer that is not currently playing.
+ */
+static void CacheBuffer(const char* filename, ALuint buffer)
+{
+   // Don't cache if already present
+   if (g_cacheMap.find(filename) != g_cacheMap.end())
+      return;
+
+   // If cache is full, evict least-recently-used entries until we have room
+   while (g_cacheList.size() >= MAX_CACHED_BUFFERS)
+   {
+      // Find LRU entry that's not in use (search from back = oldest)
+      bool evicted = false;
+      for (auto it = g_cacheList.rbegin(); it != g_cacheList.rend(); ++it)
+      {
+         if (!IsBufferInUse(it->buffer))
+         {
+            // Delete the OpenAL buffer
+            alDeleteBuffers(1, &it->buffer);
+            debug(("CacheBuffer: evicted LRU buffer for %s\n", it->filename.c_str()));
+            
+            // Remove from map and list
+            g_cacheMap.erase(it->filename);
+            // Convert reverse iterator to forward iterator for erase
+            g_cacheList.erase(std::next(it).base());
+            evicted = true;
+            break;
+         }
+      }
+      
+      // If all buffers are in use, we can't cache this one
+      if (!evicted)
+      {
+         debug(("CacheBuffer: cache full and all buffers in use, not caching %s\n", filename));
+         return;
+      }
+   }
+
+   // Add new entry at front (most recently used)
+   g_cacheList.push_front({filename, buffer});
+   g_cacheMap[filename] = g_cacheList.begin();
+   
+   debug(("CacheBuffer: cached %s (cache size: %zu)\n", filename, g_cacheList.size()));
+}
+
+/*
+ * ParseOGGFile: Returns an OpenAL buffer ID for the decoded OGG file, or 0 on failure.
+ * Decodes an OGG Vorbis file via stb_vorbis and uploads to OpenAL.
+ */
+static ALuint ParseOGGFile(const char* filename)
 {
    ALuint buffer = 0;
    int channels, sample_rate;
@@ -197,22 +298,13 @@ static ALuint LoadOGGFile(const char* filename, bool useCache)
    int num_samples;
    ALenum format;
 
-   if (useCache)
-   {
-      for (int i = 0; i < g_cacheCount; i++)
-      {
-         if (_stricmp(g_bufferCache[i].filename, filename) == 0)
-            return g_bufferCache[i].buffer;
-      }
-   }
-
-   debug(("LoadOGGFile: Attempting to load %s\n", filename));
+   debug(("ParseOGGFile: Attempting to load %s\n", filename));
 
    // Check if file exists
    FILE* test_file = NULL;
    if (fopen_s(&test_file, filename, "rb") != 0 || !test_file)
    {
-      debug(("LoadOGGFile: File not found or cannot open: %s\n", filename));
+      debug(("ParseOGGFile: File not found or cannot open: %s\n", filename));
       return 0;
    }
    fclose(test_file);
@@ -220,15 +312,15 @@ static ALuint LoadOGGFile(const char* filename, bool useCache)
    // Decode entire OGG file
    num_samples = stb_vorbis_decode_filename(filename, &channels, &sample_rate, &decoded);
 
-   debug(("LoadOGGFile: stb_vorbis_decode_filename returned %d samples\n", num_samples));
+   debug(("ParseOGGFile: stb_vorbis_decode_filename returned %d samples\n", num_samples));
 
    if (num_samples <= 0)
    {
-      debug(("LoadOGGFile: Failed to decode %s (error code: %d)\n", filename, num_samples));
+      debug(("ParseOGGFile: Failed to decode %s (error code: %d)\n", filename, num_samples));
       return 0;
    }
 
-   debug(("LoadOGGFile: Decoded %s - %d samples, %d channels, %d Hz\n", 
+   debug(("ParseOGGFile: Decoded %s - %d samples, %d channels, %d Hz\n", 
           filename, num_samples, channels, sample_rate));
 
    // Determine OpenAL format
@@ -238,7 +330,7 @@ static ALuint LoadOGGFile(const char* filename, bool useCache)
       format = AL_FORMAT_STEREO16;
    else
    {
-      debug(("LoadOGGFile: Unsupported channel count %d\n", channels));
+      debug(("ParseOGGFile: Unsupported channel count %d\n", channels));
       free(decoded);
       return 0;
    }
@@ -247,7 +339,7 @@ static ALuint LoadOGGFile(const char* filename, bool useCache)
    alGenBuffers(1, &buffer);
    if (alGetError() != AL_NO_ERROR)
    {
-      debug(("LoadOGGFile: Failed to create buffer\n"));
+      debug(("ParseOGGFile: Failed to create buffer\n"));
       free(decoded);
       return 0;
    }
@@ -258,19 +350,12 @@ static ALuint LoadOGGFile(const char* filename, bool useCache)
 
    if (alGetError() != AL_NO_ERROR)
    {
-      debug(("LoadOGGFile: Failed to upload buffer data\n"));
+      debug(("ParseOGGFile: Failed to upload buffer data\n"));
       alDeleteBuffers(1, &buffer);
       return 0;
    }
 
-   if (useCache && g_cacheCount < MAX_AUDIO_BUFFERS)
-   {
-      strncpy_s(g_bufferCache[g_cacheCount].filename, MAX_PATH, filename, _TRUNCATE);
-      g_bufferCache[g_cacheCount].buffer = buffer;
-      g_cacheCount++;
-   }
-
-   debug(("LoadOGGFile [OpenAL]: %s OK\n", filename));
+   debug(("ParseOGGFile [OpenAL]: %s OK\n", filename));
    return buffer;
 }
 
@@ -311,8 +396,8 @@ bool MusicPlay(const char* filename, bool loop)
 
    g_musicPlaying = false;
 
-   // Load OGG file (filename already includes path)
-   newBuffer = LoadOGGFile(filename, false);
+   // Load OGG file (filename already includes path) - no caching for music
+   newBuffer = ParseOGGFile(filename);
    if (newBuffer == 0)
    {
       debug(("MusicPlay: Failed to load %s\n", filename));
@@ -342,9 +427,6 @@ bool MusicPlay(const char* filename, bool loop)
    return true;
 }
 
-/*
- * MusicStop: Stop background music
- */
 void MusicStop(void)
 {
    if (!g_initialized || !g_musicSource)
@@ -356,9 +438,6 @@ void MusicStop(void)
    g_musicPlaying = false;
 }
 
-/*
- * MusicSetVolume: Set music volume
- */
 void MusicSetVolume(float volume)
 {
    g_musicVolume = volume;
@@ -368,35 +447,22 @@ void MusicSetVolume(float volume)
    }
 }
 
-/*
- * MusicIsPlaying: Check if music is playing
- */
 bool MusicIsPlaying(void)
 {
    return g_musicPlaying;
 }
 
 /*
- * LoadWAVFile: Load a WAV file into an OpenAL buffer
- * Returns buffer ID on success, 0 on failure
- * Handles non-standard WAV files with extra chunks before fmt
+ * ParseWAVFile: Returns an OpenAL buffer ID for the loaded WAV file, or 0 on failure.
+ * Handles non-standard WAV files with extra chunks before fmt.
  */
-static ALuint LoadWAVFile(const char* filename)
+static ALuint ParseWAVFile(const char* filename)
 {
-   // Check cache first
-   for (int i = 0; i < g_cacheCount; i++)
-   {
-      if (_stricmp(g_bufferCache[i].filename, filename) == 0)
-      {
-         return g_bufferCache[i].buffer;
-      }
-   }
-
    // Open file
    FILE* file;
    if (fopen_s(&file, filename, "rb") != 0 || file == NULL)
    {
-      debug(("LoadWAVFile: Cannot open %s\n", filename));
+      debug(("ParseWAVFile: Cannot open %s\n", filename));
       return 0;
    }
 
@@ -404,7 +470,7 @@ static ALuint LoadWAVFile(const char* filename)
    char chunkID[4];
    if (fread(chunkID, 1, 4, file) != 4 || memcmp(chunkID, "RIFF", 4) != 0)
    {
-      debug(("LoadWAVFile: Not a WAV file: %s\n", filename));
+      debug(("ParseWAVFile: Not a WAV file: %s\n", filename));
       fclose(file);
       return 0;
    }
@@ -412,7 +478,7 @@ static ALuint LoadWAVFile(const char* filename)
    DWORD riffSize;
    if (fread(&riffSize, 4, 1, file) != 1)
    {
-      debug(("LoadWAVFile: Truncated header: %s\n", filename));
+      debug(("ParseWAVFile: Truncated header: %s\n", filename));
       fclose(file);
       return 0;
    }
@@ -420,7 +486,7 @@ static ALuint LoadWAVFile(const char* filename)
 
    if (fread(chunkID, 1, 4, file) != 4 || memcmp(chunkID, "WAVE", 4) != 0)
    {
-      debug(("LoadWAVFile: Not a WAV file: %s\n", filename));
+      debug(("ParseWAVFile: Not a WAV file: %s\n", filename));
       fclose(file);
       return 0;
    }
@@ -445,7 +511,7 @@ static ALuint LoadWAVFile(const char* filename)
       {
          if (chunkSize < 16)
          {
-            debug(("LoadWAVFile: fmt chunk too small: %s\n", filename));
+            debug(("ParseWAVFile: fmt chunk too small: %s\n", filename));
             break;
          }
          WORD blockAlign;
@@ -465,7 +531,7 @@ static ALuint LoadWAVFile(const char* filename)
       {
          if (!foundFmt)
          {
-            debug(("LoadWAVFile: data chunk before fmt chunk: %s\n", filename));
+            debug(("ParseWAVFile: data chunk before fmt chunk: %s\n", filename));
             break;
          }
          dataSize = chunkSize;
@@ -490,13 +556,13 @@ static ALuint LoadWAVFile(const char* filename)
 
    if (!foundFmt)
    {
-      debug(("LoadWAVFile: Missing fmt chunk: %s\n", filename));
+      debug(("ParseWAVFile: Missing fmt chunk: %s\n", filename));
       return 0;
    }
 
    if (!data)
    {
-      debug(("LoadWAVFile: No data chunk: %s\n", filename));
+      debug(("ParseWAVFile: No data chunk: %s\n", filename));
       return 0;
    }
 
@@ -512,7 +578,7 @@ static ALuint LoadWAVFile(const char* filename)
    alGenBuffers(1, &buffer);
    if (alGetError() != AL_NO_ERROR)
    {
-      debug(("LoadWAVFile: Failed to generate buffer\n"));
+      debug(("ParseWAVFile: Failed to generate buffer\n"));
       free(data);
       return 0;
    }
@@ -522,28 +588,42 @@ static ALuint LoadWAVFile(const char* filename)
 
    if (alGetError() != AL_NO_ERROR)
    {
-      debug(("LoadWAVFile: Failed to buffer data\n"));
+      debug(("ParseWAVFile: Failed to buffer data\n"));
       alDeleteBuffers(1, &buffer);
       return 0;
    }
 
-   // Add to cache
-   if (g_cacheCount < MAX_AUDIO_BUFFERS)
-   {
-      strncpy_s(g_bufferCache[g_cacheCount].filename, MAX_PATH, filename, _TRUNCATE);
-      g_bufferCache[g_cacheCount].buffer = buffer;
-      g_cacheCount++;
-   }
-
-   debug(("LoadWAVFile [OpenAL]: %s OK\n", filename));
+   debug(("ParseWAVFile [OpenAL]: %s OK\n", filename));
    return buffer;
 }
 
 /*
- * SoundPlay: Returns true if the sound was successfully started.
- * Plays a sound file via OpenAL with volume control, optional looping,
- * and 3D positioning based on row/col coordinates.
- * Supports OGG and WAV formats (tries OGG first for better quality/compression).
+ * LoadAudioBuffer: Returns an OpenAL buffer ID for the audio file, or 0 on failure.
+ * Handles caching for sound effects. Determines format from file extension.
+ */
+static ALuint LoadAudioBuffer(const char* filename)
+{
+   // Check cache first
+   ALuint buffer = FindCachedBuffer(filename);
+   if (buffer != 0)
+      return buffer;
+
+   // Parse file based on extension
+   const char* ext = strrchr(filename, '.');
+   if (ext && (_stricmp(ext, ".ogg") == 0))
+      buffer = ParseOGGFile(filename);
+   else
+      buffer = ParseWAVFile(filename);
+
+   // Cache successful loads
+   if (buffer != 0)
+      CacheBuffer(filename, buffer);
+
+   return buffer;
+}
+
+/*
+ * SoundPlay: Returns true if sound started. Supports OGG/WAV, 3D positioning, looping.
  */
 bool SoundPlay(const char* filename, int volume, BYTE flags,
                int src_row, int src_col, int radius, int max_vol)
@@ -557,13 +637,7 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
       return true;
 
-   // Dispatch to appropriate loader based on file extension
-   ALuint buffer = 0;
-   const char* ext = strrchr(filename, '.');
-   if (ext && (_stricmp(ext, ".ogg") == 0))
-      buffer = LoadOGGFile(filename, true);
-   else
-      buffer = LoadWAVFile(filename);
+   ALuint buffer = LoadAudioBuffer(filename);
    if (buffer == 0)
       return false;
 
@@ -678,8 +752,7 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
 }
 
 /*
- * AudioUpdateListener: Update listener position and orientation for 3D audio
- * Should be called each frame with player position and camera direction
+ * AudioUpdateListener: Update listener position/orientation for 3D audio.
  */
 void AudioUpdateListener(float x, float y, float z,
                          float forwardX, float forwardY, float forwardZ)
@@ -694,9 +767,6 @@ void AudioUpdateListener(float x, float y, float z,
    alListenerfv(AL_ORIENTATION, ori);
 }
 
-/*
- * SoundStopAll: Stop all playing sounds
- */
 void SoundStopAll(void)
 {
    if (!g_initialized)
@@ -709,8 +779,7 @@ void SoundStopAll(void)
 }
 
 /*
- * SoundStopLooping: Stop only looping sounds, allowing one-shot sounds to finish.
- * Used during room transitions to stop ambient loops while preserving normal sounds.
+ * SoundStopLooping: Stop looping sounds only, one-shots continue to finish.
  */
 void SoundStopLooping(void)
 {
@@ -729,24 +798,14 @@ void SoundStopLooping(void)
 }
 
 /*
- * Audio_StopSourcesForFilename: Stop any sources currently playing the
- * buffer associated with `filename` (case-insensitive match against cache).
+ * Audio_StopSourcesForFilename: Stop sources playing the given filename.
  */
 void Audio_StopSourcesForFilename(const char* filename)
 {
    if (!g_initialized || filename == NULL)
       return;
 
-   // Find buffer in cache
-   ALuint targetBuffer = 0;
-   for (int i = 0; i < g_cacheCount; i++)
-   {
-      if (_stricmp(g_bufferCache[i].filename, filename) == 0)
-      {
-         targetBuffer = g_bufferCache[i].buffer;
-         break;
-      }
-   }
+   ALuint targetBuffer = FindCachedBuffer(filename);
    if (targetBuffer == 0)
       return;
 

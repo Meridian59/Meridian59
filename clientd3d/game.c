@@ -244,7 +244,7 @@ void SetPlayerRemoteView(ID objID, int flags, int height, BYTE light)
    }
 }
 /************************************************************************/
-void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id)
+void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id, BYTE weather_effect)
 {
    char *fname;
 
@@ -263,7 +263,8 @@ void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id)
    ResetPlayerPosition();
 
    current_room.ambient_light = ambient_light;
-   current_room.bkgnd = bkgnd_id; 
+   current_room.bkgnd = bkgnd_id;
+   current_room.weather_effect = weather_effect;
 
    /* Save walls and free old room, if any */
    if (current_room.tree != NULL)
@@ -322,7 +323,7 @@ void EnterNewRoom(void)
    EnterNewRoom3D(&current_room);
 
    MapEnterRoom(&current_room);
-
+   WeatherEnterRoom(&current_room);
    LightChanged3D(player.light, current_room.ambient_light);
 
    ServerMovedPlayer();

@@ -92,10 +92,12 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 
    case EFFECT_RAINING:
 	  effects.raining = true;
+	  effects.snowing = false;
 	  RedrawAll();
 	  break;
 
    case EFFECT_SNOWING:
+	  effects.raining = false;
 	  effects.snowing = true;
 	  RedrawAll();
 	  break;
@@ -256,4 +258,43 @@ bool AnimateEffects(int dt)
    }
 
    return bRedraw;
+}
+
+/************************************************************************/
+/*
+ * WeatherEnterRoom: Checks if the room has a weather effect that differs
+ *   from the client's weather, and updates the client weather accordingly.
+ */
+void WeatherEnterRoom(room_type *room)
+{
+	int roomWeather = room->weather_effect;
+
+	if (roomWeather == WEATHER_CLEAR)
+	{
+		if (effects.raining == true)
+		{
+			effects.raining = false;
+		}
+		if (effects.snowing == true)
+		{
+			effects.snowing = false;
+		}
+		RedrawAll();
+	}	
+	
+	if (roomWeather == WEATHER_RAIN && effects.raining == false)
+	{
+		effects.raining = true;
+		effects.snowing = false;
+		RedrawAll();
+	}
+	
+	if (roomWeather == WEATHER_SNOW && effects.snowing == false)
+	{
+		effects.raining = false;
+		effects.snowing = true;
+		RedrawAll();
+	}	
+	
+	return;
 }

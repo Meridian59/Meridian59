@@ -438,6 +438,14 @@ enum {
    EFFECT_XLATOVERRIDE	= 17,  // Use this xlat at end over the whole screen
 };
 
+/* Weather codes */
+enum {
+   WEATHER_CLEAR = 1,
+   WEATHER_CLOUDY = 2,
+   WEATHER_RAIN = 3,
+   WEATHER_SNOW = 4,
+};
+
 /* Room animation action codes */
 enum {
    RA_NONE               = 0,  // Do nothing special

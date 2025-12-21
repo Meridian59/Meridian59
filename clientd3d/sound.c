@@ -20,7 +20,6 @@ static bool iequals(const std::string &a, const std::string &b)
 	return _stricmp(a.c_str(), b.c_str()) == 0;
 }
 
-/* Marks all currently tracked looping sounds for potential cleanup. */
 void Sound_BeginLoopingSoundTransition(void)
 {
 	prev_looping = curr_looping;
@@ -28,7 +27,6 @@ void Sound_BeginLoopingSoundTransition(void)
 	looping_cleanup_pending = true;
 }
 
-/* Registers a looping sound as active, protecting it from cleanup. */
 void Sound_RegisterLoopingSound(const std::string &filename)
 {
 	if (filename.empty())
@@ -51,7 +49,6 @@ void Sound_RegisterLoopingSound(const std::string &filename)
 	}
 }
 
-/* Stops any looping sounds that were not re-registered since the last Begin call. */
 void Sound_EndLoopingSoundTransition(void)
 {
 	if (!looping_cleanup_pending)

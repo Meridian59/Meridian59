@@ -22,8 +22,13 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 
 M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol);
 
+/* Marks all currently tracked looping sounds for potential cleanup. */
 void Sound_BeginLoopingSoundTransition(void);
+
+/* Registers a looping sound as active, protecting it from cleanup. */
 void Sound_RegisterLoopingSound(const std::string &filename);
+
+/* Stops any looping sounds that were not re-registered since the last Begin call. */
 void Sound_EndLoopingSoundTransition(void);
 
 M59EXPORT void SoundAbort(void);

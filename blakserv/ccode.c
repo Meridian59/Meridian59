@@ -2425,13 +2425,13 @@ blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
   
 	if (config_id.v.tag != TAG_INT)
 	{
-		bprintf("C_GetServerConfigValue can't set from non-int %i,%i\n",
+		bprintf("C_GetServerConfigValue can't set from non-int %i,%" PRId64 "\n",
 			config_id.v.tag,config_id.v.data);
 		return NIL;
 	}
 
 	if (!IsAllowedConfigID(config_id.v.data)) {
-			bprintf("C_GetServerConfigValue: Config ID %i is not allowed\n", config_id.v.data);
+			bprintf("C_GetServerConfigValue: Config ID %" PRId64 " is not allowed\n", config_id.v.data);
 			return NIL;
 	}
 
@@ -2439,7 +2439,7 @@ blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
 
 	if (cnode == NULL || cnode->config_id == INVALID_CONFIG)
 	{
-		bprintf("C_GetServerConfigValue can't find config id %i\n", config_id.v.data);
+		bprintf("C_GetServerConfigValue can't find config id %" PRId64 "\n", config_id.v.data);
 		return NIL;
 	}
 

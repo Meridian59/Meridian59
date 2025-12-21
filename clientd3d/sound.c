@@ -166,10 +166,7 @@ void UpdateLoopingSounds(int px, int py, int angle)
 	float radians = DegToRad(angle);
 	float forwardX = (float)cos(radians);
 	float forwardZ = (float)-sin(radians);  // Negate so north faces -Z
-	
-	debug(("UpdateLoopingSounds: pos=(%d,%d), angle=%d, forward=(%.2f,%.2f)\n",
-	       px, py, angle, forwardX, forwardZ));
-	
+
 	// Update OpenAL listener position and orientation
 	AudioUpdateListener((float)px, 0.0f, (float)py, forwardX, 0.0f, forwardZ);
 }

@@ -1652,8 +1652,23 @@ bool HandleLoginFailed(char *ptr, long len)
 /********************************************************************/
 bool HandleEnterGame(char *ptr, long len)
 {
-   if (len != 0)
-      return False;
+   int server_move_interval;
+
+   if (len < 4)
+      return false;
+
+   Extract(&ptr, &server_move_interval, 4);
+
+   // Sanity check to ensure move interval isn't too aggressive or invalid
+   if (server_move_interval < MINIMUM_MOVE_INTERVAL)
+   {
+      debug(("MoveInterval %i lower than minimum threshold %i.\n", server_move_interval, MINIMUM_MOVE_INTERVAL));
+      return false;
+   }
+
+   // Set the client extern variable to the server move interval
+   move_interval = server_move_interval;
+
    MainSetState(STATE_GAME);
    return true;
 }

@@ -38,7 +38,7 @@ constants:
 
 resources:
  
-   itematt_misdirection_desc = "  An illusion has been cast on this item, hiding it's true abilities."
+   itematt_misdirection_desc = "An illusion has been cast on this item, hiding it's true abilities."
    iaMisdirection_gone = "The illusion around your %s fades, and you can see it for what it truly is."
    
 classvars:

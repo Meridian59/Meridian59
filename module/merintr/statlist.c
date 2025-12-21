@@ -30,13 +30,13 @@ static int num_visible;             // # of stats visible in list box
 
 static int StatListFindItem(int num);
 static LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpellIcon );
+static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpellIcon );
 static int  StatsListGetItemHeight(void);
 static void StatsListLButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListLButtonDblClk(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListRButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
-static Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
+static bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags);
 /************************************************************************/
 /*
  * StatsListCreate:  Create stats list box, and fill it with the given stats.
@@ -161,7 +161,7 @@ LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
    switch (message)
    {
    case WM_KEYDOWN:
-      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, StatListKey) == True)
+      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, StatListKey) == true)
       	 return 0;
       break;
 
@@ -226,7 +226,7 @@ BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 				stats_area.y + lpdis->rcItem.top + StatsGetButtonBorder(), -1);
 
       /* Draw info on stat */
-	  StatsListDrawStat(lpdis, (Bool) (lpdis->itemState & ODS_SELECTED), (Bool)( StatsGetCurrentGroup() == STATS_SPELLS ) );
+	  StatsListDrawStat(lpdis, (bool) (lpdis->itemState & ODS_SELECTED), ( StatsGetCurrentGroup() == STATS_SPELLS ) );
       break;
 
    case ODA_FOCUS:
@@ -239,15 +239,14 @@ BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 /*****************************************************************************/
 /* 
  * StatsListDrawStat:  Draw info about stat in stat list box.
- *   selected is True iff the item is currently selected.
+ *   selected is true iff the item is currently selected.
  */
-void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpellIcon )
+void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpellIcon)
 {
    HFONT hOldFont;
    Statistic *s;
    char str[MAXRSCSTRING + 10];
    RECT r;
-   int lastItem = ListBox_GetCount(lpdis->hwndItem) - 1;
    RECT rcWnd;
 
    GetClientRect(lpdis->hwndItem,&rcWnd);
@@ -284,16 +283,8 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
       areaIcon.y = lpdis->rcItem.top;
       areaIcon.cx = ENCHANT_SIZE;		//xxx
       areaIcon.cy = ENCHANT_SIZE;
-      DrawObjectIcon(lpdis->hDC, s->list.icon, 0, True, &areaIcon, NULL, 0, 0, True);
+      DrawObjectIcon(lpdis->hDC, s->list.icon, 0, true, &areaIcon, NULL, 0, 0, true);
       break;
-   }
-   if (lastItem == (int)lpdis->itemID)
-   {
-      RECT rcWnd;
-      GetClientRect(lpdis->hwndItem,&rcWnd);
-      rcWnd.top = lpdis->rcItem.bottom;
-      if (rcWnd.top < rcWnd.bottom)
-	 InvalidateRect(lpdis->hwndItem,&rcWnd,TRUE);
    }
 }
 /*****************************************************************************/
@@ -467,11 +458,11 @@ void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
 /************************************************************************/
 /*
  * StatListKey:  User pressed a key on stat list box.
- *   Return True iff key should NOT be passed on to Windows for default processing.
+ *   Return true iff key should NOT be passed on to Windows for default processing.
  */
-Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
+bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 {
-   Bool held_down = (flags & 0x4000) ? True : False;  /* Is key being held down? */
+   bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    int old_top, new_top, old_pos, new_pos;
 
    UserDidSomething();
@@ -492,7 +483,7 @@ Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
      ListBox_SetCurSel(hwnd, new_pos);
      SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
-     return True;
+     return true;
 
    case VK_DOWN:
      WindowBeginUpdate(hwnd);
@@ -503,7 +494,7 @@ Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
      ListBox_SetCurSel(hwnd, new_pos);
      SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
-     return True;
+     return true;
 
    case VK_PRIOR:
      WindowBeginUpdate(hwnd);
@@ -513,7 +504,7 @@ Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
      ListBox_SetCurSel(hwnd, new_pos);
      SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
-     return True;
+     return true;
 
    case VK_NEXT:
      WindowBeginUpdate(hwnd);
@@ -523,7 +514,7 @@ Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
      ListBox_SetCurSel(hwnd, new_pos);
      SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
-     return True;
+     return true;
 
 	case VK_RETURN:	//	ajw
 		{
@@ -550,7 +541,7 @@ Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
 			}
 			SafeFree( pszLabel );
 		}
-		return True;
+		return true;
    }
 
    return StatInputKey(hwnd, key, fDown, cRepeat, flags);
@@ -558,9 +549,9 @@ Bool StatListKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
 
 /************************************************************************/
 /*
- * ShowStatsList: Added by ajw.
+ * ShowStatsList
  */
-void ShowStatsList( Bool bShow )
+void ShowStatsList(bool bShow)
 {
 	ShowWindow( hList, bShow ? SW_SHOW : SW_HIDE );
 //	StatsClearArea();

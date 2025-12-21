@@ -43,12 +43,10 @@
 
 #include <d3d9.h>
 
-typedef unsigned char Bool;
 typedef INT64 int64;
-enum {False = 0, True = 1};
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 33  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 35  /* Minor version of client program; must be in [0, 99] */
 
 #define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 
@@ -76,17 +74,12 @@ extern void GetGamePath( char *szGamePath );
 extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
 
-extern Bool is_foreground;   // True when program is in the foreground
+extern bool is_foreground;   // True when program is in the foreground
 
 // Minimum # of milliseconds between non-repeat actions
 #define KEY_NOREPEAT_INTERVAL 400
 
 /* This list of include files is good for precompiled headers */
-/* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef M59_RETAIL
   // #define to enable Miles Sound System version.  If not defined,
@@ -100,18 +93,14 @@ extern "C" {
 ((fn)((hwnd), (int)(wParam), (lParam)), 0L)
 #define MAX_VOLUME 50
 #else
+extern "C" {
 #include "wavemix.h"
+}
 #endif
    
 #define VOLUME_CUTOFF_DISTANCE 16
 
-#ifdef __cplusplus
-};
-
 #define M59EXPORT extern "C"
-#else
-#define M59EXPORT /* nothing */
-#endif
 
 // Remove debugging strings in final version
 #ifndef NODPRINTFS
@@ -120,7 +109,7 @@ extern "C" {
 #define debug(x)
 #endif
 
-M59EXPORT void _cdecl dprintf(char *fmt,...);
+M59EXPORT void _cdecl dprintf(const char *fmt,...);
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -243,6 +232,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "crc.h"
 #include "zlib.h"
 #include "signup.h"
+#include "preferences.h"
 
 // Only include externs if compiling main client
 #ifdef BLAKCLIENT

@@ -125,7 +125,7 @@ static void FreeCHK(void*ptr)
 	
 	if( p[1] != MCHK_START ) {
 		ptr = (unsigned long*)ptr - 2;
-		eprintf("possible memory underrun at 0x%lx\n",ptr);
+		eprintf("possible memory underrun at 0x%p\n", (void *) ptr);
 		
 		free( ptr ) ;
 		return;
@@ -140,7 +140,7 @@ static void FreeCHK(void*ptr)
 	/* it may have been corrupted */ 
 	if(size==0) {
 		ptr = (unsigned long*)ptr - 2;
-		eprintf("freeing zero length memory block 0x%lx\n",ptr);
+		eprintf("freeing zero length memory block 0x%p\n", (void *) ptr);
 		
 		free( ptr );
 		return ;
@@ -149,7 +149,7 @@ static void FreeCHK(void*ptr)
 	p = (unsigned long*)((unsigned char*)ptr + (size));
 	
 	if( p[0] != MCHK_END ) {
-		eprintf("possible memory overrun at 0x%lx\n",ptr);
+		eprintf("possible memory overrun at 0x%p\n", (void *) ptr);
 	}
 	
 	ptr = (unsigned long*)ptr - 2;
@@ -278,7 +278,7 @@ void * AllocateMemoryDebug(int malloc_id,size_t size,const char *filename,int li
 	{
 	/* assume channels started up if allocation error, which might not be true,
 		but if so, then there are more serious problems! */
-		eprintf("AllocateMemory couldn't allocate %i bytes (id %i)\n",size,malloc_id);
+		eprintf("AllocateMemory couldn't allocate %i bytes (id %i)\n",(int) size,malloc_id);
 		FatalError("Memory allocation failure");
 	}
 	if (InMainLoop())

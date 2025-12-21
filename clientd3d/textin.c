@@ -26,15 +26,15 @@ static keymap textin_key_table[] = {
 { VK_ESCAPE,      KEY_ANY,              A_GOTOMAIN },
 };
 
-// True when we should ignore next selection message (used to override default
+// true when we should ignore next selection message (used to override default
 // combo box behavior).
-static Bool skip_selection;       
+static bool skip_selection;       
 
 extern HPALETTE hPal;
 extern int border_index;
 
 static LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static Bool TextInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
+static bool TextInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags);
 
 static void CalculateWindowHeight(void)
 {
@@ -118,7 +118,7 @@ void TextInputResize(int xsize, int ysize, AREA view)
 }
 
 /************************************************************************/
-void TextInputSetFocus(Bool forward)
+void TextInputSetFocus(bool forward)
 {
    SetFocus(hwndInput);
    ComboBox_SetEditSel(hwndInput, 0, -1);  // select all text
@@ -149,9 +149,9 @@ void TextInputDrawBorder(void)
 /************************************************************************/
 /*
  * TextInputSetText:  Set the contents of the text input box to the given string.
- *   If focus is True, set focus to text input box.
+ *   If focus is true, set focus to text input box.
  */
-void TextInputSetText(char *text, Bool focus)
+void TextInputSetText(char *text, bool focus)
 {
    int len;
 
@@ -172,7 +172,7 @@ LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
    switch (message)
    {
    case WM_KEYDOWN:
-      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, TextInputKey) == True)
+      if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, TextInputKey) == true)
       	 return 0;
       break;
 
@@ -183,7 +183,7 @@ LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
 
    case WM_SETFOCUS:
    case WM_KILLFOCUS:
-      skip_selection = True;
+      skip_selection = true;
       TextInputDrawBorder();
       break;
 
@@ -192,7 +192,7 @@ LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       // gets the focus, or selecting (0, 0) when losing the focus.
       if (skip_selection)
       {
-	 skip_selection = False;
+	 skip_selection = false;
 	 return 0;
       }
       break;
@@ -203,15 +203,15 @@ LRESULT CALLBACK TextInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
 /************************************************************************/
 /*
  * TextInputKey:  User pressed a key on text input box.
- *   Return True iff key should NOT be passed on to Windows for default processing.
+ *   Return true iff key should NOT be passed on to Windows for default processing.
  */
-Bool TextInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
+bool TextInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 {
-   Bool held_down = (flags & 0x4000) ? True : False;  /* Is key being held down? */
+   bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    char string[MAXSAY + 1];
    int action;
    BOOL bValid;
-   void *action_data;
+   const void *action_data;
 
    if (key == VK_RETURN && !held_down)
    {
@@ -219,7 +219,7 @@ Bool TextInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
 
       ComboBox_GetText(hwndInput, string, MAXSAY + 1);
       if (string[0] == 0)
-	 return True;
+	 return true;
 
       SetFocus(hMain);
       bValid = ParseGotText(string);
@@ -245,16 +245,16 @@ Bool TextInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags)
 	 }
       }
 
-      return True;
+      return true;
    }
    
    // Check for special keys
    action = TranslateKey(key, textin_key_table, &action_data);
 
    if (action == A_NOACTION)
-      return False;
+      return false;
 
    PerformAction(action, action_data);
 
-   return True;
+   return true;
 }

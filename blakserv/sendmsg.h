@@ -85,15 +85,15 @@ void InitProfiling(void);
 void InitBkodInterpret(void);
 kod_statistics * GetKodStats(void);
 char * GetBkodPtr(void);
-Bool IsInterpreting(void);
+bool IsInterpreting(void);
 
 void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 
 blak_int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 blak_int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[]);
 int SendBlakodClassMessage(int class_id,int message_id,int num_params,parm_node parm[]);
-char *BlakodDebugInfo(void);
-char *BlakodStackInfo(void);
+std::string BlakodDebugInfo(void);
+std::string BlakodStackInfo(void);
 
 /* this function used in sendmsg.c and ccode.c, but called all the time! */
 
@@ -111,8 +111,8 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       if (GetKodStats()->debugging)
       {
 	 if (local_vars->locals[data].v.tag == TAG_INVALID)
-	    eprintf("[%s] RetrieveValue got value of local or parameter that was uninitialized (INVALID %i)\n",
-	       BlakodDebugInfo(),local_vars->locals[data].v.data);
+	    eprintf("[%s] RetrieveValue got value of local or parameter that was uninitialized (INVALID %" PRId64 ")\n",
+              BlakodDebugInfo().c_str(),local_vars->locals[data].v.data);
       }
       return *(val_type *)&local_vars->locals[data].int_val;
    }
@@ -122,15 +122,15 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       o = GetObjectByID(object_id);
       if (o == NULL)
       {
-	 eprintf("[%s] RetrieveValue can't find OBJECT %i\n",BlakodDebugInfo(),object_id);
+        eprintf("[%s] RetrieveValue can't find OBJECT %i\n",BlakodDebugInfo().c_str(),object_id);
 	 ret_val.int_val = NIL;
 	 return ret_val;
       }
       if (GetKodStats()->debugging)
       {
 	 if (o->p[data].val.v.tag == TAG_INVALID)
-	    eprintf("[%s] RetrieveValue got value of property that was uninitialized (INVALID %i)\n",
-	       BlakodDebugInfo(),local_vars->locals[data].v.data);
+	    eprintf("[%s] RetrieveValue got value of property that was uninitialized (INVALID %" PRId64 ")\n",
+              BlakodDebugInfo().c_str(),local_vars->locals[data].v.data);
       }
       return *(val_type *)&o->p[data].val.int_val; 
    }
@@ -144,7 +144,7 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       if (o == NULL)
       {
 	 eprintf("[%s] RetrieveValue class var can't find OBJECT %i\n",
-	    BlakodDebugInfo(),object_id);
+           BlakodDebugInfo().c_str(),object_id);
 	 ret_val.int_val = NIL;
 	 return ret_val;
       }
@@ -153,14 +153,14 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
       if (c == NULL)
       {
 	 eprintf("[%s] RetrieveValue can't find CLASS %i for OBJECT %i\n",
-                 BlakodDebugInfo(),o->class_id,object_id);
+           BlakodDebugInfo().c_str(),o->class_id,object_id);
 	 ret_val.int_val = NIL;
 	 return ret_val;
       }
       if (data >= c->num_vars || data < 0)
       {
-	 eprintf("[%s] RetrieveValue can't retrieve invalid class var %i in OBJECT %i CLASS %s (%i)\n",
-                 BlakodDebugInfo(),data,object_id,c->class_name,c->class_id);
+	 eprintf("[%s] RetrieveValue can't retrieve invalid class var %" PRId64 " in OBJECT %i CLASS %s (%i)\n",
+           BlakodDebugInfo().c_str(),data,object_id,c->class_name,c->class_id);
 	 ret_val.int_val = NIL;
 	 return ret_val;
       }
@@ -174,7 +174,7 @@ val_type __inline RetrieveValue(int object_id,local_var_type *local_vars,int dat
    }
 
    bprintf("[%s] RetrieveValue can't identify type %i\n",
-      BlakodDebugInfo(),data_type);
+           BlakodDebugInfo().c_str(),data_type);
 
    ret_val.int_val = NIL;
    return ret_val;

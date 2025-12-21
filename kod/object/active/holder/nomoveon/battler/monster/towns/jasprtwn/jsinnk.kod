@@ -36,11 +36,11 @@ properties:
    
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       send(self,@SetMood,#new_mood=piMood + 1);
       
-      propagate;
+      return;
    }
    
    AffectMood(what=$,why=$)

@@ -41,9 +41,6 @@ enum
 		M = 0x02
 }; /* admin mode can do vs. maintenance mode can do */
 
-#define T True
-#define F False
-
 #define MAX_ADMIN_PARM 6
 #define MAX_ADMIN_BLAK_PARM 10
 
@@ -54,7 +51,7 @@ typedef struct admin_table_struct
 	void (*admin_func)(int session_id, admin_parm_type parms[],
                       int num_blak_parm, parm_node blak_parms[]);
 	int parm_type[MAX_ADMIN_PARM];
-	Bool has_blak_parm;
+	bool has_blak_parm;
 	int permissions;
 	struct admin_table_struct *sub_table;
 	int len_sub_table;
@@ -64,14 +61,14 @@ typedef struct admin_table_struct
 
 void AdminSendBufferList(void);
 
-void aprintf(const char *fmt,...);
+void aprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
 void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
 void DoAdminCommand(char *admin_command);
 void AdminTable(int len_admin_table,admin_table_type command_table[],int session_id,
 				char *command);
-Bool AdminIsValidBlakParm(val_type check_val);
+bool AdminIsValidBlakParm(val_type check_val);
 
 void AdminHelp(int session_id,int len_command_table,admin_table_type command_table[]);
 
@@ -301,86 +298,86 @@ void AdminMark(int session_id,admin_parm_type parms[],
 
 admin_table_type admin_show_table[] =
 {
-	{ AdminShowAccount,       {R,N}, F, A|M, NULL, 0, "account",
+	{ AdminShowAccount,       {R,N}, false, A|M, NULL, 0, "account",
 	"Show one account by account id or name" },
-	{ AdminShowAccounts,      {N},   F, A, NULL, 0, "accounts",      "Show all accounts" },
-	{ AdminShowObjects,       {I,N}, F, A|M, NULL, 0, "belong",       "Show objects belonging to id" },
-	{ AdminShowCalled,        {I,N}, F, A, NULL, 0, "called",
+	{ AdminShowAccounts,      {N},   false, A, NULL, 0, "accounts",      "Show all accounts" },
+	{ AdminShowObjects,       {I,N}, false, A|M, NULL, 0, "belong",       "Show objects belonging to id" },
+	{ AdminShowCalled,        {I,N}, false, A, NULL, 0, "called",
      "Show top (int) called messages" },
-	{ AdminShowCalls,         {I,N}, F, A, NULL, 0, "calls",         "Show top (int) C call counts" },
-	{ AdminShowClass,         {S,N}, F,A|M, NULL, 0, "class",          "Show info about class" },
-	{ AdminShowTime,          {N},   F, A|M, NULL, 0, "clock",        "Show current server time" },
-	{ AdminShowConfiguration, {N},   F, A|M, NULL, 0, "configuration", "Show configuration values" },
-	{ AdminShowConstant,      {S,N}, F,A|M, NULL, 0, "constant",       "Show value of admin constant" },
-	{ AdminShowDynamicResources,{N}, F, A, NULL, 0, "dynamic",       "Show all dynamic resources" },
-	{ AdminShowExactInstances,{S,N}, F, A, NULL, 0, "exactinstances", "Show all instances of class, excluding subclasses" },
-	{ AdminShowInstances,     {S,N}, F, A, NULL, 0, "instances",     "Show all instances of class" },
-	{ AdminShowList,          {I,N}, F, A|M, NULL, 0, "list",          "Traverse & show a list" },
-	{ AdminShowListNode,      {I,N}, F, A|M, NULL, 0, "listnode",      "Show one list node by id" },
-	{ AdminShowMatches,       {S,S,S,S,S,N}, F, A, NULL, 0, "matches",     "Show all instances of class which match criteria" },
-	{ AdminShowMemory,        {N},   F, A|M, NULL, 0, "memory",        "Show system memory use" },
-	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",
+	{ AdminShowCalls,         {I,N}, false, A, NULL, 0, "calls",         "Show top (int) C call counts" },
+	{ AdminShowClass,         {S,N}, false,A|M, NULL, 0, "class",          "Show info about class" },
+	{ AdminShowTime,          {N},   false, A|M, NULL, 0, "clock",        "Show current server time" },
+	{ AdminShowConfiguration, {N},   false, A|M, NULL, 0, "configuration", "Show configuration values" },
+	{ AdminShowConstant,      {S,N}, false,A|M, NULL, 0, "constant",       "Show value of admin constant" },
+	{ AdminShowDynamicResources,{N}, false, A, NULL, 0, "dynamic",       "Show all dynamic resources" },
+	{ AdminShowExactInstances,{S,N}, false, A, NULL, 0, "exactinstances", "Show all instances of class, excluding subclasses" },
+	{ AdminShowInstances,     {S,N}, false, A, NULL, 0, "instances",     "Show all instances of class" },
+	{ AdminShowList,          {I,N}, false, A|M, NULL, 0, "list",          "Traverse & show a list" },
+	{ AdminShowListNode,      {I,N}, false, A|M, NULL, 0, "listnode",      "Show one list node by id" },
+	{ AdminShowMatches,       {S,S,S,S,S,N}, false, A, NULL, 0, "matches",     "Show all instances of class which match criteria" },
+	{ AdminShowMemory,        {N},   false, A|M, NULL, 0, "memory",        "Show system memory use" },
+	{ AdminShowMessage,       {S,S,N},false,A|M, NULL, 0, "message",
 	"Show info about class & message" },
-	{ AdminShowName,          {R,N}, F, A|M, NULL, 0, "name",          "Show object of user name" },
-	{ AdminShowObject,        {I,N}, F, A|M, NULL, 0, "object",        "Show one object by id" },
-	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",       "Show all packages loaded" },
-	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
-	{ AdminShowReferences,    {S,S,N}, F, A, NULL, 0, "references",
+	{ AdminShowName,          {R,N}, false, A|M, NULL, 0, "name",          "Show object of user name" },
+	{ AdminShowObject,        {I,N}, false, A|M, NULL, 0, "object",        "Show one object by id" },
+	{ AdminShowPackages,      {N},   false,A, NULL, 0, "packages",       "Show all packages loaded" },
+	{ AdminShowProtocol,      {N},   false, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
+	{ AdminShowReferences,    {S,S,N}, false, A, NULL, 0, "references",
 	"Show what objects or lists reference a particular data value" },
-	{ AdminShowResource,      {S,N}, F, A|M, NULL, 0, "resource",
+	{ AdminShowResource,      {S,N}, false, A|M, NULL, 0, "resource",
 	"Show a resource by resource name" },
-	{ AdminShowStatus,        {N},   F, A|M, NULL, 0, "status",        "Show system status" },
-	{ AdminShowString,        {I,N}, F, A|M, NULL, 0, "string",        "Show one string by string id" },
-	{ AdminShowSysTimers,     {N},   F, A, NULL, 0, "systimers",     "Show system timers" },
-	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "table",         "Show a hash table" },
-	{ AdminShowTimer,         {I},   F, A|M, NULL, 0, "timer",        "Show one timer by id" },
-	{ AdminShowTimers,        {N},   F, A, NULL, 0, "timers",        "Show all timers" },
-	{ AdminShowTransmitted,   {N},   F,A, NULL, 0, "transmitted",
+	{ AdminShowStatus,        {N},   false, A|M, NULL, 0, "status",        "Show system status" },
+	{ AdminShowString,        {I,N}, false, A|M, NULL, 0, "string",        "Show one string by string id" },
+	{ AdminShowSysTimers,     {N},   false, A, NULL, 0, "systimers",     "Show system timers" },
+	{ AdminShowTable,         {I,N}, false, A|M, NULL, 0, "table",         "Show a hash table" },
+	{ AdminShowTimer,         {I},   false, A|M, NULL, 0, "timer",        "Show one timer by id" },
+	{ AdminShowTimers,        {N},   false, A, NULL, 0, "timers",        "Show all timers" },
+	{ AdminShowTransmitted,   {N},   false,A, NULL, 0, "transmitted",
 	"Show # of bytes transmitted in last minute" },
-	{ AdminShowUsage,         {N},   F,A|M,NULL, 0, "usage",         "Show current usage" },
-	{ AdminShowUser,          {R,N}, F, A|M, NULL, 0, "user",          "Show one user by name or object id" },
-	{ AdminShowUsers,         {N},   F, A, NULL, 0, "users",         "Show all users" },
+	{ AdminShowUsage,         {N},   false,A|M,NULL, 0, "usage",         "Show current usage" },
+	{ AdminShowUser,          {R,N}, false, A|M, NULL, 0, "user",          "Show one user by name or object id" },
+	{ AdminShowUsers,         {N},   false, A, NULL, 0, "users",         "Show all users" },
 };
 #define LEN_ADMIN_SHOW_TABLE (sizeof(admin_show_table)/sizeof(admin_table_type))
 
 admin_table_type admin_setacco_table[] =
 {
-	{ AdminSetAccountCredits,  {I,I,N}, F, A, NULL, 0, "credits",
+	{ AdminSetAccountCredits,  {I,I,N}, false, A, NULL, 0, "credits",
 	"Set an account's number of credits--use Add Account Credit instead" },
-	{ AdminSetAccountName,     {I,R,N}, F, A|M, NULL, 0, "name",
+	{ AdminSetAccountName,     {I,R,N}, false, A|M, NULL, 0, "name",
 		"Set account name by account number and password" },
-	{ AdminSetAccountObject,   {I,I,N}, F, A|M, NULL, 0, "object",
+	{ AdminSetAccountObject,   {I,I,N}, false, A|M, NULL, 0, "object",
 	"Set an object to be the game object for an account, i.e., a character" },
-	{ AdminSetAccountPassword, {I,S,N}, F,A|M, NULL, 0, "password",
+	{ AdminSetAccountPassword, {I,S,N}, false,A|M, NULL, 0, "password",
 	"Set password by account number and password" },
 };
 #define LEN_ADMIN_SETACCO_TABLE (sizeof(admin_setacco_table)/sizeof(admin_table_type))
 
 admin_table_type admin_suspend_table[] =
 {
-	{ AdminSuspendAccount,  {I,R,N}, F, A|M, NULL, 0, "account",
+	{ AdminSuspendAccount,  {I,R,N}, false, A|M, NULL, 0, "account",
 	"Suspends account by name or id for number of hours" },
-	{ AdminSuspendUser,     {I,R,N}, F, A|M, NULL, 0, "user",
+	{ AdminSuspendUser,     {I,R,N}, false, A|M, NULL, 0, "user",
 		"Suspends account by user name for number of hours" },
 };
 #define LEN_ADMIN_SUSPEND_TABLE (sizeof(admin_suspend_table)/sizeof(admin_table_type))
 
 admin_table_type admin_unsuspend_table[] =
 {
-	{ AdminUnsuspendUser,     {R,N}, F, A|M, NULL, 0, "user",
+	{ AdminUnsuspendUser,     {R,N}, false, A|M, NULL, 0, "user",
 		"Unsuspends account by user name immediately" },
-	{ AdminUnsuspendAccount,  {R,N}, F, A|M, NULL, 0, "account",
+	{ AdminUnsuspendAccount,  {R,N}, false, A|M, NULL, 0, "account",
 	"Unsuspends account by name or id immediately" },
 };
 #define LEN_ADMIN_UNSUSPEND_TABLE (sizeof(admin_unsuspend_table)/sizeof(admin_table_type))
 
 admin_table_type admin_setcfg_table[] =
 {
-	{ AdminSetConfigBool,     {S,S,S,N}, F, A|M, NULL, 0, "boolean",
+	{ AdminSetConfigBool,     {S,S,S,N}, false, A|M, NULL, 0, "boolean",
 	"Set a modifiable boolean configuration parameter by [group], name, yes/no" },
-	{ AdminSetConfigInt,     {S,S,I,N}, F, A|M, NULL, 0, "integer",
+	{ AdminSetConfigInt,     {S,S,I,N}, false, A|M, NULL, 0, "integer",
 		"Set a modifiable integer configuration parameter by [group], name, new integer value" },
-	{ AdminSetConfigStr,      {S,S,R,N}, F, A|M, NULL, 0, "string",
+	{ AdminSetConfigStr,      {S,S,R,N}, false, A|M, NULL, 0, "string",
 	"Set a modifiable string configuration parameter by [group], name, new string value" },
 };
 #define LEN_ADMIN_SETCFG_TABLE (sizeof(admin_setcfg_table)/sizeof(admin_table_type))
@@ -388,153 +385,153 @@ admin_table_type admin_setcfg_table[] =
 admin_table_type admin_set_table[] =
 {
 	/*
-	{ AdminSetResource,   {I,R,N},     F, A, NULL, 0, "resource",
+	{ AdminSetResource,   {I,R,N},     false, A, NULL, 0, "resource",
 	"Set a dynamic resource to have a different string/filename" },
 	*/
-	{ NULL, {N}, F, A, admin_setacco_table,  LEN_ADMIN_SETACCO_TABLE, "account",
+	{ NULL, {N}, false, A, admin_setacco_table,  LEN_ADMIN_SETACCO_TABLE, "account",
 	"Account subcommand" },
-	{ AdminSetClass,      {S,S,S,S,N}, F, A|M, NULL, 0, "class", "Set classvar by name of class, name of var, and value" },
-	{ NULL, {N}, F, A, admin_setcfg_table,   LEN_ADMIN_SETCFG_TABLE,  "config",
+	{ AdminSetClass,      {S,S,S,S,N}, false, A|M, NULL, 0, "class", "Set classvar by name of class, name of var, and value" },
+	{ NULL, {N}, false, A, admin_setcfg_table,   LEN_ADMIN_SETCFG_TABLE,  "config",
 	"Config subcommand" },
-	{ AdminSetObject,     {I,S,S,S,N}, F, A|M, NULL, 0, "object", "Set object by id single property" },
+	{ AdminSetObject,     {I,S,S,S,N}, false, A|M, NULL, 0, "object", "Set object by id single property" },
 };
 #define LEN_ADMIN_SET_TABLE (sizeof(admin_set_table)/sizeof(admin_table_type))
 
 admin_table_type admin_create_table[] =
 {
-	{ AdminCreateAccount, {S,S,S,N}, F,A,NULL, 0, "account",
+	{ AdminCreateAccount, {S,S,S,N}, false,A,NULL, 0, "account",
 		"Create account by type (user/admin/dm), name, password" },
-	{ AdminCreateAdmin,   {I,N},   F, A, NULL, 0, "admin",   "Create admin object by account id" },
-	{ AdminCreateAutomated,{S,S,N},F,A|M,NULL, 0, "automated",
+	{ AdminCreateAdmin,   {I,N},   false, A, NULL, 0, "admin",   "Create admin object by account id" },
+	{ AdminCreateAutomated,{S,S,N},false,A|M,NULL, 0, "automated",
 	"Create account and user by name, password" },
-	{ AdminCreateDM,      {I,N},   F, A|M, NULL, 0, "dm",      "Create DM object by account id" },
-	{ AdminCreateListNode,{S,S,S,S,N},F, A, NULL, 0, "listnode","Create list node" },
-	{ AdminCreateObject,  {S,N},   T, A, NULL, 0, "object",  "Create object by class name and parms" },
-	{ AdminCreateResource,{R,N},   F, A, NULL, 0, "resource","Create resource string" },
-	{ AdminCreateTimer,   {I,S,I,N},F,A, NULL, 0, "timer","Create timer for obj id, message, milli" },
-	{ AdminCreateUser,    {I,N},   F, A|M, NULL, 0, "user",    "Create user object by account id" },
+	{ AdminCreateDM,      {I,N},   false, A|M, NULL, 0, "dm",      "Create DM object by account id" },
+	{ AdminCreateListNode,{S,S,S,S,N},false, A, NULL, 0, "listnode","Create list node" },
+	{ AdminCreateObject,  {S,N},   true, A, NULL, 0, "object",  "Create object by class name and parms" },
+	{ AdminCreateResource,{R,N},   false, A, NULL, 0, "resource","Create resource string" },
+	{ AdminCreateTimer,   {I,S,I,N},false,A, NULL, 0, "timer","Create timer for obj id, message, milli" },
+	{ AdminCreateUser,    {I,N},   false, A|M, NULL, 0, "user",    "Create user object by account id" },
 };
 #define LEN_ADMIN_CREATE_TABLE (sizeof(admin_create_table)/sizeof(admin_table_type))
 
 admin_table_type admin_delete_table[] =
 {
-	{ AdminDeleteAccount, {I,N}, F,A|M,NULL, 0, "account","Delete account & user by ID" },
-	{ AdminDeleteTimer,   {I,N}, F, A, NULL, 0, "timer",  "Delete timer by ID" },
-	{ AdminDeleteUser,    {I,N}, F, A|M, NULL, 0, "user",   "Delete user by object ID" },
+	{ AdminDeleteAccount, {I,N}, false,A|M,NULL, 0, "account","Delete account & user by ID" },
+	{ AdminDeleteTimer,   {I,N}, false, A, NULL, 0, "timer",  "Delete timer by ID" },
+	{ AdminDeleteUser,    {I,N}, false, A|M, NULL, 0, "user",   "Delete user by object ID" },
 };
 #define LEN_ADMIN_DELETE_TABLE (sizeof(admin_delete_table)/sizeof(admin_table_type))
 
 admin_table_type admin_send_table[] =
 {
-	{ AdminSendObject,    {I,S,N}, T, A|M, NULL, 0, "object", "Send object by ID a message" },
-	{ AdminSendUsers,     {R,N},   F, A|M, NULL, 0, "users",  "Send logged in people a system message" },
-	{ AdminSendClass,     {S,S,N}, T, A|M, NULL, 0, "class",  "Send all objects of class a message" },
+	{ AdminSendObject,    {I,S,N}, true, A|M, NULL, 0, "object", "Send object by ID a message" },
+	{ AdminSendUsers,     {R,N},   false, A|M, NULL, 0, "users",  "Send logged in people a system message" },
+	{ AdminSendClass,     {S,S,N}, true, A|M, NULL, 0, "class",  "Send all objects of class a message" },
 };
 #define LEN_ADMIN_SEND_TABLE (sizeof(admin_send_table)/sizeof(admin_table_type))
 
 admin_table_type admin_trace_table[] =
 {
-	{ AdminTraceOffMessage, {S,S,N}, F, A, NULL, 0, "off",
+	{ AdminTraceOffMessage, {S,S,N}, false, A, NULL, 0, "off",
 	"Stop tracing message by class & msg names " },
-	{ AdminTraceOnMessage,  {S,S,N}, F, A, NULL, 0, "on",  "Trace message by class & message names " },
+	{ AdminTraceOnMessage,  {S,S,N}, false, A, NULL, 0, "on",  "Trace message by class & message names " },
 };
 #define LEN_ADMIN_TRACE_TABLE (sizeof(admin_trace_table)/sizeof(admin_table_type))
 
 admin_table_type admin_add_table[] =
 {
-	{ AdminAddCredits,   {I,I,N}, F, A, NULL, 0, "credits",
+	{ AdminAddCredits,   {I,I,N}, false, A, NULL, 0, "credits",
 		"Add credits by account number and credits" },
 };
 #define LEN_ADMIN_ADD_TABLE (sizeof(admin_add_table)/sizeof(admin_table_type))
 
 admin_table_type admin_kickoff_table[] =
 {
-	{ AdminKickoffAccount, {I,N},  F, A, NULL, 0, "account", "Kick one account out of the game" },
-	{ AdminKickoffAll,     {N},    F, A, NULL, 0, "all", "Kick all users out of the game" },
+	{ AdminKickoffAccount, {I,N},  false, A, NULL, 0, "account", "Kick one account out of the game" },
+	{ AdminKickoffAll,     {N},    false, A, NULL, 0, "all", "Kick all users out of the game" },
 };
 #define LEN_ADMIN_KICKOFF_TABLE (sizeof(admin_kickoff_table)/sizeof(admin_table_type))
 
 admin_table_type admin_hangup_table[] =
 {
-	{ AdminHangupAccount,  {R,N},  F, A|M, NULL, 0, "account", "Hangup one account" },
-	{ AdminHangupAll,      {N},    F, A|M, NULL, 0, "all", "Hangup all users" },
-	{ AdminBlockIP,        {R,N},  F, A|M, NULL, 0, "ip", "Block an IP address (temporarily)" },
-	{ AdminHangupSession,  {I,N},  F, A, NULL, 0, "session", "Hangup one session" },
-	{ AdminHangupUser,     {R,N},  F, A|M, NULL, 0, "user", "Hangup one user" },
+	{ AdminHangupAccount,  {R,N},  false, A|M, NULL, 0, "account", "Hangup one account" },
+	{ AdminHangupAll,      {N},    false, A|M, NULL, 0, "all", "Hangup all users" },
+	{ AdminBlockIP,        {R,N},  false, A|M, NULL, 0, "ip", "Block an IP address (temporarily)" },
+	{ AdminHangupSession,  {I,N},  false, A, NULL, 0, "session", "Hangup one session" },
+	{ AdminHangupUser,     {R,N},  false, A|M, NULL, 0, "user", "Hangup one user" },
 };
 #define LEN_ADMIN_HANGUP_TABLE (sizeof(admin_hangup_table)/sizeof(admin_table_type))
 
 admin_table_type admin_reload_table[] =
 {
-	{ AdminReloadGame,     {I,N}, F, A|M, NULL, 0, "game",   "Reload game from any save time (0 for last)" },
-	{ AdminReloadMotd,     {N},   F, A|M, NULL, 0, "motd",   "Reload message of the day from file" },
-	{ AdminReloadPackages, {N},   F, A|M, NULL, 0, "packages","Rescan upload directory for packages" },
-	{ AdminReloadSystem,   {N},   F, A|M, NULL, 0, "system", "Save game and reload all kod, motd" },
+	{ AdminReloadGame,     {I,N}, false, A|M, NULL, 0, "game",   "Reload game from any save time (0 for last)" },
+	{ AdminReloadMotd,     {N},   false, A|M, NULL, 0, "motd",   "Reload message of the day from file" },
+	{ AdminReloadPackages, {N},   false, A|M, NULL, 0, "packages","Rescan upload directory for packages" },
+	{ AdminReloadSystem,   {N},   false, A|M, NULL, 0, "system", "Save game and reload all kod, motd" },
 };
 #define LEN_ADMIN_RELOAD_TABLE (sizeof(admin_reload_table)/sizeof(admin_table_type))
 
 admin_table_type admin_recreate_table[] =
 {
-	{ AdminRecreateAutomated,{I,S,S,N},F,A|M,NULL, 0, "automated",
+	{ AdminRecreateAutomated,{I,S,S,N},false,A|M,NULL, 0, "automated",
 		"Create specific account and user by name, password" },
 };
 #define LEN_ADMIN_RECREATE_TABLE (sizeof(admin_recreate_table)/sizeof(admin_recreate_table))
 
 admin_table_type admin_disable_table[] =
 {
-	{ AdminDisableSysTimer,{I,N}, F, A, NULL, 0, "systimer","Disable a system timer" },
+	{ AdminDisableSysTimer,{I,N}, false, A, NULL, 0, "systimer","Disable a system timer" },
 };
 #define LEN_ADMIN_DISABLE_TABLE (sizeof(admin_disable_table)/sizeof(admin_table_type))
 
 admin_table_type admin_enable_table[] =
 {
-	{ AdminEnableSysTimer,{I,N}, F, A, NULL, 0, "systimer","Enable a system timer" },
+	{ AdminEnableSysTimer,{I,N}, false, A, NULL, 0, "systimer","Enable a system timer" },
 };
 #define LEN_ADMIN_ENABLE_TABLE (sizeof(admin_enable_table)/sizeof(admin_table_type))
 
 admin_table_type admin_terminate_table[] =
 {
-	{ AdminTerminateNoSave,{N},   F, A|M, NULL, 0, "nosave", "Shut down the server without saving" },
-	{ AdminTerminateSave,  {N},   F, A|M, NULL, 0, "save",   "Save game and shut down the server" },
+	{ AdminTerminateNoSave,{N},   false, A|M, NULL, 0, "nosave", "Shut down the server without saving" },
+	{ AdminTerminateSave,  {N},   false, A|M, NULL, 0, "save",   "Save game and shut down the server" },
 };
 #define LEN_ADMIN_TERMINATE_TABLE (sizeof(admin_terminate_table)/sizeof(admin_table_type))
 
 admin_table_type admin_save_table[] =
 {
-	{ AdminSaveConfiguration,{N},F, A|M, NULL, 0, "configuration","Save blakserv.cfg" },
-	{ AdminSaveGame,      {N},   F, A|M, NULL, 0, "game",    "Save game (will garbage collect first)" },
+	{ AdminSaveConfiguration,{N},false, A|M, NULL, 0, "configuration","Save blakserv.cfg" },
+	{ AdminSaveGame,      {N},   false, A|M, NULL, 0, "game",    "Save game (will garbage collect first)" },
 };
 #define LEN_ADMIN_SAVE_TABLE (sizeof(admin_save_table)/sizeof(admin_table_type))
 
 admin_table_type admin_main_table[] =
 {
-	{ NULL, {N}, F, A, admin_add_table,    LEN_ADMIN_ADD_TABLE,    "add",    "Add subcommand" },
-	{ NULL, {N}, F, A, admin_create_table, LEN_ADMIN_CREATE_TABLE, "create", "Create subcommand" },
-	{ NULL, {N}, F, A, admin_delete_table, LEN_ADMIN_DELETE_TABLE, "delete", "Delete subcommand" },
-	{ NULL, {N}, F, A, admin_disable_table,LEN_ADMIN_DISABLE_TABLE,"disable", "Disable subcommand" },
-	{ NULL, {N}, F, A, admin_enable_table, LEN_ADMIN_ENABLE_TABLE, "enable", "Enable subcommand" },
-	{ AdminGarbage,       {N},   F, A, NULL, 0, "garbage",   "Garbage collect" },
-	{ NULL, {N}, F, A, admin_hangup_table, LEN_ADMIN_HANGUP_TABLE, "hangup", "Hangup subcommand" },
-	{ AdminLock,          {R,N}, F, A|M, NULL, 0, "lock",      "Lock the game" },
-	{ NULL, {N}, F, A, admin_kickoff_table,LEN_ADMIN_KICKOFF_TABLE,"kickoff","Kickoff subcommand" },
-	{ AdminMail,          {N},   F, A, NULL, 0, "mail",      "Read administrator mail" },
-	{ AdminMark,          {N},   F, A|M, NULL, 0, "mark",      "Mark all channel logs with a dashed line" },
-	{ AdminPage,          {N},   F, A, NULL, 0, "page",      "Page the console" },
-	{ AdminRead,          {S,N}, F, A|M, NULL, 0, "read",      "Read admin commands from a file, echoes everything" },
-	{ NULL, {N}, F, A, admin_recreate_table,LEN_ADMIN_RECREATE_TABLE, "recreate", "Recreate subcommand" },
-	{ NULL, {N}, F, A, admin_reload_table, LEN_ADMIN_RELOAD_TABLE, "reload", "Reload subcommand" },
-	{ NULL, {N}, F, A, admin_save_table,   LEN_ADMIN_SAVE_TABLE,   "save",   "Save subcommand" },
-	{ AdminSay,           {R,N}, F, A|M, NULL, 0, "say",       "Say text to all admins logged in" },
-	{ NULL, {N}, F, A, admin_send_table,   LEN_ADMIN_SEND_TABLE,   "send",   "Send subcommand" },
-	{ NULL, {N}, F, A, admin_set_table,    LEN_ADMIN_SET_TABLE,    "set",    "Set subcommand" },
-	{ NULL, {N}, F, A, admin_show_table,   LEN_ADMIN_SHOW_TABLE,   "show",   "Show subcommand" },
-	{ NULL, {N}, F, A, admin_suspend_table, LEN_ADMIN_SUSPEND_TABLE,"suspend", "Suspend subcommand" },
-	{ NULL, {N}, F, A, admin_terminate_table,LEN_ADMIN_TERMINATE_TABLE,"terminate",
+	{ NULL, {N}, false, A, admin_add_table,    LEN_ADMIN_ADD_TABLE,    "add",    "Add subcommand" },
+	{ NULL, {N}, false, A, admin_create_table, LEN_ADMIN_CREATE_TABLE, "create", "Create subcommand" },
+	{ NULL, {N}, false, A, admin_delete_table, LEN_ADMIN_DELETE_TABLE, "delete", "Delete subcommand" },
+	{ NULL, {N}, false, A, admin_disable_table,LEN_ADMIN_DISABLE_TABLE,"disable", "Disable subcommand" },
+	{ NULL, {N}, false, A, admin_enable_table, LEN_ADMIN_ENABLE_TABLE, "enable", "Enable subcommand" },
+	{ AdminGarbage,       {N},   false, A, NULL, 0, "garbage",   "Garbage collect" },
+	{ NULL, {N}, false, A, admin_hangup_table, LEN_ADMIN_HANGUP_TABLE, "hangup", "Hangup subcommand" },
+	{ AdminLock,          {R,N}, false, A|M, NULL, 0, "lock",      "Lock the game" },
+	{ NULL, {N}, false, A, admin_kickoff_table,LEN_ADMIN_KICKOFF_TABLE,"kickoff","Kickoff subcommand" },
+	{ AdminMail,          {N},   false, A, NULL, 0, "mail",      "Read administrator mail" },
+	{ AdminMark,          {N},   false, A|M, NULL, 0, "mark",      "Mark all channel logs with a dashed line" },
+	{ AdminPage,          {N},   false, A, NULL, 0, "page",      "Page the console" },
+	{ AdminRead,          {S,N}, false, A|M, NULL, 0, "read",      "Read admin commands from a file, echoes everything" },
+	{ NULL, {N}, false, A, admin_recreate_table,LEN_ADMIN_RECREATE_TABLE, "recreate", "Recreate subcommand" },
+	{ NULL, {N}, false, A, admin_reload_table, LEN_ADMIN_RELOAD_TABLE, "reload", "Reload subcommand" },
+	{ NULL, {N}, false, A, admin_save_table,   LEN_ADMIN_SAVE_TABLE,   "save",   "Save subcommand" },
+	{ AdminSay,           {R,N}, false, A|M, NULL, 0, "say",       "Say text to all admins logged in" },
+	{ NULL, {N}, false, A, admin_send_table,   LEN_ADMIN_SEND_TABLE,   "send",   "Send subcommand" },
+	{ NULL, {N}, false, A, admin_set_table,    LEN_ADMIN_SET_TABLE,    "set",    "Set subcommand" },
+	{ NULL, {N}, false, A, admin_show_table,   LEN_ADMIN_SHOW_TABLE,   "show",   "Show subcommand" },
+	{ NULL, {N}, false, A, admin_suspend_table, LEN_ADMIN_SUSPEND_TABLE,"suspend", "Suspend subcommand" },
+	{ NULL, {N}, false, A, admin_terminate_table,LEN_ADMIN_TERMINATE_TABLE,"terminate",
 	"Terminate subcommand" },
-	{ NULL, {N}, F, A, admin_trace_table,  LEN_ADMIN_TRACE_TABLE,  "trace",  "Trace subcommand" },
-	{ AdminUnlock,        {N},   F, A|M, NULL, 0, "unlock",    "Unlock the game" },
-	{ NULL, {N}, F, A, admin_unsuspend_table, LEN_ADMIN_UNSUSPEND_TABLE,"unsuspend", "Unsuspend subcommand" },
-	{ AdminWho,           {N},   F, A|M, NULL, 0, "who",       "Show every account logged on" },
+	{ NULL, {N}, false, A, admin_trace_table,  LEN_ADMIN_TRACE_TABLE,  "trace",  "Trace subcommand" },
+	{ AdminUnlock,        {N},   false, A|M, NULL, 0, "unlock",    "Unlock the game" },
+	{ NULL, {N}, false, A, admin_unsuspend_table, LEN_ADMIN_UNSUSPEND_TABLE,"unsuspend", "Unsuspend subcommand" },
+	{ AdminWho,           {N},   false, A|M, NULL, 0, "who",       "Show every account logged on" },
 };
 
 #define LEN_ADMIN_MAIN_TABLE (sizeof(admin_main_table)/sizeof(admin_table_type))
@@ -615,7 +612,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 
 	if (len_buf > BUFFER_SIZE)
 	{
-		eprintf("SendAdminBuffer sent only first %lu bytes of requested buffer,\n",BUFFER_SIZE);
+		eprintf("SendAdminBuffer sent only first %i bytes of requested buffer,\n",BUFFER_SIZE);
 		len_buf = BUFFER_SIZE;
 	}
 	else if (len_buf < 0 || !buf)
@@ -639,7 +636,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 		SendPacket(admin_session_id);
 		break;
 	default :
-		eprintf("SendAdminBuffer called, SESSION %lu state %lu is not admin or game\n",
+		eprintf("SendAdminBuffer called, SESSION %i state %i is not admin or game\n",
 			session->session_id,session->state);
 	}
 }
@@ -675,14 +672,14 @@ void TryAdminCommand(int session_id,char *admin_command)
 	s = GetSessionByID(session_id);
 	if (s == NULL)
 	{
-		eprintf("TryAdminCommand got invalid SESSION %lu\n",session_id);
+		eprintf("TryAdminCommand got invalid SESSION %i\n",session_id);
 		return;
 	}
 
 	admin_session_id = session_id;
 
 	if (blist != NULL)
-		eprintf("TryAdminCommand entered with blist = %08x!\n",blist);
+		eprintf("TryAdminCommand entered with blist = %p!\n", (void *) blist);
 
 	blist = NULL;
 
@@ -723,7 +720,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 	s = GetSessionByID(session_id);
 	if (s == NULL)
 	{
-     eprintf("AdminTable got invalid SESSION %lu\n",session_id);
+     eprintf("AdminTable got invalid SESSION %i\n",session_id);
      return;
 	}
 	if (command == NULL || !stricmp(command,"HELP") || !stricmp(command,"?"))
@@ -789,7 +786,6 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 	}
 
 	/* check parameters */
-
 	for (i=0;i<MAX_ADMIN_PARM;i++)
 	{
 		if (command_table[index].parm_type[i] == N)
@@ -807,7 +803,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			parm_str = strtok(NULL," \t\n");
 			if (parm_str == NULL)
 			{
-				aprintf("Missing parameter %lu.\n",i+1);
+				aprintf("Missing parameter %i.\n",i+1);
 				return;
 			}
 			prev_tok = parm_str;
@@ -827,8 +823,9 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			admin_parm[i] = (admin_parm_type)num;
 			break;
 		case R :
-			/* remember how strtok works to see why this works */
-			admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
+      /* remember how strtok works to see why this works */
+      admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
+
 			/* now make sure no more params */
 			prev_tok = NULL;
 			break;
@@ -852,13 +849,13 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			parm_str = strtok(NULL," \t\n");
 			if (parm_str == NULL)
 			{
-				aprintf("Blakod parameter %lu needs tag and value.\n",i+1);
+				aprintf("Blakod parameter %i needs tag and value.\n",i+1);
 				return;
 			}
 			num = GetTagNum(parm_str);
 			if (num == INVALID_TAG)
 			{
-				aprintf("Blakod parameter %lu has invalid tag.\n",i+1);
+				aprintf("Blakod parameter %i has invalid tag.\n",i+1);
 				return;
 			}
 			blak_val.v.tag = num;
@@ -869,7 +866,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				parm_str = strtok( NULL, "" );	// Get rest of line for "quote" type parameter
 				if (parm_str == NULL)
 				{
-					aprintf("Blakod parameter %lu needs value\n",i+1);
+					aprintf("Blakod parameter %i needs value\n",i+1);
 					return;
 				}
 
@@ -891,7 +888,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				parm_str = strtok(NULL," \t\n");
 				if (parm_str == NULL)
 				{
-					aprintf("Blakod parameter %lu needs value.\n",i+1);
+					aprintf("Blakod parameter %i needs value.\n",i+1);
 					return;
 				}
 				if (0 == stricmp("SELF", parm_str) && blak_val.v.tag == TAG_OBJECT &&
@@ -899,7 +896,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				{
 					num = s->game->object_id;
 				}
-				else if (LookupAdminConstant(parm_str,&num) == False)
+				else if (LookupAdminConstant(parm_str,&num) == false)
 				{
 					bool negate = false;
 
@@ -913,7 +910,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 					num = GetDataNum(blak_val.v.tag,parm_str);
 					if (num == INVALID_DATA)
 					{
-						aprintf("Blakod parameter %lu has invalid data.\n",i+1);
+						aprintf("Blakod parameter %i has invalid data.\n",i+1);
 						return;
 					}
 
@@ -922,9 +919,9 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				}
 				blak_val.v.data = num;
 
-				if (AdminIsValidBlakParm(blak_val) == False)
+				if (AdminIsValidBlakParm(blak_val) == false)
 				{
-					aprintf("Blakod parameter %lu references invalid data.\n",i+1);
+					aprintf("Blakod parameter %i references invalid data.\n",i+1);
 					return;
 				}
 
@@ -948,7 +945,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 		command_table[index].admin_func(session_id,admin_parm, 0, blak_parm);
 }
 
-Bool AdminIsValidBlakParm(val_type check_val)
+bool AdminIsValidBlakParm(val_type check_val)
 {
 	switch (check_val.v.tag)
 	{
@@ -963,26 +960,26 @@ Bool AdminIsValidBlakParm(val_type check_val)
 	case TAG_NIL :
 		return check_val.v.data == 0;
 	case TAG_TEMP_STRING :
-		return True;		// "quote" type parm: Assume any (non-null) string is valid
+		return true;		// "quote" type parm: Assume any (non-null) string is valid
 	}
 
-	return True;
+	return true;
 }
 
 void AdminHelp(int session_id,int len_command_table,admin_table_type command_table[])
 {
 	int i,j;
-	Bool done_parm;
+	bool done_parm;
 
 	for (i=0;i<len_command_table;i++)
 	{
 		aprintf("%-10s ",command_table[i].admin_cmd);
 
-		done_parm = False;
+		done_parm = false;
 		for (j=0;j<MAX_ADMIN_PARM;j++)
 		{
 			if (command_table[i].parm_type[j] == N)
-				done_parm = True;
+				done_parm = true;
 			if (done_parm)
 				aprintf(" ");
 			else
@@ -1070,7 +1067,7 @@ void AdminSaveGame(int session_id,admin_parm_type parms[],
 
 	SendBlakodEndSystemEvent(SYSEVENT_SAVE);
 
-	aprintf("done.  Save time is (%lli).\n", save_time);
+	aprintf("done.  Save time is (%" PRId64 ").\n", save_time);
 	UnpauseTimers();
 }
 
@@ -1088,7 +1085,7 @@ void AdminSaveConfiguration(int session_id,admin_parm_type parms[],
 
 	fprintf(configfile,"# %s\n",BlakServLongVersionString());
 	fprintf(configfile,"# Configuration file automatically generated at %s\n",
-		TimeStr(GetTime()));
+          TimeStr(GetTime()).c_str());
 	fprintf(configfile,"# -------------------------------------------\n");
 
 
@@ -1136,7 +1133,7 @@ void AdminSaveOneConfigNode(config_node *c,const char *config_name,const char *d
 		if ((stricmp(default_str,"Yes") == 0) ^ c->config_int_value)
 		{
 			fprintf(configfile,"%-20s ",config_name);
-			if (c->config_int_value != False)
+			if (c->config_int_value != false)
 				fprintf(configfile,"Yes\n");
 			else
 				fprintf(configfile,"No\n");
@@ -1205,12 +1202,12 @@ void AdminWhoEachSession(session_node *s)
 			{
 				r = GetResourceByID(name_val.v.data);
 				if (r == NULL)
-					aprintf("Invalid resource id %i",name_val.v.data);
+					aprintf("Invalid resource id %" PRId64,name_val.v.data);
 				else
 					aprintf("%s",r->resource_val);
 			}
 			else
-				aprintf("Non-resource %i,%i",name_val.v.tag,name_val.v.data);
+				aprintf("Non-resource %s",fmt(name_val));
 			aprintf(" (%i)",s->game->object_id);
 		}
 	}
@@ -1323,14 +1320,14 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 
 	kstat = GetKodStats();
 
-	aprintf("Current time is %s\n",TimeStr(now));
-	aprintf("System started at %s (up for %s = %lli seconds)\n",
-		TimeStr(kstat->system_start_time),
-          RelativeTimeStr((int) (now - kstat->system_start_time)),
-		now - kstat->system_start_time);
+	aprintf("Current time is %s\n",TimeStr(now).c_str());
+	aprintf("System started at %s (up for %s = %" PRId64 " seconds)\n",
+          TimeStr(kstat->system_start_time).c_str(),
+          RelativeTimeStr((int) (now - kstat->system_start_time)).c_str(),
+          now - kstat->system_start_time);
 
 	aprintf("----\n");
-	aprintf("Interpreted %i.%09i billion total instructions in %lli seconds\n",
+	aprintf("Interpreted %i.%09i billion total instructions in %" PRId64 " seconds\n",
 		kstat->billions_interpreted,kstat->num_interpreted,
 		kstat->interpreting_time/1000);
 	aprintf("Handled %i top level messages, total %i messages\n",
@@ -1384,7 +1381,7 @@ void AdminShowMemory(int session_id,admin_parm_type parms[],
 
 	size_t total = 0;
 
-	aprintf("%s\n",TimeStr(GetTime()));
+	aprintf("%s\n",TimeStr(GetTime()).c_str());
 	for (int i=0;i<GetNumMemoryStats();i++)
 	{
 		aprintf("%-20s %8lu\n",GetMemoryStatName(i),mstat->allocated[i]);
@@ -1462,7 +1459,7 @@ void AdminShowObjects(int session_id,admin_parm_type parms[],
 
 	object_id = (int)parms[0];
 
-	if( IsObjectByID( object_id ) == False )
+	if( IsObjectByID( object_id ) == false )
 	{
 		aprintf("Invalid object id %i (or it has been deleted).\n",
 			object_id);
@@ -1508,7 +1505,7 @@ void AdminShowObject(int session_id,admin_parm_type parms[],
 	int object_id;
 	object_id = (int)parms[0];
 
-	if (IsObjectByID(object_id) == False)
+	if (IsObjectByID(object_id) == false)
 	{
 		aprintf("Invalid object id %i (or it has been deleted).\n",
 			object_id);
@@ -1578,7 +1575,7 @@ void AdminShowList(int session_id,admin_parm_type parms[],
 	list_id = (int)parms[0];
 
 	aprintf(":<\n");
-	AdminShowListParen(session_id,list_id,True);
+	AdminShowListParen(session_id,list_id,true);
 	aprintf(":>\n");
 }
 
@@ -1598,7 +1595,7 @@ void AdminShowListParen(int session_id,int list_id,int new_start)
 		aprintf(": [\n");
 
 	if (l->first.v.tag == TAG_LIST)
-		AdminShowListParen(session_id,l->first.v.data,True);
+		AdminShowListParen(session_id,l->first.v.data,true);
 	else
 	{
 		//if (!new_start)
@@ -1608,7 +1605,7 @@ void AdminShowListParen(int session_id,int list_id,int new_start)
 	}
 
 	if (l->rest.v.tag == TAG_LIST)
-		AdminShowListParen(session_id,l->rest.v.data,False);
+		AdminShowListParen(session_id,l->rest.v.data,false);
 	else
 		if (l->rest.v.tag != TAG_NIL)
 		{
@@ -1659,12 +1656,12 @@ void AdminShowOneUser(user_node *u)
 	{
 		r = GetResourceByID(name_val.v.data);
 		if (r == NULL)
-			aprintf("Invalid resource id %i.",name_val.v.data);
+			aprintf("Invalid resource id %" PRId64 ".",name_val.v.data);
 		else
 			aprintf("%s",r->resource_val);
 	}
 	else
-		aprintf("Non-resource %i,%i.",name_val.v.tag,name_val.v.data);
+		aprintf("Non-resource %s.",fmt(name_val));
 	aprintf("\n");
 }
 
@@ -1674,17 +1671,17 @@ void AdminShowUser(int session_id,admin_parm_type parms[],
 	user_node *u;
 	int id;
 	char *ptr;
-	Bool is_by_number;
+	bool is_by_number;
 	char *arg_str;
 
 	arg_str = (char *)parms[0];
-	is_by_number = True;
+	is_by_number = true;
 
 	ptr = arg_str;
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
-			is_by_number = False;
+			is_by_number = false;
 		ptr++;
 	}
 
@@ -1730,18 +1727,18 @@ void AdminShowAccount(int session_id,admin_parm_type parms[],
 	account_node *a;
 	int account_id;
 	char *ptr;
-	Bool is_account_number;
+	bool is_account_number;
 
 	char *account_str;
 	account_str = (char *)parms[0];
 
-	is_account_number = True;
+	is_account_number = true;
 
 	ptr = account_str;
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
-			is_account_number = False;
+			is_account_number = false;
 		ptr++;
 	}
 
@@ -1800,7 +1797,7 @@ void AdminShowOneAccount(account_node *a)
    }
 
 	aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n",a->account_id,ch,a->name,
-        buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time));
+          buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time).c_str());
 }
 
 void AdminShowResource(int session_id,admin_parm_type parms[],
@@ -1903,7 +1900,7 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 {
 	INT64 now = GetTime();
 
-	aprintf("Current server clock reads %lli (%s).\n", now, TimeStr(now));
+	aprintf("Current server clock reads %" PRId64 " (%s).\n", now, TimeStr(now).c_str());
 }
 
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],
@@ -1936,7 +1933,7 @@ void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *d
 		aprintf("%s\n",c->config_str_value);
 		break;
 	case CONFIG_BOOL :
-		if (c->config_int_value != False)
+		if (c->config_int_value != false)
 			aprintf("Yes\n");
 		else
 			aprintf("No\n");
@@ -1955,7 +1952,7 @@ void AdminShowString(int session_id,admin_parm_type parms[],
 	int string_id;
 	string_id = (int)parms[0];
 
-	if (IsStringByID(string_id) == False)
+	if (IsStringByID(string_id) == false)
 	{
 		aprintf("Cannot find string %i.\n",string_id);
 		return;
@@ -1997,11 +1994,11 @@ void AdminShowEachSysTimer(systimer_node *st)
 	case SYST_RESET_POOL : s = "Reset buffer pool"; break;
 	default : s = "Unknown"; break;
 	}
-	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period));
-	aprintf("%-15s ",RelativeTimeStr(st->time));
+	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period).c_str());
+	aprintf("%-15s ",RelativeTimeStr(st->time).c_str());
 
 	if (st->enabled)
-		aprintf("%-22s",TimeStr(st->next_time_activate));
+		aprintf("%-22s",TimeStr(st->next_time_activate).c_str());
 	else
 		aprintf("Disabled");
 	aprintf("\n");
@@ -2360,7 +2357,7 @@ void AdminShowMatches(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (LookupAdminConstant(data_str,&data_int) == False)
+	if (LookupAdminConstant(data_str,&data_int) == false)
 	{
 		bool negate = false;
 
@@ -2562,7 +2559,7 @@ void AdminShowReferences(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (LookupAdminConstant(admin_show_references_data_str,&data_int) == False)
+	if (LookupAdminConstant(admin_show_references_data_str,&data_int) == false)
 	{
 		bool negate = false;
 
@@ -2737,7 +2734,7 @@ void AdminSetClass(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (LookupAdminConstant(data_str,&data_int) == False)
+	if (LookupAdminConstant(data_str,&data_int) == false)
 	{
 		bool negate = false;
 
@@ -2810,7 +2807,7 @@ void AdminSetObject(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (LookupAdminConstant(data_str,&data_int) == False)
+	if (LookupAdminConstant(data_str,&data_int) == false)
 	{
 		bool negate = false;
 
@@ -2946,7 +2943,7 @@ void AdminSetAccountObject(int session_id,admin_parm_type parms[],
 		u = NULL;
 	}
 
-	if (AssociateUser(account_id,object_id) == False) /* creates a user node for it */
+	if (AssociateUser(account_id,object_id) == false) /* creates a user node for it */
 	{
 		aprintf("Error assocating new account and object.\n");
 	}
@@ -3012,7 +3009,7 @@ void AdminSetConfigInt(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (c->is_dynamic == False)
+	if (c->is_dynamic == false)
 	{
 		aprintf("This configure option is not settable at runtime.\n");
 		return;
@@ -3059,7 +3056,7 @@ void AdminSetConfigBool(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (c->is_dynamic == False)
+	if (c->is_dynamic == false)
 	{
 		aprintf("This configure option is not settable at runtime.\n");
 		return;
@@ -3080,9 +3077,9 @@ void AdminSetConfigBool(int session_id,admin_parm_type parms[],
 
 
 	if (stricmp(new_value,"YES") == 0)
-		SetConfigBool(c->config_id,True);
+		SetConfigBool(c->config_id,true);
 	else
-		SetConfigBool(c->config_id,False);
+		SetConfigBool(c->config_id,false);
 
 
 	aprintf("Configure option group %s name %s is now set to '%s'.\n",
@@ -3116,7 +3113,7 @@ void AdminSetConfigStr(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (c->is_dynamic == False)
+	if (c->is_dynamic == false)
 	{
 		aprintf("This configure option is not settable at runtime.\n");
 		return;
@@ -3144,7 +3141,7 @@ void AdminSuspendUser(int session_id,admin_parm_type parms[],
 	int hours;
 	int id;
 	char *arg_str;
-	Bool is_by_number;
+	bool is_by_number;
 	//char *ptr;
 
 	hours = (int)parms[0];
@@ -3156,14 +3153,14 @@ void AdminSuspendUser(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	is_by_number = False;
-	//   is_by_number = True;
+	is_by_number = false;
+	//   is_by_number = true;
 
 	//   ptr = arg_str;
 	//   while (*ptr != 0)
 	//   {
 	//      if (*ptr < '0' || *ptr > '9')
-	//	 is_by_number = False;
+	//	 is_by_number = false;
 	//      ptr++;
 	//   }
 
@@ -3206,7 +3203,7 @@ void AdminSuspendUser(int session_id,admin_parm_type parms[],
 	else
 	{
 		aprintf("Account %i (%s) is suspended until %s.\n",
-			a->account_id, a->name, TimeStr(a->suspend_time));
+            a->account_id, a->name, TimeStr(a->suspend_time).c_str());
 	}
 }
 
@@ -3217,7 +3214,7 @@ void AdminSuspendAccount(int session_id,admin_parm_type parms[],
 	int hours;
 	int id;
 	char *arg_str;
-	Bool is_by_number;
+	bool is_by_number;
 	char *ptr;
 
 	hours = (int)parms[0];
@@ -3229,13 +3226,13 @@ void AdminSuspendAccount(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	is_by_number = True;
+	is_by_number = true;
 
 	ptr = arg_str;
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
-			is_by_number = False;
+			is_by_number = false;
 		ptr++;
 	}
 
@@ -3270,7 +3267,7 @@ void AdminSuspendAccount(int session_id,admin_parm_type parms[],
 	else
 	{
 		aprintf("Account %i (%s) is suspended until %s.\n",
-			a->account_id, a->name, TimeStr(a->suspend_time));
+            a->account_id, a->name, TimeStr(a->suspend_time).c_str());
 	}
 }
 
@@ -3281,7 +3278,7 @@ void AdminUnsuspendUser(int session_id,admin_parm_type parms[],
 	account_node *a;
 	int id;
 	char *arg_str;
-	Bool is_by_number;
+	bool is_by_number;
 	//char *ptr;
 
 	arg_str = (char *)parms[0];
@@ -3291,14 +3288,14 @@ void AdminUnsuspendUser(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	is_by_number = False;
-	//   is_by_number = True;
+	is_by_number = false;
+	//   is_by_number = true;
 
 	//   ptr = arg_str;
 	//   while (*ptr != 0)
 	//   {
 	//      if (*ptr < '0' || *ptr > '9')
-	//	 is_by_number = False;
+	//	 is_by_number = false;
 	//      ptr++;
 	//   }
 
@@ -3343,7 +3340,7 @@ void AdminUnsuspendAccount(int session_id,admin_parm_type parms[],
 	account_node *a;
 	int id;
 	char *arg_str;
-	Bool is_by_number;
+	bool is_by_number;
 	char *ptr;
 
 	arg_str = (char *)parms[0];
@@ -3353,13 +3350,13 @@ void AdminUnsuspendAccount(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	is_by_number = True;
+	is_by_number = true;
 
 	ptr = arg_str;
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
-			is_by_number = False;
+			is_by_number = false;
 		ptr++;
 	}
 
@@ -3421,7 +3418,7 @@ void AdminCreateAccount(int session_id,admin_parm_type parms[],
 	switch (toupper(type[0]))
 	{
 	case 'A':
-		if (CreateAccount(name,password,ACCOUNT_ADMIN,&account_id) == False)
+		if (CreateAccount(name,password,ACCOUNT_ADMIN,&account_id) == false)
 		{
 			aprintf("Account name %s already exists\n",name);
 			return;
@@ -3429,7 +3426,7 @@ void AdminCreateAccount(int session_id,admin_parm_type parms[],
 		break;
 
 	case 'D':
-		if (CreateAccount(name,password,ACCOUNT_DM,&account_id) == False)
+		if (CreateAccount(name,password,ACCOUNT_DM,&account_id) == false)
 		{
 			aprintf("Account name %s already exists\n",name);
 			return;
@@ -3437,7 +3434,7 @@ void AdminCreateAccount(int session_id,admin_parm_type parms[],
 		break;
 
 	default :
-		if (CreateAccount(name,password,ACCOUNT_NORMAL,&account_id) == False)
+		if (CreateAccount(name,password,ACCOUNT_NORMAL,&account_id) == false)
 		{
 			aprintf("Account name %s already exists\n",name);
 			return;
@@ -3461,7 +3458,7 @@ void AdminCreateAutomated(int session_id,admin_parm_type parms[],
 	name = (char *)parms[0];
 	password = (char *)parms[1];
 
-	if (CreateAccount(name,password,ACCOUNT_NORMAL,&account_id) == False)
+	if (CreateAccount(name,password,ACCOUNT_NORMAL,&account_id) == false)
 	{
 		aprintf("Account name %s already exists\n",name);
 		return;
@@ -3757,7 +3754,7 @@ void AdminDeleteEachUserObject(user_node *u)
 }
 
 static int admin_check_user;
-static Bool admin_user_is_logged_in;
+static bool admin_user_is_logged_in;
 void AdminDeleteUser(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[])
 {
@@ -3774,7 +3771,7 @@ void AdminDeleteUser(int session_id,admin_parm_type parms[],
 	}
 
 	admin_check_user = u->object_id;
-	admin_user_is_logged_in = False;
+	admin_user_is_logged_in = false;
 	ForEachSession(AdminCheckUserLoggedOn);
 
 	if (admin_user_is_logged_in)
@@ -3790,7 +3787,7 @@ void AdminDeleteUser(int session_id,admin_parm_type parms[],
 void AdminCheckUserLoggedOn(session_node *s)
 {
 	if (s && s->state == STATE_GAME && s->game && s->game->object_id == admin_check_user)
-		admin_user_is_logged_in = True;
+		admin_user_is_logged_in = true;
 }
 
 void AdminSendObject(int session_id,admin_parm_type parms[],
@@ -4135,17 +4132,17 @@ void AdminHangupUser(int session_id,admin_parm_type parms[],
 	session_node *hangup_session;
 	int id;
 	char *arg_str;
-	Bool is_by_number;
+	bool is_by_number;
 	char *ptr;
 
 	arg_str = (char *)parms[0];
-	is_by_number = True;
+	is_by_number = true;
 
 	ptr = arg_str;
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
-			is_by_number = False;
+			is_by_number = false;
 		ptr++;
 	}
 
@@ -4232,17 +4229,17 @@ void AdminHangupAccount(int session_id,admin_parm_type parms[],
 	session_node *hangup_session;
 	int id;
 	char *arg_str;
-	Bool is_by_number;
+	bool is_by_number;
 	char *ptr;
 
 	arg_str = (char *)parms[0];
-	is_by_number = True;
+	is_by_number = true;
 
 	ptr = arg_str;
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
-			is_by_number = False;
+			is_by_number = false;
 		ptr++;
 	}
 
@@ -4386,8 +4383,6 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	lprintf("AdminReloadGame\n");
 
 	/* make sure no one in game */
-	AdminHangupAll(session_id, parms, num_blak_parm, blak_parm);
-
 	accounts_in_game = 0;
 	ForEachSession(AdminReloadGameEachSession);
 	if (accounts_in_game > 0)
@@ -4396,6 +4391,8 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 			accounts_in_game,accounts_in_game == 1 ? "person is" : "people are");
 		return;
 	}
+
+  AdminHangupAll(session_id, parms, num_blak_parm, blak_parm);
 
 	aprintf("Unloading game... ");
 	AdminSendBufferList();
@@ -4470,7 +4467,7 @@ void AdminDisableSysTimer(int session_id,admin_parm_type parms[],
 	int systimer_type;
 	systimer_type = (int)parms[0];
 
-	if (DisableSysTimer(systimer_type) == False)
+	if (DisableSysTimer(systimer_type) == false)
 		aprintf("Invalid systimer type %i.\n",systimer_type);
 	else
 		aprintf("Systimer disabled.\n");
@@ -4484,7 +4481,7 @@ void AdminEnableSysTimer(int session_id,admin_parm_type parms[],
 	int systimer_type;
 	systimer_type = (int)parms[0];
 
-	if (EnableSysTimer(systimer_type) == False)
+	if (EnableSysTimer(systimer_type) == false)
 		aprintf("Invalid systimer type %i.\n",systimer_type);
 	else
 		aprintf("Systimer enabled.\n");
@@ -4545,7 +4542,7 @@ void AdminRead(int session_id,admin_parm_type parms[],
 	FILE *fptr;
 	char line[2000];
 	char *ptr;
-	static int admin_in_read = False;
+	static bool admin_in_read = false;
 
 	char *filename;
 	filename = (char *)parms[0];
@@ -4563,7 +4560,7 @@ void AdminRead(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	admin_in_read = True;
+	admin_in_read = true;
 
 	while (fgets(line,sizeof(line)-1,fptr))
 	{
@@ -4584,7 +4581,7 @@ void AdminRead(int session_id,admin_parm_type parms[],
 
 	fclose(fptr);
 
-	admin_in_read = False;
+	admin_in_read = false;
 }
 
 void AdminMark(int session_id,admin_parm_type parms[],

@@ -26,8 +26,8 @@ resources:
    MrIk_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s."
 
    MarionInnkeeper_room_rented = \
-      "Here ya go then.  Hope you enjoy your stay, if you have any problems Tova "
-      "will be glad to help you."
+      "Here you go then.  Hope you enjoy your stay!  If you run into any troubles, you "
+      "know where to find me."
    MarionInnkeeper_cost = \
       "Oh, good, you should rest.  Let me see....  I charge %i shillings to ~Irent~n "
       "a nice ~Iroom~n here for 85 days.  If you wish to stay longer, I charge %i "
@@ -110,7 +110,7 @@ messages:
       propagate;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(self,@IsObjectSundry,#what=what)
          OR Send(self,@IsObjectReagent,#what=what)
@@ -136,13 +136,13 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what=self,#string=MrIk_entry_welcome,
           #type=SAY_RESOURCE,
           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 	 
-      propagate;
+      return;
    }
    
 

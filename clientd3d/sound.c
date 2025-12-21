@@ -15,7 +15,7 @@
 #include "client.h"
 static char sound_dir[] = "resource";   /* Directory for sound files */
 
-static Bool wave_open = False;   /* Is Wavemix open & ready to play sounds? */
+static bool wave_open = false;   /* Is Wavemix open & ready to play sounds? */
 
 static HANDLE hMixSession; /* Handle for Wavemix DLL */
 
@@ -105,7 +105,7 @@ void SoundInitialize(void)
 	debug(( "MSS digital sound initialized successfully.\n" ));
 	debug(( "%i simultaneous voices available.\n", iNumVoices ));
 
-	wave_open = True;
+	wave_open = true;
    }
 
 #else
@@ -113,7 +113,7 @@ void SoundInitialize(void)
    {
    MCI_SYSINFO_PARMS mciSysinfoParms;
    DWORD num_devices, retval;
-   Bool has_wave = False;
+   bool has_wave = false;
 
    /* See if WAV player is present */
    mciSysinfoParms.lpstrReturn = (LPSTR) &num_devices;
@@ -122,7 +122,7 @@ void SoundInitialize(void)
    retval = mciSendCommand(0, MCI_SYSINFO, MCI_SYSINFO_QUANTITY,
                            (DWORD_PTR) &mciSysinfoParms);
    if (retval == 0 && num_devices > 0)
-      has_wave = True;
+      has_wave = true;
 
    /* Start Wave mixer */
    if (has_wave)
@@ -130,19 +130,19 @@ void SoundInitialize(void)
       if ((hMixSession = WaveMixInit()) == NULL)
       {
 	 debug(("WaveMixInit returned error\n"));
-	 wave_open = False;
+	 wave_open = false;
       }
-      else wave_open = True;
+      else wave_open = true;
 
       if (WaveMixOpenChannel(hMixSession, 0, WMIX_ALL))
       {
 	 debug(("WaveMixOpenChannel returned error\n"));
-	 wave_open = False;
+	 wave_open = false;
       }
       if (WaveMixActivate(hMixSession, TRUE) != MMSYSERR_NOERROR)
       {
 	 debug(("WaveMixActivate returned error\n"));
-	 wave_open = False;
+	 wave_open = false;
       }
    }
    }
@@ -180,12 +180,23 @@ static HDIGDRIVER WAVE_init_driver( DWORD rate, WORD bits, WORD chans )
  *		and radius and max_vol as attenuation parameters
  * Returns 0 on success; nonzero on error.
  */
-UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, int src_col, int radius, int max_vol)
+UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
+                  BYTE flags, int src_row, int src_col, int radius, int max_vol)
 {
    if (!wave_open)
       return TRUE;
 
 #ifdef M59_MSS
+
+	// Quick configuration escape for looping and random sounds.
+   if ((flags & SF_LOOP) && (!config.play_loop_sounds))
+   {
+      return 0;
+   }
+   if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
+   {
+      return 0;
+   }
 
 	int i, iRandomPitch;
 	void FAR *pSample;
@@ -199,16 +210,11 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 		return 1L;
 	}
 
-	// Quick configuration escape for especially annoying sound types.
-	if ((flags & SF_LOOP) && (!config.play_loop_sounds))
-		return 0;
-	if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
-		return 0;
-
 	// Find an HSAMPLE to play it
 	for( i=0; i < iNumVoices; i++ )
 	{
-		if( AIL_sample_user_data( SampleHandle[i], SOUND_USER_ADDRESS ) == 0 )
+		if (AIL_sample_user_data(SampleHandle[i], SOUND_USER_ADDRESS) == 0 &&
+			AIL_sample_status(SampleHandle[i]) == SMP_DONE)
 			break;
 	}
 
@@ -257,12 +263,14 @@ UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, i
 		AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_MAXVOL, vol );
 	}
 
-	// Finally, activate sample
-	AIL_start_sample( SampleHandle[i] );
-	AIL_set_sample_user_data( SampleHandle[i], SOUND_USER_ADDRESS, (S32) pSample );
+	// Set user data BEFORE starting sample
+	AIL_set_sample_user_data(SampleHandle[i], SOUND_USER_ADDRESS, (S32) pSample);
 
-	//	register callback to free memory allocated
-	AIL_register_EOS_callback( SampleHandle[i], SoundDoneCallback );
+	// Start sample BEFORE registering callback
+	AIL_start_sample(SampleHandle[i]);
+
+	// Register callback LAST - after sample is fully initialized
+	AIL_register_EOS_callback(SampleHandle[i], SoundDoneCallback);
 
 	return 0;
 #else

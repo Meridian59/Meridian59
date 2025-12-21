@@ -127,7 +127,7 @@ messages:
       {
          if Random(1,piSpellpower) > 70
          {    
-            Send(self,@ReportToTarget,#who=what,#BaseString=Listener_name_leaves);
+            Send(self,@ReportNameToTarget,#who=what,#BaseString=Listener_name_leaves);
          }
          else
          {  

@@ -98,7 +98,7 @@ classvars:
    viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_BUYER | MOB_TEACHER
    viOccupation = MOB_ROLE_ASSASSIN
 
-   viMerchant_markup = MERCHANT_EXPENSIVE
+   viMerchant_markup = MERCHANT_RIPOFF
 
 properties:
 

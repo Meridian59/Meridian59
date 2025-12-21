@@ -18,7 +18,7 @@
 
 #include "client.h"
 
-extern Bool				gD3DRedrawAll;
+extern int gD3DRedrawAll;
 int move_interval;
 static const int MINIMUM_MOVE_INTERVAL = 250;
 
@@ -115,7 +115,7 @@ static handler_struct game_handler_table[] = {
 static BYTE ExtractPaletteTranslation(char **ptr, BYTE *translation, BYTE *effect);
 
 static unsigned int server_secure_token = 0;
-static char* server_sliding_token = NULL;
+static const char* server_sliding_token = NULL;
 static char* _redbookstring = NULL;
 static ID _redbook = 0;
 
@@ -151,7 +151,7 @@ void UpdateSecurityRedbook(ID idRedbook)
        _redbookstring = strdup(_redbookstring);
 }
 
-char* GetSecurityRedbook()
+const char* GetSecurityRedbook()
 {
    if (!_redbookstring)
       return "BLAKSTON: Greenwich Q Zjiria";
@@ -393,7 +393,7 @@ room_contents_node *ExtractNewRoomObject(char **ptr)
 //   ExtractDLighting(ptr, &r->obj.dLighting);
 
    ExtractCoordinates(ptr, &r->motion.x, &r->motion.y);
-   r->moving = False;
+   r->moving = false;
 
    Extract(ptr, &word, SIZE_ANGLE);
    r->angle = ANGLE_STOC(word);   
@@ -401,7 +401,7 @@ room_contents_node *ExtractNewRoomObject(char **ptr)
    ExtractPaletteTranslation(ptr,&r->motion.translation,&r->motion.effect);
    ExtractAnimation(ptr, &r->motion.animate);
    r->motion.overlays = ExtractOverlays(ptr);
-   r->motion.move_animating = False;
+   r->motion.move_animating = false;
 
    return r;
 }
@@ -492,10 +492,10 @@ WORD ExtractString(char **ptr, long len, char *message, int max_chars)
  * using on the first byte of the packet.  The server can tell us a
  * new value to mangle/unmangle with, every now and then.
  */
-Bool DesecureByServerToken(char *message, int len)
+bool DesecureByServerToken(char *message, int len)
 {
    if (!message || len <= 0)
-      return False;
+      return false;
 
    *message = (*message) ^ (server_secure_token & 0xFF);
 
@@ -509,19 +509,19 @@ Bool DesecureByServerToken(char *message, int len)
 	     server_sliding_token = GetSecurityRedbook();
    }
 
-   return True;
+   return true;
 }
 /********************************************************************/
 /*
  * HandleMessage: Handle messages arriving from the server.  len should
  *   be the length of message INCLUDING type byte; 
  *   the first byte of the message should be the type (BP_CREATE, etc.).
- *   Return True iff message has correct format.
+ *   Return true iff message has correct format.
  */
-Bool HandleMessage(char *message, int len)
+bool HandleMessage(char *message, int len)
 {
    HandlerTable table;
-   Bool handled;
+   bool handled;
 
    DesecureByServerToken(message, len);
 
@@ -537,14 +537,14 @@ Bool HandleMessage(char *message, int len)
 
    case STATE_GAME:
       // See if a module wants to handle the message
-      if (ModuleEvent(EVENT_SERVERMSG, message, len) == False)
-	 return True;
+      if (ModuleEvent(EVENT_SERVERMSG, message, len) == false)
+	 return true;
 
       table = game_handler_table;
       break;
 
    default:
-      return False;
+      return false;
    }
 
    handled =  LookupMessage(message, len, table);
@@ -556,14 +556,14 @@ Bool HandleMessage(char *message, int len)
 /*
  * LookupMessage:  Dispatch the given message according to the given message
  *   handler table. 
- *   Return True iff message successfully handled by one of the message handlers
+ *   Return true iff message successfully handled by one of the message handlers
  *   in the table.
  */
-Bool LookupMessage(char *message, int len, HandlerTable table)
+bool LookupMessage(char *message, int len, HandlerTable table)
 {
    char *ptr;
    unsigned char type;
-   Bool success = False;
+   bool success = false;
    int index;
 
    memcpy(&type, message, SIZE_TYPE);
@@ -585,7 +585,7 @@ Bool LookupMessage(char *message, int len, HandlerTable table)
 					// Don't print error message for "subprotocols"; these handle themselves
 					if (type != BP_USERCOMMAND)
 						debug(("Error in message of type %d from server\n", type));
-					return False;
+					return false;
 				}
 			}
 		break;
@@ -594,13 +594,13 @@ Bool LookupMessage(char *message, int len, HandlerTable table)
 	}
 
    if (table[index].msg_type == 0)
-      return False;
-   return True;
+      return false;
+   return true;
 }
 /********************************************************************/
 /*                      GAME MODE MESSAGES                          */
 /********************************************************************/
-Bool HandlePlayer(char *ptr, long len)
+bool HandlePlayer(char *ptr, long len)
 {   
    player_info player;
    ID bkgnd_id;
@@ -637,13 +637,13 @@ Bool HandlePlayer(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    SetPlayerInfo(&player, ambient_light, bkgnd_id);
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleRoomContents(char *ptr, long len)
+bool HandleRoomContents(char *ptr, long len)
 {   
    room_contents_node *room_item;
    list_type room_contents_list = NULL;
@@ -653,7 +653,7 @@ Bool HandleRoomContents(char *ptr, long len)
    char *start;
 
    if (len < SIZE_ID + SIZE_LIST_LEN)
-      return False;
+      return false;
    len -= SIZE_ID + SIZE_LIST_LEN;
 
    Extract(&ptr, &room_id, SIZE_ID);
@@ -674,15 +674,15 @@ Bool HandleRoomContents(char *ptr, long len)
    if (len != 0)
    {
       RoomObjectListDestroy(room_contents_list);
-      return False;
+      return false;
    }
 
    SetPlayerRemoteView(0,0,0,0);
    SetRoomInfo(room_id, room_contents_list);
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleMove(char *ptr, long len)
+bool HandleMove(char *ptr, long len)
 {    
    ID obj_id;
    int x, y;
@@ -691,7 +691,7 @@ Bool HandleMove(char *ptr, long len)
    BOOL turnToFace = FALSE;
 
    if (len < 1 * SIZE_ID + 2 * SIZE_COORD + 1)
-      return False;
+      return false;
 
    Extract(&ptr, &obj_id, sizeof(obj_id));
    ExtractCoordinates(&ptr, &x, &y);
@@ -705,29 +705,29 @@ Bool HandleMove(char *ptr, long len)
    
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    MoveObject2(obj_id, x, y, speed, turnToFace);
 
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleTurn(char *ptr,long len)
+bool HandleTurn(char *ptr,long len)
 {    
    ID obj_id;
    WORD angle;
 
    if (len != SIZE_ID + SIZE_ANGLE)
-      return False;
+      return false;
 
    Extract(&ptr, &obj_id, sizeof(obj_id));
    Extract(&ptr, &angle, sizeof(angle));
    TurnObject(obj_id, angle);
 
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleCreate(char *ptr,long len)
+bool HandleCreate(char *ptr,long len)
 {   
    room_contents_node *room_item;
    char *start = ptr;
@@ -738,7 +738,7 @@ Bool HandleCreate(char *ptr,long len)
    if (len != 0)
    {
       SafeFree(room_item);
-      return False;
+      return false;
    }
 
    CreateObject(room_item);
@@ -746,15 +746,15 @@ Bool HandleCreate(char *ptr,long len)
    // something changed, so we probably need to rebuild static lists
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleRemove(char *ptr,long len)
+bool HandleRemove(char *ptr,long len)
 {   
    ID obj_id;
 
    if (len != 1 * SIZE_ID)
-      return False;
+      return false;
    
    Extract(&ptr, &obj_id, SIZE_ID);
 
@@ -763,10 +763,10 @@ Bool HandleRemove(char *ptr,long len)
    // something changed, so we probably need to rebuild static lists
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleChange(char *ptr, long len)
+bool HandleChange(char *ptr, long len)
 {
    object_node object;
    Animate a;
@@ -784,32 +784,32 @@ Bool HandleChange(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    ChangeObject(&object, translation, effect, &a, overlays);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleObjectContents(char *ptr,long len)
+bool HandleObjectContents(char *ptr,long len)
 {
    list_type list = NULL;
    ID object_id;
 
    if (len < SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &object_id, SIZE_ID);
    len -= SIZE_ID;
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
-      return False;
+      return false;
       
    GotObjectContents(object_id, list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleInventoryAdd(char *ptr,long len)
+bool HandleInventoryAdd(char *ptr,long len)
 {
    object_node *obj;
    char *start = ptr;
@@ -819,65 +819,65 @@ Bool HandleInventoryAdd(char *ptr,long len)
    if (len != 0)
    {
       SafeFree(obj);
-      return False;
+      return false;
    }
 
    AddToInventory(obj);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleInventoryRemove(char *ptr,long len)
+bool HandleInventoryRemove(char *ptr,long len)
 {
    ID obj_id;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &obj_id, SIZE_ID);
    
    RemoveFromInventory(obj_id);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleInventory(char *ptr,long len)
+bool HandleInventory(char *ptr,long len)
 {
    list_type list = NULL;
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
-      return False;
+      return false;
 
    SetInventory(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleStringMessage(char *ptr,long len)
+bool HandleStringMessage(char *ptr,long len)
 {
    char message[MAXMESSAGE];
    char* msg = message;
    ID resource_id;
 
    if (len < SIZE_ID)
-      return False;
+      return false;
    
    Extract(&ptr, &resource_id, SIZE_ID);
 
    /* Remove format string id # from length */
    if (!CheckServerMessage(&msg, &ptr, len - SIZE_ID, resource_id))
-      return False;
+      return false;
 
    GameMessage(msg);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSysMessage(char *ptr,long len)
+bool HandleSysMessage(char *ptr,long len)
 {
    // System messages used to be handled and displayed separately; now
    // we just display them in the main text area.
    return HandleStringMessage(ptr, len);
 }
 /********************************************************************/
-Bool HandleSaid(char *ptr,long len)
+bool HandleSaid(char *ptr,long len)
 {
    char message[MAXMESSAGE];
    char* msg = message;
@@ -885,7 +885,7 @@ Bool HandleSaid(char *ptr,long len)
    BYTE say_type;
 
    if (len < SIZE_ID)
-      return False;
+      return false;
    
    Extract(&ptr, &sender_id, SIZE_ID);
    Extract(&ptr, &sender_name, SIZE_ID);
@@ -895,42 +895,42 @@ Bool HandleSaid(char *ptr,long len)
    len -= 2 * SIZE_ID + SIZE_SAY_INFO;
 
    if (!CheckServerMessage(&msg, &ptr, len, resource_id))
-      return False;
+      return false;
 
    MessageSaid(sender_id, sender_name, say_type, msg);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleInvalidateData(char *ptr,long len)
+bool HandleInvalidateData(char *ptr,long len)
 {
    if (len != 0)
-      return False;
+      return false;
    ResetUserData();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleWait(char *ptr,long len)
+bool HandleWait(char *ptr,long len)
 {
    if (len != 0)
-      return False;
+      return false;
 
    //	System is saving - clear user selected target as the ID will be invalid afterwards.
    SetUserTargetID( INVALID_ID );
 
    GameWait();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleUnwait(char *ptr,long len)
+bool HandleUnwait(char *ptr,long len)
 {
    if (len != 0)
-      return False;
+      return false;
 
    GameUnwait();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLook(char *ptr, long len)
+bool HandleLook(char *ptr, long len)
 {
    char message[MAXMESSAGE];
    char* msg = message;
@@ -950,7 +950,7 @@ Bool HandleLook(char *ptr, long len)
    Extract(&ptr, &resource_id, SIZE_ID);
    len -= (ptr - start);
    if (!CheckServerMessage(&msg, &ptr, len, resource_id))
-      return False;
+      return false;
 
    // Get inscription string
    inscription[0] = '\0';
@@ -959,16 +959,16 @@ Bool HandleLook(char *ptr, long len)
    {
       Extract(&ptr, &resource_id, SIZE_ID);
       if (!CheckServerMessage(&inscr, &ptr, len, resource_id))
-	 return False;
+	 return false;
    }
 
    DisplayDescription(&obj, flags, (pane? inscr : NULL), msg, NULL, obj.rarity);
    ObjectDestroy(&obj);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleUseList(char *ptr,long len)
+bool HandleUseList(char *ptr,long len)
 {
    list_type use_list = NULL;
    WORD list_len;
@@ -977,7 +977,7 @@ Bool HandleUseList(char *ptr,long len)
    char *start;
 
    if (len < SIZE_LIST_LEN)
-      return False;
+      return false;
    len -= SIZE_LIST_LEN;
 
    Extract(&ptr, &list_len, SIZE_LIST_LEN);
@@ -994,40 +994,40 @@ Bool HandleUseList(char *ptr,long len)
    if (len != 0)
    {
       list_delete(use_list);
-      return False;
+      return false;
    }
             
    UseListSet(use_list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleUse(char *ptr,long len)
+bool HandleUse(char *ptr,long len)
 {
    ID obj_id;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
    
    Extract(&ptr, &obj_id, SIZE_ID);
 
    UseObject(obj_id);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleUnuse(char *ptr, long len)
+bool HandleUnuse(char *ptr, long len)
 {
    ID obj_id;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &obj_id, SIZE_ID);
 
    UnuseObject(obj_id);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleOffer(char *ptr,long len)
+bool HandleOffer(char *ptr,long len)
 {
    list_type list = NULL;
    object_node offerer;
@@ -1041,55 +1041,55 @@ Bool HandleOffer(char *ptr,long len)
    len -= (ptr - start);
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
-      return False;
+      return false;
 
    ReceiveOffer(offerer.id, offerer.icon_res, offerer.name_res, list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleOfferCanceled(char *ptr,long len)
+bool HandleOfferCanceled(char *ptr,long len)
 {
    if (len != 0)
-      return False;
+      return false;
 
    OfferCanceled();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleOffered(char *ptr,long len)
+bool HandleOffered(char *ptr,long len)
 {
    list_type list = NULL;
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
-      return False;
+      return false;
 
    Offered(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleCounteroffered(char *ptr,long len)
+bool HandleCounteroffered(char *ptr,long len)
 {
    list_type list = NULL;
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
-      return False;
+      return false;
 
    Counteroffered(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleCounteroffer(char *ptr,long len)
+bool HandleCounteroffer(char *ptr,long len)
 {
    list_type list = NULL;
 
    if ((list = ExtractObjectList(&ptr, len)) == LIST_ERROR)
-      return False;
+      return false;
 
    Counteroffer(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePlayers(char *ptr,long len)
+bool HandlePlayers(char *ptr,long len)
 {
    list_type list = NULL;
    WORD list_len;
@@ -1122,14 +1122,14 @@ Bool HandlePlayers(char *ptr,long len)
    if (len != 0)
    {
       ObjectListDestroy(list);
-      return False;
+      return false;
    }   
 
    SetCurrentUsers(list);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleAddPlayer(char *ptr,long len)
+bool HandleAddPlayer(char *ptr,long len)
 {
    object_node *obj;
    char *start = ptr;
@@ -1149,14 +1149,14 @@ Bool HandleAddPlayer(char *ptr,long len)
    if (len != 0)
    {
       ObjectDestroyAndFree(obj);
-      return False;
+      return false;
    }
    
    AddCurrentUser(obj);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleBuyList(char *ptr, long len)
+bool HandleBuyList(char *ptr, long len)
 {
    object_node seller;
    buy_object *buy_obj;
@@ -1187,14 +1187,14 @@ Bool HandleBuyList(char *ptr, long len)
    if (0)
    {
       ObjectListDestroy(list);
-      return False;
+      return false;
    }
    BuyList(seller, list);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleWithdrawalList(char *ptr, long len)
+bool HandleWithdrawalList(char *ptr, long len)
 {
    object_node seller;
    buy_object *buy_obj;
@@ -1222,27 +1222,27 @@ Bool HandleWithdrawalList(char *ptr, long len)
    if (len != 0)
    {
       ObjectListDestroy(list);
-      return False;
+      return false;
    }
    WithdrawalList(seller, list);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleRemovePlayer(char *ptr,long len)
+bool HandleRemovePlayer(char *ptr,long len)
 {
    ID obj_id;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &obj_id, SIZE_ID);
    
    RemoveCurrentUser(obj_id);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePlayWave(char *ptr,long len)
+bool HandlePlayWave(char *ptr,long len)
 {
    ID rsc, obj;
    BYTE flags;
@@ -1250,7 +1250,7 @@ Bool HandlePlayWave(char *ptr,long len)
    int radius, maxvol;
 
    if (len != 6 * SIZE_ID + 1)
-      return False;
+      return false;
 
    Extract(&ptr, &rsc, SIZE_ID);
    Extract(&ptr, &obj, SIZE_ID);
@@ -1261,84 +1261,84 @@ Bool HandlePlayWave(char *ptr,long len)
    Extract(&ptr, &maxvol, sizeof(maxvol));
    
    GamePlaySound(rsc, obj, flags, (WORD)row, (WORD)col, (WORD)radius, (WORD)maxvol);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePlayMidi(char *ptr,long len)
+bool HandlePlayMidi(char *ptr,long len)
 {
    ID rsc;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &rsc, SIZE_ID);
    
    PlayMidiRsc(rsc);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePlayMusic(char *ptr,long len)
+bool HandlePlayMusic(char *ptr,long len)
 {
    ID rsc;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &rsc, SIZE_ID);
    
    PlayMusicRsc(rsc);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleQuit(char *ptr, long len)
+bool HandleQuit(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    GameQuit();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLightAmbient(char *ptr, long len)
+bool HandleLightAmbient(char *ptr, long len)
 {
    BYTE light;
 
    if (len != SIZE_LIGHT)
-      return False;
+      return false;
 
    Extract(&ptr, &light, SIZE_LIGHT);
    SetAmbientLight(light);
    gD3DRedrawAll |= D3DRENDER_REDRAW_UPDATE;
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLightPlayer(char *ptr, long len)
+bool HandleLightPlayer(char *ptr, long len)
 {
    BYTE light;
 
    if (len != SIZE_LIGHT)
-      return False;
+      return false;
 
    Extract(&ptr, &light, SIZE_LIGHT);
    SetPlayerLight(light);
    gD3DRedrawAll |= D3DRENDER_REDRAW_UPDATE;
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleBackground(char *ptr, long len)
+bool HandleBackground(char *ptr, long len)
 {
    ID bkgnd;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &bkgnd, SIZE_ID);
    SetBackground(bkgnd);
-   return True;   
+   return true;   
 }
 /********************************************************************/
-Bool HandleEffect(char *ptr, long len)
+bool HandleEffect(char *ptr, long len)
 {
    WORD effect_num;
 
@@ -1347,7 +1347,7 @@ Bool HandleEffect(char *ptr, long len)
    return PerformEffect(effect_num, ptr, len);
 }
 /********************************************************************/
-Bool HandleShoot(char *ptr, long len)
+bool HandleShoot(char *ptr, long len)
 {
    Projectile *p = (Projectile *) ZeroSafeMalloc(sizeof(Projectile));
    BYTE speed;
@@ -1372,62 +1372,62 @@ Bool HandleShoot(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    ProjectileAdd(p, source, dest, speed, flags, reserved);
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLoadModule(char *ptr, long len)
+bool HandleLoadModule(char *ptr, long len)
 {
    ID name_rsc;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &name_rsc, SIZE_ID);
 
    ModuleLoadByRsc(name_rsc);
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleUnloadModule(char *ptr, long len)
+bool HandleUnloadModule(char *ptr, long len)
 {
    ID name_rsc;
 
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &name_rsc, SIZE_ID);
 
    ModuleExitByRsc(name_rsc);
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleChangeResource(char *ptr, long len)
+bool HandleChangeResource(char *ptr, long len)
 {
    char res_string[MAXNAME + 1];
    ID res;
 
    if (len < SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &res, SIZE_ID);
    len -= SIZE_ID;
 
    len = ExtractString(&ptr, len, res_string, MAXNAME);
    if (len != 0)
-      return False;
+      return false;
 
    ChangeResource(res, res_string);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePlayerOverlay(char *ptr, long len)
+bool HandlePlayerOverlay(char *ptr, long len)
 {
    object_node *poverlay;
    char *start = ptr;
@@ -1441,14 +1441,14 @@ Bool HandlePlayerOverlay(char *ptr, long len)
    if (len != 0)
    {
       ObjectDestroyAndFree(poverlay);
-      return False;
+      return false;
    }
 
    SetPlayerOverlay(hotspot, poverlay);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSectorMove(char *ptr, long len)
+bool HandleSectorMove(char *ptr, long len)
 {
    WORD sector_num, height;
    BYTE speed, type;
@@ -1460,10 +1460,10 @@ Bool HandleSectorMove(char *ptr, long len)
 
    MoveSector(type, sector_num, height, speed);   
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleWallAnimate(char *ptr, long len)
+bool HandleWallAnimate(char *ptr, long len)
 {
    WORD wall_num;
    Animate a;
@@ -1474,10 +1474,10 @@ Bool HandleWallAnimate(char *ptr, long len)
    Extract(&ptr, &action, 1);
 
    WallChange(wall_num, &a, action);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSectorAnimate(char *ptr, long len)
+bool HandleSectorAnimate(char *ptr, long len)
 {
    WORD sector_num;
    Animate a;
@@ -1488,10 +1488,10 @@ Bool HandleSectorAnimate(char *ptr, long len)
    Extract(&ptr, &action, 1);
 
    SectorChange(sector_num, &a, action);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleAddBackgroundOverlay(char *ptr, long len)
+bool HandleAddBackgroundOverlay(char *ptr, long len)
 {
    BackgroundOverlay *overlay;
    char *start = ptr;
@@ -1501,28 +1501,28 @@ Bool HandleAddBackgroundOverlay(char *ptr, long len)
    if (ptr - start != len)
    {
       BackgroundOverlayDestroyAndFree(overlay);
-      return False;
+      return false;
    }
 
    BackgroundOverlayAdd(overlay);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleRemoveBackgroundOverlay(char *ptr, long len)
+bool HandleRemoveBackgroundOverlay(char *ptr, long len)
 {
    ID id;
    
    if (len != SIZE_ID)
-      return False;
+      return false;
 
    Extract(&ptr, &id, SIZE_ID);
    
    BackgroundOverlayRemove(id);
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleChangeBackgroundOverlay(char *ptr, long len)
+bool HandleChangeBackgroundOverlay(char *ptr, long len)
 {
    BackgroundOverlay *overlay;
    char *start = ptr;
@@ -1532,27 +1532,27 @@ Bool HandleChangeBackgroundOverlay(char *ptr, long len)
    if (ptr - start != len)
    {
       BackgroundOverlayDestroyAndFree(overlay);
-      return False;
+      return false;
    }
 
    BackgroundOverlayChange(overlay);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleRoundtrip(char *ptr, long len)
+bool HandleRoundtrip(char *ptr, long len)
 {
   DWORD data;
   
   if (len != 4)
-    return False;
+    return false;
 
   Extract(&ptr, &data, 4);
   RequestRoundtrip(data);
 
-  return True;
+  return true;
 }
 /********************************************************************/
-Bool HandleChangeTexture(char *ptr, long len)
+bool HandleChangeTexture(char *ptr, long len)
 {
    WORD id_num, texture_num;
    BYTE flags;
@@ -1564,14 +1564,14 @@ Bool HandleChangeTexture(char *ptr, long len)
    Extract(&ptr, &flags, 1);
    
    if (ptr - start != len)
-      return False;
+      return false;
 
    TextureChange(id_num, texture_num, flags);
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSectorLight(char *ptr, long len)
+bool HandleSectorLight(char *ptr, long len)
 {
    WORD sector_num;
    BYTE type;
@@ -1582,13 +1582,13 @@ Bool HandleSectorLight(char *ptr, long len)
    Extract(&ptr, &type, 1);
 
    if (ptr - start != len)
-      return False;
+      return false;
 
    SectorFlickerChange(sector_num, type);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLightShading(char *ptr, long len)
+bool HandleLightShading(char *ptr, long len)
 {
    WORD sun_x, sun_y;
    BYTE directional_light;
@@ -1599,10 +1599,10 @@ Bool HandleLightShading(char *ptr, long len)
    Extract(&ptr, &sun_y, 2);
 
    SetLightingInfo(sun_x, sun_y, directional_light);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleEchoPing(char *ptr, long len)
+bool HandleEchoPing(char *ptr, long len)
 {
    if (len > 0 && ptr != NULL)
    {
@@ -1623,126 +1623,111 @@ Bool HandleEchoPing(char *ptr, long len)
    }
 
    if (len != 0)
-      return False;
+      return false;
    PingGotReply();
-   return True;
+   return true;
 }
 /********************************************************************/
 /*                      LOGIN MODE MESSAGES                         */
 /********************************************************************/
-Bool HandleLoginOk(char *ptr, long len)
+bool HandleLoginOk(char *ptr, long len)
 {
    BYTE admin;
 
    if (len != SIZE_ADMIN)
-      return False;
+      return false;
 
    Extract(&ptr, &admin, SIZE_ADMIN);
    LoginOk(admin);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLoginFailed(char *ptr, long len)
+bool HandleLoginFailed(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginError(IDS_BADLOGIN);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleEnterGame(char *ptr, long len)
+bool HandleEnterGame(char *ptr, long len)
 {
-   int server_move_interval;
-
-   if (len < 4)
+   if (len != 0)
       return False;
-
-   Extract(&ptr, &server_move_interval, 4);
-
-   // Sanity check to ensure move interval isn't too aggressive or invalid
-   if (server_move_interval < MINIMUM_MOVE_INTERVAL)
-   {
-      debug(("MoveInterval %i lower than minimum threshold %i.\n", server_move_interval, MINIMUM_MOVE_INTERVAL));
-      return False;
-   }
-
-   // Set the client extern variable to the server move interval
-   move_interval = server_move_interval;
-
    MainSetState(STATE_GAME);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleEnterAdmin(char *ptr, long len)
+bool HandleEnterAdmin(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    MainSetState(STATE_TERM);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGetLogin(char *ptr, long len)
+bool HandleGetLogin(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginSendInfo();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGetChoice(char *ptr, long len)
+bool HandleGetChoice(char *ptr, long len)
 {
    int i;
    unsigned int seeds[NUM_STREAMS];
 
    if (len != NUM_STREAMS * 4)
-      return False;
+      return false;
 
    for (i=0; i < NUM_STREAMS; i++)
       Extract(&ptr, &seeds[i], 4);
 
    RandomStreamsInit(seeds);
    EnterGame();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleLoginErrorMsg(char *ptr, long len)
+bool HandleLoginErrorMsg(char *ptr, long len)
 {
    char message[MAXMESSAGE + 1];
    BYTE action;
 
    len = ExtractString(&ptr, len, message, MAXMESSAGE);
    if (len != 1)
-      return False;
+      return false;
    Extract(&ptr, &action, 1);
    LoginErrorMessage(message, action);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleAccountUsed(char *ptr, long len)
+bool HandleAccountUsed(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginError(IDS_ACCOUNTUSED);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleTooManyLogins(char *ptr, long len)
+bool HandleTooManyLogins(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginError(IDS_TOOMANYLOGINS);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleTimeout(char *ptr, long len)
+bool HandleTimeout(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginTimeout();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleDownload(char *ptr, long len)
+bool HandleDownload(char *ptr, long len)
 {
    char *start = ptr;
    WORD i;
@@ -1772,50 +1757,50 @@ Bool HandleDownload(char *ptr, long len)
    {
       SafeFree(dinfo->files);
       SafeFree(dinfo);
-      return False;
+      return false;
    }
    
    DownloadFiles(dinfo);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleNoCredits(char *ptr, long len)
+bool HandleNoCredits(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginError(IDS_NOCREDITS);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePasswordOk(char *ptr, long len)
+bool HandlePasswordOk(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    GameMessage(GetString(hInst, IDS_PASSWORDCHANGED));
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandlePasswordNotOk(char *ptr, long len)
+bool HandlePasswordNotOk(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    GameMessage(GetString(hInst, IDS_PASSWORDNOTCHANGED));
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleCredits(char *ptr, long len)
+bool HandleCredits(char *ptr, long len)
 {
    DWORD credits;
 
    if (len != sizeof(credits))
-      return False;
+      return false;
 
    Extract(&ptr, &credits, 4);
 //   SetCredits(credits);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleDeleteRsc(char *ptr, long len)
+bool HandleDeleteRsc(char *ptr, long len)
 {
    list_type files = NULL;
    char *file;
@@ -1831,7 +1816,7 @@ Bool HandleDeleteRsc(char *ptr, long len)
       if ((len = ExtractString(&ptr, len, file, MAXMESSAGE)) == -1)
       {
          list_destroy(files);
-         return False;
+         return false;
       }
       files = list_add_item(files, file);
    }
@@ -1843,68 +1828,68 @@ Bool HandleDeleteRsc(char *ptr, long len)
    return len == 0;
 }
 /********************************************************************/
-Bool HandleDeleteAllRsc(char *ptr, long len)
+bool HandleDeleteAllRsc(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    DeleteAllRscFiles();
-   return True;
+   return true;
 }
 
 /********************************************************************/
-Bool HandleLoginResync(char *ptr, long len)
+bool HandleLoginResync(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    /* Go into resynchronization */
    MainSetState(STATE_STARTUP);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGameResync(char *ptr, long len)
+bool HandleGameResync(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    GameDisplayResync();
    /* Go into resynchronization */
    GameSetState(GAME_RESYNC);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleNoCharacters(char *ptr, long len)
+bool HandleNoCharacters(char *ptr, long len)
 {
    if (len != 0)
-      return False;
+      return false;
    LoginError(IDS_NOCHARACTERS);
    Logoff();
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGetClient(char *ptr, long len)
+bool HandleGetClient(char *ptr, long len)
 {
    char hostname[MAXMESSAGE], filename[MAXMESSAGE];
    debug(("Got GetClient\n"));
    
    if ((len = ExtractString(&ptr, len, hostname, MAXMESSAGE)) == -1)
-      return False;
+      return false;
 
    if ((len = ExtractString(&ptr, len, filename, MAXMESSAGE)) == -1)
-      return False;
+      return false;
 
    debug(("server = %s, filename = %s\n", hostname, filename));
 
    DownloadNewClient(hostname, filename);
 
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleResetView(char *ptr, long len)
+bool HandleResetView(char *ptr, long len)
 {
    SetPlayerRemoteView(0,0,0,0);
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleSetView(char *ptr, long len)
+bool HandleSetView(char *ptr, long len)
 {
    char *start = ptr;
    ID objID;
@@ -1919,8 +1904,8 @@ Bool HandleSetView(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    SetPlayerRemoteView(objID,viewFlags,viewHeight,viewLight);
-   return True;
+   return true;
 }

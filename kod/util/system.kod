@@ -33,6 +33,9 @@ constants:
    % Six minutes, in ms.
    GUILD_MAINTENANCE_DELAY = 360000
 
+   % Skip expensive ops if online player count exceeds this
+   CROWDED_SERVER_THRESHOLD = 100
+
    RECREATE_NOT = -1
    RECREATE_WAITING = 0
    RECREATE_PHASE_ONE = 1
@@ -1042,8 +1045,6 @@ messages:
                Send(j,@Delete);
             }
 
-            plReflections = DelListElem(plReflections,i);
-
             break;
          }
       }
@@ -1673,6 +1674,20 @@ messages:
          Send(i,@MsgSendUser,#message_rsc=rMessage,#parm1=Send(what,@GetTrueName),#type1=STRING_RESOURCE,
               #parm2=param2,#parm3=param3,#parm4=param4,#parm5=param5,#parm6=param6,
               #parm7=param7,#type3=STRING_RESOURCE,#type5=type5,#type7=type7);
+      }
+
+      % Send structured event data to webhook listeners
+      if NOT Send(self,@GetChaosNight)
+      {
+         SendWebhook("UserKilled",
+            "rMessage", rMessage,
+            "param1", Send(what,@GetTrueName),
+            "param2", param2,
+            "param3", param3,
+            "param4", param4,
+            "param5", param5,
+            "param6", param6,
+            "param7", param7);
       }
 
       return;
@@ -3490,6 +3505,7 @@ messages:
       Create(&ZombieTreasure);
       Create(&EntTreasure);
       Create(&MummyTreasure);
+      Create(&FrogmanTreasure);
 
       Create(&CaveOrcTreasure);
       Create(&OrcWizardTreasure);
@@ -6599,6 +6615,83 @@ messages:
       }
       return total;
    }
+
+   IsServerCrowded()
+   "Returns TRUE if server has too many players online for expensive operations"
+   {
+      local iPlayersOnline;
+
+      iPlayersOnline = Length(Send(self,@GetUsersLoggedOn));
+
+      return (iPlayersOnline >= CROWDED_SERVER_THRESHOLD);
+   }
+
+   UpdateWhoListForAll()
+   {
+      local i;
+      for i in Send(self,@GetUsersLoggedOn)
+      {
+         Send(i,@ToCliPlayers);
+      }
+      return;
+   }
+
+   FindBadMonsterEffects()
+   "Find monsters where piDrawfx was incorrectly set to $"
+   {
+      local room, i, active;
+
+      for room in plRooms
+      {
+         for i in Send(room, @GetHolderActive)
+         {
+            active = Send(room, @HolderExtractObject, #data=i);
+            if IsClass(active, &Monster) 
+            {
+               if ($ = Send(active, @GetDrawFX)) 
+               {
+                  debug("Object", active, "has $ piDrawfx");
+               }
+            }
+         }  
+      }
+
+      return;
+   }
+
+   FindBadRoomTextures()
+   "Find rooms where the sector ID for texture changes was incorrectly set to $"
+   {
+      local room;
+
+      for room in plRooms
+      {
+         Send(room, @FindBadTextureChanges);
+      }
+
+      return;
+   }
+
+   FindBadRoomSectors()
+   "Find rooms where the sector ID for animations was incorrectly set to $"
+   {
+      local room;
+
+      for room in plRooms
+      {
+         Send(room, @FindBadSectorChanges);
+      }
+
+      return;
+   }
+
+   PostPatchUpdates()
+   "Runs one-time update functions after a patch. Call via 'send object 0 PostPatchUpdates'"
+   {
+      Send(&Statue, @UpgradeStatue);
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

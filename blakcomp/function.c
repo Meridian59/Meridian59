@@ -85,6 +85,7 @@ function_type Functions[] = {
 {"RecycleUser",         RECYCLEUSER,     AEXPRESSION,   ANONE},
 {"MinigameNumberToString", MINIGAMENUMBERTOSTRING,     AEXPRESSION,   AEXPRESSION,   ANONE},
 {"MinigameStringToNumber", MINIGAMESTRINGTONUMBER,     AEXPRESSION,   ANONE},
+{"SendWebhook",         SENDWEBHOOK,     AEXPRESSIONS,   ANONE},
 {"GetServerConfigValue", GETSERVERCONFIGVALUE,  AEXPRESSION,   ANONE},
 };
 

@@ -74,7 +74,7 @@ void UserReadNews(object_node *obj, char *desc, WORD newsgroup, BYTE permissions
    s.permissions = permissions;
    s.desc = desc;
 
-   DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
+   SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_NEWSREAD), cinfo->hMain,
                   ReadNewsDialogProc, (LPARAM)&s);
 }
 /****************************************************************************/
@@ -406,9 +406,9 @@ void UserReplyNewsMail(NewsArticle *article)
  *   fill in str to contain a string describing the date and time, such as
  *   "Dec 25, 1994 18:00".
  *   str must have length at least MAXDATE.
- *   Returns True iff minutes is legal, i.e. positive.
+ *   Returns true iff minutes is legal, i.e. positive.
  */
-Bool DateFromSeconds(long seconds, char *str)
+bool DateFromSeconds(long seconds, char *str)
 {
    struct tm *t;
    time_t local_time = seconds;
@@ -417,12 +417,12 @@ Bool DateFromSeconds(long seconds, char *str)
    t = localtime(&local_time);
 
    if (t == NULL)
-      return False;
+      return false;
 
    snprintf(str, MAXDATE, "%s %s %.2ld, %.4ld %.2ld:%.2ld",
             GetString(hInst, weekdays[t->tm_wday]), GetString(hInst, months[t->tm_mon]),
             t->tm_mday, t->tm_year + 1900, t->tm_hour, t->tm_min);
-   return True;
+   return true;
 }
 
 void OnColumnClick(LPNMLISTVIEW pLVInfo)

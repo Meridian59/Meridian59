@@ -26,7 +26,7 @@ static FILE *debug_file = NULL;
 char *szAppName;
 
 /************************************************************************/
-void _cdecl dprintf(char *fmt, ...)
+void _cdecl dprintf(const char *fmt, ...)
 {
 	const int bufferSize = 256;
 	const char s[bufferSize]{ 0 };
@@ -48,9 +48,8 @@ void _cdecl dprintf(char *fmt, ...)
 }
 
 unsigned short gCRC16=0;
-extern WORD GetCRC16(char *buf, int length);
 
-static unsigned short crc16( char *name)
+static unsigned short crc16(const char *name)
 {
 	FILE*fp;
 	char*buffer;
@@ -100,7 +99,7 @@ static void GenerateCRC16( void )
 LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	/* See if module wants to handle message */
-	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == False)
+	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == false)
 		return 0;
 
 	switch (message)
@@ -126,12 +125,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_SYSKEYDOWN:
-		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == True)
+		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == true)
 			return 0;
 		break;  // Pass message on to Windows for default menu handling
 
 	case WM_SYSKEYUP:
-		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == True)
+		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == true)
 			return 0;
 		break;  // Pass message on to Windows for default menu handling
 

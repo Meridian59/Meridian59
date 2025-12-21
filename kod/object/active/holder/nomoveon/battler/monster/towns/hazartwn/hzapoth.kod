@@ -52,18 +52,18 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(Self,@IsObjectReagent,#what=what) or send(self,@IsObjectGem,#what=what)
          { return True;}
       return False;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#string=HzAp_entry_welcome,
               #type = SAY_RESOURCE);
-      propagate;
+      return;
    }
    
 

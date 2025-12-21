@@ -48,7 +48,7 @@ properties:
 
 messages:
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iAction;
 
@@ -69,7 +69,7 @@ messages:
          send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      propagate;
+      return;
    }
 
    CreateDestinationList()

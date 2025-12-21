@@ -53,7 +53,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
 
@@ -69,7 +69,7 @@ messages:
       if iFlags & PLAYER_PK
       {
 	 send( self, @SetMood, #new_mood = piMood + 1 );
-	 propagate;
+	 return;
       }
       if not (iFlags & PLAYER_OUTLAW)
       {
@@ -79,7 +79,7 @@ messages:
       Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanMadScientist_entry_welcome,
          #type = SAY_RESOURCE);
 
-      propagate;
+      return;
    }
 
 

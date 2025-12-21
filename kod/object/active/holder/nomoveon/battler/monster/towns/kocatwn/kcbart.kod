@@ -39,7 +39,7 @@ properties:
    
 messages:
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if isClass(what,&ShortSword)
       {
@@ -85,7 +85,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       if send(who, @GetGender) = GENDER_MALE
       {
@@ -100,7 +100,7 @@ messages:
       Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanBartender_entry_welcome,
              #type = SAY_RESOURCE);
              
-      propagate;
+      return;
    }
    
 end

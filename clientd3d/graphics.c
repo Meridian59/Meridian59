@@ -21,18 +21,18 @@
 
 extern AREA	gD3DView;
 
-/* Set to True when the room should be redrawn at the first opportunity */
-static Bool need_redraw = False;
+/* Set to true when the room should be redrawn at the first opportunity */
+static bool need_redraw = false;
 
 static AREA view;			/* Client coordinates of room viewing rectangle */
 static AREA areaMiniMap;	//	Coords of the MiniMap.
 
 static DRAWBORDEREXCLUDE drawborderexcludeView = { 43, 43, 45, 45, 46, 48, 46, 48 };
 
-Bool map = False;             // True if we should draw map instead of room view
+bool map = false;             // true if we should draw map instead of room view
 
-static Bool capture = False;  // True when graphics area has mouse capture
-static ID   drag_object;      // When capture = True, holds id of object being dragged
+static bool capture = false;  // true when graphics area has mouse capture
+static ID   drag_object;      // When capture = true, holds id of object being dragged
 static int fps;
 static int msDrawFrame;
 
@@ -88,11 +88,6 @@ void GraphicsToggleMap(void)
 void ResizeAll(void)
 {
    RECT r;
-   
-   GetWindowRect(hMain, &r);
-   //MoveWindow(hMain, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
-   MoveWindow(hMain, 0, 0, 1024, 768, TRUE);
-
    GetClientRect(hMain, &r);
    MainResize(hMain, SIZE_RESTORED, r.right - r.left, r.bottom - r.top);
    InvalidateRect(hMain, NULL, TRUE);
@@ -105,9 +100,9 @@ void ResizeAll(void)
  *    as if the graphics were drawn 1:1.
  *    
  *    If (client_x, client_y) is in room view area, set (x, y) to corresponding
- *    point in room view and return True.  Otherwise return False.
+ *    point in room view and return true.  Otherwise return false.
  */
-Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
+bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
 {
     // Default scale factors for hardware renderer.
     float scale_x = 1.0f;
@@ -129,17 +124,17 @@ Bool TranslateToRoom(int client_x, int client_y, int *x, int *y)
     // Check if the translated coordinates are within the valid room bounds.
     if (*x < 0 || *x > view.cx ||
         *y < 0 || *y > view.cy)
-        return False;
+        return false;
 
-    return True;
+    return true;
 }
 /************************************************************************/
 /*
  * MouseToRoom:  Translate from current mouse position to 
  *    the coordinates of the room.  Sets (x, y) to the room coordinate (pixel) 
- *    containing mouse pointer.  Returns True iff pointer is in grid area.
+ *    containing mouse pointer.  Returns true iff pointer is in grid area.
  */
-Bool MouseToRoom(int *x, int *y)
+bool MouseToRoom(int *x, int *y)
 {
    POINT mouse;
 
@@ -157,7 +152,7 @@ Bool MouseToRoom(int *x, int *y)
  *		Returns true and sets x and y to MiniMap relative coords if cursor
  *		is in MiniMap area.
  */
-Bool MouseToMiniMap( int* x, int* y )
+bool MouseToMiniMap( int* x, int* y )
 {
 	POINT ptMouse;
 	GetCursorPos( &ptMouse );
@@ -165,12 +160,12 @@ Bool MouseToMiniMap( int* x, int* y )
 
 	if( ptMouse.x < areaMiniMap.x || ptMouse.x > areaMiniMap.x + areaMiniMap.cx ||
 		ptMouse.y < areaMiniMap.y || ptMouse.y > areaMiniMap.y + areaMiniMap.cy )
-		return False;
+		return false;
 
 	*x = ptMouse.x - areaMiniMap.x;
 	*y = ptMouse.y - areaMiniMap.y;
 
-	return True;
+	return true;
 }
 
 /************************************************************************/
@@ -181,7 +176,7 @@ Bool MouseToMiniMap( int* x, int* y )
 void GraphicsAreaResize(int xsize, int ysize)
 {
    int new_xsize, new_ysize;  /* Need signed #s */
-   Bool must_redraw = False;
+   bool must_redraw = false;
 
    int iHeightAvailableForMapAndStats;
 
@@ -226,7 +221,7 @@ void GraphicsAreaResize(int xsize, int ysize)
    else view.y += TOP_BORDER + MIN_TOP_NOTOOLBAR + EDGETREAT_HEIGHT;
    
    if (new_xsize != view.cx || new_ysize != view.cy)
-      must_redraw = True;
+      must_redraw = true;
 
    view.cx = new_xsize;
    view.cy = new_ysize;
@@ -295,10 +290,10 @@ void DrawGridBorder(void)
 }
 /************************************************************************/
 /*
- * MapVisible:  Return True iff we are currently showing the map in the main
+ * MapVisible:  Return true iff we are currently showing the map in the main
  *   graphics area.
  */
-Bool MapVisible(void)
+bool MapVisible(void)
 {
    return map;
 }
@@ -325,7 +320,7 @@ void RedrawForce(void)
    if (state == GAME_INVALID || state == GAME_INIT || IsIconic(hMain) ||
        view.cx == 0 || view.cy == 0 || current_room.rows == 0 || current_room.cols == 0)
    {
-      need_redraw = False;
+      need_redraw = false;
       return;
    }
 
@@ -335,7 +330,7 @@ void RedrawForce(void)
     *         This is useful in rare circumstances when an effect should
     *         last only one frame, even if animation is off.
     */
-   need_redraw = False;
+   need_redraw = false;
    HDC hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
@@ -401,11 +396,11 @@ void RedrawForce(void)
 /************************************************************************/
 void RedrawAll(void)
 {
-   need_redraw = True;
+   need_redraw = true;
 }
 
 /************************************************************************/
-Bool NeedRedraw(void)
+bool NeedRedraw(void)
 {
    return need_redraw;
 }
@@ -448,7 +443,7 @@ void UserStartDrag(void)
    if (objects->next == NULL)
    {
       SetCapture(hMain);
-      capture = True;
+      capture = true;
       obj = (object_node *) objects->data;
       drag_object = obj->id;
       SetMainCursor(LoadCursor(hInst, MAKEINTRESOURCE(IDC_GETCURSOR)));
@@ -479,20 +474,20 @@ void UserEndDrag(void)
 /************************************************************************/
 /*
  * GraphicsReleaseCapture:  Release mouse capture, if main window has it.
- *   Return True iff main window had mouse capture.
+ *   Return true iff main window had mouse capture.
  */
-Bool GraphicsReleaseCapture(void)
+bool GraphicsReleaseCapture(void)
 {
    if (!capture)
-      return False;
+      return false;
 
    ReleaseCapture();
-   capture = False;
+   capture = false;
    GameWindowSetCursor();
-   return True;
+   return true;
 }
 /************************************************************************/
-Bool GraphicsMouseCaptured(void)
+bool GraphicsMouseCaptured(void)
 {
    return capture;
 }

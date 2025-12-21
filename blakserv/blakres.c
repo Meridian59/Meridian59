@@ -196,18 +196,18 @@ resource_node * GetResourceByID(int id)
 	return NULL;
 }
 
-Bool IsResourceByID(int id)
+bool IsResourceByID(int id)
 {
 	resource_node *r = GetResourceByID(id);
 	if (r == NULL)
-		return False;
-	return True;
+		return false;
+	return true;
 }
 
 resource_node * GetResourceByName(const char *resource_name)
 {
 	int resource_id;
-	Bool found;
+	bool found;
 
 	found = SIHashFind(resource_name_map,resource_name,&resource_id);
 	if (found)

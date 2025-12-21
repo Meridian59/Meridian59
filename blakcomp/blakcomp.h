@@ -45,9 +45,6 @@
 
 #define TABLESIZE       1023    /* Size of symbol tables */
 
-typedef int Bool;
-enum {False = 0, True = 1};
-
 enum { C_NUMBER, C_STRING, C_NIL, C_FNAME, C_RESOURCE, C_CLASS, C_MESSAGE, C_OVERRIDE }; 
 
 /* Types of operators */
@@ -201,7 +198,7 @@ typedef struct _class {
    list_type            classvars;
    list_type            properties;
    list_type            messages;
-   int                  is_new;	     /* True iff class needs code to be generated for it */
+   bool                 is_new;	     /* true iff class needs code to be generated for it */
 } *class_type, class_struct;
 
 /* Function parameter types --see function.c */
@@ -326,11 +323,11 @@ int get_statement_line(stmt_type s, int curline);
 
 void codegen(char *current_fname, char *bof_fname);
 void set_kodbase_filename(char *filename);
-int load_kodbase(void);
-int save_kodbase(void);
+bool load_kodbase(void);
+bool save_kodbase(void);
 
 /*************************** Global variables *************************/
-extern int generate_code; 	/* Nonzero if we should generate code */
+extern bool generate_code;      /* true if we should generate code */
 extern SymbolTable st;          /* Compiler's symbol table */
 
 /**************************** Include files ***************************/

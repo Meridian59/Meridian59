@@ -45,7 +45,7 @@ properties:
    
 messages:
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(what,@CanBeGiventoNPC) and 
          (Send(Self,@IsObjectWearable,#what=what) OR
@@ -76,7 +76,7 @@ messages:
    }
 
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what = self, #string=BQSmith_entry_welcome,
          #type = SAY_RESOURCE, 

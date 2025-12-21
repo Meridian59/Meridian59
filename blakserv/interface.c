@@ -63,27 +63,21 @@ HWND hwndTab_page;
 HWND tab_pages[NUM_TAB_PAGES];
 HWND tab_about;
 
-Bool is_about;
+bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
 #define HWND_ADMIN tab_pages[2]
 
 /* subclass admin edit window to get enter and tab keys */
-
-#ifdef STRICT
 static WNDPROC lpfnDefAdminInputProc;
 static WNDPROC lpfnDefAdminResponseProc;
-#else
-static FARPROC lpfnDefAdminInputProc;
-static FARPROC lpfnDefAdminResponseProc;
-#endif
 
 /* status window stuff--make a timer to clear it every once in a while */
 #define STATUS_CONNECTION_WIDTH 30
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
-Bool is_timer_pending;
+bool is_timer_pending;
 
 #define ADMIN_RESPONSE_SIZE (256 * 1024)
 
@@ -124,13 +118,15 @@ void InterfaceRemoveList(int session_id);
 void InterfaceUpdateList(int session_id);
 void InterfaceUpdateAdmin(void);
 
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message);
+
 void InitInterface(void)
 {
 	HANDLE hThread;
 	
 	sessions_logged_on = 0;
-	is_timer_pending = False;
-	is_about = False;
+	is_timer_pending = false;
+	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -252,19 +248,19 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 				switch (lpttt->hdr.idFrom)
 				{ 
 				case IDM_FILE_EXIT : 
-					lpttt->lpszText = "Exit";
+					lpttt->lpszText = const_cast<char *>("Exit");
 					break; 
 				case IDM_FILE_SAVE :
-					lpttt->lpszText = "Save Game";
+					lpttt->lpszText = const_cast<char *>("Save Game");
 					break; 
 				case IDM_FILE_RELOADSYSTEM :
-					lpttt->lpszText = "Reload System";
+					lpttt->lpszText = const_cast<char *>("Reload System");
 					break; 
 				case IDM_MESSAGES_MESSAGEOFTHEDAY :
-					lpttt->lpszText = "Message of the Day";
+					lpttt->lpszText = const_cast<char *>("Message of the Day");
 					break;
 				case IDM_HELP_ABOUT :
-					lpttt->lpszText = "About";
+					lpttt->lpszText = const_cast<char *>("About");
 					break; 
 				} 
 				break;
@@ -371,7 +367,7 @@ void InterfaceAddList(int session_id)
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE; 
 	lvi.state = 0; 
 	lvi.stateMask = 0; 
-	lvi.pszText = "  ?";  
+	lvi.pszText = const_cast<char *>("  ?");  
 	lvi.iImage = -1;
 	
 	lvi.iItem = index;
@@ -383,12 +379,12 @@ void InterfaceAddList(int session_id)
 	if (s->account == NULL)
 	{
 		/* need braces around this macro to use in an if/else */
-		ListView_SetItemText(hwndLV,index,1,"");
+		ListView_SetItemText(hwndLV,index,1,const_cast<char *>(""));
 	}
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
-	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
@@ -433,8 +429,8 @@ void InterfaceUpdateList(int session_id)
 	{
 		if (s->account == NULL)
 		{
-			ListView_SetItemText(hwndLV,index,0,"  ?");
-			ListView_SetItemText(hwndLV,index,1,"");
+			ListView_SetItemText(hwndLV,index,0,const_cast<char *>("  ?"));
+			ListView_SetItemText(hwndLV,index,1,const_cast<char *>(""));
 		}
 		else
 		{
@@ -442,7 +438,7 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
-		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
+		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time).c_str());
 		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}
@@ -602,11 +598,11 @@ void InterfaceCreateTabControl(HWND hwnd)
     tie.iImage = -1; 
     tie.pszText = s;
 	
-    tie.pszText = "&Status";
+    tie.pszText = const_cast<char *>("&Status");
     TabCtrl_InsertItem(hwndTab,0, &tie);
-    tie.pszText = "&Channels";
+    tie.pszText = const_cast<char *>("&Channels");
     TabCtrl_InsertItem(hwndTab,1, &tie);
-    tie.pszText = "&Administration";
+    tie.pszText = const_cast<char *>("&Administration");
     TabCtrl_InsertItem(hwndTab,2, &tie);
 	
     tab_pages[0] = CreateDialog(hInst,MAKEINTRESOURCE(IDD_TAB_PAGE_STATUS),hwndTab,
@@ -795,27 +791,27 @@ void InterfaceCreateListControl()
 	
 	/* make the columns */
 	
-	lvc.pszText = "#";
+	lvc.pszText = const_cast<char *>("#");
 	lvc.iSubItem = 0;
 	lvc.cx = 29; 
 	ListView_InsertColumn(hwndLV,0,&lvc);
 	
-	lvc.pszText = "Name";
+	lvc.pszText = const_cast<char *>("Name");
 	lvc.iSubItem = 1;
 	lvc.cx = 113; 
 	ListView_InsertColumn(hwndLV,1,&lvc);
 	
-	lvc.pszText = "Since";
+	lvc.pszText = const_cast<char *>("Since");
 	lvc.iSubItem = 2;
 	lvc.cx = 80; 
 	ListView_InsertColumn(hwndLV,2,&lvc);
 	
-	lvc.pszText = "State";
+	lvc.pszText = const_cast<char *>("State");
 	lvc.iSubItem = 3;
 	lvc.cx = 118; 
 	ListView_InsertColumn(hwndLV,3,&lvc);
 	
-	lvc.pszText = "From";
+	lvc.pszText = const_cast<char *>("From");
 	lvc.iSubItem = 4;
 	lvc.cx = 127; 
 	ListView_InsertColumn(hwndLV,4,&lvc);
@@ -886,10 +882,10 @@ void InterfaceDrawText(HWND hwnd)
 		SetDlgItemText(HWND_STATUS,IDC_MEMORY_VALUE,s);
 		
 		kstat = GetKodStats();
-		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time));
+		snprintf(s, sizeof(s),"%s",TimeStr(kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_STARTED_VALUE,s);
 		
-		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time));
+		snprintf(s, sizeof(s),"%-200s",RelativeTimeStr(GetTime()-kstat->system_start_time).c_str());
 		SetDlgItemText(HWND_STATUS,IDC_UP_FOR_VALUE,s);
 		
 		if (kstat->interpreting_time/1000.0 < 0.01) 
@@ -1027,40 +1023,61 @@ void InterfaceReloadSystem()
 	LeaveServerLock();
 }
 
-/* stolen from client, 9/19/95
-*
-* CenterWindow: Center one window over another.  Also ensure that the
-*   centered window (hwnd) is completely on the screen.  
-*   Call when processing the WM_INITDIALOG message of dialogs, or
-*   WM_CREATE in WndProcs. 
+/* 
+* CenterWindow: Centers the child window (hwnd) over the parent window 
+*   (hwndParent) while ensuring it's fully visible on the screen, even 
+*   across multiple monitors. The window is positioned within the 
+*   working area of the monitor, excluding taskbars. If hwndParent is NULL, 
+*   the desktop window is used as the parent.
+*   
+* Parameters:
+*   hwnd        - Handle to the child window.
+*   hwndParent  - Handle to the parent window. NULL uses the desktop.
+*   
+* Call this function during WM_INITDIALOG or WM_CREATE to center dialog 
+* boxes or other child windows.
 */
 void CenterWindow(HWND hwnd, HWND hwndParent)
 {
-	RECT rcDlg, rcParent;
-	int screen_width, screen_height, x, y;
-	
-	/* If dialog has no parent, then its parent is really the desktop */
-	if (hwndParent == NULL)
-		hwndParent = GetDesktopWindow();
-	
-	GetWindowRect(hwndParent, &rcParent);
-	GetWindowRect(hwnd, &rcDlg);
-	
-	/* Move dialog rectangle to upper left (0, 0) for ease of calculation */
-	OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
-	
-	x = rcParent.left + (rcParent.right - rcParent.left)/2 - rcDlg.right/2;
-	y = rcParent.top + (rcParent.bottom - rcParent.top)/2 - rcDlg.bottom/2;
-	
-	
-	/* Make sure that child window is completely on the screen */
-	screen_width  = GetSystemMetrics(SM_CXSCREEN);
-	screen_height = GetSystemMetrics(SM_CYSCREEN);
-	
-	x = std::max(0, std::min(x, (int) (screen_width  - rcDlg.right)));
-   y = std::max(0, std::min(y, (int) (screen_height - rcDlg.bottom)));
-	
-	SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+    RECT rcDlg, rcParent, rcScreen;
+    int x, y;
+
+    if (hwndParent == NULL)
+        hwndParent = GetDesktopWindow();
+
+    GetWindowRect(hwndParent, &rcParent);
+    GetWindowRect(hwnd, &rcDlg);
+
+    // Move dialog rectangle to upper left (0, 0) for ease of calculation
+    OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
+
+    // Default position: center over parent window
+    x = rcParent.left + (rcParent.right - rcParent.left) / 2 - rcDlg.right / 2;
+    y = rcParent.top + (rcParent.bottom - rcParent.top) / 2 - rcDlg.bottom / 2;
+
+    // Get the monitor information for the parent window
+    MONITORINFO mi;
+    mi.cbSize = sizeof(MONITORINFO);
+    HMONITOR hMonitor = MonitorFromWindow(hwndParent, MONITOR_DEFAULTTONEAREST);
+    if (GetMonitorInfo(hMonitor, &mi))
+    {
+        rcScreen = mi.rcWork;  // Use working area excluding taskbar
+
+        // Adjust position to ensure the child window is fully visible
+        x = std::max<LONG>(rcScreen.left, std::min<LONG>(x, rcScreen.right - rcDlg.right));
+		y = std::max<LONG>(rcScreen.top, std::min<LONG>(y, rcScreen.bottom - rcDlg.bottom));
+    }
+    else
+    {
+        // Fallback to center the window on the primary monitor if monitor info fails
+        int screen_width = GetSystemMetrics(SM_CXSCREEN);
+        int screen_height = GetSystemMetrics(SM_CYSCREEN);
+
+        x = (screen_width - rcDlg.right) / 2;
+        y = (screen_height - rcDlg.bottom) / 2;
+    }
+
+    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)
@@ -1070,7 +1087,7 @@ INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		CenterWindow(hwnd,NULL);
+        CenterWindow(hwnd, GetParent(hwnd));
 		
 		Edit_LimitText(GetDlgItem(hwnd,IDC_MOTD),sizeof(s)-1);
 		
@@ -1107,7 +1124,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = True;
+		is_about = true;
 		
 		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
@@ -1142,18 +1159,62 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 
 void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 {
-	char s[400];
+	char s[CHANBUF_SIZE];
 	
 	switch (codeNotify)
 	{
 	case LBN_DBLCLK :
 		if (id == IDC_LOG_LIST || id == IDC_ERROR_LIST || id == IDC_DEBUG_LIST)
 		{
-			ListBox_GetText(hwndCtl,ListBox_GetCurSel(hwndCtl),s);
-			MessageBox(hwndMain,s,BlakServNameString(),MB_OK | MB_ICONINFORMATION);
+			int sel = ListBox_GetCurSel(hwndCtl);
+			if (sel == LB_ERR)  // nothing selected
+				return;
+
+			int len = ListBox_GetTextLen(hwndCtl, sel);
+			if (len == LB_ERR)
+				return;
+			
+			if (len < (int)sizeof(s))
+			{
+				ListBox_GetText(hwndCtl, sel, s);
+				ShowCopyableMessageDialog(hwndMain, s);
+			}
+			else
+			{
+				char warning[200];
+				snprintf(warning, sizeof(warning), 
+					"Debug message too long to display (%d characters).\n"
+					"Maximum supported: %zu characters.", len, sizeof(s)-1);
+				ShowCopyableMessageDialog(hwndMain, warning);
+			}
 		}
 		break;
 	}
+}
+
+
+INT_PTR CALLBACK CopyableMessageDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        SetDlgItemText(hDlg, IDC_MESSAGE_EDIT, (LPCTSTR)lParam);
+		CenterWindow(hDlg, GetParent(hDlg));
+        return TRUE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
+static void ShowCopyableMessageDialog(HWND hwndParent, const char *message)
+{
+	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COPYABLE_MESSAGE), hwndParent, CopyableMessageDlgProc, (LPARAM)message);
 }
 
 LRESULT CALLBACK InterfaceAdminInputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -25,7 +25,7 @@ typedef struct {
 ID    char_to_use;   /* ID # of character player wants to use in game */
 char  name_to_use[MAXNAME];   /* name resource of character player wants to use in game */
 
-char *ad_directory = "ads";   // Subdirectory with advertisement files
+const char *ad_directory = "ads";   // Subdirectory with advertisement files
 
 static HWND hPickCharDialog = NULL;
 extern HWND hMakeCharDialog;
@@ -46,21 +46,21 @@ void GoToGame(ID character)
 /********************************************************************/
 void AbortCharDialogs(void)
 {
-   Bool has_dialog = False;
+   bool has_dialog = false;
 
    if (hPickCharDialog != NULL)
    {
-      has_dialog = True;
+      has_dialog = true;
       EndDialog(hPickCharDialog, IDCANCEL);
    }
    if (hMakeCharDialog != NULL)
    {
-      has_dialog = True;
+      has_dialog = true;
       PropSheet_PressButton(hMakeCharDialog, PSBTN_CANCEL);
       // Hide in case another dialog pops up; for some reason the property sheet lingers awhile
       ShowWindow(hMakeCharDialog, SW_HIDE);
    }
-   exiting = True;
+   exiting = true;
 
    if (!has_dialog)
       PostMessage(cinfo->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
@@ -166,12 +166,9 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
          // Load the BMP file
          hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-         if (hBitmap == NULL) {
-               MessageBox(hDlg, "Failed to load bitmap image!", "Error", MB_OK | MB_ICONERROR);
-               continue;
+         if (hBitmap != NULL) {
+           SendDlgItemMessage(hDlg, animation_controls[i], STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
          }
-
-         SendDlgItemMessage(hDlg, animation_controls[i], STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
       }
       
       hPickCharDialog = hDlg;

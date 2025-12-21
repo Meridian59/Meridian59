@@ -42,35 +42,10 @@ static std::string ConvertLegacyMusicExtension(const std::string& filepath)
 }
 
 /******************************************************************************/
-void MusicInitialize(void)
-{
-   ResetMusicVolume();
-}
-
-/******************************************************************************/
 void MusicClose(void)
 {
    MusicStop();
    playing_music = false;
-}
-
-/******************************************************************************/
-/*
- * PlayMidiFile: Returns true if music started successfully.
- * Legacy shim for BP_PLAY_MIDI; maps .mid/.midi/.mp3 to .ogg.
- */
-bool PlayMidiFile(HWND hWndNotify, char *fname)
-{
-   if (!fname) return false;
-   std::string filename = ConvertLegacyMusicExtension(fname);
-   if (MusicPlay(filename.c_str(), true))
-   {
-      playing_music = true;
-      debug(("PlayMidiFile (legacy compat): OpenAL playing %s\n", filename.c_str()));
-      return true;
-   }
-   debug(("PlayMidiFile (legacy compat): failed to play %s\n", filename.c_str()));
-   return false;
 }
 
 /******************************************************************************/
@@ -206,11 +181,6 @@ void NewMusic(WPARAM type, ID rsc)
 }
 
 /******************************************************************************/
-void MusicDone(UINT device)
-{
-}
-
-/******************************************************************************/
 void MusicAbort(void)
 {
    MusicStop();
@@ -218,7 +188,11 @@ void MusicAbort(void)
 }
 
 /******************************************************************************/
-void MusicStart(void)
+/*
+ * MusicRestart: Resume playing the most recent background music.
+ * Called when user re-enables music in settings.
+ */
+void MusicRestart(void)
 {
    if (state == STATE_GAME && latest_music)
    {

@@ -132,7 +132,6 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	InitCommonControls();
 	
 	AudioInit(hwnd);
-	MusicInitialize();
 	
 	SetMainCursor(LoadCursor(NULL, IDC_ARROW));
 	

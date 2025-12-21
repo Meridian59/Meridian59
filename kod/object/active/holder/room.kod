@@ -60,13 +60,15 @@ resources:
    background_kocatan_morning_sky = 1skyc.bgf
    background_kocatan_night_sky = 1skyd.bgf
 
+   % Each time of day has both clear and cloudy skyboxes.
    background_afternoon_sky = 2skya.bgf
+   background_afternoon_cloudy_sky = 3sky.bgf
    background_evening_sky = 2skyb.bgf
+   background_evening_cloudy_sky = 3skyb.bgf
    background_morning_sky = 2skyc.bgf
+   background_morning_cloudy_sky = 3skyc.bgf
    background_night_sky = 2skyd.bgf
-
-   % Unlike the rest of these, this is actually a stormy sky.
-   background_stormy_sky = 3sky.bgf
+   background_night_cloudy_sky = 3skyd.bgf
 
    creaky_door_sound = doropen1.wav
 
@@ -246,8 +248,15 @@ properties:
 
    pbUser_in_room = FALSE
 
-   % Used to set type of weather to render. Default is clear weather.
+   % Precipitation is on by default, but it can be toggled off if needed.
+   pbPrecipitation_enabled = true
+   % Used to set type of weather to render for everyone in the room.
    piWeather_type = WEATHER_CLEAR
+   % Determines how weather differs here, such as no snow in the tropics.
+   piClimate = CLIMATE_TEMPERATE
+   
+   % Slight chance for mountain climates to turn local rain to snow.
+   piMountain_snow_chance = 20
 
    % For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    %  resources
@@ -286,7 +295,19 @@ messages:
       iDelay = piDispose_delay + Random(-5000,5000);
       ptDispose = CreateTimer(self,@DisposeTimer,iDelay);
       piRoom_flags = viPermanent_flags;
+	  
+	  % If outdoor factor is zero, it's safe to say it's completely indoors.
+	  if piOutside_factor = 0
+	  {
+	     pbPrecipitation_enabled = false;
+	  }
 
+      % Automatically set the climate to tropical if it's on Ko'catan.
+      if Send(self,@GetRegion) = RID_KOCATAN
+      {
+         piClimate = CLIMATE_TROPICAL;
+      }
+	  
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
 
@@ -1478,92 +1499,94 @@ messages:
       return;
    }
 
-   RecalcKocatanSkyGraphic(iWeather=0)
+   RecalcKocatanSkyGraphic(iDayPhase=$,iWeather=0)
    {
       prBackground = background_stars;
 
-      if iWeather = WEATHER_DAY
+      if iDayPhase = WEATHER_DAY AND iWeather = WEATHER_CLEAR
       {
          prBackground = background_kocatan_afternoon_sky;
       }
-
-      if iWeather = WEATHER_DAY_STORMY
+      if iDayPhase = WEATHER_DAY AND iWeather <> WEATHER_CLEAR 
       {
-         prBackground = background_kocatan_afternoon_sky;
+         prBackground = background_afternoon_cloudy_sky;
       }
 
-      if iWeather = WEATHER_DUSK
-      {
-         prBackground = background_kocatan_evening_sky;
-      }
-
-      if iWeather = WEATHER_DUSK_STORMY
+      if iDayPhase = WEATHER_DUSK AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_kocatan_evening_sky;
       }
+      if iDayPhase = WEATHER_DUSK AND iWeather <> WEATHER_CLEAR 
+      {
+         prBackground = background_evening_cloudy_sky;
+      }
 
-      if iWeather = WEATHER_DAWN
+      if iDayPhase = WEATHER_DAWN AND iWeather = WEATHER_CLEAR
       {
          prBackground = background_kocatan_morning_sky;
       }
-
-      if iWeather = WEATHER_DAWN_STORMY
+      if iDayPhase = WEATHER_DAWN AND iWeather <> WEATHER_CLEAR
       {
-         prBackground = background_kocatan_morning_sky;
+         prBackground = background_morning_cloudy_sky;
       }
 
-      if iWeather = WEATHER_NIGHT
+      if iDayPhase = WEATHER_NIGHT AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_kocatan_night_sky;
       }
-
+      if iDayPhase = WEATHER_NIGHT AND iWeather <> WEATHER_CLEAR 
+      {
+         prBackground = background_night_cloudy_sky;
+      }
+	  
       return;
    }
 
-   RecalcBackgroundSkyGraphic(iWeather=0)
+   RecalcBackgroundSkyGraphic(iDayPhase=$,iWeather=0)
    "Doing this this way allows us to have some zones, such as Ko'catan, have "
    "different skies."
    {
       prBackground = background_night_sky;
       if Send(self,@GetRegion) = RID_KOCATAN
       {
-         Send(self,@RecalcKocatanSkyGraphic,#iWeather=iWeather);
+         Send(self,@RecalcKocatanSkyGraphic,#iDayPhase=iDayPhase,#iWeather=iWeather);
          return;
       }
 
-      if iWeather = WEATHER_DAY
-      {
-         prBackground = background_light_sky;
-      }
-
-      if iWeather = WEATHER_DAY_STORMY
+      if iDayPhase = WEATHER_DAY AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_afternoon_sky;
       }
-
-      if iWeather = WEATHER_DUSK
+      if iDayPhase = WEATHER_DAY AND iWeather <> WEATHER_CLEAR 
       {
-         prBackground = background_dusk_sky;
+         prBackground = background_afternoon_cloudy_sky;
       }
 
-      if iWeather = WEATHER_DUSK_STORMY
+      if iDayPhase = WEATHER_DUSK AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_evening_sky;
       }
-
-      if iWeather = WEATHER_DAWN
+      if iDayPhase = WEATHER_DUSK  AND iWeather <> WEATHER_CLEAR 
       {
-         prBackground = background_dusk_sky;
+         prBackground = background_evening_cloudy_sky;
       }
 
-      if iWeather = WEATHER_DAWN_STORMY
+      if iDayPhase = WEATHER_DAWN AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_morning_sky;
       }
+      if iDayPhase = WEATHER_DAWN AND iWeather <> WEATHER_CLEAR 
+      {
+         prBackground = background_morning_cloudy_sky;
+      }
 
-      if iWeather = WEATHER_NIGHT
+      if iDayPhase = WEATHER_NIGHT AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_night_sky;
+      }
+	  if iDayPhase = WEATHER_NIGHT AND iWeather <> WEATHER_CLEAR 
+      {
+         prBackground = background_night_cloudy_sky;
       }
 
       return;
@@ -1571,12 +1594,13 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local iWeather;
-
-      % Change weather for background if outdoors and tell everyone the
+      local iDayPhase,iWeather;
+	  
+	  % Change weather for background if outdoors and tell everyone the
       %  background changed
-
-      iWeather = Send(SYS,@GetWeather);
+	  
+      iDayPhase = Send(SYS,@GetDayPhase);
+	  iWeather = Send(SYS,@GetWeather);
 
       if Send(SYS,@GetChaosNight)
       {
@@ -1585,7 +1609,8 @@ messages:
          return;
       }
 
-      Send(self,@RecalcBackgroundSkyGraphic,#iWeather=iWeather);
+      Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=iWeather);
+	  Send(self,@SetRoomWeather,#what=iWeather);
       Send(self,@RecalculateDirectionalLight);
 
       Send(self,@AmbientLightChanged);
@@ -1598,29 +1623,92 @@ messages:
    SetRoomWeather(what=$)
    "Sets weather effects to this room."
    {
-      local i, each_obj;
+      local i, each_obj, newWeather;
 	  
-      piWeather_type = what;
-      for i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&Player)
+	  % First, adjust new weather based on the climate.
+	  newWeather = what;
+	  
+	  % Tropical areas like Ko'catan doesn't get snow.
+	  if piClimate = CLIMATE_TROPICAL AND newWeather = WEATHER_SNOW
+	  {
+         newWeather = WEATHER_RAIN;
+	  }
+	  
+	  % Each mountain area has a chance to snow instead of rain.
+	  if piClimate = CLIMATE_MOUNTAIN AND newWeather = WEATHER_RAIN
+	  {
+         if Random(1,100) <= piMountain_snow_chance
+		 {
+		    newWeather = WEATHER_SNOW;
+	     }
+	  }
+	  
+	  if piWeather_type <> newWeather
+	  {
+		 piWeather_type = newWeather;
+         for i in plActive
          {
-            % Clear out previous weather before applying any new ones.
-		    Send(each_obj,@EffectSendUser,#what=each_obj,#effect=EFFECT_CLEARWEATHER);
-            if piWeather_type <> WEATHER_CLEAR
-			{
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&Player)
+            {
 			   Send(each_obj,@EffectSendUser,#what=each_obj,
-			      #effect=Send(self, @GetWeatherEffect, #what=piWeather_type));
-			}
+			        #effect=Send(self, @GetWeatherEffect, #what=piWeather_type));
+            }
          }
-      }
+	  }
       return;
+   }
+   
+   TogglePrecipitation(what=$)
+   "Enables or disables precipitation."
+   {
+	  local i,each_obj,newEffect;
+	  
+	  if pbPrecipitation_enabled <> what
+	  {
+	     pbPrecipitation_enabled = what;
+	     if pbPrecipitation_enabled = true
+	     {
+	        newEffect = Send(self, @GetWeatherEffect, #what=piWeather_type);
+	     }
+	     else
+	     {
+	        newEffect = EFFECT_CLEARWEATHER;
+	     }
+		 
+	     for i in plActive
+	     {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&Player)
+            {
+		   	Send(each_obj,@EffectSendUser,#what=each_obj,#effect=newEffect);
+            }
+	     }
+	  }
+	  return;
+   }
+
+   SetRoomClimate(what=$)
+   {
+	  if piClimate <> what
+	  {
+	     piClimate = what;
+	  }
+	  return;
+   }
+   
+   GetRoomWeather()
+   {
+	  return piWeather_type;
    }
    
    GetWeatherEffect(what=$)
    "Gets render effect from weather type."
    {
+        if what = WEATHER_CLEAR OR what = WEATHER_CLOUDY
+        {
+           return EFFECT_CLEARWEATHER;
+        }
         if what = WEATHER_RAIN
         {
            return EFFECT_RAINING;
@@ -1629,8 +1717,8 @@ messages:
         {
            return EFFECT_SNOWING;
         }
-        debug("Couldn't find valid weather effect. Setting to weather_clear.");
-        return EFFECT_CLEARWEATHER;
+        debug("Couldn't find valid weather effect.");
+        return;
    }
 
    RecalculateDirectionalLight()
@@ -1823,14 +1911,7 @@ messages:
                  #state=(Nth(i,3)));
          }
 		 
-		 % add weather effects
-		 if (piWeather_type <> WEATHER_CLEAR)
-		 {
-			Send(what,@EffectSendUser,#what=what,
-			   #effect=Send(self, @GetWeatherEffect, #what=piWeather_type));
-		 }
       }
-
       return;
    }
 
@@ -1968,9 +2049,6 @@ messages:
          }
       }
 	  
-	  % Remove weather effects caused by this room.
-	  Send(what,@EffectSendUser,#what=what,#effect=EFFECT_CLEARWEATHER);
-
       Send(self,@LastUserLeft,#what=what);
 
       propagate;

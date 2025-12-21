@@ -3,6 +3,10 @@
 #include "client.h"
 #include "drawdefs.h"
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 static const char sound_dir[] = "resource";
 static bool wave_open = false;
 
@@ -79,21 +83,19 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 							BYTE flags, int src_row, int src_col, int radius,
 							int max_vol)
 {
-	char pathbuf[MAX_PATH];
-	bool played = false;
-	const char *actual_path = NULL;  // Track which path was actually used
-
 	if (!fname || fname[0] == '\0')
 		return false;
 
+	bool played = false;
+	std::string actual_path;
+
 	/* If name appears to be a bare filename (no path), try resource dir first
 	   to avoid noisy "cannot open" logs for the working directory lookup. */
-	bool has_path = (strchr(fname, '\\') != NULL) || (strchr(fname, '/') != NULL) || (strchr(fname, ':') != NULL);
-	if (!has_path)
+	if (!fs::path(fname).has_parent_path())
 	{
-		snprintf(pathbuf, MAX_PATH, "%s\\%s", sound_dir, fname);
-		debug(("PlayWaveFile: trying %s\n", pathbuf));
-		played = SoundPlay(pathbuf, volume, flags, src_row, src_col, radius, max_vol);
+		std::string pathbuf = (fs::path(sound_dir) / fname).string();
+		debug(("PlayWaveFile: trying %s\n", pathbuf.c_str()));
+		played = SoundPlay(pathbuf.c_str(), volume, flags, src_row, src_col, radius, max_vol);
 		if (played)
 		{
 			actual_path = pathbuf;
@@ -116,7 +118,7 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 
 	/* If this is a looping sound and it played, register the actual path used
 	   so Audio_StopSourcesForFilename can find it in the buffer cache. */
-	if (played && (flags & SF_LOOP) && actual_path)
+	if (played && (flags & SF_LOOP) && !actual_path.empty())
 	{
 		Sound_RegisterLoopingSound(actual_path);
 	}

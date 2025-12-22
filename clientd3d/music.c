@@ -124,7 +124,7 @@ void PlayMusicRsc(ID rsc)
 
    // Check if this is the same music file already playing (by filename, not resource ID)
    // Different rooms may use different resource IDs for the same music file
-   if (playing_music && _stricmp(current_music_file.c_str(), fname.c_str()) == 0)
+   if (playing_music && iequals(current_music_file, fname))
    {
       debug(("PlayMusicRsc: same music file already playing (%s), not restarting\n", fname.c_str()));
       return;
@@ -160,7 +160,7 @@ void NewMusic(WPARAM type, ID rsc)
    std::string fname = (fs::path(music_dir) / filename).string();
 
    // Check if the same music file is already playing
-   if (playing_music && _stricmp(current_music_file.c_str(), fname.c_str()) == 0)
+   if (playing_music && iequals(current_music_file, fname))
    {
       debug(("NewMusic: same music file already playing (%s), not restarting\n", fname.c_str()));
       return;

@@ -18,12 +18,6 @@ static bool looping_cleanup_pending = false;
 // Forward to audio layer helper
 void Audio_StopSourcesForFilename(const char* filename);
 
-// Case-insensitive string comparison helper
-static bool iequals(const std::string &a, const std::string &b)
-{
-	return _stricmp(a.c_str(), b.c_str()) == 0;
-}
-
 void Sound_BeginLoopingSoundTransition(void)
 {
 	prev_looping = curr_looping;

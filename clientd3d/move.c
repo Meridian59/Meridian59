@@ -441,9 +441,6 @@ void UserMovePlayer(int action)
        last_splash = 0xFFFFFFFF;
    }
 
-   // Update looping sounds to reflect the player's new position and orientation
-   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
-
    RedrawAll();
 }
 
@@ -734,9 +731,6 @@ void ServerMovedPlayer(void)
    RoomObjectSetHeight(player_obj);
    server_x = player_obj->motion.x;
    server_y = player_obj->motion.y;
-
-   // Update looping sounds to reflect the player's new position and orientation
-   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
 }
 /************************************************************************/
 /*
@@ -887,9 +881,6 @@ void UserTurnPlayer(int action)
       player.angle += NUMDEGREES;
    player.angle = player.angle % NUMDEGREES;
 
-   // Update 3D audio listener orientation
-   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
-
    // Inform server of turn if necessary
    MoveUpdateServer();
 
@@ -926,9 +917,6 @@ void UserTurnPlayerMouse(int delta)
       player.angle += NUMDEGREES;
    player.angle = player.angle % NUMDEGREES;
 
-   // Update 3D audio listener orientation
-   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
-
    // Inform server of turn if necessary
    MoveUpdateServer();
 
@@ -960,9 +948,6 @@ void UserFlipPlayer(void)
    // Turn 180 degrees around
    player.angle += NUMDEGREES / 2;
    player.angle = player.angle % NUMDEGREES;
-
-   // Update 3D audio listener orientation
-   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
 
    MoveUpdateServer();
    RedrawAll();

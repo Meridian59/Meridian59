@@ -19,8 +19,6 @@ static ID bg_music = 0;     /* Resource id of background music file; 0 if none *
 static ID latest_music = 0; /* Most recent music resource id */
 static char current_music_file[MAX_PATH] = ""; /* Filename of currently playing music */
 
-enum {SOUND_MUSIC};
-
 /* local functions */
 static void PlayMusicFileInternal(const std::string& fname);
 

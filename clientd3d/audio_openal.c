@@ -691,13 +691,22 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    alSourcei(source, AL_BUFFER, buffer);
 
    // Determine if this is a positional sound (has valid position coordinates)
-   bool isPositional = (flags & SF_LOOP) && (src_row > 0 || src_col > 0);
+   bool isPositional = (src_row > 0 || src_col > 0);
+
+   // Convert fine coords to tile coords if needed
+   int pos_row = src_row;
+   int pos_col = src_col;
+   if (pos_row > FINENESS || pos_col > FINENESS)
+   {
+      pos_row = src_row >> LOG_FINENESS;
+      pos_col = src_col >> LOG_FINENESS;
+   }
 
    if (isPositional)
    {
       // 3D positional sound - negate X to convert game coords to OpenAL coords
       alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
-      alSource3f(source, AL_POSITION, -(float)src_col, 0.0f, (float)src_row);
+      alSource3f(source, AL_POSITION, -(float)pos_col, 0.0f, (float)pos_row);
 
       // Distance attenuation: full volume within 1 tile, silent at radius
       alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
@@ -709,7 +718,7 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcef(source, AL_GAIN, gain);
 
       debug(("SoundPlay: 3D sound at (%d,%d), radius=%d, gain=%.2f\n",
-             src_col, src_row, radius, gain));
+             pos_col, pos_row, radius, gain));
    }
    else
    {
@@ -717,8 +726,8 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
       alSource3f(source, AL_POSITION, 0.0f, 0.0f, 0.0f);
 
-      // Set volume (convert from 0-255 to 0.0-1.0 for legacy interface)
-      float gain = (float)volume / 255.0f;
+      // Set volume (volume is 0-MAX_VOLUME, convert to 0.0-1.0)
+      float gain = (float)volume / (float)MAX_VOLUME;
       if (flags & SF_LOOP)
          gain *= (float)config.ambient_volume / 100.0f;
       else

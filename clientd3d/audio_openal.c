@@ -631,11 +631,15 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    if (!g_initialized)
       return false;
 
-   // Quick configuration escape for looping and random sounds
+   // Check master sound toggle (Options menu and preferences checkbox)
+   if (!config.play_sound)
+      return false;
+
+   // Check sub-toggles for looping and random sounds (preferences checkboxes)
    if ((flags & SF_LOOP) && (!config.play_loop_sounds))
-      return true;
+      return false;
    if ((flags & SF_RANDOM_PLACE) && (!config.play_random_sounds))
-      return true;
+      return false;
 
    ALuint buffer = LoadAudioBuffer(filename);
    if (buffer == 0)

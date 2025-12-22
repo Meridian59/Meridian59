@@ -194,6 +194,10 @@ void MusicRestart(void)
    {
       PlayMusicRsc(latest_music);
    }
+   else if (state == STATE_OFFLINE)
+   {
+      PlayMusicFile(hMain, splash_music);
+   }
 }
 
 /******************************************************************************/

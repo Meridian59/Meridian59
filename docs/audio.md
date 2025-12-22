@@ -1,0 +1,170 @@
+# Meridian 59 Audio System
+
+## Overview
+
+The client audio system was refactored in PR #1293 (Q4 2025 / Q1 2026) to replace the proprietary Miles Sound System (MSS) and WaveMix with OpenAL Soft, an open-source, cross-platform audio library.
+
+## Architecture
+
+```mermaid
+graph TD
+    subgraph "Server Protocol"
+        BP_PLAY_MIDI[BP_PLAY_MIDI]
+        BP_PLAY_MUSIC[BP_PLAY_MUSIC]
+        BP_PLAY_WAVE[BP_PLAY_WAVE]
+    end
+
+    subgraph "Protocol Handlers (server.c)"
+        HandlePlayMidi[HandlePlayMidi]
+        HandlePlayMusic[HandlePlayMusic]
+        HandlePlayWave[HandlePlayWave]
+    end
+
+    subgraph "Music API (music.c)"
+        PlayMusicRsc[PlayMusicRsc]
+        PlayMusicFile[PlayMusicFile]
+        MusicRestart[MusicRestart]
+    end
+
+    subgraph "Sound API (sound.c)"
+        GamePlaySound[GamePlaySound]
+        PlayWaveRsc[PlayWaveRsc]
+    end
+
+    subgraph "OpenAL Engine (audio_openal.c)"
+        AudioInit[AudioInit]
+        MusicPlay[MusicPlay]
+        SoundPlay[SoundPlay]
+        AudioShutdown[AudioShutdown]
+    end
+
+    subgraph "Audio Hardware"
+        OpenAL[OpenAL Soft]
+    end
+
+    BP_PLAY_MIDI --> HandlePlayMidi
+    BP_PLAY_MUSIC --> HandlePlayMusic
+    BP_PLAY_WAVE --> HandlePlayWave
+
+    HandlePlayMidi --> PlayMusicRsc
+    HandlePlayMusic --> PlayMusicRsc
+    HandlePlayWave --> GamePlaySound
+
+    PlayMusicRsc --> PlayMusicFile
+    PlayMusicFile --> MusicPlay
+    MusicRestart --> PlayMusicRsc
+
+    GamePlaySound --> PlayWaveRsc
+    PlayWaveRsc --> SoundPlay
+
+    MusicPlay --> OpenAL
+    SoundPlay --> OpenAL
+```
+
+## Before vs After
+
+| Aspect | Before (MSS/WaveMix) | After (OpenAL Soft) |
+|--------|---------------------|---------------------|
+| **License** | Proprietary (cannot distribute) | LGPL (open source) |
+| **Music Format** | MIDI, MP3 | OGG Vorbis |
+| **Sound Format** | WAV | WAV, OGG Vorbis |
+| **3D Audio** | None | Positional audio with distance falloff |
+| **Caching** | None | LRU buffer cache (256 entries) |
+| **Platform** | Windows only | Cross-platform |
+
+## Function Reference
+
+### Engine Layer (audio_openal.c)
+
+| Function | Purpose |
+|----------|---------|
+| `AudioInit(hwnd)` | Initialize OpenAL device, context, and sources |
+| `AudioShutdown()` | Clean up all audio resources |
+| `MusicPlay(filename, loop)` | Play OGG file on dedicated music source |
+| `MusicStop()` | Stop music playback |
+| `MusicSetVolume(volume)` | Set music volume (0.0 - 1.0) |
+| `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
+| `SoundStopAll()` | Stop all sound effects |
+| `AudioUpdateListener(x, y, z, ...)` | Update listener position for 3D audio |
+
+### Music API (music.c)
+
+| Function | Exported | Purpose |
+|----------|----------|---------|
+| `PlayMusicFile(hwnd, filename)` | ? | Play music by filename (handles .mid/.mp3 ? .ogg) |
+| `PlayMusicRsc(rsc)` | ? | Play music by resource ID |
+| `MusicAbort()` | ? | Stop all music |
+| `MusicRestart()` | ? | Resume music when user re-enables in settings |
+| `MusicClose()` | ? | Shutdown music system |
+| `NewMusic(type, rsc)` | ? | Handle server music message |
+| `ResetMusicVolume()` | ? | Apply volume from config |
+
+### Sound API (sound.c)
+
+| Function | Purpose |
+|----------|---------|
+| `PlayWaveRsc(rsc, ...)` | Play sound effect by resource ID |
+| `PlayWaveFile(filename, ...)` | Play sound effect by filename |
+| `GamePlaySound(rsc, ...)` | Entry point from server protocol |
+| `SoundAbort()` | Stop all sounds |
+
+## API Consolidation (PR #1293)
+
+The following functions were removed to simplify the API:
+
+| Removed | Reason |
+|---------|--------|
+| `MusicInitialize()` | Folded into `AudioInit()` |
+| `PlayMidiFile()` | Redundant - `PlayMusicFile()` handles .mid conversion |
+| `PlayMidiRsc()` | Redundant - `HandlePlayMidi` now calls `PlayMusicRsc` directly |
+| `MusicDone()` | Was an empty stub |
+| `MusicStart()` | Renamed to `MusicRestart()` for clarity |
+
+## File Format Conversion
+
+Legacy music files (.mid, .midi, .mp3) are automatically mapped to .ogg:
+
+```
+main.mid  ? main.ogg
+theme.mp3 ? theme.ogg
+```
+
+This mapping happens in `ConvertLegacyMusicExtension()` in music.c.
+
+## Buffer Caching
+
+Sound effects are cached using an LRU (Least Recently Used) strategy:
+
+- **Cache size:** 256 buffers maximum
+- **Eviction:** Oldest unused buffer is evicted when cache is full
+- **Protection:** Buffers currently playing are never evicted
+- **Lookup:** O(1) via case-insensitive hash map
+
+Music is NOT cached because tracks are large and typically don't repeat rapidly.
+
+## 3D Positional Audio
+
+Looping ambient sounds (fountains, torches, etc.) use 3D positioning:
+
+- **Distance model:** Linear distance clamped
+- **Reference distance:** 1 tile (full volume)
+- **Max distance:** Radius from server (silence beyond)
+- **Coordinate mapping:** Game coords ? OpenAL coords (X negated)
+
+The listener position is updated each frame via `AudioUpdateListener()`.
+
+## Configuration
+
+Audio settings in `meridian.ini`:
+
+```ini
+[Meridian]
+MusicVolume=40      ; 0-100
+SoundVolume=99      ; 0-100
+AmbientVolume=100   ; 0-100 (looping/3D sounds)
+```
+
+## Dependencies
+
+- **OpenAL Soft 1.24.3** - Audio engine (`OpenAL32.lib`, `OpenAL32.dll`)
+- **stb_vorbis** - OGG Vorbis decoder (single-header library)

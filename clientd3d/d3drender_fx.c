@@ -316,7 +316,7 @@ void RainInit(void)
 {
 	const int RAIN_EMITTER_RADIUS = 15000;
 	const int RAIN_EMITTER_ENERGY = 120;
-	const int RAIN_EMITTER_HEIGHT = 2500;
+	const int RAIN_EMITTER_HEIGHT = 3000;
 	const int RAIN_TIMER = 1;
 	const bool RAIN_WEATHER_EFFECT = true;
 	const int RAIN_VELOCITY = -250;
@@ -346,7 +346,7 @@ void SnowInit(void)
 {
 	const int SNOW_EMITTER_RADIUS = 15000;
 	const int SNOW_EMITTER_ENERGY = 400;
-	const int SNOW_EMITTER_HEIGHT = 2500;
+	const int SNOW_EMITTER_HEIGHT = 3000;
 	const int SNOW_FALL_SPEED = -35;
 	const int SNOW_TIMER = 1;
 	const int SNOW_RANDOM_ROT = 2;

@@ -218,8 +218,13 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 								sign = -sign;
 							pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
 							
-							// Only randomize z-position if this isn't a weather particle.
-							if (pEmitter->bWeatherEffect == false)
+							// Weather particles spawn randomly between half height to max height.
+							if (pEmitter->bWeatherEffect)
+							{
+								pParticle->pos.z -= ((int)rand() & (pEmitter->randomPos)/2);
+							}
+							// Otherwise, randomize z-position if this isn't a weather particle.
+							else
 							{
 								if ((int)rand() & 1)
 									sign = -sign;

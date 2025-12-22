@@ -17,7 +17,7 @@ static const char music_dir[] = "resource";
 static bool playing_music = false;  /* Is a music file currently playing as background? */
 static ID bg_music = 0;     /* Resource id of background music file; 0 if none */
 static ID latest_music = 0; /* Most recent music resource id */
-static char current_music_file[MAX_PATH] = ""; /* Filename of currently playing music */
+static std::string current_music_file; /* Filename of currently playing music */
 
 /* local functions */
 static void PlayMusicFileInternal(const std::string& fname);
@@ -106,7 +106,7 @@ void PlayMusicRsc(ID rsc)
       playing_music = false;
       bg_music = 0;
       latest_music = 0;
-      current_music_file[0] = '\0';
+      current_music_file.clear();
       return;
    }
 
@@ -124,7 +124,7 @@ void PlayMusicRsc(ID rsc)
 
    // Check if this is the same music file already playing (by filename, not resource ID)
    // Different rooms may use different resource IDs for the same music file
-   if (playing_music && _stricmp(current_music_file, fname.c_str()) == 0)
+   if (playing_music && _stricmp(current_music_file.c_str(), fname.c_str()) == 0)
    {
       debug(("PlayMusicRsc: same music file already playing (%s), not restarting\n", fname.c_str()));
       return;
@@ -135,8 +135,7 @@ void PlayMusicRsc(ID rsc)
    playing_music = false;
 
    // Store the new music filename before playing
-   strncpy(current_music_file, fname.c_str(), sizeof(current_music_file) - 1);
-   current_music_file[sizeof(current_music_file) - 1] = '\0';
+   current_music_file = fname;
 
    PlayMusicFile(hMain, fname.c_str());
 }
@@ -150,7 +149,7 @@ void NewMusic(WPARAM type, ID rsc)
    {
       MusicStop();
       playing_music = false;
-      current_music_file[0] = '\0';
+      current_music_file.clear();
       return;
    }
 
@@ -161,7 +160,7 @@ void NewMusic(WPARAM type, ID rsc)
    std::string fname = (fs::path(music_dir) / filename).string();
 
    // Check if the same music file is already playing
-   if (playing_music && _stricmp(current_music_file, fname.c_str()) == 0)
+   if (playing_music && _stricmp(current_music_file.c_str(), fname.c_str()) == 0)
    {
       debug(("NewMusic: same music file already playing (%s), not restarting\n", fname.c_str()));
       return;
@@ -172,8 +171,7 @@ void NewMusic(WPARAM type, ID rsc)
    playing_music = false;
 
    // Store the new music filename before playing
-   strncpy(current_music_file, fname.c_str(), sizeof(current_music_file) - 1);
-   current_music_file[sizeof(current_music_file) - 1] = '\0';
+   current_music_file = fname;
 
    PlayMusicFile(hMain, fname.c_str());
 }

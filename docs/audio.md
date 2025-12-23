@@ -144,12 +144,25 @@ Music is NOT cached because tracks are large and typically don't repeat rapidly.
 
 ## 3D Positional Audio
 
-Looping ambient sounds (fountains, torches, etc.) use 3D positioning:
+### Which Sounds Are Positional?
 
-- **Distance model:** Linear distance clamped
+Not all sounds use 3D positioning. This matches the original MSS behavior where all sounds
+played at equal volume in both stereo channels (no panning).
+
+| Sound Type | Positional? | Rationale |
+|------------|-------------|----------|
+| `SF_RANDOM_PLACE` | No | Periodic ambient sounds (server picks random location) |
+| `SF_LOOP` at coords (1,1) or (2,2) | No | Background atmosphere using placeholder coordinates |
+| `SF_LOOP` at real coords | Yes | Localized objects (fountains, torches, etc.) |
+| Other sounds with coords | Yes | Combat, spells, object interactions |
+| Sounds at (0,0) | No | No position specified, play centered |
+
+### Distance Model
+
+- **Model:** Linear distance clamped
 - **Reference distance:** 1 tile (full volume)
 - **Max distance:** Radius from server (silence beyond)
-- **Coordinate mapping:** Game coords ? OpenAL coords (X negated)
+- **Coordinate mapping:** Game coords to OpenAL coords (X negated for handedness)
 
 The listener position is updated each frame via `AudioUpdateListener()`.
 
@@ -163,6 +176,41 @@ MusicVolume=40      ; 0-100
 SoundVolume=99      ; 0-100
 AmbientVolume=100   ; 0-100 (looping/3D sounds)
 ```
+
+## HRTF and Surround Sound
+
+OpenAL Soft supports multiple audio output modes configured via `alsoft.ini` (user's AppData or game directory):
+
+### HRTF (Headphone 3D Audio)
+
+Head-Related Transfer Function simulates 3D audio for headphone users by applying filters
+that mimic how sound reaches your ears from different directions.
+
+To enable HRTF, create or edit `alsoft.ini`:
+
+```ini
+[general]
+hrtf = true
+```
+
+OpenAL Soft ships with built-in HRTF data. Additional HRTF profiles (.mhr files) can be
+placed in the OpenAL Soft data directory.
+
+### Surround Sound (5.1 / 7.1)
+
+OpenAL Soft automatically detects and uses your system's speaker configuration. For
+multi-channel setups (5.1, 7.1), 3D positional sounds will be correctly spatialized
+across all speakers.
+
+To force a specific output mode in `alsoft.ini`:
+
+```ini
+[general]
+channels = surround51   ; Options: mono, stereo, quad, surround51, surround61, surround71
+```
+
+No game configuration is required—OpenAL Soft handles speaker routing automatically
+based on your Windows audio device settings.
 
 ## Dependencies
 

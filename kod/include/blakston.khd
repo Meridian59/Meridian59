@@ -1592,7 +1592,6 @@
    TID_MUMMY         = 52
    TID_THRASHER      = 53
    TID_FROGMAN       = 54
-   TID_ICE_PERSON    = 55
 
    %%% English articles
 

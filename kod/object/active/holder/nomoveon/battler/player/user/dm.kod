@@ -79,19 +79,6 @@ resources:
    dm_afternoon_command = "afternoon"
    dm_evening_command = "evening"
    dm_night_command = "night"
-   
-   dm_precipitation_on_command = "precipitation on"
-   dm_precipitation_off_command = "precipitation off"
-   dm_weather_clear_command = "weather clear"
-   dm_weather_cloudy_command = "weather cloudy"
-   dm_weather_rain_command = "weather rain"
-   dm_weather_snow_command = "weather snow"
-   dm_season_rain_command = "season rain"
-   dm_season_snow_command = "season snow"
-   dm_climate_temperate_command = "climate temperate"
-   dm_climate_tropical_command = "climate tropical"
-   dm_climate_mountain_command = "climate mountain"
-
    dm_restore_time_command = "restore time"
    dm_call_monster_command = "call monster"
    dm_npc_chat_command = "npc chat"
@@ -1333,81 +1320,6 @@ messages:
          Send(SYS,@SetHour,#num=23);
          
          return;
-      }
-	  
-	  % Commands to enable/disable precipitation in the current room.
-	  if StringEqual(string,dm_precipitation_on_command)
-         OR StringEqual(string,"precipitation on")
-      {
-		 Send(poOwner,@TogglePrecipitation,#what=true);
-         return;
-      }
-      if StringEqual(string,dm_precipitation_off_command)
-         OR StringEqual(string,"precipitation off")
-      {
-         Send(poOwner,@TogglePrecipitation,#what=false);
-         return;
-      }
-	  
-	  % Commands to immediately set server weather.
-	  if StringEqual(string,dm_weather_clear_command)
-         OR StringEqual(string,"weather clear")
-      {
-		 Send(SYS,@SetWeather,#what=WEATHER_CLEAR);
-         return;
-      }
-      if StringEqual(string,dm_weather_cloudy_command)
-         OR StringEqual(string,"weather cloudy")
-      {
-         Send(SYS,@SetWeather,#what=WEATHER_CLOUDY);
-         return;
-      }
-      if StringEqual(string,dm_weather_rain_command)
-         OR StringEqual(string,"weather rain")
-      {
-		 Send(SYS,@SetWeather,#what=WEATHER_RAIN);
-         return;
-      }
-	  if StringEqual(string,dm_weather_snow_command)
-         OR StringEqual(string,"weather snow")
-      {
-		 Send(SYS,@SetWeather,#what=WEATHER_SNOW);
-         return;
-      }
-
-      % Commands to apply seasons to the server. For now it uses
-	  % rain/snow as seasons to change the default precipitation.
-      if StringEqual(string,dm_season_rain_command)
-         OR StringEqual(string,"season rain")
-      {
-		 Send(SYS,@SetSeason,#what=WEATHER_RAIN);
-         return;
-      }
-	  if StringEqual(string,dm_season_snow_command)
-         OR StringEqual(string,"season snow")
-      {
-		 Send(SYS,@SetSeason,#what=WEATHER_SNOW);
-         return;
-      }
-	  
-	  % Commands for setting room climate.
-	  if StringEqual(string,dm_climate_temperate_command)
-         OR StringEqual(string,"climate temperate")
-      {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_TEMPERATE);
-		 return;
-      }
-	  if StringEqual(string,dm_climate_tropical_command)
-         OR StringEqual(string,"climate tropical")
-      {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_TROPICAL);
-		 return;
-      }
-	  if StringEqual(string,dm_climate_mountain_command)
-         OR StringEqual(string,"climate mountain")
-      {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_MOUNTAIN);
-		 return;
       }
 
       if StringEqual(string,dm_restore_time_command)

@@ -2472,7 +2472,6 @@ messages:
 
       AddPacket(1,Send(poOwner,@GetRoomLight));
       AddPacket(1,bound(piLight,0,255));
-      AddPacket(1,Send(poOwner,@GetRoomWeather));
 
       rBackground = Send(poOwner,@GetRoomBackground);
       if rBackground <> $

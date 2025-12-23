@@ -154,7 +154,7 @@ messages:
       propagate;
    }
 
-   RecalcBackgroundSkyGraphic(iDayPhase=$,iWeather=0)
+   RecalcBackgroundSkyGraphic(iWeather=0)
    {
       return;
    }

@@ -264,26 +264,25 @@ bool AnimateEffects(int dt)
 
 /************************************************************************/
 /*
- * WeatherEnterRoom: Checks if the room has a weather effect that differs
- *   from the client's weather, and updates the client weather accordingly.
+ * NewWeather: Applies weather effect. Note that rain & snow cannot play simulanteously.
  */
-void WeatherEnterRoom()
+void NewWeather(BYTE weather_effect)
 {
-	if (current_room.weather_effect == WEATHER_CLEAR)
+	if (weather_effect == WEATHER_CLEAR || weather_effect == WEATHER_CLOUDY)
 	{
 		effects.raining = false;
 		effects.snowing = false;
 		RedrawAll();
 	}	
 	
-	if (current_room.weather_effect == WEATHER_RAIN && effects.raining == false)
+	if (weather_effect == WEATHER_RAIN)
 	{
 		effects.raining = true;
 		effects.snowing = false;
 		RedrawAll();
 	}
 	
-	if (current_room.weather_effect == WEATHER_SNOW && effects.snowing == false)
+	if (weather_effect == WEATHER_SNOW)
 	{
 		effects.raining = false;
 		effects.snowing = true;

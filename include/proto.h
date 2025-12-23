@@ -216,6 +216,7 @@ enum {
    BP_SET_VIEW              = 237,
    BP_RESET_VIEW            = 238,
    BP_REQ_GET_FROM_CONTAINER  = 239,
+   BP_WEATHER               = 240,
 };
 
 // User commands (in BP_USERCOMMAND message)

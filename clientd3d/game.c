@@ -323,7 +323,8 @@ void EnterNewRoom(void)
    EnterNewRoom3D(&current_room);
 
    MapEnterRoom(&current_room);
-   WeatherEnterRoom();
+   NewWeather(current_room.weather_effect);
+
    LightChanged3D(player.light, current_room.ambient_light);
 
    ServerMovedPlayer();
@@ -665,6 +666,13 @@ void SetBackground(ID bkgnd)
 {
    current_room.bkgnd = bkgnd;
    NewBackground3D(bkgnd);
+   RedrawAll();
+}
+/************************************************************************/
+void SetWeather(BYTE weather_effect)
+{
+   current_room.weather_effect = weather_effect;
+   NewWeather(weather_effect);
    RedrawAll();
 }
 /************************************************************************/

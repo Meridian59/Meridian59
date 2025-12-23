@@ -90,6 +90,7 @@ void RemoveFromInventory(ID obj);
 void SetAmbientLight(BYTE l);
 void SetPlayerLight(BYTE l);
 void SetBackground(ID bkgnd);
+void SetWeather(BYTE weather_effect);
 
 void GameWait(void);
 void GameUnwait(void);

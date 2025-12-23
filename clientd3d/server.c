@@ -107,6 +107,7 @@ static handler_struct game_handler_table[] = {
 { BP_SECTOR_LIGHT,      HandleSectorLight },
 { BP_SET_VIEW,		HandleSetView },
 { BP_RESET_VIEW,	HandleResetView },
+{ BP_WEATHER,           HandleWeather },
 { 0, NULL},   // must end table this way
 };
 
@@ -1908,4 +1909,13 @@ bool HandleSetView(char *ptr, long len)
 
    SetPlayerRemoteView(objID,viewFlags,viewHeight,viewLight);
    return true;
+}
+/********************************************************************/
+bool HandleWeather(char *ptr, long len)
+{
+   BYTE weather_effect;
+   
+   Extract(&ptr, &weather_effect, 1);
+   SetWeather(weather_effect);
+   return true;   
 }

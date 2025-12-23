@@ -323,7 +323,7 @@ void EnterNewRoom(void)
    EnterNewRoom3D(&current_room);
 
    MapEnterRoom(&current_room);
-   WeatherEnterRoom(&current_room);
+   WeatherEnterRoom();
    LightChanged3D(player.light, current_room.ambient_light);
 
    ServerMovedPlayer();

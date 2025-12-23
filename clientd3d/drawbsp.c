@@ -4036,8 +4036,8 @@ static void doDrawBackground(ViewCone *c)
       }
    }
 
-   // Don't draw bg overlays if blind
-   if (IsBlind())
+   // Don't draw background overlays if blinded. Or during cloudy weather.
+   if (IsBlind() || (IsClearWeather() == FALSE))
       return;
 
    for (l = background_overlays; l != NULL; l = l->next)

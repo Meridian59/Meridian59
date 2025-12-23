@@ -13,6 +13,8 @@
 
 #define SHAKE_AMPLITUDE (FINENESS / 4)  // size of player motion for shake effect (FINENESS units)
 
+extern room_type current_room;
+
 Effects effects;
 
 static void EffectFlash(int duration);
@@ -265,31 +267,23 @@ bool AnimateEffects(int dt)
  * WeatherEnterRoom: Checks if the room has a weather effect that differs
  *   from the client's weather, and updates the client weather accordingly.
  */
-void WeatherEnterRoom(room_type *room)
+void WeatherEnterRoom()
 {
-	int roomWeather = room->weather_effect;
-
-	if (roomWeather == WEATHER_CLEAR)
+	if (current_room.weather_effect == WEATHER_CLEAR)
 	{
-		if (effects.raining == true)
-		{
-			effects.raining = false;
-		}
-		if (effects.snowing == true)
-		{
-			effects.snowing = false;
-		}
+		effects.raining = false;
+		effects.snowing = false;
 		RedrawAll();
 	}	
 	
-	if (roomWeather == WEATHER_RAIN && effects.raining == false)
+	if (current_room.weather_effect == WEATHER_RAIN && effects.raining == false)
 	{
 		effects.raining = true;
 		effects.snowing = false;
 		RedrawAll();
 	}
 	
-	if (roomWeather == WEATHER_SNOW && effects.snowing == false)
+	if (current_room.weather_effect == WEATHER_SNOW && effects.snowing == false)
 	{
 		effects.raining = false;
 		effects.snowing = true;
@@ -297,4 +291,15 @@ void WeatherEnterRoom(room_type *room)
 	}	
 	
 	return;
+}
+
+/************************************************************************/
+
+bool IsClearWeather()
+{
+	if (current_room.weather_effect == WEATHER_CLEAR)
+	{
+		return TRUE;
+	}
+	return FALSE;
 }

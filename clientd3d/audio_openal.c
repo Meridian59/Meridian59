@@ -690,8 +690,10 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    // Attach buffer
    alSourcei(source, AL_BUFFER, buffer);
 
-   // Determine if this is a positional sound (has valid position coordinates)
-   bool isPositional = (src_row > 0 || src_col > 0);
+   // Determine if this is a positional sound (has valid position coordinates).
+   // Exclude SF_RANDOM_PLACE: MSS used same volume on both channels (no stereo panning)
+   // for ambient sounds like birds, only distance attenuation. Match that behavior.
+   bool isPositional = (src_row > 0 || src_col > 0) && !(flags & SF_RANDOM_PLACE);
 
    // Convert fine coords to tile coords if needed
    int pos_row = src_row;

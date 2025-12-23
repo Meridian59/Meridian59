@@ -690,10 +690,13 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    // Attach buffer
    alSourcei(source, AL_BUFFER, buffer);
 
-   // Determine if this is a positional sound (has valid position coordinates).
-   // Exclude SF_RANDOM_PLACE: MSS used same volume on both channels (no stereo panning)
-   // for ambient sounds like birds, only distance attenuation. Match that behavior.
-   bool isPositional = (src_row > 0 || src_col > 0) && !(flags & SF_RANDOM_PLACE);
+   // Determine if sound should use 3D positional audio or play centered on player.
+   // Non-positional (centered): SF_RANDOM_PLACE, or SF_LOOP at placeholder coords (<=2,<=2)
+   // Positional (3D): all other sounds with valid coordinates
+   bool isAmbientLoop = (flags & SF_LOOP) && (src_row <= 2) && (src_col <= 2);
+   bool isPositional = (src_row > 0 || src_col > 0) && 
+                       !(flags & SF_RANDOM_PLACE) &&
+                       !isAmbientLoop;
 
    // Convert fine coords to tile coords if needed
    int pos_row = src_row;

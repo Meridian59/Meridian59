@@ -15,26 +15,26 @@ static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
 #define BGF_VERSION 10
 
-static bool DibOpenFileReal(char *szFile, Bitmaps *b);
+static bool DibOpenFileReal(const char *szFile, Bitmaps *b);
 static bool DibReadBits(file_node *f, PDIB pdib, int version);
 /************************************************************************/
 /*
  * DibOpenFile: Load the bitmaps in the file given by filename into the
  *   given bitmap structure.  Return TRUE on success.
  */
-bool DibOpenFile(char *szFile, Bitmaps *b)
+bool DibOpenFile(const char *szFile, Bitmaps *b)
 {
    return DibOpenFileReal(szFile, b);
 }
 /************************************************************************/
-bool DibOpenFileReal(char *szFile, Bitmaps *b)
+bool DibOpenFileReal(const char *szFile, Bitmaps *b)
 {
    file_node f;
    DWORD   dwLen, dwBits;
    DWORD   width, height, xoffset, yoffset;
    BYTE    byte, num_hotspots, shrink;
    int     i, j, size, offset, num_indices, temp, version, len;
-   char		*start, *end;
+   const char *start, *end;
 
    if (!CliMappedFileOpenRead(szFile, &f))
       return false;

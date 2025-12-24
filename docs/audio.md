@@ -2,7 +2,7 @@
 
 ## Overview
 
-The client audio system was refactored in PR #1293 (Q4 2025 / Q1 2026) to replace the proprietary Miles Sound System (MSS) and WaveMix with OpenAL Soft, an open-source, cross-platform audio library.
+The client audio system was refactored in PR #1293 to replace the proprietary Miles Sound System (MSS) and WaveMix with [OpenAL Soft](https://github.com/kcat/openal-soft), an open-source, cross-platform audio library.
 
 ## Architecture
 
@@ -89,15 +89,15 @@ graph TD
 
 ### Music API (music.c)
 
-| Function | Exported | Purpose |
-|----------|----------|---------|
-| `PlayMusicFile(hwnd, filename)` | ? | Play music by filename (handles .mid/.mp3 ? .ogg) |
-| `PlayMusicRsc(rsc)` | ? | Play music by resource ID |
-| `MusicAbort()` | ? | Stop all music |
-| `MusicRestart()` | ? | Resume music when user re-enables in settings |
-| `MusicClose()` | ? | Shutdown music system |
-| `NewMusic(type, rsc)` | ? | Handle server music message |
-| `ResetMusicVolume()` | ? | Apply volume from config |
+| Function | Purpose |
+|----------|---------|
+| `PlayMusicFile(hwnd, filename)` | Play music by filename (handles .mid/.mp3 -> .ogg) |
+| `PlayMusicRsc(rsc)` | Play music by resource ID |
+| `MusicAbort()` | Stop all music |
+| `MusicRestart()` | Resume music when user re-enables in settings |
+| `MusicClose()` | Shutdown music system |
+| `NewMusic(type, rsc)` | Handle server music message |
+| `ResetMusicVolume()` | Apply volume from config |
 
 ### Sound API (sound.c)
 
@@ -125,8 +125,8 @@ The following functions were removed to simplify the API:
 Legacy music files (.mid, .midi, .mp3) are automatically mapped to .ogg:
 
 ```
-main.mid  ? main.ogg
-theme.mp3 ? theme.ogg
+main.mid  -> main.ogg
+theme.mp3 -> theme.ogg
 ```
 
 This mapping happens in `ConvertLegacyMusicExtension()` in music.c.

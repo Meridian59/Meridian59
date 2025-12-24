@@ -1854,7 +1854,7 @@ HPSTR WaveFormatConvert(LPPCMWAVEFORMAT lpOutWF, LPPCMWAVEFORMAT lpInWF, HPSTR l
 }	
 
 // Added volume 8/95 ARK
-LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPCSTR szWaveFilename, HINSTANCE hInst, DWORD dwFlags, int volume)
+LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPSTR szWaveFilename, HINSTANCE hInst, DWORD dwFlags, int volume)
 {
    MMIOINFO        mmioInfo;
    MMCKINFO	   mmckinfoParent;
@@ -1948,7 +1948,7 @@ LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPCSTR szWaveFilename, HINS
    }
    else /* Open the given file for reading using buffered I/O. */
    {
-     if (!(hmmio = mmioOpen((LPSTR) szWaveFilename, NULL, MMIO_READ | MMIO_ALLOCBUF)))
+      if (!(hmmio = mmioOpen(szWaveFilename, NULL, MMIO_READ | MMIO_ALLOCBUF)))
       {
 	 if (gfShow)
 	 {

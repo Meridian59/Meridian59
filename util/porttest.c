@@ -22,7 +22,7 @@ void Usage(void)
    exit(1);
 }
 /************************************************************************/
-void dprintf(const char *fmt,...)
+void dprintf(char *fmt,...)
 {
    char s[200];
    va_list marker;
@@ -41,7 +41,7 @@ void dprintf(const char *fmt,...)
  * OpenSocketConnection: Open a connection, given the host and socket #.
  *   Returns true on success.
  */
-bool OpenSocketConnection(const char *host, int sock_port)
+bool OpenSocketConnection(char *host, int sock_port)
 {
    WSADATA WSAData;
    SOCKADDR_IN dest_sin;

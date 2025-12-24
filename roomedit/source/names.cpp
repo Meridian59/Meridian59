@@ -46,8 +46,8 @@
 
 typedef struct
 {
-  const char   *shortdesc; /* short description of the LineDef: 16 chars max */
-  const char   *longdesc;  /* long description of the LineDef */ /*! what max? */
+  char   *shortdesc; /* short description of the LineDef: 16 chars max */
+  char   *longdesc;  /* long description of the LineDef */ /*! what max? */
   USHORT  props;     /* properties */
 } LineDefDesc;
 
@@ -366,7 +366,7 @@ static LineDefDesc LineDefInfo[] =
    Get a short (16 char.) description of the type of a linedef.
 */
 
-const char *GetLineDefTypeName(SHORT type)
+char *GetLineDefTypeName(SHORT type)
 {
   if (type >= 0 && type <= MAXLINEDEFINFO)
 	return LineDefInfo[type].shortdesc;
@@ -379,7 +379,7 @@ const char *GetLineDefTypeName(SHORT type)
    Get a long description of the type of a linedef.
 */
 
-const char *GetLineDefTypeLongName(SHORT type)
+char *GetLineDefTypeLongName(SHORT type)
 {
   if (type >= 0 && type <= MAXLINEDEFINFO)
 	return LineDefInfo[type].longdesc;
@@ -404,7 +404,7 @@ USHORT GetLineDefProperties(SHORT type)
 /*
    get the name of an object type
 */
-const char *GetObjectTypeName (SHORT objtype)
+char *GetObjectTypeName (SHORT objtype)
 {
    switch (objtype)
    {
@@ -435,7 +435,7 @@ const char *GetObjectTypeName (SHORT objtype)
 /*
    get the name of an object type (plurial)
 */
-const char *GetObjectsTypeName (SHORT objtype)
+char *GetObjectsTypeName (SHORT objtype)
 {
    switch (objtype)
    {
@@ -468,7 +468,7 @@ const char *GetObjectsTypeName (SHORT objtype)
 /*
    what are we editing?
 */
-const char *GetEditModeName (SHORT objtype)
+char *GetEditModeName (SHORT objtype)
 {
    switch (objtype)
    {
@@ -496,7 +496,7 @@ const char *GetEditModeName (SHORT objtype)
    get a short description of the flags of a linedef
 */
 
-const char *GetLineDefFlagsName (int flags)
+char *GetLineDefFlagsName (int flags)
 {
    static char temp[50];
 
@@ -552,7 +552,7 @@ const char *GetLineDefFlagsName (int flags)
    get a long description of one linedef flag
 */
 
-const char *GetLineDefFlagsLongName (SHORT flags)
+char *GetLineDefFlagsLongName (SHORT flags)
 {
    if (flags & 0x0100)
 	  return "Already on the map at startup";
@@ -582,7 +582,7 @@ const char *GetLineDefFlagsLongName (SHORT flags)
    get a short (13 char.) description of the type of a sector
 */
 
-const char *GetSectorTypeName (SHORT type)
+char *GetSectorTypeName (SHORT type)
 {
 	if (DoomVersion == 16)
 		switch (type)
@@ -721,7 +721,7 @@ const char *GetSectorTypeName (SHORT type)
    get a long description of the type of a sector
 */
 
-const char *GetSectorTypeLongName (SHORT type)
+char *GetSectorTypeLongName (SHORT type)
 {
 	if (DoomVersion == 16)
 		switch (type)

@@ -2939,7 +2939,7 @@ void AlignTexturesX (SelPtr *sdlist, SHORT type_sd, SHORT type_tex, SHORT type_o
 	/* get initial offset to use (if requrired) */
 	if (type_off == 1)
 	{
-		const char *Title = "Offset alignment";
+		char *Title = "Offset alignment";
 		char Prompt[80];
 		char Buf[6];	// Init to 0 and Keep between calls
 		int BufSize = 6;
@@ -3340,7 +3340,7 @@ void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius)
    returns TRUE if user want to stop checking
 */
 
-BOOL CheckFailed (BOOL fatal, const char *format, ...)
+BOOL CheckFailed (BOOL fatal, char *format, ...)
 {
 	int rc;
 	char msg[256];

@@ -109,7 +109,7 @@ extern "C" {
 #define debug(x)
 #endif
 
-M59EXPORT void _cdecl dprintf(const char *fmt,...);
+M59EXPORT void _cdecl dprintf(char *fmt,...);
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

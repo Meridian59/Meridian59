@@ -8,91 +8,29 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Ice Creature Overview
-
-% The ice creature is a mid-to-high level monster built to challenge players with a mix of 
-% melee and ranged combat mechanics. Here’s what makes it stand out:
-
-% **Combat Mechanics**:
-% - Can spawn with either a melee weapon (sword) or unarmed.
-% - Unarmed variants generate an ice spear for melee or ranged attacks during chases.
-% - Displays dynamic visual indicators for its damage state: default, wounded, and very wounded.
-
-% **Attributes**:
-% - Strong resistance to cold-based attacks, with moderate resistance to piercing and shock damage.
-% - Vulnerable to fire, acid, and quake-based attacks.
-% - Shows intelligent behavior, such as regrouping during combat and fleeing from frighteners.
-
-% **Special Features**:
-% - Uses overlays for weapons and appearance, like Troops and Living Statues.
-% - Temporarily disables spear throws after each attack using a timer to prevent spamming.
-
-% **Design Notes**:
-% - Designed as a high-level, high-karma mob
-% - Offers a strategic challenge, making it a good opponent for experienced players.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 Iceperson is Monster
 
 constants:
 
    include blakston.khd
 
-   ANIM_THROW = 3
-
-   THROW_CHANCE = 5
-   THROW_RANGE_SQUARED = 666
-
-   % Damage levels - artwork is not comprehensive
-   GROUP_DEFAULT = 1
-   GROUP_WOUNDED = 2
-   GROUP_VERY_WOUNDED = 3
-
-   FRAME_FEET_STANDING = 1
-   FRAME_FEET_ATTACKING = 4
-   FRAME_FEET_WALK_START = 2
-   FRAME_FEET_WALK_END = 4
-
-   % right arm
-   FRAME_ARM_STANDING = 1
-   FRAME_ARM_ATTACK_START = 1
-   FRAME_ARM_ATTACK_END = 3
-   FRAME_ARM_THROW_START = 4
-   FRAME_ARM_THROW_END = 5
-
-   % sword
-   FRAME_WEAPON_ATTACK_HELD = 1
-
-   % spear
-   FRAME_WEAPON_THROW_HELD = 1
-   FRAME_WEAPON_THROW_READY = 2
-
-   ANIMATION_WALK_SPEED = 150
-   ANIMATION_ATTACK_SPEED = 200
-   ANIMATION_THROW_SPEED = 200
-
-   SPEAR_WAIT_TIME = 10000 % Minimum time between spear throws
-   SPEAR_THROW_ANIMATION_DELAY = 200 % Time to allow for throw animation to complete
-
 resources:
 
    iceperson_koc_name_rsc = "atzmoch"
    iceperson_name_rsc = "ice creature"
-   iceperson_icon_rsc = iceper_torso.bgf
-   iceperson_desc_rsc = "This is a creature made completely from frozen water! Frost"
-      " clings to every inch of the crystalline figure, its jagged limbs glimmering in"
-      " the pale light. The air around it crackles with an icy stillness, not born of"
-      " malice but of a resolve to protect something greater."
+   iceperson_icon_rsc = iceperT.bgf
+   iceperson_desc_rsc = "This is a creature made completely from frozen water!"
 
-   iceperson_rightarm = iceper_rightarm.bgf
-   iceperson_feet = iceper_feet.bgf
-   iceperson_spear = iceper_spear.bgf
-   iceperson_sword = iceper_sword.bgf
-   iceperson_spear_projectile = icespflt.bgf
+   iceperson_head = iceperH.bgf
+   iceperson_armor = iceperA.bgf
+   iceperson_legs = iceperF.bgf
 
-   iceperson_dead_icon_rsc = iceperX.bgf
+   iceperson_rightarm = iceperR.bgf
+
+   iceperson_spear = icepersp.bgf
+   iceperson_sword = icperswd.bgf
+
+   iceperson_dead_icon_rsc = blank.bgf
    iceperson_dead_name_rsc = "melting ice"
 
    iceperson_sound_hit = ice_atkh.wav
@@ -101,7 +39,6 @@ resources:
    iceperson_sound_aware = ice_awr.wav
 
 classvars:
-
    vrKocName = iceperson_koc_name_rsc
    vrName = iceperson_name_rsc
    vrIcon = iceperson_icon_rsc
@@ -109,16 +46,14 @@ classvars:
    vrDead_icon = iceperson_dead_icon_rsc
    vrDead_name = iceperson_dead_name_rsc
 
-   viTreasure_type = TID_ICE_PERSON
-   
-   viSpeed = SPEED_SLOW
-   viAttack_type = ATCK_WEAP_PIERCE
+   viTreasure_type = TID_NONE
+   viSpeed = SPEED_AVERAGE
+   viAttack_type = ATCK_WEAP_THRUST
    viAttack_spell = ATCK_SPELL_COLD
-   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER |  AI_MOVE_FLEE_FRIGHTENERS |  AI_MOVE_REGROUP
    viAttributes = 0
-   viLevel = 90
-   viDifficulty = 8
-   viKarma = 75
+   viLevel = 75
+   viDifficulty = 5
+   viKarma = -70
 
    vrSound_hit = iceperson_sound_hit
    vrSound_miss = iceperson_sound_miss
@@ -127,341 +62,107 @@ classvars:
 
 properties:
 
-   pbThrow = FALSE
-
-   prWeaponOverlay = $
-
-   ptSpearTimer = $
-   ptSpearThrowAnimationDelayTimer = $
-
+   piAnimation = ANIM_NONE
+   piDrawFX = DRAWFX_TRANSLUCENT_50
+   
 messages:
-
-   Constructor()
-   {
-      % Random weapon selection
-      Send(self,@SetWeapon);
-
-      propagate;
-   }
 
    Constructed()
    {
-      plResistances = [ [ 99, -ATCK_SPELL_COLD ],
-                        [ 40, ATCK_WEAP_PIERCE ],
-                        [ 30, ATCK_WEAP_THRUST],
-                        [ 20, ATCK_SPELL_SHOCK ],
-                        [ 20, ATCK_SPELL_ALL ],
-                        [ 20, ATCK_WEAP_SLASH],
-                        [-10, ATCK_WEAP_BLUDGEON ],
-                        [-10, ATCK_SPELL_ACID ],
-                        [-20, ATCK_SPELL_QUAKE ],
-                        [-30, -ATCK_SPELL_FIRE ] ];
-
-      propagate;
+   plResistances = [ [ -99, -ATCK_SPELL_FIRE ],[ 99, -ATCK_SPELL_COLD ]];
+   propagate;
    }
 
-   SetWeapon()
-   "Creates some randomness in whether the instance is strictly melee (sword) "
-   " or has a ranged attack (occasional ice spear)."
+   % Used for defense messages
+   GetParryAbility(stroke_obj=$)
    {
-      local iRandom;
-
-      iRandom = random(0,1);
-
-      if iRandom = 1
+      if (stroke_obj <> $) and not Send(stroke_obj,@CanParry)
       {
-         prWeaponOverlay = iceperson_sword;
+         return 0;
       }
-
-      return;
-   }
-
-   EnterStateChase()
-   "Unarmed variant will generate a spear weapon when entering chase state."
-   {
-      if prWeaponOverlay = $ AND ptSpearTimer = $
-      {
-         Send(self,@GenerateIceSpear);
-      }
-
-      propagate;
-   }
-
-   GenerateIceSpear()
-   {
-      ptSpearTimer = $;
-      
-      prWeaponOverlay = iceperson_spear;
-      
-      Send(poOwner,@SomethingChanged,#what=self);
-      Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=iceperson_sound_aware);
-
-      return;
-   }
-
-   IceSpearTimer()
-   {
-      ptSpearThrowAnimationDelayTimer = $;
-
-      % Clears the spear overlay until generated again
-      prWeaponOverlay = $;
-      Send(poOwner,@SomethingChanged,#what=self);
-
-      % Start a timer to generate a spear again
-      ptSpearTimer = CreateTimer(self,@GenerateIceSpear,SPEAR_WAIT_TIME);
-
-      return;
-   }
-
-   MonsterCanCastSpell()
-   {
-      % Can cast a spell (throw a spear) only if equipped
-      if prWeaponOverlay = iceperson_spear
-      {
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   MonsterCastSpell()
-   {
-      local iBase;
-
-      iBase = Send(self,@AdjustedChanceBase,#base=THROW_CHANCE);
-
-      if Random(1,iBase) = 1
-         AND Send(self,@SquaredDistanceTo,#what=poTarget) < THROW_RANGE_SQUARED
-         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,#use_weapon=self)
-      {
-         Send(self,@DoMissileAttack);
-         
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   DoMissileAttack()
-   {
-      pbThrow = TRUE;
-
-      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
-      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-      
-      % A bit of a hack to prevent the spear throw animation from not completing
-      % by forcing a short delay before the next animation can be sent.
-      ptSpearThrowAnimationDelayTimer = CreateTimer(self,@IceSpearTimer,SPEAR_THROW_ANIMATION_DELAY);
-      
-      return;
+      return (viDifficulty*10)/2;
    }
 
    MonsterAttack(what = $)
    {
-      if pbThrow = TRUE
-      {
-         piAnimation = ANIM_THROW;
-         pbThrow = FALSE;
-      }
-      else
-      {
-         piAnimation = ANIM_ATTACK;
-      }
-
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-
+      Send(self,@DoSlash);
+      
       return;
    }
 
-   % Animate the torso overlay to reflect damage as hit points decrease.
-   % Note: The ice creature's artwork depicts damage only from the forward-facing angle.
-   SendAnimation()
+   DoSlash()
    {
-      local iGroup;
-
-      iGroup = GROUP_DEFAULT;
-
-      % Animate to the appropriate torso overlay as hit points drop, revealing
-      % damage. Note: the artwork only shows damage from the forward-facing angle.
-      if piHit_points < (2 * viLevel / 3)
-      {
-	      iGroup = GROUP_WOUNDED;
-      }
-      if piHit_points < (viLevel / 3)
-      {
-	      iGroup = GROUP_VERY_WOUNDED;
-      }
-
-      AddPacket(1,ANIMATE_NONE,2,iGroup);
-
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
       return;
    }
 
    SendMoveOverlays()
    {
-      if prWeaponOverlay <> $
-      {
-         AddPacket(1,3);
-      }
-      else
-      {
-         AddPacket(1,2);
-      }
+      AddPacket(1,3);
 
-      AddPacket(4,iceperson_feet,1,HS_LEGS);
-      AddPacket(1,ANIMATE_CYCLE,4,ANIMATION_WALK_SPEED,2,FRAME_FEET_WALK_START,2,FRAME_FEET_WALK_END);
+      AddPacket(4,iceperson_legs,1,HS_LEGS,1,ANIMATE_CYCLE,4,150,2,2,2,3); 
 
-      AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND);
-      AddPacket(1,ANIMATE_NONE,2,FRAME_ARM_STANDING);
-
-      if prWeaponOverlay <> $
-      {
-         AddPacket(4,prWeaponOverlay,1,HS_RIGHT_WEAPON);
-         AddPacket(1,ANIMATE_NONE,2,1);
-      }
+      AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND,1,ANIMATE_NONE,2,1);
+      AddPacket(4,iceperson_sword,1,HS_RIGHT_WEAPON,1,ANIMATE_NONE,2,5);
 
       return;
    }
 
    SendOverlays()
    {
-      if prWeaponOverlay <> $ AND piAnimation <> ANIM_THROW
-      {
-         AddPacket(1,3);
-      }
-      else
-      {
-         AddPacket(1,2);
-      }
+      % Send overlay bitmap info to user.  
 
-      AddPacket(4,iceperson_feet,1,HS_LEGS);
-         
-      if piAnimation = ANIM_ATTACK OR piAnimation = ANIM_THROW
-      {
-         AddPacket(1,ANIMATE_NONE,2,FRAME_FEET_ATTACKING);
-      }
+      % iceperson has left and right arms, head, legs, weapon, and armor
+      AddPacket(1,3);
+      
+      AddPacket(4,iceperson_legs,1,HS_LEGS);
+      if piAnimation = ANIM_ATTACK
+      {	 AddPacket(1,ANIMATE_NONE,2,4); }
       else
-      {
-         AddPacket(1,ANIMATE_NONE,2,FRAME_FEET_STANDING);
-      }
+      {	 AddPacket(1,ANIMATE_NONE,2,1); }
 
       AddPacket(4,iceperson_rightarm,1,HS_RIGHT_HAND);
-
       if piAnimation = ANIM_ATTACK
-      {
-         AddPacket(1,ANIMATE_ONCE,4,ANIMATION_ATTACK_SPEED,2,FRAME_ARM_ATTACK_START,2,FRAME_ARM_ATTACK_END,2,FRAME_ARM_STANDING);
-      }
+      {	 AddPacket(1,ANIMATE_ONCE,4,200,2,2,2,3,2,1); }
       else
-      {
-         if piAnimation = ANIM_THROW
-         {
-            AddPacket(1,ANIMATE_ONCE,4,ANIMATION_THROW_SPEED,2,FRAME_ARM_THROW_START,2,FRAME_ARM_THROW_END,2,FRAME_ARM_STANDING);
-         }
-         else
-         {
-            AddPacket(1,ANIMATE_NONE,2,FRAME_ARM_STANDING);
-         }
-      }
+      {  AddPacket(1,ANIMATE_NONE,2,1); }
+
+
+      AddPacket(4,iceperson_sword,1,HS_RIGHT_WEAPON);
+      if piAnimation = ANIM_ATTACK
+      {	 AddPacket(1,ANIMATE_ONCE,4,200,2,2,2,3,2,1); }
+      else
+      {  AddPacket(1,ANIMATE_NONE,2,1); }
+
+      return;
       
-      if prWeaponOverlay <> $ AND piAnimation <> ANIM_THROW
+   }
+
+   SendAnimation()
+   {
+      local iGroup;
+
+      iGroup = 1;
+
+      if piHit_points < (2*viLevel/3)
       {
-         AddPacket(4,prWeaponOverlay,1,HS_RIGHT_WEAPON);
-
-         if piAnimation = ANIM_ATTACK
-         {
-            if prWeaponOverlay = iceperson_sword
-            {
-               AddPacket(1,ANIMATE_ONCE,4,ANIMATION_ATTACK_SPEED,2,FRAME_ARM_ATTACK_START,2,FRAME_ARM_ATTACK_END,2,FRAME_ARM_STANDING);
-            }
-            else
-            {
-               AddPacket(1,ANIMATE_NONE,2,1);
-            }
-         }   
-         else
-         {
-            if piAnimation = ANIM_THROW
-            {
-               AddPacket(1,ANIMATE_ONCE,4,ANIMATION_THROW_SPEED,2,FRAME_WEAPON_THROW_HELD,2,FRAME_WEAPON_THROW_READY,2,FRAME_WEAPON_THROW_HELD);
-            }
-            else
-            {
-               AddPacket(1,ANIMATE_NONE,2,1);
-            }
-         }
+	 iGroup = 2;
       }
- 
-      return;
-   }
-
-   GetProjectileSpeed()
-   {
-      return 8;
-   }
-
-   SendProjectileAnimation()
-   {
-      AddPacket(1,ANIMATE_NONE,2,1);
-
-      return;
-   }
-
-   GetProjectileLightFlags()
-   {
-      return LIGHT_FLAG_NONE;
-   }
-
-   GetProjectileIcon()
-   {
-      return iceperson_spear_projectile;
-   }
-
-   SendLightingInformation()
-   {
-      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-      AddPacket(1,5); % 5 out of 255 intensity of light
-      AddPacket(2,LIGHT_WHITE);
-
-      return;
-   }
-   
-   GetParryAbility(stroke_obj=$)
-   {
-      if (stroke_obj <> $) AND NOT Send(stroke_obj,@CanParry)
+      if piHit_points < (viLevel/3)
       {
-         return 0;
+	 iGroup = 3;
       }
-      return (viDifficulty*10)/2;
-   }
-   
-   GetOptimalRange()
-   {
-      return random(8,15);
+      AddPacket(1,ANIMATE_NONE,2,iGroup);
+      return;
    }
 
    CanMorphTo()
    {
       return FALSE;
    }      
-
-   Delete()
-   {
-      if ptSpearTimer <> $
-      {
-         DeleteTimer(ptSpearTimer);
-         ptSpearTimer = $;
-      }
-
-      if ptSpearThrowAnimationDelayTimer <> $
-      {
-         DeleteTimer(ptSpearThrowAnimationDelayTimer);
-         ptSpearThrowAnimationDelayTimer = $;
-      }
-      
-      propagate;
-   }
 
 end
 

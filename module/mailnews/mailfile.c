@@ -131,6 +131,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    const int subject_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN, IDS_SUBJECT_PORTUGUESE};
    const int num_subjects = sizeof(subject_ids) / sizeof(subject_ids[0]);
    auto subject_strs = std::vector<std::string>(num_subjects);
+   char *subject = "";
    char *ptr;
    int num;
    int subject_id_index = 0;
@@ -174,7 +175,6 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
       }
    }
 
-   char *subject = nullptr;
    if (subject_found)
    {
       /* Skip "Subject: " or other translation leading string */
@@ -191,12 +191,14 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
          message = ptr + 1;
       }
    }
+   else
+   {
+      subject = "";
+   }
 
    /* Add "Subject:" field to message */
    strcat(new_msg, subject_strs[subject_id_index].c_str());
-   if (subject != nullptr) {
-     strcat(new_msg, subject);
-   }
+   strcat(new_msg, subject);
    strcat(new_msg, "\r\n");
    
    /* Add "Date:" field to message */

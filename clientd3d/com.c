@@ -41,7 +41,7 @@ static BYTE epoch;     // Epoch byte from last server message
 static unsigned int streams[NUM_STREAMS];
 
 /* local function prototypes */
-static bool WriteSocket(const char *buf,int numbytes);
+static bool WriteSocket(char *buf,int numbytes);
 static int ReadServerSocket(void);
 static void Resynchronize(void);
 static unsigned int RandomStreamsStep(void);
@@ -160,7 +160,7 @@ int ReadServerSocket(void)
 
 /********************************************************************/
 /* Return true on success */
-bool WriteSocket(const char *buf,int numbytes)
+bool WriteSocket(char *buf,int numbytes)
 {
 	int retval;
 	
@@ -195,7 +195,7 @@ void CloseConnection(void)
 /********************************************************************/
 /* Sendxxx adds the header, Writexxx is raw--works with comm programs */
 
-bool WriteServer(const char *buf, UINT numbytes)
+bool WriteServer(char *buf, UINT numbytes)
 {
 	switch(connection)
 	{
@@ -215,7 +215,7 @@ bool WriteServer(const char *buf, UINT numbytes)
 *  If numbytes <= MAX_COPYBUF, the prefix and message are sent in a single call to WriteServer.
 *  Otherwise, they are written separately.
 */
-bool SendServer(const char *msg, UINT numbytes)
+bool SendServer(char *msg, UINT numbytes)
 {
 	WORD length = (WORD) numbytes;
 	WORD randnum, temp, crc;

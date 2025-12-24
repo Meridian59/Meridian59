@@ -184,12 +184,9 @@ messages:
       return;
    }
 
-   DoBaseDesc()
+   AppendDesc()
    {
       local a, b, x;
-
-      % Call parent to append base description first
-      AppendTempString(vrDesc);
 
       % sample: "The pattern on this shield is rose astride gold;
       %          the traditional mark of the Foobars.  The eye of
@@ -236,7 +233,7 @@ messages:
       if piInsigniaType = INSIG_REBEL { AppendTempString( guildshield_insig_rebel); }
       if piInsigniaType = INSIG_NONE { AppendTempString(guildshield_insig_none); }
 
-      return;
+      propagate;
    }
 
    Randomize()

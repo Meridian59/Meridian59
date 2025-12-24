@@ -1,0 +1,28 @@
+# Ice Person sword
+# groups
+# 1 Held
+# 2-3 attacking
+-s 1 
+18
+icsw000h.bmp   [-9, -7] 
+icsw045h.bmp   [-11, -1] 
+icsw090h.bmp   [-10, -6] 
+icsw180h.bmp   [-20, -5] 
+icsw270h.bmp   [-24, -7] 
+icsw315h.bmp   [-16, -5] 
+icsw000a.bmp   [-13, -11] 
+icsw045a.bmp   [-16, -12] 
+icsw090a.bmp   [-22, -9] 
+icsw180a.bmp   [-8, -14] 
+icsw270a.bmp   [-9, -10] 
+icsw315a.bmp   [-7, -13] 
+icsw000b.bmp   [-7, -6] 
+icsw045b.bmp   [-5, -2] 
+icsw090b.bmp   [-11, -1] 
+icsw180b.bmp   [-9, -9] 
+icsw270b.bmp   [-17, -7] 
+icsw315b.bmp   [-12, 0] 
+3
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14

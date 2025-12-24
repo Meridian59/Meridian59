@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Seduce is Spell
+seduce is Spell
 
 constants:
 
@@ -80,48 +80,49 @@ messages:
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
-         return FALSE;
+         return False;
       }
 
       % Can cast on any battler (player or monster) unless it's a revenant or supermonster.
       % Casting on a player is just for roleplay.  See CastSpell().
 
       target = First(lTargets);
-      if NOT IsClass(target,&Battler) OR IsClass(target,&Revenant)
-               OR IsClass(target,&Lich) OR IsClass(target,&DeadLich)
-               OR IsClass(target,&LupoggKing) OR IsClass(target,&Ghost)
-               OR IsClass(target,&SpiderQueen) OR IsClass(target,&Brambles)
-               OR IsClass(target,&OrcPitBoss) OR IsClass(target,&Yeti)
-               OR IsClass(target,&OrcPitBossBody)
+      if not IsClass(target, &Battler) or isClass(target,&revenant)
+               or isClass(target,&Lich) or isClass(target,&DeadLich)
+               or isClass(target,&LupoggKing) or isClass(target,&Ghost)
+               or isClass(target,&SpiderQueen) or isClass(target,&Brambles)
+               or isClass(target,&OrcPitBoss) or isClass(target,&Yeti)
+               or isClass(target,&OrcPitBossBody)
       {
-         if NOT bItemCast
+         if not bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
               #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
          }
-         return FALSE;
+         return False;
       }
 
       if target = who
       {
-         if NOT bItemCast
+         if not bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+            Send(who, @MsgSendUser, #message_rsc=spell_no_self_target,
+              #parm1=vrName);
          }
-         return FALSE;
+         return False;
       }
 
       % check for enchantment already applied
       if Send(target,@IsEnchanted,#what=self)
       {
-         if NOT bItemCast
+         if not bItemCast
          {
             Send(who,@MsgSendUser,#message_rsc=seduce_already_enchanted,
 	           #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
          return False;
       }
-      if Send(target,@getMaster) <> $	     %% target has a master already.
+      if send(target,@getMaster) <> $	     %% target has a master already.
       {
          return FALSE;
       }
@@ -138,46 +139,44 @@ messages:
       % Tell everyone if the caster is making a move on a player.
       % A 'seduce' on another player is just for roleplay.
       %
-      if IsClass(oTarget,&Player)
+      if isClass(oTarget,&Player)
       {
-         % Tell the caster the spell is happening on a player.
-         %
-         Send(who,@MsgSendUser,#message_rsc=seduce_player_first,
-               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+	 % Tell the caster the spell is happening on a player.
+	 %
+	 Send(who,@MsgSendUser,#message_rsc=seduce_player_first,
+	      #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 
-         % Tell the target the spell is happening.
-         %
-         Send(oTarget,@MsgSendUser,#message_rsc=seduce_player_second,
-               #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
-               #parm3=Send(who,@GetHisHer));
+	 % Tell the target the spell is happening.
+	 %
+	 Send(oTarget,@MsgSendUser,#message_rsc=seduce_player_second,
+	      #parm1=Send(who,@GetCapDef),#parm2=send(who,@GetName),
+	      #parm3=send(who,@GetHisHer));
 
-         % Everyone else in the room sees the spell.
-         %
-         oRoom = Send(who,@GetOwner);
-         lOthers = Send(oRoom,@GetHolderActive);
-
-         for i in lOthers
-         {
-            oEach = Send(oRoom,@HolderExtractObject,#data=i);
-            if (IsClass(oEach,&Player) AND (oEach <> who) AND (oEach <> oTarget))
-            {
-               Send(oEach,@MsgSendUser,#message_rsc=seduce_player_third,
-                  #parm1=Send(who,@GetCapDef),
-                  #parm2=Send(who,@GetName),
-                  #parm3=Send(oTarget,@GetDef),
-                  #parm4=Send(oTarget,@GetName));
-            }
-         }
+	 % Everyone else in the room sees the spell.
+	 %
+	 oRoom = send(who,@GetOwner);
+	 lOthers = send(oRoom,@GetHolderActive);
+	 for i in lOthers
+	 {
+	    oEach = Send(oRoom,@HolderExtractObject,#data=i);
+	    if (IsClass(oEach,&Player) and (oEach <> who) and (oEach <> oTarget))
+	    {
+	       send(oEach,@MsgSendUser,#message_rsc=seduce_player_third,
+	         #parm1=Send(who,@GetCapDef),
+	         #parm2=Send(who,@GetName),
+	         #parm3=Send(oTarget,@GetDef),
+	         #parm4=Send(oTarget,@GetName));
+	    }
+	 }
       }
       else
       {
          iRoll = (send(who,@GetMaxHealth)/2);         % 0-75
-         iRoll = (iRoll + Send(who,@GetIntellect));   % 0-50
-         iRoll = (iRoll + Random(0,25));              % 0-25
-         iRoll = (iRoll * Bound(iSpellPower,25,100) / 100);
-         iRoll = Bound(iRoll,0,(Send(who,@GetMaxHealth)*2));
-
-         if iRoll > Send(oTarget,@GetMaxHitPoints)
+         iRoll = (iRoll + send(who,@GetIntellect));   % 0-50
+         iRoll = (iRoll + random(0,25));              % 0-25
+         iRoll = (iRoll * bound(iSpellPower,25,100) / 100);
+         iRoll = bound(iRoll,0,(send(who,@GetMaxHealth)*2));
+         if iRoll > send(oTarget,@GetMaxHitPoints)
          {
             % Tell the caster the spell is happening on a monster.
             Send(who,@MsgSendUser,#message_rsc=seduce_caster,
@@ -185,7 +184,7 @@ messages:
 
             % Do the work on the monster.
             Send(oTarget,@StartEnchantment,#what=self,#time=viDrainTime,#state=who);
-            Send(oTarget,@SetMaster,#oMaster=who);
+            send(oTarget,@SetMaster,#omaster=who);
             Post(oTarget,@ResetBehaviorFlags);
          }
          else
@@ -195,14 +194,12 @@ messages:
             AppendTempString(send(oTarget,@GetDef));
             AppendTempString(send(oTarget,@GetName));
             AppendTempString(seduce_fail_2);
-            
-            Send(who,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
-            
-            if iRoll < (Send(oTarget,@GetMaxHitPoints)/4)
+            send(who,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
+            if iRoll < (send(oTarget,@GetMaxHitPoints)/4)
             {
                % oops!  since you failed, now they really hate you!
-               Send(oTarget,@TargetSwitch,#what=who,#iHatred=bound((iSpellPower*2),25,100));
-               Send(oTarget,@EnterStateChase,#target=who,#actnow=True);
+               send(oTarget, @TargetSwitch, #what=who, #iHatred=bound((iSpellPower*2),25,100));
+               send(oTarget, @EnterStateChase, #target=who, #actnow=True);
             }
          }
       }
@@ -216,7 +213,6 @@ messages:
 
       debug(iSpellPower);
       iDuration = (5 + iSpellPower/4)*10000;
-
       return random(iDuration/2,iDuration);
    }
    
@@ -227,9 +223,9 @@ messages:
       % - Player (state) is present
       if Send(state,@IsLoggedOn) AND Send(who,@GetHealth) > 0 
          AND Send(state,@GetOwner) = Send(who,@GetOwner)
-         AND Send(state,@GetMana) >= (Send(who,@GetLevel) / 10)
+         AND Send(state,@GetMana) >= (Send(who,@getlevel) / 10)
       {
-         Send(state,@LoseMana,#amount=Send(who,@GetLevel) / 10);
+         Send(state,@LoseMana,#amount=Send(who,@getlevel) / 10);
          Post(who,@StartEnchantment,#what=self,#time=viDrainTime,#state=state);
 
          return;
@@ -245,11 +241,10 @@ messages:
 
    ModifyMonsterBehavior(mob = $)
    {
-      Send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
-      Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
-      Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
-      Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
-      
+      send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
       return;      
    }
 

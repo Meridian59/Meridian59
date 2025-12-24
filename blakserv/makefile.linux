@@ -81,7 +81,6 @@ OBJS =  \
 	$(OUTDIR)/mutex_impl.obj \
 	$(OUTDIR)/fileutil.obj \
 	$(OUTDIR)/osd_linux.obj \
-	$(OUTDIR)/webhook.obj \
 
 
 ifdef BLAK_PLATFORM_MAC

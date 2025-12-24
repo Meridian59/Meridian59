@@ -26,7 +26,7 @@ static FILE *debug_file = NULL;
 char *szAppName;
 
 /************************************************************************/
-void _cdecl dprintf(const char *fmt, ...)
+void _cdecl dprintf(char *fmt, ...)
 {
 	const int bufferSize = 256;
 	const char s[bufferSize]{ 0 };
@@ -48,8 +48,9 @@ void _cdecl dprintf(const char *fmt, ...)
 }
 
 unsigned short gCRC16=0;
+extern WORD GetCRC16(char *buf, int length);
 
-static unsigned short crc16(const char *name)
+static unsigned short crc16( char *name)
 {
 	FILE*fp;
 	char*buffer;

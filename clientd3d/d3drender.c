@@ -148,6 +148,7 @@ extern BYTE				*gBits;
 extern BYTE				*gBufferBits;
 extern D3DPRESENT_PARAMETERS	gPresentParam;
 extern long				stretchfactor;
+extern BYTE				light_rows[MAXY/2+1];      // Strength of light as function of screen row
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 

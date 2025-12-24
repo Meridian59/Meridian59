@@ -99,8 +99,6 @@ void MainServer()
 	InitTable();
 	AddBuiltInDLlist();
 	
-	InitWebhooks();
-	
 	LoadMotd();
 	LoadBof();
 	LoadRsc();
@@ -178,8 +176,6 @@ void MainExitServer()
 	ResetObject();
 	ResetMessage();
 	ResetClass();
-	
-	ShutdownWebhooks();
 	
 	ResetConfig();
 	

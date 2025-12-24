@@ -671,7 +671,7 @@ void TEditorClient::SetupMenu()
 	TMenu menu (mainFrame->GetMenu());
 	HMENU newMiscMenu;
 	int newMiscMenuID;
-	const char *newMiscMenuName;
+	char *newMiscMenuName;
 
 	// Uncheck and check appropriate mode menu item
 	menu.CheckMenuItem (CM_MODE_THINGS, MF_BYCOMMAND |
@@ -1678,13 +1678,10 @@ void TEditorClient::EvKeyDown (UINT key, UINT repeatCount, UINT flags)
 			Scroller->ScrollBy(0, -(long)repeatCount);
 			break;
 		case VK_ESCAPE:
-    {
       // Unselect everything
-      TMapDC dc (this);
-      HighlightSelection (dc, EditMode, Selected);
+      HighlightSelection (TMapDC(this), EditMode, Selected);
       ForgetSelection (&Selected);
       break;
-    }
 	}
 
 	TLayoutWindow::EvKeyDown(key, repeatCount, flags);
@@ -1732,8 +1729,7 @@ void TEditorClient::EvChar (UINT key, UINT repeatCount, UINT flags)
 		if ( InsertingObject )
 			return;
 
-		TMapDC dc (this);
-		HighlightSelection (dc, EditMode, Selected);
+		HighlightSelection (TMapDC(this), EditMode, Selected);
 		ForgetSelection (&Selected);
 	}
 	// (Un)select current object
@@ -1748,8 +1744,7 @@ void TEditorClient::EvChar (UINT key, UINT repeatCount, UINT flags)
 		else
 			SelectObject (&Selected, CurObject);
 
-		TMapDC dc (this);
-		HighlightObject (dc, EditMode, CurObject, GREEN);
+		HighlightObject (TMapDC(this), EditMode, CurObject, GREEN);
 	}
 }
 

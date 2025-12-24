@@ -49,7 +49,7 @@ typedef struct {
 
 extern HPALETTE hPal;
 
-static const char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
+static char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
 
 /* local function prototypes */
 LRESULT CALLBACK GraphCtlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -102,7 +102,7 @@ bool GraphCtlUnregister(HINSTANCE hInst)
    return UnregisterClass(GraphCtlName, hInst);
 }
 /*****************************************************************************/
-const char *GraphCtlGetClassName(void)
+char *GraphCtlGetClassName(void)
 {
    return GraphCtlName;
 }

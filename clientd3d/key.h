@@ -35,7 +35,7 @@ typedef struct {
    WORD  vk_code;  /* Virtual key code */ 
    WORD  flags;    /* Modifier keys */
    WORD  command;  /* Game command corresponding to key & flags */
-   const void *data;     /* Extra data associated with command */
+   void *data;     /* Extra data associated with command */
 } keymap, * KeyTable;
 
 // translates ascii key name to vk code used by windows
@@ -50,7 +50,7 @@ void KeyClose(void);
 M59EXPORT void KeyAddTable(int game_state, KeyTable table);
 M59EXPORT void KeyRemoveTable(int game_state, KeyTable table);
 
-M59EXPORT int  TranslateKey(UINT vk_key, KeyTable table, const void **data);
+M59EXPORT int  TranslateKey(UINT vk_key, KeyTable table, void **data);
 M59EXPORT void KeySetLastNorepeatTime(void);
 void HandleKeys(void);
 int  KeysDown(void);

@@ -234,7 +234,7 @@ void MainTab(int ctrl, bool forward)
 /*
  * PerformAction:  Dispatch on game action.
  */
-void PerformAction(int action, const void *action_data)
+void PerformAction(int action, void *action_data)
 {
    // See if a module wants to handle this action
    if (ModuleEvent(EVENT_USERACTION, action, action_data) == false)

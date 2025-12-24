@@ -118,6 +118,6 @@ void GameChangeColor(void);
 
 void MainTab(int ctrl, bool forward);
 
-M59EXPORT void PerformAction(int action, const void *action_data);
+M59EXPORT void PerformAction(int action, void *action_data);
 
 #endif /* #ifndef _INTRFACE_H */

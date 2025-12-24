@@ -125,7 +125,7 @@ static unsigned char gSkyboxBGRA[] =
 
 // Interfaces
 
-static void D3DRenderBackgroundsLoad(const char* pFilename, int index);
+static void D3DRenderBackgroundsLoad(char* pFilename, int index);
 static bool D3DRenderBackgroundSet(ID background);
 
 // Implementations
@@ -329,7 +329,7 @@ void D3DRenderSkyBoxShutdown()
 /**
 * Loads a series of PNG images from a specified file and creates textures for the skybox.
 */
-void D3DRenderBackgroundsLoad(const char* pFilename, int index)
+void D3DRenderBackgroundsLoad(char* pFilename, int index)
 {
 	FILE* pFile;
 	png_structp	pPng = NULL;

@@ -25,7 +25,7 @@ typedef struct {
 ID    char_to_use;   /* ID # of character player wants to use in game */
 char  name_to_use[MAXNAME];   /* name resource of character player wants to use in game */
 
-const char *ad_directory = "ads";   // Subdirectory with advertisement files
+char *ad_directory = "ads";   // Subdirectory with advertisement files
 
 static HWND hPickCharDialog = NULL;
 extern HWND hMakeCharDialog;

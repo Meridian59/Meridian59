@@ -60,7 +60,7 @@ void FontsCreate(bool use_defaults)
    int temp;
    LOGFONT lf;
    char str[MAX_FONTNAME], name[10], *ptr;
-   const char *separators = ",";
+   char *separators = ",";
    bool success;
 
    hDefaultFont = (HFONT) GetStockObject(SYSTEM_FONT);

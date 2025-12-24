@@ -27,7 +27,7 @@ extern int NumBBGs;
 static BOOL SaveBBGFile(int bbg, char *filename);
 static INT_PTR CALLBACK SaveBBGDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static const char *BBG_Filter = "Command files\0*.bbg\0All Files\0*.*\0\0";
+static char *BBG_Filter = "Command files\0*.bbg\0All Files\0*.*\0\0";
 /************************************************************************/
 void OpenBBG(void)
 {

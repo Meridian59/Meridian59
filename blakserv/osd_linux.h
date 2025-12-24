@@ -61,9 +61,6 @@ typedef int HWND;
 typedef uint64_t UINT64;
 typedef int64_t INT64;
 
-#define INVALID_HANDLE_VALUE -1
-#define CloseHandle close
-
 #define MAXGETHOSTSTRUCT 64
 
 void RunMainLoop(void);

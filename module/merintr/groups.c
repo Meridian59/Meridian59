@@ -16,8 +16,8 @@
 #define MAX_GROUPLINE (MAX_GROUPSIZE * (MAX_CHARNAME + 1))
 #define MAX_GROUPKEYS (MAX_NUMGROUPS * (MAX_GROUPNAME + 1))
 
-static const char group_section[] = "Groups";   // Section for groups in INI file
-static const char *name_separator = ",";
+static char group_section[] = "Groups";   // Section for groups in INI file
+static char *name_separator = ",";
 
 int num_groups;
 char groups[MAX_NUMGROUPS][MAX_GROUPNAME + 1];       // Pointers to group names

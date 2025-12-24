@@ -180,8 +180,7 @@ static HDIGDRIVER WAVE_init_driver( DWORD rate, WORD bits, WORD chans )
  *		and radius and max_vol as attenuation parameters
  * Returns 0 on success; nonzero on error.
  */
-UINT PlayWaveFile(HWND hwnd, const char *fname, int volume,
-                  BYTE flags, int src_row, int src_col, int radius, int max_vol)
+UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, int src_col, int radius, int max_vol)
 {
    if (!wave_open)
       return TRUE;

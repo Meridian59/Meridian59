@@ -15,7 +15,7 @@
 
 typedef struct {
    const char *text;
-   const char *title;
+   char *title;
    UINT style;
 } MsgBoxStruct;
 
@@ -128,7 +128,7 @@ bool _cdecl AreYouSure(HINSTANCE hModule, HWND hParent, int defbutton, int fmt_i
  *   - All default button styles (DEFBUTTON1, etc.)
  *   The box is application modal.
  */
-int ClientMessageBox(HWND hwndParent, const char *text, const char *title, UINT style)
+int ClientMessageBox(HWND hwndParent, const char *text, char *title, UINT style)
 {
    MsgBoxStruct s;
    static bool box_up = false;

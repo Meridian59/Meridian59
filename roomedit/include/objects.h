@@ -100,7 +100,7 @@ void GoToObject (int objtype, SHORT objnum);
 // originaly form editobj.cpp
 void InsertRectangle (SHORT xpos, SHORT ypos, SHORT width, SHORT height);
 void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius);
-BOOL CheckFailed (BOOL fatal, const char *format, ...);
+BOOL CheckFailed (BOOL fatal, char *format, ...);
 BOOL IsTextureNameInList (char *name, TextureInfo **list, SHORT numelems);
 void Statistics ();
 BOOL CheckSectors ();

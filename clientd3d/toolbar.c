@@ -37,7 +37,7 @@ extern HPALETTE hPal;
 static void ToolbarSetButtonVisibility(HWND hButton);
 static void ToolbarButtonPressed(Button *b);
 static Button *ToolbarFindButtonByHandle(HWND hwnd);
-static Button *ToolbarFindButtonByAction(int action, const void *action_data);
+static Button *ToolbarFindButtonByAction(int action, void *action_data);
 static LRESULT CALLBACK ToolbarButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
@@ -221,7 +221,7 @@ void ToolbarCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 void ToolbarButtonPressed(Button *b)
 {
    int action;
-   const void *data;
+   void *data;
 
    /* See if module wants to handle this event */
    if (ModuleEvent(EVENT_TOOLBUTTON, b) == false)
@@ -252,7 +252,7 @@ void ToolbarButtonPressed(Button *b)
  *   for toggle buttons.
  *   Returns true iff button state set.
  */
-bool ToolbarSetButtonState(int action, const void *action_data, bool state)
+bool ToolbarSetButtonState(int action, void *action_data, bool state)
 {
   Button *b = ToolbarFindButtonByAction(action, action_data);
   
@@ -288,7 +288,7 @@ Button *ToolbarFindButtonByHandle(HWND hwnd)
  * ToolbarFindButtonByAction:  Return Button structure for toolbar button
  *   with given action, or NULL if none found.
  */
-Button *ToolbarFindButtonByAction(int action, const void *action_data)
+Button *ToolbarFindButtonByAction(int action, void *action_data)
 {
    int i;
    

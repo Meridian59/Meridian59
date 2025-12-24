@@ -160,7 +160,7 @@ void RestartClient()
    si.cb = sizeof(si);
    GetStartupInfo(&si); /* shouldn't need to do this.  very weird */
 
-   if (!CreateProcess(restart_filename.c_str(),NULL,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
+   if (!CreateProcess(restart_filename.c_str(),"",NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
    {
      snprintf(s, sizeof(s), GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
       MessageBox(NULL,s,GetString(hInst, IDS_APPNAME),MB_ICONSTOP);
@@ -343,9 +343,9 @@ INT_PTR CALLBACK ErrorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
    return FALSE;
 }
 /*****************************************************************************/
-const char *GetLastErrorStr()
+char *GetLastErrorStr()
 { 
-   const char *error_str;
+   char *error_str;
    
    error_str = "No error string"; /* in case the call  fails */
 

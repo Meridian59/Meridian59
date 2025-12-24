@@ -72,7 +72,7 @@ void Error(const char *fmt, ...)
  * SaveRscFile:  Save contents of global var resources to given rsc filename.
  *   Return true on success.
  */
-bool SaveRscFile(const char *filename)
+bool SaveRscFile(char *filename)
 {
    int num_resources, i, temp;
    Resource *r;
@@ -118,7 +118,7 @@ bool SaveRscFile(const char *filename)
 /*
  * EachRscCallback:  Called for each resource that's loaded.
  */
-bool EachRscCallback(const char *filename, int rsc, const char *name)
+bool EachRscCallback(char *filename, int rsc, char *name)
 {
    Resource *r;
 

@@ -188,13 +188,13 @@
 /* from things.cpp */
 USHORT GetThingProperties(SHORT type);
 int GetThingColour (SHORT);
-const char *GetThingName (SHORT);
-const char  *GetThingPicName(SHORT type);
+char *GetThingName (SHORT);
+char  *GetThingPicName(SHORT type);
 SHORT GetThingRadius (SHORT);
 SHORT  GetThingHeight(SHORT type);
 SHORT  GetThingHealth(SHORT type);
-const char *GetAngleName (SHORT);
-const char *GetWhenName (SHORT);
+char *GetAngleName (SHORT);
+char *GetWhenName (SHORT);
 
 enum KodThings {
 	kodPlayerBlocking,

@@ -54,7 +54,7 @@ KODINCLUDEDIR = $(KODDIR)/include
 
 PALETTEFILE = $(TOPDIR)/blakston.pal
 
-CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX --std=c++20
+CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX --std=c++17
 
 OS := $(shell uname)
 

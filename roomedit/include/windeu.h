@@ -46,11 +46,11 @@ enum OPT_TYPE
 
 typedef struct
 {
-   const char *short_name;        /* abbreviated command line argument */
-   const char *long_name;         /* command line arg. or keyword */
+   char *short_name;        /* abbreviated command line argument */
+   char *long_name;         /* command line arg. or keyword */
    enum OPT_TYPE opt_type ; /* type of this option */
-   const char *msg_if_true;       /* message printed if option is true */
-   const char *msg_if_false;      /* message printed if option is false */
+   char *msg_if_true;       /* message printed if option is true */
+   char *msg_if_false;      /* message printed if option is false */
    void *data_ptr;          /* pointer to the data */
 } OptDesc;
 
@@ -213,19 +213,19 @@ void CleanupWindeu () ;
 void CenterWindow (TWindow *pWnd);
 void Beep ();
 void PlaySound (int, int);
-void ProgError (const char *, ...);
-void LogMessage (const char *, ...);
-void LogError(const char *, ...);
+void ProgError (char *, ...);
+void LogMessage (char *, ...);
+void LogError(char *, ...);
 void CloseLog(void);
 void ClearLog(void);
-void WorkMessage (const char*, ...);
+void WorkMessage (char*, ...);
 void GetWorkMessage (char *buffer, size_t bufferSize);
-BOOL Confirm (const char*, ...);
-void Notify (const char *, ...);
+BOOL Confirm (char*, ...);
+void Notify (char *, ...);
 void FunnyMessage ();
 void Usage ();
 void ParseCommandLineOptions( int argc, char *argv[], char *init_level);
-void ParseConfigFileOptions (const char *filename);
+void ParseConfigFileOptions (char *filename);
 void AppendItemToList (char ***list, char *item);
 char *FormatNumber(LONG num);
 

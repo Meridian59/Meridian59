@@ -89,11 +89,11 @@ extern MDirPtr MasterDir;   /* the master directory */
 WadPtr BasicWadOpen (char *);
 void BasicWadRead (WadPtr, void *, long);
 void BasicWadSeek (WadPtr, long);
-MDirPtr FindMasterDir( MDirPtr, const char *);
+MDirPtr FindMasterDir( MDirPtr, char *);
 void ListMasterDirectory( FILE *);
 void ListFileDirectory( FILE *, WadPtr);
 void BuildNewMainWad( char *, Bool);
-void WriteBytes( FILE *, const void *, long);
+void WriteBytes( FILE *, void *, long);
 void CopyBytes( FILE *, FILE *, long);
 int Exists( char *);
 void DumpDirectoryEntry( FILE *, char *);

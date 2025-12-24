@@ -45,10 +45,10 @@ static HMENU hMenu;
 GraphSpot WanderOne;
 GraphSpot Anchor;
 
-const char *szAppName = "BBGun";
-static const char *help_file = "bbgun.hlp";
+char *szAppName = "BBGun";
+static char *help_file = "bbgun.hlp";
 
-static const char *BMP_Filter = "Bitmaps\0*.bmp\0All Files\0*.*\0\0";
+static char *BMP_Filter = "Bitmaps\0*.bmp\0All Files\0*.*\0\0";
 /************************************************************************/
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {

@@ -25,7 +25,7 @@
 typedef int socklen_t;
 
 void RunMainLoop(void);
-const char * GetLastErrorStr();
+char * GetLastErrorStr();
 
 // a lot of stuff that really belongs here is in interface.h instead
 

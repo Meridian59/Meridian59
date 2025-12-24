@@ -31,7 +31,7 @@ static const int MAPFILE_VERSION = 1;
 static const int MAPFILE_TOP_TABLE_SIZE = 100;      // # of entries in top level table
 static const int MAPFILE_LOWER_TABLE_SIZE = 100;    // # of entries in a single offset table
 
-static const char *map_directory = "mail";
+static char *map_directory = "mail";
 static const char *map_filename  = "mail\\game.map";
 
 static const char map_magic[] = {0x4D, 0x41, 0x50, 0x0F};
@@ -184,7 +184,7 @@ bool MapFileLoadRoom(room_type *room)
          return false;
        if (fread(&room->annotations[i].y, 1, 4, mapfile) != 4)
          return false;
-       if (fread(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
+       if (fread(room->annotations[i].text, MAX_ANNOTATION_LEN, 1, mapfile) != MAX_ANNOTATION_LEN)
          return false;
      }     
    }
@@ -259,7 +259,7 @@ bool MapFileSaveRoom(room_type *room)
          return false;
        if (fwrite(&room->annotations[i].y, 1, 4, mapfile) != 4)
          return false;
-       if (fwrite(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
+       if (fwrite(room->annotations[i].text, MAX_ANNOTATION_LEN, 1, mapfile) != MAX_ANNOTATION_LEN)
          return false;
      }
    }

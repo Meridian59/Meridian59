@@ -126,6 +126,6 @@ extern BBGdata BBGs[MAX_BBGS];
 extern GraphSpot WanderOne;
 extern GraphSpot Anchor;
 
-extern const char *szAppName;
+extern char *szAppName;
 
 #endif // _BBGUN_H

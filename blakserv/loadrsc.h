@@ -14,6 +14,6 @@
 #define _LOADRSC_H
 
 void LoadRsc(void);
-void LoadDynamicRsc(const char *filename);
+void LoadDynamicRsc(char *filename);
 
 #endif

@@ -16,7 +16,7 @@
  * MappedFileOpenRead:  Open filename as a memory-mapped file for read-only access, 
  *   and map a view of the entire file.  Returns true on success, and fills in f.
  */
-bool CliMappedFileOpenRead(const char *filename, file_node *f)
+bool CliMappedFileOpenRead(char *filename, file_node *f)
 {
    f->fh = CreateFile(filename,GENERIC_READ,FILE_SHARE_READ,NULL,
 		      OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,NULL);

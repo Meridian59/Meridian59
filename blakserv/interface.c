@@ -248,19 +248,19 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 				switch (lpttt->hdr.idFrom)
 				{ 
 				case IDM_FILE_EXIT : 
-					lpttt->lpszText = const_cast<char *>("Exit");
+					lpttt->lpszText = "Exit";
 					break; 
 				case IDM_FILE_SAVE :
-					lpttt->lpszText = const_cast<char *>("Save Game");
+					lpttt->lpszText = "Save Game";
 					break; 
 				case IDM_FILE_RELOADSYSTEM :
-					lpttt->lpszText = const_cast<char *>("Reload System");
+					lpttt->lpszText = "Reload System";
 					break; 
 				case IDM_MESSAGES_MESSAGEOFTHEDAY :
-					lpttt->lpszText = const_cast<char *>("Message of the Day");
+					lpttt->lpszText = "Message of the Day";
 					break;
 				case IDM_HELP_ABOUT :
-					lpttt->lpszText = const_cast<char *>("About");
+					lpttt->lpszText = "About";
 					break; 
 				} 
 				break;
@@ -367,7 +367,7 @@ void InterfaceAddList(int session_id)
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE; 
 	lvi.state = 0; 
 	lvi.stateMask = 0; 
-	lvi.pszText = const_cast<char *>("  ?");  
+	lvi.pszText = "  ?";  
 	lvi.iImage = -1;
 	
 	lvi.iItem = index;
@@ -379,7 +379,7 @@ void InterfaceAddList(int session_id)
 	if (s->account == NULL)
 	{
 		/* need braces around this macro to use in an if/else */
-		ListView_SetItemText(hwndLV,index,1,const_cast<char *>(""));
+		ListView_SetItemText(hwndLV,index,1,"");
 	}
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
@@ -429,8 +429,8 @@ void InterfaceUpdateList(int session_id)
 	{
 		if (s->account == NULL)
 		{
-			ListView_SetItemText(hwndLV,index,0,const_cast<char *>("  ?"));
-			ListView_SetItemText(hwndLV,index,1,const_cast<char *>(""));
+			ListView_SetItemText(hwndLV,index,0,"  ?");
+			ListView_SetItemText(hwndLV,index,1,"");
 		}
 		else
 		{
@@ -598,11 +598,11 @@ void InterfaceCreateTabControl(HWND hwnd)
     tie.iImage = -1; 
     tie.pszText = s;
 	
-    tie.pszText = const_cast<char *>("&Status");
+    tie.pszText = "&Status";
     TabCtrl_InsertItem(hwndTab,0, &tie);
-    tie.pszText = const_cast<char *>("&Channels");
+    tie.pszText = "&Channels";
     TabCtrl_InsertItem(hwndTab,1, &tie);
-    tie.pszText = const_cast<char *>("&Administration");
+    tie.pszText = "&Administration";
     TabCtrl_InsertItem(hwndTab,2, &tie);
 	
     tab_pages[0] = CreateDialog(hInst,MAKEINTRESOURCE(IDD_TAB_PAGE_STATUS),hwndTab,
@@ -791,27 +791,27 @@ void InterfaceCreateListControl()
 	
 	/* make the columns */
 	
-	lvc.pszText = const_cast<char *>("#");
+	lvc.pszText = "#";
 	lvc.iSubItem = 0;
 	lvc.cx = 29; 
 	ListView_InsertColumn(hwndLV,0,&lvc);
 	
-	lvc.pszText = const_cast<char *>("Name");
+	lvc.pszText = "Name";
 	lvc.iSubItem = 1;
 	lvc.cx = 113; 
 	ListView_InsertColumn(hwndLV,1,&lvc);
 	
-	lvc.pszText = const_cast<char *>("Since");
+	lvc.pszText = "Since";
 	lvc.iSubItem = 2;
 	lvc.cx = 80; 
 	ListView_InsertColumn(hwndLV,2,&lvc);
 	
-	lvc.pszText = const_cast<char *>("State");
+	lvc.pszText = "State";
 	lvc.iSubItem = 3;
 	lvc.cx = 118; 
 	ListView_InsertColumn(hwndLV,3,&lvc);
 	
-	lvc.pszText = const_cast<char *>("From");
+	lvc.pszText = "From";
 	lvc.iSubItem = 4;
 	lvc.cx = 127; 
 	ListView_InsertColumn(hwndLV,4,&lvc);

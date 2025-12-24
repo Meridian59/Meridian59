@@ -636,10 +636,7 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
       {
 	 volume = maxvolume - (distance * maxvolume / cutoff) ;
       }
-      debug(("GamePlaySound: distance=%i, cutoff=%i\n", distance, cutoff));
    }
-   debug(("GamePlaySound: volume=%i, flags=0x%02X, row=%i, col=%i\n",
-         volume, flags, src_row, src_col));
    PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
 }
 /************************************************************************/

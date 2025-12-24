@@ -19,6 +19,7 @@
 #include <functional>
 #include <list>
 #include <unordered_map>
+#include <filesystem>
 
 // STB Vorbis for OGG decoding (compiled separately with STB_VORBIS_NO_PUSHDATA_API)
 extern "C" int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
@@ -301,13 +302,11 @@ static ALuint ParseOGGFile(const char* filename)
    debug(("ParseOGGFile: Attempting to load %s\n", filename));
 
    // Check if file exists
-   FILE* test_file = NULL;
-   if (fopen_s(&test_file, filename, "rb") != 0 || !test_file)
+   if (!std::filesystem::exists(filename))
    {
-      debug(("ParseOGGFile: File not found or cannot open: %s\n", filename));
+      debug(("ParseOGGFile: File not found: %s\n", filename));
       return 0;
    }
-   fclose(test_file);
 
    // Decode entire OGG file
    num_samples = stb_vorbis_decode_filename(filename, &channels, &sample_rate, &decoded);

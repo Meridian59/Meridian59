@@ -2475,7 +2475,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
 
       if (!ss)
       {
-         bprintf("C_IsPointInSector: Sector id not found in room: %" PRId64 "\n", sector_id, room_val.v.data);
+         bprintf("C_IsPointInSector: Sector id not found in room: %d (room: %" PRId64 ")\n", sector_id, room_val.v.data);
          continue;
       }
 

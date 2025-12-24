@@ -22,7 +22,7 @@
 #define SCROLL_WALL_FAST_PERIOD   8
 
 // Number of milliseconds between flickering a light
-#define FLICKER_PERIOD 100
+static int FLICKER_PERIOD = 100;
 
 // For ANIMATE_ROOM_BITMAP animations
 typedef struct

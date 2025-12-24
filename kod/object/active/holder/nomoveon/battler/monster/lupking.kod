@@ -471,7 +471,7 @@ messages:
       }
    
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
-      Send(oSpell,@DoEarthQuake,#who=self,#severity=2);
+      Send(oSpell,@DoEarthQuake,#who=self,#severity=2,#bDeathEffect=TRUE);
 
       propagate;
    }

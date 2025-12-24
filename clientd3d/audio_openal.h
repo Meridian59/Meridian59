@@ -24,7 +24,7 @@ void MusicSetVolume(float volume); // 0.0 to 1.0
 bool MusicIsPlaying(void);
 
 // Returns true if sound started successfully; supports OGG and WAV formats,
-// looping, and 3D positioning
+// looping, and 3D positioning. Coordinates are in tile units.
 bool SoundPlay(const char* filename, int volume, BYTE flags, 
                int src_row, int src_col, int radius, int max_vol);
 

@@ -607,8 +607,9 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
 	 int distance = ComputeObjectDistance(p, obj) >> LOG_FINENESS;
 	 if (distance > 2)
 	    volume = MAX_VOLUME * 2 / distance;
-	 src_row = obj->motion.y;
-	 src_col = obj->motion.x;
+	 // Convert fine coords to tile coords for audio positioning
+	 src_row = obj->motion.y >> LOG_FINENESS;
+	 src_col = obj->motion.x >> LOG_FINENESS;
       }
    }
    else if((x > 0) || (y > 0))	

@@ -164,6 +164,17 @@ played at equal volume in both stereo channels (no panning).
 - **Max distance:** Radius from server (silence beyond)
 - **Coordinate mapping:** Game coords to OpenAL coords (X negated for handedness)
 
+### Coordinate System
+
+All audio positioning uses **tile coordinates** (coarse grid), not fine coordinates:
+
+- **Fine coords:** High precision (e.g., 39424, 56832), used for smooth player movement
+- **Tile coords:** Coarse grid (e.g., 56, 18), conversion: `tile = fine >> LOG_FINENESS`
+
+`GamePlaySound()` normalizes object positions (fine) to tile coords before calling audio.
+`UpdateLoopingSounds()` converts player position (fine) to tile coords for the listener.
+Server-provided ambient sound positions are already in tile coords.
+
 The listener position is updated each frame via `AudioUpdateListener()`.
 
 ## Configuration

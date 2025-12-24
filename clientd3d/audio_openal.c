@@ -43,11 +43,13 @@ struct CacheNode {
 
 struct CaseInsensitiveHash {
    size_t operator()(const std::string& s) const {
-      std::string lower;
-      lower.reserve(s.size());
+      size_t hash = 0;
       for (char c : s)
-         lower.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c))));
-      return std::hash<std::string>{}(lower);
+      {
+         // Standard hash mixing formula to spread values evenly
+         hash ^= std::tolower(static_cast<unsigned char>(c)) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      }
+      return hash;
    }
 };
 

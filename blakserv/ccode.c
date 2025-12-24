@@ -2402,7 +2402,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
    roomdata_node *rd = GetRoomDataByID(room_val.v.data);
    if (!rd || !rd->file_info.sectors)
    {
-      bprintf("C_IsPointInSector has bad room id passed in: %i\n", room_val.v.data);
+      bprintf("C_IsPointInSector has bad room id passed in: %" PRId64 "\n", room_val.v.data);
       return NIL;
    }
 
@@ -2429,7 +2429,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
       list_node *list = GetListNodeByID(id_list_val.v.data);
       if (!list)
       {
-         bprintf("C_IsPointInSector failed to get list node by id: %i\n", id_list_val.v.data);
+         bprintf("C_IsPointInSector failed to get list node by id: %" PRId64 "\n", id_list_val.v.data);
          return NIL;
       }
 
@@ -2475,7 +2475,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
 
       if (!ss)
       {
-         bprintf("C_IsPointInSector: Sector id not found in room: %i\n", sector_id, room_val.v.data);
+         bprintf("C_IsPointInSector: Sector id not found in room: %" PRId64 "\n", sector_id, room_val.v.data);
          continue;
       }
 

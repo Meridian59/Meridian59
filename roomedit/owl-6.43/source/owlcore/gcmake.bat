@@ -1,1 +1,0 @@
-gmake -fgc.mak

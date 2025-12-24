@@ -81,7 +81,7 @@ ishash_type load_game_resources;
 \
 	if (len > max_len-1) \
    { \
-      eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,max_len); \
+     eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,(int) max_len); \
       return false; \
    } \
 \
@@ -262,7 +262,7 @@ bool LoadGameParse(char *filename)
 				return false;
 			break;
 		default :
-			eprintf("LoadGameFile found invalid command byte %u at offset %i in %s\n",
+			eprintf("LoadGameFile found invalid command byte %u at offset %li in %s\n",
                  cmd,ftell(loadfile.file),filename);
 			return false;
 		}
@@ -538,7 +538,7 @@ void LoadGameTranslateVal(val_type *pval)
 		lgc = GetLoadGameClassByID(pval->v.data);
 		if (lgc == NULL)
 		{
-			eprintf("LoadGameTranslateVal unable to get class %i\n",pval->v.data);
+			eprintf("LoadGameTranslateVal unable to get class %" PRId64 "\n",pval->v.data);
 			break;
 		}
 		c = GetClassByName(lgc->class_name);
@@ -559,7 +559,7 @@ void LoadGameTranslateVal(val_type *pval)
 		resource_name = GetLoadGameResourceByID(pval->v.data);
 		if (resource_name == NULL)
 		{
-			eprintf("LoadGameTranslateVal unable to get resource %i\n",pval->v.data);
+			eprintf("LoadGameTranslateVal unable to get resource %" PRId64 "\n",pval->v.data);
 			break;
 		}
 

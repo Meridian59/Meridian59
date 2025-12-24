@@ -123,7 +123,7 @@ bool CompareKeyTableListEntries(void *p1, void *p2)
  *   Return A_NOACTION if no command exists.  Otherwise, return action and set data 
  *   to point to data field for keypress.
  */
-int TranslateKey(UINT vk_key, KeyTable table, void **data)
+int TranslateKey(UINT vk_key, KeyTable table, const void **data)
 {
    int index;
    WORD table_flags, flags = 0;
@@ -178,7 +178,7 @@ void HandleKeys(void)
    int num_actions;           // Number of valid entries in actions
    bool moved, turned, already_done;
    KeyTable table;
-   void *action_data;
+   const void *action_data;
    list_type l;
 
    /* If main window no longer has the focus, don't read keyboard */

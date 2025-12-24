@@ -62,9 +62,7 @@ bool LoadAll(void)
 	if (LoadAllButAccountAtTime(time_str) == false)
 		return false;
 	
-	/* can't use TimeStr() in an xprintf because it uses TimeStr() too */
-	strncpy(time_str,TimeStr(last_save_time), sizeof(time_str));
-	lprintf("LoadAll loaded game saved at %s\n",time_str);
+	lprintf("LoadAll loaded game saved at %s\n", TimeStr(last_save_time).c_str());
 	
 	return true;
 }

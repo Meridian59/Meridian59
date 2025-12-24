@@ -138,8 +138,8 @@ void set_extension(char *newfile, char *filename, char *extension)
  */
 DWORD string_hash(char *name, DWORD max_val)
 {
-  register char *cp;
-  register DWORD k;
+  char *cp;
+  DWORD k;
 
   cp = name;
   k = 0;
@@ -153,7 +153,7 @@ DWORD string_hash(char *name, DWORD max_val)
  * MakeDirectory:  Create directory of given name, if it doesn't already exist.
  *   Returns true if directory exists or was successfully created.
  */
-bool MakeDirectory(char *name)
+bool MakeDirectory(const char *name)
 {
    struct stat s;
 
@@ -643,7 +643,7 @@ int MenuFindItemByName(HMENU hMenu, char *name)
 /*
  * GetCRC16:  Return 16 bit CRC of given buffer with given length.
  */
-WORD GetCRC16(char *buf, int length)
+WORD GetCRC16(const char *buf, int length)
 {
    DWORD crc = GetCRC32(buf, length);
    return (WORD) (crc & 0xffff);
@@ -652,7 +652,7 @@ WORD GetCRC16(char *buf, int length)
 /*
  * GetCRC32:  Return 32 bit CRC of given buffer with given length.
  */
-DWORD GetCRC32(char *buf, int length)
+DWORD GetCRC32(const char *buf, int length)
 {
    return CRC32(buf, length);
 }

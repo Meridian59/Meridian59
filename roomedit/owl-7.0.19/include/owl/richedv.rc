@@ -1,0 +1,101 @@
+//-----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1991, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TRichEditView
+//-----------------------------------------------------------------------------
+
+#include "owl/richedv.rh"
+#include "owl/editsear.rh"
+#include "owl/winres.rh"
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+CM_FORMATFONT BITMAP "owl/res/font.bmp"
+CM_FORMATBOLD BITMAP "owl/res/fontbld.bmp"
+CM_FORMATITALIC BITMAP "owl/res/fontitl.bmp"
+CM_FORMATUNDERLINE BITMAP "owl/res/fontund.bmp"
+CM_FORMATCOLOR BITMAP "owl/res/fontclr.bmp"
+CM_PARAGRAPHLEFT BITMAP "owl/res/parleft.bmp"
+CM_PARAGRAPHCENTER BITMAP "owl/res/parcentr.bmp"
+CM_PARAGRAPHRIGHT BITMAP "owl/res/parright.bmp"
+CM_PARAGRAPHBULLET BITMAP "owl/res/parbullt.bmp"
+
+IDA_RICHEDITVIEW ACCELERATORS
+{
+  "Z", CM_EDITUNDO, VIRTKEY, CONTROL
+  "X", CM_EDITCUT, VIRTKEY, CONTROL
+  "C", CM_EDITCOPY, VIRTKEY, CONTROL
+  "V", CM_EDITPASTE, VIRTKEY, CONTROL
+  VK_DELETE, CM_EDITDELETE, VIRTKEY
+  VK_DELETE, CM_EDITCLEAR, VIRTKEY, CONTROL
+  VK_F3, CM_EDITFINDNEXT, VIRTKEY
+}
+
+IDM_RICHEDITVIEW MENU
+{
+  MENUITEM SEPARATOR
+  POPUP "&Edit"
+  {
+    MENUITEM "&Undo\aCtrl+Z", CM_EDITUNDO, GRAYED
+    MENUITEM SEPARATOR
+    MENUITEM "Cu&t\aCtrl+X", CM_EDITCUT, GRAYED
+    MENUITEM "&Copy\aCtrl+C", CM_EDITCOPY, GRAYED
+    MENUITEM "&Paste\aCtrl+V", CM_EDITPASTE, GRAYED
+    MENUITEM SEPARATOR
+    MENUITEM "Clear &All\aCtrl+Del", CM_EDITCLEAR, GRAYED
+    MENUITEM "&Delete", CM_EDITDELETE, GRAYED
+  }
+  POPUP "&Search"
+  {
+    MENUITEM "&Find...", CM_EDITFIND, GRAYED
+    MENUITEM "&Replace...", CM_EDITREPLACE, GRAYED
+    MENUITEM "&Next\aF3", CM_EDITFINDNEXT, GRAYED
+  }
+  MENUITEM SEPARATOR
+  MENUITEM SEPARATOR
+  POPUP "&Character"
+  {
+    MENUITEM "F&ont...", CM_FORMATFONT
+    MENUITEM "&Color...", CM_FORMATCOLOR
+    MENUITEM "Back&ground Color...", CM_FORMATBKCOLOR
+    POPUP "&Format"
+    {
+      MENUITEM "&Bold", CM_FORMATBOLD
+      MENUITEM "&Italic", CM_FORMATITALIC
+      MENUITEM "&Underline", CM_FORMATUNDERLINE
+      MENUITEM "&Strikeout", CM_FORMATSTRIKEOUT
+    }
+  }
+  POPUP "&Paragraph"
+  {
+    MENUITEM "&Left", CM_PARAGRAPHLEFT
+    MENUITEM "&Center", CM_PARAGRAPHCENTER
+    MENUITEM "&Right", CM_PARAGRAPHRIGHT
+    MENUITEM SEPARATOR
+    MENUITEM "&Bulletted", CM_PARAGRAPHBULLET
+  }
+  MENUITEM SEPARATOR
+  MENUITEM SEPARATOR
+}
+
+STRINGTABLE
+BEGIN
+  CM_FORMATFONT-1, "Font attributes"
+  CM_FORMATFONT, "Select font for current selection\nFont"
+  CM_FORMATCOLOR, "Formats the selection with color\nColor"
+  CM_FORMATBKCOLOR, "Formats the selection with background color\nBackground"
+  CM_FORMATBOLD, "Makes the selection bold(togle)\nBold"
+  CM_FORMATITALIC, "Makes the selection italic(togle)\nItalic"
+  CM_FORMATUNDERLINE, "Makes the selection with a continuous underline(togle)\nUnderline"
+  CM_FORMATSTRIKEOUT, "Makes the selection with a continuous strikeout(togle)\nStrikeout"
+  CM_PARAGRAPHLEFT-1, "Paragraph attributes"
+  CM_PARAGRAPHLEFT, "Left-justifies paragraph\nAlign Left"
+  CM_PARAGRAPHCENTER, "Center-justifies paragraph\nCenter"
+  CM_PARAGRAPHRIGHT, "Right-justifies paragraph\nAlign Right"
+  CM_PARAGRAPHBULLET, "Inserts a bullet on this line\nBullets"
+END

@@ -705,6 +705,19 @@ resources:
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
    
+
+   player_advancement_cap_hit_1 = \
+      "~IYou feel like you've practiced all you can in this location.  "
+      "Perhaps a change of scenery would help refresh your mind."
+
+   player_advancement_cap_hit_2 = \
+      "~IYour training seems to have stagnated here. Moving to a different "
+      "area might allow you to continue improving your abilities."
+
+   player_advancement_cap_hit_3 = \
+      "~IYou sense that this place holds no more lessons for you right now.  "
+      "Exploring other locations could renew your capacity for learning."
+
 classvars:
 
    viHand_space = 2
@@ -1084,13 +1097,25 @@ messages:
             piFlags2=piFlags2 | flag ;
          }
       }
-      
-      if (poOwner <> $)
-         AND (flagset = 1)
-         AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
+
+      % Update who list and room for PK-related flag changes (both setting AND clearing)
+      if flagset = 1 AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
       {
-         % Tell room about change in case there are ramifications.
-         Send(poOwner,@SomethingChanged,#what=self);
+         % Update who list for murderer/outlaw changes
+         if (flag & (PFLAG_MURDERER | PFLAG_OUTLAW))
+         {
+            % Only update who list if server isn't too busy
+            if NOT Send(SYS,@IsServerCrowded)
+            {
+               Send(SYS,@UpdateWhoListForAll);
+            }
+         }
+
+         % Tell room about change in case there are ramifications
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
       }
       
       return;
@@ -3197,7 +3222,7 @@ messages:
 
    CheckPosition(what=$,type=$,space=0)
    {
-      local i, iSpace;
+      local i, iSpace, bAllowCombination;
 
       if space = 0 OR type = $ OR what = $
       {
@@ -3243,6 +3268,28 @@ messages:
          }
          else
          {
+            % Check if items can be worn in the same slot despite conflicts
+            bAllowCombination = FALSE;
+            
+            for i in plUsing
+            {
+               if Send(i,@GetItemUseType) & type
+               {
+                  if (Send(what,@CanBeWornInSameSlotWith,#what=i) 
+                          OR Send(i,@CanBeWornInSameSlotWith,#what=what))
+                  {
+                     bAllowCombination = TRUE;
+                     break;
+                  }
+               }
+            }
+            
+            if bAllowCombination
+            {
+               return TRUE;
+            }
+            
+            % For all other conflicts, space is full
             Send(self,@MsgSendUser,#message_rsc=player_use_full);
          }
          
@@ -4704,7 +4751,10 @@ messages:
          }
       }
       
-      Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      if poOwner <> $ 
+      {
+         Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      }
 
       % Let our shield know we killed something.
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
@@ -6383,7 +6433,7 @@ messages:
       }
       
       % No karma change in arenas.
-      if Send(oRoom,@IsArena)
+      if oRoom <> $ AND Send(oRoom,@IsArena)
       {
          return 0;
       }
@@ -7488,9 +7538,31 @@ messages:
    CheckAdvancementPoints()
    "Checks to be sure a player isn't at the limit yet."
    {
+      local iMessage;
+
       if piAdvancement_points < ADVANCEMENT_LIMIT
       {
          return TRUE;
+      }
+
+      % Player has hit the advancement cap.  Show educational message occasionally
+      % about moving to different rooms to continue practicing (12.5% chance).
+      if Random(1,8) = 1
+      {
+         iMessage = Random(1,3);
+         
+         if iMessage = 1
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_advancement_cap_hit_1);
+         }
+         if iMessage = 2
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_advancement_cap_hit_2);
+         }
+         if iMessage = 3
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_advancement_cap_hit_3);
+         }
       }
       
       return FALSE;
@@ -8728,6 +8800,13 @@ messages:
    "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
+      if Send(self,@FindUsing,#class=&Robe) <> $ 
+         AND IsClass(what,&Pants) 
+      {
+         % Player is wearing a robe so we don't show pants here as they are underneath.
+         return;
+      }
+
       poLegs_set = what;
       prLegs = new_legs;
 
@@ -8743,22 +8822,40 @@ messages:
    }
 
    ResetPlayerLegs()
-   "Sets our icon to its natural, un-panted state."
+   "Sets our player's legs to show their robes, pants (equipped or un-panted state)."
    {
+      local robes_in_use, pants_in_use, translation;
+      robes_in_use = Send(self,@FindUsing,#class=&Robe);
+      if robes_in_use <> $
+      {
+         % Player is wearing robes (regardless of what's changed beneath).
+         return;
+      }
+
       poLegs_set = $;
 
-      if piGender = GENDER_MALE
+      pants_in_use = Send(self,@FindUsing,#class=&Pants);
+      if pants_in_use = $
       {
-         prLegs = player_legs_a_rsc;
+         translation = Send(self,@GetDefaultPantsTranslation);
+         if piGender = GENDER_MALE
+         {
+            prLegs = player_legs_a_rsc;
+         }
+         else
+         {
+            prLegs = player_legs_b_rsc;
+         }
       }
       else
       {
-         prLegs = player_legs_b_rsc;
+         prLegs = Send(pants_in_use,@GetLegs,#who=self);
+         translation = Send(pants_in_use,@GetPaletteTranslation);
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | 
-                            (Send(self,@GetDefaultPantsTranslation) * PLAYER_TRANSLATION_LEGS_MUL); 
+                           (translation * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
       {      

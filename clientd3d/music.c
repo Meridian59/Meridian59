@@ -72,24 +72,11 @@ static void PlayMusicFileInternal(const std::string& fname)
    // Stop any currently playing music before attempting new track
    MusicStop();
 
-   // Try to play the filename directly first
    if (MusicPlay(filename.c_str(), true))
    {
       playing_music = true;
       debug(("PlayMusicFile: OpenAL playing %s\n", filename.c_str()));
       return;
-   }
-
-   // If that failed and filename is a bare name, try prefixed with music_dir
-   if (!fs::path(filename).has_parent_path())
-   {
-      std::string pathbuf = (fs::path(music_dir) / filename).string();
-      if (MusicPlay(pathbuf.c_str(), true))
-      {
-         playing_music = true;
-         debug(("PlayMusicFile: OpenAL playing %s\n", pathbuf.c_str()));
-         return;
-      }
    }
 
    debug(("PlayMusicFile: failed to play %s\n", filename.c_str()));

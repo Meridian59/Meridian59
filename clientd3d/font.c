@@ -33,6 +33,7 @@ static char fontinfo[][MAX_FONTNAME] = {
 { "24,0,0,0,700,0,0,0,0,0,0,0,0,Arial" },          /* FONT_MAP_TITLE */
 { "12,0,0,0,400,0,0,0,0,0,0,0,0,Arial" },           /* FONT_MAP_LABEL */
 { "12,0,0,0,400,0,0,0,0,0,0,0,0,Arial" },           /* FONT_MAP_TEXT */
+{ "-13,0,0,0,700,0,0,0,0,3,2,5,0,Arial" },          /* FONT_MAP_ANNOTATIONS */
 };
 
 static char font_section[] = "Fonts";  /* Section for fonts in INI file */

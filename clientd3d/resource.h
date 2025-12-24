@@ -639,6 +639,7 @@
 #define IDS_RESTORE_DEFAULTS            3649
 #define IDS_PREFERENCES_TITLE	          3650
 #define IDS_INTRO                       3651
+#define ID_FONT_ANNOTATIONS             3652
 
 // Next default values for new objects
 // 

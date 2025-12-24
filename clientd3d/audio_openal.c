@@ -261,7 +261,6 @@ static void CacheBuffer(const char* filename, ALuint buffer)
          {
             // Delete the OpenAL buffer
             alDeleteBuffers(1, &it->buffer);
-            debug(("CacheBuffer: evicted LRU buffer for %s\n", it->filename.c_str()));
             
             // Remove from map and list
             g_cacheMap.erase(it->filename);
@@ -283,8 +282,6 @@ static void CacheBuffer(const char* filename, ALuint buffer)
    // Add new entry at front (most recently used)
    g_cacheList.push_front({filename, buffer});
    g_cacheMap[filename] = g_cacheList.begin();
-   
-   debug(("CacheBuffer: cached %s (cache size: %zu)\n", filename, g_cacheList.size()));
 }
 
 /*
@@ -299,8 +296,6 @@ static ALuint ParseOGGFile(const char* filename)
    int num_samples;
    ALenum format;
 
-   debug(("ParseOGGFile: Attempting to load %s\n", filename));
-
    // Check if file exists
    if (!std::filesystem::exists(filename))
    {
@@ -311,16 +306,11 @@ static ALuint ParseOGGFile(const char* filename)
    // Decode entire OGG file
    num_samples = stb_vorbis_decode_filename(filename, &channels, &sample_rate, &decoded);
 
-   debug(("ParseOGGFile: stb_vorbis_decode_filename returned %d samples\n", num_samples));
-
    if (num_samples <= 0)
    {
       debug(("ParseOGGFile: Failed to decode %s (error code: %d)\n", filename, num_samples));
       return 0;
    }
-
-   debug(("ParseOGGFile: Decoded %s - %d samples, %d channels, %d Hz\n", 
-          filename, num_samples, channels, sample_rate));
 
    // Determine OpenAL format
    if (channels == 1)
@@ -354,7 +344,6 @@ static ALuint ParseOGGFile(const char* filename)
       return 0;
    }
 
-   debug(("ParseOGGFile [OpenAL]: %s OK\n", filename));
    return buffer;
 }
 
@@ -371,8 +360,6 @@ bool MusicPlay(const char* filename, bool loop)
       debug(("MusicPlay: OpenAL not initialized!\n"));
       return false;
    }
-
-   debug(("MusicPlay: %s (loop=%d)\n", filename, loop));
 
    // Always stop any currently playing music unconditionally
    // This ensures we stop even if our flag got out of sync with OpenAL state
@@ -422,7 +409,6 @@ bool MusicPlay(const char* filename, bool loop)
    }
 
    g_musicPlaying = true;
-   debug(("MusicPlay: Now playing %s\n", filename));
    return true;
 }
 
@@ -592,7 +578,6 @@ static ALuint ParseWAVFile(const char* filename)
       return 0;
    }
 
-   debug(("ParseWAVFile [OpenAL]: %s OK\n", filename));
    return buffer;
 }
 

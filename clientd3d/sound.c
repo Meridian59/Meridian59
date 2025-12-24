@@ -88,7 +88,6 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	if (!fs::path(fname).has_parent_path())
 	{
 		std::string pathbuf = (fs::path(sound_dir) / fname).string();
-		debug(("PlayWaveFile: trying %s\n", pathbuf.c_str()));
 		played = SoundPlay(pathbuf.c_str(), volume, flags, src_row, src_col, radius, max_vol);
 		if (played)
 		{
@@ -96,7 +95,6 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 		}
 		else
 		{
-			debug(("PlayWaveFile: trying %s\n", fname));
 			played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol);
 			if (played)
 				actual_path = fname;
@@ -104,7 +102,6 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	}
 	else
 	{
-		debug(("PlayWaveFile: trying %s\n", fname));
 		played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol);
 		if (played)
 			actual_path = fname;
@@ -131,8 +128,6 @@ M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int
 	name = LookupRsc(rsc);
 	if (name == NULL)
 		return;
-
-	debug(("PlayWaveRsc: rsc=%d -> %s\n", rsc, name));
 
 	/* Forward to PlayWaveFile which handles path resolution and ambient tracking */
 	PlayWaveFile(hMain, name, volume, flags, row, col, radius, max_vol);

@@ -87,7 +87,6 @@ bool AudioInit(HWND hWnd)
    if (g_initialized)
       return true;
 
-   // Open default audio device
    g_device = alcOpenDevice(NULL);
    if (!g_device)
    {
@@ -95,7 +94,6 @@ bool AudioInit(HWND hWnd)
       return false;
    }
 
-   // Create audio context
    g_context = alcCreateContext(g_device, NULL);
    if (!g_context)
    {
@@ -105,7 +103,6 @@ bool AudioInit(HWND hWnd)
       return false;
    }
 
-   // Make context current
    if (!alcMakeContextCurrent(g_context))
    {
       debug(("AudioInit: Failed to make context current\n"));
@@ -116,7 +113,6 @@ bool AudioInit(HWND hWnd)
       return false;
    }
 
-   // Generate audio sources
    alGenSources(MAX_AUDIO_SOURCES, g_sources);
    if (alGetError() != AL_NO_ERROR)
    {
@@ -130,14 +126,12 @@ bool AudioInit(HWND hWnd)
    }
    g_numSources = MAX_AUDIO_SOURCES;
 
-   // Create dedicated music source
    alGenSources(1, &g_musicSource);
    if (alGetError() != AL_NO_ERROR)
    {
       debug(("AudioInit: Failed to generate music source\n"));
    }
 
-   // Set default listener properties
    alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
    alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
    ALfloat listenerOri[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }; // forward, up
@@ -160,25 +154,21 @@ void AudioShutdown(void)
    if (!g_initialized)
       return;
 
-   // Stop all sounds
    SoundStopAll();
    MusicStop();
 
-   // Delete music source
    if (g_musicSource)
    {
       alDeleteSources(1, &g_musicSource);
       g_musicSource = 0;
    }
 
-   // Delete sound sources
    if (g_numSources > 0)
    {
       alDeleteSources(g_numSources, g_sources);
       g_numSources = 0;
    }
 
-   // Delete all cached buffers
    for (auto& node : g_cacheList)
    {
       alDeleteBuffers(1, &node.buffer);
@@ -186,7 +176,6 @@ void AudioShutdown(void)
    g_cacheList.clear();
    g_cacheMap.clear();
 
-   // Destroy context
    if (g_context)
    {
       alcMakeContextCurrent(NULL);
@@ -194,7 +183,6 @@ void AudioShutdown(void)
       g_context = NULL;
    }
 
-   // Close device
    if (g_device)
    {
       alcCloseDevice(g_device);
@@ -392,14 +380,12 @@ bool MusicPlay(const char* filename, bool loop)
 
    g_musicBuffer = newBuffer;
 
-   // Attach buffer to music source
    alSourcei(g_musicSource, AL_BUFFER, g_musicBuffer);
    alSourcei(g_musicSource, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
    alSourcei(g_musicSource, AL_SOURCE_RELATIVE, AL_TRUE);
    alSource3f(g_musicSource, AL_POSITION, 0.0f, 0.0f, 0.0f);
    alSourcef(g_musicSource, AL_GAIN, (float)config.music_volume / 100.0f);
 
-   // Start playing
    alSourcePlay(g_musicSource);
 
    if (alGetError() != AL_NO_ERROR)
@@ -671,7 +657,6 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
 
    ALuint source = g_sources[sourceIndex];
 
-   // Attach buffer
    alSourcei(source, AL_BUFFER, buffer);
 
    // Determine if sound should use 3D positional audio or play centered on player.

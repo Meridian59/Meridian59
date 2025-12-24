@@ -194,8 +194,8 @@ void AudioShutdown(void)
 }
 
 /*
- * IsBufferInUse: Returns true if the buffer is currently being played by any source.
- * Used to prevent evicting buffers that are actively playing.
+ * IsBufferInUse: Returns true if the buffer is currently attached to a playing or
+ * paused source.
  */
 static bool IsBufferInUse(ALuint buffer)
 {

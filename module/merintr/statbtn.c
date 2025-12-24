@@ -312,7 +312,7 @@ bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 {
    bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
    int action;
-   void *action_data;
+   const void *action_data;
 
    UserDidSomething();
    

@@ -1220,7 +1220,7 @@ static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lP
                 }
 
                 if (vkCode >= 'A' && vkCode <= 'Z') {
-                    sprintf(TCNewkey, "%c", (char)vkCode + 32); // +32 changes it to lowercase
+                    snprintf(TCNewkey, sizeof(TCNewkey), "%c", (char)vkCode + 32); // +32 changes it to lowercase
                     AppendModifier(TCNewkey, iModifier);
                     EndDialog(GetForegroundWindow(), IDOK);
                     return 1; // Prevent further processing

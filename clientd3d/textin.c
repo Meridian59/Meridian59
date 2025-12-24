@@ -211,7 +211,7 @@ bool TextInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
    char string[MAXSAY + 1];
    int action;
    BOOL bValid;
-   void *action_data;
+   const void *action_data;
 
    if (key == VK_RETURN && !held_down)
    {

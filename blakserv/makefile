@@ -82,6 +82,7 @@ OBJS =  \
 	$(OUTDIR)\mutex_impl.obj \
 	$(OUTDIR)\fileutil.obj \
 	$(OUTDIR)\osd_windows.obj \
+	$(OUTDIR)\webhook.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

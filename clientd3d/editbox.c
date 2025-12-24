@@ -109,7 +109,7 @@ void EditBoxGetArea(AREA *a)
 LRESULT CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int action;
-   void *action_data;
+   const void *action_data;
 
    switch (message)
    {

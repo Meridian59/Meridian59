@@ -15,8 +15,7 @@
 #define MAP_ANNOTATION_SIZE     (2 * FINENESS)  // Size of annotation graphic in FINENESS units
 #define MAP_ANNOTATION_MIN_SIZE 14              // Min size of drawn annotation in pixels
 #define MAP_ANNOTATION_MAX_SIZE 30              // Max size
-#define MAX_ANNOTATIONS_BAD     20              // Prior version allowed this many annotations and corrupted data
-#define MAX_ANNOTATIONS         21              // Max number of annotations in a room. [NOTE: Do not set this to MAX_ANNOTATIONS_BAD! - Recovery from corrupted data]
+#define MAX_ANNOTATIONS         20              // Max number of annotations in a room
 #define MAX_ANNOTATION_LEN 100
 
 typedef struct {

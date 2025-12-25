@@ -561,7 +561,10 @@ void MapEnterRoom(room_type *room)
    room->annotations_offset = 0;
 
    // Load map from file
-   MapFileLoadRoom(room);
+   if(!MapFileLoadRoom(room))
+   {
+      debug(("MapEnterRoom:  Couldn't load map for room!\n"));
+   }
 
    fMapCacheValid = FALSE;
 }

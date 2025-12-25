@@ -18,5 +18,10 @@ void MapFileClose(void);
 bool MapFileLoadRoom(room_type *room);
 bool MapFileSaveRoom(room_type *room);
 bool MapFileSaveRoomAnnotations(room_type *room);
+#ifndef M59_RETAIL
+bool MapFileValidateAllRooms();
+#endif
+bool MapFileFindNextKnownData(int *next_offset, int curr_offset);
+bool IsValidRoomAnnotation(MapAnnotation *annotation);
 
 #endif /* #ifndef _MAPFILE_H */

@@ -571,7 +571,10 @@ void MapEnterRoom(room_type *room)
  */
 void MapExitRoom(room_type *room)
 {
-   MapFileSaveRoom(room);
+   if (!MapFileSaveRoom(room))
+   {
+      debug(("MapExitRoom:  Couldn't save map for room!\n"));
+   }
    if (pMapWalls)
       SafeFree(pMapWalls);
    pMapWalls = NULL;

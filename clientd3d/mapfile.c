@@ -138,7 +138,7 @@ bool MapFileLoadRoom(room_type *room)
    BYTE byte;
 
    if (mapfile == nullptr)
-     return false;
+      return false;
 
    // See if we've been in this room before
    if (!MapFileFindRoom(room->security, false))
@@ -149,46 +149,51 @@ bool MapFileLoadRoom(room_type *room)
 
    if (num_walls != room->num_walls)
    {
-      debug(("MapFileSetWalls found %d walls in room; map file has %d\n", 
-             num_walls, room->num_walls));
+      debug(("MapFileSetWalls found %d walls in room; map file has %d\n", num_walls, room->num_walls));
       return false;
    }
 
-   for (i=0; i < num_walls; i++)
+   for (i = 0; i < num_walls; i++)
    {
-     offset = i % 8;
-     if (offset == 0)
-     {
-       if (fread(&byte, 1, 1, mapfile) != 1)
-         return false;
-     }
-     room->walls[i].seen = ((byte & (1 << offset)) != 0) ? true : false;
+      offset = i % 8;
+      if (offset == 0)
+      {
+         if (fread(&byte, 1, 1, mapfile) != 1)
+            return false;
+      }
+      room->walls[i].seen = ((byte & (1 << offset)) != 0) ? true : false;
    }
-   
+
    if (fread(&room->annotations_offset, 1, 4, mapfile) != 4)
-     return false;
-   
+      return false;
+
    // Read annotations if present
    if (room->annotations_offset != 0)
    {
-     fseek(mapfile, room->annotations_offset, SEEK_SET);
-     
-     // Read # of annotations
-     if (fread(&num_annotations, 1, 4, mapfile) != 4)
-       return false;
-     num_annotations = min(num_annotations, MAX_ANNOTATIONS);
-     
-     for (i=0; i < num_annotations; i++)
-     {
-       if (fread(&room->annotations[i].x, 1, 4, mapfile) != 4)
+      fseek(mapfile, room->annotations_offset, SEEK_SET);
+
+      // Read # of annotations
+      if (fread(&num_annotations, 1, 4, mapfile) != 4)
          return false;
-       if (fread(&room->annotations[i].y, 1, 4, mapfile) != 4)
-         return false;
-       if (fread(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
-         return false;
-     }     
+      if(num_annotations == MAX_ANNOTATIONS_BAD)
+      {
+         // Corrupt annotations block. Only read one annotation.
+         num_annotations = 1;
+      }
+      num_annotations = min(num_annotations, MAX_ANNOTATIONS);
+      num_annotations = max(num_annotations, 0);
+
+      for (i = 0; i < num_annotations; i++)
+      {
+         if (fread(&room->annotations[i].x, 1, 4, mapfile) != 4)
+            return false;
+         if (fread(&room->annotations[i].y, 1, 4, mapfile) != 4)
+            return false;
+         if (fread(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
+            return false;
+      }
    }
-   
+
    return true;
 }
 /*****************************************************************************/
@@ -199,7 +204,7 @@ bool MapFileLoadRoom(room_type *room)
  */
 bool MapFileSaveRoom(room_type *room)
 {
-   int i, offset, temp;
+   int i, offset;
    BYTE byte;
 
    if (nullptr == mapfile || !room || !room->tree || !room->nodes)
@@ -215,57 +220,116 @@ bool MapFileSaveRoom(room_type *room)
       return false;
 
    byte = 0;
-   for (i=0; i < room->num_walls; i++)
+   for (i = 0; i < room->num_walls; i++)
    {
       offset = i % 8;
       if (room->walls[i].seen)
-        byte |= (1 << offset);
+         byte |= (1 << offset);
       if (offset == 7)
       {
-        if (fwrite(&byte, 1, 1, mapfile) != 1)
-          return false;
-        byte = 0;
+         if (fwrite(&byte, 1, 1, mapfile) != 1)
+            return false;
+         byte = 0;
       }
    }
 
    // Write last byte if we ended partway through one
    if (offset != 7 && room->num_walls != 0)
-     if (fwrite(&byte, 1, 1, mapfile) != 1)
-       return false;
-   
-   // Write out offset of annotations; write placeholder first in case at end of file
-   if (fwrite(&temp, 1, 4, mapfile) != 4)
-     return false;
-   
-   // See if adding annotations for the first time
-   if (room->annotations_changed && room->annotations_offset == 0)
-     room->annotations_offset = FileSize(mapfile);
-   
-   fseek(mapfile, -4, SEEK_CUR);
-   if (fwrite(&room->annotations_offset, 1, 4, mapfile) != 4)
-     return false;
+      if (fwrite(&byte, 1, 1, mapfile) != 1)
+         return false;
 
-   // Write out annotations if they've changed
-   if (room->annotations_changed)
+   if (!MapFileSaveRoomAnnotations(room))
    {
-     fseek(mapfile, room->annotations_offset, SEEK_SET);
-     temp = MAX_ANNOTATIONS;
-     if (fwrite(&temp, 1, 4, mapfile) != 4)
-       return false;
-     
-     for (i=0; i < MAX_ANNOTATIONS; i++)
-     {
-       if (fwrite(&room->annotations[i].x, 1, 4, mapfile) != 4)
-         return false;
-       if (fwrite(&room->annotations[i].y, 1, 4, mapfile) != 4)
-         return false;
-       if (fwrite(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
-         return false;
-     }
+      return false;
    }
 
    return true;
 }
+
+bool MapFileSaveRoomAnnotations(room_type *room)
+{
+   int i, offset, num_annotations, temp = 0;
+   bool createAnnotationsBlock = false;
+
+   if (nullptr == mapfile || !room)
+      return false;
+
+   // Algorithm:
+   //    Currently the file pointer is pointing at the 'annotations_offset' field within the room block (if written), which says where the annotations block is. A value of 0 means no annotations block.
+   //    If inside of the annotations block, the number of annotations written is MAX_ANNOTATIONS_BAD, then we can only use the first one - all others are corrupt/missing.
+   //    If the number of annotations is different than MAX_ANNOTATIONS, we need to rewrite the annotations block anyway.
+   //   We also need to throw out the old annotations block, and rewrite a new one at the end of the file.
+
+   // Get the position of the annotations_offset field
+   offset = ftell(mapfile);
+
+   // Write out offset of annotations; write placeholder first in case at end of file
+   if (fwrite(&temp, 1, 4, mapfile) != 4)
+      return false;
+
+   // See if we are creating a new annotations block
+   // - If we currently don't have one and our annotations have changed
+   // - If we have one, but our old one is corrupt (MAX_ANNOTATIONS_BAD)
+   if (room->annotations_offset == 0)
+   {
+      if (room->annotations_changed)
+      {
+         createAnnotationsBlock = true;
+      }
+   }
+   else
+   {
+      // Read existing annotations block to see if corrupt (or different size)
+      fseek(mapfile, room->annotations_offset, SEEK_SET);
+      // Read # of annotations
+      if (fread(&num_annotations, 1, 4, mapfile) != 4)
+         return false;
+      if (num_annotations == MAX_ANNOTATIONS_BAD || num_annotations != MAX_ANNOTATIONS)
+      {
+         // Corrupt (or resized) annotations block - need to rewrite
+         createAnnotationsBlock = true;
+      }
+   }
+
+   if(createAnnotationsBlock)
+   {
+      // New annotation block will start at the end of the file
+      room->annotations_offset = FileSize(mapfile);
+
+      // Move back to annotations_offset field and write the correct offset
+      fseek(mapfile, offset, SEEK_SET);
+      if (fwrite(&room->annotations_offset, 1, 4, mapfile) != 4)
+         return false;
+   }
+
+   // Write out annotations if they've changed or are being created
+   if (room->annotations_changed || createAnnotationsBlock)
+   {
+      // Write out number of annotations; write placeholder first in case at end of file - will rewrite later after success
+      fseek(mapfile, room->annotations_offset, SEEK_SET);
+      if (fwrite(&temp, 1, 4, mapfile) != 4)
+         return false;
+
+      for (i = 0; i < MAX_ANNOTATIONS; i++)
+      {
+         if (fwrite(&room->annotations[i].x, 1, 4, mapfile) != 4)
+            return false;
+         if (fwrite(&room->annotations[i].y, 1, 4, mapfile) != 4)
+            return false;
+         if (fwrite(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
+            return false;
+      }
+
+      // Now that the annotations block is complete, go back and rewrite the number of annotations
+      num_annotations = MAX_ANNOTATIONS;
+      fseek(mapfile, room->annotations_offset, SEEK_SET);
+      if (fwrite(&num_annotations, 1, 4, mapfile) != 4)
+         return false;
+   }
+
+   return true;
+}
+
 /*****************************************************************************/
 /* 
  * MapFileFindRoom:  Set file pointer of mapfile to start of entry for room with

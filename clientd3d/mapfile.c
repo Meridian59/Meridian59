@@ -83,15 +83,13 @@ void MapFileInitialize(void)
       MapFileClose();
       return;
    }
-   else
-   {
+
 #ifndef M59_RETAIL
-      if (!MapFileValidateAllRooms())
-      {
-         debug(("Map file validation failed!!\n"));
-      }
-#endif
+   if (!MapFileValidateAllRooms())
+   {
+      debug(("Map file validation failed!!\n"));
    }
+#endif
 }
 /*****************************************************************************/
 /* 

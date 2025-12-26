@@ -565,12 +565,6 @@ void MapEnterRoom(room_type *room)
    {
       debug(("MapEnterRoom:  Couldn't load map for room!\n"));
    }
-#ifndef M59_RETAIL
-   if (!MapFileValidateAllRooms())
-   {
-      debug(("Map file validation failed!!\n"));
-   }
-#endif
 
    fMapCacheValid = FALSE;
 }
@@ -584,12 +578,6 @@ void MapExitRoom(room_type *room)
    {
       debug(("MapExitRoom:  Couldn't save map for room!\n"));
    }
-#ifndef M59_RETAIL
-   if (!MapFileValidateAllRooms())
-   {
-      debug(("Map file validation failed!!\n"));
-   }
-#endif
    if (pMapWalls)
       SafeFree(pMapWalls);
    pMapWalls = NULL;

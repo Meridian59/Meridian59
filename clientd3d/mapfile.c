@@ -512,17 +512,32 @@ static int FileSize(FILE *file) {
 #ifndef M59_RETAIL
 bool MapFileValidateAllRooms()
 {
+   const char *csv_filename = "mail\\game.map.csv";
+   FILE *csv_file = fopen(csv_filename, "wt");
+   fprintf(csv_file, "Name,Start,End,Info\n");
+
+   int throwaway;
+   int file_size = 0;
+
    if (mapfile == nullptr)
       return false;
+
+   // Get file size to know when we reach the end of the file
+   if (fseek(mapfile, 0, SEEK_END))
+      return false;
+   file_size = ftell(mapfile);
+   fprintf(csv_file, "End of File,%d,%d,EOF\n", file_size, file_size+10000000);
 
    // Seek past the first 8 bytes (header)
    if (fseek(mapfile, 8, SEEK_SET))
       return false;
+   fprintf(csv_file, "File Header,%d,%d,Magic Number\n", 0, 8);
 
    // The 'top table' is the next MAPFILE_TOP_TABLE_SIZE * 4 bytes
    int topTable[MAPFILE_TOP_TABLE_SIZE];
    if( fread(topTable, 4, MAPFILE_TOP_TABLE_SIZE, mapfile) != MAPFILE_TOP_TABLE_SIZE)
       return false;
+   fprintf(csv_file, "Top Table,%d,%d,Top Table\n", 8, ftell(mapfile));
 
    // Iterate through each entry in the top table
    for(int i=0; i<MAPFILE_TOP_TABLE_SIZE; i++)
@@ -534,17 +549,33 @@ bool MapFileValidateAllRooms()
       if (fseek(mapfile, topTable[i], SEEK_SET))
          return false;
       LowerTableEntry lowerTable[MAPFILE_LOWER_TABLE_SIZE];
+      if (fread(&throwaway, 1, 4, mapfile) != 4)  // "Next table pointer" - unused
+         return false;
       if (fread(lowerTable, sizeof(LowerTableEntry), MAPFILE_LOWER_TABLE_SIZE, mapfile) != MAPFILE_LOWER_TABLE_SIZE)
          return false;
+      fprintf(csv_file, "Lower Table,%d,%d,Index=%d\n", topTable[i], ftell(mapfile), i);
 
       // Iterate through each entry in the lower table
       for (int j = 0; j < MAPFILE_LOWER_TABLE_SIZE; j++)
       {
-         // Ignore empty/invalid entries
-         if(lowerTable[j].security == 0)
-            continue;
-         if(lowerTable[j].offset <= 0)
-            continue;
+         if(lowerTable[j].security == 0 && lowerTable[j].offset == 0)
+            continue;  // Empty entry
+
+         bool off_file = (lowerTable[j].offset <= 0 || lowerTable[j].offset > file_size);
+         if (off_file)
+         {
+            debug(("MapFileIterateAllRooms: Found invalid table entry (offset OOB).\n"));
+         }
+
+         if (lowerTable[j].security == 0)
+         {
+            debug(("MapFileIterateAllRooms: Found invalid table entry (security invalid).\n"));
+         }
+         
+         if (lowerTable[j].offset == 0)
+         {
+            debug(("MapFileIterateAllRooms: Found invalid table entry (offset invalid).\n"));
+         }
 
          // Process the room entry here
          if (!MapFileFindRoom(lowerTable[j].security, false))
@@ -557,14 +588,40 @@ bool MapFileValidateAllRooms()
             debug(("MapFileIterateAllRooms: File position mismatch for room with security %d\n", lowerTable[j].security));
             return false;
          }
+         
+         // Process the room entry here - skip past walls, find map annotation offset
+         int num_walls = 0;
+         if (fread(&num_walls, 1, 4, mapfile) != 4)
+            return false;
+
+         // 'num_walls' is the number of bits, so round up, divide by 8, and skip that number of bytes
+         if (fseek(mapfile, (num_walls + 7) / 8, SEEK_CUR))
+            return false;
+         
+         // Read the location of the annotations block
+         int annotations_offset = 0;
+         if (fread(&annotations_offset, 1, 4, mapfile) != 4)
+            return false;
+
+         fprintf(csv_file, "Room,%d,%d,Security=%d\n", lowerTable[j].offset, ftell(mapfile), lowerTable[j].security);
+
+         // If there is an annotations block, check if it's the next known offset
+         if (annotations_offset > 0)
+         {
+            fprintf(csv_file, "Annotations,%d,%d,Security=%d\n", annotations_offset, annotations_offset + (4+sizeof(MapAnnotation)*MAX_ANNOTATIONS), lowerTable[j].security);
+         }
       }
    }
+
+   fclose(csv_file);
    return true;
 }
 #endif
 
 bool MapFileFindNextKnownData(int* next_offset, int curr_offset)
 {
+   int throwaway;
+
    if (mapfile == nullptr || next_offset == nullptr)
       return false;
 
@@ -592,17 +649,16 @@ bool MapFileFindNextKnownData(int* next_offset, int curr_offset)
       if (fseek(mapfile, topTable[i], SEEK_SET))
          return false;
       LowerTableEntry lowerTable[MAPFILE_LOWER_TABLE_SIZE];
+      if (fread(&throwaway, 1, 4, mapfile) != 4)  // "Next table pointer" - unused
+         return false;
       if (fread(lowerTable, sizeof(LowerTableEntry), MAPFILE_LOWER_TABLE_SIZE, mapfile) != MAPFILE_LOWER_TABLE_SIZE)
          return false;
 
       // Iterate through each entry in the lower table
       for (int j = 0; j < MAPFILE_LOWER_TABLE_SIZE; j++)
       {
-         // Ignore empty/invalid entries
-         if (lowerTable[j].security == 0)
-            continue;
-         if (lowerTable[j].offset <= 0)
-            continue;
+         if (lowerTable[j].security == 0 && lowerTable[j].offset == 0)
+            continue;  // Empty entry
          
          // Seek to the room data
          if (fseek(mapfile, lowerTable[j].offset, SEEK_SET))

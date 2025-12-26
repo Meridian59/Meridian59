@@ -222,24 +222,32 @@ void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 	}
 }
 /****************************************************************************/
-void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y,
-                          UINT keyFlags) {
-  /* See if a module wants to handle mouse click */
-  if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
-    return;
-
-  UserDidSomething();
-  SetFocus(hMain);
+void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	/* See if a module wants to handle mouse click */
+	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
+		return;
+	
+	switch (state)
+	{
+	case STATE_GAME:
+		GameMouseButtonDown(hwnd, fDoubleClick, x, y, keyFlags);
+		break;
+	}
 }
 /****************************************************************************/
-void MainMouseRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y,
-                          UINT keyFlags) {
-  /* See if a module wants to handle mouse click */
-  if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
-    return;
-
-  UserDidSomething();
-  SetFocus(hMain);
+void MainMouseRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	/* See if a module wants to handle mouse click */
+	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == false)
+		return;
+	
+	switch (state)
+	{
+	case STATE_GAME:
+		GameMouseButtonDown(hwnd, fDoubleClick, x, y, keyFlags);
+		break;
+	}
 }
 /****************************************************************************/
 void MainMouseLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)

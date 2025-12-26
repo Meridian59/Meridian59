@@ -85,7 +85,7 @@ static void MapDrawWall(HDC hdc, int x, int y, float scale, WallData *wall);
 static void MapDrawPlayer(HDC hdc, int x, int y, float scale);
 static void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale);
 static void MapDrawWalls(HDC hdc, int x, int y, float scale, room_type *room);
-static void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap );
+static void MapDrawAnnotations(HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap, bool bDrawText);
 
 void MapSetWallPositions(room_type *room, float scale, int numWalls)
 {
@@ -223,7 +223,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
 
 	    MapDrawWalls(hdc, xoffset, yoffset, scale, room);
        if (config.map_annotations)
-          MapDrawAnnotations(hdc, room->annotations, xoffset, yoffset, scale, FALSE );
+          MapDrawAnnotations(hdc, room->annotations, xoffset, yoffset, scale, FALSE, true);
 	    MapDrawObjects(hdc, room->contents, xoffset, yoffset, scale);
 	    MapDrawPlayer(hdc, xoffset, yoffset, scale);
 	 }
@@ -259,7 +259,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
 	    else
 	       MapDrawWalls(hdc, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, room);
        if (config.map_annotations)
-          MapDrawAnnotations( hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, TRUE );
+          MapDrawAnnotations(hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, TRUE, scaleMiniMap > 0.0075f);
 	    MapDrawObjects(hdc, room->contents, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
 	    MapDrawPlayer(hdc, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
 	 }
@@ -514,36 +514,87 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
  * MapDrawAnnotations:  Draw spots identifying map annotations.
  *   (x, y) is the upper-left corner of the drawing area on hdc.
  */
-void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap )
+void MapDrawAnnotations(HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap, bool bDrawText)
 {
-	int i, adjusted_size, new_x, new_y;
+   int i, adjusted_size, new_x, new_y;
+   HFONT hOldFont;
+   int padding = 2;
 
    // Scale annotation, capping it between the minimum and maximum limits
    adjusted_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_SIZE);
    adjusted_size = max(MAP_ANNOTATION_MIN_SIZE, adjusted_size);
 
-	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap, adjusted_size );
+   MapMoveAnnotations(annotations, x, y, scaleToUse, bMiniMap, adjusted_size);
 
-	for (i=0; i < MAX_ANNOTATIONS; i++)
-	{
-		if (annotations[i].text[0] == 0)
-			continue;
+   // Draw Map Annotation Icons
+   for (i = 0; i < MAX_ANNOTATIONS; i++)
+   {
+      if (annotations[i].text[0] == 0)
+         continue;
 
-		new_x = x + (int) (annotations[i].x * scaleToUse);
-		new_y =	y + (int) (annotations[i].y * scaleToUse);
+      new_x = x + (int) (annotations[i].x * scaleToUse);
+      new_y = y + (int) (annotations[i].y * scaleToUse);
 
-		if (annotation.bits != NULL)
-		{
-			OffscreenWindowBackground(NULL, new_x - (adjusted_size / 2), new_y - (adjusted_size / 2), 
-									    annotation.width, annotation.height);
-			OffscreenStretchBlt(hdc, (int) (new_x - (adjusted_size / 2)), (int) (new_y - (adjusted_size / 2)), 
-								  adjusted_size, adjusted_size,
-								  annotation.bits, 0, 0, 
-								  annotation.width, annotation.height,
-								  OBB_COPY | OBB_FLIP);
-		}
-	}
-} 
+      if (annotation.bits != NULL)
+      {
+         OffscreenWindowBackground(NULL, new_x - (adjusted_size / 2), new_y - (adjusted_size / 2), annotation.width,
+                                   annotation.height);
+         OffscreenStretchBlt(hdc, (int) (new_x - (adjusted_size / 2)), (int) (new_y - (adjusted_size / 2)),
+                             adjusted_size, adjusted_size, annotation.bits, 0, 0, annotation.width, annotation.height,
+                             OBB_COPY | OBB_FLIP);
+      }
+   }
+
+   // Draw Map Annotation Text
+   if(bDrawText)
+   {
+      // Select new font
+      hOldFont = (HFONT) SelectObject(hdc, GetFont(FONT_MAP_ANNOTATIONS));
+      SetBkMode(hdc, TRANSPARENT);
+
+      for (i = 0; i < MAX_ANNOTATIONS; i++)
+      {
+         char *annotation_text = annotations[i].text;
+         int annotation_text_length = (int) strlen(annotation_text);
+         if (annotation_text_length == 0)
+            continue;
+
+         new_x = x + (int) (annotations[i].x * scaleToUse);
+         new_y = y + (int) (annotations[i].y * scaleToUse);
+
+         if (annotation.bits != NULL)
+         {
+            RECT r;
+            SIZE textSize;
+
+            // Determine the size of the text, and set up RECT for drawing
+            GetTextExtentPoint32(hdc, annotation_text, annotation_text_length, &textSize);
+
+            r.left = new_x - (textSize.cx / 2) - padding;
+            r.right = new_x + (textSize.cx / 2) + padding;
+            r.top = new_y + (adjusted_size / 2) - padding;
+            r.bottom = r.top + textSize.cy + padding;
+
+            // Draw 4 times to create a shadow effect
+            SetTextColor(hdc, GetColor(COLOR_BGD));
+            for (int i = 0; i < 4; ++i)
+            {
+               RECT bgRect;
+               CopyRect(&bgRect, &r);
+               OffsetRect(&bgRect, (i % 2) ? 1 : -1, (i >= 2) ? 1 : -1);
+               DrawText(hdc, annotation_text, annotation_text_length, &bgRect, DT_CENTER);
+            }
+
+            // Draw main text
+            SetTextColor(hdc, GetColor(COLOR_FGD));
+            DrawText(hdc, annotation_text, annotation_text_length, &r, DT_CENTER);
+         }
+      }
+
+      // Reset font
+      SelectObject(hdc, hOldFont);
+   }
+}
 /*****************************************************************************/
 /*
  * MapEnterRoom:  Mark all walls as unseen when user enters a new room, and load

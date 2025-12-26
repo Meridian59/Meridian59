@@ -153,7 +153,9 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    case ID_OPTIONS_FONT_MAP_TITLE: UserSelectFont(FONT_MAP_TITLE); break;
    case ID_OPTIONS_FONT_MAP_LABEL: UserSelectFont(FONT_MAP_LABEL); break;
    case ID_OPTIONS_FONT_MAP_TEXT: UserSelectFont(FONT_MAP_TEXT); break;
-
+   case ID_FONT_ANNOTATIONS:
+      UserSelectFont(FONT_MAP_ANNOTATIONS);
+      break;
    case ID_FONT_GAMETEXT:
       UserSelectFont(FONT_EDIT);
       break;

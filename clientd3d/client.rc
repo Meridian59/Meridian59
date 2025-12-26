@@ -90,6 +90,7 @@ BEGIN
             MENUITEM "&Listar caixas",              ID_FONT_LIST
             MENUITEM "&Títulos",                    ID_FONT_TITLES
             MENUITEM "Emails e &mensagens",         ID_FONT_MAIL
+            MENUITEM "&Anotaciones del mapa",       ID_FONT_ANNOTATIONS
             POPUP "Imprimir mapa"
             BEGIN
                 MENUITEM "Comentários",             ID_OPTIONS_FONT_MAP_TEXT
@@ -1101,6 +1102,7 @@ BEGIN
             MENUITEM "Inventarfenster",             ID_FONT_LIST
             MENUITEM "Überschriften",               ID_FONT_TITLES
             MENUITEM "Post && Nachrichten",         ID_FONT_MAIL
+            MENUITEM "Kartenbeschriftungen",        ID_FONT_ANNOTATIONS
             POPUP "Karten drucken"
             BEGIN
                 MENUITEM "Kommentare",                  ID_OPTIONS_FONT_MAP_TEXT
@@ -2116,6 +2118,7 @@ BEGIN
             MENUITEM "&List boxes",                 ID_FONT_LIST
             MENUITEM "&Titles",                     ID_FONT_TITLES
             MENUITEM "&Mail and news",              ID_FONT_MAIL
+            MENUITEM "Map &Annotations",            ID_FONT_ANNOTATIONS
             POPUP "Map Printing"
             BEGIN
                 MENUITEM "Comments",                    ID_OPTIONS_FONT_MAP_TEXT

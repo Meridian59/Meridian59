@@ -21,6 +21,7 @@ bool MapFileSaveRoomAnnotations(room_type *room);
 #ifndef M59_RETAIL
 bool MapFileValidateAllRooms();
 #endif
+bool MapFileReadAndValidateNumAnnotations(room_type *room, int *num_annotations);
 bool MapFileFindNextKnownData(int *next_offset, int curr_offset);
 bool IsValidRoomAnnotation(MapAnnotation *annotation);
 

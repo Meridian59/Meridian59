@@ -185,26 +185,9 @@ bool MapFileLoadRoom(room_type *room)
    // Read annotations if present
    if (room->annotations_offset != 0)
    {
-      if (fseek(mapfile, room->annotations_offset, SEEK_SET))
+      if (!MapFileReadAndValidateNumAnnotations(room, &num_annotations))
          return false;
 
-      // Read # of annotations
-      if (fread(&num_annotations, 1, 4, mapfile) != 4)
-         return false;
-      num_annotations = min(num_annotations, MAX_ANNOTATIONS);
-      num_annotations = max(num_annotations, 0);
-      
-      // Find the next area of known data - we do not want to read past this ever
-      int next_offset = 0;
-      if (MapFileFindNextKnownData(&next_offset, room->annotations_offset))
-      {
-         int max_annotations = (next_offset - room->annotations_offset - 4) / (4 + 4 + MAX_ANNOTATION_LEN);
-         if(num_annotations > max_annotations)
-         {
-            num_annotations = max_annotations;
-            debug(("Detected corrupt map annotations block - reducing number of annotations to %d.\n", num_annotations));
-         }
-      }
       // Seek back to the first annotation entry
       if (fseek(mapfile, room->annotations_offset + 4, SEEK_SET))
          return false;
@@ -317,6 +300,38 @@ bool MapFileSaveRoom(room_type *room)
    return true;
 }
 
+bool MapFileReadAndValidateNumAnnotations(room_type* room, int* num_annotations)
+{
+   if (room->annotations_offset == 0)
+   {
+      *num_annotations = 0;
+      return true;
+   }
+
+   if (fseek(mapfile, room->annotations_offset, SEEK_SET))
+      return false;
+
+   // Read # of annotations
+   if (fread(num_annotations, 1, 4, mapfile) != 4)
+      return false;
+   *num_annotations = min(*num_annotations, MAX_ANNOTATIONS);
+   *num_annotations = max(*num_annotations, 0);
+
+   // Find the next area of known data - we do not want to read past this ever
+   int next_offset = 0;
+   if (MapFileFindNextKnownData(&next_offset, room->annotations_offset))
+   {
+      int max_annotations = (next_offset - room->annotations_offset - 4) / (4 + 4 + MAX_ANNOTATION_LEN);
+      if (*num_annotations > max_annotations)
+      {
+         *num_annotations = max_annotations;
+         debug(("Detected corrupt map annotations block - reducing number of annotations to %d.\n", *num_annotations));
+      }
+   }
+
+   return true;
+}
+
 bool MapFileSaveRoomAnnotations(room_type *room)
 {
    int i, offset, num_annotations, temp = 0;
@@ -349,12 +364,9 @@ bool MapFileSaveRoomAnnotations(room_type *room)
       }
       else
       {
-         // Read existing annotations block to see if a different size
-         if (fseek(mapfile, room->annotations_offset, SEEK_SET))
+         if (!MapFileReadAndValidateNumAnnotations(room, &num_annotations))
             return false;
-         // Read # of annotations
-         if (fread(&num_annotations, 1, 4, mapfile) != 4)
-            return false;
+
          if (num_annotations != MAX_ANNOTATIONS)
          {
             // Corrupt (or resized) annotations block - need to rewrite

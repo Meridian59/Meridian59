@@ -324,7 +324,7 @@ bool MapFileReadAndValidateNumAnnotations(room_type* room, int* num_annotations)
       int max_annotations = (next_offset - room->annotations_offset - 4) / (4 + 4 + MAX_ANNOTATION_LEN);
       if (*num_annotations > max_annotations)
       {
-         *num_annotations = max_annotations;
+         *num_annotations = 1; // Could set this to max_annotations, but in MOST cases we know that only the first one is going to be valid due to the bug that caused it
          debug(("Detected corrupt map annotations block - reducing number of annotations to %d.\n", *num_annotations));
       }
    }

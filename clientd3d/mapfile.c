@@ -251,7 +251,7 @@ bool IsValidRoomAnnotation(MapAnnotation *annotation)
       return false;
 
    // Check for valid text length
-   int len = strnlen(annotation->text, MAX_ANNOTATION_LEN);
+   int len = (int)strnlen(annotation->text, MAX_ANNOTATION_LEN);
    if (len > MAX_ANNOTATION_LEN-1)
    {
       return false;
@@ -606,7 +606,7 @@ bool MapFileValidateAllRooms()
          // If there is an annotations block, check if it's the next known offset
          if (annotations_offset > 0)
          {
-            fprintf(csv_file, "Annotations,%d,%d,Security=%d\n", annotations_offset, annotations_offset + (4+sizeof(MapAnnotation)*MAX_ANNOTATIONS), lowerTable[j].security);
+            fprintf(csv_file, "Annotations,%d,%d,Security=%d\n", annotations_offset, annotations_offset + (int)(4+sizeof(MapAnnotation)*MAX_ANNOTATIONS), lowerTable[j].security);
          }
       }
    }

@@ -6,32 +6,29 @@
 //
 // Meridian is a registered trademark.
 /*
- * music.h:  Header file for music.c
+ * music.h: Music playback API
+ *
+ * Public API (exported to DLLs):
+ *   PlayMusicFile  - Play music by filename (.ogg, auto-converts .mid/.mp3)
+ *   PlayMusicRsc   - Play music by resource ID
+ *   MusicAbort     - Stop all music
+ *
+ * Internal:
+ *   MusicClose     - Shutdown
+ *   MusicRestart   - Resume music when user re-enables in settings
+ *   NewMusic       - Handle server music message
+ *   ResetMusicVolume - Apply config volume
  */
 
 #ifndef _MUSIC_H
 #define _MUSIC_H
 
-#ifdef M59_MSS
-#include "mss.h"
-#endif
-
-void MusicInitialize(void);
 void MusicClose(void);
 
-DWORD PlayMidiFile(HWND hWndNotify, char *fname);
-M59EXPORT DWORD PlayMusicFile(HWND hWndNotify, const char *fname);
-M59EXPORT void PlayMidiRsc(ID rsc);
+M59EXPORT bool PlayMusicFile(HWND hWndNotify, const char *fname);
 M59EXPORT void PlayMusicRsc(ID rsc);
-
-#ifdef M59_MSS
-void AILEXPORT MIDIDoneCallback(HSAMPLE S);
-#else
-void MusicDone(UINT device);
-#endif
-
 M59EXPORT void MusicAbort(void);
-void MusicStart(void);
+void MusicRestart(void);
 void NewMusic(WPARAM type, ID rsc);
 void ResetMusicVolume();
 

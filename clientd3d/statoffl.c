@@ -27,7 +27,7 @@ static POINT bm_origin;          /* Upper left corner of bitmap */
 static POINT button_origin;      /* Upper left corner of button */
 
 static const char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
-static const char *splash_music    = "resource\\main.mid";    // Music file to play
+const char *splash_music           = "resource\\main.ogg";    // Music file to play
 
 static bool showing_splash;      // true when displaying splash screen
 
@@ -225,8 +225,7 @@ void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
    KillTimer(NULL, timer_id);
    timer_id = 0;
 
-   // Play music
-   if (config.play_music)
+   if (config.play_music && !MusicIsPlaying())
       PlayMusicFile(hMain, splash_music);
 }
 /****************************************************************************/

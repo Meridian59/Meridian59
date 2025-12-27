@@ -177,6 +177,35 @@ Server-provided ambient sound positions are already in tile coords.
 
 The listener position is updated each frame via `AudioUpdateListener()`.
 
+## Audio File Guidelines
+
+When adding new sound files to the game, follow these guidelines for optimal playback:
+
+### Sound Effects (Positional)
+
+| Requirement | Value | Reason |
+|-------------|-------|--------|
+| **Channels** | Mono (1 channel) | OpenAL only applies 3D positioning to mono sources. Stereo sounds will ignore positioning and play centered. |
+| **Format** | OGG Vorbis or WAV | OGG preferred for smaller file size |
+| **Sample Rate** | 44100 Hz | Standard quality (22050 Hz also supported for legacy compatibility) |
+
+### Music (Non-Positional)
+
+| Requirement | Value | Reason |
+|-------------|-------|--------|
+| **Channels** | Stereo (2 channels) | Music plays centered, stereo preserves original mix |
+| **Format** | OGG Vorbis | Required for music playback |
+| **Sample Rate** | 44100 Hz | Standard music quality |
+
+### Why Mono for 3D Audio?
+
+OpenAL uses the mono audio data and applies HRTF/panning based on the sound's position
+relative to the listener. With stereo files, OpenAL cannot determine how to spatialize
+the left vs right channels, so it plays them as-is (no 3D effect).
+
+If you notice a sound effect is not panning correctly when you move around it in-game,
+check if the source file is stereo and convert it to mono.
+
 ## Configuration
 
 Audio settings in `meridian.ini`:

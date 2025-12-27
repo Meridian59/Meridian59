@@ -107,6 +107,7 @@ static handler_struct game_handler_table[] = {
 { BP_SECTOR_LIGHT,      HandleSectorLight },
 { BP_SET_VIEW,		HandleSetView },
 { BP_RESET_VIEW,	HandleResetView },
+{ BP_WEATHER,           HandleWeather },
 { 0, NULL},   // must end table this way
 };
 
@@ -603,6 +604,7 @@ bool HandlePlayer(char *ptr, long len)
    player_info player;
    ID bkgnd_id;
    BYTE ambient_light;
+   BYTE weather_effect;
    DWORD flags,depth;
    char *start = ptr;
 
@@ -616,7 +618,8 @@ bool HandlePlayer(char *ptr, long len)
 
    Extract(&ptr, &ambient_light, SIZE_LIGHT);
    Extract(&ptr, &player.light, SIZE_LIGHT);
-
+   Extract(&ptr, &weather_effect, 1);
+   
    Extract(&ptr, &bkgnd_id, SIZE_ID);
 
    Extract(&ptr, &effects.wadingsound, SIZE_ID);
@@ -637,7 +640,7 @@ bool HandlePlayer(char *ptr, long len)
    if (len != 0)
       return false;
 
-   SetPlayerInfo(&player, ambient_light, bkgnd_id);
+   SetPlayerInfo(&player, ambient_light, bkgnd_id, weather_effect);
    return true;   
 }
 /********************************************************************/
@@ -1906,4 +1909,13 @@ bool HandleSetView(char *ptr, long len)
 
    SetPlayerRemoteView(objID,viewFlags,viewHeight,viewLight);
    return true;
+}
+/********************************************************************/
+bool HandleWeather(char *ptr, long len)
+{
+   BYTE weather_effect;
+   
+   Extract(&ptr, &weather_effect, 1);
+   SetWeather(weather_effect);
+   return true;   
 }

@@ -216,6 +216,7 @@ enum {
    BP_SET_VIEW              = 237,
    BP_RESET_VIEW            = 238,
    BP_REQ_GET_FROM_CONTAINER  = 239,
+   BP_WEATHER               = 240,
 };
 
 // User commands (in BP_USERCOMMAND message)
@@ -436,6 +437,14 @@ enum {
    EFFECT_FLASHXLAT     = 15,  // Flashes screen with a given XLAT number
    EFFECT_WHITEOUT	= 16,  // Got from full white and fade back to normal
    EFFECT_XLATOVERRIDE	= 17,  // Use this xlat at end over the whole screen
+};
+
+/* Weather codes */
+enum {
+   WEATHER_CLEAR = 1,
+   WEATHER_CLOUDY = 2,
+   WEATHER_RAIN = 3,
+   WEATHER_SNOW = 4,
 };
 
 /* Room animation action codes */

@@ -33,9 +33,6 @@ void InitAccount(void)
 
    console_account = &console_account_node;
    console_account->account_id = 0;
-   console_account->name = ConfigStr(CONSOLE_ADMINISTRATOR);
-   console_account->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,1);
-   console_account->password[0] = 0;
 
    console_account->type = ACCOUNT_ADMIN;
    console_account->last_login_time = 0;
@@ -51,7 +48,7 @@ void ResetAccount(void)
    while (a != NULL)
    {
       temp = a->next;
-      FreeMemory(MALLOC_ID_ACCOUNT,a,sizeof(account_node));
+      delete a;
       a = temp;
    }
    accounts = NULL;
@@ -102,7 +99,7 @@ bool CreateAccount(char *name,char *password,int type,int *account_id)
 	if (GetAccountByName(name) != NULL)
 		return false;
 
-   a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
+   a = new account_node;
    a->account_id = next_account_id++;
 
    a->name = name;
@@ -137,7 +134,7 @@ int CreateAccountSecurePassword(const char *name,const char *password,int type)
    }
    buf[index] = 0;
 
-   a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
+   a = new account_node;
    a->account_id = next_account_id++;
 
    a->name = name;
@@ -176,7 +173,7 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
    if (next_account_id < account_id)
       next_account_id = account_id;
 
-   a = (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
+   a = new account_node;
    a->account_id = account_id;
    if (account_id >= next_account_id)
       next_account_id = account_id+1;
@@ -199,8 +196,6 @@ void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_lo
    account_node *a;
 
    a = new account_node;
-   // XXX Account for memory
-   // (account_node *)AllocateMemory(MALLOC_ID_ACCOUNT,sizeof(account_node));
 
    a->account_id = account_id;
    if (account_id >= next_account_id)
@@ -229,7 +224,7 @@ bool DeleteAccount(int account_id)
    {
       accounts = a->next;
       
-      delete a; // XXX FreeMemory(MALLOC_ID_ACCOUNT,a,sizeof(account_node));
+      delete a;
       return true;
    }
    
@@ -241,7 +236,7 @@ bool DeleteAccount(int account_id)
         /* remove from list, then free memory */
         a->next = temp->next;
         
-        delete temp; // XXX FreeMemory(MALLOC_ID_ACCOUNT,temp,sizeof(account_node));
+        delete temp;
         return true;
       }
       a = a->next;
@@ -377,7 +372,7 @@ account_node * GetAccountByName(const char *name)
    a = accounts;
    while (a != NULL)
    {
-     if (a->name == name)
+     if (!stricmp(a->name.c_str(), name))
        return a;
      a = a->next;
    }
@@ -391,7 +386,7 @@ account_node * AccountLoginByName(char *name)
    a = accounts;
    while (a != NULL)
    {
-     if (a->name == name)
+     if (!stricmp(a->name.c_str(), name))
      {
        /* give administrators credits every time they login */
        /*

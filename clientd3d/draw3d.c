@@ -317,24 +317,21 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 /************************************************************************/
 void DrawViewTreatment()
 {
-   if (gD3DDriverProfile.bSoftwareRenderer == TRUE)
+   //	Draw view elements (edge treatment): added by ajw.
+   int i;
+   int iOffset = 0;
+
+   BYTE* pBitsTarget = gBufferBits;
+   int iWidthTarget = MAXX*2;
+
+   if (GetFocus() == hMain)
+      iOffset = 4;
+
+   for (i = iOffset; i < iOffset + (NUM_VIEW_ELEMENTS / 2); i++)
    {
-      //	Draw view elements (edge treatment): added by ajw.
-      int i;
-      int iOffset = 0;
-
-      BYTE* pBitsTarget = gBufferBits;
-      int iWidthTarget = MAXX*2;
-
-      if (GetFocus() == hMain)
-         iOffset = 4;
-
-      for (i = iOffset; i < iOffset + (NUM_VIEW_ELEMENTS / 2); i++)
-      {
-         BitCopy(pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
-            ViewElements[i].bits, 0, 0, DIBWIDTH(ViewElements[i].width), OBB_FLIP | OBB_TRANSPARENT);
-         GdiFlush();
-      }
+      BitCopy(pBitsTarget, iWidthTarget, ViewElements[i].x, ViewElements[i].y, ViewElements[i].width, ViewElements[i].height,
+         ViewElements[i].bits, 0, 0, DIBWIDTH(ViewElements[i].width), OBB_FLIP | OBB_TRANSPARENT);
+      GdiFlush();
    }
 
    //	Ensure that border, which covers up parts of view treatment, is drawn.
@@ -416,12 +413,10 @@ void UpdateRoom3D(room_type *room, Draw3DParams *params)
    DrawBSP(room, params, area.cx, false);
    t2=timeGetTime();
 
-   // Draw corner treatment.
-   DrawViewTreatment();
-
    // Copy offscreen buffer to screen.
    if (!D3DRenderIsEnabled())
    {
+      DrawViewTreatment();
 		RecopyRoom3D( params->hdc, params->x, params->y, params->width, params->height, false );
 		GdiFlush();
    }

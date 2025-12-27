@@ -576,6 +576,7 @@ static ALuint ParseWAVFile(const char* filename)
 /*
  * LoadAudioBuffer: Returns an OpenAL buffer ID for the audio file, or 0 on failure.
  * Handles caching for sound effects. Determines format from file extension.
+ * Prefers .ogg files; falls back to .wav if .ogg doesn't exist.
  */
 static ALuint LoadAudioBuffer(const char* filename)
 {
@@ -584,16 +585,39 @@ static ALuint LoadAudioBuffer(const char* filename)
    if (buffer != 0)
       return buffer;
 
+   // Build path and prefer .ogg over .wav
+   std::filesystem::path filepath(filename);
+   std::string ext = filepath.extension().string();
+
+   // If requested file is .wav, try .ogg first (new standard)
+   if (iequals(ext, ".wav"))
+   {
+      std::filesystem::path oggPath = filepath;
+      oggPath.replace_extension(".ogg");
+      
+      if (std::filesystem::exists(oggPath))
+      {
+         filepath = oggPath;
+         ext = ".ogg";
+      }
+   }
+
+   std::string finalPath = filepath.string();
+
+   // Check cache again with potentially updated path
+   buffer = FindCachedBuffer(finalPath.c_str());
+   if (buffer != 0)
+      return buffer;
+
    // Parse file based on extension
-   const char* ext = strrchr(filename, '.');
-   if (ext && (_stricmp(ext, ".ogg") == 0))
-      buffer = ParseOGGFile(filename);
+   if (iequals(ext, ".ogg"))
+      buffer = ParseOGGFile(finalPath.c_str());
    else
-      buffer = ParseWAVFile(filename);
+      buffer = ParseWAVFile(finalPath.c_str());
 
    // Cache successful loads
    if (buffer != 0)
-      CacheBuffer(filename, buffer);
+      CacheBuffer(finalPath.c_str(), buffer);
 
    return buffer;
 }

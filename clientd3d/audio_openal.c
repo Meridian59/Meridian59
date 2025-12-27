@@ -711,9 +711,6 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       float gain = (float)max_vol / (float)MAX_VOLUME;
       gain *= (float)config.ambient_volume / 100.0f;
       alSourcef(source, AL_GAIN, gain);
-
-      debug(("SoundPlay: 3D sound at (%d,%d), radius=%d, gain=%.2f\n",
-             src_col, src_row, radius, gain));
    }
    else
    {
@@ -728,9 +725,6 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       else
          gain *= (float)config.sound_volume / 100.0f;
       alSourcef(source, AL_GAIN, gain);
-
-      debug(("SoundPlay: Starting sound, gain=%.2f, loop=%d\n",
-             gain, (flags & SF_LOOP) ? 1 : 0));
    }
 
    // Set looping

@@ -75,7 +75,6 @@ static void PlayMusicFileInternal(const std::string& fname)
    if (MusicPlay(filename.c_str(), true))
    {
       playing_music = true;
-      debug(("PlayMusicFile: OpenAL playing %s\n", filename.c_str()));
       return;
    }
 
@@ -87,7 +86,6 @@ void PlayMusicRsc(ID rsc)
 {
    char *filename;
 
-   debug(("PlayMusicRsc %d\n", rsc));
    /* Begin looping sound transition: mark current looping sounds so newly-started
       sounds for the new room can be registered and protected. */
    Sound_BeginLoopingSoundTransition();

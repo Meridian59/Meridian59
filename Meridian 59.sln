@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Meridian 59", "Meridian 59.vcxproj", "{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Local|x64 = Debug Local|x64
+		Debug Local|x86 = Debug Local|x86
+		Debug Retail|x64 = Debug Retail|x64
+		Debug Retail|x86 = Debug Retail|x86
+		Release Local|x64 = Release Local|x64
+		Release Local|x86 = Release Local|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Local|x64.ActiveCfg = Debug|x64
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Local|x64.Build.0 = Debug|x64
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Local|x86.ActiveCfg = Debug|Win32
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Local|x86.Build.0 = Debug|Win32
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Retail|x64.ActiveCfg = Debug Retail|x64
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Retail|x64.Build.0 = Debug Retail|x64
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Retail|x86.ActiveCfg = Debug Retail|Win32
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Debug Retail|x86.Build.0 = Debug Retail|Win32
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Release Local|x64.ActiveCfg = Release|x64
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Release Local|x64.Build.0 = Release|x64
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Release Local|x86.ActiveCfg = Release|Win32
+		{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}.Release Local|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7C6B5D1-83CB-4EC7-99F5-6577E86B53F1}
+	EndGlobalSection
+EndGlobal

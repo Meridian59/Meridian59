@@ -1,0 +1,1498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug Retail|Win32">
+      <Configuration>Debug Retail</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Retail|x64">
+      <Configuration>Debug Retail</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bbgun\bbgfile.c" />
+    <ClCompile Include="bbgun\bbgun.c" />
+    <ClCompile Include="bbgun\bmparea.c" />
+    <ClCompile Include="bbgun\dibutil.c" />
+    <ClCompile Include="bbgun\draw.c" />
+    <ClCompile Include="bbgun\pal.c" />
+    <ClCompile Include="bbgun\palette.c" />
+    <ClCompile Include="blakcomp\actions.c" />
+    <ClCompile Include="blakcomp\codegen.c" />
+    <ClCompile Include="blakcomp\codeutil.c" />
+    <ClCompile Include="blakcomp\debug\blakcomp.tab.c" />
+    <ClCompile Include="blakcomp\debug\lexyy.c" />
+    <ClCompile Include="blakcomp\function.c" />
+    <ClCompile Include="blakcomp\kodbase.c" />
+    <ClCompile Include="blakcomp\optimize.c" />
+    <ClCompile Include="blakcomp\resource.c" />
+    <ClCompile Include="blakcomp\sort.c" />
+    <ClCompile Include="blakcomp\table.c" />
+    <ClCompile Include="blakcomp\util.c" />
+    <ClCompile Include="blakdeco\blakdeco.c" />
+    <ClCompile Include="blakserv\account.c" />
+    <ClCompile Include="blakserv\admin.c" />
+    <ClCompile Include="blakserv\admincons.c" />
+    <ClCompile Include="blakserv\adminfn.c" />
+    <ClCompile Include="blakserv\apndfile.c" />
+    <ClCompile Include="blakserv\async.c" />
+    <ClCompile Include="blakserv\blakres.c" />
+    <ClCompile Include="blakserv\block.c" />
+    <ClCompile Include="blakserv\bufpool.c" />
+    <ClCompile Include="blakserv\builtin.c" />
+    <ClCompile Include="blakserv\ccode.c" />
+    <ClCompile Include="blakserv\chanbuf.c" />
+    <ClCompile Include="blakserv\channel.c" />
+    <ClCompile Include="blakserv\class.c" />
+    <ClCompile Include="blakserv\commcli.c" />
+    <ClCompile Include="blakserv\config.c" />
+    <ClCompile Include="blakserv\debug.c" />
+    <ClCompile Include="blakserv\dllist.c" />
+    <ClCompile Include="blakserv\fileutil.c" />
+    <ClCompile Include="blakserv\game.c" />
+    <ClCompile Include="blakserv\gamelock.c" />
+    <ClCompile Include="blakserv\garbage.c" />
+    <ClCompile Include="blakserv\interface.c" />
+    <ClCompile Include="blakserv\intrlock.c" />
+    <ClCompile Include="blakserv\intstringhash.c" />
+    <ClCompile Include="blakserv\kodbase.c" />
+    <ClCompile Include="blakserv\list.c" />
+    <ClCompile Include="blakserv\loadacco.c" />
+    <ClCompile Include="blakserv\loadall.c" />
+    <ClCompile Include="blakserv\loadgame.c" />
+    <ClCompile Include="blakserv\loadkod.c" />
+    <ClCompile Include="blakserv\loadrsc.c" />
+    <ClCompile Include="blakserv\loadstr.c" />
+    <ClCompile Include="blakserv\main.c" />
+    <ClCompile Include="blakserv\maintenance.c" />
+    <ClCompile Include="blakserv\memory.c" />
+    <ClCompile Include="blakserv\message.c" />
+    <ClCompile Include="blakserv\motd.c" />
+    <ClCompile Include="blakserv\mutex_impl.c" />
+    <ClCompile Include="blakserv\nameid.c" />
+    <ClCompile Include="blakserv\object.c" />
+    <ClCompile Include="blakserv\osd_epoll.c" />
+    <ClCompile Include="blakserv\osd_kqueue.c" />
+    <ClCompile Include="blakserv\osd_linux.c" />
+    <ClCompile Include="blakserv\osd_windows.c" />
+    <ClCompile Include="blakserv\parsecli.c" />
+    <ClCompile Include="blakserv\resync.c" />
+    <ClCompile Include="blakserv\roofile.c" />
+    <ClCompile Include="blakserv\roomdata.c" />
+    <ClCompile Include="blakserv\saveacco.c" />
+    <ClCompile Include="blakserv\saveall.c" />
+    <ClCompile Include="blakserv\savegame.c" />
+    <ClCompile Include="blakserv\saversc.c" />
+    <ClCompile Include="blakserv\savestr.c" />
+    <ClCompile Include="blakserv\sendmsg.c" />
+    <ClCompile Include="blakserv\session.c" />
+    <ClCompile Include="blakserv\sprocket.c" />
+    <ClCompile Include="blakserv\string.c" />
+    <ClCompile Include="blakserv\stringinthash.c" />
+    <ClCompile Include="blakserv\synched.c" />
+    <ClCompile Include="blakserv\system.c" />
+    <ClCompile Include="blakserv\systimer.c" />
+    <ClCompile Include="blakserv\table.c" />
+    <ClCompile Include="blakserv\term.c" />
+    <ClCompile Include="blakserv\time.c" />
+    <ClCompile Include="blakserv\timer.c" />
+    <ClCompile Include="blakserv\trysync.c" />
+    <ClCompile Include="blakserv\user.c" />
+    <ClCompile Include="blakserv\version.c" />
+    <ClCompile Include="blakserv\webhook.c" />
+    <ClCompile Include="clientd3d\about.c" />
+    <ClCompile Include="clientd3d\animate.c" />
+    <ClCompile Include="clientd3d\annotate.c" />
+    <ClCompile Include="clientd3d\bitmap.c" />
+    <ClCompile Include="clientd3d\boverlay.c" />
+    <ClCompile Include="clientd3d\bspload.c" />
+    <ClCompile Include="clientd3d\buy.c" />
+    <ClCompile Include="clientd3d\cache.c" />
+    <ClCompile Include="clientd3d\client.c" />
+    <ClCompile Include="clientd3d\client3d.c" />
+    <ClCompile Include="clientd3d\color.c" />
+    <ClCompile Include="clientd3d\com.c" />
+    <ClCompile Include="clientd3d\config.c" />
+    <ClCompile Include="clientd3d\cursor.c" />
+    <ClCompile Include="clientd3d\d3dcache.c" />
+    <ClCompile Include="clientd3d\d3ddriver.c" />
+    <ClCompile Include="clientd3d\d3dparticle.c" />
+    <ClCompile Include="clientd3d\d3drender.c" />
+    <ClCompile Include="clientd3d\d3drender_bgoverlays.c" />
+    <ClCompile Include="clientd3d\d3drender_fx.c" />
+    <ClCompile Include="clientd3d\d3drender_materials.c" />
+    <ClCompile Include="clientd3d\d3drender_objects.c" />
+    <ClCompile Include="clientd3d\d3drender_skybox.c" />
+    <ClCompile Include="clientd3d\d3drender_textures.c" />
+    <ClCompile Include="clientd3d\d3drender_world.c" />
+    <ClCompile Include="clientd3d\debug\pal.c" />
+    <ClCompile Include="clientd3d\debug\trig.c" />
+    <ClCompile Include="clientd3d\dialog.c" />
+    <ClCompile Include="clientd3d\dibutil.c" />
+    <ClCompile Include="clientd3d\download.c" />
+    <ClCompile Include="clientd3d\draw.c" />
+    <ClCompile Include="clientd3d\draw3d.c" />
+    <ClCompile Include="clientd3d\drawbmp.c" />
+    <ClCompile Include="clientd3d\drawbsp.c" />
+    <ClCompile Include="clientd3d\editbox.c" />
+    <ClCompile Include="clientd3d\effect.c" />
+    <ClCompile Include="clientd3d\fixed.c" />
+    <ClCompile Include="clientd3d\font.c" />
+    <ClCompile Include="clientd3d\game.c" />
+    <ClCompile Include="clientd3d\gameuser.c" />
+    <ClCompile Include="clientd3d\graphctl.c" />
+    <ClCompile Include="clientd3d\graphics.c" />
+    <ClCompile Include="clientd3d\hookkey.c" />
+    <ClCompile Include="clientd3d\idlist.c" />
+    <ClCompile Include="clientd3d\intrface.c" />
+    <ClCompile Include="clientd3d\key.c" />
+    <ClCompile Include="clientd3d\keyhook.c" />
+    <ClCompile Include="clientd3d\lagbox.c" />
+    <ClCompile Include="clientd3d\list.c" />
+    <ClCompile Include="clientd3d\loadrsc.c" />
+    <ClCompile Include="clientd3d\login.c" />
+    <ClCompile Include="clientd3d\logoff.c" />
+    <ClCompile Include="clientd3d\lookdlg.c" />
+    <ClCompile Include="clientd3d\maindlg.c" />
+    <ClCompile Include="clientd3d\makepal.c" />
+    <ClCompile Include="clientd3d\maketrig.c" />
+    <ClCompile Include="clientd3d\map.c" />
+    <ClCompile Include="clientd3d\mapfile.c" />
+    <ClCompile Include="clientd3d\matrix.c" />
+    <ClCompile Include="clientd3d\memmap.c" />
+    <ClCompile Include="clientd3d\modules.c" />
+    <ClCompile Include="clientd3d\move.c" />
+    <ClCompile Include="clientd3d\moveobj.c" />
+    <ClCompile Include="clientd3d\msgbox.c" />
+    <ClCompile Include="clientd3d\msgfiltr.c" />
+    <ClCompile Include="clientd3d\music.c" />
+    <ClCompile Include="clientd3d\objdraw.c" />
+    <ClCompile Include="clientd3d\object.c" />
+    <ClCompile Include="clientd3d\object3d.c" />
+    <ClCompile Include="clientd3d\offer.c" />
+    <ClCompile Include="clientd3d\overlay.c" />
+    <ClCompile Include="clientd3d\ownerdrw.c" />
+    <ClCompile Include="clientd3d\palette.c" />
+    <ClCompile Include="clientd3d\parse.c" />
+    <ClCompile Include="clientd3d\ping.c" />
+    <ClCompile Include="clientd3d\preferences.c" />
+    <ClCompile Include="clientd3d\profane.c" />
+    <ClCompile Include="clientd3d\project.c" />
+    <ClCompile Include="clientd3d\protocol.c" />
+    <ClCompile Include="clientd3d\regexpr.c" />
+    <ClCompile Include="clientd3d\roomanim.c" />
+    <ClCompile Include="clientd3d\rops.c" />
+    <ClCompile Include="clientd3d\say.c" />
+    <ClCompile Include="clientd3d\select.c" />
+    <ClCompile Include="clientd3d\server.c" />
+    <ClCompile Include="clientd3d\signup.c" />
+    <ClCompile Include="clientd3d\sound.c" />
+    <ClCompile Include="clientd3d\srvrstr.c" />
+    <ClCompile Include="clientd3d\startup.c" />
+    <ClCompile Include="clientd3d\statconn.c" />
+    <ClCompile Include="clientd3d\statgame.c" />
+    <ClCompile Include="clientd3d\statoffl.c" />
+    <ClCompile Include="clientd3d\statstrt.c" />
+    <ClCompile Include="clientd3d\statterm.c" />
+    <ClCompile Include="clientd3d\table.c" />
+    <ClCompile Include="clientd3d\textin.c" />
+    <ClCompile Include="clientd3d\toolbar.c" />
+    <ClCompile Include="clientd3d\tooltip.c" />
+    <ClCompile Include="clientd3d\transfer.c" />
+    <ClCompile Include="clientd3d\uselist.c" />
+    <ClCompile Include="clientd3d\util.c" />
+    <ClCompile Include="clientd3d\web.c" />
+    <ClCompile Include="clientd3d\winmenu.c" />
+    <ClCompile Include="clientd3d\winmsg.c" />
+    <ClCompile Include="clientd3d\xform.c" />
+    <ClCompile Include="clientd3d\xlat.c" />
+    <ClCompile Include="club\club.c" />
+    <ClCompile Include="club\clubarchive.c" />
+    <ClCompile Include="club\transfer.c" />
+    <ClCompile Include="club\util.c" />
+    <ClCompile Include="external\libarchive\archive_acl.c" />
+    <ClCompile Include="external\libarchive\archive_check_magic.c" />
+    <ClCompile Include="external\libarchive\archive_cmdline.c" />
+    <ClCompile Include="external\libarchive\archive_cryptor.c" />
+    <ClCompile Include="external\libarchive\archive_digest.c" />
+    <ClCompile Include="external\libarchive\archive_disk_acl_darwin.c" />
+    <ClCompile Include="external\libarchive\archive_disk_acl_freebsd.c" />
+    <ClCompile Include="external\libarchive\archive_disk_acl_linux.c" />
+    <ClCompile Include="external\libarchive\archive_disk_acl_sunos.c" />
+    <ClCompile Include="external\libarchive\archive_entry.c" />
+    <ClCompile Include="external\libarchive\archive_entry_copy_bhfi.c" />
+    <ClCompile Include="external\libarchive\archive_entry_copy_stat.c" />
+    <ClCompile Include="external\libarchive\archive_entry_link_resolver.c" />
+    <ClCompile Include="external\libarchive\archive_entry_sparse.c" />
+    <ClCompile Include="external\libarchive\archive_entry_stat.c" />
+    <ClCompile Include="external\libarchive\archive_entry_strmode.c" />
+    <ClCompile Include="external\libarchive\archive_entry_xattr.c" />
+    <ClCompile Include="external\libarchive\archive_getdate.c" />
+    <ClCompile Include="external\libarchive\archive_hmac.c" />
+    <ClCompile Include="external\libarchive\archive_match.c" />
+    <ClCompile Include="external\libarchive\archive_options.c" />
+    <ClCompile Include="external\libarchive\archive_pack_dev.c" />
+    <ClCompile Include="external\libarchive\archive_pathmatch.c" />
+    <ClCompile Include="external\libarchive\archive_ppmd7.c" />
+    <ClCompile Include="external\libarchive\archive_random.c" />
+    <ClCompile Include="external\libarchive\archive_rb.c" />
+    <ClCompile Include="external\libarchive\archive_read.c" />
+    <ClCompile Include="external\libarchive\archive_read_add_passphrase.c" />
+    <ClCompile Include="external\libarchive\archive_read_append_filter.c" />
+    <ClCompile Include="external\libarchive\archive_read_data_into_fd.c" />
+    <ClCompile Include="external\libarchive\archive_read_disk_entry_from_file.c" />
+    <ClCompile Include="external\libarchive\archive_read_disk_posix.c" />
+    <ClCompile Include="external\libarchive\archive_read_disk_set_standard_lookup.c" />
+    <ClCompile Include="external\libarchive\archive_read_disk_windows.c" />
+    <ClCompile Include="external\libarchive\archive_read_extract.c" />
+    <ClCompile Include="external\libarchive\archive_read_extract2.c" />
+    <ClCompile Include="external\libarchive\archive_read_open_fd.c" />
+    <ClCompile Include="external\libarchive\archive_read_open_file.c" />
+    <ClCompile Include="external\libarchive\archive_read_open_filename.c" />
+    <ClCompile Include="external\libarchive\archive_read_open_memory.c" />
+    <ClCompile Include="external\libarchive\archive_read_set_format.c" />
+    <ClCompile Include="external\libarchive\archive_read_set_options.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_all.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_bzip2.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_compress.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_grzip.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_gzip.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_lrzip.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_lz4.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_lzop.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_none.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_program.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_rpm.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_uu.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_filter_xz.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_7zip.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_all.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_ar.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_by_code.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_cab.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_cpio.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_empty.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_iso9660.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_lha.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_mtree.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_rar.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_raw.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_tar.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_warc.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_xar.c" />
+    <ClCompile Include="external\libarchive\archive_read_support_format_zip.c" />
+    <ClCompile Include="external\libarchive\archive_string.c" />
+    <ClCompile Include="external\libarchive\archive_string_sprintf.c" />
+    <ClCompile Include="external\libarchive\archive_util.c" />
+    <ClCompile Include="external\libarchive\archive_version_details.c" />
+    <ClCompile Include="external\libarchive\archive_virtual.c" />
+    <ClCompile Include="external\libarchive\archive_windows.c" />
+    <ClCompile Include="external\libarchive\archive_write.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_b64encode.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_by_name.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_bzip2.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_compress.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_grzip.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_gzip.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_lrzip.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_lz4.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_lzop.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_none.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_program.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_uuencode.c" />
+    <ClCompile Include="external\libarchive\archive_write_add_filter_xz.c" />
+    <ClCompile Include="external\libarchive\archive_write_disk_posix.c" />
+    <ClCompile Include="external\libarchive\archive_write_disk_set_standard_lookup.c" />
+    <ClCompile Include="external\libarchive\archive_write_disk_windows.c" />
+    <ClCompile Include="external\libarchive\archive_write_open_fd.c" />
+    <ClCompile Include="external\libarchive\archive_write_open_file.c" />
+    <ClCompile Include="external\libarchive\archive_write_open_filename.c" />
+    <ClCompile Include="external\libarchive\archive_write_open_memory.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_7zip.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_ar.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_by_name.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_cpio.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_cpio_newc.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_filter_by_ext.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_gnutar.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_iso9660.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_mtree.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_pax.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_raw.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_shar.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_ustar.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_v7tar.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_warc.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_xar.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_format_zip.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_options.c" />
+    <ClCompile Include="external\libarchive\archive_write_set_passphrase.c" />
+    <ClCompile Include="external\libarchive\filter_fork_posix.c" />
+    <ClCompile Include="external\libarchive\filter_fork_windows.c" />
+    <ClCompile Include="external\libarchive\xxhash.c" />
+    <ClCompile Include="external\libpng\png.c" />
+    <ClCompile Include="external\libpng\pngerror.c" />
+    <ClCompile Include="external\libpng\pngget.c" />
+    <ClCompile Include="external\libpng\pngmem.c" />
+    <ClCompile Include="external\libpng\pngpread.c" />
+    <ClCompile Include="external\libpng\pngread.c" />
+    <ClCompile Include="external\libpng\pngrio.c" />
+    <ClCompile Include="external\libpng\pngrtran.c" />
+    <ClCompile Include="external\libpng\pngrutil.c" />
+    <ClCompile Include="external\libpng\pngset.c" />
+    <ClCompile Include="external\libpng\pngtrans.c" />
+    <ClCompile Include="external\libpng\pngwio.c" />
+    <ClCompile Include="external\libpng\pngwrite.c" />
+    <ClCompile Include="external\libpng\pngwtran.c" />
+    <ClCompile Include="external\libpng\pngwutil.c" />
+    <ClCompile Include="external\wavemix\wavemix.c" />
+    <ClCompile Include="external\zlib\adler32.c" />
+    <ClCompile Include="external\zlib\compress.c" />
+    <ClCompile Include="external\zlib\crc32.c" />
+    <ClCompile Include="external\zlib\deflate.c" />
+    <ClCompile Include="external\zlib\gzclose.c" />
+    <ClCompile Include="external\zlib\gzlib.c" />
+    <ClCompile Include="external\zlib\gzread.c" />
+    <ClCompile Include="external\zlib\gzwrite.c" />
+    <ClCompile Include="external\zlib\infback.c" />
+    <ClCompile Include="external\zlib\inffast.c" />
+    <ClCompile Include="external\zlib\inflate.c" />
+    <ClCompile Include="external\zlib\inftrees.c" />
+    <ClCompile Include="external\zlib\trees.c" />
+    <ClCompile Include="external\zlib\uncompr.c" />
+    <ClCompile Include="external\zlib\zutil.c" />
+    <ClCompile Include="makebgf\dibutil.c" />
+    <ClCompile Include="makebgf\makebgf.c" />
+    <ClCompile Include="makebgf\writebgf.c" />
+    <ClCompile Include="module\admin\account.c" />
+    <ClCompile Include="module\admin\admin.c" />
+    <ClCompile Include="module\admin\admindlg.c" />
+    <ClCompile Include="module\admin\adminprs.c" />
+    <ClCompile Include="module\char\char.c" />
+    <ClCompile Include="module\char\charface.c" />
+    <ClCompile Include="module\char\charmake.c" />
+    <ClCompile Include="module\char\charname.c" />
+    <ClCompile Include="module\char\charpick.c" />
+    <ClCompile Include="module\char\charskil.c" />
+    <ClCompile Include="module\char\charspel.c" />
+    <ClCompile Include="module\char\charstat.c" />
+    <ClCompile Include="module\chess\board.c" />
+    <ClCompile Include="module\chess\chess.c" />
+    <ClCompile Include="module\chess\cmove.c" />
+    <ClCompile Include="module\dm\command.c" />
+    <ClCompile Include="module\dm\dm.c" />
+    <ClCompile Include="module\dm\gchannel.c" />
+    <ClCompile Include="module\dm\qeditor.c" />
+    <ClCompile Include="module\mailnews\mailfile.c" />
+    <ClCompile Include="module\mailnews\mailnews.c" />
+    <ClCompile Include="module\mailnews\mailread.c" />
+    <ClCompile Include="module\mailnews\mailsend.c" />
+    <ClCompile Include="module\mailnews\newsread.c" />
+    <ClCompile Include="module\mailnews\newssend.c" />
+    <ClCompile Include="module\merintr\actions.c" />
+    <ClCompile Include="module\merintr\alias.c" />
+    <ClCompile Include="module\merintr\command.c" />
+    <ClCompile Include="module\merintr\drawint.c" />
+    <ClCompile Include="module\merintr\enchant.c" />
+    <ClCompile Include="module\merintr\groupdlg.c" />
+    <ClCompile Include="module\merintr\groups.c" />
+    <ClCompile Include="module\merintr\guild.c" />
+    <ClCompile Include="module\merintr\guildaly.c" />
+    <ClCompile Include="module\merintr\guildbuy.c" />
+    <ClCompile Include="module\merintr\guildhal.c" />
+    <ClCompile Include="module\merintr\guildinv.c" />
+    <ClCompile Include="module\merintr\guildmem.c" />
+    <ClCompile Include="module\merintr\guildmtr.c" />
+    <ClCompile Include="module\merintr\guildshi.c" />
+    <ClCompile Include="module\merintr\inventry.c" />
+    <ClCompile Include="module\merintr\merintr.c" />
+    <ClCompile Include="module\merintr\mermain.c" />
+    <ClCompile Include="module\merintr\skills.c" />
+    <ClCompile Include="module\merintr\spells.c" />
+    <ClCompile Include="module\merintr\statbtn.c" />
+    <ClCompile Include="module\merintr\statcach.c" />
+    <ClCompile Include="module\merintr\statlist.c" />
+    <ClCompile Include="module\merintr\statmain.c" />
+    <ClCompile Include="module\merintr\statnum.c" />
+    <ClCompile Include="module\merintr\stats.c" />
+    <ClCompile Include="module\merintr\userarea.c" />
+    <ClCompile Include="util\crc.c" />
+    <ClCompile Include="util\md5.c" />
+    <ClCompile Include="util\memmap.c" />
+    <ClCompile Include="util\palcomp.c" />
+    <ClCompile Include="util\paldump.c" />
+    <ClCompile Include="util\porttest.c" />
+    <ClCompile Include="util\rscload.c" />
+    <ClCompile Include="util\rscmerge.c" />
+    <ClCompile Include="util\rscprint.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bbgun\bbgfile.h" />
+    <ClInclude Include="bbgun\bbgun.h" />
+    <ClInclude Include="bbgun\bmparea.h" />
+    <ClInclude Include="bbgun\dibutil.h" />
+    <ClInclude Include="bbgun\draw.h" />
+    <ClInclude Include="bbgun\palette.h" />
+    <ClInclude Include="bbgun\resource.h" />
+    <ClInclude Include="blakcomp\blakcomp.h" />
+    <ClInclude Include="blakcomp\codegen.h" />
+    <ClInclude Include="blakcomp\debug\blakcomp.tab.h" />
+    <ClInclude Include="blakcomp\optimize.h" />
+    <ClInclude Include="blakcomp\resource.h" />
+    <ClInclude Include="blakcomp\sort.h" />
+    <ClInclude Include="blakcomp\table.h" />
+    <ClInclude Include="blakcomp\util.h" />
+    <ClInclude Include="blakserv\account.h" />
+    <ClInclude Include="blakserv\admin.h" />
+    <ClInclude Include="blakserv\admincons.h" />
+    <ClInclude Include="blakserv\adminfn.h" />
+    <ClInclude Include="blakserv\apndfile.h" />
+    <ClInclude Include="blakserv\async.h" />
+    <ClInclude Include="blakserv\blakres.h" />
+    <ClInclude Include="blakserv\blakserv.h" />
+    <ClInclude Include="blakserv\block.h" />
+    <ClInclude Include="blakserv\bof.h" />
+    <ClInclude Include="blakserv\bstring.h" />
+    <ClInclude Include="blakserv\btime.h" />
+    <ClInclude Include="blakserv\bufpool.h" />
+    <ClInclude Include="blakserv\builtin.h" />
+    <ClInclude Include="blakserv\ccode.h" />
+    <ClInclude Include="blakserv\chanbuf.h" />
+    <ClInclude Include="blakserv\channel.h" />
+    <ClInclude Include="blakserv\class.h" />
+    <ClInclude Include="blakserv\commcli.h" />
+    <ClInclude Include="blakserv\config.h" />
+    <ClInclude Include="blakserv\debug.h" />
+    <ClInclude Include="blakserv\dllist.h" />
+    <ClInclude Include="blakserv\fileutil.h" />
+    <ClInclude Include="blakserv\game.h" />
+    <ClInclude Include="blakserv\gamelock.h" />
+    <ClInclude Include="blakserv\garbage.h" />
+    <ClInclude Include="blakserv\interface.h" />
+    <ClInclude Include="blakserv\intrlock.h" />
+    <ClInclude Include="blakserv\intstringhash.h" />
+    <ClInclude Include="blakserv\kodbase.h" />
+    <ClInclude Include="blakserv\list.h" />
+    <ClInclude Include="blakserv\loadacco.h" />
+    <ClInclude Include="blakserv\loadall.h" />
+    <ClInclude Include="blakserv\loadgame.h" />
+    <ClInclude Include="blakserv\loadkod.h" />
+    <ClInclude Include="blakserv\loadrsc.h" />
+    <ClInclude Include="blakserv\loadstr.h" />
+    <ClInclude Include="blakserv\maintenance.h" />
+    <ClInclude Include="blakserv\memory.h" />
+    <ClInclude Include="blakserv\message.h" />
+    <ClInclude Include="blakserv\motd.h" />
+    <ClInclude Include="blakserv\mutex_impl.h" />
+    <ClInclude Include="blakserv\nameid.h" />
+    <ClInclude Include="blakserv\object.h" />
+    <ClInclude Include="blakserv\osd_linux.h" />
+    <ClInclude Include="blakserv\osd_windows.h" />
+    <ClInclude Include="blakserv\parsecli.h" />
+    <ClInclude Include="blakserv\resource.h" />
+    <ClInclude Include="blakserv\resync.h" />
+    <ClInclude Include="blakserv\roofile.h" />
+    <ClInclude Include="blakserv\roomdata.h" />
+    <ClInclude Include="blakserv\saveacco.h" />
+    <ClInclude Include="blakserv\saveall.h" />
+    <ClInclude Include="blakserv\savegame.h" />
+    <ClInclude Include="blakserv\saversc.h" />
+    <ClInclude Include="blakserv\savestr.h" />
+    <ClInclude Include="blakserv\sendmsg.h" />
+    <ClInclude Include="blakserv\session.h" />
+    <ClInclude Include="blakserv\sprocket.h" />
+    <ClInclude Include="blakserv\stringinthash.h" />
+    <ClInclude Include="blakserv\synched.h" />
+    <ClInclude Include="blakserv\system.h" />
+    <ClInclude Include="blakserv\systimer.h" />
+    <ClInclude Include="blakserv\table.h" />
+    <ClInclude Include="blakserv\term.h" />
+    <ClInclude Include="blakserv\timer.h" />
+    <ClInclude Include="blakserv\trysync.h" />
+    <ClInclude Include="blakserv\user.h" />
+    <ClInclude Include="blakserv\version.h" />
+    <ClInclude Include="blakserv\webhook.h" />
+    <ClInclude Include="clientd3d\about.h" />
+    <ClInclude Include="clientd3d\animate.h" />
+    <ClInclude Include="clientd3d\annotate.h" />
+    <ClInclude Include="clientd3d\bitmap.h" />
+    <ClInclude Include="clientd3d\boverlay.h" />
+    <ClInclude Include="clientd3d\bsp.h" />
+    <ClInclude Include="clientd3d\bspload.h" />
+    <ClInclude Include="clientd3d\buy.h" />
+    <ClInclude Include="clientd3d\cache.h" />
+    <ClInclude Include="clientd3d\client.h" />
+    <ClInclude Include="clientd3d\client3d.h" />
+    <ClInclude Include="clientd3d\color.h" />
+    <ClInclude Include="clientd3d\com.h" />
+    <ClInclude Include="clientd3d\config.h" />
+    <ClInclude Include="clientd3d\cursor.h" />
+    <ClInclude Include="clientd3d\d3dcache.h" />
+    <ClInclude Include="clientd3d\d3ddriver.h" />
+    <ClInclude Include="clientd3d\d3dparticle.h" />
+    <ClInclude Include="clientd3d\d3drender.h" />
+    <ClInclude Include="clientd3d\d3drender_bgoverlays.h" />
+    <ClInclude Include="clientd3d\d3drender_fx.h" />
+    <ClInclude Include="clientd3d\d3drender_materials.h" />
+    <ClInclude Include="clientd3d\d3drender_objects.h" />
+    <ClInclude Include="clientd3d\d3drender_skybox.h" />
+    <ClInclude Include="clientd3d\d3drender_textures.h" />
+    <ClInclude Include="clientd3d\d3drender_world.h" />
+    <ClInclude Include="clientd3d\d3dtypes.h" />
+    <ClInclude Include="clientd3d\debug\trig.h" />
+    <ClInclude Include="clientd3d\dialog.h" />
+    <ClInclude Include="clientd3d\download.h" />
+    <ClInclude Include="clientd3d\draw.h" />
+    <ClInclude Include="clientd3d\draw3d.h" />
+    <ClInclude Include="clientd3d\drawbmp.h" />
+    <ClInclude Include="clientd3d\drawbsp.h" />
+    <ClInclude Include="clientd3d\drawdefs.h" />
+    <ClInclude Include="clientd3d\editbox.h" />
+    <ClInclude Include="clientd3d\effect.h" />
+    <ClInclude Include="clientd3d\extern.h" />
+    <ClInclude Include="clientd3d\fixed.h" />
+    <ClInclude Include="clientd3d\font.h" />
+    <ClInclude Include="clientd3d\game.h" />
+    <ClInclude Include="clientd3d\gameuser.h" />
+    <ClInclude Include="clientd3d\graphctl.h" />
+    <ClInclude Include="clientd3d\graphics.h" />
+    <ClInclude Include="clientd3d\hook.h" />
+    <ClInclude Include="clientd3d\idlist.h" />
+    <ClInclude Include="clientd3d\intrface.h" />
+    <ClInclude Include="clientd3d\key.h" />
+    <ClInclude Include="clientd3d\lagbox.h" />
+    <ClInclude Include="clientd3d\list.h" />
+    <ClInclude Include="clientd3d\loadrsc.h" />
+    <ClInclude Include="clientd3d\login.h" />
+    <ClInclude Include="clientd3d\logoff.h" />
+    <ClInclude Include="clientd3d\maindlg.h" />
+    <ClInclude Include="clientd3d\map.h" />
+    <ClInclude Include="clientd3d\mapfile.h" />
+    <ClInclude Include="clientd3d\matrix.h" />
+    <ClInclude Include="clientd3d\memmap.h" />
+    <ClInclude Include="clientd3d\messages.h" />
+    <ClInclude Include="clientd3d\modules.h" />
+    <ClInclude Include="clientd3d\move.h" />
+    <ClInclude Include="clientd3d\moveobj.h" />
+    <ClInclude Include="clientd3d\msgbox.h" />
+    <ClInclude Include="clientd3d\msgfiltr.h" />
+    <ClInclude Include="clientd3d\music.h" />
+    <ClInclude Include="clientd3d\objdraw.h" />
+    <ClInclude Include="clientd3d\object.h" />
+    <ClInclude Include="clientd3d\object3d.h" />
+    <ClInclude Include="clientd3d\offer.h" />
+    <ClInclude Include="clientd3d\overlay.h" />
+    <ClInclude Include="clientd3d\ownerdrw.h" />
+    <ClInclude Include="clientd3d\palette.h" />
+    <ClInclude Include="clientd3d\parse.h" />
+    <ClInclude Include="clientd3d\ping.h" />
+    <ClInclude Include="clientd3d\preferences.h" />
+    <ClInclude Include="clientd3d\profane.h" />
+    <ClInclude Include="clientd3d\project.h" />
+    <ClInclude Include="clientd3d\protocol.h" />
+    <ClInclude Include="clientd3d\regexpr.h" />
+    <ClInclude Include="clientd3d\resource.h" />
+    <ClInclude Include="clientd3d\room.h" />
+    <ClInclude Include="clientd3d\roomanim.h" />
+    <ClInclude Include="clientd3d\rops.h" />
+    <ClInclude Include="clientd3d\say.h" />
+    <ClInclude Include="clientd3d\select.h" />
+    <ClInclude Include="clientd3d\server.h" />
+    <ClInclude Include="clientd3d\signup.h" />
+    <ClInclude Include="clientd3d\sound.h" />
+    <ClInclude Include="clientd3d\srvrstr.h" />
+    <ClInclude Include="clientd3d\startup.h" />
+    <ClInclude Include="clientd3d\statconn.h" />
+    <ClInclude Include="clientd3d\statgame.h" />
+    <ClInclude Include="clientd3d\statoffl.h" />
+    <ClInclude Include="clientd3d\statstrt.h" />
+    <ClInclude Include="clientd3d\statterm.h" />
+    <ClInclude Include="clientd3d\table.h" />
+    <ClInclude Include="clientd3d\textin.h" />
+    <ClInclude Include="clientd3d\toolbar.h" />
+    <ClInclude Include="clientd3d\tooltip.h" />
+    <ClInclude Include="clientd3d\transfer.h" />
+    <ClInclude Include="clientd3d\uselist.h" />
+    <ClInclude Include="clientd3d\util.h" />
+    <ClInclude Include="clientd3d\web.h" />
+    <ClInclude Include="clientd3d\winmenu.h" />
+    <ClInclude Include="clientd3d\winmsg.h" />
+    <ClInclude Include="clientd3d\winxblak.h" />
+    <ClInclude Include="clientd3d\xform.h" />
+    <ClInclude Include="clientd3d\xlat.h" />
+    <ClInclude Include="club\club.h" />
+    <ClInclude Include="club\clubarchive.h" />
+    <ClInclude Include="club\resource.h" />
+    <ClInclude Include="club\transfer.h" />
+    <ClInclude Include="club\util.h" />
+    <ClInclude Include="external\libarchive\archive.h" />
+    <ClInclude Include="external\libarchive\archive_acl_private.h" />
+    <ClInclude Include="external\libarchive\archive_cmdline_private.h" />
+    <ClInclude Include="external\libarchive\archive_crc32.h" />
+    <ClInclude Include="external\libarchive\archive_cryptor_private.h" />
+    <ClInclude Include="external\libarchive\archive_digest_private.h" />
+    <ClInclude Include="external\libarchive\archive_endian.h" />
+    <ClInclude Include="external\libarchive\archive_entry.h" />
+    <ClInclude Include="external\libarchive\archive_entry_locale.h" />
+    <ClInclude Include="external\libarchive\archive_entry_private.h" />
+    <ClInclude Include="external\libarchive\archive_getdate.h" />
+    <ClInclude Include="external\libarchive\archive_hmac_private.h" />
+    <ClInclude Include="external\libarchive\archive_openssl_evp_private.h" />
+    <ClInclude Include="external\libarchive\archive_openssl_hmac_private.h" />
+    <ClInclude Include="external\libarchive\archive_options_private.h" />
+    <ClInclude Include="external\libarchive\archive_pack_dev.h" />
+    <ClInclude Include="external\libarchive\archive_pathmatch.h" />
+    <ClInclude Include="external\libarchive\archive_platform.h" />
+    <ClInclude Include="external\libarchive\archive_platform_acl.h" />
+    <ClInclude Include="external\libarchive\archive_platform_xattr.h" />
+    <ClInclude Include="external\libarchive\archive_ppmd7_private.h" />
+    <ClInclude Include="external\libarchive\archive_ppmd_private.h" />
+    <ClInclude Include="external\libarchive\archive_private.h" />
+    <ClInclude Include="external\libarchive\archive_random_private.h" />
+    <ClInclude Include="external\libarchive\archive_rb.h" />
+    <ClInclude Include="external\libarchive\archive_read_disk_private.h" />
+    <ClInclude Include="external\libarchive\archive_read_private.h" />
+    <ClInclude Include="external\libarchive\archive_string.h" />
+    <ClInclude Include="external\libarchive\archive_string_composition.h" />
+    <ClInclude Include="external\libarchive\archive_windows.h" />
+    <ClInclude Include="external\libarchive\archive_write_disk_private.h" />
+    <ClInclude Include="external\libarchive\archive_write_private.h" />
+    <ClInclude Include="external\libarchive\archive_xxhash.h" />
+    <ClInclude Include="external\libarchive\config.h" />
+    <ClInclude Include="external\libarchive\config_freebsd.h" />
+    <ClInclude Include="external\libarchive\filter_fork.h" />
+    <ClInclude Include="external\libpng\png.h" />
+    <ClInclude Include="external\libpng\pngconf.h" />
+    <ClInclude Include="external\libpng\pngdebug.h" />
+    <ClInclude Include="external\libpng\pnginfo.h" />
+    <ClInclude Include="external\libpng\pnglibconf.h" />
+    <ClInclude Include="external\libpng\pngpriv.h" />
+    <ClInclude Include="external\libpng\pngstruct.h" />
+    <ClInclude Include="external\wavemix\wavemix.h" />
+    <ClInclude Include="external\zlib\crc32.h" />
+    <ClInclude Include="external\zlib\deflate.h" />
+    <ClInclude Include="external\zlib\gzguts.h" />
+    <ClInclude Include="external\zlib\inffast.h" />
+    <ClInclude Include="external\zlib\inffixed.h" />
+    <ClInclude Include="external\zlib\inflate.h" />
+    <ClInclude Include="external\zlib\inftrees.h" />
+    <ClInclude Include="external\zlib\trees.h" />
+    <ClInclude Include="external\zlib\zconf.h" />
+    <ClInclude Include="external\zlib\zlib.h" />
+    <ClInclude Include="external\zlib\zutil.h" />
+    <ClInclude Include="include\bkod.h" />
+    <ClInclude Include="include\BugSplat.h" />
+    <ClInclude Include="include\crc.h" />
+    <ClInclude Include="include\dibutil.h" />
+    <ClInclude Include="include\fixedpt.h" />
+    <ClInclude Include="include\md5.h" />
+    <ClInclude Include="include\module.h" />
+    <ClInclude Include="include\proto.h" />
+    <ClInclude Include="include\roomtype.h" />
+    <ClInclude Include="include\rscfile.h" />
+    <ClInclude Include="include\rscload.h" />
+    <ClInclude Include="include\wavemix.h" />
+    <ClInclude Include="makebgf\dibutil.h" />
+    <ClInclude Include="makebgf\makebgf.h" />
+    <ClInclude Include="makebgf\writebgf.h" />
+    <ClInclude Include="module\admin\account.h" />
+    <ClInclude Include="module\admin\admin.h" />
+    <ClInclude Include="module\admin\adminrc.h" />
+    <ClInclude Include="module\char\char.h" />
+    <ClInclude Include="module\char\charrc.h" />
+    <ClInclude Include="module\chess\board.h" />
+    <ClInclude Include="module\chess\chess.h" />
+    <ClInclude Include="module\chess\chessrc.h" />
+    <ClInclude Include="module\chess\cmove.h" />
+    <ClInclude Include="module\dm\command.h" />
+    <ClInclude Include="module\dm\dm.h" />
+    <ClInclude Include="module\dm\gchannel.h" />
+    <ClInclude Include="module\dm\qeditor.h" />
+    <ClInclude Include="module\dm\resource.h" />
+    <ClInclude Include="module\mailnews\mail.h" />
+    <ClInclude Include="module\mailnews\mailnews.h" />
+    <ClInclude Include="module\mailnews\mailnwrc.h" />
+    <ClInclude Include="module\mailnews\news.h" />
+    <ClInclude Include="module\merintr\actions.h" />
+    <ClInclude Include="module\merintr\alias.h" />
+    <ClInclude Include="module\merintr\command.h" />
+    <ClInclude Include="module\merintr\drawint.h" />
+    <ClInclude Include="module\merintr\enchant.h" />
+    <ClInclude Include="module\merintr\groupdlg.h" />
+    <ClInclude Include="module\merintr\groups.h" />
+    <ClInclude Include="module\merintr\guild.h" />
+    <ClInclude Include="module\merintr\guildinv.h" />
+    <ClInclude Include="module\merintr\inventry.h" />
+    <ClInclude Include="module\merintr\merintr.h" />
+    <ClInclude Include="module\merintr\merintrc.h" />
+    <ClInclude Include="module\merintr\mermain.h" />
+    <ClInclude Include="module\merintr\skills.h" />
+    <ClInclude Include="module\merintr\spells.h" />
+    <ClInclude Include="module\merintr\statbtn.h" />
+    <ClInclude Include="module\merintr\statcach.h" />
+    <ClInclude Include="module\merintr\statlist.h" />
+    <ClInclude Include="module\merintr\statmain.h" />
+    <ClInclude Include="module\merintr\statnum.h" />
+    <ClInclude Include="module\merintr\stats.h" />
+    <ClInclude Include="module\merintr\userarea.h" />
+    <ClInclude Include="util\memmap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="bbgun\bbgun.rc" />
+    <ResourceCompile Include="blakserv\blakserv.rc" />
+    <ResourceCompile Include="clientd3d\client.rc" />
+    <ResourceCompile Include="club\club.rc" />
+    <ResourceCompile Include="external\wavemix\wavemix.rc" />
+    <ResourceCompile Include="module\admin\admin.rc" />
+    <ResourceCompile Include="module\char\char.rc" />
+    <ResourceCompile Include="module\chess\chess.rc" />
+    <ResourceCompile Include="module\dm\dm.rc" />
+    <ResourceCompile Include="module\mailnews\mailnews.rc" />
+    <ResourceCompile Include="module\merintr\merintr.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="blakcomp\blakcomp.l" />
+    <None Include="blakcomp\blakcomp.y" />
+    <None Include="blakcomp\makefile" />
+    <None Include="blakcomp\makefile.linux" />
+    <None Include="blakdeco\makefile" />
+    <None Include="blakserv\BLAKSERV.HLP" />
+    <None Include="blakserv\makefile" />
+    <None Include="blakserv\makefile.linux" />
+    <None Include="blakserv\RCa07400" />
+    <None Include="blakserv\RCa88188" />
+    <None Include="clientd3d\client.aps" />
+    <None Include="clientd3d\client.def" />
+    <None Include="clientd3d\makefile" />
+    <None Include="clientd3d\meridian.ini" />
+    <None Include="clientd3d\RCa88188" />
+    <None Include="clientd3d\RDa88188" />
+    <None Include="clientd3d\todo" />
+    <None Include="club\download.avi" />
+    <None Include="club\makefile" />
+    <None Include="club\RCa88188" />
+    <None Include="doc\blakod.tex" />
+    <None Include="doc\design\Admin\cheating.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Admin\customize.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Admin\events.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Admin\server guide.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\gods.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Afiera.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Aftyn.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Alzahakar.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Bei.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Colhorr.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Cylill.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\D%27Franco.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Drechx.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Duke.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Esseldi.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Fehr.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Frisconar.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Frular.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\guard1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\guard2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Herbutte.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Hester.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Joguer.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Jonas.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonBadCap.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonBank.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonBartender.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonBone.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonBow.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonGoodCap.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonInn.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonLang.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonMagic.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonRiija.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonScientist.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonSmith.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonStore.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonTailor.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonTrader.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonVault.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\KonWeapon.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\List.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Madelia.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Maleval.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Meidei.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Miriana.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Morrigan.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\NPC.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Obert.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Paddock.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Parrin.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Pietro.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Princess.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Pritchett.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Querti.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Quintor.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Ran.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Rook.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Roq.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Rycksher.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Saidi.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\SampleNPC.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Skivlat.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Solomon.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Tenuv.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Tova.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Watcher.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Widow.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Xiana.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Yevitan.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Zhieu.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Backstory\npc\Zuxana.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Changelogs\brian_changes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Changelogs\mike_changes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Changelogs\TODO.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\ads.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\Blakod notes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\Blakod standard.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\guest accounts.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\Historical\guildsh.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\Historical\guildshields.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\immortal.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\lighting.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Coding\timestamps.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\default.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\armor.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\assassin%27s game.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\combat.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\faction bonuses.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\Historical\newquest.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\Historical\old advancement.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\Historical\old stats.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\Historical\spellsurv.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\karma.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\logoff.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\monsters.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\rooms.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\stats.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\treasure.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Mechanics\weapons.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\changes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\oldchanges.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\priority.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\questdoc.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\questeng.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\resist.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Misc\spells.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\necpuzz2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\necpuzz3.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\necpuzzl.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\rendesign.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renhapp2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renhappy.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renitmst.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renmonst.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\rennpc.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renobj.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renobj2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renquest.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renrooms.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renspel4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renspel5.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Renaissance\renspel6.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\artlist.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\backstory.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\justicar.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\konimaslegacy.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\modart.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\monsters.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\island1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ka1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ka2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ka3.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ka4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ka5.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kb1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kb2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kb3.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kb4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kb5.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kc1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kc2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kc3.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kc4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kc5.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kd1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kd2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kd3.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\kd4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ke1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ke2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\ke4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\rooms1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\temple1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\original map\town1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\plan-apr.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\proposal.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Revelations\reagents.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\brian_changes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\DA changes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\Dark Angels.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\joe_changes.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\libspells.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\spelsurv.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\trifeat.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\trimons.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\trinpc.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\trinpc2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\triplot.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\trispell.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Trinity\trsplrec.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\design\Updates\Vale\plan-feb.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\makefile" />
+    <None Include="doc\marketng.tex" />
+    <None Include="doc\overview.tex" />
+    <None Include="doc\Slopes\texture2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="doc\Slopes\tmap.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="external\libarchive\makefile" />
+    <None Include="external\libpng\INSTALL" />
+    <None Include="external\libpng\libpng-config.in" />
+    <None Include="external\libpng\libpng.pc.in" />
+    <None Include="external\libpng\LICENSE" />
+    <None Include="external\libpng\makefile" />
+    <None Include="external\libpng\README" />
+    <None Include="external\wavemix\makefile" />
+    <None Include="external\wavemix\wavemix.ini" />
+    <None Include="external\wavemix\wavmix32.def" />
+    <None Include="external\zlib\LICENSE" />
+    <None Include="external\zlib\makefile" />
+    <None Include="kod\backup.bat" />
+    <None Include="kod\kod.mak" />
+    <None Include="kod\kod.mak.linux" />
+    <None Include="kod\makefile" />
+    <None Include="kod\makefile.linux" />
+    <None Include="kod\object.kod" />
+    <None Include="kod\util.kod" />
+    <None Include="makebgf\makefile" />
+    <None Include="module\admin\admin.def" />
+    <None Include="module\admin\makefile" />
+    <None Include="module\char\char.def" />
+    <None Include="module\char\makefile" />
+    <None Include="module\chess\chess.def" />
+    <None Include="module\chess\makefile" />
+    <None Include="module\dm\dm.def" />
+    <None Include="module\dm\makefile" />
+    <None Include="module\mailnews\mailnews.def" />
+    <None Include="module\mailnews\makefile" />
+    <None Include="module\merintr\makefile" />
+    <None Include="module\merintr\merintr.def" />
+    <None Include="util\crazy.pl" />
+    <None Include="util\genpass.pl" />
+    <None Include="util\make-beta-accounts.pl" />
+    <None Include="util\make-beta-passwords.pl" />
+    <None Include="util\makefile" />
+    <None Include="util\makefile.linux" />
+    <None Include="util\overall.pl" />
+    <None Include="util\UserInfo.pl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="clientd3d\profane.txt" />
+    <Text Include="doc\bkod.txt" />
+    <Text Include="doc\bof.txt" />
+    <Text Include="doc\clisource.txt" />
+    <Text Include="doc\compiler.txt" />
+    <Text Include="doc\dbase.txt" />
+    <Text Include="doc\desc.txt" />
+    <Text Include="doc\general.txt" />
+    <Text Include="doc\graphics.txt" />
+    <Text Include="doc\login.txt" />
+    <Text Include="doc\protocol.txt" />
+    <Text Include="doc\resource.txt" />
+    <Text Include="doc\usercmd.txt" />
+    <Text Include="external\libarchive\CMakeLists.txt" />
+    <Text Include="external\libpng\CMakeLists.txt" />
+    <Text Include="kod\objects.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="blakserv\ant.bmp" />
+    <Image Include="blakserv\archetype.bmp" />
+    <Image Include="blakserv\logo.ico" />
+    <Image Include="blakserv\meridian.ico" />
+    <Image Include="club\logo.ico" />
+    <Image Include="module\admin\account.ico" />
+    <Image Include="module\dm\gchannel.ico" />
+    <Image Include="module\dm\qeditor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="blakserv\signal.wav" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{9D60EFE2-A733-68F4-F894-3CCAF5440AC2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeOutput>meridian.exe</NMakeOutput>
+    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|x64'">
+    <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeOutput>meridian.exe</NMakeOutput>
+    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeOutput>./run/localclient/meridian.exe</NMakeOutput>
+    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)run\localclient\</OutDir>
+    <NMakeIncludeSearchPath>$(ProjectDir)include;$(ProjectDir)external\libarchive;$(ProjectDir)external\libpng;$(ProjectDir)external\wavemix;$(ProjectDir)external\zlib;$(ProjectDir)clientd3d\debug;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|Win32'">
+    <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeOutput>./run/localclient/meridian.exe</NMakeOutput>
+    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions />
+    <OutDir>$(SolutionDir)run\localclient\</OutDir>
+    <NMakeIncludeSearchPath>$(ProjectDir)include;$(ProjectDir)external\libarchive;$(ProjectDir)external\libpng;$(ProjectDir)external\wavemix;$(ProjectDir)external\zlib;$(ProjectDir)clientd3d\debug;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>nmake</NMakeBuildCommandLine>
+    <NMakeOutput>meridian.exe</NMakeOutput>
+    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeBuildCommandLine>nmake</NMakeBuildCommandLine>
+    <NMakeOutput>meridian.exe</NMakeOutput>
+    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

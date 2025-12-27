@@ -1,5 +1,16 @@
-// Meridian 59 sound.c - sound effects via OpenAL Soft
-
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+/*
+ * sound.c:  Sound effects playback via OpenAL Soft.
+ *
+ * Handles WAV/OGG sound effects with optional 3D positional audio.
+ * Tracks looping ambient sounds across room transitions.
+ */
 #include "client.h"
 #include "drawdefs.h"
 

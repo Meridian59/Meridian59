@@ -9,11 +9,13 @@ SOURCEDIR = $(CLIENTDIR)
 # generated files are there.
 CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT -DSTB_VORBIS_NO_PUSHDATA_API
 
-# Select OpenAL library path based on target platform
+# Select OpenAL library and DLL path based on target platform
 !if "$(PLATFORM)" == "x64"
 LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win64
+OPENALDLLDIR = $(OPENALDIR)\bin\Win64
 !else
 LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win32
+OPENALDLLDIR = $(OPENALDIR)\bin\Win32
 !endif
 
 LIBS =  \
@@ -168,6 +170,7 @@ $(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSF
 <<
 	$(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
 	$(CP) $@ $(CLIENTRUNDIR)
+	$(CP) $(OPENALDLLDIR)\soft_oal.dll $(CLIENTRUNDIR)\OpenAL32.dll
 
 $(OUTDIR)\maketrig.exe: $(OUTDIR)\maketrig.obj
 	$(LINK) $** -out:$@ $(LINKFLAGS)

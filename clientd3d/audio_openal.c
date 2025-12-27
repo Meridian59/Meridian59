@@ -489,12 +489,16 @@ static ALuint ParseWAVFile(const char* filename)
          }
          WORD blockAlign;
          DWORD byteRate;
-         fread(&audioFormat, 2, 1, file);
-         fread(&numChannels, 2, 1, file);
-         fread(&sampleRate, 4, 1, file);
-         fread(&byteRate, 4, 1, file);
-         fread(&blockAlign, 2, 1, file);
-         fread(&bitsPerSample, 2, 1, file);
+         if (fread(&audioFormat, 2, 1, file) != 1 ||
+             fread(&numChannels, 2, 1, file) != 1 ||
+             fread(&sampleRate, 4, 1, file) != 1 ||
+             fread(&byteRate, 4, 1, file) != 1 ||
+             fread(&blockAlign, 2, 1, file) != 1 ||
+             fread(&bitsPerSample, 2, 1, file) != 1)
+         {
+            debug(("ParseWAVFile: Failed to read fmt chunk: %s\n", filename));
+            break;
+         }
          // Skip any extra format bytes
          if (chunkSize > 16)
             fseek(file, chunkSize - 16, SEEK_CUR);

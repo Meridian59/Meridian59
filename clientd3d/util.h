@@ -96,4 +96,7 @@ M59EXPORT void *ZeroSafeMalloc(int bytes);
 M59EXPORT void *SafeRealloc(void* pMemory, int bytes);
 M59EXPORT void SafeFree(void *pMemory);
 
+// Case-insensitive string comparison for std::string
+bool iequals(const std::string& a, const std::string& b);
+
 #endif /* #ifndef _UTIL_H */

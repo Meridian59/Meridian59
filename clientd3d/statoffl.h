@@ -23,4 +23,6 @@ void OfflineSetFocus(HWND hwnd, HWND hwndOldFocus);
 
 M59EXPORT void OfflineConnect(void);
 
+extern const char *splash_music;
+
 #endif /* #ifndef _OFFLINE_H */

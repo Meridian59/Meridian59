@@ -260,7 +260,7 @@ resources:
    user_doesnt_know_spell = "You have not yet learned the spell '%s'!"
 
    user_wave_welcome = welcome.wav
-   user_wave_killed = killed.wav
+   user_wave_killed = killed_voice.wav
 
    user_midi_killed = killed.mid
 

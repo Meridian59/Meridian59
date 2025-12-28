@@ -26,6 +26,7 @@
  */
 
 #include "client.h"
+#include <filesystem>
 
 static const int MAPFILE_VERSION_1 = 1;
 static const int MAPFILE_VERSION = 2;
@@ -34,7 +35,7 @@ static const int MAPFILE_LOWER_TABLE_SIZE = 100;    // # of entries in a single 
 
 static const char *map_directory = "mail";
 static const char *map_filename  = "mail\\game.map";
-static const char *map_filename_temp = "mail\\game.map.temp";
+static const char *map_filename_temp = "mail\\game.map.temp";  // Temporary file name for map file migration
 
 static const char map_magic[] = {0x4D, 0x41, 0x50, 0x0F};
 
@@ -52,9 +53,9 @@ static bool WriteHeader(FILE *file);
 static bool ReadRoomAnnotations(FILE *file, room_type *room, int max_annotations);
 static bool SaveRoomAnnotations(FILE *file, room_type *room);
 static int FileSize(FILE *file);
-//static bool MapFileFindNextKnownData(int *next_offset, int curr_offset);
 static bool MapFileMigrateVersion1ToVersion2();
-static bool MapFileMigrateVersion1ToVersion2Data(FILE *destfile, LowerTableEntry *rooms, int *mapAnnotationOffsets);
+static bool MapFileMigrateVersion1ToVersion2Data_Fancy(FILE *destfile, LowerTableEntry *rooms, int *mapAnnotationOffsets);
+static bool MapFileMigrateVersion1ToVersion2Data_Simple(FILE *destfile, LowerTableEntry *rooms, int *mapAnnotationOffsets);
 
 /*****************************************************************************/
 /* 
@@ -63,12 +64,10 @@ static bool MapFileMigrateVersion1ToVersion2Data(FILE *destfile, LowerTableEntry
  */
 void MapFileInitialize(void)
 {
-   struct stat s;
-
    if (!MakeDirectory(map_directory))
       return;
 
-   bool file_exists = (stat(map_filename, &s) == 0);
+   bool file_exists = std::filesystem::exists(map_filename);
    if (file_exists)
    {
      mapfile = fopen(map_filename, "r+b");
@@ -121,7 +120,7 @@ bool MapFileVerifyHeader(FILE *file, bool file_exists)
             return false;
       if (fread(&version, 1, 4, file) != 4)
          return false;
-      if(version == MAPFILE_VERSION_1)
+      if (version == MAPFILE_VERSION_1)
       {
          // Migrate old version 1 map file to version 2
          debug(("Migrating map file from version 1 to version 2\n"));
@@ -220,8 +219,7 @@ bool ReadRoomAnnotations(FILE *file, room_type *room, int max_annotations)
       int num_annotations = 0;
       if (fread(&num_annotations, 1, 4, file) != 4)
          return false;
-      num_annotations = min(num_annotations, max_annotations);
-      num_annotations = max(num_annotations, 0);
+      num_annotations = std::clamp(num_annotations, 0, max_annotations);
 
       // Read through each annotation
       for (int i = 0; i < num_annotations; i++)
@@ -296,10 +294,9 @@ bool SaveRoomAnnotations(FILE* file, room_type *room)
    if (nullptr == file || !room)
       return false;
 
-   // Algorithm:
-   //    Currently the file pointer is pointing at the 'annotations_offset' field within the room block (if written), which says where the annotations block is. A value of 0 means no annotations block.
-   //    If the number of annotations is different than MAX_ANNOTATIONS and we are writing new data, we need to recreate the annotations block.
-   //   We also need to throw out the old annotations block, and rewrite a new one at the end of the file.
+   // Currently the file pointer is pointing at the 'annotations_offset' field within
+   // the room block (if written), which says where the annotations block is. A value
+   // of 0 means no annotations block.
 
    // Get the position of the annotations_offset field
    offset = ftell(file);
@@ -314,7 +311,7 @@ bool SaveRoomAnnotations(FILE* file, room_type *room)
       room->annotations_offset = FileSize(file);
    }
 
-   if(room->annotations_offset == 0)
+   if (room->annotations_offset == 0)
    {
       // No annotations block to write
       return true;
@@ -344,7 +341,7 @@ bool SaveRoomAnnotations(FILE* file, room_type *room)
          if (fwrite(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, file) != MAX_ANNOTATION_LEN)
             return false;
 
-         if(strlen(room->annotations[i].text) > 0)
+         if (strlen(room->annotations[i].text) > 0)
          {
             debug(("Wrote annotation '%s'\n", room->annotations[i].text));
          }
@@ -475,21 +472,14 @@ static int FileSize(FILE *file) {
 
 bool MapFileMigrateVersion1ToVersion2()
 {
-   if(mapfile == nullptr)
+   if (mapfile == nullptr)
       return false;
 
-   // Open temp file - if it exists, delete it first
-   struct stat s;
-   bool file_exists = (stat(map_filename_temp, &s) == 0);
-   if (file_exists)
-   {
-      remove(map_filename_temp);
-   }
-   // File doesn't exist; create a new one
+   // Create an empty temp file
    FILE* destfile = fopen(map_filename_temp, "w+b");
    if (destfile == nullptr)
    {
-      debug(("Couldn't open temp map file for migration\n"));
+      debug(("Couldn't open temp map file (%s) for migration\n", map_filename_temp));
       return false;
    }
 
@@ -505,7 +495,7 @@ bool MapFileMigrateVersion1ToVersion2()
    int* mapAnnotationOffsets = new int[MAPFILE_LOWER_TABLE_SIZE * MAPFILE_TOP_TABLE_SIZE];
 
    // Iterate through all rooms in old file and copy them to new file
-   if(!MapFileMigrateVersion1ToVersion2Data(destfile, rooms, mapAnnotationOffsets))
+   if (!MapFileMigrateVersion1ToVersion2Data_Fancy(destfile, rooms, mapAnnotationOffsets))
    {
       delete[] rooms;
       delete[] mapAnnotationOffsets;
@@ -520,7 +510,7 @@ bool MapFileMigrateVersion1ToVersion2()
    // Close both files, delete the old one, and rename the new one
    fclose(destfile);
    fclose(mapfile);
-   if( remove(map_filename) != 0)
+   if (remove(map_filename) != 0)
    {
       debug(("Failed to delete old map file during migration\n"));
    }
@@ -531,7 +521,7 @@ bool MapFileMigrateVersion1ToVersion2()
 
    // Reopen the new file as the main map file
    mapfile = fopen(map_filename, "r+b");
-   if( !MapFileVerifyHeader(mapfile, true))
+   if (!MapFileVerifyHeader(mapfile, true))
    {
       MapFileClose();
       return false;
@@ -540,7 +530,15 @@ bool MapFileMigrateVersion1ToVersion2()
    return true;
 }
 
-bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms, int* mapAnnotationOffsets)
+/*
+ This is the 'Fancy' version of the migration function, which verifies each room and annotation block,
+ ensuring that any bad data is avoided. It's slower, but safer.
+
+ TODO: Switch over from the 'Fancy' to the 'Simple' version once we are confident that map files
+       are not corrupt in the wild.
+ Added by Bill Carlson, 12/27/2025
+*/
+bool MapFileMigrateVersion1ToVersion2Data_Fancy(FILE* destfile, LowerTableEntry* rooms, int* mapAnnotationOffsets)
 {
    int throwaway;
    int file_size = 0;
@@ -640,7 +638,7 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
          if (fread(&annotations_offset, 1, 4, mapfile) != 4)
             return false;
 
-         if(annotations_offset > 0)
+         if (annotations_offset > 0)
          {
             mapAnnotationOffsets[mapAnnotationOffsetsCount] = annotations_offset;
             ++mapAnnotationOffsetsCount;
@@ -670,7 +668,7 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
       if (fread(&num_walls, 1, 4, mapfile) != 4)
          return false;
       int num_wall_bytes = (num_walls + 7) / 8;
-      if(num_wall_bytes > sizeof(wallData))
+      if (num_wall_bytes > sizeof(wallData))
       {
          debug(("MapFileMigrateVersion1ToVersion2Data: Room with security %d has too many walls (%d)\n", rooms[i].security, num_walls));
          return false;
@@ -679,7 +677,7 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
          return false;
 
       // Write the room data to the destination file
-      if(fwrite(&num_walls, 1, 4, destfile) != 4)
+      if (fwrite(&num_walls, 1, 4, destfile) != 4)
          return false;
       if (fwrite(wallData, 1, num_wall_bytes, destfile) != num_wall_bytes)
          return false;
@@ -735,8 +733,136 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
 
       if (!SaveRoomAnnotations(destfile, &temp_room))
          return false;
+   }
 
-      // Copy the annotation data
+   return true;
+}
+
+/*
+ This is the 'Simple' version of the migration function, which does do some basic validation,
+ but generally assumes that all room and annotation data is valid and sized correctly.
+ 
+ It's faster and has lower memory requirements, but less safe.
+
+ TODO: Switch over from the 'Fancy' to the 'Simple' version once we are confident that map files
+       are not corrupt in the wild.
+ Added by Bill Carlson, 12/27/2025
+*/
+bool MapFileMigrateVersion1ToVersion2Data_Simple(FILE *destfile)
+{
+   int throwaway;
+   int file_size = 0;
+   byte wallData[4096];
+
+   if (mapfile == nullptr)
+      return false;
+
+   // Get file size to know when we reach the end of the file
+   if (fseek(mapfile, 0, SEEK_END))
+      return false;
+   file_size = ftell(mapfile);
+
+   // Seek past the first 8 bytes (header)
+   if (fseek(mapfile, 8, SEEK_SET))
+      return false;
+
+   // The 'top table' is the next MAPFILE_TOP_TABLE_SIZE * 4 bytes
+   int topTable[MAPFILE_TOP_TABLE_SIZE];
+   if (fread(topTable, 4, MAPFILE_TOP_TABLE_SIZE, mapfile) != MAPFILE_TOP_TABLE_SIZE)
+      return false;
+
+   // Iterate through all top level entries
+   for (int i = 0; i < MAPFILE_TOP_TABLE_SIZE; i++)
+   {
+      if (topTable[i] == 0)
+         continue;
+
+      // Go to lower table and read it fully
+      if (fseek(mapfile, topTable[i], SEEK_SET))
+         return false;
+      LowerTableEntry lowerTable[MAPFILE_LOWER_TABLE_SIZE];
+      if (fread(&throwaway, 1, 4, mapfile) != 4)  // "Next table pointer" - unused
+         return false;
+      if (fread(lowerTable, sizeof(LowerTableEntry), MAPFILE_LOWER_TABLE_SIZE, mapfile) != MAPFILE_LOWER_TABLE_SIZE)
+         return false;
+
+      // Iterate through each entry in the lower table
+      for (int j = 0; j < MAPFILE_LOWER_TABLE_SIZE; j++)
+      {
+         if (lowerTable[j].security == 0 && lowerTable[j].offset == 0)
+            continue;  // Empty entry
+
+         bool off_file = (lowerTable[j].offset <= 0 || lowerTable[j].offset > file_size);
+         if (off_file)
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Found invalid table entry (offset OOB).\n"));
+            continue;
+         }
+
+         if (lowerTable[j].security == 0)
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Found invalid table entry (security invalid).\n"));
+            continue;
+         }
+
+         if (lowerTable[j].offset == 0)
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Found invalid table entry (offset invalid).\n"));
+            continue;
+         }
+
+         // Find the source room
+         if (!MapFileFindRoom(mapfile, lowerTable[j].security, false))
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Failed to load source room with security %d\n",
+                   lowerTable[j].security));
+            continue;
+         }
+
+         // Find the destination room
+         if (!MapFileFindRoom(destfile, lowerTable[j].security, true))
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Failed to load destination room with security %d\n",
+                   lowerTable[j].security));
+            continue;
+         }
+
+         // Read the source room data
+         int num_walls = 0;
+         if (fread(&num_walls, 1, 4, mapfile) != 4)
+            return false;
+         int num_wall_bytes = (num_walls + 7) / 8;
+         if (num_wall_bytes > sizeof(wallData))
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Room with security %d has too many walls (%d)\n",
+                   lowerTable[j].security, num_walls));
+            return false;
+         }
+         if (fread(wallData, 1, num_wall_bytes, mapfile) != num_wall_bytes)
+            return false;
+
+         // Write the room data to the destination file
+         if (fwrite(&num_walls, 1, 4, destfile) != 4)
+            return false;
+         if (fwrite(wallData, 1, num_wall_bytes, destfile) != num_wall_bytes)
+            return false;
+
+         // Read the annotation offset from the source file
+         room_type temp_room;
+         memset(&temp_room, 0, sizeof(room_type));
+         if (fread(&temp_room.annotations_offset, 1, 4, mapfile) != 4)
+            return false;
+
+         if (temp_room.annotations_offset > 0)
+         {
+            if (!ReadRoomAnnotations(mapfile, &temp_room, MAX_ANNOTATIONS))
+               return false;
+            temp_room.annotations_changed = true;  // Force write of annotations
+         }
+
+         if (!SaveRoomAnnotations(destfile, &temp_room))
+            return false;
+      }
    }
 
    return true;

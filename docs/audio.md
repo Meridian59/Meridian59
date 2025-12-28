@@ -131,6 +131,23 @@ theme.mp3 -> theme.ogg
 
 This mapping happens in `ConvertLegacyMusicExtension()` in music.c.
 
+Sound effects also prefer .ogg over .wav. When a .wav file is requested, the audio
+system first checks if an .ogg version exists and uses that instead.
+
+### File Naming Convention
+
+**Important:** Music and sound effect files must not share the same base name.
+
+Since both music (.mid) and sounds (.wav) now resolve to .ogg, a naming conflict occurs
+if both `forest.mid` (music) and `forest.wav` (sound effect) exist - they would both
+map to `forest.ogg`.
+
+Existing conflicts were resolved in PR #1307. When adding new audio:
+
+- Use descriptive, unique names for all audio files
+- Prefix or suffix to distinguish purpose if needed (e.g., `forest_ambient.ogg` vs `forest_theme.ogg`)
+- Check that no existing music or sound uses the same base name
+
 ## Buffer Caching
 
 Sound effects are cached using an LRU (Least Recently Used) strategy:

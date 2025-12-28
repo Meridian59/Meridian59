@@ -71,6 +71,7 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /MP enables parallel compiling
 # /MT link with static C runtime library
 # /Zi includes debugging information
+# /DFMT_UNICODE=0 disables Unicode support for fmtlib
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
              /wd4996 /wd4312 \

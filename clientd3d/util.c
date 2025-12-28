@@ -103,7 +103,12 @@ char *strtolower(char *s)
    }
    return s;
 }
-/********************************************************************/
+/************************************************************************/
+bool iequals(const std::string& a, const std::string& b)
+{
+   return _stricmp(a.c_str(), b.c_str()) == 0;
+}
+/************************************************************************/
 void wait(long seconds)
 {
    long t = time(NULL);

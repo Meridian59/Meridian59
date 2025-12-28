@@ -81,22 +81,7 @@ extern bool is_foreground;   // True when program is in the foreground
 
 /* This list of include files is good for precompiled headers */
 
-#ifdef M59_RETAIL
-  // #define to enable Miles Sound System version.  If not defined,
-  // music is played through the default MIDI player, and sound goes through the
-  // ancient wavemix DLL.
-  #define M59_MSS
-#endif
-
-#ifdef M59_MSS
-#define HANDLE_MM_WOM_DONE(hwnd, wParam, lParam, fn) \
-((fn)((hwnd), (int)(wParam), (lParam)), 0L)
 #define MAX_VOLUME 50
-#else
-extern "C" {
-#include "wavemix.h"
-}
-#endif
    
 #define VOLUME_CUTOFF_DISTANCE 16
 
@@ -115,6 +100,8 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include <stdlib.h>
 #include <crtdbg.h>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 #ifdef M59_RETAIL
   // Minidump reporting
@@ -184,6 +171,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "config.h"
 #include "palette.h"
 #include "sound.h"
+#include "audio_openal.h"
 #include "module.h"     // header common to client and module files
 #include "modules.h"
 #include "textin.h"

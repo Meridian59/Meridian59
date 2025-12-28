@@ -73,7 +73,7 @@ void SetObjectInfo(ID object_id, list_type contents);
 void SetPlayerRemoteView(ID objID, int flags, int height, BYTE light);
 
 
-Bool IsInUse(ID obj_id);
+bool IsInUse(ID obj_id);
 
 void ChangePlayerPos(WORD new_row, WORD new_col);
 void TurnObject(ID object_id, WORD angle);
@@ -114,5 +114,7 @@ M59EXPORT player_info *GetPlayerInfo(void);
 
 M59EXPORT void SetActiveStatGroup(int stat_group);
 M59EXPORT int GetActiveStatGroup(void);
+
+const room_type& getCurrentRoom();
 
 #endif _GAME_H

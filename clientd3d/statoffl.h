@@ -14,10 +14,6 @@
 
 #define MODULE_OFFLINE_ID 1
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void OfflineInit(void);
 void OfflineExit(void);
 void OfflineCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
@@ -27,8 +23,6 @@ void OfflineSetFocus(HWND hwnd, HWND hwndOldFocus);
 
 M59EXPORT void OfflineConnect(void);
 
-#ifdef __cplusplus
-}
-#endif
+extern const char *splash_music;
 
 #endif /* #ifndef _OFFLINE_H */

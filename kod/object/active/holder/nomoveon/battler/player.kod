@@ -434,7 +434,7 @@ resources:
       "city of Barloque there is a clerk named Caramo which handles the "
       "election of the position of Justicar.  The Justicar pardons those that "
       "have been flagged as outlaws and murderers.  Unless you wish to see "
-      "such villians get pardons, it is important to be active in voting."
+      "such villains get pardons, it is important to be active in voting."
       "\n\n"
       "I must warn you that engaging in lethal combat against other players "
       "may soil your good name.  If you strike an innocent, or cast "
@@ -463,7 +463,7 @@ resources:
       "\n\n"
       "%s"
       "\n\n"
-      "Finally, some last bits of advice as I depart.  Do not dispair if "
+      "Finally, some last bits of advice as I depart.  Do not despair if "
       "you are sent to the underworld by some monster or even another "
       "player.  Death is part of the cycle, and learning to recover from "
       "death is important.  Put some items away in the vault in Barloque for "
@@ -561,7 +561,7 @@ resources:
       "\n\n"
       "Lastly, if you wish to leave this land for a bit, merely log off.  "
       "When you log on, you will reappear where you left.  However for "
-      "reasons of saftey, it is highly recommended that you do so in a safe "
+      "reasons of safety, it is highly recommended that you do so in a safe "
       "place, such as an inn.  If you log off outside an inn, you may take "
       "losses similar to death as your soul did not leave the land "
       "completely when you logged off."
@@ -705,6 +705,19 @@ resources:
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
    
+
+   player_advancement_cap_hit_1 = \
+      "~IYou feel like you've practiced all you can in this location.  "
+      "Perhaps a change of scenery would help refresh your mind."
+
+   player_advancement_cap_hit_2 = \
+      "~IYour training seems to have stagnated here. Moving to a different "
+      "area might allow you to continue improving your abilities."
+
+   player_advancement_cap_hit_3 = \
+      "~IYou sense that this place holds no more lessons for you right now.  "
+      "Exploring other locations could renew your capacity for learning."
+
 classvars:
 
    viHand_space = 2
@@ -804,7 +817,7 @@ properties:
    piMax_Mana = 20
    piMana = 20
 
-   % piKarma is measured in hundreths of karma units
+   % piKarma is measured in hundredths of karma units
    piKarma = 0
 
    % Percent stomach is full.
@@ -1019,6 +1032,9 @@ messages:
       
       Send(Send(SYS,@GetAssassinGame),@RemoveFromGame,#who=self);
       Send(Send(SYS,@GetLore),@PlayerSuicides,#who=self);
+      Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=-1);
+      Send(SYS, @RecreatedUser, #what=self);  % Clear bank, vault, etc.
+
       plSchools = $;
       
       propagate;
@@ -1081,13 +1097,25 @@ messages:
             piFlags2=piFlags2 | flag ;
          }
       }
-      
-      if (poOwner <> $)
-         AND (flagset = 1)
-         AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
+
+      % Update who list and room for PK-related flag changes (both setting AND clearing)
+      if flagset = 1 AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
       {
-         % Tell room about change in case there are ramifications.
-         Send(poOwner,@SomethingChanged,#what=self);
+         % Update who list for murderer/outlaw changes
+         if (flag & (PFLAG_MURDERER | PFLAG_OUTLAW))
+         {
+            % Only update who list if server isn't too busy
+            if NOT Send(SYS,@IsServerCrowded)
+            {
+               Send(SYS,@UpdateWhoListForAll);
+            }
+         }
+
+         % Tell room about change in case there are ramifications
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
       }
       
       return;
@@ -2436,6 +2464,12 @@ messages:
 
    DropItem(droppedItem=$, targetGhost=$, dropRoom=$, dropRow=0, dropCol=0,
             index=$, merge=TRUE)
+   % Removes the specified item (by object or index) from the player's inventory and drops it in the specified location.
+   % Returns TRUE if the item was successfully dropped, FALSE otherwise.
+   %
+   % IMPORTANT: This function is assumed NOT to add items to the inventory.
+   % If this behavior changes, review all code that loops over inventory and calls DropItem,
+   % as it may result in infinite loops or other unintended consequences.
    {
       local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
       
@@ -3188,7 +3222,7 @@ messages:
 
    CheckPosition(what=$,type=$,space=0)
    {
-      local i, iSpace;
+      local i, iSpace, bAllowCombination;
 
       if space = 0 OR type = $ OR what = $
       {
@@ -3234,6 +3268,28 @@ messages:
          }
          else
          {
+            % Check if items can be worn in the same slot despite conflicts
+            bAllowCombination = FALSE;
+            
+            for i in plUsing
+            {
+               if Send(i,@GetItemUseType) & type
+               {
+                  if (Send(what,@CanBeWornInSameSlotWith,#what=i) 
+                          OR Send(i,@CanBeWornInSameSlotWith,#what=what))
+                  {
+                     bAllowCombination = TRUE;
+                     break;
+                  }
+               }
+            }
+            
+            if bAllowCombination
+            {
+               return TRUE;
+            }
+            
+            % For all other conflicts, space is full
             Send(self,@MsgSendUser,#message_rsc=player_use_full);
          }
          
@@ -3486,8 +3542,8 @@ messages:
    }
 
    AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
-   "Will not let a person attack someone who isnt pkill_enabled."
-   "Wll not let a person who isnt pkill_enabled attack another person."
+   "Will not let a person attack someone who isn't pkill_enabled."
+   "Will not let a person who isn't pkill_enabled attack another person."
    {
       local oRoom;
       
@@ -4001,7 +4057,7 @@ messages:
 
       oFinalTarget = oTarget;
 
-      % Strange case of us targetting something that someone else is holding.
+      % Strange case of us targeting something that someone else is holding.
       %  This cannot be owned by us, since we already checked that.
       if oTargetOwner <> $
          AND IsClass(oTargetOwner,&Battler)
@@ -4051,7 +4107,7 @@ messages:
          %  something behind you.  "Behind you" is defined as behind the line defined
          %  by the cardinal directions that are the closest to being perpendicular to the
          %  player's direction vector.  For example, if you're facing mostly east, then
-         %  the cardinal direction direction line runs north/south; in essense, anything
+         %  the cardinal direction direction line runs north/south; in essence, anything
          %  that is further west than you is "behind" you.  The more interesting cases
          %  are when the player is facing one of the corner directions.  We calculate
          %  the equation of the line using the point-slope formula and determine which
@@ -4661,7 +4717,7 @@ messages:
 
    GetWeaponSwingBonus()
    {
-      % Separate out the number of groups of swings (the bonus) fromt he proficiency number.
+      % Separate out the number of groups of swings (the bonus) from the proficiency number.
       return piWeaponInfo/1000;
    }
 
@@ -4695,7 +4751,10 @@ messages:
          }
       }
       
-      Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      if poOwner <> $ 
+      {
+         Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      }
 
       % Let our shield know we killed something.
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
@@ -5499,7 +5558,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
+      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, iSpellPower;
 
       if piMana > piMax_mana
       {
@@ -5538,7 +5597,8 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
          if Send(self,@IsEnchanted,#what=oSpell)
          {
-            iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
+            iSpellPower = send(oSpell,@GetSpellPower,#who=self);
+            iTime = Send(oSpell,@AdjustManaTime,#time=iTime,#iSpellPower=iSpellPower);
          }
       }
 
@@ -5547,9 +5607,11 @@ messages:
 
    ReqEatSomething(filling = 0, what = $)
    {
+      local i;
       % This is the only place we need piStomach to be correct
       Send(self,@UpdateStomach);
 
+      % Are we too full to eat and drink?
       if (piStomach + filling) > 100
       {
          if what = $ OR NOT Send(what,@IsBeverage)
@@ -5563,7 +5625,19 @@ messages:
          
          return FALSE;
       }
-      
+
+      % An enchantment may prevent eating food - ie Second Wind
+      % Loop over the enchantments to check
+      if what <> $
+      {
+         for i in plEnchantments
+         {
+            if NOT Send(nth(i,2),@ReqEatSomething,#what=what,#who=self)
+            {
+               return FALSE;
+            }
+         }
+      }
       return TRUE;
    }
 
@@ -5704,7 +5778,7 @@ messages:
    }
 
    NewLight()
-   "Call this everytime player light is changed."
+   "Call this every time player light is changed."
    {      
       Send(self,@SourceLightChanged);
       
@@ -5756,7 +5830,7 @@ messages:
       %           OOOOOOOOOOOOOO......             (. is space to max)
       %     -->   OOOOOOOOOO......
       %     which could result in death!
-      %     the behavior could be made assymetrical,
+      %     the behavior could be made asymmetrical,
       %           OOOOOOOOOOOOOO......
       %     -->   OOOOOOOOOOOOOO..
       %     but what about this case?
@@ -5765,7 +5839,7 @@ messages:
       %     the left is obviously abusable - compound it with the first gain above,
       %     and by putting on and removing a circlet we gain health!
       %     the right might be ok, and is closest to the current scheme,
-      %     but this introduces even more assymmetry and thus makes me nervous.
+      %     but this introduces even more asymmetry and thus makes me nervous.
       %     so my first pass is to do nothing to health here:
       %
       %if piHealth > piMax_health { piHealth = piMax_health; }
@@ -6255,7 +6329,7 @@ messages:
    }
 
    AddKarma(amount = 0)
-   "Adds argument (which must be in hundreths of karma units) to karma"
+   "Adds argument (which must be in hundredths of karma units) to karma"
    {
       piKarma = piKarma + amount;
       Send(self,@NewKarma);
@@ -6359,7 +6433,7 @@ messages:
       }
       
       % No karma change in arenas.
-      if Send(oRoom,@IsArena)
+      if oRoom <> $ AND Send(oRoom,@IsArena)
       {
          return 0;
       }
@@ -7464,9 +7538,31 @@ messages:
    CheckAdvancementPoints()
    "Checks to be sure a player isn't at the limit yet."
    {
+      local iMessage;
+
       if piAdvancement_points < ADVANCEMENT_LIMIT
       {
          return TRUE;
+      }
+
+      % Player has hit the advancement cap.  Show educational message occasionally
+      % about moving to different rooms to continue practicing (12.5% chance).
+      if Random(1,8) = 1
+      {
+         iMessage = Random(1,3);
+         
+         if iMessage = 1
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_advancement_cap_hit_1);
+         }
+         if iMessage = 2
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_advancement_cap_hit_2);
+         }
+         if iMessage = 3
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_advancement_cap_hit_3);
+         }
       }
       
       return FALSE;
@@ -7886,7 +7982,7 @@ messages:
 
          Post(self,@EvaluatePKStatus);
 
-         % Let SoldierShields know we died.  It handles itself as apropriate.
+         % Let SoldierShields know we died.  It handles itself as appropriate.
          oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
          if oSoldierShield <> $
          {
@@ -8704,6 +8800,13 @@ messages:
    "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
+      if Send(self,@FindUsing,#class=&Robe) <> $ 
+         AND IsClass(what,&Pants) 
+      {
+         % Player is wearing a robe so we don't show pants here as they are underneath.
+         return;
+      }
+
       poLegs_set = what;
       prLegs = new_legs;
 
@@ -8719,22 +8822,40 @@ messages:
    }
 
    ResetPlayerLegs()
-   "Sets our icon to its natural, un-panted state."
+   "Sets our player's legs to show their robes, pants (equipped or un-panted state)."
    {
+      local robes_in_use, pants_in_use, translation;
+      robes_in_use = Send(self,@FindUsing,#class=&Robe);
+      if robes_in_use <> $
+      {
+         % Player is wearing robes (regardless of what's changed beneath).
+         return;
+      }
+
       poLegs_set = $;
 
-      if piGender = GENDER_MALE
+      pants_in_use = Send(self,@FindUsing,#class=&Pants);
+      if pants_in_use = $
       {
-         prLegs = player_legs_a_rsc;
+         translation = Send(self,@GetDefaultPantsTranslation);
+         if piGender = GENDER_MALE
+         {
+            prLegs = player_legs_a_rsc;
+         }
+         else
+         {
+            prLegs = player_legs_b_rsc;
+         }
       }
       else
       {
-         prLegs = player_legs_b_rsc;
+         prLegs = Send(pants_in_use,@GetLegs,#who=self);
+         translation = Send(pants_in_use,@GetPaletteTranslation);
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | 
-                            (Send(self,@GetDefaultPantsTranslation) * PLAYER_TRANSLATION_LEGS_MUL); 
+                           (translation * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
       {      
@@ -11196,7 +11317,9 @@ messages:
 
    ResignFaction()
    {
-      local numMembers, oQuestEngine, oQuest, oFlagPole;
+      local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
+
+      iServiceQuestIndex = 0;
 
       oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
@@ -11217,51 +11340,41 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=player_unfactioned);
       }
-      
-      %decrease the max number of loyalty quests by one
+
+      % Decrease the max number of loyalty quests and expire the player's 
+      % current service quest, if one is active 
       if piFaction = FACTION_PRINCESS
       {
+         iServiceQuestIndex = QST_ID_PRINCESS_SERVICE;
+      }
+
+      if piFaction = FACTION_DUKE
+      {
+         iServiceQuestIndex = QST_ID_DUKE_SERVICE;
+      }
+
+      if piFaction = FACTION_REBEL
+      {
+         iServiceQuestIndex = QST_ID_REBEL_SERVICE;
+      }
+
+      if iServiceQuestIndex > 0
+      {
          oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_PRINCESS_SERVICE);
+                     #index=iServiceQuestIndex);
+         
+         % If the player is on a service quest for the faction they're losing, 
+         % let's expire it to avoid confusion caused by its eventual failure.
+         Send(oQuestEngine,@ExpireQuests,#index=iServiceQuestIndex,#who=self,
+               #report=FALSE);
+
+         % Decrease the max number of loyalty quests by one
          numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
          if numMembers > 0
          {
             Send(oQuestEngine,@SetQuestMaxActive,
-                 #index=QST_ID_PRINCESS_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-      }
-      
-      if piFaction = FACTION_DUKE
-      {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_DUKE_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_DUKE_SERVICE,
-                 #new_max=(numMembers-1));
-         }
-         else
-         {
-            Debug("ResignFaction miscounted number of faction members!");
-         }
-      }
-      
-      if piFaction = FACTION_REBEL
-      {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
-                       #index=QST_ID_REBEL_SERVICE);
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
-         {
-            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_REBEL_SERVICE,
-                 #new_max=(numMembers-1));
+                  #index=iServiceQuestIndex,
+                  #new_max=(numMembers-1));
          }
          else
          {
@@ -12264,7 +12377,6 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

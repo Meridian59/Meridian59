@@ -18,7 +18,7 @@ static HMENU actions_menu;    // Actions submenu
 typedef struct {
    int command;                // Windows menu command when item selected (0 if a separator item)
    int name;                   // ID of string to show for item
-   char *text;                 // Text command to execute
+   const char *text;           // Text command to execute
 } Action;
 
 static Action actions[] = {

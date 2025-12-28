@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define PAGE_BREAK_CHAR '¶'	  /* For multi-page descriptions */
+static const unsigned char PAGE_BREAK_CHAR = 0xB6;	  /* U+00B6 PILCROW SIGN For multi-page descriptions */
 #define MAX_PAGE_DESCRIPTION_TEXT MAXMESSAGE
 
 static HWND hDescDialog = NULL;   /* Non-null if Description dialog is up */
@@ -31,6 +31,7 @@ static ChildPlacement desc_controls[] = {
 	{ IDC_USE,         RDI_BOTTOM },
 	{ IDC_UNUSE,       RDI_BOTTOM },
 	{ IDC_INSIDE,      RDI_BOTTOM },
+	{ IDC_APPLY,       RDI_BOTTOM },
 	{ IDC_ACTIVATE,    RDI_BOTTOM },
 	{ IDC_URLLABEL,    RDI_BOTTOM },
 	{ IDC_URLBUTTON,   RDI_BOTTOM },
@@ -197,7 +198,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 {
 	DescDialogStruct *info;
 	static HWND hwndBitmap;
-	static Bool changed;   // True when player has changed description
+	static bool changed;   // true when player has changed description
 	HWND hEdit, hwndOK, hURL, hFixed;
 	HDC hdc;
 	HFONT hFont;
@@ -341,7 +342,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		SetLookPageButtons(hDlg, info);
 		SetFocus(hwndOK);
 		hDescDialog = hDlg;
-		changed = False;
+		changed = false;
 		return FALSE;
 		
    case WM_PAINT:
@@ -454,7 +455,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   case IDC_DESCBOX:
 			   if (GET_WM_COMMAND_CMD(wParam, lParam) != EN_CHANGE)
 				   break;
-			   changed = True;
+			   changed = true;
 			   return TRUE;
 			   
 		   case IDC_URLBUTTON:
@@ -517,7 +518,7 @@ void AnimateDescription(int dt)
 	
 	old_group = obj->animate->group;
 	
-	if (AnimateObject(obj, dt) == True)
+	if (AnimateObject(obj, dt) == true)
 		SendMessage(hDescDialog, BK_ANIMATE, 0, 0);
 }
 /*****************************************************************************/
@@ -559,7 +560,7 @@ INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 		MoveWindow(hDlg, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
 			dlg_rect.bottom - dlg_rect.top, FALSE);
 		
-		sprintf(buf, "%u", info->amount);
+		snprintf(buf, sizeof(buf), "%u", info->amount);
 		Edit_SetText(hEdit, buf);
 		Edit_LimitText(hEdit, MAXAMOUNT);
 		
@@ -664,10 +665,9 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 	// Different dialog for players
 	template_id = (obj->flags & OF_PLAYER) ? IDD_DESCPLAYER : IDD_DESC;
 	
-	DialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
+	SafeDialogBoxParam(hInst, MAKEINTRESOURCE(template_id), hDescParent,
                  DescDialogProc, reinterpret_cast<LPARAM>(&info));
 	
-	TooltipReset();
 	SetDescParams(NULL, DESC_NONE);
 }
 /************************************************************************/
@@ -732,4 +732,14 @@ void AbortGameDialogs(void)
 	AbortAnnotateDialog();
 	AbortPasswordDialog();
 	AbortPreferencesDialog();
+}
+/************************************************************************/
+/*
+* SafeDialogBoxParam:  A wrapper for DialogBoxParam that resets tooltips when a dialog is opened.
+*   This is necessary because tooltips are not reset when a dialog is opened.
+*/
+INT_PTR SafeDialogBoxParam(HINSTANCE hInstance, LPCSTR lpTemplate, HWND hWndParent, DLGPROC lpDialogFunc, LPARAM dwInitParam)
+{
+    TooltipReset();
+    return DialogBoxParam(hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
 }

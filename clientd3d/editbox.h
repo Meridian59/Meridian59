@@ -16,7 +16,7 @@ void EditBoxCreate(HWND hParent);
 void EditBoxDestroy(void);
 void EditBoxReset(int xsize, int ysize, AREA view);
 void EditBoxResize(int xsize, int ysize, AREA view);
-void EditBoxSetFocus(Bool forward);
+void EditBoxSetFocus(bool forward);
 void EditBoxDrawBorder(void);
 void EditBoxGetArea(AREA *a);
 HWND EditBoxWindow(void);

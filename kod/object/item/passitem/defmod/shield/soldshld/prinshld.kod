@@ -17,6 +17,14 @@ constants:
 
    include blakston.khd
 
+   FACTION_RANK_MIN = 1
+   FACTION_RANK_MAX = 10
+
+   % The min and max possible mana reduction values, 
+   % scaling linearly with faction rank.
+   MANA_REDUCTION_MIN = 5
+   MANA_REDUCTION_MAX = 25
+
 resources:
 
    PrincessShield_name_rsc = "shield of the Princess' army"
@@ -150,10 +158,30 @@ messages:
    }
 
    GetSpellManaReduction()
+   "Gets the % by which mana is reduced for Princess shield holders."
    {
       local iReduction;
 
-      iReduction = Bound(((piFactionRank/3) - 1),0,$);
+      % Sample numbers for:
+      % - FACTION_RANK_MIN = 1
+      % - FACTION_RANK_MAX = 10
+      % - MANA_REDUCTION_MIN = 5
+      % - MANA_REDUCTION_MAX = 25
+      
+      % Faction Rank | iReduction (%)
+      % -------------|---------------
+      %       1      |      5
+      %       2      |      7
+      %       3      |      9
+      %       4      |     11
+      %       5      |     13
+      %       6      |     16
+      %       7      |     18
+      %       8      |     20
+      %       9      |     22
+      %      10      |     25
+
+      iReduction = ((piFactionRank - 1) * (MANA_REDUCTION_MAX - MANA_REDUCTION_MIN) / (FACTION_RANK_MAX - FACTION_RANK_MIN)) + MANA_REDUCTION_MIN;
 
       return iReduction;
    }

@@ -10,22 +10,11 @@
 
 // Variables
 
-extern LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-extern room_type current_room;
-
-extern d3d_driver_profile gD3DDriverProfile;
-extern d3d_render_pool_new gWorldPool;
-extern d3d_render_cache_system gWorldCacheSystem;
-
-extern D3DMATRIX view;
-
-extern Bool gD3DRedrawAll;
-
 static const float SKYBOX_DIMENSIONS = 75000.0f;
 static const float SKYBOX_Y = 37000.0f;
 
 static LPDIRECT3DTEXTURE9 gpSkyboxTextures[5][6];
-int gCurBackground;
+static int gCurBackground;
 static ID tempBkgnd = 0;
 
 static float gSkyboxXYZ[] =
@@ -136,15 +125,17 @@ static unsigned char gSkyboxBGRA[] =
 
 // Interfaces
 
-static void D3DRenderBackgroundsLoad(char* pFilename, int index);
-static void D3DRenderBackgroundSet(ID background);
+static void D3DRenderBackgroundsLoad(const char* pFilename, int index);
+static bool D3DRenderBackgroundSet(ID background);
 
 // Implementations
 
 /**
-* Initialize the skybox rendering process.
+* Update the skybox with the current background.
+* Return true the background has changed and false otherwise.
+* If the background has changed, the caller should trigger a redraw all.
 */
-void D3DRenderSkyBoxBegin()
+bool D3DRenderUpdateSkyBox(DWORD background)
 {
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
@@ -154,17 +145,19 @@ void D3DRenderSkyBoxBegin()
 		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
 		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
 	}
-	if (tempBkgnd != current_room.bkgnd)
+	if (tempBkgnd != background)
 	{
-		D3DRenderBackgroundSet(current_room.bkgnd);
-		tempBkgnd = current_room.bkgnd;
+		tempBkgnd = background;
+		return D3DRenderBackgroundSet(tempBkgnd);
 	}
+	return false;
 }
 
 /**
 * Function to render the skybox with the current background.
 */
-void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* pRNode, int& angleHeading, int& anglePitch)
+void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
+	const SkyboxRenderParams& skyboxRenderParams)
 {
 	// Set render states for skybox
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -187,22 +180,19 @@ void D3DRenderSkyBox(room_type* room, Draw3DParams* params, room_contents_node* 
 
 	// Set vertex shader and declaration for the skybox
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skyboxRenderParams.vertexDeclaration);
 
 	// Render the skybox
-	D3DRenderPoolReset(&gWorldPool, &D3DMaterialWorldPool);
-	D3DRenderSkyboxDraw(&gWorldPool, angleHeading, anglePitch);
-	D3DCacheFill(&gWorldCacheSystem, &gWorldPool, 1);
-	D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
+	D3DRenderPoolReset(&skyboxRenderParams.renderPool, &D3DMaterialWorldPool);
+	D3DRenderSkyboxDraw(&skyboxRenderParams.renderPool, angleHeading, anglePitch);
+	D3DCacheFill(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1);
+	D3DCacheFlush(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1, 
+		D3DPT_TRIANGLESTRIP);
 
 	// Restore render states after skybox rendering
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
-
-	// Restore alpha blending and alpha testing for subsequent rendering
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 
 	// restore the correct view matrix
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
@@ -281,12 +271,13 @@ void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int angle
 
 /**
 * Set the current background texture for the skybox by background ID.
+* Returns true if the background was set successfully and false otherwise.
 */
-void D3DRenderBackgroundSet(ID background)
+bool D3DRenderBackgroundSet(ID background)
 {
 	char* filename = LookupRsc(background);
 
-	if (!filename) return;
+	if (!filename) return false;
 
 	static const std::unordered_map<std::string, int> backgroundMap = {
 		{"1skya.bgf", 0},
@@ -306,8 +297,7 @@ void D3DRenderBackgroundSet(ID background)
 		gCurBackground = it->second;
 	}
 
-	// force a rebuild since static lightmaps might have changed
-	gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	return true;
 }
 
 /**
@@ -332,7 +322,7 @@ void D3DRenderSkyBoxShutdown()
 /**
 * Loads a series of PNG images from a specified file and creates textures for the skybox.
 */
-void D3DRenderBackgroundsLoad(char* pFilename, int index)
+void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 {
 	FILE* pFile;
 	png_structp	pPng = NULL;

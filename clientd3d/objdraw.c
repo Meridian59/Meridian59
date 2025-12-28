@@ -109,7 +109,7 @@ void DrawObjectTranslucent(ObjectRowData *d)
 	bixlat* pBiXlat = &_blend75;
 	BYTE index;
 	int effect;
-	register BYTE *start, *end;
+	BYTE *start, *end;
 	int x, xinc;
 	BYTE *palette, *row_bits;
 	
@@ -403,9 +403,8 @@ void DrawObjectDitherTranslate(ObjectRowData *d)
 }
 
 /************************************************************************/
-void DrawTargetHalo( ObjectRowData* d, BYTE* obj_bits, long y, long yinc, long bitmap_width, Bool bTopRow, Bool bBottomRow )	//, Bool bClipHaloLeft, Bool bClipHaloRight )
+void DrawTargetHalo( ObjectRowData* d, BYTE* obj_bits, long y, long yinc, long bitmap_width, bool bTopRow, bool bBottomRow )
 {
-	//	ajw
 	//	Draw target selection effect around object.
 	//	This occurs before object is drawn, so only stuff around the edges will show.
 	
@@ -548,7 +547,7 @@ void DrawTargetHalo( ObjectRowData* d, BYTE* obj_bits, long y, long yinc, long b
 }
 
 /************************************************************************/
-void DrawTargetEffect( ObjectRowData* d )		//	ajw
+void DrawTargetEffect( ObjectRowData* d )
 {
 	//	For showing user's selected target.
 	//	Draws overs previously drawn image, acting on pixels already drawn.

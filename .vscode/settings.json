@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.rc": "resource_files"
+  },
+  "[resource_files]": {
+    "files.encoding": "windows1252"
+  }
+}

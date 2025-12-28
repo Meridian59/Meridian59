@@ -90,7 +90,7 @@ messages:
       propagate;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what = $, who = $)
    {
       if Send(what,@CanBeGiventoNPC)
          AND (Send(Self,@IsObjectWeapon,#what=what)
@@ -125,7 +125,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
 

@@ -15,6 +15,10 @@ constants:
    include blakston.khd
 
    ANIM_FLASH = 2
+   ANIMATION_FLASH_SPEED = 300
+   FRAME_DEFAULT = 1
+   FRAME_BROKEN_GROUND = 4
+   FRAME_FLASH = 5
 
 resources:
 
@@ -45,6 +49,9 @@ classvars:
    viBulk = 10
    viWeight = 15
 
+   viGround_group = 2
+   viBroken_group = 3
+
 properties:
 
    vrDesc = frozjewel_desc_rsc
@@ -63,6 +70,8 @@ messages:
 	           #parm1=Send(self,@GetCapDef),#parm2=vrName);
          Send(poOwner,@TryUnuseItem,#what=self);
          vrDesc = frozjewel_desc_broken_rsc;
+
+         Send(poOwner,@SomethingChanged,#what=self);
       
          return hit_roll;
       }
@@ -122,30 +131,28 @@ messages:
 
    SendAnimation()
    {
-      AddPacket(1,ANIMATE_NONE,2,2);
+      % Override to replace the default broken inventory graphic `viBroken_group` 
+      % with a broken ground graphic.
+      if piHits <= 0
+      {
+         AddPacket(1,ANIMATE_NONE, 2,FRAME_BROKEN_GROUND);
 
-      return;
-   }
+         return;
+      }
 
-   SendLookAnimation()
-   {
-      AddPacket(1,ANIMATE_NONE,2,1);
-
-      return;
-   }
+      propagate;
+   } 
 
    SendInventoryAnimation()
    {
       if piAnimation = ANIM_FLASH
       {
-         AddPacket(1,ANIMATE_ONCE,4,300,2,3,2,3,2,1);
-      }
-      else
-      {
-         AddPacket(1,ANIMATE_NONE,2,1);
+         AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_FLASH_SPEED, 2,FRAME_FLASH, 2,FRAME_FLASH, 2,FRAME_DEFAULT);
+       
+         return;
       }
       
-      return;
+      propagate;
    }
 
 

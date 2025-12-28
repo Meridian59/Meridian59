@@ -43,19 +43,19 @@ typedef struct {
    int current_value;  // Current value
    int limit_value;    // Maximum value "current_value" can attain
    COLORREF colors[GRAPH_NUMCOLORS];
-   Bool button_down;
+   bool button_down;
    DWORD style;
 } GraphCtlStruct;
 
 extern HPALETTE hPal;
 
-static char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
+static const char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
 
 /* local function prototypes */
 LRESULT CALLBACK GraphCtlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 static void GraphCtlLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void GraphCtlLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
-static Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
+static bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
 static void GraphCtlPaint(HWND hwnd);
 static void GraphCtlMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
 static void GraphCtlKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
@@ -64,11 +64,11 @@ static void GraphCtlMoveBar(HWND hwnd, GraphCtlStruct *info, int x);
 /*****************************************************************************/
 /*
  * GraphCtlRegister:  One-time initialization to register graph control.
- *   Return True iff successful, or class already registered.
+ *   Return true iff successful, or class already registered.
  */
-Bool GraphCtlRegister(HINSTANCE hInst)
+bool GraphCtlRegister(HINSTANCE hInst)
 {
-   static Bool registered = False;
+   static bool registered = false;
    WNDCLASS wc;
 
    if (!registered)
@@ -85,7 +85,7 @@ Bool GraphCtlRegister(HINSTANCE hInst)
       wc.style         = CS_DBLCLKS | CS_VREDRAW | CS_HREDRAW | CS_GLOBALCLASS;
       
       if (RegisterClass(&wc) != 0)
-	 registered = True;
+	 registered = true;
       else debug(("Registering graph class failed\n"));
    }
    return registered;
@@ -95,14 +95,14 @@ Bool GraphCtlRegister(HINSTANCE hInst)
  * GraphCtlUnregister:  Remove registration info for graph control.
  *   This function should only be called after all windows that contain graph
  *   controls have been destroyed, i.e. just before the program exits.
- *   Return True iff successful, or class already registered.
+ *   Return true iff successful, or class already registered.
  */
-Bool GraphCtlUnregister(HINSTANCE hInst)
+bool GraphCtlUnregister(HINSTANCE hInst)
 {
    return UnregisterClass(GraphCtlName, hInst);
 }
 /*****************************************************************************/
-char *GraphCtlGetClassName(void)
+const char *GraphCtlGetClassName(void)
 {
    return GraphCtlName;
 }
@@ -166,7 +166,7 @@ LRESULT CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
    return 0L;
 }
 /*****************************************************************************/
-Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
+bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
    GraphCtlStruct *info;
    int i;
@@ -179,7 +179,7 @@ Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
    info->current_value = GRAPHDEFVAL;
    info->limit_value   = GRAPHDEFLIMIT;
 
-   info->button_down = False;
+   info->button_down = false;
 
    /* Copy style bits */
    info->style = lpCreateStruct->style;
@@ -188,7 +188,7 @@ Bool GraphCtlCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
    for (i=0; i < GRAPH_NUMCOLORS; i++)
       info->colors[i] = (COLORREF) -1;
 
-   return True;
+   return true;
 }
 /*****************************************************************************/
 void GraphCtlLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
@@ -204,7 +204,7 @@ void GraphCtlLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
    GraphCtlMoveBar(hwnd, info, x);
 
    /* Capture mouse movements until button is released */
-   info->button_down = True;
+   info->button_down = true;
    SetCapture(hwnd);
 }
 /*****************************************************************************/
@@ -215,7 +215,7 @@ void GraphCtlLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
    if (!(info->style & GCS_INPUT))
       return;
 
-   info->button_down = False;
+   info->button_down = false;
    ReleaseCapture();
 }
 /*****************************************************************************/
@@ -266,7 +266,7 @@ void GraphCtlPaint(HWND hwnd)
    POINT triangle[3] = { { 0, 0}, {GRAPH_SLIDER_HEIGHT / 2, GRAPH_SLIDER_HEIGHT - 1},
 			 { - GRAPH_SLIDER_HEIGHT / 2, GRAPH_SLIDER_HEIGHT - 1} };
    POINT points[3];
-   Bool focus;
+   bool focus;
    char temp[MAXAMOUNT + 1];
 
 
@@ -351,7 +351,7 @@ void GraphCtlPaint(HWND hwnd)
    // Draw value of stat, if appropriate
    if (info->style & GCS_NUMBER)
    {
-      sprintf(temp, "%d", info->current_value);
+      snprintf(temp, sizeof(temp), "%d", info->current_value);
 
       SetBkMode(hdc, TRANSPARENT);
       SelectObject(hdc, GetFont(FONT_STATNUM));

@@ -6,9 +6,6 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-#include <unordered_map>
-#include <unordered_set>
-#include <chrono>
 
 #define	TEX_CACHE_MAX_OBJECT	8000000
 #define	TEX_CACHE_MAX_WORLD		8000000
@@ -22,12 +19,12 @@ extern int main_viewport_width;
 extern int main_viewport_height;
 
 // Define field of views with magic numbers for tuning
-inline float FovHorizontal(long width)
+float FovHorizontal(long width)
 {
 	return width / (float)(main_viewport_width) * (-PI / 3.78f);
 }
 
-inline float FovVertical(long height)
+float FovVertical(long height)
 {
 	return height / (float)(main_viewport_height) * (PI / 5.88f);
 }
@@ -94,10 +91,11 @@ BYTE					gViewerLight = 0;
 int						gNumObjects;
 int						gNumVertices;
 int						gNumDPCalls;
-PALETTEENTRY			gPalette[256];
-unsigned int			gFrame = 0;
+static PALETTEENTRY		gPalette[256];
 int						gScreenWidth;
 int						gScreenHeight;
+
+static unsigned int		gFrame = 0;
 
 // The size of the main full size render buffer and also a smaller buffer for effects.
 // The smaller buffer is used for effects that don't need full resolution.
@@ -133,20 +131,15 @@ LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 
 AREA					gD3DView;
-Bool					gD3DRedrawAll = FALSE;
+int           gD3DRedrawAll = 0;
 int						gTemp = 0;
-Bool					gWireframe;		// this is really bad, I'm sorry
+bool					gWireframe;		// this is really bad, I'm sorry
 
-extern player_info		player;
 extern long				viewer_height;
-extern Color			base_palette[];
+extern Color			base_palette[NUM_COLORS];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
-extern Draw3DParams		*p;
-extern int				gNumCalls;
-extern room_type		current_room;
-extern long				shade_amount;
 extern DrawItem			drawdata[];
 extern long				nitems;
 extern int				sector_depths[];
@@ -154,12 +147,11 @@ extern d3d_driver_profile	gD3DDriverProfile;
 extern BYTE				*gBits;
 extern BYTE				*gBufferBits;
 extern D3DPRESENT_PARAMETERS	gPresentParam;
-extern Vector3D			sun_vect;
 extern long				stretchfactor;
-extern BYTE				light_rows[MAXY/2+1];      // Strength of light as function of screen row
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
+D3DMATRIX view, mat, rot, trans, proj;
 
 void				D3DRenderLMapsBuild(void);
 void				D3DLMapsStaticGet(room_type *room);
@@ -185,9 +177,58 @@ void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
                                    *((DWORD *) &bias));
 }
 
+int getD3dRenderThreshold()
+{
+	return d3dRenderTextureThreshold;
+}
+
+bool isManagedTexturesEnabled() {
+    return gD3DDriverProfile.bManagedTextures;
+}
+
+bool isFogEnabled()
+{
+	return gD3DDriverProfile.bFogEnable;
+}
+
+void setWireframeMode(bool isEnabled)
+{
+	gWireframe = isEnabled;
+}
+
+PALETTEENTRY* getPalette()
+{
+    return gPalette;
+}
+
+const Color(&getBasePalette())[NUM_COLORS]
+{
+	return base_palette;
+}
+
+bool isWireframeMode()
+{
+	return gWireframe;
+}
+
+const font_3d& getFont3d()
+{
+	return gFont;
+}
+
+const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
+{
+	return gpDLightWhite;
+}
+
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+{
+	return gpBackBufferTex[0];
+}
+
 // externed stuff
 extern void			DrawItemsD3D();
-extern Bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
+extern bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 extern void			UpdateRoom3D(room_type *room, Draw3DParams *params);
 
 int DistanceGet(int x, int y)
@@ -435,8 +476,7 @@ void D3DRenderShutDown(void)
 		gpD3D = NULL;
 	}
 }
-D3DMATRIX	mat, rot, trans, view, proj, identity;
-long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox, timeSetup, timeComplete;
+
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
 	int			angleHeading, anglePitch;
@@ -444,18 +484,36 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	int			curIndex = 0;
 	room_contents_node *pRNode = nullptr;
 
+	long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox, timeSetup, timeComplete;
+
 	timeOverall = timeGetTime();
 	timeSetup = timeGetTime();
 
-	// If blind, don't draw anything
-	Bool can_see = !effects.blind;
-	Bool draw_sky = can_see;
-	Bool draw_world = can_see;
-	Bool draw_objects = can_see;
-	Bool draw_particles = can_see;
-	Bool draw_background_overlays = can_see;
+	// Static variable to track the player's previous ability to see. Initialize it only once.
+	static bool can_see = !effects.blind;
 
-	D3DRenderSkyBoxBegin();
+	// Determine the current ability to see.
+	bool can_see_now = !effects.blind;
+
+	// Trigger a redraw only if the player was blind, but now can see.
+	if (!can_see && can_see_now) {
+		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	}
+
+	// Update the can_see state for the next frame.
+	can_see = can_see_now;
+
+	// If blind (!can_see), don't draw anything
+	bool draw_sky = can_see;
+	bool draw_world = can_see;
+	bool draw_objects = can_see;
+	bool draw_particles = can_see;
+	bool draw_background_overlays = can_see;
+
+	if (D3DRenderUpdateSkyBox(room->bkgnd))
+	{
+		gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+	}
 
 	// view element textures
 	if (gFrame == 0)
@@ -477,7 +535,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	gNumVertices = 0;
 	gNumDPCalls = 0;
 
-	p = params;
+	setDrawParams(params);
 
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;
@@ -534,13 +592,26 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_sky) // Render the skybox first
 	{
-		D3DRenderSkyBox(room, params, pRNode, angleHeading, anglePitch);
+		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
+		D3DRenderSkyBox(params, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
+
+	// Prepare our rendering parameters
+
+	WorldCacheSystemParams worldCacheSystemParams(&gWorldCacheSystem, &gWorldCacheSystemStatic,
+		&gLMapCacheSystem, &gLMapCacheSystemStatic, &gWallMaskCacheSystem);
+
+	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
+		
+	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, 
+		view, proj);
+
+	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
+
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange);
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
-		D3DFxInit();
-
 		D3DCacheSystemReset(&gWorldCacheSystemStatic);
 		D3DCacheSystemReset(&gWallMaskCacheSystem);
 
@@ -550,14 +621,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 		
 		// Second pass: render transparent objects
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-		D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 
 		gD3DRedrawAll = FALSE;
 	}
@@ -574,12 +645,15 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// background overlays (e.g. the Sun & Moon)
 	if (draw_background_overlays)
 	{
-		D3DRenderBackgroundOverlays(&gWorldPool, angleHeading, anglePitch, room, params);
+		BackgroundOverlaysRenderStateParams bgoRenderStateParams(decl1dc, gD3DDriverProfile, &gWorldPool, &gWorldCacheSystem, 
+			view, mat, gD3DRect);
+		BackgroundOverlaysSceneParams bgoSceneParams(&num_visible_objects, visible_objects, angleHeading, anglePitch, room, params);
+		D3DRenderBackgroundOverlays(bgoRenderStateParams, bgoSceneParams);
 	}
 
 	if (draw_world)
 	{
-		D3DRenderWorld(room, params, pRNode);
+		timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -587,12 +661,22 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_particles)
 	{
-		D3DRenderParticles();
+		ParticleSystemStructure particleSystemStructure(decl1dc, playerDeltaPos, &gParticlePool, &gParticleCacheSystem);
+		D3DRenderParticles(particleSystemStructure);
 	}
 
 	if (draw_objects)
 	{
-		D3DRenderObjects(room, params, pRNode);
+		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem, view, proj, room, params);
+
+		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
+			gpBackBufferTexFull, gpBackBufferTex);
+
+		FontTextureParams fontTextureParams(&gFont, gSmallTextureSize);
+
+		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
+
+		timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
@@ -609,16 +693,21 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
+	FxRenderSystemStructure fxRenderSystemStructure(decl1dc, &gObjectPool, &gObjectCacheSystem, 
+		&gEffectPool, &gEffectCacheSystem, gpBackBufferTex, gpBackBufferTexFull, 
+		gFullTextureSize, gSmallTextureSize, mat, gFrame, gScreenWidth, gScreenHeight);
+
 	// post overlay effects
 	if (draw_objects)
 	{
-		D3DPostOverlayEffects(&gObjectPool);
+		D3DPostOverlayEffects(fxRenderSystemStructure);
 	}
 
-	// test blur
+	// apply blur and wave distortion effects
 	if (effects.blur || effects.waver)
 	{
-		D3DFxBlurWaver();
+		MatrixIdentity(&mat);
+		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 
 	timeComplete = timeGetTime();
@@ -631,6 +720,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
@@ -663,8 +755,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		{
 			D3DRenderShutDown();
 			D3DRenderInit(hMain);
-			D3DGeometryBuildNew(room, &gWorldPoolStatic, false);
-			D3DGeometryBuildNew(room, &gWorldPoolStatic, true);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 		}
 	}
 	if ((gFrame & 255) == 255)
@@ -678,20 +770,20 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 }
 
-Bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
+bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 {
 	if (dLight->objID != pRNode->obj.id)
-		return FALSE;
+		return false;
 	if (dLight->xyzScale.x != DLIGHT_SCALE(pRNode->obj.dLighting.intensity))
-		return FALSE;
+		return false;
 	if (dLight->color.b != (pRNode->obj.dLighting.color & 31) * 255 / 31)
-		return FALSE;
+		return false;
 	if (dLight->color.g != ((pRNode->obj.dLighting.color >> 5) & 31) * 255 / 31)
-		return FALSE;
+		return false;
 	if (dLight->color.r != ((pRNode->obj.dLighting.color >> 10) & 31) * 255 / 31)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 void D3DLMapsStaticGet(room_type *room)
@@ -718,7 +810,7 @@ void D3DLMapsStaticGet(room_type *room)
 
 		pDib = GetObjectPdib(pProjectile->icon_res, 0, 0);
 
-		GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
+		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
 			max(bottom, pProjectile->motion.z);
@@ -776,7 +868,7 @@ void D3DLMapsStaticGet(room_type *room)
 
 		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
 
-		GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
+		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
 			max(bottom, pRNode->motion.z);
@@ -845,7 +937,7 @@ void D3DLMapsStaticGet(room_type *room)
 		gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
 		gDLightCache.dLights[gDLightCache.numLights].xyz.z = pRNode->motion.z;
 
-		GetRoomHeight(current_room.tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
+		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
 
 		gDLightCache.dLights[gDLightCache.numLights].xyz.z =
 			max(bottom, pRNode->motion.z);
@@ -899,7 +991,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 	{
 		if (tree == NULL)
 		{
-			return False;
+			return false;
 		}
 
 		switch(tree->type)
@@ -925,7 +1017,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 
 			default:
 				debug(("add_object error!\n"));
-			return False;
+			return false;
 		}
 	}
 }
@@ -1405,257 +1497,108 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
    // Render view elements (such as the main viewport yellow ui corners)
-	int						i;
-	float					screenW, screenH, foffset;
-	int						offset = 0;
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
+   int i, j;
+   float screenW, screenH, foffset;
+   int offset = 0;
+   d3d_render_packet_new *pPacket;
+   d3d_render_chunk_new *pChunk;
 
-	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)main_viewport_width;
-	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)main_viewport_height;
+   screenW = (float) (gD3DRect.right - gD3DRect.left) / (float) gScreenWidth;
+   screenH = (float) (gD3DRect.bottom - gD3DRect.top) / (float) gScreenHeight;
 
-	if (GetFocus() == hMain)
-		offset = 4;
+   if (GetFocus() == hMain)
+      offset = 4;
 
-	foffset = 1.0f / 64.0f;
+   foffset = 1.0f / 64.0f;
 
-	// top left
-	pPacket = D3DRenderPacketNew(pPool);
-	pPacket->pDib = NULL;
-	pPacket->pTexture = gpViewElements[0 + offset];
-	pPacket->xLat0 = 0;
-	pPacket->xLat1 = 0;
-	pPacket->effect = 0;
-	pPacket->size = pPool->packetSize;
+   // 0 = top-left
+   // 1 = top-right
+   // 2 = bottom-left
+   // 3 = bottom-right
 
-	pChunk = D3DRenderChunkNew(pPacket);
-	pChunk->flags = 0;
-	pChunk->numIndices = 4;
-	pChunk->numVertices = 4;
-	pChunk->numPrimitives = pChunk->numVertices - 2;
-	pChunk->xLat0 = 0;
-	pChunk->xLat1 = 0;
+   for (i = 0; i < 4; ++i)
+   {
+      float left, right, top, bottom;
 
-	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-	pChunk->pMaterialFctn = D3DMaterialNone;
+      float width = (float)ViewElements[i + offset].width / screenW;
+      float height = (float)ViewElements[i + offset].height / screenH;
 
-	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH, gScreenHeight);
-	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW, gScreenWidth);
-	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH, gScreenHeight);
-	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW, gScreenWidth);
-	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+      if (i % 2 == 0)  // left side
+      {
+         left = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
+         right = D3DRENDER_SCREEN_TO_CLIP_X(width, gScreenWidth);
+      }
+      else  // right side
+      {
+         left = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - width, gScreenWidth);
+         right = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth);
+      }
 
-	for (i = 0; i < 4; i++)
-	{
-		pChunk->bgra[i].b = 255;
-		pChunk->bgra[i].g = 255;
-		pChunk->bgra[i].r = 255;
-		pChunk->bgra[i].a = 255;
-	}
+      if (i < 2)  // top side
+      {
+         top = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+         bottom = D3DRENDER_SCREEN_TO_CLIP_Y(height, gScreenHeight);
+      }
+      else  // bottom side
+      {
+         top = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - height, gScreenHeight);
+         bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
+      }
 
-	pChunk->st0[0].s = foffset;
-	pChunk->st0[0].t = foffset;
-	pChunk->st0[1].s = foffset;
-	pChunk->st0[1].t = 1.0f - foffset;
-	pChunk->st0[2].s = 1.0f - foffset;
-	pChunk->st0[2].t = 1.0f - foffset;
-	pChunk->st0[3].s = 1.0f - foffset;
-	pChunk->st0[3].t = foffset;
+      pPacket = D3DRenderPacketNew(pPool);
+      pPacket->pDib = NULL;
+      pPacket->pTexture = gpViewElements[i + offset];
+      pPacket->xLat0 = 0;
+      pPacket->xLat1 = 0;
+      pPacket->effect = 0;
+      pPacket->size = pPool->packetSize;
 
-	pChunk->indices[0] = 1;
-	pChunk->indices[1] = 2;
-	pChunk->indices[2] = 0;
-	pChunk->indices[3] = 3;
+      pChunk = D3DRenderChunkNew(pPacket);
+      pChunk->flags = 0;
+      pChunk->numIndices = 4;
+      pChunk->numVertices = 4;
+      pChunk->numPrimitives = pChunk->numVertices - 2;
+      pChunk->xLat0 = 0;
+      pChunk->xLat1 = 0;
 
-	// top right
-	pPacket = D3DRenderPacketNew(pPool);
-	pPacket->pDib = NULL;
-	pPacket->pTexture = gpViewElements[1 + offset];
-	pPacket->xLat0 = 0;
-	pPacket->xLat1 = 0;
-	pPacket->effect = 0;
-	pPacket->size = pPool->packetSize;
+      pPacket->pMaterialFctn = D3DMaterialObjectPacket;
+      pChunk->pMaterialFctn = D3DMaterialNone;
 
-	pChunk = D3DRenderChunkNew(pPacket);
-	pChunk->flags = 0;
-	pChunk->numIndices = 4;
-	pChunk->numVertices = 4;
-	pChunk->numPrimitives = pChunk->numVertices - 2;
-	pChunk->xLat0 = 0;
-	pChunk->xLat1 = 0;
+      pChunk->xyz[0].x = left;
+      pChunk->xyz[0].z = top;
+      pChunk->xyz[0].y = VIEW_ELEMENT_Z;
+      pChunk->xyz[1].x = left;
+      pChunk->xyz[1].z = bottom;
+      pChunk->xyz[1].y = VIEW_ELEMENT_Z;
+      pChunk->xyz[2].x = right;
+      pChunk->xyz[2].z = bottom;
+      pChunk->xyz[2].y = VIEW_ELEMENT_Z;
+      pChunk->xyz[3].x = right;
+      pChunk->xyz[3].z = top;
+      pChunk->xyz[3].y = VIEW_ELEMENT_Z;
 
-	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-	pChunk->pMaterialFctn = D3DMaterialNone;
+      for (j = 0; j < 4; j++)
+      {
+         pChunk->bgra[j].b = 255;
+         pChunk->bgra[j].g = 255;
+         pChunk->bgra[j].r = 255;
+         pChunk->bgra[j].a = 255;
+      }
 
-	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-		gScreenWidth);
-	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-		gScreenWidth);
-	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH,
-		gScreenHeight);
-	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-		gScreenWidth);
-	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(56 / (float)screenH,
-		gScreenHeight);
-	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-		gScreenWidth);
-	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+      pChunk->st0[0].s = foffset;
+      pChunk->st0[0].t = foffset;
+      pChunk->st0[1].s = foffset;
+      pChunk->st0[1].t = 1.0f - foffset;
+      pChunk->st0[2].s = 1.0f - foffset;
+      pChunk->st0[2].t = 1.0f - foffset;
+      pChunk->st0[3].s = 1.0f - foffset;
+      pChunk->st0[3].t = foffset;
 
-	for (i = 0; i < 4; i++)
-	{
-		pChunk->bgra[i].b = 255;
-		pChunk->bgra[i].g = 255;
-		pChunk->bgra[i].r = 255;
-		pChunk->bgra[i].a = 255;
-	}
-
-	pChunk->st0[0].s = foffset;
-	pChunk->st0[0].t = foffset;
-	pChunk->st0[1].s = foffset;
-	pChunk->st0[1].t = 1.0f - foffset;
-	pChunk->st0[2].s = 1.0f - foffset;
-	pChunk->st0[2].t = 1.0f - foffset;
-	pChunk->st0[3].s = 1.0f - foffset;
-	pChunk->st0[3].t = foffset;
-
-	pChunk->indices[0] = 1;
-	pChunk->indices[1] = 2;
-	pChunk->indices[2] = 0;
-	pChunk->indices[3] = 3;
-
-	// bottom left
-	pPacket = D3DRenderPacketNew(pPool);
-	pPacket->pDib = NULL;
-	pPacket->pTexture = gpViewElements[2 + offset];
-	pPacket->xLat0 = 0;
-	pPacket->xLat1 = 0;
-	pPacket->effect = 0;
-	pPacket->size = pPool->packetSize;
-
-	pChunk = D3DRenderChunkNew(pPacket);
-	pChunk->flags = 0;
-	pChunk->numIndices = 4;
-	pChunk->numVertices = 4;
-	pChunk->numPrimitives = pChunk->numVertices - 2;
-	pChunk->xLat0 = 0;
-	pChunk->xLat1 = 0;
-
-	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-	pChunk->pMaterialFctn = D3DMaterialNone;
-
-	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
-		gScreenHeight);
-	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f, gScreenHeight);
-	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW,
-		gScreenWidth);
-	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
-		gScreenHeight);
-	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(46 / (float)screenW,
-		gScreenWidth);
-	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
-		gScreenHeight);
-	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-	for (i = 0; i < 4; i++)
-	{
-		pChunk->bgra[i].b = 255;
-		pChunk->bgra[i].g = 255;
-		pChunk->bgra[i].r = 255;
-		pChunk->bgra[i].a = 255;
-	}
-
-	pChunk->st0[0].s = foffset;
-	pChunk->st0[0].t = foffset;
-	pChunk->st0[1].s = foffset;
-	pChunk->st0[1].t = 1.0f - foffset;
-	pChunk->st0[2].s = 1.0f - foffset;
-	pChunk->st0[2].t = 1.0f - foffset;
-	pChunk->st0[3].s = 1.0f - foffset;
-	pChunk->st0[3].t = foffset;
-
-	pChunk->indices[0] = 1;
-	pChunk->indices[1] = 2;
-	pChunk->indices[2] = 0;
-	pChunk->indices[3] = 3;
-
-	// bottom right
-	pPacket = D3DRenderPacketNew(pPool);
-	pPacket->pDib = NULL;
-	pPacket->pTexture = gpViewElements[3 + offset];
-	pPacket->xLat0 = 0;
-	pPacket->xLat1 = 0;
-	pPacket->effect = 0;
-	pPacket->size = pPool->packetSize;
-
-	pChunk = D3DRenderChunkNew(pPacket);
-	pChunk->flags = 0;
-	pChunk->numIndices = 4;
-	pChunk->numVertices = 4;
-	pChunk->numPrimitives = pChunk->numVertices - 2;
-	pChunk->xLat0 = 0;
-	pChunk->xLat1 = 0;
-
-	pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-	pChunk->pMaterialFctn = D3DMaterialNone;
-
-	pChunk->xyz[0].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-		gScreenWidth);
-	pChunk->xyz[0].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH,
-		gScreenHeight);
-	pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[1].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - 47 / (float)screenW,
-		gScreenWidth);
-	pChunk->xyz[1].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
-		gScreenHeight);
-	pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[2].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-		gScreenWidth);
-	pChunk->xyz[2].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 0.5f,
-		gScreenHeight);
-	pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-	pChunk->xyz[3].x = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth,
-		gScreenWidth);
-	pChunk->xyz[3].z = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - 56 / (float)screenH, gScreenHeight);
-	pChunk->xyz[3].y = VIEW_ELEMENT_Z;
-
-	for (i = 0; i < 4; i++)
-	{
-		pChunk->bgra[i].b = 255;
-		pChunk->bgra[i].g = 255;
-		pChunk->bgra[i].r = 255;
-		pChunk->bgra[i].a = 255;
-	}
-
-	pChunk->st0[0].s = foffset;
-	pChunk->st0[0].t = foffset;
-	pChunk->st0[1].s = foffset;
-	pChunk->st0[1].t = 1.0f - foffset;
-	pChunk->st0[2].s = 1.0f - foffset;
-	pChunk->st0[2].t = 1.0f - foffset;
-	pChunk->st0[3].s = 1.0f - foffset;
-	pChunk->st0[3].t = foffset;
-
-	pChunk->indices[0] = 1;
-	pChunk->indices[1] = 2;
-	pChunk->indices[2] = 0;
-	pChunk->indices[3] = 3;
+      pChunk->indices[0] = 1;
+      pChunk->indices[1] = 2;
+      pChunk->indices[2] = 0;
+      pChunk->indices[3] = 3;
+   }
 }
 
 LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,

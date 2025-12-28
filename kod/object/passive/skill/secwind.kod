@@ -28,6 +28,7 @@ resources:
 
    SecondWind_success = "You catch your second wind!"
    SecondWind_finished = "You feel more relaxed as your second wind dissipates."
+   player_not_hungry = "Still feeling a surge of vitality, you have no interest in food or drink right now."
    SecondWind_sound = wscndwnd.wav
 
 classvars:
@@ -149,7 +150,7 @@ messages:
    %
 
    EndEnchantment(who=$,state=$,report=TRUE)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       local iAmount;
 
@@ -166,7 +167,7 @@ messages:
    }
 
    RemoveEnchantmentEffects(who=$,state=$,report=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       Send(self,@EndEnchantment,#who=who,#report=report,#state=state);
 
@@ -174,43 +175,43 @@ messages:
    }
 
    ShowEnchantmentIcon(type=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return viShow_enchantment_icon & 0x02;
    }
 
    IsPersonalEnchantment()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return TRUE;
    }
 
    SetSpellPlayerFlag(who=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return;
    }
 
    AffectsMaxMana()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return FALSE;
    }
 
    IsPeriodic()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return FALSE;
    }
 
    RestartEnchantmentEffect(who=$, state=$)
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return;
    }
 
    IsHarmful()
-   "Included to support mimicing of personal enchantment spells."
+   "Included to support mimicking of personal enchantment spells."
    {
       return FALSE;
    }
@@ -220,6 +221,27 @@ messages:
    {
       % Being a personal enchantment, stop SW from being removed by player(s)
       return FALSE;
+   }
+
+   ReqEatSomething(what=$, who=$)
+   "Returns if an enchantment allows the player to eat as they normally can"
+   {
+      if what <> $
+      {
+         % Prevent consumption of food - except mints for the mana effect
+         if Send(what,@IsItemType,#type=ITEMTYPE_FOOD)
+         {
+            if IsClass(what,&Mint)
+            {
+               return TRUE;
+            }
+            Send(who,@MsgSendUser,#message_rsc=player_not_hungry);
+            return FALSE;
+         }
+      }
+
+      % The default case is we can eat - for potions, flasks, etc
+      return TRUE;
    }
 
 end

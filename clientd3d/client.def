@@ -26,6 +26,7 @@ EXPORTS
 	ResetUserData
 	WebLaunchBrowser
 	InitMenuPopupHandler
+	SafeDialogBoxParam
 
 ; Keyboard handling
 	KeyAddTable
@@ -203,7 +204,6 @@ EXPORTS
 ; Sound and music
 	PlayMusicFile
 	PlayMusicRsc
-	PlayMidiRsc
 	PlayWaveFile
 	PlayWaveRsc
 	SoundAbort

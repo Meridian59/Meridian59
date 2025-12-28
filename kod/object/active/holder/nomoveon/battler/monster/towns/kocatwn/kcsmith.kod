@@ -70,7 +70,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(what,@CanBeGivenToNPC) and 
          (Send(Self,@IsObjectWearable,#what=what) OR
@@ -105,7 +105,7 @@ messages:
    }
 
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       Post(poOwner,@SomeoneSaid,#what = self, #string=kcSmith_entry_welcome,
          #type = SAY_RESOURCE);

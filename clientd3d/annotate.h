@@ -12,9 +12,9 @@
 #ifndef _ANNOTATE_H
 #define _ANNOTATE_H
 
-#define MAP_ANNOTATION_SIZE     (2 * FINENESS)    // Size of annotation indicator in FINENESS units
-#define MAP_ANNOTATION_MIN_SIZE 14                // Min size of drawn annotation in pixels
-
+#define MAP_ANNOTATION_SIZE     (2 * FINENESS)  // Size of annotation graphic in FINENESS units
+#define MAP_ANNOTATION_MIN_SIZE 14              // Min size of drawn annotation in pixels
+#define MAP_ANNOTATION_MAX_SIZE 30              // Max size
 #define MAX_ANNOTATIONS    20
 #define MAX_ANNOTATION_LEN 100
 
@@ -25,7 +25,7 @@ typedef struct {
 
 void MapAnnotationsInitialize(void);
 void MapAnnotationGetText(TOOLTIPTEXT *ttt);
-void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap );
+void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, bool bMiniMap, int size );
 void MapAnnotationClick(int x, int y);
 void AbortAnnotateDialog(void);
 

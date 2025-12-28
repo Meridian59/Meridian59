@@ -104,6 +104,9 @@ enum
    BLAKOD_GROUP,
    BLAKOD_MAX_STATEMENTS,
 
+   WEBHOOK_GROUP,
+   WEBHOOK_ENABLED, WEBHOOK_PREFIX,
+
    NUM_CONFIG_VALUES
 };
 
@@ -135,14 +138,14 @@ void ForEachConfigNode(void (*callback_func)(config_node *c,const char *config_n
 
 int ConfigInt(int config_id);
 char * ConfigStr(int config_id);
-Bool ConfigBool(int config_id);
+bool ConfigBool(int config_id);
 
 char * LockConfigStr(int config_id);
 void UnlockConfigStr(void);
 
 int GetConfigIDByGroupAndName(char *group,char *name);
 void SetConfigInt(int config_id,int new_value);
-void SetConfigBool(int config_id,Bool new_value);
+void SetConfigBool(int config_id,bool new_value);
 void SetConfigStr(int config_id,char *new_value);
 
 void LoadConfig(void);

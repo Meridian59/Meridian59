@@ -25,7 +25,7 @@ typedef struct {
 ID    char_to_use;   /* ID # of character player wants to use in game */
 char  name_to_use[MAXNAME];   /* name resource of character player wants to use in game */
 
-char *ad_directory = "ads";   // Subdirectory with advertisement files
+const char *ad_directory = "ads";   // Subdirectory with advertisement files
 
 static HWND hPickCharDialog = NULL;
 extern HWND hMakeCharDialog;
@@ -46,21 +46,21 @@ void GoToGame(ID character)
 /********************************************************************/
 void AbortCharDialogs(void)
 {
-   Bool has_dialog = False;
+   bool has_dialog = false;
 
    if (hPickCharDialog != NULL)
    {
-      has_dialog = True;
+      has_dialog = true;
       EndDialog(hPickCharDialog, IDCANCEL);
    }
    if (hMakeCharDialog != NULL)
    {
-      has_dialog = True;
+      has_dialog = true;
       PropSheet_PressButton(hMakeCharDialog, PSBTN_CANCEL);
       // Hide in case another dialog pops up; for some reason the property sheet lingers awhile
       ShowWindow(hMakeCharDialog, SW_HIDE);
    }
-   exiting = True;
+   exiting = true;
 
    if (!has_dialog)
       PostMessage(cinfo->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
@@ -130,6 +130,7 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    static HWND hList;
    int index, i;
    Character *c;
+   HBITMAP hBitmap;
 
    switch (message)
    {
@@ -158,11 +159,16 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       Edit_SetText(GetDlgItem(hDlg, IDC_MOTD), info->motd);  
       
       // Display advertisements
-      for (i=0; i < info->num_ads; i++)
+      for (i = 0; i < info->num_ads; i++)
       {
          char filename[MAX_PATH + FILENAME_MAX];
          sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
-         Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
+
+         // Load the BMP file
+         hBitmap = (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+         if (hBitmap != NULL) {
+           SendDlgItemMessage(hDlg, animation_controls[i], STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
+         }
       }
       
       hPickCharDialog = hDlg;

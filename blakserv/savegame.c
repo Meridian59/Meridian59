@@ -11,54 +11,63 @@
 
   This module saves game information to the file, so it can be loaded
   in by loadgame.c at some future time.
-  
+
 */
 
 #include "blakserv.h"
 
 static FILE *savefile;
+bool is_save_successful;
 
 #define SaveGameWrite(buf,len) \
 { \
-	if (fwrite(buf,len,1,savefile) != 1) \
-	eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-} 
+	if (fwrite(buf,len,1,savefile) != 1) { \
+		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
+	  is_save_successful = false; \
+	} \
+}
 
 #define SaveGameWriteByte(byte) \
 { \
 	char ch; \
 	ch = byte; \
-	if (fwrite(&ch,1,1,savefile) != 1) \
-	eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-} 
+	if (fwrite(&ch,1,1,savefile) != 1) { \
+		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
+		is_save_successful = false; \
+	} \
+}
 
 #define SaveGameWriteInt(num) \
 { \
 	int temp; \
 	temp = num; \
-	if (fwrite(&temp,4,1,savefile) != 1) \
-	eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-} 
+	if (fwrite(&temp,4,1,savefile) != 1) { \
+		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
+		is_save_successful = false; \
+	} \
+}
 
 #define SaveGameWriteInt64(num) \
 { \
 	INT64 temp; \
 	temp = num; \
-	if (fwrite(&temp,8,1,savefile) != 1) \
-	eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-} 
+	if (fwrite(&temp,8,1,savefile) != 1) { \
+		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
+		is_save_successful = false; \
+	} \
+}
 
 #define SaveGameWriteString(s) \
 { \
 	size_t len_s; \
 	if (s == NULL) \
-{ \
-	eprintf("SaveGameWriteString line %i can't save NULL string, invalid saved game\n", \
-	__LINE__); \
-	len_s = 0; \
-	SaveGameWrite(&len_s,2); \
-	return; \
-} \
+	{ \
+		eprintf("SaveGameWriteString line %i can't save NULL string, invalid saved game\n", __LINE__); \
+		len_s = 0; \
+		SaveGameWrite(&len_s,2); \
+		is_save_successful = false; \
+		return; \
+	} \
 	len_s = strlen(s); \
 	SaveGameWrite(&len_s,2); \
 	SaveGameWrite(s,len_s); \
@@ -85,14 +94,15 @@ void SaveGameCountEachDynamicRsc(resource_node *r);
 
 const char *GetTagShortName(val_type val);
 
-Bool SaveGame(char *filename)
+bool SaveGame(char *filename)
 {
 	savefile = fopen(filename,"wb");
 	if (savefile == NULL)
 	{
 		eprintf("SaveGame can't open %s to save everything!!!\n",filename);
-		return False;
+		return false;
 	}
+	is_save_successful = true;
 
 	// Version number
 	SaveGameWriteByte('V');
@@ -103,12 +113,12 @@ Bool SaveGame(char *filename)
 	SaveSystem();
 	SaveObjects();
 	SaveListNodes();
-	SaveTimers(); 
+	SaveTimers();
 	SaveUsers();
-	
+
 	fclose(savefile);
-	
-	return True;
+
+	return is_save_successful;
 }
 
 void SaveClasses(void)
@@ -119,7 +129,7 @@ void SaveClasses(void)
 void SaveEachClass(class_node *c)
 {
 	int i;
-	
+
 	if ((GetClassByID(c->class_id) != c) ||
 		(c->super_id != NO_SUPERCLASS && GetClassByID(c->super_id) == NULL) ||
 		(c->class_name == NULL))
@@ -127,12 +137,12 @@ void SaveEachClass(class_node *c)
 		eprintf("SaveEachClass is not saving invalid class %i\n",c->class_id);
 		return;
 	}
-	
+
 	SaveGameWriteByte(SAVE_GAME_CLASS);
 	SaveGameWriteInt(c->class_id);
 	SaveGameWriteString(c->class_name);
 	SaveGameWriteInt(c->num_properties);
-	
+
 	for (i=1;i<=c->num_properties;i++)
 	{
 		const char *s = GetPropertyNameByID(c,i);
@@ -157,7 +167,7 @@ void SaveEachResource(resource_node *r)
 		eprintf("SaveEachResource is not saving invalid resource %i\n",r->resource_id);
 		return;
 	}
-	
+
 	SaveGameWriteByte(SAVE_GAME_RESOURCE);
 	SaveGameWriteInt(r->resource_id);
 	SaveGameWriteString(r->resource_name);
@@ -178,19 +188,19 @@ void SaveEachObject(object_node *o)
 {
 	int i;
 	class_node *c;
-	
+
 	c = GetClassByID(o->class_id);
 	if (c == NULL)
 	{
 		eprintf("SaveEachObject can't get class %i\n",o->class_id);
 		return;
 	}
-	
+
 	SaveGameWriteByte(SAVE_GAME_OBJECT);
 	SaveGameWriteInt(o->object_id);
 	SaveGameWriteInt(o->class_id);
 	SaveGameWriteInt(c->num_properties);
-	
+
 	/* remember, don't save self (p[0]) because no name for it!
     * loadall will set self for us, fortunately.
     */
@@ -222,26 +232,26 @@ void SaveEachTimer(timer_node *t)
 	INT64 save_time;
 	object_node *o;
 	const char *s;
-	
+
 	o = GetObjectByID(t->object_id);
 	if (o == NULL)
 	{
 		eprintf("SaveEachTimer can't get object %i\n",t->object_id);
 		return;
 	}
-	
+
 	s = GetNameByID(t->message_id);
 	if (!s)
 	{
 		eprintf("SaveEachTimer is not saving invalid timer %i\n",t->object_id);
 		return;
 	}
-	
+
 	SaveGameWriteByte(SAVE_GAME_TIMER);
 	SaveGameWriteInt(t->timer_id);
 	SaveGameWriteInt(t->object_id);
 	SaveGameWriteString(GetNameByID(t->message_id));
-	
+
 	save_time = (INT64)(t->time - GetMilliCount());
 	if (save_time < 0)
 		save_time = 0;

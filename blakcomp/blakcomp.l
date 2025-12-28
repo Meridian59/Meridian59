@@ -24,12 +24,12 @@ static FILE *open_file(char *fname);
 static void usage(void);
 
 int lineno;
-Bool generate_code = True;  /* True if we should generate code */
+bool generate_code = true;  /* true if we should generate code */
 extern int yydebug;        /* Set to nonzero to get yacc debug info */
 list_type file_list;       /* List of files to compile */
 char *current_fname;
 char *bof_fname;       /* Object code filename */
-int debug_bof;         /* Should we put debugging info in .bof file? */
+bool debug_bof;         /* Should we put debugging info in .bof file? */
 
 struct file_state {
    YY_BUFFER_STATE buffer;
@@ -145,7 +145,7 @@ include         { return INCLUDE; }
 void handle_error(void)
 {
    static int numerrors = 0;
-   generate_code = False; /* Errors; don't generate code */
+   generate_code = false; /* Errors; don't generate code */
    if (++numerrors > MAXERRORS)
    {
       fprintf(stderr, "Too many errors. Aborting.\n");
@@ -230,6 +230,24 @@ void simple_warning(const char *fmt, ...)
    printf("\n");
 }
 /************************************************************************/
+// Return value of hex digit, or -1 if none.
+int read_escape_char(unsigned char c)
+{
+  if (c >= '0' && c <= '9')
+  {
+    return c - '0';
+  }
+  if (c >= 'a' && c <= 'f')
+  {
+    return c - 'a' + 10;
+  }
+  if (c >= 'A' && c <= 'F')
+  {
+    return c - 'A' + 10;
+  }
+  return -1;
+}
+/************************************************************************/
 /*
  * assemble_string:  Convert a Blakod multiple-line string into a
  *   plain string, without starting and ending quotes, and with escape
@@ -237,65 +255,92 @@ void simple_warning(const char *fmt, ...)
  */
 char *assemble_string(char *str)
 {
-   char *new_str = strdup(str);
-   char *rd, *wt;
-   int inside_quotes = 1;
+   unsigned char *new_str = reinterpret_cast<unsigned char *>(strdup(str));
+   bool inside_quotes = true;
 
-   rd = new_str;
-   wt = new_str;
+   unsigned char *rd = new_str;
+   unsigned char *wt = new_str;
 
    while (*rd != '\0')
    {
-      /* Throw out junk outside quotes */
-      if (!inside_quotes && *rd != '"')
-      {
-	 if (*rd == '\n')
-	    lineno++;
-	 rd++;
-	 continue;
-      }
-	 
-      switch (*rd)
-      {
-      case '\\':
-	 rd++;
-	 
-	 /* Look for special characters */
-	 switch (*rd)
-	 {
-	 case 'n':
-	    *wt = '\r';    /* Ugh.. CR-LF pair for Windows ugliness */
-	    wt++;
-	    *wt = '\n';
-	    wt++;
-	    break;
+     // Disallow high-bit ASCII to make files UTF-8 clean
+     if (*rd > 127)
+     {
+       yyerror("Illegal character in string");
+     }
+     
+     /* Throw out junk outside quotes */
+     if (!inside_quotes && *rd != '"')
+     {
+       if (*rd == '\n')
+         lineno++;
+       rd++;
+       continue;
+     }
+     
+     switch (*rd)
+     {
+     case '\\':
+       rd++;
+       
+       /* Look for special characters */
+       switch (*rd)
+       {
+       case 'n':
+         *wt = '\r';    /* Ugh.. CR-LF pair for Windows ugliness */
+         wt++;
+         *wt = '\n';
+         wt++;
+         break;
 
-	 default:
-	    *wt = *rd;
-	    wt++;
-	    break;
-	    
-	 }
-	 break;
-
-      case '"':  /* Ignore quotes */
-	 inside_quotes = 1 - inside_quotes;
-	 break;
-
-      case '\n': /* Ignore newlines */
-	 lineno++;
-	 break;
-
-      default:
-	 *wt = *rd;
-	 wt++;
-	 break;
-      }
-
-      rd++;
+       case 'x': {
+         // Look for \xnn escape sequence
+         rd++;
+         int escape_val_1 = read_escape_char(*rd);
+         if (escape_val_1 < 0)
+         {
+           yyerror("Illegal escape sequence");
+           break;
+         }
+         rd++;
+         int escape_val_2 = read_escape_char(*rd);
+         if (escape_val_2 < 0)
+         {
+           yyerror("Illegal escape sequence");
+           break;
+         }
+         *wt = (16 * escape_val_1) + escape_val_2;
+         wt++;
+         break;
+       }
+         
+       default:
+         *wt = *rd;
+         wt++;
+         break;
+         
+       }
+       break;
+       
+     case '"':  /* Ignore quotes */
+       inside_quotes = !inside_quotes;
+       break;
+       
+     case '\n': /* Ignore newlines */
+       lineno++;
+       break;
+       
+     default:
+       *wt = *rd;
+       wt++;
+       break;
+     }
+     
+     rd++;
    }
    *wt = '\0';
-   return new_str;
+
+   return (char *) new_str;
 }
 /************************************************************************/
 /* 
@@ -361,7 +406,7 @@ FILE *open_file(char *fname)
    FILE *fin;
 
    /* Add .kod extension if necessary */
-   set_extension(temp, fname, ".kod");
+   set_extension(temp, sizeof(temp), fname, ".kod");
    
    if ((fin = fopen(temp, "r")) == NULL)
    {
@@ -373,7 +418,7 @@ FILE *open_file(char *fname)
 
    /* Construct object code filename */
    bof_fname = strdup(fname);
-   set_extension(bof_fname, bof_fname, ".bof");
+   set_extension(bof_fname, sizeof(bof_fname), bof_fname, ".bof");
 
    return fin;
 }
@@ -473,7 +518,7 @@ int main(int argc, char **argv)
    }
 
    file_list = NULL;
-   debug_bof = False;
+   debug_bof = false;
 
    num_include_dirs = 0;
 
@@ -486,7 +531,7 @@ int main(int argc, char **argv)
 	 switch(toupper(*(arg + 1)))
 	 {
 	 case 'D':               /* Debugging on */
-	    debug_bof = True;
+	    debug_bof = true;
 	    break;
 	    
 	 case 'K' :              /* Specify kodbase filename */
@@ -566,7 +611,7 @@ int main(int argc, char **argv)
 		   codegen(current_fname, bof_fname);
 		else
 		   all_success = false;
-      generate_code = True;
+      generate_code = true;
    }
 
    /* Give warnings for classes that should be recompiled */

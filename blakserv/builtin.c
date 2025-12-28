@@ -88,7 +88,7 @@ void CreateBuiltIn(void)
 				break;
 			} 
 			
-			if (AssociateUser(account_id,object_id) == False)
+			if (AssociateUser(account_id,object_id) == false)
 				eprintf("CreateBuiltIn had AssociateUser fail, on account %i object %i\n",
 				account_id,object_id);
 		}

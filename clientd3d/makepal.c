@@ -147,7 +147,7 @@ void WritePalette(char *dir)
    char tempbuf[512];
    int i, j;
 
-   sprintf(tempbuf, "%s\\%s", dir, output_file);
+   snprintf(tempbuf, sizeof(tempbuf), "%s\\%s", dir, output_file);
    palfile = fopen(tempbuf, "wt");
 
    if (palfile == NULL)

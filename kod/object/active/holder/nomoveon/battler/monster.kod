@@ -22,10 +22,6 @@ constants:
    %  learn to qualify for a new spell.
    MONSTER_LEARN_GRADIENT = 15
 
-   % Default interval in seconds between welcome messages from npcs when a 
-   %  player enters their room.
-   WELCOME_MESSAGE_INTERVAL = 30
-
 resources:
 
    monster_percent_q = "%q"
@@ -216,8 +212,8 @@ classvars:
                                 
    viTreasure_type = TID_NONE
 
-   % Random delay from delay to 1.50*delay
-   viRandom_delay = 40000
+   % Random delay from delay to 2.50*delay
+   viRandom_delay = 120000
    % from delay to 1.33*delay
    viSpasm_delay  = 15000
 
@@ -261,6 +257,7 @@ classvars:
    vrTeach_quest_needed = monster_teach_quest_needed
    vrNothing_for_sale = Lm_nothing_for_sale
    vrMrcnt_too_costly = Lm_mrcnt_too_costly
+   vrBuyer_unwanted = Lm_buyer_unwanted
    vrMonster_healing = Lm_monster_healing
 
    % Obsolete, but still included here for safety's sake.
@@ -346,10 +343,6 @@ properties:
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
-
-   
-   % Tracking the last time this monster welcomed a player
-   piLastWelcomeTime = 0
 
 messages:
 
@@ -809,7 +802,7 @@ messages:
    %%% Sensory Inputs
    
    NewOwner(what = $)
-   "Monster just entered this room. Right now, thats only possible on a"
+   "Monster just entered this room. Right now, that's only possible on a "
    "creation. So, lets pause for a few beats if we got users."
    {
       if what = $
@@ -832,7 +825,7 @@ messages:
    FirstUserEntered(what = $,new_row = $,new_col = $)
    "Since we've already been notified in SomethingEntered that a user got"
    "here, we have already handled the case that the user was plunked down"
-   "near a non-fighting and agressive mob. So, lets just start our timers."
+   "near a non-fighting and aggressive mob. So, let's just start our timers."
    {
       piWalkingEffort = 0;
 
@@ -886,8 +879,8 @@ messages:
    }
 
    SomethingAttacked(what = $,victim = $,use_weapon = $)
-   "We may have been assaulted by something, so lets return fire if "
-   "appropriateIf were already fighting this person, this doesnt interrupt "
+   "We may have been assaulted by something, so let's return fire if "
+   "appropriate. If we are already fighting this person, this doesn't interrupt "
    "our plans."
    {
       % Getting hit revitalizes my will to walk.
@@ -1069,7 +1062,10 @@ messages:
 
       % Carry out attack
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-      Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      if poBrain <> $   % Attack could cause our death in some cases
+      {
+         Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      }
 
       return;
    }
@@ -1143,9 +1139,9 @@ messages:
    MoveTimer( timer = $ )
    "Time to move a notch. I would REALLY like it to redo this so that the "
    "Monsters move on a finer grid than the row/col (perhaps 16finerow?) "
-   "But just havent had the time. Anyway, we want to wander unless for "
+   "But just haven't had the time. Anyway, we want to wander unless for "
    "some reason we are restricted not to. We do check to see if there is "
-   "someone to chase if we are the agressive type. If we cant physically "
+   "someone to chase if we are the aggressive type. If we can't physically "
    "move, then we still keep the timer open for its healing/etc."
    {
       Send(self,@ClearBehavior,#timer=timer);
@@ -1281,7 +1277,7 @@ messages:
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
          AND (Send(poOwner,@GetEnchantmentState,#what=oSpell) <> $)
       {
-         % Reduce chance to 2/3 by multplying base by 3/2
+         % Reduce chance to 2/3 by multiplying base by 3/2
          base = (3 * base) / 2;
       }
 
@@ -2346,10 +2342,10 @@ messages:
                return FALSE;
             }
 
-            if NOT Send(self,@ObjectDesired,#what=i)
+            if NOT Send(self,@ObjectDesired,#what=i,#who=what)
             {
                Send(self,@SayToOne,#target=what,
-                    #message_rsc=Lm_buyer_unwanted);
+                    #message_rsc=vrBuyer_unwanted);
 
                return FALSE;
             }
@@ -2468,7 +2464,7 @@ messages:
       else
       {
          % We musta wanted the item for some other reason. So do special stuff
-         % If we get a FALSE return, it means we didnt keep the item.
+         % If we get a FALSE return, it means we didn't keep the item.
          if NOT Send(self,@CheckWhyWanted,#obj=obj,#who=who)
          {
             return;
@@ -2498,7 +2494,7 @@ messages:
    }
 
    GotUnwantedItem(obj = $, who = $)
-   "Someone just randomly gave us an object we didnt really want."
+   "Someone just randomly gave us an object we didn't really want. "
    "They could be fishing for a quest, so occasionally, lets keep it."
    {
       local i,lReward,oLibrary,iQuestID;
@@ -2654,7 +2650,7 @@ messages:
          }
       }
 
-      % If it wasnt a current quest, maybe it was an old quest.
+      % If it wasn't a current quest, maybe it was an old quest.
       for i in Send(oLibrary,@GetOldPhrases,#mob=self)
       {
          if Send(oLibrary,@IsQuestStringMatch,
@@ -2964,8 +2960,7 @@ messages:
       
       if NOT test
       {
-         ptRandom=CreateTimer(self,@RandomTimer,
-                              viRandom_delay + Random(0,viRandom_delay/2));
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay * Random(2, 5) / 2);
       }
 
       return;
@@ -4248,8 +4243,7 @@ messages:
 
       if (viAttributes & MOB_RANDOM)
       {
-         ptRandom = CreateTimer(self,@RandomTimer,
-                                viRandom_delay+Random(0,viRandom_delay/2));
+         ptRandom = CreateTimer(self,@RandomTimer,viRandom_delay * Random(2, 5) / 2);
       }
 
       if (viAttributes & MOB_SPASM)
@@ -4705,9 +4699,10 @@ messages:
       return viAttributes;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$, who=$)
    "This is set in individual buyers.  It allows them to pick and choose"
-   "what they want to buy."
+   "what they want to buy.  The 'who' parameter also allows buyers to"
+   "use SayToOne to tell a player directly why they refused an offer."
    {
       return TRUE;
    }
@@ -5077,7 +5072,7 @@ messages:
             return TRUE;
          }
       
-         if Send(poOwner,@CountHoldingHowMany,#class=&Player) > 1
+         if Send(poOwner,@CountHoldingHowMany,#class=&Player,#lExcludeClasses=[&DM]) > 1
          {
             Send(self,@Say,#message_rsc=monster_refuse_service);
             Send(self,@SayToOne,#target=who,
@@ -5826,19 +5821,6 @@ messages:
    GetProjectileIcon()
    {
       return;
-   }
-
-   % True if the monster is ready to say a welcoming message to players
-   %  who have entered their room.
-   ReadyForWelcome()
-   {
-      if GetTime() > (piLastWelcomeTime + WELCOME_MESSAGE_INTERVAL)
-      {
-         piLastWelcomeTime = GetTime();
-         return TRUE;
-      }
-      
-      return FALSE;
    }
 
 end

@@ -26,7 +26,7 @@ static FILE *debug_file = NULL;
 char *szAppName;
 
 /************************************************************************/
-void _cdecl dprintf(char *fmt, ...)
+void _cdecl dprintf(const char *fmt, ...)
 {
 	const int bufferSize = 256;
 	const char s[bufferSize]{ 0 };
@@ -48,9 +48,8 @@ void _cdecl dprintf(char *fmt, ...)
 }
 
 unsigned short gCRC16=0;
-extern WORD GetCRC16(char *buf, int length);
 
-static unsigned short crc16( char *name)
+static unsigned short crc16(const char *name)
 {
 	FILE*fp;
 	char*buffer;
@@ -100,11 +99,23 @@ static void GenerateCRC16( void )
 LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	/* See if module wants to handle message */
-	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == False)
+	if (ModuleEvent(EVENT_WINDOWMSG, hwnd, message, wParam, lParam) == false)
 		return 0;
 
 	switch (message)
 	{
+		case WM_MOUSEWHEEL:
+		{
+				if (state == STATE_GAME)
+				{
+						int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+						int direction = (zDelta > 0) ? 1 : -1; // Scroll up is positive, scroll down is negative
+						MapZoom(direction);
+						return 0;
+				}
+				break;
+		}
+
 		HANDLE_MSG(hwnd, WM_CREATE, MainInit);
 		HANDLE_MSG(hwnd, WM_PAINT, MainExpose);
 		HANDLE_MSG(hwnd, WM_DESTROY, MainQuit);
@@ -114,12 +125,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_SYSKEYDOWN:
-		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == True)
+		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == true)
 			return 0;
 		break;  // Pass message on to Windows for default menu handling
 
 	case WM_SYSKEYUP:
-		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == True)
+		if (HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, MainKey) == true)
 			return 0;
 		break;  // Pass message on to Windows for default menu handling
 
@@ -129,6 +140,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_MBUTTONDOWN, MainMouseMButtonDown);
 		HANDLE_MSG(hwnd, WM_LBUTTONDBLCLK, MainMouseLButtonDown);
 		HANDLE_MSG(hwnd, WM_LBUTTONUP, MainMouseLButtonUp);
+
 		HANDLE_MSG(hwnd, WM_MOUSEMOVE, MainMouseMove);
 		HANDLE_MSG(hwnd, WM_VSCROLL,MainVScroll);
 
@@ -164,21 +176,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_CTLCOLORSTATIC, MainCtlColor);
 		HANDLE_MSG(hwnd, WM_CTLCOLORSCROLLBAR, MainCtlColor);
 
-		/* Wave mixer has finished playing file */
-		HANDLE_MSG(hwnd, MM_WOM_DONE, SoundDone);
-
 	case BK_SOCKETEVENT:
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
-
-#ifndef M59_MSS
-	case MM_MCINOTIFY:  /* MIDI file has finished playing */
-		if (wParam != MCI_NOTIFY_SUCCESSFUL)
-			break;
-
-		MusicDone(LOWORD(lParam));
-		break;
-#endif
 
 	case BK_NEWSOUND:
 		NewMusic(wParam, lParam);
@@ -313,7 +313,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	{
 		char buf[256];
 		DWORD err = GetLastError();
-		sprintf(buf, "Error - Couldn't Create Client Window : %d", err);
+		snprintf(buf, sizeof(buf), "Error - Couldn't Create Client Window : %d", err);
 		MessageBox(NULL, buf, "ERROR!", MB_OK);
 		MainQuit(hMain);
 		exit(1);

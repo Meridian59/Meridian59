@@ -26,6 +26,7 @@ resources:
 
    room_door_is_locked = "This door is locked."
    room_sound_locked = doorlck.wav
+   room_sound_locked_female = doorlckf.wav
 
    room_move_req_no = "You're unable to change rooms."
 
@@ -885,11 +886,6 @@ messages:
          return RID_KOCATAN;
       }
 
-      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13)
-      {
-         return RID_KOCATAN;
-      }
-
       if (piRoom_num >= RID_ORC_CAVE1) and (piRoom_num <= RID_ORC_CAVE_END)
       {
          return RID_ORC_CAVE1;
@@ -898,16 +894,6 @@ messages:
       if (piRoom_num >= RID_BRAX_START) and (piRoom_num <= RID_BRAX_END)
       {
          return RID_BRAX;
-      }
-
-      if piRoom_num = RID_GUILDH15
-      {
-         return RID_BRAX;
-      }
-
-      if piRoom_num = RID_OUTOFGRACE
-      {
-         return RID_OUTOFGRACE;
       }
 
       return RID_DEFAULT;
@@ -1369,7 +1355,7 @@ messages:
 
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
    "This takes a spell/skill that who is trying to advance and modifies the "
-   "improve_chance.  This supercedes (but still supports) the ROOM_HARD_LEARN "
+   "improve_chance.  This supersedes (but still supports) the ROOM_HARD_LEARN "
    "flag."
    {
       if Send(self,@CheckRoomFlag,#flag=ROOM_HARD_LEARN)
@@ -1751,7 +1737,7 @@ messages:
          AND Send(what,@GetOwner) <> $
          AND IsClass(Send(what,@GetOwner),&Player)
       {
-         % Check the time currently left on the dipose timer.  Reset the timer
+         % Check the time currently left on the dispose timer.  Reset the timer
          %  to a minute if we have less than a minute left.  This should cut
          %  down on cases of someone dropping an object and it being cleaned up
          %  immediately afterwards.
@@ -1779,13 +1765,7 @@ messages:
             for i in plActive
             {
                each_obj = First(i);
-               if IsClass(each_obj,&Monster)
-               {
-                     if Send(each_obj, @ReadyForWelcome)
-                     {
-                        Send(each_obj,@UserEntered,#who=what);
-                     }
-               }
+               Send(each_obj,@UserEntered,#who=what);
             }
          }
 
@@ -2456,6 +2436,12 @@ messages:
    {
       local i,each_obj;
 
+      if sector = $
+      {
+         debug("SetSector called with missing sector ID");
+         return;
+      }
+
       % tell everyone in the room at the moment about the change
 
       for i in plActive
@@ -2569,8 +2555,15 @@ messages:
    }
 
    ChangeTexture(id = $,new_texture = $,flags = 0)
+   "Set a texture override for the given server ID.  Return TRUE on success."
    {
       local i,each_obj;
+
+      if id = $ 
+      {
+         debug("Tried to change texture with $ server ID");
+         return FALSE;
+      }
 
       % tell everyone in the room at the moment about the change
       for i in plActive
@@ -2590,14 +2583,14 @@ messages:
          {
             SetNth(i,2,new_texture);
 
-            return;
+            return TRUE;
          }
       }
 
       % not already in list, so add
       plTexture_changes = Cons([ id, new_texture, flags ], plTexture_changes);
 
-      return;
+      return TRUE;
    }
 
    HolderExtractObject(data = $)
@@ -2750,7 +2743,7 @@ messages:
                   Send(what,@MsgSendUser,#message_rsc=room_door_is_locked);
                }
 
-               Send(what,@WaveSendUser,#wave_rsc=room_sound_locked);
+               Send(self,@SendLockedRoomSound,#who=what);
 
                return TRUE;
             }
@@ -3869,8 +3862,11 @@ messages:
    CanHavePlayerPortal()
    "Return whether it's permissible to have a player-created portal in this room. "
    {
-      % No portals into "historic" (i.e. inaccessible, dead) areas
-      if Send(self, @GetRegion) = RID_HISTORIC
+      % No portals in 
+      % - "historic" (i.e. inaccessible, dead) areas
+      % - "No combat" rooms like inns, adv halls, rented rooms, and others
+      if Send(self,@GetRegion) = RID_HISTORIC
+         OR Send(self,@CheckRoomFlag,#flag=ROOM_NO_COMBAT) 
       {
          return FALSE;
       }
@@ -3954,5 +3950,48 @@ messages:
       return;
    }
 
+   SendLockedRoomSound(who=$)
+   {
+      if Send(who,@GetGender) = GENDER_FEMALE
+      {
+         Send(who,@WaveSendUser,#wave_rsc=room_sound_locked_female);
+      }
+      else
+      {
+         Send(who,@WaveSendUser,#wave_rsc=room_sound_locked);
+      }
+
+      return;
+   }
+
+   FindBadTextureChanges()
+   "Print any texture changes with $ as the sector ID"
+   {
+      local i;
+      for i in plTexture_changes
+      {
+         if First(i) = $ 
+         {
+            debug("Room", piRoom_num, "id", self, "has bad texture change", i);
+         }
+      }
+
+      return;
+   }
+
+   FindBadSectorChanges()
+   "Print any sector changes with $ as the sector ID"
+   {
+      local i;
+      for i in plSector_changes
+      {
+         if First(i) = $ 
+         {
+            debug("Room", piRoom_num, "id", self, "has bad sector change", i);
+         }
+      }
+
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -12,6 +12,6 @@
 #ifndef _STARTUP_H
 #define _STARTUP_H
 
-Bool StartupCheck(void);
+bool StartupCheck(void);
 
 #endif /* #ifndef _STARTUP_H */

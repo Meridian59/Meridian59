@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
    SECTOR_PLATFORM = 3
-   SECTOR_PLATFORM_DN = 264
+   SECTOR_PLATFORM_DN = 250
    SECTOR_PLATFORM_UP = 800
    SECTOR_LEDGE_N = 4
    SECTOR_LEDGE_N_DN = 510
@@ -53,12 +53,9 @@ constants:
    G9_DN_SPEED = 15
 
    % 2 minutes (time the puzzle stays solved before resetting)
-   LIGHTNING_TIMELIMIT = 1000 * 60 * 2
-   % 1 hour (once touched, time the puzzle stays that way before resetting)
-   LIGHTNING_TOUCHEDTIMELIMIT = 1000 * 60 * 60
-
-   % 2 seconds
-   LEVER_REACTIVATE_DELAY = 1000 * 2      
+   PUZZLE_TIMELIMIT = 1000 * 60 * 2
+   % 5 minutes (once touched, time the puzzle stays that way before resetting)
+   LEVER_TOUCHEDTIMELIMIT = 1000 * 60 * 5
 
 resources:
 
@@ -67,24 +64,23 @@ resources:
    OutdoorsG9_music = walk4.mid
 
    G9_door_sound = down2.wav
+   G9_platform_sound = rumble.wav
 
    G9_center_lever_desc = "Clearly of ancient design, you somehow doubt that this lever still does what it "
-      "was originally enchanted to do, if it does anything at all.  A label along the handle, written in an "
-      "archaic but still legible variant of modern Meridian script, reads "
-      "\"Activate Center\""
+      "was originally enchanted to do, if it does anything at all."
    G9_outer1_lever_desc = "Clearly of ancient design, you somehow doubt that this lever still does what it "
-      "was originally enchanted to do, if it does anything at all.  A label along the handle, written in an "
-      "archaic but still legible variant of modern Meridian script, reads "
-      "\"Activate Corner\""
+      "was originally enchanted to do, if it does anything at all."
    G9_outer2_lever_desc = "Clearly of ancient design, you somehow doubt that this lever still does what it "
-      "was originally enchanted to do, if it does anything at all.  A label along the handle, written in an "
-      "archaic but still legible variant of modern Meridian script, reads "
-      "\"Raise/Lower Corner\""
+      "was originally enchanted to do, if it does anything at all."
+   G9_floor_lever_desc = "These levers, crafted through collaboration between the cities, now grant control over the pillars once governed by the magic of the nearby mana node."
+
+   G9_distant_rumble_msg = "The ground quakes beneath your feet - the entrance to the Necropolis has been disturbed."
 
    G9_lever_icon = neclever.bgf
 
    G9_tome_name = "Journal of the Watcher of the Brax Arena"
-   G9_tome_text = "For the sake of future Watchers, I wish to set down now a set of "
+   G9_tome_text = "[A hastily scrawled note has been added to the first page: 'These instructions are no longer accurate - the levers' enchantments have completely degraded.']\n\n" 
+      "For the sake of future Watchers, I wish to set down now a set of "
       "instructions for correctly operating the Arena's magically enchanted devices (as the "
       "last Watcher can no longer tell you, it does not pay to invoke the Queen's "
       "wrath by making careless mistakes).\n\n"
@@ -95,7 +91,7 @@ resources:
       "be directed in just the right way to trigger the summoning of an undead horde "
       "for the Queen's sacrificial ceremonies, as well as raising the central stands to "
       "a safe height above the ensuing mayhem.\n"
-	   "¶"
+	   "\xB6"
       "Note that under normal circumstances, raising and activating all the pillars "
       "is as simple as pulling all nine control levers (although it should be noted "
       "that activation levers will only activate that pillar if it is already raised).  "
@@ -150,14 +146,15 @@ properties:
    pbSELit = FALSE
    pbNELit = FALSE
 
-   ptResetLightningPuzzle = $
+   ptResetPuzzle = $
+   ptActivateLevers = $
 
+   % Floor levers
    poCenterLever = $
-   plOuterLevers1 = $
-   plLeverEffects1 = $
-   plOuterLevers2 = $
-   plLeverEffects2 = $
-   ptReactivateLevers = $
+   poNWLever = $
+   poSELever = $
+   poSWLever = $
+   poNELever = $
 
    plSkellyGenPoints = $
 
@@ -166,7 +163,9 @@ messages:
    Constructed()
    {
       local oMovingSpire;
+
       plMonsters = [ [&Orc, 80], [&DeathSpider, 20] ];
+      
       plGenerators = [ [10, 44], [25, 47], [29, 58], [22, 63], [14, 68],
 		                 [19,  6], [25, 11], [35, 12], [35, 23], [18, 20],
 		                 [ 9, 18], [13, 24], [ 8, 31], [24, 28], [14, 38],
@@ -183,7 +182,7 @@ messages:
                           #upH=SECTOR_PLATFORM_UP,#downH=SECTOR_PLATFORM_DN,
                           #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
                           #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0,
-                          #movesound=G9_door_sound);
+                          #movesound=G9_platform_sound);
 
       poLedgeN = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_LEDGE_N,
                         #upH=SECTOR_LEDGE_N_UP,#downH=SECTOR_LEDGE_N_DN,
@@ -196,9 +195,9 @@ messages:
                         #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
 
       poCenterSpire = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_SPIRE_CENTER,
-                             #upH=SECTOR_SPIRE_CENTER_UP,#downH=SECTOR_SPIRE_CENTER_DN,
+                             #upH=SECTOR_SPIRE_CENTER_UP,#downH=SECTOR_PLATFORM_DN,
                              #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
-                             #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
+                             #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0,#movesound=G9_door_sound);
 
       poSkellyCubbyholes = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_CUBBYHOLES,
                                   #upH=SECTOR_CUBBYHOLES_UP,#downH=SECTOR_CUBBYHOLES_DN,
@@ -210,34 +209,28 @@ messages:
       oMovingSpire = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_SPIRE_NE,
                             #upH=SECTOR_SPIRE_UP,#downH=SECTOR_SPIRE_DN,
                             #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
-                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0,
-                            #movesound=G9_door_sound);
+                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
       plOuterSpires = cons(oMovingSpire, plOuterSpires);
 
       oMovingSpire = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_SPIRE_SE,
                             #upH=SECTOR_SPIRE_UP,#downH=SECTOR_SPIRE_DN,
                             #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
-                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0,
-                            #movesound=G9_door_sound);
+                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
       plOuterSpires = cons(oMovingSpire, plOuterSpires);
 
       oMovingSpire = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_SPIRE_SW,
                             #upH=SECTOR_SPIRE_UP,#downH=SECTOR_SPIRE_DN,
                             #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
-                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0,
-                            #movesound=G9_door_sound);
+                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
       plOuterSpires = cons(oMovingSpire, plOuterSpires);
 
       oMovingSpire = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_SPIRE_NW,
                             #upH=SECTOR_SPIRE_UP,#downH=SECTOR_SPIRE_DN,
                             #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
-                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0,
-                            #movesound=G9_door_sound);
+                            #upspeed=G9_UP_SPEED,#downspeed=G9_DN_SPEED,#toggletime=0);
       plOuterSpires = cons(oMovingSpire, plOuterSpires);
 
-      post(self,@ResetLightningPuzzle);
-      post(self,@DeactivateLevers);
-      post(self,@RandomizeLeverEffects);
+      Post(self,@ActivateLevers);
 
       propagate;
    }
@@ -256,260 +249,93 @@ messages:
 
    CreateStandardObjects()
    {
-      local oPortal, oLever, oBook;
+      local oLever;
 
+      % Create the mana node
       Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_g9),
-           #new_row=52,#new_col=30,#fine_row=0,#fine_col=48,
-           #new_angle=ANGLE_WEST);
+           #new_row=52,#new_col=30,#fine_row=0,#fine_col=48,#new_angle=ANGLE_WEST);
 
-      if NOT Send(SYS,@AreRoomIllusionsEnabled)
-      {
-         oPortal = Create(&Portal,#dest_room_num=RID_G9,#dest_row=7,#dest_col=55,
-                          #dest_fine_row=39, #dest_fine_col=60);
-         Send(self,@NewHold,#what=oPortal,#new_row=20, #new_col=56,
-              #fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH_EAST);
-      }
+      % Create the book pedestal
+      Send(self,@NewHold,#what=Create(&BookPedestal,#name=G9_tome_name,#text=G9_tome_text),
+         #new_row=1,#new_col=60,#fine_row=48,#fine_col=16,#new_angle=ANGLE_SOUTH_EAST);
 
-      oBook = Create(&BookPedestal,#Name=G9_tome_name,#Text=G9_tome_text);
-      Send(self,@NewHold,#what=oBook,#new_row=1,#new_col=60,
-           #fine_row=48,#fine_col=16,#new_angle=ANGLE_SOUTH_EAST);
+      % Note: The necro levers are non-functional and present for historical purposes.
+      %       The levers are not needed to solve the puzzle. Instead, the player must
+      %       use the platform levers raise the platform.
 
-      poCenterLever = Create(&Lever,#description=G9_center_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      Send(self,@NewHold,#what=poCenterLever,#new_row=3,#new_col=60,
-           #fine_row=16,#fine_col=16,#new_angle=ANGLE_NORTH);
-           
-      oLever = Create(&Lever,#description=G9_outer1_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers1 = cons(oLever,plOuterLevers1);
+      % Create the center necro lever
+      oLever = Create(&Lever,#description=G9_center_lever_desc,#icon=G9_lever_icon,#range=2);
+      Send(self,@NewHold,#what=oLever,#new_row=3,#new_col=60,
+         #fine_row=15,#fine_col=16,#new_angle=ANGLE_NORTH);
+
+      % Create the first set of necro levers
+      oLever = Create(&Lever,#description=G9_outer1_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=3,#new_col=59,
-           #fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
+         #fine_row=0,#fine_col=49,#new_angle=ANGLE_EAST);
 
-      oLever = Create(&Lever,#description=G9_outer1_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers1 = cons(oLever,plOuterLevers1);
+      oLever = Create(&Lever,#description=G9_outer1_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=2,#new_col=59,
-           #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+         #fine_row=32,#fine_col=49,#new_angle=ANGLE_EAST);
 
-      oLever = Create(&Lever,#description=G9_outer1_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers1 = cons(oLever,plOuterLevers1);
+      oLever = Create(&Lever,#description=G9_outer1_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=2,#new_col=59,
-           #fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
+         #fine_row=0,#fine_col=49,#new_angle=ANGLE_EAST);
 
-      oLever = Create(&Lever,#description=G9_outer1_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers1 = cons(oLever,plOuterLevers1);
+      oLever = Create(&Lever,#description=G9_outer1_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=59,
-           #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+         #fine_row=32,#fine_col=49,#new_angle=ANGLE_EAST);
            
-      oLever = Create(&Lever,#description=G9_outer2_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers2 = cons(oLever,plOuterLevers2);
+      % Create the second set of necro levers
+      oLever = Create(&Lever,#description=G9_outer2_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=60,
-           #fine_row=16,#fine_col=0,#new_angle=ANGLE_SOUTH);           
+         #fine_row=17,#fine_col=0,#new_angle=ANGLE_SOUTH);           
 
-      oLever = Create(&Lever,#description=G9_outer2_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers2 = cons(oLever,plOuterLevers2);
+      oLever = Create(&Lever,#description=G9_outer2_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=60,
-           #fine_row=16,#fine_col=32,#new_angle=ANGLE_SOUTH);           
+         #fine_row=17,#fine_col=32,#new_angle=ANGLE_SOUTH);         
 
-      oLever = Create(&Lever,#description=G9_outer2_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers2 = cons(oLever,plOuterLevers2);
+      oLever = Create(&Lever,#description=G9_outer2_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=61,
-           #fine_row=16,#fine_col=0,#new_angle=ANGLE_SOUTH);           
+         #fine_row=17,#fine_col=0,#new_angle=ANGLE_SOUTH);           
 
-      oLever = Create(&Lever,#description=G9_outer2_lever_desc,
-                      #icon=G9_lever_icon,#range=2);
-      plOuterLevers2 = cons(oLever,plOuterLevers2);
+      oLever = Create(&Lever,#description=G9_outer2_lever_desc,#icon=G9_lever_icon,#range=2);
       Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=61,
-           #fine_row=16,#fine_col=32,#new_angle=ANGLE_SOUTH);
+         #fine_row=17,#fine_col=32,#new_angle=ANGLE_SOUTH);
       
-      propagate;
-   }
 
-   DisableIllusions()
-   {
-      local oPortal;
-      if not (Send(self,@CouNtholdingHowMany,#class=&portal) > 0)
-      {
-         oPortal = Create(&Portal,#dest_room_num=RID_G9,#dest_row=7,#dest_col=55,
-                          #dest_fine_row=39,#dest_fine_col=60);
-         Send(self,@NewHold,#what=oPortal,#new_row=20,#new_col=56,
-              #fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH_EAST);
-      }
+      % Create platform levers
+      % Note: The platform levers are the current solution to the puzzle.
 
-      Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,
-           #height=224,#speed=0);
-      Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,
-           #height=224,#speed=0);
-
-      return;
-   }
-
-   EnableIllusions()
-   {
-      local i, each_obj;
-
-      for i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#Data=i);
-         if IsClass(each_obj,&portal)
-         {
-            Send(each_obj,@Delete);
-         }
-      }
-
-      Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,
-           #height=400,#speed=0);
-      Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,
-           #height=264,#speed=0);
-
-      return;
-   }
-
-   FirstUserEntered()
-   {
-      if NOT (Send(SYS,@AreRoomIllusionsEnabled))
-      {
-         Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,
-              #height=224,#speed=0);
-         Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,
-              #height=224,#speed=0);
-      }
-
-      propagate;
-   }
-
-   NewHold(what=$, new_row=$, new_col=$)
-   {
-      if NOT (Send(SYS,@AreRoomIllusionsEnabled))
-         OR ((what=$) OR (new_row=$) OR (new_col=$))
-         OR Send(poPlatform,@GetState) = SECTOR_UP
-      {
-         propagate;
-      }
-
-      if isClass(what,&WallofLightning)
-      {
-         post(self,@UpdateSpireState,#oLightning=what);
-      }
-
-      propagate;
-   }
-
-   UpdateSpireState(oLightning=$)
-   {
-      local new_row, new_col;
-
-      new_row = Send(oLightning,@GetRow);
-      new_col = Send(oLightning,@GetCol);
-
-      if ((new_row = CENTER_ROW) AND (new_col = CENTER_COL))
-         AND NOT pbCenterLit
-      {
-         Send(self,@ToggleCenterLight);
-         Send(Nth(plOuterSpires,1),@Toggle,#toggleback=FALSE);
-         Send(Nth(plOuterSpires,2),@Toggle,#toggleback=FALSE);
-         Send(Nth(plOuterSpires,3),@Toggle,#toggleback=FALSE);
-         Send(Nth(plOuterSpires,4),@Toggle,#toggleback=FALSE);
-
-         Send(self,@Touched);
-      }
-
-      if ((new_row = NW_ROW) AND (new_col = NW_COL))
-         AND NOT pbNWLit
-      {
-         Send(self,@ToggleNWLight);
-         Send(self,@Touched);
-      }
-
-      if ((new_row = SW_ROW) AND (new_col = SW_COL))
-         AND NOT pbSWLit
-      {
-         Send(self,@ToggleSWLight);
-         Send(self,@Touched);
-      }
-
-      if ((new_row = SE_ROW) AND (new_col = SE_COL))
-         AND NOT pbSELit
-      {
-         Send(self,@ToggleSELight);
-         Send(self,@Touched);
-      }
-
-      if ((new_row = NE_ROW) AND (new_col = NE_COL))
-         AND NOT pbNELit
-      {
-         Send(self,@ToggleNELight);
-         Send(self,@Touched);
-      }
-
-      if pbCenterLit AND pbNWLit AND pbSWLit AND pbSELit AND pbNELit
-         AND (Send(Nth(plOuterSpires,1),@GetState)=SECTOR_UP)
-         AND (Send(Nth(plOuterSpires,2),@GetState)=SECTOR_UP)
-         AND (Send(Nth(plOuterSpires,3),@GetState)=SECTOR_UP)
-         AND (Send(Nth(plOuterSpires,4),@GetState)=SECTOR_UP)
-      {
-         Send(self,@LightningPuzzleSolved);
-      }
+      poCenterLever = Create(&Lever,#description=G9_floor_lever_desc,#range=1);
+      Send(self,@NewHold,#what=poCenterLever,#new_row=21,#new_col=55,#fine_row=30,#fine_col=30);
       
-      return;
+      poNWLever = Create(&Lever,#description=G9_floor_lever_desc,#range=1);
+      Send(self,@NewHold,#what=poNWLever,#new_row=16,#new_col=51,#fine_row=0,#fine_col=0);
+      
+      poNELever = Create(&Lever,#description=G9_floor_lever_desc,#range=1);
+      Send(self,@NewHold,#what=poNELever,#new_row=16,#new_col=60,#fine_row=0,#fine_col=0);
+
+      poSWLever = Create(&Lever,#description=G9_floor_lever_desc,#range=1);
+      Send(self,@NewHold,#what=poSWLever,#new_row=25,#new_col=51,#fine_row=0,#fine_col=0);
+      
+      poSELever = Create(&Lever,#description=G9_floor_lever_desc,#range=1);
+      Send(self,@NewHold,#what=poSELever,#new_row=25,#new_col=60,#fine_row=0,#fine_col=0);
+
+      propagate;
    }
-
-%%%%%%%%%%%%%%%%
-% Previously, columns would only stay lit as long as a lightning element was present there.
-%     this is probably too difficult, so I've removed that.
-%     if this code goes back in, note one subtlety:  if column goes down, then the lightning element goes
-%     away, the column stays lit!  bug?  trick to completing the puzzle?  hmmm....
-%%%%%%%%%%%%%%%%
-%
-%   LeaveHold(what=$)
-%   {
-%      local old_row, old_col;
-%      if (what=$) { propagate; }
-%      if isClass(what,&WallofLightning)
-%      {
-%         old_row = Send(what,@GetRow);
-%         old_col = Send(what,@GetCol);
-%         if ((old_row = NW_ROW) and (old_col = NW_COL))
-%         {
-%            if pbNWLit
-%            {
-%               Send(self,@ToggleNWLight);
-%            }
-%         }
-%         if ((old_row = SW_ROW) and (old_col = SW_COL))
-%         {
-%            if pbSWLit
-%            {
-%               Send(self,@ToggleSWLight);
-%            }
-%         }
-%         if ((old_row = SE_ROW) and (old_col = SE_COL))
-%         {
-%            if pbSELit
-%            {
-%               Send(self,@ToggleSELight);
-%            }
-%         }
-%         if ((old_row = NE_ROW) and (old_col = NE_COL))
-%         {
-%            if pbNELit
-%            {
-%               Send(self,@ToggleNELight);
-%            }
-%         }
-%      }
-%      propagate;
-%   }
-
-   ResetLightningPuzzle()
+   
+   ReturnPuzzleToInitialState()
+   "Returns levers, lights, and spire to their original state."
    {
-      ptResetLightningPuzzle = $;
+      ptResetPuzzle = $;
 
+      % Flip the platform levers to their original state
+      Send(self,@ResetLeverStates);
+
+      % Set a timer to "unlock" use of the levers after a short delay
+      ptActivateLevers = CreateTimer(self,@ActivateLevers,PUZZLE_TIMELIMIT);
+
+      % Turn off pillar lights
       if pbCenterLit
       {
          Send(self,@ToggleCenterLight);
@@ -535,6 +361,7 @@ messages:
          Send(self,@ToggleNELight);
       }
 
+      % Reset sector animations
       Send(poCenterSpire,@MoveDown);
       Send(Nth(plOuterSpires,1),@MoveDown);
       Send(Nth(plOuterSpires,2),@MoveDown);
@@ -543,30 +370,67 @@ messages:
       Send(poPlatform,@MoveDown);
       Send(poLedgeN,@MoveUp);
       Send(poLedgeS,@MoveDown);
-
-      if ptReactivateLevers <> $
-      {
-         DeleteTimer(ptReactivateLevers);
-         ptReactivateLevers = $;
-      }
-
-      Send(self,@ReactivateLevers);
       Send(poSkellyCubbyholes,@MoveDown);
 
       return;
    }
 
-   LightningPuzzleSolved()
+   ResetLeverStates()
+   "Resets the state of the levers to their original (up) position."
    {
-      if ptResetLightningPuzzle <> $
+      if Send(poCenterLever,@GetState) = LEVER_DOWN
       {
-         DeleteTimer(ptResetLightningPuzzle);
-         ptResetLightningPuzzle = $;
+         Send(poCenterLever,@SwitchLever);
       }
 
-      ptResetLightningPuzzle = CreateTimer(self,@ResetLightningPuzzle,
-                                           LIGHTNING_TIMELIMIT);
-      Send(self,@DeactivateLevers);
+      if Send(poNWLever,@GetState) = LEVER_DOWN
+      {
+         Send(poNWLever,@SwitchLever);
+      }
+
+      if Send(poNELever,@GetState) = LEVER_DOWN
+      {
+         Send(poNELever,@SwitchLever);
+      }
+
+      if Send(poSWLever,@GetState) = LEVER_DOWN
+      {
+         Send(poSWLever,@SwitchLever);
+      }
+
+      if Send(poSELever,@GetState) = LEVER_DOWN
+      {
+         Send(poSELever,@SwitchLever);
+      }
+
+      return;
+   }
+
+   ActivateLevers()
+   {
+      ptActivateLevers = $;
+
+      Send(poCenterLever,@SetStuck,#newStuck=FALSE);
+      Send(poNWLever,@SetStuck,#newStuck=TRUE);
+      Send(poNELever,@SetStuck,#newStuck=TRUE);
+      Send(poSWLever,@SetStuck,#newStuck=TRUE);
+      Send(poSELever,@SetStuck,#newStuck=TRUE);
+
+      return;
+   }
+
+   PuzzleSolved()
+   {
+      Send(self,@DeleteTimers);
+
+      ptResetPuzzle = CreateTimer(self,@ReturnPuzzleToInitialState,PUZZLE_TIMELIMIT);
+
+      % Set all levers to stuck
+      Send(poCenterLever,@SetStuck,#newStuck=TRUE);
+      Send(poNWLever,@SetStuck,#newStuck=TRUE);
+      Send(poNELever,@SetStuck,#newStuck=TRUE);
+      Send(poSWLever,@SetStuck,#newStuck=TRUE);
+      Send(poSELever,@SetStuck,#newStuck=TRUE);
 
       if pbCenterLit
       {
@@ -592,6 +456,9 @@ messages:
       {
          Send(self,@ToggleNELight);
       }
+
+      % Shake the room
+      Post(self,@Rumble,#duration=5000,#disruption=0);
 
       Send(poCenterSpire,@MoveUp);
       Send(Nth(plOuterSpires,1),@MoveDown);
@@ -605,13 +472,39 @@ messages:
 
       Send(self,@GenerateSkellies);
 
-      % 1 out of 100 chance to randomize the levers after the puzzle is solved.
-      if random(1,100) = 1
-      {
-         Send(self,@RandomizeLeverEffects);
-      }
+      Send(self,@BroadcastPuzzleSolved);
 
       return;
+   }
+
+   BroadcastPuzzleSolved()
+   "Notifies rooms and players that the puzzle has been solved."
+   {
+      local i, oRoom, oPlayer;
+      
+      for oRoom in Send(SYS,@GetRooms)
+      {
+         % Skip room if not in Brax
+         if Send(oRoom,@GetRegion) <> RID_BRAX
+         {
+            continue;
+         }
+
+         % Rumble room
+         Send(oRoom,@Rumble,#duration=3000,#disruption=0);
+
+         % Send a message to all players in the room
+         for i in Send(oRoom,@GetHolderActive)
+         {
+            oPlayer = Send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(oPlayer,&Player)
+            {
+               Send(oPlayer,@MsgSendUser,#message_rsc=G9_distant_rumble_msg);
+            }
+         }
+      }    
+
+      return; 
    }
 
    GenerateSkellies()
@@ -661,10 +554,10 @@ messages:
                #new_col=Nth(Nth(plSkellyGenPoints,iSkellyLocation),2) );
       }
 
-      if ptResetLightningPuzzle = $
+      if ptResetPuzzle = $
       {
-         ptResetLightningPuzzle = CreateTimer(self,@ResetLightningPuzzle,
-                                              LIGHTNING_TIMELIMIT);
+         ptResetPuzzle = CreateTimer(self,@ReturnPuzzleToInitialState,
+                                              PUZZLE_TIMELIMIT);
       }
 
       return TRUE;
@@ -690,11 +583,6 @@ messages:
    
    ToggleNWLight()
    {
-      if Send(Nth(plOuterSpires,1),@GetState) = SECTOR_DN
-      {
-         return;
-      }
-
       if pbNWLit
       {
          pbNWLit = FALSE;
@@ -713,11 +601,6 @@ messages:
    
    ToggleSWLight()
    {
-      if Send(Nth(plOuterSpires,2),@GetState) = SECTOR_DN
-      {
-         return;
-      }
-
       if pbSWLit
       {
          pbSWLit = FALSE;
@@ -736,11 +619,6 @@ messages:
    
    ToggleSELight()
    {
-      if Send(Nth(plOuterSpires,3),@GetState) = SECTOR_DN
-      {
-         return;
-      }
-
       if pbSELit
       {
          pbSELit = FALSE;
@@ -759,11 +637,6 @@ messages:
    
    ToggleNELight()
    {
-      if Send(Nth(plOuterSpires,4),@GetState) = SECTOR_DN
-      {
-         return;
-      }
-
       if pbNELit
       {
          pbNELit = FALSE;
@@ -780,207 +653,107 @@ messages:
       return;
    }
 
-   SomethingChanged(what=$)
+   SomethingChanged(what = $)
    {
-      local oLever, i;
-
       if isClass(what,&Lever)
       {
-         if what = poCenterLever
+         if Send(what,@GetRow) = 21
          {
-            Send(self,@ToggleCenterLight);
-            Send(Nth(plOuterSpires,1),@Toggle,#toggleback=FALSE);
-            Send(Nth(plOuterSpires,2),@Toggle,#toggleback=FALSE);
-            Send(Nth(plOuterSpires,3),@Toggle,#toggleback=FALSE);
-            Send(Nth(plOuterSpires,4),@Toggle,#toggleback=FALSE);
-            Send(self,@Touched);
-         }
-
-         for oLever in plOuterLevers1
-         {
-            if what = oLever
+            if Send(what,@GetCol) = 55
             {
-               i = Nth(plLeverEffects1,FindListElem(plOuterLevers1,oLever));
+               Send(self,@ToggleCenterLight);
+               Send(poCenterSpire,@MoveUp);
+               Send(Nth(plOuterSpires,1),@Toggle,#toggleback=FALSE);
+               Send(Nth(plOuterSpires,2),@Toggle,#toggleback=FALSE);
+               Send(Nth(plOuterSpires,3),@Toggle,#toggleback=FALSE);
+               Send(Nth(plOuterSpires,4),@Toggle,#toggleback=FALSE);
 
-               if i = 1
+               if Send(poCenterLever,@GetState) = LEVER_UP
                {
+                  Send(poNWLever,@SetStuck,#newStuck=TRUE);
+                  Send(poNELever,@SetStuck,#newStuck=TRUE);
+                  Send(poSWLever,@SetStuck,#newStuck=TRUE);
+                  Send(poSELever,@SetStuck,#newStuck=TRUE);
+               }
+               else
+               {
+                  Send(poNWLever,@SetStuck,#newStuck=FALSE);
+                  Send(poNELever,@SetStuck,#newStuck=FALSE);
+                  Send(poSWLever,@SetStuck,#newStuck=FALSE);
+                  Send(poSELever,@SetStuck,#newStuck=FALSE);
+               }
+            }
+         }
+         else
+         {
+            if Send(what,@GetRow) = 16
+            {
+               if Send(what,@GetCol) = 51
+               {
+                  % NW pillar
                   Send(self,@ToggleNWLight);
                }
-
-               if i = 2
+               else
                {
-                  Send(self,@ToggleSWLight);
-               }
-
-               if i = 3
-               {
-                  Send(self,@ToggleSELight);
-               }
-
-               if i = 4
-               {
+                  % NE pillar
                   Send(self,@ToggleNELight);
                }
-
-               % toggle the position of the spire after it in the list.
-               i = Nth(plLeverEffects1,((FindListElem(plOuterLevers1,oLever) mod 4) + 1));
-               Send(Nth(plOuterSpires,i),@Toggle,#toggleback=FALSE);
-
-               % toggle the position of the spire before it in the list.
-               i = Nth(plLeverEffects1,(((FindListElem(plOuterLevers1,oLever) - 2) mod 4) + 1));
-               Send(Nth(plOuterSpires,i),@Toggle,#toggleback=FALSE);
-
-               % toggle the position of the spire before that in the list.
-               i = Nth(plLeverEffects1,(((FindListElem(plOuterLevers1,oLever) - 3) mod 4) + 1));
-               Send(Nth(plOuterSpires,i),@Toggle,#toggleback=FALSE);
-
-               Send(self,@Touched);
             }
-         }
-
-         for oLever in plOuterLevers2
-         {
-            if what = oLever
+            else
             {
-               i = Nth(plLeverEffects1,
-                       Nth(plLeverEffects2,FindListElem(plOuterLevers2,oLever)));
-               Send(Nth(plOuterSpires,i),@Toggle,#toggleback=FALSE);
-
-               i = Nth(plLeverEffects1,
-                       ((Nth(plLeverEffects2,FindListElem(plOuterLevers2,oLever)) mod 4) + 1));
-               Send(Nth(plOuterSpires,i),@Toggle,#toggleback=FALSE);
-
-               Send(self,@Touched);
+               if Send(what,@GetCol) = 51
+               {
+                  % SW pillar
+                  Send(self,@ToggleSWLight);
+               }
+               else
+               {
+                  % SE pillar
+                  Send(self,@ToggleSELight);
+               }
             }
          }
 
-         Send(self,@DeactivateLevers);
-         ptReactivateLevers = CreateTimer(self,@ReactivateLevers,LEVER_REACTIVATE_DELAY);
+         Send(self,@Touched);
+
          if pbCenterLit AND pbNWLit AND pbSWLit AND pbSELit AND pbNELit
             AND (Send(Nth(plOuterSpires,1),@GetState)=SECTOR_UP)
             AND (Send(Nth(plOuterSpires,2),@GetState)=SECTOR_UP)
             AND (Send(Nth(plOuterSpires,3),@GetState)=SECTOR_UP)
             AND (Send(Nth(plOuterSpires,4),@GetState)=SECTOR_UP)
          {
-            Send(self,@LightningPuzzleSolved);
+            Send(self,@PuzzleSolved);
          }
       }
-
+   
       propagate;
-   }
-
-   RandomizeLeverEffects()
-   "generates a random permutation of 1-4 for each lever set."
-   {
-      local l, index;
-
-      l = [1, 2, 3, 4];
-      plLeverEffects1 = $;
-
-      while length(l) > 0
-      {
-         index = random(1,length(l));
-         plLeverEffects1 = cons(Nth(l,index),plLeverEffects1);
-         l = DelListElem(l,Nth(l,index));
-      }
-
-      l = [1, 2, 3, 4];
-      plLeverEffects2 = $;
-
-      while length(l) > 0
-      {
-         index = random(1,length(l));
-         plLeverEffects2 = cons(Nth(l,index),plLeverEffects2);
-         l = DelListElem(l,Nth(l,index));
-      }
-
-      return;
-   }
-
-   ReactivateLevers()
-   {
-      local i;
-
-      ptReactivateLevers = $;
-
-      Send(poCenterLever,@SetStuck,#newStuck=FALSE);
-      for i in plOuterLevers1
-      {
-         Send(i,@SetStuck,#newStuck=FALSE);
-      }
-      for i in plOuterLevers2
-      {
-         Send(i,@SetStuck,#newStuck=FALSE);
-      }
-
-      return;
-   }
-
-   DeactivateLevers()
-   {
-      local i;
-
-      if ptReactivateLevers <> $
-      {
-         DeleteTimer(ptReactivateLevers);
-         ptReactivateLevers = $;
-      }
-
-      Send(poCenterLever,@SetStuck,#newStuck=TRUE);
-
-      for i in plOuterLevers1
-      {
-         Send(i,@SetStuck,#newStuck=TRUE);
-      }
-
-      for i in plOuterLevers2
-      {
-         Send(i,@SetStuck,#newStuck=TRUE);
-      }
-
-      return;
    }
 
    Touched()
    {
-      if ptResetLightningPuzzle <> $
+      if ptResetPuzzle <> $
       {
-         DeleteTimer(ptResetLightningPuzzle);
-         ptResetLightningPuzzle = $;
+         DeleteTimer(ptResetPuzzle);
+         ptResetPuzzle = $;
       }
 
-      ptResetLightningPuzzle = CreateTimer(self,@ResetLightningPuzzle,
-                                           LIGHTNING_TOUCHEDTIMELIMIT);
+      ptResetPuzzle = CreateTimer(self,@ReturnPuzzleToInitialState,LEVER_TOUCHEDTIMELIMIT);
 
       return;
    }
 
    AdminResetPuzzle()
    {
-      if ptResetLightningPuzzle <> $
-      {
-         DeleteTimer(ptResetLightningPuzzle);
-         ptResetLightningPuzzle = $;
-      }
+      Send(self,@DeleteTimers);
 
-      ptResetLightningPuzzle = CreateTimer(self,@ResetLightningPuzzle,10);
+      ptResetPuzzle = CreateTimer(self,@ReturnPuzzleToInitialState,10);
 
       return;
    }
    
    Delete()
    {
-      if ptReactivateLevers <> $
-      {
-         DeleteTimer(ptReactivateLevers);
-         ptReactivateLevers = $;
-      }
-
-      if ptResetLightningPuzzle <> $
-      {
-         DeleteTimer(ptResetLightningPuzzle);
-         ptResetLightningPuzzle = $;
-      }
+      Send(self,@DeleteTimers);
 
       if poPlatform <> $
       {
@@ -1020,16 +793,33 @@ messages:
       poLedgeS = $;
       poCenterSpire = $;
       plOuterSpires = $;
-      poCenterLever = $;
-      plOuterLevers1 = $;
-      plOuterLevers2 = $;
-      plLeverEffects1 = $;
-      plLeverEffects2 = $;
       poSkellyCubbyholes = $;
+
+      poCenterLever = $;
+      poNWLever = $;
+      poNELever = $;
+      poSWLever = $;
+      poSELever = $;
       
       propagate;
    }
 
+   DeleteTimers()
+   {
+      if ptResetPuzzle <> $
+      {
+         DeleteTimer(ptResetPuzzle);
+         ptResetPuzzle = $;
+      }
+
+      if ptActivateLevers <> $
+      {
+         DeleteTimer(ptActivateLevers);
+         ptActivateLevers = $;
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

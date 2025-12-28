@@ -120,13 +120,14 @@ messages:
       send(poOwner,@MsgSendUser,#message_rsc=SpecialGift_open,
            #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
 
+      Send(what,@WaveSendUser,#wave_rsc=gift_open_wav);
+
       oldOwner = poOwner;
-      send(poOwner,@LeaveHold,#what=self);
       send(self,@NewOwner,#what=$);
       send(oldOwner,@NewHold,#what=poContents);
 
       % Note that this RecalcBulkAndWeight is entirely superfluous,
-      %  but we'll leave it here as a safeguard against future wierdness.
+      %  but we'll leave it here as a safeguard against future weirdness.
       send(oldOwner,@RecalcBulkAndWeight);
 
       poContents = $;

@@ -284,10 +284,14 @@ messages:
          i = 1;
          while i <= iNumItemsInventory
          {
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            if Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
             {
-               % Don't need to increment unless the item stayed in the
-               %  inventory.
+               iNumItemsInventory = iNumItemsInventory - 1;
+            }
+            else
+            {
+               % Only increment the index if the item could not be dropped and
+               % remained in inventory.
                i = i + 1;
             }
          }
@@ -348,11 +352,11 @@ messages:
 
          if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
-            BaseLossAmount = -2;
+            BaseLossAmount = 2;
          }
          else
          {
-            BaseLossAmount = -1;
+            BaseLossAmount = 1;
          }
 
          % Loop through once to reduce LossCounter below Length(lSpells), and
@@ -367,12 +371,14 @@ messages:
                i = i + 1;
                iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
                                     #compound=Nth(lSpells,i));
-               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+               % Players shouldn't lose their last 5% from logoff penalties to avoid
+               % complete skill loss spiral
+               LossAmount = Bound(BaseLossAmount*iLoops,0,iSpellAbility-5);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
                                   #compound=Nth(lSpells,i));
                Send(poGhostedPlayer,@ChangeSpellAbility,
-                    #spell_num=iAbilityNum,#amount=LossAmount);
-               numSpellPointsLost = (numSpellPointsLost - LossAmount);
+                    #spell_num=iAbilityNum,#amount=-LossAmount);
+               numSpellPointsLost = (numSpellPointsLost + LossAmount);
             }
          }
 
@@ -415,8 +421,8 @@ messages:
             iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
                                #compound=Nth(lSpells,i));
             Send(poGhostedPlayer,@ChangeSpellAbility,
-                 #spell_num=iAbilityNum,#amount=BaseLossAmount);
-            numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+                 #spell_num=iAbilityNum,#amount=-BaseLossAmount);
+            numSpellPointsLost = numSpellPointsLost + BaseLossAmount;
             LossCounter = LossCounter - 1;
          }
       }
@@ -443,12 +449,14 @@ messages:
                i = i + 1;
                iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
                                     #compound=Nth(lSkills,i));
-               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+               % Players shouldn't lose their last 5% from logoff penalties to avoid
+               % complete skill loss spiral
+               LossAmount = Bound(BaseLossAmount*iLoops,0,iSkillAbility-5);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
                                   #compound=Nth(lSkills,i));
                Send(poGhostedPlayer,@ChangeSkillAbility,
-                    #skill_num=iAbilityNum,#amount=LossAmount);
-               numSkillPointsLost = numSkillPointsLost - LossAmount;
+                    #skill_num=iAbilityNum,#amount=-LossAmount);
+               numSkillPointsLost = numSkillPointsLost + LossAmount;
             }
          }
 
@@ -490,8 +498,8 @@ messages:
             iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
                                #compound=Nth(lSkills,i));
             Send(poGhostedPlayer,@ChangeSkillAbility,
-                 #skill_num=iAbilityNum,#amount=BaseLossAmount);
-            numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+                 #skill_num=iAbilityNum,#amount=-BaseLossAmount);
+            numSkillPointsLost = numSkillPointsLost + BaseLossAmount;
             LossCounter = LossCounter - 1;
          }
       }

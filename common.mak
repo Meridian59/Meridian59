@@ -1,8 +1,5 @@
 # stuff included in blakston makefiles
 
-# defining DYNAMIC uses multi-threaded C runtime DLL; 
-# otherwise link statically with single-threaded lib
-
 # defining RELEASE compiles optimized
 # defining NODEBUG omits debugging information
 # defining FINAL implies release, and also removes debugging strings from client executable 
@@ -41,18 +38,16 @@ DECODIR     = $(TOPDIR)\blakdeco
 MAKEBGFDIR  = $(TOPDIR)\makebgf
 RESOURCEDIR = $(TOPDIR)\resource
 MODULEDIR   = $(TOPDIR)\module
-CRUSHERDIR  = $(TOPDIR)\crusher
 UTILDIR     = $(TOPDIR)\util
 SPROCKETDIR = $(TOPDIR)\sprocket
 CLUBDIR     = $(TOPDIR)\club
-KEYBINDDIR  = $(TOPDIR)\keybind
 
 # 3rd party libraries
 EXTERNALDIR = $(TOPDIR)\external
-WAVEMIXDIR  = $(EXTERNALDIR)\wavemix
 LIBARCHIVEDIR = $(EXTERNALDIR)\libarchive
 LIBPNGDIR   = $(EXTERNALDIR)\libpng
 ZLIBDIR     = $(EXTERNALDIR)\zlib
+OPENALDIR   = $(EXTERNALDIR)\openal-soft\openal-soft-1.24.3-bin
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -73,11 +68,12 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /wd4996  disables warning (deprecated function called)
 # /wd4312  disables warning (cast 32-bit value to 64-bit pointer)
 # /MP enables parallel compiling
+# /MT link with static C runtime library
 # /Zi includes debugging information
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
              /wd4996 /wd4312 \
-	     -TP -WX -GR- -EHsc- -MP -Zi /arch:SSE
+	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++20
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -W3 -DBLAKDEBUG
@@ -108,12 +104,6 @@ LINKFLAGS = $(LINKNORMALFLAGS)
 LINKFLAGS = $(LINKFLAGS) /DLL
 !endif
 
-!ifdef DYNAMIC
-CFLAGS = $(CFLAGS) /MD
-!else
-CFLAGS = $(CFLAGS) /MT
-!endif DYNAMIC
-
 !ifdef NODPRINTFS
 CFLAGS = $(CFLAGS) -DNODPRINTFS
 !endif NODPRINTFS
@@ -141,4 +131,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(OPENALDIR)\include

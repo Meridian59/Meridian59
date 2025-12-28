@@ -199,7 +199,7 @@ messages:
 
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
    "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
-   "This supercedes the ROOM_HARD_LEARN flag."
+   "This supersedes the ROOM_HARD_LEARN flag."
    {
       % Hinder learning room enchants because of the Yeti's discordance
       if IsClass(oSpellSkill,&RoomEnchantment)

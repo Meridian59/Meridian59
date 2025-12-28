@@ -19,12 +19,12 @@
 
 #include "client.h"
 
-#define MAP_WALL_THICKNESS 1
-#define MAP_SELF_THICKNESS 2
-#define MAP_PLAYER_THICKNESS 5
-#define MAP_OBJECT_THICKNESS 3
+#define MAP_WALL_THICKNESS 1        // Thickness of wall lines
+#define MAP_SELF_THICKNESS 2        // Stroke thickness of player arrow marker
+#define MAP_PLAYER_THICKNESS 3      // Stroke thickness of other players
+#define MAP_OBJECT_THICKNESS 3      // Stroke thickness of objects
 
-#define MAP_PLAYER_MARKER_SIZE 3
+#define MAP_PLAYER_MARKER_SIZE 3    // Size of player arrow marker
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
 #define MAP_SELF_COLOR          PALETTERGB(0, 0, 255)
@@ -35,7 +35,8 @@
 #define MAP_ENEMY_COLOR         PALETTERGB(255, 0, 0)
 #define MAP_GUILDMATE_COLOR     PALETTERGB(255, 255, 0)
 
-#define MAP_OBJECT_RADIUS (FINENESS / 6)  // Radius of circle drawn for an object
+#define MAP_OBJECT_SIZE (FINENESS / 2)  // Size of ellipse drawn for an object
+#define MAP_OBJECT_MAX_SIZE 8           // Maximum size of object ellipses
 
 #define MAP_ZOOM_INCREMENT 0.1       // Amount to change zoom factor per user command
 #define MAP_ZOOM_DELAY     100       // # of milliseconds between zooming in by INCREMENT
@@ -50,7 +51,7 @@ static HPEN hFriendPen, hEnemyPen, hGuildmatePen;
 
 static float zoom;              // Factor to zoom in on map
 
-static BOOL bDrawBackgroundStatic = False;
+static BOOL bDrawBackgroundStatic = false;
 
 // To go from room coordinates (rx, xy) to screen coordinates (sx, sy):
 // sx = xoffset + rx * scale
@@ -84,7 +85,7 @@ static void MapDrawWall(HDC hdc, int x, int y, float scale, WallData *wall);
 static void MapDrawPlayer(HDC hdc, int x, int y, float scale);
 static void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale);
 static void MapDrawWalls(HDC hdc, int x, int y, float scale, room_type *room);
-static void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap );
+static void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap );
 
 void MapSetWallPositions(room_type *room, float scale, int numWalls)
 {
@@ -183,7 +184,7 @@ void MapClose(void)
  *   bits points to the bitmap in hdc.
  *   width gives the width of the bitmap in hdc.
  */
-void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool bMiniMap )
+void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool bMiniMap )
 {
    RECT rect;
    AREA view;
@@ -198,7 +199,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
       if( bDrawBackgroundStatic )
       {
 	 DrawWindowBackgroundMem(&map_bkgnd, bits, &rect, width, view.x, view.y);
-	 bDrawBackgroundStatic = False;
+	 bDrawBackgroundStatic = false;
       }
    else
       DrawWindowBackgroundMem(&map_bkgnd, bits, &rect, width, (int)( player.x * scaleMiniMap ), (int)( player.y * scaleMiniMap ) );
@@ -382,7 +383,8 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
    int dx, dy;
    static int mapObjectDistanceShiftAndSquare = (MAP_OBJECT_DISTANCE >> 4) * (MAP_OBJECT_DISTANCE >> 4);
 
-   radius = max(1, MAP_OBJECT_RADIUS * scale);
+   // Scale radius, clamping between a minimum of 1 and the defined maximum
+   radius = min(max(1, (MAP_OBJECT_SIZE * scale)), MAP_OBJECT_MAX_SIZE) / 2;
 
    for (l = objects; l != NULL; l = l->next)
    {
@@ -512,11 +514,15 @@ void MapDrawPlayer(HDC hdc, int x, int y, float scale)
  * MapDrawAnnotations:  Draw spots identifying map annotations.
  *   (x, y) is the upper-left corner of the drawing area on hdc.
  */
-void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, Bool bMiniMap )
+void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, float scaleToUse, bool bMiniMap )
 {
-	int i, radius, new_x, new_y;
+	int i, adjusted_size, new_x, new_y;
 
-	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap );
+   // Scale annotation, capping it between the minimum and maximum limits
+   adjusted_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_SIZE);
+   adjusted_size = max(MAP_ANNOTATION_MIN_SIZE, adjusted_size);
+
+	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap, adjusted_size );
 
 	for (i=0; i < MAX_ANNOTATIONS; i++)
 	{
@@ -526,14 +532,12 @@ void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, floa
 		new_x = x + (int) (annotations[i].x * scaleToUse);
 		new_y =	y + (int) (annotations[i].y * scaleToUse);
 
-		radius = max(MAP_ANNOTATION_MIN_SIZE / 2, (int) (MAP_ANNOTATION_SIZE * scaleToUse / 2));
-
 		if (annotation.bits != NULL)
 		{
-			OffscreenWindowBackground(NULL, new_x - radius, new_y - radius, 
+			OffscreenWindowBackground(NULL, new_x - (adjusted_size / 2), new_y - (adjusted_size / 2), 
 									    annotation.width, annotation.height);
-			OffscreenStretchBlt(hdc, (int) (new_x - radius), (int) (new_y - radius), 
-								  2 * radius, 2 * radius,
+			OffscreenStretchBlt(hdc, (int) (new_x - (adjusted_size / 2)), (int) (new_y - (adjusted_size / 2)), 
+								  adjusted_size, adjusted_size,
 								  annotation.bits, 0, 0, 
 								  annotation.width, annotation.height,
 								  OBB_COPY | OBB_FLIP);
@@ -550,10 +554,10 @@ void MapEnterRoom(room_type *room)
    int i;
 
    for (i = 0; i < room->num_walls; i++)
-      room->walls[i].seen = False;
+      room->walls[i].seen = false;
 
    memset(room->annotations, 0, MAX_ANNOTATIONS * sizeof(MapAnnotation));
-   room->annotations_changed = False;
+   room->annotations_changed = false;
    room->annotations_offset = 0;
 
    // Load map from file
@@ -603,7 +607,7 @@ void MapZoom(int direction)
    fMapCacheValid = FALSE;
 
    //	Set flag that keeps background of the map fixed for the next draw.
-   bDrawBackgroundStatic = True;
+   bDrawBackgroundStatic = true;
 
    RedrawAll();
 }
@@ -612,7 +616,7 @@ void MapZoom(int direction)
  * MapScreenToRoom:  Given (x, y) in pixels measured from the origin of the graphics
  *   window, modify (x, y) to give the room coordinates on this location on the map.
  */
-void MapScreenToRoom( int *x, int *y, Bool bMiniMap )
+void MapScreenToRoom( int *x, int *y, bool bMiniMap )
 {
    if( !bMiniMap )
    {
@@ -631,10 +635,10 @@ void MapScreenToRoom( int *x, int *y, Bool bMiniMap )
 }
 /*****************************************************************************/
 /*
- * MapShowAllWalls:  Set all walls in current room to seen (show = True)
- *   or hidden (show = False).
+ * MapShowAllWalls:  Set all walls in current room to seen (show = true)
+ *   or hidden (show = false).
  */
-void MapShowAllWalls(room_type *room, Bool show)
+void MapShowAllWalls(room_type *room, bool show)
 {
    WallData *wall;
    int i;
@@ -651,10 +655,10 @@ void MapShowAllWalls(room_type *room, Bool show)
 	 continue;
 
       if (show && !(sidedef->flags & WF_MAP_NEVER))
-	wall->seen = True;
+	wall->seen = true;
 
       if (!show && !(sidedef->flags & WF_MAP_ALWAYS))
-	wall->seen = False;
+	wall->seen = false;
      }
 }
 
@@ -884,7 +888,7 @@ void PrintMap(BOOL useDefault)
       doc.lpszDocName = buffer;
 
       StartDoc(pageSetup.hDC,&doc);
-      wsprintf(buffer,"Map of %s",LookupNameRsc(player.room_name_res));
+      snprintf(buffer, sizeof(buffer), "Map of %s",LookupNameRsc(player.room_name_res));
 
       GetClipBox(pageSetup.hDC,&rcPage);
       rcPage.top += GetDeviceCaps(pageSetup.hDC, LOGPIXELSY) / 2;

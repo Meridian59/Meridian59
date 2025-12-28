@@ -221,7 +221,7 @@ messages:
          return FALSE;
       }
 
-      % Use iDuration (in ms).  If it is nil, then covert iDurationSecs to ms.
+      % Use iDuration (in ms).  If it is nil, then convert iDurationSecs to ms.
       if iDuration = $
       {
          if iDurationSecs = $

@@ -14,8 +14,8 @@
 
 static BYTE bof_magic[] = { 0x42, 0x4F, 0x46, 0xFF };
 
-int codegen_ok;
-extern int debug_bof;  /* Should we put debugging info into .bof? */
+bool codegen_ok;
+extern bool debug_bof;  /* Should we put debugging info into .bof? */
 
 typedef struct {
    int lineno;   // Kod line number
@@ -50,8 +50,8 @@ void codegen_classes(void)
 
    /* Make list of only classes which appeared in current source file */
    for (templist = st.classes; templist != NULL; templist = templist->next)
-      if ( ((class_type) (templist->data))->is_new == True)
-	 c = list_add_item(c, templist->data);
+      if ( ((class_type) (templist->data))->is_new)
+        c = list_add_item(c, templist->data);
    
    /* Write out # of classes */
    numclasses = list_length(c);
@@ -859,7 +859,7 @@ void codegen(char *kod_fname, char *bof_fname)
    list_type c = NULL;
    long endpos, stringpos, debugpos, namepos;
 
-   codegen_ok = True;
+   codegen_ok = true;
    debug_lines = NULL;
 
    outfile = fopen(bof_fname, "w+b");
@@ -931,12 +931,12 @@ void codegen(char *kod_fname, char *bof_fname)
    if (codegen_ok)
    {
       char temp[256];
-      set_extension(temp, bof_fname, ".rsc");
+      set_extension(temp, sizeof(temp), bof_fname, ".rsc");
       write_resources(temp);
       save_kodbase();
    }
 
    /* Mark all classes as done */
    for (c = st.classes; c != NULL; c = c->next)
-      ((class_type) (c->data))->is_new = False;
+      ((class_type) (c->data))->is_new = false;
 }

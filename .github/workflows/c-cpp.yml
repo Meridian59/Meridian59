@@ -24,7 +24,25 @@ jobs:
         make -f makefile.linux -k
         cd ../kod
         make -f makefile.linux
-  
+
+  build-mac:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: make blakserv
+      working-directory: blakserv
+      run: make -f makefile.linux -k
+      
+    - name: make kod
+      working-directory: blakcomp
+      run: |
+        make -f makefile.linux -k
+        cd ../kod
+        make -f makefile.linux
+
   
   build-windows-32:
   

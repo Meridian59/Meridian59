@@ -14,7 +14,6 @@
 #define ATTACK_DELAY 1000  // Minimum number of milliseconds between user attacks
 
 extern player_info player;
-extern room_type current_room;
 
 static SendOfferDialogStruct info; /* Stuff to send to offer dialog */
 
@@ -26,8 +25,8 @@ static ID idTarget = INVALID_ID;		//	Target object, or INVALID_ID if no target s
 static void ApplyCallback(ID obj2);
 static void SetDescParamsByRoomObject(room_contents_node *r, HWND hwnd);
 
-extern BOOL		gbMouselook;
-extern RECT		gD3DRect;
+extern bool gbMouselook;
+extern RECT gD3DRect;
 /************************************************************************/
 /*
  * UserInventoryList:  Bring up a dialog for user to select multiple objects
@@ -407,12 +406,12 @@ void UserUnuse(void)
 /************************************************************************/
 /*
  * UserToggleMusic: Called when user turns music on or off.
- *   music_on is True iff user just turned music on.
+ *   music_on is true iff user just turned music on.
  */
-void UserToggleMusic(Bool music_on)
+void UserToggleMusic(bool music_on)
 {
    if (music_on)
-      MusicStart();
+      MusicRestart();
    else MusicAbort();
 }
 /************************************************************************/
@@ -679,7 +678,7 @@ void SetDescParamsByRoomObject(room_contents_node *r, HWND hwnd)
  * UserTargetNextOrPrevious:  Called when the user asks to target "next" object. Sets idTarget.
  *								ajw
  */
-void UserTargetNextOrPrevious(Bool bTargetNext)
+void UserTargetNextOrPrevious(bool bTargetNext)
 {
 	list_type	object_list;
 	int			iListIndex = 0;
@@ -751,7 +750,7 @@ void UserTargetNextOrPrevious(Bool bTargetNext)
  */
 void SetUserTargetID(ID idTargetNew)
 {
-	extern Bool map;
+	extern bool map;
 
 	if (map)
 		idTargetNew = INVALID_ID;
@@ -775,14 +774,11 @@ ID GetUserTargetID()
 
 void UserMouselookToggle(void)
 {
-	if (FALSE == gbMouselook)
+	if (false == gbMouselook)
 	{
 		RECT		rect;
-//		WINDOWINFO	windowInfo;
 		POINT	pt, center;
-//		int		x, y;
 
-//		GetWindowInfo(hMain, &windowInfo);
 		GetClientRect(hMain, &rect);
 		pt.x = rect.left;
 		pt.y = rect.top;
@@ -794,29 +790,20 @@ void UserMouselookToggle(void)
 		center.x += gD3DRect.left + pt.x;
 		center.y += gD3DRect.top + pt.y;
 
-//		x = (gD3DRect.right - gD3DRect.left) / 2;
-//		y = (gD3DRect.bottom - gD3DRect.top) / 2;
-
-//		x += gD3DRect.left + windowInfo.rcClient.left;
-//		y += gD3DRect.top + windowInfo.rcClient.top;
-
-		gbMouselook = TRUE;
-//		GetClientRect(hMain, &rect);
-//		GetCursorPos(&pt);
-//		SetCursorPos(rect.right / 2, rect.bottom / 2);
+		gbMouselook = true;
 		SetCursorPos(center.x, center.y);
 		while (ShowCursor(FALSE) >= 0)
 			ShowCursor(FALSE);
 	}
 	else
 	{
-		gbMouselook = FALSE;
+		gbMouselook = false;
 		while (ShowCursor(TRUE) < 0)
 			ShowCursor(TRUE);
 	}
 }
 
-Bool UserMouselookIsEnabled(void)
+bool UserMouselookIsEnabled(void)
 {
 	return gbMouselook;
 }

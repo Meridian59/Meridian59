@@ -48,7 +48,7 @@ typedef struct {
 
 typedef struct {
    char name[MAX_GUILD_NAME]; // Name of guild
-   Bool has_password;             // True if guild has a password
+   bool has_password;             // True if guild has a password
    char password[MAX_GUILD_NAME]; // Guild password
    int  flags;
    ID   guild_id;             // Guild to which player belongs

@@ -53,7 +53,7 @@ void AddDLlist(char *filename,int time,int file_type, int file_size)
       eprintf("AddDLlist got bad time %i for file %s\n",time,filename);
 
    new_node = (dllist_node *)AllocateMemory(MALLOC_ID_DLLIST,sizeof(dllist_node));
-   strcpy(new_node->fname,filename);
+   strncpy(new_node->fname,filename, sizeof(new_node->fname));
 
    new_node->file_type = file_type;
    new_node->last_mod_time = time;

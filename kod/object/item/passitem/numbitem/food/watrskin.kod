@@ -45,7 +45,7 @@ properties:
 
    viFilling = 6
    viNutrition = 3
-   piNumber = 20
+   piNumber = 2
 
 messages:
 
@@ -53,15 +53,15 @@ messages:
    {      
       if piNumber = 1
       {
-	 AppendTempString(waterskin_desc_amount_singular);
-	 send(SYS,@AppendCardinalToTempString,#number=piNumber);
-	 AppendTempString(waterskin_desc_amount_singular2);
+	      AppendTempString(waterskin_desc_amount_singular);
+	      Send(SYS,@AppendCardinalToTempString,#number=piNumber);
+	      AppendTempString(waterskin_desc_amount_singular2);
       }
       else
       {
-	 AppendTempString(waterskin_desc_amount_plural);
-	 send(SYS,@AppendCardinalToTempString,#number=piNumber);
-	 AppendTempString(waterskin_desc_amount_plural2);
+	      AppendTempString(waterskin_desc_amount_plural);
+	      Send(SYS,@AppendCardinalToTempString,#number=piNumber);
+	      AppendTempString(waterskin_desc_amount_plural2);
       }
     
       return;
@@ -71,15 +71,18 @@ messages:
    {
       if piNumber <= 3
       {
-	 AddPacket(1,ANIMATE_NONE,2,2);
-	 return;
+	      AddPacket(1,ANIMATE_NONE,2,2);
+	      
+         return;
       }
+
       propagate;
    }
 
    SendInventoryAnimation()
    {
       Send(self,@SendAnimation);
+      
       return;
    }
 

@@ -67,7 +67,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   WelcomeUser(who = $)
    {
       local iFlags;
       if random(1,10)
@@ -80,7 +80,7 @@ messages:
       {
 	 send( self, @SetMood, #new_mood = piMood - 1 );
       }
-      propagate;
+      return;
    }
    
    GetVaultNum()

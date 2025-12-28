@@ -54,8 +54,8 @@ void MapAnnotationGetText(TOOLTIPTEXT *ttt)
 {
   int index;
 
-//   if (!MapVisible())
-//      return;
+   if (!config.map_annotations || !config.drawmap)
+      return;
 
   index = ttt->hdr.idFrom;
 
@@ -74,8 +74,16 @@ void MapAnnotationGetText(TOOLTIPTEXT *ttt)
 /*****************************************************************************/
 /*
  * MapMoveAnnotations:  Recompute tooltip rectangles for map annotations.
+ *
+ * Parameters:
+ *  annotations - An array of MapAnnotation objects containing annotation details
+ *  x           - X-offset to adjust the annotation position relative to the view
+ *  y           - Y-offset to adjust the annotation position relative to the view
+ *  scale       - Map scaling factor applied to annotation positions for zooming
+ *  bMiniMap    - true if minimap, false otherwise
+ *  size        - The full size of the square annotation, already adjusted by the zoom factor and clipped
  */
-void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap )
+void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, bool bMiniMap, int size )
 {
    int i;
    TOOLINFO ti;
@@ -97,12 +105,11 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
      if (annotations[i].text[0] == 0)
        continue;
 
-     // Set up tooltip for annotation
-     ti.rect.left = view.x + x + (int) ((annotations[i].x - MAP_ANNOTATION_SIZE / 2) * scale);
-     ti.rect.top  = view.y + y + (int) ((annotations[i].y - MAP_ANNOTATION_SIZE / 2) * scale);
-
-     ti.rect.right  = ti.rect.left + (int) (MAP_ANNOTATION_SIZE * scale);
-     ti.rect.bottom = ti.rect.top  + (int) (MAP_ANNOTATION_SIZE * scale);
+     // Set up tooltip for annotation  
+     ti.rect.left = view.x + x + (int) (annotations[i].x * scale) - (size / 2);
+     ti.rect.top  = view.y + y + (int) (annotations[i].y * scale) - (size / 2);
+     ti.rect.right  = ti.rect.left + size;
+     ti.rect.bottom = ti.rect.top  + size;
 
      // Clip tooltip rectangle to graphics view window
      ti.rect.left = max(ti.rect.left, view.x);
@@ -123,68 +130,63 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
  */
 void MapAnnotationClick(int x, int y)
 {
-  int i, index;
-  MapAnnotation *a;
-  Bool existed;    // True if editing an existing annotation
-  
-//  int stretchfactor = config.large_area ? 2 : 1;
+   int i, index;
+   MapAnnotation *a;
+   bool existed;  // true if editing an existing annotation
 
-//  // Map doesn't change with large or small graphics area; undo strechfactor correction
-//  x *= stretchfactor;
-//  y *= stretchfactor;
+   if (!config.map_annotations || !config.drawmap)
+     return;
 
-  MapScreenToRoom( &x, &y, TRUE );
+   MapScreenToRoom(&x, &y, TRUE);
 
-  // See if close to an annotation
-  index = -1;
-  existed = False;
-  for (i=0; i < MAX_ANNOTATIONS; i++)
-  {
-     a = &current_room.annotations[i];
-     if (a->text[0] == 0)
-       continue;
+   // See if close to an annotation
+   index = -1;
+   existed = false;
+   for (i = 0; i < MAX_ANNOTATIONS; i++)
+   {
+      a = &current_room.annotations[i];
+      if (a->text[0] == 0)
+         continue;
 
-     if (a->x <= x + MAP_ANNOTATION_SIZE / 2 && a->x >= x - MAP_ANNOTATION_SIZE / 2 &&
-	 a->y <= y + MAP_ANNOTATION_SIZE / 2 && a->y >= y - MAP_ANNOTATION_SIZE / 2)
-       {
-	 existed = True;
-	 index = i;
-	 break;
-       }
-  }
-
-  if (index == -1)
-  {
-    // Look for a free annotation slot
-    for (i=0; i < MAX_ANNOTATIONS; i++)
-    {
-      if (current_room.annotations[i].text[0] == 0)
+      if (a->x <= x + MAP_ANNOTATION_SIZE && a->x >= x - MAP_ANNOTATION_SIZE &&
+          a->y <= y + MAP_ANNOTATION_SIZE && a->y >= y - MAP_ANNOTATION_SIZE)
       {
-	index = i;
-	break;
+         existed = true;
+         index = i;
+         break;
       }
-    }
+   }
+
+   if (index == -1)
+   {
+      // Look for a free annotation slot
+      for (i = 0; i < MAX_ANNOTATIONS; i++)
+      {
+         if (current_room.annotations[i].text[0] == 0)
+         {
+            index = i;
+            break;
+         }
+      }
       if (index == -1)
       {
-	GameMessagePrintf(GetString(hInst, IDS_ANNOTATIONSFULL), MAX_ANNOTATIONS);
-	return;
+         GameMessagePrintf(GetString(hInst, IDS_ANNOTATIONSFULL), MAX_ANNOTATIONS);
+         return;
       }
-  }
+   }
 
-  if (DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain,
-		     MapAnnotationDialogProc, (LPARAM) index) == IDOK)
-    {
-      current_room.annotations_changed = True;
+   if (SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
+                      (LPARAM) index) == IDOK)
+   {
+      current_room.annotations_changed = true;
       if (!existed)
-	{
-	  current_room.annotations[index].x = x;
-	  current_room.annotations[index].y = y;
-	}
-    }
+      {
+         current_room.annotations[index].x = x;
+         current_room.annotations[index].y = y;
+      }
+   }
 
-  TooltipReset();
-
-  RedrawAll();    // In case we added or removed an annotation
+   RedrawAll();  // In case we added or removed an annotation
 }
 /*****************************************************************************/
 /*

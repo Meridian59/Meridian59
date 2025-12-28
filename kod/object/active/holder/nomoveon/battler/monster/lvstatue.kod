@@ -230,7 +230,7 @@ messages:
          viLevel = viLevel + 15;
          viDifficulty = viDifficulty + 2;
 
-	 % This makes the soliders not have karma
+	 % This makes the soldiers not have karma
          pbDontDispose = TRUE;
       }
       else
@@ -434,7 +434,7 @@ messages:
    }
 
    TweakBehavior()
-   "Our default behavior it not be noticable as a monster."
+   "Our default behavior it not be noticeable as a monster."
    {
       if viSpeed = SPEED_NONE
       {

@@ -193,7 +193,6 @@ messages:
             }
          }
       
-         AppendTempString("\n\n");
          AppendTempString(vrPoss_Article);
          AppendTempString(Send(self,@GetName));
          AppendTempString(rItem_condition);
@@ -220,50 +219,143 @@ messages:
       return;
    }
 
-   CreateDesc(bShowall=FALSE)
+   CreateDesc(bShowAll=FALSE)
+   "Returns the item's full description text by combining the base description, "
+   "attribute descriptions, and condition information. When bShowAll is TRUE, "
+   "all attributes are shown including unidentified ones and misdirection "
+   "attributes display their real descriptions instead of fake ones."
    {
-      local bAlreadyBlind, bIdentified, oItemAtt, i, iNum;
-
-      bAlreadyBlind = FALSE;
       ClearTempString();
       Send(self,@DoBaseDesc);
-
-      if Send(self,@HasAttribute,#ItemAtt=IA_MISDIRECTION) AND NOT bShowAll
+      Send(self,@AppendAttributeDescriptions,#bShowAll=bShowAll);
+      Send(self,@AppendConditionDescription);
+      
+      return;
+   }
+   
+   AppendAttributeDescriptions(bShowAll=FALSE)
+   "Adds all visible attribute descriptions to the temp string with formatting. "
+   "When bShowAll is TRUE, all attributes including misdirection are revealed."
+   {
+      local bHasVisibleAttributes;
+      
+      bHasVisibleAttributes = Send(self,@HasVisibleAttributes,#bShowAll=bShowAll);
+      if bHasVisibleAttributes
       {
-         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
-         Send(oItemAtt,@AppendMisdirectedDesc,#oItem=self,
-              #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+         AppendTempString("\n\n");
       }
-      else
+      
+      Send(self,@ProcessAttributeList,#bShowAll=bShowAll,
+           #bAlreadyBlind=FALSE,#bFirstAttribute=TRUE);
+      
+      return;
+   }
+   
+   HasVisibleAttributes(bShowAll=FALSE)
+   "Returns TRUE if any attributes will display visible text. The bShowAll "
+   "parameter affects visibility by including unidentified attributes in the check."
+   {
+      local i, iNum, oItemAtt;
+      
+      if plItem_Attributes = $
       {
-         for i in plItem_Attributes
+         return FALSE;
+      }
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         
+         % IA_MISDIRECTION always shows (creates fake desc)
+         if iNum = IA_MISDIRECTION
          {
-            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-            bIdentified = Send(self,@GetIDStatusFromCompound,
-                               #compound=First(i));
+            return TRUE;
+         }
+         
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if oItemAtt <> $ AND Send(oItemAtt,@GetDesc) <> resource_blank
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+   
+   ProcessAttributeList(bShowAll=FALSE, bAlreadyBlind=FALSE, bFirstAttribute=TRUE)
+   "Processes the attribute list and appends descriptions to the temp string. When "
+   "bShowAll is TRUE, unidentified attributes are shown and misdirection displays "
+   "real descriptions instead of fake ones."
+   {
+      local i, iNum, oItemAtt, bIdentified;
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         
+         % Handle misdirection special case
+         if iNum = IA_MISDIRECTION AND NOT bShowAll
+         {
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+            if NOT bFirstAttribute
+            {
+               AppendTempString("  ");
+            }
+            Send(oItemAtt,@AppendMisdirectedDesc,
+               #oItem=self,
+               #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+            bFirstAttribute = FALSE;
+            continue;
+         }
 
-            if NOT (bIdentified OR bShowAll)
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         bIdentified = Send(self,@GetIDStatusFromCompound,#compound=First(i));
+
+         % Handle unidentified attributes
+         if NOT (bIdentified OR bShowAll)
+         {
+            if NOT bAlreadyBlind
             {
-               if bAlreadyBlind
+               if NOT bFirstAttribute
                {
-                  continue;
+                  AppendTempString("  ");
                }
-               else
-               {
-                  AppendTempString(itematt_generic);
-                  bAlreadyBlind = TRUE;
-               }
+               AppendTempString(itematt_generic);
+               bFirstAttribute = FALSE;
+               bAlreadyBlind = TRUE;
             }
-            else
-            {
-               Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
-            }
-         }       
+            continue;
+         }
+
+         % Skip invisible attributes 
+         if Send(oItemAtt,@GetDesc) = resource_blank
+         {
+            continue;
+         }
+
+         % Add spacing and append description
+         if NOT bFirstAttribute
+         {
+            AppendTempString("  ");
+         }
+         Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+         bFirstAttribute = FALSE;
       }
 
-      % Special things for number items, etc.
-      Send(self,@AppendDesc);  
+      return;
+   }
+   
+   AppendConditionDescription()
+   "Adds condition information to the temp string if applicable."
+   {
+      % Insert condition separator only if AppendDesc will output condition text.
+      if vbShow_condition AND piHits_init > 0
+      {
+         % Only append separator if we already added base description or attributes
+         AppendTempString("\n\n");
+      }
+      
+      Send(self,@AppendDesc);
       
       return;
    }
@@ -1237,6 +1329,7 @@ messages:
    }
 
    RevealHiddenAttributes()
+   "Reveals the item's attributes, returning TRUE if any were hidden."
    {
       local i, bDone;
 
@@ -1251,6 +1344,22 @@ messages:
       }
       
       return bDone;
+   }
+
+   HideHiddenAttributes()
+   "Hides the item's hidden attributes."
+   {
+      local i;
+
+      for i in plItem_Attributes
+      {
+         if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
+         {
+            setNth(i,1,(First(i)-1));
+         }
+      }
+
+      return;
    }
 
    AddAttributeSpecifics(litemAtt=$)
@@ -1792,9 +1901,32 @@ messages:
          AND Send(self,@GetPaletteTranslation) = (viUnrevealedColor & ITEM_PALETTE_MASK)
       {
          Send(self,@SetPaletteTranslation,#translation=viRevealedColor);
-         return TRUE;
       }
-      return FALSE;
+
+      return;
+   }
+
+   HideHiddenColor()
+   "Hides the item's true color."
+   {
+      if viUnrevealedColor <> 0
+         AND viRevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = (viRevealedColor & ITEM_PALETTE_MASK)
+      {
+         Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
+      }
+
+      return;
+   }
+
+   FindBadItemFlags() 
+   "Print object ID if item is in an illegal state"
+   {
+      if piItem_flags = $ 
+      {
+         debug("Item", self, "has $ piItem_flags");
+      }
+      return;
    }
 
 end

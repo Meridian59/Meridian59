@@ -45,8 +45,8 @@ classvars:
    viGround_group = 2
 
    viValue_average = 2000
-   viWeight = 75
-   viBulk = 150
+   viBulk = 20
+   viWeight = 25
 
    
 properties:

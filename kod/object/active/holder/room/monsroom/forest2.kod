@@ -24,7 +24,7 @@ resources:
    room_forest2 = forest2.roo
    room_name_forest2 = "The Forests of Meridian"
 
-   forest2_noise = forest.wav
+   forest2_noise = ambforest.wav
 
    forest2_music = walk2.mid
 

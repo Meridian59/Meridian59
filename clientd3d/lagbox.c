@@ -274,7 +274,7 @@ LRESULT Lagbox_UpdateLatencyText()
 	strcat(szTooltip, ": ");
 
 	LoadString(hInst, IDS_LATENCYMETRIC, szFormat, sizeof(szFormat));
-	sprintf(szMetric, szFormat, dwLagboxLatency);
+	snprintf(szMetric, sizeof(szMetric), szFormat, dwLagboxLatency);
 	strcat(szTooltip, szMetric);
 
 	TOOLINFO ti = { 0 };

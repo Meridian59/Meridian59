@@ -12,7 +12,7 @@
  * references to other nodes, walls and sectors are in the form of an indices.  We convert these
  * directly into pointers in RoomSwizzle.
  *
- * The file also contains a security checksum that we use as a unique ID of the room, and which 
+ * The file also contains a security checksum that we use as a unique ID of the room, and which
  * also prevents tampering.  We recalculate the checksum as the room is loaded, and compare
  * the result with the checksum in the file.  In addition, the server sends us the checksum of
  * the current room; we compare the two elsewhere to make sure that the client uses the correct
@@ -24,35 +24,36 @@
 
 static const int ROO_VERSION = 10;
 
-static BYTE room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
+static BYTE room_magic[] = {0x52, 0x4F, 0x4F, 0xB1};
 
-static int room_version;     // Version of room file we're reading
+static int room_version;  // Version of room file we're reading
 
-static int security;         // Room security value, calculated as room is loaded
+static int security;  // Room security value, calculated as room is loaded
 
-static Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version);
-static Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version);
-static Bool LoadSectors(file_node *f, room_type *room, int num_sectors);
-static Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
-static Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
+static bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version);
+static bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version);
+static bool LoadSectors(file_node *f, room_type *room, int num_sectors);
+static bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
+static bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
 /*****************************************************************************************/
 /*
  * BSPRooFileLoad:  Load room description from given file, and put result in room.
- *   Returns True on success.
+ *   Returns true on success.
  */
-extern Bool						gD3DRedrawAll;
-extern d3d_render_cache_system	gWorldCacheSystemStatic;
-extern d3d_render_cache_system	gLMapCacheSystemStatic;
-extern custom_xyz				playerOldPos;
+extern int gD3DRedrawAll;
+extern d3d_render_cache_system gWorldCacheSystemStatic;
+extern d3d_render_cache_system gLMapCacheSystemStatic;
+extern custom_xyz playerOldPos;
 
 // Interpret the given 4-byte buffer as a float or int, depending on room_version
-static float readValue(char *buf, int room_version) {
-  if (room_version < 13)
-    return (float) *((int *) buf);
-  return *((float *) buf);
+static float readValue(char *buf, int room_version)
+{
+   if (room_version < 13)
+      return (float) *((int *) buf);
+   return *((float *) buf);
 }
 
-Bool BSPRooFileLoad(char *fname, room_type *room)
+bool BSPRooFileLoad(char *fname, room_type *room)
 {
    int i, temp;
    BYTE byte;
@@ -61,49 +62,85 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    file_node f;
 
    if (!CliMappedFileOpenRead(fname, &f))
-      return False;
+      return false;
 
    // Check magic number and version
    for (i = 0; i < 4; i++)
       if (CliMappedFileRead(&f, &byte, 1) != 1 || byte != room_magic[i])
-      { MappedFileClose(&f); debug(("%s is not a roo file\n", fname)); return False; }
+      {
+         MappedFileClose(&f);
+         debug(("%s is not a roo file\n", fname));
+         return false;
+      }
 
    security = 0;
 
    if (CliMappedFileRead(&f, &room_version, 4) != 4 || room_version < ROO_VERSION)
-   { 
-      MappedFileClose(&f); 
-      debug(("Bad roo version %d; expecting %d\n", room_version, ROO_VERSION)); 
-      return False; 
+   {
+      MappedFileClose(&f);
+      debug(("Bad roo version %d; expecting %d\n", room_version, ROO_VERSION));
+      return false;
    }
-   
+
    security += room_version;
 
    if (CliMappedFileRead(&f, &room->security, 4) != 4)
-   { MappedFileClose(&f); return False; }   
+   {
+      MappedFileClose(&f);
+      return false;
+   }
 
    // Read pointer to main info in file, and go there
    if (CliMappedFileRead(&f, &temp, 4) != 4)
-   { MappedFileClose(&f); return False; }
+   {
+      MappedFileClose(&f);
+      return false;
+   }
    MappedFileGoto(&f, temp);
 
    // Read size of room
    if (CliMappedFileRead(&f, &room->width, 4) != 4)
-   { MappedFileClose(&f); return False; }
+   {
+      MappedFileClose(&f);
+      return false;
+   }
 
    offset_adjust = 0;
    room->cols = room->width >> LOG_FINENESS;
 
    if (CliMappedFileRead(&f, &room->height, 4) != 4)
-   { MappedFileClose(&f); return False; }
+   {
+      MappedFileClose(&f);
+      return false;
+   }
    room->rows = room->height >> LOG_FINENESS;
 
    // Read pointers to file sections
-   if (CliMappedFileRead(&f, &node_pos, 4) != 4) { MappedFileClose(&f); return False; }
-   if (CliMappedFileRead(&f, &wall_pos, 4) != 4) { MappedFileClose(&f); return False; }
-   if (CliMappedFileRead(&f, &temp, 4) != 4) { MappedFileClose(&f); return False; }
-   if (CliMappedFileRead(&f, &sidedef_pos, 4) != 4) { MappedFileClose(&f); return False; }
-   if (CliMappedFileRead(&f, &sector_pos, 4) != 4) { MappedFileClose(&f); return False; }
+   if (CliMappedFileRead(&f, &node_pos, 4) != 4)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (CliMappedFileRead(&f, &wall_pos, 4) != 4)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (CliMappedFileRead(&f, &temp, 4) != 4)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (CliMappedFileRead(&f, &sidedef_pos, 4) != 4)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (CliMappedFileRead(&f, &sector_pos, 4) != 4)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
    node_pos += offset_adjust;
    wall_pos += offset_adjust;
    sidedef_pos += offset_adjust;
@@ -111,44 +148,60 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
 
    // Read nodes
    MappedFileGoto(&f, node_pos);
-   if (CliMappedFileRead(&f, &num_nodes, 2) != 2) { MappedFileClose(&f); return False; }
-   if (LoadNodes(&f, room, num_nodes, room_version) == False) 
-   { 
+   if (CliMappedFileRead(&f, &num_nodes, 2) != 2)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (LoadNodes(&f, room, num_nodes, room_version) == false)
+   {
       debug(("Failure loading %d nodes\n", num_nodes));
-      MappedFileClose(&f); 
-      return False; 
+      MappedFileClose(&f);
+      return false;
    }
 
    // Read walls
    MappedFileGoto(&f, wall_pos);
-   if (CliMappedFileRead(&f, &num_walls, 2) != 2) { MappedFileClose(&f); return False; }
-   if (LoadWalls(&f, room, num_walls, room_version) == False) 
-   { 
+   if (CliMappedFileRead(&f, &num_walls, 2) != 2)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (LoadWalls(&f, room, num_walls, room_version) == false)
+   {
       debug(("Failure loading %d walls\n", num_walls));
-      MappedFileClose(&f); 
-      return False; 
+      MappedFileClose(&f);
+      return false;
    }
 
    // Read sidedefs
    MappedFileGoto(&f, sidedef_pos);
-   if (CliMappedFileRead(&f, &num_sidedefs, 2) != 2) { MappedFileClose(&f); return False; }
-   if (LoadSidedefs(&f, room, num_sidedefs) == False) 
-   { 
+   if (CliMappedFileRead(&f, &num_sidedefs, 2) != 2)
+   {
+      MappedFileClose(&f);
+      return false;
+   }
+   if (LoadSidedefs(&f, room, num_sidedefs) == false)
+   {
       debug(("Failure loading %d sidedefs\n", num_sidedefs));
-      MappedFileClose(&f); 
-      return False; 
+      MappedFileClose(&f);
+      return false;
    }
 
    // Read sectors
    MappedFileGoto(&f, sector_pos);
-   if (CliMappedFileRead(&f, &num_sectors, 2) != 2) { MappedFileClose(&f); return False; }
-   if (LoadSectors(&f, room, num_sectors) == False)
-   { 
-      debug(("Failure loading %d sectors\n", num_sectors));
-      MappedFileClose(&f); 
-      return False; 
+   if (CliMappedFileRead(&f, &num_sectors, 2) != 2)
+   {
+      MappedFileClose(&f);
+      return false;
    }
-   
+   if (LoadSectors(&f, room, num_sectors) == false)
+   {
+      debug(("Failure loading %d sectors\n", num_sectors));
+      MappedFileClose(&f);
+      return false;
+   }
+
    MappedFileClose(&f);
 
    if (num_nodes == 0)
@@ -156,38 +209,39 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
       debug(("LoadRoom found room with no nodes!\n"));
       room->tree = NULL;
    }
-   else room->tree = &room->nodes[0];
+   else
+      room->tree = &room->nodes[0];
 
-   if (RoomSwizzle(room, room->tree, num_nodes, num_walls, num_sidedefs, num_sectors) ==  False)
+   if (RoomSwizzle(room, room->tree, num_nodes, num_walls, num_sidedefs, num_sectors) == false)
    {
-      debug(("RoomSwizzle failed\n")); 
+      debug(("RoomSwizzle failed\n"));
       BSPRoomFree(room);
-      return False; 
+      return false;
    }
 
    security ^= 0x89ab786c;
    if (security != room->security)
    {
-      debug(("Room security mismatch while loading (got %d, expecting %d)!\n",
-             security, room->security));
+      debug(("Room security mismatch while loading (got %d, expecting %d)!\n", security, room->security));
       BSPRoomFree(room);
-      return False;
+      return false;
    }
 
-   room->num_nodes    = num_nodes;
-   room->num_walls    = num_walls;
-   room->num_sectors  = num_sectors;
+   room->num_nodes = num_nodes;
+   room->num_walls = num_walls;
+   room->num_sectors = num_sectors;
    room->num_sidedefs = num_sidedefs;
 
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+   D3DFxInit();
 
-	playerOldPos.x = 0;
-	playerOldPos.y = 0;
-	playerOldPos.z = 0;
+   playerOldPos.x = 0;
+   playerOldPos.y = 0;
+   playerOldPos.z = 0;
 
    CacheReport();
 
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
@@ -204,19 +258,20 @@ void BSPRoomFree(room_type *room)
    }
 
    // Free animation structures
-   for (i=0; i < room->num_sidedefs; i++)
+   for (i = 0; i < room->num_sidedefs; i++)
       if (room->sidedefs[i].animate != NULL)
-	 SafeFree(room->sidedefs[i].animate);
+         SafeFree(room->sidedefs[i].animate);
 
    // free animation and slope structures for each sector
-   for (i=0; i < room->num_sectors; i++) {
-      if (room->sectors[i].animate != NULL) 
-	 SafeFree(room->sectors[i].animate);
-      
-      if (room->sectors[i].sloped_floor != NULL) 
-	 SafeFree(room->sectors[i].sloped_floor);
-      if (room->sectors[i].sloped_ceiling != NULL) 
-	 SafeFree(room->sectors[i].sloped_ceiling);
+   for (i = 0; i < room->num_sectors; i++)
+   {
+      if (room->sectors[i].animate != NULL)
+         SafeFree(room->sectors[i].animate);
+
+      if (room->sectors[i].sloped_floor != NULL)
+         SafeFree(room->sectors[i].sloped_floor);
+      if (room->sectors[i].sloped_ceiling != NULL)
+         SafeFree(room->sectors[i].sloped_ceiling);
    }
 
    SafeFree(room->nodes);
@@ -243,9 +298,9 @@ void BSPRoomFree(room_type *room)
 /*****************************************************************************************/
 /*
  * LoadNodes:  Load nodes of BSP tree, and set tree field of room structure to the root.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
+bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
 {
    int i, j, size;
    BYTE type;
@@ -255,7 +310,7 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
    room->nodes = (BSPnode *) SafeMalloc(size);
    memset(room->nodes, 0, size);
 
-   for (i=0; i < num_nodes; i++)
+   for (i = 0; i < num_nodes; i++)
    {
       BSPnode *node;
       BSPleaf *leaf;
@@ -263,78 +318,92 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
 
       node = &room->nodes[i];
 
-      if (CliMappedFileRead(f, &type, 1) != 1) return False;
+      if (CliMappedFileRead(f, &type, 1) != 1)
+         return false;
       node->type = (BSPnodetype) type;
 
       char buf[4];
-      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, buf, 4) != 4)
+         return false;
       node->bbox.x0 = readValue(buf, room_version);
-      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, buf, 4) != 4)
+         return false;
       node->bbox.y0 = readValue(buf, room_version);
-      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, buf, 4) != 4)
+         return false;
       node->bbox.x1 = readValue(buf, room_version);
-      if (CliMappedFileRead(f, buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, buf, 4) != 4)
+         return false;
       node->bbox.y1 = readValue(buf, room_version);
-      
 
-//      debug(("Loading node %d ", i));
+      //      debug(("Loading node %d ", i));
 
       switch (type)
       {
       case BSPinternaltype:
-	 inode = &node->u.internal;
-	 
-   if (CliMappedFileRead(f, buf, 4) != 4) return False;
-   inode->separator.a = readValue(buf, room_version);
-   security += *((int *) buf);
-   if (CliMappedFileRead(f, buf, 4) != 4) return False;
-   inode->separator.b = readValue(buf, room_version);
-   security += *((int *) buf);
-   if (CliMappedFileRead(f, buf, 4) != 4) return False;
-   inode->separator.c = readValue(buf, room_version);
-   security += *((int *) buf);
+         inode = &node->u.internal;
 
-	 if (CliMappedFileRead(f, &inode->pos_num, 2) != 2) return False;
-	 if (CliMappedFileRead(f, &inode->neg_num, 2) != 2) return False;
-	 if (CliMappedFileRead(f, &inode->wall_num, 2) != 2) return False;
+         if (CliMappedFileRead(f, buf, 4) != 4)
+            return false;
+         inode->separator.a = readValue(buf, room_version);
+         security += *((int *) buf);
+         if (CliMappedFileRead(f, buf, 4) != 4)
+            return false;
+         inode->separator.b = readValue(buf, room_version);
+         security += *((int *) buf);
+         if (CliMappedFileRead(f, buf, 4) != 4)
+            return false;
+         inode->separator.c = readValue(buf, room_version);
+         security += *((int *) buf);
 
-	 security += inode->wall_num;
+         if (CliMappedFileRead(f, &inode->pos_num, 2) != 2)
+            return false;
+         if (CliMappedFileRead(f, &inode->neg_num, 2) != 2)
+            return false;
+         if (CliMappedFileRead(f, &inode->wall_num, 2) != 2)
+            return false;
 
-	 break;
+         security += inode->wall_num;
+
+         break;
 
       case BSPleaftype:
-	 leaf = &node->u.leaf;
-	 
-	 if (CliMappedFileRead(f, &leaf->sector_num, 2) != 2) return False;
+         leaf = &node->u.leaf;
 
-	 // Get points of polygon
-	 if (CliMappedFileRead(f, &num_points, 2) != 2) return False;
-	 leaf->poly.npts = num_points;
-	 for (j=0; j < num_points; j++)
-	 {
-	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
-      leaf->poly.p[j].x = readValue(buf, room_version);
-      security += *((int *) buf);
-	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
-      leaf->poly.p[j].y = readValue(buf, room_version);
-      security += *((int *) buf);
-	 }
-	 leaf->poly.p[num_points] = leaf->poly.p[0];	 
-	 break;
+         if (CliMappedFileRead(f, &leaf->sector_num, 2) != 2)
+            return false;
+
+         // Get points of polygon
+         if (CliMappedFileRead(f, &num_points, 2) != 2)
+            return false;
+         leaf->poly.npts = num_points;
+         for (j = 0; j < num_points; j++)
+         {
+            if (CliMappedFileRead(f, &buf, 4) != 4)
+               return false;
+            leaf->poly.p[j].x = readValue(buf, room_version);
+            security += *((int *) buf);
+            if (CliMappedFileRead(f, &buf, 4) != 4)
+               return false;
+            leaf->poly.p[j].y = readValue(buf, room_version);
+            security += *((int *) buf);
+         }
+         leaf->poly.p[num_points] = leaf->poly.p[0];
+         break;
 
       default:
-	 debug(("LoadNodes got unknown node type %d!\n", (int) type));
-	 return False;
-      }      
+         debug(("LoadNodes got unknown node type %d!\n", (int) type));
+         return false;
+      }
    }
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
  * LoadWalls:  Load walls, and set global walls variable to array of walls.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
+bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
 {
    int i, size;
    WORD word;
@@ -344,60 +413,78 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
    room->walls = (WallData *) SafeMalloc(size);
    memset(room->walls, 0, size);
 
-   for (i=0; i < num_walls; i++)
+   for (i = 0; i < num_walls; i++)
    {
       WallData *wall = &room->walls[i];
-      
-//      debug(("Loading wall %d of %d\n", i, num_walls));
 
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
+      //      debug(("Loading wall %d of %d\n", i, num_walls));
+
+      if (CliMappedFileRead(f, &word, 2) != 2)
+         return false;
       wall->next_num = word;
 
       // Get sidedef numbers
-      if (CliMappedFileRead(f, &wall->pos_sidedef_num, 2) != 2) return False;
-      if (CliMappedFileRead(f, &wall->neg_sidedef_num, 2) != 2) return False;
+      if (CliMappedFileRead(f, &wall->pos_sidedef_num, 2) != 2)
+         return false;
+      if (CliMappedFileRead(f, &wall->neg_sidedef_num, 2) != 2)
+         return false;
       security += wall->pos_sidedef_num + wall->neg_sidedef_num;
 
-	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, &buf, 4) != 4)
+         return false;
       wall->x0 = readValue(buf, room_version);
       security += *((int *) buf);
-	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, &buf, 4) != 4)
+         return false;
       wall->y0 = readValue(buf, room_version);
       security += *((int *) buf);
-	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, &buf, 4) != 4)
+         return false;
       wall->x1 = readValue(buf, room_version);
       security += *((int *) buf);
-	    if (CliMappedFileRead(f, &buf, 4) != 4) return False;
+      if (CliMappedFileRead(f, &buf, 4) != 4)
+         return false;
       wall->y1 = readValue(buf, room_version);
       security += *((int *) buf);
-      
+
       // Get wall length -- used to be 2 byte int, now 4 byte float
-      if (room_version < 13) {
-        if (CliMappedFileRead(f, &word, 2) != 2) return False;
-        wall->length = word;
-      } else {
-        if (CliMappedFileRead(f, &wall->length, 4) != 4) return False;
+      if (room_version < 13)
+      {
+         if (CliMappedFileRead(f, &word, 2) != 2)
+            return false;
+         wall->length = word;
       }
-      
+      else
+      {
+         if (CliMappedFileRead(f, &wall->length, 4) != 4)
+            return false;
+      }
+
       // Get texture offsets
-      if (CliMappedFileRead(f, &wall->pos_xoffset, 2) != 2) return False;
-      if (CliMappedFileRead(f, &wall->neg_xoffset, 2) != 2) return False;
-      if (CliMappedFileRead(f, &wall->pos_yoffset, 2) != 2) return False;
-      if (CliMappedFileRead(f, &wall->neg_yoffset, 2) != 2) return False;
+      if (CliMappedFileRead(f, &wall->pos_xoffset, 2) != 2)
+         return false;
+      if (CliMappedFileRead(f, &wall->neg_xoffset, 2) != 2)
+         return false;
+      if (CliMappedFileRead(f, &wall->pos_yoffset, 2) != 2)
+         return false;
+      if (CliMappedFileRead(f, &wall->neg_yoffset, 2) != 2)
+         return false;
 
       // Get sector numbers
-      if (CliMappedFileRead(f, &wall->pos_sector_num, 2) != 2) return False;
-      if (CliMappedFileRead(f, &wall->neg_sector_num, 2) != 2) return False;
+      if (CliMappedFileRead(f, &wall->pos_sector_num, 2) != 2)
+         return false;
+      if (CliMappedFileRead(f, &wall->neg_sector_num, 2) != 2)
+         return false;
       security += wall->pos_sector_num + wall->neg_sector_num;
    }
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
  * LoadSidedefs:  Load sidedefs, and set global sidedefs variable to array of sidedefs.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
+bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
 {
    int i, size, period;
    BYTE speed;
@@ -406,91 +493,108 @@ Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
    room->sidedefs = (Sidedef *) SafeMalloc(size);
    memset(room->sidedefs, 0, size);
 
-   for (i=0; i < num_sidedefs; i++)
+   for (i = 0; i < num_sidedefs; i++)
    {
       Sidedef *s = &room->sidedefs[i];
-      
-      if (CliMappedFileRead(f, &s->server_id, 2) != 2) return False;
+
+      if (CliMappedFileRead(f, &s->server_id, 2) != 2)
+         return false;
       security += s->server_id;
-      
+
       // Get wall bitmaps
-      if (CliMappedFileRead(f, &s->normal_type, 2) != 2) return False;
+      if (CliMappedFileRead(f, &s->normal_type, 2) != 2)
+         return false;
       s->normal_bmap = GetGridPdib(s->normal_type);
-      if (CliMappedFileRead(f, &s->above_type, 2) != 2) return False;
-      s->above_bmap  = GetGridPdib(s->above_type);
-      if (CliMappedFileRead(f, &s->below_type, 2) != 2) return False;
-      s->below_bmap  = GetGridPdib(s->below_type);
+      if (CliMappedFileRead(f, &s->above_type, 2) != 2)
+         return false;
+      s->above_bmap = GetGridPdib(s->above_type);
+      if (CliMappedFileRead(f, &s->below_type, 2) != 2)
+         return false;
+      s->below_bmap = GetGridPdib(s->below_type);
       security += s->above_type + s->below_type + s->normal_type;
 
-      if (CliMappedFileRead(f, &s->flags, 4) != 4) return False;
+      if (CliMappedFileRead(f, &s->flags, 4) != 4)
+         return false;
       security += s->flags;
-      if (CliMappedFileRead(f, &speed, 1) != 1) return False;
+      if (CliMappedFileRead(f, &speed, 1) != 1)
+         return false;
 
       // Set up animation, if any
       if (speed != 0)
       {
-	 s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
-	 RoomSetupCycleAnimation(s->animate, speed);
+         s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
+         RoomSetupCycleAnimation(s->animate, speed);
       }
       else if (WallScrollSpeed(s->flags) != SCROLL_NONE)
       {
-	 // Slow down wall scrolling speed; this is because we notice subjectively
-	 // that walls are scrolling too fast.
-	 speed = WallScrollSpeed(s->flags);
-	 switch (speed)
-	 {
-	 case SCROLL_SLOW:   period = SCROLL_WALL_SLOW_PERIOD;     break;
-	 case SCROLL_MEDIUM: period = SCROLL_WALL_MEDIUM_PERIOD;   break;
-	 case SCROLL_FAST:   period = SCROLL_WALL_FAST_PERIOD;     break;
-	 }
-	 s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
-	 RoomSetupScrollAnimation(s->animate, period, WallScrollDirection(s->flags));
+         // Slow down wall scrolling speed; this is because we notice subjectively
+         // that walls are scrolling too fast.
+         speed = WallScrollSpeed(s->flags);
+         switch (speed)
+         {
+         case SCROLL_SLOW:
+            period = SCROLL_WALL_SLOW_PERIOD;
+            break;
+         case SCROLL_MEDIUM:
+            period = SCROLL_WALL_MEDIUM_PERIOD;
+            break;
+         case SCROLL_FAST:
+            period = SCROLL_WALL_FAST_PERIOD;
+            break;
+         }
+         s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
+         RoomSetupScrollAnimation(s->animate, period, WallScrollDirection(s->flags));
       }
-      else s->animate = NULL;
+      else
+         s->animate = NULL;
    }
-   return True;
+   return true;
 }
 
 // These vector math functions are just a little bit of pork to make
 //  setting up the slope info records easier.
-	
+
 /* returns length of input vector */
-float V3Length(Vector3D *a) 
+float V3Length(Vector3D *a)
 {
-  float lenSquared = (a->x * a->x + a->y * a->y + a->z * a->z);
-  float s = sqrt(lenSquared);
-  return(s);
+   float lenSquared = (a->x * a->x + a->y * a->y + a->z * a->z);
+   float s = sqrt(lenSquared);
+   return (s);
 }
 
 /* return vector sum c = a+b */
-Vector3D *V3Add(Vector3D *a, Vector3D *b, Vector3D *c) {
-    c->x = a->x + b->x;
-    c->y = a->y + b->y;
-    c->z = a->z + b->z;
+Vector3D *V3Add(Vector3D *a, Vector3D *b, Vector3D *c)
+{
+   c->x = a->x + b->x;
+   c->y = a->y + b->y;
+   c->z = a->z + b->z;
 
-    return(c);
+   return (c);
 }
 
 /* return the cross product c = a cross b */
-Vector3D *V3Cross(Vector3D *a, Vector3D *b, Vector3D *c) {
-  c->x = ((a->y * b->z) - (a->z * b->y)) / FIXED_ONE;
-  c->y = ((a->z * b->x) - (a->x * b->z)) / FIXED_ONE;
-  c->z = ((a->x * b->y) - (a->y * b->x)) / FIXED_ONE;
-  return(c);
+Vector3D *V3Cross(Vector3D *a, Vector3D *b, Vector3D *c)
+{
+   c->x = ((a->y * b->z) - (a->z * b->y)) / FIXED_ONE;
+   c->y = ((a->z * b->x) - (a->x * b->z)) / FIXED_ONE;
+   c->z = ((a->x * b->y) - (a->y * b->x)) / FIXED_ONE;
+   return (c);
 }
 
 /* scales the input vector to the new length and returns it */
-Vector3D *V3Scale(Vector3D *v, float newlen) {
-    float len;
-    
-    len = V3Length(v);
-    
-    if (len != 0.0) {
+Vector3D *V3Scale(Vector3D *v, float newlen)
+{
+   float len;
+
+   len = V3Length(v);
+
+   if (len != 0.0)
+   {
       v->x = v->x * newlen / len;
       v->y = v->y * newlen / len;
       v->z = v->z * newlen / len;
-    }
-    return(v);
+   }
+   return (v);
 }
 
 // from drawbsp.c
@@ -502,108 +606,121 @@ extern long shade_amount;
  *   runtime representation of the data describing the texture coordinates.
  *   Return pointer to new SlopeData record on success, NULL on error
  */
-SlopeData *LoadSlopeInfo(file_node *f) {
-    int       size;
-    long      txt_angle;
-    long      index;
-    SlopeData *new_slope;
-    Vector3D  texture_orientation;
-    Vector3D  v1,v2;
-    char      junk[6];
+SlopeData *LoadSlopeInfo(file_node *f)
+{
+   int size;
+   long txt_angle;
+   long index;
+   SlopeData *new_slope;
+   Vector3D texture_orientation;
+   Vector3D v1, v2;
+   char junk[6];
 
-    // create a new slope record
-    size = sizeof(SlopeData);
-    new_slope = (SlopeData *) SafeMalloc(size);
-    memset(new_slope, 0, size);
+   // create a new slope record
+   size = sizeof(SlopeData);
+   new_slope = (SlopeData *) SafeMalloc(size);
+   memset(new_slope, 0, size);
 
-    // load coefficients of plane equation
-    char buf[4];
-    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
-    new_slope->plane.a = readValue(buf, room_version);
-    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
-    new_slope->plane.b = readValue(buf, room_version);
-    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
-    new_slope->plane.c = readValue(buf, room_version);
-    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
-    new_slope->plane.d = readValue(buf, room_version);
+   // load coefficients of plane equation
+   char buf[4];
+   if (CliMappedFileRead(f, buf, 4) != 4)
+      return nullptr;
+   new_slope->plane.a = readValue(buf, room_version);
+   if (CliMappedFileRead(f, buf, 4) != 4)
+      return nullptr;
+   new_slope->plane.b = readValue(buf, room_version);
+   if (CliMappedFileRead(f, buf, 4) != 4)
+      return nullptr;
+   new_slope->plane.c = readValue(buf, room_version);
+   if (CliMappedFileRead(f, buf, 4) != 4)
+      return nullptr;
+   new_slope->plane.d = readValue(buf, room_version);
 
-    //    dprintf("loaded equation a = %d, b = %d, c = %d, d = %d\n", new_slope->plane.a, new_slope->plane.b, new_slope->plane.c, new_slope->plane.d);
-    
-    if (new_slope->plane.c == 0) {
-	debug(("Error: loaded plane equation equal to a vertical slope\n"));
-	// punt on error and stick in non crashing values (use assert instead?)
-	new_slope->plane.a = 0;
-	new_slope->plane.b = 0;
-	new_slope->plane.c = 1024;
-	new_slope->plane.d = 0;
-    }
-    
-    // load x & y of texture origin
-    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
-    new_slope->p0.x = readValue(buf, room_version);
-    if (CliMappedFileRead(f, buf, 4) != 4) return nullptr;
-    new_slope->p0.y = readValue(buf, room_version);
-    
-    // calculate z of texture origin from x, y, and plane equation
-    new_slope->p0.z = (-new_slope->plane.a*new_slope->p0.x - new_slope->plane.b*new_slope->p0.y - new_slope->plane.d)/new_slope->plane.c;
+   //    dprintf("loaded equation a = %d, b = %d, c = %d, d = %d\n", new_slope->plane.a, new_slope->plane.b,
+   //    new_slope->plane.c, new_slope->plane.d);
 
-    // load in texture angle - this is planar angle between x axis of texture & x axis of world
-    if (CliMappedFileRead(f, &txt_angle, 4) != 4) return (SlopeData *)NULL;
+   if (new_slope->plane.c == 0)
+   {
+      debug(("Error: loaded plane equation equal to a vertical slope\n"));
+      // punt on error and stick in non crashing values (use assert instead?)
+      new_slope->plane.a = 0;
+      new_slope->plane.b = 0;
+      new_slope->plane.c = 1024;
+      new_slope->plane.d = 0;
+   }
 
-	new_slope->texRot = txt_angle;
-    
-    // convert angle to vector
-    texture_orientation.x = COS(txt_angle) >> 6;
-    texture_orientation.y = SIN(txt_angle) >> 6;
-    texture_orientation.z = 0;
+   // load x & y of texture origin
+   if (CliMappedFileRead(f, buf, 4) != 4)
+      return nullptr;
+   new_slope->p0.x = readValue(buf, room_version);
+   if (CliMappedFileRead(f, buf, 4) != 4)
+      return nullptr;
+   new_slope->p0.y = readValue(buf, room_version);
 
-    // generate other endpoints from plane normal, texture origin, and texture
-    //  orientation which determine the orientation of the texture's u v space
-    //  in the 3d world's x, y, z space
-    
-    // cross normal with texture orientation to get vector perpendicular to texture
-    //  orientation and normal = v axis direction
-    V3Cross((Vector3D *)&(new_slope->plane), &texture_orientation, &v2);
-    // scale to size of texture in world space
-    V3Scale(&v2, FINENESS);
-    
-    // cross normal with v axis direction vector to get vector perpendicular to v axis
-    //  and normal = u axis direction vector
-    V3Cross(&v2, (Vector3D *)&(new_slope->plane), &v1);
-    // scale to size of texture in world space
-    V3Scale(&v1, FINENESS);
+   // calculate z of texture origin from x, y, and plane equation
+   new_slope->p0.z =
+       (-new_slope->plane.a * new_slope->p0.x - new_slope->plane.b * new_slope->p0.y - new_slope->plane.d) /
+       new_slope->plane.c;
 
-    // add vectors to origin to get endpoints
-    V3Add(&new_slope->p0, &v1, &new_slope->p1);
-    V3Add(&new_slope->p0, &v2, &new_slope->p2);
+   // load in texture angle - this is planar angle between x axis of texture & x axis of world
+   if (CliMappedFileRead(f, &txt_angle, 4) != 4)
+      return (SlopeData *) NULL;
 
-    // set flags indicating properties of the slope
-    new_slope->flags = 0;
+   new_slope->texRot = txt_angle;
 
-    if (ABS(new_slope->plane.c) < DIRECTIONAL_THRESHOLD)
-	new_slope->flags |= SLF_DIRECTIONAL;
-    else if (new_slope->plane.c < 0) // ceiling, apply same lighting hack as regular ceilings (see doDrawLeaf)
-	new_slope->lightscale = FINENESS-(shade_amount>>1);
-    else
-	new_slope->lightscale = FINENESS;
-    
-    // it's not clear that anyone will actually use this flag, but we talked about using it once
-    if ((new_slope->plane.c >= 0) && (new_slope->plane.c < TOO_STEEP_THRESHOLD))
-        new_slope->flags |= SLF_TOO_STEEP;
+   // convert angle to vector
+   texture_orientation.x = COS(txt_angle) >> 6;
+   texture_orientation.y = SIN(txt_angle) >> 6;
+   texture_orientation.z = 0;
 
-    for (index=0; index < 3; index++)
-       // Skip unused bytes
-       if (CliMappedFileRead(f, &junk, 6) != 6) return (SlopeData *)NULL;
+   // generate other endpoints from plane normal, texture origin, and texture
+   //  orientation which determine the orientation of the texture's u v space
+   //  in the 3d world's x, y, z space
 
-    return new_slope;
+   // cross normal with texture orientation to get vector perpendicular to texture
+   //  orientation and normal = v axis direction
+   V3Cross((Vector3D *) &(new_slope->plane), &texture_orientation, &v2);
+   // scale to size of texture in world space
+   V3Scale(&v2, FINENESS);
+
+   // cross normal with v axis direction vector to get vector perpendicular to v axis
+   //  and normal = u axis direction vector
+   V3Cross(&v2, (Vector3D *) &(new_slope->plane), &v1);
+   // scale to size of texture in world space
+   V3Scale(&v1, FINENESS);
+
+   // add vectors to origin to get endpoints
+   V3Add(&new_slope->p0, &v1, &new_slope->p1);
+   V3Add(&new_slope->p0, &v2, &new_slope->p2);
+
+   // set flags indicating properties of the slope
+   new_slope->flags = 0;
+
+   if (ABS(new_slope->plane.c) < DIRECTIONAL_THRESHOLD)
+      new_slope->flags |= SLF_DIRECTIONAL;
+   else if (new_slope->plane.c < 0)  // ceiling, apply same lighting hack as regular ceilings (see doDrawLeaf)
+      new_slope->lightscale = FINENESS - (shade_amount >> 1);
+   else
+      new_slope->lightscale = FINENESS;
+
+   // it's not clear that anyone will actually use this flag, but we talked about using it once
+   if ((new_slope->plane.c >= 0) && (new_slope->plane.c < TOO_STEEP_THRESHOLD))
+      new_slope->flags |= SLF_TOO_STEEP;
+
+   for (index = 0; index < 3; index++)
+      // Skip unused bytes
+      if (CliMappedFileRead(f, &junk, 6) != 6)
+         return (SlopeData *) NULL;
+
+   return new_slope;
 }
 
 /*****************************************************************************************/
 /*
  * LoadSectors:  Load sectors, and set global sectors variable to array of sectors.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
+bool LoadSectors(file_node *f, room_type *room, int num_sectors)
 {
    int i, size, period;
    WORD word;
@@ -613,106 +730,125 @@ Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
    room->sectors = (Sector *) SafeMalloc(size);
    memset(room->sectors, 0, size);
 
-   for (i=0; i < num_sectors; i++)
+   for (i = 0; i < num_sectors; i++)
    {
       Sector *s = &room->sectors[i];
-      
-      if (CliMappedFileRead(f, &s->server_id, 2) != 2) return False;
+
+      if (CliMappedFileRead(f, &s->server_id, 2) != 2)
+         return false;
       security += s->server_id;
-      
+
       // Get floor and ceiling bitmaps
-      if (CliMappedFileRead(f, &s->floor_type, 2) != 2) return False;
+      if (CliMappedFileRead(f, &s->floor_type, 2) != 2)
+         return false;
       s->floor = GetGridPdib(s->floor_type);
-      if (CliMappedFileRead(f, &s->ceiling_type, 2) != 2) return False;
+      if (CliMappedFileRead(f, &s->ceiling_type, 2) != 2)
+         return false;
       s->ceiling = GetGridPdib(s->ceiling_type);
       security += s->floor_type + s->ceiling_type;
 
       // Get texture origin
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
+      if (CliMappedFileRead(f, &word, 2) != 2)
+         return false;
       s->tx = FinenessKodToClient(word);
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
+      if (CliMappedFileRead(f, &word, 2) != 2)
+         return false;
       s->ty = FinenessKodToClient(word);
 
       // Get floor and ceiling heights
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
+      if (CliMappedFileRead(f, &word, 2) != 2)
+         return false;
       security += word;
       s->floor_height = HeightKodToClient(word);
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
+      if (CliMappedFileRead(f, &word, 2) != 2)
+         return false;
       security += word;
       s->ceiling_height = HeightKodToClient(word);
- 
-      if (CliMappedFileRead(f, &s->light, 1) != 1) return False;
+
+      if (CliMappedFileRead(f, &s->light, 1) != 1)
+         return false;
       security += s->light;
 
-      if (CliMappedFileRead(f, &s->flags, 4) != 4) return False;
+      if (CliMappedFileRead(f, &s->flags, 4) != 4)
+         return false;
       security += s->flags;
 
       // XXX Old version
       if (room_version >= 10)
       {
-	 if (CliMappedFileRead(f, &speed, 1) != 1) return False;
+         if (CliMappedFileRead(f, &speed, 1) != 1)
+            return false;
       }
-      else speed = 0;
+      else
+         speed = 0;
 
       // Set up animation, if any
       if (speed != 0)
       {
-	 s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
-	 RoomSetupCycleAnimation(s->animate, speed);
+         s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
+         RoomSetupCycleAnimation(s->animate, speed);
       }
       else if (SectorScrollSpeed(s->flags) != SCROLL_NONE)
       {
-	 speed = SectorScrollSpeed(s->flags);
-	 switch (speed)
-	 {
-	 case SCROLL_SLOW:   period = SCROLL_SLOW_PERIOD;   break;
-	 case SCROLL_MEDIUM: period = SCROLL_MEDIUM_PERIOD; break;
-	 case SCROLL_FAST:   period = SCROLL_FAST_PERIOD;   break;
-	 }
-	 s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
-	 RoomSetupScrollAnimation(s->animate, period, SectorScrollDirection(s->flags));
+         speed = SectorScrollSpeed(s->flags);
+         switch (speed)
+         {
+         case SCROLL_SLOW:
+            period = SCROLL_SLOW_PERIOD;
+            break;
+         case SCROLL_MEDIUM:
+            period = SCROLL_MEDIUM_PERIOD;
+            break;
+         case SCROLL_FAST:
+            period = SCROLL_FAST_PERIOD;
+            break;
+         }
+         s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
+         RoomSetupScrollAnimation(s->animate, period, SectorScrollDirection(s->flags));
       }
       else if (s->flags & SF_FLICKER)
       {
-	 s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
-	 RoomSetupFlickerAnimation(s->animate, s->light, s->server_id);
+         s->animate = (RoomAnimate *) SafeMalloc(sizeof(RoomAnimate));
+         RoomSetupFlickerAnimation(s->animate, s->light, s->server_id);
       }
-      else s->animate = NULL;
+      else
+         s->animate = NULL;
 
-      if (s->flags & SF_SLOPED_FLOOR) {
-	  s->sloped_floor = LoadSlopeInfo(f);
-	  if (s->sloped_floor == (SlopeData *)NULL)
-	      return False;
+      if (s->flags & SF_SLOPED_FLOOR)
+      {
+         s->sloped_floor = LoadSlopeInfo(f);
+         if (s->sloped_floor == (SlopeData *) NULL)
+            return false;
       }
 
-      if (s->flags & SF_SLOPED_CEILING) {
-	  s->sloped_ceiling = LoadSlopeInfo(f);
-	  if (s->sloped_ceiling == (SlopeData *)NULL)
-	      return False;
+      if (s->flags & SF_SLOPED_CEILING)
+      {
+         s->sloped_ceiling = LoadSlopeInfo(f);
+         if (s->sloped_ceiling == (SlopeData *) NULL)
+            return false;
       }
    }
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
- * RoomSwizzle:  Convert node and wall id numbers loaded from the file into pointers 
+ * RoomSwizzle:  Convert node and wall id numbers loaded from the file into pointers
  *   directly to these nodes and walls.
- *   Return True if all id numbers are legal, and so conversion was successful.
+ *   Return true if all id numbers are legal, and so conversion was successful.
  */
 #define MAXLONG 0x7fffffff
-#define OVERFLOWAMOUNT (MAXLONG>>(LOG_FINENESS*2))
+#define OVERFLOWAMOUNT (MAXLONG >> (LOG_FINENESS * 2))
 
-Bool RoomSwizzle(room_type *room, BSPTree tree, 
-		 int num_nodes, int num_walls, int num_sidedefs, int num_sectors)
+bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors)
 {
    BSPinternal *inode;
    BSPleaf *leaf;
    WallData *wall;
-   float   a,b,c,x0,y0,x1,y1,norm_size;
-   float   a2,b2;
+   float a, b, c, x0, y0, x1, y1, norm_size;
+   float a2, b2;
 
    if (tree == NULL)
-      return True;
+      return true;
 
    switch (tree->type)
    {
@@ -724,164 +860,167 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
       b = inode->separator.b;
       c = inode->separator.c;
 
-      // get point on plane from wall data 
+      // get point on plane from wall data
       x0 = room->walls[inode->wall_num - 1].x0;
       y0 = room->walls[inode->wall_num - 1].y0;
       x1 = room->walls[inode->wall_num - 1].x1;
       y1 = room->walls[inode->wall_num - 1].y1;
 
+      a2 = a * a;  // get a bead on general scale of normal vector
+      b2 = b * b;
 
-      a2 = a*a; // get a bead on general scale of normal vector
-      b2 = b*b;
+      if ((a2 > OVERFLOWAMOUNT) || (b2 > OVERFLOWAMOUNT) || (a2 + b2 > OVERFLOWAMOUNT))
+      {
+         a = inode->separator.a;
+         b = inode->separator.b;
 
-      if ((a2 > OVERFLOWAMOUNT) || (b2 > OVERFLOWAMOUNT) || (a2+b2 > OVERFLOWAMOUNT)) {
-	  a = inode->separator.a;
-	  b = inode->separator.b;
-
-	  norm_size = sqrt(a2 + b2);
-	  if ((a2 < 0) || (b2 < 0) || (norm_size <= 0)) {
-	      norm_size = 1;
-	      debug(("RoomSwizzle: still getting overflow in normalization math!\n"));
-	  }
-
+         norm_size = sqrt(a2 + b2);
+         if ((a2 < 0) || (b2 < 0) || (norm_size <= 0))
+         {
+            norm_size = 1;
+            debug(("RoomSwizzle: still getting overflow in normalization math!\n"));
+         }
       }
-      else {
-	  a *= FINENESS;
-	  b *= FINENESS;
+      else
+      {
+         a *= FINENESS;
+         b *= FINENESS;
 
-	  norm_size = sqrt(a*a + b*b);
+         norm_size = sqrt(a * a + b * b);
       }
 
       // normalize a & b
-      a = (a * FINENESS)/norm_size;
-      b = (b * FINENESS)/norm_size;
-      
+      a = (a * FINENESS) / norm_size;
+      b = (b * FINENESS) / norm_size;
+
       inode->separator.a = a;
       inode->separator.b = b;
 
       // re-calc c
       // take average over endpoints of wall (reduce error ?)
-      inode->separator.c = -((a*x1+b*y1)+(a*x0+b*y0))/2.0;
+      inode->separator.c = -((a * x1 + b * y1) + (a * x0 + b * y0)) / 2.0;
 
       if (inode->pos_num == 0)
-	 inode->pos_side = NULL;
+         inode->pos_side = NULL;
+      else if (inode->pos_num < 0 || inode->pos_num > num_nodes)
+      {
+         debug(("RoomSwizzle got node #%d; max is %d\n", inode->pos_num, num_nodes));
+         inode->pos_side = NULL;
+      }
       else
-	 if (inode->pos_num < 0 || inode->pos_num > num_nodes)
-	 {
-	    debug(("RoomSwizzle got node #%d; max is %d\n", inode->pos_num, num_nodes));
-	    inode->pos_side = NULL;
-	 }
-	 else inode->pos_side = &room->nodes[inode->pos_num - 1];
+         inode->pos_side = &room->nodes[inode->pos_num - 1];
 
       if (inode->neg_num == 0)
-	 inode->neg_side = NULL;
+         inode->neg_side = NULL;
+      else if (inode->neg_num < 0 || inode->neg_num > num_nodes)
+      {
+         debug(("RoomSwizzle got node #%d; max is %d", inode->neg_num, num_nodes));
+         inode->neg_side = NULL;
+      }
       else
-	 if (inode->neg_num < 0 || inode->neg_num > num_nodes)
-	 {
-	    debug(("RoomSwizzle got node #%d; max is %d", inode->neg_num, num_nodes));
-	    inode->neg_side = NULL;
-	 }
-	 else inode->neg_side = &room->nodes[inode->neg_num - 1];
+         inode->neg_side = &room->nodes[inode->neg_num - 1];
 
       if (inode->wall_num == 0)
-	 inode->walls_in_plane = NULL;
+         inode->walls_in_plane = NULL;
+      else if (inode->wall_num < 0 || inode->wall_num > num_walls)
+      {
+         debug(("RoomSwizzle got wall #%d; max is %d\n", inode->wall_num, num_walls));
+         inode->walls_in_plane = NULL;
+      }
       else
-	 if (inode->wall_num < 0 || inode->wall_num > num_walls)
-	 {
-	    debug(("RoomSwizzle got wall #%d; max is %d\n", inode->wall_num, num_walls));
-	    inode->walls_in_plane = NULL;
-	 }
-	 else inode->walls_in_plane = &room->walls[inode->wall_num - 1];
+         inode->walls_in_plane = &room->walls[inode->wall_num - 1];
 
       // Swizzle wall list
       if (inode->walls_in_plane != NULL)
       {
-	 // Set next pointers to build up list
-	 for (wall = inode->walls_in_plane; wall->next_num != 0; wall = wall->next)
-	 {
-	    if (wall->next_num < 0 || wall->next_num > num_walls)
-	    {
-	       debug(("RoomSwizzle got wall #%d; max is %d\n", wall->next_num, num_walls));
-	       return False;
-	    }
-	    else wall->next = &room->walls[wall->next_num - 1];
-	 }
-	 wall->next = NULL;
+         // Set next pointers to build up list
+         for (wall = inode->walls_in_plane; wall->next_num != 0; wall = wall->next)
+         {
+            if (wall->next_num < 0 || wall->next_num > num_walls)
+            {
+               debug(("RoomSwizzle got wall #%d; max is %d\n", wall->next_num, num_walls));
+               return false;
+            }
+            else
+               wall->next = &room->walls[wall->next_num - 1];
+         }
+         wall->next = NULL;
 
-	 // Set sidedef and sector pointers
-	 for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
-	 {
-	    if (wall->pos_sidedef_num > num_sidedefs)
-	    {
-	       debug(("RoomSwizzle found wall referencing sidedef %d; max is %d\n", 
-		       wall->pos_sidedef_num, num_sidedefs));
-	       return False;
-	    }
-	    if (wall->pos_sidedef_num == 0)
-	       wall->pos_sidedef = NULL;
-	    else wall->pos_sidedef = &room->sidedefs[wall->pos_sidedef_num - 1];
+         // Set sidedef and sector pointers
+         for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
+         {
+            if (wall->pos_sidedef_num > num_sidedefs)
+            {
+               debug(
+                   ("RoomSwizzle found wall referencing sidedef %d; max is %d\n", wall->pos_sidedef_num, num_sidedefs));
+               return false;
+            }
+            if (wall->pos_sidedef_num == 0)
+               wall->pos_sidedef = NULL;
+            else
+               wall->pos_sidedef = &room->sidedefs[wall->pos_sidedef_num - 1];
 
-	    if (wall->neg_sidedef_num > num_sidedefs)
-	    {
-	       debug(("RoomSwizzle found wall referencing sidedef %d; max is %d\n", 
-		       wall->neg_sidedef_num, num_sidedefs));
-	       return False;
-	    }
-	    if (wall->neg_sidedef_num == 0)
-	       wall->neg_sidedef = NULL;
-	    else wall->neg_sidedef = &room->sidedefs[wall->neg_sidedef_num - 1];
+            if (wall->neg_sidedef_num > num_sidedefs)
+            {
+               debug(
+                   ("RoomSwizzle found wall referencing sidedef %d; max is %d\n", wall->neg_sidedef_num, num_sidedefs));
+               return false;
+            }
+            if (wall->neg_sidedef_num == 0)
+               wall->neg_sidedef = NULL;
+            else
+               wall->neg_sidedef = &room->sidedefs[wall->neg_sidedef_num - 1];
 
-	    if (wall->pos_sector_num > num_sectors)
-	    {
-	       debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", 
-		       wall->pos_sector_num, num_sectors));
-	       return False;
-	    }
+            if (wall->pos_sector_num > num_sectors)
+            {
+               debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", wall->pos_sector_num, num_sectors));
+               return false;
+            }
 
-	    if (wall->pos_sector_num == 0)
-	       wall->pos_sector = NULL;
-	    else wall->pos_sector = &room->sectors[wall->pos_sector_num - 1];
+            if (wall->pos_sector_num == 0)
+               wall->pos_sector = NULL;
+            else
+               wall->pos_sector = &room->sectors[wall->pos_sector_num - 1];
 
-	    if (wall->neg_sector_num > num_sectors)
-	    {
-	       debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", 
-		       wall->neg_sector_num, num_sectors));
-	       return False;
-	    }
+            if (wall->neg_sector_num > num_sectors)
+            {
+               debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", wall->neg_sector_num, num_sectors));
+               return false;
+            }
 
-	    if (wall->neg_sector_num == 0)
-	       wall->neg_sector = NULL;
-	    else wall->neg_sector = &room->sectors[wall->neg_sector_num - 1];
+            if (wall->neg_sector_num == 0)
+               wall->neg_sector = NULL;
+            else
+               wall->neg_sector = &room->sectors[wall->neg_sector_num - 1];
 
-	    SetWallHeights(wall);
-	 }
+            SetWallHeights(wall);
+         }
       }
 
-      if (RoomSwizzle(room, inode->pos_side, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
-	 return False;
-      if (RoomSwizzle(room, inode->neg_side, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
-	 return False;
+      if (RoomSwizzle(room, inode->pos_side, num_nodes, num_walls, num_sidedefs, num_sectors) == false)
+         return false;
+      if (RoomSwizzle(room, inode->neg_side, num_nodes, num_walls, num_sidedefs, num_sectors) == false)
+         return false;
       break;
-      
+
    case BSPleaftype:
       leaf = &tree->u.leaf;
 
       if (leaf->sector_num > num_sectors)
       {
-	 debug(("RoomSwizzle found leaf referencing sector %d; max is %d\n", 
-		 leaf->sector, num_sectors));
-	 return False;
+         debug(("RoomSwizzle found leaf referencing sector %d; max is %d\n", leaf->sector, num_sectors));
+         return false;
       }
       if (leaf->sector_num == 0)
       {
-	 debug(("RoomSwizzle found leaf without sector reference\n"));
-	 return False;
+         debug(("RoomSwizzle found leaf without sector reference\n"));
+         return false;
       }
       leaf->sector = &room->sectors[leaf->sector_num - 1];
       break;
    }
-   
-   return True;
+
+   return true;
 }
 
 /*****************************************************************************/
@@ -909,32 +1048,27 @@ void BSPDumpTree(BSPnode *tree, int level)
    {
    case BSPleaftype:
       leaf = &tree->u.leaf;
-//      debug(("%sFloor type = %d, ceiling type = %d\n", indent, 
-//	      leaf->floor_type, leaf->ceiling_type));
+      //      debug(("%sFloor type = %d, ceiling type = %d\n", indent,
+      //	      leaf->floor_type, leaf->ceiling_type));
       debug(("%sPolygon has %d points: ", indent, leaf->poly.npts));
-      for (i=0; i < leaf->poly.npts; i++)
+      for (i = 0; i < leaf->poly.npts; i++)
       {
-	 debug(("(%f %f) ", leaf->poly.p[i].x, leaf->poly.p[i].y));
+         debug(("(%f %f) ", leaf->poly.p[i].x, leaf->poly.p[i].y));
       }
       debug(("\n"));
       return;
 
    case BSPinternaltype:
       node = &tree->u.internal;
-      
-      debug(("%sBounding box = (%f %f) (%f %f)\n", indent, 
-	      tree->bbox.x0, tree->bbox.y0, 
-	      tree->bbox.x1, tree->bbox.y1));
-      debug(("%sPlane (a, b, c) = (%f %f %f):\n", indent, node->separator.a,
-	      node->separator.b, node->separator.c));
+
+      debug(("%sBounding box = (%f %f) (%f %f)\n", indent, tree->bbox.x0, tree->bbox.y0, tree->bbox.x1, tree->bbox.y1));
+      debug(("%sPlane (a, b, c) = (%f %f %f):\n", indent, node->separator.a, node->separator.b, node->separator.c));
       debug(("%sWalls:\n", indent));
       for (wall = node->walls_in_plane; wall != NULL; wall = wall->next)
       {
-	 debug(("%s   (%f %f)-(%f %f) ", indent, 
-		 wall->x0, wall->y0, 
-		 wall->x1, wall->y1));
-	 debug((" z = (%d %d %d %d), +x=%d, -x=%d\n", 
-		 wall->z0, wall->z1, wall->z2, wall->z3, wall->pos_xoffset, wall->neg_xoffset));
+         debug(("%s   (%f %f)-(%f %f) ", indent, wall->x0, wall->y0, wall->x1, wall->y1));
+         debug((" z = (%d %d %d %d), +x=%d, -x=%d\n", wall->z0, wall->z1, wall->z2, wall->z3, wall->pos_xoffset,
+                wall->neg_xoffset));
       }
 
       debug(("%s+ side:\n", indent));
@@ -949,7 +1083,7 @@ void BSPDumpTree(BSPnode *tree, int level)
 }
 /***************************************************************************/
 /*
- * RoomSetupCycleAnimation:  Set up the given RoomAnimate structure for a 
+ * RoomSetupCycleAnimation:  Set up the given RoomAnimate structure for a
  *   cycling animation.
  */
 void RoomSetupCycleAnimation(RoomAnimate *ra, BYTE speed)
@@ -967,7 +1101,7 @@ void RoomSetupCycleAnimation(RoomAnimate *ra, BYTE speed)
 }
 /***************************************************************************/
 /*
- * RoomSetupScrollAnimation:  Set up the given RoomAnimate structure for a 
+ * RoomSetupScrollAnimation:  Set up the given RoomAnimate structure for a
  *   scrolling animation.  period and direction characterize the scrolling;
  *   the direction is a constant from bsp.h.
  */
@@ -987,7 +1121,7 @@ void RoomSetupScrollAnimation(RoomAnimate *ra, int period, BYTE direction)
 }
 /***************************************************************************/
 /*
- * RoomSetupFlickerAnimation:  Set up the given RoomAnimate structure for a 
+ * RoomSetupFlickerAnimation:  Set up the given RoomAnimate structure for a
  *   flickering light animation.
  *   original_light gives base light level from which to flicker.
  *   server_id gives the user id # of the sector.
@@ -1001,7 +1135,7 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
    ra->animation = ANIMATE_FLICKER;
    f->period = FLICKER_PERIOD;
    f->tick = f->period;
-   
+
    f->original_light = original_light;
    f->server_id = server_id;
 }
@@ -1050,14 +1184,14 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
  * the closer sector is above at the left endpoint of the wall. If the sector behind
  * the wall is above at the left endpoint, then it would look like this:
  *
- *      .       
+ *      .
  *      |\     .
- *      | \   / 
- *      |  \ /  
- *      |   x   
- *      |  /    
- *      | /     
- *      |/      
+ *      | \   /
+ *      |  \ /
+ *      |   x
+ *      |  /
+ *      | /
+ *      |/
  *      /
  *     /
  *
@@ -1145,7 +1279,7 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
  * below the original line from z1 to zz0 will be hidden, and the wall will get
  * rendered as:
  *
- *               . 
+ *               .
  *        \     /|
  *         \   / |
  *          \ /  |
@@ -1153,7 +1287,7 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
  *            \  |
  *             \ |
  *              \|
- *               \ 
+ *               \
  *                \
  *
  *   This is exactly what needs to get drawn for this bowtie for this situation.
@@ -1161,9 +1295,13 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
  *****************************************************************************/
 
 // Make sure wall height can be stored in two bytes. Used by SetWallHeights below.
-#define WALL_HEIGHT_CHECK(z) if ((z) > 65535) {debug(("SetWallHeights: got wall taller than 65535."));\
-    debug((" Shorten ceiling height or change\nshort to long in WallData struct in bsp.h\n"));\
-    (z) = 65535;}
+#define WALL_HEIGHT_CHECK(z)                                                                                           \
+   if ((z) > 65535)                                                                                                    \
+   {                                                                                                                   \
+      debug(("SetWallHeights: got wall taller than 65535."));                                                          \
+      debug((" Shorten ceiling height or change\nshort to long in WallData struct in bsp.h\n"));                       \
+      (z) = 65535;                                                                                                     \
+   }
 
 /***************************************************************************
  *
@@ -1173,7 +1311,7 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
 void SetWallHeights(WallData *wall)
 {
    Sector *S1, *S2;
-   long	  S1_height0,S2_height0,S1_height1,S2_height1;
+   long S1_height0, S2_height0, S1_height1, S2_height1;
 
    S1 = wall->pos_sector;
    S2 = wall->neg_sector;
@@ -1205,7 +1343,7 @@ void SetWallHeights(WallData *wall)
       wall->zz2 = wall->zz3 = GetCeilingHeight(wall->x1, wall->y1, S1);
       return;
    }
-   
+
    S1_height0 = GetFloorHeight(wall->x0, wall->y0, S1);
    S2_height0 = GetFloorHeight(wall->x0, wall->y0, S2);
    S1_height1 = GetFloorHeight(wall->x1, wall->y1, S1);
@@ -1217,77 +1355,83 @@ void SetWallHeights(WallData *wall)
    WALL_HEIGHT_CHECK(S1_height1);
    WALL_HEIGHT_CHECK(S2_height1);
 
-   if (S1_height0 > S2_height0) { // S1 is above S2 at first endpoint
-       if (S1_height1 >= S2_height1) {
-	   // normal wall - S1 higher at both ends
-	   wall->bowtie_bits = 0;
+   if (S1_height0 > S2_height0)
+   {  // S1 is above S2 at first endpoint
+      if (S1_height1 >= S2_height1)
+      {
+         // normal wall - S1 higher at both ends
+         wall->bowtie_bits = 0;
 
-	   wall->z1 = S1_height0;
-	   wall->zz1 = S1_height1;
-	   wall->z0 = S2_height0;
-	   wall->zz0 = S2_height1;
-       }
-       else {
-			// bowtie - see notes on bowties above
-			wall->bowtie_bits = (BYTE)BT_BELOW_POS; // positive sector is on top at endpoint 0
+         wall->z1 = S1_height0;
+         wall->zz1 = S1_height1;
+         wall->z0 = S2_height0;
+         wall->zz0 = S2_height1;
+      }
+      else
+      {
+         // bowtie - see notes on bowties above
+         wall->bowtie_bits = (BYTE) BT_BELOW_POS;  // positive sector is on top at endpoint 0
 
-			if (gD3DEnabled)
-			{
-				wall->z1 = S1_height0;
-				wall->zz1 = S1_height1;
-				wall->z0 = S2_height0;
-				wall->zz0 = S1_height1;
+         if (gD3DEnabled)
+         {
+            wall->z1 = S1_height0;
+            wall->zz1 = S1_height1;
+            wall->z0 = S2_height0;
+            wall->zz0 = S1_height1;
 
-				wall->z1Neg = S2_height0;
-				wall->zz1Neg = S2_height1;
-				wall->z0Neg = S2_height0;
-				wall->zz0Neg = S1_height1;
-			}
-			else
-			{
-				wall->z1 = S1_height0;
-				wall->zz1 = S2_height1;
-				wall->z0 = S2_height0;
-				wall->zz0 = S1_height1;
-			}
-       }
+            wall->z1Neg = S2_height0;
+            wall->zz1Neg = S2_height1;
+            wall->z0Neg = S2_height0;
+            wall->zz0Neg = S1_height1;
+         }
+         else
+         {
+            wall->z1 = S1_height0;
+            wall->zz1 = S2_height1;
+            wall->z0 = S2_height0;
+            wall->zz0 = S1_height1;
+         }
+      }
    }
-   else { // S2 above S1 at first endpoint
-       if (S2_height1 >= S1_height1) {
-	   // normal wall - S2 higher at both ends
-	   wall->bowtie_bits = 0;
+   else
+   {  // S2 above S1 at first endpoint
+      if (S2_height1 >= S1_height1)
+      {
+         // normal wall - S2 higher at both ends
+         wall->bowtie_bits = 0;
 
-	   wall->z1 = S2_height0;
-	   wall->zz1 = S2_height1;
-	   wall->z0 = S1_height0;
-	   wall->zz0 = S1_height1;
-       }
-       else {
-			// bowtie - see notes on bowties above
-			wall->bowtie_bits = (BYTE)BT_BELOW_NEG; // negative sector is on top at endpoint 0
+         wall->z1 = S2_height0;
+         wall->zz1 = S2_height1;
+         wall->z0 = S1_height0;
+         wall->zz0 = S1_height1;
+      }
+      else
+      {
+         // bowtie - see notes on bowties above
+         wall->bowtie_bits = (BYTE) BT_BELOW_NEG;  // negative sector is on top at endpoint 0
 
-			if (gD3DEnabled)
-			{
-				wall->z1 = S1_height0;
-				wall->zz1 = S1_height1;
-				wall->z0 = S1_height0;
-				wall->zz0 = S2_height1;
+         if (gD3DEnabled)
+         {
+            wall->z1 = S1_height0;
+            wall->zz1 = S1_height1;
+            wall->z0 = S1_height0;
+            wall->zz0 = S2_height1;
 
-				wall->z1Neg = S2_height0;
-				wall->zz1Neg = S2_height1;
-				wall->z0Neg = S1_height0;
-				wall->zz0Neg = S2_height1;
-			}
-			else
-			{
-				wall->z1 = S2_height0;
-				wall->zz1 = S1_height1;
-				wall->z0 = S1_height0;
-				wall->zz0 = S2_height1;
-			}
-       }
+            wall->z1Neg = S2_height0;
+            wall->zz1Neg = S2_height1;
+            wall->z0Neg = S1_height0;
+            wall->zz0Neg = S2_height1;
+         }
+         else
+         {
+            wall->z1 = S2_height0;
+            wall->zz1 = S1_height1;
+            wall->z0 = S1_height0;
+            wall->zz0 = S2_height1;
+         }
+      }
    }
-   
+
    S1_height0 = GetCeilingHeight(wall->x0, wall->y0, S1);
    S2_height0 = GetCeilingHeight(wall->x0, wall->y0, S2);
    S1_height1 = GetCeilingHeight(wall->x1, wall->y1, S1);
@@ -1298,45 +1442,51 @@ void SetWallHeights(WallData *wall)
    WALL_HEIGHT_CHECK(S2_height0);
    WALL_HEIGHT_CHECK(S1_height1);
    WALL_HEIGHT_CHECK(S2_height1);
-   
-   if (S1_height0 > S2_height0) {
-       if (S1_height1 >= S2_height1) {
-	   // normal wall - S1 higher at both ends
-	   wall->bowtie_bits &= (BYTE)~BT_ABOVE_BOWTIE; // Clear above bowtie bits
 
-	   wall->z3 = S1_height0;
-	   wall->zz3 = S1_height1;
-	   wall->z2 = S2_height0;
-	   wall->zz2 = S2_height1;
-       }
-       else {
-	   // bowtie - see notes on bowties above
-	   wall->bowtie_bits |= (BYTE)BT_ABOVE_POS; // positive sector is on top at endpoint 0
+   if (S1_height0 > S2_height0)
+   {
+      if (S1_height1 >= S2_height1)
+      {
+         // normal wall - S1 higher at both ends
+         wall->bowtie_bits &= (BYTE) ~BT_ABOVE_BOWTIE;  // Clear above bowtie bits
 
-	   wall->z3 = S1_height0;
-	   wall->zz3 = S2_height1;
-	   wall->z2 = S2_height0;
-	   wall->zz2 = S1_height1;
-       }
+         wall->z3 = S1_height0;
+         wall->zz3 = S1_height1;
+         wall->z2 = S2_height0;
+         wall->zz2 = S2_height1;
+      }
+      else
+      {
+         // bowtie - see notes on bowties above
+         wall->bowtie_bits |= (BYTE) BT_ABOVE_POS;  // positive sector is on top at endpoint 0
+
+         wall->z3 = S1_height0;
+         wall->zz3 = S2_height1;
+         wall->z2 = S2_height0;
+         wall->zz2 = S1_height1;
+      }
    }
-   else {
-       if (S2_height1 >= S1_height1) {
-	   // normal wall - S2 higher at both ends
-	   wall->bowtie_bits &= (BYTE)~BT_ABOVE_BOWTIE;
+   else
+   {
+      if (S2_height1 >= S1_height1)
+      {
+         // normal wall - S2 higher at both ends
+         wall->bowtie_bits &= (BYTE) ~BT_ABOVE_BOWTIE;
 
-	   wall->z3 = S2_height0;
-	   wall->zz3 = S2_height1;
-	   wall->z2 = S1_height0;
-	   wall->zz2 = S1_height1;
-       }
-       else {
-	   // bowtie - see notes on bowties above
-	   wall->bowtie_bits |= (BYTE)BT_ABOVE_NEG; // negative sector is on top at endpoint 0
+         wall->z3 = S2_height0;
+         wall->zz3 = S2_height1;
+         wall->z2 = S1_height0;
+         wall->zz2 = S1_height1;
+      }
+      else
+      {
+         // bowtie - see notes on bowties above
+         wall->bowtie_bits |= (BYTE) BT_ABOVE_NEG;  // negative sector is on top at endpoint 0
 
-	   wall->z3 = S2_height0;
-	   wall->zz3 = S1_height1;
-	   wall->z2 = S1_height0;
-	   wall->zz2 = S2_height1;
-       }
+         wall->z3 = S2_height0;
+         wall->zz3 = S1_height1;
+         wall->z2 = S1_height0;
+         wall->zz2 = S2_height1;
+      }
    }
 }

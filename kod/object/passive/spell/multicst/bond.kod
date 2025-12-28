@@ -24,7 +24,7 @@ resources:
       "bond requires terrific amounts of energy to form.  A heartstone and "
       "dozens of polished serphym and diamonds must be crushed to amplify "
       "the caster's mystical energy, which must then be focused through a "
-      "prism.  The item to be bonded must be targetted.  Once the casting "
+      "prism.  The item to be bonded must be targeted.  Once the casting "
       "is complete the item will follow its owner to hell itself."
    
    Bond_sound = sbond.wav

@@ -28,7 +28,7 @@ constants:
    GOOD_COLOR = 82
    BAD_COLOR =  83
 
-   % How much wait between suicides?  Curently 10 minutes.
+   % How much wait between suicides?  Currently 10 minutes.
    SUICIDE_REPEAT_TIME = 600 
 
    % What's the length of the Posting timer check? Currently 30 mins.
@@ -260,7 +260,7 @@ resources:
    user_doesnt_know_spell = "You have not yet learned the spell '%s'!"
 
    user_wave_welcome = welcome.wav
-   user_wave_killed = killed.wav
+   user_wave_killed = killed_voice.wav
 
    user_midi_killed = killed.mid
 
@@ -2182,6 +2182,8 @@ messages:
 
       Send(self,@SendUserAllWindowOverlays);
 
+      Send(self,@SendBackgroundObjects);
+
       return;
    }
 
@@ -2216,12 +2218,7 @@ messages:
 
    UserLogonHook()
    {
-      local i;
-      
-      for i in Send(SYS,@GetBackgroundObjects)
-      {
-         Send(i,@AddBackgroundObject,#who=self);
-      }
+      Send(self,@SendBackgroundObjects);
 
       Send(self,@LoadMailNews);
 
@@ -2230,6 +2227,18 @@ messages:
       piMovesCounter = 0;
 
       propagate;
+   }
+
+   SendBackgroundObjects()
+   {
+      local i;
+
+      for i in Send(SYS,@GetBackgroundObjects)
+      {
+         Send(i,@AddBackgroundObject,#who=self);
+      }
+
+      return;
    }
 
    LoadMailNews()
@@ -3678,7 +3687,13 @@ messages:
                }
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  if iCan_hold < iNumber
+                  % Possible conditions: iNumber is less than number argument
+                  %   because iCan_hold was less than number OR
+                  %   iNumber equals iCan_hold and number is $ OR
+                  %   iNumber equals number and we don't need to send user_got_some
+                  % Note that if number argument is null and we can hold the whole stack
+                  %   we don't end up here because ReqNewHold evaluates true
+                  if iNumber <> number
                   {
                      Send(self,@MsgSendUser,#message_rsc=user_got_some,
                         #parm1=Send(what,@GetName));
@@ -5769,7 +5784,7 @@ messages:
       {
         if i < 1
         {
-           Debug("Bad withdrawl quantity", i, "from user", self);
+           Debug("Bad withdrawal quantity", i, "from user", self);
            return;
         }
       }
@@ -7292,14 +7307,12 @@ messages:
 
       oIllusion = Send(self,@GetIllusionForm);
 
-      % If we're morphed, get rid of any "player" flags
+      % If we're morphed, get rid of certain "player" flags
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND oIllusion <> $
          AND IsClass(oIllusion,&Monster)
       {
-         iFlags = (iFlags & ~USER_YES & ~OFFER_YES & ~PLAYER_PK
-                   & ~PLAYER_OUTLAW);
-         iFlags = (iFlags & ~PLAYER_DM & ~PLAYER_CREATOR & ~PLAYER_SUPER);
+         iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
 
       return iFlags;

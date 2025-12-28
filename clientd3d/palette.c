@@ -19,7 +19,6 @@
 static RGBQUAD colors[NUM_COLORS];   /* Colors of our standard palette */
 HPALETTE hPal;                       /* our standard drawing palette */
 static HPALETTE hBgPal;              // Palette for when we're a bg window
-extern Color base_palette[];         
 int has_palette;                     // True when on a palette device
 
 /******************************************************************************/
@@ -119,6 +118,8 @@ HPALETTE InitializePalette(void)
       }
    }
 
+   const auto& base_palette = getBasePalette();
+
    if (has_palette)
    {
       /* Build up a new palette from system colors and our colors */
@@ -181,7 +182,7 @@ HPALETTE InitializePalette(void)
  * PaletteActivate:  Set the palette of the main window.  
  *   is_foreground tells if the application is in the foreground.
  */
-void PaletteActivate(Bool is_foreground)
+void PaletteActivate(bool is_foreground)
 {
    int i;
    HPALETTE hPalT;

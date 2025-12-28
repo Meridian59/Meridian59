@@ -23,57 +23,59 @@
 
 INT64 SaveAll(void)
 {
-   Bool save_ok;
+  bool save_ok;
    INT64 save_time;
    char save_name[MAX_PATH+FILENAME_MAX];
    char time_str[100];
-   
+
    /* Note:  You must call GarbageCollect() right before SaveAll() */
-   
+
 /*
 	 charlie: machine sets the local time from a time synch server
      its potentially dangerous, but only if the time has been changed
 	 between either server startup or last save, which is unlikely to
-	 have drifted by much, things will only start to freak out if the 
+	 have drifted by much, things will only start to freak out if the
 	 difference is more than say a minute behind, meaning the all the
-	 timers will run for an extra minute.. its better this way as the 
+	 timers will run for an extra minute.. its better this way as the
 	 time is going to be corrected every (currently) 4 hours , even
 	 the worst PC clocks aren`t going to degrade that much in 4 hours
 */
-     
-   /* The current time is used as a suffix to the save filenames.  
+
+   /* The current time is used as a suffix to the save filenames.
       We make our own copy since the time functions use a static
       buffer. */
    save_time = GetTime();
    snprintf(time_str, sizeof(time_str), "%lli",(long long) save_time);
-   
-   save_ok = True;
+
+   save_ok = true;
 
    lprintf("Saving game (time stamp %s)...\n", time_str);
-   
+
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
-   if (SaveGame(save_name) == False)
-      save_ok = False;
+   if (SaveGame(save_name) == false)
+      save_ok = false;
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,time_str);
-   if (SaveStrings(save_name) == False)
-      save_ok = False;
+   if (SaveStrings(save_name) == false)
+      save_ok = false;
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,time_str);
-   if (SaveAccounts(save_name) == False)
-      save_ok = False;
+   if (SaveAccounts(save_name) == false)
+      save_ok = false;
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
    if (!SaveDynamicRsc(save_name))
-      save_ok = False;
+      save_ok = false;
 
-   if (save_ok)
+   if (save_ok) {
       SaveControlFile(save_time);
-   
-   lprintf("Save game successful (time stamp %s).\n", time_str);
 
-   if (save_ok)
+      lprintf("Save game successful (time stamp %s).\n", time_str);
+
       return save_time;
+   }
+
+   lprintf("Save game NOT successful (time stamp %s).\n", time_str);
 
    return 0;
 }
@@ -101,10 +103,10 @@ void SaveControlFile(INT64 save_time)
    fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"#\n");
-   fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time));
+   fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time).c_str());
    fprintf(savefile,"#\n");
    fprintf(savefile,"\n");
    fprintf(savefile,"LASTSAVE %lli\n",(long long) save_time);
-   
+
    fclose(savefile);
 }

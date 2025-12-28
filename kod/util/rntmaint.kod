@@ -385,7 +385,7 @@ messages:
    "If the player has a gold room key, this command will delete any "
    "existing copies of it and notify any player holding such a copy.\n"
    "Returns a string resource for the NPC to respond with based on "
-   "an unsuccessful result, or $ on succcess as an indicator for the "
+   "an unsuccessful result, or $ on success as an indicator for the "
    "NPC to respond with a confirmation line specific to them."
    {
       local oKey;
@@ -448,7 +448,7 @@ messages:
 
       if oMoney = $ OR Send(oMoney,@GetNumber) < iAmount
       {
-         % Something wierd went on here.  Don't give a message, just bail.
+         % Something weird went on here.  Don't give a message, just bail.
          return $;
       }
 

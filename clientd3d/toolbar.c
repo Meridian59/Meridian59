@@ -37,7 +37,7 @@ extern HPALETTE hPal;
 static void ToolbarSetButtonVisibility(HWND hButton);
 static void ToolbarButtonPressed(Button *b);
 static Button *ToolbarFindButtonByHandle(HWND hwnd);
-static Button *ToolbarFindButtonByAction(int action, void *action_data);
+static Button *ToolbarFindButtonByAction(int action, const void *action_data);
 static LRESULT CALLBACK ToolbarButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
 /*
@@ -64,9 +64,9 @@ void ToolbarDestroy(void)
 /*
  * ToolbarAddButton:  Add a button to the toolbar.
  *   s describes the properties of the button.
- *   Return True iff button created successfully.
+ *   Return true iff button created successfully.
  */
-Bool __cdecl ToolbarAddButton(AddButton *s)
+bool __cdecl ToolbarAddButton(AddButton *s)
 {
    HWND hwnd;
    int x, y;
@@ -76,7 +76,7 @@ Bool __cdecl ToolbarAddButton(AddButton *s)
    if (num_buttons >= MAX_BUTTONS)
    {
       debug(("ToolbarAddButton: Too many buttons!\n"));
-      return False;
+      return false;
    }
 
    x = TOOLBAR_X + num_buttons * (TOOLBAR_BUTTON_LEFT_SPACING + TOOLBAR_BUTTON_WIDTH);	//	+ num_separators * TOOLBAR_SEPARATOR_WIDTH;
@@ -86,7 +86,7 @@ Bool __cdecl ToolbarAddButton(AddButton *s)
    if (s->bitmap_id == 0)
    {
       num_separators++;
-      return True;
+      return true;
    }
 
    hwnd = CreateWindow("button", "", WS_CHILD | BS_OWNERDRAW, 
@@ -96,19 +96,19 @@ Bool __cdecl ToolbarAddButton(AddButton *s)
    if (hwnd == NULL)
    {
       debug(("ToolbarAddButton failed to create button window\n"));
-      return False;
+      return false;
    }
 
    ptr = GetBitmapResource(s->hModule, s->bitmap_id);
    if (ptr == NULL)
-      return False;
+      return false;
 
    bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
    if (ptr->biWidth != 2 * TOOLBAR_BUTTON_WIDTH || ptr->biHeight != TOOLBAR_BUTTON_HEIGHT)
    {
       debug(("ToolbarAddButton found button bitmap %d with bad size\n", s->bitmap_id));
-      return False;
+      return false;
    }
 
    lpfnDefButtonProc = SubclassWindow(hwnd, ToolbarButtonProc);
@@ -127,12 +127,12 @@ Bool __cdecl ToolbarAddButton(AddButton *s)
    buttons[num_buttons].action_data2 = s->data2;
    buttons[num_buttons].bits         = bits;
    buttons[num_buttons].x            = x;
-   buttons[num_buttons].pressed      = False;
+   buttons[num_buttons].pressed      = false;
    num_buttons++;
 
    Lagbox_Reposition();
 
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
@@ -221,10 +221,10 @@ void ToolbarCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 void ToolbarButtonPressed(Button *b)
 {
    int action;
-   void *data;
+   const void *data;
 
    /* See if module wants to handle this event */
-   if (ModuleEvent(EVENT_TOOLBUTTON, b) == False)
+   if (ModuleEvent(EVENT_TOOLBUTTON, b) == false)
       return;
 
    action = b->action;
@@ -248,16 +248,16 @@ void ToolbarButtonPressed(Button *b)
 /****************************************************************************/
 /*
  * ToolbarSetButtonState:  Given an action, find the corresponding toolbar button
- *   and set its state (True = pressed in, False = out).  This is only useful
+ *   and set its state (true = pressed in, false = out).  This is only useful
  *   for toggle buttons.
- *   Returns True iff button state set.
+ *   Returns true iff button state set.
  */
-Bool ToolbarSetButtonState(int action, void *action_data, Bool state)
+bool ToolbarSetButtonState(int action, const void *action_data, bool state)
 {
   Button *b = ToolbarFindButtonByAction(action, action_data);
   
   if (b == NULL)
-    return False;
+    return false;
 
   Button_SetState(b->hwnd, state);
   // Redraw if necessary
@@ -288,7 +288,7 @@ Button *ToolbarFindButtonByHandle(HWND hwnd)
  * ToolbarFindButtonByAction:  Return Button structure for toolbar button
  *   with given action, or NULL if none found.
  */
-Button *ToolbarFindButtonByAction(int action, void *action_data)
+Button *ToolbarFindButtonByAction(int action, const void *action_data)
 {
    int i;
    
@@ -300,9 +300,9 @@ Button *ToolbarFindButtonByAction(int action, void *action_data)
 /****************************************************************************/
 /*
  * ToolbarDrawButton: Handle WM_DRAWITEM messages for toolbar buttons.
- *   Return True iff message handled.
+ *   Return true iff message handled.
  */
-Bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    Button *b;
    int x;
@@ -332,9 +332,9 @@ Bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 			 b->bits, x, 0, 2 * TOOLBAR_BUTTON_WIDTH, 
 			 OBB_FLIP | OBB_COPY | OBB_TRANSPARENT);
       }
-      return True;
+      return true;
    }
-   return False;
+   return false;
 }
 /****************************************************************************/
 /*

@@ -42,7 +42,7 @@ properties:
    
 messages:
 
-   UserEntered( who = $ )
+   WelcomeUser( who = $ )
    {
       local iFlags;
       iFlags = send( who, @GetObjectFlags );
@@ -62,7 +62,7 @@ messages:
       {
 	 send( self, @SetMood, #new_mood = piMood - 1 );
       }
-      propagate;
+      return;
    }
 
    AffectMood( why = $, what = $ )
@@ -110,7 +110,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if isClass(what,&NumberItem) and
          send(what,@GetNumber) > 25

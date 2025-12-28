@@ -43,6 +43,8 @@ properties:
 
 messages:
 
-
+      % The welcome message along with newbie instructions are managed by player dialog and 
+      % player_newbie_commands in player.kod, so we don't need to do anything here.
+      
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

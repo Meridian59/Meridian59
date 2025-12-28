@@ -11,12 +11,16 @@ BGFS = \
 	$(OUTDIR)\arrowfir.bgf \
 	$(OUTDIR)\arrowsil.bgf \
 	$(OUTDIR)\arrowner.bgf \
+	$(OUTDIR)\basiclute.bgf \
+	$(OUTDIR)\basicluteov.bgf \
 	$(OUTDIR)\mystswd.bgf \
 	$(OUTDIR)\mystwdov.bgf \
 	$(OUTDIR)\ring3.bgf \
 	$(OUTDIR)\povmystsw.bgf \
 	$(OUTDIR)\splash.bgf \
-	$(OUTDIR)\moon.bgf \
+	$(OUTDIR)\truelute.bgf \
+	$(OUTDIR)\trueluteov.bgf \
+	$(OUTDIR)\moon.bgf
 
 all: makedirs $(BGFS)
 

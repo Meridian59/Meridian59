@@ -24,13 +24,13 @@ static float aspect_ratio;    // Aspect ratio of main dialog; preserved on resiz
 
 ClientInfo *c;         // Holds data passed from main client
 
-Bool exiting;
+bool exiting;
 
 /* local function prototypes */
-static Bool HandleUserCommand(char *ptr, long len);
-static Bool HandleGameState(char *ptr, long len);
-static Bool HandleGameStart(char *ptr, long len);
-static Bool HandleGamePlayer(char *ptr, long len);
+static bool HandleUserCommand(char *ptr, long len);
+static bool HandleGameState(char *ptr, long len);
+static bool HandleGameStart(char *ptr, long len);
+static bool HandleGamePlayer(char *ptr, long len);
 
 // Server message handler table
 static handler_struct handler_table[] = {
@@ -77,11 +77,11 @@ static void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify
 static LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void ChessGotState(unsigned char *state);
-static void ChessDlgShowMessage(char *message);
+static void ChessDlgShowMessage(const char *message);
 static void ChessDlgShowGameStatus(void);
 static void ChessDlgShowMover(void);
 static INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-static Bool AbortChessDialogs(void);
+static bool AbortChessDialogs(void);
 static void ChessGotPlayerName(BYTE player_num, char *name);
 static void ChessSendMove(void);
 /****************************************************************************/
@@ -110,18 +110,18 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    BoardBitmapsLoad();
    hChessDlg = CreateDialog(hInst, MAKEINTRESOURCE(IDD_CHESS), c->hMain, ChessDialogProc);
 
-   exiting = False;
+   exiting = false;
 }
 /****************************************************************************/
 void WINAPI ModuleExit(void)
 {
-   Bool has_dialog = False;
+   bool has_dialog = false;
 
    // Prevent infinite loop when chess dialog closed
    if (exiting)
       return;
    
-   exiting = True;
+   exiting = true;
 
    has_dialog = AbortChessDialogs();
    
@@ -135,24 +135,24 @@ void WINAPI ModuleExit(void)
  * EVENT_SERVERMSG
  */
 /****************************************************************************/
-Bool WINAPI EventServerMessage(char *message, long len)
+bool WINAPI EventServerMessage(char *message, long len)
 {
-   Bool retval;
+   bool retval;
 
    retval = LookupMessage(message, len, handler_table);
 
    // If we handle message, don't pass it on to anyone else
-   if (retval == True)
-     return False;
+   if (retval == true)
+     return false;
 
-   return True;    // Allow other modules to get other messages
+   return true;    // Allow other modules to get other messages
 }
 /********************************************************************/
-Bool HandleUserCommand(char *ptr, long len)
+bool HandleUserCommand(char *ptr, long len)
 {
    BYTE type;
    int index;
-   Bool success;
+   bool success;
 
    Extract(&ptr, &type, SIZE_TYPE);
 
@@ -169,18 +169,18 @@ Bool HandleUserCommand(char *ptr, long len)
 	    if (!success)
 	    {
 	       debug(("Error in user command message of type %d from server\n", type));
-	       return False;
+	       return false;
 	    }
-	    return True;
+	    return true;
 	 }
 	 break;
       }
       index++;
    }
-   return False;
+   return false;
 }
 /********************************************************************/
-Bool HandleGameState(char *ptr, long len)
+bool HandleGameState(char *ptr, long len)
 {
    ID game;
    unsigned char state[BOARD_STATE_LEN + 1];
@@ -190,27 +190,27 @@ Bool HandleGameState(char *ptr, long len)
    if (game != game_obj)
    {
       debug(("Chess got game state for game %d, expecting game %d\n", game, game_obj));
-      return False;
+      return false;
    }
    len -= SIZE_ID;
    len = ExtractString(&ptr, len, (char *) state, BOARD_STATE_LEN);
 
    if (len != 0)
-      return False;
+      return false;
 
    ChessGotState(state);
       
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGameStart(char *ptr, long len)
+bool HandleGameStart(char *ptr, long len)
 {
    char *start = ptr;
    BYTE player_num;
    
    // If we've already received our game object number, skip
    if (game_obj != 0)
-      return False;
+      return false;
 
    Extract(&ptr, &game_obj, SIZE_ID);
    Extract(&ptr, &player_num, 1);
@@ -218,7 +218,7 @@ Bool HandleGameStart(char *ptr, long len)
 
    len -= (ptr - start);
    if (len != 0)
-      return False;
+      return false;
 
    switch (player_num)
    {
@@ -240,37 +240,37 @@ Bool HandleGameStart(char *ptr, long len)
    // Display player's name in dialog
    ChessGotPlayerName(player_num, LookupRsc(c->player->name_res));
    
-   return True;
+   return true;
 }
 /********************************************************************/
-Bool HandleGamePlayer(char *ptr, long len)
+bool HandleGamePlayer(char *ptr, long len)
 {
    char name[MAXUSERNAME + 1];
    BYTE player_num;
 
    // If we've haven't received our game object number, skip
    if (game_obj == 0)
-      return False;
+      return false;
 
    Extract(&ptr, &player_num, 1);
    len -= 1;
    len = ExtractString(&ptr, len, name, MAXUSERNAME);
 
    if (len != 0)
-      return False;
+      return false;
    
    ChessGotPlayerName(player_num, name);
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
  * EVENT_RESETDATA
  */
 /****************************************************************************/
-Bool WINAPI EventResetData(void)
+bool WINAPI EventResetData(void)
 {
    ModuleExit();
-   return True;
+   return true;
 }
 /********************************************************************/
 INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -299,7 +299,7 @@ INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       GetClientRect(hwnd, &rect);
       b.square_size = min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
 
-      b.valid = False;
+      b.valid = false;
       return TRUE;
 
    case WM_SIZE:
@@ -346,9 +346,9 @@ void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
 	 break;
 
       if (b.color == WHITE)
-	 b.white_resigned = True;
+	 b.white_resigned = true;
       if (b.color == BLACK)
-	 b.black_resigned = True;
+	 b.black_resigned = true;
 
       ChessSendMove();
       break;
@@ -464,7 +464,7 @@ void ChessSendMove(void)
 void ChessGotState(unsigned char *state)
 {
    //   debug(("Chess got game state %s\n", state));
-   b.valid = True;
+   b.valid = true;
 
    // If game hasn't been initialized yet, set default board configuration
    if (state[0] == 0)
@@ -481,25 +481,25 @@ void ChessGotState(unsigned char *state)
 /*
  * ChessDlgShowGameStatus:  Display a message giving state of game
  *   (stalemate, checkmate, etc.)
- *   Return True iff any message was displayed.
+ *   Return true iff any message was displayed.
  */
 void ChessDlgShowGameStatus(void)
 {
    if (hChessDlg == NULL)
       return;
    
-   b.game_over = False;
+   b.game_over = false;
 
    // Give a message for various situations
    if (b.white_resigned)
    {
       ChessDlgShowMessage(GetString(hInst, IDS_WHITERESIGN));
-      b.game_over = True;
+      b.game_over = true;
    }
    else if (b.black_resigned)
    {
       ChessDlgShowMessage(GetString(hInst, IDS_BLACKRESIGN));
-      b.game_over = True;
+      b.game_over = true;
    }
    else if (!HasLegalMove(&b, b.move_color))
    {
@@ -507,7 +507,7 @@ void ChessDlgShowGameStatus(void)
       if (IsInCheck(&b, b.move_color))
 	 ChessDlgShowMessage(GetString(hInst, IDS_CHECKMATE));
       else ChessDlgShowMessage(GetString(hInst, IDS_STALEMATE));
-      b.game_over = True;
+      b.game_over = true;
    }
    else if (IsInCheck(&b, b.move_color))
    {
@@ -562,7 +562,7 @@ void ChessDlgShowMover(void)
 /*
  * ChessDlgShowMessage:  Display given text message in chess dialog.
  */
-void ChessDlgShowMessage(char *message)
+void ChessDlgShowMessage(const char *message)
 {
    if (hChessDlg == NULL)
       return;
@@ -643,18 +643,18 @@ void ChessGotPlayerName(BYTE player_num, char *name)
 }
 /****************************************************************************/
 /*
- * AbortChessDialogs:  Close chess dialogs.  Return True iff any was open.
+ * AbortChessDialogs:  Close chess dialogs.  Return true iff any was open.
  */
-Bool AbortChessDialogs(void)
+bool AbortChessDialogs(void)
 {
-   Bool retval = False, has_promote;
+   bool retval = false, has_promote;
 
    has_promote = (hPromoteDlg != NULL);
 
    if (hChessDlg != NULL)
    {
       DestroyWindow(hChessDlg);
-      retval = True;
+      retval = true;
 
       if (!has_promote)
 	 PostMessage(c->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);

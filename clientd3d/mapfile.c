@@ -184,7 +184,7 @@ bool MapFileLoadRoom(room_type *room)
          return false;
        if (fread(&room->annotations[i].y, 1, 4, mapfile) != 4)
          return false;
-       if (fread(room->annotations[i].text, MAX_ANNOTATION_LEN, 1, mapfile) != MAX_ANNOTATION_LEN)
+       if (fread(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
          return false;
      }     
    }
@@ -259,7 +259,7 @@ bool MapFileSaveRoom(room_type *room)
          return false;
        if (fwrite(&room->annotations[i].y, 1, 4, mapfile) != 4)
          return false;
-       if (fwrite(room->annotations[i].text, MAX_ANNOTATION_LEN, 1, mapfile) != MAX_ANNOTATION_LEN)
+       if (fwrite(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, mapfile) != MAX_ANNOTATION_LEN)
          return false;
      }
    }

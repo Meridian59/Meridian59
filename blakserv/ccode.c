@@ -2299,3 +2299,107 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	
 	return ret_val.int_val;
 }
+
+blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
+    int num_normal_parms, parm_node normal_parm_array[],
+    int num_name_parms, parm_node name_parm_array[])
+{
+    val_type msg_val, event_val, key_val, value_val;
+    const char *content, *event_name, *key_str, *value_str;
+    int content_len, event_len, key_len, value_len;
+    std::string json;
+    
+    // Handle single string parameter
+    if (num_normal_parms == 1) {
+        msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+        
+        if (!LookupString(msg_val, "C_SendWebhook", &content, &content_len)) {
+            bprintf("C_SendWebhook: LookupString failed\n");
+            return NIL;
+        }
+
+        SendWebhookMessage(content, content_len);
+        return NIL;
+    }
+    
+    // Handle JSON style: event name + key-value pairs
+    if (num_normal_parms < 3) {
+        bprintf("C_SendWebhook: Invalid number of parameters\n");
+        return NIL;
+    }
+    
+    // First parameter is the event name
+    event_val = RetrieveValue(object_id, local_vars, 
+        normal_parm_array[0].type, normal_parm_array[0].value);
+    
+    if (!LookupString(event_val, "C_SendWebhook", &event_name, &event_len)) {
+        bprintf("C_SendWebhook: Event name lookup failed\n");
+        return NIL;
+    }
+    
+    // Start building JSON: {"event": "EventName", "params": {
+    json += "{\"event\":\"";
+    json.append(event_name, event_len);
+    json += "\",\"params\":{";
+    
+    // Process remaining parameters as key-value pairs
+    for (int i = 1; i < num_normal_parms; i += 2) {
+        if (i + 1 >= num_normal_parms) {
+            break; // Need pairs of arguments
+        }
+        
+        // Get the key (parameter name)
+        key_val = RetrieveValue(object_id, local_vars,
+            normal_parm_array[i].type, normal_parm_array[i].value);
+        
+        if (!LookupString(key_val, "C_SendWebhook", &key_str, &key_len)) {
+            continue; // Skip if key is not a string
+        }
+        
+        // Get the value
+        value_val = RetrieveValue(object_id, local_vars,
+            normal_parm_array[i + 1].type, normal_parm_array[i + 1].value);
+        
+        // Add comma if not first parameter
+        if (i > 1) {
+            json += ",";
+        }
+        
+        // Add key
+        json += "\"";
+        json.append(key_str, key_len);
+        json += "\":";
+        
+        // Handle different value types
+        if (value_val.v.tag == TAG_STRING || value_val.v.tag == TAG_TEMP_STRING || 
+            value_val.v.tag == TAG_RESOURCE) {
+            if (LookupString(value_val, "C_SendWebhook", &value_str, &value_len)) {
+                // Escape quotes in the string value
+                json += "\"";
+                for (int j = 0; j < value_len; j++) {
+                    if (value_str[j] == '\"' || value_str[j] == '\\') {
+                        json += '\\';
+                    }
+                    json += value_str[j];
+                }
+                json += "\"";
+            } else {
+                json += "null";
+            }
+        } else if (value_val.v.tag == TAG_INT) {
+            json += std::to_string(value_val.v.data);
+        } else if (value_val.v.tag == TAG_NIL) {
+            json += "null";
+        } else {
+            // For objects or other types, try to get their name or use ID
+            json += std::to_string(value_val.v.data);
+        }
+    }
+    
+    // Close JSON: }}
+    json += "}}";
+    
+    // Send the webhook message
+    SendWebhookMessage(json.c_str(), (int)json.length());
+    return NIL;
+}

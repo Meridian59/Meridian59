@@ -135,7 +135,8 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
    if (GetGameDataValid())
       RedrawForce();
 
-   return;
+   // Update 3D audio listener position/orientation
+   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
 }
 /************************************************************************/
 /* 

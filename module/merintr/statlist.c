@@ -247,7 +247,6 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpe
    Statistic *s;
    char str[MAXRSCSTRING + 10];
    RECT r;
-   int lastItem = ListBox_GetCount(lpdis->hwndItem) - 1;
    RECT rcWnd;
 
    GetClientRect(lpdis->hwndItem,&rcWnd);
@@ -286,14 +285,6 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpe
       areaIcon.cy = ENCHANT_SIZE;
       DrawObjectIcon(lpdis->hDC, s->list.icon, 0, true, &areaIcon, NULL, 0, 0, true);
       break;
-   }
-   if (lastItem == (int)lpdis->itemID)
-   {
-      RECT rcWnd;
-      GetClientRect(lpdis->hwndItem,&rcWnd);
-      rcWnd.top = lpdis->rcItem.bottom;
-      if (rcWnd.top < rcWnd.bottom)
-	 InvalidateRect(lpdis->hwndItem,&rcWnd,TRUE);
    }
 }
 /*****************************************************************************/

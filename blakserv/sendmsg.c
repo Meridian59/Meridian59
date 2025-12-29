@@ -176,6 +176,8 @@ void InitBkodInterpret(void)
 
 	ccall_table[MINIGAMENUMBERTOSTRING] = C_MinigameNumberToString;
 	ccall_table[MINIGAMESTRINGTONUMBER] = C_MinigameStringToNumber;
+
+	ccall_table[SENDWEBHOOK] = C_SendWebhook;
 }
 
 kod_statistics * GetKodStats()

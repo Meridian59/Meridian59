@@ -229,13 +229,13 @@ BOOL AboutInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    
        if (i == 0)
        {
-       dudes[i].angle = 3 * NUMDEGREES / 4;
-       dudes[i].x = DUDE_X1;
+		   dudes[i].angle = 3 * NUMDEGREES / 4;
+		   dudes[i].x = DUDE_X1;
        }
        else
        {
-       dudes[i].angle = NUMDEGREES / 4;
-       dudes[i].x = DUDE_X2;
+		   dudes[i].angle = NUMDEGREES / 4;
+		   dudes[i].x = DUDE_X2;
        }
    }
 

@@ -33,7 +33,6 @@ void DeleteAllRscFiles(void);
 M59EXPORT char *LookupRsc(ID idnum);
 M59EXPORT char *LookupNameRsc(ID idnum);
 M59EXPORT char *LookupRscNoError(ID idnum);
-M59EXPORT bool AreResourcesLoaded(void);
 
 #endif /* #ifndef _LOADRSC_H */
 

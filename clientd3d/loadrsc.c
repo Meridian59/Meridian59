@@ -331,14 +331,6 @@ char *LookupRscNoError(ID idnum)
 	return r->data;
 }
 /******************************************************************************/
-/*
-* AreResourcesLoaded: Return true if resource system has been initialized.
-*/
-bool AreResourcesLoaded(void)
-{
-	return (t != NULL);
-}
-/******************************************************************************/
 /* 
 * FreeRsc:  Free a resource.  This is a callback procedure passed to table_delete.
 */

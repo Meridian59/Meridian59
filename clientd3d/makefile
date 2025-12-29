@@ -25,8 +25,7 @@ LIBS =  \
 	ole32.lib OpenAL32.lib \
 	d3d9.lib libpng.lib zlib.lib
 
-# Setting RETAIL=1 turns on the Miles Sound System, which we can't
-# put in the open source version
+# Setting RETAIL=1 includes Bugsplat; not needed for development
 !ifdef RETAIL
 
 CFLAGS = $(CFLAGS) -DM59_RETAIL

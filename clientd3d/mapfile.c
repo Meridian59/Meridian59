@@ -229,6 +229,7 @@ bool ReadRoomAnnotations(FILE *file, room_type *room, int max_annotations)
             return false;
          if (fread(room->annotations[i].text, 1, MAX_ANNOTATION_LEN, file) != MAX_ANNOTATION_LEN)
             return false;
+         room->annotations[i].text[MAX_ANNOTATION_LEN - 1] = 0;  // Ensure null-termination
       }
    }
 
@@ -351,6 +352,9 @@ bool SaveRoomAnnotations(FILE* file, room_type *room)
       if (fseek(file, room->annotations_offset, SEEK_SET))
          return false;
       if (fwrite(&num_annotations, 1, 4, file) != 4)
+         return false;
+      // Move back to end of annotations block
+      if (fseek(file, MAX_ANNOTATIONS * (4 + 4 + MAX_ANNOTATION_LEN), SEEK_CUR))
          return false;
    }
 
@@ -616,27 +620,35 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
          if (ftell(mapfile) != lowerTable[j].offset)
          {
             debug(("MapFileMigrateVersion1ToVersion2Data: File position mismatch for room with security %d\n", lowerTable[j].security));
-            return false;
+            continue;
          }
 
          // This is a valid room - keep track of it for the copy step
          rooms[roomsCount].security = lowerTable[j].security;
          rooms[roomsCount].offset = ftell(mapfile);
-         ++roomsCount;
 
          // Process the room entry here - skip past walls, find map annotation offset
          int num_walls = 0;
          if (fread(&num_walls, 1, 4, mapfile) != 4)
-            return false;
+            continue;
 
          // 'num_walls' is the number of bits, so round up, divide by 8, and skip that number of bytes
          if (fseek(mapfile, (num_walls + 7) / 8, SEEK_CUR))
-            return false;
+            continue;
 
          // Read the location of the annotations block
          int annotations_offset = 0;
          if (fread(&annotations_offset, 1, 4, mapfile) != 4)
-            return false;
+            continue;
+
+         if (annotations_offset < 0 || annotations_offset > file_size)
+         {
+            debug(("MapFileMigrateVersion1ToVersion2Data: Found invalid map annotation entry (offset OOB).\n"));
+            continue;
+         }
+         
+         // Don't increase the room count until after we've validated the room
+         ++roomsCount;
 
          if (annotations_offset > 0)
          {
@@ -718,17 +730,19 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
 
          int num_annotations = MAX_ANNOTATIONS;
          int max_annotations = (next_data - temp_room.annotations_offset - 4) / (4 + 4 + MAX_ANNOTATION_LEN);
+         max_annotations = std::clamp(max_annotations, 0, MAX_ANNOTATIONS);
          if (max_annotations < num_annotations)
          {
-            num_annotations = max(num_annotations, max_annotations);
+            num_annotations = min(num_annotations, max_annotations);
             // In MOST cases we know that only the first annotation is going to be valid, due to the bug that caused it
-            num_annotations = max(num_annotations, 1);
+            num_annotations = min(num_annotations, 1);
             debug(("Detected corrupt map annotations block - reducing number of annotations to %d.\n", num_annotations));
          }
 
          if (!ReadRoomAnnotations(mapfile, &temp_room, max_annotations))
             return false;
          temp_room.annotations_changed = true;  // Force write of annotations
+         temp_room.annotations_offset = 0;      // Force new annotations block (value is also from the old file)
       }
 
       if (!SaveRoomAnnotations(destfile, &temp_room))

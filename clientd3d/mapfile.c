@@ -54,7 +54,7 @@ static bool ReadRoomAnnotations(FILE *file, room_type *room, int max_annotations
 static bool SaveRoomAnnotations(FILE *file, room_type *room);
 static int FileSize(FILE *file);
 static bool MapFileMigrateVersion1ToVersion2();
-static bool MapFileMigrateVersion1ToVersion2Data(FILE *destfile, LowerTableEntry *rooms, int *mapAnnotationOffsets);
+static bool MapFileMigrateVersion1ToVersion2Data(FILE *destfile);
 
 /*****************************************************************************/
 /* 
@@ -493,22 +493,12 @@ bool MapFileMigrateVersion1ToVersion2()
       return false;
    }
 
-   // Allocate temp storage for room entries and annotation offsets
-   LowerTableEntry* rooms = new LowerTableEntry[MAPFILE_LOWER_TABLE_SIZE * MAPFILE_TOP_TABLE_SIZE];
-   int* mapAnnotationOffsets = new int[MAPFILE_LOWER_TABLE_SIZE * MAPFILE_TOP_TABLE_SIZE];
-
    // Iterate through all rooms in old file and copy them to new file
-   if (!MapFileMigrateVersion1ToVersion2Data(destfile, rooms, mapAnnotationOffsets))
+   if (!MapFileMigrateVersion1ToVersion2Data(destfile))
    {
-      delete[] rooms;
-      delete[] mapAnnotationOffsets;
-
       fclose(destfile);
       return false;
    }
-
-   delete[] rooms;
-   delete[] mapAnnotationOffsets;
 
    // Close both files, delete the old one, and rename the new one
    fclose(destfile);
@@ -542,7 +532,7 @@ bool MapFileMigrateVersion1ToVersion2()
        MapFileVerifyHeader() to accept either version 1 or version 2 files, without any migration.
  Added by Bill Carlson, 12/27/2025
 */
-bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms, int* mapAnnotationOffsets)
+bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile)
 {
    int throwaway;
    int file_size = 0;
@@ -562,8 +552,8 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
    // There are 100 top-level entries, each with 100 lower-level entries, which means 10,000 possible rooms
    // All of that room data is too much to hold in memory, but we can keep "pointers" (file offset) to each room and
    // annotations to quickly confirm whether the map annotation is potentially corrupt.
-   int roomsCount = 0;
-   int mapAnnotationOffsetsCount = 0;
+   std::vector<LowerTableEntry> rooms;
+   std::vector<int> mapAnnotationOffsets;
 
    // The 'top table' is the next MAPFILE_TOP_TABLE_SIZE * 4 bytes
    int topTable[MAPFILE_TOP_TABLE_SIZE];
@@ -623,10 +613,6 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
             continue;
          }
 
-         // This is a valid room - keep track of it for the copy step
-         rooms[roomsCount].security = lowerTable[j].security;
-         rooms[roomsCount].offset = ftell(mapfile);
-
          // Process the room entry here - skip past walls, find map annotation offset
          int num_walls = 0;
          if (fread(&num_walls, 1, 4, mapfile) != 4)
@@ -647,20 +633,22 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
             continue;
          }
          
-         // Don't increase the room count until after we've validated the room
-         ++roomsCount;
+         // Don't push the room info until after we've validated the room
+         LowerTableEntry roomEntry;
+         roomEntry.security = lowerTable[j].security;
+         roomEntry.offset = lowerTable[j].offset;
+         rooms.push_back(roomEntry);
 
          if (annotations_offset > 0)
          {
-            mapAnnotationOffsets[mapAnnotationOffsetsCount] = annotations_offset;
-            ++mapAnnotationOffsetsCount;
+            mapAnnotationOffsets.push_back(annotations_offset);
          }
       }
    }
 
    // SECOND PASS - Copy each room's data to the new file
    byte wallData[4096];
-   for (int i = 0; i < roomsCount; i++)
+   for (size_t i = 0; i < rooms.size(); i++)
    {
       // Find the source room
       if (!MapFileFindRoom(mapfile, rooms[i].security, false))
@@ -706,11 +694,11 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
          // Start from file_size (end of file), look through all known rooms and annotation blocks to find the next
          // known data offset after temp_room.annotations_offset
          int next_data = file_size;
-         for (int j = 0; j < MAPFILE_LOWER_TABLE_SIZE * MAPFILE_TOP_TABLE_SIZE; ++j)
+         for (size_t j = 0; j < MAPFILE_LOWER_TABLE_SIZE * MAPFILE_TOP_TABLE_SIZE; ++j)
          {
-            if (j > roomsCount && j > mapAnnotationOffsetsCount)
+            if (j > rooms.size() && j > mapAnnotationOffsets.size())
                break;
-            if (j < roomsCount)
+            if (j < rooms.size())
             {
                int offset = rooms[j].offset;
                if (offset > temp_room.annotations_offset && offset < next_data)
@@ -718,7 +706,7 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile, LowerTableEntry* rooms
                   next_data = offset;
                }
             }
-            if (j < mapAnnotationOffsetsCount)
+            if (j < mapAnnotationOffsets.size())
             {
                int offset = mapAnnotationOffsets[j];
                if (offset > temp_room.annotations_offset && offset < next_data)

@@ -46,7 +46,7 @@
 typedef INT64 int64;
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 35  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 36  /* Minor version of client program; must be in [0, 99] */
 
 #define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 

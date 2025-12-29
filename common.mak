@@ -61,6 +61,7 @@ KODINCLUDEDIR = $(KODDIR)\include
 PALETTEFILE = $(TOPDIR)\blakston.pal
 
 # compiler specs -- uses multi-threaded DLL C runtime library
+# /FC displays full path of source code file in diagnostics
 # /TP builds C files in C++ mode
 # /WX treats warnings as errors
 # /GR- turns off RTTI

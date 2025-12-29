@@ -1202,27 +1202,6 @@ void D3DLMapsStaticGet(room_type * room)
 
          gDLightCache.dLights[gDLightCache.numLights].xyz.z = floorZ + heightAboveFloor;
 
-         gDLightCache.dLights[gDLightCache.numLights].xyzScale.x = D3DLightScale(pRNode->obj.dLighting.intensity);
-         gDLightCache.dLights[gDLightCache.numLights].xyzScale.y = D3DLightScale(pRNode->obj.dLighting.intensity);
-         gDLightCache.dLights[gDLightCache.numLights].xyzScale.z = D3DLightScale(pRNode->obj.dLighting.intensity);
-
-         if (pRNode->obj.dLighting.intensity == 0)
-            pRNode->obj.dLighting.intensity = 1;
-
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.x =
-             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.x;
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.y =
-             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.y;
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.z =
-             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.z;
-
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.x =
-             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.x / 2.0f);
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.y =
-             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.y / 2.0f);
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.z =
-             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.z / 2.0f);
-
          // BRIGHTNESS: Apply flicker to both SIZE and COLOR
          float flickerBrightness = 1.0f;
          if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))

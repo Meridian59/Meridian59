@@ -2364,16 +2364,6 @@ blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal
       bprintf("C_BuildString format error: %s\n", e.what());
       return NIL;
    }
-   catch (const std::bad_alloc &e)
-   {
-      bprintf("C_BuildString out of memory: %s\n", e.what());
-      return NIL;
-   }
-   catch (const std::exception &e)
-   {
-      bprintf("C_BuildString exception: %s\n", e.what());
-      return NIL;
-   }
 }
 
 blak_int C_SendWebhook(int object_id, local_var_type *local_vars,

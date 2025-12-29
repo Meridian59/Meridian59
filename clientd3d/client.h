@@ -66,9 +66,6 @@ typedef INT64 int64;
 /* To make sure we are using the right version of the client */
 #define P_CATCH 3
 
-/* Enable for "retail", official builds, not for the open source version */
-//#define M59_RETAIL
-
 extern void GetGamePath( char *szGamePath );
 
 extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -102,11 +99,6 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include <string>
 #include <vector>
 #include <algorithm>
-
-#ifdef M59_RETAIL
-  // Minidump reporting
-  #include "bugsplat.h"
-#endif
 
 #include "resource.h"
 #include "proto.h"

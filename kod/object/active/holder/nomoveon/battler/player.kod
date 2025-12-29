@@ -5339,6 +5339,21 @@ messages:
 
       return $;
    }
+
+   LookupPlayerInstrument()
+   {
+      local i;
+
+      for i in plUsing
+      {
+         if IsClass(i,&Instrument)
+         {
+            return i;
+         }      
+      } 
+
+      return $;
+   }
    
    LeaveHold(what = $)
    {

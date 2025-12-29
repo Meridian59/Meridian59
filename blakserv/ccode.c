@@ -2310,7 +2310,7 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
                        int num_name_parms, parm_node name_parm_array[])
 {
-   const char *string1 = NULL;
+   const char *string1 = nullptr;
    int len1 = 0;
 
    // Get the format string
@@ -2359,9 +2359,19 @@ blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal
       ret.v.data = CreateStringWithLen(result.c_str(), static_cast<int>(result.length()));
       return ret.int_val;
    }
-   catch (const std::exception &e)
+   catch (const fmt::format_error &e)
    {
       bprintf("C_BuildString format error: %s\n", e.what());
+      return NIL;
+   }
+   catch (const std::bad_alloc &e)
+   {
+      bprintf("C_BuildString out of memory: %s\n", e.what());
+      return NIL;
+   }
+   catch (const std::exception &e)
+   {
+      bprintf("C_BuildString exception: %s\n", e.what());
       return NIL;
    }
 }

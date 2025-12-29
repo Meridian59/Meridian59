@@ -73,9 +73,9 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /Zi includes debugging information
 # /DFMT_UNICODE=0 disables Unicode support for fmtlib
 
-CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
+CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 -DFMT_UNICODE=0 \
              /wd4996 /wd4312 \
-	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++20 -DFMT_UNICODE=0
+	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++20
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -W3 -DBLAKDEBUG
@@ -133,4 +133,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(OPENALDIR)\include;$(FMTLIBDIR)\fmt;$(FMTLIBDIR);
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(OPENALDIR)\include;$(FMTLIBDIR);

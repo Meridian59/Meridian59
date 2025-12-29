@@ -42,6 +42,9 @@ UTILDIR     = $(TOPDIR)/util
 SPROCKETDIR = $(TOPDIR)/sprocket
 CLUBDIR     = $(TOPDIR)/club
 
+# 3rd party libraries
+FMTLIBDIR  = $(EXTERNALDIR)\fmtlib
+
 BLAKBINDIR = $(TOPDIR)/bin
 BLAKLIBDIR = $(TOPDIR)/lib
 BLAKINCLUDEDIR = $(TOPDIR)/include
@@ -53,7 +56,7 @@ KODINCLUDEDIR = $(KODDIR)/include
 
 PALETTEFILE = $(TOPDIR)/blakston.pal
 
-CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX --std=c++20
+CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX -DFMT_UNICODE=0 --std=c++20
 
 OS := $(shell uname)
 
@@ -111,4 +114,4 @@ MAKEBGF = $(BLAKBINDIR)/makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(FMTLIBDIR);

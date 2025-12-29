@@ -105,6 +105,9 @@ int						gSmallTextureSize;
 
 int						d3dRenderTextureThreshold;
 
+// Debug flag to enable/disable light position visualization.
+// When true, renders yellow wireframe ellipsoids at static light positions.
+// See D3DRenderDebugLightPositions() for details.
 bool debugLightPositions = false;
 
 D3DVERTEXELEMENT9		decl0[] = {
@@ -479,9 +482,12 @@ void D3DRenderShutDown(void)
 	}
 }
 
-
-// Global light scale (apply a percentage to all DLIGHT_SCALE results).
-// Change at runtime with SetGlobalLightScale().
+// Global light scale multiplier for all dynamic lights (0.0 to 5.0, default 0.45).
+// Applied in D3DLightScale() to control the radius of all light sources.
+// Lower values = smaller, more concentrated lights. Higher values = larger, more diffuse lights.
+// Changed at runtime via SetGlobalLightScale(), which triggers a full world geometry rebuild
+// to update all cached lightmaps. With MIN_WORLD_LIGHT_RADIUS = 0, this provides full control
+// over light size purely through intensity values and this scale factor.
 static float gLightScale = 0.45f;
 
 // Minimum world light radius in FINENESS units (1024 = one grid square).
@@ -493,12 +499,7 @@ static const float MIN_WORLD_LIGHT_RADIUS = 0.0f;
 
 void SetGlobalLightScale(float scale)
 {
-   // clamp to sensible range
-   if (scale < 0.0f)
-      scale = 0.0f;
-   if (scale > 5.0f)
-      scale = 5.0f;
-   gLightScale = scale;
+   gLightScale = std::clamp(scale, 0.0f, 5.0f);
 
    // Force a full world rebuild so cached lightmaps / geometry that depend on radii update.
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
@@ -506,20 +507,29 @@ void SetGlobalLightScale(float scale)
 
 float GetGlobalLightScale(void) { return gLightScale; }
 
-
+/**
+ * Debug visualization function that renders yellow wireframe ellipsoids at each static light position.
+ * The ellipsoids are oriented according to the sun direction and sized to show the light's radius.
+ *
+ * To enable: Set debugLightPositions = true (defined at the top of this file).
+ * To disable: Set debugLightPositions = false.
+ *
+ * This is called from D3DRenderBegin() when both debugLightPositions and config.bDynamicLighting are true.
+ * Helps visualize light coverage and debug lighting issues.
+ */
 void D3DRenderDebugLightPositions(Draw3DParams *params)
 {
    // Debug: Draw WIREFRAME ELLIPSOIDS oriented by sun direction at static light positions
    const int LAT_SEGMENTS = 8;
    const int LON_SEGMENTS = 12;
 
-   debug(("DEBUG: Drawing %d static lights as directional ellipsoids\n", gDLightCache.numLights));
+   //debug(("DEBUG: Drawing %d static lights as directional ellipsoids\n", gDLightCache.numLights));
 
    // Get sun direction for orientation
    const Vector3D &sunVect = getSunVector();
    float sunAngle = atan2f(sunVect.y, sunVect.x);  // Angle in XY plane
 
-   debug(("  Sun vector: (%.2f, %.2f, %.2f), angle: %.2f rad\n", sunVect.x, sunVect.y, sunVect.z, sunAngle));
+   //debug(("  Sun vector: (%.2f, %.2f, %.2f), angle: %.2f rad\n", sunVect.x, sunVect.y, sunVect.z, sunAngle));
 
    D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
    D3DCacheSystemReset(&gObjectCacheSystem);
@@ -533,8 +543,8 @@ void D3DRenderDebugLightPositions(Draw3DParams *params)
       float radiusY = light->xyzScale.y / 2.0f;
       float radiusZ = light->xyzScale.z / 2.0f;
 
-      debug(("  Light %d: pos=(%.1f, %.1f, %.1f) half-radii=(%.1f, %.1f, %.1f)\n", i, light->xyz.x, light->xyz.y,
-             light->xyz.z, radiusX, radiusY, radiusZ));
+      //debug(("  Light %d: pos=(%.1f, %.1f, %.1f) half-radii=(%.1f, %.1f, %.1f)\n", i, light->xyz.x, light->xyz.y,
+      //       light->xyz.z, radiusX, radiusY, radiusZ));
 
       // Precompute rotation for sun direction
       float cosSun = cosf(sunAngle);
@@ -1182,10 +1192,10 @@ void D3DLMapsStaticGet(room_type * room)
          if (pDib)
             spriteHeight = ((float) pDib->height / (float) pDib->shrink * 16.0f) - (float) pDib->yoffset * 4.0f;
 
-         // For the light to illuminate floors, its Z position must be ABOVE the floor.
-         // The cosAngle check in the lighting code (cosAngle = lightVec.z for floors) will reject
-         // any light that is at or below floor level.
-         // Ensure the light is positioned at least MIN_LIGHT_HEIGHT units above the floor.
+         // Position the light above the floor to ensure proper illumination.
+         // Lights at floor level would only illuminate upward from their center position.
+         // Elevating by sprite height (or minimum offset) allows the light to illuminate
+         // the floor beneath it and surrounding geometry effectively.
          const float MIN_LIGHT_HEIGHT_ABOVE_FLOOR = 64.0f;
          float heightAboveFloor =
              (spriteHeight > MIN_LIGHT_HEIGHT_ABOVE_FLOOR) ? spriteHeight : MIN_LIGHT_HEIGHT_ABOVE_FLOOR;
@@ -1213,13 +1223,38 @@ void D3DLMapsStaticGet(room_type * room)
          gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.z =
              1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.z / 2.0f);
 
-         // BRIGHTNESS: Apply flicker to COLOR only
+         // BRIGHTNESS: Apply flicker to both SIZE and COLOR
          float flickerBrightness = 1.0f;
          if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
          {
-            flickerBrightness = (float) pRNode->obj.lightAdjust / (float) FLICKER_LEVEL;
+            flickerBrightness = (float) pRNode->obj.lightAdjust / GetFlickerLevel();
          }
-
+         
+         // Apply flicker to the intensity for radius calculation
+         int flickeredIntensity = (int) (pRNode->obj.dLighting.intensity * flickerBrightness);
+         
+         gDLightCache.dLights[gDLightCache.numLights].xyzScale.x = D3DLightScale(flickeredIntensity);
+         gDLightCache.dLights[gDLightCache.numLights].xyzScale.y = D3DLightScale(flickeredIntensity);
+         gDLightCache.dLights[gDLightCache.numLights].xyzScale.z = D3DLightScale(flickeredIntensity);
+         
+         if (pRNode->obj.dLighting.intensity == 0)
+            pRNode->obj.dLighting.intensity = 1;
+         
+         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.x =
+             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.x;
+         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.y =
+             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.y;
+         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.z =
+             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.z;
+         
+         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.x =
+             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.x / 2.0f);
+         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.y =
+             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.y / 2.0f);
+         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.z =
+             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.z / 2.0f);
+         
+         // Flicker also applied to color
          gDLightCache.dLights[gDLightCache.numLights].color.a = COLOR_MAX;
          gDLightCache.dLights[gDLightCache.numLights].color.r =
              (BYTE) (((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31 * flickerBrightness);
@@ -1227,7 +1262,7 @@ void D3DLMapsStaticGet(room_type * room)
              (BYTE) (((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31 * flickerBrightness);
          gDLightCache.dLights[gDLightCache.numLights].color.b =
              (BYTE) ((pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31 * flickerBrightness);
-
+         
          gDLightCache.numLights++;
       }
    }
@@ -1320,13 +1355,6 @@ void D3DRenderLMapsBuild(void)
 			scale = 16.0f - scale;
 			scale = max(scale, 0);
 			scale /= 16.0f;
-
-			// REMOVED: Hard edge cutoff
-			// The gradient now smoothly fades to zero at the edges naturally
-
-	        /*if ((height == 0) || (height == 31) ||
-				(width == 0) || (width == 31))
-				scale = 0;*/
 
 			*(pBits++) = 255 * scale;
 			*(pBits++) = 255 * scale;

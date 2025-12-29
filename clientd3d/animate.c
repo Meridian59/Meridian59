@@ -28,17 +28,14 @@
 #include "client.h"
 
 #define ANIMATE_INTERVAL 8  // ms between background animation updates (8.3333 = 120fps)
-#define FLASH_LEVEL (LIGHT_LEVELS/2)
 #define TIME_FLASH 1000
+
+static const float FLICKER_LEVEL = LIGHT_LEVELS / 2.0f;  // Light adjustment range for flickering objects
+static const float FLASH_LEVEL = LIGHT_LEVELS / 2.0f;    // Light adjustment range for flashing objects
 
 static int  animation_timer = 0;   // id of animation timer, or 0 if none
 static DWORD timeLastFrame;
 static int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
-
-// Flicker animation constants
-#define FLICKER_HASH_PRIME 7919      // Prime number for spreading object IDs
-#define FLICKER_HASH_MODULO 10000    // Modulo for hash normalization
-#define FLICKER_WAVE_COUNT 5         // Number of sine waves to combine
 
 #define TIME_FULL_OBJECT_PHASE 1800
 static int phaseStates[] = {
@@ -83,6 +80,10 @@ DWORD GetFrameTime(void)
    return timeLastFrame;
 }
 
+float GetFlickerLevel(void)
+{
+   return FLICKER_LEVEL;
+}
 /************************************************************************/
 void AnimationTimerProc(HWND hwnd, UINT timer)
 {
@@ -179,28 +180,47 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
    {
+      // Initialize flicker time with random offset on first use to desynchronize lights
+      if (obj->flickerTime == 0)
+      {
+         // Use object ID as seed for consistent but unique offsets
+         obj->flickerTime = (obj->id * 137) % 10000;  // Random offset 0-10 seconds
+      }
+      
       // Dramatic campfire-style flicker with independent per-object timing
       obj->flickerTime += dt;
       
-      // Spread object IDs using hash to ensure nearby IDs get different phases
-      float phaseOffset = (float)((obj->id * FLICKER_HASH_PRIME) % FLICKER_HASH_MODULO) 
-                         / (float)FLICKER_HASH_MODULO * 2.0f * PI;
-      float t = ((float)obj->flickerTime / 1000.0f) + phaseOffset;
+      // Flicker animation wave parameters
+      // Using prime-like frequencies prevents synchronization between lights
+      static const float waveAmplitudes[] = { 1.3f, 1.1f, 0.9f, 1.4f, 1.2f };
+      static const float waveFrequencies[] = { 3.14f, 7.0f, 11.0f, 2.0f, 0.62f };
+      static const int waveCount = sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]);
+      
+      // Ensure amplitudes and frequencies arrays have the same length
+      static_assert(sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]) == 
+                    sizeof(waveFrequencies) / sizeof(waveFrequencies[0]),
+                    "waveAmplitudes and waveFrequencies must have the same number of elements");
+      
+      // Compute sum of amplitudes (for normalization)
+      static const float amplitudeSum = waveAmplitudes[0] + waveAmplitudes[1] + 
+                                         waveAmplitudes[2] + waveAmplitudes[3] + 
+                                         waveAmplitudes[4];
+      static const float amplitudeOffset = amplitudeSum / 2.0f;
+      
+      float t = (float)obj->flickerTime / 1000.0f;
 
       // Combine multiple sine waves at different frequencies for organic flickering
-      // Using prime frequencies prevents synchronization between lights
       float flicker = 0.0f;
-      flicker += sinf(t * 3.14f) * 1.3f;   // Slow wave (? frequency)
-      flicker += sinf(t * 7.0f) * 1.1f;    // Medium-fast wave  
-      flicker += sinf(t * 11.0f) * 0.9f;   // Fast wave
-      flicker += sinf(t * 2.0f) * 1.4f;    // Medium wave
-      flicker += sinf(t * 0.62f) * 1.2f;   // Very slow wave
+      for (int i = 0; i < waveCount; i++)
+      {
+         flicker += sinf(t * waveFrequencies[i]) * waveAmplitudes[i];
+      }
       
-      // Normalize to 0.0-1.0 range (5.9 is sum of wave amplitudes, 2.9 is offset)
-      flicker = (flicker + 2.9f) / 5.9f;
-      flicker = max(0.0f, min(1.0f, flicker));
+      // Normalize to 0.0-1.0 range
+      flicker = (flicker + amplitudeOffset) / amplitudeSum;
+      flicker = std::clamp(flicker, 0.0f, 1.0f);
       
-      obj->lightAdjust = (int)(flicker * FLICKER_LEVEL);
+      obj->lightAdjust = (int)(flicker * GetFlickerLevel());
       need_redraw = true;
    }
 
@@ -250,7 +270,7 @@ bool AnimateObject(object_node *obj, int dt)
    return need_redraw;
 }
 /************************************************************************/
-/* 
+ /* 
  * Animate projectiles active in in current room; return true if any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */
@@ -306,7 +326,7 @@ bool AnimateBackgroundOverlays(int dt)
    return need_redraw;
 }
 /************************************************************************/
-/* 
+ /* 
  * Animate player overlays; return true if any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */
@@ -332,7 +352,7 @@ bool AnimatePlayerOverlays(int dt)
    return need_redraw;
 }
 /************************************************************************/
-/*
+ /*
  * AnimateSingle:  Animate the given animation structure for a PDIB with the
  *   given number of groups.  Return true iff the display bitmap changes.
  *   dt is number of milliseconds since last time animation timer went off.

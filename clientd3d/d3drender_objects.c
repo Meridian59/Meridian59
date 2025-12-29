@@ -2391,7 +2391,7 @@ bool D3DObjectLightingCalc(
 		// Apply flickering adjustment to the combined lighting (base + dynamic)
 		if (pRNode->obj.flags & OF_FLASHING)
 		{
-			float adjustment = (float)pRNode->obj.lightAdjust / (float)FLICKER_LEVEL;
+			float adjustment = (float)pRNode->obj.lightAdjust / GetFlickerLevel();
 			bgra->b = min(COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));
 			bgra->g = min(COLOR_AMBIENT, bgra->g + (bgra->g * adjustment));
 			bgra->r = min(COLOR_AMBIENT, bgra->r + (bgra->r * adjustment));

@@ -1428,6 +1428,31 @@ void D3DRenderCeilingMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, LPDIREC
    }
 }
 
+
+/**
+ * Checks if a light position is inside the 2D bounding box defined by the given vertices.
+ * Returns true if the light is inside the bounding box, false otherwise.
+ */
+static bool IsLightInsideBoundingBox(float lightX, float lightY, const custom_xyz *xyz, int numVertices)
+{
+   float minX = xyz[0].x, maxX = xyz[0].x;
+   float minY = xyz[0].y, maxY = xyz[0].y;
+
+   for (int i = 1; i < numVertices; i++)
+   {
+      if (xyz[i].x < minX)
+         minX = xyz[i].x;
+      if (xyz[i].x > maxX)
+         maxX = xyz[i].x;
+      if (xyz[i].y < minY)
+         minY = xyz[i].y;
+      if (xyz[i].y > maxY)
+         maxY = xyz[i].y;
+   }
+
+   return (lightX >= minX && lightX <= maxX && lightY >= minY && lightY <= maxY);
+}
+
 /*
  * Add light map for floor to the render pool.
  */
@@ -1488,7 +1513,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
          if (xyz[count].y > maxY) maxY = xyz[count].y;
       }
       // If light is inside the bounding box, it should definitely affect this polygon
-      if (lightX >= minX && lightX <= maxX && lightY >= minY && lightY <= maxY)
+      if (IsLightInsideBoundingBox(lightX, lightY, xyz, pNode->u.leaf.poly.npts))
       {
          lightInsidePolygon = true;
       }
@@ -1658,7 +1683,7 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
          if (xyz[count].y > maxY) maxY = xyz[count].y;
       }
       // If light is inside the bounding box, it should definitely affect this polygon
-      if (lightX >= minX && lightX <= maxX && lightY >= minY && lightY <= maxY)
+      if (IsLightInsideBoundingBox(lightX, lightY, xyz, pNode->u.leaf.poly.npts))
       {
          lightInsidePolygon = true;
       }
@@ -1893,7 +1918,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          if (xyz[i].y > maxY) maxY = xyz[i].y;
       }
       // If light is inside the bounding box, it should affect this wall
-      if (lightX >= minX && lightX <= maxX && lightY >= minY && lightY <= maxY)
+      if (IsLightInsideBoundingBox(lightX, lightY, xyz, 4))
       {
          lightNearWall = true;
       }

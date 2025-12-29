@@ -12,8 +12,6 @@
 #ifndef _ANIMATE_H
 #define _ANIMATE_H
 
-#define FLICKER_LEVEL (LIGHT_LEVELS / 2)
-
 void AnimationTimerAbort(void);
 void AnimationTimerStart(void);
 M59EXPORT bool AnimateObject(object_node *obj, int dt);
@@ -22,5 +20,6 @@ void AnimateStop(Animate *a);
 bool AnimateSingle(Animate *a, int num_groups, int dt);
 
 DWORD GetFrameTime(void);
+float GetFlickerLevel(void);
 
 #endif /* #ifndef _ANIMATE_H */

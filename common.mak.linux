@@ -43,7 +43,8 @@ SPROCKETDIR = $(TOPDIR)/sprocket
 CLUBDIR     = $(TOPDIR)/club
 
 # 3rd party libraries
-FMTLIBDIR  = $(EXTERNALDIR)\fmtlib
+EXTERNALDIR = $(TOPDIR)/external
+FMTLIBDIR   = $(EXTERNALDIR)/fmtlib
 
 BLAKBINDIR = $(TOPDIR)/bin
 BLAKLIBDIR = $(TOPDIR)/lib

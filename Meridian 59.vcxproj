@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug Retail|Win32">
-      <Configuration>Debug Retail</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug Retail|x64">
-      <Configuration>Debug Retail</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -1399,22 +1391,12 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -1432,16 +1414,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -1454,12 +1430,8 @@
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|x64'">
-    <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
-    <NMakeOutput>meridian.exe</NMakeOutput>
-    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions />
+	<LocalDebuggerWorkingDirectory>$(ProjectDir)run\localclient\</LocalDebuggerWorkingDirectory>
+	<LocalDebuggerCommandArguments>/H:localhost /P:5959</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
@@ -1468,27 +1440,25 @@
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)run\localclient\</OutDir>
-    <NMakeIncludeSearchPath>$(ProjectDir)include;$(ProjectDir)external\libarchive;$(ProjectDir)external\libpng;$(ProjectDir)external\wavemix;$(ProjectDir)external\zlib;$(ProjectDir)clientd3d\debug;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Retail|Win32'">
-    <NMakeBuildCommandLine>nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
-    <NMakeOutput>./run/localclient/meridian.exe</NMakeOutput>
-    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions />
-    <OutDir>$(SolutionDir)run\localclient\</OutDir>
+	<LocalDebuggerWorkingDirectory>$(ProjectDir)run\localclient\</LocalDebuggerWorkingDirectory>
+	<LocalDebuggerCommandArguments>/H:localhost /P:5959</LocalDebuggerCommandArguments>
     <NMakeIncludeSearchPath>$(ProjectDir)include;$(ProjectDir)external\libarchive;$(ProjectDir)external\libpng;$(ProjectDir)external\wavemix;$(ProjectDir)external\zlib;$(ProjectDir)clientd3d\debug;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>nmake</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake RELEASE=1</NMakeBuildCommandLine>
     <NMakeOutput>meridian.exe</NMakeOutput>
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<LocalDebuggerWorkingDirectory>$(ProjectDir)run\localclient\</LocalDebuggerWorkingDirectory>
+	<LocalDebuggerCommandArguments>/H:localhost /P:5959</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>nmake</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake RELEASE=1</NMakeBuildCommandLine>
     <NMakeOutput>meridian.exe</NMakeOutput>
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<LocalDebuggerWorkingDirectory>$(ProjectDir)run\localclient\</LocalDebuggerWorkingDirectory>
+	<LocalDebuggerCommandArguments>/H:localhost /P:5959</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

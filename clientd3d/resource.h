@@ -639,6 +639,29 @@
 #define IDS_RESTORE_DEFAULTS            3649
 #define IDS_PREFERENCES_TITLE	          3650
 #define IDS_INTRO                       3651
+#define ID_FONT_ANNOTATIONS             3652
+#define IDS_ACTION                      3653
+#define IDD_ACTIONS                     3654
+#define IDC_ACTION1                     3655  // First action of 10, keep these in sequence
+#define IDC_ACTION2                     3656
+#define IDC_ACTION3                     3657
+#define IDC_ACTION4                     3658
+#define IDC_ACTION5                     3659
+#define IDC_ACTION6                     3660
+#define IDC_ACTION7                     3661
+#define IDC_ACTION8                     3662
+#define IDC_ACTION9                     3663
+#define IDC_ACTION10                    3664
+#define IDC_ACTION1_MOD                 3665
+#define IDC_ACTION2_MOD                 3666
+#define IDC_ACTION3_MOD                 3667
+#define IDC_ACTION4_MOD                 3668
+#define IDC_ACTION5_MOD                 3669
+#define IDC_ACTION6_MOD                 3670
+#define IDC_ACTION7_MOD                 3671
+#define IDC_ACTION8_MOD                 3672
+#define IDC_ACTION9_MOD                 3673
+#define IDC_ACTION10_MOD                3674
 
 // Next default values for new objects
 // 

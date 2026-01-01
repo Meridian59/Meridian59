@@ -20,7 +20,7 @@
 
 #define MAX_VERBLEN  10     // Maximum length of a command verb to alias
 #define MAX_ALIASLEN 100    // Maximum length of an alias command
-#define NUM_ALIASES  12     // Number of aliases
+#define NUM_ALIASES  22     // Number of aliases
 
 typedef struct
 {
@@ -49,6 +49,16 @@ static HotkeyAlias aliases[] =
    { VK_F10,  "addgroup", true, },
    { VK_F11,  "mail",     true, },
    { VK_F12,  "quit",     true, },
+   { '1',     "",         true, },
+   { '2',     "",         true, },
+   { '3',     "",         true, },
+   { '4',     "",         true, },
+   { '5',     "",         true, },
+   { '6',     "",         true, },
+   { '7',     "",         true, },
+   { '8',     "",         true, },
+   { '9',     "",         true, },
+   { '10',    "",         true, },
 };
 
 static VerbAlias* _apVerbAliases = NULL;
@@ -97,12 +107,12 @@ void AliasInit(void)
    char	destName[128];
    const char *srcName;
    WORD command;
-   player_info	*playerInfo;
+   player_info *playerInfo;
 
    destName[0] = '\0';
 
    playerInfo = GetPlayerInfo();
-   
+
    // This was incorrectly being called before the player's resource was known,
    // giving an unknown resource dialog box every time the game was entered.
    // Unfortunately, players' aliases were then written to disk under with
@@ -117,8 +127,8 @@ void AliasInit(void)
 
    for (i = 0; i < len; i++)
    {
-	   itoa(srcName[i], temp, 10);
-	   strcat(destName, temp);
+      itoa(srcName[i], temp, 10);
+      strcat(destName, temp);
    }
 
    strcpy(fullSection, alias_section);
@@ -129,19 +139,18 @@ void AliasInit(void)
    {
       // Read function key aliases
       sprintf(temp, "F%d", i + 1);
-      //GetPrivateProfileString(alias_section, temp, aliases[i].text,
-	  GetPrivateProfileString(fullSection, temp, aliases[i].text,
-      aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
+      // GetPrivateProfileString(alias_section, temp, aliases[i].text,
+      GetPrivateProfileString(fullSection, temp, aliases[i].text, aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
 
       // Check for CR
-    len = (int) strlen(aliases[i].text);
+      len = (int) strlen(aliases[i].text);
       if (len > 0 && aliases[i].text[len - 1] == '~')
       {
 	 command = A_TEXTINSERT;
 	 aliases[i].text[len - 1] = 0;
 	 aliases[i].cr = false;
       }
-      else 
+      else
       {
 	 command = A_TEXTCOMMAND;
 	 aliases[i].cr = true;
@@ -223,10 +232,10 @@ void AliasSave(void)
 {
    int i, len;
    char temp[10], text[MAX_ALIASLEN + 1];
-   char	fullSection[255];
-   char	destName[128];
-   char	*srcName;
-   player_info	*playerInfo;
+   char fullSection[255];
+   char destName[128];
+   char *srcName;
+   player_info *playerInfo;
    WORD command;
 
    destName[0] = '\0';
@@ -237,22 +246,22 @@ void AliasSave(void)
 
    for (i = 0; i < len; i++)
    {
-	   itoa(srcName[i], temp, 10);
-	   strcat(destName, temp);
+      itoa(srcName[i], temp, 10);
+      strcat(destName, temp);
    }
 
    strcpy(fullSection, alias_section);
    strcat(fullSection, destName);
 
    // Save the hotkey aliases.
-   for (i=0; i < NUM_ALIASES; i++)
+   for (i = 0; i < NUM_ALIASES; i++)
    {
       // Save function key aliases
       sprintf(temp, "F%d", i + 1);
 
       if (aliases[i].cr)
       {
-	      strcpy(text, aliases[i].text);
+         strcpy(text, aliases[i].text);
          command = A_TEXTCOMMAND;
       }
       else
@@ -274,13 +283,10 @@ void AliasSave(void)
       WritePrivateProfileSection(command_section, "\0\0\0", cinfo->ini_file);
       for (i = 0; i < _nVerbAliases; i++)
       {
-	 if (_apVerbAliases[i].verb[0])
-	 {
-	    WritePrivateProfileString(command_section,
-	       _apVerbAliases[i].verb,
-	       _apVerbAliases[i].text,
-	       cinfo->ini_file);
-	 }
+         if (_apVerbAliases[i].verb[0])
+         {
+            WritePrivateProfileString(command_section, _apVerbAliases[i].verb, _apVerbAliases[i].text, cinfo->ini_file);
+         }
       }
    }
 }
@@ -296,14 +302,14 @@ void AliasSetKey(KeyTable table, WORD vk_key, WORD flags, WORD command, void *da
    for (index = 0; table[index].vk_code != 0; index++)
    {
       if (table[index].vk_code != vk_key)
-	 continue;
+         continue;
 
       table_flags = table[index].flags;
-      
+
       if (table_flags == KEY_ANY || (table_flags & flags))
       {
-	 table[index].command = command;
-	 table[index].data    = data;
+         table[index].command = command;
+         table[index].data = data;
       }
    }
 }

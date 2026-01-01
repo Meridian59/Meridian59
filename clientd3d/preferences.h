@@ -8,6 +8,8 @@
 #ifndef _PREFERENCES_H
 #define _PREFERENCES_H
 
+static constexpr int MAX_ACTION_KEYS = 10;
+
 void ShowPreferencesDialog(HWND hWndParent);
 
 #endif	/* #ifndef _PREFERENCES_H */

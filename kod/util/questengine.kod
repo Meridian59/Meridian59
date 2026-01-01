@@ -1465,14 +1465,14 @@ resources:
 	% Default restriction hint messages
 	default_restriction_generic = "You don't meet the requirements for this task."
 
-	default_restriction_karma_same = "Your view of the world doesn't match mine.  Come back when it does."
-	default_restriction_karma_different = "Your outlook is too close to mine.  Come back when you've changed."
+	default_restriction_karma_same = "Your path doesn't align with what's needed here.  Walk a different road."
+	default_restriction_karma_different = "Your path is too close to mine.  I need someone who walks a different way."
 	default_restriction_karma_good = "You must walk a more virtuous path.  Come back when you've embraced the light."
 	default_restriction_karma_neutral = "Your path leans too far in one direction.  Come back when you've found balance."
 	default_restriction_karma_evil = "You must embrace the darkness.  Come back when you've let go of your virtue."
 
-	default_restriction_faction_duke = "Only those pledged to the ducal faction may continue.  Join the ranks, then return."
-	default_restriction_faction_neutral = "You must be neutral to join a faction.  If you are already aligned with another, you must first renounce your allegiance.  If you are already a member of this faction, there is no need to join again."
+	default_restriction_faction_neutral = "You must be free of faction ties. Renounce your allegiances and return."
+	default_restriction_faction_duke = "Only those pledged to the Duke may continue.  Join the ranks, then return."
 	default_restriction_faction_princess = "Only those under the royal banner may proceed.  Join the cause, then return."
 	default_restriction_faction_rebel = "Access is reserved for the rebel faithful.  Join the cause before you return."
 	default_restriction_faction_same = "Your loyalties don't match mine.  Come back when they do."
@@ -1480,15 +1480,15 @@ resources:
 	default_restriction_faction_in = "Your side holds no sway right now.  Come back when you're in power."
 	default_restriction_faction_out = "Your side rules for now.  Come back when you've lost that grip."
 
-	default_restriction_newbie = "Your skills are beyond this.  Move along."
-	default_restriction_not_newbie = "Your inexperience shows.  Come back once you've learned the ropes."
+	default_restriction_newbie = "Your skills are beyond this.  Find a more suitable task."
+	default_restriction_not_newbie = "Your inexperience shows.  Come back once you've gained more experience."
 	default_restriction_murderer = "Your hands are too clean for this task.  Come back when they're stained."
 	default_restriction_not_murderer = "Your past is soaked in blood.  Come back when you've washed it away."
 	default_restriction_outlaw = "Your respect for the law makes this impossible.  Come back when you've cast it aside."
-	default_restriction_not_outlaw = "Your name carries too much trouble.  Come back when you've earned some trust."
+	default_restriction_not_outlaw = "Your name carries too much trouble.  Come back when you've earned some trust and redemption."
 	default_restriction_lawful = "Your record is too tarnished.  Come back when you're known to walk the line."
    
-	default_restriction_not_succeeded_recently = "You've already proven yourself.  There's nothing more to gain right now."
+	default_restriction_not_succeeded_recently = "You've already proven yourself recently.  There's nothing more to gain right now."
 	default_restriction_not_succeeded = "You've already completed this.  There's nothing left to offer you."
 	default_restriction_not_failed_recently = "You've already failed at this task.  Come back when you've succeeded."
 	default_restriction_not_failed = "You've failed this task.  There will be no second chance."

@@ -383,6 +383,7 @@ static ascii_key	gAsciiKeyMap[] =
 	{"left",	VK_LEFT},
 	{"right",	VK_RIGHT},
 	{"tab",		VK_TAB},
+   {"`",       VK_OEM_3},
 	{"numpad0",	VK_NUMPAD0},
 	{"numpad1",	VK_NUMPAD1},
 	{"numpad2",	VK_NUMPAD2},
@@ -537,6 +538,20 @@ keymap	gCustomKeys[] =
 	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
 	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
 	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
+
+   // aliases (action hotkeys)
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
 
 	// end
 	{0, 0, 0},
@@ -750,6 +765,14 @@ void CustomConfigInit(void)
 		WritePrivateProfileString("keys", "tabbackward", "tab+shift", "./config.ini");
 		WritePrivateProfileString("keys", "mapzoomin", "add", "./config.ini");
 		WritePrivateProfileString("keys", "mapzoomout", "subtract", "./config.ini");
+
+      for (int i = 0; i < MAX_ACTION_KEYS; i++)
+      {
+         char aliasName[16], aliasKey[16];
+         sprintf(aliasName, "action%d", i + 1);
+         sprintf(aliasKey, "%d", i + 1);
+         WritePrivateProfileString("keys", aliasName, aliasKey, "./config.ini");
+      }
 	}
 
 	// now check config settings
@@ -928,6 +951,12 @@ void CustomConfigInit(void)
 			gCustomKeys[curKey].vk_code = fKey;
 			gCustomKeys[curKey].flags = KEY_ANY;
 		}
+
+      for (i=0; i<MAX_ACTION_KEYS; i++, curKey++)
+      {
+         gCustomKeys[curKey].vk_code = '0' + 1;
+         gCustomKeys[curKey].flags = KEY_ANY;
+      }
 
 		KeyAddTable(GAME_PLAY, gCustomKeys);
 	}

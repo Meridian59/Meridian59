@@ -804,33 +804,34 @@ messages:
          % Check if the player qualifies for the quest and if not, look to tell them why
          iRestrictionType = Send(poQuest,@CheckPlayerCriteria,#quester_wannabe=who_tried);
 
-         if iRestrictionType <> 1
+         if iRestrictionType > 1 AND iType = QN_TYPE_MESSAGE
          {
-            if iRestrictionType > 1 AND iType = QN_TYPE_MESSAGE
+            oQuestEngine = Send(SYS,@GetQuestEngine);
+            iQuestTemplateIndex = Send(poQuest,@GetQuestTemplateIndex);
+
+            oRestrictionHint = Send(oQuestEngine,@GetRestrictionHint,
+               #who=who_tried,
+               #quest_template_index=iQuestTemplateIndex,
+               #quest_node_index=piQuestNodeTemplateIndex,
+               #restriction_type=iRestrictionType);
+
+            if oRestrictionHint <> $
             {
-               oQuestEngine = Send(SYS,@GetQuestEngine);
-               iQuestTemplateIndex = Send(poQuest,@GetQuestTemplateIndex);
-
-               oRestrictionHint = Send(oQuestEngine,@GetRestrictionHint,
-                  #who=who_tried,
-                  #quest_template_index=iQuestTemplateIndex,
-                  #quest_node_index=piQuestNodeTemplateIndex,
-                  #restriction_type=iRestrictionType);
-
-               if oRestrictionHint <> $
-               {
-                  % Message nodes may share triggers. On eligibility failure we queue (not send) a 
-                  % restriction hint and return FALSE so other nodes can be tried. After iterating 
-                  % all nodes, we flush at most one queued hint to the speaking player if none 
-                  % succeeded. On success, any queued hint for that player is cleared.
-                  Send(poDestNPC,@QueueQuestRestrictHint,#who=who_tried,#hint=oRestrictionHint);
-               }
-               else
-               {
-                  debug("No restriction hint found for restriction type:", iRestrictionType, "for quest template index:", iQuestTemplateIndex, "and quest node index:", piQuestNodeTemplateIndex);
-               }
+               % Message nodes may share triggers. On eligibility failure we queue (not send) a 
+               % restriction hint and return FALSE so other nodes can be tried. After iterating 
+               % all nodes, we flush at most one queued hint to the speaking player if none 
+               % succeeded. On success, any queued hint for that player is cleared.
+               Send(poDestNPC,@QueueQuestRestrictHint,#who=who_tried,#hint=oRestrictionHint);
             }
+            else
+            {
+               debug("No restriction hint found for restriction type:", iRestrictionType, "for quest template index:", iQuestTemplateIndex, "and quest node index:", piQuestNodeTemplateIndex);
+            }
+         }
 
+         % If the criteria is otherwise not met (not TRUE), return FALSE
+         if iRestrictionType <> TRUE
+         {
             return FALSE;
          }
 

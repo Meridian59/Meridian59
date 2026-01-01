@@ -345,6 +345,11 @@ properties:
    piMinDamage = $
    piMaxDamage = $
 
+   % List of pending quest restriction hints queued for players. Each element is [player, hint_message].
+   % Used when multiple quest message nodes share triggers - hints are queued (not sent immediately)
+   % during eligibility checks so other nodes can be tried first. After iterating all nodes, at most
+   % one queued hint is flushed to the player if none succeeded. On success, any queued hint for
+   % that player is cleared.
    plPendingRestrictHints = $
 
 messages:

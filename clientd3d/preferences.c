@@ -79,6 +79,8 @@ static char TCMap[MAX_KEYVALUELEN];
 static char TCMapzoomin[MAX_KEYVALUELEN];
 static char TCMapzoomout[MAX_KEYVALUELEN];
 
+static char TCAction[MAX_ACTION_KEYS][MAX_KEYVALUELEN];
+
 // Default values
 
 // BOOL values
@@ -143,6 +145,11 @@ static const char* const DEF_INVERT = "false";
 static const int DEF_MOUSELOOKXSCALE = 15;
 static const int DEF_MOUSELOOKYSCALE = 9;
 
+// Actions
+static const char *const DEF_ACTIONS[MAX_ACTION_KEYS] = {
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
+};
+
 // Message to tell our sub tabs to refresh their data
 #define WM_USER_REINITDIALOG (WM_USER + 1)
 
@@ -151,6 +158,7 @@ INT_PTR CALLBACK AssignKeyDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK ActionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK CommunicationPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK InteractionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK TargetingPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -169,6 +177,7 @@ static const std::vector<TabInfo> tabs = {
     {IDS_PREFERENCES, IDD_SETTINGS, CommonPreferencesDlgProc},
     {IDS_OPTIONS, IDD_OPTIONS, OptionsPreferencesDlgProc},
     {IDS_MOVE, IDD_MOVEMENT, MovementPreferencesDlgProc},
+    {IDS_ACTION, IDD_ACTIONS, ActionPreferencesDlgProc},
     {IDS_COMMS, IDD_COMMUNICATION, CommunicationPreferencesDlgProc},
     {IDS_INTERACT, IDD_INTERACTION, InteractionPreferencesDlgProc},
     {IDS_TARGET, IDD_TARGETING, TargetingPreferencesDlgProc},
@@ -295,6 +304,14 @@ static void UpdateINIFile()
     settingsChanged = WritePrivateProfileStringIfChanged(strSection, "mapzoomin", TCMapzoomin, strINIFile) || settingsChanged;
     settingsChanged = WritePrivateProfileStringIfChanged(strSection, "mapzoomout", TCMapzoomout, strINIFile) || settingsChanged;
 
+    // Actions
+    for (int i = 0; i < MAX_ACTION_KEYS; i++)
+    {
+        char actionKey[32];
+        snprintf(actionKey, sizeof(actionKey), "action%d", i + 1);
+        settingsChanged = WritePrivateProfileStringIfChanged(strSection, actionKey, TCAction[i], strINIFile) || settingsChanged;
+    }
+
     // Alert that changes to config.ini will require a client restart (e.g. graphic preferences)
     if (settingsChanged)
     {
@@ -394,6 +411,14 @@ static void ReadINIFile()
     GetPrivateProfileString(strSection, "map", DEF_MAP, TCMap, nSize, strINIFile);
     GetPrivateProfileString(strSection, "mapzoomin", DEF_MAPZOOMIN, TCMapzoomin, nSize, strINIFile);
     GetPrivateProfileString(strSection, "mapzoomout", DEF_MAPZOOMOUT, TCMapzoomout, nSize, strINIFile);
+
+    // Actions
+    for (int i = 0; i < MAX_ACTION_KEYS; i++)
+    {
+        char actionKey[32];
+        snprintf(actionKey, sizeof(actionKey), "action%d", i + 1);
+        GetPrivateProfileString(strSection, actionKey, "", TCAction[i], nSize, strINIFile);
+    }
 }
 
 static bool IsModifier(const char *TCValue)
@@ -485,6 +510,11 @@ static bool CheckforDuplicateBind(const char *TCCompare)
     if (strcmp(TCCompare, TCMap) == 0 && TCCompare != TCMap) return true;
     if (strcmp(TCCompare, TCMapzoomin) == 0 && TCCompare != TCMapzoomin) return true;
     if (strcmp(TCCompare, TCMapzoomout) == 0 && TCCompare != TCMapzoomout) return true;
+
+    for (int i = 0; i < MAX_ACTION_KEYS; i++)
+    {
+       if (strcmp(TCCompare, TCAction[i]) == 0 && TCCompare != TCAction[i]) return true;
+    }
     return false;
 }
 
@@ -612,6 +642,11 @@ static void RestoreDefaults(HWND hDlg)
     strcpy_s(TCMap, sizeof(TCMap), DEF_MAP);
     strcpy_s(TCMapzoomin, sizeof(TCMapzoomin), DEF_MAPZOOMIN);
     strcpy_s(TCMapzoomout, sizeof(TCMapzoomout), DEF_MAPZOOMOUT);
+
+    for (int i = 0; i < MAX_ACTION_KEYS; i++)
+    {
+       strcpy_s(TCAction[i], sizeof(TCAction[i]), DEF_ACTIONS[i]);
+    }
 
     // Update the options dialog with the default settings.
     CheckDlgButton(hDlg, IDC_ALWAYSRUN, m_alwaysrun);
@@ -1238,6 +1273,22 @@ static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lP
                     return 1; // Prevent further processing
                 }
 
+                if (vkCode >= '0' && vkCode <= '9')
+                {
+                   sprintf(TCNewkey, "%d", vkCode-'0');
+                   AppendModifier(TCNewkey, iModifier);
+                   EndDialog(GetForegroundWindow(), IDOK);
+                   return 1;  // Prevent further processing
+                }
+
+                if (vkCode >= VK_NUMPAD0 && vkCode <= VK_NUMPAD9)
+                {
+                   sprintf(TCNewkey, "numpad%d", vkCode-VK_NUMPAD0);
+                   AppendModifier(TCNewkey, iModifier);
+                   EndDialog(GetForegroundWindow(), IDOK);
+                   return 1;  // Prevent further processing
+                }
+
                 switch (vkCode) {
                 case VK_BACK:
                     strcpy_s(TCNewkey, sizeof(TCNewkey), "backspace");
@@ -1307,6 +1358,9 @@ static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lP
                     break;
                 case 0xde:
                     strcpy_s(TCNewkey, sizeof(TCNewkey), "'");
+                    break;
+                case VK_OEM_3:
+                    strcpy_s(TCNewkey, sizeof(TCNewkey), "`");
                     break;
                 }
 
@@ -1606,6 +1660,56 @@ static INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPAR
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+// Function to initialize action key bindings
+static void InitializeActionKeyBindings(HWND hDlg)
+{
+   for (int i = 0; i < MAX_ACTION_KEYS; i++)
+   {
+      SetDlgItemText(hDlg, IDC_ACTION1 + i, TCAction[i]);
+      InitModifierButton(TCAction[i], GetDlgItem(hDlg, IDC_ACTION1_MOD + i));
+   }
+}
+
+// Dialog procedure for the Action Preferences dialog
+static INT_PTR CALLBACK ActionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+   switch (message)
+   {
+   case WM_INITDIALOG:
+      InitializeActionKeyBindings(hDlg);
+      return (INT_PTR) TRUE;
+
+   case WM_COMMAND: {
+      WORD low = LOWORD(wParam);
+      for (int i = 0; i < MAX_ACTION_KEYS; ++i)
+      {
+         if(low == IDC_ACTION1 + i)
+         {
+            AssignKey(hDlg, TCAction[i], IDC_ACTION1 + i);
+            return (INT_PTR) TRUE;
+         }
+         else if(low == IDC_ACTION1_MOD + i)
+         {
+            ModifyKey(hDlg, TCAction[i], IDC_ACTION1 + i);
+            return (INT_PTR) TRUE;
+         }
+      }
+      break;
+   }
+
+   case WM_NOTIFY:
+      if (((LPNMHDR) lParam)->code == PSN_APPLY)
+      {
+         // Save settings
+         UpdateINIFile();
+         SetWindowLongPtr(hDlg, DWLP_MSGRESULT, PSNRET_NOERROR);
+         return (INT_PTR) TRUE;
+      }
+      break;
+   }
+   return (INT_PTR) FALSE;
 }
 
 static LRESULT CALLBACK PropSheetSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,

@@ -1020,6 +1020,7 @@ BEGIN
 	IDS_PREFERENCES					"Preferências"
 	IDS_OPTIONS						"Opções"
 	IDS_MOVE						"Movimento"
+   IDS_ACTION                 "Ações"
 	IDS_COMMS						"Comunicação"
 	IDS_INTERACT					"Interação"
 	IDS_TARGET						"Alvo"
@@ -2039,7 +2040,8 @@ BEGIN
 	IDS_PREFERENCES_TITLE			"Meridian 59 Einstellungen"
 	IDS_PREFERENCES					"Einstellungen"
 	IDS_OPTIONS						"Optionen"
-	IDS_MOVE						"Bewegung"
+	IDS_MOVE						   "Bewegung"
+   IDS_ACTION                 "Aktionen"
 	IDS_COMMS						"Kommunikation"
 	IDS_INTERACT					"Interaktion"
 	IDS_TARGET						"Zielerfassung"
@@ -2663,6 +2665,48 @@ BEGIN
     PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,229,64,14,14
     PUSHBUTTON      "+",IDC_FLIP_MOD,229,83,14,14
     PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,229,102,14,14
+END
+
+IDD_ACTIONS DIALOG 0, 0, 258, 138
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Actions"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Action 1",IDC_STATIC,7,9,43,8
+    LTEXT           "Action 2",IDC_STATIC,7,28,43,8
+    LTEXT           "Action 3",IDC_STATIC,7,47,43,8
+    LTEXT           "Action 4",IDC_STATIC,7,66,43,8
+    LTEXT           "Action 5",IDC_STATIC,7,85,43,8
+
+    LTEXT           "Action 6",IDC_STATIC,126,9,43,8
+    LTEXT           "Action 7",IDC_STATIC,126,29,43,8
+    LTEXT           "Action 8",IDC_STATIC,126,47,43,8
+    LTEXT           "Action 9",IDC_STATIC,126,66,43,8
+    LTEXT           "Action 10",IDC_STATIC,126,86,43,8
+
+    PUSHBUTTON      "1",IDC_ACTION1,44,7,55,14
+    PUSHBUTTON      "2",IDC_ACTION2,44,26,55,14
+    PUSHBUTTON      "3",IDC_ACTION3,44,45,55,14
+    PUSHBUTTON      "4",IDC_ACTION4,44,64,55,14
+    PUSHBUTTON      "5",IDC_ACTION5,44,83,55,14
+
+    PUSHBUTTON      "6",IDC_ACTION6,171,7,55,14
+    PUSHBUTTON      "7",IDC_ACTION7,171,26,55,14
+    PUSHBUTTON      "8",IDC_ACTION8,171,45,55,14
+    PUSHBUTTON      "9",IDC_ACTION9,171,64,55,14
+    PUSHBUTTON      "0",IDC_ACTION10,171,83,55,14
+
+    PUSHBUTTON      "+",IDC_ACTION1_MOD,102,7,14,14
+    PUSHBUTTON      "+",IDC_ACTION2_MOD,102,26,14,14
+    PUSHBUTTON      "+",IDC_ACTION3_MOD,102,45,14,14
+    PUSHBUTTON      "+",IDC_ACTION4_MOD,102,64,14,14
+    PUSHBUTTON      "+",IDC_ACTION5_MOD,102,83,14,14
+
+    PUSHBUTTON      "+",IDC_ACTION6_MOD,229,7,14,14
+    PUSHBUTTON      "+",IDC_ACTION7_MOD,229,26,14,14
+    PUSHBUTTON      "+",IDC_ACTION8_MOD,229,45,14,14
+    PUSHBUTTON      "+",IDC_ACTION9_MOD,229,64,14,14
+    PUSHBUTTON      "+",IDC_ACTION10_MOD,229,83,14,14
 END
 
 IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
@@ -3320,6 +3364,7 @@ BEGIN
 	IDS_PREFERENCES					"Preferences"
 	IDS_OPTIONS						"Options"
 	IDS_MOVE						"Move"
+   IDS_ACTION                 "Actions"
 	IDS_COMMS						"Comms"
 	IDS_INTERACT					"Interact"
 	IDS_TARGET						"Target"

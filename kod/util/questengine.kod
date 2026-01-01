@@ -1467,9 +1467,9 @@ resources:
 
 	default_restriction_karma_same = "Your view of the world doesn't match mine.  Come back when it does."
 	default_restriction_karma_different = "Your outlook is too close to mine.  Come back when you've changed."
-	default_restriction_karma_good = "Your heart's too dark for this task.  Come back when you walk a better path."
+	default_restriction_karma_good = "You must walk a more virtuous path.  Come back when you've embraced the light."
 	default_restriction_karma_neutral = "Your path leans too far in one direction.  Come back when you've found balance."
-	default_restriction_karma_evil = "Your virtue makes you weak.  Come back when you've let it go."
+	default_restriction_karma_evil = "You must embrace the darkness.  Come back when you've let go of your virtue."
 
 	default_restriction_faction_duke = "Only those pledged to the ducal faction may continue.  Join the ranks, then return."
 	default_restriction_faction_neutral = "You must be neutral to join a faction.  If you are already aligned with another, you must first renounce your allegiance.  If you are already a member of this faction, there is no need to join again."
@@ -1519,6 +1519,15 @@ resources:
 	default_restriction_health_moderate = "considerably stronger"
 	default_restriction_health_far = "much stronger"
 	default_restriction_health_very_far = "significantly stronger"
+
+   % Restriction hint overrides
+   
+   % template #35 overrides:
+   % The tradingpost quests require players to have chosen a side (good or evil karma), so neutral
+   % players cannot access it. Both karma restriction messages share the same text to guide neutral
+   % players to choose light or darkness, regardless of which restriction triggers.
+   tradingpost_karma_good = "My inventory is only for those who walk a clear path.  Come back when you've chosen light or darkness."
+   tradingpost_karma_evil = "My inventory is only for those who walk a clear path.  Come back when you've chosen light or darkness."
 
    questEngine_report_sender = "Quest Engine"
    questEngine_report_1 = "Subject: Report: Quest %q\n"
@@ -2456,7 +2465,22 @@ RecreateQuestNodes()
    %		assign hint,
    %		success hint,
    %		failure hint
-   %		time limit	]
+   %		time limit,
+   %		restriction hints ]
+
+   % Quest Node Restriction Hints:
+   % --------------------------------
+   % Restriction hints are custom messages (resource strings) displayed to players when they fail to meet
+   % a quest node's requirements. Each hint is associated with a restriction type (e.g. Q_PLAYER_KARMA_GOOD,
+   % Q_PLAYER_KARMA_EVIL, Q_PLAYER_HAS_HEALTH_LEVEL, etc). Use @SetQuestNodeRestrictionHints to override
+   % the default restriction hints for a quest node template.
+   %
+   % Example:
+   % send( self, @SetQuestNodeRestrictionHints, #index = 35, #restriction_hints = 
+   %   [ 
+   %      [ Q_PLAYER_KARMA_GOOD, tradingpost_karma_good ],
+   %      [ Q_PLAYER_KARMA_EVIL, tradingpost_karma_evil ] 
+   %   ] );
 
   % Will recreate questnodetemplates, including creating strings to hold the hints
 
@@ -3034,6 +3058,11 @@ RecreateQuestNodes()
    {
       send( self, @SetQuestNodeNPCList, #index = 35,
             #new_NPC_list = send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &kocatanTradeMaster));
+      send( self, @SetQuestNodeRestrictionHints, #index = 35, #restriction_hints = 
+      [ 
+         [ Q_PLAYER_KARMA_GOOD, tradingpost_karma_good ],
+         [ Q_PLAYER_KARMA_EVIL, tradingpost_karma_evil ] 
+      ] );
    }
    else
    {

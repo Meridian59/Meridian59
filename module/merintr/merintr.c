@@ -42,6 +42,7 @@ static bool HandleLookPlayer(char *ptr, long len);
 static bool HandleSendQuit(char *ptr, long len);
 static bool HandleSpellSchools(char *ptr, long len);
 static void CustomConfigInit(void);
+static Key GetKeyFromName(char *str);
 
 // Server message handler table
 static handler_struct handler_table[] = {
@@ -239,18 +240,18 @@ keymap interface_key_table[] = {
 { 'Y',            KEY_NONE,             A_TEXTINSERT, "y" },
 { 'Z',            KEY_NONE,             A_TEXTINSERT, "z" },
 
-{ VK_F1,          KEY_NONE,             A_TEXTCOMMAND, },  // These keys filled in by aliases
-{ VK_F2,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F3,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F4,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F5,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F6,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F7,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F8,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F9,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F10,         KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F11,         KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F12,         KEY_NONE,             A_TEXTCOMMAND, },
+{ VK_F1,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+0, },  // These keys filled in by aliases
+{ VK_F2,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+1, },
+{ VK_F3,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+2, },
+{ VK_F4,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+3, },
+{ VK_F5,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+4, },
+{ VK_F6,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+5, },
+{ VK_F7,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+6, },
+{ VK_F8,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+7, },
+{ VK_F9,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+8, },
+{ VK_F10,         KEY_NONE,             A_TEXTCOMMANDALIAS_START+9, },
+{ VK_F11,         KEY_NONE,             A_TEXTCOMMANDALIAS_START+10, },
+{ VK_F12,         KEY_NONE,             A_TEXTCOMMANDALIAS_START+11, },
 
 { VK_SPACE,       KEY_ANY,              A_GO },
 { VK_RETURN,      KEY_ANY,              A_LOOK },
@@ -412,6 +413,9 @@ static ascii_key	gAsciiKeyMap[] =
 	{"f10",		VK_F10},
 	{"f11",		VK_F11},
 	{"f12",		VK_F12},
+   {"minus",   VK_OEM_MINUS},
+   {"equals",  VK_OEM_PLUS},
+   {"backspace", VK_BACK},
 	{"\0",		0},
 };
 
@@ -526,32 +530,30 @@ keymap	gCustomKeys[] =
 	{(WORD)-1,				(WORD)-1,				A_WHO,				NULL},
 
 	// aliases (fkey hotkeys)
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMAND,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+0,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+1,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+2,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+3,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+4,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+5,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+6,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+7,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+8,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+9,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+10,		NULL},
+	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+11,		NULL},
 
    // aliases (action hotkeys)
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMAND, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+12, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+13, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+14, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+15, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+16, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+17, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+18, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+19, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+20, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+21, NULL},
 
 	// end
 	{0, 0, 0},
@@ -664,10 +666,8 @@ bool WINAPI EventServerMessage(char *message, long len)
 void CustomConfigInit(void)
 {
 	int		i, curKey, curAction, fKey, bQuickChat, value;
-	WORD	flags, runKey;
+	WORD	runKey;
 	char	string0[255];
-	char	string1[255];
-	char	*pChar1;
 	char	keys[] = "keys";
 	char	config[] = "config";
 	char	file[] = "./config.ini";
@@ -880,60 +880,25 @@ void CustomConfigInit(void)
 			GetPrivateProfileString(keys, gActionLabels[curAction].label, "error\n", string0,
 				255, file);
 
-			if (strcmp(string0, "error\n") == 0)
-				continue;
+         Key key = GetKeyFromName(string0);
+         if(key.vk_code == 0)
+         {
+            continue;
+         }
 
-			// check to see if this is a multi-key bind
-			if (pChar1 = strpbrk(string0, "+"))
-			{
-				strcpy(string1, &pChar1[1]);
-				*pChar1 = '\0';
+			if  (((string0[0] >= 'a') && (string0[0] <= 'z')) && ((string0[1] == '+') || (string0[1] == '\0')))
+         {
+            if (bQuickChat)
+               continue;
+         }
 
-				if (0 == strcmp(string1, "shift"))
-					flags = KEY_SHIFT;
-
-				if (0 == strcmp(string1, "alt"))
-					flags = KEY_ALT;
-
-				if (0 == strcmp(string1, "ctrl"))
-					flags = KEY_CTL;
-
-				if (0 == strcmp(string1, "any"))
-					flags = KEY_ANY;
-			}
-			else
-				flags = KEY_NONE;
-
-			if //((strlen(string0) == 1) && 
-				(((string0[0] >= 'a') && (string0[0] <= 'z')) &&
-				((string0[1] == '+') || (string0[1] == '\0')))
-				
-			{
-				if (bQuickChat)
-					continue;
-
-				strupr(string0);
-				gCustomKeys[curKey].vk_code = string0[0];
-				gCustomKeys[curKey].flags = flags;
-			}
-			else
-			{
-				for (i = 0; gAsciiKeyMap[i].asciiName[0] != '\0'; i++)
-				{
-					if (strcmp(string0, gAsciiKeyMap[i].asciiName) == 0)
-					{
-						gCustomKeys[curKey].vk_code = gAsciiKeyMap[i].vkCode;
-						gCustomKeys[curKey].flags = flags;
-					}
-				}
-			}
+         gCustomKeys[curKey].vk_code = key.vk_code;
+			gCustomKeys[curKey].flags = key.flags;
 
 			if (IsMoveFastAction(gActionLabels[curAction].action) ||
 				IsTurnFastAction(gActionLabels[curAction].action))
 			{
-				if (cinfo->config->bAlwaysRun)
-					gCustomKeys[curKey].flags = flags;
-				else
+				if (!cinfo->config->bAlwaysRun)
 					gCustomKeys[curKey].flags = (gCustomKeys[curKey].flags & (~KEY_NONE)) | runKey;
 			}
 			else if (IsMoveAction(gActionLabels[curAction].action) ||
@@ -941,8 +906,6 @@ void CustomConfigInit(void)
 			{
 				if (cinfo->config->bAlwaysRun)
 					gCustomKeys[curKey].flags = (gCustomKeys[curKey].flags & (~KEY_NONE)) | runKey;
-				else
-					gCustomKeys[curKey].flags = flags;
 			}
 		}
 
@@ -954,13 +917,93 @@ void CustomConfigInit(void)
 
       for (i=0; i<MAX_ACTION_KEYS; i++, curKey++)
       {
-         gCustomKeys[curKey].vk_code = '0' + 1;
-         gCustomKeys[curKey].flags = KEY_ANY;
+         char actionKey[32];
+         snprintf(actionKey, sizeof(actionKey), "action%d", i + 1);
+         GetPrivateProfileString(keys, actionKey, "error\n", string0, 255, file);
+
+         Key key = GetKeyFromName(string0);
+         if (key.vk_code == 0)
+         {
+            continue;
+         }
+
+         gCustomKeys[curKey].vk_code = key.vk_code;
+         gCustomKeys[curKey].flags = key.flags;
       }
 
 		KeyAddTable(GAME_PLAY, gCustomKeys);
 	}
 }
+
+static Key GetKeyFromName(char *strIn)
+{
+   Key ret;
+   ret.vk_code = 0;
+   ret.flags = KEY_NONE;
+
+   // Create a copy, so we can edit it
+   char str[255];
+   strcpy(str, strIn);
+
+   if (strcmp(str, "error\n") == 0)
+      return ret;
+
+   // check to see if this is a multi-key bind
+   char *pChar = strpbrk(str, "+");
+   if (pChar != nullptr)
+   {
+      pChar[0] = '\0';
+      ++pChar;
+
+      if (0 == strcmp(pChar, "shift"))
+      {
+         ret.flags = KEY_SHIFT;
+      }
+      else if (0 == strcmp(pChar, "alt"))
+      {
+         ret.flags = KEY_ALT;
+      }
+      else if (0 == strcmp(pChar, "ctrl"))
+      {
+         ret.flags = KEY_CTL;
+      }
+      else if (0 == strcmp(pChar, "any"))
+      {
+         ret.flags = KEY_ANY;
+      }
+   }
+
+   size_t len = strlen(str);
+   if ((len == 1) && (str[0] >= 'a') && (str[0] <= 'z'))
+   {
+      strupr(str);
+      ret.vk_code = str[0];
+   }
+   else if (len == 1 && (str[0] >= 'A') && (str[0] <= 'Z'))
+   {
+      ret.vk_code = str[0];
+   }
+   else if (len == 1 && (str[0] >= '0') && (str[0] <= '9'))
+   {
+      ret.vk_code = str[0];
+   }
+   else
+   {
+      // Try the ascii key map
+      for (int i = 0; gAsciiKeyMap[i].asciiName[0] != '\0'; i++)
+      {
+         if (strcmp(str, gAsciiKeyMap[i].asciiName) == 0)
+         {
+            ret.vk_code = gAsciiKeyMap[i].vkCode;
+            break;
+         }
+      }
+   }
+
+   return ret;
+}
+
+
 /********************************************************************/
 /* 
  * ExtractNewSpell: Similar to ExtractNewObject, but extracts a spell

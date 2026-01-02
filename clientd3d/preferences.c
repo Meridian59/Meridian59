@@ -1359,8 +1359,14 @@ static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lP
                 case 0xde:
                     strcpy_s(TCNewkey, sizeof(TCNewkey), "'");
                     break;
-                case VK_OEM_3:
+                case VK_BACKQUOTE:
                     strcpy_s(TCNewkey, sizeof(TCNewkey), "`");
+                    break;
+                case VK_OEM_MINUS:
+                    strcpy_s(TCNewkey, sizeof(TCNewkey), "-");
+                    break;
+                case VK_OEM_PLUS:
+                    strcpy_s(TCNewkey, sizeof(TCNewkey), "=");
                     break;
                 }
 

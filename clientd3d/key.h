@@ -30,6 +30,13 @@
 #define KEY_NONE   0x08
 #define KEY_ANY    0x10
 
+/* Key structure: virtual key code and modifier flags */
+typedef struct
+{
+   WORD vk_code; /* Virtual key code */
+   WORD flags;   /* Modifier keys */
+} Key;
+
 /* Translation table entry from key to action */
 typedef struct {
    WORD  vk_code;  /* Virtual key code */ 

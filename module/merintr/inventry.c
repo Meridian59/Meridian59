@@ -82,18 +82,18 @@ keymap inventory_key_table[] = {
 { 'R',            KEY_NONE,             A_TOGGLEUSE },
 { 'U',            KEY_NONE,             A_TOGGLEUSE },
 
-{ VK_F1,          KEY_NONE,             A_TEXTCOMMAND, },  // These keys filled in by aliases
-{ VK_F2,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F3,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F4,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F5,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F6,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F7,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F8,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F9,          KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F10,         KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F11,         KEY_NONE,             A_TEXTCOMMAND, },
-{ VK_F12,         KEY_NONE,             A_TEXTCOMMAND, },
+{ VK_F1,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+0, },  // These keys filled in by aliases
+{ VK_F2,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+1, },
+{ VK_F3,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+2, },
+{ VK_F4,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+3, },
+{ VK_F5,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+4, },
+{ VK_F6,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+5, },
+{ VK_F7,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+6, },
+{ VK_F8,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+7, },
+{ VK_F9,          KEY_NONE,             A_TEXTCOMMANDALIAS_START+8, },
+{ VK_F10,         KEY_NONE,             A_TEXTCOMMANDALIAS_START+9, },
+{ VK_F11,         KEY_NONE,             A_TEXTCOMMANDALIAS_START+10, },
+{ VK_F12,         KEY_NONE,             A_TEXTCOMMANDALIAS_START+11, },
 
 { 0, 0, 0},   // Must end table this way
 };

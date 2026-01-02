@@ -19,14 +19,12 @@
 #include "merintr.h"
 
 #define MAX_VERBLEN  10     // Maximum length of a command verb to alias
-#define MAX_ALIASLEN 100    // Maximum length of an alias command
-#define NUM_ALIASES  22     // Number of aliases
+#define NUM_FKEYS    12     // Number of function key aliases
 
 typedef struct
 {
    WORD  key;       // Key to assign alias to
    char  text[MAX_ALIASLEN + 1];      // Text command for alias
-   bool  cr;        // true iff alias is a self-contained command (add CR to end)
 } HotkeyAlias;
 
 typedef struct
@@ -37,28 +35,28 @@ typedef struct
 
 static HotkeyAlias aliases[] =
 {
-   { VK_F1,   "help",     true, },
-   { VK_F2,   "rest",     true, },
-   { VK_F3,   "stand",    true, },
-   { VK_F4,   "neutral",  true, },
-   { VK_F5,   "happy",    true, },
-   { VK_F6,   "sad",      true, },
-   { VK_F7,   "wry",      true, },
-   { VK_F8,   "wave",     true, },
-   { VK_F9,   "point",    true, },
-   { VK_F10,  "addgroup", true, },
-   { VK_F11,  "mail",     true, },
-   { VK_F12,  "quit",     true, },
-   { '1',     "",         true, },
-   { '2',     "",         true, },
-   { '3',     "",         true, },
-   { '4',     "",         true, },
-   { '5',     "",         true, },
-   { '6',     "",         true, },
-   { '7',     "",         true, },
-   { '8',     "",         true, },
-   { '9',     "",         true, },
-   { '10',    "",         true, },
+   { VK_F1,   "help",     },
+   { VK_F2,   "rest",     },
+   { VK_F3,   "stand",    },
+   { VK_F4,   "neutral",  },
+   { VK_F5,   "happy",    },
+   { VK_F6,   "sad",      },
+   { VK_F7,   "wry",      },
+   { VK_F8,   "wave",     },
+   { VK_F9,   "point",    },
+   { VK_F10,  "addgroup", },
+   { VK_F11,  "mail",     },
+   { VK_F12,  "quit",     },
+   { '0',     "",         },
+   { '1',     "",         },
+   { '2',     "",         },
+   { '3',     "",         },
+   { '4',     "",         },
+   { '5',     "",         },
+   { '6',     "",         },
+   { '7',     "",         },
+   { '8',     "",         },
+   { '9',     "",         },
 };
 
 static VerbAlias* _apVerbAliases = NULL;
@@ -91,7 +89,7 @@ static HWND hAliasDialog2 = NULL;
 
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-static void UpdateKeyTables(int key, WORD command, char *text);
+static void UpdateKeyTables(WORD command, char *text);
 extern bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
 
@@ -138,25 +136,20 @@ void AliasInit(void)
    for (i = 0; i < NUM_ALIASES; i++)
    {
       // Read function key aliases
-      sprintf(temp, "F%d", i + 1);
-      // GetPrivateProfileString(alias_section, temp, aliases[i].text,
+      bool isFKey = (aliases[i].key >= VK_F1 && aliases[i].key <= VK_F12);
+      if (isFKey)
+      {
+         sprintf(temp, "F%d", aliases[i].key - VK_F1 + 1);
+      }
+      else 
+      {
+         sprintf(temp, "action%d", aliases[i].key - '0' + 1);
+      }
+
       GetPrivateProfileString(fullSection, temp, aliases[i].text, aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
 
-      // Check for CR
-      len = (int) strlen(aliases[i].text);
-      if (len > 0 && aliases[i].text[len - 1] == '~')
-      {
-	 command = A_TEXTINSERT;
-	 aliases[i].text[len - 1] = 0;
-	 aliases[i].cr = false;
-      }
-      else
-      {
-	 command = A_TEXTCOMMAND;
-	 aliases[i].cr = true;
-      }
-
-      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
+      command = A_TEXTCOMMANDALIAS_START + i;
+      UpdateKeyTables(command, aliases[i].text);
    }
 }
 
@@ -231,7 +224,7 @@ void AliasExit(void)
 void AliasSave(void)
 {
    int i, len;
-   char temp[10], text[MAX_ALIASLEN + 1];
+   char temp[10];
    char fullSection[255];
    char destName[128];
    char *srcName;
@@ -257,21 +250,20 @@ void AliasSave(void)
    for (i = 0; i < NUM_ALIASES; i++)
    {
       // Save function key aliases
-      sprintf(temp, "F%d", i + 1);
-
-      if (aliases[i].cr)
+      bool isFKey = (aliases[i].key >= VK_F1 && aliases[i].key <= VK_F12);
+      if (isFKey)
       {
-         strcpy(text, aliases[i].text);
-         command = A_TEXTCOMMAND;
+         sprintf(temp, "F%d", aliases[i].key - VK_F1 + 1);
       }
       else
       {
-         sprintf(text, "%s~", aliases[i].text);
-         command = A_TEXTINSERT;
+         sprintf(temp, "action%d", aliases[i].key - '0' + 1);
       }
-      WritePrivateProfileString(fullSection, temp, text, cinfo->ini_file);
 
-      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
+      command = A_TEXTCOMMANDALIAS_START + i;
+      WritePrivateProfileString(fullSection, temp, aliases[i].text, cinfo->ini_file);
+
+      UpdateKeyTables(command, aliases[i].text);
    }
 
    strcpy(fullSection, command_section);
@@ -292,25 +284,15 @@ void AliasSave(void)
 }
 /****************************************************************************/
 /*
- * AliasSetKey:  Set up given alias to given virtual key code in given key table.
+ * AliasSetCommand:  Set the data (command alias) to a particular command alias ID in a given key table.
  */
-void AliasSetKey(KeyTable table, WORD vk_key, WORD flags, WORD command, void *data)
+void AliasSetCommand(KeyTable table, WORD command, void *data)
 {
-   int index;
-   WORD table_flags;
-
-   for (index = 0; table[index].vk_code != 0; index++)
+   for (int index = 0; table[index].vk_code != 0; index++)
    {
-      if (table[index].vk_code != vk_key)
+      if (table[index].command != command)
          continue;
-
-      table_flags = table[index].flags;
-
-      if (table_flags == KEY_ANY || (table_flags & flags))
-      {
-         table[index].command = command;
-         table[index].data = data;
-      }
+      table[index].data = data;
    }
 }
 /****************************************************************************/
@@ -565,54 +547,70 @@ INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
    {
    case WM_INITDIALOG:
       // Show current aliases
-      for (i=0; i < NUM_ALIASES; i++)
+      for (i = 0; i < NUM_ALIASES; i++)
       {
-	 hEdit = GetDlgItem(hDlg, IDC_ALIASF1 + i);
-	 SetWindowText(hEdit, aliases[i].text);
-	 Edit_LimitText(hEdit, MAX_ALIASLEN - 1);
-	 SetWindowFont(hEdit, GetFont(FONT_LIST), FALSE);
+         int controlID = (i < NUM_FKEYS) ? (IDC_ALIASF1 + i) : (IDC_ALIAS_ACTION1 + (i - NUM_FKEYS));
+         int checkID = (i < NUM_FKEYS) ? (IDC_CHECK_F1 + i) : (IDC_CHECK_ACTION1 + (i - NUM_FKEYS));
 
-	 CheckDlgButton(hDlg, IDC_CHECK_F1 + i, aliases[i].cr);
+         hEdit = GetDlgItem(hDlg, controlID);
+
+         // Strip off the '~' for display purposes
+         char temp[MAX_ALIASLEN + 1];
+         bool cr = true;
+         strcpy(temp, aliases[i].text);
+         if (aliases[i].text[strlen(aliases[i].text) - 1] == '~')
+         {
+            cr = false;
+            temp[strlen(aliases[i].text) - 1] = '\0';
+         }
+         SetWindowText(hEdit, temp);
+
+         Edit_LimitText(hEdit, MAX_ALIASLEN - 1);
+         SetWindowFont(hEdit, GetFont(FONT_LIST), FALSE);
+
+         CheckDlgButton(hDlg, checkID, cr);
       }
 
       hAliasDialog = hDlg;
       hAliasDialog1 = hDlg;
       if (hAliasDialog2)
-	 DestroyWindow(GetDlgItem(hDlg, IDC_TUNNEL));
+         DestroyWindow(GetDlgItem(hDlg, IDC_TUNNEL));
 
       CenterWindow(hDlg, GetParent(hDlg));
       return TRUE;
 
    case WM_COMMAND:
-      switch(GET_WM_COMMAND_ID(wParam, lParam))
+      switch (GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDOK:
-	 // Read aliases
-	 for (i=0; i < NUM_ALIASES; i++)
-	 {
-	    GetDlgItemText(hDlg, IDC_ALIASF1 + i, aliases[i].text, MAX_ALIASLEN - 1);
-	    aliases[i].cr = IsDlgButtonChecked(hDlg, IDC_CHECK_F1 + i);
-	    if (aliases[i].cr)
-	       command = A_TEXTCOMMAND;
-	    else command = A_TEXTINSERT;
-	    AliasSetKey(interface_key_table, aliases[i].key, KEY_NONE, command, aliases[i].text);
-	    AliasSetKey(inventory_key_table, aliases[i].key, KEY_NONE, command, aliases[i].text);
-	 }
+         // Read aliases
+         for (i = 0; i < NUM_ALIASES; i++)
+         {
+            int controlID = (i < NUM_FKEYS) ? (IDC_ALIASF1 + i) : (IDC_ALIAS_ACTION1 + (i - NUM_FKEYS));
+            int checkID = (i < NUM_FKEYS) ? (IDC_CHECK_F1 + i) : (IDC_CHECK_ACTION1 + (i - NUM_FKEYS));
+            GetDlgItemText(hDlg, controlID, aliases[i].text, MAX_ALIASLEN - 1);
+            if (!IsDlgButtonChecked(hDlg, checkID))
+            {
+               aliases[i].text[strlen(aliases[i].text)] = '~';
+            }
+            command = A_TEXTCOMMANDALIAS_START + i;
+            AliasSetCommand(interface_key_table, command, aliases[i].text);
+            AliasSetCommand(inventory_key_table, command, aliases[i].text);
+         }
 
-	 EndDialog(hDlg, IDOK);
-	 return TRUE;
+         EndDialog(hDlg, IDOK);
+         return TRUE;
 
       case IDCANCEL:
-	 EndDialog(hDlg, IDCANCEL);
-	 return TRUE;
+         EndDialog(hDlg, IDCANCEL);
+         return TRUE;
 
       case IDC_TUNNEL:
-	 if (!hAliasDialog2 &&
-	     IDOK == DialogBox(hInst, MAKEINTRESOURCE(IDD_CMDALIAS), hDlg, VerbAliasDialogProc))
-	 {
-	    AliasSave();
-	    SetFocus(GetDlgItem(hDlg, IDOK));
-	 }
+         if (!hAliasDialog2 && IDOK == DialogBox(hInst, MAKEINTRESOURCE(IDD_CMDALIAS), hDlg, VerbAliasDialogProc))
+         {
+            AliasSave();
+            SetFocus(GetDlgItem(hDlg, IDOK));
+         }
       }
       break;
 
@@ -621,7 +619,7 @@ INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       hAliasDialog1 = NULL;
       return TRUE;
    }
-   
+
    return FALSE;
 }
 /*****************************************************************************/
@@ -667,52 +665,52 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 
       // Prepare list of aliases currently defined.
       {
-	 LV_COLUMN lvcol;
-	 HWND hList;
-	 int i;
+         LV_COLUMN lvcol;
+         HWND hList;
+         int i;
 
-	 // Prepare list of aliases.
-	 hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
-	 SetWindowFont(hList, GetFont(FONT_LIST), FALSE);
-	 SetWindowLong(hList, GWL_STYLE, GetWindowLong(hList, GWL_STYLE) | LVS_SHOWSELALWAYS);
+         // Prepare list of aliases.
+         hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
+         SetWindowFont(hList, GetFont(FONT_LIST), FALSE);
+         SetWindowLong(hList, GWL_STYLE, GetWindowLong(hList, GWL_STYLE) | LVS_SHOWSELALWAYS);
 
-	 // Add column headings
-	 lvcol.mask = LVCF_TEXT | LVCF_WIDTH;
-	 lvcol.pszText = GetString(hInst, IDS_AHEADER0);
-	 lvcol.cx = 60;
-	 ListView_InsertColumn(hList, 0, &lvcol);
-	 lvcol.pszText = GetString(hInst, IDS_AHEADER1);
-	 lvcol.cx = 220;
-	 ListView_InsertColumn(hList, 1, &lvcol);
+         // Add column headings
+         lvcol.mask = LVCF_TEXT | LVCF_WIDTH;
+         lvcol.pszText = GetString(hInst, IDS_AHEADER0);
+         lvcol.cx = 60;
+         ListView_InsertColumn(hList, 0, &lvcol);
+         lvcol.pszText = GetString(hInst, IDS_AHEADER1);
+         lvcol.cx = 220;
+         ListView_InsertColumn(hList, 1, &lvcol);
 
-	 // Add aliases
-	 for (i = 0; i < _nVerbAliases; i++)
-	 {
-	    if (_apVerbAliases[i].verb[0])
-	    {
-	       LV_ITEM lvitem;
+         // Add aliases
+         for (i = 0; i < _nVerbAliases; i++)
+         {
+            if (_apVerbAliases[i].verb[0])
+            {
+               LV_ITEM lvitem;
 
-	       // Add item for verb.
-	       lvitem.mask = LVIF_TEXT;
-	       lvitem.iItem = ListView_GetItemCount(hList);
-	       lvitem.iSubItem = 0;
-	       lvitem.pszText = _apVerbAliases[i].verb;
-	       lvitem.iItem = ListView_InsertItem(hList, &lvitem);
+               // Add item for verb.
+               lvitem.mask = LVIF_TEXT;
+               lvitem.iItem = ListView_GetItemCount(hList);
+               lvitem.iSubItem = 0;
+               lvitem.pszText = _apVerbAliases[i].verb;
+               lvitem.iItem = ListView_InsertItem(hList, &lvitem);
 
-	       // Add subitem for command.
-	       lvitem.mask = LVIF_TEXT;
-	       lvitem.iSubItem = 1;
-	       lvitem.pszText = _apVerbAliases[i].text;
-	       ListView_SetItem(hList, &lvitem);
-	    }
-	 }
+               // Add subitem for command.
+               lvitem.mask = LVIF_TEXT;
+               lvitem.iSubItem = 1;
+               lvitem.pszText = _apVerbAliases[i].text;
+               ListView_SetItem(hList, &lvitem);
+            }
+         }
       }
 
       // Dialog is up.
       hAliasDialog = hDlg;
       hAliasDialog2 = hDlg;
       if (hAliasDialog1)
-	 DestroyWindow(GetDlgItem(hDlg, IDC_TUNNEL));
+         DestroyWindow(GetDlgItem(hDlg, IDC_TUNNEL));
 
       CenterWindow(hDlg, GetParent(hDlg));
       return TRUE;
@@ -720,238 +718,230 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
    case WM_NOTIFY:
       if (wParam != IDC_COMMAND_LIST)
       {
-	 return TRUE;
+         return TRUE;
       }
       else
       {
-	 NM_LISTVIEW* pnm = (NM_LISTVIEW*)lParam;
-	 LV_HITTESTINFO lvhit;
-	 LV_KEYDOWN* plvkey;
-	 HWND hList;
-	 int i;
+         NM_LISTVIEW *pnm = (NM_LISTVIEW *) lParam;
+         LV_HITTESTINFO lvhit;
+         LV_KEYDOWN *plvkey;
+         HWND hList;
+         int i;
 
-	 if (!pnm)
-	    break;
+         if (!pnm)
+            break;
 
-	 // Prepare list of aliases.
-	 hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
+         // Prepare list of aliases.
+         hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
 
-	 switch (pnm->hdr.code)
-	 {
-	 case NM_CLICK:
-	    {
-	       VerbAlias alias;
-	       LV_ITEM lvitem;
-	       HWND hList;
+         switch (pnm->hdr.code)
+         {
+         case NM_CLICK: {
+            VerbAlias alias;
+            LV_ITEM lvitem;
+            HWND hList;
 
-	       hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
+            hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
 
-	       // If you click anywhere on an item.
-	       GetCursorPos(&lvhit.pt);
-	       ScreenToClient(hList, &lvhit.pt);
-	       lvhit.pt.x = 3;
-	       i = ListView_HitTest(hList, &lvhit);
-	       if (i < 0)
-		  break;
+            // If you click anywhere on an item.
+            GetCursorPos(&lvhit.pt);
+            ScreenToClient(hList, &lvhit.pt);
+            lvhit.pt.x = 3;
+            i = ListView_HitTest(hList, &lvhit);
+            if (i < 0)
+               break;
 
-	       // Get our current definition.
-	       lvitem.mask = LVIF_TEXT;
-	       lvitem.iItem = i;
-	       lvitem.iSubItem = 0;
-	       lvitem.pszText = alias.verb;
-	       lvitem.cchTextMax = sizeof(alias.verb);
-	       ListView_GetItem(hList, &lvitem);
-	       lvitem.iSubItem = 1;
-	       lvitem.pszText = alias.text;
-	       lvitem.cchTextMax = sizeof(alias.text);
-	       ListView_GetItem(hList, &lvitem);
+            // Get our current definition.
+            lvitem.mask = LVIF_TEXT;
+            lvitem.iItem = i;
+            lvitem.iSubItem = 0;
+            lvitem.pszText = alias.verb;
+            lvitem.cchTextMax = sizeof(alias.verb);
+            ListView_GetItem(hList, &lvitem);
+            lvitem.iSubItem = 1;
+            lvitem.pszText = alias.text;
+            lvitem.cchTextMax = sizeof(alias.text);
+            ListView_GetItem(hList, &lvitem);
 
-	       // Put it up for editing.
-	       SetDlgItemText(hDlg, IDC_VERB, alias.verb);
-	       SetDlgItemText(hDlg, IDC_EXPANSION, alias.text);
+            // Put it up for editing.
+            SetDlgItemText(hDlg, IDC_VERB, alias.verb);
+            SetDlgItemText(hDlg, IDC_EXPANSION, alias.text);
 
-	       // Select and focus the item in the list.
-	       ListView_SetItemState(hList, i, 
-				     LVIS_SELECTED | LVIS_FOCUSED,
-				     LVIS_SELECTED | LVIS_FOCUSED);
-	    }
-	    break;
+            // Select and focus the item in the list.
+            ListView_SetItemState(hList, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+         }
+         break;
 
-	 case LVN_KEYDOWN:
-	    plvkey = (LV_KEYDOWN*)pnm;
-	    if (plvkey->wVKey == VK_DELETE)
-	    {
-//	       for (i = 0; i < nItems; i++)
-//		  if (is selected i)
-//		     ListView_DeleteItem(hList, i);
-	    }
-	    break;
-	 }
+         case LVN_KEYDOWN:
+            plvkey = (LV_KEYDOWN *) pnm;
+            if (plvkey->wVKey == VK_DELETE)
+            {
+               //	       for (i = 0; i < nItems; i++)
+               //		  if (is selected i)
+               //		     ListView_DeleteItem(hList, i);
+            }
+            break;
+         }
       }
       return TRUE;
 
    case WM_COMMAND:
-      switch(GET_WM_COMMAND_ID(wParam, lParam))
+      switch (GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDOK:
-	 // Erase current set and redefine words in the dialog.
-	 {
-	    int i, nItems;
-	    HWND hList;
-	    hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
+         // Erase current set and redefine words in the dialog.
+         {
+            int i, nItems;
+            HWND hList;
+            hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
 
-	    // Simulate a last click of 'Define' in case they forgot.
-	    // Does no harm if they left the boxes empty after their
-	    // last 'Define'.
-	    //
-	    ListView_ClearSelection(hList);
-	    SendMessage(hDlg, WM_COMMAND,
-	       (WPARAM)MAKELONG(IDC_DEFINE, BN_CLICKED),
-	       (LPARAM)GetDlgItem(hDlg, IDC_DEFINE));
+            // Simulate a last click of 'Define' in case they forgot.
+            // Does no harm if they left the boxes empty after their
+            // last 'Define'.
+            //
+            ListView_ClearSelection(hList);
+            SendMessage(hDlg, WM_COMMAND, (WPARAM) MAKELONG(IDC_DEFINE, BN_CLICKED),
+                        (LPARAM) GetDlgItem(hDlg, IDC_DEFINE));
 
-	    // Clear our real aliases and rebuild them from our listbox.
-	    //
-	    FreeVerbAliases();
-	    nItems = ListView_GetItemCount(hList);
-	    for (i = 0; i < nItems; i++)
-	    {
-	       VerbAlias alias;
-	       LV_ITEM lvitem;
+            // Clear our real aliases and rebuild them from our listbox.
+            //
+            FreeVerbAliases();
+            nItems = ListView_GetItemCount(hList);
+            for (i = 0; i < nItems; i++)
+            {
+               VerbAlias alias;
+               LV_ITEM lvitem;
 
-	       lvitem.mask = LVIF_TEXT;
-	       lvitem.iItem = i;
-	       lvitem.iSubItem = 0;
-	       lvitem.pszText = alias.verb;
-	       lvitem.cchTextMax = sizeof(alias.verb);
-	       ListView_GetItem(hList, &lvitem);
-	       lvitem.iSubItem = 1;
-	       lvitem.pszText = alias.text;
-	       lvitem.cchTextMax = sizeof(alias.text);
-	       ListView_GetItem(hList, &lvitem);
+               lvitem.mask = LVIF_TEXT;
+               lvitem.iItem = i;
+               lvitem.iSubItem = 0;
+               lvitem.pszText = alias.verb;
+               lvitem.cchTextMax = sizeof(alias.verb);
+               ListView_GetItem(hList, &lvitem);
+               lvitem.iSubItem = 1;
+               lvitem.pszText = alias.text;
+               lvitem.cchTextMax = sizeof(alias.text);
+               ListView_GetItem(hList, &lvitem);
 
-	       AddVerbAlias(alias.verb, alias.text);
-	    }
-	 }
-	 EndDialog(hDlg, IDOK);
-	 return TRUE;
+               AddVerbAlias(alias.verb, alias.text);
+            }
+         }
+         EndDialog(hDlg, IDOK);
+         return TRUE;
 
       case IDCANCEL:
-	 EndDialog(hDlg, IDCANCEL);
-	 return TRUE;
+         EndDialog(hDlg, IDCANCEL);
+         return TRUE;
 
-      case IDC_DEFINE:
-	 {
-	    VerbAlias alias;
-	    LV_ITEM lvitem;
-	    HWND hList;
+      case IDC_DEFINE: {
+         VerbAlias alias;
+         LV_ITEM lvitem;
+         HWND hList;
 
-	    hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
+         hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
 
-	    // Get our new definition.
-	    GetDlgItemText(hDlg, IDC_VERB, alias.verb, sizeof(alias.verb));
-	    GetDlgItemText(hDlg, IDC_EXPANSION, alias.text, sizeof(alias.text));
-	    if (!alias.verb[0])
-	    {
-	       SetFocus(GetDlgItem(hDlg, IDC_VERB));
-	       return TRUE;
-	    }
-	    if (!alias.text[0])
-	    {
-	       SetFocus(GetDlgItem(hDlg, IDC_EXPANSION));
-	       return TRUE;
-	    }
+         // Get our new definition.
+         GetDlgItemText(hDlg, IDC_VERB, alias.verb, sizeof(alias.verb));
+         GetDlgItemText(hDlg, IDC_EXPANSION, alias.text, sizeof(alias.text));
+         if (!alias.verb[0])
+         {
+            SetFocus(GetDlgItem(hDlg, IDC_VERB));
+            return TRUE;
+         }
+         if (!alias.text[0])
+         {
+            SetFocus(GetDlgItem(hDlg, IDC_EXPANSION));
+            return TRUE;
+         }
 
-	    // Simulate a remove so we don't have to hunt and modify existing entry.
-	    ListView_ClearSelection(hList);
-	    SendMessage(hDlg, WM_COMMAND,
-	       (WPARAM)MAKELONG(IDC_REMOVE, BN_CLICKED),
-	       (LPARAM)GetDlgItem(hDlg, IDC_REMOVE));
+         // Simulate a remove so we don't have to hunt and modify existing entry.
+         ListView_ClearSelection(hList);
+         SendMessage(hDlg, WM_COMMAND, (WPARAM) MAKELONG(IDC_REMOVE, BN_CLICKED),
+                     (LPARAM) GetDlgItem(hDlg, IDC_REMOVE));
 
-	    // Add item for verb.
-	    lvitem.mask = LVIF_TEXT;
-	    lvitem.iItem = ListView_GetItemCount(hList);
-	    lvitem.iSubItem = 0;
-	    lvitem.pszText = alias.verb;
-	    lvitem.iItem = ListView_InsertItem(hList, &lvitem);
+         // Add item for verb.
+         lvitem.mask = LVIF_TEXT;
+         lvitem.iItem = ListView_GetItemCount(hList);
+         lvitem.iSubItem = 0;
+         lvitem.pszText = alias.verb;
+         lvitem.iItem = ListView_InsertItem(hList, &lvitem);
 
-	    // Add subitem for command.
-	    lvitem.mask = LVIF_TEXT;
-	    lvitem.iSubItem = 1;
-	    lvitem.pszText = alias.text;
-	    ListView_SetItem(hList, &lvitem);
+         // Add subitem for command.
+         lvitem.mask = LVIF_TEXT;
+         lvitem.iSubItem = 1;
+         lvitem.pszText = alias.text;
+         ListView_SetItem(hList, &lvitem);
 
-	    // Clear the fields to try another.
-	    SetDlgItemText(hDlg, IDC_VERB, "");
-	    SetDlgItemText(hDlg, IDC_EXPANSION, "");
-	    SetFocus(GetDlgItem(hDlg, IDC_VERB));
-	 }
-	 return TRUE;
+         // Clear the fields to try another.
+         SetDlgItemText(hDlg, IDC_VERB, "");
+         SetDlgItemText(hDlg, IDC_EXPANSION, "");
+         SetFocus(GetDlgItem(hDlg, IDC_VERB));
+      }
+         return TRUE;
 
-      case IDC_REMOVE:
-	 {
-	    char verb[MAX_VERBLEN+1];
-	    LV_FINDINFO lvfind;
-	    HWND hList;
-	    int i;
+      case IDC_REMOVE: {
+         char verb[MAX_VERBLEN + 1];
+         LV_FINDINFO lvfind;
+         HWND hList;
+         int i;
 
-	    hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
+         hList = GetDlgItem(hDlg, IDC_COMMAND_LIST);
 
-	    // Get our new definition.
-	    GetDlgItemText(hDlg, IDC_VERB, verb, sizeof(verb));
-	    if (!verb[0])
-	    {
-	       LV_ITEM lvitem;
+         // Get our new definition.
+         GetDlgItemText(hDlg, IDC_VERB, verb, sizeof(verb));
+         if (!verb[0])
+         {
+            LV_ITEM lvitem;
 
-	       i = ListView_GetSelection(hList);
-	       if (i < 0)
-	       {
-		  SetFocus(GetDlgItem(hDlg, IDC_VERB));
-		  return TRUE;
-	       }
+            i = ListView_GetSelection(hList);
+            if (i < 0)
+            {
+               SetFocus(GetDlgItem(hDlg, IDC_VERB));
+               return TRUE;
+            }
 
-	       lvitem.mask = LVIF_TEXT;
-	       lvitem.iItem = i;
-	       lvitem.iSubItem = 0;
-	       lvitem.pszText = verb;
-	       lvitem.cchTextMax = sizeof(verb);
-	       ListView_GetItem(hList, &lvitem);
-	       if (!verb[0])
-	       {
-		  SetFocus(GetDlgItem(hDlg, IDC_VERB));
-		  return TRUE;
-	       }
-	    }
+            lvitem.mask = LVIF_TEXT;
+            lvitem.iItem = i;
+            lvitem.iSubItem = 0;
+            lvitem.pszText = verb;
+            lvitem.cchTextMax = sizeof(verb);
+            ListView_GetItem(hList, &lvitem);
+            if (!verb[0])
+            {
+               SetFocus(GetDlgItem(hDlg, IDC_VERB));
+               return TRUE;
+            }
+         }
 
-	    // Find item for verb.
-	    lvfind.flags = LVFI_STRING | LVFI_WRAP; // not LVFI_PARTIAL
-	    lvfind.psz = verb;
-	    lvfind.lParam = 0;
-	    i = ListView_FindItem(hList, -1, &lvfind);
-	    if (i < 0)
-	    {
-	       SetFocus(GetDlgItem(hDlg, IDC_VERB));
-	       Edit_SetSel(GetDlgItem(hDlg, IDC_VERB), 0, -1);
-	       return TRUE;
-	    }
+         // Find item for verb.
+         lvfind.flags = LVFI_STRING | LVFI_WRAP;  // not LVFI_PARTIAL
+         lvfind.psz = verb;
+         lvfind.lParam = 0;
+         i = ListView_FindItem(hList, -1, &lvfind);
+         if (i < 0)
+         {
+            SetFocus(GetDlgItem(hDlg, IDC_VERB));
+            Edit_SetSel(GetDlgItem(hDlg, IDC_VERB), 0, -1);
+            return TRUE;
+         }
 
-	    // Remove item.
-	    ListView_DeleteItem(hList, i);
+         // Remove item.
+         ListView_DeleteItem(hList, i);
 
-	    // Clear the fields to try another.
-	    SetDlgItemText(hDlg, IDC_VERB, "");
-	    SetDlgItemText(hDlg, IDC_EXPANSION, "");
-	    SetFocus(GetDlgItem(hDlg, IDC_VERB));
-	 }
-	 return TRUE;
+         // Clear the fields to try another.
+         SetDlgItemText(hDlg, IDC_VERB, "");
+         SetDlgItemText(hDlg, IDC_EXPANSION, "");
+         SetFocus(GetDlgItem(hDlg, IDC_VERB));
+      }
+         return TRUE;
 
       case IDC_TUNNEL:
-	 if (!hAliasDialog1 &&
-	     IDOK == DialogBox(hInst, MAKEINTRESOURCE(IDD_ALIAS), hDlg, AliasDialogProc))
-	 {
-	    AliasSave();
-	    SetFocus(GetDlgItem(hDlg, IDOK));
-	 }
-	 return TRUE;
+         if (!hAliasDialog1 && IDOK == DialogBox(hInst, MAKEINTRESOURCE(IDD_ALIAS), hDlg, AliasDialogProc))
+         {
+            AliasSave();
+            SetFocus(GetDlgItem(hDlg, IDOK));
+         }
+         return TRUE;
       }
       break;
 
@@ -960,7 +950,7 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
       hAliasDialog2 = NULL;
       return TRUE;
    }
-   
+
    return FALSE;
 }
 
@@ -970,11 +960,11 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
  * depending on the client configuration, then also update the inventory key
  * table so that the hotkey aliases work when the user is in that child window
  */
-static void UpdateKeyTables(int key, WORD command, char *text)
+static void UpdateKeyTables(WORD command, char *text)
 {
    if (gbClassicKeys) 
-      AliasSetKey(interface_key_table, key, KEY_NONE, command, text);
+      AliasSetCommand(interface_key_table, command, text);
    else
-      AliasSetKey(gCustomKeys, key, KEY_NONE, command, text);
-   AliasSetKey(inventory_key_table, key, KEY_NONE, command, text);
+      AliasSetCommand(gCustomKeys, command, text);
+   AliasSetCommand(inventory_key_table, command, text);
 }

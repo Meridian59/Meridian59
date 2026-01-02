@@ -7,6 +7,9 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
+// Variables
+extern room_type current_room;
+
 void D3DParticleDestroy(particle *pParticle);
 
 void D3DParticleSystemReset(particle_system *pParticleSystem)
@@ -15,45 +18,65 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 	pParticleSystem->emitterList = NULL;
 }
 
-void D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
-							float velX, float velY, float velZ, unsigned char b, unsigned char g,
-							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos,
-							int randomRot)
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, int timerBase, 
+								bool bWeatherEffect)
 {
 	emitter	*pEmitter = NULL;
 
 	if (pParticleSystem == NULL)
-		return;
+		return nullptr;
 
 	pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
 
 	if (pEmitter == NULL)
-		return;
+		return nullptr;
 
 	memset(pEmitter, 0, sizeof(emitter));
 
 	pEmitter->numParticles = 0;
-	pEmitter->bRandomize = bRandomize;
-	pEmitter->pos.x = posX;
-	pEmitter->pos.y = posY;
-	pEmitter->pos.z = posZ;
-	pEmitter->rotation.x = rotX;
-	pEmitter->rotation.y = rotY;
-	pEmitter->rotation.z = rotZ;
-	pEmitter->velocity.x = velX;
-	pEmitter->velocity.y = velY;
-	pEmitter->velocity.z = velZ;
 	pEmitter->energy = energy;
 	pEmitter->timer = timerBase;
 	pEmitter->timerBase = timerBase;
-	pEmitter->bgra.b = b;
-	pEmitter->bgra.g = g;
-	pEmitter->bgra.r = r;
-	pEmitter->bgra.a = a;
+	
+	// bWeatherEffect makes particles clear when hitting ceilings or floors. It also
+	// randomzies velocity.z a bit, and also ignores randomPos for the z-axis.
+	pEmitter->bWeatherEffect = bWeatherEffect;
+	
+	return pEmitter;
+}
+void D3DParticleEmitterSetPos(emitter *pEmitter, float posX, float posY, float posZ)
+{
+	pEmitter->pos.x = posX;
+	pEmitter->pos.y = posY;
+	pEmitter->pos.z = posZ;
+}
+void D3DParticleEmitterSetVel(emitter *pEmitter, float velX, float velY, float velZ)
+{
+	pEmitter->velocity.x = velX;
+	pEmitter->velocity.y = velY;
+	pEmitter->velocity.z = velZ;
+}
+void D3DParticleEmitterSetRot(emitter *pEmitter, float rotX, float rotY, float rotZ)
+{
+	pEmitter->rotation.x = rotX;
+	pEmitter->rotation.y = rotY;
+	pEmitter->rotation.z = rotZ;	
+}
+// Randomizes particle position and rotation. Setting any one of them to '0' disables it.
+void D3DParticleEmitterSetRandom(emitter *pEmitter, int randomPos, int randomRot)
+{
 	pEmitter->randomPos = randomPos;
 	pEmitter->randomRot = randomRot;
-
+}
+void D3DParticleEmitterSetBGRA(emitter *pEmitter, const custom_bgra &newBGRA)
+{
+	pEmitter->bgra.b = newBGRA.b;
+	pEmitter->bgra.g = newBGRA.g;
+	pEmitter->bgra.r = newBGRA.r;
+	pEmitter->bgra.a = newBGRA.a;	
+}
+void D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter)
+{
 	if (NULL == pParticleSystem->emitterList)
 		pParticleSystem->emitterList =
 			list_create(pEmitter);
@@ -124,6 +147,24 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 				pParticle->pos.y += pParticle->velocity.y;
 				pParticle->pos.z += pParticle->velocity.z;
 
+				// bWeatherEffect means that every frame, each particle checks in their leaf sector if they
+				// hit a ceiling or floor. If so, the particle is cleared.
+				if (pEmitter->bWeatherEffect)
+				{
+					BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
+					if (leaf && leaf->sector->ceiling)
+					{
+						D3DParticleDestroy(pParticle);
+						pEmitter->numParticles--;
+						continue;
+					}
+					if (leaf && (pParticle->pos.z < GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector)))
+					{
+						pParticle->energy = 0;
+						continue;
+					}
+				}
+
 				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
 				assert(pPacket);
 				pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
@@ -165,7 +206,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 						pParticle->pos.y = pEmitter->pos.y;
 						pParticle->pos.z = pEmitter->pos.z;
 
-						if (pEmitter->bRandomize)
+						if (pEmitter->randomPos)
 						{
 							int	sign = 1;
 
@@ -176,10 +217,19 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 							if ((int)rand() & 1)
 								sign = -sign;
 							pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
-
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
+							
+							// Weather particles spawn randomly between half height to max height.
+							if (pEmitter->bWeatherEffect)
+							{
+								pParticle->pos.z -= ((int)rand() & (pEmitter->randomPos)/2);
+							}
+							// Otherwise, randomize z-position if this isn't a weather particle.
+							else
+							{
+								if ((int)rand() & 1)
+									sign = -sign;
+								pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
+							}
 						}
 
 						pParticle->velocity.x = pEmitter->velocity.x;
@@ -190,23 +240,18 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 						pParticle->rotation.y = pEmitter->rotation.y;
 						pParticle->rotation.z = pEmitter->rotation.z;
 
-						if (pEmitter->bRandomize)
+						// Randomizes z-velocity a bit for weather effects.
+						if (pEmitter->bWeatherEffect)
+						{
+							pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
+						}
+
+						if (pEmitter->randomRot)
 						{
 							float	random, sign;
 
 							sign = 1;
 
-/*							random = (int)rand() % 10;
-							random = DEGREES_TO_RADIANS(random);
-							pParticle->rotation.x += random * sign;
-
-							random = (int)rand() % 10;
-							random = DEGREES_TO_RADIANS(random);
-							pParticle->rotation.y += random * sign;
-
-							random = (int)rand() % 10;
-							random = DEGREES_TO_RADIANS(random);
-							pParticle->rotation.z += random * sign;*/
 							random = (int)rand() % pEmitter->randomRot;
 							if (random <= 1)
 								random = 2;

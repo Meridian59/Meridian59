@@ -47,5 +47,7 @@ void EffectsExit(void);
 bool IsBlind(void);
 bool PerformEffect(WORD effect, char *ptr, int len);
 bool AnimateEffects(int dt);
+void NewWeather(BYTE weather_effect);
+bool IsClearWeather(void);
 
 #endif /* #ifndef _EFFECT_H */

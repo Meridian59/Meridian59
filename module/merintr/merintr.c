@@ -981,7 +981,7 @@ static Key GetKeyFromName(char *strIn)
       }
    }
 
-   int len = strlen(str);
+   size_t len = strlen(str);
    if ((len == 1) && (str[0] >= 'a') && (str[0] <= 'z'))
    {
       strupr(str);

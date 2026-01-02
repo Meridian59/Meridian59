@@ -527,7 +527,7 @@ void PerformAction(int action, const void *action_data)
    if(action == A_TEXTCOMMAND || action >= A_TEXTCOMMANDALIAS_START && action <= A_TEXTCOMMANDALIAS_END)
    {
       char *command = (char *) action_data;
-      int len = strlen(command);
+      size_t len = strlen(command);
       if (command[len - 1] != '~')
       {
          // No ~, that means we have a complete command

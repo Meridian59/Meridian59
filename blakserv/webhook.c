@@ -63,7 +63,7 @@ bool InitWebhooks(void)
 
 void ShutdownWebhooks(void)
 {
-    if (!webhook_initialized) {
+    if (!IsWebhookEnabled()) {
         return;
     }
 
@@ -86,7 +86,7 @@ bool IsWebhookEnabled(void)
 
 bool SendWebhookMessage(const char* message, int len)
 {
-    if (!webhook_initialized || !message || len <= 0) {
+    if (!IsWebhookEnabled() || !message || len <= 0) {
         return false;
     }
 

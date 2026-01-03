@@ -70,6 +70,7 @@ properties:
    prWeapon = statue_default_sword
    prShield = statue_default_shield
    prBowTop = $
+   prInstrument = $
    
    piIcon_frame = 1
    piLegs_frame = 1
@@ -237,6 +238,12 @@ messages:
          if prShield <> $
          {
             piShield_frame = 2;
+            piLeft_frame = 7;
+            piOverlays = piOverlays + 1;
+         }
+
+         if prInstrument <> $
+         {
             piLeft_frame = 7;
             piOverlays = piOverlays + 1;
          }
@@ -438,7 +445,7 @@ messages:
 
    SetStatue(original = $)
    {      
-      local oWeapon, oShield, oMask;
+      local oWeapon, oShield, oMask, oInstrument;
 
       if original = $ OR NOT IsClass(original,&User)
       {
@@ -478,6 +485,14 @@ messages:
       {
          oShield = Send(poOriginal, @LookupPlayerShield);
          piShield_hotspot = Send(oShield, @GetOverlayHotspot);
+      }
+
+      % Check for instrument (e.g. lute)
+      prInstrument = $;
+      oInstrument = send(poOriginal,@LookupPlayerInstrument);
+      if oInstrument <> $
+      {
+         prInstrument = send(oInstrument,@GetOverlay);
       }
 
       prBowTop = $; 
@@ -592,6 +607,14 @@ messages:
          }      
 
          AddPacket(1,ANIMATE_NONE,2,piShield_frame);  
+      }
+
+      % Instrument overlay (e.g. lute)
+      if prInstrument <> $ AND piPose = POSE_NONE
+      {
+         AddPacket(4,prInstrument);
+         AddPacket(1,HS_LEFT_WEAPON);
+         AddPacket(1,ANIMATE_NONE,2,1);
       }
 
       if prWeapon <> $ AND (piPose <> POSE_CAST AND piPose <> POSE_PUNCH)

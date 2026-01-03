@@ -5339,6 +5339,22 @@ messages:
 
       return $;
    }
+
+   LookupPlayerInstrument()
+   "Returns the instrument currently in use."
+   {
+      local i;
+
+      for i in plUsing
+      {
+         if IsClass(i,&Instrument)
+         {
+            return i;
+         }      
+      } 
+
+      return $;
+   }
    
    LeaveHold(what = $)
    {

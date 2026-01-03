@@ -87,6 +87,7 @@ properties:
    piAnimation = ANIM_NONE
    pbSurfaced = FALSE
 
+   % When TRUE, the monster will attack by throwing a rock instead of melee attacking
    pbThrow = FALSE
 
    ptPostPop = $

@@ -2309,6 +2309,11 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int content_len, event_len, key_len, value_len;
     std::string json;
     
+    // Early exit if webhooks not enabled - avoid all string/JSON work
+    if (!IsWebhookEnabled()) {
+        return NIL;
+    }
+
     // Handle single string parameter
     if (num_normal_parms == 1) {
         msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);

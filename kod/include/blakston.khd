@@ -1130,14 +1130,22 @@
    OUTDOORS_10 = 10
 
    % Weather options
-   WEATHER_DAY = 1
-   WEATHER_NIGHT = 2
-   WEATHER_DAY_STORMY = 3
-   WEATHER_DUSK = 4
-   WEATHER_DUSK_STORMY = 5
-   WEATHER_DAWN = 6
-   WEATHER_DAWN_STORMY = 7
+   WEATHER_DAWN = 1
+   WEATHER_DAY = 2
+   WEATHER_DUSK = 3
+   WEATHER_NIGHT = 4
 
+   WEATHER_CLEAR = 1
+   WEATHER_CLOUDY = 2
+   WEATHER_RAIN = 3
+   WEATHER_SNOW = 4
+   
+   % Room climate
+   CLIMATE_TEMPERATE = 1
+   CLIMATE_TROPICAL = 2
+   CLIMATE_MOUNTAIN = 3
+
+   
    % Trees (linked to group numbers in the tree top/bottom .bgf)
    TREE_OAK = 1
    TREE_ELM = 2

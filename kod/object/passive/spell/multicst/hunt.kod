@@ -43,6 +43,9 @@ resources:
 
    hunt_lost_trackers = "You seem to have managed to lose your trackers!"
    hunt_gain_trackers = "You sense that someone knows where you are..."
+   hunt_target_offline = \
+      "You feel the magical trail begin to reach out in vain for your target, "
+      "but finding nothing it dissipates.  The target is no longer in the world."
 
 classvars:
 
@@ -76,14 +79,6 @@ properties:
    % Spell is harmful to the player it's cast upon.
    viHarmful = TRUE
 
-   % Disabled temporarily 
-   % When used on offline targets who log on during it's duration, the target
-   % will be tracked indefinitely. Offline players' timers are "frozen", but 
-   % Hunt introduces an active timer that decouples from the enchantment during
-   % reactivation of timers (when the player logs on). This should be addressed
-   % or the spell reworked before enabling.
-   pbEnabled = FALSE
-
 messages:      
 
    Constructed()  
@@ -110,6 +105,17 @@ messages:
       local i, oTarget;
 
       oTarget = First(lTargets);
+
+      % Check if target is online before applying the enchantment
+      if oTarget <> $ AND NOT Send(oTarget,@IsLoggedOn)
+      {
+         for i in lCasters
+         {
+            Send(i,@MsgSendUser,#message_rsc=hunt_target_offline);
+         }
+         
+         return;
+      }
 
       for i in Send(oPrism,@GetCasters)
       {

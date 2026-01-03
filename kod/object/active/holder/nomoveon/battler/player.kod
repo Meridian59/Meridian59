@@ -5341,6 +5341,7 @@ messages:
    }
 
    LookupPlayerInstrument()
+   "Returns the instrument currently in use."
    {
       local i;
 

@@ -415,18 +415,28 @@ messages:
       return;
    }
 
-   AppendDesc()
+   DoBaseDesc()
    {
-      local oSpell;
+      local oSpell, lData;
+
+      if Send(self,@HasAttribute,#ItemAtt=IA_NEW_DESCRIPTION)
+      {
+         lData = Send(self,@GetAttributeData,#ItemAtt=IA_NEW_DESCRIPTION);
+         AppendTempString(Nth(lData,2));
+      }
+      else
+      {
+         AppendTempString(vrDesc);
+      }
 
       % Find a spell, any spell, so we can get the string out of it for which school we are.
-      oSpell = send(SYS,@FindSpellByNum,#num=SID_BLINK);
-   
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLINK);
+
       AppendTempString(RobeInsignia_school_info1);
       AppendTempString(Send(oSpell,@GetSchoolStr,#iSchool=piSchool));
       AppendTempString(RobeInsignia_school_info2);
-   
-      propagate;
+
+      return;
    }
 
 

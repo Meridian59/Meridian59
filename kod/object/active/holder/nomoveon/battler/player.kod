@@ -8768,7 +8768,9 @@ messages:
    }
 
    ResetPlayerArms(alldone = TRUE)
-   "Sets our icon to its current shirted state (or default if no shirt worn)."
+    "Sets our icon to its current shirted state (or default if no shirt worn). If a shirt is "
+    "equipped it delegates arm setup to that shirt so shirt-specific arm graphics (e.g. tanktop) "
+    "are restored correctly."
    {
       local iShirt_xlat, i, bFound;
       poArms_set = $;
@@ -8787,6 +8789,20 @@ messages:
       
       if NOT bFound
       {
+         for i in plUsing
+         {
+            if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
+            {
+               Send(i,@SetArms);
+               
+               if poOwner <> $ AND alldone
+               {      
+                  Send(poOwner,@SomethingChanged,#what=self);
+               }
+               return;
+            }
+         }
+
          if piGender = GENDER_MALE
          {
             prRight_arm = player_Rightarm_a_rsc;
@@ -11877,7 +11893,7 @@ messages:
       
       for i in plUsing
       {
-         if IsClass(i,&shirt)
+         if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
          {
             return Send(i,@GetPaletteTranslation);
          }

@@ -8799,7 +8799,7 @@ messages:
          }
       }
       
-      iShirt_xlat = Send(self,@GetDefaultShirtTranslation);         
+      iShirt_xlat = Send(self,@GetCurrentShirtColor);
       piBody_translations2 = piBody_translations2 & ~PLAYER_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirt_xlat * PLAYER_TRANSLATION2_ARMS_MUL);
 

@@ -8768,7 +8768,7 @@ messages:
    }
 
    ResetPlayerArms(alldone = TRUE)
-   "Sets our icon to its natural, default-shirted state."
+   "Sets our icon to its current shirted state (or default if no shirt worn)."
    {
       local iShirt_xlat, i, bFound;
       poArms_set = $;

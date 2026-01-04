@@ -55,7 +55,7 @@ messages:
 
    NewOwner(what = $)
    {
-      if poOwner <> $ AND IsClass(what,&Battler)
+      if what <> $ AND IsClass(what,&Battler)
       {
          pbGathered = TRUE;
       }

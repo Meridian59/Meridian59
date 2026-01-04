@@ -8791,7 +8791,7 @@ messages:
       {
          for i in plUsing
          {
-            if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
+            if IsClass(i,&Shirt)
             {
                Send(i,@SetArms);
                

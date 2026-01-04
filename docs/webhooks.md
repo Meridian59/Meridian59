@@ -200,15 +200,13 @@ When the webhook listener starts, it creates multiple named pipes to handle conn
 ### 2. Connection (M59 server side)
 When the Meridian 59 server starts:
 
-1. **Initialization**: `InitWebhooks()` checks if webhooks are enabled in config
-   - If disabled (default): Sets `webhook_initialized = false`, returns immediately
-   - If enabled: Prepares internal state, sets `webhook_initialized = true`
+1. **Initialization**: `InitWebhooks()` checks if webhooks are enabled in config and prepares internal state
 2. **Lazy Connection**: On first message send, server attempts to connect to available pipes
 3. **Claiming**: First available pipe is claimed and kept open for subsequent messages
 4. **Messaging**: `SendWebhookMessage()` writes to the connected pipe
 5. **Cleanup**: `ShutdownWebhooks()` closes connections on server shutdown
 
-**Performance Optimization**: When webhooks are disabled, the `IsWebhookEnabled()` check in `C_SendWebhook()` returns false immediately, avoiding all string processing and JSON building. This is why changing the webhook config requires a server restart - the enabled state is cached at startup for performance.
+**Performance Optimization**: When webhooks are disabled, `IsWebhookEnabled()` returns false immediately, avoiding all string processing and JSON building. This is why changing the webhook config requires a server restart - the enabled state is cached at startup for performance.
 
 ### 3. Message Flow
 ```

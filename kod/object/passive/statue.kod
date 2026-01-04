@@ -527,11 +527,6 @@ messages:
       return;
    }
 
-   UpgradeStatue()
-   {
-      return;
-   }
-
    SendOverlays()
    {
       local iSkin_xlat;

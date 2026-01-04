@@ -527,25 +527,6 @@ messages:
       return;
    }
 
-   UpgradeStatue()
-   {
-      % Legacy statues stored facial overlay as an object reference. Convert to resource.
-      % Facial overlays (masks) added in patch 1.3.2 / client 732.
-      % https://github.com/Meridian59/Meridian59/issues/1268
-      % This function to be removed after it has been run via "send class" from admin mode on the server.
-
-      % Check if prFacialOverlay is an object (legacy)
-      if IsObject(prFacialOverlay)
-      {
-         % Legacy: prFacialOverlay is an object reference, convert to resource
-         % The mask object should already have its owner set, just get the overlay
-         prFacialOverlay = Send(prFacialOverlay,@GetOverlay);
-         Send(self,@ResetFrames);
-      }
-      
-      return;
-   }
-
    SendOverlays()
    {
       local iSkin_xlat;

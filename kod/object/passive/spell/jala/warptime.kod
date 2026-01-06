@@ -36,15 +36,15 @@ classvars:
    vrIcon = WarpTime_icon_rsc
    vrDesc = WarpTime_desc_rsc
 
-   viMana = 5          % Mana is amount used upon inititiation
-   viManaDrain = 5     % Drain is amount used every viDrainTime milliseconds
-   viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
+   viMana = 5           % Mana is amount used upon initiation
+   viManaDrain = 5      % Drain is amount used every `viDrainTime` milliseconds
+   viDrainTime = 5000   % Drain some mana every `viDrainTime` milliseconds
    viSpell_num = SID_WARP_TIME
 
    viSchool = SS_JALA
    viSpell_level = 2
 
-   viHarmful = False
+   viHarmful = FALSE
 
 properties:
    
@@ -65,10 +65,14 @@ messages:
    {
       local i, oEnch, state, bFound, tranceTimeLeft;
 
-      if who = $ or not isClass(who,&Player) { propagate; }
+      if (who = $) OR NOT IsClass(who,&Player) 
+      {
+         propagate;
+      }
 
       bFound = FALSE;
-      for i in send(who,@GetEnchantmentsByClass,#enchClass=&Trance)
+
+      for i in Send(who,@GetEnchantmentsByClass,#enchClass=&Trance)
       {
          bFound = TRUE;
          oEnch = Nth(i,2);
@@ -79,8 +83,8 @@ messages:
             state = Nth(i,3);
          }
          
-         tranceTimeLeft = getTimeRemaining(first(i));
-         tranceTimeLeft = send(self,@GetStretchedTime,#oldTime=tranceTimeLeft,#oRoom=send(who,@getOwner));
+         tranceTimeLeft = GetTimeRemaining(first(i));
+         tranceTimeLeft = Send(self,@GetStretchedTime,#oldTime=tranceTimeLeft,#oRoom=Send(who,@getOwner));
 
          % break the old trance
          Send(oEnch,@BreakTrance,#who=who,#state=state,#event=EVENT_STEER);
@@ -91,41 +95,45 @@ messages:
 
       if bFound
       {
-         send(who,@MsgSendUser,#message_rsc=warptime_StartEnchantment);
+         Send(who,@MsgSendUser,#message_rsc=warptime_StartEnchantment);
       }
       
       propagate;
    }
 
-   GetStretchedTime(oldtime=0, iSpellPower=0, oRoom=$)
+   GetStretchedTime( oldtime=0, iSpellPower=0, oRoom=$ )
    {
       if oRoom <> $
       {
-         iSpellPower = nth(send(oRoom,@GetEnchantmentState,#what=self),3);
+         iSpellPower = Nth(Send(oRoom,@GetEnchantmentState,#what=self),3);
       }
       
-      return oldtime*(100+iSpellPower)/100;
+      return oldtime * (100 + iSpellPower) / 100;
    }
    
    GetUnstretchedTime(oldtime=0, iSpellPower=0, oRoom=$)
    {
       if oRoom <> $
       {
-         iSpellPower = nth(send(oRoom,@GetEnchantmentState,#what=self),3);
+         iSpellPower = Nth(Send(oRoom,@GetEnchantmentState,#what=self),3);
       }
       
-      return oldtime*100/(100+iSpellPower);
+      return oldtime * 100 / (100 + iSpellPower);
    }
 
-   RemoveEnchantment(who = $)
+   RemoveEnchantment( who = $ )
    "Called instead of EndEnchantment when trance is broken"
    {
       local i, oEnch, state, bFound, tranceTimeLeft;
 
-      if who = $ or not isClass(who,&Player) { propagate; }
+      if (who = $) OR NOT IsClass(who,&Player)
+      {
+         propagate;
+      }
 
       bFound = FALSE;
-      for i in send(who,@GetEnchantmentsByClass,#enchClass=&Trance)
+
+      for i in Send(who,@GetEnchantmentsByClass,#enchClass=&Trance)
       {
          oEnch = Nth(i,2);
          bFound = TRUE;
@@ -137,7 +145,7 @@ messages:
          }
 
          tranceTimeLeft = GetTimeRemaining(first(i));
-         tranceTimeLeft = send(self,@GetUnstretchedTime,#oldTime=tranceTimeLeft,#oRoom=send(who,@GetOwner));
+         tranceTimeLeft = Send(self,@GetUnstretchedTime,#oldTime=tranceTimeLeft,#oRoom=Send(who,@GetOwner));
 
          % break the old trance
          Send(oEnch,@BreakTrance,#who=who,#state=state,#event=EVENT_STEER);
@@ -148,12 +156,11 @@ messages:
 
       if bFound
       {
-         send(who,@MsgSendUser,#message_rsc=warptime_RemoveEnchantment);
+         Send(who,@MsgSendUser,#message_rsc=warptime_RemoveEnchantment);
       }
       
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

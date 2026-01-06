@@ -83,7 +83,7 @@ messages:
             state = Nth(i,3);
          }
          
-         tranceTimeLeft = GetTimeRemaining(first(i));
+         tranceTimeLeft = GetTimeRemaining(First(i));
          tranceTimeLeft = Send(self,@GetStretchedTime,#oldTime=tranceTimeLeft,#oRoom=Send(who,@getOwner));
 
          % break the old trance
@@ -144,7 +144,7 @@ messages:
             state = Nth(i,3);
          }
 
-         tranceTimeLeft = GetTimeRemaining(first(i));
+         tranceTimeLeft = GetTimeRemaining(First(i));
          tranceTimeLeft = Send(self,@GetUnstretchedTime,#oldTime=tranceTimeLeft,#oRoom=Send(who,@GetOwner));
 
          % break the old trance

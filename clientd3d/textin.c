@@ -121,6 +121,7 @@ void TextInputResize(int xsize, int ysize, AREA view)
 void TextInputSetFocus(bool forward)
 {
    SetFocus(hwndInput);
+   skip_selection = false;
    ComboBox_SetEditSel(hwndInput, 0, -1);  // select all text
 }
 /************************************************************************/
@@ -161,6 +162,7 @@ void TextInputSetText(char *text, bool focus)
    if (focus)
       SetFocus(hwndInput);
 
+   skip_selection = false;
    ComboBox_SetEditSel(hwndInput, len, len);  // Move caret to end of text
 }
 /************************************************************************/

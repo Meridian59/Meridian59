@@ -2,9 +2,9 @@
 
 # defining RELEASE compiles optimized
 # defining NODEBUG omits debugging information
-# defining FINAL implies release, and also removes debugging strings from client executable 
+# defining RETAIL implies release, and also removes debugging strings from client executable 
 
-!ifdef FINAL
+!ifdef RETAIL
 RELEASE = 1
 NODPRINTFS = 1
 !endif
@@ -61,6 +61,7 @@ KODINCLUDEDIR = $(KODDIR)\include
 PALETTEFILE = $(TOPDIR)\blakston.pal
 
 # compiler specs -- uses multi-threaded DLL C runtime library
+# /FC displays full path of source code file in diagnostics
 # /TP builds C files in C++ mode
 # /WX treats warnings as errors
 # /GR- turns off RTTI
@@ -72,7 +73,7 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /Zi includes debugging information
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
-             /wd4996 /wd4312 \
+             /wd4996 /wd4312 /FC \
 	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++20
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox

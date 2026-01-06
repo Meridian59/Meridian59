@@ -2304,11 +2304,15 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int num_normal_parms, parm_node normal_parm_array[],
     int num_name_parms, parm_node name_parm_array[])
 {
+    // Early exit if webhooks not enabled - avoid all string/JSON work
+    if (!IsWebhookEnabled()) {
+        return NIL;
+    }
+
     val_type msg_val, event_val, key_val, value_val;
     const char *content, *event_name, *key_str, *value_str;
     int content_len, event_len, key_len, value_len;
-    std::string json;
-    
+
     // Handle single string parameter
     if (num_normal_parms == 1) {
         msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2338,7 +2342,7 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     }
     
     // Start building JSON: {"event": "EventName", "params": {
-    json += "{\"event\":\"";
+    std::string json = "{\"event\":\"";
     json.append(event_name, event_len);
     json += "\",\"params\":{";
     

@@ -6651,7 +6651,6 @@ messages:
    PostPatchUpdates()
    "Runs one-time update functions after a patch. Call via 'send object 0 PostPatchUpdates'"
    {
-      Send(&Statue, @UpgradeStatue);
       return;
    }
 

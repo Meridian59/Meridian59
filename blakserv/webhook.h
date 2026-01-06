@@ -66,6 +66,6 @@ void ShutdownWebhooks(void);
  */
 bool SendWebhookMessage(const char* message, int len);
 
-
+bool IsWebhookEnabled(void);
 
 #endif /* _WEBHOOK_H */

@@ -46,7 +46,7 @@
 typedef INT64 int64;
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 35  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 36  /* Minor version of client program; must be in [0, 99] */
 
 #define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 
@@ -65,9 +65,6 @@ typedef INT64 int64;
 /* Due to problems with packet sniffers, include this constant in the AP_REQ_GAME packet */
 /* To make sure we are using the right version of the client */
 #define P_CATCH 3
-
-/* Enable for "retail", official builds, not for the open source version */
-//#define M59_RETAIL
 
 extern void GetGamePath( char *szGamePath );
 
@@ -102,11 +99,6 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include <string>
 #include <vector>
 #include <algorithm>
-
-#ifdef M59_RETAIL
-  // Minidump reporting
-  #include "bugsplat.h"
-#endif
 
 #include "resource.h"
 #include "proto.h"

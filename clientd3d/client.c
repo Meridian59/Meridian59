@@ -11,9 +11,14 @@
 */
 
 #include <assert.h>
-#include <crtdbg.h>
 
 #include "client.h"
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
+
 
 HWND hMain = NULL;             /* Main window */
 HINSTANCE hInst = NULL;           /* Program's instance */

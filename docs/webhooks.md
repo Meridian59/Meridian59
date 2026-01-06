@@ -4,6 +4,8 @@ The Meridian 59 webhook system enables the game server to send real-time notific
 
 **Note: Webhooks are disabled by default.** You must enable them in your server configuration.
 
+**Important: Changing webhook settings requires a server restart.** The webhook enabled/disabled state is checked once at startup and cached for performance. If you enable or disable webhooks in `blakserv.cfg`, you must restart the server for the change to take effect.
+
 ## Quick Start
 
 ### 1. Enable Webhooks
@@ -198,11 +200,13 @@ When the webhook listener starts, it creates multiple named pipes to handle conn
 ### 2. Connection (M59 server side)
 When the Meridian 59 server starts:
 
-1. **Initialization**: `InitWebhooks()` prepares internal state (does not connect pipes yet)
+1. **Initialization**: `InitWebhooks()` checks if webhooks are enabled in config and prepares internal state
 2. **Lazy Connection**: On first message send, server attempts to connect to available pipes
 3. **Claiming**: First available pipe is claimed and kept open for subsequent messages
 4. **Messaging**: `SendWebhookMessage()` writes to the connected pipe
 5. **Cleanup**: `ShutdownWebhooks()` closes connections on server shutdown
+
+**Performance Optimization**: When webhooks are disabled, `IsWebhookEnabled()` returns false immediately, avoiding all string processing and JSON building. This is why changing the webhook config requires a server restart - the enabled state is cached at startup for performance.
 
 ### 3. Message Flow
 ```

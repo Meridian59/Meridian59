@@ -222,6 +222,7 @@ void EnchantmentsMovePlayer(void)
 
       x += width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /************************************************************************/
@@ -251,6 +252,7 @@ void EnchantmentsMoveRoom(void)
 
       x -= width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /****************************************************************************/

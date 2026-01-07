@@ -143,7 +143,7 @@ messages:
          % This is conflicting armor - try to unequip the robe
          if Send(poOwner,@TryUnuseItem,#what=self)
          {
-            propagate;
+            return TRUE;
          }
          
          return FALSE;

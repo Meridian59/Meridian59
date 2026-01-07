@@ -34,7 +34,7 @@ resources:
    item_broken_battle_clothing_plural = "Your %s fall into useless tatters!"
 
    itematt_generic = \
-      " At first glance, it seems quite ordinary, but there is something odd "
+      "At first glance, it seems quite ordinary, but there is something odd "
       "about it you can't put your finger on."
 
    nakedleftarm_male = blg.bgf

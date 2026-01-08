@@ -78,13 +78,6 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, iSpellpower = $)
-   {
-      Send(who,@AddDefenseModifier,#what=self);
-      
-      propagate;
-   }
-
    EndEnchantment(who = $,state = $)
    {
       Send(who,@RemoveDefenseModifier,#what=self);
@@ -92,8 +85,14 @@ messages:
       propagate;
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(target=$, iSpellpower=0)
    {
+      % Add defense modifier here, after parent class confirms target is valid.
+      if target <> $
+      {
+         Send(target,@AddDefenseModifier,#what=self);
+      }
+
       return iSpellpower;
    }
 

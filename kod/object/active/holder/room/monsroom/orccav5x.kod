@@ -45,13 +45,14 @@ properties:
 
    prMusic = OrcCave5Ext_music
 
+   poPoolWater = $
+
 messages:
 
-   CreateStandardExits()
+   Constructor()
    {
-      plEdge_exits = $;
-      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_CAVE5, 12, 4, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_PIT, 64, 68, ROTATE_NONE], plEdge_exits);
+      % Create food item that can stand in for pool water
+      poPoolWater = Create(&Food);
 
       propagate;
    }
@@ -77,7 +78,7 @@ messages:
    UserDrink(who=$)
    {
       %% someone presses space bar in the pool, gets a cute little boost.
-      if NOT Send(who,@ReqEatSomething,#filling=viFilling,#what=self)
+      if NOT Send(who,@ReqEatSomething,#filling=viFilling,#what=poPoolWater)
       {
          return TRUE;
       }      
@@ -104,7 +105,16 @@ messages:
       propagate;
    }
 
+   Delete()
+   {
+      if poPoolWater <> $
+      {
+         Send(poPoolWater,@Delete);
+         poPoolWater = $;
+      }
 
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

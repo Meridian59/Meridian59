@@ -131,6 +131,7 @@ void InitBkodInterpret(void)
 	ccall_table[GETTEMPSTRING] = C_GetTempString;
 	ccall_table[CREATESTRING] = C_CreateString;
 	ccall_table[STRINGSUBSTITUTE] = C_StringSubstitute;
+	ccall_table[BUILDSTRING] = C_BuildString;
 	ccall_table[STRINGLENGTH] = C_StringLength;
 	ccall_table[STRINGCONSISTSOF] = C_StringConsistsOf;
 	

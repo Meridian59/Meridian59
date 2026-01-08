@@ -48,6 +48,7 @@ LIBARCHIVEDIR = $(EXTERNALDIR)\libarchive
 LIBPNGDIR   = $(EXTERNALDIR)\libpng
 ZLIBDIR     = $(EXTERNALDIR)\zlib
 OPENALDIR   = $(EXTERNALDIR)\openal-soft\openal-soft-1.24.3-bin
+FMTLIBDIR  = $(EXTERNALDIR)\fmtlib
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -71,8 +72,9 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /MP enables parallel compiling
 # /MT link with static C runtime library
 # /Zi includes debugging information
+# /DFMT_UNICODE=0 disables Unicode support for fmtlib
 
-CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
+CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 -DFMT_UNICODE=0 \
              /wd4996 /wd4312 /FC \
 	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++20
 
@@ -132,4 +134,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(OPENALDIR)\include
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(OPENALDIR)\include;$(FMTLIBDIR);

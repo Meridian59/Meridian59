@@ -222,6 +222,7 @@ void EnchantmentsMovePlayer(void)
 
       x += width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
       InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
@@ -252,6 +253,7 @@ void EnchantmentsMoveRoom(void)
 
       x -= width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
       InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }

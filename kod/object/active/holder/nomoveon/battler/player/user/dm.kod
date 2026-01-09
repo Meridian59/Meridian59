@@ -1339,13 +1339,13 @@ messages:
 	  if StringEqual(string,dm_precipitation_on_command)
          OR StringEqual(string,"precipitation on")
       {
-		 Send(poOwner,@TogglePrecipitation,#what=true);
+		 Send(poOwner,@TogglePrecipitation,#what=TRUE);
          return;
       }
       if StringEqual(string,dm_precipitation_off_command)
          OR StringEqual(string,"precipitation off")
       {
-         Send(poOwner,@TogglePrecipitation,#what=false);
+         Send(poOwner,@TogglePrecipitation,#what=FALSE);
          return;
       }
 	  

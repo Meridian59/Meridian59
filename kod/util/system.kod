@@ -288,17 +288,6 @@ properties:
    % For now, it's just used to apply rain to every room.
    piSeason = WEATHER_RAIN
 
-   % This sets the hourly intervals within a day for checking if the weather
-   % should change.  Setting this to 0 turns off the hourly checks, while
-   % setting this to 24 (max) performs the check once every midnight.
-   piWeatherInterval = 3
-   
-   % Percentage chance to shift weather based on the current weather.
-   piClearToCloudy = 20
-   piCloudyToClear = 30
-   piCloudyToStormy = 40
-   piStormyToCloudy = 75
-
    poLibrary = $
    poParliament = $
    poLore = $
@@ -1107,7 +1096,7 @@ messages:
    SetHour(num = $)
    {
       piHour = num mod 24;
-      Send(self,@NewGameHour,#bTimeAdjusted=true);
+      Send(self,@NewGameHour,#bTimeManuallySet=TRUE);
       return;
    }
 
@@ -3611,34 +3600,44 @@ messages:
    RecalcWeatherConditions()
    "Determines randomly if the weather shifts, based on the current weather."
    {
-	  local randomResult;
-	  randomResult = Random(1,100);
+	  local iRandomResult,iClearChance,iCloudyChance,iStormyChance;
+
+	  iRandomResult = Random(1,100);
 	  
-	  if piCurrent_weather = WEATHER_CLEAR AND randomResult <= piClearToCloudy
+	  if piCurrent_weather = WEATHER_CLEAR
 	  {
-         piCurrent_weather = WEATHER_CLOUDY;
-		 return;
+         iCloudyChance = Send(Send(self,@GetSettings),@GetClearToCloudy);
+		 if iRandomResult <= iCloudyChance
+		 {
+		    piCurrent_weather = WEATHER_CLOUDY;
+		    return;
+		 }
 	  }
 
 	  if piCurrent_weather = WEATHER_CLOUDY 
-	                          AND randomResult < piCloudyToClear
-	  {
-		piCurrent_weather = WEATHER_CLEAR;
+      {
+        iClearChance = Send(Send(self,@GetSettings),@GetCloudyToCleary);
+        iStormyChance = Send(Send(self,@GetSettings),@GetCloudyToStormy);
+        if iRandomResult < iClearChance
+        {
+           piCurrent_weather = WEATHER_CLEAR;
+        }
+        else
+	    {
+           if piCurrent_weather = WEATHER_CLOUDY 
+		                         AND iRandomResult < (iClearChance + iStormyChance)
+           {
+              piCurrent_weather = piSeason;
+              return;
+		   }
+        }
 		return;
       }
-	  else
-	  {
-         if piCurrent_weather = WEATHER_CLOUDY 
-		                         AND randomResult < (piCloudyToClear + piCloudyToStormy)
-         {
-	        piCurrent_weather = piSeason;
-			return;
-		 }
-      }
 
-	  if piCurrent_weather = WEATHER_RAIN OR piCurrent_weather = WEATHER_SNOW
+	  if (piCurrent_weather = WEATHER_RAIN) OR (piCurrent_weather = WEATHER_SNOW)
 	  {
-	     if randomResult <= piStormyToCloudy
+	     iCloudyChance = Send(Send(self,@GetSettings),@GetStormyToCloudy);
+		 if iRandomResult <= iCloudyChance
 		 {
 			piCurrent_weather = WEATHER_CLOUDY;
          }
@@ -3646,16 +3645,19 @@ messages:
 	  return;
    }
 
-   NewGameHour(bTimeAdjusted=false)
+   NewGameHour(bTimeManuallySet=FALSE)
    "Recalculates the light and weather, based on piHour"
    {
-      local i,iLight_hour;
+      local i,iLight_hour,iWeatherInterval;
 
       % Weather is recalculated at hourly intervals every day. If the time
 	  % was manually adjusted with SetHour(), then we ignore this recalculation.
-	  if piWeatherInterval > 0 AND piWeatherInterval <= 24 AND bTimeAdjusted = false
+	  if bTimeManuallySet = FALSE 
 	  {
-	     if (piHour mod piWeatherInterval) = 0
+	     iWeatherInterval = Send(Send(self,@GetSettings),@GetWeatherInterval);
+		 
+		 if (iWeatherInterval > 0 AND iWeatherInterval <= 24) 
+		                 AND ((piHour mod iWeatherInterval) = 0)
 	     {
 			Send(self,@RecalcWeatherConditions);
          }

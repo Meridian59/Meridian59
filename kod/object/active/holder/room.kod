@@ -248,15 +248,12 @@ properties:
 
    pbUser_in_room = FALSE
 
-   % Precipitation is on by default, but it can be toggled off if needed.
-   pbPrecipitation_enabled = true
+   % Activates weather particles such as rain. It's on by default.
+   pbPrecipitation_enabled = TRUE
    % Used to set type of weather to render for everyone in the room.
    piWeather_type = WEATHER_CLEAR
    % Determines how weather differs here, such as no snow in the tropics.
    piClimate = CLIMATE_TEMPERATE
-   
-   % Slight chance for mountain climates to turn local rain to snow.
-   piMountain_snow_chance = 20
 
    % For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    %  resources
@@ -295,18 +292,6 @@ messages:
       iDelay = piDispose_delay + Random(-5000,5000);
       ptDispose = CreateTimer(self,@DisposeTimer,iDelay);
       piRoom_flags = viPermanent_flags;
-	  
-	  % If outdoor factor is zero, it's safe to say it's completely indoors.
-	  if piOutside_factor = 0
-	  {
-	     pbPrecipitation_enabled = false;
-	  }
-
-      % Automatically set the climate to tropical if it's on Ko'catan.
-      if Send(self,@GetRegion) = RID_KOCATAN
-      {
-         piClimate = CLIMATE_TROPICAL;
-      }
 	  
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
@@ -1622,61 +1607,43 @@ messages:
    }
    
    RecalcRoomWeather(what=$)
-   "Sets weather effects to this room."
+   "Sets room weather based on room climate. And if rain/snow is enabled."
    {
-      local i, each_obj, newWeather;
-	  
-	  % First, adjust new weather based on the climate.
-	  newWeather = what;
+	  % If precipitation is off, just turn rain/snow into cloudy.
+	  if pbPrecipitation_enabled = FALSE AND (what = WEATHER_RAIN
+	                                       OR what = WEATHER_SNOW)
+	  {
+		piWeather_type = WEATHER_CLOUDY;
+		return;
+	  }
 	  
 	  % Tropical areas like Ko'catan doesn't get snow.
-	  if piClimate = CLIMATE_TROPICAL AND newWeather = WEATHER_SNOW
+	  if piClimate = CLIMATE_TROPICAL AND what = WEATHER_SNOW
 	  {
-         newWeather = WEATHER_RAIN;
+         piWeather_type = WEATHER_RAIN;
+		 return;
 	  }
 	  
 	  % Each mountain area has a chance to snow instead of rain.
-	  if piClimate = CLIMATE_MOUNTAIN AND newWeather = WEATHER_RAIN
+	  if piClimate = CLIMATE_MOUNTAIN AND what = WEATHER_RAIN
 	  {
-         if Random(1,100) <= piMountain_snow_chance
+         if Random(1,100) <= Send(Send(SYS,@GetSettings),@GetMountainSnowChance)
 		 {
-		    newWeather = WEATHER_SNOW;
+		    piWeather_type = WEATHER_SNOW;
+			return;
 	     }
 	  }
-	  
-	  if piWeather_type <> newWeather
-	  {
-		 piWeather_type = newWeather;
-	  }
-      return;
+      
+	  % Otherwise, set weather normally.
+	  piWeather_type = what;
+	  return;
    }
    
    TogglePrecipitation(what=$)
    "Enables or disables precipitation."
    {
-	  local i,each_obj,newEffect;
-	  
-	  if pbPrecipitation_enabled <> what
-	  {
-	     pbPrecipitation_enabled = what;
-	     if pbPrecipitation_enabled = true
-	     {
-	        newEffect = Send(self, @GetWeatherEffect, #what=piWeather_type);
-	     }
-	     else
-	     {
-	        newEffect = EFFECT_CLEARWEATHER;
-	     }
-		 
-	     for i in plActive
-	     {
-            each_obj = Send(self,@HolderExtractObject,#data=i);
-            if IsClass(each_obj,&Player)
-            {
-		   	Send(each_obj,@EffectSendUser,#what=each_obj,#effect=newEffect);
-            }
-	     }
-	  }
+	  pbPrecipitation_enabled = what;
+      Send(self,@RecalcLightAndWeather);
 	  return;
    }
 
@@ -3273,7 +3240,7 @@ messages:
    WeatherChanged()
    {
       local i,each_obj;
-
+      
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);

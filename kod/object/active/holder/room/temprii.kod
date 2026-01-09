@@ -16,7 +16,7 @@ constants:
 
    RESET_TIME = 30000            % five seconds
    DEATH_MESSAGE_DELAY = 5000
-   PAINT_EFFECT_DURATION = 2000
+   PAIN_EFFECT_DURATION = 2000
 
    SECTOR_DOOR = 4
 
@@ -409,7 +409,7 @@ messages:
          Send(what,@LoseHealth,#amount=(Send(what,@GetHealth)-1));
          Send(Send(sys,@FindSpellByNum,#num=SID_HOLD),@DoHold,
               #what=self,#oTarget=what,#iDurationSecs=5,#report=FALSE,#bAllowFreeAction=FALSE);
-         Send(what,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=PAINT_EFFECT_DURATION);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=PAIN_EFFECT_DURATION);
          Send(what,@EffectSendUserXLat,#xlat=0);
          Send(what,@EffectSendUser,#what=what,#effect=EFFECT_PARALYZE_OFF);
       }
@@ -496,7 +496,7 @@ messages:
       ptDeathMessageTimer = $;
       
       Send(poDead,@MsgSendUser,#message_rsc=riijadeadmessage5);
-      Send(poDead,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=PAINT_EFFECT_DURATION);
+      Send(poDead,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=PAIN_EFFECT_DURATION);
       Send(poDead,@EffectSendUserXLat,#xlat=0);
       Send(poDead,@EffectSendUser,#what=poDead,#effect=EFFECT_PARALYZE_OFF);
 

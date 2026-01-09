@@ -45,13 +45,22 @@ properties:
 
    prMusic = OrcCave5Ext_music
 
-   poFoodProxy = $ % A food object used to interface with user drink requests
+   poFoodProxy = $  % A food object used to interface with user drink requests
 
 messages:
 
    Constructor()
    {
       poFoodProxy = Create(&Food);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_CAVE5, 12, 4, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_PIT, 64, 68, ROTATE_NONE], plEdge_exits);
 
       propagate;
    }

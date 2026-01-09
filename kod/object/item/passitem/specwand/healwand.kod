@@ -18,7 +18,7 @@ resources:
 
    healWand_name_rsc = "wand of healing"
    healWand_icon_rsc = healwand.bgf
-   healWand_desc_rsc = "This wand is almost comically decorated by obviously fake gems.   "
+   healWand_desc_rsc = "This wand is almost comically decorated by obviously fake gems.  "
        "Still, the wand hums nearly inaudibly, and when you put your hand on it, it is "
        "warm to the touch."
    healWand_success_wav_rsc = healwand.wav

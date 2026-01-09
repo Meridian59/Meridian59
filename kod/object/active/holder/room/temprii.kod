@@ -323,10 +323,10 @@ messages:
    {
       local i;
 
-      if IsClass(what,&Player)
-         AND ((new_row >= 31 AND new_col >= 26) AND (new_row <= 44 AND new_col <= 29))
+      if IsClass(what,&Player) AND
+         (((new_row >= 31 AND new_col >= 26) AND (new_row <= 44 AND new_col <= 29))
          OR ((new_row >= 31 AND new_col >= 32) AND (new_row <= 45 AND new_col <= 35))
-         OR (new_row = 45 AND new_col = 29)
+         OR (new_row = 45 AND new_col = 29))
       {
          Send(self,@PlayerHurledSelfOffCliffs,#what=what);
       }
@@ -338,7 +338,7 @@ messages:
          %% on the bridge.  Do they have a sword of riija?
          if IsClass(what,&Monster)  
          {
-            Send(what,@Killed);
+            Post(what,@Killed);
             
             return;
          }

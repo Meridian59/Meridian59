@@ -1024,8 +1024,13 @@ void D3DLMapsStaticGet(room_type * room)
 	bool dynamicLightsEnabled = true;
 	bool staticLightsEnabled = true;
 
+	debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));
+
 	if (projectileLightsEnable)
 	{
+		debug(("=== PROJECTILE LIGHTS ===\n"));
+		int projectileCount = 0;
+		
 		for (list = room->projectiles; list != NULL; list = list->next)
 		{
 			Projectile	*pProjectile = (Projectile *)list->data;
@@ -1035,6 +1040,9 @@ void D3DLMapsStaticGet(room_type * room)
 
 			if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
 				continue;
+
+			debug(("  Projectile Light %d: color=0x%04X, intensity=%d\n", 
+				projectileCount++, pProjectile->dLighting.color, pProjectile->dLighting.intensity));
 
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
@@ -1082,11 +1090,14 @@ void D3DLMapsStaticGet(room_type * room)
 
 			gDLightCacheDynamic.numLights++;
 		}
+      debug(("Total Projectile Lights: %d\n\n", projectileCount));
 
 	}
 
    if (dynamicLightsEnabled)
    {
+      debug(("=== DYNAMIC LIGHTS ===\n"));
+      int dynamicCount = 0;
       // dynamic lights
       for (list = room->contents; list != NULL; list = list->next)
       {
@@ -1097,6 +1108,10 @@ void D3DLMapsStaticGet(room_type * room)
 
          if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
             continue;
+
+
+		debug(("  Dynamic Light %d: color=0x%04X, intensity=%d\n", dynamicCount++,
+                pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity));
 
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pRNode->motion.y;
@@ -1154,10 +1169,15 @@ void D3DLMapsStaticGet(room_type * room)
 
          gDLightCacheDynamic.numLights++;
       }
+      
+      debug(("Total Dynamic Lights: %d\n\n", dynamicCount));
    }
 
    if (staticLightsEnabled)
    {
+      debug(("=== STATIC LIGHTS ===\n"));
+      int staticCount = 0;
+      
       // static lights
       for (list = room->contents; list != NULL; list = list->next)
       {
@@ -1192,10 +1212,6 @@ void D3DLMapsStaticGet(room_type * room)
          if (pDib)
             spriteHeight = ((float) pDib->height / (float) pDib->shrink * 16.0f) - (float) pDib->yoffset * 4.0f;
 
-         // Position the light above the floor to ensure proper illumination.
-         // Lights at floor level would only illuminate upward from their center position.
-         // Elevating by sprite height (or minimum offset) allows the light to illuminate
-         // the floor beneath it and surrounding geometry effectively.
          const float MIN_LIGHT_HEIGHT_ABOVE_FLOOR = 64.0f;
          float heightAboveFloor =
              (spriteHeight > MIN_LIGHT_HEIGHT_ABOVE_FLOOR) ? spriteHeight : MIN_LIGHT_HEIGHT_ABOVE_FLOOR;
@@ -1203,15 +1219,27 @@ void D3DLMapsStaticGet(room_type * room)
          gDLightCache.dLights[gDLightCache.numLights].xyz.z = floorZ + heightAboveFloor;
 
          // BRIGHTNESS: Apply flicker to both SIZE and COLOR
+         // BUT: Skip flickering for "atmospheric lights" (lights without visible objects)
+         // These are lights with no icon_res, no renderable bitmap
          float flickerBrightness = 1.0f;
-         if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
+         bool isAtmosphericLight = (pRNode->obj.icon_res == 0 || pDib == NULL);
+
+         if (!isAtmosphericLight && (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)))
          {
             flickerBrightness = (float) pRNode->obj.lightAdjust / GetFlickerLevel();
          }
          
          // Apply flicker to the intensity for radius calculation
          int flickeredIntensity = (int) (pRNode->obj.dLighting.intensity * flickerBrightness);
-         
+
+         debug(("  Static Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
+                "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s%s\n",
+                staticCount++, pRNode->obj.id, pRNode->obj.flags, pRNode->obj.dLighting.flags,
+                pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity, pRNode->obj.lightAdjust,
+                flickerBrightness, flickeredIntensity, (pRNode->obj.flags & OF_FLICKERING) ? " [FLICKERING]" : "",
+                (pRNode->obj.flags & OF_FLASHING) ? " [FLASHING]" : "",
+                isAtmosphericLight ? " [ATMOSPHERIC-NO-FLICKER]" : ""));
+
          gDLightCache.dLights[gDLightCache.numLights].xyzScale.x = D3DLightScale(flickeredIntensity);
          gDLightCache.dLights[gDLightCache.numLights].xyzScale.y = D3DLightScale(flickeredIntensity);
          gDLightCache.dLights[gDLightCache.numLights].xyzScale.z = D3DLightScale(flickeredIntensity);
@@ -1244,6 +1272,7 @@ void D3DLMapsStaticGet(room_type * room)
          
          gDLightCache.numLights++;
       }
+      debug(("Total Static Lights: %d\n\n", staticCount));
    }
 }
 
@@ -1262,7 +1291,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 		switch(tree->type)
 		{
 			case BSPleaftype:
-        return tree->u.leaf.sector->light;
+		return tree->u.leaf.sector->light;
 
 			case BSPinternaltype:
 				side0 = tree->u.internal.separator.a * pRNode->motion.x +

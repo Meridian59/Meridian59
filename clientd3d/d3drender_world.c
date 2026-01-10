@@ -1580,7 +1580,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
             st[count].t = xyz[count].y - pDLightCache->dLights[numLights].xyz.y;
 
             st[count].s *= invXScale;
-            st[count].t *= invXScale;
+            st[count].t *= invYScale;
 
             st[count].s += 0.5f;
             st[count].t += 0.5f;

@@ -178,7 +178,7 @@ bool AnimateObject(object_node *obj, int dt)
    bool need_redraw = false;
    list_type over_list;
 
-   if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
+   if (OF_FLICKERING == (OF_FLICKERING & obj->flags))
    {
       // Initialize flicker time with random offset on first use to desynchronize lights
       if (obj->flickerTime == 0)
@@ -224,7 +224,7 @@ bool AnimateObject(object_node *obj, int dt)
       need_redraw = true;
    }
 
-   if (OF_FLASHING == (OF_BOUNCING & obj->flags))
+   if (OF_FLASHING == (OF_FLASHING & obj->flags))
    {
       DWORD angleFlash;
       obj->bounceTime += min(dt,50);

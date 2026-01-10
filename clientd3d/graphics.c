@@ -341,7 +341,6 @@ void RedrawForce(void)
    msDrawFrame = elapsedMilliseconds;
 
    auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
-
    fps = 1000 / max(1, elapsedMilliseconds);
 
    if (maxFPS)

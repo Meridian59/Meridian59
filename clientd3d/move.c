@@ -210,14 +210,10 @@ void UserMovePlayer(int action)
    if (dt <= 0)
       dt = 1;
    
-   // Scale movement distance based on actual elapsed time to achieve
-   // frame-rate independent movement speed.
-   // Target: move MOVEUNITS distance per MOVE_DELAY milliseconds
-   move_distance = move_distance * dt / MOVE_DELAY;
-   
    if (dt < MOVE_DELAY)
    {
       gravityAdjust = 1.0;
+      move_distance = move_distance * dt / MOVE_DELAY;
    }
    else
    {

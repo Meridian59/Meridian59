@@ -18,29 +18,6 @@ constants:
    DEATH_MESSAGE_DELAY = 5000
    PAIN_EFFECT_DURATION = 2000
 
-   TEMPLE_ROW_MIN = 4
-   TEMPLE_ROW_MAX = 30
-   TEMPLE_COL_MIN = 13
-   TEMPLE_COL_MAX = 44
-
-   BRIDGE_BUFFER_LEFT_ROW_MIN = 31
-   BRIDGE_BUFFER_LEFT_ROW_MAX = 44
-   BRIDGE_BUFFER_LEFT_COL_MIN = 26
-   BRIDGE_BUFFER_LEFT_COL_MAX = 29
-
-   BRIDGE_BUFFER_LEFT_B_ROW = 45
-   BRIDGE_BUFFER_LEFT_B_COL = 29
-
-   BRIDGE_ROW_MIN = 32
-   BRIDGE_ROW_MAX = 45
-   BRIDGE_COL_1 = 30
-   BRIDGE_COL_2 = 31
-
-   BRIDGE_BUFFER_RIGHT_ROW_MIN = 31
-   BRIDGE_BUFFER_RIGHT_ROW_MAX = 45
-   BRIDGE_BUFFER_RIGHT_COL_MIN = 32
-   BRIDGE_BUFFER_RIGHT_COL_MAX = 35
-
    SECTOR_DOOR = 4
 
 resources:
@@ -585,8 +562,8 @@ messages:
    IsObjectInTempleRegion(what=$,row=0,col=0)
    "Returns TRUE if the object is in the temple region"
    {
-      if ((row >= TEMPLE_ROW_MIN AND col >= TEMPLE_COL_MIN) 
-            AND (row <= TEMPLE_ROW_MAX AND col <= TEMPLE_COL_MAX))
+      if ((row >= 4 AND col >= 13) 
+            AND (row <= 30 AND col <= 44))
       {
          return TRUE;
       }
@@ -609,8 +586,8 @@ messages:
    IsObjectOnBridge(what=$,row=0,col=0)
    "Returns TRUE if the object is on the bridge"
    {
-      if ((row > BRIDGE_ROW_MIN AND row < BRIDGE_ROW_MAX) 
-         AND ((col = BRIDGE_COL_1 OR col = BRIDGE_COL_2)))
+      if ((row > 32 AND row < 45) 
+         AND ((col = 30 OR col = 31)))
       {
          return TRUE;
       }
@@ -621,11 +598,11 @@ messages:
    IsObjectInBridgeBufferZone(what=$,row=0,col=0)
    "Returns TRUE if the object is in the bridge's left or right buffer areas"
    {
-      if (((row >= BRIDGE_BUFFER_LEFT_ROW_MIN AND col >= BRIDGE_BUFFER_LEFT_COL_MIN) 
-            AND (row <= BRIDGE_BUFFER_LEFT_ROW_MAX AND col <= BRIDGE_BUFFER_LEFT_COL_MAX))
-         OR ((row >= BRIDGE_BUFFER_RIGHT_ROW_MIN AND col >= BRIDGE_BUFFER_RIGHT_COL_MIN) 
-            AND (row <= BRIDGE_BUFFER_RIGHT_ROW_MAX AND col <= BRIDGE_BUFFER_RIGHT_COL_MAX))
-         OR (row = BRIDGE_BUFFER_LEFT_B_ROW AND col = BRIDGE_BUFFER_LEFT_B_COL))
+      if (((row >= 31 AND col >= 26) 
+            AND (row <= 44 AND col <= 29))
+         OR ((row >= 31 AND col >= 32) 
+            AND (row <= 45 AND col <= 35))
+         OR (row = 45 AND col = 29))
       {
          return TRUE;
       }

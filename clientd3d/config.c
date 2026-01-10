@@ -285,7 +285,7 @@ void ConfigLoad(void)
 
 #ifndef NODPRINTFS
    config.showMapBlocking = GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
-   config.showFPS = GetConfigInt(special_section, INIShowFPS, 0, ini_file);
+   config.showFPS      = GetConfigInt(special_section, INIShowFPS, 0, ini_file);
    config.showUnseenWalls = GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
    config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
    config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);

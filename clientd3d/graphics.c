@@ -340,7 +340,9 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
-   auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
+   // Ensure we don't exceed 60 FPS to maintain consistent movement timing.
+   auto maxFPS = (config.maxFPS > 0 ? min(config.maxFPS, defaultMaxFps) : defaultMaxFps);
+
    fps = 1000 / max(1, elapsedMilliseconds);
 
    if (maxFPS)
@@ -351,7 +353,7 @@ void RedrawForce(void)
           int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
           Sleep(msSleep);
 
-          // Reclaulate the fps following the sleep.
+          // Recalculate the fps following the sleep.
           endFrame = chrono_time_now();
           elapsedTime = (endFrame - lastEndFrame);
           elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();

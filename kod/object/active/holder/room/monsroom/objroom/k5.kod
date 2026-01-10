@@ -54,6 +54,8 @@ properties:
    piBrambleDamage = 20    % Maximum damage the brambles do.
    piBrambleHits = 100     % Number of hit points the brambles have.
    poShrine = $
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_ARID
    
 messages:
 

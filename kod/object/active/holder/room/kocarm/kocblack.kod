@@ -44,6 +44,9 @@ properties:
    piOutside_factor = 3
 
    prMusic = KocatanSmithy_music
+   
+   % Rain could pour from the opening above.
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

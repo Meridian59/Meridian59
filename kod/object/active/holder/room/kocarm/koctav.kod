@@ -39,6 +39,9 @@ properties:
    piOutside_factor = 3
 
    prMusic = koctavern_music
+   
+   % There's an opening at the back of the tavern that can get rain.
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

@@ -39,6 +39,9 @@ properties:
 
    piBaseLight = LIGHT_NICE
    piOutside_factor = OUTDOORS_3
+   
+   pbPrecipitation_enabled = FALSE
+   piClimate = CLIMATE_NONE
 
 messages:
 

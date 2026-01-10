@@ -66,6 +66,8 @@ properties:
 
    ptSecret = $
    ptEntrance = $
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

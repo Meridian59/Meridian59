@@ -1141,9 +1141,11 @@
    WEATHER_SNOW = 4
    
    % Room climate
-   CLIMATE_TEMPERATE = 1
-   CLIMATE_TROPICAL = 2
-   CLIMATE_MOUNTAIN = 3
+   CLIMATE_NONE = 1
+   CLIMATE_TEMPERATE = 2
+   CLIMATE_TROPICAL = 3
+   CLIMATE_MOUNTAIN = 4
+   CLIMATE_ARID = 5
 
    
    % Trees (linked to group numbers in the tree top/bottom .bgf)

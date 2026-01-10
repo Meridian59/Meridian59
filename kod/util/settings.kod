@@ -129,7 +129,9 @@ properties:
    
    % Chance for mountain climates to turn local rain to snow.
    piMountain_snow_chance = 20
-
+   
+   % Chance for arid climates to rain or snow. Includes badlands and tundras.
+   piArid_stormy_chance = 5
 
    %
    % Miscellaneous
@@ -355,6 +357,11 @@ messages:
    {
       return piMountain_snow_chance;
    }
+
+   GetAridStormyChance()
+   {
+      return piArid_stormy_chance;
+   }   
    
    %
    % Miscellaneous

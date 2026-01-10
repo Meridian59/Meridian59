@@ -248,8 +248,11 @@ properties:
 
    pbUser_in_room = FALSE
 
-   % Activates weather particles such as rain. It's on by default.
-   pbPrecipitation_enabled = TRUE
+   % Activates weather particles such as rain. It's undefined by default and
+   % the room subclasses can assign it. If a room doesn't define ut, then it 
+   % gets auto-assigned using GetPrecipitationSetting().
+   pbPrecipitation_enabled = $
+   
    % Used to set type of weather to render for everyone in the room.
    piWeather_type = WEATHER_CLEAR
    % Determines how weather differs here, such as no snow in the tropics.
@@ -295,6 +298,10 @@ messages:
 	  
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
+	  
+	  % If we just constructed this room, try to check if we need
+	  % to auto-assign precipitation settings if it's undefined.
+	  Send(self,@GetPrecipitationSetting);
 
       propagate;
    }
@@ -380,6 +387,41 @@ messages:
       }
 
       propagate;
+   }
+   
+   GetPrecipitationSetting()
+   "Either returns precipitation setting, or auto-assign if it's undefined."
+   {
+	  local iTerrain;
+
+	  if pbPrecipitation_enabled <> $
+	  {
+	     return pbPrecipitation_enabled;
+	  }
+	  
+	  % If undefined, assign precipitation setting based on terrain flags.
+	  % This can cover most rooms, but some need to be manually set.
+	  % e.g. Rooms with the TERRAIN_CASTLE flag includes open courtyards.
+	  iTerrain = Send(self,@GetTerrainType);
+	  
+	  % Check for rooms that are most likely all indoors.
+	  if (iTerrain & TERRAIN_CAVES) OR (iTerrain & TERRAIN_MINES)
+         OR (iTerrain & TERRAIN_SEWERS) OR (iTerrain & TERRAIN_NECROPOLIS)
+      {
+         pbPrecipitation_enabled = FALSE;
+		 return FALSE;
+      }	  
+
+	  % These terrain are often indoors but may have open spaces or windows.
+	  if (iTerrain & TERRAIN_GUILDHALL) OR (iTerrain & TERRAIN_RESIDENCE)
+	        OR (iTerrain & TERRAIN_SHOP) OR (iTerrain & TERRAIN_CASTLE)
+	  {
+	     pbPrecipitation_enabled = FALSE;
+		 return FALSE;
+	  }
+	  
+      pbPrecipitation_enabled = TRUE;
+      return TRUE;
    }
 
    EnableIllusions()
@@ -1594,8 +1636,9 @@ messages:
          return;
       }
 
-      Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=iWeather);
+      % First check if the local weather gets adjusted, which can affect which skybox to show.
 	  Send(self,@RecalcRoomWeather,#what=iWeather);
+      Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=piWeather_type);
       Send(self,@RecalculateDirectionalLight);
 
       Send(self,@AmbientLightChanged);
@@ -1609,9 +1652,17 @@ messages:
    RecalcRoomWeather(what=$)
    "Sets room weather based on room climate. And if rain/snow is enabled."
    {
+	  % Rooms without climate won't have cloudy or stormy weather.
+	  % Includes Martyr's Battleground and Out of Grace.
+	  if piClimate = CLIMATE_NONE
+	  {
+		piWeather_type = WEATHER_CLEAR;
+		return;
+	  }
+	  
 	  % If precipitation is off, just turn rain/snow into cloudy.
-	  if pbPrecipitation_enabled = FALSE AND (what = WEATHER_RAIN
-	                                       OR what = WEATHER_SNOW)
+	  if Send(self,@GetPrecipitationSetting) = FALSE
+	     AND (what = WEATHER_RAIN OR what = WEATHER_SNOW)
 	  {
 		piWeather_type = WEATHER_CLOUDY;
 		return;
@@ -1633,25 +1684,44 @@ messages:
 			return;
 	     }
 	  }
+	  
+	  % Arid climates rarely rain or snow. This includes badlands and tundras.
+	  if piClimate = CLIMATE_ARID AND (what = WEATHER_RAIN
+	                                       OR what = WEATHER_SNOW)
+	  {
+         if NOT (Random(1,100) <= Send(Send(SYS,@GetSettings),@GetAridStormyChance))
+		 {
+		    piWeather_type = WEATHER_CLOUDY;
+			return;
+	     }
+	  }
       
 	  % Otherwise, set weather normally.
-	  piWeather_type = what;
+	  if piWeather_type <> what
+	  {
+	     piWeather_type = what;
+	  }
 	  return;
    }
    
    TogglePrecipitation(what=$)
    "Enables or disables precipitation."
    {
-	  pbPrecipitation_enabled = what;
-      Send(self,@RecalcLightAndWeather);
+	  if pbPrecipitation_enabled <> what
+	  {
+	     pbPrecipitation_enabled = what;
+         Send(self,@RecalcLightAndWeather);
+	  }
 	  return;
    }
 
    SetRoomClimate(what=$)
+   "Allows DMs to adjust room climate."
    {
 	  if piClimate <> what
 	  {
 	     piClimate = what;
+		 Send(self,@RecalcLightAndWeather);
 	  }
 	  return;
    }

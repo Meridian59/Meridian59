@@ -64,6 +64,9 @@ properties:
 
    piMonster_count_max = 20
 
+   pbPrecipitation_enabled = FALSE
+   piClimate = CLIMATE_NONE
+
 messages:
 
    Constructed()

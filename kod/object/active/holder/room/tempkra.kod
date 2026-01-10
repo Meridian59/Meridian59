@@ -88,6 +88,8 @@ properties:
    piPosition = DOOR_CLOSED
 
    ptReset = $
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_MOUNTAIN
 
 messages:
 

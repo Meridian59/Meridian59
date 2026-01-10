@@ -165,6 +165,10 @@ LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       	 return 0;
       break;
 
+   case WM_MOUSEWHEEL:
+      InvalidateRect(hList, NULL, TRUE);
+      break;
+
       HANDLE_MSG(hwnd, WM_VSCROLL, StatsListVScroll);
 
    case WM_ERASEBKGND:

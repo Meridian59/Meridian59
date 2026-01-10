@@ -340,8 +340,7 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
-   // Ensure we don't exceed 60 FPS to maintain consistent movement timing.
-   auto maxFPS = (config.maxFPS > 0 ? min(config.maxFPS, defaultMaxFps) : defaultMaxFps);
+   auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
 
    fps = 1000 / max(1, elapsedMilliseconds);
 

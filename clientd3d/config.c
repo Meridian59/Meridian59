@@ -285,11 +285,11 @@ void ConfigLoad(void)
 
 #ifndef NODPRINTFS
    config.showMapBlocking = GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
-   config.showFPS      = GetConfigInt(special_section, INIShowFPS, 0, ini_file);
+   config.showFPS = GetConfigInt(special_section, INIShowFPS, 0, ini_file);
    config.showUnseenWalls = GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
    config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
    config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
-   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 60, ini_file);
+   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 120, ini_file);
    config.clearCache = GetConfigInt(special_section, INIClearCache, false, ini_file);
    //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
 #else
@@ -298,7 +298,7 @@ void ConfigLoad(void)
    config.showUnseenWalls = FALSE;
    config.showUnseenMonsters = FALSE;
    config.avoidDownloadAskDialog = FALSE;
-   config.maxFPS = FALSE;
+   config.maxFPS = 120;
    config.clearCache = FALSE;
 #endif // NODPRINTFS
 

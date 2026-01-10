@@ -267,23 +267,7 @@ void UserMovePlayer(int action)
    last_move_action = action;
    FindOffsets(move_distance, angle, &dx, &dy);
 
-   // Ensure frame-rate independent movement by maintaining consistent collision check density.
-   // At high FPS, move_distance is small, but we still need adequate collision checks.
-   // Guarantee at least 4 collision steps per MOVEUNITS of distance.
-   int time_based_steps = NUM_STEPS_PER_SECOND * dt / 1000;
-   int distance_based_steps = max(1, abs(dx) / (MOVEUNITS / 4));
-   if (abs(dy) > abs(dx))
-      distance_based_steps = max(distance_based_steps, abs(dy) / (MOVEUNITS / 4));
-   
-   num_steps = max(distance_based_steps, min(STEPS_PER_MOVE, time_based_steps));
-
-   // TEMPORARY DEBUG: Log movement parameters
-   static DWORD debug_counter = 0;
-   if (++debug_counter % 60 == 0)
-   {
-      debug(("MOVE DEBUG: dt=%d ms, num_steps=%d (time:%d, dist:%d), move_dist=%d (dx=%d,dy=%d), fps=%d\n",
-             dt, num_steps, time_based_steps, distance_based_steps, move_distance, dx, dy, (dt > 0 ? 1000/dt : 0)));
-   }
+   num_steps = max(1, min(STEPS_PER_MOVE, NUM_STEPS_PER_SECOND * dt / 1000));
 
    xinc = dx / num_steps;
    yinc = dy / num_steps;

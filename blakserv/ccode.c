@@ -17,6 +17,8 @@
 */
 
 #include "blakserv.h"
+#define FMT_HEADER_ONLY
+#include "fmt/format.h"
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
@@ -2300,15 +2302,83 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+/**
+ * C_BuildString: Builds a new string from a format string and substitution arguments.
+ * Uses fmtlib with support for both string and integer arguments.
+ * Format string should use {} tokens (e.g., "{0}", "{1:d}", etc.)
+ */
+blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+                       int num_name_parms, parm_node name_parm_array[])
+{
+   const char *string1 = nullptr;
+   int len1 = 0;
+
+   // Get the format string
+   val_type string_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+   if (!LookupString(string_val, "C_BuildString", &string1, &len1))
+      return NIL;
+
+   int use_args = num_normal_parms - 1;
+
+   try
+   {
+      std::vector<fmt::basic_format_arg<fmt::format_context>> format_args;
+      format_args.reserve(use_args);
+
+      // Storage for string data (must stay alive during formatting)
+      std::vector<std::string> string_storage;
+      string_storage.reserve(use_args);
+
+      for (int i = 0; i < use_args; i++)
+      {
+         val_type val = RetrieveValue(object_id, local_vars, normal_parm_array[i + 1].type, normal_parm_array[i + 1].value);
+
+         if (val.v.tag == TAG_INT)
+         {
+            // Keep integers as integers for {:d}, {:x}, etc. formatting
+            format_args.emplace_back(static_cast<int>(val.v.data));
+         }
+         else
+         {
+            const char *param_str = NULL;
+            int param_len = 0;
+            if (!LookupString(val, "C_BuildString", &param_str, &param_len))
+               return NIL;
+
+            string_storage.emplace_back(param_str, param_len);
+            format_args.emplace_back(string_storage.back());
+         }
+      }
+
+      // Now do the actual formatting: substitute {} placeholders with our arguments
+      std::string fmt_str(string1, len1);
+      std::string result = fmt::vformat(fmt_str, fmt::format_args(format_args.data(), static_cast<int>(format_args.size())));
+
+      val_type ret;
+      ret.v.tag = TAG_STRING;
+      ret.v.data = CreateStringWithLen(result.c_str(), static_cast<int>(result.length()));
+      return ret.int_val;
+   }
+   catch (const fmt::format_error &e)
+   {
+      bprintf("C_BuildString format error: %s\n", e.what());
+      return NIL;
+   }
+}
+
 blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int num_normal_parms, parm_node normal_parm_array[],
     int num_name_parms, parm_node name_parm_array[])
 {
+    // Early exit if webhooks not enabled - avoid all string/JSON work
+    if (!IsWebhookEnabled()) {
+        return NIL;
+    }
+
     val_type msg_val, event_val, key_val, value_val;
     const char *content, *event_name, *key_str, *value_str;
     int content_len, event_len, key_len, value_len;
-    std::string json;
-    
+
     // Handle single string parameter
     if (num_normal_parms == 1) {
         msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2338,7 +2408,7 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     }
     
     // Start building JSON: {"event": "EventName", "params": {
-    json += "{\"event\":\"";
+    std::string json = "{\"event\":\"";
     json.append(event_name, event_len);
     json += "\",\"params\":{";
     

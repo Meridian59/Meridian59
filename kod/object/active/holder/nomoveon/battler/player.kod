@@ -5339,6 +5339,22 @@ messages:
 
       return $;
    }
+
+   LookupPlayerInstrument()
+   "Returns the instrument currently in use."
+   {
+      local i;
+
+      for i in plUsing
+      {
+         if IsClass(i,&Instrument)
+         {
+            return i;
+         }      
+      } 
+
+      return $;
+   }
    
    LeaveHold(what = $)
    {
@@ -8752,7 +8768,9 @@ messages:
    }
 
    ResetPlayerArms(alldone = TRUE)
-   "Sets our icon to its natural, default-shirted state."
+    "Sets our icon to its current shirted state (or default if no shirt worn). If a shirt is "
+    "equipped it delegates arm setup to that shirt so shirt-specific arm graphics (e.g. tanktop) "
+    "are restored correctly."
    {
       local iShirt_xlat, i, bFound;
       poArms_set = $;
@@ -8771,6 +8789,20 @@ messages:
       
       if NOT bFound
       {
+         for i in plUsing
+         {
+            if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
+            {
+               Send(i,@SetArms);
+               
+               if poOwner <> $ AND alldone
+               {      
+                  Send(poOwner,@SomethingChanged,#what=self);
+               }
+               return;
+            }
+         }
+
          if piGender = GENDER_MALE
          {
             prRight_arm = player_Rightarm_a_rsc;
@@ -8783,7 +8815,7 @@ messages:
          }
       }
       
-      iShirt_xlat = Send(self,@GetDefaultShirtTranslation);         
+      iShirt_xlat = Send(self,@GetCurrentShirtColor);
       piBody_translations2 = piBody_translations2 & ~PLAYER_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirt_xlat * PLAYER_TRANSLATION2_ARMS_MUL);
 
@@ -11861,7 +11893,7 @@ messages:
       
       for i in plUsing
       {
-         if IsClass(i,&shirt)
+         if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
          {
             return Send(i,@GetPaletteTranslation);
          }

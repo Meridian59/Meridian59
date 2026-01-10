@@ -109,6 +109,7 @@ properties:
    prWeapon = LogoffGhost_default_sword
    prShield = LogoffGhost_default_shield
    prBowTop = $
+   prInstrument = $
 
    piIcon_frame = 1
    piLegs_frame = 1
@@ -565,6 +566,12 @@ messages:
          piOverlays = piOverlays + 1;
       }
 
+      if prInstrument <> $
+      {
+         piLeft_frame = 7;
+         piOverlays = piOverlays + 1;
+      }
+
       if prWeapon <> $
       {
          piWeapon_frame = 4;
@@ -615,7 +622,7 @@ messages:
 
    SetLogoffGhost(GhostedPlayer = $)
    {
-      local oWeapon;
+      local oWeapon, oInstrument;
 
       if GhostedPlayer = $
          OR NOT IsClass(GhostedPlayer,&User)
@@ -647,6 +654,14 @@ messages:
 
       piWeapon_translation = 0;
       prBowTop = $;
+
+      % Check for instrument (e.g. lute)
+      prInstrument = $;
+      oInstrument = send(poGhostedPlayer,@LookupPlayerInstrument);
+      if oInstrument <> $
+      {
+         prInstrument = send(oInstrument,@GetOverlay);
+      }
 
       if oWeapon <> $
       {
@@ -749,6 +764,14 @@ messages:
          }
 
          AddPacket(1,ANIMATE_NONE, 2,piShield_frame);
+      }
+
+      % Instrument overlay (e.g. lute)
+      if prInstrument <> $
+      {
+         AddPacket(4,prInstrument);
+         AddPacket(1,HS_LEFT_WEAPON);
+         AddPacket(1,ANIMATE_NONE,2,1);
       }
 
       if prWeapon <> $

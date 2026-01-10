@@ -18,6 +18,29 @@ constants:
    DEATH_MESSAGE_DELAY = 5000
    PAIN_EFFECT_DURATION = 2000
 
+   TEMPLE_ROW_MIN = 4
+   TEMPLE_ROW_MAX = 30
+   TEMPLE_COL_MIN = 13
+   TEMPLE_COL_MAX = 44
+
+   BRIDGE_BUFFER_LEFT_ROW_MIN = 31
+   BRIDGE_BUFFER_LEFT_ROW_MAX = 44
+   BRIDGE_BUFFER_LEFT_COL_MIN = 26
+   BRIDGE_BUFFER_LEFT_COL_MAX = 29
+
+   BRIDGE_BUFFER_LEFT_B_ROW = 45
+   BRIDGE_BUFFER_LEFT_B_COL = 29
+
+   BRIDGE_ROW_MIN = 32
+   BRIDGE_ROW_MAX = 45
+   BRIDGE_COL_1 = 30
+   BRIDGE_COL_2 = 31
+
+   BRIDGE_BUFFER_RIGHT_ROW_MIN = 31
+   BRIDGE_BUFFER_RIGHT_ROW_MAX = 45
+   BRIDGE_BUFFER_RIGHT_COL_MIN = 32
+   BRIDGE_BUFFER_RIGHT_COL_MAX = 35
+
    SECTOR_DOOR = 4
 
 resources:
@@ -84,15 +107,12 @@ messages:
 
    Teleport(what=$)
    {
-      local iRow, iCol, oRoom;
+      local oRoom;
       
       if Send(what,@GetOwner) = self
       {
          % Someone is casting blink.  If on the island, blink them back to the city.
-         iRow = Send(what,@GetRow);
-         iCol = Send(what,@GetCol);
-
-         if ((iRow >= 4 AND iCol >= 13) AND (iRow <= 30 AND iCol <= 44))
+         if Send(self,@IsObjectInTempleRegion,#what=what,#row=Send(what,@GetRow),#col=Send(what,@GetCol))
          {
             oRoom = Send(SYS,@FindRoombyNum,#num=RID_KOC_NORTH);            
             Post(oRoom,@Teleport,#what=what);
@@ -106,17 +126,20 @@ messages:
 
    NewHold(what=$,new_row=0,new_col=0)
    {
-      local iRow, iCol;
-      
-      iRow = Send(what,@GetRow);
-      iCol = Send(what,@GetCol);
-      
+      % If someone logs on or otherwise appears in the temple, teleport them away
       if IsClass(what,&Player)
-         AND ((New_Row >= 4 AND New_Col >= 13)
-              AND (New_Row <= 30 AND New_Col <= 44))
+         AND Send(self,@IsObjectInTempleRegion,#what=what,#row=new_row,#col=new_col)
          AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
       {
          Post(self,@Teleport,#what=what);
+      }
+
+      % Catch and kill any monsters (e.g. reflections, apparitions, etc) spawned in the
+      % the area stretching from the bridge's left to right buffer areas.
+      if IsClass(what,&Monster) AND Send(self,@IsObjectInBridgeRegion,#what=what,#row=new_row,#col=new_col)
+      {
+         % `Post` to allow the monster movement to complete before killing it
+         Post(what,@Killed,#what=what);
       }
       
       propagate;
@@ -323,26 +346,23 @@ messages:
    {
       local i;
 
-      if IsClass(what,&Player) AND
-         (((new_row >= 31 AND new_col >= 26) AND (new_row <= 44 AND new_col <= 29))
-         OR ((new_row >= 31 AND new_col >= 32) AND (new_row <= 45 AND new_col <= 35))
-         OR (new_row = 45 AND new_col = 29))
+      if IsClass(what,&Player) AND Send(self,@IsObjectInBridgeBufferZone,#what=what,#row=new_row,#col=new_col)
       {
          Send(self,@PlayerHurledSelfOffCliffs,#what=what);
       }
       
-      if (new_row > 32) AND (new_row < 45) 
-         AND ((new_col = 30) OR (new_col = 31))
+      % Catch and kill any monsters (e.g. reflections, apparitions, etc) spawned in the
+      % the area stretching from the bridge's left to right buffer areas.
+      if IsClass(what,&Monster) AND Send(self,@IsObjectInBridgeRegion,#what=what,#row=new_row,#col=new_col)
+      {
+         % `Post` to allow the monster movement to complete before killing it
+         Post(what,@Killed,#what=what);
+      }
+
+      if IsClass(what,&Player) AND Send(self,@IsObjectOnBridge,#what=what,#row=new_row,#col=new_col)
          AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
       {
-         %% on the bridge.  Do they have a sword of riija?
-         if IsClass(what,&Monster)  
-         {
-            Post(what,@Killed);
-            
-            return;
-         }
-                  
+         %% on the bridge.  Do they have a sword of riija?                  
          for i in Send(what,@GetPlayerUsing)
          {
             %% checking item to see if it's a riija sword.
@@ -560,6 +580,57 @@ messages:
       }
 
       return chance;
+   }
+
+   IsObjectInTempleRegion(what=$,row=0,col=0)
+   "Returns TRUE if the object is in the temple region"
+   {
+      if ((row >= TEMPLE_ROW_MIN AND col >= TEMPLE_COL_MIN) 
+            AND (row <= TEMPLE_ROW_MAX AND col <= TEMPLE_COL_MAX))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   IsObjectInBridgeRegion(what=$,row=0,col=0)
+   "Returns TRUE if the object is in the bridge region or it's adjacent buffer areas"
+   {
+      if Send(self,@IsObjectInBridgeBufferZone,#what=what,#row=row,#col=col) 
+         OR Send(self,@IsObjectOnBridge,#what=what,#row=row,#col=col)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   IsObjectOnBridge(what=$,row=0,col=0)
+   "Returns TRUE if the object is on the bridge"
+   {
+      if ((row > BRIDGE_ROW_MIN AND row < BRIDGE_ROW_MAX) 
+         AND ((col = BRIDGE_COL_1 OR col = BRIDGE_COL_2)))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   IsObjectInBridgeBufferZone(what=$,row=0,col=0)
+   "Returns TRUE if the object is in the bridge's left or right buffer areas"
+   {
+      if (((row >= BRIDGE_BUFFER_LEFT_ROW_MIN AND col >= BRIDGE_BUFFER_LEFT_COL_MIN) 
+            AND (row <= BRIDGE_BUFFER_LEFT_ROW_MAX AND col <= BRIDGE_BUFFER_LEFT_COL_MAX))
+         OR ((row >= BRIDGE_BUFFER_RIGHT_ROW_MIN AND col >= BRIDGE_BUFFER_RIGHT_COL_MIN) 
+            AND (row <= BRIDGE_BUFFER_RIGHT_ROW_MAX AND col <= BRIDGE_BUFFER_RIGHT_COL_MAX))
+         OR (row = BRIDGE_BUFFER_LEFT_B_ROW AND col = BRIDGE_BUFFER_LEFT_B_COL))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

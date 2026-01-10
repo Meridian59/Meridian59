@@ -759,6 +759,11 @@ messages:
       return f;
    }
 
+   GetType()
+   {
+      return piType;
+   }
+
    ShowDesc()
    {
       if psCustomDesc <> $

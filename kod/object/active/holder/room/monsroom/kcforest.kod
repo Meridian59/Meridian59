@@ -24,6 +24,8 @@ properties:
 
    plItem_coords = $
    piItem_gen_counter = 0
+   
+   pbPrecipitation_enabled = TRUE
    piClimate = CLIMATE_TROPICAL
 
 messages:

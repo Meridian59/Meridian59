@@ -1312,6 +1312,12 @@ messages:
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_arid);
 		 return;
       }
+	  if StringEqual(string,dm_climate_arid_command)
+         OR StringEqual(string,"climate arid")
+      {
+         Send(poOwner,@SetRoomClimate,#what=CLIMATE_ARID);
+		 return;
+      }
 
       if StringEqual(string,"restore time")
       {

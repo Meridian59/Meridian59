@@ -562,52 +562,28 @@ messages:
    IsObjectInTempleRegion(what=$,row=0,col=0)
    "Returns TRUE if the object is in the temple region"
    {
-      if ((row >= 4 AND col >= 13) 
-            AND (row <= 30 AND col <= 44))
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return ((row >= 4 AND col >= 13) AND (row <= 30 AND col <= 44));
    }
 
    IsObjectInBridgeRegion(what=$,row=0,col=0)
-   "Returns TRUE if the object is in the bridge region or it's adjacent buffer areas"
+   "Returns TRUE if the object is in the bridge region or its adjacent buffer areas"
    {
-      if Send(self,@IsObjectInBridgeBufferZone,#what=what,#row=row,#col=col) 
-         OR Send(self,@IsObjectOnBridge,#what=what,#row=row,#col=col)
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return Send(self,@IsObjectInBridgeBufferZone,#what=what,#row=row,#col=col) 
+         OR Send(self,@IsObjectOnBridge,#what=what,#row=row,#col=col);
    }
 
    IsObjectOnBridge(what=$,row=0,col=0)
    "Returns TRUE if the object is on the bridge"
    {
-      if ((row > 32 AND row < 45) 
-         AND ((col = 30 OR col = 31)))
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return ((row > 32 AND row < 45) AND ((col = 30 OR col = 31)));
    }
 
    IsObjectInBridgeBufferZone(what=$,row=0,col=0)
    "Returns TRUE if the object is in the bridge's left or right buffer areas"
    {
-      if (((row >= 31 AND col >= 26) 
-            AND (row <= 44 AND col <= 29))
-         OR ((row >= 31 AND col >= 32) 
-            AND (row <= 45 AND col <= 35))
-         OR (row = 45 AND col = 29))
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return (((row >= 31 AND col >= 26) AND (row <= 44 AND col <= 29))
+         OR ((row >= 31 AND col >= 32) AND (row <= 45 AND col <= 35))
+         OR (row = 45 AND col = 29));
    }
 
 end

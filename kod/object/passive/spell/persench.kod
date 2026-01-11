@@ -207,8 +207,7 @@ messages:
    }
 
    InitializeEnchantmentState()
-   "Called when starting an enchantment.  Returns the state to store.  "
-   "May have side effects (e.g., AddDefenseModifier).  Do not call multiple times."
+   "Returns the enchantment state to store."
    {
       return $;
    }

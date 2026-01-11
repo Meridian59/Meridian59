@@ -152,7 +152,7 @@ public:
 public:
 	virtual void SetupWindow ();
 	virtual void Paint (TDC& dc, bool erase, TRect& rect);
-	virtual char far* GetClassName ();
+	virtual TWindowClassName GetWindowClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void CloseWindow (int retVal = 0);
 	virtual void Destroy (int retVal = 0);

@@ -79,8 +79,10 @@ OBJS =  \
 	$(OUTDIR)\stringinthash.obj \
 	$(OUTDIR)\intstringhash.obj \
 	$(OUTDIR)\sprocket.obj \
-	$(OUTDIR)\mutex_windows.obj \
+	$(OUTDIR)\mutex_impl.obj \
+	$(OUTDIR)\fileutil.obj \
 	$(OUTDIR)\osd_windows.obj \
+	$(OUTDIR)\webhook.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

@@ -12,7 +12,7 @@
 #ifndef _COMMAND_H
 #define _COMMAND_H
 
-Bool TellGroup(char *name, char *message);
+bool TellGroup(char *name, char *message);
 
 // Command handling procedures
 void CommandSay(char *args);

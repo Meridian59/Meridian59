@@ -357,9 +357,9 @@ void TInfoControl::InsertAt (int linePos, const char *format, ...)
 }
 
 
-char far* TInfoControl::GetClassName ()
+TWindowClassName TInfoControl::GetWindowClassName ()
 {
-	return "WinDEU_InfoControl";
+	return TWindowClassName{"WinDEU_InfoControl"};
 }
 
 

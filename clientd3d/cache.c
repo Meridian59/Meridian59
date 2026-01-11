@@ -40,7 +40,7 @@
  static Cache grid_cache;
  static Cache object_cache;
 
- static Bool IdCacheBitmapCompare(void *idnum, void *b);
+ static bool IdCacheBitmapCompare(void *idnum, void *b);
  static void CacheAddBitmap(Cache *cache, cache_bitmap bitmap);
  static cache_bitmap CacheFindBitmap(Cache *cache, ID id);
  static void CacheClear(Cache *cache);
@@ -49,7 +49,7 @@
  * IdCacheBitmapCompare: Compare a # and a cache bitmap; 
  *   return nonzero if # equals bitmap's id.
  */
- Bool IdCacheBitmapCompare(void *idnum, void *b)
+ bool IdCacheBitmapCompare(void *idnum, void *b)
  {  
     return *((ID *) idnum) == ((cache_bitmap) b)->idnum;
  }

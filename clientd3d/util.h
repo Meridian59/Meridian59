@@ -70,30 +70,33 @@ char *strtolower(char *);
 void  wait(long seconds);
 DWORD string_hash(char *name, DWORD max_val);
 void  set_extension(char *newfile, char *filename, char *extension);
-M59EXPORT Bool  MakeDirectory(char *name);
-Bool  GetWorkingDirectory(char *buf, int buflen);
+M59EXPORT bool  MakeDirectory(const char *name);
+bool  GetWorkingDirectory(char *buf, int buflen);
 char *GetLastErrorStr(void);
 M59EXPORT void  CenterWindow(HWND hDlg, HWND hwndParent);
-M59EXPORT void  EditBoxScroll(HWND hEdit, Bool scrollback);
-Bool  EditBoxLastVisible(HWND hEdit);
-Bool  HasExtension(char *filename, char *extension);
+M59EXPORT void  EditBoxScroll(HWND hEdit, bool scrollback);
+bool  EditBoxLastVisible(HWND hEdit);
+bool  HasExtension(char *filename, char *extension);
 M59EXPORT void  AreaToRect(AREA *a, RECT *r);
 M59EXPORT void  RectToArea(RECT *r, AREA *a);
 M59EXPORT void  UnionArea(AREA *a, AREA *a1, AREA *a2);
-M59EXPORT Bool  IsInArea(AREA *a, int x, int y);
+M59EXPORT bool  IsInArea(AREA *a, int x, int y);
 void  GetSystemStats(SystemInfo *s);
-M59EXPORT void  ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, Bool redraw);
+M59EXPORT void  ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, bool redraw);
 M59EXPORT void  ResizeDialog(HWND hDlg, RECT *dlg_rect, ChildPlacement *children);
 M59EXPORT int   MenuFindItemByName(HMENU hMenu, char *name);
-WORD  GetCRC16(char *buf, int length);
-DWORD  GetCRC32(char *buf, int length);
+WORD  GetCRC16(const char *buf, int length);
+DWORD  GetCRC32(const char *buf, int length);
 M59EXPORT BITMAPINFOHEADER *GetBitmapResource(HMODULE hModule, int bitmap_id);
-M59EXPORT Bool GetBitmapResourceInfo(HMODULE hModule, int bitmap_id, RawBitmap *b);
+M59EXPORT bool GetBitmapResourceInfo(HMODULE hModule, int bitmap_id, RawBitmap *b);
 M59EXPORT void InitMenuPopupHandler(HWND hwnd, HMENU hMenu, UINT item, BOOL fSystemMenu);
 
 M59EXPORT void *SafeMalloc(int bytes);
 M59EXPORT void *ZeroSafeMalloc(int bytes);
 M59EXPORT void *SafeRealloc(void* pMemory, int bytes);
 M59EXPORT void SafeFree(void *pMemory);
+
+// Case-insensitive string comparison for std::string
+bool iequals(const std::string& a, const std::string& b);
 
 #endif /* #ifndef _UTIL_H */

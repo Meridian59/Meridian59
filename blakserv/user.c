@@ -115,7 +115,7 @@ user_node * CreateNewUserByName(int account_id,int class_id,char*buf)
    return u;
 }
 
-Bool AssociateUser(int account_id,int object_id)
+bool AssociateUser(int account_id,int object_id)
 {
    user_node *u;
 
@@ -123,7 +123,7 @@ Bool AssociateUser(int account_id,int object_id)
    while (u != NULL)
    {
       if (u->object_id == object_id)
-	 return False;
+        return false;
       u = u->next;
    }
 
@@ -134,7 +134,7 @@ Bool AssociateUser(int account_id,int object_id)
    u->next = users;
    users = u;
 
-   return True;
+   return true;
 }
 
 void LoadUser(int account_id,int object_id)

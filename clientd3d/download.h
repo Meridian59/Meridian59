@@ -42,10 +42,10 @@ void DownloadInit(void);
 void DownloadExit(void);
 
 void DownloadFiles(DownloadInfo *params);
-Bool DownloadCheckDirs(HWND hParent);
+bool DownloadCheckDirs(HWND hParent);
 void DownloadSetTime(int new_time);
 
-Bool DownloadBferHandleMessage(char *ptr, long len);
+bool DownloadBferHandleMessage(char *ptr, long len);
 
 void DownloadNewClient(char *hostname, char *filename);
 

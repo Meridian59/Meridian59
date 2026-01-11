@@ -46,7 +46,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
            if send(what,@CanBeGivenToNPC) AND
            (send(self,@IsObjectWearable,#what=what)

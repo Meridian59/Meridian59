@@ -52,7 +52,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if Send(Self,@IsObjectReagent,#what=what) or send(self,@IsObjectGem,#what=what)
          { return True;}

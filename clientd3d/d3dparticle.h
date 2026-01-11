@@ -45,7 +45,7 @@ typedef struct emitter
 	custom_xyz	rotation;
 	custom_bgra	bgra;
 	particle	particles[MAX_PARTICLES];
-	Bool		bRandomize;
+	bool		bRandomize;
 } emitter;
 
 typedef struct particle_system
@@ -58,7 +58,7 @@ void	D3DParticleSystemReset(particle_system *pParticleSystem);
 void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
 							float velX, float velY, float velZ, unsigned char b, unsigned char g,
 							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, Bool bRandomize, int randomPos, int randomRot);
+							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos, int randomRot);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 //void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,

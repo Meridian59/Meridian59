@@ -14,7 +14,7 @@
 
 void StatCacheCreate(void);
 void StatCacheDestroy(void);
-Bool StatCacheGetEntry(int group, list_type *stats);
+bool StatCacheGetEntry(int group, list_type *stats);
 void StatCacheSetEntry(int group, list_type stats);
 void StatCacheSetSize(int size);
 Statistic *StatCacheUpdate(BYTE group, Statistic *s);

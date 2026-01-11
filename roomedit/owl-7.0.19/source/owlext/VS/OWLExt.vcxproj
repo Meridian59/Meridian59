@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{2A0621CD-328B-4991-8A05-705249BF2988}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>owlext</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">owlext-7.x.x-v1920-x64-dt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">owlext-7.x.x-v1920-x64-t</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">owlext-7.x.x-v1920-x86-t</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">owlext-7.x.x-v1920-x86-dt</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_OWLEXTLIB;_OWLEXTPCH;_CRT_SECURE_NO_WARNINGS;_HAS_AUTO_PTR_ETC=0;__DEBUG=2;__TRACE;__WARN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owlext/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\include\owlext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x86 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_OWLEXTLIB;_OWLEXTPCH;_CRT_SECURE_NO_WARNINGS;_HAS_AUTO_PTR_ETC=0;__DEBUG=2;__TRACE;__WARN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owlext/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\include\owlext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x64 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_OWLEXTLIB;_OWLEXTPCH;_CRT_SECURE_NO_WARNINGS;_HAS_AUTO_PTR_ETC=0;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owlext/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\include\owlext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x86 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILD_OWLEXTLIB;_OWLEXTPCH;_CRT_SECURE_NO_WARNINGS;_HAS_AUTO_PTR_ETC=0;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owlext/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\include\owlext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x64 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\bmpmenu.cpp" />
+    <ClCompile Include="..\browse.cpp" />
+    <ClCompile Include="..\busy.cpp" />
+    <ClCompile Include="..\butappdlg.cpp" />
+    <ClCompile Include="..\calcedit.cpp" />
+    <ClCompile Include="..\caledit.cpp" />
+    <ClCompile Include="..\colorhls.cpp" />
+    <ClCompile Include="..\colpick.cpp" />
+    <ClCompile Include="..\comboexp.cpp" />
+    <ClCompile Include="..\ctxhelpm.cpp" />
+    <ClCompile Include="..\dirdialg.cpp" />
+    <ClCompile Include="..\dlgtoolb.cpp" />
+    <ClCompile Include="..\dockingex.cpp" />
+    <ClCompile Include="..\editlist.cpp" />
+    <ClCompile Include="..\enumwnd.cpp" />
+    <ClCompile Include="..\gadgctrl.cpp" />
+    <ClCompile Include="..\gadgdesc.cpp" />
+    <ClCompile Include="..\gadgetex.cpp" />
+    <ClCompile Include="..\gaugegad.cpp" />
+    <ClCompile Include="..\harborex.cpp" />
+    <ClCompile Include="..\hlinkctl.cpp" />
+    <ClCompile Include="..\keyhook.cpp" />
+    <ClCompile Include="..\menubtn.cpp" />
+    <ClCompile Include="..\mousehk.cpp" />
+    <ClCompile Include="..\msc\owlextpch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\msghook.cpp" />
+    <ClCompile Include="..\multiwin.cpp" />
+    <ClCompile Include="..\notebook.cpp" />
+    <ClCompile Include="..\owlext.cpp" />
+    <ClCompile Include="..\pickedit.cpp" />
+    <ClCompile Include="..\pictdeco.cpp" />
+    <ClCompile Include="..\pictdlg.cpp" />
+    <ClCompile Include="..\popedit.cpp" />
+    <ClCompile Include="..\progress.cpp" />
+    <ClCompile Include="..\simplapp.cpp" />
+    <ClCompile Include="..\staticbm.cpp" />
+    <ClCompile Include="..\tabwin.cpp" />
+    <ClCompile Include="..\thredprg.cpp" />
+    <ClCompile Include="..\timer.cpp" />
+    <ClCompile Include="..\tipdialg.cpp" />
+    <ClCompile Include="..\toolcustdlg.cpp" />
+    <ClCompile Include="..\urllink.cpp" />
+    <ClCompile Include="..\validate.cpp" />
+    <ClCompile Include="..\version.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\include\owlext\calcedit.rh" />
+    <None Include="..\..\..\include\owlext\caledit.rh" />
+    <None Include="..\..\..\include\owlext\colpick.rh" />
+    <None Include="..\..\..\include\owlext\ctxhelpm.rh" />
+    <None Include="..\..\..\include\owlext\dirdialg.rh" />
+    <None Include="..\..\..\include\owlext\dockingex.rh" />
+    <None Include="..\..\..\include\owlext\hlinkctl.rh" />
+    <None Include="..\..\..\include\owlext\menubtn.rh" />
+    <None Include="..\..\..\include\owlext\pickedit.rh" />
+    <None Include="..\..\..\include\owlext\progress.rh" />
+    <None Include="..\..\..\include\owlext\res\copy.cur" />
+    <None Include="..\..\..\include\owlext\res\cutpast.cur" />
+    <None Include="..\..\..\include\owlext\res\delete.cur" />
+    <None Include="..\..\..\include\owlext\res\hand.cur" />
+    <None Include="..\..\..\include\owlext\res\hlink.cur" />
+    <None Include="..\..\..\include\owlext\tipdialg.rh" />
+    <None Include="..\..\..\include\owlext\urllink.rh" />
+    <None Include="..\CB\owlext.cbproj" />
+    <None Include="..\README.HTM">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\tipfile.tip" />
+    <None Include="..\vc.mak" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\include\owlext\calcedit.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\caledit.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\colpick.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\ctxhelpm.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\dirdialg.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\dockingex.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\hlinkctl.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\menubtn.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\pickedit.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\progress.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\tipdialg.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\..\..\include\owlext\urllink.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\owlext.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="..\version.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\owlext\all.h" />
+    <ClInclude Include="..\..\..\include\owlext\bmpmenu.h" />
+    <ClInclude Include="..\..\..\include\owlext\browse.h" />
+    <ClInclude Include="..\..\..\include\owlext\busy.h" />
+    <ClInclude Include="..\..\..\include\owlext\butappdlg.h" />
+    <ClInclude Include="..\..\..\include\owlext\calcedit.h" />
+    <ClInclude Include="..\..\..\include\owlext\caledit.h" />
+    <ClInclude Include="..\..\..\include\owlext\colorhls.h" />
+    <ClInclude Include="..\..\..\include\owlext\colpick.h" />
+    <ClInclude Include="..\..\..\include\owlext\comboexp.h" />
+    <ClInclude Include="..\..\..\include\owlext\core.h" />
+    <ClInclude Include="..\..\..\include\owlext\ctxhelpm.h" />
+    <ClInclude Include="..\..\..\include\owlext\debugex.h" />
+    <ClInclude Include="..\..\..\include\owlext\defs.h" />
+    <ClInclude Include="..\..\..\include\owlext\dirdialg.h" />
+    <ClInclude Include="..\..\..\include\owlext\dlgapp.h" />
+    <ClInclude Include="..\..\..\include\owlext\dlgtoolb.h" />
+    <ClInclude Include="..\..\..\include\owlext\dockingex.h" />
+    <ClInclude Include="..\..\..\include\owlext\editlist.h" />
+    <ClInclude Include="..\..\..\include\owlext\enumwnd.h" />
+    <ClInclude Include="..\..\..\include\owlext\gadgctrl.h" />
+    <ClInclude Include="..\..\..\include\owlext\gadgdesc.h" />
+    <ClInclude Include="..\..\..\include\owlext\gadgetex.h" />
+    <ClInclude Include="..\..\..\include\owlext\gaugegad.h" />
+    <ClInclude Include="..\..\..\include\owlext\harborex.h" />
+    <ClInclude Include="..\..\..\include\owlext\hlinkctl.h" />
+    <ClInclude Include="..\..\..\include\owlext\keyhook.h" />
+    <ClInclude Include="..\..\..\include\owlext\menubtn.h" />
+    <ClInclude Include="..\..\..\include\owlext\mousehk.h" />
+    <ClInclude Include="..\..\..\include\owlext\msghook.h" />
+    <ClInclude Include="..\..\..\include\owlext\multiwin.h" />
+    <ClInclude Include="..\..\..\include\owlext\notebook.h" />
+    <ClInclude Include="..\..\..\include\owlext\owlext.h" />
+    <ClInclude Include="..\..\..\include\owlext\owlxlink.h" />
+    <ClInclude Include="..\..\..\include\owlext\pch.h" />
+    <ClInclude Include="..\..\..\include\owlext\pickedit.h" />
+    <ClInclude Include="..\..\..\include\owlext\pictdeco.h" />
+    <ClInclude Include="..\..\..\include\owlext\pictdlg.h" />
+    <ClInclude Include="..\..\..\include\owlext\popedit.h" />
+    <ClInclude Include="..\..\..\include\owlext\progress.h" />
+    <ClInclude Include="..\..\..\include\owlext\property.h" />
+    <ClInclude Include="..\..\..\include\owlext\rcptr.h" />
+    <ClInclude Include="..\..\..\include\owlext\simplapp.h" />
+    <ClInclude Include="..\..\..\include\owlext\singletn.h" />
+    <ClInclude Include="..\..\..\include\owlext\staticbm.h" />
+    <ClInclude Include="..\..\..\include\owlext\tabwin.h" />
+    <ClInclude Include="..\..\..\include\owlext\thredprg.h" />
+    <ClInclude Include="..\..\..\include\owlext\timer.h" />
+    <ClInclude Include="..\..\..\include\owlext\tipdialg.h" />
+    <ClInclude Include="..\..\..\include\owlext\toolcustdlg.h" />
+    <ClInclude Include="..\..\..\include\owlext\urllink.h" />
+    <ClInclude Include="..\..\..\include\owlext\util.h" />
+    <ClInclude Include="..\..\..\include\owlext\validate.h" />
+    <ClInclude Include="..\..\..\include\owlext\version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\include\owlext\res\calbtn.bmp" />
+    <Image Include="..\..\..\include\owlext\res\calcbtn.bmp" />
+    <Image Include="..\..\..\include\owlext\res\calpnbtn.bmp" />
+    <Image Include="..\..\..\include\owlext\res\dirimage.bmp" />
+    <Image Include="..\..\..\include\owlext\res\downarro.bmp" />
+    <Image Include="..\..\..\include\owlext\res\help.bmp" />
+    <Image Include="..\..\..\include\owlext\res\hlnkurl.ico" />
+    <Image Include="..\..\..\include\owlext\res\hlpcont.bmp" />
+    <Image Include="..\..\..\include\owlext\res\litebulb.bmp" />
+    <Image Include="..\..\..\include\owlext\res\popupd.bmp" />
+    <Image Include="..\..\..\include\owlext\res\popupr.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

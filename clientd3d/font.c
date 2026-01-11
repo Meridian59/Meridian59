@@ -39,7 +39,7 @@ static char font_section[] = "Fonts";  /* Section for fonts in INI file */
 
 /* local function prototypes */
 UINT_PTR CALLBACK ChooseFontHookProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-Bool SetFont(WORD font, LOGFONT *lf);
+bool SetFont(WORD font, LOGFONT *lf);
 void DestroyFont(WORD font);
 HFONT GetFont(WORD font);
 
@@ -51,17 +51,17 @@ LOGFONT *GetLogfont(int fontNum)
 /************************************************************************/
 /*
  * FontsCreate:  Create all fonts for use in the game.
- *  If use_defaults is False, try to load fonts from INI file.
+ *  If use_defaults is false, try to load fonts from INI file.
  *  Otherwise use default fonts.
  */
-void FontsCreate(Bool use_defaults)
+void FontsCreate(bool use_defaults)
 {
    WORD i;
    int temp;
    LOGFONT lf;
    char str[MAX_FONTNAME], name[10], *ptr;
-   char *separators = ",";
-   Bool success;
+   const char *separators = ",";
+   bool success;
 
    hDefaultFont = (HFONT) GetStockObject(SYSTEM_FONT);
 
@@ -76,43 +76,43 @@ void FontsCreate(Bool use_defaults)
 	 GetPrivateProfileString(font_section, name, fontinfo[i], str, MAX_FONTNAME, ini_file);
       }
 
-      success = True;
+      success = true;
       if ((ptr = strtok(str, separators)) == NULL || sscanf(ptr, "%d", &lf.lfHeight) != 1)
-	 success = False;
+	 success = false;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfWidth) != 1)
-	 success = False;
+	 success = false;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfEscapement) != 1)
-	 success = False;
+	 success = false;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfOrientation) != 1)
-	 success = False;
+	 success = false;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &lf.lfWeight) != 1)
-	 success = False;
+	 success = false;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfItalic = temp; /* 1 byte value */
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfUnderline = temp;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfStrikeOut = temp;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfCharSet = temp;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfOutPrecision = temp;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfClipPrecision = temp;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfQuality = temp;
       if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-	 success = False;
+	 success = false;
       else lf.lfPitchAndFamily = temp;
       if ((ptr = strtok(NULL, separators)) == NULL)	 
-	 success = False; 
+	 success = false; 
       else strcpy(lf.lfFaceName, ptr);
 
       memcpy(&logfonts[i],&lf,sizeof(LOGFONT));
@@ -154,23 +154,23 @@ HFONT GetFont(WORD font)
 /************************************************************************/
 /*
  * SetFont:  Set given user font # using given font info.  
- *   Returns True on success; returns False and uses default font on failure.
+ *   Returns true on success; returns false and uses default font on failure.
  */
-Bool SetFont(WORD font, LOGFONT *lf)
+bool SetFont(WORD font, LOGFONT *lf)
 {
    if (font > MAXFONTS)
    {
       debug(("Illegal font #%u\n", font));
-      return False;
+      return false;
    }
 
    fonts[font] = CreateFontIndirect(lf);
    if (fonts[font] == NULL)
    {
       fonts[font] = hDefaultFont;
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }
 /************************************************************************/
 /* 
@@ -202,7 +202,7 @@ void FontsSave(void)
 void FontsRestoreDefaults(void)
 {
    FontsDestroy();
-   FontsCreate(True);
+   FontsCreate(true);
    MainChangeFont();
 
    ModuleEvent(EVENT_FONTCHANGED, -1, NULL);
@@ -253,7 +253,7 @@ void UserSelectFont(WORD font)
    SetFont(font, cf.lpLogFont);
 
    /* See if a module wants to intercept font change */
-   if (ModuleEvent(EVENT_FONTCHANGED, font, cf.lpLogFont) == False)
+   if (ModuleEvent(EVENT_FONTCHANGED, font, cf.lpLogFont) == false)
       return;
 
    /* Update fonts on screen */

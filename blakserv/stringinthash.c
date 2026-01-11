@@ -78,7 +78,7 @@ void SIHashInsert(sihash_type sihash,const char *key,int value)
 	}
 }
 
-Bool SIHashFind(sihash_type sihash,const char *key,int *value)
+bool SIHashFind(sihash_type sihash,const char *key,int *value)
 {
 	unsigned int hash_value = GetBufferHash(key,strlen(key)) % sihash->size;
 	sihash_node *node = sihash->nodes[hash_value];
@@ -87,11 +87,11 @@ Bool SIHashFind(sihash_type sihash,const char *key,int *value)
 		if (stricmp(node->key,key) == 0)
 		{
 			*value = node->value;
-			return True;
+			return true;
 		}
 		node = node->next;
 	}
-	return False;
+	return false;
 }
 
 const char * SIHashFindByValue(sihash_type sihash,int value)

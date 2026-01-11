@@ -12,7 +12,7 @@
 #ifndef _BSPLOAD_H
 #define _BSPLOAD_H
 
-Bool BSPRooFileLoad(char *fname, room_type *room);
+bool BSPRooFileLoad(char *fname, room_type *room);
 void BSPRoomFree(room_type *room);
 
 void BSPDumpTree(BSPnode *tree, int level);

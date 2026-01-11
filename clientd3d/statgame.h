@@ -26,13 +26,13 @@
 enum { GAME_NONE = 0, GAME_PLAY = 1, GAME_RESYNC = 2, GAME_INIT = 3,
     GAME_WAIT = 4, GAME_INVALID = 5, GAME_SELECT = 6, };
 
-/* Return True iff user actions shouldn't be processed in given game state */
+/* Return true iff user actions shouldn't be processed in given game state */
 #define IsWaitingGameState(s) ((s) == GAME_WAIT || (s) == GAME_INVALID || (s) == GAME_NONE)
 
 void GameInit(void);
 void GameExit(void);
 void GameExpose(HWND hwnd);
-Bool GameKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+bool GameKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
 void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 void GameLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
 void GameMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
@@ -43,7 +43,7 @@ void GameResize(HWND hwnd, UINT resize_flag, int xsize, int ysize);
 void GameSetFocus(HWND hwnd, HWND hwndOldFocus);
 void GameKillFocus(HWND hwnd, HWND hwndNewFocus);
 void GameCommand(HWND hwnd,int id,HWND hwndCtl,UINT codeNotify);
-Bool GameDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool GameDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void GameIdle(void);
 void GameTimer(HWND hwnd, UINT id);
 void GameEnterIdle(HWND hwnd, UINT source, HWND hwndSource);

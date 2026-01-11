@@ -30,17 +30,17 @@ static int room_version;  // Version of room file we're reading
 
 static int security;  // Room security value, calculated as room is loaded
 
-static Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version);
-static Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version);
-static Bool LoadSectors(file_node *f, room_type *room, int num_sectors);
-static Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
-static Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
+static bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version);
+static bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version);
+static bool LoadSectors(file_node *f, room_type *room, int num_sectors);
+static bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs);
+static bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors);
 /*****************************************************************************************/
 /*
  * BSPRooFileLoad:  Load room description from given file, and put result in room.
- *   Returns True on success.
+ *   Returns true on success.
  */
-extern Bool gD3DRedrawAll;
+extern int gD3DRedrawAll;
 extern d3d_render_cache_system gWorldCacheSystemStatic;
 extern d3d_render_cache_system gLMapCacheSystemStatic;
 extern custom_xyz playerOldPos;
@@ -53,7 +53,7 @@ static float readValue(char *buf, int room_version)
    return *((float *) buf);
 }
 
-Bool BSPRooFileLoad(char *fname, room_type *room)
+bool BSPRooFileLoad(char *fname, room_type *room)
 {
    int i, temp;
    BYTE byte;
@@ -62,7 +62,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    file_node f;
 
    if (!CliMappedFileOpenRead(fname, &f))
-      return False;
+      return false;
 
    // Check magic number and version
    for (i = 0; i < 4; i++)
@@ -70,7 +70,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
       {
          MappedFileClose(&f);
          debug(("%s is not a roo file\n", fname));
-         return False;
+         return false;
       }
 
    security = 0;
@@ -79,7 +79,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    {
       MappedFileClose(&f);
       debug(("Bad roo version %d; expecting %d\n", room_version, ROO_VERSION));
-      return False;
+      return false;
    }
 
    security += room_version;
@@ -87,14 +87,14 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &room->security, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
 
    // Read pointer to main info in file, and go there
    if (CliMappedFileRead(&f, &temp, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    MappedFileGoto(&f, temp);
 
@@ -102,7 +102,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &room->width, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
 
    offset_adjust = 0;
@@ -111,7 +111,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &room->height, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    room->rows = room->height >> LOG_FINENESS;
 
@@ -119,27 +119,27 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &node_pos, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    if (CliMappedFileRead(&f, &wall_pos, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    if (CliMappedFileRead(&f, &temp, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    if (CliMappedFileRead(&f, &sidedef_pos, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    if (CliMappedFileRead(&f, &sector_pos, 4) != 4)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
    node_pos += offset_adjust;
    wall_pos += offset_adjust;
@@ -151,13 +151,13 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &num_nodes, 2) != 2)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
-   if (LoadNodes(&f, room, num_nodes, room_version) == False)
+   if (LoadNodes(&f, room, num_nodes, room_version) == false)
    {
       debug(("Failure loading %d nodes\n", num_nodes));
       MappedFileClose(&f);
-      return False;
+      return false;
    }
 
    // Read walls
@@ -165,13 +165,13 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &num_walls, 2) != 2)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
-   if (LoadWalls(&f, room, num_walls, room_version) == False)
+   if (LoadWalls(&f, room, num_walls, room_version) == false)
    {
       debug(("Failure loading %d walls\n", num_walls));
       MappedFileClose(&f);
-      return False;
+      return false;
    }
 
    // Read sidedefs
@@ -179,13 +179,13 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &num_sidedefs, 2) != 2)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
-   if (LoadSidedefs(&f, room, num_sidedefs) == False)
+   if (LoadSidedefs(&f, room, num_sidedefs) == false)
    {
       debug(("Failure loading %d sidedefs\n", num_sidedefs));
       MappedFileClose(&f);
-      return False;
+      return false;
    }
 
    // Read sectors
@@ -193,13 +193,13 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    if (CliMappedFileRead(&f, &num_sectors, 2) != 2)
    {
       MappedFileClose(&f);
-      return False;
+      return false;
    }
-   if (LoadSectors(&f, room, num_sectors) == False)
+   if (LoadSectors(&f, room, num_sectors) == false)
    {
       debug(("Failure loading %d sectors\n", num_sectors));
       MappedFileClose(&f);
-      return False;
+      return false;
    }
 
    MappedFileClose(&f);
@@ -212,11 +212,11 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    else
       room->tree = &room->nodes[0];
 
-   if (RoomSwizzle(room, room->tree, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
+   if (RoomSwizzle(room, room->tree, num_nodes, num_walls, num_sidedefs, num_sectors) == false)
    {
       debug(("RoomSwizzle failed\n"));
       BSPRoomFree(room);
-      return False;
+      return false;
    }
 
    security ^= 0x89ab786c;
@@ -224,7 +224,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    {
       debug(("Room security mismatch while loading (got %d, expecting %d)!\n", security, room->security));
       BSPRoomFree(room);
-      return False;
+      return false;
    }
 
    room->num_nodes = num_nodes;
@@ -241,7 +241,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
 
    CacheReport();
 
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
@@ -298,9 +298,9 @@ void BSPRoomFree(room_type *room)
 /*****************************************************************************************/
 /*
  * LoadNodes:  Load nodes of BSP tree, and set tree field of room structure to the root.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
+bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
 {
    int i, j, size;
    BYTE type;
@@ -319,21 +319,21 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
       node = &room->nodes[i];
 
       if (CliMappedFileRead(f, &type, 1) != 1)
-         return False;
+         return false;
       node->type = (BSPnodetype) type;
 
       char buf[4];
       if (CliMappedFileRead(f, buf, 4) != 4)
-         return False;
+         return false;
       node->bbox.x0 = readValue(buf, room_version);
       if (CliMappedFileRead(f, buf, 4) != 4)
-         return False;
+         return false;
       node->bbox.y0 = readValue(buf, room_version);
       if (CliMappedFileRead(f, buf, 4) != 4)
-         return False;
+         return false;
       node->bbox.x1 = readValue(buf, room_version);
       if (CliMappedFileRead(f, buf, 4) != 4)
-         return False;
+         return false;
       node->bbox.y1 = readValue(buf, room_version);
 
       //      debug(("Loading node %d ", i));
@@ -344,24 +344,24 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
          inode = &node->u.internal;
 
          if (CliMappedFileRead(f, buf, 4) != 4)
-            return False;
+            return false;
          inode->separator.a = readValue(buf, room_version);
          security += *((int *) buf);
          if (CliMappedFileRead(f, buf, 4) != 4)
-            return False;
+            return false;
          inode->separator.b = readValue(buf, room_version);
          security += *((int *) buf);
          if (CliMappedFileRead(f, buf, 4) != 4)
-            return False;
+            return false;
          inode->separator.c = readValue(buf, room_version);
          security += *((int *) buf);
 
          if (CliMappedFileRead(f, &inode->pos_num, 2) != 2)
-            return False;
+            return false;
          if (CliMappedFileRead(f, &inode->neg_num, 2) != 2)
-            return False;
+            return false;
          if (CliMappedFileRead(f, &inode->wall_num, 2) != 2)
-            return False;
+            return false;
 
          security += inode->wall_num;
 
@@ -371,20 +371,20 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
          leaf = &node->u.leaf;
 
          if (CliMappedFileRead(f, &leaf->sector_num, 2) != 2)
-            return False;
+            return false;
 
          // Get points of polygon
          if (CliMappedFileRead(f, &num_points, 2) != 2)
-            return False;
+            return false;
          leaf->poly.npts = num_points;
          for (j = 0; j < num_points; j++)
          {
             if (CliMappedFileRead(f, &buf, 4) != 4)
-               return False;
+               return false;
             leaf->poly.p[j].x = readValue(buf, room_version);
             security += *((int *) buf);
             if (CliMappedFileRead(f, &buf, 4) != 4)
-               return False;
+               return false;
             leaf->poly.p[j].y = readValue(buf, room_version);
             security += *((int *) buf);
          }
@@ -393,17 +393,17 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes, int room_version)
 
       default:
          debug(("LoadNodes got unknown node type %d!\n", (int) type));
-         return False;
+         return false;
       }
    }
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
  * LoadWalls:  Load walls, and set global walls variable to array of walls.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
+bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
 {
    int i, size;
    WORD word;
@@ -420,30 +420,30 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
       //      debug(("Loading wall %d of %d\n", i, num_walls));
 
       if (CliMappedFileRead(f, &word, 2) != 2)
-         return False;
+         return false;
       wall->next_num = word;
 
       // Get sidedef numbers
       if (CliMappedFileRead(f, &wall->pos_sidedef_num, 2) != 2)
-         return False;
+         return false;
       if (CliMappedFileRead(f, &wall->neg_sidedef_num, 2) != 2)
-         return False;
+         return false;
       security += wall->pos_sidedef_num + wall->neg_sidedef_num;
 
       if (CliMappedFileRead(f, &buf, 4) != 4)
-         return False;
+         return false;
       wall->x0 = readValue(buf, room_version);
       security += *((int *) buf);
       if (CliMappedFileRead(f, &buf, 4) != 4)
-         return False;
+         return false;
       wall->y0 = readValue(buf, room_version);
       security += *((int *) buf);
       if (CliMappedFileRead(f, &buf, 4) != 4)
-         return False;
+         return false;
       wall->x1 = readValue(buf, room_version);
       security += *((int *) buf);
       if (CliMappedFileRead(f, &buf, 4) != 4)
-         return False;
+         return false;
       wall->y1 = readValue(buf, room_version);
       security += *((int *) buf);
 
@@ -451,40 +451,40 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls, int room_version)
       if (room_version < 13)
       {
          if (CliMappedFileRead(f, &word, 2) != 2)
-            return False;
+            return false;
          wall->length = word;
       }
       else
       {
          if (CliMappedFileRead(f, &wall->length, 4) != 4)
-            return False;
+            return false;
       }
 
       // Get texture offsets
       if (CliMappedFileRead(f, &wall->pos_xoffset, 2) != 2)
-         return False;
+         return false;
       if (CliMappedFileRead(f, &wall->neg_xoffset, 2) != 2)
-         return False;
+         return false;
       if (CliMappedFileRead(f, &wall->pos_yoffset, 2) != 2)
-         return False;
+         return false;
       if (CliMappedFileRead(f, &wall->neg_yoffset, 2) != 2)
-         return False;
+         return false;
 
       // Get sector numbers
       if (CliMappedFileRead(f, &wall->pos_sector_num, 2) != 2)
-         return False;
+         return false;
       if (CliMappedFileRead(f, &wall->neg_sector_num, 2) != 2)
-         return False;
+         return false;
       security += wall->pos_sector_num + wall->neg_sector_num;
    }
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
  * LoadSidedefs:  Load sidedefs, and set global sidedefs variable to array of sidedefs.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
+bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
 {
    int i, size, period;
    BYTE speed;
@@ -498,26 +498,26 @@ Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
       Sidedef *s = &room->sidedefs[i];
 
       if (CliMappedFileRead(f, &s->server_id, 2) != 2)
-         return False;
+         return false;
       security += s->server_id;
 
       // Get wall bitmaps
       if (CliMappedFileRead(f, &s->normal_type, 2) != 2)
-         return False;
+         return false;
       s->normal_bmap = GetGridPdib(s->normal_type);
       if (CliMappedFileRead(f, &s->above_type, 2) != 2)
-         return False;
+         return false;
       s->above_bmap = GetGridPdib(s->above_type);
       if (CliMappedFileRead(f, &s->below_type, 2) != 2)
-         return False;
+         return false;
       s->below_bmap = GetGridPdib(s->below_type);
       security += s->above_type + s->below_type + s->normal_type;
 
       if (CliMappedFileRead(f, &s->flags, 4) != 4)
-         return False;
+         return false;
       security += s->flags;
       if (CliMappedFileRead(f, &speed, 1) != 1)
-         return False;
+         return false;
 
       // Set up animation, if any
       if (speed != 0)
@@ -548,7 +548,7 @@ Bool LoadSidedefs(file_node *f, room_type *room, int num_sidedefs)
       else
          s->animate = NULL;
    }
-   return True;
+   return true;
 }
 
 // These vector math functions are just a little bit of pork to make
@@ -718,9 +718,9 @@ SlopeData *LoadSlopeInfo(file_node *f)
 /*****************************************************************************************/
 /*
  * LoadSectors:  Load sectors, and set global sectors variable to array of sectors.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
+bool LoadSectors(file_node *f, room_type *room, int num_sectors)
 {
    int i, size, period;
    WORD word;
@@ -735,49 +735,49 @@ Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
       Sector *s = &room->sectors[i];
 
       if (CliMappedFileRead(f, &s->server_id, 2) != 2)
-         return False;
+         return false;
       security += s->server_id;
 
       // Get floor and ceiling bitmaps
       if (CliMappedFileRead(f, &s->floor_type, 2) != 2)
-         return False;
+         return false;
       s->floor = GetGridPdib(s->floor_type);
       if (CliMappedFileRead(f, &s->ceiling_type, 2) != 2)
-         return False;
+         return false;
       s->ceiling = GetGridPdib(s->ceiling_type);
       security += s->floor_type + s->ceiling_type;
 
       // Get texture origin
       if (CliMappedFileRead(f, &word, 2) != 2)
-         return False;
+         return false;
       s->tx = FinenessKodToClient(word);
       if (CliMappedFileRead(f, &word, 2) != 2)
-         return False;
+         return false;
       s->ty = FinenessKodToClient(word);
 
       // Get floor and ceiling heights
       if (CliMappedFileRead(f, &word, 2) != 2)
-         return False;
+         return false;
       security += word;
       s->floor_height = HeightKodToClient(word);
       if (CliMappedFileRead(f, &word, 2) != 2)
-         return False;
+         return false;
       security += word;
       s->ceiling_height = HeightKodToClient(word);
 
       if (CliMappedFileRead(f, &s->light, 1) != 1)
-         return False;
+         return false;
       security += s->light;
 
       if (CliMappedFileRead(f, &s->flags, 4) != 4)
-         return False;
+         return false;
       security += s->flags;
 
       // XXX Old version
       if (room_version >= 10)
       {
          if (CliMappedFileRead(f, &speed, 1) != 1)
-            return False;
+            return false;
       }
       else
          speed = 0;
@@ -818,28 +818,28 @@ Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
       {
          s->sloped_floor = LoadSlopeInfo(f);
          if (s->sloped_floor == (SlopeData *) NULL)
-            return False;
+            return false;
       }
 
       if (s->flags & SF_SLOPED_CEILING)
       {
          s->sloped_ceiling = LoadSlopeInfo(f);
          if (s->sloped_ceiling == (SlopeData *) NULL)
-            return False;
+            return false;
       }
    }
-   return True;
+   return true;
 }
 /*****************************************************************************************/
 /*
  * RoomSwizzle:  Convert node and wall id numbers loaded from the file into pointers
  *   directly to these nodes and walls.
- *   Return True if all id numbers are legal, and so conversion was successful.
+ *   Return true if all id numbers are legal, and so conversion was successful.
  */
 #define MAXLONG 0x7fffffff
 #define OVERFLOWAMOUNT (MAXLONG >> (LOG_FINENESS * 2))
 
-Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors)
+bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, int num_sidedefs, int num_sectors)
 {
    BSPinternal *inode;
    BSPleaf *leaf;
@@ -848,7 +848,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
    float a2, b2;
 
    if (tree == NULL)
-      return True;
+      return true;
 
    switch (tree->type)
    {
@@ -939,7 +939,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
             if (wall->next_num < 0 || wall->next_num > num_walls)
             {
                debug(("RoomSwizzle got wall #%d; max is %d\n", wall->next_num, num_walls));
-               return False;
+               return false;
             }
             else
                wall->next = &room->walls[wall->next_num - 1];
@@ -953,7 +953,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
             {
                debug(
                    ("RoomSwizzle found wall referencing sidedef %d; max is %d\n", wall->pos_sidedef_num, num_sidedefs));
-               return False;
+               return false;
             }
             if (wall->pos_sidedef_num == 0)
                wall->pos_sidedef = NULL;
@@ -964,7 +964,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
             {
                debug(
                    ("RoomSwizzle found wall referencing sidedef %d; max is %d\n", wall->neg_sidedef_num, num_sidedefs));
-               return False;
+               return false;
             }
             if (wall->neg_sidedef_num == 0)
                wall->neg_sidedef = NULL;
@@ -974,7 +974,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
             if (wall->pos_sector_num > num_sectors)
             {
                debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", wall->pos_sector_num, num_sectors));
-               return False;
+               return false;
             }
 
             if (wall->pos_sector_num == 0)
@@ -985,7 +985,7 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
             if (wall->neg_sector_num > num_sectors)
             {
                debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", wall->neg_sector_num, num_sectors));
-               return False;
+               return false;
             }
 
             if (wall->neg_sector_num == 0)
@@ -997,10 +997,10 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
          }
       }
 
-      if (RoomSwizzle(room, inode->pos_side, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
-         return False;
-      if (RoomSwizzle(room, inode->neg_side, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
-         return False;
+      if (RoomSwizzle(room, inode->pos_side, num_nodes, num_walls, num_sidedefs, num_sectors) == false)
+         return false;
+      if (RoomSwizzle(room, inode->neg_side, num_nodes, num_walls, num_sidedefs, num_sectors) == false)
+         return false;
       break;
 
    case BSPleaftype:
@@ -1009,18 +1009,18 @@ Bool RoomSwizzle(room_type *room, BSPTree tree, int num_nodes, int num_walls, in
       if (leaf->sector_num > num_sectors)
       {
          debug(("RoomSwizzle found leaf referencing sector %d; max is %d\n", leaf->sector, num_sectors));
-         return False;
+         return false;
       }
       if (leaf->sector_num == 0)
       {
          debug(("RoomSwizzle found leaf without sector reference\n"));
-         return False;
+         return false;
       }
       leaf->sector = &room->sectors[leaf->sector_num - 1];
       break;
    }
 
-   return True;
+   return true;
 }
 
 /*****************************************************************************/

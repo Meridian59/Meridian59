@@ -18,45 +18,45 @@
 static const int CASTLE_X_LEFT = 2;
 static const int CASTLE_X_RIGHT = 6;
 
-static Bool PathIsClear(Board *b, POINT p1, POINT p2, BYTE color);
-static Bool SquareIsAttacked(Board *b, POINT p, BYTE color);
-static Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color);
+static bool PathIsClear(Board *b, POINT p1, POINT p2, BYTE color);
+static bool SquareIsAttacked(Board *b, POINT p, BYTE color);
+static bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color);
 static void PieceMove(Board *b, POINT p1, POINT p2);
-static Bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color);
+static bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color);
 /****************************************************************************/
 /*
- * ChessMoveIsLegal:  Return True iff the move from p1 to p2 is legal for the player
+ * ChessMoveIsLegal:  Return true iff the move from p1 to p2 is legal for the player
  *   of the given color.
  *   Assumes that p1 contains a piece of the player's color.
  */
-Bool ChessMoveIsLegal(Board *b, POINT p1, POINT p2, BYTE color)
+bool ChessMoveIsLegal(Board *b, POINT p1, POINT p2, BYTE color)
 {
    Board new_board;
    
    if (!PieceCanMove(b, p1, p2, color))
-      return False;
+      return false;
 
    // Move must not leave king in check -- see if king attacked after move performed
    memcpy(&new_board, b, sizeof(Board));
-   ChessMovePerform(&new_board, p1, p2, False);
+   ChessMovePerform(&new_board, p1, p2, false);
 
    if (IsInCheck(&new_board, color))
-      return False;
-   return True;
+      return false;
+   return true;
 }
 /****************************************************************************/
 /*
- * PieceCanMove:  Return True iff the piece at p1 can move to p2.
+ * PieceCanMove:  Return true iff the piece at p1 can move to p2.
  *   Assumes that p1 contains a piece of the player's color.
  */
-Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color)
+bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color)
 {
    BYTE piece;
    Square *s2;
    int direction, dy;
    
    if (p1.x == p2.x && p1.y == p2.y)
-      return False;
+      return false;
 
    piece = b->squares[p1.y][p1.x].piece;
    s2 = &b->squares[p2.y][p2.x];
@@ -70,7 +70,7 @@ Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color)
       
       // Make sure moving in the correct direction
       if (dy == 0 || abs(dy) > 2 || SGN(dy) != direction)
-	 return False;
+	 return false;
       
       // 3 cases:  capturing diagonally, moving straight ahead, or illegal move
       switch (abs(p2.x - p1.x))
@@ -78,7 +78,7 @@ Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color)
       case 0:
 	 // If moving straight, can't capture
 	 if (s2->piece != NONE)
-	    return False;
+	    return false;
 	 break;
       case 1:
 	 // Look for en passant capture
@@ -93,67 +93,67 @@ Bool PieceCanMove(Board *b, POINT p1, POINT p2, BYTE color)
 	 
 	 // If moving diagonally, must capture
 	 if (s2->piece == NONE || s2->color == color)
-	    return False;
+	    return false;
 	 break;
       default:
-	 return False;
+	 return false;
       }
 
       // Can only move 2 squares forward on first move
       if (abs(dy) == 2)
 	 if ((color == WHITE && p1.y != 1) ||
 	     (color == BLACK && p1.y != 6))
-	    return False;
+	    return false;
       break;
    case ROOK:
       if (p1.x != p2.x && p1.y != p2.y)
-	 return False;
+	 return false;
       break;
    case KNIGHT:
       if (abs(p2.x - p1.x) + abs(p2.y - p1.y) != 3)
-	 return False;
+	 return false;
 
       if (abs(p2.x - p1.x) == 3 || abs(p2.y - p1.y) == 3)
-	 return False;
+	 return false;
       break;
    case BISHOP:
       if (abs(p2.x - p1.x) != abs(p2.y - p1.y))
-	 return False;
+	 return false;
       break;
    case QUEEN:
       if (p1.x != p2.x && p1.y != p2.y && abs(p2.x - p1.x) != abs(p2.y - p1.y))
-	 return False;
+	 return false;
       break;
    case KING:
       if (IsLegalCastle(b, p1, p2, color))
 	 break;
 
       if (abs(p2.x - p1.x) > 1 || abs(p2.y - p1.y) > 1)
-	 return False;
+	 return false;
       break;
    default:
       debug(("ChessMoveIsLegal got unknown piece type %d\n", piece));
-      return False;
+      return false;
    }
 
    // Can't move onto same color
    if (s2->piece != NONE && s2->color == color)
-      return False;
+      return false;
       
    // Check path to make sure no pieces are in the way (except for knights)
    if (piece != KNIGHT)
-      if (!PathIsClear(b, p1, p2, color))
-	 return False;
-   return True;
+     if (!PathIsClear(b, p1, p2, color))
+       return false;
+   return true;
 }
 
 /****************************************************************************/
 /*
  * ChessMovePerform:  Perform the move from p1 to p2 on the given board.  Assumes
  *   that the move is legal.
- *   If interactive is True, ask user for piece on pawn promotion if necessary.
+ *   If interactive is true, ask user for piece on pawn promotion if necessary.
  */
-void ChessMovePerform(Board *b, POINT p1, POINT p2, Bool interactive)
+void ChessMovePerform(Board *b, POINT p1, POINT p2, bool interactive)
 {
    BYTE piece;
    int direction;
@@ -202,26 +202,26 @@ void ChessMovePerform(Board *b, POINT p1, POINT p2, Bool interactive)
    // Set castling flags if king or rook moved
    if (piece == KING)
    {
-      b->pdata[b->move_color].can_castle_left  = False;
-      b->pdata[b->move_color].can_castle_right = False;
+      b->pdata[b->move_color].can_castle_left  = false;
+      b->pdata[b->move_color].can_castle_right = false;
    }
    else if (piece == ROOK)
    {
       if (((b->move_color == WHITE && p1.y == 0) || (b->move_color == BLACK && p1.y == 7)))
 	 if (p1.x == 0)
-	    b->pdata[b->move_color].can_castle_left = False;
+	    b->pdata[b->move_color].can_castle_left = false;
 	 else if (p1.x == 7)
-	    b->pdata[b->move_color].can_castle_right = False;
+	    b->pdata[b->move_color].can_castle_right = false;
    }
 
    // Set en passant information
    if (piece == PAWN && abs(p2.y - p1.y) > 1) 
    {
-      b->en_passant = True;
+      b->en_passant = true;
       b->passant_square.x = p1.x;
       b->passant_square.y = (p1.y + p2.y) / 2;
    }
-   else b->en_passant = False;
+   else b->en_passant = false;
    
    if (b->move_color == WHITE)
       b->move_color = BLACK;
@@ -241,14 +241,14 @@ void PieceMove(Board *b, POINT p1, POINT p2)
 
 /****************************************************************************/
 /*
- * PathIsClear:  Return True iff the path from p1 to p2 is clear, with these
+ * PathIsClear:  Return true iff the path from p1 to p2 is clear, with these
  *   2 exceptions:
  *    1) p1 may contain a piece
  *    2) p2 may contain a piece NOT of the given color
  *   Assumes that p1 and p2 are connected by a horizontal, vertical, or diagonal
  *   line.
  */
-Bool PathIsClear(Board *b, POINT p1, POINT p2, BYTE color)
+bool PathIsClear(Board *b, POINT p1, POINT p2, BYTE color)
 {
    int dx, dy;
    int x, y;
@@ -263,23 +263,23 @@ Bool PathIsClear(Board *b, POINT p1, POINT p2, BYTE color)
    while (x != p2.x || y != p2.y)
    {
       if (b->squares[y][x].piece != NONE)
-	 return False;
+	 return false;
       x += dx;
       y += dy;
    }
 
    // p2 can't contain piece of same color
    if (b->squares[y][x].piece != NONE && b->squares[y][x].color == color)
-      return False;
+      return false;
    
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
- * SquareIsAttacked:  Return True iff the given square is attacked by a piece
+ * SquareIsAttacked:  Return true iff the given square is attacked by a piece
  *   of the given color.
  */
-Bool SquareIsAttacked(Board *b, POINT p, BYTE color)
+bool SquareIsAttacked(Board *b, POINT p, BYTE color)
 {
    int i, j;
    POINT p1;
@@ -292,71 +292,71 @@ Bool SquareIsAttacked(Board *b, POINT p, BYTE color)
 	    p1.x = j;
 	    p1.y = i;
 	    if (PieceCanMove(b, p1, p, color))
-	       return True;
+	       return true;
 	 }
    
-   return False;
+   return false;
 }
 /****************************************************************************/
 /*
- * IsInCheck:  Return True iff player of given color is in check on given board.
+ * IsInCheck:  Return true iff player of given color is in check on given board.
  */
-Bool IsInCheck(Board *b, BYTE color)
+bool IsInCheck(Board *b, BYTE color)
 {
    int i, j;
    BYTE other_color;
    POINT p;
-   Bool found;
+   bool found;
 
-   found = False;
+   found = false;
    for (i=0; i < BOARD_HEIGHT; i++)
       for (j=0; j < BOARD_WIDTH; j++)
 	 if (b->squares[i][j].piece == KING && b->squares[i][j].color == color)
 	 {
 	    p.x = j;
 	    p.y = i;
-	    found = True;
+	    found = true;
 	    break;
 	 }
 
    if (!found)
-      return False;
+      return false;
    
    other_color = (color == WHITE) ? BLACK : WHITE;
    if (SquareIsAttacked(b, p, other_color))
-      return True;
-   return False;
+      return true;
+   return false;
 }
 /****************************************************************************/
 /*
- * IsLegalCastle:  Return True iff the given move is a castle, the player
+ * IsLegalCastle:  Return true iff the given move is a castle, the player
  *   can castle on this side, and the move is legal.
  *   Assumes p1 contains the king of the given color.
  */
-Bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color)
+bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color)
 {
-   Bool left;   // True if castling on left; False if castling on right
+   bool left;   // true if castling on left; false if castling on right
    int i, min_col, max_col;
    BYTE other_color;
    POINT p;
 
    // First see if move is a castle attempt
    if (p2.x != CASTLE_X_LEFT && p2.x != CASTLE_X_RIGHT)
-     return False;
+     return false;
 
    if (color == WHITE && p2.y != 0)
-     return False;
+     return false;
    if (color == BLACK && p2.y != BOARD_HEIGHT - 1)
-     return False;
+     return false;
    
    if (p2.x == CASTLE_X_LEFT)
-      left = True;
-   else left = False;
+      left = true;
+   else left = false;
    
    // See if player allowed to castle on this side
    if ((left  && !b->pdata[color].can_castle_left) ||
        (!left && !b->pdata[color].can_castle_right))
-      return False;
+      return false;
 
 
    // See if path is clear
@@ -373,7 +373,7 @@ Bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color)
 
    for (i = min_col; i <= max_col; i++)
      if (b->squares[p2.y][i].piece != NONE)
-       return False;
+       return false;
 
    // See if in check at any king position
    if (left)
@@ -393,17 +393,17 @@ Bool IsLegalCastle(Board *b, POINT p1, POINT p2, BYTE color)
    {
       p.x = i;
       if (SquareIsAttacked(b, p, other_color))
-	 return False;
+	 return false;
    }
 
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
- * HasLegalMove:  Return True iff player of given color has a legal move on the
+ * HasLegalMove:  Return true iff player of given color has a legal move on the
  *   given board.
  */
-Bool HasLegalMove(Board *b, BYTE color)
+bool HasLegalMove(Board *b, BYTE color)
 {
    int i, j, k, l;
    POINT p1, p2;
@@ -422,9 +422,9 @@ Bool HasLegalMove(Board *b, BYTE color)
 		  p2.x = l;
 		  p2.y = k;
 		  if (ChessMoveIsLegal(b, p1, p2, color))
-		     return True;
+		     return true;
 	       }
 	 }
       }
-   return False;
+   return false;
 }

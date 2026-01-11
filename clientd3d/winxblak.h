@@ -15,10 +15,10 @@
 #ifndef _WINXBLAK_H
 #define _WINXBLAK_H
 
-/* Bool Cls_OnKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) */
+/* bool Cls_OnKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) */
 #define HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, fn) \
     ((fn)((hwnd), (UINT)(wParam), TRUE, (int)LOWORD(lParam), (UINT)HIWORD(lParam)))
-/* Bool Cls_OnSysKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) */
+/* bool Cls_OnSysKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) */
 #define HANDLE_WM_SYSKEYDOWN_BLAK(hwnd, wParam, lParam, fn) \
     ((fn)((hwnd), (UINT)(wParam), TRUE, (int)LOWORD(lParam), (UINT)HIWORD(lParam)))
 

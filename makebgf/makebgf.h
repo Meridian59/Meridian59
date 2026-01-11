@@ -22,9 +22,6 @@
 
 #include "dibutil.h"
 
-typedef unsigned char Bool;
-enum {False = 0, True = 1};
-
 #define MAX_BITMAPNAME 32
 
 #define NUM_COLORS 256  // Require bitmaps to have exactly this many colors
@@ -53,11 +50,11 @@ typedef struct {
 // Command line option parameters
 typedef struct {
    int  shrink;
-   Bool rotate;
-   Bool compress;
+   bool rotate;
+   bool compress;
 } Options;
 
-void Error(char *fmt,...);
+void Error(const char *fmt,...);
 
 #include "writebgf.h"
 

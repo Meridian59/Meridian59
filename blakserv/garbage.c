@@ -52,7 +52,7 @@ void RenumberUserObjectReferences(user_node *u);
 void RenumberSessionObjectReferences(session_node *s);
 void RenumberTimerObjectReferences(timer_node *t);
 void RenumberListNodeObjectReferences(list_node *l,int list_id);
-Bool ResetObjectReference(val_type *vobject_ptr);
+bool ResetObjectReference(val_type *vobject_ptr);
 void CompactObject(object_node *o);
 
 /* timer garbage collection (well, renumbering) */
@@ -286,7 +286,7 @@ void RenumberListNodeReferences(val_type *vlist_ptr)
    
    if (l->garbage_ref == REFERENCED || l->garbage_ref == UNREFERENCED)
    {
-      eprintf("RenumberListNodeReferences unrenumbered list node %i\n",
+      eprintf("RenumberListNodeReferences unrenumbered list node %" PRId64 "\n",
 	      vlist_ptr->v.data);
       return;
    }
@@ -401,7 +401,7 @@ void RenumberObjectReferences(object_node *o)
    {
       if (o->p[i].val.v.tag == TAG_OBJECT)
       {
-	 if (ResetObjectReference(&(o->p[i].val)) == False)
+	 if (ResetObjectReference(&(o->p[i].val)) == false)
 	 {
 	    eprintf("RenumberObjectReferences got object death in object %i\n",
 		    o->object_id);
@@ -414,7 +414,7 @@ void RenumberListNodeObjectReferences(list_node *l,int list_id)
 {
    if (l->first.v.tag == TAG_OBJECT)
    {
-      if (ResetObjectReference(&(l->first)) == False)
+      if (ResetObjectReference(&(l->first)) == false)
 	 eprintf("RenumberListNodesReferences got object death in list node %i first\n",
 		 list_id);
       
@@ -422,7 +422,7 @@ void RenumberListNodeObjectReferences(list_node *l,int list_id)
    
    if (l->rest.v.tag == TAG_OBJECT)
    {
-      if (ResetObjectReference(&(l->rest)) == False)
+      if (ResetObjectReference(&(l->rest)) == false)
 	 eprintf("RenumberListNodesReferences got object death in list node %i first\n",
 		 list_id);
    }
@@ -476,7 +476,7 @@ void RenumberTimerObjectReferences(timer_node *t)
 }
 
 
-Bool ResetObjectReference(val_type *vobject_ptr)
+bool ResetObjectReference(val_type *vobject_ptr)
 {
    object_node *o;
 
@@ -484,11 +484,11 @@ Bool ResetObjectReference(val_type *vobject_ptr)
    if (o == NULL)
    {
       eprintf("ResetObjectReference death by garbage collection\n");
-      return False;
+      return false;
    }
 
    vobject_ptr->v.data = o->garbage_ref; /* has the new object id */
-   return True;
+   return true;
 }
 
 void CompactObject(object_node *o)
@@ -527,7 +527,8 @@ void ResetTimerReference(val_type *vtimer_ptr)
    t = GetTimerByID(vtimer_ptr->v.data);
    if (t == NULL)
    {
-      eprintf("ResetTimerReference found a reference to non-existent timer %i\n",vtimer_ptr->v.data);
+      eprintf("ResetTimerReference found a reference to non-existent timer %" PRId64 "\n",
+              vtimer_ptr->v.data);
       return;
    }
 
@@ -617,8 +618,8 @@ void ResetStringReference(val_type *vlist_ptr)
 
    if (snod->garbage_ref == REFERENCED || snod->garbage_ref == UNREFERENCED)
    {
-      eprintf("RenumberStringReferences unrenumbered string node %i\n",
-	      vlist_ptr->v.data);
+      eprintf("RenumberStringReferences unrenumbered string node %" PRId64 "\n",
+              vlist_ptr->v.data);
       return;
    }
 

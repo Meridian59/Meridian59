@@ -56,7 +56,7 @@ void LookListSetContents(HWND hwndListBox, list_type contents, int flags)
       if (!(info->flags & LD_AMOUNTS) || !IsNumberObj(obj->id))
       {
          ListBox_SetSel(hwndListBox, TRUE, 0);
-         info->selected[0] = True;
+         info->selected[0] = true;
       }
    }
    else ListBox_SetCurSel(hwndListBox, 0); 
@@ -177,8 +177,8 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    SetWindowText(hDlg, info->title);  /* Set window's title */
 
    // Remember state of list box items
-   info->selected = (Bool *) SafeMalloc(list_length(info->contents) * sizeof(Bool));
-   memset(info->selected, 0, list_length(info->contents) * sizeof(Bool));
+   info->selected = (bool *) SafeMalloc(list_length(info->contents) * sizeof(bool));
+   memset(info->selected, 0, list_length(info->contents) * sizeof(bool));
    
    LookListSetContents(info->hwndListBox, info->contents, info->flags);
 
@@ -244,7 +244,7 @@ int LookVkeyToItem(HWND hwnd, UINT key, HWND hwndListbox, int iCaret)
 void LookSelChange(HWND hList)
 {
    int i, count;
-   Bool selected;
+   bool selected;
    
    count = ListBox_GetCount(hList);
    for (i=0; i < count; i++)
@@ -257,7 +257,7 @@ void LookSelChange(HWND hList)
          if (!GetAmountListBox(hList, i))
          {
             ListBox_SetSel(hList, FALSE, i);
-            info->selected[i] = False;
+            info->selected[i] = false;
             continue;
          }
       }
@@ -304,7 +304,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       // Select all for number items
       for (i=0; i < num_entries; i++)
       {
-	 info->selected[i] = True;
+	 info->selected[i] = true;
 	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
 	 if (IsNumberObj(obj->id))
 	    amount = obj->amount;
@@ -331,7 +331,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	    RequestLook(obj->id);
 	    SetDescParams(hDlg, DESC_NONE);
 	    ListBox_SetSel(info->hwndListBox, FALSE, index);
-	    info->selected[index] = False;
+	    info->selected[index] = false;
 	 }
 	 break;
 
@@ -464,9 +464,9 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
  * InputNumber:  Input number from player.  Has default value, and minimum
  *   and maximum values for spin button.  Places the new dialog
  *   at (x, y) on hwnd. hParent is parent of dialog.
- *   Return True if ok.  False if cancel pressed.
+ *   Return true if ok.  false if cancel pressed.
  */
-Bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int startValue, int minValue, int maxValue)
+bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int startValue, int minValue, int maxValue)
 {
    RECT r;
    AmountDialogStruct dlg_info;
@@ -481,10 +481,10 @@ Bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int st
    
    if (IDCANCEL == SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AMOUNT), hParent,
       AmountDialogProc, (LPARAM) &dlg_info))
-      return False;  /* Don't select item */
+      return false;  /* Don't select item */
 
    *returnValue = dlg_info.amount;
-   return True;
+   return true;
 }
 
 /************************************************************************/
@@ -492,32 +492,32 @@ Bool InputNumber(HWND hParent, HWND hwnd, int x, int y, int *returnValue, int st
  * GetAmount:  If appropriate, display amount dialog to get amount
  *   of given object at (x, y) on hwnd.
  *   hParent is parent of dialog.
- *   Return True if item isn't a number item, or user entered valid amount.
+ *   Return true if item isn't a number item, or user entered valid amount.
  */
-Bool GetAmount(HWND hParent, HWND hwnd, object_node *obj, int x, int y)
+bool GetAmount(HWND hParent, HWND hwnd, object_node *obj, int x, int y)
 {
    int value;
 
    if (!IsNumberObj(obj->id))
-      return True;
+      return true;
 
    if (!InputNumber(hParent,hwnd,x,y,&value,(int)obj->amount,1,(int)obj->amount))
    {
-      return False;
+      return false;
    }
    if (value == 0)
-      return False;
+      return false;
 
    obj->temp_amount = value;
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
  * GetAmountListBox:  If appropriate, display amount dialog to get amount
  *   of object at given index in given list box.
- *   Return True iff item should be selected (i.e. user entered valid #)
+ *   Return true iff item should be selected (i.e. user entered valid #)
  */
-Bool GetAmountListBox(HWND hList, int index)
+bool GetAmountListBox(HWND hList, int index)
 {
    object_node *obj;
    MEASUREITEMSTRUCT m;
@@ -525,7 +525,7 @@ Bool GetAmountListBox(HWND hList, int index)
    /* See if item requires an amount */
    obj = (object_node *) ListBox_GetItemData(hList, index);
    if (obj == NULL || !IsNumberObj(obj->id))
-      return True;
+      return true;
 
    /* Place amount dialog just beneath selected item */
    ItemListMeasureItem(hList, &m);
@@ -574,7 +574,7 @@ LPARAM CALLBACK LookProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags)
 {
    LookDialogStruct dlg_info;
-   Bool valid;
+   bool valid;
 
    /* Do nothing if list is empty, or if dialog is already up */
    if (l == NULL || hwndLookDialog != NULL)

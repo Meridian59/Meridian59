@@ -1,0 +1,27 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TPropertySheet and TPropertyPage
+//----------------------------------------------------------------------------
+
+#include <owl/propsht.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+STRINGTABLE
+{
+  IDS_APPLY, "&Apply"
+  IDS_BACK, "Back"
+  IDS_CANCEL, "Cancel"
+  IDS_CLOSE, "Close"
+  IDS_FINISH, "Finish"
+  IDS_HELP, "&Help"
+  IDS_NEXT, "Next"
+  IDS_OK, "OK"
+}

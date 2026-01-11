@@ -30,7 +30,7 @@ void codegen_error(const char *fmt, ...)
    va_end(marker);
    fprintf(stderr, "\nAborting.\n");
 
-   codegen_ok = False;
+   codegen_ok = false;
 }
 /************************************************************************/
 void OutputOpcode(FILE *outfile, opcode_type opcode)
@@ -273,10 +273,10 @@ int set_dest_id(opcode_type *opcode, id_type id)
 }
 /************************************************************************/
 /* 
- * is_base_level: returns True iff e is a base-level expression; i.e. if
+ * is_base_level: returns true iff e is a base-level expression; i.e. if
  *     it is a leaf of an expression tree. 
  */
-int is_base_level(expr_type e)
+bool is_base_level(expr_type e)
 {
    return e->type == E_IDENTIFIER || e->type == E_CONSTANT;
 }

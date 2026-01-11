@@ -71,15 +71,15 @@ messages:
 
    CastSpell(who = $,iSpellPower=0, lTargets = $)
    {
-      % If it's only self cast, spoof self as target for following code
-      if NOT vbCanCastonOthers
+      % If it's only self cast, spoof self as target for following code.
+      % (ltargets could be non-$ if spell is cast by an item)
+      if NOT vbCanCastOnOthers AND lTargets = $
       {
          lTargets = Cons(who, lTargets);
       }
 
       Send(first(lTargets),@ResetPlayerFlagList);
-      Send(first(lTargets),@AddDefenseModifier,#what=self);
-      
+
       propagate;
    }
 
@@ -101,8 +101,14 @@ messages:
       return random(iDuration/2,iDuration);
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(target=$, iSpellpower=0)
    {
+      % Add defense modifier here, after parent class confirms target is valid.
+      if target <> $
+      {
+         Send(target,@AddDefenseModifier,#what=self);
+      }
+
       return iSpellpower;
    }
 

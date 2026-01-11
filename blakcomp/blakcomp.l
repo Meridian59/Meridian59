@@ -24,12 +24,12 @@ static FILE *open_file(char *fname);
 static void usage(void);
 
 int lineno;
-Bool generate_code = True;  /* True if we should generate code */
+bool generate_code = true;  /* true if we should generate code */
 extern int yydebug;        /* Set to nonzero to get yacc debug info */
 list_type file_list;       /* List of files to compile */
 char *current_fname;
 char *bof_fname;       /* Object code filename */
-int debug_bof;         /* Should we put debugging info in .bof file? */
+bool debug_bof;         /* Should we put debugging info in .bof file? */
 
 struct file_state {
    YY_BUFFER_STATE buffer;
@@ -145,7 +145,7 @@ include         { return INCLUDE; }
 void handle_error(void)
 {
    static int numerrors = 0;
-   generate_code = False; /* Errors; don't generate code */
+   generate_code = false; /* Errors; don't generate code */
    if (++numerrors > MAXERRORS)
    {
       fprintf(stderr, "Too many errors. Aborting.\n");
@@ -239,11 +239,11 @@ int read_escape_char(unsigned char c)
   }
   if (c >= 'a' && c <= 'f')
   {
-    return c - 'a';
+    return c - 'a' + 10;
   }
   if (c >= 'A' && c <= 'F')
   {
-    return c - 'A';
+    return c - 'A' + 10;
   }
   return -1;
 }
@@ -310,6 +310,7 @@ char *assemble_string(char *str)
            break;
          }
          *wt = (16 * escape_val_1) + escape_val_2;
+         wt++;
          break;
        }
          
@@ -517,7 +518,7 @@ int main(int argc, char **argv)
    }
 
    file_list = NULL;
-   debug_bof = False;
+   debug_bof = false;
 
    num_include_dirs = 0;
 
@@ -530,7 +531,7 @@ int main(int argc, char **argv)
 	 switch(toupper(*(arg + 1)))
 	 {
 	 case 'D':               /* Debugging on */
-	    debug_bof = True;
+	    debug_bof = true;
 	    break;
 	    
 	 case 'K' :              /* Specify kodbase filename */
@@ -610,7 +611,7 @@ int main(int argc, char **argv)
 		   codegen(current_fname, bof_fname);
 		else
 		   all_success = false;
-      generate_code = True;
+      generate_code = true;
    }
 
    /* Give warnings for classes that should be recompiled */

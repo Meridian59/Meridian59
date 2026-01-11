@@ -20,7 +20,7 @@ typedef struct _node {
 } *list_type, list_struct;
 
 /* procedure to compare two list entries:  return nonzero iff entries are equal */
-typedef Bool (*CompareProc)(void *, void *);
+typedef bool (*CompareProc)(void *, void *);
 
 /* procedure to compare two list entries:  return zero iff entries are equal,
  *  < 0 if first entry is smaller, > 0 if first entry is larger.

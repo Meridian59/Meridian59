@@ -140,7 +140,7 @@ typedef struct d3d_render_cache_system
 typedef struct d3d_render_chunk_new
 {
 	D3DMATRIX			xForm;
-	Bool				(*pMaterialFctn)(struct d3d_render_chunk_new *pChunk);
+	bool				(*pMaterialFctn)(struct d3d_render_chunk_new *pChunk);
 	d3d_render_cache	*pRenderCache;
 	u_int				flags;
 	u_int				curIndex;
@@ -159,7 +159,7 @@ typedef struct d3d_render_chunk_new
 	BYTE				xLat0;
 	BYTE				xLat1;
 	BYTE				zBias;
-	Bool				isTargeted;
+	bool				isTargeted;
 	Plane				plane;
 	custom_index		indices[(MAX_NPTS - 2) * 3];
 	custom_st			st0[MAX_NPTS];
@@ -171,7 +171,7 @@ typedef struct d3d_render_chunk_new
 // chunks of geometry all using same texture and material
 typedef struct d3d_render_packet_new
 {
-	Bool				(*pMaterialFctn)(struct d3d_render_packet_new *pPacket,
+	bool				(*pMaterialFctn)(struct d3d_render_packet_new *pPacket,
 										d3d_render_cache_system *pCacheSystem);
 	LPDIRECT3DTEXTURE9	pTexture;
 	PDIB				pDib;
@@ -186,7 +186,7 @@ typedef struct d3d_render_packet_new
 } d3d_render_packet_new;
 
 // render packet pool
-typedef Bool (*MaterialFctn)(struct d3d_render_pool_new *pPool);
+typedef bool (*MaterialFctn)(struct d3d_render_pool_new *pPool);
 typedef struct d3d_render_pool_new
 {
 	MaterialFctn		pMaterialFctn;

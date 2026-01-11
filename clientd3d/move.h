@@ -22,8 +22,8 @@
 void ResetPlayerPosition(void);
 
 void UserMovePlayer(int action);
-Bool ObjectsMove(int dt);
-Bool MoveSingle(Motion *m, int dt);
+bool ObjectsMove(int dt);
+bool MoveSingle(Motion *m, int dt);
 
 void PlayerChangeHeight(int dz);
 void PlayerChangeHeightMouse(int dz);
@@ -33,7 +33,7 @@ int  PlayerGetHeightOffset(void);
 
 void ServerMovedPlayer(void);
 void MoveUpdateServer(void);
-void MoveSetValidity(Bool valid);
+void MoveSetValidity(bool valid);
 void MoveUpdatePosition(void);
 
 void UserTurnPlayer(int action);

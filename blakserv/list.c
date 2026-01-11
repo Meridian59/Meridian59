@@ -76,18 +76,18 @@ int AllocateListNode(void)
 	return num_nodes++;
 }
 
-Bool LoadList(int list_id,val_type first,val_type rest)
+bool LoadList(int list_id,val_type first,val_type rest)
 {
 	if (AllocateListNode() != list_id)
 	{
 		eprintf("LoadList didn't make list id %i\n",list_id);
-		return False;
+		return false;
 	}
 	
 	list_nodes[list_id].first = first;
 	list_nodes[list_id].rest = rest;
 	
-	return True;
+	return true;
 }
 
 list_node *GetListNodeByID(int list_id)
@@ -100,12 +100,12 @@ list_node *GetListNodeByID(int list_id)
 	return &list_nodes[list_id];
 }
 
-Bool IsListNodeByID(int list_id)
+bool IsListNodeByID(int list_id)
 {
 	if (list_id < 0 || list_id >= num_nodes)
-		return False;
+		return false;
 	
-	return True;
+	return true;
 }
 
 blak_int First(int list_id)
@@ -175,8 +175,7 @@ blak_int Nth(int n,int list_id)
 		}
 		if (l->rest.v.tag != TAG_LIST)
 		{
-			bprintf("Nth can't go past end of list %i,%i\n",
-				l->rest.v.tag,l->rest.v.data);
+			bprintf("Nth can't go past end of list %s\n", fmt(l->rest));
 			return NIL;
 		}
 		l = GetListNodeByID(l->rest.v.data);
@@ -211,8 +210,7 @@ int SetNth(int n,int list_id,val_type new_val)
 		}
 		if (l->rest.v.tag != TAG_LIST)
 		{
-			bprintf("SetNth can't go past end o' list %i,%i\n",
-				l->rest.v.tag,l->rest.v.data);
+			bprintf("SetNth can't go past end o' list %s\n", fmt(l->rest));
 			return NIL;
 		}
 		l = GetListNodeByID(l->rest.v.data);
@@ -277,8 +275,8 @@ blak_int DelListElem(val_type list_id,val_type list_elem)
 		return list_id.int_val;
 	}
 	
-	bprintf("DelListElem can't find elem %i,%i in list id %i\n",
-		list_elem.v.tag,list_elem.v.data,list_id.v.data);
+	bprintf("DelListElem can't find elem %s in list id %" PRId64 "\n",
+          fmt(list_elem),list_id.v.data);
 	
 	return list_id.int_val;
 }
@@ -305,13 +303,13 @@ void MoveListElem(val_type list_id, val_type n, val_type m)
   int dest_index = m.v.data;
   if (source_index <= 0 || source_index > (int) node_contents.size())
   {
-    bprintf("MoveListElem got source index out of range %i in list %i\n",
+    bprintf("MoveListElem got source index out of range %i in list %" PRId64 "\n",
             source_index, list_id.v.data);
     return;
   }
   if (dest_index <= 0 || dest_index > (int) node_contents.size() + 1)
   {
-    bprintf("MoveListElem got destination index out of range %i in list %i\n",
+    bprintf("MoveListElem got destination index out of range %i in list %" PRId64 "\n",
             dest_index, list_id.v.data);
     return;
   }

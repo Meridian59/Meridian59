@@ -27,7 +27,7 @@ typedef struct
 void InitChannelBuffer(void);
 void WriteChannelBuffer(int channel_id,char *s);
 
-Bool IsNewChannelText(void);
+bool IsNewChannelText(void);
 channel_buffer_node * GetChannelBuffer(void);
 void DoneChannelBuffer(void);
 

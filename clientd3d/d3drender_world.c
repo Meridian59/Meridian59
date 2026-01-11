@@ -199,7 +199,7 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
    int count;
    BSPnode *pNode = NULL;
    WallData *pWall;
-   Bool bDynamic;
+   bool bDynamic;
 
    auto &cacheSystem = worldRenderParams.cacheSystemParams;
    auto &pools = worldRenderParams.poolParams;
@@ -225,33 +225,33 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
 
             flags = 0;
             wallFlags = 0;
-            bDynamic = FALSE;
+            bDynamic = false;
 
             if (pWall->pos_sidedef)
             {
                if (pWall->pos_sidedef->flags & WF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
             if (pWall->neg_sidedef)
             {
                if (pWall->neg_sidedef->flags & WF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
             if (pWall->pos_sector)
             {
                if (pWall->pos_sector->flags & SF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
             if (pWall->neg_sector)
             {
                if (pWall->neg_sector->flags & SF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
-            if (FALSE == bDynamic)
+            if (false == bDynamic)
                continue;
 
             if (pWall->pos_sidedef)
@@ -376,7 +376,7 @@ void D3DRenderLMapsPostDraw(const WorldRenderParams &worldRenderParams,
 
          for (pWall = tree->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
          {
-            Bool bDynamic = FALSE;
+            bool bDynamic = false;
 
             // Determine if the wall is transparent
             bool isTransparent = (pWall->pos_sidedef && pWall->pos_sidedef->flags & WF_TRANSPARENT) ||
@@ -391,28 +391,28 @@ void D3DRenderLMapsPostDraw(const WorldRenderParams &worldRenderParams,
             if (pWall->pos_sidedef)
             {
                if (pWall->pos_sidedef->flags & WF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
             if (pWall->neg_sidedef)
             {
                if (pWall->neg_sidedef->flags & WF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
             if (pWall->pos_sector)
             {
                if (pWall->pos_sector->flags & SF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
             if (pWall->neg_sector)
             {
                if (pWall->neg_sector->flags & SF_HAS_ANIMATED)
-                  bDynamic = TRUE;
+                  bDynamic = true;
             }
 
-            if (FALSE == bDynamic)
+            if (false == bDynamic)
                continue;
 
             if (pWall->pos_sidedef)

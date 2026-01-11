@@ -1,0 +1,26 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TValidator and derived classes
+//----------------------------------------------------------------------------
+
+#include <owl/validate.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+STRINGTABLE
+{
+  IDS_VALPXPCONFORM, "Input does not conform to picture:\n""%s"""
+  IDS_VALINVALIDCHAR, "Invalid character in input"
+  IDS_VALNOTINRANGE, "Value is not in the range %ld to %ld."
+  IDS_VALNOTINLIST, "Input is not in valid-list"
+  IDS_VALREQUIRED, "Input is required"
+  IDS_VALNONBLANK, "Non-blank input is required"
+  IDS_VALCAPTION, "Invalid Input"
+}

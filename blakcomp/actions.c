@@ -113,17 +113,17 @@ int class_compare(void *info1, void *info2)
 }
 /************************************************************************/
 /*
- * is_parent: returns True iff parent is a parent class of child, or if 
+ * is_parent: returns true iff parent is a parent class of child, or if 
  *    parent and child are the same class.
  *    Class id #s are compared to see if two classes are equal.
  */
-int is_parent(class_type parent, class_type child)
+bool is_parent(class_type parent, class_type child)
 {
    if (child->class_id->idnum == parent->class_id->idnum)
-      return True;
+      return true;
 
    if (child->superclass == NULL)
-      return False;
+      return false;
 
    return is_parent(parent, child->superclass);
 }
@@ -1455,7 +1455,7 @@ class_type make_class_signature(id_type class_id, id_type superclass_id)
    c->resources  = NULL;
    c->properties = NULL;
    c->messages   = NULL;
-   c->is_new = True; /* We should generate code for this class */
+   c->is_new = true; /* We should generate code for this class */
 
    /* Superclass must be defined, if one is given */
    if (superclass_id != NULL)
@@ -1503,8 +1503,6 @@ class_type make_class_signature(id_type class_id, id_type superclass_id)
 class_type make_class(class_type c, list_type resources, list_type classvars,
 		      list_type properties, list_type messages)
 {
-   int has_constructor = False;
-
    c->resources = resources;
    c->classvars = list_append(st.override_classvars, classvars);
    c->properties = properties;

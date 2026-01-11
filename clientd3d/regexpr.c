@@ -903,19 +903,20 @@ void re_compile_fastmap(regexp_t bufp)
 #define MAX_FAILURES   100000  /* max # of failure points before failing */
 
 
-int re_match_2(regexp_t bufp, char *string1, int size1, char *string2, int size2,
+int re_match_2(regexp_t bufp, const char *string1, int size1, const char *string2, int size2,
                int pos, regexp_registers_t regs, int mstop)
 {
-  struct failure_point { char *text, *partend, *code; }
+  struct failure_point { const char *text, *partend; char *code; }
     *failure_stack_start, *failure_sp, *failure_stack_end,
     initial_failure_stack[INITIAL_FAILURES];
   int	failure_stack_size;
-  char *code, *translate, *text, *textend, *partend, *part_2_end;
-  char *regmaybe_text[RE_NREGS], *regmaybe_partend[RE_NREGS];
-  char *regstart_text[RE_NREGS], *regstart_partend[RE_NREGS];
-  char *regend_text[RE_NREGS], *regend_partend[RE_NREGS];
+  char *code;
+  const char *translate, *text, *textend, *partend, *part_2_end;
+  const char *regmaybe_text[RE_NREGS], *regmaybe_partend[RE_NREGS];
+  const char *regstart_text[RE_NREGS], *regstart_partend[RE_NREGS];
+  const char *regend_text[RE_NREGS], *regend_partend[RE_NREGS];
   int a, b, ch, reg, regch, match_end;
-  char *regtext, *regpartend, *regtextend;
+  const char *regtext, *regpartend, *regtextend;
 
 #define PREFETCH					\
   MACRO_BEGIN						\
@@ -1415,10 +1416,11 @@ int re_match(regexp_t bufp,char *string,int size, int pos,regexp_registers_t reg
 }
 
 int re_search_2(
-   regexp_t bufp, char *string1, int size1, char *string2, int size2,
+   regexp_t bufp, const char *string1, int size1, const char *string2, int size2,
    int pos, int range, regexp_registers_t regs, int mstop)
 {
-  char *fastmap, *translate, *text, *partstart, *partend;
+  const char *fastmap, *translate, *partstart, *partend;
+  const char *text;
   int dir, ret;
   char anchor;
   
@@ -1525,7 +1527,7 @@ int re_search_2(
 }
 
 int re_search(
-   regexp_t bufp, char *string,
+   regexp_t bufp, const char *string,
    int size, int startpos, int range,
    regexp_registers_t regs)
 {
@@ -1587,14 +1589,14 @@ static int re_expandalloc(char **buffer, int *allocated, int atleast, int chunk)
 
 char *re_replace_all(
    regexp_t bufp,
-   char *string,
-   char *with,
-   int (*verifycallback)(char*,int,int))
+   const char *string,
+   const char *with,
+   int (*verifycallback)(const char*,int,int))
 {
 	int found, prevend, i;
 	char *result;
 	int build;
-	char *parse;
+	const char *parse;
 	int resultalloc;
 	struct re_registers regstruct;
 	regexp_registers_t regs = &regstruct;
@@ -1744,7 +1746,7 @@ int main()
 			(unsigned char)exp.buffer[pos++]);
 	      break;
 	    case Cexact:
-	      sprintf(buf, "exact '%c' 0x%x", exp.buffer[pos],
+	      snprintf(buf, sizeof(buf), "exact '%c' 0x%x", exp.buffer[pos],
 		      (unsigned char)exp.buffer[pos]);
 	      pos++;
 	      break;
@@ -1752,13 +1754,13 @@ int main()
 	      strcpy(buf, "anychar");
 	      break;
 	    case Cstart_memory:
-	      sprintf(buf, "start_memory %d", exp.buffer[pos++]);
+	      snprintf(buf, sizeof(buf), "start_memory %d", exp.buffer[pos++]);
 	      break;
 	    case Cend_memory:
-	      sprintf(buf, "end_memory %d", exp.buffer[pos++]);
+	      snprintf(buf, sizeof(buf), "end_memory %d", exp.buffer[pos++]);
 	      break;
 	    case Cmatch_memory:
-	      sprintf(buf, "match_memory %d", exp.buffer[pos++]);
+	      snprintf(buf, sizeof(buf), "match_memory %d", exp.buffer[pos++]);
 	      break;
 	    case Cjump:
 	    case Cdummy_failure_jump:
@@ -1789,7 +1791,7 @@ int main()
 		  cp = "unknown jump";
 		  break;
 		}
-	      sprintf(buf, "%s %d", cp, a + pos);
+	      snprintf(buf, sizeof(buf), "%s %d", cp, a + pos);
 	      break;
 	    case Cbegbuf:
 	      strcpy(buf,"begbuf");
@@ -1810,7 +1812,7 @@ int main()
 	      strcpy(buf,"notwordbound");
 	      break;
 	    default:
-	      sprintf(buf, "unknown code %d",
+	      snprintf(buf, sizeof(buf), "unknown code %d",
 		      (unsigned char)exp.buffer[pos - 1]);
 	      break;
 	    }

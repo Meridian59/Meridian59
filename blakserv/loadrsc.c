@@ -20,8 +20,8 @@
 #define RSC_EXTENSION ".rsc"
 
 /* local function prototypes */
-bool EachLoadRsc(char *filename,int resource_num, char *string);
-Bool LoadDynamicRscName(char *filename);
+bool EachLoadRsc(const char *filename,int resource_num, const char *string);
+bool LoadDynamicRscName(const char *filename);
 
 void LoadRsc(void)
 {
@@ -47,20 +47,20 @@ void LoadRsc(void)
 	*/
 }
 
-bool EachLoadRsc(char *filename,int resource_num,char *string)
+bool EachLoadRsc(const char *filename,int resource_num,const char *string)
 {
 	AddResource(resource_num,string);
 	return true;
 }
 
 
-void LoadDynamicRsc(char *filename)
+void LoadDynamicRsc(const char *filename)
 {
-	if (LoadDynamicRscName(filename) == False)
+	if (LoadDynamicRscName(filename) == false)
 		eprintf("LoadDynamicRsc error loading %s\n",filename);
 }
 
-Bool LoadDynamicRscName(char *filename)
+bool LoadDynamicRscName(const char *filename)
 {
 	FILE *fh = fopen(filename,"rb");
    int magic_num;
@@ -69,7 +69,7 @@ Bool LoadDynamicRscName(char *filename)
 	unsigned int i;
 	
 	if (fh == NULL)
-		return False;
+		return false;
 
 	fread(&magic_num,4,1,fh);
 	fread(&version,4,1,fh);
@@ -77,13 +77,13 @@ Bool LoadDynamicRscName(char *filename)
 	if (ferror(fh) || feof(fh))
 	{
 		fclose(fh);
-		return False;
+		return false;
 	}
 
 	if (version != 1)
 	{
 		eprintf("LoadDynamicRscName can't understand rsc version != 1\n");
-		return False;
+		return false;
 	}
 
 	for (i=0;i<num_resources;i++)
@@ -100,14 +100,14 @@ Bool LoadDynamicRscName(char *filename)
 		if (ferror(fh) || feof(fh))
 		{
 			fclose(fh);
-			return False;
+			return false;
 		}
 
 		if (len_data > sizeof(resource_value)-1)
 		{
 			eprintf("LoadDynamicRscName got invalid long dynamic resource %u\n",
 					  len_data);
-			return False;
+			return false;
 		}
 
 		fread(&resource_value,len_data,1,fh);
@@ -115,7 +115,7 @@ Bool LoadDynamicRscName(char *filename)
 		if (ferror(fh) || feof(fh))
 		{
 			fclose(fh);
-			return False;
+			return false;
 		}
 		resource_value[len_data] = '\0'; // null-terminate string
 		//dprintf("got %u %s\n",resource_id,resource_value);
@@ -123,6 +123,6 @@ Bool LoadDynamicRscName(char *filename)
 	}
 
 	fclose(fh);
-	return True;
+	return true;
 }
 

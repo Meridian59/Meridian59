@@ -80,10 +80,10 @@ void MapAnnotationGetText(TOOLTIPTEXT *ttt)
  *  x           - X-offset to adjust the annotation position relative to the view
  *  y           - Y-offset to adjust the annotation position relative to the view
  *  scale       - Map scaling factor applied to annotation positions for zooming
- *  bMiniMap    - True if minimap, false otherwise
+ *  bMiniMap    - true if minimap, false otherwise
  *  size        - The full size of the square annotation, already adjusted by the zoom factor and clipped
  */
-void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, Bool bMiniMap, int size )
+void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, bool bMiniMap, int size )
 {
    int i;
    TOOLINFO ti;
@@ -132,7 +132,7 @@ void MapAnnotationClick(int x, int y)
 {
    int i, index;
    MapAnnotation *a;
-   Bool existed;  // True if editing an existing annotation
+   bool existed;  // true if editing an existing annotation
 
    if (!config.map_annotations || !config.drawmap)
      return;
@@ -141,7 +141,7 @@ void MapAnnotationClick(int x, int y)
 
    // See if close to an annotation
    index = -1;
-   existed = False;
+   existed = false;
    for (i = 0; i < MAX_ANNOTATIONS; i++)
    {
       a = &current_room.annotations[i];
@@ -151,7 +151,7 @@ void MapAnnotationClick(int x, int y)
       if (a->x <= x + MAP_ANNOTATION_SIZE && a->x >= x - MAP_ANNOTATION_SIZE &&
           a->y <= y + MAP_ANNOTATION_SIZE && a->y >= y - MAP_ANNOTATION_SIZE)
       {
-         existed = True;
+         existed = true;
          index = i;
          break;
       }
@@ -178,7 +178,7 @@ void MapAnnotationClick(int x, int y)
    if (SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ANNOTATE), hMain, MapAnnotationDialogProc,
                       (LPARAM) index) == IDOK)
    {
-      current_room.annotations_changed = True;
+      current_room.annotations_changed = true;
       if (!existed)
       {
          current_room.annotations[index].x = x;

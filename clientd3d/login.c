@@ -17,9 +17,9 @@ using namespace std;
 #define MAXSERVERNUM 3      /* Max # of digits in server number */
 
 static int user_type;       /* Tells if user is administrator, guest, etc.. */
-Bool logged_in;             /* True iff we're past login dialog */
+bool logged_in;             /* true iff we're past login dialog */
 extern int connection;
-Bool admin_mode;            // True when user wants to go into admin mode
+bool admin_mode;            // true when user wants to go into admin mode
 
 static INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static HWND GetMessageBoxParent(void);
@@ -30,7 +30,7 @@ SystemInfo sysinfo;
 /****************************************************************************/
 /*
 * UseRetailLoginSystem:  Determine if the retail web api's should be utilized.
-*   Return True iff "retail", official build, is in use (not for the open source version).
+*   Return true iff "retail", official build, is in use (not for the open source version).
 */
 bool UseRetailLoginSystem()
 {
@@ -84,7 +84,7 @@ void LoginSendInfo(void)
  */
 void LoginOk(BYTE type)
 {
-   logged_in = True;
+   logged_in = true;
    user_type = type;
 }
 /****************************************************************************/
@@ -228,25 +228,25 @@ void EnterGame(void)
 /****************************************************************************/
 /*
  * GetLogin:  Bring up dialog asking user to fill in login information.
- *   Return True iff user presses OK button.
+ *   Return true iff user presses OK button.
  */
-Bool GetLogin(void)
+bool GetLogin(void)
 {
-   admin_mode = False;
+   admin_mode = false;
    if (config.quickstart)
    {
-      logged_in = False;
+      logged_in = false;
    }
    else
    {
-      logged_in = False;
+      logged_in = false;
       if (DialogBox(hInst, MAKEINTRESOURCE(IDD_LOGIN), hMain, LoginDialogProc) == IDCANCEL)
-	 return False;
+	 return false;
       // Go into admin mode if control key is held down
       admin_mode = (GetKeyState(VK_CONTROL) < 0);
    }
       
-   return True;
+   return true;
 }
 /****************************************************************************/
 /*
@@ -331,7 +331,7 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 	 if (GetFocus() == hUser)
 	 {
 	    SetFocus(hPasswd);
-	    return True;
+	    return true;
 	 }
 	 
 	 if (GetFocus() == hPasswd)
@@ -342,7 +342,7 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 	    if (success)
 	       PostMessage(hDlg, WM_COMMAND, IDC_OK, 0);
 	    else SetFocus(GetDlgItem(hDlg, IDC_SERVER_101));
-	    return True;	    
+	    return true;	    
 	 }
 
 	 if (GetFocus() == GetDlgItem(hDlg, IDC_SERVER_101) ||

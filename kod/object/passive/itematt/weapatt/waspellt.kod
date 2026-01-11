@@ -119,7 +119,6 @@ messages:
          rName = iaSpellType_acid;
       }
       
-      AppendTempString("  ");
       AppendTempString(rName);
 
       % If not faked, then add maker information if available.

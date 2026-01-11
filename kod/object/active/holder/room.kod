@@ -2436,6 +2436,12 @@ messages:
    {
       local i,each_obj;
 
+      if sector = $
+      {
+         debug("SetSector called with missing sector ID");
+         return;
+      }
+
       % tell everyone in the room at the moment about the change
 
       for i in plActive
@@ -2549,8 +2555,15 @@ messages:
    }
 
    ChangeTexture(id = $,new_texture = $,flags = 0)
+   "Set a texture override for the given server ID.  Return TRUE on success."
    {
       local i,each_obj;
+
+      if id = $ 
+      {
+         debug("Tried to change texture with $ server ID");
+         return FALSE;
+      }
 
       % tell everyone in the room at the moment about the change
       for i in plActive
@@ -2570,14 +2583,14 @@ messages:
          {
             SetNth(i,2,new_texture);
 
-            return;
+            return TRUE;
          }
       }
 
       % not already in list, so add
       plTexture_changes = Cons([ id, new_texture, flags ], plTexture_changes);
 
-      return;
+      return TRUE;
    }
 
    HolderExtractObject(data = $)
@@ -3951,5 +3964,34 @@ messages:
       return;
    }
 
+   FindBadTextureChanges()
+   "Print any texture changes with $ as the sector ID"
+   {
+      local i;
+      for i in plTexture_changes
+      {
+         if First(i) = $ 
+         {
+            debug("Room", piRoom_num, "id", self, "has bad texture change", i);
+         }
+      }
+
+      return;
+   }
+
+   FindBadSectorChanges()
+   "Print any sector changes with $ as the sector ID"
+   {
+      local i;
+      for i in plSector_changes
+      {
+         if First(i) = $ 
+         {
+            debug("Room", piRoom_num, "id", self, "has bad sector change", i);
+         }
+      }
+
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -85,7 +85,7 @@ messages:
       propagate;
    }
 
-   GetStateValue(target=$, iSpellpower=0)
+   InitializeEnchantmentState(target=$, iSpellpower=0)
    {
       % Add defense modifier here, after parent class confirms target is valid.
       if target <> $

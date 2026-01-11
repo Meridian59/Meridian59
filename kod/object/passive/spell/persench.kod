@@ -182,11 +182,12 @@ messages:
       Send(oTarget,@MsgSendUser,#message_rsc=vrEnchantment_On);
  
       Send(oTarget,@StartEnchantment,#what=self,
-           #state=send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,#target=oTarget),
+           #state=send(self,@InitializeEnchantmentState,#iSpellpower=iSpellpower,#who=who,#target=oTarget),
            #time=send(self,@GetDuration,#iSpellPower=iSpellPower),
            #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon));
            
-      % GetStateValue is sometimes (eg used for pre-enchantment behaviors, who is the caster, target is the target (sometimes the same as who).
+      % InitializeEnchantmentState may have side effects (e.g., AddDefenseModifier).
+      % who is the caster, target is the target (sometimes the same as who).
 
       if oTarget <> who
       {
@@ -206,7 +207,9 @@ messages:
       return;
    }
 
-   GetStateValue()
+   InitializeEnchantmentState()
+   "Called when starting an enchantment.  Returns the state to store.  "
+   "May have side effects (e.g., AddDefenseModifier).  Do not call multiple times."
    {
       return $;
    }

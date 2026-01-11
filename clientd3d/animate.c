@@ -180,48 +180,65 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_FLICKERING & obj->flags))
    {
-      // Initialize flicker time with random offset on first use to desynchronize lights
-      if (obj->flickerTime == 0)
+      // Skip flickering for dynamic light objects
+      // Check both dLighting.intensity and icon resource name to identify dynamic lights
+      bool isDynamicLight = false;
+      
+      
+      // Also check if the icon resource is "DynamicLight_icon"
+      if (!isDynamicLight)
       {
-         // Use object ID as seed for consistent but unique offsets
-         obj->flickerTime = (obj->id * 137) % 10000;  // Random offset 0-10 seconds
+         char* iconName = LookupRscNoError(obj->icon_res);
+         if (_stricmp(iconName, "blank.bgf  ") == 0)
+            isDynamicLight = true;
       }
       
-      // Dramatic campfire-style flicker with independent per-object timing
-      obj->flickerTime += dt;
-      
-      // Flicker animation wave parameters
-      // Using prime-like frequencies prevents synchronization between lights
-      static const float waveAmplitudes[] = { 1.3f, 1.1f, 0.9f, 1.4f, 1.2f };
-      static const float waveFrequencies[] = { 3.14f, 7.0f, 11.0f, 2.0f, 0.62f };
-      static const int waveCount = sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]);
-      
-      // Ensure amplitudes and frequencies arrays have the same length
-      static_assert(sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]) == 
-                    sizeof(waveFrequencies) / sizeof(waveFrequencies[0]),
-                    "waveAmplitudes and waveFrequencies must have the same number of elements");
-      
-      // Compute sum of amplitudes (for normalization)
-      static const float amplitudeSum = waveAmplitudes[0] + waveAmplitudes[1] + 
-                                         waveAmplitudes[2] + waveAmplitudes[3] + 
-                                         waveAmplitudes[4];
-      static const float amplitudeOffset = amplitudeSum / 2.0f;
-      
-      float t = (float)obj->flickerTime / 1000.0f;
+      // Only apply flickering if this is NOT a dynamic light
+      if (!isDynamicLight)
+      {
+         // Initialize flicker time with random offset on first use to desynchronize lights
+         if (obj->flickerTime == 0)
+         {
+            // Use object ID as seed for consistent but unique offsets
+            obj->flickerTime = (obj->id * 137) % 10000;  // Random offset 0-10 seconds
+         }
+         
+         // Dramatic campfire-style flicker with independent per-object timing
+         obj->flickerTime += dt;
+         
+         // Flicker animation wave parameters
+         // Using prime-like frequencies prevents synchronization between lights
+         static const float waveAmplitudes[] = { 1.3f, 1.1f, 0.9f, 1.4f, 1.2f };
+         static const float waveFrequencies[] = { 3.14f, 7.0f, 11.0f, 2.0f, 0.62f };
+         static const int waveCount = sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]);
+         
+         // Ensure amplitudes and frequencies arrays have the same length
+         static_assert(sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]) == 
+                       sizeof(waveFrequencies) / sizeof(waveFrequencies[0]),
+                       "waveAmplitudes and waveFrequencies must have the same number of elements");
+         
+         // Compute sum of amplitudes (for normalization)
+         static const float amplitudeSum = waveAmplitudes[0] + waveAmplitudes[1] + 
+                                            waveAmplitudes[2] + waveAmplitudes[3] + 
+                                            waveAmplitudes[4];
+         static const float amplitudeOffset = amplitudeSum / 2.0f;
+         
+         float t = (float)obj->flickerTime / 1000.0f;
 
-      // Combine multiple sine waves at different frequencies for organic flickering
-      float flicker = 0.0f;
-      for (int i = 0; i < waveCount; i++)
-      {
-         flicker += sinf(t * waveFrequencies[i]) * waveAmplitudes[i];
+         // Combine multiple sine waves at different frequencies for organic flickering
+         float flicker = 0.0f;
+         for (int i = 0; i < waveCount; i++)
+         {
+            flicker += sinf(t * waveFrequencies[i]) * waveAmplitudes[i];
+         }
+         
+         // Normalize to 0.0-1.0 range
+         flicker = (flicker + amplitudeOffset) / amplitudeSum;
+         flicker = std::clamp(flicker, 0.0f, 1.0f);
+         
+         obj->lightAdjust = (int)(flicker * GetFlickerLevel());
+         need_redraw = true;
       }
-      
-      // Normalize to 0.0-1.0 range
-      flicker = (flicker + amplitudeOffset) / amplitudeSum;
-      flicker = std::clamp(flicker, 0.0f, 1.0f);
-      
-      obj->lightAdjust = (int)(flicker * GetFlickerLevel());
-      need_redraw = true;
    }
 
    if (OF_FLASHING == (OF_FLASHING & obj->flags))

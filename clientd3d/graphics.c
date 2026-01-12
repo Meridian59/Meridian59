@@ -15,7 +15,6 @@
 #include <vector>
 #include <numeric>
 #include <chrono>
-#include <thread>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -348,30 +347,11 @@ void RedrawForce(void)
    {
       if (fps > maxFPS)
       {
-          // Calculate target frame time
-          auto frameDuration = std::chrono::microseconds(1000000 / maxFPS);
-          auto targetTime = startFrame + frameDuration;
-          
-          // Hybrid sleep: yield for coarse waiting, then busy-wait for precision
-          auto now = chrono_time_now();
-          if (now < targetTime)
-          {
-              auto timeRemaining = targetTime - now;
-              
-              // Yield the thread while we're more than 2ms away from target
-              while (chrono_time_now() < targetTime - std::chrono::milliseconds(2))
-              {
-                  std::this_thread::yield();
-              }
-              
-              // Busy-wait for the remaining time for precision
-              while (chrono_time_now() < targetTime)
-              {
-                  // Spin
-              }
-          }
+          // Clamp the fps to the maximum.
+          int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
+          Sleep(msSleep);
 
-          // Recalculate the fps following the wait
+          // Reclaulate the fps following the sleep.
           endFrame = chrono_time_now();
           elapsedTime = (endFrame - lastEndFrame);
           elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();

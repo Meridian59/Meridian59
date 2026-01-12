@@ -180,16 +180,15 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_FLICKERING & obj->flags))
    {
-      // Skip flickering for dynamic light objects created by administrators
-      bool isDynamicLight = false;
+      // Skip flickering for atmospheric light objects created by administrators
+      bool AtmosphericLight = false;
       char* iconName = LookupRscNoError(obj->icon_res);
       if (_stricmp(iconName, "blank.bgf") == 0)
       {
-         isDynamicLight = true;
+         AtmosphericLight = true;
       }
-      
-      // Only apply flickering if this is NOT a dynamic light
-      if (!isDynamicLight)
+
+      if (!AtmosphericLight)
       {
          // Initialize flicker time with random offset on first use to desynchronize lights
          if (obj->flickerTime == 0)

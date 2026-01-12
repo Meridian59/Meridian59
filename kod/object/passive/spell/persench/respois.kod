@@ -62,7 +62,7 @@ messages:
       return;
    }
 
-   GetStateValue(iSpellpower=$)
+   InitializeEnchantmentState(iSpellpower=$)
    {
       local ifactor;    
 

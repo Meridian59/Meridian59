@@ -25,6 +25,9 @@ resources:
    bar_leave_w2 = "~kMeidei tells you, \"Pray thee, good fellow, do not ascend those stairs.\""
    bar_leave_w3 = "~kMeidei lectures you on how it is impolite to enter his private rooms without first getting permission."
    
+   bar_adv_icon = jbook.bgf
+   bar_adv_name = "Tales of Adventure"
+   bar_adv_desc = "Stories from the people of Meridian, collected by Bards"
 
 classvars:
 
@@ -97,71 +100,46 @@ messages:
 
    CreateStandardObjects()
    {
+     local oNews;
 
-      Send(self,@NewHold,#what=Create(&BarloqueBartender),
-           #new_row=10,#new_col=13,#new_angle=ANGLE_EAST);
+     Send(self,@NewHold,#what=Create(&BarloqueBartender),#new_row=10,#new_col=13,#new_angle=ANGLE_EAST);
 
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=3,#new_col=3,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=3,#new_col=6,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=3,#new_col=17,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=3,#new_col=20,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=6,#new_col=3,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=6,#new_col=20,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=9,#new_col=18,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=9,#new_col=5,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=12,#new_col=20,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=15,#new_col=5,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=15,#new_col=18,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=21,#new_col=3,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=21,#new_col=6,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=21,#new_col=17,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Table),
-           #new_row=21,#new_col=20,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=3,#new_col=3,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=3,#new_col=6,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=3,#new_col=17,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=3,#new_col=20,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=6,#new_col=3,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=6,#new_col=20,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=9,#new_col=18,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=9,#new_col=5,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=20,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=15,#new_col=5,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=15,#new_col=18,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=21,#new_col=3,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=21,#new_col=6,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=21,#new_col=17,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&Table),#new_row=21,#new_col=20,#fine_col=0,#fine_row=0);
 
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=5,#new_col=10,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=5,#new_col=13,#fine_col=0,#fine_row=0);
 
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=5,#new_col=10,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=5,#new_col=13,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=7,#new_col=15);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=9,#new_col=15);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=11,#new_col=15);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=13,#new_col=15);
 
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=7,#new_col=15);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=9,#new_col=15);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=11,#new_col=15);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=13,#new_col=15);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=7,#new_col=7);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=9,#new_col=7);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=11,#new_col=7);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=13,#new_col=7);
 
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=7,#new_col=7);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=9,#new_col=7);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=11,#new_col=7);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=13,#new_col=7);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=15,#new_col=10,#fine_col=0,#fine_row=0);
+     Send(self,@NewHold,#what=Create(&BarStool),#new_row=15,#new_col=13,#fine_col=0,#fine_row=0);
 
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=15,#new_col=10,#fine_col=0,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&BarStool),
-           #new_row=15,#new_col=13,#fine_col=0,#fine_row=0);
+     oNews = Create(&Newslink,#nid=NID_ADVENTURE,#name=bar_adv_name,#icon=bar_adv_icon,#desc=bar_adv_desc);
+     Send(self,@NewHold,#what=oNews,#new_row=1,#new_col=9,#fine_row=43,#fine_col=48,#new_angle=ANGLE_SOUTH);
 
-      propagate;
+     propagate;
    }
 
 end

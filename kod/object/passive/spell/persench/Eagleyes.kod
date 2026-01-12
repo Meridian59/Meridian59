@@ -74,7 +74,7 @@ messages:
       return;
    }
 
-   GetStateValue(who=$,iSpellpower=$,target = $)
+   InitializeEnchantmentState(who=$,iSpellpower=$,target = $)
    {
       local iFactor;
       

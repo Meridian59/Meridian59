@@ -79,8 +79,7 @@ messages:
       }
 
       Send(first(lTargets),@ResetPlayerFlagList);
-      Send(first(lTargets),@AddDefenseModifier,#what=self);
-      
+
       propagate;
    }
 
@@ -102,8 +101,14 @@ messages:
       return random(iDuration/2,iDuration);
    }
 
-   GetStateValue(iSpellpower=$)
+   InitializeEnchantmentState(target=$, iSpellpower=0)
    {
+      % Add defense modifier here, after parent class confirms target is valid.
+      if target <> $
+      {
+         Send(target,@AddDefenseModifier,#what=self);
+      }
+
       return iSpellpower;
    }
 

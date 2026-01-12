@@ -44,6 +44,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = barhall_music
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

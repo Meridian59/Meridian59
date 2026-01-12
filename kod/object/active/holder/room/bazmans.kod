@@ -46,6 +46,8 @@ properties:
 %   prBackground = background_mountains
 
    pblocked = False
+   
+   pbPrecipitation_enabled = TRUE
 
 
 messages:

@@ -54,6 +54,8 @@ properties:
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    prMusic = barloquenorth_music
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

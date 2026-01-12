@@ -1621,13 +1621,14 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local iDayPhase,iWeather;
+      local iDayPhase,iWeather,iPrecipitation;
 	  
 	  % Change weather for background if outdoors and tell everyone the
       %  background changed
 	  
       iDayPhase = Send(SYS,@GetDayPhase);
 	  iWeather = Send(SYS,@GetWeather);
+	  iPrecipitation = Send(self,@GetPrecipitationSetting);
 
       if Send(SYS,@GetChaosNight)
       {
@@ -1637,7 +1638,7 @@ messages:
       }
 
       % First check if the local weather gets adjusted, which can affect which skybox to show.
-	  Send(self,@RecalcRoomWeather,#what=iWeather);
+	  Send(self,@RecalcRoomWeather,#what=iWeather,#precipitation=iPrecipitation);
       Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=piWeather_type);
       Send(self,@RecalculateDirectionalLight);
 
@@ -1649,7 +1650,7 @@ messages:
       return;
    }
    
-   RecalcRoomWeather(what=$)
+   RecalcRoomWeather(what=$,precipitation=$)
    "Sets room weather based on room climate. And if rain/snow is enabled."
    {
 	  % Rooms without climate won't have cloudy or stormy weather.
@@ -1661,8 +1662,7 @@ messages:
 	  }
 	  
 	  % If precipitation is off, just turn rain/snow into cloudy.
-	  if Send(self,@GetPrecipitationSetting) = FALSE
-	     AND (what = WEATHER_RAIN OR what = WEATHER_SNOW)
+	  if (precipitation = FALSE) AND (what = WEATHER_RAIN OR what = WEATHER_SNOW)
 	  {
 		piWeather_type = WEATHER_CLOUDY;
 		return;

@@ -141,7 +141,7 @@ messages:
    % State value is: list containing the drain time as the first element, and the listener object as the second element.
    %   IE [ drain time (in ms), listener object ]
 
-   GetStateValue(iSpellPower=$,who=$)
+   InitializeEnchantmentState(iSpellPower=$,who=$)
    % Create and place the listener.
    {
       local oRoom, lRooms, ilength, iRow, iCol, oListener;

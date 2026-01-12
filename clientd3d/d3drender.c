@@ -1024,11 +1024,20 @@ void D3DLMapsStaticGet(room_type * room)
 	bool dynamicLightsEnabled = true;
 	bool staticLightsEnabled = true;
 
-	debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));
+	// Debug flags to control light map processing debug output
+	// It will output the number and some details on each light type:
+	// projectiles, dynamic and static.
+	// Set to 'true' to enable debug output, 'false' to disable.
+	bool debugLights = false;
+
+	if (debugLights)
+		debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));
 
 	if (projectileLightsEnable)
 	{
-		debug(("=== PROJECTILE LIGHTS ===\n"));
+      if (debugLights)
+			debug(("=== PROJECTILE LIGHTS ===\n"));
+
 		int projectileCount = 0;
 		
 		for (list = room->projectiles; list != NULL; list = list->next)
@@ -1041,8 +1050,9 @@ void D3DLMapsStaticGet(room_type * room)
 			if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
 				continue;
 
-			debug(("  Projectile Light %d: color=0x%04X, intensity=%d\n", 
-				projectileCount++, pProjectile->dLighting.color, pProjectile->dLighting.intensity));
+			if (debugLights)
+				debug(("  Projectile Light %d: color=0x%04X, intensity=%d\n", 
+					projectileCount++, pProjectile->dLighting.color, pProjectile->dLighting.intensity));
 
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
@@ -1090,13 +1100,17 @@ void D3DLMapsStaticGet(room_type * room)
 
 			gDLightCacheDynamic.numLights++;
 		}
-      debug(("Total Projectile Lights: %d\n\n", projectileCount));
+
+      if (debugLights)
+		debug(("Total Projectile Lights: %d\n\n", projectileCount));
 
 	}
 
    if (dynamicLightsEnabled)
    {
-      debug(("=== DYNAMIC LIGHTS ===\n"));
+      if (debugLights)
+		debug(("=== DYNAMIC LIGHTS ===\n"));
+
       int dynamicCount = 0;
       // dynamic lights
       for (list = room->contents; list != NULL; list = list->next)
@@ -1109,9 +1123,9 @@ void D3DLMapsStaticGet(room_type * room)
          if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
             continue;
 
-
-		debug(("  Dynamic Light %d: color=0x%04X, intensity=%d\n", dynamicCount++,
-                pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity));
+		if (debugLights)
+            debug(("  Dynamic Light %d: color=0x%04X, intensity=%d\n", dynamicCount++, pRNode->obj.dLighting.color,
+                   pRNode->obj.dLighting.intensity));
 
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pRNode->motion.y;
@@ -1170,12 +1184,15 @@ void D3DLMapsStaticGet(room_type * room)
          gDLightCacheDynamic.numLights++;
       }
       
-      debug(("Total Dynamic Lights: %d\n\n", dynamicCount));
+	  if (debugLights)
+		debug(("Total Dynamic Lights: %d\n\n", dynamicCount));
    }
 
    if (staticLightsEnabled)
    {
-      debug(("=== STATIC LIGHTS ===\n"));
+      if (debugLights)
+		debug(("=== STATIC LIGHTS ===\n"));
+
       int staticCount = 0;
       
       // static lights
@@ -1220,18 +1237,13 @@ void D3DLMapsStaticGet(room_type * room)
 
          // BRIGHTNESS: Apply flicker to both SIZE and COLOR
          // BUT: Skip flickering for "atmospheric lights" (lights without visible objects)
-         // placed by an admin via `dm place dynamic light` command.
+         // placed by an admin via the `dm place dynamic light` command.
          // These are lights with no renderable bitmap.
          float flickerBrightness = 1.0f;
          bool isAtmosphericLight = (pRNode->obj.icon_res == 0 || pDib == NULL);
-
-         // Also check if the icon resource is "DynamicLight_icon"
-         if (!isAtmosphericLight)
-         {
-            char *iconName = LookupRscNoError(pRNode->obj.icon_res);
-            if (_stricmp(iconName, "blank.bgf") == 0)
-               isAtmosphericLight = true;
-         }
+         char *iconName = LookupRscNoError(pRNode->obj.icon_res);
+         if (_stricmp(iconName, "blank.bgf") == 0)
+            isAtmosphericLight = true;
 
          if (!isAtmosphericLight && (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)))
          {
@@ -1241,13 +1253,14 @@ void D3DLMapsStaticGet(room_type * room)
          // Apply flicker to the intensity for radius calculation
          int flickeredIntensity = (int) (pRNode->obj.dLighting.intensity * flickerBrightness);
 
-         debug(("  Static Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
-                "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s%s\n",
-                staticCount++, pRNode->obj.id, pRNode->obj.flags, pRNode->obj.dLighting.flags,
-                pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity, pRNode->obj.lightAdjust,
-                flickerBrightness, flickeredIntensity, (pRNode->obj.flags & OF_FLICKERING) ? " [FLICKERING]" : "",
-                (pRNode->obj.flags & OF_FLASHING) ? " [FLASHING]" : "",
-                isAtmosphericLight ? " [ATMOSPHERIC-NO-FLICKER]" : ""));
+		 if (debugLights)
+            debug(("  Static Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
+                   "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s%s\n",
+                   staticCount++, pRNode->obj.id, pRNode->obj.flags, pRNode->obj.dLighting.flags,
+                   pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity, pRNode->obj.lightAdjust,
+                   flickerBrightness, flickeredIntensity, (pRNode->obj.flags & OF_FLICKERING) ? " [FLICKERING]" : "",
+                   (pRNode->obj.flags & OF_FLASHING) ? " [FLASHING]" : "",
+                   isAtmosphericLight ? " [ATMOSPHERIC-NO-FLICKER]" : ""));
 
 		 // Use unmodified intensity for atmospheric lights
 		 if (isAtmosphericLight)
@@ -1290,7 +1303,9 @@ void D3DLMapsStaticGet(room_type * room)
          
          gDLightCache.numLights++;
       }
-      debug(("Total Static Lights: %d\n\n", staticCount));
+
+	  if (debugLights)
+		debug(("Total Static Lights: %d\n\n", staticCount));
    }
 }
 

@@ -180,17 +180,12 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_FLICKERING & obj->flags))
    {
-      // Skip flickering for dynamic light objects
-      // Check both dLighting.intensity and icon resource name to identify dynamic lights
+      // Skip flickering for dynamic light objects created by administrators
       bool isDynamicLight = false;
-      
-      
-      // Also check if the icon resource is "DynamicLight_icon"
-      if (!isDynamicLight)
+      char* iconName = LookupRscNoError(obj->icon_res);
+      if (_stricmp(iconName, "blank.bgf") == 0)
       {
-         char* iconName = LookupRscNoError(obj->icon_res);
-         if (_stricmp(iconName, "blank.bgf  ") == 0)
-            isDynamicLight = true;
+         isDynamicLight = true;
       }
       
       // Only apply flickering if this is NOT a dynamic light
@@ -287,7 +282,7 @@ bool AnimateObject(object_node *obj, int dt)
    return need_redraw;
 }
 /************************************************************************/
- /* 
+/* 
  * Animate projectiles active in in current room; return true if any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */
@@ -369,7 +364,7 @@ bool AnimatePlayerOverlays(int dt)
    return need_redraw;
 }
 /************************************************************************/
- /*
+/*
  * AnimateSingle:  Animate the given animation structure for a PDIB with the
  *   given number of groups.  Return true iff the display bitmap changes.
  *   dt is number of milliseconds since last time animation timer went off.

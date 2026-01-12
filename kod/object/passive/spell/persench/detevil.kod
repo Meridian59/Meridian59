@@ -83,7 +83,7 @@ messages:
       return;
    }
 
-   GetStateValue(iSpellpower = $)
+   InitializeEnchantmentState(iSpellpower = $)
    {
       return $;
    }

@@ -6,7 +6,7 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR)
+CFLAGS += -I $(BLAKINCLUDEDIR) -I $(FMTLIBDIR)
 
 SOURCEDIR = .
 

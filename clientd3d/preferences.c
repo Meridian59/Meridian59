@@ -1170,7 +1170,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.play_loop_sounds = IsDlgButtonChecked(hDlg, IDC_LOOPSOUNDS);
             config.play_random_sounds = IsDlgButtonChecked(hDlg, IDC_RANDSOUNDS);
             if (!config.play_sound)
-              SoundAbort();
+              SoundStopAll();
             config.halocolor = IsDlgButtonChecked(hDlg, IDC_TARGETHALO1) == BST_CHECKED ? 0 :
                                IsDlgButtonChecked(hDlg, IDC_TARGETHALO2) == BST_CHECKED ? 1 : 2;
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);

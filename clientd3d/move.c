@@ -441,10 +441,6 @@ void UserMovePlayer(int action)
        last_splash = 0xFFFFFFFF;
    }
 
-   // Update looping sounds to reflect the player's new position
-//   debug(("Player now at: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS));
-   UpdateLoopingSounds( player.x >> LOG_FINENESS, player.y  >> LOG_FINENESS );
-
    RedrawAll();
 }
 
@@ -735,10 +731,6 @@ void ServerMovedPlayer(void)
    RoomObjectSetHeight(player_obj);
    server_x = player_obj->motion.x;
    server_y = player_obj->motion.y;
-
-   // Update looping sounds to reflect the player's new position
-//   debug(("Player now at: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS));
-   UpdateLoopingSounds( player.x >> LOG_FINENESS, player.y  >> LOG_FINENESS);
 }
 /************************************************************************/
 /*
@@ -956,6 +948,7 @@ void UserFlipPlayer(void)
    // Turn 180 degrees around
    player.angle += NUMDEGREES / 2;
    player.angle = player.angle % NUMDEGREES;
+
    MoveUpdateServer();
    RedrawAll();
 }

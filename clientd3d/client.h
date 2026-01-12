@@ -46,7 +46,7 @@
 typedef INT64 int64;
 
 #define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 35  /* Minor version of client program; must be in [0, 99] */
+#define MINOR_REV 36  /* Minor version of client program; must be in [0, 99] */
 
 #define VERSION_NUMBER(major_rev, minor_rev) ((major_rev * 100) + minor_rev)
 
@@ -66,9 +66,6 @@ typedef INT64 int64;
 /* To make sure we are using the right version of the client */
 #define P_CATCH 3
 
-/* Enable for "retail", official builds, not for the open source version */
-//#define M59_RETAIL
-
 extern void GetGamePath( char *szGamePath );
 
 extern LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -81,22 +78,7 @@ extern bool is_foreground;   // True when program is in the foreground
 
 /* This list of include files is good for precompiled headers */
 
-#ifdef M59_RETAIL
-  // #define to enable Miles Sound System version.  If not defined,
-  // music is played through the default MIDI player, and sound goes through the
-  // ancient wavemix DLL.
-  #define M59_MSS
-#endif
-
-#ifdef M59_MSS
-#define HANDLE_MM_WOM_DONE(hwnd, wParam, lParam, fn) \
-((fn)((hwnd), (int)(wParam), (lParam)), 0L)
 #define MAX_VOLUME 50
-#else
-extern "C" {
-#include "wavemix.h"
-}
-#endif
    
 #define VOLUME_CUTOFF_DISTANCE 16
 
@@ -115,11 +97,8 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include <stdlib.h>
 #include <crtdbg.h>
 #include <string>
-
-#ifdef M59_RETAIL
-  // Minidump reporting
-  #include "bugsplat.h"
-#endif
+#include <vector>
+#include <algorithm>
 
 #include "resource.h"
 #include "proto.h"
@@ -184,6 +163,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "config.h"
 #include "palette.h"
 #include "sound.h"
+#include "audio_openal.h"
 #include "module.h"     // header common to client and module files
 #include "modules.h"
 #include "textin.h"

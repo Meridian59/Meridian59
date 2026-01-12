@@ -11,9 +11,14 @@
 */
 
 #include <assert.h>
-#include <crtdbg.h>
 
 #include "client.h"
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
+
 
 HWND hMain = NULL;             /* Main window */
 HINSTANCE hInst = NULL;           /* Program's instance */
@@ -176,21 +181,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_CTLCOLORSTATIC, MainCtlColor);
 		HANDLE_MSG(hwnd, WM_CTLCOLORSCROLLBAR, MainCtlColor);
 
-		/* Wave mixer has finished playing file */
-		HANDLE_MSG(hwnd, MM_WOM_DONE, SoundDone);
-
 	case BK_SOCKETEVENT:
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
-
-#ifndef M59_MSS
-	case MM_MCINOTIFY:  /* MIDI file has finished playing */
-		if (wParam != MCI_NOTIFY_SUCCESSFUL)
-			break;
-
-		MusicDone(LOWORD(lParam));
-		break;
-#endif
 
 	case BK_NEWSOUND:
 		NewMusic(wParam, lParam);

@@ -399,7 +399,7 @@ messages:
       return iDuration;
    }  
 
-   GetStateValue(iSpellpower=$)
+   InitializeEnchantmentState(iSpellpower=$)
    {
       Return iSpellpower;
    }

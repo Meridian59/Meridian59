@@ -212,7 +212,7 @@ void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
 
    SetFocus(hMain);
 
-   if (text_area_resize_zone) {
+   if (text_area_resize_zone && keyFlags & MK_LBUTTON) {
        // Start text area resize.
        text_area_resize_inprogress = true;
        previous_mouse_position = { x,y };

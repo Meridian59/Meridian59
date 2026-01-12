@@ -67,16 +67,13 @@ resources:
    guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
-
-   faction_war_kill_title_1 = " bested by "
-   faction_war_kill_title_2 = "."
-   faction_war_kill_body_1 = " has been bested by faction rival "
-   faction_war_kill_body_2 = " during a land claim attempt"
-   faction_war_kill_body_3 = "."
-   faction_war_kill_body_4 = "\n--------------------------------"
-   faction_war_kill_body_5 = "\nLocation: "
-   faction_war_kill_body_6 = "\nFactions: "
-   faction_war_kill_body_7 = " vs "
+   
+   faction_war_kill_title = "{0} bested by {1}."
+   faction_war_kill_body_start = "{0} has been bested by faction rival {1}"
+   faction_war_kill_body_claim = " during a land claim attempt"
+   faction_war_kill_body_separator = ".\n--------------------------------\n"
+   faction_war_kill_body_location = "Location: {0}\n"
+   faction_war_kill_body_factions = "Factions: {0} vs {1}"
 
    system_char_module = char.dll
 
@@ -1564,50 +1561,40 @@ messages:
                   rMessage = system_user_killed_shield;
                   % Parameters set by default
 
-                  ClearTempString();
-                  AppendTempString(Send(what,@GetTrueName));
-                  AppendTempString(faction_war_kill_title_1);
-                  AppendTempString(Send(killer,@GetTrueName));
-                  AppendTempString(faction_war_kill_title_2);
-                  territory_news_title = CreateString();
-                  SetString(territory_news_title, GetTempString());
-
-                  ClearTempString();
-                  AppendTempString(Send(what,@GetTrueName));
-                  AppendTempString(faction_war_kill_body_1);
-                  AppendTempString(Send(killer,@GetTrueName));
-
                   oRoom = Send(what,@GetOwner);
                   oParl = Send(SYS,@GetParliament);
                   oFlag = Send(oRoom,@FindHoldingActive,#class=&Flagpole);
 
+                  ClearTempString();
+
+                  AppendTempString(BuildString(faction_war_kill_body_start, 
+                                    Send(what,@GetTrueName), 
+                                    Send(killer,@GetTrueName)));
+
                   if (oFlag <> $ AND Send(oFlag,@IsClaimAttemptInProgress))
                   {
-                     AppendTempString(faction_war_kill_body_2);
-                  } 
+                     AppendTempString(faction_war_kill_body_claim);
+                  }
 
-                  AppendTempString(faction_war_kill_body_3);
-                  AppendTempString(faction_war_kill_body_4);
-                                    
+                  AppendTempString(faction_war_kill_body_separator);
+
+                  if (oRoom <> $)
+                  {
+                     AppendTempString(BuildString(faction_war_kill_body_location, 
+                                       Send(oRoom,@GetName)));
+                  }
+
                   if (oParl <> $)
                   {
                      rVicFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(what,@GetFaction));
                      rKilFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(killer,@GetFaction));
-                  }
 
-                  if (oRoom <> $)
-                  {
-                     AppendTempString(faction_war_kill_body_5);
-                     AppendTempString(Send(oRoom,@GetName));
+                     if (rVicFaction <> $ AND rKilFaction <> $)
+                     {
+                        AppendTempString(BuildString(faction_war_kill_body_factions, rVicFaction, rKilFaction));
+                     }
                   }
-
-                  if (rVicFaction <> $ AND rKilFaction <> $)
-                  {
-                     AppendTempString(faction_war_kill_body_6);
-                     AppendTempString(rVicFaction);
-                     AppendTempString(faction_war_kill_body_7);
-                     AppendTempString(rKilFaction);
-                  }
+                  territory_news_title = BuildString(faction_war_kill_title, Send(what,@GetTrueName), Send(killer,@GetTrueName));
 
                   territory_news_body = CreateString();
                   SetString(territory_news_body, GetTempString());

@@ -41,15 +41,8 @@ resources:
    TerritoryGame_his = "his"
    TerritoryGame_their = "their"
 
-   territory_string_title_1 = " now "
-   territory_string_title_2 = " "
-   territory_string_title_3 = "!"
-
-   territory_string_body_1 = "Having claimed "
-   territory_string_body_2 = ", "
-   territory_string_body_3 = " now also "
-   territory_string_body_4 = " the city of "
-   territory_string_body_5 = "!"
+   territory_string_title = "{0} now {1} {2}!"
+   territory_string_body = "Having claimed {0}, {1} now also {2} the city of {3}!"
 
 properties:
 
@@ -657,28 +650,8 @@ messages:
                #parm2=rFaction,#parm3=rControls,#parm4=rCity);
       }
 
-      ClearTempString();
-      AppendTempString(rFaction); 
-      AppendTempString(territory_string_title_1); 
-      AppendTempString(rControls);
-      AppendTempString(territory_string_title_2); 
-      AppendTempString(rCity); 
-      AppendTempString(territory_string_title_3);
-      territory_news_title = CreateString(); 
-      SetString(territory_news_title, GetTempString());
-
-      ClearTempString();
-      AppendTempString(territory_string_body_1);
-      AppendTempString(sTowns); 
-      AppendTempString(territory_string_body_2);
-      AppendTempString(rFaction); 
-      AppendTempString(territory_string_body_3); 
-      AppendTempString(rControls);
-      AppendTempString(territory_string_body_4); 
-      AppendTempString(rCity); 
-      AppendTempString(territory_string_body_5);
-      territory_news_body = CreateString(); 
-      SetString(territory_news_body, GetTempString());
+      territory_news_title = BuildString(territory_string_title, rFaction, rControls, rCity);
+      territory_news_body = BuildString(territory_string_body, sTowns, rFaction, rControls, rCity);
 
       % Post to the territory news
       oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);

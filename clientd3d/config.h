@@ -139,7 +139,6 @@ void TimeSettingsLoad(void);
 void TimeSettingsSave(int download_time);
 
 M59EXPORT int GetConfigInt(char *section, char *key, int default_value, char *fname);
-bool WritePrivateProfileInt(char *section, char *key, int value, char *fname);
 M59EXPORT bool WriteConfigInt(char *section, char *key, int value, char *fname);
 
 void ConfigSetServerNameByNumber(int num);

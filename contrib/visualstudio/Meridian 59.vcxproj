@@ -1425,7 +1425,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
     <NMakeOutput>../../run/localclient/meridian.exe</NMakeOutput>
     <NMakeCleanCommandLine>cd ""..\..\"" &amp;&amp; nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>
@@ -1436,7 +1436,7 @@
     <OutDir>$(SolutionDir)..\..\run\localclient\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
     <NMakeOutput>../../run/localclient/meridian.exe</NMakeOutput>
     <NMakeCleanCommandLine>cd ""..\..\"" &amp;&amp; nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>
@@ -1448,7 +1448,7 @@
     <IntDir>$(ShortProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo RELEASE=1 Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo RELEASE=1</NMakeBuildCommandLine>
     <NMakeOutput>../../run/localclient/meridian.exe</NMakeOutput>
     <NMakeCleanCommandLine>cd ""..\..\"" &amp;&amp; nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
@@ -1459,7 +1459,7 @@
     <NMakeIncludeSearchPath>$(ProjectDir)..\..\include;$(ProjectDir)..\..\external\libarchive;$(ProjectDir)..\..\external\libpng;$(ProjectDir)..\..\external\wavemix;$(ProjectDir)..\..\external\zlib;$(ProjectDir)..\..\clientd3d\debug;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo RELEASE=1 Bclient Bmodules Bupdater Bserver</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd ""..\..\"" &amp;&amp; nmake /nologo RELEASE=1</NMakeBuildCommandLine>
     <NMakeOutput>../../run/localclient/meridian.exe</NMakeOutput>
     <NMakeCleanCommandLine>cd ""..\..\"" &amp;&amp; nmake clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>

@@ -298,7 +298,7 @@ void ConfigLoad(void)
    config.showUnseenWalls = FALSE;
    config.showUnseenMonsters = FALSE;
    config.avoidDownloadAskDialog = FALSE;
-   config.maxFPS = FALSE;
+   config.maxFPS = 120;
    config.clearCache = FALSE;
 #endif // NODPRINTFS
 

@@ -108,7 +108,7 @@ int						d3dRenderTextureThreshold;
 // Debug flag to enable/disable light position visualization.
 // When true, renders yellow wireframe ellipsoids at static light positions.
 // See D3DRenderDebugLightPositions() for details.
-bool debugLightPositions = false;
+static const bool debugLightPositions = false;
 
 D3DVERTEXELEMENT9		decl0[] = {
 	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
@@ -514,7 +514,6 @@ float GetGlobalLightScale(void) { return gLightScale; }
  * To enable: Set debugLightPositions = true (defined at the top of this file).
  * To disable: Set debugLightPositions = false.
  *
- * This is called from D3DRenderBegin() when both debugLightPositions and config.bDynamicLighting are true.
  * Helps visualize light coverage and debug lighting issues.
  */
 void D3DRenderDebugLightPositions(Draw3DParams *params)
@@ -988,12 +987,10 @@ static float D3DLightScale(int intensity)
    const float LIGHT_BASE_SIZE = 2000.0f;
 
    float baseRadius = (intensity * LIGHT_MULTIPLIER / 255.0f) + LIGHT_BASE_SIZE;
-
    float r = baseRadius * gLightScale;
+
    // enforce a minimum world radius so small gLightScale values don't collapse lights
-   if (r < MIN_WORLD_LIGHT_RADIUS)
-      r = MIN_WORLD_LIGHT_RADIUS;
-   return r;
+   return std::max(r, MIN_WORLD_LIGHT_RADIUS);
 }
 
 bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
@@ -1235,42 +1232,29 @@ void D3DLMapsStaticGet(room_type * room)
 
          gDLightCache.dLights[gDLightCache.numLights].xyz.z = floorZ + heightAboveFloor;
 
-         // BRIGHTNESS: Apply flicker to both SIZE and COLOR
-         // BUT: Skip flickering for "atmospheric lights" (lights without visible objects)
-         // placed by an admin via the `dm place dynamic light` command.
-         // These are lights with no renderable bitmap.
+         // Apply flicker to both SIZE and COLOR
          float flickerBrightness = 1.0f;
-         bool isAtmosphericLight = (pRNode->obj.icon_res == 0 || pDib == NULL);
-         char *iconName = LookupRscNoError(pRNode->obj.icon_res);
-         if (_stricmp(iconName, "blank.bgf") == 0)
-            isAtmosphericLight = true;
+         int flickeredIntensity = pRNode->obj.dLighting.intensity;
 
-         if (!isAtmosphericLight && (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)))
+         if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
          {
             flickerBrightness = (float) pRNode->obj.lightAdjust / GetFlickerLevel();
+            flickeredIntensity = (int) (D3DLightScale(pRNode->obj.dLighting.intensity) * flickerBrightness);
          }
-         
-         // Apply flicker to the intensity for radius calculation
-         int flickeredIntensity = (int) (pRNode->obj.dLighting.intensity * flickerBrightness);
+         else
+         {
+            // Use unmodified classic intensity for non-flickering lights
+            flickeredIntensity = D3DLightScale(pRNode->obj.dLighting.intensity);
+         }
 
 		 if (debugLights)
-            debug(("  Static Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
-                   "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s%s\n",
+            debug(("Static Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
+                   "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s\n",
                    staticCount++, pRNode->obj.id, pRNode->obj.flags, pRNode->obj.dLighting.flags,
                    pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity, pRNode->obj.lightAdjust,
                    flickerBrightness, flickeredIntensity, (pRNode->obj.flags & OF_FLICKERING) ? " [FLICKERING]" : "",
-                   (pRNode->obj.flags & OF_FLASHING) ? " [FLASHING]" : "",
-                   isAtmosphericLight ? " [ATMOSPHERIC-NO-FLICKER]" : ""));
+                   (pRNode->obj.flags & OF_FLASHING) ? " [FLASHING]" : ""));
 
-		 // Use unmodified intensity for atmospheric lights
-		 if (isAtmosphericLight)
-		 {
-			flickeredIntensity = DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		 }
-		 else
-		 {
-			flickeredIntensity = D3DLightScale(flickeredIntensity);
-		 }
          gDLightCache.dLights[gDLightCache.numLights].xyzScale.x = flickeredIntensity;
          gDLightCache.dLights[gDLightCache.numLights].xyzScale.y = flickeredIntensity;
          gDLightCache.dLights[gDLightCache.numLights].xyzScale.z = flickeredIntensity;

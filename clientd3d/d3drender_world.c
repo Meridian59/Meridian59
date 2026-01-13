@@ -1428,6 +1428,25 @@ void D3DRenderCeilingMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, LPDIREC
    }
 }
 
+/**
+ * Calculates the 2D bounding box (min/max X and Y) for a set of vertices.
+ */
+static void CalculateBoundingBox2D(const custom_xyz *xyz, int numVertices, float &outMinX, float &outMaxX,
+                                   float &outMinY, float &outMaxY)
+{
+   outMinX = xyz[0].x;
+   outMaxX = xyz[0].x;
+   outMinY = xyz[0].y;
+   outMaxY = xyz[0].y;
+
+   for (int i = 1; i < numVertices; i++)
+   {
+      outMinX = (std::min)(outMinX, xyz[i].x);
+      outMaxX = (std::max)(outMaxX, xyz[i].x);
+      outMinY = (std::min)(outMinY, xyz[i].y);
+      outMaxY = (std::max)(outMaxY, xyz[i].y);
+   }
+}
 
 /**
  * Checks if a light position is inside the 2D bounding box defined by the given vertices.
@@ -1435,21 +1454,8 @@ void D3DRenderCeilingMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, LPDIREC
  */
 static bool IsLightInsideBoundingBox(float lightX, float lightY, const custom_xyz *xyz, int numVertices)
 {
-   float minX = xyz[0].x, maxX = xyz[0].x;
-   float minY = xyz[0].y, maxY = xyz[0].y;
-
-   for (int i = 1; i < numVertices; i++)
-   {
-      if (xyz[i].x < minX)
-         minX = xyz[i].x;
-      if (xyz[i].x > maxX)
-         maxX = xyz[i].x;
-      if (xyz[i].y < minY)
-         minY = xyz[i].y;
-      if (xyz[i].y > maxY)
-         maxY = xyz[i].y;
-   }
-
+   float minX, maxX, minY, maxY;
+   CalculateBoundingBox2D(xyz, numVertices, minX, maxX, minY, maxY);
    return (lightX >= minX && lightX <= maxX && lightY >= minY && lightY <= maxY);
 }
 
@@ -1501,19 +1507,8 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
                    (pDLightCache->dLights[numLights].xyzScale.x / 1.5f);  // * 2.0f;
 
       // Check if light is inside the polygon's bounding box
-      float lightX = pDLightCache->dLights[numLights].xyz.x;
-      float lightY = pDLightCache->dLights[numLights].xyz.y;
-      float minX = xyz[0].x, maxX = xyz[0].x;
-      float minY = xyz[0].y, maxY = xyz[0].y;
-      for (count = 1; count < pNode->u.leaf.poly.npts; count++)
-      {
-         if (xyz[count].x < minX) minX = xyz[count].x;
-         if (xyz[count].x > maxX) maxX = xyz[count].x;
-         if (xyz[count].y < minY) minY = xyz[count].y;
-         if (xyz[count].y > maxY) maxY = xyz[count].y;
-      }
-      // If light is inside the bounding box, it should definitely affect this polygon
-      if (IsLightInsideBoundingBox(lightX, lightY, xyz, pNode->u.leaf.poly.npts))
+      if (IsLightInsideBoundingBox(pDLightCache->dLights[numLights].xyz.x, pDLightCache->dLights[numLights].xyz.y, xyz,
+                                   pNode->u.leaf.poly.npts))
       {
          lightInsidePolygon = true;
       }
@@ -1671,19 +1666,8 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
           (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) * (pDLightCache->dLights[numLights].xyzScale.x / 1.5f);
 
       // Check if light is inside the polygon's bounding box (simple heuristic)
-      float lightX = pDLightCache->dLights[numLights].xyz.x;
-      float lightY = pDLightCache->dLights[numLights].xyz.y;
-      float minX = xyz[0].x, maxX = xyz[0].x;
-      float minY = xyz[0].y, maxY = xyz[0].y;
-      for (count = 1; count < pNode->u.leaf.poly.npts; count++)
-      {
-         if (xyz[count].x < minX) minX = xyz[count].x;
-         if (xyz[count].x > maxX) maxX = xyz[count].x;
-         if (xyz[count].y < minY) minY = xyz[count].y;
-         if (xyz[count].y > maxY) maxY = xyz[count].y;
-      }
-      // If light is inside the bounding box, it should definitely affect this polygon
-      if (IsLightInsideBoundingBox(lightX, lightY, xyz, pNode->u.leaf.poly.npts))
+      if (IsLightInsideBoundingBox(pDLightCache->dLights[numLights].xyz.x, pDLightCache->dLights[numLights].xyz.y, xyz,
+                                   pNode->u.leaf.poly.npts))
       {
          lightInsidePolygon = true;
       }
@@ -1906,19 +1890,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
           (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) * (pDLightCache->dLights[numLights].xyzScale.x / 1.5f);
 
       // Check if light is inside the wall's bounding box in XY plane
-      float lightX = pDLightCache->dLights[numLights].xyz.x;
-      float lightY = pDLightCache->dLights[numLights].xyz.y;
-      float minX = xyz[0].x, maxX = xyz[0].x;
-      float minY = xyz[0].y, maxY = xyz[0].y;
-      for (i = 1; i < 4; i++)
-      {
-         if (xyz[i].x < minX) minX = xyz[i].x;
-         if (xyz[i].x > maxX) maxX = xyz[i].x;
-         if (xyz[i].y < minY) minY = xyz[i].y;
-         if (xyz[i].y > maxY) maxY = xyz[i].y;
-      }
-      // If light is inside the bounding box, it should affect this wall
-      if (IsLightInsideBoundingBox(lightX, lightY, xyz, 4))
+      if (IsLightInsideBoundingBox(pDLightCache->dLights[numLights].xyz.x, pDLightCache->dLights[numLights].xyz.y, xyz, 4))
       {
          lightNearWall = true;
       }

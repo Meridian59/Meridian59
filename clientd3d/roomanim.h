@@ -21,8 +21,9 @@
 #define SCROLL_WALL_MEDIUM_PERIOD 32
 #define SCROLL_WALL_FAST_PERIOD   8
 
-// Number of milliseconds between flickering a light
-static int FLICKER_PERIOD = 100;
+// Milliseconds between sector light flicker updates (ambient room lighting only).
+// Object lights (OF_FLICKERING) use a different continuous wave-based system.
+static const int FLICKER_PERIOD = 100;
 
 // For ANIMATE_ROOM_BITMAP animations
 typedef struct

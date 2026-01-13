@@ -990,7 +990,7 @@ static float D3DLightScale(int intensity)
    float r = baseRadius * gLightScale;
 
    // enforce a minimum world radius so small gLightScale values don't collapse lights
-   return std::max(r, MIN_WORLD_LIGHT_RADIUS);
+   return (std::max)(r, MIN_WORLD_LIGHT_RADIUS);
 }
 
 bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)

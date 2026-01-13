@@ -324,7 +324,7 @@ bool AnimateBackgroundOverlays(int dt)
    return need_redraw;
 }
 /************************************************************************/
- /* 
+/* 
  * Animate player overlays; return true if any was animated.
  *   dt is number of milliseconds since last time animation timer went off.
  */

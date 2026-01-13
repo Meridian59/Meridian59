@@ -1009,7 +1009,7 @@ bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 	return true;
 }
 
-void D3DLMapsStaticGet(room_type * room)
+void D3DLMapsStaticGet(room_type *room)
 {
    room_contents_node *pRNode;
    list_type list;

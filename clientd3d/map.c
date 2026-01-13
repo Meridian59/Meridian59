@@ -78,7 +78,7 @@ static BOOL fMapCacheValid = FALSE;
 static struct map_wall_cache_t *pMapWalls = NULL;
 static float mapCacheScale = 0.0;
 static int mapNumCacheWalls = 0;
-static constexpr int MAX_ANNOTATION_TEXT_ZOOM = 133; // Unit-less number which helps define when we stop displaying annotation text
+static constexpr int MAX_ANNOTATION_TEXT_ZOOM = 60; // Unit-less number which helps define when we stop displaying annotation text
 
 /* local function prototypes */
 static void MapDrawMiniMapWalls(HDC hdc, int x, int y, room_type *room);
@@ -260,7 +260,26 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
 	    else
 	       MapDrawWalls(hdc, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, room);
        if (config.map_annotations)
-          MapDrawAnnotations(hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, TRUE, scaleMiniMap > (1.0f / MAX_ANNOTATION_TEXT_ZOOM));
+       {
+          bool drawText = true;
+          if (config.map_text_zoom_limit == 0)
+          {
+             // Set to 0, keep them always off
+             drawText = false;
+          }
+          else if (config.map_text_zoom_limit == CONFIG_MAX_TEXT_ZOOM_LIMIT)
+          {
+             // Set to max, keep them always on
+             drawText = true;
+          }
+          else
+          {
+             // Set to something in between, calculate based on zoom level
+             drawText = scaleMiniMap > (1.0f / ((float)config.map_text_zoom_limit * MAX_ANNOTATION_TEXT_ZOOM));
+          }
+          
+          MapDrawAnnotations(hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, TRUE, drawText);
+       }
 	    MapDrawObjects(hdc, room->contents, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
 	    MapDrawPlayer(hdc, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
 	 }

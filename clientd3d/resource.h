@@ -640,6 +640,7 @@
 #define IDS_PREFERENCES_TITLE	          3650
 #define IDS_INTRO                       3651
 #define ID_FONT_ANNOTATIONS             3652
+#define IDC_ANNOTATION_ZOOM_LIMIT       3653
 
 // Next default values for new objects
 // 

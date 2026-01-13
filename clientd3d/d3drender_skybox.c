@@ -139,6 +139,8 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 {
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
+		// Note, for now using default clear skies for non-clear weather in this draft.
+		// At least until cloudy skyboxes for hardware rendering gets added in.
 		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
 		D3DRenderBackgroundsLoad("./resource/skyb.bsf", 1);
 		D3DRenderBackgroundsLoad("./resource/skyc.bsf", 2);
@@ -278,16 +280,21 @@ bool D3DRenderBackgroundSet(ID background)
 	char* filename = LookupRsc(background);
 
 	if (!filename) return false;
-
+	
+	// This draft PR still uses clear skies for cloudy weather until cloudy skyboxes are added.
 	static const std::unordered_map<std::string, int> backgroundMap = {
 		{"1skya.bgf", 0},
 		{"2skya.bgf", 0},
+		{"3sky.bgf", 0},
 		{"1skyb.bgf", 1},
 		{"2skyb.bgf", 1},
+		{"3skyb.bgf", 1},
 		{"1skyc.bgf", 2},
 		{"2skyc.bgf", 2},
+		{"3skyc.bgf", 2},
 		{"1skyd.bgf", 3},
 		{"2skyd.bgf", 3},
+		{"3skyd.bgf", 3},
 		{"redsky.bgf", 4}
 	};
 

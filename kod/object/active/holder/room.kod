@@ -440,7 +440,7 @@ messages:
       }
 
       % Now delete the old room and teleport users back to the new room
-      Send(oOldRoom,@Delete,#skip_table_delete=TRUE);
+      Send(oOldRoom,@Delete,#bSkip_table_delete=FALSE);
 
       for i in lUsers
       {
@@ -1004,7 +1004,7 @@ messages:
       return;
    }
 
-   Delete(skip_table_delete = FALSE)
+   Delete(bSkip_table_delete = TRUE)
    {
       local i;
 
@@ -1029,7 +1029,7 @@ messages:
          ptPeriodic_sounds = $;
       }
 
-      if NOT skip_table_delete
+      if bSkip_table_delete
       {
          Send(SYS,@DeleteRoom,#what=self);
       }

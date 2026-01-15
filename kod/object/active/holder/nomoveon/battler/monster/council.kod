@@ -111,7 +111,19 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
+
+   OnRoomRecreated(old_room = $, new_room = $)
+   "Called when this room is being recreated. If this councilor's homeroom matches the old "
+   "room, move to the new room."
+   {
+      if old_room <> $ AND new_room <> $ AND Send(old_room,@GetRoomNum) = viHomeroom
+      {
+         Send(self,@GotoHomeroom);
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -53,8 +53,9 @@ resources:
    system_user_killed_outlaw = \
       "### The feared outlaw, %q, has just met justice at %s%q's hands."
    system_killed_self = "### %q was just slain by %s own folly."
-   system_user_killed_room = \
-      "### %s have laid claim to yet another poor soul, %q."
+   system_user_killed_room_1 = "### %q met their end in %s."
+   system_user_killed_room_2 = "### %q was slain by the perils of %s."
+   system_user_killed_room_3 = "### %q's adventure ended abruptly in %s."
    system_user_killed_token = "### %q lost a token to %s%q."
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
@@ -1455,7 +1456,7 @@ messages:
 
    UserKilled(what = $,killer = $)
    {
-      local i, rMessage, oSoldierShield, oGuild, oKillerGuild,
+      local i, iRoll, rMessage, oSoldierShield, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
             war_string1, war_string2, oBook, oMaster;
 
@@ -1505,11 +1506,23 @@ messages:
 
       if IsClass(killer,&Room)
       {
-         rMessage = system_user_killed_room;
-         param2 = Send(what,@GetTrueName);
+         % Room-blamed death (e.g. environmental earthquake).
+         iRoll = Random(1,3);
 
-         % Eliminate param3 that was set by default
-         param3 = $;
+         if iRoll = 1
+         {
+            rMessage = system_user_killed_room_1;
+         }
+         if iRoll = 2
+         {
+            rMessage = system_user_killed_room_2;
+         }
+         if iRoll = 3
+         {
+            rMessage = system_user_killed_room_3;
+         }
+
+         param2 = $;
       }
 
       if what = killer

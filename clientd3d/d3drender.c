@@ -1009,12 +1009,130 @@ bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 	return true;
 }
 
+/*
+ * Helper structure to pass light data for initialization.
+ */
+typedef struct
+{
+   int baseIntensity;
+   int objFlags;
+   int lightAdjust;
+   WORD lightColor;  // 16-bit RGB color (5-5-5 format)
+   ID objID;       // Object ID for debug output
+   WORD lightFlags;  // Light flags for debug output
+} LightSourceData;
+
+/*
+ * Calculate flickered intensity and brightness for a light.
+ * Returns the scaled intensity with flicker applied (if applicable).
+ * Also outputs the flickerBrightness value for color calculations.
+ */
+static int CalculateFlickeredIntensity(const LightSourceData *lightData, float *outFlickerBrightness)
+{
+   float flickerBrightness = 1.0f;
+   int flickeredIntensity;
+
+   if (lightData->objFlags & (OF_FLICKERING | OF_FLASHING))
+   {
+      flickerBrightness = (float) lightData->lightAdjust / GetFlickerLevel();
+      flickeredIntensity = (int) (D3DLightScale(lightData->baseIntensity) * flickerBrightness);
+   }
+   else
+   {
+      // Use unmodified classic intensity for non-flickering lights
+      flickeredIntensity = D3DLightScale(lightData->baseIntensity);
+   }
+
+   if (outFlickerBrightness)
+      *outFlickerBrightness = flickerBrightness;
+
+   return flickeredIntensity;
+}
+
+/*
+ * Initialize all light scale and color properties for a d_light structure.
+ * This handles xyzScale, invXYZScale, invXYZScaleHalf, and color with flicker applied.
+ * Optionally outputs debug information if debugLights is true.
+ */
+static void InitializeLightProperties(d_light *light, const LightSourceData *lightData, bool debugLights,
+                                      const char *lightType, int *pLightCount)
+{
+   float flickerBrightness;
+   int flickeredIntensity = CalculateFlickeredIntensity(lightData, &flickerBrightness);
+
+   *pLightCount++;
+
+   // Debug output
+   if (debugLights)
+   {
+      debug(("%s Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
+             "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s\n",
+             lightType, *pLightCount, lightData->objID, lightData->objFlags, lightData->lightFlags,
+             lightData->lightColor, lightData->baseIntensity, lightData->lightAdjust, flickerBrightness,
+             flickeredIntensity, (lightData->objFlags & OF_FLICKERING) ? " [FLICKERING]" : "",
+             (lightData->objFlags & OF_FLASHING) ? " [FLASHING]" : ""));
+   }
+
+   // Set xyz scales (all three axes use same value)
+   light->xyzScale.x = flickeredIntensity;
+   light->xyzScale.y = flickeredIntensity;
+   light->xyzScale.z = flickeredIntensity;
+
+   // Calculate inverse scales
+   light->invXYZScale.x = 1.0f / light->xyzScale.x;
+   light->invXYZScale.y = 1.0f / light->xyzScale.y;
+   light->invXYZScale.z = 1.0f / light->xyzScale.z;
+
+   // Calculate inverse half scales
+   light->invXYZScaleHalf.x = 1.0f / (light->xyzScale.x / 2.0f);
+   light->invXYZScaleHalf.y = 1.0f / (light->xyzScale.y / 2.0f);
+   light->invXYZScaleHalf.z = 1.0f / (light->xyzScale.z / 2.0f);
+
+   // Set color with flicker applied (convert from 16-bit 5-5-5 RGB to 8-bit RGBA)
+   light->color.a = COLOR_MAX;
+   light->color.r = (BYTE) (((lightData->lightColor >> 10) & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.g = (BYTE) (((lightData->lightColor >> 5) & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.b = (BYTE) ((lightData->lightColor & 31) * COLOR_MAX / 31 * flickerBrightness);
+}
+
+/*
+ * Calculate the Z position for a light based on object position, floor height, and sprite dimensions.
+ * This ensures lights are positioned above the floor for proper illumination.
+ *
+ * Parameters:
+ *   room - Room containing the BSP tree for height lookup
+ *   motionX, motionY, motionZ - Object's current position
+ *   pDib - Object's bitmap (can be NULL)
+ *
+ * Returns: The calculated Z position for the light
+ */
+static float CalculateLightZPosition(room_type *room, long motionX, long motionY, long motionZ, PDIB pDib)
+{
+   long top, bottom;
+   int sector_flags;
+
+   // Get floor height at object position
+   GetRoomHeight(room->tree, &top, &bottom, &sector_flags, motionX, motionY);
+
+   // Start at floor level
+   float floorZ = (float) max(bottom, motionZ);
+
+   // Calculate sprite height
+   float spriteHeight = 0.0f;
+   if (pDib)
+      spriteHeight = ((float) pDib->height / (float) pDib->shrink * 16.0f) - (float) pDib->yoffset * 4.0f;
+
+   // Ensure the light is positioned above the floor for proper illumination
+   const float MIN_LIGHT_HEIGHT_ABOVE_FLOOR = 64.0f;
+   float heightAboveFloor = (spriteHeight > MIN_LIGHT_HEIGHT_ABOVE_FLOOR) ? spriteHeight : MIN_LIGHT_HEIGHT_ABOVE_FLOOR;
+
+   return floorZ + heightAboveFloor;
+}
+
 void D3DLMapsStaticGet(room_type *room)
 {
    room_contents_node *pRNode;
    list_type list;
-   long top, bottom;
-   int sector_flags;
    PDIB pDib;
 
 	bool projectileLightsEnable = true;
@@ -1022,8 +1140,7 @@ void D3DLMapsStaticGet(room_type *room)
 	bool staticLightsEnabled = true;
 
 	// Debug flags to control light map processing debug output
-	// It will output the number and some details on each light type:
-	// projectiles, dynamic and static.
+	// It will output the number and some details on each light type: projectiles, dynamic and static.
 	// Set to 'true' to enable debug output, 'false' to disable.
 	bool debugLights = false;
 
@@ -1047,53 +1164,26 @@ void D3DLMapsStaticGet(room_type *room)
 			if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
 				continue;
 
-			if (debugLights)
-				debug(("  Projectile Light %d: color=0x%04X, intensity=%d\n", 
-					projectileCount++, pProjectile->dLighting.color, pProjectile->dLighting.intensity));
-
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pProjectile->motion.z;
 
 			pDib = GetObjectPdib(pProjectile->icon_res, 0, 0);
-
-			GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
-
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-				max(bottom, pProjectile->motion.z);
+				CalculateLightZPosition(room, pProjectile->motion.x, pProjectile->motion.y, pProjectile->motion.z, pDib);
 
-			if (pDib)
-				gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
-					((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
+			if (debugLights)
+				debug(("Projectile Light %d: color=0x%04X, intensity=%d\n", projectileCount, pProjectile->dLighting.color,
+					pProjectile->dLighting.intensity));
 
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-				D3DLightScale(pProjectile->dLighting.intensity);
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-				D3DLightScale(pProjectile->dLighting.intensity);
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-				D3DLightScale(pProjectile->dLighting.intensity);
-
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-				1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-				1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-				1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
-
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-				1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-				1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-				1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
-
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r =
-				((pProjectile->dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g =
-				((pProjectile->dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b =
-				(pProjectile->dLighting.color & 31) * COLOR_MAX / 31;
+			LightSourceData lightData = {.baseIntensity = pProjectile->dLighting.intensity,
+										.objFlags = 0, // keep projectiles non flickering and revisit
+										.lightAdjust = 0,
+										.lightColor = pProjectile->dLighting.color,
+										.objID = 0,
+										.lightFlags = 0};
+			InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], &lightData, false,
+									"Projectile", &projectileCount);
 
 			gDLightCacheDynamic.numLights++;
 		}
@@ -1120,63 +1210,25 @@ void D3DLMapsStaticGet(room_type *room)
          if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
             continue;
 
-		if (debugLights)
-            debug(("  Dynamic Light %d: color=0x%04X, intensity=%d\n", dynamicCount++, pRNode->obj.dLighting.color,
-                   pRNode->obj.dLighting.intensity));
-
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pRNode->motion.y;
 
          pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
-
-         // Get floor height at object position
-         GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
-
-         // Start at floor level
-         float dynFloorZ = (float) max(bottom, pRNode->motion.z);
-
-         // Calculate sprite height
-         float dynSpriteHeight = 0.0f;
-         if (pDib)
-            dynSpriteHeight = ((float) pDib->height / (float) pDib->shrink * 16.0f) - (float) pDib->yoffset * 4.0f;
-
-         // Ensure the light is positioned above the floor for proper illumination
-         const float MIN_DYN_LIGHT_HEIGHT = 64.0f;
-         float dynHeightAboveFloor = (dynSpriteHeight > MIN_DYN_LIGHT_HEIGHT) ? dynSpriteHeight : MIN_DYN_LIGHT_HEIGHT;
-
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = dynFloorZ + dynHeightAboveFloor;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
+			CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
 
          if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
             continue;
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-             D3DLightScale(pRNode->obj.dLighting.intensity);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-             D3DLightScale(pRNode->obj.dLighting.intensity);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-             D3DLightScale(pRNode->obj.dLighting.intensity);
+         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity,
+									.objFlags = pRNode->obj.flags,
+									.lightAdjust = pRNode->obj.lightAdjust,
+									.lightColor = pRNode->obj.dLighting.color,
+									.objID = pRNode->obj.id,
+									.lightFlags = pRNode->obj.dLighting.flags};
 
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-             1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-             1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-             1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
-
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-             1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-             1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-             1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
-
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r =
-             ((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g =
-             ((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b =
-             (pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31;
+         InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], &lightData, debugLights,
+								"Dynamic", &dynamicCount);
 
          gDLightCacheDynamic.numLights++;
       }
@@ -1212,78 +1264,19 @@ void D3DLMapsStaticGet(room_type *room)
          pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
 
          gDLightCache.dLights[gDLightCache.numLights].objID = pRNode->obj.id;
-
          gDLightCache.dLights[gDLightCache.numLights].xyz.x = pRNode->motion.x;
          gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
+         gDLightCache.dLights[gDLightCache.numLights].xyz.z =
+             CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
 
-         // Get floor height at object position
-         GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
-
-         // Start at floor level
-         float floorZ = (float) max(bottom, pRNode->motion.z);
-
-         float spriteHeight = 0.0f;
-         if (pDib)
-            spriteHeight = ((float) pDib->height / (float) pDib->shrink * 16.0f) - (float) pDib->yoffset * 4.0f;
-
-         const float MIN_LIGHT_HEIGHT_ABOVE_FLOOR = 64.0f;
-         float heightAboveFloor =
-             (spriteHeight > MIN_LIGHT_HEIGHT_ABOVE_FLOOR) ? spriteHeight : MIN_LIGHT_HEIGHT_ABOVE_FLOOR;
-
-         gDLightCache.dLights[gDLightCache.numLights].xyz.z = floorZ + heightAboveFloor;
-
-         // Apply flicker to both SIZE and COLOR
-         float flickerBrightness = 1.0f;
-         int flickeredIntensity = pRNode->obj.dLighting.intensity;
-
-         if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
-         {
-            flickerBrightness = (float) pRNode->obj.lightAdjust / GetFlickerLevel();
-            flickeredIntensity = (int) (D3DLightScale(pRNode->obj.dLighting.intensity) * flickerBrightness);
-         }
-         else
-         {
-            // Use unmodified classic intensity for non-flickering lights
-            flickeredIntensity = D3DLightScale(pRNode->obj.dLighting.intensity);
-         }
-
-		 if (debugLights)
-            debug(("Static Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
-                   "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s\n",
-                   staticCount++, pRNode->obj.id, pRNode->obj.flags, pRNode->obj.dLighting.flags,
-                   pRNode->obj.dLighting.color, pRNode->obj.dLighting.intensity, pRNode->obj.lightAdjust,
-                   flickerBrightness, flickeredIntensity, (pRNode->obj.flags & OF_FLICKERING) ? " [FLICKERING]" : "",
-                   (pRNode->obj.flags & OF_FLASHING) ? " [FLASHING]" : ""));
-
-         gDLightCache.dLights[gDLightCache.numLights].xyzScale.x = flickeredIntensity;
-         gDLightCache.dLights[gDLightCache.numLights].xyzScale.y = flickeredIntensity;
-         gDLightCache.dLights[gDLightCache.numLights].xyzScale.z = flickeredIntensity;
-         
-         if (pRNode->obj.dLighting.intensity == 0)
-            pRNode->obj.dLighting.intensity = 1;
-         
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.x =
-             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.x;
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.y =
-             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.y;
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScale.z =
-             1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.z;
-         
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.x =
-             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.x / 2.0f);
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.y =
-             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.y / 2.0f);
-         gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.z =
-             1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.z / 2.0f);
-         
-         // Flicker also applied to color
-         gDLightCache.dLights[gDLightCache.numLights].color.a = COLOR_MAX;
-         gDLightCache.dLights[gDLightCache.numLights].color.r =
-             (BYTE) (((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31 * flickerBrightness);
-         gDLightCache.dLights[gDLightCache.numLights].color.g =
-             (BYTE) (((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31 * flickerBrightness);
-         gDLightCache.dLights[gDLightCache.numLights].color.b =
-             (BYTE) ((pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31 * flickerBrightness);
+         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity,
+                                      .objFlags = pRNode->obj.flags,
+                                      .lightAdjust = pRNode->obj.lightAdjust,
+                                      .lightColor = pRNode->obj.dLighting.color,
+                                      .objID = pRNode->obj.id,
+                                      .lightFlags = pRNode->obj.dLighting.flags};
+         InitializeLightProperties(&gDLightCache.dLights[gDLightCache.numLights], &lightData, debugLights, "Static",
+                                   &staticCount);
          
          gDLightCache.numLights++;
       }

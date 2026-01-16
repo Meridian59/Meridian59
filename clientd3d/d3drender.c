@@ -105,6 +105,11 @@ int						gSmallTextureSize;
 
 int						d3dRenderTextureThreshold;
 
+// Debug flag to enable/disable light position visualization.
+// When true, renders yellow wireframe ellipsoids at static light positions.
+// See D3DRenderDebugLightPositions() for details.
+static const bool debugLightPositions = false;
+
 D3DVERTEXELEMENT9		decl0[] = {
 	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
 	{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
@@ -131,7 +136,7 @@ LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 
 AREA					gD3DView;
-int           gD3DRedrawAll = 0;
+int						gD3DRedrawAll = 0;
 int						gTemp = 0;
 bool					gWireframe;		// this is really bad, I'm sorry
 
@@ -477,6 +482,201 @@ void D3DRenderShutDown(void)
 	}
 }
 
+// Global light scale multiplier for all dynamic lights (0.0 to 5.0, default 0.45).
+// Applied in D3DLightScale() to control the radius of all light sources.
+// Lower values = smaller, more concentrated lights. Higher values = larger, more diffuse lights.
+// Changed at runtime via SetGlobalLightScale(), which triggers a full world geometry rebuild
+// to update all cached lightmaps. With MIN_WORLD_LIGHT_RADIUS = 0, this provides full control
+// over light size purely through intensity values and this scale factor.
+static float gLightScale = 0.45f;
+
+// Minimum world light radius in FINENESS units (1024 = one grid square).
+// With the bounding box check in D3DRenderLMapPostFloorAdd/Ceiling/Wall, we no longer
+// need a large minimum radius to catch lights centered in polygons. The bounding box
+// check handles that case. This minimum is just a safety floor for very small lights.
+// Set to 0 to allow full control via gLightScale and object intensity.
+static const float MIN_WORLD_LIGHT_RADIUS = 0.0f;
+
+void SetGlobalLightScale(float scale)
+{
+   gLightScale = std::clamp(scale, 0.0f, 5.0f);
+
+   // Force a full world rebuild so cached lightmaps / geometry that depend on radii update.
+   gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+}
+
+float GetGlobalLightScale(void) { return gLightScale; }
+
+/**
+ * Debug visualization function that renders yellow wireframe ellipsoids at each static light position.
+ * The ellipsoids are oriented according to the sun direction and sized to show the light's radius.
+ *
+ * To enable: Set debugLightPositions = true (defined at the top of this file).
+ * To disable: Set debugLightPositions = false.
+ *
+ * Helps visualize light coverage and debug lighting issues.
+ */
+void D3DRenderDebugLightPositions(Draw3DParams *params)
+{
+   // Debug: Draw WIREFRAME ELLIPSOIDS oriented by sun direction at static light positions
+   const int LAT_SEGMENTS = 8;
+   const int LON_SEGMENTS = 12;
+
+   //debug(("DEBUG: Drawing %d static lights as directional ellipsoids\n", gDLightCache.numLights));
+
+   // Get sun direction for orientation
+   const Vector3D &sunVect = getSunVector();
+   float sunAngle = atan2f(sunVect.y, sunVect.x);  // Angle in XY plane
+
+   //debug(("  Sun vector: (%.2f, %.2f, %.2f), angle: %.2f rad\n", sunVect.x, sunVect.y, sunVect.z, sunAngle));
+
+   D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
+   D3DCacheSystemReset(&gObjectCacheSystem);
+
+   for (int i = 0; i < gDLightCache.numLights; i++)
+   {
+      d_light *light = &gDLightCache.dLights[i];
+
+      // The lighting system uses invXYZScaleHalf (1.0 / (xyzScale / 2.0))
+      float radiusX = light->xyzScale.x / 2.0f;
+      float radiusY = light->xyzScale.y / 2.0f;
+      float radiusZ = light->xyzScale.z / 2.0f;
+
+      //debug(("  Light %d: pos=(%.1f, %.1f, %.1f) half-radii=(%.1f, %.1f, %.1f)\n", i, light->xyz.x, light->xyz.y,
+      //       light->xyz.z, radiusX, radiusY, radiusZ));
+
+      // Precompute rotation for sun direction
+      float cosSun = cosf(sunAngle);
+      float sinSun = sinf(sunAngle);
+
+      // Draw latitude rings (horizontal circles)
+      for (int lat = 0; lat <= LAT_SEGMENTS; lat++)
+      {
+         d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(&gObjectPool, NULL, NULL, 0, 0, 0);
+         if (pPacket == NULL)
+            continue;
+
+         d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
+         if (pChunk == NULL)
+            continue;
+
+         pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
+         pChunk->pMaterialFctn = &D3DMaterialNone;
+
+         pChunk->numVertices = LON_SEGMENTS + 1;
+         pChunk->numIndices = LON_SEGMENTS * 2;
+         pChunk->numPrimitives = LON_SEGMENTS;
+
+         MatrixIdentity(&pChunk->xForm);
+
+         float theta = (float) lat / (float) LAT_SEGMENTS * PI;  // 0 to PI (north to south)
+         float sinTheta = sinf(theta);
+         float cosTheta = cosf(theta);
+
+         // Generate ring of vertices at this latitude
+         for (int lon = 0; lon <= LON_SEGMENTS; lon++)
+         {
+            float phi = (float) lon / (float) LON_SEGMENTS * 2.0f * PI;  // 0 to 2*PI (around)
+            float sinPhi = sinf(phi);
+            float cosPhi = cosf(phi);
+
+            // Ellipsoid formula with anisotropic scaling (using HALF radius)
+            float localX = radiusX * sinTheta * cosPhi;
+            float localY = radiusY * sinTheta * sinPhi;
+            float localZ = radiusZ * cosTheta;
+
+            // Rotate by sun angle (around Z-axis to align with sun direction in XY plane)
+            float rotatedX = localX * cosSun - localY * sinSun;
+            float rotatedY = localX * sinSun + localY * cosSun;
+            float rotatedZ = localZ;
+
+            // Translate to light position
+            pChunk->xyz[lon].x = light->xyz.x + rotatedX;
+            pChunk->xyz[lon].y = light->xyz.y + rotatedY;
+            pChunk->xyz[lon].z = light->xyz.z + rotatedZ;
+
+            // Yellow wireframe
+            pChunk->bgra[lon].r = 255;
+            pChunk->bgra[lon].g = 255;
+            pChunk->bgra[lon].b = 0;
+            pChunk->bgra[lon].a = 255;
+         }
+
+         // Build line indices (connect consecutive points in the ring)
+         for (int j = 0; j < LON_SEGMENTS; j++)
+         {
+            pChunk->indices[j * 2 + 0] = j;
+            pChunk->indices[j * 2 + 1] = j + 1;
+         }
+      }
+
+      // Draw longitude lines (vertical meridians)
+      for (int lon = 0; lon < LON_SEGMENTS; lon++)
+      {
+         d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(&gObjectPool, NULL, NULL, 0, 0, 0);
+         if (pPacket == NULL)
+            continue;
+
+         d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
+         if (pChunk == NULL)
+            continue;
+
+         pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
+         pChunk->pMaterialFctn = &D3DMaterialNone;
+
+         pChunk->numVertices = LAT_SEGMENTS + 1;
+         pChunk->numIndices = LAT_SEGMENTS * 2;
+         pChunk->numPrimitives = LAT_SEGMENTS;
+
+         MatrixIdentity(&pChunk->xForm);
+
+         float phi = (float) lon / (float) LON_SEGMENTS * 2.0f * PI;
+         float sinPhi = sinf(phi);
+         float cosPhi = cosf(phi);
+
+         // Generate line of vertices from north to south pole at this longitude
+         for (int lat = 0; lat <= LAT_SEGMENTS; lat++)
+         {
+            float theta = (float) lat / (float) LAT_SEGMENTS * PI;
+            float sinTheta = sinf(theta);
+            float cosTheta = cosf(theta);
+
+            // Ellipsoid formula with anisotropic scaling (using HALF radius)
+            float localX = radiusX * sinTheta * cosPhi;
+            float localY = radiusY * sinTheta * sinPhi;
+            float localZ = radiusZ * cosTheta;
+
+            // Rotate by sun angle
+            float rotatedX = localX * cosSun - localY * sinSun;
+            float rotatedY = localX * sinSun + localY * cosSun;
+            float rotatedZ = localZ;
+
+            // Translate to light position
+            pChunk->xyz[lat].x = light->xyz.x + rotatedX;
+            pChunk->xyz[lat].y = light->xyz.y + rotatedY;
+            pChunk->xyz[lat].z = light->xyz.z + rotatedZ;
+
+            // Yellow wireframe
+            pChunk->bgra[lat].r = 255;
+            pChunk->bgra[lat].g = 255;
+            pChunk->bgra[lat].b = 0;
+            pChunk->bgra[lat].a = 255;
+         }
+
+         // Build line indices (connect consecutive points along meridian)
+         for (int j = 0; j < LAT_SEGMENTS; j++)
+         {
+            pChunk->indices[j * 2 + 0] = j;
+            pChunk->indices[j * 2 + 1] = j + 1;
+         }
+      }
+   }
+
+   // Flush everything using the standard cache system with LINE LIST primitive
+   D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
+   D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_LINELIST);
+}
+
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
 	int			angleHeading, anglePitch;
@@ -654,6 +854,12 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_world)
 	{
 		timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
+
+		// DEBUG: Draw circles at static light positions
+		if (debugLightPositions && config.bDynamicLighting)
+		{
+			D3DRenderDebugLightPositions(params);
+		}
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -770,6 +976,23 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 }
 
+/*
+ * Scale light radius based on intensity (0-255) and global scale factor.
+ * Applies the original D3D light radius curve, then scales by gLightScale.
+ */
+static float D3DLightScale(int intensity)
+{
+   // Keep the original curve but apply the global scale variable
+   const float LIGHT_MULTIPLIER = 10000.0f;
+   const float LIGHT_BASE_SIZE = 2000.0f;
+
+   float baseRadius = (intensity * LIGHT_MULTIPLIER / 255.0f) + LIGHT_BASE_SIZE;
+   float r = baseRadius * gLightScale;
+
+   // enforce a minimum world radius so small gLightScale values don't collapse lights
+   return (std::max)(r, MIN_WORLD_LIGHT_RADIUS);
+}
+
 bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 {
 	if (dLight->objID != pRNode->obj.id)
@@ -786,200 +1009,281 @@ bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 	return true;
 }
 
+/*
+ * Helper structure to pass light data for initialization.
+ */
+typedef struct
+{
+   int baseIntensity;
+   int objFlags;
+   int lightAdjust;
+   WORD lightColor;  // 16-bit RGB color (5-5-5 format)
+   ID objID;       // Object ID for debug output
+   WORD lightFlags;  // Light flags for debug output
+} LightSourceData;
+
+/*
+ * Calculate flickered intensity and brightness for a light.
+ * Returns the scaled intensity with flicker applied (if applicable).
+ * Also outputs the flickerBrightness value for color calculations.
+ */
+static int CalculateFlickeredIntensity(const LightSourceData *lightData, float *outFlickerBrightness)
+{
+   float flickerBrightness = 1.0f;
+   int flickeredIntensity;
+
+   if (lightData->objFlags & (OF_FLICKERING | OF_FLASHING))
+   {
+      flickerBrightness = (float) lightData->lightAdjust / GetFlickerLevel();
+      flickeredIntensity = (int) (D3DLightScale(lightData->baseIntensity) * flickerBrightness);
+   }
+   else
+   {
+      // Use unmodified classic intensity for non-flickering lights
+      flickeredIntensity = D3DLightScale(lightData->baseIntensity);
+   }
+
+   if (outFlickerBrightness)
+      *outFlickerBrightness = flickerBrightness;
+
+   return flickeredIntensity;
+}
+
+/*
+ * Initialize all light scale and color properties for a d_light structure.
+ * This handles xyzScale, invXYZScale, invXYZScaleHalf, and color with flicker applied.
+ * Optionally outputs debug information if debugLights is true.
+ */
+static void InitializeLightProperties(d_light *light, const LightSourceData *lightData, bool debugLights,
+                                      const char *lightType, int *pLightCount)
+{
+   float flickerBrightness;
+   int flickeredIntensity = CalculateFlickeredIntensity(lightData, &flickerBrightness);
+
+   *pLightCount++;
+
+   // Debug output
+   if (debugLights)
+   {
+      debug(("%s Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
+             "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s\n",
+             lightType, *pLightCount, lightData->objID, lightData->objFlags, lightData->lightFlags,
+             lightData->lightColor, lightData->baseIntensity, lightData->lightAdjust, flickerBrightness,
+             flickeredIntensity, (lightData->objFlags & OF_FLICKERING) ? " [FLICKERING]" : "",
+             (lightData->objFlags & OF_FLASHING) ? " [FLASHING]" : ""));
+   }
+
+   // Set xyz scales (all three axes use same value)
+   light->xyzScale.x = flickeredIntensity;
+   light->xyzScale.y = flickeredIntensity;
+   light->xyzScale.z = flickeredIntensity;
+
+   // Calculate inverse scales
+   light->invXYZScale.x = 1.0f / light->xyzScale.x;
+   light->invXYZScale.y = 1.0f / light->xyzScale.y;
+   light->invXYZScale.z = 1.0f / light->xyzScale.z;
+
+   // Calculate inverse half scales
+   light->invXYZScaleHalf.x = 1.0f / (light->xyzScale.x / 2.0f);
+   light->invXYZScaleHalf.y = 1.0f / (light->xyzScale.y / 2.0f);
+   light->invXYZScaleHalf.z = 1.0f / (light->xyzScale.z / 2.0f);
+
+   // Set color with flicker applied (convert from 16-bit 5-5-5 RGB to 8-bit RGBA)
+   light->color.a = COLOR_MAX;
+   light->color.r = (BYTE) (((lightData->lightColor >> 10) & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.g = (BYTE) (((lightData->lightColor >> 5) & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.b = (BYTE) ((lightData->lightColor & 31) * COLOR_MAX / 31 * flickerBrightness);
+}
+
+/*
+ * Calculate the Z position for a light based on object position, floor height, and sprite dimensions.
+ * This ensures lights are positioned above the floor for proper illumination.
+ *
+ * Parameters:
+ *   room - Room containing the BSP tree for height lookup
+ *   motionX, motionY, motionZ - Object's current position
+ *   pDib - Object's bitmap (can be NULL)
+ *
+ * Returns: The calculated Z position for the light
+ */
+static float CalculateLightZPosition(room_type *room, long motionX, long motionY, long motionZ, PDIB pDib)
+{
+   long top, bottom;
+   int sector_flags;
+
+   // Get floor height at object position
+   GetRoomHeight(room->tree, &top, &bottom, &sector_flags, motionX, motionY);
+
+   // Start at floor level
+   float floorZ = (float) max(bottom, motionZ);
+
+   // Calculate sprite height
+   float spriteHeight = 0.0f;
+   if (pDib)
+      spriteHeight = ((float) pDib->height / (float) pDib->shrink * 16.0f) - (float) pDib->yoffset * 4.0f;
+
+   // Ensure the light is positioned above the floor for proper illumination
+   const float MIN_LIGHT_HEIGHT_ABOVE_FLOOR = 64.0f;
+   float heightAboveFloor = (spriteHeight > MIN_LIGHT_HEIGHT_ABOVE_FLOOR) ? spriteHeight : MIN_LIGHT_HEIGHT_ABOVE_FLOOR;
+
+   return floorZ + heightAboveFloor;
+}
+
 void D3DLMapsStaticGet(room_type *room)
 {
-	room_contents_node	*pRNode;
-	list_type			list;
-	long				top, bottom;
-	int					sector_flags;
-	PDIB				pDib;
+   room_contents_node *pRNode;
+   list_type list;
+   PDIB pDib;
 
-	for (list = room->projectiles; list != NULL; list = list->next)
+	bool projectileLightsEnable = true;
+	bool dynamicLightsEnabled = true;
+	bool staticLightsEnabled = true;
+
+	// Debug flags to control light map processing debug output
+	// It will output the number and some details on each light type: projectiles, dynamic and static.
+	// Set to 'true' to enable debug output, 'false' to disable.
+	bool debugLights = false;
+
+	if (debugLights)
+		debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));
+
+	if (projectileLightsEnable)
 	{
-		Projectile	*pProjectile = (Projectile *)list->data;
+      if (debugLights)
+			debug(("=== PROJECTILE LIGHTS ===\n"));
 
-		if (gDLightCacheDynamic.numLights >= 50)
-			continue;
+		int projectileCount = 0;
+		
+		for (list = room->projectiles; list != NULL; list = list->next)
+		{
+			Projectile	*pProjectile = (Projectile *)list->data;
 
-		if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
-			continue;
+			if (gDLightCacheDynamic.numLights >= 50)
+				continue;
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pProjectile->motion.z;
+			if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
+				continue;
 
-		pDib = GetObjectPdib(pProjectile->icon_res, 0, 0);
+			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
+			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
+			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pProjectile->motion.z;
 
-		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
+			pDib = GetObjectPdib(pProjectile->icon_res, 0, 0);
+			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
+				CalculateLightZPosition(room, pProjectile->motion.x, pProjectile->motion.y, pProjectile->motion.z, pDib);
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-			max(bottom, pProjectile->motion.z);
+			if (debugLights)
+				debug(("Projectile Light %d: color=0x%04X, intensity=%d\n", projectileCount, pProjectile->dLighting.color,
+					pProjectile->dLighting.intensity));
 
-		if (pDib)
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
-				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
+			LightSourceData lightData = {.baseIntensity = pProjectile->dLighting.intensity,
+										.objFlags = 0, // keep projectiles non flickering and revisit
+										.lightAdjust = 0,
+										.lightColor = pProjectile->dLighting.color,
+										.objID = 0,
+										.lightFlags = 0};
+			InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], &lightData, false,
+									"Projectile", &projectileCount);
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
+			gDLightCacheDynamic.numLights++;
+		}
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
+      if (debugLights)
+		debug(("Total Projectile Lights: %d\n\n", projectileCount));
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r =
-			((pProjectile->dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g =
-			((pProjectile->dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b =
-			(pProjectile->dLighting.color & 31) * COLOR_MAX / 31;
-
-		gDLightCacheDynamic.numLights++;
 	}
 
-	// dynamic lights
-	for (list = room->contents; list != NULL; list = list->next)
-	{
-		pRNode = (room_contents_node *)list->data;
+   if (dynamicLightsEnabled)
+   {
+      if (debugLights)
+		debug(("=== DYNAMIC LIGHTS ===\n"));
 
-		if (gDLightCacheDynamic.numLights >= 50)
-			continue;
+      int dynamicCount = 0;
+      // dynamic lights
+      for (list = room->contents; list != NULL; list = list->next)
+      {
+         pRNode = (room_contents_node *) list->data;
 
-		if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
-			continue;
+         if (gDLightCacheDynamic.numLights >= 50)
+            continue;
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pRNode->motion.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pRNode->motion.z;
+         if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
+            continue;
 
-		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pRNode->motion.y;
 
-		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
+         pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
+         gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
+			CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-			max(bottom, pRNode->motion.z);
+         if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
+            continue;
 
-		if (pDib)
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
-				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
+         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity,
+									.objFlags = pRNode->obj.flags,
+									.lightAdjust = pRNode->obj.lightAdjust,
+									.lightColor = pRNode->obj.dLighting.color,
+									.objID = pRNode->obj.id,
+									.lightFlags = pRNode->obj.dLighting.flags};
 
-		if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
-			continue;
+         InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], &lightData, debugLights,
+								"Dynamic", &dynamicCount);
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
+         gDLightCacheDynamic.numLights++;
+      }
+      
+	  if (debugLights)
+		debug(("Total Dynamic Lights: %d\n\n", dynamicCount));
+   }
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
+   if (staticLightsEnabled)
+   {
+      if (debugLights)
+		debug(("=== STATIC LIGHTS ===\n"));
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
+      int staticCount = 0;
+      
+      // static lights
+      for (list = room->contents; list != NULL; list = list->next)
+      {
+         pRNode = (room_contents_node *) list->data;
 
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r =
-			((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g =
-			((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b =
-			(pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31;
+         if (gDLightCache.numLights >= 50)
+            continue;
 
-		gDLightCacheDynamic.numLights++;
-	}
+         if (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC)
+            continue;
 
-	// static lights
-	for (list = room->contents; list != NULL; list = list->next)
-	{
-		pRNode = (room_contents_node *)list->data;
+         if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
+            continue;
 
-		if (gDLightCache.numLights >= 50)
-			continue;
+         if (!D3DLMapCheck(&gDLightCache.dLights[gDLightCache.numLights], pRNode))
+            gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 
-		if (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC)
-			continue;
+         pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
 
-		if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
-			continue;
+         gDLightCache.dLights[gDLightCache.numLights].objID = pRNode->obj.id;
+         gDLightCache.dLights[gDLightCache.numLights].xyz.x = pRNode->motion.x;
+         gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
+         gDLightCache.dLights[gDLightCache.numLights].xyz.z =
+             CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
 
-		if (!D3DLMapCheck(&gDLightCache.dLights[gDLightCache.numLights], pRNode))
-			gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity,
+                                      .objFlags = pRNode->obj.flags,
+                                      .lightAdjust = pRNode->obj.lightAdjust,
+                                      .lightColor = pRNode->obj.dLighting.color,
+                                      .objID = pRNode->obj.id,
+                                      .lightFlags = pRNode->obj.dLighting.flags};
+         InitializeLightProperties(&gDLightCache.dLights[gDLightCache.numLights], &lightData, debugLights, "Static",
+                                   &staticCount);
+         
+         gDLightCache.numLights++;
+      }
 
-		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
-
-		gDLightCache.dLights[gDLightCache.numLights].objID = pRNode->obj.id;
-
-		gDLightCache.dLights[gDLightCache.numLights].xyz.x = pRNode->motion.x;
-		gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
-		gDLightCache.dLights[gDLightCache.numLights].xyz.z = pRNode->motion.z;
-
-		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
-
-		gDLightCache.dLights[gDLightCache.numLights].xyz.z =
-			max(bottom, pRNode->motion.z);
-
-		if (pDib)
-			gDLightCache.dLights[gDLightCache.numLights].xyz.z +=
-				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-		gDLightCache.dLights[gDLightCache.numLights].xyzScale.x =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCache.dLights[gDLightCache.numLights].xyzScale.y =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCache.dLights[gDLightCache.numLights].xyzScale.z =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-
-		if (pRNode->obj.dLighting.intensity == 0)
-			pRNode->obj.dLighting.intensity = 1;
-
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScale.x =
-			1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.x;
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScale.y =
-			1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.y;
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScale.z =
-			1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.z;
-
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.x =
-			1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.x / 2.0f);
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.y =
-			1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.y / 2.0f);
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.z =
-			1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.z / 2.0f);
-
-		gDLightCache.dLights[gDLightCache.numLights].color.a = COLOR_MAX;
-		gDLightCache.dLights[gDLightCache.numLights].color.r =
-			((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-		gDLightCache.dLights[gDLightCache.numLights].color.g =
-			((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-		gDLightCache.dLights[gDLightCache.numLights].color.b =
-			(pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31;
-
-		gDLightCache.numLights++;
-	}
+	  if (debugLights)
+		debug(("Total Static Lights: %d\n\n", staticCount));
+   }
 }
 
 int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
@@ -997,7 +1301,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 		switch(tree->type)
 		{
 			case BSPleaftype:
-        return tree->u.leaf.sector->light;
+		return tree->u.leaf.sector->light;
 
 			case BSPinternaltype:
 				side0 = tree->u.internal.separator.a * pRNode->motion.x +
@@ -1069,10 +1373,6 @@ void D3DRenderLMapsBuild(void)
 			scale = 16.0f - scale;
 			scale = max(scale, 0);
 			scale /= 16.0f;
-
-			if ((height == 0) || (height == 31) ||
-				(width == 0) || (width == 31))
-				scale = 0;
 
 			*(pBits++) = 255 * scale;
 			*(pBits++) = 255 * scale;

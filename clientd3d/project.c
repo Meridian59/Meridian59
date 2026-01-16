@@ -20,6 +20,10 @@
 extern room_type current_room;
 extern player_info player;
 
+// Maximum time (in seconds) for a projectile to reach its target
+// This ensures long-range projectiles arrive quickly enough to match attack sounds
+#define MAX_PROJECTILE_TRAVEL_TIME 10.0f
+
 /********************************************************************/
 /*
  * CompareProjectiles:  Utility comparison function for use with lists.
@@ -57,17 +61,17 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 
    p->motion.source_x = s->motion.x;
    p->motion.source_y = s->motion.y;
-   p->motion.source_z = s->motion.z; //GetPointFloor(s->motion.x, s->motion.y);
+   p->motion.source_z = s->motion.z;
 
    p->motion.dest_x = d->motion.x;
    p->motion.dest_y = d->motion.y;
-   p->motion.dest_z = d->motion.z; //GetPointFloor(d->motion.x, d->motion.y);
+   p->motion.dest_z = d->motion.z;
 
-//   debug(("source obj = %d, x = %d, y = %d, z = %d\n", source_obj, 
-//	   p->motion.source_x, p->motion.source_y, p->motion.source_z));
-//
-//   debug(("dest obj = %d, x = %d, y = %d, z = %d\n", dest_obj, 
-//	   p->motion.dest_x, p->motion.dest_y, p->motion.dest_z));
+   // debug(("source obj = %d, x = %d, y = %d, z = %d\n", source_obj,
+   //	   p->motion.source_x, p->motion.source_y, p->motion.source_z));
+   //
+   //   debug(("dest obj = %d, x = %d, y = %d, z = %d\n", dest_obj,
+   //	   p->motion.dest_x, p->motion.dest_y, p->motion.dest_z));
 
    // See how far we should move per frame
    dx = p->motion.dest_x - p->motion.source_x;
@@ -76,10 +80,36 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 
    if (speed == 0 || (dx == 0 && dy == 0 && dz == 0))
       p->motion.increment = 1.0;
-   else 
+   else
    {
-      distance = sqrtf(dx * dx + dy * dy + dz * dz) / FINENESS;
-      p->motion.increment = ((float) speed) / 1000.0 / distance;
+      // Use 64-bit integers to prevent overflow when calculating distance
+      __int64 dx64 = (__int64) dx;
+      __int64 dy64 = (__int64) dy;
+      __int64 dz64 = (__int64) dz;
+
+      distance = sqrtf((float) (dx64 * dx64 + dy64 * dy64 + dz64 * dz64)) / FINENESS;
+
+      // Calculate normal increment based on speed
+      float normal_increment = ((float) speed) / 1000.0f / distance;
+
+      // Calculate the time it would take at normal speed (in seconds)
+      // increment * dt * frames = 1.0, so time = 1.0 / (increment * fps)
+      // Assuming 60 FPS and dt in milliseconds: time = 1000.0 / (increment * 60)
+      float estimated_travel_time = 1.0f / normal_increment / 60.0f;
+
+      // If travel time exceeds maximum, scale up the speed
+      if (estimated_travel_time > MAX_PROJECTILE_TRAVEL_TIME)
+      {
+         // Scale increment to ensure arrival within MAX_PROJECTILE_TRAVEL_TIME
+         float speed_multiplier = estimated_travel_time / MAX_PROJECTILE_TRAVEL_TIME;
+         p->motion.increment = normal_increment * speed_multiplier;
+
+         debug(("Long range projectile: distance=%.1f, speed boosted by %.2fx\n", distance, speed_multiplier));
+      }
+      else
+      {
+         p->motion.increment = normal_increment;
+      }
    }
 
    p->motion.x = p->motion.source_x;

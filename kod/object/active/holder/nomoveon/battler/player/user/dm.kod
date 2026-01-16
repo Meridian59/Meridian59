@@ -504,13 +504,11 @@ messages:
    }
 
    CheckAdvancementPoints()
+   "Returns TRUE to exempt DMs from the advancement cap.  Regular players "
+   "have a limit on how much they can advance per hour per room; DMs are "
+   "not subject to this limit regardless of pbAdvancement setting."
    {
-      if NOT pbAdvancement
-      {
-         return TRUE;
-      }
-      
-      propagate;
+      return TRUE;
    }
 
    AdvancementCheck(what=$,killing_blow=TRUE)

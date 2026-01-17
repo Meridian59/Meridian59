@@ -2443,7 +2443,13 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
 
    if (fr_val.v.tag != TAG_INT)
    {
-      bprintf("C_IsPointInSector has bad fr tag\n");
+      bprintf("C_IsPointInSector has bad fine-row tag\n");
+      return NIL;
+   }
+
+   if (fc_val.v.tag != TAG_INT)
+   {
+      bprintf("C_IsPointInSector has bad fine-col tag\n");
       return NIL;
    }
 
@@ -2466,7 +2472,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
    }
 
    roomdata_node *rd = GetRoomDataByID(room_val.v.data);
-   if (!rd || !rd->file_info.sectors)
+   if (!rd || rd->file_info.sectors.empty())
    {
       bprintf("C_IsPointInSector has bad room id passed in: %" PRId64 "\n", room_val.v.data);
       return NIL;
@@ -2484,53 +2490,41 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
 
    // Build the vector of sector ids
    std::vector<int> sector_ids;
-   
-	 if (id_list_val.v.tag == TAG_INT)
-   {
-      sector_id = (int) id_list_val.v.data;
-      sector_ids.push_back(sector_id);
-   }
-   else if (id_list_val.v.tag == TAG_LIST)
-   {
-      list_node *list = GetListNodeByID(id_list_val.v.data);
-      if (!list)
-      {
-         bprintf("C_IsPointInSector failed to get list node by id: %" PRId64 "\n", id_list_val.v.data);
-         return NIL;
-      }
 
-      while (list != NULL)
-      {
-         if (list->first.v.tag == TAG_INT)
-         {
-            sector_id = list->first.v.data;
-            sector_ids.push_back(sector_id);
-         }
-         else
-         {
-            bprintf("C_IsPointInSector: Sector id list element is not an integer\n");
-         }
-
-         if (list->rest.v.tag == TAG_LIST)
-         {
-            list = GetListNodeByID(list->rest.v.data);
-         }
-         else
-         {
-						break;
-         }
-      }
-   }
-   else
+   list_node *list = GetListNodeByID(id_list_val.v.data);
+   if (!list)
    {
-      bprintf("C_IsPointInSector has bad sector_ids parameter tag, expected list or int\n");
+      bprintf("C_IsPointInSector failed to get list node by id: %" PRId64 "\n", id_list_val.v.data);
       return NIL;
+   }
+
+   while (list != NULL)
+   {
+      if (list->first.v.tag == TAG_INT)
+      {
+         sector_id = list->first.v.data;
+         sector_ids.push_back(sector_id);
+      }
+      else
+      {
+         bprintf("C_IsPointInSector: Sector id list element is not an integer\n");
+      }
+
+      if (list->rest.v.tag == TAG_LIST)
+      {
+         list = GetListNodeByID(list->rest.v.data);
+      }
+      else
+      {
+         bprintf("C_IsPointInSector: List element is not a list\n");
+         break;
+      }
    }
 
    for (int sector_id : sector_ids)
    {
       server_sector *ss = nullptr;
-      for (int i = 0; i < r->num_sectors; i++)
+      for (size_t i = 0; i < r->sectors.size(); i++)
       {
          if (r->sectors[i].id == sector_id)
          {
@@ -2546,7 +2540,7 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
       }
 
       // Found matching sector, check polygons
-      for (int p = 0; p < ss->num_polygons; p++)
+      for (size_t p = 0; p < ss->polygons.size(); p++)
       {
          const server_polygon &poly = ss->polygons[p];
          if (!poly.vertices_x || !poly.vertices_y || poly.num_vertices < 3)

@@ -110,6 +110,9 @@ int						d3dRenderTextureThreshold;
 // See D3DRenderDebugLightPositions() for details.
 static const bool debugLightPositions = false;
 
+// The maximum number of lights supported across all types (static, dynamic and projectiles0
+static const int maximumLights = 50;
+
 D3DVERTEXELEMENT9		decl0[] = {
 	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
 	{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
@@ -983,7 +986,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 static float D3DLightScale(int intensity)
 {
    // Keep the original curve but apply the global scale variable
-   const float LIGHT_MULTIPLIER = 10000.0f;
+   const float LIGHT_MULTIPLIER = 12000.0f;
    const float LIGHT_BASE_SIZE = 2000.0f;
 
    float baseRadius = (intensity * LIGHT_MULTIPLIER / 255.0f) + LIGHT_BASE_SIZE;
@@ -1027,20 +1030,19 @@ typedef struct
  * Returns the scaled intensity with flicker applied (if applicable).
  * Also outputs the flickerBrightness value for color calculations.
  */
-static int CalculateFlickeredIntensity(const LightSourceData *lightData, float *outFlickerBrightness)
+static int CalculateFlickeredIntensity(const LightSourceData &lightData, float *outFlickerBrightness)
 {
    float flickerBrightness = 1.0f;
    int flickeredIntensity;
 
-   if (lightData->objFlags & (OF_FLICKERING | OF_FLASHING))
+   if (lightData.objFlags & (OF_FLICKERING | OF_FLASHING))
    {
-      flickerBrightness = (float) lightData->lightAdjust / GetFlickerLevel();
-      flickeredIntensity = (int) (D3DLightScale(lightData->baseIntensity) * flickerBrightness);
+      flickerBrightness = (float) lightData.lightAdjust / GetFlickerLevel();
+      flickeredIntensity = (int) (D3DLightScale(lightData.baseIntensity) * flickerBrightness);
    }
    else
    {
-      // Use unmodified classic intensity for non-flickering lights
-      flickeredIntensity = D3DLightScale(lightData->baseIntensity);
+      flickeredIntensity = D3DLightScale(lightData.baseIntensity);
    }
 
    if (outFlickerBrightness)
@@ -1054,23 +1056,25 @@ static int CalculateFlickeredIntensity(const LightSourceData *lightData, float *
  * This handles xyzScale, invXYZScale, invXYZScaleHalf, and color with flicker applied.
  * Optionally outputs debug information if debugLights is true.
  */
-static void InitializeLightProperties(d_light *light, const LightSourceData *lightData, bool debugLights,
-                                      const char *lightType, int *pLightCount)
+static void InitializeLightProperties(d_light *light,
+                                      const LightSourceData &lightData,
+                                      bool debugLights, const char *lightType,
+                                      int &lightCount)
 {
    float flickerBrightness;
    int flickeredIntensity = CalculateFlickeredIntensity(lightData, &flickerBrightness);
 
-   *pLightCount++;
+   lightCount++;  // Cleaner syntax (was: *pLightCount++)
 
    // Debug output
    if (debugLights)
    {
       debug(("%s Light %d: objID=%ld, objFlags=0x%08X, lightFlags=0x%04X, color=0x%04X, intensity=%d, "
              "lightAdjust=%d, flickerBright=%.3f, flickeredInt=%d%s%s\n",
-             lightType, *pLightCount, lightData->objID, lightData->objFlags, lightData->lightFlags,
-             lightData->lightColor, lightData->baseIntensity, lightData->lightAdjust, flickerBrightness,
-             flickeredIntensity, (lightData->objFlags & OF_FLICKERING) ? " [FLICKERING]" : "",
-             (lightData->objFlags & OF_FLASHING) ? " [FLASHING]" : ""));
+             lightType, lightCount, lightData.objID, lightData.objFlags, lightData.lightFlags, lightData.lightColor,
+             lightData.baseIntensity, lightData.lightAdjust, flickerBrightness, flickeredIntensity,
+             (lightData.objFlags & OF_FLICKERING) ? " [FLICKERING]" : "",
+             (lightData.objFlags & OF_FLASHING) ? " [FLASHING]" : ""));
    }
 
    // Set xyz scales (all three axes use same value)
@@ -1090,9 +1094,9 @@ static void InitializeLightProperties(d_light *light, const LightSourceData *lig
 
    // Set color with flicker applied (convert from 16-bit 5-5-5 RGB to 8-bit RGBA)
    light->color.a = COLOR_MAX;
-   light->color.r = (BYTE) (((lightData->lightColor >> 10) & 31) * COLOR_MAX / 31 * flickerBrightness);
-   light->color.g = (BYTE) (((lightData->lightColor >> 5) & 31) * COLOR_MAX / 31 * flickerBrightness);
-   light->color.b = (BYTE) ((lightData->lightColor & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.r = (BYTE) (((lightData.lightColor >> 10) & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.g = (BYTE) (((lightData.lightColor >> 5) & 31) * COLOR_MAX / 31 * flickerBrightness);
+   light->color.b = (BYTE) ((lightData.lightColor & 31) * COLOR_MAX / 31 * flickerBrightness);
 }
 
 /*
@@ -1129,6 +1133,29 @@ static float CalculateLightZPosition(room_type *room, long motionX, long motionY
    return floorZ + heightAboveFloor;
 }
 
+/*
+ * Check if a light should be processed based on cache limits and light properties.
+ * Returns true if the light should be skipped.
+ *
+ * Parameters:
+ *   currentLightCount - Current number of lights in the cache
+ *   lightFlags - Light flags to check (pass 0 to skip dynamic check, LIGHT_FLAG_DYNAMIC to require dynamic)
+ *   lightColor - 16-bit RGB color
+ *   lightIntensity - Light intensity (0-255)
+ */
+static bool ShouldSkipLight(int currentLightCount, WORD lightFlags, WORD lightColor, int lightIntensity)
+{
+   // Check cache limit
+   if (currentLightCount >= maximumLights)
+      return true;
+
+   // Check if light has valid color and intensity
+   if (lightColor == 0 || lightIntensity == 0)
+      return true;
+
+   return false;
+}
+
 void D3DLMapsStaticGet(room_type *room)
 {
    room_contents_node *pRNode;
@@ -1142,27 +1169,26 @@ void D3DLMapsStaticGet(room_type *room)
 	// Debug flags to control light map processing debug output
 	// It will output the number and some details on each light type: projectiles, dynamic and static.
 	// Set to 'true' to enable debug output, 'false' to disable.
-	bool debugLights = false;
+	bool debugLights = true;
 
 	if (debugLights)
 		debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));
 
 	if (projectileLightsEnable)
 	{
+      int projectileCount = 0;
+
       if (debugLights)
 			debug(("=== PROJECTILE LIGHTS ===\n"));
 
-		int projectileCount = 0;
-		
+		// projectiles
 		for (list = room->projectiles; list != NULL; list = list->next)
 		{
 			Projectile	*pProjectile = (Projectile *)list->data;
 
-			if (gDLightCacheDynamic.numLights >= 50)
-				continue;
-
-			if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
-				continue;
+			if (ShouldSkipLight(gDLightCacheDynamic.numLights, 0, pProjectile->dLighting.color,
+                             pProjectile->dLighting.intensity))
+            continue;
 
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
@@ -1177,13 +1203,13 @@ void D3DLMapsStaticGet(room_type *room)
 					pProjectile->dLighting.intensity));
 
 			LightSourceData lightData = {.baseIntensity = pProjectile->dLighting.intensity,
-										.objFlags = 0, // keep projectiles non flickering and revisit
+										.objFlags = pProjectile->flags,
 										.lightAdjust = 0,
 										.lightColor = pProjectile->dLighting.color,
 										.objID = 0,
 										.lightFlags = 0};
-			InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], &lightData, false,
-									"Projectile", &projectileCount);
+			InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], lightData, false,
+									"Projectile", projectileCount);
 
 			gDLightCacheDynamic.numLights++;
 		}
@@ -1195,19 +1221,22 @@ void D3DLMapsStaticGet(room_type *room)
 
    if (dynamicLightsEnabled)
    {
+      int dynamicCount = 0;
+
       if (debugLights)
 		debug(("=== DYNAMIC LIGHTS ===\n"));
 
-      int dynamicCount = 0;
       // dynamic lights
       for (list = room->contents; list != NULL; list = list->next)
       {
          pRNode = (room_contents_node *) list->data;
 
-         if (gDLightCacheDynamic.numLights >= 50)
+         bool isDynamic = (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) != 0;
+         if (!isDynamic)
             continue;
 
-         if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
+         if (ShouldSkipLight(gDLightCacheDynamic.numLights, pRNode->obj.dLighting.flags, pRNode->obj.dLighting.color,
+                             pRNode->obj.dLighting.intensity))
             continue;
 
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
@@ -1217,18 +1246,15 @@ void D3DLMapsStaticGet(room_type *room)
          gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
 			CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
 
-         if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
-            continue;
-
-         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity,
+         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity*10,
 									.objFlags = pRNode->obj.flags,
 									.lightAdjust = pRNode->obj.lightAdjust,
 									.lightColor = pRNode->obj.dLighting.color,
 									.objID = pRNode->obj.id,
 									.lightFlags = pRNode->obj.dLighting.flags};
 
-         InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], &lightData, debugLights,
-								"Dynamic", &dynamicCount);
+         InitializeLightProperties(&gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights], lightData, debugLights,
+								"Dynamic", dynamicCount);
 
          gDLightCacheDynamic.numLights++;
       }
@@ -1239,23 +1265,22 @@ void D3DLMapsStaticGet(room_type *room)
 
    if (staticLightsEnabled)
    {
+      int staticCount = 0;
+
       if (debugLights)
 		debug(("=== STATIC LIGHTS ===\n"));
-
-      int staticCount = 0;
       
       // static lights
       for (list = room->contents; list != NULL; list = list->next)
       {
          pRNode = (room_contents_node *) list->data;
 
-         if (gDLightCache.numLights >= 50)
+		 bool isDynamic = (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) != 0;
+         if (isDynamic)
             continue;
 
-         if (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC)
-            continue;
-
-         if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
+         if (ShouldSkipLight(gDLightCacheDynamic.numLights, pRNode->obj.dLighting.flags, pRNode->obj.dLighting.color,
+                             pRNode->obj.dLighting.intensity))
             continue;
 
          if (!D3DLMapCheck(&gDLightCache.dLights[gDLightCache.numLights], pRNode))
@@ -1275,8 +1300,8 @@ void D3DLMapsStaticGet(room_type *room)
                                       .lightColor = pRNode->obj.dLighting.color,
                                       .objID = pRNode->obj.id,
                                       .lightFlags = pRNode->obj.dLighting.flags};
-         InitializeLightProperties(&gDLightCache.dLights[gDLightCache.numLights], &lightData, debugLights, "Static",
-                                   &staticCount);
+         InitializeLightProperties(&gDLightCache.dLights[gDLightCache.numLights], lightData, debugLights, "Static",
+                                   staticCount);
          
          gDLightCache.numLights++;
       }

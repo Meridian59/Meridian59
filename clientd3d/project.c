@@ -20,9 +20,11 @@
 extern room_type current_room;
 extern player_info player;
 
-// Maximum time (in seconds) for a projectile to reach its target
-// This ensures long-range projectiles arrive quickly enough to match attack sounds
-#define MAX_PROJECTILE_TRAVEL_TIME 10.0f
+// Maximum time (in seconds) for a projectile to reach its target.
+// This ensures long-range projectiles arrive quickly enough to match attack sounds.
+// Note: Since motion updates happen at variable frame rates (dt in milliseconds),
+// this value is used to calculate a speed multiplier to cap total travel time.
+static const float MAX_PROJECTILE_TRAVEL_TIME = 2.0;
 
 /********************************************************************/
 /*
@@ -82,34 +84,26 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
       p->motion.increment = 1.0;
    else
    {
-      // Use 64-bit integers to prevent overflow when calculating distance
-      __int64 dx64 = (__int64) dx;
-      __int64 dy64 = (__int64) dy;
-      __int64 dz64 = (__int64) dz;
+      float dx_f = (float) dx;
+      float dy_f = (float) dy;
+      float dz_f = (float) dz;
 
-      distance = sqrtf((float) (dx64 * dx64 + dy64 * dy64 + dz64 * dz64)) / FINENESS;
+      distance = sqrtf(dx_f * dx_f + dy_f * dy_f + dz_f * dz_f) / FINENESS;
 
       // Calculate normal increment based on speed
+      // speed is in grid squares per 10 seconds, distance is in grid squares
       float normal_increment = ((float) speed) / 1000.0f / distance;
 
-      // Calculate the time it would take at normal speed (in seconds)
-      // increment * dt * frames = 1.0, so time = 1.0 / (increment * fps)
-      // Assuming 60 FPS and dt in milliseconds: time = 1000.0 / (increment * 60)
-      float estimated_travel_time = 1.0f / normal_increment / 60.0f;
+      // Cap maximum travel time to prevent extremely long-range projectiles from taking
+      // 30+ seconds to arrive, which breaks gameplay (attack sounds/animations finish
+      // while projectile is still mid-flight). This only affects edge cases at extreme
+      // ranges; normal combat distances use the unmodified speed parameter.
+      // Calculate minimum increment needed to arrive within MAX_PROJECTILE_TRAVEL_TIME:
+      // min_increment ensures: (1.0 / min_increment / 1000.0) <= MAX_PROJECTILE_TRAVEL_TIME
+      float min_increment = 1.0f / (MAX_PROJECTILE_TRAVEL_TIME * 1000.0f);
 
-      // If travel time exceeds maximum, scale up the speed
-      if (estimated_travel_time > MAX_PROJECTILE_TRAVEL_TIME)
-      {
-         // Scale increment to ensure arrival within MAX_PROJECTILE_TRAVEL_TIME
-         float speed_multiplier = estimated_travel_time / MAX_PROJECTILE_TRAVEL_TIME;
-         p->motion.increment = normal_increment * speed_multiplier;
-
-         debug(("Long range projectile: distance=%.1f, speed boosted by %.2fx\n", distance, speed_multiplier));
-      }
-      else
-      {
-         p->motion.increment = normal_increment;
-      }
+      // Use the faster of the two speeds (normal or minimum required)
+      p->motion.increment = (std::max)(normal_increment, min_increment);
    }
 
    p->motion.x = p->motion.source_x;

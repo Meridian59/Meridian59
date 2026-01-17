@@ -90,8 +90,6 @@ resources:
    guildhall_new_occupants = "~B%s has been rented to new owners."
    guildhall_someone_rented = "Someone has already rented this guild hall."
 
-   guildhall_teleported = "You blink and find yourself in the foyer."
-
    guildhall_newsball = "news"
    guildhall_newsdesc = "This is the latest guild news."
 
@@ -185,18 +183,6 @@ properties:
    plLegal_Entry = $
 
    piLastDoorOpen = 0
-
-   ptEntrance = $
-
-   % Timer for checking the door sector for players
-   ptEntranceCheck = $
-
-   % Default time to wait before checking the door sector for lingering players
-   % Subclasses should override with the value of door delay.
-   piEntranceTimeout = 10000
-
-   % Door sector ID(s) (single or array) monitored for players lingering after doors close.
-   plDoorSectors = $
 
 messages:
 
@@ -1029,58 +1015,6 @@ messages:
       return;
    }
 
-   CloseEntranceDoor()
-   {
-      ptEntrance = $;
-
-      Send(self,@CloseEntranceDoorLogic);
-      Send(self,@CloseEntranceDoorSound);
-
-      ptEntranceCheck = CreateTimer(self,@CheckDoorSector,piEntranceTimeout);
-
-      return;
-   }
-
-   CloseEntranceDoorLogic()
-   "Override to perform room-specific door closing logic."
-   {
-      return;
-   }
-
-   CheckDoorSector()
-   "Checks for players lingering in the door sector and teleports them to the foyer."
-   {
-      local i, oObject;
-
-      ptEntranceCheck = $;
-
-      if plDoorSectors = $
-      {
-         debug("Missing door sector(s) when checking door sector(s) for players.");
-         return;
-      }
-
-      for i in plActive
-      {
-         oObject = First(i);
-         if IsClass(oObject,&Player)
-         {
-            if IsPointInSector(prmRoom,
-               Send(oObject,@GetRow),
-               Send(oObject,@GetCol),
-               Send(oObject,@GetFineRow),
-               Send(oObject,@GetFineCol),
-               plDoorSectors)
-            {
-               Send(oObject,@MsgSendUser,#message_rsc=guildhall_teleported);
-               Send(self,@Teleport,#what=oObject,#foyer=TRUE);
-            }
-         }
-      }
-      
-      return;
-   }
-
    CloseEntranceDoorSound()
    {
       Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_close_sound); 
@@ -1149,18 +1083,6 @@ messages:
       {
          DeleteTimer(ptConquer);
          ptConquer = $;
-      }
-
-      if ptEntrance <> $
-      {
-         DeleteTimer(ptEntrance);
-         ptEntrance = $;
-      }
-
-      if ptEntranceCheck <> $
-      {
-         DeleteTimer(ptEntranceCheck);
-         ptEntranceCheck = $;
       }
 
       propagate;

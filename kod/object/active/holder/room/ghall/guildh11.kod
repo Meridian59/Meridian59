@@ -65,16 +65,13 @@ properties:
    piOutside_factor = OUTDOORS_5
 
    ptSecret = $
-
-   piEntranceTimeout = DOOR_DELAY
+   ptEntrance = $
 
 messages:
 
    Constructor()
    {
       plGuild_doors = [ [7,16] ];
-
-      plDoorSectors = [ MAINDOOR, MAINDOOR2 ];
 
       propagate;
    }
@@ -105,6 +102,11 @@ messages:
       {
          DeleteTimer(ptSecret);
          ptSecret=$;
+      }
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
       }
 
       propagate;
@@ -142,14 +144,16 @@ messages:
       return;
    }
 
-   CloseEntranceDoorLogic()
+   CloseEntranceDoor()
    {
-      Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
-         #height=128,#speed=50);
-      Send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
-         #height=118,#speed=50);
-
-      propagate;
+       ptEntrance = $;
+       send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=128,#speed=50);
+       send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
+            #height=118,#speed=50);
+       send(self,@CloseEntranceDoorSound);
+       
+       return;
    }
 
    OpenSecretDoor()

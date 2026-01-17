@@ -53,6 +53,7 @@ void ResetRoomData()
    {
       temp = room->next;
       BSPRoomFreeServer(&(room->file_info));
+      room->file_info.~room_type();
       FreeMemory(MALLOC_ID_ROOM,room,sizeof(roomdata_node));
       room = temp;
    }
@@ -81,6 +82,7 @@ blak_int LoadRoomData(int resource_id)
    }
 
    room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM,sizeof(roomdata_node));
+   new(&room->file_info) room_type();
    room->roomdata_id = num_roomdata++;
    room->file_info = file_info;
 

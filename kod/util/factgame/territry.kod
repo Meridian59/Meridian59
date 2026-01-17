@@ -26,6 +26,7 @@ resources:
    TerritoryGame_rebel = "the rebel Jonas"
    TerritoryGame_unfactioned = "the unfactioned"
 
+   TerritoryGame_bonus_territory_title = "~I%s now %s the city of %s!"
    TerritoryGame_bonus_territory = "~IHaving claimed %q, %s now also %s the city of %s!"
    TerritoryGame_control = "control"
    TerritoryGame_controls = "controls"
@@ -39,6 +40,9 @@ resources:
    TerritoryGame_her = "her"
    TerritoryGame_his = "his"
    TerritoryGame_their = "their"
+
+   territory_string_title = "{0} now {1} {2}!"
+   territory_string_body = "Having claimed {0}, {1} now also {2} the city of {3}!"
 
 properties:
 
@@ -585,7 +589,7 @@ messages:
 
    SendBonusTownMessage(faction=$,town=$)
    {
-      local i, sTowns, rFaction, rControls, rCity;
+      local i, sTowns, rFaction, rControls, rCity, oBook, territory_news_title, territory_news_body;
 
       sTowns = createString();
       clearTempString();
@@ -645,6 +649,14 @@ messages:
                #parm1=sTowns,#type1=STRING_RESOURCE,
                #parm2=rFaction,#parm3=rControls,#parm4=rCity);
       }
+
+      territory_news_title = BuildString(territory_string_title, rFaction, rControls, rCity);
+      territory_news_body = BuildString(territory_string_body, sTowns, rFaction, rControls, rCity);
+
+      % Post to the territory news
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
+      Send(oBook,@PostNews,#what=Create(&CorNothAmbassador),
+         #title=territory_news_title,#body=territory_news_body);
 
       return;
    }

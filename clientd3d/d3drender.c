@@ -1169,7 +1169,7 @@ void D3DLMapsStaticGet(room_type *room)
 	// Debug flags to control light map processing debug output
 	// It will output the number and some details on each light type: projectiles, dynamic and static.
 	// Set to 'true' to enable debug output, 'false' to disable.
-	bool debugLights = true;
+	bool debugLights = false;
 
 	if (debugLights)
 		debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));

@@ -165,28 +165,28 @@ void GameExpose(HWND hwnd)
    EndPaint(hwnd, &ps);
 }
 /****************************************************************************/
-/* Return True iff message should NOT be passed to Windows for default processing */
-Bool GameKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+/* Return true iff message should NOT be passed to Windows for default processing */
+bool GameKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
-   Bool held_down = (flags & 0x4000) ? True : False;  /* Is key being held down? */
+   bool held_down = (flags & 0x4000) ? true : false;  /* Is key being held down? */
 
    UserDidSomething();   /* User is alive! */
 
    if (!fDown)
    {
       KeyUpHack(vk);   // Work around Windows bug
-      return False;
+      return false;
    }
 
    /* Since mouse clicks are handled in separate procedure, throw them out here */
    if (vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON)
-      return False;
+      return false;
 
    if (cRepeat > 1 || held_down)
       // Stop Windows from going to menu when F10 pressed
       if (vk == VK_F10)
-	 return True;
-      else return False;
+	 return true;
+      else return false;
 
    HandleKeys();    // Handle key right away; don't wait for idle processing to get it
 
@@ -197,13 +197,13 @@ Bool GameKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
     */
 
    if (vk == VK_MENU && KeysDown() > 1)
-      return True;
+      return true;
 
    // Stop Windows from going to menu when F10 pressed
    if (vk == VK_F10)
-      return True;
+      return true;
 
-   return False;
+   return false;
 }
 /****************************************************************************/
 void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
@@ -212,7 +212,7 @@ void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
 
    SetFocus(hMain);
 
-   if (text_area_resize_zone) {
+   if (text_area_resize_zone && keyFlags & MK_LBUTTON) {
        // Start text area resize.
        text_area_resize_inprogress = true;
        previous_mouse_position = { x,y };
@@ -332,10 +332,10 @@ void GameKillFocus(HWND hwnd, HWND hwndNewFocus)
    RedrawAll();
 }
 /****************************************************************************/
-Bool GameDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool GameDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    if (!ModuleEvent(EVENT_DRAWITEM, hwnd, lpdis))
-      return True;
+      return true;
 
    switch (lpdis->CtlID)
    {
@@ -344,7 +344,7 @@ Bool GameDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
    case IDC_TOOLBUTTON:
       return ToolbarDrawButton(hwnd, lpdis);
    }
-   return False;
+   return false;
 }
 /****************************************************************************/
 void GameCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)

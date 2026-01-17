@@ -21,10 +21,10 @@ extern int main_viewport_width;
 extern int main_viewport_height;
 
 /* local function prototypes */
-Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
+bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 static void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags);
 static void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays,
-			       Bool underlays, BYTE secondtranslation, int flags);
+                                      bool underlays, BYTE secondtranslation, int flags);
 /************************************************************************/
 void SetPlayerOverlay(char hotspot, object_node *poverlay)
 {
@@ -102,25 +102,25 @@ void DrawPlayerOverlays(void)
       // Draw underlays
       overlays = *(obj->overlays);
       if (overlays != NULL)
-	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, True, obj->secondtranslation, flags | (obj->effect << 20));
+	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, true, obj->secondtranslation, flags | (obj->effect << 20));
 
       DrawPlayerOverlayBitmap(pdib, &obj_area, obj->translation, obj->secondtranslation, flags | (obj->effect << 20));
 
       // Draw overlays
       if (overlays != NULL)
-	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, False, obj->secondtranslation, flags | (obj->effect << 20));
+	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, false, obj->secondtranslation, flags | (obj->effect << 20));
    }
 }
 /************************************************************************/
 /*
  * DrawPlayerOverlayOverlays:  Draw overlays on the base player overlay whose bitmap is pdib_obj.
  *   object_area is the area the player overlay occupies on the screen.
- *   If underlays is True, draw only those overlays which should be drawn
+ *   If underlays is true, draw only those overlays which should be drawn
  *     before the base player overlay is drawn.
  *   flags gives the object flags for special drawing effects.
  */
-void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays, Bool underlays,
-			       BYTE secondtranslation, int flags)
+void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays, bool underlays,
+                               BYTE secondtranslation, int flags)
 {
    list_type l;
    AREA overlay_area;
@@ -191,7 +191,7 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE s
    ZeroMemory(&dos,sizeof(dos));
    dos.pdib     = pdib;
    dos.light    = KOD_LIGHT_LEVELS - 1;
-   dos.draw     = True;
+   dos.draw     = true;
    dos.flags    = flags;
    dos.cone     = &c;
    dos.distance = 1;
@@ -199,20 +199,20 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE s
    dos.translation = translation;
    dos.secondtranslation = secondtranslation;
    dos.obj      = pPlayer;
-   DrawObjectBitmap( &dos, obj_area, False );
+   DrawObjectBitmap( &dos, obj_area, false );
 }
 /************************************************************************/
 /*
  * ComputePlayerOverlayArea:  A player overlay with the given PDIB is to be placed
  *   on the given hotspot.  Set area to the area the overlay should occupy.
- *   Return True iff hotspot # is legal.
+ *   Return true iff hotspot # is legal.
  */
-Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
+bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
 {
    if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
    {
       debug(("ComputePlayerOverlayArea found hotspot out of range (%d).\n", (int) hotspot));
-      return False;
+      return false;
    }
 
    int dib_width = DibWidth(pdib);
@@ -268,6 +268,6 @@ Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
    obj_area->y += dib_y_offset;
    obj_area->cx = dib_width;
    obj_area->cy = dib_height;
-   return True;
+   return true;
 }
 

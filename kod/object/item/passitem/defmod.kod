@@ -166,6 +166,18 @@ messages:
       return TRUE; 
    }
 
+   CanBeWornInSameSlotWith(what = $)
+   "Returns TRUE if this item can be worn simultaneously with the given item"
+   "despite both using overlapping equipment slots (use types). This allows special"
+   "exceptions like pants+robes (both use ITEM_USE_LEGS) or shirts+robes."
+   "Default: FALSE (items with overlapping slots cannot be worn together)."
+   {
+      % Default implementation - no special coexistence rules
+      % Most items cannot be worn in the same slot as other items
+      % Override this method in specific items to allow special combinations
+      return FALSE;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

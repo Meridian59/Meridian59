@@ -78,7 +78,7 @@ typedef struct
    } u;
 } DrawItem;
 
-void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw);
+void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw);
 BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y);
 
 BSPnode  *BSPBuildTree(room_type *room);
@@ -87,7 +87,7 @@ BSPnode  *BSPGetNewNode(void);
 BSPTree   BSPFreeTree(BSPTree tree);
 int       BSPGetNumWalls(void);
 
-Bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x, long y);
+bool GetRoomHeight(BSPnode *tree, long *ceiling, long *floor, int *flags, long x, long y);
 long GetFloorHeight(long x, long y, Sector *sector);
 long GetCeilingHeight(long x, long y, Sector *sector);
 
@@ -97,6 +97,6 @@ void DrawRoom3D(room_type *room, Draw3DParams *params);
 void DrawMapAsView(room_type *room, Draw3DParams *params); /* in Draw3d.h */
 void DrawMiniMap(room_type *room, Draw3DParams *params); /* in Draw3d.h */
 void EnterNewRoom3D(room_type *room);
-Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int x, int y, long r);
+bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int x, int y, long r);
 
 #endif /* #ifndef _DRAWBSP_H */

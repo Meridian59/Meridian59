@@ -48,7 +48,7 @@ int spell_points;                       // Number of points left
 static HWND hTab;      // Handle of tab control
 static HWND hTabPage;  // Handle of currently active child modeless dialog, depending on active tab
 
-static Bool enter_game;// True when user fills in dialog and hits OK
+static bool enter_game;// true when user fills in dialog and hits OK
 
 extern ID    char_to_use;     /* ID # of character player wants to use in game */
 extern char  name_to_use[];   /* name of character player wants to use in game */
@@ -93,7 +93,7 @@ void MakeChar(CharAppearance *ap_init, list_type spells_init, list_type skills_i
       psp[i].pfnCallback = NULL;
    }
    
-   enter_game = False;
+   enter_game = false;
 
    PropertySheet(&psh);   
 
@@ -114,7 +114,7 @@ void MakeChar(CharAppearance *ap_init, list_type spells_init, list_type skills_i
  * VerifySettings:  User has pressed Done button; check values of all settings.
  *   If settings are OK, send them to server.
  */
-Bool VerifySettings(void)
+bool VerifySettings(void)
 {
    char name[MAX_CHARNAME], *new_name, desc[MAX_DESCRIPTION];
    int stats[NUM_CHAR_STATS], parts[NUM_FACE_OVERLAYS + 1];
@@ -130,15 +130,15 @@ Bool VerifySettings(void)
    {
       ClientError(hInst, hMakeCharDialog, IDS_BADCHARNAME, MIN_CHARNAME);
       PropSheet_SetCurSel(hTab, 0, TAB_NAME);
-      return False;
+      return false;
    }
 
    // If stats or spell/skill points remain, ask user to continue
    if (CharStatsGetPoints() > 0 && !AreYouSure(hInst, hMakeCharDialog, NO_BUTTON, IDS_STATPOINTSLEFT))
-     return False;
+     return false;
 
    if (spell_points > 0 && !AreYouSure(hInst, hMakeCharDialog, NO_BUTTON, IDS_SPELLPOINTSLEFT))
-     return False;
+     return false;
 
    // Fill in face bitmaps
    CharFaceGetChoices(ap, parts, &gender);
@@ -173,7 +173,7 @@ Bool VerifySettings(void)
    list_delete(skills_send);
 
    EnableWindow(GetDlgItem(hMakeCharDialog, IDOK), FALSE);
-   return True;
+   return true;
 }
 
 /********************************************************************/
@@ -215,7 +215,7 @@ void CharTabPageCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 /********************************************************************/
 void CharInfoValid(void)
 {
-   enter_game = True;
+   enter_game = true;
    if (hMakeCharDialog != NULL)
       EndDialog(hMakeCharDialog, IDOK);
 

@@ -1,0 +1,70 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TEditFile
+//----------------------------------------------------------------------------
+
+#include <owl/editfile.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+CM_FILENEW BITMAP "owl/res/new.bmp"
+CM_FILEOPEN BITMAP "owl/res/open.bmp"
+CM_FILESAVE BITMAP "owl/res/save.bmp"
+CM_FILESAVEAS BITMAP "owl/res/saveas.bmp"
+
+IDA_EDITFILE ACCELERATORS
+{
+  "Z", CM_EDITUNDO, VIRTKEY, CONTROL
+  "X", CM_EDITCUT, VIRTKEY, CONTROL
+  "C", CM_EDITCOPY, VIRTKEY, CONTROL
+  "V", CM_EDITPASTE, VIRTKEY, CONTROL
+  VK_DELETE, CM_EDITDELETE, VIRTKEY
+  VK_DELETE, CM_EDITCLEAR, VIRTKEY, CONTROL
+  VK_F3, CM_EDITFINDNEXT, VIRTKEY
+}
+
+IDM_EDITFILE MENU
+{
+  POPUP "&File"
+  {
+    MENUITEM "&New", CM_FILENEW
+    MENUITEM "&Open...", CM_FILEOPEN
+    MENUITEM "&Save", CM_FILESAVE
+    MENUITEM "Save &As...", CM_FILESAVEAS
+    MENUITEM SEPARATOR
+    MENUITEM "E&xit", CM_EXIT
+  }
+  POPUP "&Edit"
+  {
+    MENUITEM "&Undo\aCtrl+Z", CM_EDITUNDO
+    MENUITEM SEPARATOR
+    MENUITEM "Cu&t\aCtrl+X", CM_EDITCUT
+    MENUITEM "&Copy\aCtrl+C", CM_EDITCOPY
+    MENUITEM "&Paste\aCtrl+V", CM_EDITPASTE
+    MENUITEM "&Delete\aDel", CM_EDITDELETE
+    MENUITEM "C&lear All\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "&Search"
+  {
+    MENUITEM "&Find...", CM_EDITFIND
+    MENUITEM "&Replace...", CM_EDITREPLACE
+    MENUITEM "&Next\aF3", CM_EDITFINDNEXT
+  }
+}
+
+STRINGTABLE
+{
+  IDS_UNTITLEDFILE, "Untitled"
+  IDS_UNABLEREAD, "Unable to read file %s from disk."
+  IDS_UNABLEWRITE, "Unable to write file %s to disk."
+  IDS_FILECHANGED, "The text in the %s file has changed.\n\nDo you want to save the changes?"
+  IDS_FILEFILTER, "Text files (*.TXT)|*.TXT|All Files (*.*)|*.*|"
+  IDS_RICHEDITFILTER, "RTF files (*.RTF)|*.RTF|Text files (*.TXT)|*.TXT|All Files (*.*)|*.*|"
+}

@@ -13,7 +13,7 @@
 #ifndef _LOADALL_H
 #define _LOADALL_H
 
-Bool LoadAll(void);
-Bool LoadAllButAccount(void);
+bool LoadAll(void);
+bool LoadAllButAccount(void);
 
 #endif

@@ -26,7 +26,7 @@ extern client_message chess_msg_table[];
 extern HINSTANCE   hInst;          // Handle of this DLL
 extern HWND        hChessDlg;
 extern ClientInfo *c;              // Holds data passed from main client
-extern Bool        exiting;        // True when module is exiting and should be unloaded
+extern bool        exiting;        // True when module is exiting and should be unloaded
 
 void ChessRedrawBoard(void);
 BYTE ChessGetPromotionPiece(void);

@@ -18,7 +18,7 @@
 // new border colors for grey background in new client - mistery
 #define HIGHLIGHT_INDEX 195
 
-Bool DrawInitialize(void);
+bool DrawInitialize(void);
 void DrawClose(void);
 void DrawChangeColor(void);
 
@@ -26,7 +26,7 @@ PDIB GetObjectPdib(ID id, long angle, int group);
 PDIB GetGridPdib(WORD grid_id);
 PDIB GetBackgroundPdib(DWORD rsc);
 
-void DrawRoom(HDC hdc, int x, int y, room_type *room, Bool map);
+void DrawRoom(HDC hdc, int x, int y, room_type *room, bool map);
 
 //	ajw For added DrawBorder functionality. (Allows corners of area to be excluded from border drawing.)
 typedef struct DRAWBORDEREXCLUDETAG

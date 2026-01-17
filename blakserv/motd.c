@@ -21,7 +21,7 @@
 char *motd;
 
 /* local function prototypes */
-Bool LoadMotdName(char *fname);
+bool LoadMotdName(char *fname);
 
 void InitMotd(void)
 {
@@ -65,14 +65,14 @@ void ResetLoadMotd()
    }
 }
 
-Bool LoadMotdName(char *fname)
+bool LoadMotdName(char *fname)
 {
    FILE *file;
    int file_size;
    
    file = fopen(fname, "rb");
    if (file == NULL)
-      return False;
+      return false;
 
    // Get file size
    struct stat st;
@@ -86,14 +86,14 @@ Bool LoadMotdName(char *fname)
       FreeMemory(MALLOC_ID_MOTD,motd,file_size + 1);
       motd = NULL;
       fclose(file);
-      return False;
+      return false;
    }
 
    motd[file_size] = 0; /* zero terminate string */
 
    fclose(file);
 
-   return True;
+   return true;
 }
 
 void SetMotd(char *new_motd)

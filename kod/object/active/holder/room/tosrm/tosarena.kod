@@ -27,7 +27,6 @@ resources:
 
    TosArena_music = pk_fm.mid
 
-   TosArena_commence_wav = forest.wav
    wind_sound_tosarena = ambcntry.wav
    wind1_sound_tosarena = rs_wind.wav
 

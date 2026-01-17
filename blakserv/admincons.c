@@ -69,7 +69,7 @@ void LoadAdminConstants(void)
 	char *name_str,*value_str;
 	int value;
 	
-	if (ConfigBool(CONSTANTS_ENABLED) == False)
+	if (ConfigBool(CONSTANTS_ENABLED) == false)
 		return;
 	
 	if ((constantsfile = fopen(ConfigStr(CONSTANTS_FILENAME),"rt")) == NULL)
@@ -114,7 +114,7 @@ void LoadAdminConstants(void)
 	fclose(constantsfile);
 }
 
-Bool LookupAdminConstant(const char *name,int *ret_ptr)
+bool LookupAdminConstant(const char *name,int *ret_ptr)
 {
 	admin_constant_node *ac;
 	
@@ -124,9 +124,9 @@ Bool LookupAdminConstant(const char *name,int *ret_ptr)
 		if (stricmp(name,ac->name) == 0)
 		{
 			*ret_ptr = ac->value;
-			return True;
+			return true;
 		}      
 		ac = ac->next;
 	}
-	return False;
+	return false;
 }

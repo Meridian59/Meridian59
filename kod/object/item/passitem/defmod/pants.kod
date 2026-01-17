@@ -100,8 +100,17 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      if send(what,@getitemusetype) & ITEM_USE_LEGS
+      % Check if the item conflicts with pants' use type
+      if send(what,@getitemusetype) & viUse_type
       {
+         % Check if this item can be worn in the same slot as pants (bidirectional check)
+         if Send(self,@CanBeWornInSameSlotWith,#what=what) 
+            OR Send(what,@CanBeWornInSameSlotWith,#what=self)
+         {
+            propagate;
+         }
+         
+         % Cannot be worn together - try to unequip the pants
          if Send(poOwner,@TryUnuseItem,#what=self)
          {
             propagate;
@@ -133,6 +142,19 @@ messages:
    IsPlural()
    {
       return TRUE;
+   }
+
+   CanBeWornInSameSlotWith(what = $)
+   "Pants can be worn in the same slot as robes despite both using ITEM_USE_LEGS."
+   "This allows wearing pants underneath robes for layered clothing."
+   {
+      % Pants can be worn simultaneously with robes
+      if IsClass(what, &Robe)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
    }
 
 

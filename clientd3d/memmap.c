@@ -14,15 +14,15 @@
 /***************************************************************************/
 /*
  * MappedFileOpenRead:  Open filename as a memory-mapped file for read-only access, 
- *   and map a view of the entire file.  Returns True on success, and fills in f.
+ *   and map a view of the entire file.  Returns true on success, and fills in f.
  */
-Bool CliMappedFileOpenRead(char *filename, file_node *f)
+bool CliMappedFileOpenRead(const char *filename, file_node *f)
 {
    f->fh = CreateFile(filename,GENERIC_READ,FILE_SHARE_READ,NULL,
 		      OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,NULL);
    if (f->fh == INVALID_HANDLE_VALUE)
    {
-      return False;
+      return false;
    }
 
    f->length = GetFileSize(f->fh, NULL);
@@ -31,7 +31,7 @@ Bool CliMappedFileOpenRead(char *filename, file_node *f)
    if (f->mapfh == NULL)
    {
       CloseHandle(f->fh);
-      return False;
+      return false;
    }
 
    f->mem = (char *) MapViewOfFile(f->mapfh,FILE_MAP_READ,0,0,0);
@@ -39,11 +39,11 @@ Bool CliMappedFileOpenRead(char *filename, file_node *f)
    {
       CloseHandle(f->mapfh);
       CloseHandle(f->fh);
-      return False;
+      return false;
    }
 
    f->ptr = f->mem;
-   return True;
+   return true;
 }
 /***************************************************************************/
 /*
@@ -63,21 +63,21 @@ int CliMappedFileRead(file_node *f, void *buf, int num)
 /***************************************************************************/
 /*
  * MappedFileGoto:  Set file pointer of f to given position.
- *   Return True iff position is legal.
+ *   Return true iff position is legal.
  */
-Bool MappedFileGoto(file_node *f, int pos)
+bool MappedFileGoto(file_node *f, int pos)
 {
    if (pos < 0 || pos > f->length)
-      return False;
+      return false;
 
    f->ptr = f->mem + pos;
-   return True;
+   return true;
 }
 /***************************************************************************/
-Bool MappedFileClose(file_node *f)
+bool MappedFileClose(file_node *f)
 {
    UnmapViewOfFile(f->mem);
    CloseHandle(f->mapfh);
    CloseHandle(f->fh);
-   return False;
+   return false;
 }

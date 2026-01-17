@@ -12,29 +12,27 @@
 #ifndef _SOUND_H
 #define _SOUND_H
 
-#ifdef M59_MSS
-#include "mss.h"
-#endif
+#include <string>
 
 void SoundInitialize(void);
 
-DWORD PlayMidiFile(HWND hWndNotify, char *fname);
-M59EXPORT UINT PlayWaveFile(HWND hwnd, char *fname, int volume, BYTE flags, int src_row, int src_col, int radius, int max_vol);
-
-#ifdef M59_MSS
-void AILCALLBACK SoundDoneCallback( HSAMPLE S );
-void SoundDone(  HWND hwnd, WPARAM wParam, LPARAM lParam  );
-static HDIGDRIVER WAVE_init_driver( DWORD rate, WORD bits, WORD chans );
-#else
-void SoundDone(HWND hwnd, int iChannel, LPMIXWAVE lpMixWave);
-#endif
+M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
+                                     BYTE flags, int src_row, int src_col, int radius,
+                                     int max_vol);
 
 M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol);
-M59EXPORT void PlayMidiRsc(ID rsc);
-M59EXPORT void PlayMusicRsc(ID rsc);
+
+/* Marks all currently tracked looping sounds for potential cleanup. */
+void Sound_BeginLoopingSoundTransition(void);
+
+/* Registers a looping sound as active, protecting it from cleanup. */
+void Sound_RegisterLoopingSound(const std::string &filename);
+
+/* Stops any looping sounds that were not re-registered since the last Begin call. */
+void Sound_EndLoopingSoundTransition(void);
 
 M59EXPORT void SoundAbort(void);
 void NewSound(WPARAM type, ID rsc);
-void UpdateLoopingSounds( int px, int py);
+void UpdateLoopingSounds(int px, int py, int angle);
 
 #endif /* #ifndef _SOUND_H */

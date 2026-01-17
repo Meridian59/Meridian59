@@ -69,7 +69,7 @@ static PieceBitmap piece_bitmaps[2][NUM_PIECES] = {
    { {IDB_RPAWN}, {IDB_RROOK}, {IDB_RKNIGHT}, {IDB_RBISHOP}, {IDB_RQUEEN}, {IDB_RKING} },
 };
 
-static Bool move_started = False;   // True when user has selected piece to move
+static bool move_started = false;   // true when user has selected piece to move
 static POINT move_pos1, move_pos2;  // Coordinates to move from and to
 
 /****************************************************************************/
@@ -110,9 +110,9 @@ void BoardEncode(Board *b, unsigned char *s)
 /****************************************************************************/
 /*
  * BoardDecode:  Decode board state from string.
- *   Return True iff string is a legal board state.
+ *   Return true iff string is a legal board state.
  */
-Bool BoardDecode(unsigned char *s, Board *b)
+bool BoardDecode(unsigned char *s, Board *b)
 {
    int i, j, index;
 
@@ -126,24 +126,24 @@ Bool BoardDecode(unsigned char *s, Board *b)
       }
    b->move_color = (s[index] & 0x02) >> 1;
 
-   b->pdata[WHITE].can_castle_left  = (s[index] & 0x04) ? True : False;
-   b->pdata[WHITE].can_castle_right = (s[index] & 0x08) ? True : False;
-   b->pdata[BLACK].can_castle_left  = (s[index] & 0x10) ? True : False;
-   b->pdata[BLACK].can_castle_right = (s[index] & 0x20) ? True : False;
+   b->pdata[WHITE].can_castle_left  = (s[index] & 0x04) ? true : false;
+   b->pdata[WHITE].can_castle_right = (s[index] & 0x08) ? true : false;
+   b->pdata[BLACK].can_castle_left  = (s[index] & 0x10) ? true : false;
+   b->pdata[BLACK].can_castle_right = (s[index] & 0x20) ? true : false;
 
    index++;
-   b->en_passant = (s[index] & 0x02) ? True : False;
+   b->en_passant = (s[index] & 0x02) ? true : false;
    b->passant_square.y = (s[index] & 0x1c) >> 2;
    b->passant_square.x = (s[index] & 0xe0) >> 5;
 
    index++;
-   b->white_resigned = (s[index] & 0x02) ? True : False;
-   b->black_resigned = (s[index] & 0x04) ? True : False;
+   b->white_resigned = (s[index] & 0x02) ? true : false;
+   b->black_resigned = (s[index] & 0x04) ? true : false;
 
    // Compute game over elsewhere
-   b->game_over = False;
+   b->game_over = false;
 
-   return True;
+   return true;
 }
 
 /****************************************************************************/
@@ -190,14 +190,14 @@ void BoardInitialize(Board *b)
 
    for (i=0; i < 2; i++)
    {
-      b->pdata[i].can_castle_left = True;
-      b->pdata[i].can_castle_right = True;
+      b->pdata[i].can_castle_left = true;
+      b->pdata[i].can_castle_right = true;
    }
 
-   b->en_passant = False;
-   b->white_resigned = False;
-   b->black_resigned = False;
-   b->game_over = False;
+   b->en_passant = false;
+   b->white_resigned = false;
+   b->black_resigned = false;
+   b->game_over = false;
 }
 /****************************************************************************/
 /*
@@ -284,23 +284,23 @@ void BoardDraw(HDC hdc, Board *b)
 /****************************************************************************/
 /*
  * BoardSquareSelect:  Called when user has selected a square on the board.
- *   Return True iff user makes a legal move.
+ *   Return true iff user makes a legal move.
  */
-Bool BoardSquareSelect(Board *b, int row, int col)
+bool BoardSquareSelect(Board *b, int row, int col)
 {
-   Bool retval = False;
+   bool retval = false;
    
    if (move_started)
    {
       move_pos2.x = col;
       move_pos2.y = row;
-      move_started = False;
+      move_started = false;
 
       // Check for legal move; perform if legal
       if (ChessMoveIsLegal(b, move_pos1, move_pos2, b->color))
       {
-	 ChessMovePerform(b, move_pos1, move_pos2, True);
-	 retval = True;
+	 ChessMovePerform(b, move_pos1, move_pos2, true);
+	 retval = true;
       }
 
       ChessRedrawBoard();
@@ -309,9 +309,9 @@ Bool BoardSquareSelect(Board *b, int row, int col)
    else
       // See if there's a piece of our color here
       if (b->squares[row][col].piece == NONE || b->squares[row][col].color != b->color)
-	 return False;
+	 return false;
    
-   move_started = True;
+   move_started = true;
 
    move_pos1.x = col;
    move_pos1.y = row;

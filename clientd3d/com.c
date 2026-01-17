@@ -27,7 +27,7 @@ static int bufpos;
 
 extern int connection;  /* What type of connection do we have? */
 
-static Bool notification = False;  /* Is notification on? */
+static bool notification = false;  /* Is notification on? */
 
 static SOCKET sock = INVALID_SOCKET; /* Socket communications handle */
 
@@ -41,7 +41,7 @@ static BYTE epoch;     // Epoch byte from last server message
 static unsigned int streams[NUM_STREAMS];
 
 /* local function prototypes */
-static Bool WriteSocket(char *buf,int numbytes);
+static bool WriteSocket(const char *buf,int numbytes);
 static int ReadServerSocket(void);
 static void Resynchronize(void);
 static unsigned int RandomStreamsStep(void);
@@ -49,20 +49,20 @@ static unsigned int RandomStreamsStep(void);
 /********************************************************************/
 /*
 * OpenSocketConnection: Open a connection, given the host and socket #.
-*   Returns True on success.
+*   Returns true on success.
 */
-Bool OpenSocketConnection(char *host, int sock_port)
+bool OpenSocketConnection(char *host, int sock_port)
 {
 	WSADATA WSAData;
 	SOCKADDR_IN dest_sin;
 	PHOSTENT phe;
-	Bool success = False;
+	bool success = false;
 	long addr;
 	
 	if (WSAStartup(MAKEWORD(1,1), &WSAData) != 0) 
 	{
 		ClientError(hInst, hMain, IDS_CANTINITSOCKET);
-		return False;
+		return false;
 	}
 	
 	sock = socket(AF_INET,SOCK_STREAM,0);
@@ -70,7 +70,7 @@ Bool OpenSocketConnection(char *host, int sock_port)
 	{
 		debug(("Error on call to socket; error # was %d\n", WSAGetLastError()));
 		closesocket(sock);
-		return False;
+		return false;
 	}
 	
 	// Try to interpret host as an address with "." notation
@@ -78,7 +78,7 @@ Bool OpenSocketConnection(char *host, int sock_port)
 	if (addr != -1)
 	{
 		dest_sin.sin_addr.s_addr = addr;
-		success = True;
+		success = true;
 	}
 	else
 	{
@@ -87,7 +87,7 @@ Bool OpenSocketConnection(char *host, int sock_port)
 		if (phe != NULL)
 		{
 			memcpy((char *)&(dest_sin.sin_addr), phe->h_addr, phe->h_length);
-			success = True;
+			success = true;
 		}
 	}
 	
@@ -95,7 +95,7 @@ Bool OpenSocketConnection(char *host, int sock_port)
 	{
 		debug(("Error on gethostbyname; error # was %d.\n Make sure '%s' is listed in the hosts file.\n",
 			WSAGetLastError(), host));
-		return False;
+		return false;
 	}   
 	
 	dest_sin.sin_family = AF_INET;
@@ -105,19 +105,19 @@ Bool OpenSocketConnection(char *host, int sock_port)
 	if (!StartReadNotification())
 	{
 		closesocket(sock);
-		return False;
+		return false;
 	}
 	
 	if (connect(sock,(PSOCKADDR) &dest_sin, sizeof(dest_sin)) < 0) 
 		if (WSAGetLastError() != WSAEWOULDBLOCK)
 		{
 			debug(("Error on connect; error # was %d\n", WSAGetLastError()));
-			return False;
+			return false;
 		}
 		
 		bufpos = 0;
 		
-		return True;
+		return true;
 }
 /********************************************************************/
 /*
@@ -159,8 +159,8 @@ int ReadServerSocket(void)
 }
 
 /********************************************************************/
-/* Return TRUE on success */
-Bool WriteSocket(char *buf,int numbytes)
+/* Return true on success */
+bool WriteSocket(const char *buf,int numbytes)
 {
 	int retval;
 	
@@ -168,10 +168,10 @@ Bool WriteSocket(char *buf,int numbytes)
 	{
 		retval = send(sock, buf, numbytes, 0);
 		if (retval != SOCKET_ERROR)
-			return TRUE;
+			return true;
 		
 		if (WSAGetLastError() != WSAEWOULDBLOCK)
-			return FALSE;
+			return false;
 	}
 }
 /********************************************************************/
@@ -195,7 +195,7 @@ void CloseConnection(void)
 /********************************************************************/
 /* Sendxxx adds the header, Writexxx is raw--works with comm programs */
 
-Bool WriteServer(char *buf, UINT numbytes)
+bool WriteServer(const char *buf, UINT numbytes)
 {
 	switch(connection)
 	{
@@ -204,7 +204,7 @@ Bool WriteServer(char *buf, UINT numbytes)
 		
 	default:
 		debug(("WriteServer got bogus connection type %d\n", connection));
-		return True;
+		return true;
 	}      
 }
 /********************************************************************/
@@ -215,12 +215,12 @@ Bool WriteServer(char *buf, UINT numbytes)
 *  If numbytes <= MAX_COPYBUF, the prefix and message are sent in a single call to WriteServer.
 *  Otherwise, they are written separately.
 */
-Bool SendServer(char *msg, UINT numbytes)
+bool SendServer(const char *msg, UINT numbytes)
 {
 	WORD length = (WORD) numbytes;
 	WORD randnum, temp, crc;
 	char copybuf[MAX_COPYBUF + 20], *ptr;
-	Bool single_write;
+	bool single_write;
 	BYTE byte = 0;
 	
 	/* 
@@ -267,7 +267,7 @@ Bool SendServer(char *msg, UINT numbytes)
 	{
 		ClientError(hInst, hMain, IDS_CANTWRITE);
 		debug(("Socket write error = %d\n", WSAGetLastError()));
-		return False;
+		return false;
 	}
 	
 	/* If message is too large, write it out separately */    
@@ -276,10 +276,10 @@ Bool SendServer(char *msg, UINT numbytes)
 		{
 			ClientError(hInst, hMain, IDS_CANTWRITE);
 			debug(("Socket write error = %d\n", WSAGetLastError()));
-			return False;
+			return false;
 		}
 		
-		return True;
+		return true;
 }
 /********************************************************************/
 /*
@@ -309,21 +309,21 @@ int ReadServer(void)
 /********************************************************************/
 /*
 * StartReadNotification:  Turn on notification for reads from serial or socket.
-*   Returns True on success.
+*   Returns true on success.
 */
-Bool StartReadNotification(void)
+bool StartReadNotification(void)
 {
-	Bool retval;
+	bool retval;
 	
 	//   debug(("Starting notification\n"));
-	notification = True;
+	notification = true;
 	switch (connection)
 	{
 	case CON_SOCKET:
 	/* Send main window a BK_SOCKETEVENT when data is pending on the socket,
 		or when the socket is opened or closed. */
 		retval = WSAAsyncSelect(sock, hMain, BK_SOCKETEVENT, FD_READ | FD_CLOSE | FD_CONNECT) >= 0;
-		if (retval == False)
+		if (retval == false)
 			debug(("StartReadNotification failed, error was %d\n", WSAGetLastError()));      
 		break;
 	}
@@ -350,7 +350,7 @@ void EndReadNotification(void)
 			debug(("EndReadNotification failed, error was %d\n", WSAGetLastError()));
 		break;
 	}
-	notification = False;
+	notification = false;
 }
 
 

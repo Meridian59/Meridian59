@@ -24,7 +24,7 @@ typedef struct
 sihash_type CreateSIHash(int table_size);
 void FreeSIHash(sihash_type sihash);
 void SIHashInsert(sihash_type sihash,const char *key,int value);
-Bool SIHashFind(sihash_type sihash,const char *key,int *value);
+bool SIHashFind(sihash_type sihash,const char *key,int *value);
 const char * SIHashFindByValue(sihash_type sihash,int value);
 
 #endif

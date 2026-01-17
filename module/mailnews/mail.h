@@ -40,17 +40,17 @@ void MailChangeFonts(void);
 void MailChangeColor(void);
 void UserSendMail(void);
 void UserReadMail(void);
-Bool AbortMailDialogs(void);
-Bool ListViewGetCurrentData(HWND hList, int *index, int *data);
+bool AbortMailDialogs(void);
+bool ListViewGetCurrentData(HWND hList, int *index, int *data);
 void MailRecipientsReceived(WORD num_objects, ID *objs);
 
 /* mailfile.c */
 void MailGetMessageList(void);
 void MailDeleteMessageList(void);
-Bool MailLoadMessage(int number, int max_chars, char *buf);
+bool MailLoadMessage(int number, int max_chars, char *buf);
 void MailNewMessage(int server_index, char *sender, int num_recipients, 
 		    char recipients[MAX_RECIPIENTS][MAXUSERNAME + 1], char *message, long msg_time);
-Bool MailDeleteMessage(int number);
-Bool MailParseMessage(int msgnum, MailInfo *info);
+bool MailDeleteMessage(int number);
+bool MailParseMessage(int msgnum, MailInfo *info);
 
 #endif /* #ifndef _MAIL_H */

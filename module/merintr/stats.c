@@ -79,7 +79,7 @@ INT_PTR CALLBACK StatsWindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
      {
      case IDC_STATBUTTON:
        StatButtonDrawItem(hwnd, lpdis);
-       return False;
+       return false;
 
      default:
        return StatsListDrawItem(hwnd, lpdis);
@@ -153,7 +153,7 @@ void StatsResize(int xsize, int ysize, AREA *view)
    StatsMove();
 }
 /************************************************************************/
-void StatsSetFocus(Bool forward)
+void StatsSetFocus(bool forward)
 {
    SetFocus(hStats);
 }
@@ -210,10 +210,10 @@ void StatsChangeColor(void)
 /*
  * StatsDrawNumItem:  Redraw stats area.
  */
-Bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    StatsDraw();
-   return True;
+   return true;
 }
 
 /************************************************************************/
@@ -252,7 +252,7 @@ void ActivateInventory()
 void ActivateStatGroup(int stat_group)
 {
 	list_type stat_list;
-	if (StatCacheGetEntry(stat_group, &stat_list) == True)
+	if (StatCacheGetEntry(stat_group, &stat_list) == true)
 	{
 		DisplayStatGroup(stat_group, stat_list);
 	}
@@ -434,7 +434,7 @@ void StatsReceiveGroup(BYTE group, list_type l)
 			if( StatsGetCurrentGroup() == STATS_INVENTORY )
 			{
 				//	Inventory must be going away.
-				ShowInventory( False );
+				ShowInventory(false);
 			}
 		}
 		DisplayStatGroup(group, l);
@@ -481,7 +481,7 @@ void DisplayStatGroup(BYTE group, list_type l)
 
 /************************************************************************/
 /*
- * DisplayInventoryAsStatGroup:  ajw - Like DisplayStatGroup, but called when Inventory becomes the shown "group".
+ * DisplayInventoryAsStatGroup: Like DisplayStatGroup, but called when Inventory becomes the shown "group".
  */
 void DisplayInventoryAsStatGroup( BYTE group )
 {
@@ -490,9 +490,9 @@ void DisplayInventoryAsStatGroup( BYTE group )
 
 /************************************************************************/
 /*
- * StatsShowGroup:  ajw - Show or hide controls for a group of stats.
+ * StatsShowGroup:  Show or hide controls for a group of stats.
  */
-void StatsShowGroup( Bool bShow )
+void StatsShowGroup(bool bShow)
 {
 	int group_type_temp;              // Type of group currently being displayed
 	if (stats == NULL)

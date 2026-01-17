@@ -23,7 +23,7 @@
 
 INT64 SaveAll(void)
 {
-   Bool save_ok;
+  bool save_ok;
    INT64 save_time;
    char save_name[MAX_PATH+FILENAME_MAX];
    char time_str[100];
@@ -47,25 +47,25 @@ INT64 SaveAll(void)
    save_time = GetTime();
    snprintf(time_str, sizeof(time_str), "%lli",(long long) save_time);
 
-   save_ok = True;
+   save_ok = true;
 
    lprintf("Saving game (time stamp %s)...\n", time_str);
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
-   if (SaveGame(save_name) == False)
-      save_ok = False;
+   if (SaveGame(save_name) == false)
+      save_ok = false;
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,time_str);
-   if (SaveStrings(save_name) == False)
-      save_ok = False;
+   if (SaveStrings(save_name) == false)
+      save_ok = false;
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),ACCOUNT_FILE_SAVE,time_str);
-   if (SaveAccounts(save_name) == False)
-      save_ok = False;
+   if (SaveAccounts(save_name) == false)
+      save_ok = false;
 
    snprintf(save_name, sizeof(save_name), "%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
    if (!SaveDynamicRsc(save_name))
-      save_ok = False;
+      save_ok = false;
 
    if (save_ok) {
       SaveControlFile(save_time);
@@ -103,7 +103,7 @@ void SaveControlFile(INT64 save_time)
    fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),STRING_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"# %s%s%lli\n",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,(long long) save_time);
    fprintf(savefile,"#\n");
-   fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time));
+   fprintf(savefile,"# Last successful save was at %s\n",TimeStr(save_time).c_str());
    fprintf(savefile,"#\n");
    fprintf(savefile,"\n");
    fprintf(savefile,"LASTSAVE %lli\n",(long long) save_time);

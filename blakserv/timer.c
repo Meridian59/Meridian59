@@ -79,7 +79,7 @@ void PauseTimers(void)
 {
    if (pause_time != 0)
    {
-      eprintf("PauseTimers called when they were already paused at %s\n",TimeStr(pause_time));
+      eprintf("PauseTimers called when they were already paused at %s\n",TimeStr(pause_time).c_str());
       return;
    }
    pause_time = GetTime();
@@ -176,7 +176,7 @@ int CreateTimer(int object_id,int message_id,int milliseconds)
    return t->timer_id;
 }
 
-Bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds)
+bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds)
 {
    object_node *o;
    timer_node *t;
@@ -186,14 +186,14 @@ Bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds)
    if (o == NULL)
    {
       eprintf("LoadTimer can't find object %i\n",object_id);
-      return False;
+      return false;
    }
 
    m = GetMessageByName(o->class_id,message_name,NULL);
    if (m == NULL) 
    {
       eprintf("LoadTimer can't find message name %s\n",message_name);
-      return False;
+      return false;
    }
 
    t = (timer_node *)AllocateMemory(MALLOC_ID_TIMER,sizeof(timer_node));
@@ -211,7 +211,7 @@ Bool LoadTimer(int timer_id,int object_id,char *message_name,INT64 milliseconds)
    if (timer_id >= next_timer_num)
       next_timer_num = timer_id + 1;
 
-   return True;
+   return true;
 }
 
 void StoreDeletedTimer(timer_node *t)
@@ -222,12 +222,12 @@ void StoreDeletedTimer(timer_node *t)
    /* dprintf("storing timer id %i\n",deleted_timers->timer_id); */
 }
 
-Bool DeleteTimer(int timer_id)
+bool DeleteTimer(int timer_id)
 {
    timer_node *t,*prev;
 
    if (timers == NULL)
-      return False;
+      return false;
    
    if (timers->timer_id == timer_id)
    {
@@ -237,7 +237,7 @@ Bool DeleteTimer(int timer_id)
       StoreDeletedTimer(timers);
 
       timers = t;
-      return True;
+      return true;
    }
 
    prev = timers;
@@ -251,7 +251,7 @@ Bool DeleteTimer(int timer_id)
 	 /* put deleted timer on deleted_timer list */
 	 StoreDeletedTimer(t);
 
-	 return True;
+	 return true;
       }
       prev = t;
       t = t->next;
@@ -269,7 +269,7 @@ Bool DeleteTimer(int timer_id)
    }
    dprintf("\n");
 #endif
-   return False;
+   return false;
 }
 
 /* activate the 1st timer, if it is time */

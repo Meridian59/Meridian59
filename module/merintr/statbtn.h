@@ -19,10 +19,10 @@ void StatsDestroyButtons(void);
 void StatsMoveButtons(void);
 void StatsSetButtonFocus(int group);
 
-Bool StatInputKey(HWND hwnd, UINT key, Bool fDown, int cRepeat, UINT flags);
+bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags);
 
 int  StatsGetButtonBorder(void);
-Bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
 int StatsFindGroupByHwnd(HWND hwnd);

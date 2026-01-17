@@ -78,21 +78,21 @@ static char color_section[] = "Colors";  /* Section for colors in INI file */
 extern HPALETTE hPal;
 
 INT_PTR CALLBACK ColorDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-Bool SetColor(WORD color, COLORREF cr);
+bool SetColor(WORD color, COLORREF cr);
 /************************************************************************/
 /*
 * ColorsCreate:  Create all colors for use in the game.
-*  If use_defaults is False, try to load colors from INI file.
+*  If use_defaults is false, try to load colors from INI file.
 *  Otherwise use colors fonts.
 */
-void ColorsCreate(Bool use_defaults)
+void ColorsCreate(bool use_defaults)
 {
 	WORD i;
 	int temp;
 	BYTE red, green, blue;
 	char str[100], name[10], *ptr;
-	char *separators = ",";
-	Bool success;
+	const char *separators = ",";
+	bool success;
 
 	DefaultColor = PALETTERGB(255, 255, 255);
 	hDefaultBrush = (HBRUSH) GetStockObject(BLACK_BRUSH);
@@ -113,15 +113,15 @@ void ColorsCreate(Bool use_defaults)
 				GetPrivateProfileString(color_section, name, colorinfo[i], str, 100, ini_file);
 			}
 
-			success = True;
+			success = true;
 			if ((ptr = strtok(str, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-				success = False;
+				success = false;
 			else red = temp;
 			if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-				success = False;
+				success = false;
 			else green = temp;
 			if ((ptr = strtok(NULL, separators)) == NULL || sscanf(ptr, "%d", &temp) != 1)
-				success = False;
+				success = false;
 			else blue = temp;
 
 			if (success)
@@ -171,14 +171,14 @@ HBRUSH GetBrush(WORD color)
 /************************************************************************/
 /*
 * SetColor:  Set given user color # using given COLORREF.
-*   Returns True on success; returns False and uses default color on failure.
+*   Returns true on success; returns false and uses default color on failure.
 */
-Bool SetColor(WORD color, COLORREF cr)
+bool SetColor(WORD color, COLORREF cr)
 {
 	if (color > MAXCOLORS)
 	{
 		debug(("Illegal color #%u\n", color));
-		return False;
+		return false;
 	}
 
 	/* Round color to nearest match in our palette; this lets transparency work */
@@ -189,7 +189,7 @@ Bool SetColor(WORD color, COLORREF cr)
 		DeleteObject(brushes[color]);
 		brushes[color] = NULL;
 	}
-	return True;
+	return true;
 }
 /************************************************************************/
 /*
@@ -213,7 +213,7 @@ void ColorsSave(void)
 void ColorsRestoreDefaults(void)
 {
 	ColorsDestroy();
-	ColorsCreate(True);
+	ColorsCreate(true);
 	MainChangeColor();
 
 	ModuleEvent(EVENT_COLORCHANGED, -1, 0);
@@ -242,7 +242,7 @@ void UserSelectColor(WORD color)
 	SetColor(color, cc.rgbResult);
 
 	/* See if a module wants to intercept color change */
-	if (ModuleEvent(EVENT_COLORCHANGED, color, cc.rgbResult) == False)
+	if (ModuleEvent(EVENT_COLORCHANGED, color, cc.rgbResult) == false)
 		return;
 
 	MainChangeColor();
@@ -258,7 +258,7 @@ void UserSelectColors(WORD fg, WORD bg)
 	info.fg = fg;
 	info.bg = bg;
 
-	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COLOR), hMain,
+	SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_COLOR), hMain,
 		ColorDialogProc, (LPARAM) &info);
 }
 /************************************************************************/

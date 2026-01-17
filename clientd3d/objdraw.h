@@ -30,7 +30,7 @@ typedef struct {
 
 typedef void (*DrawingLoop)(ObjectRowData *d);
 
-void DrawTargetHalo( ObjectRowData* d, BYTE* obj_bits, long y, long yinc, long bitmap_width, Bool bTopRow, Bool bBottomRow );
-void DrawTargetEffect( ObjectRowData* d );		//	ajw
+void DrawTargetHalo( ObjectRowData* d, BYTE* obj_bits, long y, long yinc, long bitmap_width, bool bTopRow, bool bBottomRow );
+void DrawTargetEffect( ObjectRowData* d );
 
 #endif /* #ifndef _OBJDRAW_H */

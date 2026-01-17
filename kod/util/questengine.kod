@@ -176,6 +176,7 @@ resources:
    shalilledisciple_assign = "`bYou wish to learn more of the gentle, healing ways of our good Lady.  You must "
          "brave the temple of %NPC, and proclaim your willingness to forgive their violence and brutality. Heal "
          "them if you can.  Say, \"%CARGO\"  Then, return and tell me that you have done as I asked."
+   shalilledisciple_invoke_success = "Go back and tell your priestess her blessing is neither wanted nor needed."
    shalilledisciple_success = "`bBlessed be this day. Today there is the birth of another soul filling with the "
          "light of Shal'ille.  Seek me when you are ready to learn more of the Blessed Mother's knowledge and "
          "spells.  You are worthy."
@@ -190,6 +191,7 @@ resources:
    farendisciple_assign = "`B`gYou wish the blessing of the land through our Lord Faren.  You must prove that you "
          "are worthy of his blessings.  Take this message to %NPC: \"%CARGO\"  Return quick to notify me when you "
          "are done and perhaps Faren will favor you with power."
+   farendisciple_invoke_success = "You've delivered your message. I have no use for sermons. Go back and seek your blessing."
    farendisciple_success = "`B`gThe gaze of Faren is upon you. You have done well.  Seek me when you would learn "
          "more of his ways and his spells. "
    farendisciple_failure = "Subject: Look within and burn, child\n"
@@ -200,8 +202,9 @@ resources:
          "of a lightless sky and a bloody moon."
    qordisciple_assign = "`rYou wish to be surrounded by the ineffable embrace of our patron Mistress.  "
          "Your judgement is keen but what of your loyalty?  To prove this to me you must invoke Mistress Qor to "
-         "%NPC, thus:  %CARGO  After that, return and tell me you are done and we shall revel in the beauty of "
+         "%NPC, thus: \"%CARGO\"  After that, return and tell me you are done and we shall revel in the beauty of "
          "corruption."
+   qordisciple_invoke_success = "That is a vile utterance. You would speak such corruption aloud? Tell your Mistress you found no converts here."
    qordisciple_success = "`rYou have fulfilled my wishes. You are not only wise but tenacious.  Seek me out when you "
          "would learn more of Qor's spells of power."
    qordisciple_failure = "Subject: Qor has deemed you unworthy\n"
@@ -2617,6 +2620,7 @@ RecreateQuestNodes()
       lNPCs = cons(first(send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &DukeLiege )),lNPCs);
       send( self, @SetQuestNodeNPCList, #index = 13, #new_NPC_list = lNPCs );
       send( self, @SetQuestNodeAssignHint, #index = 13, #new_hint = shalilledisciple_assign );
+      send( self, @SetQuestNodeSuccessHint, #index = 13, #new_hint = shalilledisciple_invoke_success );
       send( self, @SetQuestNodeFailureHint, #index = 13, #new_hint = shalilledisciple_failure );
    }
    else
@@ -2651,6 +2655,7 @@ RecreateQuestNodes()
       lNPCs = send( send( SYS, @GetLibrary ), @GetOccupationList, #iJob = MOB_ROLE_BARTENDER, #onIsland = FALSE );
       send( self, @SetQuestNodeNPCList, #index = 16, #new_NPC_list = lNPCs );
       send( self, @SetQuestNodeAssignHint, #index = 16, #new_hint = farendisciple_assign );
+      send( self, @SetQuestNodeSuccessHint, #index = 16, #new_hint = farendisciple_invoke_success );
       send( self, @SetQuestNodeFailureHint, #index = 16, #new_hint = farendisciple_failure );
    }
    else
@@ -3077,6 +3082,7 @@ RecreateQuestNodes()
       lNPCs = cons(first(send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &JasperInnKeeper )),lNPCs);
       send( self, @SetQuestNodeNPCList, #index = 43, #new_NPC_list = lNPCs );
       send( self, @SetQuestNodeAssignHint, #index = 43, #new_hint = qordisciple_assign );
+      send( self, @SetQuestNodeSuccessHint, #index = 43, #new_hint = qordisciple_invoke_success );
       send( self, @SetQuestNodeFailureHint, #index = 43, #new_hint = qordisciple_failure );
    }
    else

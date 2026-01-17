@@ -84,6 +84,8 @@
 #define IDC_RICHEDIT21                  1068
 #define IDC_STATIC3                     1069
 #define IDC_STATIC4                     1070
+#define IDC_MESSAGE_EDIT                1071
+#define IDD_COPYABLE_MESSAGE            1072
 #define IDM_FILE_EXIT                   40001
 #define IDM_FILE_SAVE                   40003
 #define IDM_FILE_RELOADSYSTEM           40004

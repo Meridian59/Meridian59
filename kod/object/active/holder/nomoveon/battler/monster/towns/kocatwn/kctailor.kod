@@ -247,7 +247,7 @@ messages:
       propagate;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if IsClass(what,&NumberItem) and
          Send(what,@GetNumber) > 100

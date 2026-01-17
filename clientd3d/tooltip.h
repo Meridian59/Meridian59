@@ -14,7 +14,6 @@
 
 void TooltipCreate(void);
 void TooltipDestroy(void);
-void TooltipsEnable(Bool enable);
 M59EXPORT void TooltipForwardMessage(MSG *msg);
 
 M59EXPORT void TooltipAddRectangle(HWND hwnd, RECT *rect, HINSTANCE hModule, int name);

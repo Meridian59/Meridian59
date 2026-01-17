@@ -29,41 +29,41 @@ M59EXPORT void WindowBeginUpdate(HWND hwnd);
 M59EXPORT void WindowEndUpdate(HWND hwnd);
 
 /* Macros so that same procedures can be used for list boxes & combo boxes */
-#define ItemListAddItem(hwnd, obj, index, quan)     OwnerListAddItem(hwnd, obj, index, False, quan)
-#define ItemListRemoveItem(hwnd, id)          OwnerListRemoveItem(hwnd, id, False)
-#define ItemListSetContents(hwnd, list, quan)       OwnerListSetContents(hwnd, list, False, quan)
-#define ItemListChangeItem(hwnd, obj, quan)         OwnerListChangeItem(hwnd, obj, False, quan)
-#define ItemListFindItem(hwnd, id)            OwnerListFindItem(hwnd, id, False)
-#define ItemListFindObject(hwnd, id)          OwnerListFindObject(hwnd, id, False)
-#define ItemListCompareItem(hwnd, lpcis)      OwnerListCompareItem(hwnd, lpcis, False)
-#define ItemListMeasureItem(hwnd, lpcis)      OwnerListMeasureItem(hwnd, lpcis, False)
-#define ItemListDrawItem(hwnd, lpdis)         OwnerListDrawItem(hwnd, lpdis, False)
-#define ItemListDrawItemNoSelect(hwnd, lpdis) OwnerListDrawItemNoSelect(hwnd, lpdis, False)
+#define ItemListAddItem(hwnd, obj, index, quan)     OwnerListAddItem(hwnd, obj, index, false, quan)
+#define ItemListRemoveItem(hwnd, id)          OwnerListRemoveItem(hwnd, id, false)
+#define ItemListSetContents(hwnd, list, quan)       OwnerListSetContents(hwnd, list, false, quan)
+#define ItemListChangeItem(hwnd, obj, quan)         OwnerListChangeItem(hwnd, obj, false, quan)
+#define ItemListFindItem(hwnd, id)            OwnerListFindItem(hwnd, id, false)
+#define ItemListFindObject(hwnd, id)          OwnerListFindObject(hwnd, id, false)
+#define ItemListCompareItem(hwnd, lpcis)      OwnerListCompareItem(hwnd, lpcis, false)
+#define ItemListMeasureItem(hwnd, lpcis)      OwnerListMeasureItem(hwnd, lpcis, false)
+#define ItemListDrawItem(hwnd, lpdis)         OwnerListDrawItem(hwnd, lpdis, false)
+#define ItemListDrawItemNoSelect(hwnd, lpdis) OwnerListDrawItemNoSelect(hwnd, lpdis, false)
 
-#define ItemBoxAddItem(hwnd, obj, index)     OwnerListAddItem(hwnd, obj, index, True, False)
-#define ItemBoxRemoveItem(hwnd, id)          OwnerListRemoveItem(hwnd, id, True)
-#define ItemBoxSetContents(hwnd, list)       OwnerListSetContents(hwnd, list, True, False)
-#define ItemBoxChangeItem(hwnd, obj)         OwnerListChangeItem(hwnd, obj, True)
-#define ItemBoxFindItem(hwnd, id)            OwnerListFindItem(hwnd, id, True)
-#define ItemBoxFindObject(hwnd, id)          OwnerListFindObject(hwnd, id, True)
-#define ItemBoxCompareItem(hwnd, lpcis)      OwnerListCompareItem(hwnd, lpcis, True)
-#define ItemBoxMeasureItem(hwnd, lpcis)      OwnerListMeasureItem(hwnd, lpcis, True)
-#define ItemBoxDrawItem(hwnd, lpdis)         OwnerListDrawItem(hwnd, lpdis, True)
-#define ItemBoxDrawItemNoSelect(hwnd, lpdis) OwnerListDrawItemNoSelect(hwnd, lpdis, True)
+#define ItemBoxAddItem(hwnd, obj, index)     OwnerListAddItem(hwnd, obj, index, true, false)
+#define ItemBoxRemoveItem(hwnd, id)          OwnerListRemoveItem(hwnd, id, true)
+#define ItemBoxSetContents(hwnd, list)       OwnerListSetContents(hwnd, list, true, false)
+#define ItemBoxChangeItem(hwnd, obj)         OwnerListChangeItem(hwnd, obj, true)
+#define ItemBoxFindItem(hwnd, id)            OwnerListFindItem(hwnd, id, true)
+#define ItemBoxFindObject(hwnd, id)          OwnerListFindObject(hwnd, id, true)
+#define ItemBoxCompareItem(hwnd, lpcis)      OwnerListCompareItem(hwnd, lpcis, true)
+#define ItemBoxMeasureItem(hwnd, lpcis)      OwnerListMeasureItem(hwnd, lpcis, true)
+#define ItemBoxDrawItem(hwnd, lpdis)         OwnerListDrawItem(hwnd, lpdis, true)
+#define ItemBoxDrawItemNoSelect(hwnd, lpdis) OwnerListDrawItemNoSelect(hwnd, lpdis, true)
 
 
 M59EXPORT ID ItemListGetId(HWND hList);
 
-M59EXPORT int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan);
-/*M59EXPORT*/ void OwnerListRemoveItem(HWND hwnd, ID id, Bool combo);
-M59EXPORT void OwnerListSetContents(HWND hwnd, list_type contents, Bool combo, Bool quan);
-M59EXPORT void OwnerListChangeItem(HWND hwnd, object_node *obj, Bool combo, Bool quan);
-M59EXPORT object_node *OwnerListFindObject(HWND hList, ID id, Bool combo);
-M59EXPORT int OwnerListFindItem(HWND hList, ID id, Bool combo);
-M59EXPORT int OwnerListCompareItem(HWND hwnd, const COMPAREITEMSTRUCT *lpcis, Bool combo);
-M59EXPORT void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpMeasureItem, Bool combo);
-M59EXPORT BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpDrawItem, Bool combo);
-M59EXPORT BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo);
+M59EXPORT int OwnerListAddItem(HWND hwnd, object_node *obj, int index, bool combo, bool quan);
+/*M59EXPORT*/ void OwnerListRemoveItem(HWND hwnd, ID id, bool combo);
+M59EXPORT void OwnerListSetContents(HWND hwnd, list_type contents, bool combo, bool quan);
+M59EXPORT void OwnerListChangeItem(HWND hwnd, object_node *obj, bool combo, bool quan);
+M59EXPORT object_node *OwnerListFindObject(HWND hList, ID id, bool combo);
+M59EXPORT int OwnerListFindItem(HWND hList, ID id, bool combo);
+M59EXPORT int OwnerListCompareItem(HWND hwnd, const COMPAREITEMSTRUCT *lpcis, bool combo);
+M59EXPORT void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpMeasureItem, bool combo);
+M59EXPORT BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpDrawItem, bool combo);
+M59EXPORT BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, bool combo);
 
 
 #endif /* #ifndef _OWNERDRW_H */

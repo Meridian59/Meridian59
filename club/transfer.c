@@ -22,9 +22,9 @@ static DWORD size;                    // Size of block we're reading
 static int bytes_read;                // Total # of bytes we've read
 
 /************************************************************************/
-Bool TransferStart(void)
+bool TransferStart(void)
 {
-   Bool done;
+   bool done;
    const char *mime_types[2] = { "application/x-zip-compressed", NULL };
    char file_size_buf[20];
    DWORD file_size_buf_len = sizeof(file_size_buf);
@@ -38,7 +38,7 @@ Bool TransferStart(void)
    {
      Error(GetString(hInst, IDS_CANTINIT), GetLastError(), GetLastErrorStr());
      PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-     return False;
+     return false;
    }
 
    hSession = InternetConnect(hConnection, transfer_machine.c_str(), 
@@ -54,7 +54,7 @@ Bool TransferStart(void)
               GetLastError(), GetLastErrorStr());
         InternetCloseHandle(hConnection);
         PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-        return False;
+        return false;
       }
    }
 
@@ -69,7 +69,7 @@ Bool TransferStart(void)
          InternetCloseHandle(hSession);
          InternetCloseHandle(hConnection);
          PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-         return False;
+         return false;
       }
    }
    
@@ -80,7 +80,7 @@ Bool TransferStart(void)
       InternetCloseHandle(hSession);
       InternetCloseHandle(hConnection);
       PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-      return False;
+      return false;
    }
    
    // Get file size
@@ -92,7 +92,7 @@ Bool TransferStart(void)
       InternetCloseHandle(hSession);
       InternetCloseHandle(hConnection);
       PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-      return False;
+      return false;
    }
    
    sscanf(file_size_buf, "%d", &file_size);
@@ -108,11 +108,11 @@ Bool TransferStart(void)
      InternetCloseHandle(hSession);
      InternetCloseHandle(hConnection);
      PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-     return False;
+     return false;
    }
 
    // Read first block
-   done = False;
+   done = false;
    bytes_read = 0;
    while (!done)
    {
@@ -139,7 +139,7 @@ Bool TransferStart(void)
           InternetCloseHandle(hSession);
           InternetCloseHandle(hConnection);
           PostMessage(hwndMain, CM_RETRYABORT, 0, 0);
-          return False;
+          return false;
        }
      }
      
@@ -155,10 +155,10 @@ Bool TransferStart(void)
        InternetCloseHandle(hFile);
        InternetCloseHandle(hSession);
        InternetCloseHandle(hConnection);   
-       done = True;
+       done = true;
      }
    }
    
    PostMessage(hwndMain, CM_DEARCHIVE, 0, 0);
-   return True;
+   return true;
 }

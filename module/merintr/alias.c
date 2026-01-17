@@ -26,7 +26,7 @@ typedef struct
 {
    WORD  key;       // Key to assign alias to
    char  text[MAX_ALIASLEN + 1];      // Text command for alias
-   Bool  cr;        // True iff alias is a self-contained command (add CR to end)
+   bool  cr;        // true iff alias is a self-contained command (add CR to end)
 } HotkeyAlias;
 
 typedef struct
@@ -37,18 +37,18 @@ typedef struct
 
 static HotkeyAlias aliases[] =
 {
-   { VK_F1,   "help",     True, },
-   { VK_F2,   "rest",     True, },
-   { VK_F3,   "stand",    True, },
-   { VK_F4,   "neutral",  True, },
-   { VK_F5,   "happy",    True, },
-   { VK_F6,   "sad",      True, },
-   { VK_F7,   "wry",      True, },
-   { VK_F8,   "wave",     True, },
-   { VK_F9,   "point",    True, },
-   { VK_F10,  "addgroup", True, },
-   { VK_F11,  "mail",     True, },
-   { VK_F12,  "quit",     True, },
+   { VK_F1,   "help",     true, },
+   { VK_F2,   "rest",     true, },
+   { VK_F3,   "stand",    true, },
+   { VK_F4,   "neutral",  true, },
+   { VK_F5,   "happy",    true, },
+   { VK_F6,   "sad",      true, },
+   { VK_F7,   "wry",      true, },
+   { VK_F8,   "wave",     true, },
+   { VK_F9,   "point",    true, },
+   { VK_F10,  "addgroup", true, },
+   { VK_F11,  "mail",     true, },
+   { VK_F12,  "quit",     true, },
 };
 
 static VerbAlias* _apVerbAliases = NULL;
@@ -56,7 +56,7 @@ static int _nVerbAliases = 0;
 static int _nAllocated = 0;
 #define CHUNKSIZE 10
 
-static char* _szDefaultVerbAliases =
+static const char* _szDefaultVerbAliases =
    "chuckle=emote chuckles.\0"
    "giggle=emote giggles.\0"
    "hail=tellguild Hail Guildmembers!\0"
@@ -82,7 +82,7 @@ static HWND hAliasDialog2 = NULL;
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void UpdateKeyTables(int key, WORD command, char *text);
-extern Bool	gbClassicKeys;
+extern bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
 
 /****************************************************************************/
@@ -95,7 +95,7 @@ void AliasInit(void)
    char temp[10];
    char	fullSection[255];
    char	destName[128];
-   char	*srcName;
+   const char *srcName;
    WORD command;
    player_info	*playerInfo;
 
@@ -139,12 +139,12 @@ void AliasInit(void)
       {
 	 command = A_TEXTINSERT;
 	 aliases[i].text[len - 1] = 0;
-	 aliases[i].cr = False;
+	 aliases[i].cr = false;
       }
       else 
       {
 	 command = A_TEXTCOMMAND;
-	 aliases[i].cr = True;
+	 aliases[i].cr = true;
       }
 
       UpdateKeyTables(aliases[i].key, command, aliases[i].text);
@@ -153,8 +153,7 @@ void AliasInit(void)
 
 void CmdAliasInit(void)
 {
-	// Command Aliases
-    char* pVerb;
+    // Command Aliases
     char* pCommand;
     int nAllocated = 1024;
     char* pSection = (char *) SafeMalloc(nAllocated);
@@ -184,10 +183,14 @@ void CmdAliasInit(void)
        }
     }
     
-    pVerb = pSection;
     if (!pSection || !pSection[0])
-       pVerb = _szDefaultVerbAliases;
-    
+    {
+      if (pSection)
+        SafeFree(pSection);
+      pSection = strdup(_szDefaultVerbAliases);
+    }
+
+    char *pVerb = pSection;
     while (*pVerb)
     {
        pCommand = strtok(pVerb, "=");
@@ -438,8 +441,6 @@ BOOL ParseVerbAlias(char* pInput)
 
    pArgs = strtok(pVerb, " \t\r\n");
    pArgs = strtok(NULL, "\r\n");
-   if (!pArgs)
-      pArgs = "";
 
    for (i = 0; i < _nVerbAliases; i++)
    {
@@ -474,18 +475,16 @@ BOOL ParseVerbAlias(char* pInput)
    //
    pVerb = _apVerbAliases[iMatch].text;
    strcpy(accum, pVerb);
+   char* pBefore = pVerb;
+   char* pAfter = strstr(pVerb, "~~");
+   
+   if (pAfter && pArgs && (strlen(pVerb)+strlen(pArgs) < MAXSAY))
    {
-      char* pBefore = pVerb;
-      char* pAfter = strstr(pVerb, "~~");
-
-      if (pAfter && (strlen(pVerb)+strlen(pArgs) < MAXSAY))
-      {
-	 strcpy(accum+(pAfter-pBefore), pArgs);
-	 strcat(accum, pAfter+2);
-	 pVerb = accum;
-      }
+     strcpy(accum+(pAfter-pBefore), pArgs);
+     strcat(accum, pAfter+2);
+     pVerb = accum;
    }
-
+   
    bInvalid = ModuleEvent(EVENT_TEXTCOMMAND, accum);
    if (bInvalid)
       GameMessage(GetString(hInst, IDS_INVALIDALIAS));

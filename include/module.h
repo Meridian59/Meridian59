@@ -32,8 +32,8 @@ typedef struct {
    HPALETTE     hPal;                         // Main palette
    HWND         hToolTips;                    // Tooltip control
    char        *szAppName;                    // Program name
-   Bool        *map;                          // True when map is being drawn (instead of 3D view)
-   Bool        *first_load;                   // True when the FIRST module is loaded
+   bool        *map;                          // True when map is being drawn (instead of 3D view)
+   bool        *first_load;                   // True when the FIRST module is loaded
    BYTE        (*light_palettes)[NUM_PALETTES][NUM_COLORS]; // Palettes at different light levels
    DWORD       *latency;                      // Server latency in milliseconds
 } ClientInfo;

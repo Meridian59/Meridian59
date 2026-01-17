@@ -50,6 +50,7 @@ function_type Functions[] = {
 {"StringEqual",		STRINGEQUAL,	 AEXPRESSION, 	AEXPRESSION,	ANONE},
 {"StringContain",	STRINGCONTAIN,	 AEXPRESSION, 	AEXPRESSION,	ANONE},
 {"StringSubstitute",	STRINGSUBSTITUTE,AEXPRESSION, 	AEXPRESSION,	AEXPRESSION,	ANONE},
+{"BuildString",         BUILDSTRING,     AEXPRESSION,   AEXPRESSIONS,    ANONE},
 {"StringLength",        STRINGLENGTH,    AEXPRESSION,   ANONE},
 {"StringConsistsOf",    STRINGCONSISTSOF,AEXPRESSION,   AEXPRESSION,    ANONE},
 {"CreateTimer",         CREATETIMER,     AEXPRESSION,   AEXPRESSION,    AEXPRESSION, ANONE},
@@ -85,6 +86,7 @@ function_type Functions[] = {
 {"RecycleUser",         RECYCLEUSER,     AEXPRESSION,   ANONE},
 {"MinigameNumberToString", MINIGAMENUMBERTOSTRING,     AEXPRESSION,   AEXPRESSION,   ANONE},
 {"MinigameStringToNumber", MINIGAMESTRINGTONUMBER,     AEXPRESSION,   ANONE},
+{"SendWebhook",         SENDWEBHOOK,     AEXPRESSIONS,   ANONE},
    };
 
 int numfuncs = (sizeof(Functions)/sizeof(function_type));

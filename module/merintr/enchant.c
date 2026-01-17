@@ -41,7 +41,7 @@ static void EnchantmentsMovePlayer(void);
 static void EnchantmentsMoveRoom(void);
 static list_type EnchantmentListDestroy(list_type list);
 static Enchantment *EnchantmentDestroy(Enchantment *e);
-static Bool CompareIdEnchantment(void *idnum, void *e);
+static bool CompareIdEnchantment(void *idnum, void *e);
 static Enchantment *EnchantmentFindByWindow(HWND hwnd);
 static LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 /****************************************************************************/
@@ -222,6 +222,9 @@ void EnchantmentsMovePlayer(void)
 
       x += width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
+      // https://github.com/Meridian59/Meridian59/pull/1337
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /************************************************************************/
@@ -251,6 +254,9 @@ void EnchantmentsMoveRoom(void)
 
       x -= width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
+      // https://github.com/Meridian59/Meridian59/pull/1337
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /****************************************************************************/
@@ -265,7 +271,7 @@ void EnchantmentsNewRoom(void)
 /*
  * EnchantmentDrawItem:  Draw enchantment for given DRAWITEM structure.
  */
-Bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    Enchantment *e;
    AREA area;
@@ -291,9 +297,9 @@ Bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       area.cx = area.cy = ENCHANT_SIZE;
       DrawStretchedObjectGroup(lpdis->hDC, e->obj, e->obj->animate->group, &area, NULL);
 
-      return True;
+      return true;
    }
-   return False;
+   return false;
 }
 /****************************************************************************/
 /*
@@ -324,10 +330,10 @@ Enchantment *EnchantmentDestroy(Enchantment *e)
 }
 /************************************************************************/
 /*
- * CompareIdEnchantment: Compare an id # with an enchantment; return True iff they
+ * CompareIdEnchantment: Compare an id # with an enchantment; return true iff they
  *    have the same id #.
  */
-Bool CompareIdEnchantment(void *idnum, void *e)
+bool CompareIdEnchantment(void *idnum, void *e)
 {
    return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(((Enchantment *) e)->obj->id);
 }
@@ -416,7 +422,7 @@ LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
  */
 void AnimateEnchantments(int dt)
 {
-   Bool need_redraw;
+   bool need_redraw;
    Enchantment *e;
    list_type l;
 

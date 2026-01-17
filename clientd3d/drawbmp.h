@@ -41,10 +41,10 @@ M59EXPORT void OffscreenBitBlt(HDC hdc, int dest_x, int dest_y, int width, int h
 M59EXPORT void OffscreenStretchBlt(HDC hdc, int dest_x, int dest_y, int dest_width, int dest_height,
 			 BYTE *bits, int source_x, int source_y, int source_width, int source_height,
 			 int options);
-M59EXPORT void DrawObject(HDC hdc, object_node *obj, int group, Bool draw_obj, AREA *area, HBRUSH brush,
-			int x, int y, int angle, Bool copy);
-M59EXPORT void DrawObjectIcon(HDC hdc, ID icon, int group, Bool draw_obj, AREA *area, HBRUSH brush,
-			int x, int y, Bool copy);
+M59EXPORT void DrawObject(HDC hdc, object_node *obj, int group, bool draw_obj, AREA *area, HBRUSH brush,
+			int x, int y, int angle, bool copy);
+M59EXPORT void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRUSH brush,
+			int x, int y, bool copy);
 M59EXPORT void OffscreenCopy(HDC hdc, int dest_x, int dest_y, int width, int height, 
 		   int source_x, int source_y);
 

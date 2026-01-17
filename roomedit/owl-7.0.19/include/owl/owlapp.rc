@@ -1,0 +1,20 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Default ObjectWindows application resources
+//----------------------------------------------------------------------------
+
+#include <owl/window.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Default application icons
+//
+IDI_OWLAPP ICON "owl/res/owlapp.ico"
+IDI_OWLAPPSM ICON "owl/res/owlappsm.ico"

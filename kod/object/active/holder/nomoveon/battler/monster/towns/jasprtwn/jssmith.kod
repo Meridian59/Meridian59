@@ -90,7 +90,7 @@ messages:
       propagate;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what = $, who = $)
    {
       if Send(what,@CanBeGiventoNPC)
          AND (Send(Self,@IsObjectWeapon,#what=what)

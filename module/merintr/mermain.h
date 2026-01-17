@@ -14,9 +14,9 @@
 
 // Hold player/game data that's known only in module
 typedef struct {
-   Bool   resting;        // True when player is resting (idle)
+   bool   resting;        // True when player is resting (idle)
    int    vigor;          // Current value of player's vigor stat
-   Bool   aggressive;     // True when people allowed to kill others (safety off)
+   bool   aggressive;     // True when people allowed to kill others (safety off)
 } PInfo;
 
 void InterfaceInit(void);
@@ -24,13 +24,13 @@ void InterfaceExit(void);
 
 void InterfaceResizeModule(int xsize, int ysize, AREA *view);
 void InterfaceRedrawModule(HDC hdc);
-Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 
 void InterfaceFontChanged(WORD font_id, LOGFONT *font);
 void InterfaceColorChanged(WORD color_id, COLORREF color);
 void InterfaceResetData(void);
-Bool InterfaceTab(int control, Bool forward);
-Bool InterfaceAction(int action, void *action_data);
+bool InterfaceTab(int control, bool forward);
+bool InterfaceAction(int action, void *action_data);
 void InterfaceNewRoom(void);
 void InterfaceConfigChanged(void);
 void InterfaceUserChanged(void);
@@ -41,9 +41,6 @@ ID FindPlayerByNameExact(char *name);
 
 extern PInfo pinfo;
 
-#if 0
-#define MAP_INDEX  4                 // Index of "map" command in toolbar list
-#endif
 #define REST_INDEX 3                 // Index of "rest" command in toolbar list
 extern AddButton default_buttons[];  // Toolbar button info
 

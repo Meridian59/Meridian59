@@ -49,7 +49,7 @@ properties:
    
 messages:
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       return TRUE;
    }

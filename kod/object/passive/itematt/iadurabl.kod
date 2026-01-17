@@ -38,7 +38,7 @@ resources:
  
    itematt_durable_name = "well-crafted %s"
    durable_dm = "durable"
-   itematt_durable_desc_1 = "  The craftsmanship of this "
+   itematt_durable_desc_1 = "The craftsmanship of this "
    itematt_durable_desc_2 = " is admirable, obviously the result of hundreds of hours of work by expert hands."
 
 classvars:

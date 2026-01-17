@@ -39,13 +39,13 @@ typedef struct
    list_type bg_overlays; // Overlays to draw on background bitmap
 
    MapAnnotation annotations[MAX_ANNOTATIONS];
-   Bool annotations_changed;  // True when user has changed an annotation in the room
+   bool annotations_changed;  // True when user has changed an annotation in the room
    int  annotations_offset;   // Offset of current room's annotations in map file
 
    DWORD flags;
    DWORD overrideDepth[4];
 } room_type;
 
-Bool AnimateRoom(room_type *room, int dt);
+bool AnimateRoom(room_type *room, int dt);
 
 #endif /* #ifndef _ROOM_H */

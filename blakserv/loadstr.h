@@ -13,6 +13,6 @@
 #ifndef _LOADSTR_H
 #define _LOADSTR_H
 
-Bool LoadBlakodStrings(char *filename);
+bool LoadBlakodStrings(char *filename);
 
 #endif

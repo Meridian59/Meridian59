@@ -25,6 +25,7 @@ BOOL ParseVerbAlias(char *pInput);
 
 void CommandAlias(char *args);
 void CommandVerbAlias(char *args);
+void CommandActionAlias(char *args);
 
 #endif /* #ifndef _ALIAS_H */
 

@@ -57,6 +57,9 @@ static HotkeyAlias aliases[] =
    { '7',     "",         },
    { '8',     "",         },
    { '9',     "",         },
+   { '-',     "",         },
+   { '=',     "",         },
+   { '`',     "",         },
 };
 
 static VerbAlias* _apVerbAliases = NULL;
@@ -86,6 +89,7 @@ extern keymap	gCustomKeys[];
 static HWND hAliasDialog = NULL;
 static HWND hAliasDialog1 = NULL;
 static HWND hAliasDialog2 = NULL;
+static bool bShowingFKeys = true;
 
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -136,14 +140,14 @@ void AliasInit(void)
    for (i = 0; i < NUM_ALIASES; i++)
    {
       // Read function key aliases
-      bool isFKey = (aliases[i].key >= VK_F1 && aliases[i].key <= VK_F12);
+      bool isFKey = (i < NUM_FKEYS);
       if (isFKey)
       {
-         sprintf(temp, "F%d", aliases[i].key - VK_F1 + 1);
+         sprintf(temp, "F%d", i+1);
       }
       else 
       {
-         sprintf(temp, "action%d", aliases[i].key - '0' + 1);
+         sprintf(temp, "action%d", i+1 - NUM_FKEYS);
       }
 
       GetPrivateProfileString(fullSection, temp, aliases[i].text, aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
@@ -250,14 +254,14 @@ void AliasSave(void)
    for (i = 0; i < NUM_ALIASES; i++)
    {
       // Save function key aliases
-      bool isFKey = (aliases[i].key >= VK_F1 && aliases[i].key <= VK_F12);
+      bool isFKey = (i < NUM_FKEYS);
       if (isFKey)
       {
-         sprintf(temp, "F%d", aliases[i].key - VK_F1 + 1);
+         sprintf(temp, "F%d", i+1);
       }
       else
       {
-         sprintf(temp, "action%d", aliases[i].key - '0' + 1);
+         sprintf(temp, "action%d", i+1 - NUM_FKEYS);
       }
 
       command = A_TEXTCOMMANDALIAS_START + i;
@@ -531,44 +535,115 @@ void CommandVerbAlias(char *args)
 }
 void CommandAlias(char *args)
 {
+   bShowingFKeys = true;
    CommandAliasCommon(args, AliasDialogProc, IDD_ALIAS);
 }
+void CommandActionAlias(char *args)
+{
+   bShowingFKeys = false;
+   CommandAliasCommon(args, AliasDialogProc, IDD_ALIAS);
+}
+
+void UpdateActionAlias(HWND hDlg, bool isFKey, int controlIndex, int aliasIndex)
+{
+   int controlID = IDC_ALIAS_ACTION1 + controlIndex;
+   int checkID = IDC_CHECK_ACTION1 + controlIndex;
+   int textID = IDC_ALIAS_ACTIONTEXT1 + controlIndex;
+
+   HotkeyAlias &alias = aliases[aliasIndex];
+
+   // Strip off the '~' for display purposes
+   char temp[MAX_ALIASLEN + 1];
+   bool cr = true;
+   strcpy(temp, alias.text);
+   if (alias.text[strlen(alias.text) - 1] == '~')
+   {
+      cr = false;
+      temp[strlen(alias.text) - 1] = '\0';
+   }
+
+   // Set the label text
+   char label[32];
+   if(isFKey)
+      sprintf(label, "F%d", controlIndex + 1);
+   else
+      sprintf(label, "Action %d", controlIndex + 1);
+   HWND hText = GetDlgItem(hDlg, textID);
+   SetWindowText(hText, label);
+   
+   // Set the text of the editable control
+   HWND hEdit = GetDlgItem(hDlg, controlID);
+   SetWindowText(hEdit, temp);
+   Edit_LimitText(hEdit, MAX_ALIASLEN - 1);
+   SetWindowFont(hEdit, GetFont(FONT_LIST), FALSE);
+
+   // Set the checkbox state
+   CheckDlgButton(hDlg, checkID, cr);
+}
+
+void ReadActionAlias(HWND hDlg, bool isFKey, int controlIndex, int aliasIndex)
+{
+   int controlID = IDC_ALIAS_ACTION1 + controlIndex;
+   int checkID = IDC_CHECK_ACTION1 + controlIndex;
+
+   HotkeyAlias &alias = aliases[aliasIndex];
+
+   GetDlgItemText(hDlg, controlID, alias.text, MAX_ALIASLEN - 1);
+   if (!IsDlgButtonChecked(hDlg, checkID))
+   {
+      alias.text[strlen(alias.text)] = '~';
+   }
+
+   WORD command = A_TEXTCOMMANDALIAS_START + aliasIndex;
+   AliasSetCommand(interface_key_table, command, alias.text);
+   AliasSetCommand(inventory_key_table, command, alias.text);
+}
+
 /*****************************************************************************/
 /*
  * AliasDialogProc:  Dialog procedure for alias dialog.
  */
 INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-   int i;
-   HWND hEdit;
-   WORD command;
-
    switch (message)
    {
    case WM_INITDIALOG:
       // Show current aliases
-      for (i = 0; i < NUM_ALIASES; i++)
+      if (bShowingFKeys)
       {
-         int controlID = (i < NUM_FKEYS) ? (IDC_ALIASF1 + i) : (IDC_ALIAS_ACTION1 + (i - NUM_FKEYS));
-         int checkID = (i < NUM_FKEYS) ? (IDC_CHECK_F1 + i) : (IDC_CHECK_ACTION1 + (i - NUM_FKEYS));
+         // TODO: Set window caption and action type
+         SetWindowText(hDlg, "Hotkey Aliases");
 
-         hEdit = GetDlgItem(hDlg, controlID);
+         HWND hType = GetDlgItem(hDlg, IDC_ALIAS_ACTIONTYPE);
+         SetWindowText(hType, "Key:");
 
-         // Strip off the '~' for display purposes
-         char temp[MAX_ALIASLEN + 1];
-         bool cr = true;
-         strcpy(temp, aliases[i].text);
-         if (aliases[i].text[strlen(aliases[i].text) - 1] == '~')
+         // TODO: Show "Command Aliases" button
+
+         // Update all F-keys
+         int controlIndex = 0;
+         for (int i = 0; i < NUM_FKEYS; ++i)
          {
-            cr = false;
-            temp[strlen(aliases[i].text) - 1] = '\0';
+            UpdateActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+            ++controlIndex;
          }
-         SetWindowText(hEdit, temp);
+      }
+      else
+      {
+         // TODO: Set window caption and action type
+         SetWindowText(hDlg, "Action Aliases");
 
-         Edit_LimitText(hEdit, MAX_ALIASLEN - 1);
-         SetWindowFont(hEdit, GetFont(FONT_LIST), FALSE);
+         HWND hType = GetDlgItem(hDlg, IDC_ALIAS_ACTIONTYPE);
+         SetWindowText(hType, "Action:");
 
-         CheckDlgButton(hDlg, checkID, cr);
+         // TODO: Hide "Command Aliases" button
+
+         // Update all action keys
+         int controlIndex = 0;
+         for (int i = NUM_FKEYS; i < NUM_ALIASES; ++i)
+         {
+            UpdateActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+            ++controlIndex;
+         }
       }
 
       hAliasDialog = hDlg;
@@ -578,24 +653,28 @@ INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
       CenterWindow(hDlg, GetParent(hDlg));
       return TRUE;
-
    case WM_COMMAND:
       switch (GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDOK:
          // Read aliases
-         for (i = 0; i < NUM_ALIASES; i++)
+         if (bShowingFKeys)
          {
-            int controlID = (i < NUM_FKEYS) ? (IDC_ALIASF1 + i) : (IDC_ALIAS_ACTION1 + (i - NUM_FKEYS));
-            int checkID = (i < NUM_FKEYS) ? (IDC_CHECK_F1 + i) : (IDC_CHECK_ACTION1 + (i - NUM_FKEYS));
-            GetDlgItemText(hDlg, controlID, aliases[i].text, MAX_ALIASLEN - 1);
-            if (!IsDlgButtonChecked(hDlg, checkID))
+            int controlIndex = 0;
+            for(int i=0; i<NUM_FKEYS; i++)
             {
-               aliases[i].text[strlen(aliases[i].text)] = '~';
+               ReadActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+               ++controlIndex;
             }
-            command = A_TEXTCOMMANDALIAS_START + i;
-            AliasSetCommand(interface_key_table, command, aliases[i].text);
-            AliasSetCommand(inventory_key_table, command, aliases[i].text);
+         }
+         else
+         {
+            int controlIndex = 0;
+            for(int i=NUM_FKEYS; i<NUM_ALIASES; i++)
+            {
+               ReadActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+               ++controlIndex;
+            }
          }
 
          EndDialog(hDlg, IDOK);

@@ -643,7 +643,8 @@
 #define IDC_ANNOTATION_ZOOM_LIMIT       3653
 #define IDS_ACTION                      3654
 #define IDD_ACTIONS                     3655
-#define IDC_ACTION1                     3656  // First action of 10, keep these in sequence
+
+#define IDC_ACTION1                     3656  // First action of 12, keep these in sequence
 #define IDC_ACTION2                     3657
 #define IDC_ACTION3                     3658
 #define IDC_ACTION4                     3659
@@ -653,16 +654,23 @@
 #define IDC_ACTION8                     3663
 #define IDC_ACTION9                     3664
 #define IDC_ACTION10                    3665
-#define IDC_ACTION1_MOD                 3666
-#define IDC_ACTION2_MOD                 3667
-#define IDC_ACTION3_MOD                 3668
-#define IDC_ACTION4_MOD                 3669
-#define IDC_ACTION5_MOD                 3670
-#define IDC_ACTION6_MOD                 3671
-#define IDC_ACTION7_MOD                 3672
-#define IDC_ACTION8_MOD                 3673
-#define IDC_ACTION9_MOD                 3674
-#define IDC_ACTION10_MOD                3675
+#define IDC_ACTION11                    3666
+#define IDC_ACTION12                    3667
+
+#define IDC_ACTION1_MOD                 3668  // First action modifier of 12, keep these in sequence
+#define IDC_ACTION2_MOD                 3669
+#define IDC_ACTION3_MOD                 3670
+#define IDC_ACTION4_MOD                 3671
+#define IDC_ACTION5_MOD                 3672
+#define IDC_ACTION6_MOD                 3673
+#define IDC_ACTION7_MOD                 3674
+#define IDC_ACTION8_MOD                 3675
+#define IDC_ACTION9_MOD                 3676
+#define IDC_ACTION10_MOD                3677
+#define IDC_ACTION11_MOD                3678
+#define IDC_ACTION12_MOD                3679
+
+#define IDC_ACTIONALIASSETTINGS         3680
 
 // Next default values for new objects
 // 

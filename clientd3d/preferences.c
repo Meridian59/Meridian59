@@ -1689,6 +1689,12 @@ static INT_PTR CALLBACK ActionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
 
    case WM_COMMAND: {
       WORD low = LOWORD(wParam);
+      if(low == IDC_ACTIONALIASSETTINGS)
+      {
+         // Open the Action Aliases settings dialog
+         ModuleEvent(EVENT_TEXTCOMMAND, "actionalias");
+         return (INT_PTR) TRUE;
+      }
       for (int i = 0; i < MAX_ACTION_KEYS; ++i)
       {
          if(low == IDC_ACTION1 + i)

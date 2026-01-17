@@ -57,7 +57,7 @@
 #define STATS_BOTTOM_GAP_HEIGHT	2
 
 // Number of configurable command aliases
-#define NUM_ALIASES 22
+#define NUM_ALIASES 24
 #define MAX_ALIASLEN 100  // Maximum length of an alias command
 
 /* List of actions that can be taken by user */

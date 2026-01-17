@@ -343,6 +343,7 @@ static TypedCommand commands[] = {
 { "tguild",      CommandTellGuild, },
 { "safetyon",    CommandSafetyOn, },
 { "safetyoff",   CommandSafetyOff, },
+{ "actionalias", CommandActionAlias, },
 { NULL,          NULL},    // Must end table this way
 };
 
@@ -554,6 +555,8 @@ keymap	gCustomKeys[] =
    {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+19, NULL},
    {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+20, NULL},
    {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+21, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+22, NULL},
+   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+23, NULL},
 
 	// end
 	{0, 0, 0},

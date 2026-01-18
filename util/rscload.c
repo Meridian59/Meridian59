@@ -8,16 +8,16 @@
 
 static const int RSC_VERSION = 4;
 static const int MAX_RSC_LEN = 20000;
-static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
+static const char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
-static bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback);
+static bool RscFileRead(const char *fname, FILE *f, RscCallbackProc callback);
 /***************************************************************************/
 /*
  * RscFileLoad:  Open the given rsc file, and call the callback procedure
  *   for each resource in the file.
  *   Return true iff every resource in the file is passed to the callback, false otherwise.
  */
-bool RscFileLoad(char *fname, RscCallbackProc callback)
+bool RscFileLoad(const char *fname, RscCallbackProc callback)
 {
    FILE *f;
 
@@ -36,7 +36,7 @@ bool RscFileLoad(char *fname, RscCallbackProc callback)
 /*
  * RscFileRead:  Do real work of RscFileLoad.
  */
-bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback)
+bool RscFileRead(const char *fname, FILE *f, RscCallbackProc callback)
 {
    int i, num_resources, version, rsc_num;
    unsigned char byte;

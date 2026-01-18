@@ -78,7 +78,7 @@ messages:
       propagate;
    }
 
-   GetStateValue(iSpellpower=$)
+   InitializeEnchantmentState(iSpellpower=$)
    {
       return iSpellpower;
    }

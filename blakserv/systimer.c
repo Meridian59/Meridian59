@@ -68,7 +68,7 @@ void CreateSysTimer(int type,int time,int period)
    st->systimer_type = type;
    st->time = time;
    st->period = period;
-   st->enabled = True;
+   st->enabled = true;
    st->next = NULL;
 
    now = GetTime();
@@ -187,7 +187,7 @@ void ForEachSysTimer(void (*callback_func)(systimer_node *st))
    }
 }
 
-Bool DisableSysTimer(int systimer_type)
+bool DisableSysTimer(int systimer_type)
 {
    systimer_node *st;
 
@@ -197,15 +197,15 @@ Bool DisableSysTimer(int systimer_type)
    {
       if (st->systimer_type == systimer_type)
       {
-	 st->enabled = False;
-	 return True;
+	 st->enabled = false;
+	 return true;
       }
       st = st->next;
    }
-   return False;
+   return false;
 }
 
-Bool EnableSysTimer(int systimer_type)
+bool EnableSysTimer(int systimer_type)
 {
    systimer_node *st;
 
@@ -215,10 +215,10 @@ Bool EnableSysTimer(int systimer_type)
    {
       if (st->systimer_type == systimer_type)
       {
-	 st->enabled = True;
-	 return True;
+	 st->enabled = true;
+	 return true;
       }
       st = st->next;
    }
-   return False;
+   return false;
 }

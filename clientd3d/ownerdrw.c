@@ -27,7 +27,7 @@
 
 static HIMAGELIST g_hImageList = NULL;
 
-static void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo);
+static void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo);
 /*****************************************************************************/
 /*
  * WindowBeginUpdate:  Turn off redrawing for a list box so that it won't
@@ -54,7 +54,7 @@ void WindowEndUpdate(HWND hwnd)
  * NOTE: All the procedures below are meant to work on either owner-drawn list
  *       boxes or owner-drawn combo boxes, because the code is virtually identical
  *       except for Windows messages.  The last parameter to each function is 
- *       True for combo boxes, and False for list boxes.
+ *       true for combo boxes, and false for list boxes.
  */
 /*****************************************************************************/
 
@@ -66,7 +66,7 @@ void WindowEndUpdate(HWND hwnd)
  *   if the list is sorted, the object is added in sorted order.
  *   Returns index of added item.
  */
-int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool quan)
+int OwnerListAddItem(HWND hwnd, object_node *obj, int index, bool combo, bool quan)
 {
    std::string raritySuffix;
    std::string nameWithSuffix;
@@ -113,7 +113,7 @@ int OwnerListAddItem(HWND hwnd, object_node *obj, int index, Bool combo, Bool qu
  * OwnerListSetContents:  Set the list box's contents to the items in the given
  *   list.  Calls WindowBegin/EndUpdate to prevent flashing.
  */
-void OwnerListSetContents(HWND hwnd, list_type contents, Bool combo, Bool quan)
+void OwnerListSetContents(HWND hwnd, list_type contents, bool combo, bool quan)
 {
    list_type l;
 
@@ -127,7 +127,7 @@ void OwnerListSetContents(HWND hwnd, list_type contents, Bool combo, Bool quan)
 /*
  * OwnerListRemoveItem:  Remove the item from the list if it's there.
  */
-void OwnerListRemoveItem(HWND hList, ID id, Bool combo)
+void OwnerListRemoveItem(HWND hList, ID id, bool combo)
 {
    int i, num_items = combo ? ComboBox_GetCount(hList) : ListBox_GetCount(hList);
    object_node *obj;
@@ -152,7 +152,7 @@ void OwnerListRemoveItem(HWND hList, ID id, Bool combo)
  * OwnerListFindItem:  Return the index of the object with the given id in the
  *   given list box, or -1 if it's not there.
  */
-int OwnerListFindItem(HWND hList, ID id, Bool combo)
+int OwnerListFindItem(HWND hList, ID id, bool combo)
 {
    int i, num_items = combo ? ComboBox_GetCount(hList) : ListBox_GetCount(hList);
    object_node *obj;
@@ -172,7 +172,7 @@ int OwnerListFindItem(HWND hList, ID id, Bool combo)
  * OwnerListChangeItem:  Change attributes of given object in item list.
  *   We should reset icon & name string of the item in the list.
  */
-void OwnerListChangeItem(HWND hwnd, object_node *obj, Bool combo, Bool quan)
+void OwnerListChangeItem(HWND hwnd, object_node *obj, bool combo, bool quan)
 {
    int index;
 
@@ -188,7 +188,7 @@ void OwnerListChangeItem(HWND hwnd, object_node *obj, Bool combo, Bool quan)
  * OwnerListFindObject:  Return the object with the given id in the
  *   given list box, or NULL if it's not there.
  */
-object_node *OwnerListFindObject(HWND hList, ID id, Bool combo)
+object_node *OwnerListFindObject(HWND hList, ID id, bool combo)
 {
    int i, num_items = combo ? ComboBox_GetCount(hList) : ListBox_GetCount(hList);
    object_node *obj;
@@ -229,7 +229,7 @@ ID ItemListGetId(HWND hList)
 /* 
  * OwnerListCompareItem:  Message handler for item list boxes.
  */
-int OwnerListCompareItem(HWND hwnd, const COMPAREITEMSTRUCT *lpcis, Bool combo)
+int OwnerListCompareItem(HWND hwnd, const COMPAREITEMSTRUCT *lpcis, bool combo)
 {
    char buf1[MAXNAME], buf2[MAXNAME];
    
@@ -250,7 +250,7 @@ int OwnerListCompareItem(HWND hwnd, const COMPAREITEMSTRUCT *lpcis, Bool combo)
 /* 
  * OwnerListMeasureItem:  Message handler for item list boxes.
  */
-void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, Bool combo)
+void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, bool combo)
 {
    int style, height;
 
@@ -271,7 +271,7 @@ void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, Bool combo)
  * OwnerListDrawItem:  Message handler for item list boxes.  Return TRUE iff
  *   message is handled.
  */
-BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
+BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, bool combo)
 {
   int iOldCaretItem = (intptr_t)GetProp(lpdis->hwndItem, "Caret");
   int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
@@ -285,7 +285,7 @@ BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
    {
    case ODA_SELECT:
    case ODA_DRAWENTIRE:
-      DrawOwnerListItem(lpdis, (Bool) (lpdis->itemState & ODS_SELECTED), combo);
+      DrawOwnerListItem(lpdis, (bool) (lpdis->itemState & ODS_SELECTED), combo);
       break;
 
    case ODA_FOCUS:
@@ -302,7 +302,7 @@ BOOL OwnerListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
  *   Doesn't draw selected objects differently from unselected ones, essentially
  *   disabling selections.
  */
-BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool combo)
+BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, bool combo)
 {
   int iOldCaretItem = (intptr_t)GetProp(lpdis->hwndItem, "Caret");
   int iNewCaretItem = SendMessage(lpdis->hwndItem, LB_GETCARETINDEX, 0, 0L);
@@ -316,7 +316,7 @@ BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool comb
    {
    case ODA_SELECT:
    case ODA_DRAWENTIRE:
-      DrawOwnerListItem(lpdis, False, combo);
+      DrawOwnerListItem(lpdis, false, combo);
       break;
 
    case ODA_FOCUS:
@@ -330,11 +330,11 @@ BOOL OwnerListDrawItemNoSelect(HWND hwnd, const DRAWITEMSTRUCT *lpdis, Bool comb
 /*
  * DrawOwnerListItem:  Draw an owner-draw list item, not including selection
  *   or focus.
- *   The item is drawn selected iff selected is True.
+ *   The item is drawn selected iff selected is true.
  *   (lpdis doesn't determine selection so that OwnerListDrawItemNoSelect can
  *    force item to be drawn without selection.)
  */
-void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
+void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
 {
    char buf[MAXNAME];
    object_node *obj;

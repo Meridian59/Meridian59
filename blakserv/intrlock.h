@@ -16,11 +16,11 @@
 void InitInterfaceLocks(void);
 
 void EnterServerLock(void);
-Bool TryEnterServerLock(void);
+bool TryEnterServerLock(void);
 void LeaveServerLock(void);
 
 void SetQuit(void);
-Bool GetQuit(void);
+bool GetQuit(void);
 
 void SignalSession(int session_id);
 

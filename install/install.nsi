@@ -127,15 +127,11 @@ Section "Meridian 59 (required)"
   SetOutPath $INSTDIR
 
   ; Put executable files there
-  File "${SOURCEDIR}\archive.dll"
   File "${SOURCEDIR}\club.exe"
   File "${SOURCEDIR}\heidelb1.ttf"
   File "${SOURCEDIR}\license.rtf"
   File "${SOURCEDIR}\meridian.exe"
-  File "${SOURCEDIR}\mss32.dll"
-  File "${SOURCEDIR}\mss32midi.dll"
-  File "${SOURCEDIR}\mssmp3.asi"
-  File "${SOURCEDIR}\waveplay.dll"
+  File "${SOURCEDIR}\OpenAL32.dll"
   File "${SOURCEDIR}\zlib1.dll"
 
   File "${SOURCEDIR}\BsSndRpt.exe"

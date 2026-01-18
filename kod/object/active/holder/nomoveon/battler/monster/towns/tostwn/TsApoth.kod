@@ -63,7 +63,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if send(self,@IsObjectReagent,#what=what)
          AND NOT send(self,@IsObjectGem,#what=what)

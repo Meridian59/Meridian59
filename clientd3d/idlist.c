@@ -26,7 +26,7 @@ IDList IDListDelete(IDList id_list)
 /*
  * IDListMember:  Return True iff given name resource is a member of the id list.
  */
-Bool IDListMember(IDList id_list, ID name_res)
+bool IDListMember(IDList id_list, ID name_res)
 {
    return (list_find_item(id_list, (void *) name_res, CompareId) != NULL);
 }

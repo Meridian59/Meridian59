@@ -79,7 +79,7 @@ typedef struct {
 
 // Structure used for drawing objects and projectiles
 typedef struct {
-   Bool draw;                  /* True if object is drawn; false if visible but not drawn */
+   bool draw;                  /* True if object is drawn; false if visible but not drawn */
    ID   id;                    /* object's ID number, or INVALID_ID if a projectile */
    long distance;              /* Distance to object */
    long angle;                 /* Angle object is facing */
@@ -96,11 +96,11 @@ typedef struct {
    room_contents_node *obj;    // Pointer to room_contents_node for object
 } DrawnObject;
 
-Bool InitializeGraphics3D(void);
+bool InitializeGraphics3D(void);
 void CloseGraphics3D(void);
 void ViewElementsReposition( AREA* pAreaView );
 void GraphicsResetFont(void);
-void RecopyRoom3D( HDC hdc, int x, int y, int width, int height, Bool bMiniMap );
+void RecopyRoom3D(HDC hdc, int x, int y, int width, int height, bool bMiniMap);
 void SetLightingInfo(int sun_x, int sun_y, BYTE intensity);
 
 int  DiscreteLog(int x);

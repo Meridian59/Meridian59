@@ -14,7 +14,7 @@
 #define _ROOFILE_H
 
 
-Bool BSPRooFileLoadServer(char *fname, room_type *room);
+bool BSPRooFileLoadServer(char *fname, room_type *room);
 void BSPRoomFreeServer(room_type *room);
 
 #endif

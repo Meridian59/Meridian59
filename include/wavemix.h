@@ -64,7 +64,7 @@ UINT		WINAPI WaveMixActivate(HANDLE hMixSession, BOOL fActivate);
 #define WMIX_FILE			0x0001
 #define WMIX_RESOURCE	0x0002
 #define WMIX_MEMORY		0x0004
-LPMIXWAVE	WINAPI WaveMixOpenWave(HANDLE hMixSession, LPSTR szWaveFilename, HINSTANCE hInst, DWORD dwFlags, int volume);
+LPMIXWAVE	WINAPI WaveMixOpenWave(HANDLE hMixSession, LPCSTR szWaveFilename, HINSTANCE hInst, DWORD dwFlags, int volume);
 
 #define WMIX_OPENSINGLE 0	/* open the single channel specified by iChannel */
 #define WMIX_OPENALL 1 /* opens all the channels, iChannel ignored */

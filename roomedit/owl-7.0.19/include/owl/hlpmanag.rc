@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1998 by Yura Bidus, All Rights Reserved
+//
+// Resources for THelpManager
+//----------------------------------------------------------------------------
+
+#include <owl/hlpmanag.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Context sensitive help cursor
+//
+IDC_HELPCURSOR CURSOR "owl/res/help.cur"
+
+IDM_WHAT_IS_THIS MENU
+{
+  MENUITEM "What's this?", CM_WHAT_IS_THIS
+}
+
+// Help hints displayed in the status bar
+//
+STRINGTABLE
+{
+  CM_CONTEXTHELP, "\nWhat's This?"
+  CM_WHAT_IS_THIS, "Get help on specified item\nWhat's This?"
+}

@@ -36,7 +36,7 @@ void EffectsExit(void)
 
 /****************************************************************************/
 
-Bool IsBlind()
+bool IsBlind()
 {
    if (effects.blind)
       return TRUE;
@@ -48,9 +48,9 @@ Bool IsBlind()
 /*
  * PerformEffect:  Perform given effect #.  Ptr and len are extra bytes from
  *   server message; their interpretation depends on the particular effect.
- *   Return True iff ptr and len are correct for given effect type.
+ *   Return true iff ptr and len are correct for given effect type.
  */
-Bool PerformEffect(WORD effect, char *ptr, int len)
+bool PerformEffect(WORD effect, char *ptr, int len)
 {
    int duration, xlat;
    char *start = ptr;
@@ -73,36 +73,36 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
       break;
 
    case EFFECT_PARALYZE:
-      effects.paralyzed = True;
+      effects.paralyzed = true;
       break;
 
    case EFFECT_RELEASE:
-      effects.paralyzed = False;
+      effects.paralyzed = false;
       break;
 
    case EFFECT_BLIND:
-      effects.blind = True;
+      effects.blind = true;
       RedrawAll();
       break;
 
    case EFFECT_SEE:
-      effects.blind = False;
+      effects.blind = false;
       RedrawAll();
       break;
 
    case EFFECT_RAINING:
-	  effects.raining = True;
+	  effects.raining = true;
 	  RedrawAll();
 	  break;
 
    case EFFECT_SNOWING:
-	  effects.snowing = True;
+	  effects.snowing = true;
 	  RedrawAll();
 	  break;
 
    case EFFECT_CLEARWEATHER:
-	  effects.raining = False;
-	  effects.snowing = False;
+	  effects.raining = false;
+	  effects.snowing = false;
 	  RedrawAll();
 	  break;
 
@@ -156,24 +156,24 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
 	  break;
 
    case EFFECT_SAND:
-	  effects.sand = True;
+	  effects.sand = true;
 	  RedrawAll();
 	  break;
 
    case EFFECT_CLEARSAND:
-	  effects.sand = False;
+	  effects.sand = false;
 	  RedrawAll();
 	  break;
 
    default:
       debug(("PerformEffect got unknown effect type %d\n", effect));
-      return False;
+      return false;
    }
    
    len -= (ptr - start);
    if (len == 0)
-      return True;
-   return False;
+      return true;
+   return false;
 }
 
 /****************************************************************************/
@@ -214,45 +214,45 @@ void EffectShake(void)
  * AnimateEffects: Animate special effects
  *   dt is number of milliseconds since last time animation timer went off.
  */
-Bool AnimateEffects(int dt)
+bool AnimateEffects(int dt)
 {
-   Bool bRedraw = False;
+   bool bRedraw = false;
 
    if (effects.blur > 0)
    {
       effects.blur = max(0, effects.blur - dt);
-      bRedraw = True;
+      bRedraw = true;
    }
 
    if (effects.waver > 0)
    {
       effects.waver = max(0, effects.waver - dt);
-      bRedraw = True;
+      bRedraw = true;
    }
 
    if (effects.pain > 0)
    {
       effects.pain = max(0, effects.pain - dt);
-      bRedraw = True;
+      bRedraw = true;
    }
 
    if (effects.whiteout > 0)
    {
       effects.whiteout = max(0, effects.whiteout - dt);
-      bRedraw = True;
+      bRedraw = true;
    }
 
    if (effects.invert > 0)
    {
       effects.invert = max(0, effects.invert - dt);
-      bRedraw = True;
+      bRedraw = true;
    }
 
    if (effects.shake > 0)
    {
       effects.shake = max(0, effects.shake - dt);
       EffectShake();
-      bRedraw = True;
+      bRedraw = true;
    }
 
    return bRedraw;

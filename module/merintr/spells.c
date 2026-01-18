@@ -185,8 +185,8 @@ char *GetSpellName(char *str, char **next)
    // checks on unquoted ambiguous words.
 
    char *ptr, *retval;
-   Bool quoted = False;
-   Bool ambiguous = False;
+   bool quoted = false;
+   bool ambiguous = false;
 
    if (str == NULL)
       return NULL;
@@ -201,7 +201,7 @@ char *GetSpellName(char *str, char **next)
    // See if name is quoted
    if (*str == '\"')
    {
-      quoted = True;
+      quoted = true;
       retval = str + 1;
    }
    else retval = str;
@@ -275,11 +275,11 @@ spell *FindSpellByName(char *name)
    list_type l;
    spell *sp, *best_spell;
    int match, max_match;
-   Bool tied;            // True if a different spell matches as well as best_spell
+   bool tied;            // true if a different spell matches as well as best_spell
    char *ptr, *spell_name;
 
    max_match = 0;
-   tied = False;
+   tied = false;
    for (l = spells; l != NULL; l = l->next)
    {
       sp = (spell *) (l->data);
@@ -309,10 +309,10 @@ spell *FindSpellByName(char *name)
       {
 	 max_match = match;
 	 best_spell = sp;
-	 tied = False;
+	 tied = false;
       }
       else if (match == max_match)
-	 tied = True;
+	 tied = true;
    }
 
    

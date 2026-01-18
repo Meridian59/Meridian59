@@ -15,7 +15,7 @@
 void MapFileInitialize(void);
 void MapFileClose(void);
 
-Bool MapFileLoadRoom(room_type *room);
-Bool MapFileSaveRoom(room_type *room);
+bool MapFileLoadRoom(room_type *room);
+bool MapFileSaveRoom(room_type *room);
 
 #endif /* #ifndef _MAPFILE_H */

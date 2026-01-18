@@ -18,8 +18,8 @@ BOOL bg_overlayVisible;
 
 extern room_type current_room;
 
-static Bool CompareBackgroundOverlays(void *b1, void *b2);
-static Bool CompareBackgroundOverlayId(void *id, void *b1);
+static bool CompareBackgroundOverlays(void *b1, void *b2);
+static bool CompareBackgroundOverlayId(void *id, void *b1);
 /********************************************************************/
 void BackgroundOverlaysReset(void)
 {
@@ -85,7 +85,7 @@ void BackgroundOverlayChange(BackgroundOverlay *overlay)
  * CompareBackgroundOverlays: Compare two background overlays; return True iff they
  *    have the same id #.
  */
-Bool CompareBackgroundOverlays(void *b1, void *b2)
+bool CompareBackgroundOverlays(void *b1, void *b2)
 {
    return ((BackgroundOverlay *) b1)->obj.id == ((BackgroundOverlay *) b2)->obj.id;
 }
@@ -94,7 +94,7 @@ Bool CompareBackgroundOverlays(void *b1, void *b2)
  * CompareBackgroundOverlayId: Compare a background overlay and an ID; return True iff they
  *    have the same id #.
  */
-Bool CompareBackgroundOverlayId(void *id, void *b1)
+bool CompareBackgroundOverlayId(void *id, void *b1)
 {
    return ((BackgroundOverlay *) b1)->obj.id == reinterpret_cast<std::intptr_t>(id);
 }

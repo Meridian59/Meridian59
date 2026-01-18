@@ -52,7 +52,7 @@ enum { UNSEL_FGD, UNSEL_BGD, SEL_FGD, SEL_BGD };
 // Turn normal RGB color into palette-relative RGB color
 #define MAKEPALETTERGB(c) ((c) | 0x02000000)
 
-void ColorsCreate(Bool use_defaults);
+void ColorsCreate(bool use_defaults);
 void ColorsDestroy(void);
 M59EXPORT COLORREF GetColor(WORD color);
 M59EXPORT HBRUSH GetBrush(WORD color);

@@ -25,22 +25,22 @@
 
 static Table *t;      /* Hash table of all resources loaded in */
 
-static char resource_dir[] = "resource";
-static char room_dir[] = "resource";
-static char rsb_spec[] = "*.rsb";
-static char rsc_spec[] = "*.rsc";
+static const char resource_dir[] = "resource";
+static const char room_dir[] = "resource";
+static const char rsb_spec[] = "*.rsb";
+static const char rsc_spec[] = "*.rsc";
 
-static Bool ignore_duplicates;  // Don't complain about duplicate rscs when True
+static bool ignore_duplicates;  // Don't complain about duplicate rscs when true
 
 /* local function prototypes */
 static DWORD ResourceHash(void *resource, DWORD tablesize);
-static Bool  ResourceCompare(void *r1, void *r2);
+static bool  ResourceCompare(void *r1, void *r2);
 static DWORD IdHash(void *idnum, DWORD tablesize);
-static Bool  IdResourceCompare(void *idnum, void *r1);
+static bool  IdResourceCompare(void *idnum, void *r1);
 static void  FreeRsc(void *entry);
-static bool  RscAddCallback(char *fname, int res, char *string);
-static Bool  LoadRscFiles(char *filespec);
-static Bool  LoadRscFilesSorted(char *filespec);
+static bool  RscAddCallback(const char *fname, int res, const char *string);
+static bool  LoadRscFiles(const char *filespec);
+static bool  LoadRscFilesSorted(const char *filespec);
 /******************************************************************************/
 /*
 * GetString:  Load and return resource string with given resource identifier.
@@ -65,9 +65,9 @@ DWORD IdHash(void *idnum, DWORD tablesize)
 	return *((ID *) idnum) % tablesize;
 }
 /******************************************************************************/
-Bool IdResourceCompare(void *idnum, void *r1)
+bool IdResourceCompare(void *idnum, void *r1)
 {
-	return (Bool) (*((ID *) idnum) == ((resource_type) r1)->idnum);
+	return (*((ID *) idnum) == ((resource_type) r1)->idnum);
 }
 /******************************************************************************/
 DWORD ResourceHash(void *resource, DWORD tablesize)
@@ -75,9 +75,9 @@ DWORD ResourceHash(void *resource, DWORD tablesize)
 	return (((resource_type) resource)->idnum) % tablesize;
 }
 /******************************************************************************/
-Bool ResourceCompare(void *r1, void *r2)
+bool ResourceCompare(void *r1, void *r2)
 {
-	return (Bool) (((resource_type) r1)->idnum == ((resource_type) r2)->idnum);
+	return (((resource_type) r1)->idnum == ((resource_type) r2)->idnum);
 }
 /******************************************************************************/
 /*
@@ -90,16 +90,16 @@ int CompareFilenames(void *f1, void *f2)
 /******************************************************************************/
 /*
 * LoadResources: Load all resources into a newly allocated table.
-*   Return True on success, False iff no resource files found.
+*   Return true on success, false iff no resource files found.
 */
-Bool LoadResources(void)
+bool LoadResources(void)
 {
-	Bool rsc_loaded, rsb_loaded;
+	bool rsc_loaded, rsb_loaded;
 	
 	/* Initialize new table */
 	t = table_create(TABLE_SIZE);
 	
-	ignore_duplicates = True;
+	ignore_duplicates = true;
 	// Load combined rscs, then normal rscs
 	rsb_loaded = LoadRscFilesSorted(rsb_spec);
 	rsc_loaded = LoadRscFiles(rsc_spec);
@@ -112,33 +112,33 @@ Bool LoadResources(void)
 	RscAddCallback("", LAGBOXICON_RSC, "ilagbox.bgf");
 	RscAddCallback("", LAGBOXNAME_RSC, "Latency");
 	
-	ignore_duplicates = False;
+	ignore_duplicates = false;
 	
 	if (!rsb_loaded && !rsc_loaded)
 	{
 		debug(("Couldn't load any resources!\n"));
-		return False;
+		return false;
 	}
 	
-	return True;
+	return true;
 }
 /******************************************************************************/
 /*
 * LoadRscFiles:  Load all the resource files with the given filespec.
-*   Returns True iff any was loaded.
+*   Returns true iff any was loaded.
 */
-Bool LoadRscFiles(char *filespec)
+bool LoadRscFiles(const char *filespec)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA file_info;
 	char file_load_path[MAX_PATH + FILENAME_MAX], game_path[MAX_PATH];
 	
 	GetGamePath( game_path );
-	sprintf(file_load_path,"%s%s\\%s", game_path, resource_dir, filespec);
+	snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, filespec);
 	
 	hFindFile = FindFirstFile(file_load_path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
-		return False;
+		return false;
 	
 	for(;;)
 	{
@@ -146,7 +146,7 @@ Bool LoadRscFiles(char *filespec)
 		if (!(file_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
 			/* Add subdirectory name, using file_load_path as temporary */
-			sprintf(file_load_path, "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
+			snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
 			_RPT1(_CRT_WARN,"Loading File : %s\n",file_load_path); 
 			if (!RscFileLoad(file_load_path, RscAddCallback))
 				debug(("Can't load resource file %s\n", file_info.cFileName));
@@ -158,15 +158,15 @@ Bool LoadRscFiles(char *filespec)
 	
 	FindClose(hFindFile);
 	
-	return True;
+	return true;
 }
 /******************************************************************************/
 /*
 * LoadRscFilesSorted:  Load all the resource files with the given filespec, in 
 *   sorted filename order.
-*   Returns True iff any was loaded.
+*   Returns true iff any was loaded.
 */
-Bool LoadRscFilesSorted(char *filespec)
+bool LoadRscFilesSorted(const char *filespec)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA file_info;
@@ -174,11 +174,11 @@ Bool LoadRscFilesSorted(char *filespec)
 	list_type filenames, l;
 	
 	GetGamePath( game_path );
-	sprintf(file_load_path,"%s%s\\%s", game_path, resource_dir, filespec);
+	snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, filespec);
 	
 	hFindFile = FindFirstFile(file_load_path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
-		return False;
+		return false;
 	
 	filenames = NULL;
 	for(;;)
@@ -194,7 +194,7 @@ Bool LoadRscFilesSorted(char *filespec)
 	for (l = filenames; l != NULL; l = l->next)
 	{
 		/* Add subdirectory name, using file_load_path as temporary */
-		sprintf(file_load_path, "%s%s\\%s", game_path, resource_dir, (char *) (l->data));  
+		snprintf(file_load_path, sizeof(file_load_path), "%s%s\\%s", game_path, resource_dir, (char *) (l->data));  
 		
 		_RPT1(_CRT_WARN,"Loading File : %s\n",file_load_path); 
 		
@@ -205,7 +205,7 @@ Bool LoadRscFilesSorted(char *filespec)
 	FindClose(hFindFile);
 	
 	list_destroy(filenames);
-	return True;
+	return true;
 }
 /******************************************************************************/
 void ChangeResource(ID res, char *value)
@@ -240,7 +240,7 @@ void FreeResources(void)
 * RscAddCallback:  Called for each new resource that's loaded from a file.
 *   Add given resource to table.
 */
-bool RscAddCallback(char *fname, int res, char *string)
+bool RscAddCallback(const char *fname, int res, const char *string)
 {
 	resource_type entry, r;
 	
@@ -346,31 +346,31 @@ void MissingResource(void)
 	return;
 #else
 	/* Maximum of one of these dialogs at a time */
-	static Bool dialog_up = False;
+	static bool dialog_up = false;
 	
 	if (dialog_up)
 		return;
 	
-	dialog_up = True;
+	dialog_up = true;
 	if (!AreYouSure(hInst, hMain, YES_BUTTON, IDS_MISSINGRESOURCE))
 		return;
 	
 	RequestQuit();
-	dialog_up = False;
+	dialog_up = false;
 #endif
 }
 /******************************************************************************/
 /*
 * LoadRoomFile:  Load the room description file given by fname into the 
-*   given room structure.  Returns True iff successful.
+*   given room structure.  Returns true iff successful.
 */
-Bool LoadRoomFile(char *fname, room_type *r)
+bool LoadRoomFile(char *fname, room_type *r)
 {
 	char filename[MAX_PATH + FILENAME_MAX], game_path[MAX_PATH];
 	
 	GetGamePath( game_path );
 	/* Add directory to filename */
-	sprintf(filename, "%s%s\\%.*s", game_path, room_dir, FILENAME_MAX, fname);
+	snprintf(filename, sizeof(filename), "%s%s\\%.*s", game_path, room_dir, FILENAME_MAX, fname);
 	
 	return BSPRooFileLoad(filename, r);
 }
@@ -391,7 +391,7 @@ void DeleteRscFiles(list_type files)
 	{
 		fname = (char *) l->data;
 		
-		sprintf(filename, "%s%s\\%.*s", game_path, resource_dir, FILENAME_MAX, fname);
+		snprintf(filename, sizeof(filename), "%s%s\\%.*s", game_path, resource_dir, FILENAME_MAX, fname);
 		
 		/* If file doesn't exist, we're ok */
 		if (stat(filename, &s) != 0)
@@ -420,7 +420,7 @@ void DeleteAllRscFiles(void)
 	DownloadSetTime(0);
 	
 	debug(("Deleting all resource files\n"));
-	sprintf(path, "%s%s\\*.*", game_path, resource_dir);
+	snprintf(path, sizeof(path), "%s%s\\*.*", game_path, resource_dir);
 	
 	hFindFile = FindFirstFile(path, &file_info);
 	if (hFindFile == INVALID_HANDLE_VALUE)
@@ -431,7 +431,7 @@ void DeleteAllRscFiles(void)
 		// Skip directories
 		if (!(file_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			sprintf(path, "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
+			snprintf(path, sizeof(path), "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
 			
 			if (unlink(path) != 0)
 				ClientError(hInst, hMain, IDS_CANTDELETE, path);

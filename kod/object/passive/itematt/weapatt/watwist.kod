@@ -26,7 +26,7 @@ constants:
 
 resources:
 
-   weapatt_twister_desc = "  A swirling green 'GMT' is stamped into the pommel."
+   weapatt_twister_desc = "A swirling green 'GMT' is stamped into the pommel."
    twister_dm = "twister"
 
    weapatt_twister_victim_effect = "~gYou feel disoriented, losing your bearings."

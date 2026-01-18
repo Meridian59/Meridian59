@@ -198,7 +198,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 {
 	DescDialogStruct *info;
 	static HWND hwndBitmap;
-	static Bool changed;   // True when player has changed description
+	static bool changed;   // true when player has changed description
 	HWND hEdit, hwndOK, hURL, hFixed;
 	HDC hdc;
 	HFONT hFont;
@@ -342,7 +342,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		SetLookPageButtons(hDlg, info);
 		SetFocus(hwndOK);
 		hDescDialog = hDlg;
-		changed = False;
+		changed = false;
 		return FALSE;
 		
    case WM_PAINT:
@@ -455,7 +455,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   case IDC_DESCBOX:
 			   if (GET_WM_COMMAND_CMD(wParam, lParam) != EN_CHANGE)
 				   break;
-			   changed = True;
+			   changed = true;
 			   return TRUE;
 			   
 		   case IDC_URLBUTTON:
@@ -518,7 +518,7 @@ void AnimateDescription(int dt)
 	
 	old_group = obj->animate->group;
 	
-	if (AnimateObject(obj, dt) == True)
+	if (AnimateObject(obj, dt) == true)
 		SendMessage(hDescDialog, BK_ANIMATE, 0, 0);
 }
 /*****************************************************************************/

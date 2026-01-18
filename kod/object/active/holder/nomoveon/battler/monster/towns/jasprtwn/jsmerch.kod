@@ -82,7 +82,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what = $, who = $)
    {
       if Send(what,@CanBeGiventoNPC)
          AND send(self,@IsObjectReagent,#what=what)

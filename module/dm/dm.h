@@ -22,7 +22,7 @@
 #define MODULE_ID 104    // Unique module id #
 
 extern ClientInfo *cinfo;         // Holds data passed from main client
-extern Bool exiting;              // True when module is exiting and should be unloaded
+extern bool exiting;              // True when module is exiting and should be unloaded
 
 extern HINSTANCE hInst;  // module handle
 

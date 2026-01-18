@@ -242,7 +242,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what=$,report=TRUE)
+   ObjectDesired(what=$,who=$,report=TRUE)
    "This is set in individual buyers.  It allows them to pick and choose"
    "what they want to buy."
    {

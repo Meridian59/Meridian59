@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TRecentFileList
+//----------------------------------------------------------------------------
+
+#include <owl/rcntfile.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+#define MRU_ACTIVATION_COMMAND_HINT\
+  "Reopen this closed file."
+
+STRINGTABLE
+{
+  CM_MRU_FIRST+0, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+1, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+2, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+3, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+4, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+5, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+6, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+7, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+8, MRU_ACTIVATION_COMMAND_HINT
+  CM_MRU_FIRST+9, MRU_ACTIVATION_COMMAND_HINT
+}

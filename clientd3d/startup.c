@@ -14,9 +14,9 @@
 #include "client.h"
 
 /****************************************************************************/
-Bool StartupCheck(void)
+bool StartupCheck(void)
 {
-   Bool retval = True;
+   bool retval = true;
    HDC hdc = GetDC(NULL);
    long num_colors;
    int num_planes, num_bpp;
@@ -30,7 +30,7 @@ Bool StartupCheck(void)
       num_colors = 1L << (num_bpp * num_planes);
 
       ClientError(hInst, NULL, IDS_TOOFEWCOLORS, NUM_COLORS, num_colors);
-      retval = False;
+      retval = false;
    }
    
    ReleaseDC(NULL, hdc);

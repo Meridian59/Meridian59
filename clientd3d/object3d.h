@@ -42,7 +42,7 @@ typedef struct {
    PDIB      pdib;       // Object bitmap
    int       distance;   // Distance to object in FINENESS units
    BYTE      light;      // Light level to draw object
-   Bool      draw;       // True if object should actually be drawn (False = just compute location)
+   bool      draw;       // true if object should actually be drawn (false = just compute location)
    ViewCone *cone;       // Cone in which to draw object
    int       flags;      // Object flags for special options (invisibility, etc.)
    int       cutoff;     // Last screen row in which to draw object (to cut off at ground level)
@@ -55,12 +55,12 @@ typedef struct {
 #define NAME_COLOR_NORMAL_BG   PALETTERGB(0, 0, 0)
 
 BOOL DrawObject3D(DrawnObject *object, ViewCone *clip);
-Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *area, Bool bTargetSelectEffect );
+bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *area, bool bTargetSelectEffect );
 int  FindHotspot(list_type overlays, PDIB pdib, PDIB pdib_ov, char hotspot, 
 		 int angle, POINT *point);
-Bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *width, int *height);
+bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *width, int *height);
 void DrawObjectDecorations(DrawnObject *object);
-Bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, 
+bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, 
 		     list_type overlays, int overlay_depth, AREA *overlay_area);
 
 #endif /* #ifndef _OBJECT3D_H */

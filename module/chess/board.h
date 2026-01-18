@@ -26,8 +26,8 @@ typedef struct {
 } Square;
 
 typedef struct {
-   Bool can_castle_left;   // Can castle on the left side
-   Bool can_castle_right;  // Can castle on the right side
+   bool can_castle_left;   // Can castle on the left side
+   bool can_castle_right;  // Can castle on the right side
 } PlayerData;
 
 typedef struct {
@@ -35,22 +35,22 @@ typedef struct {
    int square_size;      // # of pixels per square
    BYTE color;           // Color of this player, OBSERVER if not a player
    BYTE move_color;      // Whose turn it is
-   Bool valid;           // True when initial board data has been received from server
+   bool valid;           // True when initial board data has been received from server
    PlayerData pdata[2];  // Per-player info (can castle, etc.)
-   Bool en_passant;      // True if last move on board was a pawn move 2 squares forward
+   bool en_passant;      // True if last move on board was a pawn move 2 squares forward
    POINT passant_square; // Square where pawn could be captured via en passant
                          // (meaningful only if en_passant is True).
-   Bool white_resigned;  // True when white has resigned
-   Bool black_resigned;  // True when black has resigned
+   bool white_resigned;  // True when white has resigned
+   bool black_resigned;  // True when black has resigned
 
-   Bool game_over;       // True when game is over
+   bool game_over;       // True when game is over
 } Board;
 
 void BoardEncode(Board *b, unsigned char *s);
-Bool BoardDecode(unsigned char *s, Board *b);
+bool BoardDecode(unsigned char *s, Board *b);
 void BoardBitmapsLoad(void);
 void BoardDraw(HDC hdc, Board *b);
 void BoardInitialize(Board *b);
-Bool BoardSquareSelect(Board *b, int row, int col);
+bool BoardSquareSelect(Board *b, int row, int col);
 
 #endif /* #ifndef _BOARD_H */

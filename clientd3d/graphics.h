@@ -23,14 +23,14 @@ M59EXPORT void CopyCurrentView(AREA *v);
 M59EXPORT void CopyCurrentAreaMiniMap( AREA* v );
 
 void ResizeAll(void);
-M59EXPORT Bool MouseToRoom(int *x, int *y);
-Bool TranslateToRoom(int client_x, int client_y, int *x, int *y);
+M59EXPORT bool MouseToRoom(int *x, int *y);
+bool TranslateToRoom(int client_x, int client_y, int *x, int *y);
 
 //	ajw
-Bool MouseToMiniMap( int* x, int* y );
+bool MouseToMiniMap( int* x, int* y );
 
 M59EXPORT void RedrawAll(void);
-Bool NeedRedraw(void);
+bool NeedRedraw(void);
 void RedrawForce(void);
 
 void GraphicsAreaCreate(HWND hwnd);
@@ -40,12 +40,12 @@ void GraphicsSizeRoom(room_type room);
 void GraphicsAreaResize(int xsize, int ysize);
 void GraphicsToggleMap(void);
 void DrawGridBorder(void);
-Bool MapVisible(void);
-Bool GraphicsReleaseCapture(void);
+bool MapVisible(void);
+bool GraphicsReleaseCapture(void);
 
 void UserStartDrag(void);
 void UserEndDrag(void);
-Bool GraphicsMouseCaptured(void);
+bool GraphicsMouseCaptured(void);
 int GetFPS(void);
 int GetMSDrawFrame(void);
 

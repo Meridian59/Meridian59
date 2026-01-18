@@ -12,6 +12,6 @@
 #ifndef _TRANSFER_H
 #define _TRANSFER_H
 
-Bool TransferStart(void);
+bool TransferStart(void);
 
 #endif // _TRANSFER_H

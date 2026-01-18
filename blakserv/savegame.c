@@ -17,13 +17,13 @@
 #include "blakserv.h"
 
 static FILE *savefile;
-Bool is_save_successful;
+bool is_save_successful;
 
 #define SaveGameWrite(buf,len) \
 { \
 	if (fwrite(buf,len,1,savefile) != 1) { \
 		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-	  is_save_successful = False; \
+	  is_save_successful = false; \
 	} \
 }
 
@@ -33,7 +33,7 @@ Bool is_save_successful;
 	ch = byte; \
 	if (fwrite(&ch,1,1,savefile) != 1) { \
 		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-		is_save_successful = False; \
+		is_save_successful = false; \
 	} \
 }
 
@@ -43,7 +43,7 @@ Bool is_save_successful;
 	temp = num; \
 	if (fwrite(&temp,4,1,savefile) != 1) { \
 		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-		is_save_successful = False; \
+		is_save_successful = false; \
 	} \
 }
 
@@ -53,7 +53,7 @@ Bool is_save_successful;
 	temp = num; \
 	if (fwrite(&temp,8,1,savefile) != 1) { \
 		eprintf("File %s Line %i error writing to file!\n",__FILE__,__LINE__); \
-		is_save_successful = False; \
+		is_save_successful = false; \
 	} \
 }
 
@@ -65,7 +65,7 @@ Bool is_save_successful;
 		eprintf("SaveGameWriteString line %i can't save NULL string, invalid saved game\n", __LINE__); \
 		len_s = 0; \
 		SaveGameWrite(&len_s,2); \
-		is_save_successful = False; \
+		is_save_successful = false; \
 		return; \
 	} \
 	len_s = strlen(s); \
@@ -94,13 +94,13 @@ void SaveGameCountEachDynamicRsc(resource_node *r);
 
 const char *GetTagShortName(val_type val);
 
-Bool SaveGame(char *filename)
+bool SaveGame(char *filename)
 {
 	savefile = fopen(filename,"wb");
 	if (savefile == NULL)
 	{
 		eprintf("SaveGame can't open %s to save everything!!!\n",filename);
-		return False;
+		return false;
 	}
 	is_save_successful = true;
 

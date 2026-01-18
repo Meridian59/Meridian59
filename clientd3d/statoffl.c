@@ -26,10 +26,10 @@ static int button_width, button_height;
 static POINT bm_origin;          /* Upper left corner of bitmap */
 static POINT button_origin;      /* Upper left corner of button */
 
-static char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
-static char *splash_music    = "resource\\main.mid";    // Music file to play
+static const char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
+const char *splash_music           = "resource\\main.ogg";    // Music file to play
 
-static Bool showing_splash;      // True when displaying splash screen
+static bool showing_splash;      // true when displaying splash screen
 
 static WNDPROC lpfnDefButtonProc; /* Default button window procedure */
 
@@ -50,7 +50,7 @@ void OfflineInit(void)
 {
    connection = CON_NONE;
    ResetSecurityToken();
-   showing_splash = False;
+   showing_splash = false;
 
    if (config.quickstart)
    {
@@ -166,7 +166,7 @@ void IntroShowSplash(void)
    }
    if (showing_splash)
      return;
-   showing_splash = True;
+   showing_splash = true;
 
    hwndDialButton = CreateWindow("button", NULL, 
 		WS_CHILD | WS_VISIBLE,
@@ -225,8 +225,7 @@ void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
    KillTimer(NULL, timer_id);
    timer_id = 0;
 
-   // Play music
-   if (config.play_music)
+   if (config.play_music && !MusicIsPlaying())
       PlayMusicFile(hMain, splash_music);
 }
 /****************************************************************************/

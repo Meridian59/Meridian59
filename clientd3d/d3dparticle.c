@@ -18,7 +18,7 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 void D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
 							float velX, float velY, float velZ, unsigned char b, unsigned char g,
 							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, Bool bRandomize, int randomPos,
+							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos,
 							int randomRot)
 {
 	emitter	*pEmitter = NULL;

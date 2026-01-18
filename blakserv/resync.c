@@ -51,7 +51,7 @@ void ResyncProcessSessionBuffer(session_node *s)
 
    while (s->receive_list != NULL)
    {
-      if (ReadSessionBytes(s,1,&ch) == False)
+      if (ReadSessionBytes(s,1,&ch) == false)
 	 return;
       
       ResyncInputChar(s,ch);

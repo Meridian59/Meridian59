@@ -42,13 +42,13 @@ typedef struct d3d_driver_profile
 	DWORD					maxAnisotropy;
 	DWORD					vertexProcessingMode;
 	DWORD					lmapMode;
-	Bool					bZBias;
-	Bool					bCull;
+	bool					bZBias;
+	bool					bCull;
 	bool					bManagedTextures;
-	Bool					bSoftwareRenderer;
-	Bool					bFogEnable;
+	bool					bSoftwareRenderer;
+	bool					bFogEnable;
 } d3d_driver_profile;
 
-Bool D3DDriverProfileInit(void);
+bool D3DDriverProfileInit(void);
 
 #endif

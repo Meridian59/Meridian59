@@ -114,7 +114,7 @@ messages:
       return;
    }
 
-   GetStateValue(who = $, iSpellPower = 0,target=$)      
+   InitializeEnchantmentState(who = $, iSpellPower = 0,target=$)      
    {      
       Send(target,@AddDefenseModifier,#what=self);       
 

@@ -1,0 +1,20 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for ObjectWindows DLLs
+//----------------------------------------------------------------------------
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+#ifndef MAKELIB
+#  if defined(__BORLANDC__) && defined(RC_INVOKED)
+#    include "version.i" // preprocessed "version.rc"
+#  else
+#    include "version.rc"
+#  endif
+#endif
+
+#include "owl/all.rc"

@@ -25,8 +25,8 @@ static char ad_dir[]          = "ads";
 
 static HWND hDownloadDialog = NULL;   /* Non-NULL if download dialog is up */
 
-static Bool abort_download = FALSE;   // True if user aborts download
-static Bool advert = FALSE;           // True if user aborts download
+static bool abort_download = false;   // true if user aborts download
+static bool advert = false;           // true if user aborts download
 static int  extraction_error = 0;        // Resource id of error string; 0 if none
 
 static int total = 0;
@@ -47,9 +47,9 @@ static INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wPara
 static INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static void _cdecl TransferMessage(char *fmt, ...);
 static void AbortDownloadDialog(void);
-static Bool DownloadDone(DownloadFileInfo *file_info);
-static Bool DownloadDeleteFile(char *filename);
-static Bool DownloadUnarchiveFile(char *zip_name, char *dir);
+static bool DownloadDone(DownloadFileInfo *file_info);
+static bool DownloadDeleteFile(char *filename);
+static bool DownloadUnarchiveFile(char *zip_name, char *dir);
 /*****************************************************************************/
 bool FileExists(const char *filename)
 {
@@ -109,7 +109,7 @@ void DownloadFiles(DownloadInfo *params)
          break;
       }
    }
-   abort_download = True;
+   abort_download = true;
    config.quickstart = FALSE;
    //MainSetState(STATE_OFFLINE);
    Logoff();
@@ -120,37 +120,37 @@ void DownloadFiles(DownloadInfo *params)
 /*
  * DownloadCheckDirs:  Make sure that directories needed for downloading exist.
  *   hParent is parent for error dialog.
- *   Return True iff they all exist.
+ *   Return true iff they all exist.
  */
-Bool DownloadCheckDirs(HWND hParent)
+bool DownloadCheckDirs(HWND hParent)
 {
    // Make sure that necessary subdirectories exist
-   if (MakeDirectory(download_dir) == False)
+   if (MakeDirectory(download_dir) == false)
    {
       ClientError(hInst, hMain, IDS_CANTMAKEDIR, download_dir, GetLastErrorStr());
-      return False;
+      return false;
    }
-   if (MakeDirectory(resource_dir) == False)
+   if (MakeDirectory(resource_dir) == false)
    {
       ClientError(hInst, hMain, IDS_CANTMAKEDIR, resource_dir, GetLastErrorStr());
-      return False;
+      return false;
    }
-   if (MakeDirectory(help_dir) == False)
+   if (MakeDirectory(help_dir) == false)
    {
       ClientError(hInst, hMain, IDS_CANTMAKEDIR, help_dir, GetLastErrorStr());
-      return False;
+      return false;
    }
-   if (MakeDirectory(mail_dir) == False)
+   if (MakeDirectory(mail_dir) == false)
    {
       ClientError(hInst, hMain, IDS_CANTMAKEDIR, mail_dir, GetLastErrorStr());
-      return False;
+      return false;
    }
-   if (MakeDirectory(ad_dir) == False)
+   if (MakeDirectory(ad_dir) == false)
    {
       ClientError(hInst, hMain, IDS_CANTMAKEDIR, ad_dir, GetLastErrorStr());
-      return False;
+      return false;
    }
-   return True;
+   return true;
 }
 
 INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -218,7 +218,7 @@ INT_PTR CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
          EndDialog(hDlg, 3);
          return TRUE;
       case IDCANCEL:
-         abort_download = True;
+         abort_download = true;
          EndDialog(hDlg, IDCANCEL);
          return TRUE;
       case IDC_UPDATE:
@@ -265,7 +265,7 @@ INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       hGraph = GetDlgItem(hDlg, IDC_ANIMATE1);
       bResult = Animate_Open(hGraph, MAKEINTRESOURCE(IDA_DOWNLOAD));
 
-      abort_download = False;
+      abort_download = false;
       PostMessage(hDlg, BK_TRANSFERSTART, 0, 0);
 
       GetDlgItemText(hDlg, IDC_FILESIZE, format, sizeof(format));
@@ -357,7 +357,7 @@ INT_PTR CALLBACK DownloadDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDCANCEL:
-         abort_download = True;
+         abort_download = true;
          EndDialog(hDlg, IDCANCEL);
          return TRUE;
       }
@@ -406,9 +406,9 @@ void AbortDownloadDialog(void)
  *   if appropriate.
  *   zip_filename is the name of the file on the disk.
  *   file_info gives info about downloaded file.
- *   Return True iff successful.
+ *   Return true iff successful.
  */
-Bool DownloadDone(DownloadFileInfo *file_info)
+bool DownloadDone(DownloadFileInfo *file_info)
 {
    char zip_name[MAX_PATH + FILENAME_MAX];    // Name of uncompressed file
    char *destination_dir;
@@ -446,7 +446,7 @@ Bool DownloadDone(DownloadFileInfo *file_info)
 
    default:
       debug(("Got bad file location flags %d\n", DownloadLocation(file_info->flags)));
-      return False;
+      return false;
    }
 
    debug(("destination = %s\n", destination_dir));
@@ -457,14 +457,14 @@ Bool DownloadDone(DownloadFileInfo *file_info)
    case DF_DELETE:
       snprintf(zip_name, sizeof(zip_name), "%s\\%s", destination_dir, file_info->filename);
       if (!DownloadDeleteFile(zip_name))
-         return False;
+         return false;
       break;
 
    case DF_RETRIEVE:
       if (!DownloadUnarchiveFile(zip_name, destination_dir))
       {
          unlink(zip_name);
-         return False;
+         return false;
       }
       unlink(zip_name);
       break;
@@ -476,33 +476,33 @@ Bool DownloadDone(DownloadFileInfo *file_info)
 
    debug(("Got file successfully\n"));
 
-   return True;
+   return true;
 }
 /*****************************************************************************/
 /*
- * DownloadDeleteFile:  Delete given file.  Return True on success.
+ * DownloadDeleteFile:  Delete given file.  Return true on success.
  */
-Bool DownloadDeleteFile(char *filename)
+bool DownloadDeleteFile(char *filename)
 {
    struct stat s;
-   Bool done = False;
+   bool done = false;
 
    debug(("deleting file %s\n", filename));
 
    // Ignore if file doesn't exist
    if (stat(filename, &s) != 0)
-      return True;
+      return true;
    
    while (!done)
    {
       if (!DeleteFile(filename))
       {
          if (!AreYouSure(hInst, hMain, YES_BUTTON, IDS_CANTDELETEFILE, filename))
-            return False;
+            return false;
       }
-      else done = True;
+      else done = true;
    }
-   return True;
+   return true;
 }
 /*****************************************************************************/
 static int CopyArchiveData(struct archive *ar, struct archive *aw)
@@ -617,18 +617,18 @@ bool ExtractArchive(const char *zip_file, const char *out_dir)
 /*****************************************************************************/
 /*
  * DownloadUnarchiveFile: Unarchive archive zip_name to given
- *   directory.  Return True on success.
+ *   directory.  Return true on success.
  */
-Bool DownloadUnarchiveFile(char *zip_name, char *dir)
+bool DownloadUnarchiveFile(char *zip_name, char *dir)
 {
-   Bool retval = True;
+   bool retval = true;
 
    // Does file exist?
    struct stat s;
    if (stat(zip_name, &s) != 0)
    {
       ClientError(hInst, hDownloadDialog, IDS_MISSINGARCHIVE, zip_name);
-      return False;
+      return false;
    }
 
    while (1)
@@ -645,7 +645,7 @@ Bool DownloadUnarchiveFile(char *zip_name, char *dir)
       if (!AreYouSure(hInst, hDownloadDialog, YES_BUTTON, IDS_CANTUNCOMPRESS, 
                       zip_name, GetString(hInst, extraction_error)))
       {
-         retval = False;
+         retval = false;
          break;
       }
    }

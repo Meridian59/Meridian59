@@ -1,0 +1,25 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1995, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TPickListDialog
+//----------------------------------------------------------------------------
+
+#include <owl/picklist.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+IDD_PICKLISTDIALOG DIALOGEX 82, 68, 243, 101
+STYLE DS_SHELLFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "PickList"
+FONT 8, "MS Shell Dlg"
+{
+  CONTROL "", IDC_LIST, "LISTBOX", LBS_NOTIFY | LBS_HASSTRINGS | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 11, 10, 155, 81
+  CONTROL "OK", IDOK, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 179, 29, 50, 14
+  CONTROL "Cancel", IDCANCEL, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 179, 57, 50, 14
+}

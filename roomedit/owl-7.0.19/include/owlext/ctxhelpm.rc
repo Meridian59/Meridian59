@@ -1,0 +1,31 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//----------------------------------------------------------------------------
+#include <owlext/ctxhelpm.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+#include "windows.h"
+#endif
+
+CM_HELPCONTEXT BITMAP  "res/hlpcont.bmp"
+CM_HELPCONTENTS BITMAP "res/help.bmp"
+
+STRINGTABLE
+BEGIN
+  CM_HELPCONTENTS-1, "Access online help"
+  CM_HELPCONTENTS,   "Display the help table of contents."
+  CM_HELPCONTEXT,    "Display help for clicked on buttons, menus and windows."
+  CM_HELPSEARCH,     "Display a specified help topic with a keyword."
+  CM_HELPUSING,      "Display instructions about how to use online help."
+  IDS_HINTTEXT,      "Click on the object, where you want to have help. Press ESC to end the context help."
+END
+
+#endif

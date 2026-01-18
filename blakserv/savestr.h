@@ -18,6 +18,6 @@
 #define LEN_STR_ID 4
 #define LEN_STR_LEN 4
 
-Bool SaveStrings(char*filename);
+bool SaveStrings(char*filename);
 
 #endif

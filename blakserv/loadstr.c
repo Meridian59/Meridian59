@@ -17,7 +17,7 @@
 
 #include "blakserv.h"
 
-Bool LoadBlakodStrings(char *filename)
+bool LoadBlakodStrings(char *filename)
 {
    FILE *f;
    
@@ -28,14 +28,14 @@ Bool LoadBlakodStrings(char *filename)
    {
       eprintf("LoadBlakodStrings can't open %s to load the strings, none loaded\n",
               filename);
-      return False;
+      return false;
    }
    
    if (fread(&version, 1, LEN_STR_VERSION, f) != LEN_STR_VERSION ||
        fread(&num_strs, 1, LEN_NUM_STRS, f) != LEN_NUM_STRS)
    {
       fclose(f);
-      return False;
+      return false;
    }
    
    for (i=0;i<num_strs;i++)
@@ -44,18 +44,18 @@ Bool LoadBlakodStrings(char *filename)
           fread(&len_str, 1, LEN_STR_LEN, f) != LEN_STR_LEN)
       {
          fclose(f);
-         return False;
+         return false;
       }
       
       if (!LoadBlakodString(f,len_str,str_id))
       {
          fclose(f);
-         return False;
+         return false;
       }
    }
 
    fclose(f);
 
-   return True;
+   return true;
 }
 

@@ -313,9 +313,9 @@ void CommandCast(char *args)
 /************************************************************************/
 /*
  * TellGroup:  Send message to a group of people.
- *   Return True iff the name was matched to a group name.
+ *   Return true iff the name was matched to a group name.
  */
-Bool TellGroup(char *name, char *message)
+bool TellGroup(char *name, char *message)
 {
    UserGroup g;
    int i;
@@ -325,11 +325,11 @@ Bool TellGroup(char *name, char *message)
    switch (GroupLoad(name, &g))
    {
    case GROUP_NOMATCH:
-      return False;
+      return false;
 
    case GROUP_AMBIGUOUS:
       GameMessage(GetString(hInst, IDS_DUPLICATEGROUPNAME));
-      return True;
+      return true;
    }
    
    say_group = NULL;
@@ -353,15 +353,15 @@ Bool TellGroup(char *name, char *message)
    if (say_group == NULL)
    {
       GameMessage(GetString(hInst, IDS_GROUPNOTON));
-      return True;
+      return true;
    }
   
    if (!FilterSayMessage(message))
-      return True;
+      return true;
 
    SendSayGroup(say_group, message);
    IDListDelete(say_group);
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
@@ -401,9 +401,9 @@ void CommandRest(char *args)
 
    RequestRest();
    GameMessage(GetString(hInst, IDS_REST));
-   pinfo.resting = True;
+   pinfo.resting = true;
 
-   ToolbarSetButtonState(default_buttons[REST_INDEX].action, default_buttons[REST_INDEX].data, True);
+   ToolbarSetButtonState(default_buttons[REST_INDEX].action, default_buttons[REST_INDEX].data, true);
 }
 /************************************************************************/
 /*
@@ -419,9 +419,9 @@ void CommandStand(char *args)
 
    RequestStand();
    GameMessage(GetString(hInst, IDS_STAND));
-   pinfo.resting = False;
+   pinfo.resting = false;
 
-   ToolbarSetButtonState(default_buttons[REST_INDEX].action, default_buttons[REST_INDEX].data, False);
+   ToolbarSetButtonState(default_buttons[REST_INDEX].action, default_buttons[REST_INDEX].data, false);
 }
 /************************************************************************/
 /*

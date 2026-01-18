@@ -32,6 +32,6 @@ void ReceiveOffer(ID obj_id, ID icon_res, ID name_res, list_type items);
 void Counteroffer(list_type items);
 void Counteroffered(list_type items);
 void OfferCanceled(void);
-Bool OfferInProgress(void);
+bool OfferInProgress(void);
 
 #endif /* #ifndef _OFFER_H */

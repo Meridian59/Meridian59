@@ -22,19 +22,19 @@ FILE *accofile;
 /* local function prototypes */
 void SaveEachAccount(account_node *a);
 
-Bool SaveAccounts(char *filename)
+bool SaveAccounts(char *filename)
 {
    if ((accofile = fopen(filename,"wt")) == NULL)
    {
       eprintf("SaveAccounts can't open %s to save accounts!\n",filename);
-      return False;
+      return false;
    }
 
    ForEachAccount(SaveEachAccount);
    fprintf(accofile,"NEXT_ACCOUNT_ID %i\n",GetNextAccountID());
    fclose(accofile);
 
-   return True;
+   return true;
 }
 
 void SaveEachAccount(account_node *a)

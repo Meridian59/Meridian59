@@ -326,7 +326,7 @@ void SetOneClassPropertyNames(class_node *c)
 		{
 			// if we have this property name already, don't need to add again
 			int value;
-			if (SIHashFind(c->property_names,prop->name,&value) == False)
+			if (SIHashFind(c->property_names,prop->name,&value) == false)
 				SIHashInsert(c->property_names,prop->name,prop->id);
 			prop = prop->next;
 		}
@@ -352,7 +352,7 @@ class_node * GetClassByID(int class_id)
 class_node * GetClassByName(const char *class_name)
 {
 	int class_id;
-	Bool found;
+	bool found;
 
 	found = SIHashFind(class_name_map,class_name,&class_id);
 	if (found)
@@ -373,7 +373,7 @@ int GetPropertyIDByName(class_node *c,const char *property_name)
 	if (c == NULL)
 		return INVALID_PROPERTY;
 
-	if (SIHashFind(c->property_names,property_name,&id) == True)
+	if (SIHashFind(c->property_names,property_name,&id) == true)
 		return id;
 
 	// check ancestor classes

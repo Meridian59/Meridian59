@@ -182,7 +182,7 @@ HPALETTE InitializePalette(void)
  * PaletteActivate:  Set the palette of the main window.  
  *   is_foreground tells if the application is in the foreground.
  */
-void PaletteActivate(Bool is_foreground)
+void PaletteActivate(bool is_foreground)
 {
    int i;
    HPALETTE hPalT;

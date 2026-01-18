@@ -2,9 +2,9 @@
 
 # defining RELEASE compiles optimized
 # defining NODEBUG omits debugging information
-# defining FINAL implies release, and also removes debugging strings from client executable 
+# defining RETAIL implies release, and also removes debugging strings from client executable 
 
-ifdef FINAL
+ifdef RETAIL
 RELEASE = 1
 NODPRINTFS = 1
 endif
@@ -41,7 +41,10 @@ MODULEDIR   = $(TOPDIR)/module
 UTILDIR     = $(TOPDIR)/util
 SPROCKETDIR = $(TOPDIR)/sprocket
 CLUBDIR     = $(TOPDIR)/club
-WAVEMIXDIR  = $(TOPDIR)/wavemix
+
+# 3rd party libraries
+EXTERNALDIR = $(TOPDIR)/external
+FMTLIBDIR   = $(EXTERNALDIR)/fmtlib
 
 BLAKBINDIR = $(TOPDIR)/bin
 BLAKLIBDIR = $(TOPDIR)/lib
@@ -54,7 +57,17 @@ KODINCLUDEDIR = $(KODDIR)/include
 
 PALETTEFILE = $(TOPDIR)/blakston.pal
 
-CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX --std=c++11
+CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX -DFMT_UNICODE=0 --std=c++20
+
+OS := $(shell uname)
+
+ifeq ($(OS),Darwin)
+    BLAK_PLATFORM_MAC = 1
+    # Clang won't treat .c files as C++ without this
+    CCOMMONFLAGS += -x c++
+endif
+
+
 CNORMALFLAGS = $(CCOMMONFLAGS) -O3
 CDEBUGFLAGS = $(CCOMMONFLAGS) -DBLAKDEBUG -g
 CNODEBUGFLAGS = $(CCOMMONFLAGS) -DBLAKDEBUG
@@ -102,4 +115,4 @@ MAKEBGF = $(BLAKBINDIR)/makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(FMTLIBDIR);

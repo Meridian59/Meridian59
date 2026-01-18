@@ -139,7 +139,7 @@ void Dearchive(const char *dest_path, const char *zip_name)
       
       if (extraction_error == 0)
       {
-         success = True;
+         success = true;
          break;
       }
       

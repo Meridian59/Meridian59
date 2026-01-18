@@ -93,7 +93,7 @@ void CommandGetPlayer(char *args)
  */
 void CommandShowMap(char *args)
 {
-  MapShowAllWalls(cinfo->current_room, True);
+  MapShowAllWalls(cinfo->current_room, true);
   RedrawAll();
 }
 /************************************************************************/
@@ -102,7 +102,7 @@ void CommandShowMap(char *args)
  */
 void CommandHideMap(char *args)
 {
-  MapShowAllWalls(cinfo->current_room, False);
+  MapShowAllWalls(cinfo->current_room, false);
   RedrawAll();
 }
 /************************************************************************/
@@ -145,10 +145,10 @@ ID FindPlayerByName(char *name)
    char *player, *ptr;
    int match, max_match;
    ID best_player;
-   Bool tied;            // True if a different player matches as well as best_player
+   bool tied;            // true if a different player matches as well as best_player
 
    max_match = 0;
-   tied = False;
+   tied = false;
    for (l = *(cinfo->current_users); l != NULL; l = l->next)
    {
       object_node *obj = (object_node *) (l->data);
@@ -184,10 +184,10 @@ ID FindPlayerByName(char *name)
       {
 	 max_match = match;
 	 best_player = obj->id;
-	 tied = False;
+	 tied = false;
       }
       else if (match == max_match)
-	 tied = True;
+	 tied = true;
    }
    
    if (max_match == 0)

@@ -88,7 +88,7 @@ public:
 public:
 	virtual void SetupWindow();
 	virtual void Paint( TDC& dc, bool erase, TRect& rect);
-    virtual char far* GetClassName ();
+    virtual TWindowClassName GetWindowClassName ();
     virtual void GetWindowClass (WNDCLASS& wndClass);
 //{{TInfoControlVIRTUAL_END}}
 

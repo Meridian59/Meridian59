@@ -83,7 +83,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    KeySetLastNorepeatTime();
 
    // See if module wants to handle menu selection
-   if (ModuleEvent(EVENT_MENUITEM, id) == False)
+   if (ModuleEvent(EVENT_MENUITEM, id) == false)
       return;
    
    /* Handle menu selections */
@@ -134,7 +134,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       config.play_sound = !config.play_sound;
       CheckMenuItem(menu, ID_OPTIONS_SOUND, config.play_sound ? MF_CHECKED : MF_UNCHECKED);
       if (!config.play_sound)
-	 SoundAbort();
+	 SoundStopAll();
       break;
    case ID_OPTIONS_SAVENOW:
       SaveSettings();

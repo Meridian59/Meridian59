@@ -21,7 +21,7 @@ typedef struct {
 } Table;
 
 typedef DWORD (*HashProc)(void *, DWORD);
-//already defined in list.h typedef Bool   (*CompareProc)(void *, void *);
+//already defined in list.h typedef bool   (*CompareProc)(void *, void *);
 typedef void  (*TableDestroyProc)(void *);
 
 Table *table_create(DWORD size);

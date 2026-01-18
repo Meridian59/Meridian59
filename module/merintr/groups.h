@@ -29,16 +29,16 @@ void GroupsLoad(void);
 int  GroupLoad(char *name, UserGroup *g);
 void GroupSave(char *name, UserGroup *g);
 int  GroupAdd(char *group_name, char *args);
-Bool GroupNew(char *group_name);
+bool GroupNew(char *group_name);
 
-Bool GroupDelete(char *group_name);
+bool GroupDelete(char *group_name);
 int  GroupDeleteNames(char *group_name, char *args);
 
 void GroupPrint(char *group_name);
 void GroupsPrint(void);
 
 int FindGroupByName(char *name);
-Bool GroupNameMatches(char *name, int index);
+bool GroupNameMatches(char *name, int index);
 
 void AbortGroupDialog(void);
 

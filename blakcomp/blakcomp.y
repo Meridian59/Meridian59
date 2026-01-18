@@ -1,6 +1,7 @@
 %{
 #include "blakcomp.h"
 #include <stdio.h>
+#include <stdint.h>   // Needed for Bison to get PTRDIFF_MAX (Bison bug?)
 %}
 
 %union {

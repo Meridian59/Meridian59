@@ -1,0 +1,49 @@
+# lute - Third Person overlays
+#^Applied to Hotspot: 0
+#*Groups: 6
+
+-s 4
+36
+basicluteov.bmp [180, 93] 
+basicluteov.bmp [155, 94] 
+basicluteov.bmp [136, 93] 
+basicluteov.bmp [139, 90] 
+basicluteov.bmp [184, 91] 
+basicluteov.bmp [189, 91] 
+basicluteov.bmp [180, 93] 
+basicluteov.bmp [155, 94] 
+basicluteov.bmp [136, 93] 
+basicluteov.bmp [139, 90] 
+basicluteov.bmp [184, 91] 
+basicluteov.bmp [189, 91] 
+basicluteov.bmp [180, 93] 
+basicluteov.bmp [155, 94] 
+basicluteov.bmp [136, 93] 
+basicluteov.bmp [139, 90] 
+basicluteov.bmp [184, 91] 
+basicluteov.bmp [189, 91] 
+basicluteov.bmp [180, 93] 
+basicluteov.bmp [155, 94] 
+basicluteov.bmp [136, 93] 
+basicluteov.bmp [139, 90] 
+basicluteov.bmp [184, 91] 
+basicluteov.bmp [189, 91] 
+basicluteov.bmp [180, 93] 
+basicluteov.bmp [155, 94] 
+basicluteov.bmp [136, 93] 
+basicluteov.bmp [139, 90] 
+basicluteov.bmp [184, 91] 
+basicluteov.bmp [189, 91] 
+basicluteov.bmp [180, 93] 
+basicluteov.bmp [155, 94] 
+basicluteov.bmp [136, 93] 
+basicluteov.bmp [139, 90] 
+basicluteov.bmp [184, 91] 
+basicluteov.bmp [189, 91] 
+6
+ 8      1   2   3   4   4   4   5   6
+ 8      7   8   9  10  10  10  11  12
+ 8     13  14  15  16  16  16  17  18
+ 8     19  20  21  22  22  22  23  24
+ 8     25  26  27  28  28  28  29  30
+ 8     31  32  33  34  34  34  35  36

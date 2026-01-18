@@ -19,8 +19,8 @@ constants:
 resources:
 
    lute_name_rsc = "lute"
-   lute_icon_rsc = music.bgf
-   lute_overlay_rsc = luteov.bgf
+   lute_icon_rsc = basiclute.bgf
+   lute_overlay_rsc = basicluteov.bgf
    lute_desc_rsc = "The simple lute is the instrument of choice among the meridian bards.  "
 		  "Its rosewood construction offers a rich tone in the hands of an expert."
    lute_used_wav_rsc = lute_equip.wav

@@ -26,19 +26,19 @@ typedef struct tagREGEXP
 	int m_nLength;
 } REGEXP;
 
-static char* _szProfaneFile = "mail\\profane.dat";
+static const char* _szProfaneFile = "mail\\profane.dat";
 
 static REGEXP* _apExpressions = NULL;
 static int _nExpressions = 0;
 static int _nAllocated = 0;
 #define CHUNKSIZE 20
 
-static char _szPrefix[] = "\\([`~][rgbBIUn]\\)*";
-static char _szPostfix[] = "\\([`~][rgbBIUn]\\)*";
-static char _szGrout[] = "\\([`~][rgbBIUn]\\|[^a-zA-Z0-9\"]\\)*";
+static const char _szPrefix[] = "\\([`~][rgbBIUn]\\)*";
+static const char _szPostfix[] = "\\([`~][rgbBIUn]\\)*";
+static const char _szGrout[] = "\\([`~][rgbBIUn]\\|[^a-zA-Z0-9\"]\\)*";
 static int _nGrout;
 
-static char* _szAlpha[] =
+static const char* _szAlpha[] =
 {
 	// Letter lookups are based on similar or passable appearances in
 	// the default character set and font for the text window.  Other
@@ -76,7 +76,7 @@ static char* _szAlpha[] =
 
 #define MAXPATTERN (sizeof(_szPrefix)+(150*MAXPROFANETERM)+sizeof(_szPostfix)+1)
 
-static char* _szWith[] =
+static const char* _szWith[] =
 {
 	"!#@*%",
 	"@+$&!",
@@ -462,7 +462,7 @@ void FreeProfaneTerms()
 // in the string as a whole.  The more "visible" the word boundaries
 // are, the more likely it was an intentional curse.
 //
-int VerifyProfaneUsage(char* string, int from, int to)
+int VerifyProfaneUsage(const char* string, int from, int to)
 {
 	BOOL bStart = FALSE;
 	BOOL bEnd = FALSE;
@@ -509,7 +509,7 @@ int VerifyProfaneUsage(char* string, int from, int to)
 	//
 	{
 		BOOL bBroken = FALSE;
-		char* p = string+from;
+		const char* p = string+from;
 		while (*p && p < string+to)
 		{
 			while ((*p == '~' || *p == '`') && *(p+1) && p < string+to)
@@ -529,7 +529,7 @@ int VerifyProfaneUsage(char* string, int from, int to)
 	//
 	{
 		BOOL bExtended = FALSE;
-		char* p = string+from;
+		const char* p = string+from;
 		while (*p && p < string+to)
 		{
 			if (*p & 0x80)
@@ -543,7 +543,7 @@ int VerifyProfaneUsage(char* string, int from, int to)
 	return FALSE;
 }
 
-BOOL ContainsProfaneTerms(char* pszText)
+BOOL ContainsProfaneTerms(const char* pszText)
 {
 	struct re_registers regs;
 	int i, a;
@@ -567,7 +567,7 @@ BOOL ContainsProfaneTerms(char* pszText)
 	return FALSE;
 }
 
-char* CleanseProfaneString(char* pszText)
+char* CleanseProfaneString(const char* pszText)
 {
 	char* ping = strdup(pszText);
 	char* pong = NULL;
@@ -587,7 +587,7 @@ char* CleanseProfaneString(char* pszText)
 		if (_apExpressions[i].m_pszTerm)
 		{
 			char* buffer;
-			char* with;
+			const char* with;
 
 			_nWith++;
 			if (!_szWith[_nWith])

@@ -5,9 +5,6 @@
 #ifndef _MEMMAP_H
 #define _MEMMAP_H
 
-typedef unsigned char Bool;
-enum {False = 0, True = 1};
-
 typedef struct
 {
    HANDLE fh;    // Handle of file
@@ -17,9 +14,8 @@ typedef struct
    char *ptr;    // Current position in file
 } file_node;
 
-Bool MappedFileOpenRead(char *filename,file_node *f);
-Bool MappedFileOpenWrite(char *filename, file_node *f, int length);
-int  MappedFileOpenCopy(char *filename, file_node *f);
+bool MappedFileOpenRead(char *filename,file_node *f);
+bool MappedFileOpenWrite(char *filename, file_node *f, int length);
 int  MappedFileRead(file_node *f, void *buf, int num);
 int  MappedFileWrite(file_node *f, void *buf, int num);
 void MappedFileClose(file_node *f);

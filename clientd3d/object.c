@@ -14,28 +14,28 @@ extern int sector_depths[];
 
 /************************************************************************/
 /*
- * CompareId: Compare two id #s; return True iff they
+ * CompareId: Compare two id #s; return true iff they
  *    have the same id #.
  */
-Bool CompareId(void *id1, void *id2)
+bool CompareId(void *id1, void *id2)
 {
    return reinterpret_cast<std::intptr_t>(id1) == reinterpret_cast<std::intptr_t>(id2);
 }
 /************************************************************************/
 /*
- * CompareIdObject: Compare an id # with an object; return True iff they
+ * CompareIdObject: Compare an id # with an object; return true iff they
  *    have the same id #.
  */
-Bool CompareIdObject(void *idnum, void *obj)
+bool CompareIdObject(void *idnum, void *obj)
 {
    return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(((object_node *) obj)->id);
 }
 /************************************************************************/
 /*
  * CompareIdRoomObject: Compare an id # with an object in a list of room contents; 
- *    return True iff they have the same id #.
+ *    return true iff they have the same id #.
  */
-Bool CompareIdRoomObject(void *idnum, void *obj)
+bool CompareIdRoomObject(void *idnum, void *obj)
 {
    return GetObjId(reinterpret_cast<std::intptr_t>(idnum)) == GetObjId(((room_contents_node *) obj)->obj.id);
 }
@@ -278,9 +278,9 @@ void ObjectStopAnimation(object_node *obj)
 /*****************************************************************************/
 /*
  * RoomObjectSetAnimation:  Set animation for given room object to move animation
- *   if "move" is True, and normal animation otherwise.
+ *   if "move" is true, and normal animation otherwise.
  */
-void RoomObjectSetAnimation(room_contents_node *r, Bool move)
+void RoomObjectSetAnimation(room_contents_node *r, bool move)
 {
   if (move)
   {

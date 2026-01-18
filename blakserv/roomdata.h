@@ -28,8 +28,8 @@ enum
 
 void InitRoomData(void);
 void ResetRoomData(void);
-Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
-Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
+bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
+bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
 blak_int LoadRoomData(int resource_id);
 roomdata_node * GetRoomDataByID(int id);
 

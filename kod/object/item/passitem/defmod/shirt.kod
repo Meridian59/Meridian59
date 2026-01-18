@@ -211,6 +211,19 @@ messages:
       return TRUE;
    }
 
+   CanBeWornInSameSlotWith(what = $)
+   "Shirts can be worn with robes despite visual overlap."
+   "This allows wearing shirts underneath robes for layered clothing."
+   {
+      % Shirts can be worn simultaneously with robes
+      if IsClass(what, &Robe)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

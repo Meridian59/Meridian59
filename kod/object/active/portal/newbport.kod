@@ -58,22 +58,22 @@ messages:
    {
       % Warn true newbies of the perils of going through the portal.
       % Check to see if we warn them or let them through.
-      if (NOT send(what,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
+      if (NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
          AND (plWarnedList = $ OR FindListElem(plWarnedList,what) = 0)
       {
          % This player hasn't tried to enter yet, or isn't a true newbie.
          %  Give them the warning and bump them, then record that we warned them.
          Send(what,@MsgSendUser,#message_rsc=newbportal_warning);
-         send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
-              #new_row=send(self,@GetRow)+ROW_ADJUST,#new_col=send(self,@GetCol)+COL_ADJUST,
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
+              #new_row=Send(self,@GetRow)+ROW_ADJUST,#new_col=Send(self,@GetCol)+COL_ADJUST,
               #new_angle=ANGLE_NORTH);
-         plWarnedList = cons(what,plWarnedList);
+         plWarnedList = Cons(what,plWarnedList);
       }
       else
       {
          % They have already been warned, let them through.
          % Don't keep the record around.
-         if plWarnedList <> $
+         if plWarnedList <> $ AND FindListElem(plWarnedList,what) <> 0
          {
             plWarnedList = DelListElem(plWarnedList,what);
          }

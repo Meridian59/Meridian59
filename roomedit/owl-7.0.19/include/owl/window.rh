@@ -1,0 +1,87 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Common resource IDs
+//----------------------------------------------------------------------------
+
+#if !defined(OWL_WINDOW_RH)
+#define OWL_WINDOW_RH
+
+//
+// CM_EXIT as used by OWL clashes with CM_EXIT in VCL.  To avoid
+// silently failing at runtime because we got the wrong value:
+//
+// 1) define _OWL_CM_EXIT.  this macro will always be used, and can
+// be used anywhere that CM_EXIT was used in previous versions of OWL
+//
+// 2) if CM_EXIT is already defined, and neither _USE_VCL_CM_EXIT nor
+// _USE_OWL_CM_EXIT is defined, issue an error
+//
+// 3) if _USE_OWL_CM_EXIT is defined, define CM_EXIT to _OWL_CM_EXIT
+//
+// 4) if CM_EXIT is not defined, and neither _USE_VCL_CM_EXIT nor
+// _USE_OWL_CM_EXIT is defined, ddefine CM_EXIT to _OWL_CM_EXIT, and
+// issue a warning that this may clash with a (future) include of
+// <controls.hpp> from VCL
+//
+#if !defined(BI_COMP_BORLANDC)
+#  define CM_EXIT 24310
+#else
+#  define _OWL_CM_EXIT 24310
+
+#  if defined(CM_EXIT)
+#   if defined(_USE_OWL_CM_EXIT)
+#     undef CM_EXIT
+#     define CM_EXIT _OWL_CM_EXIT
+#   elif !defined(_USE_VCL_CM_EXIT)
+#     error CM_EXIT clash: define either _USE_OWL_CM_EXIT or _USE_VCL_CM_EXIT
+#   endif
+#  elif !defined(_USE_VCL_CM_EXIT)
+#   if !defined(_USE_OWL_CM_EXIT)
+#     pragma message("CM_EXIT definition may clash with <controls.hpp>")
+#   endif
+#   define CM_EXIT _OWL_CM_EXIT
+#  endif
+#endif
+
+//
+// Common edit menu commands
+//
+#define CM_EDITUNDO 24321
+#define CM_EDITCUT 24322
+#define CM_EDITCOPY 24323
+#define CM_EDITPASTE 24324
+#define CM_EDITDELETE 24325
+#define CM_EDITCLEAR 24326
+#define CM_EDITADD 24327
+#define CM_EDITEDIT 24328
+#define CM_EDITREDO 24329
+
+//
+// Default ObjectWindows app icon IDs
+//
+#define IDI_OWLAPP 32000
+#define IDI_OWLAPPSM 32001
+
+//
+// The following ObjectWindows constants are C++ constants. The macros
+// duplicated below allow the constants to be used when compiling resources.
+//
+#if defined(RC_INVOKED)
+
+//
+// Decoration IDs
+//
+#define IDW_STATUSBAR 32040
+#define IDW_TOOLBAR 32041
+
+//
+// MDI IDs
+//
+#define IDW_MDICLIENT 32000
+#define IDW_FIRSTMDICHILD 32001
+
+#endif
+
+#endif

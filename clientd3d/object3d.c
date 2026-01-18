@@ -65,8 +65,8 @@ static void SortObjects(DrawnObject *objects, int *indices, int max_object);
 static void ComputeObjectArea(PDIB pdib, int center, int distance, int height, AREA *a, int *cutoff);
 static void ComputeOverlayArea(int distance, AREA *obj, int obj_stretch, AREA *ov, int ov_stretch);
 int  FindHotspotPdib(PDIB pdib, char hotspot, POINT *point);
-static Bool DrawObjectOverlays( DrawObjectInfo *dos, list_type overlays, PDIB pdib_obj,
-			       AREA *obj_area, int angle, Bool underlays, Bool bTargetSelectEffect );
+static bool DrawObjectOverlays(DrawObjectInfo *dos, list_type overlays, PDIB pdib_obj,
+                               AREA *obj_area, int angle, bool underlays, bool bTargetSelectEffect);
 /************************************************************************/
 /*
  * DrawObject3D:  Draw the single object described by the given DrawnObject structure.
@@ -79,10 +79,10 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 	int  object_stretch;  // Factor to scale bitmap down when drawing it
 	AREA object_area;     // Area in which to draw object
 	DrawObjectInfo dos;   // Info for drawing object
-	Bool visible, temp;
+	bool visible, temp;
 	int cutoff;           // Last row of object to be drawn on screen.
 
-	Bool bShowTargetSelectEffect = FALSE;
+	bool bShowTargetSelectEffect = false;
 
 	ZeroMemory(&dos,sizeof(dos));
 
@@ -124,10 +124,10 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 	for(;;) 	//	Do twice if bShowTargetSelectEffect and there are overlays (so that inner halo lines get erased by 2nd pass).
 	{
 		dos.cutoff = cutoff;
-		visible = False;
+		visible = false;
 		if (object->overlays != NULL)
 		{
-			temp = DrawObjectOverlays( &dos, object->overlays, pdib_obj, &object_area, angle, True, bShowTargetSelectEffect );
+			temp = DrawObjectOverlays( &dos, object->overlays, pdib_obj, &object_area, angle, true, bShowTargetSelectEffect );
 			visible = visible || temp;
 		}
 
@@ -141,7 +141,7 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 		// Draw overlays
 		if (object->overlays != NULL)
 		{
-			temp = DrawObjectOverlays( &dos, object->overlays, pdib_obj, &object_area, angle, False, bShowTargetSelectEffect );
+			temp = DrawObjectOverlays( &dos, object->overlays, pdib_obj, &object_area, angle, false, bShowTargetSelectEffect );
 			visible = visible || temp;
 		}
 		if( object->overlays == NULL || !bShowTargetSelectEffect )
@@ -185,20 +185,20 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 /*
  * DrawObjectOverlays:  Draw overlays on object whose bitmap is dos->pdib.
  *   angle is angle that object is being viewed at.
- *   If underlays is True, draw only those overlays which should be drawn
+ *   If underlays is true, draw only those overlays which should be drawn
  *     before the object is drawn.
- *   Return True iff at least part of one overlay is visible.
+ *   Return true iff at least part of one overlay is visible.
  */
-Bool DrawObjectOverlays( DrawObjectInfo *dos, list_type overlays, PDIB pdib_obj,
-			AREA *obj_area, int angle, Bool underlays, Bool bTargetSelectEffect )
+bool DrawObjectOverlays( DrawObjectInfo *dos, list_type overlays, PDIB pdib_obj,
+			AREA *obj_area, int angle, bool underlays, bool bTargetSelectEffect )
 {
 	list_type l;
 	AREA overlay_area;
 	int pass;  // Which pass of overlays are we on; 0 = under; 1 = normal; 2 = over
 	int depth; // Current overlay depth to match
-	Bool visible, temp;
+	bool visible, temp;
 
-	visible = False;
+	visible = false;
 	for (pass = 0; pass < 3; pass++)
 	{
 		if (underlays)
@@ -247,9 +247,9 @@ Bool DrawObjectOverlays( DrawObjectInfo *dos, list_type overlays, PDIB pdib_obj,
 /*
  * DrawObjectBitmap:  Draw given bitmap in given rectangle on screen.
  *   The rectangle is clipped to the screen.
- * Return True iff the object is at least partly visible.
+ * Return true iff the object is at least partly visible.
  */
-Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEffect )
+bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, bool bTargetSelectEffect )
 {
    long x, xinc, y, yinc;
    long startx, endx, starty, endy, bitmap_width;
@@ -260,11 +260,8 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    int effect;
    ObjectRowData d;
 
-//	Bool	bClipHaloLeft;
-//	Bool	bClipHaloRight;
-
    if (obj_area->cx == 0 || obj_area->cy == 0)
-      return False;
+      return false;
 
    c = dos->cone;
 
@@ -283,10 +280,10 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 
    /* See if completely off screen */
    if (endx < 0 || endy < 0 || startx >= area.cx || starty >= area.cy)
-      return False;
+      return false;
 
    if (!dos->draw)
-      return True;
+      return true;
 
    obj_bits = DibPtr(dos->pdib);
    bitmap_width = DibWidth(dos->pdib);
@@ -390,7 +387,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 	 d.obj_bits	= row_bits;
 	 d.x		= x;
 	 d.xinc		= xinc;
-	 DrawTargetHalo( &d, obj_bits, y, yinc, bitmap_width, (Bool)( row == starty ), (Bool)( row == endy ) );	//, bClipHaloLeft, bClipHaloRight );
+	 DrawTargetHalo( &d, obj_bits, y, yinc, bitmap_width, ( row == starty ), ( row == endy ) );
       }
 
 
@@ -401,7 +398,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
         while (screen_ptr <= end_screen_ptr)
         {
           /* Don't draw transparent pixels */
-          register BYTE color = *(row_bits + (x >> FIX_DECIMAL));
+          BYTE color = *(row_bits + (x >> FIX_DECIMAL));
           if (color != TRANSPARENT_INDEX)
             *screen_ptr = palette[color];
           
@@ -437,7 +434,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 	 }
       }
    }
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
@@ -511,15 +508,15 @@ void ComputeOverlayArea(int distance, AREA *obj, int obj_stretch, AREA *ov, int 
  *   overlay_depth tells which depth of overlay to match (HOTSPOT_OVER, etc.).  If this
  *     is HOTSPOT_ANY, the depth is ignored; any hotspot with the correct number matches.
  *
- *   If this bitmap should be drawn now, fill in overlay_area and return True.
- *   Otherwise, return False.
+ *   If this bitmap should be drawn now, fill in overlay_area and return true.
+ *   Otherwise, return false.
  */
-Bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, list_type overlays,
-		     int overlay_depth, AREA *overlay_area)
+bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, list_type overlays,
+                     int overlay_depth, AREA *overlay_area)
 {
    // If overlay doesn't have a hotspot, draw it as an overlay
    if (hotspot == 0 && overlay_depth != HOTSPOT_OVER)
-      return False;
+      return false;
 
    // See if overlay should be placed on hotspot
    if (hotspot != 0)
@@ -535,11 +532,11 @@ Bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, list_
 	 // Don't complain, since having missing hotspots is sometimes useful
 	 //	    debug(("Failed to find overlay %d for bitmap %d\n", 
 	 //		    overlay->hotspot, overlay->icon_res));
-	 return False;
+	 return false;
       }
       
       if (overlay_depth != HOTSPOT_ANY && retval != overlay_depth)
-	 return False;
+	 return false;
       
       // Move overlay to hotspot
       overlay_area->x = hotspot_pos.x;
@@ -553,7 +550,7 @@ Bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, list_
 
    overlay_area->cx = DibWidth(pdib_ov);
    overlay_area->cy = DibHeight(pdib_ov);
-   return True;
+   return true;
 }
 /************************************************************************/
 /*
@@ -664,9 +661,9 @@ int FindHotspotPdib(PDIB pdib, char hotspot, POINT *point)
 /*
  * GetObjectSize: Figure out size of an object's bitmap and overlays,
  *   and set width and height to these values.
- *   Return True on success.
+ *   Return true on success.
  */
-Bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *width, int *height)
+bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *width, int *height)
 {
   PDIB pdib, pdib_ov;
   int min_x, max_x;
@@ -675,7 +672,7 @@ Bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *w
   
   pdib = GetObjectPdib(icon_res, angle, group);
   if (!pdib)
-    return False;
+    return false;
   
   /* find width of primary bitmap */
   min_x = min_y = 0;
@@ -711,7 +708,7 @@ Bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *w
   }
   *width  = max_x - min_x;
   *height = max_y - min_y;
-  return True;
+  return true;
 }
 
 /************************************************************************/

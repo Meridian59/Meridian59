@@ -74,8 +74,14 @@ messages:
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
      local oTarget;
+
+     if lTargets = $ 
+     {
+          % Can happen if e.g. immortal admin tries to cast on self
+          return;
+     }
 	  
-	  oTarget = First(lTargets);
+	 oTarget = First(lTargets);
       Send(oTarget,@MsgSendUser,#message_rsc=RingOfFlames_target,
 		    #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 	  

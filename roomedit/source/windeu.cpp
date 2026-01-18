@@ -93,7 +93,7 @@ Bool Debug = FALSE;			/* are we debugging? */
 Bool Quiet = FALSE;			/* don't play a sound when an object is selected */
 Bool Quieter = FALSE;		/* don't play any sound, even when an error occurs */
 Bool Expert = FALSE;		/* don't ask for confirmation for some operations */
-char *CfgFile = DEU_CONFIG_FILE;/* name of the configuration file */
+const char *CfgFile = DEU_CONFIG_FILE;/* name of the configuration file */
 int  InitialScale = 8;		/* initial zoom factor for map */
 Bool Colour2 = FALSE;		/* use the alternate set for things colors */
 Bool InfoShown = TRUE;		/* should we display the info bar? */
@@ -555,7 +555,7 @@ void ParseCommandLineOptions( int argc, char *argv[], char *init_level)
    read the config file
 */
 
-void ParseConfigFileOptions(char *filename)
+void ParseConfigFileOptions(const char *filename)
 {
 	FILE *cfgfile;
 	char  line[1024];
@@ -761,7 +761,7 @@ void PlaySound( int /*freq*/, int /*msec*/)
    terminate the program reporting an error
 */
 
-void ProgError( char *errstr, ...)
+void ProgError( const char *errstr, ...)
 {
 	TRACE ("ProgError: start");
 	static char msg[256];	// Safer than on stack
@@ -818,7 +818,7 @@ void CloseLog(void)
    }
 }
 
-void LogMessage(char *logstr, ...)
+void LogMessage(const char *logstr, ...)
 {
 	va_list  args;
 	time_t   tval;
@@ -851,7 +851,7 @@ void LogMessage(char *logstr, ...)
 }
 
 
-void LogError(char *logstr, ...)
+void LogError(const char *logstr, ...)
 {
 	va_list  args;
 	time_t   tval;
@@ -888,7 +888,7 @@ void LogError(char *logstr, ...)
    write a message in the status bar of the main frame
 */
 
-void WorkMessage (char *workstr, ...)
+void WorkMessage (const char *workstr, ...)
 {
 	va_list  args;
 	static char msg[256];
@@ -926,7 +926,7 @@ void GetWorkMessage (char *buffer, size_t bufferSize)
    Ask the user to confirm a choice (message box)
 */
 
-BOOL Confirm(char *confstr, ...)
+BOOL Confirm(const char *confstr, ...)
 {
 	va_list  args;
 	char msg[256];	// Safer than on stack
@@ -948,7 +948,7 @@ BOOL Confirm(char *confstr, ...)
 	Notify the user of a message in a message box
 */
 
-void Notify(char *notstr, ...)
+void Notify(const char *notstr, ...)
 {
 	va_list  args;
 	char msg[256];

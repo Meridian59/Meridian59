@@ -25,7 +25,7 @@ typedef struct systimer_struct
    int time;
    int period;
    INT64 next_time_activate;
-   Bool enabled;
+   bool enabled;
    struct systimer_struct *next;
 } systimer_node;
 
@@ -34,7 +34,7 @@ void ResetSysTimer();
 void CreateSysTimer(int type,int time,int period);
 void ProcessSysTimer(INT64 time);
 void ForEachSysTimer(void (*callback_func)(systimer_node *st));
-Bool DisableSysTimer(int systimer_type);
-Bool EnableSysTimer(int systimer_type);
+bool DisableSysTimer(int systimer_type);
+bool EnableSysTimer(int systimer_type);
 
 #endif

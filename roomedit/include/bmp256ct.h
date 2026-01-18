@@ -107,7 +107,7 @@ public:
 //{{TBitmap256ControlVIRTUAL_BEGIN}}
 public:
 	virtual void Paint (TDC& dc, bool erase, TRect& rect);
-	virtual char far*GetClassName ();
+	virtual TWindowClassName GetWindowClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void SetupWindow ();
 //{{TBitmap256ControlVIRTUAL_END}}

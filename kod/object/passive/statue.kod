@@ -65,11 +65,12 @@ properties:
    prLeft_arm = $
    prLegs = $
    pbIsHairVisible = $
-   prFacialOverlay = $
+   prFacialOverlay = $ % Facial overlay resource (e.g. mask)
 
    prWeapon = statue_default_sword
    prShield = statue_default_shield
    prBowTop = $
+   prInstrument = $
    
    piIcon_frame = 1
    piLegs_frame = 1
@@ -237,6 +238,12 @@ messages:
          if prShield <> $
          {
             piShield_frame = 2;
+            piLeft_frame = 7;
+            piOverlays = piOverlays + 1;
+         }
+
+         if prInstrument <> $
+         {
             piLeft_frame = 7;
             piOverlays = piOverlays + 1;
          }
@@ -438,7 +445,7 @@ messages:
 
    SetStatue(original = $)
    {      
-      local oWeapon, oShield;
+      local oWeapon, oShield, oMask, oInstrument;
 
       if original = $ OR NOT IsClass(original,&User)
       {
@@ -461,7 +468,14 @@ messages:
       prToupee = send(poOriginal,@GetHairRsc);
       send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
+      % Get the facial overlay object and store its gender-specific resource
+      prFacialOverlay = $;
+      oMask = Send(poOriginal,@GetFacialOverlay);
+      if oMask <> $
+      {
+         prFacialOverlay = Send(oMask,@GetOverlay);
+      }
+      
       pbIsHairVisible = Send(poOriginal,@IsHairVisible);
 
       oWeapon = send(poOriginal,@LookUpPlayerWeapon);
@@ -471,6 +485,14 @@ messages:
       {
          oShield = Send(poOriginal, @LookupPlayerShield);
          piShield_hotspot = Send(oShield, @GetOverlayHotspot);
+      }
+
+      % Check for instrument (e.g. lute)
+      prInstrument = $;
+      oInstrument = send(poOriginal,@LookupPlayerInstrument);
+      if oInstrument <> $
+      {
+         prInstrument = send(oInstrument,@GetOverlay);
       }
 
       prBowTop = $; 
@@ -502,18 +524,6 @@ messages:
 
       AddPacket(1,ANIMATE_NONE,2,piIcon_frame);
 
-      return;
-   }
-
-   UpgradeStatue()
-   {
-
-      % We added the ability to show facial overlays (patch 1.3.2 / client 732).
-      % To upgrade the statue we reset the frames having first correctly set the new properties.
-      % This function to be removed after it has been run via "send class" from admin mode on the server.
-      prFacialOverlay = Send(poOriginal,@GetFacialOverlay);
-      pbIsHairVisible = Send(poOriginal,@IsHairVisible);
-      Send(self,@ResetFrames);
       return;
    }
 
@@ -580,6 +590,14 @@ messages:
          AddPacket(1,ANIMATE_NONE,2,piShield_frame);  
       }
 
+      % Instrument overlay (e.g. lute)
+      if prInstrument <> $ AND piPose = POSE_NONE
+      {
+         AddPacket(4,prInstrument);
+         AddPacket(1,HS_LEFT_WEAPON);
+         AddPacket(1,ANIMATE_NONE,2,1);
+      }
+
       if prWeapon <> $ AND (piPose <> POSE_CAST AND piPose <> POSE_PUNCH)
       {
          if piPose=POSE_BOW_ATTACK
@@ -622,9 +640,12 @@ messages:
          }
       }
 
+      % Facial overlay (e.g. mask)
       if prFacialOverlay <> $
       {
-         Send(prFacialOverlay,@SendOverlayInformation,#iAnimation = $);
+         AddPacket(4,prFacialOverlay);
+         AddPacket(1,HS_TOUPEE);
+         AddPacket(1,ANIMATE_NONE,2,1);
       }
 
       return;

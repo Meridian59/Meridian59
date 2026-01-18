@@ -1453,6 +1453,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_TARGETNOTVISIBLEFORCAST "You can't see your selected target."
+    IDS_DUPLICATETARGETNAME     "Duplicate targets found with that name."
+    IDS_NOTARGETFOUND           "No target found with that name."
 END
 
 STRINGTABLE 

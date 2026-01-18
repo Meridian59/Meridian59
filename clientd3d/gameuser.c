@@ -745,6 +745,66 @@ void UserTargetNextOrPrevious(bool bTargetNext)
 
 /************************************************************************/
 /*
+ * GetTargetIDFromString:  Tries to find a visible object with the given name - also returns the player ID if 'self' or 'me' is given
+ */
+ID GetTargetIDFromString(HINSTANCE hInst, char *name, int *out_error_code)
+{
+   // Skip spaces
+   while (*name == ' ')
+      name++;
+
+   // Quick check for self/me
+   if (stricmp(name, "self") == 0 || stricmp(name, "me") == 0)
+      return player.id;
+
+   ID match_id = INVALID_ID;
+   list_type object_list;
+   room_contents_node *rcnObject = NULL;
+   int iListIndex = 0;
+   // Get list of visible objects that are players or enemies
+   object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE | OF_PLAYER, OF_INVISIBLE);
+   if (object_list)
+   {
+      int match_count = 0;
+      size_t name_len = strlen(name);
+
+      // Try to find named target in list.
+      while (rcnObject = (room_contents_node *) list_nth_item(object_list, iListIndex))
+      {
+         char *obj_name = LookupNameRsc(rcnObject->obj.name_res);
+         bool match = strnicmp(obj_name, name, name_len) == 0;
+         if (match)
+         {
+            ++match_count;
+            match_id = rcnObject->obj.id;
+         }
+         iListIndex++;
+      }
+      list_delete(object_list);
+
+      if (match_count > 1)
+      {
+         // Error about ambiguous target name
+         if (out_error_code != NULL)
+            *out_error_code = TARGET_ERROR_AMBIGUOUS;
+         return INVALID_ID;
+      }
+   }
+
+   if (match_id == INVALID_ID)
+   {
+      // Error about no match found
+      if (out_error_code != NULL)
+         *out_error_code = TARGET_ERROR_NOT_FOUND;
+      return INVALID_ID;
+   }
+
+   // Found a unique best match
+   return match_id;
+}
+
+/************************************************************************/
+/*
  * SetUserTargetID:  Sets current target object id, which should be INVALID_ID if no target set.
  *						ajw
  */

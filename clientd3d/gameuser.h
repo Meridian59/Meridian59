@@ -13,6 +13,8 @@
 #define _GAMEUSER_H
 
 #define CLOSE_DISTANCE (5 * FINENESS)  // Objects must be this close for get, put, etc.
+#define TARGET_ERROR_NOT_FOUND -1
+#define TARGET_ERROR_AMBIGUOUS -2
 
 list_type UserInventoryList(HWND hwnd, char *title);
 void UserAttack(int action);
@@ -44,6 +46,7 @@ ID   GetUserTargetID();
 void UserMouselookToggle(void);
 bool UserMouselookIsEnabled(void);
 void UserTargetSelf(void);
+ID GetTargetIDFromString(HINSTANCE hInst, char* name, int* out_error_code);
 
 void GotObjectContents(ID object_id, list_type contents);
 

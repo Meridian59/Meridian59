@@ -20,6 +20,12 @@
 extern room_type current_room;
 extern player_info player;
 
+// Maximum time (in seconds) for a projectile to reach its target.
+// This ensures long-range projectiles arrive quickly enough to match attack sounds.
+// Note: Since motion updates happen at variable frame rates (dt in milliseconds),
+// this value is used to calculate a speed multiplier to cap total travel time.
+static const float MAX_PROJECTILE_TRAVEL_TIME = 2.0;
+
 /********************************************************************/
 /*
  * CompareProjectiles:  Utility comparison function for use with lists.
@@ -57,17 +63,17 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 
    p->motion.source_x = s->motion.x;
    p->motion.source_y = s->motion.y;
-   p->motion.source_z = s->motion.z; //GetPointFloor(s->motion.x, s->motion.y);
+   p->motion.source_z = s->motion.z;
 
    p->motion.dest_x = d->motion.x;
    p->motion.dest_y = d->motion.y;
-   p->motion.dest_z = d->motion.z; //GetPointFloor(d->motion.x, d->motion.y);
+   p->motion.dest_z = d->motion.z;
 
-//   debug(("source obj = %d, x = %d, y = %d, z = %d\n", source_obj, 
-//	   p->motion.source_x, p->motion.source_y, p->motion.source_z));
-//
-//   debug(("dest obj = %d, x = %d, y = %d, z = %d\n", dest_obj, 
-//	   p->motion.dest_x, p->motion.dest_y, p->motion.dest_z));
+   // debug(("source obj = %d, x = %d, y = %d, z = %d\n", source_obj,
+   //	   p->motion.source_x, p->motion.source_y, p->motion.source_z));
+   //
+   //   debug(("dest obj = %d, x = %d, y = %d, z = %d\n", dest_obj,
+   //	   p->motion.dest_x, p->motion.dest_y, p->motion.dest_z));
 
    // See how far we should move per frame
    dx = p->motion.dest_x - p->motion.source_x;
@@ -76,10 +82,30 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 
    if (speed == 0 || (dx == 0 && dy == 0 && dz == 0))
       p->motion.increment = 1.0;
-   else 
+   else
    {
-      distance = sqrtf(dx * dx + dy * dy + dz * dz) / FINENESS;
-      p->motion.increment = ((float) speed) / 1000.0 / distance;
+      float dx_f = (float) dx;
+      float dy_f = (float) dy;
+      float dz_f = (float) dz;
+
+      distance = sqrtf(dx_f * dx_f + dy_f * dy_f + dz_f * dz_f) / FINENESS;
+
+      // Calculate normal increment based on speed
+      // The server sends speed as "grid squares per 10 seconds", and increment is
+      // "progress per millisecond", so we divide by 10000 (10 seconds = 10000 milliseconds).
+      // This matches the calculation in MoveObject2() in moveobj.c.
+      float normal_increment = ((float) speed) / 10000.0f / distance;
+
+      // Cap maximum travel time to prevent extremely long-range projectiles from taking
+      // 30+ seconds to arrive, which breaks gameplay (attack sounds/animations finish
+      // while projectile is still mid-flight). This only affects edge cases at extreme
+      // ranges; normal combat distances use the unmodified speed parameter.
+      // Calculate minimum increment needed to arrive within MAX_PROJECTILE_TRAVEL_TIME:
+      // min_increment ensures: (1.0 / min_increment / 1000.0) <= MAX_PROJECTILE_TRAVEL_TIME
+      float min_increment = 1.0f / (MAX_PROJECTILE_TRAVEL_TIME * 1000.0f);
+
+      // Use the faster of the two speeds (normal or minimum required)
+      p->motion.increment = (std::max)(normal_increment, min_increment);
    }
 
    p->motion.x = p->motion.source_x;

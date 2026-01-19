@@ -519,13 +519,9 @@ messages:
    }
 
    CheckAdvancementPoints()
+   "Always returns TRUE for DMs."
    {
-      if NOT pbAdvancement
-      {
-         return TRUE;
-      }
-      
-      propagate;
+      return TRUE;
    }
 
    AdvancementCheck(what=$,killing_blow=TRUE)

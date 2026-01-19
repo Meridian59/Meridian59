@@ -745,27 +745,38 @@ void UserTargetNextOrPrevious(bool bTargetNext)
 
 /************************************************************************/
 /*
- * GetTargetIDFromString:  Tries to find a visible object with the given name - also returns the player ID if 'self' or 'me' is given
+ * GetTargetIDFromString:  Tries to find any visible object with the given name - also returns the player ID if 'self' or 'me' is given
  */
-ID GetTargetIDFromString(HINSTANCE hInst, char *name, int *out_error_code)
+std::vector<ID> GetTargetsByName(const std::string &pName, bool allowSelf)
 {
+   std::vector<ID> target_ids;
+
    // Skip spaces, convert to lowercase
-   while (*name == ' ')
-      name++;
+   std::string name = pName;
+   name.erase(0, name.find_first_not_of(' '));
+   std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
-   std::string strName = name;
-   std::transform(strName.begin(), strName.end(), strName.begin(), ::tolower);
+   if (allowSelf)
+   {
+      // Quick check for self/me
+      if (name == "self" || name == "me")
+      {
+         target_ids.push_back(player.id);
+         return target_ids;
+      }
+   }
 
-   // Quick check for self/me
-   if (strName == "self" || strName == "me")
-      return player.id;
-
-   std::vector<std::pair<const std::string, void*>> entries;
+   // Get a vector of all potential target entries
+   std::vector<std::pair<const std::string, ID>> entries;
+   std::string objName;
 
    // Add local player to entries, so it can be matched by name
-   std::string objName = LookupNameRsc(player.name_res);
-   std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
-   entries.push_back(std::make_pair(objName, (void *)player.id));
+   if (allowSelf)
+   {
+      objName = LookupNameRsc(player.name_res);
+      std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
+      entries.push_back(std::make_pair(objName, player.id));
+   }
 
    // Get list of visible objects that are players or enemies
    list_type object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE | OF_PLAYER, OF_INVISIBLE);
@@ -779,33 +790,21 @@ ID GetTargetIDFromString(HINSTANCE hInst, char *name, int *out_error_code)
          objName = LookupNameRsc(rcnObject->obj.name_res);
          std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
 
-         entries.push_back(std::make_pair(objName, (void *)rcnObject->obj.id));
+         entries.push_back(std::make_pair(objName, rcnObject->obj.id));
          iListIndex++;
       }
       list_delete(object_list);
    }
 
    // Do the search to see if we can find any matches by name
-   std::vector<void*> matches = FindPrefixMatches(entries, strName);
-
-   if (matches.size() > 1)
+   for (const auto &entry : entries)
    {
-      // Error about ambiguous target name
-      if (out_error_code != NULL)
-         *out_error_code = TARGET_ERROR_AMBIGUOUS;
-      return INVALID_ID;
+      if (entry.first.starts_with(name))
+      {
+         target_ids.push_back(entry.second);
+      }
    }
-
-   if (matches.empty())
-   {
-      // Error about no match found
-      if (out_error_code != NULL)
-         *out_error_code = TARGET_ERROR_NOT_FOUND;
-      return INVALID_ID;
-   }
-
-   // Found a unique best match
-   return (ID)matches[0];
+   return target_ids;
 }
 
 /************************************************************************/

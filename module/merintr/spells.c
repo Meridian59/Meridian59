@@ -394,22 +394,19 @@ void SpellCast(spell_action *spa)
    // See if user specified target on command line
    if (spa->target != NULL && spa->target[0] != '\0')
    {
-      int error_code = NULL;
-      target_id = GetTargetIDFromString(hInst, spa->target, &error_code);
-      if (target_id == INVALID_ID)
+      // Do a search by name for all potential targets
+      std::vector<ID> targets = GetTargetsByName(std::string(spa->target));
+      if(targets.size() > 1)
       {
-         char *error_string;
-         if (error_code == TARGET_ERROR_AMBIGUOUS)
-         {
-            error_string = GetString(hInst, IDS_DUPLICATETARGETNAME);
-         }
-         else
-         {
-            error_string = GetString(hInst, IDS_NOTARGETFOUND);
-         }
-
-         GameMessage(error_string);
-         return;
+         GameMessage( GetString(hInst, IDS_DUPLICATETARGETNAME) );
+      }
+      else if(targets.empty())
+      {
+         GameMessage( GetString(hInst, IDS_NOTARGETFOUND) );
+      }
+      else
+      {
+         target_id = (ID)targets[0];
       }
    }
    else

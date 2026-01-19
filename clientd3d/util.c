@@ -156,25 +156,6 @@ DWORD string_hash(char *name, DWORD max_val)
 
 /************************************************************************/
 /*
- * Counts the number of strings in the given vector that start with the given prefix - case sensitive.
- */
-std::vector<void*> FindPrefixMatches(const std::vector<std::pair<const std::string, void*>> &entries, const std::string &prefix)
-{
-   std::vector<void *> matches;
-
-   for (const auto &entry : entries)
-   {
-      if(entry.first.starts_with(prefix))
-      {
-         matches.push_back(entry.second);
-      }
-   }
-
-   return matches;
-}
-
-/************************************************************************/
-/*
  * MakeDirectory:  Create directory of given name, if it doesn't already exist.
  *   Returns true if directory exists or was successfully created.
  */

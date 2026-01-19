@@ -214,4 +214,4 @@ EXPORTS
 
 ; ajw
 	GetUserTargetID
-	GetTargetIDFromString
+	GetTargetsByName

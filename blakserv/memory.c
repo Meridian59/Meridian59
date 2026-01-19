@@ -328,3 +328,18 @@ void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 #endif
 }
 
+void AddMemoryCount(int malloc_id, size_t size)
+{
+   if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
+      eprintf("AddMemoryCount adding memory of unknown type %i\n", malloc_id);
+   else
+      memory_stat.allocated[malloc_id] += size;
+}
+
+void SubtractMemoryCount(int malloc_id, size_t size)
+{
+   if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
+      eprintf("SubtractMemoryCount subtracting memory of unknown type %i\n", malloc_id);
+   else
+      memory_stat.allocated[malloc_id] -= size;
+}

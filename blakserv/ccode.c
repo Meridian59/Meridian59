@@ -2491,69 +2491,83 @@ blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_no
    // Build the vector of sector ids
    std::vector<int> sector_ids;
 
-   list_node *list = GetListNodeByID(id_list_val.v.data);
-   if (!list)
+   if (id_list_val.v.tag == TAG_INT)
    {
-      bprintf("C_IsPointInSector failed to get list node by id: %" PRId64 "\n", id_list_val.v.data);
-      return NIL;
+      sector_id = (int) id_list_val.v.data;
+      sector_ids.push_back(sector_id);
    }
-
-   while (list != NULL)
+   else if (id_list_val.v.tag == TAG_LIST)
    {
-      if (list->first.v.tag == TAG_INT)
+      list_node *list = GetListNodeByID(id_list_val.v.data);
+      if (!list)
       {
-         sector_id = list->first.v.data;
-         sector_ids.push_back(sector_id);
-      }
-      else
-      {
-         bprintf("C_IsPointInSector: Sector id list element is not an integer\n");
+         bprintf("C_IsPointInSector failed to get list node by id: %" PRId64 "\n", id_list_val.v.data);
+         return NIL;
       }
 
-      if (list->rest.v.tag == TAG_LIST)
+      while (list != NULL)
       {
-         list = GetListNodeByID(list->rest.v.data);
-      }
-      else
-      {
-         bprintf("C_IsPointInSector: List element is not a list\n");
-         break;
-      }
-   }
-
-   for (int sector_id : sector_ids)
-   {
-      server_sector *ss = nullptr;
-      for (size_t i = 0; i < r->sectors.size(); i++)
-      {
-         if (r->sectors[i].id == sector_id)
+         if (list->first.v.tag == TAG_INT)
          {
-            ss = &r->sectors[i];
+            sector_id = list->first.v.data;
+            sector_ids.push_back(sector_id);
+         }
+         else
+         {
+            bprintf("C_IsPointInSector: Sector id list element is not an integer\n");
+         }
+
+         if (list->rest.v.tag == TAG_LIST)
+         {
+            list = GetListNodeByID(list->rest.v.data);
+            if (!list)
+            {
+               bprintf("C_IsPointInSector: Failed to get list node by id: %" PRId64 "\n", list->rest.v.data);
+               return NIL;
+            }
+         }
+         else
+         {
+            // End of list
             break;
          }
       }
 
-      if (!ss)
+      for (int sector_id : sector_ids)
       {
-         bprintf("C_IsPointInSector: Sector id not found in room: %d (room: %" PRId64 ")\n", sector_id, room_val.v.data);
-         continue;
-      }
-
-      // Found matching sector, check polygons
-      for (size_t p = 0; p < ss->polygons.size(); p++)
-      {
-         const server_polygon &poly = ss->polygons[p];
-         if (!poly.vertices_x || !poly.vertices_y || poly.num_vertices < 3)
+         server_sector *ss = nullptr;
+         for (size_t i = 0; i < r->sectors.size(); i++)
          {
+            if (r->sectors[i].id == sector_id)
+            {
+               ss = &r->sectors[i];
+               break;
+            }
+         }
+
+         if (!ss)
+         {
+            bprintf("C_IsPointInSector: Sector id not found in room: %d (room: %" PRId64 ")\n", sector_id,
+                    room_val.v.data);
             continue;
          }
 
-         if (IsPointInPoly(fine_x, fine_y, poly))
+         // Found matching sector, check polygons
+         for (size_t p = 0; p < ss->polygons.size(); p++)
          {
-            val_type ret;
-            ret.v.tag = TAG_INT;
-            ret.v.data = true;
-            return ret.int_val;
+            const server_polygon &poly = ss->polygons[p];
+            if (!poly.vertices_x || !poly.vertices_y || poly.num_vertices < 3)
+            {
+               continue;
+            }
+
+            if (IsPointInPoly(fine_x, fine_y, poly))
+            {
+               val_type ret;
+               ret.v.tag = TAG_INT;
+               ret.v.data = true;
+               return ret.int_val;
+            }
          }
       }
    }

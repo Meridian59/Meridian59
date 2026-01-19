@@ -44,6 +44,23 @@ void InitRoomData()
    num_roomdata = 0;
 }
 
+static size_t CalculateRoomTypeMemory(const room_type *room)
+{
+   size_t total = sizeof(room_type);
+   
+   // Track vector's internal buffer capacity
+   total += room->sectors.capacity() * sizeof(server_sector);
+   
+   // Track each sector's polygon vector buffer
+   for (size_t i = 0; i < room->sectors.size(); i++)
+   {
+      total += room->sectors[i].polygons.capacity() * sizeof(server_polygon);
+      // Note: polygon vertex arrays are already tracked by AllocateMemory
+   }
+   
+   return total;
+}
+
 void ResetRoomData()
 {
    roomdata_node *room,*temp;
@@ -53,8 +70,14 @@ void ResetRoomData()
    {
       temp = room->next;
       BSPRoomFreeServer(&(room->file_info));
-      room->file_info.~room_type();
-      FreeMemory(MALLOC_ID_ROOM,room,sizeof(roomdata_node));
+
+      // Manually subtract memory for room_type structure
+      SubtractMemoryCount(MALLOC_ID_ROOM, CalculateRoomTypeMemory(&(room->file_info)));
+
+      // Manually subtract memory for roomdata_node structure
+      SubtractMemoryCount(MALLOC_ID_ROOM, sizeof(roomdata_node));
+
+      delete room;
       room = temp;
    }
    roomdata = NULL;
@@ -66,7 +89,6 @@ blak_int LoadRoomData(int resource_id)
    val_type ret_val;
    resource_node *r;
    roomdata_node *room;
-   room_type file_info;
 
    r = GetResourceByID(resource_id);
    if (r == NULL)
@@ -75,24 +97,27 @@ blak_int LoadRoomData(int resource_id)
       return NIL;
    }
 
-   if (!LoadRoomFile(r->resource_val,&file_info))
+   room = new roomdata_node();
+   if (!LoadRoomFile(r->resource_val,&room->file_info))
    {
       bprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
+
+      // Manually subtract memory for room_type and roomdata_node structures
+      SubtractMemoryCount(MALLOC_ID_ROOM, sizeof(room_type) + sizeof(roomdata_node));
+
+      delete room;
       return NIL;
    }
 
-   room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM,sizeof(roomdata_node));
-   new(&room->file_info) room_type();
-   room->roomdata_id = num_roomdata++;
-   room->file_info = file_info;
+   // Manually add memory for roomdata_node structure
+   AddMemoryCount(MALLOC_ID_ROOM, sizeof(roomdata_node));
 
+   // Manually add memory for room_type structure
+   AddMemoryCount(MALLOC_ID_ROOM, CalculateRoomTypeMemory(&(room->file_info)));
+
+   room->roomdata_id = num_roomdata++;
    room->next = roomdata;
    roomdata = room;
-
-/*
-   dprintf("LoadRoomData read room %i [%i,%i]\n",
-	   room->roomdata_id,room->file_info.rows,room->file_info.cols);
-*/
 
    ret_val.v.tag = TAG_ROOM_DATA;
    ret_val.v.data = room->roomdata_id;

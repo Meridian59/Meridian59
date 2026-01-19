@@ -69,6 +69,7 @@ typedef struct {
 char *strtolower(char *);
 void  wait(long seconds);
 DWORD string_hash(char *name, DWORD max_val);
+std::vector<void*> FindPrefixMatches(const std::vector<std::pair<const std::string, void*>> &entries, const std::string &prefix);
 void  set_extension(char *newfile, char *filename, char *extension);
 M59EXPORT bool  MakeDirectory(const char *name);
 bool  GetWorkingDirectory(char *buf, int buflen);

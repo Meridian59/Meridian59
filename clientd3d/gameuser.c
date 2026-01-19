@@ -749,49 +749,54 @@ void UserTargetNextOrPrevious(bool bTargetNext)
  */
 ID GetTargetIDFromString(HINSTANCE hInst, char *name, int *out_error_code)
 {
-   // Skip spaces
+   // Skip spaces, convert to lowercase
    while (*name == ' ')
       name++;
 
+   std::string strName = name;
+   std::transform(strName.begin(), strName.end(), strName.begin(), ::tolower);
+
    // Quick check for self/me
-   if (stricmp(name, "self") == 0 || stricmp(name, "me") == 0)
+   if (strName == "self" || strName == "me")
       return player.id;
 
-   ID match_id = INVALID_ID;
-   list_type object_list;
-   room_contents_node *rcnObject = NULL;
-   int iListIndex = 0;
+   std::vector<std::pair<const std::string, void*>> entries;
+
+   // Add local player to entries, so it can be matched by name
+   std::string objName = LookupNameRsc(player.name_res);
+   std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
+   entries.push_back(std::make_pair(objName, (void *)player.id));
+
    // Get list of visible objects that are players or enemies
-   object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE | OF_PLAYER, OF_INVISIBLE);
+   list_type object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE | OF_PLAYER, OF_INVISIBLE);
    if (object_list)
    {
-      int match_count = 0;
-      size_t name_len = strlen(name);
-
-      // Try to find named target in list.
+      // Try to find named target in list - convert to lowercase for comparison
+      room_contents_node *rcnObject = NULL;
+      int iListIndex = 0;
       while (rcnObject = (room_contents_node *) list_nth_item(object_list, iListIndex))
       {
-         char *obj_name = LookupNameRsc(rcnObject->obj.name_res);
-         bool match = strnicmp(obj_name, name, name_len) == 0;
-         if (match)
-         {
-            ++match_count;
-            match_id = rcnObject->obj.id;
-         }
+         objName = LookupNameRsc(rcnObject->obj.name_res);
+         std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
+
+         entries.push_back(std::make_pair(objName, (void *)rcnObject->obj.id));
          iListIndex++;
       }
       list_delete(object_list);
-
-      if (match_count > 1)
-      {
-         // Error about ambiguous target name
-         if (out_error_code != NULL)
-            *out_error_code = TARGET_ERROR_AMBIGUOUS;
-         return INVALID_ID;
-      }
    }
 
-   if (match_id == INVALID_ID)
+   // Do the search to see if we can find any matches by name
+   std::vector<void*> matches = FindPrefixMatches(entries, strName);
+
+   if (matches.size() > 1)
+   {
+      // Error about ambiguous target name
+      if (out_error_code != NULL)
+         *out_error_code = TARGET_ERROR_AMBIGUOUS;
+      return INVALID_ID;
+   }
+
+   if (matches.empty())
    {
       // Error about no match found
       if (out_error_code != NULL)
@@ -800,7 +805,7 @@ ID GetTargetIDFromString(HINSTANCE hInst, char *name, int *out_error_code)
    }
 
    // Found a unique best match
-   return match_id;
+   return (ID)matches[0];
 }
 
 /************************************************************************/

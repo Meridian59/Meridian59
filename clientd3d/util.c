@@ -153,7 +153,6 @@ DWORD string_hash(char *name, DWORD max_val)
 
    return k % max_val;
 }
-
 /************************************************************************/
 /*
  * MakeDirectory:  Create directory of given name, if it doesn't already exist.

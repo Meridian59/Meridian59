@@ -396,17 +396,17 @@ void SpellCast(spell_action *spa)
    {
       // Do a search by name for all potential targets
       std::vector<ID> targets = GetTargetsByName(std::string(spa->target));
-      if(targets.size() > 1)
+      if (targets.size() > 1)
       {
-         GameMessage( GetString(hInst, IDS_DUPLICATETARGETNAME) );
+         GameMessage(GetString(hInst, IDS_DUPLICATETARGETNAME));
       }
-      else if(targets.empty())
+      else if (targets.empty())
       {
-         GameMessage( GetString(hInst, IDS_NOTARGETFOUND) );
+         GameMessage(GetString(hInst, IDS_NOTARGETFOUND));
       }
       else
       {
-         target_id = (ID)targets[0];
+         target_id = (ID) targets[0];
       }
    }
    else

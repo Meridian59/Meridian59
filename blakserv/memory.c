@@ -348,7 +348,7 @@ void AddMemoryCount(int malloc_id, int64_t size)
 
       if (result < 0)
       {
-         eprintf("AddMemoryCount: Memory count would go negative for type %i (current: %zu, adjustment: %lld)\n",
+         eprintf("AddMemoryCount: Memory count would go negative for type %i (current: %zu, adjustment: %" PRId64 ")\n",
                  malloc_id, memory_stat.allocated[malloc_id], size);
          memory_stat.allocated[malloc_id] = 0;  // Clamp to 0 but log the error
       }

@@ -292,12 +292,6 @@ keymap select_key_table[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
-/* Keys in waiting states, so that user can still quit game */
-static keymap default_key_table[] = {
-{ 'Q',          KEY_NONE,  A_QUIT },
-{ 0, 0, 0},   // Must end table this way
-};
-
 static TypedCommand commands[] = {
 { "say",         CommandSay, },
 { "yell",        CommandYell, },
@@ -618,7 +612,6 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    CustomConfigInit();
 
    KeyAddTable(GAME_SELECT, select_key_table);
-   KeyAddTable(GAME_INVALID, default_key_table);
 
    InterfaceInit();
 }
@@ -627,7 +620,6 @@ void WINAPI ModuleExit(void)
 {
    KeyRemoveTable(GAME_PLAY, interface_key_table);
    KeyRemoveTable(GAME_SELECT, select_key_table);
-   KeyRemoveTable(GAME_INVALID, default_key_table);
 
    FreeVerbAliases();
 

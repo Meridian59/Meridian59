@@ -28,7 +28,7 @@ typedef struct {
 // A 'spell_action' ties together a spell and its target string
 struct spell_action
 {
-   spell *sp;
+   spell *spell;
    char *target;
 };
 

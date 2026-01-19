@@ -359,9 +359,7 @@ void UserCastSpell(void)
    
    list_delete(sel_list);
    
-   spell_action spa;
-   spa.sp = sp;
-   spa.target = NULL;
+   spell_action spa = {sp, NULL};
    PerformAction(A_CASTSPELL, &spa);
 }
 /********************************************************************/
@@ -372,7 +370,7 @@ void SpellCast(spell_action *spa)
 {
    if (spa == NULL)
       return;
-   spell *sp = spa->sp;
+   spell *sp = spa->spell;
    if (sp == NULL)
       return;
 
@@ -395,14 +393,16 @@ void SpellCast(spell_action *spa)
    if (spa->target != NULL && spa->target[0] != '\0')
    {
       // Do a search by name for all potential targets
-      std::vector<ID> targets = GetTargetsByName(std::string(spa->target));
+      auto targets = GetTargetsByName(std::string(spa->target), true);
       if (targets.size() > 1)
       {
          GameMessage(GetString(hInst, IDS_DUPLICATETARGETNAME));
+         return;
       }
       else if (targets.empty())
       {
          GameMessage(GetString(hInst, IDS_NOTARGETFOUND));
+         return;
       }
       else
       {
@@ -419,13 +419,16 @@ void SpellCast(spell_action *spa)
       // User has target already selected.
       if (target_id == GetPlayer()->id || FindVisibleObjectById(target_id))
       {
-         /* Make temporary list for sending to server */
+         // Make temporary list for sending to server
          temp_obj.id = target_id;
          temp_obj.temp_amount = 1;
          RequestCast(sp->obj.id, temp_list);
       }
-      else  // Target cannot be seen.
+      else
+      {  
+         // Target cannot be seen.
          GameMessage(GetString(hInst, IDS_TARGETNOTVISIBLEFORCAST));
+      }
       return;
    }
 
@@ -626,9 +629,7 @@ void MenuSpellChosen(int id)
       return;
    }
 
-   spell_action spa;
-   spa.sp = sp;
-   spa.target = NULL;
+   spell_action spa = {sp, NULL};
    PerformAction(A_CASTSPELL, &spa);
 }
 

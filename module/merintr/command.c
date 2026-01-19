@@ -308,9 +308,7 @@ void CommandCast(char *args)
       return;
    }
 
-   spell_action spa;
-   spa.sp = sp; 
-   spa.target = next_name;
+   spell_action spa = {sp, next_name};
    PerformAction(A_CASTSPELL, &spa);
 }
 

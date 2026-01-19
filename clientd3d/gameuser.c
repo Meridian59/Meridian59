@@ -745,9 +745,10 @@ void UserTargetNextOrPrevious(bool bTargetNext)
 
 /************************************************************************/
 /*
- * GetTargetIDFromString:  Tries to find any visible object with the given name - also returns the player ID if 'self' or 'me' is given
+ * GetTargetIDFromString:  Tries to find any visible object with the given name 
+ * - also returns the player ID if 'self' or 'me' is given
  */
-std::vector<ID> GetTargetsByName(const std::string &pName, bool allowSelf)
+std::vector<ID> GetTargetsByName(const std::string &pName, bool allow_self)
 {
    std::vector<ID> target_ids;
 
@@ -756,7 +757,7 @@ std::vector<ID> GetTargetsByName(const std::string &pName, bool allowSelf)
    name.erase(0, name.find_first_not_of(' '));
    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
-   if (allowSelf)
+   if (allow_self)
    {
       // Quick check for self/me
       if (name == "self" || name == "me")
@@ -771,7 +772,7 @@ std::vector<ID> GetTargetsByName(const std::string &pName, bool allowSelf)
    std::string objName;
 
    // Add local player to entries, so it can be matched by name
-   if (allowSelf)
+   if (allow_self)
    {
       objName = LookupNameRsc(player.name_res);
       std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
@@ -797,11 +798,26 @@ std::vector<ID> GetTargetsByName(const std::string &pName, bool allowSelf)
    }
 
    // Do the search to see if we can find any matches by name
+   bool exact_match = false;
    for (const auto &entry : entries)
    {
       if (entry.first.starts_with(name))
       {
-         target_ids.push_back(entry.second);
+         if (entry.first.length() == name.length())
+         {
+            // Exact match found - clear any previous partial matches
+            if (!exact_match)
+            {
+               exact_match = true;
+               target_ids.clear();
+            }
+            target_ids.push_back(entry.second);
+         }
+         else if (!exact_match)
+         {
+            // Only add partial matches if no exact match found yet
+            target_ids.push_back(entry.second);
+         }
       }
    }
    return target_ids;

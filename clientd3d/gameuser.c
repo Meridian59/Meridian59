@@ -25,6 +25,9 @@ static ID idTarget = INVALID_ID;		//	Target object, or INVALID_ID if no target s
 static void ApplyCallback(ID obj2);
 static void SetDescParamsByRoomObject(room_contents_node *r, HWND hwnd);
 
+static const char* szTargetMe = "me";
+static const char *szTargetSelf = "self";
+
 extern bool gbMouselook;
 extern RECT gD3DRect;
 /************************************************************************/
@@ -760,7 +763,7 @@ std::vector<ID> GetTargetsByName(const std::string &pName, bool allow_self)
    if (allow_self)
    {
       // Quick check for self/me
-      if (name == "self" || name == "me")
+      if (name == szTargetSelf || name == szTargetMe)
       {
          target_ids.push_back(player.id);
          return target_ids;

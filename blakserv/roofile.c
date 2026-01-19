@@ -414,7 +414,7 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
                eprintf("BSPRooFileLoadServer: Failed to skip ceiling-slope record in %s\n", fname);
                return false;
             }
-         }   
+         }
 
          room->sectors.push_back(ss);
       }

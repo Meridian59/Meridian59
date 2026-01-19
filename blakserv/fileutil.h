@@ -9,6 +9,38 @@
 #ifndef _FILEUTIL_H
 #define _FILEUTIL_H
 
+/**
+ * RAII wrapper for FILE* that automatically closes the file when it goes out of scope.
+ * 
+ * This class ensures files are properly closed even if an error occurs or an early return
+ * happens, eliminating the need for manual fclose() calls..
+ */
+class FileGuard
+{
+   FILE *file;
+
+public:
+   FileGuard(FILE *f) : file(f) {}
+
+   // Destructor automatically closes the file if it's still open
+   ~FileGuard()
+   {
+      if (file) fclose(file);
+   }
+
+   // Prevent copying
+   FileGuard(const FileGuard&) = delete;
+   FileGuard& operator=(const FileGuard&) = delete;
+
+   // Allow access to underlying file
+   FILE* get() const { return file; }
+   FILE* operator->() const { return file; }
+   operator FILE*() const { return file; }
+
+   // Allow explicit release
+   FILE* release() { FILE *f = file; file = nullptr; return f; }
+};
+
 // Fill in "files" with the names of all files matching the given pattern.
 // extension should include the dot, e.g., ".txt"
 // Return true on success.

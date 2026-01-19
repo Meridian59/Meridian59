@@ -52,10 +52,9 @@ static size_t CalculateRoomTypeMemory(const room_type *room)
    total += room->sectors.capacity() * sizeof(server_sector);
    
    // Track each sector's polygon vector buffer
-   for (size_t i = 0; i < room->sectors.size(); i++)
+   for (auto &sector : room->sectors)
    {
-      total += room->sectors[i].polygons.capacity() * sizeof(server_polygon);
-      // Note: polygon vertex arrays are already tracked by AllocateMemory
+      total += sector.polygons.capacity() * sizeof(server_polygon);
    }
    
    return total;
@@ -72,10 +71,7 @@ void ResetRoomData()
       BSPRoomFreeServer(&(room->file_info));
 
       // Manually subtract memory for room_type structure
-      SubtractMemoryCount(MALLOC_ID_ROOM, CalculateRoomTypeMemory(&(room->file_info)));
-
-      // Manually subtract memory for roomdata_node structure
-      SubtractMemoryCount(MALLOC_ID_ROOM, sizeof(roomdata_node));
+      SubtractMemoryCount(MALLOC_ID_ROOM, room->GetSize());
 
       delete room;
       room = temp;
@@ -93,27 +89,23 @@ blak_int LoadRoomData(int resource_id)
    r = GetResourceByID(resource_id);
    if (r == NULL)
    {
-      bprintf("LoadRoomData can't find resource %i\n",resource_id);
+      eprintf("LoadRoomData can't find resource %i\n",resource_id);
       return NIL;
    }
 
    room = new roomdata_node();
    if (!LoadRoomFile(r->resource_val,&room->file_info))
    {
-      bprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
+      eprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
 
       // Manually subtract memory for room_type and roomdata_node structures
-      SubtractMemoryCount(MALLOC_ID_ROOM, sizeof(room_type) + sizeof(roomdata_node));
+      SubtractMemoryCount(MALLOC_ID_ROOM, room->GetSize());
 
       delete room;
       return NIL;
    }
 
-   // Manually add memory for roomdata_node structure
-   AddMemoryCount(MALLOC_ID_ROOM, sizeof(roomdata_node));
-
-   // Manually add memory for room_type structure
-   AddMemoryCount(MALLOC_ID_ROOM, CalculateRoomTypeMemory(&(room->file_info)));
+   AddMemoryCount(MALLOC_ID_ROOM, room->GetSize());
 
    room->roomdata_id = num_roomdata++;
    room->next = roomdata;

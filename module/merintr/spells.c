@@ -406,7 +406,7 @@ void SpellCast(spell_action *spa)
       }
       else
       {
-         target_id = (ID) targets[0];
+         target_id = targets[0];
       }
    }
    else

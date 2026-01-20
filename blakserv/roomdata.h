@@ -22,8 +22,6 @@ typedef struct roomdata_struct
    size_t GetSize(void) const
    {
       size_t total = sizeof(*this);
-
-      total += sizeof(room_type);
    
       // Track vector's internal buffer capacity
       total += file_info.sectors.capacity() * sizeof(server_sector);

@@ -97,10 +97,6 @@ blak_int LoadRoomData(int resource_id)
    if (!LoadRoomFile(r->resource_val,&room->file_info))
    {
       eprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
-
-      // Manually subtract memory for room_type and roomdata_node structures
-      AddMemoryCount(MALLOC_ID_ROOM, -(int64_t)room->GetSize());
-
       delete room;
       return NIL;
    }

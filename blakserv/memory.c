@@ -328,18 +328,33 @@ void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 #endif
 }
 
-void AddMemoryCount(int malloc_id, size_t size)
+/**
+ * Add or subtract memory count from the memory statistics.
+ *
+ * @param malloc_id The memory allocation ID (MALLOC_ID_*)
+ * @param size Positive value to add memory, negative value to subtract memory
+ *
+ * @note This function allows manual adjustment of memory counts for STL
+ *       containers and other allocations not managed by AllocateMemory.
+ */
+void AddMemoryCount(int malloc_id, int64_t size)
 {
    if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
       eprintf("AddMemoryCount adding memory of unknown type %i\n", malloc_id);
    else
-      memory_stat.allocated[malloc_id] += size;
-}
+   {
+      // Because size_t is unsigned, cast to signed, perform, then cast back
+      long long result = (long long) memory_stat.allocated[malloc_id] + size;
 
-void SubtractMemoryCount(int malloc_id, size_t size)
-{
-   if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
-      eprintf("SubtractMemoryCount subtracting memory of unknown type %i\n", malloc_id);
-   else
-      memory_stat.allocated[malloc_id] -= size;
+      if (result < 0)
+      {
+         eprintf("AddMemoryCount: Memory count would go negative for type %i (current: %zu, adjustment: %" PRId64 ")\n",
+                 malloc_id, memory_stat.allocated[malloc_id], size);
+         memory_stat.allocated[malloc_id] = 0;  // Clamp to 0 but log the error
+      }
+      else
+      {
+         memory_stat.allocated[malloc_id] = (size_t) result;
+      }
+   }
 }

@@ -13,27 +13,29 @@
 #ifndef _ROOMDATA_H
 #define _ROOMDATA_H
 
-
 typedef struct roomdata_struct
 {
-   blak_int roomdata_id;
-   room_type file_info;
-   struct roomdata_struct *next;
-   size_t GetSize(void) const
+ public:
+   int GetSize(void) const
    {
-      size_t total = sizeof(*this);
-   
+      size_t total = sizeof *this;
+
       // Track vector's internal buffer capacity
       total += file_info.sectors.capacity() * sizeof(server_sector);
-      
+
       // Track each sector's polygon vector buffer
       for (auto &sector : file_info.sectors)
       {
          total += sector.polygons.capacity() * sizeof(server_polygon);
       }
-      
-      return total;
+
+      return (int) total;
    }
+   struct roomdata_struct *next;
+   room_type file_info;
+   blak_int roomdata_id;
+
+ private:
 } roomdata_node;
 
 enum

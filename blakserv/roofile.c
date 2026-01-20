@@ -81,6 +81,7 @@ static short readShort(FILE *fd)          /* 2-byte little-endian signed short *
 
 static int readByte(FILE *fd)             /* 1-byte unsigned, returns int for error checking */
 {
+   // Use unsigned char so byte value 0xFF doesn't collide with -1 error code
    unsigned char v = 0;
    if (fread(&v, 1, 1, fd) != 1)
       return -1;

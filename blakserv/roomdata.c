@@ -44,22 +44,6 @@ void InitRoomData()
    num_roomdata = 0;
 }
 
-static size_t CalculateRoomTypeMemory(const room_type *room)
-{
-   size_t total = sizeof(room_type);
-   
-   // Track vector's internal buffer capacity
-   total += room->sectors.capacity() * sizeof(server_sector);
-   
-   // Track each sector's polygon vector buffer
-   for (auto &sector : room->sectors)
-   {
-      total += sector.polygons.capacity() * sizeof(server_polygon);
-   }
-   
-   return total;
-}
-
 void ResetRoomData()
 {
    roomdata_node *room,*temp;

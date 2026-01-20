@@ -19,26 +19,32 @@ class FileGuard
 {
    FILE *file;
 
-public:
-   FileGuard(FILE *f) : file(f) {}
+ public:
+   explicit FileGuard(FILE *f) : file(f) {}
 
    // Destructor automatically closes the file if it's still open
    ~FileGuard()
    {
-      if (file) fclose(file);
+      if (file)
+         fclose(file);
    }
 
    // Prevent copying
-   FileGuard(const FileGuard&) = delete;
-   FileGuard& operator=(const FileGuard&) = delete;
+   FileGuard(const FileGuard &) = delete;
+   FileGuard &operator=(const FileGuard &) = delete;
 
    // Allow access to underlying file
-   FILE* get() const { return file; }
-   FILE* operator->() const { return file; }
-   operator FILE*() const { return file; }
+   FILE *get() const { return file; }
+   FILE *operator->() const { return file; }
+   operator FILE *() const { return file; }
 
    // Allow explicit release
-   FILE* release() { FILE *f = file; file = nullptr; return f; }
+   FILE *release()
+   {
+      FILE *f = file;
+      file = nullptr;
+      return f;
+   }
 };
 
 // Fill in "files" with the names of all files matching the given pattern.

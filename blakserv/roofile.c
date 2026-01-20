@@ -71,7 +71,7 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
       if (read(infile, room->grid[i], room->cols) != room->cols)
       {
 	 for (j=0; j <= i; j++)
-	    FreeMemory(MALLOC_ID_ROOM,room->grid[i],room->cols);
+	    FreeMemory(MALLOC_ID_ROOM,room->grid[j],room->cols);
 	 FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(char *));
 
 	 close(infile);
@@ -87,7 +87,7 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
       if (read(infile, room->flags[i], room->cols) != room->cols)
       {
 	 for (j=0; j <= i; j++)
-	    FreeMemory(MALLOC_ID_ROOM,room->flags[i],room->cols);
+	    FreeMemory(MALLOC_ID_ROOM,room->flags[j],room->cols);
 	 FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(char *));
 
 	 close(infile);

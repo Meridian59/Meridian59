@@ -21,7 +21,7 @@ typedef struct roomdata_struct
    struct roomdata_struct *next;
    size_t GetSize(void) const
    {
-      size_t total = sizeof(roomdata_node);
+      size_t total = sizeof(*this);
 
       total += sizeof(room_type);
    

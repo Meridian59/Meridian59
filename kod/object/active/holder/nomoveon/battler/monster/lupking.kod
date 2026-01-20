@@ -442,7 +442,7 @@ messages:
 
    Killed(what=$)
    {
-      local oSpell, NumAttackers, i, rMyName, rMyDef;
+      local oSpell, NumAttackers, i;
 
       NumAttackers = length(plAttackers);
  
@@ -472,12 +472,9 @@ messages:
    
       % Environmental earthquake - room-based, flat damage, blamed on room.
       % Using Post so earthquake fires after the lupogg king finishes dying.
-      % Capture name/article now since object may be deleted by the time Post fires.
-      rMyDef = Send(self,@GetDef);
-      rMyName = Send(self,@GetName);
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
       Post(oSpell,@DoEarthQuake,#where=poOwner,#severity=2,
-           #rDeathSourceDef=rMyDef,#rDeathSourceName=rMyName);
+           #rDeathSourceDef=Send(self,@GetDef),#rDeathSourceName=Send(self,@GetName));
 
       propagate;
    }

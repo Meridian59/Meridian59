@@ -53,8 +53,7 @@ resources:
    system_user_killed_outlaw = \
       "### The feared outlaw, %q, has just met justice at %s%q's hands."
    system_killed_self = "### %q was just slain by %s own folly."
-   system_user_killed_room = \
-      "### %s have laid claim to yet another poor soul, %q."
+   system_user_killed_room = "### %q met an untimely end."
    system_user_killed_token = "### %q lost a token to %s%q."
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
@@ -1505,10 +1504,9 @@ messages:
 
       if IsClass(killer,&Room)
       {
+         % Room-blamed death (e.g. environmental earthquake).
          rMessage = system_user_killed_room;
-         param2 = Send(what,@GetTrueName);
-
-         % Eliminate param3 that was set by default
+         param2 = $;
          param3 = $;
       }
 
@@ -1530,16 +1528,20 @@ messages:
          else
          {
             % Outlaw or murderer was killed?
-            if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            % Skip these overrides for Room deaths - room message takes priority.
+            if NOT IsClass(killer,&Room)
             {
-               rMessage = system_user_killed_outlaw;
-               % Parameters set by default
-            }
+               if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               {
+                  rMessage = system_user_killed_outlaw;
+                  % Parameters set by default
+               }
 
-            if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            {
-               rMessage = system_user_killed_pker;
-               % Parameters set by default
+               if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               {
+                  rMessage = system_user_killed_pker;
+                  % Parameters set by default
+               }
             }
 
             if IsClass(killer,&User)

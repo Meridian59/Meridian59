@@ -125,8 +125,9 @@ messages:
                 rDeathSourceDef=$, rDeathSourceName=$)
    "Deals damage to all battlers in a room with earthquake effects.  Caster "
    "mode (#who) applies distance-based damage falloff; environmental mode "
-   "(#where) applies flat damage.  Pre-captured rDeathSourceName/Def strings "
-   "display a special room message when triggered by a dying creature."
+   "(#where) applies flat damage.  rDeathSourceDef (article) and "
+   "rDeathSourceName (name) display a room message naming the creature "
+   "whose death triggered the earthquake."
    {
       local i, iDamage, oRoom, lActive, each_obj, oBlameTarget, lFinalTargets,
             lBossMonsters, bEnvironmental;
@@ -151,8 +152,6 @@ messages:
             bEnvironmental = TRUE;
             
             % For environmental earthquakes, blame the room for kills.
-            % (We can't safely use oDeathSource since it may be deleted by the time
-            % a Posted earthquake fires. The special room message uses pre-captured strings.)
             oBlameTarget = where;
          }
          else
@@ -215,8 +214,7 @@ messages:
          {
             if rDeathSourceName <> $
             {
-               % Death-triggered earthquake (e.g. lupogg king dying)
-               % Use pre-captured strings since the source object may be deleted.
+               % Death-triggered earthquake - show collapse message.
                Send(each_obj,@MsgSendUser,#message_rsc=earthquake_death_rsc,
                     #parm1=rDeathSourceDef,
                     #parm2=rDeathSourceName);

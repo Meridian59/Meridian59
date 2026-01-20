@@ -87,19 +87,18 @@ resources:
    guildshield_checker = " quartered with "
 
    guildshield_heraldry_known = ": the mark of the "
-   guildshield_heraldry_postfix = ". "
+   guildshield_heraldry_postfix = "."
 
-   guildshield_insig_riija = "The unblinking eye of Riija stares from its center. "
-   guildshield_insig_qor = "The skull insignia of Qor is upon it. "
-   guildshield_insig_kraanan = "The weapons of Kraanan are crossed acenter. "
-   guildshield_insig_faren = "The power of Faren arcs across it. "
-   guildshield_insig_jala = "The lute of Jala is depicted upon it. "
-   guildshield_insig_princess = "It is emblazoned with the Royal Crown of Kateriina. "
-   guildshield_insig_old_duke = "The bold seal of Kalior is affixed. "
-   guildshield_insig_duke = "The bold seal of Akardius is affixed. "
-   guildshield_insig_shalille = "The ankh of Shal'ille's blessing is afaced. "
-   guildshield_insig_rebel = "The rebel flag of Jonas is displayed proudly. "
-   guildshield_insig_none = ""
+   guildshield_insig_riija = "The unblinking eye of Riija stares from its center."
+   guildshield_insig_qor = "The skull insignia of Qor is upon it."
+   guildshield_insig_kraanan = "The weapons of Kraanan are crossed acenter."
+   guildshield_insig_faren = "The power of Faren arcs across it."
+   guildshield_insig_jala = "The lute of Jala is depicted upon it."
+   guildshield_insig_princess = "It is emblazoned with the Royal Crown of Kateriina."
+   guildshield_insig_old_duke = "The bold seal of Kalior is affixed."
+   guildshield_insig_duke = "The bold seal of Akardius is affixed."
+   guildshield_insig_shalille = "The ankh of Shal'ille's blessing is afaced."
+   guildshield_insig_rebel = "The rebel flag of Jonas is displayed proudly."
 
 classvars:
 
@@ -225,6 +224,10 @@ messages:
       AppendTempString(guildshield_heraldry_postfix);
 
       % insignia, if any
+      if piInsigniaType <> INSIG_NONE
+      {
+         AppendTempString("  ");
+      }
       if piInsigniaType = INSIG_RIIJA { AppendTempString(guildshield_insig_riija); }
       if piInsigniaType = INSIG_QOR { AppendTempString(guildshield_insig_qor); }
       if piInsigniaType = INSIG_KRAANAN { AppendTempString(guildshield_insig_kraanan); }
@@ -233,8 +236,7 @@ messages:
       if piInsigniaType = INSIG_PRINCESS { AppendTempString(guildshield_insig_princess); }
       if piInsigniaType = INSIG_DUKE { AppendTempString(guildshield_insig_duke); }
       if piInsigniaType = INSIG_SHALILLE { AppendTempString(guildshield_insig_shalille); }
-      if piInsigniaType = INSIG_REBEL { AppendTempString( guildshield_insig_rebel); }
-      if piInsigniaType = INSIG_NONE { AppendTempString(guildshield_insig_none); }
+      if piInsigniaType = INSIG_REBEL { AppendTempString(guildshield_insig_rebel); }
 
       return;
    }

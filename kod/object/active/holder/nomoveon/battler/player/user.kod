@@ -977,14 +977,9 @@ messages:
       
       if liClient_cmd = BP_REQ_DROP
       {
-         if bSpam AND NOT Send(self,@PlayerIsImmortal)
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
-         
+
          return;
       }
       

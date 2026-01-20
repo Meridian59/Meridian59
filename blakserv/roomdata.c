@@ -71,7 +71,7 @@ void ResetRoomData()
       BSPRoomFreeServer(&(room->file_info));
 
       // Manually subtract memory for room_type structure
-      SubtractMemoryCount(MALLOC_ID_ROOM, room->GetSize());
+      AddMemoryCount(MALLOC_ID_ROOM, -(int64_t)room->GetSize());
 
       delete room;
       room = temp;
@@ -99,13 +99,13 @@ blak_int LoadRoomData(int resource_id)
       eprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
 
       // Manually subtract memory for room_type and roomdata_node structures
-      SubtractMemoryCount(MALLOC_ID_ROOM, room->GetSize());
+      AddMemoryCount(MALLOC_ID_ROOM, -(int64_t)room->GetSize());
 
       delete room;
       return NIL;
    }
 
-   AddMemoryCount(MALLOC_ID_ROOM, room->GetSize());
+   AddMemoryCount(MALLOC_ID_ROOM, (int64_t)room->GetSize());
 
    room->roomdata_id = num_roomdata++;
    room->next = roomdata;

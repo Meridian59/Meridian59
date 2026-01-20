@@ -64,7 +64,7 @@ resources:
    guildshield_window_overlay_rsc = povshldE.bgf
 
    guildshield_desc_rsc = \
-      "Heavy metal shields of this style are decorated in the standards of its owner guild. "
+      "Heavy metal shields of this style are decorated in the standards of its owner guild."
 
    guildshield_heraldry_prefix = "The pattern on this shield is "
 
@@ -194,6 +194,7 @@ messages:
       %          the traditional mark of the Foobars.  The eye of
       %          Riija is staring ahead."
 
+      AppendTempString("  ");
       AppendTempString(guildshield_heraldry_prefix);
 
       % color 1

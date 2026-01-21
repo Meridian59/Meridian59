@@ -979,7 +979,7 @@ messages:
       {
          oWhat = Nth(client_msg,2);
          Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
-
+         
          return;
       }
       

@@ -31,26 +31,26 @@ static const int SF_SLOPED_CEILING = 0x00000800;
       } \
    } while (0)
 
-#define CHECK_READ_INT(expr, fname, desc) \
+#define CHECK_READ_INT(fd, out, fname, desc) \
    do { \
-      if ((expr) == -1) { \
-         eprintf("Failed to read %s in %s\n", desc, fname); \
+      if (!readInt(fd, out)) { \
+         eprintf("Failed to read int %s in %s\n", desc, fname); \
          return false; \
       } \
    } while (0)
 
-#define CHECK_READ_SHORT(expr, fname, desc) \
+#define CHECK_READ_SHORT(fd, out, fname, desc) \
    do { \
-      if ((expr) == -1) { \
-         eprintf("Failed to read %s in %s\n", desc, fname); \
+      if (!readShort(fd, out)) { \
+         eprintf("Failed to read short %s in %s\n", desc, fname); \
          return false; \
       } \
    } while (0)
 
-#define CHECK_READ_BYTE(expr, fname, desc) \
+#define CHECK_READ_BYTE(fd, out, fname, desc) \
    do { \
-      if ((expr) == -1) { \
-         eprintf("Failed to read %s in %s\n", desc, fname); \
+      if (!readByte(fd, out)) { \
+         eprintf("Failed to read byte%s in %s\n", desc, fname); \
          return false; \
       } \
    } while (0)
@@ -63,42 +63,35 @@ static const int SF_SLOPED_CEILING = 0x00000800;
       } \
    } while (0)
 
-static int readInt(FILE *fd)              /* 4-byte little-endian signed int   */
+static bool readInt(FILE *fd, int *out)              /* 4-byte little-endian signed int   */
 {
-   int v;
-   if (fread(&v, sizeof(int), 1, fd) != 1)
-      return -1;
-   return v;
+   return fread(out, sizeof(int), 1, fd) == 1;
 }
 
-static short readShort(FILE *fd)          /* 2-byte little-endian signed short */
+static bool readShort(FILE *fd, short *out)          /* 2-byte little-endian signed short */
 {
-   short v;
-   if (fread(&v, sizeof(short), 1, fd) != 1)
-      return -1;
-   return v;
+   return fread(out, sizeof(short), 1, fd) == 1;
 }
 
-static int readByte(FILE *fd)             /* 1-byte unsigned, returns int for error checking */
+static bool readByte(FILE *fd, unsigned char *out)             /* 1-byte unsigned, returns int for error checking */
 {
    // Use unsigned char so byte value 0xFF doesn't collide with -1 error code
-   unsigned char v = 0;
-   if (fread(&v, 1, 1, fd) != 1)
-      return -1;
-   return (int)v;
+   return fread(out, 1, 1, fd) == 1;
 }
 
-static int readCoord(FILE *fd, bool as_float)
+static bool readCoord(FILE *fd, int *out, bool as_float)
 {
    char buf[4];
    if (fread(buf, 4, 1, fd) != 1)
-      return 0;
+      return false;
 
    if (as_float)
-      return (int)(*((float *)buf));
+      *out = (int)(*((float *)buf));
+   else
+      *out = *((int *)buf);
 
    // version ≤12 – bytes contain a plain little-endian int
-   return *((int *)buf);
+   return true;
 }
 
 /*********************************************************************************************/
@@ -116,7 +109,7 @@ static bool LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_t
    for (int n = 0; n < num_nodes; n++)
    {
       unsigned char type;
-      CHECK_FREAD(fread(&type, 1, 1, fd), fname, "node type");
+      CHECK_READ_BYTE(fd, &type, fname, "node type");
       CHECK_SEEK(fseek(fd, 16, SEEK_CUR), fname, "bbox");
 
       if (type == 1)
@@ -125,8 +118,18 @@ static bool LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_t
       }
       else if (type == 2)
       {
-         unsigned short sector_plus1 = readShort(fd);
-         short num_pts = readShort(fd);
+         short sector_plus1;
+         short num_pts;
+
+         CHECK_READ_SHORT(fd, &sector_plus1, fname, "sector_plus1");
+         CHECK_READ_SHORT(fd, &num_pts, fname, "num_pts");
+
+         if (sector_plus1 < 0 || num_pts < 0) 
+         {
+            eprintf("LoadSectorPolygons: Failed to read sector_plus1 or num_pts in %s (sector_plus1=%d, num_pts=%d)\n", 
+                    fname, sector_plus1, num_pts);
+            return false;
+         }
 
          if (sector_plus1 < 0 || num_pts < 0)
          {
@@ -145,11 +148,19 @@ static bool LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_t
             poly.num_vertices = num_pts;
             poly.vertices_x = (int *) AllocateMemory(MALLOC_ID_ROOM, num_pts * sizeof(int));
             poly.vertices_y = (int *) AllocateMemory(MALLOC_ID_ROOM, num_pts * sizeof(int));
-            
+
             for (int i = 0; i < num_pts; i++)
             {
-               poly.vertices_x[i] = readCoord(fd, coords_are_floats);
-               poly.vertices_y[i] = readCoord(fd, coords_are_floats);
+               int x, y;
+               if (!readCoord(fd, &x, coords_are_floats) || !readCoord(fd, &y, coords_are_floats))
+               {
+                  FreeMemory(MALLOC_ID_ROOM, poly.vertices_x, num_pts * sizeof(int));
+                  FreeMemory(MALLOC_ID_ROOM, poly.vertices_y, num_pts * sizeof(int));
+                  eprintf("LoadSectorPolygons: Failed to read polygon coordinates in %s\n", fname);
+                  return false;
+               }
+               poly.vertices_x[i] = x;
+               poly.vertices_y[i] = y;
             }
 
             ss->polygons.push_back(poly);
@@ -164,7 +175,7 @@ static bool LoadSectorPolygons(FILE *fd, long nodes_start, int num_nodes, room_t
          break;
       }
    }
-   
+
    return true;
 }
 
@@ -177,7 +188,8 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
    int i, temp, roo_version;
    unsigned char byte;
 
-   FILE *f = fopen(fname, "rb");;
+   FILE *f = fopen(fname, "rb");
+
    if (!f)
    {
       eprintf("BSPRooFileLoadServer: Failed to open file %s\n", fname);
@@ -189,30 +201,29 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
    //
    // Header check
    //
+
+   // Check magic number and version
    for (i = 0; i < 4; i++)
-      if (fread(&byte, 1, 1, infile.get()) != 1 || byte != room_magic[i])
+   {
+      CHECK_READ_BYTE(infile.get(), &byte, fname, "magic number");
+      if (byte != room_magic[i])
       {
-         eprintf("BSPRooFileLoadServer: Failed to read room_magic in %s\n", fname);
+         eprintf("BSPRooFileLoadServer: Invalid magic number %d at position %d in %s\n", byte, i, fname);
          return false;
       }
+   }
 
-   //
-   // Read room version
-   //
-   if (fread(&roo_version, 4, 1, infile.get()) != 1 || roo_version < ROO_VERSION)
+   CHECK_READ_INT(infile.get(), &roo_version, fname, "roo_version");
+   if (roo_version < ROO_VERSION)
    {
-      eprintf("BSPRooFileLoadServer: Failed to read roo_version in %s\n", fname);
+      eprintf("BSPRooFileLoadServer: Invalid roo_version %d (minimum %d) in %s\n", roo_version, ROO_VERSION, fname);
       return false;
    }
 
-   //
-   // Read room security (unused by loader)
-   //
+   // Read room security
    CHECK_FREAD(fread(&room->security, 4, 1, infile.get()), fname, "room->security");
 
-   //
    // Read absolute offsets to main (client) and server sections
-   //
    int main_off, server_off;
    CHECK_FREAD(fread(&main_off, 4, 1, infile.get()), fname, "main_off");
    CHECK_FREAD(fread(&server_off, 4, 1, infile.get()), fname, "server_off");
@@ -221,48 +232,26 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
    // Client section
    //
 
-   //
    // Seek to Sector metadata and BSP polygons
-   //
    CHECK_SEEK(fseek(infile.get(), main_off, SEEK_SET), fname, "main_off");
 
-   //
-   // Read in and ignore room width and height (not used on server)
-   //
-   CHECK_READ_INT(readInt(infile.get()), fname, "room_w");
-   CHECK_READ_INT(readInt(infile.get()), fname, "room_h");
+   int dummy;
+   CHECK_READ_INT(infile.get(), &dummy, fname, "room_w");  // room width (ignore)
+   CHECK_READ_INT(infile.get(), &dummy, fname, "room_h");  // room height (ignore)
 
-   //
    // Read in subsection offsets
-   //
    int node_off;
-   CHECK_READ_INT(node_off = readInt(infile.get()), fname, "node_off");
-   
-   //
-   // Read in and ignore cwall offset
-   //
-   CHECK_READ_INT(readInt(infile.get()), fname, "cwall_off");
-   
-   //
-   // Read in and ignore rwall offset
-   //
-   CHECK_READ_INT(readInt(infile.get()), fname, "rwall_off");
-   
-   //
-   // Read in and ignore sidedef offset
-   //
-   CHECK_READ_INT(readInt(infile.get()), fname, "sidedef_off");
+   CHECK_READ_INT(infile.get(), &node_off, fname, "node_off");
 
-   //
+   CHECK_READ_INT(infile.get(), &dummy, fname, "cwall_off");    // client wall offset (ignore)
+   CHECK_READ_INT(infile.get(), &dummy, fname, "rwall_off");    // roomedit wall offset (ignore)
+   CHECK_READ_INT(infile.get(), &dummy, fname, "sidedef_off");  // sidedef offset (ignore)
+
    // Read in sector offset
-   //
    int sector_off;
-   CHECK_READ_INT(sector_off = readInt(infile.get()), fname, "sector_off");
-   
-   //
-   // Read in and ignore extra offset
-   //
-   CHECK_READ_INT(readInt(infile.get()), fname, "extra_off");
+   CHECK_READ_INT(infile.get(), &sector_off, fname, "sector_off");
+
+   CHECK_READ_INT(infile.get(), &dummy, fname, "extra_off");  // extra offset (ignore)
 
    //
    // Sector metadata
@@ -270,9 +259,15 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
 
    CHECK_SEEK(fseek(infile.get(), sector_off, SEEK_SET), fname, "sector_off");
 
-   int num_sectors;
-   CHECK_READ_SHORT(num_sectors = readShort(infile.get()), fname, "num_sectors");
-   
+   short num_sectors;
+   CHECK_READ_SHORT(infile.get(), &num_sectors, fname, "num_sectors");
+
+   if (num_sectors < 0)
+   {
+      eprintf("BSPRooFileLoadServer: Invalid num_sectors %d (must be non-negative) in %s\n", num_sectors, fname);
+      return false;
+   }
+
    room->sectors.clear();
 
    if (num_sectors > 0)
@@ -282,21 +277,26 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
       for (i = 0; i < num_sectors; i++)
       {
          server_sector ss;
+         short id_short;
 
-         ss.id = readShort(infile.get());
+         CHECK_READ_SHORT(infile.get(), &id_short, fname, "sector id");
+         ss.id = id_short;
 
-         CHECK_READ_SHORT(readShort(infile.get()), fname, "floor_type");      // floor_type (ignore)
-         CHECK_READ_SHORT(readShort(infile.get()), fname, "ceiling_type");    // ceiling_type (ignore)
-         CHECK_READ_SHORT(readShort(infile.get()), fname, "xoffset");         // xoffset (ignore)
-         CHECK_READ_SHORT(readShort(infile.get()), fname, "yoffset");         // yoffset (ignore)
-         CHECK_READ_SHORT(readShort(infile.get()), fname, "floorh");          // floorh (ignore)
-         CHECK_READ_SHORT(readShort(infile.get()), fname, "ceilh");           // ceilh (ignore)
-         CHECK_READ_BYTE(readByte(infile.get()), fname, "light");             // light (ignore)
+         short dummy_short;
+         CHECK_READ_SHORT(infile.get(), &dummy_short, fname, "floor_type");    // floor_type (ignore)
+         CHECK_READ_SHORT(infile.get(), &dummy_short, fname, "ceiling_type");  // ceiling_type (ignore)
+         CHECK_READ_SHORT(infile.get(), &dummy_short, fname, "xoffset");       // xoffset (ignore)
+         CHECK_READ_SHORT(infile.get(), &dummy_short, fname, "yoffset");       // yoffset (ignore)
+         CHECK_READ_SHORT(infile.get(), &dummy_short, fname, "floorh");        // floorh (ignore)
+         CHECK_READ_SHORT(infile.get(), &dummy_short, fname, "ceilh");         // ceilh (ignore)
+
+         unsigned char dummy_byte;
+         CHECK_READ_BYTE(infile.get(), &dummy_byte, fname, "light");  // light (ignore)
 
          int flags;
-         CHECK_READ_INT(flags = readInt(infile.get()), fname, "blak_flags");
+         CHECK_READ_INT(infile.get(), &flags, fname, "blak_flags");
 
-         CHECK_READ_BYTE(readByte(infile.get()), fname, "animate_speed");      // animate_speed (ignore)
+         CHECK_READ_BYTE(infile.get(), &dummy_byte, fname, "animate_speed");  // animate_speed (ignore)
 
          if (flags & SF_SLOPED_FLOOR)
             CHECK_SEEK(fseek(infile.get(), 46, SEEK_CUR), fname, "floor-slope record");
@@ -311,8 +311,9 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
    // Sector polygons
    CHECK_SEEK(fseek(infile.get(), node_off, SEEK_SET), fname, "node_off");
 
-   int num_nodes;
-   CHECK_READ_SHORT(num_nodes = readShort(infile.get()), fname, "num_nodes");
+   short num_nodes_short;
+   CHECK_READ_SHORT(infile.get(), &num_nodes_short, fname, "num_nodes");
+   int num_nodes = num_nodes_short;
 
    bool coords_are_floats = (roo_version >= 13);
    if (!LoadSectorPolygons(infile.get(), node_off + 2, num_nodes, room, fname, coords_are_floats))
@@ -320,16 +321,16 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
       eprintf("BSPRooFileLoadServer: Failed to load sector polygons in %s\n", fname);
       return false;
    }
-   
+
    // Server section
-   // Rows / cols / grids (unchanged)
+   // Rows / cols / grids
    CHECK_SEEK(fseek(infile.get(), server_off, SEEK_SET), fname, "server_off");
 
-   CHECK_READ_INT(temp = readInt(infile.get()), fname, "temp (1)");
-   
+   CHECK_READ_INT(infile.get(), &temp, fname, "temp (1)");
+
    room->rows = (short) temp;
-   
-   CHECK_READ_INT(temp = readInt(infile.get()), fname, "temp (2)");
+
+   CHECK_READ_INT(infile.get(), &temp, fname, "temp (2)");
 
    room->cols = (short) temp;
 
@@ -369,7 +370,7 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
          room->monster_grid[i] = (unsigned char *) AllocateMemory(MALLOC_ID_ROOM, room->cols);
          if (fread(room->monster_grid[i], room->cols, 1, infile.get()) != 1)
          {
-            for (int j=0; j<=i; j++)
+            for (int j = 0; j <= i; j++)
                FreeMemory(MALLOC_ID_ROOM, room->monster_grid[j], room->cols);
             FreeMemory(MALLOC_ID_ROOM, room->monster_grid, room->rows * sizeof(char *));
             eprintf("BSPRooFileLoadServer: Failed to read monster grid in %s\n", fname);
@@ -377,7 +378,7 @@ bool BSPRooFileLoadServer(char *fname, room_type *room)
          }
       }
    }
-   
+
    return true;
 }
 /*********************************************************************************************/

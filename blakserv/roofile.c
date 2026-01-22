@@ -63,17 +63,17 @@ static const int SF_SLOPED_CEILING = 0x00000800;
       } \
    } while (0)
 
-static bool readInt(FILE *fd, int *out) /* Reads 4-byte little-endian signed int */
+static bool readInt(FILE *fd, int *out)  /* Reads 4-byte little-endian signed int */
 {
    return fread(out, 4, 1, fd) == 1;
 }
 
-static bool readShort(FILE *fd, short *out) /* Reads 2-byte little-endian signed short */
+static bool readShort(FILE *fd, short *out)  /* Reads 2-byte little-endian signed short */
 {
    return fread(out, 2, 1, fd) == 1;
 }
 
-static bool readByte(FILE *fd, unsigned char *out) /* Reads 1-byte unsigned */ 
+static bool readByte(FILE *fd, unsigned char *out)  /* Reads 1-byte unsigned */ 
 { 
    return fread(out, 1, 1, fd) == 1; 
 }

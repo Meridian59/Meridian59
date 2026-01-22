@@ -50,7 +50,7 @@ static const int SF_SLOPED_CEILING = 0x00000800;
 #define CHECK_READ_BYTE(fd, out, fname, desc) \
    do { \
       if (!readByte(fd, out)) { \
-         eprintf("Failed to read byte%s in %s\n", desc, fname); \
+         eprintf("Failed to read byte %s in %s\n", desc, fname); \
          return false; \
       } \
    } while (0)
@@ -63,20 +63,19 @@ static const int SF_SLOPED_CEILING = 0x00000800;
       } \
    } while (0)
 
-static bool readInt(FILE *fd, int *out)              /* 4-byte little-endian signed int   */
+static bool readInt(FILE *fd, int *out) /* Reads 4-byte little-endian signed int */
 {
-   return fread(out, sizeof(int), 1, fd) == 1;
+   return fread(out, 4, 1, fd) == 1;
 }
 
-static bool readShort(FILE *fd, short *out)          /* 2-byte little-endian signed short */
+static bool readShort(FILE *fd, short *out) /* Reads 2-byte little-endian signed short */
 {
-   return fread(out, sizeof(short), 1, fd) == 1;
+   return fread(out, 2, 1, fd) == 1;
 }
 
-static bool readByte(FILE *fd, unsigned char *out)             /* 1-byte unsigned, returns int for error checking */
-{
-   // Use unsigned char so byte value 0xFF doesn't collide with -1 error code
-   return fread(out, 1, 1, fd) == 1;
+static bool readByte(FILE *fd, unsigned char *out) /* Reads 1-byte unsigned */ 
+{ 
+   return fread(out, 1, 1, fd) == 1; 
 }
 
 static bool readCoord(FILE *fd, int *out, bool as_float)
@@ -86,11 +85,16 @@ static bool readCoord(FILE *fd, int *out, bool as_float)
       return false;
 
    if (as_float)
+   {
+      // version ≥13 – bytes contain a little-endian float
       *out = (int)(*((float *)buf));
+   }
    else
+   {
+      // version ≤12 – bytes contain a plain little-endian int
       *out = *((int *)buf);
+   }
 
-   // version ≤12 – bytes contain a plain little-endian int
    return true;
 }
 

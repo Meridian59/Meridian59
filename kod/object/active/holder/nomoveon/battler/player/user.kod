@@ -3763,15 +3763,12 @@ messages:
       for i in item_list
       {
          oItem = i;
+         iNumber = $;
 
          if IsClass(oItem,&NumberItem)
          {
             iNumber = First(number_list);
             number_list = Rest(number_list);
-         }
-         else
-         {
-            iNumber = $;
          }
 
          Send(self,@UserDrop,#what=oItem,#number=iNumber);

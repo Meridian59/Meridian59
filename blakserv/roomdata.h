@@ -15,7 +15,6 @@
 
 typedef struct roomdata_struct
 {
- public:
    int GetSize(void) const
    {
       size_t total = sizeof *this;
@@ -34,8 +33,6 @@ typedef struct roomdata_struct
    struct roomdata_struct *next;
    room_type file_info;
    blak_int roomdata_id;
-
- private:
 } roomdata_node;
 
 enum

@@ -17,8 +17,6 @@
  */
 class FileGuard
 {
-   FILE *file;
-
  public:
    explicit FileGuard(FILE *f) : file(f) {}
 
@@ -45,6 +43,9 @@ class FileGuard
       file = nullptr;
       return f;
    }
+
+private:
+   FILE *file;
 };
 
 // Fill in "files" with the names of all files matching the given pattern.

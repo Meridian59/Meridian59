@@ -169,7 +169,7 @@ void IntroShowSplash(void)
    showing_splash = true;
 
    hwndDialButton = CreateWindow("button", NULL, 
-		WS_CHILD,  // Created hidden, shown after positioning
+		WS_CHILD | WS_VISIBLE,
 		0, 0, 0, 0, hMain, (HMENU) IDC_DIALBUTTON,
 		hInst, NULL);
    SetWindowText(hwndDialButton, GetString(hInst, IDS_INTRO));
@@ -215,7 +215,6 @@ void IntroShowSplash(void)
    GetClientRect(hMain, &rect);
    OfflineResize(rect.right, rect.bottom);
 
-   ShowWindow(hwndDialButton, SW_SHOW);
    SetFocus(hwndDialButton);
 
    timer_id = SetTimer(NULL, 0, MUSIC_DELAY, PlayMusicProc);

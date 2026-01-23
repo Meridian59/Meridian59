@@ -110,7 +110,7 @@ int						d3dRenderTextureThreshold;
 // See D3DRenderDebugLightPositions() for details.
 static const bool debugLightPositions = false;
 
-// The maximum number of lights supported across all types (static, dynamic and projectiles0
+// The maximum number of lights supported across all types (static, dynamic and projectiles)
 static const int maximumLights = 50;
 
 D3DVERTEXELEMENT9		decl0[] = {
@@ -485,7 +485,7 @@ void D3DRenderShutDown(void)
 	}
 }
 
-// Global light scale multiplier for all dynamic lights (0.0 to 5.0, default 0.45).
+// Global light scale multiplier for all dynamic lights.
 // Applied in D3DLightScale() to control the radius of all light sources.
 // Lower values = smaller, more concentrated lights. Higher values = larger, more diffuse lights.
 // Changed at runtime via SetGlobalLightScale(), which triggers a full world geometry rebuild
@@ -1015,7 +1015,7 @@ bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 /*
  * Helper structure to pass light data for initialization.
  */
-typedef struct
+struct LightSourceData
 {
    int baseIntensity;
    int objFlags;
@@ -1023,7 +1023,7 @@ typedef struct
    WORD lightColor;  // 16-bit RGB color (5-5-5 format)
    ID objID;       // Object ID for debug output
    WORD lightFlags;  // Light flags for debug output
-} LightSourceData;
+};
 
 /*
  * Calculate flickered intensity and brightness for a light.
@@ -1055,6 +1055,18 @@ static int CalculateFlickeredIntensity(const LightSourceData &lightData, float *
  * Initialize all light scale and color properties for a d_light structure.
  * This handles xyzScale, invXYZScale, invXYZScaleHalf, and color with flicker applied.
  * Optionally outputs debug information if debugLights is true.
+ *
+ * Parameters:
+ *   light - The d_light structure to initialize
+ *   lightData - Source data for the light (intensity, color, flags, etc.)
+ *   debugLights - If true, output debug information
+ *   lightType - String describing the light type for debug output (e.g., "Static", "Dynamic")
+ *   lightCount - Reference to a counter for debug output. Incremented each call to track light index.
+ *                Initialize to 0 before processing a batch of lights.
+ *
+ * Notes:
+ *   - Safe to call multiple times on the same light - no persistent state is modified
+ *   - The lightCount increment is purely for debug output formatting
  */
 static void InitializeLightProperties(d_light *light,
                                       const LightSourceData &lightData,
@@ -1064,7 +1076,7 @@ static void InitializeLightProperties(d_light *light,
    float flickerBrightness;
    int flickeredIntensity = CalculateFlickeredIntensity(lightData, &flickerBrightness);
 
-   lightCount++;  // Cleaner syntax (was: *pLightCount++)
+   lightCount++;
 
    // Debug output
    if (debugLights)
@@ -1326,7 +1338,7 @@ int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
 		switch(tree->type)
 		{
 			case BSPleaftype:
-		return tree->u.leaf.sector->light;
+				return tree->u.leaf.sector->light;
 
 			case BSPinternaltype:
 				side0 = tree->u.internal.separator.a * pRNode->motion.x +

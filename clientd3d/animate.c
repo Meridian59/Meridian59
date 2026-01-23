@@ -211,7 +211,7 @@ bool AnimateObject(object_node *obj, int dt)
         float flicker = 0.0f;
         for (int i = 0; i < waveCount; i++)
         {
-        flicker += sinf(t * waveFrequencies[i]) * waveAmplitudes[i];
+            flicker += sinf(t * waveFrequencies[i]) * waveAmplitudes[i];
         }
          
         // Normalize to 0.0-1.0 range

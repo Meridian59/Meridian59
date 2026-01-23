@@ -341,9 +341,9 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 /* attempt make a crc16 on the meridian.exe */
 	GenerateCRC16();
 
-	MainInitState(STATE_OFFLINE);
-
 	UpdateWindow(hMain);
+
+	MainInitState(STATE_OFFLINE);
 
 	while (!bQuit)
 	{

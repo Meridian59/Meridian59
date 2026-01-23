@@ -310,7 +310,9 @@ enum {
 enum { STAT_INT = 1, STAT_RES = 2, };
 
 /* Statistics group types */
-enum {
+// Needs to match server-side values like STAT_LIST
+enum StatGroupType : BYTE {
+   INVALID_TYPE     = 0,    // Invalid type
    STATS_NUMERIC    = 1,    // Numeric values
    STATS_LIST       = 2,    // Items in a list
 };

@@ -30,7 +30,7 @@ static int num_visible;             // # of stats visible in list box
 
 static int StatListFindItem(int num);
 static LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpellIcon );
+static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected);
 static int  StatsListGetItemHeight(void);
 static void StatsListLButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListLButtonDblClk(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
@@ -208,12 +208,12 @@ void StatsListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis)
  * StatsListDrawItem:  Message handler for stats list boxes.  Return TRUE iff
  *   message is handled.
  */
-BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    AREA stats_area;
 
    if (hList == NULL)
-      return TRUE;
+      return true;
 
    switch (lpdis->itemAction)
    {
@@ -221,31 +221,31 @@ BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
    case ODA_DRAWENTIRE:
       /* If box is empty, do nothing */
       if (lpdis->itemID == -1)
-	 return TRUE;
+         return true;
 
       /* Draw window background at correct offset */
       StatsGetArea(&stats_area);
-      DrawWindowBackgroundColor(pinventory_bkgnd(), lpdis->hDC, (RECT *) (&lpdis->rcItem),			//	was NULL
-				stats_area.x + lpdis->rcItem.left,
-				stats_area.y + lpdis->rcItem.top + StatsGetButtonBorder(), -1);
+      DrawWindowBackgroundColor(pinventory_bkgnd(), lpdis->hDC, (RECT *) (&lpdis->rcItem),  //	was NULL
+                                stats_area.x + lpdis->rcItem.left,
+                                stats_area.y + lpdis->rcItem.top + StatsGetButtonBorder(), -1);
 
       /* Draw info on stat */
-	  StatsListDrawStat(lpdis, (bool) (lpdis->itemState & ODS_SELECTED), ( StatsGetCurrentGroup() == STATS_SPELLS ) );
+      StatsListDrawStat(lpdis, (bool) (lpdis->itemState & ODS_SELECTED));
       break;
 
    case ODA_FOCUS:
-//      DrawFocusRect(lpdis->hDC, &lpdis->rcItem);
+      // DrawFocusRect(lpdis->hDC, &lpdis->rcItem);
       break;
    }
-   
-   return TRUE;
+
+   return true;
 }
 /*****************************************************************************/
 /* 
  * StatsListDrawStat:  Draw info about stat in stat list box.
  *   selected is true iff the item is currently selected.
  */
-void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpellIcon)
+void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected)
 {
    HFONT hOldFont;
    Statistic *s;
@@ -253,7 +253,7 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpe
    RECT r;
    RECT rcWnd;
 
-   GetClientRect(lpdis->hwndItem,&rcWnd);
+   GetClientRect(lpdis->hwndItem, &rcWnd);
    if (lpdis->rcItem.bottom > rcWnd.bottom)
       return;
 
@@ -271,21 +271,21 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpe
    r.left += ENCHANT_SIZE + 2;
    // Draw text with drop shadow
    SetTextColor(lpdis->hDC, GetColor(COLOR_STATSBGD));
-   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
+   DrawText(lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT);
    OffsetRect(&r, 1, 1);
    SetTextColor(lpdis->hDC, selected ? GetColor(COLOR_HIGHLITE) : GetColor(COLOR_STATSFGD));
-   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
+   DrawText(lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT);
 
    SelectObject(lpdis->hDC, hOldFont);
 
    switch (StatsGetCurrentGroup())
    {
-   AREA areaIcon;
+      AREA areaIcon;
    case STATS_SPELLS:
    case STATS_SKILLS:
       areaIcon.x = lpdis->rcItem.left;
       areaIcon.y = lpdis->rcItem.top;
-      areaIcon.cx = ENCHANT_SIZE;		//xxx
+      areaIcon.cx = ENCHANT_SIZE;  // xxx
       areaIcon.cy = ENCHANT_SIZE;
       DrawObjectIcon(lpdis->hDC, s->list.icon, 0, true, &areaIcon, NULL, 0, 0, true);
       break;

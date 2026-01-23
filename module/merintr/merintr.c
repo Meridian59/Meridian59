@@ -573,7 +573,7 @@ keymap gQuickChatTable[] = {
 };
 
 extern player_info* GetPlayerInfo(void);
-extern void SetActiveStatGroup(int stat_group);
+extern void SetActiveStatGroup(StatGroup stat_group);
 extern int GetActiveStatGroup(void);
 
 /* local function prototypes */
@@ -970,23 +970,23 @@ bool ExtractStatistic(char **ptr, Statistic *s)
    switch (s->type)
    {
    case STATS_NUMERIC:
-      Extract(ptr, &s->numeric.tag,   SIZE_STAT_TYPE);
+      Extract(ptr, &s->numeric.tag, SIZE_STAT_TYPE);
       Extract(ptr, &s->numeric.value, SIZE_ID);
-      
+
       if (s->numeric.tag == STAT_INT)
       {
-	 Extract(ptr, &s->numeric.min, SIZE_ID);
-	 Extract(ptr, &s->numeric.max, SIZE_ID);
-	 Extract(ptr, &s->numeric.current_max, SIZE_ID);
+         Extract(ptr, &s->numeric.min, SIZE_ID);
+         Extract(ptr, &s->numeric.max, SIZE_ID);
+         Extract(ptr, &s->numeric.current_max, SIZE_ID);
       }
       break;
-      
+
    case STATS_LIST:
       Extract(ptr, &s->list.id, SIZE_ID);
       Extract(ptr, &s->list.value, SIZE_ID);
       Extract(ptr, &s->list.icon, SIZE_ID);
       break;
-      
+
    default:
       debug(("ExtractStatistic got unknown stat type %d\n", (int) s->type));
       return false;
@@ -1104,7 +1104,7 @@ bool HandleRemoveSkill(char *ptr, long len)
 /********************************************************************/
 bool HandleStat(char *ptr, long len)
 {
-   BYTE group;
+   StatGroup group;
    Statistic s;
    char *start = ptr;
 
@@ -1123,7 +1123,8 @@ bool HandleStat(char *ptr, long len)
 bool HandleStatGroup(char *ptr, long len)
 {
    list_type stat_list = NULL;
-   BYTE group, list_len;
+   StatGroup group;
+   BYTE list_len;
    int i;
    char *start = ptr;
 
@@ -1685,7 +1686,7 @@ bool WINAPI EventInventory(int command, void *data)
       DisplayInventory(cinfo->player->inventory);
       StatsShowGroup( false );
       ShowInventory( true );
-      DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
+      DisplayInventoryAsStatGroup( StatGroup::STATS_INVENTORY );
       break;
 
    case INVENTORY_ADD:
@@ -1694,7 +1695,7 @@ bool WINAPI EventInventory(int command, void *data)
       //DisplayInventory(cinfo->player->inventory);
       StatsShowGroup( false );
       ShowInventory( true );
-      DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
+      DisplayInventoryAsStatGroup( StatGroup::STATS_INVENTORY );
 
       break;
 
@@ -1779,12 +1780,12 @@ player_info *GetPlayer(void)
    return GetPlayerInfo();
 }
 
-void SetStatGroup(int stat_group)
+void SetStatGroup(StatGroup stat_group)
 {
-   SetActiveStatGroup(stat_group);
+   SetActiveStatGroup((int)stat_group);
 }
 
-int GetStatGroup(void)
+StatGroup GetStatGroup(void)
 {
-   return GetActiveStatGroup();
+   return (StatGroup)GetActiveStatGroup();
 }

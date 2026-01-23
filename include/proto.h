@@ -306,6 +306,10 @@ enum {
 /* Max # of player overlays allowed */
 #define NUM_PLAYER_OVERLAYS 2
 
+#ifndef BYTE
+typedef unsigned char BYTE;
+#endif
+
 /* Constants for stat type STAT and STAT_GROUP messages */
 enum { STAT_INT = 1, STAT_RES = 2, };
 

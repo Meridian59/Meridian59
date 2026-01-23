@@ -57,16 +57,16 @@ KODINCLUDEDIR = $(KODDIR)/include
 
 PALETTEFILE = $(TOPDIR)/blakston.pal
 
-CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX -DFMT_UNICODE=0 -std=c++20
+CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX -DFMT_UNICODE=0 --std=c++20
 
 OS := $(shell uname)
 
 ifeq ($(OS),Darwin)
     BLAK_PLATFORM_MAC = 1
-    # Clang won't treat .c files as C++ without this
-    CCOMMONFLAGS += -x c++
 endif
 
+# Clang won't treat .c files as C++ without this
+CCOMMONFLAGS += -x c++
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -O3
 CDEBUGFLAGS = $(CCOMMONFLAGS) -DBLAKDEBUG -g

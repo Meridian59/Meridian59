@@ -331,7 +331,21 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);
-	SetWindowPlacement(hMain, &w);
+	int showCmd = w.showCmd;
+	
+	// Size window while hidden, then show after splash is positioned
+	if (showCmd == SW_SHOWMAXIMIZED || showCmd == SW_MAXIMIZE)
+	{
+		// Maximized: ShowWindow handles sizing, no need for placement struct
+		ShowWindow(hMain, SW_SHOWMAXIMIZED);
+		ShowWindow(hMain, SW_HIDE);
+	}
+	else
+	{
+		// Normal: SetWindowPlacement needs struct for position, modify showCmd to hide
+		w.showCmd = SW_HIDE;
+		SetWindowPlacement(hMain, &w);
+	}
 
 	D3DRenderInit(hMain);
 
@@ -341,9 +355,10 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 /* attempt make a crc16 on the meridian.exe */
 	GenerateCRC16();
 
-	UpdateWindow(hMain);
-
 	MainInitState(STATE_OFFLINE);
+
+	ShowWindow(hMain, showCmd);
+	UpdateWindow(hMain);
 
 	while (!bQuit)
 	{

@@ -43,7 +43,7 @@ properties:
    % Are we currently lit?  Used for lights that turn on/off.
    pbIsLit = TRUE
 
-   % Is flicking enabled or not.
+   % Is flickering enabled or not.
    pbIsFlickering = TRUE
 
    % What intensity? from 0-255

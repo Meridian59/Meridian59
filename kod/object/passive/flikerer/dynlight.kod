@@ -150,11 +150,5 @@ messages:
       propagate;
    }
 
-   StopFlickering()
-   {
-      pbIsFlickering = FALSE;
-      return;
-   }
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

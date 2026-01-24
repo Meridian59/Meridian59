@@ -214,8 +214,8 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
    rcScreen = mi.rcWork;  // Use rcWork for the working area excluding taskbar
 
    // Make sure that child window is completely on the screen
-   x = max(rcScreen.left, min(x, rcScreen.right - rcDlg.right));
-   y = max(rcScreen.top, min(y, rcScreen.bottom - rcDlg.bottom));
+   x = (int)std::max(rcScreen.left, std::min((LONG)x, rcScreen.right - rcDlg.right));
+   y = (int)std::max(rcScreen.top, std::min((LONG)y, rcScreen.bottom - rcDlg.bottom));
 
    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }
@@ -539,10 +539,10 @@ void ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, bool red
 
    /* Try to keep dialog item from getting too big after window obscures it */
    if (y_increase > 0)
-      y_increase = max(0, min(y_increase, dlg_rect.bottom - item_rect.bottom));
+      y_increase = std::max(0L, std::min((LONG)y_increase, dlg_rect.bottom - item_rect.bottom));
 
    if (x_increase > 0)
-      x_increase = max(0, min(x_increase, dlg_rect.right - item_rect.left));
+      x_increase = std::max(0L, std::min((LONG)x_increase, dlg_rect.right - item_rect.left));
 
    if (flags & RDI_LEFT)
       new_rect.left = item_rect.left;

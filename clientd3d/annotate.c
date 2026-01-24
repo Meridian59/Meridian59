@@ -112,10 +112,10 @@ void MapMoveAnnotations( MapAnnotation *annotations, int x, int y, float scale, 
      ti.rect.bottom = ti.rect.top  + size;
 
      // Clip tooltip rectangle to graphics view window
-     ti.rect.left = max(ti.rect.left, view.x);
-     ti.rect.top = max(ti.rect.top, view.y);
-     ti.rect.right = min(ti.rect.right, view.x + view.cx);
-     ti.rect.bottom = min(ti.rect.bottom, view.y + view.cy);     
+     ti.rect.left = std::max(ti.rect.left, (long)view.x);
+     ti.rect.top = std::max(ti.rect.top, (long)view.y);
+     ti.rect.right = std::min(ti.rect.right, (long)(view.x + view.cx));
+     ti.rect.bottom = std::min(ti.rect.bottom, (long)(view.y + view.cy));     
 
      ti.uId = i;
      ti.lpszText = LPSTR_TEXTCALLBACK; 

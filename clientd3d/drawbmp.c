@@ -132,12 +132,12 @@ void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRU
 		return;
 	
 	// If object larger than offscreen buffer, we'll have to stretch it down
-	draw_size = min(max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y), 
-		max(area->cx, area->cy));
-	
+	draw_size = std::min(std::max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y),
+		std::max(area->cx, area->cy));
+
 	SelectPalette(hdc, hPal, FALSE);
 	RealizePalette(hdc);
-	
+
 	pdib = GetObjectPdib(icon, 0, group);
 	if (pdib == NULL)
 		return;
@@ -174,24 +174,24 @@ void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRU
 	height = max_rect.bottom - max_rect.top;
 	
 	/* Stretch object to just fit in square */
-	inc = (max(width, height) << FIX_DECIMAL) / draw_size;
-	
+	inc = (std::max(width, height) << FIX_DECIMAL) / draw_size;
+
 	if (draw_obj || has_overlay)
 	{
 		// Center object in drawing square
 		temp = draw_size - (width << FIX_DECIMAL) / inc;
 		obj_rect.left  = x + temp / 2 - DIVUP((max_rect.left << FIX_DECIMAL), inc);
 		obj_rect.right = obj_rect.left + DIVUP((DibWidth(pdib) << FIX_DECIMAL), inc);
-		
+
 		temp = draw_size - (height << FIX_DECIMAL) / inc;
 		obj_rect.top    = y + temp / 2 - DIVUP((max_rect.top << FIX_DECIMAL), inc);
 		obj_rect.bottom = obj_rect.top + DIVUP((DibHeight(pdib) << FIX_DECIMAL), inc);
 	}
-	
+
 	// Draw underlays
 	//if (obj->overlays != NULL)
 	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, true, obj->secondtranslation, obj->flags);
-	
+
 	if (draw_obj)
 		DrawStretchedBitmap(pdib, obj_rect, inc, 0, 0, 0);
 	
@@ -231,12 +231,12 @@ void DrawObject(HDC hdc, object_node *obj, int group, bool draw_obj, AREA *area,
 		return;
 	
 	// If object larger than offscreen buffer, we'll have to stretch it down
-	draw_size = min(max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y), 
-		max(area->cx, area->cy));
-	
+	draw_size = std::min(std::max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y),
+		std::max(area->cx, area->cy));
+
 	SelectPalette(hdc, hPal, FALSE);
 	RealizePalette(hdc);
-	
+
 	pdib = GetObjectPdib(obj->icon_res, angle, group);
 	if (pdib == NULL)
 		return;
@@ -263,24 +263,24 @@ void DrawObject(HDC hdc, object_node *obj, int group, bool draw_obj, AREA *area,
 	height = max_rect.bottom - max_rect.top;
 	
 	/* Stretch object to just fit in square */
-	inc = (max(width, height) << FIX_DECIMAL) / draw_size;
-	
+	inc = (std::max(width, height) << FIX_DECIMAL) / draw_size;
+
 	if (draw_obj || has_overlay)
 	{
 		// Center object in drawing square
 		temp = draw_size - (width << FIX_DECIMAL) / inc;
 		obj_rect.left  = x + temp / 2 - DIVUP((max_rect.left << FIX_DECIMAL), inc);
 		obj_rect.right = obj_rect.left + DIVUP((DibWidth(pdib) << FIX_DECIMAL), inc);
-		
+
 		temp = draw_size - (height << FIX_DECIMAL) / inc;
 		obj_rect.top    = y + temp / 2 - DIVUP((max_rect.top << FIX_DECIMAL), inc);
 		obj_rect.bottom = obj_rect.top + DIVUP((DibHeight(pdib) << FIX_DECIMAL), inc);
 	}
-	
+
 	// Draw underlays
 	if (obj->overlays != NULL)
 		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, true, obj->secondtranslation, obj->flags, angle);
-	
+
 	if (draw_obj)
 		DrawStretchedBitmap(pdib, obj_rect, inc, obj->translation, obj->secondtranslation, obj->flags);
 	
@@ -411,10 +411,10 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 	ObjectRowData d;
 	
 	// Bring rectangle into range to prevent crashes
-	rect.left   = max(rect.left, 0);
-	rect.right  = min(rect.right, OFFSCREEN_BITMAP_SIZE - 1);
-	rect.top    = max(rect.top, 0);
-	rect.bottom = min(rect.bottom, OFFSCREEN_BITMAP_SIZE - 1);
+	rect.left   = std::max(rect.left, 0L);
+	rect.right  = std::min(rect.right, (long)(OFFSCREEN_BITMAP_SIZE - 1));
+	rect.top    = std::max(rect.top, 0L);
+	rect.bottom = std::min(rect.bottom, (long)(OFFSCREEN_BITMAP_SIZE - 1));
 	
 	bitmap_width = DibWidth(pdib);
 	obj_bits = DibPtr(pdib);
@@ -533,12 +533,12 @@ bool ComputeObjectBoundingBox(PDIB pdib, list_type overlays, bool include_object
 		}
 		else
 		{
-			max_rect->left = min(max_rect->left, x);
-			max_rect->top  = min(max_rect->top, y);
+			max_rect->left = std::min((int)max_rect->left, x);
+			max_rect->top  = std::min((int)max_rect->top, y);
 		}
-		
-		max_rect->right  = max(max_rect->right, x + DibWidth(pdib_ov) * obj_shrink / shrink);
-		max_rect->bottom = max(max_rect->bottom, y + DibHeight(pdib_ov) * obj_shrink / shrink);
+
+		max_rect->right  = std::max((int)max_rect->right, x + DibWidth(pdib_ov) * obj_shrink / shrink);
+		max_rect->bottom = std::max((int)max_rect->bottom, y + DibHeight(pdib_ov) * obj_shrink / shrink);
 		
 		has_overlay = true;
 	}
@@ -559,8 +559,8 @@ void CreateWindowBackground(void)
 		debug(("Couldn't lock resource!\n"));      
 	bkgnd.bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 	
-	bkgnd.height = min(ptr->biHeight, OFFSCREEN_BITMAP_SIZE);
-	bkgnd.width  = min(ptr->biWidth, OFFSCREEN_BITMAP_SIZE);
+	bkgnd.height = std::min((int)ptr->biHeight, OFFSCREEN_BITMAP_SIZE);
+	bkgnd.width  = std::min((int)ptr->biWidth, OFFSCREEN_BITMAP_SIZE);
 }
 /************************************************************************/
 /*
@@ -608,10 +608,10 @@ void DrawWindowBackgroundColor(RawBitmap *bg, HDC hdc, RECT *rect, int xin, int 
 				{
 					x = rect->left;
 					xoffset = xin % bg->width;
-					height = min(bg->height - yoffset, rect->bottom - y);
+					height = std::min((LONG)(bg->height - yoffset), rect->bottom - y);
 					while (x < rect->right)
 					{
-						width = min(bg->width - xoffset, rect->right - x);
+						width = std::min((LONG)(bg->width - xoffset), rect->right - x);
 						BitBlt(hdc, x, y, width, height, gOffscreenDC, xoffset, yoffset, SRCCOPY);
 						x += bg->width - xoffset;
 						xoffset = 0;
@@ -648,10 +648,10 @@ void DrawWindowBackgroundMem(RawBitmap *bg, BYTE *ptr, RECT *r, int block_width,
 	{
 		x = r->left;
 		xoffset = xin % bg->width;
-		height = min(bg->height - yoffset, r->bottom - y);
+		height = std::min(bg->height - yoffset, (int)(r->bottom - y));
 		while (x < r->right)
 		{
-			width = min(bg->width - xoffset, r->right - x);
+			width = std::min(bg->width - xoffset, (int)(r->right - x));
 			
 			gptr = ptr + x + y * block_width;
 			bkgnd_ptr = bg->bits + xoffset + yoffset * bg->width;

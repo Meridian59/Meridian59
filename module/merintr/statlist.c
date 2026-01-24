@@ -86,7 +86,7 @@ void StatsListResize(list_type stats)
    MoveWindow(hList, 0, y, stats_area.cx, stats_area.cy - y, TRUE);
 
    // Hide scrollbar if not needed
-   num_visible = (stats_area.cy - y) / max(ListBox_GetItemHeight(hList, 0), 1);
+   num_visible = (stats_area.cy - y) / std::max(ListBox_GetItemHeight(hList, 0), 1);
    if (num_visible >= ListBox_GetCount(hList))
      SetScrollRange(hList, SB_VERT, 0, 0, TRUE);
    else
@@ -447,8 +447,8 @@ void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       // Pointless "SB_ENDSCROLL" added recently
       return;
    }
-   new_top = max(new_top, 0);
-   new_top = min(new_top, num_items - num_visible);
+   new_top = std::max(new_top, 0);
+   new_top = std::min(new_top, num_items - num_visible);
 
    if (new_top != old_top)
    {
@@ -480,7 +480,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
    {
    case VK_UP:
      WindowBeginUpdate(hwnd);
-     new_pos = max(0, old_pos - 1);
+     new_pos = std::max(0, old_pos - 1);
      if (new_pos < old_top)
        new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
@@ -491,7 +491,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 
    case VK_DOWN:
      WindowBeginUpdate(hwnd);
-     new_pos = min(old_pos + 1, ListBox_GetCount(hwnd) - 1);
+     new_pos = std::min(old_pos + 1, ListBox_GetCount(hwnd) - 1);
      if (new_pos > old_top + num_visible)
        new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
@@ -502,7 +502,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 
    case VK_PRIOR:
      WindowBeginUpdate(hwnd);
-     new_pos = max(0, old_pos - num_visible);
+     new_pos = std::max(0, old_pos - num_visible);
      new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
@@ -512,7 +512,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 
    case VK_NEXT:
      WindowBeginUpdate(hwnd);
-     new_pos = min(old_pos + num_visible, ListBox_GetCount(hwnd) - 1);
+     new_pos = std::min(old_pos + num_visible, ListBox_GetCount(hwnd) - 1);
      new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);

@@ -83,7 +83,7 @@ messages:
       return iSpellpower * 1000;
    }
 
-   GetStateValue(who = $, iSpellPower = 0)      
+   InitializeEnchantmentState(who = $, iSpellPower = 0)      
    {      
       Send(who,@AddDefenseModifier,#what=self);      
 

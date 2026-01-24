@@ -470,8 +470,11 @@ messages:
 
       }
    
+      % Environmental earthquake - room-based, flat damage, blamed on room.
+      % Using Post so earthquake fires after the lupogg king finishes dying.
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
-      post(oSpell,@DoEarthQuake,#where=poOwner,#severity=2);
+      Post(oSpell,@DoEarthQuake,#where=poOwner,#severity=2,
+           #rDeathSourceDef=Send(self,@GetDef),#rDeathSourceName=Send(self,@GetName));
 
       propagate;
    }

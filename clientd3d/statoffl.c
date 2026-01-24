@@ -124,8 +124,13 @@ void OfflineResize(int xsize, int ysize)
    button_origin.y = max(0, min(bm_origin.y + bm_height, ysize - button_height));
 
    if (hwndDialButton != NULL)
+   {
      MoveWindow(hwndDialButton, button_origin.x, button_origin.y, 
 		button_width, button_height, TRUE);
+     // Show button now that it's positioned correctly
+     if (!IsWindowVisible(hwndDialButton))
+        ShowWindow(hwndDialButton, SW_SHOW);
+   }
    InvalidateRect(hMain, NULL, TRUE);  /* redraw all */
 }
 /****************************************************************************/
@@ -169,7 +174,7 @@ void IntroShowSplash(void)
    showing_splash = true;
 
    hwndDialButton = CreateWindow("button", NULL, 
-		WS_CHILD | WS_VISIBLE,
+		WS_CHILD,
 		0, 0, 0, 0, hMain, (HMENU) IDC_DIALBUTTON,
 		hInst, NULL);
    SetWindowText(hwndDialButton, GetString(hInst, IDS_INTRO));
@@ -211,7 +216,7 @@ void IntroShowSplash(void)
    button_width = bm_width;
    button_height = BUTTON_YSIZE;
 
-   /* Simulate resize to get positions right */
+   /* Position splash and button based on current window size */
    GetClientRect(hMain, &rect);
    OfflineResize(rect.right, rect.bottom);
 

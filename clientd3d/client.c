@@ -332,17 +332,18 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);
 	int showCmd = w.showCmd;
-	
-	// Size window while hidden, then show after splash is positioned
+
 	if (showCmd == SW_SHOWMAXIMIZED || showCmd == SW_MAXIMIZE)
 	{
-		// Maximized: ShowWindow handles sizing, no need for placement struct
+		// Maximize now so splash screen is positioned correctly.
+		// WM_SETREDRAW prevents visual flash during resize.
+		SendMessage(hMain, WM_SETREDRAW, FALSE, 0);
 		ShowWindow(hMain, SW_SHOWMAXIMIZED);
 		ShowWindow(hMain, SW_HIDE);
+		SendMessage(hMain, WM_SETREDRAW, TRUE, 0);
 	}
 	else
 	{
-		// Normal: SetWindowPlacement needs struct for position, modify showCmd to hide
 		w.showCmd = SW_HIDE;
 		SetWindowPlacement(hMain, &w);
 	}

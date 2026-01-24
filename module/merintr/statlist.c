@@ -205,7 +205,7 @@ void StatsListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis)
 }
 /*****************************************************************************/
 /* 
- * StatsListDrawItem:  Message handler for stats list boxes.  Return TRUE iff
+ * StatsListDrawItem:  Message handler for stats list boxes.  Return true iff
  *   message is handled.
  */
 bool StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)

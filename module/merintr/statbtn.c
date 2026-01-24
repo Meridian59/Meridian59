@@ -63,8 +63,8 @@ static int button_border = 0;         // Height of area reserved for buttons
 static void StatsCreateButtons(void);
 static LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void StatsMoveButtonFocus(bool forward);
-StatButton *FindStatsButtonByGroup(StatGroup group);
-StatButton *FindStatsButtonByHwnd(HWND hwnd);
+static StatButton *FindStatsButtonByGroup(StatGroup group);
+static StatButton *FindStatsButtonByHwnd(HWND hwnd);
 
 /************************************************************************/
 /*
@@ -474,8 +474,8 @@ StatButton *FindStatsButtonByHwnd(HWND hwnd)
  */
 StatGroup StatsFindGroupByHwnd(HWND hwnd)
 {
-   StatButton* button = FindStatsButtonByHwnd(hwnd);
-   if(button != nullptr)
+   StatButton *button = FindStatsButtonByHwnd(hwnd);
+   if (button != nullptr)
       return button->group;
    return StatGroup::GROUP_NONE;
 }

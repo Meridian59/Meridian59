@@ -23,15 +23,13 @@
 
 // Numbers for groups of statistics Equate with value returned from StatsGetCurrentGroup()
 // NOTE: These values are matched to server-side values - seen in user.kod for example
-enum StatGroup : BYTE {
-   GROUP_NONE = (BYTE)-1,
-   STATS_MAIN = 1,      // (Health, Mana, Vigor) Not shown on skills panel, shown on character panel
-   STATS_CHARACTER = 2, // (Might, Int, Stam, Agil, Myst, Aim, Karma)
+enum StatGroup : unsigned char {
+   GROUP_NONE = (unsigned char)-1,
+   STATS_MAIN = 1,            // (Health, Mana, Vigor) Not shown on skills panel, shown on character panel
+   STATS_CHARACTER = 2,       // (Might, Int, Stam, Agil, Myst, Aim, Karma)
    STATS_SPELLS = 3,
    STATS_SKILLS = 4,
-   STATS_INVENTORY = 5, // Not a real stat group, client-side only
-
-   STATS_COUNT,  // Number of stat groups defined
+   STATS_INVENTORY = 5,       // Not a real stat group, client-side only
 };
 
 /* game statistics */

@@ -110,6 +110,20 @@ int						d3dRenderTextureThreshold;
 // See D3DRenderDebugLightPositions() for details.
 static const bool debugLightPositions = false;
 
+// Performance profiling for flickering lights feature.
+// When true, outputs timing and count stats every 256 frames.
+// Use this to compare performance with flickering on vs off.
+static bool flickerPerfProfile = true;
+
+// Accumulated performance counters (reset every 256 frames)
+static long flickerPerfTimeAccum = 0;      // Time spent in light processing (ms)
+static int flickerPerfLightsAccum = 0;     // Total lights processed
+static int flickerPerfFlickerAccum = 0;    // Flickering lights processed
+static int flickerPerfFrameCount = 0;      // Frames since last report
+
+// GPU metrics for flicker profiling
+static int flickerRedrawsTriggered = 0;    // Full redraws triggered by light changes
+
 // The maximum number of lights supported across all types (static, dynamic and projectiles)
 static const int maximumLights = 50;
 
@@ -977,6 +991,34 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
 	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
 
+	// Flicker performance profiling - report every 256 frames
+	if (flickerPerfProfile)
+	{
+		flickerPerfFrameCount++;
+		if (flickerPerfFrameCount >= 256)
+		{
+			float avgTimePerFrame = (float)flickerPerfTimeAccum / flickerPerfFrameCount;
+			float avgLightsPerFrame = (float)flickerPerfLightsAccum / flickerPerfFrameCount;
+			float avgFlickerPerFrame = (float)flickerPerfFlickerAccum / flickerPerfFrameCount;
+
+			debug(("=== FLICKER PERF (256 frames) === time=%ldms (avg %.2fms/frame) | lights=%.1f/frame | flickering=%.1f/frame | redraws=%d ===\n",
+				flickerPerfTimeAccum, avgTimePerFrame, avgLightsPerFrame, avgFlickerPerFrame,
+				flickerRedrawsTriggered));
+
+			// Report memory usage for flicker feature
+			// Light caches are pre-allocated: 2 × d_light_cache (each ~14340 bytes = numLights int + MAX_DLIGHTS × d_light)
+			int lightCacheMemory = 2 * (int)sizeof(d_light_cache);
+			debug(("=== FLICKER MEMORY === lightCaches=%d bytes | flickerObjs=%.1f/frame (x8 bytes) ===\n",
+				lightCacheMemory, avgFlickerPerFrame));
+
+			// Reset accumulators
+			flickerPerfTimeAccum = 0;
+			flickerPerfLightsAccum = 0;
+			flickerPerfFlickerAccum = 0;
+			flickerPerfFrameCount = 0;
+			flickerRedrawsTriggered = 0;
+		}
+	}
 }
 
 /*
@@ -1000,13 +1042,9 @@ bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 {
 	if (dLight->objID != pRNode->obj.id)
 		return false;
-	if (dLight->xyzScale.x != DLIGHT_SCALE(pRNode->obj.dLighting.intensity))
+	if (dLight->baseIntensity != DLIGHT_SCALE(pRNode->obj.dLighting.intensity))
 		return false;
-	if (dLight->color.b != (pRNode->obj.dLighting.color & 31) * 255 / 31)
-		return false;
-	if (dLight->color.g != ((pRNode->obj.dLighting.color >> 5) & 31) * 255 / 31)
-		return false;
-	if (dLight->color.r != ((pRNode->obj.dLighting.color >> 10) & 31) * 255 / 31)
+	if (dLight->baseColor != pRNode->obj.dLighting.color)
 		return false;
 
 	return true;
@@ -1077,6 +1115,10 @@ static void InitializeLightProperties(d_light *light,
    int flickeredIntensity = CalculateFlickeredIntensity(lightData, &flickerBrightness);
 
    lightCount++;
+
+   // Store base values for cache validation (unflickered)
+   light->baseIntensity = DLIGHT_SCALE(lightData.baseIntensity);
+   light->baseColor = lightData.lightColor;
 
    // Debug output
    if (debugLights)
@@ -1183,6 +1225,13 @@ void D3DLMapsStaticGet(room_type *room)
 	// Set to 'true' to enable debug output, 'false' to disable.
 	bool debugLights = false;
 
+	// Performance profiling
+	long flickerPerfStart = 0;
+	int flickerCount = 0;
+	int totalLightCount = 0;
+	if (flickerPerfProfile)
+		flickerPerfStart = timeGetTime();
+
 	if (debugLights)
 		debug(("=== PROCESSING LIGHTS IN ROOM ===\n"));
 
@@ -1224,6 +1273,10 @@ void D3DLMapsStaticGet(room_type *room)
 									"Projectile", projectileCount);
 
 			gDLightCacheDynamic.numLights++;
+
+			// Performance profiling: count projectile lights
+			if (flickerPerfProfile)
+				totalLightCount++;
 		}
 
       if (debugLights)
@@ -1269,8 +1322,16 @@ void D3DLMapsStaticGet(room_type *room)
 								"Dynamic", dynamicCount);
 
          gDLightCacheDynamic.numLights++;
+
+         // Performance profiling: count flickering lights
+         if (flickerPerfProfile)
+         {
+            totalLightCount++;
+            if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
+               flickerCount++;
+         }
       }
-      
+
 	  if (debugLights)
 		debug(("Total Dynamic Lights: %d\n\n", dynamicCount));
    }
@@ -1287,7 +1348,7 @@ void D3DLMapsStaticGet(room_type *room)
       {
          pRNode = (room_contents_node *) list->data;
 
-		 bool isDynamic = (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) != 0;
+         bool isDynamic = (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) != 0;
          if (isDynamic)
             continue;
 
@@ -1295,31 +1356,68 @@ void D3DLMapsStaticGet(room_type *room)
                              pRNode->obj.dLighting.intensity))
             continue;
 
-         if (!D3DLMapCheck(&gDLightCache.dLights[gDLightCache.numLights], pRNode))
-            gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+         bool isFlickering = (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)) != 0;
 
+         // Select target cache: flickering lights go to dynamic cache, static lights to main cache
+         d_light_cache *targetCache = isFlickering ? &gDLightCacheDynamic : &gDLightCache;
+         const char *debugLabel = isFlickering ? "Flickering" : "Static";
+
+         // Non-flickering lights need structural change detection
+         if (!isFlickering)
+         {
+            if (!D3DLMapCheck(&targetCache->dLights[targetCache->numLights], pRNode))
+            {
+               // Structural change (light added/removed/moved, base intensity/color changed)
+               gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+               if (flickerPerfProfile)
+                  flickerRedrawsTriggered++;
+            }
+         }
+
+         // Common light setup
          pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
 
-         gDLightCache.dLights[gDLightCache.numLights].objID = pRNode->obj.id;
-         gDLightCache.dLights[gDLightCache.numLights].xyz.x = pRNode->motion.x;
-         gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
-         gDLightCache.dLights[gDLightCache.numLights].xyz.z =
-             CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
+         d_light *light = &targetCache->dLights[targetCache->numLights];
 
-         LightSourceData lightData = {.baseIntensity = pRNode->obj.dLighting.intensity,
-                                      .objFlags = pRNode->obj.flags,
-                                      .lightAdjust = pRNode->obj.lightAdjust,
-                                      .lightColor = pRNode->obj.dLighting.color,
-                                      .objID = pRNode->obj.id,
-                                      .lightFlags = pRNode->obj.dLighting.flags};
-         InitializeLightProperties(&gDLightCache.dLights[gDLightCache.numLights], lightData, debugLights, "Static",
-                                   staticCount);
-         
-         gDLightCache.numLights++;
+         // Static lights need objID for cache validation
+         if (!isFlickering)
+            light->objID = pRNode->obj.id;
+
+         light->xyz.x = pRNode->motion.x;
+         light->xyz.y = pRNode->motion.y;
+         light->xyz.z = CalculateLightZPosition(room, pRNode->motion.x, pRNode->motion.y, pRNode->motion.z, pDib);
+
+         LightSourceData lightData = {
+            .baseIntensity = pRNode->obj.dLighting.intensity,
+            .objFlags = pRNode->obj.flags,
+            .lightAdjust = pRNode->obj.lightAdjust,
+            .lightColor = pRNode->obj.dLighting.color,
+            .objID = pRNode->obj.id,
+            .lightFlags = pRNode->obj.dLighting.flags
+         };
+         InitializeLightProperties(light, lightData, debugLights, debugLabel, staticCount);
+
+         targetCache->numLights++;
+
+         // Performance profiling: count flickering lights
+         if (flickerPerfProfile)
+         {
+            totalLightCount++;
+            if (isFlickering)
+               flickerCount++;
+         }
       }
 
 	  if (debugLights)
 		debug(("Total Static Lights: %d\n\n", staticCount));
+   }
+
+   // Accumulate performance stats
+   if (flickerPerfProfile)
+   {
+      flickerPerfTimeAccum += (timeGetTime() - flickerPerfStart);
+      flickerPerfLightsAccum += totalLightCount;
+      flickerPerfFlickerAccum += flickerCount;
    }
 }
 

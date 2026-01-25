@@ -113,7 +113,7 @@ static const bool debugLightPositions = false;
 // Performance profiling for flickering lights feature.
 // When true, outputs timing and count stats every 256 frames.
 // Use this to compare performance with flickering on vs off.
-static bool flickerPerfProfile = true;
+static bool flickerPerfProfile = false;
 
 // Accumulated performance counters (reset every 256 frames)
 static long flickerPerfTimeAccum = 0;      // Time spent in light processing (ms)

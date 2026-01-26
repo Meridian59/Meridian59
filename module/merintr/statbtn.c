@@ -29,15 +29,16 @@ typedef struct {
   int  iWidthRight;		//	Width of right bitmap used for button.
   int  x, y;            // Location of button relative to top left of stat area
   int  name;            // Resource identifier for tooltip name string (0 if none)
+  StatGroup group;      // Stat group this button represents
 } StatButton;
 
 #define NUM_BUTTONS 4
 
 static StatButton buttons[NUM_BUTTONS] = {
-  { IDB_SBUTTON1_LEFT, IDB_SBUTTON1_MID, IDB_SBUTTON1_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_STATS },
-  { IDB_SBUTTON2_LEFT, IDB_SBUTTON2_MID, IDB_SBUTTON2_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_SPELLS },
-  { IDB_SBUTTON3_LEFT, IDB_SBUTTON3_MID, IDB_SBUTTON3_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_SKILLS },
-  { IDB_SBUTTON4_LEFT, IDB_SBUTTON4_MID, IDB_SBUTTON4_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_INVENTORY },
+   { IDB_SBUTTON4_LEFT, IDB_SBUTTON4_MID, IDB_SBUTTON4_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_INVENTORY, StatGroup::STATS_INVENTORY },
+   { IDB_SBUTTON2_LEFT, IDB_SBUTTON2_MID, IDB_SBUTTON2_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_SPELLS, StatGroup::STATS_SPELLS},
+   { IDB_SBUTTON3_LEFT, IDB_SBUTTON3_MID, IDB_SBUTTON3_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_SKILLS, StatGroup::STATS_SKILLS},
+   { IDB_SBUTTON1_LEFT, IDB_SBUTTON1_MID, IDB_SBUTTON1_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_STATS, StatGroup::STATS_CHARACTER},
 };
 
 /* Keys to override default actions */
@@ -61,7 +62,10 @@ static int button_border = 0;         // Height of area reserved for buttons
 /* local function prototypes */
 static void StatsCreateButtons(void);
 static LRESULT CALLBACK StatButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static void StatsMoveButtonFocus(HWND button, bool forward);
+static void StatsMoveButtonFocus(bool forward);
+static StatButton *FindStatsButtonByGroup(StatGroup group);
+static StatButton *FindStatsButtonByHwnd(HWND hwnd);
+
 /************************************************************************/
 /*
  * StatButtonsCreate:  Load bitmaps for stat buttons.
@@ -117,7 +121,8 @@ void StatsSetButtons(int num_groups)
 {
    if (num_groups == NUM_BUTTONS + 1)
      StatsCreateButtons();
-   else debug(("StatsSetButtons got %d buttons; expecting %d\n", num_groups, NUM_BUTTONS + 1));
+   else
+      debug(("StatsSetButtons got %d buttons; expecting %d\n", num_groups, NUM_BUTTONS + 1));
 }
 /************************************************************************/
 /*
@@ -125,19 +130,17 @@ void StatsSetButtons(int num_groups)
  */
 void StatsCreateButtons(void)
 {
-   int i, max_height = 0;
-   StatButton *button;
+   int max_height = 0;
 
    // Get rid of existent button windows
-   for (i = 0; i < NUM_BUTTONS; i++)
+   for (int i = 0; i < NUM_BUTTONS; i++)
    {
-      button = &buttons[i];
+      StatButton* button = &buttons[i];
       if (button->hwnd != NULL)
-	DestroyWindow(button->hwnd);
+         DestroyWindow(button->hwnd);
 
-      button->hwnd = CreateWindow("button", NULL, WS_CHILD | BS_OWNERDRAW, 
-				  0, 0, 0, 0,
-				  hStats, (HMENU) IDC_STATBUTTON, hInst, NULL);
+      button->hwnd = CreateWindow("button", NULL, WS_CHILD | BS_OWNERDRAW,
+         0, 0, 0, 0, hStats, (HMENU) IDC_STATBUTTON, hInst, NULL);
       lpfnDefButtonProc = SubclassWindow(button->hwnd, StatButtonProc);
       max_height = std::max(max_height, button->height);
 		if( button->name != 0 )
@@ -174,28 +177,9 @@ void StatsMoveButtons(void)
 	//	Buttons are now stretched to fit width of area.
 	for( i = 0; i < NUM_BUTTONS; i++ )
 	{
-		StatButton* button;
-		//	ajw Hard-coded changed order of buttons appearance.
-		switch( i )
-		{
-		case 0:
-			button = &buttons[3];		//	Inventory
-			break;
-		case 1:
-			button = &buttons[1];		//	Spells
-			break;
-		case 2:
-			button = &buttons[2];		//	Skills
-			break;
-		case 3:
-			button = &buttons[0];		//	Stats
-			break;
-		}
+		StatButton* button = &buttons[i];
 		if( button->hwnd == NULL )
 			continue;
-
-//		x = ( stats_area.cx / ( NUM_BUTTONS * 2 ) ) * ( 2 * i + 1 ) - (int)( button->width / 2 );
-//		y = 0;
 
 		x = ( stats_area.cx / NUM_BUTTONS ) * i;
 		y = 0;
@@ -210,59 +194,18 @@ void StatsMoveButtons(void)
 		button->x = x;
 		button->y = y;
 	}
-/*
-   // Compute width of each button; all same size, but must fit in stats area
-   width = -STATUS_BUTTON_SPACING;
-   for (i=0; i < NUM_BUTTONS; i++)
-     width += buttons[i].width + STATUS_BUTTON_SPACING;
-
-   x = (stats_area.cx - width) / 2;
-   y = 0;
-   for (i=0; i < NUM_BUTTONS; i++)
-   {
-      StatButton *button;
-	  
-	//	ajw Hard-coded changed order of buttons appearance.
-	switch( i )
-	{
-	case 0:
-	     button = &buttons[3];		//	Inventory
-	     break;
-	case 1:
-	     button = &buttons[1];		//	Spells
-	     break;
-	case 2:
-	     button = &buttons[2];		//	Skills
-	     break;
-	case 3:
-	     button = &buttons[0];		//	Stats
-	     break;
-	}
-
-      if (button->hwnd == NULL)
-	continue;
-      
-      MoveWindow(button->hwnd, x, y, button->width, button->height, TRUE);
-      ShowWindow(button->hwnd, SW_SHOWNORMAL);
-      button->x = x;
-      button->y = y;
-
-      x += button->width + STATUS_BUTTON_SPACING;
-   }
-*/
 }
 /************************************************************************/
 /*
  * StatsSetButtonFocus:  Set focus to button for given group, if possible.
  */
-void StatsSetButtonFocus(int group)
+void StatsSetButtonFocus(StatGroup group)
 {
-   // Skip main group
-   group--;
-
-   // Set focus to button of current group (starts counting from 0)
-   if (group <= NUM_BUTTONS)
-     SetFocus(buttons[group - 1].hwnd);
+   StatButton *button = FindStatsButtonByGroup(group);
+   if (button)
+   {
+      SetFocus(button->hwnd);
+   }
 }
 /************************************************************************/
 /*
@@ -315,31 +258,31 @@ bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
    const void *action_data;
 
    UserDidSomething();
-   
+
    /* See if stat button handles this key */
-   action = TranslateKey(key, stats_key_table, &action_data); 
+   action = TranslateKey(key, stats_key_table, &action_data);
    if (action == A_NOACTION)
       return false;
 
-   switch(action)
+   switch (action)
    {
    case A_TABFWD:
       TextInputSetFocus(true);
       break;
    case A_TABBACK:
-		SetFocus(cinfo->hMain);	//	ajw
-		//InventorySetFocus(false);
-		break;
+      SetFocus(cinfo->hMain);  // ajw
+      // InventorySetFocus(false);
+      break;
    case A_NEXT:
-      StatsMoveButtonFocus(hwnd, true);
+      StatsMoveButtonFocus(true);
       break;
    case A_PREV:
-      StatsMoveButtonFocus(hwnd, false);
+      StatsMoveButtonFocus(false);
       break;
 
    default:
       if (!held_down)
-	 PerformAction(action, action_data);
+         PerformAction(action, action_data);
       break;
    }
    return true;
@@ -350,9 +293,8 @@ bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
  */
 bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
-	int group, xSrc;
+   int xSrc;
 	int xDest;
-	StatButton *button;
 	bool bPressed = false;
 
 	switch (lpdis->itemAction)
@@ -360,20 +302,18 @@ bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 	case ODA_SELECT:
 	case ODA_DRAWENTIRE:
 		// Draw bitmap, if button has one
-		group = StatsFindGroupByHwnd(lpdis->hwndItem) - 1;
-		if( group == GROUP_NONE || buttons[group].bitsLeft == NULL )
+      StatButton* button = FindStatsButtonByHwnd(lpdis->hwndItem);
+		if( button == nullptr || button->bitsLeft == NULL )
 		{
 			FillRect(lpdis->hDC, &lpdis->rcItem, (HBRUSH) GetStockObject(LTGRAY_BRUSH));
 		}
 		else
 		{
-			button = &buttons[group];
 			// Pick image to draw, depending on whether button is pressed
-			if( lpdis->itemState & ODS_SELECTED || StatsGetCurrentGroup() == group + 2 )
+			if( lpdis->itemState & ODS_SELECTED || StatsGetCurrentGroup() == button->group )
 				bPressed = true;
 
 			SelectPalette(lpdis->hDC, cinfo->hPal, FALSE);
-//			OffscreenWindowBackground( NULL, button->x, button->y, button->width, button->height );
 
 			//	Left piece.
 			if( bPressed )
@@ -411,50 +351,65 @@ bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
  */
 void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-	int group;
-	list_type stat_list;
+   StatButton *button = FindStatsButtonByHwnd(hwndCtl);
+   if (button == nullptr)
+      return;
 
-	group = StatsFindGroupByHwnd(hwndCtl) + 1;  // Skip main stat group
-	if (group == GROUP_NONE)
-		return;
+   StatGroup group = button->group;
+   if (group == StatGroup::GROUP_NONE)
+      return;
 
+   StatsSetActiveGroup(group);
+}
+
+
+/************************************************************************/
+/*
+ * StatsSetActiveGroup: Activate a particular stat group in the UI.
+ */
+void StatsSetActiveGroup(StatGroup group)
+{
 	// Record which group is now active (inventory, spells, skills or stats)
 	// Used to restore correct ui state following a system save.
 	SetStatGroup(group);
 
-	if (group != StatsGetCurrentGroup())
+   StatGroup old_group = StatsGetCurrentGroup();
+   StatButton *old_button = FindStatsButtonByGroup(old_group);
+	if (old_group != group)
 	{
 		//	ajw Changes to make Inventory act somewhat like one of the stats groups.
-		if( StatsGetCurrentGroup() == STATS_INVENTORY )
+		if( old_group == StatGroup::STATS_INVENTORY )
 		{
 			//	Inventory must be going away.
 			ShowInventory( false );
-//			StatsShowGroup( true );
 		}
-		if( group == STATS_INVENTORY )
+		if( group == StatGroup::STATS_INVENTORY )
 		{
 			//	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.
-			InvalidateRect( buttons[ StatsGetCurrentGroup()-2 ].hwnd, NULL, FALSE );
+			InvalidateRect( old_button->hwnd, NULL, FALSE );
 
 			StatsShowGroup( false );
 			ShowInventory( true );
-			DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
+			DisplayInventoryAsStatGroup( StatGroup::STATS_INVENTORY );
 		}
 		else
 		{
 			// Check stat cache; if group not present, ask server
+         list_type stat_list;
 			if (StatCacheGetEntry(group, &stat_list) == true)
-				DisplayStatGroup((BYTE) group, stat_list);
+				DisplayStatGroup(group, stat_list);
 			else
 			{
-				debug(("Requesting group %d\n", group));
-				RequestStats(group);
+				debug(("Requesting group %d\n", (int)group));
+				RequestStats((BYTE)group);
 			}
 		}
 	}
+   
+   //	[ xxx Still broken - click on Inv when it is already selected, but drag off of button and release. ]
 	if( StatsGetCurrentGroup() == STATS_INVENTORY )
 		InventorySetFocus( true );		//	Force focus to leave stats group window after button within it was pushed.
-	//	[ xxx Still broken - click on Inv when it is already selected, but drag off of button and release. ]
+	
 }
 
 /************************************************************************/
@@ -462,34 +417,65 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
  * StatsMoveButtonFocus:  Focus is currently on given button; move focus forward
  *   or backward, depending on "forward".
  */
-void StatsMoveButtonFocus(HWND button, bool forward)
+void StatsMoveButtonFocus(bool forward)
 {
-   int num = StatsFindGroupByHwnd(button);
-   int dx = forward ? +1 : -1;
+   StatGroup group = StatsGetCurrentGroup();
 
-   if (num == GROUP_NONE)
+   int button_index = 0;
+   for (button_index = 0; button_index < NUM_BUTTONS; button_index++)
    {
-      debug(("StatsMoveButtonFocus got bogus button window\n"));
-      return;
+      if (buttons[button_index].group == group)
+      {
+         button_index = (button_index + (forward ? 1 : -1)) % NUM_BUTTONS;
+         StatsSetActiveGroup(buttons[button_index].group);
+         return;
+      }
    }
-   num = (num - 1 + dx) % NUM_BUTTONS;
-   if (num < 0)
-      num += NUM_BUTTONS;
-   
-   if (num < NUM_BUTTONS)
-      SetFocus(buttons[num].hwnd);
 }
+
+/************************************************************************/
+/*
+ * FindStatsButtonByHwnd:  Return pointer to the StatButton with given hwnd, or nullptr if none.
+ */
+StatButton *FindStatsButtonByGroup(StatGroup group)
+{
+   for (int i = 0; i < NUM_BUTTONS; i++)
+   {
+      if (buttons[i].group == group)
+      {
+         return &buttons[i];
+      }
+   }
+
+   return nullptr;
+}
+
+/************************************************************************/
+/*
+ * FindStatsButtonByHwnd:  Return pointer to the StatButton with given hwnd, or nullptr if none.
+ */
+StatButton *FindStatsButtonByHwnd(HWND hwnd)
+{
+   for (int i = 0; i < NUM_BUTTONS; i++)
+   {
+      if (buttons[i].hwnd == hwnd)
+      {
+         return &buttons[i];
+      }
+   }
+
+   return nullptr;
+}
+
+
 /************************************************************************/
 /*
  * StatsFindGroupByHwnd:  Return group # of stat with given button, or GROUP_NONE if none.
  */
-int StatsFindGroupByHwnd(HWND hwnd)
+StatGroup StatsFindGroupByHwnd(HWND hwnd)
 {
-   int i, num = STATS_MAIN;
-
-   for (i = 0; i < NUM_BUTTONS; i++)
-      if (buttons[i].hwnd == hwnd)
-	 return i + 1;
-
-   return GROUP_NONE;
+   StatButton *button = FindStatsButtonByHwnd(hwnd);
+   if (button != nullptr)
+      return button->group;
+   return StatGroup::GROUP_NONE;
 }

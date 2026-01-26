@@ -127,7 +127,7 @@ void StatsMainChange(Statistic *s)
 
    SendMessage(s->hControl, GRPH_RANGESET, s->numeric.min, s->numeric.max);
    SendMessage(s->hControl, GRPH_POSSET, 0, s->numeric.value);
-   SendMessage(s->hControl, GRPH_LIMITSET, 0, s->numeric.current_max);	 
+   SendMessage(s->hControl, GRPH_LIMITSET, 0, s->numeric.current_max);
 
    if (s->num == STAT_VIGOR)
    {
@@ -136,10 +136,10 @@ void StatsMainChange(Statistic *s)
 
       // Set color of graph if vigor is very low
       if (pinfo.vigor < MIN_VIGOR && old_vigor >= MIN_VIGOR)
-	 SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, STAT_EMERGENCY_COLOR);
+         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, STAT_EMERGENCY_COLOR);
 
       if (pinfo.vigor >= MIN_VIGOR && old_vigor < MIN_VIGOR)
-	 SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));	 
+         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
    }
 }
 

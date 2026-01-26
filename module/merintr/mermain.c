@@ -137,7 +137,7 @@ void InterfaceRedrawModule(HDC hdc)
   if( StatsGetCurrentGroup() == STATS_INVENTORY )
   {
     InvalidateRect( GetHwndInv(), NULL, FALSE );
-    ShowInventory(TRUE);
+    ShowInventory(true);
     InventoryRedraw();
   }
 }

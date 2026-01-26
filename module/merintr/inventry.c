@@ -1161,7 +1161,11 @@ bool InventoryDropCurrentItem(room_contents_node *container)
       return false;
 
    if (container == NULL)
-      RequestDrop(item->obj);
+   {
+      list_type drop_list = list_add_item(NULL, item->obj);
+      RequestDrop(drop_list);
+      list_delete(drop_list);
+   }
    else RequestPut(item->obj, container->obj.id);
    return true;
 }

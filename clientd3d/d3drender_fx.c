@@ -575,7 +575,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// whiteout
 	if (effects.whiteout)
 	{
-		int whiteout =s td::min(effects.whiteout, 500);
+		int whiteout = std::min(effects.whiteout, 500);
 
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = std::max(whiteout, 200);

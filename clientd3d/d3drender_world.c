@@ -1441,10 +1441,10 @@ static void CalculateBoundingBox2D(const custom_xyz *xyz, int numVertices, float
 
    for (int i = 1; i < numVertices; i++)
    {
-      outMinX = (std::min)(outMinX, xyz[i].x);
-      outMaxX = (std::max)(outMaxX, xyz[i].x);
-      outMinY = (std::min)(outMinY, xyz[i].y);
-      outMaxY = (std::max)(outMaxY, xyz[i].y);
+      outMinX = std::min(outMinX, xyz[i].x);
+      outMaxX = std::max(outMaxX, xyz[i].x);
+      outMinY = std::min(outMinY, xyz[i].y);
+      outMaxY = std::max(outMaxY, xyz[i].y);
    }
 }
 

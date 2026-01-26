@@ -465,7 +465,7 @@ static void AddObjects(room_type *room)
          nobjects--;
          continue;
       }
-      d->draw.height = max(bottom, r->motion.z);
+      d->draw.height = std::max(bottom, (long)r->motion.z);
 
       // Set object depth based on "depth" sector flags
       d->draw.depth = sector_depths[SectorDepth(sector_flags)];
@@ -793,7 +793,7 @@ loop:
    if (node->left)
    {
       if (node->right)
-         h = max(node->left->height, node->right->height) + 1;
+         h = std::max(node->left->height, node->right->height) + 1;
       else
          h = node->left->height + 1;
    }
@@ -1083,8 +1083,8 @@ static bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
    {
       next = c->next;  // get next pointer now, before we munge c
 
-      c0 = max(col0, c->cone.leftedge);
-      c1 = min(col1, c->cone.rightedge);
+      c0 = std::max(col0, (long)c->cone.leftedge);
+      c1 = std::min(col1, (long)c->cone.rightedge);
 
       // some common subexpressions
       a_topb = a * c->cone.top_b;
@@ -1294,8 +1294,8 @@ static bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       next = c->next;  // get next pointer now, before we munge c
 
       // get left and right edges of item under consideration
-      c0 = max(col0, c->cone.leftedge);
-      c1 = min(col1, c->cone.rightedge);
+      c0 = std::max(col0, (long)c->cone.leftedge);
+      c1 = std::min(col1, (long)c->cone.rightedge);
 
       a_botb = a * c->cone.bot_b;
       a_botd = a * c->cone.bot_d;
@@ -1823,13 +1823,13 @@ bool Bbox_shadowed(long x0, long y0, long x1, long y1)
    {  // find minimum column
       col0 = screen_width;
       if (r0 > 0)
-         col0 = min(col0, (screen_width * l0 + screen_width2) / (l0 + r0));
+         col0 = std::min(col0, (screen_width * l0 + screen_width2) / (l0 + r0));
       if (r1 > 0)
-         col0 = min(col0, (screen_width * l1 + screen_width2) / (l1 + r1));
+         col0 = std::min(col0, (screen_width * l1 + screen_width2) / (l1 + r1));
       if (r2 > 0)
-         col0 = min(col0, (screen_width * l2 + screen_width2) / (l2 + r2));
+         col0 = std::min(col0, (screen_width * l2 + screen_width2) / (l2 + r2));
       if (r3 > 0)
-         col0 = min(col0, (screen_width * l3 + screen_width2) / (l3 + r3));
+         col0 = std::min(col0, (screen_width * l3 + screen_width2) / (l3 + r3));
    }
 
    if (offrightedge)
@@ -1838,13 +1838,13 @@ bool Bbox_shadowed(long x0, long y0, long x1, long y1)
    {  // find maximum column
       col1 = 0;
       if (l0 > 0)
-         col1 = max(col1, (screen_width * l0 + screen_width2) / (l0 + r0));
+         col1 = std::max(col1, (screen_width * l0 + screen_width2) / (l0 + r0));
       if (l1 > 0)
-         col1 = max(col1, (screen_width * l1 + screen_width2) / (l1 + r1));
+         col1 = std::max(col1, (screen_width * l1 + screen_width2) / (l1 + r1));
       if (l2 > 0)
-         col1 = max(col1, (screen_width * l2 + screen_width2) / (l2 + r2));
+         col1 = std::max(col1, (screen_width * l2 + screen_width2) / (l2 + r2));
       if (l3 > 0)
-         col1 = max(col1, (screen_width * l3 + screen_width2) / (l3 + r3));
+         col1 = std::max(col1, (screen_width * l3 + screen_width2) / (l3 + r3));
    }
 
    /* Note: we only use the left and right edges of the view cone because
@@ -2537,7 +2537,7 @@ static void WalkLeaf(BSPleaf *leaf)
          {
             a = 1;
             b = 0;
-            d = min(row0, row1);
+            d = std::min(row0, row1);
          }
          else
          {
@@ -2600,7 +2600,7 @@ static void WalkLeaf(BSPleaf *leaf)
          {
             a = 1;
             b = 0;
-            d = min(row0, row1);
+            d = std::min(row0, row1);
          }
          else
          {
@@ -2788,7 +2788,7 @@ static void outlinecone(ViewCone *c)
       debug(("minrow left (%d %d): %d\n", c->leftedge, c->rightedge, minrow));
    if (maxrow >= area.cy)
       debug(("maxrow left (%d %d): %d (%d)\n", c->leftedge, c->rightedge, maxrow, area.cy));
-   for (row = max(0, minrow); row <= min(area.cy - 1, maxrow); row++)
+   for (row = std::max(0, minrow); row <= std::min(area.cy - 1, maxrow); row++)
       *(gBits + row * MAXX + c->leftedge) = fillcolor;
 
    minrow = DIVUP(c->top_b * c->rightedge + c->top_d, c->top_a);
@@ -2801,7 +2801,7 @@ static void outlinecone(ViewCone *c)
              DIVDOWN(c->bot_b * c->leftedge + c->bot_d, c->bot_a), c->rightedge, minrow, maxrow));
    if (maxrow >= area.cy)
       debug(("maxrow right (%d %d): %d (%d)\n", c->leftedge, c->rightedge, maxrow, area.cy));
-   for (row = max(0, minrow); row <= min(area.cy - 1, maxrow); row++)
+   for (row = std::max(0, minrow); row <= std::min(area.cy - 1, maxrow); row++)
       *(gBits + row * MAXX + c->rightedge) = fillcolor;
 
    fillcolor += 15;
@@ -2938,7 +2938,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
          // This is the last piece of code I wrote as an employee of 3DO
          // 3-24-1997 Colin Andrews
-         top = max(BSPwall->z3, BSPwall->zz3);
+         top = std::max(BSPwall->z3, BSPwall->zz3);
          top = (top + FINENESS - 1) & ~(FINENESS - 1);
       }
 
@@ -2946,7 +2946,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bottom = BSPwall->z2;
       else
       {  // bottom of wall is sloped, choose abitrary texture endpoint
-         bottom = min(BSPwall->z2, BSPwall->zz2);
+         bottom = std::min(BSPwall->z2, BSPwall->zz2);
          bottom = bottom & ~(FINENESS - 1);
       }
 
@@ -2966,7 +2966,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          top = BSPwall->z1;
       else
       {  // top of wall is sloped, choose abitrary texture endpoint
-         top = max(BSPwall->z1, BSPwall->zz1);
+         top = std::max(BSPwall->z1, BSPwall->zz1);
          top = (top + FINENESS - 1) & ~(FINENESS - 1);
       }
 
@@ -2974,7 +2974,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bottom = BSPwall->z0;
       else
       {  // bottom of wall is sloped, choose abitrary texture endpoint
-         bottom = min(BSPwall->z0, BSPwall->zz0);
+         bottom = std::min(BSPwall->z0, BSPwall->zz0);
          bottom = bottom & ~(FINENESS - 1);
       }
 
@@ -2994,7 +2994,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          top = BSPwall->z2;
       else
       {  // top of wall is sloped, choose abitrary texture endpoint
-         top = max(BSPwall->z2, BSPwall->zz2);
+         top = std::max(BSPwall->z2, BSPwall->zz2);
          top = (top + FINENESS - 1) & ~(FINENESS - 1);
       }
 
@@ -3002,7 +3002,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bottom = BSPwall->z1;
       else
       {  // bottom of wall is sloped, choose abitrary texture endpoint
-         bottom = min(BSPwall->z1, BSPwall->zz1);
+         bottom = std::min(BSPwall->z1, BSPwall->zz1);
          bottom = bottom & ~(FINENESS - 1);
       }
 
@@ -3167,7 +3167,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          int temp;
 
          temp = yinc * (rowend - clipend) + (yoffset << FIX_DECIMAL);
-         total_steps = min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - temp, yinc));
+         total_steps = std::min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - temp, yinc));
       }
 
       // Make sure ytex >= 0
@@ -3182,8 +3182,8 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          // Draw until we reach the top of the wall on the screen, or the top of the bitmap
          if (yinc)
          {
-            num_steps = min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - ytex, yinc));
-            num_steps = max(1, num_steps);
+            num_steps = std::min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - ytex, yinc));
+            num_steps = std::max(1L, num_steps);
          }
          else
             num_steps = total_steps;
@@ -3608,7 +3608,7 @@ static void doDrawSloped(ViewCone *c, BSPleaf *leaf, BYTE floor)
       {
 
          // how many pixels to skip in this sub-affine step
-         count = min(SLOPE_TEXTURE_STEP, len);
+         count = std::min((long)SLOPE_TEXTURE_STEP, len);
          len -= SLOPE_TEXTURE_STEP;
 
          // save values for current endpoint
@@ -4027,7 +4027,7 @@ static void doDrawBackground(ViewCone *c)
          xoffset = xoffset % width;
          while (mincol <= maxcol)
          {
-            length = min(maxcol - mincol + 1, width - xoffset);
+            length = std::min(maxcol - mincol + 1, width - xoffset);
 
             memcpy(gBits + row * MAXX + mincol, bkgnd_ptr + xoffset, length);
             mincol += length;
@@ -4076,15 +4076,15 @@ static void doDrawBackground(ViewCone *c)
 
       if (px + over_width <= c->leftedge || px > c->rightedge)
          continue;
-      starty = max(minrow, py);
-      endy = min(maxrow, py + over_height - 1);
+      starty = std::max((long)minrow, py);
+      endy = std::min((long)maxrow, py + over_height - 1);
       overlay->rcScreen.top = starty;
       overlay->rcScreen.bottom = endy;
       bg_overlayVisible = TRUE;
       for (row = starty; row <= endy; row++)
       {
-         mincol = max(c->leftedge, px);
-         maxcol = min(c->rightedge, px + over_width - 1);
+         mincol = std::max((long)c->leftedge, px);
+         maxcol = std::min((long)c->rightedge, px + over_width - 1);
 
          if (c->top_b > 0)
          {

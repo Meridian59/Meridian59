@@ -599,12 +599,12 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
       {
          if (flicker->server_id == 0)
             flicker->light = (flicker->original_light & 0x7F) +
-                             rand() % min(FLICKER_INTENSITY, (0x80 - (flicker->original_light & 0x7F)));
+                             rand() % std::min(FLICKER_INTENSITY, (0x80 - (flicker->original_light & 0x7F)));
          else
             // Cause all sectors with the same id to flicker identically
             flicker->light = (flicker->original_light & 0x7F) +
                              (flicker_amount * flicker->server_id) %
-                                 min(FLICKER_INTENSITY, (0x80 - (flicker->original_light & 0x7F)));
+                                 std::min(FLICKER_INTENSITY, (0x80 - (flicker->original_light & 0x7F)));
       }
       else
       {

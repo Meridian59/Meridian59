@@ -779,14 +779,14 @@ void CustomConfigInit(void)
 		255, file);
 
 	value = atoi(string0);
-	cinfo->config->mouselookXScale = min(30, max(1, value));
+	cinfo->config->mouselookXScale = std::min(30, std::max(1, value));
 
 	// mouselook y scale
 	GetPrivateProfileString(config, "mouselookyscale", "error\n", string0,
 		255, file);
 
 	value = atoi(string0);
-	cinfo->config->mouselookYScale = min(30, max(1, value));
+	cinfo->config->mouselookYScale = std::min(30, std::max(1, value));
 
 	// mouselook invert
 	GetPrivateProfileString(config, "invertmouse", "error\n", string0,

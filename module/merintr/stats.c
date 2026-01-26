@@ -21,8 +21,8 @@ static list_type stats = NULL;      // List of stats currently being processed.
 
 static AREA stats_area;
 
-static int current_group;           // Group number currently being processed.
-static int group_type;              // Type of group currently being processed.
+static StatGroup current_group;           // Group number currently being processed.
+static StatGroupType group_type;              // Type of group currently being processed.
 
 /* local function prototypes */
 static void StatsCreateGroup(void);
@@ -39,7 +39,7 @@ void StatsCreate(HWND hParent)
   CreateDialog(hInst, MAKEINTRESOURCE(IDD_STATS), hParent, StatsWindowProc);
   
   current_group = STATS_INVENTORY;   // Group to start displaying
-  group_type = GROUP_NONE;
+  group_type = StatGroupType::INVALID_TYPE;
   StatCacheCreate();
   StatButtonsCreate();
   RequestStatGroups();   
@@ -236,7 +236,7 @@ void StatsClearArea(void)
 void ActivateInventory()
 {
 	InvalidateRect(GetHwndInv(), NULL, FALSE);
-	DisplayInventoryAsStatGroup((BYTE)STATS_INVENTORY);
+	DisplayInventoryAsStatGroup(StatGroup::STATS_INVENTORY);
 
 	InventoryRedraw();
 	InventorySetFocus(true);
@@ -249,7 +249,7 @@ void ActivateInventory()
 /*
  * ActiveStatGroup: Activate a specific stat group.
  */
-void ActivateStatGroup(int stat_group)
+void ActivateStatGroup(StatGroup stat_group)
 {
 	list_type stat_list;
 	if (StatCacheGetEntry(stat_group, &stat_list) == true)
@@ -268,8 +268,8 @@ void ActivateStatGroup(int stat_group)
  */
 void RestoreActiveStatGroup()
 {
-	int active_stat_group = GetStatGroup();
-	bool inventory_group = (active_stat_group == STATS_INVENTORY);
+	StatGroup active_stat_group = GetStatGroup();
+	bool inventory_group = (active_stat_group == StatGroup::STATS_INVENTORY);
 	StatsShowGroup(!inventory_group);
 	ShowInventory(inventory_group);
 
@@ -364,15 +364,15 @@ void StatsMove(void)
  */
 void StatsDraw(void)
 {
-   switch(group_type)
+   switch (group_type)
    {
    case STATS_NUMERIC:
-		if( StatsGetCurrentGroup() != STATS_INVENTORY && StatsGetCurrentGroup() != STATS_SPELLS && StatsGetCurrentGroup() != STATS_SKILLS )
-			StatsNumDraw(stats);
+      if (StatsGetCurrentGroup() == StatGroup::STATS_MAIN || StatsGetCurrentGroup() == StatGroup::STATS_CHARACTER)
+         StatsNumDraw(stats);
       break;
 
    case STATS_LIST:
-//	   InvalidateRect( hStats, NULL, FALSE );
+      // InvalidateRect( hStats, NULL, FALSE );
       break;
    }
 }
@@ -381,7 +381,7 @@ void StatsDraw(void)
 /*
  * StatChange:  Called when server tells us that a statistic has changed value.
  */
-void StatChange(BYTE group, Statistic *s)
+void StatChange(StatGroup group, Statistic *s)
 {
    Statistic *new_stat;
 
@@ -419,7 +419,7 @@ void StatRedraw(Statistic *s)
 /*
  * StatsReceiveGroup:  Called when we receive a group of stats from the server.
  */
-void StatsReceiveGroup(BYTE group, list_type l)
+void StatsReceiveGroup(StatGroup group, list_type l)
 {
 	if (group == STATS_MAIN)
 		StatsMainReceive(l);
@@ -452,7 +452,7 @@ void StatsGetArea(AREA *a)
 /*
  * StatsGetCurrentGroup:  Return the stat group currently being displayed
  */
-int StatsGetCurrentGroup(void)
+StatGroup StatsGetCurrentGroup(void)
 {
    return current_group;
 }
@@ -461,7 +461,7 @@ int StatsGetCurrentGroup(void)
 /*
  * DisplayStatGroup:  Display the given group of stats.
  */
-void DisplayStatGroup(BYTE group, list_type l)
+void DisplayStatGroup(StatGroup group, list_type l)
 {
    current_group = group;
 
@@ -469,8 +469,9 @@ void DisplayStatGroup(BYTE group, list_type l)
    stats = l;
 
    if (stats == NULL)
-      group_type = GROUP_NONE;
-   else group_type = ((Statistic *) (stats->data))->type;
+      group_type = StatGroupType::INVALID_TYPE;
+   else
+      group_type = ((Statistic *) (stats->data))->type;
 
    StatsClearArea();
 
@@ -483,7 +484,7 @@ void DisplayStatGroup(BYTE group, list_type l)
 /*
  * DisplayInventoryAsStatGroup: Like DisplayStatGroup, but called when Inventory becomes the shown "group".
  */
-void DisplayInventoryAsStatGroup( BYTE group )
+void DisplayInventoryAsStatGroup( StatGroup group )
 {
 	current_group = group;
 }
@@ -494,18 +495,18 @@ void DisplayInventoryAsStatGroup( BYTE group )
  */
 void StatsShowGroup(bool bShow)
 {
-	int group_type_temp;              // Type of group currently being displayed
-	if (stats == NULL)
-		group_type_temp = GROUP_NONE;
-	else group_type_temp = ((Statistic *) (stats->data))->type;
-	switch( group_type_temp )
-	{
-	case STATS_NUMERIC:
-		ShowStatsNum( bShow, stats );
-		break;
+   StatGroupType group_type_temp = StatGroupType::INVALID_TYPE;  // Type of group currently being displayed
+   if (stats != NULL)
+      group_type_temp = ((Statistic *) (stats->data))->type;
 
-	case STATS_LIST:
-		ShowStatsList( bShow );
-		break;
-	}
+   switch (group_type_temp)
+   {
+   case STATS_NUMERIC:
+      ShowStatsNum(bShow, stats);
+      break;
+
+   case STATS_LIST:
+      ShowStatsList(bShow);
+      break;
+   }
 }

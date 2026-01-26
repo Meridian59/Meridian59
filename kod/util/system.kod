@@ -6726,6 +6726,9 @@ messages:
    PostPatchUpdates()
    "Runs one-time update functions after a patch. Call via 'send object 0 PostPatchUpdates'"
    {
+      % Ensure existing dynamic lights function as they did prior to the patch (without flickering visually)
+      % Remove this along with Flickerer::StopFlickering after PostPatchUpdates has been applied.
+      Send(&DynamicLight, @StopFlickering);
       return;
    }
 

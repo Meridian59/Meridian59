@@ -33,35 +33,35 @@ void StatsNumCreate(list_type stats)
 {
    list_type l;
    int y, height;
-   
+
    // Create graph controls for integer stats
-   height = GetFontHeight(GetFont(FONT_STATS)) + STATUS_SPACING;	 
+   height = GetFontHeight(GetFont(FONT_STATS)) + STATUS_SPACING;
    y = StatsGetButtonBorder();
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
-      
+
       s->y = y;
       s->cy = height;
       y += height;
-      
+
       if (s->numeric.tag != STAT_INT)
-	 continue;
-      
+         continue;
+
       s->hControl = CreateWindow(GraphCtlGetClassName(), NULL,
-				 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER,
-				 0, 0, 0, 0, hStats,
-				 NULL, hInst, NULL);
-      
+                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER,
+                                 0, 0, 0, 0, hStats,
+                                 NULL, hInst, NULL);
+
       StatsNumChangeStat(s);
    }
-   
+
    stats_scrollbar_width = GetSystemMetrics(SM_CXVSCROLL);
    hStatsScroll = CreateWindow("scrollbar", NULL, WS_CHILD | SBS_VERT,
-			       0, 0, 100, 100,  /* Make sure scrollbar drawn ok */
-			       hStats, NULL, hInst, NULL);
+                              0, 0, 100, 100, /* Make sure scrollbar drawn ok */
+                              hStats, NULL, hInst, NULL);
    top_stat = 0;
-   
+
    // Set colors of graphs
    StatsChangeColor();
 }
@@ -76,12 +76,12 @@ void StatsNumDestroy(list_type stats)
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
-      
+
       if (s->numeric.tag != STAT_INT)
-	 continue;
-      
+         continue;
+
       DestroyWindow(s->hControl);
-   }   
+   }
    DestroyWindow(hStatsScroll);
 }
 /************************************************************************/
@@ -106,78 +106,79 @@ void StatsNumResize(list_type stats)
       Statistic *s = (Statistic *) (l->data);
 
       if (s->numeric.tag != STAT_INT)
-	 continue;
+         continue;
 
       num_stats++;
 
       if (y + s->cy <= stats_area.cy)
       {
-	 y += s->cy;
-	 num_visible++;
+         y += s->cy;
+         num_visible++;
       }
    }
 
    if (num_visible < num_stats)
       has_scrollbar = true;
-   
+
    top_stat = min(top_stat, num_stats - num_visible);
 
    // Move graph bars
    x = stats_area.cx / 2;
-   stats_bar_width = has_scrollbar ? 
-     stats_area.cx / 2 - stats_scrollbar_width - 1 : stats_area.cx / 2;
+   stats_bar_width = has_scrollbar ? stats_area.cx / 2 - stats_scrollbar_width - 1 : stats_area.cx / 2;
    stats_bar_width -= RIGHT_BORDER;
    num_visible = 0;
    count = 0;
-   
+
    y = StatsGetButtonBorder();
-   
+
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
-      
+
       if (s->numeric.tag != STAT_INT)
-	 continue;
-      
+         continue;
+
       // Take into account position of scrollbar
       if (count++ < top_stat)
       {
-	 ShowWindow(s->hControl, SW_HIDE);
-	 continue;
+         ShowWindow(s->hControl, SW_HIDE);
+         continue;
       }
-      
+
       // Center bar vertically
       s->y = y;
       y += s->cy;
-      
-      MoveWindow(s->hControl, x, s->y + (s->cy - STATS_BAR_HEIGHT) / 2, 
-		 stats_bar_width, STATS_BAR_HEIGHT, TRUE);
-      
+
+      MoveWindow(s->hControl, x, s->y + (s->cy - STATS_BAR_HEIGHT) / 2,
+         stats_bar_width, STATS_BAR_HEIGHT, TRUE);
+
       // Only show graph bar if it's completely visible
-	  //	And Inventory is not selected.	ajw
-      if (s->y + s->cy <= stats_area.cy && StatsGetCurrentGroup() != STATS_INVENTORY )
+      //	And Inventory is not selected.	ajw
+      if (s->y + s->cy <= stats_area.cy && StatsGetCurrentGroup() != STATS_INVENTORY)
       {
-	 ShowWindow(s->hControl, SW_NORMAL);
-	 num_visible++;
+         ShowWindow(s->hControl, SW_NORMAL);
+         num_visible++;
       }
-      else ShowWindow(s->hControl, SW_HIDE);
+      else
+         ShowWindow(s->hControl, SW_HIDE);
       height = s->cy;
    }
-   
+
    // Show scrollbar if necessary
    if (has_scrollbar)
    {
       y = StatsGetButtonBorder();
-      MoveWindow(hStatsScroll, stats_area.cx - stats_scrollbar_width, 
-		 y, stats_scrollbar_width, num_visible * height, FALSE);
+      MoveWindow(hStatsScroll, stats_area.cx - stats_scrollbar_width,
+               y, stats_scrollbar_width, num_visible * height, FALSE);
       ShowWindow(hStatsScroll, SW_HIDE);
       SetScrollRange(hStatsScroll, SB_CTL, 0, num_stats - num_visible, TRUE);
-      SetScrollPos(hStatsScroll, SB_CTL, top_stat, TRUE); 
-	  if( StatsGetCurrentGroup() != STATS_INVENTORY )	//	ajw
-			ShowWindow(hStatsScroll, SW_SHOWNORMAL);
+      SetScrollPos(hStatsScroll, SB_CTL, top_stat, TRUE);
+      if (StatsGetCurrentGroup() != STATS_INVENTORY)  //	ajw
+         ShowWindow(hStatsScroll, SW_SHOWNORMAL);
    }
-   else ShowWindow(hStatsScroll, SW_HIDE);
-   
+   else
+      ShowWindow(hStatsScroll, SW_HIDE);
+
    StatsDraw();
 }
 /************************************************************************/

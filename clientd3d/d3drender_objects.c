@@ -2382,17 +2382,17 @@ bool D3DObjectLightingCalc(
 		bgra->r = std::min((float)COLOR_AMBIENT, (float)light);
 		bgra->a = 255;
 
-		bgra->b = std::min(COLOR_AMBIENT, bgra->b + (lastDistance * pDLight->color.b / COLOR_AMBIENT));
-		bgra->g = std::min(COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
-		bgra->r = std::min(COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
+		bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (lastDistance * pDLight->color.b / COLOR_AMBIENT));
+		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
+		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
 		
 		// Apply flickering adjustment to the combined lighting (base + dynamic)
 		if (pRNode->obj.flags & OF_FLICKERING)
 		{
 			float adjustment = (float)pRNode->obj.lightAdjust / GetFlickerLevel();
-			bgra->b = std::min(COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));
-			bgra->g = std::min(COLOR_AMBIENT, bgra->g + (bgra->g * adjustment));
-			bgra->r = std::min(COLOR_AMBIENT, bgra->r + (bgra->r * adjustment));
+			bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));
+			bgra->g = std::min((float)COLOR_AMBIENT, bgra->g + (bgra->g * adjustment));
+			bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (bgra->r * adjustment));
 		}
 	}
 	else

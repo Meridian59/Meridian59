@@ -43,6 +43,9 @@ properties:
    % Are we currently lit?  Used for lights that turn on/off.
    pbIsLit = TRUE
 
+   % Is flickering enabled or not.
+   pbIsFlickering = TRUE
+
    % What intensity? from 0-255
    %  Keep this as a property to allow us to set it dynamically.
    piLightIntensity = 255
@@ -51,7 +54,7 @@ messages:
    
    Constructor(iIntensity=$)
    {
-      send(self,@SetAnimationSpeed);
+      Send(self,@SetAnimationSpeed);
 
       if iIntensity <> $
       {
@@ -95,7 +98,7 @@ messages:
 
       iFlags = viObject_flags;
       
-      if pbIsLit
+      if pbIsFlickering
       {
          iFlags = iFlags | FLICKERING_YES;
       }
@@ -107,7 +110,7 @@ messages:
    "this item makes faren spells in the room stronger."
    {
       return TRUE;
-   }   
+   }
 
    SendLightingInformation()
    {
@@ -121,6 +124,12 @@ messages:
       }
 
       propagate;
+   }
+
+   StopFlickering()
+   {
+      pbIsFlickering = FALSE;
+      return;
    }
 
 

@@ -310,9 +310,11 @@ enum {
 enum { STAT_INT = 1, STAT_RES = 2, };
 
 /* Statistics group types */
-enum {
-   STATS_NUMERIC    = 1,    // Numeric values
-   STATS_LIST       = 2,    // Items in a list
+// Needs to match server-side values
+enum StatGroupType : unsigned char {
+   INVALID_TYPE     = 0,    // Invalid type
+   STATS_NUMERIC    = 1,    // Numeric values = STAT_VALUE
+   STATS_LIST       = 2,    // Items in a list = STAT_LIST
 };
 
 /* Enchantment types */

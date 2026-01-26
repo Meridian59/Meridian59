@@ -100,7 +100,7 @@ extern HINSTANCE hInst;  // module handle
 
 extern player_info *GetPlayer(void);
 
-extern void SetStatGroup(int stat_group);
-extern int GetStatGroup(void);
+extern void SetStatGroup(StatGroup stat_group);
+extern StatGroup GetStatGroup(void);
 
 #endif /* #ifndef _MERINTR_H */

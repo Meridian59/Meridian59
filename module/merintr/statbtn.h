@@ -17,14 +17,15 @@ void StatButtonsDestroy(void);
 void StatsSetButtons(int num_groups);
 void StatsDestroyButtons(void);
 void StatsMoveButtons(void);
-void StatsSetButtonFocus(int group);
+void StatsSetButtonFocus(StatGroup group);
 
 bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags);
 
 int  StatsGetButtonBorder(void);
 bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
+void StatsSetActiveGroup(StatGroup group);
 
-int StatsFindGroupByHwnd(HWND hwnd);
+StatGroup StatsFindGroupByHwnd(HWND hwnd);
 
 #endif /* #ifndef _STATBTN_H */

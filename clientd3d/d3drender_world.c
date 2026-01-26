@@ -1563,7 +1563,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
             if (falloff < 0)
                falloff = -falloff;
 
-            falloff = min(1.0f, falloff);
+            falloff = std::min(1.0f, falloff);
             falloff = 1.0f - falloff;
 
             bgra[count].b = falloff * pDLightCache->dLights[numLights].color.b;
@@ -1720,7 +1720,7 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
             if (falloff < 0)
                falloff = -falloff;
 
-            falloff = min(1.0f, falloff);
+            falloff = std::min(1.0f, falloff);
             falloff = 1.0f - falloff;
 
             bgra[count].b = falloff * pDLightCache->dLights[numLights].color.b;
@@ -1969,7 +1969,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
                if (falloff < 0)
                   falloff = -falloff;
 
-               falloff = min(1.0f, falloff);
+               falloff = std::min(1.0f, falloff);
                falloff = 1.0f - falloff;
 
                st[i].s = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invYScale + 0.5f;
@@ -1989,7 +1989,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
                if (falloff < 0)
                   falloff = -falloff;
 
-               falloff = min(1.0f, falloff);
+               falloff = std::min(1.0f, falloff);
                falloff = 1.0f - falloff;
 
                st[i].s = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invXScale + 0.5f;
@@ -2632,7 +2632,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
             bottom = pXYZ[1].z;
          else
          {
-            bottom = min(pXYZ[1].z, pXYZ[2].z);
+            bottom = std::min(pXYZ[1].z, pXYZ[2].z);
             bottom = bottom & ~(FINENESS - 1);
          }
 
@@ -2640,7 +2640,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
             top = pXYZ[0].z;
          else
          {
-            top = max(pXYZ[0].z, pXYZ[3].z);
+            top = std::max(pXYZ[0].z, pXYZ[3].z);
             top = (top + FINENESS - 1) & ~(FINENESS - 1);
          }
 
@@ -2666,7 +2666,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
             top = pXYZ[0].z;
          else
          {
-            top = max(pXYZ[0].z, pXYZ[3].z);
+            top = std::max(pXYZ[0].z, pXYZ[3].z);
             top = (top + FINENESS - 1) & ~(FINENESS - 1);
          }
 
@@ -2674,7 +2674,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
             bottom = pXYZ[1].z;
          else
          {
-            bottom = min(pXYZ[1].z, pXYZ[2].z);
+            bottom = std::min(pXYZ[1].z, pXYZ[2].z);
             bottom = bottom & ~(FINENESS - 1);
          }
 

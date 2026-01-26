@@ -87,8 +87,8 @@ void CacheInitialize(void)
   // Set aside up to 1/4 of free memory for caches
   mem_available = statex.ullAvailPhys / 4;
   
-  object_cache.max_size = max(mem_available / 2, config.ObjectCacheMin );
-  grid_cache.max_size   = max(mem_available / 2, config.GridCacheMin );
+  object_cache.max_size = std::max(mem_available / 2, (DWORDLONG)config.ObjectCacheMin );
+  grid_cache.max_size   = std::max(mem_available / 2, (DWORDLONG)config.GridCacheMin );
   
   debug(("%12d bytes for object cache\n", object_cache.max_size));
   debug(("%12d bytes for grid cache\n", grid_cache.max_size));

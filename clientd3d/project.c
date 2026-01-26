@@ -105,7 +105,7 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
       float min_increment = 1.0f / (MAX_PROJECTILE_TRAVEL_TIME * 1000.0f);
 
       // Use the faster of the two speeds (normal or minimum required)
-      p->motion.increment = (std::max)(normal_increment, min_increment);
+      p->motion.increment = std::max(normal_increment, min_increment);
    }
 
    p->motion.x = p->motion.source_x;

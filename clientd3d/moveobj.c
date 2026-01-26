@@ -235,7 +235,7 @@ bool ObjectsMove(int dt)
 			if (!(OF_PLAYER & r->obj.flags))
 			{
 				int floor,ceiling,angleBounce,bounceHeight;
-				r->obj.bounceTime += min(dt,40);
+				r->obj.bounceTime += std::min(dt,40);
 				if (r->obj.bounceTime > TIME_FULL_OBJECT_BOUNCE)
 					r->obj.bounceTime -= TIME_FULL_OBJECT_BOUNCE;
 				angleBounce = NUMDEGREES * r->obj.bounceTime / TIME_FULL_OBJECT_BOUNCE;

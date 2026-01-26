@@ -40,8 +40,8 @@
 
 #define MAP_ZOOM_INCREMENT 0.1       // Amount to change zoom factor per user command
 #define MAP_ZOOM_DELAY     100       // # of milliseconds between zooming in by INCREMENT
-#define MAP_ZOOM_MINZOOM   0.5       // Farthest we can zoom out
-#define MAP_ZOOM_MAXZOOM   8.0       // Closest we can zoom in
+#define MAP_ZOOM_MINZOOM   0.5f      // Farthest we can zoom out
+#define MAP_ZOOM_MAXZOOM   8.0f      // Closest we can zoom in
 
 #define MAP_OBJECT_DISTANCE (7 * FINENESS) // Draw all object closer than this to player
 
@@ -214,7 +214,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
 	 if( !bMiniMap )
 	 {
 	    scale = ((float) area->cx) / room->width;
-	    scale = min(scale, ((float) area->cy) / room->height);
+	    scale = std::min(scale, ((float) area->cy) / room->height);
 	    scale *= zoom;
 
 	    // Center map on player
@@ -231,7 +231,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
 	 {
 	    float cacheDiff;
 	    scaleMiniMap = ((float) area->cx) / room->width;
-	    scaleMiniMap = min( scaleMiniMap, ((float) area->cy) / room->height );
+	    scaleMiniMap = std::min( scaleMiniMap, ((float) area->cy) / room->height );
 	    scaleMiniMap *= zoom;
 
 	    cacheDiff = scaleMiniMap - mapCacheScale;
@@ -384,7 +384,7 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
    static int mapObjectDistanceShiftAndSquare = (MAP_OBJECT_DISTANCE >> 4) * (MAP_OBJECT_DISTANCE >> 4);
 
    // Scale radius, clamping between a minimum of 1 and the defined maximum
-   radius = min(max(1, (MAP_OBJECT_SIZE * scale)), MAP_OBJECT_MAX_SIZE) / 2;
+   radius = std::min(std::max(1.0f, (MAP_OBJECT_SIZE * scale)), (float)MAP_OBJECT_MAX_SIZE) / 2;
 
    for (l = objects; l != NULL; l = l->next)
    {
@@ -519,8 +519,8 @@ void MapDrawAnnotations( HDC hdc, MapAnnotation *annotations, int x, int y, floa
 	int i, adjusted_size, new_x, new_y;
 
    // Scale annotation, capping it between the minimum and maximum limits
-   adjusted_size = min(MAP_ANNOTATION_SIZE * scaleToUse, MAP_ANNOTATION_MAX_SIZE);
-   adjusted_size = max(MAP_ANNOTATION_MIN_SIZE, adjusted_size);
+   adjusted_size = std::min((int)(MAP_ANNOTATION_SIZE * scaleToUse), MAP_ANNOTATION_MAX_SIZE);
+   adjusted_size = std::max(MAP_ANNOTATION_MIN_SIZE, adjusted_size);
 
 	MapMoveAnnotations( annotations, x, y, scaleToUse, bMiniMap, adjusted_size );
 
@@ -607,8 +607,8 @@ void MapZoom(int direction)
    last_time = now;
 
    zoom += increment;
-   zoom = (float) max(zoom, MAP_ZOOM_MINZOOM);
-   zoom = (float) min(zoom, MAP_ZOOM_MAXZOOM);
+   zoom = std::max(zoom, MAP_ZOOM_MINZOOM);
+   zoom = std::min(zoom, MAP_ZOOM_MAXZOOM);
 
    fMapCacheValid = FALSE;
 
@@ -715,17 +715,17 @@ static void ComputeMaxWallBoundaries(RECT *prc)
       WallData *wall = &current_room.walls[w];
       if (w == 0)
       {
-	 prc->left = min(wall->x0,wall->x1);
-	 prc->right = max(wall->x0,wall->x1);
-	 prc->top = min(wall->y0,wall->y1);
-	 prc->bottom = max(wall->y0,wall->y1);
+	 prc->left = (LONG)std::min(wall->x0,wall->x1);
+	 prc->right = (LONG)std::max(wall->x0,wall->x1);
+	 prc->top = (LONG)std::min(wall->y0,wall->y1);
+	 prc->bottom = (LONG)std::max(wall->y0,wall->y1);
       }
       else
       {
-	 prc->left = min(prc->left,min(wall->x0,wall->x1));
-	 prc->right = max(prc->right,max(wall->x0,wall->x1));
-	 prc->top = min(prc->top,min(wall->y0,wall->y1));
-	 prc->bottom = max(prc->bottom,max(wall->y0,wall->y1));
+	 prc->left = std::min(prc->left,(LONG)std::min(wall->x0,wall->x1));
+	 prc->right = std::max(prc->right,(LONG)std::max(wall->x0,wall->x1));
+	 prc->top = std::min(prc->top,(LONG)std::min(wall->y0,wall->y1));
+	 prc->bottom = std::max(prc->bottom,(LONG)std::max(wall->y0,wall->y1));
       }
    }
    prc->left -= 10;

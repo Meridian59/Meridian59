@@ -293,5 +293,5 @@ int GetFontHeight(HFONT hFont)
    SelectObject(hdc, hOldFont);
    ReleaseDC(hMain, hdc);
    
-   return max(tm.tmHeight, 1);  // In case of divide by zero
+   return std::max((int)tm.tmHeight, 1);  // In case of divide by zero
 }

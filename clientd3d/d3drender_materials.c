@@ -629,7 +629,7 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 	if (pChunk->flags & D3DRENDER_NOAMBIENT)
 		end = (16384 + (light * FINENESS) + (drawParams.viewer_light * 64));
 	else
-		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
+		end = (32768 + (std::max(0.0f, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
 		(current_room.ambient_light * FINENESS));
 
 	return end;

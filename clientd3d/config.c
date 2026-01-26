@@ -469,8 +469,8 @@ void WindowSettingsSave(void)
 
    r = &w.rcNormalPosition;
 
-   w.ptMaxPosition.x = min(w.ptMaxPosition.x, - GetSystemMetrics(SM_CXFRAME));
-   w.ptMaxPosition.y = min(w.ptMaxPosition.y, - GetSystemMetrics(SM_CYFRAME));
+   w.ptMaxPosition.x = std::min(w.ptMaxPosition.x, (LONG)(- GetSystemMetrics(SM_CXFRAME)));
+   w.ptMaxPosition.y = std::min(w.ptMaxPosition.y, (LONG)(- GetSystemMetrics(SM_CYFRAME)));
 
    WriteConfigInt(window_section, INILeft, r->left, ini_file);
    WriteConfigInt(window_section, INIRight, r->right, ini_file);
@@ -493,8 +493,8 @@ void WindowSettingsLoad(WINDOWPLACEMENT *w)
    def_y = - GetSystemMetrics(SM_CYFRAME);
 
    // Try to make client window optimally sized, but also fit to screen
-   def_width  = min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
-   def_height = min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
+   def_width  = std::min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
+   def_height = std::min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
 
    r->left   = GetConfigInt(window_section, INILeft, MAIN_DEF_LEFT, ini_file);
    r->right  = GetConfigInt(window_section, INIRight, MAIN_DEF_LEFT + def_width, ini_file);

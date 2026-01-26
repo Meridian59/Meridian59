@@ -1506,7 +1506,7 @@ void D3DRenderLMapsBuild(void)
 			float	scale = sqrtf((height - 16) * (height - 16) +
 											(width - 16) * (width - 16));
 			scale = 16.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 16.0f;
 
 			*(pBits++) = 255 * scale;
@@ -1534,7 +1534,7 @@ void D3DRenderLMapsBuild(void)
 											(width - 16) * (width - 16));
 
 			scale = 16.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 16.0f;
 
 			if ((height == 0) || (height == 31) ||
@@ -1566,7 +1566,7 @@ void D3DRenderLMapsBuild(void)
 											(width - 64) * (width - 64));
 
 			scale = 64.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 64.0f;
 
 			if (scale > 0)
@@ -1598,7 +1598,7 @@ void D3DRenderLMapsBuild(void)
 			float	scaleAlpha;
 
 			scale = 16.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 16.0f;
 
 			if ((height == 0) || (height == 31) ||
@@ -1606,7 +1606,7 @@ void D3DRenderLMapsBuild(void)
 				scale = 0;
 
 			scaleAlpha = scale;
-			scale = max(0.33f, scale);
+			scale = std::max(0.33f, scale);
 
 			*(pBits++) = 255 * scale;
 			*(pBits++) = 255 * scale;

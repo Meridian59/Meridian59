@@ -314,12 +314,12 @@ void SandstormInit(void)
 */
 void RainInit(void)
 {
-	const int RAIN_EMITTER_RADIUS = 15000;
-	const int RAIN_EMITTER_ENERGY = 120;
+	const int RAIN_EMITTER_RADIUS = 7000;
+	const int RAIN_EMITTER_ENERGY = 80;
 	const int RAIN_EMITTER_HEIGHT = 3000;
 	const int RAIN_TIMER = 1;
 	const bool RAIN_WEATHER_EFFECT = true;
-	const int RAIN_VELOCITY = -250;
+	const int RAIN_VELOCITY = -120;
 	const int RAIN_RANDOM_ROT = 2;
 	// Rain emitter position is offsetted since they aren't centered on the player.
 	const int RAIN_EMITTER_OFFSET = 600;
@@ -333,7 +333,15 @@ void RainInit(void)
 		D3DParticleEmitterSetVel(newEmitter, 0, 0, RAIN_VELOCITY);
 		D3DParticleEmitterSetRot(newEmitter, 0, 0, 0);
 		D3DParticleEmitterSetBGRA(newEmitter, RAIN_COLOR);
-		D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS, RAIN_RANDOM_ROT);
+		// Most emitters focus on spawning nearby particles, while others can spawn further away.
+		if (i < 12)
+		{
+			D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS, RAIN_RANDOM_ROT);
+		}
+		else
+		{
+			D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS * 3, RAIN_RANDOM_ROT);
+		}
 		D3DParticleEmitterAddToList(&rainParticleSystem, newEmitter);
 	}
 }
@@ -344,10 +352,10 @@ void RainInit(void)
 */
 void SnowInit(void)
 {
-	const int SNOW_EMITTER_RADIUS = 15000;
+	const int SNOW_EMITTER_RADIUS = 7000;
 	const int SNOW_EMITTER_ENERGY = 400;
 	const int SNOW_EMITTER_HEIGHT = 3000;
-	const int SNOW_FALL_SPEED = -35;
+	const int SNOW_FALL_SPEED = -12;
 	const int SNOW_TIMER = 1;
 	const int SNOW_RANDOM_ROT = 2;
 	const bool SNOW_WEATHER_EFFECT = true;

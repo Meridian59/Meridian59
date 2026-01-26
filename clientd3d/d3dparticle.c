@@ -108,7 +108,8 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 	for (list = pParticleSystem->emitterList; list != NULL; list = list->next)
 	{
 		pEmitter = (emitter *)list->data;
-
+		
+		// Update existing particles
 		for (curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
 		{
 			pParticle = &pEmitter->particles[curParticle];
@@ -119,7 +120,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 				pEmitter->numParticles--;
 			}
 			else
-			{
+			{				
 				custom_xyzw	velocity;
 
 				velocity.x = pParticle->velocity.x;
@@ -146,25 +147,16 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 				pParticle->pos.x += pParticle->velocity.x;
 				pParticle->pos.y += pParticle->velocity.y;
 				pParticle->pos.z += pParticle->velocity.z;
-
-				// bWeatherEffect means that every frame, each particle checks in their leaf sector if they
-				// hit a ceiling or floor. If so, the particle is cleared.
-				if (pEmitter->bWeatherEffect)
+				
+				// After a weather particle moves, check if it landed on a ceiling or floor.
+				if (pEmitter->bWeatherEffect && pParticle->pos.z <= pParticle->surfaceHeight)
 				{
-					BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
-					if (leaf && leaf->sector->ceiling)
-					{
-						D3DParticleDestroy(pParticle);
-						pEmitter->numParticles--;
-						continue;
-					}
-					if (leaf && (pParticle->pos.z < GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector)))
-					{
-						pParticle->energy = 0;
-						continue;
-					}
+					// Also set it at surface height so it won't show through ceilings.
+					pParticle->pos.z = pParticle->surfaceHeight;
+					pParticle->energy = 0;
+					continue;
 				}
-
+				
 				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
 				assert(pPacket);
 				pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
@@ -190,6 +182,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 			}
 		}
 
+		// Creating new particles
 		if (pEmitter->numParticles < MAX_PARTICLES)
 		{
 			int	curParticle;
@@ -244,6 +237,35 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 						if (pEmitter->bWeatherEffect)
 						{
 							pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
+						}
+						
+						// Each weather particle store the height of the ceiling/floor where they will clear away.
+						if (pEmitter->bWeatherEffect)
+						{				
+							BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
+							if (leaf && leaf->sector->ceiling)
+							{
+								// We convert ceiling height to fineness units to be more precise on where the
+								// weather particles disappear, so that they won't show through the ceiling.
+								pParticle->surfaceHeight = GetCeilingHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector)
+																		* FINENESS;										
+								if (pParticle->pos.z <= pParticle->surfaceHeight)
+								{
+									pParticle->pos.z = pParticle->surfaceHeight;
+									pParticle->energy = 0;
+									continue;
+								}
+							}
+							else if (leaf && leaf->sector->floor)
+							{
+								pParticle->surfaceHeight = GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector);
+							}
+							// If weather particle is out of bounds, set it to default ground height so
+							// it still shows properly either outdoors or from outside windows.
+							else
+							{
+								pParticle->surfaceHeight = 0;
+							}
 						}
 
 						if (pEmitter->randomRot)

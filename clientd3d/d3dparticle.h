@@ -12,14 +12,15 @@ const int MAX_PARTICLES = 128;
 
 typedef struct particle
 {
-	int			energy;
-	custom_xyz	pos;
-	custom_xyz	oldPos;
-	custom_xyz	velocity;
-	custom_xyz	rotation;
-	custom_bgra	bgra;
-	float		size;
-	float		weight;
+	int				energy;
+	custom_xyz		pos;
+	custom_xyz		oldPos;
+	custom_xyz		velocity;
+	custom_xyz		rotation;
+	custom_bgra		bgra;
+	float			size;
+	float			weight;
+	float			surfaceHeight;
 } particle;
 
 typedef struct emitter

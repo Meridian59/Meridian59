@@ -539,10 +539,10 @@ void ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, bool red
 
    /* Try to keep dialog item from getting too big after window obscures it */
    if (y_increase > 0)
-      y_increase = std::max(0L, std::min((LONG)y_increase, dlg_rect.bottom - item_rect.bottom));
+      y_increase = std::clamp((LONG)y_increase, 0L, dlg_rect.bottom - item_rect.bottom);
 
    if (x_increase > 0)
-      x_increase = std::max(0L, std::min((LONG)x_increase, dlg_rect.right - item_rect.left));
+      x_increase = std::clamp((LONG)x_increase, 0L, dlg_rect.right - item_rect.left);
 
    if (flags & RDI_LEFT)
       new_rect.left = item_rect.left;

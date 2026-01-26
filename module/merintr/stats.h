@@ -21,39 +21,45 @@
 
 #define STATS_BAR_HEIGHT    12
 
-/* Numbers for groups of statistics */
-#define GROUP_NONE -1
-#define STATS_MAIN 1
-
-//	ajw added constants to refer to other stats "groups". Equate with value returned from StatsGetCurrentGroup().
-#define	STATS_SPELLS		3
-#define	STATS_SKILLS		4
-#define	STATS_INVENTORY		5
+// Numbers for groups of statistics Equate with value returned from StatsGetCurrentGroup()
+// NOTE: These values are matched to server-side values - seen in user.kod for example
+enum StatGroup : unsigned char {
+   GROUP_NONE = (unsigned char)-1,
+   STATS_MAIN = 1,            // (Health, Mana, Vigor) Not shown on skills panel, shown on character panel
+   STATS_CHARACTER = 2,       // (Might, Int, Stam, Agil, Myst, Aim, Karma)
+   STATS_SPELLS = 3,
+   STATS_SKILLS = 4,
+   STATS_INVENTORY = 5,       // Not a real stat group, client-side only
+};
 
 /* game statistics */
-typedef struct {
-   BYTE  num;       /* ordinal # of statistic within group */
-   ID    name_res;  /* Name of statistic */
-   BYTE  type;      // Statistic type (numeric or list)
-   union {
+typedef struct
+{
+   BYTE num;        /* ordinal # of statistic within group */
+   ID name_res;     /* Name of statistic */
+   StatGroupType type;  // Statistic type (STATS_NUMERIC or STATS_LIST)
+   union
+   {
       // List item stat
-      struct {
-	 ID    id;                     // Object to examine when this stat selected
-	 int   value;                  // Value associated with stat
-	 ID    icon;
+      struct
+      {
+         ID id;      // Object to examine when this stat selected
+         int value;  // Value associated with stat
+         ID icon;
       } list;
 
       // Numeric value stat
-      struct {
-	 BYTE  tag;                    /* Type of value: resource or integer */
-	 ID    value;                  /* resource id or integer value */
-	 int   min, max, current_max;  // Limits for numeric stats 
+      struct
+      {
+         BYTE tag;                   /* Type of value: resource or integer */
+         ID value;                   /* resource id or integer value */
+         int min, max, current_max;  // Limits for numeric stats
       } numeric;
    };
 
    // fields used internally by client
-   HWND  hControl;  /* Control window for this stat */
-   int   y, cy;     /* Vertical position and size of stat display */
+   HWND hControl; /* Control window for this stat */
+   int y, cy;     /* Vertical position and size of stat display */
 } Statistic;
 
 #define STATS_GRAPH_BORDER 8   // Space between bar graphs
@@ -67,17 +73,17 @@ bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatsSetFocus(bool forward);
 void StatsDrawBorder(void);
 void StatsGetArea(AREA *a);
-int  StatsGetCurrentGroup(void);
+StatGroup StatsGetCurrentGroup(void);
 void StatsDraw(void);
 void StatsMove(void);
 void StatsClearArea(void);
 
 void StatsGroupsInfo(BYTE num_groups, ID *names);
-void StatChange(BYTE group, Statistic *s);
-void StatsReceiveGroup(BYTE group, list_type l);
+void StatChange(StatGroup group, Statistic *s);
+void StatsReceiveGroup(StatGroup group, list_type l);
 
-void DisplayStatGroup(BYTE group, list_type l);
-void DisplayInventoryAsStatGroup(BYTE group);
+void DisplayStatGroup(StatGroup group, list_type l);
+void DisplayInventoryAsStatGroup(StatGroup group);
 void StatsShowGroup(bool bShow);
 
 #endif /* #ifndef _STATS_H */

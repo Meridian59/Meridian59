@@ -18,7 +18,7 @@ void StatsListResize(list_type stats);
 void StatsListChangeStat(Statistic *s);
 
 void StatsListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis);
-BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
+bool StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatsListCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
 void ShowStatsList(bool bShow);

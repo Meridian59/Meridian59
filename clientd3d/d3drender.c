@@ -1173,7 +1173,7 @@ static float CalculateLightZPosition(room_type *room, long motionX, long motionY
    GetRoomHeight(room->tree, &top, &bottom, &sector_flags, motionX, motionY);
 
    // Start at floor level
-   float floorZ = (float) max(bottom, motionZ);
+   float floorZ = (float) std::max(bottom, motionZ);
 
    // Calculate sprite height
    float spriteHeight = 0.0f;

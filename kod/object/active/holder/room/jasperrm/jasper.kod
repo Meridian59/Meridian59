@@ -43,6 +43,7 @@ properties:
    piOutside_factor = 8
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

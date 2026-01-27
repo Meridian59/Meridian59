@@ -47,6 +47,8 @@ properties:
    piRoom_num = RID_MOCKERS_ROOM
 
    pbLocked = FALSE
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

@@ -41,6 +41,8 @@ properties:
    piRoom_num = RID_CASTLE2A
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

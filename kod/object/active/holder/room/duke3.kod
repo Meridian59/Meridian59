@@ -49,6 +49,8 @@ properties:
 
 
    prMusic = Duke3_music
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

@@ -279,11 +279,13 @@ properties:
 
    % outdoor brightness level (0-100), updated hourly
    piBrightness
-   % updated here and there
-   piWeather
-
-   % updated every day
-   pbStormy = TRUE
+   
+   piDayPhase = WEATHER_DAY
+   piCurrent_weather = WEATHER_CLEAR
+   
+   % Seasons affect what weather happens in different climates.
+   % For now, it's just used to apply rain to every room.
+   piSeason = WEATHER_RAIN
 
    poLibrary = $
    poParliament = $
@@ -1093,14 +1095,13 @@ messages:
    SetHour(num = $)
    {
       piHour = num mod 24;
-      Send(self,@NewGameHour);
+      Send(self,@NewGameHour,#bTimeManuallySet=TRUE);
       return;
    }
 
    NewHour()
    {
       piHour = (piHour + 1) mod 24;
-      %Send(self,@RecalcLightAndWeather);
 
       if piHour = 0
       {
@@ -1142,7 +1143,6 @@ messages:
          }
       }
 
-      Send(self,@RecalcWeatherConditions);
       Send(self,@NewGameDay);
 
       Send(poParliament,@NewDay);
@@ -3534,9 +3534,46 @@ messages:
       return $;
    }
 
+   GetDayPhase()
+   {
+	  return piDayPhase;
+   }
+
    GetWeather()
    {
-      return piWeather;
+	  return piCurrent_weather;
+   }
+   
+   SetWeather(what=$)
+   "Used by DMs to directly set the global weather."
+   {
+      local i;
+      
+	  if piCurrent_weather <> what
+	  {
+         piCurrent_weather = what;
+	     for i in plRooms
+         {
+            Send(i,@RecalcLightAndWeather);
+         }
+	  }
+      return;
+   }
+   
+   SetSeason(what=$)
+   "Used by DMs to set global season. For now it only uses rain/snow."
+   {
+	  local i;
+	  
+	  if piSeason <> what
+	  {
+	     piSeason = what;
+		 for i in plRooms
+         {
+            Send(i,@RecalcLightAndWeather);
+         }
+	  }
+	  return;
    }
 
    RecalcLightAndWeather()
@@ -3563,53 +3600,90 @@ messages:
    }
 
    RecalcWeatherConditions()
-   "Resets piStormy randomly"
+   "Determines randomly if the weather shifts, based on the current weather."
    {
-      pbStormy = False;
-      if Random(1,100) <= 100
+	  local iRandomResult,iClearChance,iCloudyChance,iStormyChance;
+
+	  iRandomResult = Random(1,100);
+	  
+	  if piCurrent_weather = WEATHER_CLEAR
+	  {
+         iCloudyChance = Send(Send(self,@GetSettings),@GetClearToCloudy);
+		 if iRandomResult <= iCloudyChance
+		 {
+		    piCurrent_weather = WEATHER_CLOUDY;
+		    return;
+		 }
+	  }
+
+	  if piCurrent_weather = WEATHER_CLOUDY 
       {
-         pbStormy = True;
+        iClearChance = Send(Send(self,@GetSettings),@GetCloudyToCleary);
+        iStormyChance = Send(Send(self,@GetSettings),@GetCloudyToStormy);
+        if iRandomResult < iClearChance
+        {
+           piCurrent_weather = WEATHER_CLEAR;
+        }
+        else
+	    {
+           if piCurrent_weather = WEATHER_CLOUDY 
+		                         AND iRandomResult < (iClearChance + iStormyChance)
+           {
+              piCurrent_weather = piSeason;
+              return;
+		   }
+        }
+		return;
       }
-      return;
+
+	  if (piCurrent_weather = WEATHER_RAIN) OR (piCurrent_weather = WEATHER_SNOW)
+	  {
+	     iCloudyChance = Send(Send(self,@GetSettings),@GetStormyToCloudy);
+		 if iRandomResult <= iCloudyChance
+		 {
+			piCurrent_weather = WEATHER_CLOUDY;
+         }
+	  }
+	  return;
    }
 
-   NewGameHour()
+   NewGameHour(bTimeManuallySet=FALSE)
    "Recalculates the light and weather, based on piHour"
    {
-      local i,iLight_hour;
+      local i,iLight_hour,iWeatherInterval;
+
+      % Weather is recalculated at hourly intervals every day. If the time
+	  % was manually adjusted with SetHour(), then we ignore this recalculation.
+	  if bTimeManuallySet = FALSE 
+	  {
+	     iWeatherInterval = Send(Send(self,@GetSettings),@GetWeatherInterval);
+		 
+		 if (iWeatherInterval > 0 AND iWeatherInterval <= 24) 
+		                 AND ((piHour mod iWeatherInterval) = 0)
+	     {
+			Send(self,@RecalcWeatherConditions);
+         }
+	  }
 
       if piHour < 6 or piHour > 20
       {
-         piWeather = WEATHER_NIGHT;
+         piDayPhase = WEATHER_NIGHT;
       }
       else
       {
          if piHour > 17
          {
-            piWeather = WEATHER_DUSK;
-            if pbStormy
-            {
-               piWeather = WEATHER_DUSK_STORMY;
-            }
-
+            piDayPhase = WEATHER_DUSK;
          }
          else
          {
             if piHour < 9
             {
-               piWeather = WEATHER_DAWN;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAWN_STORMY;
-               }
+               piDayPhase = WEATHER_DAWN;
             }
             else
             {
-               piWeather = WEATHER_DAY;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAY_STORMY;
-               }
+               piDayPhase = WEATHER_DAY;
             }
          }
       }
@@ -3635,7 +3709,6 @@ messages:
       {
          piBrightness = 75;
       }
-
 
       for i in plBackground_objects
       {

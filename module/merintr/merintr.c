@@ -530,33 +530,33 @@ keymap	gCustomKeys[] =
 	{(WORD)-1,				(WORD)-1,				A_TEXTINSERT,		"emote "},
 	{(WORD)-1,				(WORD)-1,				A_WHO,				NULL},
 
-	// aliases (fkey hotkeys)
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+0,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+1,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+2,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+3,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+4,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+5,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+6,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+7,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+8,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+9,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+10,		NULL},
-	{(WORD)-1,				(WORD)-1,				A_TEXTCOMMANDALIAS_START+11,		NULL},
+	// aliases (f     key hotkeys)
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 0,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 1,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 2,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 3,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 4,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 5,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 6,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 7,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 8,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 9,    NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 10,   NULL},
+    {(WORD) -1,         (WORD) -1,           A_TEXTCOMMANDALIAS_START + 11,   NULL},
 
    // aliases (action hotkeys)
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+12, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+13, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+14, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+15, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+16, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+17, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+18, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+19, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+20, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+21, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+22, NULL},
-   {(WORD) -1, (WORD) -1, A_TEXTCOMMANDALIAS_START+23, NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 12,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 13,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 14,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 15,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 16,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 17,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 18,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 19,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 20,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 21,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 22,   NULL},
+    {(WORD) -1,          (WORD) -1,          A_TEXTCOMMANDALIAS_START + 23,   NULL},
 
 	// end
 	{0, 0, 0},
@@ -884,19 +884,20 @@ void CustomConfigInit(void)
 				255, file);
 
          Key key = GetKeyFromName(string0);
-         if(key.vk_code == 0)
+         if (key.vk_code == 0)
          {
             continue;
          }
 
-			if  (((string0[0] >= 'a') && (string0[0] <= 'z')) && ((string0[1] == '+') || (string0[1] == '\0')))
+         if (((string0[0] >= 'a') && (string0[0] <= 'z')) &&
+             ((string0[1] == '+') || (string0[1] == '\0')))
          {
             if (bQuickChat)
                continue;
          }
 
          gCustomKeys[curKey].vk_code = key.vk_code;
-			gCustomKeys[curKey].flags = key.flags;
+         gCustomKeys[curKey].flags = key.flags;
 
 			if (IsMoveFastAction(gActionLabels[curAction].action) ||
 				IsTurnFastAction(gActionLabels[curAction].action))
@@ -918,7 +919,7 @@ void CustomConfigInit(void)
 			gCustomKeys[curKey].flags = KEY_ANY;
 		}
 
-      for (i=0; i<MAX_ACTION_KEYS; i++, curKey++)
+      for (i = 0; i < MAX_ACTION_KEYS; i++, curKey++)
       {
          char actionKey[32];
          snprintf(actionKey, sizeof(actionKey), "action%d", i + 1);
@@ -938,7 +939,11 @@ void CustomConfigInit(void)
 	}
 }
 
-static Key GetKeyFromName(char *strIn)
+/********************************************************************/
+/* 
+ * GetKeyFromName: Given a string representation of a key, return it
+ */
+Key GetKeyFromName(char *strIn)
 {
    Key ret;
    ret.vk_code = 0;

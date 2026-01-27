@@ -513,7 +513,8 @@ static bool CheckforDuplicateBind(const char *TCCompare)
 
     for (int i = 0; i < MAX_ACTION_KEYS; i++)
     {
-       if (strcmp(TCCompare, TCAction[i]) == 0 && TCCompare != TCAction[i]) return true;
+       if (strcmp(TCCompare, TCAction[i]) == 0 && TCCompare != TCAction[i])
+          return true;
     }
     return false;
 }
@@ -1689,7 +1690,7 @@ static INT_PTR CALLBACK ActionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
 
    case WM_COMMAND: {
       WORD low = LOWORD(wParam);
-      if(low == IDC_ACTIONALIASSETTINGS)
+      if (low == IDC_ACTIONALIASSETTINGS)
       {
          // Open the Action Aliases settings dialog
          ModuleEvent(EVENT_TEXTCOMMAND, "actionalias");
@@ -1697,12 +1698,12 @@ static INT_PTR CALLBACK ActionPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
       }
       for (int i = 0; i < MAX_ACTION_KEYS; ++i)
       {
-         if(low == IDC_ACTION1 + i)
+         if (low == IDC_ACTION1 + i)
          {
             AssignKey(hDlg, TCAction[i], IDC_ACTION1 + i);
             return (INT_PTR) TRUE;
          }
-         else if(low == IDC_ACTION1_MOD + i)
+         else if (low == IDC_ACTION1_MOD + i)
          {
             ModifyKey(hDlg, TCAction[i], IDC_ACTION1 + i);
             return (INT_PTR) TRUE;

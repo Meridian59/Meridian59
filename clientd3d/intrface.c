@@ -524,7 +524,7 @@ void PerformAction(int action, const void *action_data)
       UserWithdraw();
       break;
    }
-   if(action == A_TEXTCOMMAND || action >= A_TEXTCOMMANDALIAS_START && action <= A_TEXTCOMMANDALIAS_END)
+   if (action == A_TEXTCOMMAND || action >= A_TEXTCOMMANDALIAS_START && action <= A_TEXTCOMMANDALIAS_END)
    {
       char *command = (char *) action_data;
       size_t len = strlen(command);

@@ -252,7 +252,7 @@ void D3DRenderNamesDraw3D(
 	// base objects
 	for (list_type list = objectsRenderParams.room->contents; list != NULL; list = list->next)
 	{
-		float glyph_scale = 255;
+		unsigned char glyph_scale = 255;
 
 		room_contents_node* pRNode = (room_contents_node*)list->data;
 
@@ -326,8 +326,8 @@ void D3DRenderNamesDraw3D(
 
 		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
-		MatrixTranslate(&mat, (float)pRNode->motion.x, (float)max(bottom,
-			pRNode->motion.z) - depth +
+		MatrixTranslate(&mat, (float)pRNode->motion.x, (float)std::max(bottom,
+			(long)pRNode->motion.z) - depth +
 			(((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f) +
 			((float)pRNode->boundingHeightAdjust * 4.0f), (float)pRNode->motion.y);
 		MatrixMultiply(&xForm, &rot, &mat);
@@ -359,8 +359,8 @@ void D3DRenderNamesDraw3D(
 			color = base_palette[palette[GetClosestPaletteIndex(fg_color)]];
 			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
-			glyph_scale = max(bgra.b, bgra.g);
-			glyph_scale = max(glyph_scale, bgra.r);
+			glyph_scale = std::max(bgra.b, bgra.g);
+			glyph_scale = std::max(glyph_scale, bgra.r);
 		}
 
 		bgra.r = color.red * glyph_scale / 255;
@@ -384,8 +384,8 @@ void D3DRenderNamesDraw3D(
 
 				// Take out space for kerning
 				int kerningAmount = getKerningAmount(pFont, pName, ptr - 1);
-				float leading = min(0, pFont->abc[index].abcA + kerningAmount);
-				float trailing = min(0, pFont->abc[index].abcC);
+				float leading = std::min(0.0f, (float)(pFont->abc[index].abcA + kerningAmount));
+				float trailing = std::min(0.0f, (float)pFont->abc[index].abcC);
 				charWidth += (leading + trailing);
 				x += charWidth;
 			}
@@ -924,8 +924,8 @@ void D3DRenderOverlaysDraw(
 
 					MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 					MatrixTranspose(&rot, &rot);
-					MatrixTranslate(&mat, (float)pRNode->motion.x, (float)max(bottom,
-						pRNode->motion.z) - depthf, (float)pRNode->motion.y);
+					MatrixTranslate(&mat, (float)pRNode->motion.x, (float)std::max(bottom,
+						(long)pRNode->motion.z) - depthf, (float)pRNode->motion.y);
 					MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
 					lastDistance = 0;
@@ -1106,12 +1106,12 @@ void D3DRenderOverlaysDraw(
 								range->top_row = tempTop;
 								range->bottom_row = tempBottom;
 
-								*gameObjectDataParams.numVisibleObjects = min(*gameObjectDataParams.numVisibleObjects + 1, MAXOBJECTS);
+								*gameObjectDataParams.numVisibleObjects = std::min(*gameObjectDataParams.numVisibleObjects + 1, MAXOBJECTS);
 							}
 
 							/* Record boundaries of drawing area */
-							range->left_col = min(range->left_col, tempLeft);
-							range->right_col = max(range->right_col, tempRight);
+							range->left_col = std::min(range->left_col, (long)tempLeft);
+							range->right_col = std::max(range->right_col, (long)tempRight);
 
 							if (tempTop <= range->top_row)
 							{
@@ -1121,8 +1121,8 @@ void D3DRenderOverlaysDraw(
 								i = 0;
 							}
 
-							range->top_row = min(range->top_row, tempTop);
-							range->bottom_row = max(range->bottom_row, tempBottom);
+							range->top_row = std::min(range->top_row, (long)tempTop);
+							range->bottom_row = std::max(range->bottom_row, (long)tempBottom);
 						}
 					}
 
@@ -1173,12 +1173,12 @@ void D3DRenderOverlaysDraw(
 							case 0:
 								pChunk->bgra[i].b = 0;
 								pChunk->bgra[i].g = 0;
-								pChunk->bgra[i].r = min(bgra.r * 2.0f, 255);
+								pChunk->bgra[i].r = std::min(bgra.r * 2.0f, 255.0f);
 								pChunk->bgra[i].a = 255;
 								break;
 
 							case 1:
-								pChunk->bgra[i].b = min(bgra.r * 2.0f, 255);
+								pChunk->bgra[i].b = std::min(bgra.r * 2.0f, 255.0f);
 								pChunk->bgra[i].g = 0;
 								pChunk->bgra[i].r = 0;
 								pChunk->bgra[i].a = 255;
@@ -1186,7 +1186,7 @@ void D3DRenderOverlaysDraw(
 
 							default:
 								pChunk->bgra[i].b = 0;
-								pChunk->bgra[i].g = min(bgra.r * 2.0f, 255);
+								pChunk->bgra[i].g = std::min(bgra.r * 2.0f, 255.0f);
 								pChunk->bgra[i].r = 0;
 								pChunk->bgra[i].a = 255;
 								break;
@@ -1426,7 +1426,7 @@ void D3DRenderObjectsDraw(
 
 		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
-		MatrixTranslate(&mat, (float)pRNode->motion.x, max(bottom, pRNode->motion.z) - depth,
+		MatrixTranslate(&mat, (float)pRNode->motion.x, std::max(bottom, (long)pRNode->motion.z) - depth,
 			(float)pRNode->motion.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
@@ -1647,14 +1647,14 @@ void D3DRenderObjectsDraw(
 					range->top_row = tempTop;
 					range->bottom_row = tempBottom;
 
-					*gameObjectDataParams.numVisibleObjects = min(*gameObjectDataParams.numVisibleObjects + 1, MAXOBJECTS);
+					*gameObjectDataParams.numVisibleObjects = std::min(*gameObjectDataParams.numVisibleObjects + 1, MAXOBJECTS);
 				}
 
 				// Record boundaries of drawing area
-				range->left_col = min(range->left_col, tempLeft);
-				range->right_col = max(range->right_col, tempRight);
-				range->top_row = min(range->top_row, tempTop);
-				range->bottom_row = max(range->bottom_row, tempBottom);
+				range->left_col = std::min(range->left_col, (long)tempLeft);
+				range->right_col = std::max(range->right_col, (long)tempRight);
+				range->top_row = std::min(range->top_row, (long)tempTop);
+				range->bottom_row = std::max(range->bottom_row, (long)tempBottom);
 			}
 		}
 
@@ -1703,12 +1703,12 @@ void D3DRenderObjectsDraw(
 				case 0:
 					pChunk->bgra[i].b = 0;
 					pChunk->bgra[i].g = 0;
-					pChunk->bgra[i].r = min(bgra.r * 2.0f, 255);
+					pChunk->bgra[i].r = std::min(bgra.r * 2.0f, 255.0f);
 					pChunk->bgra[i].a = 255;
 					break;
 
 				case 1:
-					pChunk->bgra[i].b = min(bgra.r * 2.0f, 255);
+					pChunk->bgra[i].b = std::min(bgra.r * 2.0f, 255.0f);
 					pChunk->bgra[i].g = 0;
 					pChunk->bgra[i].r = 0;
 					pChunk->bgra[i].a = 255;
@@ -1716,7 +1716,7 @@ void D3DRenderObjectsDraw(
 
 				default:
 					pChunk->bgra[i].b = 0;
-					pChunk->bgra[i].g = min(bgra.r * 2.0f, 255);
+					pChunk->bgra[i].g = std::min(bgra.r * 2.0f, 255.0f);
 					pChunk->bgra[i].r = 0;
 					pChunk->bgra[i].a = 255;
 					break;
@@ -2350,7 +2350,7 @@ bool D3DObjectLightingCalc(
 	}
 
 	lastDistance = 1.0f - lastDistance;
-	lastDistance = max(0, lastDistance);
+	lastDistance = std::max(0.0f, lastDistance);
 	lastDistance = COLOR_AMBIENT * lastDistance;
 
 	light = D3DRenderObjectGetLight(room->tree, pRNode);
@@ -2379,20 +2379,20 @@ bool D3DObjectLightingCalc(
 
 	if (pDLight)
 	{
-		bgra->b = min(COLOR_AMBIENT, light);
-		bgra->g = min(COLOR_AMBIENT, light);
-		bgra->r = min(COLOR_AMBIENT, light);
+		bgra->b = std::min((float)COLOR_AMBIENT, (float)light);
+		bgra->g = std::min((float)COLOR_AMBIENT, (float)light);
+		bgra->r = std::min((float)COLOR_AMBIENT, (float)light);
 		bgra->a = 255;
 
-		bgra->b = min(COLOR_AMBIENT, bgra->b + (lastDistance * pDLight->color.b / COLOR_AMBIENT));
-		bgra->g = min(COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
-		bgra->r = min(COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
+		bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (lastDistance * pDLight->color.b / COLOR_AMBIENT));
+		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
+		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
 	}
 	else
 	{
-		bgra->b = min(COLOR_AMBIENT, light + lastDistance);
-		bgra->g = min(COLOR_AMBIENT, light + lastDistance);
-		bgra->r = min(COLOR_AMBIENT, light + lastDistance);
+		bgra->b = std::min((float)COLOR_AMBIENT, light + lastDistance);
+		bgra->g = std::min((float)COLOR_AMBIENT, light + lastDistance);
+		bgra->r = std::min((float)COLOR_AMBIENT, light + lastDistance);
 		bgra->a = 255;
 	}
 

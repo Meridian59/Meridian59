@@ -205,7 +205,7 @@ void EffectShake(void)
    }
    else
    {
-      int amplitude = min(SHAKE_AMPLITUDE, effects.shake/3) + 1;
+      int amplitude = (int)std::min(SHAKE_AMPLITUDE, (long)(effects.shake/3)) + 1;
       effects.view_dx = (rand() % amplitude) - (amplitude / 2);
       effects.view_dy = (rand() % amplitude) - (amplitude / 2);
       effects.view_dz = (rand() % amplitude) - (amplitude / 2);
@@ -224,37 +224,37 @@ bool AnimateEffects(int dt)
 
    if (effects.blur > 0)
    {
-      effects.blur = max(0, effects.blur - dt);
+      effects.blur = std::max(0, effects.blur - dt);
       bRedraw = true;
    }
 
    if (effects.waver > 0)
    {
-      effects.waver = max(0, effects.waver - dt);
+      effects.waver = std::max(0, effects.waver - dt);
       bRedraw = true;
    }
 
    if (effects.pain > 0)
    {
-      effects.pain = max(0, effects.pain - dt);
+      effects.pain = std::max(0, effects.pain - dt);
       bRedraw = true;
    }
 
    if (effects.whiteout > 0)
    {
-      effects.whiteout = max(0, effects.whiteout - dt);
+      effects.whiteout = std::max(0, effects.whiteout - dt);
       bRedraw = true;
    }
 
    if (effects.invert > 0)
    {
-      effects.invert = max(0, effects.invert - dt);
+      effects.invert = std::max(0, effects.invert - dt);
       bRedraw = true;
    }
 
    if (effects.shake > 0)
    {
-      effects.shake = max(0, effects.shake - dt);
+      effects.shake = std::max(0, effects.shake - dt);
       EffectShake();
       bRedraw = true;
    }

@@ -142,7 +142,7 @@ void StatsCreateButtons(void)
       button->hwnd = CreateWindow("button", NULL, WS_CHILD | BS_OWNERDRAW,
          0, 0, 0, 0, hStats, (HMENU) IDC_STATBUTTON, hInst, NULL);
       lpfnDefButtonProc = SubclassWindow(button->hwnd, StatButtonProc);
-      max_height = max(max_height, button->height);
+      max_height = std::max(max_height, button->height);
       if (button->name != 0)
          TooltipAddWindow(button->hwnd, hInst, button->name);
    }

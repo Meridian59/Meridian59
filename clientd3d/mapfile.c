@@ -721,9 +721,9 @@ bool MapFileMigrateVersion1ToVersion2Data(FILE* destfile)
          max_annotations = std::clamp(max_annotations, 0, MAX_ANNOTATIONS);
          if (max_annotations < num_annotations)
          {
-            num_annotations = min(num_annotations, max_annotations);
+            num_annotations = std::min(num_annotations, max_annotations);
             // In MOST cases we know that only the first annotation is going to be valid, due to the bug that caused it
-            num_annotations = min(num_annotations, 1);
+            num_annotations = std::min(num_annotations, 1);
             debug(("Detected corrupt map annotations block - reducing number of annotations to %d.\n", num_annotations));
          }
 

@@ -603,8 +603,8 @@ void RecopyRoom3D(HDC hdc, int x, int y, int width, int height, bool bMiniMap)
 
    if( !bMiniMap )
    {
-   width =  min(width, 2 * MAXX);
-   height = min(height, 2 * MAXY);
+   width =  std::min(width, 2 * MAXX);
+   height = std::min(height, 2 * MAXY);
    gCopyDC = gBufferDC;
    }
    else
@@ -716,8 +716,8 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
        index = (scale * index)>>LOG_FINENESS;
 
    index += lightOffset;
-   index = max(index, 0);
-   index = min(index, LIGHT_LEVELS - 1);
+   index = std::max(index, 0);
+   index = std::min(index, LIGHT_LEVELS - 1);
 
    return light_palettes[index];
 }
@@ -756,8 +756,8 @@ int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightO
        index = (scale * index)>>LOG_FINENESS;
 
    index += lightOffset;
-   index = max(index, 0);
-   index = min(index, LIGHT_LEVELS - 1);
+   index = std::max(index, 0);
+   index = std::min(index, LIGHT_LEVELS - 1);
 
    return index;
 }

@@ -106,8 +106,8 @@ void OfflineExpose(HWND hwnd)
 
    /* Draw bitmap */   
    GetClientRect(hMain, &r);
-   height = min(bm_height, r.bottom - button_height);
-   
+   height = std::min(bm_height, (int)(r.bottom - button_height));
+
    if (hTitleDC != NULL)
       BitBlt(hdc, bm_origin.x, bm_origin.y, bm_width, height, hTitleDC, 0, 0, SRCCOPY);
    EndPaint(hMain, &ps);
@@ -115,13 +115,13 @@ void OfflineExpose(HWND hwnd)
 /****************************************************************************/
 void OfflineResize(int xsize, int ysize)
 {
-   bm_origin.x = max(0, (xsize - bm_width) / 2);
-   bm_origin.y = max(0, (ysize - button_height - bm_height) / 2);
-   
-   button_width = min(bm_width, xsize);
+   bm_origin.x = std::max(0L, (LONG)(xsize - bm_width) / 2);
+   bm_origin.y = std::max(0L, (LONG)(ysize - button_height - bm_height) / 2);
 
-   button_origin.x = max(0, (xsize - button_width) / 2);
-   button_origin.y = max(0, min(bm_origin.y + bm_height, ysize - button_height));
+   button_width = std::min(bm_width, xsize);
+
+   button_origin.x = std::max(0L, (LONG)(xsize - button_width) / 2);
+   button_origin.y = std::max(0L, std::min(bm_origin.y + bm_height, (LONG)(ysize - button_height)));
 
    if (hwndDialButton != NULL)
      MoveWindow(hwndDialButton, button_origin.x, button_origin.y, 

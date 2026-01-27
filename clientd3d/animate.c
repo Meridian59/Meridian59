@@ -191,7 +191,7 @@ bool AnimateObject(object_node *obj, int dt)
    if (OF_FLASHING == (OF_BOUNCING & obj->flags))
    {
       DWORD angleFlash;
-      obj->bounceTime += min(dt,50);
+      obj->bounceTime += std::min(dt,50);
       if (obj->bounceTime > TIME_FLASH)
 	 obj->bounceTime -= TIME_FLASH;
       angleFlash = NUMDEGREES * obj->bounceTime / TIME_FLASH;
@@ -210,7 +210,7 @@ bool AnimateObject(object_node *obj, int dt)
    if (OF_PHASING == (OF_PHASING & obj->flags))
    {
       int anglePhase;
-      obj->phaseTime += min(dt,40);
+      obj->phaseTime += std::min(dt,40);
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
 	 obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;

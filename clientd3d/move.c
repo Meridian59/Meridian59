@@ -263,7 +263,7 @@ void UserMovePlayer(int action)
    last_move_action = action;
    FindOffsets(move_distance, angle, &dx, &dy);
 
-   num_steps = max(1, min(STEPS_PER_MOVE, NUM_STEPS_PER_SECOND * dt / 1000));
+   num_steps = std::max(1, std::min(STEPS_PER_MOVE, NUM_STEPS_PER_SECOND * dt / 1000));
 
    xinc = dx / num_steps;
    yinc = dy / num_steps;
@@ -276,14 +276,14 @@ void UserMovePlayer(int action)
    original_z = player_obj->motion.z;
 
    // Closest player can get to wall is half his width.  Avoid divide by zero errors.
-   min_distance = max(1, player.width / 2);
+   min_distance = std::max(1, player.width / 2);
    min_distance2 = min_distance * min_distance;
 
    for (i=0; i < num_steps; i++)
    {
       x = last_x + xinc;
       y = last_y + yinc;
-      z = max(player_obj->motion.z, GetFloorBase(last_x, last_y));
+      z = std::max(player_obj->motion.z, GetFloorBase(last_x, last_y));
 
       // Can't move into a place with no floor
       leaf = BSPFindLeafByPoint(current_room.tree, x, y);
@@ -368,7 +368,7 @@ void UserMovePlayer(int action)
 
       // Check next part of step with new floor height or current player height, whichever
       // is higher (works correctly when user is falling)
-      z = max(z, player_obj->motion.z);
+      z = std::max(z, player_obj->motion.z);
       
       // See if an object prevents this move
       retval = MoveObjectAllowed(&current_room, last_x, last_y, &x, &y, z);
@@ -518,10 +518,10 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
       Sector *other_sector;
       int below_height;
       float d0, d1, dx, dy, lenWall2;
-      float minx = min(wall->x0, wall->x1) - min_distance;
-      float maxx = max(wall->x0, wall->x1) + min_distance;
-      float miny = min(wall->y0, wall->y1) - min_distance;
-      float maxy = max(wall->y0, wall->y1) + min_distance;
+      float minx = std::min(wall->x0, wall->x1) - min_distance;
+      float maxx = std::max(wall->x0, wall->x1) + min_distance;
+      float miny = std::min(wall->y0, wall->y1) - min_distance;
+      float maxy = std::max(wall->y0, wall->y1) + min_distance;
 	 
       // See if we are near the wall itself, and not just the wall's plane
       if ((new_x >= minx) && (new_x <= maxx) && (new_y >= miny) && (new_y <= maxy))
@@ -970,7 +970,7 @@ void BounceUser(int dt)
 
    if (config.bounce)
    {
-     dt = min(dt, MOVE_DELAY);
+     dt = std::min(dt, MOVE_DELAY);
      bounce_time += ((float) dt) / MOVE_DELAY;  /* In radians */
      bounce_height = (long) (BOUNCE_HEIGHT * sin(bounce_time));
    }
@@ -1006,16 +1006,16 @@ void PlayerChangeHeight(int dz)
    last_time = now;
 
    height_offset += dz;
-   height_offset = min(height_offset, HEIGHT_MAX_OFFSET);
-   height_offset = max(height_offset, - HEIGHT_MAX_OFFSET);
+   height_offset = std::min(height_offset, (long)HEIGHT_MAX_OFFSET);
+   height_offset = std::max(height_offset, (long)- HEIGHT_MAX_OFFSET);
    RedrawAll();
 }
 
 void PlayerChangeHeightMouse(int dz)
 {
    height_offset += dz;
-   height_offset = min(height_offset, HEIGHT_MAX_OFFSET);
-   height_offset = max(height_offset, - HEIGHT_MAX_OFFSET);
+   height_offset = std::min(height_offset, (long)HEIGHT_MAX_OFFSET);
+   height_offset = std::max(height_offset, (long)- HEIGHT_MAX_OFFSET);
 }
 /************************************************************************/
 /*

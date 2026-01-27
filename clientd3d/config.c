@@ -78,6 +78,7 @@ static char INISpinningCube[]= "SpinningCube";
 static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
+static char INIMapTextZoomLimit[] = "MapTextZoomLimit";
 
 static char window_section[] = "Window";         /* Section in INI file for window info */
 static char INILeft[]        = "NormalLeft";
@@ -251,6 +252,7 @@ void ConfigLoad(void)
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, true, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, true, ini_file);
+   config.map_text_zoom_limit = GetConfigInt(interface_section, INIMapTextZoomLimit, 50, ini_file);
 
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
@@ -373,6 +375,7 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INIHaloColor, config.halocolor, ini_file);
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
+   WriteConfigInt(interface_section, INIMapTextZoomLimit, config.map_text_zoom_limit, ini_file);
    
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
 

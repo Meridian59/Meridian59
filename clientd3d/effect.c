@@ -13,6 +13,8 @@
 
 #define SHAKE_AMPLITUDE (FINENESS / 4)  // size of player motion for shake effect (FINENESS units)
 
+extern room_type current_room;
+
 Effects effects;
 
 static void EffectFlash(int duration);
@@ -92,10 +94,12 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 
    case EFFECT_RAINING:
 	  effects.raining = true;
+	  effects.snowing = false;
 	  RedrawAll();
 	  break;
 
    case EFFECT_SNOWING:
+	  effects.raining = false;
 	  effects.snowing = true;
 	  RedrawAll();
 	  break;
@@ -256,4 +260,45 @@ bool AnimateEffects(int dt)
    }
 
    return bRedraw;
+}
+
+/************************************************************************/
+/*
+ * NewWeather: Applies weather effect. Note that rain & snow cannot play simulanteously.
+ */
+void NewWeather(BYTE weather_effect)
+{
+	if (weather_effect == WEATHER_CLEAR || weather_effect == WEATHER_CLOUDY)
+	{
+		effects.raining = false;
+		effects.snowing = false;
+		RedrawAll();
+	}	
+	
+	if (weather_effect == WEATHER_RAIN)
+	{
+		effects.raining = true;
+		effects.snowing = false;
+		RedrawAll();
+	}
+	
+	if (weather_effect == WEATHER_SNOW)
+	{
+		effects.raining = false;
+		effects.snowing = true;
+		RedrawAll();
+	}	
+	
+	return;
+}
+
+/************************************************************************/
+
+bool IsClearWeather()
+{
+	if (current_room.weather_effect == WEATHER_CLEAR)
+	{
+		return TRUE;
+	}
+	return FALSE;
 }

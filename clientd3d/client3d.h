@@ -17,6 +17,7 @@
 int  GetPointFloor(int x, int y);
 int GetFloorBase(int x, int y);
 bool GetPointHeights(int x, int y, int *floor, int *ceiling);
+int  GetPointCeiling(int x, int y);
 PDIB GetPointCeilingTexture(int x, int y);
 PDIB GetPointFloorTexture(int x, int y);
 int GetPointDepth(int x, int y);

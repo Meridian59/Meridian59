@@ -206,8 +206,8 @@ BOOL AboutInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    dude_x = pt.x;
    dude_y = pt.y;
 
-   gbits_width  = max(scroll_width, DUDE_AREA_WIDTH);
-   gbits_height = max(scroll_height, DUDE_MAX_HEIGHT);
+   gbits_width  = std::max(scroll_width, DUDE_AREA_WIDTH);
+   gbits_height = std::max(scroll_height, DUDE_MAX_HEIGHT);
 
    gDC = CreateMemBitmap(gbits_width, gbits_height, &gOldBitmap, &gBits);
    if (gDC == 0)

@@ -297,7 +297,7 @@ INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       else aspect_ratio = min_window_size.cx / min_window_size.cy;
 
       GetClientRect(hwnd, &rect);
-      b.square_size = min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
+      b.square_size = std::min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
 
       b.valid = false;
       return TRUE;
@@ -306,7 +306,7 @@ INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       ResizeDialog(hDlg, &dlg_rect, chess_controls);
       hwnd = GetDlgItem(hDlg, IDC_BOARD);
       GetClientRect(hwnd, &rect);
-      b.square_size = min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
+      b.square_size = std::min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
       return TRUE;
       
       HANDLE_MSG(hDlg, WM_COMMAND, ChessDlgCommand);

@@ -813,7 +813,7 @@ void D3DLMapsStaticGet(room_type *room)
 		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-			max(bottom, pProjectile->motion.z);
+			std::max(bottom, (long)pProjectile->motion.z);
 
 		if (pDib)
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
@@ -871,7 +871,7 @@ void D3DLMapsStaticGet(room_type *room)
 		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
 
 		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-			max(bottom, pRNode->motion.z);
+			std::max(bottom, (long)pRNode->motion.z);
 
 		if (pDib)
 			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
@@ -940,7 +940,7 @@ void D3DLMapsStaticGet(room_type *room)
 		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
 
 		gDLightCache.dLights[gDLightCache.numLights].xyz.z =
-			max(bottom, pRNode->motion.z);
+			std::max(bottom, (long)pRNode->motion.z);
 
 		if (pDib)
 			gDLightCache.dLights[gDLightCache.numLights].xyz.z +=
@@ -1067,7 +1067,7 @@ void D3DRenderLMapsBuild(void)
 			float	scale = sqrtf((height - 16) * (height - 16) +
 											(width - 16) * (width - 16));
 			scale = 16.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 16.0f;
 
 			if ((height == 0) || (height == 31) ||
@@ -1099,7 +1099,7 @@ void D3DRenderLMapsBuild(void)
 											(width - 16) * (width - 16));
 
 			scale = 16.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 16.0f;
 
 			if ((height == 0) || (height == 31) ||
@@ -1131,7 +1131,7 @@ void D3DRenderLMapsBuild(void)
 											(width - 64) * (width - 64));
 
 			scale = 64.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 64.0f;
 
 			if (scale > 0)
@@ -1163,7 +1163,7 @@ void D3DRenderLMapsBuild(void)
 			float	scaleAlpha;
 
 			scale = 16.0f - scale;
-			scale = max(scale, 0);
+			scale = std::max(scale, 0.0f);
 			scale /= 16.0f;
 
 			if ((height == 0) || (height == 31) ||
@@ -1171,7 +1171,7 @@ void D3DRenderLMapsBuild(void)
 				scale = 0;
 
 			scaleAlpha = scale;
-			scale = max(0.33f, scale);
+			scale = std::max(0.33f, scale);
 
 			*(pBits++) = 255 * scale;
 			*(pBits++) = 255 * scale;

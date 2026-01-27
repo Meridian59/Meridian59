@@ -15,6 +15,7 @@
 #pragma warning(disable: 4244) // cast double to float loses information
 
 #ifndef _INC_WINDOWS
+#define NOMINMAX
 #include <windows.h>
 #include <windowsx.h>
 #include "winxblak.h"

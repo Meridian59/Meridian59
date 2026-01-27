@@ -172,10 +172,10 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 		}
 
 		/* Record boundaries of drawing area */
-		range->left_col   = min(range->left_col, orect.left);
-		range->right_col  = max(range->right_col, orect.right);
-		range->top_row    = min(range->top_row, orect.top);
-		range->bottom_row = max(range->bottom_row, orect.bottom);
+		range->left_col   = std::min(range->left_col, orect.left);
+		range->right_col  = std::max(range->right_col, orect.right);
+		range->top_row    = std::min(range->top_row, orect.top);
+		range->bottom_row = std::max(range->bottom_row, orect.bottom);
 	}
 
 	return TRUE;
@@ -266,17 +266,17 @@ bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, bool bTargetSelectEf
    c = dos->cone;
 
    /* Clip object to sides of screen */
-   startx = max(0, obj_area->x);
-   endx = min(area.cx - 1, obj_area->x + obj_area->cx - 1);
+   startx = std::max(0L, (long)obj_area->x);
+   endx = std::min((long)(area.cx - 1), (long)(obj_area->x + obj_area->cx - 1));
 
-   starty = max(0, obj_area->y);
-   endy = min(area.cy - 1, obj_area->y + obj_area->cy - 1);
+   starty = std::max(0L, (long)obj_area->y);
+   endy = std::min((long)(area.cy - 1), (long)(obj_area->y + obj_area->cy - 1));
 
    // Cut off bottom of bitmap at ground level
-   endy = min(endy, dos->cutoff);
+   endy = std::min(endy, (long)dos->cutoff);
 
-   startx = max(startx, c->leftedge);
-   endx = min(endx, c->rightedge);
+   startx = std::max(startx, (long)c->leftedge);
+   endx = std::min(endx, (long)c->rightedge);
 
    /* See if completely off screen */
    if (endx < 0 || endy < 0 || startx >= area.cx || starty >= area.cy)
@@ -294,23 +294,23 @@ bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, bool bTargetSelectEf
    lefttop = DIVUP(c->top_b * c->leftedge + c->top_d, c->top_a);
    righttop = DIVUP(c->top_b * c->rightedge + c->top_d, c->top_a);
    if (lefttop < righttop)
-      starty = max(starty, lefttop);
+      starty = std::max(starty, lefttop);
    else
-      starty = max(starty, righttop);
+      starty = std::max(starty, righttop);
 
    leftbot = DIVDOWN(c->bot_b * c->leftedge + c->bot_d, c->bot_a);
    rightbot = DIVDOWN(c->bot_b * c->rightedge + c->bot_d, c->bot_a);
    if (leftbot > rightbot)
-      endy = min(endy, leftbot);
+      endy = std::min(endy, leftbot);
    else
-      endy = min(endy, rightbot);
+      endy = std::min(endy, rightbot);
 
    /* Save object drawing rectangle */
    //	(Enlarge boundaries encompassing all bitmaps in this object.)
-   orect.left   = min(orect.left, startx);
-   orect.right  = max(orect.right, endx);
-   orect.top    = min(orect.top, starty);
-   orect.bottom = max(orect.bottom, endy);
+   orect.left   = std::min((long)orect.left, startx);
+   orect.right  = std::max((long)orect.right, endx);
+   orect.top    = std::min((long)orect.top, starty);
+   orect.bottom = std::max((long)orect.bottom, endy);
 
    y = (starty - obj_area->y) * yinc;
 
@@ -678,14 +678,14 @@ bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *w
   min_x = min_y = 0;
   max_x = BitmapToFineness(DibWidth(pdib)) / DibShrinkFactor(pdib);
   max_y = BitmapToFineness(DibHeight(pdib)) / DibShrinkFactor(pdib);
-  
+
   /* find width of overlays */
   for(l = overlays; l != NULL; l = l->next)
   {
      Overlay *overlay = (Overlay *) (l->data);
      char hotspot = overlay->hotspot;
      AREA ov_area;
-     
+
      pdib_ov = GetObjectPdib(overlay->icon_res, angle, overlay->animate.group);
      if (pdib_ov == NULL)
 	continue;
@@ -700,11 +700,11 @@ bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *w
      ov_area.cy = BitmapToFineness(ov_area.cy) / DibShrinkFactor(pdib_ov);
      ov_area.y  = BitmapToFineness(ov_area.y) / OVERLAY_FACTOR;
 
-     min_x = min(min_x, ov_area.x);
-     max_x = max(max_x, ov_area.x + ov_area.cx);
+     min_x = std::min(min_x, (int)ov_area.x);
+     max_x = std::max(max_x, (int)(ov_area.x + ov_area.cx));
 
-     min_y = min(min_y, ov_area.y);
-     max_y = max(max_y, ov_area.y + ov_area.cy);
+     min_y = std::min(min_y, (int)ov_area.y);
+     max_y = std::max(max_y, (int)(ov_area.y + ov_area.cy));
   }
   *width  = max_x - min_x;
   *height = max_y - min_y;

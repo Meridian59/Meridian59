@@ -73,7 +73,7 @@ INT_PTR CALLBACK TimeoutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 	 else
 	 {
 	    Edit_GetText(hMinutes, temp, MAXMINUTES);
-	    config.timeout = max(atoi(temp), 0);
+	    config.timeout = std::max(atoi(temp), 0);
 	    if (state == STATE_GAME)
 	       LogoffTimerReset();
 	 }
@@ -112,7 +112,7 @@ void LogoffTimerStart(void)
    if (config.timeout == 0)
       return;
 
-   delay = (UINT) (min((long) ((long) config.timeout * MS_PER_MINUTE), MAXTIMERMS));
+   delay = (UINT) (std::min((long) ((long) config.timeout * MS_PER_MINUTE), (long)MAXTIMERMS));
    timer_id = SetTimer(NULL, 0, (UINT) delay, LogoffTimerProc);
    if (timer_id == 0)
    {
@@ -159,7 +159,7 @@ void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
    }
 
    /* Restart timer */
-   delay = (UINT) (min((long) config.timeout * MS_PER_MINUTE - elapsed, MAXTIMERMS));
+   delay = (UINT) (std::min((long) config.timeout * MS_PER_MINUTE - elapsed, (long)MAXTIMERMS));
    timer_id = SetTimer(NULL, 0, (UINT) delay, LogoffTimerProc);   
    if (timer_id == 0)
       ClientError(hInst, hMain, IDS_NOTIMERS);

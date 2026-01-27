@@ -224,7 +224,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
 
 	    MapDrawWalls(hdc, xoffset, yoffset, scale, room);
        if (config.map_annotations)
-          MapDrawAnnotations(hdc, room->annotations, xoffset, yoffset, scale, FALSE, true);
+          MapDrawAnnotations(hdc, room->annotations, xoffset, yoffset, scale, false, true);
 	    MapDrawObjects(hdc, room->contents, xoffset, yoffset, scale);
 	    MapDrawPlayer(hdc, xoffset, yoffset, scale);
 	 }
@@ -278,7 +278,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, bool 
              drawText = scaleMiniMap > (1.0f / ((float)config.map_text_zoom_limit * MAX_ANNOTATION_TEXT_ZOOM));
           }
           
-          MapDrawAnnotations(hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, TRUE, drawText);
+          MapDrawAnnotations(hdc, room->annotations, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap, true, drawText);
        }
 	    MapDrawObjects(hdc, room->contents, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);
 	    MapDrawPlayer(hdc, xoffsetMiniMap, yoffsetMiniMap, scaleMiniMap);

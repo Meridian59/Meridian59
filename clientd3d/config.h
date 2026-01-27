@@ -22,7 +22,7 @@
 
 #define CONFIG_MAX_VOLUME 100  // Max value of sound / music volume settings
 
-#define CONFIG_MAX_TEXT_ZOOM_LIMIT 100  // Max value of map text zoom limit
+static const int CONFIG_MAX_TEXT_ZOOM_LIMIT = 100;  // Max value of map text zoom limit
 
 // Communication settings
 typedef struct {

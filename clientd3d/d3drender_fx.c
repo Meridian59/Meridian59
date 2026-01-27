@@ -333,15 +333,7 @@ void RainInit(void)
 		D3DParticleEmitterSetVel(newEmitter, 0, 0, RAIN_VELOCITY);
 		D3DParticleEmitterSetRot(newEmitter, 0, 0, 0);
 		D3DParticleEmitterSetBGRA(newEmitter, RAIN_COLOR);
-		// Most emitters focus on spawning nearby particles, while others can spawn further away.
-		if (i < 12)
-		{
-			D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS, RAIN_RANDOM_ROT);
-		}
-		else
-		{
-			D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS * 3, RAIN_RANDOM_ROT);
-		}
+		D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS, RAIN_RANDOM_ROT);
 		D3DParticleEmitterAddToList(&rainParticleSystem, newEmitter);
 	}
 }

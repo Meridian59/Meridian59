@@ -6,9 +6,16 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <cmath>
+#include <chrono>
+
+using namespace std::chrono;
 
 // Variables
 extern room_type current_room;
+
+steady_clock::time_point lastFrameTime = steady_clock::now();
+int64_t msDeltaTime = 0;
 
 void D3DParticleDestroy(particle *pParticle);
 
@@ -109,6 +116,12 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 	{
 		pEmitter = (emitter *)list->data;
 		
+		// Calculate time (in milliseconds) since the last frame.
+		auto currentFrameTime = steady_clock::now();
+		auto duration = duration_cast<milliseconds>(currentFrameTime - lastFrameTime);
+		msDeltaTime = duration.count();
+		lastFrameTime = currentFrameTime;
+		
 		// Update existing particles
 		for (curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
 		{
@@ -121,6 +134,16 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 			}
 			else
 			{				
+				if (pEmitter->bWeatherEffect)
+				{
+					pParticle->lifetime += msDeltaTime;
+					if (pParticle->lifetime >= pParticle->maxTime)
+					{
+						pParticle->energy = 0;
+						continue;
+					}
+				}
+				
 				custom_xyzw	velocity;
 
 				velocity.x = pParticle->velocity.x;
@@ -147,15 +170,6 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 				pParticle->pos.x += pParticle->velocity.x;
 				pParticle->pos.y += pParticle->velocity.y;
 				pParticle->pos.z += pParticle->velocity.z;
-				
-				// After a weather particle moves, check if it landed on a ceiling or floor.
-				if (pEmitter->bWeatherEffect && pParticle->pos.z <= pParticle->surfaceHeight)
-				{
-					// Also set it at surface height so it won't show through ceilings.
-					pParticle->pos.z = pParticle->surfaceHeight;
-					pParticle->energy = 0;
-					continue;
-				}
 				
 				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
 				assert(pPacket);
@@ -242,29 +256,37 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 						// Each weather particle store the height of the ceiling/floor where they will clear away.
 						if (pEmitter->bWeatherEffect)
 						{				
+							pParticle->lifetime = 0;
+							
 							BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
+
 							if (leaf && leaf->sector->ceiling)
 							{
 								// We convert ceiling height to fineness units to be more precise on where the
 								// weather particles disappear, so that they won't show through the ceiling.
-								pParticle->surfaceHeight = GetCeilingHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector)
-																		* FINENESS;										
-								if (pParticle->pos.z <= pParticle->surfaceHeight)
+								float ceilingHeight = GetCeilingHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector) * FINENESS;
+								
+								if (pParticle->pos.z < ceilingHeight)
 								{
-									pParticle->pos.z = pParticle->surfaceHeight;
-									pParticle->energy = 0;
-									continue;
+									pParticle->pos.z = ceilingHeight;
 								}
+								pParticle->maxTime = (pParticle->pos.z - ceilingHeight) / abs(pParticle->velocity.z);	
 							}
 							else if (leaf && leaf->sector->floor)
 							{
-								pParticle->surfaceHeight = GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector);
+								float floorHeight = GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector);
+
+								if (pParticle->pos.z < floorHeight)
+								{
+									pParticle->pos.z = floorHeight;
+								}
+								pParticle->maxTime = (pParticle->pos.z - floorHeight) / abs(pParticle->velocity.z);						
 							}
-							// If weather particle is out of bounds, set it to default ground height so
+							// If weather particle is out of bounds, set maxTime to a few seconds so
 							// it still shows properly either outdoors or from outside windows.
 							else
 							{
-								pParticle->surfaceHeight = 0;
+								pParticle->maxTime = 2000;
 							}
 						}
 

@@ -20,7 +20,9 @@ typedef struct particle
 	custom_bgra		bgra;
 	float			size;
 	float			weight;
-	float			surfaceHeight;
+	// Milliseconds for weather particles to clear.
+	int				lifetime;
+	int				maxTime;
 } particle;
 
 typedef struct emitter

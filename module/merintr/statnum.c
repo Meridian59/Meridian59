@@ -119,8 +119,8 @@ void StatsNumResize(list_type stats)
 
    if (num_visible < num_stats)
       has_scrollbar = true;
-
-   top_stat = min(top_stat, num_stats - num_visible);
+   
+   top_stat = std::min(top_stat, num_stats - num_visible);
 
    // Move graph bars
    x = stats_area.cx / 2;
@@ -246,8 +246,8 @@ void StatsNumVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       return;
    }
 
-   new_top = max(new_top, min_stat);
-   new_top = min(new_top, max_stat);
+   new_top = std::max(new_top, min_stat);
+   new_top = std::min(new_top, max_stat);
 
    if (new_top != top_stat)
    {

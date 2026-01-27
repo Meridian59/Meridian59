@@ -261,7 +261,7 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 				range->top_row = tempTop;
 				range->bottom_row = tempBottom;
 
-				*bgoSceneParams.numVisibleObjects = min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
+				*bgoSceneParams.numVisibleObjects = std::min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
 			}
 
 			overlay->rcScreen.left = tempLeft;
@@ -273,10 +273,10 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 			overlay->drawn = TRUE;
 
 			// Record boundaries of drawing area.
-			range->left_col = min(range->left_col, tempLeft);
-			range->right_col = max(range->right_col, tempRight);
-			range->top_row = min(range->top_row, tempTop);
-			range->bottom_row = max(range->bottom_row, tempBottom);
+			range->left_col = std::min(range->left_col, (long)tempLeft);
+			range->right_col = std::max(range->right_col, (long)tempRight);
+			range->top_row = std::min(range->top_row, (long)tempTop);
+			range->bottom_row = std::max(range->bottom_row, (long)tempBottom);
 		}
 
 	}

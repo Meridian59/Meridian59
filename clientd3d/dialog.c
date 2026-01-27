@@ -149,8 +149,8 @@ static void ResizeEditToFitText(HWND hEdit, HFONT hFont)
 	yincrease = GetFontHeight(hFont) * num_lines - (edit_rect.bottom - edit_rect.top);
 	
 	GetWindowRect(hParent, &dlg_rect);
-	yincrease = min(yincrease, GetSystemMetrics(SM_CYSCREEN) - dlg_rect.bottom + dlg_rect.top);
-	yincrease = max(0, yincrease);
+	yincrease = std::min(yincrease, (int)(GetSystemMetrics(SM_CYSCREEN) - dlg_rect.bottom + dlg_rect.top));
+	yincrease = std::max(0, yincrease);
 	MoveWindow(hParent, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
 		dlg_rect.bottom - dlg_rect.top + yincrease, FALSE);
 }

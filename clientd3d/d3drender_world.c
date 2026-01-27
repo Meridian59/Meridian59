@@ -1428,6 +1428,37 @@ void D3DRenderCeilingMaskAdd(BSPnode *pNode, d3d_render_pool_new *pPool, LPDIREC
    }
 }
 
+/**
+ * Calculates the 2D bounding box (min/max X and Y) for a set of vertices.
+ */
+static void CalculateBoundingBox2D(const custom_xyz *xyz, int numVertices, float &outMinX, float &outMaxX,
+                                   float &outMinY, float &outMaxY)
+{
+   outMinX = xyz[0].x;
+   outMaxX = xyz[0].x;
+   outMinY = xyz[0].y;
+   outMaxY = xyz[0].y;
+
+   for (int i = 1; i < numVertices; i++)
+   {
+      outMinX = std::min(outMinX, xyz[i].x);
+      outMaxX = std::max(outMaxX, xyz[i].x);
+      outMinY = std::min(outMinY, xyz[i].y);
+      outMaxY = std::max(outMaxY, xyz[i].y);
+   }
+}
+
+/**
+ * Checks if a light position is inside the 2D bounding box defined by the given vertices.
+ * Returns true if the light is inside the bounding box, false otherwise.
+ */
+static bool IsLightInsideBoundingBox(float lightX, float lightY, const custom_xyz *xyz, int numVertices)
+{
+   float minX, maxX, minY, maxY;
+   CalculateBoundingBox2D(xyz, numVertices, minX, maxX, minY, maxY);
+   return (lightX >= minX && lightX <= maxX && lightY >= minY && lightY <= maxY);
+}
+
 /*
  * Add light map for floor to the render pool.
  */
@@ -1461,6 +1492,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
       float distance, lightRange;
       int unlit;
       float falloff, invXScale, invYScale, invZScale, invXScaleHalf, invYScaleHalf, invZScaleHalf;
+      bool lightInsidePolygon = false;
 
       invXScale = pDLightCache->dLights[numLights].invXYZScale.x;
       invYScale = pDLightCache->dLights[numLights].invXYZScale.y;
@@ -1474,35 +1506,34 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
       lightRange = (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) *
                    (pDLightCache->dLights[numLights].xyzScale.x / 1.5f);  // * 2.0f;
 
-      // if dlight is too far away, skip it
-      for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+      // Check if light is inside the polygon's bounding box
+      if (IsLightInsideBoundingBox(pDLightCache->dLights[numLights].xyz.x, pDLightCache->dLights[numLights].xyz.y, xyz,
+                                   pNode->u.leaf.poly.npts))
       {
-         vector.x = xyz[count].x - pDLightCache->dLights[numLights].xyz.x;
-         vector.y = xyz[count].y - pDLightCache->dLights[numLights].xyz.y;
-
-         distance = ((vector.x * vector.x) + (vector.y * vector.y));
-
-         if (distance > lightRange)
-            unlit++;
+         lightInsidePolygon = true;
       }
 
-      if (unlit < pNode->u.leaf.poly.npts)
+      // if dlight is too far away, skip it (unless light is inside the polygon)
+      if (!lightInsidePolygon)
       {
-         custom_xyz lightVec, normal;
-         float cosAngle;
+         for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+         {
+            vector.x = xyz[count].x - pDLightCache->dLights[numLights].xyz.x;
+            vector.y = xyz[count].y - pDLightCache->dLights[numLights].xyz.y;
 
-         lightVec.x = pDLightCache->dLights[numLights].xyz.x - xyz[0].x;
-         lightVec.y = pDLightCache->dLights[numLights].xyz.y - xyz[0].y;
-         lightVec.z = pDLightCache->dLights[numLights].xyz.z - xyz[0].z;
+            distance = ((vector.x * vector.x) + (vector.y * vector.y));
 
-         normal.x = 0;
-         normal.y = 0;
-         normal.z = 1.0f;
+            if (distance > lightRange)
+               unlit++;
+         }
+      }
 
-         cosAngle = lightVec.x * normal.x + lightVec.y * normal.y + lightVec.z * normal.z;
-
-         if (cosAngle <= 0)
-            continue;
+      if (lightInsidePolygon || unlit < pNode->u.leaf.poly.npts)
+      {
+         // NOTE: Removed cosAngle check for floors. The original check was meant for backface culling,
+         // but it caused problems when the light's Z (calculated at the light's position) was below
+         // the floor polygon's Z (in a different sector with higher floor_height). Floors always
+         // face up, so we don't need this culling - the distance-based falloff handles attenuation.
 
          pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
          if (NULL == pPacket)
@@ -1527,7 +1558,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
 
          for (count = 0; count < pNode->u.leaf.poly.npts; count++)
          {
-            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScaleHalf;
+            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScale;
 
             if (falloff < 0)
                falloff = -falloff;
@@ -1544,7 +1575,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
             st[count].t = xyz[count].y - pDLightCache->dLights[numLights].xyz.y;
 
             st[count].s *= invXScale;
-            st[count].t *= invXScale;
+            st[count].t *= invYScale;
 
             st[count].s += 0.5f;
             st[count].t += 0.5f;
@@ -1619,6 +1650,7 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
       float distance, lightRange;
       int unlit;
       float falloff, invXScale, invYScale, invZScale, invXScaleHalf, invYScaleHalf, invZScaleHalf;
+      bool lightInsidePolygon = false;
 
       invXScale = pDLightCache->dLights[numLights].invXYZScale.x;
       invYScale = pDLightCache->dLights[numLights].invXYZScale.y;
@@ -1633,35 +1665,32 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
       lightRange =
           (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) * (pDLightCache->dLights[numLights].xyzScale.x / 1.5f);
 
-      // if dlight is too far away, skip it
-      for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+      // Check if light is inside the polygon's bounding box (simple heuristic)
+      if (IsLightInsideBoundingBox(pDLightCache->dLights[numLights].xyz.x, pDLightCache->dLights[numLights].xyz.y, xyz,
+                                   pNode->u.leaf.poly.npts))
       {
-         vector.x = xyz[count].x - pDLightCache->dLights[numLights].xyz.x;
-         vector.y = xyz[count].y - pDLightCache->dLights[numLights].xyz.y;
-
-         distance = ((vector.x * vector.x) + (vector.y * vector.y));
-
-         if (distance > lightRange)
-            unlit++;
+         lightInsidePolygon = true;
       }
 
-      if (unlit < pNode->u.leaf.poly.npts)
+      // if dlight is too far away, skip it (unless light is inside the polygon)
+      if (!lightInsidePolygon)
       {
-         custom_xyz lightVec, normal;
-         float cosAngle;
+         for (count = 0; count < pNode->u.leaf.poly.npts; count++)
+         {
+            vector.x = xyz[count].x - pDLightCache->dLights[numLights].xyz.x;
+            vector.y = xyz[count].y - pDLightCache->dLights[numLights].xyz.y;
 
-         lightVec.x = pDLightCache->dLights[numLights].xyz.x - xyz[0].x;
-         lightVec.y = pDLightCache->dLights[numLights].xyz.y - xyz[0].y;
-         lightVec.z = pDLightCache->dLights[numLights].xyz.z - xyz[0].z;
+            distance = ((vector.x * vector.x) + (vector.y * vector.y));
 
-         normal.x = 0;
-         normal.y = 0;
-         normal.z = -1.0f;
+            if (distance > lightRange)
+               unlit++;
+         }
+      }
 
-         cosAngle = lightVec.x * normal.x + lightVec.y * normal.y + lightVec.z * normal.z;
-
-         if (cosAngle <= 0)
-            continue;
+      if (lightInsidePolygon || unlit < pNode->u.leaf.poly.npts)
+      {
+         // NOTE: Removed cosAngle check for ceilings (same reason as floors).
+         // Ceilings always face down, the distance-based falloff handles attenuation.
 
          pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
          if (NULL == pPacket)
@@ -1686,7 +1715,7 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
 
          for (count = 0; count < pNode->u.leaf.poly.npts; count++)
          {
-            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScaleHalf;
+            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScale;
 
             if (falloff < 0)
                falloff = -falloff;
@@ -1846,6 +1875,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
       int unlit;
       unsigned int i;
       float falloff, invXScale, invYScale, invZScale, invXScaleHalf, invYScaleHalf, invZScaleHalf;
+      bool lightNearWall = false;
 
       invXScale = pDLightCache->dLights[numLights].invXYZScale.x;
       invYScale = pDLightCache->dLights[numLights].invXYZScale.y;
@@ -1859,19 +1889,28 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
       lightRange =
           (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) * (pDLightCache->dLights[numLights].xyzScale.x / 1.5f);
 
-      // if dlight is too far away, skip it
-      for (i = 0; i < 4; i++)
+      // Check if light is inside the wall's bounding box in XY plane
+      if (IsLightInsideBoundingBox(pDLightCache->dLights[numLights].xyz.x, pDLightCache->dLights[numLights].xyz.y, xyz, 4))
       {
-         vector.x = xyz[i].x - pDLightCache->dLights[numLights].xyz.x;
-         vector.y = xyz[i].y - pDLightCache->dLights[numLights].xyz.y;
-
-         distance = ((vector.x * vector.x) + (vector.y * vector.y));
-
-         if (distance > lightRange)
-            unlit++;
+         lightNearWall = true;
       }
 
-      if (unlit < 4)
+      // if dlight is too far away, skip it (unless light is near the wall)
+      if (!lightNearWall)
+      {
+         for (i = 0; i < 4; i++)
+         {
+            vector.x = xyz[i].x - pDLightCache->dLights[numLights].xyz.x;
+            vector.y = xyz[i].y - pDLightCache->dLights[numLights].xyz.y;
+
+            distance = ((vector.x * vector.x) + (vector.y * vector.y));
+
+            if (distance > lightRange)
+               unlit++;
+         }
+      }
+
+      if (lightNearWall || unlit < 4)
       {
          custom_xyz normal, vec0, vec1;
 
@@ -1888,17 +1927,11 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          normal.z = vec0.y * vec1.x - vec0.x * vec1.y;
          normal.y = vec0.x * vec1.z - vec0.z * vec1.x;
 
-         custom_xyz lightVec;
-         float cosAngle;
-
-         lightVec.x = pDLightCache->dLights[numLights].xyz.x - xyz[0].x;
-         lightVec.y = pDLightCache->dLights[numLights].xyz.y - xyz[0].y;
-         lightVec.z = pDLightCache->dLights[numLights].xyz.z - xyz[0].z;
-
-         cosAngle = lightVec.x * normal.x + lightVec.y * normal.y + lightVec.z * normal.z;
-
-         if (cosAngle <= 0)
-            continue;
+         // NOTE: Removed cosAngle backface culling check for walls.
+         // The check was causing issues similar to floors/ceilings where position
+         // differences between light and wall sectors caused incorrect rejections.
+         // The normal is still calculated above because it's used below to determine
+         // the wall's major axis for texture coordinate calculation.
 
          pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, 0, 0, 0);
          if (NULL == pPacket)
@@ -1931,7 +1964,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          {
             for (i = 0; i < 4; i++)
             {
-               falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invXScaleHalf;
+               falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invXScale;
 
                if (falloff < 0)
                   falloff = -falloff;
@@ -1951,7 +1984,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          {
             for (i = 0; i < 4; i++)
             {
-               falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invYScaleHalf;
+               falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invYScale;
 
                if (falloff < 0)
                   falloff = -falloff;

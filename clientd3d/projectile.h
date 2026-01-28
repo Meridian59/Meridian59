@@ -6,11 +6,11 @@
 //
 // Meridian is a registered trademark.
 /*
- * project.h:  Header file for project.c
+ * projectile.h:  Header file for projectile.c
  */
 
-#ifndef _PROJECT_H
-#define _PROJECT_H
+#ifndef _PROJECTILE_H
+#define _PROJECTILE_H
 
 /* Flags bit values for Projectile structure */
 #define PROJ_FLAG_FOLLOWGROUND	 0x0001
@@ -30,4 +30,4 @@ typedef struct {
 void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD flags, WORD reserved);
 bool ProjectilesMove(int dt);
 
-#endif /* #ifndef _PROJECT_H */
+#endif /* #ifndef _PROJECTILE_H */

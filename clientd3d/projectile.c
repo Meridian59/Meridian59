@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 /*
- * project.c:  Deal with "shooting" bitmaps, that is, bitmaps which move continuously
+ * projectile.c:  Deal with "shooting" bitmaps, that is, bitmaps which move continuously
  *   from one place to another.  Objects can't be shot this way; this is essentially
  *   a special effect.
  *

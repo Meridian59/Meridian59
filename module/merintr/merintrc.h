@@ -361,6 +361,48 @@
 #define IDM_GROUP                       4009
 #define IDM_VERBALIAS                   4010
 #define IDM_DANCE                       4011
+#define IDC_ALIAS_ACTION1               4012
+#define IDC_ALIAS_ACTION2               4013
+#define IDC_ALIAS_ACTION3               4014
+#define IDC_ALIAS_ACTION4               4015
+#define IDC_ALIAS_ACTION5               4016
+#define IDC_ALIAS_ACTION6               4017
+#define IDC_ALIAS_ACTION7               4018
+#define IDC_ALIAS_ACTION8               4019
+#define IDC_ALIAS_ACTION9               4020
+#define IDC_ALIAS_ACTION10              4021
+#define IDC_ALIAS_ACTION11              4022
+#define IDC_ALIAS_ACTION12              4023
+
+#define IDC_CHECK_ACTION1               4024
+#define IDC_CHECK_ACTION2               4025
+#define IDC_CHECK_ACTION3               4026
+#define IDC_CHECK_ACTION4               4027
+#define IDC_CHECK_ACTION5               4028
+#define IDC_CHECK_ACTION6               4029
+#define IDC_CHECK_ACTION7               4030
+#define IDC_CHECK_ACTION8               4031
+#define IDC_CHECK_ACTION9               4032
+#define IDC_CHECK_ACTION10              4033
+#define IDC_CHECK_ACTION11              4034
+#define IDC_CHECK_ACTION12              4035
+
+#define IDC_ALIAS_ACTIONTEXT1           4036
+#define IDC_ALIAS_ACTIONTEXT2           4037
+#define IDC_ALIAS_ACTIONTEXT3           4038
+#define IDC_ALIAS_ACTIONTEXT4           4039
+#define IDC_ALIAS_ACTIONTEXT5           4040
+#define IDC_ALIAS_ACTIONTEXT6           4041
+#define IDC_ALIAS_ACTIONTEXT7           4042
+#define IDC_ALIAS_ACTIONTEXT8           4043
+#define IDC_ALIAS_ACTIONTEXT9           4044
+#define IDC_ALIAS_ACTIONTEXT10          4045
+#define IDC_ALIAS_ACTIONTEXT11          4046
+#define IDC_ALIAS_ACTIONTEXT12          4047
+
+#define IDC_ALIAS_CAPTION               4048
+#define IDC_ALIAS_ACTIONTYPE            4049
+
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

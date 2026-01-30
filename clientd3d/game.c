@@ -487,7 +487,21 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
 
 	  // I'd like to second the notion that this is bad, wtf... - mistery
 
+      // Save timing fields that shouldn't be overwritten (prevents light flashing during combat)
+      int savedBounceTime = r->obj.bounceTime;
+      int savedPhaseTime = r->obj.phaseTime;
+      int savedLightAdjust = r->obj.lightAdjust;
+      BYTE savedEffect = r->obj.effect;
+      int savedFlickerTime = r->obj.flickerTime;
+
       memcpy(&r->obj, new_obj, sizeof(object_node));
+
+      // Restore timing fields
+      r->obj.bounceTime = savedBounceTime;
+      r->obj.phaseTime = savedPhaseTime;
+      r->obj.lightAdjust = savedLightAdjust;
+      r->obj.effect = savedEffect;
+      r->obj.flickerTime = savedFlickerTime;
       memcpy(&r->motion.animate, a, sizeof(Animate));
       r->motion.overlays = overlays;
       r->motion.move_animating = false;

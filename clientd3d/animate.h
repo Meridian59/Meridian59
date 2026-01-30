@@ -20,5 +20,6 @@ void AnimateStop(Animate *a);
 bool AnimateSingle(Animate *a, int num_groups, int dt);
 
 DWORD GetFrameTime(void);
+float GetFlickerLevel(void);
 
 #endif /* #ifndef _ANIMATE_H */

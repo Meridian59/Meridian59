@@ -116,6 +116,8 @@ typedef struct d_light
 	custom_xyz	invXYZScaleHalf;
 	custom_bgra	color;
 	ID			objID;
+    int			baseIntensity;  // Unflickered base intensity for cache validation
+    WORD		baseColor;      // Raw 16-bit color for cache validation
 } d_light;
 
 typedef struct d_light_cache

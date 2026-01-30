@@ -2313,7 +2313,7 @@ bool D3DObjectLightingCalc(
 
 		vector.x = pRNode->motion.x - lightAndTextureParams.lightCache->dLights[numLights].xyz.x;
 		vector.y = pRNode->motion.y - lightAndTextureParams.lightCache->dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCache->dLights[numLights].xyz.z);
+		vector.z = pRNode->motion.z - lightAndTextureParams.lightCache->dLights[numLights].xyz.z;
 
 		distance = (vector.x * vector.x) + (vector.y * vector.y) +
 			(vector.z * vector.z);
@@ -2334,7 +2334,7 @@ bool D3DObjectLightingCalc(
 
 		vector.x = pRNode->motion.x - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.x;
 		vector.y = pRNode->motion.y - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.y;
-		vector.z = (pRNode->motion.z - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.z);
+		vector.z = pRNode->motion.z - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.z;
 
 		distance = (vector.x * vector.x) + (vector.y * vector.y) +
 			(vector.z * vector.z);
@@ -2368,12 +2368,10 @@ bool D3DObjectLightingCalc(
 	if (fogEnabled && ((flags & D3DRENDER_NOAMBIENT) == 0))
 		intDistance = FINENESS;
 
-	if (pRNode->obj.flags & OF_FLASHING)
-		light = GetLightPaletteIndex(intDistance, light, FINENESS,
-			pRNode->obj.lightAdjust);
+	if (pRNode->obj.flags & OF_FLICKERING)
+		light = GetLightPaletteIndex(intDistance, light, FINENESS, pRNode->obj.lightAdjust);
 	else
-		light = GetLightPaletteIndex(intDistance, light, FINENESS,
-			0);
+		light = GetLightPaletteIndex(intDistance, light, FINENESS, 0);
 
 	light = light * COLOR_AMBIENT / 64;
 
@@ -2387,6 +2385,15 @@ bool D3DObjectLightingCalc(
 		bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (lastDistance * pDLight->color.b / COLOR_AMBIENT));
 		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
 		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
+		
+		// Apply flickering adjustment to the combined lighting (base + dynamic)
+		if (pRNode->obj.flags & OF_FLICKERING)
+		{
+			float adjustment = (float)pRNode->obj.lightAdjust / GetFlickerLevel();
+			bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));
+			bgra->g = std::min((float)COLOR_AMBIENT, bgra->g + (bgra->g * adjustment));
+			bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (bgra->r * adjustment));
+		}
 	}
 	else
 	{

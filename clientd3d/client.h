@@ -118,7 +118,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "bsp.h"
 #include "room.h"
 #include "object3d.h"
-#include "project.h"
+#include "projectile.h"
 #include "boverlay.h"
 #include "game.h"
 #include "gameuser.h"

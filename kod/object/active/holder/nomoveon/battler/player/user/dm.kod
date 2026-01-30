@@ -51,26 +51,9 @@ resources:
    dm_createjunk = "item junk"
    dm_getall = "get"
    dm_gettotem = "totem"
-   dm_help_command = "help"
-   dm_appeal_off_command = "appeal off"
-   dm_appeal_on_command = "appeal on"
-   dm_guest_appeal_off_command = "guest appeal off"
-   dm_guest_appeal_on_command = "guest appeal on"
-   dm_stealth_on_command = "stealth on"
-   dm_stealth_off_command = "stealth off"
-   dm_rumble_command = "rumble"
-   dm_good_command = "good"
-   dm_neutral_command = "neutral"
-   dm_evil_command = "evil"
    dm_monster_budget_command = "monster budget"
    dm_monster_authorize_command = "monster authorize"
    dm_none = "none"
-   dm_clear_abilities_command = "clear abilities"
-   dm_clear_inventory_command = "clear inventory"
-   dm_get_spells_command = "get spells"
-   dm_get_skills_command = "get skills"
-   dm_get_money_command = "get money"
-   dm_boost_stats_command = "boost stats"
    dm_PK_enable_command = "PK enable"
    dm_PK_disable_command = "PK disable"
    dm_PK_lock_command = "PK lock"
@@ -80,11 +63,7 @@ resources:
    dm_evening_command = "evening"
    dm_night_command = "night"
    dm_restore_time_command = "restore time"
-   dm_call_monster_command = "call monster"
    dm_npc_chat_command = "npc chat"
-   dm_plain_command = "plain"
-   dm_human_command = "human"
-   dm_disguise_command = "disguise"
    dm_get_misc_command = "get misc"
    dm_get_weapons_command = "get weapons"
    dm_get_armor_command = "get armor"
@@ -100,8 +79,6 @@ resources:
    dm_get_potions_command = "get potions"
    dm_get_scrolls_command = "get scrolls"
    dm_get_masks_command = "get masks"
-   dm_hidden_command = "hidden"
-   dm_blank_command = "blank"
 
    dm_roomgive_command = "roomgive"
    dm_gave_to_number = "%s players received reward!"
@@ -629,10 +606,11 @@ messages:
          propagate;
       }
 
-      % These checks seem to do double-duty, but this is so other countries can 
-      %  localize the words yet English speaking admins can still use the system.
+      % DM mode commands use only string literals, not resources,
+      % to ensure the English command always works regardless of any
+      % resource localization.
 
-      if StringEqual(string,dm_help_command)
+      if StringEqual(string,"help")
       {
          if pbSay_commands
          {
@@ -648,47 +626,41 @@ messages:
          }
       }
       
-      if StringEqual(string,dm_appeal_off_command)
-         OR StringEqual(string,"appeal off")
+      if StringEqual(string,"appeal off")
       {
          pbAppeal = pbAppeal & ~1;
          Send(self,@MsgSendUser,#message_rsc=dm_appeal_off);
          return;
       }
 
-      if StringEqual(string,dm_appeal_on_command)
-         OR StringEqual(string,"appeal on")
+      if StringEqual(string,"appeal on")
       {
          pbAppeal = pbAppeal | 1;
          Send(self,@MsgSendUser,#message_rsc=dm_appeal_on);
          return;
       }
 
-      if StringEqual(string,dm_guest_appeal_off_command)
-         OR StringEqual(string,"guest appeal off")
+      if StringEqual(string,"guest appeal off")
       {
          pbAppeal = pbAppeal & ~2;
          Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_off);
          return;
       }
       
-      if StringEqual(string,dm_guest_appeal_on_command)
-         OR StringEqual(string,"guest appeal on")
+      if StringEqual(string,"guest appeal on")
       {
          pbAppeal = pbAppeal | 2;
          Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_on);
          return;
       }
 
-      if StringEqual(string,dm_stealth_on_command)
-         OR StringEqual(string,"stealth on")
+      if StringEqual(string,"stealth on")
       {
          pbStealth = TRUE;
          Send(self,@MsgSendUser,#message_rsc=dm_stealth_on);
          return;
       }
-      if StringEqual(string,dm_stealth_off_command)
-         OR StringEqual(string,"stealth off")
+      if StringEqual(string,"stealth off")
       {
          pbStealth = FALSE;
          Send(self,@MsgSendUser,#message_rsc=dm_stealth_off);
@@ -704,8 +676,7 @@ messages:
 
       if pbActor
       {
-         if StringEqual(string,dm_hidden_command)
-            OR StringEqual(string,"hidden")
+         if StringEqual(string,"hidden")
          {
             if NOT (piDMFlags & DMFLAG_HIDDEN)
             {
@@ -730,8 +701,7 @@ messages:
             return;
          }
 
-         if StringEqual(string,dm_blank_command)
-            OR StringEqual(string,"blank")
+         if StringEqual(string,"blank")
          {
             % Make everyone think we left the room.
             lObjects = Send(poOwner,@GetHolderActive);
@@ -765,10 +735,9 @@ messages:
             return;
          }
          
-         if StringContain(string,dm_disguise_command)
-            OR StringContain(string,"disguise")
+         if StringContain(string,"disguise")
          {
-           StringSubstitute(string,dm_disguise_command," ");
+           StringSubstitute(string,"disguise"," ");
            StringSubstitute(string,"disguise"," ");
          
            % Checks art archive, if no matches goes to NPCs.
@@ -817,8 +786,7 @@ messages:
            return;
         }
 
-        if StringEqual(string,dm_plain_command) OR StringEqual(string,dm_human_command)
-           OR StringEqual(string,"plain") OR StringEqual(string,"human")
+        if StringEqual(string,"plain") OR StringEqual(string,"human")
         {
            Send(self,@ResetPlayerIcon,#alldone=FALSE);
            pbMorph = FALSE;
@@ -855,15 +823,14 @@ messages:
            return;
         }
          
-         if (StringEqual(string,dm_rumble_command) OR StringEqual(string,"rumble"))
+         if (StringEqual(string,"rumble"))
          {
             Send(poOwner,@Rumble);
 
             return;
          }
       
-         if (StringContain(string,dm_event_sign_command)
-             OR StringContain(string,"event sign"))
+         if (StringContain(string,"event sign"))
          {
             oObject = create(&EventSign);
 
@@ -874,8 +841,7 @@ messages:
          }
       }
 
-      if StringEqual(string,dm_good_command)
-         OR StringEqual(string,"good")
+      if StringEqual(string,"good")
       {
          piKarma = 10000;
          Send(self,@NewKarma);
@@ -889,8 +855,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_neutral_command)
-         OR StringEqual(string,"neutral")
+      if StringEqual(string,"neutral")
       {
          piKarma = 0;
          Send(self,@NewKarma);
@@ -904,8 +869,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_evil_command)
-         OR StringEqual(string,"evil")
+      if StringEqual(string,"evil")
       {
          piKarma = -10000;
          Send(self,@NewKarma);
@@ -971,8 +935,7 @@ messages:
          }
       }
 
-      if StringContain(string,dm_monster_budget_command)
-         OR StringContain(string,"monster budget")
+      if StringContain(string,"monster budget")
       {
          Send(self,@ReportMonsterBudget);
          
@@ -980,8 +943,7 @@ messages:
       }
 
       if (StringContain(string,dm_makemonster) OR StringContain(string,"monster"))
-         AND NOT (StringContain(string,dm_monster_authorize_command)
-                  OR StringContain(string,"monster authorize")) 
+         AND NOT (StringContain(string,"monster authorize")) 
       {
          bFound = FALSE;
          lTemplate = Send(SYS,@GetMonsterTemplates);
@@ -1063,12 +1025,10 @@ messages:
       }
 
       if pbMonsterMaker
-         AND (StringContain(string,dm_monster_authorize_command)
-              OR StringContain(string,"monster authorize"))
+         AND (StringContain(string,"monster authorize"))
       {
          temp = CreateString();
          temp = SetString(temp, string);
-         StringSubstitute(temp,dm_monster_authorize_command,"");
          StringSubstitute(temp,"monster authorize","");
          StringSubstitute(temp," ","");
 
@@ -1411,8 +1371,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_roomgive_command)
-         OR StringContain(string,"roomgive")
+      if StringContain(string,"roomgive")
       {
          iGiven = 0;
          lTemplate = Send(SYS,@GetItemTemplates);

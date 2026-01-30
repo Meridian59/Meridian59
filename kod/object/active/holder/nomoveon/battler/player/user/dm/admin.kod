@@ -33,18 +33,8 @@ resources:
 
    admin_create_itematt_command = "create item attribute"
    admin_create_unrevealed_itematt_command = "create unrevealed itematt"
-   admin_anonymous_command = "anonymous"
-   admin_shadow_command = "shadow"
    admin_relic_command = "relic"
-   admin_start_tour_command = "start tour"
-   admin_end_tour_command = "end tour"
-   admin_mortal_command = "mortal"
-   admin_immortal_command = "immortal"
-   admin_create_dynamic_light_command = "place dynamic light"
    admin_create_ornamental_object = "place ornament"
-   admin_logoffghost_on_command = "logoffghost on"
-   admin_logoffghost_off_command = "logoffghost off"
-   admin_logoffghost_temp_off_command = "logoffghost temp off"
 
    admin_no_longer = "This command no longer exists; try the DM command form."
 
@@ -141,6 +131,10 @@ messages:
    {
       local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute;
 
+      % Admin mode commands use only string literals, not resources,
+      % to ensure the English command always works regardless of any
+      % resource localization.
+
       % Everything below this point involves checks for commands issued through the SAY_DM
       % (dm <command here>) channel.
       if (type <> SAY_DM)
@@ -148,13 +142,12 @@ messages:
          propagate;
       }
 
-      bShouldRevealAttribute = NOT StringContain(string, admin_create_unrevealed_itematt_command);
+      bShouldRevealAttribute = NOT StringContain(string, "create unrevealed itematt");
       
       % if bShouldRevealAttribute ends up FALSE, we've already passed the 
       % dialog check for an attempt to create an item attribute.  Otherwise,
       % check the dialog for the standard item attribute creation strings 
       if (NOT bShouldRevealAttribute
-         OR StringContain(string,admin_create_itematt_command)
          OR StringContain(string,"create itematt"))
       {
          %% Only works on weapons for now.
@@ -208,8 +201,7 @@ messages:
          return;
       }
 
-      if (StringContain(string,admin_relic_command)
-          OR StringContain(string,"relic"))
+      if (StringContain(string,"relic"))
       {
          if (StringContain(string,"1") OR StringContain(string,"heirloom"))
          {
@@ -247,8 +239,7 @@ messages:
          }
       }
 
-      if StringEqual(string,admin_anonymous_command)
-         OR StringEqual(string,"anonymous")
+      if StringEqual(string,"anonymous")
       {
          if NOT (piFlags & PFLAG_ANONYMOUS)
          {
@@ -280,8 +271,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_shadow_command)
-         OR StringEqual(string,"shadow")
+      if StringEqual(string,"shadow")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_black);
          Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
@@ -292,24 +282,21 @@ messages:
       }
 
 
-      if StringEqual(string,admin_start_tour_command)
-         OR StringEqual(string,"start tour")
+      if StringEqual(string,"start tour")
       {
          Send(self,@StartTour);
 
          return;
       }
 
-      if StringEqual(string,admin_end_tour_command)
-         OR StringEqual(string,"end tour")
+      if StringEqual(string,"end tour")
       {
          Send(self,@EndTour);
 
          return;
       }
 
-      if StringEqual(string,admin_mortal_command)
-         or StringEqual(string,"mortal")
+      if StringEqual(string,"mortal")
       {
          pbImmortal = FALSE;
 
@@ -328,8 +315,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_immortal_command)
-         OR StringEqual(string,"immortal")
+      if StringEqual(string,"immortal")
       {
          pbImmortal = pbImmortalSave;
 
@@ -357,7 +343,7 @@ messages:
       }
 
       %%% Code for placing an ornamental object
-      if StringContain(string, admin_create_ornamental_object)
+      if StringContain(string,"place ornament")
       {
          oObject = Create(&OrnamentalObject, #type=OO_DUNG);
          Send(oObject, @PlaceAt, #what=self);
@@ -367,8 +353,7 @@ messages:
 
       %%% Code for placing light items.
 
-      if StringEqual(string,admin_create_dynamic_light_command)
-         OR StringEqual(string,"place dynamic light")
+      if StringEqual(string,"place dynamic light")
       {
          oObject = create(&DynamicLight,#bVisible=TRUE);
 
@@ -430,8 +415,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_logoffghost_on_command)
-         OR StringEqual(string,"logoffghost on")
+      if StringEqual(string,"logoffghost on")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_on);
          Send(SYS,@SetLogoffPenaltyEnable,#enable=TRUE);
@@ -439,8 +423,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_logoffghost_off_command)
-         OR StringEqual(string,"logoffghost off")
+      if StringEqual(string,"logoffghost off")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_off);
          Send(SYS,@SetLogoffPenaltyEnable,#enable=FALSE);
@@ -448,8 +431,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_logoffghost_temp_off_command)
-         OR StringEqual(string,"logoffghost temp off")
+      if StringEqual(string,"logoffghost temp off")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_temp_off);
          Send(SYS,@TempDisableLogoffPenalties);         

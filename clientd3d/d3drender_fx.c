@@ -315,18 +315,18 @@ void SandstormInit(void)
 void RainInit(void)
 {
 	const int RAIN_EMITTER_RADIUS = 7000;
-	const int RAIN_EMITTER_ENERGY = 80;
+	const int RAIN_EMITTER_ENERGY = 200;
 	const int RAIN_EMITTER_HEIGHT = 3000;
-	const int RAIN_TIMER = 1;
+	const int RAIN_TIMER = 15; // Milliseconds
 	const bool RAIN_WEATHER_EFFECT = true;
-	const int RAIN_VELOCITY = -120;
-	const int RAIN_RANDOM_ROT = 2;
+	const int RAIN_VELOCITY = -250;
+	const int RAIN_RANDOM_ROT = 0;
 	// Rain emitter position is offsetted since they aren't centered on the player.
 	const int RAIN_EMITTER_OFFSET = 600;
 
 	D3DParticleSystemReset(&rainParticleSystem);
 	emitter* newEmitter = nullptr;
-	for(int i = 0; i < 16; i++)
+	for(int i = 0; i < 8; i++)
 	{
 		newEmitter = D3DParticleEmitterInit(&rainParticleSystem, RAIN_EMITTER_ENERGY, RAIN_TIMER, RAIN_WEATHER_EFFECT);
 		D3DParticleEmitterSetPos(newEmitter, -RAIN_EMITTER_OFFSET, -RAIN_EMITTER_OFFSET, RAIN_EMITTER_HEIGHT);
@@ -345,18 +345,18 @@ void RainInit(void)
 void SnowInit(void)
 {
 	const int SNOW_EMITTER_RADIUS = 7000;
-	const int SNOW_EMITTER_ENERGY = 400;
+	const int SNOW_EMITTER_ENERGY = 800;
 	const int SNOW_EMITTER_HEIGHT = 3000;
-	const int SNOW_FALL_SPEED = -12;
-	const int SNOW_TIMER = 1;
-	const int SNOW_RANDOM_ROT = 2;
+	const int SNOW_FALL_SPEED = -40;
+	const int SNOW_TIMER = 15;  // Milliseconds
+	const int SNOW_RANDOM_ROT = 0;
 	const bool SNOW_WEATHER_EFFECT = true;
 	// Snow emitter position is offsetted since they aren't centered on the player.
 	const int SNOW_EMITTER_OFFSET = 600;
 	
 	D3DParticleSystemReset(&snowParticleSystem);
 	emitter* newEmitter = nullptr;
-	for(int i = 0; i < 16; i++)
+	for(int i = 0; i < 8; i++)
 	{
 		newEmitter = D3DParticleEmitterInit(&snowParticleSystem, SNOW_EMITTER_ENERGY, SNOW_TIMER, SNOW_WEATHER_EFFECT);
 		D3DParticleEmitterSetPos(newEmitter, -SNOW_EMITTER_OFFSET, -SNOW_EMITTER_OFFSET, SNOW_EMITTER_HEIGHT);

@@ -41,6 +41,7 @@ emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, in
 	memset(pEmitter, 0, sizeof(emitter));
 
 	pEmitter->numParticles = 0;
+	pEmitter->nextSlot = 0;
 	pEmitter->energy = energy;
 	pEmitter->timer = timerBase;
 	pEmitter->timerBase = timerBase;
@@ -111,230 +112,216 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 	D3DCacheSystemReset(pCacheSystem);
 	D3DRenderPoolReset(pPool, &D3DMaterialParticlePool);
+	
+	// Calculate time (in milliseconds) since the last frame.
+	auto currentFrameTime = steady_clock::now();
+	auto duration = duration_cast<milliseconds>(currentFrameTime - lastFrameTime);
+	msDeltaTime = duration.count();
+	lastFrameTime = currentFrameTime;
 
 	for (list = pParticleSystem->emitterList; list != NULL; list = list->next)
 	{
 		pEmitter = (emitter *)list->data;
-		
-		// Calculate time (in milliseconds) since the last frame.
-		auto currentFrameTime = steady_clock::now();
-		auto duration = duration_cast<milliseconds>(currentFrameTime - lastFrameTime);
-		msDeltaTime = duration.count();
-		lastFrameTime = currentFrameTime;
 		
 		// Update existing particles
 		for (curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
 		{
 			pParticle = &pEmitter->particles[curParticle];
 
-			if (--pParticle->energy <= 0)
+			// Skip dead particles, or end particles that run out of energy.
+			if (pParticle->energy <= 0 || --pParticle->energy <= 0)
 			{
-				D3DParticleDestroy(pParticle);
-				pEmitter->numParticles--;
+				continue;
 			}
-			else
-			{				
-				if (pEmitter->bWeatherEffect)
+			// Update lifetime for weather particles since only they track time.
+			if (pEmitter->bWeatherEffect)
+			{
+				pParticle->lifetime += msDeltaTime;
+				if (pParticle->lifetime >= pParticle->maxTime)
 				{
-					pParticle->lifetime += msDeltaTime;
-					if (pParticle->lifetime >= pParticle->maxTime)
-					{
-						pParticle->energy = 0;
-						continue;
-					}
+					pParticle->energy = 0;
+					continue;
 				}
-				
-				custom_xyzw	velocity;
-
-				velocity.x = pParticle->velocity.x;
-				velocity.y = pParticle->velocity.y;
-				velocity.z = pParticle->velocity.z;
-				velocity.w = 1.0f;
-
-				MatrixRotateX(&matrix, pParticle->rotation.x);
-				MatrixRotateY(&rotate, pParticle->rotation.y);
-				MatrixMultiply(&rotate, &matrix, &rotate);
-				MatrixRotateZ(&matrix, pParticle->rotation.z);
-				MatrixMultiply(&rotate, &rotate, &matrix);
-
-				MatrixMultiplyVector(&velocity, &rotate, &velocity);
-
-				pParticle->velocity.x = velocity.x;
-				pParticle->velocity.y = velocity.y;
-				pParticle->velocity.z = velocity.z;
-
-				pParticle->oldPos.x = pParticle->pos.x;
-				pParticle->oldPos.y = pParticle->pos.y;
-				pParticle->oldPos.z = pParticle->pos.z;
-
-				pParticle->pos.x += pParticle->velocity.x;
-				pParticle->pos.y += pParticle->velocity.y;
-				pParticle->pos.z += pParticle->velocity.z;
-				
-				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
-				assert(pPacket);
-				pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
-
-				pChunk = D3DRenderChunkNew(pPacket);
-				assert(pChunk);
-				pChunk->numIndices = 2;
-				pChunk->numVertices = 2;
-				pChunk->numPrimitives = 1;
-				pChunk->pMaterialFctn = &D3DMaterialParticleChunk;
-
-				MatrixTranslate(&pChunk->xForm, pParticle->pos.x, pParticle->pos.z, pParticle->pos.y);
-
-				CHUNK_XYZ_SET(pChunk, 0, 0, 0, 0);
-				CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y,
-					-pParticle->velocity.z);
-				CHUNK_BGRA_SET(pChunk, 0, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
-					pParticle->bgra.a);
-				CHUNK_BGRA_SET(pChunk, 1, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
-					0);
-				CHUNK_INDEX_SET(pChunk, 0, 0);
-				CHUNK_INDEX_SET(pChunk, 1, 1);
 			}
+
+			custom_xyzw	velocity;
+
+			velocity.x = pParticle->velocity.x;
+			velocity.y = pParticle->velocity.y;
+			velocity.z = pParticle->velocity.z;
+			velocity.w = 1.0f;
+
+			MatrixRotateX(&matrix, pParticle->rotation.x);
+			MatrixRotateY(&rotate, pParticle->rotation.y);
+			MatrixMultiply(&rotate, &matrix, &rotate);
+			MatrixRotateZ(&matrix, pParticle->rotation.z);
+			MatrixMultiply(&rotate, &rotate, &matrix);
+
+			MatrixMultiplyVector(&velocity, &rotate, &velocity);
+
+			pParticle->velocity.x = velocity.x;
+			pParticle->velocity.y = velocity.y;
+			pParticle->velocity.z = velocity.z;
+
+			pParticle->oldPos.x = pParticle->pos.x;
+			pParticle->oldPos.y = pParticle->pos.y;
+			pParticle->oldPos.z = pParticle->pos.z;
+
+			pParticle->pos.x += pParticle->velocity.x;
+			pParticle->pos.y += pParticle->velocity.y;
+			pParticle->pos.z += pParticle->velocity.z;
+			
+			pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
+			assert(pPacket);
+			pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
+
+			pChunk = D3DRenderChunkNew(pPacket);
+			assert(pChunk);
+			pChunk->numIndices = 2;
+			pChunk->numVertices = 2;
+			pChunk->numPrimitives = 1;
+			pChunk->pMaterialFctn = &D3DMaterialParticleChunk;
+
+			MatrixTranslate(&pChunk->xForm, pParticle->pos.x, pParticle->pos.z, pParticle->pos.y);
+
+			CHUNK_XYZ_SET(pChunk, 0, 0, 0, 0);
+			CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y,
+				-pParticle->velocity.z);
+			CHUNK_BGRA_SET(pChunk, 0, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
+				pParticle->bgra.a);
+			CHUNK_BGRA_SET(pChunk, 1, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
+				0);
+			CHUNK_INDEX_SET(pChunk, 0, 0);
+			CHUNK_INDEX_SET(pChunk, 1, 1);
 		}
 
 		// Creating new particles
-		if (pEmitter->numParticles < MAX_PARTICLES)
+		pEmitter->timer -= msDeltaTime;
+		if (pEmitter->timer <= 0)
 		{
-			int	curParticle;
+			// Particles spawn one at a time and use circular buffing to track the next open particle.
+			pParticle = &pEmitter->particles[pEmitter->nextSlot];
 
-			if (--pEmitter->timer <= 0)
+			pParticle->pos.x = pEmitter->pos.x;
+			pParticle->pos.y = pEmitter->pos.y;
+			pParticle->pos.z = pEmitter->pos.z;
+
+			if (pEmitter->randomPos)
 			{
-				for (curParticle = 0; curParticle < MAX_PARTICLES; curParticle++)
+				int	sign = 1;
+
+				if ((int)rand() & 1)
+					sign = -sign;
+				pParticle->pos.x += sign * ((int)rand() & pEmitter->randomPos);
+
+				if ((int)rand() & 1)
+					sign = -sign;
+				pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
+				
+				// Weather particles spawn randomly between half height to max height.
+				if (pEmitter->bWeatherEffect)
 				{
-					pParticle = &pEmitter->particles[curParticle];
-
-					if (pParticle->energy == 0)
-					{
-						pParticle->pos.x = pEmitter->pos.x;
-						pParticle->pos.y = pEmitter->pos.y;
-						pParticle->pos.z = pEmitter->pos.z;
-
-						if (pEmitter->randomPos)
-						{
-							int	sign = 1;
-
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.x += sign * ((int)rand() & pEmitter->randomPos);
-
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
-							
-							// Weather particles spawn randomly between half height to max height.
-							if (pEmitter->bWeatherEffect)
-							{
-								pParticle->pos.z -= ((int)rand() & (pEmitter->randomPos)/2);
-							}
-							// Otherwise, randomize z-position if this isn't a weather particle.
-							else
-							{
-								if ((int)rand() & 1)
-									sign = -sign;
-								pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
-							}
-						}
-
-						pParticle->velocity.x = pEmitter->velocity.x;
-						pParticle->velocity.y = pEmitter->velocity.y;
-						pParticle->velocity.z = pEmitter->velocity.z;
-
-						pParticle->rotation.x = pEmitter->rotation.x;
-						pParticle->rotation.y = pEmitter->rotation.y;
-						pParticle->rotation.z = pEmitter->rotation.z;
-
-						// Randomizes z-velocity a bit for weather effects.
-						if (pEmitter->bWeatherEffect)
-						{
-							pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
-						}
-						
-						// Each weather particle store the height of the ceiling/floor where they will clear away.
-						if (pEmitter->bWeatherEffect)
-						{				
-							pParticle->lifetime = 0;
-							
-							BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
-
-							if (leaf && leaf->sector->ceiling)
-							{
-								// We convert ceiling height to fineness units to be more precise on where the
-								// weather particles disappear, so that they won't show through the ceiling.
-								float ceilingHeight = GetCeilingHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector) * FINENESS;
-								
-								if (pParticle->pos.z < ceilingHeight)
-								{
-									pParticle->pos.z = ceilingHeight;
-								}
-								pParticle->maxTime = (pParticle->pos.z - ceilingHeight) / abs(pParticle->velocity.z);	
-							}
-							else if (leaf && leaf->sector->floor)
-							{
-								float floorHeight = GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector);
-
-								if (pParticle->pos.z < floorHeight)
-								{
-									pParticle->pos.z = floorHeight;
-								}
-								pParticle->maxTime = (pParticle->pos.z - floorHeight) / abs(pParticle->velocity.z);						
-							}
-							// If weather particle is out of bounds, set maxTime to a few seconds so
-							// it still shows properly either outdoors or from outside windows.
-							else
-							{
-								pParticle->maxTime = 2000;
-							}
-						}
-
-						if (pEmitter->randomRot)
-						{
-							float	random, sign;
-
-							sign = 1;
-
-							random = (int)rand() % pEmitter->randomRot;
-							if (random <= 1)
-								random = 2;
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->rotation.x += (pEmitter->rotation.x * random * sign);
-							pParticle->pos.x += (int)rand() % FINENESS;
-
-							random = (int)rand() % pEmitter->randomRot;
-							if (random <= 1)
-								random = 2;
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->rotation.y += (pEmitter->rotation.y * random * sign);
-							pParticle->pos.y += (int)rand() % FINENESS;
-
-							random = (int)rand() % pEmitter->randomRot;
-							if (random <= 1)
-								random = 2;
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->rotation.z += (pEmitter->rotation.z * random * sign);
-							pParticle->pos.z += (int)rand() % FINENESS;
-						}
-
-						pParticle->bgra.b = pEmitter->bgra.b;
-						pParticle->bgra.g = pEmitter->bgra.g;
-						pParticle->bgra.r = pEmitter->bgra.r;
-						pParticle->bgra.a = pEmitter->bgra.a;
-
-						pParticle->energy = pEmitter->energy;
-
-						pEmitter->numParticles++;
-						curParticle = MAX_PARTICLES;
-					}
+					pParticle->pos.z -= ((int)rand() & (pEmitter->randomPos)/2);
 				}
-
-				pEmitter->timer = pEmitter->timerBase;
+				// Otherwise, randomize z-position if this isn't a weather particle.
+				else
+				{
+					if ((int)rand() & 1)
+						sign = -sign;
+					pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
+				}
 			}
+
+			pParticle->velocity.x = pEmitter->velocity.x;
+			pParticle->velocity.y = pEmitter->velocity.y;
+			pParticle->velocity.z = pEmitter->velocity.z;
+
+			pParticle->rotation.x = pEmitter->rotation.x;
+			pParticle->rotation.y = pEmitter->rotation.y;
+			pParticle->rotation.z = pEmitter->rotation.z;
+
+			// Randomizes z-velocity a bit for weather effects.
+			if (pEmitter->bWeatherEffect)
+			{
+				pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
+			}
+			
+			// Each weather particle calculates the time it takes for them to land on the ground.
+			if (pEmitter->bWeatherEffect)
+			{				
+				pParticle->lifetime = 0;
+				
+				BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
+				if (leaf && leaf->sector->ceiling)
+				{
+					pParticle->maxTime = 0;
+					pParticle->energy = 0; 
+					continue;	
+				}
+				else if (leaf && leaf->sector->floor)
+				{
+					float floorHeight = GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector);
+
+					if (pParticle->pos.z < floorHeight)
+					{
+						pParticle->maxTime = 0;
+						pParticle->energy = 0; 
+						continue;
+					}
+					pParticle->maxTime = abs((pParticle->pos.z - floorHeight) / pParticle->velocity.z) * 1000;			
+				}
+				// Out-of-bound weather particles still spawn for a few seconds so they can still show normally
+				// outdoors beyond areas like forest walls, or from outside windows.
+				else
+				{
+					pParticle->maxTime = 2000;
+				}
+			}
+
+			if (pEmitter->randomRot)
+			{
+				float	random, sign;
+
+				sign = 1;
+
+				random = (int)rand() % pEmitter->randomRot;
+				if (random <= 1)
+					random = 2;
+				if ((int)rand() & 1)
+					sign = -sign;
+				pParticle->rotation.x += (pEmitter->rotation.x * random * sign);
+				pParticle->pos.x += (int)rand() % FINENESS;
+
+				random = (int)rand() % pEmitter->randomRot;
+				if (random <= 1)
+					random = 2;
+				if ((int)rand() & 1)
+					sign = -sign;
+				pParticle->rotation.y += (pEmitter->rotation.y * random * sign);
+				pParticle->pos.y += (int)rand() % FINENESS;
+
+				random = (int)rand() % pEmitter->randomRot;
+				if (random <= 1)
+					random = 2;
+				if ((int)rand() & 1)
+					sign = -sign;
+				pParticle->rotation.z += (pEmitter->rotation.z * random * sign);
+				pParticle->pos.z += (int)rand() % FINENESS;
+			}
+
+			pParticle->bgra.b = pEmitter->bgra.b;
+			pParticle->bgra.g = pEmitter->bgra.g;
+			pParticle->bgra.r = pEmitter->bgra.r;
+			pParticle->bgra.a = pEmitter->bgra.a;
+
+			pParticle->energy = pEmitter->energy;
+			
+			pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;
+			if (pEmitter->numParticles < MAX_PARTICLES)
+			{
+				pEmitter->numParticles++;
+			}
+			pEmitter->timer = pEmitter->timerBase;
 		}
 	}
 

@@ -28,6 +28,7 @@ typedef struct particle
 typedef struct emitter
 {
 	int				numParticles;
+	int				nextSlot;
 	int				energy;
 	int				timer;
 	int				timerBase;

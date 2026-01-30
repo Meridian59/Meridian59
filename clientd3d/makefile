@@ -89,7 +89,7 @@ OBJS = \
         $(OUTDIR)\graphctl.obj \
         $(OUTDIR)\animate.obj \
         $(OUTDIR)\config.obj \
-        $(OUTDIR)\project.obj \
+        $(OUTDIR)\projectile.obj \
         $(OUTDIR)\uselist.obj \
         $(OUTDIR)\move.obj \
         $(OUTDIR)\startup.obj \

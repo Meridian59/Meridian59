@@ -36,7 +36,7 @@ messages:
                      [ &Emerald, 5 ],
                      [ &Sapphire, 4 ],
                      [ &InkyCap, 4 ],
-                     [ &KnightShield, 1 ],
+                     [ &KnightShield, 5 ],
                      [ &DiscordScroll, 1 ],
                      [ &IdentifyWand, 1 ]
                    ];

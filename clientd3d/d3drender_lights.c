@@ -710,11 +710,13 @@ void D3DRenderLightsShutdown(LPDIRECT3DTEXTURE9 whiteTex, LPDIRECT3DTEXTURE9 ora
    if (whiteTex)
    {
       IDirect3DTexture9_Release(whiteTex);
+      whiteTex = NULL;
    }
    if (orangeTex)
    {
       IDirect3DTexture9_Release(orangeTex);
-   }
+      orangeTex = NULL;
+   }		
 }
 
 void D3DLightsReportFlickerPerf(void)

@@ -44,12 +44,10 @@ LPDIRECT3DDEVICE9		gpD3DDevice = NULL;
 LPDIRECT3DTEXTURE9		gpDLightAmbient = NULL;
 LPDIRECT3DTEXTURE9		gpDLightWhite = NULL;
 LPDIRECT3DTEXTURE9		gpDLightOrange = NULL;
-LPDIRECT3DTEXTURE9		gpBloom = NULL;
 LPDIRECT3DTEXTURE9		gpNoLookThrough = NULL;
 LPDIRECT3DTEXTURE9		gpBackBufferTex[16];
 LPDIRECT3DTEXTURE9		gpBackBufferTexFull;
 LPDIRECT3DTEXTURE9		gpViewElements[NUM_VIEW_ELEMENTS];
-LPDIRECT3DTEXTURE9		gpSunTex;
 
 D3DVIEWPORT9			gViewport;
 D3DCAPS9				gD3DCaps;
@@ -418,17 +416,12 @@ void D3DRenderShutDown(void)
 		D3DRenderPoolShutdown(&gEffectPool);
 		D3DRenderPoolShutdown(&gParticlePool);
 
-      D3DRenderLightsShutdown(gpDLightWhite, gpDLightOrange);
-		gpDLightWhite = NULL;
-		gpDLightOrange = NULL;
-      IDirect3DTexture9_Release(gpBloom);
-		gpBloom = NULL;
-      IDirect3DTexture9_Release(gpNoLookThrough);
+		D3DRenderLightsShutdown(gpDLightWhite, gpDLightOrange);
+
+		IDirect3DTexture9_Release(gpNoLookThrough);
 		gpNoLookThrough = NULL;
-      IDirect3DTexture9_Release(gpBackBufferTexFull);
+		IDirect3DTexture9_Release(gpBackBufferTexFull);
 		gpBackBufferTexFull = NULL;
-      IDirect3DTexture9_Release(gpSunTex);
-		gpSunTex = NULL;
 
 		if (gFont.pTexture)
 		{

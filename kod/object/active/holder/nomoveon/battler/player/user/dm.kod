@@ -43,18 +43,6 @@ resources:
    dm_makesignetwork = "You have created a signet ring (i.e. newbie quest egg)."
    dm_makesignetfail = "You were unable to create a signet ring at this time."
 
-   % Commands
-   dm_makemonster = "monster"
-   dm_event_sign_command = "event sign"
-   dm_makeitem = "item"
-   dm_createsignet = "item signet ring"
-   dm_createjunk = "item junk"
-   dm_getall = "get"
-   dm_gettotem = "totem"
-   dm_monster_budget_command = "monster budget"
-   dm_monster_authorize_command = "monster authorize"
-   dm_none = "none"
-
    dm_roomgive_command = "roomgive"
    dm_gave_to_number = "%s players received reward!"
 
@@ -65,9 +53,6 @@ resources:
    dm_blank = "You are now blank."
 
    dm_no_longer = "This command no longer exists.  Type DM HELP for more info."
-   dm_old_makeMonster = "makemonster"
-   dm_old_makeitem = "makeitem"
-   dm_old_getall = "get all"
 
    dm_hidden = "You are hidden from mortal eyes."
    dm_not_hidden = "Your are no longer hidden from mortal eyes."
@@ -642,8 +627,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_gettotem)
-         OR StringEqual(string,"totem")
+      if StringEqual(string,"totem")
       {
          Send(self,@NewHold,#what=Send(SYS,@GetTotem));
          return;
@@ -915,8 +899,8 @@ messages:
          return;
       }
 
-      if (StringContain(string,dm_makemonster) OR StringContain(string,"monster"))
-         AND NOT (StringContain(string,"monster authorize")) 
+      if StringContain(string,"monster")
+         AND NOT StringContain(string,"monster authorize")
       {
          bFound = FALSE;
          lTemplate = Send(SYS,@GetMonsterTemplates);
@@ -1025,9 +1009,9 @@ messages:
          }
          
          % if we got here, no valid monster name given
-         if StringContain(temp,dm_none)
+         if StringContain(temp,"none")
          {
-            StringSubstitute(temp,dm_none,"");
+            StringSubstitute(temp,"none","");
             StringSubstitute(temp," ","");
             oBard = Send(SYS,@FindUserByString,#string=temp);
             if oBard <> $ AND IsClass(oBard,&DM)
@@ -1141,7 +1125,6 @@ messages:
       }
 
       if StringEqual(string,"boost stats")
-         OR StringEqual(string,"boost stats")
       {
          % Boost all stats to max
          piMight = 50;
@@ -1296,16 +1279,14 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_createjunk)
-         OR StringContain(string,"item junk")
+      if StringContain(string,"item junk")
       {
          Send(self,@NewHold,#what=Create(&Junk));
 
          return;
       }
 
-      if StringEqual(string,dm_createsignet)
-         OR StringEqual(string,"item signet ring")
+      if StringEqual(string,"item signet ring")
       {
          if Send(SYS,@GetLibrary) <> $
          {
@@ -1354,8 +1335,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_makeitem)
-         OR StringContain(string,"item")
+      if StringContain(string,"item")
       {
          bFound = FALSE;
          lTemplate = Send(SYS,@GetItemTemplates);
@@ -1385,8 +1365,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_getall)
-         OR StringContain(string,"get")
+      if StringContain(string,"get")
       {
          Send(self,@GetAllOfItem,#string=string);
 

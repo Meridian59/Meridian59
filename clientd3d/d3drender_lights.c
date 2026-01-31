@@ -47,6 +47,10 @@ static float gLightScale = 0.45f;
 // Set to 0 to allow full control via gLightScale and object intensity.
 static const float MIN_WORLD_LIGHT_RADIUS = 0.0f;
 
+// Light map textures for dynamic lighting (white glow and orange glow)
+static LPDIRECT3DTEXTURE9 gpDLightWhite = NULL;
+static LPDIRECT3DTEXTURE9 gpDLightOrange = NULL;
+
 bool SetGlobalLightScale(float scale, int* redrawFlags)
 {
    float newScale = std::clamp(scale, 0.0f, 5.0f);
@@ -644,16 +648,16 @@ bool D3DLightsDebugPositionsEnabled(void)
    return debugLightPositions;
 }
 
-void D3DRenderLMapsBuild(LPDIRECT3DTEXTURE9* outWhiteTex, LPDIRECT3DTEXTURE9* outOrangeTex)
+void D3DRenderLMapsBuild(void)
 {
    D3DLOCKED_RECT lockedRect;
    unsigned char* pBits = NULL;
    int width, height;
 
    // white glow
-   IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, outWhiteTex, NULL);
+   IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpDLightWhite, NULL);
 
-   IDirect3DTexture9_LockRect(*outWhiteTex, 0, &lockedRect, NULL, 0);
+   IDirect3DTexture9_LockRect(gpDLightWhite, 0, &lockedRect, NULL, 0);
 
    pBits = (unsigned char*)lockedRect.pBits;
 
@@ -673,12 +677,12 @@ void D3DRenderLMapsBuild(LPDIRECT3DTEXTURE9* outWhiteTex, LPDIRECT3DTEXTURE9* ou
       }
    }
 
-   IDirect3DTexture9_UnlockRect(*outWhiteTex, 0);
+   IDirect3DTexture9_UnlockRect(gpDLightWhite, 0);
 
    // orange glow
-   IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, outOrangeTex, NULL);
+   IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpDLightOrange, NULL);
 
-   IDirect3DTexture9_LockRect(*outOrangeTex, 0, &lockedRect, NULL, 0);
+   IDirect3DTexture9_LockRect(gpDLightOrange, 0, &lockedRect, NULL, 0);
 
    pBits = (unsigned char*)lockedRect.pBits;
 
@@ -702,21 +706,31 @@ void D3DRenderLMapsBuild(LPDIRECT3DTEXTURE9* outWhiteTex, LPDIRECT3DTEXTURE9* ou
       }
    }
 
-   IDirect3DTexture9_UnlockRect(*outOrangeTex, 0);
+   IDirect3DTexture9_UnlockRect(gpDLightOrange, 0);
 }
 
-void D3DRenderLightsShutdown(LPDIRECT3DTEXTURE9 whiteTex, LPDIRECT3DTEXTURE9 orangeTex)
+void D3DRenderLightsShutdown(void)
 {
-   if (whiteTex)
+   if (gpDLightWhite)
    {
-      IDirect3DTexture9_Release(whiteTex);
-      whiteTex = NULL;
+      IDirect3DTexture9_Release(gpDLightWhite);
+      gpDLightWhite = NULL;
    }
-   if (orangeTex)
+   if (gpDLightOrange)
    {
-      IDirect3DTexture9_Release(orangeTex);
-      orangeTex = NULL;
-   }		
+      IDirect3DTexture9_Release(gpDLightOrange);
+      gpDLightOrange = NULL;
+   }
+}
+
+LPDIRECT3DTEXTURE9 D3DRenderLightsGetWhite(void)
+{
+   return gpDLightWhite;
+}
+
+LPDIRECT3DTEXTURE9 D3DRenderLightsGetOrange(void)
+{
+   return gpDLightOrange;
 }
 
 void D3DLightsReportFlickerPerf(void)

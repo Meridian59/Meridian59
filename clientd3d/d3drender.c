@@ -40,10 +40,6 @@ d3d_render_packet_new	*gpPacket;
 LPDIRECT3D9				gpD3D = NULL;
 LPDIRECT3DDEVICE9		gpD3DDevice = NULL;
 
-// temp dynamic lightmaps
-LPDIRECT3DTEXTURE9		gpDLightAmbient = NULL;
-LPDIRECT3DTEXTURE9		gpDLightWhite = NULL;
-LPDIRECT3DTEXTURE9		gpDLightOrange = NULL;
 LPDIRECT3DTEXTURE9		gpNoLookThrough = NULL;
 LPDIRECT3DTEXTURE9		gpBackBufferTex[16];
 LPDIRECT3DTEXTURE9		gpBackBufferTexFull;
@@ -213,7 +209,7 @@ const font_3d& getFont3d()
 
 const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
 {
-	return gpDLightWhite;
+	return D3DRenderLightsGetWhite();
 }
 
 const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
@@ -344,7 +340,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 
    SetZBias(gpD3DDevice, 0);
 
-	D3DRenderLMapsBuild(&gpDLightWhite, &gpDLightOrange);
+	D3DRenderLMapsBuild();
 
 	ReleaseCapture();
 
@@ -416,12 +412,18 @@ void D3DRenderShutDown(void)
 		D3DRenderPoolShutdown(&gEffectPool);
 		D3DRenderPoolShutdown(&gParticlePool);
 
-		D3DRenderLightsShutdown(gpDLightWhite, gpDLightOrange);
+		D3DRenderLightsShutdown();
 
-		IDirect3DTexture9_Release(gpNoLookThrough);
-		gpNoLookThrough = NULL;
-		IDirect3DTexture9_Release(gpBackBufferTexFull);
-		gpBackBufferTexFull = NULL;
+		if (gpNoLookThrough)
+		{
+			IDirect3DTexture9_Release(gpNoLookThrough);
+			gpNoLookThrough = NULL;
+		}
+		if (gpBackBufferTexFull)
+		{
+			IDirect3DTexture9_Release(gpBackBufferTexFull);
+			gpBackBufferTexFull = NULL;
+		}
 
 		if (gFont.pTexture)
 		{
@@ -598,7 +600,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
-	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange);
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, D3DRenderLightsGetOrange());
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{

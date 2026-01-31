@@ -67,11 +67,16 @@ bool D3DLightsDebugPositionsEnabled(void);
 
 // Build light map textures (white glow, orange glow).
 // Called during D3D initialization.
-// Returns pointers to the created textures.
-void D3DRenderLMapsBuild(LPDIRECT3DTEXTURE9* outWhiteTex, LPDIRECT3DTEXTURE9* outOrangeTex);
+void D3DRenderLMapsBuild(void);
 
 // Release light map textures during shutdown.
-void D3DRenderLightsShutdown(LPDIRECT3DTEXTURE9 whiteTex, LPDIRECT3DTEXTURE9 orangeTex);
+void D3DRenderLightsShutdown(void);
+
+// Get the white light map texture.
+LPDIRECT3DTEXTURE9 D3DRenderLightsGetWhite(void);
+
+// Get the orange light map texture.
+LPDIRECT3DTEXTURE9 D3DRenderLightsGetOrange(void);
 
 // Set the global light scale multiplier (0.0 to 5.0).
 // This controls the radius of all dynamic light sources.

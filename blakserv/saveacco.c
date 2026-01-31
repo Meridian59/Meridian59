@@ -39,18 +39,14 @@ bool SaveAccounts(char *filename)
 
 void SaveEachAccount(account_node *a)
 {
-   unsigned char *ptr;
-   
-   fprintf(accofile,"ACCOUNT %i:%s:",a->account_id,a->name);
+   fprintf(accofile,"ACCOUNT %i:%s:",a->account_id,a->name.c_str());
 
-   ptr = (unsigned char *) a->password;
-   while (*ptr != 0)
+   for (auto it : a->password)
    {
-      fprintf(accofile,"%02x",*ptr);
-      ptr++;
+     fprintf(accofile,"%02x", (unsigned char) it);
    }
 
-   if (a->password[0] == 0)
+   if (a->password.empty())
       fprintf(accofile,"None");
 
    fprintf(accofile,":%i:%lli:%i:%lli\n",a->type,(long long) a->last_login_time,

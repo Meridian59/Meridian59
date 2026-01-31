@@ -25,6 +25,9 @@ struct account_node
    INT64 last_login_time;
    INT64 suspend_time;
    account_node *next;
+
+   account_node();
+   ~account_node();
 };
 
 void InitAccount(void);
@@ -38,9 +41,9 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
 void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_login_time,
 		 INT64 suspend_time, int credits);
 bool DeleteAccount(int account_id);
-void SetAccountName(account_node *a,char *name);
-void SetAccountPassword(account_node *a,char *password);
-void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password);
+void SetAccountName(account_node *a,const char *name);
+void SetAccountPassword(account_node *a,const char *password);
+void SetAccountPasswordAlreadyEncrypted(account_node *a,const char *password);
 void SetNextAccountID(int accountNum);
 account_node * GetAccountByID(int account_id);
 account_node * GetAccountByName(const char *name);

@@ -23,6 +23,20 @@ int next_account_id;
 
 static account_node console_account;
 
+account_node::account_node()
+{
+   AddMemoryCount(MALLOC_ID_ACCOUNT, sizeof(*this));
+   AddMemoryCount(MALLOC_ID_ACCOUNT, name.capacity());
+   AddMemoryCount(MALLOC_ID_ACCOUNT, password.capacity());
+}
+
+account_node::~account_node()
+{
+   AddMemoryCount(MALLOC_ID_ACCOUNT, - (int) sizeof(*this));
+   AddMemoryCount(MALLOC_ID_ACCOUNT, - (int) name.capacity());
+   AddMemoryCount(MALLOC_ID_ACCOUNT, - (int) password.capacity());
+}
+
 /* local function prototypes */
 void InsertAccount(account_node *a);
 
@@ -94,20 +108,16 @@ void InsertAccount(account_node *a)
 
 bool CreateAccount(char *name,char *password,int type,int *account_id)
 {
-   char buf[ENCRYPT_LEN+1];
    account_node *a;
 
-	if (GetAccountByName(name) != NULL)
-		return false;
+   if (GetAccountByName(name) != NULL)
+      return false;
 
    a = new account_node;
    a->account_id = next_account_id++;
 
-   a->name = name;
- 
-   MDString(password,(unsigned char *) buf);
-   buf[ENCRYPT_LEN] = 0;
-   a->password = buf;
+   SetAccountName(a, name);
+   SetAccountPassword(a, password);
    a->type = type;
    a->last_login_time = 0;
    a->suspend_time = 0;
@@ -115,8 +125,8 @@ bool CreateAccount(char *name,char *password,int type,int *account_id)
 
    InsertAccount(a);
 
-	*account_id = a->account_id;
-	return true;
+   *account_id = a->account_id;
+   return true;
 }
 
 int CreateAccountSecurePassword(const char *name,const char *password,int type)
@@ -138,8 +148,8 @@ int CreateAccountSecurePassword(const char *name,const char *password,int type)
    a = new account_node;
    a->account_id = next_account_id++;
 
-   a->name = name;
-   a->password = buf;
+   SetAccountName(a, name);
+   SetAccountPasswordAlreadyEncrypted(a, buf);
    a->type = type;
    a->last_login_time = 0;
    a->suspend_time = 0;
@@ -179,8 +189,8 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
    if (account_id >= next_account_id)
       next_account_id = account_id+1;
 
-   a->name = name;
-   a->password = buf;
+   SetAccountName(a, name);
+   SetAccountPasswordAlreadyEncrypted(a, buf);
    a->type = type;
    a->last_login_time = 0;
    a->suspend_time = 0;
@@ -202,8 +212,8 @@ void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_lo
    if (account_id >= next_account_id)
       next_account_id = account_id + 1;
 
-   a->name = name;
-   a->password = password;
+   SetAccountName(a, name);
+   SetAccountPasswordAlreadyEncrypted(a, password);
    a->type = type;
    a->last_login_time = last_login_time;
    a->suspend_time = suspend_time;
@@ -236,7 +246,7 @@ bool DeleteAccount(int account_id)
       {
         /* remove from list, then free memory */
         a->next = temp->next;
-        
+
         delete temp;
         return true;
       }
@@ -246,23 +256,27 @@ bool DeleteAccount(int account_id)
    return false;
 }
 
-void SetAccountName(account_node *a,char *name)
+void SetAccountName(account_node *a, const char *name)
 {
+   AddMemoryCount(MALLOC_ID_ACCOUNT, - (int) a->name.capacity());
    a->name = name;
+   AddMemoryCount(MALLOC_ID_ACCOUNT, a->name.capacity());
 }
 
-void SetAccountPassword(account_node *a,char *password)
+void SetAccountPassword(account_node *a, const char *password)
 {
    char buf[ENCRYPT_LEN+1];
 
    MDString(password,(unsigned char *) buf);
    buf[ENCRYPT_LEN] = 0;
-   a->password = buf;
+   SetAccountPasswordAlreadyEncrypted(a, buf);
 }
 
-void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password)
+void SetAccountPasswordAlreadyEncrypted(account_node *a, const char *password)
 {
+   AddMemoryCount(MALLOC_ID_ACCOUNT, - (int) a->password.capacity());
    a->password = password;
+   AddMemoryCount(MALLOC_ID_ACCOUNT, a->password.capacity());
 }
 
 bool SuspendAccountAbsolute(account_node *a, INT64 suspend_time)

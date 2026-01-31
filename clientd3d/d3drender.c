@@ -829,25 +829,36 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
-		D3DCacheSystemReset(&gWorldCacheSystemStatic);
-		D3DCacheSystemReset(&gWallMaskCacheSystem);
+		// Defer static cache rebuild while invert effect is active.
+		// GetLightPaletteIndex returns PALETTE_INVERT during the flash effect, which would
+		// cause incorrect lighting values to be baked into the static geometry cache.
+		// Keep gD3DRedrawAll set so rebuild happens after the invert effect ends.
+		if (effects.invert > 0)
+		{
+			// Skip rebuild this frame - will be processed when invert effect ends
+		}
+		else
+		{
+			D3DCacheSystemReset(&gWorldCacheSystemStatic);
+			D3DCacheSystemReset(&gWallMaskCacheSystem);
 
-		D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
-		D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
+			D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
+			D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
 
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
-		
-		// Second pass: render transparent objects
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 
-		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+			// Second pass: render transparent objects
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-		gD3DRedrawAll = FALSE;
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+
+			gD3DRedrawAll = FALSE;
+		}
 	}
 	else if (gD3DRedrawAll & D3DRENDER_REDRAW_UPDATE)
 	{
@@ -1076,6 +1087,10 @@ static int CalculateFlickeredIntensity(const LightSourceData &lightData, float *
    if (lightData.objFlags & (OF_FLICKERING | OF_FLASHING))
    {
       flickerBrightness = (float) lightData.lightAdjust / GetFlickerLevel();
+      // Clamp to non-negative to handle flashing lights where SIN() can go negative.
+      // Negative brightness would cause invalid color values.
+      flickerBrightness = flickerBrightness;
+       //std::max(flickerBrightness, 0.0f);
       flickeredIntensity = (int) (D3DLightScale(lightData.baseIntensity) * flickerBrightness);
    }
    else
@@ -1132,9 +1147,13 @@ static void InitializeLightProperties(d_light *light,
    }
 
    // Set xyz scales (all three axes use same value)
-   light->xyzScale.x = flickeredIntensity;
-   light->xyzScale.y = flickeredIntensity;
-   light->xyzScale.z = flickeredIntensity;
+   // Ensure minimum intensity of 1 to prevent division by zero in inverse scale
+   // calculations and in d3drender_objects.c distance calculations.
+   // This can occur when flickering/flashing lights have lightAdjust near zero.
+   int safeIntensity = flickeredIntensity; //std::max(flickeredIntensity, 1);
+   light->xyzScale.x = safeIntensity;
+   light->xyzScale.y = safeIntensity;
+   light->xyzScale.z = safeIntensity;
 
    // Calculate inverse scales
    light->invXYZScale.x = 1.0f / light->xyzScale.x;

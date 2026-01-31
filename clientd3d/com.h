@@ -17,8 +17,8 @@ enum { CON_NONE, CON_SOCKET };  /* Connection types */
 #define COMBUFSIZE 40000  /* Size of send and receive buffers */
 
 int ReadServer(void);
-bool SendServer(char *buf, unsigned int numbytes);
-bool WriteServer(char *buf,unsigned int numbytes);
+bool SendServer(const char *buf, unsigned int numbytes);
+bool WriteServer(const char *buf,unsigned int numbytes);
 void CloseSocketConnection(void);
 bool OpenSocketConnection(char *hostname, int sock_port);
 void CloseConnection(void);

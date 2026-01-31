@@ -34,6 +34,7 @@
 
 static int  animation_timer = 0;   // id of animation timer, or 0 if none
 static DWORD timeLastFrame;
+static int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
 
 #define TIME_FULL_OBJECT_PHASE 1800
 static int phaseStates[] = {
@@ -130,7 +131,8 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
    if (GetGameDataValid())
       RedrawForce();
 
-   return;
+   // Update 3D audio listener position/orientation
+   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
 }
 /************************************************************************/
 /* 
@@ -173,14 +175,23 @@ bool AnimateObject(object_node *obj, int dt)
 
    if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
    {
-      obj->lightAdjust = rand() % FLICKER_LEVEL;
-      need_redraw = true;
+      // Use global flicker timer that counts down
+      flickerTimer -= dt;
+      
+      // Check if time to flicker
+      if (flickerTimer <= 0)
+      {
+         int flicker_value = rand() % FLICKER_LEVEL;
+         flickerTimer = FLICKER_PERIOD;  // Reset timer
+         obj->lightAdjust = flicker_value;
+         need_redraw = true;
+      }
    }
 
    if (OF_FLASHING == (OF_BOUNCING & obj->flags))
    {
       DWORD angleFlash;
-      obj->bounceTime += min(dt,50);
+      obj->bounceTime += std::min(dt,50);
       if (obj->bounceTime > TIME_FLASH)
 	 obj->bounceTime -= TIME_FLASH;
       angleFlash = NUMDEGREES * obj->bounceTime / TIME_FLASH;
@@ -199,7 +210,7 @@ bool AnimateObject(object_node *obj, int dt)
    if (OF_PHASING == (OF_PHASING & obj->flags))
    {
       int anglePhase;
-      obj->phaseTime += min(dt,40);
+      obj->phaseTime += std::min(dt,40);
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
 	 obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;

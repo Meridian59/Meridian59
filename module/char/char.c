@@ -110,7 +110,7 @@ bool HandleCharacters(char *ptr, long len)
 
       Extract(&ptr, &c->id, SIZE_ID);
       Extract(&ptr, &string_len, SIZE_STRING_LEN);
-      string_len = min(string_len, MAXNAME);
+      string_len = std::min((int)string_len, MAXNAME);
       c->name = (char *) SafeMalloc(string_len + 1);
       Extract(&ptr, c->name, string_len);
       c->name[string_len] = 0;

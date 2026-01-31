@@ -707,6 +707,11 @@ static void InitializeMapKeyBindings(HWND hDlg) {
     InitModifierButton(TCMap, GetDlgItem(hDlg, IDC_MAP_MOD));
     InitModifierButton(TCMapzoomin, GetDlgItem(hDlg, IDC_MAPZOOMIN_MOD));
     InitModifierButton(TCMapzoomout, GetDlgItem(hDlg, IDC_MAPZOOMOUT_MOD));
+
+    CheckDlgButton(hDlg, IDC_MAP_ANNOTATIONS, config.map_annotations);
+
+    Trackbar_SetRange(GetDlgItem(hDlg, IDC_ANNOTATION_ZOOM_LIMIT), 0, CONFIG_MAX_TEXT_ZOOM_LIMIT, FALSE);
+    Trackbar_SetPos(GetDlgItem(hDlg, IDC_ANNOTATION_ZOOM_LIMIT), config.map_text_zoom_limit);
 }
 
 // Dialog procedure for the Map Preferences dialog
@@ -738,8 +743,17 @@ static INT_PTR CALLBACK MapPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wP
         case IDC_MAPZOOMOUT_MOD:
             ModifyKey(hDlg, TCMapzoomout, IDC_MAPZOOMOUT);
             break;
+        case IDC_MAP_ANNOTATIONS:
+            config.map_annotations = IsDlgButtonChecked(hDlg, IDC_MAP_ANNOTATIONS);
+            break;
         }
         break;
+    case WM_HSCROLL:
+       if ((HWND) lParam == GetDlgItem(hDlg, IDC_ANNOTATION_ZOOM_LIMIT))
+       {
+          config.map_text_zoom_limit = Trackbar_GetPos(GetDlgItem(hDlg, IDC_ANNOTATION_ZOOM_LIMIT));
+       }
+       break;
 
     case WM_NOTIFY:
         if (((LPNMHDR)lParam)->code == PSN_APPLY)
@@ -1098,6 +1112,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
         // Initialize dialog with current settings
         CheckDlgButton(hDlg, IDC_SCROLLLOCK, config.scroll_lock);
         CheckDlgButton(hDlg, IDC_DRAWNAMES, config.draw_names);
+        CheckDlgButton(hDlg, IDC_INV_RARITY, config.show_inventory_rarity);
         CheckDlgButton(hDlg, IDC_TOOLTIPS, config.tooltips);
         CheckDlgButton(hDlg, IDC_PAIN, config.pain);
         CheckDlgButton(hDlg, IDC_INVNUM, config.inventory_num);
@@ -1108,7 +1123,6 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
         CheckDlgButton(hDlg, ID_SPINNING_CUBE, config.spinning_cube);
         CheckDlgButton(hDlg, IDC_PROFANE, config.antiprofane);
         CheckDlgButton(hDlg, IDC_DRAWMAP, config.drawmap);
-        CheckDlgButton(hDlg, IDC_MAP_ANNOTATIONS, config.map_annotations);
 
         CheckDlgButton(hDlg, IDC_MUSIC, config.play_music);
         CheckDlgButton(hDlg, IDC_SOUNDFX, config.play_sound);
@@ -1147,6 +1161,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             // Save settings (config is persisted on close of the meridian executable)
             config.scroll_lock = IsDlgButtonChecked(hDlg, IDC_SCROLLLOCK);
             config.draw_names = IsDlgButtonChecked(hDlg, IDC_DRAWNAMES);
+            config.show_inventory_rarity = IsDlgButtonChecked(hDlg, IDC_INV_RARITY);
             config.tooltips = IsDlgButtonChecked(hDlg, IDC_TOOLTIPS);
             config.pain = IsDlgButtonChecked(hDlg, IDC_PAIN);
             config.inventory_num = IsDlgButtonChecked(hDlg, IDC_INVNUM);
@@ -1154,7 +1169,6 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.bounce = IsDlgButtonChecked(hDlg, IDC_BOUNCE);
             config.antiprofane = IsDlgButtonChecked(hDlg, IDC_PROFANE);
             config.drawmap = IsDlgButtonChecked(hDlg, IDC_DRAWMAP);
-            config.map_annotations = IsDlgButtonChecked(hDlg, IDC_MAP_ANNOTATIONS);
             bool temp = IsDlgButtonChecked(hDlg, IDC_TOOLBAR);
             bool toolbar_changed = (temp != (bool) config.toolbar);
             config.toolbar = temp;
@@ -1168,7 +1182,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.play_loop_sounds = IsDlgButtonChecked(hDlg, IDC_LOOPSOUNDS);
             config.play_random_sounds = IsDlgButtonChecked(hDlg, IDC_RANDSOUNDS);
             if (!config.play_sound)
-              SoundAbort();
+              SoundStopAll();
             config.halocolor = IsDlgButtonChecked(hDlg, IDC_TARGETHALO1) == BST_CHECKED ? 0 :
                                IsDlgButtonChecked(hDlg, IDC_TARGETHALO2) == BST_CHECKED ? 1 : 2;
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);
@@ -1218,7 +1232,7 @@ static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lP
                 }
 
                 if (vkCode >= 'A' && vkCode <= 'Z') {
-                    sprintf(TCNewkey, "%c", (char)vkCode + 32); // +32 changes it to lowercase
+                    snprintf(TCNewkey, sizeof(TCNewkey), "%c", (char)vkCode + 32); // +32 changes it to lowercase
                     AppendModifier(TCNewkey, iModifier);
                     EndDialog(GetForegroundWindow(), IDOK);
                     return 1; // Prevent further processing

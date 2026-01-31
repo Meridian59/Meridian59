@@ -55,8 +55,8 @@ void UserMoveCursor(int command, int dy, int dx)
 	downright.y = view.y + view.cy - 1;
 	ClientToScreen(hMain, &downright);
 	
-	c.y = min(max(upleft.y, c.y + dy), downright.y - 1);
-	c.x = min(max(upleft.x, c.x + dx), downright.x - 1);
+	c.y = std::min(std::max(upleft.y, c.y + dy), downright.y - 1);
+	c.x = std::min(std::max(upleft.x, c.x + dx), downright.x - 1);
 	
 	SetCursorPos(c.x, c.y);
 }

@@ -575,10 +575,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// whiteout
 	if (effects.whiteout)
 	{
-		int	whiteout = min(effects.whiteout, 500);
+		int whiteout = std::min(effects.whiteout, 500);
 
 		whiteout = whiteout * COLOR_MAX / 500;
-		whiteout = max(whiteout, 200);
+		whiteout = std::max(whiteout, 200);
 
 		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
@@ -617,7 +617,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		if (effects.pain)
 		{
-			int	pain = min(effects.pain, 2000);
+			int	pain = std::min(effects.pain, 2000);
 
 			pain = pain * 204 / 2000;
 

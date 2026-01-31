@@ -11,9 +11,14 @@
 */
 
 #include <assert.h>
-#include <crtdbg.h>
 
 #include "client.h"
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
+
 
 HWND hMain = NULL;             /* Main window */
 HINSTANCE hInst = NULL;           /* Program's instance */
@@ -26,7 +31,7 @@ static FILE *debug_file = NULL;
 char *szAppName;
 
 /************************************************************************/
-void _cdecl dprintf(char *fmt, ...)
+void _cdecl dprintf(const char *fmt, ...)
 {
 	const int bufferSize = 256;
 	const char s[bufferSize]{ 0 };
@@ -48,9 +53,8 @@ void _cdecl dprintf(char *fmt, ...)
 }
 
 unsigned short gCRC16=0;
-extern WORD GetCRC16(char *buf, int length);
 
-static unsigned short crc16( char *name)
+static unsigned short crc16(const char *name)
 {
 	FILE*fp;
 	char*buffer;
@@ -177,21 +181,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_CTLCOLORSTATIC, MainCtlColor);
 		HANDLE_MSG(hwnd, WM_CTLCOLORSCROLLBAR, MainCtlColor);
 
-		/* Wave mixer has finished playing file */
-		HANDLE_MSG(hwnd, MM_WOM_DONE, SoundDone);
-
 	case BK_SOCKETEVENT:
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
-
-#ifndef M59_MSS
-	case MM_MCINOTIFY:  /* MIDI file has finished playing */
-		if (wParam != MCI_NOTIFY_SUCCESSFUL)
-			break;
-
-		MusicDone(LOWORD(lParam));
-		break;
-#endif
 
 	case BK_NEWSOUND:
 		NewMusic(wParam, lParam);
@@ -339,7 +331,22 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);
-	SetWindowPlacement(hMain, &w);
+	int showCmd = w.showCmd;
+
+	if (showCmd == SW_SHOWMAXIMIZED || showCmd == SW_MAXIMIZE)
+	{
+		// Maximize now so splash screen is positioned correctly.
+		// WM_SETREDRAW prevents visual flash during resize.
+		SendMessage(hMain, WM_SETREDRAW, FALSE, 0);
+		ShowWindow(hMain, SW_SHOWMAXIMIZED);
+		ShowWindow(hMain, SW_HIDE);
+		SendMessage(hMain, WM_SETREDRAW, TRUE, 0);
+	}
+	else
+	{
+		w.showCmd = SW_HIDE;
+		SetWindowPlacement(hMain, &w);
+	}
 
 	D3DRenderInit(hMain);
 
@@ -351,6 +358,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	MainInitState(STATE_OFFLINE);
 
+	ShowWindow(hMain, showCmd);
 	UpdateWindow(hMain);
 
 	while (!bQuit)

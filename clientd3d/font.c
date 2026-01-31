@@ -33,6 +33,7 @@ static char fontinfo[][MAX_FONTNAME] = {
 { "24,0,0,0,700,0,0,0,0,0,0,0,0,Arial" },          /* FONT_MAP_TITLE */
 { "12,0,0,0,400,0,0,0,0,0,0,0,0,Arial" },           /* FONT_MAP_LABEL */
 { "12,0,0,0,400,0,0,0,0,0,0,0,0,Arial" },           /* FONT_MAP_TEXT */
+{ "-13,0,0,0,700,0,0,0,0,3,2,5,0,Arial" },          /* FONT_MAP_ANNOTATIONS */
 };
 
 static char font_section[] = "Fonts";  /* Section for fonts in INI file */
@@ -60,7 +61,7 @@ void FontsCreate(bool use_defaults)
    int temp;
    LOGFONT lf;
    char str[MAX_FONTNAME], name[10], *ptr;
-   char *separators = ",";
+   const char *separators = ",";
    bool success;
 
    hDefaultFont = (HFONT) GetStockObject(SYSTEM_FONT);
@@ -293,5 +294,5 @@ int GetFontHeight(HFONT hFont)
    SelectObject(hdc, hOldFont);
    ReleaseDC(hMain, hdc);
    
-   return max(tm.tmHeight, 1);  // In case of divide by zero
+   return std::max((int)tm.tmHeight, 1);  // In case of divide by zero
 }

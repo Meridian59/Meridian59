@@ -29,7 +29,7 @@ constants:
 
 resources:
 
-   weapattpunisher_desc = "  The emblem of a fist holding an ankh rests in the pommel of this weapon, promising "
+   weapattpunisher_desc = "The emblem of a fist holding an ankh rests in the pommel of this weapon, promising "
    weapattpunisher_desc2 = " advantage in the fight for justice."
    punisher_fail_use = "As you grab the hilt of %s%s, you scream out in pain and let go!"
    weapattpunisher_name = "%s of the just"

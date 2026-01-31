@@ -61,17 +61,14 @@ typedef int HWND;
 typedef uint64_t UINT64;
 typedef int64_t INT64;
 
+#define INVALID_HANDLE_VALUE -1
+#define CloseHandle close
+
 #define MAXGETHOSTSTRUCT 64
 
 void RunMainLoop(void);
 int GetLastError();
 char * GetLastErrorStr();
-
-// Fill in "files" with the names of all files matching the given pattern.
-// Return true on success.
-bool FindMatchingFiles(const char *path, const char *extension, StringVector *files);
-
-bool BlakMoveFile(const char *source, const char *dest);
 
 void InitInterface(void);
 

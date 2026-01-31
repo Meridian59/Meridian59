@@ -306,7 +306,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       if (r == NULL)
       {
         bprintf("EqualTableEntry can't find resource %s\n", fmt(s1_val));
-        eprintf("%s\n",BlakodStackInfo());
+        eprintf("%s\n",BlakodStackInfo().c_str());
         return false;
       }
       s1 = r->resource_val;
@@ -318,7 +318,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       if (snod == NULL)
       {
         bprintf("EqualTableEntry can't find string %s\n", fmt(s1_val));
-        eprintf("%s\n",BlakodStackInfo());
+        eprintf("%s\n",BlakodStackInfo().c_str());
         return false;
       }
       s1 = snod->data;
@@ -340,7 +340,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       if (r == NULL)
       {
         bprintf("EqualTableEntry can't find resource %s\n", fmt(s2_val));
-        eprintf("%s\n",BlakodStackInfo());
+        eprintf("%s\n",BlakodStackInfo().c_str());
         return false;
       }
       s2 = r->resource_val;
@@ -352,7 +352,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
       if (snod == NULL)
       {
         bprintf("EqualTableEntry can't find string %s\n", fmt(s2_val));
-        eprintf("%s\n",BlakodStackInfo());
+        eprintf("%s\n",BlakodStackInfo().c_str());
         return false;
       }
       s2 = snod->data;
@@ -375,7 +375,7 @@ bool EqualTableEntry(val_type s1_val,val_type s2_val)
    {
       eprintf("EqualTableEntry can't match %s with %s\n",
               fmt(s1_val),fmt(s2_val));
-      eprintf("%s\n",BlakodStackInfo());
+      eprintf("%s\n",BlakodStackInfo().c_str());
       return false;
    }
 
@@ -396,7 +396,7 @@ unsigned int GetTableHash(val_type val)
       if (r == NULL)
       {
 	 bprintf("GetTableHash can't find resource %" PRId64 "\n",val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
+	 eprintf("%s\n",BlakodStackInfo().c_str());
 	 return 0;
       }
       s = r->resource_val;
@@ -408,7 +408,7 @@ unsigned int GetTableHash(val_type val)
       if (snod == NULL)
       {
 	 bprintf("GetTableHash can't find string %" PRId64 "\n",val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
+	 eprintf("%s\n",BlakodStackInfo().c_str());
 	 return 0;
       }
       s = snod->data;

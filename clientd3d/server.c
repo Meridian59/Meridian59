@@ -113,7 +113,7 @@ static handler_struct game_handler_table[] = {
 static BYTE ExtractPaletteTranslation(char **ptr, BYTE *translation, BYTE *effect);
 
 static unsigned int server_secure_token = 0;
-static char* server_sliding_token = NULL;
+static const char* server_sliding_token = NULL;
 static char* _redbookstring = NULL;
 static ID _redbook = 0;
 
@@ -149,7 +149,7 @@ void UpdateSecurityRedbook(ID idRedbook)
        _redbookstring = strdup(_redbookstring);
 }
 
-char* GetSecurityRedbook()
+const char* GetSecurityRedbook()
 {
    if (!_redbookstring)
       return "BLAKSTON: Greenwich Q Zjiria";
@@ -1262,6 +1262,10 @@ bool HandlePlayWave(char *ptr,long len)
    return true;
 }
 /********************************************************************/
+/*
+ * HandlePlayMidi: Returns true if message parsed successfully.
+ * Legacy server protocol handler for BP_PLAY_MIDI.
+ */
 bool HandlePlayMidi(char *ptr,long len)
 {
    ID rsc;
@@ -1271,7 +1275,7 @@ bool HandlePlayMidi(char *ptr,long len)
 
    Extract(&ptr, &rsc, SIZE_ID);
    
-   PlayMidiRsc(rsc);
+   PlayMusicRsc(rsc);
    return true;
 }
 /********************************************************************/

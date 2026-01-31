@@ -170,7 +170,6 @@ session_node * CreateSession(connection_node conn);
 session_node *GetSessionByAccount(account_node *a);
 session_node * GetSessionBySocket(SOCKET sock);
 void ForEachSession(void (*callback_func)(session_node *s));
-int GetUsedSessions(void);
 const char * GetStateName(session_node *s);
 session_node *GetSessionByID(int session_id);
 void SetSessionState(session_node *s,int state);

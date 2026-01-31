@@ -39,7 +39,7 @@ properties:
    
 messages:
 
-   ObjectDesired(what=$)
+   ObjectDesired(what=$,who=$)
    {
       if isClass(what,&ShortSword)
       {

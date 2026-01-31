@@ -82,6 +82,9 @@ void FlushDefaultChannels()
          fflush(channel[i].file);
 }
 
+// Max length of a time string
+static const int MAX_TIME_SIZE = 100;
+
 void dprintf(const char *fmt,...)
 {
    char s[2000];
@@ -90,7 +93,7 @@ void dprintf(const char *fmt,...)
    snprintf(s, sizeof(s), "%s|",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
-   vsprintf(s+strlen(s),fmt,marker);
+   vsnprintf(s+strlen(s), sizeof(s) - MAX_TIME_SIZE, fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
@@ -108,7 +111,7 @@ void eprintf(const char *fmt,...)
    snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
-   vsprintf(s+strlen(s),fmt,marker);
+   vsnprintf(s+strlen(s), sizeof(s) - MAX_TIME_SIZE, fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
@@ -121,10 +124,10 @@ void bprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()).c_str(),BlakodDebugInfo());
+   snprintf(s, sizeof(s), "%s | [%s] ",TimeStr(GetTime()).c_str(),BlakodDebugInfo().c_str());
 
    va_start(marker,fmt);
-   vsprintf(s+strlen(s),fmt,marker);
+   vsnprintf(s+strlen(s), sizeof(s) - MAX_TIME_SIZE, fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
@@ -142,7 +145,7 @@ void lprintf(const char *fmt,...)
    snprintf(s, sizeof(s), "%s | ",TimeStr(GetTime()).c_str());
 
    va_start(marker,fmt);
-   vsprintf(s+strlen(s),fmt,marker);
+   vsnprintf(s+strlen(s), sizeof(s) - MAX_TIME_SIZE, fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */

@@ -2,9 +2,9 @@
 
 # defining RELEASE compiles optimized
 # defining NODEBUG omits debugging information
-# defining FINAL implies release, and also removes debugging strings from client executable 
+# defining RETAIL implies release, and also removes debugging strings from client executable 
 
-!ifdef FINAL
+!ifdef RETAIL
 RELEASE = 1
 NODPRINTFS = 1
 !endif
@@ -44,10 +44,11 @@ CLUBDIR     = $(TOPDIR)\club
 
 # 3rd party libraries
 EXTERNALDIR = $(TOPDIR)\external
-WAVEMIXDIR  = $(EXTERNALDIR)\wavemix
 LIBARCHIVEDIR = $(EXTERNALDIR)\libarchive
 LIBPNGDIR   = $(EXTERNALDIR)\libpng
 ZLIBDIR     = $(EXTERNALDIR)\zlib
+OPENALDIR   = $(EXTERNALDIR)\openal-soft\openal-soft-1.24.3-bin
+FMTLIBDIR  = $(EXTERNALDIR)\fmtlib
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -61,6 +62,7 @@ KODINCLUDEDIR = $(KODDIR)\include
 PALETTEFILE = $(TOPDIR)\blakston.pal
 
 # compiler specs -- uses multi-threaded DLL C runtime library
+# /FC displays full path of source code file in diagnostics
 # /TP builds C files in C++ mode
 # /WX treats warnings as errors
 # /GR- turns off RTTI
@@ -70,10 +72,11 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /MP enables parallel compiling
 # /MT link with static C runtime library
 # /Zi includes debugging information
+# /DFMT_UNICODE=0 disables Unicode support for fmtlib
 
-CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
-             /wd4996 /wd4312 \
-	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++17
+CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 -DFMT_UNICODE=0 \
+             /wd4996 /wd4312 /FC \
+	     -TP -WX -GR- -EHsc- -MP -MT -Zi -std:c++20
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -W3 -DBLAKDEBUG
@@ -131,4 +134,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(LIBARCHIVEDIR);$(LIBPNGDIR);$(ZLIBDIR);$(OPENALDIR)\include;$(FMTLIBDIR);

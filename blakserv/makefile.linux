@@ -6,11 +6,11 @@ TOPDIR=..
 
 include $(TOPDIR)/common.mak.linux
 
-CFLAGS += -I $(BLAKINCLUDEDIR) -pthread
+CFLAGS += -I $(BLAKINCLUDEDIR) -I $(FMTLIBDIR)
 
 SOURCEDIR = .
 
-LIBS = -lpthread
+LIBS =
 
 OBJS =  \
 	$(OUTDIR)/main.obj \
@@ -79,13 +79,13 @@ OBJS =  \
 	$(OUTDIR)/intstringhash.obj \
 	$(OUTDIR)/sprocket.obj \
 	$(OUTDIR)/mutex_impl.obj \
+	$(OUTDIR)/fileutil.obj \
 	$(OUTDIR)/osd_linux.obj \
+	$(OUTDIR)/webhook.obj \
 
 
 ifdef BLAK_PLATFORM_MAC
 
-# Clang complains loudly about sprintf being deprecated
-CFLAGS += -Wno-error=deprecated-declarations
 OBJS += $(OUTDIR)/osd_kqueue.obj
 
 else

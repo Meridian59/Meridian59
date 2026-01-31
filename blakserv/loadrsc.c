@@ -20,8 +20,8 @@
 #define RSC_EXTENSION ".rsc"
 
 /* local function prototypes */
-bool EachLoadRsc(char *filename,int resource_num, char *string);
-bool LoadDynamicRscName(char *filename);
+bool EachLoadRsc(const char *filename,int resource_num, const char *string);
+bool LoadDynamicRscName(const char *filename);
 
 void LoadRsc(void)
 {
@@ -47,20 +47,20 @@ void LoadRsc(void)
 	*/
 }
 
-bool EachLoadRsc(char *filename,int resource_num,char *string)
+bool EachLoadRsc(const char *filename,int resource_num,const char *string)
 {
 	AddResource(resource_num,string);
 	return true;
 }
 
 
-void LoadDynamicRsc(char *filename)
+void LoadDynamicRsc(const char *filename)
 {
 	if (LoadDynamicRscName(filename) == false)
 		eprintf("LoadDynamicRsc error loading %s\n",filename);
 }
 
-bool LoadDynamicRscName(char *filename)
+bool LoadDynamicRscName(const char *filename)
 {
 	FILE *fh = fopen(filename,"rb");
    int magic_num;

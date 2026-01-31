@@ -90,6 +90,7 @@ BEGIN
             MENUITEM "&Listar caixas",              ID_FONT_LIST
             MENUITEM "&Títulos",                    ID_FONT_TITLES
             MENUITEM "Emails e &mensagens",         ID_FONT_MAIL
+            MENUITEM "&Anotaciones del mapa",       ID_FONT_ANNOTATIONS
             POPUP "Imprimir mapa"
             BEGIN
                 MENUITEM "Comentários",             ID_OPTIONS_FONT_MAP_TEXT
@@ -180,6 +181,7 @@ BEGIN
     CONTROL         "Balançar câmera ao andar",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
     CONTROL         "Mostrar dor em impactos",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
     CONTROL         "Mostrar nomes dos jogadores",IDC_DRAWNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
+    CONTROL         "Mostrar raridade dos itens do inventário",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
     CONTROL         "Mostrar quantidade de itens",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     GROUPBOX        "Efeitos de áudio",IDC_STATIC,6,87,245,83,WS_GROUP
     CONTROL         "Música",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,55,9
@@ -201,7 +203,6 @@ BEGIN
     CONTROL         "Mostrar latência",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,187,77,9
     CONTROL         "Mapa dinâmico",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,197,79,10
     CONTROL         "Texto colorido",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,187,72,10
-    CONTROL         "Anotações do mapa",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
     PUSHBUTTON      "&Configurações",IDC_PROFANESETTINGS,169,225,70,12
 END
 
@@ -648,6 +649,11 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAP_MOD,125,7,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,125,26,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,125,45,14,14
+
+    GROUPBOX        "Opções do Mapa",IDC_STATIC,6,80,245,45,WS_GROUP
+    CONTROL         "Anotações",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
+    LTEXT           "Limite de Zoom do Texto",IDC_STATIC,13,109,50,10
+    CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
 END
 
 IDD_MOVEMENT DIALOG 0, 0, 296, 138
@@ -1100,6 +1106,7 @@ BEGIN
             MENUITEM "Inventarfenster",             ID_FONT_LIST
             MENUITEM "Überschriften",               ID_FONT_TITLES
             MENUITEM "Post && Nachrichten",         ID_FONT_MAIL
+            MENUITEM "Kartenbeschriftungen",        ID_FONT_ANNOTATIONS
             POPUP "Karten drucken"
             BEGIN
                 MENUITEM "Kommentare",                  ID_OPTIONS_FONT_MAP_TEXT
@@ -1190,6 +1197,7 @@ BEGIN
     CONTROL         "Schrittschwankungen anzeigen",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
     CONTROL         "Schmerzen bei Treffern anzeigen",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
     CONTROL         "Namen der Spieler anzeigen",IDC_DRAWNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,38,132,9
+    CONTROL         "Seltenheit der Inventargegenstände anzeigen",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
     CONTROL         "Anzahl der Gegenstände anzeigen",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     GROUPBOX        "Audio Effekte",IDC_STATIC,6,87,245,83,WS_GROUP
     CONTROL         "Musik",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,99,33,9
@@ -1659,6 +1667,11 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAP_MOD,125,7,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,125,26,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,125,45,14,14
+
+    GROUPBOX        "Kartenoptionen",IDC_STATIC,6,80,245,45,WS_GROUP
+    CONTROL         "Kartennotizen",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
+    LTEXT           "Zoomgrenze für Text",IDC_STATIC,13,109,50,10
+    CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
 END
 
 IDD_MOVEMENT DIALOG 0, 0, 296, 138
@@ -2114,6 +2127,7 @@ BEGIN
             MENUITEM "&List boxes",                 ID_FONT_LIST
             MENUITEM "&Titles",                     ID_FONT_TITLES
             MENUITEM "&Mail and news",              ID_FONT_MAIL
+            MENUITEM "Map &Annotations",            ID_FONT_ANNOTATIONS
             POPUP "Map Printing"
             BEGIN
                 MENUITEM "Comments",                    ID_OPTIONS_FONT_MAP_TEXT
@@ -2206,6 +2220,7 @@ BEGIN
     CONTROL         "Draw player names over their heads",IDC_DRAWNAMES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
     CONTROL         "Show amounts for inventory items",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
+    CONTROL         "Show inventory item rarities",IDC_INV_RARITY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,61,132,9
     GROUPBOX        "Audio Effects",IDC_STATIC,6,80,245,82,WS_GROUP
     CONTROL         "Music",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,91,35,9
     CONTROL         "Sounds",IDC_SOUNDFX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,91,44,9
@@ -2226,9 +2241,8 @@ BEGIN
     CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,176,77,9
     CONTROL         "Show dynamic map",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,187,79,10
     CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,176,72,10
-    CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,187,72,10
+    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,187,72,10
     PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,102,208,142,12
-    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,199,71,9
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -2792,6 +2806,11 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAP_MOD,118,7,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,118,26,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,118,45,14,14
+
+    GROUPBOX        "Map Options",IDC_STATIC,6,80,245,45,WS_GROUP
+    CONTROL         "Annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
+    LTEXT           "Text Zoom Limit",IDC_STATIC,13,109,50,10
+    CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
 END
 
 /////////////////////////////////////////////////////////////////////////////

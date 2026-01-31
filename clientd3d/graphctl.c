@@ -49,7 +49,7 @@ typedef struct {
 
 extern HPALETTE hPal;
 
-static char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
+static const char *GraphCtlName = "BlakGraph";  /* Class name for graph controls; use in CreateWindowx */
 
 /* local function prototypes */
 LRESULT CALLBACK GraphCtlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -102,7 +102,7 @@ bool GraphCtlUnregister(HINSTANCE hInst)
    return UnregisterClass(GraphCtlName, hInst);
 }
 /*****************************************************************************/
-char *GraphCtlGetClassName(void)
+const char *GraphCtlGetClassName(void)
 {
    return GraphCtlName;
 }
@@ -312,10 +312,10 @@ void GraphCtlPaint(HWND hwnd)
       bar_pos = (info->current_value - info->min_value) * 1000 / 
 	 (info->max_value - info->min_value);
       // Bring within legal range, in case current_value is outside limits
-      bar_pos = min(max(0, bar_pos), 1000);	    
+      bar_pos = std::clamp(bar_pos, 0L, 1000L);
    }
-   
-   bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;  /* Skip border */ 
+
+   bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;  /* Skip border */
    value_pos = bar_pos;
    bar_rect.left   = rect.left + 1;
    bar_rect.right  = bar_pos;
@@ -330,12 +330,12 @@ void GraphCtlPaint(HWND hwnd)
 
       bar_rect.left  = bar_pos;
 
-      bar_pos = (info->limit_value - info->min_value) * 1000 / 
+      bar_pos = (info->limit_value - info->min_value) * 1000 /
 	 (info->max_value - info->min_value);
       bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;
 
       // Bring within legal range, in case limit_value is outside limits
-      bar_pos = min(max(0, bar_pos), 1000);
+      bar_pos = std::clamp(bar_pos, 0L, 1000L);
 
       bar_rect.right = bar_pos;
       limit_brush = CreateSolidBrush(colors[GRAPHCOLOR_LIMITBAR]);
@@ -364,7 +364,7 @@ void GraphCtlPaint(HWND hwnd)
       else
 	 x = value_pos - size.cx - 1;
 
-      TextOut(hdc, x, max(0, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
+      TextOut(hdc, x, std::max(0L, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
    }
    
    /* Draw slider if appropriate */
@@ -517,7 +517,7 @@ void GraphCtlMoveBar(HWND hwnd, GraphCtlStruct *info, int x)
 	 (info->max_value - info->min_value) / (rect.right - rect.left - 2);
 
    /* Bring into range */
-   bar_value = max(min(bar_value, info->max_value), info->min_value);
+   bar_value = std::clamp(bar_value, info->min_value, info->max_value);
 
    SendMessage(hwnd, GRPH_POSSETUSER, 0, bar_value);
 }

@@ -131,7 +131,7 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hRichEditLib = LoadLibrary("riched32.dll");
 	InitCommonControls();
 	
-	MusicInitialize();
+	AudioInit(hwnd);
 	
 	SetMainCursor(LoadCursor(NULL, IDC_ARROW));
 	

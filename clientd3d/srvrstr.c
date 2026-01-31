@@ -248,7 +248,7 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 }
 /************************************************************************/
 
-static char *format_chars = "`~"; // Characters that start a format code
+static const char *format_chars = "`~"; // Characters that start a format code
 
 // FormatCode types
 #define CODE_COLOR 0x01
@@ -284,7 +284,7 @@ static int num_format_codes = sizeof(code_table) / sizeof(FormatCode);
  * DisplayServerMessage:  Display message from server, extracting any style or color codes.
  *   color and style give default style and color values.
  */
-void DisplayServerMessage(char *message, COLORREF start_color, BYTE start_style)
+void DisplayServerMessage(const char *message, COLORREF start_color, BYTE start_style)
 {
    EditBoxStartAdd();
 
@@ -298,40 +298,39 @@ void DisplayServerMessage(char *message, COLORREF start_color, BYTE start_style)
  *   color and style give default style and color values.
  *   Does the real work of DisplayServerMessage.
  */
-void DisplayMessage(char *message, COLORREF start_color, BYTE start_style)
+void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 {
    int i;
    char ch, *ptr, *str;  // str points to start of current piece of message
    COLORREF color, new_color;
    BYTE style, new_style, new_type;
    BOOL bFree = FALSE;
-   char* p;
 
-   message = strdup(message);
-   p = message;
+   char *new_message = strdup(message);
+   char *p = new_message;
 
    if (config.antiprofane)
    {
       if (config.ignoreprofane)
       {
-	 if (ContainsProfaneTerms(message))
-	 {
- 	    message = (char *) SafeMalloc(MAXSTRINGLEN);
-	    LoadString(hInst, IDS_PROFANITYREMOVED, message, MAXSTRINGLEN);
-	    bFree = TRUE;
-	 }
+        if (ContainsProfaneTerms(new_message))
+        {
+          new_message = (char *) SafeMalloc(MAXSTRINGLEN);
+          LoadString(hInst, IDS_PROFANITYREMOVED, new_message, MAXSTRINGLEN);
+          bFree = TRUE;
+        }
       }
       else
       {
-	 message = CleanseProfaneString(message);
-	 bFree = TRUE;
+        new_message = CleanseProfaneString(new_message);
+        bFree = TRUE;
       }
    }
 
-   str = message;
+   str = new_message;
    color = start_color;
    style = start_style;
-   for (ptr = message; *ptr != 0; ptr++)
+   for (ptr = new_message; *ptr != 0; ptr++)
    {
       if (strchr(format_chars, *ptr) == NULL)
 	 continue;
@@ -400,7 +399,7 @@ void DisplayMessage(char *message, COLORREF start_color, BYTE start_style)
       EditBoxAddText(str, color, style);
 
    if (bFree)
-      SafeFree(message);
+      SafeFree(new_message);
 
    SafeFree(p);
 }

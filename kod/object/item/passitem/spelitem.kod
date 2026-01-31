@@ -184,11 +184,21 @@ messages:
 
    AppendDesc()
    {
-      % Tell player if this has karma restrictions
+      % Tell player if this has karma restrictions.
+      % Add separators appropriately based on whether condition will be shown.
       if (pbCheckKarma AND Send(self, @GetRequiredKarma) <> 0)
       {
-         AppendTempString("\n\n");
+         if NOT (vbShow_condition AND piHits_init > 0)
+         {
+            % No condition follows, add separator before karma text.
+            AppendTempString("\n\n");
+         }
          AppendTempString(vrKarmaDesc);
+         if (vbShow_condition AND piHits_init > 0)
+         {
+            % Condition follows, add separator after karma text.
+            AppendTempString("\n\n");
+         }
       }
 
       propagate;

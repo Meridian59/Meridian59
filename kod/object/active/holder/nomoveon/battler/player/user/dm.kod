@@ -54,31 +54,6 @@ resources:
    dm_monster_budget_command = "monster budget"
    dm_monster_authorize_command = "monster authorize"
    dm_none = "none"
-   dm_PK_enable_command = "PK enable"
-   dm_PK_disable_command = "PK disable"
-   dm_PK_lock_command = "PK lock"
-   dm_PK_unlock_command = "PK unlock"
-   dm_morning_command = "morning"
-   dm_afternoon_command = "afternoon"
-   dm_evening_command = "evening"
-   dm_night_command = "night"
-   dm_restore_time_command = "restore time"
-   dm_npc_chat_command = "npc chat"
-   dm_get_misc_command = "get misc"
-   dm_get_weapons_command = "get weapons"
-   dm_get_armor_command = "get armor"
-   dm_get_food_command = "get food"
-   dm_get_reagents_command = "get reagents"
-   dm_get_gems_command = "get gems"
-   dm_get_ammo_command = "get ammo"
-   dm_get_wands_command = "get wands"
-   dm_get_rings_command = "get rings"
-   dm_get_sundries_command = "get sundries"
-   dm_get_games_command = "get games"
-   dm_get_necklaces_command = "get necklaces"
-   dm_get_potions_command = "get potions"
-   dm_get_scrolls_command = "get scrolls"
-   dm_get_masks_command = "get masks"
 
    dm_roomgive_command = "roomgive"
    dm_gave_to_number = "%s players received reward!"
@@ -738,7 +713,6 @@ messages:
          if StringContain(string,"disguise")
          {
            StringSubstitute(string,"disguise"," ");
-           StringSubstitute(string,"disguise"," ");
          
            % Checks art archive, if no matches goes to NPCs.
            temp = Send(Send(SYS,@GetArtArchive),@FindArchiveByString,#string=string);
@@ -904,8 +878,7 @@ messages:
       %  "monster", so they gotta come before the monster generating ones.
       if pbSay_commands
       {
-         if StringEqual(string,dm_call_monster_command)
-            OR StringEqual(string,"call monster")
+         if StringEqual(string,"call monster")
          {
             i = Send(poOwner,@TryCreateMonster);
             if not pbStealth
@@ -1088,8 +1061,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_clear_abilities_command)
-         OR StringEqual(string,"clear abilities")
+      if StringEqual(string,"clear abilities")
       {
          for i in Send(self,@GetSpellList)
          {
@@ -1107,8 +1079,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_clear_inventory_command)
-         OR StringEqual(string,"clear inventory")
+      if StringEqual(string,"clear inventory")
       {
          for i in plActive
          {
@@ -1129,8 +1100,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_spells_command)
-         OR StringEqual(string,"get spells")
+      if StringEqual(string,"get spells")
       {
          for i in Send(SYS,@GetSpells)
          {
@@ -1149,8 +1119,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_skills_command)
-         OR StringEqual(string,"get skills")
+      if StringEqual(string,"get skills")
       {
          for i in Send(SYS,@GetSkills)
          {
@@ -1164,15 +1133,14 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_money_command)
-         OR StringEqual(string,"get money")
+      if StringEqual(string,"get money")
       {
          Send(self,@NewHold,#what=Create(&Money,#number=500000));
 
          return;
       }
 
-      if StringEqual(string,dm_boost_stats_command)
+      if StringEqual(string,"boost stats")
          OR StringEqual(string,"boost stats")
       {
          % Boost all stats to max
@@ -1209,24 +1177,21 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_PK_enable_command)
-         OR StringEqual(string,"PK enable")
+      if StringEqual(string,"PK enable")
       { 
          Send(self,@PkillEnable);
 
          return;
       }
       
-      if StringEqual(string,dm_PK_disable_command)
-         OR StringEqual(string,"PK disable")
+      if StringEqual(string,"PK disable")
       {
          Send(self,@PkillDisable);
 
          return;
       }
       
-      if StringEqual(string,dm_PK_lock_command)
-         OR StringEqual(string,"PK lock")
+      if StringEqual(string,"PK lock")
       {
          Send(self,@PkillLock);
          Send(self,@MsgSendUser,#message_rsc=dm_pk_lock);
@@ -1235,8 +1200,7 @@ messages:
          return;
       }
       
-      if StringEqual(string,dm_PK_unlock_command)
-         OR StringEqual(string,"PK unlock")
+      if StringEqual(string,"PK unlock")
       {
          Send(self,@PkillUnlock);
          Send(self,@MsgSendUser,#message_rsc=dm_pk_unlock);
@@ -1246,40 +1210,35 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_morning_command)
-         OR StringEqual(string,"morning")
+      if StringEqual(string,"morning")
       {
          Send(SYS,@SetHour,#num=6);
 
          return;
       }
 
-      if StringEqual(string,dm_afternoon_command)
-         OR StringEqual(string,"afternoon")
+      if StringEqual(string,"afternoon")
       {
          Send(SYS,@SetHour,#num=13);
 
          return;
       }
 
-      if StringEqual(string,dm_evening_command)
-         OR StringEqual(string,"evening")
+      if StringEqual(string,"evening")
       {
          Send(SYS,@SetHour,#num=18);
 
          return;
       }
 
-      if StringEqual(string,dm_night_command)
-         OR StringEqual(string,"night")
+      if StringEqual(string,"night")
       {
          Send(SYS,@SetHour,#num=23);
          
          return;
       }
 
-      if StringEqual(string,dm_restore_time_command)
-         OR StringEqual(string,"restore time")
+      if StringEqual(string,"restore time")
       {
          Send(SYS,@RecalcLightAndWeather);
 
@@ -1322,8 +1281,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_npc_chat_command)
-         OR StringEqual(string,"npc chat")
+      if StringEqual(string,"npc chat")
       {
          temp = Send(poOwner,@GetHolderActive);
 
@@ -1702,128 +1660,112 @@ messages:
 
    GetAllOfItem(string=$)
    {
-      if StringEqual(string,dm_get_misc_command)
-         OR StringEqual(string,"get misc")
+      if StringEqual(string,"get misc")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MISC);
 
          return;
       }
 
-      if StringEqual(string,dm_get_weapons_command)
-         OR StringEqual(string,"get weapons")
+      if StringEqual(string,"get weapons")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_WEAPON);
 
          return;
       }
 
-      if StringEqual(string,dm_get_armor_command)
-         OR StringEqual(string,"get armor")
+      if StringEqual(string,"get armor")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ARMOR);
 
          return;
       }
 
-      if StringEqual(string,dm_get_food_command)
-         OR StringEqual(string,"get food")
+      if StringEqual(string,"get food")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_FOOD);
 
          return;
       }
 
-      if StringEqual(string,dm_get_reagents_command)
-         OR StringEqual(string,"get reagents")
+      if StringEqual(string,"get reagents")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_REAGENT);
 
          return;
       }
 
-      if StringEqual(string,dm_get_gems_command)
-         OR StringEqual(string,"get gems")
+      if StringEqual(string,"get gems")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_GEM);
 
          return;
       }
 
-      if StringEqual(string,dm_get_ammo_command)
-         OR StringEqual(string,"get ammo")
+      if StringEqual(string,"get ammo")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_AMMO);
 
          return;
       }
 
-      if StringEqual(string,dm_get_wands_command)
-         OR StringEqual(string,"get wands")
+      if StringEqual(string,"get wands")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_WAND);
 
          return;
       }
 
-      if StringEqual(string,dm_get_rings_command)
-         OR StringEqual(string,"get rings")
+      if StringEqual(string,"get rings")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_RING);
 
          return;
       }
 
-      if StringEqual(string,dm_get_sundries_command)
-         OR StringEqual(string,"get sundries")
+      if StringEqual(string,"get sundries")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_SUNDRY);
 
          return;
       }
 
-      if StringEqual(string,dm_get_games_command)
-         OR StringEqual(string,"get games")
+      if StringEqual(string,"get games")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_GAME);
 
          return;
       }
 
-      if StringEqual(string,dm_get_necklaces_command)
-         OR StringEqual(string,"get necklaces")
+      if StringEqual(string,"get necklaces")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_NECKLACE);
 
          return;
       }
 
-      if StringEqual(string,dm_get_potions_command)
-         OR StringEqual(string,"get potions")
+      if StringEqual(string,"get potions")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_POTION);
 
          return;
       }
 
-      if StringEqual(string,dm_get_scrolls_command)
-         OR StringEqual(string,"get scrolls")
+      if StringEqual(string,"get scrolls")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_SCROLL);
 
          return;
       }
 
-      if StringEqual(string,dm_get_masks_command)
-         OR StringEqual(string,"get masks")
+      if StringEqual(string,"get masks")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MASK);
 
          return;
       }
 
-      if StringEqual(string,dm_get_money_command)
-         OR StringEqual(string,"get money")
+      if StringEqual(string,"get money")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MONEY);
 

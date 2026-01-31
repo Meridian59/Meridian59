@@ -31,11 +31,6 @@ resources:
 
    admin_currently_in = "The ROO for `b%s`n is `k`B%s`n."
 
-   admin_create_itematt_command = "create item attribute"
-   admin_create_unrevealed_itematt_command = "create unrevealed itematt"
-   admin_relic_command = "relic"
-   admin_create_ornamental_object = "place ornament"
-
    admin_no_longer = "This command no longer exists; try the DM command form."
 
    % not for admin use, but to let creator work

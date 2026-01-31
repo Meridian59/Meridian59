@@ -15,7 +15,7 @@
 
 enum { ACCOUNT_NORMAL = 0, ACCOUNT_ADMIN = 1, ACCOUNT_DM = 2, ACCOUNT_GUEST = 3};
 
-typedef struct account_node_struct
+struct account_node
 {
    int account_id;
    std::string name;
@@ -24,8 +24,8 @@ typedef struct account_node_struct
    int credits;			/* remember, stored as 1/100 of a credit */
    INT64 last_login_time;
    INT64 suspend_time;
-   struct account_node_struct *next;
-} account_node;
+   account_node *next;
+};
 
 void InitAccount(void);
 void ResetAccount(void);

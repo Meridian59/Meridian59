@@ -21,7 +21,7 @@
 account_node *accounts;
 int next_account_id;
 
-account_node console_account_node,*console_account;
+static account_node console_account;
 
 /* local function prototypes */
 void InsertAccount(account_node *a);
@@ -31,13 +31,14 @@ void InitAccount(void)
    accounts = NULL;
    next_account_id = 1;
 
-   console_account = &console_account_node;
-   console_account->account_id = 0;
+   console_account.account_id = 0;
+   console_account.name = ConfigStr(CONSOLE_ADMINISTRATOR);
+   console_account.password = "";
 
-   console_account->type = ACCOUNT_ADMIN;
-   console_account->last_login_time = 0;
-   console_account->suspend_time = 0;
-   console_account->credits = 0;
+   console_account.type = ACCOUNT_ADMIN;
+   console_account.last_login_time = 0;
+   console_account.suspend_time = 0;
+   console_account.credits = 0;
 }
 
 void ResetAccount(void)
@@ -57,7 +58,7 @@ void ResetAccount(void)
 
 account_node * GetConsoleAccount()
 {
-   return console_account;
+   return &console_account;
 }
 
 

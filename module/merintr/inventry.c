@@ -318,7 +318,7 @@ void InventoryComputeRowsCols(void)
    if (has_scrollbar)
       width -= inventory_scrollbar_width;
 
-   cols = max(width / INVENTORY_BOX_WIDTH, 1);
+   cols = std::max(width / INVENTORY_BOX_WIDTH, 1);
 }
 /************************************************************************/
 /*
@@ -376,8 +376,8 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       // Pointless "SB_ENDSCROLL" added recently
       return;
    }
-   new_top = max(new_top, 0);
-   new_top = min(new_top, (num_items + cols - 1) / cols - rows);
+   new_top = std::max(new_top, 0);
+   new_top = std::min(new_top, (num_items + cols - 1) / cols - rows);
 
    if (new_top != top_row)
    {
@@ -694,9 +694,9 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          DeleteObject(hPenLight);
 
          COLORREF shadow = RGB(
-            max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
-            max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
-            max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0)
+            std::max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            std::max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            std::max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0)
          );
          HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
          oldPen = SelectObject(hdc, hPenShadow);
@@ -1033,7 +1033,7 @@ void InventoryCursorMove(int action)
    if (new_col < 0)
       new_col += cols;
 
-   new_row = max(0, cursor_row + dy);
+   new_row = std::max(0, cursor_row + dy);
    
    // See if we're going off end of inventory
    if (new_row * cols + new_col >= num_items)
@@ -1161,7 +1161,11 @@ bool InventoryDropCurrentItem(room_contents_node *container)
       return false;
 
    if (container == NULL)
-      RequestDrop(item->obj);
+   {
+      list_type drop_list = list_add_item(NULL, item->obj);
+      RequestDrop(drop_list);
+      list_delete(drop_list);
+   }
    else RequestPut(item->obj, container->obj.id);
    return true;
 }

@@ -222,6 +222,9 @@ void EnchantmentsMovePlayer(void)
 
       x += width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
+      // https://github.com/Meridian59/Meridian59/pull/1337
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /************************************************************************/
@@ -251,6 +254,9 @@ void EnchantmentsMoveRoom(void)
 
       x -= width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
+      // https://github.com/Meridian59/Meridian59/pull/1337
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /****************************************************************************/

@@ -1,0 +1,23 @@
+VISUAL STUDIO INTEGRATION
+
+This directory contains a .sln and .vcxproj files for assisting in 
+building, running, and debugging through Visual Studio 2022. It is an 
+optional method for building the game separate from calling the nmake 
+command. VS integration directly calls those same underlying make files,
+so this should be practically identical.
+
+BUILD INSTRUCTIONS
+
+The code has been built successfully with Microsoft Visual Studio 2022
+Community Edition, which you can download for free at 
+https://visualstudio.microsoft.com/downloads/
+
+1. Open the Meridian 59.sln file
+
+2. Press 'F7' to Build, or 'F5' to Build and Run
+
+RUN INSTRUCTIONS
+
+See the main 'README' file for how to run the client and create an 
+administrator account and character. Otherwise, pressing "F5" from 
+within Visual Studio will run the client.

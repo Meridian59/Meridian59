@@ -87,7 +87,7 @@ messages:
       return;
    }
 
-   GetStateValue(who = $,iSpellPower= 0,Target=$)
+   InitializeEnchantmentState(who = $,iSpellPower= 0,Target=$)
    {
       local iReflectOdds;
 

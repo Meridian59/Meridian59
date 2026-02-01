@@ -11,9 +11,14 @@
 */
 
 #include <assert.h>
-#include <crtdbg.h>
 
 #include "client.h"
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
+
 
 HWND hMain = NULL;             /* Main window */
 HINSTANCE hInst = NULL;           /* Program's instance */
@@ -326,7 +331,22 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);
-	SetWindowPlacement(hMain, &w);
+	int showCmd = w.showCmd;
+
+	if (showCmd == SW_SHOWMAXIMIZED || showCmd == SW_MAXIMIZE)
+	{
+		// Maximize now so splash screen is positioned correctly.
+		// WM_SETREDRAW prevents visual flash during resize.
+		SendMessage(hMain, WM_SETREDRAW, FALSE, 0);
+		ShowWindow(hMain, SW_SHOWMAXIMIZED);
+		ShowWindow(hMain, SW_HIDE);
+		SendMessage(hMain, WM_SETREDRAW, TRUE, 0);
+	}
+	else
+	{
+		w.showCmd = SW_HIDE;
+		SetWindowPlacement(hMain, &w);
+	}
 
 	D3DRenderInit(hMain);
 
@@ -338,6 +358,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	MainInitState(STATE_OFFLINE);
 
+	ShowWindow(hMain, showCmd);
 	UpdateWindow(hMain);
 
 	while (!bQuit)

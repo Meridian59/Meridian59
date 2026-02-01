@@ -64,7 +64,7 @@ messages:
    }
 
 
-   GetStateValue(who = $, iSpellPower = 0, Target = $)
+   InitializeEnchantmentState(who = $, iSpellPower = 0, Target = $)
    {
       local iMightChange;
       iMightChange = iSpellPower/5+1;

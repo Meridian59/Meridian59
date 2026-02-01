@@ -229,7 +229,7 @@ bixlat* FindStandardBiXlat(UINT uBiXlatID)
 
 BYTE GetRGBLightness(PALETTEENTRY* pe)
 {
-	return LOBYTE(max(max(pe->peRed, pe->peGreen), pe->peBlue));
+	return LOBYTE(std::max(std::max(pe->peRed, pe->peGreen), pe->peBlue));
 }
 
 /* CalcFilterXlat:

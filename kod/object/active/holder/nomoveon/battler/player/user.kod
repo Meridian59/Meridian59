@@ -977,13 +977,8 @@ messages:
       
       if liClient_cmd = BP_REQ_DROP
       {
-         if bSpam AND NOT Send(self,@PlayerIsImmortal)
-         {
-            return;
-         }
-
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
+         lItems = Nth(client_msg,2);
+         Send(self,@UserDropItems,#item_list=lItems,#number_list=number_stuff);
          
          return;
       }
@@ -3752,16 +3747,38 @@ messages:
       return;
    }
 
-   UserDrop(what = $,number = $)
+   UserDropItems(item_list=$, number_list=$)
+   "Iterates item_list and calls UserDrop for each item.  Extracts the "
+   "appropriate amount from number_list for NumberItems."
    {
-      local oNumber;
+      local i, oItem, iNumber;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
-      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  
+      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
+
+      for i in item_list
+      {
+         oItem = i;
+         iNumber = $;
+
+         if IsClass(oItem,&NumberItem)
+         {
+            iNumber = First(number_list);
+            number_list = Rest(number_list);
+         }
+
+         Send(self,@UserDrop,#what=oItem,#number=iNumber);
+      }
+      return;
+   }
+
+   UserDrop(what = $,number = $)
+   {
+      local oNumber;
 
       if NOT Send(self,@IsHolding,#what=what)
       {

@@ -45,7 +45,16 @@ properties:
 
    prMusic = OrcCave5Ext_music
 
+   poFoodProxy = $  % A food object used to interface with user drink requests
+
 messages:
+
+   Constructor()
+   {
+      poFoodProxy = Create(&Food);
+
+      propagate;
+   }
 
    CreateStandardExits()
    {
@@ -77,7 +86,7 @@ messages:
    UserDrink(who=$)
    {
       %% someone presses space bar in the pool, gets a cute little boost.
-      if NOT Send(who,@ReqEatSomething,#filling=viFilling,#what=self)
+      if NOT Send(who,@ReqEatSomething,#filling=viFilling,#what=poFoodProxy)
       {
          return TRUE;
       }      
@@ -104,7 +113,16 @@ messages:
       propagate;
    }
 
+   Delete()
+   {
+      if poFoodProxy <> $
+      {
+         Send(poFoodProxy,@Delete);
+         poFoodProxy = $;
+      }
 
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

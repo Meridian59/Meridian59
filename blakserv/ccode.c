@@ -17,12 +17,20 @@
 */
 
 #include "blakserv.h"
+#define FMT_HEADER_ONLY
+#include "fmt/format.h"
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
 // global buffers for zero-terminated string manipulation
 static char buf0[LEN_MAX_CLIENT_MSG+1];
 static char buf1[LEN_MAX_CLIENT_MSG+1];
+
+// Fineness units consistent with Blakod
+static const int FINENESS = 64;
+
+// Scaling factor to convert server coordinates to polygon vertex coordinates
+static const int POLYGON_COORD_SCALE = 16;
 
 /* just like strstr, except any case-insensitive match will be returned */
 const char* stristr(const char* pSource, const char* pSearch)
@@ -2300,15 +2308,281 @@ blak_int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+/**
+ * C_BuildString: Builds a new string from a format string and substitution arguments.
+ * Uses fmtlib with support for both string and integer arguments.
+ * Format string should use {} tokens (e.g., "{0}", "{1:d}", etc.)
+ */
+blak_int C_BuildString(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+                       int num_name_parms, parm_node name_parm_array[])
+{
+   const char *string1 = nullptr;
+   int len1 = 0;
+
+   // Get the format string
+   val_type string_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+   if (!LookupString(string_val, "C_BuildString", &string1, &len1))
+      return NIL;
+
+   int use_args = num_normal_parms - 1;
+
+   try
+   {
+      std::vector<fmt::basic_format_arg<fmt::format_context>> format_args;
+      format_args.reserve(use_args);
+
+      // Storage for string data (must stay alive during formatting)
+      std::vector<std::string> string_storage;
+      string_storage.reserve(use_args);
+
+      for (int i = 0; i < use_args; i++)
+      {
+         val_type val = RetrieveValue(object_id, local_vars, normal_parm_array[i + 1].type, normal_parm_array[i + 1].value);
+
+         if (val.v.tag == TAG_INT)
+         {
+            // Keep integers as integers for {:d}, {:x}, etc. formatting
+            format_args.emplace_back(static_cast<int>(val.v.data));
+         }
+         else
+         {
+            const char *param_str = NULL;
+            int param_len = 0;
+            if (!LookupString(val, "C_BuildString", &param_str, &param_len))
+               return NIL;
+
+            string_storage.emplace_back(param_str, param_len);
+            format_args.emplace_back(string_storage.back());
+         }
+      }
+
+      // Now do the actual formatting: substitute {} placeholders with our arguments
+      std::string fmt_str(string1, len1);
+      std::string result = fmt::vformat(fmt_str, fmt::format_args(format_args.data(), static_cast<int>(format_args.size())));
+
+      val_type ret;
+      ret.v.tag = TAG_STRING;
+      ret.v.data = CreateStringWithLen(result.c_str(), static_cast<int>(result.length()));
+      return ret.int_val;
+   }
+   catch (const fmt::format_error &e)
+   {
+      bprintf("C_BuildString format error: %s\n", e.what());
+      return NIL;
+   }
+}
+
+/**
+ * IsPointInPoly: Returns True if point (fx, fy) lies inside the given polygon.
+ */
+static bool IsPointInPoly(int fx, int fy, const server_polygon &poly)
+{
+   if (poly.num_vertices < 3)
+      return false;
+
+   bool inside = false;
+   for (int i = 0, j = poly.num_vertices - 1; i < poly.num_vertices; j = i++)
+   {
+      int xi = poly.vertices_x[i], yi = poly.vertices_y[i];
+      int xj = poly.vertices_x[j], yj = poly.vertices_y[j];
+
+      if (yj - yi == 0)
+         continue;
+
+      if ((yi > fy) != (yj > fy))
+      {
+         double x_int = (double) (xj - xi) * (double) (fy - yi) / (double) (yj - yi) + xi;
+
+         if (fx < x_int)
+            inside = !inside;
+      }
+   }
+   return inside;
+}
+
+/**
+ * C_IsPointInSector: Tests whether a fine-grained room coordinate falls inside any polygon of sectors
+ * matching given ID(s).
+ * Expects 6 params: room data, row, col, fine-row (fr), fine-col (fc), and an ID or list of IDs.
+ */
+blak_int C_IsPointInSector(int object_id, local_var_type *local_vars, int num_normal_parms, parm_node normal_parm_array[],
+                         int num_name_parms, parm_node name_parm_array[])
+{
+   val_type room_val, row_val, col_val, fr_val, fc_val, id_list_val;
+   int sector_id;
+
+   if (num_normal_parms != 6)
+   {
+      bprintf("C_IsPointInSector has wrong number of parameters\n");
+      return NIL;
+   }
+   room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
+   row_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type, normal_parm_array[1].value);
+   col_val = RetrieveValue(object_id, local_vars, normal_parm_array[2].type, normal_parm_array[2].value);
+   fr_val = RetrieveValue(object_id, local_vars, normal_parm_array[3].type, normal_parm_array[3].value);
+   fc_val = RetrieveValue(object_id, local_vars, normal_parm_array[4].type, normal_parm_array[4].value);
+   id_list_val = RetrieveValue(object_id, local_vars, normal_parm_array[5].type, normal_parm_array[5].value);
+
+   if (room_val.v.tag != TAG_ROOM_DATA)
+   {
+      bprintf("C_IsPointInSector has bad room tag\n");
+      return NIL;
+   }
+
+   if (row_val.v.tag != TAG_INT)
+   {
+      bprintf("C_IsPointInSector has bad row tag\n");
+      return NIL;
+   }
+
+   if (col_val.v.tag != TAG_INT)
+   {
+      bprintf("C_IsPointInSector has bad col tag\n");
+      return NIL;
+   }
+
+   if (fr_val.v.tag != TAG_INT)
+   {
+      bprintf("C_IsPointInSector has bad fine-row tag\n");
+      return NIL;
+   }
+
+   if (fc_val.v.tag != TAG_INT)
+   {
+      bprintf("C_IsPointInSector has bad fine-col tag\n");
+      return NIL;
+   }
+
+   if (id_list_val.v.tag == TAG_INT)
+   {
+      val_type temp, nil_val;
+      temp.v.tag = TAG_INT;
+      temp.v.data = id_list_val.v.data;
+
+      nil_val.v.tag = TAG_INT;
+      nil_val.v.data = 0;
+
+      id_list_val.v.data = Cons(temp, nil_val);
+      id_list_val.v.tag = TAG_LIST;
+   }
+   else if (id_list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_IsPointInSector has bad sector_ids parameter tag, expected list or int\n");
+      return NIL;
+   }
+
+   roomdata_node *rd = GetRoomDataByID(room_val.v.data);
+   if (!rd || rd->file_info.sectors.empty())
+   {
+      bprintf("C_IsPointInSector has bad room id passed in: %" PRId64 "\n", room_val.v.data);
+      return NIL;
+   }
+
+   room_type *r = &rd->file_info;
+
+   // remember that kod uses 1-based arrays and we don't
+   int row0 = (int) row_val.v.data - 1;
+   int col0 = (int) col_val.v.data - 1;
+
+   // Now, we need to convert the kod coordinates to coordinates that match the room data
+   int fine_x = (int) ((long long) (col0 * FINENESS) + fc_val.v.data) * POLYGON_COORD_SCALE;
+   int fine_y = (int) ((long long) (row0 * FINENESS) + fr_val.v.data) * POLYGON_COORD_SCALE;
+
+   // Build the vector of sector ids
+   std::vector<int> sector_ids;
+
+   list_node *list = GetListNodeByID(id_list_val.v.data);
+   if (!list)
+   {
+      bprintf("C_IsPointInSector failed to get list node by id: %" PRId64 "\n", id_list_val.v.data);
+      return NIL;
+   }
+
+   while (list != NULL)
+   {
+      if (list->first.v.tag == TAG_INT)
+      {
+         sector_id = list->first.v.data;
+         sector_ids.push_back(sector_id);
+      }
+      else
+      {
+         bprintf("C_IsPointInSector: Sector id list element is not an integer\n");
+      }
+
+      if (list->rest.v.tag == TAG_LIST)
+      {
+         list = GetListNodeByID(list->rest.v.data);
+         if (!list)
+         {
+            bprintf("C_IsPointInSector: Failed to get list node by id: %" PRId64 "\n", list->rest.v.data);
+            return NIL;
+         }
+      }
+      else
+      {
+         // End of list
+         break;
+      }
+   }
+
+   for (int sector_id : sector_ids)
+   {
+      server_sector *ss = nullptr;
+      for (size_t i = 0; i < r->sectors.size(); i++)
+      {
+         if (r->sectors[i].id == sector_id)
+         {
+            ss = &r->sectors[i];
+            break;
+         }
+      }
+
+      if (!ss)
+      {
+         bprintf("C_IsPointInSector: Sector id not found in room: %d (room: %" PRId64 ")\n", sector_id,
+                 room_val.v.data);
+         continue;
+      }
+
+      // Found matching sector, check polygons
+      for (size_t p = 0; p < ss->polygons.size(); p++)
+      {
+         const server_polygon &poly = ss->polygons[p];
+         if (!poly.vertices_x || !poly.vertices_y || poly.num_vertices < 3)
+         {
+            continue;
+         }
+
+         if (IsPointInPoly(fine_x, fine_y, poly))
+         {
+            val_type ret;
+            ret.v.tag = TAG_INT;
+            ret.v.data = true;
+            return ret.int_val;
+         }
+      }
+   }
+
+   val_type ret;
+   ret.v.tag = TAG_INT;
+   ret.v.data = false;
+   return ret.int_val;
+}
+
 blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     int num_normal_parms, parm_node normal_parm_array[],
     int num_name_parms, parm_node name_parm_array[])
 {
+    // Early exit if webhooks not enabled - avoid all string/JSON work
+    if (!IsWebhookEnabled()) {
+        return NIL;
+    }
+
     val_type msg_val, event_val, key_val, value_val;
     const char *content, *event_name, *key_str, *value_str;
     int content_len, event_len, key_len, value_len;
-    std::string json;
-    
+
     // Handle single string parameter
     if (num_normal_parms == 1) {
         msg_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2338,7 +2612,7 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     }
     
     // Start building JSON: {"event": "EventName", "params": {
-    json += "{\"event\":\"";
+    std::string json = "{\"event\":\"";
     json.append(event_name, event_len);
     json += "\",\"params\":{";
     

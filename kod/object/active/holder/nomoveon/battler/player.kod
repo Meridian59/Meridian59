@@ -757,6 +757,10 @@ properties:
    %  nicer players. Named something unusual to deter experimentation.
    piFlags3 = 0
 
+   % Whether player has an active glow effect (from glowing weapon).
+   % Separate from flicker flag so glow can have different light properties.
+   pbHasGlow = FALSE
+
    % player starts unguilded--doesn't do much yet
    poGuild = $
    piGuildRejoinTimestamp = 0
@@ -9092,8 +9096,9 @@ messages:
    {
       poIllusion_set = $;
 
-      % Recalculate the flicker flag.
+      % Recalculate the flicker and glow flags.
       Send(self,@RecalcFlickerFlag);
+      Send(self,@RecalcGlowFlag);
 
       % Reset our drawFX.  Also does the SomethingChanged bit if appropriate.
       Send(self,@ResetPlayerDrawFX);
@@ -10035,34 +10040,87 @@ messages:
 
    SetFlickerFlag()
    {
+      % Glow takes priority - don't set flicker if glow is active.
+      if pbHasGlow
+      {
+         return;
+      }
+
       piDrawfx = piDrawfx | FLICKERING_YES;
-      
+
       return;
    }
 
    ClearFlickerFlag()
    {
       piDrawfx = piDrawfx & (~FLICKERING_YES);
-      
+
+      return;
+   }
+
+   SetGlowFlag()
+   {
+      pbHasGlow = TRUE;
+
+      % Glow takes priority over torch flicker - clear flicker flag
+      % so the steady blue light isn't affected by torch.
+      piDrawfx = piDrawfx & (~FLICKERING_YES);
+
+      return;
+   }
+
+   ClearGlowFlag()
+   {
+      pbHasGlow = FALSE;
+
+      % Recalculate flicker flag in case torch is still equipped.
+      Send(self,@RecalcFlickerFlag);
+
       return;
    }
 
    RecalcFlickerFlag()
-   { 
+   "Recalculates flicker flag based on equipped torch."
+   {
       local i;
-      
+
       piDrawfx = piDrawfx & (~FLICKERING_YES);
+
+      % Glow takes priority - don't set flicker if glow is active.
+      if pbHasGlow
+      {
+         return;
+      }
+
       for i in plUsing
       {
          if IsClass(i,&Torch)
-            OR (IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
          {
             piDrawfx = piDrawfx | FLICKERING_YES;
-            
+
             return;
          }
       }
-      
+
+      return;
+   }
+
+   RecalcGlowFlag()
+   "Recalculates glow flag based on equipped glowing weapon."
+   {
+      local i;
+
+      pbHasGlow = FALSE;
+      for i in plUsing
+      {
+         if IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
+         {
+            pbHasGlow = TRUE;
+
+            return;
+         }
+      }
+
       return;
    }
 
@@ -12344,10 +12402,25 @@ messages:
       {
          % A bit of a kludge.  Ideally, we should query the objects we are using
          %  to find out if any want to add lighting information to us.
-         if (piDrawFX & FLICKERING_YES)
+
+         % Check for glow effect first (from glowing weapon spell).
+         % Uses steady light blue light, smaller radius than torch.
+         if pbHasGlow
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % intensity of light flickering out of 255.
+            % Intensity: smaller radius than torch.
+            AddPacket(1,3);
+            % Color: light blue.
+            AddPacket(2,LIGHT_FOUNTAIN);
+
+            return;
+         }
+
+         % Torch uses flickering fire light.
+         if (piDrawFX & FLICKERING_YES)
+         {
+            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC | LIGHT_FLAG_WAVERING));
+            % Intensity of light flickering out of 255.
             AddPacket(1,5);
             % Color
             AddPacket(2,LIGHT_FIRE);

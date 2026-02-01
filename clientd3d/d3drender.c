@@ -1087,10 +1087,6 @@ static int CalculateFlickeredIntensity(const LightSourceData &lightData, float *
    if (lightData.objFlags & (OF_FLICKERING | OF_FLASHING))
    {
       flickerBrightness = (float) lightData.lightAdjust / GetFlickerLevel();
-      // Clamp to non-negative to handle flashing lights where SIN() can go negative.
-      // Negative brightness would cause invalid color values.
-      flickerBrightness = flickerBrightness;
-       //std::max(flickerBrightness, 0.0f);
       flickeredIntensity = (int) (D3DLightScale(lightData.baseIntensity) * flickerBrightness);
    }
    else
@@ -1147,13 +1143,9 @@ static void InitializeLightProperties(d_light *light,
    }
 
    // Set xyz scales (all three axes use same value)
-   // Ensure minimum intensity of 1 to prevent division by zero in inverse scale
-   // calculations and in d3drender_objects.c distance calculations.
-   // This can occur when flickering/flashing lights have lightAdjust near zero.
-   int safeIntensity = flickeredIntensity; //std::max(flickeredIntensity, 1);
-   light->xyzScale.x = safeIntensity;
-   light->xyzScale.y = safeIntensity;
-   light->xyzScale.z = safeIntensity;
+   light->xyzScale.x = flickeredIntensity;
+   light->xyzScale.y = flickeredIntensity;
+   light->xyzScale.z = flickeredIntensity;
 
    // Calculate inverse scales
    light->invXYZScale.x = 1.0f / light->xyzScale.x;

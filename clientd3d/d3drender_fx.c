@@ -314,26 +314,34 @@ void SandstormInit(void)
 */
 void RainInit(void)
 {
-	const int RAIN_EMITTER_RADIUS = 7000;
+	const int RAIN_EMITTER_RADIUS = 7500;
 	const int RAIN_EMITTER_ENERGY = 200;
 	const int RAIN_EMITTER_HEIGHT = 3000;
 	const int RAIN_TIMER = 15; // Milliseconds
 	const bool RAIN_WEATHER_EFFECT = true;
-	const int RAIN_VELOCITY = -250;
+	const int RAIN_VELOCITY = -200;
 	const int RAIN_RANDOM_ROT = 0;
 	// Rain emitter position is offsetted since they aren't centered on the player.
 	const int RAIN_EMITTER_OFFSET = 600;
 
 	D3DParticleSystemReset(&rainParticleSystem);
 	emitter* newEmitter = nullptr;
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < 16; i++)
 	{
 		newEmitter = D3DParticleEmitterInit(&rainParticleSystem, RAIN_EMITTER_ENERGY, RAIN_TIMER, RAIN_WEATHER_EFFECT);
 		D3DParticleEmitterSetPos(newEmitter, -RAIN_EMITTER_OFFSET, -RAIN_EMITTER_OFFSET, RAIN_EMITTER_HEIGHT);
 		D3DParticleEmitterSetVel(newEmitter, 0, 0, RAIN_VELOCITY);
 		D3DParticleEmitterSetRot(newEmitter, 0, 0, 0);
 		D3DParticleEmitterSetBGRA(newEmitter, RAIN_COLOR);
-		D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS, RAIN_RANDOM_ROT);
+		// Half of the emitters spawn snow nearby, and the rest can spawn further.
+		if (i < 8)
+		{
+			D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS, RAIN_RANDOM_ROT);
+		}
+		else
+		{
+			D3DParticleEmitterSetRandom(newEmitter, RAIN_EMITTER_RADIUS * 2, RAIN_RANDOM_ROT);
+		}
 		D3DParticleEmitterAddToList(&rainParticleSystem, newEmitter);
 	}
 }
@@ -344,10 +352,10 @@ void RainInit(void)
 */
 void SnowInit(void)
 {
-	const int SNOW_EMITTER_RADIUS = 7000;
+	const int SNOW_EMITTER_RADIUS = 7500;
 	const int SNOW_EMITTER_ENERGY = 800;
 	const int SNOW_EMITTER_HEIGHT = 3000;
-	const int SNOW_FALL_SPEED = -40;
+	const int SNOW_FALL_SPEED = -30;
 	const int SNOW_TIMER = 15;  // Milliseconds
 	const int SNOW_RANDOM_ROT = 0;
 	const bool SNOW_WEATHER_EFFECT = true;
@@ -356,14 +364,22 @@ void SnowInit(void)
 	
 	D3DParticleSystemReset(&snowParticleSystem);
 	emitter* newEmitter = nullptr;
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < 16; i++)
 	{
 		newEmitter = D3DParticleEmitterInit(&snowParticleSystem, SNOW_EMITTER_ENERGY, SNOW_TIMER, SNOW_WEATHER_EFFECT);
 		D3DParticleEmitterSetPos(newEmitter, -SNOW_EMITTER_OFFSET, -SNOW_EMITTER_OFFSET, SNOW_EMITTER_HEIGHT);
 		D3DParticleEmitterSetVel(newEmitter, 0, 0, SNOW_FALL_SPEED);
 		D3DParticleEmitterSetRot(newEmitter, 0, 0, 0);
 		D3DParticleEmitterSetBGRA(newEmitter, SNOW_COLOR);
-		D3DParticleEmitterSetRandom(newEmitter, SNOW_EMITTER_RADIUS, SNOW_RANDOM_ROT);
+		// Half of the emitters spawn snow nearby, and the rest can spawn further.
+		if (i < 8)
+		{
+			D3DParticleEmitterSetRandom(newEmitter, SNOW_EMITTER_RADIUS, SNOW_RANDOM_ROT);
+		}
+		else
+		{
+			D3DParticleEmitterSetRandom(newEmitter, SNOW_EMITTER_RADIUS * 2, SNOW_RANDOM_ROT);
+		}
 		D3DParticleEmitterAddToList(&snowParticleSystem, newEmitter);
 	}
 }

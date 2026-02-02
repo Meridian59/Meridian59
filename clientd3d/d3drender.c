@@ -829,25 +829,36 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
-		D3DCacheSystemReset(&gWorldCacheSystemStatic);
-		D3DCacheSystemReset(&gWallMaskCacheSystem);
+		// Defer static cache rebuild while invert effect is active.
+		// GetLightPaletteIndex returns PALETTE_INVERT during the flash effect, which would
+		// cause incorrect lighting values to be baked into the static geometry cache.
+		// Keep gD3DRedrawAll set so rebuild happens after the invert effect ends.
+		if (effects.invert > 0)
+		{
+			// Skip rebuild this frame - will be processed when invert effect ends
+		}
+		else
+		{
+			D3DCacheSystemReset(&gWorldCacheSystemStatic);
+			D3DCacheSystemReset(&gWallMaskCacheSystem);
 
-		D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
-		D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
+			D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
+			D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
 
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
-		
-		// Second pass: render transparent objects
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 
-		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+			// Second pass: render transparent objects
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-		gD3DRedrawAll = FALSE;
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+
+			gD3DRedrawAll = FALSE;
+		}
 	}
 	else if (gD3DRedrawAll & D3DRENDER_REDRAW_UPDATE)
 	{

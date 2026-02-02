@@ -2368,8 +2368,17 @@ bool D3DObjectLightingCalc(
 	if (fogEnabled && ((flags & D3DRENDER_NOAMBIENT) == 0))
 		intDistance = FINENESS;
 
+	// Only apply visual flickering when sector_light <= 127 (dark/nighttime)
+	// sector_light > 127 means outdoor/daytime (ambient light affects sector)
+	// This matches the software renderer's GetLightPalette behavior in draw3d.c
+	int effectiveLightAdjust = pRNode->obj.lightAdjust;
+	if (light > 127 && (pRNode->obj.flags & OF_FLICKERING))
+	{
+		effectiveLightAdjust = 0;  // Disable visual flicker during daytime
+	}
+
 	if (pRNode->obj.flags & OF_FLICKERING)
-		light = GetLightPaletteIndex(intDistance, light, FINENESS, pRNode->obj.lightAdjust);
+		light = GetLightPaletteIndex(intDistance, light, FINENESS, effectiveLightAdjust);
 	else
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, 0);
 

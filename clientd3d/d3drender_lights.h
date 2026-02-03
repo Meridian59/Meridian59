@@ -18,16 +18,7 @@ struct LightCacheUpdateParams
 {
    d_light_cache* lightCache;          // Static lights cache
    d_light_cache* lightCacheDynamic;   // Dynamic/flickering lights cache
-   int* redrawFlags;                    // Pointer to gD3DRedrawAll flags
-
-   LightCacheUpdateParams(
-      d_light_cache* lightCacheParam,
-      d_light_cache* lightCacheDynamicParam,
-      int* redrawFlagsParam)
-      : lightCache(lightCacheParam),
-        lightCacheDynamic(lightCacheDynamicParam),
-        redrawFlags(redrawFlagsParam)
-   {}
+   int& redrawFlags;                    // Reference to allow light cache updates to trigger scene redraws
 };
 
 // Parameters for rendering debug light visualization
@@ -36,15 +27,6 @@ struct LightDebugRenderParams
    d_light_cache* lightCache;
    d3d_render_pool_new* objectPool;
    d3d_render_cache_system* objectCacheSystem;
-
-   LightDebugRenderParams(
-      d_light_cache* lightCacheParam,
-      d3d_render_pool_new* objectPoolParam,
-      d3d_render_cache_system* objectCacheSystemParam)
-      : lightCache(lightCacheParam),
-        objectPool(objectPoolParam),
-        objectCacheSystem(objectCacheSystemParam)
-   {}
 };
 
 // Populate the light caches with lights from the room's objects and projectiles.

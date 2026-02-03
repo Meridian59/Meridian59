@@ -530,7 +530,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;
-	LightCacheUpdateParams lightCacheParams(&gDLightCache, &gDLightCacheDynamic, &gD3DRedrawAll);
+	LightCacheUpdateParams lightCacheParams{&gDLightCache, &gDLightCacheDynamic, gD3DRedrawAll};
 	D3DLMapsStaticGet(room, lightCacheParams);
 
 	IDirect3DDevice9_Clear(gpD3DDevice, 0, NULL, D3DCLEAR_TARGET |
@@ -650,7 +650,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		// DEBUG: Draw circles at static light positions
 		if (D3DLightsDebugPositionsEnabled() && config.bDynamicLighting)
 		{
-			LightDebugRenderParams debugParams(&gDLightCache, &gObjectPool, &gObjectCacheSystem);
+			LightDebugRenderParams debugParams{&gDLightCache, &gObjectPool, &gObjectCacheSystem};
 			D3DRenderDebugLightPositions(params, debugParams);
 		}
 	}
@@ -766,9 +766,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
 	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
-
-	// Flicker performance profiling - report every 256 frames
-	D3DLightsReportFlickerPerf();
 }
 
 void D3DRenderResizeDisplay(int left, int top, int right, int bottom)

@@ -21,6 +21,11 @@ static const bool debugLightPositions = false;
 // Performance profiling for flickering lights feature.
 // When true, outputs timing and count stats every 256 frames.
 // Use this to compare performance with flickering on vs off.
+// 
+// To enable profiling:
+// 1. Set flickerPerfProfile = true (below)
+// 2. Add this call at the end of D3DRenderBegin() in d3drender.c:
+//    D3DLightsReportFlickerPerf();
 static bool flickerPerfProfile = false;
 
 // Accumulated performance counters (reset every 256 frames)
@@ -391,7 +396,7 @@ void D3DLMapsStaticGet(room_type* room, const LightCacheUpdateParams& params)
             {
                // Structural change (light added/removed/moved, base intensity/color changed)
                if (params.redrawFlags)
-                  *params.redrawFlags |= D3DRENDER_REDRAW_ALL;
+                  params.redrawFlags |= D3DRENDER_REDRAW_ALL;
                if (flickerPerfProfile)
                   flickerRedrawsTriggered++;
             }

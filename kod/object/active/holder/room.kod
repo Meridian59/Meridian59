@@ -2760,7 +2760,22 @@ messages:
                           #iAngle=Send(what,@GetAngle),
                           #iAngle_Change=Nth(i,6));
 
-            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            % Play door sound at the door's location.  DMs/Admins are silent
+            % to avoid revealing their presence.  If shared setting is enabled,
+            % all players in room hear it; otherwise only the opener hears it
+            % (non-positional, legacy behavior).
+            if NOT IsClass(what,&DM)
+            {
+               if Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
+               {
+                  Send(self,@SomethingWaveRoom,#wave_rsc=Send(self,@GetDoorSound),
+                       #row=row,#col=col);
+               }
+               else
+               {
+                  Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+               }
+            }
 
             Send(SYS,@UtilGoNearSquare,#what=what,
                  #where=Send(SYS,@FindRoomByNum,#num=Nth(i,3)),
@@ -2778,14 +2793,16 @@ messages:
       return vrDoor_sound;
    }
 
-   SomethingWaveRoom(what = 0,wave_rsc = $)
-   "Don't send <what> if not from any particular object"
+   SomethingWaveRoom(what = 0, wave_rsc = $, row = $, col = $)
+   "Plays a sound for all users in the room. Sends WaveSendUser to each user "
+   "with the provided wave_rsc, source object, row, and col parameters."
    {
       local i;
 
       for i in plActive
       {
-         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what);
+         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what,
+              #row=row,#col=col);
       }
 
       return;

@@ -171,6 +171,7 @@ properties:
 
 %   prBackground = background_mountains
 
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

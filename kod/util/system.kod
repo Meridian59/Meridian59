@@ -281,11 +281,11 @@ properties:
    piBrightness
    
    piDayPhase = WEATHER_DAY
-   piCurrent_weather = WEATHER_CLEAR
+   piGlobal_weather = WEATHER_CLEAR
    
-   % Seasons affect what weather happens in different climates.
-   % For now, it's just used to apply rain to every room.
-   piSeason = WEATHER_RAIN
+   % Sets the kind of precipitation to use whenever it gets stormy.
+   % Setting this to snow basically makes it winter.
+   piDefault_precipitation = WEATHER_RAIN
 
    poLibrary = $
    poParliament = $
@@ -3539,19 +3539,19 @@ messages:
 	  return piDayPhase;
    }
 
-   GetWeather()
+   GetGlobalWeather()
    {
-	  return piCurrent_weather;
+	  return piGlobal_weather;
    }
    
-   SetWeather(what=$)
+   SetGlobalWeather(what=$)
    "Used by DMs to directly set the global weather."
    {
       local i;
       
-	  if piCurrent_weather <> what
+	  if piGlobal_weather <> what
 	  {
-         piCurrent_weather = what;
+         piGlobal_weather = what;
 	     for i in plRooms
          {
             Send(i,@RecalcLightAndWeather);
@@ -3561,13 +3561,13 @@ messages:
    }
    
    SetSeason(what=$)
-   "Used by DMs to set global season. For now it only uses rain/snow."
+   "Used by DMs to set global season. Currently used to set default precipitation to rain/snow."
    {
 	  local i;
 	  
-	  if piSeason <> what
+	  if piDefault_precipitation <> what
 	  {
-	     piSeason = what;
+	     piDefault_precipitation = what;
 		 for i in plRooms
          {
             Send(i,@RecalcLightAndWeather);
@@ -3606,42 +3606,42 @@ messages:
 
 	  iRandomResult = Random(1,100);
 	  
-	  if piCurrent_weather = WEATHER_CLEAR
+	  if piGlobal_weather = WEATHER_CLEAR
 	  {
          iCloudyChance = Send(Send(self,@GetSettings),@GetClearToCloudy);
 		 if iRandomResult <= iCloudyChance
 		 {
-		    piCurrent_weather = WEATHER_CLOUDY;
+		    piGlobal_weather = WEATHER_CLOUDY;
 		    return;
 		 }
 	  }
 
-	  if piCurrent_weather = WEATHER_CLOUDY 
+	  if piGlobal_weather = WEATHER_CLOUDY 
       {
         iClearChance = Send(Send(self,@GetSettings),@GetCloudyToCleary);
         iStormyChance = Send(Send(self,@GetSettings),@GetCloudyToStormy);
         if iRandomResult < iClearChance
         {
-           piCurrent_weather = WEATHER_CLEAR;
+           piGlobal_weather = WEATHER_CLEAR;
         }
         else
 	    {
-           if piCurrent_weather = WEATHER_CLOUDY 
+           if piGlobal_weather = WEATHER_CLOUDY 
 		                         AND iRandomResult < (iClearChance + iStormyChance)
            {
-              piCurrent_weather = piSeason;
+              piGlobal_weather = piDefault_precipitation;
               return;
 		   }
         }
 		return;
       }
 
-	  if (piCurrent_weather = WEATHER_RAIN) OR (piCurrent_weather = WEATHER_SNOW)
+	  if (piGlobal_weather = WEATHER_RAIN) OR (piGlobal_weather = WEATHER_SNOW)
 	  {
 	     iCloudyChance = Send(Send(self,@GetSettings),@GetStormyToCloudy);
 		 if iRandomResult <= iCloudyChance
 		 {
-			piCurrent_weather = WEATHER_CLOUDY;
+			piGlobal_weather = WEATHER_CLOUDY;
          }
 	  }
 	  return;

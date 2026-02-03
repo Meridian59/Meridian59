@@ -249,12 +249,12 @@ properties:
    pbUser_in_room = FALSE
 
    % Activates weather particles such as rain. It's undefined by default and
-   % the room subclasses can assign it. If a room doesn't define ut, then it 
-   % gets auto-assigned using GetPrecipitationSetting().
+   % the room subclasses can assign it. If the room's .kod file doesn't define it, 
+   % then it gets auto-assigned using GetPrecipitationSetting().
    pbPrecipitation_enabled = $
    
    % Used to set type of weather to render for everyone in the room.
-   piWeather_type = WEATHER_CLEAR
+   piRoom_weather = WEATHER_CLEAR
    % Determines how weather differs here, such as no snow in the tropics.
    piClimate = CLIMATE_TEMPERATE
 
@@ -400,25 +400,20 @@ messages:
 	  }
 	  
 	  % If undefined, assign precipitation setting based on terrain flags.
-	  % This can cover most rooms, but some need to be manually set.
-	  % e.g. Rooms with the TERRAIN_CASTLE flag includes open courtyards.
+	  % This can cover most rooms, but some may need to be manually set.
+	  % e.g. Rooms with the TERRAIN_CASTLE flag includes open courtyards,
+	  % or indoor areas may have windows where rain/snow can show outside.
 	  iTerrain = Send(self,@GetTerrainType);
 	  
-	  % Check for rooms that are most likely all indoors.
+	  % Check for rooms that are most likely indoors.
 	  if (iTerrain & TERRAIN_CAVES) OR (iTerrain & TERRAIN_MINES)
          OR (iTerrain & TERRAIN_SEWERS) OR (iTerrain & TERRAIN_NECROPOLIS)
+		 OR (iTerrain & TERRAIN_GUILDHALL) OR (iTerrain & TERRAIN_RESIDENCE)
+	     OR (iTerrain & TERRAIN_SHOP) OR (iTerrain & TERRAIN_CASTLE)
       {
          pbPrecipitation_enabled = FALSE;
 		 return FALSE;
       }	  
-
-	  % These terrain are often indoors but may have open spaces or windows.
-	  if (iTerrain & TERRAIN_GUILDHALL) OR (iTerrain & TERRAIN_RESIDENCE)
-	        OR (iTerrain & TERRAIN_SHOP) OR (iTerrain & TERRAIN_CASTLE)
-	  {
-	     pbPrecipitation_enabled = FALSE;
-		 return FALSE;
-	  }
 	  
       pbPrecipitation_enabled = TRUE;
       return TRUE;
@@ -1627,7 +1622,7 @@ messages:
       %  background changed
 	  
       iDayPhase = Send(SYS,@GetDayPhase);
-	  iWeather = Send(SYS,@GetWeather);
+	  iWeather = Send(SYS,@GetGlobalWeather);
 	  iPrecipitation = Send(self,@GetPrecipitationSetting);
 
       if Send(SYS,@GetChaosNight)
@@ -1639,7 +1634,7 @@ messages:
 
       % First check if the local weather gets adjusted, which can affect which skybox to show.
 	  Send(self,@RecalcRoomWeather,#what=iWeather,#precipitation=iPrecipitation);
-      Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=piWeather_type);
+      Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=piRoom_weather);
       Send(self,@RecalculateDirectionalLight);
 
       Send(self,@AmbientLightChanged);
@@ -1657,21 +1652,21 @@ messages:
 	  % Includes Martyr's Battleground and Out of Grace.
 	  if piClimate = CLIMATE_NONE
 	  {
-		piWeather_type = WEATHER_CLEAR;
+		piRoom_weather = WEATHER_CLEAR;
 		return;
 	  }
 	  
 	  % If precipitation is off, just turn rain/snow into cloudy.
 	  if (precipitation = FALSE) AND (what = WEATHER_RAIN OR what = WEATHER_SNOW)
 	  {
-		piWeather_type = WEATHER_CLOUDY;
+		piRoom_weather = WEATHER_CLOUDY;
 		return;
 	  }
 	  
 	  % Tropical areas like Ko'catan doesn't get snow.
 	  if piClimate = CLIMATE_TROPICAL AND what = WEATHER_SNOW
 	  {
-         piWeather_type = WEATHER_RAIN;
+         piRoom_weather = WEATHER_RAIN;
 		 return;
 	  }
 	  
@@ -1680,7 +1675,7 @@ messages:
 	  {
          if Random(1,100) <= Send(Send(SYS,@GetSettings),@GetMountainSnowChance)
 		 {
-		    piWeather_type = WEATHER_SNOW;
+		    piRoom_weather = WEATHER_SNOW;
 			return;
 	     }
 	  }
@@ -1691,15 +1686,15 @@ messages:
 	  {
          if NOT (Random(1,100) <= Send(Send(SYS,@GetSettings),@GetAridStormyChance))
 		 {
-		    piWeather_type = WEATHER_CLOUDY;
+		    piRoom_weather = WEATHER_CLOUDY;
 			return;
 	     }
 	  }
       
 	  % Otherwise, set weather normally.
-	  if piWeather_type <> what
+	  if piRoom_weather <> what
 	  {
-	     piWeather_type = what;
+	     piRoom_weather = what;
 	  }
 	  return;
    }
@@ -1728,7 +1723,7 @@ messages:
    
    GetRoomWeather()
    {
-	  return piWeather_type;
+	  return piRoom_weather;
    }
    
    GetWeatherEffect(what=$)

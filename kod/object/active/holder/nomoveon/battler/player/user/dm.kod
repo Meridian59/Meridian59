@@ -1236,27 +1236,27 @@ messages:
 	  % Commands to immediately set server weather.
 	  if StringEqual(string,"weather clear")
       {
-		 Send(SYS,@SetWeather,#what=WEATHER_CLEAR);
+		 Send(SYS,@SetGlobalWeather,#what=WEATHER_CLEAR);
          return;
       }
       if StringEqual(string,"weather cloudy")
       {
-         Send(SYS,@SetWeather,#what=WEATHER_CLOUDY);
+         Send(SYS,@SetGlobalWeather,#what=WEATHER_CLOUDY);
          return;
       }
       if StringEqual(string,"weather rain")
       {
-		 Send(SYS,@SetWeather,#what=WEATHER_RAIN);
+		 Send(SYS,@SetGlobalWeather,#what=WEATHER_RAIN);
          return;
       }
 	  if StringEqual(string,"weather snow")
       {
-		 Send(SYS,@SetWeather,#what=WEATHER_SNOW);
+		 Send(SYS,@SetGlobalWeather,#what=WEATHER_SNOW);
          return;
       }
 
-      % Commands to apply seasons to the server. For now it uses
-	  % rain/snow as seasons to change the default precipitation.
+      % Commands to apply seasons to the server. For now it's actually
+	  % being used to set default precipitation to rain or snow.
       if StringEqual(string,"season rain")
       {
 		 Send(SYS,@SetSeason,#what=WEATHER_RAIN);

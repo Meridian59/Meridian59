@@ -74,6 +74,9 @@ properties:
    ptIllusionResetTimer = $
    ptDeathMessageTimer = $
    poDead = $
+   
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_TROPICAL
 
 messages:
 

@@ -313,7 +313,7 @@ void EnterNewRoom(void)
 
    DrawGridBorder();   
 
-   SoundAbort();  // Turn off looping sounds
+   SoundStopLooping();
 
    //	Clear any user selected target.
 	SetUserTargetID( INVALID_ID );
@@ -380,6 +380,9 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
       player.y = r->motion.y;
       r->motion.z = GetFloorBase(player.x,player.y);
       player.angle = r->angle;
+
+      // Initialize the 3D audio listener position for the new room
+      UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
    }
 
    // Set z coordinates of all objects
@@ -402,6 +405,10 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
    RedrawAll();
 
    ModuleEvent(EVENT_USERCHANGED);
+
+   /* Finalize looping sound transition: stop any previous-room looping sounds
+      that were not re-registered during room loading. */
+   Sound_EndLoopingSoundTransition();
 }
 /************************************************************************/
 void TurnObject(ID object_id, WORD angle)
@@ -478,7 +485,21 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
 
 	  // I'd like to second the notion that this is bad, wtf... - mistery
 
+      // Save timing fields that shouldn't be overwritten (prevents light flashing during combat)
+      int savedBounceTime = r->obj.bounceTime;
+      int savedPhaseTime = r->obj.phaseTime;
+      int savedLightAdjust = r->obj.lightAdjust;
+      BYTE savedEffect = r->obj.effect;
+      int savedFlickerTime = r->obj.flickerTime;
+
       memcpy(&r->obj, new_obj, sizeof(object_node));
+
+      // Restore timing fields
+      r->obj.bounceTime = savedBounceTime;
+      r->obj.phaseTime = savedPhaseTime;
+      r->obj.lightAdjust = savedLightAdjust;
+      r->obj.effect = savedEffect;
+      r->obj.flickerTime = savedFlickerTime;
       memcpy(&r->motion.animate, a, sizeof(Animate));
       r->motion.overlays = overlays;
       r->motion.move_animating = false;
@@ -600,8 +621,9 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
 	 int distance = ComputeObjectDistance(p, obj) >> LOG_FINENESS;
 	 if (distance > 2)
 	    volume = MAX_VOLUME * 2 / distance;
-	 src_row = obj->motion.y;
-	 src_col = obj->motion.x;
+	 // Convert fine coords to tile coords for audio positioning
+	 src_row = obj->motion.y >> LOG_FINENESS;
+	 src_col = obj->motion.x >> LOG_FINENESS;
       }
    }
    else if((x > 0) || (y > 0))	
@@ -629,8 +651,6 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
       {
 	 volume = maxvolume - (distance * maxvolume / cutoff) ;
       }
-      // debug(("Distance = %i\n",distance));
-      // debug(("Setting volume to %i.\n",volume));
    }
    PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
 }

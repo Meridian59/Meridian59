@@ -54,7 +54,7 @@ typedef struct {
    bool compress;
 } Options;
 
-void Error(char *fmt,...);
+void Error(const char *fmt,...);
 
 #include "writebgf.h"
 

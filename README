@@ -1,7 +1,7 @@
 Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2022 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2025 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -76,9 +76,9 @@ client (meridian.exe) with command line flags, like this:
 meridian.exe /U:joe.smith /W:password /H:localhost /P:5959 
 
 
-RUNNING ON LINUX
+RUNNING THE SERVER ON LINUX OR MAC
 
-The server can be built on Linux with the following commands:
+The server can be built on Linux or Mac with the following commands:
 
 cd blakserv
 make -f makefile.linux
@@ -88,7 +88,7 @@ The blakserv.cfg file requires some manual changes to run on Linux.
 
 THIRD-PARTY CODE
 
-Meridian uses zlib, libpng libarchive.  All three are built from source.
+Meridian uses zlib, libpng, libarchive.  All three are built from source.
 libarchive was configured via cmake with the following cmake environment
 variables set to use zlib:
 
@@ -101,3 +101,4 @@ CONTACT INFORMATION
 You can contact us at meridian59.email@gmail.com.  Our Web site is
 https://meridian59.com, where you can also read about the history of
 the game.
+

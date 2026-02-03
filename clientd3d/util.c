@@ -103,7 +103,12 @@ char *strtolower(char *s)
    }
    return s;
 }
-/********************************************************************/
+/************************************************************************/
+bool iequals(const std::string& a, const std::string& b)
+{
+   return _stricmp(a.c_str(), b.c_str()) == 0;
+}
+/************************************************************************/
 void wait(long seconds)
 {
    long t = time(NULL);
@@ -138,8 +143,8 @@ void set_extension(char *newfile, char *filename, char *extension)
  */
 DWORD string_hash(char *name, DWORD max_val)
 {
-  register char *cp;
-  register DWORD k;
+  char *cp;
+  DWORD k;
 
   cp = name;
   k = 0;
@@ -153,7 +158,7 @@ DWORD string_hash(char *name, DWORD max_val)
  * MakeDirectory:  Create directory of given name, if it doesn't already exist.
  *   Returns true if directory exists or was successfully created.
  */
-bool MakeDirectory(char *name)
+bool MakeDirectory(const char *name)
 {
    struct stat s;
 
@@ -209,8 +214,8 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
    rcScreen = mi.rcWork;  // Use rcWork for the working area excluding taskbar
 
    // Make sure that child window is completely on the screen
-   x = max(rcScreen.left, min(x, rcScreen.right - rcDlg.right));
-   y = max(rcScreen.top, min(y, rcScreen.bottom - rcDlg.bottom));
+   x = (int)std::max(rcScreen.left, std::min((LONG)x, rcScreen.right - rcDlg.right));
+   y = (int)std::max(rcScreen.top, std::min((LONG)y, rcScreen.bottom - rcDlg.bottom));
 
    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }
@@ -534,10 +539,10 @@ void ResizeDialogItem(HWND hDlg, HWND hItem, RECT *old_rect, int flags, bool red
 
    /* Try to keep dialog item from getting too big after window obscures it */
    if (y_increase > 0)
-      y_increase = max(0, min(y_increase, dlg_rect.bottom - item_rect.bottom));
+      y_increase = std::clamp((LONG)y_increase, 0L, dlg_rect.bottom - item_rect.bottom);
 
    if (x_increase > 0)
-      x_increase = max(0, min(x_increase, dlg_rect.right - item_rect.left));
+      x_increase = std::clamp((LONG)x_increase, 0L, dlg_rect.right - item_rect.left);
 
    if (flags & RDI_LEFT)
       new_rect.left = item_rect.left;
@@ -643,7 +648,7 @@ int MenuFindItemByName(HMENU hMenu, char *name)
 /*
  * GetCRC16:  Return 16 bit CRC of given buffer with given length.
  */
-WORD GetCRC16(char *buf, int length)
+WORD GetCRC16(const char *buf, int length)
 {
    DWORD crc = GetCRC32(buf, length);
    return (WORD) (crc & 0xffff);
@@ -652,7 +657,7 @@ WORD GetCRC16(char *buf, int length)
 /*
  * GetCRC32:  Return 32 bit CRC of given buffer with given length.
  */
-DWORD GetCRC32(char *buf, int length)
+DWORD GetCRC32(const char *buf, int length)
 {
    return CRC32(buf, length);
 }

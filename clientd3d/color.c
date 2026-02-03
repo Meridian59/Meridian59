@@ -91,7 +91,7 @@ void ColorsCreate(bool use_defaults)
 	int temp;
 	BYTE red, green, blue;
 	char str[100], name[10], *ptr;
-	char *separators = ",";
+	const char *separators = ",";
 	bool success;
 
 	DefaultColor = PALETTERGB(255, 255, 255);

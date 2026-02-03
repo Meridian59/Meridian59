@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for TStatusBar
+//----------------------------------------------------------------------------
+
+#include <owl/statusba.rh>
+#include <owl/winres.rh>
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE {"< unsaveable >"} // Prevent corruption by the VS Resource Editor.
+#endif
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+STRINGTABLE
+{
+  IDS_MODES, "EXT|CAPS|NUM|SCRL|OVR|REC"
+  IDS_MODESOFF, "   |    |   |    |   |   "
+
+  SC_SIZE-1, "Commands for manipulating this and other windows"
+  SC_SIZE, "Resize this window"
+  SC_MOVE, "Move the window to a different screen location"
+  SC_MINIMIZE, "Collapse this window to an icon"
+  SC_MAXIMIZE, "Expand this window to full screen size"
+  SC_NEXTWINDOW, "Switch to next window"
+  SC_PREVWINDOW, "Switch to previous window"
+  SC_CLOSE, "Close this window"
+  SC_RESTORE, "Restore this window to normal size"
+  SC_TASKLIST, "Switch to another task"
+}

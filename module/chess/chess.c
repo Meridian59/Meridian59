@@ -77,7 +77,7 @@ static void ChessDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify
 static LRESULT CALLBACK ChessBoardProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void BoardLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void ChessGotState(unsigned char *state);
-static void ChessDlgShowMessage(char *message);
+static void ChessDlgShowMessage(const char *message);
 static void ChessDlgShowGameStatus(void);
 static void ChessDlgShowMover(void);
 static INT_PTR CALLBACK ChessPromotionDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -297,7 +297,7 @@ INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       else aspect_ratio = min_window_size.cx / min_window_size.cy;
 
       GetClientRect(hwnd, &rect);
-      b.square_size = min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
+      b.square_size = std::min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
 
       b.valid = false;
       return TRUE;
@@ -306,7 +306,7 @@ INT_PTR CALLBACK ChessDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       ResizeDialog(hDlg, &dlg_rect, chess_controls);
       hwnd = GetDlgItem(hDlg, IDC_BOARD);
       GetClientRect(hwnd, &rect);
-      b.square_size = min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
+      b.square_size = std::min(rect.bottom / BOARD_HEIGHT, rect.right / BOARD_WIDTH);
       return TRUE;
       
       HANDLE_MSG(hDlg, WM_COMMAND, ChessDlgCommand);
@@ -562,7 +562,7 @@ void ChessDlgShowMover(void)
 /*
  * ChessDlgShowMessage:  Display given text message in chess dialog.
  */
-void ChessDlgShowMessage(char *message)
+void ChessDlgShowMessage(const char *message)
 {
    if (hChessDlg == NULL)
       return;

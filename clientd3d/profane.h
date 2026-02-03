@@ -22,8 +22,8 @@ BOOL RemoveProfaneTerm(char* pszTerm);
 void SaveProfaneTerms();
 void FreeProfaneTerms();
 void RecompileAllProfaneExpressions();
-BOOL ContainsProfaneTerms(char* pszText);
-char* CleanseProfaneString(char* pszText);
+BOOL ContainsProfaneTerms(const char* pszText);
+char* CleanseProfaneString(const char* pszText);
 
 /***************************************************************************/
 

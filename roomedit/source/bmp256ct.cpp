@@ -163,10 +163,10 @@ TBitmap256Control::~TBitmap256Control ()
 // TBitmap256Control
 // -----------------
 //
-char far*
-TBitmap256Control::GetClassName ()
+TWindowClassName
+TBitmap256Control::GetWindowClassName ()
 {
-	return "Bitmap256Control";
+	return TWindowClassName{"Bitmap256Control"};
 }
 
 

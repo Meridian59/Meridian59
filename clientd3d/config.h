@@ -22,6 +22,8 @@
 
 #define CONFIG_MAX_VOLUME 100  // Max value of sound / music volume settings
 
+static const int CONFIG_MAX_TEXT_ZOOM_LIMIT = 100;  // Max value of map text zoom limit
+
 // Communication settings
 typedef struct {
    WORD  timeout;                 /* # of seconds to wait before redialing */
@@ -90,8 +92,8 @@ typedef struct {
    bool colorcodes;
    int lastPasswordChange;
 
-   int soundLibrary;
-   bool rosterbmps;         // unused, should be removed
+   int soundLibrary;             /* Reserved for struct layout compatibility */
+   bool rosterbmps;              /* Reserved for struct layout compatibility */
    int CacheBalance;			 /* controls the balance between the object and grid caches */
    int ObjectCacheMin;			 /* minimum size of the object cache */
    int GridCacheMin;			 /* minimum size of the grid cache */
@@ -106,6 +108,7 @@ typedef struct {
    int	mouselookYScale;
 
    bool map_annotations;       /* Display annotations on map? */
+   int map_text_zoom_limit;    // 0 - 100
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
@@ -120,6 +123,7 @@ typedef struct {
    // and switches D3D present mode to D3DPRESENT_INTERVAL_DEFAULT 
    // for more stable, power-efficient rendering.
    bool gpuEfficiency;
+   bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
 } Config;
 
 void ConfigInit(void);
@@ -138,7 +142,6 @@ void TimeSettingsLoad(void);
 void TimeSettingsSave(int download_time);
 
 M59EXPORT int GetConfigInt(char *section, char *key, int default_value, char *fname);
-bool WritePrivateProfileInt(char *section, char *key, int value, char *fname);
 M59EXPORT bool WriteConfigInt(char *section, char *key, int value, char *fname);
 
 void ConfigSetServerNameByNumber(int num);
@@ -146,9 +149,5 @@ void ConfigSetSocketPortByNumber(int num);
 
 // Is this the Steam version of the client?  (e.g. this has its own update system)
 bool IsSteamVersion();
-  
-#define LIBRARY_NIL 0
-#define LIBRARY_MSS 1
-#define LIBRARY_MIX 2
 
 #endif /* #ifndef _CONFIG_H */

@@ -1,0 +1,59 @@
+//----------------------------------------------------------------------------
+// OWL Extensions (OWLEXT) Class Library
+// Copyright (C) 1998 by Dieter Windau, All rights reserved
+//
+// May be used without permission, if appropriate credit is given
+//
+// Note that if you link to OWLEXT statically, you must remember to
+// manually include or cut-n-paste these .RC definitions into your own
+// .RC file; if you forget, you will get "Create fail for ...." exceptions
+// in your code at runtime.
+//----------------------------------------------------------------------------
+#include <owlext/hlinkctl.rh>
+#include <owl/winres.rh>
+
+IDI_HLINK_URL           ICON    DISCARDABLE     "res\\hlnkurl.ico"
+IDC_HLINK               CURSOR  DISCARDABLE     "res\\hlink.cur"
+
+IDD_HLINK_PROPERTIES DIALOGEX DISCARDABLE  0, 0, 207, 169
+STYLE DS_SHELLFONT | WS_CHILD | WS_CAPTION
+CAPTION "General"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDI_HLINK_URL, -1, 7,7,18,20
+    EDITTEXT        IDC_NAME,44,14,156,25,ES_MULTILINE | ES_AUTOHSCROLL |
+                    ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    CONTROL         "",-1,"Static",SS_ETCHEDHORZ,7,44,193,1
+    LTEXT           "Address (URL):",IDC_URL_PROMPT,7,60,28,24
+    EDITTEXT        IDC_URL,44,63,156,14,ES_AUTOHSCROLL | ES_READONLY | NOT
+                    WS_BORDER | NOT WS_TABSTOP
+END
+
+IDM_HLINK_POPUP MENU DISCARDABLE
+BEGIN
+    POPUP "_POPUP_"
+    BEGIN
+        MENUITEM "&Open",                       ID_POPUP_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "Copy Shor&tcut",              ID_POPUP_COPYSHORTCUT
+        MENUITEM SEPARATOR
+        MENUITEM "Add to &Favorites",           ID_POPUP_ADDTOFAVORITES
+        MENUITEM "Add to &Desktop",             ID_POPUP_ADDTODESKTOP
+        MENUITEM SEPARATOR
+        MENUITEM "P&roperties",                 ID_POPUP_PROPERTIES
+    END
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_POPUP_COPYSHORTCUT   "Copy this shortcut to the clipboard"
+    ID_POPUP_PROPERTIES     "Show the properties of this item"
+    ID_POPUP_ADDTOFAVORITES "Add this shortcut to your Favorites"
+    ID_POPUP_ADDTODESKTOP   "Add this shortcut to the Desktop"
+    ID_POPUP_OPEN           "Opens this shortcut"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    IDS_HLINK_PROPERTIES    "Properties"
+END

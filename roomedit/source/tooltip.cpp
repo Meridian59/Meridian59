@@ -356,9 +356,9 @@ void TToolTip::GetWindowClass (WNDCLASS &wc)
 	wc.style |= CS_SAVEBITS;
 }
 
-LPSTR TToolTip::GetClassName ()
+TWindowClassName TToolTip::GetWindowClassName ()
 {
-	return "WinDEUTooltip";
+	return TWindowClassName{"WinDEUTooltip"};
 }
 
 void TToolTip::Paint (TDC &dc, BOOL, TRect &)

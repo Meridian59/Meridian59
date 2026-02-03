@@ -29,8 +29,8 @@ void AppendTextFile(session_node *s,const char *filename,
    {
       eprintf("AppendTextFile can't open %s to write out new text!\n",save_name);
       dprintf("-------------------------------------------\n");
-      dprintf("From account %i, %s\n",s->account->account_id,s->account->name);
-      dprintf("%s\n\n",TimeStr(GetTime()));
+      dprintf("From account %i, %s\n",s->account->account_id,s->account->name.c_str());
+      dprintf("%s\n\n",TimeStr(GetTime()).c_str());
       for (i=0;i<len;i++)
 	 dprintf("%c",text[i]);
       dprintf("\n\n");
@@ -39,8 +39,8 @@ void AppendTextFile(session_node *s,const char *filename,
    }
 
    fprintf(appendfile,"-------------------------------------------\n");
-   fprintf(appendfile,"From account %i, %s\n",s->account->account_id,s->account->name);
-   fprintf(appendfile,"%s\n\n",TimeStr(GetTime()));
+   fprintf(appendfile,"From account %i, %s\n",s->account->account_id,s->account->name.c_str());
+   fprintf(appendfile,"%s\n\n",TimeStr(GetTime()).c_str());
    for (i=0;i<len;i++)
       fprintf(appendfile,"%c",text[i]);
    fprintf(appendfile,"\n\n");

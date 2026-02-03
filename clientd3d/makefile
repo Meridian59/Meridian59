@@ -7,22 +7,30 @@ SOURCEDIR = $(CLIENTDIR)
 
 # Need to put build dir in include path, because trig and palette
 # generated files are there.
-CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
+CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT -DSTB_VORBIS_NO_PUSHDATA_API
+
+# Select OpenAL library and DLL path based on target platform
+!if "$(PLATFORM)" == "x64"
+LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win64
+OPENALDLLDIR = $(OPENALDIR)\bin\Win64
+!else
+LINKFLAGS = $(LINKFLAGS) /LIBPATH:$(OPENALDIR)\libs\Win32
+OPENALDLLDIR = $(OPENALDIR)\bin\Win32
+!endif
 
 LIBS =  \
-	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
-	 ws2_32.lib comctl32.lib advapi32.lib \
-	 winmm.lib libarchive.lib rscload.lib wininet.lib \
-	 ole32.lib waveplay.lib \
-	 d3d9.lib libpng.lib zlib.lib
+	user32.lib gdi32.lib comdlg32.lib shell32.lib \
+	ws2_32.lib comctl32.lib advapi32.lib \
+	winmm.lib libarchive.lib rscload.lib wininet.lib \
+	ole32.lib OpenAL32.lib \
+	d3d9.lib libpng.lib zlib.lib
 
-# Setting RETAIL=1 turns on the Miles Sound System, which we can't
-# put in the open source version
+# Setting RETAIL=1 includes Bugsplat; not needed for development
 !ifdef RETAIL
 
 CFLAGS = $(CFLAGS) -DM59_RETAIL
 LIBS = $(LIBS) \
-       mss32.lib mss32midi.lib bugsplat.lib
+        bugsplat.lib
 
 !endif
 
@@ -81,7 +89,7 @@ OBJS = \
         $(OUTDIR)\graphctl.obj \
         $(OUTDIR)\animate.obj \
         $(OUTDIR)\config.obj \
-        $(OUTDIR)\project.obj \
+        $(OUTDIR)\projectile.obj \
         $(OUTDIR)\uselist.obj \
         $(OUTDIR)\move.obj \
         $(OUTDIR)\startup.obj \
@@ -106,6 +114,8 @@ OBJS = \
         $(OUTDIR)\say.obj \
         $(OUTDIR)\sound.obj \
         $(OUTDIR)\music.obj \
+        $(OUTDIR)\audio_openal.obj \
+        $(OUTDIR)\stb_vorbis.obj \
         $(OUTDIR)\key.obj \
         $(OUTDIR)\buy.obj \
         $(OUTDIR)\statstrt.obj \
@@ -150,12 +160,16 @@ $(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
 $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
+$(OUTDIR)\stb_vorbis.obj : $(TOPDIR)\external\stb\stb_vorbis.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
+
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<
 $(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS) /NODEFAULTLIB:libc
 <<
 	$(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
 	$(CP) $@ $(CLIENTRUNDIR)
+	$(CP) $(OPENALDLLDIR)\soft_oal.dll $(CLIENTRUNDIR)\OpenAL32.dll
 
 $(OUTDIR)\maketrig.exe: $(OUTDIR)\maketrig.obj
 	$(LINK) $** -out:$@ $(LINKFLAGS)

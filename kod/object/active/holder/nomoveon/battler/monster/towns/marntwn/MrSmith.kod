@@ -77,7 +77,7 @@ messages:
       return;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what = $, who = $)
    {
       % Allow him to buy the weapons and shields from the nearby crypt.
       if Send(what,@CanBeGiventoNPC)

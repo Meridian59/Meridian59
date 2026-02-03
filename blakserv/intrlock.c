@@ -19,7 +19,7 @@
 
 Mutex muxServer;
 
-CRITICAL_SECTION csQuit;
+Mutex muxQuit;
 bool quit;
 
 void InitInterfaceLocks()
@@ -27,8 +27,7 @@ void InitInterfaceLocks()
    muxServer = MutexCreate();
 
    quit = false;
-   InitializeCriticalSection(&csQuit);
-   
+   muxQuit = MutexCreate();
 }
 
 void EnterServerLock()
@@ -48,22 +47,22 @@ void LeaveServerLock()
 
 void SetQuit()
 {
-   EnterCriticalSection(&csQuit);   
+   MutexAcquire(muxQuit);   
    quit = true;
 
 #ifdef BLAK_PLATFORM_WINDOWS
    PostThreadMessage(main_thread_id,WM_QUIT,0,0);
 #endif
-   LeaveCriticalSection(&csQuit);
+   MutexRelease(muxQuit);
 }
 
 bool GetQuit()
 {
    bool copy_quit;
 
-   EnterCriticalSection(&csQuit);   
+   MutexAcquire(muxQuit);   
    copy_quit = quit;
-   LeaveCriticalSection(&csQuit);
+   MutexRelease(muxQuit);
 
    return copy_quit;
 }

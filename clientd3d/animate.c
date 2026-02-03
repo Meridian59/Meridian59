@@ -28,12 +28,14 @@
 #include "client.h"
 
 #define ANIMATE_INTERVAL 8  // ms between background animation updates (8.3333 = 120fps)
-#define FLICKER_LEVEL (LIGHT_LEVELS/2)
-#define FLASH_LEVEL (LIGHT_LEVELS/2)
 #define TIME_FLASH 1000
 
-static int  animation_timer = 0;   // id of animation timer, or 0 if none
+static const float FLICKER_LEVEL = LIGHT_LEVELS / 2.0f;  // Light adjustment range for flickering objects
+static const float FLASH_LEVEL = LIGHT_LEVELS / 2.0f;    // Light adjustment range for flashing objects
+
+static int animation_timer = 0;   // id of animation timer, or 0 if none
 static DWORD timeLastFrame;
+static const int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
 
 #define TIME_FULL_OBJECT_PHASE 1800
 static int phaseStates[] = {
@@ -78,6 +80,10 @@ DWORD GetFrameTime(void)
    return timeLastFrame;
 }
 
+float GetFlickerLevel(void)
+{
+   return FLICKER_LEVEL;
+}
 /************************************************************************/
 void AnimationTimerProc(HWND hwnd, UINT timer)
 {
@@ -130,7 +136,8 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
    if (GetGameDataValid())
       RedrawForce();
 
-   return;
+   // Update 3D audio listener position/orientation
+   UpdateLoopingSounds(player.x >> LOG_FINENESS, player.y >> LOG_FINENESS, player.angle);
 }
 /************************************************************************/
 /* 
@@ -171,18 +178,56 @@ bool AnimateObject(object_node *obj, int dt)
    bool need_redraw = false;
    list_type over_list;
 
-   if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
+   if (OF_FLICKERING == (OF_FLICKERING & obj->flags))
    {
-      obj->lightAdjust = rand() % FLICKER_LEVEL;
-      need_redraw = true;
+        // Initialize flicker time with random offset on first use to desynchronize lights
+        if (obj->flickerTime == 0)
+        {
+            // Use object ID as seed for consistent but unique offsets
+            obj->flickerTime = (obj->id * 137) % 10000;  // Random offset 0-10 seconds
+        }
+         
+        // Dramatic campfire-style flicker with independent per-object timing
+        obj->flickerTime += dt;
+         
+        // Flicker animation wave parameters
+        // Using prime-like frequencies prevents synchronization between lights
+        static const float waveAmplitudes[] = { 1.3f, 1.1f, 0.9f, 1.4f, 1.2f };
+        static const float waveFrequencies[] = { 3.14f, 7.0f, 11.0f, 2.0f, 0.62f };
+        static constexpr int waveCount = sizeof(waveAmplitudes) / sizeof(waveAmplitudes[0]);
+         
+        // Ensure amplitudes and frequencies arrays have the same length
+        static_assert(waveCount == sizeof(waveFrequencies) / sizeof(waveFrequencies[0]),
+                    "waveAmplitudes and waveFrequencies must have the same number of elements");
+         
+        // Compute sum of amplitudes (for normalization)
+        static const float amplitudeSum = waveAmplitudes[0] + waveAmplitudes[1] + 
+                                        waveAmplitudes[2] + waveAmplitudes[3] + 
+                                        waveAmplitudes[4];
+         
+        float t = (float)obj->flickerTime / 1000.0f;
+
+        // Combine multiple sine waves at different frequencies for organic flickering
+        float flicker = 0.0f;
+        for (int i = 0; i < waveCount; i++)
+        {
+            flicker += sinf(t * waveFrequencies[i]) * waveAmplitudes[i];
+        }
+         
+        // Normalize to 0.0-1.0 range
+        flicker = flicker / amplitudeSum + 0.5f;
+        flicker = std::clamp(flicker, 0.0f, 1.0f);
+         
+        obj->lightAdjust = (int)(flicker * GetFlickerLevel());
+        need_redraw = true;
    }
 
-   if (OF_FLASHING == (OF_BOUNCING & obj->flags))
+   if (OF_FLASHING == (OF_FLASHING & obj->flags))
    {
       DWORD angleFlash;
-      obj->bounceTime += min(dt,50);
+      obj->bounceTime += std::min(dt,50);
       if (obj->bounceTime > TIME_FLASH)
-	 obj->bounceTime -= TIME_FLASH;
+         obj->bounceTime -= TIME_FLASH;
       angleFlash = NUMDEGREES * obj->bounceTime / TIME_FLASH;
       obj->lightAdjust = FIXED_TO_INT(fpMul(FLASH_LEVEL, SIN(angleFlash)));
       need_redraw = true;
@@ -193,15 +238,15 @@ bool AnimateObject(object_node *obj, int dt)
       object_bitmap_type obj_bmap;
       obj_bmap = FindObjectBitmap(obj->icon_res);
       if (obj_bmap != NULL)
-	 need_redraw |= AnimateSingle(obj->animate, BitmapsNumGroups(obj_bmap->bmaps), dt);
+         need_redraw |= AnimateSingle(obj->animate, BitmapsNumGroups(obj_bmap->bmaps), dt);
    }
    
    if (OF_PHASING == (OF_PHASING & obj->flags))
    {
       int anglePhase;
-      obj->phaseTime += min(dt,40);
+      obj->phaseTime += std::min(dt,40);
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
-	 obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
+         obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;
       obj->flags = (~OF_EFFECT_MASK & obj->flags) | phaseStates[anglePhase];
       need_redraw = true;

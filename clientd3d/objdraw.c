@@ -109,7 +109,7 @@ void DrawObjectTranslucent(ObjectRowData *d)
 	bixlat* pBiXlat = &_blend75;
 	BYTE index;
 	int effect;
-	register BYTE *start, *end;
+	BYTE *start, *end;
 	int x, xinc;
 	BYTE *palette, *row_bits;
 	

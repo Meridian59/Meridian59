@@ -240,7 +240,7 @@ bool VerifyArguments(Bitmaps *b, Options *options)
    return true;
 }
 /**************************************************************************/
-void Error(char *fmt,...)
+void Error(const char *fmt,...)
 {
    char s[200];
    va_list marker;

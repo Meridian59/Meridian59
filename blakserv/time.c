@@ -28,10 +28,10 @@ time_t GetTime()
 	return time(NULL);
 }
 
-const char * TimeStr(time_t time)
+std::string TimeStr(time_t time)
 {
 	struct tm *tm_time;
-	static char s[80];
+	char s[80];
 	const char *time_format;
 	
 	if (time == 0)
@@ -50,10 +50,10 @@ const char * TimeStr(time_t time)
 	return s;
 }
 
-const char * ShortTimeStr(time_t time)
+std::string ShortTimeStr(time_t time)
 {
 	struct tm *tm_time;
-	static char s[80];
+	char s[80];
 	const char *time_format;
 	
 	if (time == 0)
@@ -72,10 +72,10 @@ const char * ShortTimeStr(time_t time)
 	return s;
 }
 
-const char * FileTimeStr(time_t time)
+std::string FileTimeStr(time_t time)
 {
 	struct tm *tm_time;
-	static char s[80];
+	char s[80];
 	
 	if (time == 0)
 		return "Never";
@@ -88,30 +88,29 @@ const char * FileTimeStr(time_t time)
 	return s;
 }
 
-const char * RelativeTimeStr(time_t time)
+std::string RelativeTimeStr(time_t time)
 {
-	static char s[80];
+  std::string s;
 	int amount;
-	s[0] = 0;
 	
 	amount = (int) (time / (24*60*60));
 	if (amount != 0)
-		snprintf(s, sizeof(s), "%i day%s ",amount,amount != 1 ? "s" : "");
+    s += std::to_string(amount) + " day" + (amount != 1 ? "s" : "") + " ";
 	
 	amount = (time / (60*60)) % 24;
 	if (amount != 0)
-		sprintf(s+strlen(s),"%i hour%s ",amount,amount != 1 ? "s" : "");
+    s += std::to_string(amount) + " hour" + (amount != 1 ? "s" : "") + " ";
 	
 	amount = (time / 60) % 60;
 	if (amount != 0)
-		sprintf(s+strlen(s),"%i minute%s ",amount,amount != 1 ? "s" : "");
+    s += std::to_string(amount) + " minute" + (amount != 1 ? "s" : "") + " ";
 	
 	amount = time % 60;
 	if (amount != 0)
-		sprintf(s+strlen(s),"%i second%s",amount,amount != 1 ? "s" : "");
+    s += std::to_string(amount) + " second" + (amount != 1 ? "s" : "") + " ";
 	
-	if (s[0] == 0)
-		snprintf(s, sizeof(s), "0 sec");
+	if (s.empty())
+		s = "0 sec";
 	
 	return s;
 }

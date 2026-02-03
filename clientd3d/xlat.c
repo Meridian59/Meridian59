@@ -229,7 +229,7 @@ bixlat* FindStandardBiXlat(UINT uBiXlatID)
 
 BYTE GetRGBLightness(PALETTEENTRY* pe)
 {
-	return LOBYTE(max(max(pe->peRed, pe->peGreen), pe->peBlue));
+	return LOBYTE(std::max(std::max(pe->peRed, pe->peGreen), pe->peBlue));
 }
 
 /* CalcFilterXlat:
@@ -607,7 +607,7 @@ void XlatDib(BYTE* pabyBits, int width, int height, xlat* pXlat)
 	{
 		int row = i;
 		//BUGBUG: if flipped dib, row = height - 1 - i;
-		register BYTE* pbyPixel = pabyBits + row*width;
+		BYTE* pbyPixel = pabyBits + row*width;
 		BYTE* pbyEnd = pbyPixel + width;
 		while (pbyPixel < pbyEnd)
 		{

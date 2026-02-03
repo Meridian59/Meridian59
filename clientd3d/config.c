@@ -52,7 +52,6 @@ static char INIBrowser[]     = "Browser";
 static char INIDefaultBrowser[] = "DefaultBrowser";
 static char INIVersion[]     = "INIVersion";
 static char INILastPass[]    = "Sentinel";
-static char INISoundLibrary[] = "SoundLibrary";
 static char INICacheBalance[] = "CacheBalance";
 static char INIObjectCacheMin[] = "ObjectCacheMin";
 static char INIGridCacheMin[] = "GridCacheMin";
@@ -79,6 +78,7 @@ static char INISpinningCube[]= "SpinningCube";
 static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
 static char INIMapAnnotations[] = "MapAnnotations";
+static char INIMapTextZoomLimit[] = "MapTextZoomLimit";
 
 static char window_section[] = "Window";         /* Section in INI file for window info */
 static char INILeft[]        = "NormalLeft";
@@ -99,6 +99,7 @@ static char INIDomainFormat[] = "Domain";
 
 static char users_section[]  = "Users";  /* Section for dealing with other users */
 static char INIDrawNames[]   = "DrawNames";
+static char INIShowRarity[]  = "DrawInventoryRarities";
 static char INIIgnoreAll[]   = "IgnoreAll";
 static char ININoBroadcast[] = "NoBroadcast";
 static char INIIgnoreList[]  = "IgnoreList";
@@ -214,6 +215,7 @@ void ConfigLoad(void)
 			   config.browser, MAX_PATH, ini_file); 
    
    config.draw_names   = GetConfigInt(users_section, INIDrawNames, true, ini_file);
+   config.show_inventory_rarity   = GetConfigInt(users_section, INIShowRarity, true, ini_file);
    config.ignore_all   = GetConfigInt(users_section, INIIgnoreAll, false, ini_file);
    config.no_broadcast = GetConfigInt(users_section, ININoBroadcast, false, ini_file);
 
@@ -250,6 +252,7 @@ void ConfigLoad(void)
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, true, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, true, ini_file);
+   config.map_text_zoom_limit = GetConfigInt(interface_section, INIMapTextZoomLimit, 50, ini_file);
 
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
@@ -263,11 +266,10 @@ void ConfigLoad(void)
    config.CacheBalance   = GetConfigInt(misc_section, INICacheBalance,        70, ini_file);
    config.ObjectCacheMin = GetConfigInt(misc_section, INIObjectCacheMin, 6000000, ini_file);
    config.GridCacheMin = GetConfigInt(misc_section, INIGridCacheMin,   4000000, ini_file);
+   config.soundLibrary = 0; /* Reserved for struct layout compatibility */
 
    if( config.CacheBalance < 10 ) config.CacheBalance = 10 ;
    if( config.CacheBalance > 90 ) config.CacheBalance = 90 ;
-
-   config.soundLibrary = GetConfigInt(misc_section, INISoundLibrary, LIBRARY_MSS, ini_file);
 
 #ifdef NODPRINTFS
    config.debug    = false;
@@ -298,7 +300,7 @@ void ConfigLoad(void)
    config.showUnseenWalls = FALSE;
    config.showUnseenMonsters = FALSE;
    config.avoidDownloadAskDialog = FALSE;
-   config.maxFPS = FALSE;
+   config.maxFPS = 120;
    config.clearCache = FALSE;
 #endif // NODPRINTFS
 
@@ -308,27 +310,10 @@ void ConfigLoad(void)
    config.active_stat_group = GetConfigInt(misc_section, INIActiveStatGroup, 5, ini_file);
 
    // Determine if we should be using gpu efficiency mode or not.
-   auto one_time_gpu_efficiency_enablement = GetConfigInt(config_section, 
-	   "gpuefficiencyonetimeflip", false, config_ini);
-   if (one_time_gpu_efficiency_enablement)
-   {
-      char config_value[10];
-      GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
-		  sizeof(config_value), config_ini);
-      config.gpuEfficiency = (0 == strcmp(config_value, "true"));
-   }
-   else
-   {
-      // TODO: Added February 2025 - remove after the next update when everyone will have been reset.
-      // Also remove the `one_time_gpu_efficiency_enablement` variable and associated check above.
-
-      // Perform one-time flip to enable GPU efficiency mode regardless of current preference.
-      // This is to ensure players start from a clean slate with maximum performance.
-      // After this one-time flip, future changes to gpu efficiency preferences will be respected.
-      config.gpuEfficiency = true;
-      WriteConfigInt(config_section, INIGpuEfficiencyOneTimeFlip, true, config_ini);
-      WritePrivateProfileString(config_section, INIGpuEfficiency, "true", config_ini);
-   }
+   char config_value[10];
+   GetPrivateProfileString(config_section, INIGpuEfficiency, "true", config_value, 
+	   sizeof(config_value), config_ini);
+   config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
    TimeSettingsLoad();
 }
@@ -356,6 +341,7 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIGridCacheMin, config.GridCacheMin, ini_file);
 
    WriteConfigInt(users_section, INIDrawNames, config.draw_names, ini_file);
+   WriteConfigInt(users_section, INIShowRarity, config.show_inventory_rarity, ini_file);
    WriteConfigInt(users_section, INIIgnoreAll, config.ignore_all, ini_file);
    WriteConfigInt(users_section, ININoBroadcast, config.no_broadcast, ini_file);
 
@@ -389,6 +375,7 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INIHaloColor, config.halocolor, ini_file);
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
+   WriteConfigInt(interface_section, INIMapTextZoomLimit, config.map_text_zoom_limit, ini_file);
    
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
 
@@ -485,8 +472,8 @@ void WindowSettingsSave(void)
 
    r = &w.rcNormalPosition;
 
-   w.ptMaxPosition.x = min(w.ptMaxPosition.x, - GetSystemMetrics(SM_CXFRAME));
-   w.ptMaxPosition.y = min(w.ptMaxPosition.y, - GetSystemMetrics(SM_CYFRAME));
+   w.ptMaxPosition.x = std::min(w.ptMaxPosition.x, (LONG)(- GetSystemMetrics(SM_CXFRAME)));
+   w.ptMaxPosition.y = std::min(w.ptMaxPosition.y, (LONG)(- GetSystemMetrics(SM_CYFRAME)));
 
    WriteConfigInt(window_section, INILeft, r->left, ini_file);
    WriteConfigInt(window_section, INIRight, r->right, ini_file);
@@ -509,8 +496,8 @@ void WindowSettingsLoad(WINDOWPLACEMENT *w)
    def_y = - GetSystemMetrics(SM_CYFRAME);
 
    // Try to make client window optimally sized, but also fit to screen
-   def_width  = min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
-   def_height = min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
+   def_width  = std::min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
+   def_height = std::min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
 
    r->left   = GetConfigInt(window_section, INILeft, MAIN_DEF_LEFT, ini_file);
    r->right  = GetConfigInt(window_section, INIRight, MAIN_DEF_LEFT + def_width, ini_file);

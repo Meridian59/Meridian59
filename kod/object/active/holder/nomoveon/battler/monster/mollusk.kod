@@ -18,15 +18,15 @@ constants:
    ANIM_THROW = 3
 
    FRAME_UNDERGROUND = 1
-   FRAME_STANDING = 2
-   FRAME_WALK_START = 3
-   FRAME_WALK_END = 7
-   FRAME_ATTACK_START = 8
-   FRAME_ATTACK_END = 11
-   FRAME_THROW_START = 12
-   FRAME_THROW_END = 15
-   FRAME_POPUP_START = 16
-   FRAME_POPUP_END = 20
+   FRAME_STANDING = 20
+   FRAME_WALK_START = 2
+   FRAME_WALK_END = 6
+   FRAME_ATTACK_START = 7
+   FRAME_ATTACK_END = 10
+   FRAME_THROW_START = 11
+   FRAME_THROW_END = 14
+   FRAME_POPUP_START = 15
+   FRAME_POPUP_END = 19
    
    ANIMATION_WALK_SPEED = 80
    ANIMATION_ATTACK_SPEED = 225
@@ -87,6 +87,9 @@ properties:
    piAnimation = ANIM_NONE
    pbSurfaced = FALSE
 
+   % When TRUE, the monster will attack by throwing a rock instead of melee attacking
+   pbThrow = FALSE
+
    ptPostPop = $
 
 messages:
@@ -108,21 +111,24 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-         send(self,@SendAttackAnimation);
+         AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_ATTACK_SPEED,
+                2,FRAME_ATTACK_START, 2,FRAME_ATTACK_END, 2,FRAME_STANDING);
 
          return;
       }
 
       if piAnimation = ANIM_THROW
       {
-         send(self,@SendThrowAnimation);
+         AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_THROW_SPEED,
+                2,FRAME_THROW_START, 2,FRAME_THROW_END, 2,FRAME_STANDING);
 
          return;
       }
 
       if piAnimation = ANIM_POPUP
       {
-         send(self,@SendPopupAnimation);
+         AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_POPUP_SPEED,
+                2,FRAME_POPUP_START, 2,FRAME_POPUP_END, 2,FRAME_STANDING);
 
          return;
       }
@@ -175,34 +181,10 @@ messages:
       return;
    }
 
-   SendAttackAnimation()
-   {
-      AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_ATTACK_SPEED,
-                2,FRAME_ATTACK_START, 2,FRAME_ATTACK_END, 2,FRAME_STANDING);
-
-      return;
-   }
-
-   SendThrowAnimation()
-   {
-      AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_THROW_SPEED,
-                2,FRAME_THROW_START, 2,FRAME_THROW_END, 2,FRAME_STANDING);
-
-      return;
-   }
-
    SendMoveAnimation()
    {
       AddPacket(1,ANIMATE_CYCLE, 4,ANIMATION_WALK_SPEED,
                 2,FRAME_WALK_START, 2,FRAME_WALK_END);
-
-      return;
-   }
-
-   SendPopupAnimation()
-   {
-      AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_POPUP_SPEED,
-                2,FRAME_POPUP_START, 2,FRAME_POPUP_END, 2,FRAME_STANDING);
 
       return;
    }
@@ -216,7 +198,17 @@ messages:
 
    MonsterAttack(what = $)
    {
-      piAnimation = ANIM_ATTACK;
+      if pbThrow
+      {
+         piAnimation = ANIM_THROW;
+      }
+      else
+      {
+         piAnimation = ANIM_ATTACK;
+      }
+
+      pbThrow = FALSE;
+
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
       
@@ -255,9 +247,7 @@ messages:
 
    DoMissileAttack()
    {
-      piAnimation = ANIM_THROW;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
+      pbThrow = TRUE;
       send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
 

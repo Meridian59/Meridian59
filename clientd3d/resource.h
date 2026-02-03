@@ -353,6 +353,7 @@
 #define IDC_IGNOREALL                   1141
 #define IDC_APPLY                       1141
 #define IDC_DRAWNAMES                   1143
+#define IDC_INV_RARITY                  1144
 #define IDC_SCROLLLOCK                  1145
 #define IDC_PAIN                        1146
 #define IDC_TOOLTIPS                    1147
@@ -638,6 +639,8 @@
 #define IDS_RESTORE_DEFAULTS            3649
 #define IDS_PREFERENCES_TITLE	          3650
 #define IDS_INTRO                       3651
+#define ID_FONT_ANNOTATIONS             3652
+#define IDC_ANNOTATION_ZOOM_LIMIT       3653
 
 // Next default values for new objects
 // 

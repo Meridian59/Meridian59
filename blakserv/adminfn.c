@@ -61,7 +61,7 @@ typedef struct admin_table_struct
 
 void AdminSendBufferList(void);
 
-void aprintf(const char *fmt,...);
+void aprintf(const char *fmt,...) PRINTF_FORMAT(1,2);
 void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
@@ -612,7 +612,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 
 	if (len_buf > BUFFER_SIZE)
 	{
-		eprintf("SendAdminBuffer sent only first %lu bytes of requested buffer,\n",BUFFER_SIZE);
+		eprintf("SendAdminBuffer sent only first %i bytes of requested buffer,\n",BUFFER_SIZE);
 		len_buf = BUFFER_SIZE;
 	}
 	else if (len_buf < 0 || !buf)
@@ -636,7 +636,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 		SendPacket(admin_session_id);
 		break;
 	default :
-		eprintf("SendAdminBuffer called, SESSION %lu state %lu is not admin or game\n",
+		eprintf("SendAdminBuffer called, SESSION %i state %i is not admin or game\n",
 			session->session_id,session->state);
 	}
 }
@@ -672,14 +672,14 @@ void TryAdminCommand(int session_id,char *admin_command)
 	s = GetSessionByID(session_id);
 	if (s == NULL)
 	{
-		eprintf("TryAdminCommand got invalid SESSION %lu\n",session_id);
+		eprintf("TryAdminCommand got invalid SESSION %i\n",session_id);
 		return;
 	}
 
 	admin_session_id = session_id;
 
 	if (blist != NULL)
-		eprintf("TryAdminCommand entered with blist = %08x!\n",blist);
+		eprintf("TryAdminCommand entered with blist = %p!\n", (void *) blist);
 
 	blist = NULL;
 
@@ -720,7 +720,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 	s = GetSessionByID(session_id);
 	if (s == NULL)
 	{
-     eprintf("AdminTable got invalid SESSION %lu\n",session_id);
+     eprintf("AdminTable got invalid SESSION %i\n",session_id);
      return;
 	}
 	if (command == NULL || !stricmp(command,"HELP") || !stricmp(command,"?"))
@@ -803,7 +803,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			parm_str = strtok(NULL," \t\n");
 			if (parm_str == NULL)
 			{
-				aprintf("Missing parameter %lu.\n",i+1);
+				aprintf("Missing parameter %i.\n",i+1);
 				return;
 			}
 			prev_tok = parm_str;
@@ -849,13 +849,13 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			parm_str = strtok(NULL," \t\n");
 			if (parm_str == NULL)
 			{
-				aprintf("Blakod parameter %lu needs tag and value.\n",i+1);
+				aprintf("Blakod parameter %i needs tag and value.\n",i+1);
 				return;
 			}
 			num = GetTagNum(parm_str);
 			if (num == INVALID_TAG)
 			{
-				aprintf("Blakod parameter %lu has invalid tag.\n",i+1);
+				aprintf("Blakod parameter %i has invalid tag.\n",i+1);
 				return;
 			}
 			blak_val.v.tag = num;
@@ -866,7 +866,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				parm_str = strtok( NULL, "" );	// Get rest of line for "quote" type parameter
 				if (parm_str == NULL)
 				{
-					aprintf("Blakod parameter %lu needs value\n",i+1);
+					aprintf("Blakod parameter %i needs value\n",i+1);
 					return;
 				}
 
@@ -888,7 +888,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				parm_str = strtok(NULL," \t\n");
 				if (parm_str == NULL)
 				{
-					aprintf("Blakod parameter %lu needs value.\n",i+1);
+					aprintf("Blakod parameter %i needs value.\n",i+1);
 					return;
 				}
 				if (0 == stricmp("SELF", parm_str) && blak_val.v.tag == TAG_OBJECT &&
@@ -910,7 +910,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 					num = GetDataNum(blak_val.v.tag,parm_str);
 					if (num == INVALID_DATA)
 					{
-						aprintf("Blakod parameter %lu has invalid data.\n",i+1);
+						aprintf("Blakod parameter %i has invalid data.\n",i+1);
 						return;
 					}
 
@@ -921,7 +921,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 
 				if (AdminIsValidBlakParm(blak_val) == false)
 				{
-					aprintf("Blakod parameter %lu references invalid data.\n",i+1);
+					aprintf("Blakod parameter %i references invalid data.\n",i+1);
 					return;
 				}
 
@@ -1067,7 +1067,7 @@ void AdminSaveGame(int session_id,admin_parm_type parms[],
 
 	SendBlakodEndSystemEvent(SYSEVENT_SAVE);
 
-	aprintf("done.  Save time is (%lli).\n", save_time);
+	aprintf("done.  Save time is (%" PRId64 ").\n", save_time);
 	UnpauseTimers();
 }
 
@@ -1085,7 +1085,7 @@ void AdminSaveConfiguration(int session_id,admin_parm_type parms[],
 
 	fprintf(configfile,"# %s\n",BlakServLongVersionString());
 	fprintf(configfile,"# Configuration file automatically generated at %s\n",
-		TimeStr(GetTime()));
+          TimeStr(GetTime()).c_str());
 	fprintf(configfile,"# -------------------------------------------\n");
 
 
@@ -1161,7 +1161,7 @@ void AdminWho(int session_id,admin_parm_type parms[],
 
 void AdminWhoEachSession(session_node *s)
 {
-	const char *str;
+  std::string str;
 
 	if (s->conn.type == CONN_CONSOLE)
 		return;
@@ -1171,7 +1171,7 @@ void AdminWhoEachSession(session_node *s)
 	else
 		str = "?";
 
-	aprintf("%-18.18s ",str);
+	aprintf("%-18.18s ",str.c_str());
 
 	if (s->account != NULL)
 		aprintf("%4i",s->account->account_id);
@@ -1202,12 +1202,12 @@ void AdminWhoEachSession(session_node *s)
 			{
 				r = GetResourceByID(name_val.v.data);
 				if (r == NULL)
-					aprintf("Invalid resource id %i",name_val.v.data);
+					aprintf("Invalid resource id %" PRId64,name_val.v.data);
 				else
 					aprintf("%s",r->resource_val);
 			}
 			else
-				aprintf("Non-resource %i,%i",name_val.v.tag,name_val.v.data);
+				aprintf("Non-resource %s",fmt(name_val));
 			aprintf(" (%i)",s->game->object_id);
 		}
 	}
@@ -1298,7 +1298,7 @@ void AdminPage(int session_id,admin_parm_type parms[],
 		eprintf("AdminPage admin SESSION %i has no session!",session_id);
 	else
 		if (s->account != NULL)
-			lprintf("AdminPage %s paged the console\n",s->account->name);
+			lprintf("AdminPage %s paged the console\n",s->account->name.c_str());
 
 		InterfaceSignalConsole();
 }
@@ -1320,14 +1320,14 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 
 	kstat = GetKodStats();
 
-	aprintf("Current time is %s\n",TimeStr(now));
-	aprintf("System started at %s (up for %s = %lli seconds)\n",
-		TimeStr(kstat->system_start_time),
-          RelativeTimeStr((int) (now - kstat->system_start_time)),
-		now - kstat->system_start_time);
+	aprintf("Current time is %s\n",TimeStr(now).c_str());
+	aprintf("System started at %s (up for %s = %" PRId64 " seconds)\n",
+          TimeStr(kstat->system_start_time).c_str(),
+          RelativeTimeStr((int) (now - kstat->system_start_time)).c_str(),
+          now - kstat->system_start_time);
 
 	aprintf("----\n");
-	aprintf("Interpreted %i.%09i billion total instructions in %lli seconds\n",
+	aprintf("Interpreted %i.%09i billion total instructions in %" PRId64 " seconds\n",
 		kstat->billions_interpreted,kstat->num_interpreted,
 		kstat->interpreting_time/1000);
 	aprintf("Handled %i top level messages, total %i messages\n",
@@ -1381,7 +1381,7 @@ void AdminShowMemory(int session_id,admin_parm_type parms[],
 
 	size_t total = 0;
 
-	aprintf("%s\n",TimeStr(GetTime()));
+	aprintf("%s\n",TimeStr(GetTime()).c_str());
 	for (int i=0;i<GetNumMemoryStats();i++)
 	{
 		aprintf("%-20s %8lu\n",GetMemoryStatName(i),mstat->allocated[i]);
@@ -1656,12 +1656,12 @@ void AdminShowOneUser(user_node *u)
 	{
 		r = GetResourceByID(name_val.v.data);
 		if (r == NULL)
-			aprintf("Invalid resource id %i.",name_val.v.data);
+			aprintf("Invalid resource id %" PRId64 ".",name_val.v.data);
 		else
 			aprintf("%s",r->resource_val);
 	}
 	else
-		aprintf("Non-resource %i,%i.",name_val.v.tag,name_val.v.data);
+		aprintf("Non-resource %s.",fmt(name_val));
 	aprintf("\n");
 }
 
@@ -1796,8 +1796,8 @@ void AdminShowOneAccount(account_node *a)
 	   buff[0] = 0;
    }
 
-	aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n",a->account_id,ch,a->name,
-        buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time));
+   aprintf("%4i%c %-24s%8s %4i.%02i %-30s\n",a->account_id,ch,a->name.c_str(),
+          buff, a->credits/100,a->credits%100,TimeStr(a->last_login_time).c_str());
 }
 
 void AdminShowResource(int session_id,admin_parm_type parms[],
@@ -1900,7 +1900,7 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 {
 	INT64 now = GetTime();
 
-	aprintf("Current server clock reads %lli (%s).\n", now, TimeStr(now));
+	aprintf("Current server clock reads %" PRId64 " (%s).\n", now, TimeStr(now).c_str());
 }
 
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],
@@ -1994,11 +1994,11 @@ void AdminShowEachSysTimer(systimer_node *st)
 	case SYST_RESET_POOL : s = "Reset buffer pool"; break;
 	default : s = "Unknown"; break;
 	}
-	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period));
-	aprintf("%-15s ",RelativeTimeStr(st->time));
+	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period).c_str());
+	aprintf("%-15s ",RelativeTimeStr(st->time).c_str());
 
 	if (st->enabled)
-		aprintf("%-22s",TimeStr(st->next_time_activate));
+		aprintf("%-22s",TimeStr(st->next_time_activate).c_str());
 	else
 		aprintf("Disabled");
 	aprintf("\n");
@@ -2863,9 +2863,9 @@ void AdminSetAccountName(int session_id,admin_parm_type parms[],
 		return;
 	}
 	lprintf("AdminSetAccountName changing name of account %i from %s to %s\n",
-		a->account_id,a->name,name);
+          a->account_id,a->name.c_str(),name);
 	aprintf("Changing name of account %i from '%s' to '%s'.\n",
-		a->account_id,a->name,name);
+          a->account_id,a->name.c_str(),name);
 	SetAccountName(a,name);
 }
 
@@ -2885,10 +2885,10 @@ void AdminSetAccountPassword(int session_id,admin_parm_type parms[],
 		aprintf("Cannot find account %i.\n",account_id);
 		return;
 	}
-	lprintf("AdminSetAccountPassword setting password for %s\n",a->name);
+	lprintf("AdminSetAccountPassword setting password for %s\n",a->name.c_str());
 	SetAccountPassword(a,password);
 
-	aprintf("Set password for account %i (%s).\n",a->account_id,a->name);
+	aprintf("Set password for account %i (%s).\n",a->account_id,a->name.c_str());
 }
 
 void AdminSetAccountCredits(int session_id,admin_parm_type parms[],
@@ -3191,19 +3191,19 @@ void AdminSuspendUser(int session_id,admin_parm_type parms[],
 	if (!SuspendAccountRelative(a, hours))
 	{
 		aprintf("Suspension of account %i (%s) failed.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 		return;
 	}
 
 	if (a->suspend_time <= 0)
 	{
 		aprintf("Account %i (%s) is unsuspended.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 	}
 	else
 	{
 		aprintf("Account %i (%s) is suspended until %s.\n",
-			a->account_id, a->name, TimeStr(a->suspend_time));
+            a->account_id, a->name.c_str(), TimeStr(a->suspend_time).c_str());
 	}
 }
 
@@ -3255,19 +3255,19 @@ void AdminSuspendAccount(int session_id,admin_parm_type parms[],
 	if (!SuspendAccountRelative(a, hours))
 	{
 		aprintf("Suspension of account %i (%s) failed.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 		return;
 	}
 
 	if (a->suspend_time <= 0)
 	{
 		aprintf("Account %i (%s) is unsuspended.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 	}
 	else
 	{
 		aprintf("Account %i (%s) is suspended until %s.\n",
-			a->account_id, a->name, TimeStr(a->suspend_time));
+            a->account_id, a->name.c_str(), TimeStr(a->suspend_time).c_str());
 	}
 }
 
@@ -3326,12 +3326,12 @@ void AdminUnsuspendUser(int session_id,admin_parm_type parms[],
 	if (!SuspendAccountAbsolute(a, 0) || a->suspend_time > 0)
 	{
 		aprintf("Unsuspension of account %i (%s) failed.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 		return;
 	}
 
 	aprintf("Account %i (%s) is unsuspended.\n",
-		a->account_id, a->name);
+          a->account_id, a->name.c_str());
 }
 
 void AdminUnsuspendAccount(int session_id,admin_parm_type parms[],
@@ -3379,12 +3379,12 @@ void AdminUnsuspendAccount(int session_id,admin_parm_type parms[],
 	if (!SuspendAccountAbsolute(a, 0) || a->suspend_time > 0)
 	{
 		aprintf("Unsuspension of account %i (%s) failed.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 		return;
 	}
 
 	aprintf("Account %i (%s) is unsuspended.\n",
-		a->account_id, a->name);
+          a->account_id, a->name.c_str());
 }
 
 void AdminCreateAccount(int session_id,admin_parm_type parms[],
@@ -4055,7 +4055,7 @@ void AdminAddCredits(int session_id,admin_parm_type parms[],
 		aprintf("Cannot find ACCOUNT %i.\n",account_id);
 		return;
 	}
-	lprintf("AdminAddAccount adding %i credits to ACCOUNT %i (%s)\n",credits,account_id,a->name);
+	lprintf("AdminAddAccount adding %i credits to ACCOUNT %i (%s)\n",credits,account_id,a->name.c_str());
 	a->credits += 100*credits;
 }
 
@@ -4098,16 +4098,16 @@ void AdminKickoffAccount(int session_id,admin_parm_type parms[],
 
 	if (kickoff_session == NULL)
 	{
-		aprintf("ACCOUNT %i (%s) is not logged on.\n",account_id,a->name);
+		aprintf("ACCOUNT %i (%s) is not logged on.\n",account_id,a->name.c_str());
 		return;
 	}
 	if (kickoff_session->state != STATE_GAME)
 	{
-		aprintf("ACCOUNT %i (%s) is not in the game.\n",account_id,a->name);
+		aprintf("ACCOUNT %i (%s) is not in the game.\n",account_id,a->name.c_str());
 		return;
 	}
 
-	lprintf("AdminKickoffAccount kicking ACCOUNT %i (%s) out of the game\n",account_id,a->name);
+	lprintf("AdminKickoffAccount kicking ACCOUNT %i (%s) out of the game\n",account_id,a->name.c_str());
 	GameClientExit(kickoff_session);
 	SetSessionState(kickoff_session,STATE_SYNCHED);
 }
@@ -4174,7 +4174,7 @@ void AdminHangupUser(int session_id,admin_parm_type parms[],
 	if (hangup_session == NULL)
 	{
 		aprintf("ACCOUNT %i (%s) is not logged in.\n",
-			a->account_id, a->name);
+            a->account_id, a->name.c_str());
 		return;
 	}
 
@@ -4185,7 +4185,7 @@ void AdminHangupUser(int session_id,admin_parm_type parms[],
 	}
 
 	aprintf("ACCOUNT %i (%s) SESSION %i has been disconnected.\n",
-		a->account_id, a->name, hangup_session->session_id);
+          a->account_id, a->name.c_str(), hangup_session->session_id);
 
 	// Manually hanging up an account will block that IP address
 	// from reconnecting for a short time (usually 5min).
@@ -4262,7 +4262,7 @@ void AdminHangupAccount(int session_id,admin_parm_type parms[],
 	hangup_session = GetSessionByAccount(a);
 	if (hangup_session == NULL)
 	{
-		aprintf("ACCOUNT %i (%s) is not logged in.\n",a->account_id,a->name);
+		aprintf("ACCOUNT %i (%s) is not logged in.\n",a->account_id,a->name.c_str());
 		return;
 	}
 
@@ -4273,7 +4273,7 @@ void AdminHangupAccount(int session_id,admin_parm_type parms[],
 	}
 
 	aprintf("ACCOUNT %i (%s) SESSION %i has been disconnected.\n",
-		a->account_id, a->name, hangup_session->session_id);
+          a->account_id, a->name.c_str(), hangup_session->session_id);
 
 	// Manually hanging up an account will block that IP address
 	// from reconnecting for a short time (usually 5min).
@@ -4507,7 +4507,7 @@ void AdminSay(int session_id,admin_parm_type parms[],
 void AdminSayEachAdminSession(session_node *s)
 {
 	session_node *sender_session;
-	const char* account;
+  std::string account;
 
 	sender_session = GetSessionByID(say_admin_session_id);
 	if (sender_session == NULL)
@@ -4523,16 +4523,14 @@ void AdminSayEachAdminSession(session_node *s)
 		(s->state == STATE_GAME && s->account && s->account->type == ACCOUNT_ADMIN))
 	{
 		account = "Administrator";
-		if (sender_session->account &&
-			sender_session->account->name &&
-			*sender_session->account->name)
+		if (sender_session->account && !sender_session->account->name.empty())
 		{
 			account = sender_session->account->name;
 		}
 
 		SendSessionAdminText(s->session_id,
-			"%s says, \"%s\"\n",
-			account,say_admin_text);
+                         "%s says, \"%s\"\n",
+                         account.c_str(),say_admin_text);
 	}
 }
 

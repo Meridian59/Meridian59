@@ -39,8 +39,8 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
 
    if (obj_size.v.tag != TAG_INT)
    {
-      bprintf("AddBlakodToPacket looking for int, # of bytes, got %i,%i\n",
-	      obj_size.v.tag,obj_size.v.data);
+      bprintf("AddBlakodToPacket looking for int, # of bytes, got %s\n",
+              fmt(obj_size));
       return;
    }
 
@@ -56,7 +56,7 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
       snod = GetStringByID(obj_data.v.data);
       if (snod == NULL)
       {
-			bprintf("AddBlakodToPacket can't find string id %i\n",obj_data.v.data);
+			bprintf("AddBlakodToPacket can't find string id %" PRId64 "\n",obj_data.v.data);
 			break;
       }
       AddStringToPacket(snod->len_data,snod->data);
@@ -92,14 +92,14 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
       case STRING_RESOURCE :
 			if (obj_data.v.tag != TAG_RESOURCE)
 			{
-				bprintf("AddBlakodToPacket can't send %i,%i as a resource/string\n",
-						  obj_data.v.tag,obj_data.v.data);
+				bprintf("AddBlakodToPacket can't send %s as a resource/string\n",
+                fmt(obj_data));
 				return;
 			}
 			r = GetResourceByID(obj_data.v.data);
 			if (r == NULL)
 			{
-				bprintf("AddBlakodToPacket can't find resource %i as a resource/string\n",
+				bprintf("AddBlakodToPacket can't find resource %" PRId64 " as a resource/string\n",
 						  obj_data.v.data);
 				return;
 			}
@@ -167,7 +167,7 @@ void SecurePacketBufferList(int session_id, buffer_node *bl)
 	  s->sliding_token > pRedbook+strlen(pRedbook))
       {
 	 lprintf("SecurePacketBufferList lost redbook on session %i account %i (%s), may break session\n",
-	    session_id, s->account->account_id, s->account->name);
+           session_id, s->account->account_id, s->account->name.c_str());
 	 s->sliding_token = pRedbook;
       }
 

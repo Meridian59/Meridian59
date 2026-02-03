@@ -149,8 +149,8 @@ static void ResizeEditToFitText(HWND hEdit, HFONT hFont)
 	yincrease = GetFontHeight(hFont) * num_lines - (edit_rect.bottom - edit_rect.top);
 	
 	GetWindowRect(hParent, &dlg_rect);
-	yincrease = min(yincrease, GetSystemMetrics(SM_CYSCREEN) - dlg_rect.bottom + dlg_rect.top);
-	yincrease = max(0, yincrease);
+	yincrease = std::min(yincrease, (int)(GetSystemMetrics(SM_CYSCREEN) - dlg_rect.bottom + dlg_rect.top));
+	yincrease = std::max(0, yincrease);
 	MoveWindow(hParent, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
 		dlg_rect.bottom - dlg_rect.top + yincrease, FALSE);
 }
@@ -420,7 +420,11 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   case IDC_DROP:
 			   // Drop all of number items
 			   info->obj->temp_amount = info->obj->amount;
-			   RequestDrop(info->obj);
+			   {
+			      list_type drop_list = list_add_item(NULL, info->obj);
+			      RequestDrop(drop_list);
+			      list_delete(drop_list);
+			   }
 			   EndDialog(hDlg, 0);
 			   return TRUE;
 			   

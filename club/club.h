@@ -46,7 +46,7 @@
 
 void Status(char *fmt, ...);
 void Error(char *fmt, ...);
-char *GetLastErrorStr();
+const char *GetLastErrorStr();
 
 extern HINSTANCE hInst;
 extern HWND hwndMain;

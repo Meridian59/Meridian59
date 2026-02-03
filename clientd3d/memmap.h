@@ -24,7 +24,7 @@ typedef struct
 
 // Rename to avoid naming conflicts
 int  CliMappedFileRead(file_node *f, void *buf, int num);
-bool CliMappedFileOpenRead(char *filename, file_node *f);
+bool CliMappedFileOpenRead(const char *filename, file_node *f);
 bool MappedFileGoto(file_node *f, int pos);
 bool MappedFileClose(file_node *f);
 

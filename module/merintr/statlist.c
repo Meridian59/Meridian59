@@ -30,7 +30,7 @@ static int num_visible;             // # of stats visible in list box
 
 static int StatListFindItem(int num);
 static LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpellIcon );
+static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected);
 static int  StatsListGetItemHeight(void);
 static void StatsListLButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListLButtonDblClk(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
@@ -86,7 +86,7 @@ void StatsListResize(list_type stats)
    MoveWindow(hList, 0, y, stats_area.cx, stats_area.cy - y, TRUE);
 
    // Hide scrollbar if not needed
-   num_visible = (stats_area.cy - y) / max(ListBox_GetItemHeight(hList, 0), 1);
+   num_visible = (stats_area.cy - y) / std::max(ListBox_GetItemHeight(hList, 0), 1);
    if (num_visible >= ListBox_GetCount(hList))
      SetScrollRange(hList, SB_VERT, 0, 0, TRUE);
    else
@@ -165,6 +165,10 @@ LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       	 return 0;
       break;
 
+   case WM_MOUSEWHEEL:
+      InvalidateRect(hList, NULL, TRUE);
+      break;
+
       HANDLE_MSG(hwnd, WM_VSCROLL, StatsListVScroll);
 
    case WM_ERASEBKGND:
@@ -201,15 +205,15 @@ void StatsListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis)
 }
 /*****************************************************************************/
 /* 
- * StatsListDrawItem:  Message handler for stats list boxes.  Return TRUE iff
+ * StatsListDrawItem:  Message handler for stats list boxes.  Return true iff
  *   message is handled.
  */
-BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+bool StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 {
    AREA stats_area;
 
    if (hList == NULL)
-      return TRUE;
+      return true;
 
    switch (lpdis->itemAction)
    {
@@ -217,40 +221,39 @@ BOOL StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
    case ODA_DRAWENTIRE:
       /* If box is empty, do nothing */
       if (lpdis->itemID == -1)
-	 return TRUE;
+         return true;
 
       /* Draw window background at correct offset */
       StatsGetArea(&stats_area);
-      DrawWindowBackgroundColor(pinventory_bkgnd(), lpdis->hDC, (RECT *) (&lpdis->rcItem),			//	was NULL
-				stats_area.x + lpdis->rcItem.left,
-				stats_area.y + lpdis->rcItem.top + StatsGetButtonBorder(), -1);
+      DrawWindowBackgroundColor(pinventory_bkgnd(), lpdis->hDC, (RECT *) (&lpdis->rcItem),  //	was NULL
+                                stats_area.x + lpdis->rcItem.left,
+                                stats_area.y + lpdis->rcItem.top + StatsGetButtonBorder(), -1);
 
       /* Draw info on stat */
-	  StatsListDrawStat(lpdis, (bool) (lpdis->itemState & ODS_SELECTED), ( StatsGetCurrentGroup() == STATS_SPELLS ) );
+      StatsListDrawStat(lpdis, (bool) (lpdis->itemState & ODS_SELECTED));
       break;
 
    case ODA_FOCUS:
-//      DrawFocusRect(lpdis->hDC, &lpdis->rcItem);
+      // DrawFocusRect(lpdis->hDC, &lpdis->rcItem);
       break;
    }
-   
-   return TRUE;
+
+   return true;
 }
 /*****************************************************************************/
 /* 
  * StatsListDrawStat:  Draw info about stat in stat list box.
  *   selected is true iff the item is currently selected.
  */
-void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpellIcon)
+void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected)
 {
    HFONT hOldFont;
    Statistic *s;
    char str[MAXRSCSTRING + 10];
    RECT r;
-   int lastItem = ListBox_GetCount(lpdis->hwndItem) - 1;
    RECT rcWnd;
 
-   GetClientRect(lpdis->hwndItem,&rcWnd);
+   GetClientRect(lpdis->hwndItem, &rcWnd);
    if (lpdis->rcItem.bottom > rcWnd.bottom)
       return;
 
@@ -268,32 +271,24 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected, bool bShowSpe
    r.left += ENCHANT_SIZE + 2;
    // Draw text with drop shadow
    SetTextColor(lpdis->hDC, GetColor(COLOR_STATSBGD));
-   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
+   DrawText(lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT);
    OffsetRect(&r, 1, 1);
    SetTextColor(lpdis->hDC, selected ? GetColor(COLOR_HIGHLITE) : GetColor(COLOR_STATSFGD));
-   DrawText( lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT );
+   DrawText(lpdis->hDC, str, (int) strlen(str), &r, DT_LEFT);
 
    SelectObject(lpdis->hDC, hOldFont);
 
    switch (StatsGetCurrentGroup())
    {
-   AREA areaIcon;
+      AREA areaIcon;
    case STATS_SPELLS:
    case STATS_SKILLS:
       areaIcon.x = lpdis->rcItem.left;
       areaIcon.y = lpdis->rcItem.top;
-      areaIcon.cx = ENCHANT_SIZE;		//xxx
+      areaIcon.cx = ENCHANT_SIZE;  // xxx
       areaIcon.cy = ENCHANT_SIZE;
       DrawObjectIcon(lpdis->hDC, s->list.icon, 0, true, &areaIcon, NULL, 0, 0, true);
       break;
-   }
-   if (lastItem == (int)lpdis->itemID)
-   {
-      RECT rcWnd;
-      GetClientRect(lpdis->hwndItem,&rcWnd);
-      rcWnd.top = lpdis->rcItem.bottom;
-      if (rcWnd.top < rcWnd.bottom)
-	 InvalidateRect(lpdis->hwndItem,&rcWnd,TRUE);
    }
 }
 /*****************************************************************************/
@@ -452,8 +447,8 @@ void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       // Pointless "SB_ENDSCROLL" added recently
       return;
    }
-   new_top = max(new_top, 0);
-   new_top = min(new_top, num_items - num_visible);
+   new_top = std::max(new_top, 0);
+   new_top = std::min(new_top, num_items - num_visible);
 
    if (new_top != old_top)
    {
@@ -485,7 +480,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
    {
    case VK_UP:
      WindowBeginUpdate(hwnd);
-     new_pos = max(0, old_pos - 1);
+     new_pos = std::max(0, old_pos - 1);
      if (new_pos < old_top)
        new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
@@ -496,7 +491,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 
    case VK_DOWN:
      WindowBeginUpdate(hwnd);
-     new_pos = min(old_pos + 1, ListBox_GetCount(hwnd) - 1);
+     new_pos = std::min(old_pos + 1, ListBox_GetCount(hwnd) - 1);
      if (new_pos > old_top + num_visible)
        new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
@@ -507,7 +502,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 
    case VK_PRIOR:
      WindowBeginUpdate(hwnd);
-     new_pos = max(0, old_pos - num_visible);
+     new_pos = std::max(0, old_pos - num_visible);
      new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
@@ -517,7 +512,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 
    case VK_NEXT:
      WindowBeginUpdate(hwnd);
-     new_pos = min(old_pos + num_visible, ListBox_GetCount(hwnd) - 1);
+     new_pos = std::min(old_pos + num_visible, ListBox_GetCount(hwnd) - 1);
      new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);

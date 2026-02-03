@@ -109,6 +109,7 @@ properties:
    prWeapon = LogoffGhost_default_sword
    prShield = LogoffGhost_default_shield
    prBowTop = $
+   prInstrument = $
 
    piIcon_frame = 1
    piLegs_frame = 1
@@ -352,11 +353,11 @@ messages:
 
          if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
-            BaseLossAmount = -2;
+            BaseLossAmount = 2;
          }
          else
          {
-            BaseLossAmount = -1;
+            BaseLossAmount = 1;
          }
 
          % Loop through once to reduce LossCounter below Length(lSpells), and
@@ -371,12 +372,14 @@ messages:
                i = i + 1;
                iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
                                     #compound=Nth(lSpells,i));
-               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+               % Players shouldn't lose their last 5% from logoff penalties to avoid
+               % complete skill loss spiral
+               LossAmount = Bound(BaseLossAmount*iLoops,0,iSpellAbility-5);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
                                   #compound=Nth(lSpells,i));
                Send(poGhostedPlayer,@ChangeSpellAbility,
-                    #spell_num=iAbilityNum,#amount=LossAmount);
-               numSpellPointsLost = (numSpellPointsLost - LossAmount);
+                    #spell_num=iAbilityNum,#amount=-LossAmount);
+               numSpellPointsLost = (numSpellPointsLost + LossAmount);
             }
          }
 
@@ -419,8 +422,8 @@ messages:
             iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
                                #compound=Nth(lSpells,i));
             Send(poGhostedPlayer,@ChangeSpellAbility,
-                 #spell_num=iAbilityNum,#amount=BaseLossAmount);
-            numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+                 #spell_num=iAbilityNum,#amount=-BaseLossAmount);
+            numSpellPointsLost = numSpellPointsLost + BaseLossAmount;
             LossCounter = LossCounter - 1;
          }
       }
@@ -447,12 +450,14 @@ messages:
                i = i + 1;
                iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
                                     #compound=Nth(lSkills,i));
-               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+               % Players shouldn't lose their last 5% from logoff penalties to avoid
+               % complete skill loss spiral
+               LossAmount = Bound(BaseLossAmount*iLoops,0,iSkillAbility-5);
                iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
                                   #compound=Nth(lSkills,i));
                Send(poGhostedPlayer,@ChangeSkillAbility,
-                    #skill_num=iAbilityNum,#amount=LossAmount);
-               numSkillPointsLost = numSkillPointsLost - LossAmount;
+                    #skill_num=iAbilityNum,#amount=-LossAmount);
+               numSkillPointsLost = numSkillPointsLost + LossAmount;
             }
          }
 
@@ -494,8 +499,8 @@ messages:
             iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
                                #compound=Nth(lSkills,i));
             Send(poGhostedPlayer,@ChangeSkillAbility,
-                 #skill_num=iAbilityNum,#amount=BaseLossAmount);
-            numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+                 #skill_num=iAbilityNum,#amount=-BaseLossAmount);
+            numSkillPointsLost = numSkillPointsLost + BaseLossAmount;
             LossCounter = LossCounter - 1;
          }
       }
@@ -561,6 +566,12 @@ messages:
          piOverlays = piOverlays + 1;
       }
 
+      if prInstrument <> $
+      {
+         piLeft_frame = 7;
+         piOverlays = piOverlays + 1;
+      }
+
       if prWeapon <> $
       {
          piWeapon_frame = 4;
@@ -611,7 +622,7 @@ messages:
 
    SetLogoffGhost(GhostedPlayer = $)
    {
-      local oWeapon;
+      local oWeapon, oInstrument;
 
       if GhostedPlayer = $
          OR NOT IsClass(GhostedPlayer,&User)
@@ -643,6 +654,14 @@ messages:
 
       piWeapon_translation = 0;
       prBowTop = $;
+
+      % Check for instrument (e.g. lute)
+      prInstrument = $;
+      oInstrument = send(poGhostedPlayer,@LookupPlayerInstrument);
+      if oInstrument <> $
+      {
+         prInstrument = send(oInstrument,@GetOverlay);
+      }
 
       if oWeapon <> $
       {
@@ -745,6 +764,14 @@ messages:
          }
 
          AddPacket(1,ANIMATE_NONE, 2,piShield_frame);
+      }
+
+      % Instrument overlay (e.g. lute)
+      if prInstrument <> $
+      {
+         AddPacket(4,prInstrument);
+         AddPacket(1,HS_LEFT_WEAPON);
+         AddPacket(1,ANIMATE_NONE,2,1);
       }
 
       if prWeapon <> $

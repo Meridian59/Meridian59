@@ -53,7 +53,11 @@ void ResetRoomData()
    {
       temp = room->next;
       BSPRoomFreeServer(&(room->file_info));
-      FreeMemory(MALLOC_ID_ROOM,room,sizeof(roomdata_node));
+
+      // Manually subtract memory for room_type structure
+      AddMemoryCount(MALLOC_ID_ROOM, -(int64_t)room->GetSize());
+
+      delete room;
       room = temp;
    }
    roomdata = NULL;
@@ -65,32 +69,27 @@ blak_int LoadRoomData(int resource_id)
    val_type ret_val;
    resource_node *r;
    roomdata_node *room;
-   room_type file_info;
 
    r = GetResourceByID(resource_id);
    if (r == NULL)
    {
-      bprintf("LoadRoomData can't find resource %i\n",resource_id);
+      eprintf("LoadRoomData can't find resource %i\n",resource_id);
       return NIL;
    }
 
-   if (!LoadRoomFile(r->resource_val,&file_info))
+   room = new roomdata_node();
+   if (!LoadRoomFile(r->resource_val,&room->file_info))
    {
-      bprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
+      eprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
+      delete room;
       return NIL;
    }
 
-   room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM,sizeof(roomdata_node));
-   room->roomdata_id = num_roomdata++;
-   room->file_info = file_info;
+   AddMemoryCount(MALLOC_ID_ROOM, (int64_t)room->GetSize());
 
+   room->roomdata_id = num_roomdata++;
    room->next = roomdata;
    roomdata = room;
-
-/*
-   dprintf("LoadRoomData read room %i [%i,%i]\n",
-	   room->roomdata_id,room->file_info.rows,room->file_info.cols);
-*/
 
    ret_val.v.tag = TAG_ROOM_DATA;
    ret_val.v.data = room->roomdata_id;
@@ -149,7 +148,7 @@ bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    
    if (debug)
       dprintf("room %i, from row %i, col %i to row %i, col %i\n",
-	      r,from_row,from_col,to_row,to_col);
+              (int) r->roomdata_id,from_row,from_col,to_row,to_col);
    if (!bad_to &&
        (r->file_info.flags[to_row][to_col] & ROOM_FLAG_WALKABLE) == 0)
    {
@@ -271,7 +270,7 @@ bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    
    if (debug)
       dprintf("room %i, from row %i, col %i to row %i, col %i\n",
-	      r,from_row,from_col,to_row,to_col);
+              (int) r->roomdata_id,from_row,from_col,to_row,to_col);
    if (!bad_to &&
        (r->file_info.flags[to_row][to_col] & ROOM_FLAG_WALKABLE) == 0)
    {
@@ -320,7 +319,7 @@ bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int
    if (r->file_info.monster_grid == NULL)
    {
 	   bprintf("CanMoveInRoomFine has no monster grid for %i\n",
-			   r->roomdata_id);
+             (int) r->roomdata_id);
 	   return true;
    }
    /* one of these cases WILL be true */

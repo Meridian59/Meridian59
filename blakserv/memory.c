@@ -125,7 +125,7 @@ static void FreeCHK(void*ptr)
 	
 	if( p[1] != MCHK_START ) {
 		ptr = (unsigned long*)ptr - 2;
-		eprintf("possible memory underrun at 0x%lx\n",ptr);
+		eprintf("possible memory underrun at 0x%p\n", (void *) ptr);
 		
 		free( ptr ) ;
 		return;
@@ -140,7 +140,7 @@ static void FreeCHK(void*ptr)
 	/* it may have been corrupted */ 
 	if(size==0) {
 		ptr = (unsigned long*)ptr - 2;
-		eprintf("freeing zero length memory block 0x%lx\n",ptr);
+		eprintf("freeing zero length memory block 0x%p\n", (void *) ptr);
 		
 		free( ptr );
 		return ;
@@ -149,7 +149,7 @@ static void FreeCHK(void*ptr)
 	p = (unsigned long*)((unsigned char*)ptr + (size));
 	
 	if( p[0] != MCHK_END ) {
-		eprintf("possible memory overrun at 0x%lx\n",ptr);
+		eprintf("possible memory overrun at 0x%p\n", (void *) ptr);
 	}
 	
 	ptr = (unsigned long*)ptr - 2;
@@ -278,7 +278,7 @@ void * AllocateMemoryDebug(int malloc_id,size_t size,const char *filename,int li
 	{
 	/* assume channels started up if allocation error, which might not be true,
 		but if so, then there are more serious problems! */
-		eprintf("AllocateMemory couldn't allocate %i bytes (id %i)\n",size,malloc_id);
+		eprintf("AllocateMemory couldn't allocate %i bytes (id %i)\n",(int) size,malloc_id);
 		FatalError("Memory allocation failure");
 	}
 	if (InMainLoop())
@@ -328,3 +328,33 @@ void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 #endif
 }
 
+/**
+ * Add or subtract memory count from the memory statistics.
+ *
+ * @param malloc_id The memory allocation ID (MALLOC_ID_*)
+ * @param size Positive value to add memory, negative value to subtract memory
+ *
+ * @note This function allows manual adjustment of memory counts for STL
+ *       containers and other allocations not managed by AllocateMemory.
+ */
+void AddMemoryCount(int malloc_id, int64_t size)
+{
+   if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
+      eprintf("AddMemoryCount adding memory of unknown type %i\n", malloc_id);
+   else
+   {
+      // Because size_t is unsigned, cast to signed, perform, then cast back
+      long long result = (long long) memory_stat.allocated[malloc_id] + size;
+
+      if (result < 0)
+      {
+         eprintf("AddMemoryCount: Memory count would go negative for type %i (current: %zu, adjustment: %" PRId64 ")\n",
+                 malloc_id, memory_stat.allocated[malloc_id], size);
+         memory_stat.allocated[malloc_id] = 0;  // Clamp to 0 but log the error
+      }
+      else
+      {
+         memory_stat.allocated[malloc_id] = (size_t) result;
+      }
+   }
+}

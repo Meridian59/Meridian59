@@ -79,7 +79,7 @@ void PauseTimers(void)
 {
    if (pause_time != 0)
    {
-      eprintf("PauseTimers called when they were already paused at %s\n",TimeStr(pause_time));
+      eprintf("PauseTimers called when they were already paused at %s\n",TimeStr(pause_time).c_str());
       return;
    }
    pause_time = GetTime();

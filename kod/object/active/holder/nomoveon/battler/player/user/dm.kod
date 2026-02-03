@@ -43,66 +43,6 @@ resources:
    dm_makesignetwork = "You have created a signet ring (i.e. newbie quest egg)."
    dm_makesignetfail = "You were unable to create a signet ring at this time."
 
-   % Commands
-   dm_makemonster = "monster"
-   dm_event_sign_command = "event sign"
-   dm_makeitem = "item"
-   dm_createsignet = "item signet ring"
-   dm_createjunk = "item junk"
-   dm_getall = "get"
-   dm_gettotem = "totem"
-   dm_help_command = "help"
-   dm_appeal_off_command = "appeal off"
-   dm_appeal_on_command = "appeal on"
-   dm_guest_appeal_off_command = "guest appeal off"
-   dm_guest_appeal_on_command = "guest appeal on"
-   dm_stealth_on_command = "stealth on"
-   dm_stealth_off_command = "stealth off"
-   dm_rumble_command = "rumble"
-   dm_good_command = "good"
-   dm_neutral_command = "neutral"
-   dm_evil_command = "evil"
-   dm_monster_budget_command = "monster budget"
-   dm_monster_authorize_command = "monster authorize"
-   dm_none = "none"
-   dm_clear_abilities_command = "clear abilities"
-   dm_clear_inventory_command = "clear inventory"
-   dm_get_spells_command = "get spells"
-   dm_get_skills_command = "get skills"
-   dm_get_money_command = "get money"
-   dm_boost_stats_command = "boost stats"
-   dm_PK_enable_command = "PK enable"
-   dm_PK_disable_command = "PK disable"
-   dm_PK_lock_command = "PK lock"
-   dm_PK_unlock_command = "PK unlock"
-   dm_morning_command = "morning"
-   dm_afternoon_command = "afternoon"
-   dm_evening_command = "evening"
-   dm_night_command = "night"
-   dm_restore_time_command = "restore time"
-   dm_call_monster_command = "call monster"
-   dm_npc_chat_command = "npc chat"
-   dm_plain_command = "plain"
-   dm_human_command = "human"
-   dm_disguise_command = "disguise"
-   dm_get_misc_command = "get misc"
-   dm_get_weapons_command = "get weapons"
-   dm_get_armor_command = "get armor"
-   dm_get_food_command = "get food"
-   dm_get_reagents_command = "get reagents"
-   dm_get_gems_command = "get gems"
-   dm_get_ammo_command = "get ammo"
-   dm_get_wands_command = "get wands"
-   dm_get_rings_command = "get rings"
-   dm_get_sundries_command = "get sundries"
-   dm_get_games_command = "get games"
-   dm_get_necklaces_command = "get necklaces"
-   dm_get_potions_command = "get potions"
-   dm_get_scrolls_command = "get scrolls"
-   dm_get_masks_command = "get masks"
-   dm_hidden_command = "hidden"
-   dm_blank_command = "blank"
-
    dm_roomgive_command = "roomgive"
    dm_gave_to_number = "%s players received reward!"
 
@@ -113,9 +53,6 @@ resources:
    dm_blank = "You are now blank."
 
    dm_no_longer = "This command no longer exists.  Type DM HELP for more info."
-   dm_old_makeMonster = "makemonster"
-   dm_old_makeitem = "makeitem"
-   dm_old_getall = "get all"
 
    dm_hidden = "You are hidden from mortal eyes."
    dm_not_hidden = "Your are no longer hidden from mortal eyes."
@@ -504,13 +441,9 @@ messages:
    }
 
    CheckAdvancementPoints()
+   "Always returns TRUE for DMs."
    {
-      if NOT pbAdvancement
-      {
-         return TRUE;
-      }
-      
-      propagate;
+      return TRUE;
    }
 
    AdvancementCheck(what=$,killing_blow=TRUE)
@@ -633,10 +566,11 @@ messages:
          propagate;
       }
 
-      % These checks seem to do double-duty, but this is so other countries can 
-      %  localize the words yet English speaking admins can still use the system.
+      % DM mode commands use only string literals, not resources,
+      % to ensure the English command always works regardless of any
+      % resource localization.
 
-      if StringEqual(string,dm_help_command)
+      if StringEqual(string,"help")
       {
          if pbSay_commands
          {
@@ -652,55 +586,48 @@ messages:
          }
       }
       
-      if StringEqual(string,dm_appeal_off_command)
-         OR StringEqual(string,"appeal off")
+      if StringEqual(string,"appeal off")
       {
          pbAppeal = pbAppeal & ~1;
          Send(self,@MsgSendUser,#message_rsc=dm_appeal_off);
          return;
       }
 
-      if StringEqual(string,dm_appeal_on_command)
-         OR StringEqual(string,"appeal on")
+      if StringEqual(string,"appeal on")
       {
          pbAppeal = pbAppeal | 1;
          Send(self,@MsgSendUser,#message_rsc=dm_appeal_on);
          return;
       }
 
-      if StringEqual(string,dm_guest_appeal_off_command)
-         OR StringEqual(string,"guest appeal off")
+      if StringEqual(string,"guest appeal off")
       {
          pbAppeal = pbAppeal & ~2;
          Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_off);
          return;
       }
       
-      if StringEqual(string,dm_guest_appeal_on_command)
-         OR StringEqual(string,"guest appeal on")
+      if StringEqual(string,"guest appeal on")
       {
          pbAppeal = pbAppeal | 2;
          Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_on);
          return;
       }
 
-      if StringEqual(string,dm_stealth_on_command)
-         OR StringEqual(string,"stealth on")
+      if StringEqual(string,"stealth on")
       {
          pbStealth = TRUE;
          Send(self,@MsgSendUser,#message_rsc=dm_stealth_on);
          return;
       }
-      if StringEqual(string,dm_stealth_off_command)
-         OR StringEqual(string,"stealth off")
+      if StringEqual(string,"stealth off")
       {
          pbStealth = FALSE;
          Send(self,@MsgSendUser,#message_rsc=dm_stealth_off);
          return;
       }
 
-      if StringContain(string,dm_gettotem)
-         OR StringEqual(string,"totem")
+      if StringEqual(string,"totem")
       {
          Send(self,@NewHold,#what=Send(SYS,@GetTotem));
          return;
@@ -708,8 +635,7 @@ messages:
 
       if pbActor
       {
-         if StringEqual(string,dm_hidden_command)
-            OR StringEqual(string,"hidden")
+         if StringEqual(string,"hidden")
          {
             if NOT (piDMFlags & DMFLAG_HIDDEN)
             {
@@ -734,8 +660,7 @@ messages:
             return;
          }
 
-         if StringEqual(string,dm_blank_command)
-            OR StringEqual(string,"blank")
+         if StringEqual(string,"blank")
          {
             % Make everyone think we left the room.
             lObjects = Send(poOwner,@GetHolderActive);
@@ -769,10 +694,8 @@ messages:
             return;
          }
          
-         if StringContain(string,dm_disguise_command)
-            OR StringContain(string,"disguise")
+         if StringContain(string,"disguise")
          {
-           StringSubstitute(string,dm_disguise_command," ");
            StringSubstitute(string,"disguise"," ");
          
            % Checks art archive, if no matches goes to NPCs.
@@ -821,8 +744,7 @@ messages:
            return;
         }
 
-        if StringEqual(string,dm_plain_command) OR StringEqual(string,dm_human_command)
-           OR StringEqual(string,"plain") OR StringEqual(string,"human")
+        if StringEqual(string,"plain") OR StringEqual(string,"human")
         {
            Send(self,@ResetPlayerIcon,#alldone=FALSE);
            pbMorph = FALSE;
@@ -859,15 +781,14 @@ messages:
            return;
         }
          
-         if (StringEqual(string,dm_rumble_command) OR StringEqual(string,"rumble"))
+         if (StringEqual(string,"rumble"))
          {
             Send(poOwner,@Rumble);
 
             return;
          }
       
-         if (StringContain(string,dm_event_sign_command)
-             OR StringContain(string,"event sign"))
+         if (StringContain(string,"event sign"))
          {
             oObject = create(&EventSign);
 
@@ -878,8 +799,7 @@ messages:
          }
       }
 
-      if StringEqual(string,dm_good_command)
-         OR StringEqual(string,"good")
+      if StringEqual(string,"good")
       {
          piKarma = 10000;
          Send(self,@NewKarma);
@@ -893,8 +813,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_neutral_command)
-         OR StringEqual(string,"neutral")
+      if StringEqual(string,"neutral")
       {
          piKarma = 0;
          Send(self,@NewKarma);
@@ -908,8 +827,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_evil_command)
-         OR StringEqual(string,"evil")
+      if StringEqual(string,"evil")
       {
          piKarma = -10000;
          Send(self,@NewKarma);
@@ -944,8 +862,7 @@ messages:
       %  "monster", so they gotta come before the monster generating ones.
       if pbSay_commands
       {
-         if StringEqual(string,dm_call_monster_command)
-            OR StringEqual(string,"call monster")
+         if StringEqual(string,"call monster")
          {
             i = Send(poOwner,@TryCreateMonster);
             if not pbStealth
@@ -975,17 +892,15 @@ messages:
          }
       }
 
-      if StringContain(string,dm_monster_budget_command)
-         OR StringContain(string,"monster budget")
+      if StringContain(string,"monster budget")
       {
          Send(self,@ReportMonsterBudget);
          
          return;
       }
 
-      if (StringContain(string,dm_makemonster) OR StringContain(string,"monster"))
-         AND NOT (StringContain(string,dm_monster_authorize_command)
-                  OR StringContain(string,"monster authorize")) 
+      if StringContain(string,"monster")
+         AND NOT StringContain(string,"monster authorize")
       {
          bFound = FALSE;
          lTemplate = Send(SYS,@GetMonsterTemplates);
@@ -1067,12 +982,10 @@ messages:
       }
 
       if pbMonsterMaker
-         AND (StringContain(string,dm_monster_authorize_command)
-              OR StringContain(string,"monster authorize"))
+         AND (StringContain(string,"monster authorize"))
       {
          temp = CreateString();
          temp = SetString(temp, string);
-         StringSubstitute(temp,dm_monster_authorize_command,"");
          StringSubstitute(temp,"monster authorize","");
          StringSubstitute(temp," ","");
 
@@ -1096,9 +1009,9 @@ messages:
          }
          
          % if we got here, no valid monster name given
-         if StringContain(temp,dm_none)
+         if StringContain(temp,"none")
          {
-            StringSubstitute(temp,dm_none,"");
+            StringSubstitute(temp,"none","");
             StringSubstitute(temp," ","");
             oBard = Send(SYS,@FindUserByString,#string=temp);
             if oBard <> $ AND IsClass(oBard,&DM)
@@ -1132,8 +1045,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_clear_abilities_command)
-         OR StringEqual(string,"clear abilities")
+      if StringEqual(string,"clear abilities")
       {
          for i in Send(self,@GetSpellList)
          {
@@ -1151,8 +1063,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_clear_inventory_command)
-         OR StringEqual(string,"clear inventory")
+      if StringEqual(string,"clear inventory")
       {
          for i in plActive
          {
@@ -1173,8 +1084,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_spells_command)
-         OR StringEqual(string,"get spells")
+      if StringEqual(string,"get spells")
       {
          for i in Send(SYS,@GetSpells)
          {
@@ -1193,8 +1103,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_skills_command)
-         OR StringEqual(string,"get skills")
+      if StringEqual(string,"get skills")
       {
          for i in Send(SYS,@GetSkills)
          {
@@ -1208,16 +1117,14 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_money_command)
-         OR StringEqual(string,"get money")
+      if StringEqual(string,"get money")
       {
          Send(self,@NewHold,#what=Create(&Money,#number=500000));
 
          return;
       }
 
-      if StringEqual(string,dm_boost_stats_command)
-         OR StringEqual(string,"boost stats")
+      if StringEqual(string,"boost stats")
       {
          % Boost all stats to max
          piMight = 50;
@@ -1253,24 +1160,21 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_PK_enable_command)
-         OR StringEqual(string,"PK enable")
+      if StringEqual(string,"PK enable")
       { 
          Send(self,@PkillEnable);
 
          return;
       }
       
-      if StringEqual(string,dm_PK_disable_command)
-         OR StringEqual(string,"PK disable")
+      if StringEqual(string,"PK disable")
       {
          Send(self,@PkillDisable);
 
          return;
       }
       
-      if StringEqual(string,dm_PK_lock_command)
-         OR StringEqual(string,"PK lock")
+      if StringEqual(string,"PK lock")
       {
          Send(self,@PkillLock);
          Send(self,@MsgSendUser,#message_rsc=dm_pk_lock);
@@ -1279,8 +1183,7 @@ messages:
          return;
       }
       
-      if StringEqual(string,dm_PK_unlock_command)
-         OR StringEqual(string,"PK unlock")
+      if StringEqual(string,"PK unlock")
       {
          Send(self,@PkillUnlock);
          Send(self,@MsgSendUser,#message_rsc=dm_pk_unlock);
@@ -1290,40 +1193,35 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_morning_command)
-         OR StringEqual(string,"morning")
+      if StringEqual(string,"morning")
       {
          Send(SYS,@SetHour,#num=6);
 
          return;
       }
 
-      if StringEqual(string,dm_afternoon_command)
-         OR StringEqual(string,"afternoon")
+      if StringEqual(string,"afternoon")
       {
          Send(SYS,@SetHour,#num=13);
 
          return;
       }
 
-      if StringEqual(string,dm_evening_command)
-         OR StringEqual(string,"evening")
+      if StringEqual(string,"evening")
       {
          Send(SYS,@SetHour,#num=18);
 
          return;
       }
 
-      if StringEqual(string,dm_night_command)
-         OR StringEqual(string,"night")
+      if StringEqual(string,"night")
       {
          Send(SYS,@SetHour,#num=23);
          
          return;
       }
 
-      if StringEqual(string,dm_restore_time_command)
-         OR StringEqual(string,"restore time")
+      if StringEqual(string,"restore time")
       {
          Send(SYS,@RecalcLightAndWeather);
 
@@ -1366,8 +1264,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_npc_chat_command)
-         OR StringEqual(string,"npc chat")
+      if StringEqual(string,"npc chat")
       {
          temp = Send(poOwner,@GetHolderActive);
 
@@ -1382,16 +1279,14 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_createjunk)
-         OR StringContain(string,"item junk")
+      if StringContain(string,"item junk")
       {
          Send(self,@NewHold,#what=Create(&Junk));
 
          return;
       }
 
-      if StringEqual(string,dm_createsignet)
-         OR StringEqual(string,"item signet ring")
+      if StringEqual(string,"item signet ring")
       {
          if Send(SYS,@GetLibrary) <> $
          {
@@ -1415,8 +1310,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_roomgive_command)
-         OR StringContain(string,"roomgive")
+      if StringContain(string,"roomgive")
       {
          iGiven = 0;
          lTemplate = Send(SYS,@GetItemTemplates);
@@ -1441,8 +1335,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_makeitem)
-         OR StringContain(string,"item")
+      if StringContain(string,"item")
       {
          bFound = FALSE;
          lTemplate = Send(SYS,@GetItemTemplates);
@@ -1472,8 +1365,7 @@ messages:
          return;
       }
 
-      if StringContain(string,dm_getall)
-         OR StringContain(string,"get")
+      if StringContain(string,"get")
       {
          Send(self,@GetAllOfItem,#string=string);
 
@@ -1747,128 +1639,112 @@ messages:
 
    GetAllOfItem(string=$)
    {
-      if StringEqual(string,dm_get_misc_command)
-         OR StringEqual(string,"get misc")
+      if StringEqual(string,"get misc")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MISC);
 
          return;
       }
 
-      if StringEqual(string,dm_get_weapons_command)
-         OR StringEqual(string,"get weapons")
+      if StringEqual(string,"get weapons")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_WEAPON);
 
          return;
       }
 
-      if StringEqual(string,dm_get_armor_command)
-         OR StringEqual(string,"get armor")
+      if StringEqual(string,"get armor")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ARMOR);
 
          return;
       }
 
-      if StringEqual(string,dm_get_food_command)
-         OR StringEqual(string,"get food")
+      if StringEqual(string,"get food")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_FOOD);
 
          return;
       }
 
-      if StringEqual(string,dm_get_reagents_command)
-         OR StringEqual(string,"get reagents")
+      if StringEqual(string,"get reagents")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_REAGENT);
 
          return;
       }
 
-      if StringEqual(string,dm_get_gems_command)
-         OR StringEqual(string,"get gems")
+      if StringEqual(string,"get gems")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_GEM);
 
          return;
       }
 
-      if StringEqual(string,dm_get_ammo_command)
-         OR StringEqual(string,"get ammo")
+      if StringEqual(string,"get ammo")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_AMMO);
 
          return;
       }
 
-      if StringEqual(string,dm_get_wands_command)
-         OR StringEqual(string,"get wands")
+      if StringEqual(string,"get wands")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_WAND);
 
          return;
       }
 
-      if StringEqual(string,dm_get_rings_command)
-         OR StringEqual(string,"get rings")
+      if StringEqual(string,"get rings")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_RING);
 
          return;
       }
 
-      if StringEqual(string,dm_get_sundries_command)
-         OR StringEqual(string,"get sundries")
+      if StringEqual(string,"get sundries")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_SUNDRY);
 
          return;
       }
 
-      if StringEqual(string,dm_get_games_command)
-         OR StringEqual(string,"get games")
+      if StringEqual(string,"get games")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_GAME);
 
          return;
       }
 
-      if StringEqual(string,dm_get_necklaces_command)
-         OR StringEqual(string,"get necklaces")
+      if StringEqual(string,"get necklaces")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_NECKLACE);
 
          return;
       }
 
-      if StringEqual(string,dm_get_potions_command)
-         OR StringEqual(string,"get potions")
+      if StringEqual(string,"get potions")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_POTION);
 
          return;
       }
 
-      if StringEqual(string,dm_get_scrolls_command)
-         OR StringEqual(string,"get scrolls")
+      if StringEqual(string,"get scrolls")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_SCROLL);
 
          return;
       }
 
-      if StringEqual(string,dm_get_masks_command)
-         OR StringEqual(string,"get masks")
+      if StringEqual(string,"get masks")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MASK);
 
          return;
       }
 
-      if StringEqual(string,dm_get_money_command)
-         OR StringEqual(string,"get money")
+      if StringEqual(string,"get money")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MONEY);
 

@@ -2773,7 +2773,8 @@ messages:
                }
                else
                {
-                  Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+                  Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound),
+                       #row=0,#col=0);
                }
             }
 
@@ -2793,7 +2794,7 @@ messages:
       return vrDoor_sound;
    }
 
-   SomethingWaveRoom(what = 0, wave_rsc = $, row = $, col = $)
+   SomethingWaveRoom(what = 0, wave_rsc = $, row = 0, col = 0)
    "Plays a sound for all users in the room. Sends WaveSendUser to each user "
    "with the provided wave_rsc, source object, row, and col parameters."
    {

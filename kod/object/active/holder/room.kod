@@ -2769,12 +2769,11 @@ messages:
                if Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
                {
                   Send(self,@SomethingWaveRoom,#wave_rsc=Send(self,@GetDoorSound),
-                       #row=row,#col=col);
+                       #row=row,#col=col,#cutoff_radius=4);
                }
                else
                {
-                  Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound),
-                       #row=0,#col=0);
+                  Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
                }
             }
 
@@ -2794,16 +2793,16 @@ messages:
       return vrDoor_sound;
    }
 
-   SomethingWaveRoom(what = 0, wave_rsc = $, row = 0, col = 0)
+   SomethingWaveRoom(what = 0, wave_rsc = $, row = 0, col = 0, cutoff_radius = 0)
    "Plays a sound for all users in the room. Sends WaveSendUser to each user "
-   "with the provided wave_rsc, source object, row, and col parameters."
+   "with the provided wave_rsc, source object, row, col, and cutoff_radius."
    {
       local i;
 
       for i in plActive
       {
          Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what,
-              #row=row,#col=col);
+              #row=row,#col=col,#cutoff_radius=cutoff_radius);
       }
 
       return;

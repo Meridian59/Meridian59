@@ -69,6 +69,7 @@ resources:
    background_stormy_sky = 3sky.bgf
 
    creaky_door_sound = doropen1.wav
+   door_close_sound = dorclose.ogg
 
    water_wading_sound = splash.wav
 
@@ -179,6 +180,7 @@ classvars:
    viTerrain_type = 0
 
    vrDoor_sound = creaky_door_sound
+   vrDoor_close_sound = door_close_sound
    vrWading_Sound = water_wading_sound
 
    viFlag_row = $
@@ -2781,6 +2783,18 @@ messages:
                  #where=Send(SYS,@FindRoomByNum,#num=Nth(i,3)),
                  #new_row=Nth(i,4),#new_col=Nth(i,5),#new_angle=iAngle);
 
+            % Play door closing sound from player's position in destination
+            % room so it sounds on both sides of the door.  Only if shared
+            % mode enabled (otherwise no sound played, legacy behavior).
+            if NOT IsClass(what,&DM)
+               AND Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
+            {
+               Send(Send(what,@GetOwner),@SomethingWaveRoom,
+                    #wave_rsc=Send(self,@GetDoorCloseSound),
+                    #row=Send(what,@GetRow),#col=Send(what,@GetCol),
+                    #cutoff_radius=4);
+            }
+
             return TRUE;
          }
       }
@@ -2791,6 +2805,11 @@ messages:
    GetDoorSound()
    {
       return vrDoor_sound;
+   }
+
+   GetDoorCloseSound()
+   {
+      return vrDoor_close_sound;
    }
 
    SomethingWaveRoom(what = 0, wave_rsc = $, row = 0, col = 0, cutoff_radius = 0)

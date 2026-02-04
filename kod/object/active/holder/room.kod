@@ -417,8 +417,8 @@ messages:
          }
       }
 
-      % Temporarily remove old room from the system's room list so that we can create a new one
-      Send(SYS,@DeleteRoom,#what=self);
+      % Remove old room from the system room list, allowing us to create a new one
+      Send(SYS,@DeleteRoom,#what=oOldRoom);
       
       % Create the new room
       Send(SYS,@CreateOneRoomIfNew,#num=piRoom_num,#class=cClass);
@@ -433,21 +433,15 @@ messages:
       % Send message to all active objects in the old room that want to preserve themselves
       for i in lActiveObjects
       {
-         if i <> $
-         {
-            Send(i,@OnRoomRecreated,#old_room=oOldRoom,#new_room=oNewRoom);
-         }
+         Send(i,@OnRoomRecreated,#old_room=oOldRoom,#new_room=oNewRoom);
       }
 
-      % Now delete the old room and teleport users back to the new room
-      Send(oOldRoom,@Delete,#bSkip_table_delete=FALSE);
+      % Now fully delete the old room and teleport users back to the (new) room
+      Send(oOldRoom,@Delete);
 
       for i in lUsers
       {
-         if i <> $
-         {
-            Send(oNewRoom,@Teleport,#what=i);
-         }
+         Send(oNewRoom,@Teleport,#what=i);
       }
 
       return;
@@ -1004,7 +998,7 @@ messages:
       return;
    }
 
-   Delete(bSkip_table_delete = TRUE)
+   Delete()
    {
       local i;
 
@@ -1027,11 +1021,6 @@ messages:
       {
          DeleteTimer(ptPeriodic_sounds);
          ptPeriodic_sounds = $;
-      }
-
-      if bSkip_table_delete
-      {
-         Send(SYS,@DeleteRoom,#what=self);
       }
 
       Send(self,@RemoveAllEnchantments);

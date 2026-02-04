@@ -33,7 +33,7 @@ messages:
    }
 
    OnRoomRecreated(old_room = $, new_room = $)
-   "Default handler for room recreation events. Most objects do nothing."
+   "Default handler for room recreation events."
    {
       % Default: do nothing. Subclasses should override to preserve themselves.
       return;

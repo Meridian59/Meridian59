@@ -114,8 +114,8 @@ messages:
    }
 
    OnRoomRecreated(old_room = $, new_room = $)
-   "Called when this room is being recreated. If this councilor's homeroom matches the old "
-   "room, move to the new room."
+   "Returns the councilor to their homeroom after room recreation, since councilors "
+   "are not recreated with the room itself."
    {
       if old_room <> $ AND new_room <> $ AND Send(old_room,@GetRoomNum) = viHomeroom
       {

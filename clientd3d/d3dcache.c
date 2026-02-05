@@ -9,10 +9,6 @@
 
 extern int						gNumDPCalls;
 extern d3d_render_cache			gTempCache;
-
-extern LPDIRECT3DTEXTURE9		gpDLightAmbient;
-extern LPDIRECT3DTEXTURE9		gpDLightWhite;
-extern LPDIRECT3DTEXTURE9		gpDLightOrange;
 extern d3d_driver_profile		gD3DDriverProfile;
 
 void	D3DCacheLock(d3d_render_cache *pCache);

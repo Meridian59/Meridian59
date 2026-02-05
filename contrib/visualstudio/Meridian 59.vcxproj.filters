@@ -88,6 +88,9 @@
     <ClCompile Include="..\..\clientd3d\d3drender_fx.c">
       <Filter>clientd3d</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\clientd3d\d3drender_lights.c">
+      <Filter>clientd3d</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\clientd3d\d3drender_materials.c">
       <Filter>clientd3d</Filter>
     </ClCompile>
@@ -1339,6 +1342,9 @@
       <Filter>clientd3d</Filter>
     </ClInclude>
     <ClInclude Include="..\..\clientd3d\d3drender_fx.h">
+      <Filter>clientd3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\clientd3d\d3drender_lights.h">
       <Filter>clientd3d</Filter>
     </ClInclude>
     <ClInclude Include="..\..\clientd3d\d3drender_materials.h">

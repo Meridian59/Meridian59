@@ -138,6 +138,7 @@ OBJS = \
         $(OUTDIR)\d3drender.obj \
         $(OUTDIR)\d3drender_bgoverlays.obj \
         $(OUTDIR)\d3drender_fx.obj \
+        $(OUTDIR)\d3drender_lights.obj \
         $(OUTDIR)\d3drender_materials.obj \
         $(OUTDIR)\d3drender_objects.obj \
         $(OUTDIR)\d3drender_skybox.obj \

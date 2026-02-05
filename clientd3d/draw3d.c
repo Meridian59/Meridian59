@@ -214,7 +214,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 		PDIB pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
 		if (!pdibCeiling)
 		{
-			RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, TRUE/*torch*/);
+			RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/);
 			RedrawAll();
 		}
 	}
@@ -225,7 +225,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 		PDIB pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
 		if (!pdibCeiling)
 		{
-			SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, TRUE/*torch*/);
+			SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/);
 			RedrawAll();
 		}
 	}

@@ -30,13 +30,13 @@ messages:
    {
       plTreasure = [ [ &Mushroom, 25 ],
                      [ &RedMushroom, 20 ],
-                     [ &Snack, 19 ],
+                     [ &Snack, 15 ],
                      [ &Money, 15 ],
                      [ &NeruditeArrow, 5 ],
                      [ &Emerald, 5 ],
                      [ &Sapphire, 4 ],
                      [ &InkyCap, 4 ],
-                     [ &KnightShield, 1 ],
+                     [ &KnightShield, 5 ],
                      [ &DiscordScroll, 1 ],
                      [ &IdentifyWand, 1 ]
                    ];

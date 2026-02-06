@@ -272,33 +272,23 @@ void NewWeather(BYTE weather_effect)
 	{
 		effects.raining = false;
 		effects.snowing = false;
-		RedrawAll();
 	}	
-	
-	if (weather_effect == WEATHER_RAIN)
+	else if (weather_effect == WEATHER_RAIN)
 	{
 		effects.raining = true;
 		effects.snowing = false;
-		RedrawAll();
 	}
-	
-	if (weather_effect == WEATHER_SNOW)
+	else if (weather_effect == WEATHER_SNOW)
 	{
 		effects.raining = false;
 		effects.snowing = true;
-		RedrawAll();
-	}	
-	
-	return;
+	}
+	RedrawAll();
 }
 
 /************************************************************************/
 
 bool IsClearWeather()
 {
-	if (current_room.weather_effect == WEATHER_CLEAR)
-	{
-		return TRUE;
-	}
-	return FALSE;
+	return current_room.weather_effect == WEATHER_CLEAR;
 }

@@ -102,7 +102,7 @@ void SandstormInit(void)
 	const int SAND_EMITTER_RADIUS = 12;
 	const int SAND_EMITTER_ENERGY = 40;
 	const int SAND_EMITTER_HEIGHT = 0;
-	const int SAND_TIMER = 1;
+	const int SAND_TIMER_MS = 15;
 	const int SAND_RAND_POS = 1;
 	const int SAND_RAND_ROT = 2;
 	const bool SAND_WEATHER_EFFECT = false;
@@ -110,7 +110,7 @@ void SandstormInit(void)
 	D3DParticleSystemReset(&sandParticleSystem);
 	emitter* newEmitter = nullptr;
 	// four corners, blowing around the perimeter
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, 500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -118,7 +118,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 	
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 500.0f, 0, 0);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -126,7 +126,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, -500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -134,7 +134,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -500.0f, 0, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -143,7 +143,7 @@ void SandstormInit(void)
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
 	// four corners, blowing towards player
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 353.55f, 353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -151,7 +151,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 353.55f, -353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -159,7 +159,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -353.55f, -353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -167,7 +167,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -353.55f, 353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -176,7 +176,7 @@ void SandstormInit(void)
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
 	// forward, left, right, and back, blowing towards player
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -1024.0f, 0, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 500.0f, 0.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -184,7 +184,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 1024.0f, 0, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -500.0f, 0.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -192,7 +192,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, 0, SAND_EMITTER_RADIUS * 1024.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, -500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -200,7 +200,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, 0, SAND_EMITTER_RADIUS * -1024.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, 500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -209,7 +209,7 @@ void SandstormInit(void)
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
 	// four corners, blowing around the perimeter
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, 500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -217,7 +217,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 	
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 500.0f, 0, 0);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -225,7 +225,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 	
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, -500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -233,7 +233,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);		
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -500.0f, 0, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -242,7 +242,7 @@ void SandstormInit(void)
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
 	// four corners, blowing towards player
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 353.55f, 353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -250,7 +250,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 	
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 353.55f, -353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -258,7 +258,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);		
 	
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -353.55f, -353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -266,7 +266,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);		
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 724.0f, SAND_EMITTER_RADIUS * -724.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -353.55f, 353.55f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -275,7 +275,7 @@ void SandstormInit(void)
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
 	// forward, left, right, and back, blowing towards player
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * -1024.0f, 0, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 500.0f, 0.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -283,7 +283,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, SAND_EMITTER_RADIUS * 1024.0f, 0, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, -500.0f, 0.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -291,7 +291,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);	
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, 0, SAND_EMITTER_RADIUS * 1024.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, -500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -299,7 +299,7 @@ void SandstormInit(void)
 	D3DParticleEmitterSetRandom(newEmitter, SAND_RAND_POS, SAND_RAND_ROT);
 	D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 
-	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER, SAND_WEATHER_EFFECT);
+	newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_ENERGY, SAND_TIMER_MS, SAND_WEATHER_EFFECT);
 	D3DParticleEmitterSetPos(newEmitter, 0, SAND_EMITTER_RADIUS * -1024.0f, SAND_EMITTER_HEIGHT);
 	D3DParticleEmitterSetVel(newEmitter, 0, 500.0f, 0.0f);
 	D3DParticleEmitterSetRot(newEmitter, 0, -PI / 500.0f, -PI / 500.0f);
@@ -317,7 +317,7 @@ void RainInit(void)
 	const int RAIN_EMITTER_RADIUS = 7500;
 	const int RAIN_EMITTER_ENERGY = 200;
 	const int RAIN_EMITTER_HEIGHT = 3000;
-	const int RAIN_TIMER = 15; // Milliseconds
+	const int RAIN_TIMER_MS = 15; // Milliseconds
 	const bool RAIN_WEATHER_EFFECT = true;
 	const int RAIN_VELOCITY = -200;
 	const int RAIN_RANDOM_ROT = 0;
@@ -328,7 +328,7 @@ void RainInit(void)
 	emitter* newEmitter = nullptr;
 	for(int i = 0; i < 16; i++)
 	{
-		newEmitter = D3DParticleEmitterInit(&rainParticleSystem, RAIN_EMITTER_ENERGY, RAIN_TIMER, RAIN_WEATHER_EFFECT);
+		newEmitter = D3DParticleEmitterInit(&rainParticleSystem, RAIN_EMITTER_ENERGY, RAIN_TIMER_MS, RAIN_WEATHER_EFFECT);
 		D3DParticleEmitterSetPos(newEmitter, -RAIN_EMITTER_OFFSET, -RAIN_EMITTER_OFFSET, RAIN_EMITTER_HEIGHT);
 		D3DParticleEmitterSetVel(newEmitter, 0, 0, RAIN_VELOCITY);
 		D3DParticleEmitterSetRot(newEmitter, 0, 0, 0);
@@ -356,7 +356,7 @@ void SnowInit(void)
 	const int SNOW_EMITTER_ENERGY = 800;
 	const int SNOW_EMITTER_HEIGHT = 3000;
 	const int SNOW_FALL_SPEED = -30;
-	const int SNOW_TIMER = 15;  // Milliseconds
+	const int SNOW_TIMER_MS = 15;  // Milliseconds
 	const int SNOW_RANDOM_ROT = 0;
 	const bool SNOW_WEATHER_EFFECT = true;
 	// Snow emitter position is offsetted since they aren't centered on the player.
@@ -366,7 +366,7 @@ void SnowInit(void)
 	emitter* newEmitter = nullptr;
 	for(int i = 0; i < 16; i++)
 	{
-		newEmitter = D3DParticleEmitterInit(&snowParticleSystem, SNOW_EMITTER_ENERGY, SNOW_TIMER, SNOW_WEATHER_EFFECT);
+		newEmitter = D3DParticleEmitterInit(&snowParticleSystem, SNOW_EMITTER_ENERGY, SNOW_TIMER_MS, SNOW_WEATHER_EFFECT);
 		D3DParticleEmitterSetPos(newEmitter, -SNOW_EMITTER_OFFSET, -SNOW_EMITTER_OFFSET, SNOW_EMITTER_HEIGHT);
 		D3DParticleEmitterSetVel(newEmitter, 0, 0, SNOW_FALL_SPEED);
 		D3DParticleEmitterSetRot(newEmitter, 0, 0, 0);

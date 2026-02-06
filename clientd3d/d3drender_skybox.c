@@ -12,10 +12,10 @@
 
 static const float SKYBOX_DIMENSIONS = 75000.0f;
 static const float SKYBOX_Y = 37000.0f;
-static const int TOTAL_SKYBOXES = 9;
+static const int NUM_SKYBOXES = 9;
 static const int SKYBOX_SIDES = 6;
 
-static LPDIRECT3DTEXTURE9 gpSkyboxTextures[TOTAL_SKYBOXES][SKYBOX_SIDES];
+static LPDIRECT3DTEXTURE9 gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 static int gCurBackground;
 static ID tempBkgnd = 0;
 
@@ -319,7 +319,7 @@ bool D3DRenderBackgroundSet(ID background)
 */
 void D3DRenderSkyBoxShutdown()
 {
-	for (int j = 0; j < TOTAL_SKYBOXES; j++)
+	for (int j = 0; j < NUM_SKYBOXES; j++)
 	{
 		for (int i = 0; i < SKYBOX_SIDES; i++)
 		{
@@ -339,8 +339,13 @@ void D3DRenderSkyBoxShutdown()
 void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 {
 	// The .bsf/.png files for skyboxes are actually six .png files stored in a single 
-	// file by appending each picture's binary data into one file using a hex editor.
-	// Color depth is 24-bit since the alpha channel (transparency) isn't used.
+	// file by appending each picture's binary data into one file.
+	//
+	// The pictures for each cubemap face are stored in this order:
+	// Back -> Bottom -> Front -> Left -> Right -> Top
+	//
+	// Color depth is also 24-bit since the alpha channel (transparency) isn't used.
+	
 	FILE* pFile;
 	png_structp	pPng = NULL;
 	png_infop	pInfo = NULL;
@@ -395,8 +400,6 @@ void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 		int	i;
 		png_bytep curRow;
 
-		// The pictures for each cubemap face are stored in this order:
-		// Back -> Bottom -> Front -> Left -> Right -> Top
 		for (i = 0; i < SKYBOX_SIDES; i++)
 		{
 			pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);

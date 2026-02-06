@@ -200,16 +200,15 @@ void GraphicsResetFont(void)
 void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 {
 	// Only drawn in room, before overlays are drawn.
+	if (IsBlind()) return;
 	
-	// sand
-	if (effects.sand && !IsBlind())
+	if (effects.sand)
 	{
 		SandDib(gBits, MAXX, MAXY, 200/*drops*/);
 		RedrawAll();
 	}
 
-	// rain
-	if (effects.raining && !IsBlind())
+	if (effects.raining)
 	{
 		PDIB pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
 		if (!pdibCeiling)
@@ -219,8 +218,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 		}
 	}
 
-	// snow
-	if (effects.snowing && !IsBlind())
+	if (effects.snowing)
 	{
 		PDIB pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
 		if (!pdibCeiling)

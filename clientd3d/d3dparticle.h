@@ -20,9 +20,10 @@ typedef struct particle
 	custom_bgra		bgra;
 	float			size;
 	float			weight;
-	// Milliseconds for weather particles to clear.
-	int				lifetime;
-	int				maxTime;
+	// Current age of the weather particle (in milliseconds)
+	int32_t			lifetimeMs;
+	// Max lifespan of the weather particle (in milliseconds)
+	int32_t			maxTimeMs;
 } particle;
 
 typedef struct emitter
@@ -30,8 +31,8 @@ typedef struct emitter
 	int				numParticles;
 	int				nextSlot;
 	int				energy;
-	int				timer;
-	int				timerBase;
+	int64_t			timerMs;
+	int64_t			timerBaseMs;
 	int				randomPos;
 	int				randomRot;
 	custom_xyz		pos;
@@ -64,8 +65,10 @@ void		D3DParticleEmitterSetRandom(emitter *pEmitter, int randomPos, int randomRo
 void		D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter);
 
 void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
-//void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
+
 void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
+void 		D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool);
+void 		D3DParticleCreate(emitter *pEmitter, particle *pParticle);
 
 #endif

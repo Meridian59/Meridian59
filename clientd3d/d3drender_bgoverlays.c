@@ -227,21 +227,14 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 		center.z = topLeft.z;
 
-		if (
-			(
-				(D3DRENDER_CLIP(topLeft.x, 1.0f) &&
-					D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
-				(D3DRENDER_CLIP(bottomLeft.x, 1.0f) &&
-					D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
-				(D3DRENDER_CLIP(topRight.x, 1.0f) &&
-					D3DRENDER_CLIP(topRight.y, 1.0f)) ||
-				(D3DRENDER_CLIP(bottomRight.x, 1.0f) &&
-					D3DRENDER_CLIP(bottomRight.y, 1.0f)) ||
-				(D3DRENDER_CLIP(center.x, 1.0f))
-				) &&
-			D3DRENDER_CLIP(topLeft.z, 1.0f))
-		{
+		bool isAnyCornerVisible =  
+			(D3DRENDER_CLIP(topLeft.x, 1.0f)		&& D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
+			(D3DRENDER_CLIP(bottomLeft.x, 1.0f)		&& D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
+			(D3DRENDER_CLIP(topRight.x, 1.0f)		&& D3DRENDER_CLIP(topRight.y, 1.0f)) ||
+			(D3DRENDER_CLIP(bottomRight.x, 1.0f)	&& D3DRENDER_CLIP(bottomRight.y, 1.0f));
 
+		if ((isAnyCornerVisible || D3DRENDER_CLIP(center.x, 1.0f)) && D3DRENDER_CLIP(topLeft.z, 1.0f))
+		{
 			int tempLeft = (topLeft.x * w / 2) + (w / 2);
 			int tempRight = (bottomRight.x * w / 2) + (w / 2);
 			int tempTop = (topLeft.y * -h / 2) + (h / 2);
@@ -272,7 +265,7 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 			overlay->rcScreen.top = tempTop;
 			overlay->rcScreen.bottom = tempBottom;
 
-			// The background overlay is visible and eligable for click detection.
+			// The background overlay is visible and eligible for click detection.
 			overlay->drawn = TRUE;
 
 			// Record boundaries of drawing area.

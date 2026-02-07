@@ -14,9 +14,10 @@ using namespace std::chrono;
 // Variables
 extern room_type current_room;
 
+// 64-bit monotonic clock since boot time, and has practically infinite range (+/- 292 years).
 static steady_clock::time_point lastFrameTime = steady_clock::now();
-// Using int64_t for delta time to match steady_clock's type.
-static int64_t msDeltaTime = 0;
+// Elapsed time between frames (in seconds).
+static float deltaTime_s = 0.0f;
 
 void D3DParticleDestroy(particle *pParticle);
 
@@ -26,7 +27,7 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 	pParticleSystem->emitterList = NULL;
 }
 
-emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, int timerBaseMs, 
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, float timerBase_s, 
 								bool bWeatherEffect)
 {
 	emitter	*pEmitter = NULL;
@@ -44,8 +45,8 @@ emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, in
 	pEmitter->numParticles = 0;
 	pEmitter->nextSlot = 0;
 	pEmitter->energy = energy;
-	pEmitter->timerMs = timerBaseMs;
-	pEmitter->timerBaseMs = timerBaseMs;
+	pEmitter->timer_s = timerBase_s;
+	pEmitter->timerBase_s = timerBase_s;
 	
 	pEmitter->bWeatherEffect = bWeatherEffect;
 	
@@ -109,10 +110,10 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 	D3DCacheSystemReset(pCacheSystem);
 	D3DRenderPoolReset(pPool, &D3DMaterialParticlePool);
 	
-	// Calculate time (in milliseconds) since the last frame.
+	// Calculate time (in seconds) since the last frame.
 	auto currentFrameTime = steady_clock::now();
-	auto duration = duration_cast<milliseconds>(currentFrameTime - lastFrameTime);
-	msDeltaTime = duration.count();
+	auto elapsed = currentFrameTime - lastFrameTime;
+	deltaTime_s = duration<float>(elapsed).count();
 	lastFrameTime = currentFrameTime;
 
 	for (list = pParticleSystem->emitterList; list != NULL; list = list->next)
@@ -127,8 +128,8 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		}
 
 		// Creating new particles
-		pEmitter->timerMs -= msDeltaTime;
-		if (pEmitter->timerMs <= 0)
+		pEmitter->timer_s -= deltaTime_s;
+		if (pEmitter->timer_s <= 0)
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
 			pParticle = &pEmitter->particles[pEmitter->nextSlot];
@@ -150,8 +151,8 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	// Update lifetime for weather particles since only they track time.
 	if (pEmitter->bWeatherEffect)
 	{
-		pParticle->lifetimeMs += static_cast<int32_t>(msDeltaTime);
-		if (pParticle->lifetimeMs >= pParticle->maxTimeMs)
+		pParticle->lifetime_s += deltaTime_s;
+		if (pParticle->lifetime_s >= pParticle->maxTime_s)
 		{
 			D3DParticleDestroy(pParticle);
 			return;
@@ -258,7 +259,7 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 	// Each weather particle calculates the time it takes for them to land on the ground.
 	if (pEmitter->bWeatherEffect)
 	{				
-		pParticle->lifetimeMs = 0;
+		pParticle->lifetime_s = 0;
 		
 		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
 		if (leaf && leaf->sector->ceiling)
@@ -275,13 +276,13 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 				D3DParticleDestroy(pParticle);
 				return;
 			}
-			pParticle->maxTimeMs = abs((pParticle->pos.z - floorHeight) / pParticle->velocity.z) * 1000;			
+			pParticle->maxTime_s = abs((pParticle->pos.z - floorHeight) / pParticle->velocity.z);			
 		}
 		// Out-of-bound weather particles still spawn for a few seconds so they can still show normally
 		// outdoors beyond areas like forest walls, or from outside windows.
 		else
 		{
-			pParticle->maxTimeMs = 2000;
+			pParticle->maxTime_s = 2.0f;
 		}
 	}
 
@@ -323,11 +324,11 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 	{
 		pEmitter->numParticles++;
 	}
-	pEmitter->timerMs = pEmitter->timerBaseMs;
+	pEmitter->timer_s = pEmitter->timerBase_s;
 }
 
 void D3DParticleDestroy(particle *pParticle)
 {
-	pParticle->maxTimeMs = 0;
+	pParticle->maxTime_s = 0;
 	pParticle->energy = 0;
 }

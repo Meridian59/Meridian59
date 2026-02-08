@@ -68,7 +68,7 @@ resources:
    % Unlike the rest of these, this is actually a stormy sky.
    background_stormy_sky = 3sky.bgf
 
-   creaky_door_sound = doropen1.wav
+   door_open_sound = doropen1.ogg
    door_close_sound = dorclose.ogg
 
    water_wading_sound = splash.wav
@@ -179,7 +179,7 @@ classvars:
    % Used to determine sounds and by some spells to gauge bonuses
    viTerrain_type = 0
 
-   vrDoor_sound = creaky_door_sound
+   vrDoor_open_sound = door_open_sound
    vrDoor_close_sound = door_close_sound
    vrWading_Sound = water_wading_sound
 
@@ -2770,12 +2770,12 @@ messages:
             {
                if Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
                {
-                  Send(self,@SomethingWaveRoom,#wave_rsc=Send(self,@GetDoorSound),
+                  Send(self,@SomethingWaveRoom,#wave_rsc=vrDoor_open_sound,
                        #row=row,#col=col,#cutoff_radius=4);
                }
                else
                {
-                  Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+                  Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
                }
             }
 
@@ -2790,7 +2790,7 @@ messages:
                AND Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
             {
                Send(Send(what,@GetOwner),@SomethingWaveRoom,
-                    #wave_rsc=Send(self,@GetDoorCloseSound),
+                    #wave_rsc=vrDoor_close_sound,
                     #row=Send(what,@GetRow),#col=Send(what,@GetCol),
                     #cutoff_radius=4);
             }
@@ -2800,16 +2800,6 @@ messages:
       }
 
       propagate;
-   }
-
-   GetDoorSound()
-   {
-      return vrDoor_sound;
-   }
-
-   GetDoorCloseSound()
-   {
-      return vrDoor_close_sound;
    }
 
    SomethingWaveRoom(what = 0, wave_rsc = $, row = 0, col = 0, cutoff_radius = 0)

@@ -89,7 +89,7 @@ messages:
          else
          {
             Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
-            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
             Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=4,#new_col=5);
             return TRUE;
          }
@@ -105,7 +105,7 @@ messages:
          else
          {
             Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
-            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
             Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=3,#new_col=2);
             return TRUE;
          }

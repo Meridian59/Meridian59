@@ -30,6 +30,8 @@ resources:
    illusionaryform_on = "You take the shape of %s%s."
    illusionaryform_off = \
       "Your illusionary form wears off; you appear to be yourself."
+	  
+   illusionaryform_sound = rperappr.ogg
 
 classvars:
 
@@ -46,6 +48,8 @@ classvars:
    viChance_to_increase = 40
 
    viFlash = FLASH_GOOD_SELF
+   
+   vrSucceed_wav = illusionaryform_sound
 
 properties:
 

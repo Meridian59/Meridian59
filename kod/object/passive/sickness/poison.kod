@@ -27,7 +27,8 @@ resources:
    "strength, slowly sapping away at your strength, your health, "
    "and your will to live."
 
-   poison_sound = poisoned.wav
+   poison_sound_male = Poisoned.ogg
+   poison_sound_female = Poisonedf.ogg
 
 classvars:
 
@@ -69,7 +70,15 @@ messages:
       send(who,@AddPoison,#strength=lossrate);
       send(who,@StartEnchantment,#what=self,#time=duration,#state=lossrate);
       send(who,@MsgSendUser,#message_rsc=poison_start);
-      Send(who,@WaveSendUser,#wave_rsc=poison_sound);
+	  
+      if Send(who,@GetGender) = GENDER_FEMALE
+      {
+         Send(who,@WaveSendUser,#wave_rsc=poison_sound_female);
+      }
+      else
+      {
+         Send(who,@WaveSendUser,#wave_rsc=poison_sound_male);
+      }
       
       return;
    }

@@ -24,6 +24,7 @@ resources:
    DetectInvisible_off_rsc = "Your eyesight returns to its former mundanity."
    DetectInvisible_already_enchanted_rsc = "You can already see the invisible."
    DetectInvisible_Success_rsc = "%s%s eyes pulse briefly."
+   DetectInvisible_sound = kdetinv.ogg
 
 classvars:
 
@@ -44,7 +45,8 @@ classvars:
 
    viCast_time = 3000
    viChance_To_Increase = 15
-
+   
+   vrSucceed_wav = DetectInvisible_sound
 
 properties:
 

@@ -38,28 +38,28 @@ resources:
    Shrine_Shalille_text = \
       "You are seized by a sense of sudden well being, as though you were "
       "being held and comforted."
-   Shrine_Shalille_sound = shalille.wav
+   Shrine_Shalille_sound = shalille.ogg
    Shrine_Qor_text = \
       "A chill runs up your spine and the shadows seem suddenly darker and "
       "more foreboding."
-   Shrine_Qor_sound = qor.wav
+   Shrine_Qor_sound = qor.ogg
    Shrine_Kraanan_text = \
       "A sudden triumphant call of victory splits the heavens."
-   Shrine_Kraanan_sound = kraanan.wav
+   Shrine_Kraanan_sound = kraanan.ogg
    Shrine_Faren_text = \
       "A massive crash of the elements reverberates through the shuddering air."
-   Shrine_Faren_sound = faren.wav
+   Shrine_Faren_sound = faren.ogg
    Shrine_Riija_text = "Mischievous noises cascade down from the heavens."
-   Shrine_Riija_sound = riija.wav
+   Shrine_Riija_sound = riija.ogg
    Shrine_Jala_text =  "A sweet song drifts lazily through the air."
-   Shrine_Jala_sound = nodeup.wav
+   Shrine_Jala_sound = jala.ogg
 
    Shrine_unsatisfied = "The shrine finds nothing to its liking."
    Shrine_mana_boost = \
       "Your body thrills to a rush of magical energy from the shrine."
 
    shrine_trance_break = "Your prayer ends abruptly."
-   shrine_trance_break_sound = spelfail.wav
+   shrine_trance_break_sound = spelfail.ogg
 
 
 classvars:

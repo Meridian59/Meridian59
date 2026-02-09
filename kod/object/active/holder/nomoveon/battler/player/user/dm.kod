@@ -32,7 +32,7 @@ resources:
 
    dm_pk_lock = "Your PK status is now unchanged by natural events."
    dm_pk_unlock = "Your PK status now acts as if you were a normal player."
-
+   
    dm_precipitation_on = "This location is now capable of rain and snow."
    dm_precipitation_off = "This location can no longer rain nor snow."
    dm_climate_none = "The climate here is now static and unaffected by global weather."
@@ -1310,12 +1310,6 @@ messages:
       {
          Send(poOwner,@SetClimate,#what=CLIMATE_ARID);
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_arid);
-		 return;
-      }
-	  if StringEqual(string,dm_climate_arid_command)
-         OR StringEqual(string,"climate arid")
-      {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_ARID);
 		 return;
       }
 

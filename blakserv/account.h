@@ -15,17 +15,20 @@
 
 enum { ACCOUNT_NORMAL = 0, ACCOUNT_ADMIN = 1, ACCOUNT_DM = 2, ACCOUNT_GUEST = 3};
 
-typedef struct account_node_struct
+struct account_node
 {
    int account_id;
-   char *name;
-   char *password;
+   std::string name;
+   std::string password;
    int type;
    int credits;			/* remember, stored as 1/100 of a credit */
    INT64 last_login_time;
    INT64 suspend_time;
-   struct account_node_struct *next;
-} account_node;
+   account_node *next;
+
+   account_node();
+   ~account_node();
+};
 
 void InitAccount(void);
 void ResetAccount(void);
@@ -38,9 +41,9 @@ int RecreateAccountSecurePassword(int account_id,char *name,char *password,int t
 void LoadAccount(int account_id,char *name,char *password,int type,INT64 last_login_time,
 		 INT64 suspend_time, int credits);
 bool DeleteAccount(int account_id);
-void SetAccountName(account_node *a,char *name);
-void SetAccountPassword(account_node *a,char *password);
-void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password);
+void SetAccountName(account_node *a,const char *name);
+void SetAccountPassword(account_node *a,const char *password);
+void SetAccountPasswordAlreadyEncrypted(account_node *a,const char *password);
 void SetNextAccountID(int accountNum);
 account_node * GetAccountByID(int account_id);
 account_node * GetAccountByName(const char *name);

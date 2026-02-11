@@ -40,16 +40,10 @@ d3d_render_packet_new	*gpPacket;
 LPDIRECT3D9				gpD3D = NULL;
 LPDIRECT3DDEVICE9		gpD3DDevice = NULL;
 
-// temp dynamic lightmaps
-LPDIRECT3DTEXTURE9		gpDLightAmbient = NULL;
-LPDIRECT3DTEXTURE9		gpDLightWhite = NULL;
-LPDIRECT3DTEXTURE9		gpDLightOrange = NULL;
-LPDIRECT3DTEXTURE9		gpBloom = NULL;
 LPDIRECT3DTEXTURE9		gpNoLookThrough = NULL;
 LPDIRECT3DTEXTURE9		gpBackBufferTex[16];
 LPDIRECT3DTEXTURE9		gpBackBufferTexFull;
 LPDIRECT3DTEXTURE9		gpViewElements[NUM_VIEW_ELEMENTS];
-LPDIRECT3DTEXTURE9		gpSunTex;
 
 D3DVIEWPORT9			gViewport;
 D3DCAPS9				gD3DCaps;
@@ -131,7 +125,7 @@ LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 
 AREA					gD3DView;
-int           gD3DRedrawAll = 0;
+int						gD3DRedrawAll = 0;
 int						gTemp = 0;
 bool					gWireframe;		// this is really bad, I'm sorry
 
@@ -152,9 +146,6 @@ extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
 D3DMATRIX view, mat, rot, trans, proj;
-
-void				D3DRenderLMapsBuild(void);
-void				D3DLMapsStaticGet(room_type *room);
 
 // new render stuff
 void					D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize);
@@ -218,7 +209,7 @@ const font_3d& getFont3d()
 
 const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
 {
-	return gpDLightWhite;
+	return D3DRenderLightsGetWhite();
 }
 
 const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
@@ -421,18 +412,18 @@ void D3DRenderShutDown(void)
 		D3DRenderPoolShutdown(&gEffectPool);
 		D3DRenderPoolShutdown(&gParticlePool);
 
-      IDirect3DTexture9_Release(gpDLightWhite);
-		gpDLightWhite = NULL;
-      IDirect3DTexture9_Release(gpDLightOrange);
-		gpDLightOrange = NULL;
-      IDirect3DTexture9_Release(gpBloom);
-		gpBloom = NULL;
-      IDirect3DTexture9_Release(gpNoLookThrough);
-		gpNoLookThrough = NULL;
-      IDirect3DTexture9_Release(gpBackBufferTexFull);
-		gpBackBufferTexFull = NULL;
-      IDirect3DTexture9_Release(gpSunTex);
-		gpSunTex = NULL;
+		D3DRenderLightsShutdown();
+
+		if (gpNoLookThrough)
+		{
+			IDirect3DTexture9_Release(gpNoLookThrough);
+			gpNoLookThrough = NULL;
+		}
+		if (gpBackBufferTexFull)
+		{
+			IDirect3DTexture9_Release(gpBackBufferTexFull);
+			gpBackBufferTexFull = NULL;
+		}
 
 		if (gFont.pTexture)
 		{
@@ -539,7 +530,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;
-	D3DLMapsStaticGet(room);
+	LightCacheUpdateParams lightCacheParams{&gDLightCache, &gDLightCacheDynamic, gD3DRedrawAll};
+	D3DLMapsStaticGet(room, lightCacheParams);
 
 	IDirect3DDevice9_Clear(gpD3DDevice, 0, NULL, D3DCLEAR_TARGET |
 		D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
@@ -608,29 +600,40 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
-	WorldPropertyParams worldPropertyParams(gpNoLookThrough, gpDLightOrange);
+	WorldPropertyParams worldPropertyParams(gpNoLookThrough, D3DRenderLightsGetOrange());
 
 	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
 	{
-		D3DCacheSystemReset(&gWorldCacheSystemStatic);
-		D3DCacheSystemReset(&gWallMaskCacheSystem);
+		// Defer static cache rebuild while invert effect is active.
+		// GetLightPaletteIndex returns PALETTE_INVERT during the flash effect, which would
+		// cause incorrect lighting values to be baked into the static geometry cache.
+		// Keep gD3DRedrawAll set so rebuild happens after the invert effect ends.
+		if (effects.invert > 0)
+		{
+			// Skip rebuild this frame - will be processed when invert effect ends
+		}
+		else
+		{
+			D3DCacheSystemReset(&gWorldCacheSystemStatic);
+			D3DCacheSystemReset(&gWallMaskCacheSystem);
 
-		D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
-		D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
+			D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
+			D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
 
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
-		
-		// Second pass: render transparent objects
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 
-		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+			// Second pass: render transparent objects
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-		gD3DRedrawAll = FALSE;
+			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+
+			gD3DRedrawAll = FALSE;
+		}
 	}
 	else if (gD3DRedrawAll & D3DRENDER_REDRAW_UPDATE)
 	{
@@ -654,6 +657,13 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_world)
 	{
 		timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
+
+		// DEBUG: Draw circles at static light positions
+		if (D3DLightsDebugPositionsEnabled() && config.bDynamicLighting)
+		{
+			LightDebugRenderParams debugParams{&gDLightCache, &gObjectPool, &gObjectCacheSystem};
+			D3DRenderDebugLightPositions(params, debugParams);
+		}
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -767,259 +777,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
 	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
-
-}
-
-bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
-{
-	if (dLight->objID != pRNode->obj.id)
-		return false;
-	if (dLight->xyzScale.x != DLIGHT_SCALE(pRNode->obj.dLighting.intensity))
-		return false;
-	if (dLight->color.b != (pRNode->obj.dLighting.color & 31) * 255 / 31)
-		return false;
-	if (dLight->color.g != ((pRNode->obj.dLighting.color >> 5) & 31) * 255 / 31)
-		return false;
-	if (dLight->color.r != ((pRNode->obj.dLighting.color >> 10) & 31) * 255 / 31)
-		return false;
-
-	return true;
-}
-
-void D3DLMapsStaticGet(room_type *room)
-{
-	room_contents_node	*pRNode;
-	list_type			list;
-	long				top, bottom;
-	int					sector_flags;
-	PDIB				pDib;
-
-	for (list = room->projectiles; list != NULL; list = list->next)
-	{
-		Projectile	*pProjectile = (Projectile *)list->data;
-
-		if (gDLightCacheDynamic.numLights >= 50)
-			continue;
-
-		if ((pProjectile->dLighting.color == 0) || (pProjectile->dLighting.intensity == 0))
-			continue;
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pProjectile->motion.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pProjectile->motion.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pProjectile->motion.z;
-
-		pDib = GetObjectPdib(pProjectile->icon_res, 0, 0);
-
-		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pProjectile->motion.x, pProjectile->motion.y);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-			max(bottom, pProjectile->motion.z);
-
-		if (pDib)
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
-				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-			DLIGHT_SCALE(pProjectile->dLighting.intensity);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r =
-			((pProjectile->dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g =
-			((pProjectile->dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b =
-			(pProjectile->dLighting.color & 31) * COLOR_MAX / 31;
-
-		gDLightCacheDynamic.numLights++;
-	}
-
-	// dynamic lights
-	for (list = room->contents; list != NULL; list = list->next)
-	{
-		pRNode = (room_contents_node *)list->data;
-
-		if (gDLightCacheDynamic.numLights >= 50)
-			continue;
-
-		if ((pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC) == 0)
-			continue;
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.x = pRNode->motion.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.y = pRNode->motion.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z = pRNode->motion.z;
-
-		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
-
-		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z =
-			max(bottom, pRNode->motion.z);
-
-		if (pDib)
-			gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyz.z +=
-				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-		if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
-			continue;
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.x =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.y =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScale.z =
-			1.0f / gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z;
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.x =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.x / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.y =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.y / 2.0f);
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].invXYZScaleHalf.z =
-			1.0f / (gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].xyzScale.z / 2.0f);
-
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.a = COLOR_MAX;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.r =
-			((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.g =
-			((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-		gDLightCacheDynamic.dLights[gDLightCacheDynamic.numLights].color.b =
-			(pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31;
-
-		gDLightCacheDynamic.numLights++;
-	}
-
-	// static lights
-	for (list = room->contents; list != NULL; list = list->next)
-	{
-		pRNode = (room_contents_node *)list->data;
-
-		if (gDLightCache.numLights >= 50)
-			continue;
-
-		if (pRNode->obj.dLighting.flags & LIGHT_FLAG_DYNAMIC)
-			continue;
-
-		if ((pRNode->obj.dLighting.color == 0) || (pRNode->obj.dLighting.intensity == 0))
-			continue;
-
-		if (!D3DLMapCheck(&gDLightCache.dLights[gDLightCache.numLights], pRNode))
-			gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
-
-		pDib = GetObjectPdib(pRNode->obj.icon_res, 0, 0);
-
-		gDLightCache.dLights[gDLightCache.numLights].objID = pRNode->obj.id;
-
-		gDLightCache.dLights[gDLightCache.numLights].xyz.x = pRNode->motion.x;
-		gDLightCache.dLights[gDLightCache.numLights].xyz.y = pRNode->motion.y;
-		gDLightCache.dLights[gDLightCache.numLights].xyz.z = pRNode->motion.z;
-
-		GetRoomHeight(room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y);
-
-		gDLightCache.dLights[gDLightCache.numLights].xyz.z =
-			max(bottom, pRNode->motion.z);
-
-		if (pDib)
-			gDLightCache.dLights[gDLightCache.numLights].xyz.z +=
-				((float)pDib->height / (float)pDib->shrink * 16.0f) - (float)pDib->yoffset * 4.0f;
-
-		gDLightCache.dLights[gDLightCache.numLights].xyzScale.x =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCache.dLights[gDLightCache.numLights].xyzScale.y =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-		gDLightCache.dLights[gDLightCache.numLights].xyzScale.z =
-			DLIGHT_SCALE(pRNode->obj.dLighting.intensity);
-
-		if (pRNode->obj.dLighting.intensity == 0)
-			pRNode->obj.dLighting.intensity = 1;
-
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScale.x =
-			1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.x;
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScale.y =
-			1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.y;
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScale.z =
-			1.0f / gDLightCache.dLights[gDLightCache.numLights].xyzScale.z;
-
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.x =
-			1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.x / 2.0f);
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.y =
-			1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.y / 2.0f);
-		gDLightCache.dLights[gDLightCache.numLights].invXYZScaleHalf.z =
-			1.0f / (gDLightCache.dLights[gDLightCache.numLights].xyzScale.z / 2.0f);
-
-		gDLightCache.dLights[gDLightCache.numLights].color.a = COLOR_MAX;
-		gDLightCache.dLights[gDLightCache.numLights].color.r =
-			((pRNode->obj.dLighting.color >> 10) & 31) * COLOR_MAX / 31;
-		gDLightCache.dLights[gDLightCache.numLights].color.g =
-			((pRNode->obj.dLighting.color >> 5) & 31) * COLOR_MAX / 31;
-		gDLightCache.dLights[gDLightCache.numLights].color.b =
-			(pRNode->obj.dLighting.color & 31) * COLOR_MAX / 31;
-
-		gDLightCache.numLights++;
-	}
-}
-
-int D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode)
-{
-	long side0;
-	BSPnode *pos, *neg;
-   
-	while (1)
-	{
-		if (tree == NULL)
-		{
-			return false;
-		}
-
-		switch(tree->type)
-		{
-			case BSPleaftype:
-        return tree->u.leaf.sector->light;
-
-			case BSPinternaltype:
-				side0 = tree->u.internal.separator.a * pRNode->motion.x +
-				tree->u.internal.separator.b * pRNode->motion.y +
-				tree->u.internal.separator.c;
-
-				pos = tree->u.internal.pos_side;
-				neg = tree->u.internal.neg_side;
-
-				if (side0 == 0)
-					tree = (pos != NULL) ? pos : neg;
-				else if (side0 > 0)
-					tree = pos;
-				else if (side0 < 0)
-					tree = neg;
-			break;
-
-			default:
-				debug(("add_object error!\n"));
-			return false;
-		}
-	}
 }
 
 void D3DRenderResizeDisplay(int left, int top, int right, int bottom)
@@ -1044,158 +801,6 @@ void D3DRenderEnableToggle(void)
 int D3DRenderIsEnabled(void)
 {
 	return gD3DEnabled;
-}
-
-void D3DRenderLMapsBuild(void)
-{
-	D3DLOCKED_RECT	lockedRect;
-	unsigned char	*pBits = NULL;
-	int				width, height;
-
-	// white glow
-	IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0,
-                                  D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpDLightWhite, NULL);
-
-	IDirect3DTexture9_LockRect(gpDLightWhite, 0, &lockedRect, NULL, 0);
-
-	pBits = (unsigned char *)lockedRect.pBits;
-
-	for (height = 0; height < 32; height++)
-	{
-		for (width = 0; width < 32; width++)
-		{
-			float	scale = sqrtf((height - 16) * (height - 16) +
-											(width - 16) * (width - 16));
-			scale = 16.0f - scale;
-			scale = max(scale, 0);
-			scale /= 16.0f;
-
-			if ((height == 0) || (height == 31) ||
-				(width == 0) || (width == 31))
-				scale = 0;
-
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255;
-		}
-	}
-
-	IDirect3DTexture9_UnlockRect(gpDLightWhite, 0);
-
-	// orange glow
-	IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0,
-                                  D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpDLightOrange, NULL);
-
-	IDirect3DTexture9_LockRect(gpDLightOrange, 0, &lockedRect, NULL, 0);
-
-	pBits = (unsigned char *)lockedRect.pBits;
-
-	for (height = 0; height < 32; height++)
-	{
-		for (width = 0; width < 32; width++)
-		{
-			float	scale = sqrtf((height - 16) * (height - 16) +
-											(width - 16) * (width - 16));
-
-			scale = 16.0f - scale;
-			scale = max(scale, 0);
-			scale /= 16.0f;
-
-			if ((height == 0) || (height == 31) ||
-				(width == 0) || (width == 31))
-				scale = 0;
-
-			*(pBits++) = LIGHTMAP_B * scale;
-			*(pBits++) = LIGHTMAP_G * scale;
-			*(pBits++) = LIGHTMAP_R * scale;
-			*(pBits++) = COLOR_MAX * scale;
-		}
-	}
-
-	IDirect3DTexture9_UnlockRect(gpDLightOrange, 0);
-
-	// sun texture
-	IDirect3DDevice9_CreateTexture(gpD3DDevice, 128, 128, 1, 0,
-                                  D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSunTex, NULL);
-
-	IDirect3DTexture9_LockRect(gpSunTex, 0, &lockedRect, NULL, 0);
-
-	pBits = (unsigned char *)lockedRect.pBits;
-
-	for (height = 0; height < 128; height++)
-	{
-		for (width = 0; width < 128; width++)
-		{
-			float	scale = sqrtf((height - 64) * (height - 64) +
-											(width - 64) * (width - 64));
-
-			scale = 64.0f - scale;
-			scale = max(scale, 0);
-			scale /= 64.0f;
-
-			if (scale > 0)
-				scale = 1.0f;
-
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-		}
-	}
-
-	IDirect3DTexture9_UnlockRect(gpSunTex, 0);
-
-	// sun bloom texture
-	IDirect3DDevice9_CreateTexture(gpD3DDevice, 32, 32, 1, 0,
-                                  D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpBloom, NULL);
-
-	IDirect3DTexture9_LockRect(gpBloom, 0, &lockedRect, NULL, 0);
-
-	pBits = (unsigned char *)lockedRect.pBits;
-
-	for (height = 0; height < 32; height++)
-	{
-		for (width = 0; width < 32; width++)
-		{
-			float	scale = sqrtf((height - 16) * (height - 16) +
-											(width - 16) * (width - 16));
-			float	scaleAlpha;
-
-			scale = 16.0f - scale;
-			scale = max(scale, 0);
-			scale /= 16.0f;
-
-			if ((height == 0) || (height == 31) ||
-				(width == 0) || (width == 31))
-				scale = 0;
-
-			scaleAlpha = scale;
-			scale = max(0.33f, scale);
-
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scale;
-			*(pBits++) = 255 * scaleAlpha;
-		}
-	}
-
-	IDirect3DTexture9_UnlockRect(gpBloom, 0);
-
-	// no look through texture
-	IDirect3DDevice9_CreateTexture(gpD3DDevice, 1, 1, 1, 0,
-                                  D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpNoLookThrough, NULL);
-
-	IDirect3DTexture9_LockRect(gpNoLookThrough, 0, &lockedRect, NULL, 0);
-
-	pBits = (unsigned char *)lockedRect.pBits;
-
-	*(pBits++) = 0;
-	*(pBits++) = 0;
-	*(pBits++) = 0;
-	*(pBits++) = 0;
-
-	IDirect3DTexture9_UnlockRect(gpNoLookThrough, 0);
 }
 
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)

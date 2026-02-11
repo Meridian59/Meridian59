@@ -215,25 +215,24 @@ bool D3DMaterialNone(d3d_render_chunk_new *pPool)
  */
 bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
 {
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-                                         D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-                                         D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+   // Sampler 0 is the Lightmap. Border mode prevents streaking at edges.
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_BORDERCOLOR, 0x00000000);  // Transparent Black
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
-                                         D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
-                                         D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+   // Sampler 1 is the Base Texture. Wrap mode checks out for tiling walls/floors.
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	const auto& whiteLightTexture = getWhiteLightTexture();
-	IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) whiteLightTexture);
+   const auto &whiteLightTexture = getWhiteLightTexture();
+   IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) whiteLightTexture);
 
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, 0);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_MODULATE, D3DTA_CURRENT, D3DTA_TEXTURE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_SELECTARG2, D3DTA_CURRENT, D3DTA_TEXTURE);
+   D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+   D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, 0);
+   D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_MODULATE, D3DTA_CURRENT, D3DTA_TEXTURE);
+   D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_SELECTARG2, D3DTA_CURRENT, D3DTA_TEXTURE);
 
-	return true;
+   return true;
 }
 
 /**
@@ -630,7 +629,7 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 	if (pChunk->flags & D3DRENDER_NOAMBIENT)
 		end = (16384 + (light * FINENESS) + (drawParams.viewer_light * 64));
 	else
-		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
+		end = (32768 + (std::max(0.0f, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
 		(current_room.ambient_light * FINENESS));
 
 	return end;

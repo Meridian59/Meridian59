@@ -174,7 +174,7 @@ void MakeReplySubject(char *subject, int max_chars)
    /* Add "Re: " to the beginning if appropriate */
    if (strnicmp(subject, re_string, re_len))
    {
-      memmove(subject + re_len, subject, min((int) strlen(subject) + 1, max_chars - re_len));
+      memmove(subject + re_len, subject, std::min((int) strlen(subject) + 1, max_chars - re_len));
       memcpy(subject, re_string, re_len);
       subject[max_chars - 1] = 0;
    }

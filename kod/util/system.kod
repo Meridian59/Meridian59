@@ -6659,6 +6659,55 @@ messages:
       return;
    }
 
+   LogAllPassiveObjects()
+   "Admin supported\n"
+   "Iterates over all rooms and logs details of all passive objects.\n"
+   "Output includes: room number, class, type (icon), row, col, fine_row, fine_col, angle"
+   {
+      local oRoom, lPassiveObject, oObject, iRoomNum, iClass, iType, iRow, iCol, iFineRow, iFineCol, iAngle;
+
+      for oRoom in plRooms
+      {
+         iRoomNum = Send(oRoom,@GetRoomNum);
+         
+         if Send(oRoom,@GetplPassive) = $
+         {
+            continue;
+         }
+
+         for lPassiveObject in Send(oRoom,@GetplPassive)
+         {
+            oObject = first(lPassiveObject);
+            
+            if oObject = $
+            {
+               continue;
+            }
+
+            iClass = GetClass(oObject);
+            if IsClass(oObject,&OrnamentalObject)
+            {
+               iType = Send(oObject,@GetType);
+            }
+            else
+            {
+               iType = 0;
+            }
+            iType = Send(oObject,@GetIcon);
+            iRow = Send(oObject,@GetRow);
+            iCol = Send(oObject,@GetCol);
+            iFineRow = Send(oObject,@GetFineRow);
+            iFineCol = Send(oObject,@GetFineCol);
+            iAngle = Send(oObject,@GetAngle);
+
+            Debug("Passive Object - Room:",iRoomNum,"Class:",iClass,"Type:",iType,
+                  "Row:",iRow,"Col:",iCol,"FineRow:",iFineRow,"FineCol:",iFineCol,"Angle:",iAngle);
+         }
+      }
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

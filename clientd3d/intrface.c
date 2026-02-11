@@ -474,18 +474,6 @@ void PerformAction(int action, const void *action_data)
       TextInputSetText((char *) action_data, true);
       break;
 
-   case A_TEXTCOMMAND:
-   {
-       DWORD now = timeGetTime();
-       if (now - last_text_command_time > KEY_NOREPEAT_INTERVAL)
-       {
-           TextInputSetText((char*)action_data, false);
-           ParseGotText((char*)action_data);    
-           last_text_command_time = now;
-       }       
-       
-       break;
-   }
    case A_WHO:
       UserWho();
       break;
@@ -535,6 +523,30 @@ void PerformAction(int action, const void *action_data)
    case A_WITHDRAW:
       UserWithdraw();
       break;
+   }
+   if (action == A_TEXTCOMMAND || action >= A_TEXTCOMMANDALIAS_START && action <= A_TEXTCOMMANDALIAS_END)
+   {
+      char *command = (char *) action_data;
+      size_t len = strlen(command);
+      if (command[len - 1] != '~')
+      {
+         // No ~, that means we have a complete command
+         DWORD now = timeGetTime();
+         if (now - last_text_command_time > KEY_NOREPEAT_INTERVAL)
+         {
+            TextInputSetText((char *) action_data, false);
+            ParseGotText((char *) action_data);
+            last_text_command_time = now;
+         }
+      }
+      else
+      {
+         // Remove trailing ~, set as text input
+         char text[MAX_ALIASLEN + 1];
+         strcpy(text, command);
+         text[len - 1] = '\0';
+         TextInputSetText(text, true);
+      }
    }
 }
 

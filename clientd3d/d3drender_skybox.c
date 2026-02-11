@@ -139,6 +139,8 @@ static bool D3DRenderBackgroundSet(ID background);
 */
 bool D3DRenderUpdateSkyBox(DWORD background)
 {
+	if (background == 0) return false;
+
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
 		// Clear skies

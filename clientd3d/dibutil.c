@@ -144,7 +144,7 @@ bool DibOpenFileReal(const char *szFile, Bitmaps *b)
     b->pdibs[i]->uniqueID = 0;
     b->pdibs[i]->uniqueID2 = 0;
     
-    for (j = 0; j < min(len, 4); j++)
+    for (j = 0; j < std::min(len, 4); j++)
     {
       b->pdibs[i]->uniqueID |= string[j] << (j * 8);
     }

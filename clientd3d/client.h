@@ -15,6 +15,7 @@
 #pragma warning(disable: 4244) // cast double to float loses information
 
 #ifndef _INC_WINDOWS
+#define NOMINMAX
 #include <windows.h>
 #include <windowsx.h>
 #include "winxblak.h"
@@ -117,7 +118,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "bsp.h"
 #include "room.h"
 #include "object3d.h"
-#include "project.h"
+#include "projectile.h"
 #include "boverlay.h"
 #include "game.h"
 #include "gameuser.h"
@@ -200,6 +201,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "d3drender.h"
 #include "d3drender_bgoverlays.h"
 #include "d3drender_fx.h"
+#include "d3drender_lights.h"
 #include "d3drender_materials.h"
 #include "d3drender_objects.h"
 #include "d3drender_skybox.h"

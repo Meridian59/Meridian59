@@ -156,7 +156,7 @@ void GroupCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	  ComboBox_ResetContent(hCombo);
 	  ListBox_ResetContent(GetDlgItem(hDlg, IDC_GROUPMEMBERS));
        }
-       else ComboBox_SetCurSel(hCombo, min(index, ComboBox_GetCount(hCombo) - 1));
+       else ComboBox_SetCurSel(hCombo, std::min(index, ComboBox_GetCount(hCombo) - 1));
 
        FORWARD_WM_COMMAND(hDlg, IDC_GROUPS, hCombo, CBN_SELCHANGE, GroupDialogProc);
  
@@ -218,7 +218,7 @@ void GroupCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
      }
      
      ListBox_DeleteString(hList, index);
-     ListBox_SetCurSel(hList, min(index, ListBox_GetCount(hList) - 1));
+     ListBox_SetCurSel(hList, std::min(index, ListBox_GetCount(hList) - 1));
      SetDlgItemText(hDlg, IDC_GROUPSTATUS, "");
      break;
 

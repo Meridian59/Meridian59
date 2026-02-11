@@ -12347,8 +12347,8 @@ messages:
          if (piDrawFX & FLICKERING_YES)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % 75 out of 255 intensity of light
-            AddPacket(1,60);
+            % intensity of light flickering out of 255.
+            AddPacket(1,5);
             % Color
             AddPacket(2,LIGHT_FIRE);
 

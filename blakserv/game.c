@@ -99,7 +99,7 @@ void GameProcessSessionTimer(session_node *s)
    if (GetTime() - s->game->game_last_message_time > ConfigInt(INACTIVE_GAME))
    {
       lprintf("GameProcessSessionTimer logging out ACCOUNT %i (%s) which hasn't been heard from.\n",
-	 s->account->account_id, s->account->name);
+              s->account->account_id, s->account->name.c_str());
       HangupSession(s);
       return;
    }
@@ -531,7 +531,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       new_password[len] = 0; /* null terminate string */
       index += 2 + len;
 
-      if (strcmp(s->account->password,password))
+      if (s->account->password == password)
       {
 	 AddByteToPacket(BP_PASSWORD_NOT_OK);
 	 SendPacket(s->session_id);

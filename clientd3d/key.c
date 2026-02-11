@@ -48,7 +48,7 @@
 #define MAX_ACTIONS   10   /* Max # of actions to do on a single poll of keyboard */
 
 // Last time we performed a non-repeat action
-static DWORD last_norepeat_time;
+static DWORD last_norepeat_time[A_COUNT];
 
 typedef struct {
    int      state;   // Game state in which this key table applies
@@ -227,10 +227,13 @@ void HandleKeys(void)
 	 actions[num_actions++] = action;
 	 
 	 /* Only repeat for moving actions and a few others */
-	 if (!RepeatAction(action))
-	    if (now - last_norepeat_time >= KEY_NOREPEAT_INTERVAL)
-	       norepeat = true;
-	    else continue;    // Action retried too soon
+    if (!RepeatAction(action))
+    {
+       if (now - last_norepeat_time[action] >= KEY_NOREPEAT_INTERVAL)
+          norepeat = true;
+       else
+          continue;  // Action retried too soon
+    }
 	 
 	if (IsMoveAction(action))
 		if (moved)
@@ -379,7 +382,7 @@ void HandleKeys(void)
 	 
 	 // If we're doing a non-repeat action, remember the time so that we don't repeat it
 	 if (norepeat)
-	    last_norepeat_time = now;
+	    last_norepeat_time[action] = now;
 	 
 	 PerformAction(action, action_data);
       }
@@ -387,12 +390,14 @@ void HandleKeys(void)
 }
 /***********************************************************************/
 /*
- * KeySetLastNorepeatTime:  Set last time a non-repeat action occurred to the
- *   current time.
+ * KeySetLastNorepeatTime:  Set last time all non-repeat actions occurred
+ * to the current time.
  */
 void KeySetLastNorepeatTime(void)
 {
-   last_norepeat_time = timeGetTime();
+   DWORD time = timeGetTime();
+   for (int i = 0; i < A_COUNT; i++)
+      last_norepeat_time[i] = time;
 }
 /***********************************************************************/
 /*

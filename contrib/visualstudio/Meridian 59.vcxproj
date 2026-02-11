@@ -129,6 +129,7 @@
     <ClCompile Include="..\..\clientd3d\d3drender.c" />
     <ClCompile Include="..\..\clientd3d\d3drender_bgoverlays.c" />
     <ClCompile Include="..\..\clientd3d\d3drender_fx.c" />
+    <ClCompile Include="..\..\clientd3d\d3drender_lights.c" />
     <ClCompile Include="..\..\clientd3d\d3drender_materials.c" />
     <ClCompile Include="..\..\clientd3d\d3drender_objects.c" />
     <ClCompile Include="..\..\clientd3d\d3drender_skybox.c" />
@@ -544,6 +545,7 @@
     <ClInclude Include="..\..\clientd3d\d3drender.h" />
     <ClInclude Include="..\..\clientd3d\d3drender_bgoverlays.h" />
     <ClInclude Include="..\..\clientd3d\d3drender_fx.h" />
+    <ClInclude Include="..\..\clientd3d\d3drender_lights.h" />
     <ClInclude Include="..\..\clientd3d\d3drender_materials.h" />
     <ClInclude Include="..\..\clientd3d\d3drender_objects.h" />
     <ClInclude Include="..\..\clientd3d\d3drender_skybox.h" />

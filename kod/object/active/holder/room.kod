@@ -68,7 +68,8 @@ resources:
    % Unlike the rest of these, this is actually a stormy sky.
    background_stormy_sky = 3sky.bgf
 
-   creaky_door_sound = doropen1.wav
+   door_open_sound = doropen1.ogg
+   door_close_sound = dorclose.ogg
 
    water_wading_sound = splash.wav
 
@@ -178,7 +179,8 @@ classvars:
    % Used to determine sounds and by some spells to gauge bonuses
    viTerrain_type = 0
 
-   vrDoor_sound = creaky_door_sound
+   vrDoor_open_sound = door_open_sound
+   vrDoor_close_sound = door_close_sound
    vrWading_Sound = water_wading_sound
 
    viFlag_row = $
@@ -2787,11 +2789,38 @@ messages:
                           #iAngle=Send(what,@GetAngle),
                           #iAngle_Change=Nth(i,6));
 
-            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            % Play door sound at the door's location.  DMs/Admins are silent
+            % to avoid revealing their presence.  If shared setting is enabled,
+            % all players in room hear it; otherwise only the opener hears it
+            % (non-positional, legacy behavior).
+            if NOT IsClass(what,&DM)
+            {
+               if Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
+               {
+                  Send(self,@SomethingWaveRoom,#wave_rsc=vrDoor_open_sound,
+                       #row=row,#col=col,#cutoff_radius=4);
+               }
+               else
+               {
+                  Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
+               }
+            }
 
             Send(SYS,@UtilGoNearSquare,#what=what,
                  #where=Send(SYS,@FindRoomByNum,#num=Nth(i,3)),
                  #new_row=Nth(i,4),#new_col=Nth(i,5),#new_angle=iAngle);
+
+            % Play door closing sound from player's position in destination
+            % room so it sounds on both sides of the door.  Only if shared
+            % mode enabled (otherwise no sound played, legacy behavior).
+            if NOT IsClass(what,&DM)
+               AND Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
+            {
+               Send(Send(what,@GetOwner),@SomethingWaveRoom,
+                    #wave_rsc=vrDoor_close_sound,
+                    #row=Send(what,@GetRow),#col=Send(what,@GetCol),
+                    #cutoff_radius=4);
+            }
 
             return TRUE;
          }
@@ -2800,19 +2829,16 @@ messages:
       propagate;
    }
 
-   GetDoorSound()
-   {
-      return vrDoor_sound;
-   }
-
-   SomethingWaveRoom(what = 0,wave_rsc = $)
-   "Don't send <what> if not from any particular object"
+   SomethingWaveRoom(what = 0, wave_rsc = $, row = 0, col = 0, cutoff_radius = 0)
+   "Plays a sound for all users in the room. Sends WaveSendUser to each user "
+   "with the provided wave_rsc, source object, row, col, and cutoff_radius."
    {
       local i;
 
       for i in plActive
       {
-         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what);
+         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what,
+              #row=row,#col=col,#cutoff_radius=cutoff_radius);
       }
 
       return;

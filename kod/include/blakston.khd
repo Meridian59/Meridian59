@@ -1129,12 +1129,13 @@
    OUTDOORS_9 = 9
    OUTDOORS_10 = 10
 
-   % Weather options
-   WEATHER_DAWN = 1
-   WEATHER_DAY = 2
-   WEATHER_DUSK = 3
-   WEATHER_NIGHT = 4
+   % Periods of the day
+   DAY_PERIOD_MORNING = 1
+   DAY_PERIOD_AFTERNOON = 2
+   DAY_PERIOD_EVENING = 3
+   DAY_PERIOD_NIGHT = 4
 
+   % Weather options
    WEATHER_CLEAR = 1
    WEATHER_CLOUDY = 2
    WEATHER_RAIN = 3

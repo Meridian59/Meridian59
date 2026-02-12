@@ -248,10 +248,8 @@ properties:
 
    pbUser_in_room = FALSE
 
-   % Activates weather particles such as rain. It's undefined by default and
-   % the room subclasses can assign it. If the room's .kod file doesn't define it, 
-   % then it gets auto-assigned using GetPrecipitationSetting().
-   pbPrecipitation_enabled = $
+   % Activates weather particles such as rain or snow.
+   pbPrecipitation_enabled = FALSE
    
    % Used to set type of weather to render for everyone in the room.
    piRoom_weather = WEATHER_CLEAR
@@ -299,9 +297,7 @@ messages:
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
 	  
-	  % If we just constructed this room, try to check if we need
-	  % to auto-assign precipitation settings if it's undefined.
-	  Send(self,@GetPrecipitationSetting);
+	  Send(self,@RecalcPrecipitationSetting);
 
       propagate;
    }
@@ -390,33 +386,40 @@ messages:
    }
    
    GetPrecipitationSetting()
-   "Either returns precipitation setting, or auto-assign if it's undefined."
    {
-	  local iTerrain;
-
-	  if pbPrecipitation_enabled <> $
-	  {
-	     return pbPrecipitation_enabled;
-	  }
+      return pbPrecipitation_enabled;
+   }
+   
+   RecalcPrecipitationSetting()
+   "Assigns precipitation settings upon room creation."
+   {
+	  local iTerrain, bIndoors;
 	  
-	  % If undefined, assign precipitation setting based on terrain flags.
+	  % If the room subclass didn't enable rain/snow, then this function will
+	  % attempt to assign precipitation settings based on terrain flags.
 	  % This can cover most rooms, but some may need to be manually set.
 	  % e.g. Rooms with the TERRAIN_CASTLE flag includes open courtyards,
 	  % or indoor areas may have windows where rain/snow can show outside.
+	  
+      if pbPrecipitation_enabled
+      {
+	     return;
+      }
+	  
 	  iTerrain = Send(self,@GetTerrainType);
 	  
 	  % Check for rooms that are most likely indoors.
-	  if (iTerrain & TERRAIN_CAVES) OR (iTerrain & TERRAIN_MINES)
-         OR (iTerrain & TERRAIN_SEWERS) OR (iTerrain & TERRAIN_NECROPOLIS)
-		 OR (iTerrain & TERRAIN_GUILDHALL) OR (iTerrain & TERRAIN_RESIDENCE)
-	     OR (iTerrain & TERRAIN_SHOP) OR (iTerrain & TERRAIN_CASTLE)
+	  bIndoors = ((iTerrain & TERRAIN_CAVES) OR (iTerrain & TERRAIN_MINES)
+               OR (iTerrain & TERRAIN_SEWERS) OR (iTerrain & TERRAIN_NECROPOLIS)
+		       OR (iTerrain & TERRAIN_GUILDHALL) OR (iTerrain & TERRAIN_RESIDENCE)
+	           OR (iTerrain & TERRAIN_SHOP) OR (iTerrain & TERRAIN_CASTLE));
+	  
+	  if NOT bIndoors
       {
-         pbPrecipitation_enabled = FALSE;
-		 return FALSE;
+         pbPrecipitation_enabled = TRUE;
       }	  
 	  
-      pbPrecipitation_enabled = TRUE;
-      return TRUE;
+      return;
    }
 
    EnableIllusions()
@@ -1548,42 +1551,43 @@ messages:
       return;
    }
 
-   RecalcKocatanSkyGraphic(iDayPhase=$,iWeather=0)
+   RecalcKocatanSkyGraphic(iDayPeriod=$,iWeather=0)
+   "Determines sky graphics for the Ko'catan region, based on the period of the day and weather."
    {
       prBackground = background_stars;
 
-      if iDayPhase = WEATHER_DAY AND iWeather = WEATHER_CLEAR
+      if iDayPeriod = DAY_PERIOD_AFTERNOON AND iWeather = WEATHER_CLEAR
       {
          prBackground = background_kocatan_afternoon_sky;
       }
-      if iDayPhase = WEATHER_DAY AND iWeather <> WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_AFTERNOON AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_afternoon_cloudy_sky;
       }
 
-      if iDayPhase = WEATHER_DUSK AND iWeather = WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_EVENING AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_kocatan_evening_sky;
       }
-      if iDayPhase = WEATHER_DUSK AND iWeather <> WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_EVENING AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_evening_cloudy_sky;
       }
 
-      if iDayPhase = WEATHER_DAWN AND iWeather = WEATHER_CLEAR
+      if iDayPeriod = DAY_PERIOD_MORNING AND iWeather = WEATHER_CLEAR
       {
          prBackground = background_kocatan_morning_sky;
       }
-      if iDayPhase = WEATHER_DAWN AND iWeather <> WEATHER_CLEAR
+      if iDayPeriod = DAY_PERIOD_MORNING AND iWeather <> WEATHER_CLEAR
       {
          prBackground = background_morning_cloudy_sky;
       }
 
-      if iDayPhase = WEATHER_NIGHT AND iWeather = WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_NIGHT AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_kocatan_night_sky;
       }
-      if iDayPhase = WEATHER_NIGHT AND iWeather <> WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_NIGHT AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_night_cloudy_sky;
       }
@@ -1591,49 +1595,49 @@ messages:
       return;
    }
 
-   RecalcBackgroundSkyGraphic(iDayPhase=$,iWeather=0)
-   "Doing this this way allows us to have some zones, such as Ko'catan, have "
-   "different skies."
+   RecalcBackgroundSkyGraphic(iDayPeriod=$,iWeather=0)
+   "Determines which background sky to apply, based on the period of the day and weather."
    {
       prBackground = background_night_sky;
+	  
       if Send(self,@GetRegion) = RID_KOCATAN
       {
-         Send(self,@RecalcKocatanSkyGraphic,#iDayPhase=iDayPhase,#iWeather=iWeather);
+         Send(self,@RecalcKocatanSkyGraphic,#iDayPeriod=iDayPeriod,#iWeather=iWeather);
          return;
       }
 
-      if iDayPhase = WEATHER_DAY AND iWeather = WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_AFTERNOON AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_afternoon_sky;
       }
-      if iDayPhase = WEATHER_DAY AND iWeather <> WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_AFTERNOON AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_afternoon_cloudy_sky;
       }
 
-      if iDayPhase = WEATHER_DUSK AND iWeather = WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_EVENING AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_evening_sky;
       }
-      if iDayPhase = WEATHER_DUSK  AND iWeather <> WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_EVENING  AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_evening_cloudy_sky;
       }
 
-      if iDayPhase = WEATHER_DAWN AND iWeather = WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_MORNING AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_morning_sky;
       }
-      if iDayPhase = WEATHER_DAWN AND iWeather <> WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_MORNING AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_morning_cloudy_sky;
       }
 
-      if iDayPhase = WEATHER_NIGHT AND iWeather = WEATHER_CLEAR 
+      if iDayPeriod = DAY_PERIOD_NIGHT AND iWeather = WEATHER_CLEAR 
       {
          prBackground = background_night_sky;
       }
-	  if iDayPhase = WEATHER_NIGHT AND iWeather <> WEATHER_CLEAR 
+	  if iDayPeriod = DAY_PERIOD_NIGHT AND iWeather <> WEATHER_CLEAR 
       {
          prBackground = background_night_cloudy_sky;
       }
@@ -1643,12 +1647,12 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local iDayPhase,iWeather,iPrecipitation;
+      local iDayPeriod,iWeather,iPrecipitation;
 	  
 	  % Change weather for background if outdoors and tell everyone the
       %  background changed
 	  
-      iDayPhase = Send(SYS,@GetDayPhase);
+      iDayPeriod = Send(SYS,@GetDayPeriod);
 	  iWeather = Send(SYS,@GetGlobalWeather);
 	  iPrecipitation = Send(self,@GetPrecipitationSetting);
 
@@ -1661,7 +1665,7 @@ messages:
 
       % First check if the local weather gets adjusted, which can affect which skybox to show.
 	  Send(self,@RecalcRoomWeather,#what=iWeather,#precipitation=iPrecipitation);
-      Send(self,@RecalcBackgroundSkyGraphic,#iDayPhase=iDayPhase,#iWeather=piRoom_weather);
+      Send(self,@RecalcBackgroundSkyGraphic,#iDayPeriod=iDayPeriod,#iWeather=piRoom_weather);
       Send(self,@RecalculateDirectionalLight);
 
       Send(self,@AmbientLightChanged);
@@ -1675,8 +1679,7 @@ messages:
    RecalcRoomWeather(what=$,precipitation=$)
    "Sets room weather based on room climate. And if rain/snow is enabled."
    {
-	  % Rooms without climate won't have cloudy or stormy weather.
-	  % Includes Martyr's Battleground and Out of Grace.
+	  % Rooms without climate won't have cloudy nor stormy weather.
 	  if piClimate = CLIMATE_NONE
 	  {
 		piRoom_weather = WEATHER_CLEAR;
@@ -1707,7 +1710,7 @@ messages:
 	     }
 	  }
 	  
-	  % Arid climates rarely rain or snow. This includes badlands and tundras.
+	  % Arid climates rarely rain or snow.
 	  if piClimate = CLIMATE_ARID AND (what = WEATHER_RAIN
 	                                       OR what = WEATHER_SNOW)
 	  {
@@ -1737,7 +1740,7 @@ messages:
 	  return;
    }
 
-   SetRoomClimate(what=$)
+   SetClimate(what=$)
    "Allows DMs to adjust room climate."
    {
 	  if piClimate <> what
@@ -1748,28 +1751,9 @@ messages:
 	  return;
    }
    
-   GetRoomWeather()
+   GetWeather()
    {
 	  return piRoom_weather;
-   }
-   
-   GetWeatherEffect(what=$)
-   "Gets render effect from weather type."
-   {
-        if what = WEATHER_CLEAR OR what = WEATHER_CLOUDY
-        {
-           return EFFECT_CLEARWEATHER;
-        }
-        if what = WEATHER_RAIN
-        {
-           return EFFECT_RAINING;
-        }
-        if what = WEATHER_SNOW
-        {
-           return EFFECT_SNOWING;
-        }
-        debug("Couldn't find valid weather effect.");
-        return;
    }
 
    RecalculateDirectionalLight()

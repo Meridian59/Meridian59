@@ -1267,8 +1267,7 @@ messages:
          return;
       }
 
-      % Commands to apply seasons to the server. For now it's actually
-	  % being used to set default precipitation to rain or snow.
+      % Commands to apply seasons to the server.
       if StringEqual(string,"season rain")
       {
 		 Send(SYS,@SetSeason,#what=WEATHER_RAIN);
@@ -1285,31 +1284,31 @@ messages:
 	  % Commands for setting room climate.
 	  if StringEqual(string,"climate none")
       {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_NONE);
+         Send(poOwner,@SetClimate,#what=CLIMATE_NONE);
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_none);
 		 return;
       }
 	  if StringEqual(string,"climate temperate")
       {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_TEMPERATE);
+         Send(poOwner,@SetClimate,#what=CLIMATE_TEMPERATE);
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_temperate);
 		 return;
       }
 	  if StringEqual(string,"climate tropical")
       {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_TROPICAL);
+         Send(poOwner,@SetClimate,#what=CLIMATE_TROPICAL);
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_tropical);
 		 return;
       }
 	  if StringEqual(string,"climate mountain")
       {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_MOUNTAIN);
+         Send(poOwner,@SetClimate,#what=CLIMATE_MOUNTAIN);
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_mountain);
 		 return;
       }
 	  if StringEqual(string,"climate arid")
       {
-         Send(poOwner,@SetRoomClimate,#what=CLIMATE_ARID);
+         Send(poOwner,@SetClimate,#what=CLIMATE_ARID);
 		 Send(self,@MsgSendUser,#message_rsc=dm_climate_arid);
 		 return;
       }

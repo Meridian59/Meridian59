@@ -280,7 +280,9 @@ properties:
    % outdoor brightness level (0-100), updated hourly
    piBrightness
    
-   piDayPhase = WEATHER_DAY
+   % Represents the day cycle (e.g. morning, night)
+   piDayPeriod = DAY_PERIOD_MORNING
+   
    piGlobal_weather = WEATHER_CLEAR
    
    % Sets the kind of precipitation to use whenever it gets stormy.
@@ -3534,9 +3536,9 @@ messages:
       return $;
    }
 
-   GetDayPhase()
+   GetDayPeriod()
    {
-	  return piDayPhase;
+	  return piDayPeriod;
    }
 
    GetGlobalWeather()
@@ -3648,12 +3650,13 @@ messages:
    }
 
    NewGameHour(bTimeManuallySet=FALSE)
-   "Recalculates the light and weather, based on piHour"
+   "Recalculates the light, day period and weather based on piHour."
+   "Set 'bTimeManuallySet' to TRUE to suppress weather changes when forcing time changes."
+   "Particularly if it lands on an hour where a weather check would naturally occur."
    {
       local i,iLight_hour,iWeatherInterval;
 
-      % Weather is recalculated at hourly intervals every day. If the time
-	  % was manually adjusted with SetHour(), then we ignore this recalculation.
+      % Weather is recalculated at hourly intervals every day.
 	  if bTimeManuallySet = FALSE 
 	  {
 	     iWeatherInterval = Send(Send(self,@GetSettings),@GetWeatherInterval);
@@ -3667,23 +3670,23 @@ messages:
 
       if piHour < 6 or piHour > 20
       {
-         piDayPhase = WEATHER_NIGHT;
+         piDayPeriod = DAY_PERIOD_NIGHT;
       }
       else
       {
          if piHour > 17
          {
-            piDayPhase = WEATHER_DUSK;
+            piDayPeriod = DAY_PERIOD_EVENING;
          }
          else
          {
             if piHour < 9
             {
-               piDayPhase = WEATHER_DAWN;
+               piDayPeriod = DAY_PERIOD_MORNING;
             }
             else
             {
-               piDayPhase = WEATHER_DAY;
+               piDayPeriod = DAY_PERIOD_AFTERNOON;
             }
          }
       }

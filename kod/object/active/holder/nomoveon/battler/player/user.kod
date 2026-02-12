@@ -2467,7 +2467,7 @@ messages:
 
       AddPacket(1,Send(poOwner,@GetRoomLight));
       AddPacket(1,bound(piLight,0,255));
-      AddPacket(1,Send(poOwner,@GetRoomWeather));
+      AddPacket(1,Send(poOwner,@GetWeather));
 
       rBackground = Send(poOwner,@GetRoomBackground);
       if rBackground <> $
@@ -6925,7 +6925,7 @@ messages:
       if pbLogged_on
       {
          AddPacket(1,BP_WEATHER);
-         AddPacket(1,Send(poOwner,@GetRoomWeather));
+         AddPacket(1,Send(poOwner,@GetWeather));
          SendPacket(poSession);
       }
       

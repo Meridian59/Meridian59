@@ -88,6 +88,7 @@ enum { MOVE_BLOCKED = 1, MOVE_OK, MOVE_CHANGED, };
 extern player_info player;
 extern room_type current_room;
 extern int sector_depths[];
+extern int move_interval;
 
 static DWORD server_time = 0;           // Last time we informed server of our position
 static DWORD last_splash = 0;           // Time of the last play of the splash wading sound
@@ -742,7 +743,7 @@ void MoveUpdateServer(void)
    int angle;
 
    // Inform server if necessary
-   if (now - server_time < MOVE_INTERVAL || !pos_valid)
+   if (now - server_time < (DWORD) move_interval || !pos_valid)
       return;
 
    MoveUpdatePosition();
@@ -764,22 +765,29 @@ void MoveUpdateServer(void)
 void MoveUpdatePosition(void)
 {
    int x, y;
-   BYTE speed;
-
+   
    x = player.x;
    y = player.y;
 
    if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
    {
-      debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
-      speed = 18;
+      time_t rawtime;
+      char buffer[9]; // Buffer to hold HH:MM:SS
+
+      DWORD current_time = timeGetTime();
+      time(&rawtime);
+      struct tm *timeinfo = localtime(&rawtime);
+      strftime(buffer, sizeof(buffer), "%H:%M:%S", timeinfo);
+      
+      debug(("[%s] MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", buffer, x, server_y, y));
+      BYTE speed = 18;
       if (IsMoveFastAction(last_move_action))
         speed *= 2;
       
       RequestMove(y, x, speed, player.room_id);
       server_x = x;
       server_y = y;
-      server_time = timeGetTime();
+      server_time = current_time;
    }
 }
 /************************************************************************/

@@ -442,23 +442,51 @@ messages:
 
    Recreate()
    {
-      local cClass, lUsers, oNewRoom, i;
+      local cClass, lUsers, oNewRoom, i, lActiveObjects, oActiveObject, oOldRoom;
 
       lUsers = $;
+      lActiveObjects = $;
       cClass = GetClass(self);
+      oOldRoom = self;
+
+      % Collect users and all active objects
       for i in plActive
       {
-         if isClass(first(i),&User)
+         oActiveObject = First(i);
+         if oActiveObject <> $
          {
-            lUsers = Cons(first(i),lUsers);
+            lActiveObjects = Cons(oActiveObject,lActiveObjects);
+            if IsClass(oActiveObject,&User)
+            {
+               lUsers = Cons(oActiveObject,lUsers);
+            }
          }
       }
 
-      Send(self,@Delete);
+      % Remove old room from the system room list, allowing us to create a new one
+      Send(SYS,@DeleteRoom,#what=oOldRoom);
+      
+      % Create the new room
       Send(SYS,@CreateOneRoomIfNew,#num=piRoom_num,#class=cClass);
+      oNewRoom = Send(SYS,@FindRoomByNum,#num=piRoom_num);
+      
+      if oNewRoom = $
+      {
+         debug("Recreate: Failed to create new room, RID:",piRoom_num);
+         return;
+      }
+
+      % Send message to all active objects in the old room that want to preserve themselves
+      for i in lActiveObjects
+      {
+         Send(i,@OnRoomRecreated,#old_room=oOldRoom,#new_room=oNewRoom);
+      }
+
+      % Now fully delete the old room and teleport users back to the (new) room
+      Send(oOldRoom,@Delete);
+
       for i in lUsers
       {
-         oNewRoom = Send(SYS,@FindRoomByNum,#num=piRoom_num);
          Send(oNewRoom,@Teleport,#what=i);
       }
 
@@ -1041,7 +1069,6 @@ messages:
          ptPeriodic_sounds = $;
       }
 
-      Send(SYS,@DeleteRoom,#what=self);
       Send(self,@RemoveAllEnchantments);
 
       propagate;

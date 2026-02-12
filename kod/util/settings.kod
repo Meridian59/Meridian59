@@ -119,18 +119,18 @@ properties:
    % Used by system.kod to check hourly intervals within a day for checking if
    % the weather should change.  Setting this to 0 turns off the hourly checks, 
    % while setting this to 24 (max) performs the check once every midnight.
-   piWeatherInterval = 3
+   piWeatherHourlyInterval = 3
    
    % Percentage chance to shift weather based on the current weather.
-   piClearToCloudy = 20
-   piCloudyToClear = 30
-   piCloudyToStormy = 40
-   piStormyToCloudy = 75
+   piClearToCloudyChance = 20
+   piCloudyToClearChance = 30
+   piCloudyToStormyChance = 40
+   piStormyToCloudyChance = 75
    
    % Chance for mountain climates to turn local rain to snow.
    piMountain_snow_chance = 20
    
-   % Chance for arid climates to rain or snow. Includes badlands and tundras.
+   % Chance for arid climates to rain or snow.
    piArid_stormy_chance = 5
 
    %
@@ -328,29 +328,29 @@ messages:
    % Weather settings
    %
 
-   GetWeatherInterval()
+   GetWeatherHourlyInterval()
    {
-      return piWeatherInterval;
+      return piWeatherHourlyInterval;
    }
    
    GetClearToCloudy()
    {
-      return piClearToCloudy;
+      return piClearToCloudyChance;
    }
    
    GetCloudyToClear()
    {
-      return piCloudyToClear;
+      return piCloudyToClearChance;
    }
 
    GetCloudyToStormy()
    {
-      return piCloudyToStormy;
+      return piCloudyToStormyChance;
    }
    
    GetStormyToCloudy()
    {
-      return piStormyToCloudy;
+      return piStormyToCloudyChance;
    }
    
    GetMountainSnowChance()

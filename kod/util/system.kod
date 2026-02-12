@@ -3611,17 +3611,36 @@ messages:
 	  if piGlobal_weather = WEATHER_CLEAR
 	  {
          iCloudyChance = Send(Send(self,@GetSettings),@GetClearToCloudy);
+		 
+		 if iCloudyChance < 0 OR iCloudyChance > 100
+         {
+		    debug("Value for 'piClearToCloudyChance' is out of range [0,100].");
+			return;
+         }
+		 
 		 if iRandomResult <= iCloudyChance
 		 {
 		    piGlobal_weather = WEATHER_CLOUDY;
-		    return;
 		 }
+		 return;
 	  }
 
 	  if piGlobal_weather = WEATHER_CLOUDY 
       {
-        iClearChance = Send(Send(self,@GetSettings),@GetCloudyToCleary);
+        iClearChance = Send(Send(self,@GetSettings),@GetCloudyToClear);
         iStormyChance = Send(Send(self,@GetSettings),@GetCloudyToStormy);
+
+		if (iClearChance < 0 OR iClearChance > 100 OR iStormyChance < 0 OR iStormyChance > 100)
+        {
+		   debug("Either 'piCloudyToClearChance' or 'piCloudyToStormyChance' are out of range [0,100].");
+           return;
+        }
+        if (iClearChance + iStormyChance) > 100
+        {
+           debug("Sum of (piCloudyToClearChance + piCloudyToStormyChance) is out of range [0, 100].");
+           return;
+        }
+		
         if iRandomResult < iClearChance
         {
            piGlobal_weather = WEATHER_CLEAR;
@@ -3632,7 +3651,6 @@ messages:
 		                         AND iRandomResult < (iClearChance + iStormyChance)
            {
               piGlobal_weather = piDefault_precipitation;
-              return;
 		   }
         }
 		return;
@@ -3641,6 +3659,13 @@ messages:
 	  if (piGlobal_weather = WEATHER_RAIN) OR (piGlobal_weather = WEATHER_SNOW)
 	  {
 	     iCloudyChance = Send(Send(self,@GetSettings),@GetStormyToCloudy);
+		 
+		 if iCloudyChance < 0 OR iCloudyChance > 100
+         {
+		    debug("Value for 'piStormyToCloudyChance' is out of range [0,100].");
+			return;
+         }
+		 
 		 if iRandomResult <= iCloudyChance
 		 {
 			piGlobal_weather = WEATHER_CLOUDY;
@@ -3654,19 +3679,24 @@ messages:
    "Set 'bTimeManuallySet' to TRUE to suppress weather changes when forcing time changes."
    "Particularly if it lands on an hour where a weather check would naturally occur."
    {
-      local i,iLight_hour,iWeatherInterval;
+      local i,iLight_hour,iWeatherHourlyInterval;
 
       % Weather is recalculated at hourly intervals every day.
-	  if bTimeManuallySet = FALSE 
-	  {
-	     iWeatherInterval = Send(Send(self,@GetSettings),@GetWeatherInterval);
-		 
-		 if (iWeatherInterval > 0 AND iWeatherInterval <= 24) 
-		                 AND ((piHour mod iWeatherInterval) = 0)
-	     {
-			Send(self,@RecalcWeatherConditions);
+      % Setting the interval to '0' disables the hourly changes.
+	  iWeatherHourlyInterval = Send(Send(self,@GetSettings),@GetWeatherHourlyInterval);
+	  
+      if (iWeatherHourlyInterval < 0 OR iWeatherHourlyInterval > 24)
+      {
+         debug("Value for piWeatherHourlyInterval is out of range [0,24]");
+      }
+      else
+      {
+		 if (bTimeManuallySet = FALSE) AND (iWeatherHourlyInterval <> 0)
+               AND ((piHour mod iWeatherHourlyInterval) = 0)
+         {
+         	Send(self,@RecalcWeatherConditions);
          }
-	  }
+      }
 
       if piHour < 6 or piHour > 20
       {

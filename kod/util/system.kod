@@ -68,11 +68,14 @@ resources:
    system_admin_message = "%q"
    
    faction_war_kill_title = "{0} bested by {1}."
-   faction_war_kill_body_start = "{0} has been bested by faction rival {1}"
-   faction_war_kill_body_claim = " during a land claim attempt"
-   faction_war_kill_body_separator = ".\n--------------------------------\n"
-   faction_war_kill_body_location = "Location: {0}\n"
-   faction_war_kill_body_factions = "Factions: {0} vs {1}"
+   faction_war_kill_body = "{0} has been bested by faction rival {1}."
+                           "\n--------------------------------\n"
+                           "Location: {2}\n"
+                           "Factions: {3} vs {4}"
+   faction_war_kill_claim_body = "{0} has been bested by faction rival {1} during a land claim attempt."
+                                 "\n--------------------------------\n"
+                                 "Location: {2}\n"
+                                 "Factions: {3} vs {4}"
 
    system_char_module = char.dll
 
@@ -1567,39 +1570,21 @@ messages:
                   oParl = Send(SYS,@GetParliament);
                   oFlag = Send(oRoom,@FindHoldingActive,#class=&Flagpole);
 
-                  ClearTempString();
+                  % TODO: If there's no room or Parliament present, we can't post the news.
 
-                  AppendTempString(BuildString(faction_war_kill_body_start, 
-                                    Send(what,@GetTrueName), 
-                                    Send(killer,@GetTrueName)));
+                  rVicFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(what,@GetFaction));
+                  rKilFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(killer,@GetFaction));
 
-                  if (oFlag <> $ AND Send(oFlag,@IsClaimAttemptInProgress))
-                  {
-                     AppendTempString(faction_war_kill_body_claim);
-                  }
-
-                  AppendTempString(faction_war_kill_body_separator);
-
-                  if (oRoom <> $)
-                  {
-                     AppendTempString(BuildString(faction_war_kill_body_location, 
-                                       Send(oRoom,@GetName)));
-                  }
-
-                  if (oParl <> $)
-                  {
-                     rVicFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(what,@GetFaction));
-                     rKilFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(killer,@GetFaction));
-
-                     if (rVicFaction <> $ AND rKilFaction <> $)
-                     {
-                        AppendTempString(BuildString(faction_war_kill_body_factions, rVicFaction, rKilFaction));
-                     }
-                  }
                   territory_news_title = BuildString(faction_war_kill_title, Send(what,@GetTrueName), Send(killer,@GetTrueName));
 
-                  territory_news_body = CreateString();
-                  SetString(territory_news_body, GetTempString());
+                  if Send(oFlag,@IsClaimAttemptInProgress)
+                  {
+                     territory_news_body = BuildString(faction_war_kill_claim_body, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), rVicFaction, rKilFaction);
+                  }
+                  else
+                  {
+                     territory_news_body = BuildString(faction_war_kill_body, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), rVicFaction, rKilFaction);
+                  }
 
                   % Post to the territory news
                   oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);

@@ -3673,6 +3673,21 @@ messages:
 	  }
 	  return;
    }
+   
+   UpdatePrecipitationSettings()
+   "Admin supported."
+   "Updates all room with precipitation disabled to recalculate the setting based on"
+   "their terrain flags. Some rooms may falsely enable it and may need a manual adjustment."
+   {
+      local i;
+	  
+      for i in plRooms
+      {
+         Send(i,@RecalcPrecipitationSetting);
+      }
+	  
+      return;
+   }
 
    NewGameHour(bTimeManuallySet=FALSE)
    "Recalculates the light, day period and weather based on piHour."
@@ -3682,7 +3697,6 @@ messages:
       local i,iLight_hour,iWeatherHourlyInterval;
 
       % Weather is recalculated at hourly intervals every day.
-      % Setting the interval to '0' disables the hourly changes.
 	  iWeatherHourlyInterval = Send(Send(self,@GetSettings),@GetWeatherHourlyInterval);
 	  
       if (iWeatherHourlyInterval < 0 OR iWeatherHourlyInterval > 24)
@@ -3691,6 +3705,8 @@ messages:
       }
       else
       {
+		 % Only calculate weather if the time was NOT manually set. 
+		 % And skip if the interval is 0. This also prevents modulo-by-zero errors.
 		 if (bTimeManuallySet = FALSE) AND (iWeatherHourlyInterval <> 0)
                AND ((piHour mod iWeatherHourlyInterval) = 0)
          {

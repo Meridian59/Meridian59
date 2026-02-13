@@ -391,12 +391,12 @@ messages:
    }
    
    RecalcPrecipitationSetting()
-   "Assigns precipitation settings upon room creation."
+   "Assigns precipitation settings either with room creation or admin command."
    {
 	  local iTerrain, bIndoors;
 	  
-	  % If the room subclass didn't enable rain/snow, then this function will
-	  % attempt to assign precipitation settings based on terrain flags.
+	  % If precipitation is disabled in this room, then this function will
+	  % estimate if it should be toggled on based on terrain flags.
 	  % This can cover most rooms, but some may need to be manually set.
 	  % e.g. Rooms with the TERRAIN_CASTLE flag includes open courtyards,
 	  % or indoor areas may have windows where rain/snow can show outside.
@@ -417,6 +417,7 @@ messages:
 	  if NOT bIndoors
       {
          pbPrecipitation_enabled = TRUE;
+		 Send(self,@RecalcLightAndWeather);
       }	  
 	  
       return;

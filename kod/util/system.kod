@@ -279,11 +279,15 @@ properties:
 
    % outdoor brightness level (0-100), updated hourly
    piBrightness
-   % updated here and there
-   piWeather
-
-   % updated every day
-   pbStormy = TRUE
+   
+   % Represents the day cycle (e.g. morning, night)
+   piDayPeriod = DAY_PERIOD_MORNING
+   
+   piGlobal_weather = WEATHER_CLEAR
+   
+   % Sets the kind of precipitation to use whenever it gets stormy.
+   % Setting this to snow basically makes it winter.
+   piDefault_precipitation = WEATHER_RAIN
 
    poLibrary = $
    poParliament = $
@@ -1093,14 +1097,13 @@ messages:
    SetHour(num = $)
    {
       piHour = num mod 24;
-      Send(self,@NewGameHour);
+      Send(self,@NewGameHour,#bTimeManuallySet=TRUE);
       return;
    }
 
    NewHour()
    {
       piHour = (piHour + 1) mod 24;
-      %Send(self,@RecalcLightAndWeather);
 
       if piHour = 0
       {
@@ -1142,7 +1145,6 @@ messages:
          }
       }
 
-      Send(self,@RecalcWeatherConditions);
       Send(self,@NewGameDay);
 
       Send(poParliament,@NewDay);
@@ -3534,9 +3536,46 @@ messages:
       return $;
    }
 
-   GetWeather()
+   GetDayPeriod()
    {
-      return piWeather;
+	  return piDayPeriod;
+   }
+
+   GetGlobalWeather()
+   {
+	  return piGlobal_weather;
+   }
+   
+   SetGlobalWeather(what=$)
+   "Used by DMs to directly set the global weather."
+   {
+      local i;
+      
+	  if piGlobal_weather <> what
+	  {
+         piGlobal_weather = what;
+	     for i in plRooms
+         {
+            Send(i,@RecalcLightAndWeather);
+         }
+	  }
+      return;
+   }
+   
+   SetSeason(what=$)
+   "Used by DMs to set global season. Currently used to set default precipitation to rain/snow."
+   {
+	  local i;
+	  
+	  if piDefault_precipitation <> what
+	  {
+	     piDefault_precipitation = what;
+		 for i in plRooms
+         {
+            Send(i,@RecalcLightAndWeather);
+         }
+	  }
+	  return;
    }
 
    RecalcLightAndWeather()
@@ -3563,53 +3602,137 @@ messages:
    }
 
    RecalcWeatherConditions()
-   "Resets piStormy randomly"
+   "Determines randomly if the weather shifts, based on the current weather."
    {
-      pbStormy = False;
-      if Random(1,100) <= 100
+	  local iRandomResult,iClearChance,iCloudyChance,iStormyChance;
+
+	  iRandomResult = Random(1,100);
+	  
+	  if piGlobal_weather = WEATHER_CLEAR
+	  {
+         iCloudyChance = Send(Send(self,@GetSettings),@GetClearToCloudy);
+		 
+		 if iCloudyChance < 0 OR iCloudyChance > 100
+         {
+		    debug("Value for 'piClearToCloudyChance' is out of range [0,100].");
+			return;
+         }
+		 
+		 if iRandomResult <= iCloudyChance
+		 {
+		    piGlobal_weather = WEATHER_CLOUDY;
+		 }
+		 return;
+	  }
+
+	  if piGlobal_weather = WEATHER_CLOUDY 
       {
-         pbStormy = True;
+        iClearChance = Send(Send(self,@GetSettings),@GetCloudyToClear);
+        iStormyChance = Send(Send(self,@GetSettings),@GetCloudyToStormy);
+
+		if (iClearChance < 0 OR iClearChance > 100 OR iStormyChance < 0 OR iStormyChance > 100)
+        {
+		   debug("Either 'piCloudyToClearChance' or 'piCloudyToStormyChance' are out of range [0,100].");
+           return;
+        }
+        if (iClearChance + iStormyChance) > 100
+        {
+           debug("Sum of (piCloudyToClearChance + piCloudyToStormyChance) is out of range [0, 100].");
+           return;
+        }
+		
+        if iRandomResult < iClearChance
+        {
+           piGlobal_weather = WEATHER_CLEAR;
+        }
+        else
+	    {
+           if piGlobal_weather = WEATHER_CLOUDY 
+		                         AND iRandomResult < (iClearChance + iStormyChance)
+           {
+              piGlobal_weather = piDefault_precipitation;
+		   }
+        }
+		return;
       }
+
+	  if (piGlobal_weather = WEATHER_RAIN) OR (piGlobal_weather = WEATHER_SNOW)
+	  {
+	     iCloudyChance = Send(Send(self,@GetSettings),@GetStormyToCloudy);
+		 
+		 if iCloudyChance < 0 OR iCloudyChance > 100
+         {
+		    debug("Value for 'piStormyToCloudyChance' is out of range [0,100].");
+			return;
+         }
+		 
+		 if iRandomResult <= iCloudyChance
+		 {
+			piGlobal_weather = WEATHER_CLOUDY;
+         }
+	  }
+	  return;
+   }
+   
+   UpdatePrecipitationSettings()
+   "Admin supported."
+   "Updates all room with precipitation disabled to recalculate the setting based on"
+   "their terrain flags. Some rooms may falsely enable it and may need a manual adjustment."
+   {
+      local i;
+	  
+      for i in plRooms
+      {
+         Send(i,@RecalcPrecipitationSetting);
+      }
+	  
       return;
    }
 
-   NewGameHour()
-   "Recalculates the light and weather, based on piHour"
+   NewGameHour(bTimeManuallySet=FALSE)
+   "Recalculates the light, day period and weather based on piHour."
+   "Set 'bTimeManuallySet' to TRUE to suppress weather changes when forcing time changes."
+   "Particularly if it lands on an hour where a weather check would naturally occur."
    {
-      local i,iLight_hour;
+      local i,iLight_hour,iWeatherHourlyInterval;
+
+      % Weather is recalculated at hourly intervals every day.
+	  iWeatherHourlyInterval = Send(Send(self,@GetSettings),@GetWeatherHourlyInterval);
+	  
+      if (iWeatherHourlyInterval < 0 OR iWeatherHourlyInterval > 24)
+      {
+         debug("Value for piWeatherHourlyInterval is out of range [0,24]");
+      }
+      else
+      {
+		 % Only calculate weather if the time was NOT manually set. 
+		 % And skip if the interval is 0. This also prevents modulo-by-zero errors.
+		 if (bTimeManuallySet = FALSE) AND (iWeatherHourlyInterval <> 0)
+               AND ((piHour mod iWeatherHourlyInterval) = 0)
+         {
+         	Send(self,@RecalcWeatherConditions);
+         }
+      }
 
       if piHour < 6 or piHour > 20
       {
-         piWeather = WEATHER_NIGHT;
+         piDayPeriod = DAY_PERIOD_NIGHT;
       }
       else
       {
          if piHour > 17
          {
-            piWeather = WEATHER_DUSK;
-            if pbStormy
-            {
-               piWeather = WEATHER_DUSK_STORMY;
-            }
-
+            piDayPeriod = DAY_PERIOD_EVENING;
          }
          else
          {
             if piHour < 9
             {
-               piWeather = WEATHER_DAWN;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAWN_STORMY;
-               }
+               piDayPeriod = DAY_PERIOD_MORNING;
             }
             else
             {
-               piWeather = WEATHER_DAY;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAY_STORMY;
-               }
+               piDayPeriod = DAY_PERIOD_AFTERNOON;
             }
          }
       }
@@ -3635,7 +3758,6 @@ messages:
       {
          piBrightness = 75;
       }
-
 
       for i in plBackground_objects
       {

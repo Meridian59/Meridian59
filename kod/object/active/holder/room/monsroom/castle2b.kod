@@ -42,6 +42,8 @@ properties:
 
    prRoom = room_castle2b
    piRoom_num = RID_CASTLE2B
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

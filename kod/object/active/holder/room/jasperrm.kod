@@ -10,6 +10,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JasperRoom is Room
 
+constants:
+
+   include blakston.khd
+   
 resources:
 
    JasperRoom_music = city03.mid
@@ -17,6 +21,7 @@ resources:
 properties:
 
    prMusic = JasperRoom_music
+   piClimate = CLIMATE_MOUNTAIN
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

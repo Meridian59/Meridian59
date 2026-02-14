@@ -75,6 +75,11 @@ messages:
       Send(self,@NewHold,#what=Create(&Throne),
            #new_row=33,#new_col=23,#fine_col=48,#new_angle=ANGLE_NORTH);
 
+      oNews = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
+      if oNews = $
+      {
+         oNews = Create(&TerritoryNews,#nid=NID_TERRITORY_NEWS);
+      }
 
       oNews = Create(&TerritoryNewsLink,#nid=NID_TERRITORY_NEWS);
       Send(self,@NewHold,#what=oNews,#new_row=29,#new_col=19,

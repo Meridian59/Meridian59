@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   territorynewslink_icon_rsc = jbook.bgf
+   territorynewslink_icon_rsc = tbook.bgf
    territorynewslink_name_rsc = "Territory War Dispatches"
    territorynewslink_desc_rsc = "Faction claims, battles, and city control across the territories."
 
@@ -27,6 +27,19 @@ properties:
    vrIcon = territorynewslink_icon_rsc
 
 messages:
+
+   Constructor(nid = NID_TERRITORY_NEWS, name = $, desc = $, icon = $)
+   {
+      local oNews;
+
+      oNews = Send(SYS,@FindNewsByNum,#num=nid);
+      if oNews = $
+      {
+         Create(&TerritoryNews,#nid=nid);
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

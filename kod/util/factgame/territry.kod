@@ -21,28 +21,20 @@ constants:
 
 resources:
 
-   TerritoryGame_duke = "Duke Akardius"
-   TerritoryGame_princess = "Princess Kateriina"
-   TerritoryGame_rebel = "the rebel Jonas"
-   TerritoryGame_unfactioned = "the unfactioned"
-
-   TerritoryGame_bonus_territory_title = "~I%s now %s the city of %s!"
-   TerritoryGame_bonus_territory = "~IHaving claimed %q, %s now also %s the city of %s!"
-   TerritoryGame_control = "control"
-   TerritoryGame_controls = "controls"
+   TerritoryGame_bonus_territory = "~IHaving claimed %q, %s now also controls the city of %s!"
    TerritoryGame_Tos = "Tos"
    TerritoryGame_Barloque = "Barloque"
    TerritoryGame_Jasper = "Jasper"
    TerritoryGame_Marion = "Marion"
    TerritoryGame_CorNoth = "Cor Noth"
 
-   TerritoryGame_lost_hometown = "~IHaving lost %s home city, %s reluinquishes all claimed territories."
-   TerritoryGame_her = "her"
-   TerritoryGame_his = "his"
-   TerritoryGame_their = "their"
+   % {0} = faction name, {1} = city name
+   territory_string_title_1 = "LAND CLAIM: {0} secures {1}"
+   territory_string_title_2 = "LAND CLAIM: {0} claims new ground"
+   territory_string_title_3 = "LAND CLAIM: {0} strengthens control"
 
-   territory_string_title = "{0} now {1} {2}!"
-   territory_string_body = "Having claimed {0}, {1} now also {2} the city of {3}!"
+   % {0} = room name(s), {1} = faction name, {2} = city name
+   territory_string_body = "Having claimed {0}, {1} now also controls the city of {2}."
 
 properties:
 
@@ -589,7 +581,7 @@ messages:
 
    SendBonusTownMessage(faction=$,town=$)
    {
-      local i, sTowns, rFaction, rControls, rCity, oBook, territory_news_title, territory_news_body;
+      local i, sTowns, rFaction, rCity, oBook, territory_news_title, territory_news_body, iPick, rTemplate;
 
       sTowns = createString();
       clearTempString();
@@ -606,16 +598,7 @@ messages:
       AppendTempString(send(send(SYS,@FindRoomByNum,#num=nth(town,length(town))),@GetName));
       setString(sTowns,GetTempString());
 
-      if faction <> FACTION_NEUTRAL
-      {
-         rControls = TerritoryGame_controls;
-         rFaction = send(send(SYS,@GetParliament),@GetFactionLiegeName,#faction=faction);
-      }
-      else
-      {
-         rFaction = TerritoryGame_unfactioned;
-         rControls = TerritoryGame_control;
-      }
+      rFaction = send(send(SYS,@GetParliament),@GetFactionLiegeName,#faction=faction);
 
       rCity = TerritoryGame_Tos;
       if town = plBarloqueRIDs
@@ -647,11 +630,16 @@ messages:
 
          Send(i,@MsgSendUser,#message_rsc=TerritoryGame_bonus_territory,
                #parm1=sTowns,#type1=STRING_RESOURCE,
-               #parm2=rFaction,#parm3=rControls,#parm4=rCity);
+               #parm2=rFaction,#parm3=rCity);
       }
 
-      territory_news_title = BuildString(territory_string_title, rFaction, rControls, rCity);
-      territory_news_body = BuildString(territory_string_body, sTowns, rFaction, rControls, rCity);
+      iPick = Random(1,3);
+      if iPick = 1 { rTemplate = territory_string_title_1; }
+      if iPick = 2 { rTemplate = territory_string_title_2; }
+      if iPick = 3 { rTemplate = territory_string_title_3; }
+
+      territory_news_title = BuildString(rTemplate, rFaction, rCity);
+      territory_news_body = BuildString(territory_string_body, sTowns, rFaction, rCity);
 
       % Post to the territory news
       oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);

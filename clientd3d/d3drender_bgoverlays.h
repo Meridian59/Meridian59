@@ -62,7 +62,18 @@ struct BackgroundOverlaysSceneParams {
     {}
 };
 
+typedef struct overlay_region {
+	custom_xyzw topLeft;
+	custom_xyzw topRight;
+	custom_xyzw bottomLeft;
+	custom_xyzw bottomRight;
+	custom_xyzw center;
+} overlay_region;
+
 void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& backgroundOverlaysRenderStateParams, 
     const BackgroundOverlaysSceneParams& backgroundOverlaysSceneParams);
+
+void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoRenderStateParams, 
+    const BackgroundOverlaysSceneParams& bgoSceneParams, list_type list);
 
 #endif	/* #ifndef _D3DRENDERBGOVERLAYS_H */

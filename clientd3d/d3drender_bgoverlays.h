@@ -68,12 +68,33 @@ typedef struct overlay_region {
 	custom_xyzw bottomLeft;
 	custom_xyzw bottomRight;
 	custom_xyzw center;
+	int width;
+	int height;
 } overlay_region;
+
+// Camera orientation and transformation matrices
+typedef struct overlay_transform {
+	Vector3D pos;
+	float angleHeading;
+	float anglePitch;
+	D3DMATRIX rot;
+	D3DMATRIX mat;
+} overlay_transform;
 
 void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& backgroundOverlaysRenderStateParams, 
     const BackgroundOverlaysSceneParams& backgroundOverlaysSceneParams);
 
 void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoRenderStateParams, 
     const BackgroundOverlaysSceneParams& bgoSceneParams, list_type list);
+
+void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, long* object_height);
+
+overlay_region D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* pChunk, 
+	overlay_transform* transform, const auto& params);
+
+bool D3DIsBGOverlayVisible(overlay_region* region);
+
+void D3DFinalizeBGOverlay(BackgroundOverlay* overlay, overlay_region* region, overlay_transform* transform, ObjectRange* range,
+	const BackgroundOverlaysSceneParams& bgoSceneParams);
 
 #endif	/* #ifndef _D3DRENDERBGOVERLAYS_H */

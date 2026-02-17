@@ -7,9 +7,32 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
-const float DEGREES_TO_RADIANS = PI / 180.0f;
-const float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
+// Using static constexpr to set up constants at compile time to reduce CPU overhead.
+// Meridian 59's angles are in game units. (4096 units = 360-degree circle)
+static constexpr float FULL_CIRCLE_UNITS = 4096.0f;
+static constexpr float GAME_UNITS_TO_RADIANS = (2.0f * PI) / FULL_CIRCLE_UNITS;
+static constexpr float FULL_CIRCLE_TO_DEGREES = 360.0f / FULL_CIRCLE_UNITS;
+static constexpr float DEGREES_TO_RADIANS = PI / 180.0f;
+static constexpr float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
+
+// Specify the maximum and minimum altitude of the background overlay.
+// This will map from the -200 to 200 values return from the server to these values.
+static constexpr int ALTITUDE_MAX = 200;
+static constexpr int ALTITUDE_MIN = -200;
+// Increase the size of the background overlay if necessary.
+static constexpr float SIZE_SCALER = 1.2f;
+
+// Rendering constants
+static constexpr int NUM_VERTICES = 4;
+static constexpr int NUM_INDICES = NUM_VERTICES;
+static constexpr int NUM_PRIMITIVES = NUM_VERTICES - 2;
+
+// Small value to adjust UV coordinates inward. Avoids texture bleeding.
+static constexpr float EPSILON = 0.007f;  
+// Pre-calculated UV arrays for a quad.
+static constexpr float u[NUM_VERTICES] = { EPSILON, 1.0f - EPSILON, 1.0f - EPSILON, EPSILON };
+static constexpr float v[NUM_VERTICES] = { EPSILON, EPSILON, 1.0f - EPSILON, 1.0f - EPSILON };
+
 
 /**
 * Render background overlays in the current room -- for example the Sun and Moon.
@@ -72,99 +95,105 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	overlay->drawn = FALSE;
 
 	// Check if the sky is cloudy. If so, don't render the sun/moon and don't let us right-click it.
-	if (IsClearWeather() == false) return;
-	
-	// Increase the size of the background overlay if necessary.
-	float size_scaler = 1.2f;
+	if (IsClearWeather() == false)
+		return;
 
-	// Specify the maximum and minimum altitude of the background overlay.
-	// This will map from the -200 to 200 values return from the server to these values.
-	int height_max = 200;
-	int height_min = -200;
+	long object_width = DibWidth(pDib) * SIZE_SCALER;
+	long object_height = DibHeight(pDib) * SIZE_SCALER;
 
-	long object_width = DibWidth(pDib) * size_scaler;
-	long object_height = DibHeight(pDib) * size_scaler;
-
+	// Find or create a render packet for this texture.
 	d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(bgoRenderStateParams.worldPool, NULL, pDib, 0, 0, 0);
 	if (NULL == pPacket)
 		return;
 
+	// Initialize a new chunk of geometry data for this background overlay.
 	d3d_render_chunk_new* pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
 
 	pPacket->pMaterialFctn = &D3DMaterialWorldPacket;
 
-	pChunk->numIndices = 4;
-	pChunk->numVertices = 4;
-	pChunk->numPrimitives = pChunk->numVertices - 2;
+	// Define the quad's topology and rendering flags.
+	pChunk->numIndices = NUM_INDICES;
+	pChunk->numVertices = NUM_VERTICES;
+	pChunk->numPrimitives = NUM_PRIMITIVES;
 	pChunk->pMaterialFctn = &D3DMaterialWorldDynamicChunk;
 	pChunk->flags |= D3DRENDER_NOAMBIENT | D3DRENDER_WORLD_OBJ;
 	pChunk->zBias = ZBIAS_BASE;
 
-	int piAngle = overlay->x;
-	int piHeight = overlay->y;
-
+	// Map raw server height (-200 to 200) to engine altitude range
 	auto mapRange = [](double value, double in_min, double in_max, double out_min, double out_max) -> double {
 		return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	};
 
-	long mappedHeightValue = mapRange(piHeight, -200, 200, height_min, height_max);
-	float angleInRadians = piAngle / 4096.0f;
-	double azimuthalAngle = angleInRadians * 2 * PI;
-	long radius = height_max * 5;
+	long mappedHeightValue = mapRange(overlay->y, -200, 200, ALTITUDE_MIN, ALTITUDE_MAX);
+	double azimuthalAngle = overlay->x * GAME_UNITS_TO_RADIANS;
+	
+	// Calculate BG overlay's position on a sphere surrounding the viewer.
+	long radius = ALTITUDE_MAX * 5;
 	double horizontalRadius = sqrt(pow(radius, 2) - pow(mappedHeightValue, 2));		
 
 	const auto& params = bgoSceneParams.params;
 
-	long x = params->viewer_x - (object_width / 2) + horizontalRadius * cos(azimuthalAngle);
-	long y = params->viewer_y - (object_height / 2) + horizontalRadius * sin(azimuthalAngle);
-	long z = params->viewer_height + mappedHeightValue;
+	// Center the quad and project it onto the sky dome relative to the viewer.
+	overlay_transform transform;
+	transform.pos.x = (float)(params->viewer_x - (object_width / 2) + horizontalRadius * cos(azimuthalAngle));
+	transform.pos.y = (float)(params->viewer_y - (object_height / 2) + horizontalRadius * sin(azimuthalAngle));
+	transform.pos.z = (float)(params->viewer_height + mappedHeightValue);
+	
+	MatrixIdentity(&transform.mat);
+	MatrixIdentity(&transform.rot);
+	// Camera's current rotation and tilt.
+	transform.angleHeading = (float)bgoSceneParams.angleHeading;
+	transform.anglePitch = (float)bgoSceneParams.anglePitch;
 
-	Vector3D bg_overlay_pos;
-	bg_overlay_pos.x = x;
-	bg_overlay_pos.y = y;
-	bg_overlay_pos.z = z;
+	MatrixRotateY(&transform.rot, transform.angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
+	MatrixRotateX(&transform.mat, transform.anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
+	MatrixTranspose(&transform.rot, &transform.rot);
+	MatrixTranslate(&transform.mat, transform.pos.x, transform.pos.z, transform.pos.y);
+	MatrixMultiply(&pChunk->xForm, &transform.rot, &transform.mat);
 
-	D3DMATRIX rot, mat;
-	MatrixIdentity(&mat);
-	MatrixIdentity(&rot);
+	D3DBuildBGOverlayMesh(pChunk, &object_width, &object_height);
 
-	const auto& angleHeading = bgoSceneParams.angleHeading;
-	const auto& anglePitch = bgoSceneParams.anglePitch;
+	// Determine if the background overlay is visible for click detection in client
+	// (e.g. Blinded by the light of the Sun).
+	ObjectRange* range = FindVisibleObjectById(overlay->obj.id);
+	const auto& d3dRect = bgoRenderStateParams.d3dRect;
+	overlay_region region = D3DSetupOverlayRegion(d3dRect,pChunk,&transform,params);
+	if (D3DIsBGOverlayVisible(&region))
+	{
+		D3DFinalizeBGOverlay(overlay, &region, &transform, range, bgoSceneParams);
+	}	
+}
 
-	MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
-	MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
-	MatrixTranspose(&rot, &rot);
-	MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
-	MatrixMultiply(&pChunk->xForm, &rot, &mat);
-
+/**
+* Defines the background overlay's shape, size, and texture mapping.
+*/
+void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, long* object_height)
+{
 	pChunk->xyz[0].x = 0;
 	pChunk->xyz[0].z = 0;
 	pChunk->xyz[0].y = 0;
 
-	pChunk->xyz[1].x = -object_width;
+	pChunk->xyz[1].x = -(*object_width);
 	pChunk->xyz[1].z = 0;
 	pChunk->xyz[1].y = 0;
 
-	pChunk->xyz[2].x = -object_width;
-	pChunk->xyz[2].z = object_height;
+	pChunk->xyz[2].x = -(*object_width);
+	pChunk->xyz[2].z = *object_height;
 	pChunk->xyz[2].y = 0;
 
 	pChunk->xyz[3].x = 0;
-	pChunk->xyz[3].z = object_height;
+	pChunk->xyz[3].z = *object_height;
 	pChunk->xyz[3].y = 0;
 
-	for (int j = 0; j < 4; j++)
+	// Sets each of the four vertices to solid white to display texture in original colors.
+	for (int j = 0; j < NUM_VERTICES; j++)
 	{
 		pChunk->bgra[j].b = 255;
 		pChunk->bgra[j].g = 255;
 		pChunk->bgra[j].r = 255;
 		pChunk->bgra[j].a = 255;
 	}
-
-	const float epsilon = 0.007f; // Small value to adjust UV coordinates inward
-	static const float u[4] = { epsilon, 1.0f - epsilon, 1.0f - epsilon, epsilon };
-	static const float v[4] = { epsilon, epsilon, 1.0f - epsilon, 1.0f - epsilon };
 
 	// Normally, you'd assign these in a predictable (e.g., top-left to bottom-right) order. 
 	// Here, we intentionally swap certain indices to mirror the texture along the X-axis.
@@ -181,17 +210,15 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	pChunk->indices[1] = 2;
 	pChunk->indices[2] = 0;
 	pChunk->indices[3] = 3;
+}
 
-	// Determine if the background overlay is visible for click detection in client
-	// (e.g. Blinded by the light of the Sun).
-	ObjectRange* range = FindVisibleObjectById(overlay->obj.id);
-
-	const auto& d3dRect = bgoRenderStateParams.d3dRect;
-
-	int w = d3dRect.right - d3dRect.left;
-	int h = d3dRect.bottom - d3dRect.top;
-
+overlay_region D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* pChunk, overlay_transform* transform, const auto& params)
+{
 	overlay_region region;
+	
+	region.width = d3dRect.right - d3dRect.left;
+	region.height = d3dRect.bottom - d3dRect.top;
+	
 	region.topLeft.x = pChunk->xyz[3].x;
 	region.topLeft.y = pChunk->xyz[3].z;
 	region.topLeft.z = 0;
@@ -213,14 +240,14 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	region.bottomRight.w = 1.0f;
 
 	D3DMATRIX localToScreen, trans;
-	MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
-	MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
-	MatrixMultiply(&rot, &rot, &mat);
+	MatrixRotateY(&transform->rot, transform->angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+	MatrixRotateX(&transform->mat, transform->anglePitch * 50.0f / 414.0f * PI / 180.0f);
+	MatrixMultiply(&transform->rot, &transform->rot, &transform->mat);
 	MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
-	MatrixMultiply(&mat, &trans, &rot);
+	MatrixMultiply(&transform->mat, &trans, &transform->rot);
 	XformMatrixPerspective(&localToScreen, FovHorizontal(d3dRect.right - d3dRect.left), FovVertical(d3dRect.bottom - d3dRect.top), 1.0f, 2000000.0f);
-	MatrixMultiply(&mat, &pChunk->xForm, &mat);
-	MatrixMultiply(&localToScreen, &mat, &localToScreen);
+	MatrixMultiply(&transform->mat, &pChunk->xForm, &transform->mat);
+	MatrixMultiply(&localToScreen, &transform->mat, &localToScreen);
 
 	MatrixMultiplyVector(&region.topLeft, &localToScreen, &region.topLeft);
 	MatrixMultiplyVector(&region.topRight, &localToScreen, &region.topRight);
@@ -247,52 +274,64 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	region.center.x = (region.topLeft.x + region.topRight.x) / 2.0f;
 	region.center.y = (region.topLeft.y + region.bottomLeft.y) / 2.0f;
 	region.center.z = region.topLeft.z;
+	
+	return region;
+}
 
+bool D3DIsBGOverlayVisible(overlay_region* region)
+{
 	bool isAnyCornerVisible =  
-		(D3DRENDER_CLIP(region.topLeft.x, 1.0f)		&& D3DRENDER_CLIP(region.topLeft.y, 1.0f)) ||
-		(D3DRENDER_CLIP(region.bottomLeft.x, 1.0f)		&& D3DRENDER_CLIP(region.bottomLeft.y, 1.0f)) ||
-		(D3DRENDER_CLIP(region.topRight.x, 1.0f)		&& D3DRENDER_CLIP(region.topRight.y, 1.0f)) ||
-		(D3DRENDER_CLIP(region.bottomRight.x, 1.0f)	&& D3DRENDER_CLIP(region.bottomRight.y, 1.0f));
+		(D3DRENDER_CLIP(region->topLeft.x, 1.0f)		&& D3DRENDER_CLIP(region->topLeft.y, 1.0f)) ||
+		(D3DRENDER_CLIP(region->bottomLeft.x, 1.0f)		&& D3DRENDER_CLIP(region->bottomLeft.y, 1.0f)) ||
+		(D3DRENDER_CLIP(region->topRight.x, 1.0f)		&& D3DRENDER_CLIP(region->topRight.y, 1.0f)) ||
+		(D3DRENDER_CLIP(region->bottomRight.x, 1.0f)	&& D3DRENDER_CLIP(region->bottomRight.y, 1.0f));
 
-	if ((isAnyCornerVisible || D3DRENDER_CLIP(region.center.x, 1.0f)) && D3DRENDER_CLIP(region.topLeft.z, 1.0f))
+	return (isAnyCornerVisible || D3DRENDER_CLIP(region->center.x, 1.0f)) && D3DRENDER_CLIP(region->topLeft.z, 1.0f);
+}
+
+/**
+* Projects BG overlay into screen space and registers it for rendering.
+* Calculates pixel boundaries, handles visibility entries, and enables click detection.
+*/
+void D3DFinalizeBGOverlay(BackgroundOverlay* overlay, overlay_region* region, overlay_transform* transform, ObjectRange* range,
+		const BackgroundOverlaysSceneParams& bgoSceneParams)
+{
+	int tempLeft = (region->topLeft.x * region->width / 2) + (region->width / 2);
+	int tempRight = (region->bottomRight.x * region->width / 2) + (region->width / 2);
+	int tempTop = (region->topLeft.y * -(region->height / 2)) + (region->height / 2);
+	int tempBottom = (region->bottomRight.y * -(region->height) / 2) + (region->height / 2);
+
+	const auto* player = GetPlayerInfo();
+	int distX = transform->pos.x - player->x;
+	int distY = transform->pos.y - player->y;
+
+	int distance = DistanceGet(distX, distY);
+
+	if (range == NULL)
 	{
-		int tempLeft = (region.topLeft.x * w / 2) + (w / 2);
-		int tempRight = (region.bottomRight.x * w / 2) + (w / 2);
-		int tempTop = (region.topLeft.y * -h / 2) + (h / 2);
-		int tempBottom = (region.bottomRight.y * -h / 2) + (h / 2);
+		// Set up new visible object.
+		range = &bgoSceneParams.visibleObjects[*bgoSceneParams.numVisibleObjects];
+		range->id = overlay->obj.id;
+		range->distance = distance;
+		range->left_col = tempLeft;
+		range->right_col = tempRight;
+		range->top_row = tempTop;
+		range->bottom_row = tempBottom;
 
-		const auto* player = GetPlayerInfo();
-		int distX = bg_overlay_pos.x - player->x;
-		int distY = bg_overlay_pos.y - player->y;
+		*bgoSceneParams.numVisibleObjects = std::min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
+	}
 
-		int distance = DistanceGet(distX, distY);
+	overlay->rcScreen.left = tempLeft;
+	overlay->rcScreen.right = tempRight;
+	overlay->rcScreen.top = tempTop;
+	overlay->rcScreen.bottom = tempBottom;
 
-		if (range == NULL)
-		{
-			// Set up new visible object.
-			range = &bgoSceneParams.visibleObjects[*bgoSceneParams.numVisibleObjects];
-			range->id = overlay->obj.id;
-			range->distance = distance;
-			range->left_col = tempLeft;
-			range->right_col = tempRight;
-			range->top_row = tempTop;
-			range->bottom_row = tempBottom;
+	// The background overlay is visible and eligible for click detection.
+	overlay->drawn = TRUE;
 
-			*bgoSceneParams.numVisibleObjects = std::min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
-		}
-
-		overlay->rcScreen.left = tempLeft;
-		overlay->rcScreen.right = tempRight;
-		overlay->rcScreen.top = tempTop;
-		overlay->rcScreen.bottom = tempBottom;
-
-		// The background overlay is visible and eligible for click detection.
-		overlay->drawn = TRUE;
-
-		// Record boundaries of drawing area.
-		range->left_col = std::min(range->left_col, (long)tempLeft);
-		range->right_col = std::max(range->right_col, (long)tempRight);
-		range->top_row = std::min(range->top_row, (long)tempTop);
-		range->bottom_row = std::max(range->bottom_row, (long)tempBottom);
-	}	
+	// Record boundaries of drawing area.
+	range->left_col = std::min(range->left_col, (long)tempLeft);
+	range->right_col = std::max(range->right_col, (long)tempRight);
+	range->top_row = std::min(range->top_row, (long)tempTop);
+	range->bottom_row = std::max(range->bottom_row, (long)tempBottom);
 }

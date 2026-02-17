@@ -249,16 +249,13 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 	pParticle->rotation.x = pEmitter->rotation.x;
 	pParticle->rotation.y = pEmitter->rotation.y;
 	pParticle->rotation.z = pEmitter->rotation.z;
-
-	// Randomizes z-velocity a bit for weather effects.
-	if (pEmitter->bWeatherEffect)
-	{
-		pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
-	}
 	
 	// Each weather particle calculates the time it takes for them to land on the ground.
 	if (pEmitter->bWeatherEffect)
 	{				
+		// Randomizes z-velocity a bit for weather effects.
+		pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
+		
 		pParticle->lifetime_s = 0;
 		
 		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);

@@ -13,9 +13,9 @@ static particle_system rainParticleSystem;
 static particle_system snowParticleSystem;
 
 // Default colors for particles
-static const custom_bgra SANDSTORM_COLOR = {6,153,226,255};
-static const custom_bgra RAIN_COLOR = {249,228,175,150};
-static const custom_bgra SNOW_COLOR = {255,255,255,220};
+static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
+static constexpr custom_bgra RAIN_COLOR = {249,228,175,150};
+static constexpr custom_bgra SNOW_COLOR = {255,255,255,220};
 
 // Interfaces
 

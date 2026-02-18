@@ -22,7 +22,7 @@ static constexpr int ALTITUDE_MIN = -200;
 // Increase the size of the background overlay if necessary.
 static constexpr float SIZE_SCALER = 1.2f;
 
-// Rendering constants
+// Rendering constants for a 2D quad.
 static constexpr int NUM_VERTICES = 4;
 static constexpr int NUM_INDICES = NUM_VERTICES;
 static constexpr int NUM_PRIMITIVES = NUM_VERTICES - 2;
@@ -40,36 +40,43 @@ static constexpr float v[NUM_VERTICES] = { EPSILON, EPSILON, 1.0f - EPSILON, 1.0
 void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoRenderStateParams, 
     const BackgroundOverlaysSceneParams& bgoSceneParams)
 {
+	// Reset world matrix and setup fixed-function pipeline for simple quad rendering.	
 	MatrixIdentity(&bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, bgoRenderStateParams.vertexDeclaration);
 
+	// Disable z-writing so BG overlays won't block world objects 
+	// and enable z-testing so that world objects can hide them.
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 
-	// Enable alpha blending and alpha testing for subsequent rendering
+	// Enable alpha blending and alpha testing for subsequent rendering.
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
 
 	D3DRenderPoolReset(bgoRenderStateParams.worldPool, &D3DMaterialWorldPool);
 	D3DCacheSystemReset(bgoRenderStateParams.worldCacheSystem);
 
+	// Process all background overlays into the render pool.
 	for (list_type list = bgoSceneParams.room->bg_overlays; list != NULL; list = list->next)
 	{
 		D3DProcessBackgroundOverlay(bgoRenderStateParams, bgoSceneParams, list);
 	}
+	
+	// Batch and dispatch the draw calls to the GPU using Triangle Strips.
 	D3DCacheFill(bgoRenderStateParams.worldCacheSystem, bgoRenderStateParams.worldPool, 1);
 	D3DCacheFlush(bgoRenderStateParams.worldCacheSystem, bgoRenderStateParams.worldPool, 1, D3DPT_TRIANGLESTRIP);
 
+	// Restore standard render states to avoid breaking subsequent world-object rendering.
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
 
-	// Disable alpha blending and alpha testing
+	// Disable alpha blending and alpha testing.
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
 
-	// restore the correct material and view matrices.
+	// Restore the correct material and view matrices.
 	MatrixIdentity(&bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &bgoRenderStateParams.transformMatrix);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &bgoRenderStateParams.view);
@@ -101,7 +108,7 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	long object_width = DibWidth(pDib) * SIZE_SCALER;
 	long object_height = DibHeight(pDib) * SIZE_SCALER;
 
-	// Find or create a render packet for this texture.
+	// Attempt to batch this overlay into an existing render packet for this texture.
 	d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(bgoRenderStateParams.worldPool, NULL, pDib, 0, 0, 0);
 	if (NULL == pPacket)
 		return;
@@ -120,7 +127,7 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	pChunk->flags |= D3DRENDER_NOAMBIENT | D3DRENDER_WORLD_OBJ;
 	pChunk->zBias = ZBIAS_BASE;
 
-	// Map raw server height (-200 to 200) to engine altitude range
+	// Map raw server height (-200 to 200) to engine altitude range.
 	auto mapRange = [](double value, double in_min, double in_max, double out_min, double out_max) -> double {
 		return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	};
@@ -128,7 +135,8 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	long mappedHeightValue = mapRange(overlay->y, -200, 200, ALTITUDE_MIN, ALTITUDE_MAX);
 	double azimuthalAngle = overlay->x * GAME_UNITS_TO_RADIANS;
 	
-	// Calculate BG overlay's position on a sphere surrounding the viewer.
+	// Calculate BG overlay's position on a sky dome surrounding the viewer.
+	// A 5x multiplier ensures enough depth for the overlay to stay behind world geometry.
 	long radius = ALTITUDE_MAX * 5;
 	double horizontalRadius = sqrt(pow(radius, 2) - pow(mappedHeightValue, 2));		
 
@@ -142,13 +150,16 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	
 	MatrixIdentity(&transform.mat);
 	MatrixIdentity(&transform.rot);
-	// Camera's current rotation and tilt.
+	// Apply camera rotation and tilt.
 	transform.angleHeading = (float)bgoSceneParams.angleHeading;
 	transform.anglePitch = (float)bgoSceneParams.anglePitch;
-
+	
+	// Build rotation matrices.
 	MatrixRotateY(&transform.rot, transform.angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
 	MatrixRotateX(&transform.mat, transform.anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
 	MatrixTranspose(&transform.rot, &transform.rot);
+	
+	// Position overlay in the world relative to viewer's current location.
 	MatrixTranslate(&transform.mat, transform.pos.x, transform.pos.z, transform.pos.y);
 	MatrixMultiply(&pChunk->xForm, &transform.rot, &transform.mat);
 
@@ -170,18 +181,23 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 */
 void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, long* object_height)
 {
+	// Defines four corners of the quad in local object space.
+	// Bottom Right (origin)
 	pChunk->xyz[0].x = 0;
 	pChunk->xyz[0].z = 0;
 	pChunk->xyz[0].y = 0;
 
+	// Bottom Left
 	pChunk->xyz[1].x = -(*object_width);
 	pChunk->xyz[1].z = 0;
 	pChunk->xyz[1].y = 0;
 
+	// Top Left
 	pChunk->xyz[2].x = -(*object_width);
 	pChunk->xyz[2].z = *object_height;
 	pChunk->xyz[2].y = 0;
 
+	// Top Right
 	pChunk->xyz[3].x = 0;
 	pChunk->xyz[3].z = *object_height;
 	pChunk->xyz[3].y = 0;
@@ -195,6 +211,7 @@ void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, lon
 		pChunk->bgra[j].a = 255;
 	}
 
+	// Map texture coordinates to vertices.
 	// Normally, you'd assign these in a predictable (e.g., top-left to bottom-right) order. 
 	// Here, we intentionally swap certain indices to mirror the texture along the X-axis.
 	pChunk->st0[0].s = u[1];
@@ -206,54 +223,50 @@ void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, lon
 	pChunk->st0[3].s = u[2];
 	pChunk->st0[3].t = v[3];
 
+	// Define the index buffer for a Triangle Strip.
+    // This order (1, 2, 0, 3) creates two triangles that share an edge to form the quad.
 	pChunk->indices[0] = 1;
 	pChunk->indices[1] = 2;
 	pChunk->indices[2] = 0;
 	pChunk->indices[3] = 3;
 }
 
+/**
+* Maps 3D overlay coordiantes to 2D screen space.
+*/
 overlay_region D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* pChunk, overlay_transform* transform, const auto& params)
 {
 	overlay_region region;
 	
+	// Initialize viewport dimensions and quad corner points.
 	region.width = d3dRect.right - d3dRect.left;
 	region.height = d3dRect.bottom - d3dRect.top;
-	
-	region.topLeft.x = pChunk->xyz[3].x;
-	region.topLeft.y = pChunk->xyz[3].z;
-	region.topLeft.z = 0;
-	region.topLeft.w = 1.0f;
 
-	region.topRight.x = pChunk->xyz[3].x;
-	region.topRight.y = pChunk->xyz[3].z;
-	region.topRight.z = 0;
-	region.topRight.w = 1.0f;
+	region.topLeft = {pChunk->xyz[3].x, pChunk->xyz[3].z, 0, 1.0f};
+	region.topRight = {pChunk->xyz[3].x, pChunk->xyz[3].z, 0, 1.0f};
+	region.bottomLeft = {pChunk->xyz[1].x, pChunk->xyz[1].z, 0, 1.0f};
+	region.bottomRight = {pChunk->xyz[1].x, pChunk->xyz[1].z, 0, 1.0f};
 
-	region.bottomLeft.x = pChunk->xyz[1].x;
-	region.bottomLeft.y = pChunk->xyz[1].z;
-	region.bottomLeft.z = 0;
-	region.bottomLeft.w = 1.0f;
-
-	region.bottomRight.x = pChunk->xyz[1].x;
-	region.bottomRight.y = pChunk->xyz[1].z;
-	region.bottomRight.z = 0;
-	region.bottomRight.w = 1.0f;
-
+	// Construct combined World-View-Projection matrix for screen-space mappping.
 	D3DMATRIX localToScreen, trans;
-	MatrixRotateY(&transform->rot, transform->angleHeading * 360.0f / 4096.0f * PI / 180.0f);
-	MatrixRotateX(&transform->mat, transform->anglePitch * 50.0f / 414.0f * PI / 180.0f);
+	MatrixRotateY(&transform->rot, transform->angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
+	MatrixRotateX(&transform->mat, transform->anglePitch * 50.0f / 414.0f * DEGREES_TO_RADIANS);
 	MatrixMultiply(&transform->rot, &transform->rot, &transform->mat);
 	MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 	MatrixMultiply(&transform->mat, &trans, &transform->rot);
+	
 	XformMatrixPerspective(&localToScreen, FovHorizontal(d3dRect.right - d3dRect.left), FovVertical(d3dRect.bottom - d3dRect.top), 1.0f, 2000000.0f);
+	
 	MatrixMultiply(&transform->mat, &pChunk->xForm, &transform->mat);
 	MatrixMultiply(&localToScreen, &transform->mat, &localToScreen);
 
+	// Transform 3D vertices to clip space.
 	MatrixMultiplyVector(&region.topLeft, &localToScreen, &region.topLeft);
 	MatrixMultiplyVector(&region.topRight, &localToScreen, &region.topRight);
 	MatrixMultiplyVector(&region.bottomLeft, &localToScreen, &region.bottomLeft);
 	MatrixMultiplyVector(&region.bottomRight, &localToScreen, &region.bottomRight);
 
+	// Perspective divide to reach Normalized Device Coordinates.
 	region.topLeft.x /= region.topLeft.w;
 	region.topLeft.y /= region.topLeft.w;
 	region.topLeft.z /= region.topLeft.w;
@@ -261,6 +274,7 @@ overlay_region D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* 
 	region.bottomRight.y /= region.bottomRight.w;
 	region.bottomRight.z /= region.bottomRight.w;
 
+	// Remap depth to D3D range and align bounding box corners.
 	region.topLeft.z = region.topLeft.z * 2.0f - 1.0f;
 	region.bottomRight.z = region.bottomRight.z * 2.0f - 1.0f;
 
@@ -278,6 +292,7 @@ overlay_region D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* 
 	return region;
 }
 
+// Returns true if BG overlay quad is both on-screen and within viewable depth range.
 bool D3DIsBGOverlayVisible(overlay_region* region)
 {
 	bool isAnyCornerVisible =  

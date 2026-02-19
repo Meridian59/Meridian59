@@ -20,14 +20,12 @@ constants:
 
 resources:
 
-   territorynews_icon_rsc = tbook.bgf
    territorynews_name_rsc = "Territory War Dispatches"
    territorynews_desc_rsc = "Faction claims, battles, and city control across the territories."
 
 properties:
 
    vrName = territorynews_name_rsc
-   vrIcon = territorynews_icon_rsc
    vrDesc = territorynews_desc_rsc
 messages:
 

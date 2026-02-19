@@ -6740,42 +6740,11 @@ messages:
       local oRoom;
 
       % Initialize the territory wars newsglobes
-      oRoom = Send(self,@FindRoomByNum,#num=RID_DUKE3);
+      oRoom = Send(self,@FindRoomByNum,#num=RID_CORNOTH);
       if oRoom <> $
       {
-         debug("PostPatchUpdates:: Recreating RID_DUKE3");
+         debug("PostPatchUpdates:: Recreating RID_CORNOTH");
          oRoom = Send(oRoom,@Recreate);
-      }
-
-      oRoom = Send(self,@FindRoomByNum,#num=RID_CASTLE2C);
-      if oRoom <> $
-      {
-         debug("PostPatchUpdates:: Recreating RID_CASTLE2C");
-         oRoom = Send(oRoom,@Recreate);
-      }
-
-      oRoom = Send(self,@FindRoomByNum,#num=RID_JAS_TAVERN);
-      if oRoom <> $
-      {
-         debug("PostPatchUpdates:: Recreating RID_JAS_TAVERN");
-         oRoom = Send(oRoom,@Recreate);
-      }
-
-      oRoom = Send(self,@FindRoomByNum,#num=RID_BAR_BAR);
-      if oRoom <> $
-      {
-         debug("PostPatchUpdates:: Recreating RID_BAR_BAR");
-         oRoom = Send(oRoom,@Recreate);
-      }
-
-      % Recreate TerritoryGame because resources have changed
-      if (Send(SYS,@RecreateTerritoryGame))
-      {
-         debug("PostPatchUpdates:: Recreated TerritoryGame");
-      }
-      else
-      {
-         debug("PostPatchUpdates:: Failed to recreate TerritoryGame");
       }
 
       % Ensure existing dynamic lights function as they did prior to the patch (without flickering visually)

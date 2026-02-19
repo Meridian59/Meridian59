@@ -20,7 +20,7 @@ static constexpr float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
 static constexpr int ALTITUDE_MAX = 200;
 static constexpr int ALTITUDE_MIN = -200;
 // Increase the size of the background overlay if necessary.
-static constexpr float SIZE_SCALER = 1.2f;
+static constexpr float BG_OVERLAY_SIZE_SCALE = 1.2f;
 
 // Rendering constants for a 2D quad.
 static constexpr int NUM_VERTICES = 4;
@@ -105,8 +105,8 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	if (IsClearWeather() == false)
 		return;
 
-	long object_width = DibWidth(pDib) * SIZE_SCALER;
-	long object_height = DibHeight(pDib) * SIZE_SCALER;
+	long object_width = DibWidth(pDib) * BG_OVERLAY_SIZE_SCALE;
+	long object_height = DibHeight(pDib) * BG_OVERLAY_SIZE_SCALE;
 
 	// Attempt to batch this overlay into an existing render packet for this texture.
 	d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(bgoRenderStateParams.worldPool, NULL, pDib, 0, 0, 0);
@@ -186,17 +186,14 @@ void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, lon
 	pChunk->xyz[0].x = 0;
 	pChunk->xyz[0].z = 0;
 	pChunk->xyz[0].y = 0;
-
 	// Bottom Left
 	pChunk->xyz[1].x = -(*object_width);
 	pChunk->xyz[1].z = 0;
 	pChunk->xyz[1].y = 0;
-
 	// Top Left
 	pChunk->xyz[2].x = -(*object_width);
 	pChunk->xyz[2].z = *object_height;
 	pChunk->xyz[2].y = 0;
-
 	// Top Right
 	pChunk->xyz[3].x = 0;
 	pChunk->xyz[3].z = *object_height;
@@ -232,7 +229,7 @@ void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, long* object_width, lon
 }
 
 /**
-* Maps 3D overlay coordiantes to 2D screen space.
+* Calculates screen boundaries.  Returns a region used for determining if the BG overlay is on-screen.
 */
 overlay_region D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* pChunk, overlay_transform* transform, const auto& params)
 {
@@ -311,6 +308,7 @@ bool D3DIsBGOverlayVisible(overlay_region* region)
 void D3DFinalizeBGOverlay(BackgroundOverlay* overlay, overlay_region* region, overlay_transform* transform, ObjectRange* range,
 		const BackgroundOverlaysSceneParams& bgoSceneParams)
 {
+	// Convert normalized coordinates to pixel coordinates.
 	int tempLeft = (region->topLeft.x * region->width / 2) + (region->width / 2);
 	int tempRight = (region->bottomRight.x * region->width / 2) + (region->width / 2);
 	int tempTop = (region->topLeft.y * -(region->height / 2)) + (region->height / 2);

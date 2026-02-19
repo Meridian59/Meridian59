@@ -618,7 +618,7 @@ bool HandlePlayer(char *ptr, long len)
 
    Extract(&ptr, &ambient_light, SIZE_LIGHT);
    Extract(&ptr, &player.light, SIZE_LIGHT);
-   Extract(&ptr, &weather_effect, 1);
+   Extract(&ptr, &weather_effect, SIZE_WEATHER_EFFECT);
    
    Extract(&ptr, &bkgnd_id, SIZE_ID);
 

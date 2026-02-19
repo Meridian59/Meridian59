@@ -545,6 +545,7 @@ typedef enum {
 #define SIZE_FILTER          2
 #define SIZE_PROJECTILE_FLAGS 2
 #define SIZE_PROJECTILE_RESERVED 2
+#define SIZE_WEATHER_EFFECT  1	
 
 // new defines for dynamic lighting of d3d client
 #define LIGHT_FLAG_NONE		0x0000

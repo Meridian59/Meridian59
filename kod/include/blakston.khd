@@ -349,6 +349,7 @@
    NID_GUILD_CHARTER = 10
    NID_GODROOM = 14
    NID_GUILD_NEWS = 15
+   NID_TERRITORY_NEWS = 16
 
    % NOTE: Guilds now use their RID_ numbers as their NIDs.  Do not assign them
    %  their own NID.

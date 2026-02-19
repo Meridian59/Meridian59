@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This class extends newsglobe functionality to allow for territory and faction 
+% news to be displayed separately. The news type is NID_NEWS_TERRITORY.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TerritoryNews is News
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   territorynews_name_rsc = "Territory War Dispatches"
+   territorynews_desc_rsc = "Faction claims, battles, and city control across the territories."
+
+properties:
+
+   vrName = territorynews_name_rsc
+   vrDesc = territorynews_desc_rsc
+messages:
+
+   GetNewsPermission(what = $)
+   {
+      if (IsClass(what,&CorNothAmbassador) OR IsClass(what,&DM))
+      {
+         return NEWS_PERMISSION_READ_WRITE;
+      }
+
+      return NEWS_PERMISSION_READ;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -48,11 +48,11 @@ resources:
    Kriipa_dead_icon_rsc = kriipaX.bgf
    Kriipa_dead_name_rsc = "slain Kriipa"
 
-   Kriipa_sound_hit = kr_atkm.ogg
-   Kriipa_sound_miss = kr_atkm.ogg
-   Kriipa_sound_death = kr_dth.ogg
-   Kriipa_sound_aware = kr_awr.ogg
-   Kriipa_sound_land = krip_land.ogg
+   Kriipa_sound_hit = kr_atkm.wav
+   Kriipa_sound_miss = kr_atkm.wav
+   Kriipa_sound_death = kr_dth.wav
+   Kriipa_sound_aware = kr_awr.wav
+   Kriipa_sound_land = krip_land.wav
 
    kriipa_cant_attack = "The kriipa is out of your reach!"
 

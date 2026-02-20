@@ -27,8 +27,8 @@ resources:
    "strength, slowly sapping away at your strength, your health, "
    "and your will to live."
 
-   poison_sound_male = Poisoned.ogg
-   poison_sound_female = Poisonedf.ogg
+   poison_sound_male = Poisoned.wav
+   poison_sound_female = Poisonedf.wav
 
 classvars:
 

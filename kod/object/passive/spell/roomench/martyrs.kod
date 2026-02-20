@@ -37,7 +37,7 @@ resources:
    martyrsbg_new_entrant = \
       "You imagine you can feel the presence of the gods watching you."
 
-   martrysbg_sound = kmatbat.ogg
+   martrysbg_sound = kmatbat.wav
 
 classvars:
 

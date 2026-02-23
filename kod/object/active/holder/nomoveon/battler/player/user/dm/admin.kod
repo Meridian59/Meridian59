@@ -360,12 +360,77 @@ messages:
          return;
       }
 
+      %%% More specific matches must come before less specific ones
+      %%% since StringContain is used (substring match).
+
+      if StringContain(string,"place table lamp")
+      {
+         oObject = create(&TableLamp);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place kocatan lamp")
+      {
+         oObject = create(&KocatanLamp);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
       if StringContain(string,"place lamp")
       {
          oObject = create(&Lamp);
 
          Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place brazier switch")
+      {
+         oObject = create(&BrazierSwitch);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place skull brazier")
+      {
+         oObject = create(&SkullBrazier);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place kocatan brazier")
+      {
+         oObject = create(&KocatanBrazier);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
 
          return;
       }
@@ -375,7 +440,9 @@ messages:
          oObject = create(&Brazier);
 
          Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
 
          return;
       }
@@ -385,7 +452,9 @@ messages:
          oObject = create(&Candelabra);
 
          Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
 
          return;
       }
@@ -395,7 +464,9 @@ messages:
          oObject = create(&Candle);
 
          Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
 
          return;
       }
@@ -405,7 +476,45 @@ messages:
          oObject = create(&Firepit);
 
          Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place smoke column")
+      {
+         oObject = create(&SmokeColumn);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place orc torch")
+      {
+         oObject = create(&OrcTorch);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+
+         return;
+      }
+
+      if StringContain(string,"place glow tree")
+      {
+         oObject = create(&GlowTree);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
 
          return;
       }

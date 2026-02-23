@@ -124,7 +124,8 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute;
+      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute,
+            lFlickererTypes, lEntry;
 
       % Admin mode commands use only string literals, not resources,
       % to ensure the English command always works regardless of any
@@ -360,160 +361,29 @@ messages:
          return;
       }
 
-      if StringContain(string,"place table lamp")
+      %%% Data-driven placement of all Flickerer light types.
+      lFlickererTypes = [ ["place table lamp",      &TableLamp],
+                          ["place kocatan lamp",    &KocatanLamp],
+                          ["place lamp",            &Lamp],
+                          ["place brazier switch",  &BrazierSwitch],
+                          ["place skull brazier",   &SkullBrazier],
+                          ["place kocatan brazier", &KocatanBrazier],
+                          ["place brazier",         &Brazier],
+                          ["place candelabra",      &Candelabra],
+                          ["place candle",          &Candle],
+                          ["place firepit",         &Firepit],
+                          ["place smoke column",    &SmokeColumn],
+                          ["place orc torch",       &OrcTorch],
+                          ["place glow tree",       &GlowTree] ];
+
+      for lEntry in lFlickererTypes
       {
-         oObject = create(&TableLamp);
+         if StringEqual(string, First(lEntry))
+         {
+            Send(self, @AdminPlaceFlickerer, #class=Nth(lEntry, 2));
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place kocatan lamp")
-      {
-         oObject = create(&KocatanLamp);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place lamp")
-      {
-         oObject = create(&Lamp);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place brazier switch")
-      {
-         oObject = create(&BrazierSwitch);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place skull brazier")
-      {
-         oObject = create(&SkullBrazier);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place kocatan brazier")
-      {
-         oObject = create(&KocatanBrazier);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place brazier")
-      {
-         oObject = create(&Brazier);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candelabra")
-      {
-         oObject = create(&Candelabra);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candle")
-      {
-         oObject = create(&Candle);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place firepit")
-      {
-         oObject = create(&Firepit);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place smoke column")
-      {
-         oObject = create(&SmokeColumn);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place orc torch")
-      {
-         oObject = create(&OrcTorch);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place glow tree")
-      {
-         oObject = create(&GlowTree);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-
-         return;
+            return;
+         }
       }
 
       if StringEqual(string,"logoffghost on")
@@ -623,6 +493,21 @@ messages:
       }
 
       propagate;
+   }
+
+   AdminPlaceFlickerer(class=$)
+   "Creates a Flickerer light of the given class at the admin's position."
+   {
+      local oObject;
+
+      oObject = Create(class);
+      Send(poOwner, @NewHold, #what=oObject,
+           #new_row=Send(self, @GetRow),
+           #new_col=Send(self, @GetCol),
+           #fine_row=Send(self, @GetFineRow),
+           #fine_col=Send(self, @GetFineCol));
+
+      return;
    }
 
    %%% Investigator stuff

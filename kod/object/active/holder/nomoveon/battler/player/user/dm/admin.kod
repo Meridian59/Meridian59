@@ -360,9 +360,6 @@ messages:
          return;
       }
 
-      %%% More specific matches must come before less specific ones
-      %%% since StringContain is used (substring match).
-
       if StringContain(string,"place table lamp")
       {
          oObject = create(&TableLamp);

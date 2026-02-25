@@ -155,7 +155,8 @@ messages:
         #parm1=send(oAmmo,@GetName));
 
       send(send(who,@GetOwner),@SomethingShot,#who=who,
-        #target=send(who,@GetKillTarget), #projectile=oAmmo);
+        #target=send(who,@GetKillTarget), #projectile=oAmmo, 
+        #flags=send(oAmmo,@GetProjectileLightFlags));
 
       send(oAmmo,@SubtractNumber,#number=1);
 

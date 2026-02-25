@@ -3057,7 +3057,8 @@ messages:
       {
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,
                         #mob=TRUE,#playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);       
+                        #karma=Send(self,@GetKarma),#monstername=vrName,
+                        #drawfx=viDead_drawfx);       
       }
 
       return oBody;                 

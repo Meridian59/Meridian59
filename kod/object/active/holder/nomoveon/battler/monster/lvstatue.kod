@@ -1077,7 +1077,7 @@ messages:
    {
       return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
                     #playername=Send(killer,@GetTrueName),#mob=TRUE,
-                    #monstername=LivingStatue_name_rsc,
+                    #monstername=LivingStatue_name_rsc,#karma=viKarma,
                     #PlayerBodyOverlay=vrDead_Legs,#DrawFX=viDead_drawfx);
    }
 

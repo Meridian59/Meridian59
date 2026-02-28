@@ -70,6 +70,16 @@ messages:
 
    Constructed()
    {
+      Send(self,@InitPlaceableTypes);
+
+      propagate;
+   }
+
+   InitPlaceableTypes()
+   "Builds the placeable types list. Called from Constructed() for new "
+   "Admin objects, and lazily from UserSay() for existing saved ones. "
+   "If entries are added or removed, use PostPatch to nil plPlaceableTypes."
+   {
       plPlaceableTypes = [ ["place table lamp",      &TableLamp],
                            ["place kocatan lamp",    &KocatanLamp],
                            ["place lamp",            &Lamp],
@@ -84,7 +94,7 @@ messages:
                            ["place orc torch",       &OrcTorch],
                            ["place glow tree",       &GlowTree] ];
 
-      propagate;
+      return;
    }
 
    UserLogonHook()
@@ -383,6 +393,14 @@ messages:
       }
 
       %%% Data-driven placement of objects by class.
+      % Lazy init: covers existing saved Admin objects where Constructed()
+      % didn't run. To add new entries, add them in InitPlaceableTypes()
+      % and clear plPlaceableTypes via PostPatchUpdates().
+      if plPlaceableTypes = $
+      {
+         Send(self,@InitPlaceableTypes);
+      }
+
       for lEntry in plPlaceableTypes
       {
          if StringEqual(string, First(lEntry))

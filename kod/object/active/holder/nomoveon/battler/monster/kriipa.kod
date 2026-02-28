@@ -52,6 +52,7 @@ resources:
    Kriipa_sound_miss = kr_atkm.wav
    Kriipa_sound_death = kr_dth.wav
    Kriipa_sound_aware = kr_awr.wav
+   Kriipa_sound_land = krip_land.wav
 
    kriipa_cant_attack = "The kriipa is out of your reach!"
 
@@ -76,6 +77,7 @@ classvars:
    vrSound_miss = Kriipa_sound_miss
    vrSound_aware = Kriipa_sound_aware
    vrSound_death = Kriipa_sound_death
+   vrSound_land = Kriipa_sound_land
 
 properties:
 
@@ -201,7 +203,7 @@ messages:
       piAnimation = ANIM_JUMPUP;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }   
 
@@ -210,7 +212,9 @@ messages:
       piAnimation = ANIM_JUMPDOWN;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+      Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_land,
+           #flags=SOUND_RANDOM_PITCH);
+
       return;
    }   
 

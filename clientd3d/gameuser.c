@@ -25,6 +25,9 @@ static ID idTarget = INVALID_ID;		//	Target object, or INVALID_ID if no target s
 static void ApplyCallback(ID obj2);
 static void SetDescParamsByRoomObject(room_contents_node *r, HWND hwnd);
 
+static const char* szTargetMe = "me";
+static const char *szTargetSelf = "self";
+
 extern bool gbMouselook;
 extern RECT gD3DRect;
 /************************************************************************/
@@ -741,6 +744,86 @@ void UserTargetNextOrPrevious(bool bTargetNext)
 		}
 		list_delete(object_list);
 	}
+}
+
+/************************************************************************/
+/*
+ * GetTargetIDFromString:  Tries to find any visible object with the given name 
+ * - also returns the player ID if 'self' or 'me' is given
+ */
+std::vector<ID> GetTargetsByName(const std::string &pName, bool allow_self)
+{
+   std::vector<ID> target_ids;
+
+   // Skip spaces, convert to lowercase
+   std::string name = pName;
+   name.erase(0, name.find_first_not_of(' '));
+   std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+   if (allow_self)
+   {
+      // Quick check for self/me
+      if (name == szTargetSelf || name == szTargetMe)
+      {
+         target_ids.push_back(player.id);
+         return target_ids;
+      }
+   }
+
+   // Get a vector of all potential target entries
+   std::vector<std::pair<const std::string, ID>> entries;
+   std::string objName;
+
+   // Add local player to entries, so it can be matched by name
+   if (allow_self)
+   {
+      objName = LookupNameRsc(player.name_res);
+      std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
+      entries.push_back(std::make_pair(objName, player.id));
+   }
+
+   // Get list of visible objects that are players or enemies
+   list_type object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 0, OF_ATTACKABLE | OF_PLAYER, OF_INVISIBLE);
+   if (object_list)
+   {
+      // Try to find named target in list - convert to lowercase for comparison
+      room_contents_node *rcnObject = NULL;
+      int iListIndex = 0;
+      while (rcnObject = (room_contents_node *) list_nth_item(object_list, iListIndex))
+      {
+         objName = LookupNameRsc(rcnObject->obj.name_res);
+         std::transform(objName.begin(), objName.end(), objName.begin(), ::tolower);
+
+         entries.push_back(std::make_pair(objName, rcnObject->obj.id));
+         iListIndex++;
+      }
+      list_delete(object_list);
+   }
+
+   // Do the search to see if we can find any matches by name
+   bool exact_match = false;
+   for (const auto &entry : entries)
+   {
+      if (entry.first.starts_with(name))
+      {
+         if (entry.first.length() == name.length())
+         {
+            // Exact match found - clear any previous partial matches
+            if (!exact_match)
+            {
+               exact_match = true;
+               target_ids.clear();
+            }
+            target_ids.push_back(entry.second);
+         }
+         else if (!exact_match)
+         {
+            // Only add partial matches if no exact match found yet
+            target_ids.push_back(entry.second);
+         }
+      }
+   }
+   return target_ids;
 }
 
 /************************************************************************/

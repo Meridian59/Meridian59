@@ -361,6 +361,8 @@
 #define IDM_GROUP                       4009
 #define IDM_VERBALIAS                   4010
 #define IDM_DANCE                       4011
+#define IDS_DUPLICATETARGETNAME         4012
+#define IDS_NOTARGETFOUND               4013
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

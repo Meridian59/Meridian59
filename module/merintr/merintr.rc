@@ -425,7 +425,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    191                     "Você não consegue ver o alvo selecionado."
+    IDS_TARGETNOTVISIBLEFORCAST "Você não consegue ver o alvo selecionado."
+    IDS_DUPLICATETARGETNAME     "Vários alvos encontrados com esse nome."
+    IDS_NOTARGETFOUND           "Nenhum alvo encontrado com esse nome."
 END
 
 STRINGTABLE 
@@ -785,6 +787,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_TARGETNOTVISIBLEFORCAST "Du kannst das ausgewählte Ziel nicht sehen."
+    IDS_DUPLICATETARGETNAME     "Mehrere Ziele mit diesem Namen gefunden."
+    IDS_NOTARGETFOUND           "Kein Ziel mit diesem Namen gefunden."
 END
 
 STRINGTABLE 
@@ -1453,6 +1457,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_TARGETNOTVISIBLEFORCAST "You can't see your selected target."
+    IDS_DUPLICATETARGETNAME     "Duplicate targets found with that name."
+    IDS_NOTARGETFOUND           "No target found with that name."
 END
 
 STRINGTABLE 

@@ -44,6 +44,7 @@ ID   GetUserTargetID();
 void UserMouselookToggle(void);
 bool UserMouselookIsEnabled(void);
 void UserTargetSelf(void);
+std::vector<ID> GetTargetsByName(const std::string& pName, bool allow_self);
 
 void GotObjectContents(ID object_id, list_type contents);
 

@@ -51,21 +51,10 @@ resources:
 
 classvars:
 
-   clPlaceableTypes = [ ["place table lamp",      &TableLamp],\
-                        ["place kocatan lamp",    &KocatanLamp],\
-                        ["place lamp",            &Lamp],\
-                        ["place brazier switch",  &BrazierSwitch],\
-                        ["place skull brazier",   &SkullBrazier],\
-                        ["place kocatan brazier", &KocatanBrazier],\
-                        ["place brazier",         &Brazier],\
-                        ["place candelabra",      &Candelabra],\
-                        ["place candle",          &Candle],\
-                        ["place firepit",         &Firepit],\
-                        ["place smoke column",    &SmokeColumn],\
-                        ["place orc torch",       &OrcTorch],\
-                        ["place glow tree",       &GlowTree] ]
 
 properties:
+
+   plPlaceableTypes = $
 
    pbCapableAdmin = TRUE
    pbSay_commands = TRUE
@@ -78,6 +67,25 @@ properties:
    piTour_count
 
 messages:
+
+   Constructed()
+   {
+      plPlaceableTypes = [ ["place table lamp",      &TableLamp],
+                           ["place kocatan lamp",    &KocatanLamp],
+                           ["place lamp",            &Lamp],
+                           ["place brazier switch",  &BrazierSwitch],
+                           ["place skull brazier",   &SkullBrazier],
+                           ["place kocatan brazier", &KocatanBrazier],
+                           ["place brazier",         &Brazier],
+                           ["place candelabra",      &Candelabra],
+                           ["place candle",          &Candle],
+                           ["place firepit",         &Firepit],
+                           ["place smoke column",    &SmokeColumn],
+                           ["place orc torch",       &OrcTorch],
+                           ["place glow tree",       &GlowTree] ];
+
+      propagate;
+   }
 
    UserLogonHook()
    {
@@ -375,7 +383,7 @@ messages:
       }
 
       %%% Data-driven placement of objects by class.
-      for lEntry in clPlaceableTypes
+      for lEntry in plPlaceableTypes
       {
          if StringEqual(string, First(lEntry))
          {

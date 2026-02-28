@@ -51,6 +51,19 @@ resources:
 
 classvars:
 
+   clPlaceableTypes = [ ["place table lamp",      &TableLamp],
+                        ["place kocatan lamp",    &KocatanLamp],
+                        ["place lamp",            &Lamp],
+                        ["place brazier switch",  &BrazierSwitch],
+                        ["place skull brazier",   &SkullBrazier],
+                        ["place kocatan brazier", &KocatanBrazier],
+                        ["place brazier",         &Brazier],
+                        ["place candelabra",      &Candelabra],
+                        ["place candle",          &Candle],
+                        ["place firepit",         &Firepit],
+                        ["place smoke column",    &SmokeColumn],
+                        ["place orc torch",       &OrcTorch],
+                        ["place glow tree",       &GlowTree] ]
 
 properties:
 
@@ -125,7 +138,7 @@ messages:
    UserSay(string = $,type = $)
    {
       local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute,
-            lFlickererTypes, lEntry;
+            lEntry;
 
       % Admin mode commands use only string literals, not resources,
       % to ensure the English command always works regardless of any
@@ -361,26 +374,12 @@ messages:
          return;
       }
 
-      %%% Data-driven placement of all Flickerer light types.
-      lFlickererTypes = [ ["place table lamp",      &TableLamp],
-                          ["place kocatan lamp",    &KocatanLamp],
-                          ["place lamp",            &Lamp],
-                          ["place brazier switch",  &BrazierSwitch],
-                          ["place skull brazier",   &SkullBrazier],
-                          ["place kocatan brazier", &KocatanBrazier],
-                          ["place brazier",         &Brazier],
-                          ["place candelabra",      &Candelabra],
-                          ["place candle",          &Candle],
-                          ["place firepit",         &Firepit],
-                          ["place smoke column",    &SmokeColumn],
-                          ["place orc torch",       &OrcTorch],
-                          ["place glow tree",       &GlowTree] ];
-
-      for lEntry in lFlickererTypes
+      %%% Data-driven placement of objects by class.
+      for lEntry in clPlaceableTypes
       {
          if StringEqual(string, First(lEntry))
          {
-            Send(self, @AdminPlaceFlickerer, #class=Nth(lEntry, 2));
+            Send(self, @AdminPlaceObject, #class=Nth(lEntry, 2));
 
             return;
          }
@@ -495,8 +494,8 @@ messages:
       propagate;
    }
 
-   AdminPlaceFlickerer(class=$)
-   "Creates a Flickerer light of the given class at the admin's position."
+   AdminPlaceObject(class=$)
+   "Creates an object of the given class at the admin's position."
    {
       local oObject;
 

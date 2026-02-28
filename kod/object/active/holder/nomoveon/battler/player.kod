@@ -757,10 +757,6 @@ properties:
    %  nicer players. Named something unusual to deter experimentation.
    piFlags3 = 0
 
-   % Whether player has an active glow effect (from glowing weapon).
-   % Separate from flicker flag so glow can have different light properties.
-   pbHasGlow = FALSE
-
    % player starts unguilded--doesn't do much yet
    poGuild = $
    piGuildRejoinTimestamp = 0
@@ -9096,9 +9092,8 @@ messages:
    {
       poIllusion_set = $;
 
-      % Recalculate the flicker and glow flags.
-      Send(self,@RecalcFlickerFlag);
-      Send(self,@RecalcGlowFlag);
+      % Recalculate the flicker and glow draw effects.
+      Send(self,@RecalcDrawFXFlags);
 
       % Reset our drawFX.  Also does the SomethingChanged bit if appropriate.
       Send(self,@ResetPlayerDrawFX);
@@ -10038,90 +10033,63 @@ messages:
       return;
    }
 
-   SetFlickerFlag()
+   RecalcDrawFXFlags()
+   "Recalculates flicker flag by querying equipped items."
+   "Glow (steady light) suppresses torch flicker on the character sprite."
    {
-      % Glow takes priority - don't set flicker if glow is active.
-      if pbHasGlow
-      {
-         return;
-      }
+      local i, bHasGlow, bHasTorch;
 
-      piDrawfx = piDrawfx | FLICKERING_YES;
-
-      return;
-   }
-
-   ClearFlickerFlag()
-   {
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
-
-      return;
-   }
-
-   SetGlowFlag()
-   {
-      pbHasGlow = TRUE;
-
-      % Glow takes priority over torch flicker - clear flicker flag
-      % so the steady blue light isn't affected by torch.
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
-
-      return;
-   }
-
-   ClearGlowFlag()
-   {
-      pbHasGlow = FALSE;
-
-      % Recalculate flicker flag in case torch is still equipped.
-      Send(self,@RecalcFlickerFlag);
-
-      return;
-   }
-
-   RecalcFlickerFlag()
-   "Recalculates flicker flag based on equipped torch."
-   {
-      local i;
-
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
-
-      % Glow takes priority - don't set flicker if glow is active.
-      if pbHasGlow
-      {
-         return;
-      }
+      bHasGlow = FALSE;
+      bHasTorch = FALSE;
 
       for i in plUsing
       {
          if IsClass(i,&Torch)
          {
-            piDrawfx = piDrawfx | FLICKERING_YES;
-
-            return;
+            bHasTorch = TRUE;
          }
+
+         if IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
+         {
+            bHasGlow = TRUE;
+         }
+      }
+
+      % Glow suppresses visual flickering -- steady light looks better.
+      if bHasTorch AND NOT bHasGlow
+      {
+         piDrawfx = piDrawfx | FLICKERING_YES;
+      }
+      else
+      {
+         piDrawfx = piDrawfx & (~FLICKERING_YES);
       }
 
       return;
    }
 
-   RecalcGlowFlag()
-   "Recalculates glow flag based on equipped glowing weapon."
+   MixLightColors(iColor1 = 0, iColor2 = 0)
+   "Mixes two RGB 5-5-5 light colors by averaging their R, G, B components."
    {
-      local i;
+      local iR1, iG1, iB1, iR2, iG2, iB2, iR, iG, iB;
 
-      pbHasGlow = FALSE;
-      for i in plUsing
-      {
-         if IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
-         {
-            pbHasGlow = TRUE;
+      % Extract RGB components from 5-5-5 packed format.
+      % Bits 14-10 = Red, Bits 9-5 = Green, Bits 4-0 = Blue.
+      iR1 = (iColor1 / 1024) & 31;
+      iG1 = (iColor1 / 32) & 31;
+      iB1 = iColor1 & 31;
 
-            return;
-         }
-      }
+      iR2 = (iColor2 / 1024) & 31;
+      iG2 = (iColor2 / 32) & 31;
+      iB2 = iColor2 & 31;
 
-      return;
+      % Average each component.
+      iR = (iR1 + iR2) / 2;
+      iG = (iG1 + iG2) / 2;
+      iB = (iB1 + iB2) / 2;
+
+      % Repack into RGB 5-5-5.
+      return (iR * 1024) + (iG * 32) + iB;
    }
 
    BreakTrance(event = 0, castwhat = $, usewhat = $)
@@ -12387,7 +12355,14 @@ messages:
    }
 
    SendLightingInformation()
+   "Queries equipped items directly for their light color and intensity."
+   "When multiple sources are active, their colors are mixed."
+   "Steady (non-flickering) light is preferred over wavering when present."
    {
+      local i, oWeapAtt, iFlags, iIntensity, iColor, bHasLight,
+            iTorchColor, iTorchIntensity, iGlowColor, iGlowIntensity,
+            bHasSteady;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12398,35 +12373,78 @@ messages:
 
          return;
       }
-      else
+
+      % Query equipped items for their light properties.
+      iTorchColor = 0;
+      iTorchIntensity = 0;
+      iGlowColor = 0;
+      iGlowIntensity = 0;
+
+      for i in plUsing
       {
-         % A bit of a kludge.  Ideally, we should query the objects we are using
-         %  to find out if any want to add lighting information to us.
-
-         % Check for glow effect first (from glowing weapon spell).
-         % Uses steady magical blue light.
-         if pbHasGlow
+         if IsClass(i,&Torch)
          {
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % Intensity: moderate radius, slightly smaller than torch.
-            AddPacket(1,4);
-            % Color: vivid magical blue.
-            AddPacket(2,LIGHT_FOUNTAIN); % LIGHT_GLOW -- more blue
-
-            return;
+            iTorchColor = Send(i,@GetLightColor);
+            iTorchIntensity = Send(i,@GetLightIntensity);
          }
 
-         % Torch uses flickering fire light.
-         if (piDrawFX & FLICKERING_YES)
+         if IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
          {
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC | LIGHT_FLAG_WAVERING));
-            % Intensity of light flickering out of 255.
-            AddPacket(1,5);
-            % Color
-            AddPacket(2,LIGHT_FIRE);
-
-            return;
+            oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+            iGlowColor = Send(oWeapAtt,@GetLightColor);
+            iGlowIntensity = Send(oWeapAtt,@GetLightIntensity);
          }
+      }
+
+      % Accumulate light from active sources, mixing colors.
+      iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+      iIntensity = 0;
+      iColor = 0;
+      bHasLight = FALSE;
+      bHasSteady = FALSE;
+
+      if iGlowColor <> 0
+      {
+         iColor = iGlowColor;
+         iIntensity = iGlowIntensity;
+         bHasLight = TRUE;
+         bHasSteady = TRUE;
+      }
+
+      if iTorchColor <> 0
+      {
+         if bHasLight
+         {
+            % Mix with existing light source.
+            iColor = Send(self,@MixLightColors,
+                          #iColor1=iColor,#iColor2=iTorchColor);
+            if iTorchIntensity > iIntensity
+            {
+               iIntensity = iTorchIntensity;
+            }
+         }
+         else
+         {
+            iColor = iTorchColor;
+            iIntensity = iTorchIntensity;
+         }
+
+         bHasLight = TRUE;
+      }
+
+      if bHasLight
+      {
+         % Prefer steady light when a non-flickering source is present.
+         if NOT bHasSteady
+         {
+            iFlags = iFlags | LIGHT_FLAG_WAVERING;
+         }
+
+         AddPacket(2,iFlags);
+         AddPacket(1,iIntensity);
+         AddPacket(2,iColor);
+
+         return;
       }
 
       propagate;

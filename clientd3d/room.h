@@ -24,6 +24,7 @@ typedef struct
 
    DWORD bkgnd;           /* Resource ID of background bitmap; 0 if none */
    BYTE ambient_light;    /* Intensity of ambient light, 0 = min, 15 = max */
+   BYTE weather_effect;	  // Current weather effect, such as rain or snow.
 
    BSPTree tree;          /* BSP tree of room */
    BSPnode *nodes;        // Array of nodes in use

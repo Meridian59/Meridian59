@@ -199,34 +199,34 @@ void GraphicsResetFont(void)
 /************************************************************************/
 void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 {
-	PDIB pdibCeiling = NULL;
-
 	// Only drawn in room, before overlays are drawn.
-
-	pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
-
-	// sand
+	if (IsBlind()) return;
+	
 	if (effects.sand)
 	{
 		SandDib(gBits, MAXX, MAXY, 200/*drops*/);
 		RedrawAll();
 	}
 
-#if 0
-	// rain
-	if (effects.raining && !pdibCeiling)
+	if (effects.raining)
 	{
-		RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
-		RedrawAll();
+		PDIB pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
+		if (!pdibCeiling)
+		{
+			RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/);
+			RedrawAll();
+		}
 	}
 
-	// snow
-	if (effects.snowing && !pdibCeiling)
+	if (effects.snowing)
 	{
-		SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
-		RedrawAll();
+		PDIB pdibCeiling = GetPointCeilingTexture(params->viewer_x, params->viewer_y);
+		if (!pdibCeiling)
+		{
+			SnowDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/);
+			RedrawAll();
+		}
 	}
-#endif
 }
 
 /************************************************************************/

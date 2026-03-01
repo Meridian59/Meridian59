@@ -216,6 +216,7 @@ enum {
    BP_SET_VIEW              = 237,
    BP_RESET_VIEW            = 238,
    BP_REQ_GET_FROM_CONTAINER  = 239,
+   BP_WEATHER               = 240,
 };
 
 // User commands (in BP_USERCOMMAND message)
@@ -440,6 +441,14 @@ enum {
    EFFECT_XLATOVERRIDE	= 17,  // Use this xlat at end over the whole screen
 };
 
+/* Weather codes */
+enum {
+   WEATHER_CLEAR = 1,
+   WEATHER_CLOUDY = 2,
+   WEATHER_RAIN = 3,
+   WEATHER_SNOW = 4,
+};
+
 /* Room animation action codes */
 enum {
    RA_NONE               = 0,  // Do nothing special
@@ -536,6 +545,7 @@ typedef enum {
 #define SIZE_FILTER          2
 #define SIZE_PROJECTILE_FLAGS 2
 #define SIZE_PROJECTILE_RESERVED 2
+#define SIZE_WEATHER_EFFECT  1	
 
 // new defines for dynamic lighting of d3d client
 #define LIGHT_FLAG_NONE		0x0000

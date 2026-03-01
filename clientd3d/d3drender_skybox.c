@@ -12,8 +12,10 @@
 
 static const float SKYBOX_DIMENSIONS = 75000.0f;
 static const float SKYBOX_Y = 37000.0f;
+static const int NUM_SKYBOXES = 9;
+static const int SKYBOX_SIDES = 6;
 
-static LPDIRECT3DTEXTURE9 gpSkyboxTextures[5][6];
+static LPDIRECT3DTEXTURE9 gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 static int gCurBackground;
 static ID tempBkgnd = 0;
 
@@ -141,11 +143,18 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 
 	if (gpSkyboxTextures[0][0] == NULL)
 	{
+		// Clear skies
 		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
 		D3DRenderBackgroundsLoad("./resource/skyb.bsf", 1);
 		D3DRenderBackgroundsLoad("./resource/skyc.bsf", 2);
 		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
+		// Frenzy sky
 		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
+		// Cloudy skies
+		D3DRenderBackgroundsLoad("./resource/3skya.png", 5);
+		D3DRenderBackgroundsLoad("./resource/3skyb.png", 6);
+		D3DRenderBackgroundsLoad("./resource/3skyc.png", 7);
+		D3DRenderBackgroundsLoad("./resource/3skyd.png", 8);
 	}
 	if (tempBkgnd != background)
 	{
@@ -227,7 +236,7 @@ void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int angle
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
 		D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < SKYBOX_SIDES; i++)
 	{
 		pPacket = D3DRenderPacketFindMatch(pPool, gpSkyboxTextures[gCurBackground][i], NULL, 0, 0, 0);
 		if (NULL == pPacket)
@@ -280,7 +289,8 @@ bool D3DRenderBackgroundSet(ID background)
 	char* filename = LookupRsc(background);
 
 	if (!filename) return false;
-
+	
+	// This draft PR still uses clear skies for cloudy weather until cloudy skyboxes are added.
 	static const std::unordered_map<std::string, int> backgroundMap = {
 		{"1skya.bgf", 0},
 		{"2skya.bgf", 0},
@@ -290,7 +300,11 @@ bool D3DRenderBackgroundSet(ID background)
 		{"2skyc.bgf", 2},
 		{"1skyd.bgf", 3},
 		{"2skyd.bgf", 3},
-		{"redsky.bgf", 4}
+		{"redsky.bgf", 4},
+		{"3sky.bgf", 5},
+		{"3skyb.bgf", 6},
+		{"3skyc.bgf", 7},
+		{"3skyd.bgf", 8}
 	};
 
 	auto it = backgroundMap.find(filename);
@@ -307,9 +321,9 @@ bool D3DRenderBackgroundSet(ID background)
 */
 void D3DRenderSkyBoxShutdown()
 {
-	for (int j = 0; j < 5; j++)
+	for (int j = 0; j < NUM_SKYBOXES; j++)
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < SKYBOX_SIDES; i++)
 		{
 			if (gpSkyboxTextures[j][i])
 			{
@@ -326,6 +340,14 @@ void D3DRenderSkyBoxShutdown()
 */
 void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 {
+	// The .bsf/.png files for skyboxes are actually six .png files stored in a single 
+	// file by appending each picture's binary data into one file.
+	//
+	// The pictures for each cubemap face are stored in this order:
+	// Back -> Bottom -> Front -> Left -> Right -> Top
+	//
+	// Color depth is also 24-bit since the alpha channel (transparency) isn't used.
+	
 	FILE* pFile;
 	png_structp	pPng = NULL;
 	png_infop	pInfo = NULL;
@@ -380,7 +402,7 @@ void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 		int	i;
 		png_bytep curRow;
 
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < SKYBOX_SIDES; i++)
 		{
 			pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 			pInfo = png_create_info_struct(pPng);

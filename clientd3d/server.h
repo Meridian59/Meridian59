@@ -129,6 +129,7 @@ bool HandleEchoPing(char *ptr, long len);
 bool HandleSectorLight(char *ptr, long len);
 bool HandleSetView(char *ptr, long len);
 bool HandleResetView(char *ptr, long len);
+bool HandleWeather(char *ptr, long len);
 
 /* Login mode handlers */
 bool HandleLoginOk(char *ptr,long len);

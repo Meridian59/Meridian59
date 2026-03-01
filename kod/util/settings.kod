@@ -111,6 +111,28 @@ properties:
    % Used for debugging the placement of hot plates.
    pbReportHotPlates = FALSE
 
+
+   %
+   % Weather settings
+   %
+
+   % Used by system.kod to check hourly intervals within a day for checking if
+   % the weather should change.  Setting this to 0 turns off the hourly checks, 
+   % while setting this to 24 (max) performs the check once every midnight.
+   piWeatherHourlyInterval = 3
+   
+   % Percentage chance to shift weather based on the current weather.
+   piClearToCloudyChance = 20
+   piCloudyToClearChance = 30
+   piCloudyToStormyChance = 40
+   piStormyToCloudyChance = 75
+   
+   % Chance for mountain climates to turn local rain to snow.
+   piMountain_snow_chance = 20
+   
+   % Chance for arid climates to rain or snow.
+   piArid_stormy_chance = 5
+
    %
    % Miscellaneous
    %
@@ -302,7 +324,45 @@ messages:
       return pbReportHotPlates;
    }
 
+   %
+   % Weather settings
+   %
 
+   GetWeatherHourlyInterval()
+   {
+      return piWeatherHourlyInterval;
+   }
+   
+   GetClearToCloudy()
+   {
+      return piClearToCloudyChance;
+   }
+   
+   GetCloudyToClear()
+   {
+      return piCloudyToClearChance;
+   }
+
+   GetCloudyToStormy()
+   {
+      return piCloudyToStormyChance;
+   }
+   
+   GetStormyToCloudy()
+   {
+      return piStormyToCloudyChance;
+   }
+   
+   GetMountainSnowChance()
+   {
+      return piMountain_snow_chance;
+   }
+
+   GetAridStormyChance()
+   {
+      return piArid_stormy_chance;
+   }   
+   
    %
    % Miscellaneous
    %

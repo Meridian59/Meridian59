@@ -70,6 +70,9 @@ properties:
    piPortal_counter = 0
    pbPuzzle = TRUE
 
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_MOUNTAIN
+
 messages:
 
    Constructed()

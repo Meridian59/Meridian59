@@ -41,6 +41,10 @@ properties:
 
    prRoom = room_castle1
    piRoom_num = RID_CASTLE1
+   
+   % For seeing weather outside the windows.
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_MOUNTAIN
 
 messages:
 

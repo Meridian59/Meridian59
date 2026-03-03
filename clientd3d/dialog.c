@@ -349,16 +349,8 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			strncpy(rawDescription, descriptionBuffer, MAX_PAGE_DESCRIPTION_TEXT);
 			rawDescription[MAX_PAGE_DESCRIPTION_TEXT] = '\0';
 			updatingText = true;
-			if (info->flags & DF_PLAINTEXT)
-			{
-				SetWindowText(hEdit, descriptionBuffer);
-				ResetRichEditFormatting(hEdit);
-			}
-			else
-			{
-				RichEditSetMarkdownText(hEdit, descriptionBuffer,
-					GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
-			}
+			RichEditSetMarkdownText(hEdit, descriptionBuffer,
+				GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
 			updatingText = false;
 		}
 		
@@ -372,7 +364,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		}
 		
 		// Can this player edit this object's description?
-		if ((info->flags & DF_EDITABLE) && !(info->flags & DF_PLAINTEXT))
+		if (info->flags & DF_EDITABLE)
 		{
 			HWND hCheckbox = GetDlgItem(hDlg, IDC_DESCEDIT);
 			// Add WS_CLIPSIBLINGS so the owner-draw name control won't paint over us.

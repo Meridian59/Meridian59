@@ -227,7 +227,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       UserSelectColors(COLOR_INVNUMFGD, COLOR_INVNUMBGD);
       break;
    case ID_COLOR_CODE:
-      UserSelectColors(COLOR_CODEFGD, COLOR_CODEBGD);
+      UserSelectColor(COLOR_CODEFGD);
       break;
    case ID_COLOR_LINK:
       UserSelectColor(COLOR_LINKFGD);

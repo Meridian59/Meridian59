@@ -24,6 +24,7 @@ static ChildPlacement mailsend_controls[] = {
 { IDC_MAILEDIT,   RDI_ALL },
 { IDC_SUBJECT,    RDI_LEFT | RDI_RIGHT | RDI_TOP},
 { IDC_RECIPIENTS, RDI_LEFT | RDI_RIGHT | RDI_TOP},
+{ IDC_PREVIEW,    RDI_RIGHT | RDI_TOP },
 { IDC_OK,         RDI_LEFT | RDI_HPIN | RDI_BOTTOM },
 { IDCANCEL,       RDI_LEFT | RDI_HPIN | RDI_BOTTOM },
 { 0,              0 },   // Must end this way
@@ -81,6 +82,7 @@ INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 {
    static HWND hEdit, hSubject, hRecipients;
    static MailInfo *reply;
+   static char rawMailBody[MAXMAIL];
    MINMAXINFO *lpmmi;
 
    switch (message)
@@ -91,7 +93,18 @@ INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       hEdit = GetDlgItem(hDlg, IDC_MAILEDIT);
       hSubject = GetDlgItem(hDlg, IDC_SUBJECT);
       hRecipients = GetDlgItem(hDlg, IDC_RECIPIENTS);
-      
+
+      // Rich Edit controls don't respond to WM_CTLCOLOREDIT; set colors directly.
+      SendMessage(hEdit, EM_SETBKGNDCOLOR, FALSE, GetColor(COLOR_MAILBGD));
+      {
+         CHARFORMAT cformat;
+         memset(&cformat, 0, sizeof(cformat));
+         cformat.cbSize = sizeof(cformat);
+         cformat.dwMask = CFM_COLOR;
+         cformat.crTextColor = GetColor(COLOR_MAILFGD);
+         SendMessage(hEdit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cformat);
+      }
+
       /* Store dialog rectangle in case of resize */
       GetWindowRect(hDlg, &dlg_rect);
 
@@ -102,6 +115,8 @@ INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
 
       hSendMailDlg = hDlg;
+
+      rawMailBody[0] = '\0';
 
       // See if we should initialize dialog for a reply
       reply = (MailInfo *) lParam;
@@ -165,6 +180,33 @@ INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 	 DestroyWindow(hDlg);
 	 return TRUE;
 
+      case IDC_PREVIEW:
+	 if (IsDlgButtonChecked(hDlg, IDC_PREVIEW) == BST_CHECKED)
+	 {
+	    // Switch to preview: save raw text, render formatted, set read-only.
+	    Edit_GetText(hEdit, rawMailBody, MAXMAIL);
+	    Edit_SetReadOnly(hEdit, TRUE);
+	    RichEditSetMarkdownText(hEdit, rawMailBody, GetColor(COLOR_MAILFGD), MD_RENDER_FULL);
+	 }
+	 else
+	 {
+	    // Switch to edit: restore raw text.
+	    CHARFORMAT cformat;
+	    Edit_SetReadOnly(hEdit, FALSE);
+	    SetWindowText(hEdit, rawMailBody);
+	    // Reset formatting leftover from preview rendering.
+	    memset(&cformat, 0, sizeof(cformat));
+	    cformat.cbSize = sizeof(cformat);
+	    cformat.dwMask = CFM_COLOR | CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE | CFM_SIZE;
+	    cformat.crTextColor = GetColor(COLOR_MAILFGD);
+	    cformat.yHeight = MD_DEFAULT_FONT_TWIPS;
+	    cformat.dwEffects = 0;
+	    SendMessage(hEdit, EM_SETSEL, 0, -1);
+	    SendMessage(hEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cformat);
+	    SendMessage(hEdit, EM_SETSEL, -1, -1);
+	 }
+	 return TRUE;
+
       case IDOK:
 	 /* User has pressed return somewhere */
 	 if (GetFocus() == hSubject)
@@ -174,6 +216,13 @@ INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 	 return TRUE;
 
       case IDC_OK:
+	 // If in preview mode, restore raw text before sending.
+	 if (IsDlgButtonChecked(hDlg, IDC_PREVIEW) == BST_CHECKED)
+	 {
+	    CheckDlgButton(hDlg, IDC_PREVIEW, BST_UNCHECKED);
+	    Edit_SetReadOnly(hEdit, FALSE);
+	    Edit_SetText(hEdit, rawMailBody);
+	 }
 	 SendMailMessage(hDlg);
 	 return TRUE;
       }

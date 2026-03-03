@@ -182,6 +182,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "memmap.h"
 #include "mapfile.h"
 #include "srvrstr.h"
+#include "markdown.h"
 #include "tooltip.h"
 #include "lagbox.h"
 #include "transfer.h"

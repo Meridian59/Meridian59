@@ -21,9 +21,9 @@ typedef struct particle
 	float			size;
 	float			weight;
 	// Current age of the weather particle (in seconds)
-	float			lifetime_s;
+	float			currentAge_s;
 	// Max lifespan of the weather particle (in seconds)
-	float			maxTime_s;
+	float			maxAge_s;
 } particle;
 
 typedef struct emitter

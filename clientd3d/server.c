@@ -105,9 +105,9 @@ static handler_struct game_handler_table[] = {
 { BP_ROUNDTRIP1,        HandleRoundtrip },
 { BP_CHANGE_TEXTURE,    HandleChangeTexture },
 { BP_SECTOR_LIGHT,      HandleSectorLight },
-{ BP_SET_VIEW,		HandleSetView },
-{ BP_RESET_VIEW,	HandleResetView },
-{ BP_WEATHER,           HandleWeather },
+{ BP_SET_VIEW,			HandleSetView },
+{ BP_RESET_VIEW,		HandleResetView },
+{ BP_WEATHER,           HandleChangeWeather },
 { 0, NULL},   // must end table this way
 };
 
@@ -1915,11 +1915,11 @@ bool HandleSetView(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-bool HandleWeather(char *ptr, long len)
+bool HandleChangeWeather(char *ptr, long len)
 {
    BYTE weather_effect;
    
-   Extract(&ptr, &weather_effect, 1);
+   Extract(&ptr, &weather_effect, SIZE_WEATHER_EFFECT);
    SetWeather(weather_effect);
    return true;   
 }

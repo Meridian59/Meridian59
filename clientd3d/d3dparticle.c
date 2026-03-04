@@ -14,7 +14,6 @@ using namespace std::chrono;
 // Variables
 extern room_type current_room;
 
-// 64-bit monotonic clock since boot time, and has practically infinite range (+/- 292 years).
 static steady_clock::time_point lastFrameTime = steady_clock::now();
 // Elapsed time between frames (in seconds).
 static float deltaTime_s = 0.0f;
@@ -42,8 +41,6 @@ emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, fl
 
 	memset(pEmitter, 0, sizeof(emitter));
 
-	pEmitter->numParticles = 0;
-	pEmitter->nextSlot = 0;
 	pEmitter->energy = energy;
 	pEmitter->timer_s = timerBase_s;
 	pEmitter->timerBase_s = timerBase_s;
@@ -151,8 +148,8 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	// Update lifetime for weather particles since only they track time.
 	if (pEmitter->bWeatherEffect)
 	{
-		pParticle->lifetime_s += deltaTime_s;
-		if (pParticle->lifetime_s >= pParticle->maxTime_s)
+		pParticle->currentAge_s += deltaTime_s;
+		if (pParticle->currentAge_s >= pParticle->maxAge_s)
 		{
 			D3DParticleDestroy(pParticle);
 			return;
@@ -256,7 +253,7 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 		// Randomizes z-velocity a bit for weather effects.
 		pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
 		
-		pParticle->lifetime_s = 0;
+		pParticle->currentAge_s = 0;
 		
 		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
 		if (leaf && leaf->sector->ceiling)
@@ -273,13 +270,13 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 				D3DParticleDestroy(pParticle);
 				return;
 			}
-			pParticle->maxTime_s = abs((pParticle->pos.z - floorHeight) / pParticle->velocity.z);			
+			pParticle->maxAge_s = abs((pParticle->pos.z - floorHeight) / pParticle->velocity.z);			
 		}
 		// Out-of-bound weather particles still spawn for a few seconds so they can still show normally
 		// outdoors beyond areas like forest walls, or from outside windows.
 		else
 		{
-			pParticle->maxTime_s = 2.0f;
+			pParticle->maxAge_s = 2.0f;
 		}
 	}
 
@@ -326,6 +323,6 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 
 void D3DParticleDestroy(particle *pParticle)
 {
-	pParticle->maxTime_s = 0;
+	pParticle->maxAge_s = 0;
 	pParticle->energy = 0;
 }

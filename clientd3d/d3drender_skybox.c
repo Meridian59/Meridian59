@@ -6,16 +6,15 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-#include <unordered_map>
+#include <filesystem>
+#include <iterator>
 
 // Variables
 
-static const float SKYBOX_DIMENSIONS = 75000.0f;
-static const float SKYBOX_Y = 37000.0f;
-static const int NUM_SKYBOXES = 9;
-static const int SKYBOX_SIDES = 6;
+static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
+static constexpr float SKYBOX_Y = 37000.0f;
+static constexpr int SKYBOX_SIDES = 6;
 
-static LPDIRECT3DTEXTURE9 gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 static int gCurBackground;
 static ID tempBkgnd = 0;
 
@@ -124,6 +123,30 @@ static unsigned char gSkyboxBGRA[] =
 	192, 192, 192, 255,
 };
 
+// Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
+// Note: Ko'catan skyboxes use the same skybox textures as the the mainland.
+static constexpr SkyboxDefinition gSkyboxTable[] = 
+{
+	// Clear skies
+    {"1skya.bgf", "skya.bsf"}, 		// Index 0
+    {"2skya.bgf", "skya.bsf"}, 		
+    {"1skyb.bgf", "skyb.bsf"}, 		// Index 1
+    {"2skyb.bgf", "skyb.bsf"}, 		
+    {"1skyc.bgf", "skyc.bsf"}, 		// Index 2
+	{"2skyc.bgf", "skyc.bsf"}, 
+    {"1skyd.bgf", "skyd.bsf"}, 		// Index 3
+	{"2skyd.bgf", "skyd.bsf"}, 
+	// Frenzy
+    {"redsky.bgf", "redsky.bsf"}, 	// Index 4
+	// Cloudy
+    {"3sky.bgf",  "3skya.png"}, 	// Index 5
+    {"3skyb.bgf", "3skyb.png"}, 	// Index 6
+    {"3skyc.bgf", "3skyc.png"}, 	// Index 7
+    {"3skyd.bgf", "3skyd.png"}  	// Index 8
+};
+
+static constexpr int NUM_SKYBOXES = static_cast<int>(std::size(gSkyboxTable));
+static LPDIRECT3DTEXTURE9 gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 
 // Interfaces
 
@@ -142,19 +165,12 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 	if (background == 0) return false;
 
 	if (gpSkyboxTextures[0][0] == NULL)
-	{
-		// Clear skies
-		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
-		D3DRenderBackgroundsLoad("./resource/skyb.bsf", 1);
-		D3DRenderBackgroundsLoad("./resource/skyc.bsf", 2);
-		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
-		// Frenzy sky
-		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
-		// Cloudy skies
-		D3DRenderBackgroundsLoad("./resource/3skya.png", 5);
-		D3DRenderBackgroundsLoad("./resource/3skyb.png", 6);
-		D3DRenderBackgroundsLoad("./resource/3skyc.png", 7);
-		D3DRenderBackgroundsLoad("./resource/3skyd.png", 8);
+	{	
+		for(int i = 0; i < NUM_SKYBOXES; i++)
+		{
+			std::filesystem::path fullPath = std::filesystem::path("./resource/") / gSkyboxTable[i].fileName;
+			D3DRenderBackgroundsLoad(fullPath.string().c_str(), i);
+		}
 	}
 	if (tempBkgnd != background)
 	{
@@ -281,7 +297,7 @@ void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int angle
 }
 
 /**
-* Set the current background texture for the skybox by background ID.
+* Maps a resource ID to a skybox index, and sets it as the current background.
 * Returns true if the background was set successfully and false otherwise.
 */
 bool D3DRenderBackgroundSet(ID background)
@@ -290,30 +306,17 @@ bool D3DRenderBackgroundSet(ID background)
 
 	if (!filename) return false;
 	
-	// This draft PR still uses clear skies for cloudy weather until cloudy skyboxes are added.
-	static const std::unordered_map<std::string, int> backgroundMap = {
-		{"1skya.bgf", 0},
-		{"2skya.bgf", 0},
-		{"1skyb.bgf", 1},
-		{"2skyb.bgf", 1},
-		{"1skyc.bgf", 2},
-		{"2skyc.bgf", 2},
-		{"1skyd.bgf", 3},
-		{"2skyd.bgf", 3},
-		{"redsky.bgf", 4},
-		{"3sky.bgf", 5},
-		{"3skyb.bgf", 6},
-		{"3skyc.bgf", 7},
-		{"3skyd.bgf", 8}
-	};
-
-	auto it = backgroundMap.find(filename);
-	if (it != backgroundMap.end())
+	for (int i = 0; i < NUM_SKYBOXES; i++)
 	{
-		gCurBackground = it->second;
+        // If the string names match, then set the index.
+		if (_stricmp(filename, gSkyboxTable[i].resourceName) == 0)
+        {
+            gCurBackground = i;
+            return true;
+        }
 	}
 
-	return true;
+	return false;
 }
 
 /**

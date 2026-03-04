@@ -14,7 +14,6 @@
 /***************************************************************************/
 
 void SandDib(BYTE* pabyBits, int width, int height, int drops)
-	//PERFORMANCE
 {
 	int allrun, allblow, alllength;
 
@@ -66,7 +65,6 @@ void SandDib(BYTE* pabyBits, int width, int height, int drops)
 /***************************************************************************/
 
 void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading)
-	//PERFORMANCE
 {
 	int allrun, allblow, alllength;
 
@@ -152,7 +150,6 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 /***************************************************************************/
 
 void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int windheading)
-	//PERFORMANCE
 {
 	int allrun, allblow, alllength, alldropwidth;
 
@@ -250,7 +247,6 @@ void SnowDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 static int _blur_offset[4] = { 1, -1, MAXX, -MAXX };
 
 void BlurDib(BYTE* pabyBits, int width, int height, int amount)
-	//PERFORMANCE
 {
 	int i, j;
 	BYTE* pbyPixel;
@@ -269,15 +265,12 @@ void BlurDib(BYTE* pabyBits, int width, int height, int amount)
 	for (i = 1; i < height-1; i++)
 	{
 		int row = i;
-		//BUGBUG: if flipped dib, row = height - 1 - i;
 		pbyPixel = pabyBits + row*width;
 		pbyEnd = pbyPixel + width;
 		pbyPixel += j;
 		while (pbyPixel < pbyEnd-j)
 		{
 			byNew = *(pbyPixel+((((intptr_t)(BYTE*)pbyPixel+i) & 1)? -j : j));
-			//REVIEW: could do: pBiXlat = FindStandardBiXlat(BIXLAT_BLEND50);
-			//REVIEW: could do: *pbyPixel = fastBIXLAT(*pbyPixel, byNew, pBiXlat); // blend the trashed pixels softly
 			*pbyPixel = byNew;
 			pbyPixel += 3;
 		}
@@ -288,7 +281,6 @@ static int _shiftbits[] = {  0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0, -1, -1
 static int _table = (sizeof(_shiftbits)/sizeof(_shiftbits[0]));
 
 void WaverDib(BYTE* pabyBits, int width, int height, int offset)
-	//PERFORMANCE
 {
 	int i, j;
 	BYTE* pbyPixel;

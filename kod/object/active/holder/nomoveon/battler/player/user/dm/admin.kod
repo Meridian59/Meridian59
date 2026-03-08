@@ -84,8 +84,7 @@ messages:
                            ["place firepit",         &Firepit],
                            ["place smoke column",    &SmokeColumn],
                            ["place orc torch",       &OrcTorch],
-                           ["place glow tree",       &GlowTree],
-                           ["place dynamic light",   &DynamicLight] ];
+                           ["place glow tree",       &GlowTree] ];
 
       return;
    }

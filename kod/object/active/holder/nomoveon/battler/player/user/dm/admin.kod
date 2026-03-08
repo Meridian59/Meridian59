@@ -54,6 +54,8 @@ classvars:
 
 properties:
 
+   plPlaceableTypes = $
+
    pbCapableAdmin = TRUE
    pbSay_commands = TRUE
    pbAdvancement = TRUE
@@ -65,6 +67,35 @@ properties:
    piTour_count
 
 messages:
+
+   Constructed()
+   {
+      Send(self,@InitPlaceableTypes);
+
+      propagate;
+   }
+
+   InitPlaceableTypes()
+   "Builds the placeable types list. Called from Constructed() for new "
+   "Admin objects, and lazily from UserSay() for existing saved ones. "
+   "If entries are added or removed, use PostPatch to nil plPlaceableTypes."
+   {
+      plPlaceableTypes = [ ["place table lamp",      &TableLamp],
+                           ["place kocatan lamp",    &KocatanLamp],
+                           ["place lamp",            &Lamp],
+                           ["place brazier switch",  &BrazierSwitch],
+                           ["place skull brazier",   &SkullBrazier],
+                           ["place kocatan brazier", &KocatanBrazier],
+                           ["place brazier",         &Brazier],
+                           ["place candelabra",      &Candelabra],
+                           ["place candle",          &Candle],
+                           ["place firepit",         &Firepit],
+                           ["place smoke column",    &SmokeColumn],
+                           ["place orc torch",       &OrcTorch],
+                           ["place glow tree",       &GlowTree] ];
+
+      return;
+   }
 
    UserLogonHook()
    {
@@ -124,7 +155,8 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute;
+      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute,
+            lEntry;
 
       % Admin mode commands use only string literals, not resources,
       % to ensure the English command always works regardless of any
@@ -360,54 +392,23 @@ messages:
          return;
       }
 
-      if StringContain(string,"place lamp")
+      %%% Data-driven placement of objects by class.
+      % Lazy init: covers existing saved Admin objects where Constructed()
+      % didn't run. To add new entries, add them in InitPlaceableTypes()
+      % and clear plPlaceableTypes via PostPatchUpdates().
+      if plPlaceableTypes = $
       {
-         oObject = create(&Lamp);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
+         Send(self,@InitPlaceableTypes);
       }
 
-      if StringContain(string,"place brazier")
+      for lEntry in plPlaceableTypes
       {
-         oObject = create(&Brazier);
+         if StringEqual(string, First(lEntry))
+         {
+            Send(self, @AdminPlaceObject, #class=Nth(lEntry, 2));
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candelabra")
-      {
-         oObject = create(&Candelabra);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candle")
-      {
-         oObject = create(&Candle);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place firepit")
-      {
-         oObject = create(&Firepit);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
+            return;
+         }
       }
 
       if StringEqual(string,"logoffghost on")
@@ -517,6 +518,21 @@ messages:
       }
 
       propagate;
+   }
+
+   AdminPlaceObject(class=$)
+   "Creates an object of the given class at the admin's position."
+   {
+      local oObject;
+
+      oObject = Create(class);
+      Send(poOwner, @NewHold, #what=oObject,
+           #new_row=Send(self, @GetRow),
+           #new_col=Send(self, @GetCol),
+           #fine_row=Send(self, @GetFineRow),
+           #fine_col=Send(self, @GetFineCol));
+
+      return;
    }
 
    %%% Investigator stuff

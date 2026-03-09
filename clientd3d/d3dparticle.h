@@ -8,13 +8,13 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-const int MAX_PARTICLES = 128;
+inline constexpr int MAX_PARTICLES = 128;
 
-typedef struct particle
+struct particle
 {
 	int				energy;
-	custom_xyz		pos;
-	custom_xyz		oldPos;
+	custom_xyz		position;
+	custom_xyz		oldPosition;
 	custom_xyz		velocity;
 	custom_xyz		rotation;
 	custom_bgra		bgra;
@@ -24,51 +24,48 @@ typedef struct particle
 	float			currentAge_s;
 	// Max lifespan of the weather particle (in seconds)
 	float			maxAge_s;
-} particle;
+};
 
-typedef struct emitter
+struct emitter
 {
 	int				numParticles;
 	int				nextSlot;
 	int				energy;
 	float			timer_s;
 	float			timerBase_s;
-	int				randomPos;
-	int				randomRot;
-	custom_xyz		pos;
+
 	custom_xyz		delta;
-	custom_xyz		velocity;
+	custom_xyz		position;
+	custom_xyz		positionVarianceMin;
+	custom_xyz		positionVarianceMax;
 	custom_xyz		rotation;
+	custom_xyz		rotationVarianceMin;
+	custom_xyz		rotationVarianceMax;
+	custom_xyz		velocity;
+	custom_xyz		velocityVarianceMin;
+	custom_xyz		velocityVarianceMax;
+	
 	custom_bgra		bgra;
 	particle		particles[MAX_PARTICLES];
-	// bWeatherEffect makes particles clear when hitting ceilings or floors. It also
-	// randomzies velocity.z a bit, and also ignores randomPos for the z-axis.
-	bool			bWeatherEffect;
-} emitter;
+	bool			bDestroysOnSurface;
+};
 
-typedef struct particle_system
+struct particle_system
 {
 	int			numParticles;
 	list_type	emitterList;
-} particle_system;
+};
 
 void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 void		D3DParticleSystemReset(particle_system *pParticleSystem);
 
-emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, float timerBase, 
-							bool bWeatherEffect);
-void		D3DParticleEmitterSetPos(emitter *pEmitter, float posX, float posY, float posZ);
-void		D3DParticleEmitterSetVel(emitter *pEmitter, float velX, float velY, float velZ);
-void		D3DParticleEmitterSetRot(emitter *pEmitter, float rotX, float rotY, float rotZ);
-void		D3DParticleEmitterSetBGRA(emitter *pEmitter, const custom_bgra &newBGRA);
-void		D3DParticleEmitterSetRandom(emitter *pEmitter, int randomPos, int randomRot);
+emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem);
 void		D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter);
-
-void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 
 void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
 void 		D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool);
 void 		D3DParticleCreate(emitter *pEmitter, particle *pParticle);
+void		D3DParticleDestroy(particle *pParticle);
 
 #endif

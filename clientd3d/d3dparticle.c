@@ -8,102 +8,70 @@
 #include "client.h"
 #include <cmath>
 #include <chrono>
+#include <random>
 
 using namespace std::chrono;
 
 // Variables
 extern room_type current_room;
 
+static std::mt19937 gen(std::random_device{}());
+
+static constexpr uint32_t PARTICLE_VERTICES = 2;
+static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
+
 static steady_clock::time_point lastFrameTime = steady_clock::now();
 // Elapsed time between frames (in seconds).
 static float deltaTime_s = 0.0f;
 
-void D3DParticleDestroy(particle *pParticle);
-
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
 	list_destroy(pParticleSystem->emitterList);
-	pParticleSystem->emitterList = NULL;
+	pParticleSystem->emitterList = nullptr;
 }
 
-emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int energy, float timerBase_s, 
-								bool bWeatherEffect)
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem)
 {
-	emitter	*pEmitter = NULL;
+	emitter	*pEmitter = nullptr;
 
-	if (pParticleSystem == NULL)
+	if (pParticleSystem == nullptr)
+	{
 		return nullptr;
-
+	}
 	pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
 
-	if (pEmitter == NULL)
+	if (pEmitter == nullptr)
+	{
 		return nullptr;
-
-	memset(pEmitter, 0, sizeof(emitter));
-
-	pEmitter->energy = energy;
-	pEmitter->timer_s = timerBase_s;
-	pEmitter->timerBase_s = timerBase_s;
+	}
 	
-	pEmitter->bWeatherEffect = bWeatherEffect;
+	memset(pEmitter, 0, sizeof(emitter));
 	
 	return pEmitter;
 }
-void D3DParticleEmitterSetPos(emitter *pEmitter, float posX, float posY, float posZ)
-{
-	pEmitter->pos.x = posX;
-	pEmitter->pos.y = posY;
-	pEmitter->pos.z = posZ;
-}
-void D3DParticleEmitterSetVel(emitter *pEmitter, float velX, float velY, float velZ)
-{
-	pEmitter->velocity.x = velX;
-	pEmitter->velocity.y = velY;
-	pEmitter->velocity.z = velZ;
-}
-void D3DParticleEmitterSetRot(emitter *pEmitter, float rotX, float rotY, float rotZ)
-{
-	pEmitter->rotation.x = rotX;
-	pEmitter->rotation.y = rotY;
-	pEmitter->rotation.z = rotZ;	
-}
-// Randomizes particle position and rotation. Setting any one of them to '0' disables it.
-void D3DParticleEmitterSetRandom(emitter *pEmitter, int randomPos, int randomRot)
-{
-	pEmitter->randomPos = randomPos;
-	pEmitter->randomRot = randomRot;
-}
-void D3DParticleEmitterSetBGRA(emitter *pEmitter, const custom_bgra &newBGRA)
-{
-	pEmitter->bgra.b = newBGRA.b;
-	pEmitter->bgra.g = newBGRA.g;
-	pEmitter->bgra.r = newBGRA.r;
-	pEmitter->bgra.a = newBGRA.a;	
-}
+
 void D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter)
 {
-	if (NULL == pParticleSystem->emitterList)
-		pParticleSystem->emitterList =
-			list_create(pEmitter);
+	if (pParticleSystem->emitterList == nullptr)
+	{
+		pParticleSystem->emitterList = list_create(pEmitter);
+	}
 	else
+	{
 		list_add_item(pParticleSystem->emitterList, pEmitter);
+	}
 }
 
 void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
 {
-	pEmitter->pos.x += posX;
-	pEmitter->pos.y += posY;
-	pEmitter->pos.z += posZ;
+	pEmitter->position.x += posX;
+	pEmitter->position.y += posY;
+	pEmitter->position.z += posZ;
 }
 
 void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem)
 {
-	int						curParticle;
-	list_type				list;
-	emitter					*pEmitter;
-	particle				*pParticle;
-
 	D3DCacheSystemReset(pCacheSystem);
 	D3DRenderPoolReset(pPool, &D3DMaterialParticlePool);
 	
@@ -113,14 +81,14 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 	deltaTime_s = duration<float>(elapsed).count();
 	lastFrameTime = currentFrameTime;
 
-	for (list = pParticleSystem->emitterList; list != NULL; list = list->next)
+	for (list_type list = pParticleSystem->emitterList; list != nullptr; list = list->next)
 	{
-		pEmitter = (emitter *)list->data;
+		emitter *pEmitter = (emitter *)list->data;
 		
 		// Update existing particles
-		for (curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
+		for (int curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
 		{
-			pParticle = &pEmitter->particles[curParticle];			
+			particle *pParticle = &pEmitter->particles[curParticle];			
 			D3DParticleUpdate(pEmitter, pParticle, pPool);
 		}
 
@@ -129,7 +97,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		if (pEmitter->timer_s <= 0)
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
-			pParticle = &pEmitter->particles[pEmitter->nextSlot];
+			particle *pParticle = &pEmitter->particles[pEmitter->nextSlot];
 			D3DParticleCreate(pEmitter, pParticle);
 		}
 	}
@@ -146,7 +114,7 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 		return;
 	}
 	// Update lifetime for weather particles since only they track time.
-	if (pEmitter->bWeatherEffect)
+	if (pEmitter->bDestroysOnSurface)
 	{
 		pParticle->currentAge_s += deltaTime_s;
 		if (pParticle->currentAge_s >= pParticle->maxAge_s)
@@ -156,16 +124,9 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 		}
 	}
 
-	custom_xyzw	velocity;
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	D3DMATRIX				rotate, matrix;
+	custom_xyzw velocity = {pParticle->velocity.x, pParticle->velocity.y, pParticle->velocity.z, 1.0f};
 
-	velocity.x = pParticle->velocity.x;
-	velocity.y = pParticle->velocity.y;
-	velocity.z = pParticle->velocity.z;
-	velocity.w = 1.0f;
-
+	D3DMATRIX rotate, matrix;
 	MatrixRotateX(&matrix, pParticle->rotation.x);
 	MatrixRotateY(&rotate, pParticle->rotation.y);
 	MatrixMultiply(&rotate, &matrix, &rotate);
@@ -173,31 +134,26 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	MatrixMultiply(&rotate, &rotate, &matrix);
 
 	MatrixMultiplyVector(&velocity, &rotate, &velocity);
-
 	pParticle->velocity.x = velocity.x;
 	pParticle->velocity.y = velocity.y;
 	pParticle->velocity.z = velocity.z;
-
-	pParticle->oldPos.x = pParticle->pos.x;
-	pParticle->oldPos.y = pParticle->pos.y;
-	pParticle->oldPos.z = pParticle->pos.z;
-
-	pParticle->pos.x += pParticle->velocity.x;
-	pParticle->pos.y += pParticle->velocity.y;
-	pParticle->pos.z += pParticle->velocity.z;
+	pParticle->oldPosition = pParticle->position;
+	pParticle->position.x += pParticle->velocity.x;
+	pParticle->position.y += pParticle->velocity.y;
+	pParticle->position.z += pParticle->velocity.z;
 	
-	pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
+	d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(pPool, nullptr, nullptr, 0, 0, 0);
 	assert(pPacket);
 	pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
 
-	pChunk = D3DRenderChunkNew(pPacket);
+	d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 	assert(pChunk);
-	pChunk->numIndices = 2;
-	pChunk->numVertices = 2;
-	pChunk->numPrimitives = 1;
+	pChunk->numIndices = PARTICLE_VERTICES;
+	pChunk->numVertices = PARTICLE_VERTICES;
+	pChunk->numPrimitives = PARTICLE_PRIMITIVES;
 	pChunk->pMaterialFctn = &D3DMaterialParticleChunk;
 
-	MatrixTranslate(&pChunk->xForm, pParticle->pos.x, pParticle->pos.z, pParticle->pos.y);
+	MatrixTranslate(&pChunk->xForm, pParticle->position.x, pParticle->position.z, pParticle->position.y);
 
 	CHUNK_XYZ_SET(pChunk, 0, 0, 0, 0);
 	CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y,
@@ -212,50 +168,32 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 
 void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 {
-	pParticle->pos.x = pEmitter->pos.x;
-	pParticle->pos.y = pEmitter->pos.y;
-	pParticle->pos.z = pEmitter->pos.z;
-
-	if (pEmitter->randomPos)
+    auto GetRandomRange = [&](float min, float max) -> float
 	{
-		int	sign = 1;
-
-		if ((int)rand() & 1) sign = -sign;
-		pParticle->pos.x += sign * ((int)rand() & pEmitter->randomPos);
-
-		if ((int)rand() & 1) sign = -sign;
-		pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
+        if (min >= max)
+		{
+			return min;
+		}
+        std::uniform_real_distribution<float> dist(min, max);
 		
-		// Weather particles spawn randomly between half height to max height.
-		if (pEmitter->bWeatherEffect)
-		{
-			pParticle->pos.z -= ((int)rand() & (pEmitter->randomPos)/2);
-		}
-		// Otherwise, randomize z-position if this isn't a weather particle.
-		else
-		{
-			if ((int)rand() & 1) sign = -sign;
-			pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
-		}
-	}
-
-	pParticle->velocity.x = pEmitter->velocity.x;
-	pParticle->velocity.y = pEmitter->velocity.y;
-	pParticle->velocity.z = pEmitter->velocity.z;
-
-	pParticle->rotation.x = pEmitter->rotation.x;
-	pParticle->rotation.y = pEmitter->rotation.y;
-	pParticle->rotation.z = pEmitter->rotation.z;
+        return dist(gen);
+    };
+	
+	pParticle->position = pEmitter->position;
+	pParticle->position.x += GetRandomRange(pEmitter->positionVarianceMin.x, pEmitter->positionVarianceMax.x);
+	pParticle->position.y += GetRandomRange(pEmitter->positionVarianceMin.y, pEmitter->positionVarianceMax.y);
+	pParticle->position.z += GetRandomRange(pEmitter->positionVarianceMin.z, pEmitter->positionVarianceMax.z);
+	pParticle->velocity = pEmitter->velocity;
+	pParticle->velocity.x += GetRandomRange(pEmitter->velocityVarianceMin.x, pEmitter->velocityVarianceMax.x);
+	pParticle->velocity.y += GetRandomRange(pEmitter->velocityVarianceMin.y, pEmitter->velocityVarianceMax.y);
+	pParticle->velocity.z += GetRandomRange(pEmitter->velocityVarianceMin.z, pEmitter->velocityVarianceMax.z);
 	
 	// Each weather particle calculates the time it takes for them to land on the ground.
-	if (pEmitter->bWeatherEffect)
-	{				
-		// Randomizes z-velocity a bit for weather effects.
-		pParticle->velocity.z *= ((float)((int)rand() % 11 + 5)) / 10.0f;
+	if (pEmitter->bDestroysOnSurface)
+	{						
+		pParticle->currentAge_s = 0.0f;
 		
-		pParticle->currentAge_s = 0;
-		
-		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->pos.x, pParticle->pos.y);
+		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->position.x, pParticle->position.y);
 		if (leaf && leaf->sector->ceiling)
 		{
 			D3DParticleDestroy(pParticle);
@@ -263,14 +201,14 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 		}
 		else if (leaf && leaf->sector->floor)
 		{
-			float floorHeight = GetFloorHeight(pParticle->pos.x, pParticle->pos.y, leaf->sector);
+			float floorHeight = GetFloorHeight(pParticle->position.x, pParticle->position.y, leaf->sector);
 
-			if (pParticle->pos.z < floorHeight)
+			if (pParticle->position.z < floorHeight)
 			{
 				D3DParticleDestroy(pParticle);
 				return;
 			}
-			pParticle->maxAge_s = abs((pParticle->pos.z - floorHeight) / pParticle->velocity.z);			
+			pParticle->maxAge_s = abs((pParticle->position.z - floorHeight) / pParticle->velocity.z);			
 		}
 		// Out-of-bound weather particles still spawn for a few seconds so they can still show normally
 		// outdoors beyond areas like forest walls, or from outside windows.
@@ -279,38 +217,12 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 			pParticle->maxAge_s = 2.0f;
 		}
 	}
-
-	if (pEmitter->randomRot)
-	{
-		float	random, sign;
-		sign = 1;
-
-		random = (int)rand() % pEmitter->randomRot;
-		if (random <= 1)
-			random = 2;
-		if ((int)rand() & 1)
-			sign = -sign;
-		pParticle->rotation.x += (pEmitter->rotation.x * random * sign);
-		pParticle->pos.x += (int)rand() % FINENESS;
-
-		random = (int)rand() % pEmitter->randomRot;
-		if (random <= 1) random = 2;
-		if ((int)rand() & 1) sign = -sign;
-		pParticle->rotation.y += (pEmitter->rotation.y * random * sign);
-		pParticle->pos.y += (int)rand() % FINENESS;
-
-		random = (int)rand() % pEmitter->randomRot;
-		if (random <= 1) random = 2;
-		if ((int)rand() & 1) sign = -sign;
-		pParticle->rotation.z += (pEmitter->rotation.z * random * sign);
-		pParticle->pos.z += (int)rand() % FINENESS;
-	}
-
-	pParticle->bgra.b = pEmitter->bgra.b;
-	pParticle->bgra.g = pEmitter->bgra.g;
-	pParticle->bgra.r = pEmitter->bgra.r;
-	pParticle->bgra.a = pEmitter->bgra.a;
-
+	
+	pParticle->rotation = pEmitter->rotation;
+	pParticle->rotation.x += GetRandomRange(pEmitter->rotationVarianceMin.x, pEmitter->rotationVarianceMax.x);
+	pParticle->rotation.y += GetRandomRange(pEmitter->rotationVarianceMin.y, pEmitter->rotationVarianceMax.y);
+	pParticle->rotation.z += GetRandomRange(pEmitter->rotationVarianceMin.z, pEmitter->rotationVarianceMax.z);
+	pParticle->bgra = pEmitter->bgra;
 	pParticle->energy = pEmitter->energy;
 	
 	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;

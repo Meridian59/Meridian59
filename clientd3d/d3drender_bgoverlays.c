@@ -7,24 +7,6 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-// Using static constexpr to set up constants at compile time to reduce CPU overhead.
-// Meridian 59's angles are in game units. (4096 units = 360-degree circle)
-static constexpr float FULL_CIRCLE_UNITS = 4096.0f;
-static constexpr float GAME_UNITS_TO_RADIANS = (2.0f * PI) / FULL_CIRCLE_UNITS;
-static constexpr float FULL_CIRCLE_TO_DEGREES = 360.0f / FULL_CIRCLE_UNITS;
-
-// Legacy vertical coordinate range [-207 to +207].
-static constexpr float Y_UNIT_RANGE = 414.0f;
-// The maximum vertical FOV tilt in software rendering mode.
-static constexpr float MAX_WORLD_PITCH_DEGREES = 50.0f;
-// The slightly reduced tilt used for background layers to prevent "sliding" artifacts.
-static constexpr float MAX_OVERLAY_PITCH_DEGREES = 45.0f;
-
-// Maps legacy software y-offset units to world-space pitch degrees.
-static constexpr float PITCH_UNIT_TO_DEGREES = MAX_WORLD_PITCH_DEGREES / Y_UNIT_RANGE;
-// Maps legacy software y-offset units to overlay-space pitch degrees.
-static constexpr float BG_OVERLAY_UNIT_TO_DEGREES = MAX_OVERLAY_PITCH_DEGREES / Y_UNIT_RANGE;
-
 // Defines altitude bounds for background overlays.
 // This maps the server's raw coordinate range [-200, 200] to the client's rendering space.
 static constexpr int ALTITUDE_MAX = 200;
@@ -137,12 +119,13 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	pChunk->zBias = ZBIAS_BASE;
 
 	// Map raw server height [-200 to 200] to engine altitude range.
-	auto mapRange = [](double value, double in_min, double in_max, double out_min, double out_max) -> double {
+	auto mapRange = [](double value, double in_min, double in_max, double out_min, double out_max) -> double
+	{
 		return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	};
 
 	long mappedHeightValue = mapRange(overlay->y, -200, 200, ALTITUDE_MIN, ALTITUDE_MAX);
-	double azimuthalAngle = overlay->x * GAME_UNITS_TO_RADIANS;
+	double azimuthalAngle = overlay->x * GAME_ANGLE_UNITS_TO_RADIANS;
 	
 	// Calculate background overlay's position on a sky dome surrounding the viewer.
 	// A 5x multiplier ensures enough depth for the overlay to stay behind world geometry.
@@ -164,8 +147,8 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	transform.anglePitch = static_cast<float>(bgoSceneParams.anglePitch);
 	
 	// Build rotation matrices.
-	MatrixRotateY(&transform.rot, DEGREES_TO_RADIANS(transform.angleHeading * FULL_CIRCLE_TO_DEGREES));
-	MatrixRotateX(&transform.mat, DEGREES_TO_RADIANS(transform.anglePitch * BG_OVERLAY_UNIT_TO_DEGREES));
+	MatrixRotateY(&transform.rot, transform.angleHeading * GAME_ANGLE_UNITS_TO_RADIANS);
+	MatrixRotateX(&transform.mat, transform.anglePitch * BG_PITCH_UNIT_TO_RADIANS);
 	MatrixTranspose(&transform.rot, &transform.rot);
 	
 	// Position background overlay in the world relative to viewer's current location.
@@ -202,9 +185,10 @@ void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, float object_width, flo
 	pChunk->xyz[3] = {0.0f, 0.0f, object_height};
 
 	// Sets each of the four vertices to solid white to display texture in original colors.
+	static constexpr custom_bgra solidWhite = {255, 255, 255, 255};
 	for (int j = 0; j < NUM_VERTICES; j++)
 	{
-		pChunk->bgra[j] = {255, 255, 255, 255};
+		pChunk->bgra[j] = solidWhite;
 	}
 
 	// Map texture coordinates to vertices.
@@ -241,8 +225,8 @@ OverlayRegion D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* p
 
 	// Construct combined World-View-Projection matrix for screen-space mappping.
 	D3DMATRIX localToScreen, trans;
-	MatrixRotateY(&transform->rot, DEGREES_TO_RADIANS(transform->angleHeading * FULL_CIRCLE_TO_DEGREES));
-	MatrixRotateX(&transform->mat, DEGREES_TO_RADIANS(transform->anglePitch * PITCH_UNIT_TO_DEGREES));
+	MatrixRotateY(&transform->rot, transform->angleHeading * GAME_ANGLE_UNITS_TO_RADIANS);
+	MatrixRotateX(&transform->mat, transform->anglePitch * BG_PITCH_UNIT_TO_RADIANS);
 	MatrixMultiply(&transform->rot, &transform->rot, &transform->mat);
 	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), -static_cast<float>(params->viewer_height), -static_cast<float>(params->viewer_y));
 	MatrixMultiply(&transform->mat, &trans, &transform->rot);

@@ -180,7 +180,7 @@ EXPORTS
 	RichEditSetFormattedText
 	RichEditSetMarkdownText
 	DisplayMessageMarkdown
-	MdInstallLinkHandler
+	EnableMarkdownLinks
 	MdClearLinks
 
 ; Manipulating objects

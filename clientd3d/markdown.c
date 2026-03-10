@@ -1764,7 +1764,7 @@ void RichEditSetMarkdownText(HWND hwndRichEdit, const char *text,
 
    // Only install link-handler subclass when links are enabled.
    if (flags & MD_RENDER_LINKS)
-      MdInstallLinkHandler(hwndRichEdit);
+      EnableMarkdownLinks(hwndRichEdit);
 
    struct MdRenderState state;
    memset(&state, 0, sizeof(state));
@@ -2063,13 +2063,10 @@ static LRESULT CALLBACK MdLinkSubclassProc(HWND hwnd, UINT msg,
 
 /************************************************************************/
 /*
- * MdInstallLinkHandler:  Installs the link-handler subclass on a Rich
- *   Edit control. Safe to call multiple times -- SetWindowSubclass with
- *   the same callback+ID just updates the reference data without adding
- *   a duplicate. Call this once after creating a Rich Edit control that
- *   will display markdown content.
+ * EnableMarkdownLinks:  Enables clickable link support on a Rich Edit
+ *   control. Safe to call multiple times on the same HWND.
  */
-void MdInstallLinkHandler(HWND hwndRichEdit)
+void EnableMarkdownLinks(HWND hwndRichEdit)
 {
    if (!hwndRichEdit)
       return;

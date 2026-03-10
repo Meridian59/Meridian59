@@ -322,7 +322,7 @@ crBackColor limitation: Rich Edit only paints background color behind individual
 
 Links use a subclass-based system instead of CFE_LINK/EN_LINK. CFE_LINK was removed because Rich Edit overrides crTextColor at paint time when CFE_LINK is set, forcing the system hyperlink color regardless of any color configured by the client.
 
-The entire link system is gated behind the `MD_RENDER_LINKS` flag. When this flag is not set, `MD_SPAN_A` enter/leave callbacks are no-ops, autolinks are not detected (`MD_FLAG_PERMISSIVEURLAUTOLINKS` and `MD_FLAG_PERMISSIVEWWWAUTOLINKS` are omitted), and `MdInstallLinkHandler` is not called. Currently only the MOTD passes `MD_RENDER_LINKS`. Email autolinks (`MD_FLAG_PERMISSIVEEMAILAUTOLINKS`) are never enabled.
+The entire link system is gated behind the `MD_RENDER_LINKS` flag. When this flag is not set, `MD_SPAN_A` enter/leave callbacks are no-ops, autolinks are not detected (`MD_FLAG_PERMISSIVEURLAUTOLINKS` and `MD_FLAG_PERMISSIVEWWWAUTOLINKS` are omitted), and `EnableMarkdownLinks` is not called. Currently only the MOTD passes `MD_RENDER_LINKS`. Email autolinks (`MD_FLAG_PERMISSIVEEMAILAUTOLINKS`) are never enabled.
 
 To enable clickable links in another context, add `| MD_RENDER_LINKS` to the `RichEditSetMarkdownText` call for that context. For example:
 

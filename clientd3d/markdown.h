@@ -43,12 +43,11 @@ M59EXPORT void DisplayMessageMarkdown(const char *message, COLORREF start_color,
                                       BYTE start_style);
 
 /*
- * MdInstallLinkHandler:  Installs a window subclass on a Rich Edit control
- *   that handles link click, hover tooltip, and hand cursor behavior. Safe
- *   to call multiple times on the same HWND -- SetWindowSubclass with the
- *   same ID updates without duplicating.
+ * EnableMarkdownLinks:  Enables clickable link support on a Rich Edit
+ *   control (click, hover tooltip, hand cursor). Safe to call multiple
+ *   times on the same HWND.
  */
-M59EXPORT void MdInstallLinkHandler(HWND hwndRichEdit);
+M59EXPORT void EnableMarkdownLinks(HWND hwndRichEdit);
 
 /*
  * MdClearLinks:  Removes all stored links for a Rich Edit control. Call

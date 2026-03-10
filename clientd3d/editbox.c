@@ -57,7 +57,7 @@ void EditBoxCreate(HWND hParent)
    /* Install link-handler subclass for chat message links.
     * Must be after SubclassWindow so it sits beneath EditProc.
     */
-   MdInstallLinkHandler(hwndText);
+   EnableMarkdownLinks(hwndText);
 }
 /************************************************************************/
 /*

@@ -8,14 +8,12 @@
 #include "client.h"
 #include <cmath>
 #include <chrono>
-#include <random>
+#include <limits>
 
 using namespace std::chrono;
 
 // Variables
 extern room_type current_room;
-
-static std::mt19937 gen(std::random_device{}());
 
 static constexpr uint32_t PARTICLE_VERTICES = 2;
 static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
@@ -23,6 +21,43 @@ static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
 static steady_clock::time_point lastFrameTime = steady_clock::now();
 // Elapsed time between frames (in seconds).
 static float deltaTime_s = 0.0f;
+
+// Xorshift32 provides improved randomization while remaining light on CPU cycles.
+static uint32_t randomState = []()
+{
+	uint32_t seed = static_cast<uint32_t>(high_resolution_clock::now().time_since_epoch().count());
+	return (seed == 0)? 0x3E71D159 : seed;
+}();
+
+static uint32_t xorshift32()
+{
+    randomState ^= randomState << 13;
+    randomState ^= randomState >> 17;
+    randomState ^= randomState << 5;
+    return randomState;
+}
+
+static float GetRandomFloatRange(float min, float max)
+{
+	if (min >= max)
+	{
+		return min;
+	}
+	static constexpr double uint32_maxValue = 1.0 / std::numeric_limits<uint32_t>::max(); 
+	
+    double normalized = xorshift32() * uint32_maxValue;
+    return min + static_cast<float>(normalized) * (max - min);
+}
+
+// Returns XYZ after adjusting it with the emitter's variance range (if any).
+static custom_xyz GetVariedXYZ(const custom_xyz& base, const custom_xyz& min, const custom_xyz& max)
+{
+	custom_xyz result = base;
+	result.x += GetRandomFloatRange(min.x, max.x);
+	result.y += GetRandomFloatRange(min.y, max.y);
+	result.z += GetRandomFloatRange(min.z, max.z);
+	return result;
+}
 
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
@@ -48,6 +83,12 @@ emitter* D3DParticleEmitterInit(particle_system *pParticleSystem)
 	memset(pEmitter, 0, sizeof(emitter));
 	
 	return pEmitter;
+}
+
+void D3DParticleEmitterSetTimer(emitter *pEmitter, float time)
+{
+	pEmitter->timer_s = time;
+	pEmitter->timerBase_s = time;
 }
 
 void D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter)
@@ -156,37 +197,17 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	MatrixTranslate(&pChunk->xForm, pParticle->position.x, pParticle->position.z, pParticle->position.y);
 
 	CHUNK_XYZ_SET(pChunk, 0, 0, 0, 0);
-	CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y,
-		-pParticle->velocity.z);
-	CHUNK_BGRA_SET(pChunk, 0, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
-		pParticle->bgra.a);
-	CHUNK_BGRA_SET(pChunk, 1, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
-		0);
+	CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y, -pParticle->velocity.z);
+	CHUNK_BGRA_SET(pChunk, 0, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r, pParticle->bgra.a);
+	CHUNK_BGRA_SET(pChunk, 1, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r, 0);
 	CHUNK_INDEX_SET(pChunk, 0, 0);
 	CHUNK_INDEX_SET(pChunk, 1, 1);
 }
 
 void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 {
-    auto GetRandomRange = [&](float min, float max) -> float
-	{
-        if (min >= max)
-		{
-			return min;
-		}
-        std::uniform_real_distribution<float> dist(min, max);
-		
-        return dist(gen);
-    };
-	
-	pParticle->position = pEmitter->position;
-	pParticle->position.x += GetRandomRange(pEmitter->positionVarianceMin.x, pEmitter->positionVarianceMax.x);
-	pParticle->position.y += GetRandomRange(pEmitter->positionVarianceMin.y, pEmitter->positionVarianceMax.y);
-	pParticle->position.z += GetRandomRange(pEmitter->positionVarianceMin.z, pEmitter->positionVarianceMax.z);
-	pParticle->velocity = pEmitter->velocity;
-	pParticle->velocity.x += GetRandomRange(pEmitter->velocityVarianceMin.x, pEmitter->velocityVarianceMax.x);
-	pParticle->velocity.y += GetRandomRange(pEmitter->velocityVarianceMin.y, pEmitter->velocityVarianceMax.y);
-	pParticle->velocity.z += GetRandomRange(pEmitter->velocityVarianceMin.z, pEmitter->velocityVarianceMax.z);
+	pParticle->position = GetVariedXYZ(pEmitter->position, pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
+	pParticle->velocity = GetVariedXYZ(pEmitter->velocity, pEmitter->velocityVarianceMin, pEmitter->velocityVarianceMax);
 	
 	// Each weather particle calculates the time it takes for them to land on the ground.
 	if (pEmitter->bDestroysOnSurface)
@@ -218,13 +239,11 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 		}
 	}
 	
-	pParticle->rotation = pEmitter->rotation;
-	pParticle->rotation.x += GetRandomRange(pEmitter->rotationVarianceMin.x, pEmitter->rotationVarianceMax.x);
-	pParticle->rotation.y += GetRandomRange(pEmitter->rotationVarianceMin.y, pEmitter->rotationVarianceMax.y);
-	pParticle->rotation.z += GetRandomRange(pEmitter->rotationVarianceMin.z, pEmitter->rotationVarianceMax.z);
+	pParticle->rotation = GetVariedXYZ(pEmitter->rotation, pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
 	pParticle->bgra = pEmitter->bgra;
 	pParticle->energy = pEmitter->energy;
 	
+	// Advance to the next slot in the circular buffer.
 	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;
 	if (pEmitter->numParticles < MAX_PARTICLES)
 	{

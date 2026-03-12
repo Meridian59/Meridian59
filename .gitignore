@@ -5,14 +5,10 @@
 *.rsc
 kodbase.txt
 run/*
-include/mss.h
-include/rrcore.h
 lib/meridian.lib
 lib/rscload.lib
 lib/libarchive.lib
 lib/libpng.lib
-lib/mss*.lib
-lib/waveplay.lib
 lib/zlib.lib
 bin/bbgun.exe
 bin/bc
@@ -28,7 +24,6 @@ bin/paldump.exe
 bin/porttest.exe
 bin/rscmerge.exe
 bin/rscprint.exe
-bin/waveplay.dll
 install/meridian59-installer.exe
 roomedit/windeu32.log
 resource/rooms/*~
@@ -36,36 +31,6 @@ resource/rooms/*~
 # Include runtime scripts
 !run/scripts
 !run/scripts/*
-
-#################
-## Eclipse
-#################
-
-*.pydevproject
-.project
-.metadata
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
-
-# External tool builders
-.externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
-*.launch
-
-# CDT-specific
-.cproject
-
-# PDT-specific
-.buildpath
-
 
 #################
 ## Visual Studio
@@ -100,9 +65,6 @@ local.properties
 *.vspscc
 .builds
 *.dotCover
-
-## TODO: If you have NuGet Package Restore enabled, uncomment this
-#packages/
 
 # Visual C++ cache files
 ipch/

@@ -66,6 +66,33 @@ resources:
    guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
+   
+   
+   % {0} = defeated player name
+   % {1} = winning player name
+   % {2} = room name
+   % {3} = defeated faction name
+   % {4} = winning faction name
+
+   % Used when a faction war kill is reported, but is not during a land claim attempt.
+   faction_war_kill_title_1 = "WAR REPORT: {1} defeated {0}"
+   faction_war_kill_title_2 = "WAR REPORT: Bloodshed at {2}"
+   faction_war_kill_title_3 = "WAR REPORT: {1} strikes down {0}"
+   faction_war_kill_body_1 = "At {2}, {1} fought under {4} and defeated {0} of {3}."
+   faction_war_kill_body_2 = "Violence erupted at {2}. {0}, sworn to {3}, was brought down by {1} of {4}."
+   faction_war_kill_body_3 = "Word from {2}: {1} of {4} has bested {0}, champion of {3}."
+   faction_war_kill_body_4 = "{2} witnessed another victory for {4}, as {1} defeated {0} of {3}."
+   faction_war_kill_body_5 = "From {2}, the news is grim for {3}: {0} has fallen to {1} of {4}."
+
+   % Used when a faction war kill is reported, but is during a land claim attempt.
+   faction_war_kill_claim_title_1 = "CLAIM SKIRMISH: {1} defeated {0}"
+   faction_war_kill_claim_title_2 = "CLAIM SKIRMISH: Battle at {2}"
+   faction_war_kill_claim_title_3 = "CLAIM SKIRMISH: {4} repels {3}"
+   faction_war_kill_claim_body_1 = "The land claim at {2} ended in blood. {1}, fighting for {4}, struck down {0} of {3}."
+   faction_war_kill_claim_body_2 = "{3} made their move at {2}, but {4} answered. {1} put an end to {0}'s land claim attempt."
+   faction_war_kill_claim_body_3 = "The claim at {2} was contested, and {4} prevailed as {1} defeated {0} of {3}."
+   faction_war_kill_claim_body_4 = "A challenge was made at {2}. {1}, fighting for {4}, bested {0} of {3} during a claim attempt."
+   faction_war_kill_claim_body_5 = "{4} tightened their grip at {2} when {1} dropped {0} of {3} mid-claim."
 
    system_char_module = char.dll
 
@@ -1456,7 +1483,9 @@ messages:
    {
       local i, rMessage, oSoldierShield, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
-            war_string1, war_string2, oBook, oMaster;
+            war_string1, war_string2, oRoom, oFlag, oBook, oMaster, oParl, 
+            territory_news_title, territory_news_body, rVicFaction, rKilFaction,
+            iPick, rTemplate;
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -1554,6 +1583,61 @@ messages:
                {
                   rMessage = system_user_killed_shield;
                   % Parameters set by default
+
+                  oRoom = Send(what,@GetOwner);
+                  oParl = Send(SYS,@GetParliament);
+                  oFlag = Send(oRoom,@FindHoldingActive,#class=&Flagpole);
+
+                  % TODO: If there's no room or Parliament present, we can't post the news.
+
+                  rVicFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(what,@GetFaction));
+                  rKilFaction = Send(oParl,@GetFactionLiegeName,#faction=Send(killer,@GetFaction));
+
+                  if Send(oFlag,@IsClaimAttemptInProgress)
+                  {
+                     iPick = Random(1,3);
+
+                     if iPick = 1 { rTemplate = faction_war_kill_claim_title_1; }
+                     if iPick = 2 { rTemplate = faction_war_kill_claim_title_2; }
+                     if iPick = 3 { rTemplate = faction_war_kill_claim_title_3; }
+                     
+                     territory_news_title = BuildString(rTemplate, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), rVicFaction, rKilFaction);
+
+                     iPick = Random(1,5);
+
+                     if iPick = 1 { rTemplate = faction_war_kill_claim_body_1; } 
+                     if iPick = 2 { rTemplate = faction_war_kill_claim_body_2; }
+                     if iPick = 3 { rTemplate = faction_war_kill_claim_body_3; }
+                     if iPick = 4 { rTemplate = faction_war_kill_claim_body_4; }
+                     if iPick = 5 { rTemplate = faction_war_kill_claim_body_5; }
+
+                     territory_news_body = BuildString(rTemplate, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), rVicFaction, rKilFaction);
+                  }
+                  else
+                  {
+                     iPick = Random(1,3);
+
+                     if iPick = 1 { rTemplate = faction_war_kill_title_1; }
+                     if iPick = 2 { rTemplate = faction_war_kill_title_2; }
+                     if iPick = 3 { rTemplate = faction_war_kill_title_3; }
+
+                     territory_news_title = BuildString(rTemplate, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), rVicFaction, rKilFaction);
+
+                     iPick = Random(1,5);
+
+                     if iPick = 1 { rTemplate = faction_war_kill_body_1; }
+                     if iPick = 2 { rTemplate = faction_war_kill_body_2; }
+                     if iPick = 3 { rTemplate = faction_war_kill_body_3; }
+                     if iPick = 4 { rTemplate = faction_war_kill_body_4; }
+                     if iPick = 5 { rTemplate = faction_war_kill_body_5; }
+
+                     territory_news_body = BuildString(rTemplate, Send(what,@GetTrueName), Send(killer,@GetTrueName), Send(oRoom,@GetName), rVicFaction, rKilFaction);
+                  }                  
+
+                  % Post to the territory news
+                  oBook = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
+                  Send(oBook,@PostNews,#what=Create(&CorNothAmbassador),#title=territory_news_title,      
+                     #body=territory_news_body);
                }
 
                % A guild war?
@@ -6653,9 +6737,19 @@ messages:
    PostPatchUpdates()
    "Runs one-time update functions after a patch. Call via 'send object 0 PostPatchUpdates'"
    {
+      local oRoom;
+
+      % Initialize the territory wars newsglobes
+      oRoom = Send(self,@FindRoomByNum,#num=RID_CORNOTH);
+      if oRoom <> $
+      {
+         debug("PostPatchUpdates:: Recreating RID_CORNOTH");
+         oRoom = Send(oRoom,@Recreate);
+      }
+
       % Ensure existing dynamic lights function as they did prior to the patch (without flickering visually)
       % Remove this along with Flickerer::StopFlickering after PostPatchUpdates has been applied.
-      Send(&DynamicLight, @StopFlickering);
+      Send(&DynamicLight, @StopFlickering);      
       return;
    }
 

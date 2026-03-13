@@ -117,6 +117,8 @@ messages:
 
    CreateStandardObjects()
    {
+      local oNews;
+
       Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
           #new_row=4,#new_col=43);
       Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_ELM),
@@ -146,6 +148,15 @@ messages:
       Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
           #new_row=16,#new_col=5);
       Send(self,@NewHold,#what=Create(&Shrub),#new_row=38,#new_col=15);
+
+      oNews = Send(SYS,@FindNewsByNum,#num=NID_TERRITORY_NEWS);
+      if oNews = $
+      {
+         oNews = Create(&TerritoryNews,#nid=NID_TERRITORY_NEWS);
+      }
+      Send(self,@NewHold,#what=oNews,#new_row=20,#new_col=16,
+            #fine_row=0,#fine_col=26,#new_angle=ANGLE_EAST);
+
       propagate;
    }
 

@@ -309,7 +309,7 @@ messages:
 
    IsFlickering()
    {
-      return TRUE;
+      return pbIn_use;
    }
 
    CanMend()

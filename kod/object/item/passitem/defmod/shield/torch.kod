@@ -307,6 +307,11 @@ messages:
       return TORCH_LIGHT;
    }
 
+   IsFlickering()
+   {
+      return TRUE;
+   }
+
    CanMend()
    {
       return FALSE;

@@ -41,7 +41,7 @@ classvars:
    vrDM_Trigger = glowing_dm
 
    % Light properties for dynamic lighting on the player.
-   viLightColor = LIGHT_DBLUE
+   viLightColor = LIGHT_BLUE
    viLightIntensity = 4
 
 properties:

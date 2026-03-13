@@ -2424,9 +2424,9 @@ bool D3DObjectLightingCalc(
 	{
 		// Convert 16-bit 5-5-5 RGB color to 8-bit components
 		const WORD selfColor = pRNode->obj.dLighting.color;
-		const float selfR = ((selfColor >> 10) & 31) * (255.0f / 31.0f);
-		const float selfG = ((selfColor >> 5) & 31) * (255.0f / 31.0f);
-		const float selfB = (selfColor & 31) * (255.0f / 31.0f);
+		const float selfR = ((selfColor >> 10) & 0x1F) * (255.0f / 31.0f);
+		const float selfG = ((selfColor >> 5) & 0x1F) * (255.0f / 31.0f);
+		const float selfB = (selfColor & 0x1F) * (255.0f / 31.0f);
 
 		// Apply a noticeable tint from the object's own light (40% blend toward light color)
 		const float selfTintStrength = 0.4f;

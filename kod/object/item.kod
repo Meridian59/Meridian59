@@ -1919,14 +1919,34 @@ messages:
       return;
    }
 
-   FindBadItemFlags() 
+   FindBadItemFlags()
    "Print object ID if item is in an illegal state"
    {
-      if piItem_flags = $ 
+      if piItem_flags = $
       {
          debug("Item", self, "has $ piItem_flags");
       }
       return;
+   }
+
+   IsFlickering()
+   {
+      return FALSE;
+   }
+
+   IsGlowing()
+   {
+      return FALSE;
+   }
+
+   GetLightColor()
+   {
+      return 0;
+   }
+
+   GetLightIntensity()
+   {
+      return 0;
    }
 
 end

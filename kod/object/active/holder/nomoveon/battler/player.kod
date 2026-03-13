@@ -10037,26 +10037,26 @@ messages:
    "Recalculates flicker flag by querying equipped items."
    "Glow (steady light) suppresses torch flicker on the character sprite."
    {
-      local i, bHasGlow, bHasTorch;
+      local i, bIsFlickering, bIsGlowing;
 
-      bHasGlow = FALSE;
-      bHasTorch = FALSE;
+      bIsFlickering = FALSE;
+      bIsGlowing = FALSE;
 
       for i in plUsing
       {
-         if IsClass(i,&Torch)
+         if Send(i,@IsFlickering)
          {
-            bHasTorch = TRUE;
+            bIsFlickering = TRUE;
          }
 
-         if IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
+         if Send(i,@IsGlowing)
          {
-            bHasGlow = TRUE;
+            bIsGlowing = TRUE;
          }
       }
 
       % Glow suppresses visual flickering -- steady light looks better.
-      if bHasTorch AND NOT bHasGlow
+      if bIsFlickering AND NOT bIsGlowing
       {
          piDrawfx = piDrawfx | FLICKERING_YES;
       }
@@ -10075,13 +10075,13 @@ messages:
 
       % Extract RGB components from 5-5-5 packed format.
       % Bits 14-10 = Red, Bits 9-5 = Green, Bits 4-0 = Blue.
-      iR1 = (iColor1 / 1024) & 31;
-      iG1 = (iColor1 / 32) & 31;
-      iB1 = iColor1 & 31;
+      iR1 = (iColor1 / 1024) & 0x1F;
+      iG1 = (iColor1 / 32) & 0x1F;
+      iB1 = iColor1 & 0x1F;
 
-      iR2 = (iColor2 / 1024) & 31;
-      iG2 = (iColor2 / 32) & 31;
-      iB2 = iColor2 & 31;
+      iR2 = (iColor2 / 1024) & 0x1F;
+      iG2 = (iColor2 / 32) & 0x1F;
+      iB2 = iColor2 & 0x1F;
 
       % Average each component.
       iR = (iR1 + iR2) / 2;
@@ -12359,7 +12359,7 @@ messages:
    "When multiple sources are active, their colors are mixed."
    "Steady (non-flickering) light is preferred over wavering when present."
    {
-      local i, oWeapAtt, iFlags, iIntensity, iColor, bHasLight,
+      local i, iFlags, iIntensity, iColor, bHasLight,
             iTorchColor, iTorchIntensity, iGlowColor, iGlowIntensity,
             bHasSteady;
 
@@ -12382,17 +12382,16 @@ messages:
 
       for i in plUsing
       {
-         if IsClass(i,&Torch)
+         if Send(i,@IsFlickering)
          {
             iTorchColor = Send(i,@GetLightColor);
             iTorchIntensity = Send(i,@GetLightIntensity);
          }
 
-         if IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
+         if Send(i,@IsGlowing)
          {
-            oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
-            iGlowColor = Send(oWeapAtt,@GetLightColor);
-            iGlowIntensity = Send(oWeapAtt,@GetLightIntensity);
+            iGlowColor = Send(i,@GetLightColor);
+            iGlowIntensity = Send(i,@GetLightIntensity);
          }
       }
 

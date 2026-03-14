@@ -671,7 +671,7 @@ messages:
       if row = 20 AND col = 6 AND fine_row > 32 AND fine_col > 32
       {
          Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
-         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
 
          Send(SYS,@UtilGoNearSquare,#what=what,
               #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
@@ -683,7 +683,7 @@ messages:
       if row = 19 AND col = 5 AND fine_row < 32 AND fine_col < 32
       {
          Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
-         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
 
          Send(SYS,@UtilGoNearSquare,#what=what,
               #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
@@ -695,7 +695,7 @@ messages:
       if row = 6 AND col = 5 AND fine_row > 32 AND fine_col < 32
       {
          Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
-         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
 
          Send(SYS,@UtilGoNearSquare,#what=what,
               #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
@@ -707,7 +707,7 @@ messages:
       if row = 5 AND col = 6 AND fine_row < 32 AND fine_col > 32
       {
          Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
-         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
 
          Send(SYS,@UtilGoNearSquare,#what=what,
               #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),

@@ -52,7 +52,7 @@ resources:
    Shrine_Riija_text = "Mischievous noises cascade down from the heavens."
    Shrine_Riija_sound = riija.wav
    Shrine_Jala_text =  "A sweet song drifts lazily through the air."
-   Shrine_Jala_sound = nodeup.wav
+   Shrine_Jala_sound = jala.wav
 
    Shrine_unsatisfied = "The shrine finds nothing to its liking."
    Shrine_mana_boost = \

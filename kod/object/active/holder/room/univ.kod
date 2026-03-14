@@ -38,6 +38,8 @@ properties:
    piRoom_num = RID_UNIVERSITY
 
    piBaseLight = LIGHT_NICE
+   
+   pbPrecipitation_enabled = FALSE
 
 messages:
 

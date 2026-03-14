@@ -44,6 +44,8 @@ properties:
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    prMusic = Duke1_music
+   
+   pbPrecipitation_enabled = TRUE
 
 messages:
 

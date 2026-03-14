@@ -47,6 +47,9 @@ properties:
 
    piMonster_count_max = 13
 
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_MOUNTAIN
+
 messages:
 
    Constructed()

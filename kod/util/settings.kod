@@ -147,9 +147,8 @@ properties:
    % contests too!)  This value can be changed to tweak the penalty in realtime
    piBroadcastManaCostPercent = 50
 
-   % If enabled, door opening sounds are shared with all players in the room
-   % with 3D positional audio.  If disabled, only the player opening the door
-   % hears the sound (legacy behavior).
+   % If enabled, door opening sounds are shared with all players in the room.
+   % If disabled, only the player opening the door hears the sound.
    pbDoorSoundShared = TRUE
 
 messages:

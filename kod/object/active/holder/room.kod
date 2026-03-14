@@ -2763,9 +2763,9 @@ messages:
                           #iAngle_Change=Nth(i,6));
 
             % Play door sound at the door's location.  DMs/Admins are silent
-            % to avoid revealing their presence.  If shared setting is enabled,
+            % to avoid revealing their presence.  If DoorSoundShared is enabled,
             % all players in room hear it; otherwise only the opener hears it
-            % (non-positional, legacy behavior).
+            % (non-positional).
             if NOT IsClass(what,&DM)
             {
                if Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
@@ -2784,8 +2784,8 @@ messages:
                  #new_row=Nth(i,4),#new_col=Nth(i,5),#new_angle=iAngle);
 
             % Play door closing sound from the opener's position in the
-            % destination room.  The opener is excluded. Legacy mode 
-            % does not play a close sound.
+            % destination room.  The opener is excluded.  When DoorSoundShared
+            % is disabled, no close sound is played.
             if NOT IsClass(what,&DM)
                AND Send(Send(SYS,@GetSettings),@DoorSoundSharedEnabled)
             {

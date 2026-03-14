@@ -134,24 +134,87 @@ static void GetPageText(char *buffer, DescDialogStruct *info)
 	buffer[len] = '\0'; // NULL terminate it.
 }
 
+/*
+ * ResizeEditToFitText:  Resizes the parent dialog so the edit control is
+ *   tall enough to display all its content without a vertical scrollbar.
+ */
 static void ResizeEditToFitText(HWND hEdit, HFONT hFont)
 {
 	HWND hParent = GetParent(hEdit);
 	
 	RECT edit_rect, dlg_rect;
-	int num_lines, yincrease;
+	int yincrease;
 	
 	if (!(GetWindowLong(hEdit, GWL_STYLE) & WS_VISIBLE))
 		return;
 	
 	GetWindowRect(hEdit, &edit_rect);
-	num_lines = Edit_GetLineCount(hEdit) + 1;
-	yincrease = GetFontHeight(hFont) * num_lines - (edit_rect.bottom - edit_rect.top);
-	
+	int origW = edit_rect.right - edit_rect.left;
+	int origH = edit_rect.bottom - edit_rect.top;
+	int textLen = GetWindowTextLength(hEdit);
+
+	if (textLen == 0)
+	{
+		yincrease = GetFontHeight(hFont) - origH;
+	}
+	else
+	{
+		POINT editPos = { edit_rect.left, edit_rect.top };
+		ScreenToClient(hParent, &editPos);
+
+		/* Temporarily expand to screen height so EM_POSFROMCHAR returns
+		 * unclipped coordinates. Width stays the same so text doesn't reflow. */
+		int screenH = GetSystemMetrics(SM_CYSCREEN);
+		MoveWindow(hEdit, editPos.x, editPos.y, origW, screenH, FALSE);
+
+		// Get Y position of last character.
+		POINTL pt;
+		SendMessage(hEdit, EM_POSFROMCHAR, (WPARAM)&pt, textLen - 1);
+
+		// Measure last line height from the distance between adjacent lines.
+		int lastLineHeight = GetFontHeight(hFont);
+		int lastLine = (int)SendMessage(hEdit, EM_LINEFROMCHAR, textLen - 1, 0);
+		if (lastLine > 0)
+		{
+			int lastIdx = (int)SendMessage(hEdit, EM_LINEINDEX, lastLine, 0);
+			int prevIdx = (int)SendMessage(hEdit, EM_LINEINDEX, lastLine - 1, 0);
+			POINTL ptPrev, ptLast;
+			SendMessage(hEdit, EM_POSFROMCHAR, (WPARAM)&ptPrev, prevIdx);
+			SendMessage(hEdit, EM_POSFROMCHAR, (WPARAM)&ptLast, lastIdx);
+			int measured = ptLast.y - ptPrev.y;
+			if (measured > lastLineHeight)
+				lastLineHeight = measured;
+		}
+
+		/* Content height = last char Y + last line height + padding.
+		 * Padding covers dySpaceAfter on the last paragraph and text descent. */
+		int padding = GetFontHeight(hFont);
+		int contentBottom = pt.y + lastLineHeight + padding;
+
+		// Account for formatting margins within the control.
+		RECT fmtRect, clientRect;
+		SendMessage(hEdit, EM_GETRECT, 0, (LPARAM)&fmtRect);
+		GetClientRect(hEdit, &clientRect);
+		int bottomMargin = std::max(0, (int)(clientRect.bottom - fmtRect.bottom));
+
+		// Non-client height (borders) from the expanded state.
+		RECT winRect;
+		GetWindowRect(hEdit, &winRect);
+		int nonClientH = (winRect.bottom - winRect.top)
+			- (clientRect.bottom - clientRect.top);
+		int neededWindowH = contentBottom + bottomMargin + nonClientH;
+
+		// Restore original size.
+		MoveWindow(hEdit, editPos.x, editPos.y, origW, origH, FALSE);
+
+		yincrease = neededWindowH - origH;
+	}
+
 	GetWindowRect(hParent, &dlg_rect);
-	yincrease = std::min(yincrease, (int)(GetSystemMetrics(SM_CYSCREEN) - dlg_rect.bottom + dlg_rect.top));
+	yincrease = std::min(yincrease, (int)(GetSystemMetrics(SM_CYSCREEN)
+		- dlg_rect.bottom + dlg_rect.top));
 	yincrease = std::max(0, yincrease);
-	MoveWindow(hParent, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left, 
+	MoveWindow(hParent, dlg_rect.left, dlg_rect.top, dlg_rect.right - dlg_rect.left,
 		dlg_rect.bottom - dlg_rect.top + yincrease, FALSE);
 }
 
@@ -188,7 +251,24 @@ static void SetLookPageButtons(HWND hDlg, DescDialogStruct *info)
 		}
 	}
 }
-
+/************************************************************************/
+/*
+ * ResetRichEditFormatting:  Reset all character formatting in a Rich Edit
+ *   control to plain text defaults (color, size, no bold/italic/underline).
+ */
+static void ResetRichEditFormatting(HWND hEdit)
+{
+	CHARFORMAT cformat;
+	memset(&cformat, 0, sizeof(cformat));
+	cformat.cbSize = sizeof(cformat);
+	cformat.dwMask = CFM_COLOR | CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE | CFM_SIZE;
+	cformat.crTextColor = GetColor(COLOR_EDITFGD);
+	cformat.yHeight = MD_DEFAULT_FONT_TWIPS;
+	cformat.dwEffects = 0;
+	SendMessage(hEdit, EM_SETSEL, 0, -1);
+	SendMessage(hEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cformat);
+	SendMessage(hEdit, EM_SETSEL, -1, -1);
+}
 /*****************************************************************************/
 /*
 * DescDialogProc:  Dialog procedure for dialog containing an
@@ -199,12 +279,14 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	DescDialogStruct *info;
 	static HWND hwndBitmap;
 	static bool changed;   // true when player has changed description
+	static bool updatingText; // Guard flag to prevent EN_CHANGE during programmatic updates
+	static char rawDescription[MAX_PAGE_DESCRIPTION_TEXT+1]; // Raw text with format codes
 	HWND hEdit, hwndOK, hURL, hFixed;
 	HDC hdc;
 	HFONT hFont;
 	RECT dlg_rect, edit_rect, fixed_rect;
 	AREA area;
-	char *desc, *str, url[MAX_URL + 1], *pPageBreak;
+	char *str, url[MAX_URL + 1], *pPageBreak;
 	DRAWITEMSTRUCT *lpdis;
 	char descriptionBuffer[MAX_PAGE_DESCRIPTION_TEXT+1];
 	int height;
@@ -222,6 +304,9 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		hFixed = GetDlgItem(hDlg, IDC_DESCFIXED);
 		hEdit = GetDlgItem(hDlg, IDC_DESCBOX);
 		hwndOK = GetDlgItem(hDlg, IDOK);
+
+		// Rich Edit controls require ENM_CHANGE to send EN_CHANGE notifications.
+		SendMessage(hEdit, EM_SETEVENTMASK, 0, ENM_CHANGE);
 		
 		// Item Name.
 		height = SetFontToFitText(info,GetDlgItem(hDlg, IDC_DESCNAME), 
@@ -235,6 +320,19 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		hFont = GetFont(FONT_EDIT);
 		SetWindowFont(hFixed, hFont, FALSE);
 		SetWindowFont(hEdit, hFont, FALSE);
+
+		// Rich Edit controls don't respond to WM_CTLCOLOREDIT; set colors directly.
+		SendMessage(hEdit, EM_SETBKGNDCOLOR, FALSE, GetColor(COLOR_EDITBGD));
+		SendMessage(hFixed, EM_SETBKGNDCOLOR, FALSE, GetSysColor(COLOR_3DFACE));
+		{
+			CHARFORMAT cformat;
+			memset(&cformat, 0, sizeof(cformat));
+			cformat.cbSize = sizeof(cformat);
+			cformat.dwMask = CFM_COLOR;
+			cformat.crTextColor = GetColor(COLOR_EDITFGD);
+			SendMessage(hEdit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cformat);
+			SendMessage(hFixed, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cformat);
+		}
 		
 		str = info->description;
 		if (str)
@@ -248,19 +346,40 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			}
 			info->numPages++;
 			GetPageText(descriptionBuffer,info);
-			Edit_SetText(hEdit, descriptionBuffer);
+			strncpy(rawDescription, descriptionBuffer, MAX_PAGE_DESCRIPTION_TEXT);
+			rawDescription[MAX_PAGE_DESCRIPTION_TEXT] = '\0';
+			updatingText = true;
+			RichEditSetMarkdownText(hEdit, descriptionBuffer,
+				GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
+			updatingText = false;
 		}
 		
 		// Show fixed string, if appropriate
 		if (info->fixed_string != NULL)
 		{
-			SetDlgItemText(hDlg, IDC_DESCFIXED, info->fixed_string);
-			SetWindowFont(GetDlgItem(hDlg, IDC_DESCFIXED), GetFont(FONT_EDIT), FALSE);
+			updatingText = true;
+			RichEditSetMarkdownText(GetDlgItem(hDlg, IDC_DESCFIXED),
+				info->fixed_string, GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
+			updatingText = false;
 		}
 		
 		// Can this player edit this object's description?
 		if (info->flags & DF_EDITABLE)
-			Edit_SetReadOnly(hEdit, FALSE);
+		{
+			HWND hCheckbox = GetDlgItem(hDlg, IDC_DESCEDIT);
+			// Add WS_CLIPSIBLINGS so the owner-draw name control won't paint over us.
+			SetWindowLong(hCheckbox, GWL_STYLE,
+				GetWindowLong(hCheckbox, GWL_STYLE) | WS_CLIPSIBLINGS);
+			SetWindowLong(GetDlgItem(hDlg, IDC_DESCNAME), GWL_STYLE,
+				GetWindowLong(GetDlgItem(hDlg, IDC_DESCNAME), GWL_STYLE) | WS_CLIPSIBLINGS);
+			// Bring checkbox to top of z-order and show it.
+			SetWindowPos(hCheckbox, HWND_TOP,
+				0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+			/* Start in preview mode (checked + read-only) so the player
+			 * sees their rendered description immediately. */
+			CheckDlgButton(hDlg, IDC_DESCEDIT, BST_CHECKED);
+			Edit_SetReadOnly(hEdit, TRUE);
+		}
 		Edit_LimitText(hEdit, MAX_DESCRIPTION);
 		if (!(info->flags & (DF_EDITABLE | DF_INSCRIBED)) && !str)
 		{
@@ -343,6 +462,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		SetFocus(hwndOK);
 		hDescDialog = hDlg;
 		changed = false;
+		updatingText = false;
 		return FALSE;
 		
    case WM_PAINT:
@@ -400,15 +520,39 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			   if (info->currentPage > 0)
 				   info->currentPage--;
 			   GetPageText(descriptionBuffer,info);
+			   strncpy(rawDescription, descriptionBuffer, MAX_PAGE_DESCRIPTION_TEXT);
+			   rawDescription[MAX_PAGE_DESCRIPTION_TEXT] = '\0';
 			   SetLookPageButtons(hDlg, info);
-			   Edit_SetText(GetDlgItem(hDlg, IDC_DESCBOX), descriptionBuffer);
+			   updatingText = true;
+			   hEdit = GetDlgItem(hDlg, IDC_DESCBOX);
+			   if (IsDlgButtonChecked(hDlg, IDC_DESCEDIT) == BST_CHECKED)
+				   RichEditSetMarkdownText(hEdit,
+					   descriptionBuffer, GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
+			   else
+			   {
+				   SetWindowText(hEdit, descriptionBuffer);
+				   ResetRichEditFormatting(hEdit);
+			   }
+			   updatingText = false;
 			   return TRUE;
 			   
 		   case IDC_NEXT:
 			   if (info->currentPage < info->numPages-1)
 				   info->currentPage++;
 			   GetPageText(descriptionBuffer,info);
-			   Edit_SetText(GetDlgItem(hDlg, IDC_DESCBOX), descriptionBuffer);
+			   strncpy(rawDescription, descriptionBuffer, MAX_PAGE_DESCRIPTION_TEXT);
+			   rawDescription[MAX_PAGE_DESCRIPTION_TEXT] = '\0';
+			   updatingText = true;
+			   hEdit = GetDlgItem(hDlg, IDC_DESCBOX);
+			   if (IsDlgButtonChecked(hDlg, IDC_DESCEDIT) == BST_CHECKED)
+				   RichEditSetMarkdownText(hEdit,
+					   descriptionBuffer, GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
+			   else
+			   {
+				   SetWindowText(hEdit, descriptionBuffer);
+				   ResetRichEditFormatting(hEdit);
+			   }
+			   updatingText = false;
 			   SetLookPageButtons(hDlg, info);
 			   return TRUE;
 			   
@@ -455,11 +599,37 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			   StartApply(info->obj->id);
 			   EndDialog(hDlg, 0);
 			   return TRUE;
-			   
+
+		   case IDC_DESCEDIT:
+			   hEdit = GetDlgItem(hDlg, IDC_DESCBOX);
+			   updatingText = true;
+			   if (IsDlgButtonChecked(hDlg, IDC_DESCEDIT) == BST_CHECKED)
+			   {
+				   // Switch to preview mode: render formatted text, read-only.
+				   Edit_SetReadOnly(hEdit, TRUE);
+				   RichEditSetMarkdownText(hEdit, rawDescription,
+					   GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
+			   }
+			   else
+			   {
+				   /* Switch to edit mode: show plain raw text.
+				    * Clear link registry so stale links don't fire on raw text. */
+				   MdClearLinks(hEdit);
+				   Edit_SetReadOnly(hEdit, FALSE);
+				   SetWindowText(hEdit, rawDescription);
+				   ResetRichEditFormatting(hEdit);
+			   }
+			   updatingText = false;
+			   return TRUE;
+
 		   case IDC_DESCBOX:
 			   if (GET_WM_COMMAND_CMD(wParam, lParam) != EN_CHANGE)
 				   break;
+			   if (updatingText)
+				   return TRUE;
 			   changed = true;
+			   GetDlgItemText(hDlg, IDC_DESCBOX, rawDescription,
+				   MAX_PAGE_DESCRIPTION_TEXT);
 			   return TRUE;
 			   
 		   case IDC_URLBUTTON:
@@ -470,13 +640,18 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			   
 		   case IDOK:
 			   
+			   /* If in preview mode (checked), rawDescription already has the latest raw text.
+			    * If in edit mode (unchecked), grab current text from the control. */
+			   if (IsDlgButtonChecked(hDlg, IDC_DESCEDIT) != BST_CHECKED)
+			   {
+				   GetDlgItemText(hDlg, IDC_DESCBOX, rawDescription,
+					   MAX_PAGE_DESCRIPTION_TEXT);
+			   }
+			   
 			   // Send new description if changed
 			   if (changed)
 			   {
-				   desc = (char *) SafeMalloc(MAX_DESCRIPTION + 1);
-				   GetDlgItemText(hDlg, IDC_DESCBOX, desc, MAX_DESCRIPTION);
-				   RequestChangeDescription(info->obj->id, desc);
-				   SafeFree(desc);
+				   RequestChangeDescription(info->obj->id, rawDescription);
 			   }
 			   
 			   // Send new URL if changed
@@ -717,7 +892,8 @@ void SetDialogFixedString(char* fixed_string)
 {
 	if (hDescDialog != NULL)
 	{
-		SetDlgItemText(hDescDialog, IDC_DESCFIXED, fixed_string);
+		RichEditSetMarkdownText(GetDlgItem(hDescDialog, IDC_DESCFIXED),
+			fixed_string, GetColor(COLOR_EDITFGD), MD_RENDER_FULL);
 		InvalidateRect(GetDlgItem(hDescDialog, IDC_DESCFIXED), NULL, TRUE);
 	}
 }/************************************************************************/

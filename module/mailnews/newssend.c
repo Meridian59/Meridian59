@@ -20,6 +20,7 @@ static RECT  dlg_rect;        // Screen position of dialog
 static ChildPlacement newssend_controls[] = {
 { IDC_NEWSEDIT,   RDI_ALL },
 { IDC_SUBJECT,    RDI_LEFT | RDI_RIGHT | RDI_TOP},
+{ IDC_PREVIEW,    RDI_RIGHT | RDI_TOP },
 { IDOK,           RDI_LEFT | RDI_HPIN | RDI_BOTTOM },
 { IDCANCEL,       RDI_LEFT | RDI_HPIN | RDI_BOTTOM },
 { 0,              0 },   // Must end this way
@@ -57,6 +58,7 @@ INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 {
    static HWND hEdit, hSubject;
    static PostNewsDialogStruct *info;
+   static char rawNewsBody[MAXARTICLE + 1];
    char *buf, subject[MAX_SUBJECT];
    int len;
    MINMAXINFO *lpmmi;
@@ -70,8 +72,22 @@ INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       hEdit = GetDlgItem(hDlg, IDC_NEWSEDIT);
       hSubject = GetDlgItem(hDlg, IDC_SUBJECT);
 
+      // Rich Edit controls require ENM_CHANGE to send EN_CHANGE notifications.
+      SendMessage(hEdit, EM_SETEVENTMASK, 0, ENM_CHANGE);
+
       Edit_LimitText(hEdit, MAXARTICLE);
       SetWindowFont(hEdit, GetFont(FONT_MAIL), TRUE);
+
+      // Rich Edit controls don't respond to WM_CTLCOLOREDIT; set colors directly.
+      SendMessage(hEdit, EM_SETBKGNDCOLOR, FALSE, GetColor(COLOR_MAILBGD));
+      {
+         CHARFORMAT cformat;
+         memset(&cformat, 0, sizeof(cformat));
+         cformat.cbSize = sizeof(cformat);
+         cformat.dwMask = CFM_COLOR;
+         cformat.crTextColor = GetColor(COLOR_MAILFGD);
+         SendMessage(hEdit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cformat);
+      }
 
       Edit_LimitText(hSubject, MAX_SUBJECT - 1);
       SetWindowFont(hSubject, GetFont(FONT_MAIL), TRUE);
@@ -93,6 +109,7 @@ INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 		    LookupNameRsc(info->group_name_rsc));
       
       EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
+      rawNewsBody[0] = '\0';
       hPostNewsDialog = hDlg;
       return FALSE;
 
@@ -133,13 +150,50 @@ INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 	    
 	 return TRUE;
 
+      case IDC_PREVIEW:
+	 if (IsDlgButtonChecked(hDlg, IDC_PREVIEW) == BST_CHECKED)
+	 {
+	    // Switch to preview: save raw text, render formatted, set read-only.
+	    Edit_GetText(hEdit, rawNewsBody, MAXARTICLE + 1);
+	    Edit_SetReadOnly(hEdit, TRUE);
+	    RichEditSetMarkdownText(hEdit, rawNewsBody, GetColor(COLOR_MAILFGD), MD_RENDER_FULL);
+	 }
+	 else
+	 {
+	    // Switch to edit: restore raw text.
+	    CHARFORMAT cformat;
+	    Edit_SetReadOnly(hEdit, FALSE);
+	    SetWindowText(hEdit, rawNewsBody);
+	    // Reset formatting leftover from preview rendering.
+	    memset(&cformat, 0, sizeof(cformat));
+	    cformat.cbSize = sizeof(cformat);
+	    cformat.dwMask = CFM_COLOR | CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE | CFM_SIZE;
+	    cformat.crTextColor = GetColor(COLOR_MAILFGD);
+	    cformat.yHeight = MD_DEFAULT_FONT_TWIPS;
+	    cformat.dwEffects = 0;
+	    SendMessage(hEdit, EM_SETSEL, 0, -1);
+	    SendMessage(hEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cformat);
+	    SendMessage(hEdit, EM_SETSEL, -1, -1);
+	 }
+	 return TRUE;
+
       case IDOK:
 	 /* Get title and article; post article */
 	 Edit_GetText(hSubject, subject, MAX_SUBJECT);
 	 
-	 len = Edit_GetTextLength(hEdit);
-	 buf = (char *) SafeMalloc(len + 1);
-	 Edit_GetText(hEdit, buf, len + 1);
+	 // If in preview mode, use saved raw text instead of rendered content.
+	 if (IsDlgButtonChecked(hDlg, IDC_PREVIEW) == BST_CHECKED)
+	 {
+	    len = (int)strlen(rawNewsBody);
+	    buf = (char *) SafeMalloc(len + 1);
+	    strcpy(buf, rawNewsBody);
+	 }
+	 else
+	 {
+	    len = Edit_GetTextLength(hEdit);
+	    buf = (char *) SafeMalloc(len + 1);
+	    Edit_GetText(hEdit, buf, len + 1);
+	 }
 	 SendArticle(info->newsgroup, subject, buf);
 	
 	 SafeFree(buf);

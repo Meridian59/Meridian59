@@ -288,7 +288,7 @@ void DisplayServerMessage(const char *message, COLORREF start_color, BYTE start_
 {
    EditBoxStartAdd();
 
-   DisplayMessage(message, start_color, start_style);
+   DisplayMessageMarkdown(message, start_color, start_style);
    
    EditBoxEndAdd();
 }
@@ -403,3 +403,135 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 
    SafeFree(p);
 }
+
+/************************************************************************/
+/*
+ * RichEditSetFormattedText:  Populates a Rich Edit control with styled text
+ *   by parsing legacy format codes and applying corresponding
+ *   CHARFORMAT styles to each segment.
+ */
+void RichEditSetFormattedText(HWND hwndRichEdit, const char *text,
+                              COLORREF defaultColor)
+{
+   int i;
+   char ch, *ptr, *str;
+   COLORREF color, new_color;
+   BYTE style, new_style, new_type;
+   CHARFORMAT cformat;
+
+   char *buf = strdup(text);
+   if (!buf)
+      return;
+
+   // Clear existing content.
+   SetWindowText(hwndRichEdit, "");
+
+   str = buf;
+   color = defaultColor;
+   style = STYLE_NORMAL;
+
+   for (ptr = buf; *ptr != 0; ptr++)
+   {
+      if (strchr(format_chars, *ptr) == NULL)
+         continue;
+
+      ch = *(ptr + 1);
+
+      // Format char at end of string -- stop processing.
+      if (ch == 0)
+         break;
+
+      new_type = 0;
+      for (i = 0; i < num_format_codes; i++)
+      {
+         if (code_table[i].code != ch)
+            continue;
+
+         switch (code_table[i].type)
+         {
+         case CODE_COLOR:
+            new_color = code_table[i].data;
+            new_type |= CODE_COLOR;
+            break;
+
+         case CODE_STYLE:
+            switch (code_table[i].data)
+            {
+            case STYLE_NORMAL:
+               new_style = STYLE_NORMAL;
+               break;
+
+            case STYLE_RESET:
+               new_style = STYLE_NORMAL;
+               new_color = defaultColor;
+               new_type |= CODE_COLOR;
+               break;
+
+            default:
+               new_style = style ^ code_table[i].data;
+               break;
+            }
+            new_type |= CODE_STYLE;
+            break;
+         }
+      }
+
+      if (new_type != 0)
+      {
+         // Null-terminate current segment and append it.
+         *ptr = 0;
+         if (*str != 0)
+         {
+            int txtlen = Edit_GetTextLength(hwndRichEdit);
+            Edit_SetSel(hwndRichEdit, txtlen, txtlen);
+
+            memset(&cformat, 0, sizeof(cformat));
+            cformat.cbSize = sizeof(cformat);
+            cformat.dwMask = CFM_COLOR | CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE;
+            cformat.crTextColor = color;
+            if (style & STYLE_BOLD)
+               cformat.dwEffects |= CFE_BOLD;
+            if (style & STYLE_ITALIC)
+               cformat.dwEffects |= CFE_ITALIC;
+            if (style & STYLE_UNDERLINE)
+               cformat.dwEffects |= CFE_UNDERLINE;
+
+            SendMessage(hwndRichEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cformat);
+            Edit_ReplaceSel(hwndRichEdit, str);
+         }
+
+         if (new_type & CODE_COLOR)
+            color = new_color;
+         if (new_type & CODE_STYLE)
+            style = new_style;
+
+         ptr++;          // Skip code character
+         str = ptr + 1;  // Next segment starts after code
+      }
+   }
+
+   // Append any remaining text.
+   if (*str != 0)
+   {
+      int txtlen = Edit_GetTextLength(hwndRichEdit);
+      Edit_SetSel(hwndRichEdit, txtlen, txtlen);
+
+      memset(&cformat, 0, sizeof(cformat));
+      cformat.cbSize = sizeof(cformat);
+      cformat.dwMask = CFM_COLOR | CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE;
+      cformat.crTextColor = color;
+      if (style & STYLE_BOLD)
+         cformat.dwEffects |= CFE_BOLD;
+      if (style & STYLE_ITALIC)
+         cformat.dwEffects |= CFE_ITALIC;
+      if (style & STYLE_UNDERLINE)
+         cformat.dwEffects |= CFE_UNDERLINE;
+
+      SendMessage(hwndRichEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cformat);
+      Edit_ReplaceSel(hwndRichEdit, str);
+   }
+
+   free(buf);
+}
+
+

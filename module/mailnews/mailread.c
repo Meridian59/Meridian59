@@ -57,7 +57,108 @@ static void PrepareMailDateMap(HWND hListView);
 static void ResetMailListSort(HWND hListView);
 static int DeleteSelectedMessages(HWND hList);
 static void UpdateButtonStates(HWND hDlg, HWND hList);
+static char *FormatMailAsMarkdown(const char *msg);
+static void RenderMailMessage(HWND hEdit, const char *msg, COLORREF color);
 
+/****************************************************************************/
+/*
+ * FormatMailAsMarkdown:  Returns a markdown-formatted copy of a mail
+ *   message, or NULL if no separator is found.  Caller must SafeFree()
+ *   the result.
+ */
+static char *FormatMailAsMarkdown(const char *msg)
+{
+   static const char separator[] = "\r\n-------------\r\n";
+   const char *sepPos = strstr(msg, separator);
+
+   if (sepPos == NULL)
+      return NULL;
+
+   const char *body = sepPos + strlen(separator);
+   int headerLen = (int)(sepPos - msg);
+   int bodyLen = (int)strlen(body);
+
+   // Bold markup adds 4 chars per label line; trailing spaces add 2 per line;
+   // HR + blank lines add 11; use headerLen * 2 to handle any header count.
+   char *out = (char *)SafeMalloc(headerLen * 2 + bodyLen + 64);
+
+   char *dst = out;
+   const char *src = msg;
+   const char *headerEnd = msg + headerLen;
+
+   // Wrap header labels in bold, add trailing two-space markdown line breaks.
+   while (src < headerEnd)
+   {
+      const char *eol = strstr(src, "\r\n");
+      if (!eol || eol > headerEnd)
+         eol = headerEnd;
+
+      const char *colon = NULL;
+      for (const char *p = src; p + 1 < eol; p++)
+      {
+         if (p[0] == ':' && p[1] == ' ')
+         {
+            colon = p;
+            break;
+         }
+      }
+
+      if (colon)
+      {
+         int labelLen = (int)(colon - src + 1);
+         *dst++ = '*'; *dst++ = '*';
+         memcpy(dst, src, labelLen);
+         dst += labelLen;
+         *dst++ = '*'; *dst++ = '*';
+         int restLen = (int)(eol - (colon + 1));
+         memcpy(dst, colon + 1, restLen);
+         dst += restLen;
+      }
+      else
+      {
+         int lineLen = (int)(eol - src);
+         memcpy(dst, src, lineLen);
+         dst += lineLen;
+      }
+
+      if (eol < headerEnd)
+      {
+         // Markdown line break.
+         *dst++ = ' '; *dst++ = ' ';
+         *dst++ = '\r'; *dst++ = '\n';
+         src = eol + 2;
+      }
+      else
+      {
+         src = headerEnd;
+      }
+   }
+
+   memcpy(dst, "\r\n\r\n---\r\n\r\n", 11);
+   dst += 11;
+
+   memcpy(dst, body, bodyLen + 1);
+
+   return out;
+}
+/****************************************************************************/
+/*
+ * RenderMailMessage:  Renders a mail message into a Rich Edit control
+ *   with bold header labels and a markdown horizontal rule separator.
+ */
+static void RenderMailMessage(HWND hEdit, const char *msg, COLORREF color)
+{
+   char *formatted = FormatMailAsMarkdown(msg);
+   if (formatted)
+   {
+      RichEditSetMarkdownText(hEdit, formatted, color, MD_RENDER_FULL);
+      SafeFree(formatted);
+   }
+   else
+   {
+      RichEditSetMarkdownText(hEdit, msg, color, MD_RENDER_FULL);
+   }
+}
 /****************************************************************************/
 /*
  * UserReadMail:  Tell the server that the user wants to read mail.
@@ -103,6 +204,17 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       hEdit = GetDlgItem(hDlg, IDC_MAILEDIT);
       hList = GetDlgItem(hDlg, IDC_MAILLIST);
       SendMessage(hDlg, BK_SETDLGFONTS, 0, 0);
+
+      // Rich Edit controls don't respond to WM_CTLCOLOREDIT; set colors directly.
+      SendMessage(hEdit, EM_SETBKGNDCOLOR, FALSE, GetColor(COLOR_MAILBGD));
+      {
+         CHARFORMAT cformat;
+         memset(&cformat, 0, sizeof(cformat));
+         cformat.cbSize = sizeof(cformat);
+         cformat.dwMask = CFM_COLOR;
+         cformat.crTextColor = GetColor(COLOR_MAILFGD);
+         SendMessage(hEdit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cformat);
+      }
 
       ListView_SetExtendedListViewStyleEx(hList, LVS_EX_FULLROWSELECT,
                                           LVS_EX_FULLROWSELECT);
@@ -278,7 +390,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          }
 
          mail_index = msg_num;
-         Edit_SetText(hEdit, msg);
+         RenderMailMessage(hEdit, msg, GetColor(COLOR_MAILFGD));
          break;
       }
       return TRUE;

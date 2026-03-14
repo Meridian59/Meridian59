@@ -32,12 +32,12 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_FGD */
 	{ "255,255,255"},   /* COLOR_LISTSELBGD */
 	{ "0,0,0"},         /* COLOR_LISTSELFGD */
-	{ "255,255,255"},   /* COLOR_MAILBGD */
-	{ "0,0,0"},         /* COLOR_MAILFGD */
+	{ "250,249,246"},   /* COLOR_MAILBGD */
+	{ "36,41,47"},      /* COLOR_MAILFGD */
 //	{ "252,128,0"},     /* COLOR_HIGHLITE */
 	{ "240,208,25"},     /* COLOR_HIGHLITE */
-	{ "0,0,0"},         /* COLOR_EDITFGD */
-	{ "255,255,255"},   /* COLOR_EDITBGD */
+	{ "36,41,47"},      /* COLOR_EDITFGD */
+	{ "250,249,246"},   /* COLOR_EDITBGD */
 	{ "128,0,128"},     /* COLOR_SYSMSGFGD */
 //	{ "0,0,0"},         /* COLOR_MAINEDITFGD */
 	{ "255,255,255"},         /* COLOR_MAINEDITFGD */
@@ -61,6 +61,10 @@ static char colorinfo[][15] = {
 	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY    - purple */
 	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNIDENTIFIED - orange */
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
+	{ "90,90,90"},      /* COLOR_CODEFGD  */
+	{ "0,0,255"},       /* COLOR_LINKFGD  */
+	{ "90,90,90"},      /* COLOR_QUOTEFGD */
+	{ "100,100,100"},   /* COLOR_QUOTEBGD */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */

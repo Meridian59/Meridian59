@@ -177,6 +177,11 @@ EXPORTS
 	EditBoxAddText
 	DisplayServerMessage
 	DisplayMessage
+	RichEditSetFormattedText
+	RichEditSetMarkdownText
+	DisplayMessageMarkdown
+	EnableMarkdownLinks
+	MdClearLinks
 
 ; Manipulating objects
 	CompareIdObject

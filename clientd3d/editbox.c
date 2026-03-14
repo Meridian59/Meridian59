@@ -43,7 +43,7 @@ void EditBoxCreate(HWND hParent)
    /* Don't use WS_VISIBLE style here--create window large enough so that 
     * scroll bar will be drawn, then size for real & make visible in ResizeEditBox.
     */
-   hwndText = CreateWindowEx(0, "richedit", NULL, 
+   hwndText = CreateWindowEx(0, "RichEdit20A", NULL, 
 			   WS_CHILD | WS_VSCROLL | WS_VISIBLE |
 			   ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL,
 			   0, 0, 0, 0, 
@@ -53,6 +53,11 @@ void EditBoxCreate(HWND hParent)
 
    lpfnDefEditProc = SubclassWindow(hwndText, EditProc);
    SetWindowFont(hwndText, GetFont(FONT_EDIT), FALSE);
+
+   /* Install link-handler subclass for chat message links.
+    * Must be after SubclassWindow so it sits beneath EditProc.
+    */
+   EnableMarkdownLinks(hwndText);
 }
 /************************************************************************/
 /*
@@ -199,10 +204,13 @@ void EditBoxAddText(char *message, int color, int style)
    /* If box is full, get as much as we can fit.  +2 for CR/LF */
    if (txtlen + msglen + 2 > MAX_TEXT)
    {
-      // XXX Split off at newline
-      Edit_SetSel(hwndText, 0, txtlen + msglen + 2 - MAX_TEXT);
+      int trimCount = txtlen + msglen + 2 - MAX_TEXT;
+      Edit_SetSel(hwndText, 0, trimCount);
       Edit_ReplaceSel(hwndText, "");
       txtlen = Edit_GetTextLength(hwndText);
+
+      /* Shift link registry positions so clickable links stay accurate. */
+      MdAdjustLinksForTrim(hwndText, (LONG)trimCount);
    }
 
    /* Append new message */

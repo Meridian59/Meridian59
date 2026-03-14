@@ -154,6 +154,17 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       SetWindowFont(hEdit, GetFont(FONT_MAIL), FALSE);
       SetWindowFont(hList, GetFont(FONT_MAIL), FALSE);
 
+      // Rich Edit controls don't respond to WM_CTLCOLOREDIT; set colors directly.
+      SendMessage(hEdit, EM_SETBKGNDCOLOR, FALSE, GetColor(COLOR_MAILBGD));
+      {
+         CHARFORMAT cformat;
+         memset(&cformat, 0, sizeof(cformat));
+         cformat.cbSize = sizeof(cformat);
+         cformat.dwMask = CFM_COLOR;
+         cformat.crTextColor = GetColor(COLOR_MAILFGD);
+         SendMessage(hEdit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cformat);
+      }
+
       /* Store dialog rectangle in case of resize */
       GetWindowRect(hDlg, &dlg_rect);
 
@@ -264,7 +275,7 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
    case BK_ARTICLE:
       /* Display article's text */
-      SetWindowText(hEdit, (char *)lParam);
+      RichEditSetMarkdownText(hEdit, (const char *)lParam, GetColor(COLOR_MAILFGD), MD_RENDER_FULL);
       if (info->permissions & NEWS_POST)
          EnableWindow(GetDlgItem(hDlg, IDC_REPLY), TRUE);
       EnableWindow(GetDlgItem(hDlg, IDC_REPLYMAIL), TRUE);

@@ -43,6 +43,10 @@ enum {
    COLOR_ITEM_TEXT_LEGENDARY,
    COLOR_ITEM_TEXT_UNIDENTIFIED,
    COLOR_ITEM_TEXT_CURSED,
+   COLOR_CODEFGD,            /* Code block text */
+   COLOR_LINKFGD,            /* Link text color */
+   COLOR_QUOTEFGD,           /* Blockquote text */
+   COLOR_QUOTEBGD,           /* Blockquote bar color */
    MAXCOLORS,
 };
 

@@ -156,7 +156,8 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       ListBox_SetCurSel(hList, 0);
       
       // Show message of the day
-      Edit_SetText(GetDlgItem(hDlg, IDC_MOTD), info->motd);  
+      RichEditSetMarkdownText(GetDlgItem(hDlg, IDC_MOTD), info->motd,
+         GetColor(COLOR_MAILFGD), MD_RENDER_FULL | MD_RENDER_LINKS);
       
       // Display advertisements
       for (i = 0; i < info->num_ads; i++)

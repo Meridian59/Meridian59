@@ -8,60 +8,71 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	128
-#define SANDSTORM_R		226
-#define SANDSTORM_G		153
-#define SANDSTORM_B		6
-#define SANDSTORM_A		255
+inline constexpr int MAX_PARTICLES = 128;
 
-#define RAIN_R			128
-#define RAIN_G			128
-#define RAIN_B			128
-#define RAIN_A			128
-
-typedef struct particle
+struct particle
 {
-	int			energy;
-	custom_xyz	pos;
-	custom_xyz	oldPos;
-	custom_xyz	velocity;
-	custom_xyz	rotation;
-	custom_bgra	bgra;
-	float		size;
-	float		weight;
-} particle;
+	int				energy;
+	custom_xyz		position;
+	custom_xyz		oldPosition;
+	custom_xyz		velocity;
+	custom_xyz		rotation;
+	custom_bgra		bgra;
+	float			size;
+	float			weight;
+	// Current age of the weather particle (in seconds)
+	float			currentAge_s;
+	// Max lifespan of the weather particle (in seconds)
+	float			maxAge_s;
+};
 
-typedef struct emitter
+struct emitter
 {
-	int			numParticles;
-	int			energy;
-	int			timer;
-	int			timerBase;
-	int			randomPos;
-	int			randomRot;
-	custom_xyz	pos;
-	custom_xyz	delta;
-	custom_xyz	velocity;
-	custom_xyz	rotation;
-	custom_bgra	bgra;
-	particle	particles[MAX_PARTICLES];
-	bool		bRandomize;
-} emitter;
+	int				numParticles;
+	int				nextSlot;
+	int				energy;
+	float			timer_s;
+	float			timerBase_s;
 
-typedef struct particle_system
+	custom_xyz		delta;
+	
+	// Base transform settings
+	custom_xyz		position;
+	custom_xyz		rotation;
+	custom_xyz		velocity;
+	
+	// Randomization ranges to apply to the base transform settings.
+	// Setting both min and max to 0 means no variance.
+	custom_xyz		positionVarianceMin;
+	custom_xyz		positionVarianceMax;
+	custom_xyz		rotationVarianceMin;
+	custom_xyz		rotationVarianceMax;
+	custom_xyz		velocityVarianceMin;
+	custom_xyz		velocityVarianceMax;
+	
+	custom_bgra		bgra;
+	particle		particles[MAX_PARTICLES];
+	
+	bool			bDestroysOnSurface;  // If true, particle clears on hitting a ceiling or floor.
+};
+
+struct particle_system
 {
 	int			numParticles;
 	list_type	emitterList;
-} particle_system;
+};
 
-void	D3DParticleSystemReset(particle_system *pParticleSystem);
-void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
-							float velX, float velY, float velZ, unsigned char b, unsigned char g,
-							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos, int randomRot);
-void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
-//void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
-void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
+void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
+void		D3DParticleSystemReset(particle_system *pParticleSystem);
+
+emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem);
+void 		D3DParticleEmitterSetTimer(emitter *pEmitter, float time);
+void		D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter);
+
+void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
+void 		D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool);
+void 		D3DParticleCreate(emitter *pEmitter, particle *pParticle);
+void		D3DParticleDestroy(particle *pParticle);
 
 #endif

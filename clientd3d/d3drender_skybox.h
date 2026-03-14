@@ -32,6 +32,12 @@ struct SkyboxRenderParams {
     {}
 };
 
+// Defines which .bgf resource gets paired with its respective hardware rendered skybox.
+struct SkyboxDefinition {
+	const char* resourceName;	// The .bgf name used by the software renderer.
+	const char* fileName;		// The .bsf/.png used in the hardware renderer.
+};
+
 bool D3DRenderUpdateSkyBox(DWORD background);
 void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
     const SkyboxRenderParams& skyboxRenderParams);

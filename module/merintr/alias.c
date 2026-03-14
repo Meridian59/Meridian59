@@ -19,14 +19,12 @@
 #include "merintr.h"
 
 #define MAX_VERBLEN  10     // Maximum length of a command verb to alias
-#define MAX_ALIASLEN 100    // Maximum length of an alias command
-#define NUM_ALIASES  12     // Number of aliases
+#define NUM_FKEYS    12     // Number of function key aliases
 
 typedef struct
 {
    WORD  key;       // Key to assign alias to
    char  text[MAX_ALIASLEN + 1];      // Text command for alias
-   bool  cr;        // true iff alias is a self-contained command (add CR to end)
 } HotkeyAlias;
 
 typedef struct
@@ -37,18 +35,31 @@ typedef struct
 
 static HotkeyAlias aliases[] =
 {
-   { VK_F1,   "help",     true, },
-   { VK_F2,   "rest",     true, },
-   { VK_F3,   "stand",    true, },
-   { VK_F4,   "neutral",  true, },
-   { VK_F5,   "happy",    true, },
-   { VK_F6,   "sad",      true, },
-   { VK_F7,   "wry",      true, },
-   { VK_F8,   "wave",     true, },
-   { VK_F9,   "point",    true, },
-   { VK_F10,  "addgroup", true, },
-   { VK_F11,  "mail",     true, },
-   { VK_F12,  "quit",     true, },
+   { VK_F1,   "help",     },
+   { VK_F2,   "rest",     },
+   { VK_F3,   "stand",    },
+   { VK_F4,   "neutral",  },
+   { VK_F5,   "happy",    },
+   { VK_F6,   "sad",      },
+   { VK_F7,   "wry",      },
+   { VK_F8,   "wave",     },
+   { VK_F9,   "point",    },
+   { VK_F10,  "addgroup", },
+   { VK_F11,  "mail",     },
+   { VK_F12,  "quit",     },
+   { '0',     "",         },
+   { '1',     "",         },
+   { '2',     "",         },
+   { '3',     "",         },
+   { '4',     "",         },
+   { '5',     "",         },
+   { '6',     "",         },
+   { '7',     "",         },
+   { '8',     "",         },
+   { '9',     "",         },
+   { '-',     "",         },
+   { '=',     "",         },
+   { '`',     "",         },
 };
 
 static VerbAlias* _apVerbAliases = NULL;
@@ -78,10 +89,11 @@ extern keymap	gCustomKeys[];
 static HWND hAliasDialog = NULL;
 static HWND hAliasDialog1 = NULL;
 static HWND hAliasDialog2 = NULL;
+static bool bShowingFKeys = true;
 
 static INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-static void UpdateKeyTables(int key, WORD command, char *text);
+static void UpdateKeyTables(WORD command, char *text);
 extern bool	gbClassicKeys;
 extern player_info *GetPlayer(void);
 
@@ -97,12 +109,12 @@ void AliasInit(void)
    char	destName[128];
    const char *srcName;
    WORD command;
-   player_info	*playerInfo;
+   player_info *playerInfo;
 
    destName[0] = '\0';
 
    playerInfo = GetPlayerInfo();
-   
+
    // This was incorrectly being called before the player's resource was known,
    // giving an unknown resource dialog box every time the game was entered.
    // Unfortunately, players' aliases were then written to disk under with
@@ -117,8 +129,8 @@ void AliasInit(void)
 
    for (i = 0; i < len; i++)
    {
-	   itoa(srcName[i], temp, 10);
-	   strcat(destName, temp);
+      itoa(srcName[i], temp, 10);
+      strcat(destName, temp);
    }
 
    strcpy(fullSection, alias_section);
@@ -128,26 +140,20 @@ void AliasInit(void)
    for (i = 0; i < NUM_ALIASES; i++)
    {
       // Read function key aliases
-      sprintf(temp, "F%d", i + 1);
-      //GetPrivateProfileString(alias_section, temp, aliases[i].text,
-	  GetPrivateProfileString(fullSection, temp, aliases[i].text,
-      aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
-
-      // Check for CR
-    len = (int) strlen(aliases[i].text);
-      if (len > 0 && aliases[i].text[len - 1] == '~')
+      bool isFKey = (i < NUM_FKEYS);
+      if (isFKey)
       {
-	 command = A_TEXTINSERT;
-	 aliases[i].text[len - 1] = 0;
-	 aliases[i].cr = false;
+         sprintf(temp, "F%d", i+1);
       }
       else 
       {
-	 command = A_TEXTCOMMAND;
-	 aliases[i].cr = true;
+         sprintf(temp, "action%d", i+1 - NUM_FKEYS);
       }
 
-      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
+      GetPrivateProfileString(fullSection, temp, aliases[i].text, aliases[i].text, MAX_ALIASLEN, cinfo->ini_file);
+
+      command = A_TEXTCOMMANDALIAS_START + i;
+      UpdateKeyTables(command, aliases[i].text);
    }
 }
 
@@ -222,11 +228,11 @@ void AliasExit(void)
 void AliasSave(void)
 {
    int i, len;
-   char temp[10], text[MAX_ALIASLEN + 1];
-   char	fullSection[255];
-   char	destName[128];
-   char	*srcName;
-   player_info	*playerInfo;
+   char temp[10];
+   char fullSection[255];
+   char destName[128];
+   char *srcName;
+   player_info *playerInfo;
    WORD command;
 
    destName[0] = '\0';
@@ -237,32 +243,31 @@ void AliasSave(void)
 
    for (i = 0; i < len; i++)
    {
-	   itoa(srcName[i], temp, 10);
-	   strcat(destName, temp);
+      itoa(srcName[i], temp, 10);
+      strcat(destName, temp);
    }
 
    strcpy(fullSection, alias_section);
    strcat(fullSection, destName);
 
    // Save the hotkey aliases.
-   for (i=0; i < NUM_ALIASES; i++)
+   for (i = 0; i < NUM_ALIASES; i++)
    {
       // Save function key aliases
-      sprintf(temp, "F%d", i + 1);
-
-      if (aliases[i].cr)
+      bool isFKey = (i < NUM_FKEYS);
+      if (isFKey)
       {
-	      strcpy(text, aliases[i].text);
-         command = A_TEXTCOMMAND;
+         sprintf(temp, "F%d", i+1);
       }
       else
       {
-         sprintf(text, "%s~", aliases[i].text);
-         command = A_TEXTINSERT;
+         sprintf(temp, "action%d", i+1 - NUM_FKEYS);
       }
-      WritePrivateProfileString(fullSection, temp, text, cinfo->ini_file);
 
-      UpdateKeyTables(aliases[i].key, command, aliases[i].text);
+      command = A_TEXTCOMMANDALIAS_START + i;
+      WritePrivateProfileString(fullSection, temp, aliases[i].text, cinfo->ini_file);
+
+      UpdateKeyTables(command, aliases[i].text);
    }
 
    strcpy(fullSection, command_section);
@@ -274,37 +279,24 @@ void AliasSave(void)
       WritePrivateProfileSection(command_section, "\0\0\0", cinfo->ini_file);
       for (i = 0; i < _nVerbAliases; i++)
       {
-	 if (_apVerbAliases[i].verb[0])
-	 {
-	    WritePrivateProfileString(command_section,
-	       _apVerbAliases[i].verb,
-	       _apVerbAliases[i].text,
-	       cinfo->ini_file);
-	 }
+         if (_apVerbAliases[i].verb[0])
+         {
+            WritePrivateProfileString(command_section, _apVerbAliases[i].verb, _apVerbAliases[i].text, cinfo->ini_file);
+         }
       }
    }
 }
 /****************************************************************************/
 /*
- * AliasSetKey:  Set up given alias to given virtual key code in given key table.
+ * AliasSetCommand:  Set the data (command alias) to a particular command alias ID in a given key table.
  */
-void AliasSetKey(KeyTable table, WORD vk_key, WORD flags, WORD command, void *data)
+void AliasSetCommand(KeyTable table, WORD command, void *data)
 {
-   int index;
-   WORD table_flags;
-
-   for (index = 0; table[index].vk_code != 0; index++)
+   for (int index = 0; table[index].vk_code != 0; index++)
    {
-      if (table[index].vk_code != vk_key)
-	 continue;
-
-      table_flags = table[index].flags;
-      
-      if (table_flags == KEY_ANY || (table_flags & flags))
-      {
-	 table[index].command = command;
-	 table[index].data    = data;
-      }
+      if (table[index].command != command)
+         continue;
+      table[index].data = data;
    }
 }
 /****************************************************************************/
@@ -537,76 +529,174 @@ void CommandAliasCommon(char *args, DLGPROC pfnAliasDialogProc, int idDialog)
       AliasSave();
    }
 }
+
 void CommandVerbAlias(char *args)
 {
    CommandAliasCommon(args, VerbAliasDialogProc, IDD_CMDALIAS);
 }
+
 void CommandAlias(char *args)
 {
+   bShowingFKeys = true;
    CommandAliasCommon(args, AliasDialogProc, IDD_ALIAS);
 }
+
+void CommandActionAlias(char *args)
+{
+   bShowingFKeys = false;
+   CommandAliasCommon(args, AliasDialogProc, IDD_ALIAS);
+}
+
+void UpdateActionAlias(HWND hDlg, bool isFKey, int controlIndex, int aliasIndex)
+{
+   int controlID = IDC_ALIAS_ACTION1 + controlIndex;
+   int checkID = IDC_CHECK_ACTION1 + controlIndex;
+   int textID = IDC_ALIAS_ACTIONTEXT1 + controlIndex;
+
+   HotkeyAlias &alias = aliases[aliasIndex];
+
+   // Strip off the '~' for display purposes
+   char temp[MAX_ALIASLEN + 1];
+   bool cr = true;
+   strcpy(temp, alias.text);
+   if (alias.text[strlen(alias.text) - 1] == '~')
+   {
+      cr = false;
+      temp[strlen(alias.text) - 1] = '\0';
+   }
+
+   // Set the label text
+   char label[32];
+   if (isFKey)
+      sprintf(label, "F%d", controlIndex + 1);
+   else
+      sprintf(label, "Action %d", controlIndex + 1);
+   HWND hText = GetDlgItem(hDlg, textID);
+   SetWindowText(hText, label);
+
+   // Set the text of the editable control
+   HWND hEdit = GetDlgItem(hDlg, controlID);
+   SetWindowText(hEdit, temp);
+   Edit_LimitText(hEdit, MAX_ALIASLEN - 1);
+   SetWindowFont(hEdit, GetFont(FONT_LIST), FALSE);
+
+   // Set the checkbox state
+   CheckDlgButton(hDlg, checkID, cr);
+}
+
+void ReadActionAlias(HWND hDlg, bool isFKey, int controlIndex, int aliasIndex)
+{
+   int controlID = IDC_ALIAS_ACTION1 + controlIndex;
+   int checkID = IDC_CHECK_ACTION1 + controlIndex;
+
+   HotkeyAlias &alias = aliases[aliasIndex];
+
+   GetDlgItemText(hDlg, controlID, alias.text, MAX_ALIASLEN - 1);
+   if (!IsDlgButtonChecked(hDlg, checkID))
+   {
+      alias.text[strlen(alias.text)] = '~';
+   }
+
+   WORD command = A_TEXTCOMMANDALIAS_START + aliasIndex;
+   AliasSetCommand(interface_key_table, command, alias.text);
+   AliasSetCommand(inventory_key_table, command, alias.text);
+}
+
 /*****************************************************************************/
 /*
  * AliasDialogProc:  Dialog procedure for alias dialog.
  */
 INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-   int i;
-   HWND hEdit;
-   WORD command;
-
    switch (message)
    {
    case WM_INITDIALOG:
       // Show current aliases
-      for (i=0; i < NUM_ALIASES; i++)
+      if (bShowingFKeys)
       {
-	 hEdit = GetDlgItem(hDlg, IDC_ALIASF1 + i);
-	 SetWindowText(hEdit, aliases[i].text);
-	 Edit_LimitText(hEdit, MAX_ALIASLEN - 1);
-	 SetWindowFont(hEdit, GetFont(FONT_LIST), FALSE);
+         // Set window caption and action type
+         SetWindowText(hDlg, "Hotkey Aliases");
 
-	 CheckDlgButton(hDlg, IDC_CHECK_F1 + i, aliases[i].cr);
+         HWND hType = GetDlgItem(hDlg, IDC_ALIAS_ACTIONTYPE);
+         SetWindowText(hType, "Key:");
+
+         // Show "Command Aliases" button
+         HWND hButton = GetDlgItem(hDlg, IDC_TUNNEL);
+         ShowWindow(hType, SW_SHOW);
+
+         // Update all F-keys
+         int controlIndex = 0;
+         for (int i = 0; i < NUM_FKEYS; ++i)
+         {
+            UpdateActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+            ++controlIndex;
+         }
+      }
+      else
+      {
+         // Set window caption and action type
+         SetWindowText(hDlg, "Action Aliases");
+
+         HWND hType = GetDlgItem(hDlg, IDC_ALIAS_ACTIONTYPE);
+         SetWindowText(hType, "Action:");
+
+         // Hide "Command Aliases" button
+         HWND hButton = GetDlgItem(hDlg, IDC_TUNNEL);
+         ShowWindow(hType, SW_HIDE);
+
+         // Update all action keys
+         int controlIndex = 0;
+         for (int i = NUM_FKEYS; i < NUM_ALIASES; ++i)
+         {
+            UpdateActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+            ++controlIndex;
+         }
       }
 
       hAliasDialog = hDlg;
       hAliasDialog1 = hDlg;
       if (hAliasDialog2)
-	 DestroyWindow(GetDlgItem(hDlg, IDC_TUNNEL));
+         DestroyWindow(GetDlgItem(hDlg, IDC_TUNNEL));
 
       CenterWindow(hDlg, GetParent(hDlg));
       return TRUE;
-
    case WM_COMMAND:
-      switch(GET_WM_COMMAND_ID(wParam, lParam))
+      switch (GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDOK:
-	 // Read aliases
-	 for (i=0; i < NUM_ALIASES; i++)
-	 {
-	    GetDlgItemText(hDlg, IDC_ALIASF1 + i, aliases[i].text, MAX_ALIASLEN - 1);
-	    aliases[i].cr = IsDlgButtonChecked(hDlg, IDC_CHECK_F1 + i);
-	    if (aliases[i].cr)
-	       command = A_TEXTCOMMAND;
-	    else command = A_TEXTINSERT;
-	    AliasSetKey(interface_key_table, aliases[i].key, KEY_NONE, command, aliases[i].text);
-	    AliasSetKey(inventory_key_table, aliases[i].key, KEY_NONE, command, aliases[i].text);
-	 }
+         // Read aliases
+         if (bShowingFKeys)
+         {
+            int controlIndex = 0;
+            for (int i = 0; i < NUM_FKEYS; i++)
+            {
+               ReadActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+               ++controlIndex;
+            }
+         }
+         else
+         {
+            int controlIndex = 0;
+            for (int i = NUM_FKEYS; i < NUM_ALIASES; i++)
+            {
+               ReadActionAlias(hDlg, bShowingFKeys, controlIndex, i);
+               ++controlIndex;
+            }
+         }
 
-	 EndDialog(hDlg, IDOK);
-	 return TRUE;
+         EndDialog(hDlg, IDOK);
+         return TRUE;
 
       case IDCANCEL:
-	 EndDialog(hDlg, IDCANCEL);
-	 return TRUE;
+         EndDialog(hDlg, IDCANCEL);
+         return TRUE;
 
       case IDC_TUNNEL:
-	 if (!hAliasDialog2 &&
-	     IDOK == DialogBox(hInst, MAKEINTRESOURCE(IDD_CMDALIAS), hDlg, VerbAliasDialogProc))
-	 {
-	    AliasSave();
-	    SetFocus(GetDlgItem(hDlg, IDOK));
-	 }
+         if (!hAliasDialog2 && IDOK == DialogBox(hInst, MAKEINTRESOURCE(IDD_CMDALIAS), hDlg, VerbAliasDialogProc))
+         {
+            AliasSave();
+            SetFocus(GetDlgItem(hDlg, IDOK));
+         }
       }
       break;
 
@@ -615,7 +705,7 @@ INT_PTR CALLBACK AliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       hAliasDialog1 = NULL;
       return TRUE;
    }
-   
+
    return FALSE;
 }
 /*****************************************************************************/
@@ -964,11 +1054,11 @@ INT_PTR CALLBACK VerbAliasDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
  * depending on the client configuration, then also update the inventory key
  * table so that the hotkey aliases work when the user is in that child window
  */
-static void UpdateKeyTables(int key, WORD command, char *text)
+static void UpdateKeyTables(WORD command, char *text)
 {
    if (gbClassicKeys) 
-      AliasSetKey(interface_key_table, key, KEY_NONE, command, text);
+      AliasSetCommand(interface_key_table, command, text);
    else
-      AliasSetKey(gCustomKeys, key, KEY_NONE, command, text);
-   AliasSetKey(inventory_key_table, key, KEY_NONE, command, text);
+      AliasSetCommand(gCustomKeys, command, text);
+   AliasSetCommand(inventory_key_table, command, text);
 }

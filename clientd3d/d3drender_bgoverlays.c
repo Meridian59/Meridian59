@@ -125,7 +125,7 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	};
 
 	long mappedHeightValue = mapRange(overlay->y, -200, 200, ALTITUDE_MIN, ALTITUDE_MAX);
-	double azimuthalAngle = overlay->x * GAME_ANGLE_UNITS_TO_RADIANS;
+	double azimuthalAngle = overlay->x * GAME_ANGLE_TO_RAD;
 	
 	// Calculate background overlay's position on a sky dome surrounding the viewer.
 	// A 5x multiplier ensures enough depth for the overlay to stay behind world geometry.
@@ -147,8 +147,8 @@ void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoR
 	transform.anglePitch = static_cast<float>(bgoSceneParams.anglePitch);
 	
 	// Build rotation matrices.
-	MatrixRotateY(&transform.rot, transform.angleHeading * GAME_ANGLE_UNITS_TO_RADIANS);
-	MatrixRotateX(&transform.mat, transform.anglePitch * BG_PITCH_UNIT_TO_RADIANS);
+	MatrixRotateY(&transform.rot, transform.angleHeading * GAME_ANGLE_TO_RAD);
+	MatrixRotateX(&transform.mat, transform.anglePitch * Y_UNIT_TO_VIEW_RAD);
 	MatrixTranspose(&transform.rot, &transform.rot);
 	
 	// Position background overlay in the world relative to viewer's current location.
@@ -225,8 +225,8 @@ OverlayRegion D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* p
 
 	// Construct combined World-View-Projection matrix for screen-space mappping.
 	D3DMATRIX localToScreen, trans;
-	MatrixRotateY(&transform->rot, transform->angleHeading * GAME_ANGLE_UNITS_TO_RADIANS);
-	MatrixRotateX(&transform->mat, transform->anglePitch * BG_PITCH_UNIT_TO_RADIANS);
+	MatrixRotateY(&transform->rot, transform->angleHeading * GAME_ANGLE_TO_RAD);
+	MatrixRotateX(&transform->mat, transform->anglePitch * Y_UNIT_TO_WORLD_RAD);
 	MatrixMultiply(&transform->rot, &transform->rot, &transform->mat);
 	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), -static_cast<float>(params->viewer_height), -static_cast<float>(params->viewer_y));
 	MatrixMultiply(&transform->mat, &trans, &transform->rot);

@@ -208,23 +208,16 @@ PALETTEENTRY* getPalette();
 // This palette remains constant and is used for color lookups and transformations.
 const Color(&getBasePalette())[NUM_COLORS];
 
-// Meridian 59's angles are in game units. (4096 units = 360-degree circle)
-inline constexpr float FULL_CIRCLE_GAME_UNITS = 4096.0f;
-inline constexpr float GAME_ANGLE_UNITS_TO_DEGREES = 360.0f / FULL_CIRCLE_GAME_UNITS;
-inline constexpr float GAME_ANGLE_UNITS_TO_RADIANS = DEGREES_TO_RADIANS(GAME_ANGLE_UNITS_TO_DEGREES);
 
-// Legacy vertical coordinate range [-207 to +207].
-inline constexpr float Y_UNIT_RANGE = 414.0f;
-// The maximum vertical FOV tilt in software rendering mode.
-inline constexpr float MAX_WORLD_PITCH_DEGREES = 50.0f;
-// The slightly reduced tilt used for all background layers to prevent "sliding" artifacts.
-inline constexpr float MAX_BACKGROUND_PITCH_DEGREES = 45.0f;
+// The software renderer's angles are in game units. A full 360-degree circle is 4096 game units.
+// Note that matrix rotations here expect radians.
+constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / 4096.0f;
 
-// Maps legacy software y-offset units to world-space pitch degrees.
-inline constexpr float PITCH_UNIT_TO_DEGREES = MAX_WORLD_PITCH_DEGREES / Y_UNIT_RANGE;
-// Maps legacy software y-offset units to background-space pitch degrees/radians.
-inline constexpr float BG_PITCH_UNIT_TO_DEGREES = MAX_BACKGROUND_PITCH_DEGREES / Y_UNIT_RANGE;
-inline constexpr float BG_PITCH_UNIT_TO_RADIANS = DEGREES_TO_RADIANS(BG_PITCH_UNIT_TO_DEGREES);
+// Maps legacy software y-offset units [-207, 207] (414 units) to world-space pitch (50 degrees). 
+constexpr float Y_UNIT_TO_WORLD_RAD = DEGREES_TO_RADIANS(50.0f) / 414.0f;
+
+// For the backgrounds and player camera, the angle is 45 degrees.  Helps prevent sliding artifacts. 
+constexpr float Y_UNIT_TO_VIEW_RAD = DEGREES_TO_RADIANS(45.0f) / 414.0f;
 
 
 #endif	// __D3DRENDER_H__

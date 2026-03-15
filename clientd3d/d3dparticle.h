@@ -8,7 +8,7 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-inline constexpr int MAX_PARTICLES = 128;
+constexpr int MAX_PARTICLES = 128;
 
 struct particle
 {

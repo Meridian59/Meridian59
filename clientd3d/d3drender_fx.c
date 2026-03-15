@@ -117,9 +117,8 @@ void SandstormInit(void)
 	emitter* newEmitter = nullptr;
 	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
 	{
-		newEmitter = D3DParticleEmitterInit(&sandParticleSystem);
+		newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER_S);
 		newEmitter->energy = SAND_EMITTER_ENERGY;
-		D3DParticleEmitterSetTimer(newEmitter, SAND_TIMER_S);
 		newEmitter->positionVarianceMin = {-SAND_EMITTER_RADIUS, -SAND_EMITTER_RADIUS, -SAND_Z_VARIANCE};
 		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE * 2.0f};
 		newEmitter->rotationVarianceMin = {-SAND_RAND_ROT, -SAND_RAND_ROT, -SAND_RAND_ROT};
@@ -132,8 +131,6 @@ void SandstormInit(void)
 		newEmitter->velocity.x = directionX * SAND_VELOCITY;
 		newEmitter->velocity.y = directionY * SAND_VELOCITY;
 		newEmitter->bgra = SANDSTORM_COLOR;
-		
-		D3DParticleEmitterAddToList(&sandParticleSystem, newEmitter);
 	}
 }
 
@@ -155,12 +152,11 @@ void RainInit(void)
 
 	D3DParticleSystemReset(&rainParticleSystem);
 	emitter* newEmitter = nullptr;
-	for(int i = 0; i < RAIN_EMITTER_COUNT; i++)
+	for (int i = 0; i < RAIN_EMITTER_COUNT; i++)
 	{
-		newEmitter = D3DParticleEmitterInit(&rainParticleSystem);
+		newEmitter = D3DParticleEmitterInit(&rainParticleSystem, RAIN_TIMER_S);
 		newEmitter->bDestroysOnSurface = true;
 		newEmitter->energy = RAIN_EMITTER_ENERGY;
-		D3DParticleEmitterSetTimer(newEmitter, RAIN_TIMER_S);
 		newEmitter->position = {0.0f, 0.0f, RAIN_EMITTER_HEIGHT};
 		//  Half of the emitters spawn weather particles twice as far.
 		if (i < (RAIN_EMITTER_COUNT / 2))
@@ -177,8 +173,6 @@ void RainInit(void)
 		newEmitter->velocityVarianceMin = {0.0f, 0.0f, WEATHER_JITTER_MIN};
 		newEmitter->velocityVarianceMax = {0.0f, 0.0f, WEATHER_JITTER_MAX};
 		newEmitter->bgra = RAIN_COLOR;
-		
-		D3DParticleEmitterAddToList(&rainParticleSystem, newEmitter);
 	}
 }
 
@@ -202,10 +196,9 @@ void SnowInit(void)
 	emitter* newEmitter = nullptr;
 	for(int i = 0; i < SNOW_EMITTER_COUNT; i++)
 	{
-		newEmitter = D3DParticleEmitterInit(&snowParticleSystem);
+		newEmitter = D3DParticleEmitterInit(&snowParticleSystem, SNOW_TIMER_S);
 		newEmitter->bDestroysOnSurface = true;
 		newEmitter->energy = SNOW_EMITTER_ENERGY;
-		D3DParticleEmitterSetTimer(newEmitter, SNOW_TIMER_S);
 		newEmitter->position = {0.0f, 0.0f, SNOW_EMITTER_HEIGHT};
 		//  Half of the emitters spawn weather particles twice as far.
 		if (i < (SNOW_EMITTER_COUNT / 2))
@@ -222,8 +215,6 @@ void SnowInit(void)
 		newEmitter->velocityVarianceMin = {0.0f, 0.0f, WEATHER_JITTER_MIN};
 		newEmitter->velocityVarianceMax = {0.0f, 0.0f, WEATHER_JITTER_MAX};
 		newEmitter->bgra = SNOW_COLOR;
-		
-		D3DParticleEmitterAddToList(&snowParticleSystem, newEmitter);
 	}
 }
 

@@ -8,7 +8,7 @@
 #include "client.h"
 #include <cmath>
 #include <chrono>
-#include <limits>
+#include <random>
 
 using namespace std::chrono;
 
@@ -22,20 +22,8 @@ static steady_clock::time_point lastFrameTime = steady_clock::now();
 // Elapsed time between frames (in seconds).
 static float deltaTime_s = 0.0f;
 
-// Xorshift32 provides improved randomization while remaining light on CPU cycles.
-static uint32_t randomState = []()
-{
-	uint32_t seed = static_cast<uint32_t>(high_resolution_clock::now().time_since_epoch().count());
-	return (seed == 0)? 0x3E71D159 : seed;
-}();
 
-static uint32_t xorshift32()
-{
-    randomState ^= randomState << 13;
-    randomState ^= randomState >> 17;
-    randomState ^= randomState << 5;
-    return randomState;
-}
+static std::mt19937 gen(static_cast<uint32_t>(high_resolution_clock::now().time_since_epoch().count()));
 
 static float GetRandomFloatRange(float min, float max)
 {
@@ -43,10 +31,9 @@ static float GetRandomFloatRange(float min, float max)
 	{
 		return min;
 	}
-	static constexpr double uint32_maxValue = 1.0 / std::numeric_limits<uint32_t>::max(); 
+	std::uniform_real_distribution<float> dist(min, max);
 	
-    double normalized = xorshift32() * uint32_maxValue;
-    return min + static_cast<float>(normalized) * (max - min);
+    return dist(gen);
 }
 
 // Returns XYZ after adjusting it with the emitter's variance range (if any).
@@ -65,34 +52,15 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 	pParticleSystem->emitterList = nullptr;
 }
 
-emitter* D3DParticleEmitterInit(particle_system *pParticleSystem)
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, float time)
 {
-	emitter	*pEmitter = nullptr;
-
-	if (pParticleSystem == nullptr)
-	{
-		return nullptr;
-	}
-	pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
-
-	if (pEmitter == nullptr)
-	{
-		return nullptr;
-	}
+	emitter	*pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
 	
 	memset(pEmitter, 0, sizeof(emitter));
 	
-	return pEmitter;
-}
-
-void D3DParticleEmitterSetTimer(emitter *pEmitter, float time)
-{
 	pEmitter->timer_s = time;
 	pEmitter->timerBase_s = time;
-}
-
-void D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter)
-{
+	
 	if (pParticleSystem->emitterList == nullptr)
 	{
 		pParticleSystem->emitterList = list_create(pEmitter);
@@ -101,7 +69,10 @@ void D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmi
 	{
 		list_add_item(pParticleSystem->emitterList, pEmitter);
 	}
+
+	return pEmitter;
 }
+
 
 void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
 {
@@ -139,7 +110,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
 			particle *pParticle = &pEmitter->particles[pEmitter->nextSlot];
-			D3DParticleCreate(pEmitter, pParticle);
+			D3DParticleInitialize(pEmitter, pParticle);
 		}
 	}
 
@@ -160,7 +131,7 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 		pParticle->currentAge_s += deltaTime_s;
 		if (pParticle->currentAge_s >= pParticle->maxAge_s)
 		{
-			D3DParticleDestroy(pParticle);
+			D3DParticleHide(pParticle);
 			return;
 		}
 	}
@@ -204,20 +175,33 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	CHUNK_INDEX_SET(pChunk, 1, 1);
 }
 
-void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
+// Gets a particle from the object pool 
+void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 {
+	// Advance to the next slot in the circular buffer and reset the emitter's timer, 
+	// regardless if the recycled particle should show up in its new location or not.
+	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;
+	if (pEmitter->numParticles < MAX_PARTICLES)
+	{
+		pEmitter->numParticles++;
+	}
+	pEmitter->timer_s = pEmitter->timerBase_s;
+
 	pParticle->position = GetVariedXYZ(pEmitter->position, pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
 	pParticle->velocity = GetVariedXYZ(pEmitter->velocity, pEmitter->velocityVarianceMin, pEmitter->velocityVarianceMax);
 	
-	// Each weather particle calculates the time it takes for them to land on the ground.
+	// Each weather particle first checks if their new spawn location is valid.
+	// If so, calculate the time it takes to land on a surface.
 	if (pEmitter->bDestroysOnSurface)
 	{						
 		pParticle->currentAge_s = 0.0f;
-		
 		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->position.x, pParticle->position.y);
+		
+		// Weather particles are hidden at ceiling sectors because a single BSP lookup cannot detect one-sided ceiling
+		// textures from the top-down.  From the player's view, the hidden particles are barely noticable from outdoors.
 		if (leaf && leaf->sector->ceiling)
 		{
-			D3DParticleDestroy(pParticle);
+			D3DParticleHide(pParticle);
 			return;	
 		}
 		else if (leaf && leaf->sector->floor)
@@ -226,7 +210,7 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 
 			if (pParticle->position.z < floorHeight)
 			{
-				D3DParticleDestroy(pParticle);
+				D3DParticleHide(pParticle);
 				return;
 			}
 			pParticle->maxAge_s = abs((pParticle->position.z - floorHeight) / pParticle->velocity.z);			
@@ -242,17 +226,9 @@ void D3DParticleCreate(emitter *pEmitter, particle *pParticle)
 	pParticle->rotation = GetVariedXYZ(pEmitter->rotation, pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
 	pParticle->bgra = pEmitter->bgra;
 	pParticle->energy = pEmitter->energy;
-	
-	// Advance to the next slot in the circular buffer.
-	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;
-	if (pEmitter->numParticles < MAX_PARTICLES)
-	{
-		pEmitter->numParticles++;
-	}
-	pEmitter->timer_s = pEmitter->timerBase_s;
 }
 
-void D3DParticleDestroy(particle *pParticle)
+void D3DParticleHide(particle *pParticle)
 {
 	pParticle->maxAge_s = 0;
 	pParticle->energy = 0;

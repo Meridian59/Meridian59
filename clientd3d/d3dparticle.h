@@ -65,14 +65,12 @@ struct particle_system
 void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 void		D3DParticleSystemReset(particle_system *pParticleSystem);
 
-emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem);
-void 		D3DParticleEmitterSetTimer(emitter *pEmitter, float time);
-void		D3DParticleEmitterAddToList(particle_system *pParticleSystem, emitter *pEmitter);
+emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem, float time);
 
 void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
 void 		D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool);
-void 		D3DParticleCreate(emitter *pEmitter, particle *pParticle);
-void		D3DParticleDestroy(particle *pParticle);
+void 		D3DParticleInitialize(emitter *pEmitter, particle *pParticle);
+void		D3DParticleHide(particle *pParticle);
 
 #endif

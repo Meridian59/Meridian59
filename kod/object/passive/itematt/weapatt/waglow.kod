@@ -40,6 +40,10 @@ classvars:
 
    vrDM_Trigger = glowing_dm
 
+   % Light properties for dynamic lighting on the player.
+   viLightColor = LIGHT_BLUE
+   viLightIntensity = 4
+
 properties:
 
    % Modify the object's price by 100%
@@ -76,7 +80,7 @@ messages:
    {
       local iLightStr;
 
-      Send(oPlayer,@SetFlickerFlag);
+      Send(oPlayer,@RecalcDrawFXFlags);
       iLightStr = Nth(Send(oItem,@GetAttributeData,#ItemAtt=WA_GLOWING),3);
       Send(oPlayer,@GainLight,#amount=iLightStr);
 
@@ -91,15 +95,19 @@ messages:
       iLightStr = Nth(Send(oItem,@GetAttributeData,#ItemAtt=WA_GLOWING),3);
       Send(oPlayer,@LoseLight,#amount=iLightStr);
 
-      if Send(oPlayer,@FindUsing,#class=&Torch) <> $
-      {
-         % Keep the flicker flag.
-         return;
-      }
-
-      Send(oPlayer,@ClearFlickerFlag);
+      Send(oPlayer,@RecalcDrawFXFlags);
 
       return;
+   }
+
+   GetLightColor()
+   {
+      return viLightColor;
+   }
+
+   GetLightIntensity()
+   {
+      return viLightIntensity;
    }
 
    AddSelfToRandomItem(oItem = $)

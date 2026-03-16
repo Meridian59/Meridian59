@@ -9092,8 +9092,8 @@ messages:
    {
       poIllusion_set = $;
 
-      % Recalculate the flicker flag.
-      Send(self,@RecalcFlickerFlag);
+      % Recalculate the flicker and glow draw effects.
+      Send(self,@RecalcDrawFXFlags);
 
       % Reset our drawFX.  Also does the SomethingChanged bit if appropriate.
       Send(self,@ResetPlayerDrawFX);
@@ -10033,37 +10033,63 @@ messages:
       return;
    }
 
-   SetFlickerFlag()
+   RecalcDrawFXFlags()
+   "Recalculates flicker flag by querying equipped items."
+   "Glow (steady light) suppresses torch flicker on the character sprite."
    {
-      piDrawfx = piDrawfx | FLICKERING_YES;
-      
-      return;
-   }
+      local i, bIsFlickering, bIsGlowing;
 
-   ClearFlickerFlag()
-   {
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
-      
-      return;
-   }
+      bIsFlickering = FALSE;
+      bIsGlowing = FALSE;
 
-   RecalcFlickerFlag()
-   { 
-      local i;
-      
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
       for i in plUsing
       {
-         if IsClass(i,&Torch)
-            OR (IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
+         if Send(i,@IsFlickering)
          {
-            piDrawfx = piDrawfx | FLICKERING_YES;
-            
-            return;
+            bIsFlickering = TRUE;
+         }
+
+         if Send(i,@IsGlowing)
+         {
+            bIsGlowing = TRUE;
          }
       }
-      
+
+      % Glow suppresses visual flickering -- steady light looks better.
+      if bIsFlickering AND NOT bIsGlowing
+      {
+         piDrawfx = piDrawfx | FLICKERING_YES;
+      }
+      else
+      {
+         piDrawfx = piDrawfx & (~FLICKERING_YES);
+      }
+
       return;
+   }
+
+   MixLightColors(iColor1 = 0, iColor2 = 0)
+   "Mixes two RGB 5-5-5 light colors by averaging their R, G, B components."
+   {
+      local iR1, iG1, iB1, iR2, iG2, iB2, iR, iG, iB;
+
+      % Extract RGB components from 5-5-5 packed format.
+      % Bits 14-10 = Red, Bits 9-5 = Green, Bits 4-0 = Blue.
+      iR1 = (iColor1 / 1024) & 0x1F;
+      iG1 = (iColor1 / 32) & 0x1F;
+      iB1 = iColor1 & 0x1F;
+
+      iR2 = (iColor2 / 1024) & 0x1F;
+      iG2 = (iColor2 / 32) & 0x1F;
+      iB2 = iColor2 & 0x1F;
+
+      % Average each component.
+      iR = (iR1 + iR2) / 2;
+      iG = (iG1 + iG2) / 2;
+      iB = (iB1 + iB2) / 2;
+
+      % Repack into RGB 5-5-5.
+      return (iR * 1024) + (iG * 32) + iB;
    }
 
    BreakTrance(event = 0, castwhat = $, usewhat = $)
@@ -12329,7 +12355,14 @@ messages:
    }
 
    SendLightingInformation()
+   "Queries equipped items directly for their light color and intensity."
+   "When multiple sources are active, their colors are mixed."
+   "Steady (non-flickering) light is preferred over wavering when present."
    {
+      local i, iFlags, iIntensity, iColor, bHasLight,
+            iTorchColor, iTorchIntensity, iGlowColor, iGlowIntensity,
+            bHasSteady;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12340,20 +12373,77 @@ messages:
 
          return;
       }
-      else
-      {
-         % A bit of a kludge.  Ideally, we should query the objects we are using
-         %  to find out if any want to add lighting information to us.
-         if (piDrawFX & FLICKERING_YES)
-         {
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % intensity of light flickering out of 255.
-            AddPacket(1,5);
-            % Color
-            AddPacket(2,LIGHT_FIRE);
 
-            return;
+      % Query equipped items for their light properties.
+      iTorchColor = 0;
+      iTorchIntensity = 0;
+      iGlowColor = 0;
+      iGlowIntensity = 0;
+
+      for i in plUsing
+      {
+         if Send(i,@IsFlickering)
+         {
+            iTorchColor = Send(i,@GetLightColor);
+            iTorchIntensity = Send(i,@GetLightIntensity);
          }
+
+         if Send(i,@IsGlowing)
+         {
+            iGlowColor = Send(i,@GetLightColor);
+            iGlowIntensity = Send(i,@GetLightIntensity);
+         }
+      }
+
+      % Accumulate light from active sources, mixing colors.
+      iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+      iIntensity = 0;
+      iColor = 0;
+      bHasLight = FALSE;
+      bHasSteady = FALSE;
+
+      if iGlowColor <> 0
+      {
+         iColor = iGlowColor;
+         iIntensity = iGlowIntensity;
+         bHasLight = TRUE;
+         bHasSteady = TRUE;
+      }
+
+      if iTorchColor <> 0
+      {
+         if bHasLight
+         {
+            % Mix with existing light source.
+            iColor = Send(self,@MixLightColors,
+                          #iColor1=iColor,#iColor2=iTorchColor);
+            if iTorchIntensity > iIntensity
+            {
+               iIntensity = iTorchIntensity;
+            }
+         }
+         else
+         {
+            iColor = iTorchColor;
+            iIntensity = iTorchIntensity;
+         }
+
+         bHasLight = TRUE;
+      }
+
+      if bHasLight
+      {
+         % Prefer steady light when a non-flickering source is present.
+         if NOT bHasSteady
+         {
+            iFlags = iFlags | LIGHT_FLAG_WAVERING;
+         }
+
+         AddPacket(2,iFlags);
+         AddPacket(1,iIntensity);
+         AddPacket(2,iColor);
+
+         return;
       }
 
       propagate;

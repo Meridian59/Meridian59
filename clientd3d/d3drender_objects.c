@@ -2412,6 +2412,29 @@ bool D3DObjectLightingCalc(
 		bgra->a = 255;
 	}
 
+	// Self-illumination: Objects that emit a steady dynamic light (like glow) get tinted
+	// by their own light color. This makes glowing players/objects visibly colored.
+	// Only applies to non-wavering dynamic lights (glow), not flickering (torch).
+	const WORD selfLightFlags = pRNode->obj.dLighting.flags;
+	const bool hasSteadyDynamicLight =
+		(selfLightFlags & (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)) == (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)
+		&& !(selfLightFlags & LIGHT_FLAG_WAVERING);
+
+	if (hasSteadyDynamicLight)
+	{
+		// Convert 16-bit 5-5-5 RGB color to 8-bit components
+		const WORD selfColor = pRNode->obj.dLighting.color;
+		const float selfR = ((selfColor >> 10) & 0x1F) * (255.0f / 31.0f);
+		const float selfG = ((selfColor >> 5) & 0x1F) * (255.0f / 31.0f);
+		const float selfB = (selfColor & 0x1F) * (255.0f / 31.0f);
+
+		// Apply a noticeable tint from the object's own light (40% blend toward light color)
+		const float selfTintStrength = 0.4f;
+		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r * (1.0f - selfTintStrength) + selfR * selfTintStrength);
+		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g * (1.0f - selfTintStrength) + selfG * selfTintStrength);
+		bgra->b = std::min((float)COLOR_AMBIENT, bgra->b * (1.0f - selfTintStrength) + selfB * selfTintStrength);
+	}
+
 	return bFogDisable;
 }
 

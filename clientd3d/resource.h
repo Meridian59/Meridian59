@@ -435,6 +435,7 @@
 #define IDC_EMAIL_ADDRESS               1218
 #define IDC_SIGNUP_TROUBLESHOOT         1219
 #define ID_SPINNING_CUBE                1220
+#define IDC_DESCEDIT                    1221
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -641,6 +642,10 @@
 #define IDS_INTRO                       3651
 #define ID_FONT_ANNOTATIONS             3652
 #define IDC_ANNOTATION_ZOOM_LIMIT       3653
+#define ID_COLOR_CODE                   3654
+#define ID_COLOR_LINK                   3655
+#define ID_FONT_CODE                    3656
+#define ID_COLOR_QUOTE                  3657
 
 // Next default values for new objects
 // 

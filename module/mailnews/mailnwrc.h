@@ -84,6 +84,7 @@
 #define IDC_REPLYALL                    1124
 #define IDC_REPLYMAIL                   1125
 #define IDS_DELETEMULTIPLE              1126
+#define IDC_PREVIEW                     1127
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

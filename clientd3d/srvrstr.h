@@ -25,6 +25,8 @@ enum {
 M59EXPORT bool CheckServerMessage(char** message, char **params, long len, ID fmt_id);
 M59EXPORT void DisplayServerMessage(const char *message, COLORREF start_color, BYTE start_style);
 M59EXPORT void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style);
+M59EXPORT void RichEditSetFormattedText(HWND hwndRichEdit, const char *text,
+                                        COLORREF defaultColor);
 
 
 #endif /* #ifndef _SRVRSTR_H */

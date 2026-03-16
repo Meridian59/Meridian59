@@ -177,6 +177,9 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    case ID_FONT_LABELS:
       UserSelectFont(FONT_LABELS);
       break;
+   case ID_FONT_CODE:
+      UserSelectFont(FONT_CODE);
+      break;
    case ID_FONT_DEFAULTS:
       FontsRestoreDefaults();
       break;
@@ -222,6 +225,15 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       break;
    case ID_COLOR_INVNUM:
       UserSelectColors(COLOR_INVNUMFGD, COLOR_INVNUMBGD);
+      break;
+   case ID_COLOR_CODE:
+      UserSelectColor(COLOR_CODEFGD);
+      break;
+   case ID_COLOR_LINK:
+      UserSelectColor(COLOR_LINKFGD);
+      break;
+   case ID_COLOR_QUOTE:
+      UserSelectColors(COLOR_QUOTEFGD, COLOR_QUOTEBGD);
       break;
    case ID_COLOR_DEFAULTS:
       ColorsRestoreDefaults();

@@ -28,6 +28,7 @@ enum {
    FONT_MAP_LABEL,
    FONT_MAP_TEXT,
    FONT_MAP_ANNOTATIONS,    /* For annotations on the map & mini-map */
+   FONT_CODE,               /* For code spans, code blocks, and tables */
    MAXFONTS,
 };
 

@@ -105,7 +105,7 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 	{	
 		for(int i = 0; i < NUM_SKYBOXES; i++)
 		{
-			std::filesystem::path fullPath = std::filesystem::path("./resource/") / gSkyboxTable[i].fileName;
+			std::filesystem::path fullPath = std::filesystem::path("./resource") / gSkyboxTable[i].fileName;
 			
 			// Skip any skybox that is missing.
 			if (!std::filesystem::exists(fullPath)) continue;

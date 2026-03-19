@@ -30,7 +30,7 @@ static void D3DRenderObjectsDraw(
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams,
 	int flags,
-	int singleObjectId = 0);
+	int singleObjectId = 0); // When non-zero, only render the object with this ID (used for per-object translucent flush)
 
 static void D3DRenderOverlaysDraw(
 	const ObjectsRenderParams& objectsRenderParams,
@@ -39,7 +39,7 @@ static void D3DRenderOverlaysDraw(
 	const LightAndTextureParams& lightAndTextureParams,
 	bool underlays,
 	int flags,
-	int singleObjectId = 0);
+	int singleObjectId = 0); // When non-zero, only render overlays for the object with this ID
 
 static int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams);
 
@@ -164,71 +164,66 @@ long D3DRenderObjects(
 	// camera's viewing direction). This is more accurate than Euclidean distance because
 	// two objects at the same radial distance but different angles can have different
 	// visual depths.
-	{
-		auto drawdata = gameObjectDataParams.drawData;
-		long vx = objectsRenderParams.params->viewer_x;
-		long vy = objectsRenderParams.params->viewer_y;
+	auto drawdata = gameObjectDataParams.drawData;
+	long vx = objectsRenderParams.params->viewer_x;
+	long vy = objectsRenderParams.params->viewer_y;
 
-		// Compute camera forward direction in world space.
-		int angleHeading = objectsRenderParams.params->viewer_angle + 3072;
-		if (angleHeading >= 4096)
-			angleHeading -= 4096;
-		float theta = (float)angleHeading * (2.0f * PI / 4096.0f);
-		float fwdX = sinf(theta);
-		float fwdY = cosf(theta);
+	// Compute camera forward direction in world space.
+	int angleHeading = objectsRenderParams.params->viewer_angle + 3072;
+	if (angleHeading >= 4096)
+		angleHeading -= 4096;
+	float theta = (float)angleHeading * (2.0f * PI / 4096.0f);
+	float fwdX = sinf(theta);
+	float fwdY = cosf(theta);
 
-		std::sort(drawdata, drawdata + gameObjectDataParams.numItems,
-			[vx, vy, fwdX, fwdY](const DrawItem& a, const DrawItem& b) {
-				bool aIsObj = (a.type == DrawObjectType);
-				bool bIsObj = (b.type == DrawObjectType);
-				if (!aIsObj || !bIsObj)
-					return aIsObj && !bIsObj;
-				auto* aNode = a.u.object.object->draw.obj;
-				auto* bNode = b.u.object.object->draw.obj;
-				if (!aNode || !bNode)
-					return false;
-				// Project displacement onto camera forward direction for view-space depth.
-				float aDepth = (aNode->motion.x - vx) * fwdX + (aNode->motion.y - vy) * fwdY;
-				float bDepth = (bNode->motion.x - vx) * fwdX + (bNode->motion.y - vy) * fwdY;
-				if (aDepth != bDepth)
-					return aDepth > bDepth;  // Farther objects drawn first (back-to-front)
-				// Tiebreaker: consistent ordering by ID prevents flicker
-				// when objects are at similar depths.
-				return aNode->obj.id < bNode->obj.id;
-			});
-	}
+	std::sort(drawdata, drawdata + gameObjectDataParams.numItems,
+		[vx, vy, fwdX, fwdY](const DrawItem& a, const DrawItem& b) {
+			bool aIsObj = (a.type == DrawObjectType);
+			bool bIsObj = (b.type == DrawObjectType);
+			if (!aIsObj || !bIsObj)
+				return aIsObj && !bIsObj;
+			auto* aNode = a.u.object.object->draw.obj;
+			auto* bNode = b.u.object.object->draw.obj;
+			if (!aNode || !bNode)
+				return false;
+			// Project displacement onto camera forward direction for view-space depth.
+			float aDepth = (aNode->motion.x - vx) * fwdX + (aNode->motion.y - vy) * fwdY;
+			float bDepth = (bNode->motion.x - vx) * fwdX + (bNode->motion.y - vy) * fwdY;
+			if (aDepth != bDepth)
+				return aDepth > bDepth;  // Farther objects drawn first (back-to-front)
+			// Tiebreaker: consistent ordering by ID prevents flicker
+			// when objects are at similar depths.
+			return aNode->obj.id < bNode->obj.id;
+		});
 
 	// Render each translucent object's complete geometry (underlays + base + overlays)
 	// and flush immediately before moving to the next object. This ensures correct
 	// back-to-front ordering even when objects share textures (since the packet system
 	// groups chunks by texture, a single flush would interleave different objects' parts).
+	std::unordered_set<int> processedIds;
+	for (int i = 0; i < gameObjectDataParams.numItems; i++)
 	{
-		auto drawdata = gameObjectDataParams.drawData;
-		std::unordered_set<int> processedIds;
-		for (int i = 0; i < gameObjectDataParams.numItems; i++)
-		{
-			if (drawdata[i].type != DrawObjectType)
-				continue;
-			auto* pRNode = drawdata[i].u.object.object->draw.obj;
-			if (pRNode == NULL)
-				continue;
-			if (!(pRNode->obj.flags & TRANSLUCENT_FLAGS))
-				continue;
-			if (processedIds.find(pRNode->obj.id) != processedIds.end())
-				continue;
-			processedIds.insert(pRNode->obj.id);
+		if (drawdata[i].type != DrawObjectType)
+			continue;
+		auto* pRNode = drawdata[i].u.object.object->draw.obj;
+		if (pRNode == NULL)
+			continue;
+		if (!(pRNode->obj.flags & TRANSLUCENT_FLAGS))
+			continue;
+		if (processedIds.find(pRNode->obj.id) != processedIds.end())
+			continue;
+		processedIds.insert(pRNode->obj.id);
 
-			D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
-			D3DCacheSystemReset(objectsRenderParams.cacheSystem);
+		D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+		D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 
-			int objId = pRNode->obj.id;
-			D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS, objId);
-			D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, TRANSLUCENT_FLAGS, objId);
-			D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, TRANSLUCENT_FLAGS, objId);
+		int objId = pRNode->obj.id;
+		D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS, objId);
+		D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, TRANSLUCENT_FLAGS, objId);
+		D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, TRANSLUCENT_FLAGS, objId);
 
-			D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
-			D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
-		}
+		D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+		D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 	}
 
 	// Render translucent projectiles.

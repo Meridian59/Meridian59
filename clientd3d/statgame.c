@@ -366,6 +366,7 @@ void GameTimer(HWND hwnd, UINT id)
    {
    case TIMER_ANIMATE:
       AnimationTimerProc(hwnd, id);
+      MusicStreamUpdate();
       break;
    }
 }
@@ -388,6 +389,7 @@ void GameIdle(void)
 
    AnimationTimerProc(hMain, 0);
    HandleKeys();
+   MusicStreamUpdate();
 
    AnimationTimerAbort();
    BackgroundSleep();

@@ -543,29 +543,112 @@ bool MusicPlay(const char* filename, bool loop)
    return true;
 }
 
-void MusicStop(void)
+/*
+ * MusicStreamUpdate: Refills processed OpenAL buffers from the vorbis
+ *   stream. Recovers from buffer underruns by restarting the source.
+ */
+void MusicStreamUpdate(void)
 {
-   if (!g_initialized || !g_musicSource)
+   if (!g_initialized || !g_music.playing)
       return;
 
-   alSourceStop(g_musicSource);
-   // Detach buffer from source before any future buffer deletion
-   alSourcei(g_musicSource, AL_BUFFER, 0);
-   g_musicPlaying = false;
+   // Drain any stale error from other OpenAL calls (SFX, etc.)
+   alGetError();
+
+   ALint state = 0;
+   alGetSourcei(g_music.source, AL_SOURCE_STATE, &state);
+
+   // Check how many buffers the source has finished playing
+   ALint processed = 0;
+   alGetSourcei(g_music.source, AL_BUFFERS_PROCESSED, &processed);
+
+   while (processed > 0)
+   {
+      ALuint buf;
+      alSourceUnqueueBuffers(g_music.source, 1, &buf);
+
+      if (!g_music.finished)
+      {
+         if (MusicStreamFillBuffer(&g_music, buf))
+         {
+            alSourceQueueBuffers(g_music.source, 1, &buf);
+         }
+      }
+
+      processed--;
+   }
+
+   if (state != AL_PLAYING)
+   {
+      ALint queued = 0;
+      alGetSourcei(g_music.source, AL_BUFFERS_QUEUED, &queued);
+      if (queued > 0)
+      {
+         // Source starved. Restart playback with whatever is queued.
+         alSourcePlay(g_music.source);
+      }
+      else
+      {
+         debug(("MusicStreamUpdate: all buffers consumed, playback done\n"));
+         g_music.playing = false;
+      }
+   }
+}
+
+/*
+ * MusicStop: Stops playback and releases the streaming decoder.
+ */
+void MusicStop(void)
+{
+   if (!g_initialized)
+      return;
+
+   debug(("MusicStop: called (playing=%d, vorbis=%p)\n",
+          (int)g_music.playing, (void*)g_music.vorbis));
+
+   alSourceStop(g_music.source);
+
+   // Unqueue all buffers so they can be reused
+   ALint queued = 0;
+   alGetSourcei(g_music.source, AL_BUFFERS_QUEUED, &queued);
+   while (queued > 0)
+   {
+      ALuint buf;
+      alSourceUnqueueBuffers(g_music.source, 1, &buf);
+      queued--;
+   }
+
+   // Fully reset source to AL_INITIAL so it is ready for queue mode next time
+   alSourcei(g_music.source, AL_BUFFER, 0);
+
+   if (g_music.vorbis)
+   {
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+   }
+
+   g_music.playing = false;
+   g_music.finished = false;
+
+   if (g_streamTimerId != 0)
+   {
+      KillTimer(NULL, g_streamTimerId);
+      g_streamTimerId = 0;
+   }
 }
 
 void MusicSetVolume(float volume)
 {
    g_musicVolume = volume;
-   if (g_initialized && g_musicSource)
+   if (g_initialized && g_music.source)
    {
-      alSourcef(g_musicSource, AL_GAIN, volume * g_masterVolume);
+      alSourcef(g_music.source, AL_GAIN, volume * g_masterVolume);
    }
 }
 
 bool MusicIsPlaying(void)
 {
-   return g_musicPlaying;
+   return g_music.playing;
 }
 
 /*

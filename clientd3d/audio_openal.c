@@ -24,6 +24,25 @@
 // STB Vorbis for OGG decoding (compiled separately with STB_VORBIS_NO_PUSHDATA_API)
 extern "C" int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
 
+// STB Vorbis streaming API
+typedef struct stb_vorbis stb_vorbis;
+
+struct stb_vorbis_info {
+   unsigned int sample_rate;
+   int channels;
+   unsigned int setup_memory_required;
+   unsigned int setup_temp_memory_required;
+   unsigned int temp_memory_required;
+   int max_frame_size;
+};
+
+extern "C" stb_vorbis* stb_vorbis_open_filename(const char *filename, int *error, const void *alloc);
+extern "C" stb_vorbis_info stb_vorbis_get_info(stb_vorbis *f);
+extern "C" int stb_vorbis_get_samples_short_interleaved(stb_vorbis *f, int channels, short *buffer, int num_shorts);
+extern "C" int stb_vorbis_seek_start(stb_vorbis *f);
+extern "C" void stb_vorbis_close(stb_vorbis *f);
+extern "C" int stb_vorbis_get_error(stb_vorbis *f);
+
 // Configuration
 static const int MAX_AUDIO_SOURCES = 32;
 static const int MAX_CACHED_BUFFERS = 256;

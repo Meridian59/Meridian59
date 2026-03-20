@@ -170,10 +170,16 @@ bool AudioInit(HWND hWnd)
    }
    g_numSources = MAX_AUDIO_SOURCES;
 
-   alGenSources(1, &g_musicSource);
+   alGenSources(1, &g_music.source);
    if (alGetError() != AL_NO_ERROR)
    {
       debug(("AudioInit: Failed to generate music source\n"));
+   }
+
+   alGenBuffers(STREAM_NUM_BUFFERS, g_music.buffers);
+   if (alGetError() != AL_NO_ERROR)
+   {
+      debug(("AudioInit: Failed to generate music stream buffers\n"));
    }
 
    alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
@@ -201,11 +207,13 @@ void AudioShutdown(void)
    SoundStopAll();
    MusicStop();
 
-   if (g_musicSource)
+   if (g_music.source)
    {
-      alDeleteSources(1, &g_musicSource);
-      g_musicSource = 0;
+      alDeleteSources(1, &g_music.source);
+      g_music.source = 0;
    }
+
+   alDeleteBuffers(STREAM_NUM_BUFFERS, g_music.buffers);
 
    if (g_numSources > 0)
    {

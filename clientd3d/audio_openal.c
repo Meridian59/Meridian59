@@ -91,10 +91,33 @@ static std::list<CacheNode> g_cacheList;
 static std::unordered_map<std::string, std::list<CacheNode>::iterator,
                           CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
-// Music state
-static ALuint g_musicSource = 0;
-static ALuint g_musicBuffer = 0;
-static bool g_musicPlaying = false;
+// Music streaming state
+static const int STREAM_NUM_BUFFERS = 4;
+static const int STREAM_BUFFER_SAMPLES = 4096;
+
+struct MusicStream {
+   stb_vorbis* vorbis;
+   ALuint source;
+   ALuint buffers[4];
+   ALenum format;
+   int channels;
+   int sample_rate;
+   bool looping;
+   bool playing;
+   bool finished;
+};
+
+static MusicStream g_music = {};
+
+/* Timer keeps streaming alive during modal dialogs (e.g. login dialog)
+ * whose internal message pump blocks MainIdle from running. */
+static const int STREAM_TIMER_MS = 50;
+static UINT_PTR g_streamTimerId = 0;
+
+static void CALLBACK MusicStreamTimerProc(HWND, UINT, UINT_PTR, DWORD)
+{
+   MusicStreamUpdate();
+}
 
 // Master volume
 static float g_masterVolume = 1.0f;

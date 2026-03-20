@@ -17,11 +17,12 @@
 bool AudioInit(HWND hWnd);
 void AudioShutdown(void);
 
-// Music control (for MP3/OGG background music)
+// Music control (for background music via streaming playback)
 bool MusicPlay(const char* filename, bool loop);
 void MusicStop(void);
 void MusicSetVolume(float volume); // 0.0 to 1.0
 bool MusicIsPlaying(void);
+void MusicStreamUpdate(void);
 
 // Returns true if sound started successfully; supports OGG and WAV formats,
 // looping, and 3D positioning. Coordinates are in tile units.

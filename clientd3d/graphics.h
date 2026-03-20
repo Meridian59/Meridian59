@@ -49,5 +49,8 @@ bool GraphicsMouseCaptured(void);
 int GetFPS(void);
 int GetMSDrawFrame(void);
 
+float GetDeltaTime();
+int GetDeltaTimeMs();
+
 #endif
 

@@ -53,6 +53,13 @@ static auto& chrono_time_now = std::chrono::steady_clock::now;
 
 static const int defaultMaxFps = 60;
 
+// Elapsed time between frames (in seconds).
+static float deltaTime_s = 0.0f;
+// Elapsed time between frames (in milliseconds) for legacy systems.
+static int deltaTime_ms = 0;
+// Tracks fractional milliseconds to prevent drift between frames.
+static float msAccumulator = 0.0f;
+
 /************************************************************************/
 /*
  * GraphicsAreaCreate:  Create main graphics view window.
@@ -358,7 +365,15 @@ void RedrawForce(void)
           fps = 1000 / std::max(1LL, elapsedMilliseconds);
       }
    }
-
+   // Calculate delta time (in seconds) since last frame, regardless of FPS limit.
+   auto frameTime = endFrame - lastEndFrame;
+   deltaTime_s = std::chrono::duration<float>(frameTime).count();
+   // Also calculate delta time in milliseconds for systems that still use it.
+   // msAccumulator keeps track of fractional time so it isn't lost between frames.
+   float totalMs = (std::chrono::duration<float, std::milli>(frameTime).count()) + msAccumulator;
+   deltaTime_ms = static_cast<int>(totalMs);
+   msAccumulator = totalMs - static_cast<float>(deltaTime_ms);
+   
    lastEndFrame = endFrame;
 
    if (config.showFPS)
@@ -474,7 +489,7 @@ void UserEndDrag(void)
 /************************************************************************/
 /*
  * GraphicsReleaseCapture:  Release mouse capture, if main window has it.
- *   Return true iff main window had mouse capture.
+ *   Return true if main window had mouse capture.
  */
 bool GraphicsReleaseCapture(void)
 {
@@ -490,4 +505,14 @@ bool GraphicsReleaseCapture(void)
 bool GraphicsMouseCaptured(void)
 {
    return capture;
+}
+/************************************************************************/
+float GetDeltaTime()
+{
+	return deltaTime_s;
+}
+/************************************************************************/
+int GetDeltaTimeMs()
+{
+	return deltaTime_ms;
 }

@@ -10,7 +10,6 @@
 #include <chrono>
 #include <random>
 
-using namespace std::chrono;
 
 // Variables
 extern room_type current_room;
@@ -18,12 +17,7 @@ extern room_type current_room;
 static constexpr uint32_t PARTICLE_VERTICES = 2;
 static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
 
-static steady_clock::time_point lastFrameTime = steady_clock::now();
-// Elapsed time between frames (in seconds).
-static float deltaTime_s = 0.0f;
-
-
-static std::mt19937 gen(static_cast<uint32_t>(high_resolution_clock::now().time_since_epoch().count()));
+static std::mt19937 gen(static_cast<uint32_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
 static float GetRandomFloatRange(float min, float max)
 {
@@ -86,12 +80,6 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 {
 	D3DCacheSystemReset(pCacheSystem);
 	D3DRenderPoolReset(pPool, &D3DMaterialParticlePool);
-	
-	// Calculate time (in seconds) since the last frame.
-	auto currentFrameTime = steady_clock::now();
-	auto elapsed = currentFrameTime - lastFrameTime;
-	deltaTime_s = duration<float>(elapsed).count();
-	lastFrameTime = currentFrameTime;
 
 	for (list_type list = pParticleSystem->emitterList; list != nullptr; list = list->next)
 	{
@@ -105,8 +93,8 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		}
 
 		// Creating new particles
-		pEmitter->timer_s -= deltaTime_s;
-		if (pEmitter->timer_s <= 0)
+		pEmitter->timer_s -= GetDeltaTime();
+		if (pEmitter->timer_s <= 0.0f)
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
 			particle *pParticle = &pEmitter->particles[pEmitter->nextSlot];
@@ -128,7 +116,7 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	// Update lifetime for weather particles since only they track time.
 	if (pEmitter->bDestroysOnSurface)
 	{
-		pParticle->currentAge_s += deltaTime_s;
+		pParticle->currentAge_s += GetDeltaTime();
 		if (pParticle->currentAge_s >= pParticle->maxAge_s)
 		{
 			D3DParticleHide(pParticle);

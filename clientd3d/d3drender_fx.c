@@ -30,7 +30,7 @@ static void SnowInit(void);
 // Implementations
 
 /**
-* Initializes the particle effects, specifically the sandstorm particle emitters.
+* Initializes the particle effects, specifically the particle emitters.
 */
 void D3DFxInit()
 {
@@ -231,18 +231,13 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
 	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
 
-	static DWORD			timeLastFrame = 0;
-
-	DWORD timeCurrent = timeGetTime();
-	DWORD timeDelta = timeCurrent - timeLastFrame;
-	timeLastFrame = timeCurrent;
-
 	// Flash of XLAT.  Could be color, blindness, whatever.
 	if (effects.flashxlat != XLAT_IDENTITY)
 	{
 		custom_bgra	bgra;
-
-		effects.duration -= (int)timeDelta;
+		
+		effects.duration -= GetDeltaTimeMs();
+		
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:

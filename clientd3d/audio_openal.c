@@ -388,12 +388,54 @@ static ALuint ParseOGGFile(const char* filename)
 }
 
 /*
- * MusicPlay: Play background music file
+ * MusicStreamFillBuffer: Returns true if audio was written to the buffer,
+ *   false if the stream ended without producing samples.
  */
-bool MusicPlay(const char* filename, bool loop)
+static bool MusicStreamFillBuffer(MusicStream* ms, ALuint buffer)
 {
-   ALuint newBuffer;
-   ALint sourceState;
+   short pcm[STREAM_BUFFER_SAMPLES * 2];  // Max stereo interleaved
+   int num_shorts = STREAM_BUFFER_SAMPLES * ms->channels;
+   int samples = 0;
+
+   // Decode a chunk. stb_vorbis returns the number of samples per channel.
+   samples = stb_vorbis_get_samples_short_interleaved(
+      ms->vorbis, ms->channels, pcm, num_shorts);
+
+   if (samples == 0)
+   {
+      int err = stb_vorbis_get_error(ms->vorbis);
+      debug(("MusicStreamFillBuffer: decode returned 0 samples (error=%d, looping=%d)\n",
+             err, (int)ms->looping));
+
+      // End of file. If looping, seek to start and try again.
+      if (ms->looping)
+      {
+         stb_vorbis_seek_start(ms->vorbis);
+         samples = stb_vorbis_get_samples_short_interleaved(
+            ms->vorbis, ms->channels, pcm, num_shorts);
+      }
+
+      if (samples == 0)
+      {
+         debug(("MusicStreamFillBuffer: still 0 after seek, marking finished\n"));
+         ms->finished = true;
+         return false;
+      }
+   }
+
+   alBufferData(buffer, ms->format, pcm,
+      samples * ms->channels * (int)sizeof(short), ms->sample_rate);
+
+   ALenum bufErr = alGetError();
+   if (bufErr != AL_NO_ERROR)
+   {
+      debug(("MusicStreamFillBuffer: alBufferData failed (err=0x%X, buf=%u, samples=%d)\n",
+             bufErr, buffer, samples));
+      return false;
+   }
+
+   return true;
+}
 
    if (!g_initialized)
    {

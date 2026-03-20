@@ -909,5 +909,36 @@ messages:
       return TRUE;
    }
 
+   IsGlowing()
+   {
+      return Send(self,@HasAttribute,#ItemAtt=WA_GLOWING);
+   }
+
+   GetLightColor()
+   {
+      local oWeapAtt;
+
+      if Send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      {
+         oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         return Send(oWeapAtt,@GetLightColor);
+      }
+
+      return 0;
+   }
+
+   GetLightIntensity()
+   {
+      local oWeapAtt;
+
+      if Send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      {
+         oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         return Send(oWeapAtt,@GetLightIntensity);
+      }
+
+      return 0;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

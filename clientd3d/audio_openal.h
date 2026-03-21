@@ -22,7 +22,6 @@ bool MusicPlay(const char* filename, bool loop);
 void MusicStop(void);
 void MusicSetVolume(float volume); // 0.0 to 1.0
 bool MusicIsPlaying(void);
-void MusicStreamUpdate(void);
 
 // Returns true if sound started successfully; supports OGG and WAV formats,
 // looping, and 3D positioning. Coordinates are in tile units.

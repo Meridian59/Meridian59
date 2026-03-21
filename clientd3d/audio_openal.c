@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <filesystem>
 
+#define STB_VORBIS_HEADER_ONLY
 #include <stb_vorbis.c>
 
 // Configuration
@@ -93,6 +94,7 @@ static MusicStream g_music = {};
  * whose internal message pump blocks MainIdle from running. */
 static const int STREAM_TIMER_MS = 50;
 static UINT_PTR g_streamTimerId = 0;
+static void MusicStreamUpdate(void);
 
 static void CALLBACK MusicStreamTimerProc(HWND, UINT, UINT_PTR, DWORD)
 {
@@ -509,11 +511,10 @@ bool MusicPlay(const char* filename, bool loop)
 
    g_music.playing = true;
 
-   /* MusicStreamUpdate is normally called from the game's idle loop, but
-    * modal dialogs (e.g. the login screen) run their own message pump and
-    * block the idle loop entirely.  A Win32 timer fires WM_TIMER messages
-    * that get dispatched by any message pump, so the streaming keeps going
-    * even while a dialog is open. */
+   /* A Win32 timer calls MusicStreamUpdate to rotate the streaming
+    * buffers.  WM_TIMER messages are dispatched by any message pump, so
+    * streaming keeps going even during modal dialogs (e.g. the login
+    * screen) that block the main game loop. */
    if (g_streamTimerId == 0)
       g_streamTimerId = SetTimer(NULL, 0, STREAM_TIMER_MS, MusicStreamTimerProc);
 
@@ -526,8 +527,9 @@ bool MusicPlay(const char* filename, bool loop)
 /*
  * MusicStreamUpdate: Refills processed OpenAL buffers from the vorbis
  *   stream. Recovers from buffer underruns by restarting the source.
+ *   Called by the Win32 timer; not called directly from the game loop.
  */
-void MusicStreamUpdate(void)
+static void MusicStreamUpdate(void)
 {
    if (!g_initialized || !g_music.playing)
       return;

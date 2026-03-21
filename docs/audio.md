@@ -82,7 +82,6 @@ graph TD
 | `AudioShutdown()` | Clean up all audio resources |
 | `MusicPlay(filename, loop)` | Open OGG for streaming and start playback |
 | `MusicStop()` | Stop music and release streaming decoder |
-| `MusicStreamUpdate()` | Refill processed streaming buffers (called per-frame) |
 | `MusicIsPlaying()` | Returns true if music is currently streaming |
 | `MusicSetVolume(volume)` | Set music volume (0.0 - 1.0) |
 | `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
@@ -181,14 +180,16 @@ chunks and fed to OpenAL through a ring buffer:
 | Memory per buffer | 16,384 bytes (stereo 16-bit) |
 | Total streaming memory | ~64 KB (vs 30-50 MB full decode) |
 
-`MusicStreamUpdate()` runs each frame. It queries `AL_BUFFERS_PROCESSED` to find
+`MusicStreamUpdate()` is called by a Win32 timer (`MusicStreamTimerProc`).
+It queries `AL_BUFFERS_PROCESSED` to find
 consumed buffers, unqueues them, decodes the next chunk of Vorbis data, and re-queues.
 If the source runs out of buffers (underrun), it restarts playback automatically.
 Looping is handled by seeking the Vorbis stream back to the start when it reaches EOF.
 
-A 50ms Win32 timer (`MusicStreamTimerProc`) also calls `MusicStreamUpdate()` as a
-fallback. This keeps music alive during modal dialogs (e.g. the login dialog) whose
-internal message pump blocks the main game loop from running.
+The timer approach means streaming works in every client state: normal gameplay, the
+splash screen, and modal dialogs (e.g. the login dialog) whose internal message pump
+would otherwise block the main game loop. `MusicStreamUpdate()` is static to
+`audio_openal.c` and not exposed in the public API.
 
 ```mermaid
 graph LR
@@ -207,15 +208,11 @@ graph LR
     end
 
     subgraph "Callers"
-        C1["GameIdle / GameTimer<br/>per-frame, in-game"]
-        C2["MainIdle<br/>per-frame, splash screen"]
-        C3["50ms SetTimer callback<br/>modal dialogs"]
+        C1["Win32 SetTimer<br/>MusicStreamTimerProc"]
     end
 
     U1 --> U2 --> U3 --> U4
     C1 --> U1
-    C2 --> U1
-    C3 --> U1
     B4 -.-> U3
 
     style B1 fill:#2f9e44,color:#fff

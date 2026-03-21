@@ -481,7 +481,6 @@ void MainIdle(void)
 		break;
 
   case STATE_OFFLINE:
-    MusicStreamUpdate();
     Sleep(1);  // Don't hog the CPU
     break;
 	}

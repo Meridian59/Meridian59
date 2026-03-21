@@ -497,48 +497,108 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 	if (FALSE == pPool->pMaterialFctn(pPool))
 		return;
 
-	for (list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
+	// Scan for any targeted (outline highlight) chunks in the pool.
+	bool hasTargeted = false;
+	for (list = pPool->renderPacketList; !hasTargeted && list != pPool->curPacketList->next; list = list->next)
 	{
 		pPacket = (d3d_render_packet_new *)list->data;
-
-		if (list == pPool->curPacketList)
-			numPackets = pPool->curPacket;
-		else
-			numPackets = pPool->size;
-
-		for (curPacket = 0; curPacket < numPackets; curPacket++, pPacket++)
-		{
-			// call material function for this packet
-			if (FALSE == pPacket->pMaterialFctn(pPacket, pCacheSystem))
-				continue;
-
+		numPackets = (list == pPool->curPacketList) ? pPool->curPacket : pPool->size;
+		for (curPacket = 0; !hasTargeted && curPacket < numPackets; curPacket++, pPacket++)
 			for (curChunk = 0; curChunk < pPacket->curChunk; curChunk++)
-			{
-				pChunk = &pPacket->renderChunks[curChunk];
+				if (pPacket->renderChunks[curChunk].isTargeted) { hasTargeted = true; break; }
+	}
 
-				// call material function for this chunk
-				if (FALSE == pChunk->pMaterialFctn(pChunk))
+	// Stencil-based two-pass outline rendering (only when a targeted chunk is present):
+	//
+	// Pass 0: render main (non-targeted) chunks normally, writing stencil=1 wherever an
+	//         opaque pixel is drawn.  The stencil records the exact on-screen footprint of
+	//         the monster's visible pixels, including for translucent objects.
+	//
+	// Pass 1: render targeted (outline) chunks only where stencil=0 — i.e. the border region
+	//         that the main chunk does NOT cover.  This prevents the highlight colour from
+	//         bleeding into the monster's body regardless of whether alpha-blending is active.
+	//
+	// The stencil buffer is cleared to 0 at the start of every frame (D3DCLEAR_STENCIL), so
+	// residual values from earlier flushes in the same frame are intentional: they correctly
+	// block the targeted outline where it would overlap another already-rendered object.
+
+	int numPasses = hasTargeted ? 2 : 1;
+
+	if (hasTargeted)
+	{
+		// Pass 0: stencil always-passes, writes ref=1 on z-pass (visible pixels).
+		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE,
+			D3DCMP_ALWAYS, 1,
+			D3DSTENCILOP_REPLACE,   // z-pass  -> write 1
+			D3DSTENCILOP_KEEP,      // stencil-fail (unused, func=ALWAYS)
+			D3DSTENCILOP_KEEP);     // z-fail  -> leave 0 (occluded pixel)
+	}
+
+	for (int pass = 0; pass < numPasses; pass++)
+	{
+		// In the targeted-pass, switch to "render only where stencil == 0".
+		if (hasTargeted && pass == 1)
+		{
+			D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE,
+				D3DCMP_NOTEQUAL, 1,
+				D3DSTENCILOP_KEEP,  // z-pass  -> leave stencil unchanged
+				D3DSTENCILOP_KEEP,  // stencil-fail -> leave unchanged
+				D3DSTENCILOP_KEEP); // z-fail  -> leave unchanged
+		}
+
+		bool renderTargeted = hasTargeted && (pass == 1);
+		pRenderCache = NULL;
+
+		for (list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
+		{
+			pPacket = (d3d_render_packet_new *)list->data;
+
+			if (list == pPool->curPacketList)
+				numPackets = pPool->curPacket;
+			else
+				numPackets = pPool->size;
+
+			for (curPacket = 0; curPacket < numPackets; curPacket++, pPacket++)
+			{
+				// call material function for this packet
+				if (FALSE == pPacket->pMaterialFctn(pPacket, pCacheSystem))
 					continue;
 
-				if (pRenderCache != pChunk->pRenderCache)
+				for (curChunk = 0; curChunk < pPacket->curChunk; curChunk++)
 				{
-					pRenderCache = pChunk->pRenderCache;
-					D3DRENDER_SET_STREAMS(gpD3DDevice, pRenderCache, numStages);
+					pChunk = &pPacket->renderChunks[curChunk];
+
+					// Pass 0: main chunks only; Pass 1 (when hasTargeted): targeted chunks only.
+					if (pChunk->isTargeted != renderTargeted)
+						continue;
+
+					// call material function for this chunk
+					if (FALSE == pChunk->pMaterialFctn(pChunk))
+						continue;
+
+					if (pRenderCache != pChunk->pRenderCache)
+					{
+						pRenderCache = pChunk->pRenderCache;
+						D3DRENDER_SET_STREAMS(gpD3DDevice, pRenderCache, numStages);
+					}
+
+					IDirect3DDevice9_DrawIndexedPrimitive(gpD3DDevice,
+	                                                  (D3DPRIMITIVETYPE) type,
+	                                                  0,
+	                                                  pChunk->startIndex,
+	                                                  pChunk->numIndices,
+	                                                  pChunk->startIndex,
+	                                                  pChunk->numPrimitives);
+
+					gNumVertices += pChunk->numIndices;
+					gNumDPCalls++;
 				}
-
-				IDirect3DDevice9_DrawIndexedPrimitive(gpD3DDevice,
-                                                  (D3DPRIMITIVETYPE) type,
-                                                  0,
-                                                  pChunk->startIndex,
-                                                  pChunk->numIndices,
-                                                  pChunk->startIndex,
-                                                  pChunk->numPrimitives);
-
-				gNumVertices += pChunk->numIndices;
-				gNumDPCalls++;
 			}
 		}
 	}
+
+	if (hasTargeted)
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
 
 	// now decrement reference count for these textures
 	for (i = 0; i < numStages; i++)

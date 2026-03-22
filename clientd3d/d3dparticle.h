@@ -8,6 +8,8 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
+#include <vector>
+
 constexpr int MAX_PARTICLES = 128;
 
 struct particle
@@ -58,8 +60,9 @@ struct emitter
 
 struct particle_system
 {
-	int			numParticles;
-	list_type	emitterList;
+	int						numParticles;
+	std::vector<emitter*>	emitterList;
+	bool*					pIsActive;	// Points to an external bool that determines if system is active.
 };
 
 void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);

@@ -9,6 +9,7 @@
 #include <cmath>
 #include <chrono>
 #include <random>
+#include <vector>
 
 
 // Variables
@@ -42,31 +43,29 @@ static custom_xyz GetVariedXYZ(const custom_xyz& base, const custom_xyz& min, co
 
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
-	list_destroy(pParticleSystem->emitterList);
-	pParticleSystem->emitterList = nullptr;
+	// Free memory from each emitter before clearing the pointers.
+	for (auto pEmitter : pParticleSystem->emitterList)
+	{
+		if (pEmitter != nullptr)
+		{
+			SafeFree(pEmitter);
+		}
+	}
+	
+	pParticleSystem->emitterList.clear();
 }
 
 emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, float time)
 {
 	emitter	*pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
-	
 	memset(pEmitter, 0, sizeof(emitter));
 	
 	pEmitter->timer_s = time;
 	pEmitter->timerBase_s = time;
 	
-	if (pParticleSystem->emitterList == nullptr)
-	{
-		pParticleSystem->emitterList = list_create(pEmitter);
-	}
-	else
-	{
-		list_add_item(pParticleSystem->emitterList, pEmitter);
-	}
-
+	pParticleSystem->emitterList.push_back(pEmitter);
 	return pEmitter;
 }
-
 
 void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
 {
@@ -81,15 +80,12 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 	D3DCacheSystemReset(pCacheSystem);
 	D3DRenderPoolReset(pPool, &D3DMaterialParticlePool);
 
-	for (list_type list = pParticleSystem->emitterList; list != nullptr; list = list->next)
-	{
-		emitter *pEmitter = (emitter *)list->data;
-		
+	for (auto pEmitter : pParticleSystem->emitterList)
+	{	
 		// Update existing particles
-		for (int curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
-		{
-			particle *pParticle = &pEmitter->particles[curParticle];			
-			D3DParticleUpdate(pEmitter, pParticle, pPool);
+		for (int i = 0; i < pEmitter->numParticles; i++)
+		{			
+			D3DParticleUpdate(pEmitter, &pEmitter->particles[i], pPool);
 		}
 
 		// Creating new particles
@@ -97,8 +93,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		if (pEmitter->timer_s <= 0.0f)
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
-			particle *pParticle = &pEmitter->particles[pEmitter->nextSlot];
-			D3DParticleInitialize(pEmitter, pParticle);
+			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot]);
 		}
 	}
 
@@ -201,6 +196,7 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 				D3DParticleHide(pParticle);
 				return;
 			}
+			
 			pParticle->maxAge_s = abs((pParticle->position.z - floorHeight) / pParticle->velocity.z);			
 		}
 		// Out-of-bound weather particles still spawn for a few seconds so they can still show normally

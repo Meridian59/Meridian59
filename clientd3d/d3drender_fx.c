@@ -6,23 +6,16 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <vector>
 
 // Variables
+static std::vector<particle_system*> particleSystemList;
+
 static particle_system sandParticleSystem;
 static particle_system rainParticleSystem;
 static particle_system snowParticleSystem;
 
-// Slight variation on weather particles fall velocity.
-static constexpr float WEATHER_JITTER_MIN = -0.5f;
-static constexpr float WEATHER_JITTER_MAX = 1.5f;
-
-// Default colors for particles
-static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
-static constexpr custom_bgra RAIN_COLOR = {249,228,175,150};
-static constexpr custom_bgra SNOW_COLOR = {255,255,255,220};
-
 // Interfaces
-
 static void SandstormInit(void);
 static void RainInit(void);
 static void SnowInit(void);
@@ -34,68 +27,84 @@ static void SnowInit(void);
 */
 void D3DFxInit()
 {
+	particleSystemList.clear();
 	SandstormInit();
 	RainInit();
 	SnowInit();
 }
 
 /**
-* Updates and renders all active particle emitters, including the sandstorm effect, 
-* in the current frame.
+* Updates and renders all active emitters and particles.
 */
 void D3DRenderParticles(const ParticleSystemStructure& pss)
 {
-	// Update position of emitters.
-	for (list_type list = sandParticleSystem.emitterList; list != nullptr; list = list->next)
+	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
+	
+	// Iterate through each particle system.
+	for (particle_system* pSystem : particleSystemList)
 	{
-		emitter *pEmitter = (emitter *)list->data;
-		if (pEmitter)
+		// Update world position of each emitter in the particle system.
+		for (emitter* pEmitter : pSystem->emitterList)
 		{
-			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
+			if (pEmitter)
+			{
+				D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
+			}
 		}
-	}
-
-	for (list_type list = rainParticleSystem.emitterList; list != nullptr; list = list->next)
-	{
-		emitter *pEmitter = (emitter *)list->data;
-		if (pEmitter)
+		// If a particle system is active, update its particles.
+		if ( pSystem->pIsActive != nullptr && *(pSystem->pIsActive) )
 		{
-			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
-		}
+			D3DParticleSystemUpdate(pSystem, pss.particlePool, pss.particleCacheSystem);
+		}	
 	}
+}
 
-	for (list_type list = snowParticleSystem.emitterList; list != nullptr; list = list->next)
+// Used by weather particle systems such as rain or snow to drop particles from a height around the player.
+void WeatherEmitterInit(particle_system* pSystem, bool* pActiveFlag, float fallVelocity, float zOffset, custom_bgra bgra)
+{
+	static constexpr int WEATHER_EMITTER_COUNT = 16;
+	static constexpr float WEATHER_TIMER_S = 0.015f;  // In seconds
+	static constexpr int WEATHER_EMITTER_ENERGY = 800;
+	static constexpr float WEATHER_EMITTER_HEIGHT = 4000.0f;
+	static constexpr float WEATHER_EMITTER_RADIUS = 7500.0f;
+
+	// Slight variation on weather particles fall velocity.
+	static constexpr float WEATHER_JITTER_MIN = -0.5f;
+	static constexpr float WEATHER_JITTER_MAX = 1.5f;
+	
+	// Sets minimum z-position variance so weather particles can be primed at the start.
+	float weatherZOffset = -(WEATHER_EMITTER_HEIGHT * (1.0f - zOffset));
+
+	D3DParticleSystemReset(pSystem);
+	emitter* newEmitter = nullptr;
+	for (int i = 0; i < WEATHER_EMITTER_COUNT; i++)
 	{
-		emitter *pEmitter = (emitter *)list->data;
-		if (pEmitter)
+		newEmitter = D3DParticleEmitterInit(pSystem, WEATHER_TIMER_S);
+		newEmitter->bDestroysOnSurface = true;
+		newEmitter->energy = WEATHER_EMITTER_ENERGY;
+		newEmitter->position = {0.0f, 0.0f, WEATHER_EMITTER_HEIGHT};
+		
+		//  Half of the emitters spawn weather particles twice as far.
+		if (i < (WEATHER_EMITTER_COUNT / 2))
 		{
-			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
+			newEmitter->positionVarianceMin = {-WEATHER_EMITTER_RADIUS, -WEATHER_EMITTER_RADIUS, weatherZOffset};
+			newEmitter->positionVarianceMax = {WEATHER_EMITTER_RADIUS, WEATHER_EMITTER_RADIUS, 0.0f};
 		}
+		else
+		{
+			newEmitter->positionVarianceMin = {-WEATHER_EMITTER_RADIUS * 2.0f, -WEATHER_EMITTER_RADIUS * 2.0f, weatherZOffset};
+			newEmitter->positionVarianceMax = {WEATHER_EMITTER_RADIUS * 2.0f, WEATHER_EMITTER_RADIUS * 2.0f, 0.0f};
+		}
+		
+		newEmitter->velocity = {0.0f, 0.0f, fallVelocity};
+		newEmitter->velocityVarianceMin = {0.0f, 0.0f, WEATHER_JITTER_MIN};
+		newEmitter->velocityVarianceMax = {0.0f, 0.0f, WEATHER_JITTER_MAX};
+		newEmitter->bgra = bgra;
 	}
-
-	if (effects.sand)
-	{
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
-
-		D3DParticleSystemUpdate(&sandParticleSystem, pss.particlePool, pss.particleCacheSystem);
-	}
-
-	if (effects.raining)
-	{
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
-
-		D3DParticleSystemUpdate(&rainParticleSystem, pss.particlePool, pss.particleCacheSystem);
-	}
-
-	if (effects.snowing)
-	{
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
-
-		D3DParticleSystemUpdate(&snowParticleSystem, pss.particlePool, pss.particleCacheSystem);
-	}
+	
+	pSystem->pIsActive = pActiveFlag;
+	particleSystemList.push_back(pSystem);
 }
 
 /**
@@ -104,14 +113,14 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 */
 void SandstormInit(void)
 {
-	static constexpr int SAND_EMITTER_COUNT = 16;
-	
+	static constexpr int SAND_EMITTER_COUNT = 16;	
 	static constexpr int SAND_EMITTER_ENERGY = 40;
 	static constexpr float SAND_EMITTER_RADIUS = 10000.0f;
 	static constexpr float SAND_Z_VARIANCE = 1000.0f;
 	static constexpr float SAND_VELOCITY = 500.0f;
 	static constexpr float SAND_TIMER_S = 0.015f;  // In seconds
 	static constexpr float SAND_RAND_ROT = PI / 1000.0f;
+	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
 	
 	D3DParticleSystemReset(&sandParticleSystem);
 	emitter* newEmitter = nullptr;
@@ -132,6 +141,9 @@ void SandstormInit(void)
 		newEmitter->velocity.y = directionY * SAND_VELOCITY;
 		newEmitter->bgra = SANDSTORM_COLOR;
 	}
+	
+	sandParticleSystem.pIsActive = &effects.sand;
+	particleSystemList.push_back(&sandParticleSystem);
 }
 
 /**
@@ -140,40 +152,11 @@ void SandstormInit(void)
 */
 void RainInit(void)
 {
-	static constexpr int RAIN_EMITTER_COUNT = 16;
+	static constexpr float RAIN_FALL_SPEED = -200.0f;
+	static constexpr float RAIN_Z_OFFSET = 0.5f;  // Rain can spawn between half height and full height.
+	static constexpr custom_bgra RAIN_COLOR = {249,228,175,150};
 	
-	static constexpr float RAIN_TIMER_S = 0.015f;  // In seconds
-	static constexpr int RAIN_EMITTER_ENERGY = 200;
-	static constexpr float RAIN_EMITTER_HEIGHT = 4000.0f;
-	// Sets minimum z-position variance so weather particles can be primed at the start.
-	static constexpr float RAIN_Z_SPAWN_OFFSET = -(RAIN_EMITTER_HEIGHT / 2);
-	static constexpr float RAIN_VELOCITY = -200.0f;
-	static constexpr float RAIN_EMITTER_RADIUS = 7500.0f;
-
-	D3DParticleSystemReset(&rainParticleSystem);
-	emitter* newEmitter = nullptr;
-	for (int i = 0; i < RAIN_EMITTER_COUNT; i++)
-	{
-		newEmitter = D3DParticleEmitterInit(&rainParticleSystem, RAIN_TIMER_S);
-		newEmitter->bDestroysOnSurface = true;
-		newEmitter->energy = RAIN_EMITTER_ENERGY;
-		newEmitter->position = {0.0f, 0.0f, RAIN_EMITTER_HEIGHT};
-		//  Half of the emitters spawn weather particles twice as far.
-		if (i < (RAIN_EMITTER_COUNT / 2))
-		{
-			newEmitter->positionVarianceMin = {-RAIN_EMITTER_RADIUS, -RAIN_EMITTER_RADIUS, RAIN_Z_SPAWN_OFFSET};
-			newEmitter->positionVarianceMax = {RAIN_EMITTER_RADIUS, RAIN_EMITTER_RADIUS, 0.0f};
-		}
-		else
-		{
-			newEmitter->positionVarianceMin = {-RAIN_EMITTER_RADIUS * 2.0f, -RAIN_EMITTER_RADIUS * 2.0f, RAIN_Z_SPAWN_OFFSET};
-			newEmitter->positionVarianceMax = {RAIN_EMITTER_RADIUS * 2.0f, RAIN_EMITTER_RADIUS * 2.0f, 0.0f};
-		}
-		newEmitter->velocity = {0.0f, 0.0f, RAIN_VELOCITY};
-		newEmitter->velocityVarianceMin = {0.0f, 0.0f, WEATHER_JITTER_MIN};
-		newEmitter->velocityVarianceMax = {0.0f, 0.0f, WEATHER_JITTER_MAX};
-		newEmitter->bgra = RAIN_COLOR;
-	}
+	WeatherEmitterInit(&rainParticleSystem, &effects.raining, RAIN_FALL_SPEED, RAIN_Z_OFFSET, RAIN_COLOR);
 }
 
 /**
@@ -182,40 +165,12 @@ void RainInit(void)
 */
 void SnowInit(void)
 {
-	static constexpr int SNOW_EMITTER_COUNT = 16;
-	
-	static constexpr float SNOW_EMITTER_RADIUS = 7500.0f;
-	static constexpr int SNOW_EMITTER_ENERGY = 800;
-	static constexpr float SNOW_EMITTER_HEIGHT = 4000.0f;
-	// Sets minimum z-position variance so weather particles can be primed at the start.
-	static constexpr float SNOW_Z_SPAWN_OFFSET = -(SNOW_EMITTER_HEIGHT * 0.875f);
 	static constexpr float SNOW_FALL_SPEED = -30.0f;
-	static constexpr float SNOW_TIMER_S = 0.015f; // In seconds
-
-	D3DParticleSystemReset(&snowParticleSystem);
-	emitter* newEmitter = nullptr;
-	for(int i = 0; i < SNOW_EMITTER_COUNT; i++)
-	{
-		newEmitter = D3DParticleEmitterInit(&snowParticleSystem, SNOW_TIMER_S);
-		newEmitter->bDestroysOnSurface = true;
-		newEmitter->energy = SNOW_EMITTER_ENERGY;
-		newEmitter->position = {0.0f, 0.0f, SNOW_EMITTER_HEIGHT};
-		//  Half of the emitters spawn weather particles twice as far.
-		if (i < (SNOW_EMITTER_COUNT / 2))
-		{
-			newEmitter->positionVarianceMin = {-SNOW_EMITTER_RADIUS, -SNOW_EMITTER_RADIUS, SNOW_Z_SPAWN_OFFSET};
-			newEmitter->positionVarianceMax = {SNOW_EMITTER_RADIUS, SNOW_EMITTER_RADIUS, 0.0f};
-		}
-		else
-		{
-			newEmitter->positionVarianceMin = {-SNOW_EMITTER_RADIUS * 2.0f, -SNOW_EMITTER_RADIUS * 2.0f, SNOW_Z_SPAWN_OFFSET};
-			newEmitter->positionVarianceMax = {SNOW_EMITTER_RADIUS * 2.0f, SNOW_EMITTER_RADIUS * 2.0f, 0.0f};
-		}
-		newEmitter->velocity = {0.0f, 0.0f, SNOW_FALL_SPEED};
-		newEmitter->velocityVarianceMin = {0.0f, 0.0f, WEATHER_JITTER_MIN};
-		newEmitter->velocityVarianceMax = {0.0f, 0.0f, WEATHER_JITTER_MAX};
-		newEmitter->bgra = SNOW_COLOR;
-	}
+	// Snow can spawn at 1/8 of emitter height to help prime it at the start since it falls slow.
+	static constexpr float SNOW_Z_OFFSET = 0.125f;
+	static constexpr custom_bgra SNOW_COLOR = {255,255,255,220};
+	
+	WeatherEmitterInit(&snowParticleSystem, &effects.snowing, SNOW_FALL_SPEED, SNOW_Z_OFFSET, SNOW_COLOR);
 }
 
 /**

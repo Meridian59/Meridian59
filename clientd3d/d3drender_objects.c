@@ -26,17 +26,17 @@ static void D3DRenderNamesDraw3D(
 
 static void D3DRenderObjectsDraw(
 	const ObjectsRenderParams& objectsRenderParams,
-	const GameObjectDataParams& gameObjectDataParams, 
+	const GameObjectDataParams& gameObjectDataParams,
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams,
 	int flags);
 
 static void D3DRenderOverlaysDraw(
 	const ObjectsRenderParams& objectsRenderParams,
-	const GameObjectDataParams& gameObjectDataParams, 
+	const GameObjectDataParams& gameObjectDataParams,
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams,
-	bool underlays, 
+	bool underlays,
 	int flags);
 
 static int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams);
@@ -154,17 +154,103 @@ long D3DRenderObjects(
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
-	// Render translucent objects
-	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS);
-	D3DRenderObjectsDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, TRANSLUCENT_FLAGS);
-	D3DRenderOverlaysDraw(objectsRenderParams, gameObjectDataParams, playerViewParams, lightAndTextureParams, 0, TRANSLUCENT_FLAGS);
+	// Render translucent objects with z-write disabled so they don't occlude objects behind them.
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
+	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
+	// Sort translucent objects back-to-front using view-space depth (distance along the
+	// camera's viewing direction). This is more accurate than Euclidean distance because
+	// two objects at the same radial distance but different angles can have different
+	// visual depths.
+	auto drawdata = gameObjectDataParams.drawData;
+	long vx = objectsRenderParams.params->viewer_x;
+	long vy = objectsRenderParams.params->viewer_y;
+
+	// Compute camera forward direction in world space.
+	int angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	if (angleHeading >= NUMDEGREES)
+		angleHeading -= NUMDEGREES;
+	float theta = (float)angleHeading * (2.0f * PI / (float)NUMDEGREES);
+	float fwdX = sinf(theta);
+	float fwdY = cosf(theta);
+
+	std::sort(drawdata, drawdata + gameObjectDataParams.numItems,
+		[vx, vy, fwdX, fwdY](const DrawItem& a, const DrawItem& b) {
+			bool aIsObj = (a.type == DrawObjectType);
+			bool bIsObj = (b.type == DrawObjectType);
+			if (!aIsObj || !bIsObj)
+				return aIsObj && !bIsObj;
+			auto* aNode = a.u.object.object->draw.obj;
+			auto* bNode = b.u.object.object->draw.obj;
+			if (!aNode || !bNode)
+				return false;
+			// Project displacement onto camera forward direction for view-space depth.
+			float aDepth = (aNode->motion.x - vx) * fwdX + (aNode->motion.y - vy) * fwdY;
+			float bDepth = (bNode->motion.x - vx) * fwdX + (bNode->motion.y - vy) * fwdY;
+			if (aDepth != bDepth)
+				return aDepth > bDepth;  // Farther objects drawn first (back-to-front)
+			// Tiebreaker: consistent ordering by ID prevents flicker
+			// when objects are at similar depths.
+			return aNode->obj.id < bNode->obj.id;
+		});
+
+	// Render each translucent object's complete geometry (underlays + base + overlays)
+	// and flush immediately before moving to the next object. This ensures correct
+	// back-to-front ordering even when objects share textures (since the packet system
+	// groups chunks by texture, a single flush would interleave different objects' parts).
+	std::unordered_set<int> processedIds;
+	for (int i = 0; i < gameObjectDataParams.numItems; i++)
+	{
+		if (drawdata[i].type != DrawObjectType)
+			continue;
+		auto* pRNode = drawdata[i].u.object.object->draw.obj;
+		if (pRNode == NULL)
+			continue;
+		if (!(pRNode->obj.flags & TRANSLUCENT_FLAGS))
+			continue;
+		if (processedIds.find(pRNode->obj.id) != processedIds.end())
+			continue;
+		processedIds.insert(pRNode->obj.id);
+
+		D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+		D3DCacheSystemReset(objectsRenderParams.cacheSystem);
+
+		int objId = pRNode->obj.id;
+		std::vector<DrawItem> singleObjectDrawData;
+		for (int j = 0; j < gameObjectDataParams.numItems; j++)
+		{
+			const DrawItem& item = drawdata[j];
+			if (item.type == DrawObjectType &&
+				item.u.object.object->draw.obj != NULL &&
+				item.u.object.object->draw.obj->obj.id == objId)
+			{
+				singleObjectDrawData.push_back(item);
+			}
+		}
+		GameObjectDataParams singleObjectParams(
+			(long)singleObjectDrawData.size(),
+			gameObjectDataParams.numVisibleObjects,
+			gameObjectDataParams.numObjects,
+			singleObjectDrawData.data(),
+			gameObjectDataParams.visibleObjects,
+			gameObjectDataParams.backBufferTexFull,
+			gameObjectDataParams.backBufferTex);
+		D3DRenderOverlaysDraw(objectsRenderParams, singleObjectParams, playerViewParams, lightAndTextureParams, 1, TRANSLUCENT_FLAGS);
+		D3DRenderObjectsDraw(objectsRenderParams, singleObjectParams, playerViewParams, lightAndTextureParams, TRANSLUCENT_FLAGS);
+		D3DRenderOverlaysDraw(objectsRenderParams, singleObjectParams, playerViewParams, lightAndTextureParams, 0, TRANSLUCENT_FLAGS);
+
+		D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
+		D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
+	}
+
+	// Render translucent projectiles.
+	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
+	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
 	*gameObjectDataParams.numObjects += D3DRenderProjectilesDraw(objectsRenderParams);
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 
 	D3DRenderFramebufferTextureCreate(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0],
 		fontTextureParams.smallTextureSize, fontTextureParams.smallTextureSize);
@@ -243,9 +329,9 @@ void D3DRenderNamesDraw3D(
 	d3d_render_chunk_new * pChunk;
 	auto pFont = fontTextureParams.font;
 
-	int angleHeading = objectsRenderParams.params->viewer_angle + 3072;
-	if (angleHeading >= 4096)
-		angleHeading -= 4096;
+	int angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	if (angleHeading >= NUMDEGREES)
+		angleHeading -= NUMDEGREES;
 
 	int anglePitch = PlayerGetHeightOffset();
 
@@ -287,8 +373,8 @@ void D3DRenderNamesDraw3D(
 
 		angle = pRNode->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
-		if (angle < -4096)
-			angle += 4096;
+		if (angle < -NUMDEGREES)
+			angle += NUMDEGREES;
 
 		/* Make sure that object is above the floor. */
 		if (!GetRoomHeight(objectsRenderParams.room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
@@ -324,7 +410,7 @@ void D3DRenderNamesDraw3D(
 			}
 		}
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+		MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pRNode->motion.x, (float)std::max(bottom,
 			(long)pRNode->motion.z) - depth +
@@ -527,10 +613,10 @@ void D3DRenderNamesDraw3D(
 */
 void D3DRenderOverlaysDraw(
 	const ObjectsRenderParams& objectsRenderParams,
-	const GameObjectDataParams& gameObjectDataParams, 
-	const PlayerViewParams& playerViewParams, 
+	const GameObjectDataParams& gameObjectDataParams,
+	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams,
-	bool underlays, 
+	bool underlays,
 	int flags)
 {
 	D3DMATRIX			mat, rot, trans;
@@ -551,9 +637,9 @@ void D3DRenderOverlaysDraw(
 
 	const auto* player = GetPlayerInfo();;
 
-	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
-	if (angleHeading >= 4096)
-		angleHeading -= 4096;
+	angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	if (angleHeading >= NUMDEGREES)
+		angleHeading -= NUMDEGREES;
 
 	anglePitch = PlayerGetHeightOffset();
 
@@ -922,7 +1008,7 @@ void D3DRenderOverlaysDraw(
 						}
 					}
 
-					MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+					MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
 					MatrixTranspose(&rot, &rot);
 					MatrixTranslate(&mat, (float)pRNode->motion.x, (float)std::max(bottom,
 						(long)pRNode->motion.z) - depthf, (float)pRNode->motion.y);
@@ -1019,7 +1105,7 @@ void D3DRenderOverlaysDraw(
 						bottomRight.z = 0;
 						bottomRight.w = 1.0f;
 
-						MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+						MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
 						MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 						MatrixMultiply(&rot, &rot, &mat);
 						MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
@@ -1234,7 +1320,7 @@ void D3DRenderOverlaysDraw(
 */
 void D3DRenderObjectsDraw(
 	const ObjectsRenderParams& objectsRenderParams,
-	const GameObjectDataParams& gameObjectDataParams, 
+	const GameObjectDataParams& gameObjectDataParams,
 	const PlayerViewParams& playerViewParams,
 	const LightAndTextureParams& lightAndTextureParams,
 	int flags)
@@ -1254,9 +1340,9 @@ void D3DRenderObjectsDraw(
 	d3d_render_packet_new* pPacket = NULL;
 	d3d_render_chunk_new* pChunk = NULL;
 
-	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
-	if (angleHeading >= 4096)
-		angleHeading -= 4096;
+	angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	if (angleHeading >= NUMDEGREES)
+		angleHeading -= NUMDEGREES;
 
 	anglePitch = PlayerGetHeightOffset();
 
@@ -1270,25 +1356,30 @@ void D3DRenderObjectsDraw(
 
 	// As we receive objects in different orders from the BSP walk this can cause inconsistent z-depth ordering.
 	// We now attempt to maintain a consistent view by sorting draw data by their ids.
-	std::sort(drawdata, drawdata + gameObjectDataParams.numItems, [](const DrawItem& a, const DrawItem& b) {
+	// For translucent objects, the caller has already sorted by distance (back-to-front)
+	// so we skip the re-sort to preserve that ordering.
+	if ((flags & TRANSLUCENT_FLAGS) == 0)
+	{
+		std::sort(drawdata, drawdata + gameObjectDataParams.numItems, [](const DrawItem& a, const DrawItem& b) {
 
-		if (a.type != DrawObjectType && b.type == DrawObjectType) {
+			if (a.type != DrawObjectType && b.type == DrawObjectType) {
+				return false;
+			}
+			if (a.type == DrawObjectType && b.type != DrawObjectType) {
+				return true;
+			}
+
+			// If both items are of the DrawObjectType, compare their draw.id
+			if (a.type == DrawObjectType && b.type == DrawObjectType) {
+				// Compare draw.id from the object union member
+				// drawdata[] may contain more than one entry with the same id so this is not a stable sort.
+				return a.u.object.object->draw.id < b.u.object.object->draw.id;
+			}
+
+			// If the types are the same and not DrawObjectType, keep the original order.
 			return false;
-		}
-		if (a.type == DrawObjectType && b.type != DrawObjectType) {
-			return true;
-		}
-
-		// If both items are of the DrawObjectType, compare their draw.id
-		if (a.type == DrawObjectType && b.type == DrawObjectType) {
-			// Compare draw.id from the object union member
-			// drawdata[] may contain more than one entry with the same id so this is not a stable sort.
-			return a.u.object.object->draw.id < b.u.object.object->draw.id;
-		}
-
-		// If the types are the same and not DrawObjectType, keep the original order.
-		return false;
-	});
+		});
+	}
 
 	// drawdata[] may contain more than one entry with the same id.
 	// We need to keep track of those we've already processed to avoid duplicates.
@@ -1387,8 +1478,8 @@ void D3DRenderObjectsDraw(
 
 		angle = pRNode->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
-		if (angle < -4096)
-			angle += 4096;
+		if (angle < -NUMDEGREES)
+			angle += NUMDEGREES;
 
 		/* Make sure that object is above the floor. */
 		if (!GetRoomHeight(objectsRenderParams.room->tree, &top, &bottom, &sector_flags, pRNode->motion.x, pRNode->motion.y))
@@ -1424,7 +1515,7 @@ void D3DRenderObjectsDraw(
 			}
 		}
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+		MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pRNode->motion.x, std::max(bottom, (long)pRNode->motion.z) - depth,
 			(float)pRNode->motion.y);
@@ -1561,7 +1652,7 @@ void D3DRenderObjectsDraw(
 			bottomRight.z = 0;
 			bottomRight.w = 1.0f;
 
-			MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+			MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
 			MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
 			MatrixMultiply(&rot, &rot, &mat);
 			MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
@@ -1767,9 +1858,9 @@ int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams)
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
 
-	angleHeading = objectsRenderParams.params->viewer_angle + 3072;
-	if (angleHeading >= 4096)
-		angleHeading -= 4096;
+	angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	if (angleHeading >= NUMDEGREES)
+		angleHeading -= NUMDEGREES;
 
 	anglePitch = PlayerGetHeightOffset();
 
@@ -1811,10 +1902,10 @@ int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams)
 
 		angle = pProjectile->angle - (objectsRenderParams.params->viewer_angle + 3072);
 
-		if (angle < -4096)
-			angle += 4096;
+		if (angle < -NUMDEGREES)
+			angle += NUMDEGREES;
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
+		MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pProjectile->motion.x, (float)pProjectile->motion.z,
 			(float)pProjectile->motion.y);

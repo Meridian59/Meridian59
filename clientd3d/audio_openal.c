@@ -21,8 +21,8 @@
 #include <unordered_map>
 #include <filesystem>
 
-// STB Vorbis for OGG decoding (compiled separately with STB_VORBIS_NO_PUSHDATA_API)
-extern "C" int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
+#define STB_VORBIS_HEADER_ONLY
+#include <stb_vorbis.c>
 
 // Configuration
 static const int MAX_AUDIO_SOURCES = 32;
@@ -72,10 +72,34 @@ static std::list<CacheNode> g_cacheList;
 static std::unordered_map<std::string, std::list<CacheNode>::iterator,
                           CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
-// Music state
-static ALuint g_musicSource = 0;
-static ALuint g_musicBuffer = 0;
-static bool g_musicPlaying = false;
+// Music streaming state
+static const int STREAM_NUM_BUFFERS = 4;
+static const int STREAM_BUFFER_SAMPLES = 4096;
+
+struct MusicStream {
+   stb_vorbis* vorbis;
+   ALuint source;
+   ALuint buffers[4];
+   ALenum format;
+   int channels;
+   int sample_rate;
+   bool looping;
+   bool playing;
+   bool finished;
+};
+
+static MusicStream g_music = {};
+
+/* Timer keeps streaming alive during modal dialogs (e.g. login dialog)
+ * whose internal message pump blocks MainIdle from running. */
+static const int STREAM_TIMER_MS = 50;
+static UINT_PTR g_streamTimerId = 0;
+static void MusicStreamUpdate(void);
+
+static void CALLBACK MusicStreamTimerProc(HWND, UINT, UINT_PTR, DWORD)
+{
+   MusicStreamUpdate();
+}
 
 // Master volume
 static float g_masterVolume = 1.0f;
@@ -128,10 +152,16 @@ bool AudioInit(HWND hWnd)
    }
    g_numSources = MAX_AUDIO_SOURCES;
 
-   alGenSources(1, &g_musicSource);
+   alGenSources(1, &g_music.source);
    if (alGetError() != AL_NO_ERROR)
    {
       debug(("AudioInit: Failed to generate music source\n"));
+   }
+
+   alGenBuffers(STREAM_NUM_BUFFERS, g_music.buffers);
+   if (alGetError() != AL_NO_ERROR)
+   {
+      debug(("AudioInit: Failed to generate music stream buffers\n"));
    }
 
    alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
@@ -159,11 +189,13 @@ void AudioShutdown(void)
    SoundStopAll();
    MusicStop();
 
-   if (g_musicSource)
+   if (g_music.source)
    {
-      alDeleteSources(1, &g_musicSource);
-      g_musicSource = 0;
+      alDeleteSources(1, &g_music.source);
+      g_music.source = 0;
    }
+
+   alDeleteBuffers(STREAM_NUM_BUFFERS, g_music.buffers);
 
    if (g_numSources > 0)
    {
@@ -338,91 +370,267 @@ static ALuint ParseOGGFile(const char* filename)
 }
 
 /*
- * MusicPlay: Play background music file
+ * MusicStreamFillBuffer: Returns true if audio was written to the buffer,
+ *   false if the stream ended without producing samples.
+ */
+static bool MusicStreamFillBuffer(MusicStream* ms, ALuint buffer)
+{
+   short pcm[STREAM_BUFFER_SAMPLES * 2];  // Max stereo interleaved
+   int num_shorts = STREAM_BUFFER_SAMPLES * ms->channels;
+   int samples = 0;
+
+   // Decode a chunk. stb_vorbis returns the number of samples per channel.
+   samples = stb_vorbis_get_samples_short_interleaved(
+      ms->vorbis, ms->channels, pcm, num_shorts);
+
+   if (samples == 0)
+   {
+      int err = stb_vorbis_get_error(ms->vorbis);
+      debug(("MusicStreamFillBuffer: decode returned 0 samples (error=%d, looping=%d)\n",
+             err, (int)ms->looping));
+
+      // End of file. If looping, seek to start and try again.
+      if (ms->looping)
+      {
+         stb_vorbis_seek_start(ms->vorbis);
+         samples = stb_vorbis_get_samples_short_interleaved(
+            ms->vorbis, ms->channels, pcm, num_shorts);
+      }
+
+      if (samples == 0)
+      {
+         debug(("MusicStreamFillBuffer: still 0 after seek, marking finished\n"));
+         ms->finished = true;
+         return false;
+      }
+   }
+
+   alBufferData(buffer, ms->format, pcm,
+      samples * ms->channels * (int)sizeof(short), ms->sample_rate);
+
+   ALenum bufErr = alGetError();
+   if (bufErr != AL_NO_ERROR)
+   {
+      debug(("MusicStreamFillBuffer: alBufferData failed (err=0x%X, buf=%u, samples=%d)\n",
+             bufErr, buffer, samples));
+      return false;
+   }
+
+   return true;
+}
+
+/*
+ * MusicPlay: Opens an OGG file for streaming playback. Returns true on
+ *   success. Only parses headers and fills initial buffers.
  */
 bool MusicPlay(const char* filename, bool loop)
 {
-   ALuint newBuffer;
-   ALint sourceState;
-
    if (!g_initialized)
    {
       debug(("MusicPlay: OpenAL not initialized!\n"));
       return false;
    }
 
-   // Always stop any currently playing music unconditionally
-   // This ensures we stop even if our flag got out of sync with OpenAL state
-   alSourceStop(g_musicSource);
-   alSourcei(g_musicSource, AL_BUFFER, 0);  // Detach buffer
+   // Drain any leftover OpenAL error from sound effect operations.
+   alGetError();
 
-   // Verify the source actually stopped (defensive check)
-   alGetSourcei(g_musicSource, AL_SOURCE_STATE, &sourceState);
-   if (sourceState == AL_PLAYING)
+   MusicStop();
+
+   // Drain any errors generated by MusicStop's OpenAL calls.
+   alGetError();
+
+   if (!std::filesystem::exists(filename))
    {
-      debug(("MusicPlay: Warning - source still playing after stop!\n"));
-   }
-
-   // Delete old buffer if we had one (now safe since source is stopped and detached)
-   if (g_musicBuffer != 0)
-   {
-      alDeleteBuffers(1, &g_musicBuffer);
-      g_musicBuffer = 0;
-   }
-
-   g_musicPlaying = false;
-
-   // Load OGG file (filename already includes path) - no caching for music
-   newBuffer = ParseOGGFile(filename);
-   if (newBuffer == 0)
-   {
-      debug(("MusicPlay: Failed to load %s\n", filename));
+      debug(("MusicPlay: File not found: %s\n", filename));
       return false;
    }
 
-   g_musicBuffer = newBuffer;
-
-   alSourcei(g_musicSource, AL_BUFFER, g_musicBuffer);
-   alSourcei(g_musicSource, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
-   alSourcei(g_musicSource, AL_SOURCE_RELATIVE, AL_TRUE);
-   alSource3f(g_musicSource, AL_POSITION, 0.0f, 0.0f, 0.0f);
-   alSourcef(g_musicSource, AL_GAIN, (float)config.music_volume / 100.0f);
-
-   alSourcePlay(g_musicSource);
-
-   if (alGetError() != AL_NO_ERROR)
+   // Open the vorbis stream (reads headers only, not a full decode)
+   int error = 0;
+   g_music.vorbis = stb_vorbis_open_filename(filename, &error, NULL);
+   if (!g_music.vorbis)
    {
-      debug(("MusicPlay: Failed to play music\n"));
+      debug(("MusicPlay: Failed to open %s (error %d)\n", filename, error));
       return false;
    }
 
-   g_musicPlaying = true;
+   stb_vorbis_info info = stb_vorbis_get_info(g_music.vorbis);
+   g_music.channels = info.channels;
+   g_music.sample_rate = info.sample_rate;
+   g_music.looping = loop;
+   g_music.finished = false;
+
+   if (info.channels == 1)
+      g_music.format = AL_FORMAT_MONO16;
+   else
+      g_music.format = AL_FORMAT_STEREO16;
+
+   // Fill initial buffers with the first few chunks of decoded audio
+   int queued = 0;
+   for (int i = 0; i < STREAM_NUM_BUFFERS; i++)
+   {
+      if (MusicStreamFillBuffer(&g_music, g_music.buffers[i]))
+         queued++;
+      else
+         break;
+   }
+
+   if (queued == 0)
+   {
+      debug(("MusicPlay: No audio data in %s\n", filename));
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+      return false;
+   }
+
+   /* OpenAL sources must be in AL_INITIAL state before queueing buffers.
+    * Setting AL_BUFFER to 0 detaches any previous buffer and resets the
+    * source.  AL_LOOPING is off because OpenAL's looping only replays a
+    * single buffer, not the whole queue.  We loop manually by seeking the
+    * decoder back to the start when it reaches end-of-file. */
+   alSourcei(g_music.source, AL_BUFFER, 0);
+   alSourcei(g_music.source, AL_LOOPING, AL_FALSE);
+   alSourcei(g_music.source, AL_SOURCE_RELATIVE, AL_TRUE);
+   alSource3f(g_music.source, AL_POSITION, 0.0f, 0.0f, 0.0f);
+   alSourcef(g_music.source, AL_GAIN, (float)config.music_volume / 100.0f);
+
+   alGetError();  // Clear errors before queue+play
+   alSourceQueueBuffers(g_music.source, queued, g_music.buffers);
+   ALenum queueErr = alGetError();
+   alSourcePlay(g_music.source);
+   ALenum playErr = alGetError();
+
+   if (queueErr != AL_NO_ERROR || playErr != AL_NO_ERROR)
+   {
+      debug(("MusicPlay: Failed - source=%u, queueErr=0x%X, playErr=0x%X\n",
+             g_music.source, queueErr, playErr));
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+      return false;
+   }
+
+   g_music.playing = true;
+
+   /* A Win32 timer calls MusicStreamUpdate to rotate the streaming
+    * buffers.  WM_TIMER messages are dispatched by any message pump, so
+    * streaming keeps going even during modal dialogs (e.g. the login
+    * screen) that block the main game loop. */
+   if (g_streamTimerId == 0)
+      g_streamTimerId = SetTimer(NULL, 0, STREAM_TIMER_MS, MusicStreamTimerProc);
+
+   debug(("MusicPlay: streaming '%s' ch=%d rate=%d looping=%d source=%u\n",
+          filename, g_music.channels, g_music.sample_rate, (int)loop,
+          g_music.source));
    return true;
 }
 
-void MusicStop(void)
+/*
+ * MusicStreamUpdate: Refills processed OpenAL buffers from the vorbis
+ *   stream. Recovers from buffer underruns by restarting the source.
+ *   Called by the Win32 timer; not called directly from the game loop.
+ */
+static void MusicStreamUpdate(void)
 {
-   if (!g_initialized || !g_musicSource)
+   if (!g_initialized || !g_music.playing)
       return;
 
-   alSourceStop(g_musicSource);
-   // Detach buffer from source before any future buffer deletion
-   alSourcei(g_musicSource, AL_BUFFER, 0);
-   g_musicPlaying = false;
+   // Drain any stale error from other OpenAL calls (SFX, etc.)
+   alGetError();
+
+   ALint state = 0;
+   alGetSourcei(g_music.source, AL_SOURCE_STATE, &state);
+
+   // Check how many buffers the source has finished playing
+   ALint processed = 0;
+   alGetSourcei(g_music.source, AL_BUFFERS_PROCESSED, &processed);
+
+   while (processed > 0)
+   {
+      ALuint buf;
+      alSourceUnqueueBuffers(g_music.source, 1, &buf);
+
+      if (!g_music.finished)
+      {
+         if (MusicStreamFillBuffer(&g_music, buf))
+         {
+            alSourceQueueBuffers(g_music.source, 1, &buf);
+         }
+      }
+
+      processed--;
+   }
+
+   if (state != AL_PLAYING)
+   {
+      ALint queued = 0;
+      alGetSourcei(g_music.source, AL_BUFFERS_QUEUED, &queued);
+      if (queued > 0)
+      {
+         // Source starved. Restart playback with whatever is queued.
+         alSourcePlay(g_music.source);
+      }
+      else
+      {
+         debug(("MusicStreamUpdate: all buffers consumed, playback done\n"));
+         g_music.playing = false;
+      }
+   }
+}
+
+/*
+ * MusicStop: Stops playback and releases the streaming decoder.
+ */
+void MusicStop(void)
+{
+   if (!g_initialized)
+      return;
+
+   debug(("MusicStop: called (playing=%d, vorbis=%p)\n",
+          (int)g_music.playing, (void*)g_music.vorbis));
+
+   alSourceStop(g_music.source);
+
+   // Unqueue all buffers so they can be reused
+   ALint queued = 0;
+   alGetSourcei(g_music.source, AL_BUFFERS_QUEUED, &queued);
+   while (queued > 0)
+   {
+      ALuint buf;
+      alSourceUnqueueBuffers(g_music.source, 1, &buf);
+      queued--;
+   }
+
+   // Fully reset source to AL_INITIAL so it is ready for queue mode next time
+   alSourcei(g_music.source, AL_BUFFER, 0);
+
+   if (g_music.vorbis)
+   {
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+   }
+
+   g_music.playing = false;
+   g_music.finished = false;
+
+   if (g_streamTimerId != 0)
+   {
+      KillTimer(NULL, g_streamTimerId);
+      g_streamTimerId = 0;
+   }
 }
 
 void MusicSetVolume(float volume)
 {
    g_musicVolume = volume;
-   if (g_initialized && g_musicSource)
+   if (g_initialized && g_music.source)
    {
-      alSourcef(g_musicSource, AL_GAIN, volume * g_masterVolume);
+      alSourcef(g_music.source, AL_GAIN, volume * g_masterVolume);
    }
 }
 
 bool MusicIsPlaying(void)
 {
-   return g_musicPlaying;
+   return g_music.playing;
 }
 
 /*

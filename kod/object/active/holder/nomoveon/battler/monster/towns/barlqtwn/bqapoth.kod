@@ -34,7 +34,7 @@ classvars:
    vrName = barloque_apothecary_name_rsc
    vrIcon = barloque_apothecary_icon_rsc
    vrDesc = barloque_apothecary_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_NOMOVE | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER | MOB_PERM_QUESTER | MOB_LAWFUL | MOB_COND_SELLER
+   viAttributes = MOB_NOFIGHT | MOB_BUYER | MOB_SELLER | MOB_NOMOVE | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER | MOB_PERM_QUESTER | MOB_LAWFUL | MOB_COND_SELLER
    viOccupation = MOB_ROLE_APOTHECARY
    viMerchant_markup = MERCHANT_DISCOUNT
    viQuestID = QST_ID_FADE_SPELL
@@ -125,6 +125,17 @@ messages:
       propagate;
    }
 
+   ObjectDesired(what=$, who=$)
+   {
+      if Send(self, @IsObjectReagent, #what=what)
+         AND NOT Send(self, @IsObjectGem, #what=what)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    SetForSale()
    "Admin supported\n"
    "Clears and recreates plFor_sale."
@@ -133,6 +144,7 @@ messages:
                        Create(&Mushroom,#number=5),
                        Create(&Elderberry,#number=5),
                        Create(&RedMushroom,#number=4),
+                       Create(&BlueMushroom,#number=4),
                        Create(&Flask) ],
                      $,
                      [ SID_HEAT, SID_FADE ],

@@ -6656,6 +6656,11 @@ messages:
       % Ensure existing dynamic lights function as they did prior to the patch (without flickering visually)
       % Remove this along with Flickerer::StopFlickering after PostPatchUpdates has been applied.
       Send(&DynamicLight, @StopFlickering);
+
+      % Applies update to Joguer's sell list to include blue mushrooms.
+      % Remove this line after PostPatchUpdates has been successfully applied. -- Aesica
+      Send(&BarloqueApothecary, @SetForSale);
+
       return;
    }
 

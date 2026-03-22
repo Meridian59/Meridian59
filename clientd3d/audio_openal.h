@@ -17,7 +17,7 @@
 bool AudioInit(HWND hWnd);
 void AudioShutdown(void);
 
-// Music control (for MP3/OGG background music)
+// Music control (for background music via streaming playback)
 bool MusicPlay(const char* filename, bool loop);
 void MusicStop(void);
 void MusicSetVolume(float volume); // 0.0 to 1.0

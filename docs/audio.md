@@ -80,8 +80,9 @@ graph TD
 |----------|---------|
 | `AudioInit(hwnd)` | Initialize OpenAL device, context, and sources |
 | `AudioShutdown()` | Clean up all audio resources |
-| `MusicPlay(filename, loop)` | Play OGG file on dedicated music source |
-| `MusicStop()` | Stop music playback |
+| `MusicPlay(filename, loop)` | Open OGG for streaming and start playback |
+| `MusicStop()` | Stop music and release streaming decoder |
+| `MusicIsPlaying()` | Returns true if music is currently streaming |
 | `MusicSetVolume(volume)` | Set music volume (0.0 - 1.0) |
 | `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
 | `SoundStopAll()` | Stop all sound effects |
@@ -158,6 +159,67 @@ Sound effects are cached using an LRU (Least Recently Used) strategy:
 - **Lookup:** O(1) via case-insensitive hash map
 
 Music is NOT cached because tracks are large and typically don't repeat rapidly.
+Instead, music uses streaming playback (see below).
+
+## Music Streaming
+
+Music files are played via streaming rather than full-file decoding. This eliminates
+the loading hitch that occurred when decompressing entire OGG files (30-50 MB of
+decoded PCM from 2-7 MB OGG files) in a single blocking call on the main thread.
+
+### How It Works
+
+On `MusicPlay()`, only the OGG headers are parsed (~1ms). Audio is decoded in small
+chunks and fed to OpenAL through a ring buffer:
+
+| Parameter | Value |
+|-----------|-------|
+| Buffer count | 4 |
+| Samples per buffer | 4096 (~93ms at 44100 Hz) |
+| Total audio runway | ~0.37 seconds |
+| Memory per buffer | 16,384 bytes (stereo 16-bit) |
+| Total streaming memory | ~64 KB (vs 30-50 MB full decode) |
+
+`MusicStreamUpdate()` is called by a Win32 timer (`MusicStreamTimerProc`).
+It queries `AL_BUFFERS_PROCESSED` to find
+consumed buffers, unqueues them, decodes the next chunk of Vorbis data, and re-queues.
+If the source runs out of buffers (underrun), it restarts playback automatically.
+Looping is handled by seeking the Vorbis stream back to the start when it reaches EOF.
+
+The timer approach means streaming works in every client state: normal gameplay, the
+splash screen, and modal dialogs (e.g. the login dialog) whose internal message pump
+would otherwise block the main game loop. `MusicStreamUpdate()` is static to
+`audio_openal.c` and not exposed in the public API.
+
+```mermaid
+graph LR
+    subgraph "Buffer Ring (4 x 16KB)"
+        B1["Buf 1<br/>Playing"]
+        B2["Buf 2<br/>Queued"]
+        B3["Buf 3<br/>Queued"]
+        B4["Buf 4<br/>Decoding"]
+    end
+
+    subgraph "Update Loop"
+        U1["alGetSourcei<br/>AL_BUFFERS_PROCESSED"]
+        U2["alSourceUnqueueBuffers"]
+        U3["stb_vorbis_get_samples<br/>4096 samples"]
+        U4["alBufferData + alSourceQueueBuffers"]
+    end
+
+    subgraph "Callers"
+        C1["Win32 SetTimer<br/>MusicStreamTimerProc"]
+    end
+
+    U1 --> U2 --> U3 --> U4
+    C1 --> U1
+    B4 -.-> U3
+
+    style B1 fill:#2f9e44,color:#fff
+    style B2 fill:#1864ab,color:#fff
+    style B3 fill:#1864ab,color:#fff
+    style B4 fill:#e67700,color:#fff
+```
 
 ## 3D Positional Audio
 

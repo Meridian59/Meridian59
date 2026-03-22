@@ -184,6 +184,8 @@ void GameProcessSessionBuffer(session_node *s)
       if (msg.crc16 != security && !s->seeds_hacked)
       {
 			s->seeds_hacked = true;
+			lprintf("GPSB: CRC fail msg_type=%d account=%i crc=%u expected=%u\n",
+			        (unsigned char)msg.data[0], s->account->account_id, msg.crc16, security);
 			if (ConfigBool(SECURITY_LOG_SPOOFS))
 			{
 				lprintf("GameProcessSessionBuffer found invalid security account %i\n",
@@ -203,7 +205,8 @@ void GameProcessSessionBuffer(session_node *s)
 
       if (msg.seqno != GetEpoch()) /* old sequence ok, just ignore */
       {
-	 /* dprintf("Game got bad epoch from session %i\n",s->session_id); */
+         lprintf("GPSB: epoch skip msg_type=%d account=%i seqno=%d epoch=%d\n",
+                 (unsigned char)msg.data[0], s->account->account_id, msg.seqno, GetEpoch());
 	 continue;
       }
       
@@ -417,6 +420,10 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 
    GameMessageCount((unsigned char)msg->data[0]);
 
+   if ((unsigned char)msg->data[0] == BP_PERF_REPORT)
+      lprintf("GPP: BP_PERF_REPORT arrived len=%d from account %u\n",
+              msg->len, s->account->account_id);
+
    switch ((unsigned char)msg->data[0])
    {
    case BP_REQ_QUIT :
@@ -433,6 +440,27 @@ void GameProtocolParse(session_node *s,client_msg *msg)
    case BP_PING :
       GameEchoPing(s);
       break;
+
+   case BP_PERF_REPORT :
+   {
+      // renderer_mode (1 byte), avg_fps (2), 1pct_low_fps (2), min_fps (2)
+      if (msg->len < 8)
+      {
+         lprintf("BP_PERF_REPORT received but too short: len=%d from account %u\n",
+                 msg->len, s->account->account_id);
+         break;
+      }
+      unsigned char renderer_mode = (unsigned char)msg->data[1];
+      unsigned short avg_fps  = *(unsigned short *)(msg->data + 2);
+      unsigned short low_fps  = *(unsigned short *)(msg->data + 4);
+      unsigned short min_fps  = *(unsigned short *)(msg->data + 6);
+      const char *rend_str = (renderer_mode == 2) ? "D3D+GpuEff"
+                           : (renderer_mode == 1) ? "D3D"
+                           : "Software";
+      lprintf("PerfReport account %u: renderer=%s fps avg=%u 1%%low=%u min=%u\n",
+              s->account->account_id, rend_str, avg_fps, low_fps, min_fps);
+      break;
+   }
 
    case BP_AD_SELECTED :
       /* they clicked on an ad; log it */
@@ -546,7 +574,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 
    default :
       ClientToBlakodUser(s,msg->len,msg->data);
-      
+
       break;
    }
 }
@@ -601,7 +629,7 @@ void GameSendEachUserChoice(user_node *u)
 {
    val_type name_val,num_val;
    resource_node *r;
-   
+
    AddIntToPacket(u->object_id);
 
    name_val.int_val = SendTopLevelBlakodMessage(u->object_id,USER_NAME_MSG,0,NULL);
@@ -638,11 +666,11 @@ void GameSendSystemEnter(session_node *s)
 
    session_id_const.v.tag = TAG_SESSION;
    session_id_const.v.data = s->session_id;
-   
+
    p.type = CONSTANT;
    p.value = session_id_const.int_val;
    p.name_id = SESSION_ID_PARM;
-   
+
    SendTopLevelBlakodMessage(GetSystemObjectID(),SYSTEM_ENTER_GAME_MSG,1,&p);
 
 }

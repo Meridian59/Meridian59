@@ -14,7 +14,9 @@
 #include "client.h"
 #include <vector>
 #include <numeric>
+#include <algorithm>
 #include <chrono>
+#include <climits>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -51,6 +53,12 @@ static steady_clock_time_point lastEndFrame;
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
+// Session-wide FPS tracking for BP_PERF_REPORT (sent once at sign-off).
+// Capped to avoid unbounded memory growth on long sessions; old samples rotate out.
+static std::vector<int> session_fps;
+static const int session_fps_max = 36000; // ~10 min at 60fps; older samples discarded
+static int session_min_fps = INT_MAX;
+
 static const int defaultMaxFps = 60;
 
 /************************************************************************/
@@ -64,9 +72,45 @@ void GraphicsAreaCreate(HWND hParent)
 /*
  * GraphicsAreaDestroy:  Destroy main graphics view window.
  */
+// Compute FPS stats for the session and send BP_PERF_REPORT once at sign-off.
+static void SendSessionPerfReport(void)
+{
+   debug(("SendSessionPerfReport called: fps_samples=%d\n", (int)session_fps.size()));
+
+   WORD avg = 0, low = 0, mn = 0;
+
+   if (!session_fps.empty())
+   {
+      // Average
+      double sum = std::accumulate(session_fps.begin(), session_fps.end(), 0.0);
+      avg = (WORD)(sum / session_fps.size());
+
+      // 1% low: sort a copy, average the bottom 1 percentile
+      std::vector<int> sorted = session_fps;
+      std::sort(sorted.begin(), sorted.end());
+      int low_count = std::max(1, (int)(sorted.size() / 100));
+      double low_sum = std::accumulate(sorted.begin(), sorted.begin() + low_count, 0.0);
+      low = (WORD)(low_sum / low_count);
+
+      mn = (WORD)((session_min_fps == INT_MAX) ? 0 : session_min_fps);
+   }
+
+   BYTE renderer_mode = D3DRenderIsEnabled() ? (config.gpuEfficiency ? 2 : 1) : 0;
+   SendPerfReport(renderer_mode, avg, low, mn);
+
+   session_fps.clear();
+   session_min_fps = INT_MAX;
+}
+
+void GraphicsFlushPerfReport(void)
+{
+   SendSessionPerfReport();
+}
+
 void GraphicsAreaDestroy(void)
 {
    GraphicsReleaseCapture();
+   SendSessionPerfReport();
 }
 /************************************************************************/
 /*
@@ -360,6 +404,16 @@ void RedrawForce(void)
    }
 
    lastEndFrame = endFrame;
+
+   // Always accumulate session-wide FPS stats for BP_PERF_REPORT (sent at sign-off).
+   if (fps > 0)
+   {
+      if ((int)session_fps.size() >= session_fps_max)
+         session_fps.erase(session_fps.begin());
+      session_fps.push_back(fps);
+      if (fps < session_min_fps)
+         session_min_fps = fps;
+   }
 
    if (config.showFPS)
    {

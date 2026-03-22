@@ -216,6 +216,36 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       SynchedAcceptLogin(s,name,password);
       
       break;
+   case AP_CLIENTINFO :
+   {
+      // Parse: string (renderer+GPU desc), WORD (vramMB), INT (vendorId), INT (deviceId),
+      //        WORD (driverMajor), WORD (driverMinor)
+      int ci = 1;
+      char gpuInfo[128] = "";
+      unsigned int vramMB = 0;
+      int vendorId = 0, deviceId = 0;
+      int driverMajor = 0, driverMinor = 0;
+      if (msg->len > ci + 2)
+      {
+         int slen = *(short *)(msg->data + ci);
+         ci += 2;
+         if (slen > 0 && slen < (int)sizeof(gpuInfo) && ci + slen <= msg->len)
+         {
+            memcpy(gpuInfo, msg->data + ci, slen);
+            gpuInfo[slen] = '\0';
+            ci += slen;
+         }
+         if (ci + 2 <= msg->len) { vramMB     = *(unsigned short *)(msg->data + ci); ci += 2; }
+         if (ci + 4 <= msg->len) { vendorId   = *(int *)(msg->data + ci);            ci += 4; }
+         if (ci + 4 <= msg->len) { deviceId   = *(int *)(msg->data + ci);            ci += 4; }
+         if (ci + 2 <= msg->len) { driverMajor = *(short *)(msg->data + ci);         ci += 2; }
+         if (ci + 2 <= msg->len) { driverMinor = *(short *)(msg->data + ci);         ci += 2; }
+      }
+      lprintf("ClientInfo account %u: GPU=\"%s\" VRAM=%uMB vendor=0x%04X dev=0x%04X driver=%d.%d\n",
+              s->account->account_id, gpuInfo, vramMB,
+              (unsigned)vendorId, (unsigned)deviceId, driverMajor, driverMinor);
+      break;
+   }
    case AP_GETCLIENT :
       eprintf("SynchedProtocolParse AP_GETCLIENT no longer supported\n");
       break;

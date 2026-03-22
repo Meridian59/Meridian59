@@ -803,6 +803,29 @@ int D3DRenderIsEnabled(void)
 	return gD3DEnabled;
 }
 
+void D3DGetAdapterInfo(char *gpuDesc, int descLen,
+                       unsigned int *vramMB,
+                       DWORD *vendorId, DWORD *deviceId,
+                       WORD *driverMajor, WORD *driverMinor)
+{
+   if (!gD3DEnabled)
+   {
+      strncpy(gpuDesc, "N/A", descLen);
+      gpuDesc[descLen - 1] = '\0';
+      *vramMB = 0;
+      *vendorId = 0; *deviceId = 0;
+      *driverMajor = 0; *driverMinor = 0;
+      return;
+   }
+   strncpy(gpuDesc, gD3DDriverProfile.adapterID.Description, descLen);
+   gpuDesc[descLen - 1] = '\0';
+   *vramMB      = gD3DDriverProfile.texMemTotal >> 20;
+   *vendorId    = gD3DDriverProfile.adapterID.VendorId;
+   *deviceId    = gD3DDriverProfile.adapterID.DeviceId;
+   *driverMajor = HIWORD(gD3DDriverProfile.adapterID.DriverVersion.HighPart);
+   *driverMinor = LOWORD(gD3DDriverProfile.adapterID.DriverVersion.HighPart);
+}
+
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
 	D3DCAPS9		d3dCaps;

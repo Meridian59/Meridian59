@@ -71,10 +71,10 @@ void LoginSendInfo(void)
 
    debug(("Got partner code of %d.\n", (sysinfo.reserved & 0xFF00) >> 8));
 
-   RequestLogin(MAJOR_REV, MINOR_REV, 
+   RequestLogin(MAJOR_REV, MINOR_REV,
 		sysinfo.platform, sysinfo.platform_major, sysinfo.platform_minor,
-		sysinfo.memory, sysinfo.chip, 
-		sysinfo.screen_width, sysinfo.screen_height, 
+		sysinfo.memory, sysinfo.chip,
+		sysinfo.screen_width, sysinfo.screen_height,
 		sysinfo.color_depth, sysinfo.bandwidth, sysinfo.reserved,
 		config.username, buf);
 }
@@ -210,19 +210,19 @@ void LoginReset(void)
  */
 void EnterGame(void)
 {
-   int encodednum;
-
    // Go into admin mode if person is admin and mode selected
    if (user_type == USER_ADMIN && admin_mode)
      {
        RequestAdmin();
        return;
      }
-  
-   // Go into game
+
+   // Go into game — defer network sends (AP_CLIENTINFO + AP_REQ_GAME) to the main
+   // message loop via BK_ENTERGAME so they are never called from inside a receive
+   // callback.  Calling ToServer() from within a receive handler can cause the
+   // WriteSocket() spin-loop to deadlock the UI thread on consecutive sends.
    DownloadCheckDirs(hMain);
-   encodednum = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
-   RequestGame(config.download_time,encodednum,inihost);
+   PostMessage(hMain, BK_ENTERGAME, 0, 0);
 }
 
 /****************************************************************************/

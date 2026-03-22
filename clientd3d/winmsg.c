@@ -140,6 +140,11 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 /****************************************************************************/
 void MainQuit(HWND hwnd)
 {
+	if (state == STATE_GAME)
+	{
+		GraphicsFlushPerfReport();
+		Sleep(300);  // Let server process before FIN races with WM_BLAK_MAIN_READ
+	}
 	CloseConnection();
 	
 	if (config.save_settings)

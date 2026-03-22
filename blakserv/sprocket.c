@@ -72,6 +72,7 @@ client_def_table_type client_def_table[] =
 	{ BP_REQ_QUIT,             { {0, DONE_PARM} } },
 	
 	{ BP_SYSTEM,               { {0, SYSTEM_TABLE_PARM} } },
+	{ BP_PERF_REPORT,          { {1, TAG_INT}, {2, TAG_INT}, {2, TAG_INT}, {2, TAG_INT}, {0, DONE_PARM} } },
 	{ BP_USERCOMMAND,          { {0, USERCOMMAND_TABLE_PARM} } },
 	
 	{ BP_REQ_ACTIVATE,         { {4, TAG_OBJECT}, {0, DONE_PARM} } },

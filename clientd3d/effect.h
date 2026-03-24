@@ -18,7 +18,8 @@
 #define EFFECT_BLUR_RATE    150
 
 // Hold status of current effects
-typedef struct {
+struct Effects
+{
    int  invert;    // # of milliseconds remaining in invert effect (0 if off)
    int  shake;     // # of milliseconds remaining in shake effect (0 if off)
    int  pain;      // # of milliseconds remaining in pain effect (0 if off)
@@ -40,7 +41,7 @@ typedef struct {
    int  flashxlat;
    int	duration;
    int  xlatOverride;
-} Effects;
+};
 
 void EffectsInit(void);
 void EffectsExit(void);

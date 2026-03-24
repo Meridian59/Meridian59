@@ -43,6 +43,9 @@ static custom_xyz GetVariedXYZ(const custom_xyz& base, const custom_xyz& min, co
 
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
+	// Reset priming seting so it won't potentially leak between room changes.
+	pParticleSystem->isPriming = false;
+	
 	// Free memory from each emitter before clearing the pointers.
 	for (auto pEmitter : pParticleSystem->emitterList)
 	{
@@ -87,13 +90,13 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		{			
 			D3DParticleUpdate(pEmitter, &pEmitter->particles[i], pPool);
 		}
-
-		// Creating new particles
+		
+		// Initializing new particles
 		pEmitter->timer_s -= GetDeltaTime();
 		if (pEmitter->timer_s <= 0.0f)
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
-			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot]);
+			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot], pParticleSystem->isPriming);
 		}
 	}
 
@@ -159,7 +162,7 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 }
 
 // Gets a particle from the object pool 
-void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
+void D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPriming)
 {
 	// Advance to the next slot in the circular buffer and reset the emitter's timer, 
 	// regardless if the recycled particle should show up in its new location or not.
@@ -197,13 +200,27 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 				return;
 			}
 			
-			pParticle->maxAge_s = abs((pParticle->position.z - floorHeight) / pParticle->velocity.z);			
+			pParticle->maxAge_s = abs((pParticle->position.z - floorHeight) / pParticle->velocity.z);
+
 		}
 		// Out-of-bound weather particles still spawn for a few seconds so they can still show normally
 		// outdoors beyond areas like forest walls, or from outside windows.
 		else
 		{
-			pParticle->maxAge_s = 2.0f;
+			pParticle->maxAge_s = 3.0f;
+		}
+		
+		// Now check if we are priming particles if we just loaded into a room or teleported around.
+		if (isPriming)
+		{
+			// If so, jump start the particle to be somewhere between the start of its spawn and near the end.
+			pParticle->currentAge_s = pParticle->maxAge_s * GetRandomFloatRange(0.0f, 0.95f);
+			pParticle->position.z += (pParticle->velocity.z * pParticle->currentAge_s);
+			
+			if (pEmitter->numParticles >= MAX_PARTICLES)
+			{
+				isPriming = false;
+			}
 		}
 	}
 	

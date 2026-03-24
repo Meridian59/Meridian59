@@ -323,6 +323,8 @@ void EnterNewRoom(void)
    EnterNewRoom3D(&current_room);
 
    MapEnterRoom(&current_room);
+   
+   // Load in the room's current weather effect.
    NewWeather(current_room.weather_effect);
 
    LightChanged3D(player.light, current_room.ambient_light);
@@ -689,6 +691,9 @@ void SetBackground(ID bkgnd)
    RedrawAll();
 }
 /************************************************************************/
+/*
+ * SetWeather:  Update the current room's weather effect.
+ */
 void SetWeather(BYTE weather_effect)
 {
    current_room.weather_effect = weather_effect;

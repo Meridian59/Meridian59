@@ -62,7 +62,11 @@ struct particle_system
 {
 	int						numParticles;
 	std::vector<emitter*>	emitterList;
-	bool*					pIsActive;	// Points to an external bool that determines if system is active.
+	// Points to an external bool that determines if system is active.
+	bool*					pIsActive;	
+	// If active, particles initialize randomly between the start and end of its lifetime.
+	// Helps 'pre-fill' particles when loading into a room or teleporting.
+	bool					isPriming;
 };
 
 void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
@@ -73,7 +77,7 @@ emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem, float time);
 void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
 void 		D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool);
-void 		D3DParticleInitialize(emitter *pEmitter, particle *pParticle);
+void 		D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPriming);
 void		D3DParticleHide(particle *pParticle);
 
 #endif

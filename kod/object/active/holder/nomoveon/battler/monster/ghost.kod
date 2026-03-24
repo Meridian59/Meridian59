@@ -73,7 +73,7 @@ properties:
 
    piAnimation = ANIM_NONE
    piGroup = 1
-   piDrawfx = DRAWFX_TRANSLUCENT_75 | FLICKERING_YES
+   piDrawfx = DRAWFX_TRANSLUCENT_75
    vrDesc = ghost_desc_rsc
 
 messages:

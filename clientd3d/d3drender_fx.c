@@ -80,7 +80,7 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 			{
 				pEmitter->numParticles = 0; 
 				pEmitter->nextSlot = 0;     
-				pEmitter->timer_s = 0;      
+				pEmitter->emitterTimer_s = 0;      
 			}
 		}
 		
@@ -89,7 +89,7 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 		{
 			if (pEmitter)
 			{
-				D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
+				D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
 			}
 		}
 		
@@ -108,7 +108,6 @@ void WeatherEmitterInit(particle_system* pSystem, bool* pActiveFlag, float fallV
 {
 	static constexpr int WEATHER_EMITTER_COUNT = 16;
 	static constexpr float WEATHER_TIMER_S = 0.015f;  // In seconds
-	static constexpr int WEATHER_EMITTER_ENERGY = 800;
 	static constexpr float WEATHER_EMITTER_HEIGHT = 4000.0f;
 	static constexpr float WEATHER_EMITTER_RADIUS = 7500.0f;
 
@@ -122,7 +121,6 @@ void WeatherEmitterInit(particle_system* pSystem, bool* pActiveFlag, float fallV
 	{
 		newEmitter = D3DParticleEmitterInit(pSystem, WEATHER_TIMER_S);
 		newEmitter->bDestroysOnSurface = true;
-		newEmitter->energy = WEATHER_EMITTER_ENERGY;
 		newEmitter->position = {0.0f, 0.0f, WEATHER_EMITTER_HEIGHT};	
 		
 		//  Half of the emitters spawn weather particles three times further away.
@@ -153,8 +151,8 @@ void WeatherEmitterInit(particle_system* pSystem, bool* pActiveFlag, float fallV
 */
 void SandstormInit(void)
 {
-	static constexpr int SAND_EMITTER_COUNT = 16;	
-	static constexpr int SAND_EMITTER_ENERGY = 40;
+	static constexpr int SAND_EMITTER_COUNT = 16;
+	static constexpr float SAND_MAX_AGE_S = 1.0f;
 	static constexpr float SAND_EMITTER_RADIUS = 10000.0f;
 	static constexpr float SAND_Z_VARIANCE = 1000.0f;
 	static constexpr float SAND_VELOCITY = 500.0f;
@@ -167,7 +165,7 @@ void SandstormInit(void)
 	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
 	{
 		newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER_S);
-		newEmitter->energy = SAND_EMITTER_ENERGY;
+		newEmitter->particleMaxAge_s = SAND_MAX_AGE_S;
 		newEmitter->positionVarianceMin = {-SAND_EMITTER_RADIUS, -SAND_EMITTER_RADIUS, -SAND_Z_VARIANCE};
 		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE * 2.0f};
 		newEmitter->rotationVarianceMin = {-SAND_RAND_ROT, -SAND_RAND_ROT, -SAND_RAND_ROT};

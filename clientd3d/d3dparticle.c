@@ -63,18 +63,18 @@ emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, float time)
 	emitter	*pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
 	memset(pEmitter, 0, sizeof(emitter));
 	
-	pEmitter->timer_s = time;
-	pEmitter->timerBase_s = time;
+	pEmitter->emitterTimer_s = time;
+	pEmitter->emitterTimerBase_s = time;
 	
 	pParticleSystem->emitterList.push_back(pEmitter);
 	return pEmitter;
 }
 
-void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
+void D3DParticleEmitterUpdate(emitter *pEmitter, custom_xyz deltaPos)
 {
-	pEmitter->position.x += posX;
-	pEmitter->position.y += posY;
-	pEmitter->position.z += posZ;
+	pEmitter->position.x += deltaPos.x;
+	pEmitter->position.y += deltaPos.y;
+	pEmitter->position.z += deltaPos.z;
 }
 
 void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
@@ -92,8 +92,8 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		}
 		
 		// Initializing new particles
-		pEmitter->timer_s -= GetDeltaTime();
-		if (pEmitter->timer_s <= 0.0f)
+		pEmitter->emitterTimer_s -= GetDeltaTime();
+		if (pEmitter->emitterTimer_s <= 0.0f)
 		{
 			// Particles spawn one at a time and use circular buffing to track the next open particle.
 			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot], pParticleSystem->isPriming);
@@ -106,20 +106,17 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool)
 {
-	// Skip dead particles, or end particles that run out of energy.
-	if (pParticle->energy <= 0 || --pParticle->energy <= 0)
+	// Skip inactive particles so they don't get added to rendering.
+	if (pParticle->isActive == false)
 	{
 		return;
 	}
-	// Update lifetime for weather particles since only they track time.
-	if (pEmitter->bDestroysOnSurface)
+	
+	pParticle->currentAge_s += GetDeltaTime();
+	if (pParticle->currentAge_s >= pParticle->maxAge_s)
 	{
-		pParticle->currentAge_s += GetDeltaTime();
-		if (pParticle->currentAge_s >= pParticle->maxAge_s)
-		{
-			D3DParticleHide(pParticle);
-			return;
-		}
+		D3DParticleHide(pParticle);
+		return;
 	}
 
 	custom_xyzw velocity = {pParticle->velocity.x, pParticle->velocity.y, pParticle->velocity.z, 1.0f};
@@ -171,16 +168,18 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPrimi
 	{
 		pEmitter->numParticles++;
 	}
-	pEmitter->timer_s = pEmitter->timerBase_s;
+	pEmitter->emitterTimer_s = pEmitter->emitterTimerBase_s;
 
 	pParticle->position = GetVariedXYZ(pEmitter->position, pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
 	pParticle->velocity = GetVariedXYZ(pEmitter->velocity, pEmitter->velocityVarianceMin, pEmitter->velocityVarianceMax);
 	
-	// Each weather particle first checks if their new spawn location is valid.
-	// If so, calculate the time it takes to land on a surface.
+	pParticle->currentAge_s = 0.0f;
+	
+	// If a particle is meant to land on a surface, it calculates the time it takes to land on it.
 	if (pEmitter->bDestroysOnSurface)
 	{						
-		pParticle->currentAge_s = 0.0f;
+		// Each weather particle first checks if their new spawn location is valid.
+		// If so, calculate the time it takes to land on a surface.
 		BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, pParticle->position.x, pParticle->position.y);
 		
 		// Weather particles are hidden at ceiling sectors because a single BSP lookup cannot detect one-sided ceiling
@@ -223,14 +222,19 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPrimi
 			}
 		}
 	}
+	// If a particle doesn't clear upon landing on a surface, give the particle a max age defined by the emitter. 
+	// Note: `particleMaxAge_s` will default to 0.0f if it isn't defined!
+	else
+	{
+		pParticle->maxAge_s = pEmitter->particleMaxAge_s;
+	}
 	
 	pParticle->rotation = GetVariedXYZ(pEmitter->rotation, pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
 	pParticle->bgra = pEmitter->bgra;
-	pParticle->energy = pEmitter->energy;
+	pParticle->isActive = true;
 }
 
 void D3DParticleHide(particle *pParticle)
 {
-	pParticle->maxAge_s = 0;
-	pParticle->energy = 0;
+	pParticle->isActive = false;
 }

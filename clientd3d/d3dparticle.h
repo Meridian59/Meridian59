@@ -14,14 +14,13 @@ constexpr int MAX_PARTICLES = 128;
 
 struct particle
 {
-	int				energy;
 	custom_xyz		position;
 	custom_xyz		oldPosition;
 	custom_xyz		velocity;
 	custom_xyz		rotation;
 	custom_bgra		bgra;
-	float			size;
-	float			weight;
+	// If false, the particle isn't included in the rendering.
+	bool			isActive;
 	// Current age of the weather particle (in seconds)
 	float			currentAge_s;
 	// Max lifespan of the weather particle (in seconds)
@@ -32,11 +31,11 @@ struct emitter
 {
 	int				numParticles;
 	int				nextSlot;
-	int				energy;
-	float			timer_s;
-	float			timerBase_s;
-
-	custom_xyz		delta;
+	// Max lifespan to apply to particles. Only used if `bDestroysOnSurface` is false.
+	float			particleMaxAge_s;
+	// Time before the emitter spawns a new particle.
+	float			emitterTimer_s;
+	float			emitterTimerBase_s;
 	
 	// Base transform settings
 	custom_xyz		position;
@@ -55,7 +54,8 @@ struct emitter
 	custom_bgra		bgra;
 	particle		particles[MAX_PARTICLES];
 	
-	bool			bDestroysOnSurface;  // If true, particle clears on hitting a ceiling or floor.
+	// If true, particle calculates the time it takes to hit the floor below them.
+	bool			bDestroysOnSurface;  
 };
 
 struct particle_system
@@ -69,7 +69,7 @@ struct particle_system
 	bool					isPriming;
 };
 
-void		D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
+void		D3DParticleEmitterUpdate(emitter *pEmitter, custom_xyz deltaPos);
 void		D3DParticleSystemReset(particle_system *pParticleSystem);
 
 emitter*	D3DParticleEmitterInit(particle_system *pParticleSystem, float time);

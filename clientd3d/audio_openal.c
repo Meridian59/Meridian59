@@ -655,12 +655,13 @@ static DWORD WINAPI MusicThreadProc(LPVOID param)
 {
    while (g_musicThreadRunning)
    {
-      EnterCriticalSection(&g_musicCS);
-      MusicCmd cmd = g_musicCmd;
+      MusicCmd cmd = MUSIC_CMD_NONE;
       std::string cmdFile;
       bool cmdLoop = false;
       float cmdVolume = 1.0f;
 
+      EnterCriticalSection(&g_musicCS);
+      cmd = g_musicCmd;
       if (cmd != MUSIC_CMD_NONE)
       {
          cmdFile = g_musicCmdFile;

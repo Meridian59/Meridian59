@@ -100,7 +100,7 @@ enum MusicCmd {
 
 static CRITICAL_SECTION g_musicCS;
 static HANDLE g_musicThread = NULL;
-static volatile bool g_musicThreadRunning = false;
+static bool g_musicThreadRunning = false;
 
 /*
  * Pending command slot (main thread writes, music thread reads).

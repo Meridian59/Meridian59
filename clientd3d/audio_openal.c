@@ -109,7 +109,7 @@ static bool g_musicThreadRunning = false;
  * thread wakes, the second overwrites the first.
  */
 static MusicCmd g_musicCmd = MUSIC_CMD_NONE;
-static char g_musicCmdFile[MAX_PATH];
+static std::string g_musicCmdFile;
 static bool g_musicCmdLoop = false;
 static float g_musicCmdVolume = 1.0f;
 
@@ -461,7 +461,7 @@ static bool MusicStreamFillBuffer(MusicStream* ms, ALuint buffer)
  *   playback. Returns true if the command was posted. Actual playback
  *   starts asynchronously on the music thread.
  */
-bool MusicPlay(const char* filename, bool loop)
+bool MusicPlay(const std::string& filename, bool loop)
 {
    if (!g_initialized || !g_musicThread)
    {
@@ -472,17 +472,17 @@ bool MusicPlay(const char* filename, bool loop)
 
    if (!std::filesystem::exists(filename))
    {
-      debug(("MusicPlay: File not found: %s\n", filename));
+      debug(("MusicPlay: File not found: %s\n", filename.c_str()));
       return false;
    }
 
    EnterCriticalSection(&g_musicCS);
    g_musicCmd = MUSIC_CMD_PLAY;
-   strncpy_s(g_musicCmdFile, sizeof(g_musicCmdFile), filename, _TRUNCATE);
+   g_musicCmdFile = filename;
    g_musicCmdLoop = loop;
    LeaveCriticalSection(&g_musicCS);
 
-   debug(("MusicPlay: queued '%s' looping=%d\n", filename, (int)loop));
+   debug(("MusicPlay: queued '%s' looping=%d\n", filename.c_str(), (int)loop));
    return true;
 }
 
@@ -541,7 +541,7 @@ static void MusicStreamUpdate(void)
 /*
  * MusicStartPlayback: Opens a vorbis stream and begins playback.
  */
-static void MusicStartPlayback(const char* filename, bool loop)
+static void MusicStartPlayback(const std::string& filename, bool loop)
 {
    alGetError();
 
@@ -549,10 +549,10 @@ static void MusicStartPlayback(const char* filename, bool loop)
    alGetError();
 
    int error = 0;
-   g_music.vorbis = stb_vorbis_open_filename(filename, &error, NULL);
+   g_music.vorbis = stb_vorbis_open_filename(filename.c_str(), &error, NULL);
    if (!g_music.vorbis)
    {
-      debug(("MusicStartPlayback: Failed to open %s (error %d)\n", filename, error));
+      debug(("MusicStartPlayback: Failed to open %s (error %d)\n", filename.c_str(), error));
       return;
    }
 
@@ -578,7 +578,7 @@ static void MusicStartPlayback(const char* filename, bool loop)
 
    if (queued == 0)
    {
-      debug(("MusicStartPlayback: No audio data in %s\n", filename));
+      debug(("MusicStartPlayback: No audio data in %s\n", filename.c_str()));
       stb_vorbis_close(g_music.vorbis);
       g_music.vorbis = NULL;
       return;
@@ -613,7 +613,7 @@ static void MusicStartPlayback(const char* filename, bool loop)
    g_music.playing = true;
 
    debug(("MusicStartPlayback: streaming '%s' ch=%d rate=%d looping=%d source=%u\n",
-          filename, g_music.channels, g_music.sample_rate, (int)loop,
+          filename.c_str(), g_music.channels, g_music.sample_rate, (int)loop,
           g_music.source));
 }
 
@@ -657,13 +657,13 @@ static DWORD WINAPI MusicThreadProc(LPVOID param)
    {
       EnterCriticalSection(&g_musicCS);
       MusicCmd cmd = g_musicCmd;
-      char cmdFile[MAX_PATH] = {};
+      std::string cmdFile;
       bool cmdLoop = false;
       float cmdVolume = 1.0f;
 
       if (cmd != MUSIC_CMD_NONE)
       {
-         strncpy_s(cmdFile, sizeof(cmdFile), g_musicCmdFile, _TRUNCATE);
+         cmdFile = g_musicCmdFile;
          cmdLoop = g_musicCmdLoop;
          cmdVolume = g_musicCmdVolume;
          g_musicCmd = MUSIC_CMD_NONE;

@@ -102,7 +102,12 @@ static CRITICAL_SECTION g_musicCS;
 static HANDLE g_musicThread = NULL;
 static volatile bool g_musicThreadRunning = false;
 
-/* Pending command slot (main thread writes, music thread reads). */
+/*
+ * Pending command slot (main thread writes, music thread reads).
+ * This is a single slot, not a queue. Only one command can be pending
+ * at a time. If the main thread posts two commands before the music
+ * thread wakes, the second overwrites the first.
+ */
 static MusicCmd g_musicCmd = MUSIC_CMD_NONE;
 static char g_musicCmdFile[MAX_PATH];
 static bool g_musicCmdLoop = false;

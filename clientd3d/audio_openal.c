@@ -20,6 +20,8 @@
 #include <list>
 #include <unordered_map>
 #include <filesystem>
+#include <thread>
+#include <chrono>
 
 #define STB_VORBIS_HEADER_ONLY
 #include <stb_vorbis.c>
@@ -688,7 +690,7 @@ static DWORD WINAPI MusicThreadProc(LPVOID param)
       }
 
       MusicStreamUpdate();
-      Sleep(10);
+      std::this_thread::sleep_for(std::chrono::milliseconds(75));
    }
 
    MusicStopPlayback();

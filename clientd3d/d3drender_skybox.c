@@ -60,6 +60,12 @@ static constexpr custom_st gSkyboxST[] =
 
 static constexpr custom_bgra gSkyboxBGRA = {192, 192, 192, 255};
 
+// Defines which .bgf resource gets paired with its respective hardware rendered skybox.
+struct SkyboxDefinition
+{
+	const char* resourceName;	// The .bgf name used by the software renderer.
+	const char* fileName;		// The .bsf/.png used in the hardware renderer.
+};
 
 // Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
 // Note: Ko'catan skyboxes use the same skybox textures as the the mainland.

@@ -118,4 +118,8 @@ M59EXPORT int GetActiveStatGroup(void);
 
 const room_type& getCurrentRoom();
 
+// Tracks initial state of room transition.
+void SetRoomJustEntered(bool state);
+bool GetRoomJustEntered(void);
+
 #endif _GAME_H

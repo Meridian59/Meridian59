@@ -8,7 +8,6 @@
 #include "client.h"
 #include <vector>
 
-extern room_type current_room;
 
 // Variables
 static std::vector<particle_system*> particleSystemList;
@@ -16,9 +15,6 @@ static std::vector<particle_system*> particleSystemList;
 static particle_system sandParticleSystem;
 static particle_system rainParticleSystem;
 static particle_system snowParticleSystem;
-
-// Stores the last room's security number, just to detect if the player changed rooms.
-static int lastRoomSecurity = -1;
 
 // Determines if the player's distance from their last position
 // is far enough to trigger particle system priming.
@@ -50,8 +46,6 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
 	
-	// Check if the player changed rooms by comparing room security numbers.
-	bool roomChanged = (current_room.security != lastRoomSecurity);
 	// Check if the player moved far enough since their last position to trigger particle priming.
 	bool teleported = ( abs(pss.playerDeltaPos.x) > TELEPORT_THRESHOLD ||
 						abs(pss.playerDeltaPos.y) > TELEPORT_THRESHOLD ||
@@ -64,14 +58,14 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 		bool particleSystemActive = (pSystem->pIsActive != nullptr && *(pSystem->pIsActive));
 		
 		// If the player just loaded into the room, prime the effects that were already in place.
-		if (roomChanged && particleSystemActive)
+		if (GetRoomJustEntered() && particleSystemActive)
 		{
 			pSystem->isPriming = true;
 		}
 
 		// Check if the player teleported far enough so particles can be primed at the player's new location.
 		// Ignores room changes since zoning also triggers this. And don't prime inactive particle systems.
-		if (teleported && !roomChanged && particleSystemActive)
+		if (teleported && !GetRoomJustEntered() && particleSystemActive)
 		{
 			pSystem->isPriming = true;
 			
@@ -99,8 +93,6 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 			D3DParticleSystemUpdate(pSystem, pss.particlePool, pss.particleCacheSystem);
 		}
 	}
-	
-	lastRoomSecurity = current_room.security;
 }
 
 // Used by weather particle systems such as rain or snow to drop particles from a height around the player.

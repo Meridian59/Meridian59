@@ -13,6 +13,10 @@
 
 player_info player;
 room_type current_room;
+
+// Tracks first frame of a room transition.
+static bool roomJustEntered;
+
 bool dataValid = false;
 
 /* This flag is true before we get the first player info message from the server,
@@ -311,6 +315,10 @@ void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id, BYT
 void EnterNewRoom(void)
 {
    SetFrameDrawn(FALSE);
+   
+   // We just entered the room, so toggle this flag so some scripts note that we just entered
+   // a room. Used in particle system so it know when to prime particles upon room change.
+   SetRoomJustEntered(true);
 
    DrawGridBorder();   
 
@@ -731,4 +739,17 @@ int GetActiveStatGroup(void)
 const room_type& getCurrentRoom()
 {
     return current_room;
+}
+
+// Sets the flag for knowing if a room was just entered.
+// Set to true in EnterNewRoom(), and cleared at the end of first DrawRoom() execution.
+void SetRoomJustEntered(bool state)
+{
+	roomJustEntered = state;
+}
+
+// Returns true only during the first frame of a new room.
+bool GetRoomJustEntered(void)
+{
+	return roomJustEntered;
 }

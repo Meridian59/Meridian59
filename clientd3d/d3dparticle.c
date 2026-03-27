@@ -31,7 +31,7 @@ static float GetRandomFloatRange(float min, float max)
     return dist(gen);
 }
 
-// Returns XYZ after adjusting it with the emitter's variance range (if any).
+// Returns a new XYZ after adjusting the base XYZ with a specified variance range (if any).
 static custom_xyz GetVariedXYZ(const custom_xyz& base, const custom_xyz& min, const custom_xyz& max)
 {
 	custom_xyz result = base;
@@ -60,8 +60,7 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 
 emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, float time)
 {
-	emitter	*pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
-	memset(pEmitter, 0, sizeof(emitter));
+	emitter	*pEmitter = (emitter *)ZeroSafeMalloc(sizeof(emitter));
 	
 	pEmitter->emitterTimer_s = time;
 	pEmitter->emitterTimerBase_s = time;

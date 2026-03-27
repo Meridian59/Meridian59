@@ -489,7 +489,7 @@ void UserEndDrag(void)
 /************************************************************************/
 /*
  * GraphicsReleaseCapture:  Release mouse capture, if main window has it.
- *   Return true if main window had mouse capture.
+ *   Return true iff main window had mouse capture.
  */
 bool GraphicsReleaseCapture(void)
 {
@@ -507,11 +507,18 @@ bool GraphicsMouseCaptured(void)
    return capture;
 }
 /************************************************************************/
+/*
+ * GetDeltaTime:  Returns delta time in seconds.
+ */
 float GetDeltaTime()
 {
 	return deltaTime_s;
 }
 /************************************************************************/
+/*
+ * GetDeltaTimeMs:  Returns delta time in milliseconds.
+ *   Used in legacy systems that still use milliseconds instead of seconds.
+ */
 int GetDeltaTimeMs()
 {
 	return deltaTime_ms;

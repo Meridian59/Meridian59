@@ -62,9 +62,11 @@ struct particle_system
 {
 	int						numParticles;
 	std::vector<emitter*>	emitterList;
-	// Points to an external bool that determines if system is active.
+	
+	// Points to an external bool that determines if this particle system is active.
 	bool*					pIsActive;	
-	// If active, particles initialize randomly between the start and end of its lifetime.
+	
+	// If true, particles initialize randomly between the start and end of their lifetime.
 	// Helps 'pre-fill' particles when loading into a room or teleporting.
 	bool					isPriming;
 };

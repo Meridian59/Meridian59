@@ -192,6 +192,8 @@ bool AudioInit(HWND hWnd)
 
    g_initialized = true;
 
+   g_musicVolume = (float)config.music_volume / 100.0f;
+
    InitializeCriticalSection(&g_musicCS);
 
    g_musicThreadRunning = true;

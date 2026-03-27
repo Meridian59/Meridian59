@@ -62,7 +62,54 @@ struct BackgroundOverlaysSceneParams {
     {}
 };
 
+// Defines a projected screen-space region for background overlays.
+// Used to determine if a BG overlay is within player view, and to map coordinates for drawing.
+struct OverlayRegion {
+	// Screen-space coordinates in Normalized Device Coordinates (NDC).
+	// X/Y ranges from -1.0 to 1.0 (edges), while Z ranges from 0.0 to 1.0 (depth).
+	custom_xyzw topLeft;
+	custom_xyzw topRight;
+	custom_xyzw bottomLeft;
+	custom_xyzw bottomRight;
+	custom_xyzw center;
+	
+	// Full viewport dimensions in pixels.
+	// Used to map NDC coordinates back to screen pixels for drawing the BG overlay.
+	int width;
+	int height;
+};
+
+// Camera orientation and transformation matrices for background overlays.
+// Used to project a background overlay onto a sky dome above the player.
+struct BackgroundOverlayTransform {
+	// The background overlay's own position.
+	Vector3D pos;
+	
+	// The viewer's heading/pitch in game units.
+	float angleHeading;
+	float anglePitch;
+	
+	// Rotation matrix based on viewer's heading/pitch.
+	D3DMATRIX rot;
+	
+	// Combined transformation matrix for world-space placement.
+	D3DMATRIX mat;
+};
+
 void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& backgroundOverlaysRenderStateParams, 
     const BackgroundOverlaysSceneParams& backgroundOverlaysSceneParams);
+
+void D3DProcessBackgroundOverlay(const BackgroundOverlaysRenderStateParams& bgoRenderStateParams, 
+    const BackgroundOverlaysSceneParams& bgoSceneParams, list_type list);
+
+void D3DBuildBGOverlayMesh(d3d_render_chunk_new* pChunk, float object_width, float object_height);
+
+OverlayRegion D3DSetupOverlayRegion(const auto& d3dRect, d3d_render_chunk_new* pChunk, 
+	BackgroundOverlayTransform* transform, const auto& params);
+
+bool D3DIsBGOverlayVisible(OverlayRegion* region);
+
+void D3DFinalizeBGOverlay(BackgroundOverlay* overlay, OverlayRegion* region, BackgroundOverlayTransform* transform, ObjectRange* range,
+	const BackgroundOverlaysSceneParams& bgoSceneParams);
 
 #endif	/* #ifndef _D3DRENDERBGOVERLAYS_H */

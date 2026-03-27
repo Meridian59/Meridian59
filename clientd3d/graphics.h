@@ -49,5 +49,11 @@ bool GraphicsMouseCaptured(void);
 int GetFPS(void);
 int GetMSDrawFrame(void);
 
+// Returns delta time in seconds.
+float GetDeltaTime();
+
+// Returns delta time in milliseconds for legacy systems that still use milliseconds.
+int GetDeltaTimeMs();
+
 #endif
 

@@ -712,10 +712,8 @@ void MusicStop(void)
 
    if (g_musicThread)
    {
-      {
-         std::lock_guard<std::mutex> lock(g_musicCS);
-         g_musicCmd = MUSIC_CMD_STOP;
-      }
+      std::lock_guard<std::mutex> lock(g_musicCS);
+      g_musicCmd = MUSIC_CMD_STOP;
    }
    else
    {
@@ -734,11 +732,9 @@ void MusicSetVolume(float volume)
 
    if (g_musicThread)
    {
-      {
-         std::lock_guard<std::mutex> lock(g_musicCS);
-         g_musicCmdVolume = volume;
-         g_musicCmd = MUSIC_CMD_VOLUME;
-      }
+      std::lock_guard<std::mutex> lock(g_musicCS);
+      g_musicCmdVolume = volume;
+      g_musicCmd = MUSIC_CMD_VOLUME;
    }
    else
    {

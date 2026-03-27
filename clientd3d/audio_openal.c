@@ -22,6 +22,7 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
+#include <mutex>
 
 #define STB_VORBIS_HEADER_ONLY
 #include <stb_vorbis.c>
@@ -100,7 +101,7 @@ enum MusicCmd {
    MUSIC_CMD_VOLUME,
 };
 
-static CRITICAL_SECTION g_musicCS;
+static std::mutex g_musicCS;
 static HANDLE g_musicThread = NULL;
 static bool g_musicThreadRunning = false;
 
@@ -194,8 +195,6 @@ bool AudioInit(HWND hWnd)
 
    g_musicVolume = (float)config.music_volume / 100.0f;
 
-   InitializeCriticalSection(&g_musicCS);
-
    g_musicThreadRunning = true;
    g_musicThread = CreateThread(NULL, 0, MusicThreadProc, NULL, 0, NULL);
    if (!g_musicThread)
@@ -225,7 +224,6 @@ void AudioShutdown(void)
       CloseHandle(g_musicThread);
       g_musicThread = NULL;
    }
-   DeleteCriticalSection(&g_musicCS);
 
    SoundStopAll();
    MusicStop();
@@ -480,11 +478,12 @@ bool MusicPlay(const std::string& filename, bool loop)
       return false;
    }
 
-   EnterCriticalSection(&g_musicCS);
-   g_musicCmd = MUSIC_CMD_PLAY;
-   g_musicCmdFile = filename;
-   g_musicCmdLoop = loop;
-   LeaveCriticalSection(&g_musicCS);
+   {
+      std::lock_guard<std::mutex> lock(g_musicCS);
+      g_musicCmd = MUSIC_CMD_PLAY;
+      g_musicCmdFile = filename;
+      g_musicCmdLoop = loop;
+   }
 
    debug(("MusicPlay: queued '%s' looping=%d\n", filename.c_str(), (int)loop));
    return true;
@@ -664,16 +663,17 @@ static DWORD WINAPI MusicThreadProc(LPVOID param)
       bool cmdLoop = false;
       float cmdVolume = 1.0f;
 
-      EnterCriticalSection(&g_musicCS);
-      cmd = g_musicCmd;
-      if (cmd != MUSIC_CMD_NONE)
       {
-         cmdFile = g_musicCmdFile;
-         cmdLoop = g_musicCmdLoop;
-         cmdVolume = g_musicCmdVolume;
-         g_musicCmd = MUSIC_CMD_NONE;
+         std::lock_guard<std::mutex> lock(g_musicCS);
+         cmd = g_musicCmd;
+         if (cmd != MUSIC_CMD_NONE)
+         {
+            cmdFile = g_musicCmdFile;
+            cmdLoop = g_musicCmdLoop;
+            cmdVolume = g_musicCmdVolume;
+            g_musicCmd = MUSIC_CMD_NONE;
+         }
       }
-      LeaveCriticalSection(&g_musicCS);
 
       switch (cmd)
       {
@@ -712,9 +712,10 @@ void MusicStop(void)
 
    if (g_musicThread)
    {
-      EnterCriticalSection(&g_musicCS);
-      g_musicCmd = MUSIC_CMD_STOP;
-      LeaveCriticalSection(&g_musicCS);
+      {
+         std::lock_guard<std::mutex> lock(g_musicCS);
+         g_musicCmd = MUSIC_CMD_STOP;
+      }
    }
    else
    {
@@ -733,10 +734,11 @@ void MusicSetVolume(float volume)
 
    if (g_musicThread)
    {
-      EnterCriticalSection(&g_musicCS);
-      g_musicCmdVolume = volume;
-      g_musicCmd = MUSIC_CMD_VOLUME;
-      LeaveCriticalSection(&g_musicCS);
+      {
+         std::lock_guard<std::mutex> lock(g_musicCS);
+         g_musicCmdVolume = volume;
+         g_musicCmd = MUSIC_CMD_VOLUME;
+      }
    }
    else
    {

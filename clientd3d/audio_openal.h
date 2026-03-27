@@ -18,7 +18,7 @@ bool AudioInit(HWND hWnd);
 void AudioShutdown(void);
 
 // Music control (for background music via streaming playback)
-bool MusicPlay(const char* filename, bool loop);
+bool MusicPlay(const std::string& filename, bool loop);
 void MusicStop(void);
 void MusicSetVolume(float volume); // 0.0 to 1.0
 bool MusicIsPlaying(void);

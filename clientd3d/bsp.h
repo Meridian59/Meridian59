@@ -26,6 +26,10 @@
 #define WF_HAS_ANIMATED   0x00000400  // has animated once and hence is dynamic geometry, required for new client
 #define WF_NO_HTILE       0x00020000  // Don't tile texture horizontally (must be transparent)
 
+// Translucency level stored in bits 15-16 (0=opaque,1=25%visible,2=50%visible,3=75%visible)
+#define WF_TRANSLUCENCY_MASK  0x00018000
+#define WallTranslucencyLevel(flags) ((BYTE)(((flags) & WF_TRANSLUCENCY_MASK) >> 15))
+
 // Texture scrolling constants
 #define SCROLL_NONE   0x00000000  // No texture scrolling
 #define SCROLL_SLOW   0x00000001  // Slow speed texture scrolling
@@ -229,6 +233,10 @@ typedef struct WallData
 
    // for bowtie handling
    BYTE bowtie_bits;  // flags set indicating a bowtie & it's orientation
+
+   // Per-wall translucency alpha set by the room editor (WallTransparencyPct config).
+   // 0 = opaque, 64 = 25% visible, 128 = 50% visible, 192 = 75% visible
+   BYTE translucency_alpha;
 
    long lightscale;  // scalar value based on angle to light source
 

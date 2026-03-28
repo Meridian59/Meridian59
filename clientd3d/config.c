@@ -108,6 +108,7 @@ static char special_section[] = "Special";  /* Section for hidden stuff in INI f
 static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
+static char INIWallTransparencyPct[] = "WallTransparencyPct";
 
 /* config.ini file entries (preferences) */
 static char config_section[] = "config";  /* Section for configuration stuff */
@@ -315,6 +316,8 @@ void ConfigLoad(void)
 	   sizeof(config_value), config_ini);
    config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
+   config.wall_transparency_pct = GetConfigInt(special_section, INIWallTransparencyPct, 50, ini_file);
+
    TimeSettingsLoad();
 }
 /****************************************************************************/
@@ -382,6 +385,8 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INITextAreaSize, config.text_area_size, ini_file);
 
    WriteConfigInt(misc_section, INIActiveStatGroup, config.active_stat_group, ini_file);
+
+   WriteConfigInt(special_section, INIWallTransparencyPct, config.wall_transparency_pct, ini_file);
 
    // "Special" section options NOT saved, so that they're not normally visible
 

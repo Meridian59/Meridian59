@@ -110,9 +110,13 @@ struct WorldRenderParams {
 }; 
 
 long D3DRenderWorld(
-    const WorldRenderParams& worldRenderParams, 
-    const WorldPropertyParams& worldPropertyParams, 
+    const WorldRenderParams& worldRenderParams,
+    const WorldPropertyParams& worldPropertyParams,
     const LightAndTextureParams& lightAndTextureParams);
+
+// Renders the alpha-blended transparent wall pass.
+// Must be called AFTER D3DRenderObjects so that objects are visible through walls.
+void D3DRenderTransparentWallsPass(const WorldRenderParams& worldRenderParams);
 
 void D3DGeometryBuildNew(
     const WorldRenderParams& worldRenderParams, 

@@ -144,4 +144,8 @@
 #define IDC_SCROLLMEDIUM2 722
 #define IDC_SCROLLFAST2   723
 
+// Translucency level comboboxes (per sidedef)
+#define IDC_TRANSLUCENCY_POS 730
+#define IDC_TRANSLUCENCY_NEG 731
+
 #endif

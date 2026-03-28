@@ -80,8 +80,8 @@ graph TD
 |----------|---------|
 | `AudioInit(hwnd)` | Initialize OpenAL device, context, and sources |
 | `AudioShutdown()` | Clean up all audio resources |
-| `MusicPlay(filename, loop)` | Open OGG for streaming and start playback |
-| `MusicStop()` | Stop music and release streaming decoder |
+| `MusicPlay(filename, loop)` | Open OGG for streaming playback |
+| `MusicStop()` | Stop music playback |
 | `MusicIsPlaying()` | Returns true if music is currently streaming |
 | `MusicSetVolume(volume)` | Set music volume (0.0 - 1.0) |
 | `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
@@ -180,16 +180,14 @@ chunks and fed to OpenAL through a ring buffer:
 | Memory per buffer | 16,384 bytes (stereo 16-bit) |
 | Total streaming memory | ~64 KB (vs 30-50 MB full decode) |
 
-`MusicStreamUpdate()` is called by a Win32 timer (`MusicStreamTimerProc`).
-It queries `AL_BUFFERS_PROCESSED` to find
-consumed buffers, unqueues them, decodes the next chunk of Vorbis data, and re-queues.
-If the source runs out of buffers (underrun), it restarts playback automatically.
-Looping is handled by seeking the Vorbis stream back to the start when it reaches EOF.
+Music streaming runs on a dedicated background thread (`MusicThreadProc`) started
+in `AudioInit()`. The thread decodes OGG data and rotates OpenAL buffers independently
+of the main thread, so buffer refills cannot be starved by UI activity.
 
-The timer approach means streaming works in every client state: normal gameplay, the
-splash screen, and modal dialogs (e.g. the login dialog) whose internal message pump
-would otherwise block the main game loop. `MusicStreamUpdate()` is static to
-`audio_openal.c` and not exposed in the public API.
+`MusicPlay()`, `MusicStop()`, and `MusicSetVolume()` post commands to the thread
+and return immediately. `MusicStreamUpdate()` queries `AL_BUFFERS_PROCESSED` to find
+consumed buffers, decodes the next chunk, and re-queues. If the source underruns,
+it restarts automatically. Looping seeks the decoder back to the start at EOF.
 
 ```mermaid
 graph LR
@@ -200,20 +198,16 @@ graph LR
         B4["Buf 4<br/>Decoding"]
     end
 
-    subgraph "Update Loop"
-        U1["alGetSourcei<br/>AL_BUFFERS_PROCESSED"]
-        U2["alSourceUnqueueBuffers"]
-        U3["stb_vorbis_get_samples<br/>4096 samples"]
-        U4["alBufferData + alSourceQueueBuffers"]
+    subgraph "Music Thread"
+        T1["Decode + refill buffers"]
     end
 
-    subgraph "Callers"
-        C1["Win32 SetTimer<br/>MusicStreamTimerProc"]
+    subgraph "Main Thread"
+        M1["MusicPlay / Stop / SetVolume"]
     end
 
-    U1 --> U2 --> U3 --> U4
-    C1 --> U1
-    B4 -.-> U3
+    M1 --> T1
+    T1 --> B4
 
     style B1 fill:#2f9e44,color:#fff
     style B2 fill:#1864ab,color:#fff

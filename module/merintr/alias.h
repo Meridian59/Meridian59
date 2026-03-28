@@ -16,7 +16,7 @@ void AliasInit(void);
 void CmdAliasInit(void);
 void AliasExit(void);
 void AliasSave(void);
-void AliasSetKey(KeyTable table, WORD key, WORD flags, WORD command, void *data);
+void AliasSetCommand(KeyTable table, WORD command, void *data);
 BOOL AddVerbAlias(char* pVerb, char* pCommand);
 void RemoveVerbAlias(char* pVerb);
 void FreeVerbAliases();
@@ -25,6 +25,7 @@ BOOL ParseVerbAlias(char *pInput);
 
 void CommandAlias(char *args);
 void CommandVerbAlias(char *args);
+void CommandActionAlias(char *args);
 
 #endif /* #ifndef _ALIAS_H */
 

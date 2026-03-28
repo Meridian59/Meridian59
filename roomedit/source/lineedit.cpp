@@ -30,6 +30,13 @@
 #include "common.h"
 #pragma hdrstop
 
+// Include owl/combobox.h before lineedit.h so that OWL_COMBOBOX_H is already
+// defined when lineedit.h's forward-decl guard fires, preventing a duplicate
+// global TComboBox declaration that would conflict with owl::TComboBox.
+#ifndef OWL_COMBOBOX_H
+#include <owl\combobox.h>
+#endif
+
 #include "bsp.h"
 #include "lineedit.h"
 #include "levels.h"
@@ -423,6 +430,9 @@ TDialog(parent, resId, module)
    pScrollSlowRadio[1]  = newTRadioButton(this, IDC_SCROLLSLOW2);
    pScrollMediumRadio[1]  = newTRadioButton(this, IDC_SCROLLMEDIUM2);
    pScrollFastRadio[1]  = newTRadioButton(this, IDC_SCROLLFAST2);
+
+   pTranslucencyPos = newTComboBox(this, IDC_TRANSLUCENCY_POS);
+   pTranslucencyNeg = newTComboBox(this, IDC_TRANSLUCENCY_NEG);
 }
 
 
@@ -445,7 +455,15 @@ void TLineDefEditDialog::SetupWindow ()
 {
    TDialog::SetupWindow();
    ::CenterWindow (this);
-   
+
+   // Populate translucency dropdowns
+   const char *transLabels[] = { "None", "25% transparent", "50% transparent", "75% transparent" };
+   for (int ti = 0; ti < 4; ti++)
+   {
+      pTranslucencyPos->AddString(transLabels[ti]);
+      pTranslucencyNeg->AddString(transLabels[ti]);
+   }
+
 //   InitLineDefSet();
 //   SetLineDefList();
    SetTextureList();
@@ -832,6 +850,12 @@ void TLineDefEditDialog::GetLineDef ()
       flags |= SCROLL_FAST << 25;
 
    CurLineDef.blak_flags = flags;
+
+   // Read translucency dropdowns
+   int tpos = pTranslucencyPos->GetSelIndex();
+   int tneg = pTranslucencyNeg->GetSelIndex();
+   CurLineDef.translucency_pos = (BYTE)(tpos >= 0 ? tpos : 0);
+   CurLineDef.translucency_neg = (BYTE)(tneg >= 0 ? tneg : 0);
 }
 
 
@@ -1144,6 +1168,12 @@ void TLineDefEditDialog::SetLineDef ()
    pNegNoVTile->SetCheck    (flags & BF_NEG_NO_VTILE ? BF_CHECKED : BF_UNCHECKED);
    pPosNoHTile->SetCheck    (flags & BF_POS_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
    pNegNoHTile->SetCheck    (flags & BF_NEG_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
+
+   // Set translucency dropdowns (clamp to 0-3 for safety)
+   int tpos = CurLineDef.translucency_pos;
+   int tneg = CurLineDef.translucency_neg;
+   pTranslucencyPos->SetSelIndex(tpos >= 0 && tpos <= 3 ? tpos : 0);
+   pTranslucencyNeg->SetSelIndex(tneg >= 0 && tneg <= 3 ? tneg : 0);
 
    switch (WallScrollPosDirection(flags))
    {

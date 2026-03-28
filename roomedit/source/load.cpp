@@ -258,6 +258,9 @@ void SetSideDefs(void)
       }
 
       LD->blak_flags = CombineFileFlags(flags1, flags2);
+      // Extract per-sidedef translucency levels from bits 15-16 of WF_ flags
+      LD->translucency_pos = WallTranslucencyLevel(flags1);
+      LD->translucency_neg = WallTranslucencyLevel(flags2);
    }
 }
 /***************************************************************************/

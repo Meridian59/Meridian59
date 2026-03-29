@@ -183,10 +183,20 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       s->screen_y = *(short *)(msg->data+index);
       index += 2;
 
+      // displays_possible now carries the OS build number (e.g. 22621 = Win11 22H2).
       s->displays_possible = *(int *)(msg->data+index);
       index += 4;
+      // bandwidth now carries packed GPU info:
+      //   bits 29-28: renderer_mode (0=SW, 1=D3D, 2=D3D+GpuEff)
+      //   bits 27-20: vramMB / 256
+      //   bits 15-0:  PCI GPU vendor ID
       s->bandwidth = *(int *)(msg->data+index);
       index += 4;
+      // reserved carries packed perf/display info:
+      //   bits 31-24: last session avg FPS / 4
+      //   bits 23-16: last session 1%-low FPS / 4
+      //   bits 15-8:  partner code
+      //   bits 7-0:   screen color depth in bits
       s->reserved = *(int *)(msg->data+index);
       index += 4;
       s->screen_color_depth = (short)(s->reserved & 0xFF);
@@ -216,36 +226,6 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       SynchedAcceptLogin(s,name,password);
       
       break;
-   case AP_CLIENTINFO :
-   {
-      // Parse: string (renderer+GPU desc), WORD (vramMB), INT (vendorId), INT (deviceId),
-      //        WORD (driverMajor), WORD (driverMinor)
-      int ci = 1;
-      char gpuInfo[128] = "";
-      unsigned int vramMB = 0;
-      int vendorId = 0, deviceId = 0;
-      int driverMajor = 0, driverMinor = 0;
-      if (msg->len > ci + 2)
-      {
-         int slen = *(short *)(msg->data + ci);
-         ci += 2;
-         if (slen > 0 && slen < (int)sizeof(gpuInfo) && ci + slen <= msg->len)
-         {
-            memcpy(gpuInfo, msg->data + ci, slen);
-            gpuInfo[slen] = '\0';
-            ci += slen;
-         }
-         if (ci + 2 <= msg->len) { vramMB     = *(unsigned short *)(msg->data + ci); ci += 2; }
-         if (ci + 4 <= msg->len) { vendorId   = *(int *)(msg->data + ci);            ci += 4; }
-         if (ci + 4 <= msg->len) { deviceId   = *(int *)(msg->data + ci);            ci += 4; }
-         if (ci + 2 <= msg->len) { driverMajor = *(short *)(msg->data + ci);         ci += 2; }
-         if (ci + 2 <= msg->len) { driverMinor = *(short *)(msg->data + ci);         ci += 2; }
-      }
-      lprintf("ClientInfo account %u: GPU=\"%s\" VRAM=%uMB vendor=0x%04X dev=0x%04X driver=%d.%d\n",
-              s->account->account_id, gpuInfo, vramMB,
-              (unsigned)vendorId, (unsigned)deviceId, driverMajor, driverMinor);
-      break;
-   }
    case AP_GETCLIENT :
       eprintf("SynchedProtocolParse AP_GETCLIENT no longer supported\n");
       break;
@@ -506,68 +486,61 @@ void VerifyLogin(session_node *s)
 void LogUserData(session_node *s)
 {
    std::string buf;
-   
-   buf += "LogUserData/4 got " + std::to_string(s->account->account_id) + " from " + s->conn.name + ", ";
 
-   switch (s->os_type)
-   {
-   case VER_PLATFORM_WIN32_WINDOWS :
-		if ((s->os_version_major > 4) ||  ((s->os_version_major == 4) && (s->os_version_minor > 0)))
-			buf += "Windows 98";
-		else
-			buf += "Windows 95";
-      break;
-   case VER_PLATFORM_WIN32_NT :
-      buf += "Windows NT";
-      break;
-   default :
-      buf += std::to_string(s->os_type);
-      break;
-   }
-   
-   buf += ", " + std::to_string(s->os_version_major) + ", " + std::to_string(s->os_version_minor) + ", ";
+   buf += "Login account " + std::to_string(s->account->account_id) + " from " + s->conn.name + ": ";
 
-   switch (s->machine_cpu&0xFFFF)	/* charlie: the cpu level is in the top 16 bits */
-   {
-   case PROCESSOR_INTEL_386 :
-      buf += "386";
-      break;
-   case PROCESSOR_INTEL_486 :
-      buf += "486";
-      break;
-   case PROCESSOR_INTEL_PENTIUM :
-      buf += "Pentium";
-      break;
-   default :
-      buf += std::to_string(s->machine_cpu&0xFFFF);
-      break;
-   }
-   
+   // Windows version (os_version_major/minor from RtlGetVersion; displays_possible = build number)
+   buf += "Win " + std::to_string(s->os_version_major) + "." + std::to_string(s->os_version_minor);
+   if (s->displays_possible > 0)
+      buf += " build " + std::to_string(s->displays_possible);
    buf += ", ";
 
-   buf += std::to_string(s->machine_ram/(1024*1024)) + " MB";
-   buf += ", ";
+   // RAM
+   buf += std::to_string(s->machine_ram / (1024 * 1024)) + " MB RAM, ";
 
-   buf += std::to_string(s->screen_x) + "x" + std::to_string(s->screen_y) + "x" + std::to_string(s->screen_color_depth);
-   std::stringstream sstream;
-   sstream << std::hex << ((s->machine_cpu&0xFFFF0000)|s->displays_possible);
-   std::string result = sstream.str();
-   buf += " (0x" + sstream.str() + ")";
+   // Screen
+   buf += std::to_string(s->screen_x) + "x" + std::to_string(s->screen_y)
+        + "@" + std::to_string(s->screen_color_depth) + "bpp, ";
+
+   // GPU vendor + VRAM + renderer decoded from bandwidth field
+   {
+      unsigned int packed  = (unsigned int)s->bandwidth;
+      int renderer_mode    = (int)((packed >> 28) & 0x3);
+      unsigned int vramMB  = ((packed >> 20) & 0xFF) * 256;
+      unsigned int vendorId = packed & 0xFFFF;
+      const char *rendStr  = (renderer_mode == 2) ? "D3D+GpuEff"
+                           : (renderer_mode == 1) ? "D3D" : "Software";
+      const char *gpuVendor = (vendorId == 0x10DE) ? "NVIDIA"
+                            : (vendorId == 0x1002) ? "AMD"
+                            : (vendorId == 0x8086) ? "Intel"
+                            : (vendorId == 0)      ? "N/A" : "GPU";
+      std::stringstream ss;
+      if (vendorId != 0 && vendorId != 0x10DE && vendorId != 0x1002 && vendorId != 0x8086)
+         ss << " 0x" << std::hex << vendorId;
+      buf += rendStr;
+      buf += " " + std::string(gpuVendor) + ss.str();
+      if (vramMB > 0)
+         buf += " " + std::to_string(vramMB) + "MB, ";
+      else
+         buf += ", ";
+   }
+
+   // Last session FPS decoded from reserved field upper 16 bits
+   {
+      unsigned int res   = (unsigned int)s->reserved;
+      unsigned int avgFps = ((res >> 24) & 0xFF) * 4;
+      unsigned int lowFps = ((res >> 16) & 0xFF) * 4;
+      if (avgFps > 0)
+         buf += "fps avg=" + std::to_string(avgFps) + " 1%low=" + std::to_string(lowFps);
+      else
+         buf += "fps=N/A";
+   }
 
    if (s->partner)
-     buf += ", Partner " + std::to_string(s->partner);
-
-   buf += ", ";
-   buf += LockConfigStr(ADVERTISE_FILE1);
-   UnlockConfigStr();
-
-   buf += ", ";
-   buf += LockConfigStr(ADVERTISE_FILE2);
-   UnlockConfigStr();
+      buf += ", Partner " + std::to_string(s->partner);
 
    buf += "\n";
-
-   lprintf("%s",buf.c_str());
+   lprintf("%s", buf.c_str());
 }
 
 void SynchedDoMenu(session_node *s)

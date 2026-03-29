@@ -183,9 +183,9 @@ void CloseConnection(void)
 	{
 	case CON_SOCKET:
 		// Switch back to blocking mode and gracefully shut down the send side
-		// before closing, to ensure any pending data (e.g. BP_PERF_REPORT) is
-		// flushed to the server.  On a non-blocking socket, closesocket() may
-		// discard unsent bytes via RST instead of a graceful FIN.
+		// before closing, to ensure any pending data is flushed to the server.
+		// On a non-blocking socket, closesocket() may discard unsent bytes via
+		// RST instead of a graceful FIN.
 		{
 			u_long blocking = 0;
 			ioctlsocket(sock, FIONBIO, &blocking);

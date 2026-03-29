@@ -27,7 +27,6 @@ static client_message login_msg_table[] = {
 { AP_REQ_MENU,             { PARAM_END }, },
 { AP_ADMINNOTE,            { PARAM_STRING, PARAM_END }, },
 { AP_PING,                 { PARAM_END }, },
-{ AP_CLIENTINFO,           { PARAM_STRING, PARAM_WORD, PARAM_INT, PARAM_INT, PARAM_WORD, PARAM_WORD, PARAM_END }, },
 { 0,                       { PARAM_END }, },    // Must terminate table this way
 };
 
@@ -75,7 +74,6 @@ static client_message game_msg_table[] = {
 { BP_CHANGE_PASSWORD,      { PARAM_STRING, PARAM_STRING, PARAM_END }, },
 { BP_REQ_HIDE,             { PARAM_ID, PARAM_END }, },
 { BP_REQ_ADMIN,			   { PARAM_STRING, PARAM_END }, },	//	AJM -- added to support ActiveX admin interface
-{ BP_PERF_REPORT,          { PARAM_BYTE, PARAM_WORD, PARAM_WORD, PARAM_WORD, PARAM_END }, },
 { 0,                       { PARAM_END }, },    // Must terminate table this way
 };
 

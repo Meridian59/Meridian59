@@ -409,8 +409,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 {
    user_node *u;
    int object_id;
-   char *ptr;
-
    char password[MAX_LOGIN_PASSWORD+1],new_password[MAX_LOGIN_PASSWORD+1];
    int len,index;
 
@@ -419,10 +417,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
    int dm_type;
 
    GameMessageCount((unsigned char)msg->data[0]);
-
-   if ((unsigned char)msg->data[0] == BP_PERF_REPORT)
-      lprintf("GPP: BP_PERF_REPORT arrived len=%d from account %u\n",
-              msg->len, s->account->account_id);
 
    switch ((unsigned char)msg->data[0])
    {
@@ -441,49 +435,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       GameEchoPing(s);
       break;
 
-   case BP_PERF_REPORT :
-   {
-      // renderer_mode (1 byte), avg_fps (2), 1pct_low_fps (2), min_fps (2)
-      if (msg->len < 8)
-      {
-         lprintf("BP_PERF_REPORT received but too short: len=%d from account %u\n",
-                 msg->len, s->account->account_id);
-         break;
-      }
-      unsigned char renderer_mode = (unsigned char)msg->data[1];
-      unsigned short avg_fps  = *(unsigned short *)(msg->data + 2);
-      unsigned short low_fps  = *(unsigned short *)(msg->data + 4);
-      unsigned short min_fps  = *(unsigned short *)(msg->data + 6);
-      const char *rend_str = (renderer_mode == 2) ? "D3D+GpuEff"
-                           : (renderer_mode == 1) ? "D3D"
-                           : "Software";
-      lprintf("PerfReport account %u: renderer=%s fps avg=%u 1%%low=%u min=%u\n",
-              s->account->account_id, rend_str, avg_fps, low_fps, min_fps);
-      break;
-   }
-
-   case BP_AD_SELECTED :
-      /* they clicked on an ad; log it */
-      switch (msg->data[1])
-      {
-      case 1:
-	 ptr = LockConfigStr(ADVERTISE_URL1);
-	 lprintf("GameProtocolParse found account %i visited ad 1, %s\n",s->account->account_id,
-		 ptr);
-	 UnlockConfigStr();
-	 break;
-      case 2:
-	 ptr = LockConfigStr(ADVERTISE_URL2);
-	 lprintf("GameProtocolParse found account %i visited ad 2, %s\n",s->account->account_id,
-		 ptr);
-	 UnlockConfigStr();
-	 break;
-      default :
-	 eprintf("GameProtocolParse found account %i visited unknown ad %i\n",
-		 s->account->account_id,msg->data[1]);
-      }
-      break;
-         
    case BP_USE_CHARACTER :
       if (s->game->object_id == INVALID_OBJECT)
       {

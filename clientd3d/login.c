@@ -217,10 +217,9 @@ void EnterGame(void)
        return;
      }
 
-   // Go into game — defer network sends (AP_CLIENTINFO + AP_REQ_GAME) to the main
-   // message loop via BK_ENTERGAME so they are never called from inside a receive
-   // callback.  Calling ToServer() from within a receive handler can cause the
-   // WriteSocket() spin-loop to deadlock the UI thread on consecutive sends.
+   // Go into game — defer AP_REQ_GAME to the main message loop via BK_ENTERGAME so it
+   // is never called from inside a receive callback.  Calling ToServer() from within a
+   // receive handler can cause the WriteSocket() spin-loop to deadlock the UI thread.
    DownloadCheckDirs(hMain);
    PostMessage(hMain, BK_ENTERGAME, 0, 0);
 }

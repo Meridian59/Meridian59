@@ -440,67 +440,84 @@ extern unsigned short gCRC16;
 
 void GetSystemStats(SystemInfo *s)
 {
-   OSVERSIONINFO version;
    MEMORYSTATUS mem;
    SYSTEM_INFO sys;
-   int iModeNum;
-   DWORD display = 0;
    unsigned long crc32;
    HDC dc;
 
-   version.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-   GetVersionEx(&version);
+   // Use RtlGetVersion to get the real Windows version (bypasses the GetVersionEx
+   // compatibility shim that reports 6.2 on Windows 10/11).
+   {
+      typedef LONG (WINAPI *FnRtlGetVersion)(OSVERSIONINFOEXW *);
+      OSVERSIONINFOEXW osInfo = { sizeof(OSVERSIONINFOEXW) };
+      HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+      FnRtlGetVersion pRtlGetVersion = ntdll
+         ? (FnRtlGetVersion)GetProcAddress(ntdll, "RtlGetVersion") : NULL;
+      if (pRtlGetVersion && pRtlGetVersion(&osInfo) == 0)
+      {
+         s->platform       = osInfo.dwPlatformId;
+         s->platform_major = osInfo.dwMajorVersion;
+         s->platform_minor = osInfo.dwMinorVersion;
+         // Use displays_possible to carry OS build number (e.g. 22621 = Win11 22H2).
+         s->color_depth    = (int)osInfo.dwBuildNumber;
+      }
+      else
+      {
+         OSVERSIONINFO v = { sizeof(v) };
+#pragma warning(suppress: 4996)  // GetVersionEx deprecated
+         GetVersionEx(&v);
+         s->platform       = v.dwPlatformId;
+         s->platform_major = v.dwMajorVersion;
+         s->platform_minor = v.dwMinorVersion;
+         s->color_depth    = 0;
+      }
+   }
 
    mem.dwLength = sizeof(MEMORYSTATUS);
    GlobalMemoryStatus(&mem);
-
    GetSystemInfo(&sys);
-
    crc32 = gCRC16;
 
-   s->platform = version.dwPlatformId;
-   s->platform_minor = version.dwMinorVersion;
-   s->platform_major = version.dwMajorVersion;
    s->memory = mem.dwTotalPhys;
    s->chip = (crc32<<16)|sys.dwProcessorType;
-   iModeNum = 0;
-   while (EnumDisplaySettings(NULL,iModeNum,&devMode[0]))
-   {
-      int shift = 0;
-      int disp = 0;
-      switch (devMode[0].dmBitsPerPel) {
-      case 8: shift = DISP_8BIT_SHIFT; break;
-      case 15: case 16: shift = DISP_16BIT_SHIFT; break;
-      case 24: shift = DISP_24BIT_SHIFT; break;
-      case 32: shift = DISP_32BIT_SHIFT; break;
-      default: shift = DISP_8BIT_SHIFT; break;
-      }
-      switch (devMode[0].dmPelsWidth) {
-      case 640: disp = DISP_640x480; break;
-      case 800: disp = DISP_800x600; break;
-      case 1024: disp = DISP_1024x768; break;
-      case 1152: disp = DISP_1152x882; break;
-      case 1280: disp = DISP_1280x1024; break;
-      case 1600: disp = DISP_1600x1200; break;
-      default:
-	 if (devMode[0].dmPelsWidth > 1600)
-	    disp = DISP_HIGHER;
-	 break;
-      }
-      display |= disp << shift;
-      iModeNum++;
-   }
-   s->color_depth = display;
-   s->bandwidth = SIBW_UNKNOWN;
+
    dc = GetDC(GetDesktopWindow());
    s->screen_width  = GetSystemMetrics(SM_CXSCREEN);
    s->screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-   s->reserved = GetDeviceCaps(dc,BITSPIXEL); //devMode[0].dmBitsPerPel;
-   s->reserved &= 0xFF;
+   // Pack GPU vendor ID, VRAM and renderer mode into the bandwidth field.
+   // bits 29-28: renderer_mode (0=Software, 1=D3D, 2=D3D+GpuEff)
+   // bits 27-20: vramMB / 256  (8 bits; 0 when D3D not yet initialised)
+   // bits 15-0:  PCI vendor ID (0x10DE=NVIDIA, 0x1002=AMD, 0x8086=Intel)
+   {
+      char gpuDesc[64];
+      unsigned int vramMB = 0;
+      DWORD vendorId = 0, deviceId = 0;
+      WORD driverMaj = 0, driverMin = 0;
+      D3DGetAdapterInfo(gpuDesc, sizeof(gpuDesc), &vramMB, &vendorId, &deviceId,
+                        &driverMaj, &driverMin);
+      int renderer_mode = !D3DRenderIsEnabled() ? 0 : (config.gpuEfficiency ? 2 : 1);
+      s->bandwidth = (int)(((unsigned int)(renderer_mode & 0x3) << 28)
+                          | (((unsigned int)(vramMB >> 8) & 0xFF) << 20)
+                          | ((unsigned int)(vendorId & 0xFFFF)));
+   }
 
-   s->reserved |= (GetPartnerCode() << 8);
-   s->reserved &= 0xFFFF;
+   // Pack color depth and partner code into low 16 bits of reserved; pack last-session
+   // FPS (from previous play session, saved to INI on logoff) into high 16 bits.
+   // bits 31-24: last_avg_fps / 4  (8 bits, 0 = no data)
+   // bits 23-16: last_low_fps / 4  (8 bits)
+   // bits 15-8:  partner code
+   // bits 7-0:   screen color depth in bits
+   {
+      unsigned int colorDepth   = (unsigned int)GetDeviceCaps(dc, BITSPIXEL) & 0xFF;
+      unsigned int partnerCode  = (unsigned int)GetPartnerCode() & 0xFF;
+      unsigned int avgFpsPacked = (unsigned int)(min(config.last_avg_fps / 4, 255));
+      unsigned int lowFpsPacked = (unsigned int)(min(config.last_low_fps / 4, 255));
+      s->reserved = (int)(colorDepth
+                         | (partnerCode  << 8)
+                         | (lowFpsPacked << 16)
+                         | (avgFpsPacked << 24));
+   }
 
    ReleaseDC(GetDesktopWindow(),dc);
 }

@@ -187,21 +187,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case BK_ENTERGAME:
 	{
-		// Deferred from EnterGame() -- send AP_CLIENTINFO then AP_REQ_GAME here,
-		// outside any receive callback, to avoid the WriteSocket spin-loop deadlock.
-		char gpuDesc[64];
-		unsigned int vramMB;
-		DWORD vendorId, deviceId;
-		WORD driverMajor, driverMinor;
-		D3DGetAdapterInfo(gpuDesc, sizeof(gpuDesc), &vramMB, &vendorId, &deviceId, &driverMajor, &driverMinor);
-
-		BYTE renderer_mode = !D3DRenderIsEnabled() ? 0 : (config.gpuEfficiency ? 2 : 1);
-		const char *rendName = (renderer_mode == 2) ? "D3D+GpuEff"
-		                     : (renderer_mode == 1) ? "D3D" : "Software";
-		char infoStr[80];
-		snprintf(infoStr, sizeof(infoStr), "[%s] %s", rendName, gpuDesc);
-		SendClientInfo(infoStr, (WORD)vramMB, (int)vendorId, (int)deviceId, driverMajor, driverMinor);
-
+		// Deferred from EnterGame() to avoid the WriteSocket spin-loop deadlock.
 		int encodednum = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
 		RequestGame(config.download_time, encodednum, inihost);
 		return 0;

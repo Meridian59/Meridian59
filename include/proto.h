@@ -45,7 +45,6 @@ enum {
    AP_NOCHARACTERS  = 37,
    AP_GUEST         = 38,
    AP_SERVICEREPORT = 39,
-   AP_CLIENTINFO    = 40,   /* Client sends GPU/system info for server-side diagnostics logging */
 };
 
 
@@ -57,7 +56,6 @@ enum {
    BP_ROUNDTRIP1            = 4,
    BP_ROUNDTRIP2            = 5,
    BP_SYSTEM                = 6,
-   BP_PERF_REPORT           = 7,   /* Client sends renderer mode + FPS stats periodically */
 
    BP_LOGOFF                = 20,
    BP_WAIT                  = 21,

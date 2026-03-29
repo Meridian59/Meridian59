@@ -65,8 +65,6 @@ typedef struct {
 #define RequestLoginResync()         ToServer(AP_RESYNC, NULL)
 
 #define RequestLoginPing()           ToServer(AP_PING, NULL)
-#define SendClientInfo(gpu, vram, vendor, device, drv_maj, drv_min) \
-  ToServer(AP_CLIENTINFO, NULL, gpu, vram, vendor, device, drv_maj, drv_min)
 
 /* Game mode messages */
 #define SendLogoff()                 ToServer(BP_LOGOFF, NULL)
@@ -110,8 +108,6 @@ ToServer(BP_REQ_MOVE, NULL, FinenessClientToKod(y) + KOD_FINENESS, \
 #define RequestChangeDescription(id, str) ToServer(BP_CHANGE_DESCRIPTION, NULL, id, str)
 #define RequestActivate(id)          ToServer(BP_REQ_ACTIVATE, NULL, id)
 #define RequestGamePing()            ToServer(BP_PING, NULL)
-#define SendPerfReport(renderer, avg, low, mn) \
-  ToServer(BP_PERF_REPORT, NULL, renderer, avg, low, mn)
 #define RequestChangeURL(obj, s)     ToServer(BP_USERCOMMAND, user_msg_table, UC_CHANGE_URL, obj, s)
 #define RequestChangePassword(str1, str2) ToServer(BP_CHANGE_PASSWORD, NULL, str1, str2)
 #define RequestRescue()              ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_RESCUE)

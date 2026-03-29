@@ -269,6 +269,32 @@ void InitWindeu (int argc, char **argv, char *init_level)
 	ParseConfigFileOptions(CfgFile);
 	ParseCommandLineOptions(argc, argv, init_level);
 
+	// Resolve RoomDir to an absolute path based on the executable location.
+	// RoomDir may be a relative path (from defaults, config file, or command line).
+	// Relative paths don't work when the current working directory differs from
+	// the executable's directory (e.g. launching from a shortcut or Explorer).
+	{
+		char exePath[MAX_PATH];
+		char tempPath[MAX_PATH];
+		char resolvedRoom[MAX_PATH];
+		GetModuleFileName(NULL, exePath, MAX_PATH);
+		char *lastSlash = strrchr(exePath, '\\');
+		if (lastSlash != NULL)
+			*(lastSlash + 1) = '\0';
+		strncpy(tempPath, exePath, MAX_PATH - 1);
+		tempPath[MAX_PATH - 1] = '\0';
+		strncat(tempPath, RoomDir, MAX_PATH - strlen(tempPath) - 1);
+		GetFullPathName(tempPath, MAX_PATH, resolvedRoom, NULL);
+
+		DWORD dwAttrib = GetFileAttributes(resolvedRoom);
+		if (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			FreeMemory(RoomDir);
+			RoomDir = (char *)GetMemory(strlen(resolvedRoom) + 1);
+			strcpy(RoomDir, resolvedRoom);
+		}
+	}
+
 	// Setup builder priority vars.
 	if ( BuildPriority < BUILD_PRIORITY_MIN )
 		BuildPriority = BUILD_PRIORITY_MIN;

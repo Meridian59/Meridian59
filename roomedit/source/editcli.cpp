@@ -171,6 +171,11 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_WM_LBUTTONUP,
 	EV_WM_LBUTTONDBLCLK,
 	EV_WM_RBUTTONDOWN,
+	EV_WM_MOUSEWHEEL,
+	EV_WM_KEYUP,
+	EV_WM_SETCURSOR,
+	EV_WM_MBUTTONDOWN,
+	EV_WM_MBUTTONUP,
 	EV_COMMAND(CM_FILE_SAVEAS, CmFileSaveAs),
 	EV_COMMAND(CM_FILE_SAVE, CmFileSave),
 	EV_COMMAND(CM_FILE_QUITEDIT, CmFileQuit),
@@ -372,6 +377,11 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	StretchMoved = FALSE;
 	SelBoxX = 0;
 	SelBoxY = 0;
+
+	SpacePanning = FALSE;
+	SpaceDragging = FALSE;
+	PanLastX = 0;
+	PanLastY = 0;
 
 	ShowRulers = FALSE;
 
@@ -1155,6 +1165,22 @@ void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
 		DrawMouseCoord (dc);
 	}
 
+	// Space+drag panning
+	if (SpacePanning && SpaceDragging)
+	{
+		long dx = point.x - PanLastX;
+		long dy = point.y - PanLastY;
+		OrigX -= (SHORT)(dx * DIV_SCALE);
+		OrigY += (SHORT)(dy * DIV_SCALE);
+		PanLastX = point.x;
+		PanLastY = point.y;
+		AdjustScroller();
+		RefreshWindows();
+		PointerX = point.x;
+		PointerY = point.y;
+		return;
+	}
+
 	PointerX = point.x;
 	PointerY = point.y;
 
@@ -1325,6 +1351,17 @@ void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
 	PointerX = point.x;
 	PointerY = point.y;
 
+	// Start space+drag panning
+	if (GetKeyState(VK_SPACE) & 0x8000)
+	{
+		SpacePanning = TRUE;
+		SpaceDragging = TRUE;
+		PanLastX = point.x;
+		PanLastY = point.y;
+		SetCapture();
+		return;
+	}
+
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
 		return;
@@ -1413,6 +1450,15 @@ void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
 {
 	PointerX = point.x;
 	PointerY = point.y;
+
+	// Stop space+drag panning
+	if (SpaceDragging)
+	{
+		SpacePanning = FALSE;
+		SpaceDragging = FALSE;
+		ReleaseCapture();
+		return;
+	}
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1649,6 +1695,55 @@ void TEditorClient::EvRButtonDown (UINT modKeys, const TPoint& point)
 		Notify ("Error: Couldn't destroy popup menu "
 				"(bad for Windows User resources");
 	*/
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//   Move the map using cursor keys
+//
+void TEditorClient::EvKeyUp (UINT key, UINT repeatCount, UINT flags)
+{
+	TLayoutWindow::EvKeyUp(key, repeatCount, flags);
+}
+
+
+bool TEditorClient::EvSetCursor (HWND hWndCursor, uint codeHitTest, TMsgId mouseMsg)
+{
+	if (SpacePanning && codeHitTest == HTCLIENT)
+	{
+		::SetCursor(::LoadCursor(NULL, IDC_HAND));
+		return true;
+	}
+	if ((GetKeyState(VK_SPACE) & 0x8000) && codeHitTest == HTCLIENT)
+	{
+		::SetCursor(::LoadCursor(NULL, IDC_HAND));
+		return true;
+	}
+	return TLayoutWindow::EvSetCursor(hWndCursor, codeHitTest, mouseMsg);
+}
+
+
+void TEditorClient::EvMButtonDown (UINT modKeys, const TPoint& point)
+{
+	SpacePanning = TRUE;
+	SpaceDragging = TRUE;
+	PanLastX = point.x;
+	PanLastY = point.y;
+	SetCapture();
+	::SetCursor(::LoadCursor(NULL, IDC_HAND));
+}
+
+
+void TEditorClient::EvMButtonUp (UINT modKeys, const TPoint& point)
+{
+	if (SpaceDragging)
+	{
+		SpacePanning = FALSE;
+		SpaceDragging = FALSE;
+		ReleaseCapture();
+	}
 }
 
 
@@ -4319,6 +4414,26 @@ void TEditorClient::CmCheckNames ()
 	StopUndoRecording();
 
 	RESTORE_HELP_CONTEXT();
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::EvMouseWheel (uint modKeys, int zDelta, const TPoint& point)
+{
+	if (modKeys & MK_CONTROL)
+	{
+		if (zDelta > 0)
+			CmZoomIn();
+		else if (zDelta < 0)
+			CmZoomOut();
+	}
+	else
+	{
+		TLayoutWindow::EvMouseWheel(modKeys, zDelta, point);
+	}
 }
 
 

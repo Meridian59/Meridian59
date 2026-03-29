@@ -58,6 +58,9 @@ static auto& chrono_time_now = std::chrono::steady_clock::now;
 static std::vector<int> session_fps;
 static const int session_fps_max = 36000; // ~10 min at 60fps; older samples discarded
 static int session_min_fps = INT_MAX;
+static int session_max_fps = 0;
+static steady_clock_time_point session_start_time;
+static bool session_timing_started = false;
 
 static const int defaultMaxFps = 60;
 
@@ -88,11 +91,22 @@ static void SaveSessionPerfToConfig(void)
       double low_sum = std::accumulate(sorted.begin(), sorted.begin() + low_count, 0.0);
       config.last_low_fps = (int)(low_sum / low_count);
 
+      config.last_max_fps = (session_max_fps > 0) ? session_max_fps : 0;
+
+      if (session_timing_started)
+      {
+         auto now = chrono_time_now();
+         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - session_start_time);
+         config.last_session_secs = (int)elapsed.count();
+      }
+
       ConfigSave();
    }
 
    session_fps.clear();
    session_min_fps = INT_MAX;
+   session_max_fps = 0;
+   session_timing_started = false;
 }
 
 void GraphicsFlushPerfReport(void)
@@ -401,11 +415,18 @@ void RedrawForce(void)
    // Always accumulate session-wide FPS stats (saved to INI at sign-off, sent in next AP_LOGIN).
    if (fps > 0)
    {
+      if (!session_timing_started)
+      {
+         session_start_time = chrono_time_now();
+         session_timing_started = true;
+      }
       if ((int)session_fps.size() >= session_fps_max)
          session_fps.erase(session_fps.begin());
       session_fps.push_back(fps);
       if (fps < session_min_fps)
          session_min_fps = fps;
+      if (fps > session_max_fps)
+         session_max_fps = fps;
    }
 
    if (config.showFPS)

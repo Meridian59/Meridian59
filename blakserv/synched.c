@@ -188,7 +188,8 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       index += 4;
       // bandwidth now carries packed GPU info:
       //   bits 29-28: renderer_mode (0=SW, 1=D3D, 2=D3D+GpuEff)
-      //   bits 27-20: vramMB / 256
+      //   bits 27-20: vramMB / 256  (DXGI dedicated VRAM; 0 if unavailable)
+      //   bits 19-16: session length bucket (0=no data, 1=<1min … 11=12+hr)
       //   bits 15-0:  PCI GPU vendor ID
       s->bandwidth = *(int *)(msg->data+index);
       index += 4;
@@ -495,45 +496,78 @@ void LogUserData(session_node *s)
       buf += " build " + std::to_string(s->displays_possible);
    buf += ", ";
 
-   // RAM
-   buf += std::to_string(s->machine_ram / (1024 * 1024)) + " MB RAM, ";
+   // RAM — machine_ram is now sent in MB (client uses GlobalMemoryStatusEx).
+   {
+      int ramMB = s->machine_ram;
+      if (ramMB >= 1024)
+         buf += std::to_string(ramMB / 1024) + " GB RAM, ";
+      else
+         buf += std::to_string(ramMB) + " MB RAM, ";
+   }
 
    // Screen
    buf += std::to_string(s->screen_x) + "x" + std::to_string(s->screen_y)
         + "@" + std::to_string(s->screen_color_depth) + "bpp, ";
 
-   // GPU vendor + VRAM + renderer decoded from bandwidth field
+   // GPU vendor + VRAM + renderer + session length decoded from bandwidth field
    {
-      unsigned int packed  = (unsigned int)s->bandwidth;
-      int renderer_mode    = (int)((packed >> 28) & 0x3);
-      unsigned int vramMB  = ((packed >> 20) & 0xFF) * 256;
+      unsigned int packed   = (unsigned int)s->bandwidth;
+      int renderer_mode     = (int)((packed >> 28) & 0x3);
+      unsigned int vramMB   = ((packed >> 20) & 0xFF) * 256;
+      unsigned int sessBuck = (packed >> 16) & 0xF;
       unsigned int vendorId = packed & 0xFFFF;
+
       const char *rendStr  = (renderer_mode == 2) ? "D3D+GpuEff"
                            : (renderer_mode == 1) ? "D3D" : "Software";
       const char *gpuVendor = (vendorId == 0x10DE) ? "NVIDIA"
                             : (vendorId == 0x1002) ? "AMD"
                             : (vendorId == 0x8086) ? "Intel"
                             : (vendorId == 0)      ? "N/A" : "GPU";
-      std::stringstream ss;
+      std::stringstream ssVendor;
       if (vendorId != 0 && vendorId != 0x10DE && vendorId != 0x1002 && vendorId != 0x8086)
-         ss << " 0x" << std::hex << vendorId;
-      buf += rendStr;
-      buf += " " + std::string(gpuVendor) + ss.str();
-      if (vramMB > 0)
+         ssVendor << " 0x" << std::hex << vendorId;
+      buf += std::string(rendStr) + ", " + std::string(gpuVendor) + ssVendor.str();
+      if (vramMB >= 1024)
+         buf += " " + std::to_string(vramMB / 1024) + "GB, ";
+      else if (vramMB > 0)
          buf += " " + std::to_string(vramMB) + "MB, ";
       else
          buf += ", ";
+
+      // Session bucket (seconds-based): 0=no data, 1=<1min, 2=1-5min, 3=5-15min,
+      // 4=15-30min, 5=30-60min, 6=1-2hr, 7=2-4hr, 8=4-6hr, 9=6-8hr, 10=8-12hr, 11=12+hr
+      static const char *sessBucketStr[] = {
+         NULL, "<1min", "~2min", "~10min", "~20min", "~45min",
+         "~1.5hr", "~3hr", "~5hr", "~7hr", "~10hr", "12+hr"
+      };
+      if (sessBuck > 0 && sessBuck < 12)
+         buf += "session " + std::string(sessBucketStr[sessBuck]) + ", ";
+      else if (sessBuck >= 12)
+         buf += "session 12+hr, ";
    }
 
-   // Last session FPS decoded from reserved field upper 16 bits
+   // Last session FPS decoded from reserved field (upper 16 bits) and machine_cpu (bits 15-8).
+   // Wine flag from machine_cpu bit 0.
    {
-      unsigned int res   = (unsigned int)s->reserved;
+      unsigned int res    = (unsigned int)s->reserved;
       unsigned int avgFps = ((res >> 24) & 0xFF) * 4;
       unsigned int lowFps = ((res >> 16) & 0xFF) * 4;
+      unsigned int cpu    = (unsigned int)s->machine_cpu;
+      unsigned int maxFps = ((cpu >> 8) & 0xFF) * 4;
+      bool         wine   = (cpu & 0x1) != 0;
+
       if (avgFps > 0)
-         buf += "fps avg=" + std::to_string(avgFps) + " 1%low=" + std::to_string(lowFps);
+      {
+         buf += "fps avg=" + std::to_string(avgFps)
+              + " 1%low=" + std::to_string(lowFps);
+         if (maxFps > 0)
+            buf += " max=" + std::to_string(maxFps);
+      }
       else
          buf += "fps=N/A";
+
+      if (wine)
+         buf += " [Wine]";
    }
 
    if (s->partner)

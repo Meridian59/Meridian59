@@ -126,8 +126,10 @@ typedef struct {
    bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
 
    // Last game session performance stats (persisted to INI, sent in AP_LOGIN for diagnostics).
-   int last_avg_fps;   // average FPS from previous session (0 = no data)
-   int last_low_fps;   // 1%-low FPS from previous session
+   int last_avg_fps;        // average FPS from previous session (0 = no data)
+   int last_low_fps;        // 1%-low FPS from previous session
+   int last_max_fps;        // peak FPS from previous session
+   int last_session_secs;   // session duration in seconds
 } Config;
 
 void ConfigInit(void);

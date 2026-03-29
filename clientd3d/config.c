@@ -113,8 +113,10 @@ static char INITechnical[]    = "Technical";
 static char config_section[] = "config";  /* Section for configuration stuff */
 static char INIGpuEfficiency[] = "gpuefficiency";
 static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
-static char INILastAvgFps[] = "LastAvgFps";
-static char INILastLowFps[] = "LastLowFps";
+static char INILastAvgFps[]        = "LastAvgFps";
+static char INILastLowFps[]        = "LastLowFps";
+static char INILastMaxFps[]        = "LastMaxFps";
+static char INILastSessionSecs[]   = "LastSessionSecs";
 
 static char INITextAreaSize[] = "TextAreaSize";
 
@@ -317,8 +319,10 @@ void ConfigLoad(void)
 	   sizeof(config_value), config_ini);
    config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
-   config.last_avg_fps = GetConfigInt(config_section, INILastAvgFps, 0, config_ini);
-   config.last_low_fps = GetConfigInt(config_section, INILastLowFps, 0, config_ini);
+   config.last_avg_fps         = GetConfigInt(config_section, INILastAvgFps,      0, config_ini);
+   config.last_low_fps         = GetConfigInt(config_section, INILastLowFps,      0, config_ini);
+   config.last_max_fps         = GetConfigInt(config_section, INILastMaxFps,      0, config_ini);
+   config.last_session_secs = GetConfigInt(config_section, INILastSessionSecs, 0, config_ini);
 
    TimeSettingsLoad();
 }
@@ -392,8 +396,10 @@ void ConfigSave(void)
 
    WritePrivateProfileString(interface_section, INIOldProfane, NULL, ini_file); // remove old string
 
-   WriteConfigInt(config_section, INILastAvgFps, config.last_avg_fps, config_ini);
-   WriteConfigInt(config_section, INILastLowFps, config.last_low_fps, config_ini);
+   WriteConfigInt(config_section, INILastAvgFps,      config.last_avg_fps,         config_ini);
+   WriteConfigInt(config_section, INILastLowFps,      config.last_low_fps,         config_ini);
+   WriteConfigInt(config_section, INILastMaxFps,      config.last_max_fps,         config_ini);
+   WriteConfigInt(config_section, INILastSessionSecs, config.last_session_secs,    config_ini);
 }
 /************************************************************************/
 void ConfigOverride(LPCTSTR pszCmdLine)

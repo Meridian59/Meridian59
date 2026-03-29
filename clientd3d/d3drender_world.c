@@ -218,7 +218,6 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
          {
             // D3DRENDER_WALL_NORMAL parts of translucent walls are handled in D3DRenderSemiTransparentWalls.
             // D3DRENDER_WALL_ABOVE and D3DRENDER_WALL_BELOW are handled here.
-            // if (pWall->translucency_alpha > 0) continue; // REMOVED
 
             // Determine if the wall is transparent
             bool isTransparent = (pWall->pos_sidedef && pWall->pos_sidedef->flags & WF_TRANSPARENT) ||
@@ -2160,7 +2159,6 @@ void D3DGeometryBuildNew(const WorldRenderParams &worldRenderParams, const World
          {
             // D3DRENDER_WALL_NORMAL parts of translucent walls are handled in D3DRenderSemiTransparentWalls.
             // D3DRENDER_WALL_ABOVE and D3DRENDER_WALL_BELOW should be added to the opaque/masked pool here.
-            // if (pWall->translucency_alpha > 0) continue; // REMOVED
 
             // Determine if the wall is transparent
             bool isTransparent = (pWall->pos_sidedef && pWall->pos_sidedef->flags & WF_TRANSPARENT) ||

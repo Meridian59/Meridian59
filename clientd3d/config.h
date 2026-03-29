@@ -124,10 +124,6 @@ typedef struct {
    // for more stable, power-efficient rendering.
    bool gpuEfficiency;
    bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
-
-   // Percentage of wall pieces (0-100) that get random transparency on room load.
-   // 0 = disabled. In D3D: walls are 25/50/75% alpha-blended. In software: dithered.
-   int wall_transparency_pct;
 } Config;
 
 void ConfigInit(void);

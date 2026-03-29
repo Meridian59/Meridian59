@@ -2938,12 +2938,12 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
             *flags |= D3DRENDER_NOAMBIENT;
 
          pBGRA[i].r = pBGRA[i].g = pBGRA[i].b = paletteIndex * COLOR_AMBIENT / 64;
-         // Use per-wall random alpha for the transparency experiment; otherwise fully opaque.
+         // Walls with translucency use their configured alpha; opaque walls stay fully opaque.
          pBGRA[i].a = ((type == D3DRENDER_WALL_NORMAL) && pWall->translucency_alpha > 0) ? pWall->translucency_alpha : 255;
       }
    }
 
-   // Mark wall as transparent when it has a random alpha so it goes through the blended pass.
+   // Mark translucent walls so they go through the blended pass.
    if (pWall->translucency_alpha > 0)
       *flags |= D3DRENDER_TRANSPARENT;
 

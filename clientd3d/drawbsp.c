@@ -2947,7 +2947,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    bool top_down;
    bool no_vtile;  // true when wall texture doesn't tile vertically
    bixlat *pBiXlat = NULL;
-   BYTE translucency_alpha;  // per-wall random transparency level (0=opaque, 64/128/192=dithered)
+   BYTE translucency_alpha;  // per-wall translucency level (0=opaque, 64/128/192=dithered)
 
 #if DRAW_WALL_CONES
    fillcone(c);

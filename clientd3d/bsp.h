@@ -234,7 +234,7 @@ typedef struct WallData
    // for bowtie handling
    BYTE bowtie_bits;  // flags set indicating a bowtie & it's orientation
 
-   // Per-wall translucency alpha set by the room editor (WallTransparencyPct config).
+   // Per-wall translucency alpha set by the room editor.
    // 0 = opaque, 64 = 25% visible, 128 = 50% visible, 192 = 75% visible
    BYTE translucency_alpha;
 

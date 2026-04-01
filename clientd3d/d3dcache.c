@@ -482,33 +482,23 @@ void D3DCacheFill(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *pP
 		CACHE_UNLOCK(pRenderCache);
 }
 
-void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *pPool, int numStages,
-				   int type)
+// Draws all chunks in the pool whose isTargeted flag matches drawTargeted.
+static void D3DCacheFlushChunks(d3d_render_cache_system *pCacheSystem,
+	d3d_render_pool_new *pPool, int numStages, int type, bool drawTargeted)
 {
-	u_int				curPacket, curChunk, numPackets;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
-	d3d_render_cache		*pRenderCache = NULL;
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	list_type				list;
-	int						i;
-
-	// call material function for this pool
-	if (FALSE == pPool->pMaterialFctn(pPool))
-		return;
+	d3d_render_cache      *pRenderCache = NULL;
+	d3d_render_packet_new *pPacket;
+	d3d_render_chunk_new  *pChunk;
+	list_type              list;
+	u_int                  curPacket, curChunk, numPackets;
 
 	for (list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
 	{
 		pPacket = (d3d_render_packet_new *)list->data;
-
-		if (list == pPool->curPacketList)
-			numPackets = pPool->curPacket;
-		else
-			numPackets = pPool->size;
+		numPackets = (list == pPool->curPacketList) ? pPool->curPacket : pPool->size;
 
 		for (curPacket = 0; curPacket < numPackets; curPacket++, pPacket++)
 		{
-			// call material function for this packet
 			if (FALSE == pPacket->pMaterialFctn(pPacket, pCacheSystem))
 				continue;
 
@@ -516,7 +506,9 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 			{
 				pChunk = &pPacket->renderChunks[curChunk];
 
-				// call material function for this chunk
+				if ((bool)pChunk->isTargeted != drawTargeted)
+					continue;
+
 				if (FALSE == pChunk->pMaterialFctn(pChunk))
 					continue;
 
@@ -527,17 +519,76 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 				}
 
 				IDirect3DDevice9_DrawIndexedPrimitive(gpD3DDevice,
-                                                  (D3DPRIMITIVETYPE) type,
-                                                  0,
-                                                  pChunk->startIndex,
-                                                  pChunk->numIndices,
-                                                  pChunk->startIndex,
-                                                  pChunk->numPrimitives);
+					(D3DPRIMITIVETYPE)type, 0,
+					pChunk->startIndex, pChunk->numIndices,
+					pChunk->startIndex, pChunk->numPrimitives);
 
 				gNumVertices += pChunk->numIndices;
 				gNumDPCalls++;
 			}
 		}
+	}
+}
+
+// Returns true if any chunk in the pool has isTargeted set.
+static bool D3DCachePoolHasTargeted(d3d_render_pool_new *pPool)
+{
+	list_type list;
+	d3d_render_packet_new *pPacket;
+	u_int curPacket, curChunk, numPackets;
+
+	for (list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
+	{
+		pPacket = (d3d_render_packet_new *)list->data;
+		numPackets = (list == pPool->curPacketList) ? pPool->curPacket : pPool->size;
+		for (curPacket = 0; curPacket < numPackets; curPacket++, pPacket++)
+			for (curChunk = 0; curChunk < pPacket->curChunk; curChunk++)
+				if (pPacket->renderChunks[curChunk].isTargeted)
+					return true;
+	}
+	return false;
+}
+
+void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *pPool, int numStages,
+				   int type)
+{
+	int						i;
+
+	// call material function for this pool
+	if (FALSE == pPool->pMaterialFctn(pPool))
+		return;
+
+	// Check whether any chunk in this pool is a targeted (outline highlight) chunk.
+	bool hasTargeted = D3DCachePoolHasTargeted(pPool);
+
+	if (hasTargeted)
+	{
+		// Pass 1 of 2 (stencil mark): draw normal chunks while writing stencil=1 for every
+		// visible pixel.  This records the monster's exact on-screen footprint so the outline
+		// pass can't bleed into the body, even when alpha-blending is active.
+		// Stencil buffer starts at 0 each frame; residual 1s from other objects correctly
+		// suppress the outline wherever it would overlap an already-drawn object.
+		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE,
+			D3DCMP_ALWAYS, 1,
+			D3DSTENCILOP_REPLACE,   // z-pass  -> write 1
+			D3DSTENCILOP_KEEP,      // stencil-fail (unused, func=ALWAYS)
+			D3DSTENCILOP_KEEP);     // z-fail  -> leave 0 (occluded pixel)
+		D3DCacheFlushChunks(pCacheSystem, pPool, numStages, type, false);
+
+		// Pass 2 of 2 (outline draw): draw targeted (outline) chunks only where stencil==0,
+		// i.e. the border pixels the normal geometry did not cover.
+		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE,
+			D3DCMP_NOTEQUAL, 1,
+			D3DSTENCILOP_KEEP,      // z-pass  -> leave stencil unchanged
+			D3DSTENCILOP_KEEP,      // stencil-fail -> leave unchanged
+			D3DSTENCILOP_KEEP);     // z-fail  -> leave unchanged
+		D3DCacheFlushChunks(pCacheSystem, pPool, numStages, type, true);
+
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
+	}
+	else
+	{
+		D3DCacheFlushChunks(pCacheSystem, pPool, numStages, type, false);
 	}
 
 	// now decrement reference count for these textures

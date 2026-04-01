@@ -291,7 +291,7 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
             pWall->separator.b = pNode->u.internal.separator.b;
             pWall->separator.c = pNode->u.internal.separator.c;
 
-            if ((pWall->translucency_alpha == 0) && (flags & D3DRENDER_WALL_NORMAL) &&
+            if ((pWall->translucency_level == 0) && (flags & D3DRENDER_WALL_NORMAL) &&
                 (((short) pWall->z2 != (short) pWall->z1) || ((short) pWall->zz2 != (short) pWall->zz1)))
             {
                D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_NORMAL, 1, true);
@@ -330,7 +330,7 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
 }
 
 /**
- * Adds all walls that carry a translucency_alpha value to the dynamic world pool so they
+ * Adds all walls that carry a non-zero translucency_level to the dynamic world pool so they
  * can be flushed in a dedicated SRCALPHA-blended pass after the opaque world geometry.
  */
 void D3DRenderSemiTransparentWalls(const WorldRenderParams &worldRenderParams)
@@ -347,7 +347,7 @@ void D3DRenderSemiTransparentWalls(const WorldRenderParams &worldRenderParams)
 
       for (WallData *pWall = pNode->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
       {
-         if (pWall->translucency_alpha == 0)
+         if (pWall->translucency_level == 0)
             continue;
 
          int flags = 0;
@@ -393,11 +393,9 @@ void D3DRenderTransparentWallsPass(const WorldRenderParams &worldRenderParams)
    // Restore world rendering state that D3DRenderObjects may have overwritten.
    // D3DRenderObjects resets all transforms to identity at the end of its pass;
    // restore the camera view and projection so walls project correctly.
-   {
-      D3DMATRIX matIdentity;
-      MatrixIdentity(&matIdentity);
-      IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &matIdentity);
-   }
+   D3DMATRIX matIdentity;
+   MatrixIdentity(&matIdentity);
+   IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &matIdentity);
    IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &worldRenderParams.view);
    IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &worldRenderParams.proj);
    SetZBias(gpD3DDevice, ZBIAS_WORLD);
@@ -2204,7 +2202,7 @@ void D3DGeometryBuildNew(const WorldRenderParams &worldRenderParams, const World
             pWall->separator.b = pNode->u.internal.separator.b;
             pWall->separator.c = pNode->u.internal.separator.c;
 
-            if ((pWall->translucency_alpha == 0) && (flags & D3DRENDER_WALL_NORMAL) && (((short) pWall->z2 != (short) pWall->z1) ||
+            if ((pWall->translucency_level == 0) && (flags & D3DRENDER_WALL_NORMAL) && (((short) pWall->z2 != (short) pWall->z1) ||
                 ((short) pWall->zz2 != (short) pWall->zz1)))
             {
                D3DRenderPacketWallAdd(pWall, pools.worldPoolStatic, D3DRENDER_WALL_NORMAL, 1, false);
@@ -2937,12 +2935,14 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 
          pBGRA[i].r = pBGRA[i].g = pBGRA[i].b = paletteIndex * COLOR_AMBIENT / 64;
          // Walls with translucency use their configured alpha; opaque walls stay fully opaque.
-         pBGRA[i].a = ((type == D3DRENDER_WALL_NORMAL) && pWall->translucency_alpha > 0) ? pWall->translucency_alpha : 255;
+         static const BYTE alpha_for_level[] = { 0, D3DRENDER_TRANS25, D3DRENDER_TRANS50, D3DRENDER_TRANS75 };
+         pBGRA[i].a = ((type == D3DRENDER_WALL_NORMAL) && pWall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+            ? alpha_for_level[pWall->translucency_level] : 255;
       }
    }
 
    // Mark translucent walls so they go through the blended pass.
-   if (pWall->translucency_alpha > 0)
+   if (pWall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
       *flags |= D3DRENDER_TRANSPARENT;
 
    return 1;

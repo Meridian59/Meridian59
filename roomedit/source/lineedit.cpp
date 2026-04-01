@@ -30,19 +30,16 @@
 #include "common.h"
 #pragma hdrstop
 
-// Include owl/combobox.h before lineedit.h so that OWL_COMBOBOX_H is already
-// defined when lineedit.h's forward-decl guard fires, preventing a duplicate
-// global TComboBox declaration that would conflict with owl::TComboBox.
-#ifndef OWL_COMBOBOX_H
-#include <owl\combobox.h>
-#endif
-
 #include "bsp.h"
 #include "lineedit.h"
 #include "levels.h"
 
 #ifndef __OWL_LISTBOX_H
 #include <owl\listbox.h>
+#endif
+
+#ifndef OWL_COMBOBOX_H
+#include <owl\combobox.h>
 #endif
 
 #ifndef __OWL_EDIT_H

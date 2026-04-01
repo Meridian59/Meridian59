@@ -64,7 +64,7 @@
 // Translucency level (alpha-blend transparency, 2 bits in bits 15-16)
 // 0 = opaque, 1 = 25% visible, 2 = 50% visible, 3 = 75% visible
 #define WF_TRANSLUCENCY_MASK  0x00018000
-#define WallTranslucencyLevel(flags) ((BYTE)(((flags) & WF_TRANSLUCENCY_MASK) >> 15))
+static inline BYTE WallTranslucencyLevel(DWORD flags) { return (BYTE)((flags & WF_TRANSLUCENCY_MASK) >> 15); }
 
 // Texture scrolling constants
 #define SCROLL_NONE    0x00000000      // No texture scrolling   

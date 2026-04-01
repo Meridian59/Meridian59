@@ -774,7 +774,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		if (hr == D3DERR_DEVICENOTRESET)
 		{
-			D3DRenderShutDown();	
+			D3DRenderShutDown();
 			D3DRenderInit(hMain);
 			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);

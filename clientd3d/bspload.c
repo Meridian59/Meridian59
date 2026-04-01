@@ -232,20 +232,17 @@ bool BSPRooFileLoad(char *fname, room_type *room)
    room->num_sectors = num_sectors;
    room->num_sidedefs = num_sidedefs;
 
-   // Set per-wall translucency from the sidedef flags (bits 15-16).
-   // Level 0 = opaque, 1 = D3DRENDER_TRANS25 (64), 2 = D3DRENDER_TRANS50 (128), 3 = D3DRENDER_TRANS75 (192).
+   // Resolve per-wall translucency levels from sidedef flags (bits 15-16).
+   // Must run after RoomSwizzle() since that is what sets up the sidedef pointers.
    // Uses the positive sidedef's level; falls back to negative if positive is zero.
+   for (int i = 0; i < num_walls; i++)
    {
-      static const BYTE alpha_for_level[4] = { 0, D3DRENDER_TRANS25, D3DRENDER_TRANS50, D3DRENDER_TRANS75 };
-      for (int i = 0; i < num_walls; i++)
-      {
-         BYTE level = 0;
-         if (room->walls[i].pos_sidedef != NULL)
-            level = WallTranslucencyLevel(room->walls[i].pos_sidedef->flags);
-         if (level == 0 && room->walls[i].neg_sidedef != NULL)
-            level = WallTranslucencyLevel(room->walls[i].neg_sidedef->flags);
-         room->walls[i].translucency_alpha = alpha_for_level[level];
-      }
+      WallTranslucency level = WALL_TRANSLUCENCY_OPAQUE;
+      if (room->walls[i].pos_sidedef != NULL)
+         level = WallTranslucencyLevel(room->walls[i].pos_sidedef->flags);
+      if (level == WALL_TRANSLUCENCY_OPAQUE && room->walls[i].neg_sidedef != NULL)
+         level = WallTranslucencyLevel(room->walls[i].neg_sidedef->flags);
+      room->walls[i].translucency_level = level;
    }
 
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;

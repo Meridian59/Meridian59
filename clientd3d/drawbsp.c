@@ -2172,10 +2172,10 @@ static void WalkWall(WallData *wall, long side)
       }
 
       // Save WALL_BELOW top boundary for WALL_NORMAL cone restriction (translucent walls).
-      if (wall->translucency_alpha > 0)
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
       { norm_bot_a = a; norm_bot_b = b; norm_bot_d = d; has_norm_bot = true; }
 
-      if (wall->translucency_alpha > 0)
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
       {
          // Translucent WALL_BELOW: add DrawItems bounded to the step section WITHOUT
          // narrowing the BSP cone.  Leaving the cone open lets background and far-side
@@ -2251,10 +2251,10 @@ static void WalkWall(WallData *wall, long side)
       }
 
       // Save WALL_ABOVE bottom boundary for WALL_NORMAL cone restriction (translucent walls).
-      if (wall->translucency_alpha > 0)
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
       { norm_top_a = a; norm_top_b = b; norm_top_d = d; has_norm_top = true; }
 
-      if (wall->translucency_alpha > 0)
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
       {
          // Translucent WALL_ABOVE: add DrawItems bounded to the railing section WITHOUT
          // narrowing the BSP cone.  Leaving the cone open lets background and far-side
@@ -2312,7 +2312,7 @@ static void WalkWall(WallData *wall, long side)
          wall->seen = true;
 
          if ((sidedef->flags & WF_TRANSPARENT && !(sidedef->flags & WF_NOLOOKTHROUGH)) ||
-             wall->translucency_alpha > 0)
+             wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
          {
             if (nitems >= MAX_ITEMS)
             {
@@ -2320,7 +2320,7 @@ static void WalkWall(WallData *wall, long side)
                return;
             }
             item = &drawdata[nitems++];
-            item->type = (wall->translucency_alpha > 0) ? DrawTranslucentWallType : DrawWallType;
+            item->type = (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE) ? DrawTranslucentWallType : DrawWallType;
             item->u.wall.wall = wall;
             item->u.wall.side = SGN(side);
             item->u.wall.wall_type = WALL_NORMAL;
@@ -2332,7 +2332,7 @@ static void WalkWall(WallData *wall, long side)
             // For translucent walls: restrict the WALL_NORMAL cone to the section
             // between WALL_ABOVE and WALL_BELOW so that WALL_NORMAL does not draw
             // in the railing/step areas, which would cause double alpha blending.
-            if (wall->translucency_alpha > 0)
+            if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
             {
                if (has_norm_top)
                {
@@ -2947,7 +2947,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    bool top_down;
    bool no_vtile;  // true when wall texture doesn't tile vertically
    bixlat *pBiXlat = NULL;
-   BYTE translucency_alpha;  // per-wall translucency level (0=opaque, 64/128/192=dithered)
+   WallTranslucency translucency_level;
 
 #if DRAW_WALL_CONES
    fillcone(c);
@@ -2993,18 +2993,18 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
    backwards = sidedef->flags & WF_BACKWARDS;
    transparent = sidedef->flags & WF_TRANSPARENT;
-   translucency_alpha = BSPwall->translucency_alpha;
+   translucency_level = BSPwall->translucency_level;
    // Select palette blend table matching the wall's translucency level.
    // Mirrors the approach used by DrawObjectTranslucent() in objdraw.c.
-   if (translucency_alpha > 0)
+   if (translucency_level > WALL_TRANSLUCENCY_OPAQUE)
    {
       extern bixlat _blend25, _blend50, _blend75;
-      if (translucency_alpha <= 64)
-         pBiXlat = &_blend25;   // 25% wall visible
-      else if (translucency_alpha <= 128)
-         pBiXlat = &_blend50;   // 50% wall visible
-      else
-         pBiXlat = &_blend75;   // 75% wall visible
+      switch (translucency_level)
+      {
+         case WALL_TRANSLUCENCY_25: pBiXlat = &_blend25; break;
+         case WALL_TRANSLUCENCY_50: pBiXlat = &_blend50; break;
+         default:                   pBiXlat = &_blend75; break;
+      }
    }
    if ((sidedef->flags & WF_NOLOOKTHROUGH) && incremental_background)
       doDrawBackground(c);
@@ -3217,7 +3217,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       int rowstart_persp = rowstart;
       int rowend_persp   = rowend;
 
-      if (translucency_alpha > 0)
+      if (translucency_level > 0)
       {
          // Translucent walls: clamp the DRAWING range to screen + cone bounds.
          if (rowstart < 0)      rowstart = 0;
@@ -3396,7 +3396,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          else if (pBiXlat != NULL)
          {
             // Palette-blended translucency: blend wall texture with scene behind it.
-            // pBiXlat selects the 25/50/75% mix table matching translucency_alpha.
+            // pBiXlat selects the 25/50/75% mix table matching translucency_level.
             // The scene (background + opaque geometry + objects) is already fully
             // composited on screen by the time this second-pass draw runs.
             while (screen_ptr > end_screen_ptr)

@@ -212,7 +212,7 @@ const Color(&getBasePalette())[NUM_COLORS];
 // Note that matrix rotations expect radians.
 constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / 4096.0f;
 
-// Maps legacy software y-offset units (414 units) to world-space pitch (50 degrees).
+// Maps legacy software y-offset units (max 414 units from the center view) to world-space pitch (50 degrees).
 // Derived from software renderer's max vertical offset calculation: (3 * CLASSIC_HEIGHT / 2), where CLASSIC_HEIGHT = 276.
 constexpr float Y_UNIT_TO_WORLD_RAD = DEGREES_TO_RADIANS(50.0f) / 414.0f;
 

@@ -114,7 +114,7 @@ void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_n
 	pParticle->currentAge_s += GetDeltaTime();
 	if (pParticle->currentAge_s >= pParticle->maxAge_s)
 	{
-		D3DParticleHide(pParticle);
+		pParticle->isActive = false;
 		return;
 	}
 
@@ -185,7 +185,7 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPrimi
 		// textures from the top-down.  From the player's view, the hidden particles are barely noticable from outdoors.
 		if (leaf && leaf->sector->ceiling)
 		{
-			D3DParticleHide(pParticle);
+			pParticle->isActive = false;
 			return;	
 		}
 		else if (leaf && leaf->sector->floor)
@@ -194,7 +194,7 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPrimi
 
 			if (pParticle->position.z < floorHeight)
 			{
-				D3DParticleHide(pParticle);
+				pParticle->isActive = false;
 				return;
 			}
 			
@@ -230,10 +230,7 @@ void D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPrimi
 	
 	pParticle->rotation = GetVariedXYZ(pEmitter->rotation, pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
 	pParticle->bgra = pEmitter->bgra;
+	
+	// Once the particle is all set, make it active so it can be included in the rendering.
 	pParticle->isActive = true;
-}
-
-void D3DParticleHide(particle *pParticle)
-{
-	pParticle->isActive = false;
 }

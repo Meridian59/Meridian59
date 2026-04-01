@@ -16,8 +16,8 @@ static particle_system sandParticleSystem;
 static particle_system rainParticleSystem;
 static particle_system snowParticleSystem;
 
-// Determines if the player's distance from their last position
-// is far enough to trigger particle system priming.
+// Determines if the player's distance from their last
+// position is far enough to trigger particle system priming.
 static constexpr float TELEPORT_THRESHOLD = 2000.0f;
 
 // Interfaces
@@ -47,7 +47,7 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
 	
 	// Check if the player moved far enough since their last position to trigger particle priming.
-	bool teleported = ( abs(pss.playerDeltaPos.x) > TELEPORT_THRESHOLD ||
+	bool justTeleported = ( abs(pss.playerDeltaPos.x) > TELEPORT_THRESHOLD ||
 						abs(pss.playerDeltaPos.y) > TELEPORT_THRESHOLD ||
 						abs(pss.playerDeltaPos.z) > TELEPORT_THRESHOLD ); 
 	
@@ -65,11 +65,12 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 
 		// Check if the player teleported far enough so particles can be primed at the player's new location.
 		// Ignores room changes since zoning also triggers this. And don't prime inactive particle systems.
-		if (teleported && !GetRoomJustEntered() && particleSystemActive)
+		if (justTeleported && !GetRoomJustEntered() && particleSystemActive)
 		{
 			pSystem->isPriming = true;
 			
-			// Clear the particles and reset both the circular buffer and emitter timers.
+			// Reset the particle system's emitters.
+			// This hides the previous particles from the player's last location to prevent artifacts.
 			for (auto pEmitter : pSystem->emitterList)
 			{
 				pEmitter->numParticles = 0; 
@@ -138,8 +139,8 @@ void WeatherEmitterInit(particle_system* pSystem, bool* pActiveFlag, float fallV
 }
 
 /**
-* Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the 
-* particle system.
+* Initializes the sandstorm particle emitters to fire sand particles around the player in
+* a full circle at randomized positions and slightly varied rotations.
 */
 void SandstormInit(void)
 {
@@ -177,8 +178,7 @@ void SandstormInit(void)
 }
 
 /**
-* Initializes the rain particle emitters with predefined positions, energy, and colors for the 
-* particle system.
+* Initializes the rain particle emitters with its specific fall speed and rain color.
 */
 void RainInit(void)
 {
@@ -189,8 +189,7 @@ void RainInit(void)
 }
 
 /**
-* Initializes the snow particle emitters with predefined positions, energy, and colors for the 
-* particle system.
+* Initializes the snow particle emitters with its specific fall speed and snow color.
 */
 void SnowInit(void)
 {

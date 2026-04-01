@@ -316,8 +316,8 @@ void EnterNewRoom(void)
 {
    SetFrameDrawn(FALSE);
    
-   // We just entered the room, so toggle this flag so some scripts note that we just entered
-   // a room. Used in particle system so it know when to prime particles upon room change.
+   // Toggle flag that tracks if a user just entered the room.
+   // Used in particle systems to know when to prime particles upon room change.
    SetRoomJustEntered(true);
 
    DrawGridBorder();   
@@ -741,11 +741,11 @@ const room_type& getCurrentRoom()
     return current_room;
 }
 
-// Sets the flag for knowing if a room was just entered.
+// Sets the flag that tracks if a room was just entered.
 // Set to true in EnterNewRoom(), and cleared at the end of first DrawRoom() execution.
-void SetRoomJustEntered(bool state)
+void SetRoomJustEntered(bool newState)
 {
-	roomJustEntered = state;
+	roomJustEntered = newState;
 }
 
 // Returns true only during the first frame of a new room.

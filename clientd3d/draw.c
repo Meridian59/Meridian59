@@ -96,7 +96,7 @@ void DrawRoom(HDC hdc, int x, int y, room_type *room, bool map)
       miniDrawCount = MINIMAP_REDRAW_EVERY_XFRAME;
    }
 
-   // If we had just entered the room earlier, set the flag to false now that we're passed that point.
+   // Reset the room entry flag now that the first frame in the room is rendered.
    if (GetRoomJustEntered())
    {
       SetRoomJustEntered(false);

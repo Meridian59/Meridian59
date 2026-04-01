@@ -80,6 +80,5 @@ void		D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_
 							 d3d_render_cache_system *pCacheSystem);
 void 		D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool);
 void 		D3DParticleInitialize(emitter *pEmitter, particle *pParticle, bool &isPriming);
-void		D3DParticleHide(particle *pParticle);
 
 #endif

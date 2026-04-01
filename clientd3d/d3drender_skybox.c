@@ -63,12 +63,12 @@ static constexpr custom_bgra gSkyboxBGRA = {192, 192, 192, 255};
 // Defines which .bgf resource gets paired with its respective hardware rendered skybox.
 struct SkyboxDefinition
 {
-	const char* resourceName;	// The .bgf name used by the software renderer.
-	const char* fileName;		// The .bsf/.png used in the hardware renderer.
+	const char* resourceName;	// The .bgf file used by the software renderer.
+	const char* fileName;		// The .bsf/.png file used in the hardware renderer.
 };
 
 // Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
-// Note: Ko'catan skyboxes use the same skybox textures as the the mainland.
+// Note: In hardware rendering, Ko'catan uses the same skybox textures as the mainland.
 static constexpr SkyboxDefinition gSkyboxTable[] = 
 {
 	// Clear skies
@@ -82,7 +82,7 @@ static constexpr SkyboxDefinition gSkyboxTable[] =
 	{"2skyd.bgf", "skyd.bsf"}, 
 	// Frenzy
     {"redsky.bgf", "redsky.bsf"}, 	// Index 4
-	// Cloudy
+	// Cloudy/Stormy
     {"3sky.bgf",  "3skya.png"}, 	// Index 5
     {"3skyb.bgf", "3skyb.png"}, 	// Index 6
     {"3skyc.bgf", "3skyc.png"}, 	// Index 7

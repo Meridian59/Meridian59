@@ -111,6 +111,11 @@ private:
 	// Displaying Rulers ?
 	BOOL   ShowRulers;
 
+	// Space+drag panning state
+	BOOL   SpacePanning;
+	BOOL   SpaceDragging;
+	SHORT  PanLastX, PanLastY;
+
 	// Mainframe status bar
 	TStatusBar *pStatusBar ;
 
@@ -168,6 +173,11 @@ protected:
 	void EvLButtonUp (UINT modKeys, const TPoint& point);
 	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
 	void EvRButtonDown (UINT modKeys, const TPoint& point);
+	void EvMouseWheel (uint modKeys, int zDelta, const TPoint& point);
+	void EvKeyUp (UINT key, UINT repeatCount, UINT flags);
+	bool EvSetCursor (HWND hWndCursor, uint codeHitTest, TMsgId mouseMsg);
+	void EvMButtonDown (UINT modKeys, const TPoint& point);
+	void EvMButtonUp (UINT modKeys, const TPoint& point);
 	void CmFileQuit ();
 	void CmSearchPrev ();
 	void CmSearchNext ();

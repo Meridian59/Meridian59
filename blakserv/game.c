@@ -184,8 +184,6 @@ void GameProcessSessionBuffer(session_node *s)
       if (msg.crc16 != security && !s->seeds_hacked)
       {
 			s->seeds_hacked = true;
-			lprintf("GPSB: CRC fail msg_type=%d account=%i crc=%u expected=%u\n",
-			        (unsigned char)msg.data[0], s->account->account_id, msg.crc16, security);
 			if (ConfigBool(SECURITY_LOG_SPOOFS))
 			{
 				lprintf("GameProcessSessionBuffer found invalid security account %i\n",
@@ -205,8 +203,7 @@ void GameProcessSessionBuffer(session_node *s)
 
       if (msg.seqno != GetEpoch()) /* old sequence ok, just ignore */
       {
-         lprintf("GPSB: epoch skip msg_type=%d account=%i seqno=%d epoch=%d\n",
-                 (unsigned char)msg.data[0], s->account->account_id, msg.seqno, GetEpoch());
+	 /* dprintf("Game got bad epoch from session %i\n",s->session_id); */
 	 continue;
       }
       

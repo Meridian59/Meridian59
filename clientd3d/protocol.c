@@ -120,14 +120,10 @@ WORD InsertString(BYTE **buf, char *str)
  */
 void Logoff(void)
 {
-   debug(("Logoff: state=%d\n", state));
    if (state == STATE_GAME)
    {
       GraphicsFlushPerfReport();
       RequestQuit();
-      // Brief pause so the server's async message loop processes the perf report
-      // before the TCP FIN from CloseConnection races with WM_BLAK_MAIN_READ.
-      Sleep(300);
    }
    CloseConnection();
    MainSetState(STATE_OFFLINE);

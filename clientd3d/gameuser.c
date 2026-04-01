@@ -421,8 +421,7 @@ void UserToggleMusic(bool music_on)
  */
 void UserQuit(void)
 {
-      GraphicsFlushPerfReport();
-      RequestQuit();
+   RequestQuit();
 }
 /************************************************************************/
 /*

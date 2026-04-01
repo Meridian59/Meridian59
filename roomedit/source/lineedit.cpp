@@ -38,9 +38,6 @@
 #include <owl\listbox.h>
 #endif
 
-#ifndef OWL_COMBOBOX_H
-#include <owl\combobox.h>
-#endif
 
 #ifndef __OWL_EDIT_H
 #include <owl\edit.h>

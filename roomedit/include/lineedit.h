@@ -62,7 +62,7 @@
 #endif
 
 #ifndef OWL_COMBOBOX_H
-	#include <owl\combobox.h>
+	class _OWLCLASS TComboBox;
 #endif
 
 #ifndef __objects_h

@@ -43,6 +43,7 @@ enum {
    COLOR_ITEM_TEXT_LEGENDARY,
    COLOR_ITEM_TEXT_UNIDENTIFIED,
    COLOR_ITEM_TEXT_CURSED,
+   COLOR_SIDEBARBGD,     /* Background of portrait and inventory sidebar */
    MAXCOLORS,
 };
 

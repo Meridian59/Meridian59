@@ -1136,6 +1136,13 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
 
         CheckDlgButton(hDlg, IDC_COLORCODES, config.colorcodes);
 
+        {
+            HWND hTheme = GetDlgItem(hDlg, IDC_THEME);
+            ComboBox_AddString(hTheme, GetString(hInst, IDS_THEME_DEFAULT));
+            ComboBox_AddString(hTheme, GetString(hInst, IDS_THEME_DARK));
+            ComboBox_SetCurSel(hTheme, config.theme);
+        }
+
         Trackbar_SetRange(GetDlgItem(hDlg, IDC_SOUND_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
         Trackbar_SetRange(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
         Trackbar_SetRange(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
@@ -1186,6 +1193,15 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.halocolor = IsDlgButtonChecked(hDlg, IDC_TARGETHALO1) == BST_CHECKED ? 0 :
                                IsDlgButtonChecked(hDlg, IDC_TARGETHALO2) == BST_CHECKED ? 1 : 2;
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);
+
+            {
+                int new_theme = ComboBox_GetCurSel(GetDlgItem(hDlg, IDC_THEME));
+                if (new_theme != config.theme)
+                {
+                    config.theme = new_theme;
+                    ThemeApply();
+                }
+            }
 
             config.sound_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME));
             config.ambient_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME));

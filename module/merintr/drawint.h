@@ -16,7 +16,14 @@ void InterfaceDrawInit(void);
 void InterfaceDrawExit(void);
 void InterfaceDrawResize(int xsize, int ysize, AREA *view);
 void InterfaceDrawElements(HDC hdc);
+void InterfaceDrawSidebarBackground(HDC hdc);
 //void InterfaceDrawBarBorder(HDC hdc, AREA *a);
 void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a );
+int DarkModeResourceId(int id);
+bool IsDarkMode(void);
+bool IsNonClassicTheme(void);
+void InvalidateDarkModeCache(void);
+void DarkScrollbarSubclass(HWND hwndScroll);
+void DarkScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, bool redraw);
 
 #endif /* #ifndef _DRAWINT_H */

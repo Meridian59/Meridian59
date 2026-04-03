@@ -269,6 +269,22 @@ void EnchantmentsNewRoom(void)
 }
 /****************************************************************************/
 /*
+ * IsRoomEnchantment:  Returns true if the given window belongs to a room
+ *   enchantment rather than a player enchantment.
+ */
+static bool IsRoomEnchantment(HWND hwnd)
+{
+   list_type l;
+   for (l = room_enchantments; l != NULL; l = l->next)
+   {
+      Enchantment *e = (Enchantment *) (l->data);
+      if (e->hwnd == hwnd)
+         return true;
+   }
+   return false;
+}
+/****************************************************************************/
+/*
  * EnchantmentDrawItem:  Draw enchantment for given DRAWITEM structure.
  */
 bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
@@ -291,7 +307,16 @@ bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       p.x = r.left;
       p.y = r.top;
       ScreenToClient(cinfo->hMain, &p);
-      OffscreenWindowBackground(NULL, p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
+      /*
+       * Room enchantments sit on the main window background (above the 3D
+       * view), while player enchantments sit on the sidebar texture.
+       * Pass the correct background so the icon cell matches its surroundings.
+       */
+      RawBitmap *bg = NULL;
+      if (IsNonClassicTheme() && !IsRoomEnchantment(lpdis->hwndItem))
+         bg = pinventory_bkgnd();
+      OffscreenWindowBackground(bg,
+         p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
 
       area.x = area.y = 0;
       area.cx = area.cy = ENCHANT_SIZE;

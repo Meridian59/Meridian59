@@ -106,6 +106,8 @@ void InterfaceFontChanged(WORD font_id, LOGFONT *font)
 /****************************************************************************/
 void InterfaceColorChanged(WORD color_id, COLORREF color)
 {
+   InvalidateDarkModeCache();
+   InterfaceDrawInit();
    InventoryChangeColor();   
    StatsChangeColor();
    StatsMainChangeColor();
@@ -129,17 +131,22 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
  */
 void InterfaceRedrawModule(HDC hdc)
 {
-  UserAreaRedraw();
-  InterfaceDrawElements(hdc);
-  StatsDrawBorder();
-  StatsMainRedraw();
-  StatsDraw();
-  if( StatsGetCurrentGroup() == STATS_INVENTORY )
-  {
-    InvalidateRect( GetHwndInv(), NULL, FALSE );
-    ShowInventory(true);
-    InventoryRedraw();
-  }
+   InterfaceDrawSidebarBackground(hdc);
+   UserAreaRedraw();
+   InterfaceDrawElements(hdc);
+   StatsDrawBorder();
+   StatsMainRedraw();
+   StatsDraw();
+   if (StatsGetCurrentGroup() == STATS_INVENTORY && IsWindowVisible(GetHwndInvDialog()))
+   {
+      /* InterfaceDrawSidebarBackground just painted the entire sidebar
+         area, including the region occupied by inventory child windows,
+         because hMain has no WS_CLIPCHILDREN.  Repaint the inventory
+         dialog plus all children (item grid and scrollbar) so they
+         appear on top of the freshly painted background. */
+      RedrawWindow(GetHwndInvDialog(), NULL, NULL,
+         RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+   }
 }
 
 /****************************************************************************/
@@ -204,7 +211,7 @@ bool InterfaceTab(int control, bool forward)
       if (!forward)
 	 break;
 
-		if( StatsGetCurrentGroup() == STATS_INVENTORY )		//	ajw
+      if( GetStatGroup() == STATS_INVENTORY )
 			InventorySetFocus( forward );
 		else
 			StatsSetFocus( forward );
@@ -215,7 +222,7 @@ bool InterfaceTab(int control, bool forward)
       if (forward)
 	 break;
       
-		if( StatsGetCurrentGroup() == STATS_INVENTORY )		//	ajw
+      if( GetStatGroup() == STATS_INVENTORY )
 			InventorySetFocus( forward );
 		else
 			StatsSetFocus( forward );

@@ -61,7 +61,8 @@ void UserAreaRedraw(void)
    else
    {
       // Set up window background under user bitmap
-      OffscreenWindowBackground(NULL, user_area.x, user_area.y, user_area.cx, user_area.cy);
+      OffscreenWindowBackground(IsNonClassicTheme() ? pinventory_bkgnd() : NULL,
+         user_area.x, user_area.y, user_area.cx, user_area.cy);
 
 	  if (GetUserTargetID() == GetPlayer()->id)
 		OffscreenStretchBlt(hdc, 0, 0, user_area.cx, user_area.cy,

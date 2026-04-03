@@ -49,6 +49,9 @@ void EditBoxCreate(HWND hParent)
 			   0, 0, 0, 0, 
 			   hParent, (HMENU) IDC_MAINTEXT, hInst, NULL);
 
+   if (config.theme == THEME_DARK)
+      SetWindowTheme(hwndText, L"DarkMode_Explorer", NULL);
+
    EditBoxChangeColor();
 
    lpfnDefEditProc = SubclassWindow(hwndText, EditProc);
@@ -77,7 +80,7 @@ void EditBoxResize(int xsize, int ysize, AREA view)
    edit_area.cx = view.cx;
    edit_area.cy = input_area.y - edit_area.y; // ysize - edit_area.y - BOTTOM_BORDER - GetTextInputHeight() - EDGETREAT_HEIGHT;
 
-   MoveWindow(hwndText, edit_area.x, edit_area.y, 
+   MoveWindow(hwndText, edit_area.x, edit_area.y,
 	      edit_area.cx, edit_area.cy,
 	      TRUE);
 
@@ -110,6 +113,7 @@ LRESULT CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
    int action;
    const void *action_data;
+   LRESULT result;
 
    switch (message)
    {
@@ -135,7 +139,10 @@ LRESULT CALLBACK EditProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
       EditBoxDrawBorder();
       break;
    }
-   return CallWindowProc(lpfnDefEditProc, hwnd, message, wParam, lParam);
+
+   result = CallWindowProc(lpfnDefEditProc, hwnd, message, wParam, lParam);
+
+   return result;
 }
 
 
@@ -281,6 +288,16 @@ void EditBoxResetFont(void)
 void EditBoxChangeColor(void)
 {
    SendMessage(hwndText, EM_SETBKGNDCOLOR, FALSE, GetColor(COLOR_MAINEDITBGD));
+}
+
+/************************************************************************/
+/*
+ * EditBoxRetheme:  Redraw the rich edit so control border changes are visible.
+ */
+void EditBoxRetheme(void)
+{
+   if (hwndText != NULL)
+      RedrawWindow(hwndText, NULL, NULL, RDW_INVALIDATE | RDW_FRAME | RDW_UPDATENOW);
 }
 
 HWND EditBoxWindow(void)

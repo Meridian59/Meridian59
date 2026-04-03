@@ -319,8 +319,10 @@ bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       }
       else
       {
+	 bool bPressed = (lpdis->itemState & ODS_SELECTED) || b->pressed;
+
 	 // Pick image to draw, depending on whether button is pressed
-	 if (lpdis->itemState & ODS_SELECTED || b->pressed)
+	 if (bPressed)
 	    x = TOOLBAR_BUTTON_WIDTH;
 	 else x = 0;
 
@@ -331,6 +333,55 @@ bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 	 OffscreenBitBlt(lpdis->hDC, 0, 0, TOOLBAR_BUTTON_WIDTH, TOOLBAR_BUTTON_HEIGHT,
 			 b->bits, x, 0, 2 * TOOLBAR_BUTTON_WIDTH, 
 			 OBB_FLIP | OBB_COPY | OBB_TRANSPARENT);
+
+	 if (config.theme == THEME_DARK)
+	 {
+	    int w = lpdis->rcItem.right - lpdis->rcItem.left;
+	    int h = lpdis->rcItem.bottom - lpdis->rcItem.top;
+
+	    BITMAPINFO bmi = {};
+	    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	    bmi.bmiHeader.biWidth = w;
+	    bmi.bmiHeader.biHeight = -h;
+	    bmi.bmiHeader.biPlanes = 1;
+	    bmi.bmiHeader.biBitCount = 32;
+	    bmi.bmiHeader.biCompression = BI_RGB;
+
+	    BYTE *pixels = NULL;
+	    HDC memDC = CreateCompatibleDC(lpdis->hDC);
+	    HBITMAP dib = CreateDIBSection(memDC, &bmi, DIB_RGB_COLORS,
+	       (void **)&pixels, NULL, 0);
+	    if (dib != NULL && pixels != NULL)
+	    {
+	       HBITMAP oldBmp = (HBITMAP)SelectObject(memDC, dib);
+	       BitBlt(memDC, 0, 0, w, h, lpdis->hDC, 0, 0, SRCCOPY);
+
+	       int base = bPressed ? 10 : 20;
+	       int total = w * h * 4;
+	       for (int i = 0; i < total; i += 4)
+	       {
+		  BYTE pb = pixels[i];
+		  BYTE pg = pixels[i + 1];
+		  BYTE pr = pixels[i + 2];
+		  BYTE maxc = (pr > pg) ? ((pr > pb) ? pr : pb) : ((pg > pb) ? pg : pb);
+		  BYTE minc = (pr < pg) ? ((pr < pb) ? pr : pb) : ((pg < pb) ? pg : pb);
+
+		  if ((maxc - minc) < 20)
+		  {
+		     int grey = (pr + pg + pb) / 3;
+		     int remapped = grey * 140 / 255 + base;
+		     pixels[i]     = (BYTE)remapped;
+		     pixels[i + 1] = (BYTE)remapped;
+		     pixels[i + 2] = (BYTE)remapped;
+		  }
+	       }
+
+	       BitBlt(lpdis->hDC, 0, 0, w, h, memDC, 0, 0, SRCCOPY);
+	       SelectObject(memDC, oldBmp);
+	       DeleteObject(dib);
+	    }
+	    DeleteDC(memDC);
+	 }
       }
       return true;
    }

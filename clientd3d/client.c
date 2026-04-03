@@ -372,29 +372,6 @@ void ThemeApply(void)
    DwmSetWindowAttribute(hMain, DWMWA_BORDER_COLOR,
       &borderColor, sizeof(borderColor));
 
-   /* Toggle dark menu bar and common controls */
-   HMODULE hUxTheme = GetModuleHandle(TEXT("uxtheme.dll"));
-   if (hUxTheme)
-   {
-      typedef int (WINAPI *fnSetPreferredAppMode)(int);
-      fnSetPreferredAppMode SetPreferredAppMode =
-         (fnSetPreferredAppMode)GetProcAddress(hUxTheme, MAKEINTRESOURCEA(135));
-      if (SetPreferredAppMode)
-         SetPreferredAppMode(dark ? 2 : 0);
-
-      typedef BOOL (WINAPI *fnAllowDarkModeForWindow)(HWND, BOOL);
-      fnAllowDarkModeForWindow AllowDarkModeForWindow =
-         (fnAllowDarkModeForWindow)GetProcAddress(hUxTheme, MAKEINTRESOURCEA(133));
-      if (AllowDarkModeForWindow)
-         AllowDarkModeForWindow(hMain, dark ? TRUE : FALSE);
-
-      typedef void (WINAPI *fnFlushMenuThemes)(void);
-      fnFlushMenuThemes FlushMenuThemes =
-         (fnFlushMenuThemes)GetProcAddress(hUxTheme, MAKEINTRESOURCEA(136));
-      if (FlushMenuThemes)
-         FlushMenuThemes();
-   }
-
    /* Toggle dark scrollbar on the main text area */
    HWND hwndText = EditBoxWindow();
    if (hwndText)
@@ -451,24 +428,6 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	/* Register our custom classes */
 	RegisterWindowClasses();
 
-	/*
-	 * Enable dark mode for menus and common controls. Uses ordinal-based
-	 * imports from uxtheme.dll, supported on Windows 10 1903+ and Windows 11.
-	 * SetPreferredAppMode(AllowDark=1) must be called before window creation.
-	 */
-	if (config.theme == THEME_DARK)
-	{
-		HMODULE hUxTheme = GetModuleHandle(TEXT("uxtheme.dll"));
-		if (hUxTheme)
-		{
-			typedef int (WINAPI *fnSetPreferredAppMode)(int);
-			fnSetPreferredAppMode SetPreferredAppMode =
-				(fnSetPreferredAppMode)GetProcAddress(hUxTheme, MAKEINTRESOURCEA(135));
-			if (SetPreferredAppMode)
-				SetPreferredAppMode(2);
-		}
-	}
-
 	hMain = CreateWindow(szAppName,       /* window class name */
 		szAppName,               /* window caption */
 		WS_OVERLAPPEDWINDOW,     /* window style */
@@ -497,22 +456,6 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		COLORREF borderColor = GetColor(COLOR_BGD);
 		DwmSetWindowAttribute(hMain, DWMWA_BORDER_COLOR,
 			&borderColor, sizeof(borderColor));
-
-		HMODULE hUxTheme = GetModuleHandle(TEXT("uxtheme.dll"));
-		if (hUxTheme)
-		{
-			typedef BOOL (WINAPI *fnAllowDarkModeForWindow)(HWND, BOOL);
-			fnAllowDarkModeForWindow AllowDarkModeForWindow =
-				(fnAllowDarkModeForWindow)GetProcAddress(hUxTheme, MAKEINTRESOURCEA(133));
-			if (AllowDarkModeForWindow)
-				AllowDarkModeForWindow(hMain, TRUE);
-
-			typedef void (WINAPI *fnFlushMenuThemes)(void);
-			fnFlushMenuThemes FlushMenuThemes =
-				(fnFlushMenuThemes)GetProcAddress(hUxTheme, MAKEINTRESOURCEA(136));
-			if (FlushMenuThemes)
-				FlushMenuThemes();
-		}
 	}
 
 	DarkMenuBar_Apply(GetMenu(hMain));

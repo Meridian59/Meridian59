@@ -1,6 +1,6 @@
 # Common makefile definitions for modules
 
-LIBS = user32.lib gdi32.lib comctl32.lib $(BLAKLIBDIR)\meridian.lib
+LIBS = user32.lib gdi32.lib comctl32.lib uxtheme.lib $(BLAKLIBDIR)\meridian.lib
 INCLUDE = $(INCLUDE);$(CLIENTDIR);$(CLIENTDIR)\$(OUTDIR)
 CFLAGS = $(CFLAGS) /LD
 

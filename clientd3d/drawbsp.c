@@ -2457,7 +2457,6 @@ static void WalkObjects(ObjectData *objects)
          *(item->u.object.object->ncones_ptr) += 1;
       }
    }
-
 }
 
 /***************************************************************************
@@ -3003,7 +3002,8 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       {
          case WALL_TRANSLUCENCY_25: pBiXlat = &_blend25; break;
          case WALL_TRANSLUCENCY_50: pBiXlat = &_blend50; break;
-         default:                   pBiXlat = &_blend75; break;
+         case WALL_TRANSLUCENCY_75: pBiXlat = &_blend75; break;
+         default:                   break; // Remains NULL; failsafe to opaque
       }
    }
    if ((sidedef->flags & WF_NOLOOKTHROUGH) && incremental_background)
@@ -3213,11 +3213,10 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       // Save unclamped geometry rows before any clamping.
       // rowstart_persp / rowend_persp are used for yinc and ytex so that the texture
       // scales and positions correctly even when the wall extends beyond screen bounds.
-      // (Same as the opaque code path, which uses rowend/rowstart before extension.)
       int rowstart_persp = rowstart;
       int rowend_persp   = rowend;
 
-      if (translucency_level > 0)
+      if (translucency_level > WALL_TRANSLUCENCY_OPAQUE)
       {
          // Translucent walls: clamp the DRAWING range to screen + cone bounds.
          if (rowstart < 0)      rowstart = 0;
@@ -3250,10 +3249,10 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       palette = GetLightPalette(d, light, BSPwall->lightscale, 0);
 
       // Tile wall bitmap vertically -- BITMAP_HEIGHT bitmap is FINENESS tall.
-      // Use the unclamped geometry rows (persp) so that yinc matches what the opaque
-      // path computes: the texture is mapped across the full physical wall height, and
-      // drawing is simply clipped to the visible cone/screen region.  This gives the
-      // same perspective-correct scaling as opaque walls and avoids texture swimming.
+      // Use the unclamped geometry rows to map the texture across the full
+      // physical wall height. This ensures the perspective scaling remains
+      // constant even when the drawing area is clipped by the screen or a cone,
+      // preventing the texture from swimming.
       if (rowend_persp > rowstart_persp)
          yinc = ((BITMAP_HEIGHT << FIX_DECIMAL) - 1) / (rowend_persp - rowstart_persp);
       else
@@ -3287,8 +3286,9 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       }
 
       // Align texture bottom-up or top-down.
-      // Use the unclamped geometry rows (persp) for ytex so that the starting texel
-      // reflects the physical wall position, matching the opaque path's behaviour.
+      // Use the unclamped geometry rows for ytex so that the starting texel
+      // reflects the physical wall position, keeping the texture correctly
+      // anchored even if the wall is clipped.
       if (top_down)
          ytex = yinc * (rowstart_persp - clipend) + (yoffset << FIX_DECIMAL);
       else

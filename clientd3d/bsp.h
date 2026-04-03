@@ -31,12 +31,12 @@
 
 enum WallTranslucency {
    WALL_TRANSLUCENCY_OPAQUE = 0,  // fully opaque
-   WALL_TRANSLUCENCY_25     = 1,  // 25% visible
-   WALL_TRANSLUCENCY_50     = 2,  // 50% visible
-   WALL_TRANSLUCENCY_75     = 3,  // 75% visible
+   WALL_TRANSLUCENCY_25     = 1,  // 25% visible (75% transparent)
+   WALL_TRANSLUCENCY_50     = 2,  // 50% visible (50% transparent)
+   WALL_TRANSLUCENCY_75     = 3,  // 75% visible (25% transparent)
 };
 
-static inline WallTranslucency WallTranslucencyLevel(DWORD flags)
+static WallTranslucency WallTranslucencyLevel(DWORD flags)
 {
    return (WallTranslucency)((flags & WF_TRANSLUCENCY_MASK) >> 15);
 }

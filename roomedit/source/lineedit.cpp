@@ -451,7 +451,7 @@ void TLineDefEditDialog::SetupWindow ()
    ::CenterWindow (this);
 
    // Populate translucency dropdowns
-   const char *transLabels[] = { "None", "25% transparent", "50% transparent", "75% transparent" };
+   const char *transLabels[] = { "None", "75% transparent", "50% transparent", "25% transparent" };
    for (int ti = 0; ti < 4; ti++)
    {
       pTranslucencyPos->AddString(transLabels[ti]);

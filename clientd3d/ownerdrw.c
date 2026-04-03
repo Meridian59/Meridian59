@@ -391,11 +391,11 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
+   if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
+      item_rarity_value = (item_rarity_grade)obj->rarity;
+
    if (!classic_dialog)
    {
-      if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
-         item_rarity_value = (item_rarity_grade)obj->rarity;
-
       crColorText = GetColor(
                         GetItemListColor(
                            lpdis->hwndItem,
@@ -408,6 +408,14 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
                               lpdis->hwndItem,
                               UNSEL_FGD,
                               item_rarity_value));
+   }
+   else if (item_rarity_value != ITEM_RARITY_GRADE_NORMAL)
+   {
+      crColorText = GetColor(
+                        GetItemListColor(
+                           lpdis->hwndItem,
+                           (selected ? SEL_FGD : UNSEL_FGD),
+                           item_rarity_value));
    }
 
    if (lpdis->itemState & ODS_DISABLED)

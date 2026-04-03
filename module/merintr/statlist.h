@@ -20,6 +20,8 @@ void StatsListChangeStat(Statistic *s);
 void StatsListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis);
 bool StatsListDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatsListCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
+void StatsListRetheme(void);
+void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 
 void ShowStatsList(bool bShow);
 

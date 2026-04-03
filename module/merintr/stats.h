@@ -77,6 +77,9 @@ StatGroup StatsGetCurrentGroup(void);
 void StatsDraw(void);
 void StatsMove(void);
 void StatsClearArea(void);
+HWND GetHwndStats(void);
+StatGroup StatsGetPendingGroup(void);
+void StatsSetPendingGroup(StatGroup group);
 
 void StatsGroupsInfo(BYTE num_groups, ID *names);
 void StatChange(StatGroup group, Statistic *s);

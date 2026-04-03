@@ -121,13 +121,16 @@ static void InventoryDrawSingleItem(InvItem *item, int row, int col);
 static void InventoryRedrawSingleItem(InvItem *item);
 static InvItem *InventoryGetCurrentItem(void);
 static ID   InventoryGetCurrentId(void);
+static bool InventoryIsVisible(void);
 static bool InventoryItemVisible(int row, int col);
 static void InventoryCursorMove(int action);
 static bool InventoryReleaseCapture(void);
 static bool InventoryDropCurrentItem(room_contents_node *container);
 static bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
+static void InventoryMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys);
 static void InventoryComputeRowsCols(void);
+static int InventoryGetWheelSteps(int zDelta);
 
 /************************************************************************/
 /*
@@ -167,6 +170,10 @@ void InventoryBoxCreate(HWND hParent)
 				WS_CHILD | SBS_VERT,
 				0, 0, 100, 100,  /* Make sure scrollbar drawn ok */
 				hwndInvDialog, (HMENU) IDC_INVSCROLL, hInst, NULL);
+   DarkScrollbarSubclass(hwndInvScroll);
+
+   if (IsDarkMode())
+      SetWindowTheme(hwndInvDialog, L"DarkMode_Explorer", NULL);
 
    inventory_scrollbar_width = GetSystemMetrics(SM_CXVSCROLL);
    num_items = 0;
@@ -191,10 +198,10 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   if (!GetBitmapResourceInfo(hInst, IDB_INVBKGND, &inventory_bkgnd))
+   if (!GetBitmapResourceInfo(hInst, DarkModeResourceId(IDB_INVBKGND), &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
-	if( !( ptr = GetBitmapResource( hInst, IDB_INVBKGND ) ) )
+	if( !( ptr = GetBitmapResource( hInst, DarkModeResourceId(IDB_INVBKGND) ) ) )
 		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
 
 	logbrush.lbStyle = BS_DIBPATTERNPT;
@@ -276,7 +283,11 @@ void InventoryBoxResize(int xsize, int ysize, AREA *view)
  */
 void InventoryDisplayScrollbar(void)
 {
-   ShowWindow(hwndInvDialog, SW_HIDE);  /* Hide scrollbar ugliness */
+   bool wasVisible = IsWindowVisible(hwndInvDialog);
+
+   /* Temporarily hide the dialog while repositioning windows to avoid
+      visual flicker from the scrollbar being moved. */
+   ShowWindow(hwndInvDialog, SW_HIDE);
    ShowWindow(hwndInvScroll, SW_HIDE); 
 
    has_scrollbar = (num_items > rows * cols);
@@ -287,9 +298,13 @@ void InventoryDisplayScrollbar(void)
 	      inventory_area.cx, inventory_area.cy,
 	      FALSE);
 
-   MoveWindow(hwndInv, 0, 0, 
-	      inventory_area.cx - inventory_scrollbar_width, inventory_area.cy,
-	      FALSE);
+   /* When no scrollbar, hwndInv fills the full dialog width so no uncovered
+      strip shows the parent window background on the right edge. */
+   int inv_width = has_scrollbar
+      ? inventory_area.cx - inventory_scrollbar_width
+      : inventory_area.cx;
+
+   MoveWindow(hwndInv, 0, 0, inv_width, inventory_area.cy, FALSE);
 
    MoveWindow(hwndInvScroll, inventory_area.cx - inventory_scrollbar_width,
 	      0, inventory_scrollbar_width,
@@ -297,10 +312,28 @@ void InventoryDisplayScrollbar(void)
 	      TRUE);
 
    InventoryScrollRange();
-	if( StatsGetCurrentGroup() == STATS_INVENTORY )
+   /* Re-show the dialog if it was visible before, or if the active
+      stat group is inventory (covers the first call during login
+      when wasVisible is false but inventory should be shown). */
+   if (wasVisible || GetStatGroup() == STATS_INVENTORY)
 	{
 		ShowWindow(hwndInvDialog, SW_SHOWNORMAL);
-		ShowWindow(hwndInvScroll, has_scrollbar ? SW_SHOWNORMAL : SW_HIDE);
+		if (has_scrollbar)
+		{
+			ShowWindow(hwndInvScroll, SW_SHOWNORMAL);
+         if (IsNonClassicTheme())
+            RedrawWindow(hwndInvScroll, NULL, NULL,
+               RDW_INVALIDATE | RDW_FRAME | RDW_ERASE | RDW_UPDATENOW);
+		}
+		else
+		{
+			ShowWindow(hwndInvScroll, SW_HIDE);
+		}
+
+      /* Draw inventory content immediately via GetDC so the strips and items
+         are painted before any queued WM_ERASEBKGND or WM_DRAWITEM fires.
+         Without this, the strip area can briefly show hMain's background. */
+      InventoryRedraw();
 	}
 }
 /************************************************************************/
@@ -326,9 +359,8 @@ void InventoryComputeRowsCols(void)
  */
 void InventoryScrollRange(void)
 {
-   /* Max is when last item is on bottom of list */
-   if (cols != 0)
-      SetScrollRange(hwndInvScroll, SB_CTL, 0, (num_items + cols - 1) / cols - rows, TRUE);
+   int totalRows = cols > 0 ? (num_items + cols - 1) / cols : 0;
+   DarkScrollbarSetInfo(hwndInvScroll, totalRows, rows, top_row, true);
 }
 /************************************************************************/
 /*
@@ -337,6 +369,7 @@ void InventoryScrollRange(void)
 void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
 {
    int new_top;  // New top row index
+   int max_top = cols > 0 ? std::max((num_items + cols - 1) / cols - rows, 0) : 0;
 
    switch (code)
    {
@@ -377,7 +410,7 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       return;
    }
    new_top = std::max(new_top, 0);
-   new_top = std::min(new_top, (num_items + cols - 1) / cols - rows);
+   new_top = std::min(new_top, max_top);
 
    if (new_top != top_row)
    {
@@ -385,6 +418,49 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       InventoryRedraw();
       SetScrollPos(hwndInvScroll, SB_CTL, top_row, TRUE); 
    }
+}
+/************************************************************************/
+/*
+ * InventoryGetWheelSteps:  Convert accumulated wheel delta into whole-row
+ *   scroll steps.
+ */
+static int InventoryGetWheelSteps(int zDelta)
+{
+   static int wheel_delta;
+
+   wheel_delta += zDelta;
+
+   int steps = wheel_delta / WHEEL_DELTA;
+   wheel_delta -= steps * WHEEL_DELTA;
+   return steps;
+}
+/************************************************************************/
+/*
+ * InventoryMouseWheel:  Scroll inventory rows in response to mouse wheel
+ *   input.  Parameter order must be (zDelta, fwKeys) to match the
+ *   HANDLE_WM_MOUSEWHEEL macro expansion from windowsx.h.
+ */
+static void InventoryMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
+{
+   int steps = InventoryGetWheelSteps(zDelta);
+   UINT code = steps > 0 ? SB_LINEUP : SB_LINEDOWN;
+
+   int max_top = cols > 0 ? std::max((num_items + cols - 1) / cols - rows, 0) : 0;
+   if (max_top == 0 || steps == 0)
+      return;
+
+   bool scrolled = false;
+   for (int index = 0; index < abs(steps); ++index)
+   {
+      int old_top = top_row;
+      InventoryVScroll(hwnd, hwndInvScroll, code, 0);
+      if (top_row != old_top)
+         scrolled = true;
+      else
+         break;
+   }
+   if (scrolled)
+      InventoryRedraw();
 }
 /************************************************************************/
 /*
@@ -396,9 +472,40 @@ void InventoryResetFont(void)
 /************************************************************************/
 /*
  * InventoryChangeColor:  Called when a color has changed.
+ *   Rethemes inventory scrollbar and recreates the background brush
+ *   to match the current theme.
  */
 void InventoryChangeColor(void)
 {
+   BITMAPINFOHEADER *ptr;
+   LOGBRUSH logbrush;
+   LPCWSTR theme = IsDarkMode() ? L"DarkMode_Explorer" : NULL;
+
+   SetWindowTheme(hwndInvDialog, theme, NULL);
+
+   /* Reload inventory background bitmap for the current theme. */
+   if (!GetBitmapResourceInfo(hInst, DarkModeResourceId(IDB_INVBKGND), &inventory_bkgnd))
+      debug(("InventoryChangeColor couldn't load inventory background bitmap\n"));
+
+   /* Recreate the scrollbar background brush. */
+   ptr = GetBitmapResource(hInst, DarkModeResourceId(IDB_INVBKGND));
+   if (ptr != NULL)
+   {
+      DeleteObject(hbrushScrollBack);
+      logbrush.lbStyle = BS_DIBPATTERNPT;
+      logbrush.lbColor = DIB_RGB_COLORS;
+      logbrush.lbHatch = (ULONG_PTR)ptr;
+      hbrushScrollBack = CreateBrushIndirect(&logbrush);
+   }
+
+   InvalidateRect(hwndInvDialog, NULL, TRUE);
+
+   /* Force a complete repaint of the entire inventory tree (dialog,
+      item grid, scrollbar) so the theme change is immediately visible.
+      Without RDW_ALLCHILDREN, the child item grid may retain stale
+      content from the previous theme until the user scrolls. */
+   RedrawWindow(hwndInvDialog, NULL, NULL,
+      RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
 }
 /************************************************************************/
 void InventorySetFocus(bool forward)
@@ -418,13 +525,36 @@ INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
       return FALSE;
 
    case WM_ERASEBKGND:
+   {
+      /* Fill the entire dialog area with the inventory background texture.
+         hwndInvDialog has no content of its own outside its child windows,
+         so without this fill, hMain's background (painted without
+         WS_CLIPCHILDREN) bleeds through and shows as the wrong color in
+         the strips around the inventory grid. */
+      HDC hdc = (HDC)wParam;
+      RECT rc;
+      GetClientRect(hwnd, &rc);
+      DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &rc,
+         inventory_area.x, inventory_area.y, -1);
       return 1;
+   }
+
+   case WM_MOUSEWHEEL:
+      HANDLE_WM_MOUSEWHEEL(hwnd, wParam, lParam, InventoryMouseWheel);
+      return TRUE;
 
       HANDLE_MSG(hwnd, WM_VSCROLL, InventoryVScroll);
 
    case WM_DRAWITEM:
       InventoryRedraw();
       return TRUE;
+
+   case WM_CTLCOLORSCROLLBAR:
+     /* Return a valid brush so DefDlgProc does not fill the scrollbar track
+        with the dialog background color, which would prevent UxTheme from
+        rendering the DarkMode_Explorer theme. GetSysColorBrush does not
+        need to be freed. Classic mode also benefits from a valid base brush. */
+     return (INT_PTR) GetSysColorBrush(COLOR_SCROLLBAR);
 
    case WM_ACTIVATE:
      if (wParam == 0)
@@ -449,6 +579,14 @@ LRESULT CALLBACK InventoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
    case WM_KEYDOWN:
       if (HANDLE_WM_KEYDOWN_BLAK(hwnd, wParam, lParam, InventoryKey))
       	 return 0;
+      break;
+   case WM_MOUSEWHEEL:
+      /* Process the scroll here, then forward to the parent dialog so
+         the dialog proc can also handle it (needed when the cursor
+         is directly over an item cell rather than the dialog). */
+      HANDLE_WM_MOUSEWHEEL(hwnd, wParam, lParam, InventoryMouseWheel);
+      SendMessage(GetParent(hwnd), WM_MOUSEWHEEL, wParam, lParam);
+      return 0;
    case WM_ERASEBKGND:
      // Draw outside of inventory items
      // XXX
@@ -519,6 +657,11 @@ void InventoryRedraw(void)
    HDC hdc;
    RECT r;
 
+   if (!InventoryIsVisible())
+   {
+      return;
+   }
+
    offset = top_row * cols;
    l = items;
    for (i=0; i < offset; i++)
@@ -586,6 +729,9 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
    AREA area, obj_area;
    char temp[MAXAMOUNT + 1];
    bool draw_cursor;
+
+   if (!InventoryIsVisible())
+      return;
    
    area.x = col * INVENTORY_BOX_WIDTH;
    area.y =  row * INVENTORY_BOX_HEIGHT;
@@ -724,6 +870,9 @@ void InventoryRedrawSingleItem(InvItem *item)
 {
    int index = 0;
    list_type l;
+
+   if (!InventoryIsVisible())
+      return;
 
    for (l = items; l != NULL; l = l->next)
    {
@@ -1242,9 +1391,9 @@ void DisplayInventory(list_type inventory)
    }
 
    InventoryScrollRange();
-   if (num_items > rows * cols)
-      InventoryDisplayScrollbar();
    WindowEndUpdate(hwndInv);
+
+   InventoryDisplayScrollbar();
 }
 /************************************************************************/
 /*
@@ -1314,6 +1463,16 @@ ID InventoryGetCurrentId(void)
 }
 /************************************************************************/
 /*
+ * InventoryIsVisible:  Return true if the inventory dialog is currently
+ *   shown on screen.
+ */
+static bool InventoryIsVisible(void)
+{
+   return hwndInvDialog != NULL && hwndInv != NULL &&
+      IsWindowVisible(hwndInvDialog) && IsWindowVisible(hwndInv);
+}
+/************************************************************************/
+/*
  * InventoryGetCurrentItem:  Return item with cursor in inventory, or NULL if none.
  */
 InvItem *InventoryGetCurrentItem(void)
@@ -1364,6 +1523,7 @@ bool InventoryMouseCaptured(void)
 void AnimateInventory(int dt)
 {
    bool need_redraw;
+   bool inventory_visible = InventoryIsVisible();
    int index;
    list_type l;
 
@@ -1373,7 +1533,7 @@ void AnimateInventory(int dt)
       InvItem *item = (InvItem *) (l->data);
       
       need_redraw = AnimateObject(item->obj, dt);
-      if (need_redraw)
+      if (need_redraw && inventory_visible)
       {
 	 // Redraw object on screen if it's visible
 	 int row = index / cols;
@@ -1388,18 +1548,46 @@ void AnimateInventory(int dt)
 
 /************************************************************************/
 /*
- * ShowInventory
+ * ShowInventory:  Show or hide the inventory dialog and scrollbar.
+ *   When showing with an active scrollbar, forces an immediate scrollbar
+ *   repaint so the scrollbar widget is not left blank after hMain's
+ *   background texture paints over it without WS_CLIPCHILDREN clipping.
  */
 void ShowInventory(bool bShow)
 {
-	ShowWindow( hwndInvDialog, bShow ? SW_SHOWNORMAL : SW_HIDE );
-	ShowWindow( hwndInvScroll, bShow && has_scrollbar ? SW_SHOWNORMAL : SW_HIDE );
+	ShowWindow(hwndInvDialog, bShow ? SW_SHOWNORMAL : SW_HIDE);
+	ShowWindow(hwndInvScroll, bShow && has_scrollbar ? SW_SHOWNORMAL : SW_HIDE);
+
+   if (bShow)
+   {
+      InvalidateRect(hwndInvDialog, NULL, FALSE);
+      InvalidateRect(hwndInv, NULL, FALSE);
+      InventoryRedraw();
+      if (has_scrollbar)
+         RedrawWindow(hwndInvScroll, NULL, NULL,
+            RDW_INVALIDATE | RDW_FRAME | RDW_ERASE | RDW_UPDATENOW);
+   }
+   else
+   {
+      HWND hwndStats = GetHwndStats();
+
+      if (hwndStats != NULL)
+      {
+         StatsClearArea();
+         InvalidateRect(hwndStats, NULL, FALSE);
+      }
+   }
 }
 
 /************************************************************************/
 HWND GetHwndInv()
 {
 	return hwndInv;
+}
+/************************************************************************/
+HWND GetHwndInvDialog()
+{
+	return hwndInvDialog;
 }
 
 /************************************************************************/

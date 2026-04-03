@@ -44,6 +44,7 @@ void AnimateInventory(int dt);
 
 void ShowInventory(bool bShow);
 HWND GetHwndInv();
+HWND GetHwndInvDialog();
 RawBitmap* pinventory_bkgnd();
 
 #endif /* #ifndef _INVENTRY_H */

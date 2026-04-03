@@ -138,6 +138,12 @@ LRESULT CALLBACK GraphCtlWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
       HANDLE_MSG(hwnd, WM_KEYDOWN, GraphCtlKey);
       HANDLE_MSG(hwnd, WM_KEYUP, GraphCtlKey);
 
+   case WM_MOUSEWHEEL:
+      /* Forward wheel events to the parent so the stats area scrolls
+         even when the cursor is over a graph control. */
+      SendMessage(GetParent(hwnd), WM_MOUSEWHEEL, wParam, lParam);
+      return 0;
+
    case WM_ERASEBKGND:
       /* don't repaint background */
 	  return TRUE; /* yes, we repainted the background, honest */
@@ -291,108 +297,285 @@ void GraphCtlPaint(HWND hwnd)
    bar_brush = CreateSolidBrush(colors[GRAPHCOLOR_BAR]);
    bkgnd_brush = CreateSolidBrush(colors[GRAPHCOLOR_BKGND]);
 
-   /* Draw frame */
-   SelectObject(hdc, pens[GRAPHCOLOR_FRAME]);
    GetClientRect(hwnd, &rect);
 
-   if (info->style & GCS_SLIDER)
+   /*
+    * Non-default themes: flat rounded bars with no ornate frame border.
+    * Default theme: original rectangular bar with optional slider triangle.
+    */
+   if (config.theme != THEME_DEFAULT)
    {
-      rect.left += GRAPH_SIDE_BORDER;
-      rect.right -= GRAPH_SIDE_BORDER;
-      rect.bottom -= GRAPH_SLIDER_HEIGHT;
-   }
-   
-   Rectangle(hdc, rect.left, rect.top, rect.right, rect.bottom);
+      static const int CORNER = 3;
 
-   /* Draw bar */
-   if (info->min_value == info->max_value)
-      bar_pos = 1000;
-   else 
-   {
-      bar_pos = (info->current_value - info->min_value) * 1000 / 
-	 (info->max_value - info->min_value);
-      // Bring within legal range, in case current_value is outside limits
-      bar_pos = std::clamp(bar_pos, 0L, 1000L);
-   }
+      /* Fill entire background with rounded rect */
+      HPEN hNullPen = (HPEN)GetStockObject(NULL_PEN);
+      SelectObject(hdc, hNullPen);
+      SelectObject(hdc, bkgnd_brush);
+      RoundRect(hdc, rect.left, rect.top, rect.right, rect.bottom, CORNER * 2, CORNER * 2);
 
-   bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;  /* Skip border */
-   value_pos = bar_pos;
-   bar_rect.left   = rect.left + 1;
-   bar_rect.right  = bar_pos;
-   bar_rect.top    = rect.top + 1;
-   bar_rect.bottom = rect.bottom - 1;
-   FillRect(hdc, &bar_rect, bar_brush);
-
-   /* Draw limit bar, if appropriate */
-   if (info->style & GCS_LIMITBAR && info->limit_value > info->current_value)
-   {
-      HBRUSH limit_brush;
-
-      bar_rect.left  = bar_pos;
-
-      bar_pos = (info->limit_value - info->min_value) * 1000 /
-	 (info->max_value - info->min_value);
-      bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;
-
-      // Bring within legal range, in case limit_value is outside limits
-      bar_pos = std::clamp(bar_pos, 0L, 1000L);
-
-      bar_rect.right = bar_pos;
-      limit_brush = CreateSolidBrush(colors[GRAPHCOLOR_LIMITBAR]);
-      FillRect(hdc, &bar_rect, limit_brush);
-      DeleteObject(limit_brush);
-   }
-
-   /* Clear area where bar isn't */
-   bar_rect.left = bar_pos;
-   bar_rect.right = rect.right - 1;
-   FillRect(hdc, &bar_rect, bkgnd_brush);
-
-   // Draw value of stat, if appropriate
-   if (info->style & GCS_NUMBER)
-   {
-      snprintf(temp, sizeof(temp), "%d", info->current_value);
-
-      SetBkMode(hdc, TRANSPARENT);
-      SelectObject(hdc, GetFont(FONT_STATNUM));
-      SetTextColor(hdc, GetColor(COLOR_BAR4));
-      GetTextExtentPoint32(hdc, temp, (int) strlen(temp), &size);
-
-      // If there's room past the bar, put it there, otherwise put it in bar
-      if (rect.right - value_pos > size.cx)
-	 x = value_pos + 1;
+      /* Compute bar position */
+      if (info->min_value == info->max_value)
+         bar_pos = 1000;
       else
-	 x = value_pos - size.cx - 1;
-
-      TextOut(hdc, x, std::max(0L, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
-   }
-   
-   /* Draw slider if appropriate */
-   DeleteObject(bkgnd_brush);
-   if (info->style & GCS_SLIDER)
-   {
-      /* Erase old slider */
-      bkgnd_brush = CreateSolidBrush(colors[GRAPHCOLOR_SLIDERBKGND]);
-      bar_rect.bottom = rect.bottom + GRAPH_SLIDER_HEIGHT;
-      bar_rect.top = rect.bottom;
-      bar_rect.left = rect.left - GRAPH_SIDE_BORDER;
-      bar_rect.right = rect.right + GRAPH_SIDE_BORDER;
-      FillRect(hdc, &bar_rect, bkgnd_brush);
-      
-      /* Draw new slider */
-      for (i=0; i < 3; i++)
       {
-	 points[i].x = triangle[i].x + bar_pos;
-	 points[i].y = triangle[i].y + rect.bottom;
+         bar_pos = (info->current_value - info->min_value) * 1000 /
+            (info->max_value - info->min_value);
+         bar_pos = std::clamp(bar_pos, 0L, 1000L);
       }
-      SelectObject(hdc, pens[GRAPHCOLOR_SLIDER]);
-      
-      /* If we have the focus, fill the slider */
-      if (focus)
-	 SelectObject(hdc, bar_brush);
-      Polygon(hdc, points, 3);
+
+      bar_pos = bar_pos * (rect.right - rect.left) / 1000 + rect.left;
+      value_pos = bar_pos;
+
+      /* Draw filled bar as a clipped vertical gradient (top highlight to bottom shade) */
+      if (bar_pos > rect.left)
+      {
+         COLORREF barColor = colors[GRAPHCOLOR_BAR];
+         BYTE r = GetRValue(barColor);
+         BYTE g = GetGValue(barColor);
+         BYTE b = GetBValue(barColor);
+
+         /* Top edge: lighter highlight */
+         BYTE lr = (BYTE)std::min(255, r + 70);
+         BYTE lg = (BYTE)std::min(255, g + 70);
+         BYTE lb = (BYTE)std::min(255, b + 70);
+         /* Bottom edge: slightly darker shade */
+         BYTE dr = (BYTE)std::max(0, r - 30);
+         BYTE dg = (BYTE)std::max(0, g - 30);
+         BYTE db = (BYTE)std::max(0, b - 30);
+
+         TRIVERTEX vert[2];
+         vert[0].x = rect.left;
+         vert[0].y = rect.top;
+         vert[0].Red   = (COLOR16)lr << 8;
+         vert[0].Green = (COLOR16)lg << 8;
+         vert[0].Blue  = (COLOR16)lb << 8;
+         vert[0].Alpha = 0;
+         vert[1].x = rect.right;
+         vert[1].y = rect.bottom;
+         vert[1].Red   = (COLOR16)dr << 8;
+         vert[1].Green = (COLOR16)dg << 8;
+         vert[1].Blue  = (COLOR16)db << 8;
+         vert[1].Alpha = 0;
+         GRADIENT_RECT gRect = { 0, 1 };
+
+         /* Clip gradient to the bar fill region inside the rounded shape */
+         HRGN hRound = CreateRoundRectRgn(rect.left, rect.top,
+            rect.right + 1, rect.bottom + 1, CORNER * 2, CORNER * 2);
+         HRGN hBar = CreateRectRgn(rect.left, rect.top, bar_pos, rect.bottom);
+         CombineRgn(hBar, hBar, hRound, RGN_AND);
+         SelectClipRgn(hdc, hBar);
+
+         GradientFill(hdc, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
+
+         SelectClipRgn(hdc, NULL);
+         DeleteObject(hBar);
+         DeleteObject(hRound);
+      }
+
+      /* Draw limit bar gradient if appropriate */
+      if (info->style & GCS_LIMITBAR && info->limit_value > info->current_value)
+      {
+         long limit_pos;
+
+         limit_pos = (info->limit_value - info->min_value) * 1000 /
+            (info->max_value - info->min_value);
+         limit_pos = std::clamp(limit_pos, 0L, 1000L);
+         limit_pos = limit_pos * (rect.right - rect.left) / 1000 + rect.left;
+
+         if (limit_pos > bar_pos)
+         {
+            COLORREF limColor = colors[GRAPHCOLOR_LIMITBAR];
+            BYTE r = GetRValue(limColor);
+            BYTE g = GetGValue(limColor);
+            BYTE b = GetBValue(limColor);
+            BYTE lr = (BYTE)std::min(255, r + 70);
+            BYTE lg = (BYTE)std::min(255, g + 70);
+            BYTE lb = (BYTE)std::min(255, b + 70);
+            BYTE dr = (BYTE)std::max(0, r - 30);
+            BYTE dg = (BYTE)std::max(0, g - 30);
+            BYTE db = (BYTE)std::max(0, b - 30);
+
+            TRIVERTEX lv[2];
+            lv[0].x = rect.left;
+            lv[0].y = rect.top;
+            lv[0].Red   = (COLOR16)lr << 8;
+            lv[0].Green = (COLOR16)lg << 8;
+            lv[0].Blue  = (COLOR16)lb << 8;
+            lv[0].Alpha = 0;
+            lv[1].x = rect.right;
+            lv[1].y = rect.bottom;
+            lv[1].Red   = (COLOR16)dr << 8;
+            lv[1].Green = (COLOR16)dg << 8;
+            lv[1].Blue  = (COLOR16)db << 8;
+            lv[1].Alpha = 0;
+            GRADIENT_RECT lgRect = { 0, 1 };
+
+            HRGN hRound = CreateRoundRectRgn(rect.left, rect.top,
+               rect.right + 1, rect.bottom + 1, CORNER * 2, CORNER * 2);
+            HRGN hLim = CreateRectRgn(bar_pos, rect.top, limit_pos, rect.bottom);
+            CombineRgn(hLim, hLim, hRound, RGN_AND);
+            SelectClipRgn(hdc, hLim);
+
+            GradientFill(hdc, lv, 2, &lgRect, 1, GRADIENT_FILL_RECT_V);
+
+            SelectClipRgn(hdc, NULL);
+            DeleteObject(hLim);
+            DeleteObject(hRound);
+         }
+      }
+
+      /* Draw rounded outline border over the filled bar */
+      SelectObject(hdc, pens[GRAPHCOLOR_FRAME]);
+      SelectObject(hdc, (HBRUSH)GetStockObject(HOLLOW_BRUSH));
+      RoundRect(hdc, rect.left, rect.top, rect.right, rect.bottom, CORNER * 2, CORNER * 2);
+
+      /* Draw value number */
+      if (info->style & GCS_NUMBER)
+      {
+         snprintf(temp, sizeof(temp), "%d", info->current_value);
+
+         SetBkMode(hdc, TRANSPARENT);
+
+         HFONT hBarFont = CreateFont(-11, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, "Segoe UI");
+         HFONT hOldFont = (HFONT)SelectObject(hdc, hBarFont);
+         GetTextExtentPoint32(hdc, temp, (int) strlen(temp), &size);
+
+
+         if (rect.right - value_pos > size.cx + 6)
+            x = value_pos + 3;
+         else
+            x = value_pos - size.cx - 3;
+
+         /* Keep text from crowding the right edge of the bar */
+         if (x + size.cx > rect.right - 8)
+            x = rect.right - size.cx - 8;
+
+         int ty = std::max(0L, (rect.bottom - size.cy) / 2);
+
+         /* Draw 1px dark outline in 4 directions for contrast against bar fills */
+         SetTextColor(hdc, RGB(0, 0, 0));
+         TextOut(hdc, x - 1, ty, temp, (int) strlen(temp));
+         TextOut(hdc, x + 1, ty, temp, (int) strlen(temp));
+         TextOut(hdc, x, ty - 1, temp, (int) strlen(temp));
+         TextOut(hdc, x, ty + 1, temp, (int) strlen(temp));
+
+         SetTextColor(hdc, GetColor(COLOR_BAR4));
+         TextOut(hdc, x, ty, temp, (int) strlen(temp));
+
+         SelectObject(hdc, hOldFont);
+         DeleteObject(hBarFont);
+      }
 
       DeleteObject(bkgnd_brush);
+   }
+   else
+   {
+      /* Default theme: original rectangular bar with frame and optional slider */
+
+      if (info->style & GCS_SLIDER)
+      {
+         rect.left += GRAPH_SIDE_BORDER;
+         rect.right -= GRAPH_SIDE_BORDER;
+         rect.bottom -= GRAPH_SLIDER_HEIGHT;
+      }
+
+      /* Draw frame */
+      SelectObject(hdc, pens[GRAPHCOLOR_FRAME]);
+      Rectangle(hdc, rect.left, rect.top, rect.right, rect.bottom);
+
+      /* Draw bar */
+      if (info->min_value == info->max_value)
+         bar_pos = 1000;
+      else
+      {
+         bar_pos = (info->current_value - info->min_value) * 1000 /
+            (info->max_value - info->min_value);
+         bar_pos = std::clamp(bar_pos, 0L, 1000L);
+      }
+
+      bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;
+      value_pos = bar_pos;
+      bar_rect.left   = rect.left + 1;
+      bar_rect.right  = bar_pos;
+      bar_rect.top    = rect.top + 1;
+      bar_rect.bottom = rect.bottom - 1;
+      FillRect(hdc, &bar_rect, bar_brush);
+
+      /* Draw limit bar, if appropriate */
+      if (info->style & GCS_LIMITBAR && info->limit_value > info->current_value)
+      {
+         HBRUSH limit_brush;
+
+         bar_rect.left  = bar_pos;
+
+         bar_pos = (info->limit_value - info->min_value) * 1000 /
+            (info->max_value - info->min_value);
+         bar_pos = bar_pos * (rect.right - rect.left - 2) / 1000 + rect.left + 1;
+         bar_pos = std::clamp(bar_pos, 0L, 1000L);
+
+         bar_rect.right = bar_pos;
+         limit_brush = CreateSolidBrush(colors[GRAPHCOLOR_LIMITBAR]);
+         FillRect(hdc, &bar_rect, limit_brush);
+         DeleteObject(limit_brush);
+      }
+
+      /* Clear area where bar isn't */
+      bar_rect.left = bar_pos;
+      bar_rect.right = rect.right - 1;
+      FillRect(hdc, &bar_rect, bkgnd_brush);
+
+      // Draw value of stat, if appropriate
+      if (info->style & GCS_NUMBER)
+      {
+         snprintf(temp, sizeof(temp), "%d", info->current_value);
+
+         SetBkMode(hdc, TRANSPARENT);
+         SelectObject(hdc, GetFont(FONT_STATNUM));
+         SetTextColor(hdc, GetColor(COLOR_BAR4));
+         GetTextExtentPoint32(hdc, temp, (int) strlen(temp), &size);
+
+
+         if (rect.right - value_pos > size.cx)
+            x = value_pos + 1;
+         else
+            x = value_pos - size.cx - 1;
+
+         /* Keep text from crowding the right edge of the bar */
+         if (x + size.cx > rect.right - 4)
+            x = rect.right - size.cx - 4;
+
+         TextOut(hdc, x, std::max(0L, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
+      }
+
+      /* Draw slider if appropriate */
+      DeleteObject(bkgnd_brush);
+      if (info->style & GCS_SLIDER)
+      {
+         /* Erase old slider */
+         bkgnd_brush = CreateSolidBrush(colors[GRAPHCOLOR_SLIDERBKGND]);
+         bar_rect.bottom = rect.bottom + GRAPH_SLIDER_HEIGHT;
+         bar_rect.top = rect.bottom;
+         bar_rect.left = rect.left - GRAPH_SIDE_BORDER;
+         bar_rect.right = rect.right + GRAPH_SIDE_BORDER;
+         FillRect(hdc, &bar_rect, bkgnd_brush);
+
+         /* Draw new slider */
+         for (i=0; i < 3; i++)
+         {
+            points[i].x = triangle[i].x + bar_pos;
+            points[i].y = triangle[i].y + rect.bottom;
+         }
+         SelectObject(hdc, pens[GRAPHCOLOR_SLIDER]);
+
+         /* If we have the focus, fill the slider */
+         if (focus)
+            SelectObject(hdc, bar_brush);
+         Polygon(hdc, points, 3);
+
+         DeleteObject(bkgnd_brush);
+      }
    }
 
    EndPaint(hwnd, &ps);

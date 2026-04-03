@@ -553,8 +553,9 @@ bool ComputeObjectBoundingBox(PDIB pdib, list_type overlays, bool include_object
 void CreateWindowBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
+	int bg_id = (config.theme == THEME_DARK) ? IDB_BACKGROUND_DARK : IDB_BACKGROUND;
 	
-	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, IDB_BACKGROUND);
+	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, bg_id);
 	if (ptr == NULL)
 		debug(("Couldn't lock resource!\n"));      
 	bkgnd.bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
@@ -584,7 +585,7 @@ void DrawWindowBackgroundColor(RawBitmap *bg, HDC hdc, RECT *rect, int xin, int 
 	switch (GameGetState())
 	{
 	case GAME_NONE:
-		FillRect(hdc, rect, GetBrush(COLOR_BGD));
+		FillRect(hdc, rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
 		break;
 		
 	default:

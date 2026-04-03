@@ -282,11 +282,14 @@ void CopyCurrentAreaMiniMap( AREA* v )
 void DrawGridBorder(void)
 {
 	if (state == STATE_GAME && (GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
+	{
 		if (GetFocus() == hMain)
 			DrawBorder(&view, HIGHLIGHT_INDEX, &drawborderexcludeView);
+		else if (config.theme == THEME_DARK)
+			DrawBorderRGB(&view, GetColor(COLOR_BGD), &drawborderexcludeView);
 		else
-			//DrawBorder(view, border_index, &drawborderexcludeView);
 			DrawBorder(&view, BORDER_INDEX, &drawborderexcludeView);
+	}
 }
 /************************************************************************/
 /*

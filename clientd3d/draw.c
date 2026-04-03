@@ -195,6 +195,87 @@ void DrawBorder( AREA *area, int index, DRAWBORDEREXCLUDE* pExclude )
 }
 /************************************************************************/
 /*
+ * DrawBorderRGB:  Draw solid-color border around the given area, bypassing
+ *   the 8-bit palette path. Used for dark theme where the palette lacks
+ *   suitably dark greys.
+ */
+void DrawBorderRGB(AREA *area, COLORREF color, DRAWBORDEREXCLUDE *pExclude)
+{
+   HDC hdc = GetDC(hMain);
+   if (hdc == NULL)
+      return;
+
+   HBRUSH brush = CreateSolidBrush(color);
+   if (brush == NULL)
+   {
+      ReleaseDC(hMain, hdc);
+      return;
+   }
+
+   RECT r;
+   int t = HIGHLIGHT_THICKNESS;
+
+   r.top = area->y - t;
+   r.bottom = r.top + t;
+   if (!pExclude)
+   {
+      r.left = area->x - t;
+      r.right = area->x + area->cx + t;
+   }
+   else
+   {
+      r.left = area->x + pExclude->iTopEdge_Left;
+      r.right = area->x + area->cx - pExclude->iTopEdge_Right;
+   }
+   FillRect(hdc, &r, brush);
+
+   if (!pExclude)
+   {
+      r.top = area->y - t;
+      r.bottom = area->y + area->cy + t;
+   }
+   else
+   {
+      r.top = area->y + pExclude->iLeftEdge_Top;
+      r.bottom = area->y + area->cy - pExclude->iLeftEdge_Bottom;
+   }
+   r.left = area->x - t;
+   r.right = r.left + t;
+   FillRect(hdc, &r, brush);
+
+   r.top = area->y + area->cy;
+   r.bottom = r.top + t;
+   if (!pExclude)
+   {
+      r.left = area->x - t;
+      r.right = area->x + area->cx + t;
+   }
+   else
+   {
+      r.left = area->x + pExclude->iBottomEdge_Left;
+      r.right = area->x + area->cx - pExclude->iBottomEdge_Right;
+   }
+   FillRect(hdc, &r, brush);
+
+   if (!pExclude)
+   {
+      r.top = area->y - t;
+      r.bottom = area->y + area->cy + t;
+   }
+   else
+   {
+      r.top = area->y + pExclude->iRightEdge_Top;
+      r.bottom = area->y + area->cy - pExclude->iRightEdge_Bottom;
+   }
+   r.left = area->x + area->cx;
+   r.right = r.left + t;
+   FillRect(hdc, &r, brush);
+
+   DeleteObject(brush);
+   ReleaseDC(hMain, hdc);
+}
+/************************************************************************/
+/*
  * DrawWindowBackgroundBorder:  Draw a rectangle of thickness pixels around the
  *   outside of the given area.  xin and yin give the offset into the background
  *   texture (see DrawWindowBackgroundColor).

@@ -42,6 +42,7 @@ typedef struct DRAWBORDEREXCLUDETAG
 } DRAWBORDEREXCLUDE;
 
 M59EXPORT void DrawBorder( AREA *area, int index, DRAWBORDEREXCLUDE* pExclude );
+M59EXPORT void DrawBorderRGB(AREA *area, COLORREF color, DRAWBORDEREXCLUDE *pExclude);
 M59EXPORT void DrawWindowBackgroundBorder( RawBitmap *bg, HDC hdc, AREA *area, int thickness, int xin, int yin, int index, DRAWBORDEREXCLUDE* pExclude );
 
 M59EXPORT HDC CreateMemBitmap(int width, int height, HBITMAP *gOldBitmap, BYTE **gBits);

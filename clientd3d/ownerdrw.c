@@ -356,25 +356,45 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   hColorBg = GetBrush(
-               GetItemListColor(
-                  lpdis->hwndItem,
-                  (selected? SEL_BGD : UNSEL_BGD),
-                  ITEM_RARITY_GRADE_NORMAL));
+   /*
+    * Dialog listboxes render in classic style (black bg, white text)
+    * so theme palettes never leak into buy/sell/drop/offer/look dialogs.
+    */
+   bool is_dialog = (GetWindowLong(GetParent(lpdis->hwndItem), GWL_STYLE) & WS_DLGFRAME);
+   bool classic_dialog = (config.theme != THEME_DEFAULT) && is_dialog;
 
-   if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
+   if (classic_dialog)
+   {
+      hColorBg = selected
+         ? (HBRUSH)GetStockObject(WHITE_BRUSH)
+         : (HBRUSH)GetStockObject(BLACK_BRUSH);
+      FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
+      crColorText = selected ? RGB(0, 0, 0) : RGB(255, 255, 255);
+   }
+   else
+   {
       hColorBg = GetBrush(
-                     GetItemListColor(
-                        lpdis->hwndItem,
-                        UNSEL_BGD,
-                        ITEM_RARITY_GRADE_NORMAL));
+                  GetItemListColor(
+                     lpdis->hwndItem,
+                     (selected? SEL_BGD : UNSEL_BGD),
+                     ITEM_RARITY_GRADE_NORMAL));
 
-   FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
+      if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
+         hColorBg = GetBrush(
+                        GetItemListColor(
+                           lpdis->hwndItem,
+                           UNSEL_BGD,
+                           ITEM_RARITY_GRADE_NORMAL));
+
+      FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
+   }
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
-   if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
-      item_rarity_value = (item_rarity_grade)obj->rarity;
+   if (!classic_dialog)
+   {
+      if (style & (OD_DRAWOBJ | OD_DRAWICON) && obj != NULL)
+         item_rarity_value = (item_rarity_grade)obj->rarity;
 
       crColorText = GetColor(
                         GetItemListColor(
@@ -382,12 +402,13 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
                            (selected ? SEL_FGD : UNSEL_FGD),
                            item_rarity_value));
 
-   if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-      crColorText = GetColor(
-                        GetItemListColor(
-                           lpdis->hwndItem,
-                           UNSEL_FGD,
-                           item_rarity_value));
+      if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
+         crColorText = GetColor(
+                           GetItemListColor(
+                              lpdis->hwndItem,
+                              UNSEL_FGD,
+                              item_rarity_value));
+   }
 
    if (lpdis->itemState & ODS_DISABLED)
 	crColorText = GetSysColor(COLOR_GRAYTEXT);
@@ -455,7 +476,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
 
    SelectObject(lpdis->hDC, GetFont(FONT_LIST));
 
-   if (style & OD_COLORTEXT)
+   if ((style & OD_COLORTEXT) && !classic_dialog)
    {
      // get the color we'd prefer for this particular obj
      if (obj == NULL) 

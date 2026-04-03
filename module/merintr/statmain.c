@@ -18,9 +18,19 @@
 #include "client.h"
 #include "merintr.h"
 
-#define STAT_VIGOR 3         // Position in main stat group of vigor stat
+#define STAT_HEALTH 1        // Position in main stat group of health stat
+#define STAT_MANA   2        // Position in main stat group of mana stat
+#define STAT_VIGOR  3        // Position in main stat group of vigor stat
 
 #define STAT_EMERGENCY_COLOR   RGB(255, 0, 0)   // Draw critical stats in this color when low
+
+static const COLORREF STAT_HEALTH_COLOR       = RGB(170, 50, 50);    // Health bar and icon: red
+static const COLORREF STAT_HEALTH_LIMIT_COLOR = RGB(100, 30, 30);    // Health limit bar: dark red
+static const COLORREF STAT_MANA_COLOR         = RGB(55, 100, 170);   // Mana bar: blue
+static const COLORREF STAT_MANA_LIMIT_COLOR   = RGB(32, 60, 100);    // Mana limit bar: dark blue
+static const COLORREF STAT_MANA_ICON_COLOR    = RGB(125, 135, 175);  // Mana icon: silver-blue
+static const COLORREF STAT_VIGOR_COLOR        = RGB(170, 148, 40);   // Vigor bar and icon: gold
+static const COLORREF STAT_VIGOR_LIMIT_COLOR  = RGB(100, 88, 25);    // Vigor limit bar: dark gold
 
 #define STAT_TOOLTIP_BASE 100  // Base for tooltip IDs
 
@@ -32,6 +42,24 @@ int stat_width;       // Width of graph bars
 
 static void StatsMainMove(void);
 static void StatsMainSetColor(Statistic *s);
+/************************************************************************/
+/*
+ * GetStatIconSize:  Returns the stat icon dimension for the active theme.
+ *   Non-default themes use a larger size so the Unicode symbols are legible.
+ */
+static int GetStatIconSize(void)
+{
+   return IsNonClassicTheme() ? 20 : STAT_ICON_SIZE;
+}
+/************************************************************************/
+/*
+ * GetStatsBarHeight:  Returns the stat bar height for the active theme.
+ *   Non-default themes use a taller bar to match the larger icon row.
+ */
+int GetStatsBarHeight(void)
+{
+   return IsNonClassicTheme() ? 17 : STATS_BAR_HEIGHT;
+}
 /************************************************************************/
 /*
  * StatsMainReceive:  We received main group of stats from server.
@@ -56,9 +84,13 @@ void StatsMainReceive(list_type stats)
    count = 0;
 
    // Create graph controls for integer stats
-   height = STAT_ICON_SIZE + STATS_MAIN_SPACING;	 
+   int icon_size = GetStatIconSize();
+   height = icon_size + STATS_MAIN_SPACING;	 
    //y = ENCHANT_SIZE + 2 * ENCHANT_BORDER - 1 + EDGETREAT_HEIGHT;
-   y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (STAT_ICON_SIZE * 3)) / 2);
+   if (IsNonClassicTheme())
+      y = TOP_BORDER + EDGETREAT_HEIGHT + 1;
+   else
+      y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (icon_size * 3)) / 2);
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
@@ -139,7 +171,7 @@ void StatsMainChange(Statistic *s)
          SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, STAT_EMERGENCY_COLOR);
 
       if (pinfo.vigor >= MIN_VIGOR && old_vigor < MIN_VIGOR)
-         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
+         StatsMainSetColor(s);
    }
 }
 
@@ -153,13 +185,17 @@ void StatsMainRedraw(void)
    HDC hdc;
    AREA a, b;
    object_node *obj;   // Fake object node for DrawObject
+   int stat_index = 0;
+
+   /* Unicode symbols for non-default stat icons: cross, ankh, lightning */
+   static const wchar_t *stat_symbols[] = { L"\u271A", L"\u2625", L"\u26A1" };
 
    hdc = GetDC(cinfo->hMain);
 
    obj = ObjectGetBlank();
 
    a.x    = stat_x;
-   a.cx   = STAT_ICON_SIZE;
+   a.cx   = GetStatIconSize();
 
    for (l = main_stats; l != NULL; l = l->next)
    {
@@ -168,17 +204,80 @@ void StatsMainRedraw(void)
       a.y    = s->y;
       a.cy   = s->cy;
 
-      obj->icon_res = s->name_res;
+      if (IsNonClassicTheme() && stat_index < 3)
+      {
+         /*
+          * Non-default themes: draw a Unicode symbol instead of the BGF sprite.
+          * Paint the tiled background first, then overlay the colored symbol.
+          */
+         OffscreenWindowBackground(IsNonClassicTheme() ? pinventory_bkgnd() : NULL,
+            a.x, a.y, a.cx, a.cy);
+         OffscreenCopy(hdc, a.x, a.y, a.cx, a.cy, 0, 0);
 
-      OffscreenWindowBackground(NULL, a.x, a.y, a.cx, a.cy);
-      DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
-      GdiFlush();
+         /*
+          * Per-symbol font size bump: the ankh and lightning glyphs render
+          * smaller than the cross at the same point size in Segoe UI Symbol.
+          */
+         static const int stat_icon_size_adj[] = { 0, 4, 3 };
+
+         /*
+          * Per-symbol Y offset: the ankh glyph has internal whitespace
+          * above the crossbar, making it appear lower than the cross
+          * and lightning. Nudge it up to equalize visual spacing.
+          */
+         static const int stat_icon_y_adj[] = { 0, -2, 0 };
+
+         HFONT hSymFont = CreateFontW(GetStatIconSize() + 4 + stat_icon_size_adj[stat_index],
+            0, 0, 0, FW_BLACK,
+            FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+            OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+            DEFAULT_PITCH | FF_DONTCARE, L"Segoe UI Symbol");
+         HFONT hOldFont = (HFONT)SelectObject(hdc, hSymFont);
+
+         SetBkMode(hdc, TRANSPARENT);
+
+         /* Per-stat icon colors matching the bar colors */
+         static const COLORREF stat_icon_colors[] = {
+            STAT_HEALTH_COLOR,
+            STAT_MANA_ICON_COLOR,
+            STAT_VIGOR_COLOR
+         };
+
+         SIZE sz;
+         GetTextExtentPoint32W(hdc, stat_symbols[stat_index], 1, &sz);
+         int tx = a.x + (a.cx - sz.cx) / 2;
+         int ty = a.y + (a.cy - sz.cy) / 2 + stat_icon_y_adj[stat_index];
+
+         /* Draw a 1px dark outline for contrast against the sidebar */
+         SetTextColor(hdc, RGB(0, 0, 0));
+         TextOutW(hdc, tx - 1, ty, stat_symbols[stat_index], 1);
+         TextOutW(hdc, tx + 1, ty, stat_symbols[stat_index], 1);
+         TextOutW(hdc, tx, ty - 1, stat_symbols[stat_index], 1);
+         TextOutW(hdc, tx, ty + 1, stat_symbols[stat_index], 1);
+
+         SetTextColor(hdc, stat_icon_colors[stat_index]);
+         TextOutW(hdc, tx, ty, stat_symbols[stat_index], 1);
+
+         SelectObject(hdc, hOldFont);
+         DeleteObject(hSymFont);
+      }
+      else
+      {
+         obj->icon_res = s->name_res;
+
+         // Default theme: use BGF sprite with tiled texture background.
+         OffscreenWindowBackground(IsNonClassicTheme() ? pinventory_bkgnd() : NULL,
+            a.x, a.y, a.cx, a.cy);
+         DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
+         GdiFlush();
+      }
 
       b.x  = stat_bar_x;
       b.cx = stat_width;
       b.y  = a.y + STATS_MAIN_SPACING;
       b.cy = s->cy - 4 * STATS_MAIN_SPACING;
-      InterfaceDrawBarBorder(NULL, hdc, &b);
+      InterfaceDrawBarBorder(IsNonClassicTheme() ? pinventory_bkgnd() : NULL, hdc, &b);
+      stat_index++;
    }
 
    ObjectDestroyAndFree(obj);
@@ -191,7 +290,7 @@ void StatsMainRedraw(void)
 void StatsMainResize(int xsize, int ysize, AREA *view)
 {
    stat_x = view->x + view->cx + LEFT_BORDER + USERAREA_WIDTH + RIGHT_BORDER + MAPTREAT_WIDTH;
-   stat_bar_x = stat_x + STAT_ICON_SIZE + RIGHT_BORDER;
+   stat_bar_x = stat_x + GetStatIconSize() + RIGHT_BORDER;
    stat_width = xsize - stat_bar_x - RIGHT_BORDER - EDGETREAT_WIDTH - MAPTREAT_WIDTH - 4;
    StatsMainMove();
 }
@@ -218,8 +317,14 @@ void StatsMainMove(void)
       if (s->numeric.tag != STAT_INT)
 	 continue;
 
-      MoveWindow(s->hControl, stat_bar_x, s->y + STATS_MAIN_SPACING, 
-		 stat_width, STATS_BAR_HEIGHT, TRUE);
+      int barH = GetStatsBarHeight();
+      int barY;
+      if (IsNonClassicTheme())
+         barY = s->y + (s->cy - barH) / 2;
+      else
+         barY = s->y + STATS_MAIN_SPACING;
+      MoveWindow(s->hControl, stat_bar_x, barY, 
+		 stat_width, barH, TRUE);
 
       // Move tooltip
       ti.uId    = STAT_TOOLTIP_BASE + count;
@@ -227,9 +332,9 @@ void StatsMainMove(void)
       if (cinfo->hToolTips != NULL)
       {
 	 ti.rect.left   = stat_x;
-	 ti.rect.right  = ti.rect.left + STAT_ICON_SIZE;
+	 ti.rect.right  = ti.rect.left + GetStatIconSize();
 	 ti.rect.top    = s->y;
-	 ti.rect.bottom = ti.rect.top + STAT_ICON_SIZE;
+	 ti.rect.bottom = ti.rect.top + GetStatIconSize();
 	 switch (count)
 	 {
 	 case 0: ti.lpszText = (LPSTR) IDS_HEALTH; break;
@@ -247,29 +352,79 @@ void StatsMainMove(void)
 }
 /************************************************************************/
 /*
- * StatsMainChangeColor:  Called when user changes a color.
+ * StatsMainChangeColor:  Called when user changes a color or theme.
+ *   Recalculates layout because non-default themes use larger bars.
  */
 void StatsMainChangeColor(void)
 {
    list_type l;
+   int icon_size = GetStatIconSize();
+   int height = icon_size + STATS_MAIN_SPACING;
+   int y;
+   if (IsNonClassicTheme())
+      y = TOP_BORDER + EDGETREAT_HEIGHT + 1;
+   else
+      y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (icon_size * 3)) / 2);
 
-   // Change colors in bar graphs   
    for (l = main_stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
+
+      s->y = y;
+      s->cy = height;
+      y += height;
+
       StatsMainSetColor(s);
    }
+
+   StatsMainMove();
+   StatsMainRedraw();
 }
 /************************************************************************/
 /*
- * StatsMainSetColor:  Set colors for a single graph control in a stat.
+ * StatsMainSetColor:  Set bar colors for a single graph control.
+ *   Non-default themes use per-stat colors (red health, blue mana, gold vigor).
+ *   Default theme uses the uniform green/red palette colors.
  */
-void StatsMainSetColor(Statistic *s)
+static void StatsMainSetColor(Statistic *s)
 {
    if (s->numeric.tag != STAT_INT)
       return;
-   
-   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
-   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, GetColor(COLOR_BAR2));
-   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));   
+
+   COLORREF barColor, limitColor;
+
+   if (IsNonClassicTheme())
+   {
+      switch (s->num)
+      {
+      case STAT_HEALTH:
+         barColor = STAT_HEALTH_COLOR;
+         limitColor = STAT_HEALTH_LIMIT_COLOR;
+         break;
+      case STAT_MANA:
+         barColor = STAT_MANA_COLOR;
+         limitColor = STAT_MANA_LIMIT_COLOR;
+         break;
+      case STAT_VIGOR:
+         barColor = STAT_VIGOR_COLOR;
+         limitColor = STAT_VIGOR_LIMIT_COLOR;
+         break;
+      default:
+         barColor = GetColor(COLOR_BAR1);
+         limitColor = GetColor(COLOR_BAR2);
+         break;
+      }
+   }
+   else
+   {
+      barColor = GetColor(COLOR_BAR1);
+      limitColor = GetColor(COLOR_BAR2);
+   }
+
+   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, barColor);
+   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, limitColor);
+   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
+
+   if (IsNonClassicTheme())
+      SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME, RGB(0, 0, 0));
 }

@@ -199,6 +199,7 @@ EXPORTS
 	DibOpenFile
 	BitmapsFree
 	CreateMemBitmap
+	RemapGreyPixels
 
 ; Animation
 	AnimateObject

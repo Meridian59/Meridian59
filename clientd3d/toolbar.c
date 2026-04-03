@@ -338,49 +338,7 @@ bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 	 {
 	    int w = lpdis->rcItem.right - lpdis->rcItem.left;
 	    int h = lpdis->rcItem.bottom - lpdis->rcItem.top;
-
-	    BITMAPINFO bmi = {};
-	    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	    bmi.bmiHeader.biWidth = w;
-	    bmi.bmiHeader.biHeight = -h;
-	    bmi.bmiHeader.biPlanes = 1;
-	    bmi.bmiHeader.biBitCount = 32;
-	    bmi.bmiHeader.biCompression = BI_RGB;
-
-	    BYTE *pixels = NULL;
-	    HDC memDC = CreateCompatibleDC(lpdis->hDC);
-	    HBITMAP dib = CreateDIBSection(memDC, &bmi, DIB_RGB_COLORS,
-	       (void **)&pixels, NULL, 0);
-	    if (dib != NULL && pixels != NULL)
-	    {
-	       HBITMAP oldBmp = (HBITMAP)SelectObject(memDC, dib);
-	       BitBlt(memDC, 0, 0, w, h, lpdis->hDC, 0, 0, SRCCOPY);
-
-	       int base = bPressed ? 10 : 20;
-	       int total = w * h * 4;
-	       for (int i = 0; i < total; i += 4)
-	       {
-		  BYTE pb = pixels[i];
-		  BYTE pg = pixels[i + 1];
-		  BYTE pr = pixels[i + 2];
-		  BYTE maxc = (pr > pg) ? ((pr > pb) ? pr : pb) : ((pg > pb) ? pg : pb);
-		  BYTE minc = (pr < pg) ? ((pr < pb) ? pr : pb) : ((pg < pb) ? pg : pb);
-
-		  if ((maxc - minc) < 20)
-		  {
-		     int grey = (pr + pg + pb) / 3;
-		     int remapped = grey * 140 / 255 + base;
-		     pixels[i]     = (BYTE)remapped;
-		     pixels[i + 1] = (BYTE)remapped;
-		     pixels[i + 2] = (BYTE)remapped;
-		  }
-	       }
-
-	       BitBlt(lpdis->hDC, 0, 0, w, h, memDC, 0, 0, SRCCOPY);
-	       SelectObject(memDC, oldBmp);
-	       DeleteObject(dib);
-	    }
-	    DeleteDC(memDC);
+	    RemapGreyPixels(lpdis->hDC, 0, 0, w, h, 140, bPressed ? 10 : 20);
 	 }
       }
       return true;

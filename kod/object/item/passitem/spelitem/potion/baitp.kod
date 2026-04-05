@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   BaitPotion_name_rsc = "The Widow Qesino's Secret Sauce"
+   BaitPotion_name_rsc = "Widow Qesino's Secret Sauce"
    %BaitPotion_icon_rsc = potion01.bgf
    BaitPotion_desc_rsc = "This is a glass vial of purple-colored liquid.  "
                         "It smells mighty scrump-dilly-umptious!"
@@ -41,6 +41,8 @@ classvars:
    viPoisonPercent = 20
    viGoBadDamage = 5
    viColor = XLAT_TO_PURPLE
+   
+   viDefinite = ARTICLE_NONE
 
 properties:
 

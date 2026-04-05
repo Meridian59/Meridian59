@@ -41,6 +41,8 @@ classvars:
    viPoisonPercent = 75
    viGoBadDamage = 20
    viColor = XLAT_TO_SKIN4
+   
+   viDefinite = ARTICLE_NONE
 
 properties:
 

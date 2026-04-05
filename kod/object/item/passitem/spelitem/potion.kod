@@ -94,7 +94,7 @@ messages:
 
    ReqNewApply(what = $,apply_on = $)
    {
-      if NOT Send(apply_on,@ReqEatSomething,#filling=viFilling)
+      if NOT Send(apply_on,@ReqEatSomething,#filling=viFilling,#what=self)
       {
 	      return FALSE;
       }

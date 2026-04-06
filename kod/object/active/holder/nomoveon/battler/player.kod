@@ -322,7 +322,7 @@ resources:
    player_desc_enchanted = "%s has %s%s.\n\n%s"
    
    player_half_full = "You feel fairly satiated."
-   player_almost_full = "Your stomach feels very stuffed and crammed."
+   player_almost_full = "Your stomach feels stuffed and nearly filled to the brim."
    player_too_full = "You are too full to eat %s%s right now."
    player_too_full_drink = "You are too full to drink %s%s right now."
 

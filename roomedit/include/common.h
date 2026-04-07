@@ -67,6 +67,7 @@
 #include <owl\checkbox.h>
 #include <owl\radiobut.h>
 #include <owl\listbox.h>
+#include <owl\combobox.h>
 #include <owl\validate.h>
 
 class TMapDC;

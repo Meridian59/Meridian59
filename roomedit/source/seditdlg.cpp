@@ -770,6 +770,34 @@ void TSectorEditDialog::CmOk ()
       RESTORE_HELP_CONTEXT();
    }
    
+   // If any changes were made, enforce transparency removal on sloped sectors
+   if (MadeChanges)
+   {
+       for (int i = 0; i < NumLineDefs; i++)
+       {
+           BOOL bSloped = FALSE;
+           if (LineDefs[i].sidedef1 != -1)
+           {
+               SHORT s1 = SideDefs[LineDefs[i].sidedef1].sector;
+               if (s1 != -1 && (Sectors[s1].blak_flags & (SF_SLOPED_FLOOR | SF_SLOPED_CEILING)))
+                   bSloped = TRUE;
+           }
+           if (!bSloped && LineDefs[i].sidedef2 != -1)
+           {
+               SHORT s2 = SideDefs[LineDefs[i].sidedef2].sector;
+               if (s2 != -1 && (Sectors[s2].blak_flags & (SF_SLOPED_FLOOR | SF_SLOPED_CEILING)))
+                   bSloped = TRUE;
+           }
+
+           if (bSloped)
+           {
+               LineDefs[i].translucency_pos = 0;
+               LineDefs[i].translucency_neg = 0;
+               LineDefs[i].blak_flags &= ~(BF_POS_TRANSPARENT | BF_NEG_TRANSPARENT);
+           }
+       }
+   }
+
    // Close Dialog box
    TDialog::CmOk();
 }

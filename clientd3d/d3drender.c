@@ -689,6 +689,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
+	// Transparent walls are drawn LAST so that sprites/monsters behind them show
+	// through correctly. Depth write is off during this pass; depth test remains on
+	// so walls behind opaque geometry are still occluded.
+	if (draw_world)
+	{
+		D3DRenderTransparentWallsPass(worldRenderParams);
+	}
+
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 
@@ -743,7 +751,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 	D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);	
+
+
+
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
 
 	IDirect3DDevice9_EndScene(gpD3DDevice);

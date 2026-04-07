@@ -913,11 +913,15 @@ int FindSidedef(LineDef *l, SideDef *s, Bool positive)
    {
       flags |= (WallScrollPosSpeed(l->blak_flags) << 10);
       flags |= (WallScrollPosDirection(l->blak_flags) << 12);
+      // Encode translucency level (0-3) into bits 15-16
+      flags |= ((l->translucency_pos & 0x03) << 15);
    }
    else
    {
       flags |= (WallScrollNegSpeed(l->blak_flags) << 10);
       flags |= (WallScrollNegDirection(l->blak_flags) << 12);
+      // Encode translucency level (0-3) into bits 15-16
+      flags |= ((l->translucency_neg & 0x03) << 15);
    }
 
    num = 1;

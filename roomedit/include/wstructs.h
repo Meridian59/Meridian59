@@ -70,6 +70,9 @@ struct LineDef
    SHORT sidedef2;  /* only if this line adjoins 2 sectors */
    int   blak_flags; /* Blakston flags for wall ARK */
 
+   BYTE  translucency_pos;  // Alpha-blend level for + sidedef: 0=none,1=25%,2=50%,3=75%
+   BYTE  translucency_neg;  // Alpha-blend level for - sidedef: 0=none,1=25%,2=50%,3=75%
+
    WORD  file_sidedef1;  // Used during saving ARK
    WORD  file_sidedef2;  // Used during saving ARK
 };

@@ -12,7 +12,7 @@
 #ifndef _PROTOCOL_H
 #define _PROTOCOL_H
 
-#define MAX_PARAMS 20   /* Max # of parameters in message to server */
+#define MAX_PARAMS 30   /* Max # of parameters in message to server */
 
 typedef BYTE param_type;
 
@@ -44,8 +44,9 @@ typedef struct {
 /* Encapsulate calls to ToServer */
 
 /* Login mode messages */
-#define RequestLogin(v1, v2, i1, i2, i3, i4, i5, w1, w2, i7, i8, i9, str1, str2) \
-  ToServer(AP_LOGIN, NULL, v1, v2, i1, i2, i3, i4, i5, w1, w2, i7, i8, i9, str1, str2)
+#define RequestLogin(v1, v2, i1, i2, i3, i4, w1, w2, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, str1, str2, str3) \
+  ToServer(AP_LOGIN, NULL, v1, v2, i1, i2, i3, i4, w1, w2, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, str1, str2, str3)
+
 #define RequestGame(time, catch, hostname) \
   ToServer(AP_REQ_GAME, NULL, time, catch, hostname)
 

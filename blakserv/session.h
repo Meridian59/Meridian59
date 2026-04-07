@@ -94,14 +94,21 @@ typedef struct
    int os_version_major;
    int os_version_minor;
    int machine_ram;
-   int machine_cpu;
    short screen_x;
    short screen_y;
    short screen_color_depth;
    short partner;
-   int displays_possible;
-   int bandwidth;
-   int reserved;
+   int os_build_number;
+   int renderer_mode;
+   int vram_mb;
+   int session_bucket;
+   int gpu_vendor_id;
+   int last_avg_fps;
+   int last_low_fps;
+   int last_max_fps;
+   int is_wine;
+   int crc16;
+   std::string gpu_desc;
 
    bool exiting_state;		/* true iff in ExitXXX, so errors on writing don't inf loop */
 				/* only needs to be set if you write, so it's only in exitgame */

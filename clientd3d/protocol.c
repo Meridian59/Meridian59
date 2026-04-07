@@ -14,9 +14,10 @@
 /* Login mode messages */
 static client_message login_msg_table[] = { 
 { AP_LOGIN,                { PARAM_BYTE, PARAM_BYTE, PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT,
-				PARAM_INT, PARAM_WORD, PARAM_WORD, 
-				PARAM_INT, PARAM_INT, PARAM_INT,
-				PARAM_STRING, PARAM_STRING, PARAM_END }, },
+				PARAM_WORD, PARAM_WORD, 
+				PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT,
+				PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT, PARAM_INT,
+				PARAM_STRING, PARAM_STRING, PARAM_STRING, PARAM_END }, },
 { AP_REQ_GAME,             { PARAM_INT, PARAM_INT, PARAM_STRING, PARAM_END }, },
 { AP_REQ_ADMIN,            { PARAM_END }, },
 { AP_GETRESOURCE,          { PARAM_END }, },
@@ -71,7 +72,7 @@ static client_message game_msg_table[] = {
 { BP_SAY_BLOCKED,          { PARAM_ID, PARAM_END }, },
 { BP_LOGOFF,               { PARAM_END }, },
 { BP_CHANGE_DESCRIPTION,   { PARAM_ID, PARAM_STRING, PARAM_END }, },
-{ BP_CHANGE_PASSWORD,      { PARAM_STRING, PARAM_STRING, PARAM_END }, },
+{ BP_CHANGE_PASSWORD,      { PARAM_STRING, PARAM_STRING, PARAM_STRING, PARAM_END }, },
 { BP_REQ_HIDE,             { PARAM_ID, PARAM_END }, },
 { BP_REQ_ADMIN,			   { PARAM_STRING, PARAM_END }, },	//	AJM -- added to support ActiveX admin interface
 { 0,                       { PARAM_END }, },    // Must terminate table this way

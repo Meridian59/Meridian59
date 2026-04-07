@@ -69,14 +69,16 @@ void LoginSendInfo(void)
    MDString(config.password, buf);
    buf[ENCRYPT_LEN] = 0;
 
-   debug(("Got partner code of %d.\n", (sysinfo.reserved & 0xFF00) >> 8));
+   debug(("Got partner code of %d.\n", sysinfo.partner_code));
 
    RequestLogin(MAJOR_REV, MINOR_REV,
 		sysinfo.platform, sysinfo.platform_major, sysinfo.platform_minor,
-		sysinfo.memory, sysinfo.chip,
-		sysinfo.screen_width, sysinfo.screen_height,
-		sysinfo.color_depth, sysinfo.bandwidth, sysinfo.reserved,
-		config.username, buf);
+		sysinfo.memory, sysinfo.screen_width, sysinfo.screen_height,
+		sysinfo.color_depth, sysinfo.os_build_number, sysinfo.renderer_mode,
+		sysinfo.vram_mb, sysinfo.session_bucket, sysinfo.gpu_vendor_id,
+		sysinfo.last_avg_fps, sysinfo.last_low_fps, sysinfo.last_max_fps,
+		sysinfo.partner_code, sysinfo.is_wine, sysinfo.crc16,
+		config.username, buf, sysinfo.gpu_desc);
 }
 /****************************************************************************/
 /*

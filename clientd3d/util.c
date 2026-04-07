@@ -11,7 +11,6 @@
 
 #include "client.h"
 #include <dxgi.h>
-#pragma comment(lib, "dxgi.lib")
 
 // Query real dedicated VRAM via DXGI by matching the adapter's VendorId+DeviceId.
 // Returns MB, or 0 if DXGI is unavailable or no match found.
@@ -38,6 +37,54 @@ static unsigned int GetDXGIDedicatedVRAMMB(DWORD vendorId, DWORD deviceId)
              && desc.DeviceId == deviceId)
          {
             vramMB = (unsigned int)(desc.DedicatedVideoMemory >> 20);
+
+            // On 32-bit apps, DedicatedVideoMemory (SIZE_T) wraps at 4GB. Fetch correct 64-bit value from registry.
+            HKEY hClassKey;
+            if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}", 0, KEY_READ, &hClassKey) == ERROR_SUCCESS)
+            {
+               char targetDev[64];
+               sprintf_s(targetDev, sizeof(targetDev), "pci\\ven_%04x&dev_%04x", vendorId, deviceId);
+               
+               DWORD index = 0;
+               char subKey[256];
+               while (RegEnumKeyA(hClassKey, index++, subKey, sizeof(subKey)) == ERROR_SUCCESS)
+               {
+                  HKEY hDevKey;
+                  if (RegOpenKeyExA(hClassKey, subKey, 0, KEY_READ, &hDevKey) == ERROR_SUCCESS)
+                  {
+                     char hwId[256] = {0};
+                     DWORD dwSize = sizeof(hwId);
+                     if (RegQueryValueExA(hDevKey, "MatchingDeviceId", NULL, NULL, (LPBYTE)hwId, &dwSize) == ERROR_SUCCESS)
+                     {
+                        if (_strnicmp(hwId, targetDev, strlen(targetDev)) == 0)
+                        {
+                           ULONGLONG qwMemSize = 0;
+                           DWORD dwMemLen = sizeof(ULONGLONG);
+                           if (RegQueryValueExA(hDevKey, "HardwareInformation.qwMemorySize", NULL, NULL, (LPBYTE)&qwMemSize, &dwMemLen) == ERROR_SUCCESS)
+                           {
+                              vramMB = (unsigned int)(qwMemSize >> 20);
+                              RegCloseKey(hDevKey);
+                              break;
+                           }
+                           else
+                           {
+                              DWORD dwMemory = 0;
+                              dwMemLen = sizeof(DWORD);
+                              if (RegQueryValueExA(hDevKey, "HardwareInformation.MemorySize", NULL, NULL, (LPBYTE)&dwMemory, &dwMemLen) == ERROR_SUCCESS)
+                              {
+                                 vramMB = (unsigned int)(((ULONGLONG)dwMemory) >> 20);
+                                 RegCloseKey(hDevKey);
+                                 break;
+                              }
+                           }
+                        }
+                     }
+                     RegCloseKey(hDevKey);
+                  }
+               }
+               RegCloseKey(hClassKey);
+            }
+
             pAdapter->Release();
             break;
          }
@@ -51,7 +98,7 @@ static unsigned int GetDXGIDedicatedVRAMMB(DWORD vendorId, DWORD deviceId)
 // Map session duration (seconds) to a 4-bit bucket for wire encoding.
 // 0=no data, 1=<1min, 2=1-5min, 3=5-15min, 4=15-30min, 5=30-60min,
 // 6=1-2hr, 7=2-4hr, 8=4-6hr, 9=6-8hr, 10=8-12hr, 11=12+hr
-static unsigned int SessionSecsToBucket(int secs)
+static int SessionSecsToBucket(int secs)
 {
    if (secs <= 0)    return 0;
    if (secs < 60)    return 1;
@@ -501,106 +548,64 @@ void GetSystemStats(SystemInfo *s)
    unsigned long crc32;
    HDC dc;
 
-   // Use RtlGetVersion to get the real Windows version (bypasses the GetVersionEx
-   // compatibility shim that reports 6.2 on Windows 10/11).
-   {
-      typedef LONG (WINAPI *FnRtlGetVersion)(OSVERSIONINFOEXW *);
-      OSVERSIONINFOEXW osInfo = { sizeof(OSVERSIONINFOEXW) };
-      HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
-      FnRtlGetVersion pRtlGetVersion = ntdll
-         ? (FnRtlGetVersion)GetProcAddress(ntdll, "RtlGetVersion") : NULL;
-      if (pRtlGetVersion && pRtlGetVersion(&osInfo) == 0)
-      {
-         s->platform       = osInfo.dwPlatformId;
-         s->platform_major = osInfo.dwMajorVersion;
-         s->platform_minor = osInfo.dwMinorVersion;
-         // Use displays_possible to carry OS build number (e.g. 22621 = Win11 22H2).
-         s->color_depth    = (int)osInfo.dwBuildNumber;
-      }
-      else
-      {
-         OSVERSIONINFO v = { sizeof(v) };
+   OSVERSIONINFO v = { sizeof(v) };
+
 #pragma warning(suppress: 4996)  // GetVersionEx deprecated
-         GetVersionEx(&v);
-         s->platform       = v.dwPlatformId;
-         s->platform_major = v.dwMajorVersion;
-         s->platform_minor = v.dwMinorVersion;
-         s->color_depth    = 0;
-      }
-   }
+   GetVersionEx(&v);
+   s->platform       = v.dwPlatformId;
+   s->platform_major = v.dwMajorVersion;
+   s->platform_minor = v.dwMinorVersion;
+   s->os_build_number = 0;
 
    mem.dwLength = sizeof(MEMORYSTATUSEX);
    GlobalMemoryStatusEx(&mem);
    GetSystemInfo(&sys);
    crc32 = gCRC16;
 
-   // Send RAM in MB so values above 2 GB (e.g. 64 GB → 65536) survive the 32-bit wire field.
-   s->memory = (int)std::min((DWORDLONG)(mem.ullTotalPhys / (1024 * 1024)), (DWORDLONG)INT_MAX);
-   // High 16 bits: CRC16 integrity check (unchanged).
-   // Low 16 bits: dwProcessorType is always 0 on 64-bit Windows — repurpose for diagnostics.
-   //   bits 15-8: last session max FPS / 4  (8 bits, same scale as avg/low)
-   //   bit  0:    Wine flag (1 = running under Wine/CrossOver, 0 = real Windows)
-   //   bits 7-1:  reserved (0)
+   ULONGLONG totalMemoryKB = 0;
+   if (GetPhysicallyInstalledSystemMemory(&totalMemoryKB))
+      s->memory = (int)(totalMemoryKB / 1024);
+   else
+      s->memory = (int)std::min((DWORDLONG)(mem.ullTotalPhys / (1024 * 1024)), (DWORDLONG)INT_MAX);
+
+   
+   s->crc16 = (int)(crc32 & 0xFFFF);
+   s->last_max_fps = config.last_max_fps;
+
+   s->is_wine = 0;
+   HKEY hWineKey;
+   if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Wine", 0, KEY_READ, &hWineKey) == ERROR_SUCCESS)
    {
-      int max_raw = config.last_max_fps / 4;
-      unsigned int maxFpsPacked = (max_raw <= 0) ? 0u : (max_raw > 255) ? 255u : (unsigned int)max_raw;
-
-      // wine_get_version is exported by Wine's ntdll but never by real Windows ntdll.
-      HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
-      unsigned int wineBit = (ntdll && GetProcAddress(ntdll, "wine_get_version")) ? 1u : 0u;
-
-      s->chip = (int)(((unsigned int)(crc32 & 0xFFFF) << 16) | (maxFpsPacked << 8) | wineBit);
+      s->is_wine = 1;
+      RegCloseKey(hWineKey);
    }
 
    dc = GetDC(GetDesktopWindow());
    s->screen_width  = GetSystemMetrics(SM_CXSCREEN);
    s->screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-   // Pack GPU/perf diagnostics into the bandwidth field:
-   // bits 29-28: renderer_mode (0=Software, 1=D3D, 2=D3D+GpuEff)
-   // bits 27-20: vramMB / 256  (8 bits; 0 when D3D not yet initialised)
-   // bits 19-16: session length bucket (see SessionSecsToBucket; 0=no data)
-   // bits 15-0:  PCI vendor ID (0x10DE=NVIDIA, 0x1002=AMD, 0x8086=Intel)
-   {
-      char gpuDesc[64];
-      unsigned int vramMBD3D = 0;
-      DWORD vendorId = 0, deviceId = 0;
-      WORD driverMaj = 0, driverMin = 0;
-      D3DGetAdapterInfo(gpuDesc, sizeof(gpuDesc), &vramMBD3D, &vendorId, &deviceId,
-                        &driverMaj, &driverMin);
-      int renderer_mode = !D3DRenderIsEnabled() ? 0 : (config.gpuEfficiency ? 2 : 1);
+   char gpuDesc[64];
+   unsigned int vramMBD3D = 0;
+   DWORD vendorId = 0, deviceId = 0;
+   WORD driverMaj = 0, driverMin = 0;
+   D3DGetAdapterInfo(gpuDesc, sizeof(gpuDesc), &vramMBD3D, &vendorId, &deviceId,
+                     &driverMaj, &driverMin);
+   int renderer_mode = !D3DRenderIsEnabled() ? 0 : (config.gpuEfficiency ? 2 : 1);
 
-      // Use DXGI to get real dedicated VRAM; fall back to D3D9 estimate if unavailable.
-      unsigned int vramMB = GetDXGIDedicatedVRAMMB(vendorId, deviceId);
-      if (vramMB == 0)
-         vramMB = vramMBD3D;
+   // Use DXGI to get real dedicated VRAM; fall back to D3D9 estimate if unavailable.
+   unsigned int vramMB = GetDXGIDedicatedVRAMMB(vendorId, deviceId);
+   if (vramMB == 0)
+      vramMB = vramMBD3D;
 
-      unsigned int sess_bucket = SessionSecsToBucket(config.last_session_secs);
-
-      s->bandwidth = (int)(((unsigned int)(renderer_mode & 0x3) << 28)
-                          | (((unsigned int)(vramMB >> 8) & 0xFF) << 20)
-                          | ((sess_bucket & 0xF) << 16)
-                          | ((unsigned int)(vendorId & 0xFFFF)));
-   }
-
-   // Pack color depth and partner code into low 16 bits of reserved; pack last-session
-   // FPS (from previous play session, saved to INI on logoff) into high 16 bits.
-   // bits 31-24: last_avg_fps / 4  (8 bits, 0 = no data)
-   // bits 23-16: last_low_fps / 4  (8 bits)
-   // bits 15-8:  partner code
-   // bits 7-0:   screen color depth in bits
-   {
-      unsigned int colorDepth   = (unsigned int)GetDeviceCaps(dc, BITSPIXEL) & 0xFF;
-      unsigned int partnerCode  = (unsigned int)GetPartnerCode() & 0xFF;
-      int avg_raw = config.last_avg_fps / 4;
-      int low_raw = config.last_low_fps / 4;
-      unsigned int avgFpsPacked = (avg_raw <= 0) ? 0u : (avg_raw > 255) ? 255u : (unsigned int)avg_raw;
-      unsigned int lowFpsPacked = (low_raw <= 0) ? 0u : (low_raw > 255) ? 255u : (unsigned int)low_raw;
-      s->reserved = (int)(colorDepth
-                         | (partnerCode  << 8)
-                         | (lowFpsPacked << 16)
-                         | (avgFpsPacked << 24));
-   }
+   s->renderer_mode = renderer_mode;
+   s->vram_mb       = (int)vramMB;
+   s->session_bucket = SessionSecsToBucket(config.last_session_secs);
+   s->gpu_vendor_id = (int)vendorId;
+   strncpy_s(s->gpu_desc, sizeof(s->gpu_desc), gpuDesc, _TRUNCATE);
+   s->color_depth   = (int)GetDeviceCaps(dc, BITSPIXEL);
+   s->partner_code  = GetPartnerCode();
+   s->last_avg_fps  = config.last_avg_fps;
+   s->last_low_fps  = config.last_low_fps;
 
    ReleaseDC(GetDesktopWindow(),dc);
 }
@@ -828,3 +833,5 @@ void InitMenuPopupHandler(HWND hwnd, HMENU hMenu, UINT item, BOOL fSystemMenu)
       EnableMenuItem(hMenu, SC_SIZE, MF_GRAYED);
    }
 }
+
+

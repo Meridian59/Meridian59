@@ -130,6 +130,10 @@ typedef struct {
    int last_low_fps;        // 1%-low FPS from previous session
    int last_max_fps;        // peak FPS from previous session
    int last_session_secs;   // session duration in seconds
+   int last_avg_ping;
+   int last_high_ping;
+   int last_min_ping;
+   int last_ping_color;
 } Config;
 
 void ConfigInit(void);

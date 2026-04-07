@@ -117,6 +117,10 @@ static char INILastAvgFps[]        = "LastAvgFps";
 static char INILastLowFps[]        = "LastLowFps";
 static char INILastMaxFps[]        = "LastMaxFps";
 static char INILastSessionSecs[]   = "LastSessionSecs";
+static char INILastAvgPing[]       = "LastAvgPing";
+static char INILastHighPing[]      = "LastHighPing";
+static char INILastMinPing[]       = "LastMinPing";
+static char INILastPingColor[]     = "LastPingColor";
 
 static char INITextAreaSize[] = "TextAreaSize";
 
@@ -323,6 +327,10 @@ void ConfigLoad(void)
    config.last_low_fps         = GetConfigInt(config_section, INILastLowFps,      0, config_ini);
    config.last_max_fps         = GetConfigInt(config_section, INILastMaxFps,      0, config_ini);
    config.last_session_secs = GetConfigInt(config_section, INILastSessionSecs, 0, config_ini);
+   config.last_avg_ping = GetConfigInt(config_section, INILastAvgPing, 0, config_ini);
+   config.last_high_ping = GetConfigInt(config_section, INILastHighPing, 0, config_ini);
+   config.last_min_ping = GetConfigInt(config_section, INILastMinPing, 0, config_ini);
+   config.last_ping_color = GetConfigInt(config_section, INILastPingColor, 0, config_ini);
 
    TimeSettingsLoad();
 }
@@ -400,6 +408,10 @@ void ConfigSave(void)
    WriteConfigInt(config_section, INILastLowFps,      config.last_low_fps,         config_ini);
    WriteConfigInt(config_section, INILastMaxFps,      config.last_max_fps,         config_ini);
    WriteConfigInt(config_section, INILastSessionSecs, config.last_session_secs,    config_ini);
+   WriteConfigInt(config_section, INILastAvgPing, config.last_avg_ping, config_ini);
+   WriteConfigInt(config_section, INILastHighPing, config.last_high_ping, config_ini);
+   WriteConfigInt(config_section, INILastMinPing, config.last_min_ping, config_ini);
+   WriteConfigInt(config_section, INILastPingColor, config.last_ping_color, config_ini);
 }
 /************************************************************************/
 void ConfigOverride(LPCTSTR pszCmdLine)

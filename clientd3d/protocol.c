@@ -124,6 +124,7 @@ void Logoff(void)
    if (state == STATE_GAME)
    {
       GraphicsFlushPerfReport();
+      PingFlushPerfReport();
       RequestQuit();
    }
    CloseConnection();

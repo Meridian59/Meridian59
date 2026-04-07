@@ -143,6 +143,7 @@ void MainQuit(HWND hwnd)
 	if (state == STATE_GAME)
 	{
 		GraphicsFlushPerfReport();
+               PingFlushPerfReport();
 	}
 	CloseConnection();
 	

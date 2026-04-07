@@ -607,6 +607,17 @@ void GetSystemStats(SystemInfo *s)
    s->last_avg_fps  = config.last_avg_fps;
    s->last_low_fps  = config.last_low_fps;
 
+   // Append ping stats to gpuDesc if available
+   if (config.last_avg_ping > 0)
+   {
+      const char *colorStr = (config.last_ping_color == 2) ? "Red" :
+                             (config.last_ping_color == 1) ? "Orange" : "Green";
+      char pingStr[128];
+      snprintf(pingStr, sizeof(pingStr), " | Ping %dms avg, %d low 1%%, %d best (%s)", 
+               config.last_avg_ping, config.last_high_ping, config.last_min_ping, colorStr);
+      strncat_s(s->gpu_desc, sizeof(s->gpu_desc), pingStr, _TRUNCATE);
+   }
+
    ReleaseDC(GetDesktopWindow(),dc);
 }
 /*****************************************************************************/

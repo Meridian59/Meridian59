@@ -72,7 +72,7 @@ typedef struct {
    int partner_code;
    int is_wine;
    int crc16;
-   char gpu_desc[64];
+   char gpu_desc[128];
 } SystemInfo;
 
 char *strtolower(char *);

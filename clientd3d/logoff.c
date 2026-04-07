@@ -155,6 +155,7 @@ void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
    {
       /* User is history! */
       GraphicsFlushPerfReport();
+      PingFlushPerfReport();
       RequestQuit();
       return;
    }

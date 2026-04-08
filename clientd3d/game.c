@@ -13,6 +13,10 @@
 
 player_info player;
 room_type current_room;
+
+// Tracks first frame of a room transition.
+static bool roomJustEntered;
+
 bool dataValid = false;
 
 /* This flag is true before we get the first player info message from the server,
@@ -244,7 +248,7 @@ void SetPlayerRemoteView(ID objID, int flags, int height, BYTE light)
    }
 }
 /************************************************************************/
-void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id)
+void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id, BYTE weather_effect)
 {
    char *fname;
 
@@ -263,7 +267,8 @@ void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id)
    ResetPlayerPosition();
 
    current_room.ambient_light = ambient_light;
-   current_room.bkgnd = bkgnd_id; 
+   current_room.bkgnd = bkgnd_id;
+   current_room.weather_effect = weather_effect;
 
    /* Save walls and free old room, if any */
    if (current_room.tree != NULL)
@@ -310,6 +315,10 @@ void SetPlayerInfo(player_info *new_player, BYTE ambient_light, ID bkgnd_id)
 void EnterNewRoom(void)
 {
    SetFrameDrawn(FALSE);
+   
+   // Toggle flag that tracks if a user just entered the room.
+   // Used in particle systems to know when to prime particles upon room change.
+   SetRoomJustEntered(true);
 
    DrawGridBorder();   
 
@@ -322,6 +331,9 @@ void EnterNewRoom(void)
    EnterNewRoom3D(&current_room);
 
    MapEnterRoom(&current_room);
+   
+   // Load in the room's current weather effect.
+   NewWeather(current_room.weather_effect);
 
    LightChanged3D(player.light, current_room.ambient_light);
 
@@ -688,6 +700,16 @@ void SetBackground(ID bkgnd)
 }
 /************************************************************************/
 /*
+ * SetWeather:  Update the current room's weather effect.
+ */
+void SetWeather(BYTE weather_effect)
+{
+   current_room.weather_effect = weather_effect;
+   NewWeather(weather_effect);
+   RedrawAll();
+}
+/************************************************************************/
+/*
  * ComputeObjectDistance:  Return distance between two given objects,
  *   in FINENESS units.
  *   XXX Would be nice to get rid of square root.
@@ -717,4 +739,17 @@ int GetActiveStatGroup(void)
 const room_type& getCurrentRoom()
 {
     return current_room;
+}
+
+// Sets the flag that tracks if a room was just entered.
+// Set to true in EnterNewRoom(), and cleared at the end of first DrawRoom() execution.
+void SetRoomJustEntered(bool newState)
+{
+	roomJustEntered = newState;
+}
+
+// Returns true only during the first frame of a new room.
+bool GetRoomJustEntered(void)
+{
+	return roomJustEntered;
 }

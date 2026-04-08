@@ -208,4 +208,15 @@ PALETTEENTRY* getPalette();
 // This palette remains constant and is used for color lookups and transformations.
 const Color(&getBasePalette())[NUM_COLORS];
 
+// The software renderer's angles are in game units. A full 360-degree circle is 4096 game units.
+// Note that matrix rotations expect radians.
+constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / 4096.0f;
+
+// Maps legacy software y-offset units (max 414 units from the center view) to world-space pitch (50 degrees).
+// Derived from software renderer's max vertical offset calculation: (3 * CLASSIC_HEIGHT / 2), where CLASSIC_HEIGHT = 276.
+constexpr float Y_UNIT_TO_WORLD_RAD = DEGREES_TO_RADIANS(50.0f) / 414.0f;
+
+// For the backgrounds and player camera, the angle is instead 45 degrees.  Helps prevent sliding artifacts. 
+constexpr float Y_UNIT_TO_VIEW_RAD = DEGREES_TO_RADIANS(45.0f) / 414.0f;
+
 #endif	// __D3DRENDER_H__

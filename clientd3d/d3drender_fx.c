@@ -6,241 +6,197 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <vector>
+
 
 // Variables
+static std::vector<particle_system*> particleSystemList;
 
-static particle_system particleSystem;
+static particle_system sandParticleSystem;
+static particle_system rainParticleSystem;
+static particle_system snowParticleSystem;
+
+// Determines if the player's distance from their last
+// position is far enough to trigger particle system priming.
+static constexpr float TELEPORT_THRESHOLD = 2000.0f;
 
 // Interfaces
-
 static void SandstormInit(void);
+static void RainInit(void);
+static void SnowInit(void);
 
 // Implementations
 
 /**
-* Initializes the particle effects, specifically the sandstorm particle emitters.
+* Initializes the particle effects, specifically the particle emitters.
 */
 void D3DFxInit()
 {
+	particleSystemList.clear();
 	SandstormInit();
+	RainInit();
+	SnowInit();
 }
 
 /**
-* Updates and renders all active particle emitters, including the sandstorm effect, 
-* in the current frame.
+* Updates and renders all active emitters and particles.
 */
 void D3DRenderParticles(const ParticleSystemStructure& pss)
 {
-	list_type	list;
-	emitter		*pEmitter;
-
-	for (list = particleSystem.emitterList; list != NULL; list = list->next)
+	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
+	
+	// Check if the player moved far enough since their last position to trigger particle priming.
+	bool justTeleported = ( abs(pss.playerDeltaPos.x) > TELEPORT_THRESHOLD ||
+						abs(pss.playerDeltaPos.y) > TELEPORT_THRESHOLD ||
+						abs(pss.playerDeltaPos.z) > TELEPORT_THRESHOLD ); 
+	
+	// Iterate through each particle system.
+	for (particle_system* pSystem : particleSystemList)
 	{
-		pEmitter = (emitter *)list->data;
+		// Check if the particle system being iterated is active.
+		bool particleSystemActive = (pSystem->pIsActive != nullptr && *(pSystem->pIsActive));
+		
+		// If the player just loaded into the room, prime the effects that were already in place.
+		if (GetRoomJustEntered() && particleSystemActive)
+		{
+			pSystem->isPriming = true;
+		}
 
-		if (pEmitter)
-			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
-	}
-
-	if (effects.sand)
-	{
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
-
-		D3DParticleSystemUpdate(&particleSystem, pss.particlePool, pss.particleCacheSystem);
+		// Check if the player teleported far enough so particles can be primed at the player's new location.
+		// Ignores room changes since zoning also triggers this. And don't prime inactive particle systems.
+		if (justTeleported && !GetRoomJustEntered() && particleSystemActive)
+		{
+			pSystem->isPriming = true;
+			
+			// Reset the particle system's emitters.
+			// This hides the previous particles from the player's last location to prevent artifacts.
+			for (auto pEmitter : pSystem->emitterList)
+			{
+				pEmitter->numParticles = 0; 
+				pEmitter->nextSlot = 0;     
+				pEmitter->emitterTimer_s = 0;      
+			}
+		}
+		
+		// Update world position of each emitter in the particle system.
+		for (emitter* pEmitter : pSystem->emitterList)
+		{
+			if (pEmitter)
+			{
+				D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
+			}
+		}
+		
+		// If a particle system is active, update its particles.
+		if (particleSystemActive)
+		{
+			D3DParticleSystemUpdate(pSystem, pss.particlePool, pss.particleCacheSystem);
+		}
 	}
 }
 
+// Used by weather particle systems such as rain or snow to drop particles from a height around the player.
+void WeatherEmitterInit(particle_system* pSystem, bool* pActiveFlag, float fallVelocity, custom_bgra bgra)
+{
+	static constexpr int WEATHER_EMITTER_COUNT = 16;
+	static constexpr float WEATHER_TIMER_S = 0.015f;  // In seconds
+	static constexpr float WEATHER_EMITTER_HEIGHT = 4000.0f;
+	static constexpr float WEATHER_EMITTER_RADIUS = 7500.0f;
+
+	// Slight variation on weather particles fall velocity.
+	static constexpr float WEATHER_JITTER_MIN = -0.5f;
+	static constexpr float WEATHER_JITTER_MAX = 1.5f;
+
+	D3DParticleSystemReset(pSystem);
+	emitter* newEmitter = nullptr;
+	for (int i = 0; i < WEATHER_EMITTER_COUNT; i++)
+	{
+		newEmitter = D3DParticleEmitterInit(pSystem, WEATHER_TIMER_S);
+		newEmitter->bDestroysOnSurface = true;
+		newEmitter->position = {0.0f, 0.0f, WEATHER_EMITTER_HEIGHT};	
+		
+		//  Half of the emitters spawn weather particles three times further away.
+		if (i < (WEATHER_EMITTER_COUNT / 2))
+		{
+			newEmitter->positionVarianceMin = {-WEATHER_EMITTER_RADIUS, -WEATHER_EMITTER_RADIUS, 0.0f};
+			newEmitter->positionVarianceMax = {WEATHER_EMITTER_RADIUS, WEATHER_EMITTER_RADIUS, 0.0f};
+		}
+		else
+		{
+		newEmitter->positionVarianceMin = {-WEATHER_EMITTER_RADIUS * 3.0f, -WEATHER_EMITTER_RADIUS * 3.0f, 0.0f};
+		newEmitter->positionVarianceMax = {WEATHER_EMITTER_RADIUS * 3.0f, WEATHER_EMITTER_RADIUS * 3.0f, 0.0f};
+		}
+		
+		newEmitter->velocity = {0.0f, 0.0f, fallVelocity};
+		newEmitter->velocityVarianceMin = {0.0f, 0.0f, WEATHER_JITTER_MIN};
+		newEmitter->velocityVarianceMax = {0.0f, 0.0f, WEATHER_JITTER_MAX};
+		newEmitter->bgra = bgra;
+	}
+
+	pSystem->pIsActive = pActiveFlag;
+	particleSystemList.push_back(pSystem);
+}
+
 /**
-* Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the 
-* particle system.
+* Initializes the sandstorm particle emitters to fire sand particles around the player in
+* a full circle at randomized positions and slightly varied rotations.
 */
 void SandstormInit(void)
 {
-	static const int EMITTER_RADIUS = 12;
-	static const int EMITTER_ENERGY = 40;
-	static const int EMITTER_HEIGHT = 0;
+	static constexpr int SAND_EMITTER_COUNT = 16;
+	static constexpr float SAND_MAX_AGE_S = 1.0f;
+	static constexpr float SAND_EMITTER_RADIUS = 10000.0f;
+	static constexpr float SAND_Z_VARIANCE = 1000.0f;
+	static constexpr float SAND_VELOCITY = 500.0f;
+	static constexpr float SAND_TIMER_S = 0.015f;  // In seconds
+	static constexpr float SAND_RAND_ROT = PI / 1000.0f;
+	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
+	
+	D3DParticleSystemReset(&sandParticleSystem);
+	emitter* newEmitter = nullptr;
+	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
+	{
+		newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER_S);
+		newEmitter->particleMaxAge_s = SAND_MAX_AGE_S;
+		newEmitter->positionVarianceMin = {-SAND_EMITTER_RADIUS, -SAND_EMITTER_RADIUS, -SAND_Z_VARIANCE};
+		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE * 2.0f};
+		newEmitter->rotationVarianceMin = {-SAND_RAND_ROT, -SAND_RAND_ROT, -SAND_RAND_ROT};
+		newEmitter->rotationVarianceMax = {SAND_RAND_ROT, SAND_RAND_ROT, SAND_RAND_ROT};
+		
+		// Each emitters fire sand particles at 22.5 degrees in a full circle.
+		float angle = (static_cast<float>(i) * 2.0f * PI) / static_cast<float>(SAND_EMITTER_COUNT);
+		float directionX = cosf(angle);
+		float directionY = sinf(angle);
+		newEmitter->velocity.x = directionX * SAND_VELOCITY;
+		newEmitter->velocity.y = directionY * SAND_VELOCITY;
+		newEmitter->bgra = SANDSTORM_COLOR;
+	}
+	
+	sandParticleSystem.pIsActive = &effects.sand;
+	particleSystemList.push_back(&sandParticleSystem);
+}
 
-	D3DParticleSystemReset(&particleSystem);
-	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		500.0f, 0, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+/**
+* Initializes the rain particle emitters with its specific fall speed and rain color.
+*/
+void RainInit(void)
+{
+	static constexpr float RAIN_FALL_SPEED = -200.0f;
+	static constexpr custom_bgra RAIN_COLOR = {249,228,175,150};
+	
+	WeatherEmitterInit(&rainParticleSystem, &effects.raining, RAIN_FALL_SPEED, RAIN_COLOR);
+}
 
-	// four corners, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		353.55f, -353.55f, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		-353.55f, -353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
-		500.0f, 0.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		500.0f, 0, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// four corners, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		353.55f, -353.55f, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		-353.55f, -353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
-		500.0f, 0.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+/**
+* Initializes the snow particle emitters with its specific fall speed and snow color.
+*/
+void SnowInit(void)
+{
+	static constexpr float SNOW_FALL_SPEED = -28.0f;
+	static constexpr custom_bgra SNOW_COLOR = {255,255,255,220};
+	
+	WeatherEmitterInit(&snowParticleSystem, &effects.snowing, SNOW_FALL_SPEED, SNOW_COLOR);
 }
 
 /**
@@ -256,22 +212,13 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
 	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
 
-	static DWORD			timeLastFrame = 0;
-	DWORD					timeCurrent, timeDelta;
-	int						i;
-	d3d_render_chunk_new	*pChunk;
-	d3d_render_packet_new	*pPacket;
-
-	timeCurrent = timeGetTime();
-	timeDelta = timeCurrent - timeLastFrame;
-	timeLastFrame = timeCurrent;
-
 	// Flash of XLAT.  Could be color, blindness, whatever.
 	if (effects.flashxlat != XLAT_IDENTITY)
 	{
 		custom_bgra	bgra;
-
-		effects.duration -= (int)timeDelta;
+		
+		effects.duration -= GetDeltaTimeMs();
+		
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:
@@ -390,10 +337,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			effects.duration = 0;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+		if (pPacket == nullptr)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -402,7 +349,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 		MatrixIdentity(&pChunk->xForm);
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
 		}
@@ -538,10 +485,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			break;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+		if (pPacket == nullptr)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -550,7 +497,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 		MatrixIdentity(&pChunk->xForm);
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
 		}
@@ -580,10 +527,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = std::max(whiteout, 200);
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+		if (pPacket == nullptr)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -592,7 +539,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 		MatrixIdentity(&pChunk->xForm);
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteout);
 		}
@@ -621,10 +568,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 			pain = pain * 204 / 2000;
 
-			pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-			if (NULL == pPacket)
+			d3d_render_packet_new *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+			if (pPacket == nullptr)
 				return;
-			pChunk = D3DRenderChunkNew(pPacket);
+			d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 			assert(pChunk);
 			pChunk->numIndices = 4;
 			pChunk->numVertices = 4;
@@ -633,7 +580,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 			MatrixIdentity(&pChunk->xForm);
 
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, pain);
 			}
@@ -665,13 +612,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 */
 void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 {
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	int						i, t;
-	static int				offset = 0;
-	static int				offsetDir = 1;
+	static int offset = 0;
+	static int offsetDir = 1;
 
-	t = fxRss.frame & 7;
+	int t = fxRss.frame & 7;
 
 	if (fxRss.frame & 63)
 	{
@@ -687,7 +631,7 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
 	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
 
 	D3DRenderFramebufferTextureCreate(fxRss.backBufferTexFull, fxRss.backBufferTex[t],
@@ -696,12 +640,12 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DCacheSystemReset(fxRss.effectCacheSystem);
 	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);
 
-	for (i = 0; i <= 7; i++)
+	for (int i = 0; i <= 7; i++)
 	{
-		pPacket = D3DRenderPacketNew(fxRss.effectPool);
-		if (NULL == pPacket)
+		d3d_render_packet_new *pPacket = D3DRenderPacketNew(fxRss.effectPool);
+		if (nullptr == pPacket)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 		pPacket->pMaterialFctn = D3DMaterialBlurPacket;
 		pChunk->pMaterialFctn = D3DMaterialBlurChunk;
 		pPacket->pTexture = fxRss.backBufferTex[i];

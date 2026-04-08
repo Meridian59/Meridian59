@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   BaitPotion_name_rsc = "The Widow Qesino's Secret Sauce"
+   BaitPotion_name_rsc = "vial of Widow Qesino's Secret Sauce"
    %BaitPotion_icon_rsc = potion01.bgf
    BaitPotion_desc_rsc = "This is a glass vial of purple-colored liquid.  "
                         "It smells mighty scrump-dilly-umptious!"

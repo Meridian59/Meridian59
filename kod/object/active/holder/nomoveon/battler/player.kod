@@ -321,8 +321,10 @@ resources:
    player_desc_enchanted_none = "%q"
    player_desc_enchanted = "%s has %s%s.\n\n%s"
    
-   player_too_full = "You are too full to eat."
-   player_too_full_drink = "You are too full to drink."
+   player_half_full = "You feel fairly satiated."
+   player_almost_full = "Your stomach feels stuffed and nearly filled to the brim."
+   player_too_full = "You are too full to eat %s%s right now."
+   player_too_full_drink = "You are too full to drink %s%s right now."
 
    player_to_hunters = "You detect that %s%s could be found somewhere around %s"
 
@@ -822,6 +824,10 @@ properties:
 
    % Percent stomach is full.
    piStomach = 0
+   
+   % Tracks the last 'piStomach' value to help prevent spamming
+   %  fullness messages on every food consumption.
+   piLastStomachValue = 0
 
    % Governs health and mana replacement rates
    piVigor = 100
@@ -1345,6 +1351,8 @@ messages:
       piStomach = piStomach - (now - piTimeLastStomachUpdate) * FOOD_USE_RATE / 100;
       piStomach = bound(piStomach,1,100);
       piTimeLastStomachUpdate = now;
+	  
+	  piLastStomachValue = piStomach;
       
       return;
    }
@@ -5630,13 +5638,24 @@ messages:
       % Are we too full to eat and drink?
       if (piStomach + filling) > 100
       {
-         if what = $ OR NOT Send(what,@IsBeverage)
+		 % Display the "too full to eat" message if the item isn't a beverage.
+		 % This is also used by default in case 'what' is undefined.
+		 if what = $ OR NOT Send(what,@IsBeverage)
          {
-            Send(self,@MsgSendUser,#message_rsc=player_too_full);
+            Send(self,@MsgSendUser,#message_rsc=player_too_full,#parm1=Send(what,@GetDef),#parm2=Send(what,@GetTrueName));
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=player_too_full_drink);
+            % If the beverage is a potion, hide the potion's true name if it isn't identified yet.	
+			if (Send(what,@IsItemType,#type=ITEMTYPE_POTION)) AND (Send(what,@IsIdentified) = FALSE)
+			{
+			   Send(self,@MsgSendUser,#message_rsc=player_too_full_drink,#parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+			}
+			% Otherwise, display the beverage's true name as normal.
+			else
+			{
+			   Send(self,@MsgSendUser,#message_rsc=player_too_full_drink,#parm1=Send(what,@GetDef),#parm2=Send(what,@GetTrueName));
+			}
          }
          
          return FALSE;
@@ -5661,6 +5680,20 @@ messages:
    {
       Send(self,@AddExertion,#amount=-10000*nutrition);
       piStomach = piStomach + filling;
+	  
+      % Display fullness messages only if the player's stomach value passed the 50% or 75% thresholds.
+      % This helps avoid spamming the messages on every bite or drink.
+      if (piStomach >= 50 AND piStomach < 75) AND piLastStomachValue < 50
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_half_full);
+      }
+
+      if piStomach >= 75 AND piLastStomachValue < 75
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_almost_full);
+      }
+
+      piLastStomachValue = piStomach;
       
       return;
    }

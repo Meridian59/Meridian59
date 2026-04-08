@@ -48,6 +48,9 @@ properties:
 
    piInit_count_min = 1
    piInit_count_max = 5
+   
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_ARID
 
 messages:
 

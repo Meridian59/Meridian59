@@ -51,6 +51,8 @@ properties:
 
    piMonster_count_max = 13
 
+   pbPrecipitation_enabled = TRUE
+
 messages:
 
    Constructed()

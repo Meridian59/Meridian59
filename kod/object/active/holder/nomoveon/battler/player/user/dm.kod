@@ -32,6 +32,16 @@ resources:
 
    dm_pk_lock = "Your PK status is now unchanged by natural events."
    dm_pk_unlock = "Your PK status now acts as if you were a normal player."
+   
+   dm_precipitation_on = "This location is now capable of rain and snow."
+   dm_precipitation_off = "This location can no longer rain nor snow."
+   dm_climate_none = "The climate here is now static and unaffected by global weather."
+   dm_climate_temperate = "The climate feels mild and moderate here."
+   dm_climate_tropical = "The area now feels hot and humid."
+   dm_climate_mountain = "The area now feels colder and windier."
+   dm_climate_arid = "The air feels extremely dry in this area."
+   dm_season_rain = "The default global precipitation is now set to rain."
+   dm_season_snow = "The default global precipitation is now set to snow."
 
    dm_PK_ENABLE = "Currently, your PK status is ON, meaning that you can attack other players at will."
    dm_PK_DISABLE = "Currently, your PK status is OFF, meaning you can not kill or be killed by other players."
@@ -1219,6 +1229,88 @@ messages:
          Send(SYS,@SetHour,#num=23);
          
          return;
+      }
+	  
+	  % Commands to enable/disable precipitation in the current room.
+	  if StringEqual(string,"precipitation on")
+      {
+		 Send(poOwner,@TogglePrecipitation,#what=TRUE);
+		 Send(self,@MsgSendUser,#message_rsc=dm_precipitation_on);
+         return;
+      }
+      if StringEqual(string,"precipitation off")
+      {
+         Send(poOwner,@TogglePrecipitation,#what=FALSE);
+		 Send(self,@MsgSendUser,#message_rsc=dm_precipitation_off);
+         return;
+      }
+	  
+	  % Commands to immediately set server weather.
+	  if StringEqual(string,"weather clear")
+      {
+		 Send(SYS,@SetGlobalWeather,#what=WEATHER_CLEAR);
+         return;
+      }
+      if StringEqual(string,"weather cloudy")
+      {
+         Send(SYS,@SetGlobalWeather,#what=WEATHER_CLOUDY);
+         return;
+      }
+      if StringEqual(string,"weather rain")
+      {
+		 Send(SYS,@SetGlobalWeather,#what=WEATHER_RAIN);
+         return;
+      }
+	  if StringEqual(string,"weather snow")
+      {
+		 Send(SYS,@SetGlobalWeather,#what=WEATHER_SNOW);
+         return;
+      }
+
+      % Commands to apply seasons to the server.
+      if StringEqual(string,"season rain")
+      {
+		 Send(SYS,@SetSeason,#what=WEATHER_RAIN);
+		 Send(self,@MsgSendUser,#message_rsc=dm_season_rain);
+         return;
+      }
+	  if StringEqual(string,"season snow")
+      {
+		 Send(SYS,@SetSeason,#what=WEATHER_SNOW);
+		 Send(self,@MsgSendUser,#message_rsc=dm_season_snow);
+         return;
+      }
+	  
+	  % Commands for setting room climate.
+	  if StringEqual(string,"climate none")
+      {
+         Send(poOwner,@SetClimate,#what=CLIMATE_NONE);
+		 Send(self,@MsgSendUser,#message_rsc=dm_climate_none);
+		 return;
+      }
+	  if StringEqual(string,"climate temperate")
+      {
+         Send(poOwner,@SetClimate,#what=CLIMATE_TEMPERATE);
+		 Send(self,@MsgSendUser,#message_rsc=dm_climate_temperate);
+		 return;
+      }
+	  if StringEqual(string,"climate tropical")
+      {
+         Send(poOwner,@SetClimate,#what=CLIMATE_TROPICAL);
+		 Send(self,@MsgSendUser,#message_rsc=dm_climate_tropical);
+		 return;
+      }
+	  if StringEqual(string,"climate mountain")
+      {
+         Send(poOwner,@SetClimate,#what=CLIMATE_MOUNTAIN);
+		 Send(self,@MsgSendUser,#message_rsc=dm_climate_mountain);
+		 return;
+      }
+	  if StringEqual(string,"climate arid")
+      {
+         Send(poOwner,@SetClimate,#what=CLIMATE_ARID);
+		 Send(self,@MsgSendUser,#message_rsc=dm_climate_arid);
+		 return;
       }
 
       if StringEqual(string,"restore time")

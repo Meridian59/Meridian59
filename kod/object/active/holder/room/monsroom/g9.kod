@@ -158,6 +158,9 @@ properties:
 
    plSkellyGenPoints = $
 
+   pbPrecipitation_enabled = TRUE
+   piClimate = CLIMATE_MOUNTAIN
+
 messages:
 
    Constructed()

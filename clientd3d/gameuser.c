@@ -421,7 +421,7 @@ void UserToggleMusic(bool music_on)
  */
 void UserQuit(void)
 {
-      RequestQuit();   
+   RequestQuit();
 }
 /************************************************************************/
 /*

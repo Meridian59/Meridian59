@@ -12,7 +12,7 @@
 #ifndef _PROTOCOL_H
 #define _PROTOCOL_H
 
-#define MAX_PARAMS 15   /* Max # of parameters in message to server */
+#define MAX_PARAMS 20   /* Max # of parameters in message to server */
 
 typedef BYTE param_type;
 

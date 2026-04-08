@@ -185,7 +185,7 @@ void CloseConnection(void)
 		closesocket(sock);
 		WSACleanup();
 		break;
-		
+
 	default:
 		break;
 	}

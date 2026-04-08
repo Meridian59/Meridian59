@@ -10,6 +10,62 @@
  */
 
 #include "client.h"
+#include <dxgi.h>
+#pragma comment(lib, "dxgi.lib")
+
+// Query real dedicated VRAM via DXGI by matching the adapter's VendorId+DeviceId.
+// Returns MB, or 0 if DXGI is unavailable or no match found.
+static unsigned int GetDXGIDedicatedVRAMMB(DWORD vendorId, DWORD deviceId)
+{
+   if (vendorId == 0 || deviceId == 0)
+      return 0;
+
+   IDXGIFactory *pFactory = NULL;
+   if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void **)&pFactory)) || !pFactory)
+      return 0;
+
+   unsigned int vramMB = 0;
+   for (UINT i = 0; ; ++i)
+   {
+      IDXGIAdapter *pAdapter = NULL;
+      if (pFactory->EnumAdapters(i, &pAdapter) == DXGI_ERROR_NOT_FOUND)
+         break;
+      if (pAdapter)
+      {
+         DXGI_ADAPTER_DESC desc = {};
+         if (SUCCEEDED(pAdapter->GetDesc(&desc))
+             && desc.VendorId == vendorId
+             && desc.DeviceId == deviceId)
+         {
+            vramMB = (unsigned int)(desc.DedicatedVideoMemory >> 20);
+            pAdapter->Release();
+            break;
+         }
+         pAdapter->Release();
+      }
+   }
+   pFactory->Release();
+   return vramMB;
+}
+
+// Map session duration (seconds) to a 4-bit bucket for wire encoding.
+// 0=no data, 1=<1min, 2=1-5min, 3=5-15min, 4=15-30min, 5=30-60min,
+// 6=1-2hr, 7=2-4hr, 8=4-6hr, 9=6-8hr, 10=8-12hr, 11=12+hr
+static unsigned int SessionSecsToBucket(int secs)
+{
+   if (secs <= 0)    return 0;
+   if (secs < 60)    return 1;
+   if (secs < 300)   return 2;
+   if (secs < 900)   return 3;
+   if (secs < 1800)  return 4;
+   if (secs < 3600)  return 5;
+   if (secs < 7200)  return 6;
+   if (secs < 14400) return 7;
+   if (secs < 21600) return 8;
+   if (secs < 28800) return 9;
+   if (secs < 43200) return 10;
+   return 11;
+}
 
 int mem_allocated = 0;   // Count of bytes allocated - bytes freed
 
@@ -440,67 +496,111 @@ extern unsigned short gCRC16;
 
 void GetSystemStats(SystemInfo *s)
 {
-   OSVERSIONINFO version;
-   MEMORYSTATUS mem;
+   MEMORYSTATUSEX mem;
    SYSTEM_INFO sys;
-   int iModeNum;
-   DWORD display = 0;
    unsigned long crc32;
    HDC dc;
 
-   version.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-   GetVersionEx(&version);
+   // Use RtlGetVersion to get the real Windows version (bypasses the GetVersionEx
+   // compatibility shim that reports 6.2 on Windows 10/11).
+   {
+      typedef LONG (WINAPI *FnRtlGetVersion)(OSVERSIONINFOEXW *);
+      OSVERSIONINFOEXW osInfo = { sizeof(OSVERSIONINFOEXW) };
+      HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+      FnRtlGetVersion pRtlGetVersion = ntdll
+         ? (FnRtlGetVersion)GetProcAddress(ntdll, "RtlGetVersion") : NULL;
+      if (pRtlGetVersion && pRtlGetVersion(&osInfo) == 0)
+      {
+         s->platform       = osInfo.dwPlatformId;
+         s->platform_major = osInfo.dwMajorVersion;
+         s->platform_minor = osInfo.dwMinorVersion;
+         // Use displays_possible to carry OS build number (e.g. 22621 = Win11 22H2).
+         s->color_depth    = (int)osInfo.dwBuildNumber;
+      }
+      else
+      {
+         OSVERSIONINFO v = { sizeof(v) };
+#pragma warning(suppress: 4996)  // GetVersionEx deprecated
+         GetVersionEx(&v);
+         s->platform       = v.dwPlatformId;
+         s->platform_major = v.dwMajorVersion;
+         s->platform_minor = v.dwMinorVersion;
+         s->color_depth    = 0;
+      }
+   }
 
-   mem.dwLength = sizeof(MEMORYSTATUS);
-   GlobalMemoryStatus(&mem);
-
+   mem.dwLength = sizeof(MEMORYSTATUSEX);
+   GlobalMemoryStatusEx(&mem);
    GetSystemInfo(&sys);
-
    crc32 = gCRC16;
 
-   s->platform = version.dwPlatformId;
-   s->platform_minor = version.dwMinorVersion;
-   s->platform_major = version.dwMajorVersion;
-   s->memory = mem.dwTotalPhys;
-   s->chip = (crc32<<16)|sys.dwProcessorType;
-   iModeNum = 0;
-   while (EnumDisplaySettings(NULL,iModeNum,&devMode[0]))
+   // Send RAM in MB so values above 2 GB (e.g. 64 GB → 65536) survive the 32-bit wire field.
+   s->memory = (int)std::min((DWORDLONG)(mem.ullTotalPhys / (1024 * 1024)), (DWORDLONG)INT_MAX);
+   // High 16 bits: CRC16 integrity check (unchanged).
+   // Low 16 bits: dwProcessorType is always 0 on 64-bit Windows — repurpose for diagnostics.
+   //   bits 15-8: last session max FPS / 4  (8 bits, same scale as avg/low)
+   //   bit  0:    Wine flag (1 = running under Wine/CrossOver, 0 = real Windows)
+   //   bits 7-1:  reserved (0)
    {
-      int shift = 0;
-      int disp = 0;
-      switch (devMode[0].dmBitsPerPel) {
-      case 8: shift = DISP_8BIT_SHIFT; break;
-      case 15: case 16: shift = DISP_16BIT_SHIFT; break;
-      case 24: shift = DISP_24BIT_SHIFT; break;
-      case 32: shift = DISP_32BIT_SHIFT; break;
-      default: shift = DISP_8BIT_SHIFT; break;
-      }
-      switch (devMode[0].dmPelsWidth) {
-      case 640: disp = DISP_640x480; break;
-      case 800: disp = DISP_800x600; break;
-      case 1024: disp = DISP_1024x768; break;
-      case 1152: disp = DISP_1152x882; break;
-      case 1280: disp = DISP_1280x1024; break;
-      case 1600: disp = DISP_1600x1200; break;
-      default:
-	 if (devMode[0].dmPelsWidth > 1600)
-	    disp = DISP_HIGHER;
-	 break;
-      }
-      display |= disp << shift;
-      iModeNum++;
+      int max_raw = config.last_max_fps / 4;
+      unsigned int maxFpsPacked = (max_raw <= 0) ? 0u : (max_raw > 255) ? 255u : (unsigned int)max_raw;
+
+      // wine_get_version is exported by Wine's ntdll but never by real Windows ntdll.
+      HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+      unsigned int wineBit = (ntdll && GetProcAddress(ntdll, "wine_get_version")) ? 1u : 0u;
+
+      s->chip = (int)(((unsigned int)(crc32 & 0xFFFF) << 16) | (maxFpsPacked << 8) | wineBit);
    }
-   s->color_depth = display;
-   s->bandwidth = SIBW_UNKNOWN;
+
    dc = GetDC(GetDesktopWindow());
    s->screen_width  = GetSystemMetrics(SM_CXSCREEN);
    s->screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-   s->reserved = GetDeviceCaps(dc,BITSPIXEL); //devMode[0].dmBitsPerPel;
-   s->reserved &= 0xFF;
+   // Pack GPU/perf diagnostics into the bandwidth field:
+   // bits 29-28: renderer_mode (0=Software, 1=D3D, 2=D3D+GpuEff)
+   // bits 27-20: vramMB / 256  (8 bits; 0 when D3D not yet initialised)
+   // bits 19-16: session length bucket (see SessionSecsToBucket; 0=no data)
+   // bits 15-0:  PCI vendor ID (0x10DE=NVIDIA, 0x1002=AMD, 0x8086=Intel)
+   {
+      char gpuDesc[64];
+      unsigned int vramMBD3D = 0;
+      DWORD vendorId = 0, deviceId = 0;
+      WORD driverMaj = 0, driverMin = 0;
+      D3DGetAdapterInfo(gpuDesc, sizeof(gpuDesc), &vramMBD3D, &vendorId, &deviceId,
+                        &driverMaj, &driverMin);
+      int renderer_mode = !D3DRenderIsEnabled() ? 0 : (config.gpuEfficiency ? 2 : 1);
 
-   s->reserved |= (GetPartnerCode() << 8);
-   s->reserved &= 0xFFFF;
+      // Use DXGI to get real dedicated VRAM; fall back to D3D9 estimate if unavailable.
+      unsigned int vramMB = GetDXGIDedicatedVRAMMB(vendorId, deviceId);
+      if (vramMB == 0)
+         vramMB = vramMBD3D;
+
+      unsigned int sess_bucket = SessionSecsToBucket(config.last_session_secs);
+
+      s->bandwidth = (int)(((unsigned int)(renderer_mode & 0x3) << 28)
+                          | (((unsigned int)(vramMB >> 8) & 0xFF) << 20)
+                          | ((sess_bucket & 0xF) << 16)
+                          | ((unsigned int)(vendorId & 0xFFFF)));
+   }
+
+   // Pack color depth and partner code into low 16 bits of reserved; pack last-session
+   // FPS (from previous play session, saved to INI on logoff) into high 16 bits.
+   // bits 31-24: last_avg_fps / 4  (8 bits, 0 = no data)
+   // bits 23-16: last_low_fps / 4  (8 bits)
+   // bits 15-8:  partner code
+   // bits 7-0:   screen color depth in bits
+   {
+      unsigned int colorDepth   = (unsigned int)GetDeviceCaps(dc, BITSPIXEL) & 0xFF;
+      unsigned int partnerCode  = (unsigned int)GetPartnerCode() & 0xFF;
+      int avg_raw = config.last_avg_fps / 4;
+      int low_raw = config.last_low_fps / 4;
+      unsigned int avgFpsPacked = (avg_raw <= 0) ? 0u : (avg_raw > 255) ? 255u : (unsigned int)avg_raw;
+      unsigned int lowFpsPacked = (low_raw <= 0) ? 0u : (low_raw > 255) ? 255u : (unsigned int)low_raw;
+      s->reserved = (int)(colorDepth
+                         | (partnerCode  << 8)
+                         | (lowFpsPacked << 16)
+                         | (avgFpsPacked << 24));
+   }
 
    ReleaseDC(GetDesktopWindow(),dc);
 }

@@ -121,7 +121,10 @@ WORD InsertString(BYTE **buf, char *str)
 void Logoff(void)
 {
    if (state == STATE_GAME)
+   {
+      GraphicsFlushPerfReport();
       RequestQuit();
+   }
    CloseConnection();
    MainSetState(STATE_OFFLINE);
 }

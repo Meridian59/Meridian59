@@ -23,7 +23,6 @@ int DarkModeResourceId(int id);
 bool IsDarkMode(void);
 bool IsNonClassicTheme(void);
 void InvalidateDarkModeCache(void);
-void DarkScrollbarSubclass(HWND hwndScroll);
-void DarkScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, bool redraw);
+void ScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, BOOL redraw);
 
 #endif /* #ifndef _DRAWINT_H */

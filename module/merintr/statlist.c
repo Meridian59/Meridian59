@@ -60,7 +60,6 @@ void StatsListCreate(list_type stats)
 			WS_CHILD | SBS_VERT,
 			0, 0, 100, 100,
 			hStats, NULL, hInst, NULL);
-   DarkScrollbarSubclass(hListScroll);
    ShowWindow(hListScroll, SW_HIDE);
 
    lpfnDefStatListProc = SubclassWindow(hList, StatsListProc);
@@ -125,8 +124,8 @@ void StatsListResize(list_type stats)
    {
       MoveWindow(hListScroll, list_width, y, list_scrollbar_width,
 		 stats_area.cy - y, FALSE);
-      DarkScrollbarSetInfo(hListScroll, ListBox_GetCount(hList), num_visible,
-	 ListBox_GetTopIndex(hList), false);
+      ScrollbarSetInfo(hListScroll, ListBox_GetCount(hList), num_visible,
+         ListBox_GetTopIndex(hList), TRUE);
       if (StatsGetCurrentGroup() != STATS_INVENTORY)
          ShowWindow(hListScroll, SW_SHOWNORMAL);
       InvalidateRect(hListScroll, NULL, FALSE);

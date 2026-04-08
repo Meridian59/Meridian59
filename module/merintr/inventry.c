@@ -170,7 +170,6 @@ void InventoryBoxCreate(HWND hParent)
 				WS_CHILD | SBS_VERT,
 				0, 0, 100, 100,  /* Make sure scrollbar drawn ok */
 				hwndInvDialog, (HMENU) IDC_INVSCROLL, hInst, NULL);
-   DarkScrollbarSubclass(hwndInvScroll);
 
    if (IsDarkMode())
       SetWindowTheme(hwndInvDialog, L"DarkMode_Explorer", NULL);
@@ -359,8 +358,11 @@ void InventoryComputeRowsCols(void)
  */
 void InventoryScrollRange(void)
 {
-   int totalRows = cols > 0 ? (num_items + cols - 1) / cols : 0;
-   DarkScrollbarSetInfo(hwndInvScroll, totalRows, rows, top_row, true);
+   if (cols != 0)
+   {
+      int totalRows = (num_items + cols - 1) / cols;
+      ScrollbarSetInfo(hwndInvScroll, totalRows, rows, top_row, TRUE);
+   }
 }
 /************************************************************************/
 /*

@@ -61,8 +61,6 @@ void StatsNumCreate(list_type stats)
                               0, 0, 100, 100, /* Make sure scrollbar drawn ok */
                               hStats, NULL, hInst, NULL);
 
-   DarkScrollbarSubclass(hStatsScroll);
-
    top_stat = 0;
 
    // Set colors of graphs
@@ -176,11 +174,6 @@ void StatsNumResize(list_type stats)
       height = s->cy;
    }
 
-   /* Keep scroll info in sync even when the scrollbar is hidden.
-      Wheel handling still queries the control, and stale range/page state can
-      survive a resize or group switch when everything fits on screen. */
-   DarkScrollbarSetInfo(hStatsScroll, num_stats, num_visible, top_stat, true);
-
    // Show scrollbar if necessary
    if (has_scrollbar)
    {
@@ -188,6 +181,7 @@ void StatsNumResize(list_type stats)
       MoveWindow(hStatsScroll, stats_area.cx - stats_scrollbar_width,
                y, stats_scrollbar_width, num_visible * height, FALSE);
       ShowWindow(hStatsScroll, SW_HIDE);
+      ScrollbarSetInfo(hStatsScroll, num_stats, num_visible, top_stat, TRUE);
       if (StatsGetCurrentGroup() != STATS_INVENTORY)  //	ajw
          ShowWindow(hStatsScroll, SW_SHOWNORMAL);
    }

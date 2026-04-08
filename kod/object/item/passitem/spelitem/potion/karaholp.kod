@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   KaraholsCursePotion_name_rsc = "Karahol's accursed elixir"
+   KaraholsCursePotion_name_rsc = "vial of Karahol's accursed elixir"
    %KaraholsCursePotion_icon_rsc = potion01.bgf
    KaraholsCursePotion_desc_rsc = "This is a glass vial of dark-colored liquid.  "
                         "It smells like a cross between licorice and musk."
@@ -41,8 +41,6 @@ classvars:
    viPoisonPercent = 75
    viGoBadDamage = 20
    viColor = XLAT_TO_SKIN4
-   
-   viDefinite = ARTICLE_NONE
 
 properties:
 

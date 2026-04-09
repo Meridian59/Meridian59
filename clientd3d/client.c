@@ -395,7 +395,7 @@ void ThemeApply(void)
       any resize or repaint.  The module DLL caches the theme value
       from the INI file; writing the new value and then immediately
       firing EVENT_COLORCHANGED ensures that every subsequent call
-      to IsNonClassicTheme()/IsDarkMode() in the resize chain
+      to IsNonDefaultTheme()/IsDarkMode() in the resize chain
       returns the correct result. */
    char theme_str[12];
    snprintf(theme_str, sizeof(theme_str), "%d", config.theme);

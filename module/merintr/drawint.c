@@ -312,9 +312,9 @@ bool IsDarkMode(void)
 
 /************************************************************************/
 /*
- * IsNonClassicTheme:  Returns true if the active theme is not the default.
+ * IsNonDefaultTheme:  Returns true if the active theme is not the default.
  */
-bool IsNonClassicTheme(void)
+bool IsNonDefaultTheme(void)
 {
    if (!darkmode_loaded)
       IsDarkMode();
@@ -346,12 +346,22 @@ void ScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, BOO
 }
 /************************************************************************/
 /*
+ * SidebarWindowBackground:  Draw the background for a sidebar panel area.
+ *   Uses the inventory texture for non-default themes and the main window
+ *   texture for the default theme.
+ */
+void SidebarWindowBackground(int x, int y, int width, int height)
+{
+   OffscreenWindowBackground(IsNonDefaultTheme() ? pinventory_bkgnd() : NULL, x, y, width, height);
+}
+/************************************************************************/
+/*
  * DarkModeResourceId:  Returns the flat variant of a bitmap resource ID
  *   when using a non-default theme.
  */
 int DarkModeResourceId(int id)
 {
-   if (!IsNonClassicTheme())
+   if (!IsNonDefaultTheme())
       return id;
 
    switch (id)
@@ -878,9 +888,9 @@ void InterfaceDrawElements(HDC hdc)
 	if (i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT)
 		continue;
 
-	/* Skip stats and editbox frame pieces in dark theme. The silver
-	   edges look wrong against the dark background. */
-	if (IsDarkMode())
+	/* Skip stats and editbox frame pieces in non-default themes. The
+	   silver edges look wrong against dark backgrounds. */
+	if (IsNonDefaultTheme())
 	{
 		if (i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT)
 			continue;
@@ -907,10 +917,10 @@ void InterfaceDrawElements(HDC hdc)
 	if( i == ELEMENT_BBOTTOM )
 		continue;
 
-	/* Stats and editbox edge repeaters have no dark variants. Skip them
-	   in dark theme so the silver edges don't show against the dark
-	   background. */
-	if (IsDarkMode())
+	/* Stats and editbox edge repeaters have no non-default variants.
+	   Skip them in non-default themes so the silver edges don't show
+	   against dark backgrounds. */
+	if (IsNonDefaultTheme())
 	{
 		if (i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT)
 			continue;
@@ -946,7 +956,7 @@ void InterfaceDrawElements(HDC hdc)
  */
 void InterfaceDrawSidebarBackground(HDC hdc)
 {
-   if (!IsNonClassicTheme())
+   if (!IsNonDefaultTheme())
       return;
 
    RECT r;
@@ -971,7 +981,7 @@ void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a )
 
   /* Non-default themes skip the ornate bar frame entirely. The graph
    * control paints its own clean flat rectangle. */
-  if (IsNonClassicTheme())
+if (IsNonDefaultTheme())
     return;
 
   elements[ELEMENT_BARRIGHT].x = a->cx;

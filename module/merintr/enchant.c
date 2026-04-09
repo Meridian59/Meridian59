@@ -283,6 +283,18 @@ static bool IsRoomEnchantment(HWND hwnd)
    }
    return false;
 }
+/************************************************************************/
+/*
+ * GetEnchantBackground:  Returns the background texture for drawing an
+ *   enchantment icon cell.  Player enchantments use the sidebar texture
+ *   in non-default themes; room enchantments use the main window background.
+ */
+static RawBitmap *GetEnchantBackground(HWND hwndItem)
+{
+   if (!IsNonDefaultTheme() || IsRoomEnchantment(hwndItem))
+      return NULL;
+   return pinventory_bkgnd();
+}
 /****************************************************************************/
 /*
  * EnchantmentDrawItem:  Draw enchantment for given DRAWITEM structure.
@@ -312,9 +324,7 @@ bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
        * view), while player enchantments sit on the sidebar texture.
        * Pass the correct background so the icon cell matches its surroundings.
        */
-      RawBitmap *bg = NULL;
-      if (IsNonClassicTheme() && !IsRoomEnchantment(lpdis->hwndItem))
-         bg = pinventory_bkgnd();
+      RawBitmap *bg = GetEnchantBackground(lpdis->hwndItem);
       OffscreenWindowBackground(bg,
          p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
 

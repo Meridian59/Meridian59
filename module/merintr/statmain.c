@@ -49,7 +49,7 @@ static void StatsMainSetColor(Statistic *s);
  */
 static int GetStatIconSize(void)
 {
-   return IsNonClassicTheme() ? 20 : STAT_ICON_SIZE;
+   return IsNonDefaultTheme() ? 20 : STAT_ICON_SIZE;
 }
 /************************************************************************/
 /*
@@ -58,7 +58,29 @@ static int GetStatIconSize(void)
  */
 int GetStatsBarHeight(void)
 {
-   return IsNonClassicTheme() ? 17 : STATS_BAR_HEIGHT;
+   return IsNonDefaultTheme() ? 17 : STATS_BAR_HEIGHT;
+}
+/************************************************************************/
+/*
+ * StatsMainGetInitialY:  Returns the Y offset for the first stat row,
+ *   accounting for the active theme's layout.
+ */
+static int StatsMainGetInitialY(int icon_size)
+{
+   if (IsNonDefaultTheme())
+      return TOP_BORDER + EDGETREAT_HEIGHT + 1;
+   return ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (icon_size * 3)) / 2);
+}
+/************************************************************************/
+/*
+ * StatsMainGetBarY:  Returns the Y position for a graph bar control
+ *   within its stat row, accounting for the active theme's layout.
+ */
+static int StatsMainGetBarY(Statistic *s, int barH)
+{
+   if (IsNonDefaultTheme())
+      return s->y + (s->cy - barH) / 2;
+   return s->y + STATS_MAIN_SPACING;
 }
 /************************************************************************/
 /*
@@ -87,10 +109,7 @@ void StatsMainReceive(list_type stats)
    int icon_size = GetStatIconSize();
    height = icon_size + STATS_MAIN_SPACING;	 
    //y = ENCHANT_SIZE + 2 * ENCHANT_BORDER - 1 + EDGETREAT_HEIGHT;
-   if (IsNonClassicTheme())
-      y = TOP_BORDER + EDGETREAT_HEIGHT + 1;
-   else
-      y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (icon_size * 3)) / 2);
+   y = StatsMainGetInitialY(icon_size);
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
@@ -204,14 +223,13 @@ void StatsMainRedraw(void)
       a.y    = s->y;
       a.cy   = s->cy;
 
-      if (IsNonClassicTheme() && stat_index < 3)
+      if (IsNonDefaultTheme() && stat_index < 3)
       {
          /*
           * Non-default themes: draw a Unicode symbol instead of the BGF sprite.
           * Paint the tiled background first, then overlay the colored symbol.
           */
-         OffscreenWindowBackground(IsNonClassicTheme() ? pinventory_bkgnd() : NULL,
-            a.x, a.y, a.cx, a.cy);
+         SidebarWindowBackground(a.x, a.y, a.cx, a.cy);
          OffscreenCopy(hdc, a.x, a.y, a.cx, a.cy, 0, 0);
 
          /*
@@ -266,8 +284,7 @@ void StatsMainRedraw(void)
          obj->icon_res = s->name_res;
 
          // Default theme: use BGF sprite with tiled texture background.
-         OffscreenWindowBackground(IsNonClassicTheme() ? pinventory_bkgnd() : NULL,
-            a.x, a.y, a.cx, a.cy);
+         SidebarWindowBackground(a.x, a.y, a.cx, a.cy);
          DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
          GdiFlush();
       }
@@ -276,7 +293,7 @@ void StatsMainRedraw(void)
       b.cx = stat_width;
       b.y  = a.y + STATS_MAIN_SPACING;
       b.cy = s->cy - 4 * STATS_MAIN_SPACING;
-      InterfaceDrawBarBorder(IsNonClassicTheme() ? pinventory_bkgnd() : NULL, hdc, &b);
+      InterfaceDrawBarBorder(NULL, hdc, &b);
       stat_index++;
    }
 
@@ -318,11 +335,7 @@ void StatsMainMove(void)
 	 continue;
 
       int barH = GetStatsBarHeight();
-      int barY;
-      if (IsNonClassicTheme())
-         barY = s->y + (s->cy - barH) / 2;
-      else
-         barY = s->y + STATS_MAIN_SPACING;
+      int barY = StatsMainGetBarY(s, barH);
       MoveWindow(s->hControl, stat_bar_x, barY, 
 		 stat_width, barH, TRUE);
 
@@ -360,11 +373,7 @@ void StatsMainChangeColor(void)
    list_type l;
    int icon_size = GetStatIconSize();
    int height = icon_size + STATS_MAIN_SPACING;
-   int y;
-   if (IsNonClassicTheme())
-      y = TOP_BORDER + EDGETREAT_HEIGHT + 1;
-   else
-      y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (icon_size * 3)) / 2);
+   int y = StatsMainGetInitialY(icon_size);
 
    for (l = main_stats; l != NULL; l = l->next)
    {
@@ -393,7 +402,7 @@ static void StatsMainSetColor(Statistic *s)
 
    COLORREF barColor, limitColor;
 
-   if (IsNonClassicTheme())
+   if (IsNonDefaultTheme())
    {
       switch (s->num)
       {
@@ -425,6 +434,6 @@ static void StatsMainSetColor(Statistic *s)
    SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, limitColor);
    SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
 
-   if (IsNonClassicTheme())
+   if (IsNonDefaultTheme())
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME, RGB(0, 0, 0));
 }

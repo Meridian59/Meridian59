@@ -289,6 +289,25 @@ bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 }
 /************************************************************************/
 /*
+ * DarkenStatButton:  Apply the non-default theme icon tint and border to a
+ *   stat button that has just been owner-drawn.  A no-op in the default theme.
+ */
+static void DarkenStatButton(HDC hdc, const RECT *rcItem, bool pressed)
+{
+   if (!IsNonDefaultTheme())
+      return;
+   int w = rcItem->right - rcItem->left;
+   int h = rcItem->bottom - rcItem->top;
+   RemapGreyPixels(hdc, 0, 0, w, h, 80, pressed ? 10 : 20);
+   HBRUSH border_brush = CreateSolidBrush(RGB(75, 75, 79));
+   if (border_brush != NULL)
+   {
+      FrameRect(hdc, rcItem, border_brush);
+      DeleteObject(border_brush);
+   }
+}
+/************************************************************************/
+/*
  * StatButtonDrawItem:  Draw stat button for given DRAWITEMSTRUCT structure.
  */
 bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
@@ -360,19 +379,7 @@ bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
                          (BYTE *) button->bitsRight, xSrc, 0, 2 * button->iWidthRight,
                          OBB_FLIP | OBB_COPY | OBB_TRANSPARENT );
 
-			if (IsDarkMode())
-			{
-				int w = lpdis->rcItem.right - lpdis->rcItem.left;
-				int h = lpdis->rcItem.bottom - lpdis->rcItem.top;
-				RemapGreyPixels(lpdis->hDC, 0, 0, w, h, 80, bPressed ? 10 : 20);
-
-				HBRUSH border_brush = CreateSolidBrush(RGB(75, 75, 79));
-				if (border_brush != NULL)
-				{
-					FrameRect(lpdis->hDC, &lpdis->rcItem, border_brush);
-					DeleteObject(border_brush);
-				}
-			}
+			DarkenStatButton(lpdis->hDC, &lpdis->rcItem, bPressed);
 		}
 		return true;
 	}

@@ -223,6 +223,18 @@ void StatsSetFocus(bool forward)
    SetFocus(hStats);
 }
 /************************************************************************/
+/*
+ * StatsDrawBorderUnfocused:  Draw the stats panel border for the unfocused
+ *   state.  Selects the border style based on the active theme.
+ */
+static void StatsDrawBorderUnfocused(AREA *area)
+{
+   if (IsNonDefaultTheme())
+      DrawBorderRGB(area, RGB(45, 45, 48), NULL);
+   else
+      DrawBorder(area, -1, NULL);
+}
+/************************************************************************/
 void StatsDrawBorder(void)
 {
 	HWND hFocus = GetFocus();
@@ -236,9 +248,8 @@ void StatsDrawBorder(void)
    // Check child windows & self
 	if ( hFocus == hStats || IsChild(hStats, hFocus) || hFocus == GetHwndInv() )
 		DrawBorder(&areaXXXTemp, HIGHLIGHT_INDEX, NULL);
-	else if (IsDarkMode())
-		DrawBorderRGB(&areaXXXTemp, RGB(45, 45, 48), NULL);
-	else DrawBorder(&areaXXXTemp, -1, NULL);
+	else
+		StatsDrawBorderUnfocused(&areaXXXTemp);
 }
 /************************************************************************/
 /*
@@ -271,7 +282,7 @@ void StatsChangeColor(void)
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, GetColor(COLOR_BAR2));
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
 
-      if (IsNonClassicTheme())
+      if (IsNonDefaultTheme())
          SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME, RGB(0, 0, 0));
    }
 

@@ -171,8 +171,7 @@ void InventoryBoxCreate(HWND hParent)
 				0, 0, 100, 100,  /* Make sure scrollbar drawn ok */
 				hwndInvDialog, (HMENU) IDC_INVSCROLL, hInst, NULL);
 
-   if (IsDarkMode())
-      SetWindowTheme(hwndInvDialog, L"DarkMode_Explorer", NULL);
+      SetWindowTheme(hwndInvDialog, IsDarkMode() ? L"DarkMode_Explorer" : NULL, NULL);
 
    inventory_scrollbar_width = GetSystemMetrics(SM_CXVSCROLL);
    num_items = 0;
@@ -320,7 +319,6 @@ void InventoryDisplayScrollbar(void)
 		if (has_scrollbar)
 		{
 			ShowWindow(hwndInvScroll, SW_SHOWNORMAL);
-         if (IsNonClassicTheme())
             RedrawWindow(hwndInvScroll, NULL, NULL,
                RDW_INVALIDATE | RDW_FRAME | RDW_ERASE | RDW_UPDATENOW);
 		}

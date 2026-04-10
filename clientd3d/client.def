@@ -65,6 +65,7 @@ EXPORTS
 	WindowBeginUpdate
 	WindowEndUpdate
 	DialogCtlColor
+	DarkMenuBar_Apply
 	MakeDirectory
 	GetString
 	AreaToRect
@@ -126,6 +127,7 @@ EXPORTS
 	OffscreenCopy
 	OffscreenWindowColor
 	DrawBorder
+	DrawBorderRGB
 	DrawWindowBackgroundColor
 	DrawWindowBackgroundBorder
 
@@ -197,6 +199,7 @@ EXPORTS
 	DibOpenFile
 	BitmapsFree
 	CreateMemBitmap
+	RemapGreyPixels
 
 ; Animation
 	AnimateObject

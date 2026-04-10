@@ -20,13 +20,15 @@
 #include "client.h"
 #include "merintr.h"
 #include "skills.h"
-
+ 
 static HWND hList;                  // Listbox containing stats
+static HWND hListScroll;            // Scrollbar for stats list box
 static WNDPROC lpfnDefStatListProc; // Default window procedure for stats list box
 
 extern HWND hStats;
 
 static int num_visible;             // # of stats visible in list box
+static int list_scrollbar_width;    // Width of stats list scrollbar
 
 static int StatListFindItem(int num);
 static LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -35,7 +37,8 @@ static int  StatsListGetItemHeight(void);
 static void StatsListLButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListLButtonDblClk(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
 static void StatsListRButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
-static void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
+static int StatsListGetWheelSteps(int zDelta);
+void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags);
 /************************************************************************/
 /*
@@ -44,23 +47,44 @@ static bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags
 void StatsListCreate(list_type stats)
 {
    list_type l;
+   Statistic *s;
 
-   hList = CreateWindow("listbox", NULL, 
-			WS_CHILD | 
+   list_scrollbar_width = GetSystemMetrics(SM_CXVSCROLL);
+
+   hList = CreateWindow("listbox", NULL,
+			WS_CHILD |
 			LBS_HASSTRINGS | LBS_SORT | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
 			0, 0, 0, 0, hStats, (HMENU) IDC_STATLIST, hInst, NULL);
-   lpfnDefStatListProc = SubclassWindow(hList, StatsListProc);
 
+   hListScroll = CreateWindow("scrollbar", NULL,
+			WS_CHILD | SBS_VERT,
+			0, 0, 100, 100,
+			hStats, NULL, hInst, NULL);
+   ShowWindow(hListScroll, SW_HIDE);
+
+   lpfnDefStatListProc = SubclassWindow(hList, StatsListProc);
    SetWindowFont(hList, GetFont(FONT_STATS), FALSE);
-   
+   ShowScrollBar(hList, SB_VERT, FALSE);
+
    for (l = stats; l != NULL; l = l->next)
    {
       int index;
-      Statistic *s = (Statistic *) (l->data);
-      
+      s = (Statistic *) (l->data);
+
       index = ListBox_AddString(hList, LookupNameRsc(s->name_res));
       ListBox_SetItemData(hList, index, s);
    }
+}
+/************************************************************************/
+/*
+ * StatsListRetheme:  Repaint the stats list and its scrollbar.
+ */
+void StatsListRetheme(void)
+{
+   if (hList != NULL)
+      InvalidateRect(hList, NULL, FALSE);
+   if (hListScroll != NULL)
+      InvalidateRect(hListScroll, NULL, FALSE);
 }
 /************************************************************************/
 /*
@@ -68,7 +92,10 @@ void StatsListCreate(list_type stats)
  */
 void StatsListDestroy(list_type stats)
 {
+   if (hListScroll != NULL)
+      DestroyWindow(hListScroll);
    DestroyWindow(hList);
+   hListScroll = NULL;
    hList = NULL;
 }
 /************************************************************************/
@@ -78,22 +105,33 @@ void StatsListDestroy(list_type stats)
 void StatsListResize(list_type stats)
 {
    AREA stats_area;
+   bool has_scrollbar;
+   int list_width;
    int y;
 
    StatsGetArea(&stats_area);
 
    y = StatsGetButtonBorder();
-   MoveWindow(hList, 0, y, stats_area.cx, stats_area.cy - y, TRUE);
 
-   // Hide scrollbar if not needed
    num_visible = (stats_area.cy - y) / std::max(ListBox_GetItemHeight(hList, 0), 1);
-   if (num_visible >= ListBox_GetCount(hList))
-     SetScrollRange(hList, SB_VERT, 0, 0, TRUE);
+   has_scrollbar = (num_visible < ListBox_GetCount(hList));
+   list_width = has_scrollbar ? stats_area.cx - list_scrollbar_width : stats_area.cx;
+
+   MoveWindow(hList, 0, y, list_width, stats_area.cy - y, TRUE);
+   ShowScrollBar(hList, SB_VERT, FALSE);
+
+   if (has_scrollbar)
+   {
+      MoveWindow(hListScroll, list_width, y, list_scrollbar_width,
+		 stats_area.cy - y, FALSE);
+      ScrollbarSetInfo(hListScroll, ListBox_GetCount(hList), num_visible,
+         ListBox_GetTopIndex(hList), TRUE);
+      if (StatsGetCurrentGroup() != STATS_INVENTORY)
+         ShowWindow(hListScroll, SW_SHOWNORMAL);
+      InvalidateRect(hListScroll, NULL, FALSE);
+   }
    else
-     {
-       SetScrollRange(hList, SB_VERT, 0, ListBox_GetCount(hList) - num_visible, TRUE);
-       SetScrollPos(hList, SB_VERT, ListBox_GetTopIndex(hList), TRUE);
-     }
+      ShowWindow(hListScroll, SW_HIDE);
 
 	if( StatsGetCurrentGroup() != STATS_INVENTORY )			//	ajw
 		ShowWindow(hList, SW_NORMAL);
@@ -129,7 +167,27 @@ void StatsListChangeStat(Statistic *s)
    ListBox_SetItemData(hList, index, s);
 
    ListBox_SetTopIndex(hList, top);
+   if (hListScroll != NULL)
+   {
+      SetScrollPos(hListScroll, SB_CTL, top, FALSE);
+      InvalidateRect(hListScroll, NULL, FALSE);
+   }
    WindowEndUpdate(hList);
+}
+/************************************************************************/
+/*
+ * StatsListGetWheelSteps:  Convert accumulated wheel delta into whole-row
+ *   scroll steps.
+ */
+static int StatsListGetWheelSteps(int zDelta)
+{
+   static int wheel_delta;
+
+   wheel_delta += zDelta;
+
+   int steps = wheel_delta / WHEEL_DELTA;
+   wheel_delta -= steps * WHEEL_DELTA;
+   return steps;
 }
 /************************************************************************/
 /*
@@ -166,14 +224,45 @@ LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       break;
 
    case WM_MOUSEWHEEL:
-      InvalidateRect(hList, NULL, TRUE);
-      break;
+   {
+      int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+      int lines = StatsListGetWheelSteps(zDelta);
+      int old_top = ListBox_GetTopIndex(hwnd);
+      int num_items = ListBox_GetCount(hwnd);
+      int new_top = old_top - lines;
 
-      HANDLE_MSG(hwnd, WM_VSCROLL, StatsListVScroll);
+      if (lines == 0)
+         return 0;
+
+      new_top = std::max(new_top, 0);
+      new_top = std::min(new_top, std::max(num_items - num_visible, 0));
+
+      if (new_top != old_top)
+      {
+         if (hListScroll != NULL)
+         {
+            SetScrollPos(hListScroll, SB_CTL, new_top, FALSE);
+            InvalidateRect(hListScroll, NULL, FALSE);
+         }
+         WindowBeginUpdate(hwnd);
+         ListBox_SetTopIndex(hwnd, new_top);
+         WindowEndUpdate(hwnd);
+      }
+      return 0;
+   }
+
+   HANDLE_MSG(hwnd, WM_VSCROLL, StatsListVScroll);
 
    case WM_ERASEBKGND:
-//		StatsClearArea();
-	   return 1;
+   {
+      AREA sa;
+      RECT r;
+      StatsGetArea(&sa);
+      GetClientRect(hwnd, &r);
+      DrawWindowBackgroundColor(pinventory_bkgnd(), (HDC)wParam, &r,
+         sa.x + r.left, sa.y + r.top + StatsGetButtonBorder(), -1);
+      return 1;
+   }
 
    case WM_LBUTTONDOWN:
       HANDLE_WM_LBUTTONDOWN(hwnd, wParam, lParam, StatsListLButton);
@@ -448,11 +537,15 @@ void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       return;
    }
    new_top = std::max(new_top, 0);
-   new_top = std::min(new_top, num_items - num_visible);
+   new_top = std::min(new_top, std::max(num_items - num_visible, 0));
 
    if (new_top != old_top)
    {
-      SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
+      if (hListScroll != NULL)
+      {
+         SetScrollPos(hListScroll, SB_CTL, new_top, FALSE);
+         InvalidateRect(hListScroll, NULL, FALSE);
+      }
 
       WindowBeginUpdate(hwnd);
       ListBox_SetTopIndex(hwnd, new_top);
@@ -485,7 +578,11 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
        new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
+       if (hListScroll != NULL)
+       {
+            SetScrollPos(hListScroll, SB_CTL, new_top, FALSE);
+            InvalidateRect(hListScroll, NULL, FALSE);
+       }
      WindowEndUpdate(hwnd);
      return true;
 
@@ -496,7 +593,11 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
        new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
+      if (hListScroll != NULL)
+      {
+         SetScrollPos(hListScroll, SB_CTL, new_top, FALSE);
+         InvalidateRect(hListScroll, NULL, FALSE);
+      }
      WindowEndUpdate(hwnd);
      return true;
 
@@ -506,7 +607,11 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
      new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
+     if (hListScroll != NULL)
+     {
+        SetScrollPos(hListScroll, SB_CTL, new_top, FALSE);
+        InvalidateRect(hListScroll, NULL, FALSE);
+     }
      WindowEndUpdate(hwnd);
      return true;
 
@@ -516,7 +621,11 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
      new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
+     if (hListScroll != NULL)
+     {
+        SetScrollPos(hListScroll, SB_CTL, new_top, FALSE);
+        InvalidateRect(hListScroll, NULL, FALSE);
+     }
      WindowEndUpdate(hwnd);
      return true;
 
@@ -558,5 +667,10 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 void ShowStatsList(bool bShow)
 {
 	ShowWindow( hList, bShow ? SW_SHOW : SW_HIDE );
+   if (hListScroll != NULL)
+   {
+      bool has_scrollbar = (num_visible < ListBox_GetCount(hList));
+      ShowWindow(hListScroll, (bShow && has_scrollbar) ? SW_SHOW : SW_HIDE);
+   }
 //	StatsClearArea();
 }

@@ -23,11 +23,15 @@ static AREA stats_area;
 
 static StatGroup current_group;           // Group number currently being processed.
 static StatGroupType group_type;              // Type of group currently being processed.
+static StatGroup pending_group;           // Explicit group request waiting on the server.
 
 /* local function prototypes */
 static void StatsCreateGroup(void);
 static void StatsDestroyGroup(void);
 static void StatsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
+static void StatsVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
+static void StatsMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys);
+static int StatsGetWheelSteps(int zDelta);
 static INT_PTR CALLBACK StatsWindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void StatRedraw(Statistic *s);
 /************************************************************************/
@@ -39,6 +43,7 @@ void StatsCreate(HWND hParent)
   CreateDialog(hInst, MAKEINTRESOURCE(IDD_STATS), hParent, StatsWindowProc);
   
   current_group = STATS_INVENTORY;   // Group to start displaying
+   pending_group = GROUP_NONE;
   group_type = StatGroupType::INVALID_TYPE;
   StatCacheCreate();
   StatButtonsCreate();
@@ -59,15 +64,19 @@ INT_PTR CALLBACK StatsWindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
       return FALSE;
 
    case WM_ERASEBKGND:
-		if( StatsGetCurrentGroup() == STATS_SPELLS || StatsGetCurrentGroup() == STATS_SKILLS )
-		{
-			StatsClearArea();
-			InvalidateRect( hStats, NULL, FALSE );
-		}
+      if (StatsGetCurrentGroup() == STATS_CHARACTER)
+      {
+         StatsClearArea();
+         StatsDraw();
+      }
+      return TRUE;
+
+   case WM_MOUSEWHEEL:
+      HANDLE_WM_MOUSEWHEEL(hwnd, wParam, lParam, StatsMouseWheel);
       return TRUE;
 
       HANDLE_MSG(hwnd, WM_COMMAND, StatsCommand);
-      HANDLE_MSG(hwnd, WM_VSCROLL, StatsNumVScroll);
+      HANDLE_MSG(hwnd, WM_VSCROLL, StatsVScroll);
 
    case WM_MEASUREITEM:
       StatsListMeasureItem(hwnd, (MEASUREITEMSTRUCT *) lParam);
@@ -86,6 +95,9 @@ INT_PTR CALLBACK StatsWindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
      }
      return TRUE;
       
+   case WM_CTLCOLORSCROLLBAR:
+     return (INT_PTR) GetSysColorBrush(COLOR_SCROLLBAR);
+
    case WM_SETFOCUS:
    case WM_KILLFOCUS:
       StatsSetButtonFocus(current_group);
@@ -112,6 +124,59 @@ void StatsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       StatsListCommand(hwnd, id, hwndCtl, codeNotify);
       break;
    }
+}
+/************************************************************************/
+/*
+ * StatsVScroll:  Dispatch vertical scrollbar messages to the active
+ *   stats group implementation.
+ */
+static void StatsVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
+{
+   switch (group_type)
+   {
+   case STATS_NUMERIC:
+      StatsNumVScroll(hwnd, hwndCtl, code, pos);
+      break;
+
+   case STATS_LIST:
+      StatsListVScroll(GetDlgItem(hwnd, IDC_STATLIST), hwndCtl, code, pos);
+      break;
+   }
+}
+/************************************************************************/
+/*
+ * StatsGetWheelSteps:  Convert accumulated wheel delta into whole-item
+ *   scroll steps.
+ */
+static int StatsGetWheelSteps(int zDelta)
+{
+   static int wheel_delta;
+
+   wheel_delta += zDelta;
+
+   int steps = wheel_delta / WHEEL_DELTA;
+   wheel_delta -= steps * WHEEL_DELTA;
+   return steps;
+}
+/************************************************************************/
+/*
+ * StatsMouseWheel:  Scroll the active stats group in response to mouse
+ *   wheel input.  Parameter order must be (zDelta, fwKeys) to match
+ *   the HANDLE_WM_MOUSEWHEEL macro expansion from windowsx.h.
+ */
+static void StatsMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
+{
+   int steps = StatsGetWheelSteps(zDelta);
+   UINT code = steps > 0 ? SB_LINEUP : SB_LINEDOWN;
+
+   if (StatsGetCurrentGroup() == STATS_INVENTORY || group_type == StatGroupType::INVALID_TYPE)
+      return;
+
+   if (steps == 0)
+      return;
+
+   for (int index = 0; index < abs(steps); ++index)
+      StatsVScroll(hwnd, NULL, code, 0);
 }
 /************************************************************************/
 /*
@@ -158,6 +223,18 @@ void StatsSetFocus(bool forward)
    SetFocus(hStats);
 }
 /************************************************************************/
+/*
+ * StatsDrawBorderUnfocused:  Draw the stats panel border for the unfocused
+ *   state.  Selects the border style based on the active theme.
+ */
+static void StatsDrawBorderUnfocused(AREA *area)
+{
+   if (IsNonDefaultTheme())
+      DrawBorderRGB(area, RGB(45, 45, 48), NULL);
+   else
+      DrawBorder(area, -1, NULL);
+}
+/************************************************************************/
 void StatsDrawBorder(void)
 {
 	HWND hFocus = GetFocus();
@@ -171,7 +248,8 @@ void StatsDrawBorder(void)
    // Check child windows & self
 	if ( hFocus == hStats || IsChild(hStats, hFocus) || hFocus == GetHwndInv() )
 		DrawBorder(&areaXXXTemp, HIGHLIGHT_INDEX, NULL);
-	else DrawBorder(&areaXXXTemp, -1, NULL);
+	else
+		StatsDrawBorderUnfocused(&areaXXXTemp);
 }
 /************************************************************************/
 /*
@@ -203,7 +281,13 @@ void StatsChangeColor(void)
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, GetColor(COLOR_BAR2));
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
+
+      if (IsNonDefaultTheme())
+         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME, RGB(0, 0, 0));
    }
+
+   StatsNumRetheme();
+   StatsListRetheme();
 }
 
 /************************************************************************/
@@ -231,10 +315,19 @@ void StatsClearArea(void)
 }
 /************************************************************************/
 /*
+ * GetHwndStats:  Return the stats dialog window handle.
+ */
+HWND GetHwndStats(void)
+{
+   return hStats;
+}
+/************************************************************************/
+/*
  * ActivateInventory: Activate the inventory.
  */
 void ActivateInventory()
 {
+   pending_group = GROUP_NONE;
 	InvalidateRect(GetHwndInv(), NULL, FALSE);
 	DisplayInventoryAsStatGroup(StatGroup::STATS_INVENTORY);
 
@@ -263,8 +356,10 @@ void ActivateStatGroup(StatGroup stat_group)
 }
 /****************************************************************************/
 /*
- * RestoreActiveGroup:  Restore the player's active stat group.
- * The possible stat groups are: inventory, skills, spells or stats.
+ * RestoreActiveStatGroup:  Restore the player's active stat group
+ *   from the INI config after login.  When the saved group is not
+ *   inventory, hides the inventory and requests the saved group
+ *   from the server.
  */
 void RestoreActiveStatGroup()
 {
@@ -279,6 +374,11 @@ void RestoreActiveStatGroup()
 	}
 	else
 	{
+		/* EventInventory already set current_group to STATS_INVENTORY.
+		 * Clear it so StatsSetActiveGroup detects a group change when
+		 * the user clicks the inventory tab before the stats response
+		 * arrives from the server. */
+		DisplayInventoryAsStatGroup(StatGroup::GROUP_NONE);
 		ActivateStatGroup(active_stat_group);
 	}
 }
@@ -425,19 +525,22 @@ void StatsReceiveGroup(StatGroup group, list_type l)
 		StatsMainReceive(l);
 	else 
 	{
-		//	ajw added 5/22/97
-		//	This fixes the bug that occurred when the server sends new spells/skills when Inventory is the
-		//	current group. (Receiving "main stats" never forces a shift in viewed group.)
-		if (group != StatsGetCurrentGroup())
+      if (group == pending_group)
+      {
+         pending_group = GROUP_NONE;
+         DisplayStatGroup(group, l);
+      }
+      else if (StatsGetCurrentGroup() == STATS_INVENTORY && group != STATS_INVENTORY)
 		{
-			//	ajw Changes to make Inventory act somewhat like one of the stats groups.
-			if( StatsGetCurrentGroup() == STATS_INVENTORY )
-			{
-				//	Inventory must be going away.
-				ShowInventory(false);
-			}
+         /*
+          * When inventory is the active display, don't switch away to show
+          * an incoming stat group (e.g. server-pushed skill/spell updates).
+          * Just cache the data; the user will see it when they switch tabs.
+          */
+			StatCacheSetEntry(group, l);
+			return;
 		}
-		DisplayStatGroup(group, l);
+      else DisplayStatGroup(group, l);
 	}
 
    StatCacheSetEntry(group, l);
@@ -459,11 +562,33 @@ StatGroup StatsGetCurrentGroup(void)
 
 /************************************************************************/
 /*
+ * StatsGetPendingGroup:  Return the stat group currently waiting on a
+ *   server response, or GROUP_NONE if there is no pending request.
+ */
+StatGroup StatsGetPendingGroup(void)
+{
+   return pending_group;
+}
+
+/************************************************************************/
+/*
+ * StatsSetPendingGroup:  Set the stat group currently waiting on a server
+ *   response.
+ */
+void StatsSetPendingGroup(StatGroup group)
+{
+   pending_group = group;
+}
+
+/************************************************************************/
+/*
  * DisplayStatGroup:  Display the given group of stats.
  */
 void DisplayStatGroup(StatGroup group, list_type l)
 {
    current_group = group;
+   if (pending_group == group)
+      pending_group = GROUP_NONE;
 
    StatsDestroyGroup();
    stats = l;
@@ -487,6 +612,7 @@ void DisplayStatGroup(StatGroup group, list_type l)
 void DisplayInventoryAsStatGroup( StatGroup group )
 {
 	current_group = group;
+   pending_group = GROUP_NONE;
 }
 
 /************************************************************************/

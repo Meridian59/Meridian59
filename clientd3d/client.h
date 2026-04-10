@@ -37,6 +37,7 @@
 #include <winsock.h>
 #include <math.h>
 #include <commctrl.h>
+#include <uxtheme.h>
 #include <richedit.h>
 #include <process.h>
 #include <tchar.h>

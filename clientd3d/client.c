@@ -13,6 +13,16 @@
 #include <assert.h>
 
 #include "client.h"
+#include <dwmapi.h>
+
+/* DWMWA_BORDER_COLOR (34) is available on Windows 11 22H2+.
+   Older SDKs may not define it. */
+#ifndef DWMWA_BORDER_COLOR
+#define DWMWA_BORDER_COLOR 34
+#endif
+#ifndef DWMWA_COLOR_DEFAULT
+#define DWMWA_COLOR_DEFAULT 0xFFFFFFFF
+#endif
 
 #ifdef M59_RETAIL
   // Minidump reporting
@@ -165,10 +175,67 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_QUERYNEWPALETTE, MainQueryNewPalette);
 		HANDLE_MSG(hwnd, WM_INITMENUPOPUP, InitMenuPopupHandler);
 
+	case WM_NCPAINT:
+	{
+		LRESULT res = DefWindowProc(hwnd, message, wParam, lParam);
+
+		/* In dark mode, Windows draws bright 1px separator lines at
+		   the top and bottom edges of the menu bar. Paint over them
+		   with the dark background color. */
+		if (config.theme != THEME_DEFAULT && GetMenu(hwnd))
+		{
+			RECT rcWindow, rcClient;
+			GetWindowRect(hwnd, &rcWindow);
+			GetClientRect(hwnd, &rcClient);
+
+			POINT ptClient = { 0, 0 };
+			ClientToScreen(hwnd, &ptClient);
+
+			int lineLeft = ptClient.x - rcWindow.left;
+			int lineRight = lineLeft + (rcClient.right - rcClient.left);
+
+			HDC hdc = GetWindowDC(hwnd);
+			if (hdc)
+			{
+				HBRUSH hBr = CreateSolidBrush(GetColor(COLOR_BGD));
+
+				/* Bottom separator (between menu bar and client area) */
+				int bottomY = ptClient.y - rcWindow.top - 1;
+				RECT rcBottom = { lineLeft, bottomY, lineRight, bottomY + 1 };
+				FillRect(hdc, &rcBottom, hBr);
+
+				/* Top separator (between title bar and menu bar) */
+				MENUBARINFO mbi = { sizeof(mbi) };
+				if (GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi))
+				{
+					int topY = mbi.rcBar.top - rcWindow.top;
+					RECT rcTop = { lineLeft, topY - 1, lineRight, topY };
+					FillRect(hdc, &rcTop, hBr);
+				}
+
+				DeleteObject(hBr);
+				ReleaseDC(hwnd, hdc);
+			}
+		}
+		return res;
+	}
+
+	case WM_NCACTIVATE:
+	{
+		LRESULT res = DefWindowProc(hwnd, message, wParam, lParam);
+		if (config.theme != THEME_DEFAULT)
+			SendMessage(hwnd, WM_NCPAINT, (WPARAM)1, 0);
+		return res;
+	}
+
 	case WM_MEASUREITEM:
+		if (DarkMenuBar_MeasureItem((MEASUREITEMSTRUCT *)lParam))
+			return TRUE;
 		ItemListMeasureItem(hwnd, (MEASUREITEMSTRUCT *) lParam);
 		return 0;
 	case WM_DRAWITEM:     // windowsx.h macro always returns FALSE
+		if (DarkMenuBar_DrawItem((DRAWITEMSTRUCT *)lParam))
+			return TRUE;
 		return MainDrawItem(hwnd, (const DRAWITEMSTRUCT *)(lParam));
 
 	case WM_SETCURSOR:
@@ -287,6 +354,62 @@ void SetUpCrashReporting() {
 #endif  
 }
 /************************************************************************/
+/*
+ * ThemeApply:  Apply the current theme at runtime. Swaps colors, toggles
+ *   dark title bar and menu chrome, updates scrollbar themes, reloads
+ *   background bitmaps, and forces a full UI redraw.
+ */
+void ThemeApply(void)
+{
+   bool dark = (config.theme == THEME_DARK);
+
+   /* Toggle dark title bar and window border color */
+   BOOL useDarkMode = dark ? TRUE : FALSE;
+   DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
+      &useDarkMode, sizeof(useDarkMode));
+
+   COLORREF borderColor = dark ? GetColor(COLOR_BGD) : DWMWA_COLOR_DEFAULT;
+   DwmSetWindowAttribute(hMain, DWMWA_BORDER_COLOR,
+      &borderColor, sizeof(borderColor));
+
+   /* Toggle dark scrollbar on the main text area */
+   HWND hwndText = EditBoxWindow();
+   if (hwndText)
+      SetWindowTheme(hwndText, dark ? L"DarkMode_Explorer" : NULL, NULL);
+
+   /* Remove owner-drawn menu state before destroying color brushes */
+   DarkMenuBar_Destroy();
+
+   /* Swap color palette */
+   ColorsDestroy();
+   ColorsCreate(false);
+
+   /* Reload background bitmap */
+   CreateWindowBackground();
+
+   /* Reapply owner-drawn menu bar for non-classic themes */
+   DarkMenuBar_Apply(GetMenu(hMain));
+   DrawMenuBar(hMain);
+
+   /* Invalidate the DLL-side theme cache BEFORE triggering
+      any resize or repaint.  The module DLL caches the theme value
+      from the INI file; writing the new value and then immediately
+      firing EVENT_COLORCHANGED ensures that every subsequent call
+      to IsNonDefaultTheme()/IsDarkMode() in the resize chain
+      returns the correct result. */
+   char theme_str[12];
+   snprintf(theme_str, sizeof(theme_str), "%d", config.theme);
+   WritePrivateProfileString("Interface", "Theme", theme_str, ini_file);
+   ModuleEvent(EVENT_COLORCHANGED, -1, 0);
+
+   /* Force full UI redraw.  MainChangeColor triggers InterfaceResize
+      which recalculates all layout dimensions (stat bar widths, icon
+      sizes, etc.) using the now-correct theme cache. */
+   MainChangeColor();
+   EditBoxRetheme();
+   TextInputRetheme();
+}
+/************************************************************************/
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam,
 				   int nCmdShow)
 {
@@ -323,6 +446,19 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		MainQuit(hMain);
 		exit(1);
 	}
+
+	if (config.theme == THEME_DARK)
+	{
+		BOOL useDarkMode = TRUE;
+		DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
+			&useDarkMode, sizeof(useDarkMode));
+
+		COLORREF borderColor = GetColor(COLOR_BGD);
+		DwmSetWindowAttribute(hMain, DWMWA_BORDER_COLOR,
+			&borderColor, sizeof(borderColor));
+	}
+
+	DarkMenuBar_Apply(GetMenu(hMain));
 
 	if (config.debug)
 		CreateDebugWindow();
@@ -376,6 +512,25 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 			// Forward appropriate messages for tooltips
 			if (state == STATE_GAME)
 				TooltipForwardMessage(&msg);
+
+			/* WM_MOUSEWHEEL is sent to the focused window, but we want
+			   scroll-under-cursor behavior.  Redirect the message to the
+			   window under the cursor and let DefWindowProc bubbling
+			   propagate it up the parent chain naturally. */
+			if (msg.message == WM_MOUSEWHEEL && state == STATE_GAME)
+			{
+				POINT pt = { GET_X_LPARAM(msg.lParam),
+				             GET_Y_LPARAM(msg.lParam) };
+				HWND hwndUnder = WindowFromPoint(pt);
+
+				if (hwndUnder && hwndUnder != hMain
+					&& IsChild(hMain, hwndUnder))
+				{
+					SendMessage(hwndUnder, msg.message,
+						msg.wParam, msg.lParam);
+					continue;
+				}
+			}
 
 			/* Handle modeless dialog messages separately */
 			if ((hCurrentDlg == NULL || !IsDialogMessage(hCurrentDlg, &msg)))

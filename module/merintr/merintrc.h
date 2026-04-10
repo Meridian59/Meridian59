@@ -231,6 +231,34 @@
 #define IDB_BITMAP1                     234
 #define IDB_SELFTRGT                    234
 #define IDS_MENU_CMDALIAS               235
+
+// Dark theme bitmap variants
+#define IDB_INVBKGND_DARK               300
+#define IDB_EULTOP_DARK                 301
+#define IDB_EULLEFT_DARK                302
+#define IDB_EURTOP_DARK                 303
+#define IDB_EURRIGHT_DARK               304
+#define IDB_ELLBOTTOM_DARK              305
+#define IDB_ELLLEFT_DARK                306
+#define IDB_ELRBOTTOM_DARK              307
+#define IDB_ELRRIGHT_DARK               308
+#define IDB_EUREPEAT_DARK               309
+#define IDB_EBREPEAT_DARK               310
+#define IDB_ELREPEAT_DARK               311
+#define IDB_ERREPEAT_DARK               312
+#define IDB_MULTOP_DARK                 313
+#define IDB_MULLEFT_DARK                314
+#define IDB_MURTOP_DARK                 315
+#define IDB_MURRIGHT_DARK               316
+#define IDB_MLLBOTTOM_DARK              317
+#define IDB_MLLLEFT_DARK                318
+#define IDB_MLRBOTTOM_DARK              319
+#define IDB_MLRRIGHT_DARK               320
+#define IDB_MUREPEAT_DARK               321
+#define IDB_MLREPEAT_DARK               322
+#define IDB_MRREPEAT_DARK               323
+#define IDB_MBREPEAT_DARK               324
+
 #define IDS_MENU_GUILD                  236
 #define IDS_MENU_WAVE                   237
 #define IDS_MENU_POINT                  238

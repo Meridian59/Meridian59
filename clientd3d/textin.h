@@ -24,6 +24,7 @@ M59EXPORT void TextInputSetFocus(bool forward);
 void TextInputSetText(char *text, bool focus);
 void TextInputDrawBorder(void);
 void TextInputResetFont(void);
+void TextInputRetheme(void);
 M59EXPORT int GetTextInputHeight(void);
 
 #endif /* #ifndef _TEXTIN_H */

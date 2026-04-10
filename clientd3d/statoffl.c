@@ -100,7 +100,7 @@ void OfflineExpose(HWND hwnd)
 
    /* Redraw background */
    hdc = BeginPaint(hMain, &ps);
-   FillRect(hdc, &ps.rcPaint, GetBrush(COLOR_BGD));
+   FillRect(hdc, &ps.rcPaint, (HBRUSH)GetStockObject(BLACK_BRUSH));
 
    SelectPalette(hdc, hPal, FALSE);
 

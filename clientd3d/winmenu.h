@@ -20,4 +20,10 @@ void MenuConnect(void);
 void MenuDisconnect(void);
 void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
+M59EXPORT void DarkMenuBar_Apply(HMENU hMenu);
+void DarkMenuBar_Remove(HMENU hMenu);
+void DarkMenuBar_Destroy(void);
+bool DarkMenuBar_MeasureItem(MEASUREITEMSTRUCT *mis);
+bool DarkMenuBar_DrawItem(DRAWITEMSTRUCT *dis);
+
 #endif /* #ifndef _WINMENU_H */

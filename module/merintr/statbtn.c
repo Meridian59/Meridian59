@@ -289,6 +289,25 @@ bool StatInputKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 }
 /************************************************************************/
 /*
+ * DarkenStatButton:  Apply the non-default theme icon tint and border to a
+ *   stat button that has just been owner-drawn.  A no-op in the default theme.
+ */
+static void DarkenStatButton(HDC hdc, const RECT *rcItem, bool pressed)
+{
+   if (!IsNonDefaultTheme())
+      return;
+   int w = rcItem->right - rcItem->left;
+   int h = rcItem->bottom - rcItem->top;
+   RemapGreyPixels(hdc, 0, 0, w, h, 80, pressed ? 10 : 20);
+   HBRUSH border_brush = CreateSolidBrush(RGB(75, 75, 79));
+   if (border_brush != NULL)
+   {
+      FrameRect(hdc, rcItem, border_brush);
+      DeleteObject(border_brush);
+   }
+}
+/************************************************************************/
+/*
  * StatButtonDrawItem:  Draw stat button for given DRAWITEMSTRUCT structure.
  */
 bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
@@ -309,16 +328,31 @@ bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 		}
 		else
 		{
+         StatGroup active_group = StatsGetPendingGroup() != GROUP_NONE
+            ? StatsGetPendingGroup()
+            : StatsGetCurrentGroup();
+
 			// Pick image to draw, depending on whether button is pressed
-			if( lpdis->itemState & ODS_SELECTED || StatsGetCurrentGroup() == button->group )
+         if( lpdis->itemState & ODS_SELECTED || active_group == button->group )
 				bPressed = true;
 
 			SelectPalette(lpdis->hDC, cinfo->hPal, FALSE);
+
+			/* Prime the offscreen buffer with the window background at
+			   the button's main-window position so transparent pixels
+			   show the correct background instead of stale data. */
+			RECT rcBtn;
+			GetClientRect(lpdis->hwndItem, &rcBtn);
+			MapWindowPoints(lpdis->hwndItem, cinfo->hMain, (LPPOINT)&rcBtn, 2);
+			int bgx = rcBtn.left;
+			int bgy = rcBtn.top;
 
 			//	Left piece.
 			if( bPressed )
 				xSrc = button->iWidthLeft;
 			else xSrc = 0;
+			OffscreenWindowBackground(NULL, bgx, bgy,
+				button->iWidthLeft, button->height);
 			OffscreenBitBlt(lpdis->hDC, 0, 0, button->iWidthLeft, button->height,
                          (BYTE *) button->bitsLeft, xSrc, 0, 2 * button->iWidthLeft,
                          OBB_FLIP | OBB_COPY | OBB_TRANSPARENT );
@@ -328,6 +362,8 @@ bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 			xDest = button->iWidthLeft;
 			while( xDest < button->width - button->iWidthRight )
 			{
+				OffscreenWindowBackground(NULL, bgx + xDest, bgy,
+					button->iWidthMid, button->height);
 				OffscreenBitBlt(lpdis->hDC, xDest, 0, button->iWidthMid, button->height,
                             (BYTE *) button->bitsMid, xSrc, 0, 2 * button->iWidthMid,
                             OBB_FLIP | OBB_COPY | OBB_TRANSPARENT );
@@ -337,9 +373,13 @@ bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 			if( bPressed )
 				xSrc = button->iWidthRight;
 			xDest = button->width - button->iWidthRight;
+			OffscreenWindowBackground(NULL, bgx + xDest, bgy,
+				button->iWidthRight, button->height);
 			OffscreenBitBlt(lpdis->hDC, xDest, 0, button->iWidthRight, button->height,
                          (BYTE *) button->bitsRight, xSrc, 0, 2 * button->iWidthRight,
                          OBB_FLIP | OBB_COPY | OBB_TRANSPARENT );
+
+			DarkenStatButton(lpdis->hDC, &lpdis->rcItem, bPressed);
 		}
 		return true;
 	}
@@ -375,6 +415,7 @@ void StatsSetActiveGroup(StatGroup group)
 
    StatGroup old_group = StatsGetCurrentGroup();
    StatButton *old_button = FindStatsButtonByGroup(old_group);
+   StatButton *new_button = FindStatsButtonByGroup(group);
 	if (old_group != group)
 	{
 		//	ajw Changes to make Inventory act somewhat like one of the stats groups.
@@ -385,8 +426,10 @@ void StatsSetActiveGroup(StatGroup group)
 		}
 		if( group == StatGroup::STATS_INVENTORY )
 		{
+         StatsSetPendingGroup(StatGroup::GROUP_NONE);
 			//	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.
-			InvalidateRect( old_button->hwnd, NULL, FALSE );
+         if (old_button != nullptr)
+            InvalidateRect( old_button->hwnd, NULL, FALSE );
 
 			StatsShowGroup( false );
 			ShowInventory( true );
@@ -397,17 +440,30 @@ void StatsSetActiveGroup(StatGroup group)
 			// Check stat cache; if group not present, ask server
          list_type stat_list;
 			if (StatCacheGetEntry(group, &stat_list) == true)
+         {
+            StatsSetPendingGroup(StatGroup::GROUP_NONE);
 				DisplayStatGroup(group, stat_list);
+         }
 			else
 			{
+            StatsSetPendingGroup(group);
+            if (old_button != nullptr)
+               InvalidateRect(old_button->hwnd, NULL, FALSE);
+            if (new_button != nullptr)
+               InvalidateRect(new_button->hwnd, NULL, FALSE);
 				debug(("Requesting group %d\n", (int)group));
 				RequestStats((BYTE)group);
 			}
 		}
 	}
+
+   if (old_button != nullptr)
+      InvalidateRect(old_button->hwnd, NULL, FALSE);
+   if (new_button != nullptr)
+      InvalidateRect(new_button->hwnd, NULL, FALSE);
    
    //	[ xxx Still broken - click on Inv when it is already selected, but drag off of button and release. ]
-	if( StatsGetCurrentGroup() == STATS_INVENTORY )
+	if( group == StatGroup::STATS_INVENTORY )
 		InventorySetFocus( true );		//	Force focus to leave stats group window after button within it was pushed.
 	
 }

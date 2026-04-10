@@ -319,8 +319,10 @@ bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       }
       else
       {
+	 bool bPressed = (lpdis->itemState & ODS_SELECTED) || b->pressed;
+
 	 // Pick image to draw, depending on whether button is pressed
-	 if (lpdis->itemState & ODS_SELECTED || b->pressed)
+	 if (bPressed)
 	    x = TOOLBAR_BUTTON_WIDTH;
 	 else x = 0;
 
@@ -331,6 +333,13 @@ bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 	 OffscreenBitBlt(lpdis->hDC, 0, 0, TOOLBAR_BUTTON_WIDTH, TOOLBAR_BUTTON_HEIGHT,
 			 b->bits, x, 0, 2 * TOOLBAR_BUTTON_WIDTH, 
 			 OBB_FLIP | OBB_COPY | OBB_TRANSPARENT);
+
+	 if (config.theme == THEME_DARK)
+	 {
+	    int w = lpdis->rcItem.right - lpdis->rcItem.left;
+	    int h = lpdis->rcItem.bottom - lpdis->rcItem.top;
+	    RemapGreyPixels(lpdis->hDC, 0, 0, w, h, 140, bPressed ? 10 : 20);
+	 }
       }
       return true;
    }

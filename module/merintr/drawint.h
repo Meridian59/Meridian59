@@ -16,7 +16,14 @@ void InterfaceDrawInit(void);
 void InterfaceDrawExit(void);
 void InterfaceDrawResize(int xsize, int ysize, AREA *view);
 void InterfaceDrawElements(HDC hdc);
+void InterfaceDrawSidebarBackground(HDC hdc);
 //void InterfaceDrawBarBorder(HDC hdc, AREA *a);
 void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a );
+int ThemeResourceId(int id);
+bool IsDarkMode(void);
+bool IsNonDefaultTheme(void);
+void InvalidateThemeCache(void);
+void ScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, BOOL redraw);
+void SidebarWindowBackground(int x, int y, int width, int height);
 
 #endif /* #ifndef _DRAWINT_H */

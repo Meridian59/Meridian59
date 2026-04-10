@@ -236,6 +236,7 @@
 #define IDS_RARITY_GRADE_UNIDENTIFIED   209
 #define IDS_RARITY_GRADE_CURSED         210
 #define IDS_NEED_STEAM_UPDATE           211
+#define IDB_BACKGROUND_DARK             212
 #define IDC_PORTNUM                     1000
 #define IDC_HOST                        1001
 #define IDC_ITEMLIST                    1002
@@ -435,6 +436,8 @@
 #define IDC_EMAIL_ADDRESS               1218
 #define IDC_SIGNUP_TROUBLESHOOT         1219
 #define ID_SPINNING_CUBE                1220
+#define IDC_DARKMODE                    1221
+#define IDC_THEME                       1222
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -641,6 +644,8 @@
 #define IDS_INTRO                       3651
 #define ID_FONT_ANNOTATIONS             3652
 #define IDC_ANNOTATION_ZOOM_LIMIT       3653
+#define IDS_THEME_DEFAULT               3654
+#define IDS_THEME_DARK                  3655
 
 // Next default values for new objects
 // 

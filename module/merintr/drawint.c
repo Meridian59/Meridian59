@@ -288,6 +288,112 @@ static InterfaceRepeater repeaters[NUM_REPEATERS] = {
 #define ELEMENT_BARBOTTOM 29
 
 static void InterfaceLoadElement(InterfaceElement *element);
+
+static bool is_dark_cached = false;
+static int  theme_cached = 0;
+static bool theme_loaded = false;
+
+/************************************************************************/
+/*
+ * IsDarkMode:  Returns true if the active theme is the dark theme.
+ *   Reads the Theme key from meridian.ini and caches the value.
+ */
+bool IsDarkMode(void)
+{
+   if (!theme_loaded)
+   {
+      theme_cached = GetPrivateProfileInt("Interface", "Theme", 0,
+                                          "./meridian.ini");
+      is_dark_cached = (theme_cached == 1);
+      theme_loaded = true;
+   }
+   return is_dark_cached;
+}
+
+/************************************************************************/
+/*
+ * IsNonDefaultTheme:  Returns true if the active theme is not the default.
+ */
+bool IsNonDefaultTheme(void)
+{
+   if (!theme_loaded)
+      IsDarkMode();
+   return (theme_cached != 0);
+}
+
+/************************************************************************/
+/*
+ * InvalidateThemeCache:  Clears the cached theme value.
+ */
+void InvalidateThemeCache(void)
+{
+   theme_loaded = false;
+}
+/************************************************************************/
+/*
+ * ScrollbarSetInfo:  Set a scrollbar's range, page size, and position
+ *   with proportional thumb sizing.  itemCount is the total number of
+ *   scrollable items, pageSize is how many fit on screen at once.
+ */
+void ScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, BOOL redraw)
+{
+   SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE | SIF_POS };
+   si.nMin  = 0;
+   si.nMax  = itemCount > 0 ? itemCount - 1 : 0;
+   si.nPage = (UINT)std::max(pageSize, 0);
+   si.nPos  = std::max(pos, 0);
+   SetScrollInfo(hwndScroll, SB_CTL, &si, redraw);
+}
+/************************************************************************/
+/*
+ * SidebarWindowBackground:  Draw the background for a sidebar panel area.
+ *   Uses the inventory texture for non-default themes and the main window
+ *   texture for the default theme.
+ */
+void SidebarWindowBackground(int x, int y, int width, int height)
+{
+   OffscreenWindowBackground(IsNonDefaultTheme() ? pinventory_bkgnd() : NULL, x, y, width, height);
+}
+/************************************************************************/
+/*
+ * ThemeResourceId:  Returns the flat variant of a bitmap resource ID
+ *   when using a non-default theme.
+ */
+int ThemeResourceId(int id)
+{
+   if (!IsNonDefaultTheme())
+      return id;
+
+   switch (id)
+   {
+   case IDB_INVBKGND:   return IDB_INVBKGND_DARK;
+   case IDB_EULTOP:     return IDB_EULTOP_DARK;
+   case IDB_EULLEFT:    return IDB_EULLEFT_DARK;
+   case IDB_EURTOP:     return IDB_EURTOP_DARK;
+   case IDB_EURRIGHT:   return IDB_EURRIGHT_DARK;
+   case IDB_ELLBOTTOM:  return IDB_ELLBOTTOM_DARK;
+   case IDB_ELLLEFT:    return IDB_ELLLEFT_DARK;
+   case IDB_ELRBOTTOM:  return IDB_ELRBOTTOM_DARK;
+   case IDB_ELRRIGHT:   return IDB_ELRRIGHT_DARK;
+   case IDB_EUREPEAT:   return IDB_EUREPEAT_DARK;
+   case IDB_EBREPEAT:   return IDB_EBREPEAT_DARK;
+   case IDB_ELREPEAT:   return IDB_ELREPEAT_DARK;
+   case IDB_ERREPEAT:   return IDB_ERREPEAT_DARK;
+   case IDB_MULTOP:     return IDB_MULTOP_DARK;
+   case IDB_MULLEFT:    return IDB_MULLEFT_DARK;
+   case IDB_MURTOP:     return IDB_MURTOP_DARK;
+   case IDB_MURRIGHT:   return IDB_MURRIGHT_DARK;
+   case IDB_MLLBOTTOM:  return IDB_MLLBOTTOM_DARK;
+   case IDB_MLLLEFT:    return IDB_MLLLEFT_DARK;
+   case IDB_MLRBOTTOM:  return IDB_MLRBOTTOM_DARK;
+   case IDB_MLRRIGHT:   return IDB_MLRRIGHT_DARK;
+   case IDB_MUREPEAT:   return IDB_MUREPEAT_DARK;
+   case IDB_MLREPEAT:   return IDB_MLREPEAT_DARK;
+   case IDB_MRREPEAT:   return IDB_MRREPEAT_DARK;
+   case IDB_MBREPEAT:   return IDB_MBREPEAT_DARK;
+   default:             return id;
+   }
+}
 /****************************************************************************/
 /*
  * InterfaceDrawInit:  Load interface bitmaps.
@@ -330,7 +436,7 @@ void InterfaceLoadElement(InterfaceElement *element)
 {
    BITMAPINFOHEADER *ptr;
    
-   ptr = GetBitmapResource(hInst, element->id);
+   ptr = GetBitmapResource(hInst, ThemeResourceId(element->id));
    if (ptr == NULL)
    {
      element->bits = NULL;
@@ -775,13 +881,22 @@ void InterfaceDrawElements(HDC hdc)
 
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
-	  //	Temp. disable xxx
-/*	  if( i >= ELEMENT_ULTOP && i <= ELEMENT_LRRIGHT )
-		  continue;
-	  if( i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT )
-		  continue;
-	  if( i == ELEMENT_BLLBOTTOM || i == ELEMENT_BLRBOTTOM )
-		  continue;*/
+	/* Inventory corners are not drawn because the inventory edge repeaters
+	   are also disabled (below), and corners without connecting edges leave
+	   orphaned fragments. The elements themselves are kept because
+	   InterfaceDrawResize() uses their positions as layout anchors. */
+	if (i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT)
+		continue;
+
+	/* Skip stats and editbox frame pieces in non-default themes. The
+	   silver edges look wrong against dark backgrounds. */
+	if (IsNonDefaultTheme())
+	{
+		if (i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT)
+			continue;
+		if (i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT)
+			continue;
+	}
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
     
@@ -801,6 +916,17 @@ void InterfaceDrawElements(HDC hdc)
 		continue;
 	if( i == ELEMENT_BBOTTOM )
 		continue;
+
+	/* Stats and editbox edge repeaters have no non-default variants.
+	   Skip them in non-default themes so the silver edges don't show
+	   against dark backgrounds. */
+	if (IsNonDefaultTheme())
+	{
+		if (i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT)
+			continue;
+		if (i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT)
+			continue;
+	}
 
 	e = &repeaters[i].element;
     x = e->x;
@@ -825,6 +951,25 @@ void InterfaceDrawElements(HDC hdc)
 }
 /****************************************************************************/
 /*
+ * InterfaceDrawSidebarBackground:  Fill the sidebar area with the
+ *   inventory background texture for non-default themes.
+ */
+void InterfaceDrawSidebarBackground(HDC hdc)
+{
+   if (!IsNonDefaultTheme())
+      return;
+
+   RECT r;
+   r.left   = player_enchant_x - 1;
+   r.top    = TOP_BORDER + EDGETREAT_HEIGHT + ENCHANT_BORDER - 1;
+   r.right  = r.left + USERAREA_WIDTH + stat_width + (stat_bar_x - stat_x) + MAPTREAT_WIDTH + 1;
+   r.bottom = r.top + (player_enchant_bottom - player_enchant_y) + USERAREA_HEIGHT +
+              ENCHANT_BORDER + MAPTREAT_HEIGHT;
+
+   DrawWindowBackgroundColor(pinventory_bkgnd(), hdc, &r, r.left, r.top, -1);
+}
+/****************************************************************************/
+/*
  * InterfaceDrawBarBorder:  Draw border around a graph bar; the bar occupies
  *   the area "a" on hdc.
  */
@@ -833,6 +978,11 @@ void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a )
   int i, x, y;
   InterfaceElement *e;
   bool vertical;
+
+  /* Non-default themes skip the ornate bar frame entirely. The graph
+   * control paints its own clean flat rectangle. */
+if (IsNonDefaultTheme())
+    return;
 
   elements[ELEMENT_BARRIGHT].x = a->cx;
 

@@ -18,6 +18,7 @@ void StatsNumResize(list_type stats);
 void StatsNumChangeStat(Statistic *s);
 void StatsNumVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 void StatsNumDraw(list_type stats);
+void StatsNumRetheme(void);
 
 void ShowStatsNum(bool bShow, list_type stats);
 

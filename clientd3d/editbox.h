@@ -27,6 +27,7 @@ M59EXPORT void EditBoxEndAdd(void);
 M59EXPORT void EditBoxAddText(char *message, int color, int style);
 void EditBoxResetFont(void);
 void EditBoxChangeColor(void);
+void EditBoxRetheme(void);
 void EditBoxSetNormalFormat(void);
 
 #endif /* #ifndef _EDITBOX_H */

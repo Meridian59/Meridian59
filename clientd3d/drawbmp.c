@@ -553,8 +553,9 @@ bool ComputeObjectBoundingBox(PDIB pdib, list_type overlays, bool include_object
 void CreateWindowBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
+	int bg_id = (config.theme == THEME_DARK) ? IDB_BACKGROUND_DARK : IDB_BACKGROUND;
 	
-	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, IDB_BACKGROUND);
+	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, bg_id);
 	if (ptr == NULL)
 		debug(("Couldn't lock resource!\n"));      
 	bkgnd.bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
@@ -584,7 +585,7 @@ void DrawWindowBackgroundColor(RawBitmap *bg, HDC hdc, RECT *rect, int xin, int 
 	switch (GameGetState())
 	{
 	case GAME_NONE:
-		FillRect(hdc, rect, GetBrush(COLOR_BGD));
+		FillRect(hdc, rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
 		break;
 		
 	default:
@@ -808,6 +809,61 @@ void OffscreenCopy(HDC hdc, int dest_x, int dest_y, int width, int height,
 				   int source_x, int source_y)
 {
 	BitBlt(hdc, dest_x, dest_y, width, height, gOffscreenDC, source_x, source_y, SRCCOPY);
+}
+
+/************************************************************************/
+/*
+ * RemapGreyPixels:  Remap grey pixels in the given DC region using a
+ *   linear transform: output = input * scale / 255 + base.
+ *   Non-grey pixels (where R, G, B differ by more than 20) are
+ *   left untouched, preserving colored icon details.
+ *
+ *   scale controls how much of the original brightness is kept (0..255).
+ *   base is added after scaling to set the minimum output level.
+ */
+M59EXPORT void RemapGreyPixels(HDC hdc, int x, int y, int w, int h, int scale, int base)
+{
+   BITMAPINFO bmi = {};
+   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+   bmi.bmiHeader.biWidth = w;
+   bmi.bmiHeader.biHeight = -h;
+   bmi.bmiHeader.biPlanes = 1;
+   bmi.bmiHeader.biBitCount = 32;
+   bmi.bmiHeader.biCompression = BI_RGB;
+
+   BYTE *pixels = NULL;
+   HDC memDC = CreateCompatibleDC(hdc);
+   HBITMAP dib = CreateDIBSection(memDC, &bmi, DIB_RGB_COLORS,
+      (void **)&pixels, NULL, 0);
+   if (dib != NULL && pixels != NULL)
+   {
+      HBITMAP oldBmp = (HBITMAP)SelectObject(memDC, dib);
+      BitBlt(memDC, 0, 0, w, h, hdc, x, y, SRCCOPY);
+
+      int total = w * h * 4;
+      for (int i = 0; i < total; i += 4)
+      {
+         BYTE pb = pixels[i];
+         BYTE pg = pixels[i + 1];
+         BYTE pr = pixels[i + 2];
+         BYTE maxc = (pr > pg) ? ((pr > pb) ? pr : pb) : ((pg > pb) ? pg : pb);
+         BYTE minc = (pr < pg) ? ((pr < pb) ? pr : pb) : ((pg < pb) ? pg : pb);
+
+         if ((maxc - minc) < 20)
+         {
+            int grey = (pr + pg + pb) / 3;
+            int remapped = grey * scale / 255 + base;
+            pixels[i]     = (BYTE)remapped;
+            pixels[i + 1] = (BYTE)remapped;
+            pixels[i + 2] = (BYTE)remapped;
+         }
+      }
+
+      BitBlt(hdc, x, y, w, h, memDC, 0, 0, SRCCOPY);
+      SelectObject(memDC, oldBmp);
+      DeleteObject(dib);
+   }
+   DeleteDC(memDC);
 }
 
 /************************************************************************/

@@ -105,6 +105,11 @@ void MainSetState(int new_state)
 	
 	MainExitState();
 	MainInitState(new_state);
+
+	/* Force immediate repaint so the new state's paint handler runs
+       before the user sees stale pixels from destroyed child windows. */
+	RedrawWindow(hMain, NULL, NULL,
+		RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW | RDW_ALLCHILDREN);
 }
 
 /****************************************************************************/
@@ -182,7 +187,7 @@ void MainExpose(HWND hwnd)
 	default:
 		/* Redraw background */
 		hdc = BeginPaint(hwnd, &ps);
-		FillRect(hdc, &ps.rcPaint, GetBrush(COLOR_BGD));
+		FillRect(hdc, &ps.rcPaint, (HBRUSH)GetStockObject(BLACK_BRUSH));
 		EndPaint(hwnd, &ps);
 		break;
 	}

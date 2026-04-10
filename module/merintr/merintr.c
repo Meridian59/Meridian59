@@ -1686,6 +1686,7 @@ bool WINAPI EventInventory(int command, void *data)
       DisplayInventory(cinfo->player->inventory);
       StatsShowGroup( false );
       ShowInventory( true );
+      InventoryRedraw();
       DisplayInventoryAsStatGroup( StatGroup::STATS_INVENTORY );
       break;
 

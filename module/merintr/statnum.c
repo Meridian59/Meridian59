@@ -60,10 +60,20 @@ void StatsNumCreate(list_type stats)
    hStatsScroll = CreateWindow("scrollbar", NULL, WS_CHILD | SBS_VERT,
                               0, 0, 100, 100, /* Make sure scrollbar drawn ok */
                               hStats, NULL, hInst, NULL);
+
    top_stat = 0;
 
    // Set colors of graphs
    StatsChangeColor();
+}
+/************************************************************************/
+/*
+ * StatsNumRetheme:  Repaint the stats scrollbar when the theme changes.
+ */
+void StatsNumRetheme(void)
+{
+   if (hStatsScroll != NULL)
+      InvalidateRect(hStatsScroll, NULL, TRUE);
 }
 /************************************************************************/
 /*
@@ -120,7 +130,7 @@ void StatsNumResize(list_type stats)
    if (num_visible < num_stats)
       has_scrollbar = true;
    
-   top_stat = std::min(top_stat, num_stats - num_visible);
+   top_stat = std::min(top_stat, std::max(num_stats - num_visible, 0));
 
    // Move graph bars
    x = stats_area.cx / 2;
@@ -149,8 +159,8 @@ void StatsNumResize(list_type stats)
       s->y = y;
       y += s->cy;
 
-      MoveWindow(s->hControl, x, s->y + (s->cy - STATS_BAR_HEIGHT) / 2,
-         stats_bar_width, STATS_BAR_HEIGHT, TRUE);
+      MoveWindow(s->hControl, x, s->y + (s->cy - GetStatsBarHeight()) / 2,
+         stats_bar_width, GetStatsBarHeight(), TRUE);
 
       // Only show graph bar if it's completely visible
       //	And Inventory is not selected.	ajw
@@ -171,8 +181,7 @@ void StatsNumResize(list_type stats)
       MoveWindow(hStatsScroll, stats_area.cx - stats_scrollbar_width,
                y, stats_scrollbar_width, num_visible * height, FALSE);
       ShowWindow(hStatsScroll, SW_HIDE);
-      SetScrollRange(hStatsScroll, SB_CTL, 0, num_stats - num_visible, TRUE);
-      SetScrollPos(hStatsScroll, SB_CTL, top_stat, TRUE);
+      ScrollbarSetInfo(hStatsScroll, num_stats, num_visible, top_stat, TRUE);
       if (StatsGetCurrentGroup() != STATS_INVENTORY)  //	ajw
          ShowWindow(hStatsScroll, SW_SHOWNORMAL);
    }
@@ -204,8 +213,11 @@ void StatsNumVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
 {
    int new_top;  // New top row index
    int min_stat, max_stat;
+   SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE };
 
-   GetScrollRange(hStatsScroll, SB_CTL, &min_stat, &max_stat);
+   GetScrollInfo(hStatsScroll, SB_CTL, &si);
+   min_stat = si.nMin;
+   max_stat = std::max(si.nMax - (int)si.nPage + 1, si.nMin);
 
    switch (code)
    {
@@ -329,8 +341,8 @@ void DisplayNumericStat(Statistic *s)
       // Draw background around stat bar
      a.x = stats_area.cx / 2;
      a.cx = stats_bar_width;
-     a.y = s->y + (s->cy - STATS_BAR_HEIGHT) / 2;
-     a.cy = STATS_BAR_HEIGHT;
+     a.y = s->y + (s->cy - GetStatsBarHeight()) / 2;
+     a.cy = GetStatsBarHeight();
      InterfaceDrawBarBorder( pinventory_bkgnd(), hdc, &a );
      break;
    }

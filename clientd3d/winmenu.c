@@ -6,11 +6,14 @@
 //
 // Meridian is a registered trademark.
 /*
- * winmenu.c:  Handle main client window menu.
+ * winmenu.c:  Handle main client window menu, including owner-drawn
+ *   menu bar rendering for dark and light themes.
  */
 #include "client.h"
 
 static HMENU menu;          // Main menu
+static HBRUSH hMenuBarBrush = NULL;
+static HBRUSH hMenuBarHotBrush = NULL;
 
 extern int connection;
 
@@ -235,4 +238,210 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       break;
 
    }
+}
+/************************************************************************/
+/*
+ * DarkMenuBar_Apply:  Convert all top-level menu bar items to
+ *   owner-drawn so they render with dark theme colors. Sets the menu
+ *   bar background brush via MENUINFO. Safe to call multiple times;
+ *   items already converted are skipped.
+ */
+void DarkMenuBar_Apply(HMENU hMenu)
+{
+   if (!hMenu || config.theme == THEME_DEFAULT)
+      return;
+
+   if (!hMenuBarBrush)
+   {
+      hMenuBarBrush = CreateSolidBrush(GetColor(COLOR_BGD));
+      hMenuBarHotBrush = CreateSolidBrush(GetColor(COLOR_EDITBGD));
+   }
+
+   MENUINFO mi;
+   memset(&mi, 0, sizeof(mi));
+   mi.cbSize = sizeof(mi);
+   mi.fMask = MIM_BACKGROUND;
+   mi.hbrBack = hMenuBarBrush;
+   SetMenuInfo(hMenu, &mi);
+
+   int count = GetMenuItemCount(hMenu);
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_FTYPE | MIIM_STRING | MIIM_DATA;
+
+      mii.dwTypeData = NULL;
+      mii.cch = 0;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      if (mii.fType & MFT_OWNERDRAW)
+         continue;
+      if (mii.fType & MFT_SEPARATOR)
+         continue;
+
+      UINT textLen = mii.cch + 1;
+      char *text = (char *)SafeMalloc(textLen);
+      mii.dwTypeData = text;
+      mii.cch = textLen;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      mii.fMask = MIIM_FTYPE | MIIM_DATA;
+      mii.fType |= MFT_OWNERDRAW;
+      mii.dwItemData = (ULONG_PTR)text;
+      SetMenuItemInfo(hMenu, i, TRUE, &mii);
+   }
+}
+/************************************************************************/
+/*
+ * DarkMenuBar_Remove:  Restore all owner-drawn menu bar items to
+ *   standard string items and clear the background brush.
+ */
+void DarkMenuBar_Remove(HMENU hMenu)
+{
+   if (!hMenu)
+      return;
+
+   int count = GetMenuItemCount(hMenu);
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_FTYPE | MIIM_DATA;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      if (!(mii.fType & MFT_OWNERDRAW))
+         continue;
+
+      char *text = (char *)mii.dwItemData;
+
+      mii.fMask = MIIM_FTYPE | MIIM_STRING | MIIM_DATA;
+      mii.fType &= ~MFT_OWNERDRAW;
+      mii.dwTypeData = text ? text : (char *)"";
+      mii.cch = text ? (UINT)strlen(text) : 0;
+      mii.dwItemData = 0;
+      SetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      if (text)
+         SafeFree(text);
+   }
+
+   MENUINFO mi;
+   memset(&mi, 0, sizeof(mi));
+   mi.cbSize = sizeof(mi);
+   mi.fMask = MIM_BACKGROUND;
+   mi.hbrBack = NULL;
+   SetMenuInfo(hMenu, &mi);
+}
+/************************************************************************/
+/*
+ * DarkMenuBar_Destroy:  Remove owner-drawn state from the current menu
+ *   and free the dark menu bar brushes.
+ */
+void DarkMenuBar_Destroy(void)
+{
+   HMENU hMenu = GetMenu(hMain);
+   if (hMenu)
+      DarkMenuBar_Remove(hMenu);
+
+   if (hMenuBarBrush)
+   {
+      DeleteObject(hMenuBarBrush);
+      hMenuBarBrush = NULL;
+   }
+   if (hMenuBarHotBrush)
+   {
+      DeleteObject(hMenuBarHotBrush);
+      hMenuBarHotBrush = NULL;
+   }
+}
+/************************************************************************/
+/*
+ * DarkMenuBar_MeasureItem:  Returns true and fills the MEASUREITEMSTRUCT
+ *   if the item is an owner-drawn menu bar item in a non-classic theme.
+ */
+bool DarkMenuBar_MeasureItem(MEASUREITEMSTRUCT *mis)
+{
+   if (mis->CtlType != ODT_MENU)
+      return false;
+   if (config.theme == THEME_DEFAULT)
+      return false;
+
+   const char *text = (const char *)mis->itemData;
+   if (!text)
+      return false;
+
+   HDC hdc = GetDC(hMain);
+   NONCLIENTMETRICS ncm;
+   memset(&ncm, 0, sizeof(ncm));
+   ncm.cbSize = sizeof(ncm);
+   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
+   HFONT hMenuFont = CreateFontIndirect(&ncm.lfMenuFont);
+   HFONT hOldFont = (HFONT)SelectObject(hdc, hMenuFont);
+
+   SIZE size;
+   GetTextExtentPoint32(hdc, text, (int)strlen(text), &size);
+
+   mis->itemWidth = size.cx;
+   mis->itemHeight = size.cy + 8;
+
+   SelectObject(hdc, hOldFont);
+   DeleteObject(hMenuFont);
+   ReleaseDC(hMain, hdc);
+
+   return true;
+}
+/************************************************************************/
+/*
+ * DarkMenuBar_DrawItem:  Returns true and paints the item if it is an
+ *   owner-drawn menu bar item in a non-classic theme.
+ */
+bool DarkMenuBar_DrawItem(DRAWITEMSTRUCT *dis)
+{
+   if (dis->CtlType != ODT_MENU)
+      return false;
+   if (config.theme == THEME_DEFAULT)
+      return false;
+
+   const char *text = (const char *)dis->itemData;
+   if (!text)
+      return false;
+
+   HDC hdc = dis->hDC;
+   RECT rc = dis->rcItem;
+
+   HBRUSH bgBrush;
+   COLORREF textColor;
+
+   if (dis->itemState & (ODS_SELECTED | ODS_HOTLIGHT))
+   {
+      bgBrush = hMenuBarHotBrush;
+      textColor = RGB(255, 255, 255);
+   }
+   else
+   {
+      bgBrush = hMenuBarBrush;
+      textColor = GetColor(COLOR_FGD);
+   }
+
+   FillRect(hdc, &rc, bgBrush);
+
+   SetTextColor(hdc, textColor);
+   SetBkMode(hdc, TRANSPARENT);
+
+   NONCLIENTMETRICS ncm;
+   memset(&ncm, 0, sizeof(ncm));
+   ncm.cbSize = sizeof(ncm);
+   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
+   HFONT hMenuFont = CreateFontIndirect(&ncm.lfMenuFont);
+   HFONT hOldFont = (HFONT)SelectObject(hdc, hMenuFont);
+
+   DrawText(hdc, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+   SelectObject(hdc, hOldFont);
+   DeleteObject(hMenuFont);
+
+   return true;
 }

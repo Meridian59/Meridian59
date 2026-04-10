@@ -20,6 +20,7 @@
 #define STATUS_BUTTON_SPACING      1 // was 5
 
 #define STATS_BAR_HEIGHT    12
+#define STATS_BAR_HEIGHT_LARGE 17
 
 // Numbers for groups of statistics Equate with value returned from StatsGetCurrentGroup()
 // NOTE: These values are matched to server-side values - seen in user.kod for example
@@ -77,6 +78,9 @@ StatGroup StatsGetCurrentGroup(void);
 void StatsDraw(void);
 void StatsMove(void);
 void StatsClearArea(void);
+HWND GetHwndStats(void);
+StatGroup StatsGetPendingGroup(void);
+void StatsSetPendingGroup(StatGroup group);
 
 void StatsGroupsInfo(BYTE num_groups, ID *names);
 void StatChange(StatGroup group, Statistic *s);

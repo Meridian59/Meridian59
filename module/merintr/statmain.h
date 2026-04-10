@@ -23,6 +23,7 @@ void StatsMainChange(Statistic *s);
 void StatsMainResize(int xsize, int ysize, AREA *view);
 void StatsMainRedraw(void);
 void StatsMainChangeColor(void);
+int GetStatsBarHeight(void);
 
 
 #endif /* #ifndef _STATMAIN_H */

@@ -391,7 +391,7 @@ void ThemeApply(void)
    DarkMenuBar_Apply(GetMenu(hMain));
    DrawMenuBar(hMain);
 
-   /* Invalidate the DLL-side dark mode cache BEFORE triggering
+   /* Invalidate the DLL-side theme cache BEFORE triggering
       any resize or repaint.  The module DLL caches the theme value
       from the INI file; writing the new value and then immediately
       firing EVENT_COLORCHANGED ensures that every subsequent call

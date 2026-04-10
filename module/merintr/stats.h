@@ -20,6 +20,7 @@
 #define STATUS_BUTTON_SPACING      1 // was 5
 
 #define STATS_BAR_HEIGHT    12
+#define STATS_BAR_HEIGHT_LARGE 17
 
 // Numbers for groups of statistics Equate with value returned from StatsGetCurrentGroup()
 // NOTE: These values are matched to server-side values - seen in user.kod for example

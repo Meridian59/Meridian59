@@ -58,7 +58,7 @@ static int GetStatIconSize(void)
  */
 int GetStatsBarHeight(void)
 {
-   return IsNonDefaultTheme() ? 17 : STATS_BAR_HEIGHT;
+   return IsNonDefaultTheme() ? STATS_BAR_HEIGHT_LARGE : STATS_BAR_HEIGHT;
 }
 /************************************************************************/
 /*

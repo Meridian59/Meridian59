@@ -19,10 +19,10 @@ void InterfaceDrawElements(HDC hdc);
 void InterfaceDrawSidebarBackground(HDC hdc);
 //void InterfaceDrawBarBorder(HDC hdc, AREA *a);
 void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a );
-int DarkModeResourceId(int id);
+int ThemeResourceId(int id);
 bool IsDarkMode(void);
 bool IsNonDefaultTheme(void);
-void InvalidateDarkModeCache(void);
+void InvalidateThemeCache(void);
 void ScrollbarSetInfo(HWND hwndScroll, int itemCount, int pageSize, int pos, BOOL redraw);
 void SidebarWindowBackground(int x, int y, int width, int height);
 

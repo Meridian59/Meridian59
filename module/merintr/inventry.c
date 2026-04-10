@@ -196,10 +196,10 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   if (!GetBitmapResourceInfo(hInst, DarkModeResourceId(IDB_INVBKGND), &inventory_bkgnd))
+   if (!GetBitmapResourceInfo(hInst, ThemeResourceId(IDB_INVBKGND), &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
-	if( !( ptr = GetBitmapResource( hInst, DarkModeResourceId(IDB_INVBKGND) ) ) )
+	if( !( ptr = GetBitmapResource( hInst, ThemeResourceId(IDB_INVBKGND) ) ) )
 		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
 
 	logbrush.lbStyle = BS_DIBPATTERNPT;
@@ -484,11 +484,11 @@ void InventoryChangeColor(void)
    SetWindowTheme(hwndInvDialog, theme, NULL);
 
    /* Reload inventory background bitmap for the current theme. */
-   if (!GetBitmapResourceInfo(hInst, DarkModeResourceId(IDB_INVBKGND), &inventory_bkgnd))
+   if (!GetBitmapResourceInfo(hInst, ThemeResourceId(IDB_INVBKGND), &inventory_bkgnd))
       debug(("InventoryChangeColor couldn't load inventory background bitmap\n"));
 
    /* Recreate the scrollbar background brush. */
-   ptr = GetBitmapResource(hInst, DarkModeResourceId(IDB_INVBKGND));
+   ptr = GetBitmapResource(hInst, ThemeResourceId(IDB_INVBKGND));
    if (ptr != NULL)
    {
       DeleteObject(hbrushScrollBack);

@@ -106,7 +106,7 @@ void InterfaceFontChanged(WORD font_id, LOGFONT *font)
 /****************************************************************************/
 void InterfaceColorChanged(WORD color_id, COLORREF color)
 {
-   InvalidateDarkModeCache();
+   InvalidateThemeCache();
    InterfaceDrawInit();
    InventoryChangeColor();   
    StatsChangeColor();

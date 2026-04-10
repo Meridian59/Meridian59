@@ -289,9 +289,9 @@ static InterfaceRepeater repeaters[NUM_REPEATERS] = {
 
 static void InterfaceLoadElement(InterfaceElement *element);
 
-static bool darkmode_cached = false;
+static bool is_dark_cached = false;
 static int  theme_cached = 0;
-static bool darkmode_loaded = false;
+static bool theme_loaded = false;
 
 /************************************************************************/
 /*
@@ -300,14 +300,14 @@ static bool darkmode_loaded = false;
  */
 bool IsDarkMode(void)
 {
-   if (!darkmode_loaded)
+   if (!theme_loaded)
    {
       theme_cached = GetPrivateProfileInt("Interface", "Theme", 0,
                                           "./meridian.ini");
-      darkmode_cached = (theme_cached == 1);
-      darkmode_loaded = true;
+      is_dark_cached = (theme_cached == 1);
+      theme_loaded = true;
    }
-   return darkmode_cached;
+   return is_dark_cached;
 }
 
 /************************************************************************/
@@ -316,18 +316,18 @@ bool IsDarkMode(void)
  */
 bool IsNonDefaultTheme(void)
 {
-   if (!darkmode_loaded)
+   if (!theme_loaded)
       IsDarkMode();
    return (theme_cached != 0);
 }
 
 /************************************************************************/
 /*
- * InvalidateDarkModeCache:  Clears the cached theme value.
+ * InvalidateThemeCache:  Clears the cached theme value.
  */
-void InvalidateDarkModeCache(void)
+void InvalidateThemeCache(void)
 {
-   darkmode_loaded = false;
+   theme_loaded = false;
 }
 /************************************************************************/
 /*
@@ -356,10 +356,10 @@ void SidebarWindowBackground(int x, int y, int width, int height)
 }
 /************************************************************************/
 /*
- * DarkModeResourceId:  Returns the flat variant of a bitmap resource ID
+ * ThemeResourceId:  Returns the flat variant of a bitmap resource ID
  *   when using a non-default theme.
  */
-int DarkModeResourceId(int id)
+int ThemeResourceId(int id)
 {
    if (!IsNonDefaultTheme())
       return id;
@@ -436,7 +436,7 @@ void InterfaceLoadElement(InterfaceElement *element)
 {
    BITMAPINFOHEADER *ptr;
    
-   ptr = GetBitmapResource(hInst, DarkModeResourceId(element->id));
+   ptr = GetBitmapResource(hInst, ThemeResourceId(element->id));
    if (ptr == NULL)
    {
      element->bits = NULL;

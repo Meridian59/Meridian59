@@ -136,9 +136,11 @@ void InterfaceRedrawModule(HDC hdc)
   StatsDraw();
   if( StatsGetCurrentGroup() == STATS_INVENTORY )
   {
-    InvalidateRect( GetHwndInv(), NULL, FALSE );
-    ShowInventory(true);
-    InventoryRedraw();
+    /* Repaint the inventory dialog and all its children (item grid and
+       scrollbar) so they draw on top of the sidebar background.  hMain
+       has no WS_CLIPCHILDREN, so the background fill covers them. */
+    RedrawWindow(GetHwndInvDialog(), NULL, NULL,
+       RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
   }
 }
 

@@ -8,35 +8,59 @@
 #ifndef __D3DRENDER_H__
 #define __D3DRENDER_H__
 
-#define DEGREES_TO_RADIANS(_x)	((float)_x * PITWICE / 360.0f)
-#define RADIANS_TO_DEGREES(_x)	((float)_x * 360.0f / PITWICE)
+// Conversion factors at compile-time to avoid runtime division.
+static constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
+static constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
 
-#define DLIGHT_SCALE(_x)		((_x * 14000 / 255) + 4000)
+inline constexpr float DEGREES_TO_RADIANS(float degrees)
+{
+	return degrees * DEG_TO_RAD_FACTOR;
+}
+inline constexpr float RADIANS_TO_DEGREES(float radians)	
+{	
+	return radians * RAD_TO_DEG_FACTOR;
+}
 
-#define D3DRENDER_CLIP(_x, _w)	((_x > -fabs(_w)) && (_x < fabs(_w)) ? 1 : 0)
+// Conversion factor from light intensity to world units.
+static constexpr float DLIGHT_SCALE_FACTOR = 14000.0f / 255.0f;
+// Minimum radius to ensure lights don't cull/pop too early.
+static constexpr float DLIGHT_MIN_RADIUS = 4000.0f;
 
-#define ZBIAS_UNDERUNDER		1
-#define ZBIAS_UNDER				3
-#define ZBIAS_UNDEROVER			6
-#define ZBIAS_BASE				10
-#define ZBIAS_OVERUNDER			11
-#define ZBIAS_OVER				13
-#define ZBIAS_OVEROVER			15
-#define ZBIAS_TARGETED			0
-#define ZBIAS_DEFAULT			1
+// Calculates light range in world units.
+inline constexpr float DLIGHT_SCALE(float intensity)
+{
+	return (intensity * DLIGHT_SCALE_FACTOR) + DLIGHT_MIN_RADIUS;
+}
+
+// Checks if a coordinate is within the bounds of range.
+inline constexpr bool D3DRENDER_CLIP(float coordinate, float range)
+{
+	const float absRange = (range < 0.0f) ? -range : range;
+	return (coordinate > -absRange) && (coordinate < absRange);
+}
+
+static constexpr int ZBIAS_UNDERUNDER = 1;
+static constexpr int ZBIAS_UNDER = 3;
+static constexpr int ZBIAS_UNDEROVER = 6;
+static constexpr int ZBIAS_BASE = 10;
+static constexpr int ZBIAS_OVERUNDER = 11;
+static constexpr int ZBIAS_OVER = 13;
+static constexpr int ZBIAS_OVEROVER = 15;
+static constexpr int ZBIAS_TARGETED = 0;
+static constexpr int ZBIAS_DEFAULT = 1;
 
 
-#define VIEW_ELEMENT_Z			0.01f
-#define PLAYER_OVERLAY_Z		0.02f
+static constexpr float VIEW_ELEMENT_Z = 0.01f;
+static constexpr float PLAYER_OVERLAY_Z = 0.02f;
 
-#define ZBIAS_WORLD				2
-#define ZBIAS_MASK				1
+static constexpr int ZBIAS_WORLD = 2;
+static constexpr int ZBIAS_MASK = 1;
 
-#define D3DRENDER_REDRAW_UPDATE	0x00000001
-#define D3DRENDER_REDRAW_ALL	0x00000002
+static constexpr int D3DRENDER_REDRAW_UPDATE = 0x00000001;
+static constexpr int D3DRENDER_REDRAW_ALL = 0x00000002;
 
 // the far clipping plane distance, which determines the maximum depth of the visible scene.
-#define Z_RANGE					(200000.0f)
+static constexpr float Z_RANGE = 200000.0f;
 
 #define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\
 do	\
@@ -108,7 +132,7 @@ do	\
 	IDirect3DDevice9_SetIndices(_pDevice,	NULL);	\
 } while (0)
 
-typedef struct d_light
+struct d_light
 {
 	custom_xyz	xyz;
 	custom_xyz	xyzScale;
@@ -118,16 +142,18 @@ typedef struct d_light
 	ID			objID;
     int			baseIntensity;  // Unflickered base intensity for cache validation
     WORD		baseColor;      // Raw 16-bit color for cache validation
-} d_light;
+};
 
-typedef struct d_light_cache
+struct d_light_cache
 {
 	int		numLights;
 	d_light	dLights[MAX_DLIGHTS];
-} d_light_cache;
+};
 
-static const int numChars = 128 - 32;
-typedef struct font_3d
+// Standard ASCII table, minus the first 32 non-printable control characters.
+static constexpr int NUM_CHARS = 128 - 32;
+
+struct font_3d
 {
 	TCHAR        strFontName[80];
 	long         fontHeight;
@@ -136,12 +162,12 @@ typedef struct font_3d
 	long				 texWidth;
 	long				 texHeight;
 	float				 texScale;
-	custom_st	   texST[numChars][2];
+	custom_st	   texST[NUM_CHARS][2];
   // Deal with underhanging and overhanging characters
-  ABC          abc[numChars];
+  ABC          abc[NUM_CHARS];
   int          numKerningPairs;
   KERNINGPAIR *kerningPairs;
-} font_3d;
+};
 
 extern LPDIRECT3D9				gpD3D;
 extern LPDIRECT3DDEVICE9		gpD3DDevice;
@@ -207,5 +233,16 @@ PALETTEENTRY* getPalette();
 // Base palette array containing predefined colors used as a reference for rendering effects.
 // This palette remains constant and is used for color lookups and transformations.
 const Color(&getBasePalette())[NUM_COLORS];
+
+// The software renderer's angles are in game units. A full 360-degree circle is 4096 game units.
+// Note that matrix rotations expect radians.
+constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / 4096.0f;
+
+// Maps legacy software y-offset units (max 414 units from the center view) to world-space pitch (50 degrees).
+// Derived from software renderer's max vertical offset calculation: (3 * CLASSIC_HEIGHT / 2), where CLASSIC_HEIGHT = 276.
+constexpr float Y_UNIT_TO_WORLD_RAD = DEGREES_TO_RADIANS(50.0f) / 414.0f;
+
+// For the backgrounds and player camera, the angle is instead 45 degrees.  Helps prevent sliding artifacts. 
+constexpr float Y_UNIT_TO_VIEW_RAD = DEGREES_TO_RADIANS(45.0f) / 414.0f;
 
 #endif	// __D3DRENDER_H__

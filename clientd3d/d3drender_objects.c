@@ -105,8 +105,8 @@ long D3DRenderObjects(
     const FontTextureParams& fontTextureParams,
     const PlayerViewParams& playerViewParams)
 {
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE); // Ensure Z-write is enabled
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);      // Ensure Z-buffer is enabled
 
@@ -122,8 +122,8 @@ long D3DRenderObjects(
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
 
-		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
-		D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		D3DRender_SetAlphaTestState(TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
+		D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 		D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(objectsRenderParams.cacheSystem);
@@ -140,8 +140,8 @@ long D3DRenderObjects(
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
 
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
@@ -156,7 +156,7 @@ long D3DRenderObjects(
 
 	// Render translucent objects with z-write disabled so they don't occlude objects behind them.
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	// Sort translucent objects back-to-front using view-space depth (distance along the
 	// camera's viewing direction). This is more accurate than Euclidean distance because
@@ -262,7 +262,7 @@ long D3DRenderObjects(
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	// Render invisible world objects
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
@@ -1040,8 +1040,7 @@ void D3DRenderOverlaysDraw(
 						bgra.a = D3DRENDER_TRANS50;
 
 					if (bgra.a != 255)
-						D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA,
-							D3DBLEND_INVSRCALPHA);
+						D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 					for (i = 0; i < 4; i++)
 					{
@@ -1582,7 +1581,7 @@ void D3DRenderObjectsDraw(
 			bgra.a = D3DRENDER_TRANS50;
 
 		if (bgra.a != 255)
-			D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+			D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 		for (i = 0; i < 4; i++)
 		{

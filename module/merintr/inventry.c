@@ -287,9 +287,13 @@ void InventoryDisplayScrollbar(void)
 	      inventory_area.cx, inventory_area.cy,
 	      FALSE);
 
-   MoveWindow(hwndInv, 0, 0, 
-	      inventory_area.cx - inventory_scrollbar_width, inventory_area.cy,
-	      FALSE);
+   /* When no scrollbar, hwndInv fills the full dialog width so no uncovered
+      strip shows the parent window background on the right edge. */
+   int inv_width = has_scrollbar
+      ? inventory_area.cx - inventory_scrollbar_width
+      : inventory_area.cx;
+
+   MoveWindow(hwndInv, 0, 0, inv_width, inventory_area.cy, FALSE);
 
    MoveWindow(hwndInvScroll, inventory_area.cx - inventory_scrollbar_width,
 	      0, inventory_scrollbar_width,
@@ -418,7 +422,17 @@ INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
       return FALSE;
 
    case WM_ERASEBKGND:
+   {
+      /* Fill the entire dialog area with the inventory background texture.
+         Without this, empty cells in the last partial row and gaps between
+         the item grid and the dialog edge show the wrong background. */
+      HDC hdc = (HDC)wParam;
+      RECT rc;
+      GetClientRect(hwnd, &rc);
+      DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &rc,
+         inventory_area.x, inventory_area.y, -1);
       return 1;
+   }
 
       HANDLE_MSG(hwnd, WM_VSCROLL, InventoryVScroll);
 
@@ -1242,9 +1256,9 @@ void DisplayInventory(list_type inventory)
    }
 
    InventoryScrollRange();
-   if (num_items > rows * cols)
-      InventoryDisplayScrollbar();
    WindowEndUpdate(hwndInv);
+
+   InventoryDisplayScrollbar();
 }
 /************************************************************************/
 /*
@@ -1400,6 +1414,11 @@ void ShowInventory(bool bShow)
 HWND GetHwndInv()
 {
 	return hwndInv;
+}
+/************************************************************************/
+HWND GetHwndInvDialog()
+{
+	return hwndInvDialog;
 }
 
 /************************************************************************/

@@ -775,13 +775,12 @@ void InterfaceDrawElements(HDC hdc)
 
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
-	  //	Temp. disable xxx
-/*	  if( i >= ELEMENT_ULTOP && i <= ELEMENT_LRRIGHT )
-		  continue;
+	  /* Skip inventory corner bitmaps.  The inventory edge repeaters
+	     (ELEMENT_ITOP through ELEMENT_IRIGHT) are already skipped in
+	     the repeater loop below, so these corners have no connecting
+	     edges and draw as floating fragments. */
 	  if( i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT )
 		  continue;
-	  if( i == ELEMENT_BLLBOTTOM || i == ELEMENT_BLRBOTTOM )
-		  continue;*/
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
     

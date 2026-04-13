@@ -249,8 +249,8 @@ void SandstormInit(void)
 */
 void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 {
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(TRUE, 1, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
@@ -684,8 +684,8 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 		}
 	}
 
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
@@ -739,8 +739,8 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	D3DCacheFill(fxRss.effectCacheSystem, fxRss.effectPool, 1);
 	D3DCacheFlush(fxRss.effectCacheSystem, fxRss.effectPool, 1, D3DPT_TRIANGLESTRIP);

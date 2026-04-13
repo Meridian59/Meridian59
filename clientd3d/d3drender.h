@@ -62,21 +62,23 @@ static constexpr int D3DRENDER_REDRAW_ALL = 0x00000002;
 // the far clipping plane distance, which determines the maximum depth of the visible scene.
 static constexpr float Z_RANGE = 200000.0f;
 
-#define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\
-do	\
-{	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, _enable);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, _refValue);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, _compareFunc);	\
-} while (0)
+inline IDirect3DDevice9* gpD3DDevice = nullptr;
 
-#define D3DRENDER_SET_ALPHABLEND_STATE(_pDevice, _enable, _srcBlend, _dstBlend)	\
-do	\
-{	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, _enable);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, _srcBlend);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, _dstBlend);	\
-} while (0)
+inline void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, enable);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHAREF, alphaRef);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, comparisonFunc);
+}
+
+inline void D3DRender_SetAlphaBlendState(BOOL enable, D3DBLEND srcBlend, D3DBLEND dstBlend)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, enable);
+	gpD3DDevice->SetRenderState(D3DRS_SRCBLEND, srcBlend);
+	gpD3DDevice->SetRenderState(D3DRS_DESTBLEND, dstBlend);
+}
 
 #define D3DRENDER_SET_STENCIL_STATE(_pDevice, _enable, _stencilFunc, _refValue, _pass, _fail, _zfail)	\
 do	\

@@ -70,7 +70,7 @@ long D3DRenderWorld(const WorldRenderParams &worldRenderParams, const WorldPrope
    auto timeWorld = timeGetTime();
 
    // Enable alpha testing
-   D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
+   D3DRender_SetAlphaTestState(TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
    // Set up texture filtering
    IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -138,7 +138,7 @@ long D3DRenderWorld(const WorldRenderParams &worldRenderParams, const WorldPrope
    SetZBias(gpD3DDevice, 1);
 
    // Disable alpha testing
-   D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
+   D3DRender_SetAlphaTestState(FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
    return timeWorld;
 }
@@ -164,8 +164,8 @@ void D3DRenderWorldLighting(const WorldRenderParams &worldRenderParams,
       auto &params = worldRenderParams.params;
       const auto &room = getCurrentRoom();
 
-      D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
-      D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
+      D3DRender_SetAlphaTestState(TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
+      D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
 
       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
@@ -178,7 +178,7 @@ void D3DRenderWorldLighting(const WorldRenderParams &worldRenderParams,
       D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room.tree, false);
 
       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
-      D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
+      D3DRender_SetAlphaTestState(TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
 
       D3DRenderLMapsPostDraw(worldRenderParams, lightAndTextureParams, room.tree, true);
       D3DRenderLMapsDynamicPostDraw(worldRenderParams, lightAndTextureParams, room.tree, true);
@@ -430,8 +430,8 @@ void D3DRenderTransparentWallsPass(const WorldRenderParams &worldRenderParams)
 
    // Alpha-testing must be OFF so walls with alpha < 128 (e.g. 25% visible)
    // are not silently discarded before the blend equation runs.
-   D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
-   D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+   D3DRender_SetAlphaTestState(FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
+   D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
    IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 
    D3DRenderPoolReset(pools.worldPool, &D3DMaterialWorldPool);
@@ -440,8 +440,8 @@ void D3DRenderTransparentWallsPass(const WorldRenderParams &worldRenderParams)
    D3DCacheFill(cacheSystem.worldCacheSystem, pools.worldPool, 1);
    D3DCacheFlush(cacheSystem.worldCacheSystem, pools.worldPool, 1, D3DPT_TRIANGLESTRIP);
 
-   D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_ONE, D3DBLEND_ZERO);
-   D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
+   D3DRender_SetAlphaBlendState(FALSE, D3DBLEND_ONE, D3DBLEND_ZERO);
+   D3DRender_SetAlphaTestState(TRUE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
    IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 }
 

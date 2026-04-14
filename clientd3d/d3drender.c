@@ -37,8 +37,6 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent)
 
 d3d_render_packet_new	*gpPacket;
 
-LPDIRECT3D9				gpD3D = NULL;
-
 LPDIRECT3DTEXTURE9		gpNoLookThrough = NULL;
 LPDIRECT3DTEXTURE9		gpBackBufferTex[16];
 LPDIRECT3DTEXTURE9		gpBackBufferTexFull;
@@ -79,14 +77,10 @@ custom_xyz				playerDeltaPos;
 font_3d					gFont;
 
 RECT					gD3DRect;
-int						gD3DEnabled;
 BYTE					gViewerLight = 0;
 int						gNumObjects;
-int						gNumVertices;
 int						gNumDPCalls;
 static PALETTEENTRY		gPalette[256];
-int						gScreenWidth;
-int						gScreenHeight;
 
 static unsigned int		gFrame = 0;
 

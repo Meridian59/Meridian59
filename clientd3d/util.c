@@ -12,6 +12,11 @@
 #include "client.h"
 #include <dxgi.h>
 
+// Well-known device setup class GUID for display adapters (GUID_DEVCLASS_DISPLAY).
+// See: https://learn.microsoft.com/en-us/windows-hardware/drivers/install/system-defined-device-setup-classes-available-to-vendors
+static const char REGPATH_DISPLAY_CLASS[] =
+   "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}";
+
 // Query real dedicated VRAM via DXGI by matching the adapter's VendorId+DeviceId.
 // Returns MB, or 0 if DXGI is unavailable or no match found.
 static unsigned int GetDXGIDedicatedVRAMMB(DWORD vendorId, DWORD deviceId)
@@ -38,9 +43,10 @@ static unsigned int GetDXGIDedicatedVRAMMB(DWORD vendorId, DWORD deviceId)
          {
             vramMB = (unsigned int)(desc.DedicatedVideoMemory >> 20);
 
-            // On 32-bit apps, DedicatedVideoMemory (SIZE_T) wraps at 4GB. Fetch correct 64-bit value from registry.
+            // On 32-bit apps, DedicatedVideoMemory (SIZE_T) wraps at 4GB.
+            // Fall back to the registry display-adapter class to get the real 64-bit value.
             HKEY hClassKey;
-            if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}", 0, KEY_READ, &hClassKey) == ERROR_SUCCESS)
+            if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, REGPATH_DISPLAY_CLASS, 0, KEY_READ, &hClassKey) == ERROR_SUCCESS)
             {
                char targetDev[64];
                sprintf_s(targetDev, sizeof(targetDev), "pci\\ven_%04x&dev_%04x", vendorId, deviceId);
@@ -568,7 +574,6 @@ void GetSystemStats(SystemInfo *s)
    else
       s->memory = (int)std::min((DWORDLONG)(mem.ullTotalPhys / (1024 * 1024)), (DWORDLONG)INT_MAX);
 
-   
    s->crc16 = (int)(crc32 & 0xFFFF);
    s->last_max_fps = config.last_max_fps;
 
@@ -844,5 +849,3 @@ void InitMenuPopupHandler(HWND hwnd, HMENU hMenu, UINT item, BOOL fSystemMenu)
       EnableMenuItem(hMenu, SC_SIZE, MF_GRAYED);
    }
 }
-
-

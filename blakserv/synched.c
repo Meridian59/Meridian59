@@ -732,7 +732,3 @@ void SynchedAddDelFile(char *str)
 {
    AddStringToPacket(strlen(str),str);
 }
-
-
-
-

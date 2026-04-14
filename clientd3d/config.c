@@ -323,9 +323,9 @@ void ConfigLoad(void)
 	   sizeof(config_value), config_ini);
    config.gpuEfficiency = (0 == strcmp(config_value, "true"));
 
-   config.last_avg_fps         = GetConfigInt(config_section, INILastAvgFps,      0, config_ini);
-   config.last_low_fps         = GetConfigInt(config_section, INILastLowFps,      0, config_ini);
-   config.last_max_fps         = GetConfigInt(config_section, INILastMaxFps,      0, config_ini);
+   config.last_avg_fps = GetConfigInt(config_section, INILastAvgFps, 0, config_ini);
+   config.last_low_fps = GetConfigInt(config_section, INILastLowFps, 0, config_ini);
+   config.last_max_fps = GetConfigInt(config_section, INILastMaxFps, 0, config_ini);
    config.last_session_secs = GetConfigInt(config_section, INILastSessionSecs, 0, config_ini);
    config.last_avg_ping = GetConfigInt(config_section, INILastAvgPing, 0, config_ini);
    config.last_high_ping = GetConfigInt(config_section, INILastHighPing, 0, config_ini);

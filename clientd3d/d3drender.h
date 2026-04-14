@@ -64,6 +64,7 @@ static constexpr float Z_RANGE = 200000.0f;
 
 inline IDirect3DDevice9* gpD3DDevice = nullptr;
 
+// Controls alpha testing, which is a 'pass/fail' chck for pixels based on their transparency.
 inline void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc)
 {
 	if (!gpD3DDevice) return;
@@ -72,6 +73,7 @@ inline void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC 
 	gpD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, comparisonFunc);
 }
 
+// Controls alpha blending, which mixes source color with destination color.
 inline void D3DRender_SetAlphaBlendState(BOOL enable, D3DBLEND srcBlend, D3DBLEND dstBlend)
 {
 	if (!gpD3DDevice) return;
@@ -91,48 +93,59 @@ do	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILZFAIL, _zfail);	\
 } while (0)
 
-#define D3DRENDER_SET_COLOR_STAGE(_pDevice, _stage, _opValue, _arg0Value, _arg1Value)	\
-do	\
-{	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLOROP,	_opValue);	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG1, _arg0Value);	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG2, _arg1Value);	\
-} while (0)
+// Controls how textures and colors are mathematically combined, whether it's a 2D sprites or 3D surfaces.
+inline void D3DRender_SetColorStage(DWORD stage, D3DTEXTUREOP colorOp, DWORD arg1, DWORD arg2)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_COLOROP, colorOp);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_COLORARG1, arg1);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_COLORARG2, arg2);
+}
 
-#define D3DRENDER_SET_ALPHA_STAGE(_pDevice, _stage, _opValue, _arg0Value, _arg1Value)	\
-do	\
-{	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAOP,	_opValue);	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG1, _arg0Value);	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG2, _arg1Value);	\
-} while (0)
+// Controls how alpha transparency is mathematically combined for any rendered surface.
+inline void D3DRender_SetAlphaStage(DWORD stage, D3DTEXTUREOP alphaOp, DWORD arg1, DWORD arg2)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAOP, alphaOp);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAARG1, arg1);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAARG2, arg2);
+}
 
-#define D3DRENDER_SET_STREAMS(_pDevice, _pCache, _numStages)	\
-do	\
-{	\
-	int	_i = 0;	\
-	int	_j;	\
-	IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
-      (_pCache)->xyzBuffer.pVBuffer, 0, sizeof(custom_xyz)); \
-	IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
-      (_pCache)->bgraBuffer.pVBuffer, 0, sizeof(custom_bgra)); \
-	for (_j = 0; _j < _numStages; _j++)	\
-		IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
-         (_pCache)->stBuffer[_j].pVBuffer, 0, sizeof(custom_st)); \
-	IDirect3DDevice9_SetIndices(_pDevice, (_pCache)->indexBuffer.pIBuffer);	\
-} while (0)
+// Controls the source of vertex data (positions, colors, and textures) for the rendering pipeline.
+inline void D3DRender_SetStreams(d3d_render_cache* pCache, int numStages)
+{
+	if (!gpD3DDevice || !pCache) return;
+	
+	int i = 0;
+	
+	gpD3DDevice->SetStreamSource(i++, pCache->xyzBuffer.pVBuffer, 0, sizeof(custom_xyz));
+	gpD3DDevice->SetStreamSource(i++, pCache->bgraBuffer.pVBuffer, 0, sizeof(custom_bgra));
+	
+	for (int j = 0; j < numStages; j++)
+	{
+		gpD3DDevice->SetStreamSource(i++, pCache->stBuffer[j].pVBuffer, 0, sizeof(custom_st));
+	}
+	
+	gpD3DDevice->SetIndices(pCache->indexBuffer.pIBuffer);
+}
 
-#define D3DRENDER_CLEAR_STREAMS(_pDevice, _numStages)	\
-do	\
-{	\
-	int	_i = 0;	\
-	int	_j;	\
-	IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
-	IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
-	for (_j = 0; _j < _numStages; _j++)	\
-		IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
-	IDirect3DDevice9_SetIndices(_pDevice,	NULL);	\
-} while (0)
+// Disconnects vertext data sources from the rendering pipeline.
+inline void D3DRender_ClearStreams(int numStages)
+{
+	if (!gpD3DDevice) return;
+	
+	int i = 0;
+	
+	gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);
+	gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);
+	
+	for (int j = 0; j < numStages; j++)
+	{
+		gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);
+	}
+	
+	gpD3DDevice->SetIndices(nullptr);
+}
 
 struct d_light
 {

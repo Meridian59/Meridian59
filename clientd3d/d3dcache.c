@@ -515,7 +515,7 @@ static void D3DCacheFlushChunks(d3d_render_cache_system *pCacheSystem,
 				if (pRenderCache != pChunk->pRenderCache)
 				{
 					pRenderCache = pChunk->pRenderCache;
-					D3DRENDER_SET_STREAMS(gpD3DDevice, pRenderCache, numStages);
+					D3DRender_SetStreams(pRenderCache, numStages);
 				}
 
 				IDirect3DDevice9_DrawIndexedPrimitive(gpD3DDevice,
@@ -573,6 +573,8 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 			D3DSTENCILOP_REPLACE,   // z-pass  -> write 1
 			D3DSTENCILOP_KEEP,      // stencil-fail (unused, func=ALWAYS)
 			D3DSTENCILOP_KEEP);     // z-fail  -> leave 0 (occluded pixel)
+		
+		
 		D3DCacheFlushChunks(pCacheSystem, pPool, numStages, type, false);
 
 		// Pass 2 of 2 (outline draw): draw targeted (outline) chunks only where stencil==0,
@@ -597,5 +599,5 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 		IDirect3DDevice9_SetTexture(gpD3DDevice, i, NULL);
 	}
 
-	D3DRENDER_CLEAR_STREAMS(gpD3DDevice, numStages);
+	D3DRender_ClearStreams(numStages);
 }

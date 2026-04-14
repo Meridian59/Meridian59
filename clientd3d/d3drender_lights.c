@@ -132,8 +132,8 @@ static int CalculateFlickeredIntensity(const LightSourceData& lightData, float* 
    }
    else
    {
-      // Non-flickering lights use the original DLIGHT_SCALE formula to preserve
-      // their pre-flicker-feature appearance (radius and brightness).
+      // Non-flickering lights scale their intensity directly via DLIGHT_SCALE
+      // to maintain consistent radius and brightness independent of the dynamic flicker system.
       flickeredIntensity = DLIGHT_SCALE(lightData.baseIntensity);
    }
 

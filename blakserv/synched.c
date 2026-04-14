@@ -555,7 +555,7 @@ void LogUserData(session_node *s)
       static const char *sessBucketStr[] = {
          NULL, "<1min", "~2min", "~10min", "~20min", "~45min",
          "~1.5hr", "~3hr", "~5hr", "~7hr", "~10hr", "12+hr"
-      };  
+      };
       if (sessBuck > 0 && sessBuck < 12)
          buf += "session " + std::string(sessBucketStr[sessBuck]) + ", ";
       else if (sessBuck >= 12)

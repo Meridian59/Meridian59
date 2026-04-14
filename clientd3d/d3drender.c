@@ -696,8 +696,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRenderTransparentWallsPass(worldRenderParams);
 	}
 
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
 
@@ -729,8 +729,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	timeComplete = timeGetTime();
 	// view elements (e.g. viewport corners)
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
 
 	D3DRender_SetAlphaTestState(TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);

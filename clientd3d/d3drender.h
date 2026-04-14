@@ -89,12 +89,12 @@ struct font_3d
 //////////////////////
 inline constexpr float DEGREES_TO_RADIANS(float degrees)
 {
-	static constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
+	constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
 	return degrees * DEG_TO_RAD_FACTOR;
 }
 inline constexpr float RADIANS_TO_DEGREES(float radians)
 {	
-	static constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
+	constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
 	return radians * RAD_TO_DEG_FACTOR;
 }
 
@@ -102,9 +102,9 @@ inline constexpr float RADIANS_TO_DEGREES(float radians)
 inline constexpr float DLIGHT_SCALE(float intensity)
 {
 	// Conversion factor from light intensity to world units.
-	static constexpr float DLIGHT_SCALE_FACTOR = 14000.0f / 255.0f;
+	constexpr float DLIGHT_SCALE_FACTOR = 14000.0f / 255.0f;
 	// Minimum radius to ensure lights don't cull/pop too early.
-	static constexpr float DLIGHT_MIN_RADIUS = 4000.0f;
+	constexpr float DLIGHT_MIN_RADIUS = 4000.0f;
 	
 	return (intensity * DLIGHT_SCALE_FACTOR) + DLIGHT_MIN_RADIUS;
 }

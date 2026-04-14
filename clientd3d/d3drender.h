@@ -82,16 +82,34 @@ inline void D3DRender_SetAlphaBlendState(BOOL enable, D3DBLEND srcBlend, D3DBLEN
 	gpD3DDevice->SetRenderState(D3DRS_DESTBLEND, dstBlend);
 }
 
-#define D3DRENDER_SET_STENCIL_STATE(_pDevice, _enable, _stencilFunc, _refValue, _pass, _fail, _zfail)	\
-do	\
-{	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, _enable);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILFUNC, _stencilFunc);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILREF, _refValue);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILPASS, _pass);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILFAIL, _fail);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILZFAIL, _zfail);	\
-} while (0)
+// Prepares the stencil buffer to "mark" a surface's area.
+inline void D3DRender_SetStencilMark(DWORD refValue)
+{
+	if (!gpD3DDevice) return;
+    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILREF, refValue);
+	// Don't mark areas that are occluded.
+    gpD3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
+}
+
+// Configures the pipeline to only draw where the stencil test matches the reference.
+inline void D3DRender_SetStencilTest(D3DCMPFUNC comparisonFunc, DWORD refValue)
+{
+    if (!gpD3DDevice) return;
+    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILFUNC, comparisonFunc);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILREF, refValue);
+	// Don't change the stencil buffer during the test.
+    gpD3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+}
+
+// Disable stencil testing for subsequent rendering.
+inline void D3DRender_DisableStencil()
+{
+    if (!gpD3DDevice) return;
+    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+}
 
 // Controls how textures and colors are mathematically combined, whether it's a 2D sprites or 3D surfaces.
 inline void D3DRender_SetColorStage(DWORD stage, D3DTEXTUREOP colorOp, DWORD arg1, DWORD arg2)
